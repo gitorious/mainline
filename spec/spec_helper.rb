@@ -8,6 +8,7 @@ Spec::Runner.configure do |config|
   config.use_transactional_fixtures = true
   config.use_instantiated_fixtures  = false
   config.fixture_path = RAILS_ROOT + '/spec/fixtures'
+  config.include AuthenticatedTestHelper
 
   # You can declare fixtures for each behaviour like this:
   #   describe "...." do
@@ -16,7 +17,7 @@ Spec::Runner.configure do |config|
   # Alternatively, if you prefer to declare them only once, you can
   # do so here, like so ...
   #
-  #   config.global_fixtures = :table_a, :table_b
+  config.global_fixtures = :users
   #
   # If you declare global fixtures, be aware that they will be declared
   # for all of your examples, even those that don't use them.
