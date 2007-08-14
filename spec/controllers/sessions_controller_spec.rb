@@ -1,6 +1,14 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe SessionsController do
+  
+  def auth_token(token)
+    CGI::Cookie.new('name' => 'auth_token', 'value' => token)
+  end
+
+  def cookie_for(user)
+    auth_token users(user).remember_token
+  end
 
   it "should login and redirect" do
     post :create, :login => "quentin", :password => "test"
@@ -58,13 +66,5 @@ describe SessionsController do
     get :new
     @controller.send(:logged_in?).should be(false)
   end
-
-  protected
-    def auth_token(token)
-      CGI::Cookie.new('name' => 'auth_token', 'value' => token)
-    end
   
-    def cookie_for(user)
-      auth_token users(user).remember_token
-    end
 end
