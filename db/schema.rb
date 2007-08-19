@@ -4,14 +4,16 @@
 
 ActiveRecord::Schema.define(:version => 2) do
 
-  create_table "sessions", :force => true do |t|
-    t.column "session_id", :string
-    t.column "data",       :text
-    t.column "updated_at", :datetime
+  create_table "projects", :force => true do |t|
+    t.column "name",        :string
+    t.column "description", :text
+    t.column "user_id",     :integer
+    t.column "created_at",  :datetime
+    t.column "updated_at",  :datetime
   end
 
-  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
-  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+  add_index "projects", ["name"], :name => "index_projects_on_name"
+  add_index "projects", ["user_id"], :name => "index_projects_on_user_id"
 
   create_table "users", :force => true do |t|
     t.column "login",                     :string

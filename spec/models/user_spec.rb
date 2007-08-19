@@ -5,6 +5,10 @@ describe User do
     @user = User.new
   end
   
+  it "should have valid associations" do
+    @user.should have_valid_associations
+  end
+  
   it "should create a valid user" do
     proc {
       user = create_user
