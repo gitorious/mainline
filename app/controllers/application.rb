@@ -2,6 +2,6 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  # Pick a unique cookie name to distinguish our session data from others'
-  session :session_key => '_ks1_session_id'
+  session :session_key => '_ks1_session_id', :secret => "TODO:CHANGEME!!!"
+  include AuthenticatedSystem
 end

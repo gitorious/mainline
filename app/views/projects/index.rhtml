@@ -1,0 +1,9 @@
+<% @page_title = "Projects" -%>
+
+<%= link_to "New project", new_project_path -%>
+
+<ul>
+<% @projects.each do |project| -%>
+  <li><%= link_to project.name, project_path(project) -%></li>
+<% end -%>
+</ul>

@@ -17,14 +17,18 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
-  map.home "", :controller => "sessions", :action => "new" # TODO change eventually
+  map.home "", :controller => "projects", :action => "new" # TODO change eventually
   
   map.resources :users
   map.resource  :sessions
+  map.resources :projects #, :has_many => [:tasks, :repositories, :milestones, :pages] do |project|
+  # project.resources :tasks
+  # project.resources :repositories
+  #end
   
   map.with_options :controller => 'sessions' do |session|
-    session.login    'login',  :action => 'new'
-    session.logout   'logout', :action => 'destroy'
+    session.login    '/login',  :action => 'new'
+    session.logout   '/logout', :action => 'destroy'
   end
 
   # Install the default route as the lowest priority.
