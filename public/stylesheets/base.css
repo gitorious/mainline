@@ -3,19 +3,56 @@ body {
 /*  background: #292929;*/
 }
 
-#header {
-  background: #292929;
-  height: 75px;
-  border-bottom: 5px solid #f9630d;
-  color: #fff;
+#top                  { color: #fff; background: #292929; }
+#top #logo            { height: 40px; float: left; }
+#top .login-logout    { float: right; margin: 5px 5px 0 0; }
+#top .login-logout p  { margin:0; font-size: 0.9em;}  
+#top #logo h1, 
+ #top #logo h2, 
+ #top #logo h3     { color: #baffb9; }
+#top a              { color: #ccc; text-decoration: none; }
+#top a:hover        { color: #fff; }
+
+ul#mainmenu {
+  height: 25px;
+  background:  #f9630d;;
+  list-style: none;
 }
+
+ul#mainmenu li {
+  display:inline;
+  font-weight: bold;
+  float:left;
+}
+
+ul#mainmenu li.first  { margin-left: 45px; }
+
+ul#mainmenu li.right {
+  float: right;
+  margin-right: 45px;
+}
+
+ul#mainmenu li a {
+  display:block;
+  height: 22px;
+  padding: 3px 5px 0 5px;
+  text-decoration:none;
+  color: #193d55;
+}
+ul#mainmenu li a:hover {
+  color: #000;
+  background: #fff;
+}
+
 
 #main {
   min-height: 400px;
+  margin-top: 20px;
 }
 
 #sidebar {
   background:#f2f5f7;
+  padding-top: 20px;
 }
 
 #footer {

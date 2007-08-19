@@ -16,8 +16,26 @@
 </head>
 <body>
   <div class="container">
-    <div id="header" class="column span-14 first last">
-      this is the header
+    <div id="top" class="column span-14 first last">      
+      <div id="logo">
+        <h2>logo</h2>
+      </div>
+      <div class="login-logout">
+        <p>(
+          <%- if logged_in? -%>
+            <%= link_to "logout", logout_path -%>
+          <%- else -%>
+            <%= link_to "login", login_path -%>
+          <%- end -%>
+        )</p>
+      </div>
+      
+      <ul id="mainmenu" class="column span-14 first last">
+        <li class="first"><%= link_to "Projects" -%></li>
+        <li><%= link_to "Tasks" -%></li>
+        <li><%= link_to "Repositories" -%></li>
+        <li><%= link_to "Members" -%></li>
+      </ul>
     </div>
     
     <div id="main" class="column span-11 first">
