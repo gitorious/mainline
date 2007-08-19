@@ -71,5 +71,11 @@ describe ProjectsController do
     response.should redirect_to(url_path(projects_path))
     Project.find_by_id(1).should == nil
   end
+  
+  it "GET projects/show should be success" do
+    get :show, :id => projects(:johans_project).id
+    assigns[:project].should == projects(:johans_project)
+    response.should be_success
+  end
 
 end
