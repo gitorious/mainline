@@ -17,8 +17,15 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
+  map.home "", :controller => "sessions", :action => "new" # TODO change eventually
+  
   map.resources :users
-  map.resource  :session
+  map.resource  :sessions
+  
+  map.with_options :controller => 'sessions' do |session|
+    session.login    'login',  :action => 'new'
+    session.logout   'logout', :action => 'destroy'
+  end
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
