@@ -1,1 +1,25 @@
-@import "blueprint/screen.css"
+body {
+  margin:0;
+/*  background: #292929;*/
+}
+
+#header {
+  background: #292929;
+  height: 75px;
+  border-bottom: 5px solid #f9630d;
+  color: #fff;
+}
+
+#main {
+  min-height: 400px;
+}
+
+#sidebar {
+  background:#f2f5f7;
+}
+
+#footer {
+  background: #ededed;
+  padding: 10px 10px 0 10px;
+  border-top: 1px #666 dotted;
+}
