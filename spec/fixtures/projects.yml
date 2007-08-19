@@ -1,7 +1,7 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 johans_project:
   id: 1
-  name: johans project
+  title: johans project
   updated_at: <%= 2.days.ago.to_s(:db) %>
   description: this is johans project yo
   user_id: 1

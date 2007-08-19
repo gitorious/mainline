@@ -32,11 +32,11 @@ describe ProjectsController do
   
   it "POST projects/create with valid data should create project" do
     login_as :johan
-    post :create, :project => {:name => "project x"}
+    post :create, :project => {:title => "project x"}
     response.should be_redirect
     response.should redirect_to(url_path(projects_path))
     
-    Project.find_by_name("project x").user.should == users(:johan)
+    Project.find_by_title("project x").user.should == users(:johan)
   end
   
   it "projects/create should require login" do
@@ -52,11 +52,11 @@ describe ProjectsController do
   it "PUT projects/update with valid data should update record" do
     login_as :johan
     project = projects(:johans_project)
-    put :update, :id => project.id, :project => {:name => "new name"}
+    put :update, :id => project.id, :project => {:title => "new name"}
     assigns(:project).should == project
     response.should be_redirect
     response.should redirect_to(project_path(project))
-    project.reload.name.should == "new name"
+    project.reload.title.should == "new name"
   end
   
   it "projects/destroy should require login" do

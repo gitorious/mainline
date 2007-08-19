@@ -4,6 +4,6 @@
 
 <ul>
 <% @projects.each do |project| -%>
-  <li><%= link_to project.name, project_path(project) -%></li>
+  <li><%= link_to project.title, project_path(project) -%></li>
 <% end -%>
 </ul>
