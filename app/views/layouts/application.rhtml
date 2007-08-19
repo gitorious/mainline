@@ -6,6 +6,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title><%= @page_title ? @page_title + " - " : "" -%>KeyserSource</title>
 	<meta name="author" content="Johan Sørensen">
+	<link rel="stylesheet" href="/stylesheets/print.css" type="text/css" media="print" charset="utf-8">
+	<link rel="stylesheet" href="/stylesheets/base.css" type="text/css" media="screen, projection" charset="utf-8">
+	<% if RAILS_ENV == "development" -%>
+	  <style type="text/css" media="screen">
+        .container { background: url(/stylesheets/blueprint/lib/img/grid.png); }
+        .container { background: url(/stylesheets/blueprint/lib/img/baseline.png); } 
+	  </style>
+	<% end -%>
 </head>
 <body>
   <div class="container">
