@@ -3,15 +3,13 @@ require File.dirname(__FILE__) + '/../abstract_unit'
 $:.unshift File.dirname(__FILE__) + '/../../../railties/lib'
 require 'action_controller/integration'
 
-begin # rescue LoadError
-require 'mocha'
-require 'stubba'
+uses_mocha 'integration' do
 
 # Stub process for testing.
 module ActionController
   module Integration
     class Session
-      def process
+      def process(*args)
       end
 
       def generic_url_rewriter
@@ -52,29 +50,27 @@ class SessionTest < Test::Unit::TestCase
   end
 
   def test_get_via_redirect
-    path = "/somepath"; args = {:id => '1'}
+    path = "/somepath"; args = {:id => '1'}; headers = {"X-Test-Header" => "testvalue" }
 
-    @session.expects(:get).with(path,args)
+    @session.expects(:get).with(path,args,headers)
 
-    redirects = [true, true, false]
-    @session.stubs(:redirect?).returns(lambda { redirects.shift })
+    @session.stubs(:redirect?).returns(true, true, false)
     @session.expects(:follow_redirect!).times(2)
 
     @session.stubs(:status).returns(200)
-    assert_equal 200, @session.get_via_redirect(path, args)
+    assert_equal 200, @session.get_via_redirect(path, args, headers)
   end
 
   def test_post_via_redirect
-    path = "/somepath"; args = {:id => '1'}
+    path = "/somepath"; args = {:id => '1'}; headers = {"X-Test-Header" => "testvalue" }
 
-    @session.expects(:post).with(path,args)
+    @session.expects(:post).with(path,args,headers)
 
-    redirects = [true, true, false]
-    @session.stubs(:redirect?).returns(lambda { redirects.shift })
+    @session.stubs(:redirect?).returns(true, true, false)
     @session.expects(:follow_redirect!).times(2)
 
     @session.stubs(:status).returns(200)
-    assert_equal 200, @session.post_via_redirect(path, args)
+    assert_equal 200, @session.post_via_redirect(path, args, headers)
   end
 
   def test_url_for_with_controller
@@ -134,21 +130,96 @@ class SessionTest < Test::Unit::TestCase
     @session.head(path,params,headers)
   end
 
-  def test_xml_http_request
+  def test_xml_http_request_get
     path = "/index"; params = "blah"; headers = {:location => 'blah'}
     headers_after_xhr = headers.merge(
       "X-Requested-With" => "XMLHttpRequest",
       "Accept"           => "text/javascript, text/html, application/xml, text/xml, */*"
     )
-    @session.expects(:post).with(path,params,headers_after_xhr)
-    @session.xml_http_request(path,params,headers)
+    @session.expects(:process).with(:get,path,params,headers_after_xhr)
+    @session.xml_http_request(:get,path,params,headers)
   end
+
+  def test_xml_http_request_post
+    path = "/index"; params = "blah"; headers = {:location => 'blah'}
+    headers_after_xhr = headers.merge(
+      "X-Requested-With" => "XMLHttpRequest",
+      "Accept"           => "text/javascript, text/html, application/xml, text/xml, */*"
+    )
+    @session.expects(:process).with(:post,path,params,headers_after_xhr)
+    @session.xml_http_request(:post,path,params,headers)
+  end
+
+  def test_xml_http_request_put
+    path = "/index"; params = "blah"; headers = {:location => 'blah'}
+    headers_after_xhr = headers.merge(
+      "X-Requested-With" => "XMLHttpRequest",
+      "Accept"           => "text/javascript, text/html, application/xml, text/xml, */*"
+    )
+    @session.expects(:process).with(:put,path,params,headers_after_xhr)
+    @session.xml_http_request(:put,path,params,headers)
+  end
+
+  def test_xml_http_request_delete
+    path = "/index"; params = "blah"; headers = {:location => 'blah'}
+    headers_after_xhr = headers.merge(
+      "X-Requested-With" => "XMLHttpRequest",
+      "Accept"           => "text/javascript, text/html, application/xml, text/xml, */*"
+    )
+    @session.expects(:process).with(:delete,path,params,headers_after_xhr)
+    @session.xml_http_request(:delete,path,params,headers)
+  end
+
+  def test_xml_http_request_head
+    path = "/index"; params = "blah"; headers = {:location => 'blah'}
+    headers_after_xhr = headers.merge(
+      "X-Requested-With" => "XMLHttpRequest",
+      "Accept"           => "text/javascript, text/html, application/xml, text/xml, */*"
+    )
+    @session.expects(:process).with(:head,path,params,headers_after_xhr)
+    @session.xml_http_request(:head,path,params,headers)
+  end
+end
+
+class IntegrationTestTest < Test::Unit::TestCase
+
+  def setup
+    @test = ::ActionController::IntegrationTest.new(:default_test)
+    @test.class.stubs(:fixture_table_names).returns([])
+    @session = @test.open_session
+  end
+
+  def test_opens_new_session
+    @test.class.expects(:fixture_table_names).times(2).returns(['foo'])
+
+    session1 = @test.open_session { |sess| }
+    session2 = @test.open_session # implicit session
+
+    assert_equal ::ActionController::Integration::Session, session1.class
+    assert_equal ::ActionController::Integration::Session, session2.class
+    assert_not_equal session1, session2
+  end
+
+end
+
+# Tests that integration tests don't call Controller test methods for processing.
+# Integration tests have their own setup and teardown.
+class IntegrationTestUsesCorrectClass < ActionController::IntegrationTest
+
+  def self.fixture_table_names
+    []
+  end
+
+  def test_integration_methods_called
+    %w( get post head put delete ).each do |verb|
+      assert_nothing_raised("'#{verb}' should use integration test methods") { send!(verb, '/') }
+    end
+  end
+
 end
 
 # TODO
 # class MockCGITest < Test::Unit::TestCase
 # end
 
-rescue LoadError
-  $stderr.puts "Skipping integration tests. `gem install mocha` and try again."
-end
+end # uses_mocha

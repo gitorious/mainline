@@ -22,8 +22,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resource  :sessions
   map.resources :projects #, :has_many => [:tasks, :repositories, :milestones, :pages] do |project|
-  # project.resources :tasks
-  # project.resources :repositories
   #end
   
   map.with_options :controller => 'sessions' do |session|

@@ -1,0 +1,79 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec/lib/spec/test/unit
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+autorunner.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+2fecc8bfe2828c236d96be53d2b467d4
+2007-09-26T05:22:19.063867Z
+2668
+btakita
+
+example_suite.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+c36ee3634a356a6ae8b778266fe44043
+2007-10-07T09:01:43.090313Z
+2695
+btakita
+
+example_group.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+be596bdc6f90274f557d52f58349cf49
+2007-11-13T20:04:27.988705Z
+2884
+aslak_hellesoy
+
+ui
+dir
+
+rspectestresult.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+2f8d0cee63bc4d6ddac00fdcde649ef3
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+

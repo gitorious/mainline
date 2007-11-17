@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'digest/md5' 
 
 class AppGenerator < Rails::Generator::Base
   DEFAULT_SHEBANG = File.join(Config::CONFIG['bindir'],
@@ -6,7 +7,8 @@ class AppGenerator < Rails::Generator::Base
 
   DATABASES = %w(mysql oracle postgresql sqlite2 sqlite3 frontbase)
 
-  default_options   :db => "mysql", :shebang => DEFAULT_SHEBANG, :freeze => false
+  default_options   :db => (ENV["RAILS_DEFAULT_DATABASE"] || "mysql"),
+    :shebang => DEFAULT_SHEBANG, :freeze => false
   mandatory_options :source => "#{File.dirname(__FILE__)}/../../../../.."
 
   def initialize(runtime_args, runtime_options = {})
@@ -22,6 +24,15 @@ class AppGenerator < Rails::Generator::Base
     script_options     = { :chmod => 0755, :shebang => options[:shebang] == DEFAULT_SHEBANG ? nil : options[:shebang] }
     dispatcher_options = { :chmod => 0755, :shebang => options[:shebang] }
 
+    # duplicate CGI::Session#generate_unique_id
+    md5 = Digest::MD5.new
+    now = Time.now
+    md5 << now.to_s
+    md5 << String(now.usec)
+    md5 << String(rand(0))
+    md5 << String($$)
+    md5 << @app_name
+
     record do |m|
       # Root directory and all subdirectories.
       m.directory ''
@@ -32,7 +43,7 @@ class AppGenerator < Rails::Generator::Base
       m.file "README",         "README"
 
       # Application
-      m.template "helpers/application.rb",        "app/controllers/application.rb", :assigns => { :app_name => @app_name }
+      m.template "helpers/application.rb",        "app/controllers/application.rb", :assigns => { :app_name => @app_name, :app_secret => md5.hexdigest }
       m.template "helpers/application_helper.rb", "app/helpers/application_helper.rb"
       m.template "helpers/test_helper.rb",        "test/test_helper.rb"
 
@@ -44,15 +55,19 @@ class AppGenerator < Rails::Generator::Base
       m.template "configs/routes.rb",     "config/routes.rb"
       m.template "configs/apache.conf",   "public/.htaccess"
 
+      # Initializers
+      m.template "configs/initializers/inflections.rb", "config/initializers/inflections.rb"
+      m.template "configs/initializers/mime_types.rb",  "config/initializers/mime_types.rb"
+
       # Environments
       m.file "environments/boot.rb",    "config/boot.rb"
-      m.template "environments/environment.rb", "config/environment.rb", :assigns => { :freeze => options[:freeze] }
+      m.template "environments/environment.rb", "config/environment.rb", :assigns => { :freeze => options[:freeze], :app_name => @app_name, :app_secret => md5.hexdigest }
       m.file "environments/production.rb",  "config/environments/production.rb"
       m.file "environments/development.rb", "config/environments/development.rb"
       m.file "environments/test.rb",        "config/environments/test.rb"
 
       # Scripts
-      %w( about breakpointer console destroy generate performance/benchmarker performance/profiler process/reaper process/spawner process/inspector runner server plugin ).each do |file|
+      %w( about console destroy generate performance/benchmarker performance/profiler performance/request process/reaper process/spawner process/inspector runner server plugin ).each do |file|
         m.file "bin/#{file}", "script/#{file}", script_options
       end
 
@@ -62,7 +77,7 @@ class AppGenerator < Rails::Generator::Base
       m.file "dispatches/dispatch.fcgi", "public/dispatch.fcgi", dispatcher_options
 
       # HTML files
-      %w(404 500 index).each do |file|
+      %w(404 422 500 index).each do |file|
         m.template "html/#{file}.html", "public/#{file}.html"
       end
 
@@ -121,7 +136,7 @@ class AppGenerator < Rails::Generator::Base
     app/models
     app/views/layouts
     config/environments
-    components
+    config/initializers
     db
     doc
     lib

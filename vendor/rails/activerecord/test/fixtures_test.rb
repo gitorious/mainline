@@ -7,17 +7,22 @@ require 'fixtures/reply'
 require 'fixtures/joke'
 require 'fixtures/course'
 require 'fixtures/category'
+require 'fixtures/parrot'
+require 'fixtures/pirate'
+require 'fixtures/treasure'
 
 class FixturesTest < Test::Unit::TestCase
   self.use_instantiated_fixtures = true
   self.use_transactional_fixtures = false
 
-  fixtures :topics, :developers, :accounts, :tasks, :categories, :funny_jokes
+  fixtures :topics, :developers, :accounts, :tasks, :categories, :funny_jokes, :binaries
 
-  FIXTURES = %w( accounts companies customers
+  FIXTURES = %w( accounts binaries companies customers
                  developers developers_projects entrants
                  movies projects subscribers topics tasks )
   MATCH_ATTRIBUTE_NAME = /[a-zA-Z][-_\w]*/
+
+  BINARY_FIXTURE_PATH = File.dirname(__FILE__) + '/fixtures/flowers.jpg'
 
   def test_clean_fixtures
     FIXTURES.each do |name|
@@ -47,15 +52,18 @@ class FixturesTest < Test::Unit::TestCase
 
   def test_inserts
     topics = create_fixtures("topics")
-    firstRow = ActiveRecord::Base.connection.select_one("SELECT * FROM topics WHERE author_name = 'David'")
-    assert_equal("The First Topic", firstRow["title"])
+    first_row = ActiveRecord::Base.connection.select_one("SELECT * FROM topics WHERE author_name = 'David'")
+    assert_equal("The First Topic", first_row["title"])
 
-    secondRow = ActiveRecord::Base.connection.select_one("SELECT * FROM topics WHERE author_name = 'Mary'")
-    assert_nil(secondRow["author_email_address"])
+    second_row = ActiveRecord::Base.connection.select_one("SELECT * FROM topics WHERE author_name = 'Mary'")
+    assert_nil(second_row["author_email_address"])
   end
 
   if ActiveRecord::Base.connection.supports_migrations?
     def test_inserts_with_pre_and_suffix
+      # Reset cache to make finds on the new table work
+      Fixtures.reset_cache
+
       ActiveRecord::Base.connection.create_table :prefix_topics_suffix do |t|
         t.column :title, :string
         t.column :author_name, :string
@@ -80,15 +88,15 @@ class FixturesTest < Test::Unit::TestCase
 
       topics = create_fixtures("topics")
 
-      firstRow = ActiveRecord::Base.connection.select_one("SELECT * FROM prefix_topics_suffix WHERE author_name = 'David'")
-      assert_equal("The First Topic", firstRow["title"])
+      first_row = ActiveRecord::Base.connection.select_one("SELECT * FROM prefix_topics_suffix WHERE author_name = 'David'")
+      assert_equal("The First Topic", first_row["title"])
 
-      secondRow = ActiveRecord::Base.connection.select_one("SELECT * FROM prefix_topics_suffix WHERE author_name = 'Mary'")
-      assert_nil(secondRow["author_email_address"])        
+      second_row = ActiveRecord::Base.connection.select_one("SELECT * FROM prefix_topics_suffix WHERE author_name = 'Mary'")
+      assert_nil(second_row["author_email_address"])
     ensure
       # Restore prefix/suffix to its previous values
-      ActiveRecord::Base.table_name_prefix = old_prefix 
-      ActiveRecord::Base.table_name_suffix = old_suffix 
+      ActiveRecord::Base.table_name_prefix = old_prefix
+      ActiveRecord::Base.table_name_suffix = old_suffix
 
       ActiveRecord::Base.connection.drop_table :prefix_topics_suffix rescue nil
     end
@@ -99,7 +107,6 @@ class FixturesTest < Test::Unit::TestCase
     first = Task.find(1)
     assert first
   end
-
 
   def test_bad_format
     path = File.join(File.dirname(__FILE__), 'fixtures', 'bad_fixtures')
@@ -174,7 +181,6 @@ class FixturesTest < Test::Unit::TestCase
     end
   end
 
-
   def test_yml_file_in_subdirectory
     assert_equal(categories(:sub_special_1).name, "A special category in a subdir file")
     assert_equal(categories(:sub_special_1).class, SpecialCategory)
@@ -185,7 +191,11 @@ class FixturesTest < Test::Unit::TestCase
     assert_equal(categories(:sub_special_3).class, SpecialCategory)
   end
 
-
+  def test_binary_in_fixtures
+    assert_equal 1, @binaries.size
+    data = File.open(BINARY_FIXTURE_PATH, "rb").read.freeze
+    assert_equal data, @flowers.data
+  end
 end
 
 if Account.connection.respond_to?(:reset_pk_sequence!)
@@ -195,6 +205,7 @@ if Account.connection.respond_to?(:reset_pk_sequence!)
 
     def setup
       @instances = [Account.new(:credit_limit => 50), Company.new(:name => 'RoR Consulting')]
+      Fixtures.reset_cache # make sure tables get reinitialized
     end
 
     def test_resets_to_min_pk_with_specified_pk_and_sequence
@@ -219,7 +230,7 @@ if Account.connection.respond_to?(:reset_pk_sequence!)
       end
     end
 
-    def test_create_fixtures_resets_sequences
+    def test_create_fixtures_resets_sequences_when_not_cached
       @instances.each do |instance|
         max_id = create_fixtures(instance.class.table_name).inject(0) do |max_id, (name, fixture)|
           fixture_id = fixture['id'].to_i
@@ -233,7 +244,6 @@ if Account.connection.respond_to?(:reset_pk_sequence!)
     end
   end
 end
-
 
 class FixturesWithoutInstantiationTest < Test::Unit::TestCase
   self.use_instantiated_fixtures = false
@@ -255,8 +265,20 @@ class FixturesWithoutInstantiationTest < Test::Unit::TestCase
     assert_equal "Jamis", developers(:jamis).name
     assert_equal 50, accounts(:signals37).credit_limit
   end
-end
 
+  def test_accessor_methods_with_multiple_args
+    assert_equal 2, topics(:first, :second).size
+    assert_raise(StandardError) { topics([:first, :second]) }
+  end
+
+  uses_mocha 'reloading_fixtures_through_accessor_methods' do
+    def test_reloading_fixtures_through_accessor_methods
+      assert_equal "The First Topic", topics(:first).title
+      @loaded_fixtures['topics']['first'].expects(:find).returns(stub(:title => "Fresh Topic!"))
+      assert_equal "Fresh Topic!", topics(:first, true).title
+    end
+  end
+end
 
 class FixturesWithoutInstanceInstantiationTest < Test::Unit::TestCase
   self.use_instantiated_fixtures = true
@@ -271,7 +293,6 @@ class FixturesWithoutInstanceInstantiationTest < Test::Unit::TestCase
     assert_not_nil @accounts
   end
 end
-
 
 class TransactionalFixturesTest < Test::Unit::TestCase
   self.use_instantiated_fixtures = true
@@ -289,7 +310,6 @@ class TransactionalFixturesTest < Test::Unit::TestCase
   end
 end
 
-
 class MultipleFixturesTest < Test::Unit::TestCase
   fixtures :topics
   fixtures :developers, :accounts
@@ -299,7 +319,6 @@ class MultipleFixturesTest < Test::Unit::TestCase
   end
 end
 
-
 class OverlappingFixturesTest < Test::Unit::TestCase
   fixtures :topics, :developers
   fixtures :developers, :accounts
@@ -308,7 +327,6 @@ class OverlappingFixturesTest < Test::Unit::TestCase
     assert_equal %w(topics developers accounts), fixture_table_names
   end
 end
-
 
 class ForeignKeyFixturesTest < Test::Unit::TestCase
   fixtures :fk_test_has_pk, :fk_test_has_fk
@@ -329,7 +347,7 @@ end
 class SetTableNameFixturesTest < Test::Unit::TestCase
   set_fixture_class :funny_jokes => 'Joke'
   fixtures :funny_jokes
-  
+
   def test_table_method
     assert_kind_of Joke, funny_jokes(:a_joke)
   end
@@ -338,7 +356,7 @@ end
 class CustomConnectionFixturesTest < Test::Unit::TestCase
   set_fixture_class :courses => Course
   fixtures :courses
-  
+
   def test_connection
     assert_kind_of Course, courses(:ruby)
     assert_equal Course.connection, courses(:ruby).connection
@@ -364,16 +382,14 @@ class CheckEscapedYamlFixturesTest < Test::Unit::TestCase
   end
 end
 
-class DevelopersProject; end;
-
+class DevelopersProject; end
 class ManyToManyFixturesWithClassDefined < Test::Unit::TestCase
   fixtures :developers_projects
-  
+
   def test_this_should_run_cleanly
     assert true
   end
 end
-
 
 class FixturesBrokenRollbackTest < Test::Unit::TestCase
   def blank_setup; end
@@ -398,4 +414,128 @@ class FixturesBrokenRollbackTest < Test::Unit::TestCase
     def load_fixtures
       raise 'argh'
     end
+end
+
+class LoadAllFixturesTest < Test::Unit::TestCase
+  self.fixture_path= File.join(File.dirname(__FILE__), '/fixtures/all')
+  fixtures :all
+
+  def test_all_there
+    assert_equal %w(developers people tasks), fixture_table_names.sort
+  end
+end
+
+class FasterFixturesTest < Test::Unit::TestCase
+  fixtures :categories, :authors
+
+  def load_extra_fixture(name)
+    fixture = create_fixtures(name)
+    assert fixture.is_a?(Fixtures)
+    @loaded_fixtures[fixture.table_name] = fixture
+  end
+
+  def test_cache
+    assert Fixtures.fixture_is_cached?(ActiveRecord::Base.connection, 'categories')
+    assert Fixtures.fixture_is_cached?(ActiveRecord::Base.connection, 'authors')
+
+    assert_no_queries do
+      create_fixtures('categories')
+      create_fixtures('authors')
+    end
+
+    load_extra_fixture('posts')
+    assert Fixtures.fixture_is_cached?(ActiveRecord::Base.connection, 'posts')
+    self.class.setup_fixture_accessors('posts')
+    assert_equal 'Welcome to the weblog', posts(:welcome).title
+  end
+end
+
+class FoxyFixturesTest < Test::Unit::TestCase
+  fixtures :parrots, :parrots_pirates, :pirates, :treasures
+
+  def test_identifies_strings
+    assert_equal(Fixtures.identify("foo"), Fixtures.identify("foo"))
+    assert_not_equal(Fixtures.identify("foo"), Fixtures.identify("FOO"))
+  end
+
+  def test_identifies_symbols
+    assert_equal(Fixtures.identify(:foo), Fixtures.identify(:foo))
+  end
+
+  TIMESTAMP_COLUMNS = %w(created_at created_on updated_at updated_on)
+
+  def test_populates_timestamp_columns
+    TIMESTAMP_COLUMNS.each do |property|
+      assert_not_nil(parrots(:george).send(property), "should set #{property}")
+    end
+  end
+
+  def test_populates_all_columns_with_the_same_time
+    last = nil
+
+    TIMESTAMP_COLUMNS.each do |property|
+      current = parrots(:george).send(property)
+      last ||= current
+
+      assert_equal(last, current)
+      last = current
+    end
+  end
+
+  def test_only_populates_columns_that_exist
+    assert_not_nil(pirates(:blackbeard).created_on)
+    assert_not_nil(pirates(:blackbeard).updated_on)
+  end
+
+  def test_preserves_existing_fixture_data
+    assert_equal(2.weeks.ago.to_date, pirates(:redbeard).created_on.to_date)
+    assert_equal(2.weeks.ago.to_date, pirates(:redbeard).updated_on.to_date)
+  end
+
+  def test_generates_unique_ids
+    assert_not_nil(parrots(:george).id)
+    assert_not_equal(parrots(:george).id, parrots(:louis).id)
+  end
+
+  def test_resolves_belongs_to_symbols
+    assert_equal(parrots(:george), pirates(:blackbeard).parrot)
+  end
+
+  def test_supports_join_tables
+    assert(pirates(:blackbeard).parrots.include?(parrots(:george)))
+    assert(pirates(:blackbeard).parrots.include?(parrots(:louis)))
+    assert(parrots(:george).pirates.include?(pirates(:blackbeard)))
+  end
+
+  def test_supports_inline_habtm
+    assert(parrots(:george).treasures.include?(treasures(:diamond)))
+    assert(parrots(:george).treasures.include?(treasures(:sapphire)))
+    assert(!parrots(:george).treasures.include?(treasures(:ruby)))
+  end
+
+  def test_supports_yaml_arrays
+    assert(parrots(:louis).treasures.include?(treasures(:diamond)))
+    assert(parrots(:louis).treasures.include?(treasures(:sapphire)))
+  end
+
+  def test_strips_DEFAULTS_key
+    assert_raise(StandardError) { parrots(:DEFAULTS) }
+
+    # this lets us do YAML defaults and not have an extra fixture entry
+    %w(sapphire ruby).each { |t| assert(parrots(:davey).treasures.include?(treasures(t))) }
+  end
+
+  def test_supports_label_interpolation
+    assert_equal("frederick", parrots(:frederick).name)
+  end
+end
+
+class ActiveSupportSubclassWithFixturesTest < ActiveSupport::TestCase
+  fixtures :parrots
+
+  # This seemingly useless assertion catches a bug that caused the fixtures
+  # setup code call nil[]
+  def test_foo
+    assert_equal parrots(:louis), Parrot.find_by_name("King Louis")
+  end
 end

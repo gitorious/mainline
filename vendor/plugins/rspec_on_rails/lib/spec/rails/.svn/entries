@@ -1,0 +1,98 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/lib/spec/rails
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+extensions
+dir
+
+extensions.rb
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+1bb49d3fa126d4585e717f11b495bf73
+2007-11-10T20:20:46.493057Z
+2844
+dchelimsky
+
+dsl
+dir
+
+story_adapter.rb
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+cb84bbd412125552f64843fe198d8c48
+2007-11-16T05:20:00.596945Z
+2899
+dchelimsky
+
+dsl.rb
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+e2b388509bae3564f4fcc8fc8e6e47c6
+2007-11-10T20:20:46.493057Z
+2844
+dchelimsky
+
+matchers
+dir
+
+version.rb
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+663f74d59405adce87faf169257de3b4
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+has-props
+
+matchers.rb
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+5c84458a582094049300ab42c385fe65
+2007-11-10T20:20:46.493057Z
+2844
+dchelimsky
+

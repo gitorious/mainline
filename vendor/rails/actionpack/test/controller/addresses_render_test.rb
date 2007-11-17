@@ -16,13 +16,11 @@ class Address
 end
 
 class AddressesTestController < ActionController::Base
-  scaffold :address
-
   def self.controller_name; "addresses"; end
   def self.controller_path; "addresses"; end
 end
 
-AddressesTestController.template_root = File.dirname(__FILE__) + "/../fixtures/"
+AddressesTestController.view_paths = [ File.dirname(__FILE__) + "/../fixtures/" ]
 
 class AddressesTest < Test::Unit::TestCase
   def setup

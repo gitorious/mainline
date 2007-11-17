@@ -1,0 +1,40 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/generators
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-15T09:43:03.172843Z
+2890
+aslak_hellesoy
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+rspec_controller
+dir
+
+rspec
+dir
+
+rspec_model
+dir
+
+rspec_scaffold
+dir
+

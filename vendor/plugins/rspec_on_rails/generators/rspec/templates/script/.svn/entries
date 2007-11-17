@@ -1,0 +1,52 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/generators/rspec/templates/script
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-09T09:42:17.719952Z
+2832
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+spec_server
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+309b816ab1ab6b6825a8f18ccbba2ded
+2007-11-09T09:42:17.719952Z
+2832
+btakita
+
+spec
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+3b01b40d35973243f354ede2a22a43fa
+2007-10-08T16:26:13.929326Z
+2703
+dchelimsky
+

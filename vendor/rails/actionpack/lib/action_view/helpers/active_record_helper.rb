@@ -1,5 +1,5 @@
 require 'cgi'
-require File.dirname(__FILE__) + '/form_helper'
+require 'action_view/helpers/form_helper'
 
 module ActionView
   class Base
@@ -10,20 +10,21 @@ module ActionView
   module Helpers
     # The Active Record Helper makes it easier to create forms for records kept in instance variables. The most far-reaching is the form
     # method that creates a complete form for all the basic content types of the record (not associations or aggregations, though). This
-    # is a great of making the record quickly available for editing, but likely to prove lackluster for a complicated real-world form.
+    # is a great way of making the record quickly available for editing, but likely to prove lackluster for a complicated real-world form.
     # In that case, it's better to use the input method and the specialized form methods in link:classes/ActionView/Helpers/FormHelper.html
     module ActiveRecordHelper
-      # Returns a default input tag for the type of object returned by the method. Example
-      # (title is a VARCHAR column and holds "Hello World"):
+      # Returns a default input tag for the type of object returned by the method. For example, let's say you have a model
+      # that has an attribute +title+ of type VARCHAR column, and this instance holds "Hello World":
       #   input("post", "title") =>
       #     <input id="post_title" name="post[title]" size="30" type="text" value="Hello World" />
       def input(record_name, method, options = {})
         InstanceTag.new(record_name, method, self).to_tag(options)
       end
 
-      # Returns an entire form with input tags and everything for a specified Active Record object. Example
-      # (post is a new record that has a title using VARCHAR and a body using TEXT):
-      #   form("post") =>
+      # Returns an entire form with all needed input tags for a specified Active Record object. For example, let's say you 
+      # have a table model <tt>Post</tt> with attributes named <tt>title</tt> of type <tt>VARCHAR</tt> and <tt>body</tt> of type <tt>TEXT</tt>:
+      #   form("post") 
+      # That line would yield a form like the following:
       #     <form action='/post/create' method='post'>
       #       <p>
       #         <label for="post_title">Title</label><br />
@@ -32,14 +33,13 @@ module ActionView
       #       <p>
       #         <label for="post_body">Body</label><br />
       #         <textarea cols="40" id="post_body" name="post[body]" rows="20">
-      #           Back to the hill and over it again!
       #         </textarea>
       #       </p>
       #       <input type='submit' value='Create' />
       #     </form>
       #
       # It's possible to specialize the form builder by using a different action name and by supplying another
-      # block renderer. Example (entry is a new record that has a message attribute using VARCHAR):
+      # block renderer. For example, let's say you have a model <tt>Entry</tt> with an attribute <tt>message</tt> of type <tt>VARCHAR</tt>:
       #
       #   form("entry", :action => "sign", :input_block =>
       #        Proc.new { |record, column| "#{column.human_name}: #{input(record, column.name)}<br />" }) =>
@@ -74,52 +74,67 @@ module ActionView
         content_tag('form', contents, :action => action, :method => 'post', :enctype => options[:multipart] ? 'multipart/form-data': nil)
       end
 
-      # Returns a string containing the error message attached to the +method+ on the +object+, if one exists.
-      # This error message is wrapped in a DIV tag, which can be specialized to include both a +prepend_text+ and +append_text+
-      # to properly introduce the error and a +css_class+ to style it accordingly. Examples (post has an error message
-      # "can't be empty" on the title attribute):
+      # Returns a string containing the error message attached to the +method+ on the +object+ if one exists.
+      # This error message is wrapped in a <tt>DIV</tt> tag, which can be extended to include a +prepend_text+ and/or +append_text+
+      # (to properly explain the error), and a +css_class+ to style it accordingly. +object+ should either be the name of an instance variable or
+      # the actual object. As an example, let's say you have a model
+      # +post+ that has an error message on the +title+ attribute:
       #
       #   <%= error_message_on "post", "title" %> =>
       #     <div class="formError">can't be empty</div>
       #
-      #   <%= error_message_on "post", "title", "Title simply ", " (or it won't work)", "inputError" %> =>
-      #     <div class="inputError">Title simply can't be empty (or it won't work)</div>
+      #   <%= error_message_on @post, "title" %> =>
+      #     <div class="formError">can't be empty</div>
+      #
+      #   <%= error_message_on "post", "title", "Title simply ", " (or it won't work).", "inputError" %> =>
+      #     <div class="inputError">Title simply can't be empty (or it won't work).</div>
       def error_message_on(object, method, prepend_text = "", append_text = "", css_class = "formError")
-        if (obj = instance_variable_get("@#{object}")) && (errors = obj.errors.on(method))
+        if (obj = (object.respond_to?(:errors) ? object : instance_variable_get("@#{object}"))) &&
+          (errors = obj.errors.on(method))
           content_tag("div", "#{prepend_text}#{errors.is_a?(Array) ? errors.first : errors}#{append_text}", :class => css_class)
         else 
           ''
         end
       end
 
-      # Returns a string with a div containing all of the error messages for the objects located as instance variables by the names
+      # Returns a string with a <tt>DIV</tt> containing all of the error messages for the objects located as instance variables by the names
       # given.  If more than one object is specified, the errors for the objects are displayed in the order that the object names are
       # provided.
       #
-      # This div can be tailored by the following options:
+      # This <tt>DIV</tt> can be tailored by the following options:
       #
       # * <tt>header_tag</tt> - Used for the header of the error div (default: h2)
       # * <tt>id</tt> - The id of the error div (default: errorExplanation)
       # * <tt>class</tt> - The class of the error div (default: errorExplanation)
-      # * <tt>object_name</tt> - The object name to use in the header, or
-      # any text that you prefer. If <tt>object_name</tt> is not set, the name of
-      # the first object will be used.
+      # * <tt>object</tt> - The object (or array of objects) for which to display errors, if you need to escape the instance variable convention
+      # * <tt>object_name</tt> - The object name to use in the header, or any text that you prefer. If <tt>object_name</tt> is not set, the name of the first object will be used.
+      # * <tt>header_message</tt> - The message in the header of the error div.  Pass +nil+ or an empty string to avoid the header message altogether. (default: X errors prohibited this object from being saved)
+      # * <tt>message</tt> - The explanation message after the header message and before the error list.  Pass +nil+ or an empty string to avoid the explanation message altogether.  (default: There were problems with the following fields:)
       #
-      # Specifying one object:
+      # To specify the display for one object, you simply provide its name as a parameter.  For example, for the +User+ model:
       # 
       #   error_messages_for 'user'
       #
-      # Specifying more than one object (and using the name 'user' in the
-      # header as the <tt>object_name</tt> instead of 'user_common'):
+      # To specify more than one object, you simply list them; optionally, you can add an extra +object_name+ parameter, which
+      # will be the name used in the header message.
       #
       #   error_messages_for 'user_common', 'user', :object_name => 'user'
+      #
+      # If the objects cannot be located as instance variables, you can add an extra +object+ paremeter which gives the actual
+      # object (or array of objects to use)
+      #
+      #   error_messages_for 'user', :object => @question.user
       #
       # NOTE: This is a pre-packaged presentation of the errors with embedded strings and a certain HTML structure. If what
       # you need is significantly different from the default presentation, it makes plenty of sense to access the object.errors
       # instance yourself and set it up. View the source of this method to see how easy it is.
       def error_messages_for(*params)
-        options = params.last.is_a?(Hash) ? params.pop.symbolize_keys : {}
-        objects = params.collect {|object_name| instance_variable_get("@#{object_name}") }.compact
+        options = params.extract_options!.symbolize_keys
+        if object = options.delete(:object)
+          objects = [object].flatten
+        else
+          objects = params.collect {|object_name| instance_variable_get("@#{object_name}") }.compact
+        end
         count   = objects.inject(0) {|sum, object| sum + object.errors.count }
         unless count.zero?
           html = {}
@@ -131,14 +146,17 @@ module ActionView
               html[key] = 'errorExplanation'
             end
           end
-          header_message = "#{pluralize(count, 'error')} prohibited this #{(options[:object_name] || params.first).to_s.gsub('_', ' ')} from being saved"
+          options[:object_name] ||= params.first
+          options[:header_message] = "#{pluralize(count, 'error')} prohibited this #{options[:object_name].to_s.gsub('_', ' ')} from being saved" unless options.include?(:header_message)
+          options[:message] ||= 'There were problems with the following fields:' unless options.include?(:message)
           error_messages = objects.map {|object| object.errors.full_messages.map {|msg| content_tag(:li, msg) } }
-          content_tag(:div,
-            content_tag(options[:header_tag] || :h2, header_message) <<
-              content_tag(:p, 'There were problems with the following fields:') <<
-              content_tag(:ul, error_messages),
-            html
-          )
+
+          contents = ''
+          contents << content_tag(options[:header_tag] || :h2, options[:header_message]) unless options[:header_message].blank?
+          contents << content_tag(:p, options[:message]) unless options[:message].blank?
+          contents << content_tag(:ul, error_messages)
+
+          content_tag(:div, contents, html)
         else
           ''
         end

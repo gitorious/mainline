@@ -1,0 +1,41 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/lib/spec/rails/extensions/spec/dsl
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-12T00:38:04.222522Z
+2864
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+configuration.rb
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+08c0a4a9f45e86def896fe941afba182
+2007-11-12T00:38:04.222522Z
+2864
+btakita
+has-props
+

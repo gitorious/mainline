@@ -1,0 +1,46 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec/lib
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+autotest
+dir
+
+spec
+dir
+
+spec.rb
+file
+
+
+
+
+2007-11-17T23:00:57.000000Z
+9e191d93e32a0e59f99f769b8b08cc45
+2007-11-15T15:43:05.483778Z
+2894
+aslak_hellesoy
+

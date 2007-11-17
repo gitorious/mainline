@@ -1,0 +1,190 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec/lib/spec
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+test
+dir
+
+story
+dir
+
+test.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+e95c8ef7eaff6af345381945efd40557
+2007-11-13T19:38:21.065024Z
+2883
+aslak_hellesoy
+
+story.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+c7776d962a22f056e9d7dbaab1340cdb
+2007-10-29T04:12:01.056651Z
+2796
+dchelimsky
+
+dsl
+dir
+
+rake
+dir
+
+dsl.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+92b064a78575d5a0cd3dc24a3283116e
+2007-11-11T21:59:57.512742Z
+2861
+dchelimsky
+
+version.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+c4eb285f16273b82c404d6c0af5a40ae
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+has-props
+
+translator.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+60e5faba8cdd949f28ffb81bfa7702b9
+2007-06-07T22:00:14.582584Z
+2087
+aslak_hellesoy
+
+extensions
+dir
+
+extensions.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+46c21d788e68c5d5f48326047bd5e837
+2007-09-29T15:25:02.613953Z
+2679
+dchelimsky
+has-props
+
+expectations
+dir
+
+matchers
+dir
+
+matchers.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+d8ca733299e19a9c4dfa790bb16741ef
+2007-09-09T06:06:23.484099Z
+2545
+btakita
+
+expectations.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+eaa26a937cfea67588c81da8651cfff8
+2007-06-03T22:49:21.418619Z
+2072
+aslak_hellesoy
+
+runner
+dir
+
+runner.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+a281f8c3fd51bd2ee2da0dedc3898a27
+2007-11-12T04:33:25.797494Z
+2872
+btakita
+
+mocks
+dir
+
+test_case_adapter.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+b57c379e221f8e94be0cdd9b4d841558
+2007-06-03T22:49:21.418619Z
+2072
+aslak_hellesoy
+has-props
+
+mocks.rb
+file
+
+
+
+
+2007-11-17T23:00:56.000000Z
+d7ce53899cef69dd54d4fa826ff18be1
+2007-09-01T13:20:15.435812Z
+2485
+dchelimsky
+

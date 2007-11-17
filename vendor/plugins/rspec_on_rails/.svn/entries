@@ -1,0 +1,91 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-16T06:57:30.386613Z
+2902
+btakita
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+Rakefile
+file
+
+
+
+
+2007-11-17T23:01:13.000000Z
+739de93985df731408dc32643c5d577a
+2007-03-31T14:43:22.905392Z
+1668
+dchelimsky
+
+spec_resources
+dir
+
+tasks
+dir
+
+init.rb
+file
+
+
+
+
+2007-11-17T23:01:13.000000Z
+640f74b8156893c1bc98a2050c8589d3
+2007-11-10T20:20:46.493057Z
+2844
+dchelimsky
+
+lib
+dir
+
+generators
+dir
+
+MIT-LICENSE
+file
+
+
+
+
+2007-11-17T23:01:13.000000Z
+313081092d4b1e5f1e1a72e356485c1a
+2007-02-04T21:59:25.090310Z
+1461
+dchelimsky
+
+spec
+dir
+
+README
+file
+
+
+
+
+2007-11-17T23:01:13.000000Z
+3b47f24078e76f6bdccd41c1d84a0264
+2007-02-13T02:04:59.904978Z
+1492
+dchelimsky
+

@@ -2,12 +2,12 @@ module Spec
   module VERSION
     unless defined? MAJOR
       MAJOR  = 1
-      MINOR  = 0
-      TINY   = 8
+      MINOR  = 1
+      TINY   = 0
       RELEASE_CANDIDATE = nil
 
-      # RANDOM_TOKEN: 0.510454315029681
-      REV = "$LastChangedRevision: 2338 $".match(/LastChangedRevision: (\d+)/)[1]
+      # RANDOM_TOKEN: 0.503937152054462
+      REV = "$LastChangedRevision: 2902 $".match(/LastChangedRevision: (\d+)/)[1]
 
       STRING = [MAJOR, MINOR, TINY].join('.')
       TAG = "REL_#{[MAJOR, MINOR, TINY, RELEASE_CANDIDATE].compact.join('_')}".upcase.gsub(/\.|-/, '_')

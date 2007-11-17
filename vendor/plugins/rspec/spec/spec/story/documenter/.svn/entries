@@ -1,0 +1,40 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec/spec/spec/story/documenter
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-10T19:14:21.072123Z
+2842
+dchelimsky
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+plain_text_documenter_spec.rb
+file
+
+
+
+
+2007-11-17T23:00:55.000000Z
+024a4364b5756100fd4edd4013f584dd
+2007-11-10T19:14:21.072123Z
+2842
+dchelimsky
+

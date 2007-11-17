@@ -1,0 +1,40 @@
+8
+
+dir
+2903
+svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/tasks
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-15T09:43:03.172843Z
+2890
+aslak_hellesoy
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+rspec.rake
+file
+
+
+
+
+2007-11-17T23:01:12.000000Z
+f0849292ecb4386e42346c5d902e5e27
+2007-11-15T09:43:03.172843Z
+2890
+aslak_hellesoy
+
