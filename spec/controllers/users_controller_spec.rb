@@ -45,6 +45,12 @@ describe UsersController do
       response.should render_template("users/new")
     }.should_not change(User, :count)
   end
+  
+  it "should be successful with valid data" do
+    proc {
+      create_user
+    }.should change(User, :count)
+  end
     
   it "should activate user" do
     User.authenticate('moe', 'test').should be(nil)
