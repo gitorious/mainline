@@ -4,7 +4,8 @@
 <h2>Associated repositories</h2>
 <ul>
   <% @repositories.each do |repos| -%>
-  <li><%= link_to repos.name, project_repository_path(@project, repos) -%></li>
+  <li><%= render :partial => repos, :object => repos, :locals => {:project => @project} -%></li>
+  
   <% end -%>
 </ul>
 

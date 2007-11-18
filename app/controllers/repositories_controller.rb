@@ -4,7 +4,7 @@ class RepositoriesController < ApplicationController
     :only => [:show, :new, :create, :edit, :update]
     
   def show
-    @project.repositories.find(params[:id])
+    @repository = @project.repositories.find(params[:id])
   end
   
   def new
