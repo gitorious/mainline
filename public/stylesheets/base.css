@@ -1,62 +1,234 @@
+/* reset */
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.1
+*/
+body { color:#000;background:#FFF; }
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,
+ input,textarea,p,blockquote,th,td { margin:0;padding:0; } 
+table { border-collapse:collapse;border-spacing:0; }
+fieldset,img { border:0; }
+address,caption,cite,code,dfn,em,strong,th,var {font-style:normal;font-weight:normal; }
+li { list-style:none;} 
+caption,th { text-align:left; }
+h1,h2,h3,h4,h5,h6 { font-size:100%;font-weight:normal; } 
+q:before,q:after{ content:''; }
+abbr,acronym { border:0;font-variant:normal; }
+sup,sub { line-height:-1px;vertical-align:text-top; }
+sub{ vertical-align:text-bottom; } 
+input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inherit; }
+
 body {
-  margin:0;
-/*  background: #292929;*/
+  background: #fff;
+  color: #000;
+	font-family: Arial, Helvetica, Verdana, sans-serif;
+	font-size: small;
+	line-height: 120%;
 }
 
-#top                  { color: #fff; background: #292929; }
-#top #logo            { height: 40px; float: left; }
-#top .login-logout    { float: right; margin: 5px 5px 0 0; }
-#top .login-logout p  { margin:0; font-size: 0.9em;}  
-#top #logo h1, 
- #top #logo h2, 
- #top #logo h3     { color: #baffb9; }
-#top a              { color: #ccc; text-decoration: none; }
-#top a:hover        { color: #fff; }
-
-ul#mainmenu {
-  height: 25px;
-  background:  #f9630d;;
-  list-style: none;
+h1, h2, h3, h4, h5, h6 {
+  color: #09460f;
 }
 
-ul#mainmenu li {
-  display:inline;
-  font-weight: bold;
+h1 {
+  font-size: 230%;
+  line-height: 230%;
+}
+
+h2 {
+  font-size: 180%;
+  line-height: 180%;;
+}
+
+p {
+  line-height: 140%;
+}
+
+code, pre, tt {
+  font-family: monospace;
+}
+
+a {
+  color: #630;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* boxes */
+
+.clear {
+  clear: both;
+}
+
+#container {
+  width: 888px;
+  margin: 10px auto 10px auto;
+}
+
+#container #logo {
+  margin: 5px 0 20px 0;
+}
+
+#container #logo h1   { line-height: 100%; }
+#container #logo h1 a { color: #666; }
+
+.login-logout {
+  float: right;
+}
+
+#container #menu {
+  height: 21px;
+  border-bottom: 1px solid #333;
+}
+
+#container #main {
+  margin-top: 20px;
+  padding: 10px 30px 10px 10px;
+  min-height: 300px;
+  width: 640px;
   float:left;
 }
 
-ul#mainmenu li.first  { margin-left: 45px; }
-
-ul#mainmenu li.right {
-  float: right;
-  margin-right: 45px;
-}
-
-ul#mainmenu li a {
-  display:block;
-  height: 22px;
-  padding: 3px 5px 0 5px;
-  text-decoration:none;
-  color: #193d55;
-}
-ul#mainmenu li a:hover {
-  color: #000;
-  background: #fff;
-}
-
-
-#main {
-  min-height: 400px;
+#container #sidebar {
   margin-top: 20px;
+  padding: 10px 30px 10px 10px;
+  min-height: 300px;
+  width: 160px;
+  float:right;
+  border-left: 1px dotted #333;
 }
 
-#sidebar {
-  background:#f2f5f7;
-  padding-top: 20px;
+#container #footer {
+  padding: 10px 30px 0 10px;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
 }
 
-#footer {
-  background: #ededed;
-  padding: 10px 10px 0 10px;
-  border-top: 1px #666 dotted;
+.flash_message {
+  clear: both;
+  padding: 5px 5px 5px 20px;
+  margin-bottom: 20px;
+  border-top:1px solid #ccc;
+  border-bottom:1px solid #ccc;
+}
+.flash_message.notice {
+  color: #588e03;
+  background: #e9fad9;
+  border-color: #588e03; 
+}
+
+.flash_message.error {
+  color: #c30000;
+  background: #f2dcdc;
+  border-color: #c30000;
+}
+
+/* menu */
+
+#menu ul {
+  list-style: none;
+  margin-left: 20px;
+  padding-top: 2px;
+}
+
+#menu ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+#menu ul li a { 
+  font-size: 16px;
+}
+
+#menu ul li a:hover {
+  text-decoration: none;
+  border-bottom: 3px solid #630;
+}
+
+/* Forms */
+
+textarea {
+  width: 90%;
+}
+
+fieldset { 
+  padding: 3px; 
+  margin: 0 0 10px 0; 
+  width: 100%;
+}
+
+legend { 
+  font-weight: bold; 
+  font-size:12px; 
+}
+
+label { 
+  font-weight: bold; 
+}
+
+.required {
+  color: #aaa;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+input.text { 
+  padding: 3px; 
+  width: 350px; 
+}
+
+textarea { 
+  width: 350px; 
+  height: 150px; 
+  padding: 3px; 
+}
+textarea.text { height: 60px; }
+textarea.wide { width: 100%; }
+textarea.tall { height: 500px; }
+textarea.medium { width: 450px; height: 250px; }
+select        { width: 200px; }
+
+input.text, textarea, select {
+  margin: 5px 0 10px 0;
+  border: 1px solid #bbb;
+}
+
+input.text:focus, input.title:focus,
+textarea:focus, select:focus {
+  border: 1px solid #666;
+}
+
+.fieldWithErrors { margin: 0; display: inline;}
+.fieldWithErrors input, .fieldWithErrors textarea,
+.fieldWithErrors select {
+  border: 1px solid #c30000;
+}
+
+.errorExplanation {
+  background: #fbe3e4; 
+  border: 1px solid #c30000;
+  width: 400px;
+  margin: 0 0 10px 0;
+}
+
+.errorExplanation h2 {
+  font-size: 120%;
+  line-height: 120%;
+  font-weight: normal;
+  padding: 5px;
+  color: #fff;
+  background: #c30000;
+}
+.errorExplanation p { padding: 2px 2px 2px 5px;}
+.errorExplanation ul {
+  padding: 5px 10px 10px 25px;
+}
+.errorExplanation ul li{
+    list-style-type: disc;
 }

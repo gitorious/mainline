@@ -1,16 +1,24 @@
 <%= error_messages_for :user %>
 <% form_for :user, :url => users_path do |f| -%>
-<p><label for="login">Login</label><br/>
-<%= f.text_field :login %></p>
+  <p>
+    <%= f.label :login -%><br/>
+    <%= f.text_field :login, :class => "text" -%>
+  </p>
 
-<p><label for="email">Email</label><br/>
-<%= f.text_field :email %></p>
+  <p>
+    <%= f.label :email -%><br/>
+    <%= f.text_field :email, :class => "text" -%>
+  </p>
 
-<p><label for="password">Password</label><br/>
-<%= f.password_field :password %></p>
+  <p>
+    <%= f.label :password -%><br/>
+    <%= f.password_field :password, :class => "text" -%>
+  </p>
 
-<p><label for="password_confirmation">Confirm Password</label><br/>
-<%= f.password_field :password_confirmation %></p>
+  <p>
+    <%= f.label :password_confirmation -%><br/>
+    <%= f.password_field :password_confirmation, :class => "text" %>
+  </p>
 
-<p><%= submit_tag 'Sign up' %></p>
+  <p><%= f.submit 'Sign up' %></p>
 <% end -%>

@@ -17,7 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
-  map.home "", :controller => "projects", :action => "new" # TODO change eventually
+  map.root :controller => "projects" # TODO change eventually
   
   map.resources :users
   map.resource  :sessions

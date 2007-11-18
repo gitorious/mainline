@@ -1,2 +1,10 @@
 <h1><%= @project.title -%></h1>
 <p><%= @project.description -%></p>
+
+
+<% content_for :sidebar do -%>
+  <% if @project.user == current_user -%>
+    <p><%= link_to "edit this project", edit_project_path(@project) -%></p>
+    <p><%= link_to "Add repository" -%></p>
+  <% end -%>
+<% end -%>
