@@ -12,20 +12,20 @@ describe SessionsController do
 
   it "should login and redirect" do
     post :create, :login => "johan", :password => "test"
-    session[:user].should_not be(nil)
+    session[:user_id].should_not be(nil)
     response.should be_redirect
   end
     
   it "should fail login and not redirect" do
     post :create, :login => 'johan', :password => 'bad password'
-    session[:user].should be(nil)
+    session[:user_id].should be(nil)
     response.should be_success
   end
     
   it "should logout" do
     login_as :johan
     get :destroy
-    session[:user].should be(nil)
+    session[:user_id].should be(nil)
     response.should be_redirect
   end
   
@@ -65,6 +65,12 @@ describe SessionsController do
     @request.cookies["auth_token"] = auth_token('invalid_auth_token')
     get :new
     @controller.send(:logged_in?).should be(false)
+  end
+  
+  it "should set current user to the session user_id" do
+    session[:user_id] = users(:johan).id
+    get :new
+    controller.send(:current_user).should == users(:johan)
   end
   
 end
