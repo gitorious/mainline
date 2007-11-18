@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
   validates_length_of       :login,    :within => 3..40
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
+  validates_format_of       :ssh_key, :with => /^ssh-[a-z0-9]{3,4} .+$/ims, :allow_nil => true
+  
   before_save :encrypt_password
   before_create :make_activation_code 
   

@@ -19,7 +19,7 @@ Spec::Runner.configure do |config|
   # Alternatively, if you prefer to declare them only once, you can
   # do so here, like so ...
   #
-  config.global_fixtures = :users, :projects
+  config.global_fixtures = :users, :projects, :repositories
   #
   # If you declare global fixtures, be aware that they will be declared
   # for all of your examples, even those that don't use them.

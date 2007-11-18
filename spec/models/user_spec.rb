@@ -97,6 +97,19 @@ describe User do
     users(:johan).remember_token_expires_at.between?(before, after).should be(true)
   end
   
+  it "should have a valid ssh key" do
+    u = users(:johan)
+    u.ssh_key = ""
+    u.should_not be_valid
+    u.ssh_key = "foo bar@baz"
+    u.should_not be_valid
+    
+    u.ssh_key = nil
+    u.should be_valid    
+    u.ssh_key = "ssh-rsa asdasdasdasd bar@baz"
+    u.should be_valid
+  end
+  
   protected
     def create_user(options = {})
       User.create({ 
