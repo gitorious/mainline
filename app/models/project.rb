@@ -8,4 +8,8 @@ class Project < ActiveRecord::Base
   before_validation do |record|
     record.slug.downcase! if record.slug
   end
+  
+  def to_param
+    slug
+  end
 end

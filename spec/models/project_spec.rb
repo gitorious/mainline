@@ -37,4 +37,10 @@ describe Project do
     project.valid?
     project.slug.should == "foo"
   end
+  
+  it "should #to_param by it's slug" do
+    project = create_project
+    project.save!
+    project.to_param.should == "foo"    
+  end
 end
