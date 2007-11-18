@@ -9,7 +9,4 @@ class Project < ActiveRecord::Base
     record.slug.downcase! if record.slug
   end
   
-  def to_param
-    slug
-  end
 end
