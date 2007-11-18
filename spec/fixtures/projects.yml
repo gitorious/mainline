@@ -1,5 +1,5 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-johans_project:
+johans:
   id: 1
   title: johans project
   updated_at: <%= 2.days.ago.to_s(:db) %>

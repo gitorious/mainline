@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe "projects/index.rhtml" do
   before(:each) do
-    @project = projects(:johans_project)
+    @project = projects(:johans)
     @projects = [@project]
   end
   

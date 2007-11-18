@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 5) do
+ActiveRecord::Schema.define(:version => 6) do
 
   create_table "projects", :force => true do |t|
     t.string   "title"
@@ -17,10 +17,12 @@ ActiveRecord::Schema.define(:version => 5) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "slug"
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_name"
   add_index "projects", ["user_id"], :name => "index_projects_on_user_id"
+  add_index "projects", ["slug"], :name => "index_projects_on_slug"
 
   create_table "repositories", :force => true do |t|
     t.string   "name"

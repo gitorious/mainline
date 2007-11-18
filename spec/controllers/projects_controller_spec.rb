@@ -32,7 +32,7 @@ describe ProjectsController do
   
   it "POST projects/create with valid data should create project" do
     login_as :johan
-    post :create, :project => {:title => "project x"}
+    post :create, :project => {:title => "project x", :slug => "projectx"}
     response.should be_redirect
     response.should redirect_to(url_path(projects_path))
     
@@ -51,8 +51,8 @@ describe ProjectsController do
   
   it "PUT projects/update with valid data should update record" do
     login_as :johan
-    project = projects(:johans_project)
-    put :update, :id => project.id, :project => {:title => "new name"}
+    project = projects(:johans)
+    put :update, :id => project.id, :project => {:title => "new name", :slug => "foo"}
     assigns(:project).should == project
     response.should be_redirect
     response.should redirect_to(project_path(project))
@@ -67,14 +67,20 @@ describe ProjectsController do
   
   it "PUT projects/destroy should destroy the project" do
     login_as :johan
-    delete :destroy, :id => projects(:johans_project)
+    delete :destroy, :id => projects(:johans)
     response.should redirect_to(url_path(projects_path))
     Project.find_by_id(1).should == nil
   end
   
   it "GET projects/show should be success" do
-    get :show, :id => projects(:johans_project).id
-    assigns[:project].should == projects(:johans_project)
+    get :show, :id => projects(:johans).id
+    assigns[:project].should == projects(:johans)
+    response.should be_success
+  end
+  
+  it "GET projects/show should fetch the repositories for a project" do
+    get :show, :id => projects(:johans).id
+    assigns[:repositories].should == projects(:johans).repositories
     response.should be_success
   end
 

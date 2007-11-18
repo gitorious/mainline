@@ -4,7 +4,7 @@ describe Repository do
   before(:each) do
     @repository = Repository.new({
       :name => "foo",
-      :project => projects(:johans_project),
+      :project => projects(:johans),
       :user => users(:johan)
     })
   end

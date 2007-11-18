@@ -2,8 +2,9 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe "projects(show.rhtml)" do
   before(:each) do
-    @project = projects(:johans_project)
+    @project = projects(:johans)
     assigns[:project] = @project
+    assigns[:repositories] = @project.repositories
   end
   
   it "should render the project title" do

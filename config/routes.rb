@@ -20,10 +20,9 @@ ActionController::Routing::Routes.draw do |map|
   
   map.root :controller => "projects" # TODO change eventually
   
-  map.resources :users
+  map.resources :users 
   map.resource  :sessions
-  map.resources :projects #, :has_many => [:tasks, :repositories, :milestones, :pages] do |project|
-  #end
+  map.resources :projects, :has_many => [:repositories]
   
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'

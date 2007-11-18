@@ -1,9 +1,22 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-one:
+johans:
   id: 1
+  name: Johans project repos
+  project_id: 1
+  user_id: 1
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
-two:
+johans2:
   id: 2
+  name: Johans other project repos
+  project_id: 1
+  user_id: 1
+  created_at: 2007-11-18 01:21:21
+  updated_at: 2007-11-18 01:21:21
+moes:
+  id: 3
+  name: moes project repos
+  project_id: 2
+  user_id: 2
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
