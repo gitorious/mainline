@@ -14,7 +14,7 @@ module AuthenticatedSystem
     
     # Store the given user in the session.
     def current_user=(new_user)
-      session[:user] = (new_user.nil? || new_user.is_a?(Symbol)) ? nil : new_user.id
+      session[:user_id] = (new_user.nil? || new_user.is_a?(Symbol)) ? nil : new_user.id
       @current_user = new_user
     end
     
@@ -49,7 +49,7 @@ module AuthenticatedSystem
     #   skip_before_filter :login_required
     #
     def login_required
-      authorized? ? true : access_denied
+      authorized? || access_denied
     end
 
     # Redirect as appropriate when an access request fails.
@@ -97,7 +97,7 @@ module AuthenticatedSystem
 
     # Called from #current_user.  First attempt to login by the user id stored in the session.
     def login_from_session
-      self.current_user = User.find_by_id(session[:user]) if session[:user]
+      self.current_user = User.find_by_id(session[:user_id]) if session[:user_id]
     end
 
     # Called from #current_user.  Now, attempt to login by basic authentication information.
