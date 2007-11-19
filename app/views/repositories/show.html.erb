@@ -1,4 +1,11 @@
-<h1><%= @repository.name -%></h1>
+<h1><%= @repository.name.inspect -%> in <%= @repository.project.title.inspect -%></h1>
+
+<p>
+  You can clone this repository with the following command:
+  <pre><code>
+    git clone <%= @repository.url -%>
+  </code></pre>
+</p>
 
 <% content_for :sidebar do -%>
   <p><%= link_to "Back to #{@project.title.inspect}", project_path(@project) -%></p>
