@@ -6,6 +6,12 @@ class Repository < ActiveRecord::Base
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
   
   before_save :set_as_mainline_if_first
+  
+  BASE_REPOSITORY_URL = "keysersource.org"
+  
+  def url
+    "git@#{BASE_REPOSITORY_URL}:#{name}.git"
+  end
     
   protected
     def set_as_mainline_if_first

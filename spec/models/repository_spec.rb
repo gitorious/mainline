@@ -43,4 +43,8 @@ describe Repository do
     @repository.save
     @repository.mainline?.should == false
   end
+  
+  it "has a checkout url" do
+    @repository.url.should == "git@keysersource.org:foo.git"
+  end
 end
