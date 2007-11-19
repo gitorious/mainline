@@ -59,6 +59,18 @@ a:hover {
   text-decoration: underline;
 }
 
+strong, b {
+  font-weight: bold;
+}
+
+em, i {
+  font-style: italic;
+}
+
+ul {
+  margin: 5px;
+}
+
 /* boxes */
 
 .clear {

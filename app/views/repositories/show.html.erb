@@ -1,4 +1,11 @@
-<h1><%= @repository.name.inspect -%> in <%= @repository.project.title.inspect -%></h1>
+<h1>
+  <%= h(@repository.name) -%> in 
+  <%= link_to h(@repository.project.title), @repository.project -%></h1>
+
+<ul>
+  <li><strong>Owner:</strong> <%= @repository.user.login -%></li>
+  <li><strong>Mirror url:</strong> <%= @repository.url -%></li>
+</ul>
 
 <p>
   You can clone this repository with the following command:
