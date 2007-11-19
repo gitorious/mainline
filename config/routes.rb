@@ -22,7 +22,11 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :users 
   map.resource  :sessions
-  map.resources :projects, :has_many => [:repositories]
+  map.resources :projects do |projects|
+    projects.resources :repositories do |repo|
+      repo.resources :committers
+    end
+  end
   
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'

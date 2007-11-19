@@ -15,6 +15,21 @@
   </code></pre>
 </p>
 
+<h4>Committers</h4>
+<ul>
+  <% @repository.committers.each do |user| -%>
+    <li>
+      <%= link_to h(user.login), user -%> 
+      <% if @repository.user == user -%>
+      <small>(owner)</small>
+      <% end -%>
+    </li>
+  <% end -%>
+</ul>
+
 <% content_for :sidebar do -%>
-  <p><%= link_to "Back to #{@project.title.inspect}", project_path(@project) -%></p>
+  <ul>
+    <li><%= link_to "Back to #{@project.title.inspect}", project_path(@project) -%></li>
+    <li><%= link_to "Add write user" -%></li>
+  </ul>
 <% end -%>

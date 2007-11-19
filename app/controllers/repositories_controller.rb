@@ -1,5 +1,5 @@
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :only => [:new, :create]
+  before_filter :login_required, :only => [:new, :create, :destroy]
   before_filter :find_project, 
     :only => [:show, :new, :create, :edit, :update]
     

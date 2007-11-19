@@ -55,4 +55,10 @@ describe Repository do
   it "has a clone url" do
     @repository.clone_url.should == "git://keysersource.org/foo.git"
   end
+  
+  it "should assign the creator as a comitter on create" do 
+    @repository.save!
+    @repository.reload
+    @repository.committers.should include(users(:johan))
+  end
 end

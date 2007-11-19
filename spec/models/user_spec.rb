@@ -110,6 +110,16 @@ describe User do
     u.should be_valid
   end
   
+  it "knows if a user has write access to a repository" do
+    u = users(:johan)
+    repo = repositories(:johans)
+    u.can_write_to?(repo).should == true
+    u.permissions.destroy_all
+    u.reload
+    u.can_write_to?(repo).should == false
+    u.can_write_to?(repositories(:moes)).should == false
+  end
+  
   protected
     def create_user(options = {})
       User.create({ 

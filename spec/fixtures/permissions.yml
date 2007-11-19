@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+johan_johans:
+  id: 1
+  user_id: 1
+  repository_id: 1
+  kind: 2
+  created_at: 2007-11-19 23:29:48
+  updated_at: 2007-11-19 23:29:48
+moes:
+  id: 2
+  user_id: 2
+  repository_id: 3
+  kind: 2
+  created_at: 2007-11-19 23:29:48
+  updated_at: 2007-11-19 23:29:48

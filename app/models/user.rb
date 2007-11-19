@@ -1,6 +1,8 @@
 require 'digest/sha1'
 class User < ActiveRecord::Base
   has_many :projects
+  has_many :permissions
+  has_many :repositories, :through => :permissions
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password
@@ -78,6 +80,10 @@ class User < ActiveRecord::Base
     self.remember_token_expires_at = nil
     self.remember_token            = nil
     save(false)
+  end
+  
+  def can_write_to?(repository)
+    !!permissions.find_by_repository_id(repository.id)
   end
 
   protected
