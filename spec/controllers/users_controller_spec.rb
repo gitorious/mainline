@@ -55,9 +55,9 @@ describe UsersController do
   it "should activate user" do
     User.authenticate('moe', 'test').should be(nil)
     get :activate, :activation_code => users(:moe).activation_code
-    response.should redirect_to '/'
+    response.should redirect_to('/')
     flash[:notice].should_not be(nil)
-    User.authenticate('moe', 'test').should == users(:moe)
+    User.authenticate('moe@example.com', 'test').should == users(:moe)
   end
 
 end

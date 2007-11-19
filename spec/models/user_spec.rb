@@ -46,16 +46,16 @@ describe User do
   
   it "should reset password" do
     users(:johan).update_attributes(:password => "newpass", :password_confirmation => "newpass")
-    User.authenticate("johan", "newpass").should == users(:johan)
+    User.authenticate("johan@johansorensen.com", "newpass").should == users(:johan)
   end
   
   it "should not rehash the password" do
-    users(:johan).update_attributes(:login => 'johan2')
-    User.authenticate("johan2", "test").should == users(:johan)
+    users(:johan).update_attributes(:email => 'johan2@js.com')
+    User.authenticate("johan2@js.com", "test").should == users(:johan)
   end
   
   it "should authenticate user" do
-    User.authenticate("johan", "test").should == users(:johan)
+    User.authenticate("johan@johansorensen.com", "test").should == users(:johan)
   end
   
   it "should set remember token" do
