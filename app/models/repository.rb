@@ -9,8 +9,16 @@ class Repository < ActiveRecord::Base
   
   BASE_REPOSITORY_URL = "keysersource.org"
   
-  def url
-    "git@#{BASE_REPOSITORY_URL}:#{name}.git"
+  def gitdir
+    "#{name}.git"
+  end
+  
+  def clone_url
+    "git://#{BASE_REPOSITORY_URL}/#{gitdir}"
+  end
+  
+  def push_url
+    "git@#{BASE_REPOSITORY_URL}:#{gitdir}"
   end
     
   protected

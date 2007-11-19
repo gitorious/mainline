@@ -44,7 +44,15 @@ describe Repository do
     @repository.mainline?.should == false
   end
   
-  it "has a checkout url" do
-    @repository.url.should == "git@keysersource.org:foo.git"
+  it "has a gitdir name" do
+    @repository.gitdir.should == "foo.git"
+  end
+  
+  it "has a push url" do
+    @repository.push_url.should == "git@keysersource.org:foo.git"
+  end
+  
+  it "has a clone url" do
+    @repository.clone_url.should == "git://keysersource.org/foo.git"
   end
 end

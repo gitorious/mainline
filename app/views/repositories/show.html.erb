@@ -4,13 +4,14 @@
 
 <ul>
   <li><strong>Owner:</strong> <%= @repository.user.login -%></li>
-  <li><strong>Mirror url:</strong> <%= @repository.url -%></li>
+  <li><strong>Mirror url:</strong> <%= @repository.clone_url -%></li>
+  <li><strong>push url:</strong> <%= @repository.push_url -%></li>
 </ul>
 
 <p>
   You can clone this repository with the following command:
   <pre><code>
-    git clone <%= @repository.url -%>
+    git clone <%= @repository.clone_url -%>
   </code></pre>
 </p>
 
