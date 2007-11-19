@@ -42,6 +42,16 @@ h2 {
   line-height: 180%;;
 }
 
+h3 {
+  font-size: 150%;
+  line-height: 150%;;
+}
+
+h4 {
+  font-size: 110%;
+  line-height: 110%;;
+}
+
 p {
   line-height: 140%;
 }
@@ -243,4 +253,19 @@ textarea:focus, select:focus {
 }
 .errorExplanation ul li{
     list-style-type: disc;
+}
+
+.repository_list li.mainline {
+  margin: 10px 0 0 0;
+  padding: 10px;
+  border-top: 1px solid #408000;
+  border-bottom: 1px solid #408000;
+  background: #efefef;
+}
+.repository_list li {
+  margin: 0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  background: #efefef;
+  font-size: 110%;
 }

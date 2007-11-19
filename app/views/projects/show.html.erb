@@ -2,9 +2,14 @@
 <p><%= @project.description -%></p>
 
 <h2>Associated repositories</h2>
-<ul>
+<ul class="repository_list">
   <% @repositories.each do |repos| -%>
-  <li><%= render :partial => repos, :object => repos, :locals => {:project => @project} -%></li>
+  <% if repos.mainline? -%>
+    <li class="mainline"><strong>Mainline:</strong> 
+  <% else -%>
+    <li>
+  <% end -%>
+    <%= render :partial => repos, :object => repos, :locals => {:project => @project} -%></li>
   
   <% end -%>
 </ul>

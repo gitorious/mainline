@@ -1,1 +1,2 @@
-<%= link_to repository.name, project_repository_path(project, repository) -%>
+<%= link_to h(repository.name), project_repository_path(project, repository) -%> 
+<em><small>(owner: <%= h(repository.user.login) -%>)</small></em>
