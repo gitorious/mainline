@@ -66,4 +66,12 @@ describe RepositoriesController, "create" do
     do_post(:name => "foo")
     response.should be_redirect
   end
+  
+  it "sets the first repository as the main line one" do
+    @project.repositories.destroy_all
+    do_post(:name => "foo")
+    response.should be_redirect
+    @project.reload
+    @project.repositories.first.mainline?.should == true
+  end
 end

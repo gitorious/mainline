@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 6) do
+ActiveRecord::Schema.define(:version => 7) do
 
   create_table "projects", :force => true do |t|
     t.string   "title"
@@ -30,11 +30,14 @@ ActiveRecord::Schema.define(:version => 6) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "mainline",   :default => false
+    t.integer  "parent_id"
   end
 
   add_index "repositories", ["name"], :name => "index_repositories_on_name"
   add_index "repositories", ["project_id"], :name => "index_repositories_on_project_id"
   add_index "repositories", ["user_id"], :name => "index_repositories_on_user_id"
+  add_index "repositories", ["parent_id"], :name => "index_repositories_on_parent_id"
 
   create_table "users", :force => true do |t|
     t.string   "login"

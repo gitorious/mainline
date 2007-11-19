@@ -13,6 +13,6 @@
 <% content_for :sidebar do -%>
   <% if @project.user == current_user -%>
     <p><%= link_to "edit this project", edit_project_path(@project) -%></p>
-    <p><%= link_to "Add repository" -%></p>
+    <p><%= link_to "Add repository", new_project_repository_path(@project) -%></p>
   <% end -%>
 <% end -%>

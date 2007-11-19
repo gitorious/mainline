@@ -6,6 +6,7 @@ johans:
   user_id: 1
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
+  mainline: true
 johans2:
   id: 2
   name: Johans other project repos
@@ -13,6 +14,7 @@ johans2:
   user_id: 1
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
+  mainline: false
 moes:
   id: 3
   name: moes project repos
@@ -20,3 +22,4 @@ moes:
   user_id: 2
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
+  mainline: true

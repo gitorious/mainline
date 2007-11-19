@@ -1,0 +1,9 @@
+<h1>Add new repository to <%= @project.title -%></h1>
+
+<% form_for [@project, @repository] do |f| -%>
+  <p>
+    <%= f.label :name -%><br />
+    <%= f.text_field :name, :class => "text" -%>
+  </p>
+  <%= f.submit -%>
+<% end -%>
