@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 8) do
+ActiveRecord::Schema.define(:version => 9) do
 
   create_table "permissions", :force => true do |t|
     t.integer  "user_id"
@@ -29,6 +29,10 @@ ActiveRecord::Schema.define(:version => 8) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "slug"
+    t.string   "license"
+    t.string   "home_url"
+    t.string   "mailinglist_url"
+    t.string   "bugtracker_url"
   end
 
   add_index "projects", ["title"], :name => "index_projects_on_name"

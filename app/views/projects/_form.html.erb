@@ -1,0 +1,28 @@
+<p>
+  <%= form.label :title -%><br />
+  <%= form.text_field :title, :class => "text" -%>
+</p>
+<p>
+  <%= form.label :slug, "Slug (for urls etc)" -%><br />
+  <%= form.text_field :slug, :class => "text" -%>
+</p>
+<p>
+  <%= form.label :description -%><br />
+  <%= form.text_area :description, :class => "text medium" -%>
+</p>
+<p>
+  <%= form.label :license -%><br />
+  <%= form.select :license, Project::LICENSES -%>
+</p>
+<p>
+  <%= form.label :home_url, "Home URL (eg Rubyforge etc)" -%><br />
+  <%= form.text_field :home_url, :class => "text" -%>
+</p>
+<p>
+  <%= form.label :mailinglist_url, "Mailinglist URL (if any)" -%><br />
+  <%= form.text_field :mailinglist_url, :class => "text" -%>
+</p>
+<p>
+  <%= form.label :bugtracker_url, "Bugtracker URL (if any)" -%><br />
+  <%= form.text_field :bugtracker_url, :class => "text" -%>
+</p>

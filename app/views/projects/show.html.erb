@@ -1,6 +1,22 @@
 <h1><%= @project.title -%></h1>
 <p><%= @project.description -%></p>
 
+<ul>
+  <li><strong>License:</strong> <%= h(@project.license) -%></li>
+  <% unless @project.home_url.blank? -%>
+  <li><strong>Home:</strong> 
+    <%= link_to h(@project.home_url), h(@project.home_url) -%></li>
+  <% end -%>
+  <% unless @project.mailinglist_url.blank? -%>
+  <li><strong>Mailinglist:</strong> 
+    <%= link_to h(@project.mailinglist_url), h(@project.mailinglist_url) -%></li>
+  <% end -%>
+  <% unless @project.bugtracker_url.blank? -%>
+  <li><strong>Bugtracker:</strong> 
+    <%= link_to h(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
+  <% end -%>
+</ul>
+
 <h2>Associated repositories</h2>
 <table class="repository_list listing">
   <tr>
