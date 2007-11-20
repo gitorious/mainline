@@ -3,41 +3,31 @@
   <%= link_to h(@repository.project.title), @repository.project -%>
 </h1>
 
-<div class="user_list">
-  <h4>Committers</h4>
-
-  <ul>
-  <% @repository.committers.each do |user| -%>
-    <li>
-      <%= link_to h(user.login), user -%> 
-      <% if @repository.user == user -%>
-      <small>(owner)</small>
-      <% end -%>
-      <% if @repository.user == current_user -%>
-        <small>
-        <%= link_to "Remove", 
-              { :controller => "committers", :action => "destroy", :id => user.id, 
-                :project_id => @project, :repository_id => @repository}, # FIXME: meh!
-              :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
-        </small>
-      <% end -%>
-    </li>
-  <% end -%>
-  </ul>
-</div>
-
-<p>
-  <ul>
-    <li><strong>Owner:</strong> <%= @repository.user.login -%></li>
-    <li><strong>Mirror url:</strong> <code><%= @repository.clone_url -%></code></li>
-    <li><strong>push url:</strong> <code><%= @repository.push_url -%></code></li>
-  </ul>
-</p>
+<ul class="infobox">
+  <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
+  <li><strong>Owner:</strong> <%=h @repository.user.login -%></li>
+  <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
+  <li><strong>Mirror url:</strong> <code><%=h @repository.clone_url -%></code></li>
+  <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>
+</ul>
 
 <p>You can clone this repository with the following command:</p>
 <pre>
 git clone <%= @repository.clone_url -%>
 </pre>
+
+<h2>Recent commits <small>(<a href="">Browse</a>)</small></h2>
+<ul>
+  <li>
+    <a href=""><%= truncate("0143292b342622a52d13d673ce698f527f791354", 10) -%></a> by <strong>Johan Sørensen</strong> on 2006-11-10 12:34<br />
+    <p>this is another commit</p>
+  </li>
+  
+  <li>
+    <a href=""><%= truncate("28836340a9ca0aa4af643efc5c0ef36cfd71beaa", 10) -%></a> by <strong>Johan Sørensen</strong> on 2006-11-10 12:34<br />
+    <p>this is the commit message</p>
+  </li>
+</ul>
 
 <% content_for :sidebar do -%>
   <ul>
@@ -48,4 +38,27 @@ git clone <%= @repository.clone_url -%>
               :repository_id => @repository } -%></li>
     <% end -%>
   </ul>
+  
+  <div class="user_list">
+    <h4>Committers</h4>
+
+    <ul>
+    <% @repository.committers.each do |user| -%>
+      <li>
+        <%= link_to h(user.login), user -%> 
+        <% if @repository.user == user -%>
+        <small>(owner)</small>
+        <% end -%>
+        <% if @repository.user == current_user -%>
+          <small>
+          <%= link_to "Remove", 
+                { :controller => "committers", :action => "destroy", :id => user.id, 
+                  :project_id => @project, :repository_id => @repository}, # FIXME: meh!
+                :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
+          </small>
+        <% end -%>
+      </li>
+    <% end -%>
+    </ul>
+  </div>
 <% end -%>

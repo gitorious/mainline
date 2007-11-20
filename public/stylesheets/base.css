@@ -140,7 +140,6 @@ pre {
   margin-right: -160px;
 }
 #container #main #content {
-  float:left;
   margin-right: 160px;
   margin-top: 20px;
   padding: 0 1em 1em 2em;
@@ -148,7 +147,7 @@ pre {
 
 #container #sidebar {
   margin-top: 20px;
-/*  padding: 10px 30px 10px 10px;*/
+  padding-left: 5px;
   min-height: 300px;
   width: 150px;
   float:right;
@@ -307,14 +306,15 @@ table.repository_list tr.mainline td {
   border-top: 1px solid #408000;
   border-bottom: 1px solid #408000;
   background: #dbf7b3;
+  font-weight: bold;
 }
 table.repository_list td {
   margin: 0;
   padding: 5px;
   border-bottom: 1px solid #ccc;
 }
-
-.user_list {
-  float: right;
-  margin: 0 100px 10px 10px;
+ul.infobox {
+  background: #efefef;
+  padding: 10px;
+  border: 1px solid #ccc;
 }
