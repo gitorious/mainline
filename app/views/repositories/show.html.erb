@@ -23,6 +23,14 @@
       <% if @repository.user == user -%>
       <small>(owner)</small>
       <% end -%>
+      <% if @repository.user == current_user -%>
+        <small>
+        <%= link_to "Remove", 
+              { :controller => "committers", :action => "destroy", :id => user.id, 
+                :project_id => @project, :repository_id => @repository}, # FIXME: meh!
+              :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
+        </small>
+      <% end -%>
     </li>
   <% end -%>
 </ul>
@@ -30,6 +38,10 @@
 <% content_for :sidebar do -%>
   <ul>
     <li><%= link_to "Back to #{@project.title.inspect}", project_path(@project) -%></li>
-    <li><%= link_to "Add write user" -%></li>
+    <% if @repository.user == current_user -%>
+    <li><%= link_to "Add committer", 
+            { :controller => "committers", :action => "new", :project_id => @project, 
+              :repository_id => @repository } -%></li>
+    <% end -%>
   </ul>
 <% end -%>

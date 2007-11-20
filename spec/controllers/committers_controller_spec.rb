@@ -54,6 +54,14 @@ describe CommittersController, "create" do
     response.should be_redirect
   end
   
+  it "only creates the committership if user isn't already a committer" do
+    @repository.committers << users(:johan)
+    @repository.save!
+    perm_count = @repository.permissions.count
+    do_post(:login => "johan")
+    @repository.permissions.count.should == perm_count
+  end
+  
   it "rerenders when theres no user found" do
     users(:johan).can_write_to?(@repository).should == false
     do_post(:login => "foo")
@@ -72,9 +80,9 @@ describe CommittersController, "create" do
     Permission.destroy_all
   end
   
-  def do_delete(permission_id)
+  def do_delete(user_id)
     delete :destroy, :project_id => @project, :repository_id => @repository,
-          :id => permission_id
+          :id => user_id
   end
   
   it "should require login" do
@@ -88,7 +96,7 @@ describe CommittersController, "create" do
     @repository.save!
     users(:johan).can_write_to?(@repository).should == true
     
-    do_delete(@repository.permissions.first.id)
+    do_delete(users(:johan).id)
     response.should be_redirect
     flash[:success].should_not be(nil)
     users(:johan).can_write_to?(@repository).should == false

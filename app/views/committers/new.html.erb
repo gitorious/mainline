@@ -1,6 +1,7 @@
-<% form_for [@repository.project, @repository, @committer] do |f| -%>
+<% form_for @committer, 
+  :url => {:controller => "committers", :action => "create"}, :method => :post do |f| -%>
   <p>
-    <%= f.label :login, "username" -%><br />
+    <%= f.label :login, "Existing username" -%><br />
     <%= f.text_field :login -%>
   </p>
 <% end -%>

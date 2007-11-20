@@ -9,7 +9,7 @@ class CommittersController < ApplicationController
   
   def create
     @committer = User.find_by_login(params[:user][:login])
-    if @committer
+    if @committer && !@repository.permissions.find_by_user_id(@committer.id)
       @repository.committers << @committer
       redirect_to [@repository.project, @repository]
     else
@@ -18,7 +18,7 @@ class CommittersController < ApplicationController
   end
   
   def destroy
-    @permission = @repository.permissions.find(params[:id])
+    @permission = @repository.permissions.find_by_user_id(params[:id])
     if @permission.destroy
       flash[:success] = "User removed from repository"
     end    
@@ -28,5 +28,9 @@ class CommittersController < ApplicationController
   private
     def find_repository
       @repository = Repository.find(params[:repository_id])
+      unless @repository.user == current_user
+        flash[:error] = "You're not the owner of this repository"
+        redirect_to [@repository.project, @repository]
+      end
     end
 end

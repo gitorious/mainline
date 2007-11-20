@@ -24,7 +24,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource  :sessions
   map.resources :projects do |projects|
     projects.resources :repositories do |repo|
-      repo.resources :committers
+      repo.resources :committers, :name_prefix => nil
     end
   end
   
