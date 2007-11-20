@@ -105,6 +105,7 @@ pre {
 
 .clear {
   clear: both;
+  height: 0;
 }
 
 #container {
@@ -133,18 +134,23 @@ pre {
 }
 
 #container #main {
-  margin-top: 20px;
-  padding: 0 3em 1em 2em;
   min-height: 300px;
-  width: 640px;
+  width:100%;
   float:left;
+  margin-right: -160px;
+}
+#container #main #content {
+  float:left;
+  margin-right: 160px;
+  margin-top: 20px;
+  padding: 0 1em 1em 2em;
 }
 
 #container #sidebar {
   margin-top: 20px;
-  padding: 10px 30px 10px 10px;
+/*  padding: 10px 30px 10px 10px;*/
   min-height: 300px;
-  width: 160px;
+  width: 150px;
   float:right;
   border-left: 1px dotted #333;
 }
@@ -154,6 +160,7 @@ pre {
   font-size: 11px;
   color: #666;
   text-align: center;
+  clear:both;
 }
 
 .flash_message {

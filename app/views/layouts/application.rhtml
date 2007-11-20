@@ -34,17 +34,19 @@
       </div>
     </div>
     <div id="main">
-      <% if flash[:notice] -%>
-        <div class="flash_message notice">
-          <p><%= flash[:notice] -%></p>
-        </div>
-      <% end -%>
-      <% if flash[:error] -%>
-        <div class="flash_message error">
-          <p><%= flash[:error] -%></p>
-        </div>
-      <% end -%>
-      <%= yield -%>
+      <div id="content">
+        <% if flash[:notice] -%>
+          <div class="flash_message notice">
+            <p><%= flash[:notice] -%></p>
+          </div>
+        <% end -%>
+        <% if flash[:error] -%>
+          <div class="flash_message error">
+            <p><%= flash[:error] -%></p>
+          </div>
+        <% end -%>
+        <%= yield -%>
+      </div>
     </div>
     <div id="sidebar">
       <%= yield :sidebar -%>
