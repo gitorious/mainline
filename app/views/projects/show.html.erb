@@ -19,11 +19,11 @@
 
 <h2>Associated repositories</h2>
 <table class="repository_list listing">
-  <tr>
+  <thead>
     <th>Name</th>
     <th>Owner</th>
     <th>Created</th>
-  </tr>
+  </thead>
   <% @repositories.each do |repos| -%>
   <tr class="<%= cycle("even", "odd") -%><%= repos.mainline? ? ' mainline' : '' -%>">
     <td>

@@ -293,10 +293,10 @@ table.listing {
 table.listing tr.odd {
   background: #efefef;
 }
-
-table.listing th {
+table.listing thead th {
   font-weight: bold;
   padding: 3px;
+  border-bottom: 2px solid #222;
 }
 
 table.repository_list tr.mainline {
@@ -306,6 +306,7 @@ table.repository_list tr.mainline {
 table.repository_list tr.mainline td { 
   border-top: 1px solid #408000;
   border-bottom: 1px solid #408000;
+  background: #dbf7b3;
 }
 table.repository_list td {
   margin: 0;
