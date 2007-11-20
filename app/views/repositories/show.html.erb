@@ -29,19 +29,10 @@ git clone <%= @repository.clone_url -%>
   </li>
 </ul>
 
-<% content_for :sidebar do -%>
-  <ul>
-    <li><%= link_to "Back to #{@project.title.inspect}", project_path(@project) -%></li>
-    <% if @repository.user == current_user -%>
-    <li><%= link_to "Add committer", 
-            { :controller => "committers", :action => "new", :project_id => @project, 
-              :repository_id => @repository } -%></li>
-    <% end -%>
-  </ul>
-  
+<% content_for :sidebar do -%>  
   <div class="user_list">
     <h4>Committers</h4>
-
+    
     <ul>
     <% @repository.committers.each do |user| -%>
       <li>
@@ -60,5 +51,11 @@ git clone <%= @repository.clone_url -%>
       </li>
     <% end -%>
     </ul>
+    
+    <% if @repository.user == current_user -%>
+    <p><%= link_to "+ Add committer", 
+            { :controller => "committers", :action => "new", :project_id => @project, 
+              :repository_id => @repository } -%></p>
+    <% end -%>
   </div>
 <% end -%>

@@ -20,9 +20,11 @@ class Project < ActiveRecord::Base
   validates_format_of :bugtracker_url, :with => URL_FORMAT_RE, 
     :if => proc{|record| !record.bugtracker_url.blank? },
     :message => "Must begin with http(s)"
+    
   before_validation do |record|
     record.slug.downcase! if record.slug
   end
+  after_create :create_mainline_repository
   
   LICENSES = [
     'MIT License',
@@ -43,5 +45,10 @@ class Project < ActiveRecord::Base
     'Microsoft Permissive License (Ms-PL)',
     'None',
   ]
+  
+  protected
+    def create_mainline_repository
+      self.repositories.create!(:user => self.user, :name => self.slug)
+    end
   
 end
