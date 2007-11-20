@@ -286,16 +286,34 @@ textarea:focus, select:focus {
     list-style-type: disc;
 }
 
-.repository_list li.mainline {
-  margin: 10px 0 0 0;
-  padding: 10px;
-  border-top: 1px solid #408000;
-  border-bottom: 1px solid #408000;
+table.listing {
+  width: 100%;
+}
+
+table.listing tr.odd {
   background: #efefef;
 }
-.repository_list li {
-  margin: 0;
+
+table.listing th {
+  font-weight: bold;
+  padding: 3px;
+}
+
+table.repository_list tr.mainline {
+  margin: 10px 0 0 0;
   padding: 10px;
+}
+table.repository_list tr.mainline td { 
+  border-top: 1px solid #408000;
+  border-bottom: 1px solid #408000;
+}
+table.repository_list td {
+  margin: 0;
+  padding: 5px;
   border-bottom: 1px solid #ccc;
-  background: #efefef;
+}
+
+.user_list {
+  float: right;
+  margin: 0 100px 10px 10px;
 }

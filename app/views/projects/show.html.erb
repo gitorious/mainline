@@ -2,18 +2,31 @@
 <p><%= @project.description -%></p>
 
 <h2>Associated repositories</h2>
-<ul class="repository_list">
+<table class="repository_list listing">
+  <tr>
+    <th>Name</th>
+    <th>Owner</th>
+    <th>Created</th>
+  </tr>
   <% @repositories.each do |repos| -%>
-  <% if repos.mainline? -%>
-    <li class="mainline"><strong>Mainline:</strong> 
-  <% else -%>
-    <li>
+  <tr class="<%= cycle("even", "odd") -%><%= repos.mainline? ? ' mainline' : '' -%>">
+    <td>
+      <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
+      <% if repos.mainline? -%> <small>(<em>Mainline</em>)</small><% end -%>
+    </td>
+    <td>
+      <% if repos.mainline? -%>
+        <%= h(repos.name) -%> (<%= h(repos.user.login) -%>)
+      <% else -%>
+        <%= h(repos.user.login) -%>
+      <% end -%>
+    </td>
+    <td>
+      <%= repos.created_at.to_s(:short) -%>
+    </td>
+  </tr>
   <% end -%>
-    <%= render :partial => repos, :object => repos, :locals => {:project => @project} -%></li>
-  
-  <% end -%>
-</ul>
-
+</table>
 
 <% content_for :sidebar do -%>
   <% if @project.user == current_user -%>
