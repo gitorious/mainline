@@ -20,65 +20,85 @@ sup,sub { line-height:-1px;vertical-align:text-top; }
 sub{ vertical-align:text-bottom; } 
 input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inherit; }
 
+/**/
+
 body {
+	font-size: 13px;
+	line-height: 1.461em;
   background: #fff;
   color: #000;
-	font-family: Arial, Helvetica, Verdana, sans-serif;
-	font-size: small;
-	line-height: 120%;
+	font-family: Georgia, Times, serif;
+  margin: 0;
+  padding: 0;
 }
-
 h1, h2, h3, h4, h5, h6 {
   color: #09460f;
+  font-weight:  normal;
 }
-
 h1 {
-  font-size: 230%;
-  line-height: 230%;
+	margin: 0;
+	font-size: 1.615em;
+	line-height: 0.904em;
+	margin-bottom: 0.904em;
 }
-
 h2 {
-  font-size: 180%;
-  line-height: 180%;;
+	margin: 0;
+	font-size: 1.461em;
+	line-height: 1em;
+	margin-bottom: 1em;
 }
-
 h3 {
-  font-size: 150%;
-  line-height: 150%;;
+	margin: 0;
+	font-size: 1.307em;
+	line-height: 1.117em;
+	margin-bottom: 1.117em;
 }
-
 h4 {
-  font-size: 110%;
-  line-height: 110%;;
+	margin: 0;
+	font-size: 1.153em;
+	line-height: 1.266em;
+	margin-bottom: 1.266em;
 }
-
-p {
-  line-height: 140%;
+p, ul, blockquote, pre, td, th, label {
+	margin: 0;
+	font-size: 1em;
+	line-height: 1.461em;
+	margin-bottom: 1.461em;
 }
-
+p.small {
+	margin: 0;
+	font-size: 0.846em;
+	line-height: 1.727em;
+	margin-bottom: 1.727em;
+}
+table {
+	border-collapse: collapse;
+	margin-bottom: 1.461em;
+}
 code, pre, tt {
   font-family: monospace;
+  line-height: 90%;
 }
-
 a {
   color: #630;
   text-decoration: none;
 }
-
 a:hover {
   text-decoration: underline;
 }
-
 strong, b {
   font-weight: bold;
 }
-
 em, i {
   font-style: italic;
 }
-
 ul {
-  margin: 5px;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+pre {
+  margin-left: 2em;
+  margin-right: 2em;
 }
 
 /* boxes */
@@ -88,8 +108,12 @@ ul {
 }
 
 #container {
-  width: 888px;
-  margin: 10px auto 10px auto;
+  width: 90%;
+}
+
+#header {
+  /*background: #C7BA99;*/
+  padding-left: 0.5em;
 }
 
 #container #logo {
@@ -110,7 +134,7 @@ ul {
 
 #container #main {
   margin-top: 20px;
-  padding: 10px 30px 10px 10px;
+  padding: 0 3em 1em 2em;
   min-height: 300px;
   width: 640px;
   float:left;
@@ -267,5 +291,4 @@ textarea:focus, select:focus {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   background: #efefef;
-  font-size: 110%;
 }

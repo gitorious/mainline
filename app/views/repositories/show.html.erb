@@ -1,22 +1,24 @@
 <h1>
   <%= h(@repository.name) -%> in 
-  <%= link_to h(@repository.project.title), @repository.project -%></h1>
-
-<ul>
-  <li><strong>Owner:</strong> <%= @repository.user.login -%></li>
-  <li><strong>Mirror url:</strong> <%= @repository.clone_url -%></li>
-  <li><strong>push url:</strong> <%= @repository.push_url -%></li>
-</ul>
+  <%= link_to h(@repository.project.title), @repository.project -%>
+</h1>
 
 <p>
-  You can clone this repository with the following command:
-  <pre><code>
-    git clone <%= @repository.clone_url -%>
-  </code></pre>
+  <ul>
+    <li><strong>Owner:</strong> <%= @repository.user.login -%></li>
+    <li><strong>Mirror url:</strong> <%= @repository.clone_url -%></li>
+    <li><strong>push url:</strong> <%= @repository.push_url -%></li>
+  </ul>
 </p>
 
+<p>You can clone this repository with the following command:</p>
+<pre>
+git clone <%= @repository.clone_url -%>
+</pre>
+
 <h4>Committers</h4>
-<ul>
+
+<p><ul>
   <% @repository.committers.each do |user| -%>
     <li>
       <%= link_to h(user.login), user -%> 
@@ -33,7 +35,7 @@
       <% end -%>
     </li>
   <% end -%>
-</ul>
+</ul></p>
 
 <% content_for :sidebar do -%>
   <ul>
