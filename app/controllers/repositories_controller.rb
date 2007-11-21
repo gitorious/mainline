@@ -8,6 +8,7 @@ class RepositoriesController < ApplicationController
   end
   
   def new
+    # TODO: Add a limit (like 5) per project
     @repository = @project.repositories.new
   end
   
