@@ -154,6 +154,23 @@ pre {
   border-left: 1px dotted #333;
 }
 
+#sidebar ul.links {
+  margin-left: -5px;
+  padding:0;
+}
+#sidebar ul.links li {
+  border-bottom: 1px dotted #888;
+}
+#sidebar ul.links li a {
+  display:block;
+  padding: 5px 5px 5px 10px; 
+}
+#sidebar ul.links li a:hover {
+  color: #fff;
+  background: #630;
+  text-decoration: none;
+}
+
 #container #footer {
   padding: 10px 30px 0 10px;
   font-size: 11px;
@@ -313,7 +330,7 @@ table.repository_list td {
   padding: 5px;
   border-bottom: 1px solid #ccc;
 }
-ul.infobox {
+.infobox {
   background: #efefef;
   padding: 10px;
   border: 1px solid #ccc;
