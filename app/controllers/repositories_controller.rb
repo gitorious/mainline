@@ -18,7 +18,7 @@ class RepositoriesController < ApplicationController
     if @repository.save
       redirect_to project_repository_path(@project, @repository)
     else
-      render :action => :new
+      render :action => "new"
     end
   end
   

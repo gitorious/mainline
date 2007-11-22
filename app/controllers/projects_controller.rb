@@ -39,10 +39,7 @@ class ProjectsController < ApplicationController
   
   def destroy
     @project = Project.find(params[:id])
-    if @project.destroy
-      redirect_to projects_path
-    else
-      flash[:error]
-    end
+    @project.destroy
+    redirect_to projects_path
   end
 end

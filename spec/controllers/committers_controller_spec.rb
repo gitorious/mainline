@@ -25,6 +25,13 @@ describe CommittersController, "new" do
     do_get
     response.should be_success
   end
+  
+  it "only allows owner to add committers" do
+    login_as :moe
+    do_get
+    response.should be_redirect
+    flash[:error].should == "You're not the owner of this repository"
+  end
 end
 
 describe CommittersController, "create" do
@@ -71,7 +78,7 @@ describe CommittersController, "create" do
   end
 end
 
-describe CommittersController, "create" do
+describe CommittersController, "destroy" do
   
   before(:each) do
     login_as :johan

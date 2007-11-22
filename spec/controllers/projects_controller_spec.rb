@@ -83,5 +83,10 @@ describe ProjectsController do
     assigns[:repositories].should == projects(:johans).repositories
     response.should be_success
   end
+  
+  it "GET projects/xx/edit should be a-ok" do
+    get :edit, :id => projects(:johans).id
+    response.should be_success
+  end
 
 end
