@@ -17,6 +17,8 @@ class RepositoriesController < ApplicationController
     @repository.user = current_user
     if @repository.save
       redirect_to project_repository_path(@project, @repository)
+    else
+      render :action => :new
     end
   end
   
