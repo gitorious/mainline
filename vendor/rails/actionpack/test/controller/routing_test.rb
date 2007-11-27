@@ -212,11 +212,19 @@ class LegacyRouteSetTests < Test::Unit::TestCase
       rs.add_named_route :user, 'admin/user/:id', :controller=>'/admin/user', :action=>'show'
       x = setup_for_named_route
       x.expects(:url_for).never
-      # x.send(:users_url)
+      x.send(:users_url)
       x.send(:users_path)
-      # x.send(:user_url, 2, :foo=>"bar")
+      x.send(:user_url, 2, :foo=>"bar")
       x.send(:user_path, 3, :bar=>"foo")
     end
+    
+    def test_optimized_named_route_with_host 
+     	rs.add_named_route :pages, 'pages', :controller => 'content', :action => 'show_page', :host => 'foo.com' 
+     	x = setup_for_named_route 
+     	x.expects(:url_for).with(:host => 'foo.com', :only_path => false, :controller => 'content', :action => 'show_page', :use_route => :pages).once
+      x.send(:pages_url)
+    end
+    
   end
 
   def setup_for_named_route
@@ -1970,6 +1978,40 @@ class RouteSetTest < Test::Unit::TestCase
     assert_equal 2, all.length
     assert_equal '/show_post/10', all.first
     assert_equal '/post/show/10', all.last
+  end
+  
+  def test_named_route_in_nested_resource
+    set.draw do |map|
+      map.resources :projects do |project|
+        project.comments 'comments', :controller => 'comments', :action => 'index'
+      end
+    end
+    
+    request.path = "/projects/1/comments"
+    request.method = :get
+    assert_nothing_raised { set.recognize(request) }
+    assert_equal("comments", request.path_parameters[:controller])
+    assert_equal("index", request.path_parameters[:action])
+  end
+  
+  def test_setting_root_in_namespace_using_symbol
+    assert_nothing_raised do
+      set.draw do |map|
+        map.namespace :admin do |admin|
+          admin.root :controller => 'home'
+        end
+      end
+    end
+  end
+  
+  def test_setting_root_in_namespace_using_string
+    assert_nothing_raised do
+      set.draw do |map|
+        map.namespace 'admin' do |admin|
+          admin.root :controller => 'home'
+        end
+      end
+    end
   end
   
 end

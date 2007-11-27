@@ -301,6 +301,31 @@ end
 # a target *label* for the *association* (monkey: george) rather than
 # a target *id* for the *FK* (monkey_id: 1).
 #
+# ==== Polymorphic belongs_to
+#
+# Supporting polymorphic relationships is a little bit more complicated, since
+# ActiveRecord needs to know what type your association is pointing at. Something
+# like this should look familiar:
+#
+#   ### in fruit.rb
+#
+#   belongs_to :eater, :polymorphic => true
+#
+#   ### in fruits.yml
+#
+#   apple:
+#     id: 1
+#     name: apple
+#     eater_id: 1
+#     eater_type: Monkey
+#
+# Can we do better? You bet!
+#
+#   apple:
+#     eater: george (Monkey)
+#
+# Just provide the polymorphic target type and ActiveRecord will take care of the rest.
+#
 # === has_and_belongs_to_many
 #
 # Time to give our monkey some fruit.
@@ -538,10 +563,12 @@ class Fixtures < YAML::Omap
     each do |label, fixture|
       row = fixture.to_hash
 
-      if model_class && model_class < ActiveRecord::Base && !row[primary_key_name]
-        # fill in timestamp columns if they aren't specified
-        timestamp_column_names.each do |name|
-          row[name] = now unless row.key?(name)
+      if model_class && model_class < ActiveRecord::Base
+        # fill in timestamp columns if they aren't specified and the model is set to record_timestamps
+        if model_class.record_timestamps
+          timestamp_column_names.each do |name|
+            row[name] = now unless row.key?(name)
+          end
         end
 
         # interpolate the fixture label
@@ -549,14 +576,36 @@ class Fixtures < YAML::Omap
           row[key] = label if value == "$LABEL"
         end
 
-        # generate a primary key
-        row[primary_key_name] = Fixtures.identify(label)
+        # generate a primary key if necessary
+        if has_primary_key_column? && !row.include?(primary_key_name)
+          row[primary_key_name] = Fixtures.identify(label)
+        end
 
-        model_class.reflect_on_all_associations.each do |association|
+        # If STI is used, find the correct subclass for association reflection
+        reflection_class =
+          if row.include?(inheritance_column_name)
+            row[inheritance_column_name].constantize rescue model_class
+          else
+            model_class
+          end
+
+        reflection_class.reflect_on_all_associations.each do |association|
           case association.macro
           when :belongs_to
-            if value = row.delete(association.name.to_s)
-              fk_name = (association.options[:foreign_key] || "#{association.name}_id").to_s
+            # Do not replace association name with association foreign key if they are named the same
+            fk_name = (association.options[:foreign_key] || "#{association.name}_id").to_s
+
+            if association.name.to_s != fk_name && value = row.delete(association.name.to_s)
+              if association.options[:polymorphic]
+                if value.sub!(/\s*\(([^\)]*)\)\s*$/, "")
+                  target_type = $1
+                  target_type_name = (association.options[:foreign_type] || "#{association.name}_type").to_s
+
+                  # support polymorphic belongs_to as "label (Type)"
+                  row[target_type_name] = target_type
+                end
+              end
+
               row[fk_name] = Fixtures.identify(value)
             end
           when :has_and_belongs_to_many
@@ -566,7 +615,7 @@ class Fixtures < YAML::Omap
 
               targets.each do |target|
                 join_fixtures["#{label}_#{target}"] = Fixture.new(
-                  { association.primary_key_name => Fixtures.identify(label),
+                  { association.primary_key_name => row[primary_key_name],
                     association.association_foreign_key => Fixtures.identify(target) }, nil)
               end
             end
@@ -598,10 +647,19 @@ class Fixtures < YAML::Omap
       @primary_key_name ||= model_class && model_class.primary_key
     end
 
+    def has_primary_key_column?
+      @has_primary_key_column ||= model_class && primary_key_name &&
+        model_class.columns.find { |c| c.name == primary_key_name }
+    end
+
     def timestamp_column_names
       @timestamp_column_names ||= %w(created_at created_on updated_at updated_on).select do |name|
         column_names.include?(name)
       end
+    end
+
+    def inheritance_column_name
+      @inheritance_column_name ||= model_class && model_class.inheritance_column
     end
 
     def column_names

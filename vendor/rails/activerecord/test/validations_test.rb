@@ -25,6 +25,10 @@ class UniqueReply < Reply
   validates_uniqueness_of :content, :scope => 'parent_id'
 end
 
+class PlagiarizedReply < Reply
+  validates_acceptance_of :author_name
+end
+
 class SillyUniqueReply < UniqueReply
 end
 
@@ -292,6 +296,11 @@ class ValidationsTest < Test::Unit::TestCase
     assert t.save
   end
 
+  def test_validates_acceptance_of_as_database_column
+    reply = PlagiarizedReply.create("author_name" => "Dan Brown")
+    assert_equal "Dan Brown", reply["author_name"]
+  end
+
   def test_validate_presences
     Topic.validates_presence_of(:title, :content)
 
@@ -547,6 +556,17 @@ class ValidationsTest < Test::Unit::TestCase
     assert Topic.create("title" => "abcde").valid?
   end
 
+  def test_validates_inclusion_of_with_formatted_message
+    Topic.validates_inclusion_of( :title, :in => %w( a b c d e f g ), :message => "option %s is not in the list" )
+
+    assert Topic.create("title" => "a", "content" => "abc").valid?
+
+    t = Topic.create("title" => "uhoh", "content" => "abc")
+    assert !t.valid?
+    assert t.errors.on(:title)
+    assert_equal "option uhoh is not in the list", t.errors["title"]
+  end
+
   def test_numericality_with_allow_nil_and_getter_method
     Developer.validates_numericality_of( :salary, :allow_nil => true)
     developer = Developer.new("name" => "michael", "salary" => nil)
@@ -559,6 +579,17 @@ class ValidationsTest < Test::Unit::TestCase
 
     assert Topic.create("title" => "something", "content" => "abc").valid?
     assert !Topic.create("title" => "monkey", "content" => "abc").valid?
+  end
+
+  def test_validates_exclusion_of_with_formatted_message
+    Topic.validates_exclusion_of( :title, :in => %w( abe monkey ), :message => "option %s is restricted" )
+
+    assert Topic.create("title" => "something", "content" => "abc")
+
+    t = Topic.create("title" => "monkey")
+    assert !t.valid?
+    assert t.errors.on(:title)
+    assert_equal "option monkey is restricted", t.errors["title"]
   end
 
   def test_validates_length_of_using_minimum

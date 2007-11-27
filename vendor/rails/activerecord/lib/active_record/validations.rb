@@ -414,8 +414,8 @@ module ActiveRecord
       #     validates_acceptance_of :eula, :message => "must be abided"
       #   end
       #
-      # The terms_of_service attribute is entirely virtual. No database column is needed. This check is performed only if
-      # terms_of_service is not nil and by default on save.
+      # If the database column does not exist, the terms_of_service attribute is entirely virtual. This check is
+      # performed only if terms_of_service is not nil and by default on save.
       #
       # Configuration options:
       # * <tt>message</tt> - A custom error message (default is: "must be accepted")
@@ -433,7 +433,7 @@ module ActiveRecord
         configuration = { :message => ActiveRecord::Errors.default_error_messages[:accepted], :on => :save, :allow_nil => true, :accept => "1" }
         configuration.update(attr_names.extract_options!)
 
-        attr_accessor *attr_names
+        attr_accessor *attr_names.reject { |name| column_names.include? name.to_s }
 
         validates_each(attr_names,configuration) do |record, attr_name, value|
           record.errors.add(attr_name, configuration[:message]) unless value == configuration[:accept]
@@ -689,8 +689,9 @@ module ActiveRecord
       # Validates whether the value of the specified attribute is available in a particular enumerable object.
       #
       #   class Person < ActiveRecord::Base
-      #     validates_inclusion_of :gender, :in=>%w( m f ), :message=>"woah! what are you then!??!!"
-      #     validates_inclusion_of :age, :in=>0..99
+      #     validates_inclusion_of :gender, :in => %w( m f ), :message => "woah! what are you then!??!!"
+      #     validates_inclusion_of :age, :in => 0..99
+      #     validates_inclusion_of :format, :in => %w( jpg gif png ), :message => "extension %s is not included in the list"
       #   end
       #
       # Configuration options:
@@ -713,7 +714,7 @@ module ActiveRecord
         raise(ArgumentError, "An object with the method include? is required must be supplied as the :in option of the configuration hash") unless enum.respond_to?("include?")
 
         validates_each(attr_names, configuration) do |record, attr_name, value|
-          record.errors.add(attr_name, configuration[:message]) unless enum.include?(value)
+          record.errors.add(attr_name, configuration[:message] % value) unless enum.include?(value)
         end
       end
 
@@ -722,6 +723,7 @@ module ActiveRecord
       #   class Person < ActiveRecord::Base
       #     validates_exclusion_of :username, :in => %w( admin superuser ), :message => "You don't belong here"
       #     validates_exclusion_of :age, :in => 30..60, :message => "This site is only for under 30 and over 60"
+      #     validates_exclusion_of :format, :in => %w( mov avi ), :message => "extension %s is not allowed"
       #   end
       #
       # Configuration options:
@@ -744,7 +746,7 @@ module ActiveRecord
         raise(ArgumentError, "An object with the method include? is required must be supplied as the :in option of the configuration hash") unless enum.respond_to?("include?")
 
         validates_each(attr_names, configuration) do |record, attr_name, value|
-          record.errors.add(attr_name, configuration[:message]) if enum.include?(value)
+          record.errors.add(attr_name, configuration[:message] % value) if enum.include?(value)
         end
       end
 
