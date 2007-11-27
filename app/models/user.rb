@@ -1,8 +1,10 @@
 require 'digest/sha1'
+
 class User < ActiveRecord::Base
   has_many :projects
   has_many :permissions
   has_many :repositories, :through => :permissions
+  has_many :ssh_keys
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password
@@ -15,7 +17,6 @@ class User < ActiveRecord::Base
   validates_length_of       :login,    :within => 3..40
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
-  validates_format_of       :ssh_key, :with => /^ssh-[a-z0-9]{3,4} .+$/ims, :allow_nil => true
   
   before_save :encrypt_password
   before_create :make_activation_code 

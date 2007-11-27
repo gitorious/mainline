@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 9) do
+ActiveRecord::Schema.define(:version => 10) do
 
   create_table "permissions", :force => true do |t|
     t.integer  "user_id"
@@ -54,6 +54,15 @@ ActiveRecord::Schema.define(:version => 9) do
   add_index "repositories", ["user_id"], :name => "index_repositories_on_user_id"
   add_index "repositories", ["parent_id"], :name => "index_repositories_on_parent_id"
 
+  create_table "ssh_keys", :force => true do |t|
+    t.integer  "user_id"
+    t.text     "key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ssh_keys", ["user_id"], :name => "index_ssh_keys_on_user_id"
+
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
@@ -65,10 +74,11 @@ ActiveRecord::Schema.define(:version => 9) do
     t.datetime "remember_token_expires_at"
     t.string   "activation_code",           :limit => 40
     t.datetime "activated_at"
-    t.text     "ssh_key"
+    t.integer  "ssh_key_id"
   end
 
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["email"], :name => "index_users_on_email"
+  add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
 
 end
