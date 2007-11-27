@@ -21,9 +21,7 @@ class Project < ActiveRecord::Base
     :if => proc{|record| !record.bugtracker_url.blank? },
     :message => "Must begin with http(s)"
     
-  before_validation do |record|
-    record.slug.downcase! if record.slug
-  end
+  before_validation :downcase_slug
   after_create :create_mainline_repository
   
   LICENSES = [
@@ -49,6 +47,10 @@ class Project < ActiveRecord::Base
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => self.slug)
+    end
+    
+    def downcase_slug
+      slug.downcase! if slug
     end
   
 end
