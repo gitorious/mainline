@@ -1,0 +1,20 @@
+<% @page_title = "Account" -%>
+
+<h2>Account details</h2>
+<ul>
+  <li>username: <%= current_user.login -%></li>
+  <li>email: <%= current_user.email -%></li>
+</ul>
+<p>
+  <%= link_to "change email/password", edit_account_path -%>
+</p>
+
+<h2>SSH Keys</h2>
+
+<% current_user.ssh_keys.each do |ssh_key| -%>
+  <%= ssh_key.key -%>
+<% end -%>
+
+<p>
+  <%= link_to "Add an SSH key to your account" -%>
+</p>

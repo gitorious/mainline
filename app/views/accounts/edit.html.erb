@@ -1,0 +1,18 @@
+<h1>Edit your account</h1>
+<%= error_messages_for :user -%>
+
+<% form_for @user, :url => account_path do |f| -%>
+  <p>
+    <%= f.label :email -%><br />
+    <%= f.text_field :email, :class => "text" -%>
+  </p>   
+  <p>    
+    <%= f.label :password -%><br />
+    <%= f.password_field :password, :class => "text" -%>
+  </p>   
+  <p>    
+    <%= f.label :password_confirmation -%><br />
+    <%= f.password_field :password_confirmation, :class => "text" -%>
+  </p>
+  <%= f.submit "Save" -%>
+<% end -%>

@@ -15,6 +15,7 @@
       <div class="login-logout">
         <p>(
           <%- if logged_in? -%>
+            <%= link_to "account", account_path  -%> | 
             <%= link_to "logout", logout_path -%>
           <%- else -%>
             <%= link_to "login", login_path -%>
