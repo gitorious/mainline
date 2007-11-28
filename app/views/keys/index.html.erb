@@ -1,0 +1,17 @@
+<% @page_title = "SSH Keys" -%>
+
+<h1>Your SSH keys</h1>
+
+<ul>
+<% @ssh_keys.each do |ssh_key| -%>
+  <li><%= render :partial => "key", :locals => {:ssh_key => ssh_key} -%></li>
+<% end -%>
+</ul>
+
+<p><%= link_to "Add", new_account_key_path  -%></p>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Account", account_path -%></li>
+  </ul>
+<% end -%>

@@ -1,0 +1,8 @@
+<p><code><%= ssh_key.key -%></code></p>
+<p>
+  <small>
+  <%= link_to "edit", edit_account_key_path(ssh_key) -%> |
+  <%= button_to "delete", account_key_path(ssh_key),
+             :confirm => "Are you sure?", :method => :delete, :class => "inline" -%>
+  </small>
+</p>

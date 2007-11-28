@@ -12,9 +12,10 @@
 <h2>SSH Keys</h2>
 
 <% current_user.ssh_keys.each do |ssh_key| -%>
-  <%= ssh_key.key -%>
+  <%= render :partial => "keys/key", :locals => {:ssh_key => ssh_key} -%>
+  <hr />
 <% end -%>
 
 <p>
-  <%= link_to "Add an SSH key to your account" -%>
+  <%= link_to "Add an SSH key to your account", account_keys_path -%>
 </p>

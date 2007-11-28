@@ -1,0 +1,17 @@
+<h1>Add a new SSH key</h1>
+
+<%= error_messages_for :ssh_key -%>
+
+<% form_for @ssh_key, :url => account_key_path(@ssh_key) do |f| -%>
+  <p>
+    <%= f.label :key -%><br />
+    <%= f.text_area :key, :class => "text medium" -%>
+  </p>
+  <%= f.submit "Save" -%>
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Account", account_path -%></li>
+  </ul>
+<% end -%>

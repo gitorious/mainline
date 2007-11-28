@@ -1,0 +1,7 @@
+<%= render :partial => "key", :locals => {:ssh_key => @ssh_key} -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Account", account_path -%></li>
+  </ul>
+<% end -%>

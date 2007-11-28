@@ -20,7 +20,9 @@ ActionController::Routing::Routes.draw do |map|
   
   map.root :controller => "projects" # TODO change eventually
   
-  map.resource :account
+  map.resource :account do |account|
+    account.resources :keys
+  end
   map.resources :users 
   map.resource  :sessions
   map.resources :projects do |projects|
