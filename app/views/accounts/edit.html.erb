@@ -16,3 +16,9 @@
   </p>
   <%= f.submit "Save" -%>
 <% end -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Account", account_path -%></li>
+  </ul>
+<% end -%>
