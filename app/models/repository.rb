@@ -1,8 +1,8 @@
 class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
-  has_many    :permissions
-  has_many    :committers, :through => :permissions, :source => :user, :dependent => :destroy
+  has_many    :permissions, :dependent => :destroy
+  has_many    :committers, :through => :permissions, :source => :user
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
@@ -11,8 +11,7 @@ class Repository < ActiveRecord::Base
   after_create :add_user_as_committer, :create_git_repository
   
   BASE_REPOSITORY_URL = "keysersource.org"
-  BASE_PATH = (RAILS_ENV == "test" ? "../test_repositories" : "../repositories")
-  BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, BASE_PATH)
+  BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
   
   def gitdir
     "#{name}.git"
@@ -32,10 +31,15 @@ class Repository < ActiveRecord::Base
   end
   
   def create_git_repository
-    FileUtils.mkdir(full_repository_path, :mode => 0750)
-    Dir.chdir(full_repository_path) do |path| 
-      Git.init(path, :repository => path)
-    end
+    git_backend.create(full_repository_path)
+  end
+  
+  def has_commits?
+    git_backend.repository_has_commits?(full_repository_path)
+  end
+  
+  def git_backend
+    RAILS_ENV == "test" ? MockGitBackend : GitBackend
   end
     
   protected

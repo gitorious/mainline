@@ -68,16 +68,17 @@ describe Repository do
   end
   
   it "inits the git repository" do
-    path = @repository.full_repository_path 
-    FileUtils.should_receive(:mkdir).with(path, :mode => 0750).and_return(true)
-    Dir.should_receive(:chdir).with(path).and_yield(path)
-    Git.should_receive(:init).with(path, :repository => path).and_return(true)
-    
+    @repository.git_backend.should_receive(:create).with(@repository.full_repository_path).and_return(true)
     @repository.create_git_repository
   end
   
   it "creates an repository after save" do
     @repository.should_receive(:create_git_repository).and_return(true)
     @repository.save
+  end
+  
+  it "knows if has commits" do
+    @repository.git_backend.should_receive(:repository_has_commits?).and_return(true)
+    @repository.has_commits?.should == true
   end
 end

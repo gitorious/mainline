@@ -53,7 +53,7 @@ describe RepositoriesController, "create" do
   end
   
   def do_post(data)
-    post :create, :project_id => @project, :repository => data
+    post :create, :project_id => @project.id, :repository => data
   end
   
   it "should require login" do
@@ -68,7 +68,7 @@ describe RepositoriesController, "create" do
   end
   
   it "sets the first repository as the main line one" do
-    @project.repositories.destroy_all
+    @project.repositories.each(&:destroy)
     do_post(:name => "foo")
     response.should be_redirect
     @project.reload

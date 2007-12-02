@@ -12,12 +12,12 @@ Spec::Runner.configure do |config|
   config.include AuthenticatedTestHelper
   config.include KeyserSource::SpecDSL
   
-  config.after(:each) do
-    path = File.join(Repository::BASE_REPOSITORY_DIR, "*")
-    Dir[path].each do |dir|
-      `rm -rf #{dir}`
-    end
-  end
+  # config.after(:each) do
+  #   path = File.join(Repository::BASE_REPOSITORY_DIR, "*")
+  #   Dir[path].each do |dir|
+  #     `rm -rf #{dir}`
+  #   end
+  # end
 
   # You can declare fixtures for each behaviour like this:
   #   describe "...." do
