@@ -6,6 +6,7 @@ class Repository < ActiveRecord::Base
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
+  validates_uniqueness_of :name, :scope => :project_id
   
   before_save :set_as_mainline_if_first
   after_create :add_user_as_committer, :create_git_repository

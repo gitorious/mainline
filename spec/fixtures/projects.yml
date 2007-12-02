@@ -7,3 +7,11 @@ johans:
   description: this is johans project yo
   user_id: 1
   created_at: <%= 5.days.ago.to_s(:db) %>
+moes:
+  id: 2
+  title: moes project
+  slug: moes-project
+  updated_at: <%= 2.days.ago.to_s(:db) %>
+  description: moes fancy project
+  user_id: 2
+  created_at: <%= 5.days.ago.to_s(:db) %>

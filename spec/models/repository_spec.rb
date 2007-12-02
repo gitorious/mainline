@@ -2,11 +2,15 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Repository do
   before(:each) do
-    @repository = Repository.new({
+    @repository = new_repos
+  end
+  
+  def new_repos(opts={})
+    Repository.new({
       :name => "foo",
       :project => projects(:johans),
       :user => users(:johan)
-    })
+    }.merge(opts))
   end
   
   it "should have valid associations" do
@@ -30,6 +34,15 @@ describe Repository do
     
     @repository.name = "foo42"
     @repository.should be_valid
+  end
+  
+  it "has a unique name within a project" do
+    @repository.save
+    repos = new_repos(:name => "FOO")
+    repos.should_not be_valid
+    repos.should have(1).error_on(:name)
+    
+    new_repos(:project => projects(:moes)).should be_valid
   end
   
   it "sets itself as mainline if it's the first repository for a project" do
