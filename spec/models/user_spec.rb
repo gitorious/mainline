@@ -101,6 +101,8 @@ describe User do
     u = users(:johan)
     repo = repositories(:johans)
     u.can_write_to?(repo).should == true
+    u.can_write_to?(repositories(:moes)).should == false
+    
     u.permissions.destroy_all
     u.reload
     u.can_write_to?(repo).should == false
