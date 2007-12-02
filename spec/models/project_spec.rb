@@ -26,6 +26,14 @@ describe Project do
     project.should_not be_valid
   end
   
+  it "should have a unique slug to be valid" do
+    p1 = create_project
+    p1.save!
+    p2 = create_project(:slug => "FOO")
+    p2.should_not be_valid
+    p2.should have(1).error_on(:slug)
+  end
+  
   it "should have an alhanumeric slug" do
     project = create_project(:slug => "asd asd")
     project.valid?

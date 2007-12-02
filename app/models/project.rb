@@ -9,6 +9,7 @@ class Project < ActiveRecord::Base
   URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
   
   validates_presence_of :title, :user_id, :slug
+  validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^[a-z0-9_\-]+$/i, 
     :message => "must match something in the range of [a-z0-9_\-]"
   validates_format_of :home_url, :with => URL_FORMAT_RE, 
