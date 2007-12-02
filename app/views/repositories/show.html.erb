@@ -22,7 +22,7 @@ git clone <%= @repository.clone_url -%>
   <% @recent_commits.each do |commit| -%>
   <li class="commit_item">
     <a href=""><%= truncate(h(commit.sha), 16) -%></a> 
-    by <strong><%=h commit.author.name -%></strong> on <%=h commit.author.date -%><br />
+    by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago<br />
     <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
   </li>
   <% end -%>
