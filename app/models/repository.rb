@@ -2,7 +2,7 @@ class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
   has_many    :permissions
-  has_many    :committers, :through => :permissions, :source => :user
+  has_many    :committers, :through => :permissions, :source => :user, :dependent => :destroy
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
@@ -11,7 +11,8 @@ class Repository < ActiveRecord::Base
   after_create :add_user_as_committer, :create_git_repository
   
   BASE_REPOSITORY_URL = "keysersource.org"
-  BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
+  BASE_PATH = (RAILS_ENV == "test" ? "../test_repositories" : "../repositories")
+  BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, BASE_PATH)
   
   def gitdir
     "#{name}.git"

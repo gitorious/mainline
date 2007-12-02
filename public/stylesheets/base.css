@@ -335,3 +335,8 @@ table.repository_list td {
   padding: 10px;
   border: 1px solid #ccc;
 }
+
+pre.commit_message {
+  margin-top: 10px;
+  margin-left: 10px;
+}

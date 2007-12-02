@@ -16,17 +16,19 @@
 git clone <%= @repository.clone_url -%>
 </pre>
 
-<h2>Recent commits <small>(<a href="">Browse</a>)</small></h2>
+<h2>Recent commits <!-- <small>(<a href="">Browse</a>)</small> --></h2>
 <ul>
-  <li>
-    <a href=""><%= truncate("0143292b342622a52d13d673ce698f527f791354", 10) -%></a> by <strong>Johan Sørensen</strong> on 2006-11-10 12:34<br />
-    <p>this is another commit</p>
+  <% begin -%>
+  <% @recent_commits.each do |commit| -%>
+  <li class="commit_item">
+    <a href=""><%= truncate(h(commit.sha), 16) -%></a> 
+    by <strong><%=h commit.author.name -%></strong> on <%=h commit.author.date -%><br />
+    <pre class="commit_message"><%= h(commit.message) -%></pre>
   </li>
-  
-  <li>
-    <a href=""><%= truncate("28836340a9ca0aa4af643efc5c0ef36cfd71beaa", 10) -%></a> by <strong>Johan Sørensen</strong> on 2006-11-10 12:34<br />
-    <p>this is the commit message</p>
-  </li>
+  <% end -%>
+  <% rescue Git::GitExecuteError -%>
+    <li><em>Error getting data or no commits yet</em></li>
+  <% end -%>
 </ul>
 
 <% content_for :sidebar do -%>  

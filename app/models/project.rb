@@ -1,6 +1,7 @@
 class Project < ActiveRecord::Base
   belongs_to  :user
-  has_many    :repositories, :order => "mainline desc, created_at desc"
+  has_many    :repositories, :order => "mainline desc, created_at desc",
+    :dependent => :destroy
   has_one     :mainline_repository, :conditions => ["mainline = ?", true], 
     :class_name => "Repository"
   has_many    :branch_repositories, :conditions => ["mainline = ?", false],

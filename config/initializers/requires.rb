@@ -1,2 +1,2 @@
 require "fileutils"
-require "git" #ruby/git gem
+require "rubygit/lib/git"

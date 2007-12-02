@@ -5,6 +5,7 @@ class RepositoriesController < ApplicationController
     
   def show
     @repository = @project.repositories.find(params[:id])
+    @recent_commits = Git.bare(@repository.full_repository_path).log(10)
   end
   
   def new
