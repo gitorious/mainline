@@ -23,7 +23,7 @@ git clone <%= @repository.clone_url -%>
   <li class="commit_item">
     <a href=""><%= truncate(h(commit.sha), 16) -%></a> 
     by <strong><%=h commit.author.name -%></strong> on <%=h commit.author.date -%><br />
-    <pre class="commit_message"><%= h(commit.message) -%></pre>
+    <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
   </li>
   <% end -%>
   <% rescue Git::GitExecuteError -%>
