@@ -6,7 +6,7 @@ class Repository < ActiveRecord::Base
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
-  validates_uniqueness_of :name, :scope => :project_id
+  validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
   before_save :set_as_mainline_if_first
   after_create :add_user_as_committer, :create_git_repository
@@ -15,7 +15,7 @@ class Repository < ActiveRecord::Base
   BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
   
   def gitdir
-    "#{name}.git"
+    File.join(project.slug, "#{name}.git")
   end
   
   def clone_url
@@ -27,7 +27,6 @@ class Repository < ActiveRecord::Base
   end
   
   def full_repository_path
-    #File.expand_path(File.join(BASE_REPOSITORY_DIR, project.slug, gitdir))
     File.expand_path(File.join(BASE_REPOSITORY_DIR, gitdir))
   end
   

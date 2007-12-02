@@ -11,7 +11,7 @@ describe GitBackend do
   
   it "creates a bare git repository" do
     path = @repository.full_repository_path 
-    FileUtils.should_receive(:mkdir).with(path, :mode => 0750).and_return(true)
+    FileUtils.should_receive(:mkdir_p).with(path, :mode => 0750).and_return(true)
     Dir.should_receive(:chdir).with(path).and_yield(path)
     Git.should_receive(:init).with(path, :repository => path).and_return(true)
   

@@ -58,15 +58,15 @@ describe Repository do
   end
   
   it "has a gitdir name" do
-    @repository.gitdir.should == "foo.git"
+    @repository.gitdir.should == "#{@repository.project.slug}/foo.git"
   end
   
   it "has a push url" do
-    @repository.push_url.should == "git@keysersource.org:foo.git"
+    @repository.push_url.should == "git@keysersource.org:#{@repository.project.slug}/foo.git"
   end
   
   it "has a clone url" do
-    @repository.clone_url.should == "git://keysersource.org/foo.git"
+    @repository.clone_url.should == "git://keysersource.org/#{@repository.project.slug}/foo.git"
   end
   
   it "should assign the creator as a comitter on create" do 
@@ -76,7 +76,7 @@ describe Repository do
   end
   
   it "has a full repository_path" do
-    expected_dir = File.expand_path(File.join(RAILS_ROOT, "../repositories", "foo.git"))
+    expected_dir = File.expand_path(File.join(RAILS_ROOT, "../repositories", projects(:johans).slug, "foo.git"))
     @repository.full_repository_path.should == expected_dir
   end
   
