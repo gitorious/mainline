@@ -2,6 +2,7 @@
 johans:
   id: 1
   title: johans project
+  slug: johans-project
   updated_at: <%= 2.days.ago.to_s(:db) %>
   description: this is johans project yo
   user_id: 1

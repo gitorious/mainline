@@ -61,4 +61,23 @@ describe Repository do
     @repository.reload
     @repository.committers.should include(users(:johan))
   end
+  
+  it "has a full repository_path" do
+    expected_dir = File.expand_path(File.join(RAILS_ROOT, "../repositories", "foo.git"))
+    @repository.full_repository_path.should == expected_dir
+  end
+  
+  it "inits the git repository" do
+    path = @repository.full_repository_path 
+    FileUtils.should_receive(:mkdir).with(path, :mode => 0750).and_return(true)
+    Dir.should_receive(:chdir).with(path).and_yield(path)
+    Git.should_receive(:init).with(path, :repository => path).and_return(true)
+    
+    @repository.create_git_repository
+  end
+  
+  it "creates an repository after save" do
+    @repository.should_receive(:create_git_repository).and_return(true)
+    @repository.save
+  end
 end

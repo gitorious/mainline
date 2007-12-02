@@ -8,9 +8,10 @@ class Repository < ActiveRecord::Base
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
   
   before_save :set_as_mainline_if_first
-  after_create :add_user_as_committer
+  after_create :add_user_as_committer, :create_git_repository
   
   BASE_REPOSITORY_URL = "keysersource.org"
+  BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
   
   def gitdir
     "#{name}.git"
@@ -22,6 +23,18 @@ class Repository < ActiveRecord::Base
   
   def push_url
     "git@#{BASE_REPOSITORY_URL}:#{gitdir}"
+  end
+  
+  def full_repository_path
+    #File.expand_path(File.join(BASE_REPOSITORY_DIR, project.slug, gitdir))
+    File.expand_path(File.join(BASE_REPOSITORY_DIR, gitdir))
+  end
+  
+  def create_git_repository
+    FileUtils.mkdir(full_repository_path, :mode => 0750)
+    Dir.chdir(full_repository_path) do |path| 
+      Git.init(path, :repository => path)
+    end
   end
     
   protected
