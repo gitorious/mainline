@@ -26,7 +26,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users 
   map.resource  :sessions
   map.resources :projects do |projects|
-    projects.resources :repositories do |repo|
+    projects.resources(:repositories, :member => { :copy => :get, :create_copy => :post }) do |repo|
       repo.resources :committers, :name_prefix => nil
     end
   end

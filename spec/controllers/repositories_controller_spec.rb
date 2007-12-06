@@ -75,3 +75,54 @@ describe RepositoriesController, "create" do
     @project.repositories.first.mainline?.should == true
   end
 end
+
+describe RepositoriesController, "copy" do
+  
+  before(:each) do
+    login_as :johan
+    @project = projects(:johans)
+    @repository = @project.repositories.first
+  end
+  
+  def do_get()
+    get :copy, :project_id => @project, :id => @repository
+  end
+  
+  it "should require login" do
+    session[:user_id] = nil
+    do_get
+    response.should redirect_to(new_sessions_path)
+  end
+  
+  it "GET projects/1/repositories/3/clone is successful" do
+    do_get
+    response.should be_success
+    assigns[:repository_to_clone].should == @repository
+    assigns[:repository].should be_instance_of(Repository)
+  end
+end
+
+describe RepositoriesController, "clone" do
+  
+  before(:each) do
+    login_as :johan
+    @project = projects(:johans)
+    @repository = @project.repositories.first
+  end
+  
+  def do_post(opts={})
+    post(:create_copy, :project_id => @project, :id => @repository,
+      :repository => opts)
+  end
+  
+  it "should require login" do
+    session[:user_id] = nil
+    do_post
+    response.should redirect_to(new_sessions_path)
+  end
+  
+  it "post projects/1/repositories/3/create_copy is successful" do
+    do_post(:name => "foo-clone")
+    response.should be_redirect
+  end
+end

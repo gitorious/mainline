@@ -35,9 +35,10 @@ git clone <%= @repository.clone_url -%>
   <div class="user_list">
     <% if @repository.user == current_user -%>
     <ul class="links">
-    <li><%= link_to "+ Add committer", 
-            { :controller => "committers", :action => "new", :project_id => @project, 
-              :repository_id => @repository } -%></li>
+      <li><%= link_to "+ Clone repository", copy_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to "+ Add committer", 
+              { :controller => "committers", :action => "new", :project_id => @project, 
+                :repository_id => @repository } -%></li>
     </ul>
     <% end -%>
     

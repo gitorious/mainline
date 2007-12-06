@@ -1,6 +1,7 @@
 class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
+  belongs_to  :parent, :class_name => "Repository"
   has_many    :permissions, :dependent => :destroy
   has_many    :committers, :through => :permissions, :source => :user
   
@@ -10,6 +11,10 @@ class Repository < ActiveRecord::Base
   
   before_save :set_as_mainline_if_first
   after_create :add_user_as_committer, :create_git_repository
+  
+  def self.new_by_cloning(other)
+    new(:parent => other, :project => other.project)
+  end
   
   BASE_REPOSITORY_URL = "keysersource.org"
   BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")

@@ -94,4 +94,10 @@ describe Repository do
     @repository.git_backend.should_receive(:repository_has_commits?).and_return(true)
     @repository.has_commits?.should == true
   end
+  
+  it "should build a new repository by cloning another one" do
+    repos = Repository.new_by_cloning(@repository)
+    repos.parent.should == @repository
+    repos.project.should == @repository.project
+  end
 end

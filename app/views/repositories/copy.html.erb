@@ -1,0 +1,11 @@
+<h1>Create a clone of <%= @repository_to_clone.name -%></h1>
+
+<%= error_messages_for :repository -%>
+
+<% form_for @repository, :repository, :url => {:action => "create_copy"} do |f| -%>
+  <p>
+    <%= f.label :name -%><br />
+    <%= f.text_field :name, :class => "text" -%>
+  </p>
+  <%= f.submit -%>
+<% end -%>

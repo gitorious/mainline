@@ -1,7 +1,6 @@
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :only => [:new, :create, :destroy]
-  before_filter :find_project, 
-    :only => [:show, :new, :create, :edit, :update]
+  before_filter :login_required, :except => [:show]
+  before_filter :find_project
     
   def show
     @repository = @project.repositories.find(params[:id])
@@ -24,6 +23,24 @@ class RepositoriesController < ApplicationController
       redirect_to project_repository_path(@project, @repository)
     else
       render :action => "new"
+    end
+  end
+  
+  def copy
+    @repository_to_clone = @project.repositories.find(params[:id])
+    @repository = Repository.new_by_cloning(@repository_to_clone)
+  end
+  
+  def create_copy
+    @repository_to_clone = @project.repositories.find(params[:id])
+    @repository = Repository.new_by_cloning(@repository_to_clone)
+    @repository.name = params[:repository][:name]
+    @repository.user = current_user
+    if @repository.save
+      redirect_to project_repository_path(@project, @repository)
+    else
+      puts @repository.errors.full_messages.inspect
+      render :action => :copy
     end
   end
   
