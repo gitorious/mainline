@@ -249,7 +249,7 @@ module ActionView
 
         if priority_countries
           country_options += options_for_select(priority_countries, selected)
-          country_options += "<option value=\"\">-------------</option>\n"
+          country_options += "<option value=\"\" disabled=\"disabled\">-------------</option>\n"
         end
 
         return country_options + options_for_select(COUNTRIES, selected)
@@ -280,7 +280,7 @@ module ActionView
 
         if priority_zones
           zone_options += options_for_select(convert_zones[priority_zones], selected)
-          zone_options += "<option value=\"\">-------------</option>\n"
+          zone_options += "<option value=\"\" disabled=\"disabled\">-------------</option>\n"
 
           zones = zones.reject { |z| priority_zones.include?( z ) }
         end
@@ -319,8 +319,7 @@ module ActionView
           "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt",
           "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands (Malvinas)",
           "Faroe Islands", "Fiji", "Finland", "France", "French Guiana", "French Polynesia",
-          "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar",
-          "Great Britain", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea",
+          "French Southern Territories", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea",
           "Guinea-Bissau", "Guyana", "Haiti", "Heard and McDonald Islands", "Holy See (Vatican City State)",
           "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran, Islamic Republic of", "Iraq",
           "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya",

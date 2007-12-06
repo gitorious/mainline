@@ -122,6 +122,23 @@ class AssociationProxyTest < Test::Unit::TestCase
     developer = Developer.create :name => "Bryan", :salary => 50_000
     assert_equal 1, developer.reload.audit_logs.size
   end
+
+  def test_failed_reload_returns_nil
+    p = setup_dangling_association
+    assert_nil p.author.reload
+  end
+
+  def test_failed_reset_returns_nil
+    p = setup_dangling_association
+    assert_nil p.author.reset
+  end
+
+  def setup_dangling_association
+    josh = Author.create(:name => "Josh")
+    p = Post.create(:title => "New on Edge", :body => "More cool stuff!", :author => josh)
+    josh.destroy
+    p
+  end
 end
 
 class HasOneAssociationsTest < Test::Unit::TestCase
@@ -1979,6 +1996,12 @@ class HasAndBelongsToManyAssociationsTest < Test::Unit::TestCase
     david = projects(:action_controller).developers.first
     david.name = "DHH"
     assert_raises(ActiveRecord::ReadOnlyRecord) { david.save! }
+  end
+
+  def test_updating_attributes_on_rich_associations_with_limited_find_from_reflection
+    david = projects(:action_controller).selected_developers.first
+    david.name = "DHH"
+    assert_nothing_raised { david.save! }
   end
 
 

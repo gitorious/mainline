@@ -25,9 +25,9 @@ module ActionView
       # 23 hrs, 59 mins, 29 secs <-> 47 hrs, 59 mins, 29 secs                     # => 1 day
       # 47 hrs, 59 mins, 29 secs <-> 29 days, 23 hrs, 59 mins, 29 secs            # => [2..29] days
       # 29 days, 23 hrs, 59 mins, 30 secs <-> 59 days, 23 hrs, 59 mins, 29 secs   # => about 1 month
-      # 59 days, 23 hrs, 59 mins, 30 secs <-> 1 yr minus 31 secs                  # => [2..12] months
-      # 1 yr minus 30 secs <-> 2 yrs minus 31 secs                                # => about 1 year
-      # 2 yrs minus 30 secs <-> max time or date                                  # => over [2..X] years
+      # 59 days, 23 hrs, 59 mins, 30 secs <-> 1 yr minus 1 sec                    # => [2..12] months
+      # 1 yr <-> 2 yrs minus 1 secs                                               # => about 1 year
+      # 2 yrs <-> max time or date                                                # => over [2..X] years
       #
       # With include_seconds = true and the difference < 1 minute 29 seconds
       # 0-4   secs      # => less than 5 seconds
@@ -56,7 +56,6 @@ module ActionView
       #   distance_of_time_in_words(to_time, from_time, true)     # => over 6 years
       #   distance_of_time_in_words(Time.now, Time.now)           # => less than a minute
       #
-      # Note: Rails calculates one year as 365.25 days.
       def distance_of_time_in_words(from_time, to_time = 0, include_seconds = false)
         from_time = from_time.to_time if from_time.respond_to?(:to_time)
         to_time = to_time.to_time if to_time.respond_to?(:to_time)
@@ -213,7 +212,7 @@ module ActionView
       # Returns a set of html select-tags (one for year, month, day, hour, and minute) pre-selected with the +datetime+.
       # It's also possible to explicitly set the order of the tags using the <tt>:order</tt> option with an array of
       # symbols <tt>:year</tt>, <tt>:month</tt> and <tt>:day</tt> in the desired order. If you do not supply a Symbol, it
-      # will be appened onto the <tt>:order</tt> passed in. You can also add <tt>:date_separator</tt> and <tt>:time_separator</tt>
+      # will be appended onto the <tt>:order</tt> passed in. You can also add <tt>:date_separator</tt> and <tt>:time_separator</tt>
       # keys to the +options+ to control visual display of the elements.
       #
       # ==== Examples
@@ -226,7 +225,7 @@ module ActionView
       #   select_datetime()
       #
       #   # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
-      #   # with the fields ordered year, month, day rather then month, day, year.
+      #   # with the fields ordered year, month, day rather than month, day, year.
       #   select_datetime(my_date_time, :order => [:year, :month, :day])
       #
       #   # Generates a datetime select that defaults to the datetime in my_date_time (four days after today)
@@ -249,7 +248,7 @@ module ActionView
       # Returns a set of html select-tags (one for year, month, and day) pre-selected with the +date+.
       # It's possible to explicitly set the order of the tags using the <tt>:order</tt> option with an array of
       # symbols <tt>:year</tt>, <tt>:month</tt> and <tt>:day</tt> in the desired order. If you do not supply a Symbol, it
-      # will be appened onto the <tt>:order</tt> passed in.
+      # will be appended onto the <tt>:order</tt> passed in.
       #
       # ==== Examples
       #   my_date = Time.today + 6.days
@@ -261,7 +260,7 @@ module ActionView
       #   select_date()
       #
       #   # Generates a date select that defaults to the date in my_date (six days after today)
-      #   # with the fields ordered year, month, day rather then month, day, year.
+      #   # with the fields ordered year, month, day rather than month, day, year.
       #   select_date(my_date, :order => [:year, :month, :day])
       #
       #   # Generates a date select that discards the type of the field and defaults to the date in 

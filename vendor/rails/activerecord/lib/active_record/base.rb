@@ -118,7 +118,7 @@ module ActiveRecord #:nodoc:
   # question mark is supposed to represent. In those cases, you can resort to named bind variables instead. That's done by replacing
   # the question marks with symbols and supplying a hash with values for the matching symbol keys:
   #
-  #   Company.find(:first, [
+  #   Company.find(:first, :conditions => [
   #     "id = :id AND name = :name AND division = :division AND created_at > :accounting_date",
   #     { :id => 3, :name => "37signals", :division => "First", :accounting_date => '2005-01-01' }
   #   ])
@@ -155,6 +155,20 @@ module ActiveRecord #:nodoc:
   # You can alternatively use self[:attribute]=(value) and self[:attribute] instead of write_attribute(:attribute, value) and
   # read_attribute(:attribute) as a shorter form.
   #
+  # == Attribute query methods
+  #
+  # In addition to the basic accessors, query methods are also automatically available on the Active Record object.
+  # Query methods allow you to test whether an attribute value is present.
+  # 
+  # For example, an Active Record User with the <tt>name</tt> attribute has a <tt>name?</tt> method that you can call
+  # to determine whether the user has a name:
+  #
+  #   user = User.new(:name => "David")
+  #   user.name? # => true
+  #
+  #   anonymous = User.new(:name => "")
+  #   anonymous.name? # => false
+  #
   # == Accessing attributes before they have been typecasted
   #
   # Sometimes you want to be able to read the raw attribute data without having the column-determined typecast run its course first.
@@ -170,12 +184,12 @@ module ActiveRecord #:nodoc:
   # Dynamic attribute-based finders are a cleaner way of getting (and/or creating) objects by simple queries without turning to SQL. They work by
   # appending the name of an attribute to <tt>find_by_</tt> or <tt>find_all_by_</tt>, so you get finders like Person.find_by_user_name,
   # Person.find_all_by_last_name, Payment.find_by_transaction_id. So instead of writing
-  # <tt>Person.find(:first, ["user_name = ?", user_name])</tt>, you just do <tt>Person.find_by_user_name(user_name)</tt>.
-  # And instead of writing <tt>Person.find(:all, ["last_name = ?", last_name])</tt>, you just do <tt>Person.find_all_by_last_name(last_name)</tt>.
+  # <tt>Person.find(:first, :conditions => ["user_name = ?", user_name])</tt>, you just do <tt>Person.find_by_user_name(user_name)</tt>.
+  # And instead of writing <tt>Person.find(:all, :conditions => ["last_name = ?", last_name])</tt>, you just do <tt>Person.find_all_by_last_name(last_name)</tt>.
   #
   # It's also possible to use multiple attributes in the same find by separating them with "_and_", so you get finders like
   # <tt>Person.find_by_user_name_and_password</tt> or even <tt>Payment.find_by_purchaser_and_state_and_country</tt>. So instead of writing
-  # <tt>Person.find(:first, ["user_name = ? AND password = ?", user_name, password])</tt>, you just do
+  # <tt>Person.find(:first, :conditions => ["user_name = ? AND password = ?", user_name, password])</tt>, you just do
   # <tt>Person.find_by_user_name_and_password(user_name, password)</tt>.
   #
   # It's even possible to use all the additional parameters to find. For example, the full interface for Payment.find_all_by_amount
@@ -440,16 +454,45 @@ module ActiveRecord #:nodoc:
         end
       end
       
-      # Works like find(:all), but requires a complete SQL string. Examples:
-      #   Post.find_by_sql "SELECT p.*, c.author FROM posts p, comments c WHERE p.id = c.post_id"
-      #   Post.find_by_sql ["SELECT * FROM posts WHERE author = ? AND created > ?", author_id, start_date]
+      #
+      # Executes a custom sql query against your database and returns all the results.  The results will 
+      # be returned as an array with columns requested encapsulated as attributes of the model you call 
+      # this method from.  If you call +Product.find_by_sql+ then the results will be returned in a Product 
+      # object with the attributes you specified in the SQL query.
+      #
+      # If you call a complicated SQL query which spans multiple tables the columns specified by the 
+      # SELECT will be attributes of the model, whether or not they are columns of the corresponding 
+      # table.
+      #
+      # The +sql+ parameter is a full sql query as a string.  It will be called as is, there will be 
+      # no database agnostic conversions performed.  This should be a last resort because using, for example,  
+      # MySQL specific terms will lock you to using that particular database engine or require you to 
+      # change your call if you switch engines
+      #
+      # ==== Examples
+      #   # A simple sql query spanning multiple tables
+      #   Post.find_by_sql "SELECT p.title, c.author FROM posts p, comments c WHERE p.id = c.post_id"
+      #   > [#<Post:0x36bff9c @attributes={"title"=>"Ruby Meetup", "first_name"=>"Quentin"}>, ...]
+      #
+      #   # You can use the same string replacement techniques as you can with ActiveRecord#find
+      #   Post.find_by_sql ["SELECT title FROM posts WHERE author = ? AND created > ?", author_id, start_date]
+      #   > [#<Post:0x36bff9c @attributes={"first_name"=>"The Cheap Man Buys Twice"}>, ...]
       def find_by_sql(sql)
         connection.select_all(sanitize_sql(sql), "#{name} Load").collect! { |record| instantiate(record) }
       end
 
-      # Returns true if the given +id+ represents the primary key of a record in the database, false otherwise.
-      # You can also pass a set of SQL conditions. 
-      # Example:
+      # Checks whether a record exists in the database that matches conditions given.  These conditions 
+      # can either be a single integer representing a primary key id to be found, or a condition to be 
+      # matched like using ActiveRecord#find.
+      #
+      # The +id_or_conditions+ parameter can be an Integer or a String if you want to search the primary key 
+      # column of the table for a matching id, or if you're looking to match against a condition you can use 
+      # an Array or a Hash.
+      #
+      # Possible gotcha: You can't pass in a condition as a string e.g. "name = 'Jamie'", this would be 
+      # sanitized and then queried against the primary key column as "id = 'name = \'Jamie"
+      #
+      # ==== Examples
       #   Person.exists?(5)
       #   Person.exists?('5')
       #   Person.exists?(:name => "David")
@@ -460,8 +503,17 @@ module ActiveRecord #:nodoc:
         false
       end
 
-      # Creates an object, instantly saves it as a record (if the validation permits it), and returns it. If the save
-      # fails under validations, the unsaved object is still returned.
+      # Creates an object (or multiple objects) and saves it to the database, if validations pass.  
+      # The resulting object is returned whether the object was saved successfully to the database or not.
+      #
+      # The +attributes+ parameter can be either be a Hash or an Array of Hashes.  These Hashes describe the
+      # attributes on the objects that are to be created.
+      #
+      # ==== Examples
+      #   # Create a single new object
+      #   User.create(:first_name => 'Jamie')
+      #   # Create an Array of new objects
+      #   User.create([{:first_name => 'Jamie'}, {:first_name => 'Jeremy'}])
       def create(attributes = nil)
         if attributes.is_a?(Array)
           attributes.collect { |attr| create(attr) }
@@ -472,16 +524,20 @@ module ActiveRecord #:nodoc:
         end
       end
 
-      # Finds the record from the passed +id+, instantly saves it with the passed +attributes+ (if the validation permits it),
-      # and returns it. If the save fails under validations, the unsaved object is still returned.
+      # Updates an object (or multiple objects) and saves it to the database, if validations pass.
+      # The resulting object is returned whether the object was saved successfully to the database or not.
       #
-      # The arguments may also be given as arrays in which case the update method is called for each pair of +id+ and 
-      # +attributes+ and an array of objects is returned.
+      # ==== Options
       #
-      # Example of updating one record:
+      # +id+          This should be the id or an array of ids to be updated
+      # +attributes+  This should be a Hash of attributes to be set on the object, or an array of Hashes.
+      #
+      # ==== Examples
+      #
+      #   # Updating one record:
       #   Person.update(15, {:user_name => 'Samuel', :group => 'expert'})
       # 
-      # Example of updating multiple records:
+      #   # Updating multiple records:
       #   people = { 1 => { "first_name" => "David" }, 2 => { "first_name" => "Jeremy"} } 	
       #   Person.update(people.keys, people.values)
       def update(id, attributes)
@@ -495,24 +551,72 @@ module ActiveRecord #:nodoc:
         end
       end
 
-      # Deletes the record with the given +id+ without instantiating an object first. If an array of ids is provided, all of them
-      # are deleted.
+      # Delete an object (or multiple objects) where the +id+ given matches the primary_key.  A SQL +DELETE+ command
+      # is executed on the database which means that no callbacks are fired off running this.  This is an efficient method
+      # of deleting records that don't need cleaning up after or other actions to be taken.
+      # 
+      # Objects are _not_ instantiated with this method.
+      #
+      # ==== Options
+      # 
+      # +id+  Can be either an Integer or an Array of Integers
+      #
+      # ==== Examples
+      #
+      #   # Delete a single object
+      #   Todo.delete(1)
+      #   
+      #   # Delete multiple objects
+      #   todos = [1,2,3]
+      #   Todo.delete(todos)
       def delete(id)
         delete_all([ "#{connection.quote_column_name(primary_key)} IN (?)", id ])
       end
 
-      # Destroys the record with the given +id+ by instantiating the object and calling #destroy (all the callbacks are the triggered).
-      # If an array of ids is provided, all of them are destroyed.
+      # Destroy an object (or multiple objects) that has the given id, the object is instantiated first,
+      # therefore all callbacks and filters are fired off before the object is deleted.  This method is
+      # less efficient than ActiveRecord#delete but allows cleanup methods and other actions to be run.
+      # 
+      # This essentially finds the object (or multiple objects) with the given id, creates a new object 
+      # from the attributes, and then calls destroy on it.
+      #
+      # ==== Options
+      # 
+      # +id+  Can be either an Integer or an Array of Integers
+      #
+      # ==== Examples
+      #
+      #   # Destroy a single object
+      #   Todo.destroy(1)
+      #   
+      #   # Destroy multiple objects
+      #   todos = [1,2,3]
+      #   Todo.destroy(todos)
       def destroy(id)
         id.is_a?(Array) ? id.each { |id| destroy(id) } : find(id).destroy
       end
 
-      # Updates all records with the SET-part of an SQL update statement in +updates+ and returns an integer with the number of rows updated.
-      # A subset of the records can be selected by specifying +conditions+. Example:
-      #   Billing.update_all "category = 'authorized', approved = 1", "author = 'David'"
+      # Updates all records with details given if they match a set of conditions supplied, limits and order can
+      # also be supplied.
       #
-      # Optional :order and :limit options may be given as the third parameter,
-      # but their behavior is database-specific.
+      # ==== Options
+      #
+      # +updates+     A String of column and value pairs that will be set on any records that match conditions
+      # +conditions+  An SQL fragment like "administrator = 1" or [ "user_name = ?", username ]. 
+      #               See conditions in the intro for more info.
+      # +options+     Additional options are :limit and/or :order, see the examples for usage.
+      #
+      # ==== Examples
+      #
+      #   # Update all billing objects with the 3 different attributes given
+      #   Billing.update_all( "category = 'authorized', approved = 1, author = 'David'" )
+      #   
+      #   # Update records that match our conditions
+      #   Billing.update_all( "author = 'David'", "title LIKE '%Rails%'" )
+      #
+      #   # Update records that match our conditions but limit it to 5 ordered by date
+      #   Billing.update_all( "author = 'David'", "title LIKE '%Rails%'", 
+      #                         :order => 'created_at', :limit => 5 )
       def update_all(updates, conditions = nil, options = {})
         sql  = "UPDATE #{table_name} SET #{sanitize_sql_for_assignment(updates)} "
         scope = scope(:find)
@@ -560,7 +664,19 @@ module ActiveRecord #:nodoc:
       # with the given ID, altering the given hash of counters by the amount
       # given by the corresponding value:
       #
+      # ==== Options
+      # 
+      # +id+        The id of the object you wish to update a counter on
+      # +counters+  An Array of Hashes containing the names of the fields 
+      #             to update as keys and the amount to update the field by as
+      #             values
+      # 
+      # ==== Examples
+      # 
+      #   # For the Post with id of 5, decrement the comment_count by 1, and 
+      #   # increment the action_count by 1
       #   Post.update_counters 5, :comment_count => -1, :action_count => 1
+      #   # Executes the following SQL:
       #   # UPDATE posts
       #   #    SET comment_count = comment_count - 1,
       #   #        action_count = action_count + 1
@@ -628,7 +744,7 @@ module ActiveRecord #:nodoc:
       #
       # To start from an all-closed default and enable attributes as needed, have a look at attr_accessible.
       def attr_protected(*attributes)
-        write_inheritable_array("attr_protected", attributes - (protected_attributes || []))
+        write_inheritable_attribute("attr_protected", Set.new(attributes.map(&:to_s)) + (protected_attributes || []))
       end
 
       # Returns an array of all the attributes that have been protected from mass-assignment.
@@ -662,7 +778,7 @@ module ActiveRecord #:nodoc:
       #   customer.credit_rating = "Average"
       #   customer.credit_rating # => "Average"
       def attr_accessible(*attributes)
-        write_inheritable_array("attr_accessible", attributes - (accessible_attributes || []))
+        write_inheritable_attribute("attr_accessible", Set.new(attributes.map(&:to_s)) + (accessible_attributes || []))
       end
 
       # Returns an array of all the attributes that have been made accessible to mass-assignment.
@@ -672,7 +788,7 @@ module ActiveRecord #:nodoc:
 
        # Attributes listed as readonly can be set for a new record, but will be ignored in database updates afterwards.
        def attr_readonly(*attributes)
-         write_inheritable_array("attr_readonly", attributes - (readonly_attributes || []))
+         write_inheritable_attribute("attr_readonly", Set.new(attributes.map(&:to_s)) + (readonly_attributes || []))
        end
 
        # Returns an array of all the attributes that have been specified as readonly.
@@ -707,14 +823,23 @@ module ActiveRecord #:nodoc:
 
       # Guesses the table name (in forced lower-case) based on the name of the class in the inheritance hierarchy descending
       # directly from ActiveRecord. So if the hierarchy looks like: Reply < Message < ActiveRecord, then Message is used
-      # to guess the table name from even when called on Reply. The rules used to do the guess are handled by the Inflector class
+      # to guess the table name even when called on Reply. The rules used to do the guess are handled by the Inflector class
       # in Active Support, which knows almost all common English inflections. You can add new inflections in config/initializers/inflections.rb.
       #
       # Nested classes are given table names prefixed by the singular form of
-      # the parent's table name. Example:
+      # the parent's table name. Enclosing modules are not considered. Examples:
+      #
+      #   class Invoice < ActiveRecord::Base; end;
       #   file                  class               table_name
       #   invoice.rb            Invoice             invoices
-      #   invoice/lineitem.rb   Invoice::Lineitem   invoice_lineitems
+      #
+      #   class Invoice < ActiveRecord::Base; class Lineitem < ActiveRecord::Base; end; end;
+      #   file                  class               table_name
+      #   invoice.rb            Invoice::Lineitem   invoice_lineitems
+      #
+      #   module Invoice; class Lineitem < ActiveRecord::Base; end; end;
+      #   file                  class               table_name
+      #   invoice/lineitem.rb   Invoice::Lineitem   lineitems
       #
       # Additionally, the class-level table_name_prefix is prepended and the
       # table_name_suffix is appended.  So if you have "myapp_" as a prefix,
@@ -1806,6 +1931,21 @@ module ActiveRecord #:nodoc:
         record
       end
 
+      # Returns an instance of the specified klass with the attributes of the current record. This is mostly useful in relation to
+      # single-table inheritance structures where you want a subclass to appear as the superclass. This can be used along with record
+      # identification in Action Pack to allow, say, Client < Company to do something like render :partial => @client.becomes(Company)
+      # to render that instance using the companies/company partial instead of clients/client.
+      #
+      # Note: The new instance will share a link to the same attributes as the original class. So any change to the attributes in either
+      # instance will affect the other.
+      def becomes(klass)
+        returning klass.new do |became|
+          became.instance_variable_set("@attributes", @attributes)
+          became.instance_variable_set("@attributes_cache", @attributes_cache)
+          became.instance_variable_set("@new_record", new_record?)
+        end
+      end
+
       # Updates a single attribute and saves the record. This is especially useful for boolean flags on existing records.
       # Note: This method is overwritten by the Validation module that'll make sure that updates made with this method
       # aren't subjected to validation checks. Hence, attributes can be updated even if the full object isn't valid.
@@ -1939,7 +2079,7 @@ module ActiveRecord #:nodoc:
         value = read_attribute(attr_name)
 
         if value.is_a?(String) && value.length > 50
-          %("#{value[0..50]}...")
+          "#{value[0..50]}...".inspect
         elsif value.is_a?(Date) || value.is_a?(Time)
           %("#{value.to_s(:db)}")
         else
@@ -1988,25 +2128,28 @@ module ActiveRecord #:nodoc:
         id.hash
       end
 
-      # Just freeze the attributes hash, such that associations are still accessible even on destroyed records.
+      # Freeze the attributes hash such that associations are still accessible, even on destroyed records.
       def freeze
         @attributes.freeze; self
       end
 
+      # Returns +true+ if the attributes hash has been frozen.
       def frozen?
         @attributes.frozen?
       end
 
-      # Records loaded through joins with piggy-back attributes will be marked as read only as they cannot be saved and return true to this query.
+      # Returns +true+ if the record is read only. Records loaded through joins with piggy-back
+      # attributes will be marked as read only since they cannot be saved.
       def readonly?
         @readonly == true
       end
 
-      def readonly! #:nodoc:
+      # Marks this record as read only.
+      def readonly!
         @readonly = true
       end
 
-      # Nice pretty inspect.
+      # Returns the contents of the record as a nicely formatted string.
       def inspect
         attributes_as_nice_string = self.class.column_names.collect { |name|
           if has_attribute?(name) || new_record?
@@ -2084,9 +2227,9 @@ module ActiveRecord #:nodoc:
           if self.class.accessible_attributes.nil? && self.class.protected_attributes.nil?
             attributes.reject { |key, value| attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
           elsif self.class.protected_attributes.nil?
-            attributes.reject { |key, value| !self.class.accessible_attributes.include?(key.gsub(/\(.+/, "").intern) || attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
+            attributes.reject { |key, value| !self.class.accessible_attributes.include?(key.gsub(/\(.+/, "")) || attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
           elsif self.class.accessible_attributes.nil?
-            attributes.reject { |key, value| self.class.protected_attributes.include?(key.gsub(/\(.+/,"").intern) || attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
+            attributes.reject { |key, value| self.class.protected_attributes.include?(key.gsub(/\(.+/,"")) || attributes_protected_by_default.include?(key.gsub(/\(.+/, "")) }
           else
             raise "Declare either attr_protected or attr_accessible for #{self.class}, but not both."
           end
@@ -2103,7 +2246,7 @@ module ActiveRecord #:nodoc:
       # Removes attributes which have been marked as readonly.
       def remove_readonly_attributes(attributes)
         unless self.class.readonly_attributes.nil?
-          attributes.delete_if { |key, value| self.class.readonly_attributes.include?(key.gsub(/\(.+/,"").intern) }
+          attributes.delete_if { |key, value| self.class.readonly_attributes.include?(key.gsub(/\(.+/,"")) }
         else
           attributes
         end

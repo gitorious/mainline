@@ -73,6 +73,10 @@ XML
       render :text => params[:file].size
     end
 
+    def test_send_file
+      send_file(File.expand_path(__FILE__))
+    end
+
     def redirect_to_same_controller
       redirect_to :controller => 'test', :action => 'test_uri', :id => 5
     end
@@ -214,7 +218,7 @@ XML
   def test_assert_tag_descendant
     process :test_html_output
 
-    # there is a tag with a decendant 'li' tag
+    # there is a tag with a descendant 'li' tag
     assert_tag :descendant => { :tag => "li" }
     # there is no tag with a descendant 'html' tag
     assert_no_tag :descendant => { :tag => "html" }
@@ -542,6 +546,11 @@ XML
     end
   end
 
+  def test_binary_content_works_with_send_file
+    get :test_send_file
+    assert_nothing_raised(NoMethodError) { @response.binary_content }
+  end
+  
   protected
     def with_foo_routing
       with_routing do |set|

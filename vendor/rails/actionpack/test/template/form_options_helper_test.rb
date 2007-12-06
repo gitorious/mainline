@@ -187,7 +187,7 @@ class FormOptionsHelperTest < Test::Unit::TestCase
     opts = time_zone_options_for_select( nil, zones )
     assert_dom_equal "<option value=\"B\">B</option>\n" +
                  "<option value=\"E\">E</option>" +
-                 "<option value=\"\">-------------</option>\n" +
+                 "<option value=\"\" disabled=\"disabled\">-------------</option>\n" +
                  "<option value=\"A\">A</option>\n" +
                  "<option value=\"C\">C</option>\n" +
                  "<option value=\"D\">D</option>",
@@ -199,7 +199,7 @@ class FormOptionsHelperTest < Test::Unit::TestCase
     opts = time_zone_options_for_select( "E", zones )
     assert_dom_equal "<option value=\"B\">B</option>\n" +
                  "<option value=\"E\" selected=\"selected\">E</option>" +
-                 "<option value=\"\">-------------</option>\n" +
+                 "<option value=\"\" disabled=\"disabled\">-------------</option>\n" +
                  "<option value=\"A\">A</option>\n" +
                  "<option value=\"C\">C</option>\n" +
                  "<option value=\"D\">D</option>",
@@ -211,7 +211,7 @@ class FormOptionsHelperTest < Test::Unit::TestCase
     opts = time_zone_options_for_select( "C", zones )
     assert_dom_equal "<option value=\"B\">B</option>\n" +
                  "<option value=\"E\">E</option>" +
-                 "<option value=\"\">-------------</option>\n" +
+                 "<option value=\"\" disabled=\"disabled\">-------------</option>\n" +
                  "<option value=\"A\">A</option>\n" +
                  "<option value=\"C\" selected=\"selected\">C</option>\n" +
                  "<option value=\"D\">D</option>",
@@ -491,7 +491,6 @@ class FormOptionsHelperTest < Test::Unit::TestCase
 <option value="Germany">Germany</option>
 <option value="Ghana">Ghana</option>
 <option value="Gibraltar">Gibraltar</option>
-<option value="Great Britain">Great Britain</option>
 <option value="Greece">Greece</option>
 <option value="Greenland">Greenland</option>
 <option value="Grenada">Grenada</option>
@@ -663,7 +662,7 @@ COUNTRIES
     @post.origin = "Denmark"
     expected_select = <<-COUNTRIES
 <select id="post_origin" name="post[origin]"><option value="New Zealand">New Zealand</option>
-<option value="Nicaragua">Nicaragua</option><option value="">-------------</option>
+<option value="Nicaragua">Nicaragua</option><option value="" disabled="disabled">-------------</option>
 <option value="Afghanistan">Afghanistan</option>
 <option value="Aland Islands">Aland Islands</option>
 <option value="Albania">Albania</option>
@@ -747,7 +746,6 @@ COUNTRIES
 <option value="Germany">Germany</option>
 <option value="Ghana">Ghana</option>
 <option value="Gibraltar">Gibraltar</option>
-<option value="Great Britain">Great Britain</option>
 <option value="Greece">Greece</option>
 <option value="Greenland">Greenland</option>
 <option value="Grenada">Grenada</option>
@@ -919,7 +917,7 @@ COUNTRIES
     @post.origin = "New Zealand"
     expected_select = <<-COUNTRIES
 <select id="post_origin" name="post[origin]"><option selected="selected" value="New Zealand">New Zealand</option>
-<option value="Nicaragua">Nicaragua</option><option value="">-------------</option>
+<option value="Nicaragua">Nicaragua</option><option value="" disabled="disabled">-------------</option>
 <option value="Afghanistan">Afghanistan</option>
 <option value="Aland Islands">Aland Islands</option>
 <option value="Albania">Albania</option>
@@ -1003,7 +1001,6 @@ COUNTRIES
 <option value="Germany">Germany</option>
 <option value="Ghana">Ghana</option>
 <option value="Gibraltar">Gibraltar</option>
-<option value="Great Britain">Great Britain</option>
 <option value="Greece">Greece</option>
 <option value="Greenland">Greenland</option>
 <option value="Grenada">Grenada</option>
@@ -1289,7 +1286,7 @@ COUNTRIES
     assert_dom_equal "<select id=\"firm_time_zone\" name=\"firm[time_zone]\">" +
                  "<option value=\"A\">A</option>\n" +
                  "<option value=\"D\" selected=\"selected\">D</option>" +
-                 "<option value=\"\">-------------</option>\n" +
+                 "<option value=\"\" disabled=\"disabled\">-------------</option>\n" +
                  "<option value=\"B\">B</option>\n" +
                  "<option value=\"C\">C</option>\n" +
                  "<option value=\"E\">E</option>" +

@@ -266,7 +266,7 @@ module ActiveRecord
     #
     # === Association callbacks
     #
-    # Similiar to the normal callbacks that hook into the lifecycle of an Active Record object, you can also define callbacks that get
+    # Similar to the normal callbacks that hook into the lifecycle of an Active Record object, you can also define callbacks that get
     # triggered when you add an object to or remove an object from an association collection. Example:
     #
     #   class Project
@@ -415,10 +415,10 @@ module ActiveRecord
     #     has_many :assets, :as => :attachable, :dependent => :destroy
     #   end
     #
-    #   class GuestPost < ActiveRecord::Base
+    #   class GuestPost < Post
     #   end
     #
-    #   class MemberPost < ActiveRecord::Base
+    #   class MemberPost < Post
     #   end
     #
     # == Caching
@@ -1247,7 +1247,7 @@ module ActiveRecord
 
         def construct_finder_sql_with_included_associations(options, join_dependency)
           scope = scope(:find)
-          sql = "SELECT #{column_aliases(join_dependency)} FROM #{connection.quote_table_name((scope && scope[:from]) || options[:from] || table_name)} "
+          sql = "SELECT #{column_aliases(join_dependency)} FROM #{(scope && scope[:from]) || options[:from] || quoted_table_name} "
           sql << join_dependency.join_associations.collect{|join| join.association_join }.join
  
           add_joins!(sql, options, scope)

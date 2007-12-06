@@ -383,9 +383,12 @@ module ActiveRecord
       #     <%= password_field "person", "password" %>
       #     <%= password_field "person", "password_confirmation" %>
       #
-      # The person has to already have a password attribute (a column in the people table), but the password_confirmation is virtual.
-      # It exists only as an in-memory variable for validating the password. This check is performed only if password_confirmation
-      # is not nil and by default on save.
+      # The added +password_confirmation+ attribute is virtual; it exists only as an in-memory attribute for validating the password.
+      # To achieve this, the validation adds acccessors to the model for the confirmation attribute. NOTE: This check is performed
+      # only if +password_confirmation+ is not nil, and by default only on save. To require confirmation, make sure to add a presence
+      # check for the confirmation attribute:
+      #
+      #   validates_presence_of :password_confirmation, :if => :password_changed?
       #
       # Configuration options:
       # * <tt>message</tt> - A custom error message (default is: "doesn't match confirmation")
@@ -595,6 +598,10 @@ module ActiveRecord
       # When the record is created, a check is performed to make sure that no record exists in the database with the given value for the specified
       # attribute (that maps to a column). When the record is updated, the same check is made but disregarding the record itself.
       #
+      # Because this check is performed outside the database there is still a chance that duplicate values
+      # will be inserted in two parallel transactions.  To guarantee against this you should create a 
+      # unique index on the field. See +create_index+ for more information.
+      #
       # Configuration options:
       # * <tt>message</tt> - Specifies a custom error message (default is: "has already been taken")
       # * <tt>scope</tt> - One or more columns by which to limit the scope of the uniquness constraint.
@@ -773,6 +780,7 @@ module ActiveRecord
       # is both present and guaranteed to be valid, you also need to use validates_presence_of.
       #
       # Configuration options:
+      # * <tt>message</tt> - A custom error message (default is: "is invalid")
       # * <tt>on</tt> Specifies when this validation is active (default is :save, other options :create, :update)
       # * <tt>if</tt> - Specifies a method, proc or string to call to determine if the validation should
       #   occur (e.g. :if => :allow_validation, or :if => Proc.new { |user| user.signup_step > 2 }).  The

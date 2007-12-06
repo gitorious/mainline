@@ -70,7 +70,7 @@ module ActionController #:nodoc:
     # no layout explicitly assigned with the +layout+ method. Nested controllers use the same folder structure for automatic layout.
     # assignment. So an Admin::WeblogController will look for a template named <tt>app/views/layouts/admin/weblog.erb</tt>.
     # Setting a layout explicitly will always override the automatic behaviour for the controller where the layout is set.
-    # Explicitly setting the layout in a parent class, though, will not override the child class's layout assignement if the child
+    # Explicitly setting the layout in a parent class, though, will not override the child class's layout assignment if the child
     # class has a layout with the same name. 
     #
     # == Inheritance for layouts
@@ -165,7 +165,7 @@ module ActionController #:nodoc:
     # variable. The preferred notation now is to use <tt>yield</tt>, as documented above.
     module ClassMethods
       # If a layout is specified, all rendered actions will have their result rendered  
-      # when the layout<tt>yield</tt>'s. This layout can itself depend on instance variables assigned during action
+      # when the layout <tt>yield</tt>s. This layout can itself depend on instance variables assigned during action
       # performance and have access to them as any normal template would.
       def layout(template_name, conditions = {}, auto = false)
         add_layout_conditions(conditions)

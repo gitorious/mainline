@@ -40,6 +40,11 @@ class LooseDescendant < LoosePerson
   attr_protected :phone_number
 end
 
+class LooseDescendantSecond< LoosePerson
+  attr_protected :phone_number
+  attr_protected :name
+end
+
 class TightPerson < ActiveRecord::Base
   self.table_name = 'people'
   attr_accessible :name, :address
@@ -843,20 +848,23 @@ class BasicsTest < Test::Unit::TestCase
   
   def test_mass_assignment_protection_inheritance
     assert_nil LoosePerson.accessible_attributes
-    assert_equal [ :credit_rating, :administrator ], LoosePerson.protected_attributes
+    assert_equal Set.new([ 'credit_rating', 'administrator' ]), LoosePerson.protected_attributes
 
     assert_nil LooseDescendant.accessible_attributes
-    assert_equal [ :credit_rating, :administrator, :phone_number  ], LooseDescendant.protected_attributes
+    assert_equal Set.new([ 'credit_rating', 'administrator', 'phone_number' ]), LooseDescendant.protected_attributes
+
+    assert_nil LooseDescendantSecond.accessible_attributes
+    assert_equal Set.new([ 'credit_rating', 'administrator', 'phone_number', 'name' ]), LooseDescendantSecond.protected_attributes, 'Running attr_protected twice in one class should merge the protections'
 
     assert_nil TightPerson.protected_attributes
-    assert_equal [ :name, :address ], TightPerson.accessible_attributes
+    assert_equal Set.new([ 'name', 'address' ]), TightPerson.accessible_attributes
 
     assert_nil TightDescendant.protected_attributes
-    assert_equal [ :name, :address, :phone_number  ], TightDescendant.accessible_attributes
+    assert_equal Set.new([ 'name', 'address', 'phone_number' ]), TightDescendant.accessible_attributes
   end
   
   def test_readonly_attributes
-    assert_equal [ :title ], ReadonlyTitlePost.readonly_attributes
+    assert_equal Set.new([ 'title' ]), ReadonlyTitlePost.readonly_attributes
     
     post = ReadonlyTitlePost.create(:title => "cannot change this", :body => "changeable")
     post.reload
@@ -1724,9 +1732,14 @@ class BasicsTest < Test::Unit::TestCase
 
   def test_attribute_for_inspect
     t = topics(:first)
-    t.content = %(This is some really long content, longer than 50 characters, so I can test that text is truncated correctly by the new ActiveRecord::Base#inspect method! Yay! BOOM!)
+    t.title = "The First Topic Now Has A Title With\nNewlines And More Than 50 Characters"
 
     assert_equal %("#{t.written_on.to_s(:db)}"), t.attribute_for_inspect(:written_on)
-    assert_equal '"This is some really long content, longer than 50 ch..."', t.attribute_for_inspect(:content)
+    assert_equal '"The First Topic Now Has A Title With\nNewlines And M..."', t.attribute_for_inspect(:title)
+  end
+  
+  def test_becomes
+    assert_kind_of Reply, topics(:first).becomes(Reply)
+    assert_equal "The First Topic", topics(:first).becomes(Reply).title
   end
 end
