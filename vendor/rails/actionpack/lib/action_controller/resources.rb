@@ -53,10 +53,11 @@ module ActionController
         @singular ||= options[:singular] || plural.to_s.singularize
 
         @options = options
-
+        
         arrange_actions
         add_default_actions
         set_prefixes
+        set_path_name
       end
 
       def controller
@@ -103,6 +104,10 @@ module ActionController
       end
 
       protected
+        def set_path_name
+          @path = options[:path_name] ? "#{path_prefix}/#{options[:path_name]}" : nil
+        end
+        
         def arrange_actions
           @collection_methods = arrange_actions_by_methods(options.delete(:collection))
           @member_methods     = arrange_actions_by_methods(options.delete(:member))
