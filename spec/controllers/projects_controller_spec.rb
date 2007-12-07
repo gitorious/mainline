@@ -27,26 +27,26 @@ describe ProjectsController do
   it "GET projects/new should require login" do
     get :new
     response.should be_redirect
-    response.should redirect_to(url_path(new_sessions_path))
+    response.should redirect_to(new_sessions_path)
   end
   
   it "POST projects/create with valid data should create project" do
     login_as :johan
     post :create, :project => {:title => "project x", :slug => "projectx"}
     response.should be_redirect
-    response.should redirect_to(url_path(projects_path))
+    response.should redirect_to(projects_path)
     
     Project.find_by_title("project x").user.should == users(:johan)
   end
   
   it "projects/create should require login" do
     post :create
-    response.should redirect_to(url_path(new_sessions_path))
+    response.should redirect_to(new_sessions_path)
   end
   
   it "projects/update should require login" do
     post :update
-    response.should redirect_to(url_path(new_sessions_path))
+    response.should redirect_to(new_sessions_path)
   end
   
   it "PUT projects/update with valid data should update record" do
@@ -55,7 +55,7 @@ describe ProjectsController do
     put :update, :id => project.slug, :project => {:title => "new name", :slug => "foo"}
     assigns(:project).should == project
     response.should be_redirect
-    response.should redirect_to(project_path(project))
+    response.should redirect_to(project_path(project.reload))
     project.reload.title.should == "new name"
   end
   
@@ -67,8 +67,8 @@ describe ProjectsController do
   
   it "PUT projects/destroy should destroy the project" do
     login_as :johan
-    delete :destroy, :id => projects(:johans)
-    response.should redirect_to(url_path(projects_path))
+    delete :destroy, :id => projects(:johans).slug
+    response.should redirect_to(projects_path)
     Project.find_by_id(1).should == nil
   end
   

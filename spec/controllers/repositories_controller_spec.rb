@@ -7,7 +7,7 @@ describe RepositoriesController, "show" do
   end
   
   def do_get(repos)
-    get :show, :project_id => @project, :id => repos
+    get :show, :project_id => @project.slug, :id => repos
   end
   
   it "GET projects/1/repositories/1 is successful" do
@@ -30,7 +30,7 @@ describe RepositoriesController, "new" do
   end
   
   def do_get()
-    get :new, :project_id => @project
+    get :new, :project_id => @project.slug
   end
   
   it "should require login" do
@@ -53,7 +53,7 @@ describe RepositoriesController, "create" do
   end
   
   def do_post(data)
-    post :create, :project_id => @project, :repository => data
+    post :create, :project_id => @project.slug, :repository => data
   end
   
   it "should require login" do
@@ -85,7 +85,7 @@ describe RepositoriesController, "copy" do
   end
   
   def do_get()
-    get :copy, :project_id => @project, :id => @repository
+    get :copy, :project_id => @project.slug, :id => @repository
   end
   
   it "should require login" do
@@ -111,7 +111,7 @@ describe RepositoriesController, "clone" do
   end
   
   def do_post(opts={})
-    post(:create_copy, :project_id => @project, :id => @repository,
+    post(:create_copy, :project_id => @project.slug, :id => @repository,
       :repository => opts)
   end
   
