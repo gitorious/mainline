@@ -7,7 +7,7 @@ describe RepositoriesController, "show" do
   end
   
   def do_get(repos)
-    get :show, :project_id => @project, :id => repos.id
+    get :show, :project_id => @project, :id => repos
   end
   
   it "GET projects/1/repositories/1 is successful" do
@@ -53,7 +53,7 @@ describe RepositoriesController, "create" do
   end
   
   def do_post(data)
-    post :create, :project_id => @project.id, :repository => data
+    post :create, :project_id => @project, :repository => data
   end
   
   it "should require login" do

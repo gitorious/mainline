@@ -52,7 +52,7 @@ describe ProjectsController do
   it "PUT projects/update with valid data should update record" do
     login_as :johan
     project = projects(:johans)
-    put :update, :id => project.id, :project => {:title => "new name", :slug => "foo"}
+    put :update, :id => project.slug, :project => {:title => "new name", :slug => "foo"}
     assigns(:project).should == project
     response.should be_redirect
     response.should redirect_to(project_path(project))
@@ -73,19 +73,19 @@ describe ProjectsController do
   end
   
   it "GET projects/show should be success" do
-    get :show, :id => projects(:johans).id
+    get :show, :id => projects(:johans).slug
     assigns[:project].should == projects(:johans)
     response.should be_success
   end
   
   it "GET projects/show should fetch the repositories for a project" do
-    get :show, :id => projects(:johans).id
+    get :show, :id => projects(:johans).slug
     assigns[:repositories].should == projects(:johans).repositories
     response.should be_success
   end
   
   it "GET projects/xx/edit should be a-ok" do
-    get :edit, :id => projects(:johans).id
+    get :edit, :id => projects(:johans).slug
     response.should be_success
   end
 

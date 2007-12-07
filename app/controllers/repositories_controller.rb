@@ -46,6 +46,6 @@ class RepositoriesController < ApplicationController
   
   private
     def find_project
-      @project = Project.find(params[:project_id])
+      @project = Project.find_by_slug!(params[:project_id])
     end
 end

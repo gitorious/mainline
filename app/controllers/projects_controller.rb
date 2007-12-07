@@ -6,7 +6,7 @@ class ProjectsController < ApplicationController
   end
   
   def show
-    @project = Project.find(params[:id])
+    @project = Project.find_by_slug!(params[:id])
     @repositories = @project.repositories
   end
   
@@ -24,11 +24,11 @@ class ProjectsController < ApplicationController
   end
   
   def edit
-    @project = Project.find(params[:id])
+    @project = Project.find_by_slug!(params[:id])
   end
   
   def update
-    @project = Project.find(params[:id])
+    @project = Project.find_by_slug!(params[:id])
     @project.attributes = params[:project]
     if @project.save
       redirect_to project_path(@project)
@@ -38,7 +38,7 @@ class ProjectsController < ApplicationController
   end
   
   def destroy
-    @project = Project.find(params[:id])
+    @project = Project.find_by_slug!(params[:id])
     @project.destroy
     redirect_to projects_path
   end

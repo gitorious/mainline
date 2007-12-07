@@ -55,4 +55,15 @@ describe Project do
     project.user.can_write_to?(project.repositories.first).should == true
   end
   
+  it "finds a project by slug or raises" do
+    Project.find_by_slug!(projects(:johans).slug).should == projects(:johans)
+    proc{
+      Project.find_by_slug!("asdasdasd")
+    }.should raise_error(ActiveRecord::RecordNotFound)
+  end 
+  
+  it "has the slug as its params" do
+    projects(:johans).to_param.should == projects(:johans).slug
+  end
+  
 end

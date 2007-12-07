@@ -8,11 +8,10 @@ class Project < ActiveRecord::Base
     :class_name => "Repository"
     
   URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
-  
   validates_presence_of :title, :user_id, :slug
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^[a-z0-9_\-]+$/i, 
-    :message => "must match something in the range of [a-z0-9_\-]"
+    :message => "must match something in the range of [a-z0-9_\-]+"
   validates_format_of :home_url, :with => URL_FORMAT_RE, 
     :if => proc{|record| !record.home_url.blank? },
     :message => "Must begin with http(s)"
@@ -45,6 +44,14 @@ class Project < ActiveRecord::Base
     'Microsoft Permissive License (Ms-PL)',
     'None',
   ]
+  
+  def self.find_by_slug!(slug)
+    find_by_slug(slug) || raise(ActiveRecord::RecordNotFound)
+  end
+  
+  def to_param
+    slug
+  end
   
   protected
     def create_mainline_repository
