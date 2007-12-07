@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/rake_tasks
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-12T00:39:55.990267Z
-2865
+2007-11-21T16:21:55.480340Z
+2938
 aslak_hellesoy
 
 
@@ -68,9 +68,9 @@ file
 
 
 
-2007-11-17T23:00:55.000000Z
+2007-12-06T23:59:59.000000Z
 9817463e38ab37059e1cc78a1f3512e7
-2006-12-04T17:10:56.821439Z
-1221
-dchelimsky
+2007-11-21T16:21:55.480340Z
+2938
+aslak_hellesoy
 

@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/lib/spec/rails/extensions/action_view
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-08-22T05:34:17.593925Z
-2421
+2007-11-18T20:09:06.362114Z
+2909
 dchelimsky
 
 
@@ -32,9 +32,9 @@ file
 
 
 
-2007-11-17T23:01:12.000000Z
-c0fb6dc431b14fe2cda9596d1323dae0
-2007-08-22T05:34:17.593925Z
-2421
+2007-12-07T00:00:10.000000Z
+4bab16f662a228ce2d954ddffb6be72c
+2007-11-18T20:09:06.362114Z
+2909
 dchelimsky
 

@@ -5,20 +5,27 @@ module Spec
         'mtime' => lambda {|file_a, file_b| File.mtime(file_b) <=> File.mtime(file_a)}
       }
 
-      BUILT_IN_FORMATTERS = {
-        'specdoc'  => Formatter::SpecdocFormatter,
-        's'        => Formatter::SpecdocFormatter,
-        'html'     => Formatter::HtmlFormatter,
-        'h'        => Formatter::HtmlFormatter,
-        'progress' => Formatter::ProgressBarFormatter,
-        'p'        => Formatter::ProgressBarFormatter,
-        'failing_examples' => Formatter::FailingExamplesFormatter,
-        'e'        => Formatter::FailingExamplesFormatter,
-        'failing_behaviours' => Formatter::FailingBehavioursFormatter,
-        'b'        => Formatter::FailingBehavioursFormatter,
-        'profile'  => Formatter::ProfileFormatter,
-        'o'        => Formatter::ProfileFormatter,
-        'textmate' => Formatter::TextMateFormatter,
+      EXAMPLE_FORMATTERS = {
+        # Load these lazily for better speed
+           'specdoc' => ['spec/runner/formatter/specdoc_formatter',            'Formatter::SpecdocFormatter'],
+                 's' => ['spec/runner/formatter/specdoc_formatter',            'Formatter::SpecdocFormatter'],
+              'html' => ['spec/runner/formatter/html_formatter',               'Formatter::HtmlFormatter'],
+                 'h' => ['spec/runner/formatter/html_formatter',               'Formatter::HtmlFormatter'],
+          'progress' => ['spec/runner/formatter/progress_bar_formatter',       'Formatter::ProgressBarFormatter'],
+                 'p' => ['spec/runner/formatter/progress_bar_formatter',       'Formatter::ProgressBarFormatter'],
+  'failing_examples' => ['spec/runner/formatter/failing_examples_formatter',   'Formatter::FailingExamplesFormatter'],
+                 'e' => ['spec/runner/formatter/failing_examples_formatter',   'Formatter::FailingExamplesFormatter'],
+'failing_behaviours' => ['spec/runner/formatter/failing_behaviours_formatter', 'Formatter::FailingBehavioursFormatter'],
+                 'b' => ['spec/runner/formatter/failing_behaviours_formatter', 'Formatter::FailingBehavioursFormatter'],
+           'profile' => ['spec/runner/formatter/profile_formatter',            'Formatter::ProfileFormatter'],
+                 'o' => ['spec/runner/formatter/profile_formatter',            'Formatter::ProfileFormatter'],
+          'textmate' => ['spec/runner/formatter/text_mate_formatter',          'Formatter::TextMateFormatter']
+      }
+
+      STORY_FORMATTERS = {
+        'plain' => ['spec/runner/formatter/story/plain_text_formatter', 'Formatter::Story::PlainTextFormatter'],
+         'html' => ['spec/runner/formatter/story/html_formatter',       'Formatter::Story::HtmlFormatter'],
+            'h' => ['spec/runner/formatter/story/html_formatter',       'Formatter::Story::HtmlFormatter']
       }
 
       attr_accessor(
@@ -28,7 +35,6 @@ module Spec
         :dry_run,
         :profile,
         :examples,
-        :formatters,
         :heckle_runner,
         :line_number,
         :loadby,
@@ -49,7 +55,6 @@ module Spec
         @output_stream = output_stream
         @backtrace_tweaker = QuietBacktraceTweaker.new
         @examples = []
-        @formatters = []
         @colour = false
         @profile = false
         @dry_run = false
@@ -66,9 +71,13 @@ module Spec
         @example_groups << example_group
       end
 
+      def remove_example_group(example_group)
+        @example_groups.delete(example_group)
+      end
+
       def run_examples
         return true unless examples_should_be_run?
-        runner = custom_runner || BehaviourRunner.new(self)
+        runner = custom_runner || ExampleGroupRunner.new(self)
 
         runner.load_files(files_to_load)
         if example_groups.empty?
@@ -127,23 +136,36 @@ module Spec
           where = @output_stream
           @out_used = true
         end
-
-        formatter_type = BUILT_IN_FORMATTERS[format] || load_class(format, 'formatter', '--format')
-        create_formatter(formatter_type, where)
+        @format_options ||= []
+        @format_options << [format, where]
+      end
+      
+      def formatters
+        @format_options ||= [['progress', @output_stream]]
+        @formatters ||= @format_options.map do |format, where|
+          formatter_type = if EXAMPLE_FORMATTERS[format]
+            require EXAMPLE_FORMATTERS[format][0]
+            eval(EXAMPLE_FORMATTERS[format][1], binding, __FILE__, __LINE__)
+          else
+            load_class(format, 'formatter', '--format')
+          end
+          formatter_type.new(self, where)
+        end
       end
 
-      def create_formatter(formatter_type, where=@output_stream)
-        formatter = formatter_type.new(self, where)
-        @formatters << formatter
-        formatter
+      def story_formatters
+        @format_options ||= [['plain', @output_stream]]
+        @story_formatters ||= @format_options.map do |format, where|
+          # We don't support custom ones yet
+          require STORY_FORMATTERS[format][0]
+          formatter_type = eval(STORY_FORMATTERS[format][1], binding, __FILE__, __LINE__)
+          formatter_type.new(self, where)
+        end
       end
 
       def load_heckle_runner(heckle)
-        if [/mswin/, /java/].detect{|p| p =~ RUBY_PLATFORM}
-          require 'spec/runner/heckle_runner_unsupported'
-        else
-          require 'spec/runner/heckle_runner'
-        end
+        suffix = [/mswin/, /java/].detect{|p| p =~ RUBY_PLATFORM} ? '_unsupported' : ''
+        require "spec/runner/heckle_runner#{suffix}"
         @heckle_runner = HeckleRunner.new(heckle)
       end
 

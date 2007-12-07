@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/spec/spec/package
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-08T07:41:53.975328Z
-2823
+2007-12-06T09:50:48.618164Z
+3060
 aslak_hellesoy
 
 
@@ -32,9 +32,9 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-68ba7981e87ed00d0590499915103eeb
-2007-11-08T07:41:53.975328Z
-2823
+2007-12-07T00:00:00.000000Z
+3f63138580c83aadc1949e3516333fe5
+2007-12-06T09:50:48.618164Z
+3060
 aslak_hellesoy
 

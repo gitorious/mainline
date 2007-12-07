@@ -1,15 +1,15 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-16T06:57:30.386613Z
-2902
-btakita
+2007-12-06T12:15:22.266627Z
+3062
+dchelimsky
 has-props
 
 svn:special svn:externals svn:needs-lock
@@ -35,11 +35,14 @@ file
 
 
 
-2007-11-17T23:00:57.000000Z
-855d3c6cd3e220b550231a78d0baa69f
-2007-11-15T21:20:16.486846Z
-2895
-aslak_hellesoy
+2007-12-07T00:00:01.000000Z
+2b376ab5f865e6aa51e7c448831da387
+2007-12-05T20:56:28.279250Z
+3055
+dchelimsky
+
+rake_tasks
+dir
 
 UPGRADE
 file
@@ -53,9 +56,6 @@ file
 1639
 dchelimsky
 
-rake_tasks
-dir
-
 stories
 dir
 
@@ -68,10 +68,22 @@ file
 
 
 
-2007-11-17T23:00:57.000000Z
-b18544d362922d6119e8c911a50a16c1
-2007-11-11T14:25:53.904752Z
-2850
+2007-12-07T00:00:01.000000Z
+b073764871ed372b1522b29fbb44552f
+2007-11-22T21:57:18.069694Z
+2960
+dchelimsky
+
+init.rb
+file
+
+
+
+
+2007-12-07T00:00:01.000000Z
+640f74b8156893c1bc98a2050c8589d3
+2007-11-22T10:00:22.039899Z
+2952
 dchelimsky
 
 TODO
@@ -86,22 +98,19 @@ file
 2802
 dchelimsky
 
-init.rb
-file
-
-
-
-
-2007-11-17T23:00:57.000000Z
-935f095f7043dbf6c1f8c60eaa9fc532
-2007-06-03T22:49:21.418619Z
-2072
-aslak_hellesoy
-
 lib
 dir
 
+story_server
+dir
+
 failing_examples
+dir
+
+bin
+dir
+
+autotest
 dir
 
 CHANGES
@@ -110,17 +119,11 @@ file
 
 
 
-2007-11-17T23:00:57.000000Z
-69cb7a0f3089e64b0e6b39c0c30a74bf
-2007-11-16T05:38:38.032263Z
-2900
+2007-12-07T00:00:01.000000Z
+335f474d672ef38a428bdf2482b1f335
+2007-12-06T01:02:24.542424Z
+3058
 dchelimsky
-
-autotest
-dir
-
-bin
-dir
 
 MIT-LICENSE
 file

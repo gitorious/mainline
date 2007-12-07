@@ -1,17 +1,18 @@
 require File.dirname(__FILE__) + '/../../../spec_helper'
+require 'spec/runner/formatter/failing_behaviours_formatter'
 
 module Spec
   module Runner
     module Formatter
-      describe "FailingBehavioursFormatter" do
+      describe FailingBehavioursFormatter do
         before(:each) do
           @io = StringIO.new
-          @options = Options.new(StringIO.new, @io)
-          @formatter = @options.create_formatter(FailingBehavioursFormatter)
+          options = mock('options')
+          @formatter = FailingBehavioursFormatter.new(options, @io)
         end
         
         def description(s)
-          Spec::DSL::ExampleGroupDescription.new(s)
+          Spec::Example::ExampleGroupDescription.new(s)
         end
 
         it "should add example name for each failure" do

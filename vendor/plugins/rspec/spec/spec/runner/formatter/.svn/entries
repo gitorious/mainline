@@ -1,15 +1,15 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/spec/spec/runner/formatter
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-12T00:39:55.990267Z
-2865
-aslak_hellesoy
+2007-12-03T08:06:34.424228Z
+3047
+btakita
 
 
 svn:special svn:externals svn:needs-lock
@@ -32,23 +32,14 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-4eaa4c02f7fd6e7bf900de26f1619abc
-2007-11-11T19:10:33.724340Z
-2859
-dchelimsky
+2007-12-07T00:00:00.000000Z
+5e4978918d0c0cb7e9383cf85b9f1224
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
 
-specdoc_formatter_dry_run_spec.rb
-file
-
-
-
-
-2007-11-17T23:00:56.000000Z
-a91e70e4ac21a16402289069cecf3ab4
-2007-09-05T08:08:08.651605Z
-2516
-btakita
+story
+dir
 
 html_formatted-1.8.4.html
 file
@@ -56,11 +47,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-516f1463c1853a920bbbde82d0dd27ae
-2007-10-19T01:00:54.966604Z
-2739
-dchelimsky
+2007-12-07T00:00:00.000000Z
+b1ac41403aa218bec91d1d3d4928bd18
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 
 html_formatted-1.8.5.html
 file
@@ -68,23 +59,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-f3b9cff5424a26d4a15371d97604b93e
-2007-10-19T01:00:54.966604Z
-2739
-dchelimsky
-
-progress_bar_formatter_failure_dump_spec.rb
-file
-
-
-
-
-2007-11-17T23:00:56.000000Z
-569c54be04a0d49098e93c9ebbf8b3e4
-2007-11-11T19:10:33.724340Z
-2859
-dchelimsky
+2007-12-07T00:00:00.000000Z
+e8efd0cd02d078a43566f425f1fb973d
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 
 html_formatted-1.8.6.html
 file
@@ -92,11 +71,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-1a2095ba6d7ee9cac94eef91c052f266
-2007-10-19T01:00:54.966604Z
-2739
-dchelimsky
+2007-12-07T00:00:00.000000Z
+73830c4be67e019f23b2312327dd16b9
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 
 progress_bar_formatter_spec.rb
 file
@@ -104,26 +83,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-9d815ad8345dce154f6d05d94ec510f0
-2007-11-11T15:26:04.911620Z
-2854
-dchelimsky
-
-stories
-dir
-
-progress_bar_formatter_dry_run_spec.rb
-file
-
-
-
-
-2007-11-17T23:00:56.000000Z
-8f937e7397067d0ad3540d8f2539b783
-2007-09-05T08:08:08.651605Z
-2516
-btakita
+2007-12-07T00:00:00.000000Z
+3248c55ceaed1e72c5554237e1365205
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
 
 snippet_extractor_spec.rb
 file
@@ -131,35 +95,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-d3888b2e54baacd101c9b6677fcb1260
-2007-06-03T22:49:21.418619Z
-2072
+2007-12-07T00:00:00.000000Z
+b915626db94b0a915a5e70239536df75
+2007-12-01T15:13:38.882255Z
+3031
 aslak_hellesoy
-
-failing_behaviours_formatter_spec.rb
-file
-
-
-
-
-2007-11-17T23:00:56.000000Z
-d30400cf33a66d364644b52aa30296b4
-2007-11-11T19:10:33.724340Z
-2859
-dchelimsky
-
-profile_formatter_spec.rb
-file
-
-
-
-
-2007-11-17T23:00:56.000000Z
-2b4c92aa916ecf794be56bcb356313d3
-2007-11-11T19:10:33.724340Z
-2859
-dchelimsky
 
 spec_mate_formatter_spec.rb
 file
@@ -167,10 +107,34 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-863cbc41b3e662eaf36ba12bb5cae4e0
-2007-11-10T21:38:02.017287Z
-2846
+2007-12-07T00:00:00.000000Z
+f74d28790844a45dbff54c16f7638ca3
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
+
+profile_formatter_spec.rb
+file
+
+
+
+
+2007-12-07T00:00:00.000000Z
+bc1f58f6d391ccabf226ba9e9b1f90a1
+2007-12-03T08:06:34.424228Z
+3047
+btakita
+
+failing_behaviours_formatter_spec.rb
+file
+
+
+
+
+2007-12-07T00:00:00.000000Z
+bea06f42c0984a8b78882bb61485f0cb
+2007-12-01T15:13:38.882255Z
+3031
 aslak_hellesoy
 
 html_formatter_spec.rb
@@ -179,10 +143,10 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-ef3658825d0e091c0fcd65b4e2607fef
-2007-11-10T21:38:02.017287Z
-2846
+2007-12-07T00:00:00.000000Z
+9607fe653374b7a3206ca83b6b398608
+2007-12-01T15:13:38.882255Z
+3031
 aslak_hellesoy
 
 failing_examples_formatter_spec.rb
@@ -191,11 +155,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-a648a4a0ba9779e2b999f743c418b08a
-2007-11-11T19:10:33.724340Z
-2859
-dchelimsky
+2007-12-07T00:00:00.000000Z
+50333e4ee9bbc63d2d453c9709dd1d41
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
 
 text_mate_formatted-1.8.4.html
 file
@@ -203,11 +167,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-9853b4c20db7f2f71d2f1451762d2b4d
-2007-11-10T16:01:12.331037Z
-2840
-aslak_hellesoy
+2007-12-07T00:00:00.000000Z
+8af159844245528268d67cc5503b76b9
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 
 text_mate_formatted-1.8.6.html
 file
@@ -215,10 +179,10 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-5d84d7201d9bfd96291e6ac2267a9579
-2007-11-09T09:42:17.719952Z
-2832
+2007-12-07T00:00:00.000000Z
+c57de459b545efd66194976eecfb5dff
+2007-11-26T01:40:11.165086Z
+2991
 btakita
 
 html_formatted-1.8.5-jruby.html
@@ -227,9 +191,9 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-8614c6077c7da338ff8592f09f739627
-2007-10-30T12:58:09.214335Z
-2799
-dchelimsky
+2007-12-07T00:00:00.000000Z
+21d26be03e63fb775ebbc87a9e6cb583
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 

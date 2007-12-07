@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/spec/rails
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-12T00:38:04.222522Z
-2864
+2007-12-03T07:25:26.525379Z
+3046
 btakita
 
 
@@ -29,9 +29,6 @@ svn:special svn:externals svn:needs-lock
 extensions
 dir
 
-dsl
-dir
-
 matchers
 dir
 
@@ -48,6 +45,9 @@ be86f7dd6aff1c7c0833df6a91f81cae
 btakita
 
 autotest
+dir
+
+example
 dir
 
 mocks

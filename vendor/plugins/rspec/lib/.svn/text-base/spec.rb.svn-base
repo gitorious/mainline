@@ -1,13 +1,14 @@
-require 'test/unit'
 require 'spec/version'
 require 'spec/matchers'
 require 'spec/expectations'
-require 'spec/translator'
-require 'spec/dsl'
+require 'spec/example'
 require 'spec/extensions'
 require 'spec/runner'
-require 'spec/story'
-require 'spec/test'
+
+if Object.const_defined?(:Test); \
+  require 'spec/interop/test'; \
+end
+
 module Spec
   class << self
     def run?
@@ -21,5 +22,20 @@ module Spec
       result; \
     end
     attr_writer :run
+    
+    def exit?; \
+      !Object.const_defined?(:Test) || Test::Unit.run?; \
+    end
   end
+end
+
+# TODO - checking for Story here is a hack to make sure that
+# the example summary doesn't appear when running stories. What
+# we should really be doing is making sure only the right formatters
+# get loaded.
+at_exit do \
+  unless $! || Spec.const_defined?(:Story) || Spec.run?; \
+    success = Spec.run; \
+    exit success if Spec.exit?; \
+  end \
 end

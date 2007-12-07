@@ -1,15 +1,15 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/spec/spec
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-16T06:53:18.121816Z
-2901
-dchelimsky
+2007-12-06T09:50:48.618164Z
+3060
+aslak_hellesoy
 
 
 svn:special svn:externals svn:needs-lock
@@ -29,13 +29,10 @@ svn:special svn:externals svn:needs-lock
 extensions
 dir
 
-test
-dir
-
 story
 dir
 
-dsl
+interop
 dir
 
 runner_spec.rb
@@ -56,11 +53,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-e01661d2a6ca92935748c43a5d861874
-2007-08-21T06:28:44.914720Z
-2412
-btakita
+2007-12-07T00:00:00.000000Z
+38b51768bd5bf541e189e92213efeec2
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
 
 expectations
 dir
@@ -77,13 +74,16 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-05bba9e909c3527a55cfff4747a69b4f
-2007-09-24T03:38:22.631002Z
-2655
+2007-12-07T00:00:00.000000Z
+a924919bb82c5735c54bb4aa13abf7b5
+2007-12-04T06:05:25.501175Z
+3049
 btakita
 
 package
+dir
+
+example
 dir
 
 mocks

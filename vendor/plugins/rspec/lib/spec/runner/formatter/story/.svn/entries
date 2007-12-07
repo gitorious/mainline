@@ -1,0 +1,52 @@
+8
+
+dir
+3063
+svn://rubyforge.org/var/svn/rspec/trunk/rspec/lib/spec/runner/formatter/story
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+html_formatter.rb
+file
+
+
+
+
+2007-12-07T00:00:00.000000Z
+ec8a2a2813f374d27f9cd869a23dfaf9
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
+
+plain_text_formatter.rb
+file
+
+
+
+
+2007-12-07T00:00:00.000000Z
+ea10fe4edb5a4feed489fc237b5b6dcd
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
+

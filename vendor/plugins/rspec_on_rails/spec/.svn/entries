@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/spec
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-12T00:38:04.222522Z
-2864
+2007-12-03T07:25:26.525379Z
+3046
 btakita
 
 
@@ -47,9 +47,9 @@ file
 
 
 
-2007-11-17T23:01:13.000000Z
-be070034765d645a9f47021ce5f1c78e
-2007-10-22T00:02:36.834583Z
-2765
+2007-12-07T00:00:10.000000Z
+e56a46a47b0981eff1b32a9efce0d1aa
+2007-11-26T00:21:14.126986Z
+2989
 btakita
 

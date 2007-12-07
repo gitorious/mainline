@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/stories
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-15T21:20:16.486846Z
-2895
+2007-12-06T09:50:48.618164Z
+3060
 aslak_hellesoy
 
 
@@ -26,47 +26,20 @@ svn:special svn:externals svn:needs-lock
 
 410327ef-2207-0410-a325-f78bbcb22a5a
 
-test
+interop
 dir
 
-specs_and_test_together
+helper.rb
 file
 
 
 
 
-2007-11-17T23:00:55.000000Z
-c88b5222db5081dff838d6fd02e49baa
-2007-11-15T21:20:16.486846Z
-2895
+2007-12-06T23:59:59.000000Z
+6c263e3c2887fd3487b2bd1b22807078
+2007-12-06T09:50:48.618164Z
+3060
 aslak_hellesoy
-
-output
-file
-
-
-
-
-2007-11-17T23:00:55.000000Z
-78263134cddaa878690047444ed54188
-2007-11-15T21:20:16.486846Z
-2895
-aslak_hellesoy
-
-smart_match.rb
-file
-
-
-
-
-2007-11-17T23:00:55.000000Z
-8f12f8383a108d1d50a9383d8fb9c718
-2007-11-15T21:20:16.486846Z
-2895
-aslak_hellesoy
-
-spec
-dir
 
 all.rb
 file
@@ -74,33 +47,18 @@ file
 
 
 
-2007-11-17T23:00:55.000000Z
-0ad8349049b7582cef85b61afce591b2
-2007-11-15T21:20:16.486846Z
-2895
-aslak_hellesoy
+2007-12-06T23:59:59.000000Z
+44f16f8b5f10006aad91353331dd5563
+2007-11-26T02:16:13.793139Z
+2993
+dchelimsky
 
-tu_example_group_subclass_with_should_methods
-file
-
-
-
-
-2007-11-17T23:00:55.000000Z
-ddbf951167b49b01661cb53d76943f02
-2007-11-15T21:20:16.486846Z
-2895
-aslak_hellesoy
+example_groups
+dir
 
-cmdline.rb
-file
-
-
-
-
-2007-11-17T23:00:55.000000Z
-8ffee627817f94623042e110077bfbed
-2007-11-15T21:20:16.486846Z
-2895
-aslak_hellesoy
+resources
+dir
+
+pending_stories
+dir
 

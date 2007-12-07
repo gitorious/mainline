@@ -1,14 +1,14 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/lib/spec/runner
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-16T04:22:13.406516Z
-2897
+2007-12-04T06:05:25.501175Z
+3049
 btakita
 
 
@@ -26,20 +26,17 @@ svn:special svn:externals svn:needs-lock
 
 410327ef-2207-0410-a325-f78bbcb22a5a
 
-extensions
-dir
-
-behaviour_runner.rb
+example_group_runner.rb
 file
 
 
 
 
-2007-11-17T23:00:56.000000Z
-828d0c9f07d0ce82824335b2023dda16
-2007-11-11T19:10:33.724340Z
-2859
-dchelimsky
+2007-12-07T00:00:00.000000Z
+d099806bcd6693d2b6d6e98b9b1ec728
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
 
 formatter
 dir
@@ -50,11 +47,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-cbee9e1dbbeebfe74a1e7e48314d9af3
-2007-06-27T17:22:44.927798Z
-2137
-aslak_hellesoy
+2007-12-07T00:00:00.000000Z
+3fd8db7991b32ac84a99e27fc2542acd
+2007-12-01T08:45:14.450224Z
+3025
+btakita
 
 reporter.rb
 file
@@ -62,23 +59,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-971c1bcd692474eaf42461cfb8c01d24
-2007-11-13T07:56:47.131980Z
-2882
-dchelimsky
-
-formatter.rb
-file
-
-
-
-
-2007-11-17T23:00:56.000000Z
-e285b44b3d4289be04c9c901ad565c02
-2007-11-12T00:39:55.990267Z
-2865
-aslak_hellesoy
+2007-12-07T00:00:00.000000Z
+99427aadf49b818e3e8da797b460b8d7
+2007-12-04T06:05:25.501175Z
+3049
+btakita
 
 heckle_runner.rb
 file
@@ -98,10 +83,10 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-2210f0a6573e9bf8405cb9fa96bf97ca
-2007-11-16T04:22:13.406516Z
-2897
+2007-12-07T00:00:00.000000Z
+b548452b72bb7cece09cafaf5d44b094
+2007-11-20T09:26:34.986029Z
+2925
 btakita
 
 command_line.rb
@@ -122,11 +107,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-38713cfd85b0431a7ce106f0558c9bb8
-2007-11-11T14:42:35.910203Z
-2851
-dchelimsky
+2007-12-07T00:00:00.000000Z
+80ef4f52ae999f214d25e3be8fe2ce2e
+2007-11-26T01:59:44.342138Z
+2992
+btakita
 
 class_and_arguments_parser.rb
 file
@@ -146,11 +131,11 @@ file
 
 
 
-2007-11-17T23:00:56.000000Z
-2cc0e4ffc428601a102c768503df3130
-2007-11-16T04:22:13.406516Z
-2897
-btakita
+2007-12-07T00:00:00.000000Z
+41c39ba4050870b40b5de9985a878974
+2007-12-01T15:13:38.882255Z
+3031
+aslak_hellesoy
 
 drb_command_line.rb
 file

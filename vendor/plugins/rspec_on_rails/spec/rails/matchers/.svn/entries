@@ -1,15 +1,15 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/spec/rails/matchers
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-09-22T22:22:17.624218Z
-2622
-dchelimsky
+2007-12-03T07:25:26.525379Z
+3046
+btakita
 
 
 svn:special svn:externals svn:needs-lock
@@ -32,11 +32,11 @@ file
 
 
 
-2007-11-17T23:01:12.000000Z
-a9927dc33840a82c5c70d3fd572b0b7f
-2007-07-30T12:57:39.909349Z
-2186
-dchelimsky
+2007-12-07T00:00:10.000000Z
+d5215a0f3b1119bde34d054811c49bff
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 
 errors_on_spec.rb
 file
@@ -56,10 +56,10 @@ file
 
 
 
-2007-11-17T23:01:13.000000Z
-d7c31d30f1e66b4aa0b5c641ac3e1377
-2007-09-09T06:06:23.484099Z
-2545
+2007-12-07T00:00:10.000000Z
+bad0a7596fb9b151cd883c66097be033
+2007-12-03T07:25:26.525379Z
+3046
 btakita
 
 render_spec.rb
@@ -68,11 +68,11 @@ file
 
 
 
-2007-11-17T23:01:13.000000Z
-7a77dd497fa7167a2bdd443b73f4d98d
-2007-06-23T11:32:24.759803Z
-2109
-dchelimsky
+2007-12-07T00:00:10.000000Z
+cff0d5e8e41abb78ba107cb233db20e8
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 
 assert_select_spec.rb
 file
@@ -80,9 +80,9 @@ file
 
 
 
-2007-11-17T23:01:13.000000Z
-4090a2aaee005e3588cf811fed505329
-2007-09-22T22:22:17.624218Z
-2622
-dchelimsky
+2007-12-07T00:00:10.000000Z
+cc0a129fe8daa39bf91943745ce88f7d
+2007-11-26T01:40:11.165086Z
+2991
+btakita
 

@@ -1,15 +1,15 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec_on_rails/generators/rspec/templates
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-11-15T09:43:03.172843Z
-2890
-aslak_hellesoy
+2007-12-06T12:33:51.352038Z
+3063
+dchelimsky
 
 
 svn:special svn:externals svn:needs-lock
@@ -71,10 +71,10 @@ file
 
 
 
-2007-11-17T23:01:12.000000Z
-bcf07d424d8f8aec4cb03e7220f59c46
-2007-09-10T13:04:49.631903Z
-2558
+2007-12-07T00:00:10.000000Z
+89a12bc184a27ee2ae689c4fd7071726
+2007-12-06T12:33:51.352038Z
+3063
 dchelimsky
 
 rcov.opts

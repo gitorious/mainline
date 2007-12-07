@@ -1,0 +1,52 @@
+8
+
+dir
+3063
+svn://rubyforge.org/var/svn/rspec/trunk/rspec/stories/resources/test
+svn://rubyforge.org/var/svn/rspec
+
+
+
+2007-11-29T12:04:41.992668Z
+3012
+aslak_hellesoy
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+410327ef-2207-0410-a325-f78bbcb22a5a
+
+test_case_with_should_methods.rb
+file
+
+
+
+
+2007-12-06T23:59:59.000000Z
+14b6fb666c843b25d9e9a63c2e1d274d
+2007-11-29T12:04:41.992668Z
+3012
+aslak_hellesoy
+
+spec_and_test_together.rb
+file
+
+
+
+
+2007-12-06T23:59:59.000000Z
+5e682a588103a52521329863f059808b
+2007-11-29T10:27:15.797436Z
+3010
+aslak_hellesoy
+

@@ -1,15 +1,15 @@
 8
 
 dir
-2903
+3063
 svn://rubyforge.org/var/svn/rspec/trunk/rspec/spec/spec/extensions
 svn://rubyforge.org/var/svn/rspec
 
 
 
-2007-10-25T14:28:01.760095Z
-2790
-dchelimsky
+2007-11-21T23:05:23.324632Z
+2944
+btakita
 
 
 svn:special svn:externals svn:needs-lock
@@ -32,9 +32,9 @@ file
 
 
 
-2007-11-17T23:00:55.000000Z
-607ac9ef48694c0ff807d36673fd7bab
-2007-10-25T14:28:01.760095Z
-2790
-dchelimsky
+2007-12-06T23:59:59.000000Z
+f687eb5a2099537de2f7216d58434252
+2007-11-21T23:05:23.324632Z
+2944
+btakita
 
