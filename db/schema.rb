@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(:version => 11) do
     t.datetime "updated_at"
     t.boolean  "mainline",   :default => false
     t.integer  "parent_id"
-    t.boolean  "ready"
+    t.boolean  "ready",      :default => false
   end
 
   add_index "repositories", ["name"], :name => "index_repositories_on_name"
