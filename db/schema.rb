@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 10) do
+ActiveRecord::Schema.define(:version => 11) do
 
   create_table "permissions", :force => true do |t|
     t.integer  "user_id"
@@ -47,12 +47,14 @@ ActiveRecord::Schema.define(:version => 10) do
     t.datetime "updated_at"
     t.boolean  "mainline",   :default => false
     t.integer  "parent_id"
+    t.boolean  "ready"
   end
 
   add_index "repositories", ["name"], :name => "index_repositories_on_name"
   add_index "repositories", ["project_id"], :name => "index_repositories_on_project_id"
   add_index "repositories", ["user_id"], :name => "index_repositories_on_user_id"
   add_index "repositories", ["parent_id"], :name => "index_repositories_on_parent_id"
+  add_index "repositories", ["ready"], :name => "index_repositories_on_ready"
 
   create_table "ssh_keys", :force => true do |t|
     t.integer  "user_id"
