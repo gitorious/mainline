@@ -46,10 +46,6 @@ class Repository < ActiveRecord::Base
   def git_backend
     RAILS_ENV == "test" ? MockGitBackend : GitBackend
   end
-  
-  def readify
-    self.ready = true    
-  end
     
   protected
     def set_as_mainline_if_first

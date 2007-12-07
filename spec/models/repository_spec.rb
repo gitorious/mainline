@@ -100,10 +100,4 @@ describe Repository do
     repos.parent.should == @repository
     repos.project.should == @repository.project
   end
-  
-  it "should readify itself" do
-    @repository.ready = false
-    @repository.readify
-    @repository.ready?.should == true
-  end
 end
