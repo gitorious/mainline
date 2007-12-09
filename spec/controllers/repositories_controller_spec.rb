@@ -126,3 +126,41 @@ describe RepositoriesController, "clone" do
     response.should be_redirect
   end
 end
+
+describe RepositoriesController, "writable_by" do
+  
+  before(:each) do
+    login_as :johan
+    @project = projects(:johans)
+    @repository = @project.repositories.first
+  end
+  
+  def do_get(options={})
+    post(:writable_by, {:project_id => @project.slug, :id => @repository,
+      :username => "johan"}.merge(options))
+  end
+  
+  it "should not require login" do
+    session[:user_id] = nil
+    do_get :username => "johan"
+    response.should_not redirect_to(new_sessions_path)
+  end
+  
+  it "get projects/1/repositories/3/writable_by?username=johan is true" do
+    do_get :username => "johan"
+    response.should be_success
+    response.body.should == "true"
+  end
+  
+  it "get projects/1/repositories/2/writable_by?username=johan is false" do
+    do_get :username => "johan", :project_id => projects(:moes).slug, :id => projects(:moes).repositories.first
+    response.should be_success
+    response.body.should == "false"
+  end
+  
+  it "get projects/1/repositories/2/writable_by?username=nonexistinguser is false" do
+    do_get :username => "nonexistinguser"
+    response.should be_success
+    response.body.should == "false"
+  end
+end

@@ -1,5 +1,5 @@
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :except => [:show]
+  before_filter :login_required, :except => [:show, :writable_by]
   before_filter :find_project
     
   def show
@@ -41,6 +41,17 @@ class RepositoriesController < ApplicationController
     else
       puts @repository.errors.full_messages.inspect
       render :action => :copy
+    end
+  end
+  
+  # Used internally to check write permissions by gitorious
+  def writable_by
+    @repository = @project.repositories.find(params[:id])
+    user = User.find_by_login(params[:username])
+    if user && user.can_write_to?(@repository)
+      render :text => "true"
+    else
+      render :text => "false"
     end
   end
   
