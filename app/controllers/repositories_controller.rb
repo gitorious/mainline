@@ -1,6 +1,7 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:show, :writable_by]
   before_filter :find_project
+  session :off, :only => [:writable_by]
     
   def show
     @repository = @project.repositories.find_by_name!(params[:id])
