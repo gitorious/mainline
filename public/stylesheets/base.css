@@ -101,6 +101,9 @@ pre {
   margin-right: 2em;
 }
 
+ul li h1, ul li h2, ul li h3, ul li h4 {
+  margin-bottom: 0.5em;
+}
 /* boxes */
 
 .clear {
@@ -339,4 +342,10 @@ table.repository_list td {
 pre.commit_message {
   margin-top: 10px;
   margin-left: 10px;
+}
+
+ul.project_list li {
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  border-bottom: 1px solid #dedede;
 }
