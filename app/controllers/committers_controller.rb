@@ -9,11 +9,17 @@ class CommittersController < ApplicationController
   
   def create
     @committer = User.find_by_login(params[:user][:login])
-    if @committer && !@repository.permissions.find_by_user_id(@committer.id)
-      @repository.committers << @committer
-      redirect_to [@repository.project, @repository]
+    if @committer
+      if !@repository.permissions.find_by_user_id(@committer.id)
+        @repository.committers << @committer
+        redirect_to([@repository.project, @repository]) and return
+      else
+        flash[:error] = "User is already a committer"
+        redirect_to(new_committer_url(@repository.project, @repository)) and return
+      end
     else
       flash[:error] = "Could not find user by that name"
+      redirect_to(new_committer_url(@repository.project, @repository))
     end
   end
   
@@ -27,7 +33,7 @@ class CommittersController < ApplicationController
   
   private
     def find_repository
-      @repository = Repository.find(params[:repository_id])
+      @repository = Repository.find_by_name!(params[:repository_id])
       unless @repository.user == current_user
         flash[:error] = "You're not the owner of this repository"
         redirect_to [@repository.project, @repository]

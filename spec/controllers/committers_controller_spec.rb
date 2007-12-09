@@ -12,7 +12,7 @@ describe CommittersController, "new" do
   end
   
   def do_get()
-    get :new, :project_id => @project, :repository_id => @repository
+    get :new, :project_id => @project.slug, :repository_id => @repository.name
   end
   
   it "should require login" do
@@ -44,7 +44,7 @@ describe CommittersController, "create" do
   end
   
   def do_post(data)
-    post :create, :project_id => @project, :repository_id => @repository,
+    post :create, :project_id => @project.slug, :repository_id => @repository.name,
           :user => data
   end
   
@@ -69,11 +69,11 @@ describe CommittersController, "create" do
     @repository.permissions.count.should == perm_count
   end
   
-  it "rerenders when theres no user found" do
+  it "redirects when theres no user found" do
     users(:johan).can_write_to?(@repository).should == false
     do_post(:login => "foo")
     users(:johan).can_write_to?(@repository).should == false
-    response.should be_success
+    response.should be_redirect
     flash[:error].should_not == nil
   end
 end
@@ -88,7 +88,7 @@ describe CommittersController, "destroy" do
   end
   
   def do_delete(user_id)
-    delete :destroy, :project_id => @project, :repository_id => @repository,
+    delete :destroy, :project_id => @project.slug, :repository_id => @repository.name,
           :id => user_id
   end
   

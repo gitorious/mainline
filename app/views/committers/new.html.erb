@@ -1,3 +1,8 @@
+<h1>
+  Give a user commit rights to <%= link_to(h(@repository.name), [@repository.project, @repository]) -%>
+  <small>(in <%= link_to h(@repository.project.title), @repository.project -%>)</small>
+</h1>
+
 <% form_for @committer, 
   :url => {:controller => "committers", :action => "create"}, :method => :post do |f| -%>
   <p>
@@ -5,4 +10,10 @@
     <%= f.text_field :login -%>
   </p>
   <%= f.submit "Find & Add" -%>
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to h("< " + @repository.project.title), @repository.project -%></li>
+  </ul>
 <% end -%>
