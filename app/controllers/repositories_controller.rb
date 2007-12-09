@@ -3,7 +3,7 @@ class RepositoriesController < ApplicationController
   before_filter :find_project
     
   def show
-    @repository = @project.repositories.find(params[:id])
+    @repository = @project.repositories.find_by_name!(params[:id])
     if @repository.has_commits?
       @recent_commits = Git.bare(@repository.full_repository_path).log(10)
     else
@@ -27,12 +27,12 @@ class RepositoriesController < ApplicationController
   end
   
   def copy
-    @repository_to_clone = @project.repositories.find(params[:id])
+    @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     @repository = Repository.new_by_cloning(@repository_to_clone)
   end
   
   def create_copy
-    @repository_to_clone = @project.repositories.find(params[:id])
+    @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]
     @repository.user = current_user
@@ -46,7 +46,7 @@ class RepositoriesController < ApplicationController
   
   # Used internally to check write permissions by gitorious
   def writable_by
-    @repository = @project.repositories.find(params[:id])
+    @repository = @project.repositories.find_by_name!(params[:id])
     user = User.find_by_login(params[:username])
     if user && user.can_write_to?(@repository)
       render :text => "true"

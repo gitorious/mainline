@@ -26,7 +26,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users 
   map.resource  :sessions
   map.resources :projects, :requirements => {:id => /[a-z0-9_\-]+/} do |projects|
-    projects.resources(:repositories, :member => { :copy => :get, :create_copy => :post }) do |repo|
+    projects.resources(:repositories, :member => { 
+      :copy => :get, 
+      :create_copy => :post
+    }, :requirements => {:id => /[a-z0-9_\-]+/}) do |repo|
       repo.resources :committers, :name_prefix => nil
     end
   end

@@ -100,4 +100,16 @@ describe Repository do
     repos.parent.should == @repository
     repos.project.should == @repository.project
   end
+  
+  it "has it's name as its to_param value" do
+    @repository.save
+    @repository.to_param.should == @repository.name
+  end
+  
+  it "finds a repository by name or raises" do
+    Repository.find_by_name!(repositories(:johans).name).should == repositories(:johans)
+    proc{
+      Repository.find_by_name!("asdasdasd")
+    }.should raise_error(ActiveRecord::RecordNotFound)
+  end
 end

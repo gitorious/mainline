@@ -16,6 +16,10 @@ class Repository < ActiveRecord::Base
     new(:parent => other, :project => other.project)
   end
   
+  def self.find_by_name!(name)
+    find_by_name(name) || raise(ActiveRecord::RecordNotFound)
+  end
+  
   BASE_REPOSITORY_URL = "keysersource.org"
   BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
   
@@ -45,6 +49,10 @@ class Repository < ActiveRecord::Base
   
   def git_backend
     RAILS_ENV == "test" ? MockGitBackend : GitBackend
+  end
+  
+  def to_param
+    name
   end
     
   protected

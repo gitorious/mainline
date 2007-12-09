@@ -7,7 +7,7 @@ describe RepositoriesController, "show" do
   end
   
   def do_get(repos)
-    get :show, :project_id => @project.slug, :id => repos
+    get :show, :project_id => @project.slug, :id => repos.name
   end
   
   it "GET projects/1/repositories/1 is successful" do
@@ -85,7 +85,7 @@ describe RepositoriesController, "copy" do
   end
   
   def do_get()
-    get :copy, :project_id => @project.slug, :id => @repository
+    get :copy, :project_id => @project.slug, :id => @repository.name
   end
   
   it "should require login" do
@@ -111,7 +111,7 @@ describe RepositoriesController, "clone" do
   end
   
   def do_post(opts={})
-    post(:create_copy, :project_id => @project.slug, :id => @repository,
+    post(:create_copy, :project_id => @project.slug, :id => @repository.name,
       :repository => opts)
   end
   
@@ -136,7 +136,7 @@ describe RepositoriesController, "writable_by" do
   end
   
   def do_get(options={})
-    post(:writable_by, {:project_id => @project.slug, :id => @repository,
+    post(:writable_by, {:project_id => @project.slug, :id => @repository.name,
       :username => "johan"}.merge(options))
   end
   
@@ -153,7 +153,8 @@ describe RepositoriesController, "writable_by" do
   end
   
   it "get projects/1/repositories/2/writable_by?username=johan is false" do
-    do_get :username => "johan", :project_id => projects(:moes).slug, :id => projects(:moes).repositories.first
+    do_get :username => "johan", :project_id => projects(:moes).slug, 
+      :id => projects(:moes).repositories.first.name
     response.should be_success
     response.body.should == "false"
   end
