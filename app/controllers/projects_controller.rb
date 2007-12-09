@@ -2,7 +2,8 @@ class ProjectsController < ApplicationController
   before_filter :login_required, :only => [:create, :update, :destroy, :new]
   
   def index
-    @projects = Project.find(:all)
+    @projects = Project.paginate(:all, :order => "created_at desc", 
+                  :page => params[:page])
   end
   
   def show

@@ -189,6 +189,7 @@ ul li h1, ul li h2, ul li h3, ul li h4 {
   border-top:1px solid #ccc;
   border-bottom:1px solid #ccc;
 }
+.flash_message p { margin: 0; }
 .flash_message.notice {
   color: #588e03;
   background: #e9fad9;
@@ -276,7 +277,7 @@ textarea:focus, select:focus {
   border: 1px solid #666;
 }
 
-.fieldWithErrors { margin: 0; display: inline;}
+.fieldWithErrors { margin: 0; display: block;}
 .fieldWithErrors input, .fieldWithErrors textarea,
 .fieldWithErrors select {
   border: 1px solid #c30000;
@@ -296,10 +297,16 @@ textarea:focus, select:focus {
   padding: 5px;
   color: #fff;
   background: #c30000;
+  margin-bottom: 0.2em;
 }
-.errorExplanation p { padding: 2px 2px 2px 5px;}
+.errorExplanation p { 
+  padding: 2px 2px 2px 5px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
 .errorExplanation ul {
   padding: 5px 10px 10px 25px;
+  margin-bottom: 0;
 }
 .errorExplanation ul li{
     list-style-type: disc;
@@ -348,4 +355,34 @@ ul.project_list li {
   padding-bottom: 1em;
   margin-bottom: 1em;
   border-bottom: 1px solid #dedede;
+}
+
+.pagination {
+  padding: 3px;
+  margin: 3px;
+  text-align: center;
+}
+.pagination a {
+  padding: 1px 5px 2px 5px;
+  margin: 2px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+}
+.pagination a:hover, .pagination a:active {
+  border-bottom: 1px solid #333;
+  background: #630;
+  color: #fff;
+}
+.pagination span.current {
+  padding: 1px 5px 2px 5px;
+  margin: 2px;
+  border: 1px solid #999;
+  font-weight: bold;
+  color: #000;
+}
+.pagination span.disabled {
+  padding: 1px 5px 2px 5px;
+  margin: 2px;
+  border: 1px solid #eee;
+  color: #ddd;
 }

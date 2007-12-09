@@ -9,8 +9,10 @@
 <% end -%>
 </ul>
 
+<%= will_paginate @projects -%>
+
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li><%= link_to "New project", new_project_path -%></li>
+    <li><%= link_to "+ New project", new_project_path -%></li>
   </ul>
 <% end -%>
