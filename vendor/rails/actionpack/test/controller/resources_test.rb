@@ -88,6 +88,14 @@ class ResourcesTest < Test::Unit::TestCase
       assert_equal 'app', ActionController::Routing::Routes.named_routes.routes[:messages].conditions[:subdomain]
     end
   end
+  
+  def test_with_custom_path_name
+    expected_options = {:controller => 'messages', :action => 'index'}
+    
+    with_restful_routing :messages, :path_name => "m" do
+      assert_recognizes(expected_options, :path => 'm/', :method => :get)
+    end
+  end
 
   def test_irregular_id_with_no_requirements_should_raise_error
     expected_options = {:controller => 'messages', :action => 'show', :id => '1.1.1'}
