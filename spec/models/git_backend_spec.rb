@@ -14,6 +14,7 @@ describe GitBackend do
     FileUtils.should_receive(:mkdir_p).with(path, :mode => 0750).and_return(true)
     Dir.should_receive(:chdir).with(path).and_yield(path)
     Git.should_receive(:init).with(path, :repository => path).and_return(true)
+    FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
   
     GitBackend.create(path)
   end
