@@ -10,6 +10,10 @@ class SshKey < ActiveRecord::Base
     key.gsub(/(.{1,#{cols}})/, "\\1\n").strip
   end
   
+  def to_key
+    %Q{command="gitorious #{user.login}",no-port-forwarding,} + 
+      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{key}}
+  end  
   
   protected
     def lint_key!

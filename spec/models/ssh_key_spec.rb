@@ -40,4 +40,11 @@ describe SshKey do
     ssh = create_key
     ssh.display_key.should include("\n")
   end
+  
+  it "returns a proper ssh key with to_key" do
+    ssh_key = create_key
+    exp_key = %Q{command="gitorious #{users(:johan).login}",no-port-forwarding,} + 
+      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{ssh_key.key}}
+    ssh_key.to_key.should == exp_key
+  end
 end
