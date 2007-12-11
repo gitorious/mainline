@@ -5,17 +5,18 @@
   <li>username: <%= current_user.login -%></li>
   <li>email: <%= current_user.email -%></li>
 </ul>
-<p>
-  <%= link_to "change email/password", edit_account_path -%>
-</p>
 
-<h2>SSH Keys</h2>
+<h3>Your SSH Keys:</h3>
 
 <% current_user.ssh_keys.each do |ssh_key| -%>
   <%= render :partial => "keys/key", :locals => {:ssh_key => ssh_key} -%>
-  <hr />
+  <% unless ssh_key == current_user.ssh_keys.last -%><hr /><% end -%>
 <% end -%>
 
-<p>
-  <%= link_to "Add an SSH key to your account", new_account_key_path -%>
-</p>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "+ Add SSH key", new_account_key_path -%></li>
+    <li><%= link_to "+ Change email or password", edit_account_path -%></li>
+  </ul>
+<% end -%>

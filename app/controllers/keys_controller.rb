@@ -23,21 +23,23 @@ class KeysController < ApplicationController
   def show
     @ssh_key = current_user.ssh_keys.find(params[:id])
   end
-  
-  def edit
-    @ssh_key = current_user.ssh_keys.find(params[:id])
-  end
-  
-  def update
-    @ssh_key = current_user.ssh_keys.find(params[:id])
-    @ssh_key.key = params[:ssh_key][:key]
-    if @ssh_key.save
-      flash[:notice] = "Key updated"
-      redirect_to account_path
-    else
-      render :action => "new"
-    end
-  end
+
+  # can't update keys since yet we'd have to to search/replace through 
+  # authorized_keys
+  # def edit
+  #   @ssh_key = current_user.ssh_keys.find(params[:id])
+  # end
+  # 
+  # def update
+  #   @ssh_key = current_user.ssh_keys.find(params[:id])
+  #   @ssh_key.key = params[:ssh_key][:key]
+  #   if @ssh_key.save
+  #     flash[:notice] = "Key updated"
+  #     redirect_to account_path
+  #   else
+  #     render :action => "new"
+  #   end
+  # end
   
   def destroy
     @ssh_key = current_user.ssh_keys.find(params[:id])
