@@ -43,8 +43,11 @@ describe SshKey do
   
   it "returns a proper ssh key with to_key" do
     ssh_key = create_key
-    exp_key = %Q{command="gitorious #{users(:johan).login}",no-port-forwarding,} + 
-      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{ssh_key.key}}
+    ssh_key.save!
+    exp_key = %Q{### START KEY #{ssh_key.id} ###\n} + 
+      %Q{command="gitorious #{users(:johan).login}",no-port-forwarding,} + 
+      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{ssh_key.key}} + 
+      %Q{\n### END KEY #{ssh_key.id} ###}
     ssh_key.to_key.should == exp_key
   end
 end

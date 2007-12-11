@@ -11,8 +11,10 @@ class SshKey < ActiveRecord::Base
   end
   
   def to_key
+    %Q{### START KEY #{self.id || "nil"} ###\n} + 
     %Q{command="gitorious #{user.login}",no-port-forwarding,} + 
-      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{key}}
+    %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{key}} + 
+    %Q{\n### END KEY #{self.id || "nil"} ###}
   end  
   
   protected
