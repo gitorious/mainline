@@ -1,6 +1,8 @@
 <h1><%=h @user.login -%></h1>
 
 <ul class="infobox">
+  <li><strong>Username:</strong> <%= h(@user.login) -%></li>
+  <li><strong>Realname:</strong> <%= @user.fullname.blank? ? "N/A" : h(@user.fullname) -%></li>
   <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
   <li><strong>Member for</strong> <%= time_ago_in_words(@user.created_at) -%></li>
 </ul>

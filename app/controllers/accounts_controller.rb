@@ -11,6 +11,7 @@ class AccountsController < ApplicationController
   def update
     @user = current_user
     current_user.email = params[:user][:email] if params[:user][:email]
+    current_user.fullname = params[:user][:fullname] if params[:user][:fullname]
     current_user.password = params[:user][:password] if params[:user][:password]
     if params[:user][:password_confirmation]
       current_user.password_confirmation = params[:user][:password_confirmation]

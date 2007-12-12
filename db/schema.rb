@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 12) do
+ActiveRecord::Schema.define(:version => 13) do
 
   create_table "permissions", :force => true do |t|
     t.integer  "user_id"
@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(:version => 12) do
     t.string   "activation_code",           :limit => 40
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
+    t.string   "fullname"
   end
 
   add_index "users", ["login"], :name => "index_users_on_login"

@@ -1,9 +1,11 @@
 <% @page_title = "Account" -%>
 
-<h2>Account details</h2>
-<ul>
-  <li>username: <%= current_user.login -%></li>
-  <li>email: <%= current_user.email -%></li>
+<h2>Account details <small><%= link_to "edit", edit_account_path -%></small></h2>
+<ul class="infobox">
+  <li><strong>Realname:</strong> 
+    <%= current_user.fullname.blank? ? "N/A" : h(current_user.fullname) -%></li>
+  <li><strong>Username:</strong> <%= link_to h(current_user.login), user_path(current_user) -%></li>
+  <li><strong>Email:</strong> <%=h current_user.email -%></li>
 </ul>
 
 <h3>Your SSH Keys:</h3>
@@ -17,6 +19,6 @@
 <% content_for :sidebar do -%>
   <ul class="links">
     <li><%= link_to "+ Add SSH key", new_account_key_path -%></li>
-    <li><%= link_to "+ Change email or password", edit_account_path -%></li>
+    <li><%= link_to "+ Edit details", edit_account_path -%></li>
   </ul>
 <% end -%>
