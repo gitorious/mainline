@@ -10,7 +10,7 @@ class ProjectsController < ApplicationController
     end
   end
   
-  def labels
+  def category
     tags = params[:id].to_s.gsub(/,\ ?/, " ")
     @projects = Project.paginate_by_tag(tags, :order => 'created_at desc', 
                   :page => params[:page])

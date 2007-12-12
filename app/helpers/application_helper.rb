@@ -8,7 +8,7 @@ module ApplicationHelper
   
   def linked_tag_list_as_sentence(tags)
     tags.map do |tag|
-      link_to(h(tag.name), { :action => :labels, :id => tag.name })
+      link_to(h(tag.name), { :action => :category, :id => tag.name })
     end.to_sentence
   end
 end
