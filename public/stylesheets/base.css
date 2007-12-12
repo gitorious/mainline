@@ -346,6 +346,10 @@ table.repository_list td {
   border: 1px solid #ccc;
 }
 
+.infobox li {
+  margin-bottom: 0.2em;
+}
+
 pre.commit_message {
   margin-top: 10px;
   margin-left: 10px;

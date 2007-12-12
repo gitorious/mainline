@@ -5,7 +5,7 @@
 
 <ul class="infobox">
   <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
-  <li><strong>Owner:</strong> <%=h @repository.user.login -%></li>
+  <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
   <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
   <li><strong>Mirror url:</strong> <code><%=h @repository.clone_url -%></code></li>
   <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>

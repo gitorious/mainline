@@ -2,6 +2,7 @@
 <p><%=h @project.description -%></p>
 
 <ul class="infobox">
+  <li><strong>Owner:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
   <li><strong>Labels:</strong> 
     <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
   <li><strong>License:</strong> <%= h(@project.license) -%></li>
