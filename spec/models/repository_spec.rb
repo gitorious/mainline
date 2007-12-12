@@ -112,4 +112,10 @@ describe Repository do
       Repository.find_by_name!("asdasdasd")
     }.should raise_error(ActiveRecord::RecordNotFound)
   end
+  
+  it "xmlilizes git paths as well" do
+    @repository.to_xml.should include("<gitdir>")
+    @repository.to_xml.should include("<clone-url>")
+    @repository.to_xml.should include("<push-url>")
+  end
 end

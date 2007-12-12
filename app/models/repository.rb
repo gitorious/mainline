@@ -54,6 +54,10 @@ class Repository < ActiveRecord::Base
   def to_param
     name
   end
+  
+  def to_xml
+    super(:methods => [:gitdir, :clone_url, :push_url])
+  end
     
   protected
     def set_as_mainline_if_first

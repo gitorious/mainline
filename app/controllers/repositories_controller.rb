@@ -10,6 +10,11 @@ class RepositoriesController < ApplicationController
     else
       @recent_commits = []
     end
+    
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @repository }
+    end
   end
   
   def new
@@ -20,10 +25,16 @@ class RepositoriesController < ApplicationController
   def create
     @repository = @project.repositories.new(params[:repository])
     @repository.user = current_user
-    if @repository.save
-      redirect_to project_repository_path(@project, @repository)
-    else
-      render :action => "new"
+    
+    respond_to do |format|
+      if @repository.save
+        location =  project_repository_path(@project, @repository)
+        format.html { redirect_to location }
+        format.xml  { render :xml => @repository, :status => :created, :location => location }
+      else
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
+      end
     end
   end
   
@@ -37,11 +48,16 @@ class RepositoriesController < ApplicationController
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]
     @repository.user = current_user
-    if @repository.save
-      redirect_to project_repository_path(@project, @repository)
-    else
-      puts @repository.errors.full_messages.inspect
-      render :action => :copy
+    
+    respond_to do |format|
+      if @repository.save
+        location = project_repository_path(@project, @repository)
+        format.html { redirect_to location }
+        format.xml  { render :xml => @repository, :status => :created, :location => location }        
+      else
+        format.html { render :action => "copy" }
+        format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
+      end
     end
   end
   

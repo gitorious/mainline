@@ -22,6 +22,24 @@ describe RepositoriesController, "show" do
   end
 end
 
+describe RepositoriesController, "show as XML" do
+  
+  before(:each) do
+    @project = projects(:johans)
+  end
+  
+  def do_get(repos)
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    get :show, :project_id => @project.slug, :id => repos.name
+  end
+  
+  it "GET projects/1/repositories/1.xml is successful" do
+    do_get @project.repositories.first
+    response.should be_success
+    response.body.should == @project.repositories.first.to_xml
+  end
+end
+
 describe RepositoriesController, "new" do
   
   before(:each) do
@@ -48,31 +66,24 @@ end
 describe RepositoriesController, "create" do
   
   before(:each) do
-    login_as :johan
+    authorize_as :johan
     @project = projects(:johans)
   end
   
   def do_post(data)
+    @request.env["HTTP_ACCEPT"] = "application/xml"
     post :create, :project_id => @project.slug, :repository => data
   end
   
-  it "should require login" do
-    session[:user_id] = nil
-    do_post :name => "foo"
-    response.should redirect_to(new_sessions_path)
+  it "should require authorization" do
+    authorize_as(nil)
+    do_post(:name => "foo")
+    response.code.to_i.should == 401
   end
   
   it "POST projects/1/repositories/create is successful" do
     do_post(:name => "foo")
-    response.should be_redirect
-  end
-  
-  it "sets the first repository as the main line one" do
-    @project.repositories.each(&:destroy)
-    do_post(:name => "foo")
-    response.should be_redirect
-    @project.reload
-    @project.repositories.first.mainline?.should == true
+    response.code.to_i.should == 201    
   end
 end
 
@@ -124,6 +135,32 @@ describe RepositoriesController, "clone" do
   it "post projects/1/repositories/3/create_copy is successful" do
     do_post(:name => "foo-clone")
     response.should be_redirect
+  end
+end
+
+describe RepositoriesController, "clone as XML" do
+  
+  before(:each) do
+    authorize_as :johan
+    @project = projects(:johans)
+    @repository = @project.repositories.first
+  end
+  
+  def do_post(opts={})
+    @request.env["HTTP_ACCEPT"] = "application/xml"
+    post(:create_copy, :project_id => @project.slug, :id => @repository.name,
+      :repository => opts)
+  end
+  
+  it "should require login" do
+    authorize_as(nil)
+    do_post(:name => "foo")
+    response.code.to_i.should == 401
+  end
+  
+  it "post projects/1/repositories/3/create_copy is successful" do
+    do_post(:name => "foo-clone")
+    response.code.to_i.should == 201
   end
 end
 
