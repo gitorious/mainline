@@ -13,7 +13,7 @@ class CommittersController < ApplicationController
       flash[:error] = "Could not find user by that name"
       respond_to do |format|
         format.html { redirect_to(new_committer_url(@repository.project, @repository)) }
-        format.xml  { render :text => "Could not find user by that name", :Status => :not_found }
+        format.xml  { render :text => "Could not a find user by that name", :Status => :not_found }
       end
       return
     end
