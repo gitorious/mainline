@@ -2,6 +2,13 @@ class UsersController < ApplicationController
   # render new.rhtml
   def new
   end
+  
+  def show
+    @user = User.find_by_login!(params[:id])
+    @repositories = @user.repositories.paginate(:all, :include => :project, 
+      :order => "project_id desc",
+      :page => params[:page])
+  end
 
   def create
     @user = User.new(params[:user])

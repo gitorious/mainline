@@ -109,6 +109,17 @@ describe User do
     u.can_write_to?(repositories(:moes)).should == false
   end
   
+  it "has the login as to_param" do
+    users(:johan).to_param.should == users(:johan).login
+  end
+  
+  it "finds a user by login or raises" do
+    User.find_by_login!(users(:johan).login).should == users(:johan)
+    proc{
+      User.find_by_login!("asdasdasd")
+    }.should raise_error(ActiveRecord::RecordNotFound)
+  end
+  
   protected
     def create_user(options = {})
       User.create({ 

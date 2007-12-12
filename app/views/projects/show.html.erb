@@ -34,9 +34,9 @@
     </td>
     <td>
       <% if repos.mainline? -%>
-        <%= h(repos.name) -%> (<%= h(repos.user.login) -%>)
+        <%= h(repos.name) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
       <% else -%>
-        <%= h(repos.user.login) -%>
+        <%= link_to h(repos.user.login), user_path(repos.user) -%>
       <% end -%>
     </td>
     <td>

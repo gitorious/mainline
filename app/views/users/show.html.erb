@@ -1,0 +1,31 @@
+<h1><%=h @user.login -%></h1>
+
+<ul class="infobox">
+  <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
+  <li><strong>Member for</strong> <%= time_ago_in_words(@user.created_at) -%></li>
+</ul>
+
+<h2>Repositories<small>, per project</small></h2>
+
+<ul>
+  <% @repositories.group_by(&:project).each do |project, repositories| -%>
+    
+    <li>
+      <strong><%= link_to h(project.title) , project_url(project) -%></strong> 
+      <ul>
+        <% repositories.each do |repos| -%>
+        <li><%= link_to h(repos.name), project_repository_url(repos.project, repos) -%></li>
+        <% end -%>
+      </ul>
+    </li>
+  <% end -%>
+  <%= will_paginate(@repositories) -%>
+</ul>
+
+<% if current_user && (current_user == @user)  -%>
+  <% content_for :sidebar do -%>
+    <ul class="links">
+      <li><%= link_to "+ Edit your account", account_url -%>
+    </ul>
+  <% end -%>
+<% end -%>

@@ -59,5 +59,11 @@ describe UsersController do
     flash[:notice].should_not be(nil)
     User.authenticate('moe@example.com', 'test').should == users(:moe)
   end
+  
+  it "shows the user" do
+    get :show, :id => users(:johan).login
+    response.should be_success
+    assigns[:user].should == users(:johan)
+  end
 
 end

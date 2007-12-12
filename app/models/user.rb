@@ -21,6 +21,21 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   before_create :make_activation_code 
   
+  def self.find_by_login!(name)
+    find_by_login(name) || raise(ActiveRecord::RecordNotFound )
+  end
+  
+  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
+  def self.authenticate(email, password)
+    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL', email] # need to get the salt
+    u && u.authenticated?(password) ? u : nil
+  end
+
+  # Encrypts some data with the salt.
+  def self.encrypt(password, salt)
+    Digest::SHA1.hexdigest("--#{salt}--#{password}--")
+  end
+  
   # Activates the user in the database.
   def activate
     @activated = true
@@ -36,17 +51,6 @@ class User < ActiveRecord::Base
   # Returns true if the user has just been activated.
   def recently_activated?
     @activated
-  end
-
-  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-  def self.authenticate(email, password)
-    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL', email] # need to get the salt
-    u && u.authenticated?(password) ? u : nil
-  end
-
-  # Encrypts some data with the salt.
-  def self.encrypt(password, salt)
-    Digest::SHA1.hexdigest("--#{salt}--#{password}--")
   end
 
   # Encrypts the password with the user salt
@@ -85,6 +89,10 @@ class User < ActiveRecord::Base
   
   def can_write_to?(repository)
     !!permissions.find_by_repository_id(repository.id)
+  end
+  
+  def to_param
+    login
   end
 
   protected
