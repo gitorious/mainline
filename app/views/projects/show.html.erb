@@ -3,7 +3,7 @@
 
 <ul class="infobox">
   <li><strong>Labels:</strong> 
-    <%= @project.tag_list.blank? ? "none" : h(@project.tag_list.to_sentence) -%></li>
+    <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
   <li><strong>License:</strong> <%= h(@project.license) -%></li>
   <% unless @project.home_url.blank? -%>
   <li><strong>Home:</strong> 
