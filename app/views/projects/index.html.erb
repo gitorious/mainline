@@ -15,4 +15,11 @@
   <ul class="links">
     <li><%= link_to "+ New project", new_project_path -%></li>
   </ul>
+  
+  <h4>Labels:</h4>
+  <ul class="tag_list">
+    <% tag_cloud @tags, default_css_tag_sizes do |tag, css_class| %>
+      <li><%= link_to h(tag.name), { :action => :labels, :id => tag.name }, :class => css_class %></li>
+    <% end %>
+  </ul>
 <% end -%>

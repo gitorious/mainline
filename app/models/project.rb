@@ -1,4 +1,6 @@
 class Project < ActiveRecord::Base
+  acts_as_taggable
+  
   belongs_to  :user
   has_many    :repositories, :order => "mainline desc, created_at desc",
     :dependent => :destroy

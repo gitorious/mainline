@@ -1,7 +1,9 @@
-<h1><%= @project.title -%></h1>
-<p><%= @project.description -%></p>
+<h1><%=h @project.title -%></h1>
+<p><%=h @project.description -%></p>
 
 <ul class="infobox">
+  <li><strong>Labels:</strong> 
+    <%= @project.tag_list.blank? ? "none" : h(@project.tag_list.to_sentence) -%></li>
   <li><strong>License:</strong> <%= h(@project.license) -%></li>
   <% unless @project.home_url.blank? -%>
   <li><strong>Home:</strong> 

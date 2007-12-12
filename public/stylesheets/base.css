@@ -386,3 +386,14 @@ ul.project_list li {
   border: 1px solid #eee;
   color: #ddd;
 }
+
+/* tags */
+
+ul.tag_list li {
+  display:inline;
+}
+
+.tag_size_1 { font-size: 1.0em; }
+.tag_size_2 { font-size: 1.2em; }
+.tag_size_3 { font-size: 1.4em; }
+.tag_size_4 { font-size: 1.6em; }

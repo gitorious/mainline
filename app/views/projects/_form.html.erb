@@ -11,6 +11,10 @@
   <%= form.text_area :description, :class => "text medium" -%>
 </p>
 <p>
+  <%= form.label :tag_list, "Labels (space seperated)" -%><br />
+  <%= form.text_field :tag_list, :class => "text" -%>
+</p>
+<p>
   <%= form.label :license -%><br />
   <%= form.select :license, Project::LICENSES -%>
 </p>

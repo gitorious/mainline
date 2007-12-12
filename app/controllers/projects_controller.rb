@@ -1,9 +1,18 @@
-class ProjectsController < ApplicationController
+class ProjectsController < ApplicationController  
   before_filter :login_required, :only => [:create, :update, :destroy, :new]
   
   def index
     @projects = Project.paginate(:all, :order => "created_at desc", 
                   :page => params[:page])
+    @tags = Project.tag_counts
+  end
+  
+  def labels
+    tags = params[:id].to_s.gsub(/,\ ?/, " ")
+    @projects = Project.paginate_by_tag(tags, :order => 'created_at desc', 
+                  :page => params[:page])
+    @tags = Project.tag_counts
+    render :action => "index"
   end
   
   def show
