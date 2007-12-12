@@ -4,20 +4,34 @@ class ProjectsController < ApplicationController
   def index
     @projects = Project.paginate(:all, :order => "created_at desc", 
                   :page => params[:page])
-    @tags = Project.tag_counts
+    respond_to do |format|
+      format.html { @tags = Project.tag_counts }
+      format.xml  { render :xml => @projects }
+    end
   end
   
   def labels
     tags = params[:id].to_s.gsub(/,\ ?/, " ")
     @projects = Project.paginate_by_tag(tags, :order => 'created_at desc', 
                   :page => params[:page])
-    @tags = Project.tag_counts
-    render :action => "index"
+
+    respond_to do |format|
+      format.html do
+        @tags = Project.tag_counts
+        render :action => "index"
+      end
+      format.xml { render :xml => @projects }
+    end
   end
   
   def show
     @project = Project.find_by_slug!(params[:id])
     @repositories = @project.repositories
+    
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @project }
+    end
   end
   
   def new
