@@ -6,7 +6,7 @@ class SshKey < ActiveRecord::Base
   
   before_save :lint_key!
   
-  def display_key(cols=72)
+  def wrapped_key(cols=72)
     key.gsub(/(.{1,#{cols}})/, "\\1\n").strip
   end
   

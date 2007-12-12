@@ -1,4 +1,4 @@
-<p><code><%= ssh_key.display_key -%></code>
+<p><code><%= ssh_key.wrapped_key -%></code>
   <%= button_to "delete", account_key_path(ssh_key),
              :confirm => "Are you sure?", :method => :delete, :class => "inline" -%>
 </p>

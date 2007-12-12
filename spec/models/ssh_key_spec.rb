@@ -38,7 +38,7 @@ describe SshKey do
     
   it "wraps the key at 72 for display" do
     ssh = create_key
-    ssh.display_key.should include("\n")
+    ssh.wrapped_key.should include("\n")
   end
   
   it "returns a proper ssh key with to_key" do
