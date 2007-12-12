@@ -118,4 +118,11 @@ describe Repository do
     @repository.to_xml.should include("<clone-url>")
     @repository.to_xml.should include("<push-url>")
   end
+  
+  it "adds an user as a comitter to itself" do
+    @repository.save
+    users(:moe).can_write_to?(@repository).should == false
+    @repository.add_committer(users(:moe))
+    users(:moe).can_write_to?(@repository).should == true
+  end
 end

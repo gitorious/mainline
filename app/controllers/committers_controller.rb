@@ -9,26 +9,41 @@ class CommittersController < ApplicationController
   
   def create
     @committer = User.find_by_login(params[:user][:login])
-    if @committer
-      if !@repository.permissions.find_by_user_id(@committer.id)
-        @repository.committers << @committer
-        redirect_to([@repository.project, @repository]) and return
-      else
-        flash[:error] = "User is already a committer"
-        redirect_to(new_committer_url(@repository.project, @repository)) and return
-      end
-    else
+    unless @committer
       flash[:error] = "Could not find user by that name"
-      redirect_to(new_committer_url(@repository.project, @repository))
+      respond_to do |format|
+        format.html { redirect_to(new_committer_url(@repository.project, @repository)) }
+        format.xml  { render :text => "Could not find user by that name", :Status => :not_found }
+      end
+      return
+    end
+
+    if @repository.add_committer(@committer)
+      respond_to do |format|
+        format.html { redirect_to([@repository.project, @repository]) }
+        format.xml do 
+          render :nothing, :status => :created, 
+            :location => project_repository_path(@repository.project, @repository)
+        end
+      end
     end
   end
   
   def destroy
     @permission = @repository.permissions.find_by_user_id(params[:id])
-    if @permission.destroy
-      flash[:success] = "User removed from repository"
-    end    
-    redirect_to [@repository.project, @repository]
+    
+    respond_to do |format|
+      if @permission.destroy
+        flash[:success] = "User removed from repository"
+        format.html { redirect_to [@repository.project, @repository] }
+        format.xml  { render :nothing, :status => :ok }
+      else
+        flash[:error] = "Could not remove user from repository"
+        format.html { redirect_to [@repository.project, @repository] }
+        format.xml  { render :nothing, :status => :unprocessable_entity }
+      end    
+      
+    end
   end
   
   private

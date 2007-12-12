@@ -58,6 +58,12 @@ class Repository < ActiveRecord::Base
   def to_xml
     super(:methods => [:gitdir, :clone_url, :push_url])
   end
+  
+  def add_committer(user)
+    unless user.can_write_to?(self)
+      committers << user
+    end
+  end
     
   protected
     def set_as_mainline_if_first
