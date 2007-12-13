@@ -9,9 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 13) do
+ActiveRecord::Schema.define(:version => 14) do
 
-  create_table "permissions", :force => true do |t|
+  create_table "committerships", :force => true do |t|
     t.integer  "user_id"
     t.integer  "repository_id"
     t.integer  "kind",          :default => 2
@@ -19,8 +19,8 @@ ActiveRecord::Schema.define(:version => 13) do
     t.datetime "updated_at"
   end
 
-  add_index "permissions", ["user_id"], :name => "index_permissions_on_user_id"
-  add_index "permissions", ["repository_id"], :name => "index_permissions_on_repository_id"
+  add_index "committerships", ["user_id"], :name => "index_permissions_on_user_id"
+  add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
 
   create_table "projects", :force => true do |t|
     t.string   "title"

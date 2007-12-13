@@ -2,8 +2,8 @@ class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
   belongs_to  :parent, :class_name => "Repository"
-  has_many    :permissions, :dependent => :destroy
-  has_many    :committers, :through => :permissions, :source => :user
+  has_many    :committerships, :dependent => :destroy
+  has_many    :committers, :through => :committerships, :source => :user
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i

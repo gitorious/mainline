@@ -2,8 +2,8 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   has_many :projects
-  has_many :permissions
-  has_many :repositories, :through => :permissions
+  has_many :committerships
+  has_many :repositories, :through => :committerships
   has_many :ssh_keys
   
   # Virtual attribute for the unencrypted password
@@ -88,7 +88,7 @@ class User < ActiveRecord::Base
   end
   
   def can_write_to?(repository)
-    !!permissions.find_by_repository_id(repository.id)
+    !!committerships.find_by_repository_id(repository.id)
   end
   
   def to_param

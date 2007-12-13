@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Permission do
+describe Committership do
   before(:each) do
-    @permission = Permission.new
+    @committership = Committership.new
   end
 
   it "should be valid" do
-    @permission.should be_valid
+    @committership.should be_valid
   end
 end

@@ -30,10 +30,10 @@ class CommittersController < ApplicationController
   end
   
   def destroy
-    @permission = @repository.permissions.find_by_user_id(params[:id])
+    @committership = @repository.committerships.find_by_user_id(params[:id])
     
     respond_to do |format|
-      if @permission.destroy
+      if @committership.destroy
         flash[:success] = "User removed from repository"
         format.html { redirect_to [@repository.project, @repository] }
         format.xml  { render :nothing, :status => :ok }

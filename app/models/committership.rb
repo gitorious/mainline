@@ -1,4 +1,4 @@
-class Permission < ActiveRecord::Base
+class Committership < ActiveRecord::Base
   belongs_to :user
   belongs_to :repository
   

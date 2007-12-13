@@ -40,7 +40,7 @@ describe CommittersController, "create" do
     login_as :johan
     @project = projects(:johans)
     @repository = repositories(:johans)
-    Permission.destroy_all
+    Committership.destroy_all
   end
   
   def do_post(data)
@@ -64,9 +64,9 @@ describe CommittersController, "create" do
   it "only creates the committership if user isn't already a committer" do
     @repository.committers << users(:johan)
     @repository.save!
-    perm_count = @repository.permissions.count
+    perm_count = @repository.committerships.count
     do_post(:login => "johan")
-    @repository.permissions.count.should == perm_count
+    @repository.committerships.count.should == perm_count
   end
   
   it "redirects when theres no user found" do
@@ -84,7 +84,7 @@ describe CommittersController, "destroy" do
     login_as :johan
     @project = projects(:johans)
     @repository = repositories(:johans)
-    Permission.destroy_all
+    Committership.destroy_all
   end
   
   def do_delete(user_id)
