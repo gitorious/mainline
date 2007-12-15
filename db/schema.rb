@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 14) do
+ActiveRecord::Schema.define(:version => 15) do
 
   create_table "committerships", :force => true do |t|
     t.integer  "user_id"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(:version => 14) do
     t.text     "key"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "ready",      :default => false
   end
 
   add_index "ssh_keys", ["user_id"], :name => "index_ssh_keys_on_user_id"
