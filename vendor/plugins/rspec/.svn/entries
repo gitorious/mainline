@@ -1,154 +1,0 @@
-8
-
-dir
-3063
-svn://rubyforge.org/var/svn/rspec/trunk/rspec
-svn://rubyforge.org/var/svn/rspec
-
-
-
-2007-12-06T12:15:22.266627Z
-3062
-dchelimsky
-has-props
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-410327ef-2207-0410-a325-f78bbcb22a5a
-
-plugins
-dir
-
-Rakefile
-file
-
-
-
-
-2007-12-07T00:00:01.000000Z
-2b376ab5f865e6aa51e7c448831da387
-2007-12-05T20:56:28.279250Z
-3055
-dchelimsky
-
-rake_tasks
-dir
-
-UPGRADE
-file
-
-
-
-
-2007-11-17T23:00:57.000000Z
-7c6a282a2aa450843d5fe1df451b5bca
-2007-03-21T18:26:21.432535Z
-1639
-dchelimsky
-
-stories
-dir
-
-spec
-dir
-
-README
-file
-
-
-
-
-2007-12-07T00:00:01.000000Z
-b073764871ed372b1522b29fbb44552f
-2007-11-22T21:57:18.069694Z
-2960
-dchelimsky
-
-init.rb
-file
-
-
-
-
-2007-12-07T00:00:01.000000Z
-640f74b8156893c1bc98a2050c8589d3
-2007-11-22T10:00:22.039899Z
-2952
-dchelimsky
-
-TODO
-file
-
-
-
-
-2007-11-17T23:00:57.000000Z
-89bf328521a77fe15a9e85ca0f12b49f
-2007-10-31T10:26:20.403647Z
-2802
-dchelimsky
-
-lib
-dir
-
-story_server
-dir
-
-failing_examples
-dir
-
-bin
-dir
-
-autotest
-dir
-
-CHANGES
-file
-
-
-
-
-2007-12-07T00:00:01.000000Z
-335f474d672ef38a428bdf2482b1f335
-2007-12-06T01:02:24.542424Z
-3058
-dchelimsky
-
-MIT-LICENSE
-file
-
-
-
-
-2007-11-17T23:00:57.000000Z
-2503811f88b794a50b2c14c58369f754
-2007-02-03T00:08:50.256904Z
-1460
-dchelimsky
-
-examples
-dir
-
-spec.opts
-file
-
-
-
-
-2007-11-17T23:00:57.000000Z
-e4dfab1b4d8ff0c2a228ede08199aafe
-2007-11-05T22:47:41.402354Z
-2815
-aslak_hellesoy
-

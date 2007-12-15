@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
-Spec::Runner.configuration.global_fixtures = :people
+Test::Unit::TestCase.fixtures :people
 
 describe ExplicitHelper, :type => :helper do
   it "should not require naming the helper if describe is passed a type" do
@@ -96,6 +96,23 @@ module Bug11223
   describe 'Accessing flash from helper spec', :type => :helper do
     it 'should not raise an error' do
       lambda { flash['test'] }.should_not raise_error
+    end
+  end
+end
+
+module Spec
+  module Rails
+    module Example
+      describe HelperExampleGroup do
+        it "should clear its name from the description" do
+          group = describe("foo", :type => :helper) do
+            $nested_group = describe("bar") do
+            end
+          end
+          group.description.to_s.should == "foo"
+          $nested_group.description.to_s.should == "foo bar"
+        end
+      end
     end
   end
 end

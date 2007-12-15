@@ -1,49 +1,0 @@
-8
-
-dir
-3063
-svn://rubyforge.org/var/svn/rspec/trunk/rspec/story_server/prototype
-svn://rubyforge.org/var/svn/rspec
-
-
-
-2007-11-19T21:56:34.055308Z
-2915
-aslak_hellesoy
-has-props
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-410327ef-2207-0410-a325-f78bbcb22a5a
-
-lib
-dir
-
-javascripts
-dir
-
-stories.html
-file
-
-
-
-
-2007-12-07T00:00:01.000000Z
-ca7c0ce064598cfd3f599bf15932a4ba
-2007-11-19T21:56:34.055308Z
-2915
-aslak_hellesoy
-
-stylesheets
-dir
-

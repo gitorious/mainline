@@ -1,64 +1,0 @@
-8
-
-dir
-3063
-svn://rubyforge.org/var/svn/rspec/trunk/rspec/stories
-svn://rubyforge.org/var/svn/rspec
-
-
-
-2007-12-06T09:50:48.618164Z
-3060
-aslak_hellesoy
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-410327ef-2207-0410-a325-f78bbcb22a5a
-
-interop
-dir
-
-helper.rb
-file
-
-
-
-
-2007-12-06T23:59:59.000000Z
-6c263e3c2887fd3487b2bd1b22807078
-2007-12-06T09:50:48.618164Z
-3060
-aslak_hellesoy
-
-all.rb
-file
-
-
-
-
-2007-12-06T23:59:59.000000Z
-44f16f8b5f10006aad91353331dd5563
-2007-11-26T02:16:13.793139Z
-2993
-dchelimsky
-
-example_groups
-dir
-
-resources
-dir
-
-pending_stories
-dir
-
