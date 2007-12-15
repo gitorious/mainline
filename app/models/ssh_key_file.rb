@@ -1,3 +1,5 @@
+# FIXME: this class acts too much like a singleton: read the file contents on
+# initialize and mark it as dirty and reload only when needed.
 class SshKeyFile
   def initialize(path=nil)
     @path = path || default_authorized_keys_path
