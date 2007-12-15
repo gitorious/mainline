@@ -1,8 +1,10 @@
 class SshKey < ActiveRecord::Base
   belongs_to :user
   
+  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\n]+ [a-z0-9_\.\-]*(@[a-z0-9\.\-]*)?$/ims
+  
   validates_presence_of :user_id, :key
-  validates_format_of   :key, :with => /^ssh-[a-z0-9]{3,4} .+$/ims
+  validates_format_of   :key, :with => SSH_KEY_FORMAT
   
   before_save :lint_key!
   
@@ -19,6 +21,6 @@ class SshKey < ActiveRecord::Base
   
   protected
     def lint_key!
-      key.gsub!(/\n+/ms, "")
+      key.gsub!(/\n*/m, "")
     end
 end

@@ -16,7 +16,14 @@ describe SshKey do
     key.key = "foo bar@baz"
     key.should_not be_valid
     
-    key.key = "ssh-rsa asdasdasdasd bar@baz"
+    key.key = "ssh-somealgo as23d$%&asdasdasd bar@baz"
+    key.should_not be_valid
+    
+    key.key = "ssh-rsa asdasda2\n34as+d=\n bar@baz"
+    key.should be_valid
+    key.key = "ssh-rsa asdasda2\n34as+d=\n bar@baz.grogg.zing"
+    key.should be_valid    
+    key.key = "ssh-rsa asdasda2\n34as+d=\n bar@127.0.0.1"
     key.should be_valid
   end
   
