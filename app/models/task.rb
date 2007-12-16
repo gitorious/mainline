@@ -1,8 +1,14 @@
 class Task < ActiveRecord::Base
   belongs_to :target, :polymorphic => true
   
-  def self.find_all_to_perform
+  def self.find_all_pending
     find(:all, :conditions => {:performed => false})
+  end
+  
+  def self.perform_all_pending!
+    find_all_pending.each do |task|
+      task.perform!
+    end
   end
   
   def perform!

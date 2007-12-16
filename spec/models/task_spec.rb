@@ -19,6 +19,15 @@ describe Task do
   
   it "finds tasks that needs performin'" do
     @task.update_attributes(:performed => true)
-    Task.find_all_to_perform.should == [tasks(:add_key)]
+    Task.find_all_pending.should == [tasks(:add_key)]
+  end
+  
+  it "performs all pending tasks" do
+    to_perform = tasks(:create_repo, :add_key)
+    Task.should_receive(:find_all_pending).and_return(to_perform)
+    to_perform.each do |task|
+      task.should_receive(:perform!).and_return(true)
+    end
+    Task.perform_all_pending!
   end
 end
