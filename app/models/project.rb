@@ -57,7 +57,7 @@ class Project < ActiveRecord::Base
   
   protected
     def create_mainline_repository
-      self.repositories.create!(:user => self.user, :name => self.slug)
+      self.repositories.create!(:user => self.user, :name => "mainline")
     end
     
     def downcase_slug

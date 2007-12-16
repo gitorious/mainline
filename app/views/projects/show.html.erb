@@ -31,7 +31,7 @@
   <tr class="<%= cycle("even", "odd") -%><%= repos.mainline? ? ' mainline' : '' -%>">
     <td>
       <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-      <% if repos.mainline? -%> <small><em>(Mainline)</em></small><% end -%>
+      <!-- <% if repos.mainline? -%> <small><em>(Mainline)</em></small><% end -%> -->
     </td>
     <td>
       <% if repos.mainline? -%>

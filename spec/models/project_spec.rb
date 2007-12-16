@@ -50,7 +50,7 @@ describe Project do
     project = create_project
     project.save
     project.repositories.should_not == []
-    project.repositories.first.name.should == project.slug
+    project.repositories.first.name.should == "mainline"
     project.repositories.first.user.should == project.user
     project.user.can_write_to?(project.repositories.first).should == true
   end
