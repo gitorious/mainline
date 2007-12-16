@@ -85,9 +85,9 @@ describe Repository do
     @repository.create_git_repository
   end
   
-  it "creates an repository after save" do
-    @repository.should_receive(:create_git_repository).and_return(true)
-    @repository.save
+  it "deletes a repository" do
+    @repository.git_backend.should_receive(:delete!).with(@repository.full_repository_path).and_return(true)
+    @repository.delete_git_repository
   end
   
   it "knows if has commits" do
@@ -124,5 +124,22 @@ describe Repository do
     users(:moe).can_write_to?(@repository).should == false
     @repository.add_committer(users(:moe))
     users(:moe).can_write_to?(@repository).should == true
+  end
+  
+  it "creates a Task on create and update" do
+    proc{
+      @repository.save!
+    }.should change(Task, :count)
+    task = Task.find(:first, :conditions => ["target_id = ?", @repository.id], :order => "id desc")
+    task.command.should == "create_git_repository"
+  end
+  
+  it "creates a Task on destroy" do
+    @repository.save!
+    proc{
+      @repository.destroy
+    }.should change(Task, :count)
+    task = Task.find(:first, :conditions => ["target_id = ?", @repository.id], :order => "id desc")
+    task.command.should == "delete_git_repository"
   end
 end

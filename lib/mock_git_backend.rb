@@ -4,6 +4,10 @@ class MockGitBackend
       true
     end
     
+    def delete!(repos_path)
+      true
+    end
+    
     def repository_has_commits?(repos_path)
       false
     end

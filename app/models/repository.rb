@@ -10,7 +10,8 @@ class Repository < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
   before_save :set_as_mainline_if_first
-  after_create :add_user_as_committer, :create_git_repository
+  after_create :add_user_as_committer, :create_new_repos_task
+  after_destroy :create_delete_repos_task
   
   def self.new_by_cloning(other)
     new(:parent => other, :project => other.project)
@@ -43,6 +44,10 @@ class Repository < ActiveRecord::Base
     git_backend.create(full_repository_path)
   end
   
+  def delete_git_repository
+    git_backend.delete!(full_repository_path)
+  end
+  
   def has_commits?
     git_backend.repository_has_commits?(full_repository_path)
   end
@@ -63,6 +68,14 @@ class Repository < ActiveRecord::Base
     unless user.can_write_to?(self)
       committers << user
     end
+  end
+  
+  def create_new_repos_task
+    Task.create!(:target => self, :command => "create_git_repository")
+  end
+  
+  def create_delete_repos_task
+    Task.create!(:target => self, :command => "delete_git_repository")
   end
     
   protected

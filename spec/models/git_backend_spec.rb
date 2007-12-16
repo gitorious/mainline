@@ -19,6 +19,12 @@ describe GitBackend do
     GitBackend.create(path)
   end
   
+  it "deletes a git repository" do
+    path = @repository.full_repository_path 
+    FileUtils.should_receive(:rm_rf).with(path).and_return(true)
+    GitBackend.delete!(path)
+  end
+  
   it "knows if a repos has commits" do
     path = @repository.full_repository_path 
     dir_mock = mock("Dir mock")

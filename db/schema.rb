@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 15) do
+ActiveRecord::Schema.define(:version => 16) do
 
   create_table "committerships", :force => true do |t|
     t.integer  "user_id"
@@ -79,6 +79,20 @@ ActiveRecord::Schema.define(:version => 15) do
   create_table "tags", :force => true do |t|
     t.string "name"
   end
+
+  create_table "tasks", :force => true do |t|
+    t.integer  "target_id"
+    t.string   "target_type"
+    t.string   "command"
+    t.boolean  "performed",    :default => false
+    t.datetime "performed_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tasks", ["target_id"], :name => "index_tasks_on_target_id"
+  add_index "tasks", ["target_type"], :name => "index_tasks_on_target_type"
+  add_index "tasks", ["performed"], :name => "index_tasks_on_performed"
 
   create_table "users", :force => true do |t|
     t.string   "login"

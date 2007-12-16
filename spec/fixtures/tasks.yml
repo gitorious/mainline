@@ -1,0 +1,14 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+create_repo:
+  id: 1
+  target_id: 1
+  target_type: Repository
+  command: create_git_repository
+  performed: 0
+    
+add_key:
+  id: 2
+  target_id: 1
+  target_type: SshKey
+  command: add_to_authorized_keys
+  performed: 0

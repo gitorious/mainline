@@ -12,6 +12,10 @@ class GitBackend
       end
     end
     
+    def delete!(repos_path)
+      FileUtils.rm_rf(repos_path)
+    end
+    
     def repository_has_commits?(repos_path)
       Dir[File.join(repos_path, "refs/heads/*")].size > 0
     end
