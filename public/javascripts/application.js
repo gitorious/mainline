@@ -1,2 +1,21 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
+var ProjectSluggorizer = Class.create({
+  initialize: function(source, target) {
+   this.source = $(source);
+   this.target = $(target); 
+   new Form.Element.Observer(
+     this.source,
+     0.8,  
+     function(el, value){
+       this.target.value = this._lintedName(value);
+     }.bind(this)
+   )
+  },
+  
+  _lintedName: function(val) {
+    var linted = val.gsub(/\W+/, ' ')
+    linted = linted.gsub(/\ +/, '-')
+    linted = linted.toLowerCase();
+    linted = linted.gsub(/\-+$/, '')
+    return linted;
+  }
+});

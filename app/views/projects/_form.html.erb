@@ -2,10 +2,15 @@
   <%= form.label :title -%><br />
   <%= form.text_field :title, :class => "text" -%>
 </p>
-<p>
-  <%= form.label :slug, "Slug (for urls etc)" -%><br />
-  <%= form.text_field :slug, :class => "text" -%>
-</p>
+<% unless ["edit", "update"].include?(controller.action_name) -%>
+  <p>
+    <%= form.label :slug, "Slug (for urls etc)" -%><br />
+    <%= form.text_field :slug, :class => "text" -%>
+  </p>
+  <script type="text/javascript" charset="utf-8">
+    var slugger = new ProjectSluggorizer("project_title", "project_slug");
+  </script>
+<% end -%>
 <p>
   <%= form.label :description -%><br />
   <%= form.text_area :description, :class => "text medium" -%>
