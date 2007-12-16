@@ -81,13 +81,13 @@ describe Repository do
   end
   
   it "inits the git repository" do
-    @repository.git_backend.should_receive(:create).with(@repository.full_repository_path).and_return(true)
-    @repository.create_git_repository
+    Repository.git_backend.should_receive(:create).with(@repository.full_repository_path).and_return(true)
+    Repository.create_git_repository(@repository.gitdir)
   end
   
   it "deletes a repository" do
-    @repository.git_backend.should_receive(:delete!).with(@repository.full_repository_path).and_return(true)
-    @repository.delete_git_repository
+    Repository.git_backend.should_receive(:delete!).with(@repository.full_repository_path).and_return(true)
+    Repository.delete_git_repository(@repository.gitdir)
   end
   
   it "knows if has commits" do
@@ -130,8 +130,9 @@ describe Repository do
     proc{
       @repository.save!
     }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_id = ?", @repository.id], :order => "id desc")
+    task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "create_git_repository"
+    task.arguments.should match(/#{@repository.gitdir}$/)
   end
   
   it "creates a Task on destroy" do
@@ -139,7 +140,8 @@ describe Repository do
     proc{
       @repository.destroy
     }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_id = ?", @repository.id], :order => "id desc")
+    task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "delete_git_repository"
+    task.arguments.should match(/#{@repository.gitdir}$/)
   end
 end

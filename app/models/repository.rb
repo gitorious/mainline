@@ -37,19 +37,23 @@ class Repository < ActiveRecord::Base
   end
   
   def full_repository_path
-    File.expand_path(File.join(BASE_REPOSITORY_DIR, gitdir))
+    self.class.full_path_from_partial_path(gitdir)
   end
   
-  def create_git_repository
-    git_backend.create(full_repository_path)
+  def self.create_git_repository(path)
+    git_backend.create(full_path_from_partial_path(path))
   end
   
-  def delete_git_repository
-    git_backend.delete!(full_repository_path)
+  def self.delete_git_repository(path)
+    git_backend.delete!(full_path_from_partial_path(path))
   end
   
   def has_commits?
     git_backend.repository_has_commits?(full_repository_path)
+  end
+  
+  def self.git_backend
+    RAILS_ENV == "test" ? MockGitBackend : GitBackend
   end
   
   def git_backend
@@ -71,11 +75,13 @@ class Repository < ActiveRecord::Base
   end
   
   def create_new_repos_task
-    Task.create!(:target => self, :command => "create_git_repository")
+    Task.create!(:target_class => self.class.name, 
+      :command => "create_git_repository", :arguments => gitdir)
   end
   
   def create_delete_repos_task
-    Task.create!(:target => self, :command => "delete_git_repository")
+    Task.create!(:target_class => self.class.name, 
+      :command => "delete_git_repository", :arguments => gitdir)
   end
     
   protected
@@ -87,5 +93,9 @@ class Repository < ActiveRecord::Base
     
     def add_user_as_committer
       committers << user
+    end
+    
+    def self.full_path_from_partial_path(path)
+      File.expand_path(File.join(BASE_REPOSITORY_DIR, path))
     end
 end

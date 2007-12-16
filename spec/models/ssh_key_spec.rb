@@ -63,7 +63,7 @@ describe SshKey do
     ssh_key = new_key
     ssh_key_file_mock.should_receive(:new).and_return(ssh_key_file_mock)
     ssh_key_file_mock.should_receive(:add_key).with(ssh_key.to_key).and_return(true)
-    ssh_key.add_to_authorized_keys(ssh_key_file_mock)
+    SshKey.add_to_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   
   it "removes itself to the authorized keys file" do
@@ -71,7 +71,7 @@ describe SshKey do
     ssh_key = new_key
     ssh_key_file_mock.should_receive(:new).and_return(ssh_key_file_mock)
     ssh_key_file_mock.should_receive(:delete_key).with(ssh_key.to_key).and_return(true)
-    ssh_key.delete_from_authorized_keys(ssh_key_file_mock)
+    SshKey.delete_from_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   
   it "creates a Task on create and update" do
@@ -79,17 +79,20 @@ describe SshKey do
     proc{
       ssh_key.save!
     }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_id = ?", ssh_key.id], :order => "id desc")
+    task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
     task.command.should == "add_to_authorized_keys"
+    task.arguments.should == ssh_key.to_key
   end
   
   it "creates a Task on destroy" do
     ssh_key = new_key
     ssh_key.save!
+    keydata = ssh_key.to_key.dup
     proc{
       ssh_key.destroy
     }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_id = ?", ssh_key.id], :order => "id desc")
+    task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
     task.command.should == "delete_from_authorized_keys"
+    task.arguments.should == keydata
   end
 end

@@ -10,7 +10,8 @@ describe Task do
   end
   
   it "performs a task" do
-    @task.target.should_receive(@task.command).and_return(true)
+    @task.target_class.constantize.should_receive(@task.command) \
+      .with(@task.arguments).and_return(true)
     @task.perform!
     @task.reload
     @task.performed?.should == true

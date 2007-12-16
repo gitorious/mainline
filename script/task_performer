@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+ENV["RAILS_ENV"] ||= "production"
+require File.dirname(__FILE__) + "/../config/environment"
+require "fileutils"
+
+LOCK_FILE_PATH = File.join(RAILS_ROOT, "tmp", "task_lockfile")
+
+class TaskLockError < StandardError; end
+
+def with_lock(&block)
+  begin
+    if File.exist?(LOCK_FILE_PATH)
+      raise TaskLockError
+    end
+    FileUtils.touch(LOCK_FILE_PATH)
+    yield
+    FileUtils.rm(LOCK_FILE_PATH)
+  rescue TaskLockError
+    $stderr.puts "Task lockfile exists"
+    exit(1)
+  end
+end
+
+with_lock do
+  log = Logger.new(File.join(RAILS_ROOT, "log", "tasks.log"))
+  log.formatter = Logger::Formatter.new
+  log.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
+  Task.perform_all_pending!(log)
+end

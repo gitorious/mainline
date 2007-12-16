@@ -22,22 +22,24 @@ class SshKey < ActiveRecord::Base
     %Q{\n### END KEY #{self.id || "nil"} ###}
   end 
   
-  def add_to_authorized_keys(key_file_class=SshKeyFile)
+  def self.add_to_authorized_keys(keydata, key_file_class=SshKeyFile)
     key_file = key_file_class.new
-    key_file.add_key(self.to_key)
+    key_file.add_key(keydata)
   end
   
-  def delete_from_authorized_keys(key_file_class=SshKeyFile)
+  def self.delete_from_authorized_keys(keydata, key_file_class=SshKeyFile)
     key_file = key_file_class.new
-    key_file.delete_key(self.to_key)
+    key_file.delete_key(keydata)
   end
   
   def create_new_task
-    Task.create!(:target => self, :command => "add_to_authorized_keys")
+    Task.create!(:target_class => self.class.name, 
+      :command => "add_to_authorized_keys", :arguments => self.to_key)
   end
   
   def create_delete_task
-    Task.create!(:target => self, :command => "delete_from_authorized_keys")
+    Task.create!(:target_class => self.class.name, 
+      :command => "delete_from_authorized_keys", :arguments => self.to_key)
   end
   
   protected

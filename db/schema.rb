@@ -81,17 +81,15 @@ ActiveRecord::Schema.define(:version => 16) do
   end
 
   create_table "tasks", :force => true do |t|
-    t.integer  "target_id"
-    t.string   "target_type"
+    t.string   "target_class"
     t.string   "command"
+    t.text     "arguments"
     t.boolean  "performed",    :default => false
     t.datetime "performed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "tasks", ["target_id"], :name => "index_tasks_on_target_id"
-  add_index "tasks", ["target_type"], :name => "index_tasks_on_target_type"
   add_index "tasks", ["performed"], :name => "index_tasks_on_performed"
 
   create_table "users", :force => true do |t|
