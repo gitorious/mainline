@@ -18,16 +18,12 @@ git clone <%= @repository.clone_url -%>
 
 <h2>Recent commits <!-- <small>(<a href="">Browse</a>)</small> --></h2>
 <ul>
-  <% begin -%>
   <% @recent_commits.each do |commit| -%>
   <li class="commit_item">
     <a href=""><%= truncate(h(commit.sha), 16) -%></a> 
     by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago<br />
     <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
   </li>
-  <% end -%>
-  <% rescue Git::GitExecuteError -%>
-    <li><em>Error getting data or no commits yet</em></li>
   <% end -%>
 </ul>
 
