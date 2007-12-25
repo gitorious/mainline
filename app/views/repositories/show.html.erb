@@ -2,8 +2,8 @@
   <%= h(@repository.name) -%> in 
   <%= link_to h(@repository.project.title), @repository.project -%>
 </h1>
-
-<ul class="infobox">
+<ul class="infobox<%- if render_build_notice_for?(@repository) -%> constructing<%- end -%>">
+  <%= render_build_notice_for(@repository) -%>
   <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
   <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
   <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>

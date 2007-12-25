@@ -11,4 +11,17 @@ module ApplicationHelper
       link_to(h(tag.name), { :action => :category, :id => tag.name })
     end.to_sentence
   end
+  
+  def render_build_notice_for?(object)
+    object.respond_to?(:ready?) && !object.ready?
+  end
+  
+  # TODO: refactor into a block that "disables" everything within it until ready
+  def render_build_notice_for(object)
+    return unless render_build_notice_for?(object)
+    out =  %Q{<div class="being_constructed">}
+    out << %Q{  <p>is being created&hellip;</p>}
+    out << %Q{</div>}
+    out
+  end
 end

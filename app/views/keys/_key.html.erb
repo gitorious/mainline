@@ -1,4 +1,8 @@
-<p><code><%= ssh_key.wrapped_key -%></code>
+<p>
+  <%= render_build_notice_for(ssh_key) -%>
+  <code<%- if render_build_notice_for?(ssh_key) -%> class="constructing"<%- end -%>>
+    <%= ssh_key.wrapped_key -%>
+  </code>
   <%= button_to "delete", account_key_path(ssh_key),
              :confirm => "Are you sure?", :method => :delete, :class => "inline" -%>
 </p>
