@@ -6,7 +6,8 @@ class Repository < ActiveRecord::Base
   has_many    :committers, :through => :committerships, :source => :user
   
   validates_presence_of :user_id, :project_id, :name
-  validates_format_of :name, :with => /^[a-z0-9_\-]+$/i
+  validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
+    :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
   before_save :set_as_mainline_if_first
