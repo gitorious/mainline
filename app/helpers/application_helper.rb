@@ -21,7 +21,8 @@ module ApplicationHelper
   def render_build_notice_for(object)
     return unless render_build_notice_for?(object)
     out =  %Q{<div class="being_constructed">}
-    out << %Q{  <p>is being created&hellip;</p>}
+    out << %Q{  <p>The #{object.class.name.humanize.downcase} is being created,<br />}
+    out << %Q{  it will be ready pretty soon&hellip;</p>}
     out << %Q{</div>}
     out
   end
