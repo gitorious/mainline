@@ -33,14 +33,16 @@ git clone <%= @repository.clone_url -%>
 
 <% content_for :sidebar do -%>  
   <div class="user_list">
-    <% if @repository.user == current_user -%>
     <ul class="links">
+    <% if @repository.ready? -%>
       <li><%= link_to "+ Clone repository", copy_project_repository_path(@project, @repository) -%></li>
+    <% end -%>
+    <% if @repository.user == current_user -%>
       <li><%= link_to "+ Add committer", 
               { :controller => "committers", :action => "new", :project_id => @project, 
                 :repository_id => @repository } -%></li>
-    </ul>
     <% end -%>
+    </ul>
     
     <h4>Committers</h4>    
     <ul>
