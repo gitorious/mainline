@@ -25,11 +25,20 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :users 
   map.resource  :sessions
-  map.resources :projects do |projects|
+  map.resources :projects, :path_name => "p" do |projects|
     projects.resources(:repositories, :member => { 
       :copy => :get, :create_copy => :post, :writable_by => :get
     }, :path_name => "repos") do |repo|
       repo.resources :committers, :name_prefix => nil
+      
+      # Repository browsing related routes
+      repo.with_options(:controller => "browse") do |r|
+        r.browse  "browse",       :action => "index"
+        r.tree    "tree/:sha",    :action => "tree", :sha => nil
+        r.blob    "blob/:sha/:filename", :action => "blob", :requirements => {:filename => /.*/}
+        r.commit  "commit/:sha",  :action => "commit"
+        r.diff    "diff/:sha/:other_sha",  :action => "diff"
+      end
     end
   end
   

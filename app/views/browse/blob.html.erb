@@ -1,0 +1,11 @@
+<h1>Blob of <code><%= params[:filename] -%></code></h1>
+<pre><%=h @blob.contents -%></pre>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "&#x2190; \"#{@repository.name}\"", 
+              project_repository_path(@project, @repository) -%></li>
+    <li><%= link_to "&#x2190; project page", 
+              project_path(@project) -%></li>
+  </ul>
+<% end -%>

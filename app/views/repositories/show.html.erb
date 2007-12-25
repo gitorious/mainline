@@ -16,14 +16,15 @@
 git clone <%= @repository.clone_url -%>
 </pre>
 
-<h2>Recent commits <!-- <small>(<a href="">Browse</a>)</small> --></h2>
+<h2>Recent commits <small>(<%= link_to "browse", project_repository_browse_path(@project, @repository) -%>)</small></h2>
 <ul>
   <% if @recent_commits.blank? -%>
     <li><em>No commits yet…</em></li>
   <% end -%>
   <% @recent_commits.each do |commit| -%>
   <li class="commit_item">
-    <a href=""><%= truncate(h(commit.sha), 16) -%></a> 
+    <a href=""><%= link_to truncate(h(commit.sha), 16), 
+      project_repository_commit_path(@project, @repository, commit.sha) -%></a> 
     by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago<br />
     <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
   </li>

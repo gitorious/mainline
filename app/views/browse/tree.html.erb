@@ -1,0 +1,31 @@
+<h1>
+  Browsing tree of <%= link_to h(@repository.name), project_repository_path(@project, @repository) -%> 
+  repository in <%= link_to h(@project.title), project_path(@project) -%>
+</h1>
+
+<table class="listing">
+  <% @tree.children.sort_by{|f,n| f }.each do |file, node| -%>
+  <tr class="<%= cycle("odd", "even") -%>">
+    <td><%= h(truncate(node.sha, 16)) -%></td>
+    <!-- <td><%= h(node.mode) -%></td> -->
+    <% if node.type == "tree" -%>
+      <td><%= link_to h(file), tree_path(node.sha) -%></td>
+      <td><%= link_to node.type, tree_path(node.sha) -%></td>
+    <!-- TODO: archive -->
+    <% else -%>
+      <td><%= link_to h(file), blob_path(node.sha, file) -%></td>
+      <td><%= link_to node.type, blob_path(node.sha, file) -%></td>
+      <td><%#= link_to "raw", raw_path(node.sha) -%></td>
+    <% end -%>
+  </tr>
+  <% end -%>
+</table>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "&#x2190; \"#{@repository.name}\"", 
+              project_repository_path(@project, @repository) -%></li>
+    <li><%= link_to "&#x2190; project page", 
+              project_path(@project) -%></li>
+  </ul>
+<% end -%>

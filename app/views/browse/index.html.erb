@@ -1,0 +1,55 @@
+<h1>
+  Browsing <%= link_to h(@repository.name), project_repository_path(@project, @repository) -%> 
+  repository in <%= link_to h(@project.title), project_path(@project) -%>
+</h1>
+
+<h2>Info</h2>
+<ul class="infobox">
+  <li><strong>owner:</strong> <%=h @git.config["user.name"] -%></li>
+  <li><strong>email:</strong> <%=h @git.config["user.email"] -%></li>
+</ul>
+
+<h2>shortlog</h2>
+<table class="listing">
+  <!-- <tr>
+    <th>Header</th>
+  </tr> -->
+  <% @git.log(20).each do |log| -%>
+  <tr class="<%= cycle "odd", "even" -%>">
+    <td><%=h log.date.strftime("%Y-%m-%d") -%></td>
+    <td><%=h log.sha[0..8] -%></td>
+    <td><%=h log.author.name -%></td>
+    <td>
+      <%= link_to h(truncate(log.message, 60)), commit_path(log.sha) -%>
+      <!-- TODO: tags mention here -->
+    </td>
+    <td><%= link_to "commit", commit_path(log.sha) -%></td>
+    <td><%= link_to "tree", tree_path(log.gtree.sha) -%></td>
+    <td><%= link_to "commit-diff", diff_path(log.sha, log.parent.sha) -%></td>
+    <!-- <td>archive (<%= log.gtree.sha -%>)</td> -->
+  </tr>
+  <% end -%>
+</table>
+
+<% content_for :sidebar do -%>
+  <h4>Branches</h4>
+  <ul>
+    <li># TODO</li>
+  </ul>
+
+  <h4>Tags</h4>
+  <ul class="links">
+  <% @git.tags.each do |tag| -%>
+    <li><%= tag.name -%></li>
+  <% end -%>
+  </ul>
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "&#x2190; \"#{@repository.name}\"", 
+              project_repository_path(@project, @repository) -%></li>
+    <li><%= link_to "&#x2190; project page", 
+              project_path(@project) -%></li>
+  </ul>
+<% end -%>

@@ -1,0 +1,20 @@
+<h1>Diff</h1>
+
+<!-- TODO: download as .patch -->
+
+<p><%= link_to params[:sha], tree_path(params[:sha]) -%> (new) | 
+  <%= link_to params[:other_sha], tree_path(params[:other_sha]) -%> (old)</p>
+
+<% @diff.each do |file| -%>
+  <h3><%=h file.path -%></h3>
+  <p><pre><%=h file.patch -%></pre></p>
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "&#x2190; \"#{@repository.name}\"", 
+              project_repository_path(@project, @repository) -%></li>
+    <li><%= link_to "&#x2190; project page", 
+              project_path(@project) -%></li>
+  </ul>
+<% end -%>

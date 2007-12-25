@@ -1,0 +1,14 @@
+<h1>Commit diff</h1>
+
+<ul class="infobox">
+  <li><strong>Date:</strong> <%=h @commit.date -%></li>
+  <li><strong>Author:</strong> <%=h @commit.author.name -%>
+      (<%=h @commit.author.email -%>)</li>
+</ul>
+
+<% #TODO: commit diff stats (as sparklines?) -%>
+
+<% @commit.diff_parent.each do |file| -%>
+  <h3><%=link_to h(file.path), blob_path(@commit.sha, file.path) -%></h3>
+  <p><pre><%=h file.patch -%></pre></p>
+<% end -%>
