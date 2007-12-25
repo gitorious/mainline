@@ -46,6 +46,15 @@ class CommittersController < ApplicationController
     end
   end
   
+  def auto_complete_for_user_login
+    #@users = User.find(:all, :conditions => ["login ilike ?", params[:user][:login]])
+    login = params[:user][:login]
+    @users = User.find(:all, 
+      :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ])
+    logger.debug @users.inspect
+    render :inline => "<%= auto_complete_result(@users, 'login') %>"
+  end
+  
   private
     def find_repository
       @repository = Repository.find_by_name!(params[:repository_id])

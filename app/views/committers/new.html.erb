@@ -8,15 +8,14 @@
   <p>
     <%= f.label :login, "Existing username" -%><br />
     <%= f.text_field :login -%>
+    <div id="user_login_auto_complete" class="auto_complete"></div>
   </p>
   <p>
-    <%= f.submit "Find & Add" -%>
+    <%= f.submit "Add as committer" -%>
   </p>
 <% end -%>
 
-<p>
-  <em>FIXME: this form sucks</em>
-</p>
+<%= auto_complete_field("user_login", :url => {:action => "auto_complete_for_user_login" }) -%>
 
 <% content_for :sidebar do -%>
   <ul class="links">
