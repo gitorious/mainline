@@ -57,7 +57,6 @@ module ActionController
         arrange_actions
         add_default_actions
         set_prefixes
-        set_path_name
       end
 
       def controller
@@ -118,10 +117,6 @@ module ActionController
         def set_prefixes
           @path_prefix = options.delete(:path_prefix)
           @name_prefix = options.delete(:name_prefix)
-        end
-        
-        def set_path_name
-          @path = options[:path_name] ? "#{path_prefix}/#{options[:path_name]}" : nil
         end
 
         def arrange_actions_by_methods(actions)
