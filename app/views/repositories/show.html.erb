@@ -18,6 +18,9 @@ git clone <%= @repository.clone_url -%>
 
 <h2>Recent commits <!-- <small>(<a href="">Browse</a>)</small> --></h2>
 <ul>
+  <% if @recent_commits.blank? -%>
+    <li><em>No commits yet…</em></li>
+  <% end -%>
   <% @recent_commits.each do |commit| -%>
   <li class="commit_item">
     <a href=""><%= truncate(h(commit.sha), 16) -%></a> 
