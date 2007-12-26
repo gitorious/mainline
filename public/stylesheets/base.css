@@ -462,7 +462,18 @@ span.tag {
   padding: 0 4px 2px 4px;
 }
 
-table.shortlog tr td {
+table.shortlog tr td, table.tree tr td {
   padding-top: 2px;
   padding-bottom: 4px;
 }
+
+table.tree tr td.node {
+  width: 75%;
+}
+table.tree tr td.node a {
+  padding-left:25px;
+  background-position: 4px 50%;
+  background-repeat: no-repeat;
+}
+table.tree tr td.file a { background-image: url("/images/icon_file.gif"); }
+table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
