@@ -1,5 +1,6 @@
 <% content_for :sidebar do -%>
   <ul class="links">
+    <li><%= link_to "&#x2190; shortlog index", browse_path -%></li>
     <li><%= link_to "&#x2190; repository page", 
               project_repository_path(@project, @repository) -%></li>
     <li><%= link_to "&#x2190; project page", 

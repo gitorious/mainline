@@ -5,12 +5,12 @@
 
 <ul class="infobox">
   <li><strong>Owner (per git-config):</strong> <%=h @git.config["user.name"] -%> (<%=h @git.config["user.email"] -%>)</li>
-  <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
+  <li><strong>Creator:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
 </ul>
 
 <h2>shortlog</h2>
 <table class="listing">
-  <% @git.log(20).each do |log| -%>
+  <% @git.log(30).each do |log| -%>
   <tr class="<%= cycle "odd", "even" -%>">
     <td><%=h log.date.strftime("%Y-%m-%d %H:%M") -%></td>
     <td><%=h log.sha[0..8] -%></td>
