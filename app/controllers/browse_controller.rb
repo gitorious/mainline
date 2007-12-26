@@ -1,5 +1,6 @@
 class BrowseController < ApplicationController
   before_filter :find_project_and_repository
+  before_filter :check_for_commits
   
   def index
     @git = Git.bare(@repository.full_repository_path)
@@ -51,5 +52,12 @@ class BrowseController < ApplicationController
     def find_project_and_repository
       @project = Project.find_by_slug!(params[:project_id])
       @repository = @project.repositories.find_by_name!(params[:repository_id])
+    end
+    
+    def check_for_commits
+      unless @repository.has_commits?
+        flash[:notice] = "The repository doesn't have any commits yet"
+        redirect_to project_repository_path(@project, @repository) and return
+      end
     end
 end
