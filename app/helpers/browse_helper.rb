@@ -19,5 +19,5 @@ module BrowseHelper
   def diff_path(sha1, other_sha1)
     project_repository_diff_path(@project, @repository, sha1, other_sha1)    
   end
-  
+    
 end

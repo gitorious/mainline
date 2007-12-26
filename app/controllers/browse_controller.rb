@@ -13,6 +13,7 @@ class BrowseController < ApplicationController
   def commit
     @git = Git.bare(@repository.full_repository_path)
     @commit = @git.gcommit(params[:sha])
+    @diff = @git.diff(@commit.parent.sha, @commit.sha)
   end
   
   def diff

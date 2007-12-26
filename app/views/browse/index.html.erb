@@ -32,24 +32,24 @@
 </table>
 
 <% content_for :sidebar do -%>
-  <h4>Branches</h4>
-  <ul>
-    <li># TODO</li>
-  </ul>
-
-  <h4>Tags</h4>
-  <ul class="links">
-  <% @git.tags.each do |tag| -%>
-    <li><%= tag.name -%></li>
-  <% end -%>
-  </ul>
-<% end -%>
-
-<% content_for :sidebar do -%>
   <ul class="links">
     <li><%= link_to "&#x2190; \"#{@repository.name}\"", 
               project_repository_path(@project, @repository) -%></li>
     <li><%= link_to "&#x2190; project page", 
               project_path(@project) -%></li>
+  </ul>
+  
+  <h5>Branches:</h5>
+  <ul class="links">
+    <% @git.branches.each do |branch| -%>
+    <li><%= link_to h(branch.name), commit_path(branch.gcommit.sha) -%></li>
+    <% end -%>
+  </ul>
+
+  <h5>Tags:</h5>
+  <ul class="links">
+  <% @git.tags.each do |tag| -%>
+    <li><%= link_to h(tag.name), commit_path(tag.sha) -%></li>
+  <% end -%>
   </ul>
 <% end -%>

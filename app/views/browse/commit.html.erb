@@ -4,11 +4,20 @@
   <li><strong>Date:</strong> <%=h @commit.date -%></li>
   <li><strong>Author:</strong> <%=h @commit.author.name -%>
       (<%=h @commit.author.email -%>)</li>
+  <li><strong>Commit SHA1:</strong> <%=h @commit.sha -%></li>
+  <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.gtree.sha), tree_path(@commit.gtree.sha) -%></li>
+  <li><strong>Commit message:</strong> 
+    <pre><%=h @commit.message -%></pre>
+  </li>
 </ul>
+
+<p></p>
 
 <% #TODO: commit diff stats (as sparklines?) -%>
 
-<% @commit.diff_parent.each do |file| -%>
-  <h3><%=link_to h(file.path), blob_path(@commit.sha, file.path) -%></h3>
+<% @diff.each do |file| -%>
+  <h3><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h3>
   <p><pre><%=h file.patch -%></pre></p>
 <% end -%>
+
+<%= render :partial => "sidebar" -%>
