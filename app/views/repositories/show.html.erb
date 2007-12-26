@@ -1,5 +1,5 @@
 <h1>
-  <%= h(@repository.name) -%> in 
+  &quot;<%= h(@repository.name) -%>&quot; repository in 
   <%= link_to h(@repository.project.title), @repository.project -%>
 </h1>
 <ul class="infobox<%- if render_build_notice_for?(@repository) -%> constructing<%- end -%>">
