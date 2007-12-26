@@ -12,11 +12,11 @@
 <table class="listing">
   <% @git.log(30).each do |log| -%>
   <tr class="<%= cycle "odd", "even" -%>">
+    <td><%= link_to h(log.sha[0..8]), tree_path(log.sha) -%></td>
     <td><%=h log.date.strftime("%Y-%m-%d %H:%M") -%></td>
-    <td><%=h log.sha[0..8] -%></td>
     <td><%=h log.author.name -%></td>
     <td>
-      <%= link_to h(truncate(log.message, 60)), commit_path(log.sha) -%>
+      <%= link_to h(truncate(log.message, 85)), commit_path(log.sha) -%>
       <%= render_tag_box_if_match(log.sha, @tags_per_sha) -%>
     </td>
     <td><%= link_to "commit", commit_path(log.sha) -%></td>
