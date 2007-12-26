@@ -6,7 +6,7 @@
 <table class="listing">
   <% @tree.children.sort_by{|f,n| f }.each do |file, node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
-    <td><%= h(truncate(node.sha, 16)) -%></td>
+    <td><%= h(node.sha[0..8]) -%></td>
     <!-- <td><%= h(node.mode) -%></td> -->
     <% if node.type == "tree" -%>
       <td><%= link_to h(file), tree_path(node.sha) -%></td>

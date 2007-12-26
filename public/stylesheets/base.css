@@ -455,3 +455,9 @@ div.auto_complete ul strong.highlight {
   margin:0;
   padding:0;
 }
+
+span.tag {
+  border: 1px solid #999;
+  background: #dedede;
+  padding: 0 4px 2px 4px;
+}

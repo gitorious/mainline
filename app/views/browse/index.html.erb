@@ -11,21 +11,17 @@
 
 <h2>shortlog</h2>
 <table class="listing">
-  <!-- <tr>
-    <th>Header</th>
-  </tr> -->
   <% @git.log(20).each do |log| -%>
   <tr class="<%= cycle "odd", "even" -%>">
-    <td><%=h log.date.strftime("%Y-%m-%d") -%></td>
+    <td><%=h log.date.strftime("%Y-%m-%d %H:%M") -%></td>
     <td><%=h log.sha[0..8] -%></td>
     <td><%=h log.author.name -%></td>
     <td>
       <%= link_to h(truncate(log.message, 60)), commit_path(log.sha) -%>
-      <!-- TODO: tags mention here -->
+      <%= render_tag_box_if_match(log.sha, @tags_per_sha) -%>
     </td>
     <td><%= link_to "commit", commit_path(log.sha) -%></td>
     <td><%= link_to "tree", tree_path(log.gtree.sha) -%></td>
-    <td><%= link_to "commit-diff", diff_path(log.sha, log.parent.sha) -%></td>
     <!-- <td>archive (<%= log.gtree.sha -%>)</td> -->
   </tr>
   <% end -%>
@@ -33,7 +29,7 @@
 
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li><%= link_to "&#x2190; \"#{@repository.name}\"", 
+    <li><%= link_to "&#x2190; repository page", 
               project_repository_path(@project, @repository) -%></li>
     <li><%= link_to "&#x2190; project page", 
               project_path(@project) -%></li>

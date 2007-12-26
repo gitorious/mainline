@@ -15,8 +15,10 @@
 
 <% #TODO: commit diff stats (as sparklines?) -%>
 
+<h2>Commit diff</h2>
+
 <% @diff.each do |file| -%>
-  <h3><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h3>
+  <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
   <p><pre><%=h file.patch -%></pre></p>
 <% end -%>
 

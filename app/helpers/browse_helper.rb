@@ -20,4 +20,16 @@ module BrowseHelper
     project_repository_diff_path(@project, @repository, sha1, other_sha1)    
   end
     
+  def render_tag_box_if_match(sha, tags_per_sha)
+    tags = tags_per_sha[sha]
+    return if tags.blank?
+    out = ""
+    tags.each do |tagname|
+      out << %Q{<span class="tag"><code>}
+      out << tagname
+      out << %Q{</code></span>}
+    end
+    out
+  end  
+  
 end

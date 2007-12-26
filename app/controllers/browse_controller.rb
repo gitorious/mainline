@@ -3,6 +3,12 @@ class BrowseController < ApplicationController
   
   def index
     @git = Git.bare(@repository.full_repository_path)
+    @tags_per_sha = returning({}) do |hash|
+      @git.tags.each do |tag| 
+        hash[tag.sha] ||= []
+        hash[tag.sha] << tag.name 
+      end
+    end
   end
   
   def tree
