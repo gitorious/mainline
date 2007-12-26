@@ -461,3 +461,8 @@ span.tag {
   background: #dedede;
   padding: 0 4px 2px 4px;
 }
+
+table.shortlog tr td {
+  padding-top: 2px;
+  padding-bottom: 4px;
+}

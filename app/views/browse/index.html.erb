@@ -9,7 +9,7 @@
 </ul>
 
 <h2>shortlog</h2>
-<table class="listing">
+<table class="listing shortlog">
   <% @git.log(30).each do |log| -%>
   <tr class="<%= cycle "odd", "even" -%>">
     <td><%= link_to h(log.sha[0..8]), tree_path(log.sha) -%></td>
