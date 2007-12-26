@@ -4,18 +4,17 @@
 </h1>
 
 <table class="listing">
-  <% @tree.children.sort_by{|f,n| f }.each do |file, node| -%>
+  <% @tree.children.sort_by{|f,n| f.downcase }.each do |file, node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
     <td><%= h(node.sha[0..8]) -%></td>
-    <!-- <td><%= h(node.mode) -%></td> -->
+    <!-- <td><%#= h(node.mode) -%></td> -->
     <% if node.type == "tree" -%>
-      <td><%= link_to h(file), tree_path(node.sha) -%></td>
+      <td><%= link_to h(file + "/"), tree_path(node.sha) -%></td>
       <td><%= link_to node.type, tree_path(node.sha) -%></td>
     <!-- TODO: archive -->
     <% else -%>
       <td><%= link_to h(file), blob_path(node.sha, file) -%></td>
       <td><%= link_to node.type, blob_path(node.sha, file) -%></td>
-      <td><%#= link_to "raw", raw_path(node.sha) -%></td>
     <% end -%>
   </tr>
   <% end -%>
