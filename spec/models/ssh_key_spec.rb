@@ -85,6 +85,7 @@ describe SshKey do
     task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
     task.command.should == "add_to_authorized_keys"
     task.arguments.should == ssh_key.to_key
+    task.target_id.should == ssh_key.id
   end
   
   it "creates a Task on destroy" do

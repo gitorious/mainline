@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 16) do
+ActiveRecord::Schema.define(:version => 17) do
 
   create_table "committerships", :force => true do |t|
     t.integer  "user_id"
@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(:version => 16) do
     t.datetime "performed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "target_id"
   end
 
   add_index "tasks", ["performed"], :name => "index_tasks_on_performed"

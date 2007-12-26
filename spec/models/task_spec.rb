@@ -18,6 +18,17 @@ describe Task do
     @task.performed_at.should_not == nil
   end
   
+  it "marks the object as ready if it has a target_id" do
+    target = repositories(:johans)
+    target.ready = false
+    target.save!
+    @task.target_id = target.id
+    @task.target_class.constantize.should_receive(@task.command) \
+      .with(@task.arguments).and_return(true)
+    @task.perform!
+    target.reload.ready?.should == true
+  end
+  
   it "finds tasks that needs performin'" do
     @task.update_attributes(:performed => true)
     Task.find_all_pending.should == [tasks(:add_key)]

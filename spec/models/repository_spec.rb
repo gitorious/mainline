@@ -133,6 +133,7 @@ describe Repository do
     task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "create_git_repository"
     task.arguments.should match(/#{@repository.gitdir}$/)
+    task.target_id.should == @repository.id
   end
   
   it "creates a Task on destroy" do

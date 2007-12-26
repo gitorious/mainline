@@ -77,7 +77,9 @@ class Repository < ActiveRecord::Base
   
   def create_new_repos_task
     Task.create!(:target_class => self.class.name, 
-      :command => "create_git_repository", :arguments => gitdir)
+      :command => "create_git_repository", 
+      :arguments => gitdir, 
+      :target_id => self.id)
   end
   
   def create_delete_repos_task

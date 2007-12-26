@@ -1,5 +1,4 @@
 class Task < ActiveRecord::Base
-  belongs_to :target, :polymorphic => true
   
   def self.find_all_pending
     find(:all, :conditions => {:performed => false})
@@ -20,6 +19,13 @@ class Task < ActiveRecord::Base
       self.performed = true
       self.performed_at = Time.now
       save!
+      unless target_id.blank?
+        obj = target_class.constantize.find_by_id(target_id)
+        if obj && obj.respond_to?(:ready)
+          obj.ready = true
+          obj.save!
+        end
+      end
     end
   end
   
