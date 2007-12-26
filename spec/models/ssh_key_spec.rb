@@ -25,6 +25,9 @@ describe SshKey do
     key.should be_valid    
     key.key = "ssh-rsa asdasda2\n34as+d=\n bar@127.0.0.1"
     key.should be_valid
+    
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steakhouse.local"
+    key.should be_valid
   end
   
   it "should have a user to be valid" do

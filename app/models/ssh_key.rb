@@ -1,7 +1,7 @@
 class SshKey < ActiveRecord::Base
   belongs_to :user
   
-  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\n]+ [a-z0-9_\.\-]*(@[a-z0-9\.\-]*)?$/ims
+  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\n\/]+ [a-z0-9_\.\-]*(@[a-z0-9\.\-]*)?$/ims
   
   validates_presence_of :user_id, :key
   validates_format_of   :key, :with => SSH_KEY_FORMAT
