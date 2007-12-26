@@ -3,10 +3,9 @@
   repository in <%= link_to h(@project.title), project_path(@project) -%>
 </h1>
 
-<h2>Info</h2>
 <ul class="infobox">
-  <li><strong>owner:</strong> <%=h @git.config["user.name"] -%></li>
-  <li><strong>email:</strong> <%=h @git.config["user.email"] -%></li>
+  <li><strong>Owner (per git-config):</strong> <%=h @git.config["user.name"] -%> (<%=h @git.config["user.email"] -%>)</li>
+  <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
 </ul>
 
 <h2>shortlog</h2>

@@ -26,6 +26,7 @@
     <th>Name</th>
     <th>Owner</th>
     <th>Created</th>
+    <th></th>
   </thead>
   <% @repositories.each do |repos| -%>
   <tr class="<%= cycle("even", "odd") -%><%= repos.mainline? ? ' mainline' : '' -%>">
@@ -43,6 +44,7 @@
     <td>
       <%= repos.created_at.to_s(:short) -%>
     </td>
+    <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
   </tr>
   <% end -%>
 </table>
