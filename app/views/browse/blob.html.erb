@@ -1,4 +1,7 @@
-<h1>Blob of <code><%= params[:filename] -%></code></h1>
+<h1>
+  Blob of <code><%= params[:filename] -%></code> 
+  <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, params[:filename]) -%>)</small>
+</h1>
 <pre><%=h @blob.contents -%></pre>
 
 <%= render :partial => "sidebar" -%>

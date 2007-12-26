@@ -16,6 +16,10 @@ module BrowseHelper
     project_repository_blob_path(@project, @repository, sha1, filename)    
   end
   
+  def raw_blob_path(sha1, filename)
+    project_repository_raw_blob_path(@project, @repository, sha1, filename)    
+  end
+  
   def diff_path(sha1, other_sha1)
     project_repository_diff_path(@project, @repository, sha1, other_sha1)    
   end

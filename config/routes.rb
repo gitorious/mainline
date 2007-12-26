@@ -36,6 +36,7 @@ ActionController::Routing::Routes.draw do |map|
         r.browse  "browse",       :action => "index"
         r.tree    "tree/:sha",    :action => "tree", :sha => nil
         r.blob    "blob/:sha/:filename", :action => "blob", :requirements => {:filename => /.*/}
+        r.raw_blob "raw/:sha/:filename", :action => "raw", :requirements => {:filename => /.*/}
         r.commit  "commit/:sha",  :action => "commit"
         r.diff    "diff/:sha/:other_sha",  :action => "diff"
       end

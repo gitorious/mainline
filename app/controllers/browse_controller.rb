@@ -32,6 +32,12 @@ class BrowseController < ApplicationController
     @blob = @git.gblob(params[:sha])
   end
   
+  def raw
+    @git = Git.bare(@repository.full_repository_path)
+    @blob = @git.gblob(params[:sha])
+    render :text => @blob.contents, :content_type => "text/plain"
+  end
+  
   def log
     @git = Git.bare(@repository.full_repository_path)
     # TODO: paginated logs
