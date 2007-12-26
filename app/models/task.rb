@@ -14,7 +14,7 @@ class Task < ActiveRecord::Base
   
   def perform!(log=RAILS_DEFAULT_LOGGER)
     transaction do
-      log.info("Performing Task #{self.id.inspect}: #{target_class}::#{command}(#{arguments[0..64].inspect}..)")
+      log.info("Performing Task #{self.id.inspect}: #{target_class}(#{target_id.inspect})::#{command}(#{arguments[0..64].inspect}..)")
       target_class.constantize.send(command, arguments)
       self.performed = true
       self.performed_at = Time.now
