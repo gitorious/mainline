@@ -1,14 +1,13 @@
 <h1>Commit <%=h @commit.sha -%></h1>
 
+<p><pre><%=h @commit.message -%></pre></p>
+
 <ul class="infobox">
   <li><strong>Date:</strong> <%=h @commit.date -%></li>
   <li><strong>Author:</strong> <%=h @commit.author.name -%>
       (<%=h @commit.author.email -%>)</li>
   <li><strong>Commit SHA1:</strong> <%=h @commit.sha -%></li>
   <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.gtree.sha), tree_path(@commit.gtree.sha) -%></li>
-  <li><strong>Commit message:</strong> 
-    <pre><%=h @commit.message -%></pre>
-  </li>
 </ul>
 
 <p></p>
