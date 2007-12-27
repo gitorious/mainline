@@ -6,14 +6,15 @@ class RepositoriesController < ApplicationController
   def show
     @repository = @project.repositories.find_by_name!(params[:id])
     if @repository.has_commits?
-      @recent_commits = Git.bare(@repository.full_repository_path).log(10)
+      @commits = Git.bare(@repository.full_repository_path).log(10)
     else
-      @recent_commits = []
+      @commits = []
     end
     
     respond_to do |format|
       format.html
-      format.xml { render :xml => @repository }
+      format.xml  { render :xml => @repository }
+      format.atom { render :template => "browse/index.atom.builder" }
     end
   end
   

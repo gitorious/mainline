@@ -11,6 +11,10 @@ class BrowseController < ApplicationController
         hash[tag.sha] << tag.name 
       end
     end
+    respond_to do |format|
+      format.html
+      format.atom
+    end
   end
   
   def tree
