@@ -10,18 +10,18 @@
 
 <h2>shortlog</h2>
 <table class="listing shortlog">
-  <% @git.log(30).each do |log| -%>
+  <% @commits.each do |commit| -%>
   <tr class="<%= cycle "odd", "even" -%>">
-    <td><%= link_to h(log.sha[0..8]), tree_path(log.sha) -%></td>
-    <td><%=h log.date.strftime("%Y-%m-%d %H:%M") -%></td>
-    <td><%=h log.author.name -%></td>
+    <td><%= link_to h(commit.sha[0..8]), tree_path(commit.sha) -%></td>
+    <td><%=h commit.date.strftime("%Y-%m-%d %H:%M") -%></td>
+    <td><%=h commit.author.name -%></td>
     <td>
-      <%= link_to h(truncate(log.message, 85)), commit_path(log.sha) -%>
-      <%= render_tag_box_if_match(log.sha, @tags_per_sha) -%>
+      <%= link_to h(truncate(commit.message, 85)), commit_path(commit.sha) -%>
+      <%= render_tag_box_if_match(commit.sha, @tags_per_sha) -%>
     </td>
-    <td><%= link_to "commit", commit_path(log.sha) -%></td>
-    <td><%= link_to "tree", tree_path(log.gtree.sha) -%></td>
-    <!-- <td>archive (<%= log.gtree.sha -%>)</td> -->
+    <td><%= link_to "commit", commit_path(commit.sha) -%></td>
+    <td><%= link_to "tree", tree_path(commit.gtree.sha) -%></td>
+    <!-- <td>archive (<%= commit.gtree.sha -%>)</td> -->
   </tr>
   <% end -%>
 </table>

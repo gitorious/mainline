@@ -4,6 +4,7 @@ class BrowseController < ApplicationController
   
   def index
     @git = Git.bare(@repository.full_repository_path)
+    @commits = @git.log(30)
     @tags_per_sha = returning({}) do |hash|
       @git.tags.each do |tag| 
         hash[tag.sha] ||= []
