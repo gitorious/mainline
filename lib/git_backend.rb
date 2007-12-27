@@ -12,6 +12,13 @@ class GitBackend
       end
     end
     
+    # Clones a new bare Git repository at +target-path+ from +source_path+
+    # sets git-daemon-export-ok if +set_export_ok+ is true (default)
+    def clone(target_path, source_path, set_export_ok = true)
+      Git.clone(source_path, target_path, :bare => true)
+      FileUtils.touch(File.join(target_path, "git-daemon-export-ok")) if set_export_ok
+    end
+    
     def delete!(repos_path)
       FileUtils.rm_rf(repos_path)
     end

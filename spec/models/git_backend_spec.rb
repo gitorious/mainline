@@ -19,6 +19,15 @@ describe GitBackend do
     GitBackend.create(path)
   end
   
+  it "clones an existing repos into a bare one" do
+    source_path = @repository.full_repository_path 
+    target_path = repositories(:johans).full_repository_path 
+    Git.should_receive(:clone).with(source_path, target_path, :bare => true).and_return(true)
+    FileUtils.should_receive(:touch).with(File.join(target_path, "git-daemon-export-ok"))
+  
+    GitBackend.clone(target_path, source_path)
+  end
+  
   it "deletes a git repository" do
     path = @repository.full_repository_path 
     FileUtils.should_receive(:rm_rf).with(path).and_return(true)

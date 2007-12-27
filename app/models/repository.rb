@@ -45,6 +45,11 @@ class Repository < ActiveRecord::Base
     git_backend.create(full_path_from_partial_path(path))
   end
   
+  def self.clone_git_repository(target_path, source_path)
+    git_backend.clone(full_path_from_partial_path(target_path), 
+      full_path_from_partial_path(source_path))
+  end
+  
   def self.delete_git_repository(path)
     git_backend.delete!(full_path_from_partial_path(path))
   end
@@ -77,14 +82,14 @@ class Repository < ActiveRecord::Base
   
   def create_new_repos_task
     Task.create!(:target_class => self.class.name, 
-      :command => "create_git_repository", 
-      :arguments => gitdir, 
+      :command => parent ? "clone_git_repository" : "create_git_repository", 
+      :arguments => parent ? [gitdir, parent.gitdir] : [gitdir], 
       :target_id => self.id)
   end
   
   def create_delete_repos_task
     Task.create!(:target_class => self.class.name, 
-      :command => "delete_git_repository", :arguments => gitdir)
+      :command => "delete_git_repository", :arguments => [gitdir])
   end
     
   protected

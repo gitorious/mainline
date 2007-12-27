@@ -84,7 +84,7 @@ describe SshKey do
     }.should change(Task, :count)
     task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
     task.command.should == "add_to_authorized_keys"
-    task.arguments.should == ssh_key.to_key
+    task.arguments.should == [ssh_key.to_key]
     task.target_id.should == ssh_key.id
   end
   
@@ -97,6 +97,6 @@ describe SshKey do
     }.should change(Task, :count)
     task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
     task.command.should == "delete_from_authorized_keys"
-    task.arguments.should == keydata
+    task.arguments.should == [keydata]
   end
 end

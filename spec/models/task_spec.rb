@@ -11,7 +11,7 @@ describe Task do
   
   it "performs a task" do
     @task.target_class.constantize.should_receive(@task.command) \
-      .with(@task.arguments).and_return(true)
+      .with(*@task.arguments).and_return(true)
     @task.perform!
     @task.reload
     @task.performed?.should == true
@@ -24,7 +24,7 @@ describe Task do
     target.save!
     @task.target_id = target.id
     @task.target_class.constantize.should_receive(@task.command) \
-      .with(@task.arguments).and_return(true)
+      .with(*@task.arguments).and_return(true)
     @task.perform!
     target.reload.ready?.should == true
   end

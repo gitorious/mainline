@@ -35,13 +35,13 @@ class SshKey < ActiveRecord::Base
   def create_new_task
     Task.create!(:target_class => self.class.name, 
       :command => "add_to_authorized_keys", 
-      :arguments => self.to_key, 
+      :arguments => [self.to_key], 
       :target_id => self.id)
   end
   
   def create_delete_task
     Task.create!(:target_class => self.class.name, 
-      :command => "delete_from_authorized_keys", :arguments => self.to_key)
+      :command => "delete_from_authorized_keys", :arguments => [self.to_key])
   end
   
   protected

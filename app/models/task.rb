@@ -1,4 +1,5 @@
 class Task < ActiveRecord::Base
+  serialize :arguments, Array
   
   def self.find_all_pending
     find(:all, :conditions => {:performed => false})
@@ -14,8 +15,8 @@ class Task < ActiveRecord::Base
   
   def perform!(log=RAILS_DEFAULT_LOGGER)
     transaction do
-      log.info("Performing Task #{self.id.inspect}: #{target_class}(#{target_id.inspect})::#{command}(#{arguments[0..64].inspect}..)")
-      target_class.constantize.send(command, arguments)
+      log.info("Performing Task #{self.id.inspect}: #{target_class}(#{target_id.inspect})::#{command}(#{arguments.inspect}..)")
+      target_class.constantize.send(command, *arguments)
       self.performed = true
       self.performed_at = Time.now
       save!

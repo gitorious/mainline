@@ -85,6 +85,14 @@ describe Repository do
     Repository.create_git_repository(@repository.gitdir)
   end
   
+  it "clones a git repository" do
+    source = repositories(:johans)
+    target = @repository
+    Repository.git_backend.should_receive(:clone).with(target.full_repository_path, 
+      source.full_repository_path).and_return(true)
+    Repository.clone_git_repository(target.gitdir, source.gitdir)
+  end
+  
   it "deletes a repository" do
     Repository.git_backend.should_receive(:delete!).with(@repository.full_repository_path).and_return(true)
     Repository.delete_git_repository(@repository.gitdir)
@@ -132,7 +140,20 @@ describe Repository do
     }.should change(Task, :count)
     task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "create_git_repository"
-    task.arguments.should match(/#{@repository.gitdir}$/)
+    task.arguments.size.should == 1
+    task.arguments.first.should match(/#{@repository.gitdir}$/)
+    task.target_id.should == @repository.id
+  end
+  
+  it "creates a clone task if there's a parent" do
+    proc{
+      @repository.parent = repositories(:johans)
+      @repository.save!
+    }.should change(Task, :count)
+    task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
+    task.command.should == "clone_git_repository"
+    task.arguments.size.should == 2
+    task.arguments.first.should match(/#{@repository.gitdir}$/)
     task.target_id.should == @repository.id
   end
   
@@ -143,6 +164,7 @@ describe Repository do
     }.should change(Task, :count)
     task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "delete_git_repository"
-    task.arguments.should match(/#{@repository.gitdir}$/)
+    task.arguments.size.should == 1
+    task.arguments.first.should match(/#{@repository.gitdir}$/)
   end
 end
