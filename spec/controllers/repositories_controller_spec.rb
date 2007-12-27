@@ -110,6 +110,7 @@ describe RepositoriesController, "copy" do
     response.should be_success
     assigns[:repository_to_clone].should == @repository
     assigns[:repository].should be_instance_of(Repository)
+    assigns[:repository].name.should match(/johans-clone-of/)
   end
 end
 

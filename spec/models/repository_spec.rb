@@ -109,6 +109,13 @@ describe Repository do
     repos.project.should == @repository.project
   end
   
+  it "suggests a decent name for a cloned repository bsed on username" do
+    repos = Repository.new_by_cloning(@repository, username="johan")
+    repos.name.should == "johans-clone-of-#{repos.parent.name}"
+    repos = Repository.new_by_cloning(@repository, username=nil)
+    repos.name.should == nil
+  end
+  
   it "has it's name as its to_param value" do
     @repository.save
     @repository.to_param.should == @repository.name

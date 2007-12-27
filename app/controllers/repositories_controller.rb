@@ -41,7 +41,7 @@ class RepositoriesController < ApplicationController
   
   def copy
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
-    @repository = Repository.new_by_cloning(@repository_to_clone)
+    @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
   end
   
   def create_copy

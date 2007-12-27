@@ -14,8 +14,9 @@ class Repository < ActiveRecord::Base
   after_create :add_user_as_committer, :create_new_repos_task
   after_destroy :create_delete_repos_task
   
-  def self.new_by_cloning(other)
-    new(:parent => other, :project => other.project)
+  def self.new_by_cloning(other, username=nil)
+    suggested_name = username ? "#{username}s-clone-of-#{other.name}" : nil
+    new(:parent => other, :project => other.project, :name => suggested_name)
   end
   
   def self.find_by_name!(name)
