@@ -53,7 +53,7 @@
   <% if @project.user == current_user -%>
   <ul class="links">
     <li><%= link_to "+ Add repository", new_project_repository_path(@project) -%></li>
-    <li><%= link_to "Edit project", edit_project_path(@project) -%></li>
+    <li><%= link_to "&#x2192; Edit project", edit_project_path(@project) -%></li>
   </ul>
   <% end -%>
 <% end -%>

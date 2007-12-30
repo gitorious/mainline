@@ -121,7 +121,7 @@ ul li h1, ul li h2, ul li h3, ul li h4 {
 }
 
 #container #logo {
-  margin: 5px 0 5px 0;
+  margin: 5px;
 }
 
 #container #logo h1   { line-height: 100%; }

@@ -19,6 +19,6 @@
 
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li><%= link_to h("< " + @repository.project.title), @repository.project -%></li>
+    <li><%= link_to "&#x2190; " + h(@repository.project.title), @repository.project -%></li>
   </ul>
 <% end -%>
