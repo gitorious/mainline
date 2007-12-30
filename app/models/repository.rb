@@ -23,7 +23,7 @@ class Repository < ActiveRecord::Base
     find_by_name(name) || raise(ActiveRecord::RecordNotFound)
   end
   
-  BASE_REPOSITORY_URL = "keysersource.org"
+  BASE_REPOSITORY_URL = "gitorious.org"
   BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
   
   def gitdir

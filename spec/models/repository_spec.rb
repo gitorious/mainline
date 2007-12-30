@@ -62,11 +62,11 @@ describe Repository do
   end
   
   it "has a push url" do
-    @repository.push_url.should == "git@keysersource.org:#{@repository.project.slug}/foo.git"
+    @repository.push_url.should == "git@gitorious.org:#{@repository.project.slug}/foo.git"
   end
   
   it "has a clone url" do
-    @repository.clone_url.should == "git://keysersource.org/#{@repository.project.slug}/foo.git"
+    @repository.clone_url.should == "git://gitorious.org/#{@repository.project.slug}/foo.git"
   end
   
   it "should assign the creator as a comitter on create" do 
