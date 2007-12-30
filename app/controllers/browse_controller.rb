@@ -11,6 +11,8 @@ class BrowseController < ApplicationController
         hash[tag.sha] << tag.name 
       end
     end
+    # TODO: Patch rails to keep track of what it responds to so we can DRY this up
+    @atom_auto_discovery = true
     respond_to do |format|
       format.html
       format.atom

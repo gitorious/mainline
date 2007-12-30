@@ -7,6 +7,9 @@
 	<meta name="author" content="Johan Sørensen">
 	<%= stylesheet_link_tag "base" -%>
   <%= javascript_include_tag :defaults, :cache => true -%>
+  <%  if @atom_auto_discovery -%>  
+    <%= auto_discovery_link_tag(:atom) -%>
+  <% end -%>
 </head>
 
 <body>

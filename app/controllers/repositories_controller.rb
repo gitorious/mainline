@@ -11,6 +11,7 @@ class RepositoriesController < ApplicationController
       @commits = []
     end
     
+    @atom_auto_discovery = true
     respond_to do |format|
       format.html
       format.xml  { render :xml => @repository }
