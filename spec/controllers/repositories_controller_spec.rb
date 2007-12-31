@@ -57,6 +57,13 @@ describe RepositoriesController, "new" do
     response.should redirect_to(new_sessions_path)
   end
   
+  it "requires adminship" do
+    login_as :moe
+    do_get
+    flash[:error].should match(/only project admins are allowed/)
+    response.should be_redirect
+  end
+  
   it "GET projects/1/repositories/new is successful" do
     do_get
     response.should be_success
@@ -66,7 +73,6 @@ end
 describe RepositoriesController, "create" do
   
   before(:each) do
-    authorize_as :johan
     @project = projects(:johans)
   end
   
@@ -76,12 +82,12 @@ describe RepositoriesController, "create" do
   end
   
   it "should require authorization" do
-    authorize_as(nil)
     do_post(:name => "foo")
     response.code.to_i.should == 401
   end
   
   it "POST projects/1/repositories/create is successful" do
+    authorize_as :johan
     do_post(:name => "foo")
     response.code.to_i.should == 201    
   end
@@ -110,7 +116,7 @@ describe RepositoriesController, "copy" do
     response.should be_success
     assigns[:repository_to_clone].should == @repository
     assigns[:repository].should be_instance_of(Repository)
-    assigns[:repository].name.should match(/johans-clone-of/)
+    assigns[:repository].name.should match(/johans\-(.+)\-clone/)
   end
 end
 

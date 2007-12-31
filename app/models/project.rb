@@ -55,6 +55,10 @@ class Project < ActiveRecord::Base
     slug
   end
   
+  def admin?(candidate)
+    candidate == user
+  end
+  
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")

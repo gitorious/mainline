@@ -66,4 +66,10 @@ describe Project do
     projects(:johans).to_param.should == projects(:johans).slug
   end
   
+  it "knows if a user is a admin on a project" do
+    projects(:johans).admin?(users(:johan)).should == true
+    projects(:johans).admin?(users(:moe)).should == false
+    projects(:johans).admin?(:false).should == false
+  end
+  
 end

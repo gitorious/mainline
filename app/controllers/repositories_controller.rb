@@ -1,6 +1,7 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:show, :writable_by]
   before_filter :find_project
+  before_filter :require_adminship, :only => [:new, :create]
   session :off, :only => [:writable_by]
     
   def show
@@ -77,5 +78,16 @@ class RepositoriesController < ApplicationController
   private
     def find_project
       @project = Project.find_by_slug!(params[:project_id])
+    end
+    
+    def require_adminship
+      unless @project.admin?(current_user)
+        respond_to do |format|
+          flash[:error] = "Sorry, only project admins are allowed to do that"
+          format.html { redirect_to(project_path(@project)) }
+          format.xml  { render :text => "Sorry, only project admins are allowed to do that", :status => :forbidden }
+        end
+        return
+      end
     end
 end
