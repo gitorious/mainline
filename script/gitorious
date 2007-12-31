@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby -wKU
+
+if File.symlink?(__FILE__)
+  $:.unshift File.dirname(File.readlink(__FILE__)) + "/../lib/gitorious/ssh"
+else
+  $:.unshift File.dirname(__FILE__) + "/../lib/gitorious/ssh"
+end
+
+ENV["PATH"] = "/opt/local/bin:#{ENV["PATH"]}"
+
+require "strainer"
+require "client"
+
+File.umask(0022)
+
+original_command = ENV["SSH_ORIGINAL_COMMAND"]
+$stderr.puts "original_command: #{original_command.inspect}" if $DEBUG
+if original_command.nil? || original_command.strip.empty?
+  $stderr.puts "Need SSH_ORIGINAL_COMMAND"
+  exit!(1)
+end
+
+user = ARGV[0]
+$stderr.puts "user: #{user.inspect}" if $DEBUG
+if user.nil? || user.strip.empty?
+  $stderr.puts "Need user arg"
+  exit!(1)
+end
+
+begin
+  strainer = Gitorious::SSH::Strainer.new(original_command).parse!
+  client = Gitorious::SSH::Client.new(strainer, user)
+
+  # The meat of it all; do the permission check
+  # replace process with git-shell if everything is fine
+  if client.assure_user_can_write!
+    args = client.to_git_shell_argument
+    $stderr.puts "git-shell -c #{args.inspect}" if $DEBUG
+    exec("git-shell", "-c", args)
+  end
+  
+  unless $?.success?
+    $stderr.puts "Failed to execute git command"
+    exit!(1)
+  end
+rescue Gitorious::SSH::AccessDeniedError => e
+  $stderr.puts "Access denied or bad repository path"
+  exit!(1)
+rescue Gitorious::SSH::BadCommandError => e
+  $stderr.puts "Access denied or bad command"
+  exit!(1)
+rescue Object => e
+  if $DEBUG
+    $stderr.puts "#{e.class.name} #{e.message}"
+    $stderr.puts e.backtrace.join("  \n")
+  end
+  $stderr.puts "fatal error"
+  exit(1)
+end
