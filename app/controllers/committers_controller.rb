@@ -13,18 +13,22 @@ class CommittersController < ApplicationController
       flash[:error] = "Could not find user by that name"
       respond_to do |format|
         format.html { redirect_to(new_committer_url(@repository.project, @repository)) }
-        format.xml  { render :text => "Could not a find user by that name", :Status => :not_found }
+        format.xml  { render :text => "Could not a find user by that name", :status => :not_found }
       end
       return
     end
 
-    if @repository.add_committer(@committer)
-      respond_to do |format|
+    respond_to do |format|
+      if @repository.add_committer(@committer)
         format.html { redirect_to([@repository.project, @repository]) }
         format.xml do 
           render :nothing, :status => :created, 
             :location => project_repository_path(@repository.project, @repository)
         end
+      else
+        flash[:error] = "Could not add user or user is already a committer"
+        format.html { redirect_to(new_committer_url(@repository.project, @repository)) }
+        format.xml  { render :text => "Could not add user or user is already a committer", :status => :not_found }
       end
     end
   end
@@ -47,11 +51,9 @@ class CommittersController < ApplicationController
   end
   
   def auto_complete_for_user_login
-    #@users = User.find(:all, :conditions => ["login ilike ?", params[:user][:login]])
     login = params[:user][:login]
     @users = User.find(:all, 
       :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ])
-    logger.debug @users.inspect
     render :inline => "<%= auto_complete_result(@users, 'login') %>"
   end
   

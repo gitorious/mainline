@@ -251,6 +251,10 @@ label {
   font-weight: normal;
 }
 
+form {
+  margin-bottom: 1.5em;
+}
+
 input.text { 
   padding: 3px; 
   width: 350px; 

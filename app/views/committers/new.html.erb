@@ -6,7 +6,7 @@
 <% form_for @committer, 
   :url => {:controller => "committers", :action => "create"}, :method => :post do |f| -%>
   <p>
-    <%= f.label :login, "Existing username" -%><br />
+    <%= f.label :login, "Existing username <small>(search-as-you-type)</small>" -%><br />
     <%= f.text_field :login -%>
     <div id="user_login_auto_complete" class="auto_complete"></div>
   </p>

@@ -1,17 +1,29 @@
-<h1>Create a clone of <%= @repository_to_clone.name -%></h1>
-
-<p>
-  <em>Notice: Repository clones that haven't had anything pushed to within 
-  7 days are automatically removed <br \>
-  <small>(just so the project don't end up with lots of empty repositories)</small>.</em>
-</p>
+<h1>Create a clone of <%= link_to h(@repository_to_clone.name), 
+  project_repository_path(@project, @repository_to_clone)  -%> <small>in 
+    <%= link_to h(@project.title), project_path(@project) -%></small></h1>
 
 <%= error_messages_for :repository -%>
 
 <% form_for @repository, :repository, :url => {:action => "create_copy"} do |f| -%>
   <p>
-    <%= f.label :name -%><br />
+    <%= f.label :name, %Q{Name <small>(eg "#{current_user.login}s-sandbox", "performance-fixes" etc)</small>} -%><br />
     <%= f.text_field :name, :class => "text" -%>
   </p>
-  <%= f.submit -%>
+  <%= f.submit "Clone repository" -%>
+<% end -%>
+
+<p>
+  <em><strong>Note:</strong> Repository clones that haven't had anything pushed 
+  to them within 7 days are automatically removed (so the project don't end up 
+  with lots of empty repositories), so it's a good idea to wait with creating 
+  the clone here until there's something to push.</em>
+</p>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "&#x2190; Repository page", 
+              project_repository_path(@project, @repository_to_clone) -%></li>
+    <li><%= link_to "&#x2190; Project page", 
+              project_path(@project) -%></li>
+  </ul>
 <% end -%>
