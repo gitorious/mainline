@@ -26,7 +26,7 @@ class ProjectsController < ApplicationController
   
   def show
     @project = Project.find_by_slug!(params[:id])
-    @repositories = @project.repositories
+    @repositories = @project.repositories.group_by(&:parent)
     
     respond_to do |format|
       format.html

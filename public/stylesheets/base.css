@@ -344,6 +344,11 @@ table.repository_list td {
   padding: 5px;
   border-bottom: 1px solid #ccc;
 }
+table.repository_list tr.clone td.name {
+  background: url("/images/clone_indent.png") 10px 50% no-repeat;
+  padding-left: 20px;
+}
+
 .infobox {
   background: #efefef;
   padding: 10px;

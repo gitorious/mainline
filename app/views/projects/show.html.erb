@@ -28,24 +28,34 @@
     <th>Created</th>
     <th></th>
   </thead>
-  <% @repositories.each do |repos| -%>
-  <tr class="<%= cycle("even", "odd") -%><%= repos.mainline? ? ' mainline' : '' -%>">
-    <td>
+  <% @repositories.each do |repos, clones| -%>
+  <% next if repos.nil? -%>
+  <tr class="<%= cycle("even", "odd") -%> mainline">
+    <td class="name">
       <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-      <!-- <% if repos.mainline? -%> <small><em>(Mainline)</em></small><% end -%> -->
     </td>
     <td>
-      <% if repos.mainline? -%>
-        <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
-      <% else -%>
-        <%= link_to h(repos.user.login), user_path(repos.user) -%>
-      <% end -%>
+      <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
     </td>
     <td>
       <%= repos.created_at.to_s(:short) -%>
     </td>
     <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
   </tr>
+    <% clones.each do |repos| -%>
+      <tr class="<%= cycle("even", "odd") -%> clone">
+        <td class="name">
+          <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
+        </td>
+        <td>
+          <%= link_to h(repos.user.login), user_path(repos.user) -%>
+        </td>
+        <td>
+          <%= repos.created_at.to_s(:short) -%>
+        </td>
+        <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
+      </tr>
+    <% end -%>
   <% end -%>
 </table>
 
