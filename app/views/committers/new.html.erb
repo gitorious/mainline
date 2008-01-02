@@ -7,15 +7,12 @@
   :url => {:controller => "committers", :action => "create"}, :method => :post do |f| -%>
   <p>
     <%= f.label :login, "Existing username <small>(search-as-you-type)</small>" -%><br />
-    <%= f.text_field :login -%>
-    <div id="user_login_auto_complete" class="auto_complete"></div>
+    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true -%>
   </p>
   <p>
     <%= f.submit "Add as committer" -%>
   </p>
 <% end -%>
-
-<%= auto_complete_field("user_login", :url => {:action => "auto_complete_for_user_login" }) -%>
 
 <% content_for :sidebar do -%>
   <ul class="links">

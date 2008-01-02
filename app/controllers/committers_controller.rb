@@ -53,8 +53,9 @@ class CommittersController < ApplicationController
   def auto_complete_for_user_login
     login = params[:user][:login]
     @users = User.find(:all, 
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ])
-    render :inline => "<%= auto_complete_result(@users, 'login') %>"
+      :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ],
+      :limit => 10)
+    render :layout => false
   end
   
   private
