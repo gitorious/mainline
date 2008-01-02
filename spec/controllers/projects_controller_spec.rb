@@ -80,7 +80,7 @@ describe ProjectsController do
   
   it "GET projects/show should fetch the repositories for a project" do
     get :show, :id => projects(:johans).slug
-    assigns[:repositories].should == projects(:johans).repositories
+    assigns[:repositories].should == projects(:johans).repositories.group_by(&:parent)
     response.should be_success
   end
   
