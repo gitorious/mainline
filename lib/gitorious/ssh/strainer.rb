@@ -1,3 +1,11 @@
+# The Strainer class (and the associated script/gitorious) was inspired by
+# the approach gitosis (http://eagain.net/gitweb/?p=gitosis.git) takes, 
+# frankly the meat of it is a straight up port/fork of the core functionality, 
+# including logic and general approach.
+# Gitosis is of this writing licensed under the GPLv2 and is copyright (c) Tommi Virtanen
+# and can be found at http://eagain.net/gitweb/?p=gitosis.git
+# Gitorious::SSH::Strainer is licensed under the same license.
+
 module Gitorious
   module SSH
     class BadCommandError < StandardError
