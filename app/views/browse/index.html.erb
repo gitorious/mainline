@@ -12,9 +12,8 @@
 <table class="listing shortlog">
   <% @commits.each do |commit| -%>
   <tr class="<%= cycle "odd", "even" -%>">
-    <td><%= link_to h(commit.sha[0..8]), tree_path(commit.sha) -%></td>
     <td><%=h commit.date.strftime("%Y-%m-%d %H:%M") -%></td>
-    <td><%=h commit.author.name -%></td>
+    <td><%=h truncate(commit.author.name, 15) -%></td>
     <td>
       <%= link_to h(truncate(commit.message, 85)), commit_path(commit.sha) -%>
       <%= render_tag_box_if_match(commit.sha, @tags_per_sha) -%>

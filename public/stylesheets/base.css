@@ -480,8 +480,7 @@ span.tag {
 }
 
 table.shortlog tr td, table.tree tr td {
-  padding-top: 2px;
-  padding-bottom: 4px;
+  padding: 2px 5px 4px 5px;
 }
 
 table.tree tr td.node {
