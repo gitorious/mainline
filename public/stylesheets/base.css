@@ -182,6 +182,10 @@ ul li h1, ul li h2, ul li h3, ul li h4 {
   clear:both;
 }
 
+#container #footer ul li {
+  display: inline;
+}
+
 .flash_message {
   clear: both;
   padding: 5px 5px 5px 20px;
@@ -411,6 +415,10 @@ ul.tag_list li {
 .tag_size_3 { font-size: 1.4em; }
 .tag_size_4 { font-size: 1.6em; }
 
+.large_tags .tag_size_1 { font-size: 1.5em; }
+.large_tags .tag_size_2 { font-size: 1.8em; }
+.large_tags .tag_size_3 { font-size: 2.2em; }
+.large_tags .tag_size_4 { font-size: 2.5em; }
 
 /* "un-ready" objects */
 
@@ -486,3 +494,9 @@ table.tree tr td.node a {
 }
 table.tree tr td.file a { background-image: url("/images/icon_file.gif"); }
 table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
+
+#site_intro {
+  width: 65%;
+  margin: 2em auto 2em auto;
+  font-size: 1.5em;
+}

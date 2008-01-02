@@ -33,7 +33,7 @@
         <ul>
           <li><%= link_to "Home", root_path -%></li>
           <li><%= link_to "Projects", projects_path -%></li>
-          <li><%#= link_to "Repositories" -%></li>
+          <li><%= link_to "About", about_path -%></li>
         </ul>
       </div>
     </div>
@@ -57,7 +57,10 @@
     </div>
     <div class="clear"></div>
     <div id="footer">
-      <p>this is the footer</p>
+      <ul>
+        <li><%= link_to "Home", root_path -%> | </li>
+        <li><%= link_to "About", about_path -%></li>
+      </ul>
     </div>
   </div>
 </body>

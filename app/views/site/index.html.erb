@@ -1,0 +1,13 @@
+<div id="site_intro">
+<p><strong><a href="/p/gitorious">Gitorious</a></strong> aims to provide a great 
+  way of doing distributed opensource code collaboration 
+  <small><%= link_to "more…", about_path -%></small></p>
+</div>
+
+<h1>Project categories</h1>
+
+<ul class="tag_list large_tags">
+  <% tag_cloud @tags, default_css_tag_sizes do |tag, css_class| %>
+    <li><%= link_to h(tag.name), projects_category_path(tag.name), :class => css_class %></li>
+  <% end %>
+</ul>

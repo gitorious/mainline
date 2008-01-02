@@ -18,13 +18,17 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
-  map.root :controller => "projects" # TODO change eventually
+  map.root :controller => "site", :action => "index"
   
   map.resource :account do |account|
     account.resources :keys
   end
   map.resources :users 
   map.resource  :sessions
+  map.with_options(:controller => "projects", :action => "category") do |project_cat|
+    project_cat.projects_category "projects/category/:id"
+    project_cat.formatted_projects_category "projects/category/:id.:format"
+  end
   map.resources :projects, :path_name => "p" do |projects|
     projects.resources(:repositories, :member => { 
       :copy => :get, :create_copy => :post, :writable_by => :get
@@ -50,6 +54,8 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
+  
+  map.about "about", :controller => "site", :action => "about"
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
