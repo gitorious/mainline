@@ -31,7 +31,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :projects, :path_name => "p" do |projects|
     projects.resources(:repositories, :member => { 
-      :copy => :get, :create_copy => :post, :writable_by => :get
+      :new => :get, :create => :post, :writable_by => :get
     }, :path_name => "repos") do |repo|
       repo.resources :committers, :name_prefix => nil
       

@@ -45,64 +45,11 @@ describe RepositoriesController, "new" do
   before(:each) do
     login_as :johan
     @project = projects(:johans)
-  end
-  
-  def do_get()
-    get :new, :project_id => @project.slug
-  end
-  
-  it "should require login" do
-    session[:user_id] = nil
-    do_get
-    response.should redirect_to(new_sessions_path)
-  end
-  
-  it "requires adminship" do
-    login_as :moe
-    do_get
-    flash[:error].should match(/only project admins are allowed/)
-    response.should be_redirect
-  end
-  
-  it "GET projects/1/repositories/new is successful" do
-    do_get
-    response.should be_success
-  end
-end
-
-describe RepositoriesController, "create" do
-  
-  before(:each) do
-    @project = projects(:johans)
-  end
-  
-  def do_post(data)
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    post :create, :project_id => @project.slug, :repository => data
-  end
-  
-  it "should require authorization" do
-    do_post(:name => "foo")
-    response.code.to_i.should == 401
-  end
-  
-  it "POST projects/1/repositories/create is successful" do
-    authorize_as :johan
-    do_post(:name => "foo")
-    response.code.to_i.should == 201    
-  end
-end
-
-describe RepositoriesController, "copy" do
-  
-  before(:each) do
-    login_as :johan
-    @project = projects(:johans)
     @repository = @project.repositories.first
   end
   
   def do_get()
-    get :copy, :project_id => @project.slug, :id => @repository.name
+    get :new, :project_id => @project.slug, :id => @repository.name
   end
   
   it "should require login" do
@@ -120,7 +67,7 @@ describe RepositoriesController, "copy" do
   end
 end
 
-describe RepositoriesController, "clone" do
+describe RepositoriesController, "create" do
   
   before(:each) do
     login_as :johan
@@ -129,7 +76,7 @@ describe RepositoriesController, "clone" do
   end
   
   def do_post(opts={})
-    post(:create_copy, :project_id => @project.slug, :id => @repository.name,
+    post(:create, :project_id => @project.slug, :id => @repository.name,
       :repository => opts)
   end
   
@@ -145,7 +92,7 @@ describe RepositoriesController, "clone" do
   end
 end
 
-describe RepositoriesController, "clone as XML" do
+describe RepositoriesController, "create as XML" do
   
   before(:each) do
     authorize_as :johan
@@ -155,7 +102,7 @@ describe RepositoriesController, "clone as XML" do
   
   def do_post(opts={})
     @request.env["HTTP_ACCEPT"] = "application/xml"
-    post(:create_copy, :project_id => @project.slug, :id => @repository.name,
+    post(:create, :project_id => @project.slug, :id => @repository.name,
       :repository => opts)
   end
   

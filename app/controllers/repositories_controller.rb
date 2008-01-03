@@ -20,33 +20,14 @@ class RepositoriesController < ApplicationController
     end
   end
   
+  # note the #new+#create actions are members in the routes, hence they require
+  # an id (of the repos to clone).
   def new
-    # TODO: Add a limit (like 5) per project
-    @repository = @project.repositories.new
-  end
-  
-  def create
-    @repository = @project.repositories.new(params[:repository])
-    @repository.user = current_user
-    
-    respond_to do |format|
-      if @repository.save
-        location =  project_repository_path(@project, @repository)
-        format.html { redirect_to location }
-        format.xml  { render :xml => @repository, :status => :created, :location => location }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-  
-  def copy
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
   end
   
-  def create_copy
+  def create
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]

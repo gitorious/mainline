@@ -28,21 +28,21 @@
     <th>Created</th>
     <th></th>
   </thead>
-  <% @repositories.each do |repos, clones| -%>
-  <% next if repos.nil? -%>
-  <tr class="<%= cycle("even", "odd") -%> mainline">
-    <td class="name">
-      <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-    </td>
-    <td>
-      <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
-    </td>
-    <td>
-      <%= repos.created_at.to_s(:short) -%>
-    </td>
-    <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
-  </tr>
-    <% clones.each do |repos| -%>
+  <% @repositories.each do |repos| # fixme: need to graph the parent relation proper -%>
+    <% if repos.mainline? -%>
+      <tr class="<%= cycle("even", "odd") -%> mainline">
+        <td class="name">
+          <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
+        </td>
+        <td>
+          <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
+        </td>
+        <td>
+          <%= repos.created_at.to_s(:short) -%>
+        </td>
+        <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
+      </tr>
+    <% else -%>
       <tr class="<%= cycle("even", "odd") -%> clone">
         <td class="name">
           <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
@@ -60,12 +60,9 @@
 </table>
 
 <% content_for :sidebar do -%>
-  <% if @project.user == current_user -%>
   <ul class="links">
     <% if @project.admin?(current_user) -%>
-      <li><%= link_to "+ Add repository", new_project_repository_path(@project) -%></li>
+      <li><%= link_to "&#x2192; Edit project", edit_project_path(@project) -%></li>
     <% end -%>
-    <li><%= link_to "&#x2192; Edit project", edit_project_path(@project) -%></li>
   </ul>
-  <% end -%>
 <% end -%>

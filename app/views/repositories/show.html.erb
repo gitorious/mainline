@@ -40,7 +40,7 @@ git clone <%= @repository.clone_url -%>
     <ul class="links">
     <% if @repository.ready? -%>
       <li><%= link_to "&#x2192; Browse repository", project_repository_browse_path(@project, @repository) -%></li>
-      <li><%= link_to "+ Clone this repository", copy_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to "+ Clone this repository", new_project_repository_path(@project, @repository) -%></li>
     <% end -%>
     <% if @repository.user == current_user -%>
       <li><%= link_to "+ Add committer", 
