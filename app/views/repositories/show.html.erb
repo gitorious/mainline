@@ -14,13 +14,17 @@
     <% end -%>
     <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
     <li><strong>Mirror url:</strong> <code><%=h @repository.clone_url -%></code></li>
-    <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>
+    <% if current_user && current_user.can_write_to?(@repository) -%>
+      <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>
+    <% end -%>
   </ul>
 
   <p>You can clone this repository with the following command:</p>
-  <pre>
-  git clone <%= @repository.clone_url -%>
-  </pre>
+  <% if current_user && current_user.can_write_to?(@repository) -%>
+    <pre>git clone <%= @repository.push_url -%></pre>
+  <% else -%>
+    <pre>git clone <%= @repository.clone_url -%></pre>
+  <% end -%>
 
   <h2>Recent commits <small>(<%= link_to "browse", project_repository_browse_path(@project, @repository) -%>)</small></h2>
   <ul>
