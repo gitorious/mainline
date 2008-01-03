@@ -18,7 +18,7 @@ describe User do
     
   it "should require a login attribute on the user object" do
     proc{
-      u = create_user(:login => nil)
+      u = create_user(:login => "")
       u.should have(2).errors_on(:login)
     }.should_not change(User, :count)
   end
@@ -122,11 +122,13 @@ describe User do
   
   protected
     def create_user(options = {})
-      User.create({ 
-        :login => 'quire', 
+      u = User.new({ 
         :email => 'quire@example.com', 
         :password => 'quire', 
         :password_confirmation => 'quire' 
       }.merge(options))
+      u.login = options[:login] || "quire"
+      u.save
+      u
     end
 end
