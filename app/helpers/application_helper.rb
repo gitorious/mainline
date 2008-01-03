@@ -12,17 +12,19 @@ module ApplicationHelper
     end.to_sentence
   end
   
-  def render_build_notice_for?(object)
-    object.respond_to?(:ready?) && !object.ready?
-  end
-  
-  # TODO: refactor into a block that "disables" everything within it until ready
-  def render_build_notice_for(object)
-    return unless render_build_notice_for?(object)
+  def build_notice_for(object)
     out =  %Q{<div class="being_constructed">}
-    out << %Q{  <p>The #{object.class.name.humanize.downcase} is being created,<br />}
+    out << %Q{  <p>This #{object.class.name.humanize.downcase} is being created,<br />}
     out << %Q{  it will be ready pretty soon&hellip;</p>}
     out << %Q{</div>}
     out
+  end
+  
+  def render_if_ready(object, &blk)
+    if object.respond_to?(:ready?) && object.ready?
+      yield
+    else
+      concat(build_notice_for(object), blk.binding)
+    end
   end
 end

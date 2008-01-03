@@ -2,22 +2,28 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ApplicationHelper do
   
-  it "renders build notice for an object if it responds tor ready?" do
+  it "renders a message if an object is not ready?" do
     repos = repositories(:johans)
-    repos.ready = true
-    render_build_notice_for?(projects(:johans)).should == false
-    render_build_notice_for?(repos).should == false
-    repos.ready = false
-    render_build_notice_for?(repos).should == true
+    build_notice_for(repos).should include("This repository is being created")
   end
   
-  it "renders a message if an object is not ready?" do
-    repos = repositories(:johans)    
-    repos.ready = true
-    render_build_notice_for(repos).should == nil
-    
-    repos.ready = false
-    render_build_notice_for(repos).should include("being created")
+  it "renders block if object is ready" do
+    obj = mock("any given object")
+    obj.stub!(:ready?).and_return(true)
+    render_if_ready(obj) do
+      "moo"
+    end.should == "moo"
+  end
+  
+  it "renders block if object is ready" do
+    obj = mock("any given object")
+    obj.stub!(:ready?).and_return(false)
+    _erbout = "" # damn you RSpec!
+    render_if_ready(obj) do
+      "moo"
+    end
+    _erbout.should_not == "moo"
+    _erbout.should match(/is being created/)
   end
   
 end

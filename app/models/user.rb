@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   has_many :projects
   has_many :committerships
   has_many :repositories, :through => :committerships
-  has_many :ssh_keys
+  has_many :ssh_keys, :order => "id desc"
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password

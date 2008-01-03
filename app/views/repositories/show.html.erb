@@ -2,38 +2,42 @@
   &quot;<%= h(@repository.name) -%>&quot; repository in 
   <%= link_to h(@repository.project.title), @repository.project -%>
 </h1>
-<ul class="infobox<%- if render_build_notice_for?(@repository) -%> constructing<%- end -%>">
-  <%= render_build_notice_for(@repository) -%>
-  <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
-  <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
-  <% if @repository.parent -%>
-  <li><strong>Clone of:</strong> 
-    <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
-  <% end -%>
-  <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
-  <li><strong>Mirror url:</strong> <code><%=h @repository.clone_url -%></code></li>
-  <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>
-</ul>
 
-<p>You can clone this repository with the following command:</p>
-<pre>
-git clone <%= @repository.clone_url -%>
-</pre>
+<% render_if_ready(@repository) do -%>
 
-<h2>Recent commits <small>(<%= link_to "browse", project_repository_browse_path(@project, @repository) -%>)</small></h2>
-<ul>
-  <% if @commits.blank? -%>
-    <li><em>No commits yet…</em></li>
-  <% end -%>
-  <% @commits.each do |commit| -%>
-  <li class="commit_item">
-    <a href=""><%= link_to truncate(h(commit.sha), 16), 
-      project_repository_commit_path(@project, @repository, commit.sha) -%></a> 
-    by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago<br />
-    <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
-  </li>
-  <% end -%>
-</ul>
+  <ul class="infobox">
+    <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
+    <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
+    <% if @repository.parent -%>
+    <li><strong>Clone of:</strong> 
+      <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
+    <% end -%>
+    <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
+    <li><strong>Mirror url:</strong> <code><%=h @repository.clone_url -%></code></li>
+    <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>
+  </ul>
+
+  <p>You can clone this repository with the following command:</p>
+  <pre>
+  git clone <%= @repository.clone_url -%>
+  </pre>
+
+  <h2>Recent commits <small>(<%= link_to "browse", project_repository_browse_path(@project, @repository) -%>)</small></h2>
+  <ul>
+    <% if @commits.blank? -%>
+      <li><em>No commits yet…</em></li>
+    <% end -%>
+    <% @commits.each do |commit| -%>
+    <li class="commit_item">
+      <a href=""><%= link_to truncate(h(commit.sha), 16), 
+        project_repository_commit_path(@project, @repository, commit.sha) -%></a> 
+      by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago<br />
+      <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
+    </li>
+    <% end -%>
+  </ul>
+  
+<% end -%>
 
 <% content_for :sidebar do -%>  
   <div class="user_list">
