@@ -45,6 +45,12 @@ describe SshKey do
     ssh.save
     ssh.key.should_not include("\n")
   end
+  
+  it "strips beginning and ending whitespace+newlines before validation" do
+    ssh = new_key(:key => "\n ssh-rsa asdfsomekey foo@example.com  \n  ")
+    ssh.valid?.should == true
+    ssh.key.should == "ssh-rsa asdfsomekey foo@example.com"
+  end
     
   it "wraps the key at 72 for display" do
     ssh = new_key

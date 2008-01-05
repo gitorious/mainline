@@ -6,6 +6,7 @@ class SshKey < ActiveRecord::Base
   validates_presence_of :user_id, :key
   validates_format_of   :key, :with => SSH_KEY_FORMAT
   
+  before_validation { |k| k.key.to_s.strip! }
   before_save   :lint_key!
   after_create  :create_new_task
   # we only allow people to create/destroy keys after_update  :create_update_task 
