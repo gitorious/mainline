@@ -2,7 +2,6 @@ class UserMailer < ActionMailer::Base
   def signup_notification(user)
     setup_email(user)
     @subject    += 'Please activate your new account'
-  
     @body[:url]  = "http://gitorious.org/users/activate/#{user.activation_code}"
   
   end
@@ -10,7 +9,6 @@ class UserMailer < ActionMailer::Base
   def activation(user)
     setup_email(user)
     @subject    += 'Your account has been activated!'
-    @body[:url]  = "http://gitorious.org/"
   end
   
   protected
