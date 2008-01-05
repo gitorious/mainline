@@ -24,7 +24,6 @@ class Repository < ActiveRecord::Base
   end
   
   BASE_REPOSITORY_URL = "gitorious.org"
-  BASE_REPOSITORY_DIR = File.join(RAILS_ROOT, "../repositories")
   
   def gitdir
     File.join(project.slug, "#{name}.git")
@@ -105,6 +104,6 @@ class Repository < ActiveRecord::Base
     end
     
     def self.full_path_from_partial_path(path)
-      File.expand_path(File.join(BASE_REPOSITORY_DIR, path))
+      File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
     end
 end

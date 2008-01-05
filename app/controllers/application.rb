@@ -2,9 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  session :session_key => '_ks1_session_id', 
-    # TODO: Read from conf file or something
-    :secret => "imcerBupbitjahalCauncafiakbyFrecowphoadmodUtNakNipnuepbyRumatmor" 
+  session :session_key => '_ks1_session_id', :secret => GitoriousConfig["cookie_secret"]
   include AuthenticatedSystem
   
   protected

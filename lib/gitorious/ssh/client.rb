@@ -36,11 +36,11 @@ module Gitorious
         "#{@strainer.verb} '#{@strainer.full_path}'"
       end
     
-    
       protected
         def connection
-          port = $DEBUG ? 3000 : 80
-          @connection ||= Net::HTTP.start("localhost", port)
+          port = GitoriousConfig["gitorious_client_port"]
+          host = GitoriousConfig["gitorious_client_host"]
+          @connection ||= Net::HTTP.start(host, port)
         end
     end
   end

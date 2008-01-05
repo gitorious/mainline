@@ -13,7 +13,7 @@ Spec::Runner.configure do |config|
   config.include KeyserSource::SpecDSL
   
   # config.after(:each) do
-  #   path = File.join(Repository::BASE_REPOSITORY_DIR, "*")
+  #   path = File.join(GitoriousConfig["repository_base_path"], "*")
   #   Dir[path].each do |dir|
   #     `rm -rf #{dir}`
   #   end

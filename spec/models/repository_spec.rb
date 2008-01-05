@@ -76,7 +76,8 @@ describe Repository do
   end
   
   it "has a full repository_path" do
-    expected_dir = File.expand_path(File.join(RAILS_ROOT, "../repositories", projects(:johans).slug, "foo.git"))
+    expected_dir = File.expand_path(File.join(GitoriousConfig["repository_base_path"], 
+      projects(:johans).slug, "foo.git"))
     @repository.full_repository_path.should == expected_dir
   end
   

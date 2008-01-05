@@ -29,10 +29,10 @@ Rails::Initializer.run do |config|
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
-  config.action_controller.session = {
-    :session_key => '_ks1_session',
-    :secret      => 'd11c9229c49301cc6c307279b689396b'
-  }
+  # config.action_controller.session = {
+  #   :session_key => '_ks1_session',
+  #   :secret      => 'd11c9229c49301cc6c307279b689396b'
+  # }
 
   # Use the database for sessions instead of the cookie-based default,
   # which shouldn't be used to store highly confidential information

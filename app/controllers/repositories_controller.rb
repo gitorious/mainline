@@ -40,7 +40,7 @@ class RepositoriesController < ApplicationController
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }        
       else
-        format.html { render :action => "copy" }
+        format.html { render :action => "new" }
         format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
       end
     end
