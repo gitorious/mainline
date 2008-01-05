@@ -24,6 +24,13 @@ describe ProjectsController do
     response.should render_template("new")
   end
   
+  it "GET projects/new should redirect to new_account_key_path if no keys on user" do
+    users(:johan).ssh_keys.destroy_all
+    login_as :johan
+    get :new
+    response.should redirect_to(new_account_key_path)
+  end
+  
   it "GET projects/new should require login" do
     get :new
     response.should be_redirect
@@ -37,6 +44,13 @@ describe ProjectsController do
     response.should redirect_to(projects_path)
     
     Project.find_by_title("project x").user.should == users(:johan)
+  end
+  
+  it "GET projects/create should redirect to new_account_key_path if no keys on user" do
+    users(:johan).ssh_keys.destroy_all
+    login_as :johan
+    post :create
+    response.should redirect_to(new_account_key_path)
   end
   
   it "projects/create should require login" do

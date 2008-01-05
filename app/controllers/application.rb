@@ -6,4 +6,13 @@ class ApplicationController < ActionController::Base
     # TODO: Read from conf file or something
     :secret => "imcerBupbitjahalCauncafiakbyFrecowphoadmodUtNakNipnuepbyRumatmor" 
   include AuthenticatedSystem
+  
+  protected
+    def require_user_has_ssh_keys
+      unless current_user.ssh_keys.count > 0
+        flash[:error] = "You need to upload your public key first"
+        redirect_to new_account_key_path
+        return 
+      end
+    end
 end

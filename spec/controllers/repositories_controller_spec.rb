@@ -65,6 +65,13 @@ describe RepositoriesController, "new" do
     assigns[:repository].should be_instance_of(Repository)
     assigns[:repository].name.should match(/johans\-(.+)\-clone/)
   end
+  
+  it "redirects to new_account_key_path if no keys on user" do
+    users(:johan).ssh_keys.destroy_all
+    login_as :johan
+    do_get
+    response.should redirect_to(new_account_key_path)
+  end
 end
 
 describe RepositoriesController, "create" do
@@ -89,6 +96,13 @@ describe RepositoriesController, "create" do
   it "post projects/1/repositories/3/create_copy is successful" do
     do_post(:name => "foo-clone")
     response.should be_redirect
+  end
+  
+  it "redirects to new_account_key_path if no keys on user" do
+    users(:johan).ssh_keys.destroy_all
+    login_as :johan
+    do_post
+    response.should redirect_to(new_account_key_path)
   end
 end
 
