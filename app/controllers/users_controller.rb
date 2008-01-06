@@ -14,8 +14,8 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
     @user.save!
-    redirect_back_or_default('/')
-    flash[:notice] = "Thanks for signing up!"
+    redirect_to root_path
+    flash[:notice] = "Thanks for signing up! You will receive an account activation email soon"
   rescue ActiveRecord::RecordInvalid
     render :action => 'new'
   end
@@ -25,7 +25,7 @@ class UsersController < ApplicationController
       self.current_user = user
       if logged_in? && !current_user.activated?
         current_user.activate
-        flash[:notice] = "Signup complete!"
+        flash[:notice] = "Your account has been activated, welcome!"
       end
     end
     redirect_back_or_default('/')

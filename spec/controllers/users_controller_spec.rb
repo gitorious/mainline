@@ -55,7 +55,7 @@ describe UsersController do
   it "requires the user to activate himself after posting valid data" do
     create_user
     User.authenticate('quire@example.com', 'quire').should == nil
-    controller.send(:current_user).should == :false
+    controller.send(:logged_in?).should == false
   end
     
   it "should activate user" do
