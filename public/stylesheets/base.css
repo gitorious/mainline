@@ -104,6 +104,10 @@ pre {
 ul li h1, ul li h2, ul li h3, ul li h4 {
   margin-bottom: 0.5em;
 }
+
+abbr {
+  border-bottom: 1px dotted #333;
+}
 /* boxes */
 
 .clear {
@@ -372,6 +376,11 @@ ul.project_list li {
   padding-bottom: 1em;
   margin-bottom: 1em;
   border-bottom: 1px solid #dedede;
+}
+
+ul.bullet_list li {
+  list-style: disc;
+  margin-left: 2.5em;
 }
 
 .pagination {
