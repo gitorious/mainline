@@ -494,6 +494,9 @@ table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
 
 #site_intro {
   width: 65%;
-  margin: 2em auto 2em auto;
+  margin: 2em auto 4em auto;
   font-size: 1.5em;
+}
+#site_project_list {
+  text-align: center;
 }
