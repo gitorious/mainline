@@ -29,9 +29,8 @@ describe RepositoriesController, "show" do
   end
   
   it "scopes GET :show to the project_id" do
-    proc  {
-      do_get repositories(:moes)
-    }.should raise_error(ActiveRecord::RecordNotFound)
+    do_get repositories(:moes)
+    response.code.to_i.should == 404
   end
 end
 
