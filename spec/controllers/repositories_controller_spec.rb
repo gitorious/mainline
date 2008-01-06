@@ -1,5 +1,18 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe RepositoriesController, "index" do
+  
+  before(:each) do
+    @project = projects(:johans)
+  end
+  
+  it "redirects to the project overview page" do
+    get :index, :project_id => @project.slug
+    response.should redirect_to(project_path(@project))
+  end
+end
+
+
 describe RepositoriesController, "show" do
   
   before(:each) do

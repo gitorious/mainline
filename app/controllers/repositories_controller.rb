@@ -1,9 +1,13 @@
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :except => [:show, :writable_by]
+  before_filter :login_required, :except => [:index, :show, :writable_by]
   before_filter :find_project
   before_filter :require_adminship, :only => [:new, :create]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   session :off, :only => [:writable_by]
+  
+  def index
+    redirect_to(project_path(@project))
+  end
     
   def show
     @repository = @project.repositories.find_by_name!(params[:id])
