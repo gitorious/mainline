@@ -25,11 +25,30 @@ class RepositoriesController < ApplicationController
   # an id (of the repos to clone).
   def new
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
+    unless @repository_to_clone.has_commits?
+      flash[:error] = "Sorry, can't clone an empty repository"
+      redirect_to project_repository_path(@project, @repository_to_clone)
+      return
+    end
     @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
   end
   
   def create
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
+    unless @repository_to_clone.has_commits?
+      target_path = project_repository_path(@project, @repository_to_clone)
+      respond_to do |format|
+        format.html do
+          flash[:error] = "Sorry, can't clone an empty repository"
+          redirect_to target_path
+        end
+        format.xml do 
+          render :text => "Sorry, can't clone an empty repository", 
+            :location => target_path, :status => :unprocessable_entity
+        end
+      end
+      return
+    end
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]
     @repository.user = current_user
