@@ -3,10 +3,10 @@
 require "yaml"
 if File.symlink?(__FILE__)
   $:.unshift File.dirname(File.readlink(__FILE__)) + "/../lib/gitorious/ssh"
-  conf_file = File.dirname(File.readlink(__FILE__)) + "/../../config/gitorious.yml"
+  conf_file = File.dirname(File.readlink(__FILE__)) + "/../config/gitorious.yml"
 else
   $:.unshift File.dirname(__FILE__) + "/../lib/gitorious/ssh"
-  conf_file = File.dirname(__FILE__) + "/../../config/gitorious.yml"
+  conf_file = File.dirname(__FILE__) + "/../config/gitorious.yml"
 end
 
 GitoriousConfig = YAML.load_file(conf_file)
