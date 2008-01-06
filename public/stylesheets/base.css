@@ -509,3 +509,35 @@ table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
 #site_project_list {
   text-align: center;
 }
+
+ul.tab_menu {
+  border-bottom: 1px solid #888;
+  list-style: none;
+  padding: 3px;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+ul.tab_menu li {
+  display:inline; 
+  margin-right: 1em;
+  border-top: 1px solid #888;
+  border-left: 1px solid #888;
+  border-right: 1px solid #888;
+  padding: 5px;
+}
+ul.tab_menu li.selected {
+  border-bottom: 1px solid #fff;
+  color: #666;
+}
+
+div.comment {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1em;
+}
+div.comment p.body {
+  margin-bottom: 0.2em;
+}
+div.comment p.byline {
+  font-size: 85%;
+}

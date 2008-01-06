@@ -1,0 +1,18 @@
+<% comment ||= nil -%>
+<% sha1 ||= nil -%>
+
+<h3>Add comment:</h3>
+
+<%= error_messages_for :comment -%>
+<% form_for([@project, @repository, comment || Comment.new]) do |f| -%>
+  <% if sha1 -%>
+    <%= f.hidden_field :sha1, :value => sha1 -%>
+  <% end -%>
+  <p>
+    <%= f.label :body -%><br />
+    <%= f.text_area :body, :class => "text medium" -%>
+  </p>
+  <p>
+    <%= f.submit "Add Comment" -%>
+  </p>
+<% end -%>

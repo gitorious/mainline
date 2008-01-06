@@ -1,0 +1,22 @@
+<h1>
+  Comments for &quot;<%= h(@repository.name) -%>&quot; repository in 
+  <%= link_to h(@repository.project.title), @repository.project -%>
+</h1>
+
+<%= render :partial => "repositories/infobox" -%>
+
+<p>You can clone this repository with the following command:</p>
+<% if logged_in? && current_user.can_write_to?(@repository) -%>
+  <pre>git clone <%= @repository.push_url -%></pre>
+<% else -%>
+  <pre>git clone <%= @repository.clone_url -%></pre>
+<% end -%>
+
+<ul class="tab_menu">
+  <li><%= link_to "Recent commits", project_repository_path(@project, @repository) -%></li>
+  <li class="selected">Comments (<%= @comments.size -%>)</li>
+</ul>
+
+<%= render :partial => @comments -%>
+
+<%= render :partial => "form" -%>

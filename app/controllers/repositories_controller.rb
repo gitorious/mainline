@@ -11,6 +11,7 @@ class RepositoriesController < ApplicationController
     
   def show
     @repository = @project.repositories.find_by_name!(params[:id])
+    @comment_count = @repository.comments.count
     if @repository.has_commits?
       @commits = Git.bare(@repository.full_repository_path).log(10)
     else
@@ -80,11 +81,7 @@ class RepositoriesController < ApplicationController
     end
   end
   
-  private
-    def find_project
-      @project = Project.find_by_slug!(params[:project_id])
-    end
-    
+  private    
     def require_adminship
       unless @project.admin?(current_user)
         respond_to do |format|

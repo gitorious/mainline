@@ -18,4 +18,8 @@ class ApplicationController < ActionController::Base
         return 
       end
     end
+    
+    def find_project
+      @project = Project.find_by_slug!(params[:project_id])
+    end
 end

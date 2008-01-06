@@ -9,7 +9,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 18) do
+ActiveRecord::Schema.define(:version => 19) do
+
+  create_table "comments", :force => true do |t|
+    t.integer  "user_id",                       :null => false
+    t.integer  "repository_id",                 :null => false
+    t.string   "sha1",          :default => "", :null => false
+    t.text     "body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
+  add_index "comments", ["repository_id"], :name => "index_comments_on_repository_id"
+  add_index "comments", ["sha1"], :name => "index_comments_on_sha1"
 
   create_table "committerships", :force => true do |t|
     t.integer  "user_id"

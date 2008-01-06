@@ -34,6 +34,9 @@ ActionController::Routing::Routes.draw do |map|
       :new => :get, :create => :post, :writable_by => :get
     }, :path_name => "repos") do |repo|
       repo.resources :committers, :name_prefix => nil
+      repo.resources :comments
+      repo.commit_comment "comments/commit/:sha", :controller => "comments", 
+        :action => "commit", :conditions => { :method => :get }
       
       # Repository browsing related routes
       repo.with_options(:controller => "browse") do |r|

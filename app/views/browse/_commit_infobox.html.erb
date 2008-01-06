@@ -1,0 +1,8 @@
+<ul class="infobox">
+  <li><strong>Date:</strong> <%=h @commit.date -%></li>
+  <li><strong>Author:</strong> <%=h @commit.author.name -%>
+      (<%=h @commit.author.email -%>)</li>
+  <li><strong>Commit SHA1:</strong> <%=h @commit.sha -%></li>
+  <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.gtree.sha), 
+    project_repository_tree_path(@project, @repository, @commit.gtree.sha) -%></li>
+</ul>
