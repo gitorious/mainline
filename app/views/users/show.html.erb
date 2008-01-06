@@ -4,7 +4,7 @@
   <li><strong>Username:</strong> <%= h(@user.login) -%></li>
   <li><strong>Realname:</strong> <%= @user.fullname.blank? ? "N/A" : h(@user.fullname) -%></li>
   <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
-  <li><strong>Url:</strong> <a href="<%=h current_user.url -%>"><%=h current_user.url -%></a></li>
+  <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
   <li><strong>Member for</strong> <%= time_ago_in_words(@user.created_at) -%></li>
 </ul>
 
