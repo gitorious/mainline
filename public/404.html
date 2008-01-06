@@ -5,9 +5,9 @@
 
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  <title>The page you were looking for doesn't exist (404)</title>
-	<style type="text/css">
-		body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
+  <title>We're sorry, but something went wrong (500)</title>
+  <link href="/stylesheets/base.css?1199397346" media="screen" rel="stylesheet" type="text/css" />
+	<style type="text/css">; }
 		div.dialog {
 			width: 25em;
 			padding: 0 4em;
@@ -16,15 +16,30 @@
 			border-right-color: #999;
 			border-bottom-color: #999;
 		}
-		h1 { font-size: 100%; color: #f00; line-height: 1.5em; }
 	</style>
 </head>
 
 <body>
-  <!-- This file lives in public/404.html -->
-  <div class="dialog">
-    <h1>The page you were looking for doesn't exist.</h1>
-    <p>You may have mistyped the address or the page may have moved.</p>
+  <div id="container">
+    <div id="header">
+      <div id="logo">
+        <%= link_to image_tag("logo.png"), root_path -%>
+        <a href="/"><img src="/images/logo.png" /></a>
+      </div>
+      <div id="menu">
+        <ul>
+          <li><a href="/">Home</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="main">
+      <div id="content">
+        <div class="dialog">
+          <h1>The page you were looking for doesn't exist.</h1>
+          <p>You may have mistyped the address or the page may have moved.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>

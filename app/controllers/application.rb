@@ -6,6 +6,10 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   
+  rescue_from(ActiveRecord::RecordNotFound) do |e| 
+    render :file => "#{RAILS_ROOT}/public/404.html"
+  end
+  
   protected
     def require_user_has_ssh_keys
       unless current_user.ssh_keys.count > 0
