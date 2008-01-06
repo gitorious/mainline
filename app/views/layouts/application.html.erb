@@ -10,6 +10,7 @@
   <%  if @atom_auto_discovery -%>  
     <%= auto_discovery_link_tag(:atom) -%>
   <% end -%>
+  <%= GitoriousConfig["extra_html_head_data"] -%>
 </head>
 
 <body>
