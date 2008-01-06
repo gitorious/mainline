@@ -1,10 +1,12 @@
 <div class="comment">
+  <a name="<%= dom_id(comment) -%>"></a>
   <p class="body"><%= sanitize(comment.body) -%></p>
   <p class="byline">
     <%= link_to(h(comment.user.login), comment.user) -%> | 
     <%= comment.created_at.to_s(:short) -%> 
     <% unless comment.sha1.blank? -%>
-    | <%= link_to "on commit #{comment.sha1[0..8]}", project_repository_commit_path(@project, @repository, comment.sha1) -%>
+    | <%= link_to "on commit #{comment.sha1[0..8]}", project_repository_commit_path(@project, @repository, comment.sha1) -%> 
     <% end -%>
+    | <a href="#<%= dom_id(comment) -%>"><abbr title="permalink for this comment">#</abbr></a> 
   </p>
 </div>
