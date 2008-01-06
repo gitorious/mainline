@@ -51,6 +51,8 @@ Rails::Initializer.run do |config|
   config.active_record.default_timezone = :utc
 
   # See Rails::Configuration for more options
+  
+  GitoriousConfig = YAML::load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))
 
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded

@@ -19,3 +19,5 @@ config.action_controller.perform_caching             = true
 
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
+
+ExceptionNotifier.exception_recipients = GitoriousConfig["exception_notification_emails"]

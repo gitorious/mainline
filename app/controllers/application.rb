@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   session :session_key => '_ks1_session_id', :secret => GitoriousConfig["cookie_secret"]
   include AuthenticatedSystem
+  include ExceptionNotifiable
   
   protected
     def require_user_has_ssh_keys
