@@ -1,5 +1,5 @@
 atom_feed do |feed|
-  feed.title("#{@project.title} - #{@repository.name}")
+  feed.title("Gitorious: #{@project.title} - #{@repository.name}")
   feed.updated((@commits.first.date))
 
   @commits.each do |commit|

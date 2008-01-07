@@ -8,7 +8,7 @@
 	<%= stylesheet_link_tag "base" -%>
   <%= javascript_include_tag :defaults, :cache => true -%>
   <%  if @atom_auto_discovery -%>  
-    <%= auto_discovery_link_tag(:atom) -%>
+    <%= auto_discovery_link_tag(:atom, :format => :atom) -%>
   <% end -%>
   <%= GitoriousConfig["extra_html_head_data"] -%>
 </head>
