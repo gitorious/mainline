@@ -13,3 +13,12 @@
     <% end %>
   </ul>
 </div>
+
+<% content_for :sidebar do -%>
+<% unless logged_in? -%>
+<p class="hint">
+  <%= link_to "Creating a user account", new_user_path -%> will allows you to create 
+  your own project or participate in the development of any project. 
+</p>
+<% end -%>
+<% end -%>

@@ -541,3 +541,8 @@ div.comment p.body {
 div.comment p.byline {
   font-size: 85%;
 }
+
+.hint {
+  color: #666;
+  font-size: 90%;
+}
