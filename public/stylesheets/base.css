@@ -125,7 +125,7 @@ abbr {
 }
 
 #container #logo {
-  margin: 5px;
+  margin: 0.5em 0.5em 1em 2em;
 }
 
 #container #logo h1   { line-height: 100%; }
@@ -214,7 +214,7 @@ abbr {
 
 #menu ul {
   list-style: none;
-  margin-left: 20px;
+  margin-left: 2em;
   padding-top: 2px;
 }
 
