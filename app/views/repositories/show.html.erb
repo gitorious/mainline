@@ -36,38 +36,4 @@
   
 <% end -%>
 
-<% content_for :sidebar do -%>  
-  <div class="user_list">
-    <ul class="links">
-    <% if @repository.ready? -%>
-      <li><%= link_to "&#x2192; Browse repository", project_repository_browse_path(@project, @repository) -%></li>
-      <li><%= link_to "+ Clone this repository", new_project_repository_path(@project, @repository) -%></li>
-    <% end -%>
-    <% if @repository.user == current_user -%>
-      <li><%= link_to "+ Add committer", 
-              { :controller => "committers", :action => "new", :project_id => @project, 
-                :repository_id => @repository } -%></li>
-    <% end -%>
-    </ul>
-    
-    <h4>Committers</h4>    
-    <ul>
-    <% @repository.committers.each do |user| -%>
-      <li>
-        <%= link_to h(user.login), user -%> 
-        <% if @repository.user == user -%>
-        <small>(owner)</small>
-        <% end -%>
-        <% if @repository.user == current_user -%>
-          <small>
-          <%= link_to "Remove", 
-                { :controller => "committers", :action => "destroy", :id => user.id, 
-                  :project_id => @project, :repository_id => @repository}, # FIXME: meh!
-                :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
-          </small>
-        <% end -%>
-      </li>
-    <% end -%>
-    </ul>
-  </div>
-<% end -%>
+<%= render :partial => "sidebar" -%>
