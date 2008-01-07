@@ -175,4 +175,18 @@ describe Repository do
     task.arguments.size.should == 1
     task.arguments.first.should match(/#{@repository.gitdir}$/)
   end
+  
+  describe "observers" do
+    it "sends an email to the admin if there's a parent" do
+      Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)
+      @repository.parent = repositories(:johans)
+      @repository.save!
+    end
+    
+    it "does not send an email to the admin if there's not a parent parent" do
+      Mailer.should_not_receive(:deliver_new_repository_clone).with(@repository).and_return(true)
+      @repository.parent = nil
+      @repository.save!
+    end
+  end
 end

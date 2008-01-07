@@ -1,4 +1,4 @@
-class UserMailer < ActionMailer::Base
+class Mailer < ActionMailer::Base
   def signup_notification(user)
     setup_email(user)
     @subject    += 'Please activate your new account'
@@ -9,6 +9,16 @@ class UserMailer < ActionMailer::Base
   def activation(user)
     setup_email(user)
     @subject    += 'Your account has been activated!'
+  end
+  
+  def new_repository_clone(repository)
+    setup_email(repository.project.user)
+    @subject += %Q{"#{repository.user.login}" has cloned "#{repository.parent.name}"}
+    @body[:user] = repository.project.user
+    @body[:cloner] = repository.user
+    @body[:project] = repository.project
+    @body[:repository] = repository
+    @body[:url] = "http://gitorious.org/p/#{repository.project.slug}/repos/#{repository.name}"
   end
   
   protected
