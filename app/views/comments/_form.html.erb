@@ -3,16 +3,23 @@
 
 <h3>Add comment:</h3>
 
-<%= error_messages_for :comment -%>
-<% form_for([@project, @repository, comment || Comment.new]) do |f| -%>
-  <% if sha1 -%>
-    <%= f.hidden_field :sha1, :value => sha1 -%>
+<% if logged_in? -%>
+  <%= error_messages_for :comment -%>
+  <% form_for([@project, @repository, comment || Comment.new]) do |f| -%>
+    <% if sha1 -%>
+      <%= f.hidden_field :sha1, :value => sha1 -%>
+    <% end -%>
+    <p>
+      <%= f.label :body -%><br />
+      <%= f.text_area :body, :class => "text medium" -%>
+    </p>
+    <p>
+      <%= f.submit "Add Comment" -%>
+    </p>
   <% end -%>
+<% else -%>
   <p>
-    <%= f.label :body -%><br />
-    <%= f.text_area :body, :class => "text medium" -%>
-  </p>
-  <p>
-    <%= f.submit "Add Comment" -%>
+    <em><%= link_to "Login", new_sessions_path -%> or 
+    <%= link_to "create an account", new_user_path -%> to post a comment</em>
   </p>
 <% end -%>
