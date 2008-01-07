@@ -3,7 +3,7 @@ atom_feed do |feed|
   feed.updated((@projects.first.created_at))
 
   @projects.each do |project|
-    item_url = project_path(project)
+    item_url = "http://gitorious.org" + project_path(project)
     feed.entry(project, :url => item_url) do |entry|
       entry.title(project.title)
       entry.content(project.description)

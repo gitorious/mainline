@@ -3,7 +3,7 @@ atom_feed do |feed|
   feed.updated((@commits.first.date))
 
   @commits.each do |commit|
-    item_url = project_repository_commit_path(@project, @repository, commit.sha)
+    item_url = "http://gitorious.org" +  project_repository_commit_path(@project, @repository, commit.sha)
     feed.entry(commit.sha, :url => item_url) do |entry|
       entry.title(truncate(commit.message, 75))
       entry.content(<<-EOS, :type => 'html')
