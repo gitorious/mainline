@@ -5,7 +5,7 @@
 <% form_for @ssh_key, :url => account_key_path(@ssh_key) do |f| -%>
   <p>
     <%= f.label :key, "Your public key" -%><br />
-    <small>It's generally located in ~/.ssh/id_rsa.pub or 
+    <small class="hint">It's generally located in ~/.ssh/id_rsa.pub or 
       ~/.ssh/id_dsa.pub</small><br />
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
