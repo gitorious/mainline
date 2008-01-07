@@ -85,7 +85,7 @@ module ActionView
         # * <tt>:url</tt>: The URL for this entry. Defaults to the polymorphic_url for the record.
         def entry(record, options = {})
           @xml.entry do 
-            @xml.id("tag:#{@view.request.host_with_port}:#{record.class}#{record.id}")
+            @xml.id(options[:id] || "tag:#{@view.request.host_with_port}:#{record.class}#{record.id}")
 
             if options[:published] || (record.respond_to?(:created_at) && record.created_at)
               @xml.published((options[:published] || record.created_at).xmlschema)
