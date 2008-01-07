@@ -1,6 +1,6 @@
 atom_feed do |feed|
   feed.title("Gitorious: projects")
-  feed.updated((@projects.first.created_at))
+  feed.updated((@projects.blank? ? Time.now : @projects.first.created_at))
 
   @projects.each do |project|
     item_url = "http://gitorious.org" + project_path(project)

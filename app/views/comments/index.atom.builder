@@ -1,6 +1,6 @@
 atom_feed do |feed|
   feed.title("Gitorious: #{@repository.name} comments")
-  feed.updated((@comments.first.created_at))
+  feed.updated((@comments.blank? ? Time.now : @comments.first.created_at))
 
   @comments.each do |comment|
     item_url = "http://gitorious.org" + project_repository_comments_path(@project,@repository)
