@@ -1,10 +1,12 @@
-<h1>Add a new SSH key</h1>
+<h1>Add a new public SSH key</h1>
 
 <%= error_messages_for :ssh_key -%>
 
 <% form_for @ssh_key, :url => account_key_path(@ssh_key) do |f| -%>
   <p>
-    <%= f.label :key -%><br />
+    <%= f.label :key, "Your public key" -%><br />
+    <small>It's generally located in ~/.ssh/id_rsa.pub or 
+      ~/.ssh/id_dsa.pub</small><br />
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
   <%= f.submit "Save" -%>
