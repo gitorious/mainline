@@ -4,7 +4,7 @@ class Repository < ActiveRecord::Base
   belongs_to  :parent, :class_name => "Repository"
   has_many    :committerships, :dependent => :destroy
   has_many    :committers, :through => :committerships, :source => :user
-  has_many    :comments
+  has_many    :comments, :dependent => :destroy
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
