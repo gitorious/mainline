@@ -11,7 +11,7 @@ end
 
 GitoriousConfig = YAML.load_file(conf_file)
 
-ENV["PATH"] = "/opt/local/bin:#{ENV["PATH"]}"
+ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
 require "strainer"
 require "client"

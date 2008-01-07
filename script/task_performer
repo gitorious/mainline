@@ -6,6 +6,8 @@ require "fileutils"
 
 LOCK_FILE_PATH = File.join(RAILS_ROOT, "tmp", "task_lockfile")
 
+ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+
 class TaskLockError < StandardError; end
 
 def with_lock(&block)
