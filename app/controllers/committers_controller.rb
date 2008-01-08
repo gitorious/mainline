@@ -1,5 +1,6 @@
 class CommittersController < ApplicationController
   before_filter :login_required, :only => [:new, :create, :destroy]
+  before_filter :find_project
   before_filter :find_repository, 
     :only => [:show, :new, :create, :edit, :update, :destroy]
     
@@ -60,7 +61,7 @@ class CommittersController < ApplicationController
   
   private
     def find_repository
-      @repository = Repository.find_by_name!(params[:repository_id])
+      @repository = @project.repositories.find_by_name!(params[:repository_id])
       unless @repository.user == current_user
         flash[:error] = "You're not the owner of this repository"
         redirect_to [@repository.project, @repository]
