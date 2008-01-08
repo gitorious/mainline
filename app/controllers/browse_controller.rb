@@ -27,7 +27,12 @@ class BrowseController < ApplicationController
   def commit
     @git = Git.bare(@repository.full_repository_path)
     @commit = @git.gcommit(params[:sha])
-    @diff = @git.diff(@commit.parent.sha, @commit.sha)
+    if @commit.parent
+      @diff = @git.diff(@commit.parent.sha || "", @commit.sha)
+    else
+      # initial commit
+      @diff = @commit.diff("") # fIXME: diffs are the wrong way
+    end
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.sha})
   end
   
