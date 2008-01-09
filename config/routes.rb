@@ -33,7 +33,7 @@ ActionController::Routing::Routes.draw do |map|
     projects.resources(:repositories, :member => { 
       :new => :get, :create => :post, :writable_by => :get
     }, :path_name => "repos") do |repo|
-      repo.resources :committers, :name_prefix => nil
+      repo.resources :committers, :name_prefix => nil, :collection => {:auto_complete_for_user_login => :post}
       repo.resources :comments
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 
         :action => "commit", :conditions => { :method => :get }
