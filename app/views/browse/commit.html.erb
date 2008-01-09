@@ -16,7 +16,8 @@
 
 <% @diff.each do |file| -%>
   <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
-  <p><pre><%=h file.patch -%></pre></p>
+  <%= render_diff(file.patch, file.src, file.dst) -%>
+  <!-- <p style="display:none" id="<%=  -%>"><pre><%=  h(file.patch) -%></pre></p> -->
 <% end -%>
 
 <%= render :partial => "sidebar" -%>
