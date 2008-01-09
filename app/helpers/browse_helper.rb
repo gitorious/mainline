@@ -44,6 +44,7 @@ module BrowseHelper
      out = "<table class=\"codediff\">\n"
 
      lines = udiff.split("\n")
+     lines.reject!{ |line| line =~ /^new file mode [0-9]+/ }
 
      lines_that_differs = /@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@/
 
@@ -69,7 +70,7 @@ module BrowseHelper
        line.gsub!(/^\s/, '') # The column where + or - would be
        line.gsub!(/^(\+{1}(\s+|\t+)?(.*))/, '\2<ins>\3</ins>')
        line.gsub!(/^(-{1}(\s+|\t+)?(.*))/, '\2<del>\3</del>')
-       line.gsub!('\ No newline at end of file', '')
+       #line.gsub!('\ No newline at end of file', '')
 
        out << "<tr class=\"changes\">\n"
 
