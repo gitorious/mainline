@@ -6,7 +6,8 @@
   <p>
     <%= f.label :key, "Your public key" -%><br />
     <small class="hint">It's generally located in ~/.ssh/id_rsa.pub or 
-      ~/.ssh/id_dsa.pub</small><br />
+      ~/.ssh/id_dsa.pub.<br />
+      If you want to use multiple keys you'll have to add each of them seperately</small><br />
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
   <%= f.submit "Save" -%>
