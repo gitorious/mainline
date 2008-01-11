@@ -29,7 +29,7 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.projects_category "projects/category/:id"
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
-  map.resources :projects, :path_name => "p" do |projects|
+  map.resources :projects do |projects|
     projects.resources(:repositories, :member => { 
       :new => :get, :create => :post, :writable_by => :get
     }, :path_name => "repos") do |repo|

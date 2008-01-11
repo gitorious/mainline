@@ -58,7 +58,7 @@ module BrowseHelper
      cur_counter = 0
      change_num = 0
 
-     if lines.size < 2
+     if lines.size < 3
        return
      end
      
