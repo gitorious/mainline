@@ -1,4 +1,4 @@
-[ ] proper diff renderer
+[ ] sidebar sometimes disappears (esp. on commit diff pages)
 [ ] Paginated log view (like git log --skip=100 --max-count=100)
 [ ] Nag project owners with no commits to the mainline repos after a week or two
 [ ] gitk-style branch view
