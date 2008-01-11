@@ -13,7 +13,7 @@ class Mailer < ActionMailer::Base
   
   def new_repository_clone(repository)
     setup_email(repository.project.user)
-    @subject += %Q{"#{repository.user.login}" has cloned "#{repository.parent.name}"}
+    @subject += %Q{#{repository.user.login} has cloned #{repository.project.slug}/#{repository.parent.name}}
     @body[:user] = repository.project.user
     @body[:cloner] = repository.user
     @body[:project] = repository.project

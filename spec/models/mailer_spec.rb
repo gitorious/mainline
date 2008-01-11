@@ -10,7 +10,7 @@ describe Mailer do
     mail = Mailer.create_new_repository_clone(repos)
     
     mail.to.should == [repos.project.user.email]
-    mail.subject.should == %Q{[Gitorious] "#{repos.user.login}" has cloned "#{repos.parent.name}"}
+    mail.subject.should == %Q{[Gitorious] #{repos.user.login} has cloned #{repos.project.slug}/#{repos.parent.name}}
     mail.body.should match(/#{repos.user.login} recently created a clone/)
     mail.body.should match(/\/p\/#{repos.project.slug}\/repos\/#{repos.name}/)
     
