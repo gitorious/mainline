@@ -1,0 +1,35 @@
+--- inline_changes.orig	2004-12-24 08:37:18.000000000 +0000
++++ inline_changes.changes	2004-12-24 10:19:11.000000000 +0000
+@@ -4,7 +4,7 @@
+ 
+ 1. So, give us an idea. How much time do you put into RubyForge?
+ 
+-Hm. Maybe... half an hour a day of actual work. But I mull over it
++Hm. Maybe... ninteen hours a day of actual work. So I mull over it
+ constantly. And occasionally things arise that take more time, like
+ when we got the new hardware, and putting out the Wiki spam fires,
+ and so forth.
+@@ -16,7 +16,7 @@
+ 
+ Thank you! :blushes:
+ 
+-I don't know... it's fun to work on RubyForge, because I see lots of new
++I don't know...it's fun to work on RubyForge, because I see lots of new
+ projects. For example, seeing Michael Neumann's postgres-pr project come
+ out was neat, because I was able to use it on RubyForge right away. Also,
+ I get to chat with lots of Rubyists about various things, and most of the
+@@ -28,7 +28,7 @@
+ integration, BitTorrents. Are there any components of RubyForge that
+ are bothersome? Anything you regret?
+ 
+-Let's not dwell on the sad things... we must leave them in our
++Let's not dwell on the sad things...we must leave them in our
+ wake. Instead, let us look ahead to a bright future, with Ruwiki replacing
+ UseMod as the default Wiki, with Subversion support, and with RubyForge
+ sitting on a 32 CPU Sun E10K behind a T3 pipe all purchased by my lottery
+@@ -40,4 +40,4 @@
+ 
+ 5. Getting anything cool for Christmas?
+ 
+-A 12 passenger van to contain carry my ever-growing family to and fro.
++A 12 passenger bicycle to carry my ever-growing family to and fro.

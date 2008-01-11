@@ -592,8 +592,7 @@ table.codediff td.cut-line {
   border-top: 1px dashed #aaa; 
   border-bottom: 1px dashed #aaa; 
 }
-
-del { background: #fbb; text-decoration: none; }
-ins { background: #afa; text-decoration: none; }
 table.codediff td.del { background: #fdd; }
 table.codediff td.ins { background: #dfd; }
+table.codediff td.del del { /*background: #fbb;*/ text-decoration: none; }
+table.codediff td.ins ins { /*background: #afa;*/ text-decoration: none; }
