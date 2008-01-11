@@ -44,7 +44,8 @@ module BrowseHelper
      out = "<table class=\"codediff\">\n"
 
      lines = udiff.split("\n")
-     lines.reject!{ |line| line =~ /^new file mode [0-9]+/ }
+     lines.reject!{ |line| line =~ /^(new|deleted) file mode [0-9]+/ }
+     lines.reject!{ |line| line =~ /^index [a-z0-9]+\.\.[a-z0-9]+/ }
 
      lines_that_differs = /@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@/
 
@@ -56,10 +57,12 @@ module BrowseHelper
      prev_counter = 0
      cur_counter = 0
      change_num = 0
-     if lines.size < 3
+
+     if lines.size < 2
        return
      end
-     lines[4..lines.length].each do |line|      
+     
+     lines[3..lines.length].each do |line|      
        if line_nums = line.match(lines_that_differs)      
        	prev_line_numbers = line_nums[1].to_i...(line_nums[1].to_i + (line_nums[2]).to_i)
          cur_line_numbers = line_nums[3].to_i...(line_nums[3].to_i + (line_nums[4]).to_i)
