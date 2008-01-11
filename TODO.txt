@@ -1,0 +1,30 @@
+[ ] proper diff renderer
+[ ] Paginated log view (like git log --skip=100 --max-count=100)
+[ ] Nag project owners with no commits to the mainline repos after a week or two
+[ ] gitk-style branch view
+[ ] project homepage is an editable wiki-ish page
+[ ] Better SshKey#key wrap
+[ ] paginate comments
+[ ] OpenID login
+[ ] Show full path in repos browser
+[ ] graph Repository#parent relationships properly
+[ ] (A RemoteRepository class for repositories hosted elsewhere?)
+[ ] Auto-remove cloned repositories that havent been committed to after 7 days?
+[ ] Archive downloads of trees
+[ ] Search (nuke the tag cloud when its there)
+[ ] Delete/archive a repos, by owner unless its the mainline one
+[ ] Delete/close (prefer latter) a Project
+[ ] Refactor the Task/queue system
+[ ] Log less in task.log (set "got X tasks to..." as debug level)
+[ ] A "Status" field for a project (though a wiki-frontpage makes this unneeded-ish)
+[ ] Mention somewhere that emails are displayed on the site, both in commits and on "profile" pages (so people can contact them)
+[ ] improve commenting and comments visibility
+[ ] handle mising/wrong SHA1s gracefully in browser
+[ ] parse SHA1s in commits+comments
+[ ] Normalize url fields (eg add http:// if it aint there) on User+Project
+
+---
+
+a ProjectMirror that sucks in svn repositories. They need to be differentiated form normal projects (don't display owner etc, since it's a mirror). Also, the mainline repository should probably be immutable so people can commit changes to the actual mirror.
+
+Groups may be a better alternative to allowing multiple repositories in a project, so a Group (or Product?) has many projects.
