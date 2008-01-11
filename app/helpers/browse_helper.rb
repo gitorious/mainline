@@ -56,7 +56,9 @@ module BrowseHelper
      prev_counter = 0
      cur_counter = 0
      change_num = 0
-
+     if lines.size < 3
+       return
+     end
      lines[4..lines.length].each do |line|      
        if line_nums = line.match(lines_that_differs)      
        	prev_line_numbers = line_nums[1].to_i...(line_nums[1].to_i + (line_nums[2]).to_i)
