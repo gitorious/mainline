@@ -7,7 +7,7 @@ class Task < ActiveRecord::Base
   
   def self.perform_all_pending!(log=RAILS_DEFAULT_LOGGER)
     tasks_to_perform = find_all_pending
-    log.info("Got #{tasks_to_perform.size.inspect} tasks to perform...")
+    log.debug("Got #{tasks_to_perform.size.inspect} tasks to perform...")
     tasks_to_perform.each do |task|
       task.perform!(log)
     end
