@@ -64,6 +64,7 @@ module AuthenticatedSystem
       respond_to do |accepts|
         accepts.html do
           store_location
+          flash[:error] = "Action requires login"
           redirect_to :controller => '/sessions', :action => 'new'
         end
         accepts.xml do

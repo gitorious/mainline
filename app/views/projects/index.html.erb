@@ -11,11 +11,13 @@
 
 <%= will_paginate @projects -%>
 
-<% content_for :sidebar do -%>
-  <ul class="links">
+<% content_for :submenu do -%>
+  <ul>
     <li><%= link_to "+ New project", new_project_path -%></li>
   </ul>
-  
+<% end -%>
+
+<% content_for :sidebar do -%>  
   <h4>Categories:</h4>
   <ul class="tag_list">
     <% tag_cloud @tags, default_css_tag_sizes do |tag, css_class| %>

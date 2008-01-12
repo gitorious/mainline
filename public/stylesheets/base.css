@@ -146,12 +146,15 @@ abbr {
   float:left;
   margin-right: -160px;
 }
-#container #main #content {
+#container #content { /* when there's no sidebar*/
+  margin: 0 0 1em 2.5em;
+}
+#container #main #content { /* when there's sidebar contents */
+  margin:0;
   margin-right: 160px;
   margin-top: 20px;
   padding: 0 1em 1em 2em;
 }
-
 #container #sidebar {
   margin-top: 20px;
   padding-left: 5px;
@@ -230,6 +233,31 @@ abbr {
 #menu ul li a:hover {
   text-decoration: none;
   border-bottom: 3px solid #630;
+}
+
+/* submenu */
+#submenu {
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid #ccc;
+}
+#submenu ul {
+  list-style: none;
+  padding: 2px 0 2px 0;
+  margin: 0 0 0 2em;
+}
+
+#submenu ul li {
+  display: inline;
+  margin-right: 30px;
+}
+
+#submenu ul li a { 
+/*  font-size: 12px;*/
+}
+
+#submenu ul li a:hover {
+  text-decoration: none;
+  border-bottom: 2px solid #630;
 }
 
 /* Forms */

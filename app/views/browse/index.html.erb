@@ -27,14 +27,16 @@
   <% end -%>
 </table>
 
-<% content_for :sidebar do -%>
-  <ul class="links">
-    <li><%= link_to "&#x2190; Repository page", 
-              project_repository_path(@project, @repository) -%></li>
-    <li><%= link_to "&#x2190; Project page", 
-              project_path(@project) -%></li>
-  </ul>
-  
+<% content_for :submenu do -%>
+<ul>
+  <li><%= link_to "&#x2190; Repository page", 
+            project_repository_path(@project, @repository) -%></li>
+  <li><%= link_to "&#x2190; Project page", 
+            project_path(@project) -%></li>
+</ul>
+<% end -%>
+
+<% content_for :sidebar do -%>  
   <h5>Branches:</h5>
   <ul class="links">
     <% @git.branches.each do |branch| -%>

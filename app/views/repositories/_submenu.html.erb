@@ -1,0 +1,13 @@
+<% content_for :submenu do -%>
+  <ul>
+  <% if @repository.ready? -%>
+    <li><%= link_to "&#x2192; Browse repository", project_repository_browse_path(@project, @repository) -%></li>
+    <li><%= link_to "+ Clone this repository", new_project_repository_path(@project, @repository) -%></li>
+  <% end -%>
+  <% if @repository.user == current_user -%>
+    <li><%= link_to "+ Add committer", 
+            { :controller => "committers", :action => "new", :project_id => @project, 
+              :repository_id => @repository } -%></li>
+  <% end -%>
+  </ul>
+<% end -%>

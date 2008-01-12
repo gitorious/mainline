@@ -26,8 +26,8 @@
 </ul>
 
 <% if current_user && (current_user == @user)  -%>
-  <% content_for :sidebar do -%>
-    <ul class="links">
+  <% content_for :submenu do -%>
+    <ul>
       <li><%= link_to "+ Edit your account", edit_account_url -%>
     </ul>
   <% end -%>

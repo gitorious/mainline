@@ -59,10 +59,10 @@
   <% end -%>
 </table>
 
-<% content_for :sidebar do -%>
-  <ul class="links">
-    <% if @project.admin?(current_user) -%>
-      <li><%= link_to "&#x2192; Edit project", edit_project_path(@project) -%></li>
-    <% end -%>
+<% content_for :submenu do -%>
+  <% if @project.admin?(current_user) -%>
+  <ul>
+    <li><%= link_to "&#x2192; Edit project", edit_project_path(@project) -%></li>
   </ul>
+  <% end -%>
 <% end -%>

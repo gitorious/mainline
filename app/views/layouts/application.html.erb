@@ -38,8 +38,13 @@
           <li><%= link_to "About", about_path -%></li>
         </ul>
       </div>
+      <div id="submenu">
+        <%= yield :submenu -%>
+      </div>
     </div>
+    <% unless @content_for_sidebar.blank? -%>
     <div id="main">
+    <% end -%>
       <div id="content">
         <% if flash[:notice] -%>
           <div class="flash_message notice">
@@ -53,11 +58,13 @@
         <% end -%>
         <%= yield -%>
       </div>
+    <% unless @content_for_sidebar.blank? -%>
     </div>
     <div id="sidebar">
       <%= yield :sidebar -%>
     </div>
     <div class="clear"></div>
+    <% end -%>
     <div id="footer">
       <ul>
         <li><%= link_to "Home", root_path -%> | </li>
