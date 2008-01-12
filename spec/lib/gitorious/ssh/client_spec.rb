@@ -23,10 +23,24 @@ describe Gitorious::SSH::Client do
     client.user_name.should == "johan"
   end
   
+  def make_request(path)
+    request = ActionController::TestRequest.new
+    request.request_uri = path
+    request
+  end
+  
   it "has a query_url" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    exp_url = "/projects/foo/repos/bar/writable_by?username=johan"
-    client.query_url.should == exp_url
+    # exp_url = "/projects/foo/repos/bar/writable_by?username=johan"
+    # client.query_url.should == exp_url
+    
+    request = make_request(client.query_url)
+    ActionController::Routing::Routes.recognize(request).should == RepositoriesController
+    # check against the actual routes
+    request.symbolized_path_parameters[:action].should == "writable_by"
+    request.symbolized_path_parameters[:controller].should == "repositories"
+    request.symbolized_path_parameters[:project_id].should == "foo"
+    request.symbolized_path_parameters[:id].should == "bar"
   end
   
   it "asks the server if a user has permission" do
