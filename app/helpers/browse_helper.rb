@@ -75,7 +75,7 @@ module BrowseHelper
   end
   
   def render_diffmode_selector
-    out = %Q{<ul class="diffmode_selector"}
+    out = %Q{<ul class="diffmode_selector">}
     out << %Q{<li class="list_header">Diff rendering mode:</li>}
     if @diffmode == "sidebyside"
       out << %Q{<li><a href="?diffmode=inline">inline</a></li>}
