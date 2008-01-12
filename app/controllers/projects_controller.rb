@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
   def index
     @projects = Project.paginate(:all, :order => "created_at desc", 
                   :page => params[:page])
-    @atom_auto_discovery = true
+    @atom_auto_discovery_url = formatted_projects_path(:atom)
     respond_to do |format|
       format.html { @tags = Project.tag_counts }
       format.xml  { render :xml => @projects }
@@ -17,7 +17,7 @@ class ProjectsController < ApplicationController
     tags = params[:id].to_s.gsub(/,\ ?/, " ")
     @projects = Project.paginate_by_tag(tags, :order => 'created_at desc', 
                   :page => params[:page])
-    @atom_auto_discovery = true
+    @atom_auto_discovery_url = formatted_projects_category_path(params[:id], :atom)
     respond_to do |format|
       format.html do
         @tags = Project.tag_counts

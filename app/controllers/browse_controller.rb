@@ -12,7 +12,7 @@ class BrowseController < ApplicationController
       end
     end
     # TODO: Patch rails to keep track of what it responds to so we can DRY this up
-    @atom_auto_discovery = true
+    @atom_auto_discovery_url = project_repository_formatted_browse_path(@project, @repository, :atom)
     respond_to do |format|
       format.html
       format.atom

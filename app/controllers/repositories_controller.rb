@@ -18,7 +18,7 @@ class RepositoriesController < ApplicationController
       @commits = []
     end
     
-    @atom_auto_discovery = true
+    @atom_auto_discovery_url = formatted_project_repository_path(@project, @repository, :atom)
     respond_to do |format|
       format.html
       format.xml  { render :xml => @repository }

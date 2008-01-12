@@ -5,7 +5,7 @@ class CommentsController < ApplicationController
   
   def index
     @comments = @repository.comments.find(:all, :include => :user)
-    @atom_auto_discovery = true
+    @atom_auto_discovery_url = formatted_project_repository_comments_path(@project, @repository, :atom)
     respond_to do |format|
       format.html { }
       format.atom { }
