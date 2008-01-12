@@ -27,7 +27,34 @@ describe AccountsController do
     put :update, :user => {:password => "fubar", :password_confirmation => "fubar"}
     flash[:notice].should_not be(nil)
     response.should redirect_to(account_path)
+  end
+  
+  it "GET /account/password is a-ok" do
+    get :password
+    response.should be_success
+    assigns[:user].should == users(:johan)
+  end
+  
+  it "PUT /account/update_password updates password if old one matches" do
+    put :update_password, :user => {
+      :current_password => "test", 
+      :password => "fubar",
+      :password_confirmation => "fubar" }
+    response.should redirect_to(account_path)
+    flash[:notice].should match(/Your password has been changed/i)
     User.authenticate(users(:johan).email, "fubar").should == users(:johan)
+  end
+  
+  it "PUT /account/update_password does not update password if old one is wrong" do
+    put :update_password, :user => {
+      :current_password => "notthecurrentpassword", 
+      :password => "fubar",
+      :password_confirmation => "fubar" }
+    flash[:notice].should == nil
+    flash[:error].should match(/doesn't seem to match/)
+    response.should render_template("accounts/password")
+    User.authenticate(users(:johan).email, "test").should == users(:johan)
+    User.authenticate(users(:johan).email, "fubar").should == nil
   end
 
 end

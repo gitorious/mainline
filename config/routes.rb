@@ -20,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.root :controller => "site", :action => "index"
   
-  map.resource :account do |account|
+  map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
     account.resources :keys
   end
   map.resources :users 

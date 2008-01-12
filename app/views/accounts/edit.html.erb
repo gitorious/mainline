@@ -14,19 +14,12 @@
     <%= f.label :url, "url <small>blog etc</small>" -%><br />
     <%= f.text_field :url, :class => "text" -%>
   </p>
-  <p>    
-    <%= f.label :password -%><br />
-    <%= f.password_field :password, :class => "text" -%>
-  </p>   
-  <p>    
-    <%= f.label :password_confirmation -%><br />
-    <%= f.password_field :password_confirmation, :class => "text" -%>
-  </p>
   <%= f.submit "Save" -%>
 <% end -%>
 
 <% content_for :submenu do -%>
   <ul>
     <li><%= link_to "&#x2190; My account", account_path -%></li>
+    <li><%= link_to "&#x2192; Change password", password_account_path -%></li>
   </ul>
 <% end -%>

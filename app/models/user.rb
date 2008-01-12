@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   has_many :comments
   
   # Virtual attribute for the unencrypted password
-  attr_accessor :password
+  attr_accessor :password, :current_password
   
   attr_protected :login
 
