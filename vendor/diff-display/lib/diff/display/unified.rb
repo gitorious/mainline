@@ -304,8 +304,8 @@ module Diff #:nodoc:#
         #   process --> identify_block --> process_block --> process_line 
         #
         def process(line)
-          return if ['++', '--'].include?(line[0,2])
-
+          return if is_extra_header_line?(line)
+          
           if match = LINE_NUM_RE.match(line) 
             identify_block
             add_separator unless @offset_changed.zero?
@@ -316,7 +316,7 @@ module Diff #:nodoc:#
           end
 
           new_line_type, line = LINE_TYPES[car(line)], cdr(line)
-
+          
           # Add line to the buffer if it's the same diff line type
           # as the previous line
           # 
@@ -355,6 +355,14 @@ module Diff #:nodoc:#
         end
 
         protected 
+        
+          def is_extra_header_line?(line)
+            return true if ['++', '--'].include?(line[0,2])
+            return true if line =~ /^(new|delete) file mode [0-9]+$/
+            return true if line =~ /^diff \-\-git/
+            return true if line =~ /^index \w+\.\.\w+ [0-9]+$/
+            false
+          end
 
           def identify_block
             if @prev_line_type.eql?(LINE_TYPES['-']) and @line_type.eql?(LINE_TYPES['+'])
@@ -370,13 +378,11 @@ module Diff #:nodoc:#
 
           def process_block(diff_line_type, new = false, old = false)
             push Block.send(diff_line_type)
-
             # Mod block
-            if diff_line_type.eql?(:mod) and @prev_buffer.size & @buffer.size == 1
+            if diff_line_type.eql?(:mod) && @prev_buffer.size && @buffer.size == 1
               process_line(@prev_buffer.first, @buffer.first)
               return
             end
-
             unroll_prev_buffer if old
             unroll_buffer      if new 
           end

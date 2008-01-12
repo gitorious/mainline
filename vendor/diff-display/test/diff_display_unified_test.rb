@@ -1,8 +1,6 @@
-require 'abstract_unit'
-require 'test/unit'
-require 'yaml'
+require File.dirname(__FILE__) + '/abstract_unit'
 
-class TestDiffDisplay < Test::Unit::TestCase
+class DisplayUnifiedTest < Test::Unit::TestCase
 
   def setup
     @diffs = load_all_diffs
@@ -24,5 +22,12 @@ class TestDiffDisplay < Test::Unit::TestCase
                    "Inline change line numbers don't match up for #{d}")
     end
   end
+  
+  # def test_edgecase
+  #   diff = load_diff(:edgecase1_diff)[:edgecase1_diff]
+  #   assert_equal(diff[:data].normalize_diff_object, 
+  #                diff[:diff].normalize_diff, 
+  #                "Data object and diff file for #{diff} don't match")
+  # end
 
 end

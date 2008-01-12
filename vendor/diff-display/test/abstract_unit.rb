@@ -1,12 +1,15 @@
+require 'test/unit'
+require 'yaml'
+
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'diff/display/unified'
 
 module Kernel
   def load_diffs(*diffs)
     loaded_diffs = Hash.new({})
-    diff_path    = 'diffs/'
+    diff_path    = File.join(File.dirname(__FILE__), 'diffs')
     diffs.each do |diff_name|
-      diff = IO.readlines(diff_path + diff_name.id2name + '.diff')
+      diff = IO.readlines(File.join(diff_path, diff_name.id2name + '.diff'))
       data = Diff::Display::Unified::Generator.run(diff)
       loaded_diffs[diff_name] = {:diff => diff, :data => data}
     end
@@ -14,7 +17,7 @@ module Kernel
   end
   alias_method :load_diff, :load_diffs
 
-  def load_all_diffs(path = 'diffs')
+  def load_all_diffs(path = File.join(File.dirname(__FILE__), 'diffs'))
     load_diffs *Dir.glob(path + '/*.diff').map {|d| File.basename(d, '.*').intern}
   end
 

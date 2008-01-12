@@ -1,8 +1,6 @@
-require 'abstract_unit'
-require 'test/unit'
-require 'yaml'
+require File.dirname(__FILE__) + '/abstract_unit'
 
-class TestDiffDisplay < Test::Unit::TestCase
+class ParityBetweenDiffAndDataTest < Test::Unit::TestCase
 
   def setup
     @diffs = load_all_diffs
