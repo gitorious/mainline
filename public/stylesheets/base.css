@@ -642,7 +642,7 @@ table.codediff td.del { background: #fdd; }
 table.codediff td.ins { background: #dfd; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td { background: #fe9; }
-table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del{ background: #fc0; }
+table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del{ background: #fd4; }
 table.codediff td.del del { text-decoration: none; }
 table.codediff td.ins ins { text-decoration: none; }
 table.sidebyside td.del del { background: #fbb; }
