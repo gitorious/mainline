@@ -24,7 +24,7 @@ module Gitorious
       end
     
       def query_url
-        url = ["/p"]
+        url = ["/projects"]
         url << @project_name
         url << "repos"
         url << @repository_name

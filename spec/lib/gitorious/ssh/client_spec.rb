@@ -25,7 +25,7 @@ describe Gitorious::SSH::Client do
   
   it "has a query_url" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    exp_url = "/p/foo/repos/bar/writable_by?username=johan"
+    exp_url = "/projects/foo/repos/bar/writable_by?username=johan"
     client.query_url.should == exp_url
   end
   
@@ -33,7 +33,7 @@ describe Gitorious::SSH::Client do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = mock("connection_stub", :null_object => true)
     connection_stub.should_receive(:get) \
-      .with("/p/foo/repos/bar/writable_by?username=johan") \
+      .with("/projects/foo/repos/bar/writable_by?username=johan") \
       .and_return(@ok_stub)
     client.should_receive(:connection).and_return(connection_stub)
 
@@ -44,7 +44,7 @@ describe Gitorious::SSH::Client do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = mock("connection stub", :null_object => true)
     connection_stub.should_receive(:get) \
-      .with("/p/foo/repos/bar/writable_by?username=johan") \
+      .with("/projects/foo/repos/bar/writable_by?username=johan") \
       .and_return(@not_ok_stub)
     client.should_receive(:connection).and_return(connection_stub)
 
