@@ -6,6 +6,7 @@
 [ ] Better SshKey#key wrap
 [ ] paginate comments
 [ ] OpenID login
+[ ] Clean up in commit diff CSS
 [ ] Show full path in repos browser
 [ ] graph Repository#parent relationships properly
 [ ] (A RemoteRepository class for repositories hosted elsewhere?)

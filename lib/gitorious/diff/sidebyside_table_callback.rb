@@ -4,23 +4,23 @@ module Gitorious
       
       # Before blocks
       def before_addblock(block)
-        "<tbody><tr>"
+        %q{<tbody class="add"><tr>}
       end
       
       def before_remblock(block) 
-        "<tbody><tr>"
+        %Q{<tbody class="rem"><tr>}
       end
       
       def before_modblock(block)
-        "<tbody><tr>"
+        %Q{<tbody class="mod"><tr>}
       end
       
       def before_unmodblock(block)
-        "<tbody><tr>"
+        %Q{<tbody class="unmod"><tr>}
       end
       
       def before_sepblock(block)
-        "<tbody><tr>"
+        %Q{<tbody class="sep"><tr>}
       end
       
       # After blocks
@@ -33,7 +33,7 @@ module Gitorious
       end
       
       def after_modblock(block)
-        # "</tbody>"
+        "</tbody>"
       end
       
       def after_unmodblock(block)
@@ -41,7 +41,7 @@ module Gitorious
       end
       
       def after_sepblock(block)
-        "</body>"
+        "</tbody>"
       end
       
       # Before lines
@@ -94,7 +94,7 @@ module Gitorious
       end
       
       def after_modline(line)
-        # "</td></tr>"
+        "</td></tr>"
       end
       
       def after_unmodline(line)

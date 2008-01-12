@@ -13,7 +13,7 @@
 <% #TODO: commit diff stats (as sparklines?) -%>
 
 <h2>Commit diff</h2>
-<% #TODO diffmode selector -%>
+<%= render_diffmode_selector -%>
 
 <% @diff.each do |file| -%>
   <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
