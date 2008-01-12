@@ -25,6 +25,7 @@ class BrowseController < ApplicationController
   end
   
   def commit
+    @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = Git.bare(@repository.full_repository_path)
     @commit = @git.gcommit(params[:sha])
     if @commit.parent

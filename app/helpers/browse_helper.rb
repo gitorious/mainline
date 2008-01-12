@@ -37,18 +37,38 @@ module BrowseHelper
   end  
   
   # Takes a unified diff as input and renders it as html
-  def render_diff(udiff, src_sha, dst_sha)
+  def render_diff(udiff, src_sha, dst_sha, display_mode = "inline")
     return if udiff.blank?
-    
+
+    case display_mode
+    when "sidebyside"
+      render_sidebyside_diff(udiff, src_sha, dst_sha)
+    else
+      render_inline_diff(udiff, src_sha, dst_sha)
+    end
+  end
+  
+  def render_inline_diff(udiff, src_sha, dst_sha)
     callback = Gitorious::Diff::InlineTableCallback.new
-    
-    out = %Q{<table class="codediff">\n}
+    out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
     out << "<tr>"
     out << %Q{<td class="line-numbers">#{src_sha}</td>}
     out << %Q{<td class="line-numbers">#{dst_sha}</td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
+    out << Diff::Display::Unified::Renderer.run(udiff, callback)
+    out << "</table>"
+    out
+  end
+  
+  def render_sidebyside_diff(udiff, src_sha, dst_sha)
+    callback = Gitorious::Diff::SidebysideTableCallback.new
+    out = %Q{<table class="codediff sidebyside">\n}
+    out << %Q{<colgroup class="left"><col class="lines"/><col class="code"/></colgroup>}
+    out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
+    out << %Q{<thead><th colspan="2">#{src_sha}</th>}
+    out << %Q{<th colspan="2">#{dst_sha}</th></thead>}
     out << Diff::Display::Unified::Renderer.run(udiff, callback)
     out << "</table>"
     out

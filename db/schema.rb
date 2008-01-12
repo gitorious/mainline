@@ -48,9 +48,9 @@ ActiveRecord::Schema.define(:version => 19) do
     t.string   "bugtracker_url"
   end
 
+  add_index "projects", ["slug"], :name => "index_projects_on_slug", :unique => true
   add_index "projects", ["title"], :name => "index_projects_on_name"
   add_index "projects", ["user_id"], :name => "index_projects_on_user_id"
-  add_index "projects", ["slug"], :name => "index_projects_on_slug"
 
   create_table "repositories", :force => true do |t|
     t.string   "name"
@@ -92,6 +92,8 @@ ActiveRecord::Schema.define(:version => 19) do
   create_table "tags", :force => true do |t|
     t.string "name"
   end
+
+  add_index "tags", ["name"], :name => "index_tags_on_name", :unique => true
 
   create_table "tasks", :force => true do |t|
     t.string   "target_class"
