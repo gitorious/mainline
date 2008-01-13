@@ -441,6 +441,10 @@ ul.bullet_list li {
   color: #ddd;
 }
 
+.section {
+  margin-bottom: 3em;
+}
+
 /* tags */
 
 ul.tag_list li {

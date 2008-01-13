@@ -1,46 +1,96 @@
-<h1>About Gitorious</h1>
+<div class="section">
+  <a name="about"></a><h1>About Gitorious</h1>
 
-<p><strong><a href="/p/gitorious">Gitorious</a> aims to provide a great way of doing distributed opensource 
-  code collaboration</strong></p>
+  <p><strong><a href="/p/gitorious">Gitorious</a> aims to provide a great way of doing distributed opensource 
+    code collaboration</strong></p>
   
-<h3>The idea</h3>
-<p>Traditional code- and project forges offer many great things and has without 
-  a question helped developers of open source software. However, there's always 
-  the issue of long-term maintainability; as humans we always get distracted, 
-  busy and or just plain tired of working with things in the long run.</p>
+  <h2>The idea</h2>
+  <p>Traditional code- and project forges offer many great things and has without 
+    a question helped developers of open source software. However, there's always 
+    the issue of long-term maintainability; as humans we always get distracted, 
+    busy and or just plain tired of working with things in the long run.</p>
   
-<p>Distributed version control provides a way around this by making everyones 
-  copy a full repository, so if people like someone elses stuff better, or 
-  that someone else is actively maintaining the project they can just pull from 
-  that person instead of the "official" repository. And if the project 
-  maintainer decides to, he can pull those changes into his mainline branch. 
-  That's what makes open source great.</p>
+  <p>Distributed version control provides a way around this by making everyones 
+    copy a full repository, so if people like someone elses stuff better, or 
+    that someone else is actively maintaining the project they can just pull from 
+    that person instead of the "official" repository. And if the project 
+    maintainer decides to, he can pull those changes into his mainline branch. 
+    That's what makes open source great.</p>
   
-<p><strong><a href="/p/gitorious">Gitorious</a></strong> provides a 
-  way of keeping track of these clones easily by:</p>
+  <p><strong><a href="/p/gitorious">Gitorious</a></strong> provides a 
+    way of keeping track of these clones easily by:</p>
   
-<ul class="bullet_list">
-	<li>Seeing what they're doing</li>
-	<li>Knowing where they can be found</li>
-	<li>Allowing anyone to contribute without being blessed with "commit bits"</li>
-	<li>Making it easier for maintainers to accept contributions</li>
-</ul>
+  <ul class="bullet_list">
+  	<li>Seeing what they're doing</li>
+  	<li>Knowing where they can be found</li>
+  	<li>Allowing anyone to contribute without being blessed with "commit bits"</li>
+  	<li>Making it easier for maintainers to accept contributions</li>
+  </ul>
   
-<p>Gitorious still under development and there's many many more things I'd like 
-  to do with it. If you have ideas for improvements or technical issues please 
-  do stop by the <a href="http://groups.google.com/group/gitorious">discussion group</a>.</p>
+  <p>Gitorious still under development and there's many many more things I'd like 
+    to do with it. If you have ideas for improvements or technical issues please 
+    do stop by the <a href="http://groups.google.com/group/gitorious">discussion group</a>.</p>
   
-<p>
-  Regards,<br />
-  <a href="/users/johan">Johan Sørensen</a><br />
-  <small>Gitorious.org maintainer</small>
-</p>
+  <p>
+    Regards,<br />
+    <a href="/users/johan">Johan Sørensen</a><br />
+    <small>Gitorious.org maintainer</small>
+  </p>
+</div>
 
-<h2>FAQ</h2>
 
-<h4>Why do I need to upload my public SSH key?</h4>
-<p>
-  When you push to a Git repository, your public key is how we authenticate 
-  you and if have the permissions required to do a commit to a given repository
-</p>
+<div class="section">
+  <a name="contact"></a><h1>Contact Info</h1>
+  <p>
+    If you experience any technical issues feel free to  
+    <a href="mailto:johan@johansorensen.com">send an email</a>, there's also the 
+    <a href="http://groups.google.com/group/gitorious">discussion group</a> for more
+    general Gitorious discussions around Gitorious.
+  </p>
+</div>
 
+<div class="section">
+  <a name="faq"></a><h1>FAQ</h1>
+
+  <h3>How do I point my local Git repository at Gitorious?</h3>
+  <p>
+    Easiest way is to put something like the following in your <code>.git/config</code> 
+    file of the repository you wish to push:
+  <pre>
+  [remote "origin"]
+         url = git@gitorious.org:<em>project</em>/<em>repository.git</em>
+         fetch = +refs/heads/*:refs/remotes/origin/*
+  [branch "master"]
+         remote = origin
+         merge = refs/heads/master
+  </pre>
+    and then <code>git push origin master</code> to push the code to Gitorious.
+  </p>
+
+  <hr />
+
+  <h3>Why is my email displayed?</h3>
+  <p>
+    The email you used to signup with Gitorious is displayed to other users, so that they 
+    can contact you about your projects if they need to. We do however take light 
+    measures against crawlers by not displaying your email in completely plain text. <br />
+    But just to be clear: we won't sell or use any information you give to 
+    gitorious.org against you or anyone else for financial and/or personal gains.
+  </p>
+
+  <hr />
+
+  <h3>Why do I need to upload my public SSH key?</h3>
+  <p>
+    When you push to a Git repository, your public key is how we authenticate 
+    you and if have the permissions required to do a commit to a given repository
+  </p>
+</div>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+<% end -%>
