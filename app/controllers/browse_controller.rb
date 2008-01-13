@@ -2,9 +2,11 @@ class BrowseController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_for_commits
   
+  LOGS_PER_PAGE = 30
+  
   def index
     @git = Git.bare(@repository.full_repository_path)
-    @commits = @git.log(30)
+    @commits = @git.log(LOGS_PER_PAGE)
     @tags_per_sha = returning({}) do |hash|
       @git.tags.each do |tag| 
         hash[tag.sha] ||= []
@@ -53,12 +55,10 @@ class BrowseController < ApplicationController
     render :text => @blob.contents, :content_type => "text/plain"
   end
   
-  @@per_page = 30
-  
   def log
     @git = Git.bare(@repository.full_repository_path)
-    skip = params[:page].blank? ? 0 : (params[:page].to_i-1) * @@per_page
-    @commits = @git.log(30, skip)
+    skip = params[:page].blank? ? 0 : (params[:page].to_i-1) * LOGS_PER_PAGE
+    @commits = @git.log(LOGS_PER_PAGE, skip)
     @tags_per_sha = returning({}) do |hash|
       @git.tags.each do |tag| 
         hash[tag.sha] ||= []
