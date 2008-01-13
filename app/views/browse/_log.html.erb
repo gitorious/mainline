@@ -1,0 +1,25 @@
+<table class="listing shortlog">
+  <% commits.each do |commit| -%>
+  <tr class="<%= cycle "odd", "even" -%>">
+    <td><%=h commit.date.strftime("%Y-%m-%d %H:%M") -%></td>
+    <td><%=h truncate(commit.author.name, 15) -%></td>
+    <td>
+      <%= link_to h(truncate(commit.message, 85)), commit_path(commit.sha) -%>
+      <%= render_tag_box_if_match(commit.sha, @tags_per_sha) -%>
+    </td>
+    <td><%= link_to "commit", commit_path(commit.sha) -%></td>
+    <td><%= link_to "tree", tree_path(commit.gtree.sha) -%></td>
+    <!-- <td>archive (<%= commit.gtree.sha -%>)</td> -->
+  </tr>
+  <% end -%>
+  <tr>
+    <td colspan="5" class="link_to_more">
+      <span>
+      <% unless params[:page].blank? || [0,1].include?(params[:page].to_i) -%>
+        <%= link_to "&#x2190; previous", log_path(:page => params[:page].to_i-1) -%> | 
+      <% end -%>
+      <%= link_to "next &#x2192;", log_path(:page => (params[:page].blank? ? 2 : params[:page].to_i+1)) -%>
+      </span>
+    </td>
+  </tr>
+</table>

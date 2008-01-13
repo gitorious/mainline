@@ -42,6 +42,7 @@ ActionController::Routing::Routes.draw do |map|
       repo.with_options(:controller => "browse") do |r|
         r.browse  "browse",       :action => "index"
         r.formatted_browse  "browse.:format",       :action => "index"
+        r.log     "log",        :action => "log"
         r.tree    "tree/:sha",    :action => "tree", :sha => nil
         r.blob    "blob/:sha/:filename", :action => "blob", :requirements => {:filename => /.*/}
         r.raw_blob "raw/:sha/:filename", :action => "raw", :requirements => {:filename => /.*/}

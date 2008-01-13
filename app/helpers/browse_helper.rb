@@ -4,6 +4,10 @@ module BrowseHelper
     project_repository_browse_path(@project, @repository)
   end
   
+  def log_path(args={})
+    project_repository_log_path(@project, @repository, args)
+  end
+  
   def tree_path(sha1=nil)
     project_repository_tree_path(@project, @repository, sha1)    
   end

@@ -1,4 +1,3 @@
-[ ] Paginated log view (like git log --skip=100 --max-count=100)
 [ ] Nag project owners with no commits to the mainline repos after a week or two
 [ ] gitk-style branch view
 [ ] project homepage is an editable wiki-ish page

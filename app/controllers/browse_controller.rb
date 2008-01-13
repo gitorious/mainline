@@ -53,9 +53,24 @@ class BrowseController < ApplicationController
     render :text => @blob.contents, :content_type => "text/plain"
   end
   
+  @@per_page = 30
+  
   def log
     @git = Git.bare(@repository.full_repository_path)
-    # TODO: paginated logs
+    skip = params[:page].blank? ? 0 : (params[:page].to_i-1) * @@per_page
+    @commits = @git.log(30, skip)
+    @tags_per_sha = returning({}) do |hash|
+      @git.tags.each do |tag| 
+        hash[tag.sha] ||= []
+        hash[tag.sha] << tag.name 
+      end
+    end
+    # TODO: Patch rails to keep track of what it responds to so we can DRY this up
+    @atom_auto_discovery_url = project_repository_formatted_browse_path(@project, @repository, :atom)
+    respond_to do |format|
+      format.html
+      format.atom
+    end
   end
   
   def archive
