@@ -445,6 +445,11 @@ ul.bullet_list li {
   margin-bottom: 3em;
 }
 
+ul.path_breadcrumbs li {
+  display: inline;
+  margin:0;
+}
+
 /* tags */
 
 ul.tag_list li {

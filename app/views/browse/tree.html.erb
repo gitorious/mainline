@@ -8,12 +8,12 @@
   <tr class="<%= cycle("odd", "even") -%>">
     <!-- <td><%#= h(node.mode) -%></td> -->
     <% if node.type == "tree" -%>
-      <td class="node tree"><%= link_to h(file + "/"), tree_path(node.sha) -%></td>
-      <td class="link"><%= link_to node.type, tree_path(node.sha) -%></td>
+      <td class="node tree"><%= link_to h(file + "/"), tree_path(node.sha, build_tree_path(file)) -%></td>
+      <td class="link"><%= link_to node.type, tree_path(node.sha, build_tree_path(file)) -%></td>
     <!-- TODO: archive -->
     <% else -%>
-      <td class="node file"><%= link_to h(file), blob_path(node.sha, file) -%></td>
-      <td class="link"><%= link_to node.type, blob_path(node.sha, file) -%></td>
+      <td class="node file"><%= link_to h(file), blob_path(node.sha, build_tree_path(file)) -%></td>
+      <td class="link"><%= link_to node.type, blob_path(node.sha, build_tree_path(file)) -%></td>
     <% end -%>
     <td class="sha1"><%= h(node.sha[0..16]) -%></td>
   </tr>

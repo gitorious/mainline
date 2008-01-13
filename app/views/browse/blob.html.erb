@@ -1,6 +1,6 @@
 <h1>
-  Blob of <code><%= params[:filename] -%></code> 
-  <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, params[:filename]) -%>)</small>
+  Blob of <code><%= current_path.join("/") -%></code> 
+  <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>
 </h1>
 <pre><%=h @blob.contents -%></pre>
 

@@ -8,25 +8,45 @@ module BrowseHelper
     project_repository_log_path(@project, @repository, args)
   end
   
-  def tree_path(sha1=nil)
-    project_repository_tree_path(@project, @repository, sha1)    
+  def tree_path(sha1=nil, path=[])
+    project_repository_tree_path(@project, @repository, sha1, path)    
   end
   
   def commit_path(sha1)
     project_repository_commit_path(@project, @repository, sha1)    
   end
   
-  def blob_path(sha1, filename)
-    project_repository_blob_path(@project, @repository, sha1, filename)    
+  def blob_path(sha1, path)
+    project_repository_blob_path(@project, @repository, sha1, path)    
   end
   
-  def raw_blob_path(sha1, filename)
-    project_repository_raw_blob_path(@project, @repository, sha1, filename)    
+  def raw_blob_path(sha1, path)
+    project_repository_raw_blob_path(@project, @repository, sha1, path)
   end
   
   def diff_path(sha1, other_sha1)
     project_repository_diff_path(@project, @repository, sha1, other_sha1)    
   end
+  
+  def current_path
+    params[:path].dup
+  end
+  
+  def build_tree_path(path)
+    current_path << path
+  end
+  
+  # def breadcrumb_path
+  #   out = %Q{<ul class="path_breadcrumbs">\n}
+  #   visited_path = []
+  #   out <<  %Q{  <li>/ #{link_to("root", tree_path(params[:sha], []))}</li>\n}
+  #   current_path.each_with_index do |path, index|
+  #     visited_path << path
+  #     out << %Q{  <li>/ #{link_to(path, tree_path(params[:sha], path))}</li>\n}
+  #   end
+  #   out << "</ul>"
+  #   out
+  # end
     
   def render_tag_box_if_match(sha, tags_per_sha)
     tags = tags_per_sha[sha]
