@@ -1,5 +1,5 @@
 <h1><%=h @project.title -%></h1>
-<p><%=h @project.description -%></p>
+<p><%= simple_format h(@project.description) -%></p>
 
 <ul class="infobox">
   <li><strong>Owner:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
