@@ -15,10 +15,11 @@ module Git
     
     @dirty_flag = nil
     
-    def initialize(base, count = 30)
+    def initialize(base, count = 30, skip = 0)
       dirty_log
       @base = base
       @count = count
+      @skip = skip
     end
 
     def object(objectish)
@@ -85,7 +86,8 @@ module Git
       # actually run the 'git log' command
       def run_log      
         log = @base.lib.full_log_commits(:count => @count, :object => @object, 
-                                    :path_limiter => @path, :since => @since, :between => @between)
+                                    :path_limiter => @path, :since => @since, 
+                                    :between => @between, :skip => @skip)
         @commits = log.map { |c| Git::Object::Commit.new(@base, c['sha'], c) }
       end
       
