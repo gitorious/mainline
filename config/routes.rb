@@ -17,7 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
-  
+  VALID_SHA = /([a-z0-9]{40}|HEAD)/
   map.root :controller => "site", :action => "index"
   
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
@@ -40,14 +40,19 @@ ActionController::Routing::Routes.draw do |map|
       
       # Repository browsing related routes
       repo.with_options(:controller => "browse") do |r|
-        r.browse  "browse",       :action => "index"
-        r.formatted_browse  "browse.:format",       :action => "index"
-        r.log     "log",        :action => "log"
-        r.tree    "tree/:sha",    :action => "tree", :sha => nil
-        r.blob    "blob/:sha/:filename", :action => "blob", :requirements => {:filename => /.*/}
-        r.raw_blob "raw/:sha/:filename", :action => "raw", :requirements => {:filename => /.*/}
-        r.commit  "commit/:sha",  :action => "commit"
-        r.diff    "diff/:sha/:other_sha",  :action => "diff"
+        r.browse  "browse",           :action => "index"
+        r.formatted_browse "browse.:format", :action => "index"
+        r.log     "log",              :action => "log"
+        r.tree    "tree/:sha/*path",  :action => "tree", 
+          :sha => nil, :path => [], :requirements => {:sha => VALID_SHA}
+        r.blob    "blob/:sha/*path",  :action => "blob", 
+          :path => [], :requirements => {:sha => VALID_SHA}
+        r.raw_blob "raw/:sha/*path",  :action => "raw", 
+          :path => [], :requirements => {:sha => VALID_SHA}
+        r.commit  "commit/:sha",      :action => "commit", 
+          :requirements => {:sha => VALID_SHA}
+        r.diff    "diff/:sha/:other_sha",  :action => "diff",
+          :requirements => {:sha => VALID_SHA, :other_sha => VALID_SHA}
       end
     end
   end
