@@ -3,6 +3,6 @@
   Blob of <code><%= current_path.join("/") -%></code> 
   <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>
 </h1>
-<pre><%=h @blob.contents -%></pre>
+<pre><%= with_line_numbers{ h(@blob.contents) } -%></pre>
 
 <%= render :partial => "submenu" -%>

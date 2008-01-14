@@ -68,6 +68,26 @@ describe BrowseHelper do
     build_tree_path("three").should == ["one", "two", "three"]
   end
   
+  describe "with_line_numbers" do
+    it "renders something with line numbers" do
+      numbered = with_line_numbers { "foo\nbar\nbaz" }
+      numbered.should include(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>})
+      numbered.should include(%Q{<td class="code">bar</td>})
+    end
+  
+    it "renders one line with line numbers" do
+      numbered = with_line_numbers { "foo" }
+      numbered.should include(%Q{<td class="line-numbers"><a href="#line1" name="line1">1</a></td>})
+      numbered.should include(%Q{<td class="code">foo</td>})
+    end
+  
+    it "doesn't blow up when with_line_numbers receives nil" do
+      proc{
+        with_line_numbers{ nil }.should == "<table>\n</table>"
+      }.should_not raise_error
+    end
+  end
+  
   # it "builds breadcrumbs of the current_path" do
   #   stub!(:current_path).and_return(["one", "two", "tree"])
   #   breadcrumb_path.should include(%Q{<ul class="path_breadcrumbs">})
