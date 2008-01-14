@@ -76,8 +76,7 @@ table {
 	margin-bottom: 1.461em;
 }
 code, pre, tt {
-  font-family: monospace;
-  line-height: 90%;
+  font: 95%/105%  Monaco, "Courier New", Courier, monaco, monospace;
 }
 a {
   color: #630;
@@ -622,7 +621,7 @@ table tr td.code {
  padding-left: 10px;
  white-space: pre;
  background: #fff;
- font: 100%/110%  "Courier New", Courier, monaco, monospace;
+ font: 95%/105%  Monaco, "Courier New", Courier, monaco, monospace;
 }
 
 table.sidebyside {
@@ -637,8 +636,7 @@ table.codediff {
   border: 1px solid #ccc;
   width: 100%;
   border-collapse: collapse;
-  font-family: monospace;
-  line-height: 90%;
+  font: 95%/105%  Monaco, "Courier New", Courier, monaco, monospace;
 }
 table.codediff .line-num-cut { 
   background: #ccc; 
