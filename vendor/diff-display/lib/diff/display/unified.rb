@@ -528,7 +528,7 @@ module Diff #:nodoc:#
             block_data << before_method(block)
             # Block must use braces rather than do/end due to precedence rules!
             block_data.concat block.inject([]) { |line_data, line|
-              line_data << before_method(line) << line << after_method(line)
+              line_data << before_method(line) << escape(line) << after_method(line)
             }
             block_data << after_method(block)
           end
@@ -542,6 +542,10 @@ module Diff #:nodoc:#
           def run(diff, callback_object = nil)
             new(diff, callback_object).rendered
           end
+        end
+        
+        def escape(text)
+          text
         end
 
         private
@@ -615,30 +619,18 @@ module Diff #:nodoc:#
       end
       #:startdoc:#
 
-      # XXX This doesn't make sense anymore...How to implement a convenient way
-      # to redefine methods such as space and escape?
-      # Mostly a convenience class at this point that just overwrites various
-      # customization methods 
-      class HTMLGenerator < Generator #:nodoc:#
+      # Renders with HTML as the target output (only effect is escaped lines)
+      # callbacks will still need to escape any lines they output
+      class HTMLRenderer < Renderer #:nodoc:#
         
-        # This and the space method now don't work/make sense now that those
-        # methods are part of the Line class and there certainly won't be an
-        # HTMLLine class
+        # escapes
         def escape(text)
+          #CGI::escapeHTML(text)
           text.gsub('&', '&amp;').
                gsub('<', '&lt;' ). 
                gsub('>', '&gt;' ).
                gsub('"', '&#34;')
         end
-
-        def space
-          '&nbsp;'
-        end
-
-      end
-
-      # How to implement this? See doc string for HTMLGenerator
-      class ASCIIGenerator < Generator #:nodoc:#
       end
 
     end

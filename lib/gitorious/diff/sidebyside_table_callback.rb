@@ -56,7 +56,7 @@ module Gitorious
       def before_remline(line)
         # rems go on the left (hide the right side)
         %Q{<th class="line-numbers">#{line.number}</th>} + 
-        %Q{<td class="code del"><del>#{line}</del></td>} + 
+        %Q{<td class="code del"><del>#{CGI.escapeHTML(line)}</del></td>} + 
         %Q{<th class="line-numbers">#{line.number}</th>} + 
         %Q{<td class="code del hidden"><del>}
       end
@@ -64,7 +64,7 @@ module Gitorious
       def before_modline(line)
         # TODO: figure how we best display these
         # %Q{<th class="line-numbers">#{line.number}</th>} + 
-        # %Q{<td class="code changed mod">#{line}</td>} + 
+        # %Q{<td class="code changed mod">#{CGI.escapeHTML(line)}</td>} + 
         # %Q{<th class="line-numbers">#{line.number}</th>} + 
         # %Q{<td class="code changed mod">}
       end
@@ -72,7 +72,7 @@ module Gitorious
       def before_unmodline(line)
         # unmods goes on both sides
         %Q{<th class="line-numbers">#{line.number}</th>} + 
-        %Q{<td class="code unchanged unmod">#{line}</td>} + 
+        %Q{<td class="code unchanged unmod">#{CGI.escapeHTML(line)}</td>} + 
         %Q{<th class="line-numbers">#{line.number}</th>} + 
         %Q{<td class="code unchanged unmod">}
       end

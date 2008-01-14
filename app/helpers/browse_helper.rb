@@ -81,7 +81,7 @@ module BrowseHelper
     out << %Q{<td class="line-numbers">#{dst_sha}</td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
-    out << Diff::Display::Unified::Renderer.run(udiff, callback)
+    out << Diff::Display::Unified::HTMLRenderer.run(udiff, callback)
     out << "</table>"
     out
   end
@@ -93,7 +93,7 @@ module BrowseHelper
     out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
     out << %Q{<thead><th colspan="2">#{src_sha}</th>}
     out << %Q{<th colspan="2">#{dst_sha}</th></thead>}
-    out << Diff::Display::Unified::Renderer.run(udiff, callback)
+    out << Diff::Display::Unified::HTMLRenderer.run(udiff, callback)
     out << "</table>"
     out
   end
