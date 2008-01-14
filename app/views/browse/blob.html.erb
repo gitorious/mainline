@@ -1,3 +1,4 @@
+<% @page_title = "#{current_path.join("/")} - #{@repository.name} in #{@project.title}" -%>
 <h1>
   Blob of <code><%= current_path.join("/") -%></code> 
   <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>

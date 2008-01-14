@@ -1,3 +1,4 @@
+<% @page_title = "Browsing #{@repository.name} in #{@project.title}" -%>
 <h1>
   Browsing <%= link_to h(@repository.name), project_repository_path(@project, @repository) -%> 
   repository in <%= link_to h(@project.title), project_path(@project) -%>

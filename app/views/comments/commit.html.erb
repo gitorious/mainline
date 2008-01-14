@@ -1,3 +1,4 @@
+<% @page_title = "Comments in #{@repository.name}" -%>
 <h1>Comments on commit <%= link_to h(@commit.sha), 
   project_repository_commit_path(@project, @repository, @commit.sha) -%></h1>
 
