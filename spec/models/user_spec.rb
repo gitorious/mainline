@@ -19,7 +19,14 @@ describe User do
   it "should require a login attribute on the user object" do
     proc{
       u = create_user(:login => "")
-      u.should have(2).errors_on(:login)
+      u.errors_on(:login).should_not == nil
+    }.should_not change(User, :count)
+  end
+  
+  it "requires a username without spaces" do
+    proc{
+      u = create_user(:login => "joe schmoe")
+      u.should have(1).errors_on(:login)
     }.should_not change(User, :count)
   end
   
@@ -42,6 +49,20 @@ describe User do
       u = create_user(:email => nil)
       u.errors.on(:email).should_not be_empty
     }.should_not change(User, :count)
+  end
+  
+  it "should require an email that looks emailish" do
+    proc{
+      u = create_user(:email => "kernel.wtf")
+      u.errors.on(:email).should_not be_empty
+    }.should_not change(User, :count)
+  end
+  
+  it "should accept co.uk and the like" do
+    proc{
+      u = create_user(:email => "ker+nel.w-t-f@foo-bar.co.uk")
+      u.errors.should be_empty
+    }.should change(User, :count)
   end
   
   it "should reset password" do

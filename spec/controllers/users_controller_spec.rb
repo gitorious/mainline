@@ -17,7 +17,7 @@ describe UsersController do
   it "should require login on signup" do
     proc{
       create_user(:login => nil)
-      assigns(:user).should have(2).errors_on(:login)
+      assigns(:user).errors_on(:login).should_not == nil
       response.should render_template("users/new")
     }.should_not change(User, :count)
   end

@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
   attr_protected :login
 
   validates_presence_of     :login, :email
+  validates_format_of       :login, :with => /^[a-z0-9\-_\.]+$/i
+  validates_format_of       :email, :with => /^[^@\s]+@([\-a-z0-9]+\.)+[a-z]{2,}$/i
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 4..40, :if => :password_required?
