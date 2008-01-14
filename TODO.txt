@@ -23,6 +23,7 @@
 [ ] Detect renames etc when showing a commit
 [ ] Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
 [ ] email repository owners when there's a new comment
+[ ] Clean up in Diff::Display::Unified
 ---
 
 a ProjectMirror that sucks in svn repositories. They need to be differentiated form normal projects (don't display owner etc, since it's a mirror). Also, the mainline repository should probably be immutable so people can commit changes to the actual mirror.

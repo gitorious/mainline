@@ -169,7 +169,7 @@ module Diff #:nodoc:#
 
       class AddLine < Line #:nodoc:#
         def initialize(line, line_number, inline = false)
-          line = inline ? line % [inline_add_open, inline_add_close] : line
+          #line = inline ? line % [inline_add_open, inline_add_close] : line
           super(line, line_number)
           @inline = inline
           self
@@ -178,7 +178,7 @@ module Diff #:nodoc:#
 
       class RemLine < Line #:nodoc:#
         def initialize(line, line_number, inline = false)
-          line = inline ? line % [inline_rem_open, inline_rem_close] : line
+          #line = inline ? line % [inline_rem_open, inline_rem_close] : line
           super(line, line_number)
           @inline = inline
           self
@@ -407,7 +407,8 @@ module Diff #:nodoc:#
           # can insert the desired formating
           def inline_diff(line, start, ending)
             line[0, start] + 
-            '%s' + extract_change(line, start, ending) + '%s' + 
+            #'%s' + extract_change(line, start, ending) + '%s' + 
+            extract_change(line, start, ending) + 
             line[ending, ending.abs]
           end
 
@@ -627,7 +628,7 @@ module Diff #:nodoc:#
         def escape(text)
           #CGI::escapeHTML(text)
           text.gsub('&', '&amp;').
-               gsub('<', '&lt;' ). 
+               gsub('<', '&lt;' ).
                gsub('>', '&gt;' ).
                gsub('"', '&#34;')
         end
