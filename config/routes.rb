@@ -23,7 +23,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
     account.resources :keys
   end
-  map.resources :users 
+  map.resources :users, :requirements => {:id => /.+/}
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"

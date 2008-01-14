@@ -71,5 +71,9 @@ describe UsersController do
     response.should be_success
     assigns[:user].should == users(:johan)
   end
+  
+  it "recognizes routing with dots in it" do
+    params_from(:get, "/users/j.s")[:id].should == "j.s"
+  end
 
 end
