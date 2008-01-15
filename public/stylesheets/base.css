@@ -27,7 +27,7 @@ body {
 	line-height: 1.461em;
   background: #fff;
   color: #000;
-	font-family: Georgia, Times, "Times new Roman", serif;
+  font-family: Georgia, Times, "Times new Roman", serif;
   margin: 0;
   padding: 0;
 }
@@ -65,6 +65,10 @@ p, ul, blockquote, pre, td, th, label {
 	line-height: 1.461em;
 	margin-bottom: 1.461em;
 }
+p, ul, blockquote, td, th, label {
+	font-family: "Bitstream Vera Serif", Georgia, Times, "Times new Roman", serif;
+}
+
 p.small {
 	margin: 0;
 	font-size: 0.846em;
@@ -76,7 +80,7 @@ table {
 	margin-bottom: 1.461em;
 }
 code, pre, tt {
-  font: 95%/105%  Monaco, "Courier New", Courier, monaco, monospace;
+  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 a {
   color: #630;
@@ -610,7 +614,7 @@ table tr .line-numbers {
  vertical-align: top;
  background: #eee;
  color: #555;
- font-size: 10px;  
+ font-size: 90%;  
  padding: 2px;
  width: 35px;
  border-right: 1px solid #ccc;
@@ -621,7 +625,7 @@ table tr td.code {
  padding-left: 10px;
  white-space: pre;
  background: #fff;
- font: 95%/105%  Monaco, "Courier New", Courier, monaco, monospace;
+ font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 
 table.sidebyside {
@@ -636,7 +640,7 @@ table.codediff {
   border: 1px solid #ccc;
   width: 100%;
   border-collapse: collapse;
-  font: 95%/105%  Monaco, "Courier New", Courier, monaco, monospace;
+  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 table.codediff .line-num-cut { 
   background: #ccc; 
