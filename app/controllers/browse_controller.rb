@@ -33,8 +33,8 @@ class BrowseController < ApplicationController
     if @commit.parent
       @diff = @git.diff(@commit.parent.sha || "", @commit.sha)
     else
-      # initial commit
-      @diff = @commit.diff("") # fIXME: diffs are the wrong way
+      # initial commit, link to the initial tree instead
+      @diff = nil
     end
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.sha})
   end

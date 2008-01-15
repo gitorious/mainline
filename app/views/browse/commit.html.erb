@@ -14,16 +14,23 @@
 
 <% #TODO: commit diff stats (as sparklines?) -%>
 
-<h2>Commit diff</h2>
-<%= render_diffmode_selector -%>
+<% if @diff.blank? -%>
+  <p>
+    This is the initial commit in this repository, 
+    <%= link_to "browse the initial tree state", tree_path(@commit.gtree.sha) -%>.
+  </p>
+<% else -%>
+  <h2>Commit diff</h2>
+  <%= render_diffmode_selector -%>
 
-<% @diff.each do |file| -%>
-  <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
-  <%= render_diff(file.patch, file.src, file.dst, @diffmode) -%>
-  <small><%= link_to_function "toggle raw diff", "$('#{file.object_id}').toggle()" -%></small>
-  <div class="toggle_diff" style="display:none" id="<%= file.object_id -%>">
-  <p><pre><%=  h(file.patch) -%></pre></p>
-  </div>
+  <% @diff.each do |file| -%>
+    <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
+    <%= render_diff(file.patch, file.src, file.dst, @diffmode) -%>
+    <small><%= link_to_function "toggle raw diff", "$('#{file.object_id}').toggle()" -%></small>
+    <div class="toggle_diff" style="display:none" id="<%= file.object_id -%>">
+    <p><pre><%=  h(file.patch) -%></pre></p>
+    </div>
+  <% end -%>
 <% end -%>
 
 <%= render :partial => "submenu" -%>
