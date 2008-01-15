@@ -27,6 +27,8 @@ class UsersController < ApplicationController
         current_user.activate
         flash[:notice] = "Your account has been activated, welcome!"
       end
+    else
+      flash[:error] = "Invalid activation code"
     end
     redirect_back_or_default('/')
   end

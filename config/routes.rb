@@ -23,6 +23,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
     account.resources :keys
   end
+  map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.resources :users, :requirements => {:id => /.+/}
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
@@ -61,8 +62,6 @@ ActionController::Routing::Routes.draw do |map|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'
   end
-  
-  map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   
   map.about "about", :controller => "site", :action => "about"
 

@@ -66,6 +66,14 @@ describe UsersController do
     User.authenticate('moe@example.com', 'test').should == users(:moe)
   end
   
+  it "flashes a message when the activation code is invalid" do
+    get :activate, :activation_code => "fubar"
+    response.should redirect_to('/')
+    flash[:notice].should be(nil)
+    flash[:error].should == "Invalid activation code"
+    User.authenticate('moe@example.com', 'test').should == nil
+  end
+  
   it "shows the user" do
     get :show, :id => users(:johan).login
     response.should be_success
@@ -74,6 +82,13 @@ describe UsersController do
   
   it "recognizes routing with dots in it" do
     params_from(:get, "/users/j.s")[:id].should == "j.s"
+  end
+  
+  it "recognizes activate routes" do
+    p = params_from(:get, "/users/activate/abc123")
+    p[:controller].should == "users"
+    p[:action].should == "activate"
+    p[:activation_code].should == "abc123"
   end
 
 end
