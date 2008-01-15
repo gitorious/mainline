@@ -83,7 +83,8 @@ code, pre, tt {
   font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 a {
-  color: #630;
+/*  color: #630;*/
+  color: #811E00;
   text-decoration: none;
 }
 a:hover {
@@ -235,23 +236,27 @@ abbr {
 
 #menu ul li a:hover {
   text-decoration: none;
-  border-bottom: 3px solid #630;
+  border-bottom: 4px solid #630;
 }
 
 /* submenu */
 #submenu {
   margin-bottom: 1.5em;
+  margin-top: 2px;
+  border-top: 1px dotted #666;
   border-bottom: 1px solid #ccc;
+  font-size: 90%;
+  min-height: 2px;
 }
 #submenu ul {
   list-style: none;
-  padding: 2px 0 2px 0;
+  padding: 2px 0 1px 0;
   margin: 0 0 0 2em;
 }
 
 #submenu ul li {
   display: inline;
-  margin-right: 30px;
+  margin-right: 20px;
 }
 
 #submenu ul li a { 
@@ -260,7 +265,7 @@ abbr {
 
 #submenu ul li a:hover {
   text-decoration: none;
-  border-bottom: 2px solid #630;
+  border-bottom: 3px solid #630;
 }
 
 /* Forms */

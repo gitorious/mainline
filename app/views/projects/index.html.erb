@@ -4,7 +4,7 @@
 <% @projects.each do |project| -%>
   <li>
     <h3><%= link_to project.title, project_path(project) -%></h3>
-    <em><%= truncate project.description, 100 -%></em>
+    <em><%= truncate project.description, 250 -%></em>
   </li>
 <% end -%>
 </ul>
