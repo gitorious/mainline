@@ -621,6 +621,7 @@ table tr .line-numbers {
  color: #555;
  font-size: 90%;  
  padding: 2px;
+ padding-top: 0;
  width: 35px;
  border-right: 1px solid #ccc;
  border-bottom: 1px solid #ddd;
@@ -628,9 +629,30 @@ table tr .line-numbers {
 table tr td.code {
  width: 95%;
  padding-left: 10px;
- white-space: pre;
+ /*white-space: pre;*/
+ white-space: pre-wrap;       /* CSS-3                  */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+ white-space: -pre-wrap;      /* Opera 4-6              */
+ white-space: -o-pre-wrap;    /* Opera 7                */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
  background: #fff;
- font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+ font: 95%/110% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+}
+
+table tr td.unwrapped {
+ white-space: pre;
+}
+
+table tr td.softwrapped {
+  white-space: pre-wrap;       /* CSS-3                  */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+  white-space: -pre-wrap;      /* Opera 4-6              */
+  white-space: -o-pre-wrap;    /* Opera 7                */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+table tr td.highlighted {
+  background: #ffc;
 }
 
 table.sidebyside {
@@ -639,6 +661,7 @@ table.sidebyside {
 }
 table.sidebyside tr td.code {
   white-space: normal;
+  padding: 2px;
 }
 
 table.codediff {

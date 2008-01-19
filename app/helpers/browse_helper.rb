@@ -115,10 +115,10 @@ module BrowseHelper
   def with_line_numbers(&block)
     out = []
     #yield.split("\n").each_with_index{ |s,i| out << "#{i+1}: #{s}" }
-    out << %Q{<table>}
+    out << %Q{<table id="codeblob">}
     yield.to_s.split("\n").each_with_index do |line, count|
       lineno = count + 1
-      out << "<tr>"
+      out << %Q{<tr id="line#{lineno}">}
       out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>} 
       out << %Q{<td class="code">#{line}</td>}
       out << "</tr>"
