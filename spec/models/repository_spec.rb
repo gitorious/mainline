@@ -176,6 +176,17 @@ describe Repository do
     task.arguments.first.should match(/#{@repository.gitdir}$/)
   end
   
+  it "has one recent commit" do
+    @repository.save!
+    repos_mock = mock("Git mock")
+    commit_mock = mock("Git::Commit mock")
+    repos_mock.should_receive(:log).with(1).and_return(commit_mock)
+    commit_mock.should_receive(:first).and_return(commit_mock)
+    Git.should_receive(:bare).with(@repository.full_repository_path).and_return(repos_mock)
+    @repository.stub!(:has_commits?).and_return(true)
+    @repository.last_commit.should == commit_mock
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)

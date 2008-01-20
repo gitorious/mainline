@@ -81,6 +81,13 @@ class Repository < ActiveRecord::Base
     end
   end
   
+  def last_commit
+    if has_commits?
+      @last_commit ||= Git.bare(full_repository_path).log(1).first
+    end
+    @last_commit
+  end
+  
   def create_new_repos_task
     Task.create!(:target_class => self.class.name, 
       :command => parent ? "clone_git_repository" : "create_git_repository", 
