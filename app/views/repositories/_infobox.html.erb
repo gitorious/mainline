@@ -6,8 +6,33 @@
     <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
   <% end -%>
   <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
-  <li><strong>Mirror url:</strong> <code><%=h @repository.clone_url -%></code></li>
+  <li>
+    <strong>Clone url:</strong> <code><%=h @repository.clone_url -%></code> 
+    <small><%= link_to_function "More info…", "$('detailed_clone_info').toggle()" -%></small>
+    <div id="detailed_clone_info" class="info_hint" style="display:none">
+      You can clone this repository with the following command:
+      <% if logged_in? && current_user.can_write_to?(@repository) -%>
+        <code>git clone <%= @repository.push_url -%></code>
+      <% else -%>
+        <code>git clone <%= @repository.clone_url -%></code>
+      <% end -%>
+    </div>
+  </li>
   <% if logged_in? && current_user.can_write_to?(@repository) -%>
-    <li><strong>push url:</strong> <code><%=h @repository.push_url -%></code></li>
+    <li>
+      <strong>Push url:</strong> <code><%=h @repository.push_url -%></code>
+      <small><%= link_to_function "More info…", "$('detailed_push_info').toggle()" -%></small>
+      <div id="detailed_push_info" class="info_hint" style="display:none">
+You can run "<code>git push git@gitorious.org:tumbline/mainline.git</code>", or 
+you can setup a remote by doing the following:
+<pre>
+git remote add origin <%= @repository.push_url %>
+# to push the master branch to the origin remote we added above:
+git push origin master 
+# after that you can just do:
+git push
+</pre>
+      </div>
+    </li>
   <% end -%>
 </ul>

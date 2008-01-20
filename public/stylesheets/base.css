@@ -598,6 +598,20 @@ div.comment p.byline {
   color: #666;
   font-size: 90%;
 }
+.info_hint {
+  font-size: 95%;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px dotted #888;
+  border-bottom: 1px dotted #888;
+}
+
+.info_hint pre {
+  margin-bottom: 5px;
+}
 
 /* diff mode selector */
 ul.mode_selector { float: right;}

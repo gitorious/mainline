@@ -7,13 +7,6 @@
 <% render_if_ready(@repository) do -%>
 
   <%= render :partial => "infobox" -%>
-
-  <p>You can clone this repository with the following command:</p>
-  <% if logged_in? && current_user.can_write_to?(@repository) -%>
-    <pre>git clone <%= @repository.push_url -%></pre>
-  <% else -%>
-    <pre>git clone <%= @repository.clone_url -%></pre>
-  <% end -%>
   
   <ul class="tab_menu">
     <li class="selected">Recent commits</li>
