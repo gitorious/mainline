@@ -1,13 +1,13 @@
 class SshKey < ActiveRecord::Base
   belongs_to :user
   
-  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\n\/]+ [a-z0-9_\.\-]*(@[a-z0-9\.\-]*)?$/ims
+  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ [a-z0-9_\.\-]*(@[a-z0-9\.\-]*)?$/ims
   
   validates_presence_of :user_id, :key
   validates_format_of   :key, :with => SSH_KEY_FORMAT
   
   before_validation { |k| k.key.to_s.strip! }
-  before_save   :lint_key!
+  before_validation   :lint_key!
   after_create  :create_new_task
   # we only allow people to create/destroy keys after_update  :create_update_task 
   after_destroy :create_delete_task
@@ -47,6 +47,6 @@ class SshKey < ActiveRecord::Base
   
   protected
     def lint_key!
-      key.gsub!(/\n*/m, "")
+      self.key.gsub!(/(\r|\n)*/m, "")
     end
 end
