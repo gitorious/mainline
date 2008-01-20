@@ -74,6 +74,14 @@ var Gitorious = {
         //e.removeClassName("softwrapped");
         e.addClassName("unwrapped");
       });
+    },
+    
+    toggle: function(elements) {
+      if (/unwrapped/.test(elements.first().className)) {
+        Gitorious.Wordwrapper.wrap(elements);
+      } else {
+        Gitorious.Wordwrapper.unwrap(elements);
+      }
     }
   }
 };

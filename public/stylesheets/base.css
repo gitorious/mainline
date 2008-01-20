@@ -600,13 +600,13 @@ div.comment p.byline {
 }
 
 /* diff mode selector */
-ul.diffmode_selector { float: right; }
-ul.diffmode_selector li {
+ul.mode_selector { float: right;}
+ul.mode_selector li {
   display:inline;
   margin-left: 1em;
 }
-ul.diffmode_selector li.list_header { font-weight: bold; }
-ul.diffmode_selector li.selected    { border-bottom: 1px solid #666; }
+ul.mode_selector li.list_header { font-weight: bold; }
+ul.mode_selector li.selected    { border-bottom: 1px solid #666; }
 
 /* Diff rendering */ 
 

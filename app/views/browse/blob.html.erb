@@ -1,8 +1,19 @@
 <% @page_title = "#{current_path.join("/")} - #{@repository.name} in #{@project.title}" -%>
+
+<ul class="mode_selector">
+  <li class="list_header">
+    Softwrap mode:
+  </li>
+  <li>
+    <%= link_to_function "Toggle", "Gitorious.Wordwrapper.toggle($$('table#codeblob td.code'))" -%>
+  </li>
+</ul>
+
 <h1>
   Blob of <code><%= current_path.join("/") -%></code> 
   <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>
 </h1>
+
 <pre><%= with_line_numbers{ h(@blob.contents) } -%></pre>
 
 <%= render :partial => "submenu" -%>

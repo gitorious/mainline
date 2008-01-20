@@ -83,7 +83,7 @@ describe BrowseHelper do
   
     it "doesn't blow up when with_line_numbers receives nil" do
       proc{
-        with_line_numbers{ nil }.should == "<table>\n</table>"
+        with_line_numbers{ nil }.should == "<table id=\"codeblob\">\n</table>"
       }.should_not raise_error
     end
   end
