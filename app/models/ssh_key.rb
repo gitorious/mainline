@@ -20,7 +20,7 @@ class SshKey < ActiveRecord::Base
     %Q{### START KEY #{self.id || "nil"} ###\n} + 
     %Q{command="gitorious #{user.login}",no-port-forwarding,} + 
     %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{key}} + 
-    %Q{\n### END KEY #{self.id || "nil"} ###}
+    %Q{\n### END KEY #{self.id || "nil"} ###\n}
   end 
   
   def self.add_to_authorized_keys(keydata, key_file_class=SshKeyFile)
