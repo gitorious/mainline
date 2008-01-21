@@ -27,6 +27,7 @@ end
 with_lock do
   log = Logger.new(File.join(RAILS_ROOT, "log", "tasks.log"))
   log.formatter = Logger::Formatter.new
+  log.level = Logger::INFO
   log.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
   begin
     Task.perform_all_pending!(log)
