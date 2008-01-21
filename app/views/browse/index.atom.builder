@@ -1,6 +1,6 @@
 atom_feed do |feed|
   feed.title("Gitorious: #{@project.title} - #{@repository.name}")
-  feed.updated((@commits.first.date))
+  feed.updated((@commits.blank? ? nil : @commits.first.date))
 
   @commits.each do |commit|
     item_url = "http://gitorious.org" +  project_repository_commit_path(@project, @repository, commit.sha)
