@@ -5,21 +5,26 @@ class BrowseController < ApplicationController
   LOGS_PER_PAGE = 30
   
   def index
-    @git = Git.bare(@repository.full_repository_path)
+    @git = Gitorious::Gitto.new(@repository.full_repository_path)
     @commits = @git.log(LOGS_PER_PAGE)
-    @tags_per_sha = returning({}) do |hash|
-      @git.tags.each do |tag| 
-        hash[tag.sha] ||= []
-        hash[tag.sha] << tag.name 
-      end
-    end
-    # TODO: Patch rails to keep track of what it responds to so we can DRY this up
-    @atom_auto_discovery_url = project_repository_formatted_browse_path(@project, @repository, :atom)
-    respond_to do |format|
-      format.html
-      format.atom
-    end
   end
+  
+  # def index
+  #   @git = Git.bare(@repository.full_repository_path)
+  #   @commits = @git.log(LOGS_PER_PAGE)
+  #   @tags_per_sha = returning({}) do |hash|
+  #     @git.tags.each do |tag| 
+  #       hash[tag.sha] ||= []
+  #       hash[tag.sha] << tag.name 
+  #     end
+  #   end
+  #   # TODO: Patch rails to keep track of what it responds to so we can DRY this up
+  #   @atom_auto_discovery_url = project_repository_formatted_browse_path(@project, @repository, :atom)
+  #   respond_to do |format|
+  #     format.html
+  #     format.atom
+  #   end
+  # end
   
   def tree
     @git = Git.bare(@repository.full_repository_path)   

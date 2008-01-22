@@ -1,13 +1,12 @@
-require File.dirname(__FILE__) + '/../../../spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
-describe Gitorious::Gitto::Gitto do
-  Gitto = Gitorious::Gitto::Gitto
+describe Gitorious::Gitto do
   
   before(:each) do
     @path = "/home/repositories/foo"
     @git_mock = mock("Git mock")
     Git.should_receive(:bare).with(@path).and_return(@git_mock)
-    @gitto = Gitto.new(@path)
+    @gitto = Gitorious::Gitto.new(@path)
   end
   
   def some_sha(char = "a")

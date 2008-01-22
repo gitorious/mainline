@@ -1,12 +1,8 @@
-module Gitorious
-  module Gitto
-    
-    class BadShaError < StandardError; end # :nodoc:
-    
+module Gitorious        
     # The point of this class is primary to prevent dangerous/malicious arguments 
     # to be passed down to the underlying Git library, since it shells out to 
     # the git binary. 
-    class Gitto
+    class Gitto      
       def initialize(repository_path)
         @repository_path = repository_path
         @git = Git.bare(@repository_path)
@@ -56,7 +52,7 @@ module Gitorious
         end
       end
       
+      class BadShaError < StandardError; end # :nodoc:
     end
     
-  end
 end
