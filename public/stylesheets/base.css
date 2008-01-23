@@ -469,10 +469,10 @@ ul.tag_list li {
 .tag_size_3 { font-size: 1.4em; }
 .tag_size_4 { font-size: 1.6em; }
 
-.large_tags .tag_size_1 { font-size: 1.5em; }
-.large_tags .tag_size_2 { font-size: 1.8em; }
-.large_tags .tag_size_3 { font-size: 2.2em; }
-.large_tags .tag_size_4 { font-size: 2.5em; }
+.large_tags .tag_size_1 { font-size: 1.0em; }
+.large_tags .tag_size_2 { font-size: 1.3em; }
+.large_tags .tag_size_3 { font-size: 1.6em; }
+.large_tags .tag_size_4 { font-size: 1.9em; }
 
 /* "un-ready" objects */
 
