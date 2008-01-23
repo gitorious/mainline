@@ -4,6 +4,7 @@
 
 <ul class="infobox">
   <li><strong>Owner:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
+  <li><strong>Created:</strong> <%= @project.created_at.to_s(:short) -%></li>
   <li><strong>Labels:</strong> 
     <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
   <li><strong>License:</strong> <%= h(@project.license) -%></li>
@@ -26,7 +27,6 @@
   <thead>
     <th>Name</th>
     <th>Owner</th>
-    <th>Created</th>
     <th>Last Commit</th>
     <th></th>
   </thead>
@@ -40,9 +40,6 @@
           <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
         </td>
         <td>
-          <%= repos.created_at.to_s(:short) -%>
-        </td>
-        <td>
           <%= repos.last_commit ? repos.last_commit.author.date.to_s(:short) : "<em>none</em>" -%>
         </td>
         <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
@@ -54,9 +51,6 @@
         </td>
         <td>
           <%= link_to h(repos.user.login), user_path(repos.user) -%>
-        </td>
-        <td>
-          <%= repos.created_at.to_s(:short) -%>
         </td>
         <td>
           <%= repos.last_commit ? repos.last_commit.author.date.to_s(:short) : "<em>none</em>" -%>
