@@ -17,7 +17,7 @@ ActionController::Routing::Routes.draw do |map|
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
-  VALID_SHA = /([a-z0-9]{40}|HEAD)/
+  VALID_SHA = /[a-z0-9~\{\}\^\.]+/i
   map.root :controller => "site", :action => "index"
   
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
