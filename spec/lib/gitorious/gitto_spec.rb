@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
+require "ostruct"
 
 describe Gitorious::Gitto do
   
@@ -67,6 +68,16 @@ describe Gitorious::Gitto do
   it "returns Git#remotes" do
     @git_mock.should_receive(:remotes).and_return([])
     @gitto.remotes
+  end
+  
+  it "returns a list of tags grouped by sha" do
+    tag1 = OpenStruct.new(:name => "tag1", :sha => some_sha("a"))
+    tag2 = OpenStruct.new(:name => "tag2", :sha => some_sha("b"))
+    @git_mock.should_receive(:tags).exactly(3).times.and_return([tag1, tag2])
+    
+    @gitto.tags_by_sha.keys.sort.should == [tag1.sha, tag2.sha]
+    @gitto.tags_by_sha[tag1.sha].should == [tag1.name]
+    @gitto.tags_by_sha[tag2.sha].should == [tag2.name]
   end
   
   describe "objectish validation" do

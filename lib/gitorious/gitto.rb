@@ -40,7 +40,16 @@ module Gitorious
       
       def tags
         @git.tags
-      end    
+      end
+      
+      def tags_by_sha
+        tags_by_sha = {}
+        tags.each do |tag| 
+          tags_by_sha[tag.sha] ||= []
+          tags_by_sha[tag.sha] << tag.name 
+        end
+        tags_by_sha
+      end
       
       def remotes
         @git.remotes
