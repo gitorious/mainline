@@ -3,29 +3,38 @@
 require "yaml"
 if File.symlink?(__FILE__)
   $:.unshift File.dirname(File.readlink(__FILE__)) + "/../lib/gitorious/ssh"
-  conf_file = File.dirname(File.readlink(__FILE__)) + "/../config/gitorious.yml"
+  BASE_DIR = File.dirname(File.readlink(__FILE__)) + "/../"
+  conf_file = File.join(BASE_DIR, "config/gitorious.yml")
 else
   $:.unshift File.dirname(__FILE__) + "/../lib/gitorious/ssh"
-  conf_file = File.dirname(__FILE__) + "/../config/gitorious.yml"
+  BASE_DIR = File.dirname(__FILE__) + "/../"
+  conf_file = File.join(BASE_DIR, "config/gitorious.yml")
 end
 
 GitoriousConfig = YAML.load_file(conf_file)
 
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
+require "logger"
 require "strainer"
 require "client"
 
 File.umask(0022)
-
 original_command = ENV["SSH_ORIGINAL_COMMAND"]
+user = ARGV[0]
+
+logger = Logger.new(File.join(BASE_DIR, "log", "gitorious_auth.log"))
+logger.formatter = Logger::Formatter.new
+logger.level = Logger::INFO
+logger.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
+logger.info("Connection from #{ENV['SSH_CLIENT'].inspect} (#{user || nil}): #{original_command || nil}")
+
 $stderr.puts "original_command: #{original_command.inspect}" if $DEBUG
 if original_command.nil? || original_command.strip.empty?
   $stderr.puts "Need SSH_ORIGINAL_COMMAND"
   exit!(1)
 end
 
-user = ARGV[0]
 $stderr.puts "user: #{user.inspect}" if $DEBUG
 if user.nil? || user.strip.empty?
   $stderr.puts "Need user arg"
