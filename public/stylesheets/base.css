@@ -730,3 +730,20 @@ table.codediff col.lines {
 #site_overview p.create_account_hint {
   margin-top: 1.5em;
 }
+
+
+#site #recent_comments {
+  width: 48%;
+  float: left;
+  padding-right: 10px;
+  border-right: 1px dotted #dedede;
+}
+
+#site #recent_comments .comment .body {
+  font-size: 90%;
+}
+
+#site #clone_list {
+  width: 49%;
+  float: right;
+}

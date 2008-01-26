@@ -9,7 +9,8 @@ describe Comment do
     c = Comment.new({
       :repository => repositories(:johans),
       :sha1 => Digest::SHA1.hexdigest("baz"),
-      :body => "blabla"
+      :body => "blabla", 
+      :project => projects(:johans)
     }.merge(opts))
     c.user = opts[:user] || users(:johan)
     c
@@ -35,6 +36,12 @@ describe Comment do
     @comment.body = nil
     @comment.should_not be_valid
     @comment.should have(1).error_on(:body)
+  end
+  
+  it "should belong to a project to be valid" do
+    @comment.project_id = nil
+    @comment.should_not be_valid
+    @comment.should have(1).error_on(:project_id)
   end
   
   # it "should have a sha1 to be valid" do

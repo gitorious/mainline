@@ -62,7 +62,8 @@ ActionController::Routing::Routes.draw do |map|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'
   end
-  
+
+  map.dashboard "dashboard", :controller => "site", :action => "dashboard"  
   map.about "about", :controller => "site", :action => "about"
 
   # Install the default route as the lowest priority.

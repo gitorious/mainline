@@ -1,0 +1,49 @@
+<% @page_title = "#{current_user.login}'s dashboard" -%>
+
+<div id="recent_comments">
+  <h2>Recent comments on your commits</h2>
+  <% @recent_comments.each do |comment| -%>
+    <div class="comment">
+      <p class="body"><%= sanitize(comment.body) -%></p>
+      <p class="byline hint">
+        on <%= link_to h(comment.repository.name), project_repository_comments_path(comment.project, comment.repository, :anchor => dom_id(comment)) -%>
+        <% unless comment.sha1.blank? -%>
+          (<%= link_to h(comment.sha1[0..6]), project_repository_commit_path(comment.project, comment.repository, comment.sha1) -%>)
+        <% end -%>
+        in <%= link_to h(comment.project.title), comment.project -%> by 
+        <%= link_to(h(comment.user.login), comment.user) -%> 
+        <%= time_ago_in_words(comment.created_at) -%> ago
+      </p>
+    </div>
+  <% end -%>
+  <% if @recent_comments.blank? -%>
+    <p class="hint">Sorry, no comments yet</p>
+  <% end -%>
+</div>
+
+<div id="clone_list">
+  <h2>Clones of your project repositories</h2>
+  <ul>
+  <% @repository_clones.each do |repos| -%>
+    <li>
+      <%= link_to h(repos.name), project_repository_path(@project, repos) -%> 
+      <small>of <%= h(repos.project.slug) -%></small>
+    </li>
+  <% end -%>
+  <% if @repository_clones.blank? -%>
+    <li class="hint">No clones so far</li>
+  <% end -%>
+  </ul>
+</div>
+
+<div class="clear"></div>
+
+<% content_for :sidebar do -%>
+  <h4>Your projects:</h4>
+  <ul class="links">
+  <% @projects.each do |project| -%>
+    <li><%= link_to project.slug, project -%></li>
+  <% end -%>
+  <li><%= link_to "Create new &#x2192;", new_project_path -%></li>
+  </ul>
+<% end -%>

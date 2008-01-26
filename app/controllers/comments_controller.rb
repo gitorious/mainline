@@ -25,6 +25,7 @@ class CommentsController < ApplicationController
   def create
     @comment = @repository.comments.new(params[:comment])
     @comment.user = current_user
+    @comment.project = @project
     respond_to do |format|
       if @comment.save
         format.html do

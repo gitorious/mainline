@@ -6,6 +6,7 @@ johans_repos:
   repository_id: 1
   sha1: 0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33 # foo
   body: a comment
+  project_id: 1
   
 johans_repos2:
   id: 2
@@ -13,6 +14,7 @@ johans_repos2:
   repository_id: 1
   sha1: 62cdb7020ff920e5aa642c3d4066950dd1f01f4d # bar
   body: another comment
+  project_id: 1
   
 moes_repos:
   id: 3
@@ -20,3 +22,4 @@ moes_repos:
   repository_id: 2
   sha1: 62cdb7020ff920e5aa642c3d4066950dd1f01f4d # bar
   body: a comment in moes repos
+  project_id: 2

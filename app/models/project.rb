@@ -2,11 +2,12 @@ class Project < ActiveRecord::Base
   acts_as_taggable
   
   belongs_to  :user
+  has_many    :comments
   has_many    :repositories, :order => "mainline desc, created_at asc",
     :dependent => :destroy
   has_one     :mainline_repository, :conditions => ["mainline = ?", true], 
     :class_name => "Repository"
-  has_many    :branch_repositories, :conditions => ["mainline = ?", false],
+  has_many    :repository_clones, :conditions => ["mainline = ?", false],
     :class_name => "Repository"
     
   URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
