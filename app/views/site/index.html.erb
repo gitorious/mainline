@@ -5,12 +5,12 @@
   <small><%= link_to "more…", about_path -%></small></p>
 </div>
 
-<div id="site_description">
-  
+<div id="site_overview">
+  <%= image_tag("overview.png") -%>
 </div>
 
 <div id="newest_projects">
-  <h2>New projects</h2>
+  <h2>Newest projects</h2>
   <ul>
     <% @projects.each do |project| -%>
       <li>

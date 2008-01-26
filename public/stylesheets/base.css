@@ -555,10 +555,10 @@ table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
 
 #site_intro {
   width: 65%;
-  margin: 2em auto 4em auto;
+  margin: 2em auto 2em auto;
   font-size: 1.5em;
 }
-#site_project_list {
+#site_project_list .tag_list{
   text-align: center;
 }
 
@@ -718,6 +718,11 @@ table.codediff col.lines {
 }
 
 #newest_projects ul li {
-  margin-left: 1em;
+  margin-left: 5px;
   margin-bottom: 5px;
+}
+
+#site_overview {
+  text-align: center;
+  margin-bottom: 4em;
 }
