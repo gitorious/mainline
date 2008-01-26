@@ -598,6 +598,8 @@ div.comment p.byline {
   color: #666;
   font-size: 90%;
 }
+small.hint { font-size: 83%;}
+
 .info_hint {
   font-size: 95%;
   color: #666;
@@ -709,4 +711,13 @@ table.sidebyside td.del del { background: #fbb; }
 table.sidebyside td.ins ins { background: #afa; }
 table.codediff col.lines {
   width: 3em;
+}
+
+#newest_projects, #site_project_list {
+  margin-bottom: 3em;
+}
+
+#newest_projects ul li {
+  margin-left: 1em;
+  margin-bottom: 5px;
 }
