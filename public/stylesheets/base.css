@@ -726,3 +726,7 @@ table.codediff col.lines {
   text-align: center;
   margin-bottom: 4em;
 }
+
+#site_overview p.create_account_hint {
+  margin-top: 1.5em;
+}
