@@ -1,0 +1,71 @@
+<h1>FAQ</h1>
+
+<h3>I get "fatal: no matching remote head" when trying to clone a repository</h3>
+<p>
+  Most likely the repository you're trying to clone is empty, and the error 
+  message is git's friendly way of telling you that. See below (or by clicking 
+  "more info" next to repositorys "push url") for info on how t push to it.
+</p>
+
+<hr />
+
+<h3>How do I point my local Git repository at Gitorious?</h3>
+<p>
+  Easiest way is to put something like the following in your <code>.git/config</code> 
+  file of the repository you wish to push:
+<pre>
+[remote "origin"]
+       url = git@gitorious.org:<em>project</em>/<em>repository.git</em>
+       fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+       remote = origin
+       merge = refs/heads/master
+</pre>
+  and then <code>git push origin master</code> to push the code to Gitorious.
+</p>
+<p>
+  You can also just run "<code>git push git@gitorious.org:tumbline/mainline.git</code>", or 
+  you can setup a remote by doing the following (add --fetch to the add call to 
+  get the config from above):
+  <pre>
+  git remote add origin git@gitorious.org:<em>project</em>/<em>repository.git</em>
+  # to push the master branch to the origin remote we added above:
+  git push origin master 
+  # after that you can just do:
+  git push
+  </pre>
+</p>
+
+<hr />
+
+<h3>Why is my email displayed?</h3>
+<p>
+  The email you used to signup with Gitorious is displayed to other users, so that they 
+  can contact you about your projects if they need to. We do however take light 
+  measures against crawlers by not displaying your email in completely plain text. <br />
+  But just to be clear: we won't sell or use any information you give to 
+  gitorious.org against you or anyone else for financial and/or personal gains.
+</p>
+
+<hr />
+
+<h3>Why do I need to upload my public SSH key?</h3>
+<p>
+  When you push to a Git repository, your public key is how we authenticate 
+  you and if have the permissions required to do a commit to a given repository
+</p>
+
+<hr />
+
+<h3>What version of Git is Gitorious running?</h3>
+<p>
+  <code>git version 1.5.3.7</code>
+</p>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "About", about_path(:anchor => "about") -%></li>
+    <li><%= link_to "Contact", about_path(:anchor => "contact") -%></li>
+    <li><%= link_to "FAQ", faq_path -%></li>
+  </ul>
+<% end -%>
