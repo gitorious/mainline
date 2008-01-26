@@ -13,7 +13,13 @@
     <li><%= link_to "comments (#{@comment_count})", project_repository_comments_path(@project, @repository) -%></li>
   </ul>
 
-  <h2>Recent commits <small>(<%= link_to "browse", project_repository_browse_path(@project, @repository) -%>)</small></h2>
+  <h2>
+    Recent commits 
+    <small>
+      (<%= link_to "Shortlog", project_repository_browse_path(@project, @repository) -%> | 
+      <%= link_to "HEAD tree", project_repository_tree_path(@project, @repository, "HEAD", []) -%>)
+    </small>
+  </h2>
   <ul>
     <% if @commits.blank? -%>
       <li><em>No commits yet…</em></li>
