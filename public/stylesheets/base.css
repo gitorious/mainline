@@ -747,3 +747,14 @@ table.codediff col.lines {
   width: 49%;
   float: right;
 }
+
+#system_message {
+  background: #ffc;
+  border-bottom: 1px solid #aaa;
+  margin-bottom: 1em;
+}
+#system_message p {
+  text-align: center;
+  margin-bottom:0;
+  padding: 5px;
+}

@@ -14,6 +14,11 @@
 </head>
 
 <body id="<%= controller.controller_name -%>">
+  <% unless GitoriousConfig["system_message"].blank? -%>
+  <div id="system_message">
+    <p><strong>System notice:</strong> <%= GitoriousConfig["system_message"] -%></p>
+  </div>
+  <% end -%>
   <div id="container">
     <div id="header">
       <div class="login-logout">
