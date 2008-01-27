@@ -739,7 +739,7 @@ table.codediff col.lines {
   padding-right: 10px;
   border-right: 1px dotted #dedede;
 }
-
+#site #recent_comments .comment { width: 100%;}
 #site #recent_comments .comment .body {
   font-size: 90%;
 }

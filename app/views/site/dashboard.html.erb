@@ -4,7 +4,7 @@
   <h2>Recent comments on your commits</h2>
   <% @recent_comments.each do |comment| -%>
     <div class="comment">
-      <p class="body"><%= sanitize(comment.body) -%></p>
+      <div class="body"><%= simple_format(sanitize(comment.body)) -%></div>
       <p class="byline hint">
         on <%= link_to h(comment.repository.name), project_repository_comments_path(comment.project, comment.repository, :anchor => dom_id(comment)) -%>
         <% unless comment.sha1.blank? -%>
