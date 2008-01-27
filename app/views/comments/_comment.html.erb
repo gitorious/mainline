@@ -1,6 +1,6 @@
 <div class="comment">
   <a name="<%= dom_id(comment) -%>"></a>
-  <p class="body"><%= sanitize(comment.body) -%></p>
+  <div class="body"><%= simple_format(sanitize(comment.body)) -%></div>
   <p class="byline">
     <%= link_to(h(comment.user.login), comment.user) -%> | 
     <%= comment.created_at.to_s(:short) -%> 

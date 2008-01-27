@@ -586,8 +586,9 @@ ul.tab_menu li.selected {
 div.comment {
   border-bottom: 1px solid #ccc;
   margin-bottom: 1em;
+  width: 63%;
 }
-div.comment p.body {
+div.comment .body {
   margin-bottom: 0.2em;
 }
 div.comment p.byline {
