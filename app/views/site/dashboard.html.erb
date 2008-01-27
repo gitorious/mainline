@@ -26,7 +26,7 @@
   <ul>
   <% @repository_clones.each do |repos| -%>
     <li>
-      <%= link_to h(repos.name), project_repository_path(@project, repos) -%> 
+      <%= link_to h(repos.name), project_repository_path(repos.project, repos) -%> 
       <small>of <%= h(repos.project.slug) -%></small>
     </li>
   <% end -%>
