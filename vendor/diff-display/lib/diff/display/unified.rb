@@ -406,10 +406,11 @@ module Diff #:nodoc:#
           # that differs internally from another line so that the Line class
           # can insert the desired formating
           def inline_diff(line, start, ending)
-            line[0, start] + 
-            #'%s' + extract_change(line, start, ending) + '%s' + 
-            extract_change(line, start, ending) + 
-            line[ending, ending.abs]
+            # line[0, start] + 
+            # #'%s' + extract_change(line, start, ending) + '%s' + 
+            # extract_change(line, start, ending) + 
+            # line[ending, ending.abs]
+            line
           end
 
           def add_separator
