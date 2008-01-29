@@ -42,6 +42,7 @@ class Project < ActiveRecord::Base
     'zlib/libpng License',
     'Apache Software License',
     'Apple Public Source License',
+    'Perl Artistic License',
     'Public Domain',
     'Other/Proprietary License',
     'Microsoft Permissive License (Ms-PL)',
