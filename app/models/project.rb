@@ -2,7 +2,7 @@ class Project < ActiveRecord::Base
   acts_as_taggable
   
   belongs_to  :user
-  has_many    :comments
+  has_many    :comments, :dependent => :destroy
   has_many    :repositories, :order => "mainline desc, created_at asc",
     :dependent => :destroy
   has_one     :mainline_repository, :conditions => ["mainline = ?", true], 

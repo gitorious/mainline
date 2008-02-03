@@ -97,7 +97,7 @@ class Repository < ActiveRecord::Base
   
   def create_delete_repos_task
     Task.create!(:target_class => self.class.name, 
-      :command => "delete_git_repository", :arguments => [gitdir]) # fixme: gitdir is probably gone in after_destroy
+      :command => "delete_git_repository", :arguments => [gitdir])
   end
     
   protected
