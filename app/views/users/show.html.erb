@@ -1,30 +1,41 @@
-<% @page_title = @user.login -%>
-<h1><%=h @user.login -%></h1>
+<% @page_title = h(@user.login) -%>
+
+<h1>
+  <%=h @user.login -%> 
+  <small><%= @user.fullname.blank? ? "" : "(#{h(@user.fullname)})" -%></small>
+</h1>
 
 <ul class="infobox">
-  <li><strong>Username:</strong> <%= h(@user.login) -%></li>
-  <li><strong>Realname:</strong> <%= @user.fullname.blank? ? "N/A" : h(@user.fullname) -%></li>
   <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
   <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
   <li><strong>Member for</strong> <%= time_ago_in_words(@user.created_at) -%></li>
 </ul>
 
-<h2>Repositories<small>, per project</small></h2>
-
-<ul>
-  <% @repositories.group_by(&:project).each do |project, repositories| -%>
-    
-    <li>
-      <strong><%= link_to h(project.title) , project_url(project) -%></strong> 
-      <ul>
-        <% repositories.each do |repos| -%>
-        <li><%= link_to h(repos.name), project_repository_url(repos.project, repos) -%></li>
-        <% end -%>
-      </ul>
+<div id="left">
+<% unless @projects.blank? -%>
+  <h2>Projects</h2>
+  <ul class="project_list">
+  <% @projects.each do |project| -%>
+    <li class="project_list_item">
+      <%= render :partial => project, :object => project -%>
     </li>
   <% end -%>
-  <%= will_paginate(@repositories) -%>
-</ul>
+  </ul>
+<% end -%>
+</div>
+
+<div id="right">
+<% unless @repositories.blank? -%>
+  <h2>Repositories</h2>
+  <% @repositories.each do |repos| -%>
+    <li>
+      <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
+      of <%= link_to h(repos.project.title), repos.project -%>
+    </li>
+  <% end -%>
+  </ul>
+<% end -%>
+</div>
 
 <% if current_user && (current_user == @user)  -%>
   <% content_for :submenu do -%>

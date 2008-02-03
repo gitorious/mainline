@@ -3,8 +3,8 @@ class ProjectsController < ApplicationController
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   
   def index
-    @projects = Project.paginate(:all, :order => "created_at desc", 
-                  :page => params[:page])
+    @projects = Project.paginate(:all, :order => "projects.created_at desc", 
+                  :page => params[:page], :include => [:tags])
     @atom_auto_discovery_url = formatted_projects_path(:atom)
     respond_to do |format|
       format.html { @tags = Project.tag_counts }

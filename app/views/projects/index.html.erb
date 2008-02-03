@@ -2,9 +2,8 @@
 
 <ul class="project_list">
 <% @projects.each do |project| -%>
-  <li>
-    <h3><%= link_to project.title, project_path(project) -%></h3>
-    <em><%= truncate project.description, 250 -%></em>
+  <li class="project_list_item">
+    <%= render :partial => project, :object => project -%>
   </li>
 <% end -%>
 </ul>

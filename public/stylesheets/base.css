@@ -759,3 +759,19 @@ table.codediff col.lines {
   margin-bottom:0;
   padding: 5px;
 }
+
+.project_list_item p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#left {
+  float:left;
+  width: 48%; 
+}
+
+#right {
+  float:right;
+  width: 48%;
+  clear:right; 
+}

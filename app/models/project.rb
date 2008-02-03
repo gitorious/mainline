@@ -53,6 +53,8 @@ class Project < ActiveRecord::Base
     find_by_slug(slug) || raise(ActiveRecord::RecordNotFound)
   end
   
+  def self.per_page() 20 end
+  
   def to_param
     slug
   end

@@ -5,9 +5,8 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_login!(params[:id])
-    @repositories = @user.repositories.paginate(:all, :include => :project, 
-      :order => "project_id desc",
-      :page => params[:page])
+    @projects = @user.projects.find(:all, :include => [:tags])
+    @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
   end
 
   def create

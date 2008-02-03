@@ -1,0 +1,6 @@
+<h3><%= link_to project.title, project_path(project) -%></h3>
+<p><%= truncate project.description, 250 -%></p>
+<p class="hint">
+  <strong>Categories:</strong> 
+  <%= project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(project.tags) -%>
+</p>
