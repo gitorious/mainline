@@ -1,97 +1,39 @@
 module Gitorious
   module Diff
-    class InlineTableCallback
-      
-      # Before blocks
-      def before_addblock(block)
-      end
-      
-      def before_remblock(block) 
-      end
-      
-      def before_modblock(block)
-      end
-      
-      def before_unmodblock(block)
-      end
-      
-      def before_sepblock(block)
-      end
-      
-      # After blocks
-      def after_addblock(block)
-      end
-      
-      def after_remblock(block)
-      end
-      
-      def after_modblock(block)
-      end
-      
-      def after_unmodblock(block)
-      end
-      
-      def after_sepblock(block)
-      end
-      
-      # Before lines
-      def before_addline(line)
+    class InlineTableCallback < BaseCallback
+      def addline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">&nbsp;</td>} + 
         %Q{<td class="line-numbers">#{line.number}</td>} + 
-        %Q{<td class="code ins"><ins>}
+        %Q{<td class="code ins"><ins>#{escape(line)}</ins></td></tr>}
       end
       
-      def before_remline(line)
+      def remline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">#{line.number}</td>} + 
         %Q{<td class="line-numbers">&nbsp;</td>} + 
-        %Q{<td class="code del"><del>}
+        %Q{<td class="code del"><del>#{escape(line)}</del></td></tr>}
       end
       
-      def before_modline(line)
+      def modline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">&nbsp;</td>} + 
         %Q{<td class="line-numbers">#{line.number}</td>} + 
-        %Q{<td class="code unchanged mod">}
+        %Q{<td class="code unchanged mod">#{escape(line)}</td></tr>}
       end
       
-      def before_unmodline(line)
+      def unmodline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">&nbsp;</td>} + 
         %Q{<td class="line-numbers">#{line.number}</td>} + 
-        %Q{<td class="code unchanged unmod">}
+        %Q{<td class="code unchanged unmod">#{escape(line)}</td></tr>}
       end
       
-      def before_sepline(line)
+      def sepline(line)
         %Q{<tr class="changes">} + 
-        %Q{<td class="line-numbers line-num-cut">...</td>} + 
-        %Q{<td class="line-numbers line-num-cut">...</td>} + 
-        %Q{<td class="code cut-line">}
-      end
-      
-      # After lines
-      def after_addline(line)
-       "</ins></td></tr>"
-      end
-      
-      def after_remline(line)
-       "</del></td></tr>"
-      end
-      
-      def after_modline(line)
-       "</td></tr>"
-      end
-      
-      def after_unmodline(line)
-       "</td></tr>"
-      end
-      
-      def after_sepline(line)
-       "</td></tr>"
-      end
-      
-      def new_line
+        %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
+        %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
+        %Q{<td class="code cut-line"></td></tr>}
       end
     end
   end

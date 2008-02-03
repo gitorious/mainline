@@ -1,6 +1,6 @@
 module Gitorious
   module Diff
-    class SidebysideTableCallback
+    class SidebysideTableCallback < BaseCallback
       
       # Before blocks
       def before_addblock(block)
@@ -45,67 +45,43 @@ module Gitorious
       end
       
       # Before lines
-      def before_addline(line)
+      def addline(line)
         # adds go on the right
         %Q{<th class="line-numbers">#{line.number}</th>} + 
         %Q{<td class="code ins"></td>} + 
         %Q{<th class="line-numbers">#{line.number}</th>} + 
-        %Q{<td class="code ins"><ins>}
+        %Q{<td class="code ins"><ins>#{escape(line)}</ins></td></tr>}
       end
       
-      def before_remline(line)
+      def remline(line)
         # rems go on the left (hide the right side)
         %Q{<th class="line-numbers">#{line.number}</th>} + 
         %Q{<td class="code del"><del>#{CGI.escapeHTML(line)}</del></td>} + 
         %Q{<th class="line-numbers">#{line.number}</th>} + 
-        %Q{<td class="code del hidden"><del>}
+        %Q{<td class="code del hidden"><del>#{escape(line)}</del></td></tr>}
       end
       
-      def before_modline(line)
+      def modline(line)
         # TODO: figure how we best display these
         # %Q{<th class="line-numbers">#{line.number}</th>} + 
         # %Q{<td class="code changed mod">#{CGI.escapeHTML(line)}</td>} + 
         # %Q{<th class="line-numbers">#{line.number}</th>} + 
-        # %Q{<td class="code changed mod">}
+        # %Q{<td class="code changed mod">#{escape(line)}</td></tr>}
       end
       
-      def before_unmodline(line)
+      def unmodline(line)
         # unmods goes on both sides
         %Q{<th class="line-numbers">#{line.number}</th>} + 
-        %Q{<td class="code unchanged unmod">#{CGI.escapeHTML(line)}</td>} + 
+        %Q{<td class="code unchanged unmod">#{escape(line)}</td>} + 
         %Q{<th class="line-numbers">#{line.number}</th>} + 
-        %Q{<td class="code unchanged unmod">}
+        %Q{<td class="code unchanged unmod">#{escape(line)}</td></tr>}
       end
       
-      def before_sepline(line)
-        %Q{<th class="line-numbers line-num-cut">...</th>} + 
-        %Q{<td class="code cut-line">...</td>} + 
-        %Q{<th class="line-numbers line-num-cut">...</th>} + 
-        %Q{<td class="code cut-line">}
-      end
-      
-      # After lines
-      def after_addline(line)
-        "</ins></td></tr>"
-      end
-      
-      def after_remline(line)
-        "</del></td></tr>"
-      end
-      
-      def after_modline(line)
-        "</td></tr>"
-      end
-      
-      def after_unmodline(line)
-        "</td></tr>"
-      end
-      
-      def after_sepline(line)
-        "</td></tr>"
-      end
-      
-      def new_line
+      def sepline(line)
+        %Q{<th class="line-numbers line-num-cut">&hellip;</th>} + 
+        %Q{<td class="code cut-line"></td>} + 
+        %Q{<th class="line-numbers line-num-cut">&hellip;</th>} + 
+        %Q{<td class="code cut-line"></td></tr>}
       end
     end
   end

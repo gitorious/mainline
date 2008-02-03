@@ -72,8 +72,10 @@ module BrowseHelper
     end
   end
   
+  #diff = Diff::Display::Unified.new(load_diff("simple"))
+  #diff.render(Diff::Renderer::Base.new)
   def render_inline_diff(udiff, src_sha, dst_sha)
-    callback = Gitorious::Diff::InlineTableCallback.new
+    differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
     out << "<tr>"
@@ -81,19 +83,19 @@ module BrowseHelper
     out << %Q{<td class="line-numbers">#{dst_sha}</td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
-    out << Diff::Display::Unified::HTMLRenderer.run(udiff, callback)
+    out << differ.render(Gitorious::Diff::InlineTableCallback.new)
     out << "</table>"
     out
   end
   
   def render_sidebyside_diff(udiff, src_sha, dst_sha)
-    callback = Gitorious::Diff::SidebysideTableCallback.new
+    differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff sidebyside">\n}
     out << %Q{<colgroup class="left"><col class="lines"/><col class="code"/></colgroup>}
     out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
     out << %Q{<thead><th colspan="2">#{src_sha}</th>}
     out << %Q{<th colspan="2">#{dst_sha}</th></thead>}
-    out << Diff::Display::Unified::HTMLRenderer.run(udiff, callback)
+    out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
     out << "</table>"
     out
   end
