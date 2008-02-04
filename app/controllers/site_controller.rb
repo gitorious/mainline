@@ -2,8 +2,7 @@ class SiteController < ApplicationController
   before_filter :login_required, :only => [:dashboard]
   
   def index
-    @tags = Project.tag_counts
-    @projects = Project.find(:all, :limit => 5, :order => "id desc")
+    @projects = Project.find(:all, :limit => 10, :order => "id desc")
   end
   
   def dashboard
