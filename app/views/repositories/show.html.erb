@@ -28,8 +28,8 @@
     <li class="commit_item">
       <a href=""><%= link_to truncate(h(commit.sha), 16), 
         project_repository_commit_path(@project, @repository, commit.sha) -%></a> 
-      by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago<br />
-      <pre class="commit_message"><%= word_wrap(h(commit.message)) -%></pre>
+      by <strong><%=h commit.author.name -%></strong> <%=h time_ago_in_words(commit.author.date) -%> ago
+      <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
     </li>
     <% end -%>
   </ul>

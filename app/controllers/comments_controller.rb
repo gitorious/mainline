@@ -13,8 +13,8 @@ class CommentsController < ApplicationController
   end
   
   def commit
-    @git = Git.bare(@repository.full_repository_path)
-    @commit = @git.gcommit(params[:sha])
+    @git = Gitorious::Gitto.new(@repository.full_repository_path)
+    @commit = @git.commit(params[:sha])
     @comments = @repository.comments.find_all_by_sha1(params[:sha], :include => :user)
   end
   

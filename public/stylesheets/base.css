@@ -403,9 +403,10 @@ table.repository_list tr.clone td.name {
   margin-bottom: 0.2em;
 }
 
-pre.commit_message {
+.commit_message, .commit_message p {
   margin-top: 10px;
   margin-left: 10px;
+  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
 }
 
 ul.project_list li {

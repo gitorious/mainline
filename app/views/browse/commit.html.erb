@@ -2,8 +2,7 @@
 
 <h1>Commit <%=h @commit.sha -%></h1>
 
-<p><pre><%=h @commit.message -%></pre></p>
-
+<div class="commit_message"><%= simple_format(h(@commit.message)) -%></div>
 <%= render :partial => "commit_infobox" -%>
 
 <ul class="tab_menu">
