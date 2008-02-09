@@ -79,19 +79,7 @@ module Diff::Display
       if new_line_type.eql?(@line_type)
         @buffer.push(line)
       else
-        # Side by side inline diff
-        #
-        # e.g.
-        #
-        #   - This line just had to go
-        #   + This line is on the way in
-        #
-        if new_line_type.eql?(LINE_TYPES['+']) and @line_type.eql?(LINE_TYPES['-'])
-          @prev_buffer = @buffer
-          @prev_line_type = @line_type
-        else
-          identify_block
-        end
+        identify_block
         @buffer = [line]
         @line_type = new_line_type
       end

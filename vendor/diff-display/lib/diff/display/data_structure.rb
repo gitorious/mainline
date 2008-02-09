@@ -56,6 +56,10 @@ module Diff
         @number = line_number
       end
       attr_reader :number
+      
+      def inspect
+        %Q{#<#{self.class.name} [#{number.inspect}] "#{self}">}
+      end
     end
     
     class AddLine < Line

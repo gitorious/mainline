@@ -32,4 +32,14 @@ describe Diff::Display::Unified::Generator do
     end
   end
   
+  describe "edgecase bugs" do
+    it "multiple rems and an add is in parity" do
+      diff_data = load_diff("multiple_rems_then_add")
+      data = Diff::Display::Unified::Generator.run(diff_data)
+      #pp data
+      data.to_diff.should == diff_data.chomp
+    end
+    
+  end
+  
 end
