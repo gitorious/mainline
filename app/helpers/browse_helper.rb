@@ -84,6 +84,11 @@ module BrowseHelper
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
     out << differ.render(Gitorious::Diff::InlineTableCallback.new)
+    out << %Q{<tr class="toggle_diff"><td colspan="3">}
+    out << %Q{<small>#{link_to_function "toggle raw diff", "$('diff#{udiff.object_id}').toggle()"}</small></td></tr>}
+    out << %Q{<tr class="raw_diff"><td colspan="3" style="display:none" id="diff#{udiff.object_id}">}
+    out << %Q{<pre>#{h(udiff)}</pre>}
+    out << "</td></tr>"
     out << "</table>"
     out
   end
@@ -93,9 +98,14 @@ module BrowseHelper
     out = %Q{<table class="codediff sidebyside">\n}
     out << %Q{<colgroup class="left"><col class="lines"/><col class="code"/></colgroup>}
     out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
-    out << %Q{<thead><th colspan="2">#{src_sha}</th>}
-    out << %Q{<th colspan="2">#{dst_sha}</th></thead>}
+    out << %Q{<thead><th colspan="2" class="line-numbers">#{src_sha}</th>}
+    out << %Q{<th colspan="2" class="line-numbers">#{dst_sha}</th></thead>}
     out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
+    out << %Q{<tr class="toggle_diff"><td colspan="4">}
+    out << %Q{<small>#{link_to_function "toggle raw diff", "$('diff#{udiff.object_id}').toggle()"}</small></td></tr>}
+    out << %Q{<tr class="raw_diff"><td colspan="4" style="display:none" id="diff#{udiff.object_id}">}
+    out << %Q{<pre>#{h(udiff)}</pre>}
+    out << "</td></tr>"
     out << "</table>"
     out
   end
