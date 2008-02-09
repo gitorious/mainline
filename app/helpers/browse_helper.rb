@@ -98,8 +98,8 @@ module BrowseHelper
     out = %Q{<table class="codediff sidebyside">\n}
     out << %Q{<colgroup class="left"><col class="lines"/><col class="code"/></colgroup>}
     out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
-    out << %Q{<thead><th colspan="2" class="line-numbers">#{src_sha}</th>}
-    out << %Q{<th colspan="2" class="line-numbers">#{dst_sha}</th></thead>}
+    out << %Q{<thead><th class="line-numbers">#{src_sha}</th><th></th>}
+    out << %Q{<th class="line-numbers">#{dst_sha}</th><th></th></thead>}
     out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
     out << %Q{<tr class="toggle_diff"><td colspan="4">}
     out << %Q{<small>#{link_to_function "toggle raw diff", "$('diff#{udiff.object_id}').toggle()"}</small></td></tr>}
