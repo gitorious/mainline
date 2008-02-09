@@ -11,7 +11,7 @@ module Diff::Display
   class Unified::Generator
     
     # Extracts the line number info for a given diff section
-    LINE_NUM_RE = /@@ [+-]([0-9]+)(?:,([0-9]+))? [+-]([0-9]+)(?:,([0-9]+))? @@/
+    LINE_NUM_RE = /^@@ [+-]([0-9]+)(?:,([0-9]+))? [+-]([0-9]+)(?:,([0-9]+))? @@/
     LINE_TYPES  = {'+' => :add, '-' => :rem, ' ' => :unmod}
     
     # Runs the generator on a diff and returns a Data object
@@ -88,7 +88,7 @@ module Diff::Display
     
     protected
       def is_header_line?(line)
-        return true if ['++', '--'].include?(line[0,2])
+        return true if ['+++ ', '--- '].include?(line[0,4])
         return true if line =~ /^(new|delete) file mode [0-9]+$/
         return true if line =~ /^diff \-\-git/
         return true if line =~ /^index \w+\.\.\w+ [0-9]+$/

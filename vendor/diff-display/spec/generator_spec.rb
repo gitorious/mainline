@@ -36,8 +36,15 @@ describe Diff::Display::Unified::Generator do
     it "multiple rems and an add is in parity" do
       diff_data = load_diff("multiple_rems_then_add")
       data = Diff::Display::Unified::Generator.run(diff_data)
-      #pp data
       data.to_diff.should == diff_data.chomp
+    end
+    
+    it "doesn't parse linenumbers that isn't part if the diff" do
+      diff_data = load_diff("pseudo_recursive")
+      data = Diff::Display::Unified::Generator.run(diff_data)
+      linenos = []
+      data.each{|blk| blk.each{|line| linenos << line.number } }
+      linenos.compact.should == (1..14).to_a
     end
     
   end
