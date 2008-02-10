@@ -377,6 +377,10 @@ table.listing {
   width: 100%;
 }
 
+table.listing tr td {
+  padding: 3px;
+}
+
 table.listing tr.odd {
   background: #efefef;
 }
