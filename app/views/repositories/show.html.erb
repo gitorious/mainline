@@ -25,6 +25,7 @@
       <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
     </li>
     <% end -%>
+    <li><%= link_to "View more &#x2192;", project_repository_log_path(@project, @repository) -%></li>
   </ul>
   
 <% end -%>
