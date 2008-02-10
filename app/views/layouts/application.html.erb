@@ -19,41 +19,57 @@
     <p><strong>System notice:</strong> <%= GitoriousConfig["system_message"] -%></p>
   </div>
   <% end -%>
+  <div id="header">
+    <h1 id="logo">
+      <%= link_to image_tag("logo-white.png"), root_path -%>
+        <!-- <h1><%= link_to "Gitorious", root_path -%></h1> -->
+    </h1>
+    <ul id="menu">
+      <% unless logged_in? -%>
+        <li><%= link_to "Home", root_path -%></li>
+      <% end -%>
+      <% if logged_in? -%>
+        <li><%= link_to "Dashboard", dashboard_path -%></li>
+      <% end -%>
+        <li><%= link_to "Projects", projects_path -%></li>
+      <% if logged_in? -%>
+        <li><%= link_to "FAQ", faq_path -%></li>
+      <% else -%>
+        <li><%= link_to "About", about_path -%></li>
+      <% end -%>
+      <%- if logged_in? -%>
+        <li class="secondary">( <%= link_to "My account", account_path -%></li>
+        <li class="secondary"><%= link_to "Logout", logout_path -%> )</li>
+      <%- else -%>
+        <li class="secondary"><%= link_to "Register", new_user_path -%></li>
+        <li class="secondary"><%= link_to "Login", login_path -%></li>
+      <%- end -%>
+    </ul>
+    <ul id="submenu">
+      <% if @project -%>
+        <li class="<%= selected_if_current_page(project_path(@project)) -%>">
+          <%= link_to h(@project.title), project_path(@project) -%>
+        </li>
+        <% if @repository -%>
+          <!-- <li class="menu_title"><%= h(@repository.name) -%>:</li> -->
+          <li class="<%= selected_if_current_page(project_repository_path(@project, @repository)) -%>">
+            <%= link_to "#{h(@repository.name)} repository", project_repository_path(@project, @repository) -%>
+          </li>
+          <li class="<%= selected_if_current_page(project_repository_browse_path(@project, @repository)) -%>">
+            <%= link_to "Commits", project_repository_browse_path(@project, @repository) -%>
+          </li>
+          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository)) -%>">
+            <%= link_to "HEAD Tree", project_repository_tree_path(@project, @repository, "HEAD") -%>
+          </li>
+          <!-- <li class="<%= selected_if_current_page(project_repository_comments_path(@project, @repository)) -%>">
+            <%= link_to "Comments", project_repository_comments_path(@project, @repository) -%>
+          </li> -->
+        <% end -%>
+      <% end -%>
+      <%= yield :submenu -%>
+    </ul>
+  </div>
   <div id="container">
-    <div id="header">
-      <div class="login-logout">
-        <p>(
-          <%- if logged_in? -%>
-            <%= link_to "My account", account_path  -%> | 
-            <%= link_to "Logout", logout_path -%>
-          <%- else -%>
-            <%= link_to "Register", new_user_path  -%> | 
-            <%= link_to "Login", login_path -%>
-          <%- end -%>
-        )</p>
-      </div>
-      <div id="logo">
-        <%= link_to image_tag("logo.png"), root_path -%>
-          <!-- <h1><%= link_to "Gitorious", root_path -%></h1> -->
-      </div>
-      <div id="menu">
-        <ul>
-          <li><%= link_to "Home", root_path -%></li>
-          <% if logged_in? -%>
-          <li><%= link_to "Dashboard", dashboard_path -%></li>
-          <% end -%>
-          <li><%= link_to "Projects", projects_path -%></li>
-          <% if logged_in? -%>
-          <li><%= link_to "FAQ", faq_path -%></li>
-          <% else -%>
-          <li><%= link_to "About", about_path -%></li>
-          <% end -%>
-        </ul>
-      </div>
-      <div id="submenu">
-        <%= yield :submenu -%>
-      </div>
-    </div>
     <% unless @content_for_sidebar.blank? -%>
     <div id="main">
     <% end -%>

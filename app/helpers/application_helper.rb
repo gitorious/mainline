@@ -26,5 +26,14 @@ module ApplicationHelper
     else
       concat(build_notice_for(object), blk.binding)
     end
+  end  
+  
+  def selected_if_current_page(url_options)
+    "selected" if current_page?(url_options)
+  end
+  
+  def link_to_with_selected(name, options = {}, html_options = nil)
+    html_options = current_page?(options) ? {:class => "selected"} : nil
+    link_to(name, options = {}, html_options)
   end
 end

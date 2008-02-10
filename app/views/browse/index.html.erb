@@ -1,7 +1,6 @@
-<% @page_title = "Browsing #{@repository.name} in #{@project.title}" -%>
+<% @page_title = "Commits in #{@repository.name} in #{@project.title}" -%>
 <h1>
-  Browsing <%= link_to h(@repository.name), project_repository_path(@project, @repository) -%> 
-  repository in <%= link_to h(@project.title), project_path(@project) -%>
+  Commits in the <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
 </h1>
 
 <ul class="infobox">
@@ -11,17 +10,8 @@
     tree_path(@commits.first.gtree.sha) -%></li>
 </ul>
 
-<h2>shortlog</h2>
+<h2>Commits</h2>
 <%= render :partial => "log", :locals => {:commits => @commits} -%>
-
-<% content_for :submenu do -%>
-<ul>
-  <li><%= link_to "&#x2190; Repository page", 
-            project_repository_path(@project, @repository) -%></li>
-  <li><%= link_to "&#x2190; Project page", 
-            project_path(@project) -%></li>
-</ul>
-<% end -%>
 
 <% content_for :sidebar do -%>  
   <h5>Branches:</h5>

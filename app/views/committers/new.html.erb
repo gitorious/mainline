@@ -1,6 +1,5 @@
 <h1>
-  Give a user commit rights to <%= link_to(h(@repository.name), [@repository.project, @repository]) -%>
-  <small>(in <%= link_to h(@repository.project.title), @repository.project -%>)</small>
+  Give a user commit rights to <%= h(@repository.name) -%>
 </h1>
 
 <% form_for @committer, 
@@ -10,12 +9,6 @@
     <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true -%>
   </p>
   <p>
-    <%= f.submit "Add as committer" -%>
+    <%= f.submit "Add as committer" -%> or <%= link_to "cancel", [@repository.project, @repository] -%>
   </p>
-<% end -%>
-
-<% content_for :submenu do -%>
-  <ul class="links">
-    <li><%= link_to "&#x2190; " + h(@repository.project.title), @repository.project -%></li>
-  </ul>
 <% end -%>

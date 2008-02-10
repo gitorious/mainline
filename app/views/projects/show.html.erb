@@ -42,7 +42,7 @@
         <td>
           <%= repos.last_commit ? repos.last_commit.author.date.to_s(:short) : "<em>none</em>" -%>
         </td>
-        <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
+        <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
       </tr>
     <% else -%>
       <tr class="<%= cycle("even", "odd") -%> clone">
@@ -55,16 +55,14 @@
         <td>
           <%= repos.last_commit ? repos.last_commit.author.date.to_s(:short) : "<em>none</em>" -%>
         </td>
-        <td><%= link_to "browse", project_repository_browse_path(@project, repos) -%></td>
+        <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
       </tr>
     <% end -%>
   <% end -%>
 </table>
 
 <% content_for :submenu do -%>
-  <% if @project.admin?(current_user) -%>
-  <ul>
-    <li><%= link_to "&#x2192; Edit project", edit_project_path(@project) -%></li>
-  </ul>
-  <% end -%>
+<% if @project.admin?(current_user) -%>
+  <li><%= link_to "Edit project", edit_project_path(@project) -%>)</li>
+<% end -%>  
 <% end -%>

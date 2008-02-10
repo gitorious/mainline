@@ -5,3 +5,7 @@
   <%= render :partial => "form", :locals => {:form => f} -%>
   <%= f.submit "Update" -%>
 <% end -%>
+
+<% content_for :submenu do -%>
+  <li class="selected"><%= link_to "Edit project", edit_project_path(@project) -%>)</li>
+<% end -%>

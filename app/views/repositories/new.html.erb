@@ -19,12 +19,3 @@
   with lots of empty repositories), so it's a good idea to wait with creating 
   the clone here until there's something to push.</em>
 </p>
-
-<% content_for :submenu do -%>
-  <ul>
-    <li><%= link_to "&#x2190; Repository page", 
-              project_repository_path(@project, @repository_to_clone) -%></li>
-    <li><%= link_to "&#x2190; Project page", 
-              project_path(@project) -%></li>
-  </ul>
-<% end -%>

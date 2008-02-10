@@ -1,7 +1,6 @@
 <% @page_title = "Comments on #{@project.title}" -%>
 <h1>
-  Comments for &quot;<%= h(@repository.name) -%>&quot; repository in 
-  <%= link_to h(@repository.project.title), @repository.project -%>
+  Comments for &quot;<%= h(@repository.name) -%>&quot; repository in <%= h(@repository.project.title) -%>
 </h1>
 
 <%= render :partial => "repositories/infobox" -%>
@@ -21,5 +20,3 @@
 <%= render :partial => @comments -%>
 
 <%= render :partial => "form" -%>
-
-<%= render :partial => "repositories/submenu" -%>

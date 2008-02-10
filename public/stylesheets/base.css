@@ -84,7 +84,8 @@ code, pre, tt {
 }
 a {
 /*  color: #630;*/
-  color: #811E00;
+/*  color: #811E00;*/
+  color: #e7371a;
   text-decoration: none;
 }
 a:hover {
@@ -121,28 +122,20 @@ abbr {
 
 #container {
   width: 90%;
+  margin-top: 20px;
 }
 
 #header {
-  /*background: #C7BA99;*/
+  background: #292929;
   padding-left: 0.5em;
 }
 
-#container #logo {
-  margin: 0.5em 0.5em 1em 2em;
+#header #logo {
+  padding: 10px 0 20px 30px;
+  line-height: 100%;
+  margin:0;
 }
-
-#container #logo h1   { line-height: 100%; }
-#container #logo h1 a { color: #666; }
-
-.login-logout {
-  float: right;
-}
-
-#container #menu {
-  height: 21px;
-  border-bottom: 1px solid #333;
-}
+#header #logo a { color: #666; }
 
 #container #main {
   min-height: 300px;
@@ -219,53 +212,73 @@ abbr {
 
 /* menu */
 
-#menu ul {
+#menu {
+  float: right;
+  margin-top: -50px;
+  margin-right: 20px;
   list-style: none;
-  margin-left: 2em;
   padding-top: 2px;
 }
 
-#menu ul li {
+#menu li {
   display: inline;
   margin-right: 20px;
 }
-
-#menu ul li a { 
-  font-size: 16px;
+#menu li.secondary {
+  margin-right: 5px;
+  color: #666;
+}
+#menu li a { 
+  font-size: 14px;
+  color: #eab239;
 }
 
-#menu ul li a:hover {
+#menu li.secondary a { 
+ font-size: 11px; 
+}
+
+#menu li a:hover {
   text-decoration: none;
-  border-bottom: 4px solid #630;
+  border-bottom: 2px solid #eab239;
 }
 
 /* submenu */
 #submenu {
-  margin-bottom: 1.5em;
-  margin-top: 2px;
-  border-top: 1px dotted #666;
-  border-bottom: 1px solid #ccc;
-  font-size: 90%;
-  min-height: 2px;
-}
-#submenu ul {
+/*  font-size: 90%;*/
   list-style: none;
-  padding: 2px 0 1px 0;
-  margin: 0 0 0 2em;
+  margin: 0 0 0 30px;
 }
 
-#submenu ul li {
+#submenu li {
   display: inline;
   margin-right: 20px;
 }
-
-#submenu ul li a { 
-/*  font-size: 12px;*/
+#submenu li.menu_title {
+  color: #ccc;
+  margin-right: 5px;
+  margin-left: 20px;
 }
 
-#submenu ul li a:hover {
+#submenu li a { 
+  font-size: 12px;
+  background: #9cce2e;
+  color: #09460f;
+  padding: 5px 10px 3px 10px;
+}
+#submenu li.selected a {
+  background: #fff;
+  color: #000;
+}
+
+#submenu li a:hover {
   text-decoration: none;
-  border-bottom: 3px solid #630;
+  background: #3b5f02;
+  color: #fff;
+}
+
+#submenu li.selected a:hover {
+  background: #fff;
+  color: #000;
 }
 
 /* Forms */

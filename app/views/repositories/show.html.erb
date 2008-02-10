@@ -1,7 +1,6 @@
 <% @page_title = "#{@repository.name} in #{@project.title}" -%>
 <h1>
-  &quot;<%= h(@repository.name) -%>&quot; repository in 
-  <%= link_to h(@repository.project.title), @repository.project -%>
+  &quot;<%= h(@repository.name) -%>&quot; repository in <%= h(@repository.project.title) -%>
 </h1>
 
 <% render_if_ready(@repository) do -%>
@@ -13,13 +12,7 @@
     <li><%= link_to "comments (#{@comment_count})", project_repository_comments_path(@project, @repository) -%></li>
   </ul>
 
-  <h2>
-    Recent commits 
-    <small>
-      (<%= link_to "Shortlog", project_repository_browse_path(@project, @repository) -%> | 
-      <%= link_to "HEAD tree", project_repository_tree_path(@project, @repository, "HEAD", []) -%>)
-    </small>
-  </h2>
+  <h2>Recent commits</h2>
   <ul>
     <% if @commits.blank? -%>
       <li><em>No commits yet…</em></li>
@@ -36,9 +29,17 @@
   
 <% end -%>
 
-<%= render :partial => "submenu" -%>
-
 <% content_for :sidebar do -%>  
+  <ul class="links">
+    <% if @repository.ready? -%>
+      <li><%= link_to "Clone this repository", new_project_repository_path(@project, @repository) -%></li>
+    <% end -%>
+    <% if @repository.user == current_user -%>
+      <li><%= link_to "Add committer", 
+              { :controller => "committers", :action => "new", :project_id => @project, 
+                :repository_id => @repository } -%></li>
+    <% end -%>
+  </ul>
   <div class="user_list">    
     <h4>Committers</h4>    
     <ul>

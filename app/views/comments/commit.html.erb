@@ -1,6 +1,5 @@
 <% @page_title = "Comments in #{@repository.name}" -%>
-<h1>Comments on commit <%= link_to h(@commit.sha), 
-  project_repository_commit_path(@project, @repository, @commit.sha) -%></h1>
+<h1>Comments on commit <%= h(@commit.sha) -%> in <%= h(@repository.name) -%></h1>
 
 <p><pre><%=h @commit.message -%></pre></p>
 
@@ -15,5 +14,3 @@
 <%= render :partial => @comments -%>
 
 <%= render :partial => "form", :locals => {:sha1 => @commit.sha} -%>
-
-<%= render :partial => "browse/submenu" -%>
