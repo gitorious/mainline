@@ -137,7 +137,19 @@ module BrowseHelper
     end
     out << "</table>"
     out.join("\n")
-    
+  end
+  
+  def render_diff_stats(stats)
+    out = %Q{<ul class="diff_stats">\n}
+    stats[:files].each_pair do |filename, stats|
+      total = stats[:insertions] + stats[:deletions]
+      out << %Q{<li><a href="##{h(filename)}">#{h(filename)}</a>&nbsp;#{total}&nbsp;}
+      out << %Q{<small class="deletions">#{(0...stats[:deletions]).map{|i| "-" }}</small>}
+      out << %Q{<small class="insertions">#{(0...stats[:insertions]).map{|i| "+" }}</small>}
+      out << %Q{</li>}
+    end
+    out << "</ul>\n"
+    out
   end
   
 end

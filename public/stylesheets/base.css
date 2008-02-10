@@ -737,6 +737,19 @@ table.codediff col.lines {
   width: 3em;
 }
 
+ul.diff_stats {
+  margin-left: 20px;
+  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  color: #888;
+}
+
+ul.diff_stats small {
+  font-size: 10px;
+  font-weight: bold;
+}
+ul.diff_stats small.insertions  { color: #00BF00; }
+ul.diff_stats small.deletions   { color: #DC0000; }
+
 #newest_projects, #site_project_list {
   margin-bottom: 3em;
 }

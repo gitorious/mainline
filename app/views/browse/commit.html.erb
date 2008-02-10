@@ -11,7 +11,7 @@
             project_repository_commit_comment_path(@project, @repository, @commit.sha) -%></li>
 </ul>
 
-<% #TODO: commit diff stats (as sparklines?) -%>
+
 
 <% if @diff.blank? -%>
   <p>
@@ -19,10 +19,11 @@
     <%= link_to "browse the initial tree state", tree_path(@commit.gtree.sha) -%>.
   </p>
 <% else -%>
+  <%= render_diff_stats(@diff.stats) -%>
   <h2>Commit diff</h2>
   <%= render_diffmode_selector -%>
-
   <% @diff.each do |file, index| -%>
+    <a name="<%= h(file.path) -%>"></a>
     <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
     <%= render_diff(file.patch, file.src, file.dst, @diffmode) -%>
   <% end -%>
