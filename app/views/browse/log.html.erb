@@ -1,10 +1,8 @@
 <% @page_title = "Commit log for #{@repository.name} in #{@project.title}" -%>
 <h1>
-  Browsing <%= link_to h(@repository.name), project_repository_path(@project, @repository) -%> 
-  repository in <%= link_to h(@project.title), project_path(@project) -%>
+  Commit log for <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
 </h1>
 
-<h2>Commit Log</h2>
 <%= render :partial => "log", :locals => {:commits => @commits} -%>
 
 <% content_for :sidebar do -%>  

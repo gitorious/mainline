@@ -548,6 +548,7 @@ span.tag {
 .link_to_more {
   border-top: 1px solid #aaa;
   padding: 2px;
+  text-align: center;
 }
 
 table.tree tr td.node {
