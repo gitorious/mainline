@@ -545,15 +545,9 @@ span.tag {
   padding: 0 4px 2px 4px;
 }
 
-table.shortlog tr td, table.tree tr td {
-  padding: 2px 5px 4px 5px;
-}
-table.shortlog tr td.link_to_more {
+.link_to_more {
   border-top: 1px solid #aaa;
   padding: 2px;
-}
-table.shortlog tr td.link_to_more span {
-  float:right;
 }
 
 table.tree tr td.node {
