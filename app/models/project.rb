@@ -63,6 +63,10 @@ class Project < ActiveRecord::Base
     candidate == user
   end
   
+  def can_be_deleted_by?(candidate)
+    (candidate == user) && (repositories.size == 1)
+  end
+  
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")

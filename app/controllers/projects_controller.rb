@@ -57,6 +57,10 @@ class ProjectsController < ApplicationController
   
   def update
     @project = Project.find_by_slug!(params[:id])
+    if @project.user != current_user
+      flash[:error] = "You're not the owner of this project"
+      redirect_to(project_path(@project)) and return
+    end
     @project.attributes = params[:project]
     if @project.save
       redirect_to project_path(@project)
@@ -65,9 +69,17 @@ class ProjectsController < ApplicationController
     end
   end
   
+  def confirm_delete
+    @project = Project.find_by_slug!(params[:id])
+  end
+  
   def destroy
     @project = Project.find_by_slug!(params[:id])
-    @project.destroy
+    if @project.can_be_deleted_by?(current_user)
+      @project.destroy
+    else
+      flash[:error] = "You're not the owner of this project, or the project has clones"
+    end
     redirect_to projects_path
   end
 end

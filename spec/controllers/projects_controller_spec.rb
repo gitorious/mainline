@@ -58,9 +58,16 @@ describe ProjectsController do
     response.should redirect_to(new_sessions_path)
   end
   
-  it "projects/update should require login" do
-    post :update
+  it "PUT projects/update should require login" do
+    put :update
     response.should redirect_to(new_sessions_path)
+  end
+  
+  it "PUT projects/update can only be done by project owner" do
+    login_as :moe
+    put :update, :id => projects(:johans).slug, :project => {:title => "new name", :slug => "foo"}
+    flash[:error].should match(/you're not the owner of this project/i)
+    response.should redirect_to(project_path(projects(:johans)))
   end
   
   it "PUT projects/update with valid data should update record" do
@@ -73,14 +80,30 @@ describe ProjectsController do
     project.reload.title.should == "new name"
   end
   
-  it "projects/destroy should require login" do
-    put :destroy
+  it "DELETE projects/destroy should require login" do
+    delete :destroy
     response.should be_redirect
     response.should redirect_to(url_path(new_sessions_path))
   end
   
-  it "PUT projects/destroy should destroy the project" do
+  it "DELETE projects/xx is only allowed by project owner" do
+    login_as :moe
+    delete :destroy, :id => projects(:johans).slug
+    response.should redirect_to(projects_path)
+    flash[:error].should match(/You're not the owner of this project, or the project has clones/i)
+  end
+  
+  it "DELETE projects/xx is only allowed if there's a single repository (mainline)" do
     login_as :johan
+    delete :destroy, :id => projects(:johans).slug
+    response.should redirect_to(projects_path)
+    flash[:error].should match(/You're not the owner of this project, or the project has clones/i)
+    Project.find_by_id(1).should_not == nil    
+  end
+  
+  it "DELETE projects/destroy should destroy the project" do
+    login_as :johan
+    projects(:johans).repositories.last.destroy
     delete :destroy, :id => projects(:johans).slug
     response.should redirect_to(projects_path)
     Project.find_by_id(1).should == nil
@@ -101,6 +124,12 @@ describe ProjectsController do
   it "GET projects/xx/edit should be a-ok" do
     get :edit, :id => projects(:johans).slug
     response.should be_success
+  end
+  
+  it "GET projects/xx/confirm_delete fetches the project" do
+    get :edit, :id => projects(:johans).slug
+    response.should be_success
+    assigns[:project].should == projects(:johans)
   end
 
 end

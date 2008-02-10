@@ -88,6 +88,10 @@ class Repository < ActiveRecord::Base
     @last_commit
   end
   
+  def can_be_deleted_by?(candidate)
+    !mainline? && (candidate == user)
+  end
+  
   def create_new_repos_task
     Task.create!(:target_class => self.class.name, 
       :command => parent ? "clone_git_repository" : "create_git_repository", 

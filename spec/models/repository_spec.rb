@@ -187,6 +187,14 @@ describe Repository do
     @repository.last_commit.should == commit_mock
   end
   
+  it "knows who can delete it" do
+    @repository.mainline = true
+    @repository.can_be_deleted_by?(users(:johan)).should == false
+    @repository.mainline = false
+    @repository.can_be_deleted_by?(users(:moe)).should == false
+    @repository.can_be_deleted_by?(users(:johan)).should == true
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)

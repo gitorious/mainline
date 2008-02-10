@@ -30,9 +30,11 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.projects_category "projects/category/:id"
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
-  map.resources :projects do |projects|
+  map.resources :projects, :member => {:confirm_delete => :get} do |projects|
     projects.resources(:repositories, :member => { 
-      :new => :get, :create => :post, :writable_by => :get
+      :new => :get, :create => :post, 
+      :writable_by => :get, 
+      :confirm_delete => :get
     }, :path_name => "repos") do |repo|
       repo.resources :committers, :name_prefix => nil, :collection => {:auto_complete_for_user_login => :post}
       repo.resources :comments

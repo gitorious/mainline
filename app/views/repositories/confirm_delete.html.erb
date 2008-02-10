@@ -1,0 +1,15 @@
+<h1>Please confirm deletion of <%= @repository.name -%> in <%= h(@project.title) -%></h1>
+
+<p class="important_message">
+  Once you press this button the repository will be deleted
+  
+  <% form_for [@project, @repository], :html => {:method => :delete} do |f| -%>
+    <%= f.submit("YES I am sure I want to delete this repository permanently") -%>
+  <% end -%>
+</p>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Back to edit screen", edit_project_repository_path(@project, @repository) -%></li>
+  </ul>
+<% end -%>

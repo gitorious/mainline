@@ -81,6 +81,21 @@ class RepositoriesController < ApplicationController
     end
   end
   
+  def confirm_delete
+    @repository = @project.repositories.find_by_name!(params[:id])
+  end
+  
+  def destroy
+    @repository = @project.repositories.find_by_name!(params[:id])
+    if @repository.can_be_deleted_by?(current_user)
+      flash[:notice] = "The repository was deleted"
+      @repository.destroy
+    else
+      flash[:error] = "You're not the owner of this repository"
+    end
+    redirect_to project_path(@project)
+  end
+  
   private    
     def require_adminship
       unless @project.admin?(current_user)

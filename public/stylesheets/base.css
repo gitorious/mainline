@@ -811,3 +811,8 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   width: 48%;
   clear:right; 
 }
+
+.important_message {
+  font-weight: bold;
+  color: #9A0000;
+}

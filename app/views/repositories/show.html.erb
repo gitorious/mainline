@@ -40,6 +40,9 @@
               { :controller => "committers", :action => "new", :project_id => @project, 
                 :repository_id => @repository } -%></li>
     <% end -%>
+    <% if @repository.can_be_deleted_by?(current_user) -%>
+      <li><%= link_to "Delete repository", confirm_delete_project_repository_path(@project, @repository) -%></li>
+    <% end -%>
   </ul>
   <div class="user_list">    
     <h4>Committers</h4>    

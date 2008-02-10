@@ -221,3 +221,38 @@ describe RepositoriesController, "writable_by" do
     response.body.should == "false"
   end
 end
+
+describe RepositoriesController, "destroy" do
+  
+  before(:each) do
+    @project = projects(:johans)
+  end
+  
+  def do_delete(repos)
+    delete :destroy, :project_id => @project.slug, :id => repos.name
+  end
+  
+  it "should require login" do
+    session[:user_id] = nil
+    do_delete(@project.repositories.first)
+    response.should redirect_to(new_sessions_path)
+  end
+  
+  it "can only be deleted by the owner" do
+    login_as :johan
+    @project.repositories.last.update_attribute(:user_id, users(:moe).id)
+    do_delete(@project.repositories.last)
+    response.should redirect_to(project_path(@project))
+    flash[:error].should == "You're not the owner of this repository"
+  end
+  
+  it "the owner can delete his own repos" do
+    login_as :johan
+    @project.repositories.last.update_attribute(:user_id, users(:johan))
+    do_delete(@project.repositories.last)
+    response.should redirect_to(project_path(@project))
+    flash[:error].should == nil
+    flash[:notice].should == "The repository was deleted"
+  end
+  
+end
