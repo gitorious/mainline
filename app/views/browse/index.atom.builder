@@ -15,7 +15,7 @@ atom_feed do |feed|
 <h1>In #{@repository.gitdir}</h1>
 <pre>
 Date:   #{commit.date.strftime("%Y-%m-%d %H:%M")}
-Author: #{commit.author.name} (#{commit.author.email})
+Committer: #{commit.committer.name} (#{commit.committer.email})
 Message:
 #{commit.message}
 <pre>
