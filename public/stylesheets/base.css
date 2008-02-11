@@ -632,7 +632,6 @@ small.hint { font-size: 83%;}
 /* diff mode selector */
 ul.mode_selector { 
   float: right;
-  margin-top: -35px;
 }
 ul.mode_selector li {
   display:inline;
