@@ -29,6 +29,7 @@
     <th>Owner</th>
     <th>Last Commit</th>
     <th></th>
+    <th></th>
   </thead>
   <% @repositories.each do |repos| # fixme: need to graph the parent relation proper -%>
     <% if repos.mainline? -%>
@@ -43,6 +44,7 @@
           <%= repos.last_commit ? repos.last_commit.author.date.to_s(:short) : "<em>none</em>" -%>
         </td>
         <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
+        <td><%= link_to "HEAD tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>
       </tr>
     <% else -%>
       <tr class="<%= cycle("even", "odd") -%> clone">
@@ -56,6 +58,7 @@
           <%= repos.last_commit ? repos.last_commit.author.date.to_s(:short) : "<em>none</em>" -%>
         </td>
         <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
+        <td><%= link_to "HEAD tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>
       </tr>
     <% end -%>
   <% end -%>
