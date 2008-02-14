@@ -44,6 +44,7 @@ class Project < ActiveRecord::Base
     'Apple Public Source License',
     'Perl Artistic License',
     'Public Domain',
+    'ISC license',
     'Other/Proprietary License',
     'Microsoft Permissive License (Ms-PL)',
     'None',
