@@ -43,10 +43,11 @@ class Project < ActiveRecord::Base
     'Apache Software License',
     'Apple Public Source License',
     'Perl Artistic License',
-    'Public Domain',
-    'ISC license',
-    'Other/Proprietary License',
     'Microsoft Permissive License (Ms-PL)',
+    'ISC License',
+    'Public Domain',
+    'Other Open Source Initiative Approved License',
+    'Other/Proprietary License',
     'None',
   ]
   
