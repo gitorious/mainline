@@ -36,4 +36,19 @@ module ApplicationHelper
     html_options = current_page?(options) ? {:class => "selected"} : nil
     link_to(name, options = {}, html_options)
   end
+  
+  def syntax_themes_css
+    out = []
+    if @load_syntax_themes
+      # %w[ active4d all_hallows_eve amy blackboard brilliance_black brilliance_dull 
+      #     cobalt dawn eiffel espresso_libre idle iplastic lazy mac_classic 
+      #     magicwb_amiga pastels_on_dark slush_poppies spacecadet sunburst 
+      #     twilight zenburnesque 
+      # ].each do |syntax|
+      #   out << stylesheet_link_tag("syntax_themes/#{syntax}")
+      # end
+      return stylesheet_link_tag("syntax_themes/idle")
+  	end
+  	out.join("\n")
+  end
 end

@@ -1,0 +1,133 @@
+.highlighted .twilight .DiffInserted {
+   background-color: #253B22;
+   color: #F8F8F8;
+}
+.highlighted .twilight .DiffHeader {
+   background-color: #0E2231;
+   color: #F8F8F8;
+   font-style: italic;
+}
+.highlighted .twilight .CssPropertyValue {
+   color: #F9EE98;
+}
+.highlighted .twilight .CCCPreprocessorDirective {
+   color: #AFC4DB;
+}
+.highlighted .twilight .Constant {
+   color: #CF6A4C;
+}
+.highlighted .twilight .DiffChanged {
+   background-color: #4A410D;
+   color: #F8F8F8;
+}
+.highlighted .twilight .EmbeddedSource {
+   background-color: #A3A6AD;
+}
+.highlighted .twilight .Support {
+   color: #9B859D;
+}
+.highlighted .twilight .MarkupList {
+   color: #F9EE98;
+}
+.highlighted .twilight .CssConstructorArgument {
+   color: #8F9D6A;
+}
+.highlighted .twilight .Storage {
+   color: #F9EE98;
+}
+.highlighted .twilight .CssClass {
+   color: #9B703F;
+}
+.highlighted .twilight .StringConstant {
+   color: #DDF2A4;
+}
+.highlighted .twilight .CssAtRule {
+   color: #8693A5;
+}
+.highlighted .twilight .MetaTagInline {
+   color: #E0C589;
+}
+.highlighted .twilight .MarkupHeading {
+   color: #CF6A4C;
+}
+.highlighted .twilight .CssTagName {
+   color: #CDA869;
+}
+.highlighted .twilight .SupportConstant {
+   color: #CF6A4C;
+}
+.highlighted .twilight .DiffDeleted {
+   background-color: #420E09;
+   color: #F8F8F8;
+}
+.highlighted .twilight .CCCPreprocessorLine {
+   color: #8996A8;
+}
+.highlighted .twilight .StringRegexpSpecial {
+   color: #CF7D34;
+}
+.highlighted .twilight .EmbeddedSourceBright {
+   background-color: #9C9EA4;
+}
+.highlighted .twilight .InvalidIllegal {
+   background-color: #241A24;
+   color: #F8F8F8;
+}
+.highlighted .twilight .SupportFunction {
+   color: #DAD085;
+}
+.highlighted .twilight .CssAdditionalConstants {
+   color: #CA7840;
+}
+.highlighted .twilight .MetaTagAll {
+   color: #AC885B;
+}
+.highlighted .twilight .StringRegexp {
+   color: #E9C062;
+}
+.highlighted .twilight .StringEmbeddedSource {
+   color: #DAEFA3;
+}
+.highlighted .twilight .EntityInheritedClass {
+   color: #9B5C2E;
+   font-style: italic;
+}
+.highlighted .twilight .CssId {
+   color: #8B98AB;
+}
+.highlighted .twilight .CssPseudoClass {
+   color: #8F9D6A;
+}
+.highlighted .twilight .StringVariable {
+   color: #8A9A95;
+}
+.highlighted .twilight .String {
+   color: #8F9D6A;
+}
+.highlighted .twilight .Keyword {
+   color: #CDA869;
+}
+.highlighted .twilight {
+   background-color: #141414;
+   color: #F8F8F8;
+}
+.highlighted .twilight .CssPropertyName {
+   color: #C5AF75;
+}
+.highlighted .twilight .DoctypeXmlProcessing {
+   color: #494949;
+}
+.highlighted .twilight .InvalidDeprecated {
+   color: #D2A8A1;
+   font-style: italic;
+}
+.highlighted .twilight .Variable {
+   color: #7587A6;
+}
+.highlighted .twilight .Entity {
+   color: #9B703F;
+}
+.highlighted .twilight .Comment {
+   color: #5F5A60;
+   font-style: italic;
+}

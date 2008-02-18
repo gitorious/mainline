@@ -652,17 +652,20 @@ tr.raw_diff td {
   padding-top: 5px;
 }
 
+table#codeblob {
+  width: 100%;
+}
+
 table tr .line-numbers {
  text-align: right;
  vertical-align: top;
  background: #eee;
  color: #555;
- font-size: 90%;  
- padding: 2px;
- padding-top: 0;
+ font-size: 92%;  
+ padding: 4px 3px 2px 2px;
  width: 35px;
  border-right: 1px solid #ccc;
- border-bottom: 1px solid #ddd;
+/* border-bottom: 1px solid #ddd;*/
 }
 table tr td.code {
  width: 95%;
@@ -690,8 +693,8 @@ table tr td.softwrapped {
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
-table tr td.highlighted {
-  background: #ffc;
+table tr td.marked {
+  background: #ffc !important;
 }
 
 table.sidebyside {

@@ -1,0 +1,73 @@
+.highlighted .lazy .OcamlInfixFPOperator {
+   text-decoration: underline;
+}
+.highlighted .lazy .OcamlInfixOperator {
+   color: #3B5BB5;
+}
+.highlighted .lazy .MetaFunctionCallPy {
+   color: #3E4558;
+}
+.highlighted .lazy .Superclass {
+   color: #3B5BB5;
+   font-style: italic;
+}
+.highlighted .lazy .LatexEntity {
+   color: #D62A28;
+}
+.highlighted .lazy .Constant {
+   color: #3B5BB5;
+}
+.highlighted .lazy .OcamlFPConstant {
+   text-decoration: underline;
+}
+.highlighted .lazy .Support {
+   color: #3B5BB5;
+}
+.highlighted .lazy .OcamlOperator {
+   color: #000000;
+}
+/*.highlighted .lazy .line-numbers {
+   background-color: #E3FC8D;
+   color: #000000;
+}*/
+.highlighted .lazy .StringInterpolation {
+   color: #671EBB;
+}
+.highlighted .lazy .InvalidIllegal {
+   background-color: #9D1E15;
+   color: #F8F8F8;
+}
+.highlighted .lazy .OcamlVariant {
+   color: #7F90AA;
+}
+.highlighted .lazy .MetaTag {
+   color: #3A4A64;
+}
+.highlighted .lazy .OcamlPrefixFPOperator {
+   text-decoration: underline;
+}
+.highlighted .lazy .OcamlPrefixOperator {
+   color: #3B5BB5;
+}
+.highlighted .lazy .String {
+   color: #409B1C;
+}
+.highlighted .lazy .Keyword {
+   color: #FF7800;
+}
+.highlighted .lazy {
+   background-color: #FFFFFF;
+   color: #000000;
+}
+.highlighted .lazy .InvalidDeprecated {
+   color: #990000;
+   font-style: italic;
+}
+.highlighted .lazy .Variable {
+}
+.highlighted .lazy .Entity {
+   color: #3B5BB5;
+}
+.highlighted .lazy .Comment {
+   color: #8C868F;
+}

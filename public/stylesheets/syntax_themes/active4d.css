@@ -1,0 +1,110 @@
+.highlighted .active4d .DiffHeader {
+   background-color: #656565;
+   color: #FFFFFF;
+}
+.highlighted .active4d .Operator {
+}
+.highlighted .active4d .InheritedClass {
+}
+.highlighted .active4d .TypeName {
+   color: #21439C;
+}
+.highlighted .active4d .Number {
+   color: #A8017E;
+}
+.highlighted .active4d .EmbeddedSource {
+   background-color: #ECF1FF;
+}
+.highlighted .active4d {
+   background-color: #FFFFFF;
+   color: #000000;
+}
+.highlighted .active4d .DiffInsertedLine {
+   background-color: #98FF9A;
+   color: #000000;
+}
+.highlighted .active4d .LibraryVariable {
+   color: #A535AE;
+}
+.highlighted .active4d .Storage {
+   color: #FF5600;
+}
+.highlighted .active4d .InterpolatedEntity {
+   font-weight: bold;
+   color: #66CCFF;
+}
+.highlighted .active4d .LocalVariable {
+   font-weight: bold;
+   color: #6392FF;
+}
+.highlighted .active4d .DiffLineRange {
+   background-color: #1B63FF;
+   color: #FFFFFF;
+}
+.highlighted .active4d .BlockComment {
+   color: #D33435;
+}
+.highlighted .active4d .TagName {
+   color: #016CFF;
+}
+.highlighted .active4d .FunctionArgument {
+}
+.highlighted .active4d .BuiltInConstant {
+   color: #A535AE;
+}
+.highlighted .active4d .LineComment {
+   color: #D33535;
+}
+.highlighted .active4d .DiffDeletedLine {
+   background-color: #FF7880;
+   color: #000000;
+}
+.highlighted .active4d .NamedConstant {
+   color: #B7734C;
+}
+.highlighted .active4d .CommandMethod {
+   font-weight: bold;
+   color: #45AE34;
+}
+.highlighted .active4d .TableField {
+   color: #0BB600;
+}
+.highlighted .active4d .PlainXmlText {
+   color: #000000;
+}
+.highlighted .active4d .Invalid {
+   background-color: #990000;
+   color: #FFFFFF;
+}
+.highlighted .active4d .LibraryClassType {
+   color: #A535AE;
+}
+.highlighted .active4d .TagAttribute {
+   color: #963DFF;
+}
+.highlighted .active4d .Keyword {
+   font-weight: bold;
+   color: #006699;
+}
+.highlighted .active4d .UserDefinedConstant {
+}
+.highlighted .active4d .String {
+   color: #666666;
+}
+.highlighted .active4d .DiffUnchangedLine {
+   color: #5E5E5E;
+}
+.highlighted .active4d .TagContainer {
+   color: #7A7A7A;
+}
+.highlighted .active4d .FunctionName {
+   color: #21439C;
+}
+.highlighted .active4d .Variable {
+   font-weight: bold;
+   color: #0053FF;
+}
+.highlighted .active4d .DateTimeLiteral {
+   font-weight: bold;
+   color: #66CCFF;
+}

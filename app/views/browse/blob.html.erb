@@ -1,4 +1,5 @@
 <% @page_title = "#{current_path.join("/")} - #{@repository.name} in #{@project.title}" -%>
+<% @load_syntax_themes = true -%>
 
 <ul class="mode_selector">
   <li class="list_header">
@@ -14,4 +15,4 @@
   <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>
 </h1>
 
-<pre><%= with_line_numbers{ h(@blob.contents) } -%></pre>
+<%= render_highlighted(@blob.contents, "application/ruby") -%>

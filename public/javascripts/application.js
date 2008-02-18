@@ -25,7 +25,7 @@ var Gitorious = {
     initialize: function(table) {
       this.table = $(table);
       this.currentHighlights = [];
-      this.highlightClassname = "highlighted";
+      this.highlightClassname = "marked";
     },
 
 

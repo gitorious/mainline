@@ -6,6 +6,7 @@
 	<title><%= @page_title ? @page_title + " - " : "" -%>Gitorious</title>
 	<meta name="author" content="Johan Sørensen">
 	<%= stylesheet_link_tag "base" -%>
+  <%= syntax_themes_css -%>
   <%= javascript_include_tag :defaults, :cache => true -%>
   <%  if @atom_auto_discovery_url -%>  
     <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url) -%>
