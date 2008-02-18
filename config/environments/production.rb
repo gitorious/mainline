@@ -14,6 +14,10 @@ config.logger = Hodel3000CompliantLogger.new(config.log_path)
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
 
+cache_dir = File.expand_path(File.join(RAILS_ROOT, 'public', 'cache'))
+config.action_controller.page_cache_directory = cache_dir
+config.action_controller.fragment_cache_store = :file_store, File.join(cache_dir, "fragments")
+
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"
 

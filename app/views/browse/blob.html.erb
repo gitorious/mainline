@@ -15,4 +15,6 @@
   <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>
 </h1>
 
-<%= render_highlighted(@blob.contents, current_path.last || "") -%>
+<% cache do -%>
+  <%= render_highlighted(@blob.contents, current_path.last || "") -%>
+<% end -%>
