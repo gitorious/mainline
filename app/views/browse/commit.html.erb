@@ -19,6 +19,7 @@
     <%= link_to "browse the initial tree state", tree_path(@commit.gtree.sha) -%>.
   </p>
 <% else -%>
+<% cache({:diffmode => @diffmode}) do -%>
   <%= render_diff_stats(@diff.stats) -%>
   <h2>Commit diff</h2>
   <%= render_diffmode_selector -%>
@@ -27,4 +28,5 @@
     <h4><%= h(file.path) -%><%#=link_to h(file.path), blob_path(file.sha, file.path) -%></h4>
     <%= render_diff(file.patch, file.src, file.dst, @diffmode) -%>
   <% end -%>
+<% end -%>
 <% end -%>
