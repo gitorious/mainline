@@ -141,8 +141,8 @@ module BrowseHelper
     out.join("\n")
   end
   
-  def render_highlighted(text, mime_type, theme = "idle")
-    syntax_name = "ruby"#syntax_name_from_mime_Type(mime_type)
+  def render_highlighted(text, filename, theme = "idle")
+    syntax_name = Uv.syntax_names_for_data(filename, text).first #TODO: render a choice select box if > 1
     highlighted = Uv.parse(text, "xhtml", syntax_name, false, theme)
     line_numbers_for(highlighted, theme)
   end

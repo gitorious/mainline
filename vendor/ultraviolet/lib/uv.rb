@@ -35,6 +35,32 @@ module Uv
          File.basename(f, '.css')
       end
    end
+   
+   def Uv.syntax_names_for_data(file_name, data)
+      init_syntaxes unless @syntaxes
+      first_line = data.split("\n").first
+      
+      result = []
+      @syntaxes.each do |key, value|
+         assigned = false
+         if value.fileTypes
+            value.fileTypes.each do |t|
+               if t == File.basename( file_name ) || t == File.extname( file_name )[1..-1]
+                  #result << [key, value] 
+                  result << key
+                  assigned = true
+                  break
+               end
+            end
+         end
+         unless assigned
+            if value.firstLineMatch && value.firstLineMatch =~ first_line
+               result << [key, value] 
+            end
+         end
+      end
+      result
+   end
 
    def Uv.syntax_for_file file_name
       init_syntaxes unless @syntaxes
@@ -70,7 +96,7 @@ module Uv
       css_class = render_style
       render_options = YAML.load( File.open(  renderer ) )
       render_processor = RenderProcessor.new( render_options, line_numbers, headers )
-      @syntaxes[syntax_name].parse( text,  render_processor )
+      (@syntaxes[syntax_name] || @syntaxes["plain_text"]).parse( text,  render_processor )
       render_processor.string
    end
 

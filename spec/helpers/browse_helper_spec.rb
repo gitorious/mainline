@@ -88,6 +88,24 @@ describe BrowseHelper do
     end
   end
   
+  describe "render_highlighted()" do
+    it "tries to figure out the filetype" do
+      Uv.should_receive(:syntax_names_for_data).with("foo.rb", "puts 'foo'").and_return(["ruby"])
+      render_highlighted("puts 'foo'", "foo.rb")
+    end
+    
+    it "parses the text" do
+      Uv.should_receive(:syntax_names_for_data).with("foo.rb", "puts 'foo'").and_return(["ruby"])
+      Uv.should_receive(:parse).and_return("puts 'foo'")
+      render_highlighted("puts 'foo'", "foo.rb")
+    end
+    
+    it "adds linenumbers" do
+      should_receive(:line_numbers_for).and_return(123)
+      render_highlighted("puts 'foo'", "foo.rb")
+    end
+  end
+  
   describe "render_diff_stats" do
     before(:each) do
       @stats = {:files=>
