@@ -91,13 +91,24 @@ module Uv
    
    def Uv.parse text, output = "xhtml", syntax_name = nil, line_numbers = false, render_style = "classic", headers = false
       init_syntaxes unless @syntaxes
-      renderer = File.join( File.dirname(__FILE__), '..',"render", output,"#{render_style}.render")
-      raise( ArgumentError, "Output for #{output} is not yet implemented" ) unless File.exists?(renderer)
       css_class = render_style
-      render_options = YAML.load( File.open(  renderer ) )
+      render_options = load_render_options(render_style, output)
       render_processor = RenderProcessor.new( render_options, line_numbers, headers )
       (@syntaxes[syntax_name] || @syntaxes["plain_text"]).parse( text,  render_processor )
       render_processor.string
+   end
+   
+   def Uv.load_render_options(render_style, output)
+     @render_options ||= {}
+     unless options = @render_options[render_style]
+      renderer = File.join( File.dirname(__FILE__), '..', "render", output, "#{render_style}.render")
+      unless File.exists?(renderer)
+        raise( ArgumentError, "Renderer #{render_style} for #{output} is not yet implemented" )
+      end
+      options = YAML.load( File.open(  renderer ) )
+      @render_options[render_style] = options
+    end
+    options
    end
 
    def Uv.debug text, syntax_name
