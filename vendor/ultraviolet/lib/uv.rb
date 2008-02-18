@@ -38,7 +38,7 @@ module Uv
    
    def Uv.syntax_names_for_data(file_name, data)
       init_syntaxes unless @syntaxes
-      first_line = data.split("\n").first
+      first_line = data.split("\n").first.to_s
       
       result = []
       @syntaxes.each do |key, value|
