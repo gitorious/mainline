@@ -662,7 +662,7 @@ table tr .line-numbers {
  background: #eee;
  color: #555;
  font-size: 92%;  
- padding: 4px 3px 2px 2px;
+ padding: 0 3px 0 2px;
  width: 35px;
  border-right: 1px solid #ccc;
 /* border-bottom: 1px solid #ddd;*/
