@@ -51,4 +51,8 @@ module ApplicationHelper
   	end
   	out.join("\n")
   end
+  
+  def flashes
+    flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
+  end
 end
