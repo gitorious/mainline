@@ -471,9 +471,11 @@ ul.bullet_list li {
   margin-bottom: 3em;
 }
 
+ul.path_breadcrumbs { margin: 0 0 5px 0; }
 ul.path_breadcrumbs li {
   display: inline;
   margin:0;
+  font-size: 11px;
 }
 
 /* tags */

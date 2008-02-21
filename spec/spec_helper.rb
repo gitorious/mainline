@@ -27,6 +27,10 @@ Spec::Runner.configure do |config|
   # do so here, like so ...
   #
   config.global_fixtures = :all
+  
+  def repo_path
+    File.join(File.dirname(__FILE__), "..", ".git")
+  end
   #
   # If you declare global fixtures, be aware that they will be declared
   # for all of your examples, even those that don't use them.

@@ -1,3 +1,4 @@
+[ ] Get rid of all the mocking in the controller tests, or at least clean it up
 [ ] Nag project owners with no commits to the mainline repos after a week or two
 [ ] gitk-style branch view
 [ ] project homepage is an editable wiki-ish page

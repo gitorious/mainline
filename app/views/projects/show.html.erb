@@ -41,7 +41,7 @@
           <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
         </td>
         <td>
-          <%= repos.last_commit ? repos.last_commit.committer.date.to_s(:short) : "<em>none</em>" -%>
+          <%= repos.last_commit ? repos.last_commit.committed_date.to_s(:short) : "<em>none</em>" -%>
         </td>
         <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
         <td><%= link_to "HEAD tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>
@@ -55,7 +55,7 @@
           <%= link_to h(repos.user.login), user_path(repos.user) -%>
         </td>
         <td>
-          <%= repos.last_commit ? repos.last_commit.committer.date.to_s(:short) : "<em>none</em>" -%>
+          <%= repos.last_commit ? repos.last_commit.committed_date.to_s(:short) : "<em>none</em>" -%>
         </td>
         <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
         <td><%= link_to "HEAD tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>

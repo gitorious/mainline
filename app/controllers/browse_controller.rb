@@ -5,9 +5,8 @@ class BrowseController < ApplicationController
   LOGS_PER_PAGE = 30
   
   def index
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)
-    @commits = @git.log(LOGS_PER_PAGE)
-    @tags_per_sha = @git.tags_by_sha
+    @git = @repository.git
+    @commits = @git.commits(@repository.head_candidate.name, LOGS_PER_PAGE)
     # TODO: Patch rails to keep track of what it responds to so we can DRY this up
     @atom_auto_discovery_url = project_repository_formatted_browse_path(@project, @repository, :atom)
     respond_to do |format|
@@ -17,44 +16,44 @@ class BrowseController < ApplicationController
   end
   
   def tree
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)   
-    @tree = @git.tree(params[:sha])
+    @git = @repository.git
+    @commit = @git.commit(params[:sha])
+    path = params[:path].blank? ? [] : ["#{params[:path].join("/")}/"] # FIXME: meh, this sux
+    @tree = @git.tree(@commit.tree.id, path)
   end
   
   def commit
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)
+    @git = @repository.git
     @commit = @git.commit(params[:sha])
-    if @commit.parent
-      @diff = @git.diff(@commit.parent.sha || "", @commit.sha)
-    else
-      # initial commit, link to the initial tree instead
-      @diff = nil
-    end
-    @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.sha})
+    @diff = @commit.diffs
+    @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id})
   end
   
   def diff
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)
+    @git = @repository.git
     @diff = @git.diff(params[:sha], params[:other_sha])
   end
   
   def blob
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)
-    @blob = @git.blob(params[:sha])
+    @git = @repository.git
+    @commit = @git.commit(params[:sha])
+    @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
+    render_not_found and return unless @blob
   end
   
   def raw
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)
-    @blob = @git.blob(params[:sha])
-    render :text => @blob.contents, :content_type => "text/plain"
+    @git = @repository.git
+    @commit = @git.commit(params[:sha])
+    @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
+    render_not_found and return unless @blob
+    render :text => @blob.data, :content_type => "text/plain"
   end
   
   def log
-    @git = Gitorious::Gitto.new(@repository.full_repository_path)
+    @git = @repository.git
     skip = params[:page].blank? ? 0 : (params[:page].to_i-1) * LOGS_PER_PAGE
-    @commits = @git.log(LOGS_PER_PAGE, skip)
-    @tags_per_sha = @git.tags_by_sha
+    @commits = @git.commits(@repository.head_candidate.name, LOGS_PER_PAGE, skip)
     # TODO: Patch rails to keep track of what it responds to so we can DRY this up
     @atom_auto_discovery_url = project_repository_formatted_browse_path(@project, @repository, :atom)
     respond_to do |format|

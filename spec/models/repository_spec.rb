@@ -100,8 +100,24 @@ describe Repository do
   end
   
   it "knows if has commits" do
-    @repository.git_backend.should_receive(:repository_has_commits?).and_return(true)
+    @repository.stub!(:new_record?).and_return(false)
+    @repository.stub!(:ready?).and_return(true)
+    git_mock = mock("Grit::Git")
+    @repository.stub!(:git).and_return(git_mock)
+    head = mock("head")
+    head.stub!(:name).and_return("master")
+    @repository.git.should_receive(:heads).and_return([head])
     @repository.has_commits?.should == true
+  end
+  
+  it "knows if has commits, unless its a new record" do
+    @repository.stub!(:new_record?).and_return(false)
+    @repository.has_commits?.should == false
+  end
+  
+  it "knows if has commits, unless its not ready" do
+    @repository.stub!(:ready?).and_return(false)
+    @repository.has_commits?.should == false
   end
   
   it "should build a new repository by cloning another one" do
@@ -179,11 +195,14 @@ describe Repository do
   it "has one recent commit" do
     @repository.save!
     repos_mock = mock("Git mock")
-    commit_mock = mock("Git::Commit mock")
-    repos_mock.should_receive(:log).with(1).and_return(commit_mock)
+    commit_mock = mock("Git::Commit mock", :null_object => true)
+    repos_mock.should_receive(:commits).with("master", 1).and_return(commit_mock)
     commit_mock.should_receive(:first).and_return(commit_mock)
-    Git.should_receive(:bare).with(@repository.full_repository_path).and_return(repos_mock)
+    @repository.stub!(:git).and_return(repos_mock)
     @repository.stub!(:has_commits?).and_return(true)
+    heads_stub = mock("head")
+    heads_stub.stub!(:name).and_return("master")    
+    @repository.stub!(:head_candidate).and_return(heads_stub)
     @repository.last_commit.should == commit_mock
   end
   
@@ -193,6 +212,29 @@ describe Repository do
     @repository.mainline = false
     @repository.can_be_deleted_by?(users(:moe)).should == false
     @repository.can_be_deleted_by?(users(:johan)).should == true
+  end
+  
+  it "has a git method that accesses the repository" do
+    # FIXME: meh for stubbing internals, need to refactor that part in Grit
+    File.should_receive(:exist?).at_least(1).with("#{@repository.full_repository_path}/.git").and_return(false)
+    File.should_receive(:exist?).at_least(1).with(@repository.full_repository_path).and_return(true)
+    @repository.git.should be_instance_of(Grit::Repo)
+    @repository.git.path.should == @repository.full_repository_path
+  end
+  
+  it "has a head_candidate" do
+    heads_stub = mock("head")
+    heads_stub.stub!(:name).and_return("master")
+    git = mock("git backend")
+    @repository.stub!(:git).and_return(git)
+    git.should_receive(:heads).and_return([heads_stub])
+    @repository.should_receive(:has_commits?).and_return(true)
+    @repository.head_candidate.should == heads_stub
+  end
+  
+  it "has a head_candidate, unless it doesn't have commits" do
+    @repository.should_receive(:has_commits?).and_return(false)
+    @repository.head_candidate.should == nil
   end
   
   describe "observers" do

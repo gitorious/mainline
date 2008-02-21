@@ -36,17 +36,22 @@ module BrowseHelper
     current_path << path
   end
   
-  # def breadcrumb_path
-  #   out = %Q{<ul class="path_breadcrumbs">\n}
-  #   visited_path = []
-  #   out <<  %Q{  <li>/ #{link_to("root", tree_path(params[:sha], []))}</li>\n}
-  #   current_path.each_with_index do |path, index|
-  #     visited_path << path
-  #     out << %Q{  <li>/ #{link_to(path, tree_path(params[:sha], path))}</li>\n}
-  #   end
-  #   out << "</ul>"
-  #   out
-  # end
+  def breadcrumb_path(root_name = "root", commit_id = params[:sha])
+    return if current_path.blank?
+    out = %Q{<ul class="path_breadcrumbs">\n}
+    visited_path = []
+    out <<  %Q{  <li>#{link_to(root_name, tree_path(commit_id, []))}</li>\n}
+    current_path.each_with_index do |path, index|
+      visited_path << path
+      if visited_path == current_path
+        out << %Q{  <li>/ #{path}</li>\n}
+      else
+        out << %Q{  <li>/ #{link_to(path, tree_path(commit_id, visited_path))}</li>\n}
+      end
+    end
+    out << "</ul>"
+    out
+  end
     
   def render_tag_box_if_match(sha, tags_per_sha)
     tags = tags_per_sha[sha]
@@ -61,26 +66,26 @@ module BrowseHelper
   end  
   
   # Takes a unified diff as input and renders it as html
-  def render_diff(udiff, src_sha, dst_sha, display_mode = "inline")
+  def render_diff(udiff, display_mode = "inline")
     return if udiff.blank?
 
     case display_mode
     when "sidebyside"
-      render_sidebyside_diff(udiff, src_sha, dst_sha)
+      render_sidebyside_diff(udiff)
     else
-      render_inline_diff(udiff, src_sha, dst_sha)
+      render_inline_diff(udiff)
     end
   end
   
   #diff = Diff::Display::Unified.new(load_diff("simple"))
   #diff.render(Diff::Renderer::Base.new)
-  def render_inline_diff(udiff, src_sha, dst_sha)
+  def render_inline_diff(udiff)
     differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
     out << "<tr>"
-    out << %Q{<td class="line-numbers">#{src_sha}</td>}
-    out << %Q{<td class="line-numbers">#{dst_sha}</td>}
+    out << %Q{<td class="line-numbers"></td>}
+    out << %Q{<td class="line-numbers"></td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
     out << differ.render(Gitorious::Diff::InlineTableCallback.new)
@@ -93,13 +98,13 @@ module BrowseHelper
     out
   end
   
-  def render_sidebyside_diff(udiff, src_sha, dst_sha)
+  def render_sidebyside_diff(udiff)
     differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff sidebyside">\n}
     out << %Q{<colgroup class="left"><col class="lines"/><col class="code"/></colgroup>}
     out << %Q{<colgroup class="right"><col class="lines"/><col class="code"/></colgroup>}
-    out << %Q{<thead><th class="line-numbers">#{src_sha}</th><th></th>}
-    out << %Q{<th class="line-numbers">#{dst_sha}</th><th></th></thead>}
+    out << %Q{<thead><th class="line-numbers"></th><th></th>}
+    out << %Q{<th class="line-numbers"></th><th></th></thead>}
     out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
     out << %Q{<tr class="toggle_diff"><td colspan="4">}
     out << %Q{<small>#{link_to_function "toggle raw diff", "$('diff#{udiff.object_id}').toggle()"}</small></td></tr>}

@@ -6,9 +6,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   
-  rescue_from(ActiveRecord::RecordNotFound) do |e| 
-    render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
-  end
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   
   protected
     def require_user_has_ssh_keys
@@ -21,5 +19,9 @@ class ApplicationController < ActionController::Base
     
     def find_project
       @project = Project.find_by_slug!(params[:project_id])
+    end
+    
+    def render_not_found
+      render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
     end
 end

@@ -15,6 +15,8 @@ class Repository < ActiveRecord::Base
   after_create :add_user_as_committer, :create_new_repos_task
   after_destroy :create_delete_repos_task
   
+  BASE_REPOSITORY_URL = "gitorious.org"
+  
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}s-#{other.name}-clone" : nil
     new(:parent => other, :project => other.project, :name => suggested_name)
@@ -24,7 +26,18 @@ class Repository < ActiveRecord::Base
     find_by_name(name) || raise(ActiveRecord::RecordNotFound)
   end
   
-  BASE_REPOSITORY_URL = "gitorious.org"
+  def self.create_git_repository(path)
+    git_backend.create(full_path_from_partial_path(path))
+  end
+  
+  def self.clone_git_repository(target_path, source_path)
+    git_backend.clone(full_path_from_partial_path(target_path), 
+      full_path_from_partial_path(source_path))
+  end
+  
+  def self.delete_git_repository(path)
+    git_backend.delete!(full_path_from_partial_path(path))
+  end
   
   def gitdir
     File.join(project.slug, "#{name}.git")
@@ -42,21 +55,13 @@ class Repository < ActiveRecord::Base
     self.class.full_path_from_partial_path(gitdir)
   end
   
-  def self.create_git_repository(path)
-    git_backend.create(full_path_from_partial_path(path))
-  end
-  
-  def self.clone_git_repository(target_path, source_path)
-    git_backend.clone(full_path_from_partial_path(target_path), 
-      full_path_from_partial_path(source_path))
-  end
-  
-  def self.delete_git_repository(path)
-    git_backend.delete!(full_path_from_partial_path(path))
+  def git
+    Grit::Repo.new(full_repository_path)
   end
   
   def has_commits?
-    git_backend.repository_has_commits?(full_repository_path)
+    return false if new_record? || !ready?
+    !git.heads.empty?
   end
   
   def self.git_backend
@@ -81,9 +86,14 @@ class Repository < ActiveRecord::Base
     end
   end
   
+  def head_candidate
+    return nil unless has_commits?
+    @head_candidate ||= git.heads.find{|h| h.name == "master"} || git.heads.first
+  end
+  
   def last_commit
     if has_commits?
-      @last_commit ||= Git.bare(full_repository_path).log(1).first
+      @last_commit ||= git.commits(head_candidate.name, 1).first
     end
     @last_commit
   end

@@ -12,9 +12,11 @@
 
 <h1>
   Blob of <code><%= current_path.join("/") -%></code> 
-  <small>(<%= link_to "raw blob data", raw_blob_path(@blob.sha, current_path) -%>)</small>
+  <small>(<%= link_to "raw blob data", raw_blob_path(@commit.id, current_path) -%>)</small>
 </h1>
 
+<%= breadcrumb_path(@repository.name, @commit.id) -%>
+
 <% cache do -%>
-  <%= render_highlighted(@blob.contents, current_path.last || "") -%>
+  <%= render_highlighted(@blob.data, current_path.last || "") -%>
 <% end -%>
