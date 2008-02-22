@@ -18,6 +18,10 @@ class BrowseController < ApplicationController
   def tree
     @git = @repository.git
     @commit = @git.commit(params[:sha])
+    unless @commit
+      redirect_to project_repository_tree_path(@project, @repository, "HEAD", params[:path])
+      return
+    end
     path = params[:path].blank? ? [] : ["#{params[:path].join("/")}/"] # FIXME: meh, this sux
     @tree = @git.tree(@commit.tree.id, path)
   end

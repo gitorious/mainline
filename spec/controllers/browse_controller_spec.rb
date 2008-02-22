@@ -53,6 +53,14 @@ describe BrowseController do
       assigns[:git].should == @git
       assigns[:tree].should == tree_mock
     end
+    
+    it "redirects to HEAD if provided sha was not found (backwards compat)" do
+      @git.should_receive(:commit).with("a"*40).and_return(nil)
+      get :tree, :project_id => @project.slug, 
+        :repository_id => @repository.name, :sha => "a"*40, :path => ["foo"]
+      
+      response.should redirect_to(project_repository_tree_path(@project, @repository, "HEAD", ["foo"]))
+    end
   end
   
   describe "#commit" do    
@@ -73,7 +81,7 @@ describe BrowseController do
       response.should be_success
       assigns[:git].should == @git
       assigns[:commit].should == @commit_mock
-      assigns[:diff].should == @diff_mock
+      assigns[:diffs].should == @diff_mock
     end
     
     it "gets the comments for the commit" do
