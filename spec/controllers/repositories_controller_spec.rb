@@ -86,7 +86,7 @@ describe RepositoriesController, "new" do
     response.should be_success
     assigns[:repository_to_clone].should == @repository
     assigns[:repository].should be_instance_of(Repository)
-    assigns[:repository].name.should match(/johans\-(.+)\-clone/)
+    assigns[:repository].name.should == "johans-clone"
   end
   
   it "redirects to new_account_key_path if no keys on user" do
