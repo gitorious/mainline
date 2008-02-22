@@ -1,21 +1,24 @@
 <% @page_title = "Tree for #{@repository.name} in #{@project.title}" -%>
 <h1>
-  Browsing tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
+  Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
 </h1>
 
+<%= breadcrumb_path(@repository.name, @commit.id) -%>
+
 <table class="listing tree">
-  <% @tree.children.sort_by{|f,n| f.downcase }.each do |file, node| -%>
+  <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
     <!-- <td><%#= h(node.mode) -%></td> -->
-    <% if node.type == "tree" -%>
-      <td class="node tree"><%= link_to h(file + "/"), tree_path(node.sha, build_tree_path(file)) -%></td>
-      <td class="link"><%= link_to node.type, tree_path(node.sha, build_tree_path(file)) -%></td>
-    <!-- TODO: archive -->
+    <% if node.is_a? Grit::Tree -%>
+      <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(@commit.id, node.name) -%></td>
     <% else -%>
-      <td class="node file"><%= link_to h(file), blob_path(node.sha, build_tree_path(file)) -%></td>
-      <td class="link"><%= link_to node.type, blob_path(node.sha, build_tree_path(file)) -%></td>
+      <td class="node file"><%= link_to h(node.basename), blob_path(@commit.id, node.name) -%></td>
     <% end -%>
-    <td class="sha1"><%= h(node.sha[0..16]) -%></td>
+    <td></td>
   </tr>
   <% end -%>
 </table>
+
+<% content_for :sidebar do -%>  
+  <%= render :partial => "tags_and_branches" -%>
+<% end -%>

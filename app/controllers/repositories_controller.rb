@@ -13,7 +13,7 @@ class RepositoriesController < ApplicationController
     @repository = @project.repositories.find_by_name!(params[:id])
     @comment_count = @repository.comments.count
     if @repository.has_commits?
-      @commits = Gitorious::Gitto.new(@repository.full_repository_path).log(10)
+      @commits = @repository.git.commits(@repository.head_candidate.name, 10)
     else
       @commits = []
     end

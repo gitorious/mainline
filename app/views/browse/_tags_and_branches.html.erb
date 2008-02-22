@@ -1,0 +1,13 @@
+<h5>Branches:</h5>
+<ul class="links">
+  <% @git.branches.each do |branch| -%>
+  <li><%= link_to h(branch.name), commit_path(branch.commit.id) -%></li>
+  <% end -%>
+</ul>
+
+<h5>Tags:</h5>
+<ul class="links">
+<% @git.tags.each do |tag| -%>
+  <li><%= link_to h(tag.name), commit_path(tag.sha) -%></li>
+<% end -%>
+</ul>

@@ -1,10 +1,10 @@
 <ul class="infobox">
-  <li><strong>Date:</strong> <%=h @commit.date -%></li>
+  <li><strong>Date:</strong> <%=h @commit.committed_date -%></li>
   <li><strong>Committer:</strong> <%=h @commit.committer.name -%> (<%=h @commit.committer.email -%>)</li>
   <% unless @commit.author.email == @commit.committer.email -%>
   <li><strong>Author:</strong> <%=h @commit.author.name -%> (<%=h @commit.author.email -%>)</li>
   <% end -%>
-  <li><strong>Commit SHA1:</strong> <%=h @commit.sha -%></li>
-  <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.gtree.sha), 
-    project_repository_tree_path(@project, @repository, @commit.gtree.sha) -%></li>
+  <li><strong>Commit SHA1:</strong> <%=h @commit.id -%></li>
+  <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.tree.id), 
+    project_repository_tree_path(@project, @repository, @commit.id) -%></li>
 </ul>

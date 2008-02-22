@@ -1,5 +1,5 @@
 <% @page_title = "Comments in #{@repository.name}" -%>
-<h1>Comments on commit <%= h(@commit.sha) -%> in <%= h(@repository.name) -%></h1>
+<h1>Comments on commit <%= h(@commit.id[0,7]) -%> in <%= h(@repository.name) -%></h1>
 
 <p><pre><%=h @commit.message -%></pre></p>
 
@@ -7,10 +7,10 @@
 
 <ul class="tab_menu">
   <li><%= link_to "Commit diff", 
-      project_repository_commit_path(@project, @repository, @commit.sha) -%></li>
+      project_repository_commit_path(@project, @repository, @commit.id) -%></li>
   <li class="selected">Comments (<%= @comments.size -%>)</li>
 </ul>
 
 <%= render :partial => @comments -%>
 
-<%= render :partial => "form", :locals => {:sha1 => @commit.sha} -%>
+<%= render :partial => "form", :locals => {:sha1 => @commit.id} -%>

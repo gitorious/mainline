@@ -1,20 +1,20 @@
 atom_feed do |feed|
   feed.title("Gitorious: #{@project.title} - #{@repository.name}")
-  feed.updated((@commits.blank? ? nil : @commits.first.date))
+  feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 
   @commits.each do |commit|
-    item_url = "http://gitorious.org" +  project_repository_commit_path(@project, @repository, commit.sha)
-    feed.entry(commit.sha, {
+    item_url = "http://gitorious.org" +  project_repository_commit_path(@project, @repository, commit.id)
+    feed.entry(commit.id, {
       :url => item_url, 
-      :updated => commit.date, 
-      :published => commit.date,
-      :id => "#{@repository.name}:#{commit.sha}"
+      :updated => commit.committed_date, 
+      :published => commit.committed_date,
+      :id => "#{@repository.name}:#{commit.id}"
     }) do |entry|
       entry.title(truncate(commit.message, 75))
       entry.content(<<-EOS, :type => 'html')
 <h1>In #{@repository.gitdir}</h1>
 <pre>
-Date:   #{commit.date.strftime("%Y-%m-%d %H:%M")}
+Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
 Committer: #{commit.committer.name} (#{commit.committer.email})
 Message:
 #{commit.message}

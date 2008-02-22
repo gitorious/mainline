@@ -24,12 +24,16 @@ describe RepositoriesController, "show" do
   end
   
   it "GET projects/1/repositories/1 is successful" do
-    do_get @project.repositories.first
+    repo = @project.repositories.first
+    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    do_get repo
     response.should be_success
   end
   
   it "scopes GET :show to the project_id" do
-    do_get repositories(:moes)
+    repo = repositories(:moes)
+    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    do_get repo
     response.code.to_i.should == 404
   end
 end
@@ -46,9 +50,12 @@ describe RepositoriesController, "show as XML" do
   end
   
   it "GET projects/1/repositories/1.xml is successful" do
-    do_get @project.repositories.first
+    repo = @project.repositories.first
+    repo.stub!(:has_commits?).and_return(false)
+    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    do_get repo
     response.should be_success
-    response.body.should == @project.repositories.first.to_xml
+    response.body.should == repo.to_xml
   end
 end
 

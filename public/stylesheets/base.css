@@ -471,9 +471,11 @@ ul.bullet_list li {
   margin-bottom: 3em;
 }
 
+ul.path_breadcrumbs { margin: 0 0 5px 0; }
 ul.path_breadcrumbs li {
   display: inline;
   margin:0;
+  font-size: 11px;
 }
 
 /* tags */
@@ -662,7 +664,7 @@ table tr .line-numbers {
  background: #eee;
  color: #555;
  font-size: 92%;  
- padding: 4px 3px 2px 2px;
+ padding: 0 3px 0 2px;
  width: 35px;
  border-right: 1px solid #ccc;
 /* border-bottom: 1px solid #ddd;*/
@@ -785,6 +787,12 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 #site #clone_list {
   width: 49%;
   float: right;
+}
+
+#site #clone_list ul li.repos {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
 #system_message {
