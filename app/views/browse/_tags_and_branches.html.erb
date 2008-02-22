@@ -8,6 +8,6 @@
 <h5>Tags:</h5>
 <ul class="links">
 <% @git.tags.each do |tag| -%>
-  <li><%= link_to h(tag.name), commit_path(tag.sha) -%></li>
+  <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
 <% end -%>
 </ul>
