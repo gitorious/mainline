@@ -13,7 +13,7 @@
 
 
 
-<% if @diff.blank? -%>
+<% if @diffs.blank? -%>
   <p>
     This is the initial commit in this repository, 
     <%= link_to "browse the initial tree state", tree_path(@commit.id) -%>.
@@ -21,9 +21,14 @@
 <% else -%>
 <% cache({:diffmode => @diffmode}) do -%>
   <%#= render_diff_stats(@diff.stats) -%>
+  <ul class="diff_stats">
+    <% @diffs.map{|d| d.a_path }.each do |path| -%>
+      <li><a href="#<%= h(path) -%>"><%= h(path) -%></a>
+    <% end -%>
+  </ul>
   <h2>Commit diff</h2>
   <%= render_diffmode_selector -%>
-  <% @diff.each do |file| -%>
+  <% @diffs.each do |file| -%>
     <a name="<%= h(file.a_path) -%>"></a>
     <h4><%=h(file.a_path) -%></h4>
     <%= render_diff(file.diff, @diffmode) -%>

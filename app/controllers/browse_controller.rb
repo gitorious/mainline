@@ -26,7 +26,7 @@ class BrowseController < ApplicationController
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
     @commit = @git.commit(params[:sha])
-    @diff = @commit.diffs
+    @diffs = @commit.diffs
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id})
   end
   
