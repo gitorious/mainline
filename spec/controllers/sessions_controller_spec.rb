@@ -73,4 +73,9 @@ describe SessionsController do
     controller.send(:current_user).should == users(:johan)
   end
   
+  it "should show flash when invalid credentials are passed" do
+    post :create, :email => "invalid", :password => "also invalid"
+    # response.body.should have_tag("div.flash_message", /please try again/)
+    # rspec.should test(flash.now)
+  end
 end
