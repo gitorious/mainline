@@ -37,10 +37,9 @@ module BrowseHelper
   end
   
   def breadcrumb_path(root_name = "root", commit_id = params[:sha])
-    return if current_path.blank?
     out = %Q{<ul class="path_breadcrumbs">\n}
     visited_path = []
-    out <<  %Q{  <li>#{link_to(root_name, tree_path(commit_id, []))}</li>\n}
+    out <<  %Q{  <li>/ #{link_to(root_name, tree_path(commit_id, []))}</li>\n}
     current_path.each_with_index do |path, index|
       visited_path << path
       if visited_path == current_path
