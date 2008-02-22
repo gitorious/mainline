@@ -42,8 +42,8 @@ module Diff
           RemLine.new(line, line_number)
         end
       
-        def unmod(line, line_number)
-          UnModLine.new(line, line_number)
+        def unmod(line, old_number, new_number)
+          UnModLine.new(line, old_number, new_number)
         end
         
         def header(line)
@@ -51,44 +51,44 @@ module Diff
         end
       end
       
-      def initialize(line, line_number)
+      def initialize(line, old_number = nil, new_number = nil)
         super(line)
-        @number = line_number
+        @old_number, @new_number = old_number, new_number
       end
-      attr_reader :number
+      attr_reader :old_number, :new_number
       
       def inspect
-        %Q{#<#{self.class.name} [#{number.inspect}] "#{self}">}
+        %Q{#<#{self.class.name} [#{old_number.inspect}-#{new_number.inspect}] "#{self}">}
       end
     end
     
     class AddLine < Line
       def initialize(line, line_number)
-        super(line, line_number)
+        super(line, nil, line_number)
       end
     end
     
     class RemLine < Line
       def initialize(line, line_number)
-        super(line, line_number)
+        super(line, line_number, nil)
       end
     end
     
     class UnModLine < Line
-      def initialize(line, line_number)
-        super(line, line_number)
+      def initialize(line, old_number, new_number)
+        super(line, old_number, new_number)
       end
     end
     
     class SepLine < Line
       def initialize(line = '...')
-        super(line, nil)
+        super(line)
       end
     end
     
     class HeaderLine < Line
       def initialize(line)
-        super(line, nil)
+        super(line)
       end
     end
     

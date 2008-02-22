@@ -39,14 +39,48 @@ describe Diff::Display::Unified::Generator do
       data.to_diff.should == diff_data.chomp
     end
     
-    it "doesn't parse linenumbers that isn't part if the diff" do
-      diff_data = load_diff("pseudo_recursive")
-      data = Diff::Display::Unified::Generator.run(diff_data)
-      linenos = []
-      data.each{|blk| blk.each{|line| linenos << line.number } }
-      linenos.compact.should == (1..14).to_a
-    end
-    
+    #it "doesn't parse linenumbers that isn't part if the diff" do
+    #  line_numbers_for(:pseudo_recursive).compact.should == (1..14).to_a
+    #end
   end
-  
+
+  describe "line numbering" do
+    it "numbers correctly for multiple_adds_after_rem" do
+      line_numbers_for(:multiple_adds_after_rem).should == [
+        [193, 193],
+        [194, nil],
+        [nil, 194],
+        [nil, 195],
+        [nil, 196],
+        [nil, 197],
+        [nil, 198],
+        [195, 199]
+      ]
+    end
+
+    it "numbers correctly for simple" do
+      line_numbers_for(:simple).should == [
+        [1, 1],
+        [2, 2],
+        [3, nil],
+        [4, nil],
+        [nil, 3],
+        [nil, 4],
+        [nil, 5],
+      ]
+    end
+  end
+
+  def line_numbers_for(diff)
+    diff_data = load_diff(diff)
+    data = Diff::Display::Unified::Generator.run(diff_data)
+    linenos = []
+    data.each do |blk| 
+      blk.each do |line|
+        next if line.class == Diff::Display::HeaderLine
+        linenos << [line.old_number, line.new_number]
+      end
+    end
+    linenos
+  end
 end

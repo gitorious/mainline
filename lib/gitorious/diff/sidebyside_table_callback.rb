@@ -47,33 +47,33 @@ module Gitorious
       # Before lines
       def addline(line)
         # adds go on the right
-        %Q{<th class="line-numbers">#{line.number}</th>} + 
+        %Q{<th class="line-numbers">#{line.old_number}</th>} + 
         %Q{<td class="code ins"></td>} + 
-        %Q{<th class="line-numbers">#{line.number}</th>} + 
+        %Q{<th class="line-numbers">#{line.new_number}</th>} + 
         %Q{<td class="code ins"><ins>#{escape(line)}</ins></td></tr>}
       end
       
       def remline(line)
         # rems go on the left (hide the right side)
-        %Q{<th class="line-numbers">#{line.number}</th>} + 
+        %Q{<th class="line-numbers">#{line.old_number}</th>} + 
         %Q{<td class="code del"><del>#{CGI.escapeHTML(line)}</del></td>} + 
-        %Q{<th class="line-numbers">#{line.number}</th>} + 
+        %Q{<th class="line-numbers">#{line.new_number}</th>} + 
         %Q{<td class="code del hidden"><del>#{escape(line)}</del></td></tr>}
       end
       
       def modline(line)
         # TODO: figure how we best display these
-        # %Q{<th class="line-numbers">#{line.number}</th>} + 
+        # %Q{<th class="line-numbers">#{line.old_number}</th>} + 
         # %Q{<td class="code changed mod">#{CGI.escapeHTML(line)}</td>} + 
-        # %Q{<th class="line-numbers">#{line.number}</th>} + 
+        # %Q{<th class="line-numbers">#{line.new_number}</th>} + 
         # %Q{<td class="code changed mod">#{escape(line)}</td></tr>}
       end
       
       def unmodline(line)
         # unmods goes on both sides
-        %Q{<th class="line-numbers">#{line.number}</th>} + 
+        %Q{<th class="line-numbers">#{line.old_number}</th>} + 
         %Q{<td class="code unchanged unmod">#{escape(line)}</td>} + 
-        %Q{<th class="line-numbers">#{line.number}</th>} + 
+        %Q{<th class="line-numbers">#{line.new_number}</th>} + 
         %Q{<td class="code unchanged unmod">#{escape(line)}</td></tr>}
       end
       

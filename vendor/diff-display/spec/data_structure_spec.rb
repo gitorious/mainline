@@ -12,9 +12,15 @@ describe "Diff::Display data structures" do
   end
   
   describe "Line" do
-    it "initializes with a line number" do
+    it "initializes with an old line number" do
       line = Diff::Display::Line.new("foo", 12)
-      line.number.should == 12
+      line.old_number.should == 12
+    end
+
+    it "initializes with numbers" do
+      line = Diff::Display::Line.new("foo", 12, 13)
+      line.old_number.should == 12
+      line.new_number.should == 13
     end
     
     it "has a class method for creating an AddLine" do
@@ -28,7 +34,7 @@ describe "Diff::Display data structures" do
     end
     
     it "has a class method for creating a UnModLine" do
-      line = Diff::Display::Line.unmod("foo", 7)
+      line = Diff::Display::Line.unmod("foo", 7, 8)
       line.should be_instance_of(Diff::Display::UnModLine)
     end
     

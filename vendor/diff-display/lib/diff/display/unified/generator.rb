@@ -27,8 +27,7 @@ module Diff::Display
       @prev_buffer    = []
       @line_type      = nil
       @prev_line_type = nil
-      @offset_base    = 0
-      @offset_changed = 0
+      @offset         = [0, 0]
       @data = Data.new
       self
     end
@@ -58,10 +57,9 @@ module Diff::Display
         identify_block
         push Block.header
         current_block << Line.header(line)
-        add_separator unless @offset_changed.zero?
-        @line_type      = nil
-        @offset_base    = $1.to_i - 1
-        @offset_changed = $3.to_i - 1
+        add_separator unless @offset[0].zero?
+        @line_type = nil
+        @offset    = Array.new(2) { $3.to_i - 1 }
         return
       end
       
@@ -96,37 +94,16 @@ module Diff::Display
       end
       
       def identify_block
-        if @prev_line_type.eql?(LINE_TYPES['-']) and @line_type.eql?(LINE_TYPES['+'])
-          process_block(:mod, true, true)
-        else
-          if LINE_TYPES.values.include?(@line_type)
-            process_block(@line_type, true)
-          end
+        if LINE_TYPES.values.include?(@line_type)
+          process_block(@line_type)
         end
 
         @prev_line_type = nil
       end
       
-      def process_block(diff_line_type, new = false, old = false)
+      def process_block(diff_line_type)
         push Block.send(diff_line_type)
-        # Mod block
-        if diff_line_type.eql?(:mod) && @prev_buffer.size && @buffer.size == 1
-          process_line(@prev_buffer.first, @buffer.first)
-          return
-        end
-        unroll_prev_buffer if old
-        unroll_buffer      if new 
-      end
-      
-      # TODO Needs a better name...it does process a line (two in fact) but
-      # its primary function is to add a Rem and an Add pair which
-      # potentially have inline changes
-      def process_line(oldline, newline)
-        # -
-        current_block << Line.rem(oldline, @offset_base += 1)
-
-        # +
-        current_block << Line.add(newline, @offset_changed += 1)
+        unroll_buffer
       end
 
       def add_separator
@@ -160,19 +137,21 @@ module Diff::Display
         @prev_buffer
       end
 
-      def unroll_prev_buffer
-        return if @prev_buffer.empty?
-        @prev_buffer.each  do |line| 
-          @offset_base += 1 
-          current_block << Line.send(@prev_line_type, line, @offset_base)
-        end
-      end
-
       def unroll_buffer
         return if @buffer.empty?
         @buffer.each do |line| 
-          @offset_changed += 1 
-          current_block << Line.send(@line_type, line, @offset_changed)
+          case @line_type
+            when :add
+              @offset[1] += 1
+              current_block << Line.send(@line_type, line, @offset[1])
+            when :rem
+              @offset[0] += 1
+              current_block << Line.send(@line_type, line, @offset[0])
+            when :unmod
+              @offset[0] += 1
+              @offset[1] += 1
+              current_block << Line.send(@line_type, line, *@offset)
+          end
         end
       end
 
