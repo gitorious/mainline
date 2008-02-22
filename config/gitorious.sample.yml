@@ -1,0 +1,8 @@
+cookie_secret: ssssht
+# The path where git repositories are stored. The actual (bare) repositories resides
+# in repository_base_path/#{project.slug}/#{repository.name}.git/
+repository_base_path: "/path/to/gitorious/repositories"
+# extra_html_head_data: Stuff that's in the html HEAD. The live site has e.g. Google Analytics here.
+# system_message: Enter a message that will appear on the front page here
+gitorious_client_port: 3000
+gitorious_client_host: localhost
