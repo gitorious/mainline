@@ -789,6 +789,12 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   float: right;
 }
 
+#site #clone_list ul li.repos {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
 #system_message {
   background: #ffc;
   border-bottom: 1px solid #aaa;

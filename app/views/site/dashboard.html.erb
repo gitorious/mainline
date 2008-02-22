@@ -25,9 +25,14 @@
   <h2>Clones of your project repositories</h2>
   <ul>
   <% @repository_clones.each do |repos| -%>
-    <li>
+    <li class="repos">
       <%= link_to h(repos.name), project_repository_path(repos.project, repos) -%> 
-      <small>of <%= h(repos.project.slug) -%></small>
+      <small>of <%= h(repos.project.slug) -%></small><br />
+      <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
+      <small>
+        <%= h(repos.last_commit.committer.name) -%> - 
+        <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
+      </small>
     </li>
   <% end -%>
   <% if @repository_clones.blank? -%>
