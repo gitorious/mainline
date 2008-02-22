@@ -1,2 +1,13 @@
-Use this README file to introduce your application and point to useful places in the API for learning more.
-Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.
+== Gitorious
+
+Gitorious.org -- Free open source hosting with a twist!
+
+== How to deploy (for local development)
+
+1. Do the normal rails app stuff (database.yml etc.)
+2. Fix the config/gitorious.sample.yml, and rename it to gitorious.yml.
+3. If you want real project data, find a project, set the 'ready' status to true, create a bare git repository (git --bare init) in the directory GitoriousConfig['repository_base_path']/#{project.slug}/#{repository.name}.git, and push something to that repository.
+4. There is no.. 4!
+
+
+Copyright (C) 2007  Johan Sørensen
