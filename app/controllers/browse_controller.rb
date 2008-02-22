@@ -42,6 +42,10 @@ class BrowseController < ApplicationController
   def blob
     @git = @repository.git
     @commit = @git.commit(params[:sha])
+    unless @commit
+      redirect_to project_repository_blob_path(@project, @repository, "HEAD", params[:path])
+      return
+    end
     @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
     render_not_found and return unless @blob
   end
@@ -49,6 +53,10 @@ class BrowseController < ApplicationController
   def raw
     @git = @repository.git
     @commit = @git.commit(params[:sha])
+    unless @commit
+      redirect_to project_repository_raw_blob_path(@project, @repository, "HEAD", params[:path])
+      return
+    end
     @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
     render_not_found and return unless @blob
     render :text => @blob.data, :content_type => "text/plain"

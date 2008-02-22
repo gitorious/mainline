@@ -131,7 +131,15 @@ describe BrowseController do
       response.should be_success
       assigns[:git].should == @git
       assigns[:blob].should == blob_mock
-    end    
+    end 
+    
+    it "redirects to HEAD if provided sha was not found (backwards compat)" do
+      @git.should_receive(:commit).with("a"*40).and_return(nil)
+      get :blob, {:project_id => @project.slug, 
+          :repository_id => @repository.name, :sha => "a"*40, :path => ["foo.rb"]}
+      
+      response.should redirect_to(project_repository_blob_path(@project, @repository, "HEAD", ["foo.rb"]))
+    end   
   end
   
   describe "#raw" do
@@ -153,6 +161,14 @@ describe BrowseController do
       assigns[:blob].should == blob_mock
       response.body.should == "blabla"
       response.content_type.should == "text/plain"
+    end
+    
+    it "redirects to HEAD if provided sha was not found (backwards compat)" do
+      @git.should_receive(:commit).with("a"*40).and_return(nil)
+      get :raw, {:project_id => @project.slug, 
+          :repository_id => @repository.name, :sha => "a"*40, :path => ["foo.rb"]}
+      
+      response.should redirect_to(project_repository_raw_blob_path(@project, @repository, "HEAD", ["foo.rb"]))
     end
   end
   
