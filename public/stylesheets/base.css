@@ -426,6 +426,11 @@ table.repository_list tr.clone td.name {
   font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
 }
 
+small.commit_message {
+  margin: 0;
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
+}
+
 ul.project_list li {
   padding-bottom: 1em;
   margin-bottom: 1em;

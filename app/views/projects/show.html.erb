@@ -32,35 +32,24 @@
     <th></th>
   </thead>
   <% @repositories.each do |repos| # fixme: need to graph the parent relation proper -%>
-    <% if repos.mainline? -%>
-      <tr class="<%= cycle("even", "odd") -%> mainline">
-        <td class="name">
-          <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-        </td>
-        <td>
-          <%= h(@project.slug) -%> (<%= link_to h(repos.user.login), user_path(repos.user) -%>)
-        </td>
-        <td>
-          <%= repos.last_commit ? repos.last_commit.committed_date.to_s(:short) : "<em>none</em>" -%>
-        </td>
-        <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
-        <td><%= link_to "HEAD tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>
-      </tr>
-    <% else -%>
-      <tr class="<%= cycle("even", "odd") -%> clone">
-        <td class="name">
-          <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-        </td>
-        <td>
-          <%= link_to h(repos.user.login), user_path(repos.user) -%>
-        </td>
-        <td>
-          <%= repos.last_commit ? repos.last_commit.committed_date.to_s(:short) : "<em>none</em>" -%>
-        </td>
-        <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
-        <td><%= link_to "HEAD tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>
-      </tr>
-    <% end -%>
+    <tr class="<%= cycle("even", "odd") -%> <%= repos.mainline? ? "mainline" : "clone" -%>">
+      <td class="name">
+        <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
+      </td>
+      <td>
+        <%= link_to h(repos.user.login), user_path(repos.user) -%>
+      </td>
+      <td>
+        <% if repos.has_commits? -%>
+          <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago: 
+          <small class="commit_message"><%= truncate(h(repos.last_commit.message), 50) -%></small>
+        <% else -%>
+          <em>none</em>
+        <% end -%>
+      </td>
+      <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
+      <td><%= link_to "tree", project_repository_tree_path(@project, repos, "HEAD") -%></td>
+    </tr>
   <% end -%>
 </table>
 
