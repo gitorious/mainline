@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+require "yaml"
+
+conf_file = File.join(File.dirname(__FILE__), "../config/gitorious.yml")
+GitoriousConfig = YAML.load_file(conf_file)
+
+Dir["#{GitoriousConfig["repository_base_path"]}/**/*.git"].each do |repo_path|
+  p repo_path
+  p `cd '#{repo_path}'; git-gc`
+  puts
+end
