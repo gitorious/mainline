@@ -10,9 +10,9 @@
   <tr class="<%= cycle("odd", "even") -%>">
     <!-- <td><%#= h(node.mode) -%></td> -->
     <% if node.is_a? Grit::Tree -%>
-      <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(@commit.id, node.name) -%></td>
+      <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(params[:sha], node.name) -%></td>
     <% else -%>
-      <td class="node file"><%= link_to h(node.basename), blob_path(@commit.id, node.name) -%></td>
+      <td class="node file"><%= link_to h(node.basename), blob_path(params[:sha], node.name) -%></td>
     <% end -%>
     <td></td>
   </tr>
