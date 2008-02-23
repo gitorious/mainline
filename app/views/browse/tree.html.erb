@@ -15,7 +15,7 @@
       <td class="node file"><%= link_to h(node.basename), blob_path(params[:sha], node.name) -%></td>
     <% end -%>
     <% last_commit = commit_for_tree_path(@repository, node.name) -%>
-    <td class="meta"><%= time_ago_in_words last_commit.committed_date -%> ago</td>
+    <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
     <td class="meta commit_message">
       <%= link_to truncate(h(last_commit.message), 75, "&hellip;"), commit_path(last_commit.id) -%>
     </td>
