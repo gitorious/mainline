@@ -5,7 +5,7 @@
 
 <%= breadcrumb_path(@repository.name, @commit.id) -%>
 
-<% cache do -%>
+<% cache(tree_path(@commit.id, params[:path])) do -%>
 <table class="listing tree">
   <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
