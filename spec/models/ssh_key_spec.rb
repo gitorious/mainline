@@ -82,7 +82,12 @@ describe SshKey do
     
   it "wraps the key at 72 for display" do
     ssh = new_key
-    ssh.wrapped_key.should include("\n")
+    expected_wrapped = <<EOS
+ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dk
+anB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216
+ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com 
+EOS
+    ssh.wrapped_key.should == expected_wrapped.strip
   end
   
   it "returns a proper ssh key with to_key" do
