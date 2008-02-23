@@ -30,6 +30,19 @@ describe SshKey do
     key.should be_valid
   end
   
+  it "allows a wider range of extended comments" do
+    key = new_key
+    
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE gitorious.org key"
+    key.should be_valid
+    
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+gitorious.org key"
+    key.should be_valid
+    
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE http://gitorious.org key"
+    key.should be_valid
+  end
+  
   it "should have a user to be valid" do
     key = new_key
     key.user_id = nil
