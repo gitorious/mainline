@@ -140,6 +140,13 @@ describe BrowseHelper do
     
   end
   
+  describe "too_big_to_render" do
+    it "knows when a blob is too big to be rendered within reasonable time" do
+      too_big_to_render?(1.kilobyte).should == false
+      too_big_to_render?(150.kilobyte).should == true
+    end
+  end
+  
   # it "builds breadcrumbs of the current_path" do
   #   stub!(:current_path).and_return(["one", "two", "tree"])
   #   breadcrumb_path.should include(%Q{<ul class="path_breadcrumbs">})

@@ -164,4 +164,8 @@ module BrowseHelper
     out
   end
   
+  def too_big_to_render?(size)
+    size > 150.kilobytes
+  end
+  
 end

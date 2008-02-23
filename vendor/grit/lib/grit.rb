@@ -23,6 +23,11 @@ require 'grit/diff'
 require 'grit/repo'
 require 'grit/stats'
 
+MIME::Types.add(*[
+  MIME::Type.from_array("application/photoshop", ['psd'])
+])
+
+
 module Grit
   class << self
     attr_accessor :debug

@@ -17,17 +17,23 @@
 <!-- <%= @blob.mime_type -%> -->
 <%= breadcrumb_path(@repository.name, @commit.id) -%>
 
-<% cache do -%>
-  <% if @blob.mime_type =~ /^text/ -%>
+<% if @blob.mime_type =~ /^text/ && !too_big_to_render?(@blob.size) -%>
+  <% cache do -%>
     <%= render_highlighted(@blob.data, current_path.last || "") -%>
-  <% elsif @blob.mime_type =~ /^image/ -%>
-    <%= image_tag raw_blob_path(@commit.id, current_path) -%>
-  <% else -%>
-    <p>
-      Not sure we can display this blob nicely (it's a "<%= @blob.mime_type -%>" mimetype), 
-      <%= link_to "try viewing the raw data", raw_blob_path(@commit.id, current_path) -%> 
-      and see if your browser figures it out.
-    </p>
   <% end -%>
-  
+<% elsif too_big_to_render?(@blob.size) && @blob.mime_type =~ /^text/ -%>
+  <p>
+    This file is too big to be rendered within reasonable time, 
+    <%= link_to "try viewing the raw data", raw_blob_path(@commit.id, current_path) -%> 
+  </p>
+<% elsif @blob.mime_type =~ /^image/ -%>
+  <% cache do -%>
+    <%= image_tag raw_blob_path(@commit.id, current_path) -%>
+  <% end -%>
+<% else -%>
+  <p>
+    Not sure we can display this blob nicely (it's a "<%= @blob.mime_type -%>" mimetype), 
+    <%= link_to "try viewing the raw data", raw_blob_path(@commit.id, current_path) -%> 
+    and see if your browser figures it out.
+  </p>
 <% end -%>
