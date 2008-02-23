@@ -26,4 +26,12 @@ describe ApplicationHelper do
     _erbout.should match(/is being created/)
   end
   
+  it "gives us the domain of a full url" do
+    base_url("http://foo.com").should == "foo.com"
+    base_url("http://www.foo.com").should == "www.foo.com"
+    base_url("http://foo.bar.baz.com").should == "foo.bar.baz.com"
+    base_url("http://foo.com/").should == "foo.com"
+    base_url("http://foo.com/bar/baz").should == "foo.com"
+  end
+  
 end

@@ -51,4 +51,8 @@ module ApplicationHelper
   	end
   	out.join("\n")
   end
+  
+  def base_url(full_url)
+    URI.parse(full_url).host
+  end
 end
