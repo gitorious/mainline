@@ -382,7 +382,7 @@ table.listing tr td {
 }
 
 table.listing tr.odd {
-  background: #efefef;
+  background: #eee;
 }
 table.listing thead th {
   font-weight: bold;
@@ -440,6 +440,10 @@ table.repository_list tr.clone td.name {
 small.commit_message {
   margin: 0;
   font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
+}
+
+.commit_message a {
+	color: #000;
 }
 
 ul.project_list li {
@@ -573,9 +577,14 @@ span.tag {
   text-align: center;
 }
 
-table.tree tr td.node {
-  width: 75%;
+table.tree tr td {
+	padding: 5px;
 }
+
+table.tree tr td.meta {
+  font-size: 90%;
+}
+
 table.tree tr td.node a {
   padding-left:25px;
   background-position: 4px 50%;

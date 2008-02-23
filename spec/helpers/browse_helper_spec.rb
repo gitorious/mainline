@@ -147,6 +147,16 @@ describe BrowseHelper do
     end
   end
   
+  describe "commit_for_tree_path" do
+    it "fetches the most recent commit from the path" do
+      repo = mock("repository")
+      git = mock("Git")
+      repo.should_receive(:git).and_return(git)
+      git.should_receive(:log).and_return([mock("commit")])
+      commit_for_tree_path(repo, "foo/bar/baz.rb")
+    end
+  end
+  
   # it "builds breadcrumbs of the current_path" do
   #   stub!(:current_path).and_return(["one", "two", "tree"])
   #   breadcrumb_path.should include(%Q{<ul class="path_breadcrumbs">})

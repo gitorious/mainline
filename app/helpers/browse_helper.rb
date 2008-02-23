@@ -168,4 +168,9 @@ module BrowseHelper
     size > 150.kilobytes
   end
   
+  # FIXME: This really belongs somewhere else, but where?
+  def commit_for_tree_path(repository, path)
+    repository.git.log(params[:sha], path, 1 => true).first
+  end
+  
 end
