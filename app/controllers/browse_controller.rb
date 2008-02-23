@@ -59,7 +59,7 @@ class BrowseController < ApplicationController
     end
     @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
     render_not_found and return unless @blob
-    render :text => @blob.data, :content_type => "text/plain"
+    render :text => @blob.data, :content_type => @blob.mime_type
   end
   
   def log
