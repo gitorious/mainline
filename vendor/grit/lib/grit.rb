@@ -21,6 +21,7 @@ require 'grit/blob'
 require 'grit/actor'
 require 'grit/diff'
 require 'grit/repo'
+require 'grit/stats'
 
 module Grit
   class << self

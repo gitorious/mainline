@@ -146,6 +146,18 @@ class TestCommit < Test::Unit::TestCase
     assert_equal '100755', diffs[0].b_mode
   end
   
+  # stats
+  
+  def test_stats
+    Git.any_instance.expects(:diff).with(
+      {:numstat => true}, 
+      "634396b2f541a9f2d58b00be1a07f0c358b999b3"
+    ).returns(fixture('diff_numstat'))
+    @c = Commit.create(@r, :id => '634396b2f541a9f2d58b00be1a07f0c358b999b3')
+    stats = @c.stats
+    assert_equal ["a.txt", "b.txt"], stats.files.keys.sort
+  end
+  
   # to_s
   
   def test_to_s

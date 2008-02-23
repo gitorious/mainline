@@ -20,12 +20,7 @@
   </p>
 <% else -%>
 <% cache({:diffmode => @diffmode}) do -%>
-  <%#= render_diff_stats(@diff.stats) -%>
-  <ul class="diff_stats">
-    <% @diffs.map{|d| d.a_path }.each do |path| -%>
-      <li><a href="#<%= h(path) -%>"><%= h(path) -%></a>
-    <% end -%>
-  </ul>
+  <%= render_diff_stats(@commit.stats) -%>
   <h2>Commit diff</h2>
   <%= render_diffmode_selector -%>
   <% @diffs.each do |file| -%>

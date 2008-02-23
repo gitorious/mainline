@@ -184,6 +184,21 @@ module Grit
       end
     end
     
+    def stats
+      if parents.empty?
+        text = @repo.git.diff({:numstat => true}, @id)
+        text2 = ""
+        text.each_line do |line|
+          (insertions, deletions, filename) = line.split("\t")
+          text2 << "#{deletions}\t#{insertions}\t#{filename}"
+        end
+        text = text2
+      else
+        text = @repo.git.diff({:numstat => true}, parents.first.id, @id)
+      end
+      Stats.list_from_string(@repo, text)
+    end
+    
     # Convert this Commit to a String which is just the SHA1 id
     def to_s
       @id
