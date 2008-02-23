@@ -143,7 +143,7 @@ describe BrowseHelper do
   describe "too_big_to_render" do
     it "knows when a blob is too big to be rendered within reasonable time" do
       too_big_to_render?(1.kilobyte).should == false
-      too_big_to_render?(150.kilobyte).should == true
+      too_big_to_render?(150.kilobyte+1).should == true
     end
   end
   
