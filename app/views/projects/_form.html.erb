@@ -12,10 +12,6 @@
   </script>
 <% end -%>
 <p>
-  <%= form.label :description -%><br />
-  <%= form.text_area :description, :class => "text medium" -%>
-</p>
-<p>
   <%= form.label :tag_list, "Categories (space seperated)" -%><br />
   <%= form.text_field :tag_list, :class => "text" -%>
 </p>
@@ -34,4 +30,12 @@
 <p>
   <%= form.label :bugtracker_url, "Bugtracker URL (if any)" -%><br />
   <%= form.text_field :bugtracker_url, :class => "text" -%>
+</p>
+<p>
+  <%= form.label :description -%><br />
+  <small class="hint">
+    <a href="http://daringfireball.net/projects/markdown/">Markdown</a> and
+    basic html is allowed
+  </small><br />
+  <%= form.text_area :description, :class => "text wide tall" -%>
 </p>

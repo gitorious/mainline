@@ -831,3 +831,14 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   font-weight: bold;
   color: #9A0000;
 }
+
+/* Page */
+
+.page ul, .page ol { margin-left: 30px; }
+.page ul li		{ list-style-type: disc; }
+.page ol li		{ list-style-type: decimal; }
+.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
+.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
+.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
+.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
+.page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}

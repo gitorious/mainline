@@ -1,6 +1,8 @@
 <% @page_title = @project.title -%>
 <h1><%=h @project.title -%></h1>
-<p><%= simple_format h(@project.description) -%></p>
+<div class="page">
+  <%= auto_link(markdown(sanitize(@project.description)), :urls) -%>
+</div>
 
 <ul class="infobox">
   <li><strong>Owner:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
