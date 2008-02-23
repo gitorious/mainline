@@ -147,6 +147,7 @@ describe BrowseController do
       blob_mock = mock("blob")
       blob_mock.stub!(:contents).and_return([blob_mock]) #meh
       blob_mock.should_receive(:data).and_return("blabla")
+      blob_mock.should_receive(:mime_type).and_return("text/plain")
       commit_stub = mock("commit")
       commit_stub.stub!(:id).and_return("a"*40)
       commit_stub.stub!(:tree).and_return(commit_stub)

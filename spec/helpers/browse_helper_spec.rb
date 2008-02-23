@@ -108,7 +108,7 @@ describe BrowseHelper do
   
   describe "render_diff_stats" do
     before(:each) do
-      @stats = {:files=>
+      @stat_data = {:files=>
         {"spec/database_spec.rb"=>{:insertions=>5, :deletions=>12},
          "spec/integration/database_integration_spec.rb"=>
           {:insertions=>2, :deletions=>2},
@@ -117,10 +117,11 @@ describe BrowseHelper do
          "spec/database_spec.rb.orig"=>{:insertions=>0, :deletions=>173},
          "bin/couch_ruby_view_requestor"=>{:insertions=>2, :deletions=>2}},
        :total=>{:files=>6, :insertions=>16, :deletions=>196, :lines=>212}}
+       @stats = Grit::Stats.new(mock("Grit::Repo"), @stat_data[:total], @stat_data[:files])
     end
     
     it "renders a list of files as anchor links" do
-      files = @stats[:files].keys
+      files = @stats.files.keys
       rendered_stats = render_diff_stats(@stats)
       files.each do |filename|
         rendered_stats.should include(%Q{<li><a href="##{h(filename)}">#{h(filename)}</a>})
