@@ -5,10 +5,10 @@
 
 <%= breadcrumb_path(@repository.name, @commit.id) -%>
 
+<% cache do -%>
 <table class="listing tree">
   <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
-    <!-- <td><%#= h(node.mode) -%></td> -->
     <% if node.is_a? Grit::Tree -%>
       <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(params[:sha], node.name) -%></td>
     <% else -%>
@@ -22,6 +22,7 @@
   </tr>
   <% end -%>
 </table>
+<% end -%>
 
 <% content_for :sidebar do -%>  
   <%= render :partial => "tags_and_branches" -%>
