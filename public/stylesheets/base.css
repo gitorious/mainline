@@ -581,8 +581,16 @@ table.tree tr td {
 	padding: 5px;
 }
 
+table.tree tr:hover {
+	background: #EFECE0;
+}
+
 table.tree tr td.meta {
-  font-size: 90%;
+  font-size: 85%;
+}
+
+table.tree tr td.meta, table.tree tr td.commit_message a {
+	color: #444;
 }
 
 table.tree tr td.node a {
