@@ -1,0 +1,16 @@
+== Guide to Hacking Gitorious
+
+=== The Hackers digest guide:
+
+1. Do the normal rails app stuff (database.yml etc.)
+
+2. Rename the config/gitorious.sample.yml file to gitorious.yml, and update it with your cahnges.
+
+3a. If you want real project data, find a project, set the 'ready' status to true, create a bare git repository (git --bare init) in the directory GitoriousConfig['repository_base_path']/#{project.slug}/#{repository.name}.git, and push something to that repository (cd to a git repository with commits and do "git push path/to/the/bare/repository/you/just/created master").
+	
+3b. OR run the script/task_performer and let it create the repository for you (remember to do step 2 first)
+	
+4. Get your git on!
+
+Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in 
+by #gitorious on irc.freenode.net if you have questions.
