@@ -55,4 +55,8 @@ module ApplicationHelper
   def base_url(full_url)
     URI.parse(full_url).host
   end
+  
+  def flashes
+    flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
+  end
 end

@@ -5,6 +5,7 @@ class SessionsController < ApplicationController
   end
 
   def create
+    flash[:error] = "hai"
     self.current_user = User.authenticate(params[:email], params[:password])
     if logged_in?
       if params[:remember_me] == "1"
@@ -14,6 +15,7 @@ class SessionsController < ApplicationController
       redirect_back_or_default('/')
       flash[:notice] = "Logged in successfully"
     else
+      flash.now[:error] = "Username/password didn't match, please try again."
       render :action => 'new'
     end
   end

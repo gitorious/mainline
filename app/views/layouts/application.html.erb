@@ -77,16 +77,7 @@
     <div id="main">
     <% end -%>
       <div id="content">
-        <% if flash[:notice] -%>
-          <div class="flash_message notice">
-            <p><%= flash[:notice] -%></p>
-          </div>
-        <% end -%>
-        <% if flash[:error] -%>
-          <div class="flash_message error">
-            <p><%= flash[:error] -%></p>
-          </div>
-        <% end -%>
+        <%= flashes %>
         <%= yield -%>
       </div>
     <% unless @content_for_sidebar.blank? -%>
