@@ -23,10 +23,10 @@ require 'grit/diff'
 require 'grit/repo'
 require 'grit/stats'
 
+# Register more known mimetypes
 MIME::Types.add(*[
   MIME::Type.from_array("application/photoshop", ['psd'])
 ])
-
 
 module Grit
   class << self

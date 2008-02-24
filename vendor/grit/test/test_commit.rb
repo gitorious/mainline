@@ -146,6 +146,7 @@ class TestCommit < Test::Unit::TestCase
     assert_equal '100755', diffs[0].b_mode
   end
   
+
   # stats
   
   def test_stats
