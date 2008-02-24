@@ -147,6 +147,7 @@ describe BrowseController do
       blob_mock = mock("blob")
       blob_mock.stub!(:contents).and_return([blob_mock]) #meh
       blob_mock.should_receive(:data).and_return("blabla")
+      blob_mock.should_receive(:size).and_return(200.kilobytes)
       blob_mock.should_receive(:mime_type).and_return("text/plain")
       commit_stub = mock("commit")
       commit_stub.stub!(:id).and_return("a"*40)
@@ -170,6 +171,22 @@ describe BrowseController do
           :repository_id => @repository.name, :sha => "a"*40, :path => ["foo.rb"]}
       
       response.should redirect_to(project_repository_raw_blob_path(@project, @repository, "HEAD", ["foo.rb"]))
+    end
+    
+    it "redirects if blob is too big" do
+      blob_mock = mock("blob")
+      blob_mock.stub!(:contents).and_return([blob_mock]) #meh
+      blob_mock.should_receive(:size).and_return(501.kilobytes)
+      commit_stub = mock("commit")
+      commit_stub.stub!(:id).and_return("a"*40)
+      commit_stub.stub!(:tree).and_return(commit_stub)
+      @git.should_receive(:commit).and_return(commit_stub)
+      @git.should_receive(:tree).and_return(blob_mock)
+      
+      get :raw, {:project_id => @project.slug, 
+          :repository_id => @repository.name, :sha => "a"*40, :path => []}
+          
+      response.should redirect_to(project_repository_path(@project, @repository))
     end
   end
   
