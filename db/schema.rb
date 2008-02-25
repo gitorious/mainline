@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20) do
+ActiveRecord::Schema.define(:version => 21) do
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id",                       :null => false
@@ -36,6 +36,20 @@ ActiveRecord::Schema.define(:version => 20) do
 
   add_index "committerships", ["user_id"], :name => "index_permissions_on_user_id"
   add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
+
+  create_table "merge_requests", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "source_repository_id"
+    t.integer  "target_repository_id"
+    t.text     "proposal"
+    t.string   "sha_snapshot"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "merge_requests", ["user_id"], :name => "index_merge_requests_on_user_id"
+  add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
+  add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
 
   create_table "projects", :force => true do |t|
     t.string   "title"
