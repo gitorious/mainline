@@ -5,6 +5,8 @@ class Repository < ActiveRecord::Base
   has_many    :committerships, :dependent => :destroy
   has_many    :committers, :through => :committerships, :source => :user
   has_many    :comments, :dependent => :destroy
+  has_many    :merge_requests, :foreign_key => 'target_repository_id'
+  has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id', :class_name => 'MergeRequest'
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,

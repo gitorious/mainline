@@ -1,6 +1,6 @@
 moes_to_johans:
-  user_id: 2
-  source_repository_id: 3 # moes
+  user_id: 1
+  source_repository_id: 2 # johans2
   target_repository_id: 1
   proposal: plz merge my clone
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3

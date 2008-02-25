@@ -33,9 +33,10 @@
 <% content_for :sidebar do -%>  
   <ul class="links">
     <% if @repository.ready? -%>
-      <li><%= link_to "Clone this repository", new_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to "Clone repository", new_project_repository_path(@project, @repository) -%></li>
     <% end -%>
     <% if @repository.user == current_user -%>
+      <li><%= link_to "Request merge", new_merge_request_path(@project, @repository) -%></li>
       <li><%= link_to "Add committer", 
               { :controller => "committers", :action => "new", :project_id => @project, 
                 :repository_id => @repository } -%></li>
