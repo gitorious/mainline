@@ -51,4 +51,15 @@
   <% end -%>
   <li><%= link_to "Create new &#x2192;", new_project_path -%></li>
   </ul>
+  <h4>Your repositories:</h4>
+  <% @repositories.each do |repos| -%>
+    <li>
+      <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
+      of <%= link_to h(repos.project.title), repos.project -%>
+    </li>
+  <% end -%>
+  </ul>
 <% end -%>
+
+
+

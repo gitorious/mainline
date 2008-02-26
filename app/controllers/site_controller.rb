@@ -13,6 +13,8 @@ class SiteController < ApplicationController
       :order => "comments.created_at desc", :include => [:user, :repository])
     @repository_clones = Repository.find(:all, :order => "created_at desc",
       :conditions => ["project_id in (?) and mainline = ?", project_ids, false])
+    
+    @repositories = current_user.repositories.find(:all, :conditions => ["mainline = ?", false])
   end
   
   def about
