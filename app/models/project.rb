@@ -69,6 +69,12 @@ class Project < ActiveRecord::Base
     (candidate == user) && (repositories.size == 1)
   end
   
+  def tag_list=(tag_list)
+    tag_list.gsub!(",", "")
+    
+    super
+  end
+  
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")
