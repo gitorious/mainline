@@ -13,8 +13,16 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
     @user.save!
+    
+    confirmation = (GitoriousConfig["require_confirmation"].nil? ? true : GitoriousConfig["require_confirmation"])
+    
     redirect_to root_path
-    flash[:notice] = "Thanks for signing up! You will receive an account activation email soon"
+    
+    if confirmation
+        flash[:notice] = "Thanks for signing up! You will receive an account activation email soon"
+    else
+        @user.activate
+    end
   rescue ActiveRecord::RecordInvalid
     render :action => 'new'
   end

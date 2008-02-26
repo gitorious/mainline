@@ -4,8 +4,8 @@ class UserObserver < ActiveRecord::Observer
   end
 
   def after_save(user)
-  
-    Mailer.deliver_activation(user) if user.recently_activated?
+    confirmation = (GitoriousConfig["require_confirmation"].nil? ? true : GitoriousConfig["require_confirmation"])
+    Mailer.deliver_activation(user) if user.recently_activated? and confirmation
   
   end
 end
