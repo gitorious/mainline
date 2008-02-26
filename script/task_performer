@@ -1,12 +1,19 @@
 #!/usr/bin/env ruby
 
-ENV["RAILS_ENV"] ||= "production"
-require File.dirname(__FILE__) + "/../config/environment"
+require 'tmpdir'
 require "fileutils"
 
-LOCK_FILE_PATH = File.join(RAILS_ROOT, "tmp", "task_lockfile")
-
+LOCK_FILE_PATH = File.join(Dir.tmpdir, "gitorious_task_lockfile")
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+
+if File.exist?(LOCK_FILE_PATH)
+    $stderr.puts "Task lockfile '#{LOCK_FILE_PATH}' exists!"
+    exit(1)
+end
+
+ENV["RAILS_ENV"] ||= "production"
+require File.dirname(__FILE__) + "/../config/environment"
+
 
 class TaskLockError < StandardError; end
 
