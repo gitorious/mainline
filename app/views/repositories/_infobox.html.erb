@@ -29,8 +29,8 @@
       <strong>Push url:</strong> <code><%=h @repository.push_url -%></code>
       <small><%= link_to_function "More info…", "$('detailed_push_info').toggle()" -%></small>
       <div id="detailed_push_info" class="info_hint" style="display:none">
-You can run "<code>git push <%= @repository.push_url %></code>", or 
-you can setup a remote by doing the following:
+        You can run "<code>git push <%= @repository.push_url %></code>", or 
+        you can setup a remote by doing the following:
 <pre>
 git remote add origin <%= @repository.push_url %>
 # to push the master branch to the origin remote we added above:
