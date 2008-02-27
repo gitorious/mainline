@@ -1,9 +1,20 @@
 class MergeRequestsController < ApplicationController
-  before_filter :login_required
+  before_filter :login_required, :except => [:index, :show]
   before_filter :find_project
   before_filter :find_repository
-  before_filter :find_merge_request, :except => [:new, :create]
-  before_filter :assert_merge_request_ownership, :except => [:new, :create]
+  before_filter :find_merge_request, :except => [:index, :show, :new, :create]
+  before_filter :assert_merge_request_ownership, :except => [:index, :show, :new, :create]
+  
+  def index
+    @merge_requests = @repository.merge_requests
+    @comment_count = @repository.comments.count
+    #@proposed_merge_requests = @repository.proposed_merge_requests
+  end
+  
+  def show
+    @merge_request = @repository.merge_requests.find(params[:id])
+    @commits = @merge_request.target_repository.git.commit_deltas_from(@merge_request.source_repository.git)
+  end
   
   def new
     @merge_request = @repository.proposed_merge_requests.new(:user => current_user)
@@ -30,7 +41,7 @@ class MergeRequestsController < ApplicationController
     @merge_request.attributes = params[:merge_request]
     if @merge_request.save
       flash[:success] = "Merge request was updated"
-      redirect_to merge_request_path(@project, @repository, @merge_request)
+      redirect_to [@project, @repository, @merge_request]
     else
       @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
       render :action => "edit"

@@ -1,0 +1,20 @@
+<% @page_title = "Merge requests in #{h(@repository.name)}" -%>
+<h1>
+  Merge requests in <%=h @repository.name  -%>
+</h1>
+
+<%= render :partial => "repositories/infobox" -%>
+
+<p class="hint">
+  A "merge request" is a notification from one repository to another that you
+  would like the changes to be merged upstream. 
+</p>
+
+<ul class="tab_menu">
+  <li><%= link_to "Recent commits", project_repository_path(@project, @repository) -%></li>
+  <li><%= link_to "comments (#{@comment_count})", 
+            project_repository_comments_path(@project, @repository) -%></li>
+  <li class="selected">merge requests(<%= @merge_requests.size -%>)</li>
+</ul>
+
+<%= render :partial => @merge_requests -%>

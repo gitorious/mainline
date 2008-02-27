@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(:version => 21) do
     t.integer  "target_repository_id"
     t.text     "proposal"
     t.string   "sha_snapshot"
+    t.integer  "status",               :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -50,6 +51,7 @@ ActiveRecord::Schema.define(:version => 21) do
   add_index "merge_requests", ["user_id"], :name => "index_merge_requests_on_user_id"
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
   add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
+  add_index "merge_requests", ["status"], :name => "index_merge_requests_on_status"
 
   create_table "projects", :force => true do |t|
     t.string   "title"

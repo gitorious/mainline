@@ -23,4 +23,10 @@ describe MergeRequest do
     @merge_request.target_repository = nil
     @merge_request.should have(1).error_on(:target_repository)
   end
+  
+  it "emails the owner of the target_repository on create"
+  
+  it "has a merged? status"
+  
+  it "has a rejected? status"
 end

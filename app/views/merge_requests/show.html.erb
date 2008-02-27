@@ -1,0 +1,25 @@
+<h1>
+  Reviewing merge request "<%=h @merge_request.source_repository.name -%>" &#x2192; 
+  "<%= @merge_request.target_repository.name -%>"
+</h1>
+
+<div class="merge_request_summary">
+  <p class="proposal"><%= sanitize(@merge_request.proposal) -%></p>
+  <p class="byline">
+    By <%= link_to h(@merge_request.user.login), @merge_request.user -%> | 
+    <%= @merge_request.created_at.to_s(:short) -%>
+  </p>
+  
+  <p>The simplest way to merge in these changes is to simply pull them in with the following command:</p>
+  <pre>git pull <%= @merge_request.source_repository.clone_url -%></pre>
+</div>
+<h2>Commits that would be merged:</h2>
+
+<ul class="shortlog">
+  <% @commits.each do |commit| -%>
+    <li><a href=""><%= link_to h(commit.id_abbrev), 
+      project_repository_commit_path(@project, @merge_request.source_repository, commit.id) -%></a> 
+    by <strong><%=h commit.committer.name -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
+    <div class="commit_message"><%= simple_format(h(commit.message)) -%></div></li>
+  <% end -%>
+</ul>

@@ -1,0 +1,10 @@
+<p>
+  <%= form.label :target_repository_id -%><br />
+  <small class="hint">The one you wish this repository should be merged with</small><br />
+  <%= form.select :target_repository_id, @repositories.map{|r| [r.name, r.id] } -%>
+</p>
+<p>
+  <%= form.label :proposal -%><br />
+  <small class="hint">A short summary of your changes</small><br />
+  <%= form.text_area :proposal, :class => "text medium" -%>
+</p>

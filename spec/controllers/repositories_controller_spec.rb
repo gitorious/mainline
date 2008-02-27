@@ -36,6 +36,13 @@ describe RepositoriesController, "show" do
     do_get repo
     response.code.to_i.should == 404
   end
+  
+  it "counts the number of merge requests" do
+    repo = @project.repositories.first
+    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    do_get repo
+    assigns[:merge_request_count].should == 1
+  end
 end
 
 describe RepositoriesController, "show as XML" do

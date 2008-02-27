@@ -1,0 +1,14 @@
+<div class="merge_request_summary">
+  <h4>
+    <%=h merge_request.source_repository.name -%> has requested a merge 
+    with <%=h merge_request.target_repository.name -%>:
+  </h4>
+  <p class="proposal"><%= sanitize(merge_request.proposal) -%></p>
+  <p>
+    <%= link_to "Review changes &#x2192;", [@project, @repository, merge_request] -%>
+  </p>
+  <p class="byline">
+    <%= link_to(h(merge_request.user.login), merge_request.user) -%> | 
+    <%= merge_request.created_at.to_s(:short) -%> | 
+  </p>
+</div>

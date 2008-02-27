@@ -7,6 +7,63 @@ describe MergeRequestsController do
     @repository = repositories(:johans2)
     @merge_request = merge_requests(:moes_to_johans)
   end
+  
+  describe "#index (GET)" do
+    def do_get
+      get :index, :project_id => @project.slug, 
+        :repository_id => @repository.name
+    end    
+    
+    it "should not require login" do
+      session[:user_id] = nil
+      do_get
+      response.should_not redirect_to(new_sessions_path)      
+    end
+    
+    it "gets all the merge requests in the repository" do
+      do_get
+      assigns[:merge_requests].should == @repository.merge_requests
+    end
+    
+    it "gets a comment count for" do
+      do_get
+      assigns[:comment_count].should == @repository.comments.count
+    end
+  end
+  
+  describe "#show (GET)" do
+    def do_get
+      get :show, :project_id => @project.slug, 
+        :repository_id => repositories(:johans).name,
+        :id => @merge_request.id
+    end
+    
+    it "should not require login" do
+      session[:user_id] = nil
+      MergeRequest.should_receive(:find).and_return(@merge_request)
+      [@merge_request.source_repository, @merge_request.target_repository].each do |r|
+        r.stub!(:git).and_return(mock("Git", :null_object => true))
+      end
+      do_get
+      response.should_not redirect_to(new_sessions_path)      
+    end
+    
+    it "gets a list of the commits to be merged" do
+      MergeRequest.should_receive(:find).and_return(@merge_request)
+      commits = [mock("commit"), mock("commit")]
+      
+      target_repo = mock("target repo")
+      @merge_request.target_repository.stub!(:git).and_return(target_repo)
+      
+      src_repo = mock("src repo")
+      @merge_request.source_repository.stub!(:git).and_return(src_repo)
+      
+      target_repo.should_receive(:commit_deltas_from).with(src_repo).and_return(commits)
+      
+      do_get
+      assigns[:commits].should == commits
+    end
+  end
 
   describe "#new (GET)" do
     def do_get
@@ -141,7 +198,7 @@ describe MergeRequestsController do
       login_as :johan
       do_put :proposal => "hai, plz merge kthnkxbye"
       
-      response.should redirect_to(merge_request_path(@project, @repository, @merge_request))
+      response.should redirect_to(project_repository_merge_request_path(@project, @repository, @merge_request))
       flash[:success].should match(/merge request was updated/i)
       @merge_request.reload.proposal.should == "hai, plz merge kthnkxbye"
     end

@@ -639,7 +639,8 @@ div.comment {
 div.comment .body {
   margin-bottom: 0.2em;
 }
-div.comment p.byline {
+
+p.byline {
   font-size: 85%;
 }
 
@@ -870,3 +871,20 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
 .page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
+
+
+/* Merge Requests */
+
+.merge_request_summary h4 {
+	color: #111;
+	margin-bottom: 5px;
+}
+
+.merge_request_summary .proposal {
+	margin: 0 0 5px 10px;
+	font-style: oblique;
+}
+
+.merge_request_summary {
+	width: 50%;
+}

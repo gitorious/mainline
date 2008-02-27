@@ -12,6 +12,7 @@ class RepositoriesController < ApplicationController
   def show
     @repository = @project.repositories.find_by_name!(params[:id])
     @comment_count = @repository.comments.count
+    @merge_request_count = @repository.merge_requests.count
     if @repository.has_commits?
       @commits = @repository.git.commits(@repository.head_candidate.name, 10)
     else
