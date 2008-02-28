@@ -10,12 +10,20 @@
     <strong>Clone url:</strong> <code><%=h @repository.clone_url -%></code> 
     <small><%= link_to_function "More info…", "$('detailed_clone_info').toggle()" -%></small>
     <div id="detailed_clone_info" class="info_hint" style="display:none">
-      You can clone this repository with the following command:
+      You can clone this repository with the following command:<br />
       <% if logged_in? && current_user.can_write_to?(@repository) -%>
         <code>git clone <%= @repository.push_url -%></code>
       <% else -%>
         <code>git clone <%= @repository.clone_url -%></code>
       <% end -%>
+    </div>
+  </li>
+  <li>
+    <strong>HTTP clone url:</strong> <code><%=h @repository.http_clone_url -%></code> 
+    <small><%= link_to_function "More info…", "$('detailed_http_clone_info').toggle()" -%></small>
+    <div id="detailed_http_clone_info" class="info_hint" style="display:none">
+      You can clone this repository with the following command:<br />
+        <code>git clone <%= @repository.http_clone_url -%></code>
     </div>
   </li>
   <% if logged_in? && current_user.can_write_to?(@repository) -%>
