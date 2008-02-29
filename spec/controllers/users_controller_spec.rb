@@ -52,6 +52,7 @@ describe UsersController do
     }.should change(User, :count)
   end
   
+  GitoriousConfig["require_confirmation"] = true
   it "requires the user to activate himself after posting valid data" do
     create_user
     User.authenticate('quire@example.com', 'quire').should == nil
