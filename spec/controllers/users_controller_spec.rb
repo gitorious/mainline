@@ -52,6 +52,13 @@ describe UsersController do
     }.should change(User, :count)
   end
   
+  GitoriousConfig["require_confirmation"] = false
+  it "shout register the user account without confirmation" do
+    create_user
+    User.authenticate('quire@example.com', 'quire').should != nil
+    controller.send(:logged_in?).should == false
+  end
+  
   GitoriousConfig["require_confirmation"] = true
   it "requires the user to activate himself after posting valid data" do
     create_user
