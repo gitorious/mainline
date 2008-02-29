@@ -69,6 +69,10 @@ describe Repository do
     @repository.clone_url.should == "git://gitorious.org/#{@repository.project.slug}/foo.git"
   end
   
+  it "has a http url" do
+    @repository.http_clone_url.should == "http://git.gitorious.org/#{@repository.project.slug}/foo.git"
+  end
+  
   it "should assign the creator as a comitter on create" do 
     @repository.save!
     @repository.reload

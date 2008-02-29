@@ -47,6 +47,10 @@ class Repository < ActiveRecord::Base
     "git://#{BASE_REPOSITORY_URL}/#{gitdir}"
   end
   
+  def http_clone_url
+    "http://git.#{BASE_REPOSITORY_URL}/#{gitdir}"
+  end
+  
   def push_url
     "git@#{BASE_REPOSITORY_URL}:#{gitdir}"
   end
