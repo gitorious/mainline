@@ -24,9 +24,25 @@ describe MergeRequest do
     @merge_request.should have(1).error_on(:target_repository)
   end
   
-  it "emails the owner of the target_repository on create"
+  it "emails the owner of the target_repository on create" do
+    Mailer.deliveries = []
+    mr = @merge_request.clone
+    mr.save
+    Mailer.deliveries.should_not be_empty
+  end
   
-  it "has a merged? status"
+  it "has a merged? status" do
+    @merge_request.status = MergeRequest::STATUS_MERGED
+    @merge_request.merged?.should == true
+  end
   
-  it "has a rejected? status"
+  it "has a rejected? status" do
+    @merge_request.status = MergeRequest::STATUS_REJECTED
+    @merge_request.rejected?.should == true
+  end
+  
+  it "has a open? status" do
+    @merge_request.status = MergeRequest::STATUS_OPEN
+    @merge_request.open?.should == true
+  end
 end

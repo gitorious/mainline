@@ -9,4 +9,16 @@ class MergeRequest < ActiveRecord::Base
   
   validates_presence_of :user, :source_repository, :target_repository
   attr_protected :user_id
+  
+  def open?
+    status == STATUS_OPEN
+  end
+  
+  def merged?
+    status == STATUS_MERGED
+  end
+  
+  def rejected?
+    status == STATUS_REJECTED
+  end
 end
