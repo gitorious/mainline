@@ -34,7 +34,7 @@ describe Project do
     p2.should have(1).error_on(:slug)
   end
   
-  it "should have an alhanumeric slug" do
+  it "should have an alphanumeric slug" do
     project = create_project(:slug => "asd asd")
     project.valid?
     project.should_not be_valid
@@ -78,6 +78,11 @@ describe Project do
     project.can_be_deleted_by?(users(:johan)).should == false # since it has > 1 repos
     project.repositories.last.destroy
     project.reload.can_be_deleted_by?(users(:johan)).should == true
+  end
+  
+  it "should strip html tags" do
+    project = create_project(:description => "<h1>Project A</h1>\n<b>Project A</b> is a....")
+    project.strip_description.index(/<\/?[^>]*>/).should == nil
   end
   
 end

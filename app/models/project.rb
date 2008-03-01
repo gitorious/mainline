@@ -75,6 +75,10 @@ class Project < ActiveRecord::Base
     super
   end
   
+  def strip_description
+    description.gsub(/<\/?[^>]*>/, "")
+  end
+  
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")

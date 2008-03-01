@@ -22,7 +22,7 @@
     <% @projects.each do |project| -%>
       <li>
         <strong><%= link_to h(project.title), project -%></strong>
-        <small class="hint"><%= truncate(h(project.description), 100) -%></small>
+        <small class="hint"><%= truncate(h(project.strip_description), 100) -%></small>
       </li>
     <% end -%>
   </ul>
