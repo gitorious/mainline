@@ -37,7 +37,14 @@ describe SiteController do
     
     it "gets a list of recent comments from users projects" do
       get :dashboard
-      assigns[:recent_comments].should == comments(:johans_repos, :johans_repos2)
+      
+      comment_list = comments(:johans_repos, :johans_repos2)
+      
+      puts comment_list.inspect
+      
+      comment_list.each { |comment|
+        assigns[:recent_comments].include?(comment).should == true
+      }
     end
     
     it "gets a list of all the clones made of current_users repositories" do
