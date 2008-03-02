@@ -881,10 +881,30 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 .merge_request_summary .proposal {
-	margin: 0 0 5px 10px;
+	margin: 5px 0 5px 10px;
 	font-style: oblique;
 }
 
 .merge_request_summary {
 	width: 50%;
+	padding: 10px;
+	border: 1px solid #ffe8cd;
+	background-color: #FEFAE6;
+	margin-bottom: 20px;
 }
+.merge_request_summary p.byline, .merge_request_summary pre {
+	margin-bottom: 0;
+}
+
+.merge_request_summary .status {
+	float:right;
+	color: #888;
+	font-size: 11px;
+}
+.merge_request_summary.rejected, .merge_request_summary.merged {
+	background: #eee;
+	border: 1px solid #ddd;
+}
+.merge_request_summary.open .status span	 		{ color: #FF7F00; }
+.merge_request_summary.merged .status span 		{ color: #48BA1C; }
+.merge_request_summary.rejected .status span	{ color: #F00; }

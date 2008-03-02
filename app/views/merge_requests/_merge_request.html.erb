@@ -1,14 +1,17 @@
-<div class="merge_request_summary">
-  <h4>
-    <%=h merge_request.source_repository.name -%> has requested a merge 
-    with <%=h merge_request.target_repository.name -%>:
-  </h4>
-  <p class="proposal"><%= sanitize(merge_request.proposal) -%></p>
-  <p>
-    <%= link_to "Review changes &#x2192;", [@project, @repository, merge_request] -%>
-  </p>
+<% no_link ||= false -%>
+
+<div class="merge_request_summary <%= merge_request.status_string -%>">
+  <p class="status">[<span><%= merge_request.status_string -%></span>]</p>
+  <h5>
+    <%= link_to h(merge_request.source_repository.name), [@project, merge_request.source_repository] -%> 
+    has requested a merge with <%= link_to h(merge_request.target_repository.name), [@project, merge_request.target_repository] -%>:
+  </h5>
+  <div class="proposal"><%= sanitize(simple_format(merge_request.proposal)) -%></div>
   <p class="byline">
     <%= link_to(h(merge_request.user.login), merge_request.user) -%> | 
-    <%= merge_request.created_at.to_s(:short) -%> | 
+    <%= merge_request.created_at.to_s(:short) -%> 
+    <% unless no_link -%>
+      | <strong><%= link_to "Review merge request &#x2192;", [@project, @repository, merge_request] -%></strong>
+    <% end -%>
   </p>
 </div>

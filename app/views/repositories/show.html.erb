@@ -11,10 +11,8 @@
     <li class="selected">Recent commits</li>
     <li><%= link_to "comments (#{@comment_count})", 
               project_repository_comments_path(@project, @repository) -%></li>
-    <% if @repository.user == current_user -%>
     <li><%= link_to "merge requests(#{@merge_request_count})", 
               project_repository_merge_requests_path(@project, @repository) -%></li>
-    <% end -%>
   </ul>
 
   <h2>Recent commits</h2>

@@ -5,7 +5,7 @@ class Repository < ActiveRecord::Base
   has_many    :committerships, :dependent => :destroy
   has_many    :committers, :through => :committerships, :source => :user
   has_many    :comments, :dependent => :destroy
-  has_many    :merge_requests, :foreign_key => 'target_repository_id', :order => "id desc"
+  has_many    :merge_requests, :foreign_key => 'target_repository_id', :order => "status, id desc"
   has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id', 
                 :class_name => 'MergeRequest', :order => "id desc"
   

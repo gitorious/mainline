@@ -45,4 +45,29 @@ describe MergeRequest do
     @merge_request.status = MergeRequest::STATUS_OPEN
     @merge_request.open?.should == true
   end
+  
+  it "has a statuses class method" do
+    MergeRequest.statuses["Open"].should == MergeRequest::STATUS_OPEN
+    MergeRequest.statuses["Merged"].should == MergeRequest::STATUS_MERGED
+    MergeRequest.statuses["Rejected"].should == MergeRequest::STATUS_REJECTED
+  end
+  
+  it "has a status_string" do
+    MergeRequest.statuses.each do |k,v|
+      @merge_request.status = v
+      @merge_request.status_string.should == k.downcase
+    end
+  end
+  
+  it "knows who can resolve itself" do
+    @merge_request.resolvable_by?(users(:johan)).should == true # owns the mainline repos
+    @merge_request.resolvable_by?(users(:moe)).should == false
+  end
+  
+  it "counts open merge_requests" do
+    mr = @merge_request.clone
+    mr.status = MergeRequest::STATUS_REJECTED
+    mr.save
+    MergeRequest.count_open.should == 1
+  end
 end

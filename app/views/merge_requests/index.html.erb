@@ -6,15 +6,21 @@
 <%= render :partial => "repositories/infobox" -%>
 
 <p class="hint">
-  A "merge request" is a notification from one repository to another that you
-  would like the changes to be merged upstream. 
+  A "merge request" is a notification from one repository to another that
+  would like their changes to be merged upstream. 
 </p>
 
 <ul class="tab_menu">
   <li><%= link_to "Recent commits", project_repository_path(@project, @repository) -%></li>
   <li><%= link_to "comments (#{@comment_count})", 
             project_repository_comments_path(@project, @repository) -%></li>
-  <li class="selected">merge requests(<%= @merge_requests.size -%>)</li>
+  <li class="selected">merge requests(<%= @merge_requests.select{|mr| mr.open? }.size -%>)</li>
 </ul>
 
-<%= render :partial => @merge_requests -%>
+<% if @merge_requests.blank? -%>
+  <p>
+    <em>No merge requests yet</em><br />
+  </p>
+<% else -%>
+  <%= render :partial => @merge_requests -%>
+<% end -%>

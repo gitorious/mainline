@@ -50,7 +50,7 @@ describe Mailer do
     mail = Mailer.create_merge_request_notification(merge_request)
     
     mail.to.should == [merge_request.target_repository.user.email]
-    mail.subject.should == "[Gitorious] #{merge_request.target_repository.user} has requested a merge in #{merge_request.target_repository.project}"
+    mail.subject.should == "[Gitorious] johan has requested a merge in johans project"
     mail.body.should match(/moe has requested that you merge #{merge_request.source_repository.name} with #{merge_request.target_repository.name}/)
     mail.body.should match(/in the #{merge_request.target_repository.project.title} project/)
     
