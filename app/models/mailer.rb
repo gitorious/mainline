@@ -23,7 +23,7 @@ class Mailer < ActionMailer::Base
   
   def merge_request_notification(merge_request)
     setup_email(merge_request.target_repository.user)
-    @subject += %Q{#{merge_request.target_repository.user.login} has requested a merge in #{merge_request.target_repository.project.title}}
+    @subject += %Q{#{merge_request.source_repository.user.login} has requested a merge in #{merge_request.target_repository.project.title}}
     @body[:merge_request] = merge_request
     @body[:project] = merge_request.target_repository.project
     url = "http://gitorious.org/p/#{merge_request.target_repository.project.slug}"
