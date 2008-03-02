@@ -25,18 +25,33 @@
   <h2>Clones of your project repositories</h2>
   <ul>
   <% @repository_clones.each do |repos| -%>
+      <li class="repos">
+        <%= link_to h(repos.name), project_repository_path(repos.project, repos) -%> 
+        <small>of <%= h(repos.project.slug) -%></small><br />
+        <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
+        <small>
+          <%= h(repos.last_commit.committer.name) -%> - 
+          <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
+        </small>
+      </li>
+  <% end -%>
+  <% if @repository_clones.blank? -%>
+    <li class="hint">No clones so far</li>
+  <% end -%>
+  </ul>
+  
+  <h2>Your repositories</h2>
+  <ul>
+  <% @repositories.each do |repos| -%>
     <li class="repos">
-      <%= link_to h(repos.name), project_repository_path(repos.project, repos) -%> 
-      <small>of <%= h(repos.project.slug) -%></small><br />
+      <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
+      <small>of <%= link_to h(repos.project.title), repos.project -%></small><br />
       <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
       <small>
         <%= h(repos.last_commit.committer.name) -%> - 
         <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
       </small>
     </li>
-  <% end -%>
-  <% if @repository_clones.blank? -%>
-    <li class="hint">No clones so far</li>
   <% end -%>
   </ul>
 </div>
@@ -50,14 +65,6 @@
     <li><%= link_to project.slug, project -%></li>
   <% end -%>
   <li><%= link_to "Create new &#x2192;", new_project_path -%></li>
-  </ul>
-  <h4>Your repositories:</h4>
-  <% @repositories.each do |repos| -%>
-    <li>
-      <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
-      of <%= link_to h(repos.project.title), repos.project -%>
-    </li>
-  <% end -%>
   </ul>
 <% end -%>
 
