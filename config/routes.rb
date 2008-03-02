@@ -56,6 +56,8 @@ ActionController::Routing::Routes.draw do |map|
           :requirements => {:sha => VALID_SHA}
         r.diff    "diff/:sha/:other_sha",  :action => "diff",
           :requirements => {:sha => VALID_SHA, :other_sha => VALID_SHA}
+        r.archive "archive/:sha",     :action => "archive", 
+          :requirements => {:sha => VALID_SHA }
       end
     end
   end

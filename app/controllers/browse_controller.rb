@@ -79,7 +79,19 @@ class BrowseController < ApplicationController
   end
   
   def archive
-    # TODO
+    @git = @repository.git
+    
+    @commit = @git.commit(params[:sha])
+    
+    if not @commit.nil?
+      prefix = "#{@project.slug}+git"
+      data = @git.archive_tar_gz(params[:sha], prefix+"/")
+      
+      send_data(data, :disposition => 'download', :type => 'application/x-gtar', :filename => "#{prefix}.tar.gz" )
+    else
+      flash[:error] = "The repository is invalid"
+      redirect_to project_repository_path(@project, @repository) and return
+    end
   end
   
   protected

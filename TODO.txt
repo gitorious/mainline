@@ -10,7 +10,7 @@
 [ ] graph Repository#parent relationships properly
 [ ] (A RemoteRepository class for repositories hosted elsewhere?)
 [ ] Auto-remove cloned repositories that havent been committed to after 7 days?
-[ ] Archive downloads of trees
+[*] Archive downloads of trees
 [ ] Search (nuke the tag cloud when its there)
 [ ] Delete/archive a repos, by owner unless its the mainline one
 [ ] Delete/close (prefer latter) a Project

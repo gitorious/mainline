@@ -1,6 +1,6 @@
 <% @page_title = "Tree for #{@repository.name} in #{@project.title}" -%>
 <h1>
-  Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
+  Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%> <small><%= link_to "[download]", repository_path("archive", @commit.id) -%></small>
 </h1>
 
 <%= breadcrumb_path(@repository.name, @commit.id) -%>
@@ -27,3 +27,4 @@
 <% content_for :sidebar do -%>  
   <%= render :partial => "tags_and_branches" -%>
 <% end -%>
+

@@ -215,5 +215,20 @@ describe BrowseController do
       assigns[:commits].should == commits
     end
   end
+  
+  describe "#archive" do
+    def do_get(opts = {})
+      get :archive, {:project_id => @project.slug, 
+        :repository_id => @repository.name}.merge(opts)
+    end
+    
+    it "archives the source tree" do
+      do_get
+      response.should be_success
+      
+      response.headers["type"].should == "application/x-gtar"
+      response.headers["Content-Transfer-Encoding"].should == "binary"
+    end
+  end
 
 end

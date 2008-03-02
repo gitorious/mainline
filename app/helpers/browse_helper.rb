@@ -12,6 +12,10 @@ module BrowseHelper
     project_repository_tree_path(@project, @repository, sha1, path)    
   end
   
+  def repository_path(action, sha1=nil)
+    project_repository_path(@project, @repository)+"/"+action+"/"+sha1.to_s
+  end
+  
   def commit_path(sha1)
     project_repository_commit_path(@project, @repository, sha1)    
   end

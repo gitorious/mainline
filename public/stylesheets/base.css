@@ -169,7 +169,7 @@ abbr {
   border-bottom: 1px dotted #888;
 }
 #sidebar ul.links li a {
-  display:block;
+  display: block;
   padding: 5px 5px 5px 10px; 
 }
 #sidebar ul.links li a:hover {
