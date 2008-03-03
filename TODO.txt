@@ -1,30 +1,47 @@
-[ ] Get rid of all the mocking in the controller tests, or at least clean it up
-[ ] Nag project owners with no commits to the mainline repos after a week or two
-[ ] gitk-style branch view
-[ ] project homepage is an editable wiki-ish page
-[ ] Better SshKey#key wrap
-[ ] paginate comments
-[ ] OpenID login
-[ ] Clean up in commit diff CSS
-[ ] Show full path in repos browser
-[ ] graph Repository#parent relationships properly
-[ ] (A RemoteRepository class for repositories hosted elsewhere?)
-[ ] Auto-remove cloned repositories that havent been committed to after 7 days?
-[*] Archive downloads of trees
-[ ] Search (nuke the tag cloud when its there)
-[ ] Delete/archive a repos, by owner unless its the mainline one
-[ ] Delete/close (prefer latter) a Project
-[ ] Refactor the Task/queue system
-[ ] A "Status" field for a project (though a wiki-frontpage makes this unneeded-ish)
-[ ] improve commenting and comments visibility
-[ ] handle mising/wrong SHA1s gracefully in browser
-[ ] parse SHA1s in commits+comments
-[ ] Normalize url fields (eg add http:// if it aint there) on User+Project
-[ ] diff-display gets confused when there's an :add right after :mod (see edgecase1.diff)
-[ ] Detect renames etc when showing a commit
-[ ] Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
-[ ] email repository owners when there's a new comment
-[*] Clean up in Diff::Display::Unified
+(in no particular order)
+
+* Comments on MergeRequests and/or votes (or just comments when you resolve)
+* only load scriptacolous+friends when needed
+* git-blame rendering?
+* Reword /about page
+* mail the user when someone adds him as a comitter
+* expire fragment caches for project+repos on deletion
+* view complete raw diff (.diff respond_to ?)
+*a Tone down the "owner" of a repository, or implement a proper "mirror" project type.
+*b be able to mark a project as a "mirror"
+* reset password functionality
+* Nicer diff stats
+* proper paginated commits
+* Rework frontpage to show advantages both for projects and contributors
+* logged in users only care about their dashboard, redirect from site#index
+* more interesting project stats on frontpage
+* parse git submodule data and link to project if submodule is in gitorious
+* link to users in gitorious in commmits if email match
+* add mainline as a remote branch in clones
+* timezone support
+* Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
+* Email source_repository owner about merge_request changes
+* Merge requests should not be limited to master<->master branches
+* Get rid of all the mocking in the controller tests, or at least clean it up
+* Nag project owners with no commits to the mainline repos after a week or two
+* gitk-style branch view
+* Projects can add multiple "pages", not just the index description
+* paginate comments
+* OpenID login
+* Clean up in commit diff CSS
+* graph Repository#parent relationships properly
+* (A RemoteRepository class for repositories hosted elsewhere?)
+* Auto-remove cloned repositories that havent been committed to after 7 days?
+* Search (nuke the tag cloud when its there)
+* Refactor the Task/queue system
+* A "Status" field for a project (though a wiki-frontpage makes this unneeded-ish)
+* improve commenting and comments visibility
+* handle mising/wrong SHA1s gracefully in browser
+* parse SHA1s in commits+comments
+* Normalize url fields (eg add http:// if it aint there) on User+Project
+* Detect renames etc when showing a commit
+* Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
+* email repository owners when there's a new comment
 ---
 
 a ProjectMirror that sucks in svn repositories. They need to be differentiated form normal projects (don't display owner etc, since it's a mirror). Also, the mainline repository should probably be immutable so people can commit changes to the actual mirror.
