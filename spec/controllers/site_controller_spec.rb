@@ -38,11 +38,7 @@ describe SiteController do
     it "gets a list of recent comments from users projects" do
       get :dashboard
       
-      comment_list = comments(:johans_repos, :johans_repos2)
-      
-      puts comment_list.inspect
-      
-      comment_list.each { |comment|
+      comments(:johans_repos, :johans_repos2).each { |comment|
         assigns[:recent_comments].include?(comment).should == true
       }
     end
