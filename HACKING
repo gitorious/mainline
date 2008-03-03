@@ -1,5 +1,12 @@
 == Guide to Hacking Gitorious
 
+=== Dependencies
+
+* bluecloth (https://rubyforge.org/projects/bluecloth/)
+* mime-types (https://rubyforge.org/projects/mime-types)
+* oniguruma (https://rubyforge.org/projects/oniguruma)
+* textpow (https://rubyforge.org/projects/textpow)
+
 === The Hackers digest guide:
 
 1. Do the normal rails app stuff (database.yml etc.)
