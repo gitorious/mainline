@@ -8,7 +8,7 @@ atom_feed do |feed|
       entry.title(project.title)
       entry.content(project.description)
       entry.author do |author|
-        author.name("Gitorious")
+        author.name(project.user.login)
       end
     end
   end

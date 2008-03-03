@@ -7,15 +7,11 @@
   <% end -%>
   <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
   <li>
-    <strong>Clone url:</strong> <code><%=h @repository.clone_url -%></code> 
+    <strong>Public clone url:</strong> <code><%=h @repository.clone_url -%></code> 
     <small><%= link_to_function "More info…", "$('detailed_clone_info').toggle()" -%></small>
     <div id="detailed_clone_info" class="info_hint" style="display:none">
       You can clone this repository with the following command:<br />
-      <% if logged_in? && current_user.can_write_to?(@repository) -%>
-        <code>git clone <%= @repository.push_url -%></code>
-      <% else -%>
-        <code>git clone <%= @repository.clone_url -%></code>
-      <% end -%>
+      <code>git clone <%= @repository.clone_url -%></code>
     </div>
   </li>
   <li>
@@ -23,7 +19,9 @@
     <small><%= link_to_function "More info…", "$('detailed_http_clone_info').toggle()" -%></small>
     <div id="detailed_http_clone_info" class="info_hint" style="display:none">
       You can clone this repository with the following command:<br />
-        <code>git clone <%= @repository.http_clone_url -%></code>
+        <code>git clone <%= @repository.http_clone_url -%></code><br />
+        <small>(note that cloning over HTTP is slightly slower, but useful 
+          if you're behind a firewall)</small>
     </div>
   </li>
   <% if logged_in? && current_user.can_write_to?(@repository) -%>
@@ -31,8 +29,8 @@
       <strong>Push url:</strong> <code><%=h @repository.push_url -%></code>
       <small><%= link_to_function "More info…", "$('detailed_push_info').toggle()" -%></small>
       <div id="detailed_push_info" class="info_hint" style="display:none">
-You can run "<code>git push git@gitorious.org:tumbline/mainline.git</code>", or 
-you can setup a remote by doing the following:
+        You can run "<code>git push <%= @repository.push_url %></code>", or 
+        you can setup a remote by doing the following:
 <pre>
 git remote add origin <%= @repository.push_url %>
 # to push the master branch to the origin remote we added above:

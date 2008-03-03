@@ -1,0 +1,35 @@
+<h1>
+  Reviewing merge request "<%=h @merge_request.source_repository.name -%>" &#x2192; 
+  "<%= @merge_request.target_repository.name -%>"
+</h1>
+
+<%= render :partial => @merge_request, :locals => { :no_link => true } -%>
+
+<% if @merge_request.resolvable_by?(current_user) -%>
+  <% form_for @merge_request, 
+      :url => resolve_project_repository_merge_request_path(@project, 
+              @repository, @merge_request) do |f| -%>
+    <p>
+      <%= f.label :status -%><br />
+      <%= f.select :status, MergeRequest.statuses.sort_by{|k,v| v } -%><br />
+      <%= f.submit "Update merge request" -%></p>
+  <% end -%>
+
+  <% if @merge_request.open? -%>
+  <p>The simplest way to merge in these changes is to simply pull them in with the following command:</p>
+  <pre>git pull <%= @merge_request.source_repository.clone_url -%></pre>
+  <% end -%>
+<% end -%>
+
+<% if @merge_request.open? -%>
+<h2>Commits that would be merged:</h2>
+
+<ul class="shortlog">
+  <% @commits.each do |commit| -%>
+    <li><a href=""><%= link_to h(commit.id_abbrev), 
+      project_repository_commit_path(@project, @merge_request.source_repository, commit.id) -%></a> 
+    by <strong><%=h commit.committer.name -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
+    <div class="commit_message"><%= simple_format(h(commit.message)) -%></div></li>
+  <% end -%>
+</ul>
+<% end -%>

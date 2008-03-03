@@ -48,6 +48,9 @@ class BrowseController < ApplicationController
     end
     @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
     render_not_found and return unless @blob
+    unless @blob.respond_to?(:data) # it's a tree
+      redirect_to project_repository_tree_path(@project, @repository, @commit.id, params[:path])
+    end
   end
   
   def raw

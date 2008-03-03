@@ -9,7 +9,10 @@
   
   <ul class="tab_menu">
     <li class="selected">Recent commits</li>
-    <li><%= link_to "comments (#{@comment_count})", project_repository_comments_path(@project, @repository) -%></li>
+    <li><%= link_to "comments (#{@comment_count})", 
+              project_repository_comments_path(@project, @repository) -%></li>
+    <li><%= link_to "merge requests(#{@merge_request_count})", 
+              project_repository_merge_requests_path(@project, @repository) -%></li>
   </ul>
 
   <h2>Recent commits</h2>
@@ -33,9 +36,10 @@
 <% content_for :sidebar do -%>  
   <ul class="links">
     <% if @repository.ready? -%>
-      <li><%= link_to "Clone this repository", new_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to "Clone repository", new_project_repository_path(@project, @repository) -%></li>
     <% end -%>
     <% if @repository.user == current_user -%>
+      <li><%= link_to "Request merge", new_project_repository_merge_request_path(@project, @repository) -%></li>
       <li><%= link_to "Add committer", 
               { :controller => "committers", :action => "new", :project_id => @project, 
                 :repository_id => @repository } -%></li>

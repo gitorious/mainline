@@ -119,6 +119,7 @@ describe BrowseController do
     it "gets the blob data for the sha provided" do
       blob_mock = mock("blob")
       blob_mock.stub!(:contents).and_return([blob_mock]) #meh
+      blob_mock.stub!(:data).and_return("blob contents")
       commit_stub = mock("commit")
       commit_stub.stub!(:id).and_return("a"*40)
       commit_stub.stub!(:tree).and_return(commit_stub)

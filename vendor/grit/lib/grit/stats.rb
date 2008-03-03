@@ -1,17 +1,6 @@
 module Grit
   
-  class Stats
-    # hsh = {:total => {:insertions => 0, :deletions => 0, :lines => 0, :files => 0}, :files => {}}
-    # 
-    # command_lines('diff', diff_opts).each do |file|
-    #   (insertions, deletions, filename) = file.split("\t")
-    #   hsh[:total][:insertions] += insertions.to_i
-    #   hsh[:total][:deletions] += deletions.to_i
-    #   hsh[:total][:lines] = (hsh[:total][:deletions] + hsh[:total][:insertions])
-    #   hsh[:total][:files] += 1
-    #   hsh[:files][filename] = {:insertions => insertions.to_i, :deletions => deletions.to_i}
-    # end
-    
+  class Stats    
     def initialize(repo, total, files)
       @repo = repo
       @total = total

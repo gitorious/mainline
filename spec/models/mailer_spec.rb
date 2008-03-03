@@ -44,5 +44,18 @@ describe Mailer do
     Mailer.deliver(mail)
     Mailer.deliveries.should == [mail]
   end
+  
+  it "sends merge_request_notification" do
+    merge_request = merge_requests(:moes_to_johans)
+    mail = Mailer.create_merge_request_notification(merge_request)
+    
+    mail.to.should == [merge_request.target_repository.user.email]
+    mail.subject.should == "[Gitorious] moe has requested a merge in johans project"
+    mail.body.should match(/moe has requested that you merge #{merge_request.source_repository.name} with #{merge_request.target_repository.name}/)
+    mail.body.should match(/in the #{merge_request.target_repository.project.title} project/)
+    
+    Mailer.deliver(mail)
+    Mailer.deliveries.should == [mail]
+  end
 
 end
