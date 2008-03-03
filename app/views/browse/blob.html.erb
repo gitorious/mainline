@@ -15,10 +15,11 @@
   <small>(<%= link_to "raw blob data", raw_blob_path(@commit.id, current_path) -%>)</small>
 </h1>
 <!-- <%= @blob.mime_type -%> -->
+
 <%= breadcrumb_path(@repository.name, @commit.id) -%>
 
 <% if @blob.mime_type =~ /^text/ && !too_big_to_render?(@blob.size) -%>
-  <% cache do -%>
+  <% cache(blob_path(@commit.id, params[:path])) do -%>
     <%= render_highlighted(@blob.data, current_path.last || "") -%>
   <% end -%>
 <% elsif too_big_to_render?(@blob.size) && @blob.mime_type =~ /^text/ -%>
@@ -27,7 +28,7 @@
     <%= link_to "try viewing the raw data", raw_blob_path(@commit.id, current_path) -%> 
   </p>
 <% elsif @blob.mime_type =~ /^image/ -%>
-  <% cache do -%>
+  <% cache(blob_path(@commit.id, params[:path])) do -%>
     <%= image_tag raw_blob_path(@commit.id, current_path) -%>
   <% end -%>
 <% else -%>
