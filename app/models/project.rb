@@ -75,7 +75,7 @@ class Project < ActiveRecord::Base
     super
   end
   
-  def strip_description
+  def stripped_description
     description.gsub(/<\/?[^>]*>/, "")
   end
   

@@ -82,7 +82,7 @@ describe Project do
   
   it "should strip html tags" do
     project = create_project(:description => "<h1>Project A</h1>\n<b>Project A</b> is a....")
-    project.strip_description.index(/<\/?[^>]*>/).should == nil
+    project.stripped_description.index(/<\/?[^>]*>/).should == nil
   end
   
 end
