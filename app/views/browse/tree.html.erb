@@ -1,6 +1,6 @@
 <% @page_title = "Tree for #{@repository.name} in #{@project.title}" -%>
 <h1>
-  Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%> <small><%= link_to "[download]", repository_path("archive", @commit.id) -%></small>
+  Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
 </h1>
 
 <%= breadcrumb_path(@repository.name, @commit.id) -%>
@@ -22,6 +22,11 @@
   </tr>
   <% end -%>
 </table>
+<% end -%>
+<% if logged_in? -%>
+<p>
+  <small><%= link_to "Download as gzipped tarball", repository_path("archive", @commit.id) -%></small>
+</p>
 <% end -%>
 
 <% content_for :sidebar do -%>  
