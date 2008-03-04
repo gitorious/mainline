@@ -52,6 +52,7 @@ describe Mailer do
     mail.subject.should == "[Gitorious] moe has requested a merge in johans project"
     mail.body.should match(/moe has requested that you merge #{merge_request.source_repository.name} with #{merge_request.target_repository.name}/)
     mail.body.should match(/in the #{merge_request.target_repository.project.title} project/)
+    mail.body.should include(merge_request.proposal)
     
     Mailer.deliver(mail)
     Mailer.deliveries.should == [mail]
