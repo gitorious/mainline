@@ -12,19 +12,19 @@
 ActiveRecord::Schema.define(:version => 21) do
 
   create_table "comments", :force => true do |t|
-    t.integer  "user_id",                       :null => false
-    t.integer  "repository_id",                 :null => false
-    t.string   "sha1",          :default => "", :null => false
+    t.integer  "user_id",       :null => false
+    t.integer  "repository_id", :null => false
+    t.string   "sha1"
     t.text     "body"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "project_id"
   end
 
-  add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
+  add_index "comments", ["project_id"], :name => "index_comments_on_project_id"
   add_index "comments", ["repository_id"], :name => "index_comments_on_repository_id"
   add_index "comments", ["sha1"], :name => "index_comments_on_sha1"
-  add_index "comments", ["project_id"], :name => "index_comments_on_project_id"
+  add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
 
   create_table "committerships", :force => true do |t|
     t.integer  "user_id"
@@ -34,8 +34,8 @@ ActiveRecord::Schema.define(:version => 21) do
     t.datetime "updated_at"
   end
 
-  add_index "committerships", ["user_id"], :name => "index_permissions_on_user_id"
   add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
+  add_index "committerships", ["user_id"], :name => "index_permissions_on_user_id"
 
   create_table "merge_requests", :force => true do |t|
     t.integer  "user_id"
@@ -48,10 +48,10 @@ ActiveRecord::Schema.define(:version => 21) do
     t.datetime "updated_at"
   end
 
-  add_index "merge_requests", ["user_id"], :name => "index_merge_requests_on_user_id"
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
-  add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
   add_index "merge_requests", ["status"], :name => "index_merge_requests_on_status"
+  add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
+  add_index "merge_requests", ["user_id"], :name => "index_merge_requests_on_user_id"
 
   create_table "projects", :force => true do |t|
     t.string   "title"
@@ -66,8 +66,8 @@ ActiveRecord::Schema.define(:version => 21) do
     t.string   "bugtracker_url"
   end
 
-  add_index "projects", ["slug"], :name => "index_projects_on_slug", :unique => true
   add_index "projects", ["title"], :name => "index_projects_on_name"
+  add_index "projects", ["slug"], :name => "index_projects_on_slug", :unique => true
   add_index "projects", ["user_id"], :name => "index_projects_on_user_id"
 
   create_table "repositories", :force => true do |t|
@@ -82,10 +82,10 @@ ActiveRecord::Schema.define(:version => 21) do
   end
 
   add_index "repositories", ["name"], :name => "index_repositories_on_name"
-  add_index "repositories", ["project_id"], :name => "index_repositories_on_project_id"
-  add_index "repositories", ["user_id"], :name => "index_repositories_on_user_id"
   add_index "repositories", ["parent_id"], :name => "index_repositories_on_parent_id"
+  add_index "repositories", ["project_id"], :name => "index_repositories_on_project_id"
   add_index "repositories", ["ready"], :name => "index_repositories_on_ready"
+  add_index "repositories", ["user_id"], :name => "index_repositories_on_user_id"
 
   create_table "ssh_keys", :force => true do |t|
     t.integer  "user_id"
@@ -142,8 +142,8 @@ ActiveRecord::Schema.define(:version => 21) do
     t.text     "url"
   end
 
-  add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["email"], :name => "index_users_on_email"
+  add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
 
 end

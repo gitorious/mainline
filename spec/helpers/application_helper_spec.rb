@@ -34,4 +34,12 @@ describe ApplicationHelper do
     base_url("http://foo.com/bar/baz").should == "foo.com"
   end
   
+  it "generates a valid gravatar url" do
+    email = "someone@myemail.com";
+    url = gravatar_url_for(email)
+    
+    base_url(url).should == "www.gravatar.com"
+    url.include?(Digest::MD5.hexdigest(email)).should == true
+  end
+  
 end
