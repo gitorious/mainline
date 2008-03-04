@@ -29,9 +29,11 @@ describe GitBackend do
   end
   
   it "deletes a git repository" do
-    path = @repository.full_repository_path 
-    FileUtils.should_receive(:rm_rf).with(path).and_return(true)
-    GitBackend.delete!(path)
+    base_path = "/base/path"
+    repos_path = base_path + "/repo"
+    GitoriousConfig.should_receive(:[]).with("repository_base_path").and_return(base_path)
+    FileUtils.should_receive(:rm_rf).with(repos_path).and_return(true)
+    GitBackend.delete!(repos_path)
   end
   
   it "knows if a repos has commits" do
