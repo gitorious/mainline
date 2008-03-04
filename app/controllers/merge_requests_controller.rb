@@ -26,7 +26,7 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
     if @merge_request.save
-      flash[:success] = "Your sent a merge request to #{@merge_request.target_repository.name}"
+      flash[:success] = %Q{You sent a merge request to "#{@merge_request.target_repository.name}"}
       redirect_to project_repository_path(@project, @repository) and return
     else
       @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
