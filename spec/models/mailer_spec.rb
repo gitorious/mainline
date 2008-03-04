@@ -26,8 +26,7 @@ describe Mailer do
     mail.to.should == [user.email]
     mail.subject.should == "[Gitorious] Please activate your new account"
     mail.body.should match(/users\/activate\/#{user.activation_code}/)
-    mail.body.should match(/Username: #{user.login}$/)
-    mail.body.should match(/Password: fubar$/)
+    mail.body.should match(/username is #{user.login}$/)
     
     Mailer.deliver(mail)
     Mailer.deliveries.should == [mail]
