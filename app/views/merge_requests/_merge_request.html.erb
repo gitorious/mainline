@@ -10,7 +10,7 @@
   <p class="byline">
     <%= link_to(h(merge_request.user.login), merge_request.user) -%> | 
     <%= merge_request.created_at.to_s(:short) -%> 
-    <% unless no_link -%>
+    <% if !no_link && merge_request.open? -%>
       | <strong><%= link_to "Review merge request &#x2192;", [@project, @repository, merge_request] -%></strong>
     <% end -%>
   </p>
