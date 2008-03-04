@@ -128,7 +128,7 @@ describe MergeRequestsController do
       proc {
         do_post
         response.should redirect_to(project_repository_path(@project, @repository))
-        flash[:success].should match(/sent a merge request to #{repositories(:johans2).name}/i)
+        flash[:success].should match(/sent a merge request to "#{repositories(:johans2).name}"/i)
       }.should change(MergeRequest, :count)
     end
     
