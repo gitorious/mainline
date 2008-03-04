@@ -2,4 +2,6 @@
 .DS_Store
 coverage/*
 public/cache/*
-*~
+config/datbase.yml
+config/gitorious.yml
+db/schema.rb
