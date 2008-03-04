@@ -1,5 +1,8 @@
 (in no particular order)
 
+* Update the HACKING with some basic coding guidelines
+* show MergeRequest#proposol in the mail we send to target_repository
+* Show the most recent mergerequests on users dashboard so they can track them
 * Make the archive download an external little mongrel/rack thing, and store the result per sha1
 * Comments on MergeRequests and/or votes (or just comments when you resolve)
 * only load scriptacolous+friends when needed
