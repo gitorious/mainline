@@ -8,7 +8,7 @@ class GitBackend
       FileUtils.mkdir_p(repos_path, :mode => 0750)
       Dir.chdir(repos_path) do |path| 
         Git.init(path, :repository => path)
-        FileUtils.touch(File.join(path, "git-daemon-export-ok")) if set_export_ok
+        post_create(path) if set_export_ok
       end
     end
     
@@ -16,7 +16,7 @@ class GitBackend
     # sets git-daemon-export-ok if +set_export_ok+ is true (default)
     def clone(target_path, source_path, set_export_ok = true)
       Git.clone(source_path, target_path, :bare => true)
-      FileUtils.touch(File.join(target_path, "git-daemon-export-ok")) if set_export_ok
+      post_create(target_path) if set_export_ok
     end
     
     def delete!(repos_path)
@@ -30,5 +30,11 @@ class GitBackend
     def repository_has_commits?(repos_path)
       Dir[File.join(repos_path, "refs/heads/*")].size > 0
     end
+    
+    protected
+      def post_create(path)
+        FileUtils.touch(File.join(path, "git-daemon-export-ok"))
+        system(%Q{GIT_DIR="#{path}" git-update-server-info})
+      end
   end
 end
