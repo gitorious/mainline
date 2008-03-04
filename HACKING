@@ -11,7 +11,7 @@
 
 1. Do the normal rails app stuff (database.yml etc.)
 
-2. Rename the config/gitorious.sample.yml file to gitorious.yml, and update it with your cahnges.
+2. Rename the config/gitorious.sample.yml file to gitorious.yml, and update it with your changes.
 
 3a. If you want real project data, find a project, set the 'ready' status to true, create a bare git repository (git --bare init) in the directory GitoriousConfig['repository_base_path']/#{project.slug}/#{repository.name}.git, and push something to that repository (cd to a git repository with commits and do "git push path/to/the/bare/repository/you/just/created master").
 	
