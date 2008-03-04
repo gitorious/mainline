@@ -5,7 +5,7 @@ describe BrowseController do
     @project = projects(:johans)
     @repository = @project.repositories.first
     @repository.stub!(:full_repository_path).and_return(repo_path)
-    
+  
     Project.should_receive(:find_by_slug!).with(@project.slug) \
       .and_return(@project)
     @project.repositories.should_receive(:find_by_name!) \
@@ -17,6 +17,7 @@ describe BrowseController do
     @head = mock("master branch")
     @head.stub!(:name).and_return("master")
     @repository.stub!(:head_candidate).and_return(@head)
+
   end
   
   describe "#index" do
@@ -223,8 +224,14 @@ describe BrowseController do
         :repository_id => @repository.name}.merge(opts)
     end
     
-    it "archives the source tree" do
+    it "does not archive the source tree if the sha is invalid" do
+      @git.should_receive(:commit).with(nil).and_return(nil)
       do_get
+      response.should_not be_success
+    end
+    
+    it "archives the source tree" do
+      do_get(:sha => "a"*40)
       response.should be_success
       
       response.headers["type"].should == "application/x-gtar"
