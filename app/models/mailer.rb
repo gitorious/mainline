@@ -2,7 +2,7 @@ class Mailer < ActionMailer::Base
   def signup_notification(user)
     setup_email(user)
     @subject    += 'Please activate your new account'
-    @body[:url]  = "http://gitorious.org/users/activate/#{user.activation_code}"
+    @body[:url]  = "http://GitoriousConfig['gitorious_host']/users/activate/#{user.activation_code}"
   
   end
   
@@ -18,7 +18,7 @@ class Mailer < ActionMailer::Base
     @body[:cloner] = repository.user
     @body[:project] = repository.project
     @body[:repository] = repository
-    @body[:url] = "http://gitorious.org/p/#{repository.project.slug}/repos/#{repository.name}"
+    @body[:url] = "http://GitoriousConfig['gitorious_host']/p/#{repository.project.slug}/repos/#{repository.name}"
   end
   
   def merge_request_notification(merge_request)
@@ -26,7 +26,7 @@ class Mailer < ActionMailer::Base
     @subject += %Q{#{merge_request.source_repository.user.login} has requested a merge in #{merge_request.target_repository.project.title}}
     @body[:merge_request] = merge_request
     @body[:project] = merge_request.target_repository.project
-    url = "http://gitorious.org/p/#{merge_request.target_repository.project.slug}"
+    url = "http://GitoriousConfig['gitorious_host']/p/#{merge_request.target_repository.project.slug}"
     url << "/repos/#{merge_request.target_repository.name}"
     url << "/merge_requests/#{merge_request.id}"
     @body[:url] = url
@@ -35,7 +35,7 @@ class Mailer < ActionMailer::Base
   protected
     def setup_email(user)
       @recipients  = "#{user.email}"
-      @from        = "Gitorious <no-reply@gitorious.org>"
+      @from        = "Gitorious <no-reply@GitoriousConfig['gitorious_host']>"
       @subject     = "[Gitorious] "
       @sent_on     = Time.now
       @body[:user] = user

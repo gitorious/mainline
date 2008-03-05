@@ -18,7 +18,7 @@ class Repository < ActiveRecord::Base
   after_create :add_user_as_committer, :create_new_repos_task
   after_destroy :create_delete_repos_task
   
-  BASE_REPOSITORY_URL = "gitorious.org"
+  BASE_REPOSITORY_URL = "GitoriousConfig['gitorious_host']"
   
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}s-clone" : nil
