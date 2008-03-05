@@ -57,16 +57,10 @@ module ApplicationHelper
   end
   
   def gravatar_url_for(email, options = {})
-    url_for({ :gravatar_id => Digest::MD5.hexdigest(email), :host => 'www.gravatar.com', :protocol => 'http://', 
-              :only_path => false, :controller => 'avatar.php', :default => "http://gitorious.org/images/default_face.png" # FIXME: hardcoded url =(
-            }.merge(options))
+    "http://www.gravatar.com/avatar.php?default=http%3A%2F%2Fgitorious.org%2Fimages%2Fdefault_face.png&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
   end
   
   def flashes
     flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
-  end
-  
-  def absolute_url(*path)
-    
   end
 end

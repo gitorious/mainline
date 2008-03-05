@@ -21,7 +21,7 @@
       <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
     <% end -%>
     <% if @repositories.first.has_commits? %>
-    <li><%= image_tag(url_for(:action => "commit_graph", :id => @project, :width => 250 )) %></li>
+    <li><%= image_tag("/projects/commit_graph/#{@project.slug}?width=250") %></li>
     <% end -%>
   </ul>
 </div>
