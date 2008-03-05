@@ -131,5 +131,23 @@ describe ProjectsController do
     response.should be_success
     assigns[:project].should == projects(:johans)
   end
+  
+  it "should generate a commit graph" do
+    project = projects(:johans)
+    repo = project.repositories.first
+    
+    path = repo.full_repository_path
+    GitBackend.create(path)
+    
+    git = repo.git.git
+    
+    get :commit_graph, :id => project.slug
+    response.should be_success
+    
+    response.headers["type"].should == "image/png"
+    response.headers["Content-Disposition"].include?("#{project.slug}-commits.png").should == true
+    
+    GitBackend.delete!(path)
+  end
 
 end

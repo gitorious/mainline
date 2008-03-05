@@ -21,6 +21,9 @@
   <ul class="project_list">
   <% @projects.each do |project| -%>
     <li class="project_list_item">
+      <% if project.repositories.first.has_commits? %>
+        <div style="float: right;"><%= image_tag(url_for(:controller => "projects", :action => "commit_graph", :id => project, :width => 130 )) %></div>
+      <% end -%>
       <%= render :partial => project, :object => project -%>
     </li>
   <% end -%>
