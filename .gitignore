@@ -5,3 +5,4 @@ public/cache/*
 config/datbase.yml
 config/gitorious.yml
 db/schema.rb
+.autotest
