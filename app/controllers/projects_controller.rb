@@ -1,3 +1,6 @@
+
+require 'gruff'
+
 class ProjectsController < ApplicationController  
   before_filter :login_required, :only => [:create, :update, :destroy, :new]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
@@ -81,5 +84,75 @@ class ProjectsController < ApplicationController
       flash[:error] = "You're not the owner of this project, or the project has clones"
     end
     redirect_to projects_path
+  end
+  
+  def commit_graph
+    @project = Project.find_by_slug!(params[:id])
+    repo = @project.mainline_repository
+    git = repo.git.git
+    
+    width = params[:width] ? params[:width].to_i : 250
+    
+    h = Hash.new
+    linen = 0
+    dategroup = Date.new
+
+    git.log({:pretty => "format:%aD", :shortstat => true}, " | grep [a-zA-Z0-9]").each { |line|
+      if line =~ /\d\d:\d\d:\d\d/ then
+        date = Date.parse(line)
+        dategroup = Date.new(date.year, date.month, 1)
+        if h[dategroup] then
+          h[dategroup][:commits] += 1
+        else
+          h[dategroup] = Hash.new
+          h[dategroup][:commits] = 1
+        end
+      else
+        line =~ /([\d]+) files changed, ([\d]+) insertions\(\+\), ([\d]+) deletions\(-\)/
+        h[dategroup][:insert] = (h[dategroup][:insert])? h[dategroup][:insert].to_i + $2.to_i : $2.to_i
+        h[dategroup][:delete] = (h[dategroup][:delete])? h[dategroup][:delete].to_i + $3.to_i : $3.to_i
+      end
+    }
+    
+    g = Gruff::Line.new(width)
+    g.title = "#{@project.title} commits" 
+    
+    commits = []
+    labels = []
+    h.sort.each { |entry|
+      date = entry.first
+      value = entry.last
+      
+      labels << date.to_s
+      commits << value[:commits]
+    }
+    
+    g.hide_legend = true
+    g.center_labels_over_point = true
+    g.no_data_message = "No commits" 
+    
+    if labels.size > 1
+      g.data("Commits", commits)
+      g.labels = { 0 => labels.first, commits.size-1 => labels.last } 
+    end
+    
+    colors = [
+      '#a9dada', # blue
+      '#aedaa9', # green
+      '#dadaa9', # yellow
+      '#daaea9', # peach
+      '#a9a9da', # dk purple
+      '#daaeda', # purple
+      '#dadada' # grey
+    ]
+    
+    g.theme = {
+      :colors => colors,
+      :marker_color => '#aea9a9', # Grey
+      :font_color => 'black',
+      :background_colors =>  '#efefef'
+    }
+    
+    send_data(g.to_blob, :disposition => 'inline', :type => 'image/png', :filename => "#{@project.slug}-commits.png")
   end
 end
