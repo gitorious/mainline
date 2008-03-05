@@ -62,15 +62,15 @@ describe Repository do
   end
   
   it "has a push url" do
-    @repository.push_url.should == "git@GitoriousConfig['gitorious_host']:#{@repository.project.slug}/foo.git"
+    @repository.push_url.should == "git@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git"
   end
   
   it "has a clone url" do
-    @repository.clone_url.should == "git://GitoriousConfig['gitorious_host']/#{@repository.project.slug}/foo.git"
+    @repository.clone_url.should == "git://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
   end
   
   it "has a http url" do
-    @repository.http_clone_url.should == "http://git.GitoriousConfig['gitorious_host']/#{@repository.project.slug}/foo.git"
+    @repository.http_clone_url.should == "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
   end
   
   it "should assign the creator as a comitter on create" do 
