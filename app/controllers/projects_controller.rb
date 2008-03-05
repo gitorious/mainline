@@ -89,28 +89,26 @@ class ProjectsController < ApplicationController
   def commit_graph
     @project = Project.find_by_slug!(params[:id])
     repo = @project.mainline_repository
-    git = repo.git.git
+    git_repo = repo.git
+    git = git_repo.git
     
     width = params[:width] ? params[:width].to_i : 250
     
     h = Hash.new
     linen = 0
     dategroup = Date.new
-
-    git.log({:pretty => "format:%aD", :shortstat => true}, " | grep [a-zA-Z0-9]").each { |line|
+    
+    data = git.rev_list({:pretty => "format:%aD", :since => "24 weeks ago"}, "master")
+    data.each_line { |line|
       if line =~ /\d\d:\d\d:\d\d/ then
         date = Date.parse(line)
+        
         dategroup = Date.new(date.year, date.month, 1)
-        if h[dategroup] then
-          h[dategroup][:commits] += 1
+        if h[dategroup]
+          h[dategroup] += 1
         else
-          h[dategroup] = Hash.new
-          h[dategroup][:commits] = 1
+          h[dategroup] = 1
         end
-      else
-        line =~ /([\d]+) files changed, ([\d]+) insertions\(\+\), ([\d]+) deletions\(-\)/
-        h[dategroup][:insert] = (h[dategroup][:insert])? h[dategroup][:insert].to_i + $2.to_i : $2.to_i
-        h[dategroup][:delete] = (h[dategroup][:delete])? h[dategroup][:delete].to_i + $3.to_i : $3.to_i
       end
     }
     
@@ -118,22 +116,25 @@ class ProjectsController < ApplicationController
     g.title = "#{@project.title} commits" 
     
     commits = []
-    labels = []
+    labels = {}
+    it = 0
     h.sort.each { |entry|
       date = entry.first
       value = entry.last
       
-      labels << date.to_s
-      commits << value[:commits]
+      labels[it] = date.strftime("%m/%y")
+      commits << value
+      it+=1
     }
     
     g.hide_legend = true
     g.center_labels_over_point = true
     g.no_data_message = "No commits" 
     
-    if labels.size > 1
+    if commits.size > 1
       g.data("Commits", commits)
-      g.labels = { 0 => labels.first, commits.size-1 => labels.last } 
+      g.labels = labels
+#       g.labels = { 0 => labels.first, commits.size-1 => labels.last } 
     end
     
     colors = [
