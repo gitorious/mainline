@@ -8,6 +8,7 @@
   <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
   <li><strong>HEAD tree:</strong> <%= link_to h(@commits.first.tree.id), 
     tree_path(@commits.id) -%></li>
+  <li><%= image_tag("/projects/commit_graph_by_author/#{@project.slug}?width=400") %></li>
 </ul>
 
 <h2>Commits</h2>

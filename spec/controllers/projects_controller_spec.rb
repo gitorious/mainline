@@ -141,7 +141,7 @@ describe ProjectsController do
     
     git = repo.git.git
     
-    get :commit_graph, :id => project.slug
+    get :commit_graph, :id => project.slug, :sha => "whatever"
     response.should be_success
     
     response.headers["type"].should == "image/png"
@@ -149,5 +149,22 @@ describe ProjectsController do
     
     GitBackend.delete!(path)
   end
-
+  
+  it "should generate a commit graph by author" do
+    project = projects(:johans)
+    repo = project.repositories.first
+    
+    path = repo.full_repository_path
+    GitBackend.create(path)
+    
+    git = repo.git.git
+    
+    get :commit_graph_by_author, :id => project.slug, :sha => "whatever"
+    response.should be_success
+    
+    response.headers["type"].should == "image/png"
+    response.headers["Content-Disposition"].include?("#{project.slug}-commits_author.png").should == true
+    
+    GitBackend.delete!(path)
+  end
 end

@@ -88,6 +88,8 @@ class ProjectsController < ApplicationController
   
   def commit_graph
     @project = Project.find_by_slug!(params[:id])
+    sha = params[:sha] ? params[:sha] : "master"
+    
     repo = @project.mainline_repository
     git_repo = repo.git
     git = git_repo.git
@@ -95,10 +97,9 @@ class ProjectsController < ApplicationController
     width = params[:width] ? params[:width].to_i : 250
     
     h = Hash.new
-    linen = 0
     dategroup = Date.new
     
-    data = git.rev_list({:pretty => "format:%aD", :since => "24 weeks ago"}, "master")
+    data = git.rev_list({:pretty => "format:%aD", :since => "24 weeks ago"}, sha)
     data.each_line { |line|
       if line =~ /\d\d:\d\d:\d\d/ then
         date = Date.parse(line)
@@ -113,6 +114,8 @@ class ProjectsController < ApplicationController
     }
     
     g = Gruff::Line.new(width)
+    setup_gruff(g)
+    g.hide_legend = true
     g.title = "#{@project.title} commits" 
     
     commits = []
@@ -127,15 +130,81 @@ class ProjectsController < ApplicationController
       it+=1
     }
     
-    g.hide_legend = true
-    g.center_labels_over_point = true
-    g.no_data_message = "No commits" 
-    
     if commits.size > 1
       g.data("Commits", commits)
       g.labels = labels
 #       g.labels = { 0 => labels.first, commits.size-1 => labels.last } 
     end
+    
+    send_data(g.to_blob, :disposition => 'inline', :type => 'image/png', :filename => "#{@project.slug}-commits.png")
+  end
+  
+  def commit_graph_by_author
+    @project = Project.find_by_slug!(params[:id])
+    sha = params[:sha] ? params[:sha] : "master"
+    
+    repo = @project.mainline_repository
+    git_repo = repo.git
+    git = git_repo.git
+    
+    width = params[:width] ? params[:width].to_i : 400
+    
+    h = Hash.new
+    
+    data = git.rev_list({:pretty => "format:name:%cn", :since => "1 years ago" }, sha)
+    data.each_line { |line|
+      if line =~ /^name:(.*)$/ then
+        author = $1
+        
+        if h[author]
+          h[author] += 1
+        else
+          h[author] = 1
+        end
+      end
+    }
+    
+    g = Gruff::Pie.new(width)
+    setup_gruff(g)
+    g.title = "#{@project.title}" 
+    
+    sorted = h.sort_by { |author, commits|
+      commits
+    }
+    
+    label_it = 0
+    labels = {}
+    max = 5
+    others = []
+    top = sorted
+    
+    if sorted.size > max
+      top = sorted[sorted.size-max, sorted.size]
+      others = sorted[0, sorted.size-max]
+    end
+    
+    top.each { |entry|
+      v = entry.last
+      g.data(entry.first, [v])
+      
+      labels[label_it] = v
+      label_it += 1
+    }
+    
+    unless others.empty?
+      others_v = others.inject { |v, acum| [v.last + acum.last] }
+      labels[label_it] = others_v.first
+      g.data("others", others_v )
+    end
+    
+    g.labels = labels
+    
+    send_data(g.to_blob, :disposition => 'inline', :type => 'image/png', :filename => "#{@project.slug}-commits_author.png")
+  end
+  
+  private
+  def setup_gruff(g)
+    g.no_data_message = "No commits" 
     
     colors = [
       '#a9dada', # blue
@@ -154,6 +223,6 @@ class ProjectsController < ApplicationController
       :background_colors =>  '#efefef'
     }
     
-    send_data(g.to_blob, :disposition => 'inline', :type => 'image/png', :filename => "#{@project.slug}-commits.png")
+    g
   end
 end
