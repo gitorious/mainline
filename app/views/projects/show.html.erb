@@ -36,10 +36,15 @@
     <th>Name</th>
     <th>Owner</th>
     <th>Last Commit</th>
+    <th>Commiter</th>
     <th></th>
     <th></th>
   </thead>
-  <% @repositories.each do |repos| # FIXME: need to graph the parent relation proper -%>
+  <% commits = [] %>
+  <% repositories = @repositories.sort_by { |e| commits << e.last_commit; e.mainline? ? Time.now : e.last_commit.committed_date } %>
+  <% email_user = RepositoriesHelper.users_by_commits(commits) %>
+  <% repositories.reverse_each do |repos| # FIXME: need to graph the parent relation proper -%>
+    <% user = email_user[repos.last_commit.committer.email] %>
     <tr class="<%= cycle("even", "odd") -%> <%= repos.mainline? ? "mainline" : "clone" -%>">
       <td class="name">
         <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
@@ -56,6 +61,7 @@
           <em>none</em>
         <% end -%>
       </td>
+      <td><%= user.nil? ? repos.last_commit.committer.name : link_to(user.login, user_path(user)) -%></td>
       <td><%= link_to "commits", project_repository_browse_path(@project, repos) -%></td>
       <td><%= link_to "tree", project_repository_tree_path(@project, repos, 
                 repos.has_commits? ? repos.head_candidate.name : "HEAD") -%></td>
