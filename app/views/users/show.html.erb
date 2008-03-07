@@ -6,7 +6,7 @@
 </h1>
 
 <div class="infobox">
-<div style="float: right;"><%= link_to(image_tag(gravatar_url_for(@user.email, { :size => 80 }), :alt => "avatar"), :action => "show") %></div>
+<div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 80 }), :action => "show") %></div>
 <ul>
   <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
   <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
@@ -21,9 +21,6 @@
   <ul class="project_list">
   <% @projects.each do |project| -%>
     <li class="project_list_item">
-      <% if project.repositories.first.has_commits? %>
-        <div style="float: right;"><%= image_tag("/projects/commit_graph/#{project.slug}?width=130") %></div>
-      <% end -%>
       <%= render :partial => project, :object => project -%>
     </li>
   <% end -%>

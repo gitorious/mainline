@@ -57,7 +57,17 @@ module ApplicationHelper
   end
   
   def gravatar_url_for(email, options = {})
-    "http://www.gravatar.com/avatar.php?default=http%3A%2F%2Fgitorious.org%2Fimages%2Fdefault_face.png&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
+    default = "http://gitorious.org/images/rails.png" # FIXME: default_face.png
+    "http://www.gravatar.com/avatar.php?default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
+  end
+  
+  def gravatar(email, options = {})
+    size = options[:size]
+    image_options = { :alt => "avatar" }
+    if size
+      image_options.merge!(:width => size, :height => size)
+    end
+    image_tag(gravatar_url_for(email, options), image_options)
   end
   
   def flashes

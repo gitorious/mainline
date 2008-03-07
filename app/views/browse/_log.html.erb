@@ -5,7 +5,7 @@
 <li class="commit_item">
   <a href=""><%= link_to h(commit.id_abbrev), 
     project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-  by <strong><%=h commit.committer.name -%></strong><small> <%= user ? "[#{link_to user.login, user}]" : "" -%></small> <%=h time_ago_in_words(commit.committed_date) -%> ago
+  by <strong><%=h commit.committer.name -%></strong><small> <%= user ? "[#{link_to user.login, user_path(user)}]" : "" -%></small> <%=h time_ago_in_words(commit.committed_date) -%> ago
   <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
 </li>
 <% end -%>

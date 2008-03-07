@@ -39,12 +39,13 @@
     <th></th>
     <th></th>
   </thead>
-  <% @repositories.each do |repos| # fixme: need to graph the parent relation proper -%>
+  <% @repositories.each do |repos| # FIXME: need to graph the parent relation proper -%>
     <tr class="<%= cycle("even", "odd") -%> <%= repos.mainline? ? "mainline" : "clone" -%>">
       <td class="name">
         <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
       </td>
       <td>
+        <%= gravatar(repos.user.email, :size => 16) %>
         <%= link_to h(repos.user.login), user_path(repos.user) -%>
       </td>
       <td>
