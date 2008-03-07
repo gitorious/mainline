@@ -3,10 +3,14 @@
 <% @commits.each do |commit| -%>
 <% user = email_user[commit.committer.email] %>
 <li class="commit_item">
+  <div>
   <a href=""><%= link_to h(commit.id_abbrev), 
     project_repository_commit_path(@project, @repository, commit.id) -%></a> 
   by <strong><%=h commit.committer.name -%></strong><small> <%= user ? "[#{link_to user.login, user_path(user)}]" : "" -%></small> <%=h time_ago_in_words(commit.committed_date) -%> ago
-  <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
+  </div>
+  <div style="float: left; width: 5%;"> <%= gravatar(commit.committer.email, :size => 32) %></div>
+  <div class="commit_message"> <%= simple_format(h(commit.message)) -%></div>
+  
 </li>
 <% end -%>
 <li class="link_to_more">
