@@ -87,10 +87,11 @@ class BrowseController < ApplicationController
     @commit = @git.commit(params[:sha])
     
     if @commit
-      data = @git.archive_tar_gz(params[:sha])
+      prefix = "#{@project.slug}-#{@repository.name}"
+      data = @git.archive_tar_gz(params[:sha], prefix + "/")
       
       send_data(data, :type => 'application/x-gzip', 
-        :filename => "#{@project.slug}-#{@repository.name}.tar.gz")
+        :filename => "#{prefix}.tar.gz")
     else
       flash[:error] = "The given repository or sha is invalid"
       redirect_to project_repository_path(@project, @repository) and return
