@@ -20,11 +20,13 @@
     <% if @commits.blank? -%>
       <li><em>No commits yet…</em></li>
     <% end -%>
+    <% email_user = RepositoriesHelper.users_by_commits(@commits) %>
     <% @commits.each do |commit| -%>
+    <% user = email_user[commit.committer.email] %>
     <li class="commit_item">
       <a href=""><%= link_to commit.id_abbrev, 
         project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-      by <strong><%=h commit.committer.name -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
+      by <strong><%=h commit.committer.name -%></strong><small> <%= user ? "[#{link_to user.login, user}]" : "" -%> <%=h time_ago_in_words(commit.committed_date) -%> ago
       <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
     </li>
     <% end -%>
