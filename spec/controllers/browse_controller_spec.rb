@@ -234,7 +234,7 @@ describe BrowseController do
       do_get(:sha => "a"*40)
       response.should be_success
       
-      response.headers["type"].should == "application/x-gtar"
+      response.headers["type"].should == "application/x-gzip"
       response.headers["Content-Transfer-Encoding"].should == "binary"
     end
   end

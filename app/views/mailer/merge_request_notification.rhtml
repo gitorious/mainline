@@ -2,6 +2,12 @@ Hello <%= @merge_request.target_repository.user.login -%>,
 
 <%= @merge_request.source_repository.user.login -%> has requested that you merge <%= @merge_request.source_repository.name -%> with <%= @merge_request.target_repository.name -%> in the <%= @project.title -%> project.
 
+<% unless @merge_request.proposal.blank? -%>
+---
+<%= @merge_request.proposal %>
+---
+<% end -%>
+
 You can review the request and its commits here:
 <%= @url %>
 
