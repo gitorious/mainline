@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+
+$: << File.dirname(__FILE__)
+require 'git'
+require 'date'
+
+gitdir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+slug = File.basename(gitdir)
+
+if slug == "mainline.git"
+  slug = File.basename(File.expand_path(File.join(gitdir, "..")))
+end
+
+git = Grit::Git.new(gitdir)
+
+while line = gets
+  oldrev, newrev, revname = line.split(" ")
+  current_rev = newrev
+  newtype = oldtype = current_rev_type = "commit"
+  
+  action = :create
+  if oldrev =~ /^0+$/
+    action = :create
+  else
+    if newrev =~ /^0+$/
+      action = :delete
+    else
+      action = :update
+    end
+  end
+  
+  if action != :create
+    newtype = git.cat_file({:t => true}, newrev)
+    oldtype = git.cat_file({:t => true}, oldrev)
+  end
+  
+  if action == :delete
+      current_rev = oldrev
+      current_rev_type = oldtype
+  end
+  
+  path, type, name = revname.split("/")
+  
+  info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %cd%nmessage: %s", :s => true}, current_rev )
+  
+  hash = {}
+  info.each { |line|
+    if line =~ /(\w+):\s(.*)$/
+      key = $1.to_sym
+      value = $2
+      
+      value = Date.parse(value) if key == :date
+      
+      hash[key] = value
+    end
+  }
+  
+  puts "#{hash[:author]}: #{action} #{current_rev_type} on #{slug} [#{hash[:date]}]"
+  puts "    #{hash[:message]}"
+  
+end
+
+puts "=> Thanks!"
+

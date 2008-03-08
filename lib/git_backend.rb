@@ -1,4 +1,5 @@
 require "fileutils"
+require "grit"
 
 class GitBackend
   class << self
@@ -7,7 +8,10 @@ class GitBackend
     def create(repos_path, set_export_ok = true)
       FileUtils.mkdir_p(repos_path, :mode => 0750)
       Dir.chdir(repos_path) do |path| 
-        Git.init(path, :repository => path)
+        template = File.expand_path(File.join(File.dirname(__FILE__), "../data/git-template"))
+        
+        git = Grit::Git.new(path)
+        git.init({}, "--template=#{template}")
         post_create(path) if set_export_ok
       end
     end
