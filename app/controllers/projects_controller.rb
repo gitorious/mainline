@@ -130,7 +130,7 @@ class ProjectsController < ApplicationController
       it+=1
     }
     
-    if commits.size > 1
+    unless commits.empty?
       g.data("Commits", commits)
       g.labels = labels
 #       g.labels = { 0 => labels.first, commits.size-1 => labels.last } 
