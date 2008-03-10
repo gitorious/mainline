@@ -12,8 +12,6 @@ describe GitBackend do
   it "creates a bare git repository" do
     path = @repository.full_repository_path 
     FileUtils.should_receive(:mkdir_p).with(path, :mode => 0750).and_return(true)
-    Dir.should_receive(:chdir).with(path).and_yield(path)
-    Git.should_receive(:init).with(path, :repository => path).and_return(true)
     FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
     GitBackend.should_receive(:execute_command).with(
       %Q{chmod +x #{File.join(path, "hooks/post-update")}}
@@ -23,6 +21,13 @@ describe GitBackend do
     ).and_return(true)
   
     GitBackend.create(path)
+    
+    Dir.chdir(path) do
+      hooks = File.join(path, "hooks")
+      File.exist?(hooks).should == true
+      File.symlink?(hooks).should == true
+      File.symlink?(File.expand_path(File.readlink(hooks))).should == true
+    end
   end
   
   it "clones an existing repos into a bare one" do

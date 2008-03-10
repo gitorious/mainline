@@ -9,7 +9,6 @@ class GitBackend
       FileUtils.mkdir_p(repos_path, :mode => 0750)
       Dir.chdir(repos_path) do |path| 
         template = File.expand_path(File.join(File.dirname(__FILE__), "../data/git-template"))
-        
         git = Grit::Git.new(path)
         git.init({}, "--template=#{template}")
         post_create(path) if set_export_ok
@@ -47,3 +46,4 @@ class GitBackend
       end
   end
 end
+

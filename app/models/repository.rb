@@ -29,7 +29,33 @@ class Repository < ActiveRecord::Base
   end
   
   def self.create_git_repository(path)
-    git_backend.create(full_path_from_partial_path(path))
+    full_path = full_path_from_partial_path(path)
+    git_backend.create(full_path)
+    
+    hooks = File.join(GitoriousConfig["repository_base_path"], ".hooks")
+    Dir.chdir(full_path) do
+      hooks_base_path = File.expand_path(File.join(File.dirname(__FILE__), "../../data/hooks")) # FIXME: the hooks are in GITORIOUS_ROOT/data/hooks
+      
+      if not File.symlink?(hooks)
+        if not File.exist?(hooks)
+          FileUtils.ln_s(hooks_base_path, hooks) # Create symlink
+        end
+      elsif File.expand_path(File.readlink(hooks)) != hooks_base_path
+        FileUtils.ln_sf(hooks_base_path, hooks) # Fixup symlink
+      end
+    end
+    
+    local_hooks = File.join(full_path, "hooks")
+    unless File.exist?(local_hooks)
+      target_path = Pathname.new(hooks).relative_path_from(Pathname.new(full_path))
+      Dir.chdir(full_path) do
+        FileUtils.ln_s(target_path, "hooks")
+      end
+    end
+    
+    File.open(File.join(full_path, "description"), "w") do |file|
+      file << path.sub(/\.git$/, "") << "\n"
+    end
   end
   
   def self.clone_git_repository(target_path, source_path)
