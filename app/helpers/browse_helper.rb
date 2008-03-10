@@ -1,11 +1,7 @@
 module BrowseHelper
   
-  def browse_path
-    project_repository_browse_path(@project, @repository)
-  end
-  
-  def log_path(args={})
-    project_repository_log_path(@project, @repository, args)
+  def log_path(head_name = "master")
+    project_repository_log_path(@project, @repository, head_name)
   end
   
   def tree_path(sha1=nil, path=[])

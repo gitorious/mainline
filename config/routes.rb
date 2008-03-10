@@ -44,9 +44,13 @@ ActionController::Routing::Routes.draw do |map|
       
       # Repository browsing related routes
       repo.with_options(:controller => "browse") do |r|
-        r.browse  "browse",           :action => "index"
-        r.formatted_browse "browse.:format", :action => "index"
-        r.log     "log",              :action => "log"
+        r.browse  "browse",           :action => "browse" # backwardscompat redirect
+        
+        r.log     "log/:head",      :action => "index", 
+          :head => nil
+        r.formatted_log "log/:head.:format", :action => "index", 
+          :head => nil # FIXME
+        
         r.tree    "tree/:sha/*path",  :action => "tree", 
           :sha => nil, :path => [], :requirements => {:sha => VALID_SHA}
         r.blob    "blob/:sha/*path",  :action => "blob", 

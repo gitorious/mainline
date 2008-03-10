@@ -20,22 +20,38 @@ describe BrowseController do
   end
   
   describe "#index" do
-    def do_get
-      get :index, :project_id => @project.slug, :repository_id => @repository.name
+    def do_get(opts = {})
+      get :index, {:project_id => @project.slug, 
+        :repository_id => @repository.name, :page => nil, :head => "master"}.merge(opts)
     end
     
-    it "GETs successfully" do
+    it "GETs page 1 successfully" do
+      @git.should_receive(:commits).with("master", 30, 0).and_return(mock("logentries"))
       do_get
-      flash[:notice].should == nil
+    end
+    
+    it "GETs page 3 successfully" do
+      @git.should_receive(:commits).with("master", 30, 60).and_return(mock("logentries"))
+      do_get(:page => 3)
+    end
+    
+    it "GETs the commits successfully" do
+      commits = mock("logentries")
+      @git.should_receive(:commits).with("master", 30, 0).and_return(commits)
+      do_get
       response.should be_success
+      assigns[:git].should == @git
+      assigns[:commits].should == commits
     end
     
-    it "fetches the specified log entries" do
-      @git.should_receive(:commits).with("master", BrowseController::LOGS_PER_PAGE) \
-        .and_return(commits=mock("logentries"))
-      do_get
-      assigns[:commits].should == commits
-    end    
+    it "redirects to the master head, if not params[:head] given" do
+      head = mock("a branch")
+      head.stub!(:name).and_return("somebranch")
+      @repository.should_receive(:head_candidate).and_return(head)
+      
+      do_get(:head => nil)
+      response.should redirect_to(project_repository_log_path(@project, @repository, "somebranch"))
+    end
   end
   
   describe "#tree" do
@@ -188,32 +204,6 @@ describe BrowseController do
           :repository_id => @repository.name, :sha => "a"*40, :path => []}
           
       response.should redirect_to(project_repository_path(@project, @repository))
-    end
-  end
-  
-  describe "#log" do
-    def do_get(opts = {})
-      get :log, {:project_id => @project.slug, 
-        :repository_id => @repository.name, :page => nil}.merge(opts)
-    end
-    
-    it "GETs page 1 successfully" do
-      @git.should_receive(:commits).with("master", 30, 0).and_return(mock("logentries"))
-      do_get
-    end
-    
-    it "GETs page 3 successfully" do
-      @git.should_receive(:commits).with("master", 30, 60).and_return(mock("logentries"))
-      do_get(:page => 3)
-    end
-    
-    it "GETs the commits successfully" do
-      commits = mock("logentries")
-      @git.should_receive(:commits).with("master", 30, 0).and_return(commits)
-      do_get
-      response.should be_success
-      assigns[:git].should == @git
-      assigns[:commits].should == commits
     end
   end
   
