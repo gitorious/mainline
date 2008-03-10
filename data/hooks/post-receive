@@ -1,13 +1,15 @@
 #!/usr/bin/env ruby
 
-$: << File.dirname(__FILE__)
-require 'git'
+incpath = File.dirname(__FILE__)
+$: << incpath
+
+require 'rails_env'
 require 'date'
 
-gitdir = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+gitdir = File.expand_path(File.join(incpath, ".."))
 slug = File.basename(gitdir)
 
-if slug == "mainline.git"
+if slug =~ /\.git$/
   slug = File.basename(File.expand_path(File.join(gitdir, "..")))
 end
 

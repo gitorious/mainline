@@ -1,5 +1,4 @@
 require "fileutils"
-require "grit"
 
 class GitBackend
   class << self
