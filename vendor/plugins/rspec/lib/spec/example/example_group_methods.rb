@@ -11,13 +11,14 @@ module Spec
         end
       end
 
-      attr_reader :description_text, :description_args, :spec_path
+      attr_reader :description_text, :description_args, :description_options, :spec_path, :registration_binding_block
 
       def inherited(klass)
         super
-        klass.register
+        klass.register {}
+        Spec::Runner.register_at_exit_hook
       end
-
+      
       # Makes the describe/it syntax available from a class. For example:
       #
       #   class StackSpec < Spec::ExampleGroup
@@ -33,10 +34,17 @@ module Spec
       #   end
       #
       def describe(*args, &example_group_block)
+        args << {} unless Hash === args.last
         if example_group_block
-          self.subclass("Subclass") do
-            describe(*args)
-            module_eval(&example_group_block)
+          params = args.last
+          params[:spec_path] = eval("caller(0)[1]", example_group_block) unless params[:spec_path]
+          if params[:shared]
+            SharedExampleGroup.new(*args, &example_group_block)
+          else
+            self.subclass("Subclass") do
+              describe(*args)
+              module_eval(&example_group_block)
+            end
           end
         else
           set_description(*args)
@@ -44,6 +52,7 @@ module Spec
           self
         end
       end
+      alias :context :describe
 
       # Use this to pull in examples from shared example groups.
       # See Spec::Runner for information about shared example groups.
@@ -106,6 +115,7 @@ module Spec
       def xit(description=nil, opts={}, &block)
         Kernel.warn("Example disabled: #{description}")
       end
+      alias_method :xspecify, :xit
 
       def run
         examples = examples_to_run
@@ -122,7 +132,12 @@ module Spec
       end
 
       def description
-        ExampleGroupMethods.description_text(*description_parts)
+        result = ExampleGroupMethods.description_text(*description_parts)
+        if result.nil? || result == ""
+          return to_s
+        else
+          result
+        end
       end
 
       def described_type
@@ -140,6 +155,7 @@ module Spec
       def set_description(*args)
         args, options = args_and_options(*args)
         @description_args = args
+        @description_options = options
         @description_text = ExampleGroupMethods.description_text(*args)
         @spec_path = File.expand_path(options[:spec_path]) if options[:spec_path]
         if described_type.class == Module
@@ -230,12 +246,17 @@ module Spec
         @after_each_parts = nil
       end
 
-      def register
+      def register(&registration_binding_block)
+        @registration_binding_block = registration_binding_block
         rspec_options.add_example_group self
       end
 
       def unregister #:nodoc:
         rspec_options.remove_example_group self
+      end
+
+      def registration_backtrace
+        eval("caller", registration_binding_block.binding)
       end
 
       def run_before_each(example)

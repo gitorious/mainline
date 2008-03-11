@@ -81,7 +81,7 @@ describe BrowseController do
   
   describe "#commit" do    
     before(:each) do
-      @commit_mock = mock("commit")
+      @commit_mock = stub("commit", :id => 1)
       @diff_mock = mock("diff mock")
       @commit_mock.should_receive(:diffs).and_return(@diff_mock)
       @git.should_receive(:commit).with("a"*40).and_return(@commit_mock)

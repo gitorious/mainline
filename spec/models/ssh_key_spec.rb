@@ -33,13 +33,13 @@ describe SshKey do
   it "allows a wider range of extended comments" do
     key = new_key
     
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE gitorious.org key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{GitoriousConfig['gitorious_host']} key"
     key.should be_valid
     
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+gitorious.org key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+#{GitoriousConfig['gitorious_host']} key"
     key.should be_valid
     
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE http://gitorious.org key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE http://#{GitoriousConfig['gitorious_host']} key"
     key.should be_valid
   end
   

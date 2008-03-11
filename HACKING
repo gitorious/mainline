@@ -2,16 +2,17 @@
 
 === Dependencies
 
-* bluecloth (https://rubyforge.org/projects/bluecloth/)
-* mime-types (https://rubyforge.org/projects/mime-types)
-* oniguruma (https://rubyforge.org/projects/oniguruma)
-* textpow (https://rubyforge.org/projects/textpow)
+* bluecloth (http://rubyforge.org/projects/bluecloth/)
+* mime-types (http://rubyforge.org/projects/mime-types)
+* oniguruma (http://rubyforge.org/projects/oniguruma)
+** requires the oniguruma C library: (http://www.geocities.jp/kosako3/oniguruma/)
+* textpow (http://rubyforge.org/projects/textpow)
 
 === The Hackers digest guide:
 
 1. Do the normal rails app stuff (database.yml etc.)
 
-2. Rename the config/gitorious.sample.yml file to gitorious.yml, and update it with your cahnges.
+2. Rename the config/gitorious.sample.yml file to gitorious.yml, and update it with your changes.
 
 3a. If you want real project data, find a project, set the 'ready' status to true, create a bare git repository (git --bare init) in the directory GitoriousConfig['repository_base_path']/#{project.slug}/#{repository.name}.git, and push something to that repository (cd to a git repository with commits and do "git push path/to/the/bare/repository/you/just/created master").
 	
