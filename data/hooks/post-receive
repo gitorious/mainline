@@ -7,9 +7,11 @@ require 'rails_env'
 require 'date'
 
 gitdir = File.expand_path(File.join(incpath, ".."))
-slug = File.basename(gitdir)
+repository_name = File.basename(gitdir)
+slug = ""
 
-if slug =~ /\.git$/
+if repository_name =~ /\.git$/
+  repository_name.sub!(/\.git$/, "")
   slug = File.basename(File.expand_path(File.join(gitdir, "..")))
 end
 
@@ -41,6 +43,8 @@ while line = gets
       current_rev_type = oldtype
   end
   
+  # type => heads, tags, remotes
+  # name => branch name
   path, type, name = revname.split("/")
   
   info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %cd%nmessage: %s", :s => true}, current_rev )
@@ -57,9 +61,59 @@ while line = gets
     end
   }
   
+  # action => create, delete, update
+  # rev_type => commit, tag
+  
   puts "#{hash[:author]}: #{action} #{current_rev_type} on #{slug} [#{hash[:date]}]"
   puts "    #{hash[:message]}"
   
+  user = User.find_by_email(hash[:email])
+  next if user.nil?
+  
+  project = Project.find_by_slug(slug)
+  repository = nil
+  
+  project.repositories.each { |repo|
+    if repo.name == repository_name
+      repository = repo
+      break
+    end
+  }
+  
+  action_name = ""
+  ref = nil
+  if current_rev_type == "commit"
+    if type == "heads"
+      case action
+        when :create
+          action_name = "create branch"
+          ref = name
+        when :update
+          action_name = "commit"
+          ref = current_rev
+        when :delete
+          action_name = "delete branch"
+          ref = name
+      end
+    elsif type == "tags"
+      if action == :create
+        action_name = "tag"
+        ref = name
+      end
+    end
+  elsif current_rev_type == "tag"
+    if type == "tags"
+      if action == :create
+        action_name = "tag"
+        ref = name
+      end
+    end
+  end
+  
+  next if action_name.empty?
+  
+  action = Action.find_by_name(action_name)
+  Event.from_action_name(action_name, user, repository, ref, hash[:message])
 end
 
 puts "=> Thanks!"

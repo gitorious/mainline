@@ -24,6 +24,8 @@ ActionController::Routing::Routes.draw do |map|
     account.resources :keys
   end
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
+
+  map.resources  :events
   map.resources :users, :requirements => {:id => /.+/}
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|

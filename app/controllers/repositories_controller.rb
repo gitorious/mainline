@@ -61,6 +61,8 @@ class RepositoriesController < ApplicationController
     
     respond_to do |format|
       if @repository.save
+        Event.from_action_name("fork project", current_user, @repository, @repository_to_clone.id)
+        
         location = project_repository_path(@project, @repository)
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }        

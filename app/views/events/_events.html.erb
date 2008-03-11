@@ -1,0 +1,71 @@
+<ul class="project_list">
+<% events.reverse_each do |event| -%>
+  <li>
+    <% action = "" %>
+    <% body = nil %>
+    <% repo = event.repository %>
+    <% project = repo.project unless repo.nil? %>
+    <% case event.action.name
+         when "create project" 
+          action = "<b>created project</b> #{link_to h(project.title), project_path(project)}"
+          body = truncate(project.stripped_description, 100)
+         when "delete project"
+          action = "<b>deleted project</b> #{h(event.ref)}"
+         when "update project"
+          action = "<b>updated project</b> #{link_to h(project.title), project_path(project)}"
+         when "fork project"
+          original_repo = Repository.find_by_id(event.ref.to_i)
+          next if original_repo.nil?
+          
+          action = "<b>forked</b> #{link_to h(project.title), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(repo.name), project_repository_url(project, repo)}"
+         when "commit"
+          action = "<b>commited to</b> #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+          body = "#{link_to event.ref, project_repository_commit_path(project, repo, event.ref)}<br/>#{event.body}"
+         when "create branch"
+          if event.ref == "master"
+            action = "<b>started development</b> of #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+            body = event.body
+          else
+            action = "<b>created branch</b> #{link_to h(event.ref), project_repository_tree_path(project, repo, event.ref)} on #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+          end
+         when "delete branch"
+          action = "<b>deleted branch</b> #{event.ref} on #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+         when "tag"
+          action = "<b>tagged</b> #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+          body = "#{link_to event.ref, project_repository_commit_path(project, repo, event.ref)}<br/>#{event.body}"
+         when "add committer"
+          committer = User.find_by_id(event.ref.to_i)
+          next if committer.nil?
+          action = "<b>added committer</b> #{link_to committer.login, user_path(committer)} to #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+         when "remove committer"
+          committer = User.find_by_id(event.ref.to_i)
+          next if committer.nil?
+          action = "<b>removed committer</b> #{link_to committer.login, user_path(committer)} from #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+         when "comment"
+          action = "<b>commented</b> #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+          comment = Comment.find_by_id(event.ref.to_i)
+          body = truncate(h(comment.body), 100)
+         when "request merge"
+          request = MergeRequest.find_by_id(event.ref.to_i)
+          next if request.nil?
+          action = "<b>requested merge</b> #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)} to #{link_to h(project.title), project_path(project)}/#{link_to h(request.target_repository.name)}"
+          body = "#{link_to "review", [project, request.target_repository, request]}<br/>#{truncate(h(request.proposal), 100)}"
+        when "resolve merge request"
+          request = MergeRequest.find_by_id(event.ref.to_i)
+          next if request.nil?
+          action = "<b>resolved merge request to </b> [#{request.status_string}] from #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+        when "update merge request"
+          request = MergeRequest.find_by_id(event.ref.to_i)
+          next if request.nil?
+          action = "<b>updated merge request</b> from #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+        when "delete merge request"
+          action = "<b>deleted merge request</b> from #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+       end -%>
+    <%= link_to event.user.login, user_path(event.user) %> <%= action %> <%= time_ago_in_words(event.date) %><br/>
+    <% if body %>
+      <%= body %>
+    <% end %>
+  </li>
+<% end -%>
+</ul>
+

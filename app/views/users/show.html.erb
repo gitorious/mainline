@@ -42,6 +42,13 @@
 <% end -%>
 </div>
 
+<div id="right">
+<% unless @user.events.empty? -%>
+  <h2>Last events</h2>
+  <%= render :partial => "/events/events", :object => @user.events -%>
+<% end -%>
+</div>
+
 <% if current_user && (current_user == @user)  -%>
   <% content_for :submenu do -%>
     <ul>

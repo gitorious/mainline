@@ -46,6 +46,7 @@ class ProjectsController < ApplicationController
     @project = Project.new(params[:project])
     @project.user = current_user
     if @project.save
+      Event.from_action_name("create project", current_user, @project.mainline_repository)
       redirect_to projects_path
     else
       render :action => 'new'
@@ -64,6 +65,7 @@ class ProjectsController < ApplicationController
     end
     @project.attributes = params[:project]
     if @project.save
+      Event.from_action_name("update project", current_user, @project.mainline_repository)
       redirect_to project_path(@project)
     else
       render :action => 'new'
@@ -77,7 +79,9 @@ class ProjectsController < ApplicationController
   def destroy
     @project = Project.find_by_slug!(params[:id])
     if @project.can_be_deleted_by?(current_user)
+      project_title = @project.title
       @project.destroy
+      Event.from_action_name("delete project", current_user, nil, project_title)
     else
       flash[:error] = "You're not the owner of this project, or the project has clones"
     end

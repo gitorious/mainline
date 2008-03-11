@@ -21,6 +21,7 @@ class CommittersController < ApplicationController
 
     respond_to do |format|
       if @repository.add_committer(@committer)
+        Event.from_action_name("add committer", current_user, @repository, @committer.id)
         format.html { redirect_to([@repository.project, @repository]) }
         format.xml do 
           render :nothing, :status => :created, 
@@ -38,7 +39,9 @@ class CommittersController < ApplicationController
     @committership = @repository.committerships.find_by_user_id(params[:id])
     
     respond_to do |format|
+      commiter = User.find_by_id(params[:id])
       if @committership.destroy
+        Event.from_action_name("remove committer", current_user, @repository, commiter.id)
         flash[:success] = "User removed from repository"
         format.html { redirect_to [@repository.project, @repository] }
         format.xml  { render :nothing, :status => :ok }
