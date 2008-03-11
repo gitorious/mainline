@@ -1,7 +1,6 @@
 (in no particular order)
 
-* It's hard to figure out how to see commits in branches other than master
-
+* refactor tags_and_branches partial into two
 * Update the HACKING with some basic coding guidelines
 * Show the most recent mergerequests on users dashboard so they can track them
 * Make the archive download an external little mongrel/rack thing, and store the result per sha1

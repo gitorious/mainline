@@ -19,6 +19,14 @@
     <% if @commits.blank? -%>
       <ul><li><em>No commits yet…</em></li></ul>
     <% else -%>
+      <div id="branches">
+        <h5>Branches:</h5>
+        <ul class="links">
+          <% @repository.git.branches.each do |branch| -%>
+          <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.name) -%></li>
+          <% end -%>
+        </ul>
+      </div>
       <%= render :partial => "browse/log" -%>
       <% if @commits.page_count > 1 -%>
       <p>
