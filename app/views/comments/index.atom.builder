@@ -3,7 +3,7 @@ atom_feed do |feed|
   feed.updated((@comments.blank? ? Time.now : @comments.first.created_at))
 
   @comments.each do |comment|
-    item_url = "http://GitoriousConfig['gitorious_host']" + project_repository_comments_path(@project,@repository)
+    item_url = "http://#{GitoriousConfig['gitorious_host']}" + project_repository_comments_path(@project,@repository)
     feed.entry(comment, :url => item_url) do |entry|
       entry.title("#{comment.user.login}: #{truncate(comment.body, 30)}")
       entry.content(comment.body)
