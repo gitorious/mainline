@@ -7,12 +7,3 @@
   <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
 </li>
 <% end -%>
-<li class="link_to_more">
-  <span>
-  <% unless params[:page].blank? || [0,1].include?(params[:page].to_i) -%>
-    <%= link_to "&#x2190; previous", log_path(:page => params[:page].to_i-1) -%> | 
-  <% end -%>
-  <%= link_to "next &#x2192;", log_path(:page => (params[:page].blank? ? 2 : params[:page].to_i+1)) -%>
-  </span>
-</li>
-</ul>

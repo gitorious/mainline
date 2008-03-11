@@ -16,20 +16,17 @@
   </ul>
 
   <h2>Recent commits</h2>
-  <ul>
     <% if @commits.blank? -%>
-      <li><em>No commits yet…</em></li>
+      <ul><li><em>No commits yet…</em></li></ul>
+    <% else -%>
+      <%= render :partial => "browse/log" -%>
+      <% if @commits.page_count > 1 -%>
+      <p>
+        <%= link_to "#{@commits.page_count} more pages of commits &#x2192;", 
+              project_repository_log_path(@project, @repository, @repository.head_candidate.name, :page => 2) -%>
+      </p>
+      <% end -%>
     <% end -%>
-    <% @commits.each do |commit| -%>
-    <li class="commit_item">
-      <a href=""><%= link_to commit.id_abbrev, 
-        project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-      by <strong><%=h commit.committer.name -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
-      <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
-    </li>
-    <% end -%>
-    <li><%= link_to "View more &#x2192;", project_repository_log_path(@project, @repository) -%></li>
-  </ul>
   
 <% end -%>
 

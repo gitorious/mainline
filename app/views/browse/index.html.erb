@@ -11,7 +11,8 @@
 </ul>
 
 <h2>Commits in "<%=h params[:head] -%>"</h2>
-<%= render :partial => "log", :locals => {:commits => @commits} -%>
+<%= render :partial => "log" -%>
+<%= will_paginate @commits %>
 
 <% content_for :sidebar do -%>  
   <%= render :partial => "tags_and_branches" -%>

@@ -120,6 +120,14 @@ class Repository < ActiveRecord::Base
     Task.create!(:target_class => self.class.name, 
       :command => "delete_git_repository", :arguments => [gitdir])
   end
+  
+  def paginated_commits(tree_name, page, per_page = 30)
+    page    = (page || 1).to_i
+    total   = git.commit_count(tree_name)
+    offset  = (page - 1) * per_page
+    commits = WillPaginate::Collection.new(page, per_page, total)
+    commits.replace git.commits(tree_name, per_page, offset)
+  end
     
   protected
     def set_as_mainline_if_first

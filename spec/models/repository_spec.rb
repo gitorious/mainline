@@ -241,6 +241,16 @@ describe Repository do
     @repository.head_candidate.should == nil
   end
   
+  it "has paginated_commits" do
+    git = mock("git")
+    commits = [mock("commit"), mock("commit")]
+    @repository.should_receive(:git).twice.and_return(git)
+    git.should_receive(:commit_count).and_return(120)
+    git.should_receive(:commits).with("foo", 30, 30).and_return(commits)
+    commits = @repository.paginated_commits("foo", 2, 30)
+    commits.should be_instance_of(WillPaginate::Collection)
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)
