@@ -11,12 +11,9 @@ describe BrowseHelper do
     letter * 40
   end
   
-  it "has a browse_path shortcut" do
-    browse_path.should == project_repository_browse_path(@project, @repository)
-  end
-  
   it "has a log_path shortcut" do
-    log_path.should == project_repository_log_path(@project, @repository)
+    log_path.should == project_repository_log_path(@project, @repository, "master")
+    log_path("foo").should == project_repository_log_path(@project, @repository, "foo")
   end
   
   it "has a log_path shortcut that takes args" do
