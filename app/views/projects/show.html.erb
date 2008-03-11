@@ -41,7 +41,7 @@
     <th></th>
   </thead>
   <% commits = [] %>
-  <% repositories = @repositories.sort_by { |e| commits << e.last_commit if e.last_commit; e.mainline? ? Time.now : e.last_commit.committed_date } %>
+  <% repositories = @repositories.sort_by { |e| if e.last_commit then commits << e.last_commit; e.mainline? ? Time.now : e.last_commit.committed_date; else Time.at(0); end } %>
   <% email_user = RepositoriesHelper.users_by_commits(commits) %>
   <% repositories.reverse_each do |repos| # FIXME: need to graph the parent relation proper -%>
     <% user = email_user[repos.last_commit.committer.email] if repos.has_commits? %>

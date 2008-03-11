@@ -28,11 +28,13 @@
       <li class="repos">
         <%= link_to h(repos.name), project_repository_path(repos.project, repos) -%> 
         <small>of <%= h(repos.project.slug) -%></small><br />
-        <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
-        <small>
-          <%= h(repos.last_commit.committer.name) -%> - 
-          <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
-        </small>
+        <% unless repos.last_commit.nil? %>
+          <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
+          <small>
+            <%= h(repos.last_commit.committer.name) -%> - 
+            <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
+          </small>
+        <% end %>
       </li>
   <% end -%>
   <% if @repository_clones.blank? -%>
@@ -46,11 +48,13 @@
     <li class="repos">
       <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
       <small>of <%= link_to h(repos.project.title), repos.project -%></small><br />
-      <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
-      <small>
-        <%= h(repos.last_commit.committer.name) -%> - 
-        <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
-      </small>
+      <% unless repos.last_commit.nil? %>
+        <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
+        <small>
+          <%= h(repos.last_commit.committer.name) -%> - 
+          <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
+        </small>
+      <% end %>
     </li>
   <% end -%>
   </ul>

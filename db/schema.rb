@@ -9,7 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 21) do
+ActiveRecord::Schema.define(:version => 23) do
+
+  create_table "actions", :force => true do |t|
+    t.string "name"
+  end
+
+  add_index "actions", ["name"], :name => "index_actions_on_name", :unique => true
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id",       :null => false
@@ -36,6 +42,17 @@ ActiveRecord::Schema.define(:version => 21) do
 
   add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
   add_index "committerships", ["user_id"], :name => "index_permissions_on_user_id"
+
+  create_table "events", :force => true do |t|
+    t.integer  "user_id",       :null => false
+    t.integer  "repository_id"
+    t.integer  "action_id",     :null => false
+    t.string   "ref"
+    t.text     "body"
+    t.datetime "date",          :null => false
+  end
+
+  add_index "events", ["user_id"], :name => "index_events_on_user_id"
 
   create_table "merge_requests", :force => true do |t|
     t.integer  "user_id"

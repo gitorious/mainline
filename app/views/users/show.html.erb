@@ -31,6 +31,7 @@
 <div id="right">
 <% unless @repositories.blank? -%>
   <h2>Repositories</h2>
+  <ul class="project_list">
   <% @repositories.each do |repos| -%>
     <li>
       <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
