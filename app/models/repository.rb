@@ -18,8 +18,6 @@ class Repository < ActiveRecord::Base
   after_create :add_user_as_committer, :create_new_repos_task
   after_destroy :create_delete_repos_task
   
-  BASE_REPOSITORY_URL = "gitorious.org"
-  
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}s-clone" : nil
     new(:parent => other, :project => other.project, :name => suggested_name)
@@ -47,15 +45,15 @@ class Repository < ActiveRecord::Base
   end
   
   def clone_url
-    "git://#{BASE_REPOSITORY_URL}/#{gitdir}"
+    "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
   
   def http_clone_url
-    "http://git.#{BASE_REPOSITORY_URL}/#{gitdir}"
+    "http://git.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
   
   def push_url
-    "git@#{BASE_REPOSITORY_URL}:#{gitdir}"
+    "git@#{GitoriousConfig['gitorious_host']}:#{gitdir}"
   end
   
   def full_repository_path
@@ -119,6 +117,14 @@ class Repository < ActiveRecord::Base
   def create_delete_repos_task
     Task.create!(:target_class => self.class.name, 
       :command => "delete_git_repository", :arguments => [gitdir])
+  end
+  
+  def paginated_commits(tree_name, page, per_page = 30)
+    page    = (page || 1).to_i
+    total   = git.commit_count(tree_name)
+    offset  = (page - 1) * per_page
+    commits = WillPaginate::Collection.new(page, per_page, total)
+    commits.replace git.commits(tree_name, per_page, offset)
   end
     
   protected

@@ -62,15 +62,15 @@ describe Repository do
   end
   
   it "has a push url" do
-    @repository.push_url.should == "git@gitorious.org:#{@repository.project.slug}/foo.git"
+    @repository.push_url.should == "git@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git"
   end
   
   it "has a clone url" do
-    @repository.clone_url.should == "git://gitorious.org/#{@repository.project.slug}/foo.git"
+    @repository.clone_url.should == "git://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
   end
   
   it "has a http url" do
-    @repository.http_clone_url.should == "http://git.gitorious.org/#{@repository.project.slug}/foo.git"
+    @repository.http_clone_url.should == "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
   end
   
   it "should assign the creator as a comitter on create" do 
@@ -239,6 +239,16 @@ describe Repository do
   it "has a head_candidate, unless it doesn't have commits" do
     @repository.should_receive(:has_commits?).and_return(false)
     @repository.head_candidate.should == nil
+  end
+  
+  it "has paginated_commits" do
+    git = mock("git")
+    commits = [mock("commit"), mock("commit")]
+    @repository.should_receive(:git).twice.and_return(git)
+    git.should_receive(:commit_count).and_return(120)
+    git.should_receive(:commits).with("foo", 30, 30).and_return(commits)
+    commits = @repository.paginated_commits("foo", 2, 30)
+    commits.should be_instance_of(WillPaginate::Collection)
   end
   
   describe "observers" do

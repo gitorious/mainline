@@ -15,7 +15,7 @@
   file of the repository you wish to push:
 <pre>
 [remote "origin"]
-       url = git@gitorious.org:<em>project</em>/<em>repository.git</em>
+       url = git@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
        fetch = +refs/heads/*:refs/remotes/origin/*
 [branch "master"]
        remote = origin
@@ -24,11 +24,11 @@
   and then <code>git push origin master</code> to push the code to Gitorious.
 </p>
 <p>
-  You can also just run "<code>git push git@gitorious.org:tumbline/mainline.git</code>", or 
+  You can also just run "<code>git push git@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", or 
   you can setup a remote by doing the following (add --fetch to the add call to 
   get the config from above):
   <pre>
-  git remote add origin git@gitorious.org:<em>project</em>/<em>repository.git</em>
+  git remote add origin git@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
   # to push the master branch to the origin remote we added above:
   git push origin master 
   # after that you can just do:
@@ -44,7 +44,7 @@
   can contact you about your projects if they need to. We do however take light 
   measures against crawlers by not displaying your email in completely plain text. <br />
   But just to be clear: we won't sell or use any information you give to 
-  gitorious.org against you or anyone else for financial and/or personal gains.
+  <%= GitoriousConfig['gitorious_host'] -%> against you or anyone else for financial and/or personal gains.
 </p>
 
 <hr />

@@ -3,16 +3,13 @@ class BrowseController < ApplicationController
   before_filter :check_for_commits
   before_filter :find_head_candidate_if_no_head_param, :only => [:index]
   
-  LOGS_PER_PAGE = 30
-  
   # backwards-compat redirects, remove at will
   def browse() redirect_to(:action => "index") end
   def log() redirect_to(:action => "index") end
   
   def index
     @git = @repository.git
-    skip = params[:page].blank? ? 0 : (params[:page].to_i-1) * LOGS_PER_PAGE
-    @commits = @git.commits(params[:head], LOGS_PER_PAGE, skip)
+    @commits = @repository.paginated_commits(params[:head], params[:page])
     # TODO: Patch rails to keep track of what it responds to so we can DRY this up
     @atom_auto_discovery_url = project_repository_formatted_log_path(@project, @repository, "master", :atom)
     respond_to do |format|

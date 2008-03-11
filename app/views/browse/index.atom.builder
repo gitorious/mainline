@@ -3,7 +3,7 @@ atom_feed do |feed|
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 
   @commits.each do |commit|
-    item_url = "http://gitorious.org" +  project_repository_commit_path(@project, @repository, commit.id)
+    item_url = "http://#{GitoriousConfig['gitorious_host']}" +  project_repository_commit_path(@project, @repository, commit.id)
     feed.entry(commit.id, {
       :url => item_url, 
       :updated => commit.committed_date, 

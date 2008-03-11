@@ -16,23 +16,25 @@
   </ul>
 
   <h2>Recent commits</h2>
-  <ul>
     <% if @commits.blank? -%>
-      <li><em>No commits yet…</em></li>
+      <ul><li><em>No commits yet…</em></li></ul>
+    <% else -%>
+      <div id="branches">
+        <h5>Branches:</h5>
+        <ul class="links">
+          <% @repository.git.branches.each do |branch| -%>
+          <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.name) -%></li>
+          <% end -%>
+        </ul>
+      </div>
+      <%= render :partial => "browse/log" -%>
+      <% if @commits.page_count > 1 -%>
+      <p>
+        <%= link_to "#{@commits.page_count} more pages of commits &#x2192;", 
+              project_repository_log_path(@project, @repository, @repository.head_candidate.name, :page => 2) -%>
+      </p>
+      <% end -%>
     <% end -%>
-    <% email_user = RepositoriesHelper.users_by_commits(@commits) %>
-    <% @commits.each do |commit| -%>
-    <% user = email_user[commit.committer.email] %>
-    <li class="commit_item">
-      <a href=""><%= link_to commit.id_abbrev, 
-        project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-      by <strong><%=h commit.committer.name -%></strong><small> <%= user ? "[#{link_to user.login, user_path(user)}]" : "" -%></small> <%=h time_ago_in_words(commit.committed_date) -%> ago
-      <div class="commit_message"><%= simple_format(h(commit.message)) -%></div>
-    </li>
-    <% end -%>
-    <li><%= link_to "View more &#x2192;", project_repository_log_path(@project, @repository) -%></li>
-  </ul>
-  
 <% end -%>
 
 <% content_for :sidebar do -%>  

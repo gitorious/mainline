@@ -14,7 +14,7 @@ class RepositoriesController < ApplicationController
     @comment_count = @repository.comments.count
     @merge_request_count = @repository.merge_requests.count_open
     if @repository.has_commits?
-      @commits = @repository.git.commits(@repository.head_candidate.name, 10)
+      @commits = @repository.paginated_commits(@repository.head_candidate.name, page=1)
     else
       @commits = []
     end

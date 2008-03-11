@@ -27,17 +27,17 @@ describe BrowseController do
     end
     
     it "GETs page 1 successfully" do
-      @git.should_receive(:commits).with("master", 30, 0).and_return(mock("logentries"))
+      @git.should_receive(:commits).with("master", 30, 0).and_return([mock("commits")])
       do_get
     end
     
     it "GETs page 3 successfully" do
-      @git.should_receive(:commits).with("master", 30, 60).and_return(mock("logentries"))
+      @git.should_receive(:commits).with("master", 30, 60).and_return([mock("commits")])
       do_get(:page => 3)
     end
     
     it "GETs the commits successfully" do
-      commits = mock("logentries")
+      commits = [mock("commits")]
       @git.should_receive(:commits).with("master", 30, 0).and_return(commits)
       do_get
       response.should be_success
@@ -82,7 +82,7 @@ describe BrowseController do
   
   describe "#commit" do    
     before(:each) do
-      @commit_mock = mock("commit")
+      @commit_mock = stub("commit", :id => 1)
       @diff_mock = mock("diff mock")
       @commit_mock.should_receive(:diffs).and_return(@diff_mock)
       @git.should_receive(:commit).with("a"*40).and_return(@commit_mock)

@@ -30,6 +30,6 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <%= render :partial => "tags_and_branches" -%>
+  <%= render :partial => "tags_and_branches", :locals => { :link_to_tree => true } -%>
 <% end -%>
 
