@@ -73,4 +73,95 @@ module ApplicationHelper
   def flashes
     flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
   end
+  
+  def commit_graph_tag(project, sha = "master")
+    repo = project.mainline_repository
+    git_repo = repo.git
+    git = git_repo.git
+    
+    h = Hash.new
+    dategroup = Date.new
+    
+    data = git.rev_list({:pretty => "format:%aD", :since => "24 weeks ago"}, sha)
+    data.each_line { |line|
+      if line =~ /\d\d:\d\d:\d\d/ then
+        date = Date.parse(line)
+        
+        dategroup = Date.new(date.year, date.month, 1)
+        if h[dategroup]
+          h[dategroup] += 1
+        else
+          h[dategroup] = 1
+        end
+      end
+    }
+    
+    commits = []
+    labels = []
+    h.sort.each { |entry|
+      date = entry.first
+      value = entry.last
+      
+      labels << date.strftime("%m/%y")
+      commits << value
+    }
+    
+    Gchart.line(:data => commits, :labels => labels, :bg => "efefef", :format => "img_tag")
+  end
+  
+  def commit_graph_by_author_tag(project, sha = "master")
+    repo = project.mainline_repository
+    git_repo = repo.git
+    git = git_repo.git
+    
+    h = Hash.new
+    
+    data = git.rev_list({:pretty => "format:name:%cn", :since => "1 years ago" }, sha)
+    data.each_line { |line|
+      if line =~ /^name:(.*)$/ then
+        author = $1
+        
+        if h[author]
+          h[author] += 1
+        else
+          h[author] = 1
+        end
+      end
+    }
+    
+    sorted = h.sort_by { |author, commits|
+      commits
+    }
+    
+    labels = []
+    data = []
+    
+    max = 5
+    others = []
+    top = sorted
+    
+    
+    if sorted.size > max
+      top = sorted[sorted.size-max, sorted.size]
+      others = sorted[0, sorted.size-max]
+    end
+    
+    top.each { |entry|
+      author = entry.first
+      v = entry.last
+      
+      data << v
+      labels << author
+    }
+    
+    unless others.empty?
+      others_v = others.inject { |v, acum| [v.last + acum.last] }
+      labels[label_it] = others_v.first
+      
+      labels << "others"
+      data << others_v
+    end
+    
+    Gchart.pie(:data => data, :labels => labels, :width => 400, :bg => "efefef", :format => "img_tag" )
+  end
 end

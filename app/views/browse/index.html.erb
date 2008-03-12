@@ -9,7 +9,7 @@
   <% unless @commits.blank? -%>
   <li><strong>HEAD tree:</strong> <%= link_to h(@commits.first.tree.id), 
     tree_path(@commits.first.id) -%></li>
-  <li><%= image_tag("/projects/commit_graph_by_author/#{@project.slug}?width=400") %></li>
+  <li><%= commit_graph_by_author_tag(@project) %></li>
   <% end -%>
 </ul>
 

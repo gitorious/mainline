@@ -42,4 +42,29 @@ describe ApplicationHelper do
     url.include?(Digest::MD5.hexdigest(email)).should == true
   end
   
+    
+  it "should generate a commit graph url" do
+    $stdout.puts "START!"
+    project = projects(:johans)
+    
+    url = commit_graph_tag(project)
+    
+    (url =~ /\<img/).should == 0
+    url.include?("google.com").should == true
+    
+    Gchart.should_receive(:line)
+    commit_graph_tag(project)
+  end
+  
+  it "should generate a url for commit graph by author" do
+    project = projects(:johans)
+    
+    
+    url = commit_graph_by_author_tag(project)
+    (url =~ /\<img/).should == 0
+    url.include?("google.com").should == true
+    
+    Gchart.should_receive(:pie)
+    commit_graph_by_author_tag(project)
+  end
 end
