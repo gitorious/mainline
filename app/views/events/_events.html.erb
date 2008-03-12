@@ -61,10 +61,17 @@
         when "delete merge request"
           action = "<b>deleted merge request</b> from #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
        end -%>
-    <%= link_to event.user.login, user_path(event.user) %> <%= action %> <%= time_ago_in_words(event.date) %><br/>
-    <% if body %>
-      <%= body %>
-    <% end %>
+    <div style="margin: 20px; padding-bottom: 10px;" >
+      <% unless action.empty? %>
+      <%= link_to event.user.login, user_path(event.user) %> <%= action %> <%= time_ago_in_words(event.date) %>
+      <% end %><br/>
+      <div style="float: left; margin: 5px;">
+        <%= gravatar(event.user.email, :size => 32)  %>
+      </div>
+      <% if body %>
+        <%= body %>
+      <% end %>
+    </div>
   </li>
 <% end -%>
 </ul>
