@@ -30,9 +30,11 @@
           end
          when "delete branch"
           action = "<b>deleted branch</b> #{event.ref} on #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
-         when "tag"
+         when "create tag"
           action = "<b>tagged</b> #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
           body = "#{link_to event.ref, project_repository_commit_path(project, repo, event.ref)}<br/>#{event.body}"
+         when "delete tag"
+          action = "<b>deleted tag</b> #{event.ref} on #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
          when "add committer"
           committer = User.find_by_id(event.ref.to_i)
           next if committer.nil?

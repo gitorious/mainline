@@ -21,7 +21,7 @@ while line = gets
   oldrev, newrev, revname = line.split(" ")
   current_rev = newrev
   newtype = oldtype = current_rev_type = "commit"
-  
+
   action = :create
   if oldrev =~ /^0+$/
     action = :create
@@ -33,11 +33,11 @@ while line = gets
     end
   end
   
-  if action != :create
+  if action != :delete
     newtype = git.cat_file({:t => true}, newrev)
   end
   
-  if action != :delete
+  if action == :update
     oldtype = git.cat_file({:t => true}, oldrev)
   end
   
@@ -66,9 +66,6 @@ while line = gets
   
   # action => create, delete, update
   # rev_type => commit, tag
-  
-  puts "#{hash[:author]}: #{action} #{current_rev_type} on #{slug} [#{hash[:date]}]"
-  puts "    #{hash[:message]}"
   
   user = User.find_by_email(hash[:email])
   next if user.nil?
@@ -100,14 +97,20 @@ while line = gets
       end
     elsif type == "tags"
       if action == :create
-        action_name = "tag"
+        action_name = "create tag"
+        ref = name
+      elsif action == :delete
+        action_name = "delete tag"
         ref = name
       end
     end
   elsif current_rev_type == "tag"
     if type == "tags"
       if action == :create
-        action_name = "tag"
+        action_name = "create tag"
+        ref = name
+      elsif action == :delete
+        action_name = "delete tag"
         ref = name
       end
     end
@@ -115,9 +118,12 @@ while line = gets
   
   next if action_name.empty?
   
+  puts "#{hash[:author]}: #{action_name} #{ref} on #{slug} [#{hash[:date]}]"
+  puts "    #{hash[:message]}"
+  
   action = Action.find_by_name(action_name)
   Event.from_action_name(action_name, user, repository, ref, hash[:message])
 end
 
-puts "=> Thanks!"
+puts "=> Thanks! http://#{GitoriousConfig['gitorious_host']}/events"
 
