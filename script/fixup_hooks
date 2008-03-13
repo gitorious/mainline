@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'tmpdir'
+require "fileutils"
+
+LOCK_FILE_PATH = File.join(Dir.tmpdir, "gitorious_task_lockfile")
+ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+
+if File.exist?(LOCK_FILE_PATH)
+    $stderr.puts "Task lockfile '#{LOCK_FILE_PATH}' exists!"
+    exit(1)
+end
+
+ENV["RAILS_ENV"] ||= "production"
+require File.dirname(__FILE__) + "/../config/environment"
+
+
+repo_path = GitoriousConfig['repository_base_path']
+repo_hooks = File.join(repo_path, ".hooks")
+gitorious_hooks = File.expand_path(File.join(File.dirname(__FILE__), "../data/hooks"))
+
+if not File.symlink?(repo_hooks)
+  if File.exist?(repo_hooks)
+    FileUtils.mv(repo_hooks, File.join(repo_path, ".hooks.backup"))
+  end
+  
+  FileUtils.ln_s(gitorious_hooks, repo_hooks)
+elsif File.readlink(repo_hooks) != gitorious_hooks
+#   puts "ln -sf #{gitorious_hooks} #{repo_hooks}"
+  File.unlink(repo_hooks)
+  FileUtils.ln_sf(gitorious_hooks, repo_hooks)
+end
+
+Dir.glob("#{repo_path}/**/*.git").each do |repo|
+  Dir.chdir(repo) do
+    hooks = File.join(repo, "hooks")
+    unless File.symlink?(hooks)
+      print "=> Fixing #{hooks}... "
+      $stdout.flush
+      
+      if File.exist?(hooks)
+        FileUtils.mv(hooks, "hooks.backup")
+      end
+      
+      FileUtils.ln_s("../../.hooks", "hooks")
+      
+      puts "[OK]"
+    end
+  end
+end
