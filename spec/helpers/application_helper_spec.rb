@@ -44,8 +44,8 @@ describe ApplicationHelper do
   
     
   it "should generate a commit graph url" do
-    $stdout.puts "START!"
     project = projects(:johans)
+    FileUtils.mkpath(project.mainline_repository.full_repository_path)
     
     url = commit_graph_tag(project)
     
@@ -58,7 +58,7 @@ describe ApplicationHelper do
   
   it "should generate a url for commit graph by author" do
     project = projects(:johans)
-    
+    FileUtils.mkpath(project.mainline_repository.full_repository_path)
     
     url = commit_graph_by_author_tag(project)
     (url =~ /\<img/).should == 0
