@@ -74,7 +74,7 @@ module ApplicationHelper
     flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
   end
   
-  def commit_graph_tag(project, sha = "master")
+  def commit_graph_tag(project, sha = "master", width = 250, height = 150)
     repo = project.mainline_repository
     git_repo = repo.git
     git = git_repo.git
@@ -106,10 +106,10 @@ module ApplicationHelper
       commits << value
     }
     
-    Gchart.line(:data => commits, :labels => labels, :bg => "efefef", :format => "img_tag")
+    Gchart.line(:data => commits, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag")
   end
   
-  def commit_graph_by_author_tag(project, sha = "master")
+  def commit_graph_by_author_tag(project, sha = "master", width = 400, height = 200)
     repo = project.mainline_repository
     git_repo = repo.git
     git = git_repo.git
@@ -156,12 +156,10 @@ module ApplicationHelper
     
     unless others.empty?
       others_v = others.inject { |v, acum| [v.last + acum.last] }
-      labels[label_it] = others_v.first
-      
       labels << "others"
-      data << others_v
+      data << others_v.last
     end
     
-    Gchart.pie(:data => data, :labels => labels, :width => 400, :bg => "efefef", :format => "img_tag" )
+    Gchart.pie(:data => data, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag" )
   end
 end
