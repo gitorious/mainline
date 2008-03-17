@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
   has_many :repositories, :through => :committerships
   has_many :ssh_keys, :order => "id desc"
   has_many :comments
-  has_many :events, :order => "events.date asc"
+  has_many :events, :order => "events.date asc", 
+      :include => [:action, :user, {:repository => :project}]
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
