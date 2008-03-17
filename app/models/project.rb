@@ -45,6 +45,7 @@ class Project < ActiveRecord::Base
     'Perl Artistic License',
     'Microsoft Permissive License (Ms-PL)',
     'ISC License',
+    'Lisp Lesser License',
     'Public Domain',
     'Other Open Source Initiative Approved License',
     'Other/Proprietary License',
