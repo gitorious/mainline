@@ -48,8 +48,8 @@ module ApplicationHelper
       #   out << stylesheet_link_tag("syntax_themes/#{syntax}")
       # end
       return stylesheet_link_tag("syntax_themes/idle")
-  	end
-  	out.join("\n")
+    end
+    out.join("\n")
   end
   
   def base_url(full_url)
@@ -58,7 +58,7 @@ module ApplicationHelper
   
   def gravatar_url_for(email, options = {})
     default = "http://#{GitoriousConfig['gitorious_host']}/images/default_face.png"
-    "http://www.gravatar.com/avatar.php?default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
+    "http://www.gravatar.com/avatar.php&amp;default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
   end
   
   def gravatar(email, options = {})
@@ -71,7 +71,7 @@ module ApplicationHelper
   end
   
   def flashes
-    flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
+    flash.map { |type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
   end
   
   def commit_graph_tag(project, sha = "master", width = 250, height = 150)
