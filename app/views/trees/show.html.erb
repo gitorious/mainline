@@ -10,9 +10,9 @@
   <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
     <% if node.is_a? Grit::Tree -%>
-      <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(params[:sha], node.name) -%></td>
+      <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(params[:id], node.name) -%></td>
     <% else -%>
-      <td class="node file"><%= link_to h(node.basename), blob_path(params[:sha], node.name) -%></td>
+      <td class="node file"><%= link_to h(node.basename), blob_path(params[:id], node.name) -%></td>
     <% end -%>
     <% last_commit = commit_for_tree_path(@repository, node.name) -%>
     <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
@@ -25,11 +25,23 @@
 <% end -%>
 <% if logged_in? -%>
 <p>
-  <small><%= link_to "Download as gzipped tarball", repository_path("archive", @commit.id) -%></small>
+  <small><%= link_to "Download as gzipped tarball", archive_tree_path(@commit.id) -%></small>
 </p>
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <%= render :partial => "tags_and_branches", :locals => { :link_to_tree => true } -%>
+  <h5>Branches:</h5>
+  <ul class="links">
+    <% @git.branches.each do |branch| -%>
+    <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
+    <% end -%>
+  </ul>
+
+  <h5>Tags:</h5>
+  <ul class="links">
+  <% @git.tags.each do |tag| -%>
+    <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
+  <% end -%>
+  </ul>
 <% end -%>
 

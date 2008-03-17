@@ -21,6 +21,18 @@ class ApplicationController < ActionController::Base
       @project = Project.find_by_slug!(params[:project_id])
     end
     
+    def find_project_and_repository
+      @project = Project.find_by_slug!(params[:project_id])
+      @repository = @project.repositories.find_by_name!(params[:repository_id])
+    end
+    
+    def check_repository_for_commits
+      unless @repository.has_commits?
+        flash[:notice] = "The repository doesn't have any commits yet"
+        redirect_to project_repository_path(@project, @repository) and return
+      end
+    end
+    
     def render_not_found
       render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
     end

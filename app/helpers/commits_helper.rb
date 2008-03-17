@@ -1,68 +1,5 @@
-module BrowseHelper
-  
-  def log_path(head_name = "master")
-    project_repository_log_path(@project, @repository, head_name)
-  end
-  
-  def tree_path(sha1=nil, path=[])
-    project_repository_tree_path(@project, @repository, sha1, path)    
-  end
-  
-  def repository_path(action, sha1=nil)
-    project_repository_path(@project, @repository)+"/"+action+"/"+sha1.to_s
-  end
-  
-  def commit_path(sha1)
-    project_repository_commit_path(@project, @repository, sha1)    
-  end
-  
-  def blob_path(sha1, path)
-    project_repository_blob_path(@project, @repository, sha1, path)    
-  end
-  
-  def raw_blob_path(sha1, path)
-    project_repository_raw_blob_path(@project, @repository, sha1, path)
-  end
-  
-  def diff_path(sha1, other_sha1)
-    project_repository_diff_path(@project, @repository, sha1, other_sha1)    
-  end
-  
-  def current_path
-    params[:path].dup
-  end
-  
-  def build_tree_path(path)
-    current_path << path
-  end
-  
-  def breadcrumb_path(root_name = "root", commit_id = params[:sha])
-    out = %Q{<ul class="path_breadcrumbs">\n}
-    visited_path = []
-    out <<  %Q{  <li>/ #{link_to(root_name, tree_path(commit_id, []))}</li>\n}
-    current_path.each_with_index do |path, index|
-      visited_path << path
-      if visited_path == current_path
-        out << %Q{  <li>/ #{path}</li>\n}
-      else
-        out << %Q{  <li>/ #{link_to(path, tree_path(commit_id, visited_path))}</li>\n}
-      end
-    end
-    out << "</ul>"
-    out
-  end
-    
-  def render_tag_box_if_match(sha, tags_per_sha)
-    tags = tags_per_sha[sha]
-    return if tags.blank?
-    out = ""
-    tags.each do |tagname|
-      out << %Q{<span class="tag"><code>}
-      out << tagname
-      out << %Q{</code></span>}
-    end
-    out
-  end  
+module CommitsHelper
+  include RepositoriesHelper
   
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
@@ -128,29 +65,6 @@ module BrowseHelper
     out
   end
   
-  def line_numbers_for(data, code_theme_class = nil)
-    out = []
-    #yield.split("\n").each_with_index{ |s,i| out << "#{i+1}: #{s}" }
-    out << %Q{<table id="codeblob" class="highlighted">}
-    data.to_s.split("\n").each_with_index do |line, count|
-      lineno = count + 1
-      out << %Q{<tr id="line#{lineno}">}
-      out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>} 
-      code_classes = "code"
-      code_classes << " #{code_theme_class}" if code_theme_class
-      out << %Q{<td class="#{code_classes}">#{line}</td>}
-      out << "</tr>"
-    end
-    out << "</table>"
-    out.join("\n")
-  end
-  
-  def render_highlighted(text, filename, theme = "idle")
-    syntax_name = Uv.syntax_names_for_data(filename, text).first #TODO: render a choice select box if > 1
-    highlighted = Uv.parse(text, "xhtml", syntax_name, false, theme)
-    line_numbers_for(highlighted, theme)
-  end
-  
   def render_diff_stats(stats)
     out = %Q{<ul class="diff_stats">\n}
     stats.files.each_pair do |filename, stats|
@@ -163,14 +77,4 @@ module BrowseHelper
     out << "</ul>\n"
     out
   end
-  
-  def too_big_to_render?(size)
-    size > 150.kilobytes
-  end
-  
-  # FIXME: This really belongs somewhere else, but where?
-  def commit_for_tree_path(repository, path)
-    repository.git.log(params[:sha], path, 1 => true).first
-  end
-  
 end
