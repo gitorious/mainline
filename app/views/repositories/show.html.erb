@@ -27,7 +27,7 @@
           <% end -%>
         </ul>
       </div>
-      <%= render :partial => "browse/log" -%>
+      <%= render :partial => "logs/log" -%>
       <% if @commits.page_count > 1 -%>
       <p>
         <%= link_to "#{@commits.page_count} more pages of commits &#x2192;", 

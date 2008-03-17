@@ -56,8 +56,8 @@
           <li class="<%= selected_if_current_page(project_repository_path(@project, @repository)) -%>">
             <%= link_to "#{h(@repository.name)} repository", project_repository_path(@project, @repository) -%>
           </li>
-          <li class="<%= selected_if_current_page(project_repository_log_path(@project, @repository)) -%>">
-            <%= link_to "Commits", project_repository_log_path(@project, @repository) -%>
+          <li class="<%= selected_if_current_page(project_repository_logs_path(@project, @repository)) -%>">
+            <%= link_to "Commits", project_repository_logs_path(@project, @repository) -%>
           </li>
           <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository)) -%>">
             <% if @repository.head_candidate -%>

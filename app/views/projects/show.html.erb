@@ -52,9 +52,8 @@
           <em>none</em>
         <% end -%>
       </td>
-      <td><%= link_to "commits", project_repository_log_path(@project, repos) -%></td>
-      <td><%= link_to "tree", project_repository_tree_path(@project, repos, 
-                repos.has_commits? ? repos.head_candidate.name : "HEAD") -%></td>
+      <td><%= link_to "commits", project_repository_logs_path(@project, repos) -%></td>
+      <td><%= link_to "tree", project_repository_trees_path(@project, repos) -%></td>
     </tr>
   <% end -%>
 </table>

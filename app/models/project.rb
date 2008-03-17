@@ -3,7 +3,7 @@ class Project < ActiveRecord::Base
   
   belongs_to  :user
   has_many    :comments, :dependent => :destroy
-  has_many    :repositories, :order => "mainline desc, created_at asc",
+  has_many    :repositories, :order => "repositories.mainline desc, repositories.created_at asc",
     :dependent => :destroy
   has_one     :mainline_repository, :conditions => ["mainline = ?", true], 
     :class_name => "Repository"

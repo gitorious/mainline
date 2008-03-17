@@ -12,10 +12,22 @@
   <% end -%>
 </ul>
 
-<h2>Commits in "<%=h params[:head] -%>"</h2>
+<h2>Commits in "<%=h params[:id] -%>"</h2>
 <%= render :partial => "log" -%>
 <%= will_paginate @commits %>
 
 <% content_for :sidebar do -%>  
-  <%= render :partial => "tags_and_branches" -%>
+  <h5>Branches:</h5>
+  <ul class="links">
+    <% @git.branches.each do |branch| -%>
+    <li><%= link_to h(branch.name), log_path(branch.name) -%></li>
+    <% end -%>
+  </ul>
+
+  <h5>Tags:</h5>
+  <ul class="links">
+  <% @git.tags.each do |tag| -%>
+    <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
+  <% end -%>
+  </ul>
 <% end -%>
