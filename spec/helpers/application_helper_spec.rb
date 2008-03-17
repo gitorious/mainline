@@ -40,6 +40,7 @@ describe ApplicationHelper do
     
     base_url(url).should == "www.gravatar.com"
     url.include?(Digest::MD5.hexdigest(email)).should == true
+    url.include?("avatar.php?").should == true
   end
   
     

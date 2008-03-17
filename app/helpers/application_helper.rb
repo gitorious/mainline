@@ -58,7 +58,7 @@ module ApplicationHelper
   
   def gravatar_url_for(email, options = {})
     default = "http://#{GitoriousConfig['gitorious_host']}/images/default_face.png"
-    "http://www.gravatar.com/avatar.php&amp;default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
+    "http://www.gravatar.com/avatar.php?default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
   end
   
   def gravatar(email, options = {})
