@@ -44,13 +44,14 @@ ActionController::Routing::Routes.draw do |map|
       
       repo.resources :logs
       repo.resources :commits
-      #repo.resources :trees
       repo.trees          "trees/", :controller => "trees", :action => "index"
-      repo.tree           "trees/:id/*path", :controller => "trees", :action => "show"
-      repo.archive_tree   "archive_tree/:id.tar.gz", :controller => "trees", :action => "archive"
-      repo.formatted_tree "trees/:id/*path.:format", :controller => "trees", :action => "show"
-      repo.raw_blob       "blobs/raw/:id/*path", :controller => "blobs", :action => "raw"
-      repo.blob           "blobs/:id/*path", :controller => "blobs", :action => "show"
+      repo.with_options(:requirements => { :id => VALID_SHA }) do |r|
+        r.tree           "trees/:id/*path", :controller => "trees", :action => "show"
+        r.formatted_tree "trees/:id/*path.:format", :controller => "trees", :action => "show"
+        r.archive_tree   "archive/:id.tar.gz", :controller => "trees", :action => "archive"
+        r.raw_blob       "blobs/raw/:id/*path", :controller => "blobs", :action => "raw"
+        r.blob           "blobs/:id/*path", :controller => "blobs", :action => "show"
+      end
       
       # Repository browsing related routes
       # repo.with_options(:controller => "browse") do |r|

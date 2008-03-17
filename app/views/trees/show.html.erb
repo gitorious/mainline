@@ -25,7 +25,7 @@
 <% end -%>
 <% if logged_in? -%>
 <p>
-  <small><%= link_to "Download as gzipped tarball", repository_path("archive", @commit.id) -%></small>
+  <small><%= link_to "Download as gzipped tarball", archive_tree_path(@commit.id) -%></small>
 </p>
 <% end -%>
 
