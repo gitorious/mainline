@@ -1,0 +1,35 @@
+<% @page_title = @search.blank? ? "Search" : %Q{Search for "#{h(params[:q])}"} -%>
+<h1>
+  <%= @search.blank? ? "Search" : %Q{Search for "#{h(params[:q])}"} -%>
+</h1>
+
+
+<% form_for :search, :html => { :method => "get" } do |f| -%>
+<p>
+  <label for="q">Search query</label><br />
+  <%= text_field_tag :q, params[:q], :class => "text" -%><br />
+  <input type="submit" value="Search" />
+</p>
+  
+<% end -%>
+
+<div class="search_results">
+<% if @search -%>
+  
+  <% if @results.empty? -%>
+    <p>Sorry, no results for "<%=h params[:q] -%>"</p>
+  <% else -%>
+    <% @results.each do |result| -%>
+    <div class="item">
+      <%= render :partial => result, :object => result -%>
+    </div>
+    <% end -%>
+    <%= will_paginate(@search) -%>
+  <% end -%>
+  
+  <p class="hint">
+    <small>Found <%= @search.total_entries -%> results in <%= @search.time -%>ms</small>
+  </p>
+  
+<% end -%>
+</div>

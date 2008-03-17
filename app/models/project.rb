@@ -10,6 +10,21 @@ class Project < ActiveRecord::Base
   has_many    :repository_clones, :conditions => ["mainline = ?", false],
     :class_name => "Repository"
     
+  is_indexed :fields => ["title", "description", "slug"], 
+    :concatenate => [
+      { :class_name => 'Tag', 
+        :field => 'name', 
+        :as => 'category',
+        :association_sql => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " + 
+                            "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id"
+      }],
+    :include => [{
+      :association_name => "user",
+      :field => "login",
+      :as => "user"
+    }]
+      
+    
   URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
   validates_presence_of :title, :user_id, :slug
   validates_uniqueness_of :slug, :case_sensitive => false
@@ -78,6 +93,8 @@ class Project < ActiveRecord::Base
   
   def stripped_description
     description.gsub(/<\/?[^>]*>/, "")
+    # sanitizer = HTML::WhiteListSanitizer.new
+    # sanitizer.sanitize(description, :tags => %w(str), :attributes => %w(class))
   end
   
   protected

@@ -913,3 +913,18 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   float: right;
   margin: 0 10px 10px 10px;
 }
+
+.search_results strong.highlight {
+  background: #ff0;
+  font-weight: normal;
+}
+.search_results strong {
+  font-weight: normal;
+}
+
+.search_results p, .search_results h3 {
+  margin-bottom: 5px;
+}
+.search_results .item {
+  margin-top: 20px;
+}

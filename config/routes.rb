@@ -77,6 +77,8 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   
+  map.resource :search
+  
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'
