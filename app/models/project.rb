@@ -72,6 +72,10 @@ class Project < ActiveRecord::Base
   end
   
   def self.per_page() 20 end
+    
+  def self.top_tags(limit = 10)
+    tag_counts(:limit => limit, :order => "count desc")
+  end
   
   def to_param
     slug
