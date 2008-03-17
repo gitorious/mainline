@@ -17,5 +17,5 @@ gitorious_client_port: 3000
 # Host the ./script/gitorious script should use:
 gitorious_client_host: localhost
 
-# Host which is serving the gitorious app
-gitorious_host: GitoriousConfig['gitorious_host']
+# Host which is serving the gitorious app, eg "gitorious.org"
+gitorious_host: gitorious.org
