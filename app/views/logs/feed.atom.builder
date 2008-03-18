@@ -22,7 +22,6 @@ Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
 Author: #{commit.author.name}
 Committer: #{commit.committer.name}
 
-
 #{commit.message}
 
 
