@@ -207,7 +207,7 @@ HELP
           # Determine full paths for source and destination files.
           source              = source_path(relative_source)
           destination         = destination_path(relative_destination)
-          destination_exists  = File.exists?(destination)
+          destination_exists  = File.exist?(destination)
 
           # If source and destination are identical then we're done.
           if destination_exists and identical?(source, destination, &block)
@@ -255,8 +255,9 @@ HELP
             FileUtils.chmod(file_options[:chmod], destination)
           end
 
-          # Optionally add file to subversion
+          # Optionally add file to subversion or git
           system("svn add #{destination}") if options[:svn]
+          system("git add -v #{relative_destination}") if options[:git]
         end
 
         # Checks if the source and the destination file are identical. If
@@ -303,33 +304,35 @@ HELP
         end
 
         # Create a directory including any missing parent directories.
-        # Always directories which exist.
+        # Always skips directories which exist.
         def directory(relative_path)
           path = destination_path(relative_path)
-          if File.exists?(path)
+          if File.exist?(path)
             logger.exists relative_path
           else
             logger.create relative_path
-	    unless options[:pretend]
-	      FileUtils.mkdir_p(path)
+	          unless options[:pretend]
+	            FileUtils.mkdir_p(path)
+	            # git doesn't require adding the paths, adding the files later will
+	            # automatically do a path add.
 	      
-	      # Subversion doesn't do path adds, so we need to add
-	      # each directory individually.
-	      # So stack up the directory tree and add the paths to
-	      # subversion in order without recursion.
-	      if options[:svn]
-		stack=[relative_path]
-		until File.dirname(stack.last) == stack.last # dirname('.') == '.'
-		  stack.push File.dirname(stack.last)
-		end
-		stack.reverse_each do |rel_path|
-		  svn_path = destination_path(rel_path)
-		  system("svn add -N #{svn_path}") unless File.directory?(File.join(svn_path, '.svn'))
-		end
-	      end
-	    end
-	  end
-	end
+	            # Subversion doesn't do path adds, so we need to add
+	            # each directory individually.
+	            # So stack up the directory tree and add the paths to
+	            # subversion in order without recursion.
+	            if options[:svn]
+		            stack=[relative_path]
+		            until File.dirname(stack.last) == stack.last # dirname('.') == '.'
+		              stack.push File.dirname(stack.last)
+		            end
+		            stack.reverse_each do |rel_path|
+		              svn_path = destination_path(rel_path)
+		              system("svn add -N #{svn_path}") unless File.directory?(File.join(svn_path, '.svn'))
+		            end
+	            end
+            end
+          end
+        end
 
         # Display a README.
         def readme(*relative_sources)
@@ -391,7 +394,7 @@ end_message
             raise UsageError, message
           end
 
-          SYNONYM_LOOKUP_URI = "http://wordnet.princeton.edu/cgi-bin/webwn2.0?stage=2&word=%s&posnumber=1&searchtypenumber=2&senses=&showglosses=1"
+          SYNONYM_LOOKUP_URI = "http://wordnet.princeton.edu/perl/webwn?s=%s"
 
           # Look up synonyms on WordNet.  Thanks to Florian Gross (flgr).
           def find_synonyms(word)
@@ -399,8 +402,8 @@ end_message
             require 'timeout'
             timeout(5) do
               open(SYNONYM_LOOKUP_URI % word) do |stream|
-                data = stream.read.gsub("&nbsp;", " ").gsub("<BR>", "")
-                data.scan(/^Sense \d+\n.+?\n\n/m)
+                # Grab words linked to dictionary entries as possible synonyms
+                data = stream.read.gsub("&nbsp;", " ").scan(/<a href="webwn.*?">([\w ]*?)<\/a>/s).uniq
               end
             end
           rescue Exception
@@ -415,7 +418,7 @@ end_message
         # Remove a file if it exists and is a file.
         def file(relative_source, relative_destination, file_options = {})
           destination = destination_path(relative_destination)
-          if File.exists?(destination)
+          if File.exist?(destination)
             logger.rm relative_destination
             unless options[:pretend]
               if options[:svn]
@@ -428,7 +431,20 @@ end_message
                 # If the directory is not in the status list, it
                 # has no modifications so we can simply remove it
                   system("svn rm #{destination}")
-                end  
+                end
+              elsif options[:git]
+                if options[:git][:new][relative_destination]
+                  # file has been added, but not committed
+                  system("git reset HEAD #{relative_destination}")
+                  FileUtils.rm(destination)
+                elsif options[:git][:modified][relative_destination]
+                  # file is committed and modified
+                  system("git rm -f #{relative_destination}")
+                else
+                  # If the directory is not in the status list, it
+                  # has no modifications so we can simply remove it
+                  system("git rm #{relative_destination}")
+                end
               else
                 FileUtils.rm(destination)
               end
@@ -450,7 +466,7 @@ end_message
           until parts.empty?
             partial = File.join(parts)
             path = destination_path(partial)
-            if File.exists?(path)
+            if File.exist?(path)
               if Dir[File.join(path, '*')].empty?
                 logger.rmdir partial
                 unless options[:pretend]
@@ -465,6 +481,8 @@ end_message
                     # has no modifications so we can simply remove it
                       system("svn rm #{path}")
                     end
+                  # I don't think git needs to remove directories?..
+                  # or maybe they have special consideration...
                   else
                     FileUtils.rmdir(path)
                   end

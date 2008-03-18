@@ -1,7 +1,6 @@
 module ActiveRecord
   module Associations
     class AssociationProxy #:nodoc:
-      attr_reader :reflection
       alias_method :proxy_respond_to?, :respond_to?
       alias_method :proxy_extend, :extend
       delegate :to_param, :to => :proxy_target
@@ -12,15 +11,15 @@ module ActiveRecord
         Array(reflection.options[:extend]).each { |ext| proxy_extend(ext) }
         reset
       end
-      
+
       def proxy_owner
         @owner
       end
-      
+
       def proxy_reflection
         @reflection
       end
-      
+
       def proxy_target
         @target
       end
@@ -28,23 +27,23 @@ module ActiveRecord
       def respond_to?(symbol, include_priv = false)
         proxy_respond_to?(symbol, include_priv) || (load_target && @target.respond_to?(symbol, include_priv))
       end
-      
+
       # Explicitly proxy === because the instance method removal above
       # doesn't catch it.
       def ===(other)
         load_target
         other === @target
       end
-      
+
       def aliased_table_name
         @reflection.klass.table_name
       end
-      
+
       def conditions
         @conditions ||= interpolate_sql(sanitize_sql(@reflection.options[:conditions])) if @reflection.options[:conditions]
       end
       alias :sql_conditions :conditions
-      
+
       def reset
         @loaded = false
         @target = nil
@@ -53,25 +52,26 @@ module ActiveRecord
       def reload
         reset
         load_target
+        self unless @target.nil?
       end
 
       def loaded?
         @loaded
       end
-      
+
       def loaded
         @loaded = true
       end
-      
+
       def target
         @target
       end
-      
+
       def target=(target)
         @target = target
         loaded
       end
-      
+
       def inspect
         reload unless loaded?
         @target.inspect
@@ -81,7 +81,7 @@ module ActiveRecord
         def dependent?
           @reflection.options[:dependent]
         end
-        
+
         def quoted_record_ids(records)
           records.map { |record| record.quoted_id }.join(',')
         end
@@ -114,14 +114,19 @@ module ActiveRecord
             :offset  => @reflection.options[:offset],
             :joins   => @reflection.options[:joins],
             :include => @reflection.options[:include],
-            :select  => @reflection.options[:select]
+            :select  => @reflection.options[:select],
+            :readonly  => @reflection.options[:readonly]
           )
         end
-        
+
       private
-        def method_missing(method, *args, &block)
-          if load_target        
-            @target.send(method, *args, &block)
+        def method_missing(method, *args)
+          if load_target
+            if block_given?
+              @target.send(method, *args)  { |*block_args| yield(*block_args) }
+            else
+              @target.send(method, *args)
+            end
           end
         end
 

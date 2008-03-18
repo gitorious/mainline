@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../abstract_unit"
+require 'abstract_unit'
 
 class NumberHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::NumberHelper
@@ -25,6 +25,7 @@ class NumberHelperTest < Test::Unit::TestCase
     assert_equal("$1,234,567,890.5", number_to_currency(1234567890.50, {:precision => 1}))
     assert_equal("&pound;1234567890,50", number_to_currency(1234567890.50, {:unit => "&pound;", :separator => ",", :delimiter => ""}))
     assert_equal("$1,234,567,890.50", number_to_currency("1234567890.50"))
+    assert_equal("1,234,567,890.50 K&#269;", number_to_currency("1234567890.50", {:unit => "K&#269;", :format => "%n %u"}))
     assert_equal("$x.", number_to_currency("x"))
     assert_nil number_to_currency(nil)
   end
@@ -87,6 +88,7 @@ class NumberHelperTest < Test::Unit::TestCase
     assert_equal '1.01 KB',   number_to_human_size(1.0100.kilobytes, 4)
     assert_equal '10 KB',   number_to_human_size(10.000.kilobytes, 4)
     assert_equal '1 Byte',   number_to_human_size(1.1)
+    assert_equal '10 Bytes', number_to_human_size(10)
     assert_nil number_to_human_size('x')
     assert_nil number_to_human_size(nil)
   end

@@ -5,7 +5,7 @@ require 'set'
 module ActiveResource
   # ActiveResource::Base is the main class for mapping RESTful resources as models in a Rails application.
   #
-  # For an outline of what Active Resource is capable of, see link:files/README.html.
+  # For an outline of what Active Resource is capable of, see link:files/vendor/rails/activeresource/README.html.
   #
   # == Automated mapping
   #
@@ -33,7 +33,7 @@ module ActiveResource
   #   ryan.exists?  #=> true
   # 
   #   ryan = Person.find(1)
-  #   # => Resource holding our newly create Person object
+  #   # => Resource holding our newly created Person object
   # 
   #   ryan.first = 'Rizzle'
   #   ryan.save  #=> true
@@ -46,15 +46,26 @@ module ActiveResource
   # === Custom REST methods
   #
   # Since simple CRUD/lifecycle methods can't accomplish every task, Active Resource also supports
-  # defining your own custom REST methods.
-  # 
-  #   Person.new(:name => 'Ryan).post(:register)
+  # defining your own custom REST methods. To invoke them, Active Resource provides the <tt>get</tt>,
+  # <tt>post</tt>, <tt>put</tt> and <tt>delete</tt> methods where you can specify a custom REST method
+  # name to invoke.
+  #
+  #   # POST to the custom 'register' REST method, i.e. POST /people/new/register.xml.
+  #   Person.new(:name => 'Ryan').post(:register)
   #   # => { :id => 1, :name => 'Ryan', :position => 'Clerk' }
   #
+  #   # PUT an update by invoking the 'promote' REST method, i.e. PUT /people/1/promote.xml?position=Manager.
   #   Person.find(1).put(:promote, :position => 'Manager')
   #   # => { :id => 1, :name => 'Ryan', :position => 'Manager' }
+  #
+  #   # GET all the positions available, i.e. GET /people/positions.xml.
+  #   Person.get(:positions)
+  #   # => [{:name => 'Manager'}, {:name => 'Clerk'}]
+  #
+  #   # DELETE to 'fire' a person, i.e. DELETE /people/1/fire.xml.
+  #   Person.find(1).delete(:fire)
   # 
-  # For more information on creating and using custom REST methods, see the 
+  # For more information on using custom REST methods, see the
   # ActiveResource::CustomMethods documentation.
   #
   # == Validations
@@ -74,25 +85,35 @@ module ActiveResource
   # == Authentication
   # 
   # Many REST APIs will require authentication, usually in the form of basic
-  # HTTP authentication.  Authentication can be specified by putting the credentials
-  # in the +site+ variable of the Active Resource class you need to authenticate.
+  # HTTP authentication.  Authentication can be specified by:
+  # * putting the credentials in the URL for the +site+ variable.
   # 
-  #   class Person < ActiveResource::Base
-  #     self.site = "http://ryan:password@api.people.com:3000/"
-  #   end
+  #    class Person < ActiveResource::Base
+  #      self.site = "http://ryan:password@api.people.com:3000/"
+  #    end
   # 
+  # * defining +user+ and/or +password+ variables
+  #
+  #    class Person < ActiveResource::Base
+  #      self.site = "http://api.people.com:3000/"
+  #      self.user = "ryan"
+  #      self.password = "password"
+  #    end
+  #
   # For obvious security reasons, it is probably best if such services are available 
   # over HTTPS.
   # 
+  # Note: Some values cannot be provided in the URL passed to site.  e.g. email addresses 
+  # as usernames.  In those situations you should use the seperate user and password option.
   # == Errors & Validation
   #
   # Error handling and validation is handled in much the same manner as you're used to seeing in
-  # Active Record.  Both the response code in the Http response and the body of the response are used to
+  # Active Record.  Both the response code in the HTTP response and the body of the response are used to
   # indicate that an error occurred.
   # 
   # === Resource errors
   # 
-  # When a get is requested for a resource that does not exist, the HTTP +404+ (Resource Not Found)
+  # When a GET is requested for a resource that does not exist, the HTTP <tt>404</tt> (Resource Not Found)
   # response code will be returned from the server which will raise an ActiveResource::ResourceNotFound
   # exception.
   # 
@@ -100,7 +121,7 @@ module ActiveResource
   #   ryan = Person.find(999) # => Raises ActiveResource::ResourceNotFound
   #   # => Response = 404
   # 
-  # +404+ is just one of the HTTP error response codes that ActiveResource will handle with its own exception. The 
+  # <tt>404</tt> is just one of the HTTP error response codes that ActiveResource will handle with its own exception. The
   # following HTTP response codes will also result in these exceptions:
   # 
   # 200 - 399:: Valid response, no exception
@@ -125,8 +146,8 @@ module ActiveResource
   # 
   # Active Resource supports validations on resources and will return errors if any these validations fail
   # (e.g., "First name can not be blank" and so on).  These types of errors are denoted in the response by 
-  # a response code of +422+ and an XML representation of the validation errors.  The save operation will 
-  # then fail (with a +false+ return value) and the validation errors can be accessed on the resource in question.
+  # a response code of <tt>422</tt> and an XML representation of the validation errors.  The save operation will
+  # then fail (with a <tt>false</tt> return value) and the validation errors can be accessed on the resource in question.
   # 
   #   ryan = Person.find(1)
   #   ryan.first #=> ''
@@ -153,6 +174,21 @@ module ActiveResource
       # Gets the URI of the REST resources to map for this class.  The site variable is required 
       # ActiveResource's mapping to work.
       def site
+        # Not using superclass_delegating_reader because don't want subclasses to modify superclass instance
+        #
+        # With superclass_delegating_reader
+        #
+        #   Parent.site = 'http://anonymous@test.com'
+        #   Subclass.site # => 'http://anonymous@test.com'
+        #   Subclass.site.user = 'david'
+        #   Parent.site # => 'http://david@test.com'
+        #
+        # Without superclass_delegating_reader (expected behaviour)
+        #
+        #   Parent.site = 'http://anonymous@test.com'
+        #   Subclass.site # => 'http://anonymous@test.com'
+        #   Subclass.site.user = 'david' # => TypeError: can't modify frozen object
+        #
         if defined?(@site)
           @site
         elsif superclass != Object && superclass.site
@@ -164,7 +200,45 @@ module ActiveResource
       # The site variable is required ActiveResource's mapping to work.
       def site=(site)
         @connection = nil
-        @site = site.nil? ? nil : create_site_uri_from(site)
+        if site.nil?
+          @site = nil
+        else
+          @site = create_site_uri_from(site)
+          @user = URI.decode(@site.user) if @site.user
+          @password = URI.decode(@site.password) if @site.password
+        end
+      end
+
+      # Gets the user for REST HTTP authentication
+      def user
+        # Not using superclass_delegating_reader. See +site+ for explanation
+        if defined?(@user)
+          @user
+        elsif superclass != Object && superclass.user
+          superclass.user.dup.freeze
+        end
+      end
+
+      # Sets the user for REST HTTP authentication
+      def user=(user)
+        @connection = nil
+        @user = user
+      end
+
+      # Gets the password for REST HTTP authentication
+      def password
+        # Not using superclass_delegating_reader. See +site+ for explanation
+        if defined?(@password)
+          @password
+        elsif superclass != Object && superclass.password
+          superclass.password.dup.freeze
+        end
+      end
+
+      # Sets the password for REST HTTP authentication
+      def password=(password)
+        @connection = nil
+        @password = password
       end
 
       # Sets the format that attributes are sent and received in from a mime type reference. Example:
@@ -181,7 +255,7 @@ module ActiveResource
           ActiveResource::Formats[mime_type_reference_or_format] : mime_type_reference_or_format
 
         write_inheritable_attribute("format", format)
-        connection.format = format
+        connection.format = format if site
       end
       
       # Returns the current format, default is ActiveResource::Formats::XmlFormat
@@ -191,10 +265,12 @@ module ActiveResource
 
       # An instance of ActiveResource::Connection that is the base connection to the remote service.
       # The +refresh+ parameter toggles whether or not the connection is refreshed at every request
-      # or not (defaults to +false+).
+      # or not (defaults to <tt>false</tt>).
       def connection(refresh = false)
         if defined?(@connection) || superclass == Object
           @connection = Connection.new(site, format) if refresh || @connection.nil?
+          @connection.user = user if user
+          @connection.password = password if password
           @connection
         else
           superclass.connection
@@ -372,6 +448,9 @@ module ActiveResource
       #   Person.find(:one, :from => :leader)                    
       #   # => GET /people/leader.xml
       #
+      #   Person.find(:all, :from => :developers, :params => { :language => 'ruby' })
+      #   # => GET /people/developers.xml?language=ruby
+      #
       #   Person.find(:one, :from => "/companies/1/manager.xml") 
       #   # => GET /companies/1/manager.xml
       #
@@ -422,7 +501,13 @@ module ActiveResource
       #   Note.exists(1349)
       #   # => false
       def exists?(id, options = {})
-        id && !find_single(id, options).nil?
+        if id
+          prefix_options, query_options = split_options(options[:params])
+          path = element_path(id, prefix_options, query_options)
+          response = connection.head(path, headers)
+          response.code == 200
+        end
+        # id && !find_single(id, options).nil?
       rescue ActiveResource::ResourceNotFound
         false
       end
@@ -687,9 +772,9 @@ module ActiveResource
     #
     # indent:: Set the indent level for the XML output (default is +2+).
     # dasherize:: Boolean option to determine whether or not element names should
-    #             replace underscores with dashes (default is +false+).
+    #             replace underscores with dashes (default is <tt>false</tt>).
     # skip_instruct::  Toggle skipping the +instruct!+ call on the XML builder 
-    #                  that generates the XML declaration (default is +false+).
+    #                  that generates the XML declaration (default is <tt>false</tt>).
     #
     # ==== Examples
     #   my_group = SubsidiaryGroup.find(:first)
@@ -769,8 +854,8 @@ module ActiveResource
     alias_method :respond_to_without_attributes?, :respond_to?
 
     # A method to determine if an object responds to a message (e.g., a method call). In Active Resource, a +Person+ object with a
-    # +name+ attribute can answer +true+ to +my_person.respond_to?("name")+, +my_person.respond_to?("name=")+, and
-    # +my_person.respond_to?("name?")+.
+    # +name+ attribute can answer <tt>true</tt> to <tt>my_person.respond_to?("name")</tt>, <tt>my_person.respond_to?("name=")</tt>, and
+    # <tt>my_person.respond_to?("name?")</tt>.
     def respond_to?(method, include_priv = false)
       method_name = method.to_s
       if attributes.nil?
@@ -807,7 +892,7 @@ module ActiveResource
       end
       
       def load_attributes_from_response(response)
-        if response['Content-size'] != "0" && response.body.strip.size > 0
+        if response['Content-Length'] != "0" && response.body.strip.size > 0
           load(self.class.format.decode(response.body))
         end
       end
@@ -831,17 +916,26 @@ module ActiveResource
         find_or_create_resource_for(name.to_s.singularize)
       end
       
+      # Tries to find a resource in a non empty list of nested modules
+      # Raises a NameError if it was not found in any of the given nested modules
+      def find_resource_in_modules(resource_name, module_names)
+        receiver = Object
+        namespaces = module_names[0, module_names.size-1].map do |module_name|
+          receiver = receiver.const_get(module_name)
+        end
+        if namespace = namespaces.reverse.detect { |ns| ns.const_defined?(resource_name) }
+          return namespace.const_get(resource_name)
+        else
+          raise NameError
+        end
+      end
+
       # Tries to find a resource for a given name; if it fails, then the resource is created
       def find_or_create_resource_for(name)
         resource_name = name.to_s.camelize
-
-        # FIXME: Make it generic enough to support any depth of module nesting
-        if (ancestors = self.class.name.split("::")).size > 1
-          begin
-            ancestors.first.constantize.const_get(resource_name)
-          rescue NameError
-            self.class.const_get(resource_name)
-          end
+        ancestors = self.class.name.split("::")
+        if ancestors.size > 1
+          find_resource_in_modules(resource_name, ancestors)
         else
           self.class.const_get(resource_name)
         end

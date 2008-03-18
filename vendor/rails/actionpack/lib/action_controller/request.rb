@@ -4,7 +4,7 @@ require 'strscan'
 
 module ActionController
   # HTTP methods which are accepted by default. 
-  ACCEPTED_HTTP_METHODS = Set.new(%w( get head put post delete ))
+  ACCEPTED_HTTP_METHODS = Set.new(%w( get head put post delete options ))
 
   # CgiRequest and TestRequest provide concrete implementations.
   class AbstractRequest
@@ -61,8 +61,10 @@ module ActionController
       request_method == :head
     end
 
+    # Provides acccess to the request's HTTP headers, for example:
+    #  request.headers["Content-Type"] # => "text/plain"
     def headers
-      @env
+      @headers ||= ActionController::Http::Headers.new(@env)
     end
 
     def content_length
@@ -111,7 +113,7 @@ module ActionController
     #   end
     def format=(extension)
       parameters[:format] = extension.to_s
-      format
+      @format = Mime::Type.lookup_by_extension(parameters[:format])
     end
 
     # Returns true if the request's "X-Requested-With" header contains
@@ -473,7 +475,7 @@ module ActionController
             when Array
               value.map { |v| get_typed_value(v) }
             else
-              if value.is_a?(UploadedFile)
+              if value.respond_to? :original_filename
                 # Uploaded file
                 if value.original_filename
                   value
@@ -498,7 +500,7 @@ module ActionController
         def read_multipart(body, boundary, content_length, env)
           params = Hash.new([])
           boundary = "--" + boundary
-          quoted_boundary = Regexp.quote(boundary, "n")
+          quoted_boundary = Regexp.quote(boundary)
           buf = ""
           bufsize = 10 * 1024
           boundary_end=""
@@ -672,6 +674,7 @@ module ActionController
             else
               top << {key => value}.with_indifferent_access
               push top.last
+              value = top[key]
             end
           else
             top << value
@@ -679,7 +682,8 @@ module ActionController
         elsif top.is_a? Hash
           key = CGI.unescape(key)
           parent << (@top = {}) if top.key?(key) && parent.is_a?(Array)
-          return top[key] ||= value
+          top[key] ||= value
+          return top[key]
         else
           raise ArgumentError, "Don't know what to do: top is #{top.inspect}"
         end
@@ -688,7 +692,7 @@ module ActionController
       end
 
       def type_conflict!(klass, value)
-        raise TypeError, "Conflicting types for parameter containers. Expected an instance of #{klass} but found an instance of #{value.class}. This can be caused by colliding Array and Hash parameters like qs[]=value&qs[key]=value."
+        raise TypeError, "Conflicting types for parameter containers. Expected an instance of #{klass} but found an instance of #{value.class}. This can be caused by colliding Array and Hash parameters like qs[]=value&qs[key]=value. (The parameters received were #{value.inspect}.)"
       end
   end
 
