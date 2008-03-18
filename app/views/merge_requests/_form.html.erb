@@ -4,6 +4,16 @@
   <%= form.select :target_repository_id, @repositories.map{|r| [r.name, r.id] } -%>
 </p>
 <p>
+  <%= form.label :target_branch -%><br />
+  <small class="hint">The target branch you wish your changes to be merged into</small><br />
+  <%= form.text_field :target_branch, :class => "text", :value => form.object.target_branch -%>
+</p>
+<p>
+  <%= form.label :source_branch -%><br />
+  <small class="hint">The source branch you wish the target repository should merge from</small><br />
+  <%= form.text_field :source_branch, :class => "text", :value => form.object.source_branch -%>
+</p>
+<p>
   <%= form.label :proposal -%><br />
   <small class="hint">A short summary of your changes</small><br />
   <%= form.text_area :proposal, :class => "text medium" -%>

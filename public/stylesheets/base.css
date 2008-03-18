@@ -606,6 +606,9 @@ table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
   margin: 2em auto 2em auto;
   font-size: 1.5em;
 }
+#site_intro .hint {
+  font-size: 55%;
+}
 #site_project_list .tag_list{
   text-align: center;
 }
@@ -798,8 +801,16 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 #site_overview {
-  text-align: center;
   margin-bottom: 4em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 910px;
+  text-align:center;
+}
+
+#site_overview table td, #site_overview table th {
+  text-align:center;
+  padding: 10px;
 }
 
 #site_overview p.create_account_hint {
@@ -913,3 +924,29 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   float: right;
   margin: 0 10px 10px 10px;
 }
+
+.search_results strong.highlight {
+  background: #ff0;
+  font-weight: normal;
+}
+.search_results strong {
+  font-weight: normal;
+}
+
+.search_results p, .search_results h3 {
+  margin-bottom: 5px;
+}
+
+.search_results .item {
+  margin-top: 20px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search_bar input {
+  padding: 3px;
+  margin:0;
+}
+.search_bar p { margin-bottom: 2px; }
+.search_bar { margin-bottom: 20px; }

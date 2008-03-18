@@ -23,7 +23,7 @@ class RepositoriesController < ApplicationController
     respond_to do |format|
       format.html
       format.xml  { render :xml => @repository }
-      format.atom { render :template => "browse/index.atom.builder" }
+      format.atom { render :template => "logs/show.atom.builder" }
     end
   end
   

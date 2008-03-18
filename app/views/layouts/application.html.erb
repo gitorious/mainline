@@ -33,6 +33,7 @@
         <li><%= link_to "Dashboard", dashboard_path -%></li>
       <% end -%>
         <li><%= link_to "Projects", projects_path -%></li>
+        <li><%= link_to "Search", search_path -%></li>
       <% if logged_in? -%>
         <li><%= link_to "FAQ", faq_path -%></li>
       <% else -%>
@@ -59,14 +60,11 @@
           <li class="<%= selected_if_current_page(project_repository_logs_path(@project, @repository)) -%>">
             <%= link_to "Commits", project_repository_logs_path(@project, @repository) -%>
           </li>
-          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository)) -%>">
-            <% if @repository.head_candidate -%>
-              <%= link_to "Source Tree", project_repository_tree_path(@project, @repository, @repository.head_candidate.name) -%>
-            <% end -%>
+          <% if @repository.head_candidate -%>
+          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository, @repository.head_candidate.name)) -%>">
+            <%= link_to "Source Tree", project_repository_tree_path(@project, @repository, @repository.head_candidate.name) -%>
           </li>
-          <!-- <li class="<%= selected_if_current_page(project_repository_comments_path(@project, @repository)) -%>">
-            <%= link_to "Comments", project_repository_comments_path(@project, @repository) -%>
-          </li> -->
+          <% end -%>
         <% end -%>
       <% end -%>
       <%= yield :submenu -%>

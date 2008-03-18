@@ -7,7 +7,7 @@ class ProjectsController < ApplicationController
                   :page => params[:page], :include => [:tags])
     @atom_auto_discovery_url = formatted_projects_path(:atom)
     respond_to do |format|
-      format.html { @tags = Project.tag_counts }
+      format.html { @tags = Project.top_tags }
       format.xml  { render :xml => @projects }
       format.atom { }
     end

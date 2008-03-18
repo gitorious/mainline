@@ -4,5 +4,10 @@ coverage/*
 public/cache/*
 config/database.yml
 config/gitorious.yml
+config/ultrasphinx/development.conf
+config/ultrasphinx/test.conf
+config/ultrasphinx/production.conf
+config/ultrasphinx/staging.conf
 db/schema.rb
 .autotest
+db/sphinx/*

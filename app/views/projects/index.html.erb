@@ -17,10 +17,10 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <h4>Categories:</h4>
+  <h4>Popular Categories:</h4>
   <ul class="tag_list">
-    <% tag_cloud @tags, default_css_tag_sizes do |tag, css_class| %>
-      <li><%= link_to h(tag.name), projects_category_path(tag.name), :class => css_class %></li>
+    <% @tags.each do |tag| %>
+      <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "category:#{h(tag.name)}") -%> </li>
     <% end %>
   </ul>
 <% end -%>
