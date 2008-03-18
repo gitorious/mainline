@@ -4,11 +4,10 @@ atom_feed do |feed|
 
   @commits.each do |commit|
     item_url = "http://#{GitoriousConfig['gitorious_host']}" +  project_repository_commit_path(@project, @repository, commit.id)
-    feed.entry(commit.id, {
+    feed.entry(commit, {
       :url => item_url, 
       :updated => commit.committed_date, 
-      :published => commit.committed_date,
-      :id => "#{@repository.name}:#{commit.id}"
+      :published => commit.committed_date
     }) do |entry|
       entry.title(truncate(commit.message, 75))
       entry.content(<<-EOS, :type => 'html')

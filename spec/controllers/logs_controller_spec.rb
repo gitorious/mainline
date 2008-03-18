@@ -55,6 +55,23 @@ describe LogsController do
       assigns[:git].should == @git
       assigns[:commits].should == commits
     end
+    
+    
+    describe "atom feed" do
+      integrate_views
+      
+      it "has a proper id in the atom feed" do
+        #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)
+        commit = Grit::Commit.new(mock("repo"), "mycommitid", [], mock("tree", :null_object => true), 
+                      mock("author", :null_object => true), Time.now, 
+                      mock("comitter", :null_object => true), Time.now, 
+                      "my commit message".split(" "))
+        @git.should_receive(:commits).and_return([commit])
+        
+        do_get(:format => "atom")
+        response.body.should include(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})
+      end
+    end
   end
 
 end
