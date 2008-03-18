@@ -70,4 +70,28 @@ describe MergeRequest do
     mr.save
     MergeRequest.count_open.should == 1
   end
+  
+  it "it defaults to master for the source_branch" do
+    mr = MergeRequest.new
+    mr.source_branch.should == "master"
+    mr.source_branch = "foo"
+    mr.source_branch.should == "foo"
+  end
+  
+  it "it defaults to master for the target_branch" do
+    mr = MergeRequest.new
+    mr.target_branch.should == "master"
+    mr.target_branch = "foo"
+    mr.target_branch.should == "foo"
+  end
+  
+  it "has a source_name" do
+    @merge_request.source_branch = "foo"
+    @merge_request.source_name.should == "#{@merge_request.source_repository.name}:foo"
+  end
+  
+  it "has a target_name" do
+    @merge_request.target_branch = "foo"
+    @merge_request.target_name.should == "#{@merge_request.target_repository.name}:foo"
+  end
 end

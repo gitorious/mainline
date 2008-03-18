@@ -14,7 +14,8 @@ class MergeRequestsController < ApplicationController
   
   def show
     @merge_request = @repository.merge_requests.find(params[:id])
-    @commits = @merge_request.target_repository.git.commit_deltas_from(@merge_request.source_repository.git)
+    @commits = @merge_request.target_repository.git.commit_deltas_from(
+      @merge_request.source_repository.git, @merge_request.source_branch, @merge_request.target_branch)
   end
   
   def new

@@ -41,6 +41,26 @@ class MergeRequest < ActiveRecord::Base
     status == STATUS_REJECTED
   end
   
+  def source_branch
+    super || "master"
+  end
+  
+  def target_branch
+    super || "master"
+  end
+  
+  def source_name
+    if source_repository
+      "#{source_repository.name}:#{source_branch}"
+    end
+  end
+  
+  def target_name
+    if target_repository
+      "#{target_repository.name}:#{target_branch}"
+    end
+  end
+  
   def resolvable_by?(candidate)
     candidate == target_repository.user
   end
