@@ -15,6 +15,12 @@ describe GitBackend do
     Dir.should_receive(:chdir).with(path).and_yield(path)
     Git.should_receive(:init).with(path, :repository => path).and_return(true)
     FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
+    GitBackend.should_receive(:execute_command).with(
+      %Q{chmod +x #{File.join(path, "hooks/post-update")}}
+    ).and_return(true)
+    GitBackend.should_receive(:execute_command).with(
+      %Q{GIT_DIR="#{path}" git-update-server-info}
+    ).and_return(true)
   
     GitBackend.create(path)
   end
@@ -24,6 +30,12 @@ describe GitBackend do
     target_path = repositories(:johans).full_repository_path 
     Git.should_receive(:clone).with(source_path, target_path, :bare => true).and_return(true)
     FileUtils.should_receive(:touch).with(File.join(target_path, "git-daemon-export-ok"))
+    GitBackend.should_receive(:execute_command).with(
+      %Q{chmod +x #{File.join(target_path, "hooks/post-update")}}
+    ).and_return(true)
+    GitBackend.should_receive(:execute_command).with(
+      %Q{GIT_DIR="#{target_path}" git-update-server-info}
+    ).and_return(true)
       
     GitBackend.clone(target_path, source_path)
   end
