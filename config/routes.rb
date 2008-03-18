@@ -52,28 +52,6 @@ ActionController::Routing::Routes.draw do |map|
         r.raw_blob       "blobs/raw/:id/*path", :controller => "blobs", :action => "raw"
         r.blob           "blobs/:id/*path", :controller => "blobs", :action => "show"
       end
-      
-      # Repository browsing related routes
-      # repo.with_options(:controller => "browse") do |r|
-      #   r.browse  "browse",           :action => "browse" # backwardscompat redirect
-      #   
-      #   r.log     "log/:head",      :action => "index", 
-      #     :head => nil
-      #   r.formatted_log "log/:head.:format", :action => "index", 
-      #     :head => nil # FIXME        
-      #   r.tree    "tree/:sha/*path",  :action => "tree", 
-      #     :sha => nil, :path => [], :requirements => {:sha => VALID_SHA}
-      #   r.blob    "blob/:sha/*path",  :action => "blob", 
-      #     :path => [], :requirements => {:sha => VALID_SHA}
-      #   r.raw_blob "raw/:sha/*path",  :action => "raw", 
-      #     :path => [], :requirements => {:sha => VALID_SHA}
-      #   r.commit  "commit/:sha",      :action => "commit", 
-      #     :requirements => {:sha => VALID_SHA}
-      #   r.diff    "diff/:sha/:other_sha",  :action => "diff",
-      #     :requirements => {:sha => VALID_SHA, :other_sha => VALID_SHA}
-      #   r.archive "archive/:sha",     :action => "archive", 
-      #     :requirements => {:sha => VALID_SHA }
-      # end
     end
   end
   
