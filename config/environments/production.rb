@@ -7,12 +7,14 @@ config.cache_classes = true
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
 
-require 'hodel_3000_compliant_logger'
-config.logger = Hodel3000CompliantLogger.new(config.log_path)
+# require 'hodel_3000_compliant_logger'
+# config.logger = Hodel3000CompliantLogger.new(config.log_path)
+config.log_level = :warn
 
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
+config.action_view.cache_template_extensions   = true
 
 cache_dir = File.expand_path(File.join(RAILS_ROOT, 'public', 'cache'))
 config.action_controller.page_cache_directory = cache_dir
