@@ -28,3 +28,7 @@ config.action_controller.fragment_cache_store = :file_store, File.join(cache_dir
 
 ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT, 
   "config/gitorious.yml"))["exception_notification_emails"]
+ExceptionNotifier.class_eval do 
+  remove_method :template_root 
+  ExceptionNotifier.template_root = "#{RAILS_ROOT}/vendor/plugins/exception_notification/lib/../views" 
+end
