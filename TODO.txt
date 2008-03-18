@@ -1,6 +1,7 @@
 (in no particular order)
 
-* refactor tags_and_branches partial into two
+* Merge requests should not be limited to master<->master branches
+* Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
 * Update the HACKING with some basic coding guidelines
 * Show the most recent mergerequests on users dashboard so they can track them
 * Make the archive download an external little mongrel/rack thing, and store the result per sha1
@@ -15,17 +16,12 @@
 *b be able to mark a project as a "mirror"
 * reset password functionality
 * Nicer diff stats
-* proper paginated commits
-* Rework frontpage to show advantages both for projects and contributors
-* logged in users only care about their dashboard, redirect from site#index
 * more interesting project stats on frontpage
 * parse git submodule data and link to project if submodule is in gitorious
 * link to users in gitorious in commmits if email match
 * add mainline as a remote branch in clones
 * timezone support
-* Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
 * Email source_repository owner about merge_request changes
-* Merge requests should not be limited to master<->master branches
 * Get rid of all the mocking in the controller tests, or at least clean it up
 * Nag project owners with no commits to the mainline repos after a week or two
 * gitk-style branch view
@@ -36,7 +32,6 @@
 * graph Repository#parent relationships properly
 * (A RemoteRepository class for repositories hosted elsewhere?)
 * Auto-remove cloned repositories that havent been committed to after 7 days?
-* Search (nuke the tag cloud when its there)
 * Refactor the Task/queue system
 * A "Status" field for a project (though a wiki-frontpage makes this unneeded-ish)
 * improve commenting and comments visibility
@@ -45,7 +40,6 @@
 * Normalize url fields (eg add http:// if it aint there) on User+Project
 * Detect renames etc when showing a commit
 * Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
-* email repository owners when there's a new comment
 ---
 
 a ProjectMirror that sucks in svn repositories. They need to be differentiated form normal projects (don't display owner etc, since it's a mirror). Also, the mainline repository should probably be immutable so people can commit changes to the actual mirror.
