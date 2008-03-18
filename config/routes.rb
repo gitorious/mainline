@@ -42,7 +42,9 @@ ActionController::Routing::Routes.draw do |map|
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 
         :action => "commit", :conditions => { :method => :get }
       
-      repo.resources :logs
+      repo.resources :logs, :requirements => { :id => VALID_SHA }#, :member => { :feed => :get }
+      repo.formatted_log_feed "logs/:id/feed.:format", :controller => "logs", :action => "feed", 
+        :conditions => {:feed => :get}, :requirements => {:id => VALID_SHA}
       repo.resources :commits
       repo.trees          "trees/", :controller => "trees", :action => "index"
       repo.with_options(:requirements => { :id => VALID_SHA }) do |r|

@@ -68,7 +68,8 @@ describe LogsController do
                       "my commit message".split(" "))
         @git.should_receive(:commits).and_return([commit])
         
-        do_get(:format => "atom")
+        get :feed, {:project_id => @project.slug, 
+          :repository_id => @repository.name, :id => "master", :format => "atom"}
         response.body.should include(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})
       end
     end
