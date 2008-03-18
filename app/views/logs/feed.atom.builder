@@ -1,9 +1,12 @@
 atom_feed do |feed|
   feed.title("Gitorious: #{@project.title} - #{@repository.name}")
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
-
+	
   @commits.each do |commit|
     item_url = "http://#{GitoriousConfig['gitorious_host']}" +  project_repository_commit_path(@project, @repository, commit.id)
+		commit_stat_data = commit.stats.files.map do |file, stats| 
+			[stats[:insertions].to_s.ljust(8, " "), stats[:deletions].to_s.ljust(8, " "), file].join
+		end
     feed.entry(commit, {
       :url => item_url, 
       :updated => commit.committed_date, 
@@ -13,10 +16,21 @@ atom_feed do |feed|
       entry.content(<<-EOS, :type => 'html')
 <h1>In #{@repository.gitdir}</h1>
 <pre>
+#{@repository.name}:#{params[:id]} in #{@project.title}
+
 Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
-Committer: #{commit.committer.name} (#{commit.committer.email})
-Message:
+Author: #{commit.author.name}
+Committer: #{commit.committer.name}
+
+
 #{commit.message}
+
+
+#{commit.stats.total[:lines]} lines changed in #{commit.stats.total[:files]} files:
+------------------------------------------------------------------------------
+adds   dels     file
+------------------------------------------------------------------------------
+#{commit_stat_data.join("\n")}
 <pre>
 EOS
       entry.author do |author|
