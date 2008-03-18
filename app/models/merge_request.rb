@@ -3,14 +3,19 @@ class MergeRequest < ActiveRecord::Base
   belongs_to :source_repository, :class_name => 'Repository'
   belongs_to :target_repository, :class_name => 'Repository'
   
-  attr_protected :user, :status
+  is_indexed :fields => ["proposal"], :include => [{
+      :association_name => "user",
+      :field => "login",
+      :as => "proposed_by"
+    }]
+  
+  attr_protected :user_id, :status
+    
+  validates_presence_of :user, :source_repository, :target_repository
   
   STATUS_OPEN = 0
   STATUS_MERGED = 1
   STATUS_REJECTED = 2
-  
-  validates_presence_of :user, :source_repository, :target_repository
-  attr_protected :user_id
   
   def self.statuses
     { "Open" => STATUS_OPEN, "Merged" => STATUS_MERGED, "Rejected" => STATUS_REJECTED }

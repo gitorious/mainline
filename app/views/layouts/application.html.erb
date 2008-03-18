@@ -60,14 +60,11 @@
           <li class="<%= selected_if_current_page(project_repository_logs_path(@project, @repository)) -%>">
             <%= link_to "Commits", project_repository_logs_path(@project, @repository) -%>
           </li>
-          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository)) -%>">
-            <% if @repository.head_candidate -%>
-              <%= link_to "Source Tree", project_repository_tree_path(@project, @repository, @repository.head_candidate.name) -%>
-            <% end -%>
+          <% if @repository.head_candidate -%>
+          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository, @repository.head_candidate.name)) -%>">
+            <%= link_to "Source Tree", project_repository_tree_path(@project, @repository, @repository.head_candidate.name) -%>
           </li>
-          <!-- <li class="<%= selected_if_current_page(project_repository_comments_path(@project, @repository)) -%>">
-            <%= link_to "Comments", project_repository_comments_path(@project, @repository) -%>
-          </li> -->
+          <% end -%>
         <% end -%>
       <% end -%>
       <%= yield :submenu -%>

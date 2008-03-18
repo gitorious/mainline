@@ -939,6 +939,9 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 
 .search_results .item {
   margin-top: 20px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
 }
 
 .search_bar input {
