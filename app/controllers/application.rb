@@ -7,6 +7,7 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
+  rescue_from ActionController::RoutingError, :with => :render_not_found
   
   protected
     def require_user_has_ssh_keys
