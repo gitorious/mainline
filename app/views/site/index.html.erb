@@ -4,11 +4,22 @@
   <strong>Gitorious</strong> aims to provide a great 
   way of doing distributed opensource code collaboration 
 </p>
+<%= render :partial => "searches/search_box" -%>
 </div>
 
 <div id="site_overview">
-  <%= image_tag("overview.png") -%>
   <% unless logged_in? -%>
+  <table>
+    <tr>
+      <th><h2>For Projects</h2></th>
+      <th><h2>For Contributors</h2></th>
+    </tr>
+    <tr>
+      <td><%= image_tag("overview_projects.png") -%></td>
+      <td><%= image_tag("overview_contributors.png") -%></td>
+    </tr>
+  </table>
+  
   <p class="hint create_account_hint">
     <%= link_to "Creating a user account", new_user_path -%> allows you to create 
     your own project or participate in the development of any project. 

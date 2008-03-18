@@ -1,0 +1,9 @@
+<div class="search_bar">
+<% form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
+<p>
+  <%= text_field_tag :q, params[:q], :class => "text" -%> 
+  <input type="submit" value="Search" />
+</p>  
+<p class="hint">eg. 'wrapper', 'category:python' or '"document database"'</p>
+<% end -%>
+</div>

@@ -3,15 +3,7 @@
   <%= @search.blank? ? "Search" : %Q{Search for "#{h(params[:q])}"} -%>
 </h1>
 
-
-<% form_for :search, :html => { :method => "get" } do |f| -%>
-<p>
-  <label for="q">Search query</label><br />
-  <%= text_field_tag :q, params[:q], :class => "text" -%><br />
-  <input type="submit" value="Search" />
-</p>
-  
-<% end -%>
+<%= render :partial => "search_box" -%>
 
 <div class="search_results">
 <% if @search -%>
