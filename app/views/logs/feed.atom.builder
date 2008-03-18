@@ -22,7 +22,7 @@ Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
 Author: #{commit.author.name}
 Committer: #{commit.committer.name}
 
-#{commit.message}
+#{word_wrap commit.message}
 
 
 #{commit.stats.total[:lines]} lines changed in #{commit.stats.total[:files]} files:

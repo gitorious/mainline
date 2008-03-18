@@ -67,6 +67,7 @@ describe LogsController do
                       mock("comitter", :null_object => true), Time.now, 
                       "my commit message".split(" "))
         @git.should_receive(:commits).and_return([commit])
+        commit.stub!(:stats).and_return(mock("stats", :null_object => true))
         
         get :feed, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "master", :format => "atom"}
