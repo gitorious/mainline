@@ -1,6 +1,5 @@
 (in no particular order)
 
-* Merge requests should not be limited to master<->master branches
 * Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
 * Update the HACKING with some basic coding guidelines
 * Show the most recent mergerequests on users dashboard so they can track them

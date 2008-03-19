@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../abstract_unit'
+require 'abstract_unit'
 
 class WorkshopsController < ActionController::Base
 end
@@ -75,6 +75,10 @@ class RedirectController < ActionController::Base
 
   def redirect_to_new_record
     redirect_to Workshop.new(5, true)
+  end
+
+  def redirect_to_nil
+    redirect_to nil
   end
 
   def rescue_errors(e) raise e end
@@ -215,6 +219,13 @@ class RedirectTest < Test::Unit::TestCase
     get :redirect_to_new_record
     assert_equal "http://test.host/workshops", redirect_to_url
   end
+
+  def test_redirect_to_nil
+    assert_raises(ActionController::ActionControllerError) do
+      get :redirect_to_nil
+    end
+  end
+
 end
 
 module ModuleTest

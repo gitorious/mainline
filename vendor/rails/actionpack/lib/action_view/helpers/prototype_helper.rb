@@ -1019,7 +1019,7 @@ module ActionView
           js_options['parameters'] = options[:with]
         end
         
-        if protect_against_forgery?
+        if protect_against_forgery? && !options[:form]
           if js_options['parameters']
             js_options['parameters'] << " + '&"
           else
@@ -1065,7 +1065,8 @@ module ActionView
     end
 
     # Converts chained method calls on DOM proxy elements into JavaScript chains 
-    class JavaScriptProxy < BasicObject #:nodoc:
+    class JavaScriptProxy < ActiveSupport::BasicObject #:nodoc:
+
       def initialize(generator, root = nil)
         @generator = generator
         @generator << root if root

@@ -1,1 +1,0 @@
-require File.dirname(__FILE__) + "/lib/resource_paths"

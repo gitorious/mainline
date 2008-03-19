@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../abstract_unit"
+require 'abstract_unit'
 
 class FormTagHelperTest < Test::Unit::TestCase
   include ActionView::Helpers::UrlHelper
@@ -185,6 +185,24 @@ class FormTagHelperTest < Test::Unit::TestCase
   def test_text_field_tag_with_multiple_options
     actual = text_field_tag "title", "Hello!", :size => 70, :maxlength => 80
     expected = %(<input id="title" name="title" size="70" maxlength="80" type="text" value="Hello!" />)
+    assert_dom_equal expected, actual
+  end
+
+  def test_label_tag_without_text
+    actual = label_tag "title"
+    expected = %(<label for="title">Title</label>)
+    assert_dom_equal expected, actual
+  end
+
+  def test_label_tag_with_text
+    actual = label_tag "title", "My Title"
+    expected = %(<label for="title">My Title</label>)
+    assert_dom_equal expected, actual
+  end
+
+  def test_label_tag_class_string
+    actual = label_tag "title", "My Title", "class" => "small_label"
+    expected = %(<label for="title" class="small_label">My Title</label>)
     assert_dom_equal expected, actual
   end
 

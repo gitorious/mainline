@@ -9,10 +9,17 @@ class LogsController < ApplicationController
   def show
     @git = @repository.git
     @commits = @repository.paginated_commits(params[:id], params[:page])
-    # TODO: refactor this
-    @atom_auto_discovery_url = formatted_project_repository_log_path(@project, @repository, "master", :atom)
+    @atom_auto_discovery_url = project_repository_formatted_log_feed_path(@project, @repository, params[:id], :atom)
     respond_to do |format|
       format.html
+    end
+  end
+  
+  def feed
+    @git = @repository.git
+    @commits = @repository.git.commits(params[:id])
+    respond_to do |format|
+      format.html { redirect_to(project_repository_log_path(@project, @repository, params[:id]))}
       format.atom
     end
   end

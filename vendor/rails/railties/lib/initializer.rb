@@ -12,6 +12,15 @@ require 'rails/plugin/loader'
 RAILS_ENV = (ENV['RAILS_ENV'] || 'development').dup unless defined?(RAILS_ENV)
 
 module Rails
+  # The Configuration instance used to configure the Rails environment
+  def self.configuration
+    @@configuration
+  end
+  
+  def self.configuration=(configuration)
+    @@configuration = configuration
+  end
+  
   # The Initializer is responsible for processing the Rails configuration, such
   # as setting the $LOAD_PATH, requiring the right frameworks, initializing
   # logging, and more. It can be run either as a single command that'll just
@@ -58,30 +67,10 @@ module Rails
     end
 
     # Sequentially step through all of the available initialization routines,
-    # in order:
-    #
-    # * #check_ruby_version
-    # * #set_load_path
-    # * #require_frameworks
-    # * #set_autoload_paths
-    # * add_plugin_load_paths
-    # * #load_environment
-    # * #initialize_encoding
-    # * #initialize_database
-    # * #initialize_logger
-    # * #initialize_framework_logging
-    # * #initialize_framework_views
-    # * #initialize_dependency_mechanism
-    # * #initialize_whiny_nils
-    # * #initialize_temporary_directories
-    # * #initialize_framework_settings
-    # * #add_support_load_paths
-    # * #load_plugins
-    # * #load_observers
-    # * #initialize_routing
-    # * #after_initialize
-    # * #load_application_initializers
+    # in order (view execution order in source).
     def process
+      Rails.configuration = configuration
+
       check_ruby_version
       set_load_path
       
@@ -92,28 +81,34 @@ module Rails
 
       initialize_encoding
       initialize_database
+
+      initialize_cache
+      initialize_framework_caches
+
       initialize_logger
       initialize_framework_logging
+
       initialize_framework_views
       initialize_dependency_mechanism
       initialize_whiny_nils
-      initialize_temporary_directories
+      initialize_temporary_session_directory
+      initialize_time_zone
       initialize_framework_settings
 
       add_support_load_paths
 
       load_plugins
 
-      # Observers are loaded after plugins in case Observers or observed models are modified by plugins.
-      load_observers
-
-      # Routing must be initialized after plugins to allow the former to extend the routes
-      initialize_routing
+      load_application_initializers
 
       # the framework is now fully initialized
       after_initialize
 
-      load_application_initializers
+      # Routing must be initialized after plugins to allow the former to extend the routes
+      initialize_routing
+
+      # Observers are loaded after plugins in case Observers or observed models are modified by plugins.
+      load_observers
     end
 
     # Check for valid Ruby version
@@ -217,11 +212,15 @@ module Rails
       end
     end
 
-    # This initialization sets $KCODE to 'u' to enable the multibyte safe operations.
-    # Plugin authors supporting other encodings should override this behaviour and
-    # set the relevant +default_charset+ on ActionController::Base
+    # For Ruby 1.8, this initialization sets $KCODE to 'u' to enable the
+    # multibyte safe operations. Plugin authors supporting other encodings
+    # should override this behaviour and set the relevant +default_charset+
+    # on ActionController::Base.
+    #
+    # For Ruby 1.9, this does nothing. Specify the default encoding in the Ruby
+    # shebang line if you don't want UTF-8.
     def initialize_encoding
-      $KCODE='u'
+      $KCODE='u' if RUBY_VERSION < '1.9'
     end
 
     # This initialization routine does nothing unless <tt>:active_record</tt>
@@ -232,6 +231,18 @@ module Rails
       if configuration.frameworks.include?(:active_record)
         ActiveRecord::Base.configurations = configuration.database_configuration
         ActiveRecord::Base.establish_connection
+      end
+    end
+
+    def initialize_cache
+      unless defined?(RAILS_CACHE)
+        silence_warnings { Object.const_set "RAILS_CACHE", ActiveSupport::Cache.lookup_store(configuration.cache_store) }
+      end
+    end
+
+    def initialize_framework_caches
+      if configuration.frameworks.include?(:action_controller)
+        ActionController::Base.cache_store ||= RAILS_CACHE
       end
     end
 
@@ -251,8 +262,11 @@ module Rails
         begin
           logger = ActiveSupport::BufferedLogger.new(configuration.log_path)
           logger.level = ActiveSupport::BufferedLogger.const_get(configuration.log_level.to_s.upcase)
-          logger.auto_flushing = false if configuration.environment == "production"
-        rescue StandardError =>e
+          if configuration.environment == "production"
+            logger.auto_flushing = false
+            logger.set_non_blocking_io
+          end
+        rescue StandardError => e
           logger = ActiveSupport::BufferedLogger.new(STDERR)
           logger.level = ActiveSupport::BufferedLogger::WARN
           logger.warn(
@@ -273,6 +287,8 @@ module Rails
       for framework in ([ :active_record, :action_controller, :action_mailer ] & configuration.frameworks)
         framework.to_s.camelize.constantize.const_get("Base").logger ||= RAILS_DEFAULT_LOGGER
       end
+      
+      RAILS_CACHE.logger ||= RAILS_DEFAULT_LOGGER
     end
 
     # Sets +ActionController::Base#view_paths+ and +ActionMailer::Base#template_root+
@@ -305,14 +321,19 @@ module Rails
       require('active_support/whiny_nil') if configuration.whiny_nils
     end
 
-    def initialize_temporary_directories
+    def initialize_temporary_session_directory
       if configuration.frameworks.include?(:action_controller)
         session_path = "#{configuration.root_path}/tmp/sessions/"
         ActionController::Base.session_options[:tmpdir] = File.exist?(session_path) ? session_path : Dir::tmpdir
+      end
+    end
 
-        cache_path = "#{configuration.root_path}/tmp/cache/"
-        if File.exist?(cache_path)
-          ActionController::Base.fragment_cache_store = :file_store, cache_path
+    def initialize_time_zone
+      if configuration.time_zone
+        Time.zone_default = TimeZone[configuration.time_zone]
+        if configuration.frameworks.include?(:active_record)
+          ActiveRecord::Base.time_zone_aware_attributes = true
+          ActiveRecord::Base.default_timezone = :utc
         end
       end
     end
@@ -414,6 +435,9 @@ module Rails
     # used directly.
     attr_accessor :logger
 
+    # The specific cache store to use. By default, the ActiveSupport::Cache::Store will be used.
+    attr_accessor :cache_store
+
     # The root of the application's views. (Defaults to <tt>app/views</tt>.)
     attr_accessor :view_path
 
@@ -453,6 +477,11 @@ module Rails
       )
     end
     alias_method :breakpoint_server=, :breakpoint_server
+
+    # Sets the default time_zone.  Setting this will enable time_zone
+    # awareness for ActiveRecord models and set the ActiveRecord default
+    # timezone to :utc.
+    attr_accessor :time_zone
 
     # Create a new Configuration instance, initialized with the default
     # values.
@@ -642,6 +671,14 @@ module Rails
 
       def default_plugin_loader
         Plugin::Loader
+      end
+      
+      def default_cache_store
+        if File.exist?("#{root_path}/tmp/cache/")
+          [ :file_store, "#{root_path}/tmp/cache/" ]
+        else
+          :memory_store
+        end
       end
   end
 end
