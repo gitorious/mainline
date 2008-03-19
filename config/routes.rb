@@ -37,7 +37,7 @@ ActionController::Routing::Routes.draw do |map|
       :confirm_delete => :get
     }, :as => "repos") do |repo|
       repo.resources :committers, :name_prefix => nil, :collection => {:auto_complete_for_user_login => :post}
-      repo.resources :comments
+      repo.resources :comments, :member => { :commmit => :get  }
       repo.resources :merge_requests, :member => { :resolve => :put }
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 
         :action => "commit", :conditions => { :method => :get }
