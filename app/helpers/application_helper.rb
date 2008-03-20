@@ -75,17 +75,18 @@ module ApplicationHelper
   end
   
   def commit_graph_tag(project, sha = "master", width = 250, height = 150)
-    repo = project.mainline_repository
+    repo = project.repositories.first
     git_repo = repo.git
     git = git_repo.git
     
     h = Hash.new
     dategroup = Date.new
     
-    data = git.rev_list({:pretty => "format:%aD", :since => "24 weeks ago"}, sha)
+    data = git.rev_list({:pretty => "format:%at", :since => "24 weeks ago"}, sha)
+    rx = /^\d/.freeze
     data.each_line { |line|
-      if line =~ /\d\d:\d\d:\d\d/ then
-        date = Date.parse(line)
+      if line =~ rx then
+        date = Time.at(line.to_i)
         
         dategroup = Date.new(date.year, date.month, 1)
         if h[dategroup]
@@ -98,7 +99,8 @@ module ApplicationHelper
     
     commits = []
     labels = []
-    h.sort.each { |entry|
+    
+    h.each { |entry|
       date = entry.first
       value = entry.last
       
@@ -110,7 +112,7 @@ module ApplicationHelper
   end
   
   def commit_graph_by_author_tag(project, sha = "master", width = 400, height = 200)
-    repo = project.mainline_repository
+    repo = project.repositories.first
     git_repo = repo.git
     git = git_repo.git
     
