@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_login!(params[:id])
-    @projects = @user.projects.find(:all, :include => [:tags])
+    @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
   end
 
