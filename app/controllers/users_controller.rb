@@ -7,6 +7,7 @@ class UsersController < ApplicationController
     @user = User.find_by_login!(params[:id])
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
+    @events = @user.events.find(:all, :order => "events.date asc", :include => [:action, :user, {:repository => :project}])
   end
 
   def create

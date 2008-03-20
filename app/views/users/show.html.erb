@@ -43,9 +43,9 @@
 </div>
 
 <div id="right">
-<% unless @user.events.empty? -%>
+<% unless @events.empty? -%>
   <h2>Last events</h2>
-  <%= render :partial => "/events/events", :object => @user.events -%>
+  <%= render :partial => "/events/events", :object => @events -%>
 <% end -%>
 </div>
 

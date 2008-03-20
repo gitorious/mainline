@@ -57,8 +57,7 @@ describe GitBackend do
       
     push_something
     GitBackend.clone(target_path, source_path)
-    
-    #File.exist?(File.join(target_path, "hooks")).should == false
+#     File.exist?(File.join(target_path, "hooks")).should == false
   end
   
   it "deletes a git repository" do
