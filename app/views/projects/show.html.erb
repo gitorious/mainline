@@ -50,7 +50,7 @@
         <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
       </td>
       <td>
-        <%= gravatar(repos.user.email, :size => 16) %>
+        <%= gravatar_frame(repos.user.email, :size => 16) %>
         <%= link_to h(repos.user.login), user_path(repos.user) -%>
       </td>
       <td>

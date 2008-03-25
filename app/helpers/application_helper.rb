@@ -70,6 +70,10 @@ module ApplicationHelper
     image_tag(gravatar_url_for(email, options), image_options)
   end
   
+  def gravatar_frame(email, options = {})
+    %@<div class="gravatar">#{gravatar(email, options)}</div>@
+  end
+  
   def flashes
     flash.map { |type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
   end
