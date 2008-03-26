@@ -14,16 +14,14 @@ atom_feed do |feed|
     }) do |entry|
       entry.title(truncate(commit.message, 75))
       entry.content(<<-EOS, :type => 'html')
-<h1>In #{@repository.gitdir}</h1>
+<h1>In #{@repository.gitdir} #{params[:id]}</h1>
 <pre>
-#{@repository.name}:#{params[:id]} in #{@project.title}
+#{word_wrap commit.message}
+
 
 Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
 Author: #{commit.author.name}
 Committer: #{commit.committer.name}
-
-#{word_wrap commit.message}
-
 
 #{commit.stats.total[:lines]} lines changed in #{commit.stats.total[:files]} files:
 ------------------------------------------------------------------------------
