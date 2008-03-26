@@ -804,13 +804,20 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 4em;
   margin-left: auto;
   margin-right: auto;
-  width: 910px;
+  width: 888px;
   text-align:center;
 }
 
 #site_overview table td, #site_overview table th {
   text-align:center;
-  padding: 10px;
+}
+
+#site_overview table td.left, #site_overview table th.left {
+  border-right: 1px dotted #ccc;
+  padding-right: 10px;
+}
+#site_overview table td.right, #site_overview table th.right {
+ padding-left: 10px; 
 }
 
 #site_overview p.create_account_hint {
