@@ -49,7 +49,7 @@ class Project < ActiveRecord::Base
     'Ruby License',
     'GNU General Public License version 2(GPLv2)',
     'GNU General Public License version 3 (GPLv3)',
-    'GNU Library Public License (LGPL)',
+    'GNU Lesser General Public License (LGPL)',
     'Mozilla Public License 1.0 (MPL)',
     'Mozilla Public License 1.1 (MPL 1.1)',
     'Qt Public License (QPL)',
