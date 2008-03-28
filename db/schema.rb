@@ -9,13 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 23) do
-
-  create_table "actions", :force => true do |t|
-    t.string "name"
-  end
-
-  add_index "actions", ["name"], :name => "index_actions_on_name", :unique => true
+ActiveRecord::Schema.define(:version => 22) do
 
   create_table "comments", :force => true do |t|
     t.integer  "user_id",       :null => false
@@ -43,17 +37,6 @@ ActiveRecord::Schema.define(:version => 23) do
   add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
   add_index "committerships", ["user_id"], :name => "index_permissions_on_user_id"
 
-  create_table "events", :force => true do |t|
-    t.integer  "user_id",       :null => false
-    t.integer  "repository_id"
-    t.integer  "action_id",     :null => false
-    t.string   "ref"
-    t.text     "body"
-    t.datetime "date",          :null => false
-  end
-
-  add_index "events", ["user_id"], :name => "index_events_on_user_id"
-
   create_table "merge_requests", :force => true do |t|
     t.integer  "user_id"
     t.integer  "source_repository_id"
@@ -63,6 +46,8 @@ ActiveRecord::Schema.define(:version => 23) do
     t.integer  "status",               :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "source_branch"
+    t.string   "target_branch"
   end
 
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
