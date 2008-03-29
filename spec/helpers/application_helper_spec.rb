@@ -53,7 +53,7 @@ describe ApplicationHelper do
     (url =~ /\<img/).should == 0
     url.include?("google.com").should == true
     
-    Gchart.should_receive(:line)
+    Gchart.should_receive(:bar)
     commit_graph_tag(project)
   end
   

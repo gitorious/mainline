@@ -104,15 +104,15 @@ module ApplicationHelper
     commits = []
     labels = []
     
-    h.each { |entry|
+    h.sort.each { |entry|
       date = entry.first
       value = entry.last
       
-      labels << date.strftime("%m/%y")
+      labels << date.strftime("%b") # + "[#{value}]" 
       commits << value
     }
     
-    Gchart.line(:data => commits, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag")
+    Gchart.bar(:data => commits, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag", :axis_with_labels => ['x'], :axis_labels => [commits], :bar_colors => 'FFDBA3')
   end
   
   def commit_graph_by_author_tag(project, sha = "master", width = 400, height = 200)
