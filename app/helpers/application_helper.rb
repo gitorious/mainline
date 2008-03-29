@@ -57,8 +57,9 @@ module ApplicationHelper
   end
   
   def gravatar_url_for(email, options = {})
-    default = "http://#{GitoriousConfig['gitorious_host']}/images/default_face.png"
-    "http://www.gravatar.com/avatar.php?default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
+    "http://www.gravatar.com/avatar.php?default=/images/default_face.png&amp;gravatar_id=" << 
+    Digest::MD5.hexdigest(email) << 
+    options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
   
   def gravatar(email, options = {})
@@ -71,7 +72,7 @@ module ApplicationHelper
   end
   
   def gravatar_frame(email, options = {})
-    %@<div class="gravatar">#{gravatar(email, options)}</div>@
+    %{<div class="gravatar">#{gravatar(email, options)}</div>}
   end
   
   def flashes
