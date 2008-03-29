@@ -90,5 +90,11 @@ describe UsersController do
     p[:action].should == "activate"
     p[:activation_code].should == "abc123"
   end
-
+  
+  it "counts the number of commits in the last week" do
+    get :show, :id => users(:johan).login
+    response.should be_success
+    assigns[:commits_last_week].kind_of?(Fixnum).should == true
+    (assigns[:commits_last_week] >= 0).should == true
+  end
 end

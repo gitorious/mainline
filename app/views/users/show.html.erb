@@ -9,8 +9,11 @@
 <div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 80 }), :action => "show") %></div>
 <ul>
   <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
-  <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+  <% if @user.url %>
+    <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+  <% end -%>
   <li><strong>Member for</strong> <%= time_ago_in_words(@user.created_at) -%></li>
+  <li><strong><%= @commits_last_week -%></strong> commits so far this week.</li>
 </ul>
 </div>
 
