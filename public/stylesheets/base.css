@@ -431,6 +431,11 @@ table.repository_list tr.clone td.name {
 	margin-bottom:0;
 }
 
+.commit_list .commit_item {
+  clear:left;
+  margin-bottom: 10px;
+}
+
 .commit_message, .commit_message p {
   margin-top: 10px;
   margin-left: 10px;
