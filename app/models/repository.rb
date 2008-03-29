@@ -127,6 +127,15 @@ class Repository < ActiveRecord::Base
     commits = WillPaginate::Collection.new(page, per_page, total)
     commits.replace git.commits(tree_name, per_page, offset)
   end
+  
+  def count_commits_from_last_week_by_user(user)
+    return 0 unless has_commits?
+    
+    commits_by_email = git.commits_since("master", "last week").collect do |commit| 
+      commit.committer.email == user.email
+    end
+    commits_by_email.size
+  end
     
   protected
     def set_as_mainline_if_first

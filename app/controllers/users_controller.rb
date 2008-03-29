@@ -9,13 +9,9 @@ class UsersController < ApplicationController
     @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
     
     @commits_last_week = 0
-    @projects.each { |project|
-      @commits_last_week += commits_last_week(@user, project.repositories.first)
-    }
-    
-    @repositories.each { |repo|
-      @commits_last_week += commits_last_week(@user, repo)
-    }
+    @projects.map{|p| p.repositories.first }.concat(@repositories).each do |repo|
+      @commits_last_week += repo.count_commits_from_last_week_by_user(@user)
+    end
   end
 
   def create
@@ -39,26 +35,5 @@ class UsersController < ApplicationController
       flash[:error] = "Invalid activation code"
     end
     redirect_back_or_default('/')
-  end
-  
-  protected
-  def commits_last_week(user, repo)
-    return 0 unless repo.has_commits?
-    git_repo = repo.git
-    git = git_repo.git
-    
-    h = Hash.new
-    
-    data = git.rev_list({:pretty => "format:email:%ce", :since => "last week" }, "master")
-    
-    user_email = user.email
-    count = 0
-    data.each_line { |line|
-      if line =~ /email:(.*)$/
-        count += 1 if user_email == $1
-      end
-    }
-    
-    count
   end
 end

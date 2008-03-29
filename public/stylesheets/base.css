@@ -970,3 +970,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 .search_bar p { margin-bottom: 2px; }
 .search_bar { margin-bottom: 20px; }
+
+#users .infobox {
+  margin-bottom: 20px;
+}

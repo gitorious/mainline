@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require "ostruct"
 
 describe Repository do
   before(:each) do
@@ -249,6 +250,11 @@ describe Repository do
     git.should_receive(:commits).with("foo", 30, 30).and_return(commits)
     commits = @repository.paginated_commits("foo", 2, 30)
     commits.should be_instance_of(WillPaginate::Collection)
+  end
+  
+  it "has a count_commits_from_last_week_by_user of 0 if no commits" do
+    @repository.should_receive(:has_commits?).and_return(false)
+    @repository.count_commits_from_last_week_by_user(users(:johan)).should == 0
   end
   
   describe "observers" do
