@@ -67,8 +67,8 @@ class Project < ActiveRecord::Base
     'None',
   ]
   
-  def self.find_by_slug!(slug)
-    find_by_slug(slug) || raise(ActiveRecord::RecordNotFound)
+  def self.find_by_slug!(slug, opts = {})
+    find_by_slug(slug, opts) || raise(ActiveRecord::RecordNotFound)
   end
   
   def self.per_page() 20 end

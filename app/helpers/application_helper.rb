@@ -48,15 +48,124 @@ module ApplicationHelper
       #   out << stylesheet_link_tag("syntax_themes/#{syntax}")
       # end
       return stylesheet_link_tag("syntax_themes/idle")
-  	end
-  	out.join("\n")
+    end
+    out.join("\n")
   end
   
   def base_url(full_url)
     URI.parse(full_url).host
   end
   
+  def gravatar_url_for(email, options = {})
+    default = "http://#{GitoriousConfig['gitorious_host']}/images/default_face.png"
+    "http://www.gravatar.com/avatar.php?default=#{default}&amp;gravatar_id=#{Digest::MD5.hexdigest(email)}#{options.map { |k,v| "&amp;#{k}=#{v}" }.join}"
+  end
+  
+  def gravatar(email, options = {})
+    size = options[:size]
+    image_options = { :alt => "avatar" }
+    if size
+      image_options.merge!(:width => size, :height => size)
+    end
+    image_tag(gravatar_url_for(email, options), image_options)
+  end
+  
+  def gravatar_frame(email, options = {})
+    %@<div class="gravatar">#{gravatar(email, options)}</div>@
+  end
+  
   def flashes
-    flash.map {|type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
+    flash.map { |type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
+  end
+  
+  def commit_graph_tag(project, sha = "master", width = 250, height = 150)
+    repo = project.repositories.first
+    git_repo = repo.git
+    git = git_repo.git
+    
+    h = Hash.new
+    dategroup = Date.new
+    
+    data = git.rev_list({:pretty => "format:%at", :since => "24 weeks ago"}, sha)
+    rx = /^\d/.freeze
+    data.each_line { |line|
+      if line =~ rx then
+        date = Time.at(line.to_i)
+        
+        dategroup = Date.new(date.year, date.month, 1)
+        if h[dategroup]
+          h[dategroup] += 1
+        else
+          h[dategroup] = 1
+        end
+      end
+    }
+    
+    commits = []
+    labels = []
+    
+    h.sort.each { |entry|
+      date = entry.first
+      value = entry.last
+      
+      labels << date.strftime("%b") # + "[#{value}]" 
+      commits << value
+    }
+    
+    Gchart.bar(:data => commits, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag", :axis_with_labels => ['x'], :axis_labels => [commits], :bar_colors => 'FFDBA3')
+  end
+  
+  def commit_graph_by_author_tag(project, sha = "master", width = 400, height = 200)
+    repo = project.repositories.first
+    git_repo = repo.git
+    git = git_repo.git
+    
+    h = Hash.new
+    
+    data = git.rev_list({:pretty => "format:name:%cn", :since => "1 years ago" }, sha)
+    data.each_line { |line|
+      if line =~ /^name:(.*)$/ then
+        author = $1
+        
+        if h[author]
+          h[author] += 1
+        else
+          h[author] = 1
+        end
+      end
+    }
+    
+    sorted = h.sort_by { |author, commits|
+      commits
+    }
+    
+    labels = []
+    data = []
+    
+    max = 5
+    others = []
+    top = sorted
+    
+    
+    if sorted.size > max
+      top = sorted[sorted.size-max, sorted.size]
+      others = sorted[0, sorted.size-max]
+    end
+    
+    top.each { |entry|
+      author = entry.first
+      v = entry.last
+      
+      data << v
+      labels << author
+    }
+    
+    unless others.empty?
+      others_v = others.inject { |v, acum| [v.last + acum.last] }
+      labels << "others"
+      data << others_v.last
+    end
+    
+    Gchart.pie(:data => data, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag" )
   end
 end

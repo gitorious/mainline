@@ -4,7 +4,8 @@ class ProjectsController < ApplicationController
   
   def index
     @projects = Project.paginate(:all, :order => "projects.created_at desc", 
-                  :page => params[:page], :include => [:tags])
+                  :page => params[:page], :include => [:tags, { :repositories => :project } ])
+    
     @atom_auto_discovery_url = formatted_projects_path(:atom)
     respond_to do |format|
       format.html { @tags = Project.top_tags }
@@ -29,8 +30,8 @@ class ProjectsController < ApplicationController
   end
   
   def show
-    @project = Project.find_by_slug!(params[:id])
-    @repositories = @project.repositories.find(:all)
+    @project = Project.find_by_slug!(params[:id], :include => [:repositories])
+    @repositories = @project.repositories
     
     respond_to do |format|
       format.html

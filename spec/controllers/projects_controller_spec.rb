@@ -131,5 +131,4 @@ describe ProjectsController do
     response.should be_success
     assigns[:project].should == projects(:johans)
   end
-
 end

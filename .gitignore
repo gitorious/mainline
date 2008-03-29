@@ -2,7 +2,7 @@
 .DS_Store
 coverage/*
 public/cache/*
-config/datbase.yml
+config/database.yml
 config/gitorious.yml
 config/ultrasphinx/development.conf
 config/ultrasphinx/test.conf

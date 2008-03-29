@@ -5,8 +5,17 @@ class UsersController < ApplicationController
   
   def show
     @user = User.find_by_login!(params[:id])
-    @projects = @user.projects.find(:all, :include => [:tags])
+    @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
+    
+    @commits_last_week = 0
+    @projects.each { |project|
+      @commits_last_week += commits_last_week(@user, project.repositories.first)
+    }
+    
+    @repositories.each { |repo|
+      @commits_last_week += commits_last_week(@user, repo)
+    }
   end
 
   def create
@@ -31,5 +40,25 @@ class UsersController < ApplicationController
     end
     redirect_back_or_default('/')
   end
-
+  
+  protected
+  def commits_last_week(user, repo)
+    return 0 unless repo.has_commits?
+    git_repo = repo.git
+    git = git_repo.git
+    
+    h = Hash.new
+    
+    data = git.rev_list({:pretty => "format:email:%ce", :since => "last week" }, "master")
+    
+    user_email = user.email
+    count = 0
+    data.each_line { |line|
+      if line =~ /email:(.*)$/
+        count += 1 if user_email == $1
+      end
+    }
+    
+    count
+  end
 end

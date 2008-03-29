@@ -98,6 +98,11 @@ sql_query_pre = ) + SQL_FUNCTIONS['postgresql']['stored_procedures'].values.join
     
   ADAPTER = ActiveRecord::Base.connection.instance_variable_get("@config")[:adapter] rescue 'mysql'
   
+  # Create language plpgsql
+  if ADAPTER == "postgresql"
+    ActiveRecord::Base.connection.execute("CREATE LANGUAGE plpgsql;") rescue nil
+  end
+  
   # Install the stored procedures.
   # XXX This shouldn't be done at every index, say the Postgres people.
   SQL_FUNCTIONS[ADAPTER]['stored_procedures'].each do |key, value|

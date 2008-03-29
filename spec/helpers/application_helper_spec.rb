@@ -34,4 +34,38 @@ describe ApplicationHelper do
     base_url("http://foo.com/bar/baz").should == "foo.com"
   end
   
+  it "generates a valid gravatar url" do
+    email = "someone@myemail.com";
+    url = gravatar_url_for(email)
+    
+    base_url(url).should == "www.gravatar.com"
+    url.include?(Digest::MD5.hexdigest(email)).should == true
+    url.include?("avatar.php?").should == true
+  end
+  
+    
+  it "should generate a commit graph url" do
+    project = projects(:johans)
+    FileUtils.mkpath(project.mainline_repository.full_repository_path)
+    
+    url = commit_graph_tag(project)
+    
+    (url =~ /\<img/).should == 0
+    url.include?("google.com").should == true
+    
+    Gchart.should_receive(:bar)
+    commit_graph_tag(project)
+  end
+  
+  it "should generate a url for commit graph by author" do
+    project = projects(:johans)
+    FileUtils.mkpath(project.mainline_repository.full_repository_path)
+    
+    url = commit_graph_by_author_tag(project)
+    (url =~ /\<img/).should == 0
+    url.include?("google.com").should == true
+    
+    Gchart.should_receive(:pie)
+    commit_graph_by_author_tag(project)
+  end
 end

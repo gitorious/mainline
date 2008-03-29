@@ -443,7 +443,15 @@ small.commit_message {
 }
 
 .commit_message a {
-	color: #000;
+  color: #000;
+}
+
+.gravatar {
+  background-color: white;
+  border: 1px solid #CCCCCC;
+  float: left;
+  margin-right: 1.0em;
+  padding: 2px;
 }
 
 ul.project_list li {
