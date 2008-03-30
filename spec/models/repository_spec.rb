@@ -257,6 +257,17 @@ describe Repository do
     @repository.count_commits_from_last_week_by_user(users(:johan)).should == 0
   end
   
+  it "returns a set of users from a list of commits" do
+    commits = []
+    users(:johan, :moe).map(&:email).each do |email|
+      committer = OpenStruct.new(:email => email)
+      commits << OpenStruct.new(:committer => committer)
+    end
+    users = @repository.users_by_commits(commits)
+    users.keys.sort.should == users(:johan, :moe).map(&:email).sort
+    users.values.map(&:login).sort.should == users(:johan, :moe).map(&:login).sort
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)

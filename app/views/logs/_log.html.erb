@@ -1,7 +1,7 @@
-<%  email_user = RepositoriesHelper.users_by_commits(@commits) %>
+<% users_by_email = @repository.users_by_commits(@commits) %>
 <ul class="commit_list">
 <% @commits.each do |commit| -%>
-<% user = email_user[commit.committer.email] %>
+<% user = users_by_email[commit.committer.email] %>
 <li class="commit_item">
   <div>
   <a href=""><%= link_to h(commit.id_abbrev), 

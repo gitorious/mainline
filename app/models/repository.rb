@@ -212,6 +212,15 @@ class Repository < ActiveRecord::Base
       hash
     end
   end
+  
+  # Returns a Hash {email => user}, where email is selected from the +commits+
+  def users_by_commits(commits)
+    emails = commits.map { |commit| commit.committer.email }.uniq
+    users = User.find(:all, :conditions => ["email in (?)", emails])
+    
+    users_by_email = users.inject({}){|hash, user| hash[user.email] = user; hash }
+    users_by_email
+  end
     
   protected
     def set_as_mainline_if_first
