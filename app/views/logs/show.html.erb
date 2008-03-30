@@ -12,9 +12,11 @@
   <% end -%>
 </ul>
 
-<div class="commits_by_author_graph">
-  <%= commit_graph_by_author_tag(@repository) %>
-</div>
+<% if @commits.current_page == 1 -%>
+  <div class="commits_by_author_graph">
+    <%= commit_graph_by_author_tag(@repository) %>
+  </div>
+<% end -%>
 <h2>Commits in "<%=h params[:id] -%>"</h2>
 <%= render :partial => "log" -%>
 <%= will_paginate @commits %>
