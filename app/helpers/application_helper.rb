@@ -28,8 +28,14 @@ module ApplicationHelper
     end
   end  
   
-  def selected_if_current_page(url_options)
-    "selected" if current_page?(url_options)
+  def selected_if_current_page(url_options, slack = false)
+    if slack
+      if controller.request.request_uri.index(CGI.escapeHTML(url_for(url_options))) == 0
+        "selected"
+      end
+    else
+      "selected" if current_page?(url_options)
+    end
   end
   
   def link_to_with_selected(name, options = {}, html_options = nil)

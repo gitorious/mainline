@@ -3,7 +3,7 @@
   Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
 </h1>
 
-<%= breadcrumb_path(@repository.name, @commit.id) -%>
+<%= breadcrumb_path(@repository.name) -%>
 
 <% cache(tree_path(@commit.id, params[:path])) do -%>
 <table class="listing tree">

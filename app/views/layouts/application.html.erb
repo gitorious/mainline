@@ -57,11 +57,11 @@
           <li class="<%= selected_if_current_page(project_repository_path(@project, @repository)) -%>">
             <%= link_to "#{h(@repository.name)} repository", project_repository_path(@project, @repository) -%>
           </li>
-          <li class="<%= selected_if_current_page(project_repository_logs_path(@project, @repository)) -%>">
+          <li class="<%= selected_if_current_page(project_repository_logs_path(@project, @repository), slack=true) -%>">
             <%= link_to "Commits", project_repository_logs_path(@project, @repository) -%>
           </li>
           <% if @repository.head_candidate -%>
-          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository, @repository.head_candidate.name)) -%>">
+          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository, @repository.head_candidate.name), slack=true) -%>">
             <%= link_to "Source Tree", project_repository_tree_path(@project, @repository, @repository.head_candidate.name) -%>
           </li>
           <% end -%>
