@@ -9,10 +9,12 @@
   <% unless @commits.blank? -%>
   <li><strong>HEAD tree:</strong> <%= link_to h(@commits.first.tree.id), 
     tree_path(@commits.first.id) -%></li>
-  <li><%= commit_graph_by_author_tag(@project) %></li>
   <% end -%>
 </ul>
 
+<div class="commits_by_author_graph">
+  <%= commit_graph_by_author_tag(@repository) %>
+</div>
 <h2>Commits in "<%=h params[:id] -%>"</h2>
 <%= render :partial => "log" -%>
 <%= will_paginate @commits %>

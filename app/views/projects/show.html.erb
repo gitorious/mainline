@@ -20,9 +20,6 @@
     <li><strong>Bugtracker at </strong> 
       <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
     <% end -%>
-    <% if @repositories.first.has_commits? %>
-    <li><%= commit_graph_tag(@project) %></li>
-    <% end -%>
   </ul>
 </div>
 

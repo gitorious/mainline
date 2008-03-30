@@ -57,7 +57,7 @@ module ApplicationHelper
   end
   
   def gravatar_url_for(email, options = {})
-    "http://www.gravatar.com/avatar.php?default=/images/default_face.png&amp;gravatar_id=" << 
+    "http://www.gravatar.com/avatar.php?gravatar_id=" << 
     Digest::MD5.hexdigest(email) << 
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
@@ -79,94 +79,42 @@ module ApplicationHelper
     flash.map { |type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
   end
   
-  def commit_graph_tag(project, sha = "master", width = 250, height = 150)
-    repo = project.repositories.first
-    git_repo = repo.git
-    git = git_repo.git
+  def commit_graph_tag(repository, sha = "master", width = 650, height = 110)
+    labels, commits = repository.commit_graph_data(sha)
+    return if commits.blank?
+    # "<pre>#{labels.inspect}\n#{commits.inspect}</pre>" + 
     
-    h = Hash.new
-    dategroup = Date.new
-    
-    data = git.rev_list({:pretty => "format:%at", :since => "24 weeks ago"}, sha)
-    rx = /^\d/.freeze
-    data.each_line { |line|
-      if line =~ rx then
-        date = Time.at(line.to_i)
-        
-        dategroup = Date.new(date.year, date.month, 1)
-        if h[dategroup]
-          h[dategroup] += 1
-        else
-          h[dategroup] = 1
-        end
+    label_names = []
+    labels.each_with_index do |week, index|
+      if (index % 5) == 0
+        label_names << "Week #{week}"
       end
-    }
-    
-    commits = []
-    labels = []
-    
-    h.sort.each { |entry|
-      date = entry.first
-      value = entry.last
-      
-      labels << date.strftime("%b") # + "[#{value}]" 
-      commits << value
-    }
-    
-    Gchart.bar(:data => commits, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag", :axis_with_labels => ['x'], :axis_labels => [commits], :bar_colors => 'FFDBA3')
+    end
+    Gchart.line({
+      :title => "Commits by week (24 week period)",
+      :data => [0] + commits, 
+      :width => width, 
+      :height => height, 
+      :format => "img_tag", 
+      :axis_with_labels => ["y", "x"], 
+      :axis_labels => ["0|#{commits.max}", label_names.join("|")],
+      :bar_colors => "9cce2e",
+      :custom => "chm=B,E4E9D4,0,0,0",
+      :max_value => "auto"
+    })
   end
   
-  def commit_graph_by_author_tag(project, sha = "master", width = 400, height = 200)
-    repo = project.repositories.first
-    git_repo = repo.git
-    git = git_repo.git
+  def commit_graph_by_author_tag(repos, sha = "master", width = 350, height = 150)    
+    labels, data = repos.commit_graph_data_by_author
     
-    h = Hash.new
-    
-    data = git.rev_list({:pretty => "format:name:%cn", :since => "1 years ago" }, sha)
-    data.each_line { |line|
-      if line =~ /^name:(.*)$/ then
-        author = $1
-        
-        if h[author]
-          h[author] += 1
-        else
-          h[author] = 1
-        end
-      end
-    }
-    
-    sorted = h.sort_by { |author, commits|
-      commits
-    }
-    
-    labels = []
-    data = []
-    
-    max = 5
-    others = []
-    top = sorted
-    
-    
-    if sorted.size > max
-      top = sorted[sorted.size-max, sorted.size]
-      others = sorted[0, sorted.size-max]
-    end
-    
-    top.each { |entry|
-      author = entry.first
-      v = entry.last
-      
-      data << v
-      labels << author
-    }
-    
-    unless others.empty?
-      others_v = others.inject { |v, acum| [v.last + acum.last] }
-      labels << "others"
-      data << others_v.last
-    end
-    
-    Gchart.pie(:data => data, :labels => labels, :width => width, :height => height, :bg => "efefef", :format => "img_tag" )
+    Gchart.pie({
+      :title => "Commits by author",
+      :data => data, 
+      :labels => labels, 
+      :width => width, 
+      :height => height, 
+      :bar_colors => "9cce2e",
+      :format => "img_tag" 
+    })
   end
 end

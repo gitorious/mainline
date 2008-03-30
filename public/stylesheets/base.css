@@ -120,6 +120,11 @@ abbr {
   height: 0;
 }
 
+.clear_left {
+  clear: left;
+  height: 0;
+}
+
 #container {
   width: 90%;
   margin-top: 20px;
@@ -973,4 +978,9 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 
 #users .infobox {
   margin-bottom: 20px;
+}
+
+.commits_by_author_graph img {
+  float: right;
+  margin: 0 0 10px 10px;
 }
