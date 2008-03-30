@@ -86,44 +86,17 @@ module ApplicationHelper
     flash.map { |type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
   end
   
-  def commit_graph_tag(repository, sha = "master", width = 650, height = 110)
-    labels, commits = repository.commit_graph_data(sha)
-    return if commits.blank?
-    
-    label_names = []
-    labels.each_with_index do |week, index|
-      if (index % 5) == 0
-        label_names << "Week #{week}"
-      end
+  def commit_graph_tag(repository, ref = "master")
+    filename = "#{repository.project.slug}_#{repository.name}_#{h(ref)}_commit_count.png"
+    if File.exist?(File.join(Gitorious::Graphs::Builder.graph_dir, filename))
+      image_tag("graphs/#{filename}")
     end
-    label_names << "Week #{labels.last}"
-    
-    # "<pre>#{labels.inspect}\n#{commits.inspect}</pre>" + 
-    Gchart.line({
-      :title => "Commits by week (24 week period)",
-      :data => [0] + commits, 
-      :width => width, 
-      :height => height, 
-      :format => "img_tag", 
-      :axis_with_labels => ["y", "x"], 
-      :axis_labels => ["|#{commits.max}", label_names.join("|")],
-      :bar_colors => "9cce2e",
-      :custom => "chm=B,E4E9D4,0,0,0",
-      :max_value => "auto"
-    })
   end
   
-  def commit_graph_by_author_tag(repos, sha = "master", width = 350, height = 150)    
-    labels, data = repos.commit_graph_data_by_author
-    
-    Gchart.pie({
-      :title => "Commits by author",
-      :data => data, 
-      :labels => labels, 
-      :width => width, 
-      :height => height, 
-      :bar_colors => "9cce2e",
-      :format => "img_tag" 
-    })
+  def commit_graph_by_author_tag(repository, ref = "master")    
+    filename = "#{repository.project.slug}_#{repository.name}_#{h(ref)}_commit_count_by_author.png"
+    if File.exist?(File.join(Gitorious::Graphs::Builder.graph_dir, filename))
+      image_tag("graphs/#{filename}")
+    end
   end
 end

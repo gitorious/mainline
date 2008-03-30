@@ -206,7 +206,11 @@ class Repository < ActiveRecord::Base
       data << others_v.last
     end
     
-    [labels, data]
+    #[labels, data]
+    labels.inject({}) do |hash, label| 
+      hash[label] = data[labels.index(label)] 
+      hash
+    end
   end
     
   protected

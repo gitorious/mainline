@@ -14,7 +14,7 @@
 
 <% if @commits.current_page == 1 -%>
   <div class="commits_by_author_graph">
-    <%= commit_graph_by_author_tag(@repository) %>
+    <%= commit_graph_by_author_tag(@repository, params[:id]) %>
   </div>
 <% end -%>
 <h2>Commits in "<%=h params[:id] -%>"</h2>
