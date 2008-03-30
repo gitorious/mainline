@@ -72,7 +72,8 @@ module ApplicationHelper
   end
   
   def gravatar_frame(email, options = {})
-    %{<div class="gravatar">#{gravatar(email, options)}</div>}
+    extra_css_class = options[:style] ? " gravatar_#{options[:style]}" : ""
+    %{<div class="gravatar#{extra_css_class}">#{gravatar(email, options)}</div>}
   end
   
   def flashes
@@ -82,7 +83,6 @@ module ApplicationHelper
   def commit_graph_tag(repository, sha = "master", width = 650, height = 110)
     labels, commits = repository.commit_graph_data(sha)
     return if commits.blank?
-    # "<pre>#{labels.inspect}\n#{commits.inspect}</pre>" + 
     
     label_names = []
     labels.each_with_index do |week, index|
@@ -90,6 +90,9 @@ module ApplicationHelper
         label_names << "Week #{week}"
       end
     end
+    label_names << "Week #{labels.last}"
+    
+    # "<pre>#{labels.inspect}\n#{commits.inspect}</pre>" + 
     Gchart.line({
       :title => "Commits by week (24 week period)",
       :data => [0] + commits, 
@@ -97,7 +100,7 @@ module ApplicationHelper
       :height => height, 
       :format => "img_tag", 
       :axis_with_labels => ["y", "x"], 
-      :axis_labels => ["0|#{commits.max}", label_names.join("|")],
+      :axis_labels => ["|#{commits.max}", label_names.join("|")],
       :bar_colors => "9cce2e",
       :custom => "chm=B,E4E9D4,0,0,0",
       :max_value => "auto"

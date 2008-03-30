@@ -7,7 +7,9 @@
 
   <%= render :partial => "infobox" -%>
   
-  <%= commit_graph_tag(@repository) %>
+  <div class="commit_graph">
+    <%= commit_graph_tag(@repository) %>
+  </div>
   
   <ul class="tab_menu">
     <li class="selected">Recent commits</li>

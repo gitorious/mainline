@@ -460,8 +460,14 @@ small.commit_message {
   background-color: white;
   border: 1px solid #CCCCCC;
   float: left;
-  margin-right: 1.0em;
+  margin-right: 10px;
   padding: 2px;
+}
+
+.gravatar_tiny {
+  background: transparent;
+  border: none;
+  margin-right: 5px;
 }
 
 ul.project_list li {
@@ -983,4 +989,8 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .commits_by_author_graph img {
   float: right;
   margin: 0 0 10px 10px;
+}
+
+.commit_graph {
+  text-align:center;
 }

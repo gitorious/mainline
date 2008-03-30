@@ -33,7 +33,6 @@
     <th>Name</th>
     <th>Owner</th>
     <th>Last Commit</th>
-    <th>Commiter</th>
     <th></th>
     <th></th>
   </thead>
@@ -47,7 +46,7 @@
         <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
       </td>
       <td>
-        <%= gravatar_frame(repos.user.email, :size => 16) %>
+        <%= gravatar_frame(repos.user.email, :size => 16, :style => "tiny") %>
         <%= link_to h(repos.user.login), user_path(repos.user) -%>
       </td>
       <td>
@@ -56,13 +55,6 @@
           <small class="commit_message"><%= truncate(h(repos.last_commit.message), 50) -%></small>
         <% else -%>
           <em>none</em>
-        <% end -%>
-      </td>
-      <td>
-        <% if user.nil? %>
-        <%= repos.last_commit.committer.name if repos.has_commits? %>
-        <% else %>
-        <%= link_to(user.login, user_path(user)) %>
         <% end -%>
       </td>
       <td><%= link_to "commits", project_repository_logs_path(@project, repos) -%></td>
