@@ -8,6 +8,7 @@ log.formatter = Logger::Formatter.new
 log.level = Logger::INFO
 log.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
 
+log.info "Starting graph generation run..."
 Repository.find(:all).each_with_index do |repository, index|
 	begin
 		Gitorious::Graphs::Builder.generate_all_for(repository)
@@ -24,3 +25,4 @@ Repository.find(:all).each_with_index do |repository, index|
 #    exit(1)		
 	end
 end
+log.info "Done with graph generation run"
