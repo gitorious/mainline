@@ -36,6 +36,7 @@
     <th></th>
     <th></th>
   </thead>
+  <% commits = [] -%>
   <% repositories = @repositories.sort_by { |e| if e.last_commit then commits << e.last_commit; e.mainline? ? Time.now : e.last_commit.committed_date; else Time.at(0); end } %>
   <% repositories.reverse_each do |repos| # FIXME: need to graph the parent relation proper -%>
     <tr class="<%= cycle("even", "odd") -%> <%= repos.mainline? ? "mainline" : "clone" -%>">
