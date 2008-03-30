@@ -146,7 +146,7 @@ class Repository < ActiveRecord::Base
     weeks = [1.day.from_now-1.week] 
     23.times{|w| weeks << weeks.last-1.week }
     week_numbers = weeks.map{|d| d.strftime("%W") }
-    commits = (0..24).to_a.map{|i| 0 }
+    commits = (0...24).to_a.map{|i| 0 }
     
     commits_by_week.each do |week, commits_in_week|
       if week_pos = week_numbers.index(week)
