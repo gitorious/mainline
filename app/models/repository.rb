@@ -82,8 +82,8 @@ class Repository < ActiveRecord::Base
     name
   end
   
-  def to_xml
-    super(:methods => [:gitdir, :clone_url, :push_url])
+  def to_xml(opts = {})
+    super({:methods => [:gitdir, :clone_url, :push_url]}.merge(opts))
   end
   
   def add_committer(user)
