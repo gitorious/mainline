@@ -1,8 +1,8 @@
 class CommittersController < ApplicationController
-  before_filter :login_required, :only => [:new, :create, :destroy]
+  before_filter :login_required, :only => [:new, :create, :destroy, :list]
   before_filter :find_project
   before_filter :find_repository, 
-    :only => [:show, :new, :create, :edit, :update, :destroy]
+    :only => [:show, :new, :create, :edit, :update, :destroy, :list]
     
   def new
     @committer = User.new
@@ -23,8 +23,7 @@ class CommittersController < ApplicationController
       if @repository.add_committer(@committer)
         format.html { redirect_to([@repository.project, @repository]) }
         format.xml do 
-          render :nothing, :status => :created, 
-            :location => project_repository_path(@repository.project, @repository)
+          render :xml => @committer
         end
       else
         flash[:error] = "Could not add user or user is already a committer"
@@ -48,6 +47,13 @@ class CommittersController < ApplicationController
         format.xml  { render :nothing, :status => :unprocessable_entity }
       end    
       
+    end
+  end
+  
+  def list
+    @committers = @repository.committers
+    respond_to do |format|
+      format.xml { render :xml => @committers }
     end
   end
   
