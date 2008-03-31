@@ -1,6 +1,8 @@
 require "gruff"
 
-Gruff::Base::TITLE_MARGIN = 2.0
+silence_warnings do
+  Gruff::Base::TITLE_MARGIN = 2.0
+end
 
 module Gitorious
   module Graphs    
