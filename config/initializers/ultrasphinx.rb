@@ -14,7 +14,7 @@ Ultrasphinx::Search.query_defaults = HashWithIndifferentAccess.new({
       Ultrasphinx::MAIN_INDEX, 
       (Ultrasphinx::DELTA_INDEX if Ultrasphinx.delta_index_present?)
     ].compact,
-  :weights => { "title" => 2.0, "name" => 2.0 },
+  :weights => { "title" => 3.0, "name" => 2.0 },
   :class_names => [],
   :filters => {},
   :facets => []
