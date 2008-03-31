@@ -101,6 +101,23 @@ class Project < ActiveRecord::Base
     # sanitizer.sanitize(description, :tags => %w(str), :attributes => %w(class))
   end
   
+  def to_xml(opts = {})
+    info = Proc.new { |options|
+      builder = options[:builder]
+      builder.owner user.login
+      
+      builder.repositories :type => "array" do 
+        repositories.each { |repo|
+          builder.repository do
+            builder.name repo.name
+            builder.owner repo.user.login
+          end
+        }
+      end
+    }
+    super({:procs => [info]}.merge(opts))
+  end
+  
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")
