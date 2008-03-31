@@ -17,7 +17,7 @@
 
   <% if @merge_request.open? -%>
   <p>The simplest way to merge in these changes is to simply pull them in with the following command:</p>
-  <pre>git pull <%= @merge_request.source_repository.clone_url -%></pre>
+  <pre>git pull <%= @merge_request.source_repository.clone_url -%> <%= @merge_request.source_branch -%></pre>
   <% end -%>
 <% end -%>
 
