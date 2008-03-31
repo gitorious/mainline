@@ -7,7 +7,7 @@ class MergeRequest < ActiveRecord::Base
       :association_name => "user",
       :field => "login",
       :as => "proposed_by"
-    }]
+    }], :conditions => "status = 0"
   
   attr_protected :user_id, :status
     

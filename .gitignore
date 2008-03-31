@@ -10,5 +10,6 @@ config/ultrasphinx/test.conf
 config/ultrasphinx/production.conf
 config/ultrasphinx/staging.conf
 db/schema.rb
+db/*.sqlite3
 .autotest
 db/sphinx/*

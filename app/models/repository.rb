@@ -182,7 +182,7 @@ class Repository < ActiveRecord::Base
     labels = []
     data = []
     
-    max = 5
+    max = 8
     others = []
     top = sorted
     
