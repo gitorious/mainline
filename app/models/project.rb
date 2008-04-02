@@ -109,6 +109,7 @@ class Project < ActiveRecord::Base
       builder.repositories :type => "array" do 
         repositories.each { |repo|
           builder.repository do
+            builder.id repo.id
             builder.name repo.name
             builder.owner repo.user.login
           end

@@ -26,12 +26,20 @@ class MergeRequestsController < ApplicationController
   def create
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    if @merge_request.save
-      flash[:success] = %Q{You sent a merge request to "#{@merge_request.target_repository.name}"}
-      redirect_to project_repository_path(@project, @repository) and return
-    else
-      @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
-      render :action => "new"
+    respond_to do |format|
+      if @merge_request.save
+        format.html {
+          flash[:success] = %Q{You sent a merge request to "#{@merge_request.target_repository.name}"}
+          redirect_to project_repository_path(@project, @repository) and return
+        }
+        format.xml { render :xml => @merge_request, :status => :created }
+      else
+        format.html {
+          @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+          render :action => "new"
+        }
+        format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
+      end
     end
   end
   
