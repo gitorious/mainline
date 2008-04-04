@@ -9,7 +9,7 @@ module TreesHelper
     current_path << path
   end
   
-  def breadcrumb_path(root_name = "root", commit_id = params[:sha])
+  def breadcrumb_path(root_name = "root", commit_id = params[:id])
     out = %Q{<ul class="path_breadcrumbs">\n}
     visited_path = []
     out <<  %Q{  <li>/ #{link_to(root_name, tree_path(commit_id, []))}</li>\n}

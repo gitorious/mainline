@@ -8,6 +8,11 @@ class UsersController < ApplicationController
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
     @events = @user.events.find(:all, :order => "events.date asc", :include => [:action, :user, {:repository => :project}])
+    
+    @commits_last_week = 0
+    @projects.map{|p| p.repositories.first }.concat(@repositories).each do |repo|
+      @commits_last_week += repo.count_commits_from_last_week_by_user(@user)
+    end
   end
 
   def create
@@ -32,5 +37,4 @@ class UsersController < ApplicationController
     end
     redirect_back_or_default('/')
   end
-
 end

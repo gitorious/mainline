@@ -44,28 +44,16 @@ describe ApplicationHelper do
   end
   
     
-  it "should generate a commit graph url" do
-    project = projects(:johans)
-    FileUtils.mkpath(project.mainline_repository.full_repository_path)
-    
-    url = commit_graph_tag(project)
-    
-    (url =~ /\<img/).should == 0
-    url.include?("google.com").should == true
-    
-    Gchart.should_receive(:line)
-    commit_graph_tag(project)
+  it "should generate a blank commit graph url if the graph isn't there" do
+    File.should_receive(:exist?).and_return(false)
+    url = commit_graph_tag(repositories(:johans))    
+    url.should == nil
   end
   
-  it "should generate a url for commit graph by author" do
-    project = projects(:johans)
-    FileUtils.mkpath(project.mainline_repository.full_repository_path)
+  it "should generate a blank url for commit graph by author if the graph isn't there" do
+    File.should_receive(:exist?).and_return(false)
     
-    url = commit_graph_by_author_tag(project)
-    (url =~ /\<img/).should == 0
-    url.include?("google.com").should == true
-    
-    Gchart.should_receive(:pie)
-    commit_graph_by_author_tag(project)
+    url = commit_graph_by_author_tag(repositories(:johans))
+    url.should == nil
   end
 end

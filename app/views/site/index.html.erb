@@ -11,12 +11,12 @@
   <% unless logged_in? -%>
   <table>
     <tr>
-      <th><h2>For Projects</h2></th>
-      <th><h2>For Contributors</h2></th>
+      <th class="left"><h2>For Projects</h2></th>
+      <th class="right"><h2>For Contributors</h2></th>
     </tr>
     <tr>
-      <td><%= image_tag("overview_projects.png") -%></td>
-      <td><%= image_tag("overview_contributors.png") -%></td>
+      <td class="left"><%= image_tag("overview_projects.png") -%></td>
+      <td class="right"><%= image_tag("overview_contributors.png") -%></td>
     </tr>
   </table>
   

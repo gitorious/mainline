@@ -49,7 +49,7 @@ class Project < ActiveRecord::Base
     'Ruby License',
     'GNU General Public License version 2(GPLv2)',
     'GNU General Public License version 3 (GPLv3)',
-    'GNU Library Public License (LGPL)',
+    'GNU Lesser General Public License (LGPL)',
     'Mozilla Public License 1.0 (MPL)',
     'Mozilla Public License 1.1 (MPL 1.1)',
     'Qt Public License (QPL)',
@@ -99,6 +99,24 @@ class Project < ActiveRecord::Base
     description.gsub(/<\/?[^>]*>/, "")
     # sanitizer = HTML::WhiteListSanitizer.new
     # sanitizer.sanitize(description, :tags => %w(str), :attributes => %w(class))
+  end
+  
+  def to_xml(opts = {})
+    info = Proc.new { |options|
+      builder = options[:builder]
+      builder.owner user.login
+      
+      builder.repositories :type => "array" do 
+        repositories.each { |repo|
+          builder.repository do
+            builder.id repo.id
+            builder.name repo.name
+            builder.owner repo.user.login
+          end
+        }
+      end
+    }
+    super({:procs => [info]}.merge(opts))
   end
   
   protected

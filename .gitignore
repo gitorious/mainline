@@ -2,6 +2,7 @@
 .DS_Store
 coverage/*
 public/cache/*
+public/images/graphs/*
 config/database.yml
 config/gitorious.yml
 config/ultrasphinx/development.conf
@@ -9,5 +10,6 @@ config/ultrasphinx/test.conf
 config/ultrasphinx/production.conf
 config/ultrasphinx/staging.conf
 db/schema.rb
+db/*.sqlite3
 .autotest
 db/sphinx/*

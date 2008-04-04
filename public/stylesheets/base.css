@@ -120,6 +120,11 @@ abbr {
   height: 0;
 }
 
+.clear_left {
+  clear: left;
+  height: 0;
+}
+
 #container {
   width: 90%;
   margin-top: 20px;
@@ -431,10 +436,19 @@ table.repository_list tr.clone td.name {
 	margin-bottom:0;
 }
 
+.commit_list .commit_item {
+  clear:left;
+  margin-bottom: 15px;
+}
+
 .commit_message, .commit_message p {
   margin-top: 10px;
   margin-left: 10px;
   font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
+}
+
+.commit_list .commit_item .commit_message {
+  margin-left: 40px;
 }
 
 small.commit_message {
@@ -443,7 +457,25 @@ small.commit_message {
 }
 
 .commit_message a {
-	color: #000;
+  color: #000;
+}
+
+.gravatar {
+  background-color: white;
+  border: 1px solid #CCCCCC;
+  float: left;
+  margin-right: 10px;
+  padding: 2px;
+}
+
+.gravatar_tiny {
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+}
+
+.commit_list .commit_item .gravatar {
+  margin-top: 5px;
 }
 
 ul.project_list li {
@@ -804,13 +836,20 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 4em;
   margin-left: auto;
   margin-right: auto;
-  width: 910px;
+  width: 888px;
   text-align:center;
 }
 
 #site_overview table td, #site_overview table th {
   text-align:center;
-  padding: 10px;
+}
+
+#site_overview table td.left, #site_overview table th.left {
+  border-right: 1px dotted #ccc;
+  padding-right: 10px;
+}
+#site_overview table td.right, #site_overview table th.right {
+ padding-left: 10px; 
 }
 
 #site_overview p.create_account_hint {
@@ -950,3 +989,16 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 .search_bar p { margin-bottom: 2px; }
 .search_bar { margin-bottom: 20px; }
+
+#users .infobox {
+  margin-bottom: 20px;
+}
+
+.commits_by_author_graph img {
+  float: right;
+  margin: 0 0 10px 10px;
+}
+
+.commit_graph {
+  text-align:center;
+}

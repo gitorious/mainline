@@ -1,16 +1,4 @@
-module RepositoriesHelper
-  # Returns a Hash {email => user}
-  def self.users_by_commits(commits)
-    emails = commits.map { |commit| commit.committer.email }
-    users = User.find(:all, :conditions => ["email in (?)", emails])
-    email_user = {}
-    users.each { |user|
-      email_user[user.email] = user
-    }
-    
-    email_user
-  end
-  
+module RepositoriesHelper  
   def log_path(objectish = "master", options = {})
     if options.blank? # just to avoid the ? being tacked onto the url
       project_repository_log_path(@project, @repository, objectish)

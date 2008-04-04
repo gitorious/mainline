@@ -21,7 +21,15 @@ module BlobsHelper
   
   def render_highlighted(text, filename, theme = "idle")
     syntax_name = Uv.syntax_names_for_data(filename, text).first #TODO: render a choice select box if > 1
-    highlighted = Uv.parse(text, "xhtml", syntax_name, false, theme)
+    begin
+      highlighted = Uv.parse(text, "xhtml", syntax_name, false, theme)
+    rescue => e
+      if e.to_s =~ /Oniguruma Error/
+        highlighted = text
+      else
+        raise e
+      end
+    end
     line_numbers_for(highlighted, theme)
   end
   

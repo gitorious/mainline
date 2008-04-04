@@ -1,16 +1,16 @@
-<%  email_user = RepositoriesHelper.users_by_commits(@commits) %>
-<ul>
+<% users_by_email = @repository.users_by_commits(@commits) %>
+<ul class="commit_list">
 <% @commits.each do |commit| -%>
-<% user = email_user[commit.committer.email] %>
+<% user = users_by_email[commit.committer.email] %>
 <li class="commit_item">
   <div>
   <a href=""><%= link_to h(commit.id_abbrev), 
     project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-  by <strong><%=h commit.committer.name -%></strong><small> <%= user ? "[#{link_to user.login, user_path(user)}]" : "" -%></small> <%=h time_ago_in_words(commit.committed_date) -%> ago
+  by <strong><%= user ? link_to(user.login, user_path(user)) : h(commit.committer.name) -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
   </div>
-  <div style="float: left; width: 5%;"> <%= gravatar(commit.committer.email, :size => 32) %></div>
-  <div class="commit_message"> <%= simple_format(h(commit.message)) -%></div>
-  
+  <%= gravatar_frame(commit.committer.email, :size => 32) %>
+  <div class="commit_message"> <%= link_to simple_format(h(commit.short_message)), project_repository_commit_path(@project, @repository, commit.id) -%></div>
+  <div class="clear_left"></div>
 </li>
 <% end -%>
 </ul>

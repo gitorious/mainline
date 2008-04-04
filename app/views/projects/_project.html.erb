@@ -1,8 +1,5 @@
-<h3><%= link_to project.title, project_path(project) -%></h3>
+<h3><%= link_to h(project.title), project_path(project) -%></h3>
 <p><%= truncate h(project.stripped_description), 250 -%></p>
-<% if project.repositories.first.has_commits? %>
-  <div><%= commit_graph_tag(project) %></div>
-<% end -%>
 <p class="hint">
   <strong>Categories:</strong> 
   <%= project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(project.tags) -%>

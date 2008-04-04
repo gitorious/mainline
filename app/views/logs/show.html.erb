@@ -9,10 +9,14 @@
   <% unless @commits.blank? -%>
   <li><strong>HEAD tree:</strong> <%= link_to h(@commits.first.tree.id), 
     tree_path(@commits.first.id) -%></li>
-  <li><%= commit_graph_by_author_tag(@project) %></li>
   <% end -%>
 </ul>
 
+<% if @commits.current_page == 1 -%>
+  <div class="commits_by_author_graph">
+    <%= commit_graph_by_author_tag(@repository, params[:id]) %>
+  </div>
+<% end -%>
 <h2>Commits in "<%=h params[:id] -%>"</h2>
 <%= render :partial => "log" -%>
 <%= will_paginate @commits %>
@@ -20,14 +24,14 @@
 <% content_for :sidebar do -%>  
   <h5>Branches:</h5>
   <ul class="links">
-    <% @git.branches.each do |branch| -%>
+    <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
     <li><%= link_to h(branch.name), log_path(branch.name) -%></li>
     <% end -%>
   </ul>
 
   <h5>Tags:</h5>
   <ul class="links">
-  <% @git.tags.each do |tag| -%>
+  <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
     <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
   <% end -%>
   </ul>

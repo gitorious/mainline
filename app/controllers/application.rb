@@ -7,7 +7,21 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
-  rescue_from ActionController::RoutingError, :with => :render_not_found
+  rescue_from ActionController::UnknownController, :with => :render_not_found
+  rescue_from ActionController::UnknownAction, :with => :render_not_found
+  
+  def rescue_action(exception)
+    return super if RAILS_ENV != "production"
+    
+    case exception
+      # Can't catch RoutingError with rescue_from it seems, 
+      # so do it the old-fashioned way
+    when ActionController::RoutingError
+      render_not_found
+    else
+      super
+    end
+  end
   
   protected
     def require_user_has_ssh_keys

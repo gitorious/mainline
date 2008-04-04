@@ -2,12 +2,23 @@
 
 === Dependencies
 
-* bluecloth (http://rubyforge.org/projects/bluecloth/)
+Ruby libraries/bindings/gems
+
+* BlueCloth (http://rubyforge.org/projects/bluecloth/)
 * mime-types (http://rubyforge.org/projects/mime-types)
 * oniguruma (http://rubyforge.org/projects/oniguruma)
-** requires the oniguruma C library: (http://www.geocities.jp/kosako3/oniguruma/)
 * textpow (http://rubyforge.org/projects/textpow)
-* chronic
+* chronic (http://rubyforge.org/projects/chronic)
+* rmagick (http://rubyforge.org/projects/rmagick)
+
+Libraries/applications:
+
+* Git (http://git-scm.org)
+* Oniguruma C library (http://www.geocities.jp/kosako3/oniguruma/)
+* Sphinx (http://sphinxsearch.com/)
+
+(App is deployed on mysql, allthough source should be free of mysql-isms/quirks)
+
 
 === The Hackers digest guide:
 
@@ -23,3 +34,22 @@
 
 Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in 
 by #gitorious on irc.freenode.net if you have questions.
+
+
+=== Tasks and other scripts
+
+* script/task_performer runs any tasks in the queue (creating repositories etc)
+* script/graph_generator generates graph.
+* rake ultrasphinx:index runs the search indexer
+
+
+=== Coding style
+
+* Two spaces, no tabs, for indention
+* Don't use and and or for boolean tests, instead always use && and ||
+* MyClass.my_method(my_arg) -- not my_method( my_arg ) or my_method my_arg
+* Unless presedence is an issue; do .. end for multi-line blocks, braces for single line blocks
+* Follow the conventions you see used in the source already
+
+(copied mostly verbatim from dev.rubyonrails.org)
+
