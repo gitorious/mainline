@@ -68,7 +68,10 @@ while line = gets
   # rev_type => commit, tag
   
   user = User.find_by_email(hash[:email])
-  next if user.nil?
+  if user.nil?
+    $stdout.puts "** The email '#{hash[:email]}' is not registered."
+    next
+  end
   
   project = Project.find_by_slug(slug)
   repository = nil
