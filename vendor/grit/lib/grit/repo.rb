@@ -89,10 +89,11 @@ module Grit
     # Commits are returned in chronological order.
     #   +start+ is the branch/commit name (default 'master')
     #   +since+ is a string represeting a date/time
+    #   +extra_options+ is a hash of extra options
     #
     # Returns Grit::Commit[] (baked)
-    def commits_since(start = 'master', since = '1970-01-01')
-      options = {:since => since}
+    def commits_since(start = 'master', since = '1970-01-01', extra_options = {})
+      options = {:since => since}.merge(extra_options)
       
       Commit.find_all(self, start, options)
     end
@@ -253,11 +254,7 @@ module Grit
     #
     # Returns nothing
     def enable_daemon_serve
-      if @bare
-        FileUtils.touch(File.join(self.path, DAEMON_EXPORT_FILE))
-      else
-        FileUtils.touch(File.join(self.path, '.git', DAEMON_EXPORT_FILE))
-      end
+      FileUtils.touch(File.join(self.path, DAEMON_EXPORT_FILE))
     end
     
     # Disable git-daemon serving of this repository by ensuring there is no
@@ -265,11 +262,7 @@ module Grit
     #
     # Returns nothing
     def disable_daemon_serve
-      if @bare
-        FileUtils.rm_f(File.join(self.path, DAEMON_EXPORT_FILE))
-      else
-        FileUtils.rm_f(File.join(self.path, '.git', DAEMON_EXPORT_FILE))
-      end
+      FileUtils.rm_f(File.join(self.path, DAEMON_EXPORT_FILE))
     end
     
     # The list of alternates for this repo
@@ -303,6 +296,10 @@ module Grit
           f.write alts.join("\n")
         end
       end
+    end
+    
+    def config
+      @config ||= Config.new(self)
     end
     
     # Pretty object inspection

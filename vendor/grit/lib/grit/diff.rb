@@ -26,14 +26,14 @@ module Grit
       diffs = []
       
       while !lines.empty?
-        m, a_path, b_path = *lines.shift.match(%r{^diff --git a/(\S+) b/(\S+)$})
+        m, a_path, b_path = *lines.shift.match(%r{^diff --git a/(.+?) b/(.+)$})
         
         if lines.first =~ /^old mode/
           m, a_mode = *lines.shift.match(/^old mode (\d+)/)
           m, b_mode = *lines.shift.match(/^new mode (\d+)/)
         end
         
-        if lines.first =~ /^diff --git/
+        if lines.empty? || lines.first =~ /^diff --git/
           diffs << Diff.new(repo, a_path, b_path, nil, nil, a_mode, b_mode, false, false, nil)
           next
         end

@@ -21,6 +21,10 @@ class TestGit < Test::Unit::TestCase
     assert_equal "\\'foo\\'", @git.e("'foo'")
   end
   
+  def test_method_missing
+    assert_match(/^git version [\w\.]*$/, @git.version)
+  end
+  
   def test_transform_options
     assert_equal ["-s"], @git.transform_options({:s => true})
     assert_equal ["-s '5'"], @git.transform_options({:s => 5})
@@ -48,3 +52,4 @@ class TestGit < Test::Unit::TestCase
     @git.foo({}, "bar's")
   end
 end
+

@@ -2,6 +2,7 @@ $:.unshift File.dirname(__FILE__) # For use/testing when no gem is installed
 
 # core
 require 'fileutils'
+require 'time'
 
 # stdlib
 
@@ -20,6 +21,7 @@ require 'grit/tree'
 require 'grit/blob'
 require 'grit/actor'
 require 'grit/diff'
+require 'grit/config'
 require 'grit/repo'
 require 'grit/stats'
 
