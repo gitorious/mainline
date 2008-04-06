@@ -1,8 +1,9 @@
 (in no particular order)
 
-* Get rid of the non-libre google graphs in favor of locally-generated ones (though NOT by the rails app)
+* Deal gracefully with markdown errors (and/or look into using the other markdown libary instead)
+* Don't generate graphs with big "No Data", text even if there's no data
+* Markdownify atom feed body for projects.atom
 * Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
-* Update the HACKING with some basic coding guidelines
 * Show the most recent mergerequests on users dashboard so they can track them
 * Make the archive download an external little mongrel/rack thing, and store the result per sha1
 * Comments on MergeRequests and/or votes (or just comments when you resolve)
@@ -11,7 +12,6 @@
 * Reword /about page
 * mail the user when someone adds him as a comitter
 * expire fragment caches for project+repos on deletion
-* view complete raw diff (.diff respond_to ?)
 *a Tone down the "owner" of a repository, or implement a proper "mirror" project type.
 *b be able to mark a project as a "mirror"
 * reset password functionality
