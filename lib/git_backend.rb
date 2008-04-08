@@ -38,7 +38,6 @@ class GitBackend
     protected
       def post_create(path)
         FileUtils.touch(File.join(path, "git-daemon-export-ok"))
-        execute_command(%Q{chmod +x #{File.join(path, "hooks/post-update")}})
         execute_command(%Q{GIT_DIR="#{path}" git-update-server-info})
       end
       

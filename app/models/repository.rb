@@ -9,7 +9,7 @@ class Repository < ActiveRecord::Base
     :order => "status, id desc", :dependent => :destroy
   has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id', 
                 :class_name => 'MergeRequest', :order => "id desc", :dependent => :destroy
-  has_many    :events, :dependent => :destroy
+  has_many    :events, :as => :target, :dependent => :destroy
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
@@ -228,7 +228,7 @@ class Repository < ActiveRecord::Base
     users_by_email = users.inject({}){|hash, user| hash[user.email] = user; hash }
     users_by_email
   end
-    
+  
   protected
     def set_as_mainline_if_first
       unless project.repositories.size >= 1
@@ -248,7 +248,7 @@ class Repository < ActiveRecord::Base
   def self.create_hooks(path)
     hooks = File.join(GitoriousConfig["repository_base_path"], ".hooks")
     Dir.chdir(path) do
-      hooks_base_path = File.expand_path(File.join(File.dirname(__FILE__), "../../data/hooks")) # FIXME: the hooks are in GITORIOUS_ROOT/data/hooks
+      hooks_base_path = File.expand_path("#{RAILS_ROOT}/data/hooks")
       
       if not File.symlink?(hooks)
         if not File.exist?(hooks)

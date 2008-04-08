@@ -7,7 +7,7 @@ class UsersController < ApplicationController
     @user = User.find_by_login!(params[:id])
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
-    @events = @user.events.find(:all, :order => "events.date asc", :include => [:action, :user, {:repository => :project}])
+    @events = @user.events.find(:all, :order => "events.date asc", :include => [:action, :user, :target])
     
     @commits_last_week = 0
     @projects.map{|p| p.repositories.first }.concat(@repositories).each do |repo|

@@ -9,7 +9,8 @@ class CreateActions < ActiveRecord::Migration
     Action.create :name => "create project"
     Action.create :name => "delete project"
     Action.create :name => "update project"
-    Action.create :name => "fork project"
+    Action.create :name => "clone repository"
+    Action.create :name => "delete repository"
     
     # On repository
     Action.create :name => "commit"

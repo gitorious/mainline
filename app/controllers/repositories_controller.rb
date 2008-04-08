@@ -61,7 +61,7 @@ class RepositoriesController < ApplicationController
     
     respond_to do |format|
       if @repository.save
-        Event.from_action_name("fork project", current_user, @repository, @repository_to_clone.id)
+        current_user.create_event("clone repository", @repository, @repository_to_clone.id)
         
         location = project_repository_path(@project, @repository)
         format.html { redirect_to location }
@@ -91,8 +91,10 @@ class RepositoriesController < ApplicationController
   def destroy
     @repository = @project.repositories.find_by_name!(params[:id])
     if @repository.can_be_deleted_by?(current_user)
+      repo_name = @repository.name
       flash[:notice] = "The repository was deleted"
       @repository.destroy
+      current_user.create_event("delete repository", @project, repo_name)
     else
       flash[:error] = "You're not the owner of this repository"
     end

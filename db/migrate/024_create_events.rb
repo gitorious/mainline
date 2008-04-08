@@ -2,11 +2,13 @@ class CreateEvents < ActiveRecord::Migration
   def self.up
     create_table :events do |t|
       t.integer           :user_id, :null => false
-      t.integer           :repository_id
       t.integer           :action_id, :null => false
-      t.string            :ref
+      t.string            :data # Additional data
       t.text              :body
       t.datetime          :date, :null => false
+      
+      t.integer           :target_id
+      t.string            :target_type
     end
     
     add_index :events, :user_id
@@ -16,3 +18,4 @@ class CreateEvents < ActiveRecord::Migration
     drop_table :events
   end
 end
+

@@ -105,7 +105,14 @@ class User < ActiveRecord::Base
   def to_xml(opts = {})
     super({:except => [:activation_code, :crypted_password, :remember_token, :remember_token_expires_at, :salt, :ssh_key_id]}.merge(opts))
   end
-
+  
+  def create_event(action_name, target, data = nil, body = nil)
+    action = Action.find_by_name(action_name)
+    return false if action.nil?
+    
+    return events.create(:action_id => action.id, :target => target, :body => body, :data => data, :date => Time.now)
+  end
+  
   protected
     # before filter 
     def encrypt_password

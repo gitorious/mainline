@@ -28,7 +28,7 @@ class MergeRequestsController < ApplicationController
     @merge_request.user = current_user
     respond_to do |format|
       if @merge_request.save
-        Event.from_action_name("request merge", current_user, @repository, @merge_request.id)
+        current_user.create_event("request merge", @merge_request)
         format.html {
           flash[:success] = %Q{You sent a merge request to "#{@merge_request.target_repository.name}"}
           redirect_to project_repository_path(@project, @repository) and return
@@ -48,7 +48,7 @@ class MergeRequestsController < ApplicationController
     # TODO: put to change status
     @merge_request.status = params[:merge_request][:status]
     if @merge_request.save
-      Event.from_action_name("resolve merge request", current_user, @repository, @merge_request.id)
+      current_user.create_event("resolve merge request", @merge_request)
       flash[:notice] = "The merge request was marked as #{@merge_request.status_string}"
     end
     redirect_to [@project, @repository, @merge_request]      
@@ -61,7 +61,7 @@ class MergeRequestsController < ApplicationController
   def update
     @merge_request.attributes = params[:merge_request]
     if @merge_request.save
-      Event.from_action_name("update merge request", current_user, @repository, @merge_request.id)
+      current_user.create_event("update merge request", @merge_request)
       flash[:success] = "Merge request was updated"
       redirect_to [@project, @repository, @merge_request]
     else
@@ -72,7 +72,7 @@ class MergeRequestsController < ApplicationController
   
   def destroy
     @merge_request.destroy
-    Event.from_action_name("delete merge request", current_user, @repository)
+    current_user.create_event("delete merge request", @repository)
     flash[:success] = "Merge request was retracted"
     redirect_to project_repository_path(@project, @repository)
   end

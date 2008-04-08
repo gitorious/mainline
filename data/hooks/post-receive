@@ -124,8 +124,7 @@ while line = gets
   puts "#{hash[:author]}: #{action_name} #{ref} on #{slug} [#{hash[:date]}]"
   puts "    #{hash[:message]}"
   
-  action = Action.find_by_name(action_name)
-  Event.from_action_name(action_name, user, repository, ref, hash[:message])
+  user.create_event(action_name, repository, ref, hash[:message])
 end
 
 puts "=> Thanks! http://#{GitoriousConfig['gitorious_host']}/events"

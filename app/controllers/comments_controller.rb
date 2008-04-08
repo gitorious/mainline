@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
     @comment.project = @project
     respond_to do |format|
       if @comment.save
-        Event.from_action_name("comment", current_user, @repository, @comment.id)
+        current_user.create_event("comment", @comment)
         format.html do
           flash[:success] = "Your comment was added"
           redirect_to project_repository_comments_path(@project, @repository)
