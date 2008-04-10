@@ -3,15 +3,16 @@
 <div id="recent_comments">
   <h2>Recent comments on your commits</h2>
   <% @recent_comments.each do |comment| -%>
-    <div class="comment">
-      <div class="body"><%= simple_format(sanitize(comment.body)) -%></div>
+    <div class="comment excerpt">
       <p class="byline hint">
-        on <%= link_to h(comment.repository.name), project_repository_comments_path(comment.project, comment.repository, :anchor => dom_id(comment)) -%>
+        <%= link_to(h(comment.user.login), comment.user) -%> 
+        on <%= link_to h(comment.project.title), comment.project -%>/<%= link_to h(comment.repository.name), project_repository_comments_path(comment.project, comment.repository, :anchor => dom_id(comment)) -%>
         <% unless comment.sha1.blank? -%>
           (<%= link_to h(comment.sha1[0..6]), project_repository_commit_path(comment.project, comment.repository, comment.sha1) -%>)
         <% end -%>
-        in <%= link_to h(comment.project.title), comment.project -%> by 
-        <%= link_to(h(comment.user.login), comment.user) -%> 
+      </p>
+      <p class="body"><%= truncate(strip_tags(comment.body), 65) -%></p>
+      <p class="byline hint">
         <%= time_ago_in_words(comment.created_at) -%> ago
       </p>
     </div>
@@ -22,7 +23,7 @@
 </div>
 
 <div id="clone_list">
-  <h2>Clones of your project repositories</h2>
+  <h2>Activity in clones of your projects</h2>
   <ul>
   <% @repository_clones.each do |repos| -%>
       <li class="repos">

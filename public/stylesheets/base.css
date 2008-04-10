@@ -668,7 +668,8 @@ ul.tab_menu li.selected {
 
 div.comment {
   border-bottom: 1px solid #ccc;
-  margin-bottom: 1em;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
   width: 63%;
 }
 div.comment .body {
@@ -676,7 +677,7 @@ div.comment .body {
 }
 
 p.byline {
-  font-size: 85%;
+  font-size: 10px;
 }
 
 .hint {
@@ -863,9 +864,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   padding-right: 10px;
   border-right: 1px dotted #dedede;
 }
+#site #recent_comments p { margin-bottom: 0; }
 #site #recent_comments .comment { width: 100%;}
 #site #recent_comments .comment .body {
-  font-size: 90%;
+  font-size: 12px;
 }
 
 #site #clone_list {
