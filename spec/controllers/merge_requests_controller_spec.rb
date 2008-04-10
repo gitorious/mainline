@@ -59,7 +59,9 @@ describe MergeRequestsController do
       src_repo = mock("src repo")
       @merge_request.source_repository.stub!(:git).and_return(src_repo)
       
-      target_repo.should_receive(:commit_deltas_from).with(src_repo, "master", "master").and_return(commits)
+      target_repo.should_receive(:commit_deltas_from).with(
+        src_repo, @merge_request.target_branch, @merge_request.source_branch
+      ).and_return(commits)
       
       do_get
       assigns[:commits].should == commits
