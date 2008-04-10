@@ -1,14 +1,14 @@
 <% users_by_email = @repository.users_by_commits(@commits) %>
 <ul class="commit_list">
 <% @commits.each do |commit| -%>
-<% user = users_by_email[commit.committer.email] %>
+<% user = users_by_email[commit.author.email] %>
 <li class="commit_item">
   <div>
   <a href=""><%= link_to h(commit.id_abbrev), 
     project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-  by <strong><%= user ? link_to(user.login, user_path(user)) : h(commit.committer.name) -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
+  by <strong><%= user ? link_to(user.login, user_path(user)) : h(commit.author.name) -%></strong> <%=h time_ago_in_words(commit.authored_date) -%> ago
   </div>
-  <%= gravatar_frame(commit.committer.email, :size => 32) %>
+  <%= gravatar_frame(commit.author.email, :size => 32) %>
   <div class="commit_message"> <%= link_to simple_format(h(commit.short_message)), project_repository_commit_path(@project, @repository, commit.id) -%></div>
   <div class="clear_left"></div>
 </li>

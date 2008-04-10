@@ -215,7 +215,7 @@ class Repository < ActiveRecord::Base
   
   # Returns a Hash {email => user}, where email is selected from the +commits+
   def users_by_commits(commits)
-    emails = commits.map { |commit| commit.committer.email }.uniq
+    emails = commits.map { |commit| commit.author.email }.uniq
     users = User.find(:all, :conditions => ["email in (?)", emails])
     
     users_by_email = users.inject({}){|hash, user| hash[user.email] = user; hash }
