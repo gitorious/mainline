@@ -50,6 +50,7 @@ class Project < ActiveRecord::Base
     'GNU General Public License version 2(GPLv2)',
     'GNU General Public License version 3 (GPLv3)',
     'GNU Lesser General Public License (LGPL)',
+    'GNU Affero General Public License (AGPLv3)',
     'Mozilla Public License 1.0 (MPL)',
     'Mozilla Public License 1.1 (MPL 1.1)',
     'Qt Public License (QPL)',
