@@ -261,7 +261,7 @@ describe Repository do
     commits = []
     users(:johan, :moe).map(&:email).each do |email|
       committer = OpenStruct.new(:email => email)
-      commits << OpenStruct.new(:committer => committer)
+      commits << OpenStruct.new(:committer => committer, :author => committer)
     end
     users = @repository.users_by_commits(commits)
     users.keys.sort.should == users(:johan, :moe).map(&:email).sort
