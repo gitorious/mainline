@@ -85,7 +85,7 @@ describe Gitorious::SSH::Client do
   
   it "returns the command we can safely execute with git-shell" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    repos_path = File.join(File.expand_path("~"), "repositories", @strainer.path)
+    repos_path = File.join(GitoriousConfig["repository_base_path"], @strainer.path)
     client.to_git_shell_argument.should == "git-upload-pack '#{repos_path}'"
   end
   

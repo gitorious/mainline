@@ -26,7 +26,7 @@ module Gitorious
       attr_reader :path, :verb, :command
     
       def full_path
-        File.join(File.expand_path("~"), "repositories", path)
+        File.join(GitoriousConfig["repository_base_path"], path)
       end
     
       def parse!
