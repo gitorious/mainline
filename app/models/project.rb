@@ -44,6 +44,7 @@ class Project < ActiveRecord::Base
   after_create :create_mainline_repository
   
   LICENSES = [
+    'Academic Free License v3.0',
     'MIT License',
     'BSD License',
     'Ruby License',
