@@ -89,14 +89,14 @@ module ApplicationHelper
   end
   
   def commit_graph_tag(repository, ref = "master")
-    filename = "#{repository.project.slug}_#{repository.name}_#{h(ref)}_commit_count.png"
+    filename = Gitorious::Graphs::CommitsBuilder.filename(repository, ref)
     if File.exist?(File.join(Gitorious::Graphs::Builder.graph_dir, filename))
       image_tag("graphs/#{filename}")
     end
   end
   
   def commit_graph_by_author_tag(repository, ref = "master")    
-    filename = "#{repository.project.slug}_#{repository.name}_#{h(ref)}_commit_count_by_author.png"
+    filename = Gitorious::Graphs::CommitsByAuthorBuilder.filename(repository, ref)
     if File.exist?(File.join(Gitorious::Graphs::Builder.graph_dir, filename))
       image_tag("graphs/#{filename}")
     end

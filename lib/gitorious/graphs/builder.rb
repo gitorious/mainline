@@ -6,10 +6,12 @@ end
 
 module Gitorious
   module Graphs    
-    class Builder      
+    class Builder
+      GENERATORS = [CommitsBuilder, CommitsByAuthorBuilder] 
       def self.generate_all_for(repository)
-        CommitsBuilder.generate_for(repository)
-        CommitsByAuthorBuilder.generate_for(repository)
+        GENERATORS.each do |generator|
+          generator.generate_for(repository)
+        end
       end
       
       def self.graph_dir
