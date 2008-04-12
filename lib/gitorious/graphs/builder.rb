@@ -6,14 +6,25 @@ end
 
 module Gitorious
   module Graphs    
-    class Builder      
+    class Builder
+      GENERATORS = [CommitsBuilder, CommitsByAuthorBuilder] 
       def self.generate_all_for(repository)
-        CommitsBuilder.generate_for(repository)
-        CommitsByAuthorBuilder.generate_for(repository)
+        GENERATORS.each do |generator|
+          generator.generate_for(repository)
+        end
       end
       
       def self.graph_dir
         File.join(RAILS_ROOT, "public/images/graphs/")
+      end
+      
+      def self.construct_filename(repository, branch, name)
+        "#{repository.project.slug}_#{repository.name}_#{branch}_#{name}.png"
+      end
+      
+      def self.status_file(repository, branch = "master")
+        File.join(RAILS_ROOT, "tmp", "graph_generator",
+             "#{repository.project.slug}_#{repository.name}_#{repository.git.commit_count(branch)}_#{self.name}.status")
       end
 
       def self.default_theme

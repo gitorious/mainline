@@ -3,10 +3,15 @@ module Gitorious
     
     class CommitsBuilder < Gitorious::Graphs::Builder
       def self.generate_for(repository)
-        if repository.has_commits?
-          builder = new(repository, repository.head_candidate.name)
+        head = repository.head_candidate
+        return if head.nil?
+        
+        branch = head.name
+        if !File.exist?(self.status_file(repository, branch)) && repository.has_commits?
+          builder = new(repository, branch)
           builder.build
           builder.write
+          FileUtils.touch(self.status_file(repository, branch))
         end
       end
       
@@ -33,8 +38,12 @@ module Gitorious
         @graph.labels = build_labels(week_numbers)
       end
       
+      def self.filename(repository, branch)
+        Builder.construct_filename(repository, branch, "commit_count")
+      end
+      
       def construct_filename
-        "#{@repository.project.slug}_#{@repository.name}_#{@branch}_commit_count.png"
+        CommitsBuilder.filename(@repository, @branch)
       end
       
       private

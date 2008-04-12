@@ -1,5 +1,16 @@
 #!/usr/bin/env ruby
 
+require 'tmpdir'
+require "fileutils"
+
+LOCK_FILE_PATH = File.join(Dir.tmpdir, "gitorious_graphgenerator_lockfile")
+if File.exist?(LOCK_FILE_PATH)
+    $stderr.puts "Lockfile '#{LOCK_FILE_PATH}' exists!"
+    exit(1)
+end
+
+FileUtils.touch(LOCK_FILE_PATH)
+
 ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__) + "/../config/environment"
 
@@ -7,6 +18,29 @@ log = Logger.new(File.join(RAILS_ROOT, "log", "graph_generator.log"))
 log.formatter = Logger::Formatter.new
 log.level = Logger::INFO
 log.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
+
+STATUS_FILE = File.join(RAILS_ROOT, "tmp", "graph_generator.status")
+update_status = !File.exist?(STATUS_FILE)
+tmpdir = File.join(RAILS_ROOT, "tmp", "graph_generator")
+if !File.directory?(tmpdir)
+  FileUtils.mkdir_p(tmpdir)
+elsif !update_status
+  mtime = File.mtime(STATUS_FILE).utc
+
+  days = (Time.now.utc - mtime) / (3600*24)
+  if days >= 5
+    log.info "Cleaning '#{tmpdir}'..."
+    Dir.glob(File.join(tmpdir, "*.status")) do |file|
+      FileUtils.rm(file)
+    end
+
+    update_status = true
+  end
+end
+
+if update_status
+  FileUtils.touch(STATUS_FILE)
+end
 
 log.info "Starting graph generation run..."
 Repository.find(:all).each_with_index do |repository, index|
@@ -26,3 +60,5 @@ Repository.find(:all).each_with_index do |repository, index|
 	end
 end
 log.info "Done with graph generation run"
+
+FileUtils.rm(LOCK_FILE_PATH)
