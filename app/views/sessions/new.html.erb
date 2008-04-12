@@ -20,8 +20,9 @@
   <p><%= submit_tag 'Log in' %></p>
 <% end -%>
 
-<% content_for(:submenu) do -%>
-  <ul>
-    <li><%= link_to "Register", new_user_path -%></li>
-  </ul>
-<% end -%>
+<p>
+  <small>
+    <%= link_to "Register", new_user_path -%> 
+    | <%= link_to "Forgotten your password?", forgot_password_users_path -%>
+  </small>
+</p>

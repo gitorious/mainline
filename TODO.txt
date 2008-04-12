@@ -1,5 +1,11 @@
 (in no particular order)
 
+>  If you do `git archive --format=tar --prefix=myproject/ HEAD | gzip >
+>  myproject.tar.gz`, when .gitattributes specifies files that have
+>  export-subst, it will expand keywords such as $Format:%cd$. Gitorious'
+>  "Download as gzipped tarball" apparently does not do this and I think
+>  it'd be pretty nice if it did.
+
 * Deal gracefully with markdown errors (and/or look into using the other markdown libary instead)
 * Don't generate graphs with big "No Data", text even if there's no data
 * Markdownify atom feed body for projects.atom
@@ -14,7 +20,6 @@
 * expire fragment caches for project+repos on deletion
 *a Tone down the "owner" of a repository, or implement a proper "mirror" project type.
 *b be able to mark a project as a "mirror"
-* reset password functionality
 * Nicer diff stats
 * more interesting project stats on frontpage
 * parse git submodule data and link to project if submodule is in gitorious

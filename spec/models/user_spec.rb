@@ -141,6 +141,19 @@ describe User do
     }.should raise_error(ActiveRecord::RecordNotFound)
   end
   
+  it "generates some randomly password" do
+    User.generate_random_password.should match(/\w+/)
+    User.generate_random_password.length.should == 12
+    User.generate_random_password(16).length.should == 16
+    User.generate_random_password(5).length.should == 5
+  end
+  
+  it "resets a password to something" do
+    u = users(:johan)
+    password = u.reset_password!
+    User.authenticate(u.email, password).should_not be_nil
+  end
+  
   protected
     def create_user(options = {})
       u = User.new({ 

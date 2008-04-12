@@ -41,6 +41,13 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest("--#{salt}--#{password}--")
   end
   
+  def self.generate_random_password(password_size = 12)
+    characters = (("a".."z").to_a + ("0".."9").to_a) - %w[0 o i l 1]
+    (0...password_size).collect do |char|
+      characters[rand(characters.length)]
+    end.join
+  end
+  
   # Activates the user in the database.
   def activate
     @activated = true
@@ -90,6 +97,14 @@ class User < ActiveRecord::Base
     self.remember_token_expires_at = nil
     self.remember_token            = nil
     save(false)
+  end
+  
+  def reset_password!
+    generated = User.generate_random_password
+    self.password = generated
+    self.password_confirmation = generated
+    self.save!
+    generated
   end
   
   def can_write_to?(repository)

@@ -32,6 +32,12 @@ class Mailer < ActionMailer::Base
     @body[:url] = url
   end
   
+  def forgotten_password(user, password)
+    setup_email(user)
+    @subject += "Your new password"
+    @body[:password] = password
+  end
+  
   protected
     def setup_email(user)
       @recipients  = "#{user.email}"

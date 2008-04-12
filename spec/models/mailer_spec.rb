@@ -57,5 +57,17 @@ describe Mailer do
     Mailer.deliver(mail)
     Mailer.deliveries.should == [mail]
   end
+  
+  it "sends forgotten_password" do
+    user = users(:johan)
+    mail = Mailer.create_forgotten_password(user, "newpassword")
+    
+    mail.to.should == [user.email]
+    mail.subject.should == "[Gitorious] Your new password"
+    mail.body.should match(/your new password is: newpassword/i)
+    
+    Mailer.deliver(mail)
+    Mailer.deliveries.should == [mail]
+  end
 
 end
