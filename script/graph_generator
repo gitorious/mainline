@@ -19,11 +19,27 @@ log.formatter = Logger::Formatter.new
 log.level = Logger::INFO
 log.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
 
+STATUS_FILE = File.join(RAILS_ROOT, "tmp", "graph_generator.status")
+update_status = !File.exist?(STATUS_FILE)
 tmpdir = File.join(RAILS_ROOT, "tmp", "graph_generator")
 if !File.directory?(tmpdir)
   FileUtils.mkdir_p(tmpdir)
-else
-  
+elsif !update_status
+  mtime = File.mtime(STATUS_FILE).utc
+
+  days = (Time.now.utc - mtime) / (3600*24)
+  if days >= 5
+    log.info "Cleaning '#{tmpdir}'..."
+    Dir.glob(File.join(tmpdir, "*.status")) do |file|
+      FileUtils.rm(file)
+    end
+
+    update_status = true
+  end
+end
+
+if update_status
+  FileUtils.touch(STATUS_FILE)
 end
 
 log.info "Starting graph generation run..."
