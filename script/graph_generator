@@ -1,5 +1,16 @@
 #!/usr/bin/env ruby
 
+require 'tmpdir'
+require "fileutils"
+
+LOCK_FILE_PATH = File.join(Dir.tmpdir, "gitorious_graphgenerator_lockfile")
+if File.exist?(LOCK_FILE_PATH)
+    $stderr.puts "Lockfile '#{LOCK_FILE_PATH}' exists!"
+    exit(1)
+end
+
+FileUtils.touch(LOCK_FILE_PATH)
+
 ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__) + "/../config/environment"
 
@@ -33,3 +44,5 @@ Repository.find(:all).each_with_index do |repository, index|
 	end
 end
 log.info "Done with graph generation run"
+
+FileUtils.rm(LOCK_FILE_PATH)
