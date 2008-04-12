@@ -5,9 +5,13 @@ module Gitorious
       def self.generate_for(repository)
         if repository.has_commits?
           repository.git.heads.each do |head|
-            builder = new(repository, head.name)
-            builder.build
-            builder.write
+            branch = head.name
+            if !File.exist?(self.status_file(repository, branch))
+              builder = new(repository, branch)
+              builder.build
+              builder.write
+              FileUtils.touch(self.status_file(repository, branch))
+            end
           end
         end
       end
@@ -31,8 +35,12 @@ module Gitorious
         end
       end
       
+      def self.filename(repository, branch)
+        Builder.construct_filename(repository, branch, "commit_count_by_author")
+      end
+      
       def construct_filename
-        "#{@repository.project.slug}_#{@repository.name}_#{@branch}_commit_count_by_author.png"
+        CommitsByAuthorBuilder.filename(@repository, @branch)
       end
     end  
     

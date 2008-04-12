@@ -8,6 +8,13 @@ log.formatter = Logger::Formatter.new
 log.level = Logger::INFO
 log.formatter.datetime_format = "%Y-%m-%d %H:%M:%S"
 
+tmpdir = File.join(RAILS_ROOT, "tmp", "graph_generator")
+if !File.directory?(tmpdir)
+  FileUtils.mkdir_p(tmpdir)
+else
+  
+end
+
 log.info "Starting graph generation run..."
 Repository.find(:all).each_with_index do |repository, index|
 	begin

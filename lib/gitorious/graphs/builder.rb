@@ -15,6 +15,15 @@ module Gitorious
       def self.graph_dir
         File.join(RAILS_ROOT, "public/images/graphs/")
       end
+      
+      def self.construct_filename(repository, branch, name)
+        "#{repository.project.slug}_#{repository.name}_#{branch}_#{name}.png"
+      end
+      
+      def self.status_file(repository, branch = "master")
+        File.join(RAILS_ROOT, "tmp", "graph_generator",
+             "#{repository.project.slug}_#{repository.name}_#{repository.git.commit_count(branch)}_#{self.name}.status")
+      end
 
       def self.default_theme
         {
