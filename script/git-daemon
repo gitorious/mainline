@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'daemons'
+require 'socket'
+
+require File.dirname(__FILE__)+'/../config/environment'
+
+BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
+
+module Git
+
+class Daemon
+  include Daemonize
+  
+  def self.start
+    new
+  end
+  
+  def initialize
+    daemonize(File.join(RAILS_ROOT, "log", "git-daemon.log"))
+    
+    trap "CLD" do
+      pid = Process.wait
+      log(pid, "Disconnected. (status=#{$?.exitstatus})")
+    end
+    
+    port = 9418
+    server = TCPServer.new('localhost', port)
+    
+    service_regexp = /(\d{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
+    while session = server.accept
+      line = session.recv(1000)
+      timeout = 30
+      if line =~ service_regexp
+        code = $1
+        service = $2
+        path = $3
+        host = $4
+        
+        path = "#{BASE_PATH}/#{path}"
+        
+        if !File.directory?(path)
+          log(Process.pid, "Invalid path: #{path}")
+          session.close
+          next
+        end
+        
+        Dir.chdir(path) do
+          cmd = "git-upload-pack --strict --timeout=#{timeout} ."
+          
+          fork do
+            pid = Process.pid
+            domain, port, name, ip = session.addr
+            log(pid, "Connection from #{ip}")
+            
+            $stdout.reopen(session)
+            $stdin.reopen(session)
+            session.close
+            
+            exec(cmd)
+            exit
+          end
+        end
+      end
+    end
+  end
+  
+  def log(pid, msg)
+    $stderr.puts "[#{pid}] #{msg}"
+  end
+end
+
+end
+
+trap "SIGINT" do
+  $stderr.puts "Exiting..."
+  exit 0
+end
+
+Git::Daemon.start
