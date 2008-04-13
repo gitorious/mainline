@@ -7,9 +7,9 @@ end
 module Gitorious
   module Graphs    
     class Builder
-      GENERATORS = [CommitsBuilder, CommitsByAuthorBuilder] 
       def self.generate_all_for(repository)
-        GENERATORS.each do |generator|
+        generators = [CommitsBuilder, CommitsByAuthorBuilder]
+        generators.each do |generator|
           generator.generate_for(repository)
         end
       end
