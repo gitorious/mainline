@@ -28,6 +28,12 @@ class Repository < ActiveRecord::Base
     find_by_name(name) || raise(ActiveRecord::RecordNotFound)
   end
   
+  def self.find_by_path(path)
+    repo_name, project_name = (path.split('/') - GitoriousConfig['repository_base_path'].split('/')).reverse
+    project = Project.find_by_slug!(project_name)
+    project.repositories.find_by_name(repo_name.sub(/\.git/, ""))
+  end
+  
   def self.create_git_repository(path)
     git_backend.create(full_path_from_partial_path(path))
   end
