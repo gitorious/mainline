@@ -2,9 +2,13 @@
 
 require 'rubygems'
 require 'daemons'
+require 'geoip'
 require 'socket'
 
+ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__)+'/../config/environment'
+
+Rails.configuration.log_level = :info # Disable debug
 
 BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
 
@@ -20,6 +24,7 @@ class Daemon
   def initialize
     daemonize(File.join(RAILS_ROOT, "log", "git-daemon.log"))
     
+    @geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
     trap "CLD" do
       pid = Process.wait
       log(pid, "Disconnected. (status=#{$?.exitstatus})")
@@ -27,8 +32,7 @@ class Daemon
     
     port = 9418
     server = TCPServer.new('localhost', port)
-    
-    service_regexp = /(\d{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
+    service_regexp = /(\w{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
     while session = server.accept
       line = session.recv(1000)
       timeout = 30
@@ -39,9 +43,13 @@ class Daemon
         host = $4
         
         path = "#{BASE_PATH}/#{path}"
-        
         if !File.directory?(path)
           log(Process.pid, "Invalid path: #{path}")
+          session.close
+          next
+        end
+        
+        if !File.exist?(File.join(path, "git-daemon-export-ok"))
           session.close
           next
         end
@@ -50,6 +58,12 @@ class Daemon
           cmd = "git-upload-pack --strict --timeout=#{timeout} ."
           
           fork do
+            repository = nil
+            begin
+              ActiveRecord::Base.allow_concurrency = true
+              repository = ::Repository.find_by_path(path)
+            rescue Exception
+            end
             pid = Process.pid
             domain, port, name, ip = session.addr
             log(pid, "Connection from #{ip}")
@@ -58,10 +72,21 @@ class Daemon
             $stdin.reopen(session)
             session.close
             
+            if repository
+              localization = @geoip.country(ip)
+              repository.cloned_from(ip, localization[3], localization[5])
+            else
+              log(pid, "Cannot find repository: #{path}")
+            end
+            
             exec(cmd)
-            exit
+            
+            exit!
           end
         end
+      else
+        $stderr.puts "Invalid request: #{line}"
+        session.close
       end
     end
   end

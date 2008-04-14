@@ -9,6 +9,7 @@ class Repository < ActiveRecord::Base
     :order => "status, id desc", :dependent => :destroy
   has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id', 
                 :class_name => 'MergeRequest', :order => "id desc", :dependent => :destroy
+  has_many    :cloners, :dependent => :destroy
   
   validates_presence_of :user_id, :project_id, :name
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
@@ -30,6 +31,7 @@ class Repository < ActiveRecord::Base
   
   def self.find_by_path(path)
     repo_name, project_name = (path.split('/') - GitoriousConfig['repository_base_path'].split('/')).reverse
+    
     project = Project.find_by_slug!(project_name)
     project.repositories.find_by_name(repo_name.sub(/\.git/, ""))
   end
@@ -226,6 +228,10 @@ class Repository < ActiveRecord::Base
     
     users_by_email = users.inject({}){|hash, user| hash[user.email] = user; hash }
     users_by_email
+  end
+  
+  def cloned_from(ip, country_code = "--", country_name = nil)
+    cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name)
   end
     
   protected
