@@ -12,6 +12,10 @@ Rails.configuration.log_level = :info # Disable debug
 
 BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
 
+MAX_CHILDREN = 35
+$children_reaped = 0
+$children_active = 0
+
 module Git
 
 class Daemon
@@ -27,13 +31,23 @@ class Daemon
     @geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
     trap "CLD" do
       pid = Process.wait
+      $children_reaped += 1
       log(pid, "Disconnected. (status=#{$?.exitstatus})")
+      
+      $children_reaped = $children_active = 0 if $children_reaped == $children_active
     end
     
     port = 9418
     server = TCPServer.new('localhost', port)
     service_regexp = /(\w{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
     while session = server.accept
+      $children_active += 1
+      
+      if $children_active - $children_reaped > MAX_CHILDREN
+        session.close
+        next
+      end
+      
       line = session.recv(1000)
       timeout = 30
       if line =~ service_regexp
