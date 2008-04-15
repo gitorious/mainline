@@ -53,12 +53,12 @@ class Daemon
       if line =~ service_regexp
         code = $1
         service = $2
-        path = $3
+        base_path = $3
         host = $4
         
-        path = "#{BASE_PATH}/#{path}"
-        if !File.directory?(path)
-          log(Process.pid, "Invalid path: #{path}")
+        path = "#{BASE_PATH}/#{base_path}"
+				if !File.join(File.expand_path(path)).index(BASE_PATH) == 0 || !File.directory?(path)
+          log(Process.pid, "Invalid path: #{base_path}")
           session.close
           next
         end
@@ -80,7 +80,7 @@ class Daemon
             end
             pid = Process.pid
             ip_family, port, name, ip = session.peeraddr
-            log(pid, "Connection from #{ip}")
+            log(pid, "Connection from #{ip} for #{path.inspect}")
             
             $stdout.reopen(session)
             $stdin.reopen(session)
