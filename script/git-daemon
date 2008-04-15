@@ -4,11 +4,15 @@ require 'rubygems'
 require 'daemons'
 require 'geoip'
 require 'socket'
+require "optparse"
 
 ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__)+'/../config/environment'
 
 Rails.configuration.log_level = :info # Disable debug
+ActiveRecord::Base.logger = nil
+ActiveRecord::Base.allow_concurrency = true
+ActiveRecord::Base.clear_active_connections!
 
 BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
 
@@ -17,115 +21,167 @@ $children_reaped = 0
 $children_active = 0
 
 module Git
-
-class Daemon
-  include Daemonize
-  
-  def self.start
-    new
-  end
-  
-  def initialize
-    daemonize(File.join(RAILS_ROOT, "log", "git-daemon.log"))
+  class Daemon
+    include Daemonize
     
-    @geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
-    trap "CLD" do
+    SERVICE_REGEXP = /(\w{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
+    
+    def initialize(options)
+      @options = options
+      @geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
+    end
+    
+    def start
+      if @options[:daemonize]
+        daemonize(@options[:logfile])
+      end
+      @socket = TCPServer.new(@options[:host], @options[:port])
+      log(Process.pid, "Listening on #{@options[:host]}:#{@options[:port]}...")
+      run
+    end
+      
+    def run
+      while session = @socket.accept
+        $children_active += 1
+      
+        if $children_active - $children_reaped > MAX_CHILDREN
+          log(Process.pid, "too many active children #{$children_active - $children_reaped}/#{MAX_CHILDREN}")
+          session.close
+          $children_active -= 1
+          next
+        end
+      
+        line = session.recv(1000)
+        timeout = 30
+        if line =~ SERVICE_REGEXP
+          code = $1
+          service = $2
+          base_path = $3
+          host = $4
+        
+          path = File.expand_path("#{BASE_PATH}/#{base_path}")
+          if !path.index(BASE_PATH) == 0 || !File.directory?(path)
+            log(Process.pid, "Invalid path: #{base_path}")
+            session.close
+            $children_active -= 1
+            next
+          end
+        
+          if !File.exist?(File.join(path, "git-daemon-export-ok"))
+            session.close
+            $children_active -= 1
+            next
+          end
+        
+          Dir.chdir(path) do
+            cmd = "git-upload-pack --strict --timeout=#{timeout} ."
+          
+            fork do
+              repository = nil
+              
+              begin
+                repository = ::Repository.find_by_path(path)
+              rescue => e
+                log(Process.pid, "AR error: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
+              end
+              
+              pid = Process.pid
+              ip_family, port, name, ip = session.peeraddr
+              log(pid, "Connection from #{ip} for #{path.inspect}")
+            
+              $stdout.reopen(session)
+              $stdin.reopen(session)
+              session.close
+            
+              if repository
+                if ip_family == "AF_INET6"
+                  repository.cloned_from(ip)
+                else
+                  localization = @geoip.country(ip)
+                  repository.cloned_from(ip, localization[3], localization[5])
+                end
+              else
+                log(pid, "Cannot find repository: #{path}")
+              end
+            
+              exec(cmd)
+              $children_reaped += 1
+              exit!
+            end
+          end
+        else
+          $stderr.puts "Invalid request: #{line}"
+          session.close
+          $children_active -= 1
+          next
+        end
+      end
+    end
+  
+    def handle_stop(signal)
+      log(Process.pid, "Received #{signal}, exiting..")
+      exit 0
+    end
+  
+    def handle_cld
       pid = Process.wait
       $children_reaped += 1
       log(pid, "Disconnected. (status=#{$?.exitstatus})")
-      
-      $children_reaped = $children_active = 0 if $children_reaped == $children_active
-    end
     
-    port = 9418
-    server = TCPServer.new('localhost', port)
-    service_regexp = /(\w{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
-    while session = server.accept
-      $children_active += 1
-      
-      if $children_active - $children_reaped > MAX_CHILDREN
-        log(Process.pid, "too many active children #{$children_active - $children_reaped}/#{MAX_CHILDREN}")
-        session.close
-        # we didn't actually do the fork, so decrease the count
-        $children_active -= 1 
-        next
-      end
-      
-      line = session.recv(1000)
-      timeout = 30
-      if line =~ service_regexp
-        code = $1
-        service = $2
-        base_path = $3
-        host = $4
-        
-        path = "#{BASE_PATH}/#{base_path}"
-        if !File.join(File.expand_path(path)).index(BASE_PATH) == 0 || !File.directory?(path)
-          log(Process.pid, "Invalid path: #{base_path}")
-          session.close
-          $children_active -= 1
-          next
-        end
-        
-        if !File.exist?(File.join(path, "git-daemon-export-ok"))
-          session.close
-          $children_active -= 1
-          next
-        end
-        
-        Dir.chdir(path) do
-          cmd = "git-upload-pack --strict --timeout=#{timeout} ."
-          
-          fork do
-            repository = nil
-            begin
-              ActiveRecord::Base.allow_concurrency = true
-              repository = ::Repository.find_by_path(path)
-            rescue Exception
-            end
-            pid = Process.pid
-            ip_family, port, name, ip = session.peeraddr
-            log(pid, "Connection from #{ip} for #{path.inspect}")
-            
-            $stdout.reopen(session)
-            $stdin.reopen(session)
-            session.close
-            
-            if repository
-              if ip_family == "AF_INET6"
-                repository.cloned_from(ip)
-              else
-                localization = @geoip.country(ip)
-                repository.cloned_from(ip, localization[3], localization[5])
-              end
-            else
-              log(pid, "Cannot find repository: #{path}")
-            end
-            
-            exec(cmd)
-            $children_reaped += 1
-            exit!
-          end
-        end
-      else
-        $stderr.puts "Invalid request: #{line}"
-        session.close
-        $children_active -= 1 
-        next
+      if $children_reaped == $children_active
+        $children_reaped = 0
+        $children_active = 0 
       end
     end
+  
+    def log(pid, msg)
+      $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
+    end
+  
+  end
+end
+
+options = {
+  :port => 9418,
+  :host => "localhost",
+  :logfile => File.join(RAILS_ROOT, "log", "git-daemon.log"),
+  :daemonize => false
+  
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} start|stop [options]"
+
+  opts.on("-p", "--port", Integer, "Port to listen on") do |o|
+    options[:port] = o
+  end
+
+  opts.on("-h", "--host", "Host to listen on") do |o|
+    options[:host] = o
   end
   
-  def log(pid, msg)
-    $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
+  opts.on("-l", "--logfile", "File to log to") do |o|
+    options[:logfile] = o
   end
-end
+  
+  opts.on("-d", "--daemonize", "Daemonize or run in foreground (default)") do |o|
+    options[:daemonize] = o
+  end
+  
+  # opts.on("-e", "--environment", "RAILS_ENV to use") do |o|
+  #   options[:port] = o
+  # end
+end.parse!
 
-end
+#puts options.inspect
 
-trap "SIGINT" do
-  $stderr.puts "Exiting..."
-  exit 0
-end
+@git_daemon = Git::Daemon.new(options)
 
-Git::Daemon.start
+trap("SIGKILL")  { @git_daemon.handle_stop("SIGKILL") }
+trap("TERM")     { @git_daemon.handle_stop("TERM")    }
+trap("SIGINT")   { @git_daemon.handle_stop("SIGINT")  }
+trap("CLD")      { @git_daemon.handle_cld  }
+
+@git_daemon.start
+
+#Git::Daemon.start

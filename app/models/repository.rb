@@ -30,7 +30,8 @@ class Repository < ActiveRecord::Base
   end
   
   def self.find_by_path(path)
-    repo_name, project_name = (path.split('/') - GitoriousConfig['repository_base_path'].split('/')).reverse
+    base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
+    repo_name, project_name = base_path.split("/").reverse
     
     project = Project.find_by_slug!(project_name)
     project.repositories.find_by_name(repo_name.sub(/\.git/, ""))
