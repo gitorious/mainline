@@ -44,7 +44,10 @@ class Daemon
       $children_active += 1
       
       if $children_active - $children_reaped > MAX_CHILDREN
+        log(Process.pid, "too many active children #{$children_active - $children_reaped}/#{MAX_CHILDREN}")
         session.close
+        # we didn't actually do the fork, so decrease the count
+        $children_active -= 1 
         next
       end
       
@@ -57,14 +60,16 @@ class Daemon
         host = $4
         
         path = "#{BASE_PATH}/#{base_path}"
-				if !File.join(File.expand_path(path)).index(BASE_PATH) == 0 || !File.directory?(path)
+        if !File.join(File.expand_path(path)).index(BASE_PATH) == 0 || !File.directory?(path)
           log(Process.pid, "Invalid path: #{base_path}")
           session.close
+          $children_active -= 1
           next
         end
         
         if !File.exist?(File.join(path, "git-daemon-export-ok"))
           session.close
+          $children_active -= 1
           next
         end
         
@@ -87,18 +92,18 @@ class Daemon
             session.close
             
             if repository
-							if ip_family == "AF_INET6"
-								repository.cloned_from(ip)
-							else
-              	localization = @geoip.country(ip)
-              	repository.cloned_from(ip, localization[3], localization[5])
-							end
+              if ip_family == "AF_INET6"
+                repository.cloned_from(ip)
+              else
+                localization = @geoip.country(ip)
+                repository.cloned_from(ip, localization[3], localization[5])
+              end
             else
               log(pid, "Cannot find repository: #{path}")
             end
             
             exec(cmd)
-            
+            $children_reaped += 1
             exit!
           end
         end
