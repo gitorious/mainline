@@ -115,7 +115,7 @@ class Daemon
   end
   
   def log(pid, msg)
-    $stderr.puts "[#{pid}] #{msg}"
+    $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
   end
 end
 
