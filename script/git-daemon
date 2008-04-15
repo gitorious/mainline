@@ -79,7 +79,7 @@ class Daemon
             rescue Exception
             end
             pid = Process.pid
-            domain, port, name, ip = session.addr
+            ip_family, port, name, ip = session.peeraddr
             log(pid, "Connection from #{ip}")
             
             $stdout.reopen(session)
@@ -87,8 +87,12 @@ class Daemon
             session.close
             
             if repository
-              localization = @geoip.country(ip)
-              repository.cloned_from(ip, localization[3], localization[5])
+							if ip_family == "AF_INET6"
+								repository.cloned_from(ip)
+							else
+              	localization = @geoip.country(ip)
+              	repository.cloned_from(ip, localization[3], localization[5])
+							end
             else
               log(pid, "Cannot find repository: #{path}")
             end
