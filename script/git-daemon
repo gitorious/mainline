@@ -110,6 +110,8 @@ class Daemon
       else
         $stderr.puts "Invalid request: #{line}"
         session.close
+        $children_active -= 1 
+        next
       end
     end
   end
