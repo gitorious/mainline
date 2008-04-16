@@ -1,7 +1,9 @@
 <ul>
-  <% @users.each do |user| -%>
-    <li><span class="login"><%=h user.login -%></span>
-      <span class="email"><small>(<%=h user.email -%>)</small></span>
-    </li>
-  <% end -%>
+<% @users.each do |user| -%>
+<li class="committer">
+<div class="image"><%= gravatar user.email, :size => 32 -%></div>
+<div class="login"><%=h user.login -%></div>
+<div class="email"><span class="informal"><%=h user.email -%></span></div>
+</li>
+<% end -%>
 </ul>
