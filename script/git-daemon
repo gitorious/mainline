@@ -16,7 +16,7 @@ ActiveRecord::Base.clear_active_connections!
 
 BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
 
-MAX_CHILDREN = 35
+MAX_CHILDREN = 30
 $children_reaped = 0
 $children_active = 0
 
@@ -108,7 +108,7 @@ module Git
               $children_reaped += 1
               exit!
             end
-          end
+          end rescue Errno::EAGAIN
         else
           $stderr.puts "Invalid request: #{line}"
           session.close
@@ -124,13 +124,25 @@ module Git
     end
   
     def handle_cld
-      pid = Process.wait
-      $children_reaped += 1
-      log(pid, "Disconnected. (status=#{$?.exitstatus})")
-    
-      if $children_reaped == $children_active
-        $children_reaped = 0
-        $children_active = 0 
+      loop do
+        pid = nil
+        begin
+          pid = Process.wait(-1, Process::WNOHANG)
+        rescue Errno::ECHILD
+          break
+        end
+        
+        if pid
+          $children_reaped += 1
+          log(pid, "Disconnected. (status=#{$?.exitstatus})") if pid > 0
+          if $children_reaped == $children_active
+            $children_reaped = 0
+            $children_active = 0 
+          end
+          
+          next
+        end
+        break
       end
     end
   
@@ -143,7 +155,7 @@ end
 
 options = {
   :port => 9418,
-  :host => "localhost",
+  :host => "0.0.0.0",
   :logfile => File.join(RAILS_ROOT, "log", "git-daemon.log"),
   :daemonize => false
   
@@ -173,8 +185,6 @@ OptionParser.new do |opts|
   # end
 end.parse!
 
-#puts options.inspect
-
 @git_daemon = Git::Daemon.new(options)
 
 trap("SIGKILL")  { @git_daemon.handle_stop("SIGKILL") }
@@ -184,4 +194,3 @@ trap("CLD")      { @git_daemon.handle_cld  }
 
 @git_daemon.start
 
-#Git::Daemon.start
