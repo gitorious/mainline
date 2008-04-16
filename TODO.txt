@@ -1,5 +1,7 @@
 (in no particular order)
 
+* if you comment on a specific commit, you should get redirected back there
+* graphs should show username (if we have it) for avoiding confusion and for consistency
 ** Repository#commit_graph_data_by_author should just use git-shortlog summary instead of jumping through hoops about it
 
 >  If you do `git archive --format=tar --prefix=myproject/ HEAD | gzip >
