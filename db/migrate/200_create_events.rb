@@ -2,7 +2,7 @@ class CreateEvents < ActiveRecord::Migration
   def self.up
     create_table :events do |t|
       t.integer           :user_id, :null => false
-      t.integer           :action_id, :null => false
+      t.integer           :action, :null => false
       t.string            :data # Additional data
       t.text              :body
       t.datetime          :date, :null => false

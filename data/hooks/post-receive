@@ -83,48 +83,48 @@ while line = gets
     end
   }
   
-  action_name = ""
+  action_id = nil
   ref = nil
   if current_rev_type == "commit"
     if type == "heads"
       case action
         when :create
-          action_name = "create branch"
+          action_id = Action::CREATE_BRANCH
           ref = name
         when :update
-          action_name = "commit"
+          action_id = Action::COMMIT
           ref = current_rev
         when :delete
-          action_name = "delete branch"
+          action_id = Action::DELETE_BRANCH
           ref = name
       end
     elsif type == "tags"
       if action == :create
-        action_name = "create tag"
+        action_id = Action::CREATE_TAG
         ref = name
       elsif action == :delete
-        action_name = "delete tag"
+        action_id = Action::DELETE_TAG
         ref = name
       end
     end
   elsif current_rev_type == "tag"
     if type == "tags"
       if action == :create
-        action_name = "create tag"
+        action_id = Action::CREATE_TAG
         ref = name
       elsif action == :delete
-        action_name = "delete tag"
+        action_id = Action::DELETE_TAG
         ref = name
       end
     end
   end
   
-  next if action_name.empty?
+  next unless action_id
   
-  puts "#{hash[:author]}: #{action_name} #{ref} on #{slug} [#{hash[:date]}]"
+  puts "#{hash[:author]}: #{Action.name(action_id)} #{ref} on #{slug} [#{hash[:date]}]"
   puts "    #{hash[:message]}"
   
-  user.create_event(action_name, repository, ref, hash[:message])
+  user.create_event(action_id, repository, ref, hash[:message])
 end
 
 puts "=> Thanks! http://#{GitoriousConfig['gitorious_host']}/events"
