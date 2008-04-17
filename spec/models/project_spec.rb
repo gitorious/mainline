@@ -103,5 +103,15 @@ describe Project do
       project.send(attr).should == 'http://blah.com'
     end
   end
+  
+  it "should not prepend http:// to empty urls" do
+    project = projects(:johans)
+    [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
+      project.send("#{attr}=", '')
+      project.send(attr).should be_blank
+      project.send("#{attr}=", nil)
+      project.send(attr).should be_blank
+    end
+  end
 
 end
