@@ -46,7 +46,6 @@
 * improve commenting and comments visibility
 * handle mising/wrong SHA1s gracefully in browser
 * parse SHA1s in commits+comments
-* Normalize url fields (eg add http:// if it aint there) on User+Project
 * Detect renames etc when showing a commit
 * Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
 ---
