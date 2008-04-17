@@ -12,7 +12,7 @@ describe EventsController do
     end
     
     it "shows news" do
-      Event.from_action_name("create project", users(:johan), @repository)
+      users(:johan).create_event(Action::CREATE_PROJECT, @repository, "", "")
       do_get
       response.should be_success
     end

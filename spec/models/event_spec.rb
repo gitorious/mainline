@@ -3,11 +3,13 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe Event do
   before(:each) do
     @event = new_event
+    @user = users(:johan)
+    @repository = repositories(:johans)
   end
   
   def new_event(opts={})
     c = Event.new({
-      :repository => repositories(:johans),
+      :target => repositories(:johans),
       
       :date => Time.now,
       :body => "blabla"
@@ -21,13 +23,11 @@ describe Event do
   end
   
   it "should create an event from the action name" do
-    event = Event.from_action_name("create project", users(:johan), repositories(:johans))
-    event.should_not == nil
+    @user.create_event(Action::CREATE_PROJECT, @repository, "", "").should_not == nil
   end
   
-  it "should not create an event without a valid name" do
-    event = Event.from_action_name("invalid action", users(:johan), repositories(:johans))
-    event.should == nil
+  it "should create an event even without a valid id" do
+    @user.create_event(52342, @repository).should_not == nil
   end
   
   

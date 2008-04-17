@@ -34,9 +34,9 @@ describe GitBackend do
     path = @repository.full_repository_path 
     FileUtils.should_receive(:mkdir_p).with(path, :mode => 0750).and_return(true)
     FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
-    GitBackend.should_receive(:execute_command).with(
-      %Q{chmod +x #{File.join(path, "hooks/post-update")}}
-    ).and_return(true)
+#     GitBackend.should_receive(:execute_command).with(
+#       %Q{chmod +x #{File.join(path, "hooks/post-update")}}
+#     ).and_return(true)
     GitBackend.should_receive(:execute_command).with(
       %Q{GIT_DIR="#{path}" git-update-server-info}
     ).and_return(true)
@@ -48,9 +48,9 @@ describe GitBackend do
     source_path = @repository.full_repository_path 
     target_path = repositories(:johans).full_repository_path 
     FileUtils.should_receive(:touch).with(File.join(target_path, "git-daemon-export-ok"))
-    GitBackend.should_receive(:execute_command).with(
-      %Q{chmod +x #{File.join(target_path, "hooks/post-update")}}
-    ).and_return(true)
+#     GitBackend.should_receive(:execute_command).with(
+#       %Q{chmod +x #{File.join(target_path, "hooks/post-update")}}
+#     ).and_return(true)
     GitBackend.should_receive(:execute_command).with(
       %Q{GIT_DIR="#{target_path}" git-update-server-info}
     ).and_return(true)
