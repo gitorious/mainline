@@ -28,7 +28,7 @@
   :url => {:controller => "committers", :action => "create"}, :method => :post do |f| -%>
   <p>
     <%= f.label :login, "Existing username <small>(search-as-you-type)</small>" -%><br />
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true -%>
+    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
   </p>
   <p>
     <%= f.submit "Add as committer" -%> or <%= link_to "cancel", [@repository.project, @repository] -%>
