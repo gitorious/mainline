@@ -19,6 +19,9 @@
       <td class="meta commit_message">
         <%= link_to truncate(h(last_commit.message), 75, "&hellip;"), commit_path(last_commit.id) -%>
       </td>
+    <% else -%>
+      <td class="meta"></td>
+      <td class="meta commit_message"></td>
     <% end -%>
   </tr>
   <% end -%>
