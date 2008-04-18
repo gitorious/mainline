@@ -1,5 +1,12 @@
 (in no particular order)
 
+two from Yurii:
+1) show commits actually merged for merge request after actual merge (I see them on open request, but do not on merged one) 
+2) provide clone url on every repo browsing page, so I can get url to pull from even if I am reading a commit
+
+* tree browser: deal better with funny characters: http://gitorious.org/projects/avara/repos/mainline/trees/master
+* if you comment on a specific commit, you should get redirected back there
+* graphs should show username (if we have it) for avoiding confusion and for consistency
 ** Repository#commit_graph_data_by_author should just use git-shortlog summary instead of jumping through hoops about it
 
 >  If you do `git archive --format=tar --prefix=myproject/ HEAD | gzip >
@@ -44,7 +51,6 @@
 * improve commenting and comments visibility
 * handle mising/wrong SHA1s gracefully in browser
 * parse SHA1s in commits+comments
-* Normalize url fields (eg add http:// if it aint there) on User+Project
 * Detect renames etc when showing a commit
 * Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
 ---
