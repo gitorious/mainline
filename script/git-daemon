@@ -33,6 +33,9 @@ module Git
     def start
       if @options[:daemonize]
         daemonize(@options[:logfile])
+        File.open(@options[:pidfile], "w") do |f| 
+          f.write(Process.pid)
+        end
       end
       @socket = TCPServer.new(@options[:host], @options[:port])
       log(Process.pid, "Listening on #{@options[:host]}:#{@options[:port]}...")
@@ -160,6 +163,7 @@ options = {
   :port => 9418,
   :host => "0.0.0.0",
   :logfile => File.join(RAILS_ROOT, "log", "git-daemon.log"),
+  :pidfile => File.join(RAILS_ROOT, "log", "git-daemon.pid"),
   :daemonize => false
   
 }
@@ -177,6 +181,10 @@ OptionParser.new do |opts|
   
   opts.on("-l", "--logfile", "File to log to") do |o|
     options[:logfile] = o
+  end
+  
+  opts.on("-l", "--logfile", "PID file to use (if daemonized)") do |o|
+    options[:pidfile] = o
   end
   
   opts.on("-d", "--daemonize", "Daemonize or run in foreground (default)") do |o|
