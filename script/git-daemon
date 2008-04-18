@@ -43,20 +43,15 @@ module Git
     end
       
     def run
-      begin
-        while session = @socket.accept_nonblock
-          connections = $children_active - $children_reaped
-          if connections > MAX_CHILDREN
-            log(Process.pid, "too many active children #{connections}/#{MAX_CHILDREN}")
-            session.close
-            next
-          end
-          
-          run_service(session)
+      while session = @socket.accept
+        connections = $children_active - $children_reaped
+        if connections > MAX_CHILDREN
+          log(Process.pid, "too many active children #{connections}/#{MAX_CHILDREN}")
+          session.close
+          next
         end
-      rescue Errno::EAGAIN, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
-        IO.select([@socket])
-        retry
+        
+        run_service(session)
       end
     end
     
