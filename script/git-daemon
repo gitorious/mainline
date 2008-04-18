@@ -61,6 +61,7 @@ module Git
       line = session.recv(1000)
       
       if line =~ SERVICE_REGEXP
+        start_time = Time.now
         code = $1
         service = $2
         base_path = $3
@@ -110,6 +111,7 @@ module Git
             else
               log(pid, "Cannot find repository: #{path}")
             end
+            log(Process.pid, "Deferred in #{'%0.5f' % (Time.now - start_time)}s")
             
             exec(cmd)
             # FIXME; we don't ever get here since we exec(), so reaped count may be incorrect 
