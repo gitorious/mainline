@@ -44,7 +44,7 @@ module Git
       
     def run
       begin
-        while session = @socket.accept
+        while session = @socket.accept_nonblock
           connections = $children_active - $children_reaped
           if connections > MAX_CHILDREN
             log(Process.pid, "too many active children #{connections}/#{MAX_CHILDREN}")
