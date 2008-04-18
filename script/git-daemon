@@ -27,7 +27,6 @@ module Git
     
     def initialize(options)
       @options = options
-      @geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
     end
     
     def start
@@ -57,6 +56,7 @@ module Git
     
     def run_service(session)
       $children_active += 1
+      ip_family, port, name, ip = session.peeraddr
       
       line = session.recv(1000)
       
@@ -94,7 +94,6 @@ module Git
             end
             
             pid = Process.pid
-            ip_family, port, name, ip = session.peeraddr
             log(pid, "Connection from #{ip} for #{path.inspect}")
           
             $stdout.reopen(session)
@@ -105,7 +104,8 @@ module Git
               if ip_family == "AF_INET6"
                 repository.cloned_from(ip)
               else
-                localization = @geoip.country(ip)
+                geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
+                localization = geoip.country(ip)
                 repository.cloned_from(ip, localization[3], localization[5])
               end
             else
@@ -120,7 +120,7 @@ module Git
           end
         end rescue Errno::EAGAIN
       else
-        $stderr.puts "Invalid request: #{line}"
+        $stderr.puts "Invalid request from #{ip}: #{line}"
         session.close
         $children_active -= 1
       end
