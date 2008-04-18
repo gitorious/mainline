@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+argentina:
+  ip: 200.45.34.21
+  country: Argentina
+  country_code: AR
+  date: 2008-04-13 23:40:30
+
+mexico:
+  ip: 200.53.12.21
+  country: Mexico
+  country_code: MX
+  date: 2008-04-13 23:40:30
