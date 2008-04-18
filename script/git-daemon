@@ -171,26 +171,31 @@ options = {
 }
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: #{$0} start|stop [options]"
+  opts.banner = "Usage: #{$0} [options]"
 
-  opts.on("-p", "--port", Integer, "Port to listen on") do |o|
+  opts.on("-p", "--port=[port]", Integer, "Port to listen on", "Default: #{options[:port]}") do |o|
     options[:port] = o
   end
 
-  opts.on("-h", "--host", "Host to listen on") do |o|
+  opts.on("-a", "--address=[host]", "Host to listen on", "Default: #{options[:host]}") do |o|
     options[:host] = o
   end
   
-  opts.on("-l", "--logfile", "File to log to") do |o|
+  opts.on("-l", "--logfile=[file]", "File to log to", "Default: #{options[:logfile]}") do |o|
     options[:logfile] = o
   end
   
-  opts.on("-l", "--logfile", "PID file to use (if daemonized)") do |o|
+  opts.on("-P", "--pidfile=[file]", "PID file to use (if daemonized)", "Default: #{options[:pidfile]}") do |o|
     options[:pidfile] = o
   end
   
-  opts.on("-d", "--daemonize", "Daemonize or run in foreground (default)") do |o|
+  opts.on("-d", "--daemonize", "Daemonize or run in foreground", "Default: #{options[:daemonize]}") do |o|
     options[:daemonize] = o
+  end
+  
+  opts.on_tail("-h", "--help", "Show this help message.") do
+    puts opts
+    exit
   end
   
   # opts.on("-e", "--environment", "RAILS_ENV to use") do |o|
