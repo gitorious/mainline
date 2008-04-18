@@ -10,12 +10,11 @@ ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__)+'/../config/environment'
 
 Rails.configuration.log_level = :info # Disable debug
-ActiveRecord::Base.logger = nil
 ActiveRecord::Base.allow_concurrency = true
-ActiveRecord::Base.clear_active_connections!
 
 BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
 
+TIMEOUT = 30
 MAX_CHILDREN = 30
 $children_reaped = 0
 $children_active = 0
@@ -24,7 +23,7 @@ module Git
   class Daemon
     include Daemonize
     
-    SERVICE_REGEXP = /(\w{4})(git-[\w-]+)\s(.+)\x0host=([\w\.\-]+)/.freeze
+    SERVICE_REGEXP = /(\w{4})(git\-upload\-pack)\s(.+)\x0host=([\w\.\-]+)/.freeze
     
     def initialize(options)
       @options = options
@@ -57,7 +56,7 @@ module Git
       $children_active += 1
       
       line = session.recv(1000)
-      timeout = 30
+      
       if line =~ SERVICE_REGEXP
         code = $1
         service = $2
@@ -79,7 +78,7 @@ module Git
         end
       
         Dir.chdir(path) do
-          cmd = "git-upload-pack --strict --timeout=#{timeout} ."
+          cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
         
           fork do
             repository = nil
@@ -108,8 +107,9 @@ module Git
             else
               log(pid, "Cannot find repository: #{path}")
             end
-          
+            
             exec(cmd)
+            # FIXME; we don't ever get here since we exec(), so reaped count may be incorrect 
             $children_reaped += 1
             exit!
           end
