@@ -28,6 +28,7 @@ ActionController::Routing::Routes.draw do |map|
     :forgot_password => :get,
     :reset_password => :post,
   }
+  map.resources  :events
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"

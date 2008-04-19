@@ -7,7 +7,9 @@ class GitBackend
     def create(repos_path, set_export_ok = true)
       FileUtils.mkdir_p(repos_path, :mode => 0750)
       Dir.chdir(repos_path) do |path| 
-        Git.init(path, :repository => path)
+        template = File.expand_path(File.join(File.dirname(__FILE__), "../data/git-template"))
+        git = Grit::Git.new(path)
+        git.init({}, "--template=#{template}")
         post_create(path) if set_export_ok
       end
     end
@@ -15,7 +17,9 @@ class GitBackend
     # Clones a new bare Git repository at +target-path+ from +source_path+
     # sets git-daemon-export-ok if +set_export_ok+ is true (default)
     def clone(target_path, source_path, set_export_ok = true)
-      Git.clone(source_path, target_path, :bare => true)
+      template = File.expand_path(File.join(File.dirname(__FILE__), "../data/git-template"))
+      git = Grit::Git.new(target_path)
+      git.clone({:bare => true}, "--template=#{template}", source_path, target_path)
       post_create(target_path) if set_export_ok
     end
     
@@ -34,7 +38,6 @@ class GitBackend
     protected
       def post_create(path)
         FileUtils.touch(File.join(path, "git-daemon-export-ok"))
-        execute_command(%Q{chmod +x #{File.join(path, "hooks/post-update")}})
         execute_command(%Q{GIT_DIR="#{path}" git-update-server-info})
       end
       
@@ -43,3 +46,4 @@ class GitBackend
       end
   end
 end
+

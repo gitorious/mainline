@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require 'tmpdir'
 
 describe GitBackend do
   before(:each) do
@@ -7,17 +8,35 @@ describe GitBackend do
       :project => projects(:johans),
       :user => users(:johan)
     })
+    
+    FileUtils.mkdir_p(@repository.full_repository_path, :mode => 0755)
   end
+  
+  def push_something
+    path = File.join(Dir.tmpdir, "gitorious.test")
+    FileUtils.mkpath(path)
+    
+    Dir.chdir(path) do
+      File.open("something", "w") do |file|
+        file << "dummy #{rand}\n"
+      end
+      
+      git = Grit::Git.new(File.join(path, ".git"))
+      git.init({}, "--shared")
+      git.add({}, "something")
+      git.commit({:m => true}, "message")
+      git.push({:all => true}, @repository.full_repository_path)
+    end
+  end
+  
   
   it "creates a bare git repository" do
     path = @repository.full_repository_path 
     FileUtils.should_receive(:mkdir_p).with(path, :mode => 0750).and_return(true)
-    Dir.should_receive(:chdir).with(path).and_yield(path)
-    Git.should_receive(:init).with(path, :repository => path).and_return(true)
     FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
-    GitBackend.should_receive(:execute_command).with(
-      %Q{chmod +x #{File.join(path, "hooks/post-update")}}
-    ).and_return(true)
+#     GitBackend.should_receive(:execute_command).with(
+#       %Q{chmod +x #{File.join(path, "hooks/post-update")}}
+#     ).and_return(true)
     GitBackend.should_receive(:execute_command).with(
       %Q{GIT_DIR="#{path}" git-update-server-info}
     ).and_return(true)
@@ -28,16 +47,17 @@ describe GitBackend do
   it "clones an existing repos into a bare one" do
     source_path = @repository.full_repository_path 
     target_path = repositories(:johans).full_repository_path 
-    Git.should_receive(:clone).with(source_path, target_path, :bare => true).and_return(true)
     FileUtils.should_receive(:touch).with(File.join(target_path, "git-daemon-export-ok"))
-    GitBackend.should_receive(:execute_command).with(
-      %Q{chmod +x #{File.join(target_path, "hooks/post-update")}}
-    ).and_return(true)
+#     GitBackend.should_receive(:execute_command).with(
+#       %Q{chmod +x #{File.join(target_path, "hooks/post-update")}}
+#     ).and_return(true)
     GitBackend.should_receive(:execute_command).with(
       %Q{GIT_DIR="#{target_path}" git-update-server-info}
     ).and_return(true)
       
+    push_something
     GitBackend.clone(target_path, source_path)
+#     File.exist?(File.join(target_path, "hooks")).should == false
   end
   
   it "deletes a git repository" do

@@ -9,8 +9,9 @@ class Project < ActiveRecord::Base
     :class_name => "Repository"
   has_many    :repository_clones, :conditions => ["mainline = ?", false],
     :class_name => "Repository"
-
-  is_indexed :fields => ["title", "description", "slug"],
+  has_many    :events, :as => :target, :dependent => :destroy
+  
+  is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
       { :class_name => 'Tag',
         :field => 'name',

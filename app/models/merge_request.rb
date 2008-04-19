@@ -2,6 +2,7 @@ class MergeRequest < ActiveRecord::Base
   belongs_to :user
   belongs_to :source_repository, :class_name => 'Repository'
   belongs_to :target_repository, :class_name => 'Repository'
+  has_many   :events, :as => :target, :dependent => :destroy
   
   is_indexed :fields => ["proposal"], :include => [{
       :association_name => "user",

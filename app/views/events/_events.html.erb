@@ -1,0 +1,18 @@
+<ul class="project_list">
+<% events.reverse_each do |event| -%>
+  <% action, body = action_and_body_for_event(event) %>
+  <li>
+    <div style="margin: 20px; padding-bottom: 10px;" >
+      <% unless action.empty? %>
+      <%= link_to event.user.login, user_path(event.user) %> <%= action %> <%= time_ago_in_words(event.date) %>
+      <% end %><br/>
+      <div style="float: left; margin: 5px;">
+        <%= gravatar(event.user.email, :size => 32)  %>
+      </div>
+      <% if body %>
+        <%= body %>
+      <% end %>
+    </div>
+  </li>
+<% end -%>
+</ul>

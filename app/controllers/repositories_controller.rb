@@ -61,6 +61,8 @@ class RepositoriesController < ApplicationController
     
     respond_to do |format|
       if @repository.save
+        current_user.create_event(Action::CLONE_REPOSITORY, @repository, @repository_to_clone.id)
+        
         location = project_repository_path(@project, @repository)
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }        
@@ -89,8 +91,10 @@ class RepositoriesController < ApplicationController
   def destroy
     @repository = @project.repositories.find_by_name!(params[:id])
     if @repository.can_be_deleted_by?(current_user)
+      repo_name = @repository.name
       flash[:notice] = "The repository was deleted"
       @repository.destroy
+      current_user.create_event(Action::DELETE_REPOSITORY, @project, repo_name)
     else
       flash[:error] = "You're not the owner of this repository"
     end

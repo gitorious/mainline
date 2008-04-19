@@ -4,6 +4,7 @@ require "ostruct"
 describe Repository do
   before(:each) do
     @repository = new_repos
+    FileUtils.mkdir_p(@repository.full_repository_path, :mode => 0755)
   end
   
   def new_repos(opts={})
@@ -12,6 +13,23 @@ describe Repository do
       :project => projects(:johans),
       :user => users(:johan)
     }.merge(opts))
+  end
+  
+  def push_something
+    path = File.join(Dir.tmpdir, "gitorious.test")
+    FileUtils.mkpath(path)
+    
+    Dir.chdir(path) do
+      File.open("something", "w") do |file|
+        file << "dummy #{rand}\n"
+      end
+      
+      git = Grit::Git.new(File.join(path, ".git"))
+      git.init({}, "--shared")
+      git.add({}, "something")
+      git.commit({:m => true}, "message")
+      git.push({:all => true}, @repository.full_repository_path)
+    end
   end
   
   it "should have valid associations" do
@@ -87,16 +105,37 @@ describe Repository do
   end
   
   it "inits the git repository" do
-    Repository.git_backend.should_receive(:create).with(@repository.full_repository_path).and_return(true)
+    path = @repository.full_repository_path
+    Repository.git_backend.should_receive(:create).with(path).and_return(true)
     Repository.create_git_repository(@repository.gitdir)
+    
+    File.exist?(path).should == true
+    
+    Dir.chdir(path) do
+      hooks = File.join(path, "hooks")
+      File.exist?(hooks).should == true
+      File.symlink?(hooks).should == true
+      File.symlink?(File.expand_path(File.readlink(hooks))).should == true
+    end
   end
   
   it "clones a git repository" do
     source = repositories(:johans)
     target = @repository
+    target_path = @repository.full_repository_path
+    
     Repository.git_backend.should_receive(:clone).with(target.full_repository_path, 
       source.full_repository_path).and_return(true)
+    
+    push_something
     Repository.clone_git_repository(target.gitdir, source.gitdir)
+    
+    Dir.chdir(target_path) do
+      hooks = File.join(target_path, "hooks")
+      File.exist?(hooks).should == true
+      File.symlink?(hooks).should == true
+      File.symlink?(File.expand_path(File.readlink(hooks))).should == true
+    end
   end
   
   it "deletes a repository" do
