@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   has_many :repositories, :through => :committerships
   has_many :ssh_keys, :order => "id desc"
   has_many :comments
-  has_many :events, :order => "events.date asc"
+  has_many :events, :order => "events.created_at asc"
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
@@ -121,7 +121,7 @@ class User < ActiveRecord::Base
   end
   
   def create_event(action_id, target, data = nil, body = nil)
-    return events.create(:action => action_id, :target => target, :body => body, :data => data, :date => Time.now)
+    events.create(:action => action_id, :target => target, :body => body, :data => data)
   end
   
   protected

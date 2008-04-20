@@ -18,6 +18,7 @@ end
 git = Grit::Git.new(gitdir)
 
 while line = gets
+  puts "@@> #{line.inspect}"
   oldrev, newrev, revname = line.split(" ")
   current_rev = newrev
   newtype = oldtype = current_rev_type = "commit"

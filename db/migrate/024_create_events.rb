@@ -5,10 +5,11 @@ class CreateEvents < ActiveRecord::Migration
       t.integer           :action, :null => false
       t.string            :data # Additional data
       t.text              :body
-      t.datetime          :date, :null => false
       
       t.integer           :target_id
       t.string            :target_type
+      
+      t.timestamps
     end
     
     add_index :events, :user_id

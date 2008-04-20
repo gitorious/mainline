@@ -10,8 +10,6 @@ describe Event do
   def new_event(opts={})
     c = Event.new({
       :target => repositories(:johans),
-      
-      :date => Time.now,
       :body => "blabla"
     }.merge(opts))
     c.user = opts[:user] || users(:johan)
