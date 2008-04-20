@@ -113,5 +113,34 @@ describe Project do
       project.send(attr).should be_blank
     end
   end
+  
+  describe "Project events" do
+    before(:each) do 
+      @project = projects(:johans)
+      @user = users(:johan)
+      @repository = @project.repositories.first
+    end
+    
+    it "should create an event from the action name" do
+      @project.create_event(Action::CREATE_PROJECT, @repository, @user, "", "").should_not == nil
+    end
+  
+    it "should create an event even without a valid id" do
+      @project.create_event(52342, @repository, @user).should_not == nil
+    end
+    
+    it "creates valid attributes on the event" do
+      e = @project.create_event(Action::COMMIT, @repository, @user, "somedata", "a body")
+      e.should be_valid
+      e.new_record?.should == false
+      e.reload
+      e.action.should == Action::COMMIT
+      e.target.should == @repository
+      e.project.should == @project
+      e.user.should == @user
+      e.data.should == "somedata"
+      e.body.should == "a body"
+    end
+  end
 
 end

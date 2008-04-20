@@ -120,10 +120,6 @@ class User < ActiveRecord::Base
     super({:except => [:activation_code, :crypted_password, :remember_token, :remember_token_expires_at, :salt, :ssh_key_id]}.merge(opts))
   end
   
-  def create_event(action_id, target, data = nil, body = nil)
-    events.create(:action => action_id, :target => target, :body => body, :data => data)
-  end
-  
   protected
     # before filter 
     def encrypt_password

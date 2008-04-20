@@ -70,6 +70,7 @@ while line = gets
   
   user = User.find_by_email(hash[:email])
   if user.nil?
+    # TODO: no user should be ok, no need to skip
     $stdout.puts "** The email '#{hash[:email]}' is not registered."
     next
   end
@@ -122,10 +123,10 @@ while line = gets
   
   next unless action_id
   
-  puts "#{hash[:author]}: #{Action.name(action_id)} #{ref} on #{slug} [#{hash[:date]}]"
-  puts "    #{hash[:message]}"
+  # puts "#{hash[:author]}: #{Action.name(action_id)} #{ref} on #{slug} [#{hash[:date]}]"
+  # puts "    #{hash[:message]}"
   
-  user.create_event(action_id, repository, ref, hash[:message])
+  project.create_event(action_id, repository, user, ref, hash[:message])
 end
 
 puts "=> Thanks! http://#{GitoriousConfig['gitorious_host']}/events"

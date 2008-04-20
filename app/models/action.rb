@@ -30,7 +30,7 @@ class Action
       when DELETE_REPOSITORY
         "delete repository"
       when COMMIT
-        "delete commit"
+        "commit"
       when CREATE_BRANCH
         "create branch"
       when DELETE_BRANCH

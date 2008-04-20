@@ -4,7 +4,7 @@
   <li>
     <div style="margin: 20px; padding-bottom: 10px;" >
       <% unless action.empty? %>
-      <%= link_to event.user.login, user_path(event.user) %> <%= action %> <%= time_ago_in_words(event.date) %>
+      <%= link_to event.user.login, user_path(event.user) %> <%= action %> <%= time_ago_in_words(event.created_at) %>
       <% end %><br/>
       <div style="float: left; margin: 5px;">
         <%= gravatar(event.user.email, :size => 32)  %>
