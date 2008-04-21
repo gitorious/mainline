@@ -62,7 +62,7 @@
 </table>
 
 <% content_for :submenu do -%>
-<% if @project.admin?(current_user) -%>
-  <li><%= link_to "Edit project", edit_project_path(@project) -%>)</li>
-<% end -%>  
+  <% if @project.admin?(current_user) -%>
+    <li><%= link_to "Project Settings", edit_project_path(@project) -%></li>
+  <% end -%>  
 <% end -%>

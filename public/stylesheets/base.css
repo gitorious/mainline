@@ -25,9 +25,10 @@ input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inhe
 body {
 	font-size: 13px;
 	line-height: 1.461em;
-  background: #fff;
+  background: #dee7ed;
   color: #000;
-  font-family: Georgia, Times, "Times new Roman", serif;
+/*  font-family: Georgia, Times, "Times new Roman", serif;*/
+  font-family: "Helvetica", Arial, sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -66,7 +67,7 @@ p, ul, blockquote, pre, td, th, label {
 	margin-bottom: 1.461em;
 }
 p, ul, blockquote, td, th, label {
-	font-family: "Bitstream Vera Serif", Georgia, Times, "Times new Roman", serif;
+/*  font-family: "Bitstream Vera Serif", Georgia, Times, "Times new Roman", serif;*/
 }
 
 p.small {
@@ -80,12 +81,13 @@ table {
 	margin-bottom: 1.461em;
 }
 code, pre, tt {
-  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  /*font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;*/
+  font-size: 95%;
+  line-height: 105%;
 }
 a {
-/*  color: #630;*/
-/*  color: #811E00;*/
-  color: #e7371a;
+/*  color: #e7371a;*/
+  color: #390;
   text-decoration: none;
 }
 a:hover {
@@ -125,37 +127,37 @@ abbr {
   height: 0;
 }
 
-#container {
-  width: 90%;
-  margin-top: 20px;
-}
-
 #header {
   background: #292929;
-  padding-left: 0.5em;
+  padding-left: 20px;
+  height: 125px;
 }
 
 #header #logo {
-  padding: 10px 0 20px 30px;
+  padding: 10px 0 15px 0;
   line-height: 100%;
   margin:0;
 }
 #header #logo a { color: #666; }
 
-#container #main {
+#header #project_title  a {
+  color: #aaa;
+  letter-spacing: 0.05em;
+}
+
+#container {
   min-height: 300px;
-  width:100%;
+  margin-right: 40px;
+  background: #fff url("/images/maincontent-border-right.gif") top right repeat-y;
+  padding: 20px 22px 20px 20px;
+}
+#container.in-context-mode {
+  border-top: 1px solid #a7afb5;
+}
+
+#container #content {
   float:left;
-  margin-right: -160px;
-}
-#container #content { /* when there's no sidebar*/
-  margin: 0 0 1em 2.5em;
-}
-#container #main #content { /* when there's sidebar contents */
-  margin:0;
-  margin-right: 160px;
-  margin-top: 20px;
-  padding: 0 1em 1em 2em;
+  position: relative;
 }
 #container #sidebar {
   margin-top: 20px;
@@ -247,31 +249,35 @@ abbr {
   border-bottom: 2px solid #eab239;
 }
 
+/* Round corners */
+.round-tl-5 { -moz-border-radius-topleft: 5px; }
+.round-tr-5 { -moz-border-radius-topright: 5px; }
+.round-bl-5 { -moz-border-radius-bottomleft: 5px; }
+.round-br-5 { -moz-border-radius-bottomright: 5px; }
+
+
 /* submenu */
 #submenu {
 /*  font-size: 90%;*/
   list-style: none;
-  margin: 0 0 0 30px;
+  margin: 0;
+  padding-top: 11px;
+  line-height:100%;
 }
 
 #submenu li {
   display: inline;
   margin-right: 20px;
 }
-#submenu li.menu_title {
-  color: #ccc;
-  margin-right: 5px;
-  margin-left: 20px;
-}
 
 #submenu li a { 
   font-size: 12px;
-  background: #9cce2e;
-  color: #09460f;
-  padding: 5px 10px 3px 10px;
+  background: #555;
+  color: #fff;
+  padding: 10px 15px 8px 15px;
 }
 #submenu li.selected a {
-  background: #fff;
+  background: #dee7ed;
   color: #000;
 }
 
@@ -282,8 +288,37 @@ abbr {
 }
 
 #submenu li.selected a:hover {
-  background: #fff;
+  background: #dee7ed;
   color: #000;
+}
+
+/* context menu */
+
+#contextmenu {
+  list-style: none;
+  margin: 0;
+  line-height: 100%;
+  margin-left: 10px;
+  background: #dee7ed;
+  height: 30px;
+}
+
+#contextmenu li {
+  float: left;
+  position: relative;
+  display: block;
+}
+
+#contextmenu li a {
+  padding: 10px 10px 7px 10px;
+  float: left;
+  position: relative;
+  display: block;
+  color: #555;
+}
+#contextmenu li a:hover {
+  text-decoration: none;
+  color: #390; /* #62b0e4 */
 }
 
 /* Forms */
@@ -427,7 +462,6 @@ table.repository_list tr.clone td.name {
 
 #projects .infobox {
 	float: right;
-	width: 30%;
 	margin: 0 0 10px 10px;
 	font-size: 93%;
 }

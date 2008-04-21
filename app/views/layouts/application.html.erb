@@ -47,44 +47,28 @@
         <li class="secondary"><%= link_to "Login", login_path -%></li>
       <%- end -%>
     </ul>
+    <% if @project -%>
+    <h2 id="project_title"><%= link_to h(@project.title), @project -%></h2>
     <ul id="submenu">
-      <% if @project -%>
-        <li class="<%= selected_if_current_page(project_path(@project)) -%>">
-          <%= link_to h(@project.title), project_path(@project) -%>
-        </li>
-        <% if @repository -%>
-          <!-- <li class="menu_title"><%= h(@repository.name) -%>:</li> -->
-          <li class="<%= selected_if_current_page(project_repository_path(@project, @repository)) -%>">
-            <%= link_to "#{h(@repository.name)} repository", project_repository_path(@project, @repository) -%>
-          </li>
-          <li class="<%= selected_if_current_page(project_repository_logs_path(@project, @repository), slack=true) -%>">
-            <%= link_to "Commits", project_repository_logs_path(@project, @repository) -%>
-          </li>
-          <% if @repository.head_candidate -%>
-          <li class="<%= selected_if_current_page(project_repository_tree_path(@project, @repository, @repository.head_candidate.name), slack=true) -%>">
-            <%= link_to "Source Tree", project_repository_tree_path(@project, @repository, @repository.head_candidate.name) -%>
-          </li>
-          <% end -%>
-        <% end -%>
-      <% end -%>
-      <%= yield :submenu -%>
+      <li class="selected"><%= link_to "Overview", project_path(@project), :class => "round-tl-5 round-tr-5" -%></li>
+      <li><%= link_to "Repositories", project_repositories_path(@project), :class => "round-tl-5 round-tr-5" -%></li>
     </ul>
+    <% end -%>
   </div>
-  <div id="container">
-    <% unless @content_for_sidebar.blank? -%>
-    <div id="main">
-    <% end -%>
-      <div id="content">
-        <%= flashes %>
-        <%= yield -%>
+  <% unless @content_for_submenu.blank? -%>
+  <ul id="contextmenu">
+    <%= yield :submenu -%>
+  </ul>
+  <% end -%>
+  <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
+    <div id="content">
+      <%= flashes %>
+      <%= yield -%>
+      <!-- <div id="sidebar">
+        <%= yield :sidebar -%>
       </div>
-    <% unless @content_for_sidebar.blank? -%>
+      <div class="clear"></div> -->
     </div>
-    <div id="sidebar">
-      <%= yield :sidebar -%>
-    </div>
-    <div class="clear"></div>
-    <% end -%>
     <div id="footer">
       <ul>
         <li><%= link_to "Home", root_path -%> | </li>
