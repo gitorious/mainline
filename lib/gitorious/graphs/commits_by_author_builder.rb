@@ -25,6 +25,7 @@ module Gitorious
         @graph.legend_font_size = 32
         @graph.top_margin = 1
         @graph.bottom_margin = 1
+        @graph.no_data_message = ""
       end
       
       def build
