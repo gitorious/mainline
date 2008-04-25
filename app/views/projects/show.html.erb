@@ -1,68 +1,56 @@
 <% @page_title = @project.title -%>
 <h1><%=h @project.title -%></h1>
 
-<div class="infobox">
-  <ul>
-    <li><strong>Labels:</strong> 
-      <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
-    <li><strong>License:</strong> <%= h(@project.license) -%></li>
-    <li><strong>Owner:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
-    <li><strong>Created:</strong> <%= @project.created_at.to_s(:short) -%></li>
-    <% unless @project.home_url.blank? -%>
-    <li><strong>Website at </strong> 
-      <%= link_to base_url(@project.home_url), h(@project.home_url) -%></li>
-    <% end -%>
-    <% unless @project.mailinglist_url.blank? -%>
-    <li><strong>Mailinglist at </strong> 
-      <%= link_to base_url(@project.mailinglist_url), h(@project.mailinglist_url) -%></li>
-    <% end -%>
-    <% unless @project.bugtracker_url.blank? -%>
-    <li><strong>Bugtracker at </strong> 
-      <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
-    <% end -%>
-  </ul>
-</div>
-
 <div class="page">
   <%= auto_link(markdown(sanitize(@project.description)), :urls) -%>
 </div>
 
-<h2 class="clear">Associated repositories</h2>
-<table class="repository_list listing">
-  <thead>
-    <th>Name</th>
-    <th>Owner</th>
-    <th>Last Commit</th>
-    <th></th>
-    <th></th>
-  </thead>
-  <% commits = [] -%>
-  <% repositories = @repositories.sort_by { |e| if e.last_commit then commits << e.last_commit; e.mainline? ? Time.now : e.last_commit.committed_date; else Time.at(0); end } %>
-  <% repositories.reverse_each do |repos| # FIXME: need to graph the parent relation proper -%>
-    <tr class="<%= cycle("even", "odd") -%> <%= repos.mainline? ? "mainline" : "clone" -%>">
-      <td class="name">
-        <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-      </td>
-      <td>
-        <%= gravatar_frame(repos.user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(repos.user.login), user_path(repos.user) -%>
-      </td>
-      <td>
-        <% if repos.has_commits? -%>
-          <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago: 
-          <small class="commit_message"><%= truncate(h(repos.last_commit.message), 50) -%></small>
-        <% else -%>
-          <em>none</em>
-        <% end -%>
-      </td>
-      <td><%= link_to "commits", project_repository_logs_path(@project, repos) -%></td>
-      <td><%= link_to "tree", project_repository_trees_path(@project, repos) -%></td>
-    </tr>
-  <% end -%>
-</table>
+<ul class="events">
+  <h2>Recent Events</h2>
+  <%= render :partial => @events -%>
+</li>
 
 <% content_for :submenu do -%>
   <% if @project.admin?(current_user) -%>
     <li><%= link_to "Project Settings", edit_project_path(@project) -%></li>
   <% end -%>  
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <div class="infoboxFU">
+    <ul>
+      <li><strong>Labels:</strong> 
+        <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
+      <li><strong>License:</strong> <%= h(@project.license) -%></li>
+      <li><strong>Owner:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
+      <li><strong>Created:</strong> <%= @project.created_at.to_s(:short) -%></li>
+      <% unless @project.home_url.blank? -%>
+      <li><strong>Website at </strong> 
+        <%= link_to base_url(@project.home_url), h(@project.home_url) -%></li>
+      <% end -%>
+      <% unless @project.mailinglist_url.blank? -%>
+      <li><strong>Mailinglist at </strong> 
+        <%= link_to base_url(@project.mailinglist_url), h(@project.mailinglist_url) -%></li>
+      <% end -%>
+      <% unless @project.bugtracker_url.blank? -%>
+      <li><strong>Bugtracker at </strong> 
+        <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
+      <% end -%>
+    </ul>
+  </div>
+  
+  <h2>Repositories</h2>
+  <ul class="repository_list listing">
+    <% @repositories.each do |repos| # FIXME: need to graph the parent relation proper -%>
+      <li>
+        <div class="name">
+          <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
+        </div>
+        <div class="user">
+          <%= gravatar(repos.user.email, :size => 16, :style => "tiny") %>
+          <%= link_to h(repos.user.login), user_path(repos.user) -%>
+        </div>
+      </li>
+    <% end -%>
+  </ul>  
 <% end -%>

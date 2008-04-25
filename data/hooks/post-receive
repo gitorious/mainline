@@ -19,7 +19,8 @@ git = Grit::Git.new(gitdir)
 
 while line = gets
   puts "@@> #{line.inspect}"
-  oldrev, newrev, revname = line.split(" ")
+  # 3b480c5c30962c9f5b82a9c61a75992dc605de21 ee27ee3a022802c0569f9cdef6e9ad29aea096a8 refs/heads/master\n
+  oldrev, newrev, revname = line.split(" ") 
   current_rev = newrev
   newtype = oldtype = current_rev_type = "commit"
 

@@ -32,6 +32,8 @@ class ProjectsController < ApplicationController
   def show
     @project = Project.find_by_slug!(params[:id], :include => [:repositories])
     @repositories = @project.repositories
+    @events = @project.events.find(:all, :limit => "20", 
+      :order => "created_at desc", :include => [:user, :project, :target])
     
     respond_to do |format|
       format.html

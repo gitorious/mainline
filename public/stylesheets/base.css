@@ -149,23 +149,32 @@ abbr {
   min-height: 300px;
   margin-right: 40px;
   background: #fff url("/images/maincontent-border-right.gif") top right repeat-y;
-  padding: 20px 22px 20px 20px;
 }
 #container.in-context-mode {
   border-top: 1px solid #a7afb5;
 }
 
 #container #content {
-  float:left;
+  float: left;
   position: relative;
+  width: 67%;
+  margin: 20px 0 20px 20px;
 }
 #container #sidebar {
-  margin-top: 20px;
-  padding-left: 5px;
-  min-height: 300px;
-  width: 150px;
-  float:right;
-  border-left: 1px dotted #333;
+  border-left: 1px solid #d1d5d8;
+  position: relative;
+  margin: 0 2px 0 70%;
+  padding: 20px;
+  background: #eef2f5;
+  color: #555;
+}
+
+#container #sidebar:after {
+  clear: left;
+  display: block;
+  visibility: hidden;
+  height: 0;
+  content: "";
 }
 
 #sidebar ul.links {
@@ -440,10 +449,8 @@ table.repository_list tr.mainline td {
   background: #dbf7b3;
   font-weight: bold;
 }
-table.repository_list td {
-  margin: 0;
-  padding: 5px;
-  border-bottom: 1px solid #ccc;
+table.repository_list li div.gravatar_tiny {
+
 }
 table.repository_list tr.clone td.name {
   background: url("/images/clone_indent.png") 10px 50% no-repeat;
