@@ -1,16 +1,15 @@
-<% action, body = action_and_body_for_event(event) %>
-<li>
-  <div style="margin: 20px; padding-bottom: 10px;" >
+<% action, body, category = action_and_body_for_event(event) %>
+<li class="event_instance">
+  <p class="event_date"><%= event.created_at.strftime("%H:%M") %></p>
+  <%= gravatar(event.user.email, :size => 16)  %>
+  <p class="event_category <%= category -%>"><%= category.humanize -%>
+  <div class="event_meta">
+    <p>
     <% unless action.empty? %>
-    <%= link_to event.user.login, user_path(event.user) %> 
-    <%= action %> 
-    <%= time_ago_in_words(event.created_at) %> ago
-    <% end %><br/>
-    <div style="float: left; margin: 5px;">
-      <%= gravatar(event.user.email, :size => 32)  %>
-    </div>
-    <% if body %>
-      <%= body %>
+      <%= link_to event.user.login, user_path(event.user) %> 
+      <%= action %> 
     <% end %>
+    </p>
+    <p><%= body %></p>
   </div>
 </li>

@@ -113,13 +113,20 @@ repo.git.heads.each do |head|
       end
       
       
-      unless action_id
-        puts "!_!_!_!_!_! no action reachable for #{commit.id}: #{commit.short_message}"
-        next
-      end
+      # unless action_id
+      #   puts "!_!_!_!_!_! no action reachable for #{commit.id}: #{commit.short_message}"
+      #   next
+      # end
       
       puts "#{current_rev_type}#{action.inspect} in #{head.name}: #{commit.short_message}"
-      project.create_event(action_id || A, repo, user, commit.id, commit.message)
+      #project.create_event(action_id, repo, user, commit.id, commit.message)
+      project.events.create({
+        :action => action_id || Action::COMMIT, 
+        :target => repo, 
+        :user => user, 
+        :body => commit.message, 
+        :data => commit.id,
+        :created_at => commit.committed_date})
     end
   end
 end

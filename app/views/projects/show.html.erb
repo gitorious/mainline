@@ -7,8 +7,15 @@
 
 <ul class="events">
   <h2>Recent Events</h2>
-  <%= render :partial => @events -%>
-</li>
+  <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
+    <li>
+      <p class="date"><%= day -%></p>
+      <ul class="event-instances">
+        <%= render :partial => events -%>
+      </ul>
+    </li>
+  <% end -%>
+</ul>
 
 <% content_for :submenu do -%>
   <% if @project.admin?(current_user) -%>
@@ -39,7 +46,7 @@
     </ul>
   </div>
   
-  <h3><%= link_to "Repositories", project_repositories_path(@project) -%></h3>
+  <h4><%= link_to "Repositories", project_repositories_path(@project) -%></h4>
   <ul class="repository_list">
     <li class="mainline">
       <div class="name">

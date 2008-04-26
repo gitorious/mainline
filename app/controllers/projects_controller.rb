@@ -33,7 +33,7 @@ class ProjectsController < ApplicationController
     @project = Project.find_by_slug!(params[:id], :include => [:repositories])
     @mainline_repository = @project.mainline_repository
     @repositories = @project.repository_clones
-    @events = @project.events.find(:all, :limit => "20", 
+    @events = @project.events.find(:all, :limit => "30", 
       :order => "created_at desc", :include => [:user, :project, :target])
     
     respond_to do |format|

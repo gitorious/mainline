@@ -36,6 +36,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #09460f;
   font-weight:  normal;
 }
+
 h1 {
 	margin: 0;
 	font-size: 1.615em;
@@ -54,12 +55,21 @@ h3 {
 	line-height: 1.117em;
 	margin-bottom: 1.117em;
 }
+
 h4 {
 	margin: 0;
 	font-size: 1.153em;
 	line-height: 1.266em;
 	margin-bottom: 1.266em;
 }
+
+#sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6 {
+  margin-bottom: 10px; 
+}
+#sidebar h1 a, #sidebar h2 a, #sidebar h3 a, #sidebar h4 a, #sidebar h5 a, #sidebar h6 a {
+  color: #555;
+}
+
 p, ul, blockquote, pre, td, th, label {
 	margin: 0;
 	font-size: 1em;
@@ -455,7 +465,7 @@ table.listing thead th {
 }
 
 #sidebar ul.repository_list ul {
-  margin-left: 10px;
+  margin-left: 20px;
 }
 #sidebar ul.repository_list .user img {
   float: left;
@@ -1056,4 +1066,43 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 
 .commit_graph {
   text-align:center;
+}
+
+/* Events */
+
+.events .date {
+  background: #999;
+  padding: 5px 10px 3px 10px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.events .event_instance .event_date {
+  float: left;
+  width: 80px;
+  text-align: center;
+  padding-top: 5px;
+  font-size: 11px;
+  color: #898989;
+}
+.events .event_instance img {
+  float: left;
+  margin-top: 3px;
+}
+
+.events .event_instance .event_meta p { padding: 0; margin: 0;}
+.events .event_instance .event_meta {
+  margin: 0 10px 20px 105px;
+}
+
+.events .event_instance .event_category {
+  float: right;
+  min-width: 100px;
+  text-align: center;
+  padding: 2px 5px 0 5px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #fff;
+  background: #b6babc;
 }
