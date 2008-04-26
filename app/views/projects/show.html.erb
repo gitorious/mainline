@@ -39,18 +39,30 @@
     </ul>
   </div>
   
-  <h2>Repositories</h2>
-  <ul class="repository_list listing">
-    <% @repositories.each do |repos| # FIXME: need to graph the parent relation proper -%>
-      <li>
-        <div class="name">
-          <%= link_to h(repos.name), project_repository_path(@project, repos) -%>
-        </div>
-        <div class="user">
-          <%= gravatar(repos.user.email, :size => 16, :style => "tiny") %>
-          <%= link_to h(repos.user.login), user_path(repos.user) -%>
-        </div>
-      </li>
-    <% end -%>
+  <h3><%= link_to "Repositories", project_repositories_path(@project) -%></h3>
+  <ul class="repository_list">
+    <li class="mainline">
+      <div class="name">
+        <strong><%= link_to h(@mainline_repository.name), [@project, @mainline_repository] -%></strong>
+      </div>
+      <div class="user">
+        <%= gravatar(@mainline_repository.user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(@mainline_repository.user.login), @mainline_repository.user -%>
+      </div>
+    </li>
+      <ul>
+      <% @repositories.each do |repos|-%>
+        <li class="clone">
+          <div class="name">
+            <%= link_to h(repos.name), [@project, repos] -%>
+          </div>
+          <div class="user">
+            <%= gravatar(repos.user.email, :size => 16, :style => "tiny") %>
+            <%= link_to h(repos.user.login), repos.user -%>
+          </div>
+        </li>
+      <% end -%>
+      <ul>
+    </li>
   </ul>  
 <% end -%>

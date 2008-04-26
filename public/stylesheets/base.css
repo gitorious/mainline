@@ -200,6 +200,7 @@ abbr {
   color: #666;
   text-align: center;
   clear:both;
+  background: #DEE7ED; 
 }
 
 #container #footer ul li {
@@ -439,23 +440,34 @@ table.listing thead th {
   border-bottom: 2px solid #888;
 }
 
-table.repository_list tr.mainline {
-  margin: 10px 0 0 0;
-  padding: 10px;
-}
-table.repository_list tr.mainline td { 
-  border-top: 1px solid #408000;
-  border-bottom: 1px solid #408000;
-  background: #dbf7b3;
-  font-weight: bold;
-}
-table.repository_list li div.gravatar_tiny {
+/* sidebar repository list */
 
+#sidebar ul.repository_list li {
+  padding-left: 25px;
+  margin-bottom: 10px;
 }
-table.repository_list tr.clone td.name {
-  background: url("/images/clone_indent.png") 10px 50% no-repeat;
-  padding-left: 20px;
+#sidebar ul.repository_list li.mainline {
+  background: url("/images/repocube_main.png") 0 0 no-repeat;
 }
+
+#sidebar ul.repository_list li.clone {
+  background: url("/images/repocube.png") 0 0 no-repeat;
+}
+
+#sidebar ul.repository_list ul {
+  margin-left: 10px;
+}
+#sidebar ul.repository_list .user img {
+  float: left;
+}
+
+#sidebar ul.repository_list .user a {
+  color: #555;
+  margin: 0 0 0 5px;
+  padding:0;
+}
+
+/* info boxes */
 
 .infobox {
   background: #efefef;
