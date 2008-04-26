@@ -469,12 +469,14 @@ table.listing thead th {
 }
 #sidebar ul.repository_list .user img {
   float: left;
+  margin-top: 1px;
 }
 
 #sidebar ul.repository_list .user a {
   color: #555;
   margin: 0 0 0 5px;
   padding:0;
+  font-size: 11px;
 }
 
 /* info boxes */
@@ -1078,8 +1080,12 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   font-size: 11px;
 }
 
-ul.events ul.event_instances {
+.events .event_instances {
   margin: 0;
+}
+
+.events .event_instances strong { 
+  color: #555; 
 }
 
 .events .event_instance .event_date {
