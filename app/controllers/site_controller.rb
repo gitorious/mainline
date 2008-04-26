@@ -7,14 +7,14 @@ class SiteController < ApplicationController
   
   def dashboard
     @projects = current_user.projects
-    project_ids = @projects.map(&:id)
-    @recent_comments = Comment.find(:all, :limit => 10,
-      :conditions => ["comments.project_id in (?)", project_ids], 
-      :order => "comments.created_at desc", :include => [:user, :repository])
-    @repository_clones = Repository.find(:all, :order => "created_at desc",
-      :conditions => ["project_id in (?) and mainline = ?", project_ids, false])
-    
-    @repositories = current_user.repositories.find(:all, :conditions => ["mainline = ?", false])
+    @repositories = current_user.repositories.find(:all, 
+      :conditions => ["mainline = ?", false])
+    event_project_ids = (@projects.map(&:id) + @repositories.map(&:project_id)).uniq
+    @events = Event.paginate(:all, 
+      :page => params[:page],
+      :conditions => ["events.project_id in (?)", event_project_ids], 
+      :order => "events.created_at desc", 
+      :include => [:user, :project])    
   end
   
   def about

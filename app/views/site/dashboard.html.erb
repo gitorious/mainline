@@ -1,77 +1,36 @@
 <% @page_title = "#{current_user.login}'s dashboard" -%>
 
-<div id="recent_comments">
-  <h2>Recent comments on your commits</h2>
-  <% @recent_comments.each do |comment| -%>
-    <div class="comment excerpt">
-      <p class="byline hint">
-        <%= link_to(h(comment.user.login), comment.user) -%> 
-        on <%= link_to h(comment.project.title), comment.project -%>/<%= link_to h(comment.repository.name), project_repository_comments_path(comment.project, comment.repository, :anchor => dom_id(comment)) -%>
-        <% unless comment.sha1.blank? -%>
-          (<%= link_to h(comment.sha1[0..6]), project_repository_commit_path(comment.project, comment.repository, comment.sha1) -%>)
-        <% end -%>
-      </p>
-      <p class="body"><%= truncate(strip_tags(comment.body), 65) -%></p>
-      <p class="byline hint">
-        <%= time_ago_in_words(comment.created_at) -%> ago
-      </p>
-    </div>
-  <% end -%>
-  <% if @recent_comments.blank? -%>
-    <p class="hint">Sorry, no comments yet</p>
-  <% end -%>
-</div>
-
-<div id="clone_list">
-  <h2>Activity in clones of your projects</h2>
-  <ul>
-  <% @repository_clones.each do |repos| -%>
-      <li class="repos">
-        <%= link_to h(repos.name), project_repository_path(repos.project, repos) -%> 
-        <small>of <%= h(repos.project.slug) -%></small><br />
-        <% unless repos.last_commit.nil? %>
-          <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
-          <small>
-            <%= h(repos.last_commit.committer.name) -%> - 
-            <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
-          </small>
-        <% end %>
-      </li>
-  <% end -%>
-  <% if @repository_clones.blank? -%>
-    <li class="hint">No clones so far</li>
-  <% end -%>
-  </ul>
-  
-  <h2>Your repositories</h2>
-  <ul>
-  <% @repositories.each do |repos| -%>
-    <li class="repos">
-      <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
-      <small>of <%= link_to h(repos.project.title), repos.project -%></small><br />
-      <% unless repos.last_commit.nil? %>
-        <code class="commit_message"><%= h(repos.last_commit.message) -%></code><br />
-        <small>
-          <%= h(repos.last_commit.committer.name) -%> - 
-          <%= time_ago_in_words(repos.last_commit.committed_date) -%> ago
-        </small>
-      <% end %>
+<ul class="events">
+  <h2>Activities</h2>
+  <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
+    <li>
+      <p class="date"><%= day -%></p>
+      <ul class="event_instances">
+        <%= render :partial => events -%>
+      </ul>
     </li>
   <% end -%>
-  </ul>
-</div>
+</ul>
 
-<div class="clear"></div>
+<%= will_paginate @events -%>
 
 <% content_for :sidebar do -%>
   <h4>Your projects:</h4>
-  <ul class="links">
+  <ul>
   <% @projects.each do |project| -%>
-    <li><%= link_to project.slug, project -%></li>
+    <li><%= link_to h(project.slug), project -%></li>
   <% end -%>
-  <li><%= link_to "Create new &#x2192;", new_project_path -%></li>
+  </ul>
+  
+  <h4>Your repository clones</h4>
+  <ul>
+  <% @repositories.each do |repo| -%>
+    <li><%= link_to h(repo.name), [repo.project, repo] -%></li>
+  <% end -%>
   </ul>
 <% end -%>
 
-
-
+<% content_for :submenu do -%>
+  <li><%= link_to "Your Account", account_path -%></li>
+  <li><%= link_to "Your Profile", user_path(current_user) -%></li>
+<% end -%>
