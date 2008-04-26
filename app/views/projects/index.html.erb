@@ -11,9 +11,7 @@
 <%= will_paginate @projects -%>
 
 <% content_for :submenu do -%>
-  <ul>
-    <li><%= link_to "New project", new_project_path -%></li>
-  </ul>
+  <li><%= link_to "New project", new_project_path -%></li>
 <% end -%>
 
 <% content_for :sidebar do -%>  

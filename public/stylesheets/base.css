@@ -166,6 +166,7 @@ abbr {
 
 #container #content {
   padding: 20px;
+  min-height: 300px;
 }
 
 #container #content.with_sidebar {

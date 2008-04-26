@@ -1,60 +1,58 @@
 <% @page_title = h(@user.login) -%>
 
-<h1>
-  <%=h @user.login -%> 
-  <small><%= @user.fullname.blank? ? "" : "(#{h(@user.fullname)})" -%></small>
-</h1>
-
-<div class="infobox">
-<div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 80 }), :action => "show") %></div>
-<ul>
-  <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
-  <% if @user.url %>
-    <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
-  <% end -%>
-  <li><strong>Member for</strong> <%= time_ago_in_words(@user.created_at) -%></li>
-  <li><strong><%= @commits_last_week -%></strong> commits so far this week.</li>
-</ul>
-</div>
-
-<div id="left">
-<% unless @projects.blank? -%>
-  <h2>Projects</h2>
-  <ul class="project_list">
-  <% @projects.each do |project| -%>
-    <li class="project_list_item">
-      <%= render :partial => project, :object => project -%>
-    </li>
-  <% end -%>
-  </ul>
-<% end -%>
-</div>
-
-<div id="right">
-<% unless @repositories.blank? -%>
-  <h2>Repositories</h2>
-  <ul class="project_list">
-  <% @repositories.each do |repos| -%>
-    <li>
-      <%= link_to h(repos.name), project_repository_url(repos.project, repos) -%> 
-      of <%= link_to h(repos.project.title), repos.project -%>
-    </li>
-  <% end -%>
-  </ul>
-<% end -%>
-</div>
-
-<div id="right">
 <% unless @events.empty? -%>
-  <h2>Last events</h2>
-  <%= render :partial => "/events/events", :object => @events -%>
+  <ul class="events">
+    <h2>Activities</h2>
+    <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
+      <li>
+        <p class="date"><%= day -%></p>
+        <ul class="event_instances">
+          <%= render :partial => events -%>
+        </ul>
+      </li>
+    <% end -%>
+  </ul>
+  <%= will_paginate @events -%>
 <% end -%>
-</div>
+
+<% content_for :sidebar do -%>
+  <h1>
+    <%=h @user.login -%> 
+    <small><%= @user.fullname.blank? ? "" : "(#{h(@user.fullname)})" -%></small>
+  </h1>
+
+  <div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 64 }), :action => "show") %></div>
+  <ul>
+    <li><strong>Email:</strong> <%= encoded_mail_to(@user.email) -%></li>
+    <% if @user.url %>
+      <li><strong>Url:</strong> <a href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+    <% end -%>
+    <li><strong>Member for</strong> about <%= time_ago_in_words(@user.created_at) -%></li>
+    <li><strong><%= @commits_last_week -%></strong> commits so far this week.</li>
+  </ul>
+
+
+  <% unless @projects.blank? -%>
+    <h4>Projects:</h4>
+    <ul>
+    <% @projects.each do |project| -%>
+      <li><%= link_to h(project.slug), project -%></li>
+    <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% unless @repositories.blank? -%>
+    <h4>Repository clones</h4>
+    <ul>
+    <% @repositories.each do |repo| -%>
+      <li><%= link_to h(repo.name), [repo.project, repo] -%></li>
+    <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
 
 <% if current_user && (current_user == @user)  -%>
   <% content_for :submenu do -%>
-    <ul>
-      <li><%= link_to "+ Edit your account", edit_account_url -%>
-    </ul>
+    <li><%= link_to "Edit your account", edit_account_url -%>
   <% end -%>
 <% end -%>
