@@ -206,4 +206,8 @@ module ApplicationHelper
       
     [action, body, category]
   end
+  
+  def sidebar_content?
+    !@content_for_sidebar.blank?
+  end
 end

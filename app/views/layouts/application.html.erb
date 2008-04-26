@@ -61,13 +61,15 @@
   </ul>
   <% end -%>
   <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
-    <div id="content">
+    <div id="content" class="<%= sidebar_content? ? "with_sidebar" : "" -%>">
       <%= flashes %>
       <%= yield -%>
     </div>
+    <% if sidebar_content? -%>
     <div id="sidebar">
       <%= yield :sidebar -%>
     </div>
+    <% end -%>
     <div id="footer">
       <ul>
         <li><%= link_to "Home", root_path -%> | </li>

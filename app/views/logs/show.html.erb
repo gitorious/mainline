@@ -3,36 +3,36 @@
   Commitlog for <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
 </h1>
 
-<ul class="infobox">
-  <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
-  <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
-  <% unless @commits.blank? -%>
-  <li><strong>HEAD tree:</strong> <%= link_to h(@commits.first.tree.id), 
-    tree_path(@commits.first.id) -%></li>
-  <% end -%>
-</ul>
-
-<% if @commits.current_page == 1 -%>
-  <div class="commits_by_author_graph">
-    <%= commit_graph_by_author_tag(@repository, params[:id]) %>
-  </div>
-<% end -%>
 <h2>Commits in "<%=h params[:id] -%>"</h2>
 <%= render :partial => "log" -%>
 <%= will_paginate @commits %>
 
 <% content_for :sidebar do -%>  
+  <ul>
+    <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
+    <li><strong>Maintainer:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
+    <% unless @commits.blank? -%>
+    <li><strong>HEAD tree:</strong> <%= link_to h(@commits.first.tree.id[0,7]), 
+      tree_path(@commits.first.id) -%></li>
+    <% end -%>
+  </ul>
+  
   <h5>Branches:</h5>
-  <ul class="links">
+  <ul>
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
     <li><%= link_to h(branch.name), log_path(branch.name) -%></li>
     <% end -%>
   </ul>
 
+  <% unless @git.tags.blank? -%>
   <h5>Tags:</h5>
-  <ul class="links">
+  <ul>
   <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
     <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
   <% end -%>
   </ul>
+  <% end -%>
+
+  <%= commit_graph_by_author_tag(@repository, params[:id]) %>
+
 <% end -%>

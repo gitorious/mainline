@@ -23,14 +23,6 @@
     <% if @commits.blank? -%>
       <ul><li><em>No commits yet…</em></li></ul>
     <% else -%>
-      <div id="branches">
-        <h5>Branches:</h5>
-        <ul class="links">
-          <% @repository.git.branches.each do |branch| -%>
-          <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.name) -%></li>
-          <% end -%>
-        </ul>
-      </div>
       <%= render :partial => "logs/log" -%>
       <% if @commits.page_count > 1 -%>
       <p>
@@ -41,40 +33,58 @@
     <% end -%>
 <% end -%>
 
-<% content_for :sidebar do -%>  
-  <ul class="links">
-    <% if @repository.ready? -%>
-      <li><%= link_to "Clone repository", new_project_repository_path(@project, @repository) -%></li>
+<% content_for :submenu do -%>
+  <% if @repository.ready? -%>
+    <li><%= link_to "Clone repository", new_project_repository_path(@project, @repository) -%></li>
+  <% end -%>
+  <% if @repository.user == current_user -%>
+    <li><%= link_to "Request merge", new_project_repository_merge_request_path(@project, @repository) -%></li>
+    <li><%= link_to "Add committer", 
+            { :controller => "committers", :action => "new", :project_id => @project, 
+              :repository_id => @repository } -%></li>
+  <% end -%>
+  <% if @repository.can_be_deleted_by?(current_user) -%>
+    <li><%= link_to "Delete repository", confirm_delete_project_repository_path(@project, @repository) -%></li>
+  <% end -%>
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <ul>
+    <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
+    <li><strong>Maintainer:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
+    <% if @repository.parent -%>
+    <li><strong>Clone of:</strong> 
+      <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
     <% end -%>
-    <% if @repository.user == current_user -%>
-      <li><%= link_to "Request merge", new_project_repository_merge_request_path(@project, @repository) -%></li>
-      <li><%= link_to "Add committer", 
-              { :controller => "committers", :action => "new", :project_id => @project, 
-                :repository_id => @repository } -%></li>
-    <% end -%>
-    <% if @repository.can_be_deleted_by?(current_user) -%>
-      <li><%= link_to "Delete repository", confirm_delete_project_repository_path(@project, @repository) -%></li>
-    <% end -%>
+    <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
+  </li>
+  
+  <h4>Committers</h4>    
+  <ul>
+  <% @repository.committers.each do |user| -%>
+    <li>
+      <%= link_to h(user.login), user -%> 
+      <% if @repository.user == user -%>
+      <small>(owner)</small>
+      <% end -%>
+      <% if @repository.user == current_user -%>
+        <small>
+        <%= link_to "Remove", 
+              { :controller => "committers", :action => "destroy", :id => user.id, 
+                :project_id => @project, :repository_id => @repository}, # FIXME: meh!
+              :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
+        </small>
+      <% end -%>
+    </li>
+  <% end -%>
   </ul>
-  <div class="user_list">    
-    <h4>Committers</h4>    
+
+  <% unless @commits.blank? -%>
+    <h4>Branches:</h4>
     <ul>
-    <% @repository.committers.each do |user| -%>
-      <li>
-        <%= link_to h(user.login), user -%> 
-        <% if @repository.user == user -%>
-        <small>(owner)</small>
-        <% end -%>
-        <% if @repository.user == current_user -%>
-          <small>
-          <%= link_to "Remove", 
-                { :controller => "committers", :action => "destroy", :id => user.id, 
-                  :project_id => @project, :repository_id => @repository}, # FIXME: meh!
-                :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
-          </small>
-        <% end -%>
-      </li>
-    <% end -%>
+      <% @repository.git.branches.each do |branch| -%>
+      <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.name) -%></li>
+      <% end -%>
     </ul>
-  </div>
+  <% end -%>
 <% end -%>

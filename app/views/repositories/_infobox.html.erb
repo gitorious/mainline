@@ -1,11 +1,4 @@
 <ul class="infobox">
-  <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
-  <li><strong>Owner:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
-  <% if @repository.parent -%>
-  <li><strong>Clone of:</strong> 
-    <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
-  <% end -%>
-  <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
   <li>
     <strong>Public clone url:</strong> <code><%=h @repository.clone_url -%></code> 
     <small><%= link_to_function "More info…", "$('detailed_clone_info').toggle()" -%></small>
