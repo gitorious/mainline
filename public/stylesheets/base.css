@@ -1078,6 +1078,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   font-size: 11px;
 }
 
+ul.events ul.event_instances {
+  margin: 0;
+}
+
 .events .event_instance .event_date {
   float: left;
   width: 80px;

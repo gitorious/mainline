@@ -10,7 +10,7 @@
   <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
     <li>
       <p class="date"><%= day -%></p>
-      <ul class="event-instances">
+      <ul class="event_instances">
         <%= render :partial => events -%>
       </ul>
     </li>
