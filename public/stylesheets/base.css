@@ -449,7 +449,7 @@ table.listing tr td {
 }
 
 table.listing tr.odd {
-  background: #eee;
+  background: #efefef;
 }
 table.listing thead th {
   font-weight: bold;

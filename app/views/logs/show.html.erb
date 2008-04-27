@@ -1,13 +1,12 @@
 <% @page_title = "Commits in #{@repository.name} in #{@project.title}" -%>
 <h1>
-  Commitlog for <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
+  Commitlog for <%= h(@repository.name) -%>:<%=h params[:id] -%> in <%= h(@project.title) -%>
 </h1>
 
 <% content_for :submenu do -%>
   <%= render :partial => "repositories/context_menu" -%>
 <% end -%>
 
-<h2>Commits in "<%=h params[:id] -%>"</h2>
 <%= render :partial => "log" -%>
 
 <% content_for :sidebar do -%>  
