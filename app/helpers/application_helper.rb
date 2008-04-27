@@ -38,6 +38,20 @@ module ApplicationHelper
     end
   end
   
+  def submenu_selected_class_if_current?(section)
+    case section
+    when :overview
+     if %w[projects].include?(controller.controller_name )
+       return "selected"
+     end
+    when :repositories
+      if %w[repositories trees logs commits comitters comments merge_requests 
+            blobs committers].include?(controller.controller_name )
+        return "selected"
+      end
+    end
+  end
+  
   def link_to_with_selected(name, options = {}, html_options = nil)
     html_options = current_page?(options) ? {:class => "selected"} : nil
     link_to(name, options = {}, html_options)
