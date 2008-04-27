@@ -3,12 +3,6 @@
   Merge requests in <%=h @repository.name  -%>
 </h1>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
-<% end -%>
-
-<%= render :partial => "repositories/infobox" -%>
-
 <p class="hint">
   A "merge request" is a notification from one repository to another that
   would like their changes to be merged upstream. 
@@ -20,4 +14,8 @@
   </p>
 <% else -%>
   <%= render :partial => @merge_requests -%>
+<% end -%>
+
+<% content_for :submenu do -%>
+  <%= render :partial => "repositories/context_menu" -%>
 <% end -%>

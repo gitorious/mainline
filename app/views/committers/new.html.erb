@@ -34,3 +34,7 @@
     <%= f.submit "Add as committer" -%> or <%= link_to "cancel", [@repository.project, @repository] -%>
   </p>
 <% end -%>
+
+<% content_for :submenu do -%>
+  <%= render :partial => "repositories/context_menu" -%>
+<% end -%>

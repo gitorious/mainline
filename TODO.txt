@@ -1,5 +1,4 @@
 new-ui:
-* create hooks symlinks on GitBackend.create+clone
 * Make the project tabs active styled depending on context
 * Fix menu bottom spacing issue in safari
 * Clone stats graph on repositories#index

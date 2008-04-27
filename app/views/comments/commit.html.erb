@@ -13,3 +13,7 @@
 <%= render :partial => @comments -%>
 
 <%= render :partial => "form", :locals => {:sha1 => @commit.id} -%>
+
+<% content_for :submenu do -%>
+  <%= render :partial => "repositories/context_menu" -%>
+<% end -%>

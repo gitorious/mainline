@@ -20,7 +20,7 @@ module Gitorious
         @repository = repository
         @branch = branch
         @graph = Gruff::Mini::Pie.new(250)
-        @graph.theme_pastel
+        @graph.theme = self.class.sidebar_pastel_theme
         @graph.marker_font_size = 32
         @graph.legend_font_size = 32
         @graph.top_margin = 1

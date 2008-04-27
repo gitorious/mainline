@@ -1068,9 +1068,9 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 20px;
 }
 
-.commits_by_author_graph img {
+.commits_by_author_graph {
   float: right;
-  margin: 0 0 10px 10px;
+  margin: 40px 0 10px 10px;
 }
 
 .commit_graph {

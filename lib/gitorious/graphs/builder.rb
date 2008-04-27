@@ -42,6 +42,23 @@ module Gitorious
         }
       end
       
+      def self.sidebar_pastel_theme
+        {
+          :colors => [
+            '#a9dada', # blue
+            '#aedaa9', # green
+            '#daaea9', # peach
+            '#dadaa9', # yellow
+            '#a9a9da', # dk purple
+            '#daaeda', # purple
+            '#dadada' # grey
+            ],
+          :marker_color => '#aea9a9', # Grey
+          :font_color => 'black',
+          :background_colors => '#EEF2F5'
+        }
+      end
+      
       def write
         dest = File.join(self.class.graph_dir, construct_filename)
         @graph.write(dest)
