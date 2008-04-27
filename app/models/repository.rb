@@ -173,60 +173,22 @@ class Repository < ActiveRecord::Base
     [week_numbers.reverse, commits.reverse]
   end
   
-  # TODO: refactor into simpler approach
   # TODO: caching
-  def commit_graph_data_by_author(head = "master")    
-    h = Hash.new
-    
-    data = self.git.git.rev_list({:pretty => "format:name:%cn", :since => "1 years ago" }, head)
+  def commit_graph_data_by_author(head = "master")
+    h = {}
+    count_author_regexp = /^\s+(\d+)\s(.+)$/.freeze
+    data = self.git.git.shortlog({:s => true }, head)
     data.each_line do |line|
-      if line =~ /^name:(.*)$/ then
-        author = $1
+      if line =~ count_author_regexp
+        count = $1.to_i
+        author = $2
         
-        if h[author]
-          h[author] += 1
-        else
-          h[author] = 1
-        end
+        h[author] ||= 0
+        h[author] += count
       end
     end
     
-    sorted = h.sort_by do |author, commits|
-      commits
-    end
-    
-    labels = []
-    data = []
-    
-    max = 8
-    others = []
-    top = sorted
-    
-    
-    if sorted.size > max
-      top = sorted[sorted.size-max, sorted.size]
-      others = sorted[0, sorted.size-max]
-    end
-    
-    top.each do |entry|
-      author = entry.first
-      v = entry.last
-      
-      data << v
-      labels << author
-    end
-    
-    unless others.empty?
-      others_v = others.inject { |v, acum| [v.last + acum.last] }
-      labels << "others"
-      data << others_v.last
-    end
-    
-    #[labels, data]
-    labels.inject({}) do |hash, label| 
-      hash[label] = data[labels.index(label)] 
-      hash
-    end
+    h
   end
   
   # Returns a Hash {email => user}, where email is selected from the +commits+

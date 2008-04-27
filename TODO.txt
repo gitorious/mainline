@@ -7,7 +7,6 @@ two from Yurii:
 * tree browser: deal better with funny characters: http://gitorious.org/projects/avara/repos/mainline/trees/master
 * if you comment on a specific commit, you should get redirected back there
 * graphs should show username (if we have it) for avoiding confusion and for consistency
-** Repository#commit_graph_data_by_author should just use git-shortlog summary instead of jumping through hoops about it
 
 >  If you do `git archive --format=tar --prefix=myproject/ HEAD | gzip >
 >  myproject.tar.gz`, when .gitattributes specifies files that have
@@ -16,7 +15,6 @@ two from Yurii:
 >  it'd be pretty nice if it did.
 
 * Deal gracefully with markdown errors (and/or look into using the other markdown libary instead)
-* Don't generate graphs with big "No Data", text even if there's no data
 * Markdownify atom feed body for projects.atom
 * Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
 * Show the most recent mergerequests on users dashboard so they can track them

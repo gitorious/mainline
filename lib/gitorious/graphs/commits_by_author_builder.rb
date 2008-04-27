@@ -25,14 +25,37 @@ module Gitorious
         @graph.legend_font_size = 32
         @graph.top_margin = 1
         @graph.bottom_margin = 1
+        @graph.no_data_message = ""
       end
       
       def build
         commits_by_author = @repository.commit_graph_data_by_author(@branch)
         
-        commits_by_author.each do |author, count|
-          @graph.data(author, count)
+        max_entries = 5
+        
+        sorted = commits_by_author.sort_by { |author, count| count }.reverse
+        
+        top = sorted
+        if sorted.size > max_entries
+          top = sorted[0, max_entries-1]
+          
+          count = 0
+          sorted[max_entries-1, sorted.size].each do |v|
+            count += v.last
+          end
+          top << ["Others", count]
         end
+        
+        labels = {}
+        label_it = 0
+        top.each do |v|
+          @graph.data("#{v.first} [#{v.last}]", v.last)
+          
+          labels[label_it] = v.first
+          label_it += 1
+        end
+        
+        @graph.labels = labels
       end
       
       def self.filename(repository, branch)
