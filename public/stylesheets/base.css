@@ -308,6 +308,10 @@ abbr {
   color: #000;
 }
 
+#submenu.white li.selected a {
+  background: #fff;
+}
+
 #submenu li a:hover {
   text-decoration: none;
   background: #3b5f02;
@@ -316,6 +320,11 @@ abbr {
 
 #submenu li.selected a:hover {
   background: #dee7ed;
+  color: #000;
+}
+
+#submenu.white li.selected a:hover {
+  background: #fff;
   color: #000;
 }
 
