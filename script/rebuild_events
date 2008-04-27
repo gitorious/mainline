@@ -5,29 +5,47 @@ ENV["RAILS_ENV"] ||= "production"
 
 require File.dirname(__FILE__) + "/../config/environment"
 
-conf_file = File.join(RAILS_ROOT, "config/gitorious.yml")
-GitoriousConfig = YAML.load_file(conf_file)
-
 abort("Usage: #{$0} repo_id") unless ARGV[0]
 
 repo = Repository.find(ARGV[0])
 project = repo.project
-puts "Destroing exiting events on #{project.slug}/#{repo.name}"
+puts "Destroying existing events on #{project.slug}/#{repo.name}"
 repo.events.destroy_all
 
 tag_map = repo.git.tags.inject({}){|hsh, t| hsh[t.commit.id] = t.name;hsh}
+
+parsed_commits = {} # Neccesary because of merge
 repo.git.heads.each do |head|
-  repo.git.commits(head.name, repo.git.commit_count).each do |commit|
-    user = User.find_by_email(commit.committer.email)
-    if user
+  users_commits = {}
+  
+  Grit::Commit.find_all(repo.git, head.name, {:since => "1 year ago"}).each do |commit|
+    users_commits[commit.committer.email] ||= []
+    users_commits[commit.committer.email] << commit
+  end
+  
+  users = User.find(:all, :conditions => ['email in (?)', users_commits.keys] )
+  users.each do |user|
+    commits = users_commits[user.email]
+    
+    commits.each_index do |i|
+      commit = commits[i]
+      previous_commit = commits[i-1]
+      
       newrev = commit.id
-      oldrev = commit.parents.first #meh
-      #revname = 
+      next if parsed_commits.has_key?(newrev)
+      parsed_commits[newrev] = true
+      
+      oldrev = previous_commit.id if previous_commit
       current_rev = newrev
       newtype = oldtype = current_rev_type = "commit"
       
+      type = repo.git.git.name_rev({}, newrev).last.split("/").first
+      if type != "tags"
+        type = "heads"
+      end
+      
       action = :create
-      if commit.parents.empty?
+      if !oldrev
         action = :create
       else
         if commit.id =~ /^0+$/
@@ -36,7 +54,7 @@ repo.git.heads.each do |head|
           action = :update
         end
       end
-      
+
       if action != :delete
         newtype = repo.git.git.cat_file({:t => true}, newrev)
       end
@@ -44,7 +62,7 @@ repo.git.heads.each do |head|
       if action == :update
         oldtype = repo.git.git.cat_file({:t => true}, oldrev)
       end
-      
+
       if action == :delete
           current_rev = oldrev
           current_rev_type = oldtype
