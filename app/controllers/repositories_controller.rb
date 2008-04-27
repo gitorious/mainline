@@ -18,7 +18,7 @@ class RepositoriesController < ApplicationController
     respond_to do |format|
       format.html
       format.xml  { render :xml => @repository }
-      format.atom { render :template => "logs/feed.atom.builder" }
+      format.atom {  }
     end
   end
   

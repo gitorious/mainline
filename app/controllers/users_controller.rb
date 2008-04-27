@@ -14,6 +14,12 @@ class UsersController < ApplicationController
     
     @commits_last_week = @user.events.count(:all, 
       :conditions => ["created_at > ? AND action = ?", 7.days.ago, Action::COMMIT])
+    @atom_auto_discovery_url = formatted_user_path(@user, :atom)
+    
+    respond_to do |format|
+      format.html { }
+      format.atom { }
+    end
   end
 
   def create

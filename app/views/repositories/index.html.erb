@@ -15,10 +15,12 @@
         <span class="bignum"><%= repo.events.count -%></span> activities
       </td>
       <td class="branch_count">
-        <span class="bignum"><%= repo.git.heads.size -%></span> branches
+        <span class="bignum"><%= repo.ready? ? repo.git.heads.size : 0 -%></span> branches
       </td>
       <td class="author_count">
-        <span class="bignum"><%= repo.commit_graph_data_by_author.keys.size -%></span> authors
+        <span class="bignum">
+          <%= repo.ready? ? repo.commit_graph_data_by_author.keys.size : 0 -%>
+        </span> authors
       </td>
     </tr>
     <tr class="graph">

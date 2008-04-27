@@ -35,10 +35,12 @@ class ProjectsController < ApplicationController
     @repositories = @project.repository_clones
     @events = @project.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc", :include => [:user, :project])
+    @atom_auto_discovery_url = formatted_project_path(@project, :atom)
     
     respond_to do |format|
       format.html
-      format.xml { render :xml => @project }
+      format.xml  { render :xml => @project }
+      format.atom { }
     end
   end
   
