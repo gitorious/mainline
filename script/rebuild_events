@@ -7,144 +7,173 @@ require File.dirname(__FILE__) + "/../config/environment"
 
 abort("Usage: #{$0} repo_id") unless ARGV[0]
 
-repo = Repository.find(ARGV[0])
-project = repo.project
-puts "Destroying existing events on #{project.slug}/#{repo.name}"
-repo.events.destroy_all
-
-tag_map = repo.git.tags.inject({}){|hsh, t| hsh[t.commit.id] = t.name;hsh}
-
-parsed_commits = {} # Neccesary because of merge
-repo.git.heads.each do |head|
-  users_commits = {}
-  
-  Grit::Commit.find_all(repo.git, head.name, {:since => "1 year ago"}).each do |commit|
-    users_commits[commit.committer.email] ||= []
-    users_commits[commit.committer.email] << commit
+def create_repo_creation_events_for(project)
+  project.repository_clones.each do |repo|
+    puts "creating Repository clone event in #{project.slug}/#{repo.name}"
+   # project.create_event(Action::CLONE_REPOSITORY, repo, repo.user, repo.parent_id)
+   project.events.create({
+     :action => Action::CLONE_REPOSITORY,
+     :target => repo,
+     :user => repo.user,
+     :data => repo.parent_id,
+     :created_at => repo.created_at
+   })
   end
-  
-  users = User.find(:all, :conditions => ['email in (?)', users_commits.keys] )
-  users.each do |user|
-    commits = users_commits[user.email]
-    
-    commits.each_index do |i|
-      commit = commits[i]
-      previous_commit = commits[i-1]
-      
-      newrev = commit.id
-      next if parsed_commits.has_key?(newrev)
-      parsed_commits[newrev] = true
-      
-      oldrev = previous_commit.id if previous_commit
-      current_rev = newrev
-      newtype = oldtype = current_rev_type = "commit"
-      
-      type = repo.git.git.name_rev({}, newrev).last.split("/").first
-      if type != "tags"
-        type = "heads"
-      end
-      
-      action = :create
-      if !oldrev
-        action = :create
-      else
-        if commit.id =~ /^0+$/
-          action = :delete
-        else
-          action = :update
-        end
-      end
+end
 
-      if action != :delete
-        newtype = repo.git.git.cat_file({:t => true}, newrev)
-      end
+def create_comment_events_for(repo, project)
+  repo.comments.each do |comment| 
+    puts "creating Comment event on #{project.slug}/#{repo.name}"
+    #project.create_event(Action::COMMENT, comment, comment.user)
+    project.events.create({
+      :action => Action::COMMENT,
+      :target => comment,
+      :user => comment.user,
+      :created_at => comment.created_at
+    })
+  end
+end
 
-      if action == :update
-        oldtype = repo.git.git.cat_file({:t => true}, oldrev)
-      end
-
-      if action == :delete
-          current_rev = oldrev
-          current_rev_type = oldtype
-      end
-      
-
-      
-      action_id = nil
-      ref = nil
-      
-      # if tagname = tag_map[commit.id]
-      #   puts "@@@@@ TAGGED @@@@@@"
-      #   if action == :create
-      #     action_id = Action::CREATE_TAG
-      #     ref = tagname
-      #   elsif action == :delete
-      #     action_id = Action::DELETE_TAG
-      #     ref = tagname
-      #   end
-      # else
-      #   case action
-      #     when :create
-      #       action_id = Action::CREATE_BRANCH
-      #       ref = head.name
-      #     when :update
-      #       action_id = Action::COMMIT
-      #       ref = current_rev
-      #     when :delete
-      #       action_id = Action::DELETE_BRANCH
-      #       ref = head.name
-      #   end
-      # end
-      
-      if current_rev_type == "commit"
-        if type == "heads"
-          case action
-            when :create
-              action_id = Action::CREATE_BRANCH
-              ref = head.name
-            when :update
-              action_id = Action::COMMIT
-              ref = current_rev
-            when :delete
-              action_id = Action::DELETE_BRANCH
-              ref = head.name
-          end
-        elsif type == "tags"
-          if action == :create
-            action_id = Action::CREATE_TAG
-            ref = tag_map[commit.id]
-          elsif action == :delete
-            action_id = Action::DELETE_TAG
-            ref = tag_map[commit.id]
-          end
-        end
-      elsif current_rev_type == "tag"
-        if type == "tags"
-          if action == :create
-            action_id = Action::CREATE_TAG
-            ref = tag_map[commit.id]
-          elsif action == :delete
-            action_id = Action::DELETE_TAG
-            ref = tag_map[commit.id]
-          end
-        end
-      end
-      
-      
-      # unless action_id
-      #   puts "!_!_!_!_!_! no action reachable for #{commit.id}: #{commit.short_message}"
-      #   next
-      # end
-      
-      puts "#{current_rev_type}#{action.inspect} in #{head.name}: #{commit.short_message}"
-      #project.create_event(action_id, repo, user, commit.id, commit.message)
+def create_merge_request_events_for(repo, project)
+  repo.merge_requests.each do |mr|
+    puts "creating MergeRequest event on #{project.slug}/#{repo.name}"
+    project.events.create({
+      :action => Action::REQUEST_MERGE,
+      :target => mr,
+      :user => mr.user,
+      :created_at => mr.created_at,
+    })
+    unless mr.open?
+      puts "creating MergeRequest resolvement event on #{project.slug}/#{repo.name}"
       project.events.create({
-        :action => action_id || Action::COMMIT, 
-        :target => repo, 
-        :user => user, 
-        :body => commit.message, 
-        :data => commit.id,
-        :created_at => commit.committed_date})
+        :action => Action::RESOLVE_MERGE_REQUEST,
+        :target => mr,
+        :user => mr.user,
+        :data => mr.status_string,
+        :created_at => mr.created_at,
+      })
     end
   end
 end
+
+def create_events_for_repository(repo, project)
+  tag_map = repo.git.tags.inject({}){|hsh, t| hsh[t.commit.id] = t.name;hsh}
+
+  parsed_commits = {} # Neccesary because of merge
+  repo.git.heads.each do |head|
+    users_commits = {}
+  
+    Grit::Commit.find_all(repo.git, head.name, {:since => "1 year ago"}).each do |commit|
+      users_commits[commit.committer.email] ||= []
+      users_commits[commit.committer.email] << commit
+    end
+  
+    users = User.find(:all, :conditions => ['email in (?)', users_commits.keys] )
+    users.each do |user|
+      commits = users_commits[user.email]
+    
+      commits.each_index do |i|
+        commit = commits[i]
+        previous_commit = commits[i-1]
+      
+        newrev = commit.id
+        next if parsed_commits.has_key?(newrev)
+        parsed_commits[newrev] = true
+      
+        oldrev = previous_commit.id if previous_commit
+        current_rev = newrev
+        newtype = oldtype = current_rev_type = "commit"
+      
+        type = repo.git.git.name_rev({}, newrev).last.split("/").first
+        if type != "tags"
+          type = "heads"
+        end
+      
+        action = :create
+        if !oldrev
+          action = :create
+        else
+          if commit.id =~ /^0+$/
+            action = :delete
+          else
+            action = :update
+          end
+        end
+
+        if action != :delete
+          newtype = repo.git.git.cat_file({:t => true}, newrev)
+        end
+
+        if action == :update
+          oldtype = repo.git.git.cat_file({:t => true}, oldrev)
+        end
+
+        if action == :delete
+            current_rev = oldrev
+            current_rev_type = oldtype
+        end
+      
+
+      
+        action_id = nil
+        ref = nil
+      
+        if current_rev_type == "commit"
+          if type == "heads"
+            case action
+              when :create
+                action_id = Action::CREATE_BRANCH
+                ref = head.name
+              when :update
+                action_id = Action::COMMIT
+                ref = current_rev
+              when :delete
+                action_id = Action::DELETE_BRANCH
+                ref = head.name
+            end
+          elsif type == "tags"
+            if action == :create
+              action_id = Action::CREATE_TAG
+              ref = tag_map[commit.id]
+            elsif action == :delete
+              action_id = Action::DELETE_TAG
+              ref = tag_map[commit.id]
+            end
+          end
+        elsif current_rev_type == "tag"
+          if type == "tags"
+            if action == :create
+              action_id = Action::CREATE_TAG
+              ref = tag_map[commit.id]
+            elsif action == :delete
+              action_id = Action::DELETE_TAG
+              ref = tag_map[commit.id]
+            end
+          end
+        end
+      
+        puts "#{current_rev_type}#{action.inspect} in #{project.slug}/#{repo.name}:#{head.name}: #{commit.short_message}"
+        #project.create_event(action_id, repo, user, commit.id, commit.message)
+        project.events.create({
+          :action => action_id || Action::COMMIT, 
+          :target => repo, 
+          :user => user, 
+          :body => commit.message, 
+          :data => commit.id,
+          :created_at => commit.committed_date})
+      end
+    end
+  end
+end
+
+
+project = Project.find(ARGV[0])
+puts "Destroying existing events on #{project.slug}"
+project.events.destroy_all
+
+project.repositories.each do |repo|
+  create_events_for_repository(repo, project)
+  create_comment_events_for(repo, project)
+  create_merge_request_events_for(repo, project)
+end
+create_repo_creation_events_for(project)
