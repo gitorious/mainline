@@ -131,7 +131,7 @@ module ApplicationHelper
         category = "project"
       when Action::COMMIT
         project = target.project
-        action = "<strong>committed</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>committed</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         body = "<code>#{truncate(event.body, 150)}</code>"
         category = "commit"
       when Action::CREATE_BRANCH

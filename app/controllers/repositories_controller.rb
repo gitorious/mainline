@@ -6,7 +6,7 @@ class RepositoriesController < ApplicationController
   session :off, :only => [:writable_by]
   
   def index
-    redirect_to(project_path(@project))
+    @repositories = @project.repositories.find(:all, :include => [:user, :events, :project])
   end
     
   def show

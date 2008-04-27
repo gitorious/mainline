@@ -1123,3 +1123,43 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   color: #fff;
   background: #b6babc;
 }
+
+/* repository meta (overview apge) */
+table.repository_meta {
+/*  border: 1px solid #ddd;*/
+  padding: 0;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+table.repository_meta .name td h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+}
+
+table.repository_meta .name td.mainline h2 { font-weight: bold; }
+
+table.repository_meta td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+table.repository_meta .name td { 
+  border-bottom: 2px solid #ddd; 
+  color: #888;
+  font-size: 12px;
+}
+
+table.repository_meta .meta td {
+  color: #888;
+  width: 33%;
+  text-align: center;
+}
+table.repository_meta .meta td.commit_count, table.repository_meta .meta td.branch_count {
+  border-right: 1px solid #ddd;
+}
+
+table.repository_meta .meta td .bignum {
+  font-size: 20px;
+}
+table.repository_meta .graph td { text-align:center; }

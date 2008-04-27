@@ -136,6 +136,10 @@ class Repository < ActiveRecord::Base
       :command => "delete_git_repository", :arguments => [gitdir])
   end
   
+  def total_commit_count
+    events.count(:conditions => {:action => Action::COMMIT})
+  end
+  
   def paginated_commits(tree_name, page, per_page = 30)
     page    = (page || 1).to_i
     total   = git.commit_count(tree_name)

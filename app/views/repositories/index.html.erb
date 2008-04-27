@@ -1,0 +1,48 @@
+<% @page_title = "Repositories in #{@project.title}" -%>
+<h1>Repositories</h1>
+
+<% @repositories.each do |repo| -%>
+  <table class="repository_meta">
+    <tr class="name">
+      <td colspan="3" class="<%= repo.mainline? ? "mainline" : "clone" -%>">
+        <h2><%= link_to h(repo.name), [@project, repo] -%></h2>
+        <%= link_to "Commits", project_repository_logs_path(@project, repo) -%> | 
+        <%= link_to "Tree", project_repository_trees_path(@project, repo) -%>
+      </td>
+    </tr>
+    <tr class="meta">
+      <td class="commit_count">
+        <span class="bignum"><%= repo.total_commit_count -%></span> total commits
+      </td>
+      <td class="branch_count">
+        <span class="bignum"><%= repo.git.heads.size -%></span> branches
+      </td>
+      <td class="author_count">
+        <span class="bignum"><%= repo.commit_graph_data_by_author.keys.size -%></span> authors
+      </td>
+    </tr>
+    <tr class="graph">
+      <td colspan="3"><%= commit_graph_tag(repo) %></td>
+    </tr>
+    <% # TODO: Clone stats -%>
+    <% # TODO: divergence from mainline in +/- -%>
+  </table>
+<% end -%>
+
+<% content_for :sidebar do -%>
+  <h4>Repositories</h4>
+  <ul class="repository_list">
+    <% @repositories.each do |repos|-%>
+      <li class="<%= repos.mainline? ? "mainline" : "clone" -%>">
+        <div class="name">
+          <%= link_to h(repos.name), [@project, repos] -%>
+        </div>
+        <div class="user">
+          <%= gravatar(repos.user.email, :size => 16, :style => "tiny") %>
+          <%= link_to h(repos.user.login), repos.user -%>
+        </div>
+      </li>
+    <% end -%>
+    </li>
+  </ul>
+<% end -%>
