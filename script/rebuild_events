@@ -162,18 +162,43 @@ def create_events_for_repository(repo, project)
           :data => commit.id,
           :created_at => commit.committed_date})
       end
+      commits = nil
+    end
+    users_commits = nil
+  end
+  parsed_commits = nil
+end
+
+def rebuild_project!(project)
+  puts "Destroying existing events on #{project.slug}"
+  project.events.destroy_all
+
+  project.repositories.each do |repo|
+    create_events_for_repository(repo, project)
+    create_comment_events_for(repo, project)
+    create_merge_request_events_for(repo, project)
+  end
+  create_repo_creation_events_for(project)
+end
+
+case ARGV[0]
+when "all"
+  Project.find(:all).each do |project|
+    puts 
+    puts "rebuilding #{project.slug}"
+    puts
+    begin
+      rebuild_project!(project)
+      GC.start
+    rescue
+      puts "!!! failed to rebuild #{project.slug} !!!"
+      puts "#{e.class}:#{e.message} \n#{e.backtrace.join("\n  ")}"
+      puts
+      next
     end
   end
+else
+  project = Project.find(ARGV[0])
+  rebuild_project!(project) if project
 end
 
-
-project = Project.find(ARGV[0])
-puts "Destroying existing events on #{project.slug}"
-project.events.destroy_all
-
-project.repositories.each do |repo|
-  create_events_for_repository(repo, project)
-  create_comment_events_for(repo, project)
-  create_merge_request_events_for(repo, project)
-end
-create_repo_creation_events_for(project)
