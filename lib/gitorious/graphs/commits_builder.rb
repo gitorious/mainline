@@ -18,7 +18,7 @@ module Gitorious
       def initialize(repository, branch)
         @repository = repository
         @branch = branch
-        @graph = Gruff::Area.new("650x150")
+        @graph = Gruff::Area.new("650x100")
         @graph.title = "Commits by week (24 week period)" 
         #@graph.x_axis_label = 'Commits by week (24 week period)'
         #@graph.y_axis_label = "Commits"

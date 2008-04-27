@@ -6,10 +6,6 @@
 <% render_if_ready(@repository) do -%>
 
   <%= render :partial => "infobox" -%>
-  
-  <div class="commit_graph">
-    <%= commit_graph_tag(@repository) %>
-  </div>
 
   <h2>Activities</h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>

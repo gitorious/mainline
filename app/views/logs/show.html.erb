@@ -3,11 +3,15 @@
   Commitlog for <%= h(@repository.name) -%>:<%=h params[:id] -%> in <%= h(@project.title) -%>
 </h1>
 
+<div class="commit_graph">
+  <%= commit_graph_tag(@repository) %>
+</div>
+
+<%= render :partial => "log" -%>
+
 <% content_for :submenu do -%>
   <%= render :partial => "repositories/context_menu" -%>
 <% end -%>
-
-<%= render :partial => "log" -%>
 
 <% content_for :sidebar do -%>  
   <ul>
