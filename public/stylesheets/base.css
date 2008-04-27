@@ -207,7 +207,7 @@ abbr {
 }
 #sidebar ul.links li a:hover {
   color: #fff;
-  background: #630;
+  background: #390;
   text-decoration: none;
 }
 
@@ -264,7 +264,7 @@ abbr {
 }
 #menu li a { 
   font-size: 14px;
-  color: #eab239;
+  color: #92B92D;
 }
 
 #menu li.secondary a { 
@@ -273,7 +273,7 @@ abbr {
 
 #menu li a:hover {
   text-decoration: none;
-  border-bottom: 2px solid #eab239;
+  border-bottom: 2px solid #92B92D;
 }
 
 /* Round corners */
@@ -314,7 +314,7 @@ abbr {
 
 #submenu li a:hover {
   text-decoration: none;
-  background: #3b5f02;
+  background: #92B92D;
   color: #fff;
 }
 
@@ -576,18 +576,17 @@ ul.bullet_list li {
   text-align: center;
 }
 .pagination a {
-  padding: 1px 5px 2px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 2px;
   border: 1px solid #ddd;
   text-decoration: none;
 }
 .pagination a:hover, .pagination a:active {
-  border-bottom: 1px solid #333;
-  background: #630;
+  background: #390;
   color: #fff;
 }
 .pagination span.current {
-  padding: 1px 5px 2px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 2px;
   border: 1px solid #999;
   font-weight: bold;
