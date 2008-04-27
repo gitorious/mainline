@@ -132,7 +132,7 @@ module ApplicationHelper
       when Action::COMMIT
         project = target.project
         action = "<strong>committed</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = "<code>#{event.body}</code>"
+        body = "<code>#{truncate(event.body, 150)}</code>"
         category = "commit"
       when Action::CREATE_BRANCH
         project = target.project
@@ -173,7 +173,7 @@ module ApplicationHelper
         repo = target.repository
         
         action = "<strong>commented</strong> on #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
-        body = truncate(h(target.body), 100)
+        body = truncate(h(target.body), 150)
         category = "comment"
       when Action::REQUEST_MERGE
         source_repository = target.source_repository

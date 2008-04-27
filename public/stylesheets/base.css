@@ -1110,7 +1110,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 
 .events .event_instance .event_meta p { padding: 0; margin: 0;}
 .events .event_instance .event_meta {
-  margin: 0 10px 20px 105px;
+  margin: 0 100px 20px 105px;
 }
 
 .events .event_instance .event_category {
