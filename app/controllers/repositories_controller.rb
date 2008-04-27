@@ -11,13 +11,8 @@ class RepositoriesController < ApplicationController
     
   def show
     @repository = @project.repositories.find_by_name!(params[:id])
-    @comment_count = @repository.comments.count
-    @merge_request_count = @repository.merge_requests.count_open
-    if @repository.has_commits?
-      @commits = @repository.paginated_commits(@repository.head_candidate.name, page=1)
-    else
-      @commits = []
-    end
+    @events = @repository.events.paginate(:all, :page => params[:page], 
+      :order => "created_at desc")
     
     @atom_auto_discovery_url = formatted_project_repository_path(@project, @repository, :atom)
     respond_to do |format|

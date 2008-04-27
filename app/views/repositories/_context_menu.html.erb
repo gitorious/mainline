@@ -1,0 +1,9 @@
+<li><%= link_to "Activity", [@project, @repository] -%></li>
+<li><%= link_to "Commits", 
+          project_repository_logs_path(@project, @repository) -%></li>
+<li><%= link_to "Trees", 
+          project_repository_trees_path(@project, @repository) -%></li>
+<li><%= link_to "Comments (#{@repository.comments.count})", 
+          project_repository_comments_path(@project, @repository) -%></li>
+<li><%= link_to "Merge requests(#{@repository.merge_requests.count_open})", 
+          project_repository_merge_requests_path(@project, @repository) -%></li>

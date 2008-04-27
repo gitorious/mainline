@@ -18,6 +18,7 @@ describe SiteController do
     before(:each) do
       login_as :johan
     end
+    
     it "GETs successfully" do
       get :dashboard
       response.should be_success
@@ -36,9 +37,8 @@ describe SiteController do
     end
     
     it "get a list of the current_users repositories, that's not mainline" do
-      repositories(:johans2).update_attribute(:user_id, users(:johan).id)
       get :dashboard
-      assigns[:repositories].should == [*repositories(:johans2)]
+      assigns[:repositories].should == [repositories(:johans_moe_clone)]
     end
   end
 

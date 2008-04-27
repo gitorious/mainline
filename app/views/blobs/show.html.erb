@@ -1,6 +1,10 @@
 <% @page_title = "#{current_path.join("/")} - #{@repository.name} in #{@project.title}" -%>
 <% @load_syntax_themes = true -%>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "repositories/context_menu" -%>
+<% end -%>
+
 <ul class="mode_selector">
   <li class="list_header">
     Softwrap mode:

@@ -1,18 +1,8 @@
 <% @page_title = h(@user.login) -%>
 
 <% unless @events.empty? -%>
-  <ul class="events">
-    <h2>Activities</h2>
-    <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
-      <li>
-        <p class="date"><%= day -%></p>
-        <ul class="event_instances">
-          <%= render :partial => events -%>
-        </ul>
-      </li>
-    <% end -%>
-  </ul>
-  <%= will_paginate @events -%>
+  <h2>Activities</h2>
+  <%= render :partial => "events/events", :locals => { :events => @events } -%>  
 <% end -%>
 
 <% content_for :sidebar do -%>

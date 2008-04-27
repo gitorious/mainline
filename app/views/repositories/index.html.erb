@@ -12,7 +12,7 @@
     </tr>
     <tr class="meta">
       <td class="commit_count">
-        <span class="bignum"><%= repo.total_commit_count -%></span> total commits
+        <span class="bignum"><%= repo.events.count -%></span> activities
       </td>
       <td class="branch_count">
         <span class="bignum"><%= repo.git.heads.size -%></span> branches

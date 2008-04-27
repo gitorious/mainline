@@ -1,5 +1,11 @@
-<ul class="project_list">
-<% events.reverse_each do |event| -%>
-  <%= render :partial => event  -%>
+<ul class="events">
+<% events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events_group| -%>
+  <li>
+    <p class="date"><%= day -%></p>
+    <ul class="event_instances">
+      <%= render :partial => events_group -%>
+    </ul>
+  </li>
 <% end -%>
 </ul>
+<%= will_paginate events -%>

@@ -5,19 +5,8 @@
   <%= auto_link(markdown(sanitize(@project.description)), :urls) -%>
 </div>
 
-<ul class="events">
-  <h2>Recent Events</h2>
-  <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
-    <li>
-      <p class="date"><%= day -%></p>
-      <ul class="event_instances">
-        <%= render :partial => events -%>
-      </ul>
-    </li>
-  <% end -%>
-</ul>
-
-<%= will_paginate @events -%>
+<h2>Activities</h2>
+<%= render :partial => "events/events", :locals => { :events => @events } -%>
 
 <% content_for :submenu do -%>
   <% if @project.admin?(current_user) -%>

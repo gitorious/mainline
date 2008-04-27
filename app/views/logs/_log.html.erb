@@ -1,16 +1,31 @@
 <% users_by_email = @repository.users_by_commits(@commits) %>
-<ul class="commit_list">
-<% @commits.each do |commit| -%>
-<% user = users_by_email[commit.author.email] %>
-<li class="commit_item">
-  <div>
-  <a href=""><%= link_to h(commit.id_abbrev), 
-    project_repository_commit_path(@project, @repository, commit.id) -%></a> 
-  by <strong><%= user ? link_to(user.login, user_path(user)) : h(commit.author.name) -%></strong> <%=h time_ago_in_words(commit.authored_date) -%> ago
-  </div>
-  <%= gravatar_frame(commit.author.email, :size => 32) %>
-  <div class="commit_message"> <%= link_to simple_format(h(commit.short_message)), project_repository_commit_path(@project, @repository, commit.id) -%></div>
-  <div class="clear_left"></div>
-</li>
+<ul class="events">
+<% @commits.group_by{|c| c.committed_date.strftime("%A %B %d") }.each do |day, commits| -%>
+  <li>
+    <p class="date"><%= day -%></p>
+    <ul class="event_instances">
+      <% commits.each do |commit| -%>
+        <% user = users_by_email[commit.author.email] %>
+        <li class="event_instance">
+          <p class="event_date"><%= commit.committed_date.strftime("%H:%M") %></p>
+          <%= gravatar(commit.author.email, :size => 16)  %>
+          <div class="event_meta">
+            <p>
+              <%= user ? link_to(user.login, user_path(user)) : h(commit.author.name) -%>
+              <strong>committed</strong> <%= link_to h(commit.id_abbrev), 
+                project_repository_commit_path(@project, @repository, commit.id) -%>
+            </p>
+            <p>
+              <div class="commit_message">
+                <%= link_to simple_format(h(commit.short_message)), 
+                  project_repository_commit_path(@project, @repository, commit.id) -%>
+              </div>
+            </p>
+          </div>
+        </li>
+      <% end -%>
+    </ul>
+  </li>
 <% end -%>
 </ul>
+<%= will_paginate @commits -%>
