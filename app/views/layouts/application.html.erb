@@ -51,11 +51,11 @@
     <ul id="submenu" class="<%= @content_for_submenu.blank? ? "white" : "" -%>">
       <li class="<%= submenu_selected_class_if_current?(:overview) -%>">
         <%= link_to "Project Overview", 
-          project_path(@project), :class => "round-tl-5 round-tr-5" -%>
+          project_path(@project), :class => "round-top-5" -%>
       </li>
       <li class="<%= submenu_selected_class_if_current?(:repositories) -%>">
         <%= link_to "Repositories", 
-          project_repositories_path(@project), :class => "round-tl-5 round-tr-5" -%>
+          project_repositories_path(@project), :class => "round-top-5" -%>
       </li>
     </ul>
     <% end -%>

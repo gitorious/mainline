@@ -277,10 +277,22 @@ abbr {
 }
 
 /* Round corners */
-.round-tl-5 { -moz-border-radius-topleft: 5px; }
-.round-tr-5 { -moz-border-radius-topright: 5px; }
-.round-bl-5 { -moz-border-radius-bottomleft: 5px; }
-.round-br-5 { -moz-border-radius-bottomright: 5px; }
+.round-top-5 {
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+}
+.round-bottom-5 {
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+}
+.round-5 {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
 
 
 /* submenu */
