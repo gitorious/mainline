@@ -1,5 +1,4 @@
 new-ui:
-* Fix menu bottom spacing issue in safari
 * Clone stats graph on repositories#index
 * divergence from mainline in +/-
 * popular & active projects on frontpage
