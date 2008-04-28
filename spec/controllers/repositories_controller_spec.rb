@@ -42,7 +42,6 @@ describe RepositoriesController, "show" do
     repo = @project.repositories.first
     repo.stub!(:git).and_return(mock("git mock", :null_object => true))
     do_get repo
-    assigns[:merge_request_count].should == 1
   end
 end
 

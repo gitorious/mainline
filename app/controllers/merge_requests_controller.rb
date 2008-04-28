@@ -2,7 +2,6 @@ class MergeRequestsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_project
   before_filter :find_repository
-  before_filter :check_repository_for_commits
   before_filter :find_merge_request, :except => [:index, :show, :new, :create]
   before_filter :assert_merge_request_ownership, :except => [:index, :show, :new, :create, :resolve]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
