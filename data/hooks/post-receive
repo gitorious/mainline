@@ -18,7 +18,7 @@ end
 git = Grit::Git.new(gitdir)
 
 while line = gets
-  puts "@@> #{line.inspect}"
+  #puts "@@> #{line.inspect}"
   # 3b480c5c30962c9f5b82a9c61a75992dc605de21 ee27ee3a022802c0569f9cdef6e9ad29aea096a8 refs/heads/master\n
   oldrev, newrev, revname = line.split(" ") 
   current_rev = newrev
@@ -130,5 +130,5 @@ while line = gets
   project.create_event(action_id, repository, user, ref, hash[:message])
 end
 
-puts "=> Thanks! http://#{GitoriousConfig['gitorious_host']}/events"
+puts "[OK]"
 
