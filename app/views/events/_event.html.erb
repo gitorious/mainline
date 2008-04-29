@@ -10,6 +10,6 @@
       <%= action %> 
     <% end %>
     </p>
-    <p><%= body %></p>
+    <p><%= simple_format(sanitize(body)) %></p>
   </div>
 </li>
