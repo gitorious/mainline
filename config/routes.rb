@@ -24,7 +24,7 @@ ActionController::Routing::Routes.draw do |map|
     account.resources :keys
   end
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
-  map.resources :users, :requirements => {:id => /.+/}, :collection => { 
+  map.resources :users, :requirements => {:id => /[^\/\\\.\s]+/ }, :collection => { # FIXME: fails if login contains .
     :forgot_password => :get,
     :reset_password => :post,
   }

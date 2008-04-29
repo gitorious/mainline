@@ -1,7 +1,7 @@
 <% @page_title = h(@user.login) -%>
 
 <% unless @events.empty? -%>
-  <h2>Activities</h2>
+  <h2>Activities<%= link_to image_tag("feed.png", :width => 24, :height => 24), @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>  
 <% end -%>
 
