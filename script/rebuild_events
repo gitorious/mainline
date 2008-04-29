@@ -7,10 +7,11 @@ require File.dirname(__FILE__) + "/../config/environment"
 
 abort("Usage: #{$0} repo_id") unless ARGV[0]
 
+$stdout.sync = true
+
 def create_repo_creation_events_for(project)
   project.repository_clones.each do |repo|
     puts "creating Repository clone event in #{project.slug}/#{repo.name}"
-   # project.create_event(Action::CLONE_REPOSITORY, repo, repo.user, repo.parent_id)
    project.events.create({
      :action => Action::CLONE_REPOSITORY,
      :target => repo,
@@ -24,7 +25,6 @@ end
 def create_comment_events_for(repo, project)
   repo.comments.each do |comment| 
     puts "creating Comment event on #{project.slug}/#{repo.name}"
-    #project.create_event(Action::COMMENT, comment, comment.user)
     project.events.create({
       :action => Action::COMMENT,
       :target => comment,
@@ -67,11 +67,11 @@ def create_events_for_repository(repo, project)
       users_commits[commit.committer.email] ||= []
       users_commits[commit.committer.email] << commit
     end
-  
+    
     users = User.find(:all, :conditions => ['email in (?)', users_commits.keys] )
     users.each do |user|
       commits = users_commits[user.email]
-    
+      puts "\nindexing #{commits.size} commits for #{user.email} in #{project.slug}/#{repo.name}:#{head.name}"
       commits.each_index do |i|
         commit = commits[i]
         previous_commit = commits[i-1]
@@ -152,8 +152,8 @@ def create_events_for_repository(repo, project)
           end
         end
       
-        puts "#{current_rev_type}#{action.inspect} in #{project.slug}/#{repo.name}:#{head.name}: #{commit.short_message}"
-        #project.create_event(action_id, repo, user, commit.id, commit.message)
+        print "." if (i % 10 == 1)
+        #puts "#{current_rev_type}#{action.inspect} in #{project.slug}/#{repo.name}:#{head.name}: #{commit.short_message}"
         project.events.create({
           :action => action_id || Action::COMMIT, 
           :target => repo, 
@@ -163,6 +163,7 @@ def create_events_for_repository(repo, project)
           :created_at => commit.committed_date})
       end
       commits = nil
+      puts
     end
     users_commits = nil
   end

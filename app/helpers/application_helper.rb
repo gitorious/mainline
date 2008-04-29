@@ -2,6 +2,11 @@
 module ApplicationHelper
   include TagsHelper
   
+  def feed_icon(url, alt_title = "Atom feed", size = :small)
+    link_to image_tag("feed_12.png", :class => "feed_icon"), url, 
+      :alt => alt_title, :title => alt_title
+  end
+  
   def default_css_tag_sizes
     %w(tag_size_1 tag_size_2 tag_size_3 tag_size_4)
   end
@@ -144,9 +149,9 @@ module ApplicationHelper
         action = "<strong>deleted repository</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"
         category = "project"
       when Action::COMMIT
-        project = target.project
+        project = event.project
         action = "<strong>committed</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = truncate(event.body, 150)
+        body = link_to(h(truncate(event.body, 150)), project_repository_commit_path(project, target, event.data))
         category = "commit"
       when Action::CREATE_BRANCH
         project = target.project

@@ -7,9 +7,9 @@
 
   <%= render :partial => "infobox" -%>
   
-  <%= render_readme(@repository) %>
+  <%#= render_readme(@repository) %>
   
-  <h2>Activities <%= link_to image_tag("feed.png", :width => 24, :height => 24), @atom_auto_discovery_url %></h2>
+  <h2>Activities <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>
 <% end -%>
 

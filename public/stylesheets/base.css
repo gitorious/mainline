@@ -1156,6 +1156,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   background: #b6babc;
 }
 
+.event_instance .event_category.comment { background: #a49d98; }
+.event_instance .event_category.project  { background: #98a49f; }
+.event_instance .event_category.merge_request { background: #a2a498; }
+
 /* repository meta (overview apge) */
 table.repository_meta {
 /*  border: 1px solid #ddd;*/
@@ -1195,3 +1199,5 @@ table.repository_meta .meta td .bignum {
   font-size: 20px;
 }
 table.repository_meta .graph td { text-align:center; }
+
+.feed_icon { margin: 0 4px 0 4px; }
