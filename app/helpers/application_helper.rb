@@ -224,4 +224,15 @@ module ApplicationHelper
   def sidebar_content?
     !@content_for_sidebar.blank?
   end
+  
+  def render_readme(repository)
+    possibilities = []
+    repository.git.git.ls_tree({:name_only => true}, "master").each do |line|
+      possibilities << line[0, line.length-1] if line =~ /README.*/
+    end
+    
+    return "" if possibilities.empty?
+    text = repository.git.git.show({}, "master:#{possibilities.first}")
+    markdown(text) rescue text.gsub("\n", "<br/>")
+  end
 end

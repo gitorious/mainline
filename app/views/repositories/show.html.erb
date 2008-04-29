@@ -6,7 +6,9 @@
 <% render_if_ready(@repository) do -%>
 
   <%= render :partial => "infobox" -%>
-
+  
+  <%= render_readme(@repository) %>
+  
   <h2>Activities</h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>
 <% end -%>
