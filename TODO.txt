@@ -1,8 +1,11 @@
+events:
+* need to create user-less events even we don't find matching users, otherwise it gets weird whenever there's commits from non-registered gitorious users (or users commit from another email).
+- maybe save name+email in events table in that case, so we can hook them up to a user later if needed.
+
 new-ui:
 * mandatory project descriptions, at least a sentence or two
 * tweak fonts-sizes and line-heights
 * Clone stats graph on repositories#index
-* divergence from mainline in +/-
 * popular & active projects on frontpage
 * make the top-header smaller (move gitorious logo to footer?)
 
