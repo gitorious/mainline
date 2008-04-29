@@ -233,7 +233,7 @@ module ApplicationHelper
     
     return "" if possibilities.empty?
     text = repository.git.git.show({}, "master:#{possibilities.first}")
-    markdown(text) rescue text.gsub("\n", "<br/>")
+    markdown(text) rescue simple_format(sanitize(text))
   end
   
   def file_path(repository, filename, head = "master")
