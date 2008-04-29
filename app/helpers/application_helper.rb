@@ -2,6 +2,11 @@
 module ApplicationHelper
   include TagsHelper
   
+  def feed_icon(url, alt_title = "Atom feed", size = :small)
+    link_to image_tag("feed_12.png", :class => "feed_icon"), url, 
+      :alt => alt_title, :title => alt_title
+  end
+  
   def default_css_tag_sizes
     %w(tag_size_1 tag_size_2 tag_size_3 tag_size_4)
   end

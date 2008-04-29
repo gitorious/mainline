@@ -1195,3 +1195,5 @@ table.repository_meta .meta td .bignum {
   font-size: 20px;
 }
 table.repository_meta .graph td { text-align:center; }
+
+.feed_icon { margin: 0 4px 0 4px; }
