@@ -144,9 +144,9 @@ module ApplicationHelper
         action = "<strong>deleted repository</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"
         category = "project"
       when Action::COMMIT
-        project = target.project
+        project = event.project
         action = "<strong>committed</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = truncate(event.body, 150)
+        body = link_to(h(truncate(event.body, 150)), project_repository_commit_path(project, target, event.data))
         category = "commit"
       when Action::CREATE_BRANCH
         project = target.project
