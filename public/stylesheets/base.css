@@ -548,6 +548,9 @@ table.listing thead th {
   margin-left: 10px;
   font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
 }
+.event_instance .commit_message, .event_instance .commit_message p {
+  margin: 2px 0 0 0;
+}
 
 .commit_list .commit_item .commit_message {
   margin-left: 40px;

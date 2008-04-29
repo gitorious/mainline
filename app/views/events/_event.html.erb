@@ -10,6 +10,8 @@
       <%= action %> 
     <% end %>
     </p>
-    <p><%= simple_format(sanitize(body)) %></p>
+    <div class="<%= event.action == Action::COMMIT ? "commit_message" : "" -%>">
+      <%= simple_format(sanitize(body)) %>
+    </div>
   </div>
 </li>
