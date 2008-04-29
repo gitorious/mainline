@@ -98,6 +98,20 @@ describe UsersController do
     (assigns[:commits_last_week] >= 0).should == true
   end
   
+  it "#show sets atom feed autodiscovery" do
+    user = users(:johan)
+    get :show, :id => user.login
+    assigns[:atom_auto_discovery_url].should == formatted_feed_user_path(user, :atom)
+  end
+  
+  it "has an atom feed" do
+    user = users(:johan)
+    get :feed, :id => user.login, :format => "atom"
+    response.should be_success
+    assigns[:user].should == user
+    assigns[:events].should == user.events.find(:all, :limit => 30, :order => "created_at desc")
+  end
+  
   describe "#forgot_password" do
     it "GETs the page fine for everyone" do
       get :forgot_password
