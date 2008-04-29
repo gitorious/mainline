@@ -180,16 +180,26 @@ class Repository < ActiveRecord::Base
   # TODO: caching
   def commit_graph_data_by_author(head = "master")
     h = {}
-    count_author_regexp = /^\s+(\d+)\s(.+)$/.freeze
-    data = self.git.git.shortlog({:s => true }, head)
+    emails = {}
+    count_author_regexp = /^\s+(\d+)\s(.+)\s\<(\S+)\>$/.freeze
+    data = self.git.git.shortlog({:e => true, :s => true }, head)
     data.each_line do |line|
       if line =~ count_author_regexp
         count = $1.to_i
         author = $2
+        email = $3
         
         h[author] ||= 0
         h[author] += count
+        
+        emails[email] = author
       end
+    end
+    
+    users = User.find(:all, :conditions => ["email in (?)", emails.keys])
+    users.each do |user|
+      author_name = emails[user.email]
+      h[user.login] = h.delete(author_name)
     end
     
     h
