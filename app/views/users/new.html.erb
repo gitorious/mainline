@@ -1,8 +1,8 @@
-<h1>Create new user</h1>
+<h1>Create new user or <%= link_to "login directly with your OpenID", login_path(:method=>'openid') -%></h1>
 
 <p>
-  Creating a user account allows you to create your own project or participate 
-  in the development of any project. 
+  Creating a user account allows you to create your own project or participate
+  in the development of any project.
 </p>
 
 <%= error_messages_for :user %>

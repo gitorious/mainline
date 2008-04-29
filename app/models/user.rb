@@ -10,10 +10,10 @@ class User < ActiveRecord::Base
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
-  
+
   attr_protected :login
 
-  validates_presence_of     :login, :email
+  validates_presence_of     :login, :email,               :if => :password_required?
   validates_format_of       :login, :with => /^[a-z0-9\-_\.]+$/i
   validates_format_of       :email, :with => /^[^@\s]+@([\-a-z0-9]+\.)+[a-z]{2,}$/i
   validates_presence_of     :password,                   :if => :password_required?
@@ -23,14 +23,14 @@ class User < ActiveRecord::Base
   validates_length_of       :login,    :within => 3..40
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
-  
+
   before_save :encrypt_password
-  before_create :make_activation_code 
-  
+  before_create :make_activation_code
+
   def self.find_by_login!(name)
     find_by_login(name) || raise(ActiveRecord::RecordNotFound )
   end
-  
+
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
     u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL', email] # need to get the salt
@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   def self.encrypt(password, salt)
     Digest::SHA1.hexdigest("--#{salt}--#{password}--")
   end
-  
+
   def self.generate_random_password(password_size = 12)
     characters = (("a".."z").to_a + ("0".."9").to_a) - %w[0 o i l 1]
     (0...password_size).collect do |char|
@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
   end
 
   def remember_token?
-    remember_token_expires_at && Time.now.utc < remember_token_expires_at 
+    remember_token_expires_at && Time.now.utc < remember_token_expires_at
   end
 
   # These create and unset the fields required for remembering users between browser closes
@@ -99,7 +99,7 @@ class User < ActiveRecord::Base
     self.remember_token            = nil
     save(false)
   end
-  
+
   def reset_password!
     generated = User.generate_random_password
     self.password = generated
@@ -107,32 +107,36 @@ class User < ActiveRecord::Base
     self.save!
     generated
   end
-  
+
   def can_write_to?(repository)
     !!committerships.find_by_repository_id(repository.id)
   end
-  
+
   def to_param
     login
   end
-  
+
   def to_xml(opts = {})
     super({:except => [:activation_code, :crypted_password, :remember_token, :remember_token_expires_at, :salt, :ssh_key_id]}.merge(opts))
   end
   
   protected
-    # before filter 
+    # before filter
     def encrypt_password
       return if password.blank?
       self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
       self.crypted_password = encrypt(password)
     end
-    
+
     def password_required?
-      crypted_password.blank? || !password.blank?
+      not_openid? && (crypted_password.blank? || !password.blank?)
     end
-    
+
+    def not_openid?
+      identity_url.blank?
+    end
+
     def make_activation_code
       self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
-    end 
+    end
 end

@@ -29,6 +29,8 @@ ActionController::Routing::Routes.draw do |map|
     :reset_password => :post,
   }, :member => { :feed => :get }
   map.resources  :events
+  }
+  map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"
