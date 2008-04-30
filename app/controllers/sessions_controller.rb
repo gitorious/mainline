@@ -31,9 +31,9 @@ class SessionsController < ApplicationController
       if result.successful?
         @user = User.find_or_initialize_by_identity_url(identity_url)
         if @user.new_record?
-          @user.login = registration['nickname']
-          @user.fullname = registration['fullname']
-          @user.email = registration['email']
+          @user.login = registration[:nickname]
+          @user.fullname = registration[:fullname]
+          @user.email = registration[:email]
           @user.save!
           @user.activate
         end
