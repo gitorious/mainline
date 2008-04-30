@@ -1,6 +1,7 @@
 events:
 * need to create user-less events even we don't find matching users, otherwise it gets weird whenever there's commits from non-registered gitorious users (or users commit from another email).
 - maybe save name+email in events table in that case, so we can hook them up to a user later if needed.
+* .hooks symlink need to go to $deploy_to/current, not the release dir
 
 new-ui:
 * show outstanding mergerequests on dashboard

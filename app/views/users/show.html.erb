@@ -35,7 +35,7 @@
     <h4>Repository clones</h4>
     <ul>
     <% @repositories.each do |repo| -%>
-      <li><%= link_to h(repo.name), [repo.project, repo] -%></li>
+      <li><%= link_to h("#{repo.project.slug}/#{repo.name}"), [repo.project, repo] -%></li>
     <% end -%>
     </ul>
   <% end -%>
