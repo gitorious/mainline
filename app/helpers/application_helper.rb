@@ -143,7 +143,7 @@ module ApplicationHelper
         
         project = target.project
         
-        action = "<strong>forked</strong> #{link_to h(project.title), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>cloned</strong> #{link_to h(project.title), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(target.name), project_repository_url(project, target)}"
         category = "repository"
       when Action::DELETE_REPOSITORY
         action = "<strong>deleted repository</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"

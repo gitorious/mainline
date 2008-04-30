@@ -3,6 +3,7 @@ events:
 - maybe save name+email in events table in that case, so we can hook them up to a user later if needed.
 
 new-ui:
+* show outstanding mergerequests on dashboard
 * mandatory project descriptions, at least a sentence or two
 * tweak fonts-sizes and line-heights
 * Clone stats graph on repositories#index
