@@ -143,7 +143,7 @@ module ApplicationHelper
         
         project = target.project
         
-        action = "<strong>cloned</strong> #{link_to h(project.title), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>cloned</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(target.name), project_repository_url(project, target)}"
         category = "repository"
       when Action::DELETE_REPOSITORY
         action = "<strong>deleted repository</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"
@@ -156,42 +156,42 @@ module ApplicationHelper
       when Action::CREATE_BRANCH
         project = target.project
         if event.data == "master"
-          action = "<strong>started development</strong> of #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+          action = "<strong>started development</strong> of #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
           body = event.body
         else
-          action = "<strong>created branch</strong> #{link_to h(event.data), project_repository_tree_path(project, target, event.data)} on #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+          action = "<strong>created branch</strong> #{link_to h(event.data), project_repository_tree_path(project, target, event.data)} on #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         end
         category = "commit"
       when Action::DELETE_BRANCH
         project = target.project
-        action = "<strong>deleted branch</strong> #{event.data} on #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>deleted branch</strong> #{event.data} on #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         category = "commit"
       when Action::CREATE_TAG
         project = target.project
-        action = "<strong>tagged</strong> #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>tagged</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         body = "#{link_to event.data, project_repository_commit_path(project, target, event.data)}<br/>#{event.body}"
         category = "commit"
       when Action::DELETE_TAG
         project = target.project
-        action = "<strong>deleted tag</strong> #{event.data} on #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>deleted tag</strong> #{event.data} on #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         category = "commit"
       when Action::ADD_COMMITTER
         user = target.user
         repo = target.repository
-        action = "<strong>added committer</strong> #{link_to user.login, user_path(user)} to #{link_to h(repo.project.title), project_path(repo.project)}/#{link_to h(repo.name), project_repository_url(repo.project, repo)}"
+        action = "<strong>added committer</strong> #{link_to user.login, user_path(user)} to #{link_to h(repo.project.slug), project_path(repo.project)}/#{link_to h(repo.name), project_repository_url(repo.project, repo)}"
         category = "repository"
       when Action::REMOVE_COMMITTER
         user = User.find_by_id(event.data.to_i)
         next unless user
         
         project = target.project
-        action = "<strong>removed committer</strong> #{link_to user.login, user_path(user)} from #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>removed committer</strong> #{link_to user.login, user_path(user)} from #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         category = "repository"
       when Action::COMMENT
         project = target.project
         repo = target.repository
         
-        action = "<strong>commented</strong> on #{link_to h(project.title), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+        action = "<strong>commented</strong> on #{link_to h(project.slug), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
         body = truncate(h(target.body), 150)
         category = "comment"
       when Action::REQUEST_MERGE
@@ -199,15 +199,16 @@ module ApplicationHelper
         project = source_repository.project
         target_repository = target.target_repository
         
-        action = "<strong>requested merge</strong> #{link_to h(project.title), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)} to #{link_to h(project.title), project_path(project)}/#{link_to h(target_repository.name)}"
-        body = "#{link_to "review", [project, target_repository, target]}<br/>#{truncate(h(target.proposal), 100)}"
-        category = "merge request"
+        action = "<strong>requested a merge of</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)} with #{link_to h(project.slug), project_path(project)}/#{link_to h(target_repository.name)}"
+        body = "#{link_to truncate(h(target.proposal), 100), [project, target_repository, target]}"
+        category = "merge_request"
       when Action::RESOLVE_MERGE_REQUEST
         source_repository = target.source_repository
         project = source_repository.project
         target_repository = target.target_repository
         
-        action = "<strong>resolved merge request </strong>to [#{target.status_string}] from #{link_to h(project.title), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)}"
+        action = "<strong>resolved merge request</strong> as [#{target.status_string}] from #{link_to h(project.slug), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)}"
+        body = "#{link_to truncate(h(target.proposal), 100), [project, target_repository, target]}"
         category = "merge_request"
       when Action::UPDATE_MERGE_REQUEST
         source_repository = target.source_repository
@@ -219,7 +220,7 @@ module ApplicationHelper
       when Action::DELETE_MERGE_REQUEST
         project = target.project
         
-        action = "<strong>deleted merge request</strong> from #{link_to h(project.title), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>deleted merge request</strong> from #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         category = "merge_request"
     end
       
