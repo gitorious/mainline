@@ -79,7 +79,7 @@ while line = gets
   user_map = users.inject({}) { |hash, user| hash[user.email] = user; hash }
   
   revs.each do |sha1|
-    info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %cd%nmessage: %s", :s => true}, sha1)
+    info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %ct%nmessage: %s", :s => true}, sha1)
     
     hash = {}
     info.each { |line|
@@ -87,7 +87,7 @@ while line = gets
         key = $1.to_sym
         value = $2
         
-        value = Date.parse(value) if key == :date
+        value = Time.at(value.to_i).utc if key == :date
         
         hash[key] = value
       end
@@ -144,7 +144,7 @@ while line = gets
     # puts "#{hash[:author]}: #{Action.name(action_id)} #{ref} on #{slug} [#{hash[:date]}]"
     # puts "    #{hash[:message]}"
     
-    project.create_event(action_id, repository, user, ref, hash[:message])
+    project.create_event(action_id, repository, user, ref, hash[:message], hash[:date])
   end
 end
 
