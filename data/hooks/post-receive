@@ -72,7 +72,7 @@ while line = gets
   user = User.find_by_email(hash[:email])
   if user.nil?
     # TODO: no user should be ok, no need to skip
-    $stdout.puts "** The email '#{hash[:email]}' is not registered."
+    # $stdout.puts "** The email '#{hash[:email]}' is not registered."
     next
   end
   

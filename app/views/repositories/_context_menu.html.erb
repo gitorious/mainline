@@ -1,7 +1,7 @@
 <li><%= link_to "Overview", [@project, @repository] -%></li>
 <li><%= link_to "Commits", 
           project_repository_logs_path(@project, @repository) -%></li>
-<li><%= link_to "Trees", 
+<li><%= link_to "Source Tree", 
           project_repository_trees_path(@project, @repository) -%></li>
 <li><%= link_to "Comments (#{@repository.comments.count})", 
           project_repository_comments_path(@project, @repository) -%></li>
