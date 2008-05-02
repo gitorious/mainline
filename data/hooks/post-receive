@@ -66,13 +66,17 @@ while line = gets
   # type => heads, tags, remotes
   # name => branch name
   path, type, name = revname.split("/")
-  
   revs = [ current_rev ]
-  if type == "heads" && action == :update
-    revs = git.rev_list({}, "#{oldrev}..#{newrev}").split("\n")
-    emails = git.log({:pretty => "format:%ce"}, "#{oldrev}..#{newrev}").split("\n")
-  else
-    emails = [git.show({:pretty => "format:%ce", :s => true}, current_rev)]
+  emails = [git.show({:pretty => "format:%ce", :s => true}, current_rev)]
+  
+  if type == "heads"
+    if action == :update
+      revs = git.rev_list({}, "#{oldrev}..#{newrev}").split("\n")
+      emails = git.log({:pretty => "format:%ce"}, "#{oldrev}..#{newrev}").split("\n")
+    elsif action == :create && name == "master"
+      revs = git.rev_list({}, current_rev).split("\n")
+      emails = git.log({:pretty => "format:%ce"}, current_rev).split("\n")
+    end
   end
   
   users = User.find(:all, :conditions => ["email in (?)", emails])
@@ -113,7 +117,7 @@ while line = gets
             ref = name
           when :update
             action_id = Action::COMMIT
-            ref = current_rev
+            ref = sha1
           when :delete
             action_id = Action::DELETE_BRANCH
             ref = name
@@ -145,6 +149,7 @@ while line = gets
     # puts "    #{hash[:message]}"
     
     project.create_event(action_id, repository, user, ref, hash[:message], hash[:date])
+    action = :update
   end
 end
 
