@@ -86,7 +86,7 @@ class ProjectsController < ApplicationController
     if @project.can_be_deleted_by?(current_user)
       project_title = @project.title
       @project.destroy
-      #current_user.create_event(Action::DELETE_PROJECT, nil, project_title)
+#       Event.create(:action => Action::DELETE_PROJECT, :user => current_user, :data => project_title) # FIXME: project_id cannot be null
     else
       flash[:error] = "You're not the owner of this project, or the project has clones"
     end

@@ -9,7 +9,7 @@ class Project < ActiveRecord::Base
     :class_name => "Repository"
   has_many    :repository_clones, :conditions => ["mainline = ?", false],
     :class_name => "Repository"
-  has_many    :events, :order => "created_at asc"
+  has_many    :events, :order => "created_at asc", :dependent => :destroy
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
