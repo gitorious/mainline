@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+ENV["RAILS_ENV"] ||= "production"
+require File.dirname(__FILE__)+'/../config/environment'
+
+Event.find(:all).each do |event|
+  begin
+    eval("#{event.target_type}").find(event.target_id)
+    Project.find(event.project_id)
+  rescue ActiveRecord::RecordNotFound
+    puts "Destroying invalid event '#{event.id}:#{Action.name(event.action)}'"
+    event.destroy
+  end
+end
+
+
