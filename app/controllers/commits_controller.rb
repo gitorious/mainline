@@ -11,7 +11,7 @@ class CommitsController < ApplicationController
     @git = @repository.git
     @commit = @git.commit(params[:id])
     @diffs = @commit.diffs
-    @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id})
+    @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
     respond_to do |format|
       format.html
       # TODO: format.diff { render :content_type => "text/plain" }
