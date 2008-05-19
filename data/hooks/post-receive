@@ -7,29 +7,14 @@ require 'rails_env'
 require 'date'
 
 gitdir = File.expand_path(File.join(incpath, ".."))
-repository_name = File.basename(gitdir)
-slug = ""
+repository = Repository.find_by_path(gitdir)
 
-if repository_name =~ /\.git$/
-  repository_name.sub!(/\.git$/, "")
-  slug = File.basename(File.expand_path(File.join(gitdir, "..")))
-end
-
-project = Project.find_by_slug(slug)
-repository = nil
-
-if project.nil?
-  $stderr.puts "Unknown project: '#{slug}'"
+if repository.nil?
+  $stderr.puts "Unknown repository"
   exit 0
 end
 
-project.repositories.each { |repo|
-  if repo.name == repository_name
-    repository = repo
-    break
-  end
-}
-
+project = repository.project
 git = Grit::Git.new(gitdir)
 
 while line = gets
@@ -79,7 +64,7 @@ while line = gets
     end
   end
   
-  users = User.find(:all, :conditions => ["email in (?)", emails])
+  users = repository.committers.find(:all, :conditions => ["email in (?)", emails])
   user_map = users.inject({}) { |hash, user| hash[user.email] = user; hash }
   
   revs.each do |sha1|
@@ -144,9 +129,6 @@ while line = gets
     end
     
     next unless action_id
-    
-    # puts "#{hash[:author]}: #{Action.name(action_id)} #{ref} on #{slug} [#{hash[:date]}]"
-    # puts "    #{hash[:message]}"
     
     project.create_event(action_id, repository, user, ref, hash[:message], hash[:date])
     action = :update
