@@ -181,25 +181,22 @@ class Repository < ActiveRecord::Base
   def commit_graph_data_by_author(head = "master")
     h = {}
     emails = {}
-    count_author_regexp = /^\s+(\d+)\s(.+)\s\<(\S+)\>$/.freeze
     data = self.git.git.shortlog({:e => true, :s => true }, head)
     data.each_line do |line|
-      if line =~ count_author_regexp
-        count = $1.to_i
-        author = $2
-        email = $3
-        
-        h[author] ||= 0
-        h[author] += count
-        
-        emails[email] = author
-      end
+      count, actor = line.split("\t")
+      actor = Grit::Actor.from_string(actor)
+      
+      h[actor.name] ||= 0
+      h[actor.name] += count.to_i      
+      emails[actor.email] = actor.name
     end
     
     users = User.find(:all, :conditions => ["email in (?)", emails.keys])
     users.each do |user|
       author_name = emails[user.email]
-      h[user.login] = h.delete(author_name)
+      if h[author_name] # in the event that a user with the same name has used two different emails, he'd be gone by now
+        h[user.login] = h.delete(author_name) 
+      end
     end
     
     h
