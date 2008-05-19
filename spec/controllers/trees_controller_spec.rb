@@ -63,6 +63,8 @@ describe TreesController do
     end
     
     it "archives the source tree" do
+      @git.should_receive(:commit).and_return(true)
+      @git.should_receive(:archive_tar_gz).and_return("the data")
       do_get
       response.should be_success
       
