@@ -28,7 +28,7 @@ module Gitorious
         @graph.marker_font_size = 12
         @graph.top_margin = 1
         @graph.bottom_margin = 1
-        @graph.no_data_message = ""
+        @graph.no_data_message = " "
       end
       
       def build
