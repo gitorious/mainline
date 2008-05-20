@@ -7,18 +7,18 @@ require 'rails_env'
 require 'date'
 
 gitdir = File.expand_path(File.join(incpath, ".."))
-repository_name = File.basename(gitdir)
-slug = ""
+repository = Repository.find_by_path(gitdir)
 
-if repository_name =~ /\.git$/
-  repository_name.sub!(/\.git$/, "")
-  slug = File.basename(File.expand_path(File.join(gitdir, "..")))
+if repository.nil?
+  $stderr.puts "Unknown repository"
+  exit 0
 end
 
+project = repository.project
 git = Grit::Git.new(gitdir)
 
 while line = gets
-  #puts "@@> #{line.inspect}"
+#   puts "@@> #{line.inspect}"
   # 3b480c5c30962c9f5b82a9c61a75992dc605de21 ee27ee3a022802c0569f9cdef6e9ad29aea096a8 refs/heads/master\n
   oldrev, newrev, revname = line.split(" ") 
   current_rev = newrev
@@ -51,83 +51,88 @@ while line = gets
   # type => heads, tags, remotes
   # name => branch name
   path, type, name = revname.split("/")
+  revs = [ current_rev ]
+  emails = [git.show({:pretty => "format:%ce", :s => true}, current_rev)]
   
-  info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %cd%nmessage: %s", :s => true}, current_rev )
-  
-  hash = {}
-  info.each { |line|
-    if line =~ /(\w+):\s(.*)$/
-      key = $1.to_sym
-      value = $2
-      
-      value = Date.parse(value) if key == :date
-      
-      hash[key] = value
-    end
-  }
-  
-  # action => create, delete, update
-  # rev_type => commit, tag
-  
-  user = User.find_by_email(hash[:email])
-  if user.nil?
-    # TODO: no user should be ok, no need to skip
-    # $stdout.puts "** The email '#{hash[:email]}' is not registered."
-    next
-  end
-  
-  project = Project.find_by_slug(slug)
-  repository = nil
-  
-  project.repositories.each { |repo|
-    if repo.name == repository_name
-      repository = repo
-      break
-    end
-  }
-  
-  action_id = nil
-  ref = nil
-  if current_rev_type == "commit"
-    if type == "heads"
-      case action
-        when :create
-          action_id = Action::CREATE_BRANCH
-          ref = name
-        when :update
-          action_id = Action::COMMIT
-          ref = current_rev
-        when :delete
-          action_id = Action::DELETE_BRANCH
-          ref = name
-      end
-    elsif type == "tags"
-      if action == :create
-        action_id = Action::CREATE_TAG
-        ref = name
-      elsif action == :delete
-        action_id = Action::DELETE_TAG
-        ref = name
-      end
-    end
-  elsif current_rev_type == "tag"
-    if type == "tags"
-      if action == :create
-        action_id = Action::CREATE_TAG
-        ref = name
-      elsif action == :delete
-        action_id = Action::DELETE_TAG
-        ref = name
-      end
+  if type == "heads"
+    if action == :update
+      revs = git.rev_list({}, "#{oldrev}..#{newrev}").split("\n")
+      emails = git.log({:pretty => "format:%ce"}, "#{oldrev}..#{newrev}").split("\n")
+    elsif action == :create && name == "master"
+      revs = git.rev_list({}, current_rev).split("\n")
+      emails = git.log({:pretty => "format:%ce"}, current_rev).split("\n")
     end
   end
   
-  next unless action_id
+  users = repository.committers.find(:all, :conditions => ["email in (?)", emails])
+  user_map = users.inject({}) { |hash, user| hash[user.email] = user; hash }
   
-  # puts "#{hash[:author]}: #{Action.name(action_id)} #{ref} on #{slug} [#{hash[:date]}]"
-  # puts "    #{hash[:message]}"
-  
-  project.create_event(action_id, repository, user, ref, hash[:message])
+  revs.each do |sha1|
+    info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %ct%nmessage: %s", :s => true}, sha1)
+    
+    hash = {}
+    info.each { |line|
+      if line =~ /(\w+):\s(.*)$/
+        key = $1.to_sym
+        value = $2
+        
+        value = Time.at(value.to_i).utc if key == :date
+        
+        hash[key] = value
+      end
+    }
+    
+    # action => create, delete, update
+    # rev_type => commit, tag
+    
+    user = user_map[hash[:email]]
+    if user.nil?
+      # TODO: no user should be ok, no need to skip
+      # $stdout.puts "** The email '#{hash[:email]}' is not registered."
+      next
+    end
+    
+    action_id = nil
+    ref = nil
+    if current_rev_type == "commit"
+      if type == "heads"
+        case action
+          when :create
+            action_id = Action::CREATE_BRANCH
+            ref = name
+          when :update
+            action_id = Action::COMMIT
+            ref = sha1
+          when :delete
+            action_id = Action::DELETE_BRANCH
+            ref = name
+        end
+      elsif type == "tags"
+        if action == :create
+          action_id = Action::CREATE_TAG
+          ref = name
+        elsif action == :delete
+          action_id = Action::DELETE_TAG
+          ref = name
+        end
+      end
+    elsif current_rev_type == "tag"
+      if type == "tags"
+        if action == :create
+          action_id = Action::CREATE_TAG
+          ref = name
+        elsif action == :delete
+          action_id = Action::DELETE_TAG
+          ref = name
+        end
+      end
+    end
+    
+    next unless action_id
+    
+    project.create_event(action_id, repository, user, ref, hash[:message], hash[:date])
+    action = :update
+  end
 end
 
 puts "[OK]"
