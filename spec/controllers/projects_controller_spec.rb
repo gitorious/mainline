@@ -39,7 +39,7 @@ describe ProjectsController do
   
   it "POST projects/create with valid data should create project" do
     login_as :johan
-    post :create, :project => {:title => "project x", :slug => "projectx"}
+    post :create, :project => {:title => "project x", :slug => "projectx", :description => "projectx's description"}
     response.should be_redirect
     response.should redirect_to(projects_path)
     
@@ -65,7 +65,7 @@ describe ProjectsController do
   
   it "PUT projects/update can only be done by project owner" do
     login_as :moe
-    put :update, :id => projects(:johans).slug, :project => {:title => "new name", :slug => "foo"}
+    put :update, :id => projects(:johans).slug, :project => {:title => "new name", :slug => "foo", :description => "bar"}
     flash[:error].should match(/you're not the owner of this project/i)
     response.should redirect_to(project_path(projects(:johans)))
   end
@@ -73,7 +73,7 @@ describe ProjectsController do
   it "PUT projects/update with valid data should update record" do
     login_as :johan
     project = projects(:johans)
-    put :update, :id => project.slug, :project => {:title => "new name", :slug => "foo"}
+    put :update, :id => project.slug, :project => {:title => "new name", :slug => "foo", :description => "bar"}
     assigns(:project).should == project
     response.should be_redirect
     response.should redirect_to(project_path(project.reload))
