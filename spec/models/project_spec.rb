@@ -6,6 +6,7 @@ describe Project do
     Project.new({
       :title => "foo project",
       :slug => "foo",
+      :description => "my little project",
       :user => users(:johan)
     }.merge(options))
   end

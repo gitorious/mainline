@@ -5,7 +5,6 @@ events:
 
 new-ui:
 * show outstanding mergerequests on dashboard
-* mandatory project descriptions, at least a sentence or two
 * tweak fonts-sizes and line-heights
 * Clone stats graph on repositories#index
 * popular & active projects on frontpage
