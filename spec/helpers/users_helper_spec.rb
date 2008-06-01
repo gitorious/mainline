@@ -11,12 +11,12 @@ describe UsersHelper do
       Need to investigate if this is a Rails bug and
       either fix it there or let go of obfuscation.
     }
-    #pending(message) do
+    pending(message) do
       email = "aAT@NOSPAM@bDOTcom"
       encoded = (0...email.length).inject("") do |result, index|
         result << sprintf("%%%x",email[index])
       end
       helper.encoded_mail_to("a@b.com").should match(/#{encoded}/)
-    #end
+    end
   end
 end

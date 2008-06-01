@@ -3,7 +3,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe CommitsHelper do
   
   it "includes the RepostoriesHelper" do
-    self.class.ancestors.should include(RepositoriesHelper)
+    included_modules = (class << helper; self; end).send(:included_modules)
+    included_modules.should include(RepositoriesHelper)
   end
   
   describe "render_diff_stats" do
@@ -22,18 +23,18 @@ describe CommitsHelper do
     
     it "renders a list of files as anchor links" do
       files = @stats.files.keys
-      rendered_stats = render_diff_stats(@stats)
+      rendered_stats = helper.render_diff_stats(@stats)
       files.each do |filename|
         rendered_stats.should include(%Q{<li><a href="##{h(filename)}">#{h(filename)}</a>})
       end
     end
     
     it "renders a graph of minuses for deletions" do
-      render_diff_stats(@stats).should include(%Q{spec/database_spec.rb</a>&nbsp;17&nbsp;<small class="deletions">#{"-"*12}</small>})
+      helper.render_diff_stats(@stats).should include(%Q{spec/database_spec.rb</a>&nbsp;17&nbsp;<small class="deletions">#{"-"*12}</small>})
     end
     
     it "renders a graph of plusses for inserts" do
-      render_diff_stats(@stats).should match(
+      helper.render_diff_stats(@stats).should match(
         /spec\/database_spec\.rb<\/a>&nbsp;17&nbsp;<small class="deletions.+<\/small><small class="insertions">#{"\\+"*5}<\/small>/
       )
     end
