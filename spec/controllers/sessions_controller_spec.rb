@@ -21,8 +21,8 @@ describe SessionsController do
   it "should login with openid and redirect" do
     identity_url = "http://patcito.myopenid.com"
     controller.stub!(:using_open_id?).and_return(true)
-    controller.stub!(:successful?).and_return(true)
-    controller.stub!(:authenticate_with_open_id).and_yield(Result[:successful],identity_url,registration={:nickname=>"patcito",:email=>"patcito@gmail.com",:fullname=>'Patrick Aljord'})
+    controller.stub!(:successful?).and_return(false)
+    controller.stub!(:authenticate_with_open_id).and_yield(Result[:successful],identity_url,registration={'nickname'=>"patcito",'email'=>"patcito@gmail.com",'fullname'=>'Patrick Aljord'})
     post :create, :openid_url => identity_url
     session[:user_id].should_not be(nil)
     response.should be_redirect
