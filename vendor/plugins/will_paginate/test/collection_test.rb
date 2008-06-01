@@ -1,6 +1,5 @@
-require File.dirname(__FILE__) + '/helper'
-require 'will_paginate'
-require 'will_paginate/core_ext'
+require 'helper'
+require 'will_paginate/array'
 
 class ArrayPaginationTest < Test::Unit::TestCase
   def test_simple
@@ -10,11 +9,10 @@ class ArrayPaginationTest < Test::Unit::TestCase
      { :page => 2,  :per_page => 3,  :expected => %w( d e ) },
      { :page => 1,  :per_page => 5,  :expected => %w( a b c d e ) },
      { :page => 3,  :per_page => 5,  :expected => [] },
-     { :page => -1, :per_page => 5,  :expected => [] },
-     { :page => 1,  :per_page => -5, :expected => [] },
     ].
     each do |conditions|
-      assert_equal conditions[:expected], collection.paginate(conditions.slice(:page, :per_page))
+      expected = conditions.delete :expected
+      assert_equal expected, collection.paginate(conditions)
     end
   end
 
@@ -25,14 +23,8 @@ class ArrayPaginationTest < Test::Unit::TestCase
   end
 
   def test_deprecated_api
-    assert_deprecated 'paginate API' do
-      result = (1..50).to_a.paginate(2, 10)
-      assert_equal 2, result.current_page
-      assert_equal (11..20).to_a, result
-      assert_equal 50, result.total_entries
-    end
-    
-    assert_deprecated { [].paginate nil }
+    assert_raise(ArgumentError) { [].paginate(2) }
+    assert_raise(ArgumentError) { [].paginate(2, 10) }
   end
 
   def test_total_entries_has_precedence
@@ -53,19 +45,30 @@ class ArrayPaginationTest < Test::Unit::TestCase
     end
 
     assert_equal entries, collection
-    assert_respond_to_all collection, %w(page_count each offset size current_page per_page total_entries)
+    assert_respond_to_all collection, %w(total_pages each offset size current_page per_page total_entries)
     assert_kind_of Array, collection
     assert_instance_of Array, collection.entries
     assert_equal 3, collection.offset
-    assert_equal 4, collection.page_count
+    assert_equal 4, collection.total_pages
     assert !collection.out_of_bounds?
+  end
+
+  def test_previous_next_pages
+    collection = create(1, 1, 3)
+    assert_nil collection.previous_page
+    assert_equal 2, collection.next_page
+    
+    collection = create(2, 1, 3)
+    assert_equal 1, collection.previous_page
+    assert_equal 3, collection.next_page
+    
+    collection = create(3, 1, 3)
+    assert_equal 2, collection.previous_page
+    assert_nil collection.next_page
   end
 
   def test_out_of_bounds
     entries = create(2, 3, 2){}
-    assert entries.out_of_bounds?
-    
-    entries = create(0, 3, 2){}
     assert entries.out_of_bounds?
     
     entries = create(1, 3, 2){}
@@ -96,26 +99,42 @@ class ArrayPaginationTest < Test::Unit::TestCase
       pager.replace array(0)
     end
     assert_equal nil, entries.total_entries
+    
+    entries = create(1) do |pager|
+      # collection is empty and we're on page 1,
+      # so the whole thing must be empty, too
+      pager.replace array(0)
+    end
+    assert_equal 0, entries.total_entries
+  end
+
+  def test_invalid_page
+    bad_inputs = [0, -1, nil, '', 'Schnitzel']
+
+    bad_inputs.each do |bad|
+      assert_raise(WillPaginate::InvalidPage) { create bad }
+    end
+  end
+
+  def test_invalid_per_page_setting
+    assert_raise(ArgumentError) { create(1, -1) }
+  end
+
+  def test_page_count_was_removed
+    assert_raise(NoMethodError) { create.page_count }
+    # It's `total_pages` now.
   end
 
   private
     def create(page = 2, limit = 5, total = nil, &block)
-      WillPaginate::Collection.create(page, limit, total, &block)
+      if block_given?
+        WillPaginate::Collection.create(page, limit, total, &block)
+      else
+        WillPaginate::Collection.new(page, limit, total)
+      end
     end
 
     def array(size = 3)
       Array.new(size)
-    end
-    
-    def collect_deprecations
-      old_behavior = WillPaginate::Deprecation.behavior
-      deprecations = []
-      WillPaginate::Deprecation.behavior = Proc.new do |message, callstack|
-        deprecations << message
-      end
-      result = yield
-      [result, deprecations]
-    ensure
-      WillPaginate::Deprecation.behavior = old_behavior
     end
 end
