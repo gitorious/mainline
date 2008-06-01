@@ -1,4 +1,76 @@
-*SVN*
+*2.1.0 (May 31st, 2008)*
+
+* InstanceTag#default_time_from_options overflows to DateTime [Geoff Buesing]
+
+* Fixed that forgery protection can be used without session tracking (Peter Jones) [#139]
+
+* Added session(:on) to turn session management back on in a controller subclass if the superclass turned it off (Peter Jones) [#136]
+
+* Change the request forgery protection to go by Content-Type instead of request.format so that you can't bypass it by POSTing to "#{request.uri}.xml" [rick]
+* InstanceTag#default_time_from_options with hash args uses Time.current as default; respects hash settings when time falls in system local spring DST gap [Geoff Buesing]
+
+* select_date defaults to Time.zone.today when config.time_zone is set [Geoff Buesing]
+
+* Fixed that TextHelper#text_field would corrypt when raw HTML was used as the value (mchenryc, Kevin Glowacz) [#80]
+
+* Added ActionController::TestCase#rescue_action_in_public! to control whether the action under test should use the regular rescue_action path instead of simply raising the exception inline (great for error testing) [DHH]
+
+* Reduce number of instance variables being copied from controller to view. [Pratik]
+
+* select_datetime and select_time default to Time.zone.now when config.time_zone is set [Geoff Buesing]
+
+* datetime_select defaults to Time.zone.now when config.time_zone is set [Geoff Buesing]
+
+* Remove ActionController::Base#view_controller_internals flag. [Pratik]
+
+* Add conditional options to caches_page method. [Paul Horsfall]
+
+* Move missing template logic to ActionView. [Pratik]
+
+* Introduce ActionView::InlineTemplate class. [Pratik]
+
+* Automatically parse posted JSON content for Mime::JSON requests.  [rick]
+
+  POST /posts
+  {"post": {"title": "Breaking News"}}
+
+  def create
+    @post = Post.create params[:post]
+    # ...
+  end
+
+* add json_escape ERB util to escape html entities in json strings that are output in HTML pages. [rick]
+
+* Provide a helper proxy to access helper methods from outside views. Closes #10839 [Josh Peek]
+  e.g. ApplicationController.helpers.simple_format(text)
+
+* Improve documentation. [Xavier Noria, leethal, jerome]
+
+* Ensure RJS redirect_to doesn't html-escapes string argument. Closes #8546 [josh, eventualbuddha, Pratik]
+
+* Support render :partial => collection of heterogeneous elements.  #11491 [Zach Dennis]
+
+* Avoid remote_ip spoofing.  [Brian Candler]
+
+* Added support for regexp flags like ignoring case in the :requirements part of routes declarations #11421 [NeilW]
+
+* Fixed that ActionController::Base#read_multipart would fail if boundary was exactly 10240 bytes #10886 [ariejan]
+
+* Fixed HTML::Tokenizer (used in sanitize helper) didn't handle unclosed CDATA tags #10071 [esad, packagethief]
+
+* Improve documentation. [Radar, Jan De Poorter, chuyeow, xaviershay, danger, miloops, Xavier Noria,  Sunny Ripert]
+
+* Fixed that FormHelper#radio_button would produce invalid ids #11298 [harlancrystal]
+
+* Added :confirm option to submit_tag #11415 [miloops]
+
+* Fixed NumberHelper#number_with_precision to properly round in a way that works equally on Mac, Windows, Linux (closes #11409, #8275, #10090, #8027) [zhangyuanyi]
+
+* Allow the #simple_format text_helper to take an html_options hash for each paragraph.  #2448 [Francois Beausoleil, thechrisoshow]
+
+* Fix regression from filter refactoring where re-adding a skipped filter resulted in it being called twice.  [rick]
+
+* Refactor filters to use Active Support callbacks.  #11235 [Josh Peek]
 
 * Fixed that polymorphic routes would modify the input array #11363 [thomas.lee]
 
@@ -8,7 +80,7 @@
 
 * Fix more obscure nested parameter hash parsing bug.  #10797 [thomas.lee]
 
-* Added ActionView::Helpers::register_javascript/stylesheet_expansion to make it easier for plugin developers to inject multiple assets #10350 [lotswholetime]
+* Added ActionView::Helpers::register_javascript/stylesheet_expansion to make it easier for plugin developers to inject multiple assets.  #10350 [lotswholetime]
 
 * Fix nested parameter hash parsing bug.  #10797 [thomas.lee]
 

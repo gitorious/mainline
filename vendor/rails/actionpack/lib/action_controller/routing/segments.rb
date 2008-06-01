@@ -171,10 +171,19 @@ module ActionController
       end
 
       def value_regexp
-        Regexp.new "\\A#{regexp.source}\\Z" if regexp
+        Regexp.new "\\A#{regexp.to_s}\\Z" if regexp
       end
+
       def regexp_chunk
-        regexp ? "(#{regexp.source})" : "([^#{Routing::SEPARATORS.join}]+)"
+        if regexp 
+          if regexp_has_modifiers?
+            "(#{regexp.to_s})"
+          else
+            "(#{regexp.source})"
+          end
+        else
+          "([^#{Routing::SEPARATORS.join}]+)"
+        end
       end
 
       def build_pattern(pattern)
@@ -183,6 +192,7 @@ module ActionController
         pattern = "#{chunk}#{pattern}"
         optional? ? Regexp.optionalize(pattern) : pattern
       end
+
       def match_extraction(next_capture)
         # All non code-related keys (such as :id, :slug) are URI-unescaped as
         # path parameters.
@@ -199,6 +209,10 @@ module ActionController
 
       def optionality_implied?
         [:action, :id].include? key
+      end
+
+      def regexp_has_modifiers?
+        regexp.options & (Regexp::IGNORECASE | Regexp::EXTENDED) != 0
       end
 
     end
@@ -230,11 +244,12 @@ module ActionController
     end
 
     class PathSegment < DynamicSegment #:nodoc:
-      RESERVED_PCHAR = "#{Segment::RESERVED_PCHAR}/"
-      UNSAFE_PCHAR = Regexp.new("[^#{URI::REGEXP::PATTERN::UNRESERVED}#{RESERVED_PCHAR}]", false, 'N').freeze
-
       def interpolation_chunk(value_code = "#{local_name}")
-        "\#{URI.escape(#{value_code}.to_s, ActionController::Routing::PathSegment::UNSAFE_PCHAR)}"
+        "\#{#{value_code}}"
+      end
+
+      def extract_value
+        "#{local_name} = hash[:#{key}] && hash[:#{key}].collect { |path_component| URI.escape(path_component.to_param, ActionController::Routing::Segment::UNSAFE_PCHAR) }.to_param #{"|| #{default.inspect}" if default}"
       end
 
       def default

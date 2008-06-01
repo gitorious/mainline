@@ -161,7 +161,7 @@ module ActiveRecord
   # == <tt>before_validation*</tt> returning statements
   #
   # If the returning value of a +before_validation+ callback can be evaluated to +false+, the process will be aborted and <tt>Base#save</tt> will return +false+.
-  # If <tt>Base#save!</tt> is called it will raise a +RecordNotSaved+ exception.
+  # If Base#save! is called it will raise a RecordNotSaved exception.
   # Nothing will be appended to the errors object.
   #
   # == Canceling callbacks
@@ -229,9 +229,9 @@ module ActiveRecord
     # Is called _after_ <tt>Base.save</tt> on existing objects that have a record.
     def after_update() end
 
-    def update_with_callbacks #:nodoc:
+    def update_with_callbacks(*args) #:nodoc:
       return false if callback(:before_update) == false
-      result = update_without_callbacks
+      result = update_without_callbacks(*args)
       callback(:after_update)
       result
     end

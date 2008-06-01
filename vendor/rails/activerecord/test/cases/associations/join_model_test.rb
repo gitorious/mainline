@@ -41,6 +41,14 @@ class AssociationsJoinModelTest < ActiveRecord::TestCase
     assert_queries(1) { assert_equal 0, author.unique_categorized_posts.count(:title, :conditions => "title is NULL") }
     assert !authors(:mary).unique_categorized_posts.loaded?
   end
+  
+  def test_has_many_uniq_through_find
+    assert_equal 1, authors(:mary).unique_categorized_posts.find(:all).size
+  end
+  
+  def test_has_many_uniq_through_dynamic_find
+    assert_equal 1, authors(:mary).unique_categorized_posts.find_all_by_title("So I was thinking").size
+  end
 
   def test_polymorphic_has_many
     assert posts(:welcome).taggings.include?(taggings(:welcome_general))
@@ -435,11 +443,33 @@ class AssociationsJoinModelTest < ActiveRecord::TestCase
     assert_nil posts(:thinking).tags.find_by_name("General").attributes["tag_id"]
   end
 
-  def test_raise_error_when_adding_new_record_to_has_many_through
-    assert_raise(ActiveRecord::HasManyThroughCantAssociateNewRecords) { posts(:thinking).tags << tags(:general).clone }
-    assert_raise(ActiveRecord::HasManyThroughCantAssociateNewRecords) { posts(:thinking).clone.tags << tags(:general) }
-    assert_raise(ActiveRecord::HasManyThroughCantAssociateNewRecords) { posts(:thinking).tags.build }
-    assert_raise(ActiveRecord::HasManyThroughCantAssociateNewRecords) { posts(:thinking).tags.new }
+  def test_associating_unsaved_records_with_has_many_through
+    saved_post = posts(:thinking)
+    new_tag = Tag.new(:name => "new")
+
+    saved_post.tags << new_tag
+    assert !new_tag.new_record? #consistent with habtm!
+    assert !saved_post.new_record?
+    assert saved_post.tags.include?(new_tag)
+
+    assert !new_tag.new_record?
+    assert saved_post.reload.tags(true).include?(new_tag)
+
+
+    new_post = Post.new(:title => "Association replacmenet works!", :body => "You best believe it.")
+    saved_tag = tags(:general)
+
+    new_post.tags << saved_tag
+    assert new_post.new_record?
+    assert !saved_tag.new_record?
+    assert new_post.tags.include?(saved_tag)
+
+    new_post.save!
+    assert !new_post.new_record?
+    assert new_post.reload.tags(true).include?(saved_tag)
+
+    assert posts(:thinking).tags.build.new_record?
+    assert posts(:thinking).tags.new.new_record?
   end
 
   def test_create_associate_when_adding_to_has_many_through
@@ -630,6 +660,38 @@ class AssociationsJoinModelTest < ActiveRecord::TestCase
     assert_no_queries do
       assert_equal comments.first.post, comments[1].post
     end
+  end
+
+  def test_has_many_through_include_uses_array_include_after_loaded
+    david = authors(:david)
+    david.categories.class # force load target
+
+    category = david.categories.first
+
+    assert_no_queries do
+      assert david.categories.loaded?
+      assert david.categories.include?(category)
+    end
+  end
+
+  def test_has_many_through_include_checks_if_record_exists_if_target_not_loaded
+    david = authors(:david)
+    category = david.categories.first
+
+    david.reload
+    assert ! david.categories.loaded?
+    assert_queries(1) do
+      assert david.categories.include?(category)
+    end
+    assert ! david.categories.loaded?
+  end
+  
+  def test_has_many_through_include_returns_false_for_non_matching_record_to_verify_scoping
+    david = authors(:david)
+    category = Category.create!(:name => 'Not Associated')
+
+    assert ! david.categories.loaded?
+    assert ! david.categories.include?(category)
   end
 
   private

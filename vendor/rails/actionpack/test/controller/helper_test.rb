@@ -85,7 +85,7 @@ class HelperTest < Test::Unit::TestCase
   def test_helper_block_include
     assert_equal expected_helper_methods, missing_methods
     assert_nothing_raised {
-      @controller_class.helper { include TestHelper }
+      @controller_class.helper { include HelperTest::TestHelper }
     }
     assert [], missing_methods
   end
@@ -119,6 +119,22 @@ class HelperTest < Test::Unit::TestCase
 
   def test_all_helpers
     methods = ApplicationController.master_helper_module.instance_methods.map(&:to_s)
+
+    # abc_helper.rb
+    assert methods.include?('bare_a')
+
+    # fun/games_helper.rb
+    assert methods.include?('stratego')
+
+    # fun/pdf_helper.rb
+    assert methods.include?('foobar')
+  end
+
+  def test_helper_proxy
+    methods = ApplicationController.helpers.methods.map(&:to_s)
+
+    # ActionView
+    assert methods.include?('pluralize')
 
     # abc_helper.rb
     assert methods.include?('bare_a')

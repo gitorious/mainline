@@ -3,6 +3,7 @@ class Author < ActiveRecord::Base
   has_many :posts_with_comments, :include => :comments, :class_name => "Post"
   has_many :posts_with_categories, :include => :categories, :class_name => "Post"
   has_many :posts_with_comments_and_categories, :include => [ :comments, :categories ], :order => "posts.id", :class_name => "Post"
+  has_many :posts_containing_the_letter_a, :class_name => "Post"
   has_many :posts_with_extension, :class_name => "Post" do #, :extend => ProxyTestExtension
     def testing_proxy_owner
       proxy_owner
@@ -15,6 +16,11 @@ class Author < ActiveRecord::Base
     end
   end
   has_many :comments, :through => :posts
+  has_many :comments_containing_the_letter_e, :through => :posts, :source => :comments
+  has_many :comments_with_order_and_conditions, :through => :posts, :source => :comments, :order => 'comments.body', :conditions => "comments.body like 'Thank%'"
+  has_many :comments_with_include, :through => :posts, :source => :comments, :include => :post
+
+
   has_many :comments_desc, :through => :posts, :source => :comments, :order => 'comments.id DESC'
   has_many :limited_comments, :through => :posts, :source => :comments, :limit => 1
   has_many :funky_comments, :through => :posts, :source => :comments
@@ -32,6 +38,11 @@ class Author < ActiveRecord::Base
   has_many :hello_posts, :class_name => "Post", :conditions => "posts.body = 'hello'"
   has_many :hello_post_comments, :through => :hello_posts, :source => :comments
   has_many :posts_with_no_comments, :class_name => 'Post', :conditions => 'comments.id is null', :include => :comments
+
+  has_many :hello_posts_with_hash_conditions, :class_name => "Post",
+:conditions => {:body => 'hello'}
+  has_many :hello_post_comments_with_hash_conditions, :through =>
+:hello_posts_with_hash_conditions, :source => :comments
 
   has_many :other_posts,          :class_name => "Post"
   has_many :posts_with_callbacks, :class_name => "Post", :before_add => :log_before_adding,

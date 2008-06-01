@@ -25,7 +25,7 @@ class UriReservedCharactersRoutingTest < Test::Unit::TestCase
     ActionController::Routing.use_controllers! ['controller']
     @set = ActionController::Routing::RouteSet.new
     @set.draw do |map|
-      map.connect ':controller/:action/:variable'
+      map.connect ':controller/:action/:variable/*additional'
     end
 
     safe, unsafe = %w(: @ & = + $ , ;), %w(^ / ? # [ ])
@@ -36,17 +36,26 @@ class UriReservedCharactersRoutingTest < Test::Unit::TestCase
   end
 
   def test_route_generation_escapes_unsafe_path_characters
-    assert_equal "/contr#{@segment}oller/act#{@escaped}ion/var#{@escaped}iable",
+    assert_equal "/contr#{@segment}oller/act#{@escaped}ion/var#{@escaped}iable/add#{@escaped}itional-1/add#{@escaped}itional-2",
       @set.generate(:controller => "contr#{@segment}oller",
                     :action => "act#{@segment}ion",
-                    :variable => "var#{@segment}iable")
+                    :variable => "var#{@segment}iable",
+                    :additional => ["add#{@segment}itional-1", "add#{@segment}itional-2"])
   end
 
   def test_route_recognition_unescapes_path_components
     options = { :controller => "controller",
                 :action => "act#{@segment}ion",
-                :variable => "var#{@segment}iable" }
-    assert_equal options, @set.recognize_path("/controller/act#{@escaped}ion/var#{@escaped}iable")
+                :variable => "var#{@segment}iable",
+                :additional => ["add#{@segment}itional-1", "add#{@segment}itional-2"] }
+    assert_equal options, @set.recognize_path("/controller/act#{@escaped}ion/var#{@escaped}iable/add#{@escaped}itional-1/add#{@escaped}itional-2")
+  end
+
+  def test_route_generation_allows_passing_non_string_values_to_generated_helper
+    assert_equal "/controller/action/variable/1/2", @set.generate(:controller => "controller",
+                                                                  :action => "action",
+                                                                  :variable => "variable",
+                                                                  :additional => [1, 2])
   end
 end
 
@@ -936,6 +945,16 @@ class DynamicSegmentTest < Test::Unit::TestCase
     a_segment.key = :action
     assert a_segment.optionality_implied?
   end
+
+  def test_modifiers_must_be_handled_sensibly
+    a_segment = ROUTING::DynamicSegment.new
+    a_segment.regexp = /david|jamis/i
+    assert_equal "((?i-mx:david|jamis))stuff", a_segment.build_pattern('stuff')
+    a_segment.regexp = /david|jamis/x
+    assert_equal "((?x-mi:david|jamis))stuff", a_segment.build_pattern('stuff')
+    a_segment.regexp = /david|jamis/
+    assert_equal "(david|jamis)stuff", a_segment.build_pattern('stuff')
+  end
 end
 
 class ControllerSegmentTest < Test::Unit::TestCase
@@ -1723,7 +1742,7 @@ class RouteSetTest < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_non_path_route_requirements_match_all
     set.draw do |map|
       map.connect 'page/37s', :controller => 'pages', :action => 'show', :name => /(jamis|david)/
@@ -2110,6 +2129,138 @@ class RouteSetTest < Test::Unit::TestCase
       end
     end
   end
+
+  def test_route_requirements_with_unsupported_regexp_options_must_error
+    assert_raises ArgumentError do
+      set.draw do |map|
+        map.connect 'page/:name', :controller => 'pages',
+          :action => 'show',
+          :requirements => {:name => /(david|jamis)/m}
+      end
+    end
+  end
+
+  def test_route_requirements_with_supported_options_must_not_error
+    assert_nothing_raised do
+      set.draw do |map|
+        map.connect 'page/:name', :controller => 'pages',
+          :action => 'show',
+          :requirements => {:name => /(david|jamis)/i}
+      end
+    end
+    assert_nothing_raised do
+      set.draw do |map|
+        map.connect 'page/:name', :controller => 'pages',
+          :action => 'show',
+          :requirements => {:name => / # Desperately overcommented regexp
+                                      ( #Either
+                                       david #The Creator
+                                      | #Or
+                                        jamis #The Deployer
+                                      )/x}
+      end
+    end
+  end
+
+  def test_route_requirement_recognize_with_ignore_case
+    set.draw do |map|
+      map.connect 'page/:name', :controller => 'pages',
+        :action => 'show',
+        :requirements => {:name => /(david|jamis)/i}
+    end
+    assert_equal({:controller => 'pages', :action => 'show', :name => 'jamis'}, set.recognize_path('/page/jamis'))
+    assert_raises ActionController::RoutingError do
+      set.recognize_path('/page/davidjamis')
+    end
+    assert_equal({:controller => 'pages', :action => 'show', :name => 'DAVID'}, set.recognize_path('/page/DAVID'))
+  end
+
+  def test_route_requirement_generate_with_ignore_case
+    set.draw do |map|
+      map.connect 'page/:name', :controller => 'pages',
+        :action => 'show',
+        :requirements => {:name => /(david|jamis)/i}
+    end
+    url = set.generate({:controller => 'pages', :action => 'show', :name => 'david'})
+    assert_equal "/page/david", url
+    assert_raises ActionController::RoutingError do
+      url = set.generate({:controller => 'pages', :action => 'show', :name => 'davidjamis'})
+    end
+    url = set.generate({:controller => 'pages', :action => 'show', :name => 'JAMIS'})
+    assert_equal "/page/JAMIS", url
+  end
+
+  def test_route_requirement_recognize_with_extended_syntax
+    set.draw do |map|
+      map.connect 'page/:name', :controller => 'pages',
+        :action => 'show',
+        :requirements => {:name => / # Desperately overcommented regexp
+                                    ( #Either
+                                     david #The Creator
+                                    | #Or
+                                      jamis #The Deployer
+                                    )/x}
+    end
+    assert_equal({:controller => 'pages', :action => 'show', :name => 'jamis'}, set.recognize_path('/page/jamis'))
+    assert_equal({:controller => 'pages', :action => 'show', :name => 'david'}, set.recognize_path('/page/david'))
+    assert_raises ActionController::RoutingError do
+      set.recognize_path('/page/david #The Creator')
+    end
+    assert_raises ActionController::RoutingError do
+      set.recognize_path('/page/David')
+    end
+  end
+
+  def test_route_requirement_generate_with_extended_syntax
+    set.draw do |map|
+      map.connect 'page/:name', :controller => 'pages',
+        :action => 'show',
+        :requirements => {:name => / # Desperately overcommented regexp
+                                    ( #Either
+                                     david #The Creator
+                                    | #Or
+                                      jamis #The Deployer
+                                    )/x}
+    end
+    url = set.generate({:controller => 'pages', :action => 'show', :name => 'david'})
+    assert_equal "/page/david", url
+    assert_raises ActionController::RoutingError do
+      url = set.generate({:controller => 'pages', :action => 'show', :name => 'davidjamis'})
+    end
+    assert_raises ActionController::RoutingError do
+      url = set.generate({:controller => 'pages', :action => 'show', :name => 'JAMIS'})
+    end
+  end
+
+  def test_route_requirement_generate_with_xi_modifiers
+    set.draw do |map|
+      map.connect 'page/:name', :controller => 'pages',
+        :action => 'show',
+        :requirements => {:name => / # Desperately overcommented regexp
+                                    ( #Either
+                                     david #The Creator
+                                    | #Or
+                                      jamis #The Deployer
+                                    )/xi}
+    end
+    url = set.generate({:controller => 'pages', :action => 'show', :name => 'JAMIS'})
+    assert_equal "/page/JAMIS", url
+  end
+
+  def test_route_requirement_recognize_with_xi_modifiers
+    set.draw do |map|
+      map.connect 'page/:name', :controller => 'pages',
+        :action => 'show',
+        :requirements => {:name => / # Desperately overcommented regexp
+                                    ( #Either
+                                     david #The Creator
+                                    | #Or
+                                      jamis #The Deployer
+                                    )/xi}
+    end
+    assert_equal({:controller => 'pages', :action => 'show', :name => 'JAMIS'}, set.recognize_path('/page/JAMIS'))
+  end
+
   
 end
 
@@ -2170,15 +2321,15 @@ class RoutingTest < Test::Unit::TestCase
   end
 
   def test_normalize_unix_paths
-    load_paths = %w(. config/../app/controllers config/../app//helpers script/../config/../vendor/rails/actionpack/lib vendor/rails/railties/builtin/rails_info app/models lib script/../config/../foo/bar/../../app/models)
+    load_paths = %w(. config/../app/controllers config/../app//helpers script/../config/../vendor/rails/actionpack/lib vendor/rails/railties/builtin/rails_info app/models lib script/../config/../foo/bar/../../app/models .foo/../.bar foo.bar/../config)
     paths = ActionController::Routing.normalize_paths(load_paths)
-    assert_equal %w(vendor/rails/railties/builtin/rails_info vendor/rails/actionpack/lib app/controllers app/helpers app/models lib .), paths
+    assert_equal %w(vendor/rails/railties/builtin/rails_info vendor/rails/actionpack/lib app/controllers app/helpers app/models config .bar lib .), paths
   end
 
   def test_normalize_windows_paths
-    load_paths = %w(. config\\..\\app\\controllers config\\..\\app\\\\helpers script\\..\\config\\..\\vendor\\rails\\actionpack\\lib vendor\\rails\\railties\\builtin\\rails_info app\\models lib script\\..\\config\\..\\foo\\bar\\..\\..\\app\\models)
+    load_paths = %w(. config\\..\\app\\controllers config\\..\\app\\\\helpers script\\..\\config\\..\\vendor\\rails\\actionpack\\lib vendor\\rails\\railties\\builtin\\rails_info app\\models lib script\\..\\config\\..\\foo\\bar\\..\\..\\app\\models .foo\\..\\.bar foo.bar\\..\\config)
     paths = ActionController::Routing.normalize_paths(load_paths)
-    assert_equal %w(vendor\\rails\\railties\\builtin\\rails_info vendor\\rails\\actionpack\\lib app\\controllers app\\helpers app\\models lib .), paths
+    assert_equal %w(vendor\\rails\\railties\\builtin\\rails_info vendor\\rails\\actionpack\\lib app\\controllers app\\helpers app\\models config .bar lib .), paths
   end
   
   def test_routing_helper_module
@@ -2190,7 +2341,7 @@ class RoutingTest < Test::Unit::TestCase
     ActionController::Routing::Routes.install_helpers c
     assert c.ancestors.include?(h)
   end
-  
+
 end
 
 uses_mocha 'route loading' do
@@ -2199,11 +2350,13 @@ uses_mocha 'route loading' do
     def setup
       routes.instance_variable_set '@routes_last_modified', nil
       silence_warnings { Object.const_set :RAILS_ROOT, '.' }
+      ActionController::Routing::Routes.configuration_file = File.join(RAILS_ROOT, 'config', 'routes.rb')
 
       @stat = stub_everything
     end
 
     def teardown
+      ActionController::Routing::Routes.configuration_file = nil
       Object.send :remove_const, :RAILS_ROOT
     end
 
@@ -2243,6 +2396,14 @@ uses_mocha 'route loading' do
       routes.expects(:reload!)
 
       Inflector.inflections { |inflect| inflect.uncountable('equipment') }
+    end
+    
+    def test_load_with_configuration
+      routes.configuration_file = "foobarbaz"
+      File.expects(:stat).returns(@stat)
+      routes.expects(:load).with("foobarbaz")
+
+      routes.reload
     end
 
     private

@@ -11,8 +11,8 @@ module ActionView
     # === Using asset hosts
     # By default, Rails links to these assets on the current host in the public
     # folder, but you can direct Rails to link to assets from a dedicated assets server by 
-    # setting ActionController::Base.asset_host in your environment.rb.  For example,
-    # let's say your asset host is assets.example.com. 
+    # setting ActionController::Base.asset_host in your <tt>config/environment.rb</tt>.  For example,
+    # let's say your asset host is <tt>assets.example.com</tt>.
     #
     #   ActionController::Base.asset_host = "assets.example.com"
     #   image_tag("rails.png")
@@ -22,8 +22,8 @@ module ActionView
     #
     # This is useful since browsers typically open at most two connections to a single host,
     # which means your assets often wait in single file for their turn to load.  You can
-    # alleviate this by using a %d wildcard in <tt>asset_host</tt> (for example, "assets%d.example.com") 
-    # to automatically distribute asset requests among four hosts (e.g., assets0.example.com through assets3.example.com)
+    # alleviate this by using a <tt>%d</tt> wildcard in <tt>asset_host</tt> (for example, "assets%d.example.com") 
+    # to automatically distribute asset requests among four hosts (e.g., "assets0.example.com" through "assets3.example.com")
     # so browsers will open eight connections rather than two.  
     #
     #   image_tag("rails.png")
@@ -101,7 +101,7 @@ module ActionView
     # something like Live HTTP Headers for Firefox to verify that the cache is indeed working (and that the assets are not being 
     # requested over and over).
     module AssetTagHelper
-      ASSETS_DIR      = defined?(RAILS_ROOT) ? "#{RAILS_ROOT}/public" : "public"
+      ASSETS_DIR      = defined?(Rails.public_path) ? Rails.public_path : "public"
       JAVASCRIPTS_DIR = "#{ASSETS_DIR}/javascripts"
       STYLESHEETS_DIR = "#{ASSETS_DIR}/stylesheets"
       
@@ -164,7 +164,7 @@ module ActionView
       # current page or you can pass the full path relative to your document
       # root. To include the Prototype and Scriptaculous javascript libraries in
       # your application, pass <tt>:defaults</tt> as the source. When using
-      # :defaults, if an <tt>application.js</tt> file exists in your public
+      # <tt>:defaults</tt>, if an application.js file exists in your public
       # javascripts directory, it will be included as well. You can modify the
       # html attributes of the script tag by passing a hash as the last argument.
       #
@@ -249,14 +249,14 @@ module ActionView
           expand_javascript_sources(sources).collect { |source| javascript_src_tag(source, options) }.join("\n")
         end
       end
-      
+
       # Register one or more javascript files to be included when <tt>symbol</tt>
-      # is passed to <tt>javascript_include_tag</tt>. This method is typically intended 
+      # is passed to <tt>javascript_include_tag</tt>. This method is typically intended
       # to be called from plugin initialization to register javascript files
       # that the plugin installed in <tt>public/javascripts</tt>.
-      # 
+      #
       #   ActionView::Helpers::AssetTagHelper.register_javascript_expansion :monkey => ["head", "body", "tail"]
-      # 
+      #
       #   javascript_include_tag :monkey # =>
       #     <script type="text/javascript" src="/javascripts/head.js"></script>
       #     <script type="text/javascript" src="/javascripts/body.js"></script>
@@ -264,14 +264,14 @@ module ActionView
       def self.register_javascript_expansion(expansions)
         @@javascript_expansions.merge!(expansions)
       end
-      
+
       # Register one or more stylesheet files to be included when <tt>symbol</tt>
-      # is passed to <tt>stylesheet_link_tag</tt>. This method is typically intended 
+      # is passed to <tt>stylesheet_link_tag</tt>. This method is typically intended
       # to be called from plugin initialization to register stylesheet files
       # that the plugin installed in <tt>public/stylesheets</tt>.
-      # 
+      #
       #   ActionView::Helpers::AssetTagHelper.register_stylesheet_expansion :monkey => ["head", "body", "tail"]
-      # 
+      #
       #   stylesheet_link_tag :monkey # =>
       #     <link href="/stylesheets/head.css"  media="screen" rel="stylesheet" type="text/css" />
       #     <link href="/stylesheets/body.css"  media="screen" rel="stylesheet" type="text/css" />
@@ -287,15 +287,15 @@ module ActionView
       def self.register_javascript_include_default(*sources)
         @@javascript_expansions[:defaults].concat(sources)
       end
-      
+
       def self.reset_javascript_include_default #:nodoc:
         @@javascript_expansions[:defaults] = JAVASCRIPT_DEFAULT_SOURCES.dup
       end
-      
+
       # Computes the path to a stylesheet asset in the public stylesheets directory.
-      # If the +source+ filename has no extension, .css will be appended.
+      # If the +source+ filename has no extension, <tt>.css</tt> will be appended.
       # Full paths from the document root will be passed through.
-      # Used internally by stylesheet_link_tag to build the stylesheet path.
+      # Used internally by +stylesheet_link_tag+ to build the stylesheet path.
       #
       # ==== Examples
       #   stylesheet_path "style" # => /stylesheets/style.css
@@ -309,7 +309,7 @@ module ActionView
       alias_method :path_to_stylesheet, :stylesheet_path # aliased to avoid conflicts with a stylesheet_path named route
 
       # Returns a stylesheet link tag for the sources specified as arguments. If
-      # you don't specify an extension, .css will be appended automatically.
+      # you don't specify an extension, <tt>.css</tt> will be appended automatically.
       # You can modify the link attributes by passing a hash as the last argument.
       #
       # ==== Examples
@@ -332,7 +332,7 @@ module ActionView
       #     <link href="/stylesheets/random.styles" media="screen" rel="stylesheet" type="text/css" />
       #     <link href="/css/stylish.css" media="screen" rel="stylesheet" type="text/css" />
       #
-      # You can also include all styles in the stylesheet directory using :all as the source:
+      # You can also include all styles in the stylesheet directory using <tt>:all</tt> as the source:
       #
       #   stylesheet_link_tag :all # =>
       #     <link href="/stylesheets/style1.css"  media="screen" rel="stylesheet" type="text/css" />
@@ -379,7 +379,7 @@ module ActionView
 
       # Computes the path to an image asset in the public images directory.
       # Full paths from the document root will be passed through.
-      # Used internally by image_tag to build the image path.
+      # Used internally by +image_tag+ to build the image path.
       #
       # ==== Examples
       #   image_path("edit")                                         # => /images/edit
@@ -454,8 +454,8 @@ module ActionView
           end
         end
 
-        # Add the .ext if not present. Return full URLs otherwise untouched.
-        # Prefix with /dir/ if lacking a leading /. Account for relative URL
+        # Add the the extension +ext+ if not present. Return full URLs otherwise untouched.
+        # Prefix with <tt>/dir/</tt> if lacking a leading +/+. Account for relative URL
         # roots. Rewrite the asset path for cache-busting asset ids. Include
         # asset host, if configured, with the correct request protocol.
         def compute_public_path(source, dir, ext = nil, include_host = true)
@@ -474,7 +474,7 @@ module ActionView
 
           ActionView::Base.computed_public_paths[cache_key] ||=
             begin
-              source += ".#{ext}" if File.extname(source).blank? && ext
+              source += ".#{ext}" if ext && File.extname(source).blank? || File.exist?(File.join(ASSETS_DIR, dir, "#{source}.#{ext}"))
 
               if source =~ %r{^[-a-z]+://}
                 source
@@ -502,9 +502,9 @@ module ActionView
             end
         end
 
-        # Pick an asset host for this source. Returns nil if no host is set,
+        # Pick an asset host for this source. Returns +nil+ if no host is set,
         # the host if no wildcard is set, the host interpolated with the
-        # numbers 0-3 if it contains %d (the number is the source hash mod 4),
+        # numbers 0-3 if it contains <tt>%d</tt> (the number is the source hash mod 4),
         # or the value returned from invoking the proc if it's a proc.
         def compute_asset_host(source)
           if host = ActionController::Base.asset_host
@@ -565,27 +565,28 @@ module ActionView
         end
 
         def expand_javascript_sources(sources)
-         if sources.include?(:all)
-           @@all_javascript_sources ||= Dir[File.join(JAVASCRIPTS_DIR, '*.js')].collect { |file| File.basename(file).split(".", 0).first }.sort
-         else
-           expanded_sources = sources.collect do |source|
-             determine_source(source, @@javascript_expansions)
-           end.flatten
-           expanded_sources << "application" if sources.include?(:defaults) && file_exist?(File.join(JAVASCRIPTS_DIR, "application.js"))
-           expanded_sources
+          if sources.include?(:all)
+            all_javascript_files = Dir[File.join(JAVASCRIPTS_DIR, '*.js')].collect { |file| File.basename(file).gsub(/\.\w+$/, '') }.sort
+            @@all_javascript_sources ||= ((determine_source(:defaults, @@javascript_expansions).dup & all_javascript_files) + all_javascript_files).uniq
+          else
+            expanded_sources = sources.collect do |source|
+              determine_source(source, @@javascript_expansions)
+            end.flatten
+            expanded_sources << "application" if sources.include?(:defaults) && file_exist?(File.join(JAVASCRIPTS_DIR, "application.js"))
+            expanded_sources
           end
         end
 
         def expand_stylesheet_sources(sources)
           if sources.first == :all
-            @@all_stylesheet_sources ||= Dir[File.join(STYLESHEETS_DIR, '*.css')].collect { |file| File.basename(file).split(".", 0).first }.sort
+            @@all_stylesheet_sources ||= Dir[File.join(STYLESHEETS_DIR, '*.css')].collect { |file| File.basename(file).gsub(/\.\w+$/, '') }.sort
           else
             sources.collect do |source|
               determine_source(source, @@stylesheet_expansions)
             end.flatten
           end
         end
-        
+
         def determine_source(source, collection)
           case source
           when Symbol

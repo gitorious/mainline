@@ -51,6 +51,11 @@ class TemplateObjectTest < Test::Unit::TestCase
       assert template.locals.has_key?(:partial_only)
     end
     
+    def test_partial_with_errors
+      template = ActionView::PartialTemplate.new(@view, 'test/raise', nil)
+      assert_raise(ActionView::TemplateError) { template.render_template }
+    end
+    
     uses_mocha 'Partial template preparation tests' do
       def test_should_prepare_on_initialization
         ActionView::PartialTemplate.any_instance.expects(:prepare!)
@@ -59,4 +64,32 @@ class TemplateObjectTest < Test::Unit::TestCase
     end
   end
   
+  class PartialTemplateFallbackTest < Test::Unit::TestCase
+    def setup
+      @view = ActionView::Base.new(LOAD_PATH_ROOT)
+      @path = 'test/layout_for_partial'
+    end
+
+    def test_default
+      template = ActionView::PartialTemplate.new(@view, @path, nil)
+      assert_equal 'test/_layout_for_partial', template.path
+      assert_equal 'erb', template.extension
+      assert_equal :html, @view.template_format
+    end
+
+    def test_js
+      @view.template_format = :js
+      template = ActionView::PartialTemplate.new(@view, @path, nil)
+      assert_equal 'test/_layout_for_partial', template.path
+      assert_equal 'erb', template.extension
+      assert_equal :html, @view.template_format
+    end
+
+    def test_xml
+      @view.template_format = :xml
+      assert_raise ActionView::MissingTemplate do
+        ActionView::PartialTemplate.new(@view, @path, nil)
+      end
+    end
+  end
 end

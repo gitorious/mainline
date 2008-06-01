@@ -22,15 +22,15 @@ end
 
 ActionView::Helpers::FormOptionsHelper::TimeZone = MockTimeZone
 
-class FormOptionsHelperTest < Test::Unit::TestCase
-  include ActionView::Helpers::FormHelper
-  include ActionView::Helpers::FormOptionsHelper
+class FormOptionsHelperTest < ActionView::TestCase
+  tests ActionView::Helpers::FormOptionsHelper
 
   silence_warnings do
     Post      = Struct.new('Post', :title, :author_name, :body, :secret, :written_on, :category, :origin)
     Continent = Struct.new('Continent', :continent_name, :countries)
     Country   = Struct.new('Country', :country_id, :country_name)
     Firm      = Struct.new('Firm', :time_zone)
+    Album     = Struct.new('Album', :id, :title, :genre)
   end
 
   def test_collection_options
@@ -303,6 +303,18 @@ class FormOptionsHelperTest < Test::Unit::TestCase
     assert_dom_equal(
       "<select id=\"post_category\" name=\"post[category]\"><option value=\"abe\" selected=\"selected\">abe</option>\n<option value=\"&lt;mus&gt;\">&lt;mus&gt;</option>\n<option value=\"hest\">hest</option></select>",
       select("post", "category", %w( abe <mus> hest ), :selected => 'abe')
+    )
+  end
+  
+  def test_select_with_index_option
+    @album = Album.new
+    @album.id = 1
+    
+    expected = "<select id=\"album__genre\" name=\"album[][genre]\"><option value=\"rap\">rap</option>\n<option value=\"rock\">rock</option>\n<option value=\"country\">country</option></select>"    
+
+    assert_dom_equal(
+      expected, 
+      select("album[]", "genre", %w[rap rock country], {}, { :index => nil })
     )
   end
 

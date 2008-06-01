@@ -216,7 +216,7 @@ class LayoutExceptionRaised < Test::Unit::TestCase
     @controller = SetsNonExistentLayoutFile.new
     get :hello
     @response.template.class.module_eval { attr_accessor :exception }
-    assert_equal ActionController::MissingTemplate, @response.template.exception.class
+    assert_equal ActionView::MissingTemplate, @response.template.exception.class
   end
 end
 
@@ -238,3 +238,22 @@ class LayoutStatusIsRenderedTest < Test::Unit::TestCase
     assert_response 401
   end
 end
+
+class LayoutSymlinkedTest < LayoutTest
+  layout "symlinked/symlinked_layout"
+end
+
+class LayoutSymlinkedIsRenderedTest < Test::Unit::TestCase
+  def setup
+    @request    = ActionController::TestRequest.new
+    @response   = ActionController::TestResponse.new
+  end
+
+  def test_symlinked_layout_is_rendered
+    @controller = LayoutSymlinkedTest.new
+    get :hello
+    assert_response 200
+    assert_equal "layouts/symlinked/symlinked_layout", @response.layout
+  end
+end
+    

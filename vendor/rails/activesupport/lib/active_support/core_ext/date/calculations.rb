@@ -16,12 +16,19 @@ module ActiveSupport #:nodoc:
         end
 
         module ClassMethods
+          # Returns a new Date representing the date 1 day ago (i.e. yesterday's date).
           def yesterday
             ::Date.today.yesterday
           end
           
+          # Returns a new Date representing the date 1 day after today (i.e. tomorrow's date).
           def tomorrow
             ::Date.today.tomorrow
+          end
+          
+          # Returns Time.zone.today when config.time_zone is set, otherwise just returns Date.today.
+          def current
+            ::Time.zone_default ? ::Time.zone.today : ::Date.today
           end
         end
         
@@ -68,7 +75,7 @@ module ActiveSupport #:nodoc:
         end
         
         # Provides precise Date calculations for years, months, and days.  The +options+ parameter takes a hash with 
-        # any of these keys: :years, :months, :weeks, :days.
+        # any of these keys: <tt>:years</tt>, <tt>:months</tt>, <tt>:weeks</tt>, <tt>:days</tt>.
         def advance(options)
           d = self
           d = d >> options.delete(:years) * 12 if options[:years]

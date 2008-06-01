@@ -1,7 +1,7 @@
 require 'abstract_unit'
 
-class NumberHelperTest < Test::Unit::TestCase
-  include ActionView::Helpers::NumberHelper
+class NumberHelperTest < ActionView::TestCase
+  tests ActionView::Helpers::NumberHelper
 
   def test_number_to_phone
     assert_equal("800-555-1212", number_to_phone(8005551212))
@@ -56,9 +56,11 @@ class NumberHelperTest < Test::Unit::TestCase
 
   def test_number_with_precision
     assert_equal("111.235", number_with_precision(111.2346))
+    assert_equal("31.83", number_with_precision(31.825, 2))    
     assert_equal("111.23", number_with_precision(111.2346, 2))
     assert_equal("111.00", number_with_precision(111, 2))
     assert_equal("111.235", number_with_precision("111.2346"))
+    assert_equal("31.83", number_with_precision("31.825", 2))
     assert_equal("112", number_with_precision(111.50, 0))
     assert_equal("1234567892", number_with_precision(1234567891.50, 0))
 

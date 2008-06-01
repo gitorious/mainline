@@ -96,6 +96,10 @@ class FixturesTest < ActiveRecord::TestCase
 
       second_row = ActiveRecord::Base.connection.select_one("SELECT * FROM prefix_topics_suffix WHERE author_name = 'Mary'")
       assert_nil(second_row["author_email_address"])
+
+      # This checks for a caching problem which causes a bug in the fixtures 
+      # class-level configuration helper.
+      assert_not_nil topics, "Fixture data inserted, but fixture objects not returned from create"
     ensure
       # Restore prefix/suffix to its previous values
       ActiveRecord::Base.table_name_prefix = old_prefix
@@ -123,7 +127,7 @@ class FixturesTest < ActiveRecord::TestCase
   end
 
   def test_complete_instantiation
-    assert_equal 2, @topics.size
+    assert_equal 4, @topics.size
     assert_equal "The First Topic", @first.title
   end
 
@@ -180,7 +184,9 @@ class FixturesTest < ActiveRecord::TestCase
 
   def test_binary_in_fixtures
     assert_equal 1, @binaries.size
-    data = File.open(ASSETS_ROOT + "/flowers.jpg", "rb").read.freeze
+    data = File.read(ASSETS_ROOT + "/flowers.jpg")
+    data.force_encoding('ASCII-8BIT') if data.respond_to?(:force_encoding)
+    data.freeze
     assert_equal data, @flowers.data
   end
 end
@@ -355,9 +361,12 @@ class ForeignKeyFixturesTest < ActiveRecord::TestCase
   end
 end
 
-class SetTableNameFixturesTest < ActiveRecord::TestCase
+class CheckSetTableNameFixturesTest < ActiveRecord::TestCase
   set_fixture_class :funny_jokes => 'Joke'
   fixtures :funny_jokes
+  # Set to false to blow away fixtures cache and ensure our fixtures are loaded 
+  # and thus takes into account our set_fixture_class
+  self.use_transactional_fixtures = false
 
   def test_table_method
     assert_kind_of Joke, funny_jokes(:a_joke)
@@ -367,6 +376,9 @@ end
 class CustomConnectionFixturesTest < ActiveRecord::TestCase
   set_fixture_class :courses => Course
   fixtures :courses
+  # Set to false to blow away fixtures cache and ensure our fixtures are loaded 
+  # and thus takes into account our set_fixture_class
+  self.use_transactional_fixtures = false
 
   def test_connection
     assert_kind_of Course, courses(:ruby)
@@ -376,6 +388,9 @@ end
 
 class InvalidTableNameFixturesTest < ActiveRecord::TestCase
   fixtures :funny_jokes
+  # Set to false to blow away fixtures cache and ensure our fixtures are loaded 
+  # and thus takes into account our lack of set_fixture_class
+  self.use_transactional_fixtures = false
 
   def test_raises_error
     assert_raises FixtureClassNotFound do
@@ -387,6 +402,9 @@ end
 class CheckEscapedYamlFixturesTest < ActiveRecord::TestCase
   set_fixture_class :funny_jokes => 'Joke'
   fixtures :funny_jokes
+  # Set to false to blow away fixtures cache and ensure our fixtures are loaded 
+  # and thus takes into account our set_fixture_class
+  self.use_transactional_fixtures = false
 
   def test_proper_escaped_fixture
     assert_equal "The \\n Aristocrats\nAte the candy\n", funny_jokes(:another_joke).name
@@ -592,15 +610,17 @@ class ActiveSupportSubclassWithFixturesTest < ActiveRecord::TestCase
 end
 
 class FixtureLoadingTest < ActiveRecord::TestCase
-  def test_logs_message_for_failed_dependency_load
-    Test::Unit::TestCase.expects(:require_dependency).with(:does_not_exist).raises(LoadError)
-    ActiveRecord::Base.logger.expects(:warn)
-    Test::Unit::TestCase.try_to_load_dependency(:does_not_exist)
-  end
+  uses_mocha 'reloading_fixtures_through_accessor_methods' do
+    def test_logs_message_for_failed_dependency_load
+      Test::Unit::TestCase.expects(:require_dependency).with(:does_not_exist).raises(LoadError)
+      ActiveRecord::Base.logger.expects(:warn)
+      Test::Unit::TestCase.try_to_load_dependency(:does_not_exist)
+    end
 
-  def test_does_not_logs_message_for_successful_dependency_load
-    Test::Unit::TestCase.expects(:require_dependency).with(:works_out_fine)
-    ActiveRecord::Base.logger.expects(:warn).never
-    Test::Unit::TestCase.try_to_load_dependency(:works_out_fine)
+    def test_does_not_logs_message_for_successful_dependency_load
+      Test::Unit::TestCase.expects(:require_dependency).with(:works_out_fine)
+      ActiveRecord::Base.logger.expects(:warn).never
+      Test::Unit::TestCase.try_to_load_dependency(:works_out_fine)
+    end
   end
 end

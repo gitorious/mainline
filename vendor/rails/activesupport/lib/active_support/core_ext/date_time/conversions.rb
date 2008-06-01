@@ -3,15 +3,21 @@ module ActiveSupport #:nodoc:
     module DateTime #:nodoc:
       # Converting datetimes to formatted strings, dates, and times.
       module Conversions
-        def self.included(base) #:nodoc:
+        def self.append_features(base) #:nodoc:
           base.class_eval do
-            alias_method :to_s, :to_formatted_s
             alias_method :default_inspect, :inspect
-            alias_method :inspect, :readable_inspect
+            alias_method :to_default_s, :to_s unless (instance_methods(false) & [:to_s, 'to_s']).empty?
 
             # Ruby 1.9 has DateTime#to_time which internally relies on Time. We define our own #to_time which allows
             # DateTimes outside the range of what can be created with Time.
-            remove_method :to_time if base.instance_methods.include?(:to_time)
+            remove_method :to_time if instance_methods.include?(:to_time)
+          end
+
+          super
+
+          base.class_eval do
+            alias_method :to_s, :to_formatted_s
+            alias_method :inspect, :readable_inspect
           end
         end
 
@@ -44,7 +50,7 @@ module ActiveSupport #:nodoc:
           formatter.respond_to?(:call) ? formatter.call(self).to_s : strftime(formatter)
         end
 
-        # Returns the utc_offset as an +HH:MM formatted string. Examples:
+        # Returns the +utc_offset+ as an +HH:MM formatted string. Examples:
         #
         #   datetime = DateTime.civil(2000, 1, 1, 0, 0, 0, Rational(-6, 24))
         #   datetime.formatted_offset         # => "-06:00"

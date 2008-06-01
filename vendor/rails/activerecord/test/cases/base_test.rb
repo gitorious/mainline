@@ -1,6 +1,8 @@
 require "cases/helper"
+require 'models/author'
 require 'models/topic'
 require 'models/reply'
+require 'models/category'
 require 'models/company'
 require 'models/customer'
 require 'models/developer'
@@ -11,6 +13,7 @@ require 'models/column_name'
 require 'models/subscriber'
 require 'models/keyboard'
 require 'models/post'
+require 'models/comment'
 require 'models/minimalistic'
 require 'models/warehouse_thing'
 require 'rexml/document'
@@ -72,7 +75,7 @@ class TopicWithProtectedContentAndAccessibleAuthorName < ActiveRecord::Base
 end
 
 class BasicsTest < ActiveRecord::TestCase
-  fixtures :topics, :companies, :developers, :projects, :computers, :accounts, :minimalistics, 'warehouse-things'
+  fixtures :topics, :companies, :developers, :projects, :computers, :accounts, :minimalistics, 'warehouse-things', :authors
 
   def test_table_exists
     assert !NonExistentTable.table_exists?
@@ -150,6 +153,7 @@ class BasicsTest < ActiveRecord::TestCase
 
     assert_equal 2, Topic.find(topic.id).content["two"]
 
+    topic.content_will_change!
     topic.content["three"] = 3
     topic.save
 
@@ -247,6 +251,27 @@ class BasicsTest < ActiveRecord::TestCase
     topic = Topic.create("title" => "New Topic")
     topicReloaded = Topic.find(topic.id)
     assert_equal(topic, topicReloaded)
+  end  
+
+  def test_create_through_factory_with_block
+    topic = Topic.create("title" => "New Topic") do |t|
+      t.author_name = "David"
+    end
+    topicReloaded = Topic.find(topic.id)
+    assert_equal("New Topic", topic.title)
+    assert_equal("David", topic.author_name)
+  end
+
+  def test_create_many_through_factory_with_block
+    topics = Topic.create([ { "title" => "first" }, { "title" => "second" }]) do |t|
+      t.author_name = "David"
+    end
+    assert_equal 2, topics.size
+    topic1, topic2 = Topic.find(topics[0].id), Topic.find(topics[1].id)
+    assert_equal "first", topic1.title
+    assert_equal "David", topic1.author_name
+    assert_equal "second", topic2.title
+    assert_equal "David", topic2.author_name
   end
 
   def test_update
@@ -477,7 +502,7 @@ class BasicsTest < ActiveRecord::TestCase
 
   def test_load
     topics = Topic.find(:all, :order => 'id')
-    assert_equal(2, topics.size)
+    assert_equal(4, topics.size)
     assert_equal(topics(:first).title, topics.first.title)
   end
 
@@ -549,10 +574,11 @@ class BasicsTest < ActiveRecord::TestCase
   end
 
   def test_destroy_all
-    assert_equal 2, Topic.count
-
-    Topic.destroy_all "author_name = 'Mary'"
-    assert_equal 1, Topic.count
+    original_count = Topic.count
+    topics_by_mary = Topic.count(:conditions => mary = "author_name = 'Mary'")
+    
+    Topic.destroy_all mary
+    assert_equal original_count - topics_by_mary, Topic.count
   end
 
   def test_destroy_many
@@ -562,8 +588,9 @@ class BasicsTest < ActiveRecord::TestCase
   end
 
   def test_delete_many
-    Topic.delete([1, 2])
-    assert_equal 0, Topic.count
+    original_count = Topic.count
+    Topic.delete(deleting = [1, 2])
+    assert_equal original_count - deleting.size, Topic.count
   end
 
   def test_boolean_attributes
@@ -588,21 +615,21 @@ class BasicsTest < ActiveRecord::TestCase
   end
 
   def test_update_all
-    assert_equal 2, Topic.update_all("content = 'bulk updated!'")
+    assert_equal Topic.count, Topic.update_all("content = 'bulk updated!'")
     assert_equal "bulk updated!", Topic.find(1).content
     assert_equal "bulk updated!", Topic.find(2).content
 
-    assert_equal 2, Topic.update_all(['content = ?', 'bulk updated again!'])
+    assert_equal Topic.count, Topic.update_all(['content = ?', 'bulk updated again!'])
     assert_equal "bulk updated again!", Topic.find(1).content
     assert_equal "bulk updated again!", Topic.find(2).content
 
-    assert_equal 2, Topic.update_all(['content = ?', nil])
+    assert_equal Topic.count, Topic.update_all(['content = ?', nil])
     assert_nil Topic.find(1).content
   end
 
   def test_update_all_with_hash
     assert_not_nil Topic.find(1).last_read
-    assert_equal 2, Topic.update_all(:content => 'bulk updated with hash!', :last_read => nil)
+    assert_equal Topic.count, Topic.update_all(:content => 'bulk updated with hash!', :last_read => nil)
     assert_equal "bulk updated with hash!", Topic.find(1).content
     assert_equal "bulk updated with hash!", Topic.find(2).content
     assert_nil Topic.find(1).last_read
@@ -637,7 +664,9 @@ class BasicsTest < ActiveRecord::TestCase
   end
 
   def test_delete_all
-    assert_equal 2, Topic.delete_all
+    assert Topic.count > 0
+    
+    assert_equal Topic.count, Topic.delete_all
   end
 
   def test_update_by_condition
@@ -804,17 +833,17 @@ class BasicsTest < ActiveRecord::TestCase
 
   def test_update_attributes!
     reply = Reply.find(2)
-    assert_equal "The Second Topic's of the day", reply.title
+    assert_equal "The Second Topic of the day", reply.title
     assert_equal "Have a nice day", reply.content
 
-    reply.update_attributes!("title" => "The Second Topic's of the day updated", "content" => "Have a nice evening")
+    reply.update_attributes!("title" => "The Second Topic of the day updated", "content" => "Have a nice evening")
     reply.reload
-    assert_equal "The Second Topic's of the day updated", reply.title
+    assert_equal "The Second Topic of the day updated", reply.title
     assert_equal "Have a nice evening", reply.content
 
-    reply.update_attributes!(:title => "The Second Topic's of the day", :content => "Have a nice day")
+    reply.update_attributes!(:title => "The Second Topic of the day", :content => "Have a nice day")
     reply.reload
-    assert_equal "The Second Topic's of the day", reply.title
+    assert_equal "The Second Topic of the day", reply.title
     assert_equal "Have a nice day", reply.content
 
     assert_raise(ActiveRecord::RecordInvalid) { reply.update_attributes!(:title => nil, :content => "Have a nice evening") }
@@ -966,25 +995,23 @@ class BasicsTest < ActiveRecord::TestCase
     ActiveRecord::Base.default_timezone = :local
   end
 
-  uses_tzinfo "test_multiparameter_attributes_on_time_with_time_zone_aware_attributes" do
-    def test_multiparameter_attributes_on_time_with_time_zone_aware_attributes
-      ActiveRecord::Base.time_zone_aware_attributes = true
-      ActiveRecord::Base.default_timezone = :utc
-      Time.zone = TimeZone[-28800]
-      attributes = {
-        "written_on(1i)" => "2004", "written_on(2i)" => "6", "written_on(3i)" => "24",
-        "written_on(4i)" => "16", "written_on(5i)" => "24", "written_on(6i)" => "00"
-      }
-      topic = Topic.find(1)
-      topic.attributes = attributes
-      assert_equal Time.utc(2004, 6, 24, 23, 24, 0), topic.written_on
-      assert_equal Time.utc(2004, 6, 24, 16, 24, 0), topic.written_on.time
-      assert_equal Time.zone, topic.written_on.time_zone
-    ensure
-      ActiveRecord::Base.time_zone_aware_attributes = false
-      ActiveRecord::Base.default_timezone = :local
-      Time.zone = nil
-    end
+  def test_multiparameter_attributes_on_time_with_time_zone_aware_attributes
+    ActiveRecord::Base.time_zone_aware_attributes = true
+    ActiveRecord::Base.default_timezone = :utc
+    Time.zone = TimeZone[-28800]
+    attributes = {
+      "written_on(1i)" => "2004", "written_on(2i)" => "6", "written_on(3i)" => "24",
+      "written_on(4i)" => "16", "written_on(5i)" => "24", "written_on(6i)" => "00"
+    }
+    topic = Topic.find(1)
+    topic.attributes = attributes
+    assert_equal Time.utc(2004, 6, 24, 23, 24, 0), topic.written_on
+    assert_equal Time.utc(2004, 6, 24, 16, 24, 0), topic.written_on.time
+    assert_equal Time.zone, topic.written_on.time_zone
+  ensure
+    ActiveRecord::Base.time_zone_aware_attributes = false
+    ActiveRecord::Base.default_timezone = :local
+    Time.zone = nil
   end
 
   def test_multiparameter_attributes_on_time_with_time_zone_aware_attributes_false
@@ -1621,6 +1648,14 @@ class BasicsTest < ActiveRecord::TestCase
     assert_equal last, Developer.find(:first, :order => 'id desc')
   end
   
+  def test_last
+    assert_equal Developer.find(:first, :order => 'id desc'), Developer.last
+  end
+
+  def test_all_with_conditions
+    assert_equal Developer.find(:all, :order => 'id desc'), Developer.all(:order => 'id desc')
+  end
+  
   def test_find_ordered_last
     last  = Developer.find :last, :order => 'developers.salary ASC'
     assert_equal last, Developer.find(:all, :order => 'developers.salary ASC').last
@@ -1694,7 +1729,7 @@ class BasicsTest < ActiveRecord::TestCase
     old_class = LooseDescendant
     Object.send :remove_const, :LooseDescendant
 
-    descendant = old_class.create!
+    descendant = old_class.create! :first_name => 'bob'
     assert_not_nil LoosePerson.find(descendant.id), "Should have found instance of LooseDescendant when finding abstract LoosePerson: #{descendant.inspect}"
   ensure
     unless Object.const_defined?(:LooseDescendant)
@@ -1770,7 +1805,7 @@ class BasicsTest < ActiveRecord::TestCase
     xml = topics(:first).to_xml(:indent => 0, :skip_instruct => true, :include => :replies, :except => :replies_count)
     assert_equal "<topic>", xml.first(7)
     assert xml.include?(%(<replies type="array"><reply>))
-    assert xml.include?(%(<title>The Second Topic's of the day</title>))
+    assert xml.include?(%(<title>The Second Topic of the day</title>))
   end
 
   def test_array_to_xml_including_has_many_association

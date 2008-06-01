@@ -70,7 +70,7 @@ module ActiveRecord
     #
     # Options:
     #
-    # * <tt>:database</tt> -- Path to the database file.
+    # * <tt>:database</tt> - Path to the database file.
     class SQLiteAdapter < AbstractAdapter
       def adapter_name #:nodoc:
         'SQLite'
@@ -107,7 +107,7 @@ module ActiveRecord
           :decimal     => { :name => "decimal" },
           :datetime    => { :name => "datetime" },
           :timestamp   => { :name => "datetime" },
-          :time        => { :name => "datetime" },
+          :time        => { :name => "time" },
           :date        => { :name => "date" },
           :binary      => { :name => "blob" },
           :boolean     => { :name => "boolean" }
@@ -214,16 +214,23 @@ module ActiveRecord
       end
 
       def add_column(table_name, column_name, type, options = {}) #:nodoc:
+        if @connection.respond_to?(:transaction_active?) && @connection.transaction_active?
+          raise StatementInvalid, 'Cannot add columns to a SQLite database while inside a transaction'
+        end
+        
         super(table_name, column_name, type, options)
         # See last paragraph on http://www.sqlite.org/lang_altertable.html
         execute "VACUUM"
       end
 
-      def remove_column(table_name, column_name) #:nodoc:
-        alter_table(table_name) do |definition|
-          definition.columns.delete(definition[column_name])
+      def remove_column(table_name, *column_names) #:nodoc:
+        column_names.flatten.each do |column_name|
+          alter_table(table_name) do |definition|
+            definition.columns.delete(definition[column_name])
+          end
         end
       end
+      alias :remove_columns :remove_column
 
       def change_column_default(table_name, column_name, default) #:nodoc:
         alter_table(table_name) do |definition|
@@ -257,7 +264,7 @@ module ActiveRecord
             record = {}
             row.each_key do |key|
               if key.is_a?(String)
-                record[key.sub(/^\w+\./, '')] = row[key]
+                record[key.sub(/^"?\w+"?\./, '')] = row[key]
               end
             end
             record

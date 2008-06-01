@@ -16,12 +16,16 @@ module ActionController
         Regexp.new "(.*?)(#{separators.source}|$)"
       end
 
+      def multiline_regexp?(expression)
+        expression.options & Regexp::MULTILINE == Regexp::MULTILINE
+      end
+
       # Accepts a "route path" (a string defining a route), and returns the array
       # of segments that corresponds to it. Note that the segment array is only
       # partially initialized--the defaults and requirements, for instance, need
-      # to be set separately, via the #assign_route_options method, and the
-      # #optional? method for each segment will not be reliable until after
-      # #assign_route_options is called, as well.
+      # to be set separately, via the +assign_route_options+ method, and the
+      # <tt>optional?</tt> method for each segment will not be reliable until after
+      # +assign_route_options+ is called, as well.
       def segments_for_route_path(path)
         rest, segments = path, []
 
@@ -99,6 +103,9 @@ module ActionController
             if requirement.source =~ %r{\A(\\A|\^)|(\\Z|\\z|\$)\Z}
               raise ArgumentError, "Regexp anchor characters are not allowed in routing requirements: #{requirement.inspect}"
             end
+            if multiline_regexp?(requirement)
+              raise ArgumentError, "Regexp multiline option not allowed in routing requirements: #{requirement.inspect}"
+            end
             segment.regexp = requirement
           else
             route_requirements[key] = requirement
@@ -117,7 +124,7 @@ module ActionController
         route_requirements
       end
 
-      # Assign default options, such as 'index' as a default for :action. This
+      # Assign default options, such as 'index' as a default for <tt>:action</tt>. This
       # method must be run *after* user supplied requirements and defaults have
       # been applied to the segments.
       def assign_default_route_options(segments)
@@ -180,7 +187,7 @@ module ActionController
         end
 
         # Routes cannot use the current string interpolation method
-        # if there are user-supplied :requirements as the interpolation
+        # if there are user-supplied <tt>:requirements</tt> as the interpolation
         # code won't raise RoutingErrors when generating
         if options.key?(:requirements) || route.requirements.keys.to_set != Routing::ALLOWED_REQUIREMENTS_FOR_OPTIMISATION
           route.optimise = false

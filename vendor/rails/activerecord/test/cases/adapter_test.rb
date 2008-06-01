@@ -6,15 +6,16 @@ class AdapterTest < ActiveRecord::TestCase
   end
 
   def test_tables
-    if @connection.respond_to?(:tables)
-      tables = @connection.tables
-      assert tables.include?("accounts")
-      assert tables.include?("authors")
-      assert tables.include?("tasks")
-      assert tables.include?("topics")
-    else
-      warn "#{@connection.class} does not respond to #tables"
-    end
+    tables = @connection.tables
+    assert tables.include?("accounts")
+    assert tables.include?("authors")
+    assert tables.include?("tasks")
+    assert tables.include?("topics")
+  end
+
+  def test_table_exists?
+    assert @connection.table_exists?("accounts")
+    assert !@connection.table_exists?("nonexistingtable")
   end
 
   def test_indexes
@@ -103,4 +104,24 @@ class AdapterTest < ActiveRecord::TestCase
     end
   end
 
+  def test_add_limit_offset_should_sanitize_sql_injection_for_limit_without_comas
+    sql_inject = "1 select * from schema"
+      assert_equal " LIMIT 1", @connection.add_limit_offset!("", :limit=>sql_inject)
+    if current_adapter?(:MysqlAdapter)
+      assert_equal " LIMIT 7, 1", @connection.add_limit_offset!("", :limit=>sql_inject, :offset=>7)
+    else
+      assert_equal " LIMIT 1 OFFSET 7", @connection.add_limit_offset!("", :limit=>sql_inject, :offset=>7)
+    end
+  end
+
+  def test_add_limit_offset_should_sanitize_sql_injection_for_limit_with_comas
+    sql_inject = "1, 7 procedure help()"
+    if current_adapter?(:MysqlAdapter)
+      assert_equal " LIMIT 1,7", @connection.add_limit_offset!("", :limit=>sql_inject)
+      assert_equal " LIMIT 7, 1", @connection.add_limit_offset!("", :limit=>sql_inject, :offset=>7)
+    else
+      assert_equal " LIMIT 1,7", @connection.add_limit_offset!("", :limit=>sql_inject)
+      assert_equal " LIMIT 1,7 OFFSET 7", @connection.add_limit_offset!("", :limit=>sql_inject, :offset=>7)
+    end
+  end
 end
