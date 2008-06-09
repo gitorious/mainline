@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+include OpenIdAuthentication
 
 describe SessionsController do
   
@@ -11,12 +12,24 @@ describe SessionsController do
   end
 
   it "should login and redirect" do
+    controller.stub!(:using_open_id?).and_return(false)
     post :create, :email => "johan@johansorensen.com", :password => "test"
     session[:user_id].should_not be(nil)
     response.should be_redirect
   end
-    
+ 
+  it "should login with openid and redirect" do
+    identity_url = "http://patcito.myopenid.com"
+    controller.stub!(:using_open_id?).and_return(true)
+    controller.stub!(:successful?).and_return(false)
+    controller.stub!(:authenticate_with_open_id).and_yield(Result[:successful],identity_url,registration={'nickname'=>"patcito",'email'=>"patcito@gmail.com",'fullname'=>'Patrick Aljord'})
+    post :create, :openid_url => identity_url
+    session[:user_id].should_not be(nil)
+    response.should be_redirect
+  end
+   
   it "should fail login and not redirect" do
+    controller.stub!(:using_open_id?).and_return(false)
     post :create, :email => 'johan@johansorensen.com', :password => 'bad password'
     session[:user_id].should be(nil)
     response.should be_success
@@ -30,11 +43,13 @@ describe SessionsController do
   end
   
   it "should remember me" do
+    controller.stub!(:using_open_id?).and_return(false)
     post :create, :email => 'johan@johansorensen.com', :password => 'test', :remember_me => "1"
     response.cookies["auth_token"].should_not be(nil)
   end 
   
   it "should should not remember me" do
+    controller.stub!(:using_open_id?).and_return(false)
     post :create, :email => 'johan@johansorensen.com', :password => 'test', :remember_me => "0"
     response.cookies["auth_token"].should be(nil)
   end 
@@ -74,6 +89,7 @@ describe SessionsController do
   end
   
   it "should show flash when invalid credentials are passed" do
+    controller.stub!(:using_open_id?).and_return(false)
     post :create, :email => "invalid", :password => "also invalid"
     # response.body.should have_tag("div.flash_message", /please try again/)
     # rspec.should test(flash.now)

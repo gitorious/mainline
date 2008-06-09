@@ -25,10 +25,10 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.resources :users, :requirements => {:id => /.+/ }, :collection => {
-    :forgot_password => :get,
-    :reset_password => :post,
-  }, :member => { :feed => :get }
+    :forgot_password => :get,    :reset_password => :post}, :member => { :feed => :get }
   map.resources  :events
+  
+  map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"

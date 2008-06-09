@@ -1,9 +1,11 @@
 <h1>Login</h1>
+<%= login_method %>
 
-
-<% form_tag sessions_path do -%>
-  <p>
-    <label for="login">Email</label><br/>
+<% form_tag sessions_path  do -%>
+  <div id="regular_login_fields">
+    <% # login_method %>
+    <p>
+  <label for="login">Email or <%= switch_login('switch to OpenID','to_openid')%></label><br/>
     <%= text_field_tag 'email', params[:email], :class => "text" %>
   </p>
 
@@ -11,7 +13,13 @@
     <label for="password">Password</label><br/>
     <%= password_field_tag 'password', '', :class => "text" %>
   </p>
-
+  </div>
+  <div id="openid_login_fields" style="display:none;">
+    <p>
+      <label for="openid">OpenID or <%= switch_login('switch to email login', 'to_email') -%></label><br/>
+      <%= text_field_tag 'openid_url', params[:openid_url], :class => "text" -%>
+    </p>
+  </div>
   <p>
     <label for="remember_me">Remember me:</label>
     <%= check_box_tag 'remember_me' %>

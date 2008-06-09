@@ -14,6 +14,10 @@
     <%= f.label :url, "url <small>blog etc</small>" -%><br />
     <%= f.text_field :url, :class => "text" -%>
   </p>
+  <p>
+    <%= f.label :url, "OpenID" -%><br />
+    <%= f.text_field :identity_url, :class => "text" -%>
+  </p>
   <%= f.submit "Save" -%>
 <% end -%>
 
