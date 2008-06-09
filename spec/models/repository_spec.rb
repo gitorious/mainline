@@ -15,23 +15,6 @@ describe Repository do
     }.merge(opts))
   end
   
-  def push_something
-    path = File.join(Dir.tmpdir, "gitorious.test")
-    FileUtils.mkpath(path)
-    
-    Dir.chdir(path) do
-      File.open("something", "w") do |file|
-        file << "dummy #{rand}\n"
-      end
-      
-      git = Grit::Git.new(File.join(path, ".git"))
-      git.init({}, "--shared")
-      git.add({}, "something")
-      git.commit({:m => true}, "message")
-      git.push({:all => true}, @repository.full_repository_path)
-    end
-  end
-  
   it "should have valid associations" do
     @repository.should have_valid_associations
   end
@@ -124,18 +107,38 @@ describe Repository do
     target = @repository
     target_path = @repository.full_repository_path
     
-    Repository.git_backend.should_receive(:clone).with(target.full_repository_path, 
+    git_backend = mock("Git backend")
+    Repository.should_receive(:git_backend).and_return(git_backend)
+    git_backend.should_receive(:clone).with(target.full_repository_path, 
       source.full_repository_path).and_return(true)
+    Repository.should_receive(:create_hooks).and_return(true)
     
-    push_something
-    Repository.clone_git_repository(target.gitdir, source.gitdir)
+    Repository.clone_git_repository(target.gitdir, source.gitdir).should be_true
+  end
+  
+  it "should create the hooks" do
+    hooks = "/path/to/hooks"
+    path = "/path/to/repository"
+    base_path = "#{RAILS_ROOT}/data/hooks"
     
-    Dir.chdir(target_path) do
-      hooks = File.join(target_path, "hooks")
-      File.exist?(hooks).should == true
-      File.symlink?(hooks).should == true
-      File.symlink?(File.expand_path(File.readlink(hooks))).should == true
-    end
+    File.should_receive(:join).ordered.with(GitoriousConfig["repository_base_path"], ".hooks").and_return(hooks)
+    
+    Dir.should_receive(:chdir).ordered.with(path).and_yield(nil)
+    
+    File.should_receive(:symlink?).ordered.with(hooks).and_return(false)
+    File.should_receive(:exist?).ordered.with(hooks).and_return(false)
+    FileUtils.should_receive(:ln_s).ordered.with(base_path, hooks)
+    
+    local_hooks = "/path/to/local/hooks"
+    File.should_receive(:join).ordered.with(path, "hooks").and_return(local_hooks)
+    
+    File.should_receive(:exist?).ordered.with(local_hooks).and_return(true)
+    
+    File.should_receive(:join).with(path, "description").ordered
+    
+    File.should_receive(:open).ordered.and_return(true)
+    
+    Repository.create_hooks(path).should be_true
   end
   
   it "deletes a repository" do
