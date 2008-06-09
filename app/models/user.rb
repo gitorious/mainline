@@ -26,9 +26,10 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
   before_create :make_activation_code
+  before_validation :lint_identity_url
 
   def self.find_by_login!(name)
-    find_by_login(name) || raise(ActiveRecord::RecordNotFound )
+    find_by_login(name) || raise(ActiveRecord::RecordNotFound)
   end
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
@@ -47,6 +48,16 @@ class User < ActiveRecord::Base
     (0...password_size).collect do |char|
       characters[rand(characters.length)]
     end.join
+  end
+  
+  def validate
+    if !not_openid?
+      begin
+        OpenIdAuthentication.normalize_url(self.identity_url)
+      rescue OpenIdAuthentication::InvalidOpenId => e
+        errors.add(:identity_url, "Invalid url")
+      end
+    end
   end
   
   # Activates the user in the database.
@@ -138,5 +149,12 @@ class User < ActiveRecord::Base
 
     def make_activation_code
       self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
+    end
+    
+    def lint_identity_url
+      return if not_openid?
+      self.identity_url = OpenIdAuthentication.normalize_url(self.identity_url)
+    rescue OpenIdAuthentication::InvalidOpenId
+      # validate will catch it instead
     end
 end

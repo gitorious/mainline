@@ -154,6 +154,23 @@ describe User do
     User.authenticate(u.email, password).should_not be_nil
   end
   
+  it "normalizes identity urls" do
+    u = users(:johan)
+    u.identity_url = "http://johan.someprovider.com"
+    u.valid?.should be_true
+    u.identity_url.should == "http://johan.someprovider.com/"
+    
+    u.identity_url = "http://johan.someprovider.com/me"
+    u.valid?.should be_true
+    u.identity_url.should == "http://johan.someprovider.com/me"
+  end
+  
+  it "catches invalid identity_url" do
+    u = users(:johan)
+    u.identity_url = "€&/()"
+    u.should have(1).errors_on(:identity_url)
+  end
+  
   protected
     def create_user(options = {})
       u = User.new({ 

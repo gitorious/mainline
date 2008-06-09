@@ -1,3 +1,0 @@
-[submodule "vendor/plugins/open_id_authentication"]
-	path = vendor/plugins/open_id_authentication
-	url = git://github.com/josh/open_id_authentication.git
