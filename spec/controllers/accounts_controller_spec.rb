@@ -56,5 +56,16 @@ describe AccountsController do
     User.authenticate(users(:johan).email, "test").should == users(:johan)
     User.authenticate(users(:johan).email, "fubar").should == nil
   end
+  
+  it "should be able to update password, even if user is openid enabled" do
+    user = users(:johan)
+    user.update_attribute(:identity_url, "http://johan.someprovider.com/")
+    put :update_password, :user => {
+      :current_password => "test", 
+      :password => "fubar",
+      :password_confirmation => "fubar" }
+    flash[:notice].should match(/Your password has been changed/i)
+    User.authenticate(users(:johan).email, "fubar").should == users(:johan)
+  end
 
 end
