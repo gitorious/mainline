@@ -170,7 +170,12 @@ describe User do
     u.identity_url = "€&/()"
     u.should have(1).errors_on(:identity_url)
   end
-  
+ 
+  it "should return that the user already has a password"
+    u = users(:johan)
+    u.is_openid_only?.should == false
+  end
+ 
   protected
     def create_user(options = {})
       u = User.new({ 

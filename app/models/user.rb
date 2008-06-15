@@ -131,6 +131,10 @@ class User < ActiveRecord::Base
     super({:except => [:activation_code, :crypted_password, :remember_token, :remember_token_expires_at, :salt, :ssh_key_id]}.merge(opts))
   end
   
+  def is_openid_only?
+    self.crypted_password.nil?
+  end
+
   protected
     # before filter
     def encrypt_password

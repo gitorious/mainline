@@ -25,7 +25,7 @@ class AccountsController < ApplicationController
   
   def update_password
     @user = current_user
-    if User.authenticate(current_user.email, params[:user][:current_password])
+    if User.authenticate(current_user.email, params[:user][:current_password]) || @user.is_openid_only?
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save

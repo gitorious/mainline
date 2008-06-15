@@ -66,6 +66,16 @@ describe AccountsController do
       :password_confirmation => "fubar" }
     flash[:notice].should match(/Your password has been changed/i)
     User.authenticate(users(:johan).email, "fubar").should == users(:johan)
+  end 
+ 
+  it "should be able to update password, even if user created his account with openid" do
+    user = users(:johan)
+    user.update_attribute(:crypted_password, nil)
+    put :update_password, :user => {
+      :password => "fubar",
+      :password_confirmation => "fubar" }
+    flash[:notice].should match(/Your password has been changed/i)
+    User.authenticate(users(:johan).email, "fubar").should == users(:johan)
   end
 
 end
