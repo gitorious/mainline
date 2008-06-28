@@ -171,7 +171,7 @@ describe User do
     u.should have(1).errors_on(:identity_url)
   end
  
-  it "should return that the user already has a password"
+  it "should return that the user already has a password" do
     u = users(:johan)
     u.is_openid_only?.should == false
   end
