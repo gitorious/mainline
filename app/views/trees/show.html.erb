@@ -41,7 +41,11 @@
   <h5>Branches:</h5>
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
-    <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
+      <% if namespaced_branch?(branch.name) -%>
+      <li><%= link_to h(branch.name), tree_path(branch.commit.id) -%></li>
+      <% else -%>
+        <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
+      <% end -%>
     <% end -%>
   </ul>
 

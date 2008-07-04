@@ -12,6 +12,9 @@ module RepositoriesHelper
   end
   
   def tree_path(treeish = "master", path=[])
+    if path.respond_to?(:to_str)
+      path = path.split("/")
+    end
     project_repository_tree_path(@project, @repository, treeish, path)
   end
   
@@ -29,5 +32,9 @@ module RepositoriesHelper
   
   def raw_blob_path(sha1, path)
     project_repository_raw_blob_path(@project, @repository, sha1, path)
+  end
+  
+  def namespaced_branch?(branchname)
+    branchname.include?("/")
   end
 end

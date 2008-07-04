@@ -37,6 +37,11 @@ describe RepositoriesHelper do
       @repository, "foo", ["a", "b", "c"])
   end
   
+  it "has a tree_path shortcut can takes a path string and turns it into a glob" do
+    tree_path("foo", "a/b/c").should == project_repository_tree_path(@project, 
+      @repository, "foo", ["a", "b", "c"])
+  end
+  
   it "has a archive_tree_path shortcut" do
     archive_tree_path.should == project_repository_archive_tree_path(@project, @repository, "master")
     archive_tree_path("foo").should == project_repository_archive_tree_path(@project, @repository, "foo")
@@ -50,5 +55,11 @@ describe RepositoriesHelper do
   it "has a raw_blob_path shortcut" do
     raw_blob_path(generic_sha, ["a","b"]).should == project_repository_raw_blob_path(
       @project, @repository, generic_sha, ["a","b"])
+  end
+  
+  it "knows if a branch is namespaced" do 
+    helper.namespaced_branch?("foo").should == false
+    helper.namespaced_branch?("foo/bar").should == true
+    helper.namespaced_branch?("foo/bar/baz").should == true
   end
 end

@@ -67,7 +67,11 @@
     <h4>Branches:</h4>
     <ul>
       <% @repository.git.branches.each do |branch| -%>
-      <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.name) -%></li>
+        <% if namespaced_branch?(branch.name) -%>
+            <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.commit.id) -%></li>
+        <% else -%>
+          <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, branch.name) -%></li>
+        <% end -%>
       <% end -%>
     </ul>
   <% end -%>
