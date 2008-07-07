@@ -43,9 +43,10 @@ class SessionsController < ApplicationController
         failed_login result.message, 'openid'
       end
     end
-    rescue ActiveRecord::RecordInvalid => invalid
-    flash[:error] = "This login (<strong>#{@user.login}</strong>) already exists, please <a href="+@user.identity_url+">choose a different persona or modify the current one</a>"
-
+  rescue ActiveRecord::RecordInvalid => invalid
+    flash[:error] = %Q{This login (<strong>#{@user.login}</strong>) already exists, 
+      please <a href="#{@user.identity_url}"> choose a different persona/nickname 
+      or modify the current one</a>}
     redirect_to login_path(:method => 'openid')
   end
 
