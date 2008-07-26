@@ -64,7 +64,7 @@ describe Repository do
   end
   
   it "has a push url" do
-    @repository.push_url.should == "git@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git"
+    @repository.push_url.should == "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git"
   end
   
   it "has a clone url" do
