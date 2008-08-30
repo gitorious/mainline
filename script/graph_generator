@@ -9,6 +9,8 @@ if File.exist?(LOCK_FILE_PATH)
     exit(1)
 end
 
+ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+
 FileUtils.touch(LOCK_FILE_PATH)
 
 ENV["RAILS_ENV"] ||= "production"
