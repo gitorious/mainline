@@ -70,7 +70,7 @@ class Repository < ActiveRecord::Base
   end
   
   def push_url
-    "git@#{GitoriousConfig['gitorious_host']}:#{gitdir}"
+    "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{gitdir}"
   end
   
   def full_repository_path
