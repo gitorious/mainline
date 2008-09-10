@@ -136,7 +136,7 @@ FTW!
  
   # sudo mkdir  /gitorious/repositories
   
-* Make a long, complicated string. You can run "apg -m 64", or perhaps even
+* Make a long, complicated string. You can run "apg -m 64", or if you lack 'apg'
     `dd if=/dev/random count=1 | md5sum` ,
   and put that on the 'cookie_secret' line (replacing the 'ssssht').
 
