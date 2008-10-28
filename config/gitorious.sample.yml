@@ -22,3 +22,6 @@ gitorious_host: gitorious.org
 
 # User which is running git daemon
 gitorious_user: git
+
+# Email spam on server errors to:
+exception_notification_emails:  
