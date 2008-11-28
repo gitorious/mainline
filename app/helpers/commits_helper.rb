@@ -1,5 +1,6 @@
 #--
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +18,7 @@
 
 module CommitsHelper
   include RepositoriesHelper
+  include UsersHelper
   
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")

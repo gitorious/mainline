@@ -25,3 +25,7 @@ gitorious_user: git
 
 # Email spam on server errors to:
 exception_notification_emails:  
+
+# Mangle visible e-mail addresses (spam protection)
+mangle_email_addresses: true
+

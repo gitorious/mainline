@@ -1,5 +1,6 @@
 #--
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,5 +20,10 @@ module UsersHelper
   def encoded_mail_to(email)
     mail_to(email, nil, :replace_at => "AT@NOSPAM@", 
       :replace_dot => "DOT", :encode => "javascript")
+  end
+
+  def encoded_mail(email)
+    email.gsub!(/@/,"AT@NOSPAM@")
+    email.gsub!(/\./,"DOT")
   end
 end

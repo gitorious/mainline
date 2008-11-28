@@ -1,6 +1,7 @@
 <%
 #--
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,8 +20,10 @@
 
 <ul class="infobox">
   <li><strong>Date:</strong> <%=h @commit.committed_date -%></li>
-  <li><strong>Committer:</strong> <%=h @commit.committer.name -%> (<%=h @commit.committer.email -%>)</li>
-  <li><strong>Author:</strong> <%=h @commit.author.name -%> (<%=h @commit.author.email -%>)</li>
+  <li><strong>Committer:</strong> <%=h @commit.committer.name -%>
+    (<%=h GitoriousConfig["mangle_email_addresses"] ? encoded_mail(@commit.committer.email) : @commit.committer.email -%>)</li>
+  <li><strong>Author:</strong> <%=h @commit.author.name -%>
+    (<%=h GitoriousConfig["mangle_email_addresses"] ? encoded_mail(@commit.author.email) : @commit.author.email -%>)</li>
   <li><strong>Commit SHA1:</strong> <%=h @commit.id -%></li>
   <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.tree.id), 
     project_repository_tree_path(@project, @repository, @commit.id) -%></li>
