@@ -146,6 +146,11 @@ module ApplicationHelper
     action = ""
     body = ""
     category = ""
+
+    if target.nil?
+      return [action, body, category]
+    end
+
     case event.action
       when Action::CREATE_PROJECT
         action = "<strong>created project</strong> #{link_to h(target.title), project_path(target)}"
