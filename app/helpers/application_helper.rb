@@ -2,6 +2,7 @@
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+#   Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -102,7 +103,7 @@ module ApplicationHelper
   
   def gravatar_url_for(email, options = {})
     "http://www.gravatar.com/avatar.php?gravatar_id=" << 
-    Digest::MD5.hexdigest(email) << 
+    (email.nil? ? "" : Digest::MD5.hexdigest(email)) <<
     "&amp;default=" <<
     u("http://#{request.host}:#{request.port}/images/default_face.gif") <<
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
