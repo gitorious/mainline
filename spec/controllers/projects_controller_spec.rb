@@ -140,13 +140,27 @@ describe ProjectsController do
     assigns[:mainline_repository].should == repositories(:johans)
     response.should be_success
   end
-  
+
+  it "GET projects/xx/edit should require login" do
+    get :edit, :id => projects(:johans).slug
+    response.should be_redirect
+    response.should redirect_to(new_sessions_path)
+  end
+
   it "GET projects/xx/edit should be a-ok" do
+    login_as(:johan)
     get :edit, :id => projects(:johans).slug
     response.should be_success
   end
+
+  it "GET projects/xx/confirm_delete should require login" do
+    get :confirm_delete
+    response.should be_redirect
+    response.should redirect_to(new_sessions_path)
+  end
   
   it "GET projects/xx/confirm_delete fetches the project" do
+    login_as(:johan)
     get :edit, :id => projects(:johans).slug
     response.should be_success
     assigns[:project].should == projects(:johans)
