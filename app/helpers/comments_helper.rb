@@ -16,4 +16,5 @@
 #++
 
 module CommentsHelper
+  include UsersHelper
 end
