@@ -11,9 +11,9 @@
 # Lines you introduce should not have trailing whitespace.
 # Also check for an indentation that has SP before a TAB.
 
-if git-rev-parse --verify HEAD 2>/dev/null
+if git rev-parse --verify HEAD 2>/dev/null
 then
-	git-diff-index -p -M --cached HEAD
+	git diff-index -p -M --cached HEAD
 else
 	# NEEDSWORK: we should produce a diff with an empty tree here
 	# if we want to do the same verification for the initial import.

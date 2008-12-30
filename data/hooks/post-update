@@ -5,4 +5,4 @@
 #
 # To enable this hook, make this file executable by "chmod +x post-update".
 
-exec git-update-server-info
+exec git update-server-info

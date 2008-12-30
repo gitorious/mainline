@@ -24,7 +24,7 @@ esac
 # on top of master.  Is it OK to rebase it?
 
 # Is topic fully merged to master?
-not_in_master=`git-rev-list --pretty=oneline ^master "$topic"`
+not_in_master=`git rev-list --pretty=oneline ^master "$topic"`
 if test -z "$not_in_master"
 then
 	echo >&2 "$topic is fully merged to master; better remove it."
@@ -32,11 +32,11 @@ then
 fi
 
 # Is topic ever merged to next?  If so you should not be rebasing it.
-only_next_1=`git-rev-list ^master "^$topic" ${publish} | sort`
-only_next_2=`git-rev-list ^master           ${publish} | sort`
+only_next_1=`git rev-list ^master "^$topic" ${publish} | sort`
+only_next_2=`git rev-list ^master           ${publish} | sort`
 if test "$only_next_1" = "$only_next_2"
 then
-	not_in_topic=`git-rev-list "^$topic" master`
+	not_in_topic=`git rev-list "^$topic" master`
 	if test -z "$not_in_topic"
 	then
 		echo >&2 "$topic is already up-to-date with master"
@@ -45,7 +45,7 @@ then
 		exit 0
 	fi
 else
-	not_in_next=`git-rev-list --pretty=oneline ^${publish} "$topic"`
+	not_in_next=`git rev-list --pretty=oneline ^${publish} "$topic"`
 	perl -e '
 		my $topic = $ARGV[0];
 		my $msg = "* $topic has commits already merged to public branch:\n";
@@ -138,13 +138,13 @@ B to be deleted.
 
 To compute (1):
 
-	git-rev-list ^master ^topic next
-	git-rev-list ^master        next
+	git rev-list ^master ^topic next
+	git rev-list ^master        next
 
 	if these match, topic has not merged in next at all.
 
 To compute (2):
 
-	git-rev-list master..topic
+	git rev-list master..topic
 
 	if this is empty, it is fully merged to "master".

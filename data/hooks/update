@@ -31,7 +31,7 @@ if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
 fi
 
 # --- Config
-allowunannotated=$(git-repo-config --bool hooks.allowunannotated)
+allowunannotated=$(git repo-config --bool hooks.allowunannotated)
 
 # check for no description
 projectdesc=$(sed -e '1p' "$GIT_DIR/description")
@@ -45,7 +45,7 @@ fi
 if [ -z "${newrev##0*}" ]; then
 	newrev_type=commit
 else
-	newrev_type=$(git-cat-file -t $newrev)
+	newrev_type=$(git cat-file -t $newrev)
 fi
 
 case "$refname","$newrev_type" in
