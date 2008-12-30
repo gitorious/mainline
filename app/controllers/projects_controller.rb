@@ -17,7 +17,7 @@
 #++
 
 class ProjectsController < ApplicationController  
-  before_filter :login_required, :only => [:create, :update, :destroy, :new]
+  before_filter :login_required, :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   
   def index
