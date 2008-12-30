@@ -37,7 +37,7 @@ describe GitBackend do
     FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
     
     GitBackend.should_receive(:execute_command).with(
-      %Q{GIT_DIR="#{path}" git-update-server-info}
+      %Q{GIT_DIR="#{path}" git update-server-info}
     ).and_return(true)
   
     GitBackend.create(path)
