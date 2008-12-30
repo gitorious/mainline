@@ -9,6 +9,6 @@ ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
 Dir["#{GitoriousConfig["repository_base_path"]}/**/*.git"].each do |repo_path|
   p repo_path
-  p `cd '#{repo_path}'; git-gc`
+  p `cd '#{repo_path}'; git gc`
   puts
 end
