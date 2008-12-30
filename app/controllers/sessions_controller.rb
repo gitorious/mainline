@@ -70,12 +70,11 @@ class SessionsController < ApplicationController
   end
 
   def password_authentication(email, password)
-    ##self.current_user = User.authenticate(login, password)
     self.current_user = User.authenticate(email, password)
     if logged_in?
       successful_login
     else
-      failed_login("Username/password didn't match, please try again.")
+      failed_login("Email and/or password didn't match, please try again.")
     end
   end
 
