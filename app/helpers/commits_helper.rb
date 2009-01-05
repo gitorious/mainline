@@ -18,7 +18,6 @@
 
 module CommitsHelper
   include RepositoriesHelper
-  include UsersHelper
   
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")

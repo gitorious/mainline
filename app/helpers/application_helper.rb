@@ -21,6 +21,7 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   include TagsHelper
+  include UsersHelper
   
   def feed_icon(url, alt_title = "Atom feed", size = :small)
     link_to image_tag("feed_12.png", :class => "feed_icon"), url, 
