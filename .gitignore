@@ -13,3 +13,4 @@ db/schema.rb
 db/*.sqlite3
 .autotest
 db/sphinx/*
+tmp/repos/*
