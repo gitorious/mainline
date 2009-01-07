@@ -11,6 +11,9 @@ Spec::Runner.configure do |config|
   config.fixture_path = RAILS_ROOT + '/spec/fixtures'
   config.include AuthenticatedTestHelper
   config.include KeyserSource::SpecDSL
+  config.before :each, :type=>:controller do
+    controller.use_rails_error_handling!
+  end
   
   # config.after(:each) do
   #   path = File.join(GitoriousConfig["repository_base_path"], "*")

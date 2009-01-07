@@ -19,6 +19,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe BlobsHelper do
   
+  include BlobsHelper
+  
   def included_modules
     (class << helper; self; end).send(:included_modules)
   end

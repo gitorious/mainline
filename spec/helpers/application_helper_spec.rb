@@ -38,12 +38,12 @@ describe ApplicationHelper do
   it "renders block if object is ready" do
     obj = mock("any given object")
     obj.stub!(:ready?).and_return(false)
-    _erbout = "" # damn you RSpec!
+    helper.output_buffer = "" # damn you RSpec!
     helper.render_if_ready(obj) do
       "moo"
     end
-    _erbout.should_not == "moo"
-    _erbout.should match(/is being created/)
+    helper.output_buffer.should_not == "moo"
+    helper.output_buffer.should match(/is being created/)
   end
   
   it "gives us the domain of a full url" do

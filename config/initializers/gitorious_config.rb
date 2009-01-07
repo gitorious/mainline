@@ -1,1 +1,1 @@
-GitoriousConfig = YAML::load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))
+GitoriousConfig = YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))

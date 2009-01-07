@@ -19,7 +19,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  session :session_key => '_ks1_session_id', :secret => GitoriousConfig["cookie_secret"]
+  session :session_key => '_ks1_session_id', :secret => YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["cookie_secret"]
   include AuthenticatedSystem
   include ExceptionNotifiable
   

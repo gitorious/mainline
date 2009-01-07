@@ -29,7 +29,7 @@ atom_feed do |feed|
       :updated => commit.committed_date, 
       :published => commit.committed_date
     }) do |entry|
-      entry.title(truncate(commit.message, 75))
+      entry.title(truncate(commit.message, :length => 75))
       entry.content(<<-EOS, :type => 'html')
 <h1>In #{@repository.gitdir} #{params[:id]}</h1>
 <pre>

@@ -46,11 +46,11 @@ module ApplicationHelper
     out
   end
   
-  def render_if_ready(object, &blk)
+  def render_if_ready(object)
     if object.respond_to?(:ready?) && object.ready?
       yield
     else
-      concat(build_notice_for(object), blk.binding)
+      concat(build_notice_for(object))
     end
   end  
   
