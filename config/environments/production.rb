@@ -21,7 +21,7 @@ cache_dir = File.expand_path(File.join(RAILS_ROOT, 'public', 'cache'))
 # Make sure these are writeable by your webserver daemon user
 #
 config.action_controller.page_cache_directory = cache_dir
-config.action_controller.fragment_cache_store = :file_store, File.join(cache_dir, "fragments")
+config.action_controller.cache_store = :file_store, File.join(cache_dir, "fragments")
 
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"
@@ -39,6 +39,5 @@ ActionMailer::Base.default_url_options[:host] =
 ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT,
   "config/gitorious.yml"))["exception_notification_emails"]
 ExceptionNotifier.class_eval do
-  remove_method :template_root
   ExceptionNotifier.template_root = "#{RAILS_ROOT}/vendor/plugins/exception_notification/lib/../views"
 end
