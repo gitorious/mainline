@@ -19,6 +19,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe RepositoriesHelper do
+  
+  include RepositoriesHelper
+  
   before(:each) do
     @project = projects(:johans)
     @repository = @project.repositories.first

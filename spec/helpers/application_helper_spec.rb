@@ -20,6 +20,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ApplicationHelper do
   
+  include ApplicationHelper
+  
   it "renders a message if an object is not ready?" do
     repos = repositories(:johans)
     helper.build_notice_for(repos).should include("This repository is being created")

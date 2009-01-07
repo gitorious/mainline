@@ -19,6 +19,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe TreesHelper do
   
+  include TreesHelper
+  
   it "includes the RepostoriesHelper" do
     included_modules = (class << helper; self; end).send(:included_modules)
     included_modules.should include(RepositoriesHelper)
