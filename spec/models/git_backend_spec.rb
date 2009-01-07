@@ -49,7 +49,7 @@ describe GitBackend do
     FileUtils.should_receive(:touch).with(File.join(target_path, "git-daemon-export-ok"))
     
     GitBackend.should_receive(:execute_command).with(
-      %Q{GIT_DIR="#{target_path}" git-update-server-info}
+      %Q{GIT_DIR="#{target_path}" git update-server-info}
     ).and_return(true)
     
     git = mock("Grit::Git instance")
