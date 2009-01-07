@@ -1,0 +1,96 @@
+#!/bin/bash
+#
+# Init file for Gitorious GIT-Daemon daemon
+#
+# chkconfig: 2345 55 25
+# description: GIT-Daemon server daemon
+#
+# processname: git-daemon
+# pidfile: /var/www/gitorious/log/git-daemon.pid
+ 
+# source function library
+. /etc/rc.d/init.d/functions
+ 
+RETVAL=0
+GIT_DAEMON="/opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/git-daemon -d"
+LOCK_FILE=/var/lock/git-daemon
+PID_FILE=/var/www/gitorious/log/git-daemon.pid
+ 
+do_check_pid() {
+  if [ -f $PID_FILE ]; then
+    PID=`cat $PID_FILE`
+    RUNNING=`ps --pid $PID | wc -l`
+  else
+    PID=0
+    RUNNING=0
+  fi
+}
+ 
+runlevel=$(set -- $(runlevel); eval "echo \$$#" )
+ 
+start()
+{
+  do_check_pid
+  if [ $RUNNING != 2 ] ; then
+echo -n $"Starting $PROG: "
+                /bin/su - git -c "$GIT_DAEMON"
+    sleep 1
+    if [ -f $PID_FILE ] ; then
+      success
+    else
+      failure
+    fi
+RETVAL=$?
+  else
+    echo -n $"$PROG already running"
+    failure
+  fi
+  [ "$RETVAL" = 0 ] && touch $LOCK_FILE
+  echo
+}
+ 
+stop()
+{
+  do_check_pid
+  echo -n $"Stopping $PROG: "
+  if [ $RUNNING != 2 ] ; then
+    failure $"Stopping $PROG"
+  else
+    killproc -p $PID_FILE
+  fi
+  RETVAL=$?
+  # if we are in halt or reboot runlevel kill all running sessions
+  # so the TCP connections are closed cleanly
+  if [ "x$runlevel" = x0 -o "x$runlevel" = x6 ] ; then
+   killproc -p $PID 2>/dev/null
+  fi
+  [ "$RETVAL" = 0 ] && rm -f $LOCK_FILE
+  echo
+}
+ 
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+    restart)
+        stop
+        start
+        ;;
+  condrestart)
+    if [ -f $LOCK_FILE ] ; then
+      if [ "$RETVAL" = 0 ] ; then
+        stop
+        # avoid race
+        sleep 5
+        start
+      fi
+    fi
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart|condrestart}"
+    RETVAL=1
+esac
+exit $RETVAL
