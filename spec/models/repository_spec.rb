@@ -196,7 +196,7 @@ describe Repository do
   
   it "suggests a decent name for a cloned repository bsed on username" do
     repos = Repository.new_by_cloning(@repository, username="johan")
-    repos.name.should == "johans-clone"
+    repos.name.should == "johan-clone"
     repos = Repository.new_by_cloning(@repository, username=nil)
     repos.name.should == nil
   end

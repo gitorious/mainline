@@ -43,7 +43,7 @@ class Repository < ActiveRecord::Base
   after_destroy :create_delete_repos_task
   
   def self.new_by_cloning(other, username=nil)
-    suggested_name = username ? "#{username}s-clone" : nil
+    suggested_name = username ? "#{username}-clone" : nil
     new(:parent => other, :project => other.project, :name => suggested_name)
   end
   

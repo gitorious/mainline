@@ -50,7 +50,9 @@
   
   <ul class="links">
     <% if @repository.ready? -%>
-      <li><%= link_to "Clone repository", new_project_repository_path(@project, @repository) -%></li>
+		<%# new_project_repository_path(@project, @repository) works in 2.1 and breaks in 2.2.2 %>
+		<%# using explicit routing for the time being %>
+      <li><%= link_to "Clone repository", :controller => "repositories", :action => "new", :project_id => @project.to_param, :id => @repository.to_param -%></li>
     <% end -%>
     <% if @repository.user == current_user -%>
       <li><%= link_to "Request merge", new_project_repository_merge_request_path(@project, @repository) -%></li>
