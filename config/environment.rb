@@ -30,13 +30,15 @@ Rails::Initializer.run do |config|
   config.gem "rmagick",      :version => '2.8.0', :lib => "RMagick"
   config.gem "chronic",      :version => '0.2.3'
   config.gem "geoip",        :version => '0.8.0'
-  config.gem "daemons",      :version => '1.0.10'
-  config.gem "rspec-rails",  :version => '1.1.11', :lib => "spec/rails"
-  config.gem "rspec",        :version => '1.1.11', :lib => "spec"
-  config.gem "hoe",          :version => '1.8.2'
-  config.gem "echoe",        :version => '3.0.2'
+  config.gem "daemons",      :version => '1.0.10', :lib => false
+  config.gem "rspec-rails",  :version => '1.1.11', :lib => false
+  config.gem "rspec",        :version => '1.1.11', :lib => false
+  config.gem "hoe",          :version => '1.8.2', :lib => false
+  config.gem "echoe",        :version => '3.0.2', :lib => false
   config.gem "RedCloth",     :version => '4.1.1', :lib => "redcloth"
   config.gem "ruby-openid",  :version => '2.1.2', :lib => "openid"
+  
+  # vendorized directly in vendor/ -- need to research if can be removed from there
   #config.gem "ultraviolet",  :version => '0.10.2', :lib => "uv"
   #config.gem "grit",         :version => '0.7.0'
 

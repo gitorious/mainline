@@ -21,7 +21,7 @@
 
 <%= error_messages_for :ssh_key -%>
 
-<% form_for @ssh_key, :url => account_key_path(@ssh_key) do |f| -%>
+<% form_for @ssh_key, :url => account_keys_path() do |f| -%>
   <p>
     <%= f.label :key, "Your public key" -%><br />
     <small class="hint">It's generally located in ~/.ssh/id_rsa.pub or 
