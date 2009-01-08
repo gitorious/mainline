@@ -81,6 +81,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def resolvable_by?(candidate)
-    candidate == target_repository.user
+    # either it is the owner or one of the committers
+    candidate == target_repository.user || target_repository.committers.include?(candidate)
   end
 end
