@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby -wKU
+
+require "rubygems"
+require "httparty"
+require "pp"
+
+project_name = ARGV[0]
+local_branch = ARGV[1] || "master"
+
+abort("Usage: #{$0} projectname <local branch>") unless project_name
+
+class GitoriousAPI
+  include HTTParty
+  base_uri "http://gitorious.org"
+  
+  def project(name)
+    data = self.class.get("/projects/#{name}.xml", { :format => :xml })
+    data["project"]
+  end
+end
+
+gts = GitoriousAPI.new
+project = gts.project(project_name)
+current_remotes = `git remote`.split("\n")
+
+project["repositories"].each do |repo|
+  git_url = "git://gitorious.org/#{project_name}/#{repo["name"]}.git"
+  unless current_remotes.include?("gts-remotes/#{repo["name"]}")
+    `git remote add gts-remotes/#{repo["name"]} #{git_url}`
+  end
+  `git fetch gts-remotes/#{repo["name"]}`
+  
+  Dir[".git/refs/remotes/gts-remotes/#{repo["name"]}/*"].map{|s| 
+    File.basename(s) 
+  }.each do |branch|
+    full_branch_name = "gts-remotes/#{repo["name"]}/#{branch}"
+    log = `git log --pretty="format:%Cblue%h %an: %Creset%s" #{local_branch}..#{full_branch_name}`
+    if !log || log.empty?
+      puts "skipping #{full_branch_name}, nothing new…"
+      next
+    end
+  
+    puts "== In #{full_branch_name}"
+    puts log
+    puts
+  end
+  puts
+end
