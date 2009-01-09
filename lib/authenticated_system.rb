@@ -65,7 +65,7 @@ module AuthenticatedSystem
         accepts.html do
           store_location
           flash[:error] = "Action requires login"
-          if GitoriousConfig['gitorious_public_registration']
+          if GitoriousConfig['public_mode']
             redirect_to :controller => '/sessions', :action => 'new'
           else
             redirect_to root_path

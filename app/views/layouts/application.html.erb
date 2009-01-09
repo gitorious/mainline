@@ -54,7 +54,7 @@
 		<li><%= link_to "Administration", admin_users_path -%></li>
 		<% end -%>
       <% end -%>
-      <% if GitoriousConfig['gitorious_public_registration'] || logged_in? -%>
+      <% if GitoriousConfig['public_mode'] || logged_in? -%>
         <li><%= link_to "Projects", projects_path -%></li>
         <li><%= link_to "Search", search_path -%></li>
       <% end -%>
@@ -67,7 +67,7 @@
         <li class="secondary">( <%= link_to "My account", account_path -%></li>
         <li class="secondary"><%= link_to "Logout", logout_path -%> )</li>
       <%- else -%>
-		<% if GitoriousConfig['gitorious_public_registration'] -%>
+		<% if GitoriousConfig['public_mode'] -%>
         	<li class="secondary"><%= link_to "Register", new_user_path -%></li>
 		<% end -%>
         <li class="secondary"><%= link_to "Login", login_path -%></li>

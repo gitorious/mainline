@@ -164,11 +164,11 @@ end
 
 describe UsersController, "in Private Mode" do
   before(:each) do
-    GitoriousConfig['gitorious_public_registration'] = false
+    GitoriousConfig['public_mode'] = false
   end
 
   after(:each) do
-    GitoriousConfig['gitorious_public_registration'] = true
+    GitoriousConfig['public_mode'] = true
   end
   
   it_should_behave_like "All Users"
