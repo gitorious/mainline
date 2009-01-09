@@ -1,6 +1,7 @@
 <%
 #--
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,11 +18,21 @@
 #++
 %>
 
-<div class="search_bar">
-<% form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
-<p>
-  <%= text_field_tag :q, params[:q], :class => "text search-field" -%> 
-  <input type="submit" value="<%= t("views.searches.search") %>" class="search-submit" />
-</p>  
-<p class="hint search-hint"><%= t("views.searches.hint") %></p>
-</div>
+Olá <%= @merge_request.target_repository.user.login -%>,
+
+<%= @merge_request.source_repository.user.login -%> requisitou que você mesclasse o repositório
+<%= @merge_request.source_repository.name -%> com <%= @merge_request.target_repository.name -%> 
+no projeto <%= @project.title -%>.
+
+<% unless @merge_request.proposal.blank? -%>
+---
+<%= @merge_request.proposal %>
+---
+<% end -%>
+
+Você pode revisar a requisição e seus commits aqui:
+<%= @url %>
+
+Atenciosamente,
+
+http://<%= GitoriousConfig['gitorious_host'] %>
