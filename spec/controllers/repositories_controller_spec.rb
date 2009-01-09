@@ -287,3 +287,26 @@ describe RepositoriesController, "destroy" do
   end
   
 end
+
+describe RepositoriesController, "with committer (not owner) logged in" do
+  integrate_views
+  
+  before(:each) do
+    login_as :mike
+    @project = projects(:johans)
+    @repository = @project.repositories.first
+  end
+  
+  def do_get()
+    get :show, :project_id => @project.slug, :id => @repository.name
+  end
+    
+  it "should GET projects/1/repositories/3 and have merge request link" do
+    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
+    @repository.stub!(:has_commits?).and_return(true)
+    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    do_get
+    flash[:error].should == nil
+    response.body.should match(/Request merge/)
+  end
+end
