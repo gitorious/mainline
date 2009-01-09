@@ -73,6 +73,9 @@
         <li class="secondary"><%= link_to "Login", login_path -%></li>
       <%- end -%>
     </ul>
+    
+    <%= render :partial => "/searches/search_box" -%>
+    
     <% if @project -%>
     <h2 id="project_title"><%= link_to h(@project.title), @project -%></h2>
     <ul id="submenu" class="<%= @content_for_submenu.blank? ? "white" : "" -%>">
@@ -86,6 +89,7 @@
       </li>
     </ul>
     <% end -%>
+    
 	<% if controller.is_a? Admin::UsersController -%>
 	<h2 id="project_title"><%= link_to "Administration", '' %></h2>
     <ul id="submenu" class="white">

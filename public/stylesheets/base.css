@@ -152,6 +152,21 @@ abbr {
 }
 #header #logo a { color: #666; }
 
+#header .search_bar {
+  float: right;
+  margin-right: 20px;
+}
+#header .search_bar .search-hint { display: none;}
+#header .search_bar .search-field {
+  width: 250px;
+}
+#header .search_bar .search-field, #header .search_bar .search-submit {
+  background: #2F2F2F;
+  color: #fff;
+  border: 1px solid #666;
+}
+#header .search_bar .search-submit { color: #aaa; }
+
 #header #project_title {
   font-size: 19px;
   line-height: 19px;

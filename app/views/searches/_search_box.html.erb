@@ -20,9 +20,9 @@
 <div class="search_bar">
 <% form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
 <p>
-  <%= text_field_tag :q, params[:q], :class => "text" -%> 
-  <input type="submit" value="Search" />
+  <%= text_field_tag :q, params[:q], :class => "text search-field" -%> 
+  <input type="submit" value="Search" class="search-submit" />
 </p>  
-<p class="hint">eg. 'wrapper', 'category:python' or '"document database"'</p>
+<p class="hint search-hint">eg. 'wrapper', 'category:python' or '"document database"'</p>
 <% end -%>
 </div>
