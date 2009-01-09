@@ -176,7 +176,7 @@ cp config/gitorious.sample.yml config/gitorious.yml
   mangle_email_addresses: true
 
   # Enable or Disable Public Mode (true) or Private Mode (false)
-  gitorious_public_registration: false
+  public_mode: false
 
 7.3.1 Remarks on gitorious.yml
 

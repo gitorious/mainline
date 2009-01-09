@@ -71,6 +71,6 @@ class ApplicationController < ActionController::Base
     end
     
     def public_and_logged_in
-      login_required unless GitoriousConfig['gitorious_public_registration']
+      login_required unless GitoriousConfig['public_mode']
     end
 end

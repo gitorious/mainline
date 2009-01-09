@@ -147,7 +147,7 @@ private Gitorious would be publicly exposed to the Internet.
 
 Now you can change your config/gitorious.yml file and change this:
 
-  gitorious_public_registration: false
+  public_mode: false
 
 The default mode is 'true', which make your Gitorious public. But if you want your
 own private server, change it to 'false'.
