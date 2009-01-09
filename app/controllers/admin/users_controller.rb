@@ -23,7 +23,7 @@ class Admin::UsersController < ApplicationController
     @user.is_admin = params[:user][:is_admin] == "1"
     respond_to do |wants|
       if @user.save
-        flash[:notice] = 'User was successfully created.'
+        flash[:notice] = I18n.t "admin.users_controller.create_notice"
         wants.html { redirect_to(admin_users_path) }
         wants.xml { render :xml => @user, :status => :created, :location => @user }
       else
@@ -38,9 +38,9 @@ class Admin::UsersController < ApplicationController
     @user = User.find_by_login!(params[:id])
     @user.suspended_at = Time.now
     if @user.save
-      flash[:notice] = "User #{@user.login} was successfully suspended."
+      flash[:notice] = I18n.t "admin.users_controller.suspend_notice", :user_name => @user.login
     else
-      flash[:error] = "Unable to suspend user #{@user.login}."
+      flash[:error] = I18n.t "admin.users_controller.suspend_error", :user_name => @user.login
     end
     redirect_to admin_users_url()
   end
@@ -49,9 +49,9 @@ class Admin::UsersController < ApplicationController
     @user = User.find_by_login!(params[:id])
     @user.suspended_at = nil
     if @user.save
-      flash[:notice] = "User #{@user.login} was successfully unsuspended."
+      flash[:notice] = I18n.t "admin.users_controller.unsuspend_notice", :user_name => @user.login
     else
-      flash[:error] = "Unable to unsuspend user #{@user.login}."
+      flash[:error] = I18n.t "admin.users_controller.unsuspend_error", :user_name => @user.login
     end
     redirect_to admin_users_url()
   end
@@ -60,7 +60,7 @@ class Admin::UsersController < ApplicationController
   
   def check_admin
     unless current_user.admin?
-      flash[:error] = "For Administrators Only"
+      flash[:error] = I18n.t "admin.users_controller.check_admin"
       redirect_to root_path
     end
   end

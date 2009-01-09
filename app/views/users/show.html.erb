@@ -23,7 +23,7 @@
 <% @page_title = h(@user.login) -%>
 
 <% unless @events.empty? -%>
-  <h2>Activities<%= feed_icon @atom_auto_discovery_url %></h2>
+  <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>  
 <% end -%>
 
@@ -39,13 +39,13 @@
     <% if @user.url %>
       <li><strong>Url:</strong> <a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
     <% end -%>
-    <li><strong>Member for</strong> about <%= time_ago_in_words(@user.created_at) -%></li>
-    <li><strong><%= @commits_last_week -%></strong> commits so far this week.</li>
+    <li><strong><%= t("views.users.member_for") %></strong> <%= t("views.users.about", :about => time_ago_in_words(@user.created_at)) %></li>
+    <li><strong><%= @commits_last_week -%></strong> <%= t("views.users.this_week", :count => @commits_last_week) %>.</li>
   </ul>
 
 
   <% unless @projects.blank? -%>
-    <h4>Projects:</h4>
+    <h4><%= t("views.site.dashboard.projects") %>:</h4>
     <ul>
     <% @projects.each do |project| -%>
       <li><%= link_to h(project.slug), project -%></li>
@@ -54,7 +54,7 @@
   <% end -%>
   
   <% unless @repositories.blank? -%>
-    <h4>Repository clones</h4>
+    <h4><%= t("views.site.dashboard.clones") %></h4>
     <ul>
     <% @repositories.each do |repo| -%>
       <li><%= link_to h("#{repo.project.slug}/#{repo.name}"), [repo.project, repo] -%></li>
@@ -65,6 +65,6 @@
 
 <% if current_user && (current_user == @user)  -%>
   <% content_for :submenu do -%>
-    <li><%= link_to "Edit your account", edit_account_url -%>
+    <li><%= link_to t("views.account.edit_title"), edit_account_url -%>
   <% end -%>
 <% end -%>

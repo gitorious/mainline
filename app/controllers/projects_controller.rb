@@ -83,7 +83,7 @@ class ProjectsController < ApplicationController
   def update
     @project = Project.find_by_slug!(params[:id])
     if @project.user != current_user
-      flash[:error] = "You're not the owner of this project"
+      flash[:error] = I18n.t "projects_controller.update_error"
       redirect_to(project_path(@project)) and return
     end
     @project.attributes = params[:project]
@@ -106,7 +106,7 @@ class ProjectsController < ApplicationController
       @project.destroy
 #       Event.create(:action => Action::DELETE_PROJECT, :user => current_user, :data => project_title) # FIXME: project_id cannot be null
     else
-      flash[:error] = "You're not the owner of this project, or the project has clones"
+      flash[:error] = I18n.t "projects_controller.destroy_error"
     end
     redirect_to projects_path
   end

@@ -45,7 +45,7 @@ class RepositoriesController < ApplicationController
   def new
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?
-      flash[:error] = "Sorry, can't clone an empty repository"
+      flash[:error] = I18n.t "repositories_controller.new_error"
       redirect_to project_repository_path(@project, @repository_to_clone)
       return
     end
@@ -58,11 +58,11 @@ class RepositoriesController < ApplicationController
       target_path = project_repository_path(@project, @repository_to_clone)
       respond_to do |format|
         format.html do
-          flash[:error] = "Sorry, can't clone an empty repository"
+          flash[:error] = I18n.t "repositories_controller.create_error"
           redirect_to target_path
         end
         format.xml do 
-          render :text => "Sorry, can't clone an empty repository", 
+          render :text => I18n.t("repositories_controller.create_error"), 
             :location => target_path, :status => :unprocessable_entity
         end
       end
@@ -105,11 +105,11 @@ class RepositoriesController < ApplicationController
     @repository = @project.repositories.find_by_name!(params[:id])
     if @repository.can_be_deleted_by?(current_user)
       repo_name = @repository.name
-      flash[:notice] = "The repository was deleted"
+      flash[:notice] = I18n.t "repositories_controller.destroy_notice"
       @repository.destroy
       @project.create_event(Action::DELETE_REPOSITORY, @project, current_user, repo_name)
     else
-      flash[:error] = "You're not the owner of this repository"
+      flash[:error] = I18n.t "repositories_controller.destroy_error"
     end
     redirect_to project_path(@project)
   end
@@ -118,9 +118,9 @@ class RepositoriesController < ApplicationController
     def require_adminship
       unless @project.admin?(current_user)
         respond_to do |format|
-          flash[:error] = "Sorry, only project admins are allowed to do that"
+          flash[:error] = I18n.t "repositories_controller.adminship_error"
           format.html { redirect_to(project_path(@project)) }
-          format.xml  { render :text => "Sorry, only project admins are allowed to do that", :status => :forbidden }
+          format.xml  { render :text => I18n.t( "repositories_controller.adminship_error"), :status => :forbidden }
         end
         return
       end

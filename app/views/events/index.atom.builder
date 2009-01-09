@@ -16,7 +16,7 @@
 #++
 
 atom_feed do |feed|
-  feed.title("Gitorious activities")
+  feed.title(t("views.events.activities"))
   feed.updated((@events.blank? ? Time.now : @events.first.created_at))
 
   @events.each do |event|

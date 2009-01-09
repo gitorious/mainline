@@ -17,7 +17,7 @@
 #++
 %>
 
-<% @page_title = "#{current_path.join("/")} - #{@repository.name} in #{@project.title}" -%>
+<% @page_title = t("views.blobs.page_title", :path => current_path.join("/"), :repo => @repository.name, :title => @project.title) -%>
 <% @load_syntax_themes = true -%>
 
 <% content_for :submenu do -%>
@@ -26,16 +26,16 @@
 
 <ul class="mode_selector">
   <li class="list_header">
-    Softwrap mode:
+    <%= t("views.blobs.wrap") %>:
   </li>
   <li>
-    <%= link_to_function "Toggle", "Gitorious.Wordwrapper.toggle($$('table#codeblob td.code'))" -%>
+    <%= link_to_function t("views.common.toggle"), "Gitorious.Wordwrapper.toggle($$('table#codeblob td.code'))" -%>
   </li>
 </ul>
 
 <h1>
-  Blob of <code><%= current_path.join("/") -%></code> 
-  <small>(<%= link_to "raw blob data", raw_blob_path(@commit.id, current_path) -%>)</small>
+  <%= t("views.blobs.title", :path => current_path.join("/")) %>
+  <small>(<%= link_to t("views.blobs.raw"), raw_blob_path(@commit.id, current_path) -%>)</small>
 </h1>
 <!-- <%= @blob.mime_type -%> -->
 
@@ -47,8 +47,8 @@
   <% end -%>
 <% elsif too_big_to_render?(@blob.size) && @blob.mime_type =~ /^text/ -%>
   <p>
-    This file is too big to be rendered within reasonable time, 
-    <%= link_to "try viewing the raw data", raw_blob_path(@commit.id, current_path) -%> 
+	<%= t("views.blobs.too_big_1") -%>
+    <%= link_to t("views.blobs.too_big_2"), raw_blob_path(@commit.id, current_path) -%> 
   </p>
 <% elsif @blob.mime_type =~ /^image/ -%>
   <% cache(blob_path(@commit.id, params[:path])) do -%>
@@ -56,8 +56,8 @@
   <% end -%>
 <% else -%>
   <p>
-    Not sure we can display this blob nicely (it's a "<%= @blob.mime_type -%>" mimetype), 
-    <%= link_to "try viewing the raw data", raw_blob_path(@commit.id, current_path) -%> 
-    and see if your browser figures it out.
+	<%= t("views.blobs.message_1", :mime => @blob.mime_type) -%>
+    <%= link_to t("views.blobs.too_big_2"), raw_blob_path(@commit.id, current_path) -%> 
+	<%= t("views.blobs.message_2") -%>
   </p>
 <% end -%>

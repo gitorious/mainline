@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   before_filter :public_and_logged_in
+  before_filter :set_locale
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
@@ -44,7 +45,7 @@ class ApplicationController < ActionController::Base
   protected
     def require_user_has_ssh_keys
       unless current_user.ssh_keys.count > 0
-        flash[:error] = "You need to upload your public key first"
+        flash[:error] = I18n.t "application.require_ssh_keys_error"
         redirect_to new_account_key_path
         return 
       end
@@ -61,7 +62,7 @@ class ApplicationController < ActionController::Base
     
     def check_repository_for_commits
       unless @repository.has_commits?
-        flash[:notice] = "The repository doesn't have any commits yet"
+        flash[:notice] = I18n.t "application.no_commits_notice"
         redirect_to project_repository_path(@project, @repository) and return
       end
     end
@@ -72,5 +73,16 @@ class ApplicationController < ActionController::Base
     
     def public_and_logged_in
       login_required unless GitoriousConfig['public_mode']
+    end
+    
+    def set_locale
+      #TODO - define proper locale switching
+      if ENV['RAILS_ENV'] == 'test'
+        I18n.default_locale = 'en'
+        I18n.locale         = 'en'
+      else
+        I18n.default_locale = YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["locale"] || "en"
+        I18n.locale         = YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["locale"] || "en"
+      end
     end
 end

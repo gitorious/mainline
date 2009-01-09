@@ -17,9 +17,9 @@
 #++
 %>
 
-<% @page_title = "Comments on #{@project.title}" -%>
+<% @page_title = t("views.comments.page_title_2", :title => @project.title) -%>
 <h1>
-  Comments for &quot;<%= h(@repository.name) -%>&quot; repository in <%= h(@repository.project.title) -%>
+  <%= t("views.comments.page_title_3", :repo => h(@repository.name), :title => h(@repository.project.title)) %>
 </h1>
 
 <%= render :partial => @comments -%>

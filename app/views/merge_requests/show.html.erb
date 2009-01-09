@@ -17,10 +17,7 @@
 #++
 %>
 
-<h1>
-  Reviewing merge request "<%=h @merge_request.source_repository.name -%>" &#x2192; 
-  "<%= @merge_request.target_repository.name -%>"
-</h1>
+<h1><%= t("views.merges.show_title", :source => h(@merge_request.source_repository.name), :target => h(@merge_request.target_repository.name)) -%></h1>
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 
@@ -31,17 +28,26 @@
     <p>
       <%= f.label :status -%><br />
       <%= f.select :status, MergeRequest.statuses.sort_by{|k,v| v } -%><br />
-      <%= f.submit "Update merge request" -%></p>
+      <%= f.submit t("views.merges.update_btn") -%></p>
   <% end -%>
 
   <% if @merge_request.open? -%>
-  <p>The simplest way to merge in these changes is to simply pull them in with the following command:</p>
-  <pre>git pull <%= @merge_request.source_repository.clone_url -%> <%= @merge_request.source_branch -%></pre>
+  <p><%= t("views.merges.help") %></p>
+  <pre>
+  	git checkout master
+    git checkout -b review/master
+    git remote add review <%= @merge_request.source_repository.clone_url -%>
+    git pull review <%= @merge_request.source_branch -%>
+    # review changes, assess they are ok
+    git checkout master
+    git merge review/master
+    git push origin master
+  </pre>
   <% end -%>
 <% end -%>
 
 <% if @merge_request.open? -%>
-<h2>Commits that would be merged:</h2>
+<h2><%= t("views.merges.commits") %>:</h2>
 
 <ul class="shortlog">
   <% @commits.each do |commit| -%>

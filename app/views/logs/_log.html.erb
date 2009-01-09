@@ -21,14 +21,14 @@
 
 <% users_by_email = @repository.users_by_commits(@commits) %>
 <ul class="events">
-<% @commits.group_by{|c| c.committed_date.strftime("%A %B %d") }.each do |day, commits| -%>
+<% @commits.group_by{|c| c.committed_date.to_s(:human) }.each do |day, commits| -%>
   <li>
     <p class="date"><%= day -%></p>
     <ul class="event_instances">
       <% commits.each do |commit| -%>
         <% user = users_by_email[commit.author.email] %>
         <li class="event_instance">
-          <p class="event_date"><%= commit.committed_date.strftime("%H:%M") %></p>
+          <p class="event_date"><%= commit.committed_date.to_s(:short_time) %></p>
           <%= gravatar(commit.author.email, :size => 16)  %>
           <div class="event_meta">
             <p>

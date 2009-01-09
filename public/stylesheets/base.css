@@ -436,6 +436,7 @@ textarea {
 }
 textarea.text { height: 60px; }
 textarea.wide { width: 100%; }
+textarea.shorter { height: 250px; }
 textarea.tall { height: 500px; }
 textarea.medium { width: 450px; height: 250px; }
 select        { width: 200px; }

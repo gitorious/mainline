@@ -18,23 +18,19 @@
 #++
 %>
 
-<% @page_title = "Free open source project hosting" -%>
+<% @page_title = t("views.site.page_title") -%>
 <div id="site_intro">
 <p>
-  <strong>Gitorious</strong> aims to provide a great 
-  way of doing distributed opensource code collaboration 
+	<%= t("views.site.description") %>
 </p>
-<% if GitoriousConfig['public_mode'] || logged_in? -%>
-  <%= render :partial => "searches/search_box" -%>
-<% end -%>
 </div>
 
 <div id="site_overview">
   <% unless logged_in? -%>
   <table>
     <tr>
-      <th class="left"><h2>For Projects</h2></th>
-      <th class="right"><h2>For Contributors</h2></th>
+      <th class="left"><h2><%= t("views.site.for_projects") %></h2></th>
+      <th class="right"><h2><%= t("views.site.for_contributors") %></h2></th>
     </tr>
     <tr>
       <td class="left"><%= image_tag("overview_projects.png") -%></td>
@@ -44,8 +40,8 @@
   
 	  <% if GitoriousConfig['public_mode'] || logged_in? -%>
 	  <p class="hint create_account_hint">
-	    <%= link_to "Creating a user account", new_user_path -%> allows you to create 
-	    your own project or participate in the development of any project. 
+	    <%= link_to t("views.site.creating_account_1"), new_user_path -%> 
+		<%= t("views.site.creating_account_2") -%>
 	  </p>
 	  <% end -%>
   <% end -%>
@@ -53,7 +49,7 @@
 
 <% if GitoriousConfig['public_mode'] || logged_in? -%>
 <div id="newest_projects">
-  <h2>Newest projects</h2>
+  <h2><%= t("views.site.newest_projects") %></h2>
   <ul>
     <% @projects.each do |project| -%>
       <li>
@@ -62,6 +58,6 @@
       </li>
     <% end -%>
   </ul>
-  <p><%= link_to "View more &raquo;", projects_path -%></p>
+  <p><%= link_to t("views.site.view_more"), projects_path -%></p>
 </div>
 <% end -%>

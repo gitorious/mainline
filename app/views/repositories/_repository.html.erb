@@ -18,4 +18,4 @@
 %>
 
 <%= link_to h(repository.name), project_repository_path(project, repository) -%> 
-<em><small>(owner: <%= h(repository.user.login) -%>)</small></em>
+<em><small>(<%= t("views.repos.owner") %>: <%= h(repository.user.login) -%>)</small></em>

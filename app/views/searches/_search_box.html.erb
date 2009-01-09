@@ -21,8 +21,8 @@
 <% form_for :search, :url => search_path, :html => { :method => "get" } do |f| -%>
 <p>
   <%= text_field_tag :q, params[:q], :class => "text search-field" -%> 
-  <input type="submit" value="Search" class="search-submit" />
+  <input type="submit" value="<%= t("views.searches.search") %>" class="search-submit" />
 </p>  
-<p class="hint search-hint">eg. 'wrapper', 'category:python' or '"document database"'</p>
+<p class="hint"><%= t("views.searches.hint") %></p>
 <% end -%>
 </div>

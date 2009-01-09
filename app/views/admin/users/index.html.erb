@@ -1,11 +1,11 @@
 <table class="listing tree">
 	<tr>
-		<td>Login</td>
-		<td>E-mail</td>
-		<td>Created At</td>
-		<td>Activated?</td>
-		<td>Suspended?</td>
-		<td>Admin?</td>
+		<td><%= t(:login, :scope => "activerecord.attributes.user").humanize %></td>
+		<td><%= t(:email, :scope => "activerecord.attributes.user").humanize %></td>
+		<td><%= t(:created_at, :scope => "activerecord.attributes.user").humanize %></td>
+		<td><%= t("views.users.activated") %></td>
+		<td><%= t("views.users.suspended") %></td>
+		<td><%= t("views.users.admin") %></td>
 		<td></td>
 	</tr>
 	<% @users.each do |user| -%>
@@ -13,13 +13,13 @@
 		<td><%= link_to h(user.login), user %></td>
 		<td><%= link_to user.email, "mailto:#{user.email}" %></td>
 		<td><%= user.created_at.to_s(:short) %></td>
-		<td><%= user.activated? ? user.activated_at.to_s(:short) : 'No' %></td>
-		<td><%= user.suspended? ? user.suspended_at.to_s(:short) : 'No' %></td>
-		<td><%= user.admin? ? "Yes" : "No" %></td>
+		<td><%= user.activated? ? user.activated_at.to_s(:short) : t("views.common.no") %></td>
+		<td><%= user.suspended? ? user.suspended_at.to_s(:short) : t("views.common.no") %></td>
+		<td><%= user.admin? ? t("views.common.yes") : t("views.common.no") %></td>
 		<% if user.suspended? -%>
-		<td><%= link_to "Unsuspend", unsuspend_admin_user_path(user), :confirm => "Confirm unsuspend?", :method => :put %></td>
+		<td><%= link_to t("views.users.unsuspend"), unsuspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
 		<% else -%>
-		<td><%= link_to "Suspend", suspend_admin_user_path(user), :confirm => "Confirm suspend?", :method => :put %></td>
+		<td><%= link_to t("views.users.suspend"), suspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
 		<% end -%>
 	</tr>
 	<% end -%>	
@@ -27,4 +27,4 @@
 
 <%= will_paginate @users -%>
 
-<p><%= link_to "Create New User", new_admin_user_path %></p>
+<p><%= link_to t("views.users.create_btn"), new_admin_user_path %></p>

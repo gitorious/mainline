@@ -18,39 +18,39 @@
 #++
 %>
 
-<h1>Login</h1>
+<h1><%= t("views.sessions.login") %></h1>
 <%= login_method %>
 
 <% form_tag sessions_path  do -%>
   <div id="regular_login_fields">
     <% # login_method %>
     <p>
-  <label for="login">Email or <%= switch_login('switch to OpenID','to_openid')%></label><br/>
+  <label for="login"><%= t("views.sessions.label").call(self) %></label><br/>
     <%= text_field_tag 'email', params[:email], :class => "text" %>
   </p>
 
   <p>
-    <label for="password">Password</label><br/>
+    <label for="password"><%= t("views.sessions.passwd") %></label><br/>
     <%= password_field_tag 'password', '', :class => "text" %>
   </p>
   </div>
   <div id="openid_login_fields" style="display:none;">
     <p>
-      <label for="openid">OpenID or <%= switch_login('switch to email login', 'to_email') -%></label><br/>
+      <label for="openid"><%= t("views.sessions.openid").call(self) %></label><br/>
       <%= text_field_tag 'openid_url', params[:openid_url], :class => "text" -%>
     </p>
   </div>
   <p>
-    <label for="remember_me">Remember me:</label>
+    <label for="remember_me"><%= t("views.sessions.remember") %>:</label>
     <%= check_box_tag 'remember_me' %>
   </p>
 
-  <p><%= submit_tag 'Log in' %></p>
+  <p><%= submit_tag t("views.sessions.submit") %></p>
 <% end -%>
 
 <p>
   <small>
-    <%= link_to "Register", new_user_path -%> 
-    | <%= link_to "Forgotten your password?", forgot_password_users_path -%>
+    <%= link_to t("views.sessions.register"), new_user_path -%> 
+    | <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
   </small>
 </p>

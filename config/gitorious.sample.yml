@@ -31,3 +31,6 @@ mangle_email_addresses: true
 
 # Enable or Disable Public Mode (true) or Private Mode (false)
 public_mode: true
+
+# Define your locale
+locale: en

@@ -20,5 +20,5 @@
 <%= render :partial => "key", :locals => {:ssh_key => @ssh_key} -%>
 
 <% content_for :submenu do -%>
-  <li><%= link_to "My Account", account_path -%></li>
+  <li><%= link_to t("views.account.my_account"), account_path -%></li>
 <% end -%>

@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
       begin
         OpenIdAuthentication.normalize_url(self.identity_url)
       rescue OpenIdAuthentication::InvalidOpenId => e
-        errors.add(:identity_url, "Invalid url")
+        errors.add(:identity_url, I18n.t( "user.invalid_url" ))
       end
     end
   end

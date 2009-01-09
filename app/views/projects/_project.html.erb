@@ -21,6 +21,6 @@
 <h3><%= link_to h(project.title), project_path(project) -%></h3>
 <p><%= truncate h(project.stripped_description), 250 -%></p>
 <p class="hint">
-  <strong>Categories:</strong> 
-  <%= project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(project.tags) -%>
+  <strong><%= t("views.projects.categories") %>:</strong> 
+  <%= project.tag_list.blank? ? t("views.common.none") : linked_tag_list_as_sentence(project.tags) -%>
 </p>

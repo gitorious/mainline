@@ -17,21 +17,19 @@
 #++
 %>
 
-<h1>Add a new public SSH key</h1>
+<h1><%= t("views.keys.add_title") %></h1>
 
 <%= error_messages_for :ssh_key -%>
 
 <% form_for @ssh_key, :url => account_keys_path() do |f| -%>
   <p>
-    <%= f.label :key, "Your public key" -%><br />
-    <small class="hint">It's generally located in ~/.ssh/id_rsa.pub or 
-      ~/.ssh/id_dsa.pub.<br />
-      If you want to use multiple keys you'll have to add each of them seperately</small><br />
+    <%= f.label :key, t("views.keys.your_public_key") -%><br />
+    <small class="hint"><%= t("views.keys.hint") %></small><br />
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
-  <%= f.submit "Save" -%>
+  <%= f.submit t("views.common.save") -%>
 <% end -%>
 
 <% content_for :submenu do -%>
-  <li><%= link_to "My account", account_path -%></li>
+  <li><%= link_to t("views.account.my_account"), account_path -%></li>
 <% end -%>

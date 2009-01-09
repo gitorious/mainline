@@ -19,7 +19,7 @@
 %>
 
 <ul class="events">
-<% events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events_group| -%>
+<% events.group_by{|e| e.created_at.to_s(:human) }.each do |day, events_group| -%>
   <li>
     <p class="date"><%= day -%></p>
     <ul class="event_instances">

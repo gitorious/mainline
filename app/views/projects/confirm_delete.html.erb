@@ -18,22 +18,22 @@
 #++
 %>
 
-<h1>Please confirm deletion of <%= h(@project.title) -%></h1>
+<h1><%= t("views.projects.delete_title", :title => h(@project.title)) %></h1>
 
 <p class="important_message">
-  Once you press this button the project will be deleted
+  <%= t("views.projects.delete_message") %>
   
   <% form_for @project, :html => {:method => :delete} do |f| -%>
-    <%= f.submit("YES I am sure I want to delete this project permanently") -%>
+    <%= f.submit(t("views.projects.delete_btn")) -%>
   <% end -%>
 </p>
 
 <% content_for :submenu do -%>
-  <li class="selected"><%= link_to "Edit project", edit_project_path(@project) -%></li>
+  <li class="selected"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
 <% end -%>
 
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li><%= link_to "Back to edit screen", edit_project_path(@project) -%></li>
+    <li><%= link_to t("views.projects.back"), edit_project_path(@project) -%></li>
   </ul>
 <% end -%>

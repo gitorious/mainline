@@ -56,7 +56,7 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
     @user.save!    
-    flash[:notice] = "Thanks for signing up! You will receive an account activation email soon"
+    flash[:notice] = I18n.t "users_controller.create_notice"
     redirect_to root_path
   rescue ActiveRecord::RecordInvalid
     render :action => 'new'
@@ -67,10 +67,10 @@ class UsersController < ApplicationController
       self.current_user = user
       if logged_in? && !current_user.activated?
         current_user.activate
-        flash[:notice] = "Your account has been activated, welcome!"
+        flash[:notice] = I18n.t "users_controller.activate_notice"
       end
     else
-      flash[:error] = "Invalid activation code"
+      flash[:error] = I18n.t "users_controller.activate_error"
     end
     redirect_back_or_default('/')
   end
@@ -83,10 +83,10 @@ class UsersController < ApplicationController
       # FIXME: should really be a two-step process: receive link, visiting it resets password
       generated_password = user.reset_password!
       Mailer.deliver_forgotten_password(user, generated_password)
-      flash[:notice] = "A new password has been sent to your email"
+      flash[:notice] = I18n.t "users_controller.reset_password_notice"
       redirect_to(root_path)
     else
-      flash[:error] = "Invalid email"
+      flash[:error] = I18n.t "users_controller.reset_password_error"
       redirect_to forgot_password_users_path
     end
   end

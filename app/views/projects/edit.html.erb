@@ -18,22 +18,22 @@
 #++
 %>
 
-<h1>Update <%= link_to h(@project.title), project_path(@project) -%></h1>
+<h1><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h1>
 
 <%= error_messages_for :project -%>
 <% form_for(@project, :method => "put") do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
-  <%= f.submit "Update" -%>
+  <%= f.submit t("views.common.update") -%>
 <% end -%>
 
 <% content_for :submenu do -%>
-  <li class="selected"><%= link_to "Edit project", edit_project_path(@project) -%></li>
+  <li class="selected"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
 <% end -%>
 
 <% content_for :sidebar do -%>
   <ul class="links">
     <% if @project.can_be_deleted_by?(current_user) -%>
-      <li><%= link_to "Delete project", confirm_delete_project_path(@project) -%></li>
+      <li><%= link_to t("views.projects.delete"), confirm_delete_project_path(@project) -%></li>
     <% end -%>
   </ul>
 <% end -%>

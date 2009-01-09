@@ -17,14 +17,14 @@
 #++
 %>
 
-<h1>Create a merge request</h1>
+<h1><%= t("views.merges.create_title") %></h1>
 
 <%= error_messages_for :merge_request -%>
 
 <% form_for [@project, @repository, @merge_request] do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
   
-  <%= f.submit "Create merge request" -%>
+  <%= f.submit t("views.merges.create_btn") -%>
 <% end -%>
 
 <% content_for :submenu do -%>

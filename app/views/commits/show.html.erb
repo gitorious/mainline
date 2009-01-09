@@ -19,17 +19,17 @@
 #++
 %>
 
-<% @page_title = "Commit in #{@repository.name} in #{@project.title}" -%>
+<% @page_title = t("views.commits.page_title", :repo => @repository.name, :title => @project.title) -%>
 
-<h1>Commit <%=h @commit.id -%></h1>
+<h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
 
 <a name="infobox"></a>
 <%= render :partial => "commit_infobox" -%>
 <div class="commit_message"><%= simple_format(h(@commit.message)) -%></div>
 
 <ul class="tab_menu">
-  <li class="selected">Commit diff</li>
-  <li><%= link_to "Comments (#{@comment_count})", 
+  <li class="selected"><%= t("views.comments.diff") %></li>
+  <li><%= link_to t("views.comments.total", :total => @comment_count), 
             project_repository_commit_comment_path(@project, @repository, @commit.id) -%></li>
 </ul>
 
@@ -37,8 +37,8 @@
 
 <% if @diffs.blank? -%>
   <p>
-    This is the initial commit in this repository, 
-    <%= link_to "browse the initial tree state", tree_path(@commit.id) -%>.
+    <%= t("views.commits.message_1") %>
+    <%= link_to t("views.commits.message_2"), tree_path(@commit.id) -%>.
   </p>
 <% else -%>
 <% cache({:diffmode => @diffmode}) do -%>

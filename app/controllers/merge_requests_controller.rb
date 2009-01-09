@@ -52,7 +52,7 @@ class MergeRequestsController < ApplicationController
       if @merge_request.save
         @project.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         format.html {
-          flash[:success] = %Q{You sent a merge request to "#{@merge_request.target_repository.name}"}
+          flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
           redirect_to project_repository_path(@project, @repository) and return
         }
         format.xml { render :xml => @merge_request, :status => :created }
@@ -71,7 +71,7 @@ class MergeRequestsController < ApplicationController
     @merge_request.status = params[:merge_request][:status]
     if @merge_request.save
       @project.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
-      flash[:notice] = "The merge request was marked as #{@merge_request.status_string}"
+      flash[:notice] = I18n.t "merge_requests_controller.resolve_notice", :status => @merge_request.status_string
     end
     redirect_to [@project, @repository, @merge_request]      
   end
@@ -84,7 +84,7 @@ class MergeRequestsController < ApplicationController
     @merge_request.attributes = params[:merge_request]
     if @merge_request.save
       @project.create_event(Action::UPDATE_MERGE_REQUEST, @merge_request, current_user)
-      flash[:success] = "Merge request was updated"
+      flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@project, @repository, @merge_request]
     else
       @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
@@ -95,7 +95,7 @@ class MergeRequestsController < ApplicationController
   def destroy
     @merge_request.destroy
     @project.create_event(Action::DELETE_MERGE_REQUEST, @repository, current_user)
-    flash[:success] = "Merge request was retracted"
+    flash[:success] = I18n.t "merge_requests_controller.destroy_success"
     redirect_to project_repository_path(@project, @repository)
   end
   
@@ -111,9 +111,9 @@ class MergeRequestsController < ApplicationController
     def assert_merge_request_resolvable
       unless @merge_request.resolvable_by?(current_user)
         respond_to do |format|
-          flash[:error] = "You're not permitted to resolve this merge request"
+          flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
           format.html { redirect_to([@project, @repository, @merge_request]) }
-          format.xml  { render :text => "You're not permitted to resolve this merge request", :status => :forbidden }
+          format.xml  { render :text => I18n.t( "merge_requests_controller.assert_resolvable_error"), :status => :forbidden }
         end
         return
       end
@@ -122,9 +122,9 @@ class MergeRequestsController < ApplicationController
     def assert_merge_request_ownership
       if @merge_request.user != current_user
         respond_to do |format|
-          flash[:error] = "You're not the owner of this merge request"
+          flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
           format.html { redirect_to([@project, @repository]) }
-          format.xml  { render :text => "You're not the owner of this merge request", :status => :forbidden }
+          format.xml  { render :text => I18n.t("merge_requests_controller.assert_ownership_error"), :status => :forbidden }
         end
         return
       end

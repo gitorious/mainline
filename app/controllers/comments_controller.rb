@@ -49,7 +49,7 @@ class CommentsController < ApplicationController
       if @comment.save
         @project.create_event(Action::COMMENT, @comment, current_user)
         format.html do
-          flash[:success] = "Your comment was added"
+          flash[:success] = I18n.t "comments_controller.create_success"
           redirect_to project_repository_comments_path(@project, @repository)
         end
       else

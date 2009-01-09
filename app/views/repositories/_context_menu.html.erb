@@ -17,12 +17,12 @@
 #++
 %>
 
-<li><%= link_to "Overview", [@project, @repository] -%></li>
-<li><%= link_to "Commits", 
+<li><%= link_to t("views.repos.overview"), [@project, @repository] -%></li>
+<li><%= link_to t("views.repos.commits"), 
           project_repository_logs_path(@project, @repository) -%></li>
-<li><%= link_to "Source Tree", 
+<li><%= link_to t("views.repos.tree"), 
           project_repository_trees_path(@project, @repository) -%></li>
-<li><%= link_to "Comments (#{@repository.comments.count})", 
+<li><%= link_to t("views.repos.comments", :count => @repository.comments.count), 
           project_repository_comments_path(@project, @repository) -%></li>
-<li><%= link_to "Merge requests(#{@repository.merge_requests.count_open})", 
+<li><%= link_to t("views.repos.requests", :count => @repository.merge_requests.count_open), 
           project_repository_merge_requests_path(@project, @repository) -%></li>

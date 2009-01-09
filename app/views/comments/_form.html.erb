@@ -20,7 +20,7 @@
 <% comment ||= nil -%>
 <% sha1 ||= nil -%>
 
-<h3>Add a new comment:</h3>
+<h3><%= t("views.comments.add_title") %>:</h3>
 
 <% if logged_in? -%>
   <%= error_messages_for :comment -%>
@@ -29,16 +29,16 @@
       <%= f.hidden_field :sha1, :value => sha1 -%>
     <% end -%>
     <p>
-      <%= f.label :body, "Comment" -%><br />
+      <%= f.label :body, t("views.comments.body") -%><br />
       <%= f.text_area :body, :class => "text medium" -%>
     </p>
     <p>
-      <%= f.submit "Add Comment" -%>
+      <%= f.submit t("views.comments.add") -%>
     </p>
   <% end -%>
 <% else -%>
   <p>
-    <em><%= link_to "Login", new_sessions_path -%> or 
-    <%= link_to "create an account", new_user_path -%> to post a comment</em>
+    <em><%= link_to t("views.sessions.login"), new_sessions_path -%> or 
+    <%= link_to t("views.accounts.create"), new_user_path -%> to post a comment</em>
   </p>
 <% end -%>

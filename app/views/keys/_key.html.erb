@@ -20,7 +20,7 @@
 <pre>
 <% render_if_ready(ssh_key) do -%>
 <code><%= ssh_key.wrapped_key -%></code>
-  <%= button_to "delete", account_key_path(ssh_key),
-             :confirm => "Are you sure?", :method => :delete, :class => "inline" -%>
+  <%= button_to t("views.common.delete"), account_key_path(ssh_key),
+             :confirm => t("views.common.confirm"), :method => :delete, :class => "inline" -%>
 <% end -%>
 </pre>

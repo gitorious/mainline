@@ -18,10 +18,8 @@
 #++
 %>
 
-<% @page_title = "#{@repository.name} in #{@project.title}" -%>
-<h1>
-  &quot;<%= h(@repository.name) -%>&quot; repository in <%= h(@repository.project.title) -%>
-</h1>
+<% @page_title = t("views.repos.show_page_title", :repo => @repository.name, :title => @project.title) -%>
+<h1><%= t("views.repos.show_title", :repo => h(@repository.name), :title => h(@repository.project.title)) %></h1>
 
 <% render_if_ready(@repository) do -%>
 
@@ -29,7 +27,7 @@
   
   <%#= render_readme(@repository) %>
   
-  <h2>Activities <%= feed_icon @atom_auto_discovery_url %></h2>
+  <h2><%= t("views.repos.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>
 <% end -%>
 
@@ -39,48 +37,47 @@
 
 <% content_for :sidebar do -%>
   <ul>
-    <li><strong>Project:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
-    <li><strong>Maintainer:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
+    <li><strong><%= t("views.logs.project") %>:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
+    <li><strong><%= t("views.logs.maintainer") %>:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
     <% if @repository.parent -%>
-    <li><strong>Clone of:</strong> 
-      <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
+    <li><strong><%= t("views.repos.clone_of") %>:</strong> <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
     <% end -%>
-    <li><strong>Created:</strong> <%= @repository.created_at.to_s(:short) -%></li>
+    <li><strong><%= t("views.repos.created") %>:</strong> <%= @repository.created_at.to_s(:short) -%></li>
   </li>
   
   <ul class="links">
     <% if @repository.ready? -%>
 		<%# new_project_repository_path(@project, @repository) works in 2.1 and breaks in 2.2.2 %>
 		<%# using explicit routing for the time being %>
-      <li><%= link_to "Clone repository", :controller => "repositories", :action => "new", :project_id => @project.to_param, :id => @repository.to_param -%></li>
+      <li><%= link_to t("views.repos.btn_clone"), :controller => "repositories", :action => "new", :project_id => @project.to_param, :id => @repository.to_param -%></li>
     <% end -%>
     <% if @repository.committers.include?(current_user) -%>
-      <li><%= link_to "Request merge", new_project_repository_merge_request_path(@project, @repository) -%></li>
+      <li><%= link_to t("views.repos.btn_request"), new_project_repository_merge_request_path(@project, @repository) -%></li>
       <% if @repository.user == current_user -%>
-      <li><%= link_to "Add committer",
+      <li><%= link_to t("views.repos.btn_add_committer"),
               { :controller => "committers", :action => "new", :project_id => @project,
                 :repository_id => @repository } -%></li>
       <% end -%>
     <% end -%>
     <% if @repository.can_be_deleted_by?(current_user) -%>
-      <li><%= link_to "Delete repository", confirm_delete_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to t("views.repos.btn_delete_repo"), confirm_delete_project_repository_path(@project, @repository) -%></li>
     <% end -%>
   </ul>
   
-  <h4>Committers</h4>    
+  <h4><%= t("views.repos.committers") %></h4>    
   <ul>
   <% @repository.committers.each do |user| -%>
     <li>
       <%= link_to h(user.login), user -%> 
       <% if @repository.user == user -%>
-      <small>(owner)</small>
+      <small>(<%= t("views.repos.owner") %>)</small>
       <% end -%>
       <% if @repository.user == current_user -%>
         <small>
-        <%= link_to "Remove", 
+        <%= link_to t("views.repos.remove"), 
               { :controller => "committers", :action => "destroy", :id => user.id, 
                 :project_id => @project, :repository_id => @repository}, # FIXME: meh!
-              :confirm => "Are you sure?", :method => :delete unless user == current_user -%>
+              :confirm => t("views.common.confirm"), :method => :delete unless user == current_user -%>
         </small>
       <% end -%>
     </li>
@@ -88,7 +85,7 @@
   </ul>
 
   <% unless @commits.blank? -%>
-    <h4>Branches:</h4>
+    <h4><%= t("views.logs.branches") %>:</h4>
     <ul>
       <% @repository.git.branches.each do |branch| -%>
         <% if namespaced_branch?(branch.name) -%>

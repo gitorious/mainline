@@ -20,7 +20,7 @@
 class Mailer < ActionMailer::Base
   def signup_notification(user)
     setup_email(user)
-    @subject    += 'Please activate your new account'
+    @subject    += I18n.t "mailer.subject"
     @body[:url]  = url_for(
       :controller => 'users',
       :action => 'activate',
@@ -30,12 +30,13 @@ class Mailer < ActionMailer::Base
 
   def activation(user)
     setup_email(user)
-    @subject    += 'Your account has been activated!'
+    @subject    += I18n.t "mailer.activated"
   end
 
   def new_repository_clone(repository)
     setup_email(repository.project.user)
-    @subject += %Q{#{repository.user.login} has cloned #{repository.project.slug}/#{repository.parent.name}}
+    @subject += I18n.t "mailer.repository_clone", :login => repository.user.login,
+      :slug => repository.project.slug, :parent => repository.parent.name
     @body[:user] = repository.project.user
     @body[:cloner] = repository.user
     @body[:project] = repository.project
@@ -45,7 +46,8 @@ class Mailer < ActionMailer::Base
 
   def merge_request_notification(merge_request)
     setup_email(merge_request.target_repository.user)
-    @subject += %Q{#{merge_request.source_repository.user.login} has requested a merge in #{merge_request.target_repository.project.title}}
+    @subject += I18n.t "mailer.request_notification", :login => merge_request.source_repository.user.login,
+      :title => merge_request.target_repository.project.title
     @body[:merge_request] = merge_request
     @body[:project] = merge_request.target_repository.project
     @body[:url] =
@@ -58,7 +60,7 @@ class Mailer < ActionMailer::Base
 
   def forgotten_password(user, password)
     setup_email(user)
-    @subject += "Your new password"
+    @subject += I18n.t "mailer.new_password"
     @body[:password] = password
   end
 

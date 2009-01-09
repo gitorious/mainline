@@ -18,22 +18,22 @@
 %>
 
 <p>
-  <%= form.label :target_repository_id -%><br />
-  <small class="hint">The one you wish this repository should be merged with</small><br />
+  <%= form.label :target_repository_id, t(:target_repository_id, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.target_repos") %></small><br />
   <%= form.select :target_repository_id, @repositories.map{|r| [r.name, r.id] } -%>
 </p>
 <p>
-  <%= form.label :target_branch -%><br />
-  <small class="hint">The target branch you wish your changes to be merged into</small><br />
+  <%= form.label :target_branch, t(:target_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.target_branch") %></small><br />
   <%= form.text_field :target_branch, :class => "text", :value => form.object.target_branch -%>
 </p>
 <p>
-  <%= form.label :source_branch -%><br />
-  <small class="hint">The source branch you wish the target repository should merge from</small><br />
+  <%= form.label :source_branch, t(:source_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.source_branch") %></small><br />
   <%= form.text_field :source_branch, :class => "text", :value => form.object.source_branch -%>
 </p>
 <p>
-  <%= form.label :proposal -%><br />
-  <small class="hint">A short summary of your changes</small><br />
+  <%= form.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
   <%= form.text_area :proposal, :class => "text medium" -%>
 </p>

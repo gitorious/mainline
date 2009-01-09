@@ -17,16 +17,16 @@
 #++
 %>
 
-<% @page_title = "Comments in #{@repository.name}" -%>
+<% @page_title = t("views.comments.page_title", :repo => @repository.name) -%>
 <h1>Comments on commit <%= h(@commit.id[0,7]) -%> in <%= h(@repository.name) -%></h1>
 
 <%= render :partial => "commits/commit_infobox" -%>
 <div class="commit_message"><%= simple_format(h(@commit.message)) -%></div>
 
 <ul class="tab_menu">
-  <li><%= link_to "Commit diff", 
+  <li><%= link_to t("views.comments.diff"), 
       project_repository_commit_path(@project, @repository, @commit.id) -%></li>
-  <li class="selected">Comments (<%= @comments.size -%>)</li>
+  <li class="selected"><%= t("views.comments.total", :total => @comments.size) %></li>
 </ul>
 
 <%= render :partial => @comments -%>

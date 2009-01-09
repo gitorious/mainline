@@ -17,19 +17,14 @@
 #++
 %>
 
-<% @page_title = "Merge requests in #{h(@repository.name)}" -%>
-<h1>
-  Merge requests in <%=h @repository.name  -%>
-</h1>
+<% @page_title = t("views.merges.page_title", :repo => h(@repository.name)) -%>
+<h1><%= t("views.merges.page_title", :repo => h(@repository.name)) %></h1>
 
-<p class="hint">
-  A "merge request" is a notification from one repository to another that
-  would like their changes to be merged upstream. 
-</p>
+<p class="hint"><%= t("views.merges.hint") %></p>
 
 <% if @merge_requests.blank? -%>
   <p>
-    <em>No merge requests yet</em><br />
+    <em><%= t("views.merges.no_merge") %></em><br />
   </p>
 <% else -%>
   <%= render :partial => @merge_requests -%>

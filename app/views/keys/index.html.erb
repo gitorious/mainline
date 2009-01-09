@@ -19,7 +19,7 @@
 
 <% @page_title = "SSH Keys" -%>
 
-<h1>Your SSH keys</h1>
+<h1><%= t("views.keys.ssh_keys") %></h1>
 
 <ul>
 <% @ssh_keys.each do |ssh_key| -%>
@@ -27,10 +27,10 @@
 <% end -%>
 </ul>
 
-<p><%= link_to "Add", new_account_key_path  -%></p>
+<p><%= link_to t("views.common.add"), new_account_key_path  -%></p>
 
 <% content_for :submenu do -%>
   <ul>
-    <li><%= link_to "Account", account_path -%></li>
+    <li><%= link_to t("views.account.show_title"), account_path -%></li>
   </ul>
 <% end -%>

@@ -18,9 +18,7 @@
 #++
 %>
 
-<h1>
-  Give a user commit rights to <%= h(@repository.name) -%>
-</h1>
+<h1><%= t("views.committers.title", :repo => h(@repository.name)) %></h1>
 <style>
   li.committer {
     height: 32px;
@@ -47,11 +45,11 @@
 <% form_for @committer, 
   :url => {:controller => "committers", :action => "create"}, :method => :post do |f| -%>
   <p>
-    <%= f.label :login, "Existing username <small>(search-as-you-type)</small>" -%><br />
+    <%= f.label :login, t("views.committers.login") -%><br />
     <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
   </p>
   <p>
-    <%= f.submit "Add as committer" -%> or <%= link_to "cancel", [@repository.project, @repository] -%>
+    <%= f.submit t("views.committers.add") -%> <%= t("views.common.or") %> <%= link_to t("views.common.cancel"), [@repository.project, @repository] -%>
   </p>
 <% end -%>
 

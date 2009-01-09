@@ -18,9 +18,9 @@
 #++
 %>
 
-<% @page_title = "Tree for #{@repository.name} in #{@project.title}" -%>
+<% @page_title = t("views.trees.page_title", :repo => @repository.name, :title => @project.title) -%>
 <h1>
-  Tree of <%= h(@repository.name) -%> repository in <%= h(@project.title) -%>
+  <%= t("views.trees.title", :repo => h(@repository.name), :title => h(@project.title)) %>
 </h1>
 
 <% content_for :submenu do -%>
@@ -53,12 +53,12 @@
 <% end -%>
 <% if logged_in? -%>
 <p>
-  <small><%= link_to "Download as gzipped tarball", archive_tree_path(@commit.id) -%></small>
+  <small><%= link_to t("views.trees.download"), archive_tree_path(@commit.id) -%></small>
 </p>
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <h5>Branches:</h5>
+  <h5><%= t("views.logs.branches") %>:</h5>
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
       <% if namespaced_branch?(branch.name) -%>
@@ -69,7 +69,7 @@
     <% end -%>
   </ul>
 
-  <h5>Tags:</h5>
+  <h5><%= t("views.logs.tags") %>:</h5>
   <ul class="links">
   <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
     <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>

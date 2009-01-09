@@ -76,6 +76,19 @@
   When you push to a Git repository, your public key is how we authenticate 
   you and check if have the permissions required to do a commit to a given repository
 </p>
+<hr />
+
+<h3>I have Windows. How do I generate the required SSH key?</h3>
+<p>
+  The recommended way to use Git on Windows is the 
+  <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%> version. It comes bundled
+  with minimal Cygwin support. When you finish installing it, you will have a "Git Bash"
+  icon in your desktop. Double click to open it and now you can use known Linux-like
+  commands, such as <code>"ssh-keygen -t rsa"</code>. Just press 'Return' in every question
+  it asks and you will finally have your pair of keys under ".ssh". For example, type
+  <code>"cat ~/.ssh/id_rsa.pub"</code>. Thats's the public key that you are required to
+  copy and paste into your account on Gitorious.
+</p>
 
 <hr />
 

@@ -45,7 +45,7 @@ class TreesController < ApplicationController
       send_data(data, :type => 'application/x-gzip', 
         :filename => "#{prefix}.tar.gz") 
     else
-      flash[:error] = "The given repository or sha is invalid"
+      flash[:error] = I18n.t "trees_controller.archive_error"
       redirect_to project_repository_path(@project, @repository) and return
     end
   end

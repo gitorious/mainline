@@ -29,10 +29,10 @@ class CommittersController < ApplicationController
   def create
     @committer = User.find_by_login(params[:user][:login])
     unless @committer
-      flash[:error] = "Could not find user by that name"
+      flash[:error] = I18n.t "committers_controller.create_error_not_found"
       respond_to do |format|
         format.html { redirect_to(new_committer_url(@repository.project, @repository)) }
-        format.xml  { render :text => "Could not a find user by that name", :status => :not_found }
+        format.xml  { render :text => I18n.t( "committers_controller.create_error_not_found"), :status => :not_found }
       end
       return
     end
@@ -46,9 +46,9 @@ class CommittersController < ApplicationController
           render :xml => @committer
         end
       else
-        flash[:error] = "Could not add user or user is already a committer"
+        flash[:error] = I18n.t "committers_controller.create_error_already_commiter"
         format.html { redirect_to(new_committer_url(@repository.project, @repository)) }
-        format.xml  { render :text => "Could not add user or user is already a committer", :status => :not_found }
+        format.xml  { render :text => I18n.t("committers_controller.create_error_already_commiter"), :status => :not_found }
       end
     end
   end
@@ -59,11 +59,11 @@ class CommittersController < ApplicationController
     respond_to do |format|
       if @committership.destroy
         @project.create_event(Action::REMOVE_COMMITTER, @repository, current_user, params[:id])
-        flash[:success] = "User removed from repository"
+        flash[:success] = I18n.t "committers_controller.destroy_success"
         format.html { redirect_to [@repository.project, @repository] }
         format.xml  { render :nothing, :status => :ok }
       else
-        flash[:error] = "Could not remove user from repository"
+        flash[:error] = I18n.t "committers_controller.destroy_error≈"
         format.html { redirect_to [@repository.project, @repository] }
         format.xml  { render :nothing, :status => :unprocessable_entity }
       end    
@@ -90,7 +90,7 @@ class CommittersController < ApplicationController
     def find_repository
       @repository = @project.repositories.find_by_name!(params[:repository_id])
       unless @repository.user == current_user
-        flash[:error] = "You're not the owner of this repository"
+        flash[:error] = I18n.t "committers_controller.find_repository_error"
         redirect_to [@repository.project, @repository]
       end
     end

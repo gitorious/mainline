@@ -24,9 +24,9 @@
     <%= link_to(h(comment.user.login), comment.user) -%> | 
     <%= comment.created_at.to_s(:short) -%> 
     <% unless comment.sha1.blank? -%>
-    | <%= link_to "on commit #{comment.sha1[0..7]}", project_repository_commit_path(comment.project, comment.repository, comment.sha1) -%> 
+    | <%= link_to t("views.comments.commit", :sha1 => comment.sha1[0..7]), project_repository_commit_path(comment.project, comment.repository, comment.sha1) -%> 
     <% end -%>
-    | <%= link_to %Q{<abbr title="permalink for this comment">#</abbr>}, 
+    | <%= link_to t("views.comments.permalink"), 
             project_repository_comments_path(comment.project, comment.repository, :anchor => dom_id(comment)) -%>
   </p>
 </div>

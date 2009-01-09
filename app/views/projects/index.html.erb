@@ -17,7 +17,7 @@
 #++
 %>
 
-<% @page_title = "Projects" -%>
+<% @page_title = t("views.projects.title") -%>
 
 <ul class="project_list">
 <% @projects.each do |project| -%>
@@ -30,11 +30,11 @@
 <%= will_paginate @projects -%>
 
 <% content_for :submenu do -%>
-  <li><%= link_to "New project", new_project_path -%></li>
+  <li><%= link_to t("views.projects.new"), new_project_path -%></li>
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <h4>Popular Categories:</h4>
+  <h4><%= t("views.projects.popular") %>:</h4>
   <ul class="tag_list">
     <% @tags.each do |tag| %>
       <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "category:#{h(tag.name)}") -%> </li>

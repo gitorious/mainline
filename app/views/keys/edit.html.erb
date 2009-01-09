@@ -17,20 +17,20 @@
 #++
 %>
 
-<h1>Edit a SSH key</h1>
+<h1><%= t("views.keys.edit_title") %></h1>
 
 <%= error_messages_for :ssh_key -%>
 
 <% form_for @ssh_key, :url => account_key_path(@ssh_key) do |f| -%>
   <p>
-    <%= f.label :key -%><br />
+    <%= f.label :key, t(:key, :scope => "activerecord.attributes.keys") -%><br />
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
-  <%= f.submit "Save" -%>
+  <%= f.submit t("views.common.save") -%>
 <% end -%>
 
 <% content_for :submenu do -%>
   <ul>
-    <li><%= link_to "Account", account_path -%></li>
+    <li><%= link_to t("views.account.show_title"), account_path -%></li>
   </ul>
 <% end -%>

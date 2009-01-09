@@ -51,16 +51,16 @@ class Project < ActiveRecord::Base
   validates_presence_of :title, :user_id, :slug, :description
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^[a-z0-9_\-]+$/i,
-    :message => "must match something in the range of [a-z0-9_\-]+"
+    :message => I18n.t( "project.format_slug_validation")
   validates_format_of :home_url, :with => URL_FORMAT_RE,
     :if => proc{|record| !record.home_url.blank? },
-    :message => "Must begin with http(s)"
+    :message => I18n.t( "project.ssl_required")
   validates_format_of :mailinglist_url, :with => URL_FORMAT_RE,
     :if => proc{|record| !record.mailinglist_url.blank? },
-    :message => "Must begin with http(s)"
+    :message => I18n.t( "project.ssl_required")
   validates_format_of :bugtracker_url, :with => URL_FORMAT_RE,
     :if => proc{|record| !record.bugtracker_url.blank? },
-    :message => "Must begin with http(s)"
+    :message => I18n.t( "project.ssl_required")
 
   before_validation :downcase_slug
   after_create :create_mainline_repository

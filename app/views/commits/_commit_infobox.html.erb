@@ -19,12 +19,12 @@
 %>
 
 <ul class="infobox">
-  <li><strong>Date:</strong> <%=h @commit.committed_date -%></li>
-  <li><strong>Committer:</strong> <%=h @commit.committer.name -%>
+  <li><strong><%= t("views.commits.date") %>:</strong> <%=h @commit.committed_date -%></li>
+  <li><strong><%= t("views.commits.committer") %>:</strong> <%=h @commit.committer.name -%>
     (<%=h GitoriousConfig["mangle_email_addresses"] ? encoded_mail(@commit.committer.email) : @commit.committer.email -%>)</li>
-  <li><strong>Author:</strong> <%=h @commit.author.name -%>
+  <li><strong><%= t("views.commits.author") %>:</strong> <%=h @commit.author.name -%>
     (<%=h GitoriousConfig["mangle_email_addresses"] ? encoded_mail(@commit.author.email) : @commit.author.email -%>)</li>
-  <li><strong>Commit SHA1:</strong> <%=h @commit.id -%></li>
-  <li><strong>Tree SHA1:</strong> <%= link_to h(@commit.tree.id), 
+  <li><strong><%= t("views.commits.sha1") %>:</strong> <%=h @commit.id -%></li>
+  <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id), 
     project_repository_tree_path(@project, @repository, @commit.id) -%></li>
 </ul>

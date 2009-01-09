@@ -17,9 +17,9 @@
 #++
 %>
 
-<% @page_title = "Events" -%>
+<% @page_title = t("views.events.page_title") -%>
 
-<h2>System Activities<%= link_to image_tag("feed.png", :width => 24, :height => 24), @atom_auto_discovery_url %></h2>
+<h2><%= t("views.events.system_activities")%><%= link_to image_tag("feed.png", :width => 24, :height => 24), @atom_auto_discovery_url %></h2>
 
 <%= render :partial => "events", :object => @events -%>
 

@@ -5,8 +5,8 @@
   <%= render :partial => 'users/form', :locals => { :f => f } %>
 
   <p>
-    <%= f.check_box :is_admin, {}, "1", "0" %> <%= f.label :is_admin, "Is Administrator?" -%>
+    <%= f.check_box :is_admin, {}, "1", "0" %> <%= f.label :is_admin, t("views.users.is_admin") -%>
   </p>
 
-  <p><%= f.submit 'Create' %> <%= link_to "Back", admin_users_path %></p>
+  <p><%= f.submit t("views.common.create") %> <%= link_to t("views.common.back"), admin_users_path %></p>
 <% end -%>

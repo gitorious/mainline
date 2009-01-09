@@ -44,7 +44,7 @@ class KeysController < ApplicationController
     
     respond_to do |format|
       if @ssh_key.save
-        flash[:notice] = "Key added"
+        flash[:notice] = I18n.t "keys_controller.create_notice"
         format.html { redirect_to account_path }
         format.xml  { render :xml => @ssh_key, :status => :created, :location => account_key_path(@ssh_key) }
       else
@@ -83,7 +83,7 @@ class KeysController < ApplicationController
   def destroy
     @ssh_key = current_user.ssh_keys.find(params[:id])
     if @ssh_key.destroy
-      flash[:notice] = "Key removed"
+      flash[:notice] = I18n.t "keys_controller.destroy_notice"
     end
     redirect_to account_path    
   end

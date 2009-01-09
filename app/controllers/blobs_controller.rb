@@ -44,7 +44,7 @@ class BlobsController < ApplicationController
     @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
     render_not_found and return unless @blob
     if @blob.size > 500.kilobytes
-      flash[:error] = "Blob is too big. Clone the repository locally to see it"
+      flash[:error] = I18n.t "blogs_controller.raw_error"
       redirect_to project_repository_path(@project, @repository) and return
     end
     render :text => @blob.data, :content_type => @blob.mime_type

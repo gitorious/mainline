@@ -18,11 +18,11 @@
 #++
 %>
 
-<% @page_title = "#{current_user.login}'s dashboard" -%>
+<% @page_title = t("views.site.dashboard.page_title", :login => current_user.login) -%>
 
 <ul class="events">
-  <h2>Activities</h2>
-  <% @events.group_by{|e| e.created_at.strftime("%A %B %d") }.each do |day, events| -%>
+  <h2><%= t("views.site.dashboard.activities") %></h2>
+  <% @events.group_by{|e| e.created_at.to_s(:human) }.each do |day, events| -%>
     <li>
       <p class="date"><%= day -%></p>
       <ul class="event_instances">
@@ -35,14 +35,14 @@
 <%= will_paginate @events -%>
 
 <% content_for :sidebar do -%>
-  <h4>Your projects:</h4>
+  <h4><%= t("views.site.dashboard.your_projects") %></h4>
   <ul>
   <% @projects.each do |project| -%>
     <li><%= link_to h(project.slug), project -%></li>
   <% end -%>
   </ul>
   
-  <h4>Your repository clones</h4>
+  <h4><%= t("views.site.dashboard.your_clones") %></h4>
   <ul>
   <% @repositories.each do |repo| -%>
     <li><%= link_to h(repo.name), [repo.project, repo] -%></li>
@@ -51,6 +51,6 @@
 <% end -%>
 
 <% content_for :submenu do -%>
-  <li><%= link_to "Your Account", account_path -%></li>
-  <li><%= link_to "Your Profile", user_path(current_user) -%></li>
+  <li><%= link_to t("views.site.dashboard.your_account"), account_path -%></li>
+  <li><%= link_to t("views.site.dashboard.your_profile"), user_path(current_user) -%></li>
 <% end -%>

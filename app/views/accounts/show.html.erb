@@ -17,18 +17,18 @@
 #++
 %>
 
-<% @page_title = "Account" -%>
+<% @page_title = t("views.account.show_title") -%>
 
-<h2>Account details <small><%= link_to "edit", edit_account_path -%></small></h2>
+<h2><%= t("views.account.edit_details") %> <small><%= link_to t("views.account.edit_link"), edit_account_path -%></small></h2>
 <ul class="infobox">
-  <li><strong>Realname:</strong> 
+  <li><strong><%= t("views.account.realname") %>:</strong> 
     <%= current_user.fullname.blank? ? "N/A" : h(current_user.fullname) -%></li>
-  <li><strong>Username:</strong> <%= link_to h(current_user.login), user_path(current_user) -%></li>
-  <li><strong>Email:</strong> <%=h current_user.email -%></li>
-  <li><strong>Url:</strong> <a href="<%=h current_user.url -%>"><%=h current_user.url -%></a></li>
+  <li><strong><%= t("views.account.username") %>:</strong> <%= link_to h(current_user.login), user_path(current_user) -%></li>
+  <li><strong><%= t(:email, :scope => 'activerecord.attributes.user') %>:</strong> <%=h current_user.email -%></li>
+  <li><strong><%= t(:url, :scope => 'activerecord.attributes.user') %>:</strong> <a href="<%=h current_user.url -%>"><%=h current_user.url -%></a></li>
 </ul>
 
-<h3>Your SSH Keys:</h3>
+<h3><%= t("views.keys.ssh_keys") %>:</h3>
 
 <% current_user.ssh_keys.each do |ssh_key| -%>
   <%= render :partial => "keys/key", :locals => {:ssh_key => ssh_key} -%>
@@ -37,6 +37,6 @@
 
 
 <% content_for :submenu do -%>
-  <li><%= link_to "Edit details", edit_account_path -%></li>
-  <li><%= link_to "Add SSH key", new_account_key_path -%></li>
+  <li><%= link_to t("views.account.edit_details"), edit_account_path -%></li>
+  <li><%= link_to t("views.keys.add_ssh_key"), new_account_key_path -%></li>
 <% end -%>
