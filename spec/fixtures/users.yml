@@ -8,6 +8,7 @@ johan:
   activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9b 
   activated_at: <%= 5.days.ago.to_s :db %> 
   ssh_key_id: 1
+  is_admin: <%= true %>
 moe:
   id: 2
   login: moe
@@ -17,6 +18,7 @@ moe:
   created_at: <%= 1.days.ago.to_s :db %>
   activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
   ssh_key_id: 2
+  is_admin: <%= false %>
 mike:
   id: 3
   login: mike
@@ -26,3 +28,4 @@ mike:
   created_at: <%= 1.days.ago.to_s :db %>
   activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
   ssh_key_id: 3
+  is_admin: <%= false %>

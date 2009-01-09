@@ -18,12 +18,32 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe "All Users", :shared => true do
+  it "should activate user" do
+    User.authenticate('moe', 'test').should be(nil)
+    get :activate, :activation_code => users(:moe).activation_code
+    response.should redirect_to('/')
+    flash[:notice].should_not be(nil)
+    User.authenticate('moe@example.com', 'test').should == users(:moe)
+  end
+
+  it "flashes a message when the activation code is invalid" do
+    get :activate, :activation_code => "fubar"
+    response.should redirect_to('/')
+    flash[:notice].should be(nil)
+    flash[:error].should == "Invalid activation code"
+    User.authenticate('moe@example.com', 'test').should == nil
+  end
+end
+
 describe UsersController do
   
   def create_user(options = {})
     post :create, :user => { :login => 'quire', :email => 'quire@example.com',
       :password => 'quire', :password_confirmation => 'quire' }.merge(options)
   end
+  
+  it_should_behave_like "All Users"
   
   it "should allow signups" do
     proc{
@@ -74,22 +94,6 @@ describe UsersController do
     create_user
     User.authenticate('quire@example.com', 'quire').should == nil
     controller.send(:logged_in?).should == false
-  end
-    
-  it "should activate user" do
-    User.authenticate('moe', 'test').should be(nil)
-    get :activate, :activation_code => users(:moe).activation_code
-    response.should redirect_to('/')
-    flash[:notice].should_not be(nil)
-    User.authenticate('moe@example.com', 'test').should == users(:moe)
-  end
-  
-  it "flashes a message when the activation code is invalid" do
-    get :activate, :activation_code => "fubar"
-    response.should redirect_to('/')
-    flash[:notice].should be(nil)
-    flash[:error].should == "Invalid activation code"
-    User.authenticate('moe@example.com', 'test').should == nil
   end
   
   it "shows the user" do
@@ -155,5 +159,34 @@ describe UsersController do
       
       User.authenticate(u.email, "secret").should_not be_nil
     end
+  end
+end
+
+describe UsersController, "in Private Mode" do
+  before(:each) do
+    GitoriousConfig['gitorious_public_registration'] = false
+  end
+
+  after(:each) do
+    GitoriousConfig['gitorious_public_registration'] = true
+  end
+  
+  it_should_behave_like "All Users"
+  
+  it "GET /users/new" do
+    get :new
+    response.should redirect_to(root_path)
+    flash[:error].should match(/Action requires login/)
+  end
+  
+  it "GET /users/johan" do
+    get :show, :id => users(:johan).to_param
+    response.should redirect_to(root_path)
+    flash[:error].should match(/Action requires login/)
+  end
+    
+  it "GET /users/forgot_password" do
+    get :forgot_password
+    response.should be_success
   end
 end

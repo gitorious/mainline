@@ -50,9 +50,14 @@
       <% end -%>
       <% if logged_in? -%>
         <li><%= link_to "Dashboard", dashboard_path -%></li>
+		<% if current_user.admin? -%>
+		<li><%= link_to "Administration", admin_users_path -%></li>
+		<% end -%>
       <% end -%>
+      <% if GitoriousConfig['gitorious_public_registration'] || logged_in? -%>
         <li><%= link_to "Projects", projects_path -%></li>
         <li><%= link_to "Search", search_path -%></li>
+      <% end -%>
       <% if logged_in? -%>
         <li><%= link_to "FAQ", faq_path -%></li>
       <% else -%>
@@ -62,7 +67,9 @@
         <li class="secondary">( <%= link_to "My account", account_path -%></li>
         <li class="secondary"><%= link_to "Logout", logout_path -%> )</li>
       <%- else -%>
-        <li class="secondary"><%= link_to "Register", new_user_path -%></li>
+		<% if GitoriousConfig['gitorious_public_registration'] -%>
+        	<li class="secondary"><%= link_to "Register", new_user_path -%></li>
+		<% end -%>
         <li class="secondary"><%= link_to "Login", login_path -%></li>
       <%- end -%>
     </ul>
@@ -79,6 +86,15 @@
       </li>
     </ul>
     <% end -%>
+	<% if controller.is_a? Admin::UsersController -%>
+	<h2 id="project_title"><%= link_to "Administration", '' %></h2>
+    <ul id="submenu" class="white">
+      <li class="selected">
+        <%= link_to "User Management", 
+          '', :class => "round-top-5" -%>
+	  </li>
+    </ul>
+	<% end -%>
   </div>
   <% unless @content_for_submenu.blank? -%>
   <ul id="contextmenu">

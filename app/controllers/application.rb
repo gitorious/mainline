@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   session :session_key => '_ks1_session_id', :secret => YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["cookie_secret"]
   include AuthenticatedSystem
   include ExceptionNotifiable
+  before_filter :public_and_logged_in
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
@@ -67,5 +68,9 @@ class ApplicationController < ActionController::Base
     
     def render_not_found
       render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+    end
+    
+    def public_and_logged_in
+      login_required unless GitoriousConfig['gitorious_public_registration']
     end
 end

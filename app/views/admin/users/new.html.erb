@@ -1,0 +1,12 @@
+<h1>Create new user</h1>
+
+<%= error_messages_for :user %>
+<% form_for :user, :url => admin_users_path do |f| -%>
+  <%= render :partial => 'users/form', :locals => { :f => f } %>
+
+  <p>
+    <%= f.check_box :is_admin, {}, "1", "0" %> <%= f.label :is_admin, "Is Administrator?" -%>
+  </p>
+
+  <p><%= f.submit 'Create' %> <%= link_to "Back", admin_users_path %></p>
+<% end -%>

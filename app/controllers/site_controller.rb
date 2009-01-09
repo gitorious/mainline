@@ -17,10 +17,15 @@
 #++
 
 class SiteController < ApplicationController
+  skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq]
   before_filter :login_required, :only => [:dashboard]
   
   def index
-    @projects = Project.find(:all, :limit => 10, :order => "id desc")
+    @projects = if GitoriousConfig['gitorious_public_registration'] || logged_in?
+      Project.find(:all, :limit => 10, :order => "id desc")
+    else
+      []
+    end
   end
   
   def dashboard

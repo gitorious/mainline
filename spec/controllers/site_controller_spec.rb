@@ -61,3 +61,23 @@ describe SiteController do
   end
 
 end
+
+
+describe SiteController, "in Private Mode" do
+  before(:each) do
+    GitoriousConfig['gitorious_public_registration'] = false
+  end
+  
+  after(:each) do
+    GitoriousConfig['gitorious_public_registration'] = true
+  end
+  
+  it "GET / should not show private content in the homepage" do
+    get :index
+    response.body.should_not match(/Newest projects/)
+    response.body.should_not match(/action\=\"\/search"/)
+    response.body.should_not match(/Creating a user account/)
+    response.body.should_not match(/\/projects/)
+    response.body.should_not match(/\/search/)
+  end
+end

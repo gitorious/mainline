@@ -1,9 +1,9 @@
 == IDEAS FOR NEW FEATURES ==
 
-- set up an Admin profile - superuser installed by default
-- set up an Admin interface - manage users, daemon status
+- set up an Admin profile - superuser installed by default [DONE!]
+- set up an Admin interface - manage users, daemon status [DONE!]
 - make it more configurable (logo, basic color theme at least)
-- make it private (enforce login instead of being always open)
+- make it private (enforce login instead of being always open) [DONE!]
   - maybe not mix public and private but an option to choose between them
 - i18n/l10n
 - Watcher's List/Favorite projects
