@@ -3,7 +3,8 @@ class Admin::UsersController < ApplicationController
   before_filter :check_admin
   
   def index
-    @users = User.all :order => 'suspended_at, login'
+    @users = User.paginate(:all, :order => 'suspended_at, login', 
+                            :page => params[:page])
     respond_to do |wants|
       wants.html
     end
