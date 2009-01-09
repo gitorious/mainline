@@ -4,6 +4,7 @@ require 'rubygems'
 require 'daemons'
 require 'geoip'
 require 'socket'
+require 'fcntl'
 require "optparse"
 
 ENV["RAILS_ENV"] ||= "production"
@@ -39,6 +40,7 @@ module Git
         end
       end
       @socket = TCPServer.new(@options[:host], @options[:port])
+      @socket.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
       log(Process.pid, "Listening on #{@options[:host]}:#{@options[:port]}...")
       run
     end
@@ -85,8 +87,8 @@ module Git
       
         Dir.chdir(path) do
           cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
-        
-          fork do
+          
+          child_pid = fork do
             repository = nil
             
             begin
@@ -97,9 +99,11 @@ module Git
             
             pid = Process.pid
             log(pid, "Connection from #{ip} for #{path.inspect}")
-          
+                        
             $stdout.reopen(session)
             $stdin.reopen(session)
+            $stderr.reopen("/dev/null")
+            
             session.close
             
             if repository
@@ -113,8 +117,8 @@ module Git
             else
               log(pid, "Cannot find repository: #{path}")
             end
-            log(Process.pid, "Deferred in #{'%0.5f' % (Time.now - start_time)}s")
             
+            log(Process.pid, "Deferred in #{'%0.5f' % (Time.now - start_time)}s")
             exec(cmd)
             # FIXME; we don't ever get here since we exec(), so reaped count may be incorrect 
             $children_reaped += 1
@@ -123,12 +127,13 @@ module Git
         end rescue Errno::EAGAIN
       else
         $stderr.puts "Invalid request from #{ip}: #{line}"
-        session.close
         $children_active -= 1
       end
+      session.close
     end
   
     def handle_stop(signal)
+      @socket.close
       log(Process.pid, "Received #{signal}, exiting..")
       exit 0
     end
