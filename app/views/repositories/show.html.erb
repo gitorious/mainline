@@ -54,11 +54,13 @@
 		<%# using explicit routing for the time being %>
       <li><%= link_to "Clone repository", :controller => "repositories", :action => "new", :project_id => @project.to_param, :id => @repository.to_param -%></li>
     <% end -%>
-    <% if @repository.user == current_user -%>
+    <% if @repository.committers.include?(current_user) -%>
       <li><%= link_to "Request merge", new_project_repository_merge_request_path(@project, @repository) -%></li>
-      <li><%= link_to "Add committer", 
-              { :controller => "committers", :action => "new", :project_id => @project, 
+      <% if @repository.user == current_user -%>
+      <li><%= link_to "Add committer",
+              { :controller => "committers", :action => "new", :project_id => @project,
                 :repository_id => @repository } -%></li>
+      <% end -%>
     <% end -%>
     <% if @repository.can_be_deleted_by?(current_user) -%>
       <li><%= link_to "Delete repository", confirm_delete_project_repository_path(@project, @repository) -%></li>

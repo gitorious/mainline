@@ -17,6 +17,8 @@
 #++
 
 class UsersController < ApplicationController
+  skip_before_filter :public_and_logged_in, :only => [:activate, :forgot_password, :reset_password]
+  
   # render new.rhtml
   def new
   end

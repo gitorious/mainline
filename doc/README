@@ -133,6 +133,29 @@ graph on commits frequency through the days. When you run it, it will generate a
 PNG static image. If you don't run it, Gitorious will simply ignore it. It is very
 cumbersome to make this component work correctly.
 
+== PRIVATE MODE ==
+
+The original intent of Gitorious is for an open source public website where every 
+project is open to the public.
+
+But as Gitorious itself is an open source project, people can choose to have their
+own installation (as you will, as you're reading this documentation).
+
+Sometimes people want to install their own private Gitorious in a VPS server. And 
+then host their company's internal projects, for example. But in this scenario, their
+private Gitorious would be publicly exposed to the Internet.
+
+Now you can change your config/gitorious.yml file and change this:
+
+  gitorious_public_registration: false
+
+The default mode is 'true', which make your Gitorious public. But if you want your
+own private server, change it to 'false'.
+
+In private mode, the 'Register' page is also locked and you need to create a super
+user manually. Do this in the server running the task 'script/create_admin'. It will
+ask for the administrator's email and password and will create it for you.
+
 == SUMMARY ==
 
 So, the shopping list goes like this:

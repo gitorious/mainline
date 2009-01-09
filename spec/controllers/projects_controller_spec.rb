@@ -166,3 +166,19 @@ describe ProjectsController do
     assigns[:project].should == projects(:johans)
   end
 end
+
+describe ProjectsController, "in Private Mode" do
+  before(:each) do
+    GitoriousConfig['gitorious_public_registration'] = false
+  end
+  
+  after(:each) do
+    GitoriousConfig['gitorious_public_registration'] = true
+  end
+  
+  it "GET /projects" do
+    get :index
+    response.should redirect_to(root_path)
+    flash[:error].should match(/Action requires login/)
+  end
+end

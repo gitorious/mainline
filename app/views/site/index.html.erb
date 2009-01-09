@@ -24,7 +24,9 @@
   <strong>Gitorious</strong> aims to provide a great 
   way of doing distributed opensource code collaboration 
 </p>
-<%= render :partial => "searches/search_box" -%>
+<% if GitoriousConfig['gitorious_public_registration'] || logged_in? -%>
+  <%= render :partial => "searches/search_box" -%>
+<% end -%>
 </div>
 
 <div id="site_overview">
@@ -40,13 +42,16 @@
     </tr>
   </table>
   
-  <p class="hint create_account_hint">
-    <%= link_to "Creating a user account", new_user_path -%> allows you to create 
-    your own project or participate in the development of any project. 
-  </p>
+	  <% if GitoriousConfig['gitorious_public_registration'] || logged_in? -%>
+	  <p class="hint create_account_hint">
+	    <%= link_to "Creating a user account", new_user_path -%> allows you to create 
+	    your own project or participate in the development of any project. 
+	  </p>
+	  <% end -%>
   <% end -%>
 </div>
 
+<% if GitoriousConfig['gitorious_public_registration'] || logged_in? -%>
 <div id="newest_projects">
   <h2>Newest projects</h2>
   <ul>
@@ -59,3 +64,4 @@
   </ul>
   <p><%= link_to "View more &raquo;", projects_path -%></p>
 </div>
+<% end -%>

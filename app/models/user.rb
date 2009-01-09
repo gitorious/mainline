@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
 
-  attr_protected :login
+  attr_protected :login, :is_admin
 
   validates_presence_of     :login, :email,               :if => :password_required?
   validates_format_of       :login, :with => /^[a-z0-9\-_\.]+$/i
@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
-    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL', email] # need to get the salt
+    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL and suspended_at IS NULL', email] # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
 
@@ -152,6 +152,14 @@ class User < ActiveRecord::Base
   
   def is_openid_only?
     self.crypted_password.nil?
+  end
+  
+  def suspended?
+    !suspended_at.nil?
+  end
+  
+  def admin?
+    is_admin
   end
 
   protected
