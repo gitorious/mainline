@@ -16,7 +16,7 @@
 1.1 Install Required Packages
 
 apt-get update
-apt-get install build-essential apache2 mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev apache2-dev sendmail
+apt-get install -y build-essential apache2 mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev apache2-dev sendmail
 
 1.2 Install some components from source
 
@@ -172,9 +172,12 @@ cp config/gitorious.sample.yml config/gitorious.yml
   # Enable or Disable Public Mode (true) or Private Mode (false)
   public_mode: false
 
+  # Define your locale
+  locale: en
+  
 7.3.1 Remarks on gitorious.yml
 
-xz- run apg -m 64
+- run apg -m 64
 - replace the result (big string, take off the line breaks to have just one 
   continuous line) with value of the the current 'cookie_secret'
 - configure 'gitorious_host' to your registered domain, if you have one

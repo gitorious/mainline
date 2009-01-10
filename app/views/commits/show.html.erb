@@ -37,8 +37,7 @@
 
 <% if @diffs.blank? -%>
   <p>
-    <%= t("views.commits.message_1") %>
-    <%= link_to t("views.commits.message_2"), tree_path(@commit.id) -%>.
+	<%= t("views.commits.message").call(self, tree_path(@commit.id)) %>
   </p>
 <% else -%>
 <% cache({:diffmode => @diffmode}) do -%>

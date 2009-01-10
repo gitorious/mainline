@@ -40,8 +40,7 @@
   
 	  <% if GitoriousConfig['public_mode'] || logged_in? -%>
 	  <p class="hint create_account_hint">
-	    <%= link_to t("views.site.creating_account_1"), new_user_path -%> 
-		<%= t("views.site.creating_account_2") -%>
+		<%= t("views.site.creating_account").call(self, new_user_path) %>
 	  </p>
 	  <% end -%>
   <% end -%>

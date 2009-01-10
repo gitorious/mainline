@@ -68,8 +68,7 @@
       :reset_password_error => "Invalid email",
     },
     :application_helper => {
-      :notice_for_2 => "it will be ready pretty soon&hellip;",
-      :notice_for_1 => "This {{class_name}} is being created,",
+      :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
       :event_status_created => "created project",
       :event_status_deleted => "deleted project",
       :event_status_updated => "updated project",
@@ -118,8 +117,9 @@
         :description => "<strong>Gitorious</strong> aims to provide a great\nway of doing distributed opensource code collaboration",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
-        :creating_account_1 => "Creating a user account",
-        :creating_account_2 => "allows you to create your own project or participate in the development of any project.",
+        :creating_account => lambda { |this, path| 
+          this.link_to("Creating a user account", path) + 
+          " allows you to create your own project or participate in the development of any project." },
         :newest_projects => "Newest projects",
         :view_more => "View more &raquo;",
         :dashboard => {
@@ -172,8 +172,8 @@
         :is_admin => "Is Administrator?",
         :forgot_title => "Forgot your password?",
         :send_new_passwd => 'Send me a new password',
-        :create_title_1 => "Create new user or",
-        :create_title_2 => "login directly with your OpenID",
+        :create_title => lambda { |this, path| "Create new user or " + 
+          this.link_to( "login directly with your OpenID", path ) },
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
         :member_for => "Member for",
         :this_week => {
@@ -196,10 +196,11 @@
         :wrap => "Softwrap mode",
         :title => "Blob of <code>{{path}}</code>",
         :raw => "raw blob data",
-        :too_big_1 => "This file is too big to be rendered within reasonable time,",
-        :too_big_2 => "try viewing the raw data",
-        :message_1 => "Not sure we can display this blob nicely (it's a \"{{mime}}\" mimetype),",
-        :message_2 => "and see if your browser figures it out.",
+        :too_big => lambda { |this, path| "This file is too big to be rendered within reasonable time, " +
+          this.link_to("try viewing the raw data", path) },
+        :message => lambda { |this, mime, path| "Not sure we can display this blob nicely (it's a \"#{mime}\" mimetype), " +
+          this.link_to("try viewing the raw data", path) + 
+          "and see if your browser figures it out." },
       },
       :comments => {
         :commit => "on commit {{sha1}}",
@@ -221,8 +222,8 @@
         :tree_sha1 => "Tree SHA1",
         :page_title => "Commit in {{repo}} in {{title}}",
         :title => "Commit {{commit}}",
-        :message_1 => "This is the initial commit in this repository, ",
-        :message_2 => "browse the initial tree state",
+        :message => lambda { |this, path| "This is the initial commit in this repository, " +
+          this.link_to( "browse the initial tree state", path ) + "." },
       },
       :sessions => {
         :login => "Login",
@@ -365,20 +366,41 @@
     },
     :date => {
       :formats => {
-        :long_ordinal => lambda { |date| "%B #{date.day.ordinalize}, %Y" }
-      }
+        :long_ordinal => lambda { |date| "%B #{date.day.ordinalize}, %Y" },
+        :default => "%Y-%m-%d",
+        :short => "%e %b",
+        :long => "%B %e, %Y",
+        :only_day => "%e",
+      },
+      :day_names => %w(Sunday Monday Tuesday Wednesday Thursday Friday Saturday),
+      :abbr_day_names => %w(Sun Mon Tue Wed Thu Fri Sat),
+      :month_names => [nil] + %w(January February March April May June July August September October November December),
+      :abbr_month_names => [nil] + %w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec),
+      :order => [ :year, :month, :day ],
     },
     :time => {
       :formats => {
         :long_ordinal => lambda { |time| "%B #{time.day.ordinalize}, %Y %H:%M" },
+        :default => "%a %b %d %H:%M:%S %Z %Y",
+        :time => "%H:%M",
+        :short => "%d %b %H:%M",
+        :long => "%B %d, %Y %H:%M",
+        :only_second => "%S",
         :human => "%A %B %d",
         :short_time => "%H:%M",
+        :datetime => {
+          :formats => {
+            :default => "%Y-%m-%dT%H:%M:%S%Z",
+          },
+        },
       },
       :time_with_zone => {
         :formats => {
           :default => lambda { |time| "%Y-%m-%d %H:%M:%S #{time.formatted_offset(false, 'UTC')}" }
-        }
-      }
+        },
+      },
+      :am => 'AM',
+      :pm => 'PM',
     },
     :activerecord => {
       :attributes => {

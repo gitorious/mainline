@@ -18,7 +18,7 @@
 #++
 %>
 
-<h1><%= t("views.users.create_title_1") %> <%= link_to t("views.users.create_title_2"), login_path(:method=>'openid') -%></h1>
+<h1><%= t("views.users.create_title").call(self, login_path(:method=>'openid')) %></h1>
 <p><%= t("views.users.create_description") %></p>
 
 <%= error_messages_for :user %>

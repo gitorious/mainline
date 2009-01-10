@@ -68,8 +68,7 @@
       :reset_password_error => "E-mail inválido",
     },
     :application_helper => {
-      :notice_for_2 => "ficará claro muito em breve&hellip;",
-      :notice_for_1 => "Este(a) {{class_name}} está sendo criado(a),",
+      :notice_for => lambda { |class_name| "Este(a) #{class_name} está sendo criado(a),<br /> ficará pronto(a) muito em breve&hellip;"},
       :event_status_created => "projeto criado",
       :event_status_deleted => "projeto apagado",
       :event_status_updated => "projeto atualizado",
@@ -118,8 +117,9 @@
         :description => "<strong>Gitorious</strong> quer fornecer uma grande\nmaneira de colaborar com código opensource de forma distribuída",
         :for_projects => "Para Projetos",
         :for_contributors => "Para Colaboradores",
-        :creating_account_1 => "Criar uma conta de usuário",
-        :creating_account_2 => "lhe permite criar seus próprios projetos ou participar do desenvolvimento de qualquer outro.",
+        :creating_account => lambda { |this, path| 
+          this.link_to("Criar uma conta de usuário", path) + 
+          " lhe permite criar seus próprios projetos ou participar do desenvolvimento de qualquer outro." },
         :newest_projects => "Projetos mais Recentes",
         :view_more => "Ver mais &raquo;",
         :dashboard => {
@@ -152,6 +152,7 @@
         :details_title => "Detalhes da Conta",
         :edit_link => "editar",
         :username => "Usuário",
+        :create => "criar uma conta",
       },
       :keys => {
         :edit_title => "Editar uma chave SSH",
@@ -171,8 +172,8 @@
         :is_admin => "É Administrador?",
         :forgot_title => "Esqueceu sua senha?",
         :send_new_passwd => 'Me envie uma nova senha',
-        :create_title_1 => "Crie um novo usuário ou",
-        :create_title_2 => "faça login diretamente com seu OpenID",
+        :create_title => lambda { |this, path| "Crie um novo usuário ou " + 
+          this.link_to( "faça login diretamente com seu OpenID", path ) },
         :create_description => "Criar uma nova conta de usuário lhe permite criar seus próprios projetos ou participar no desenvolvimento de qualquer um.",
         :member_for => "Membro por",
         :this_week => {
@@ -195,10 +196,11 @@
         :wrap => "Modo Softwrap",
         :title => "Blob de <code>{{path}}</code>",
         :raw => "dado blob puro",
-        :too_big_1 => "Este arquivo é muito grande para ser renderizado num tempo razoável,",
-        :too_big_2 => "tente ver os dados puros",
-        :message_1 => "Não há certeza que esse blob pode ser mostrado corretamente (é um mimetype \"{{mime}}\"),",
-        :message_2 => "e veja se se browser consegue carregar isso."
+        :too_big => lambda { |this, path| "Este arquivo é muito grande para ser renderizado num tempo razoável, " +
+          this.link_to("tente ver os dados puros", path) },
+        :message => lambda { |this, mime, path| "Não há certeza que esse blob pode ser mostrado corretamente (é um mimetype \"#{mime}\"), " +
+          this.link_to("tente ver os dados puros", path) + 
+          "e veja se se browser consegue carregar isso." },
       },
       :comments => {
         :commit => "no commit {{sha1}}",
@@ -220,8 +222,8 @@
         :tree_sha1 => "SHA1 da Árvore",
         :page_title => "Commit em {{repo}} no {{title}}",
         :title => "Commit {{commit}}",
-        :message_1 => "Este é o commit inicial deste repositório, ",
-        :message_2 => "navege pelo estado inicial da árvore",
+        :message => lambda { |this, path| "Este é o commit inicial deste repositório, " +
+          this.link_to( "navegue pelo estado inicial da árvore", path ) + "." },
       },
       :sessions => {
         :login => "Login",
@@ -296,6 +298,7 @@
         },
       },
       :projects => {
+        :title => "Projetos",
         :back => "Voltar à tela de edição",
         :hint => %Q{São permitidos <a href="http://daringfireball.net/projects/markdown/">Markdown</a> e HTML básico},
         :categories => "Categorias",
@@ -375,7 +378,7 @@
       :abbr_day_names => %w(Dom Seg Ter Qua Qui Sex Sáb),
       :month_names => [nil] + %w(Janeiro Fevereiro Março Abril Maio Junho Julho Agosto Setembro Outubro Novembro Dezembro),
       :abbr_month_names => [nil] + %w(Jan Fev Mar Abr Mai Jun Jul Ago Set Out Nov Dez),
-      :order => [:day, :month, :year]
+      :order => [:day, :month, :year],
     },
     :time => {
       :formats => {
@@ -387,14 +390,19 @@
         :only_second => "%S",
         :human => "%A às %d de %B",
         :short_time => "%H:%M",
+        :datetime => {
+          :formats => {
+            :default => "%Y-%m-%dT%H:%M:%S%Z",
+          },
+        },
       },
       :time_with_zone => {
         :formats => {
           :default => lambda { |time| "%Y-%m-%d %H:%M:%S #{time.formatted_offset(false, 'UTC')}" }
-        }
+        },
       },
       :am => '',
-      :pm => ''
+      :pm => '',
     },
  
     # date helper distanci em palavras

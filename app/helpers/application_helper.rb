@@ -40,8 +40,7 @@ module ApplicationHelper
   
   def build_notice_for(object)
     out =  %Q{<div class="being_constructed">}
-    out << %Q{  <p>#{I18n.t( "application_helper.notice_for_1", :class_name => object.class.name.humanize.downcase )}<br />}
-    out << %Q{  #{I18n.t( "application_helper.notice_for_2" )}</p>}
+    out << %Q{  <p>#{I18n.t( "application_helper.notice_for").call(object.class.name.humanize.downcase)}</p>}
     out << %Q{</div>}
     out
   end
