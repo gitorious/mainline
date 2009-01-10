@@ -29,15 +29,7 @@ class KeysController < ApplicationController
   def new
     @ssh_key = current_user.ssh_keys.new
   end
-  # respond_to do |format|
-  #   if @event.save
-  #     flash[:notice] = 'Event was successfully created.'
-  #     format.html { redirect_to(@event) }
-  #     format.xml  { render :xml => @event, :status => :created, :location => @event }
-  #   else
-  #     format.html { render :action => "new" }
-  #     format.xml  { render :xml => @event.errors, :status => :unprocessable_entity }
-  #   end
+  
   def create
     @ssh_key = current_user.ssh_keys.new
     @ssh_key.key = params[:ssh_key][:key]

@@ -23,7 +23,7 @@ atom_feed do |feed|
   @comments.each do |comment|
     item_url = "http://#{GitoriousConfig['gitorious_host']}" + project_repository_comments_path(@project,@repository)
     feed.entry(comment, :url => item_url) do |entry|
-      entry.title("#{comment.user.login}: #{truncate(comment.body, 30)}")
+      entry.title("#{comment.user.login}: #{truncate(comment.body, :length => 30)}")
       entry.content(comment.body)
       entry.author do |author|
         author.name(comment.user.login)

@@ -41,7 +41,7 @@
     <% if last_commit = commit_for_tree_path(@repository, node.name) -%>
       <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
       <td class="meta commit_message">
-        <%= link_to truncate(h(last_commit.message), 75, "&hellip;"), commit_path(last_commit.id) -%>
+        <%= link_to truncate(h(last_commit.message), :length => 75, "&hellip;"), commit_path(last_commit.id) -%>
       </td>
     <% else -%>
       <td class="meta"></td>

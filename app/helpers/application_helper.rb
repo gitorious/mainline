@@ -155,7 +155,7 @@ module ApplicationHelper
     case event.action
       when Action::CREATE_PROJECT
         action = "<strong>#{I18n.t("application_helper.event_status_created")}</strong> #{link_to h(target.title), project_path(target)}"
-        body = truncate(target.stripped_description, 100)
+        body = truncate(target.stripped_description, :length => 100)
         category = "project"
       when Action::DELETE_PROJECT
         action = "<strong>#{I18n.t("application_helper.event_status_deleted")}</strong> #{h(event.data)}"
@@ -177,7 +177,7 @@ module ApplicationHelper
       when Action::COMMIT
         project = event.project
         action = "<strong>#{I18n.t("application_helper.event_status_cloned")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = link_to(h(truncate(event.body, 150)), project_repository_commit_path(project, target, event.data))
+        body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
         category = "commit"
       when Action::CREATE_BRANCH
         project = target.project
@@ -218,7 +218,7 @@ module ApplicationHelper
         repo = target.repository
         
         action = "<strong>#{I18n.t("application_helper.event_commented")}</strong> on #{link_to h(project.slug), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
-        body = truncate(h(target.body), 150)
+        body = truncate(h(target.body), :length => 150)
         category = "comment"
       when Action::REQUEST_MERGE
         source_repository = target.source_repository
@@ -226,7 +226,7 @@ module ApplicationHelper
         target_repository = target.target_repository
         
         action = "<strong>#{I18n.t("application_helper.event_requested_merge_of")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)} with #{link_to h(project.slug), project_path(project)}/#{link_to h(target_repository.name)}"
-        body = "#{link_to truncate(h(target.proposal), 100), [project, target_repository, target]}"
+        body = "#{link_to truncate(h(target.proposal), :length => 100), [project, target_repository, target]}"
         category = "merge_request"
       when Action::RESOLVE_MERGE_REQUEST
         source_repository = target.source_repository
@@ -234,7 +234,7 @@ module ApplicationHelper
         target_repository = target.target_repository
         
         action = "<strong>#{I18n.t("application_helper.event_resolved_merge_request")}</strong> as [#{target.status_string}] from #{link_to h(project.slug), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)}"
-        body = "#{link_to truncate(h(target.proposal), 100), [project, target_repository, target]}"
+        body = "#{link_to truncate(h(target.proposal), :length => 100), [project, target_repository, target]}"
         category = "merge_request"
       when Action::UPDATE_MERGE_REQUEST
         source_repository = target.source_repository
