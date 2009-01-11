@@ -3,7 +3,7 @@
 
 # ONLY CHANGE THIS PART
 export SERVER_NAME=gitorious.org
-export GITORIOUS_REPO=git://gitorious.org/gitorious/mainline.git
+export GITORIOUS_REPO=git://gitorious.org/gitorious/akitaonrails-gitorious.git
 
 
 # DO NOT CHANGE THIS PART
@@ -18,47 +18,56 @@ mysql mysql -e "update user set Password=password('root') where User='root';"
 /etc/init.d/mysql stop
 /etc/init.d/mysql start
 
-mkdir ~/tmp
-cd ~/tmp
+if [ -d ~/tmp ]; then rm -Rf ~/tmp; fi
+mkdir ~/tmp && cd ~/tmp
 
-wget http://www.geocities.jp/kosako3/oniguruma/archive/onig-5.9.1.tar.gz
-tar xvfz onig-5.9.1.tar.gz 
+test -f onig-5.9.1.tar.gz || wget http://www.geocities.jp/kosako3/oniguruma/archive/onig-5.9.1.tar.gz
+test -d onig-5.9.1 || tar xvfz onig-5.9.1.tar.gz 
 cd onig-5.9.1
 ./configure && make && make install
 cd ..
 
-wget http://www.sphinxsearch.com/downloads/sphinx-0.9.8.tar.gz
-tar xvfz sphinx-0.9.8.tar.gz
+test -f sphinx-0.9.8.tar.gz || wget http://www.sphinxsearch.com/downloads/sphinx-0.9.8.tar.gz
+test -d sphinx-0.9.8 || tar xvfz sphinx-0.9.8.tar.gz
 cd sphinx-0.9.8
 ./configure && make && make install
 cd ..
 
-wget ftp://ftp.imagemagick.net/pub/ImageMagick/ImageMagick-6.4.6-9.tar.gz
-tar xvfz ImageMagick-6.4.6-9.tar.gz 
+test -f ImageMagick-6.4.6-9.tar.gz || wget ftp://ftp.imagemagick.net/pub/ImageMagick/ImageMagick-6.4.6-9.tar.gz
+test -d ImageMagick-6.4.6-9 || tar xvfz ImageMagick-6.4.6-9.tar.gz 
 cd ImageMagick-6.4.6-9
 ./configure && make && make install
 cd ..
 
-wget http://rubyforge.org/frs/download.php/48625/ruby-enterprise_1.8.6-20081215-i386.deb
+test -f ruby-enterprise_1.8.6-20081215-i386.deb || wget http://rubyforge.org/frs/download.php/48625/ruby-enterprise_1.8.6-20081215-i386.deb
 dpkg -i ruby-enterprise_1.8.6-20081215-i386.deb
 
-echo "export PATH=/opt/ruby-enterprise/bin:$PATH" >> /etc/profile
+if [ -f /etc/profile.git ]; then cp /etc/profile.git /etc/profile; fi
+cp /etc/profile /etc/profile.git
+echo "export PATH=/opt/ruby-enterprise/bin:\$PATH" >> /etc/profile
 echo "export LD_LIBRARY_PATH=\"/usr/local/lib\"" >> /etc/profile
 echo "export LDFLAGS=\"-L/usr/local/lib -Wl,-rpath,/usr/local/lib\"" >> /etc/profile
 
+if [ -f /etc/ld.so.conf.git ]; then cp /etc/ld.so.conf.git /etc/ld.so.conf; fi
 touch ld.so.conf
 echo "/usr/local/lib" >> ld.so.conf
 cat /etc/ld.so.conf >> ld.so.conf
+cp /etc/ld.so.conf /etc/ld.so.conf.git
 mv ld.so.conf /etc/ld.so.conf
 
 source /etc/profile
 ldconfig
 
-mv /usr/bin/ruby /usr/bin/ruby.old
-ln -s /opt/ruby-enterprise/bin/ruby /usr/bin/ruby
+test -f /usr/bin/ruby.old || mv /usr/bin/ruby /usr/bin/ruby.old
+test -f /usr/bin/ruby || ln -s /opt/ruby-enterprise/bin/ruby /usr/bin/ruby
 
 gem install passenger --no-rdoc --no-ri --version=2.0.6
 yes '' | /opt/ruby-enterprise/bin/passenger-install-apache2-module
+
+
+if [ -f /etc/apache2/mods-available/passenger.load ]; then rm /etc/apache2/mods-available/passenger.load; fi
+if [ -f /etc/apache2/mods-available/passenger.conf ]; then rm /etc/apache2/mods-available/passenger.conf; fi
+if [ -f /etc/apache2/sites-available/gitorious ]; then rm /etc/apache2/sites-available/gitorious; fi
 
 touch /etc/apache2/mods-available/passenger.load
 touch /etc/apache2/mods-available/passenger.conf
@@ -81,8 +90,8 @@ ln -s /etc/apache2/sites-available/gitorious /etc/apache2/sites-enabled/000-gito
 gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis ruby-openid rmagick geoip ultrasphinx rspec rspec-rails RedCloth echoe daemons geoip --no-rdoc --no-ri
 
 cd /var/www
-git clone $GITORIOUS_REPO gitorious
-ln -s /var/www/gitorious/script/gitorious /usr/local/bin/gitorious
+test -d gitorious || git clone $GITORIOUS_REPO gitorious
+test -f /usr/local/bin/gitorious || ln -s /var/www/gitorious/script/gitorious /usr/local/bin/gitorious
 
 cp /var/www/gitorious/doc/templates/ubuntu/git-daemon /etc/init.d
 cp /var/www/gitorious/doc/templates/ubuntu/git-ultrasphinx /etc/init.d
@@ -117,21 +126,22 @@ mv ~/tmp/foo /var/www/gitorious/config/database.yml
 chown git:git /var/www/gitorious/config/database.yml
 chown git:git /var/www/gitorious/config/gitorious.yml
 
+su - git -c "if [ -f ~/.bash_profile ]; rm ~/.bash_profile; fi"
+su - git -c "touch ~/.bash_profile"
+su - git -c "echo 'export RUBY_HOME=/opt/ruby-enterprise' >> ~/.bash_profile"
+su - git -c "echo 'export GEM_HOME=\$RUBY_HOME/lib/ruby/gems/1.8/gems' >> ~/.bash_profile"
+su - git -c "echo 'export PATH=\$RUBY_HOME/bin:\$PATH' >> ~/.bash_profile"
+
 su - git -c "cd /var/www/gitorious && rake db:create RAILS_ENV=production"
 su - git -c "cd /var/www/gitorious && rake db:migrate RAILS_ENV=production"
 su - git -c "cd /var/www/gitorious && rake ultrasphinx:bootstrap RAILS_ENV=production"
 
-rm ~/tmp/foo && touch ~/tmp/foo
-echo "*/2 * * * * /opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/task_performer" >> ~/tmp/foo
-echo "* */1 * * * cd /var/www/gitorious && /opt/ruby-enterprise/bin/rake ultrasphinx:index RAILS_ENV=production" >> ~/tmp/foo
-mv ~/tmp/foo /home/git
-chown git:git /home/git/foo
-su - git -c "crontab -u git /home/git/foo"
-
-su - git -c "touch ~/.bash_profile"
-su - git -c "echo 'export RUBY_HOME=/opt/ruby-enterprise' >> ~/.bash_profile"
-su - git -c "echo 'export GEM_HOME=$RUBY_HOME/lib/ruby/gems/1.8/gems' >> ~/.bash_profile"
-su - git -c "echo 'export PATH=$RUBY_HOME/bin:$PATH' >> ~/.bash_profile"
+rm ~/tmp/crontab && touch ~/tmp/crontab
+echo "*/2 * * * * /opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/task_performer" >> ~/tmp/crontab
+echo "* */1 * * * cd /var/www/gitorious && /opt/ruby-enterprise/bin/rake ultrasphinx:index RAILS_ENV=production" >> ~/tmp/crontab
+mv ~/tmp/crontab /home/git
+chown git:git /home/git/crontab
+su - git -c "crontab -u git /home/git/crontab"
 
 /etc/init.d/git-daemon start
 /etc/init.d/git-ultrasphinx start
