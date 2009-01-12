@@ -26,20 +26,15 @@ describe CommitsHelper do
   
   describe "render_diff_stats" do
     before(:each) do
-      @stat_data = {:files=>
-        {"spec/database_spec.rb"=>{:insertions=>5, :deletions=>12},
-         "spec/integration/database_integration_spec.rb"=>
-          {:insertions=>2, :deletions=>2},
-         "lib/couch_object/document.rb"=>{:insertions=>2, :deletions=>2},
-         "lib/couch_object/database.rb"=>{:insertions=>5, :deletions=>5},
-         "spec/database_spec.rb.orig"=>{:insertions=>0, :deletions=>173},
-         "bin/couch_ruby_view_requestor"=>{:insertions=>2, :deletions=>2}},
-       :total=>{:files=>6, :insertions=>16, :deletions=>196, :lines=>212}}
-       @stats = Grit::Stats.new(mock("Grit::Repo"), @stat_data[:total], @stat_data[:files])
+      @stat_data = [
+        ["spec/database_spec.rb", 5, 12, 17],
+        ["spec/integration/database_integration_spec.rb", 2, 2, 0],
+      ]
+      @stats = Grit::CommitStats.new(mock("Grit::Repo"), "a"*40, @stat_data)
     end
     
     it "renders a list of files as anchor links" do
-      files = @stats.files.keys
+      files = @stats.files.map{|f| f[0] }
       rendered_stats = helper.render_diff_stats(@stats)
       files.each do |filename|
         rendered_stats.should include(%Q{<li><a href="##{h(filename)}">#{h(filename)}</a>})

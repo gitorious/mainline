@@ -1,29 +1,30 @@
 grit
-    by Tom Preston-Werner, Chris Wanstrath
-    http://grit.rubyforge.org
+    by Tom Preston-Werner, Scott Chacon
+    http://github.com/mojombo/grit
 
 == DESCRIPTION:
 
-Grit is a Ruby library for extracting information from a git repository in and
+Grit is a Ruby library for extracting information from a git repository in an
 object oriented manner.
 
 == REQUIREMENTS:
 
-* git (http://git.or.cz) tested with 1.5.3.4
+* git (http://git-scm.com) tested with 1.6.0.2
 
 == INSTALL:
 
-sudo gem install grit
+  $ gem sources -a http://gems.github.com/ (you only need to do this once)
+  $ gem install mojombo-grit
 
 == SOURCE:
 
 Grit's git repo is available on GitHub, which can be browsed at:
 
-http://github.com/~mojombo/grit
+  http://github.com/mojombo/grit
 
 and cloned from:
 
-git://github.com/mojombo/grit.git
+  git://github.com/mojombo/grit.git
 
 == USAGE:
 
@@ -36,6 +37,7 @@ trees, blobs, etc.
 The first step is to create a Grit::Repo object to represent your repo. I
 include the Grit module so reduce typing.
 
+  require 'mojombo-grit'
   include Grit
   repo = Repo.new("/Users/tom/dev/grit")
   

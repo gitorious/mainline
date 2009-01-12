@@ -85,11 +85,10 @@ module CommitsHelper
   
   def render_diff_stats(stats)
     out = %Q{<ul class="diff_stats">\n}
-    stats.files.each_pair do |filename, stats|
-      total = stats[:insertions] + stats[:deletions]
+    stats.files.each do |filename, adds, deletes, total|
       out << %Q{<li><a href="##{h(filename)}">#{h(filename)}</a>&nbsp;#{total}&nbsp;}
-      out << %Q{<small class="deletions">#{(0...stats[:deletions]).map{|i| "-" }}</small>}
-      out << %Q{<small class="insertions">#{(0...stats[:insertions]).map{|i| "+" }}</small>}
+      out << %Q{<small class="deletions">#{(0...deletes).map{|i| "-" }}</small>}
+      out << %Q{<small class="insertions">#{(0...adds).map{|i| "+" }}</small>}
       out << %Q{</li>}
     end
     out << "</ul>\n"

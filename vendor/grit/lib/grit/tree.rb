@@ -14,7 +14,6 @@ module Grit
     # Returns Grit::Tree (baked)
     def self.construct(repo, treeish, paths = [])
       output = repo.git.ls_tree({}, treeish, *paths)
-      
       self.allocate.construct_initialize(repo, treeish, output)
     end
     
@@ -70,8 +69,10 @@ module Grit
           Tree.create(repo, :id => id, :mode => mode, :name => name)
         when "blob"
           Blob.create(repo, :id => id, :mode => mode, :name => name)
+        when "link"
+          Blob.create(repo, :id => id, :mode => mode, :name => name)
         when "commit"
-          nil
+          Submodule.create(repo, :id => id, :mode => mode, :name => name)
         else
           raise "Invalid type: #{type}"
       end
@@ -87,7 +88,11 @@ module Grit
     #
     # Returns Grit::Blob or Grit::Tree or nil if not found
     def /(file)
-      self.contents.select { |c| c.name == file }.first
+      if file =~ /\//
+        file.split("/").inject(self) { |acc, x| acc/x } rescue nil
+      else
+        self.contents.find { |c| c.name == file }
+      end
     end
     
     def basename

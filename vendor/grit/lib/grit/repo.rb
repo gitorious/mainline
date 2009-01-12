@@ -1,5 +1,3 @@
-require "enumerator"
-
 module Grit
   
   class Repo
@@ -7,6 +5,7 @@ module Grit
     
     # The path of the git repo as a String
     attr_accessor :path
+    attr_accessor :working_dir
     attr_reader :bare
     
     # The git command line interface object
@@ -14,19 +13,21 @@ module Grit
     
     # Create a new Repo instance
     #   +path+ is the path to either the root git directory or the bare git repo
+    #   +options+ :is_bare force to load a bare repo
     #
     # Examples
     #   g = Repo.new("/Users/tom/dev/grit")
     #   g = Repo.new("/Users/tom/public/grit.git")
     #
     # Returns Grit::Repo
-    def initialize(path)
+    def initialize(path, options = {})
       epath = File.expand_path(path)
       
       if File.exist?(File.join(epath, '.git'))
+        self.working_dir = epath
         self.path = File.join(epath, '.git')
         @bare = false
-      elsif File.exist?(epath) && epath =~ /\.git$/
+      elsif File.exist?(epath) && (epath =~ /\.git$/ || options[:is_bare])
         self.path = epath
         @bare = true
       elsif File.exist?(epath)
@@ -37,6 +38,14 @@ module Grit
       
       self.git = Git.new(self.path)
     end
+   
+    # Does nothing yet...
+    def self.init(path)
+      # !! TODO !!
+      # create directory
+      # generate initial git directory
+      # create new Grit::Repo on that dir, return it
+    end
     
     # The project's description. Taken verbatim from GIT_REPO/description
     #
@@ -44,6 +53,11 @@ module Grit
     def description
       File.open(File.join(self.path, 'description')).read.chomp
     end
+
+    def blame(file, commit = nil)
+      Blame.new(self, file, commit)
+    end
+
     
     # An array of Head objects representing the branch heads in
     # this repo
@@ -54,7 +68,63 @@ module Grit
     end
     
     alias_method :branches, :heads
+
+    def get_head(head_name)
+      heads.find { |h| h.name == head_name }
+    end
     
+    def is_head?(head_name)
+      get_head(head_name)
+    end
+    
+    # Object reprsenting the current repo head.
+    #
+    # Returns Grit::Head (baked)
+    def head
+      Head.current(self)
+    end
+
+
+    # Commits current index
+    #
+    # Returns true/false if commit worked
+    def commit_index(message)
+      self.git.commit({}, '-m', message)
+    end
+
+    # Commits all tracked and modified files
+    #
+    # Returns true/false if commit worked
+    def commit_all(message)
+      self.git.commit({}, '-a', '-m', message)
+    end
+
+    # Adds files to the index
+    def add(*files)
+      self.git.add({}, *files.flatten)
+    end
+
+    # Remove files from the index
+    def remove(*files)
+      self.git.rm({}, *files.flatten)
+    end
+    
+
+    def blame_tree(commit, path = nil)
+      commit_array = self.git.blame_tree(commit, path)
+      
+      final_array = {}
+      commit_array.each do |file, sha|
+        final_array[file] = commit(sha)
+      end
+      final_array
+    end
+    
+    def status
+      Status.new(self)
+    end
+
+
     # An array of Tag objects that are available in this repo
     #
     # Returns Grit::Tag[] (baked)
@@ -62,9 +132,32 @@ module Grit
       Tag.find_all(self)
     end
     
+    # An array of Remote objects representing the remote branches in
+    # this repo
+    #
+    # Returns Grit::Remote[] (baked)
+    def remotes
+      Remote.find_all(self)
+    end
+
+    # An array of Ref objects representing the refs in
+    # this repo
+    #
+    # Returns Grit::Ref[] (baked)
+    def refs
+      [ Head.find_all(self), Tag.find_all(self), Remote.find_all(self) ].flatten
+    end
+
+    def commit_stats(start = 'master', max_count = 10, skip = 0)
+      options = {:max_count => max_count,
+                 :skip => skip}
+      
+      CommitStats.find_all(self, start, options)
+    end
+    
     # An array of Commit objects representing the history of a given ref/commit
     #   +start+ is the branch/commit name (default 'master')
-    #   +max_count+ is the maximum number of commits to return (default 10)
+    #   +max_count+ is the maximum number of commits to return (default 10, use +false+ for all)
     #   +skip+ is the number of commits to skip (default 0)
     #
     # Returns Grit::Commit[] (baked)
@@ -114,24 +207,6 @@ module Grit
       options = {:max_count => 1}
       
       Commit.find_all(self, id, options).first
-    end
-    
-    # Returns a list of commits that is in +other_repo+ but not in self
-    #
-    # Returns Grit::Commit[]
-    def commit_deltas_from(other_repo, ref = "master", other_ref = "master")
-      repo_refs       = self.git.rev_list({}, ref).strip.split("\n")
-      other_repo_refs = other_repo.git.rev_list({}, other_ref).strip.split("\n")
-      
-      (other_repo_refs - repo_refs).map do |ref|
-        Commit.find_all(other_repo, ref, {:max_count => 1}).first
-      end
-      
-      # commits = []
-      # (other_repo_refs - repo_refs).each_slice(5) do |refs| # due to cmdline arg length
-      #   commits.concat Commit.find_all(self, refs.join(" "), {:max_count => refs.size})
-      # end
-      # commits
     end
     
     # The Tree object for the given treeish reference
@@ -189,19 +264,19 @@ module Grit
     #   Grit::Repo.init_bare('/var/git/myrepo.git')
     #
     # Returns Grit::Repo (the newly created repo)
-    def self.init_bare(path, options = {})
+    def self.init_bare(path, git_options = {}, repo_options = {})
       git = Git.new(path)
-      git.init(options)
-      self.new(path)
+      git.init(git_options)
+      self.new(path, repo_options)
     end
     
     # Fork a bare git repository from this repo
     #   +path+ is the full path of the new repo (traditionally ends with /<name>.git)
-    #   +options+ is any additional options to the git clone command
+    #   +options+ is any additional options to the git clone command (:bare and :shared are true by default)
     #
     # Returns Grit::Repo (the newly forked repo)
     def fork_bare(path, options = {})
-      default_options = {:bare => true, :shared => false}
+      default_options = {:bare => true, :shared => true}
       real_options = default_options.merge(options)
       self.git.clone(real_options, self.path, path)
       Repo.new(path)
@@ -248,7 +323,14 @@ module Grit
       options[:prefix] = prefix if prefix
       self.git.archive(options, treeish, "| gzip")
     end
-    
+
+    # run archive directly to a file
+    def archive_to_file(treeish = 'master', prefix = nil, filename = 'archive.tar.gz')
+      options = {}
+      options[:prefix] = prefix if prefix
+      self.git.archive(options, treeish, "| gzip > #{filename}")
+    end
+
     # Enable git-daemon serving of this repository by writing the
     # git-daemon-export-ok file to its git directory
     #
@@ -263,6 +345,10 @@ module Grit
     # Returns nothing
     def disable_daemon_serve
       FileUtils.rm_f(File.join(self.path, DAEMON_EXPORT_FILE))
+    end
+    
+    def gc_auto
+      self.git.gc({:auto => true})
     end
     
     # The list of alternates for this repo
@@ -290,7 +376,9 @@ module Grit
       end
       
       if alts.empty?
-        File.delete(File.join(self.path, *%w{objects info alternates}))
+        File.open(File.join(self.path, *%w{objects info alternates}), 'w') do |f|
+          f.write ''
+        end
       else
         File.open(File.join(self.path, *%w{objects info alternates}), 'w') do |f|
           f.write alts.join("\n")
@@ -300,6 +388,22 @@ module Grit
     
     def config
       @config ||= Config.new(self)
+    end
+    
+    def index
+      Index.new(self)
+    end
+    
+    def update_ref(head, commit_sha)
+      return nil if !commit_sha || (commit_sha.size != 40)
+   
+      ref_heads = File.join(self.path, 'refs', 'heads')
+      FileUtils.mkdir_p(ref_heads)
+      File.open(File.join(ref_heads, head), 'w') do |f|
+        f.write(commit_sha)
+      end
+      commit_sha
+
     end
     
     # Pretty object inspection

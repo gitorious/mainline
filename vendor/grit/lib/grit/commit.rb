@@ -10,6 +10,7 @@ module Grit
     lazy_reader :committed_date
     lazy_reader :message
     lazy_reader :short_message
+    lazy_reader :author_string
     
     # Instantiate a new Commit
     #   +id+ is the id of the commit
@@ -36,7 +37,7 @@ module Grit
     end
     
     def id_abbrev
-      @id[0,7]
+      @id_abbrev ||= @repo.git.rev_parse({}, self.id).chomp[0, 7]
     end
     
     # Create an unbaked Commit containing just the specified attributes
@@ -71,7 +72,7 @@ module Grit
     #
     # Returns Integer
     def self.count(repo, ref)
-      repo.git.rev_list({}, ref).strip.split("\n").size
+      repo.git.rev_list({}, ref).size / 41
     end
     
     # Find all commits matching the given criteria.
@@ -84,7 +85,7 @@ module Grit
     # Returns Grit::Commit[] (baked)
     def self.find_all(repo, ref, options = {})
       allowed_options = [:max_count, :skip, :since]
-      
+          
       default_options = {:pretty => "raw"}
       actual_options = default_options.merge(options)
       
@@ -93,8 +94,10 @@ module Grit
       else
         output = repo.git.rev_list(actual_options.merge(:all => true))
       end
-      
+            
       self.list_from_string(repo, output)
+    rescue Grit::GitRuby::Repository::NoSuchShaFound
+      []
     end
     
     # Parse out commit information into an array of baked Commit objects
@@ -102,11 +105,15 @@ module Grit
     #   +text+ is the text output from the git command (raw format)
     #
     # Returns Grit::Commit[] (baked)
+    #
+    # really should re-write this to be more accepting of non-standard commit messages
+    # - it broke when 'encoding' was introduced - not sure what else might show up
+    #
     def self.list_from_string(repo, text)
       lines = text.split("\n")
       
       commits = []
-      
+            
       while !lines.empty?
         id = lines.shift.split.last
         tree = lines.shift.split.last
@@ -116,6 +123,9 @@ module Grit
         
         author, authored_date = self.actor(lines.shift)
         committer, committed_date = self.actor(lines.shift)
+        
+        # not doing anything with this yet, but it's sometimes there
+        encoding = lines.shift.split.last if lines.first =~ /^encoding/
         
         lines.shift
         
@@ -151,38 +161,39 @@ module Grit
       Diff.list_from_string(repo, text)
     end
 
+    def show
+      diff = @repo.git.show({:full_index => true, :pretty => 'raw'}, @id)
+      if diff =~ /diff --git a/
+        diff = diff.sub(/.+?(diff --git a)/m, '\1')
+      else
+        diff = ''
+      end
+      Diff.list_from_string(@repo, diff)
+    end
+
     def diffs
       if parents.empty?
-        diff = @repo.git.show({:full_index => true, :pretty => 'raw'}, @id)
-        if diff =~ /diff --git a/
-          diff = diff.sub(/.+?(diff --git a)/m, '\1')
-        else
-          diff = ''
-        end
-        Diff.list_from_string(@repo, diff)
+        show
       else
         self.class.diff(@repo, parents.first.id, @id) 
       end
     end
     
     def stats
-      if parents.empty?
-        text = @repo.git.diff({:numstat => true}, @id)
-        text2 = ""
-        text.each_line do |line|
-          (insertions, deletions, filename) = line.split("\t")
-          text2 << "#{deletions}\t#{insertions}\t#{filename}"
-        end
-        text = text2
-      else
-        text = @repo.git.diff({:numstat => true}, parents.first.id, @id)
-      end
-      Stats.list_from_string(@repo, text)
+      stats = @repo.commit_stats(self.sha, 1)[0][-1]
     end
     
     # Convert this Commit to a String which is just the SHA1 id
     def to_s
       @id
+    end
+
+    def sha
+      @id
+    end
+    
+    def date
+      @committed_date
     end
     
     # Pretty object inspection
@@ -199,7 +210,11 @@ module Grit
       m, actor, epoch = *line.match(/^.+? (.*) (\d+) .*$/)
       [Actor.from_string(actor), Time.at(epoch.to_i)]
     end
-
+    
+    def author_string
+      "%s <%s> %s %+05d" % [author.name, author.email, authored_date.to_i, 800]
+    end
+    
     def to_hash
       {
         'id'       => id,

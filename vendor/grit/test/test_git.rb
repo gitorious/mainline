@@ -2,27 +2,29 @@ require File.dirname(__FILE__) + '/helper'
 
 class TestGit < Test::Unit::TestCase
   def setup
-    base = File.join(File.dirname(__FILE__), "..")
-    @git = Git.new(base)
-    @git_bin_base = "#{Git.git_binary} --git-dir='#{base}'"
+    @git = Git.new(File.join(File.dirname(__FILE__), *%w[..]))
   end
   
-  def test_method_missing_calls_execute
-    @git.expects(:execute).with("#{@git_bin_base} version ").returns("")
-    @git.version
+  def teardown
+    Grit.debug = false
   end
-  
-  def test_execute
-    assert_match(/^git version [\d\.]*$/, @git.execute("#{Git.git_binary} version"))
-  end
-  
-  def test_it_escapes_single_quotes_with_shell_escape
-    assert_equal "\\'foo", @git.shell_escape("'foo")
-    assert_equal "\\'foo\\'", @git.e("'foo'")
-  end
-  
+
   def test_method_missing
     assert_match(/^git version [\w\.]*$/, @git.version)
+  end
+  
+  def test_logs_stderr
+    Grit.debug = true
+    Grit.stubs(:log)
+    Grit.expects(:log).with(includes("git: 'bad' is not a git-command"))
+    @git.bad
+  end
+  
+  def testl_logs_stderr_when_skipping_timeout 
+    Grit.debug = true
+    Grit.stubs(:log)
+    Grit.expects(:log).with(includes("git: 'bad' is not a git-command"))
+    @git.bad :timeout => false
   end
   
   def test_transform_options
@@ -34,22 +36,29 @@ class TestGit < Test::Unit::TestCase
     
     assert_equal ["-s", "-t"], @git.transform_options({:s => true, :t => true}).sort
   end
-  
-  def test_transform_options_shell_escapes_arguments
-    assert_equal ["--foo='bazz\\'er'"], @git.transform_options({:foo => "bazz'er"})
-    assert_equal ["-x 'bazz\\'er'"], @git.transform_options({:x => "bazz'er"})
+
+  def test_uses_custom_sh_method
+    @git.expects(:sh)
+    @git.something
   end
-  
-  def test_it_really_shell_escapes_arguments_to_the_git_shell
-    @git.expects(:execute).with("#{@git_bin_base} foo --bar='bazz\\'er'")
-    @git.foo(:bar => "bazz'er")
-    @git.expects(:execute).with("#{@git_bin_base} bar -x 'quu\\'x'")
-    @git.bar(:x => "quu'x")
+
+  def test_can_skip_timeout
+    @git.expects(:wild_sh)
+    @git.something(:timeout => false)
   end
-  
-  def test_it_shell_escapes_the_standalone_argument
-    @git.expects(:execute).with("#{@git_bin_base} foo 'bar\\'s'")
-    @git.foo({}, "bar's")
+
+  def test_raises_if_too_many_bytes
+    @git.instance_variable_set(:@bytes_read, 6000000)
+    assert_raises Grit::Git::GitTimeout do
+      @git.version
+    end
+  end
+
+  def test_raises_on_slow_shell
+    Grit::Git.git_timeout = 0.001
+    assert_raises Grit::Git::GitTimeout do
+      @git.version
+    end
+    Grit::Git.git_timeout = 5.0
   end
 end
-

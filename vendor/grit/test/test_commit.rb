@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/helper'
 
 class TestCommit < Test::Unit::TestCase
   def setup
-    @r = Repo.new(GRIT_REPO)
+    @r = Repo.new(File.join(File.dirname(__FILE__), *%w[dot_git]), :is_bare => true)
   end
   
   # __bake__
@@ -20,6 +20,12 @@ class TestCommit < Test::Unit::TestCase
   
   def test_id_abbrev
     assert_equal '80f136f', @r.commit('80f136f500dfdb8c3e8abf4ae716f875f0a1b57f').id_abbrev
+  end
+  
+  # count
+  
+  def test_count
+    assert_equal 107, Commit.count(@r, 'master')
   end
   
   # diff
@@ -146,19 +152,6 @@ class TestCommit < Test::Unit::TestCase
     assert_equal '100755', diffs[0].b_mode
   end
   
-
-  # stats
-  
-  def test_stats
-    Git.any_instance.expects(:diff).with(
-      {:numstat => true}, 
-      "634396b2f541a9f2d58b00be1a07f0c358b999b3"
-    ).returns(fixture('diff_numstat'))
-    @c = Commit.create(@r, :id => '634396b2f541a9f2d58b00be1a07f0c358b999b3')
-    stats = @c.stats
-    assert_equal ["a.txt", "b.txt"], stats.files.keys.sort
-  end
-  
   # to_s
   
   def test_to_s
@@ -176,22 +169,22 @@ class TestCommit < Test::Unit::TestCase
   # to_hash
 
   def test_to_hash
+    old_tz, ENV["TZ"] = ENV["TZ"], "US/Pacific"
     @c = Commit.create(@r, :id => '4c8124ffcf4039d292442eeccabdeca5af5c5017')
-
+    date = Time.parse('Wed Oct 10 03:06:12 -0400 2007')
     expected = {
       'parents' => ['id' => "634396b2f541a9f2d58b00be1a07f0c358b999b3"],
-      'committed_date' => Time.parse("2007-10-10T00:06:12-07:00").localtime.xmlschema,
+      'committed_date' => date.xmlschema,
       'tree' => "672eca9b7f9e09c22dcb128c283e8c3c8d7697a4",
-      'authored_date' => Time.parse("2007-10-10T00:06:12-07:00").localtime.xmlschema,
+      'authored_date' => date.xmlschema,
       'committer' => {'email' => "tom@mojombo.com", 'name' => "Tom Preston-Werner"},
       'message' => "implement Grit#heads",
       'author' => {'email' => "tom@mojombo.com", 'name' => "Tom Preston-Werner"},
       'id' => "4c8124ffcf4039d292442eeccabdeca5af5c5017"
     }
-    
-    generated_hash = @c.to_hash
-    expected.keys.each do |exp_key|
-      assert_equal expected[exp_key], generated_hash[exp_key]
-    end
+
+    assert_equal expected, @c.to_hash
+  ensure
+    ENV["TZ"] = old_tz
   end
 end
