@@ -20,21 +20,22 @@
 #++
 %>
 
-<h1>Perguntas e Respostas</h1>
+<h1>Preguntas frecuentes</h1>
 
-<h3>Eu recebo um "fatal: no matching remote head" quando tento clonar um repositório</h3>
+<h3>Cuando intento clonar un repositorio obtengo "fatal: no matching remote head"</h3>
 <p>
-  Muito provavelmente o repositório está vazio, e essa mensagem de erro é o jeito amigável
-  do git de dizer isso. Veja abaixo (ou então clicando em "mais informações" próximo à
-  "URL Privada de Push" do repositório) para informações de como gravar coisas nele.
+  Muy probablemente el repositorio que está intentando clonar está vacío, y el
+  mensaje de error es la forma amistosa de git de dejárselo saber. Vea debajo
+  (o haciendo click en "más información" al lado de la "push URL" del repositorio)
+  para encontrar información sobre cómo publicar código.
 </p>
 
 <hr />
 
-<h3>Como eu aponto meu repositório local de Git no Gitorious?</h3>
+<h3>¿Cómo hago para apuntar mi repositorio Git local hacia Gitorious?</h3>
 <p>
-  A maneira mais fácil é colocando alguma coisa parecida com o seguinte no seu
-  arquivo <code>.git/config</code> do repositório que quer enviar para o Gitorious:
+  La manera más fácil es poniendo algo como lo siguiente en el archivo <code>.git/config</code>
+  del repositorio que quiere publicar:
 <pre>
 [remote "origin"]
        url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
@@ -43,65 +44,64 @@
        remote = origin
        merge = refs/heads/master
 </pre>
-  e então <code>git push origin master</code> para enviar os códigos para o Gitorious.
+  y entonces <code>git push origin master</code> para publicar el código en Gitorious.
 </p>
 <p>
-  Você também pode executar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", ou
-  você pode configurar um repositório remoto fazendo o seguinte (adicione --fetch para 
-  adicionar a chamada para pegar a configuração de cima):
+  También puede simplemente ejecutar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para 
+  obtener la configuración de arriba):
   <pre>
   git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-  # para gravar o branch master para o repositório remoto origin que adicionamos acima:
+  # para publicar el branch master al origin remote que agregamos arriba:
   git push origin master 
-  # depois disso você pode fazer apenas:
+  # después de eso puede simplemente hacer:
   git push
   </pre>
 </p>
 
 <hr />
 
-<h3>Por que meu e-mail está sendo mostrado?</h3>
+<h3>¿Por qué se muestra mi correo electrónico?</h3>
 <p>
-  O e-mail que você usou para se registrar no Gitorious é mostrado para outros usuários,
-  para que eles possam contactá-lo sobre seus projetos se precisarem. Nós tomamos medidas
-  leves contra crawlers por não mostrá-lo totalmente em texto puro.<br />
-  Mas somente para ser claro: nós não vendemos ou usamos qualquer informação que você der para
-  <%= GitoriousConfig['gitorious_host'] -%> contra você ou para qualquer ganho financeiro e/ou
-  pessoal.
+  El correo electrónico que utilizó para registrarse con Gitorious se muestra a otros suarios
+  para que puedan contactarlo sobre sus proyectos si así lo necesitan. De todas formas tomamos
+  algunas medidas simples contra crawlers al no mostrar toda su dirección en texto plano. <br />
+  Pero sólo para que quede claro: nosotros no vendemos ni usamos la información que usted brinda
+  a <%= GitoriousConfig['gitorious_host'] -%> para obtener ganancias económicas o personales.
 </p>
 
 <hr />
 
-<h3>Por que eu preciso fazer upload da minha chave pública de SSH?</h3>
+<h3>¿Por qué necesito cargar mi llave pública SSH?</h3>
 <p>
-  Quando você grava no repositório Git, sua chave pública é como nós o autenticamos
-  e checamos que você tem as permissões necessária para fazer um commit num dado
-  repositório.
+  Cuando usted publica en un repositorio Git, su clave pública es la forma que tenemos
+  para reconocerlo y verificar si tiene los permisos necesarios para hacer commits en
+  un repositorio dado.
 </p>
 <hr />
 
-<h3>Eu tenho Windows. Como faço para gerar as chaves SSH que preciso?</h3>
+<h3>Tengo Windows. ¿Cómo puedo generar la llave SSH requerida?</h3>
 <p>
-  A maneira recomendada para usar Git no Windows é a versão
-  <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%>. Ela vem junto com um
-  suporte mínimo de Cygwin. Quando terminar de instalar, você terá um ícone "Git Bash"
-  na sua Área de Trabalho. Dê duplo-clique para abrí-lo e agora você pode usar comandos
-  no estilo Linux como <code>"ssh-keygen -t rsa"</code>. Apenas vá teclando "Enter" a
-  cada pergunta que ele fizer e finalmente você terá seu par de chaves sob o diretório
-  ".ssh". Por exemplo, digite <code>"cat ~/.ssh/id_rsa.pub"</code>. Essa é a chave pública
-  que você deve copiar e colar na sua conta no Gitorious.
+  La forma recomendada de usar Git en Windows es usando la
+  versión <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%>. Trae incluido
+  un soporte mínimo para Cygwin. Cuando termine de instalarla, tendrá un ícono "Git Bash"
+  en su escritorio. Haga dobre click para abrirlo y podrá utilizar comandos del estilo de
+  Linux, como <code>"ssh-keygen -t rsa"</code>. Sólo presione 'Return' en cada pregunta que
+  le realice y tendrá su par de llaves en el directorio ".ssh". Por ejemplo, escriba
+  <code>"cat ~/.ssh/id_rsa.pub"</code>. Esa es la llave pública que necesita copiar y pegar
+  en su cuenta de Gitorious.
 </p>
+
 <hr />
 
-<h3>Que versão de Git o Gitorious está usando?</h3>
+<h3>¿Qué versión de Git está usando Gitorious?</h3>
 <p>
-  <code>git versão 1.5.4.4</code>
+  <code>git versión 1.5.4.4</code>
 </p>
 
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li><%= link_to "Sobre", about_path(:anchor => "about") -%></li>
-    <li><%= link_to "Contato", about_path(:anchor => "contact") -%></li>
-    <li><%= link_to "Q&A", faq_path -%></li>
+    <li><%= link_to "Acerca de", about_path(:anchor => "about") -%></li>
+    <li><%= link_to "Contacto", about_path(:anchor => "contact") -%></li>
+    <li><%= link_to "Preguntas frecuentes", faq_path -%></li>
   </ul>
 <% end -%>
