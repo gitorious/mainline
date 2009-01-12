@@ -35,8 +35,8 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
-    projects.resources(:repositories, :member => { 
-      :new => :get, :create => :post, 
+    projects.resources(:repositories, :member => {
+      :clone => :get, :create_clone => :post,
       :writable_by => :get, 
       :confirm_delete => :get
     }, :as => "repos") do |repo|

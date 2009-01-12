@@ -20,7 +20,7 @@ class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :writable_by]
   before_filter :find_project
   before_filter :require_adminship, :only => [:edit, :update]
-  before_filter :require_user_has_ssh_keys, :only => [:new, :create]
+  before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   session :off, :only => [:writable_by]
   
   def index
@@ -40,9 +40,7 @@ class RepositoriesController < ApplicationController
     end
   end
   
-  # note the #new+#create actions are members in the routes, hence they require
-  # an id (of the repos to clone).
-  def new
+  def clone
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_error"
@@ -52,7 +50,7 @@ class RepositoriesController < ApplicationController
     @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
   end
   
-  def create
+  def create_clone
     @repository_to_clone = @project.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?
       target_path = project_repository_path(@project, @repository_to_clone)
@@ -80,7 +78,7 @@ class RepositoriesController < ApplicationController
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }        
       else
-        format.html { render :action => "new" }
+        format.html { render :action => "clone" }
         format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
       end
     end

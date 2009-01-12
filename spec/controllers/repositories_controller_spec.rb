@@ -83,7 +83,7 @@ describe RepositoriesController, "show as XML" do
   end
 end
 
-describe RepositoriesController, "new" do
+describe RepositoriesController, "clone" do
   
   before(:each) do
     login_as :johan
@@ -92,7 +92,9 @@ describe RepositoriesController, "new" do
   end
   
   def do_get()
-    get :new, :project_id => @project.slug, :id => @repository.name
+    #get :new, :project_id => @project.slug, :id => @repository.name
+    #get clone_project_repository_path(@project, @repository)
+    get :clone, :project_id => @project.slug, :id => @repository.name
   end
   
   it "should require login" do
@@ -101,7 +103,7 @@ describe RepositoriesController, "new" do
     response.should redirect_to(new_sessions_path)
   end
   
-  it "GET projects/1/repositories/3/new is successful" do
+  it "GET projects/1/repositories/3/clone is successful" do
     Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
     @repository.stub!(:has_commits?).and_return(true)
     @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
@@ -131,7 +133,7 @@ describe RepositoriesController, "new" do
   end
 end
 
-describe RepositoriesController, "create" do
+describe RepositoriesController, "create_clone" do
   
   before(:each) do
     login_as :johan
@@ -140,7 +142,7 @@ describe RepositoriesController, "create" do
   end
   
   def do_post(opts={})
-    post(:create, :project_id => @project.slug, :id => @repository.name,
+    post(:create_clone, :project_id => @project.slug, :id => @repository.name,
       :repository => opts)
   end
   
@@ -176,7 +178,7 @@ describe RepositoriesController, "create" do
   end
 end
 
-describe RepositoriesController, "create as XML" do
+describe RepositoriesController, "create_clone as XML" do
   
   before(:each) do
     authorize_as :johan
@@ -186,7 +188,7 @@ describe RepositoriesController, "create as XML" do
   
   def do_post(opts={})
     @request.env["HTTP_ACCEPT"] = "application/xml"
-    post(:create, :project_id => @project.slug, :id => @repository.name,
+    post(:create_clone, :project_id => @project.slug, :id => @repository.name,
       :repository => opts)
   end
   

@@ -22,7 +22,7 @@
 <%= error_messages_for :repository -%>
 
 <% form_for @repository, :repository, 
-      :url => create_project_repository_path(@project, @repository_to_clone) do |f| -%>
+      :url => create_clone_project_repository_path(@project, @repository_to_clone) do |f| -%>
   <p>
     <%= f.label :name, t("views.repos.name", :name => current_user.login) -%><br />
     <%= f.text_field :name, :class => "text" -%>
