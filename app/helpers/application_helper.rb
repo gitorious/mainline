@@ -171,7 +171,7 @@ module ApplicationHelper
         action = "<strong>#{I18n.t("application_helper.event_status_cloned")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(target.name), project_repository_url(project, target)}"
         category = "repository"
       when Action::DELETE_REPOSITORY
-        action = "<strong>#{I18n.t("application_helper.event_status_cloned")}</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"
+        action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"
         category = "project"
       when Action::COMMIT
         project = event.project

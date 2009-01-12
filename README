@@ -62,7 +62,7 @@ Next, get the gitorious code itself:
 Install each of these Ruby libraries/bindings/gems:
 
 * mysql
-* BlueCloth     (http://rubyforge.org/projects/bluecloth/)
+* RedCloth      (http://redcloth.org/)
 * mime-types    (http://rubyforge.org/projects/mime-types)
 * oniguruma     (http://rubyforge.org/projects/oniguruma)
 * textpow       (http://rubyforge.org/projects/textpow)
@@ -72,8 +72,9 @@ Install each of these Ruby libraries/bindings/gems:
 * ultrasphinx
 * rmagick       (in ubuntu I had to sudo apt-get install librmagick-ruby librmagick-ruby-doc)
 * ruby-openid   
+* ruby-iconv
 
-  # gem install mysql BlueCloth mime-types oniguruma textpow \
+  # gem install mysql RedCloth mime-types oniguruma textpow \
       chronic rmagick geoip ultrasphinx ruby-openid 
 
 === Database
