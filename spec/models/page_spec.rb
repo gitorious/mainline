@@ -76,6 +76,13 @@ describe Page do
     p2.new?.should == false
   end
   
+  it "has a basename without the extension" do
+    p = Page.find("HowTo", @repo)
+    p.title.should == "HowTo"
+    
+    p.to_param.should == p.title
+  end
+  
   def delete_test_repo
     FileUtils.rm_rf(@path) if File.exist?(@path)
   end

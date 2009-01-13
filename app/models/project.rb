@@ -25,13 +25,16 @@ class Project < ActiveRecord::Base
   belongs_to  :user
   has_many    :comments, :dependent => :destroy
   has_many    :repositories, :order => "repositories.mainline desc, repositories.created_at asc",
-      :dependent => :destroy
-  has_one     :mainline_repository, :conditions => ["mainline = ?", true],
+      :conditions => ["kind = ?", Repository::KIND_PROJECT_REPO], :dependent => :destroy
+  has_one     :mainline_repository, 
+    :conditions => ["mainline = ? and kind = ?", true, Repository::KIND_PROJECT_REPO],
     :class_name => "Repository"
-  has_many    :repository_clones, :conditions => ["mainline = ?", false],
+  has_many    :repository_clones, 
+    :conditions => ["mainline = ? and kind = ?", false, Repository::KIND_PROJECT_REPO],
     :class_name => "Repository"
   has_many    :events, :order => "created_at asc", :dependent => :destroy
-  has_one     :wiki_repository, :class_name => "Repository"
+  has_one     :wiki_repository, :class_name => "Repository", 
+    :conditions => ["kind = ?", Repository::KIND_WIKI]
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [

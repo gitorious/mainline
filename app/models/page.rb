@@ -18,7 +18,9 @@
 class Page
   class UserNotSetError < StandardError; end
   
-  def self.find(name, repo, format = "textile")
+  DEFAULT_FORMAT = "textile"
+  
+  def self.find(name, repo, format = DEFAULT_FORMAT)
     fullname = "#{name}.#{format}"
     blob = find_or_create_blob(fullname, repo)
     new(fullname, blob, repo)
@@ -51,6 +53,19 @@ class Page
     @blob.id.nil?
   end
   
+  def new_record?
+    # always false as a easy hack around rails' form handling
+    false 
+  end
+  
+  def to_param
+    title
+  end
+  
+  def title
+    name.sub(/\.#{DEFAULT_FORMAT}$/, "")
+  end
+  
   def reload
     @blob = @repo.tree/@name
   end
@@ -61,8 +76,11 @@ class Page
     index = @repo.index
     index.add(@name, @content)
     msg = new? ? "Created #{@name}" : "Updated #{@name}"
-    head = @repo.commit("HEAD")
-    index.read_tree(head.tree.id)
-    index.commit(msg, head.id, actor)
+    if head = @repo.commit("HEAD")
+      parents = Array(index.read_tree(head.tree.id)).map{|h| h.id }
+    else
+      parents = []
+    end
+    index.commit(msg, parents, actor)
   end
 end

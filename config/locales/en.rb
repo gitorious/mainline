@@ -350,6 +350,8 @@
       :common => {
         :confirm => "Are you sure?",
         :create => "Create",
+        :creating => "Creating",
+        :editing => "Editing",
         :save => "Save",
         :delete => "delete",
         :add => "Add",

@@ -33,3 +33,11 @@ johans_moe_clone:
   updated_at: 2007-11-18 01:21:21
   mainline: false
   parent_id: 3
+johans_wiki:
+  name: <%= "mainline#{Repository::WIKI_NAME_SUFFIX}" %>
+  project_id: 1
+  user_id: 1
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
+  mainline: false
+  kind: <%= "#{Repository::KIND_WIKI}" %>

@@ -143,6 +143,13 @@ describe Project do
     project.reload.wiki_repository.should == repo
   end
   
+  it "should have a wiki repository" do
+    project = projects(:johans)
+    project.wiki_repository.should == repositories(:johans_wiki)
+    project.repositories.should_not include(repositories(:johans_wiki))
+    project.repository_clones.should_not include(repositories(:johans_wiki))
+  end
+  
   describe "Project events" do
     before(:each) do 
       @project = projects(:johans)
