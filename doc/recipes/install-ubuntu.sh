@@ -11,6 +11,17 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -q -y build-essential apache2 mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev apache2-dev sendmail
 
+# Checks for 64-bit flag
+while [ "$#" -gt "0" ]
+do
+  case $1 in
+      -64)
+          SIXTY_FOUR_FLAG=1
+          ;;
+  esac
+  shift
+done
+
 /etc/init.d/mysql stop
 mysqld_safe --skip-grant-tables &
 sleep 5
@@ -39,8 +50,27 @@ cd ImageMagick-6.4.6-9
 ./configure && make && make install
 cd ..
 
-test -f ruby-enterprise_1.8.6-20081215-i386.deb || wget http://rubyforge.org/frs/download.php/48625/ruby-enterprise_1.8.6-20081215-i386.deb
-dpkg -i ruby-enterprise_1.8.6-20081215-i386.deb
+if [ "$SIXTY_FOUR_FLAG" = "1" ]; then
+    # unattended ruby enterprise install for all other OSes (only tested on Ubuntu 8.10 64-bit)
+    # there may be some performance penalty
+    # but Gitorious is not really a performance-hungry application
+    #
+    # More information about state of 64-bit support on Ruby Enterprise:
+    # http://blog.phusion.nl/2008/12/30/ruby-enterprise-edition-second-sponsorship-campaign/
+    # http://www.rubyenterpriseedition.com/faq.html#thirty_three_percent_mem_reduction
+
+    cd ~/tmp
+    test -f ruby-enterprise-1.8.6-20081215.tar.gz || wget http://rubyforge.org/frs/download.php/48623/ruby-enterprise-1.8.6-20081215.tar.gz
+    tar xzvf ruby-enterprise-1.8.6-20081215.tar.gz
+    echo "" > unattended-install-script
+    echo "/opt/ruby-enterprise" >> unattended-install-script
+    cd ruby-enterprise-1.8.6-20081215 && cat ../unattended-install-script | ./installer
+    cd ..
+    rm unattended-install-script
+else
+    test -f ruby-enterprise_1.8.6-20081215-i386.deb || wget http://rubyforge.org/frs/download.php/48625/ruby-enterprise_1.8.6-20081215-i386.deb
+    dpkg -i ruby-enterprise_1.8.6-20081215-i386.deb
+fi
 
 if [ -f /etc/profile.git ]; then cp /etc/profile.git /etc/profile; fi
 cp /etc/profile /etc/profile.git
@@ -55,7 +85,7 @@ cat /etc/ld.so.conf >> ld.so.conf
 cp /etc/ld.so.conf /etc/ld.so.conf.git
 mv ld.so.conf /etc/ld.so.conf
 
-source /etc/profile
+. /etc/profile
 ldconfig
 
 test -f /usr/bin/ruby.old || mv /usr/bin/ruby /usr/bin/ruby.old
@@ -63,7 +93,6 @@ test -f /usr/bin/ruby || ln -s /opt/ruby-enterprise/bin/ruby /usr/bin/ruby
 
 gem install passenger --no-rdoc --no-ri --version=2.0.6
 yes '' | /opt/ruby-enterprise/bin/passenger-install-apache2-module
-
 
 if [ -f /etc/apache2/mods-available/passenger.load ]; then rm /etc/apache2/mods-available/passenger.load; fi
 if [ -f /etc/apache2/mods-available/passenger.conf ]; then rm /etc/apache2/mods-available/passenger.conf; fi
