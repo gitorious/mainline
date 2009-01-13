@@ -1,4 +1,5 @@
 module PagesHelper
+  include CommitsHelper
   
   def wikize(content)
     content = wiki_link(content)

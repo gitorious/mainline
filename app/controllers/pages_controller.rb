@@ -38,14 +38,20 @@ class PagesController < ApplicationController
   def update
     @page = Page.find(params[:id], @project.wiki_repository.git)
     @page.user = current_user
-    if @page.content != params[:page][:content]
-      @page.content = params[:page][:content]
-    end
     
-    if @page.save
+    if @page.content != params[:page][:content] && @page.save
       redirect_to project_page_path(@project, @page)
     else
       render :action => "edit"
     end
+  end
+  
+  def history
+    @page = Page.find(params[:id], @project.wiki_repository.git)    
+    if @page.new?
+      redirect_to edit_project_page_path(@project, @page) and return
+    end
+    
+    @commits = @page.history(30)
   end
 end

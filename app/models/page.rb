@@ -97,4 +97,8 @@ class Page
     end
     index.commit(msg, parents, actor, last_tree)
   end
+  
+  def history(max_count = 30)
+    @repo.log("master", @name, {:max_count => max_count})
+  end
 end

@@ -99,6 +99,16 @@ describe Page do
     p.committed_by_user.should == users(:johan)
   end
   
+  it "should have the commit history of a page" do
+    p = Page.find("HowTo", @repo)
+    p.content = "something else"
+    p.user = users(:johan); p.save
+    
+    p.history.size.should == 2
+    p.history.first.message.should == "Updated HowTo"
+    p.history.last.message.should == "first commit"
+  end
+  
   def delete_test_repo
     FileUtils.rm_rf(@path) if File.exist?(@path)
   end

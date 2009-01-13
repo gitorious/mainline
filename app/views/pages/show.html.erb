@@ -1,6 +1,6 @@
 <div class="page-header">
   <%= page_crumbs(@page) -%>
-  <% if logged_in? -%><p class="page-actions"><%= edit_link(@page) -%></p><% end -%>
+  <%= render :partial => "actions" -%>
   <h1>
     <%= h(@page.title) -%> 
   </h1>
@@ -12,9 +12,7 @@
 
 <% if commit = @page.commit -%>
 <div class="page-meta">
-  <% if logged_in? -%>
-    <p class="page-actions"><%= edit_link(@page) -%></p>
-  <% end -%>
+  <%= render :partial => "actions" -%>
   <p>
     <% if @page.committed_by_user -%>
       <%= t("views.pages.last_edited_by", 

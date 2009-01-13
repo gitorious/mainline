@@ -1052,10 +1052,18 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 .page-meta p { margin:0; padding:0;}
 .page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
+.page-meta .page-actions li {
+  padding:0;
+  margin:0;
+}
+
+.page-history .diff {
+  margin-top: 10px;
+}
 
 .page-header {
   border-bottom: 1px solid #ccc;
-  padding-bottom: 5px;
+  padding-bottom: 10px;
   margin-bottom: 10px;
 }
 .page-header h1 {
