@@ -109,6 +109,7 @@
         :logout => "Logout",
         :project_overview => "Project Overview",
         :repositories => "Repositories",
+        :pages => "Wiki pages",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
       },

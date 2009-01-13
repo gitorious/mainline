@@ -39,7 +39,12 @@ class PagesController < ApplicationController
     @page = Page.find(params[:id], @project.wiki_repository.git)
     @page.user = current_user
     
-    if @page.content != params[:page][:content] && @page.save
+    if @page.content == params[:page][:content]
+      render :action => "edit" and return
+    end
+
+    @page.content = params[:page][:content]
+    if @page.save
       redirect_to project_page_path(@project, @page)
     else
       render :action => "edit"

@@ -74,6 +74,10 @@ module ApplicationHelper
             blobs committers].include?(controller.controller_name )
         return "selected"
       end
+    when :pages
+      if %w[pages].include?(controller.controller_name )
+        return "selected"
+      end
     end
   end
   
