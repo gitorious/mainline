@@ -199,7 +199,7 @@
         :too_big => lambda { |this, path| "Este archivo es demasiado grande para ser presentado en un tiempo razonable, " +
           this.link_to("intente ver los datos puros", path) },
         :message => lambda { |this, mime, path| "No es seguro que podamos presentar este blob de forma adecuada (es un mimetype \"#{mime}\"), " +
-          this.link_to("intente ver los datos puros", path) },
+          this.link_to("intente ver los datos puros", path) +
           "y vea si su navegador sabe cómo hacerlo." },
       },
       :comments => {
