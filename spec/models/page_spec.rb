@@ -25,7 +25,7 @@ describe Page do
     FileUtils.mkdir(@path)
     Dir.chdir(@path) do
       File.open("HowTo.textile", "wb"){|f| f.puts "Hello world!" }
-      `git init; git add .; git commit -m "first"`
+      `git init; git add .; git commit --author='Johan Sorensen <johan@johansorensen.com>' -m "first commit"`
     end
     @repo = Grit::Repo.new(@path)
   end
@@ -81,6 +81,22 @@ describe Page do
     p.title.should == "HowTo"
     
     p.to_param.should == p.title
+  end
+  
+  it "should have a commit" do
+    p = Page.find("HowTo", @repo)
+    p.commit.should be_instance_of(Grit::Commit)
+    p.commit.committer.email.should == "johan@johansorensen.com"
+    p.commit.message.should == "first commit"
+    
+    p2 = Page.find("somethingnew", @repo)
+    p2.new?.should == true
+    p2.commit.should == nil
+  end
+  
+  it "should have a committed by user" do
+    p = Page.find("HowTo", @repo)
+    p.committed_by_user.should == users(:johan)
   end
   
   def delete_test_repo

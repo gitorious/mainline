@@ -165,6 +165,10 @@ class User < ActiveRecord::Base
   def to_grit_actor
     Grit::Actor.new(fullname.blank? ? login : fullname, email)
   end
+  
+  def title
+    fullname.blank? ? login : fullname
+  end
 
   protected
     # before filter

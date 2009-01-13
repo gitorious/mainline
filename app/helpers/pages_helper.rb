@@ -14,4 +14,17 @@ module PagesHelper
     end
   end
   
+  def edit_link(page)
+    link_to(t("views.common.edit")+" "+t("views.pages.page"), 
+          edit_project_page_path(@project, page.title))
+  end
+  
+  def page_crumbs(page)
+    return if page.title == "Home"
+    crumbs = %Q{<ul class="page-crumbs">}
+    crumbs << %Q{<li>#{link_to("Home", project_page_path(@project, "Home"))} &raquo;</li>}
+    crumbs << %Q{<li class="current">#{page.title}</li>}
+    crumbs << "</ul>"
+  end
+  
 end

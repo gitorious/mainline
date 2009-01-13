@@ -70,17 +70,31 @@ class Page
     @blob = @repo.tree/@name
   end
   
+  def commit
+    return if new?
+    logs = @repo.log("master", @name, {:max_count => 1})
+    return if logs.empty?
+    logs.first
+  end
+  
+  def committed_by_user
+    return user if new?
+    User.find_by_email(commit.committer.email)
+  end
+  
   def save
     raise UserNotSetError unless user
     actor = user.to_grit_actor
     index = @repo.index
     index.add(@name, @content)
-    msg = new? ? "Created #{@name}" : "Updated #{@name}"
+    msg = new? ? "Created #{@name}" : "Updated #{title}"
     if head = @repo.commit("HEAD")
-      parents = Array(index.read_tree(head.tree.id)).map{|h| h.id }
+      parents = [head.id]
+      last_tree = index.read_tree(head.tree.id)
     else
       parents = []
+      last_tree = nil
     end
-    index.commit(msg, parents, actor)
+    index.commit(msg, parents, actor, last_tree)
   end
 end

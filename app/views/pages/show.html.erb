@@ -1,4 +1,29 @@
+<div class="page-header">
+  <%= page_crumbs(@page) -%>
+  <% if logged_in? -%><p class="page-actions"><%= edit_link(@page) -%></p><% end -%>
+  <h1>
+    <%= h(@page.title) -%> 
+  </h1>
+</div>
+
 <div class="page">
-  <h1><%= h(@page.title) -%></h1>
   <%= wikize(@page.content) -%>
 </div>
+
+<% if commit = @page.commit -%>
+<div class="page-meta">
+  <% if logged_in? -%>
+    <p class="page-actions"><%= edit_link(@page) -%></p>
+  <% end -%>
+  <p>
+    <% if @page.committed_by_user -%>
+      <%= t("views.pages.last_edited_by", 
+          :link_or_name => link_to(@page.committed_by_user.title, user_path(@page.committed_by_user))) -%>
+    <% else -%>
+      <%= t("views.pages.last_edited_by", :link_or_name => h(commit.committer.name)) -%>
+    <% end -%>
+    <%= commit.date.to_s(:short) -%>
+  </p>
+  <p><em><%= h(commit.message) -%></em></p>
+</div>
+<% end -%>
