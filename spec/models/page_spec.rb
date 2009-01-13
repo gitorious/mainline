@@ -109,6 +109,17 @@ describe Page do
     p.history.last.message.should == "first commit"
   end
   
+  it "should validate the name of the page" do
+    p = Page.find("kernel#wtf", @repo)
+    p.user = users(:johan)
+    p.valid?.should == false
+    p.save.should == false
+    
+    Page.find("Kernel", @repo).valid?.should == true
+    Page.find("KernelWhat", @repo).valid?.should == true
+    Page.find("KernelWhatTheFsck", @repo).valid?.should == true
+  end
+  
   def delete_test_repo
     FileUtils.rm_rf(@path) if File.exist?(@path)
   end

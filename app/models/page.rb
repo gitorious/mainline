@@ -19,6 +19,8 @@ class Page
   class UserNotSetError < StandardError; end
   
   DEFAULT_FORMAT = "textile"
+  # TODO: support nested pages
+  TITLE_FORMAT = /([A-Z][a-z]+)/.freeze
   
   def self.find(name, repo, format = DEFAULT_FORMAT)
     fullname = "#{name}.#{format}"
@@ -82,7 +84,12 @@ class Page
     User.find_by_email(commit.committer.email)
   end
   
+  def valid?
+    (title =~ TITLE_FORMAT)  == 0
+  end
+  
   def save
+    return false unless valid?
     raise UserNotSetError unless user
     actor = user.to_grit_actor
     index = @repo.index

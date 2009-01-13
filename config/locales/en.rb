@@ -67,6 +67,10 @@
       :reset_password_notice => "A new password has been sent to your email",
       :reset_password_error => "Invalid email",
     },
+    :pages_controller => {
+      :invalid_page_error => "invalid page, badly formatted title or body",
+      :no_changes => "No changes was submitted",
+    },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
       :event_status_created => "created project",

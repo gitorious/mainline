@@ -40,6 +40,7 @@ class PagesController < ApplicationController
     @page.user = current_user
     
     if @page.content == params[:page][:content]
+      flash[:error] = I18n.t("pages_controller.no_changes")
       render :action => "edit" and return
     end
 
@@ -47,6 +48,7 @@ class PagesController < ApplicationController
     if @page.save
       redirect_to project_page_path(@project, @page)
     else
+      flash[:error] = I18n.t("pages_controller.invalid_page_error")
       render :action => "edit"
     end
   end
