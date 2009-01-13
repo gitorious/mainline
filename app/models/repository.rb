@@ -20,6 +20,11 @@
 #++
 
 class Repository < ActiveRecord::Base
+  
+  KIND_PROJECT_REPO = 0
+  KIND_WIKI = 1
+  WIKI_NAME_SUFFIX = "-gitorious-wiki"
+  
   belongs_to  :user
   belongs_to  :project
   belongs_to  :parent, :class_name => "Repository"
@@ -235,6 +240,14 @@ class Repository < ActiveRecord::Base
   
   def cloned_from(ip, country_code = "--", country_name = nil)
     cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name)
+  end
+  
+  def wiki?
+    kind == KIND_WIKI
+  end
+  
+  def project_repo?
+    kind == KIND_PROJECT_REPO
   end
   
   protected

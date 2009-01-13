@@ -331,6 +331,15 @@ describe Repository do
     users.values.map(&:login).sort.should == users(:johan, :moe).map(&:login).sort
   end
   
+  it "know if it's a normal project repository" do
+    @repository.project_repo?.should == true
+  end
+  
+  it "know if it's a wiki repo" do
+    @repository.kind = Repository::KIND_WIKI
+    @repository.wiki?.should == true
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)

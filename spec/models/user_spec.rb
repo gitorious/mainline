@@ -193,6 +193,16 @@ describe User do
     u = users(:johan)
     u.is_openid_only?.should == false
   end
+  
+  it "should return an grit actor object" do
+    js = users(:johan)
+    actor = js.to_grit_actor
+    actor.should be_instance_of(Grit::Actor)
+    actor.name.should == js.login
+    actor.email.should == js.email
+    js.fullname = "sonic the hedgehog"
+    js.to_grit_actor.name.should == js.fullname
+  end
  
   protected
     def create_user(options = {})

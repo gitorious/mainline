@@ -25,12 +25,13 @@ class Project < ActiveRecord::Base
   belongs_to  :user
   has_many    :comments, :dependent => :destroy
   has_many    :repositories, :order => "repositories.mainline desc, repositories.created_at asc",
-    :dependent => :destroy
+      :dependent => :destroy
   has_one     :mainline_repository, :conditions => ["mainline = ?", true],
     :class_name => "Repository"
   has_many    :repository_clones, :conditions => ["mainline = ?", false],
     :class_name => "Repository"
   has_many    :events, :order => "created_at asc", :dependent => :destroy
+  has_one     :wiki_repository, :class_name => "Repository"
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [

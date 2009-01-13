@@ -133,6 +133,15 @@ describe Project do
       project.send(attr).should be_blank
     end
   end
+
+  it "should find or create an associated wiki repo" do
+    project = projects(:johans)
+    repo = repositories(:johans)
+    repo.kind = Repository::KIND_WIKI
+    project.wiki_repository = repo
+    project.save!
+    project.reload.wiki_repository.should == repo
+  end
   
   describe "Project events" do
     before(:each) do 
