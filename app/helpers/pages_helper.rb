@@ -23,10 +23,14 @@ module PagesHelper
     auto_link(textilize(sanitize(content)), :urls)
   end
   
+  WIKI_WORD = /\b[A-Z][a-z]+[A-Z]\w+\b/
+  BRACKETED_WIKI_WORD = /\[\[\s*([A-Z][a-z]+([A-Z][a-z]+)?)\s*\]\]/
+  
   def wiki_link(content)
-    # TODO: support nested pages
-    #content.gsub(/([A-Z][a-z\/]+[A-Z][A-Za-z0-9]+)/) do |page_link|
-    content.gsub(/([A-Z][a-z]+[A-Z][A-Za-z0-9]+)/) do |page_link|
+    content.gsub(Regexp.union(WIKI_WORD, BRACKETED_WIKI_WORD)) do |page_link|
+      if bracketed_name = Regexp.last_match.captures.first
+        page_link = bracketed_name
+      end
       link_to(page_link, project_page_path(@project, page_link), 
                 :class => "todo missing_or_existing")
     end
