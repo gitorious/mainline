@@ -1043,6 +1043,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 /* Page */
+.wiki-page {
+  margin-left: 20px;
+  margin-right: 20px;
+}
 .page-meta { 
   font-size:11px; 
   color: #666; 
