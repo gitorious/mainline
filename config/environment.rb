@@ -31,8 +31,8 @@ Rails::Initializer.run do |config|
   config.gem "chronic",      :version => '0.2.3'
   config.gem "geoip",        :version => '0.8.0'
   config.gem "daemons",      :version => '1.0.10', :lib => false
-  config.gem "rspec-rails",  :version => '1.1.11', :lib => false
-  config.gem "rspec",        :version => '1.1.11', :lib => false
+  config.gem "rspec-rails",  :version => '1.1.12', :lib => false
+  config.gem "rspec",        :version => '1.1.12', :lib => false
   config.gem "hoe",          :version => '1.8.2', :lib => false
   config.gem "echoe",        :version => '3.0.2', :lib => false
   config.gem "RedCloth",     :version => '4.1.1', :lib => "redcloth"

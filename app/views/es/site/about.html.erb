@@ -1,0 +1,81 @@
+<%
+#--
+#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<% @page_title = "Acerca de Gitorious" -%>
+<div class="section">
+  <a name="about"></a><h1>Acerca de Gitorious</h1>
+
+  <p><strong><a href="/p/gitorious">Gitorious</a> tiene como objetivo proveer
+	una interesante manera de colaborar con el código opensource de forma distribuida</strong></p>
+  
+  <h2>The idea</h2>
+  <p>Los centros tradicionales para el gerenciamiento de código y proyectos ofrecen
+    muy buenos servicios y sin duda han ayudado a los desarrolladores Open Source.
+    Sin embargo, siempre queda el problema del mantenimiento a largo plazo. Como humanos
+    siempre nos distraemos, nos ponemos muy ocupados, o simplemente nos cansamos de
+    trabajar en lo mismo por mucho tiempo.</p>
+
+  <p>El control de versiones distribuido ofrece una alternativa al proveer una copia
+    completa del repositorio a cada uno, para que si a alguien le gusta más el trabajo
+    de otro, o ese otro está manteniendo el proyecto activamente, se pueda simplemente
+    seguir ese repositorio en vez del "oficial". Y si el responsable del proyecto así lo
+    decide, podrá también traer esos cambios a su branch principal. Eso es lo que hace
+    que el open source sea grandioso.</p>
+  
+  <p><strong><a href="/p/gitorious">Gitorious</a></strong> provee una forma de hacer
+    un seguimiento a estos clones fácilmente al permitir:</p>
+  
+  <ul class="bullet_list">
+	<li>Ver qué están haciendo los demás</li>
+	<li>Saber dónde se pueden encontrar</li>
+	<li>Que cualquier persona realice contribuciones sin necesidad de bendecirlo con "permisos de commit"</li>
+	<li>Que los responsables de proyectos acepten contribuciones sin complicaciones</li>
+  </ul>
+  
+  <p>Gitorious está todavía en desarrollo y hay muchas más cosas que me gustaría hacer con él.
+    Si tiene ideas para mejorarlo o algún problema técnico por favor pase por el
+    <a href="http://groups.google.com/group/gitorious">grupo de discusión</a>.</p>
+  
+  <p>
+    Atentamente,<br />
+    <a href="/users/johan">Johan Sørensen</a><br />
+    <small>Responsable de Gitorious.org</small>
+  </p>
+</div>
+
+
+<div class="section">
+  <a name="contact"></a><h1>Información de contacto</h1>
+  <p>
+    Si tiene cualquier problema técnico siéntase libre de
+    <a href="mailto:johan@johansorensen.com">enviar un correo electrónico</a>, también tiene
+    el <a href="http://groups.google.com/group/gitorious">grupo de discusión</a> para discusiones
+    más generales acerca de Gitorious. Existe también el canal
+    <a href="irc://irc.freenode.net/gitorious"><code>#gitorious</code></a> de IRC en FreeNode.
+  </p>
+</div>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><a href="#about">Acerca de</a></li>
+    <li><a href="#contact">Contacto</a></li>
+    <li><%= link_to "Preguntas frecuentes", faq_path -%></li>
+  </ul>
+<% end -%>

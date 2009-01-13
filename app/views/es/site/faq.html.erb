@@ -1,0 +1,107 @@
+<%
+#--
+#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
+#   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
+#   Copyright (C) 2008 David Aguilar <davvid@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<h1>Preguntas frecuentes</h1>
+
+<h3>Cuando intento clonar un repositorio obtengo "fatal: no matching remote head"</h3>
+<p>
+  Muy probablemente el repositorio que está intentando clonar está vacío, y el
+  mensaje de error es la forma amistosa de git de dejárselo saber. Vea debajo
+  (o haciendo click en "más información" al lado de la "push URL" del repositorio)
+  para encontrar información sobre cómo publicar código.
+</p>
+
+<hr />
+
+<h3>¿Cómo hago para apuntar mi repositorio Git local hacia Gitorious?</h3>
+<p>
+  La manera más fácil es poniendo algo como lo siguiente en el archivo <code>.git/config</code>
+  del repositorio que quiere publicar:
+<pre>
+[remote "origin"]
+       url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+       fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+       remote = origin
+       merge = refs/heads/master
+</pre>
+  y entonces <code>git push origin master</code> para publicar el código en Gitorious.
+</p>
+<p>
+  También puede simplemente ejecutar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para 
+  obtener la configuración de arriba):
+  <pre>
+  git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+  # para publicar el branch master al origin remote que agregamos arriba:
+  git push origin master 
+  # después de eso puede simplemente hacer:
+  git push
+  </pre>
+</p>
+
+<hr />
+
+<h3>¿Por qué se muestra mi correo electrónico?</h3>
+<p>
+  El correo electrónico que utilizó para registrarse con Gitorious se muestra a otros suarios
+  para que puedan contactarlo sobre sus proyectos si así lo necesitan. De todas formas tomamos
+  algunas medidas simples contra crawlers al no mostrar toda su dirección en texto plano. <br />
+  Pero sólo para que quede claro: nosotros no vendemos ni usamos la información que usted brinda
+  a <%= GitoriousConfig['gitorious_host'] -%> para obtener ganancias económicas o personales.
+</p>
+
+<hr />
+
+<h3>¿Por qué necesito cargar mi llave pública SSH?</h3>
+<p>
+  Cuando usted publica en un repositorio Git, su clave pública es la forma que tenemos
+  para reconocerlo y verificar si tiene los permisos necesarios para hacer commits en
+  un repositorio dado.
+</p>
+<hr />
+
+<h3>Tengo Windows. ¿Cómo puedo generar la llave SSH requerida?</h3>
+<p>
+  La forma recomendada de usar Git en Windows es usando la
+  versión <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%>. Trae incluido
+  un soporte mínimo para Cygwin. Cuando termine de instalarla, tendrá un ícono "Git Bash"
+  en su escritorio. Haga dobre click para abrirlo y podrá utilizar comandos del estilo de
+  Linux, como <code>"ssh-keygen -t rsa"</code>. Sólo presione 'Return' en cada pregunta que
+  le realice y tendrá su par de llaves en el directorio ".ssh". Por ejemplo, escriba
+  <code>"cat ~/.ssh/id_rsa.pub"</code>. Esa es la llave pública que necesita copiar y pegar
+  en su cuenta de Gitorious.
+</p>
+
+<hr />
+
+<h3>¿Qué versión de Git está usando Gitorious?</h3>
+<p>
+  <code>git versión 1.5.4.4</code>
+</p>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Acerca de", about_path(:anchor => "about") -%></li>
+    <li><%= link_to "Contacto", about_path(:anchor => "contact") -%></li>
+    <li><%= link_to "Preguntas frecuentes", faq_path -%></li>
+  </ul>
+<% end -%>

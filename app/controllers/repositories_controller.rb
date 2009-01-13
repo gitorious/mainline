@@ -22,6 +22,7 @@ class RepositoriesController < ApplicationController
   before_filter :require_adminship, :only => [:edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   session :off, :only => [:writable_by]
+  skip_before_filter :public_and_logged_in, :only => [:writable_by]
   
   def index
     @repositories = @project.repositories.find(:all, :include => [:user, :events, :project])
