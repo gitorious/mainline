@@ -21,8 +21,9 @@ atom_feed do |feed|
 	
   @commits.each do |commit|
     item_url = "http://#{GitoriousConfig['gitorious_host']}" +  project_repository_commit_path(@project, @repository, commit.id)
-		commit_stat_data = commit.stats.files.map do |file, stats| 
-			[stats[:insertions].to_s.ljust(8, " "), stats[:deletions].to_s.ljust(8, " "), file].join
+    #stats.files.each do |filename, adds, deletes, total|
+		commit_stat_data = commit.stats.files.map do |file, insertions, deletions, total| 
+			[insertions.to_s.ljust(8, " "), deletions.to_s.ljust(8, " "), file].join
 		end
     feed.entry(commit, {
       :url => item_url, 
@@ -40,7 +41,7 @@ Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
 Author: #{commit.author.name}
 Committer: #{commit.committer.name}
 
-#{commit.stats.total[:lines]} lines changed in #{commit.stats.total[:files]} files:
+#{commit.stats.total} lines changed in #{commit.stats.files.length} files:
 ------------------------------------------------------------------------------
 adds   dels     file
 ------------------------------------------------------------------------------
