@@ -379,7 +379,7 @@
         :last_edited_by => "Last edited by {{link_or_name}}",
         :or_back_to_page => "or return to {{page_link}}",
         :history => "History",
-        :history_for => "History for {{title}}",
+        :last_n_edits => "Last {{n}} edits on {{title}}",
       },
     },
     :date => {

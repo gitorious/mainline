@@ -1047,6 +1047,19 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-left: 20px;
   margin-right: 20px;
 }
+.wiki-page .page-content { max-width: 750px;}
+
+.wiki-page .toc {
+  float: right;
+  margin: 0 0 10px 10px;
+  padding: 10px 10px 10px 0;
+  background: #E9F1F6;
+  border: 1px solid #ccc;
+}
+.wiki-page .toc ul { margin-left: 10px;}
+.wiki-page .toc ul li {
+  list-style: none;
+}
 .page-meta { 
   font-size:11px; 
   color: #666; 

@@ -20,7 +20,15 @@ module PagesHelper
   
   def wikize(content)
     content = wiki_link(content)
-    auto_link(markdown(sanitize(content)), :urls)
+    rd = RDiscount.new(sanitize(content), :smart, :generate_toc)
+    content = content_tag(:div, rd.to_html, :class => "page-content")
+    toc_content = rd.toc_content
+    if !toc_content.blank?
+      toc = content_tag(:div, toc_content, :class => "toc")
+    else
+      toc = ""
+    end
+    content_tag(:div, toc + content, :class => "page wiki-page")
   end
   
   WIKI_WORD = /\b[A-Z][a-z]+[A-Z]\w+\b/

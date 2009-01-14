@@ -1,4 +1,9 @@
-<h1><%= t("views.pages.history_for", :title => link_to(@page.title, project_page_path(@project, @page.title))) -%></h1>
+<h1>
+  <%= t("views.pages.last_n_edits", {
+    :n => 30, 
+    :title => link_to(@page.title, project_page_path(@project, @page.title)
+  })) -%>
+</h1>
 
 <% @commits.each do |commit| -%>
   <div class="page-meta page-history">
