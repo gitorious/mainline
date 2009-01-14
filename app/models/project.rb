@@ -68,6 +68,7 @@ class Project < ActiveRecord::Base
 
   before_validation :downcase_slug
   after_create :create_mainline_repository
+  after_create :create_wiki_repository
 
   LICENSES = [
     'Academic Free License v3.0',
@@ -167,6 +168,15 @@ class Project < ActiveRecord::Base
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")
+    end
+    
+    def create_wiki_repository
+      self.wiki_repository = Repository.create!({
+        :user => self.user, 
+        :name => self.slug + Repository::WIKI_NAME_SUFFIX,
+        :kind => Repository::KIND_WIKI,
+        :project => self,
+      })
     end
 
     def downcase_slug

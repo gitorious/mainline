@@ -74,6 +74,15 @@ describe Project do
     project.repositories.first.user.should == project.user
     project.user.can_write_to?(project.repositories.first).should == true
   end
+  
+  it "creates the wiki repository on create" do
+    project = create_project(:slug => "my-new-project")
+    project.save!
+    project.wiki_repository.should be_instance_of(Repository)
+    project.wiki_repository.name.should == "my-new-project#{Repository::WIKI_NAME_SUFFIX}"
+    project.wiki_repository.kind.should == Repository::KIND_WIKI
+    project.repositories.should_not include(project.wiki_repository)
+  end
 
   it "finds a project by slug or raises" do
     Project.find_by_slug!(projects(:johans).slug).should == projects(:johans)
