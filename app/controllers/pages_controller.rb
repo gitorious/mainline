@@ -21,7 +21,9 @@ class PagesController < ApplicationController
   before_filter :assert_readyness
   
   def index
-    redirect_to project_page_path(@project, "Home")
+    @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|
+      n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
+    }
   end
   
   def show

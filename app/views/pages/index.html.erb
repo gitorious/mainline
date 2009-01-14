@@ -1,0 +1,6 @@
+
+<ul>
+<% @tree_nodes.each do |node| -%>
+  <li><%= link_to page_node_name(node), project_page_path(@project, page_node_name(node)) -%></li>
+<% end -%>
+</ul>

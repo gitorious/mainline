@@ -57,4 +57,7 @@ module PagesHelper
     crumbs << "</ul>"
   end
   
+  def page_node_name(node)
+    h(node.name.split(".", 2).first)
+  end  
 end

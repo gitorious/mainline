@@ -42,9 +42,13 @@ describe PagesController do
   end
   
   describe "index" do
-    it "redirects to the Home page" do
+    it "renders an index" do
+      git_stub = stub("git", {
+        :tree => stub(:contents => [mock("node", :name => "Foo"), mock("node", :name => "Bar")])
+      })
+      Repository.any_instance.stubs(:git).returns(git_stub)
       get :index, :project_id => @project.to_param
-      response.should redirect_to(project_page_path(@project, "Home"))
+      response.should be_success
     end
   end
   
