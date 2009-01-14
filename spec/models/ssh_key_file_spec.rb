@@ -57,7 +57,7 @@ describe SshKeyFile do
   end
   
   it "doesn't rewrite the file unless the key to delete is in there" do
-    File.should_not_receive(:open)
+    File.expects(:open).never
     @keyfile.delete_key(@keydata)
   end
   

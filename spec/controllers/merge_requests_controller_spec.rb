@@ -59,27 +59,27 @@ describe MergeRequestsController do
 		
 		it "should not require login" do
 			session[:user_id] = nil
-			MergeRequest.should_receive(:find).and_return(@merge_request)
+			MergeRequest.expects(:find).returns(@merge_request)
 			[@merge_request.source_repository, @merge_request.target_repository].each do |r|
-				r.stub!(:git).and_return(mock("Git", :null_object => true))
+				r.stubs(:git).returns(stub_everything("Git"))
 			end
 			do_get
 			response.should_not redirect_to(new_sessions_path)			
 		end
 		
 		it "gets a list of the commits to be merged" do
-			MergeRequest.should_receive(:find).and_return(@merge_request)
+			MergeRequest.expects(:find).returns(@merge_request)
 			commits = [mock("commit"), mock("commit")]
 			
 			target_repo = mock("target repo")
-			@merge_request.target_repository.stub!(:git).and_return(target_repo)
+			@merge_request.target_repository.stubs(:git).returns(target_repo)
 			
 			src_repo = mock("src repo")
-			@merge_request.source_repository.stub!(:git).and_return(src_repo)
+			@merge_request.source_repository.stubs(:git).returns(src_repo)
 			
-			target_repo.should_receive(:commit_deltas_from).with(
+			target_repo.expects(:commit_deltas_from).with(
 				src_repo, @merge_request.target_branch, @merge_request.source_branch
-			).and_return(commits)
+			).returns(commits)
 			
 			do_get
 			assigns[:commits].should == commits
@@ -346,9 +346,10 @@ describe MergeRequestsController do
 	end
 
   it "should allow committers to change status" do
-		MergeRequest.should_receive(:find).and_return(@merge_request)
+		MergeRequest.expects(:find).returns(@merge_request)
+		git_stub = stub_everything("Grit", :commit_deltas_from => [])
 		[@merge_request.source_repository, @merge_request.target_repository].each do |r|
-			r.stub!(:git).and_return(mock("Git", :null_object => true))
+			r.stubs(:git).returns(git_stub)
 		end
 		do_get
 		response.body.should match(/Update merge request/)			

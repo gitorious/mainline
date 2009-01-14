@@ -41,3 +41,4 @@ johans_wiki:
   updated_at: <%= Time.now %>
   mainline: false
   kind: <%= "#{Repository::KIND_WIKI}" %>
+  ready: true

@@ -110,7 +110,7 @@ describe Repository do
   
   it "inits the git repository" do
     path = @repository.full_repository_path
-    Repository.git_backend.should_receive(:create).with(path).and_return(true)
+    Repository.git_backend.expects(:create).with(path).returns(true)
     Repository.create_git_repository(@repository.gitdir)
     
     File.exist?(path).should == true
@@ -129,10 +129,10 @@ describe Repository do
     target_path = @repository.full_repository_path
     
     git_backend = mock("Git backend")
-    Repository.should_receive(:git_backend).and_return(git_backend)
-    git_backend.should_receive(:clone).with(target.full_repository_path, 
-      source.full_repository_path).and_return(true)
-    Repository.should_receive(:create_hooks).and_return(true)
+    Repository.expects(:git_backend).returns(git_backend)
+    git_backend.expects(:clone).with(target.full_repository_path, 
+      source.full_repository_path).returns(true)
+    Repository.expects(:create_hooks).returns(true)
     
     Repository.clone_git_repository(target.gitdir, source.gitdir).should be_true
   end
@@ -142,49 +142,49 @@ describe Repository do
     path = "/path/to/repository"
     base_path = "#{RAILS_ROOT}/data/hooks"
     
-    File.should_receive(:join).ordered.with(GitoriousConfig["repository_base_path"], ".hooks").and_return(hooks)
+    File.expects(:join).in_sequence.with(GitoriousConfig["repository_base_path"], ".hooks").returns(hooks)
     
-    Dir.should_receive(:chdir).ordered.with(path).and_yield(nil)
+    Dir.expects(:chdir).in_sequence.with(path).yields(nil)
     
-    File.should_receive(:symlink?).ordered.with(hooks).and_return(false)
-    File.should_receive(:exist?).ordered.with(hooks).and_return(false)
-    FileUtils.should_receive(:ln_s).ordered.with(base_path, hooks)
+    File.expects(:symlink?).in_sequence.with(hooks).returns(false)
+    File.expects(:exist?).in_sequence.with(hooks).returns(false)
+    FileUtils.expects(:ln_s).in_sequence.with(base_path, hooks)
     
     local_hooks = "/path/to/local/hooks"
-    File.should_receive(:join).ordered.with(path, "hooks").and_return(local_hooks)
+    File.expects(:join).in_sequence.with(path, "hooks").returns(local_hooks)
     
-    File.should_receive(:exist?).ordered.with(local_hooks).and_return(true)
+    File.expects(:exist?).in_sequence.with(local_hooks).returns(true)
     
-    File.should_receive(:join).with(path, "description").ordered
+    File.expects(:join).with(path, "description").in_sequence
     
-    File.should_receive(:open).ordered.and_return(true)
+    File.expects(:open).in_sequence.returns(true)
     
     Repository.create_hooks(path).should be_true
   end
   
   it "deletes a repository" do
-    Repository.git_backend.should_receive(:delete!).with(@repository.full_repository_path).and_return(true)
+    Repository.git_backend.expects(:delete!).with(@repository.full_repository_path).returns(true)
     Repository.delete_git_repository(@repository.gitdir)
   end
   
   it "knows if has commits" do
-    @repository.stub!(:new_record?).and_return(false)
-    @repository.stub!(:ready?).and_return(true)
+    @repository.stubs(:new_record?).returns(false)
+    @repository.stubs(:ready?).returns(true)
     git_mock = mock("Grit::Git")
-    @repository.stub!(:git).and_return(git_mock)
+    @repository.stubs(:git).returns(git_mock)
     head = mock("head")
-    head.stub!(:name).and_return("master")
-    @repository.git.should_receive(:heads).and_return([head])
+    head.stubs(:name).returns("master")
+    @repository.git.expects(:heads).returns([head])
     @repository.has_commits?.should == true
   end
   
   it "knows if has commits, unless its a new record" do
-    @repository.stub!(:new_record?).and_return(false)
+    @repository.stubs(:new_record?).returns(false)
     @repository.has_commits?.should == false
   end
   
   it "knows if has commits, unless its not ready" do
-    @repository.stub!(:ready?).and_return(false)
+    @repository.stubs(:ready?).returns(false)
     @repository.has_commits?.should == false
   end
   
@@ -263,14 +263,14 @@ describe Repository do
   it "has one recent commit" do
     @repository.save!
     repos_mock = mock("Git mock")
-    commit_mock = mock("Git::Commit mock", :null_object => true)
-    repos_mock.should_receive(:commits).with("master", 1).and_return(commit_mock)
-    commit_mock.should_receive(:first).and_return(commit_mock)
-    @repository.stub!(:git).and_return(repos_mock)
-    @repository.stub!(:has_commits?).and_return(true)
+    commit_mock = stub_everything("Git::Commit mock")
+    repos_mock.expects(:commits).with("master", 1).returns(commit_mock)
+    commit_mock.expects(:first).returns(commit_mock)
+    @repository.stubs(:git).returns(repos_mock)
+    @repository.stubs(:has_commits?).returns(true)
     heads_stub = mock("head")
-    heads_stub.stub!(:name).and_return("master")    
-    @repository.stub!(:head_candidate).and_return(heads_stub)
+    heads_stub.stubs(:name).returns("master")    
+    @repository.stubs(:head_candidate).returns(heads_stub)
     @repository.last_commit.should == commit_mock
   end
   
@@ -284,39 +284,39 @@ describe Repository do
   
   it "has a git method that accesses the repository" do
     # FIXME: meh for stubbing internals, need to refactor that part in Grit
-    File.should_receive(:exist?).at_least(1).with("#{@repository.full_repository_path}/.git").and_return(false)
-    File.should_receive(:exist?).at_least(1).with(@repository.full_repository_path).and_return(true)
+    File.expects(:exist?).at_least(1).with("#{@repository.full_repository_path}/.git").returns(false)
+    File.expects(:exist?).at_least(1).with(@repository.full_repository_path).returns(true)
     @repository.git.should be_instance_of(Grit::Repo)
     @repository.git.path.should == @repository.full_repository_path
   end
   
   it "has a head_candidate" do
     heads_stub = mock("head")
-    heads_stub.stub!(:name).and_return("master")
+    heads_stub.stubs(:name).returns("master")
     git = mock("git backend")
-    @repository.stub!(:git).and_return(git)
-    git.should_receive(:heads).and_return([heads_stub])
-    @repository.should_receive(:has_commits?).and_return(true)
+    @repository.stubs(:git).returns(git)
+    git.expects(:heads).returns([heads_stub])
+    @repository.expects(:has_commits?).returns(true)
     @repository.head_candidate.should == heads_stub
   end
   
   it "has a head_candidate, unless it doesn't have commits" do
-    @repository.should_receive(:has_commits?).and_return(false)
+    @repository.expects(:has_commits?).returns(false)
     @repository.head_candidate.should == nil
   end
   
   it "has paginated_commits" do
     git = mock("git")
     commits = [mock("commit"), mock("commit")]
-    @repository.should_receive(:git).twice.and_return(git)
-    git.should_receive(:commit_count).and_return(120)
-    git.should_receive(:commits).with("foo", 30, 30).and_return(commits)
+    @repository.expects(:git).times(2).returns(git)
+    git.expects(:commit_count).returns(120)
+    git.expects(:commits).with("foo", 30, 30).returns(commits)
     commits = @repository.paginated_commits("foo", 2, 30)
     commits.should be_instance_of(WillPaginate::Collection)
   end
   
   it "has a count_commits_from_last_week_by_user of 0 if no commits" do
-    @repository.should_receive(:has_commits?).and_return(false)
+    @repository.expects(:has_commits?).returns(false)
     @repository.count_commits_from_last_week_by_user(users(:johan)).should == 0
   end
   
@@ -342,13 +342,13 @@ describe Repository do
   
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
-      Mailer.should_receive(:deliver_new_repository_clone).with(@repository).and_return(true)
+      Mailer.expects(:deliver_new_repository_clone).with(@repository).returns(true)
       @repository.parent = repositories(:johans)
       @repository.save!
     end
     
     it "does not send an email to the admin if there's not a parent parent" do
-      Mailer.should_not_receive(:deliver_new_repository_clone).with(@repository).and_return(true)
+      Mailer.expects(:deliver_new_repository_clone).never
       @repository.parent = nil
       @repository.save!
     end

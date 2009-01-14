@@ -22,11 +22,11 @@ describe SearchesController do
   describe "#show" do
     it "searches for the given query" do
       searcher = mock("ultrasphinx search")
-      Ultrasphinx::Search.should_receive(:new).with({
+      Ultrasphinx::Search.expects(:new).with({
         :query => "foo", :page => 1
-      }).and_return(searcher)
-      searcher.should_receive(:run)
-      searcher.should_receive(:results).and_return(results = mock("results"))
+      }).returns(searcher)
+      searcher.expects(:run)
+      searcher.expects(:results).returns(results = mock("results"))
       
       get :show, :q => "foo"
       assigns["search"].should == searcher
@@ -34,7 +34,7 @@ describe SearchesController do
     end
     
     it "doesnt search if there's no :q param" do
-      Ultrasphinx::Search.should_not_receive(:new)
+      Ultrasphinx::Search.expects(:new).never
       get :show, :q => ""
       assigns["search"].should == nil
       assigns["results"].should == nil

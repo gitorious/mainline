@@ -55,18 +55,18 @@ describe BlobsHelper do
   
   describe "render_highlighted()" do
     it "tries to figure out the filetype" do
-      Uv.should_receive(:syntax_names_for_data).with("foo.rb", "puts 'foo'").and_return(["ruby"])
+      Uv.expects(:syntax_names_for_data).with("foo.rb", "puts 'foo'").returns(["ruby"])
       helper.render_highlighted("puts 'foo'", "foo.rb")
     end
     
     it "parses the text" do
-      Uv.should_receive(:syntax_names_for_data).with("foo.rb", "puts 'foo'").and_return(["ruby"])
-      Uv.should_receive(:parse).and_return("puts 'foo'")
+      Uv.expects(:syntax_names_for_data).with("foo.rb", "puts 'foo'").returns(["ruby"])
+      Uv.expects(:parse).returns("puts 'foo'")
       helper.render_highlighted("puts 'foo'", "foo.rb")
     end
     
     it "adds linenumbers" do
-      helper.should_receive(:line_numbers_for).and_return(123)
+      helper.expects(:line_numbers_for).returns(123)
       helper.render_highlighted("puts 'foo'", "foo.rb")
     end
   end

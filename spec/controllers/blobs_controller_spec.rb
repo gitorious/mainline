@@ -21,31 +21,30 @@ describe BlobsController do
   before(:each) do
     @project = projects(:johans)
     @repository = @project.repositories.first
-    @repository.stub!(:full_repository_path).and_return(repo_path)
+    @repository.stubs(:full_repository_path).returns(repo_path)
 
-    Project.should_receive(:find_by_slug!).with(@project.slug) \
-      .and_return(@project)
-    @project.repositories.should_receive(:find_by_name!) \
-      .with(@repository.name).and_return(@repository)
-    @repository.stub!(:has_commits?).and_return(true)
+    Project.stubs(:find_by_slug!).with(@project.slug).returns(@project)
+    @project.repositories.expects(:find_by_name!) \
+      .with(@repository.name).returns(@repository)
+    @repository.stubs(:has_commits?).returns(true)
 
-    @git = mock("Grit mock", :null_object => true)
-    @repository.stub!(:git).and_return(@git)
+    @git = stub_everything("Grit mock")
+    @repository.stubs(:git).returns(@git)
     @head = mock("master branch")
-    @head.stub!(:name).and_return("master")
-    @repository.stub!(:head_candidate).and_return(@head)
+    @head.stubs(:name).returns("master")
+    @repository.stubs(:head_candidate).returns(@head)
   end
   
   describe "#show" do
     it "gets the blob data for the sha provided" do
       blob_mock = mock("blob")
-      blob_mock.stub!(:contents).and_return([blob_mock]) #meh
-      blob_mock.stub!(:data).and_return("blob contents")
+      blob_mock.stubs(:contents).returns([blob_mock]) #meh
+      blob_mock.stubs(:data).returns("blob contents")
       commit_stub = mock("commit")
-      commit_stub.stub!(:id).and_return("a"*40)
-      commit_stub.stub!(:tree).and_return(commit_stub)
-      @git.should_receive(:commit).and_return(commit_stub)
-      @git.should_receive(:tree).and_return(blob_mock)
+      commit_stub.stubs(:id).returns("a"*40)
+      commit_stub.stubs(:tree).returns(commit_stub)
+      @git.expects(:commit).returns(commit_stub)
+      @git.expects(:tree).returns(blob_mock)
       
       get :show, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "a"*40, :path => []}
@@ -56,7 +55,7 @@ describe BlobsController do
     end 
     
     it "redirects to HEAD if provided sha was not found (backwards compat)" do
-      @git.should_receive(:commit).with("a"*40).and_return(nil)
+      @git.expects(:commit).with("a"*40).returns(nil)
       get :show, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "a"*40, :path => ["foo.rb"]}
       
@@ -67,15 +66,15 @@ describe BlobsController do
   describe "#raw" do
     it "gets the blob data from the sha and renders it as text/plain" do
       blob_mock = mock("blob")
-      blob_mock.stub!(:contents).and_return([blob_mock]) #meh
-      blob_mock.should_receive(:data).and_return("blabla")
-      blob_mock.should_receive(:size).and_return(200.kilobytes)
-      blob_mock.should_receive(:mime_type).and_return("text/plain")
+      blob_mock.stubs(:contents).returns([blob_mock]) #meh
+      blob_mock.expects(:data).returns("blabla")
+      blob_mock.expects(:size).returns(200.kilobytes)
+      blob_mock.expects(:mime_type).returns("text/plain")
       commit_stub = mock("commit")
-      commit_stub.stub!(:id).and_return("a"*40)
-      commit_stub.stub!(:tree).and_return(commit_stub)
-      @git.should_receive(:commit).and_return(commit_stub)
-      @git.should_receive(:tree).and_return(blob_mock)
+      commit_stub.stubs(:id).returns("a"*40)
+      commit_stub.stubs(:tree).returns(commit_stub)
+      @git.expects(:commit).returns(commit_stub)
+      @git.expects(:tree).returns(blob_mock)
       
       get :raw, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "a"*40, :path => []}
@@ -88,7 +87,7 @@ describe BlobsController do
     end
     
     it "redirects to HEAD if provided sha was not found (backwards compat)" do
-      @git.should_receive(:commit).with("a"*40).and_return(nil)
+      @git.expects(:commit).with("a"*40).returns(nil)
       get :raw, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "a"*40, :path => ["foo.rb"]}
       
@@ -97,13 +96,13 @@ describe BlobsController do
     
     it "redirects if blob is too big" do
       blob_mock = mock("blob")
-      blob_mock.stub!(:contents).and_return([blob_mock]) #meh
-      blob_mock.should_receive(:size).and_return(501.kilobytes)
+      blob_mock.stubs(:contents).returns([blob_mock]) #meh
+      blob_mock.expects(:size).returns(501.kilobytes)
       commit_stub = mock("commit")
-      commit_stub.stub!(:id).and_return("a"*40)
-      commit_stub.stub!(:tree).and_return(commit_stub)
-      @git.should_receive(:commit).and_return(commit_stub)
-      @git.should_receive(:tree).and_return(blob_mock)
+      commit_stub.stubs(:id).returns("a"*40)
+      commit_stub.stubs(:tree).returns(commit_stub)
+      @git.expects(:commit).returns(commit_stub)
+      @git.expects(:tree).returns(blob_mock)
       
       get :raw, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "a"*40, :path => []}

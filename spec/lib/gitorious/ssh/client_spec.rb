@@ -22,8 +22,8 @@ describe Gitorious::SSH::Client do
   
   before(:each) do
     @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
-    @ok_stub = mock("ok response mock", :body => "true")
-    @not_ok_stub = mock("ok response mock", :body => "false")
+    @ok_stub = stub("ok response mock", :body => "true")
+    @not_ok_stub = stub("ok response mock", :body => "false")
   end
   
   it "parses the project name from the passed in Strainer" do
@@ -63,29 +63,29 @@ describe Gitorious::SSH::Client do
   
   it "asks the server if a user has permission" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    connection_stub = mock("connection_stub", :null_object => true)
-    connection_stub.should_receive(:get) \
+    connection_stub = stub_everything("connection_stub")
+    connection_stub.expects(:get) \
       .with("/projects/foo/repos/bar/writable_by?username=johan") \
-      .and_return(@ok_stub)
-    client.should_receive(:connection).and_return(connection_stub)
+      .returns(@ok_stub)
+    client.expects(:connection).returns(connection_stub)
 
     client.writable_by_user?.should == true
   end
   
   it "returns false if a user doesn't have write permissions" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    connection_stub = mock("connection stub", :null_object => true)
-    connection_stub.should_receive(:get) \
+    connection_stub = stub_everything("connection stub")
+    connection_stub.expects(:get) \
       .with("/projects/foo/repos/bar/writable_by?username=johan") \
-      .and_return(@not_ok_stub)
-    client.should_receive(:connection).and_return(connection_stub)
+      .returns(@not_ok_stub)
+    client.expects(:connection).returns(connection_stub)
 
     client.writable_by_user?.should == false
   end
   
   it "assure_user_can_write! raises if a user doesn't have write permissions" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    client.should_receive(:writable_by_user?).and_return(false)
+    client.expects(:writable_by_user?).returns(false)
 
     proc {
       client.assure_user_can_write!
@@ -94,7 +94,7 @@ describe Gitorious::SSH::Client do
   
   it "assure_user_can_write! doesn't raise if a  user have write permissions" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    client.should_receive(:writable_by_user?).and_return(true)
+    client.expects(:writable_by_user?).returns(true)
 
     proc {
       client.assure_user_can_write!

@@ -43,21 +43,21 @@ describe RepositoriesController, "show" do
   
   it "GET projects/1/repositories/1 is successful" do
     repo = @project.repositories.first
-    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    repo.stubs(:git).returns(stub_everything("git mock"))
     do_get repo
     response.should be_success
   end
   
   it "scopes GET :show to the project_id" do
     repo = repositories(:moes)
-    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    repo.stubs(:git).returns(stub_everything("git mock"))
     do_get repo
     response.code.to_i.should == 404
   end
   
   it "counts the number of merge requests" do
     repo = @project.repositories.first
-    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    repo.stubs(:git).returns(stub_everything("git mock"))
     do_get repo
   end
 end
@@ -75,8 +75,8 @@ describe RepositoriesController, "show as XML" do
   
   it "GET projects/1/repositories/1.xml is successful" do
     repo = @project.repositories.first
-    repo.stub!(:has_commits?).and_return(false)
-    repo.stub!(:git).and_return(mock("git mock", :null_object => true))
+    repo.stubs(:has_commits?).returns(false)
+    repo.stubs(:git).returns(stub_everything("git mock"))
     do_get repo
     response.should be_success
     response.body.should == repo.to_xml
@@ -104,9 +104,9 @@ describe RepositoriesController, "clone" do
   end
   
   it "GET projects/1/repositories/3/clone is successful" do
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(true)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(true)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_get
     flash[:error].should == nil
     response.should be_success
@@ -124,9 +124,9 @@ describe RepositoriesController, "clone" do
   
   it "redirects with a flash if repos can't be cloned" do
     login_as :johan
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(false)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(false)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_get
     response.should redirect_to(project_repository_path(@project, @repository))
     flash[:error].should match(/can't clone an empty/i)
@@ -153,9 +153,9 @@ describe RepositoriesController, "create_clone" do
   end
   
   it "post projects/1/repositories/3/create_copy is successful" do
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(true)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(true)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_post(:name => "foo-clone")
     response.should be_redirect
   end
@@ -169,9 +169,9 @@ describe RepositoriesController, "create_clone" do
   
   it "redirects with a flash if repos can't be cloned" do
     login_as :johan
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(false)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(false)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_post(:name => "foobar")
     response.should redirect_to(project_repository_path(@project, @repository))
     flash[:error].should match(/can't clone an empty/i)
@@ -199,17 +199,17 @@ describe RepositoriesController, "create_clone as XML" do
   end
   
   it "post projects/1/repositories/3/create_copy is successful" do
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(true)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(true)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_post(:name => "foo-clone")
     response.code.to_i.should == 201
   end
   
   it "renders text if repos can't be cloned" do
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(false)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(false)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_post(:name => "foobar")
     response.code.to_i.should == 422
     response.body.should match(/can't clone an empty/i)
@@ -304,9 +304,9 @@ describe RepositoriesController, "with committer (not owner) logged in" do
   end
     
   it "should GET projects/1/repositories/3 and have merge request link" do
-    Project.should_receive(:find_by_slug!).with(@project.slug).and_return(@project)
-    @repository.stub!(:has_commits?).and_return(true)
-    @project.repositories.should_receive(:find_by_name!).with(@repository.name).and_return(@repository)
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(true)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_get
     flash[:error].should == nil
     response.body.should match(/Request merge/)

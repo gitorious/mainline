@@ -151,8 +151,8 @@ describe UsersController do
     
     it "sends a new password if email was found" do
       u = users(:johan)
-      User.should_receive(:generate_random_password).and_return("secret")
-      Mailer.should_receive(:deliver_forgotten_password).with(u, "secret")
+      User.expects(:generate_random_password).returns("secret")
+      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
       post :reset_password, :user => {:email => u.email}
       response.should redirect_to(root_path)
       flash[:notice].should == "A new password has been sent to your email"

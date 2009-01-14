@@ -31,19 +31,17 @@ describe PagesController do
       response.should redirect_to(project_page_path(@project, "Home"))
     end
   end
-
-  # FUCK RSPEC MOCKS
-  # describe "show" do
-  #   it "redirects to edit if the page is new" do
-  #     page_stub = mock("page stub")
-  #     page_stub.should_receive(:new?).and_return(true)
-  #     @project.wiki_repository.should_receive(:git).and_return(mock("git"))
-  #     Page.should_receive(:find).and_return(page_stub)
-  #     
-  #     get :show, :project_id => @project.to_param, :id => "Home"
-  #     puts response.body
-  #     response.should redirect_to(edit_project_page_path(@project, "Home"))
-  #   end
-  # end
+  
+  describe "show" do
+    it "redirects to edit if the page is new" do
+      page_stub = mock("page stub")
+      page_stub.expects(:new?).returns(true)
+      Repository.any_instance.expects(:git).returns(mock("git"))
+      Page.expects(:find).returns(page_stub)
+      
+      get :show, :project_id => @project.to_param, :id => "Home"
+      response.should redirect_to(edit_project_page_path(@project, "Home"))
+    end
+  end
   
 end
