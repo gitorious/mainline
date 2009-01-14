@@ -1230,6 +1230,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .event_instance .event_category.comment { background: #a49d98; }
 .event_instance .event_category.project  { background: #98a49f; }
 .event_instance .event_category.merge_request { background: #a2a498; }
+.event_instance .event_category.wiki { background: #7D7E6D; }
 
 /* repository meta (overview apge) */
 table.repository_meta {

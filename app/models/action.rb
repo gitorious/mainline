@@ -34,6 +34,7 @@ class Action
   RESOLVE_MERGE_REQUEST = 14
   UPDATE_MERGE_REQUEST = 15
   DELETE_MERGE_REQUEST = 16
+  UPDATE_WIKI_PAGE = 17
   
   def self.name(action_id)
     case action_id

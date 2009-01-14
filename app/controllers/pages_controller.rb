@@ -47,6 +47,7 @@ class PagesController < ApplicationController
 
     @page.content = params[:page][:content]
     if @page.save
+      @project.create_event(Action::UPDATE_WIKI_PAGE, @project, current_user, @page.title)
       redirect_to project_page_path(@project, @page)
     else
       flash[:error] = I18n.t("pages_controller.invalid_page_error")
