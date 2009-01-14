@@ -25,6 +25,22 @@ describe PagesController do
     #authorize_as :johan
   end
   
+  describe "repository readyness" do
+    it "should be ready on #index" do
+      Repository.any_instance.stubs(:ready?).returns(false)
+      get :index, :project_id => @project.to_param
+      response.should redirect_to(project_path(@project))
+      flash[:notice].should match(/is being created/)
+    end
+    
+    it "should be ready on #show" do
+      Repository.any_instance.stubs(:ready?).returns(false)
+      get :show, :project_id => @project.to_param, :id => "Home"
+      response.should redirect_to(project_path(@project))
+      flash[:notice].should match(/is being created/)
+    end
+  end
+  
   describe "index" do
     it "redirects to the Home page" do
       get :index, :project_id => @project.to_param

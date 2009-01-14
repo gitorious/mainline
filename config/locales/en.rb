@@ -70,6 +70,7 @@
     :pages_controller => {
       :invalid_page_error => "invalid page, badly formatted title or body",
       :no_changes => "No changes was submitted",
+      :repository_not_ready => "The wiki is being created",
     },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},

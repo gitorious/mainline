@@ -18,6 +18,7 @@
 class PagesController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_project
+  before_filter :assert_readyness
   
   def index
     redirect_to project_page_path(@project, "Home")
@@ -61,4 +62,12 @@ class PagesController < ApplicationController
     
     @commits = @page.history(30)
   end
+  
+  protected
+    def assert_readyness
+      unless @project.wiki_repository.ready?
+        flash[:notice] = I18n.t("pages_controller.repository_not_ready")
+        redirect_to project_path(@project) and return
+      end
+    end
 end
