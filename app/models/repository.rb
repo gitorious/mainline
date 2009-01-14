@@ -61,7 +61,7 @@ class Repository < ActiveRecord::Base
     repo_name, project_name = base_path.split("/").reverse
     
     project = Project.find_by_slug!(project_name)
-    project.repositories.find_by_name(repo_name.sub(/\.git/, ""))
+    Repository.find_by_name_and_project_id(repo_name.sub(/\.git/, ""), project.id)
   end
   
   def self.create_git_repository(path)

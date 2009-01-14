@@ -213,6 +213,20 @@ describe Repository do
     }.should raise_error(ActiveRecord::RecordNotFound)
   end
   
+  it "finds a repository by its path" do
+    repo = projects(:johans).mainline_repository
+    path = File.join(GitoriousConfig['repository_base_path'], 
+                      projects(:johans).slug, "#{repo.name}.git")
+    Repository.find_by_path(path).should == repo
+  end
+  
+  it "finds a repository by its path, regardless of repository kind" do
+    repo = projects(:johans).wiki_repository
+    path = File.join(GitoriousConfig['repository_base_path'].chomp("/"), 
+                      projects(:johans).slug, "#{repo.name}.git")
+    Repository.find_by_path(path).should == repo
+  end
+  
   it "xmlilizes git paths as well" do
     @repository.to_xml.should include("<gitdir>")
     @repository.to_xml.should include("<clone-url>")
