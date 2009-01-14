@@ -20,7 +20,7 @@ module PagesHelper
   
   def wikize(content)
     content = wiki_link(content)
-    auto_link(textilize(sanitize(content)), :urls)
+    auto_link(markdown(sanitize(content)), :urls)
   end
   
   WIKI_WORD = /\b[A-Z][a-z]+[A-Z]\w+\b/

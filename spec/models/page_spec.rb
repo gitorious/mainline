@@ -24,7 +24,7 @@ describe Page do
     delete_test_repo
     FileUtils.mkdir(@path)
     Dir.chdir(@path) do
-      File.open("HowTo.textile", "wb"){|f| f.puts "Hello world!" }
+      File.open("HowTo.markdown", "wb"){|f| f.puts "Hello world!" }
       `git init; git add .; git commit --author='Johan Sorensen <johan@johansorensen.com>' -m "first commit"`
     end
     @repo = Grit::Repo.new(@path)
@@ -35,7 +35,7 @@ describe Page do
   it "finds an existing page" do
     page = Page.find("HowTo", @repo)
     page.new?.should == false
-    page.name.should == "HowTo.textile"
+    page.name.should == "HowTo.markdown"
     page.content.should == "Hello world!\n"
   end
   
@@ -67,7 +67,7 @@ describe Page do
   it "supports nested pages" do
     p = Page.find("Hello/World", @repo)
     p.new?.should == true
-    p.name.should == "Hello/World.textile"
+    p.name.should == "Hello/World.markdown"
     p.content = "foo"
     p.user = users(:johan)
     p.save.should match(/^[a-z0-9]{40}$/)

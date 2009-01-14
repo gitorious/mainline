@@ -18,7 +18,8 @@
 class Page
   class UserNotSetError < StandardError; end
   
-  DEFAULT_FORMAT = "textile"
+  # TODO: support for more formats
+  DEFAULT_FORMAT = "markdown"
   # TODO: support nested pages
   TITLE_FORMAT = /([A-Z][a-z]+)/.freeze
   
