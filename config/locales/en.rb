@@ -382,7 +382,7 @@
         :last_n_edits => "Last {{n}} edits on {{title}}",
         :index => "Pages index",
         :format_using_markdown => %Q(Format pages using {{markdown}}),
-        :wikiwords_syntax => "CamelCase or [[Capitalized]] will be linked to a page of that name."
+        :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name."
       },
     },
     :date => {

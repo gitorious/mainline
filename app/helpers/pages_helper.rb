@@ -31,11 +31,10 @@ module PagesHelper
     content_tag(:div, toc + content, :class => "page wiki-page")
   end
   
-  WIKI_WORD = /\b[A-Z][a-z]+[A-Z]\w+\b/
-  BRACKETED_WIKI_WORD = /\[\[\s*([A-Z][a-z]+([A-Z][a-z]+)?)\s*\]\]/
+  BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\-]+)\]\]/
   
   def wiki_link(content)
-    content.gsub(Regexp.union(WIKI_WORD, BRACKETED_WIKI_WORD)) do |page_link|
+    content.gsub(BRACKETED_WIKI_WORD) do |page_link|
       if bracketed_name = Regexp.last_match.captures.first
         page_link = bracketed_name
       end
