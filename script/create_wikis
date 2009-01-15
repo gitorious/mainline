@@ -4,19 +4,21 @@ ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__) + "/../config/environment"
 
-# not cool
-# Repository.after_create_callback_chain = []
-# Repository.after_create = []
-
 action = ARGV[0]
 
-abort("Need create_repo or load_readme command") unless action
+abort("Need create_repos or load_readmes command") unless action
 
-Project.find(:all).each do |project|
+def failure_msg(msg)
+  $stderr.puts "\e[1;31m#{msg}\e[0m"
+end
+
+project_count = Project.count
+Project.find(:all).each_with_index do |project, index|
   case action
-  when "create_repo"
+  when "create_repos"
     next unless project.wiki_repository.blank?
     project.transaction do
+      puts "Creating wiki repo for #{project.slug} (#{index+1}/#{project_count})"
       wiki_repo = Repository.new({
         :name => project.slug + Repository::WIKI_NAME_SUFFIX,
         :kind => Repository::KIND_WIKI,
@@ -26,20 +28,27 @@ Project.find(:all).each do |project|
       project.wiki_repository = wiki_repo
       wiki_repo.save!
     end
-  when "load_readme"
+  when "load_readmes"
     wiki_repo = project.wiki_repository
     git_dir = File.join(GitoriousConfig["repository_base_path"], project.mainline_repository.gitdir)
-    next unless File.exist?(git_dir)
+    unless File.exist?(git_dir)
+      failure_msg "Skipping #{project.slug}, no mainline repo, wtf?  (#{index+1}/#{project_count})"
+      next
+    end
     tree = `env GIT_DIR=#{git_dir} git ls-tree HEAD`
     if tree =~ /^\d+ (.+)\t(readme(\..*)?)$/i
-      readmename = $2
-      sha = $1
-      puts "#{project.slug}: #{$1} => #{$2}"
-      p = Page.find("Home", wiki_repo.git)
-      readmeblob = project.mainline_repository.git.tree / readmename
-      p.content = readmeblob.data
-      p.user = project.user
-      p.save
+      begin
+        sha = $1
+        readmename = $2
+        puts "Creating Home in #{project.slug} based on #{$2} (#{$1}) (#{index+1}/#{project_count})"
+        p = Page.find("Home", wiki_repo.git)
+        readmeblob = project.mainline_repository.git.tree / readmename
+        p.content = readmeblob.data
+        p.user = project.user
+        p.save
+      rescue => e
+        failure_msg "FAIL: #{project.slug} #{e.class.name}: #{e.message}"
+      end
     end
   end
 end
