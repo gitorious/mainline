@@ -4,8 +4,14 @@
 </h1>
 
 <% form_for [@project, @page] do |f| -%>
+  <p class="hint">
+    <%= t("views.pages.format_using_markdown", 
+      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>)) -%><br />
+    <%= t("views.pages.wikiwords_syntax") -%>
+  </p>
   <%= f.text_area :content, :class => "text wide tall" -%>
   <%= f.submit -%> 
   <%= t("views.pages.or_back_to_page", 
         :page_link => link_to(@page.title, project_page_path(@project, @page.title))) -%>
 <% end -%>
+
