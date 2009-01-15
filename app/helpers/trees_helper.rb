@@ -56,6 +56,6 @@ module TreesHelper
   
   # FIXME: This really belongs somewhere else, but where?
   def commit_for_tree_path(repository, path)
-    repository.git.log(params[:id], path, 1 => true).first
+    repository.git.log(params[:id], path, {:max_count => 1}).first
   end
 end
