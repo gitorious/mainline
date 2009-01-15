@@ -79,7 +79,7 @@
       :event_status_updated => "updated project",
       :event_status_cloned => "cloned",
       :event_status_deleted => "deleted",
-      :event_status_committed => "committed",
+      :event_status_pushed => "pushed",
       :event_status_started => "started development",
       :event_branch_created => "created branch",
       :event_branch_deleted => "deleted branch",

@@ -182,7 +182,7 @@ module ApplicationHelper
         project = event.project
         case target.kind
         when Repository::KIND_PROJECT_REPO
-          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+          action = "<strong>#{I18n.t("application_helper.event_status_pushed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
           body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
           category = "commit"
         when Repository::KIND_WIKI

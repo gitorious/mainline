@@ -74,7 +74,7 @@
       :event_status_updated => "projeto atualizado",
       :event_status_cloned => "clonado",
       :event_status_deleted => "apagado",
-      :event_status_committed => "comitado",
+      :event_status_pushed => "comitado",
       :event_status_started => "desenvolvimento iniciado",
       :event_branch_created => "branch criado",
       :event_branch_deleted => "branch apagado",
