@@ -316,9 +316,9 @@ describe Repository do
   
   it "has a head_candidate_name that returns the commit id if the branch contains slashes" do
     heads_stub = mock("head")
-    heads_stub.stub!(:name).and_return("foo/bar")
-    heads_stub.stub!(:commit).and_return(mock("commit", :id => "asdf1234"))
-    @repository.should_receive(:head_candidate).and_return(heads_stub)
+    heads_stub.stubs(:name).returns("foo/bar")
+    heads_stub.stubs(:commit).returns(mock("commit", :id => "asdf1234"))
+    @repository.expects(:head_candidate).returns(heads_stub)
     @repository.head_candidate_name.should == "asdf1234"
   end
   
