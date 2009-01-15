@@ -50,7 +50,7 @@ ActionController::Routing::Routes.draw do |map|
       repo.resources :logs, :requirements => { :id => VALID_SHA }#, :member => { :feed => :get }
       repo.formatted_log_feed "logs/:id/feed.:format", :controller => "logs", :action => "feed", 
         :conditions => {:feed => :get}, :requirements => {:id => VALID_SHA}
-      repo.resources :commits
+      repo.resources :commits, :requirements => {:id => VALID_SHA }
       repo.trees          "trees/", :controller => "trees", :action => "index"
       repo.with_options(:requirements => { :id => VALID_SHA }) do |r|
         r.tree           "trees/:id/*path", :controller => "trees", :action => "show"
