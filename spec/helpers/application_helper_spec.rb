@@ -29,7 +29,7 @@ describe ApplicationHelper do
   
   it "renders block if object is ready" do
     obj = mock("any given object")
-    obj.stub!(:ready?).and_return(true)
+    obj.stubs(:ready?).returns(true)
     helper.render_if_ready(obj) do
       "moo"
     end.should == "moo"
@@ -37,7 +37,7 @@ describe ApplicationHelper do
   
   it "renders block if object is ready" do
     obj = mock("any given object")
-    obj.stub!(:ready?).and_return(false)
+    obj.stubs(:ready?).returns(false)
     helper.output_buffer = "" # damn you RSpec!
     helper.render_if_ready(obj) do
       "moo"
@@ -65,13 +65,13 @@ describe ApplicationHelper do
   
     
   it "should generate a blank commit graph url if the graph isn't there" do
-    File.should_receive(:exist?).and_return(false)
+    File.expects(:exist?).returns(false)
     url = helper.commit_graph_tag(repositories(:johans))    
     url.should == nil
   end
   
   it "should generate a blank url for commit graph by author if the graph isn't there" do
-    File.should_receive(:exist?).and_return(false)
+    File.expects(:exist?).returns(false)
     
     url = helper.commit_graph_by_author_tag(repositories(:johans))
     url.should == nil

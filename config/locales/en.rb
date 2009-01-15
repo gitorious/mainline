@@ -67,6 +67,11 @@
       :reset_password_notice => "A new password has been sent to your email",
       :reset_password_error => "Invalid email",
     },
+    :pages_controller => {
+      :invalid_page_error => "invalid page, badly formatted title or body",
+      :no_changes => "No changes was submitted",
+      :repository_not_ready => "The wiki is being created",
+    },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
       :event_status_created => "created project",
@@ -87,6 +92,8 @@
       :event_resolved_merge_request => "resolved merge request",
       :event_updated_merge_request => "updated merge request",
       :event_deleted_merge_request => "deleted merge request",
+      :event_status_push_wiki => "pushed wiki content",
+      :event_updated_wiki_page => "edited wiki page",
     },
     :project => {
       :format_slug_validation => "must match something in the range of [a-z0-9_\-]+",
@@ -109,6 +116,7 @@
         :logout => "Logout",
         :project_overview => "Project Overview",
         :repositories => "Repositories",
+        :pages => "Wiki pages",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
       },
@@ -350,6 +358,9 @@
       :common => {
         :confirm => "Are you sure?",
         :create => "Create",
+        :creating => "Creating",
+        :editing => "Editing",
+        :edit => "Edit",
         :save => "Save",
         :delete => "delete",
         :add => "Add",
@@ -362,6 +373,16 @@
         :update => "Update",
         :cancel => "cancel",
         :or => "or",
+      },
+      :pages => {
+        :page => "page",
+        :last_edited_by => "Last edited by {{link_or_name}}",
+        :or_back_to_page => "or return to {{page_link}}",
+        :history => "History",
+        :last_n_edits => "Last {{n}} edits on {{title}}",
+        :index => "Pages index",
+        :format_using_markdown => %Q(Format pages using {{markdown}}),
+        :wikiwords_syntax => "CamelCase or [[Capitalized]] will be linked to a page of that name."
       },
     },
     :date => {

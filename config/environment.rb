@@ -37,6 +37,7 @@ Rails::Initializer.run do |config|
   config.gem "echoe",        :version => '3.0.2', :lib => false
   config.gem "RedCloth",     :version => '4.1.1', :lib => "redcloth"
   config.gem "ruby-openid",  :version => '2.1.2', :lib => "openid"
+  config.gem "rdiscount",    :version => '1.3.1'
   
   # vendorized directly in vendor/ -- need to research if can be removed from there
   #config.gem "ultraviolet",  :version => '0.10.2', :lib => "uv"

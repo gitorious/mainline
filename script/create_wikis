@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby -KU
+
+ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+ENV["RAILS_ENV"] ||= "production"
+require File.dirname(__FILE__) + "/../config/environment"
+
+# not cool
+# Repository.after_create_callback_chain = []
+# Repository.after_create = []
+
+action = ARGV[0]
+
+abort("Need create_repo or load_readme command") unless action
+
+Project.find(:all).each do |project|
+  case action
+  when "create_repo"
+    next unless project.wiki_repository.blank?
+    project.transaction do
+      wiki_repo = Repository.new({
+        :name => project.slug + Repository::WIKI_NAME_SUFFIX,
+        :kind => Repository::KIND_WIKI,
+        :mainline => false,
+        :user => project.user,
+      })
+      project.wiki_repository = wiki_repo
+      wiki_repo.save!
+    end
+  when "load_readme"
+    wiki_repo = project.wiki_repository
+    git_dir = File.join(GitoriousConfig["repository_base_path"], project.mainline_repository.gitdir)
+    next unless File.exist?(git_dir)
+    tree = `env GIT_DIR=#{git_dir} git ls-tree HEAD`
+    if tree =~ /^\d+ (.+)\t(readme(\..*)?)$/i
+      readmename = $2
+      sha = $1
+      puts "#{project.slug}: #{$1} => #{$2}"
+      p = Page.find("Home", wiki_repo.git)
+      readmeblob = project.mainline_repository.git.tree / readmename
+      p.content = readmeblob.data
+      p.user = project.user
+      p.save
+    end
+  end
+end

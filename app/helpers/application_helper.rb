@@ -74,6 +74,10 @@ module ApplicationHelper
             blobs committers].include?(controller.controller_name )
         return "selected"
       end
+    when :pages
+      if %w[pages].include?(controller.controller_name )
+        return "selected"
+      end
     end
   end
   
@@ -151,6 +155,7 @@ module ApplicationHelper
       return [action, body, category]
     end
 
+    # FIXME: I'm screaming for some refactoring!
     case event.action
       when Action::CREATE_PROJECT
         action = "<strong>#{I18n.t("application_helper.event_status_created")}</strong> #{link_to h(target.title), project_path(target)}"
@@ -175,9 +180,16 @@ module ApplicationHelper
         category = "project"
       when Action::COMMIT
         project = event.project
-        action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
-        category = "commit"
+        case target.kind
+        when Repository::KIND_PROJECT_REPO
+          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+          body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
+          category = "commit"
+        when Repository::KIND_WIKI
+          action = "<strong>#{I18n.t("application_helper.event_status_push_wiki")}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(t("views.layout.pages")), project_pages_url(project)}"
+          body = h(truncate(event.body, :length => 150))
+          category = "wiki"
+        end
       when Action::CREATE_BRANCH
         project = target.project
         if event.data == "master"
@@ -247,6 +259,10 @@ module ApplicationHelper
         
         action = "<strong>#{I18n.t("application_helper.event_deleted_merge_request")}</strong> from #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         category = "merge_request"
+      when Action::UPDATE_WIKI_PAGE
+        project = event.target
+        action = "<strong>#{I18n.t("application_helper.event_updated_wiki_page")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to(h(event.data), project_page_path(project, event.data))}"
+        category = "wiki"
     end
       
     [action, body, category]

@@ -25,12 +25,16 @@ class Project < ActiveRecord::Base
   belongs_to  :user
   has_many    :comments, :dependent => :destroy
   has_many    :repositories, :order => "repositories.mainline desc, repositories.created_at asc",
-    :dependent => :destroy
-  has_one     :mainline_repository, :conditions => ["mainline = ?", true],
+      :conditions => ["kind = ?", Repository::KIND_PROJECT_REPO], :dependent => :destroy
+  has_one     :mainline_repository, 
+    :conditions => ["mainline = ? and kind = ?", true, Repository::KIND_PROJECT_REPO],
     :class_name => "Repository"
-  has_many    :repository_clones, :conditions => ["mainline = ?", false],
+  has_many    :repository_clones, 
+    :conditions => ["mainline = ? and kind = ?", false, Repository::KIND_PROJECT_REPO],
     :class_name => "Repository"
   has_many    :events, :order => "created_at asc", :dependent => :destroy
+  has_one     :wiki_repository, :class_name => "Repository", 
+    :conditions => ["kind = ?", Repository::KIND_WIKI]
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
@@ -64,6 +68,7 @@ class Project < ActiveRecord::Base
 
   before_validation :downcase_slug
   after_create :create_mainline_repository
+  after_create :create_wiki_repository
 
   LICENSES = [
     'Academic Free License v3.0',
@@ -163,6 +168,15 @@ class Project < ActiveRecord::Base
   protected
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")
+    end
+    
+    def create_wiki_repository
+      self.wiki_repository = Repository.create!({
+        :user => self.user, 
+        :name => self.slug + Repository::WIKI_NAME_SUFFIX,
+        :kind => Repository::KIND_WIKI,
+        :project => self,
+      })
     end
 
     def downcase_slug

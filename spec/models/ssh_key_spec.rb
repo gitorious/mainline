@@ -121,16 +121,16 @@ EOS
   it "adds itself to the authorized keys file" do
     ssh_key_file_mock = mock("SshKeyFile mock")
     ssh_key = new_key
-    ssh_key_file_mock.should_receive(:new).and_return(ssh_key_file_mock)
-    ssh_key_file_mock.should_receive(:add_key).with(ssh_key.to_key).and_return(true)
+    ssh_key_file_mock.expects(:new).returns(ssh_key_file_mock)
+    ssh_key_file_mock.expects(:add_key).with(ssh_key.to_key).returns(true)
     SshKey.add_to_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   
   it "removes itself to the authorized keys file" do
     ssh_key_file_mock = mock("SshKeyFile mock")
     ssh_key = new_key
-    ssh_key_file_mock.should_receive(:new).and_return(ssh_key_file_mock)
-    ssh_key_file_mock.should_receive(:delete_key).with(ssh_key.to_key).and_return(true)
+    ssh_key_file_mock.expects(:new).returns(ssh_key_file_mock)
+    ssh_key_file_mock.expects(:delete_key).with(ssh_key.to_key).returns(true)
     SshKey.delete_from_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   

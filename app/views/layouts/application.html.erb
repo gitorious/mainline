@@ -89,6 +89,10 @@
         <%= link_to t("views.layout.repositories"), 
           project_repositories_path(@project), :class => "round-top-5" -%>
       </li>
+      <li class="<%= submenu_selected_class_if_current?(:pages) -%>">
+        <%= link_to t("views.layout.pages"), 
+          project_page_path(@project, "Home"), :class => "round-top-5" -%>
+      </li>
     </ul>
     <% end -%>
     

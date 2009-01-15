@@ -1,0 +1,9 @@
+<ul class="page-actions">
+  <% if logged_in? -%>
+    <li><%= edit_link(@page) -%></li>
+    <li>
+      <%= link_to(t("views.pages.history"), history_project_page_path(@project, @page.title)) -%>
+    </li>
+    <li><%= link_to(t("views.pages.index"), project_pages_path(@project)) -%>
+  <% end -%>
+</ul>

@@ -27,8 +27,8 @@ describe Task do
   end
   
   it "performs a task" do
-    @task.target_class.constantize.should_receive(@task.command) \
-      .with(*@task.arguments).and_return(true)
+    @task.target_class.constantize.expects(@task.command) \
+      .with(*@task.arguments).returns(true)
     @task.perform!
     @task.reload
     @task.performed?.should == true
@@ -40,8 +40,8 @@ describe Task do
     target.ready = false
     target.save!
     @task.target_id = target.id
-    @task.target_class.constantize.should_receive(@task.command) \
-      .with(*@task.arguments).and_return(true)
+    @task.target_class.constantize.expects(@task.command) \
+      .with(*@task.arguments).returns(true)
     @task.perform!
     target.reload.ready?.should == true
   end
@@ -53,9 +53,9 @@ describe Task do
   
   it "performs all pending tasks" do
     to_perform = tasks(:create_repo, :add_key)
-    Task.should_receive(:find_all_pending).and_return(to_perform)
+    Task.expects(:find_all_pending).returns(to_perform)
     to_perform.each do |task|
-      task.should_receive(:perform!).and_return(true)
+      task.expects(:perform!).returns(true)
     end
     Task.perform_all_pending!
   end

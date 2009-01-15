@@ -21,7 +21,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ProjectsController do
   before(:each) do
-    @projects = [mock_model(Project), mock_model(Project)]
+    @projects = [projects(:johans), projects(:moes)]
   end
   
   def url_path(path, host="http://test.host")
@@ -29,7 +29,7 @@ describe ProjectsController do
   end
   
   it "GET projects/ should be succesful" do
-    Project.should_receive(:find).and_return(@projects)
+    Project.expects(:find).returns(@projects)
     get :index
     response.should be_success
     assigns(:projects).should == @projects

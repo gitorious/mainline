@@ -33,12 +33,12 @@ describe GitBackend do
   
   it "creates a bare git repository" do
     path = @repository.full_repository_path 
-    FileUtils.should_receive(:mkdir_p).with(path, :mode => 0750).and_return(true)
-    FileUtils.should_receive(:touch).with(File.join(path, "git-daemon-export-ok"))
+    FileUtils.expects(:mkdir_p).with(path, :mode => 0750).returns(true)
+    FileUtils.expects(:touch).with(File.join(path, "git-daemon-export-ok"))
     
-    GitBackend.should_receive(:execute_command).with(
+    GitBackend.expects(:execute_command).with(
       %Q{GIT_DIR="#{path}" git update-server-info}
-    ).and_return(true)
+    ).returns(true)
   
     GitBackend.create(path)
   end
@@ -46,15 +46,15 @@ describe GitBackend do
   it "clones an existing repos into a bare one" do
     source_path = @repository.full_repository_path 
     target_path = repositories(:johans).full_repository_path 
-    FileUtils.should_receive(:touch).with(File.join(target_path, "git-daemon-export-ok"))
+    FileUtils.expects(:touch).with(File.join(target_path, "git-daemon-export-ok"))
     
-    GitBackend.should_receive(:execute_command).with(
+    GitBackend.expects(:execute_command).with(
       %Q{GIT_DIR="#{target_path}" git update-server-info}
-    ).and_return(true)
+    ).returns(true)
     
     git = mock("Grit::Git instance")
-    Grit::Git.should_receive(:new).and_return(git)
-    git.should_receive(:clone)
+    Grit::Git.expects(:new).returns(git)
+    git.expects(:clone)
     
     GitBackend.clone(target_path, source_path)
   end
@@ -62,24 +62,24 @@ describe GitBackend do
   it "deletes a git repository" do
     base_path = "/base/path"
     repos_path = base_path + "/repo"
-    GitoriousConfig.should_receive(:[]).with("repository_base_path").and_return(base_path)
-    FileUtils.should_receive(:rm_rf).with(repos_path).and_return(true)
+    GitoriousConfig.expects(:[]).with("repository_base_path").returns(base_path)
+    FileUtils.expects(:rm_rf).with(repos_path).returns(true)
     GitBackend.delete!(repos_path)
   end
   
   it "knows if a repos has commits" do
     path = @repository.full_repository_path 
     dir_mock = mock("Dir mock")
-    Dir.should_receive(:[]).with(File.join(path, "refs/heads/*")).and_return(dir_mock)
-    dir_mock.should_receive(:size).and_return(0)
+    Dir.expects(:[]).with(File.join(path, "refs/heads/*")).returns(dir_mock)
+    dir_mock.expects(:size).returns(0)
     GitBackend.repository_has_commits?(path).should == false
   end
   
   it "knows if a repos has commits, if there's more than 0 heads" do
     path = @repository.full_repository_path 
     dir_mock = mock("Dir mock")
-    Dir.should_receive(:[]).with(File.join(path, "refs/heads/*")).and_return(dir_mock)
-    dir_mock.should_receive(:size).and_return(1)
+    Dir.expects(:[]).with(File.join(path, "refs/heads/*")).returns(dir_mock)
+    dir_mock.expects(:size).returns(1)
     GitBackend.repository_has_commits?(path).should == true
   end
   
