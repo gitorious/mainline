@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
   rescue_from ActionController::UnknownAction, :with => :render_not_found
+  rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -68,6 +69,10 @@ class ApplicationController < ActionController::Base
     
     def render_not_found
       render :file => "#{RAILS_ROOT}/public/404.html", :status => 404
+    end
+    
+    def render_git_timeout
+      render :partial => "/projects/git_timeout", :layout => "application" and return
     end
     
     def public_and_logged_in
