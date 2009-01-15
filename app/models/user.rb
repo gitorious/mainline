@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
   def validate
     if !not_openid?
       begin
-        OpenIdAuthentication.normalize_url(self.identity_url)
+        OpenIdAuthentication.normalize_identifier(self.identity_url)
       rescue OpenIdAuthentication::InvalidOpenId => e
         errors.add(:identity_url, I18n.t( "user.invalid_url" ))
       end
@@ -192,7 +192,7 @@ class User < ActiveRecord::Base
     
     def lint_identity_url
       return if not_openid?
-      self.identity_url = OpenIdAuthentication.normalize_url(self.identity_url)
+      self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
     rescue OpenIdAuthentication::InvalidOpenId
       # validate will catch it instead
     end
