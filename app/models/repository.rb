@@ -134,6 +134,12 @@ class Repository < ActiveRecord::Base
     @head_candidate ||= git.heads.find{|h| h.name == "master"} || git.heads.first
   end
   
+  def head_candidate_name
+    if head = head_candidate
+      head.name.include?("/") ? head.commit.id : head.name
+    end
+  end
+  
   def last_commit
     if has_commits?
       @last_commit ||= git.commits(head_candidate.name, 1).first

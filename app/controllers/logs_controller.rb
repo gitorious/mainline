@@ -20,7 +20,7 @@ class LogsController < ApplicationController
   before_filter :check_repository_for_commits
     
   def index
-    redirect_to project_repository_log_path(@project, @repository, @repository.head_candidate.name)
+    redirect_to project_repository_log_path(@project, @repository, @repository.head_candidate_name)
   end
   
   def show

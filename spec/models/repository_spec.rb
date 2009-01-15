@@ -300,6 +300,14 @@ describe Repository do
     @repository.head_candidate.should == heads_stub
   end
   
+  it "has a head_candidate_name that returns the commit id if the branch contains slashes" do
+    heads_stub = mock("head")
+    heads_stub.stub!(:name).and_return("foo/bar")
+    heads_stub.stub!(:commit).and_return(mock("commit", :id => "asdf1234"))
+    @repository.should_receive(:head_candidate).and_return(heads_stub)
+    @repository.head_candidate_name.should == "asdf1234"
+  end
+  
   it "has a head_candidate, unless it doesn't have commits" do
     @repository.should_receive(:has_commits?).and_return(false)
     @repository.head_candidate.should == nil

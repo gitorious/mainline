@@ -21,7 +21,7 @@ class TreesController < ApplicationController
   
   def index
     redirect_to(project_repository_tree_path(@project, @repository, 
-        @repository.head_candidate.name, []))
+        @repository.head_candidate_name, []))
   end
   
   def show
