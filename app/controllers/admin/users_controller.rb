@@ -55,6 +55,18 @@ class Admin::UsersController < ApplicationController
     end
     redirect_to admin_users_url()
   end
+
+  def reset_password
+    if params[:user] && user = User.find_by_email(params[:user][:email])
+      # FIXME: should really be a two-step process: receive link, visiting it resets password
+      generated_password = user.reset_password!
+      Mailer.deliver_forgotten_password(user, generated_password)
+      flash[:notice] = I18n.t "users_controller.reset_password_notice"
+    else
+      flash[:error] = I18n.t "users_controller.reset_password_error"
+    end
+    redirect_to admin_users_url()
+  end
   
   private
   

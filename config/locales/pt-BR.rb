@@ -67,6 +67,11 @@
       :reset_password_notice => "Uma nova senha foi enviada para seu e-mail",
       :reset_password_error => "E-mail inválido",
     },
+    :pages_controller => {
+      :invalid_page_error => "página inválida, título ou corpo com má formatação",
+      :no_changes => "Nenhuma mudança foi enviada",
+      :repository_not_ready => "O Wiki está sendo criado",
+    },
     :application_helper => {
       :notice_for => lambda { |class_name| "Este(a) #{class_name} está sendo criado(a),<br /> ficará pronto(a) muito em breve&hellip;"},
       :event_status_created => "projeto criado",
@@ -87,6 +92,8 @@
       :event_resolved_merge_request => "requisição de merge resolvido",
       :event_updated_merge_request => "requisição de merge atualizado",
       :event_deleted_merge_request => "requisição de merge apagado",
+      :event_status_push_wiki => "conteúdo de wiki gravado",
+      :event_updated_wiki_page => "página de wiki editada",
     },
     :project => {
       :format_slug_validation => "deve bater com alguma coisa no intervalo de [a-z0-9_\-]+",
@@ -109,6 +116,7 @@
         :logout => "Sair",
         :project_overview => "Resumo do Projeto",
         :repositories => "Repositórios",
+        :pages => "Páginas Wiki",
         :user_mgt => "Gerenciamento de Usuários",
         :discussion => "Grupo de Discussão",
       },
@@ -165,6 +173,7 @@
       :users => {
         :activated => "Ativado?",
         :suspended => "Suspenso?",
+        :reset_pwd => "Reiniciar Senha",
         :admin => "Admin?",
         :suspend => "Suspender",
         :unsuspend => "Dessuspender",
@@ -190,6 +199,7 @@
         :head_tree => "árvore HEAD",
         :branches => "Branches",
         :tags => "Tags",
+        :committed => "comitado",
       },
       :blobs => {
         :page_title => "{{path}} - {{repo}} em {{title}}",
@@ -350,6 +360,9 @@
       :common => {
         :confirm => "Tem certeza?",
         :create => "Criar",
+        :creating => "Criando",
+        :editing => "Editando",
+        :edit => "Editar",
         :save => "Gravar",
         :delete => "apagar",
         :add => "Adicionar",
@@ -362,6 +375,19 @@
         :update => "Atualizar",
         :cancel => "cancelar",
         :or => "ou",
+      },
+      :pages => {
+        :page => "página",
+        :last_edited_by => "Editado pela última vez por {{link_or_name}}",
+        :or_back_to_page => "ou retorne para {{page_link}}",
+        :history => "Histórico",
+        :last_n_edits => {
+          :one => "Última {{n}} edição em {{title}}",
+          :other => "Últimas {{n}} edições on {{title}}",
+        },
+        :index => "Índice de Páginas",
+        :format_using_markdown => %Q(Formate as páginas usando {{markdown}}),
+        :wikiwords_syntax => "[[Wikilink]] será um link para uma página com esse nome."
       },
     },
 
