@@ -45,7 +45,7 @@
   <h4><%= t("views.site.dashboard.your_clones") %></h4>
   <ul>
   <% @repositories.each do |repo| -%>
-    <li><%= link_to h(repo.name), [repo.project, repo] -%></li>
+    <li><%= link_to h(repo.name), project_repository_path(repo.project, repo) -%></li>
   <% end -%>
   </ul>
 <% end -%>
