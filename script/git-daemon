@@ -99,12 +99,6 @@ module Git
             
             pid = Process.pid
             log(pid, "Connection from #{ip} for #{path.inspect}")
-                        
-            $stdout.reopen(session)
-            $stdin.reopen(session)
-            $stderr.reopen("/dev/null")
-            
-            session.close
             
             if repository
               if ip_family == "AF_INET6"
@@ -119,6 +113,11 @@ module Git
             end
             
             log(Process.pid, "Deferred in #{'%0.5f' % (Time.now - start_time)}s")
+            
+            $stdout.reopen(session)
+            $stdin.reopen(session)
+            $stderr.reopen("/dev/null")
+            
             exec(cmd)
             # FIXME; we don't ever get here since we exec(), so reaped count may be incorrect 
             $children_reaped += 1
