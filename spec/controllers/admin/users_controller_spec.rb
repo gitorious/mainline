@@ -58,6 +58,26 @@ describe Admin::UsersController do
     flash[:error].should == "For Administrators Only"
   end
   
+  describe "#reset_password" do
+    it "redirects to forgot_password if nothing was found" do
+      post :reset_password, :user => {:email => "xxx"}
+      response.should redirect_to(admin_users_path)
+      flash[:error].should match(/invalid email/i)
+    end
+    
+    it "sends a new password if email was found" do
+      u = users(:johan)
+      User.expects(:generate_random_password).returns("secret")
+      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
+      post :reset_password, :user => {:email => u.email}
+      response.should redirect_to(admin_users_path)
+      flash[:notice].should == "A new password has been sent to your email"
+      
+      User.authenticate(u.email, "secret").should_not be_nil
+    end
+  end
+  
+  
   def valid_admin_user
     { :login => 'johndoe', :email => 'foo@foo.com', :password => 'johndoe', :password_confirmation => 'johndoe', :is_admin => "1" }
   end

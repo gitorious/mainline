@@ -74,7 +74,7 @@ ActionController::Routing::Routes.draw do |map|
   map.faq "about/faq", :controller => "site", :action => "faq"
 
   map.namespace :admin do |admin|
-    admin.resources :users, :member => { :suspend => :put, :unsuspend => :put }
+    admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
   end
 
   # Install the default route as the lowest priority.

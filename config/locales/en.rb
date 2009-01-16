@@ -173,6 +173,7 @@
       :users => {
         :activated => "Activated?",
         :suspended => "Suspended?",
+        :reset_pwd => "Reset Password",
         :admin => "Admin?",
         :suspend => "Suspend",
         :unsuspend => "Unsuspend",
@@ -198,6 +199,7 @@
         :head_tree => "HEAD tree",
         :branches => "Branches",
         :tags => "Tags",
+        :committed => "committed",
       },
       :blobs => {
         :page_title => "{{path}} - {{repo}} in {{title}}",

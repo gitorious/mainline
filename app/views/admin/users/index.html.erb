@@ -7,6 +7,7 @@
 		<td><%= t("views.users.suspended") %></td>
 		<td><%= t("views.users.admin") %></td>
 		<td></td>
+		<td></td>
 	</tr>
 	<% @users.each do |user| -%>
 	<tr class="<%= cycle("odd", "even") -%>">
@@ -21,6 +22,7 @@
 		<% else -%>
 		<td><%= link_to t("views.users.suspend"), suspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
 		<% end -%>
+		<td><%= link_to t("views.users.reset_pwd"), reset_password_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
 	</tr>
 	<% end -%>	
 </table>

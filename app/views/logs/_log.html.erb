@@ -33,7 +33,7 @@
           <div class="event_meta">
             <p>
               <%= user ? link_to(user.login, user_path(user)) : h(commit.author.name) -%>
-              <strong>committed</strong> <%= link_to h(commit.id_abbrev), 
+              <strong><%= t("views.logs.committed") %></strong> <%= link_to h(commit.id_abbrev), 
                 project_repository_commit_path(@project, @repository, commit.id) -%>
             </p>
             <p>
