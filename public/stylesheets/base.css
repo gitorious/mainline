@@ -761,6 +761,13 @@ table.tree tr td.node a {
 }
 table.tree tr td.file a { background-image: url("/images/icon_file.gif"); }
 table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
+table.tree tr td.submodule { 
+  background-image: url("/images/folder_grey.png");
+  padding-left:25px;
+  background-position: 4px 50%;
+  background-repeat: no-repeat;
+  font-style: italic;
+}
 
 #site_intro {
   width: 65%;

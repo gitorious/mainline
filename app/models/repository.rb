@@ -174,7 +174,11 @@ class Repository < ActiveRecord::Base
   
   def paginated_commits(tree_name, page, per_page = 30)
     page    = (page || 1).to_i
-    total   = git.commit_count(tree_name)
+    begin
+      total   = git.commit_count(tree_name)
+    rescue Grit::Git::GitTimeout
+      total = 2046
+    end
     offset  = (page - 1) * per_page
     commits = WillPaginate::Collection.new(page, per_page, total)
     commits.replace git.commits(tree_name, per_page, offset)

@@ -35,17 +35,24 @@
   <tr class="<%= cycle("odd", "even") -%>">
     <% if node.is_a? Grit::Tree -%>
       <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(params[:id], node.name) -%></td>
+    <% elsif node.is_a? Grit::Submodule -%>
+    <td class="node submodule"><%= h(node.basename) -%></td>
     <% else -%>
       <td class="node file"><%= link_to h(node.basename), blob_path(params[:id], node.name).gsub("%2F","/") -%></td>
     <% end -%>
-    <% if last_commit = commit_for_tree_path(@repository, node.name) -%>
-      <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
-      <td class="meta commit_message">
-        <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>
-      </td>
-    <% else -%>
+    <% if node.is_a? Grit::Submodule -%>
       <td class="meta"></td>
-      <td class="meta commit_message"></td>
+      <td class="meta commit_message">submodule: <%= h(node.url(params[:id])) -%></td>
+    <% else -%>
+      <% if last_commit = commit_for_tree_path(@repository, node.name) -%>
+        <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
+        <td class="meta commit_message">
+          <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>
+        </td>
+      <% else -%>
+        <td class="meta"></td>
+        <td class="meta commit_message"></td>
+      <% end -%>
     <% end -%>
   </tr>
   <% end -%>
