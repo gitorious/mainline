@@ -148,6 +148,10 @@ describe User do
     u.can_write_to?(repositories(:moes)).should == false
   end
   
+  it "should only have project repo as #repositories" do
+    users(:johan).repositories.should_not include(repositories(:johans_wiki))
+  end
+  
   it "has the login as to_param" do
     users(:johan).to_param.should == users(:johan).login
   end
