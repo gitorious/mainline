@@ -454,7 +454,7 @@
           :home_url => "Home URL (eg Rubyforge etc)",
           :mailinglist_url => "Mailinglist URL (if any)",
           :bugtracker_url => "Bugtracker URL (if any)",
-          :tag_list => "Categories (space seperated)",
+          :tag_list => "Categories (space separated)",
         },
         :comment => {
           :body => "Body",
