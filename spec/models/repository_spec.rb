@@ -32,7 +32,8 @@ describe Repository do
     Repository.new({
       :name => "foo",
       :project => projects(:johans),
-      :user => users(:johan)
+      :user => users(:johan),
+      :owner => groups(:johans_team_thunderbird)
     }.merge(opts))
   end
   
@@ -94,12 +95,6 @@ describe Repository do
   
   it "has a http url" do
     @repository.http_clone_url.should == "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
-  end
-  
-  it "should assign the creator as a comitter on create" do 
-    @repository.save!
-    @repository.reload
-    @repository.committers.should include(users(:johan))
   end
   
   it "has a full repository_path" do
@@ -233,11 +228,13 @@ describe Repository do
     @repository.to_xml.should include("<push-url>")
   end
   
-  it "adds an user as a comitter to itself" do
-    @repository.save
-    users(:moe).can_write_to?(@repository).should == false
-    @repository.add_committer(users(:moe))
-    users(:moe).can_write_to?(@repository).should == true
+  it "knows if a user can write to self" do
+    @repository.save!
+    @repository.writable_by?(users(:mike)).should == true
+    @repository.owner = groups(:johans_core)
+    @repository.writable_by?(users(:johan)).should == true
+    @repository.owner.add_member(users(:moe), Role.committer)
+    @repository.writable_by?(users(:moe)).should == true
   end
   
   it "creates a Task on create and update" do

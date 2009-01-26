@@ -159,12 +159,7 @@ class User < ActiveRecord::Base
   end
 
   def can_write_to?(repository)
-    case repository.owner
-    when User
-      repository.owner == self
-    when Group
-      repository.owner.committer?(self)
-    end
+    repository.writable_by?(self)
   end
 
   def to_param

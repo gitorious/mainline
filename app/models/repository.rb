@@ -29,8 +29,6 @@ class Repository < ActiveRecord::Base
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
   belongs_to  :parent, :class_name => "Repository"
-  has_many    :committerships, :dependent => :destroy
-  has_many    :committers, :through => :committerships, :source => :user
   has_many    :comments, :dependent => :destroy
   has_many    :merge_requests, :foreign_key => 'target_repository_id', 
     :order => "status, id desc", :dependent => :destroy
@@ -39,13 +37,13 @@ class Repository < ActiveRecord::Base
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   
-  validates_presence_of :user_id, :project_id, :name
+  validates_presence_of :user_id, :project_id, :name, :owner_id
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
-  before_save :set_as_mainline_if_first
-  after_create :add_user_as_committer, :create_new_repos_task
+  before_save   :set_as_mainline_if_first
+  after_create  :create_new_repos_task
   after_destroy :create_delete_repos_task
   
   def self.new_by_cloning(other, username=nil)
@@ -129,12 +127,6 @@ class Repository < ActiveRecord::Base
     super({:methods => [:gitdir, :clone_url, :push_url]}.merge(opts))
   end
   
-  def add_committer(user)
-    unless user.can_write_to?(self)
-      committers << user
-    end
-  end
-  
   def head_candidate
     return nil unless has_commits?
     @head_candidate ||= git.heads.find{|h| h.name == "master"} || git.heads.first
@@ -155,6 +147,17 @@ class Repository < ActiveRecord::Base
   
   def can_be_deleted_by?(candidate)
     !mainline? && (candidate == user)
+  end
+  
+  def writable_by?(a_user)
+    case owner
+    when User
+      self.owner == a_user
+    when Group
+      self.owner.committer?(a_user)
+    else
+      user == a_user
+    end
   end
   
   def create_new_repos_task
@@ -266,10 +269,6 @@ class Repository < ActiveRecord::Base
       unless project.repositories.size >= 1
         self.mainline = true
       end
-    end
-    
-    def add_user_as_committer
-      committers << user
     end
     
     def self.full_path_from_partial_path(path)
