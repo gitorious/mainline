@@ -19,19 +19,29 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Group do
   describe "members" do
+    before(:each) do
+      @group = groups(:johans_core)
+    end
+    
     it "knows if a user is a member" do
-      groups(:johans_core).member?(users(:johan)).should == true
-      groups(:johans_core).member?(users(:mike)).should == false
+      @group.member?(users(:johan)).should == true
+      @group.member?(users(:mike)).should == false
     end
     
     it "know the role of a member" do
-      groups(:johans_core).role_of_user(users(:mike)).should == nil
-      groups(:johans_core).role_of_user(users(:johan)).should == roles(:admin)
-      groups(:johans_core).admin?(users(:mike)).should == false
-      groups(:johans_core).admin?(users(:johan)).should == true
+      @group.role_of_user(users(:mike)).should == nil
+      @group.role_of_user(users(:johan)).should == roles(:admin)
+      @group.admin?(users(:mike)).should == false
+      @group.admin?(users(:johan)).should == true
       
-      groups(:johans_core).committer?(users(:mike)).should == false
-      groups(:johans_core).committer?(users(:johan)).should == true
+      @group.committer?(users(:mike)).should == false
+      @group.committer?(users(:johan)).should == true
+    end
+    
+    it "can add a user with a role using add_member" do
+      @group.member?(users(:mike)).should == false
+      @group.add_member(users(:mike), Role.committer)
+      @group.reload.member?(users(:mike)).should == true
     end
   end
   

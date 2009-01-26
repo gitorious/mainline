@@ -36,11 +36,18 @@ class Group < ActiveRecord::Base
     membership.role
   end
   
+  # is +candidate+ an admin in this group?
   def admin?(candidate)
     role_of_user(candidate) == Role.admin
   end
   
+  # is +candidate+ a committer (or admin) in this group?
   def committer?(candidate)
     [Role.admin, Role.committer].include?(role_of_user(candidate))
+  end
+  
+  # Adds +a_user+ as a member to this group with a role of +a_role+
+  def add_member(a_user, a_role)
+    memberships.create!(:user => a_user, :role => a_role)
   end
 end
