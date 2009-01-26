@@ -1,0 +1,7 @@
+admin:
+  name: Administrator
+  kind: <%= Role::KIND_ADMIN %>
+  
+committer:
+  name: Committer
+  kind: <%= Role::KIND_COMMITTER %>

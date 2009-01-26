@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
 #
@@ -96,9 +96,21 @@ describe Project do
   end
 
   it "knows if a user is a admin on a project" do
-    projects(:johans).admin?(users(:johan)).should == true
-    projects(:johans).admin?(users(:moe)).should == false
-    projects(:johans).admin?(:false).should == false
+    project = projects(:johans)
+    project.admin?(users(:johan)).should == true
+    project.group.memberships.create!({
+      :user => users(:mike), 
+      :role => Role.admin
+    })
+    project.admin?(users(:mike)).should == true
+    
+    project.admin?(users(:moe)).should == false
+    project.group.memberships.create!({
+      :user => users(:moe), 
+      :role => Role.committer
+    })
+    project.admin?(users(:moe)).should == false
+    project.admin?(:false).should == false
   end
 
   it "knows if a user can delete the project" do
@@ -157,6 +169,22 @@ describe Project do
     project.wiki_repository.should == repositories(:johans_wiki)
     project.repositories.should_not include(repositories(:johans_wiki))
     project.repository_clones.should_not include(repositories(:johans_wiki))
+  end
+  
+  describe "master group" do
+    it "should create a non-public group on create" do
+      project = create_project
+      project.save!
+      project.group.should_not == nil
+      project.group.public?.should == false
+    end
+    
+    it "should create a group with the creator as a admin member" do
+      project = create_project(:user => users(:moe))
+      project.save!
+      project.group.members.should == [users(:moe)]
+      project.group.role_of_user(users(:moe)).should == roles(:admin)
+    end
   end
   
   describe "Project events" do

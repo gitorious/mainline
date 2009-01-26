@@ -1,0 +1,17 @@
+johans_johan:
+  group: johans_core
+  user_id: 1
+#  user: johan
+  role: admin
+  
+johans_team_thunderbird_mike:
+  group: johans_team_thunderbird
+  user_id: 3
+#  user: mike
+  role: committer
+  
+moes_moe:
+  group: moes_core
+  user_id: 2
+#  user: moe
+  role: admin

@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Dag Odenhall <dag.odenhall@gmail.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
@@ -36,6 +36,9 @@ class Project < ActiveRecord::Base
   has_one     :wiki_repository, :class_name => "Repository", 
     :conditions => ["kind = ?", Repository::KIND_WIKI]
   
+  has_one   :group, :conditions => { :public => false }
+#  has_many  :groups, :conditions => { :public => true }
+  
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
       { :class_name => 'Tag',
@@ -67,6 +70,7 @@ class Project < ActiveRecord::Base
     :message => I18n.t( "project.ssl_required")
 
   before_validation :downcase_slug
+  before_create :create_core_group
   after_create :create_mainline_repository
   after_create :create_wiki_repository
 
@@ -111,7 +115,7 @@ class Project < ActiveRecord::Base
   end
 
   def admin?(candidate)
-    candidate == user
+    group.admin?(candidate)
   end
 
   def can_be_deleted_by?(candidate)
@@ -120,7 +124,6 @@ class Project < ActiveRecord::Base
 
   def tag_list=(tag_list)
     tag_list.gsub!(",", "")
-
     super
   end
 
@@ -166,6 +169,17 @@ class Project < ActiveRecord::Base
   end
 
   protected
+    def create_core_group
+      core_group = Group.create!(:name => self.slug + "-core")
+      core_group.project = self
+      core_group.public = false
+      core_group.memberships << Membership.create!({
+        :user => self.user,
+        :role => Role.admin
+      })
+      self.group = core_group
+    end
+  
     def create_mainline_repository
       self.repositories.create!(:user => self.user, :name => "mainline")
     end
