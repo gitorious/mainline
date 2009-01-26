@@ -73,6 +73,7 @@ describe Project do
     project.repositories.first.name.should == "mainline"
     project.repositories.first.user.should == project.user
     project.user.can_write_to?(project.repositories.first).should == true
+    project.repositories.first.owner.should == project.group
   end
   
   it "creates the wiki repository on create" do
@@ -82,6 +83,7 @@ describe Project do
     project.wiki_repository.name.should == "my-new-project#{Repository::WIKI_NAME_SUFFIX}"
     project.wiki_repository.kind.should == Repository::KIND_WIKI
     project.repositories.should_not include(project.wiki_repository)
+    project.wiki_repository.owner.should == project.group
   end
 
   it "finds a project by slug or raises" do

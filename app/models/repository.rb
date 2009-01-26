@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
@@ -25,8 +25,9 @@ class Repository < ActiveRecord::Base
   KIND_WIKI = 1
   WIKI_NAME_SUFFIX = "-gitorious-wiki"
   
-  belongs_to  :user
+  belongs_to  :user # TODO: rename to creator..
   belongs_to  :project
+  belongs_to  :owner, :polymorphic => true
   belongs_to  :parent, :class_name => "Repository"
   has_many    :committerships, :dependent => :destroy
   has_many    :committers, :through => :committerships, :source => :user

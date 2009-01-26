@@ -7,6 +7,9 @@ johans:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: true
+  owner_type: Group
+  owner_id: <%= Fixtures.identify(:johans_core) %>
+
 johans2:
   id: 2
   name: Johansprojectrepos-clone
@@ -16,6 +19,9 @@ johans2:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: false
+  owner_type: Group
+  owner_id: <%= Fixtures.identify(:johans_team_thunderbird) %>
+
 moes:
   id: 3
   name: moesprojectrepos
@@ -24,6 +30,9 @@ moes:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: true
+  owner_type: Group
+  owner_id: <%= Fixtures.identify(:moes_core) %>
+  
 johans_moe_clone:
   id: 4
   name: johans-clone-of-moes
@@ -33,6 +42,9 @@ johans_moe_clone:
   updated_at: 2007-11-18 01:21:21
   mainline: false
   parent_id: 3
+  owner_type: User
+  owner_id: 1
+  
 johans_wiki:
   name: <%= "mainline#{Repository::WIKI_NAME_SUFFIX}" %>
   project_id: 1
@@ -42,3 +54,5 @@ johans_wiki:
   mainline: false
   kind: <%= "#{Repository::KIND_WIKI}" %>
   ready: true
+  owner_type: Group
+  owner_id: <%= Fixtures.identify(:johans_core) %>

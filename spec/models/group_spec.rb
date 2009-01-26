@@ -34,4 +34,10 @@ describe Group do
       groups(:johans_core).committer?(users(:johan)).should == true
     end
   end
+  
+  describe "repositories" do
+    it "has many repositories" do
+      groups(:johans_core).repositories.should include(repositories(:johans))
+    end
+  end
 end

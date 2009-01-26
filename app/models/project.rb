@@ -181,7 +181,11 @@ class Project < ActiveRecord::Base
     end
   
     def create_mainline_repository
-      self.repositories.create!(:user => self.user, :name => "mainline")
+      self.repositories.create!({
+        :user => self.user, 
+        :name => "mainline", 
+        :owner => self.group,
+      })
     end
     
     def create_wiki_repository
@@ -190,6 +194,7 @@ class Project < ActiveRecord::Base
         :name => self.slug + Repository::WIKI_NAME_SUFFIX,
         :kind => Repository::KIND_WIKI,
         :project => self,
+        :owner => self.group,
       })
     end
 
