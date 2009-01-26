@@ -29,7 +29,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "rmagick",      :lib => "RMagick"
   config.gem "chronic"
-  config.gem "geoip",        
+  config.gem "geoip"
   config.gem "daemons",      :lib => false
   config.gem "rspec-rails",  :version => '1.1.12', :lib => false
   config.gem "rspec",        :version => '1.1.12', :lib => false
