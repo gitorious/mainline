@@ -57,7 +57,7 @@ ActionController::Routing::Routes.draw do |map|
       repo.with_options(:requirements => { :id => VALID_SHA }) do |r|
         r.tree           "trees/:id/*path", :controller => "trees", :action => "show"
         r.formatted_tree "trees/:id/*path.:format", :controller => "trees", :action => "show"
-        r.archive_tree   "archive/:id.tar.gz", :controller => "trees", :action => "archive"
+        r.archive_tree   "archive/:id.:format", :controller => "trees", :action => "archive", :requirements => { :format => /zip|tar\.gz/, :id => VALID_SHA }
         r.raw_blob       "blobs/raw/:id/*path", :controller => "blobs", :action => "raw"
         r.blob           "blobs/:id/*path", :controller => "blobs", :action => "show"
       end

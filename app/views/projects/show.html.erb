@@ -25,6 +25,10 @@
   <%= auto_link(markdown(sanitize(@project.description)), :urls) -%>
 </div>
 
+<% @project.repositories.mainlines.each do |repo| -%>
+  <%= render :partial => "repositories/statistics", :locals => {:repository => repo} -%>
+<% end -%>
+
 <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
 <%= render :partial => "events/events", :locals => { :events => @events } -%>
 
@@ -54,6 +58,9 @@
     </ul>
   
     <ul class="links">
+      <li class="wiki_page">
+        <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
+      </li>
       <% if @project.admin?(current_user) -%>
         <li class="update_project"><%= link_to t("views.projects.settings"), edit_project_path(@project) -%></li>
       <% end -%>

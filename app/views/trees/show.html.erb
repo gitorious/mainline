@@ -58,11 +58,6 @@
   <% end -%>
 </table>
 <% end -%>
-<% if logged_in? -%>
-<p>
-  <small><%= link_to t("views.trees.download"), archive_tree_path(@commit.id) -%></small>
-</p>
-<% end -%>
 
 <% content_for :sidebar do -%>  
   <h5><%= t("views.logs.branches") %>:</h5>
