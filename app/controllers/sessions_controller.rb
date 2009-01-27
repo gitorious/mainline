@@ -72,7 +72,6 @@ class SessionsController < ApplicationController
     flash[:error] = %Q{This login (<strong>#{@user.login}</strong>) already exists, 
       please <a href="#{@user.identity_url}"> choose a different persona/nickname 
       or modify the current one</a>}
-    flash[:error] = @user.errors.to_yaml
     redirect_to login_path(:method => 'openid')
   end
 
