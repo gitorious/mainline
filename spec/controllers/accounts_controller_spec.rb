@@ -47,6 +47,14 @@ describe AccountsController do
     response.should redirect_to(account_path)
   end
   
+  it 'PUT /account with confirmation of terms of service should redirect to show' do
+    u = users(:johan)
+    u.update_attributes(:aasm_state => 'pending')
+    put :update, :user => {:eula => '1'}
+    flash[:notice].should_not be(nil)
+    response.should redirect_to(account_path)
+  end
+  
   it "GET /account/password is a-ok" do
     get :password
     response.should be_success

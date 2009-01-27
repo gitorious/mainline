@@ -40,7 +40,7 @@ describe UsersController do
   
   def create_user(options = {})
     post :create, :user => { :login => 'quire', :email => 'quire@example.com',
-      :password => 'quire', :password_confirmation => 'quire' }.merge(options)
+      :password => 'quire', :password_confirmation => 'quire', :eula => '1' }.merge(options)
   end
   
   it_should_behave_like "All Users"
@@ -80,6 +80,14 @@ describe UsersController do
     proc{
       create_user(:email => nil)
       assigns(:user).errors.on(:email).should_not be_empty
+      response.should render_template("users/new")
+    }.should_not change(User, :count)
+  end
+  
+  it "should require confirmation of EULA on signup" do
+    proc{
+      create_user(:eula => '0')
+      assigns(:user).errors.on(:eula).should_not be_empty
       response.should render_template("users/new")
     }.should_not change(User, :count)
   end

@@ -207,13 +207,32 @@ describe User do
     js.fullname = "sonic the hedgehog"
     js.to_grit_actor.name.should == js.fullname
   end
+  
+  it 'should require acceptance of terms' do
+    proc{
+      u = create_user(:eula => nil)
+      u.errors.on(:eula).should_not be_empty
+    }.should_not change(User, :count)
+  end
+  
+  it 'should initially be pending' do
+    u = create_user
+    u.should be_pending
+  end
+  
+  it 'should have its state transformed when accepting the eula' do
+    u = create_user
+    u.eula = '1'
+    u.should be_terms_accepted
+  end
  
   protected
     def create_user(options = {})
       u = User.new({ 
         :email => 'quire@example.com', 
         :password => 'quire', 
-        :password_confirmation => 'quire' 
+        :password_confirmation => 'quire',
+        :eula => '1'
       }.merge(options))
       u.login = options[:login] || "quire"
       u.save

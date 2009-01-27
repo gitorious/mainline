@@ -43,10 +43,22 @@ class User < ActiveRecord::Base
   validates_length_of       :login,    :within => 3..40
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
+  
+  validates_acceptance_of :eula, :allow_nil => false, :on => :create, :unless => :in_openid_import_phase?
 
   before_save :encrypt_password
   before_create :make_activation_code
   before_validation :lint_identity_url
+
+  include AASM
+  aasm_initial_state :pending
+
+  aasm_state :pending
+  aasm_state :terms_accepted
+  
+  aasm_event :accept_terms do
+    transitions :to => :terms_accepted, :from => [:pending]
+  end
 
   def self.find_by_login!(name)
     find_by_login(name) || raise(ActiveRecord::RecordNotFound)
@@ -104,6 +116,13 @@ class User < ActiveRecord::Base
 
   def authenticated?(password)
     crypted_password == encrypt(password)
+  end
+
+  def eula=(ok)
+    @eula = ok
+    if ok.to_i == 1
+      self.accept_terms!
+    end
   end
 
   def remember_token?
@@ -169,6 +188,14 @@ class User < ActiveRecord::Base
   
   def title
     fullname.blank? ? login : fullname
+  end
+  
+  def in_openid_import_phase!
+    @in_openid_import_phase = true
+  end
+
+  def in_openid_import_phase?
+    return @in_openid_import_phase
   end
 
   protected

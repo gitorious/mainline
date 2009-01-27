@@ -161,6 +161,7 @@
         :edit_link => "edit",
         :username => "Username",
         :create => "create an account",
+        :eula => 'I accept the End user License agreement',
       },
       :keys => {
         :edit_title => "Edit a SSH key",
@@ -433,6 +434,7 @@
           :current_password => "Current Password",
           :password => "Password",
           :password_confirmation => "Password Confirmation",
+          :eula => 'End User License Agreement',
           :created_at => "Created At",
           :updated_at => "Updated At",
           :activation_code => "Activation Code",

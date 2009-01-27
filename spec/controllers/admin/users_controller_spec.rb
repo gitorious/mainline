@@ -79,6 +79,6 @@ describe Admin::UsersController do
   
   
   def valid_admin_user
-    { :login => 'johndoe', :email => 'foo@foo.com', :password => 'johndoe', :password_confirmation => 'johndoe', :is_admin => "1" }
+    { :login => 'johndoe', :email => 'foo@foo.com', :password => 'johndoe', :password_confirmation => 'johndoe', :is_admin => "1", :eula => '1' }
   end
 end

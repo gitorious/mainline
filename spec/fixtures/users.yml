@@ -9,6 +9,7 @@ johan:
   activated_at: <%= 5.days.ago.to_s :db %> 
   ssh_key_id: 1
   is_admin: <%= true %>
+  aasm_state: terms_accepted
 moe:
   id: 2
   login: moe

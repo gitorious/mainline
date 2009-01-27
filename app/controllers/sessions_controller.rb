@@ -55,8 +55,12 @@ class SessionsController < ApplicationController
           @user.login = registration['nickname']
           @user.fullname = registration['fullname']
           @user.email = registration['email']
+          @user.in_openid_import_phase!
           @user.save!
           @user.activate
+          self.current_user = @user
+          flash[:notice] = "You now need to accept the End User License Agreement"
+          redirect_to edit_account_path and return
         end
         self.current_user = @user
         successful_login
@@ -68,6 +72,7 @@ class SessionsController < ApplicationController
     flash[:error] = %Q{This login (<strong>#{@user.login}</strong>) already exists, 
       please <a href="#{@user.identity_url}"> choose a different persona/nickname 
       or modify the current one</a>}
+    flash[:error] = @user.errors.to_yaml
     redirect_to login_path(:method => 'openid')
   end
 
