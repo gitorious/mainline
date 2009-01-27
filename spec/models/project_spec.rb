@@ -170,7 +170,6 @@ describe Project do
     project = projects(:johans)
     project.wiki_repository.should == repositories(:johans_wiki)
     project.repositories.should_not include(repositories(:johans_wiki))
-    project.repository_clones.should_not include(repositories(:johans_wiki))
   end
   
   describe "master group" do

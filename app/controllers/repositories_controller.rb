@@ -25,7 +25,7 @@ class RepositoriesController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
   
   def index
-    @repositories = @project.repositories.find(:all, :include => [:user, :events, :project])
+    @repositories = @project.group.repositories.find(:all, :include => [:user, :events, :project])
   end
     
   def show

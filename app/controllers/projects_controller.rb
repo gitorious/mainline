@@ -49,8 +49,6 @@ class ProjectsController < ApplicationController
   
   def show
     @project = Project.find_by_slug!(params[:id], :include => [:repositories])
-    @mainline_repository = @project.mainline_repository
-    @repositories = @project.repository_clones
     @events = @project.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc", :include => [:user, :project])
     @atom_auto_discovery_url = formatted_project_path(@project, :atom)

@@ -37,6 +37,10 @@ class Repository < ActiveRecord::Base
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   
+  named_scope :by_users,  :conditions => { :owner_type => "User", :mainline => false }
+  named_scope :by_groups, :conditions => { :owner_type => "Group", :mainline => false }
+  named_scope :mainlines, :conditions => { :mainline => true }
+  
   validates_presence_of :user_id, :project_id, :name, :owner_id
   validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"

@@ -209,7 +209,7 @@ describe Repository do
   end
   
   it "finds a repository by its path" do
-    repo = projects(:johans).mainline_repository
+    repo = projects(:johans).repositories.mainlines.first
     path = File.join(GitoriousConfig['repository_base_path'], 
                       projects(:johans).slug, "#{repo.name}.git")
     Repository.find_by_path(path).should == repo

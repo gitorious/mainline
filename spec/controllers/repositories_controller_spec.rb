@@ -26,7 +26,7 @@ describe RepositoriesController, "index" do
   it "gets all the projects repositories" do
     get :index, :project_id => @project.slug
     response.should be_success
-    assigns(:repositories).should == @project.repositories
+    assigns(:repositories).should == @project.group.repositories
   end
 end
 
@@ -299,8 +299,10 @@ describe RepositoriesController, "destroy" do
   
   it "the owner can delete his own repos" do
     login_as :johan
-    @project.repositories.last.update_attribute(:user_id, users(:johan))
-    do_delete(@project.repositories.last)
+    repo = repositories(:johans2)
+    repo.user = users(:johan)
+    repo.save!
+    do_delete(repo)
     response.should redirect_to(project_path(@project))
     flash[:error].should == nil
     flash[:notice].should == "The repository was deleted"

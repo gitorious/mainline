@@ -1,0 +1,16 @@
+<li class="clone">
+  <div class="name">
+    <%= link_to h(repository.name), [@project, repository] -%>
+  </div>
+  <% if repository.owned_by_group? -%>
+    <div class="group">
+      <%= image_tag("silk/group.png") %>
+      <%= link_to h(repository.owner.name), repository.owner -%>
+    </div>
+  <% else -%>
+    <div class="user">
+      <%= gravatar(repository.user.email, :size => 16, :style => "tiny") %>
+      <%= link_to h(repository.user.login), repository.user -%>
+    </div>
+  <% end -%>
+</li>

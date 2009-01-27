@@ -66,30 +66,6 @@
       </li>
     </ul>
   
-  <h4><%= link_to t("views.projects.repos"), project_repositories_path(@project) -%></h4>
-  <ul class="repository_list">
-    <li class="mainline">
-      <div class="name">
-        <strong><%= link_to h(@mainline_repository.name), [@project, @mainline_repository] -%></strong>
-      </div>
-      <div class="user">
-        <%= gravatar(@mainline_repository.user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(@mainline_repository.user.login), @mainline_repository.user -%>
-      </div>
-    </li>
-      <ul>
-      <% @repositories.each do |repos|-%>
-        <li class="clone">
-          <div class="name">
-            <%= link_to h(repos.name), [@project, repos] -%>
-          </div>
-          <div class="user">
-            <%= gravatar(repos.user.email, :size => 16, :style => "tiny") %>
-            <%= link_to h(repos.user.login), repos.user -%>
-          </div>
-        </li>
-      <% end -%>
-      <ul>
-    </li>
-  </ul>  
+    <%= render :partial => "repositories" -%>
+  
 <% end -%>

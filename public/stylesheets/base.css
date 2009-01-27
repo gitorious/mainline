@@ -603,12 +603,29 @@ ul .user {
   padding-left: 2px;
 }
 
-ul .user img {
+/* sidebar repository list */
+
+#sidebar ul.repository_list li {
+  padding-left: 18px;
+  margin-bottom: 10px;
+}
+#sidebar ul.repository_list li.mainline {
+  background: url("/images/silk/database_star.png") 0 0 no-repeat;
+}
+
+#sidebar ul.repository_list li.clone {
+  background: url("/images/silk/database.png") 0 0 no-repeat;
+}
+
+#sidebar ul.repository_list ul {
+  margin-left: 10px;
+}
+#sidebar ul.repository_list .user img, #sidebar ul.repository_list .group img {
   float: left;
   margin-top: 1px;
 }
 
-ul .user a {
+#sidebar ul.repository_list .user a, #sidebar ul.repository_list .group a {
   color: #555;
   margin: 0 0 0 5px;
   padding:0;

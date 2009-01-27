@@ -133,13 +133,6 @@ describe ProjectsController do
     assigns[:project].should == projects(:johans)
     response.should be_success
   end
-  
-  it "GET projects/show should fetch the repositories for a project" do
-    get :show, :id => projects(:johans).slug
-    assigns[:repositories].should == (projects(:johans).repositories - [repositories(:johans)])
-    assigns[:mainline_repository].should == repositories(:johans)
-    response.should be_success
-  end
 
   it "GET projects/xx/edit should require login" do
     get :edit, :id => projects(:johans).slug

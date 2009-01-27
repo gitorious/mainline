@@ -315,6 +315,8 @@
         :edit_group => "Edit/show group members",
         :show_group => "Show group members",
         :owner => "Owner of the cloned repository",
+        :by_groups => "Groups",
+        :by_users => "Users",
       },
       :projects => {
         :title => "Projects",
