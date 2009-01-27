@@ -139,42 +139,36 @@ abbr {
 
 #header {
   background: #292929;
-  padding-left: 20px;
   height: 125px;
-/*  overflow:hidden;*/
+  background-image: url("/images/header_bg.png");
+  background-repeat: repeat-x;
 }
 
 #header #logo {
-  padding: 10px 0 15px 0;
+  padding: 20px 0 0 20px;
   line-height: 25px;
   margin:0;
+  float: left;
   border:0;
 }
+
+#header #searchbox {
+  float: right;
+  margin-right: 23px;
+  margin-top: 5px;
+  clear: right;
+}
+
 #header #logo a { color: #666; }
 
-#header .search_bar {
-  float: right;
-  margin-right: 20px;
-}
-#header .search_bar .search-hint { display: none;}
-#header .search_bar .search-field {
-  width: 250px;
-}
-#header .search_bar .search-field, #header .search_bar .search-submit {
-  background: #2F2F2F;
-  color: #fff;
-  border: 1px solid #666;
-}
-#header .search_bar .search-submit { color: #aaa; }
-
 #header #project_title {
-  font-size: 19px;
+  font-size: 39px;
   line-height: 19px;
-  margin: 0 0 17px 0;
+  margin: 0 0 0px 0;
   padding: 0;
 }
 #header #project_title  a {
-  color: #aaa;
+  color: #ccc;
   letter-spacing: 0.05em;
 }
 
@@ -221,16 +215,29 @@ abbr {
   margin-left: -5px;
   padding:0;
 }
+
+#sidebar ul.links li:first-child {
+  border-top: 1px dotted #888;
+}
+
 #sidebar ul.links li {
   border-bottom: 1px dotted #888;
 }
+
 #sidebar ul.links li a {
+  background-repeat: no-repeat;
+  background-position: 5px 7px; 
+  background-image: url("/images/silk/bullet_go.png");
   display: block;
-  padding: 5px 5px 5px 10px; 
+  padding: 5px 5px 5px 28px; 
 }
+
+#sidebar ul.links li:hover {
+  background: #390;
+}
+
 #sidebar ul.links li a:hover {
   color: #fff;
-  background: #390;
   text-decoration: none;
 }
 
@@ -249,29 +256,41 @@ abbr {
 
 .flash_message {
   clear: both;
-  padding: 5px 5px 5px 20px;
+  padding: 5px 5px 5px 25px;
   margin-bottom: 20px;
   border-top:1px solid #ccc;
   border-bottom:1px solid #ccc;
+  background-repeat: no-repeat;
+  background-position: 5px 7px;
 }
 .flash_message p { margin: 0; }
-.flash_message.notice, .flash_message.success {
+.flash_message.notice {
+  color: #03588e;
+  background-color: #d9e8fa;
+  border-color: #03588e; 
+  background-image: url("/images/silk/information.png");
+}
+
+.flash_message.success {
   color: #588e03;
-  background: #e9fad9;
+  background-color: #e9fad9;
   border-color: #588e03; 
+  background-image: url("/images/silk/accept.png");
 }
 
 .flash_message.error {
   color: #c30000;
-  background: #f2dcdc;
+  background-color: #f2dcdc;
   border-color: #c30000;
+  background-image: url("/images/silk/exclamation.png");
 }
 
 /* menu */
 
 #menu {
   float: right;
-  margin-top: -50px;
+  margin-top: 13px;
+  padding: 0px;
   margin-right: 20px;
   list-style: none;
   padding-top: 2px;
@@ -286,7 +305,7 @@ abbr {
   color: #666;
 }
 #menu li a { 
-  font-size: 14px;
+  font-size: 16px;
   color: #92B92D;
 }
 
@@ -367,30 +386,94 @@ abbr {
 /* context menu */
 
 #contextmenu {
-  list-style: none;
   margin: 0;
   line-height: 100%;
-  margin-left: 10px;
+  margin-left: 0px;
   background: #dee7ed;
-  height: 30px;
+  height: 29px;
+  border-top: 1px solid #AAA;
 }
 
 #contextmenu li {
   float: left;
-  position: relative;
-  display: block;
+  background-repeat: no-repeat;
+  background-position: right 0px; 
+  padding: 9px 15px 7px 10px;
+  display: list-item;
+  background-image: url("/images/breadcrumb.png");
 }
 
 #contextmenu li a {
-  padding: 10px 10px 7px 10px;
-  float: left;
-  position: relative;
-  display: block;
+  padding-left: 22px;
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+
+#contextmenu li:last-child {
+  background-image: none;
+}
+
+/* Icons used for actions and breadcrums */
+li.project > a { background-image: url("/images/silk/report.png") !important; }
+li.project_personal > a { background-image: url("/images/silk/report_user.png") !important; }
+li.project_research > a { background-image: url("/images/silk/report_magnify.png") !important; }
+li.repository > a { background-image: url("/images/silk/database.png") !important; }
+li.repository.mainline > a { background-image: url("/images/silk/database_star.png") !important; }
+li.branch > a { background-image: url("/images/silk/arrow_branch.png") !important; }
+li.tag > a { background-image: url("/images/silk/tag_blue.png") !important; }
+li.tree > a { background-image: url("/images/silk/chart_organisation.png") !important; }
+li.home > a { background-image: url("/images/silk/house.png") !important; }
+li.account > a { background-image: url("/images/silk/user.png") !important; }
+li.edit_account > a { background-image: url("/images/silk/user_edit.png") !important; }
+li.edit_account_password > a { background-image: url("/images/silk/lock_edit.png") !important; }
+li.new_key > a { background-image: url("/images/silk/key_add.png") !important; }
+li.edit_key > a { background-image: url("/images/silk/key_edit.png") !important; }
+li.key > a { background-image: url("/images/silk/key.png") !important; }
+li.zip > a { background-image: url("/images/silk/page_white_zip.png") !important; }
+li.gz > a { background-image: url("/images/silk/page_white_compressed.png") !important; }
+
+/* Icons used both for events and actions/breadcrums */
+li.event_instance.create_repository, li.create_repository > a { background-image: url("/images/silk/database_add.png") !important; }
+li.event_instance.clone_repository, li.clone_repository > a { background-image: url("/images/silk/database_clone.png") !important; }
+li.event_instance.add_committer, li.add_committer > a { background-image: url("/images/silk/group_add.png") !important; }
+li.event_instance.update_repository, li.update_repository > a { background-image: url("/images/silk/database_edit.png") !important; }
+li.event_instance.delete_repository, li.delete_repository > a { background-image: url("/images/silk/database_delete.png") !important; }
+li.event_instance.commit, li.commit > a { background-image: url("/images/silk/brick.png") !important; }
+li.event_instance.create_project, li.create_project > a { background-image: url("/images/silk/report_add.png") !important; }
+li.event_instance.delete_project, li.delete_project > a { background-image: url("/images/silk/report_delete.png") !important; }
+li.event_instance.update_project, li.update_project > a { background-image: url("/images/silk/report_edit.png") !important; }
+li.event_instance.wiki_page, li.wiki_page > a { background-image: url("/images/silk/page.png") !important; }
+
+/* Icons used for events only */
+li.event_instance.create_branch { background-image: url("/images/silk/arrow_branch.png") !important; }
+li.event_instance.delete_branch { background-image: url("/images/silk/delete.png") !important; }
+li.event_instance.create_tag { background-image: url("/images/silk/tag_blue_add.png") !important; }
+li.event_instance.delete_tag { background-image: url("/images/silk/tag_blue_delete.png") !important; }
+li.event_instance.remove_committer { background-image: url("/images/silk/group_delete.png") !important; }
+li.event_instance.comment { background-image: url("/images/silk/comment.png") !important; }
+li.event_instance.request_merge { background-image: url("/images/silk/chart_line_add.png") !important; }
+li.event_instance.resolve_merge_request { background-image: url("/images/silk/arrow_merge.png") !important; }
+li.event_instance.update_merge_request { background-image: url("/images/silk/chart_line_edit.png") !important; }
+li.event_instance.delete_merge_request { background-image: url("/images/silk/chart_line_delete.png") !important; }
+
+/* Icons used for file types in breadcrumb and tree view */
+table.tree tr td.file a, li.file > a { background-image: url("/images/silk/page_white_text.png"); }
+table.tree tr td.folder a,li.folder > a { background-image: url("/images/silk/folder.png") !important; }
+table.tree tr td.cplusplus-file a, li.cplusplus-file > a { background-image: url("/images/silk/page_white_cplusplus.png"); }
+table.tree tr td.c-file a, li.c-file > a { background-image: url("/images/silk/page_white_c.png"); }
+table.tree tr td.header-file a, li.header-file > a { background-image: url("/images/silk/page_white_h.png"); }
+table.tree tr td.java-file a, li.java-file > a { background-image: url("/images/silk/page_white_cup.png"); }
+table.tree tr td.exec-file a, li.exec-file > a { background-image: url("/images/silk/page_white_gear.png"); }
+table.tree tr td.ruby-file a, li.ruby-file > a { background-image: url("/images/silk/page_white_ruby.png"); }
+table.tree tr td.compressed-file a, li.compressed-file > a { background-image: url("/images/silk/page_white_compressed.png"); }
+table.tree tr td.image-file a, li.image-file > a { background-image: url("/images/silk/page_white_picture.png"); }
+
+#contextmenu li a {
   color: #555;
 }
 #contextmenu li a:hover {
   text-decoration: none;
-  color: #390; /* #62b0e4 */
+  color: #390;
 }
 
 /* Forms */
@@ -435,10 +518,10 @@ textarea {
   padding: 3px; 
 }
 textarea.text { height: 60px; }
-textarea.wide { width: 100%; }
-textarea.shorter { height: 250px; }
-textarea.tall { height: 500px; }
+textarea.wide { width: 500px; }
+textarea.tall { height: 300px; }
 textarea.medium { width: 450px; height: 250px; }
+textarea.fill { width: 95%; }
 select        { width: 200px; }
 
 input.text, textarea, select {
@@ -512,33 +595,34 @@ table.listing thead th {
   border-bottom: 2px solid #888;
 }
 
-/* sidebar repository list */
-
-#sidebar ul.repository_list li {
-  padding-left: 25px;
-  margin-bottom: 10px;
-}
-#sidebar ul.repository_list li.mainline {
-  background: url("/images/repocube_main.png") 0 0 no-repeat;
+ul.committers_list li {
+  margin-bottom: 2px;
 }
 
-#sidebar ul.repository_list li.clone {
-  background: url("/images/repocube.png") 0 0 no-repeat;
+ul .user {
+  padding-left: 2px;
 }
 
-#sidebar ul.repository_list ul {
-  margin-left: 20px;
-}
-#sidebar ul.repository_list .user img {
+ul .user img {
   float: left;
   margin-top: 1px;
 }
 
-#sidebar ul.repository_list .user a {
+ul .user a {
   color: #555;
   margin: 0 0 0 5px;
   padding:0;
-  font-size: 11px;
+  font-size: 11.8px;
+}
+
+ul.icon_list li {
+   margin-bottom: 3px;
+}
+
+ul.icon_list li a {
+   padding-left: 25px;
+   background-repeat: no-repeat;
+   background-position: 2px 0px;
 }
 
 /* info boxes */
@@ -554,13 +638,28 @@ table.listing thead th {
 }
 
 #projects .infobox {
-	float: right;
-	margin: 0 0 10px 10px;
-	font-size: 93%;
 }
 
 #projects .infobox ul {
-	margin-bottom:0;
+}
+
+ul.horizontal {
+  display: inline;
+  margin-left: 5px !important;
+}
+
+ul.horizontal li {
+  padding-right: 10px;
+  margin-left: 0px;
+  display: inline;
+}
+
+ul.horizontal li > a {
+  background-repeat: no-repeat;
+  background-position: 0px 2px;
+  padding-left: 22px !important;
+  padding-bottom: 2px;
+  padding-top: 2px;
 }
 
 .commit_list .commit_item {
@@ -759,15 +858,6 @@ table.tree tr td.node a {
   background-position: 4px 50%;
   background-repeat: no-repeat;
 }
-table.tree tr td.file a { background-image: url("/images/icon_file.gif"); }
-table.tree tr td.tree a { background-image: url("/images/folder_grey.png"); }
-table.tree tr td.submodule { 
-  background-image: url("/images/folder_grey.png");
-  padding-left:25px;
-  background-position: 4px 50%;
-  background-repeat: no-repeat;
-  font-style: italic;
-}
 
 #site_intro {
   width: 65%;
@@ -802,18 +892,30 @@ ul.tab_menu li.selected {
   color: #666;
 }
 
-div.comment {
+#sidebar li.comment {
+  border-top: 1px solid #fff;
   border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  width: 63%;
-}
-div.comment .body {
-  margin-bottom: 0.2em;
+  padding-bottom: 5px;
+  padding-top: 15px;
 }
 
-p.byline {
+#sidebar li.comment:first-child {
+  padding-top: 0px;
+  border-top: none;
+}
+
+#sidebar li.comment:last-child {
+    border-bottom: none;
+}
+
+#sidebar li.comment .body {
+  padding: 5px 8px 0px 8px;
+}
+
+#sidebar li.comment .byline {
   font-size: 10px;
+  margin-top: -15px;
+  float: right;
 }
 
 .hint {
@@ -934,15 +1036,15 @@ table.codediff .cut-line {
   border-bottom: 1px dashed #aaa; 
 }
 table.codediff td.hidden del { display:none; }
-table.codediff td.del { background: #ffa3a3; }
-table.codediff td.ins { background: #a3ffa3; }
+table.codediff td.del { background: #ffdddd; }
+table.codediff td.ins { background: #ddffdd; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del{ background: #fd4; }
 table.codediff td.del del { text-decoration: none; }
 table.codediff td.ins ins { text-decoration: none; }
-table.sidebyside td.del del { background: #fbb; }
-table.sidebyside td.ins ins { background: #afa; }
+table.sidebyside td.del del { background: #ffaaaa; }
+table.sidebyside td.ins ins { background: #aaffaa; }
 table.codediff col.lines {
   width: 3em;
 }
@@ -1050,66 +1152,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 /* Page */
-.wiki-page {
-  margin-left: 20px;
-  margin-right: 20px;
-}
-.wiki-page .page-content { max-width: 750px;}
-
-.wiki-page .toc {
-  float: right;
-  margin: 0 0 10px 10px;
-  padding: 10px 10px 10px 0;
-  background: #E9F1F6;
-  border: 1px solid #ccc;
-}
-.wiki-page .toc ul { margin-left: 10px;}
-.wiki-page .toc ul li {
-  list-style: none;
-}
-.page-meta { 
-  font-size:11px; 
-  color: #666; 
-  border-top: 1px solid #ccc;
-  margin-top: 10px;
-  padding-top: 10px;
-}
-.page-meta p { margin:0; padding:0;}
-.page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
-.page-meta .page-actions li {
-  padding:0;
-  margin:0;
-}
-
-.page-history .diff {
-  margin-top: 10px;
-}
-
-.page-header {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-.page-header h1 {
-  font-size: 175%; 
-  margin:0;
-  padding:0;
-}
-.page-header .page-crumbs {
-  margin: 0 0 10px 0;
-  font-size: 11px;
-}
-.page-header .page-crumbs li {
-  display: inline;
-  padding: 0;
-  margin: 0;
-  margin-right: 5px;
-  list-style-type: none;
-}
-.page-header .page-crumbs li a { margin-right: 5px;}
-.page-header .page-crumbs li.current { color: #666;}
-
-.page					{ margin-bottom: 20px; padding-bottom: 10px; /*border-bottom: 2px solid #666;*/}
+.page					{ margin-bottom: 0px; padding-bottom: 0px; /*border-bottom: 2px solid #666;*/}
 .page ul, .page ol { margin-left: 30px; }
 .page ul li		{ list-style-type: disc; }
 .page ol li		{ list-style-type: decimal; }
@@ -1211,7 +1254,13 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 .events .event_instances {
-  margin: 0;
+  margin: 0px 0px 0px 15px;
+}
+
+.events .event_instance {
+  background-repeat: no-repeat;
+  background-position: 2px 4px;
+  padding-bottom: 1px;
 }
 
 .events .event_instances strong { 
@@ -1222,7 +1271,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   float: left;
   width: 80px;
   text-align: center;
-  padding-top: 5px;
+  padding-top: 4px;
   font-size: 11px;
   color: #898989;
 }
@@ -1247,10 +1296,32 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   background: #b6babc;
 }
 
+li.event_instance.create_project { background-image: url("/images/silk/report_add.png"); }
+li.event_instance.delete_project { background-image: url("/images/silk/report_delete.png"); }
+li.event_instance.update_project { background-image: url("/images/silk/report_edit.png"); }
+li.event_instance.create_repository { background-image: url("/images/silk/database_add.png"); }
+li.event_instance.clone_repository { background-image: url("/images/silk/database_clone.png"); }
+li.event_instance.delete_repository { background-image: url("/images/silk/database_delete.png"); }
+li.event_instance.update_repository { background-image: url("/images/silk/database_edit.png"); }
+li.event_instance.commit { background-image: url("/images/silk/brick.png"); }
+li.event_instance.create_branch { background-image: url("/images/silk/arrow_branch.png"); }
+li.event_instance.delete_branch { background-image: url("/images/silk/delete.png"); }
+li.event_instance.create_tag { background-image: url("/images/silk/tag_blue_add.png"); }
+li.event_instance.delete_tag { background-image: url("/images/silk/tag_blue_delete.png"); }
+li.event_instance.add_committer { background-image: url("/images/silk/group_add.png"); }
+li.event_instance.remove_committer { background-image: url("/images/silk/group_delete.png"); }
+li.event_instance.comment { background-image: url("/images/silk/comment.png"); }
+li.event_instance.request_merge { background-image: url("/images/silk/chart_line_add.png"); }
+li.event_instance.resolve_merge_request { background-image: url("/images/silk/arrow_merge.png"); }
+li.event_instance.update_merge_request { background-image: url("/images/silk/chart_line_edit.png"); }
+li.event_instance.delete_merge_request { background-image: url("/images/silk/chart_line_delete.png"); }
+
+/* sidebar repository list */
+
+
 .event_instance .event_category.comment { background: #a49d98; }
 .event_instance .event_category.project  { background: #98a49f; }
 .event_instance .event_category.merge_request { background: #a2a498; }
-.event_instance .event_category.wiki { background: #94A499; }
 
 /* repository meta (overview apge) */
 table.repository_meta {
@@ -1292,30 +1363,5 @@ table.repository_meta .meta td .bignum {
 }
 table.repository_meta .graph td { text-align:center; }
 
-.feed_icon { margin: 0 4px 0 4px; }
+.feed_icon { margin: 0px 4px -1px 4px; }
 
-/*
- * User login autocompletion
- */
-#user_login_auto_complete  li.committer {
-  height: 32px;
-}
- 
-#user_login_auto_complete li.committer div.image {
-  float: left;
-  width: 32px;
-  height: 32px;
-  margin-right: 8px;  
-}
- 
-#user_login_auto_complete li.committer div.name {
-  font-weight: bold
-  font-size: 12px;
-  line-height: 1.2em;
-}
- 
-#user_login_auto_complete li.committer div.email {
-  font-size: 10px;
-  color:#888;
-}
- 

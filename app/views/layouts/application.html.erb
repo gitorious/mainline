@@ -42,7 +42,7 @@
   <% end -%>
   <div id="header">
     <h1 id="logo">
-      <%= link_to image_tag("logo-white.png"), root_path -%>
+      <%= link_to image_tag("/images/qt-logo.png"), root_path -%> 
     </h1>
     <ul id="menu">
       <% unless logged_in? -%>
@@ -75,7 +75,9 @@
     </ul>
     
 	<% if GitoriousConfig['public_mode'] || logged_in? -%>
+	  <div id="searchbox">
     	<%= render :partial => "/searches/search_box" -%>
+    </div>
 	<% end -%>
     
     <% if @project -%>

@@ -65,6 +65,6 @@
 
 <% if current_user && (current_user == @user)  -%>
   <% content_for :submenu do -%>
-    <li><%= link_to t("views.account.edit_title"), edit_account_url -%>
+    <li class="home"><%= link_to t("views.account.edit_title"), edit_account_url -%>
   <% end -%>
 <% end -%>
