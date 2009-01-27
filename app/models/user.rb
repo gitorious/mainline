@@ -21,14 +21,13 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   has_many :projects
-  has_many :committerships
-  has_many :repositories, :through => :committerships, 
+  has_many :memberships, :dependent => :destroy
+  has_many :groups, :through => :memberships
+  has_many :repositories,
     :conditions => ["repositories.kind = ?", Repository::KIND_PROJECT_REPO]
   has_many :ssh_keys, :order => "id desc"
   has_many :comments
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
-  has_many :memberships, :dependent => :destroy
-  has_many :groups, :through => :memberships
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
