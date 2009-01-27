@@ -24,7 +24,7 @@
 <% form_for @repository, :repository, 
       :url => create_clone_project_repository_path(@project, @repository_to_clone) do |f| -%>
   <p>
-    <%= f.label :owner, t("views.repos.clone_as") -%>
+    <%= f.label :owner, t("views.repos.owner") -%>:
     <br />
     Me: <%= f.radio_button :owner_type, "User" -%>
     Group: <%= f.radio_button :owner_type, "Group" -%>
@@ -34,7 +34,7 @@
     <p class="hint">Clone the repository as either yourself or a group you're in</p>
   </p>
   <p>
-    <%= f.label :name, t("views.repos.name", :name => current_user.login) -%><br />
+    <%= f.label :name, t("views.repos.name", :name => current_user.login) -%>:<br />
     <%= f.text_field :name, :class => "text" -%>
   </p>
   <%= f.submit t("views.repos.btn_clone") -%>
