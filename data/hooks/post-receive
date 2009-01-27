@@ -64,7 +64,8 @@ while line = gets
     end
   end
   
-  users = repository.committers.find(:all, :conditions => ["email in (?)", emails])
+  #users = repository.committers.find(:all, :conditions => ["email in (?)", emails])
+  users = repository.committers.select{|u| emails.flatten.uniq.include?(u.email) }
   user_map = users.inject({}) { |hash, user| hash[user.email] = user; hash }
   
   revs.each do |sha1|
