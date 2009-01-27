@@ -359,6 +359,14 @@ describe Repository do
     @repository.wiki?.should == true
   end
   
+  it "returns a list of committers depending on owner type" do
+    repo = repositories(:johans)
+    repo.owner.add_member(users(:mike), Role.admin)
+    repo.committers.should == groups(:johans_core).members
+    repo.owner = users(:johan)
+    repo.committers.should == [users(:johan)]
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.expects(:deliver_new_repository_clone).with(@repository).returns(true)

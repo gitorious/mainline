@@ -264,6 +264,14 @@ class Repository < ActiveRecord::Base
     kind == KIND_PROJECT_REPO
   end
   
+  def committers
+    owner === Group ? owner.members : [owner]
+  end
+  
+  def owned_by_group?
+    owner === Group
+  end
+  
   protected
     def set_as_mainline_if_first
       unless project.repositories.size >= 1

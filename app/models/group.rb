@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
   has_many :members, :through => :memberships, :source => :user
   has_many :repositories, :as => :owner
   
-  attr_protected :public
+  attr_protected :public, :role_id, :user_id
   
   # is this +user+ a member of this group?
   def member?(user)

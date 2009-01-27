@@ -255,7 +255,7 @@ abbr {
   border-bottom:1px solid #ccc;
 }
 .flash_message p { margin: 0; }
-.flash_message.notice {
+.flash_message.notice, .flash_message.success {
   color: #588e03;
   background: #e9fad9;
   border-color: #588e03; 
@@ -1293,3 +1293,29 @@ table.repository_meta .meta td .bignum {
 table.repository_meta .graph td { text-align:center; }
 
 .feed_icon { margin: 0 4px 0 4px; }
+
+/*
+ * User login autocompletion
+ */
+#user_login_auto_complete  li.committer {
+  height: 32px;
+}
+ 
+#user_login_auto_complete li.committer div.image {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;  
+}
+ 
+#user_login_auto_complete li.committer div.name {
+  font-weight: bold
+  font-size: 12px;
+  line-height: 1.2em;
+}
+ 
+#user_login_auto_complete li.committer div.email {
+  font-size: 10px;
+  color:#888;
+}
+ 

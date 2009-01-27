@@ -334,6 +334,7 @@ describe MergeRequestsController do
 	before(:each) do
 	  login_as :mike
 		@project = projects(:johans)
+		@project.group.add_member(users(:mike), Role.committer)
 		@repository = repositories(:johans2)
 		@mainline_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans)

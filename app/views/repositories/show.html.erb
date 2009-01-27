@@ -49,13 +49,8 @@
     <% if @repository.ready? -%>
       <li><%= link_to t("views.repos.btn_clone"), clone_project_repository_path(@project, @repository) -%></li>
     <% end -%>
-    <% if @repository.committers.include?(current_user) -%>
+    <% if @repository.writable_by?(current_user) -%>
       <li><%= link_to t("views.repos.btn_request"), new_project_repository_merge_request_path(@project, @repository) -%></li>
-      <% if @repository.user == current_user -%>
-      <li><%= link_to t("views.repos.btn_add_committer"),
-              { :controller => "committers", :action => "new", :project_id => @project,
-                :repository_id => @repository } -%></li>
-      <% end -%>
     <% end -%>
     <% if @repository.can_be_deleted_by?(current_user) -%>
       <li><%= link_to t("views.repos.btn_delete_repo"), confirm_delete_project_repository_path(@project, @repository) -%></li>
@@ -70,16 +65,11 @@
       <% if @repository.user == user -%>
       <small>(<%= t("views.repos.owner") %>)</small>
       <% end -%>
-      <% if @repository.user == current_user -%>
-        <small>
-        <%= link_to t("views.repos.remove"), 
-              { :controller => "committers", :action => "destroy", :id => user.id, 
-                :project_id => @project, :repository_id => @repository}, # FIXME: meh!
-              :confirm => t("views.common.confirm"), :method => :delete unless user == current_user -%>
-        </small>
-      <% end -%>
     </li>
   <% end -%>
+    <% if @repository.owned_by_group? -%>
+      <li><small><%= link_to edit_or_show_group_text, group_memberships_path(@repository.owner) -%></small></li>
+    <% end -%>
   </ul>
 
   <% unless @commits.blank? -%>

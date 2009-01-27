@@ -72,6 +72,11 @@
       :no_changes => "No changes was submitted",
       :repository_not_ready => "The wiki is being created",
     },
+    :memberships_controller => {
+      :membership_created => "Membership was successfully created",
+      :membership_updated => "Membership was updated",
+      :failed_to_destroy => "Failed to destroy membership",
+    },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
       :event_status_created => "created project",
@@ -307,6 +312,8 @@
           with lots of empty repositories), so it's a good idea to wait with creating 
           the clone here until there's something to push.</em>          
         },
+        :edit_group => "Edit/show group members",
+        :show_group => "Show group members",
       },
       :projects => {
         :title => "Projects",
@@ -333,6 +340,7 @@
         :mailing => "Mailinglist at ",
         :bugtracker => "Bugtracker at ",
         :repos => "Repositories",
+        :project_members => "Project members",
       },
       :merges => {
         :info => {
@@ -386,6 +394,10 @@
         :index => "Pages index",
         :format_using_markdown => %Q(Format pages using {{markdown}}),
         :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name."
+      },
+      :memberships => {
+        :add_new_member => "Add new member",
+        :role => "Role",
       },
     },
     :date => {
@@ -468,6 +480,12 @@
         :keys => {
           :key => "Key",
           :ready => "Ready",
+        },
+        :roles => {
+          :name => "Role"
+        },
+        :memberships => {
+          :created_at => "Created at"
         },
       },
     }

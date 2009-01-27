@@ -32,6 +32,7 @@
   <% if @project.admin?(current_user) -%>
     <li><%= link_to t("views.projects.settings"), edit_project_path(@project) -%></li>
   <% end -%>  
+  <li><%= link_to t("views.projects.project_members"), group_memberships_path(@project.group) -%>
 <% end -%>
 
 <% content_for :sidebar do -%>

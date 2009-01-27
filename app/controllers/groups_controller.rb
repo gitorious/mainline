@@ -1,7 +1,5 @@
-<%
 #--
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Will <will@gina.alaska.edu>
+#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,14 +14,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
 
-<ul>
-<% @users.each do |user| -%>
-<li class="committer">
-  <div class="image"><%= gravatar user.email, :size => 32 -%></div>
-  <div class="login"><%=h user.login -%></div>
-  <div class="email"><span class="informal"><%=h user.email -%></span></div>
-</li>
-<% end -%>
-</ul>
+class GroupsController < ApplicationController
+  before_filter :find_group
+  
+  def show
+    
+  end
+  
+  
+  protected
+    def find_group
+      @group = Group.find(params[:id])
+    end
+end

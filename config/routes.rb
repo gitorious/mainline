@@ -34,6 +34,9 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.projects_category "projects/category/:id"
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
+  map.resources :groups do |grp|
+    grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
+  end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
     projects.resources :pages, :member => { :history => :get }
     projects.resources(:repositories, :member => {
@@ -41,7 +44,6 @@ ActionController::Routing::Routes.draw do |map|
       :writable_by => :get, 
       :confirm_delete => :get
     }, :as => "repos") do |repo|
-      repo.resources :committers, :name_prefix => nil, :collection => {:auto_complete_for_user_login => :post, :list => :get, :create => :post}
       repo.resources :comments, :member => { :commmit => :get  }
       repo.resources :merge_requests, :member => { :resolve => :put }, :collection => { :create => :post }
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 

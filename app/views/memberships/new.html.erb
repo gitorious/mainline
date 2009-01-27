@@ -1,3 +1,4 @@
+<%
 #--
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
@@ -14,11 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+%>
 
-class Membership < ActiveRecord::Base
-  belongs_to :group
-  belongs_to :user
-  belongs_to :role
-  
-  validates_presence_of :group_id, :user_id, :role_id
-end
+<% form_for [@group, @membership] do |f| -%>
+  <p>
+    <%= f.label :login, t("views.account.username") -%><br />
+    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
+  </p>
+  <p>
+    <%= f.label :role, t("views.memberships.role") -%>
+    <%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%>
+  </p>
+
+  <%= f.submit -%>
+<% end -%>

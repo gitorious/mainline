@@ -55,4 +55,12 @@ module RepositoriesHelper
   def namespaced_branch?(branchname)
     branchname.include?("/")
   end
+  
+  def edit_or_show_group_text
+    if @repository.owner.admin?(current_user) 
+      t("views.repos.edit_group") 
+    else
+      t("views.repos.show_group")
+    end
+  end
 end

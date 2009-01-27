@@ -173,9 +173,9 @@ class Project < ActiveRecord::Base
       core_group = Group.create!(:name => self.slug + "-core")
       core_group.project = self
       core_group.public = false
-      core_group.memberships << Membership.create!({
+      core_group.memberships.create!({
         :user => self.user,
-        :role => Role.admin
+        :role => Role.admin,
       })
       self.group = core_group
     end
