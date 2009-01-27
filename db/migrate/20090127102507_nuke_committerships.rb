@@ -4,7 +4,7 @@ class NukeCommitterships < ActiveRecord::Migration
   end
 
   def self.down
-    create_table "committerships"
+    create_table "committerships" do |t|
       t.integer  "user_id"
       t.integer  "repository_id"
       t.integer  "kind",          :default => 2
