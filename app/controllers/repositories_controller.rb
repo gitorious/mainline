@@ -70,6 +70,12 @@ class RepositoriesController < ApplicationController
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]
     @repository.user = current_user
+    @repository.owner = case params[:repository][:owner_type]
+    when "User"
+      current_user
+    when "Group"
+      current_user.groups.find(params[:repository][:owner_id])
+    end
     
     respond_to do |format|
       if @repository.save

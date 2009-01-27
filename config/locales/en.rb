@@ -314,6 +314,7 @@
         },
         :edit_group => "Edit/show group members",
         :show_group => "Show group members",
+        :clone_as => "Clone as",
       },
       :projects => {
         :title => "Projects",

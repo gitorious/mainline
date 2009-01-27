@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -23,6 +23,16 @@
 
 <% form_for @repository, :repository, 
       :url => create_clone_project_repository_path(@project, @repository_to_clone) do |f| -%>
+  <p>
+    <%= f.label :owner, t("views.repos.clone_as") -%>
+    <br />
+    Me: <%= f.radio_button :owner_type, "User" -%>
+    Group: <%= f.radio_button :owner_type, "Group" -%>
+    <%= f.select :owner_id, current_user.groups.map{|g| [g.name, g.id] }, {},
+                  :id => "repository_owner_id_group_select" -%>
+    
+    <p class="hint">Clone the repository as either yourself or a group you're in</p>
+  </p>
   <p>
     <%= f.label :name, t("views.repos.name", :name => current_user.login) -%><br />
     <%= f.text_field :name, :class => "text" -%>

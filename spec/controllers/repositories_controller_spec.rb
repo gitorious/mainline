@@ -143,7 +143,7 @@ describe RepositoriesController, "create_clone" do
   
   def do_post(opts={})
     post(:create_clone, :project_id => @project.slug, :id => @repository.name,
-      :repository => opts)
+      :repository => {:owner_type => "User"}.merge(opts))
   end
   
   it "should require login" do
@@ -152,12 +152,30 @@ describe RepositoriesController, "create_clone" do
     response.should redirect_to(new_sessions_path)
   end
   
-  it "post projects/1/repositories/3/create_copy is successful" do
+  it "post projects/1/repositories/3/create_clone is successful" do
     Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
     @repository.stubs(:has_commits?).returns(true)
     @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
     do_post(:name => "foo-clone")
     response.should be_redirect
+  end
+  
+  it "post projects/1/repositories/3/create_clone is successful sets the owner to the user" do
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(true)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+    do_post(:name => "foo-clone", :owner_type => "User")
+    response.should be_redirect
+    assigns(:repository).owner.should == users(:johan)
+  end
+  
+  it "post projects/1/repositories/3/create_clone is successful sets the owner to the group" do
+    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+    @repository.stubs(:has_commits?).returns(true)
+    @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
+    do_post(:name => "foo-clone", :owner_type => "Group", :owner_id => users(:johan).groups.first.id)
+    response.should be_redirect
+    assigns(:repository).owner.should == users(:johan).groups.first
   end
   
   it "redirects to new_account_key_path if no keys on user" do
@@ -189,7 +207,7 @@ describe RepositoriesController, "create_clone as XML" do
   def do_post(opts={})
     @request.env["HTTP_ACCEPT"] = "application/xml"
     post(:create_clone, :project_id => @project.slug, :id => @repository.name,
-      :repository => opts)
+      :repository => {:owner_type => "User"}.merge(opts))
   end
   
   it "should require login" do
@@ -296,6 +314,7 @@ describe RepositoriesController, "with committer (not owner) logged in" do
   before(:each) do
     login_as :mike
     @project = projects(:johans)
+    @project.group.add_member(users(:mike), Role.committer)
     @repository = @project.repositories.first
   end
   
