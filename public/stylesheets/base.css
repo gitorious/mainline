@@ -1383,3 +1383,72 @@ table.repository_meta .graph td { text-align:center; }
 
 .feed_icon { margin: 0px 4px -1px 4px; }
 
+/* Wiki Pages */
+.wiki-page {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.wiki-page .page-content { max-width: 750px;}
+
+.wiki-page .toc {
+  float: right;
+  margin: 0 0 10px 10px;
+  padding: 10px 10px 10px 0;
+  background: #E9F1F6;
+  border: 1px solid #ccc;
+}
+.wiki-page .toc ul { margin-left: 10px;}
+.wiki-page .toc ul li {
+  list-style: none;
+}
+.page-meta { 
+  font-size:11px; 
+  color: #666; 
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.page-meta p { margin:0; padding:0;}
+.page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
+.page-meta .page-actions li {
+  padding:0;
+  margin:0;
+}
+
+.page-history .diff {
+  margin-top: 10px;
+}
+
+.page-header {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.page-header h1 {
+  font-size: 175%; 
+  margin:0;
+  padding:0;
+}
+.page-header .page-crumbs {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+}
+.page-header .page-crumbs li {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
+  list-style-type: none;
+}
+.page-header .page-crumbs li a { margin-right: 5px;}
+.page-header .page-crumbs li.current { color: #666;}
+
+.page					{ margin-bottom: 20px; padding-bottom: 10px; /*border-bottom: 2px solid #666;*/}
+.page ul, .page ol { margin-left: 30px; }
+.page ul li		{ list-style-type: disc; }
+.page ol li		{ list-style-type: decimal; }
+.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
+.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
+.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
+.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
+.page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
