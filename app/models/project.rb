@@ -167,6 +167,7 @@ class Project < ActiveRecord::Base
     def create_core_group
       core_group = Group.create!(:name => self.slug + "-core")
       core_group.project = self
+      core_group.creator = self.user
       core_group.public = false
       core_group.memberships.create!({
         :user => self.user,

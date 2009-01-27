@@ -178,6 +178,7 @@ describe Project do
       project.save!
       project.group.should_not == nil
       project.group.public?.should == false
+      project.group.creator.should == project.user
     end
     
     it "should create a group with the creator as a admin member" do
