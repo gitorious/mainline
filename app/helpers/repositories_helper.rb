@@ -36,8 +36,8 @@ module RepositoriesHelper
     project_repository_tree_path(@project, @repository, treeish, path)
   end
   
-  def archive_tree_path(treeish = "master")
-    project_repository_archive_tree_path(@project, @repository, treeish)
+  def archive_tree_path(treeish = "master", format = "tar.gz")
+    project_repository_archive_tree_path(@project, @repository, treeish, format)
   end
   
   def repository_path(action, sha1=nil)

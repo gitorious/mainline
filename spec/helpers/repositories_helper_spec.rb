@@ -64,8 +64,9 @@ describe RepositoriesHelper do
   end
   
   it "has a archive_tree_path shortcut" do
-    archive_tree_path.should == project_repository_archive_tree_path(@project, @repository, "master")
-    archive_tree_path("foo").should == project_repository_archive_tree_path(@project, @repository, "foo")
+    archive_tree_path.should == project_repository_archive_tree_path(@project, @repository, "master", "tar.gz")
+    archive_tree_path("foo").should == project_repository_archive_tree_path(@project, @repository, "foo", "tar.gz")
+    archive_tree_path("foo", "zip").should == project_repository_archive_tree_path(@project, @repository, "foo", "zip")
   end
   
   it "has a blob_path shortcut" do
