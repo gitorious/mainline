@@ -100,8 +100,17 @@ class SessionsController < ApplicationController
       self.current_user.remember_me
       cookies[:auth_token] = { :value => self.current_user.remember_token , :expires => self.current_user.remember_token_expires_at }
     end
-    redirect_back_or_default('/')
-    flash[:notice] = "Logged in successfully"
+    check_state_and_redirect('/')
+  end
+  
+  def check_state_and_redirect(redirection_url)
+    if current_user.pending?
+      flash[:notice] = "You need to accept the terms"
+      redirect_to edit_account_path and return
+    else
+      flash[:notice] = "Logged in successfully"
+      redirect_back_or_default(redirection_url)
+    end
   end
 
 end
