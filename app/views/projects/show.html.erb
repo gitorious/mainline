@@ -55,14 +55,14 @@
   
     <ul class="links">
       <% if @project.admin?(current_user) -%>
-        <li class="update_project"><%= link_to "Edit project settings", edit_project_path(@project) -%></li>
+        <li class="update_project"><%= link_to t("views.projects.settings"), edit_project_path(@project) -%></li>
       <% end -%>
       <% if @project.can_be_deleted_by?(current_user) -%>
-        <li class="delete_project"><%= link_to "Delete project", confirm_delete_project_path(@project) -%></li>
+        <li class="delete_project"><%= link_to t("views.projects.delete"), confirm_delete_project_path(@project) -%></li>
       <% end -%>
-      <li class="wiki_page">
-        <%= link_to t("views.layout.pages"), 
-          project_page_path(@project, "Home"), :class => "round-top-5" -%>
+      <li class="project_members">
+        <%= link_to t("views.projects.project_members"), 
+          group_memberships_path(@project.group) -%>
       </li>
     </ul>
   

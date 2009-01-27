@@ -442,6 +442,7 @@ li.event_instance.commit, li.commit > a { background-image: url("/images/silk/br
 li.event_instance.create_project, li.create_project > a { background-image: url("/images/silk/report_add.png") !important; }
 li.event_instance.delete_project, li.delete_project > a { background-image: url("/images/silk/report_delete.png") !important; }
 li.event_instance.update_project, li.update_project > a { background-image: url("/images/silk/report_edit.png") !important; }
+li.event_instance.project_members, li.project_members > a { background-image: url("/images/silk/group.png") !important; }
 li.event_instance.wiki_page, li.wiki_page > a { background-image: url("/images/silk/page.png") !important; }
 
 /* Icons used for events only */
