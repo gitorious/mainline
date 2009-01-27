@@ -223,6 +223,17 @@ describe User do
     u.eula = '1'
     u.should be_terms_accepted
   end
+  
+  it "should have many memberships" do
+    users(:johan).memberships.should == [memberships(:johans_johan)]
+    groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
+    users(:johan).memberships.count.should == 2
+  end
+  
+  it "has many groups through the memberships" do
+    groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
+    users(:johan).groups.should == groups(:johans_team_thunderbird, :johans_core)
+  end
  
   protected
     def create_user(options = {})

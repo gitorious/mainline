@@ -27,6 +27,8 @@ class User < ActiveRecord::Base
   has_many :ssh_keys, :order => "id desc"
   has_many :comments
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
+  has_many :memberships, :dependent => :destroy
+  has_many :groups, :through => :memberships
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
