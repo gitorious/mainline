@@ -20,34 +20,8 @@
 <% @page_title = t("views.repos.page_title", :repo => @project.title) -%>
 <h1><%= t("views.repos.title") %></h1>
 
-<% @repositories.each do |repo| -%>
-  <table class="repository_meta">
-    <tr class="name">
-      <td colspan="3" class="<%= repo.mainline? ? "mainline" : "clone" -%>">
-        <h2><%= link_to h(repo.name), [@project, repo] -%></h2>
-        <%= link_to t("views.repos.commits"), project_repository_logs_path(@project, repo) -%> | 
-        <%= link_to t("views.repos.tree"), project_repository_trees_path(@project, repo) -%>
-      </td>
-    </tr>
-    <tr class="meta">
-      <td class="commit_count">
-        <span class="bignum"><%= repo.events.count -%></span> <%= t("views.repos.activities", :count => repo.events.count) %>
-      </td>
-      <td class="branch_count">
-		<% @branch_count = repo.ready? ? repo.git.heads.size : 0 -%>
-        <span class="bignum"><%= @branch_count -%></span> <%= t("views.repos.branches", :count => @branch_count) %>
-      </td>
-      <td class="author_count">
-		<% @author_count = repo.ready? ? repo.commit_graph_data_by_author.keys.size : 0 -%>
-        <span class="bignum"><%= @author_count -%></span> <%= t("views.repos.authors", :count => @author_count) %>
-      </td>
-    </tr>
-    <tr class="graph">
-      <td colspan="3"><%= commit_graph_tag(repo) %></td>
-    </tr>
-    <% # TODO: Clone stats -%>
-    <% # TODO: divergence from mainline in +/- -%>
-  </table>
+<% @project.repositories.mainlines.each do |repo| -%>
+  <%= render :partial => "repositories/statistics", :locals => {:repository => repo} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>
