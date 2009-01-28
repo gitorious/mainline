@@ -72,4 +72,42 @@ module Breadcrumb
       @sha
     end
   end
+  
+  class Wiki
+    attr_reader :project
+    def initialize(project)
+      @project = project
+    end
+    
+    def breadcrumb_parent
+      @project
+    end
+    
+    def title
+      "Wiki pages"
+    end
+
+    def breadcrumb_css_class
+      'wiki'
+    end
+  end
+  
+  class Page
+    attr_reader :project, :page
+    def initialize(page, project)
+      @page = page
+      @project = project
+    end
+    
+    def breadcrumb_parent
+      Wiki.new(@project)
+    end
+    
+    def title
+      @page.title
+    end
+    def breadcrumb_css_class
+      'file'
+    end
+  end
 end

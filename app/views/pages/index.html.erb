@@ -1,3 +1,6 @@
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
 
 <ul>
 <% @tree_nodes.each do |node| -%>

@@ -1,3 +1,7 @@
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
+
 <h1>
   <%= t("views.pages.last_n_edits", {
     :n => 30, 

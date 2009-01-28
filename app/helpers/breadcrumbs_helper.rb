@@ -33,6 +33,10 @@ module BreadcrumbsHelper
       blob_path(params[:id], an_object.path)
     when Breadcrumb::Commit
       commit_path(an_object.sha)
+    when Breadcrumb::Wiki
+      project_pages_path(an_object.project)
+    when Breadcrumb::Page
+      project_page_path(an_object.project, an_object.page.to_param)
     else
       "/"
     end

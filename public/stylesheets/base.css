@@ -475,6 +475,8 @@ table.tree tr td.compressed-file a, li.compressed-file > a { background-image: u
 table.tree tr td.image-file a, li.image-file > a { background-image: url("/images/silk/page_white_picture.png"); }
 table.tree tr td.submodule a { background-image: url("/images/silk/folder_database.png"); }
 
+li.wiki a {background-image: url('/images/silk/page_white_stack.png');}
+
 #contextmenu li a {
   color: #555;
 }

@@ -1,3 +1,7 @@
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
+
 <div class="page-header">
   <%= page_crumbs(@page) -%>
   <h1>

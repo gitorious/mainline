@@ -90,3 +90,20 @@ describe Breadcrumb::Commit do
     @commit.breadcrumb_parent.should == @repo
   end
 end
+
+describe Breadcrumb::Page do
+  before(:each) do
+    project = mock
+    page = mock
+    page.stubs(:title).returns('Home')
+    @page = Breadcrumb::Page.new(page, project)
+  end
+  
+  it 'should return a Wiki as its parent' do
+    @page.breadcrumb_parent.should be_a(Breadcrumb::Wiki)
+  end
+  
+  it 'should return its title' do
+    @page.title.should == 'Home'
+  end
+end

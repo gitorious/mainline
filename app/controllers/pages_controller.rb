@@ -24,17 +24,18 @@ class PagesController < ApplicationController
     @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|
       n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
     }
+    @root = Breadcrumb::Wiki.new(@project)
   end
   
   def show
-    @page = Page.find(params[:id], @project.wiki_repository.git)
+    @page, @root = page_and_root
     if @page.new?
       redirect_to edit_project_page_path(@project, params[:id]) and return
     end
   end
   
   def edit
-    @page = Page.find(params[:id], @project.wiki_repository.git)
+    @page, @root = page_and_root
     @page.user = current_user
   end
   
@@ -58,7 +59,7 @@ class PagesController < ApplicationController
   end
   
   def history
-    @page = Page.find(params[:id], @project.wiki_repository.git)    
+    @page, @root = page_and_root
     if @page.new?
       redirect_to edit_project_page_path(@project, @page) and return
     end
@@ -72,5 +73,11 @@ class PagesController < ApplicationController
         flash[:notice] = I18n.t("pages_controller.repository_not_ready")
         redirect_to project_path(@project) and return
       end
+    end
+    
+    def page_and_root
+      page = Page.find(params[:id], @project.wiki_repository.git)    
+      root = Breadcrumb::Page.new(page, @project)
+      return page, root
     end
 end
