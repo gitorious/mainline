@@ -20,6 +20,7 @@ module RoutingFilter
       params = args.extract_options!
       user = params[:id]
       returning yield do |result|
+        return result unless result =~ /^\/users\/.+/
         if params[:controller] == "users" && params[:action] == "show" && user
           result = result.is_a?(Array) ? result.first : result
           result.replace "/~#{user.is_a?(User) ? user.to_param : user}"

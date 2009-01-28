@@ -21,16 +21,17 @@ module RoutingFilter
     
     def around_generate(*args, &block)
       params = args.extract_options!
-      if params[:controller] == "groups"
-        team = params[:id]
-      elsif params.blank? && (args.size == 1 && args.first.is_a?(Group))
-        # we get here if people use named routes + positional obj (foo_path(@foo))
-        team = args.first
-        params[:group_id] = team
-      else
-        team = params[:group_id]
-      end
       returning yield do |result|
+        return result unless result =~ /^\/teams\/.+/
+        if params[:controller] == "groups"
+          team = params[:id]
+        elsif params.blank? && (args.size == 1 && args.first.is_a?(Group))
+          # we get here if people use named routes + positional obj (foo_path(@foo))
+          team = args.first
+          params[:group_id] = team
+        else
+          team = params[:group_id]
+        end
         result = result.is_a?(Array) ? result.first : result
         team = team.is_a?(Group) ? team.to_param : team
         if params[:controller] == "groups" && params[:action] == "show" && team
