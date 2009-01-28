@@ -431,6 +431,7 @@ li.edit_key > a { background-image: url("/images/silk/key_edit.png") !important;
 li.key > a { background-image: url("/images/silk/key.png") !important; }
 li.zip > a { background-image: url("/images/silk/page_white_zip.png") !important; }
 li.gz > a { background-image: url("/images/silk/page_white_compressed.png") !important; }
+li.merge_requests > a { background-image: url("/images/silk/arrow_merge.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
 li.event_instance.create_repository, li.create_repository > a { background-image: url("/images/silk/database_add.png") !important; }
@@ -678,6 +679,17 @@ ul.horizontal li > a {
   padding-left: 22px !important;
   padding-bottom: 2px;
   padding-top: 2px;
+}
+
+.meta-info ul.horizontal li > a{
+  font-size: 11px;
+  background-image: none !important;
+  padding: 0 !important;
+}
+
+td.meta-info {
+  padding: 0 !important;
+  text-align: right;
 }
 
 .commit_list .commit_item {
