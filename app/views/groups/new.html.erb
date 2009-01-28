@@ -17,15 +17,17 @@
 #++
 %>
 
+<h1><%= t("views.groups.create_team") -%></h1>
+
 <%= error_messages_for :group -%>
 <% form_for @group do |f| -%>
   <p>
-    <%= f.label :name, "Group name" -%>:<br />
+    <%= f.label :name, t("views.groups.team_name") -%>:<br />
     <%= f.text_field :name -%>
   </p>
   <p>
-    <%= f.label :slug, "Project name" -%>:<br />
+    <%= f.label :slug, t("views.groups.project_name") -%>:<br />
     <%= text_field_with_auto_complete :project, :slug, {}, :skip_style => true, :select => :slug -%>
   </p>
-  <p><%= f.submit -%></p>
+  <p><%= f.submit t("views.groups.create_team_submit") -%></p>
 <% end -%>

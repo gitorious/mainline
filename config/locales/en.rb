@@ -402,6 +402,12 @@
         :add_new_member => "Add new member",
         :role => "Role",
       },
+      :groups => {
+        :create_team => "Create a new team",
+        :team_name => "Team name",
+        :project_name => "Project name",
+        :create_team_submit => "Create team",
+      },
     },
     :date => {
       :formats => {
