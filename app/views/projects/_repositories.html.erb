@@ -12,7 +12,7 @@
     </li>
   <% end -%>
   <li>
-    <h4><%= t("views.repos.by_groups") -%></h4>
+    <h4><%= t("views.repos.by_teams") -%></h4>
     <ul>
       <% @project.repositories.by_groups.each do |repo| -%>
           <%= render :partial => "repositories/repository_sidebar", 
