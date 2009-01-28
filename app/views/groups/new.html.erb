@@ -17,16 +17,15 @@
 #++
 %>
 
-<%= error_messages_for :group, :membership -%>
-<% form_for [@group, @membership] do |f| -%>
+<%= error_messages_for :group -%>
+<% form_for @group do |f| -%>
   <p>
-    <%= f.label :login, t("views.account.username") -%><br />
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
+    <%= f.label :name, "Group name" -%>:<br />
+    <%= f.text_field :name -%>
   </p>
   <p>
-    <%= f.label :role, t("views.memberships.role") -%>
-    <%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%>
+    <%= f.label :slug, "Project name" -%>:<br />
+    <%= text_field_with_auto_complete :project, :slug, {}, :skip_style => true, :select => :slug -%>
   </p>
-
-  <%= f.submit -%>
+  <p><%= f.submit -%></p>
 <% end -%>

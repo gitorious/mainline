@@ -17,16 +17,26 @@
 #++
 %>
 
-<%= error_messages_for :group, :membership -%>
-<% form_for [@group, @membership] do |f| -%>
-  <p>
-    <%= f.label :login, t("views.account.username") -%><br />
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
-  </p>
-  <p>
-    <%= f.label :role, t("views.memberships.role") -%>
-    <%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%>
-  </p>
+<h1><%=h @group.name -%></h1>
 
-  <%= f.submit -%>
+<h3>Repositories (<%= @group.repositories.count -%>)</h3>
+<ul>
+  <% @group.repositories.each do |repository| -%>
+    <li>
+      <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
+      <%= link_to h(repository.name), project_repository_path(repository.project, repository) -%>
+    </li>
+  <% end -%>
+</ul>
+
+<% content_for :sidebar do -%>
+  <h3>Members (<%= @group.members.count -%>)</h3>
+  <ul class="repository_list">
+    <% @group.members.each do |user| -%>
+      <li class="user">
+        <%= gravatar(user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(user.login), user_path(user) -%>
+      </li>
+    <% end -%>
+  </ul>
 <% end -%>

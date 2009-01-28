@@ -17,16 +17,13 @@
 #++
 %>
 
-<%= error_messages_for :group, :membership -%>
-<% form_for [@group, @membership] do |f| -%>
-  <p>
-    <%= f.label :login, t("views.account.username") -%><br />
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
-  </p>
-  <p>
-    <%= f.label :role, t("views.memberships.role") -%>
-    <%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%>
-  </p>
-
-  <%= f.submit -%>
+<ul>
+<% @projects.each do |project| -%>
+<li class="project">
+  <div class="slug"><%=h project.slug -%></div>
+  <% unless project.slug == project.title.downcase -%>
+    <div class="title"><span class="informal"><%=h project.title -%></span></div>
+  <% end -%>
+</li>
 <% end -%>
+</ul>

@@ -843,6 +843,42 @@ div.auto_complete ul strong.highlight {
   padding:0;
 }
 
+/* project autocompletion */
+
+#project_slug_auto_complete .slug {
+  font-weight: bold;
+}
+
+#project_slug_auto_complete .title {
+  font-style: italic;
+  font-size: 10px;
+}
+
+/* user login autocompletion */
+#user_login_auto_complete  li.committer {
+  height: 32px;
+}
+ 
+#user_login_auto_complete li.committer div.image {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;  
+}
+ 
+#user_login_auto_complete li.committer div.name {
+  font-weight: bold
+  font-size: 12px;
+  line-height: 1.2em;
+}
+ 
+#user_login_auto_complete li.committer div.email {
+  font-size: 10px;
+  color:#888;
+}
+
+
+
 span.tag {
   border: 1px solid #999;
   background: #dedede;

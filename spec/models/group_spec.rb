@@ -50,4 +50,27 @@ describe Group do
       groups(:johans_core).repositories.should include(repositories(:johans))
     end
   end
+  
+  describe "validations" do
+    it "should have a unique name" do
+      group = Group.new({
+        :project => projects(:johans), 
+        :name => groups(:johans_team_thunderbird).name
+      })
+      group.should_not be_valid
+      group.errors_on(:name).should_not == nil
+    end
+    
+    it "should have a alphanumeric name" do
+      group = Group.new({
+        :project => projects(:johans), 
+        :name => "fu bar"
+      })
+      group.valid?.should == false
+      group.errors_on(:name).should_not == nil
+      group.name = "Foo"
+      group.valid?.should == false
+      group.errors_on(:name).should_not == nil
+    end
+  end
 end

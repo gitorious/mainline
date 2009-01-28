@@ -17,16 +17,19 @@
 #++
 %>
 
-<%= error_messages_for :group, :membership -%>
-<% form_for [@group, @membership] do |f| -%>
-  <p>
-    <%= f.label :login, t("views.account.username") -%><br />
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
-  </p>
-  <p>
-    <%= f.label :role, t("views.memberships.role") -%>
-    <%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%>
-  </p>
+<ul>
+  <% @groups.each do |group| -%>
+    <li>
+      <%= link_to h(group.name), group_path(group) -%>
+      <small>(<%= group.members.count -%> members)</small>
+    </li>
+  <% end -%>
+</ul>
 
-  <%= f.submit -%>
+<%= will_paginate @groups -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li><%= link_to "Create a new group", new_group_path -%></li>
+  </ul>
 <% end -%>

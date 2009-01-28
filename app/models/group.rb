@@ -24,6 +24,11 @@ class Group < ActiveRecord::Base
   
   attr_protected :public, :role_id, :user_id
   
+  validates_presence_of :name
+  validates_uniqueness_of :name
+  validates_format_of :name, :with => /^[a-z0-9\-]+$/, 
+    :message => "Must be alphanumeric, and optional dash"
+  
   # is this +user+ a member of this group?
   def member?(user)
     members.include?(user)

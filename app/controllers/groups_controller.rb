@@ -16,15 +16,42 @@
 #++
 
 class GroupsController < ApplicationController
-  before_filter :find_group
+  before_filter :login_required, :except => [:index, :show]
   
-  def show
-    
+  def index
+    @groups = Group.paginate(:all, :page => params[:page])
   end
   
+  def show
+    @group = Group.find(params[:id])
+  end
   
-  protected
-    def find_group
-      @group = Group.find(params[:id])
+  def new
+    @group = Group.new
+  end
+  
+  def create
+    @group = Group.new(params[:group])
+    @group.transaction do
+      @group.creator = current_user
+      @group.project = Project.find_by_slug!(params[:project][:slug])
+      @group.save!
+      @group.memberships.create!({
+        :user => current_user,
+        :role => Role.admin,
+      })
     end
+    flash[:success] = "Group created"
+    redirect_to group_path(@group)
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
+    render :action => "new"
+  end
+  
+  def auto_complete_for_project_slug
+    @projects = Project.find(:all, 
+      :conditions => ['LOWER(slug) LIKE ?', "%#{params[:project][:slug].downcase}%"],
+      :limit => 10)
+    render :layout => false
+  end
+  
 end

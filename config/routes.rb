@@ -34,7 +34,7 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.projects_category "projects/category/:id"
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
-  map.resources :groups do |grp|
+  map.resources :groups, :collection => {:auto_complete_for_project_slug => :post} do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|

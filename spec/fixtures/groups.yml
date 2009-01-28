@@ -7,7 +7,7 @@ johans_core:
   user_id: 1
   
 johans_team_thunderbird:
-  name: Team Thunderbird
+  name: team-thunderbird
   public: true
 #  project: johans
 #  creator: johan
