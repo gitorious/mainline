@@ -162,6 +162,10 @@ class Project < ActiveRecord::Base
     events.create(:action => action_id, :target => target, :user => user,
                   :body => body, :data => data, :created_at => date)
   end
+  
+  def breadcrumb_parent
+    nil
+  end
 
   protected
     def create_core_group

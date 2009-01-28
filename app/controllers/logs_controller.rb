@@ -14,7 +14,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 class LogsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
@@ -25,6 +24,7 @@ class LogsController < ApplicationController
   
   def show
     @git = @repository.git
+    @root = Breadcrumb::Branch.new(@git.head, @repository)
     @commits = @repository.paginated_commits(params[:id], params[:page])
     @atom_auto_discovery_url = project_repository_formatted_log_feed_path(@project, @repository, params[:id], :atom)
     respond_to do |format|

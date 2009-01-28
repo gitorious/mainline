@@ -16,4 +16,5 @@
 #++
 
 module ProjectsHelper
+  include BreadcrumbsHelper
 end

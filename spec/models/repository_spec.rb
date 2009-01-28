@@ -359,6 +359,14 @@ describe Repository do
     @repository.wiki?.should == true
   end
   
+  it 'has a parent, which is the Project' do
+    @repository.breadcrumb_parent.should == @repository.project
+  end
+  
+  it 'should return its name as title' do
+    @repository.name.should == @repository.title
+  end
+  
   it "returns a list of committers depending on owner type" do
     repo = repositories(:johans)
     repo.owner.add_member(users(:mike), Role.admin)

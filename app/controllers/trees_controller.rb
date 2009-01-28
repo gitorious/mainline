@@ -27,6 +27,7 @@ class TreesController < ApplicationController
   def show
     @git = @repository.git
     @commit = @git.commit(params[:id])
+    @root = Breadcrumb::Folder.new(:paths => params[:path], :head => @git.head, :repository => @repository)
     unless @commit
       redirect_to project_repository_tree_path(@project, @repository, "HEAD", params[:path])
       return

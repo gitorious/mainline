@@ -33,7 +33,7 @@
 <%= render :partial => "events/events", :locals => { :events => @events } -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs" -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @project} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>

@@ -81,7 +81,7 @@
     </div>
 	<% end -%>
     
-    <% if @project -%>
+    <% if @project && false -%>
     <h2 id="project_title"><%= link_to h(@project.title), @project -%></h2>
     <ul id="submenu" class="<%= @content_for_submenu.blank? ? "white" : "" -%>">
       <li class="<%= submenu_selected_class_if_current?(:overview) -%>">

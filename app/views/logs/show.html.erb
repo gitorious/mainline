@@ -30,7 +30,7 @@
 <%= render :partial => "log" -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>  

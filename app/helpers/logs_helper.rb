@@ -17,4 +17,5 @@
 
 module LogsHelper
   include RepositoriesHelper
+  include BreadcrumbsHelper
 end

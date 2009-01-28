@@ -276,6 +276,14 @@ class Repository < ActiveRecord::Base
     owner === Group
   end
   
+  def breadcrumb_parent
+    project
+  end
+  
+  def title
+    name
+  end
+  
   protected
     def set_as_mainline_if_first
       unless project.repositories.size >= 1

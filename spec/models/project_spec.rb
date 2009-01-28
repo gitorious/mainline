@@ -127,6 +127,11 @@ describe Project do
     project = create_project(:description => "<h1>Project A</h1>\n<b>Project A</b> is a....")
     project.stripped_description.should == "Project A\nProject A is a...."
   end
+  
+  it 'should have a breadcrumb_parent method which returns nil' do
+    project = create_project
+    project.breadcrumb_parent.should be_nil
+  end
 
   # it "should strip html tags, except highlights" do
   #   project = create_project(:description => %Q{<h1>Project A</h1>\n<strong class="highlight">Project A</strong> is a....})

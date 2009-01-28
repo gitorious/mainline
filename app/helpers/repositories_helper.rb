@@ -17,6 +17,7 @@
 #++
 
 module RepositoriesHelper  
+  include BreadcrumbsHelper
   def log_path(objectish = "master", options = {})
     if options.blank? # just to avoid the ? being tacked onto the url
       project_repository_log_path(@project, @repository, objectish)
