@@ -58,7 +58,11 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
+  <%= render_download_links(@project, @repository, @git.head.name, :except => :source_tree) %>
+  
   <h5><%= t("views.logs.branches") %>:</h5>
+  
+  
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
       <% if namespaced_branch?(branch.name) -%>
@@ -67,8 +71,6 @@
         <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
       <% end -%>
     <% end -%>
-    <li class="gz"><%= link_to "Download #{params[:id]} as .tar.gz", project_repository_archive_tree_path(@project, @repository, params[:id], "tar.gz") -%></li>
-    <li class="zip"><%= link_to "Download #{params[:id]} as .zip", project_repository_archive_tree_path(@project, @repository, params[:id], "zip") -%></li>
   </ul>
 
   <h5><%= t("views.logs.tags") %>:</h5>

@@ -311,4 +311,17 @@ module ApplicationHelper
     return FILE_EXTN_MAPPINGS[File.extname(filename)] || 'file'
   end
   
+  def render_download_links(project, repository, head, options={})
+    links = {}
+    exceptions = options[:except].to_a
+
+    links[:source_tree] = content_tag(:li, link_to("View source tree for #{head}", tree_path(head)))
+    ['tar.gz', 'zip'].each do |extension|
+      links[extension.intern] = content_tag(:li, link_to("Download #{head} as #{extension}", project_repository_archive_tree_path(project, repository, head, extension)), :class => extension.split('.').last)
+    end
+    
+    links.reject!{|k,v| exceptions.include?(k)}
+    content_tag(:ul, links.values.join("\n"), :class => 'links')
+  end
+  
 end
