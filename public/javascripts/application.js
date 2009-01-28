@@ -99,4 +99,11 @@ Event.observe(window, "load", function(e){
       });
     });
   }
+  
+  $$("a.link_noop").each(function(element) {
+    element.observe("click", function(e){ 
+      Event.stop(e); 
+      return false;
+    })
+  })
 });

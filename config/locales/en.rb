@@ -99,6 +99,7 @@
       :event_deleted_merge_request => "deleted merge request",
       :event_status_push_wiki => "pushed wiki content",
       :event_updated_wiki_page => "edited wiki page",
+      :more_info => "More info…",
     },
     :project => {
       :format_slug_validation => "must match something in the range of [a-z0-9_\-]+",

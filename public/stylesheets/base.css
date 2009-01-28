@@ -103,6 +103,9 @@ a {
 a:hover {
   text-decoration: underline;
 }
+a.link_noop {
+  color: inherit;
+}
 strong, b {
   font-weight: bold;
 }
@@ -432,6 +435,7 @@ li.key > a { background-image: url("/images/silk/key.png") !important; }
 li.zip > a { background-image: url("/images/silk/page_white_zip.png") !important; }
 li.gz > a { background-image: url("/images/silk/page_white_compressed.png") !important; }
 li.merge_requests > a { background-image: url("/images/silk/arrow_merge.png") !important; }
+li.clone > a { background-image: url("/images/silk/database_clone.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
 li.event_instance.create_repository, li.create_repository > a { background-image: url("/images/silk/database_add.png") !important; }
@@ -646,15 +650,24 @@ ul.icon_list li a {
 
 /* info boxes */
 
-.infobox {
+ul.infobox {
   background: #efefef;
   padding: 10px;
   border: 1px solid #ccc;
 }
 
-.infobox li {
+ul.infobox li {
   margin-bottom: 0.2em;
 }
+
+table.repository_meta .infobox {
+  padding: 5px;
+}
+table.repository_meta .infobox ul {
+  padding: 0;
+  margin: 0;
+}
+
 
 #projects .infobox {
 }
@@ -675,7 +688,7 @@ ul.horizontal li {
 
 ul.horizontal li > a {
   background-repeat: no-repeat;
-  background-position: 0px 2px;
+  background-position: 0 0;
   padding-left: 22px !important;
   padding-bottom: 2px;
   padding-top: 2px;
@@ -901,6 +914,10 @@ span.tag {
   border-top: 1px solid #aaa;
   padding: 2px;
   text-align: center;
+}
+
+a.more_info img {
+  display: inline;
 }
 
 table.tree tr td {

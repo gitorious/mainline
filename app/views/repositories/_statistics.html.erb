@@ -8,6 +8,11 @@
         <li class="merge_requests">
           <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", project_repository_merge_requests_path(@project, repository) -%>
         </li>
+        <% if repository.parent -%>
+        <li class="clone">
+          <%= link_to "Clone of #{h(repository.parent.name)}", project_repository_path(@project, repository.parent) -%>
+        </li>
+        <% end -%>
       </ul>
     </td>
   </tr>
@@ -29,6 +34,47 @@
   </tr>
   <% # TODO: Clone stats -%>
   <% # TODO: divergence from mainline in +/- -%>
+  <tr>
+    <td colspan="3" class="infobox">
+      <ul>
+        <li>
+          <strong><%= t("views.repos.public_url") %>:</strong> 
+          <a href="<%= repository.clone_url-%>" class="link_noop"><code><%=h repository.clone_url -%></code></a> 
+          <small><%= link_to_help_toggle('detailed_clone_info') -%></small>
+          <div id="detailed_clone_info" class="info_hint" style="display:none">
+            <%= t("views.repos.help_clone") %>:<br />
+            <code>git clone <%= repository.clone_url -%></code>
+          </div>
+        </li>
+        <li>
+          <strong><%= t("views.repos.http_url") %>:</strong> 
+          <a href="<%= repository.http_clone_url-%>" class="link_noop"><code><%=h repository.http_clone_url -%></code></a> 
+          <small><%= link_to_help_toggle('detailed_http_clone_info') -%></small>
+          <div id="detailed_http_clone_info" class="info_hint" style="display:none">
+            <%= t("views.repos.help_clone") %>:<br />
+              <code>git clone <%= repository.http_clone_url -%></code><br />
+              <small>(<%= t("views.repos.help_clone_http") %>)</small>
+          </div>
+        </li>
+        <% if logged_in? && current_user.can_write_to?(repository) -%>
+          <li>
+            <strong><%= t("views.repos.push_url") %>:</strong> <code><%=h repository.push_url -%></code>
+            <small><%= link_to_help_toggle('detailed_push_info') -%></small>
+            <div id="detailed_push_info" class="info_hint" style="display:none">
+      		<%= t("views.repos.help_push").call(repository.push_url) %>
+      <pre>
+      git remote add origin <%= repository.push_url %>
+      # to push the master branch to the origin remote we added above:
+      git push origin master 
+      # after that you can just do:
+      git push
+      </pre>
+            </div>
+          </li>
+        <% end -%>
+      </ul>
+    </td>
+  </tr>
   <tr>
     <td colspan="3" class="meta-info">
     <ul class="horizontal">

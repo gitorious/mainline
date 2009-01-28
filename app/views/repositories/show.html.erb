@@ -24,7 +24,6 @@
 <% render_if_ready(@repository) do -%>
 
   <%= render :partial => "repositories/statistics", :locals => {:repository => @repository} -%>
-  <%= render :partial => "infobox" -%>
   
   <%#= render_readme(@repository) %>
   
