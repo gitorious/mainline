@@ -53,5 +53,5 @@
 <% end -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>

@@ -56,7 +56,7 @@ describe CommitsController do
 
   describe "#show" do    
     before(:each) do
-      @commit_mock = stub("commit", :id => 1)
+      @commit_mock = stub("commit", :id => 1, :id_abbrev => 'fc0')
       @diff_mock = mock("diff mock")
       @commit_mock.expects(:diffs).returns(@diff_mock)
       @git.expects(:commit).with("a"*40).returns(@commit_mock)

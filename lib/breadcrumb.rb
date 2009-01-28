@@ -56,4 +56,20 @@ module Breadcrumb
       'file'
     end
   end
+
+  class Commit
+    attr_reader :sha
+    def initialize(options)
+      @repository = options[:repository]
+      @sha = options[:id]
+    end
+    
+    def breadcrumb_parent
+      @repository
+    end
+    
+    def title
+      @sha
+    end
+  end
 end

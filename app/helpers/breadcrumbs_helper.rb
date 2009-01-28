@@ -31,6 +31,8 @@ module BreadcrumbsHelper
       tree_path(params[:id], an_object.paths)
     when Breadcrumb::Blob
       blob_path(params[:id], an_object.path)
+    when Breadcrumb::Commit
+      commit_path(an_object.sha)
     else
       "/"
     end

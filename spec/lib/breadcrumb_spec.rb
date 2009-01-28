@@ -75,3 +75,18 @@ describe Breadcrumb::Blob do
     @blob.path.should == %w(foo)
   end
 end
+
+describe Breadcrumb::Commit do
+  before(:each) do
+    @repo = mock
+    @commit = Breadcrumb::Commit.new(:repository => @repo, :id => 'ffc0349')
+  end
+  
+  it 'should return its title' do
+    @commit.title.should == 'ffc0349'
+  end
+  
+  it 'should return the Repository as its parent' do
+    @commit.breadcrumb_parent.should == @repo
+  end
+end

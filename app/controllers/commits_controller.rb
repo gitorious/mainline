@@ -28,6 +28,7 @@ class CommitsController < ApplicationController
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
     @commit = @git.commit(params[:id])
+    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
     @diffs = @commit.diffs
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
     respond_to do |format|
