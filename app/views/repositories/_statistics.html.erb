@@ -14,15 +14,15 @@
   </tr>
   <tr class="meta">
     <td class="commit_count">
-      <span class="bignum"><%= repository.events.count -%></span> <%= t("views.repositorys.activities", :count => repository.events.count) %>
+      <span class="bignum"><%= repository.events.count -%></span> <%= t("views.repos.activities", :count => repository.events.count) %>
     </td>
     <td class="branch_count">
 	<% @branch_count = repository.ready? ? repository.git.heads.size : 0 -%>
-      <span class="bignum"><%= @branch_count -%></span> <%= t("views.repositorys.branches", :count => @branch_count) %>
+      <span class="bignum"><%= @branch_count -%></span> <%= t("views.repos.branches", :count => @branch_count) %>
     </td>
     <td class="author_count">
 	<% @author_count = repository.ready? ? repository.commit_graph_data_by_author.keys.size : 0 -%>
-      <span class="bignum"><%= @author_count -%></span> <%= t("views.repositorys.authors", :count => @author_count) %>
+      <span class="bignum"><%= @author_count -%></span> <%= t("views.repos.authors", :count => @author_count) %>
     </td>
   </tr>
   <tr class="graph">
