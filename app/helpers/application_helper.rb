@@ -292,4 +292,23 @@ module ApplicationHelper
       :alt => t("application_helper.more_info")
     }), "$('#{dom_id}').toggle()", :class => "more_info")
   end
+  FILE_EXTN_MAPPINGS = {
+    '.cpp' => 'cplusplus-file', 
+    '.c' => 'c-file',
+    '.h' => 'header-file',
+    '.java' => 'java-file',
+    '.sh' => 'exec-file',
+    '.exe'  => 'exec-file',
+    '.rb' => 'ruby-file',
+    '.png' => 'image-file',
+    '.jpg' => 'image-file', 
+    '.gif' => 'image-file',
+    'jpeg' => 'image-file',
+    '.zip' => 'compressed-file',
+    '.gz' => 'compressed-file'}
+  
+  def class_for_filename(filename)
+    return FILE_EXTN_MAPPINGS[File.extname(filename)] || 'file'
+  end
+  
 end

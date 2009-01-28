@@ -40,6 +40,7 @@ describe BlobsController do
       blob_mock = mock("blob")
       blob_mock.stubs(:contents).returns([blob_mock]) #meh
       blob_mock.stubs(:data).returns("blob contents")
+      blob_mock.stubs(:basename).returns("README")
       commit_stub = mock("commit")
       commit_stub.stubs(:id).returns("a"*40)
       commit_stub.stubs(:tree).returns(commit_stub)

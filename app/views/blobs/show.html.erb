@@ -21,7 +21,7 @@
 <% @load_syntax_themes = true -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <ul class="mode_selector">
@@ -39,7 +39,6 @@
 </h1>
 <!-- <%= @blob.mime_type -%> -->
 
-<%= breadcrumb_path(@repository.name, @commit.id) -%>
 
 <% if @blob.mime_type =~ /^text/ && !too_big_to_render?(@blob.size) -%>
   <% cache(blob_path(@commit.id, params[:path])) do -%>

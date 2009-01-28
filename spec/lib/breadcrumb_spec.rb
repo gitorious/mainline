@@ -61,3 +61,17 @@ describe Breadcrumb::Branch do
     @branch.breadcrumb_parent.should == "I am a parent"
   end
 end
+
+describe Breadcrumb::Blob do
+  before(:each) do
+    @blob = Breadcrumb::Blob.new(:paths => %w(foo), :name => 'README', :head => nil ,:repository => nil)
+  end
+  
+  it 'should have a Folder as its parent' do
+    @blob.breadcrumb_parent.should be_a(Breadcrumb::Folder)
+  end
+  
+  it 'should keep its path' do
+    @blob.path.should == %w(foo)
+  end
+end

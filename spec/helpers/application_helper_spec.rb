@@ -76,4 +76,9 @@ describe ApplicationHelper do
     url = helper.commit_graph_by_author_tag(repositories(:johans))
     url.should == nil
   end
+  
+  it 'should render correct css classes for filenames' do
+    class_for_filename('foo.rb').should == 'ruby-file'
+    class_for_filename('main.cpp').should == 'cplusplus-file'
+  end
 end

@@ -27,8 +27,6 @@
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
-<%= breadcrumb_path(@repository.name) -%>
-
 <% cache(tree_path(@commit.id, params[:path])) do -%>
 <table class="listing tree">
   <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
@@ -38,7 +36,7 @@
     <% elsif node.is_a? Grit::Submodule -%>
     <td class="node submodule"><%= h(node.basename) -%></td>
     <% else -%>
-      <td class="node file"><%= link_to h(node.basename), blob_path(params[:id], node.name).gsub("%2F","/") -%></td>
+      <td class="node file <%= class_for_filename(node.name)  -%>"><%= link_to h(node.basename), blob_path(params[:id], node.name).gsub("%2F","/") -%></td>
     <% end -%>
     <% if node.is_a? Grit::Submodule -%>
       <td class="meta"></td>
@@ -69,6 +67,8 @@
         <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
       <% end -%>
     <% end -%>
+    <li class="gz"><%= link_to "Download #{params[:id]} as .tar.gz", project_repository_archive_tree_path(@project, @repository, params[:id], "tar.gz") -%></li>
+    <li class="zip"><%= link_to "Download #{params[:id]} as .zip", project_repository_archive_tree_path(@project, @repository, params[:id], "zip") -%></li>
   </ul>
 
   <h5><%= t("views.logs.tags") %>:</h5>

@@ -9,7 +9,12 @@ module BreadcrumbsHelper
       end
     end
     result.reverse.each do |crumb|
-      html << content_tag(:li, breadcrumb_link_to(crumb), :class => crumb.class.to_s.demodulize.downcase)
+      css_klass = if crumb.respond_to?(:breadcrumb_css_class)
+        crumb.breadcrumb_css_class
+      else
+        crumb.class.to_s.demodulize.downcase
+      end
+      html << content_tag(:li, breadcrumb_link_to(crumb), :class => css_klass)
     end
     return html
   end
@@ -24,6 +29,8 @@ module BreadcrumbsHelper
       project_repository_log_path(@project, @repository, an_object.title)
     when Breadcrumb::Folder
       tree_path(params[:id], an_object.paths)
+    when Breadcrumb::Blob
+      blob_path(params[:id], an_object.path)
     else
       "/"
     end
