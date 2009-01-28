@@ -17,11 +17,17 @@
 #++
 %>
 
+<h1><%= t("views.groups.teams") -%></h1>
 <ul>
   <% @groups.each do |group| -%>
     <li>
-      <%= link_to h(group.name), group_path(group) -%>
-      <small>(<%= group.members.count -%> members)</small>
+      <h4>
+        <%= link_to h(group.name), group_path(group) -%>
+        <small>
+          (<%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") -%>,
+          <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") -%>)
+        </small>
+      </h4>
     </li>
   <% end -%>
 </ul>

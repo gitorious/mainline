@@ -408,6 +408,11 @@
         :team_name => "Team name",
         :project_name => "Project name",
         :create_team_submit => "Create team",
+        :teams => "Teams",
+        :member_singular => "member",
+        :member_plural => "members",
+        :repo_singular => "repository",
+        :repo_plural => "repositories",
       },
     },
     :date => {
