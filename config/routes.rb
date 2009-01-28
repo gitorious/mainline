@@ -17,9 +17,6 @@ ActionController::Routing::Routes.draw do |map|
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
-
-  map.filter "usernames", :file => "route_filters/usernames"
-  map.filter "teams", :file => "route_filters/teams"
   
   VALID_SHA = /[a-zA-Z0-9~\{\}\+\^\.\-_]+/
   map.root :controller => "site", :action => "index"
@@ -47,7 +44,7 @@ ActionController::Routing::Routes.draw do |map|
       :clone => :get, :create_clone => :post,
       :writable_by => :get, 
       :confirm_delete => :get
-    }, :as => "repos") do |repo|
+    }) do |repo|
       repo.resources :comments, :member => { :commmit => :get  }
       repo.resources :merge_requests, :member => { :resolve => :put }, :collection => { :create => :post }
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 
@@ -86,4 +83,9 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
+  
+  # See the routing_filter plugin and lib/route_filters/*
+  map.filter "usernames", :file => "route_filters/usernames"
+  map.filter "teams", :file => "route_filters/teams"
+  map.filter "projects_and_repositories", :file => "route_filters/projects_and_repositories"
 end

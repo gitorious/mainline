@@ -17,6 +17,60 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe RepositoriesController, "Routing" do
+  before(:each) do
+    @project = projects(:johans)
+    @repo = repositories(:johans)
+  end
+  
+  it "recognizes routing like /projectname/reponame" do
+    params_from(:get, "/#{@project.to_param}/#{@repo.to_param}").should == {
+      :controller => "repositories", 
+      :action => "show", 
+      :project_id => @project.to_param,
+      :id => @repo.to_param,
+    }
+    params_from(:get, "/#{@project.to_param}/#{@repo.to_param}/trees").should == {
+      :controller => "trees", 
+      :action => "index", 
+      :project_id => @project.to_param,
+      :repository_id => @repo.to_param,
+    }
+    
+    route_for({
+      :controller => "projects", 
+      :action => "show", 
+      :id => @project.to_param
+    }).should == "/#{@project.to_param}"
+    
+    route_for({
+      :controller => "trees", 
+      :action => "index", 
+      :project_id => @project.to_param,
+      :repository_id => @repo.to_param,
+    }).should == "/#{@project.to_param}/#{@repo.to_param}/trees"
+  end
+  
+  it "recognizes routing like /projectname/repositories" do
+    params_from(:get, "/#{@project.to_param}/repositories").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :project_id => @project.to_param
+    }
+    
+    params_from(:get, "/#{@project.to_param}/repositories/").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :project_id => @project.to_param
+    }
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :project_id => @project.to_param
+    }).should == "/#{@project.to_param}/repositories"
+  end
+end
+
 describe RepositoriesController, "index" do
   
   before(:each) do

@@ -41,8 +41,9 @@ class Repository < ActiveRecord::Base
   named_scope :by_groups, :conditions => { :owner_type => "Group", :mainline => false }
   named_scope :mainlines, :conditions => { :mainline => true }
   
+  NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
   validates_presence_of :user_id, :project_id, :name, :owner_id
-  validates_format_of :name, :with => /^[a-z0-9_\-]+$/i,
+  validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   

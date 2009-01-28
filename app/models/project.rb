@@ -50,9 +50,10 @@ class Project < ActiveRecord::Base
 
 
   URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
+  NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description
   validates_uniqueness_of :slug, :case_sensitive => false
-  validates_format_of :slug, :with => /^[a-z0-9_\-]+$/i,
+  validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")
   validates_format_of :home_url, :with => URL_FORMAT_RE,
     :if => proc{|record| !record.home_url.blank? },

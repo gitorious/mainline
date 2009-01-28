@@ -19,6 +19,46 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe ProjectsController, "Routing" do
+  before(:each) do
+    @project = projects(:johans)
+  end
+  
+  it "recognizes routing like /projectname" do
+    params_from(:get, "/#{@project.to_param}").should == {
+      :controller => "projects", :action => "show", :id => @project.to_param
+    }
+    params_from(:get, "/#{@project.to_param}/").should == {
+      :controller => "projects", :action => "show", :id => @project.to_param
+    }
+    
+    route_for({
+      :controller => "projects", 
+      :action => "show", 
+      :id => @project.to_param
+    }).should == "/#{@project.to_param}"
+  end
+  
+  it "recognizes routing like /projectname/repositories" do
+    params_from(:get, "/#{@project.to_param}/repositories").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :project_id => @project.to_param
+    }
+    
+    params_from(:get, "/#{@project.to_param}/repositories/").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :project_id => @project.to_param
+    }
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :project_id => @project.to_param
+    }).should == "/#{@project.to_param}/repositories"
+  end
+end
+
 describe ProjectsController do
   before(:each) do
     @projects = [projects(:johans), projects(:moes)]
