@@ -83,7 +83,7 @@ class MembershipsController < ApplicationController
   
   protected
     def find_group
-      @group = Group.find(params[:group_id])
+      @group = Group.find_by_name!(params[:group_id])
       @project = @group.project
     end
     

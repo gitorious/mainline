@@ -17,6 +17,24 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe GroupsController, "Routing" do
+  before(:each) do
+    @group = groups(:johans_team_thunderbird)
+  end
+  
+  it "recognizes routes starting with plus as teams/show/<name>" do
+    route_for({
+      :controller => "groups", 
+      :action => "show", 
+      :id => @group.to_param
+    }).should == "/+#{@group.to_param}"
+    
+    params_from(:get, "/+#{@group.to_param}").should == {
+      :controller => "groups", :action => "show", :id => @group.to_param
+    }
+  end
+end
+
 describe GroupsController do
   before(:each) do
     @group = groups(:johans_team_thunderbird)

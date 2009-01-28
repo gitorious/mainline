@@ -23,7 +23,7 @@ class GroupsController < ApplicationController
   end
   
   def show
-    @group = Group.find(params[:id])
+    @group = Group.find_by_name!(params[:id])
   end
   
   def new

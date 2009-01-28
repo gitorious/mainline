@@ -24,10 +24,15 @@ class Group < ActiveRecord::Base
   
   attr_protected :public, :role_id, :user_id
   
+  NAME_FORMAT = /[a-z0-9\-]+/.freeze
   validates_presence_of :name
   validates_uniqueness_of :name
-  validates_format_of :name, :with => /^[a-z0-9\-]+$/, 
+  validates_format_of :name, :with => /^#{NAME_FORMAT}$/, 
     :message => "Must be alphanumeric, and optional dash"
+    
+  def to_param
+    name
+  end
   
   # is this +user+ a member of this group?
   def member?(user)

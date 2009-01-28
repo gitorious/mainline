@@ -18,6 +18,13 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Group do
+  
+  describe "in general" do
+    it "uses the name as to_param" do
+      groups(:johans_core).to_param.should == groups(:johans_core).name
+    end
+  end
+  
   describe "members" do
     before(:each) do
       @group = groups(:johans_core)

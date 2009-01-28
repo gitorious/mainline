@@ -17,6 +17,10 @@ ActionController::Routing::Routes.draw do |map|
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
+
+  map.filter "usernames", :file => "route_filters/usernames"
+  map.filter "teams", :file => "route_filters/teams"
+  
   VALID_SHA = /[a-zA-Z0-9~\{\}\+\^\.\-_]+/
   map.root :controller => "site", :action => "index"
   
@@ -82,6 +86,4 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
-  
-  map.filter "usernames", :file => "route_filters/usernames"
 end

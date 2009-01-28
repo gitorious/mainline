@@ -17,6 +17,41 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe MembershipsController, "Routing" do
+  before(:each) do
+    @group = groups(:johans_team_thunderbird)
+  end
+  
+  it "recognizes routing like /+team-name/memberships" do
+    route_for({
+      :controller => "memberships", 
+      :action => "index", 
+      :group_id => @group.to_param
+    }).should == "/+#{@group.to_param}/memberships"
+    
+    params_from(:get, "/+#{@group.to_param}/memberships").should == {
+      :controller => "memberships", :action => "index", :group_id => @group.to_param
+    }
+  end
+  
+  it "recognizes routing like /+team-name/memberships/n" do
+    membership = @group.memberships.first
+    route_for({
+      :controller => "memberships", 
+      :action => "show", 
+      :group_id => @group.to_param,
+      :id => membership.to_param
+    }).should == "/+#{@group.to_param}/memberships/#{membership.to_param}"
+    
+    params_from(:get, "/+#{@group.to_param}/memberships/#{membership.to_param}").should == {
+      :controller => "memberships", 
+      :action => "show", 
+      :group_id => @group.to_param,
+      :id => membership.to_param
+    }
+  end
+end
+
 describe MembershipsController do
   before(:each) do 
     login_as :johan
@@ -116,9 +151,8 @@ describe MembershipsController do
   
   describe "autocomplete username" do
     it "finds user by login" do
-      post :auto_complete_for_user_login, :group_id => groups(:johans_core), 
+      post :auto_complete_for_user_login, :group_id => groups(:johans_core).to_param, 
         :user => { :login => "mik" }, :format => "js"
-      response.should be_success
       assigns(:users).should == [users(:mike)]
     end
   end
