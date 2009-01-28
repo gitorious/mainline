@@ -34,7 +34,7 @@
   <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
     <% if node.is_a? Grit::Tree -%>
-      <td class="node tree"><%= link_to h(node.basename) + "/", tree_path(params[:id], node.name) -%></td>
+      <td class="node folder"><%= link_to h(node.basename) + "/", tree_path(params[:id], node.name) -%></td>
     <% elsif node.is_a? Grit::Submodule -%>
     <td class="node submodule"><%= h(node.basename) -%></td>
     <% else -%>
