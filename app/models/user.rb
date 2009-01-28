@@ -34,8 +34,9 @@ class User < ActiveRecord::Base
 
   attr_protected :login, :is_admin
 
+  USERNAME_FORMAT = /[a-z0-9\-_\.]+/.freeze
   validates_presence_of     :login, :email,               :if => :password_required?
-  validates_format_of       :login, :with => /^[a-z0-9\-_\.]+$/i
+  validates_format_of       :login, :with => /^#{USERNAME_FORMAT}$/i
   validates_format_of       :email, :with => /^[^@\s]+@([\-a-z0-9]+\.)+[a-z]{2,}$/i
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?

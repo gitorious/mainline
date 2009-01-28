@@ -36,6 +36,24 @@ describe "All Users", :shared => true do
   end
 end
 
+describe UsersController, "Routing" do
+  before(:each) do
+    @user = users(:johan)
+  end
+  
+  it "recognizes routes starting with tilde as users/show/<name>" do
+    route_for({
+      :controller => "users", 
+      :action => "show", 
+      :id => @user.to_param
+    }).should == "/~#{@user.to_param}"
+    
+    params_from(:get, "/~#{@user.to_param}").should == {
+      :controller => "users", :action => "show", :id => @user.to_param
+    }
+  end
+end
+
 describe UsersController do
   
   def create_user(options = {})
