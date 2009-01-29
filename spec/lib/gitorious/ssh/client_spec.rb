@@ -65,7 +65,7 @@ describe Gitorious::SSH::Client do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection_stub")
     connection_stub.expects(:get) \
-      .with("/projects/foo/repos/bar/writable_by?username=johan") \
+      .with("/foo/bar/writable_by?username=johan") \
       .returns(@ok_stub)
     client.expects(:connection).returns(connection_stub)
 
@@ -76,7 +76,7 @@ describe Gitorious::SSH::Client do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection stub")
     connection_stub.expects(:get) \
-      .with("/projects/foo/repos/bar/writable_by?username=johan") \
+      .with("/foo/bar/writable_by?username=johan") \
       .returns(@not_ok_stub)
     client.expects(:connection).returns(connection_stub)
 

@@ -41,9 +41,7 @@ module Gitorious
       end
     
       def query_url
-        url = ["/projects"]
-        url << @project_name
-        url << "repos"
+        url = ["/#{@project_name}"]
         url << @repository_name
         url << "writable_by?username=#{@user_name}"
         url.join("/")
