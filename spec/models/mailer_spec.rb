@@ -27,7 +27,7 @@ describe Mailer do
 
   it "send new_repository_clone" do
     repos = repositories(:johans2)
-    url = "#{URL_BASE}/projects/#{repos.project.slug}/repos/#{repos.name}"
+    url = "#{URL_BASE}/#{repos.project.to_param}/#{repos.to_param}"
     mail = Mailer.create_new_repository_clone(repos)
 
     mail.to.should == [repos.project.user.email]
@@ -68,7 +68,7 @@ describe Mailer do
 
   it "sends merge_request_notification" do
     merge_request = merge_requests(:moes_to_johans)
-    url = "#{URL_BASE}/projects/#{merge_request.target_repository.project.slug}/repos/#{merge_request.target_repository.name}/merge_requests/#{merge_request.id}"
+    url = "#{URL_BASE}/#{merge_request.target_repository.project.to_param}/#{merge_request.target_repository.to_param}/merge_requests/#{merge_request.id}"
     mail = Mailer.create_merge_request_notification(merge_request)
 
     mail.to.should == [merge_request.target_repository.user.email]
