@@ -57,6 +57,33 @@ describe ProjectsController, "Routing" do
       :project_id => @project.to_param
     }).should == "/#{@project.to_param}/repositories"
   end
+  
+  it "recognizes custom routing with format" do
+    params_from(:get, "/#{@project.to_param}.xml").should == {
+      :controller => "projects",
+      :action => "show", 
+      :id => @project.to_param,
+      :format => "xml"
+    }
+    # route_for({
+    #   :controller => "projects", 
+    #   :action => "show", 
+    #   :id => @projects.to_param,
+    #   :format => "xml"
+    # }).should == "/#{@project.to_param}.xml"
+    
+    
+    params_from(:get, "/projects.xml").should == {
+      :controller => "projects",
+      :action => "index", 
+      :format => "xml"
+    }
+    route_for({
+      :controller => "projects", 
+      :action => "index", 
+      :format => "xml"
+    }).should == "/projects.xml"
+  end
 end
 
 describe ProjectsController do

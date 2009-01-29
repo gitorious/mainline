@@ -30,18 +30,19 @@ describe RepositoriesController, "Routing" do
       :project_id => @project.to_param,
       :id => @repo.to_param,
     }
-    params_from(:get, "/#{@project.to_param}/#{@repo.to_param}/trees").should == {
-      :controller => "trees", 
+    params_from(:get, "/#{@project.to_param}/#{@repo.to_param}/merge_requests").should == {
+      :controller => "merge_requests", 
       :action => "index", 
       :project_id => @project.to_param,
       :repository_id => @repo.to_param,
     }
     
     route_for({
-      :controller => "projects", 
+      :controller => "repositories", 
       :action => "show", 
-      :id => @project.to_param
-    }).should == "/#{@project.to_param}"
+      :project_id => @project.to_param,
+      :id => @repo.to_param,
+    }).should == "/#{@project.to_param}/#{@repo.to_param}"
     
     route_for({
       :controller => "trees", 
@@ -68,6 +69,54 @@ describe RepositoriesController, "Routing" do
       :action => "index", 
       :project_id => @project.to_param
     }).should == "/#{@project.to_param}/repositories"
+  end
+  
+  it "recognizes routing like /projectname/reponame, with a non-html format" do
+    params_from(:get, "/#{@project.to_param}/#{@repo.to_param}.xml").should == {
+      :controller => "repositories", 
+      :action => "show", 
+      :project_id => @project.to_param,
+      :format => "xml",
+      :id => @repo.to_param,
+    }
+    params_from(:get, "/#{@project.to_param}/#{@repo.to_param}/merge_requests.xml").should == {
+      :controller => "merge_requests", 
+      :action => "index", 
+      :format => "xml",
+      :project_id => @project.to_param,
+      :repository_id => @repo.to_param,
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "show", 
+      :project_id => @project.to_param,
+      :id => @repo.to_param,
+      :format => "xml",
+    }).should == "/#{@project.to_param}/#{@repo.to_param}.xml"
+    
+    route_for({
+      :controller => "merge_requests", 
+      :action => "index", 
+      :project_id => @project.to_param,
+      :repository_id => @repo.to_param,
+    }).should == "/#{@project.to_param}/#{@repo.to_param}/merge_requests"
+  end
+  
+  it "recognizes routing like /projectname/repositories, with a non-html format" do
+    params_from(:get, "/#{@project.to_param}/repositories.xml").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :format => "xml",
+      :project_id => @project.to_param
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :project_id => @project.to_param,
+      :format => "xml",
+    }).should == "/#{@project.to_param}/repositories.xml"
   end
 end
 
