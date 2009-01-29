@@ -40,21 +40,17 @@
     <li><strong><%= t("views.logs.maintainer") %>:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
     <% unless @commits.blank? -%>
     <li><strong><%= t("views.logs.head_tree") %>:</strong> <%= link_to h(@commits.first.tree.id[0,7]), 
-      tree_path(@commits.first.id) -%></li>
+      tree_path(branch_with_tree(@commits.first.id, [])) -%></li>
     <% end -%>
   </ul>
 
-  <%= render_download_links(@project, @repository, @git.head.name) %>
+  <%= render_download_links(@project, @repository, params[:branch]) %>
 
   
   <h5><%= t("views.logs.branches") %>:</h5>
   <ul class="icon_list">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
-      <% if namespaced_branch?(branch.name) -%>
-        <li class="branch"><%= link_to h(branch.name), log_path(branch.commit.id) -%></li>
-      <% else -%>
-        <li class="branch"><%= link_to h(branch.name), log_path(branch.name) -%></li>
-      <% end -%>
+      <li class="branch"><%= link_to h(branch.name), log_path(branch.name) -%></li>
     <% end -%>
   </ul>
 

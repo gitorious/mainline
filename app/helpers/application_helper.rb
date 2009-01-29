@@ -314,13 +314,17 @@ module ApplicationHelper
   def render_download_links(project, repository, head, options={})
     links = []
     exceptions = options[:except].to_a
-
-    links << content_tag(:li, link_to("View source tree for #{head}", tree_path(head))) unless exceptions.include?(:source_tree)
+    unless exceptions.include?(:source_tree)
+      links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}", tree_path(head)))
+    end
+    
     ['tar.gz', 'zip'].each do |extension|
-      links << content_tag(:li, link_to("Download #{head} as #{extension}", project_repository_archive_tree_path(project, repository, head, extension)), :class => extension.split('.').last)
+      links << content_tag(:li, 
+        link_to("Download #{head} as #{extension}", 
+          project_repository_archive_tree_path(project, repository, head, extension)
+        ), :class => extension.split('.').last)
     end
     
     content_tag(:ul, links.join("\n"), :class => 'links meta')
   end
-  
 end

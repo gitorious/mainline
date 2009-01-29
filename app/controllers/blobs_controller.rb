@@ -18,31 +18,33 @@
 class BlobsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  
 
   def show
     @git = @repository.git
-    @commit = @git.commit(params[:id])
+    @ref, @path = branch_and_path(params[:branch_and_path], @git)
+    @commit = @git.commit(@ref)
     unless @commit
-      redirect_to project_repository_blob_path(@project, @repository, "HEAD", params[:path])
-      return
+      redirect_to project_repository_blob_path(@project, @repository, 
+                    branch_with_tree("HEAD", @path)) and return
     end
-    @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
-    @root = Breadcrumb::Blob.new(:paths => params[:path], :head => @git.head, :repository => @repository, :name => @blob.basename)
+    @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+    @root = Breadcrumb::Blob.new(:paths => @path, :head => @git.get_head(@ref), 
+                :repository => @repository, :name => @blob.basename)
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
-      redirect_to project_repository_tree_path(@project, @repository, @commit.id, params[:path])
+      redirect_to project_repository_tree_path(@project, @repository, @commit.id, @path)
     end
   end
 
   def raw
     @git = @repository.git
-    @commit = @git.commit(params[:id])
+    @ref, @path = branch_and_path(params[:branch_and_path], @git)
+    @commit = @git.commit(@ref)
     unless @commit
-      redirect_to project_repository_raw_blob_path(@project, @repository, "HEAD", params[:path])
-      return
+      redirect_to project_repository_raw_blob_path(@project, @repository, 
+                    branch_with_tree("HEAD", @path)) and return
     end
-    @blob = @git.tree(@commit.tree.id, ["#{params[:path].join("/")}"]).contents.first
+    @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
     render_not_found and return unless @blob
     if @blob.size > 500.kilobytes
       flash[:error] = I18n.t "blogs_controller.raw_error"

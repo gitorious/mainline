@@ -79,4 +79,40 @@ class ApplicationController < ActionController::Base
     def public_and_logged_in
       login_required unless GitoriousConfig['public_mode']
     end
+    
+    # turns ["foo", "bar"] route globbing parameters into "foo/bar"
+    def desplat_path(*paths)
+      paths.join("/")
+    end
+    helper_method :desplat_path
+    
+    # turns "foo/bar" into ["foo", "bar"] for route globbing
+    def ensplat_path(path)
+      path.split("/").select{|p| !p.blank? }
+    end
+    helper_method :ensplat_path
+    
+    # Returns an array like [branch_ref, *tree_path]
+    def branch_with_tree(branch_ref, tree_path)
+      tree_path = tree_path.is_a?(Array) ? tree_path : ensplat_path(tree_path)
+      ensplat_path(branch_ref) + tree_path
+    end
+    helper_method :branch_with_tree
+    
+    def branch_and_path(branch_and_path, git)
+      branch_and_path = desplat_path(branch_and_path)
+      branch_ref = path = nil
+      heads = Array(git.heads).map{|h| h.name }
+      heads.each do |head|
+        if branch_and_path.starts_with?(head)
+          branch_ref = head
+          path = ensplat_path(branch_and_path.sub(head, "")) || []
+        end
+      end
+      unless path # fallback
+        path = ensplat_path(branch_and_path)[1..-1]
+        branch_ref = ensplat_path(branch_and_path)[0]
+      end
+      [branch_ref, path]
+    end
 end

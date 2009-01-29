@@ -19,14 +19,14 @@ module TreesHelper
   include RepositoriesHelper
   
   def current_path
-    params[:path].dup
+    @path.dup
   end
   
   def build_tree_path(path)
     current_path << path
   end
   
-  def breadcrumb_path(root_name = "root", commit_id = params[:id])
+  def breadcrumb_path(root_name = "root", commit_id = @ref)
     out = %Q{<ul class="path_breadcrumbs">\n}
     visited_path = []
     out <<  %Q{  <li>/ #{link_to(root_name, tree_path(commit_id, []))}</li>\n}
@@ -56,6 +56,6 @@ module TreesHelper
   
   # FIXME: This really belongs somewhere else, but where?
   def commit_for_tree_path(repository, path)
-    repository.git.log(params[:id], path, {:max_count => 1}).first
+    repository.git.log(@ref, path, {:max_count => 1}).first
   end
 end

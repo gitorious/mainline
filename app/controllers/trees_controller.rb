@@ -21,28 +21,30 @@ class TreesController < ApplicationController
   
   def index
     redirect_to(project_repository_tree_path(@project, @repository, 
-        @repository.head_candidate_name, []))
+        branch_with_tree(@repository.head_candidate_name, [])))
   end
   
   def show
     @git = @repository.git
-    @commit = @git.commit(params[:id])
-    @root = Breadcrumb::Folder.new(:paths => params[:path], :head => @git.head, :repository => @repository)
+    @ref, @path = branch_and_path(params[:branch_and_path], @git)
+    @commit = @git.commit(@ref)
     unless @commit
-      redirect_to project_repository_tree_path(@project, @repository, "HEAD", params[:path])
-      return
+      redirect_to project_repository_tree_path(@project, @repository, 
+                      branch_with_tree("HEAD", @path)) and return
     end
-    path = params[:path].blank? ? [] : ["#{params[:path].join("/")}/"] # FIXME: meh, this sux
+    @root = Breadcrumb::Folder.new({:paths => @path, :head => @git.get_head(@ref), 
+                                    :repository => @repository})
+    path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
     @tree = @git.tree(@commit.tree.id, path)
   end
   
   def archive
     @git = @repository.git    
-    @commit = @git.commit(params[:id])
+    @commit = @git.commit(desplat_path(params[:branch]))
     
     if @commit
       prefix = "#{@project.slug}-#{@repository.name}"
-      data = @git.archive_tar_gz(params[:id], prefix + "/")      
+      data = @git.archive_tar_gz(desplat_path(params[:branch]), prefix + "/")      
       send_data(data, :type => 'application/x-gzip', 
         :filename => "#{prefix}.tar.gz") 
     else

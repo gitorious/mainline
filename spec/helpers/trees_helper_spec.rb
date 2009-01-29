@@ -37,12 +37,12 @@ describe TreesHelper do
   end
   
   it "has a current_path based on the *path glob" do
-    params[:path] = ["one", "two"]
+    @path = ["one", "two"]
     current_path.should == ["one", "two"]
   end
   
   it "builds a tree from current_path" do
-    params[:path] = ["one", "two"]
+    @path = ["one", "two"]
     build_tree_path("three").should == ["one", "two", "three"]
   end
   

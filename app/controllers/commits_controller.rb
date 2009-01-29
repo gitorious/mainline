@@ -21,7 +21,18 @@ class CommitsController < ApplicationController
   before_filter :check_repository_for_commits
   
   def index
-    redirect_to project_repository_log_path(@project, @repository, @repository.head_candidate.name)
+    if params[:branch].blank?
+      redirect_to project_repository_commits_in_ref_path(@project, 
+                    @repository, @repository.head_candidate.name)
+      return
+    end
+    @git = @repository.git
+    @root = Breadcrumb::Branch.new(@git.head, @repository)
+    @commits = @repository.paginated_commits(desplat_path(params[:branch]), params[:page])
+    @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
+    respond_to do |format|
+      format.html
+    end
   end
 
   def show
@@ -34,6 +45,16 @@ class CommitsController < ApplicationController
     respond_to do |format|
       format.html
       # TODO: format.diff { render :content_type => "text/plain" }
+    end
+  end
+  
+  def feed
+    @git = @repository.git
+    branch_ref = desplat_path(params[:branch])
+    @commits = @repository.git.commits(branch_ref)
+    respond_to do |format|
+      format.html { redirect_to(project_repository_commits_in_ref_path(@project, @repository, params[:branch]))}
+      format.atom
     end
   end
   

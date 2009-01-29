@@ -19,7 +19,7 @@
 
 <li><%= link_to t("views.repos.overview"), [@project, @repository] -%></li>
 <li><%= link_to t("views.repos.commits"), 
-          project_repository_logs_path(@project, @repository) -%></li>
+          project_repository_commits_path(@project, @repository) -%></li>
 <li><%= link_to t("views.repos.tree"), 
           project_repository_trees_path(@project, @repository) -%></li>
 <li><%= link_to t("views.repos.comments", :count => @repository.comments.count), 

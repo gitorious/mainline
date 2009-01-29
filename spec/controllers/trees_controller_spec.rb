@@ -45,7 +45,7 @@ describe TreesController do
       @repository.expects(:head_candidate).returns(head)
 
       get :index, :project_id => @project.slug, :repository_id => @repository.name
-      response.should redirect_to(project_repository_tree_path(@project, @repository, "somebranch", []))
+      response.should redirect_to(project_repository_tree_path(@project, @repository, ["somebranch"]))
     end
   end
   
@@ -55,35 +55,46 @@ describe TreesController do
       tree_mock.stubs(:id).returns("123")
       @commit_mock = mock("commit")
       @commit_mock.stubs(:tree).returns(tree_mock)
-      @git.expects(:commit).with("a"*40).returns(@commit_mock)
+      @git.expects(:commit).with("master").returns(@commit_mock)
       @git.expects(:tree).with(tree_mock.id, ["foo/bar/"]).returns(tree_mock)
-      get :show, :project_id => @project.slug, 
-        :repository_id => @repository.name, :id => "a"*40, :path => ["foo", "bar"]
+      @git.expects(:heads).returns(mock("head", :name => "master"))
+      get :show, :project_id => @project.to_param, 
+        :repository_id => @repository.to_param, :branch_and_path => ["master", "foo", "bar"]
         
       response.should be_success
       assigns[:git].should == @git
       assigns[:tree].should == tree_mock
+      assigns(:ref).should == "master"
+      assigns(:path).should == ["foo", "bar"]
     end
     
     it "redirects to HEAD if provided sha was not found (backwards compat)" do
       @git.expects(:commit).with("a"*40).returns(nil)
+      @git.expects(:heads).returns(mock("head", :name => "master"))
       get :show, :project_id => @project.slug, 
-        :repository_id => @repository.name, :id => "a"*40, :path => ["foo"]
+        :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo"]
       
-      response.should redirect_to(project_repository_tree_path(@project, @repository, "HEAD", ["foo"]))
+      response.should redirect_to(project_repository_tree_path(@project, @repository, ["HEAD", "foo"]))
     end
   end
   
-  describe "#archive" do
-    def do_get(opts = {})
-      get :archive, {:project_id => @project.slug, 
-        :repository_id => @repository.name}.merge(opts)
+  describe "#archive" do    
+    it "archives the source tree" do
+      @git.expects(:commit).with("master").returns(true)
+      @git.expects(:archive_tar_gz).returns("the data")
+      get :archive, :project_id => @project.slug, :format => "tar.gz",
+        :repository_id => @repository.name, :branch => ["master"]
+      response.should be_success
+      
+      response.headers["type"].should == "application/x-gzip"
+      response.headers["Content-Transfer-Encoding"].should == "binary"
     end
     
-    it "archives the source tree" do
-      @git.expects(:commit).returns(true)
+    it "archives the source tree even if the branch is namespaced" do
+      @git.expects(:commit).with("foo/bar").returns(true)
       @git.expects(:archive_tar_gz).returns("the data")
-      do_get
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
+        :branch => %w[foo bar], :format => "tar.gz"
       response.should be_success
       
       response.headers["type"].should == "application/x-gzip"

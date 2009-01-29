@@ -48,7 +48,7 @@ describe BlobsController do
       @git.expects(:tree).returns(blob_mock)
       
       get :show, {:project_id => @project.slug, 
-          :repository_id => @repository.name, :id => "a"*40, :path => []}
+          :repository_id => @repository.name, :branch_and_path => ["a"*40, "README"]}
       
       response.should be_success
       assigns[:git].should == @git
@@ -57,10 +57,11 @@ describe BlobsController do
     
     it "redirects to HEAD if provided sha was not found (backwards compat)" do
       @git.expects(:commit).with("a"*40).returns(nil)
+      @git.expects(:heads).returns(mock("head", :name => "master"))
       get :show, {:project_id => @project.slug, 
-          :repository_id => @repository.name, :id => "a"*40, :path => ["foo.rb"]}
+          :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo.rb"]}
       
-      response.should redirect_to(project_repository_blob_path(@project, @repository, "HEAD", ["foo.rb"]))
+      response.should redirect_to(project_repository_blob_path(@project, @repository, ["HEAD", "foo.rb"]))
     end   
   end
   
@@ -78,7 +79,7 @@ describe BlobsController do
       @git.expects(:tree).returns(blob_mock)
       
       get :raw, {:project_id => @project.slug, 
-          :repository_id => @repository.name, :id => "a"*40, :path => []}
+          :repository_id => @repository.name, :branch_and_path => ["a"*40, "README"]}
       
       response.should be_success
       assigns[:git].should == @git
@@ -90,9 +91,9 @@ describe BlobsController do
     it "redirects to HEAD if provided sha was not found (backwards compat)" do
       @git.expects(:commit).with("a"*40).returns(nil)
       get :raw, {:project_id => @project.slug, 
-          :repository_id => @repository.name, :id => "a"*40, :path => ["foo.rb"]}
+          :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo.rb"]}
       
-      response.should redirect_to(project_repository_raw_blob_path(@project, @repository, "HEAD", ["foo.rb"]))
+      response.should redirect_to(project_repository_raw_blob_path(@project, @repository, ["HEAD", "foo.rb"]))
     end
     
     it "redirects if blob is too big" do
@@ -106,7 +107,7 @@ describe BlobsController do
       @git.expects(:tree).returns(blob_mock)
       
       get :raw, {:project_id => @project.slug, 
-          :repository_id => @repository.name, :id => "a"*40, :path => []}
+          :repository_id => @repository.name, :branch_and_path => ["a"*40, "README"]}
           
       response.should redirect_to(project_repository_path(@project, @repository))
     end

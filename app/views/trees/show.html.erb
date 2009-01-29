@@ -27,20 +27,20 @@
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
-<% cache(tree_path(@commit.id, params[:path])) do -%>
+<% cache(tree_path(@commit.id, @path)) do -%>
 <table class="listing tree">
   <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
     <% if node.is_a? Grit::Tree -%>
-      <td class="node folder"><%= link_to h(node.basename) + "/", tree_path(params[:id], node.name) -%></td>
+      <td class="node folder"><%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%></td>
     <% elsif node.is_a? Grit::Submodule -%>
     <td class="node submodule"><%= h(node.basename) -%></td>
     <% else -%>
-      <td class="node file <%= class_for_filename(node.name)  -%>"><%= link_to h(node.basename), blob_path(params[:id], node.name).gsub("%2F","/") -%></td>
+      <td class="node file <%= class_for_filename(node.name)  -%>"><%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%></td>
     <% end -%>
     <% if node.is_a? Grit::Submodule -%>
       <td class="meta"></td>
-      <td class="meta commit_message">submodule: <%= h(node.url(params[:id])) -%></td>
+      <td class="meta commit_message">submodule: <%= h(node.url(@ref)) -%></td>
     <% else -%>
       <% if last_commit = commit_for_tree_path(@repository, node.name) -%>
         <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
@@ -63,11 +63,7 @@
   
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
-      <% if namespaced_branch?(branch.name) -%>
-      <li><%= link_to h(branch.name), tree_path(branch.commit.id) -%></li>
-      <% else -%>
-        <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
-      <% end -%>
+      <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
     <% end -%>
   </ul>
 
@@ -80,6 +76,6 @@
     </ul>
   <% end -%>
   
-  <%= render_download_links(@project, @repository, @git.head.name, :except => :source_tree) %>
+  <%= render_download_links(@project, @repository, ensplat_path(@ref), :except => :source_tree) %>
 <% end -%>
 

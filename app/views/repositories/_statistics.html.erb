@@ -3,7 +3,7 @@
     <td colspan="3" class="<%= repository.mainline? ? "mainline" : "clone" -%>">
       <h2 style="display: inline;"><%= link_to h(repository.name), [@project, repository] -%></h2>
       <ul class="horizontal" style="position: relative; top: -2px; padding-left: 10px">
-        <li class="commit"><%= link_to "Commit log", project_repository_logs_path(@project, repository) -%></li>
+        <li class="commit"><%= link_to "Commit log", project_repository_commits_path(@project, repository) -%></li>
         <li class="tree"><%= link_to "Source tree", project_repository_trees_path(@project, repository) -%></li>
         <li class="merge_requests">
           <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", project_repository_merge_requests_path(@project, repository) -%>

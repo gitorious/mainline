@@ -26,11 +26,11 @@ module BreadcrumbsHelper
     when Project
       project_path(an_object)
     when Breadcrumb::Branch
-      project_repository_log_path(@project, @repository, an_object.title)
+      project_repository_commits_in_ref_path(@project, @repository, ensplat_path(an_object.title))
     when Breadcrumb::Folder
-      tree_path(params[:id], an_object.paths)
+      tree_path(@ref, an_object.paths)
     when Breadcrumb::Blob
-      blob_path(params[:id], an_object.path)
+      blob_path(@ref, an_object.path)
     when Breadcrumb::Commit
       commit_path(an_object.sha)
     when Breadcrumb::Wiki

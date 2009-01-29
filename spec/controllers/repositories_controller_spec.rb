@@ -49,7 +49,15 @@ describe RepositoriesController, "Routing" do
       :action => "index", 
       :project_id => @project.to_param,
       :repository_id => @repo.to_param,
-    }).should == "/#{@project.to_param}/#{@repo.to_param}/trees"
+    }).should == "/#{@project.to_param}/#{@repo.to_param}/tree"
+    
+    route_for({
+      :controller => "trees", 
+      :action => "show", 
+      :project_id => @project.to_param,
+      :repository_id => @repo.to_param,
+      :branch_and_path => %w[foo bar baz]
+    }).should == "/#{@project.to_param}/#{@repo.to_param}/tree/foo/bar/baz"
   end
   
   it "recognizes routing like /projectname/repositories" do

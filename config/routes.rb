@@ -18,7 +18,7 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
-  VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_]+/
+  VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_\/]+/
   map.root :controller => "site", :action => "index"
   
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
@@ -50,18 +50,17 @@ ActionController::Routing::Routes.draw do |map|
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 
         :action => "commit", :conditions => { :method => :get }
       
-      repo.resources :logs, :requirements => { :id => VALID_REF }#, :member => { :feed => :get }
-      repo.formatted_log_feed "logs/:id/feed.:format", :controller => "logs", :action => "feed", 
-        :conditions => {:feed => :get}, :requirements => {:id => VALID_REF}
-      repo.resources :commits, :requirements => {:id => VALID_REF }
-      repo.trees          "trees/", :controller => "trees", :action => "index"
-      repo.with_options(:requirements => { :id => VALID_REF }) do |r|
-        r.tree           "trees/:id/*path", :controller => "trees", :action => "show"
-        r.formatted_tree "trees/:id/*path.:format", :controller => "trees", :action => "show"
-        r.archive_tree   "archive/:id.:format", :controller => "trees", :action => "archive", :requirements => { :format => /zip|tar\.gz/, :id => VALID_REF }
-        r.raw_blob       "blobs/raw/:id/*path", :controller => "blobs", :action => "raw"
-        r.blob           "blobs/:id/*path", :controller => "blobs", :action => "show"
-      end
+      repo.formatted_commits_feed "commits/*branch/feed.:format", :controller => "commits", :action => "feed", 
+        :conditions => {:feed => :get}
+      repo.commits      "commits", :controller => "commits", :action => "index"
+      repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
+      repo.commit       "commit/*branch_and_ref", :controller => "commits", :action => "show"
+      repo.trees      "tree/", :controller => "trees", :action => "index"
+      repo.tree       "tree/*branch_and_path", :controller => "trees", :action => "show"
+      repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
+      repo.archive_tree   "archive/*branch.:format", :controller => "trees", :action => "archive", :requirements => { :format => /zip|tar\.gz/ }
+      repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
+      repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
     end
   end
   
