@@ -284,7 +284,7 @@ module ApplicationHelper
   end
   
   def file_path(repository, filename, head = "master")
-    project_repository_blob_path(repository.project, repository, head, filename)
+    project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
   end
   
   def link_to_help_toggle(dom_id)
