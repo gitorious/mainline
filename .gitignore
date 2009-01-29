@@ -14,3 +14,4 @@ db/*.sqlite3
 .autotest
 db/sphinx/*
 tmp/repos/*
+tmp/graph_generator.status
