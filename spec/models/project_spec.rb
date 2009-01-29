@@ -65,6 +65,12 @@ describe Project do
     project.valid?
     project.slug.should == "foo"
   end
+  
+  it "cannot have a reserved name as slug" do
+    project = create_project(:slug => Gitorious::Reservations::PROJECT_NAMES.first)
+    project.valid?
+    project.errors_on(:slug).should_not be_blank
+  end
 
   it "creates an initial repository for itself" do
     project = create_project

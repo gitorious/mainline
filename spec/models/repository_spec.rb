@@ -69,6 +69,12 @@ describe Repository do
     new_repos(:project => projects(:moes)).should be_valid
   end
   
+  it "cannot have a reserved name" do
+    repo = new_repos(:name => Gitorious::Reservations::REPOSITORY_NAMES.first)
+    repo.valid?
+    repo.errors_on(:name).should_not be_blank
+  end
+  
   it "sets itself as mainline if it's the first repository for a project" do
     projects(:johans).repositories.destroy_all
     projects(:johans).repositories.reload.size.should == 0

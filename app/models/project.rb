@@ -55,6 +55,7 @@ class Project < ActiveRecord::Base
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")
+  validates_exclusion_of :slug, :in => Gitorious::Reservations::PROJECT_NAMES
   validates_format_of :home_url, :with => URL_FORMAT_RE,
     :if => proc{|record| !record.home_url.blank? },
     :message => I18n.t( "project.ssl_required")

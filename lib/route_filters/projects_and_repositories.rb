@@ -1,12 +1,11 @@
+require "gitorious/reservations"
 require 'routing_filter/base'
 
 module RoutingFilter
   class ProjectsAndRepositories < Base
     
-    # TODO: move somewhere else so project+repository validations can use it
-    RESERVED_NAMES = ["teams"] + Dir[File.join(RAILS_ROOT, "public", "*")].map{|f| File.basename(f) }
-    CONTROLLER_NAMES = ActionController::Routing.possible_controllers + RESERVED_NAMES
-    PROJECTS_MEMBER_ACTIONS = %w[edit update destroy confirm_delete]
+    RESERVED_NAMES = Gitorious::Reservations::RESERVED_ROOT_NAMES
+    CONTROLLER_NAMES = Gitorious::Reservations::CONTROLLER_NAMES + RESERVED_NAMES
     NAME_WITH_FORMAT_RE = /[a-z0-9_\-\.]+/i
     
     def around_recognize(path, env, &block)
@@ -44,7 +43,8 @@ module RoutingFilter
       end
       
       def repository_scope?(path)
-        !PROJECTS_MEMBER_ACTIONS.include?(path.sub("/", "")) && path =~ /^\/(#{NAME_WITH_FORMAT_RE})(.+)?$/i
+        !Gitorious::Reservations::PROJECTS_MEMBER_ACTIONS.include?(path.sub("/", "")) && 
+          path =~ /^\/(#{NAME_WITH_FORMAT_RE})(.+)?$/i
       end
   end
 end

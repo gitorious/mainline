@@ -45,6 +45,7 @@ class Repository < ActiveRecord::Base
   validates_presence_of :user_id, :project_id, :name, :owner_id
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
+  validates_exclusion_of :name, :in => Gitorious::Reservations::REPOSITORY_NAMES
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
   before_save   :set_as_mainline_if_first
