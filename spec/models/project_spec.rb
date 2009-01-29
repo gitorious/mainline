@@ -70,6 +70,10 @@ describe Project do
     project = create_project(:slug => Gitorious::Reservations::PROJECT_NAMES.first)
     project.valid?
     project.errors_on(:slug).should_not be_blank
+    
+    project = create_project(:slug => "dashboard")
+    project.valid?
+    project.errors_on(:slug).should_not be_blank
   end
 
   it "creates an initial repository for itself" do
