@@ -19,6 +19,11 @@
 %>
 
 <% @page_title = t("views.trees.page_title", :repo => @repository.name, :title => @project.title) -%>
+<ul class="horizontal meta" style="float:right">
+  <li class="commit">
+    <%= link_to "Commit log", project_repository_commits_in_ref_path(@project, @repository, @ref) -%>
+  </li>
+</ul>
 <h1>
   <%= t("views.trees.title", :repo => h(@repository.name), :title => h(@project.title)) %>
 </h1>

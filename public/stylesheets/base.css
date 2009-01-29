@@ -720,6 +720,10 @@ ul.horizontal li > a {
   padding-top: 2px;
 }
 
+ul.horizontal.meta li > a {
+  font-size: 11px;
+}
+
 .meta-info ul.horizontal li > a{
   font-size: 11px;
   background-image: none !important;
