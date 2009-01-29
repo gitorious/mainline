@@ -288,7 +288,7 @@ class Repository < ActiveRecord::Base
   
   protected
     def set_as_mainline_if_first
-      unless project.repositories.size >= 1
+      if project && project.repositories.count <= 1
         self.mainline = true
       end
     end
