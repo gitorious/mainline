@@ -1,6 +1,6 @@
 module Gitorious
   module Reservations
-    UNACCOUNTED_ROOT_NAMES = ["teams", "dashboard", "about"] 
+    UNACCOUNTED_ROOT_NAMES = ["teams", "dashboard", "about", "login", "logout"] 
     RESERVED_ROOT_NAMES = UNACCOUNTED_ROOT_NAMES + Dir[File.join(RAILS_ROOT, "public", "*")].map{|f| File.basename(f) }
     CONTROLLER_NAMES_PLURAL = ActionController::Routing.possible_controllers.map{|s| s.split("/").first }
     CONTROLLER_NAMES = CONTROLLER_NAMES_PLURAL + CONTROLLER_NAMES_PLURAL.map{|s| s.singularize }
