@@ -18,7 +18,7 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
-  VALID_SHA = /[a-zA-Z0-9~\{\}\+\^\.\-_]+/
+  VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_]+/
   map.root :controller => "site", :action => "index"
   
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
@@ -50,15 +50,15 @@ ActionController::Routing::Routes.draw do |map|
       repo.commit_comment "comments/commit/:sha", :controller => "comments", 
         :action => "commit", :conditions => { :method => :get }
       
-      repo.resources :logs, :requirements => { :id => VALID_SHA }#, :member => { :feed => :get }
+      repo.resources :logs, :requirements => { :id => VALID_REF }#, :member => { :feed => :get }
       repo.formatted_log_feed "logs/:id/feed.:format", :controller => "logs", :action => "feed", 
-        :conditions => {:feed => :get}, :requirements => {:id => VALID_SHA}
-      repo.resources :commits, :requirements => {:id => VALID_SHA }
+        :conditions => {:feed => :get}, :requirements => {:id => VALID_REF}
+      repo.resources :commits, :requirements => {:id => VALID_REF }
       repo.trees          "trees/", :controller => "trees", :action => "index"
-      repo.with_options(:requirements => { :id => VALID_SHA }) do |r|
+      repo.with_options(:requirements => { :id => VALID_REF }) do |r|
         r.tree           "trees/:id/*path", :controller => "trees", :action => "show"
         r.formatted_tree "trees/:id/*path.:format", :controller => "trees", :action => "show"
-        r.archive_tree   "archive/:id.:format", :controller => "trees", :action => "archive", :requirements => { :format => /zip|tar\.gz/, :id => VALID_SHA }
+        r.archive_tree   "archive/:id.:format", :controller => "trees", :action => "archive", :requirements => { :format => /zip|tar\.gz/, :id => VALID_REF }
         r.raw_blob       "blobs/raw/:id/*path", :controller => "blobs", :action => "raw"
         r.blob           "blobs/:id/*path", :controller => "blobs", :action => "show"
       end
