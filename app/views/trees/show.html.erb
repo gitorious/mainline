@@ -58,8 +58,6 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <%= render_download_links(@project, @repository, @git.head.name, :except => :source_tree) %>
-  
   <h5><%= t("views.logs.branches") %>:</h5>
   
   
@@ -73,11 +71,15 @@
     <% end -%>
   </ul>
 
-  <h5><%= t("views.logs.tags") %>:</h5>
-  <ul class="links">
-  <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-    <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
+  <% unless @git.tags.blank? -%>
+    <h5><%= t("views.logs.tags") %>:</h5>
+    <ul class="links">
+    <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
+      <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
+    <% end -%>
+    </ul>
   <% end -%>
-  </ul>
+  
+  <%= render_download_links(@project, @repository, @git.head.name, :except => :source_tree) %>
 <% end -%>
 

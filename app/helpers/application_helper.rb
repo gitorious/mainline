@@ -320,7 +320,7 @@ module ApplicationHelper
       links << content_tag(:li, link_to("Download #{head} as #{extension}", project_repository_archive_tree_path(project, repository, head, extension)), :class => extension.split('.').last)
     end
     
-    content_tag(:ul, links.join("\n"), :class => 'links')
+    content_tag(:ul, links.join("\n"), :class => 'links meta')
   end
   
 end

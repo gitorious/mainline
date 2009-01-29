@@ -223,8 +223,16 @@ abbr {
   border-top: 1px dotted #888;
 }
 
+#sidebar ul.links.meta li:first-child {
+  border-top: none;
+}
+
 #sidebar ul.links li {
   border-bottom: 1px dotted #888;
+}
+
+#sidebar ul.links.meta li {
+ border-bottom: none; 
 }
 
 #sidebar ul.links li a {
@@ -235,13 +243,28 @@ abbr {
   padding: 5px 5px 5px 28px; 
 }
 
+#sidebar ul.links.meta li a {
+  font-size: 10px;
+  padding: 2px 5px 2px 28px; 
+  background-position: 5px 2px;
+}
+
 #sidebar ul.links li:hover {
   background: #390;
+}
+
+#sidebar ul.links.meta li:hover {
+  background: inherit;
 }
 
 #sidebar ul.links li a:hover {
   color: #fff;
   text-decoration: none;
+}
+
+#sidebar ul.links.meta li a:hover {
+  color: #390; 
+  text-decoration: underline;
 }
 
 #container #footer {
