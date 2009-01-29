@@ -6,16 +6,16 @@ module RoutingFilter
     # TODO: move somewhere else so project+repository validations can use it
     RESERVED_NAMES = ["teams"] + Dir[File.join(RAILS_ROOT, "public", "*")].map{|f| File.basename(f) }
     CONTROLLER_NAMES = ActionController::Routing.possible_controllers + RESERVED_NAMES
-    
+    PROJECTS_MEMBER_ACTIONS = %w[edit update destroy confirm_delete]
     NAME_WITH_FORMAT_RE = /[a-z0-9_\-\.]+/i
     
     def around_recognize(path, env, &block)
-      if not_reserved?(path)
+      if !reserved?(path)
          if path =~ /^\/(#{NAME_WITH_FORMAT_RE})(\/.+)?/
            project_name = $1
            rest = $2
-           if rest && not_reserved?(rest) && rest =~ /^\/(#{NAME_WITH_FORMAT_RE})(.+)?$/i
-             path.replace "/projects/#{project_name}/repositories/#{$1}#{$2}"             
+           if rest && !reserved?(rest) && repository_scope?(rest)
+             path.replace "/projects/#{project_name}/repositories#{rest}"             
            else
              path.replace "/projects/#{project_name}#{rest}"
            end
@@ -30,11 +30,6 @@ module RoutingFilter
       params = args.extract_options!
       returning yield do |result|
         result = result.is_a?(Array) ? result.first : result
-        # if params[:controller] == "projects" && %w[show edit update destroy].include?(params[:action])
-        #   result.sub!(/^\/projects\/#{params[:id]}/, "/#{params[:id]}")
-        # elsif params[:project_id]
-        #   result.sub!(/^\/projects\/#{params[:project_id]}(.+)?/){ "/#{params[:project_id]}#{$1}"}
-        # end
         if result =~ /^\/projects\/(#{NAME_WITH_FORMAT_RE})\/repositories\/(#{NAME_WITH_FORMAT_RE})(.+)?/
           result.replace "/#{$1}/#{$2}#{$3}"
         elsif result =~ /^\/projects\/(#{NAME_WITH_FORMAT_RE})(.+)?/
@@ -42,9 +37,14 @@ module RoutingFilter
         end
       end
     end
-    
-    def not_reserved?(path)
-      CONTROLLER_NAMES.select{|s| path.starts_with?("/#{s}") }.length == 0
-    end
+
+    private
+      def reserved?(path)
+        CONTROLLER_NAMES.select{|s| path.starts_with?("/#{s}") }.length != 0
+      end
+      
+      def repository_scope?(path)
+        !PROJECTS_MEMBER_ACTIONS.include?(path.sub("/", "")) && path =~ /^\/(#{NAME_WITH_FORMAT_RE})(.+)?$/i
+      end
   end
 end

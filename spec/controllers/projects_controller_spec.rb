@@ -58,20 +58,33 @@ describe ProjectsController, "Routing" do
     }).should == "/#{@project.to_param}/repositories"
   end
   
+  it "recognizes project actions" do
+    {
+      "edit" => [:get, "/edit"], 
+      "update" => [:put, ""],
+      "destroy" => [:delete, ""],
+      "confirm_delete" => [:get, "/confirm_delete"],
+    }.each do |action, (method, path)|
+      params_from(method, "/#{@project.to_param}#{path}").should == {
+        :controller => "projects",
+        :action => action, 
+        :id => @project.to_param
+      }
+      route_for({
+        :controller => "projects", 
+        :action => action, 
+        :id => @project.to_param
+      }).should == "/#{@project.to_param}#{path}"
+    end
+  end
+  
   it "recognizes custom routing with format" do
     params_from(:get, "/#{@project.to_param}.xml").should == {
       :controller => "projects",
       :action => "show", 
       :id => @project.to_param,
       :format => "xml"
-    }
-    # route_for({
-    #   :controller => "projects", 
-    #   :action => "show", 
-    #   :id => @projects.to_param,
-    #   :format => "xml"
-    # }).should == "/#{@project.to_param}.xml"
-    
+    }    
     
     params_from(:get, "/projects.xml").should == {
       :controller => "projects",
