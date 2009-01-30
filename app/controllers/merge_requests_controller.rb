@@ -21,8 +21,8 @@ class MergeRequestsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_project
   before_filter :find_repository
-  before_filter :find_merge_request, :except => [:index, :show, :new, :create]
-  before_filter :assert_merge_request_ownership, :except => [:index, :show, :new, :create, :resolve]
+  before_filter :find_merge_request, :except => [:index, :show, :new, :create, :commit_list]
+  before_filter :assert_merge_request_ownership, :except => [:index, :show, :new, :create, :resolve, :commit_list]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   
   def index
@@ -31,18 +31,21 @@ class MergeRequestsController < ApplicationController
     #@proposed_merge_requests = @repository.proposed_merge_requests
   end
   
+  def commit_list
+    @merge_request = @repository.proposed_merge_requests.new(params[:merge_request].merge(:user => current_user))
+    @commits = @merge_request.commits_for_selection
+    render :layout => false
+  end
+  
   def show
     @merge_request = @repository.merge_requests.find(params[:id])
-    @commits = @merge_request.target_repository.git.commit_deltas_from(
-      @merge_request.source_repository.git, 
-      @merge_request.target_branch,
-      @merge_request.source_branch
-    )
+    @commits = @merge_request.commits_to_be_merged
   end
   
   def new
     @merge_request = @repository.proposed_merge_requests.new(:user => current_user)
     @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+    @branches = @repository.git.branches
   end
   
   def create

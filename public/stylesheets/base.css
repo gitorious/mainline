@@ -1547,3 +1547,33 @@ table.repository_meta .graph td { text-align:center; }
 .page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
 .page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
+
+
+table.select_commits_from_list th
+{
+  background-color: #ddd;
+  padding: 0.2em 0.4em;
+  font-weight: bold;
+}
+tr.commit_row td,
+tr.selected td
+{
+  background-color: #fff;
+}
+tr.commit_row td.selection
+{
+  background-image: url(/images/silk/cancel.png);
+  background-position: top 10px;
+  background-repeat: no-repeat;
+  width: 40px;
+}
+tr.selected td.selection
+{
+  background-image: url(/images/silk/accept.png);  
+}
+
+#commit_selection_error
+{
+  border: 1px solid red;
+  padding: 1em;
+}

@@ -22,6 +22,9 @@ describe MergeRequestsController do
 	
 	before(:each) do
 		@project = projects(:johans)
+		git = mock
+		git.stubs(:branches).returns([])
+		Repository.any_instance.stubs(:git).returns(git)
 		@repository = repositories(:johans2)
 		@mainline_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans)
@@ -287,6 +290,10 @@ describe MergeRequestsController do
 			response.should be_redirect
 		end
 	end
+	
+	describe "#get commit_list" do
+	  it "should render a list of commits that can be merged"
+  end
 	
 	describe "#destroy (DELETE)" do
 		def do_delete

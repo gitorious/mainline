@@ -30,8 +30,11 @@
 <p>
   <%= form.label :source_branch, t(:source_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
   <small class="hint"><%= t("views.merges.info.source_branch") %></small><br />
-  <%= form.text_field :source_branch, :class => "text", :value => form.object.source_branch -%>
+  <%= form.select :source_branch, @branches.collect(&:name), {:include_blank => true}, :onchange => "new Ajax.Updater('commit_selection','#{commit_list_project_repository_merge_requests_path}', {method:'get', parameters:Form.serialize(this.form)})" %>
 </p>
+<div id="commit_selection">
+  <%= link_to_remote "Fetch commits", :update => 'commit_selection', :url => commit_list_project_repository_merge_requests_path, :method => :get, :with => 'Form.serialize(document.forms[1])'%>
+</div>
 <p>
   <%= form.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
   <small class="hint"><%= t("views.merges.info.proposal") %></small><br />

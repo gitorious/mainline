@@ -113,4 +113,10 @@ describe MergeRequest do
     @merge_request.target_branch = "foo"
     @merge_request.target_name.should == "#{@merge_request.target_repository.name}:foo"
   end
+  
+  describe "with specific starting and ending commits" do
+    it "should suggest relevant commits to be merged"
+    it "should return potential commits for selection"
+    it "should know that it applies to specific commits"
+  end
 end

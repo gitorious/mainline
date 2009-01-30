@@ -16,7 +16,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-
 <h1><%= t("views.merges.create_title") %></h1>
 
 <%= error_messages_for :merge_request -%>
@@ -30,3 +29,7 @@
 <% content_for :submenu do -%>
   <%= render :partial => "repositories/context_menu" -%>
 <% end -%>
+
+<script type="text/javascript" charset="utf-8">
+var selectableRange = new SelectableRange();
+</script>

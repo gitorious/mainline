@@ -83,4 +83,22 @@ class MergeRequest < ActiveRecord::Base
   def resolvable_by?(candidate)
     candidate.can_write_to?(target_repository)
   end
+  
+  def commits_for_selection
+    @commits_for_selection ||= target_repository.git.commit_deltas_from(source_repository.git, target_branch, source_branch)
+  end
+  
+  def applies_to_specific_commits?
+    starting_commit && ending_commit
+  end
+  
+  def commits_to_be_merged
+    if applies_to_specific_commits?
+      f = commits_for_selection.index(commits_for_selection.find{|c|c.id == starting_commit})
+      l = commits_for_selection.index(commits_for_selection.find{|c|c.id == ending_commit})
+      return commits_for_selection[f..l]
+    else
+      return commits_for_selection
+    end
+  end
 end

@@ -1,0 +1,40 @@
+<label>Select commits</label>
+<table class="select_commits_from_list">
+  <tr>
+    <th>From</th>
+    <th>To</th>
+    <th>Summary</th>
+    <th>&nbsp;</th>
+  </tr>
+<% @commits.each_with_index do |commit, i| %>
+  <tr id="commit_<%= i -%>" class="commit_row">
+    <td>
+      <input 
+      name="merge_request[starting_commit]" 
+      type="radio" 
+      value="<%= commit.id -%>" 
+      onclick="selectableRange.startSelected(this)" />
+    </td>
+    <td><input 
+      name="merge_request[ending_commit]" 
+      type="radio" 
+      value="<%= commit.id -%>" 
+      class="merge_to" 
+      onclick="selectableRange.endSelected(this)"/>
+    </td>
+    <td>
+      <%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit) %>
+      <strong><%= commit.committer %></strong> <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago
+      <div class="commit_message">
+        <p><%= h(commit.message) %></p>
+      </div>      
+    </td>
+    <td class="selection">&nbsp;</td>
+  </tr>
+<% end %>
+</table>
+
+
+<div id="commit_selection_error" style="display:none">
+  Please select which commit to start from and which to end at. The last commit needs to be after the first one.
+</div>
