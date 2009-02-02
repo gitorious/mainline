@@ -19,14 +19,46 @@ ActionController::Routing::Routes.draw do |map|
   #map.connect ':controller/service.wsdl', :action => 'wsdl'
   
   VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_\/]+/
+  
+  repository_proc = proc do |repo|
+    repo.resources :comments, :member => { :commmit => :get  }
+    repo.resources :merge_requests, :member => { :resolve => :put }, :collection => { :create => :post, :commit_list => :get }
+    repo.commit_comment "comments/commit/:sha", :controller => "comments", 
+      :action => "commit", :conditions => { :method => :get }
+    
+    repo.formatted_commits_feed "commits/*branch/feed.:format", 
+        :controller => "commits", :action => "feed", :conditions => {:feed => :get}
+    repo.commits        "commits", :controller => "commits", :action => "index"
+    repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
+    repo.commit         "commit/*branch_and_ref", :controller => "commits", :action => "show"
+    repo.trees          "tree/", :controller => "trees", :action => "index"
+    repo.tree           "tree/*branch_and_path", :controller => "trees", :action => "show"
+    repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
+    repo.archive_tree   "archive/*branch.:format", :controller => "trees", :action => "archive", 
+                            :requirements => { :format => /zip|tar\.gz/ }
+    repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
+    repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
+  end
+  repository_options = {
+    :member => {
+      :clone => :get, :create_clone => :post,
+      :writable_by => :get, 
+      :confirm_delete => :get
+    }
+  }
+  
   map.root :controller => "site", :action => "index"
   
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
     account.resources :keys
   end
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
-  map.resources :users, :requirements => {:id => /.+/ }, :collection => {
-    :forgot_password => :get,    :reset_password => :post}, :member => { :feed => :get }
+  map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/ }, :collection => {
+    :forgot_password => :get,
+    :reset_password => :post
+  }, :member => { :feed => :get }) do |user|
+    user.resources(:repositories, repository_options, &repository_proc)
+  end
   map.resources  :events
   
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
@@ -40,28 +72,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
     projects.resources :pages, :member => { :history => :get }
-    projects.resources(:repositories, :member => {
-      :clone => :get, :create_clone => :post,
-      :writable_by => :get, 
-      :confirm_delete => :get
-    }) do |repo|
-      repo.resources :comments, :member => { :commmit => :get  }
-      repo.resources :merge_requests, :member => { :resolve => :put }, :collection => { :create => :post, :commit_list => :get }
-      repo.commit_comment "comments/commit/:sha", :controller => "comments", 
-        :action => "commit", :conditions => { :method => :get }
-      
-      repo.formatted_commits_feed "commits/*branch/feed.:format", :controller => "commits", :action => "feed", 
-        :conditions => {:feed => :get}
-      repo.commits      "commits", :controller => "commits", :action => "index"
-      repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
-      repo.commit       "commit/*branch_and_ref", :controller => "commits", :action => "show"
-      repo.trees      "tree/", :controller => "trees", :action => "index"
-      repo.tree       "tree/*branch_and_path", :controller => "trees", :action => "show"
-      repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
-      repo.archive_tree   "archive/*branch.:format", :controller => "trees", :action => "archive", :requirements => { :format => /zip|tar\.gz/ }
-      repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
-      repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
-    end
+    projects.resources(:repositories, repository_options, &repository_proc)
   end
   
   map.resource :search
@@ -84,7 +95,5 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id'
   
   # See the routing_filter plugin and lib/route_filters/*
-  map.filter "usernames", :file => "route_filters/usernames"
-  map.filter "teams", :file => "route_filters/teams"
-  map.filter "projects_and_repositories", :file => "route_filters/projects_and_repositories"
+  map.filter "repository_owner_namespacing", :file => "route_filters/repository_owner_namespacing"
 end

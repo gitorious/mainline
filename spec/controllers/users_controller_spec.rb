@@ -52,6 +52,18 @@ describe UsersController, "Routing" do
       :controller => "users", :action => "show", :id => @user.to_param
     }
   end
+  
+  it "doesn't recognize controller collection actions as repositories" do
+    params_from(:get, "/users/forgot_password").should == {
+      :controller => "users", :action => "forgot_password"
+    }
+  end
+  
+  it "doesn't recognize controller member actions as repositories" do
+    params_from(:get, "/users/activate/123").should == {
+      :controller => "users", :action => "activate", :activation_code => "123"
+    }
+  end
 end
 
 describe UsersController do
