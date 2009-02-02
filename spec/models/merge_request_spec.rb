@@ -115,8 +115,30 @@ describe MergeRequest do
   end
   
   describe "with specific starting and ending commits" do
-    it "should suggest relevant commits to be merged"
-    it "should return potential commits for selection"
-    it "should know that it applies to specific commits"
+    before(:each) do
+      commits = %w(ffc ccf 00f 0fc).collect do |sha|
+        m = mock
+        m.stubs(:id).returns(sha)
+        m
+      end
+      @merge_request.stubs(:commits_for_selection).returns(commits)
+    end
+
+    it "should suggest relevant commits to be merged" do
+      assert_equal(4, @merge_request.commits_for_selection.size)
+    end
+    
+    it "should know that it applies to specific commits" do
+      assert_equal(4, @merge_request.commits_to_be_merged.size)
+      @merge_request.starting_commit = 'ffc'
+      @merge_request.ending_commit = '00f'
+      assert_equal(%w(ffc ccf 00f), @merge_request.commits_to_be_merged.collect(&:id))
+    end
+    
+    it "should return the full set of commits if ending_commit or starting_commit don't exist" do
+      @merge_request.starting_commit = 'foo'
+      @merge_request.ending_commit = '00f'
+      assert_equal(4, @merge_request.commits_to_be_merged.size)
+    end
   end
 end

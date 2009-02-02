@@ -292,7 +292,23 @@ describe MergeRequestsController do
 	end
 	
 	describe "#get commit_list" do
-	  it "should render a list of commits that can be merged"
+	  before(:each) do
+	    commits = %w(ffc ff0).collect do |sha|
+	      m = mock
+	      m.stubs(:id).returns(sha)
+	      m
+      end
+	    merge_request = mock
+	    merge_request.stubs(:commits_for_selection).returns(commits)
+	    MergeRequest.stubs(:new).returns(merge_request)
+    end
+    
+	  it "should render a list of commits that can be merged" do
+	    login_as :johan
+			get :commit_list, :project_id => @project.slug, 
+				:repository_id => @mainline_repository.name,
+				:merge_request => {}
+    end
   end
 	
 	describe "#destroy (DELETE)" do
