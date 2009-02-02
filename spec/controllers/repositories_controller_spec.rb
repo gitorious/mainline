@@ -126,6 +126,70 @@ describe RepositoriesController, "Routing" do
       :format => "xml",
     }).should == "/#{@project.to_param}/repositories.xml"
   end
+  
+  it "recognizes routing like /~username/repositories" do
+    user = users(:johan)
+    params_from(:get, "/~#{user.to_param}/repositories").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :user_id => user.to_param
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :user_id => user.to_param,
+    }).should == "/~#{user.to_param}/repositories"
+  end
+  
+  it "recognizes routing like /~username/repositories, with a non-html format" do
+    user = users(:johan)
+    params_from(:get, "/~#{user.to_param}/repositories.xml").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :format => "xml",
+      :user_id => user.to_param
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :user_id => user.to_param,
+      :format => "xml",
+    }).should == "/~#{user.to_param}/repositories.xml"
+  end
+  
+  it "recognizes routing like /+teamname/repositories" do
+    team = groups(:johans_team_thunderbird)
+    params_from(:get, "/+#{team.to_param}/repositories").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :group_id => team.to_param
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :group_id => team.to_param,
+    }).should == "/+#{team.to_param}/repositories"
+  end
+  
+  it "recognizes routing like /+teamname/repositories, with a non-html format" do
+    team = groups(:johans_team_thunderbird)
+    params_from(:get, "/+#{team.to_param}/repositories.xml").should == {
+      :controller => "repositories",
+      :action => "index", 
+      :format => "xml",
+      :group_id => team.to_param
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "index", 
+      :group_id => team.to_param,
+      :format => "xml",
+    }).should == "/+#{team.to_param}/repositories.xml"
+  end
 end
 
 describe RepositoriesController, "index" do

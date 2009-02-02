@@ -69,6 +69,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :groups, :as => "teams", :collection => {:auto_complete_for_project_slug => :post} do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
+    grp.resources(:repositories, repository_options, &repository_proc)
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
     projects.resources :pages, :member => { :history => :get }
