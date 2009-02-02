@@ -205,6 +205,34 @@ describe RepositoriesController, "index" do
   end
 end
 
+describe RepositoriesController, "showing a user namespaced repo" do
+  before(:each) do
+    @user = users(:johan)
+  end
+  
+  it "GET users/johan/repositories/foo is successful" do
+    repo = @user.repositories.first
+    repo.stubs(:git).returns(stub_everything("git mock"))
+    get :show, :user_id => @user.to_param, :id => repo.to_param
+    response.should be_success
+    assigns(:owner).should == @user
+  end
+end
+
+describe RepositoriesController, "showing a team namespaced repo" do
+  before(:each) do
+    @group = groups(:johans_team_thunderbird)
+  end
+  
+  it "GET teams/foo/repositories/bar is successful" do
+    repo = @group.repositories.first
+    repo.stubs(:git).returns(stub_everything("git mock"))
+    get :show, :group_id => @group.to_param, :id => repo.to_param
+    response.should be_success
+    assigns(:owner).should == @group
+  end
+end
+
 
 describe RepositoriesController, "show" do
   

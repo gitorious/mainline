@@ -17,18 +17,18 @@
 #++
 %>
 
-<h1><%= t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@project.title)) %></h1>
+<h1><%= t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@owner.title)) %></h1>
 
 <p class="important_message">
   <%= t("views.repos.message_delete") %>
   
-  <% form_for [@project, @repository], :html => {:method => :delete} do |f| -%>
+  <% form_for [@owner, @repository], :html => {:method => :delete} do |f| -%>
     <%= f.submit(t("views.repos.btn_delete")) -%>
   <% end -%>
 </p>
 
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li><%= link_to t("views.projects.back"), edit_project_repository_path(@project, @repository) -%></li>
+    <li><%= link_to t("views.projects.back"), edit_project_repository_path(@owner, @repository) -%></li>
   </ul>
 <% end -%>

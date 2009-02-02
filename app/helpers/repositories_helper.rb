@@ -65,4 +65,20 @@ module RepositoriesHelper
       t("views.repos.show_group")
     end
   end
+  
+  def download_archive_links(repository)
+    # FIXME: should just use the polymorphic path instead
+    link_meth = case @owner
+    when Project
+      method(:project_repository_archive_tree_path)
+    when Group
+      method(:group_repository_archive_tree_path)
+    when User
+      method(:user_repository_archive_tree_path)
+    end
+    gz_link = link_meth.call(@owner, repository, repository.head_candidate.name, "tar.gz")
+    zip_link = link_meth.call(@owner, repository, repository.head_candidate.name, "zip")
+    content_tag(:li, link_to("Download as .tar.gz", gz_link), :class => "gz") + 
+    content_tag(:li, link_to("Download as .zip", zip_link), :class => "zip") 
+  end
 end

@@ -18,7 +18,7 @@
 #++
 %>
 
-<% @page_title = t("views.repos.show_page_title", :repo => @repository.name, :title => @project.title) -%>
+<% @page_title = t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>
 <h1><%= t("views.repos.show_title", :repo => h(@repository.name), :title => h(@repository.project.title)) %></h1>
 
 <% render_if_ready(@repository) do -%>
@@ -40,20 +40,20 @@
     <li><strong><%= t("views.logs.project") %>:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
     <li><strong><%= t("views.logs.maintainer") %>:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
     <% if @repository.parent -%>
-    <li><strong><%= t("views.repos.clone_of") %>:</strong> <%= link_to h(@repository.parent.gitdir), project_repository_path(@project, @repository.parent) -%>
+    <li><strong><%= t("views.repos.clone_of") %>:</strong> <%= link_to h(@repository.parent.gitdir), project_repository_path(@owner, @repository.parent) -%>
     <% end -%>
     <li><strong><%= t("views.repos.created") %>:</strong> <%= @repository.created_at.to_s(:short) -%></li>
   </li>
   
   <ul class="links">
     <% if @repository.ready? -%>
-      <li><%= link_to t("views.repos.btn_clone"), clone_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to t("views.repos.btn_clone"), clone_project_repository_path(@owner, @repository) -%></li>
     <% end -%>
     <% if @repository.writable_by?(current_user) -%>
-      <li><%= link_to t("views.repos.btn_request"), new_project_repository_merge_request_path(@project, @repository) -%></li>
+      <li><%= link_to t("views.repos.btn_request"), new_project_repository_merge_request_path(@owner, @repository) -%></li>
     <% end -%>
     <% if @repository.can_be_deleted_by?(current_user) -%>
-      <li><%= link_to t("views.repos.btn_delete_repo"), confirm_delete_project_repository_path(@project, @repository) -%></li>
+      <li><%= link_to t("views.repos.btn_delete_repo"), confirm_delete_project_repository_path(@owner, @repository) -%></li>
     <% end -%>
   </ul>
   
@@ -76,7 +76,7 @@
     <h4><%= t("views.logs.branches") %>:</h4>
     <ul>
       <% @repository.git.branches.each do |branch| -%>
-        <li><%= link_to h(branch.name), project_repository_log_path(@project, @repository, ensplat_path(branch.name)) -%></li>
+        <li><%= link_to h(branch.name), project_repository_log_path(@owner, @repository, ensplat_path(branch.name)) -%></li>
       <% end -%>
     </ul>
   <% end -%>

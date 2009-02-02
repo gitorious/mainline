@@ -17,12 +17,12 @@
 #++
 %>
 
-<h1><%= t("views.repos.create_title").call(self, @repository_to_clone, @project) %></h1>
+<h1><%= t("views.repos.create_title").call(self, @repository_to_clone, @owner) %></h1>
 
 <%= error_messages_for :repository -%>
 
 <% form_for @repository, :repository, 
-      :url => create_clone_project_repository_path(@project, @repository_to_clone) do |f| -%>
+      :url => create_clone_project_repository_path(@owner, @repository_to_clone) do |f| -%>
   <p>
     <%= f.label :owner, t("views.repos.owner") -%>:
     <br />
@@ -43,5 +43,5 @@
 <p><%= t("views.repos.clone_note") %></p>
 
 <% content_for :submenu do -%>
-  <li><%= link_to t("views.repos.back"), [@project, @repository_to_clone] -%>
+  <li><%= link_to t("views.repos.back"), [@owner, @repository_to_clone] -%>
 <% end -%>

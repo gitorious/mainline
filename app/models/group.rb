@@ -34,6 +34,14 @@ class Group < ActiveRecord::Base
     name
   end
   
+  def title
+    name
+  end
+  
+  def breadcrumb_parent
+    nil
+  end
+  
   # is this +user+ a member of this group?
   def member?(user)
     members.include?(user)

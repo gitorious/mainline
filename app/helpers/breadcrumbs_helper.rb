@@ -22,9 +22,11 @@ module BreadcrumbsHelper
   def breadcrumb_link_to(an_object)
     url = case an_object
     when Repository
-      project_repository_path(@project, @repository)
+      @owner ? [@owner, @repository] : project_repository_path(@project, @repository)
     when Project
       project_path(an_object)
+    when Group
+      group_path(an_object)
     when Breadcrumb::Branch
       project_repository_commits_in_ref_path(@project, @repository, ensplat_path(an_object.title))
     when Breadcrumb::Folder

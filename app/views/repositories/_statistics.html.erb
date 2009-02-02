@@ -1,16 +1,16 @@
 <table class="repository_meta">
   <tr class="name">
     <td colspan="3" class="<%= repository.mainline? ? "mainline" : "clone" -%>">
-      <h2 style="display: inline;"><%= link_to h(repository.name), [@project, repository] -%></h2>
+      <h2 style="display: inline;"><%= link_to h(repository.name), [@owner, repository] -%></h2>
       <ul class="horizontal" style="position: relative; top: -2px; padding-left: 10px">
-        <li class="commit"><%= link_to "Commit log", project_repository_commits_path(@project, repository) -%></li>
-        <li class="tree"><%= link_to "Source tree", project_repository_trees_path(@project, repository) -%></li>
+        <li class="commit"><%= link_to "Commit log", [@owner, repository, :commits] -%></li>
+        <li class="tree"><%= link_to "Source tree", [@owner, repository, :trees] -%></li>
         <li class="merge_requests">
-          <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", project_repository_merge_requests_path(@project, repository) -%>
+          <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", [@owner, repository, :merge_requests] -%>
         </li>
         <% if repository.parent -%>
         <li class="clone">
-          <%= link_to "Clone of #{h(repository.parent.name)}", project_repository_path(@project, repository.parent) -%>
+          <%= link_to "Clone of #{h(repository.parent.name)}", [repository.parent.owner, repository.parent] -%>
         </li>
         <% end -%>
       </ul>
@@ -78,10 +78,7 @@
   <tr>
     <td colspan="3" class="meta-info">
     <ul class="horizontal">
-    <% if repository.has_commits? -%>
-      <li class="gz"><%= link_to "Download as .tar.gz", project_repository_archive_tree_path(@project, repository, repository.head_candidate.name, "tar.gz") -%></li>
-      <li class="zip"><%= link_to "Download as .zip", project_repository_archive_tree_path(@project, repository, repository.head_candidate.name, "zip") -%></li>
-    <% end -%>
+    <%= download_archive_links(repository) if repository.has_commits? -%>
     </ul>
     </td>
   </tr>

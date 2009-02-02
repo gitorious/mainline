@@ -52,6 +52,18 @@ class ApplicationController < ActionController::Base
       end
     end
     
+    def find_repository_owner
+      if params[:project_id]
+        @owner = Project.find_by_slug!(params[:project_id])
+      elsif params[:user_id]
+        @owner = User.find_by_login!(params[:user_id])
+      elsif params[:group_id]
+        @owner = Group.find_by_name!(params[:group_id])
+      else
+        raise ActiveRecord::RecordNotFound
+      end
+    end
+    
     def find_project
       @project = Project.find_by_slug!(params[:project_id])
     end

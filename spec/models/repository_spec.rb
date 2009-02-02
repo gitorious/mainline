@@ -365,7 +365,7 @@ describe Repository do
     @repository.wiki?.should == true
   end
   
-  it 'has a parent, which is the Project' do
+  it 'has a parent, which is the owner' do
     @repository.breadcrumb_parent.should == @repository.project
   end
   

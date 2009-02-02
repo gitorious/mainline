@@ -279,7 +279,7 @@ class Repository < ActiveRecord::Base
   end
   
   def breadcrumb_parent
-    project
+    owner || project
   end
   
   def title

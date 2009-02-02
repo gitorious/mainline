@@ -16,12 +16,12 @@
 #++
 
 atom_feed do |feed|
-  feed.title("Gitorious: #{@project.slug}/#{@repository.name} activity")
+  feed.title("Gitorious: #{@owner.slug}/#{@repository.name} activity")
   feed.updated((@events.blank? ? Time.now : @events.first.created_at))
 
   @events.each do |event|
     action, body, category = action_and_body_for_event(event)
-    item_url = "http://#{GitoriousConfig['gitorious_host']}" + project_repository_path(@project, @repository)
+    item_url = "http://#{GitoriousConfig['gitorious_host']}" + project_repository_path(@owner, @repository)
     feed.entry(event, :url => item_url) do |entry|
       entry.title("#{h(event.user.login)} #{strip_tags(action)}")
       entry.content(<<-EOS, :type => 'html')
