@@ -96,7 +96,7 @@ class MergeRequest < ActiveRecord::Base
     if applies_to_specific_commits?
       f = commits_for_selection.index(commits_for_selection.find{|c|c.id == starting_commit})
       l = commits_for_selection.index(commits_for_selection.find{|c|c.id == ending_commit})
-      return commits_for_selection[f..l]
+      return (f && l) ? commits_for_selection[f..l] : commits_for_selection
     else
       return commits_for_selection
     end
