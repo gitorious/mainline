@@ -34,6 +34,10 @@ class Group < ActiveRecord::Base
     name
   end
   
+  def to_param_with_prefix
+    "+#{to_param}"
+  end
+  
   def title
     name
   end

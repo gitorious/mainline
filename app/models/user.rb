@@ -167,6 +167,10 @@ class User < ActiveRecord::Base
   def to_param
     login
   end
+  
+  def to_param_with_prefix
+    "~#{to_param}"
+  end
 
   def to_xml(opts = {})
     super({:except => [:activation_code, :crypted_password, :remember_token, :remember_token_expires_at, :salt, :ssh_key_id]}.merge(opts))

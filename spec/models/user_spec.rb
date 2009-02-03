@@ -234,6 +234,10 @@ describe User do
     groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
     users(:johan).groups.should == groups(:johans_team_thunderbird, :johans_core)
   end
+  
+  it "has to_param_with_prefix" do
+    users(:johan).to_param_with_prefix.should == "~#{users(:johan).to_param}"
+  end
  
   protected
     def create_user(options = {})

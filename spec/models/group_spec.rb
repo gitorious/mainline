@@ -58,6 +58,11 @@ describe Group do
     end
   end
   
+  it "has to_param_with_prefix" do
+    grp = groups(:johans_team_thunderbird)
+    grp.to_param_with_prefix.should == "+#{grp.to_param}"
+  end
+  
   describe "validations" do
     it "should have a unique name" do
       group = Group.new({

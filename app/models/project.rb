@@ -113,6 +113,10 @@ class Project < ActiveRecord::Base
   def to_param
     slug
   end
+  
+  def to_param_with_prefix
+    to_param
+  end
 
   def admin?(candidate)
     group.admin?(candidate)

@@ -177,6 +177,10 @@ describe Project do
     project.repositories.should_not include(repositories(:johans_wiki))
   end
   
+  it "has to_param_with_prefix" do
+    projects(:johans).to_param_with_prefix.should == projects(:johans).to_param
+  end
+  
   describe "master group" do
     it "should create a non-public group on create" do
       project = create_project

@@ -73,7 +73,7 @@ class Repository < ActiveRecord::Base
   def self.find_by_path(path)
     base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
     repo_name, project_name = base_path.split("/").reverse
-    
+      
     project = Project.find_by_slug!(project_name)
     Repository.find_by_name_and_project_id(repo_name.sub(/\.git/, ""), project.id)
   end
@@ -98,7 +98,7 @@ class Repository < ActiveRecord::Base
   end
   
   def gitdir
-    File.join(owner.to_param, "#{name}.git")
+    File.join(owner.to_param_with_prefix, "#{name}.git")
   end
   
   def real_gitdir
