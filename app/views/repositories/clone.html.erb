@@ -17,6 +17,21 @@
 #++
 %>
 
+<script type="text/javascript" charset="utf-8">
+  Event.observe(window, "dom:loaded", function() {
+    $("repository_owner_id_group_select").observe("change", function(e) {
+      var sel = $A(e.element().options).find(function(el){ 
+        return el.value == e.element().value;
+      })
+      $("repository_name").value = sel.text + "-clone";
+      $("repository_owner_type_group").checked = true;
+    });
+    $("repository_owner_type_user").observe("click", function(e) {
+      $("repository_name").value = "<%= current_user.login -%>s-clone";
+    })
+  });
+</script>
+
 <h1><%= t("views.repos.create_title").call(self, @repository_to_clone, @owner) %></h1>
 
 <%= error_messages_for :repository -%>
