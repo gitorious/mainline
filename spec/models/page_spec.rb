@@ -25,6 +25,8 @@ describe Page do
     FileUtils.mkdir(@path)
     Dir.chdir(@path) do
       File.open("HowTo.markdown", "wb"){|f| f.puts "Hello world!" }
+      ENV['GIT_COMMITTER_NAME'] = "Johan Sørensen"
+      ENV['GIT_COMMITTER_EMAIL'] = "johan@johansorensen.com"
       `git init; git add .; git commit --author='Johan Sorensen <johan@johansorensen.com>' -m "first commit"`
     end
     @repo = Grit::Repo.new(@path)
