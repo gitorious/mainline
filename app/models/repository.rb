@@ -42,7 +42,9 @@ class Repository < ActiveRecord::Base
   named_scope :mainlines, :conditions => { :mainline => true }
   named_scope :all_by_owner, lambda{|owner|
     if owner.is_a?(Project)
-      { :conditions => { :project_id => owner.id, :kind => KIND_PROJECT_REPO } }
+      {:conditions => ["((owner_type = 'Project' AND owner_id = :owner_id) OR project_id = :owner_id) AND kind = :kind", {
+        :owner_id => owner.id, :kind => KIND_PROJECT_REPO
+      }]}
     else
       { :conditions => { :owner_type => owner.class.name, :owner_id => owner.id, :kind => KIND_PROJECT_REPO } }
     end
