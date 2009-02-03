@@ -262,38 +262,53 @@ describe Repository do
     @repository.writable_by?(users(:mike)).should == false
   end
   
-  it "creates a Task on create and update" do
+  it 'publishes a message on create and update' do
+    destination = message_destination_by_name('/queue/RepositoryCreation')
+    messages = destination.messages
     proc{
       @repository.save!
-    }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
-    task.command.should == "create_git_repository"
-    task.arguments.size.should == 1
-    task.arguments.first.should match(/#{@repository.real_gitdir}$/)
-    task.target_id.should == @repository.id
+    }.should change(messages, :size)
+    message = deserialize_message(messages.last)
+    message['command'].should == 'create_git_repository'
+    message['arguments'].size.should == 1
+    message['arguments'].first.should match(/#{@repository.gitdir}$/)
+    message['target_id'].to_i.should == @repository.id
   end
   
   it "creates a clone task if there's a parent" do
+    destination = message_destination_by_name('/queue/RepositoryCreation')
+    messages = destination.messages
     proc{
       @repository.parent = repositories(:johans)
       @repository.save!
-    }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
-    task.command.should == "clone_git_repository"
-    task.arguments.size.should == 2
-    task.arguments.first.should match(/#{@repository.real_gitdir}$/)
-    task.target_id.should == @repository.id
+    }.should change(messages, :size)
+    message = deserialize_message(messages.last)
+
+    message['command'].should == "clone_git_repository"
+    message['arguments'].size.should == 2
+    message['arguments'].first.should match(/#{@repository.gitdir}$/)
+    message['target_id'].should == @repository.id
   end
   
   it "creates a Task on destroy" do
     @repository.save!
+    destination = message_destination_by_name('/queue/RepositoryDeletion')
+    messages = destination.messages
     proc{
       @repository.destroy
-    }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
-    task.command.should == "delete_git_repository"
-    task.arguments.size.should == 1
-    task.arguments.first.should match(/#{@repository.real_gitdir}$/)
+    }.should change(messages, :size)
+    message = deserialize_message(messages.last)
+    message['command'].should == 'delete_git_repository'
+    message['arguments'].size.should == 1
+    message['arguments'].first.should match(/#{@repository.gitdir}$/)
+  end
+  
+  def message_destination_by_name(name)
+    ActiveMessaging::Gateway.connection('default').find_destination(name)
+  end
+  
+  def deserialize_message(message)
+    ActiveSupport::JSON.decode(message.body)
   end
   
   it "has one recent commit" do

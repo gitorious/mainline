@@ -263,6 +263,14 @@ describe RepositoriesController, "show" do
     repo.stubs(:git).returns(stub_everything("git mock"))
     do_get repo
   end
+  
+  it "issues a Refresh header if repo isn't ready yet" do
+    repo = @project.repositories.first
+    repo.stubs(:ready).returns(false)
+    do_get repo
+    response.should be_success
+    response.headers['Refresh'].should_not be_nil
+  end
 end
 
 describe RepositoriesController, "show as XML" do

@@ -9,9 +9,11 @@ config/ultrasphinx/development.conf
 config/ultrasphinx/test.conf
 config/ultrasphinx/production.conf
 config/ultrasphinx/staging.conf
+config/broker.yml
 db/schema.rb
 db/*.sqlite3
 .autotest
 db/sphinx/*
 tmp/repos/*
 tmp/graph_generator.status
+tmp/poller*.pid

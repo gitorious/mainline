@@ -33,7 +33,8 @@ class RepositoriesController < ApplicationController
     @events = @repository.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
-    @atom_auto_discovery_url = formatted_project_repository_path(@owner, @repository, :atom)
+    @atom_auto_discovery_url = formatted_project_repository_path(@project, @repository, :atom)
+    response.headers['Refresh'] = 10 unless @repository.ready
     respond_to do |format|
       format.html
       format.xml  { render :xml => @repository }

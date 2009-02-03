@@ -20,7 +20,7 @@
 #++
 
 class Repository < ActiveRecord::Base
-  
+  include ActiveMessaging::MessageSender
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1
   WIKI_NAME_SUFFIX = "-gitorious-wiki"
@@ -55,10 +55,9 @@ class Repository < ActiveRecord::Base
   validates_exclusion_of :name, :in => Gitorious::Reservations::REPOSITORY_NAMES
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
-  before_save   :set_as_mainline_if_project_repository
-  before_create :set_repository_hash
-  after_create  :create_new_repos_task
-  after_destroy :create_delete_repos_task
+  before_save   :set_as_mainline_if_first
+  after_create  :post_repo_creation_message
+  after_destroy :post_repo_deletion_message
   
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}-clone" : nil
@@ -180,16 +179,16 @@ class Repository < ActiveRecord::Base
     end
   end
   
-  def create_new_repos_task
-    Task.create!(:target_class => self.class.name, 
-      :command => parent ? "clone_git_repository" : "create_git_repository", 
-      :arguments => parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir], 
-      :target_id => self.id)
+  def post_repo_creation_message
+    options = {:target_class => self.class.name, :target_id => self.id}
+    options[:command] = parent ? 'clone_git_repository' : 'create_git_repository'
+    options[:arguments] = parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
+    publish :create_repo, options.to_json
   end
   
-  def create_delete_repos_task
-    Task.create!(:target_class => self.class.name, 
-      :command => "delete_git_repository", :arguments => [real_gitdir])
+  def post_repo_deletion_message
+    options = {:target_class => self.class.name, :command => 'delete_git_repository', :arguments => [real_gitdir]}
+    publish :destroy_repo, options.to_json
   end
   
   def total_commit_count
