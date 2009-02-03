@@ -37,7 +37,7 @@ module RoutingFilter
       params = args.extract_options!
       returning yield do |result|
         result = result.is_a?(Array) ? result.first : result
-        if result =~ /^\/(#{CONTROLLER_RE})\/(#{NAME_WITH_FORMAT_RE})\/repositories\/(#{NAME_WITH_FORMAT_RE})(.+)?/
+        if result =~ /^\/(#{CONTROLLER_RE})\/(#{NAME_WITH_FORMAT_RE})\/repositories\/(#{NAME_WITH_FORMAT_RE})(.+)?/ && !reserved_action_name?($3, $1)
           result.replace "/#{PREFIXES_TO_CONTROLLER.invert[$1]}#{$2}/#{$3}#{$4}"
         elsif result =~ /^\/(#{CONTROLLER_RE})\/(#{NAME_WITH_FORMAT_RE})(.+)?/ && !reserved_action_name?($2, $1)
           result.replace "/#{PREFIXES_TO_CONTROLLER.invert[$1]}#{$2}#{$3}"

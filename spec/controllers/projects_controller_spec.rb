@@ -58,6 +58,25 @@ describe ProjectsController, "Routing" do
     }).should == "/#{@project.to_param}/repositories"
   end
   
+  it "recognizes routing like /projectname/repositories/action" do
+    params_from(:get, "/#{@project.to_param}/repositories/new").should == {
+      :controller => "repositories",
+      :action => "new", 
+      :project_id => @project.to_param
+    }
+    
+    params_from(:get, "/#{@project.to_param}/repositories/new").should == {
+      :controller => "repositories",
+      :action => "new", 
+      :project_id => @project.to_param
+    }
+    route_for({
+      :controller => "repositories", 
+      :action => "new", 
+      :project_id => @project.to_param
+    }).should == "/#{@project.to_param}/repositories/new"
+  end
+  
   it "recognizes project actions" do
     {
       "edit" => [:get, "/edit"], 
@@ -140,7 +159,7 @@ describe ProjectsController do
     login_as :johan
     post :create, :project => {:title => "project x", :slug => "projectx", :description => "projectx's description"}
     response.should be_redirect
-    response.should redirect_to(projects_path)
+    response.should redirect_to(new_project_repository_path(assigns(:project)))
     
     Project.find_by_title("project x").user.should == users(:johan)
   end
