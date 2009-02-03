@@ -242,6 +242,8 @@ describe Repository do
   
   it "knows if a user can write to self" do
     @repository.save!
+    @repository.writable_by?(users(:johan)).should == true
+    @repository.writable_by?(users(:mike)).should == false
     @repository.owner.group.add_member(users(:mike), Role.committer)
     @repository.writable_by?(users(:mike)).should == true
     
@@ -249,6 +251,15 @@ describe Repository do
     @repository.writable_by?(users(:johan)).should == true
     @repository.owner.add_member(users(:moe), Role.committer)
     @repository.writable_by?(users(:moe)).should == true
+    
+    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.writable_by?(users(:johan)).should == false
+    @repository.owner.add_member(users(:mike), Role.committer)
+    @repository.writable_by?(users(:mike)).should == true
+    
+    @repository.owner = users(:johan)
+    @repository.writable_by?(users(:johan)).should == true
+    @repository.writable_by?(users(:mike)).should == false
   end
   
   it "creates a Task on create and update" do
