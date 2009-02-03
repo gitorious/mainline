@@ -19,7 +19,7 @@
 %>
 
 <% @page_title = t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>
-<h1><%= t("views.repos.show_title", :repo => h(@repository.name), :title => h(@repository.project.title)) %></h1>
+<h1><%= t("views.repos.show_title", :repo => h(@repository.name), :title => h(@repository.owner.title)) %></h1>
 
 <% render_if_ready(@repository) do -%>
 
@@ -37,7 +37,7 @@
 
 <% content_for :sidebar do -%>
   <ul>
-    <li><strong><%= t("views.logs.project") %>:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
+    <li><strong><%= t("views.logs.owner") %>:</strong> <%= link_to h(@repository.owner.title), @repository.owner -%></li>
     <li><strong><%= t("views.logs.maintainer") %>:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
     <% if @repository.parent -%>
     <li><strong><%= t("views.repos.clone_of") %>:</strong> <%= link_to h(@repository.parent.gitdir), project_repository_path(@owner, @repository.parent) -%>
