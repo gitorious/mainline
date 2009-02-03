@@ -19,7 +19,7 @@
 
 class MergeRequestsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
-  before_filter :find_project
+  before_filter :find_repository_owner
   before_filter :find_repository
   before_filter :find_merge_request, :except => [:index, :show, :new, :create, :commit_list]
   before_filter :assert_merge_request_ownership, :except => [:index, :show, :new, :create, :resolve, :commit_list]
@@ -44,7 +44,8 @@ class MergeRequestsController < ApplicationController
   
   def new
     @merge_request = @repository.proposed_merge_requests.new(:user => current_user)
-    @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+    @repositories = Repository.all_by_owner(@owner).find(:all, 
+                      :conditions => ["id != ?", @repository.id])
     @branches = @repository.git.branches
   end
   
@@ -53,15 +54,16 @@ class MergeRequestsController < ApplicationController
     @merge_request.user = current_user
     respond_to do |format|
       if @merge_request.save
-        @project.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
+        @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         format.html {
           flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
-          redirect_to project_repository_path(@project, @repository) and return
+          redirect_to [@owner, @repository] and return
         }
         format.xml { render :xml => @merge_request, :status => :created }
       else
         format.html {
-          @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+          @repositories = Repository.all_by_owner(@owner).find(:all, 
+                            :conditions => ["id != ?", @repository.id])
           render :action => "new"
         }
         format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
@@ -73,38 +75,40 @@ class MergeRequestsController < ApplicationController
     # TODO: put to change status
     @merge_request.status = params[:merge_request][:status]
     if @merge_request.save
-      @project.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
+      @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
       flash[:notice] = I18n.t "merge_requests_controller.resolve_notice", :status => @merge_request.status_string
     end
-    redirect_to [@project, @repository, @merge_request]      
+    redirect_to [@owner, @repository, @merge_request]      
   end
   
   def edit
-    @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+    @repositories = Repository.all_by_owner(@owner).find(:all, 
+                      :conditions => ["id != ?", @repository.id])
   end
   
   def update
     @merge_request.attributes = params[:merge_request]
     if @merge_request.save
-      @project.create_event(Action::UPDATE_MERGE_REQUEST, @merge_request, current_user)
+      @owner.create_event(Action::UPDATE_MERGE_REQUEST, @merge_request, current_user)
       flash[:success] = I18n.t "merge_requests_controller.update_success"
-      redirect_to [@project, @repository, @merge_request]
+      redirect_to [@owner, @repository, @merge_request]
     else
-      @repositories = @project.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+      @repositories = Repository.all_by_owner(@owner).find(:all, 
+                        :conditions => ["id != ?", @repository.id])
       render :action => "edit"
     end
   end
   
   def destroy
     @merge_request.destroy
-    @project.create_event(Action::DELETE_MERGE_REQUEST, @repository, current_user)
+    @owner.create_event(Action::DELETE_MERGE_REQUEST, @repository, current_user)
     flash[:success] = I18n.t "merge_requests_controller.destroy_success"
-    redirect_to project_repository_path(@project, @repository)
+    redirect_to [@owner, @repository]
   end
   
-  protected
+  protected    
     def find_repository
-      @repository = @project.repositories.find_by_name!(params[:repository_id])
+      @repository = Repository.all_by_owner(@owner).find_by_name!(params[:repository_id])
     end
     
     def find_merge_request
@@ -115,7 +119,7 @@ class MergeRequestsController < ApplicationController
       unless @merge_request.resolvable_by?(current_user)
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
-          format.html { redirect_to([@project, @repository, @merge_request]) }
+          format.html { redirect_to([@owner, @repository, @merge_request]) }
           format.xml  { render :text => I18n.t( "merge_requests_controller.assert_resolvable_error"), :status => :forbidden }
         end
         return
@@ -126,7 +130,7 @@ class MergeRequestsController < ApplicationController
       if @merge_request.user != current_user
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
-          format.html { redirect_to([@project, @repository]) }
+          format.html { redirect_to([@owner, @repository]) }
           format.xml  { render :text => I18n.t("merge_requests_controller.assert_ownership_error"), :status => :forbidden }
         end
         return

@@ -51,8 +51,9 @@
       :destroy_error => "You're not the owner of this project, or the project has clones",
     },
     :repositories_controller => {
-      :new_error => "Sorry, can't clone an empty repository",
-      :create_error => "Sorry, can't clone an empty repository",
+      :new_clone_error => "Sorry, can't clone an empty repository",
+      :create_clone_error => "Sorry, can't clone an empty repository",
+      :create_success => "New repository created",
       :destroy_notice => "The repository was deleted",
       :destroy_error => "You're not the owner of this repository",
       :adminship_error => "Sorry, only project admins are allowed to do that",

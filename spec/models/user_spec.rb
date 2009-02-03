@@ -141,7 +141,7 @@ describe User do
     repo = repositories(:johans)
     u.can_write_to?(repo).should == true
     u.can_write_to?(repositories(:moes)).should == false
-    repo.owner.add_member(users(:moe), Role.committer)
+    repo.owner.group.add_member(users(:moe), Role.committer)
     users(:moe).can_write_to?(repo).should == true
     
   end

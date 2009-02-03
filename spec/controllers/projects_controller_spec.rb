@@ -193,6 +193,7 @@ describe ProjectsController do
   end
   
   it "DELETE projects/xx is only allowed if there's a single repository (mainline)" do
+    pending "TODO when Repository#owner is fully refactored"
     login_as :johan
     delete :destroy, :id => projects(:johans).slug
     response.should redirect_to(projects_path)
@@ -201,6 +202,7 @@ describe ProjectsController do
   end
   
   it "DELETE projects/destroy should destroy the project" do
+    pending "TODO when Repository#owner is fully refactored"
     login_as :johan
     projects(:johans).repositories.last.destroy
     delete :destroy, :id => projects(:johans).slug

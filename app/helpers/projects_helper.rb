@@ -17,4 +17,5 @@
 
 module ProjectsHelper
   include BreadcrumbsHelper
+  include RepositoriesHelper
 end

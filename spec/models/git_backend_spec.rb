@@ -24,7 +24,7 @@ describe GitBackend do
   before(:each) do
     @repository = Repository.new({
       :name => "foo",
-      :project => projects(:johans),
+      :owner => projects(:johans),
       :user => users(:johan)
     })
     

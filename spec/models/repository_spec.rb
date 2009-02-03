@@ -33,7 +33,7 @@ describe Repository do
       :name => "foo",
       :project => projects(:johans),
       :user => users(:johan),
-      :owner => groups(:johans_team_thunderbird)
+      :owner => projects(:johans)
     }.merge(opts))
   end
   
@@ -75,14 +75,20 @@ describe Repository do
     repo.errors_on(:name).should_not be_blank
   end
   
-  it "sets itself as mainline if it's the first repository for a project" do
-    projects(:johans).repositories.destroy_all
-    projects(:johans).repositories.reload.size.should == 0
+  it "sets itself as mainline if the owner is Project" do
+    @repository.owner = projects(:johans)
     @repository.save
     @repository.mainline?.should == true
   end
   
-  it "doesnt set itself as mainline if there's more than one repos" do
+  it "doesn't set itself as mainline if the owner is a Group" do
+    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.save
+    @repository.mainline?.should == false
+  end
+  
+  it "doesn't set itself as mainline if the owner is a User" do
+    @repository.owner = users(:johan)
     @repository.save
     @repository.mainline?.should == false
   end
@@ -236,7 +242,9 @@ describe Repository do
   
   it "knows if a user can write to self" do
     @repository.save!
+    @repository.owner.group.add_member(users(:mike), Role.committer)
     @repository.writable_by?(users(:mike)).should == true
+    
     @repository.owner = groups(:johans_core)
     @repository.writable_by?(users(:johan)).should == true
     @repository.owner.add_member(users(:moe), Role.committer)
@@ -366,7 +374,12 @@ describe Repository do
   end
   
   it 'has a parent, which is the owner' do
-    @repository.breadcrumb_parent.should == @repository.project
+    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.breadcrumb_parent.should == groups(:johans_team_thunderbird)
+    @repository.owner = users(:johan)
+    @repository.breadcrumb_parent.should == users(:johan)
+    @repository.owner = projects(:johans)
+    @repository.breadcrumb_parent.should == projects(:johans)
   end
   
   it 'should return its name as title' do
@@ -375,10 +388,14 @@ describe Repository do
   
   it "returns a list of committers depending on owner type" do
     repo = repositories(:johans)
-    repo.owner.add_member(users(:mike), Role.admin)
+    repo.owner.group.add_member(users(:mike), Role.admin)
     repo.committers.should == groups(:johans_core).members
+    
     repo.owner = users(:johan)
     repo.committers.should == [users(:johan)]
+    
+    repo.owner = groups(:johans_team_thunderbird)
+    repo.committers.should == groups(:johans_team_thunderbird).members
   end
   
   describe "observers" do

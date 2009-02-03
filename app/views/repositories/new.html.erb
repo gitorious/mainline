@@ -1,0 +1,13 @@
+<h1>Add new repository to <%= link_to @owner.title, @owner -%></h1>
+
+<%= error_messages_for :repository -%>
+<% form_for([@owner, @repository]) do |f| -%>
+  <p class="hint">
+    The repository will be owned by <%= link_to @owner.title, @owner -%> (<%= @owner.class.name -%>)
+  </p>
+  <p>
+    <%= f.label :name -%>:<br />
+    <%= f.text_field :name -%>
+  </p>
+  <%= f.submit "Create repository" -%>
+<% end -%>

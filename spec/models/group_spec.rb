@@ -54,7 +54,7 @@ describe Group do
   
   describe "repositories" do
     it "has many repositories" do
-      groups(:johans_core).repositories.should include(repositories(:johans))
+      groups(:johans_team_thunderbird).repositories.should include(repositories(:johans2))
     end
   end
   

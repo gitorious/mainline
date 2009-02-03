@@ -1,6 +1,6 @@
 <h4><%= link_to t("views.projects.repos"), project_repositories_path(@project) -%></h4>
 <ul class="repository_list">
-  <% @project.repositories.mainlines.each do |mainline| -%>
+  <% @project.project_repositories.mainlines.each do |mainline| -%>
     <li class="mainline">
       <div class="name">
         <strong><%= link_to h(mainline.name), [@project, mainline] -%></strong>
@@ -14,7 +14,7 @@
   <li>
     <h4><%= t("views.repos.by_teams") -%></h4>
     <ul>
-      <% @project.repositories.by_groups.each do |repo| -%>
+      <% @project.project_repositories.by_groups.each do |repo| -%>
           <%= render :partial => "repositories/repository_sidebar", 
                 :locals => {:repository => repo} -%>
       <% end -%>
@@ -23,7 +23,7 @@
   <li>
     <h4><%= t("views.repos.by_users") -%></h4>
     <ul>
-      <% @project.repositories.by_users.each do |repo|-%>
+      <% @project.project_repositories.by_users.each do |repo|-%>
         <%= render :partial => "repositories/repository_sidebar", 
               :locals => {:repository => repo} -%>
       <% end -%>

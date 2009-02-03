@@ -64,6 +64,11 @@ class ApplicationController < ActionController::Base
       end
     end
     
+    def find_repository_owner_and_repository
+      find_repository_owner
+      @owner.repositories.find_by_name!(params[:id])
+    end
+    
     def find_project
       @project = Project.find_by_slug!(params[:project_id])
     end

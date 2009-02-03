@@ -40,15 +40,22 @@ class Repository < ActiveRecord::Base
   named_scope :by_users,  :conditions => { :owner_type => "User", :mainline => false }
   named_scope :by_groups, :conditions => { :owner_type => "Group", :mainline => false }
   named_scope :mainlines, :conditions => { :mainline => true }
+  named_scope :all_by_owner, lambda{|owner|
+    if owner.is_a?(Project)
+      { :conditions => { :project_id => owner.id, :kind => KIND_PROJECT_REPO } }
+    else
+      { :conditions => { :owner_type => owner.class.name, :owner_id => owner.id, :kind => KIND_PROJECT_REPO } }
+    end
+  }
   
   NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
-  validates_presence_of :user_id, :project_id, :name, :owner_id
+  validates_presence_of :user_id, :name, :owner_id#, :project_id
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
   validates_exclusion_of :name, :in => Gitorious::Reservations::REPOSITORY_NAMES
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
-  before_save   :set_as_mainline_if_first
+  before_save   :set_as_mainline_if_project_repository
   after_create  :create_new_repos_task
   after_destroy :create_delete_repos_task
   
@@ -89,7 +96,7 @@ class Repository < ActiveRecord::Base
   end
   
   def gitdir
-    File.join(project.slug, "#{name}.git")
+    File.join(owner.to_param, "#{name}.git")
   end
   
   def clone_url
@@ -161,6 +168,8 @@ class Repository < ActiveRecord::Base
       self.owner == a_user
     when Group
       self.owner.committer?(a_user)
+    when Project
+      self.owner.group.committer?(a_user)
     else
       user == a_user
     end
@@ -271,7 +280,15 @@ class Repository < ActiveRecord::Base
   end
   
   def committers
-    owner === Group ? owner.members : [owner]
+    #owner === Group ? owner.members : [owner]
+    case owner
+    when Group
+      owner.members
+    when Project
+      owner.group.members
+    else
+      [owner]
+    end
   end
   
   def owned_by_group?
@@ -287,8 +304,8 @@ class Repository < ActiveRecord::Base
   end
   
   protected
-    def set_as_mainline_if_first
-      if project && project.repositories.count <= 1
+    def set_as_mainline_if_project_repository
+      if owner.is_a?(Project)
         self.mainline = true
       end
     end

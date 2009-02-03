@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
 #
@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   has_many :projects
   has_many :memberships, :dependent => :destroy
   has_many :groups, :through => :memberships
-  has_many :repositories,
+  has_many :repositories, :as => :owner, 
     :conditions => ["repositories.kind = ?", Repository::KIND_PROJECT_REPO]
   has_many :ssh_keys, :order => "id desc"
   has_many :comments

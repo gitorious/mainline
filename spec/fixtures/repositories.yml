@@ -7,8 +7,8 @@ johans:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: true
-  owner_type: Group
-  owner_id: <%= Fixtures.identify(:johans_core) %>
+  owner_type: Project
+  owner_id: 1
 
 johans2:
   id: 2
@@ -30,8 +30,8 @@ moes:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: true
-  owner_type: Group
-  owner_id: <%= Fixtures.identify(:moes_core) %>
+  owner_type: Project
+  owner_id: 2
   
 johans_moe_clone:
   id: 4

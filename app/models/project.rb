@@ -25,8 +25,12 @@ class Project < ActiveRecord::Base
   belongs_to  :user
   has_many    :comments, :dependent => :destroy
   
-  has_many    :repositories, :order => "repositories.created_at asc",
-      :conditions => ["kind = ?", Repository::KIND_PROJECT_REPO], :dependent => :destroy  
+  has_many    :project_repositories, :order => "repositories.created_at asc",
+      :conditions => ["kind = ?", Repository::KIND_PROJECT_REPO], 
+      :class_name => "Repository", :dependent => :destroy
+  has_many  :repositories, :as => :owner, :conditions => { 
+      :kind => Repository::KIND_PROJECT_REPO 
+    }, :order => "repositories.created_at asc", :dependent => :destroy
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository", 
     :conditions => ["kind = ?", Repository::KIND_WIKI]
@@ -68,7 +72,6 @@ class Project < ActiveRecord::Base
 
   before_validation :downcase_slug
   before_create :create_core_group
-  after_create :create_mainline_repository
   after_create :create_wiki_repository
 
   LICENSES = [
@@ -180,14 +183,6 @@ class Project < ActiveRecord::Base
         :role => Role.admin,
       })
       self.group = core_group
-    end
-  
-    def create_mainline_repository
-      self.repositories.create!({
-        :user => self.user, 
-        :name => "mainline", 
-        :owner => self.group,
-      })
     end
     
     def create_wiki_repository

@@ -1,5 +1,5 @@
 #--
-#		Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#		Copyright (C) 2008-2009 Johan Sørensen <johan@johansorensen.com>
 #		Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
 #
 #		This program is free software: you can redistribute it and/or modify
@@ -25,15 +25,15 @@ describe MergeRequestsController do
 		git = mock
 		git.stubs(:branches).returns([])
 		Repository.any_instance.stubs(:git).returns(git)
-		@repository = repositories(:johans2)
-		@mainline_repository = repositories(:johans)
+		@source_repository = repositories(:johans2)
+		@target_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans)
 	end
 	
 	describe "#index (GET)" do
 		def do_get
-			get :index, :project_id => @project.slug, 
-				:repository_id => @repository.name
+			get :index, :project_id => @project.to_param,
+				:repository_id => @target_repository.to_param
 		end		 
 		
 		it "should not require login" do
@@ -44,19 +44,19 @@ describe MergeRequestsController do
 		
 		it "gets all the merge requests in the repository" do
 			do_get
-			assigns[:merge_requests].should == @repository.merge_requests
+			assigns(:merge_requests).should == @target_repository.merge_requests
 		end
 		
 		it "gets a comment count for" do
 			do_get
-			assigns[:comment_count].should == @repository.comments.count
+			assigns(:comment_count).should == @target_repository.comments.count
 		end
 	end
 	
 	describe "#show (GET)" do
 		def do_get
-			get :show, :project_id => @project.slug, 
-				:repository_id => repositories(:johans).name,
+			get :show, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param,
 				:id => @merge_request.id
 		end
 		
@@ -91,8 +91,8 @@ describe MergeRequestsController do
 
 	describe "#new (GET)" do
 		def do_get
-			get :new, :project_id => @project.slug, 
-				:repository_id => @repository.name
+			get :new, :project_id => @project.to_param, 
+				:repository_id => @source_repository.to_param
 		end
 		
 		it "requires login" do
@@ -101,7 +101,7 @@ describe MergeRequestsController do
 			response.should redirect_to(new_sessions_path)
 		end
 		
-		it "is successfull" do
+		it "is successful" do
 			login_as :johan
 			do_get
 			response.should be_success
@@ -110,21 +110,21 @@ describe MergeRequestsController do
 		it "assigns the new merge_requests' source_repository" do
 			login_as :johan
 			do_get
-			assigns[:merge_request].source_repository.should == @repository
+			assigns(:merge_request).source_repository.should == @source_repository
 		end
 		
 		it "gets a list of possible target clones" do
 			login_as :johan
 			do_get
-			assigns[:repositories].should == [repositories(:johans)]
+			assigns(:repositories).should == [repositories(:johans)]
 		end
 	end
 	
 	describe "#create (POST)" do
 		def do_post(data={})
-			post :create, :project_id => @project.slug, 
-				:repository_id => @repository.name, :merge_request => {
-					:target_repository_id => repositories(:johans2).id,
+			post :create, :project_id => @project.to_param, 
+				:repository_id => @source_repository.to_param, :merge_request => {
+					:target_repository_id => @target_repository.id,
 				}.merge(data)
 		end
 		
@@ -137,7 +137,7 @@ describe MergeRequestsController do
 		it "scopes to the source_repository" do
 			login_as :johan
 			do_post
-			assigns[:merge_request].source_repository.should == @repository
+			assigns[:merge_request].source_repository.should == @source_repository
 		end
 		
 		it "scopes to the current_user" do
@@ -150,8 +150,8 @@ describe MergeRequestsController do
 			login_as :johan
 			proc {
 				do_post
-				response.should redirect_to(project_repository_path(@project, @repository))
-				flash[:success].should match(/sent a merge request to "#{repositories(:johans2).name}"/i)
+				response.should redirect_to(project_repository_path(@project, @source_repository))
+				flash[:success].should match(/sent a merge request to "#{@target_repository.name}"/i)
 			}.should change(MergeRequest, :count)
 		end
 		
@@ -166,8 +166,8 @@ describe MergeRequestsController do
 	
 	describe "#edit (GET)" do
 		def do_get
-			get :edit, :project_id => @project.slug, 
-				:repository_id => @mainline_repository.name,
+			get :edit, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param,
 				:id => @merge_request
 		end
 		
@@ -193,17 +193,17 @@ describe MergeRequestsController do
 		it "gets a list of possible target clones" do
 			login_as :johan
 			do_get
-			assigns[:repositories].should == [@repository]
+			assigns[:repositories].should == [@source_repository]
 		end
 	end
 	
 	describe "#update (PUT)" do
 		def do_put(data={})
-			put :update, :project_id => @project.slug, 
-				:repository_id => @mainline_repository.name, 
+			put :update, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param, 
 				:id => @merge_request,
 				:merge_request => {
-					:target_repository_id => repositories(:johans2).id,
+					:target_repository_id => @target_repository.id,
 				}.merge(data)
 		end
 		
@@ -223,7 +223,7 @@ describe MergeRequestsController do
 		it "scopes to the source_repository" do
 			login_as :johan
 			do_put
-			assigns[:merge_request].source_repository.should == @repository
+			assigns[:merge_request].source_repository.should == @source_repository
 		end
 		
 		it "scopes to the current_user" do
@@ -236,7 +236,7 @@ describe MergeRequestsController do
 			login_as :johan
 			do_put :proposal => "hai, plz merge kthnkxbye"
 			
-			response.should redirect_to(project_repository_merge_request_path(@project, @mainline_repository, @merge_request))
+			response.should redirect_to(project_repository_merge_request_path(@project, @target_repository, @merge_request))
 			flash[:success].should match(/merge request was updated/i)
 			@merge_request.reload.proposal.should == "hai, plz merge kthnkxbye"
 		end
@@ -246,14 +246,14 @@ describe MergeRequestsController do
 			do_put :target_repository => nil
 			response.should be_success
 			response.should render_template("merge_requests/edit")
-			assigns[:repositories].should == [@repository]
+			assigns[:repositories].should == [@source_repository]
 		end
 		
 		it "only allows the owner to update" do
 			login_as :moe
 			do_put
 			proc {
-				response.should redirect_to(project_repository_path(@project, @mainline_repository))
+				response.should redirect_to(project_repository_path(@project, @target_repository))
 				flash[:success].should == nil
 				flash[:error].should match(/You're not the owner of this merge request/i)
 			}.should_not change(MergeRequest, :count)
@@ -262,8 +262,8 @@ describe MergeRequestsController do
 	
 	describe "#resolve (PUT)" do
 		def do_put(data={})
-			put :resolve, :project_id => @project.slug, 
-				:repository_id => @mainline_repository.name, 
+			put :resolve, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param, 
 				:id => @merge_request,
 				:merge_request => {
 					:status => MergeRequest::STATUS_MERGED,
@@ -305,16 +305,16 @@ describe MergeRequestsController do
     
 	  it "should render a list of commits that can be merged" do
 	    login_as :johan
-			get :commit_list, :project_id => @project.slug, 
-				:repository_id => @mainline_repository.name,
+			get :commit_list, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param,
 				:merge_request => {}
     end
   end
 	
 	describe "#destroy (DELETE)" do
 		def do_delete
-			delete :destroy, :project_id => @project.slug, 
-				:repository_id => @mainline_repository.name, 
+			delete :destroy, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param, 
 				:id => @merge_request
 		end
 		
@@ -327,13 +327,13 @@ describe MergeRequestsController do
 		it "scopes to the source_repository" do
 			login_as :johan
 			do_delete
-			assigns[:merge_request].source_repository.should == @repository
+			assigns[:merge_request].source_repository.should == @source_repository
 		end
 		
 		it "deletes the record" do
 			login_as :johan
 			do_delete
-			response.should redirect_to(project_repository_path(@project, @mainline_repository))
+			response.should redirect_to(project_repository_path(@project, @target_repository))
 			flash[:success].should match(/merge request was retracted/i)
 			MergeRequest.find_by_id(@merge_request.id).should == nil
 		end
@@ -342,7 +342,7 @@ describe MergeRequestsController do
 			login_as :moe
 			do_delete
 			proc {
-				response.should redirect_to(project_repository_path(@project, @mainline_repository))
+				response.should redirect_to(project_repository_path(@project, @target_repository))
 				flash[:success].should == nil
 				flash[:error].should match(/You're not the owner of this merge request/i)
 			}.should_not change(MergeRequest, :count)
@@ -364,7 +364,7 @@ describe MergeRequestsController do
 	end
 
 	def do_get
-		get :show, :project_id => @project.slug, 
+		get :show, :project_id => @project.to_param, 
 			:repository_id => repositories(:johans).name,
 			:id => @merge_request.id
 	end

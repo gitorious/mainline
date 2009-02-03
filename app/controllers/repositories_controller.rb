@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -25,11 +25,11 @@ class RepositoriesController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
   
   def index
-    @repositories = @owner.group.repositories.find(:all, :include => [:user, :events, :project])
+    @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
   end
     
   def show
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = Repository.all_by_owner(@owner).find_by_name!(params[:id])
     @events = @repository.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
@@ -41,10 +41,26 @@ class RepositoriesController < ApplicationController
     end
   end
   
+  def new
+    @repository = @owner.repositories.new
+  end
+  
+  def create
+    @repository = @owner.repositories.new(params[:repository])
+    @repository.user = current_user
+    
+    if @repository.save
+      flash[:success] = I18n.t("repositories_controller.create_success")
+      redirect_to [@owner, @repository]
+    else
+      render :action => "new"
+    end
+  end
+  
   def clone
     @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?
-      flash[:error] = I18n.t "repositories_controller.new_error"
+      flash[:error] = I18n.t "repositories_controller.new_clone_error"
       redirect_to project_repository_path(@owner, @repository_to_clone)
       return
     end
@@ -57,11 +73,11 @@ class RepositoriesController < ApplicationController
       target_path = project_repository_path(@owner, @repository_to_clone)
       respond_to do |format|
         format.html do
-          flash[:error] = I18n.t "repositories_controller.create_error"
+          flash[:error] = I18n.t "repositories_controller.create_clone_error"
           redirect_to target_path
         end
         format.xml do 
-          render :text => I18n.t("repositories_controller.create_error"), 
+          render :text => I18n.t("repositories_controller.create_clone_error"), 
             :location => target_path, :status => :unprocessable_entity
         end
       end
