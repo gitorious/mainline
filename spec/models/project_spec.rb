@@ -116,11 +116,10 @@ describe Project do
   end
 
   it "knows if a user can delete the project" do
-    pending "TODO recheck when repository#owner is fully refactored"
     project = projects(:johans)
     project.can_be_deleted_by?(users(:moe)).should == false
     project.can_be_deleted_by?(users(:johan)).should == false # since it has > 1 repos
-    project.repositories.last.destroy
+    (Repository.all_by_owner(project)-project.repositories).each(&:destroy)
     project.reload.can_be_deleted_by?(users(:johan)).should == true
   end
 

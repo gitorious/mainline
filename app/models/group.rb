@@ -68,4 +68,10 @@ class Group < ActiveRecord::Base
   def add_member(a_user, a_role)
     memberships.create!(:user => a_user, :role => a_role)
   end
+  
+  def create_event(*args)
+    if project
+      project.create_event(*args)
+    end
+  end
 end

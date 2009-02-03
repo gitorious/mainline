@@ -132,7 +132,7 @@ class RepositoriesController < ApplicationController
     else
       flash[:error] = I18n.t "repositories_controller.destroy_error"
     end
-    redirect_to project_path(@owner)
+    redirect_to @owner
   end
   
   private    

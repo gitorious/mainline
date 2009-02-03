@@ -119,7 +119,7 @@ class Project < ActiveRecord::Base
   end
 
   def can_be_deleted_by?(candidate)
-    (candidate == user) && (repositories.size == 1)
+    (candidate == user) && (Repository.all_by_owner(self) - self.repositories).length == 0
   end
 
   def tag_list=(tag_list)

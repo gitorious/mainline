@@ -501,15 +501,14 @@ describe RepositoriesController, "destroy" do
   end
   
   it "the owner can delete his own repos" do
-    pending "TODO - fix when repository#owner is refactored"
     login_as :johan
     repo = repositories(:johans2)
     repo.user = users(:johan)
     repo.save!
-    do_delete(repo)
-    response.should redirect_to(project_path(@project))
+    delete :destroy, :group_id => repo.owner.to_param, :id => repo.to_param
     flash[:error].should == nil
     flash[:notice].should == "The repository was deleted"
+    response.should redirect_to(group_path(repo.owner))
   end
 end
 
