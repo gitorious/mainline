@@ -347,6 +347,7 @@
         :bugtracker => "Bugtracker at ",
         :repos => "Repositories",
         :project_members => "Project members",
+        :add_repository => "Add mainline repository"
       },
       :merges => {
         :info => {
