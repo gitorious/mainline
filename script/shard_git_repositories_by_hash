@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby -KU
+
+ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+ENV["RAILS_ENV"] ||= "production"
+require File.dirname(__FILE__) + "/../config/environment"
+require "pp"
+require "fileutils"
+
+NOOP = ARGV[0] == "dry-run"
+
+fails = []
+Repository.find(:all).each do |repo|
+  begin
+    next if File.exist?(repo.full_repository_path)
+    
+    if repo.project
+      path = File.join(repo.project.slug, "#{repo.name}.git")
+    elsif repo.owner
+      path = File.join(repo.owner.to_param, "#{repo.name}.git")
+    else
+      say "no path for #{repo.inspect}"
+    end
+    
+    full_path = File.join(GitoriousConfig["repository_base_path"], path)
+    full_target_path = File.join(GitoriousConfig["repository_base_path"], "#{repo.full_hashed_path}.git")
+    unless File.exist?(full_path)
+      $stderr.puts "\e[1;31m#{path.inspect} doesn't exist!\e[0m"
+      next
+    end
+    #p "#{path} => #{repo.full_hashed_path}.git"
+    base_dir = full_target_path.split("/")[0..-2].join("/")
+    unless File.exist?(base_dir)
+      FileUtils.mkdir_p(base_dir, :verbose => true, :noop => NOOP)
+    end
+    FileUtils.mv full_path, full_target_path, :verbose => true, :noop => NOOP
+    
+    # relink hooks    
+    FileUtils.rm(File.join(full_target_path, "hooks"), :verbose => true, :noop => NOOP)
+    hooks_src = File.join(GitoriousConfig["repository_base_path"], ".hooks")
+    hooks_dest = File.join(full_target_path, "hooks")
+    FileUtils.ln_s(hooks_src, hooks_dest, :verbose => true, :noop => NOOP)
+  rescue => e
+    fails << [repo.id, e.class.name, e.message, e.backtrace.join("\n  ")]
+  end
+end
+
+puts "\n\nFailures:"
+pp fails

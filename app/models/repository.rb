@@ -56,6 +56,7 @@ class Repository < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
   before_save   :set_as_mainline_if_project_repository
+  before_create :set_repository_hash
   after_create  :create_new_repos_task
   after_destroy :create_delete_repos_task
   
@@ -99,6 +100,10 @@ class Repository < ActiveRecord::Base
     File.join(owner.to_param, "#{name}.git")
   end
   
+  def real_gitdir
+    "#{self.full_hashed_path}.git"
+  end
+  
   def clone_url
     "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
@@ -112,7 +117,7 @@ class Repository < ActiveRecord::Base
   end
   
   def full_repository_path
-    self.class.full_path_from_partial_path(gitdir)
+    self.class.full_path_from_partial_path(real_gitdir)
   end
   
   def git
@@ -178,13 +183,13 @@ class Repository < ActiveRecord::Base
   def create_new_repos_task
     Task.create!(:target_class => self.class.name, 
       :command => parent ? "clone_git_repository" : "create_git_repository", 
-      :arguments => parent ? [gitdir, parent.gitdir] : [gitdir], 
+      :arguments => parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir], 
       :target_id => self.id)
   end
   
   def create_delete_repos_task
     Task.create!(:target_class => self.class.name, 
-      :command => "delete_git_repository", :arguments => [gitdir])
+      :command => "delete_git_repository", :arguments => [real_gitdir])
   end
   
   def total_commit_count
@@ -303,7 +308,16 @@ class Repository < ActiveRecord::Base
     name
   end
   
-  protected
+  def full_hashed_path
+    splitted = (hashed_path || set_repository_hash).scan(/.../)
+    splitted[0..2].join("/") + splitted[3..-1].join
+  end
+  
+  def set_repository_hash
+    self.hashed_path ||= Digest::SHA1.hexdigest(owner.to_param + self.to_param + Time.now.to_f.to_s)
+  end
+  
+  protected    
     def set_as_mainline_if_project_repository
       if owner.is_a?(Project)
         self.mainline = true

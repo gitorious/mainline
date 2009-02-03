@@ -111,14 +111,14 @@ describe Repository do
   
   it "has a full repository_path" do
     expected_dir = File.expand_path(File.join(GitoriousConfig["repository_base_path"], 
-      projects(:johans).slug, "foo.git"))
+      "#{@repository.full_hashed_path}.git"))
     @repository.full_repository_path.should == expected_dir
   end
   
   it "inits the git repository" do
     path = @repository.full_repository_path
     Repository.git_backend.expects(:create).with(path).returns(true)
-    Repository.create_git_repository(@repository.gitdir)
+    Repository.create_git_repository(@repository.real_gitdir)
     
     File.exist?(path).should == true
     
@@ -141,7 +141,7 @@ describe Repository do
       source.full_repository_path).returns(true)
     Repository.expects(:create_hooks).returns(true)
     
-    Repository.clone_git_repository(target.gitdir, source.gitdir).should be_true
+    Repository.clone_git_repository(target.real_gitdir, source.real_gitdir).should be_true
   end
   
   it "should create the hooks" do
@@ -171,7 +171,7 @@ describe Repository do
   
   it "deletes a repository" do
     Repository.git_backend.expects(:delete!).with(@repository.full_repository_path).returns(true)
-    Repository.delete_git_repository(@repository.gitdir)
+    Repository.delete_git_repository(@repository.real_gitdir)
   end
   
   it "knows if has commits" do
@@ -258,7 +258,7 @@ describe Repository do
     task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "create_git_repository"
     task.arguments.size.should == 1
-    task.arguments.first.should match(/#{@repository.gitdir}$/)
+    task.arguments.first.should match(/#{@repository.real_gitdir}$/)
     task.target_id.should == @repository.id
   end
   
@@ -270,7 +270,7 @@ describe Repository do
     task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "clone_git_repository"
     task.arguments.size.should == 2
-    task.arguments.first.should match(/#{@repository.gitdir}$/)
+    task.arguments.first.should match(/#{@repository.real_gitdir}$/)
     task.target_id.should == @repository.id
   end
   
@@ -282,7 +282,7 @@ describe Repository do
     task = Task.find(:first, :conditions => ["target_class = 'Repository'"], :order => "id desc")
     task.command.should == "delete_git_repository"
     task.arguments.size.should == 1
-    task.arguments.first.should match(/#{@repository.gitdir}$/)
+    task.arguments.first.should match(/#{@repository.real_gitdir}$/)
   end
   
   it "has one recent commit" do
@@ -396,6 +396,18 @@ describe Repository do
     
     repo.owner = groups(:johans_team_thunderbird)
     repo.committers.should == groups(:johans_team_thunderbird).members
+  end
+  
+  it "sets a hash on create" do
+    @repository.new_record?.should == true
+    @repository.save!
+    @repository.hashed_path.should_not == nil
+    @repository.hashed_path.should match(/[a-z0-9]{40}/)
+  end
+  
+  it "know the full hashed path" do
+    @repository.hashed_path = "a"*40
+    @repository.full_hashed_path.should == "aaa/aaa/#{'a'*33}"
   end
   
   describe "observers" do
