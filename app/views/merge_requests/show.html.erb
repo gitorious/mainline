@@ -33,16 +33,16 @@
 
   <% if @merge_request.open? -%>
   <p><%= t("views.merges.help") %></p>
-  <pre>
-  	git checkout master
-    git checkout -b review/master
-    git remote add review <%= @merge_request.source_repository.clone_url -%>
-    git pull review <%= @merge_request.source_branch -%>
-    # review changes, assess they are ok
-    git checkout master
-    git merge review/master
-    git push origin master
-  </pre>
+<pre>
+git checkout master
+git checkout -b review/master
+git remote add review <%= @merge_request.source_repository.clone_url %>
+git pull review <%= @merge_request.source_branch %>
+# review changes, assess they are ok
+git checkout master
+git merge review/master
+git push origin master
+</pre>
   <% end -%>
 <% end -%>
 

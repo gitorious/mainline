@@ -340,7 +340,7 @@
           :source_branch => "The source branch you wish the target repository should merge from",
           :proposal => "A short summary of your changes",          
         },
-        :summary_tile => "{{source}} has requested a merge with {{target}}",
+        :summary_title => "{{source}} has requested a merge with {{target}}",
         :review => "Review merge request &#x2192;",
         :page_title => "Merge requests in {{repo}}",
         :hint => %Q{A "merge request" is a notification from one repository to another that would like their changes to be merged upstream.},
