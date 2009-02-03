@@ -215,7 +215,7 @@ abbr {
 }
 
 #sidebar ul.links {
-  margin-left: -5px;
+  margin-left: -20px;
   padding:0;
 }
 
@@ -237,10 +237,10 @@ abbr {
 
 #sidebar ul.links li a {
   background-repeat: no-repeat;
-  background-position: 5px 7px; 
+  background-position: 20px 7px; 
   background-image: url("/images/silk/bullet_go.png");
   display: block;
-  padding: 5px 5px 5px 28px; 
+  padding: 5px 5px 5px 45px; 
 }
 
 #sidebar ul.links.meta li a {
@@ -251,6 +251,8 @@ abbr {
 
 #sidebar ul.links li:hover {
   background: #390;
+  margin-left: -1px;
+  padding-left: 1px;
 }
 
 #sidebar ul.links.meta li:hover {

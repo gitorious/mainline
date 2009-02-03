@@ -57,7 +57,7 @@
       <% end -%>
     </ul>
     
-    <ul class="links primary">
+    <ul class="links">
       <li class="wiki_page">
         <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
       </li>
@@ -67,7 +67,7 @@
       </li>
     </ul>
   
-    <ul class="links">
+    <ul class="links actions">
       <% if @project.admin?(current_user) -%>
         <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
         <li class="update_project"><%= link_to t("views.projects.settings"), edit_project_path(@project) -%></li>
