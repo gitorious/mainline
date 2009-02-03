@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -42,11 +42,7 @@ module Gitorious
         @path = nil
       end
       attr_reader :path, :verb, :command
-    
-      def full_path
-        File.join(GitoriousConfig["repository_base_path"], path)
-      end
-    
+      
       def parse!
         if @command.include?("\n")
           raise BadCommandError

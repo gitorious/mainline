@@ -22,8 +22,10 @@ describe Gitorious::SSH::Client do
   
   before(:each) do
     @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
-    @ok_stub = stub("ok response mock", :body => "true")
-    @not_ok_stub = stub("ok response mock", :body => "false")
+    @real_path = "abc/123/defg.git"
+    @full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
+    @ok_stub = stub("ok response mock", :body => "true #{@real_path}")
+    @not_ok_stub = stub("ok response mock", :body => "false nil")
   end
   
   it "parses the project name from the passed in Strainer" do
@@ -101,10 +103,51 @@ describe Gitorious::SSH::Client do
     }.should_not raise_error(Gitorious::SSH::AccessDeniedError)
   end
   
+  it "ask gets the real path from the query url" do
+    client = Gitorious::SSH::Client.new(@strainer, "johan")
+    connection_stub = stub_everything("connection_stub")
+    connection_stub.expects(:get) \
+      .with("/foo/bar/writable_by?username=johan") \
+      .returns(@ok_stub)
+    client.expects(:connection).once.returns(connection_stub)
+    File.expects(:exist?).with(@full_real_path).returns(true)
+    client.real_path.should == @full_real_path
+  end
+  
+  it "raises if the real path doesn't exist" do
+    client = Gitorious::SSH::Client.new(@strainer, "johan")
+    connection_stub = stub_everything("connection_stub")
+    connection_stub.expects(:get) \
+      .with("/foo/bar/writable_by?username=johan") \
+      .returns(@ok_stub)
+    client.expects(:connection).once.returns(connection_stub)
+    File.expects(:exist?).with(@full_real_path).returns(false)
+    proc {
+      client.real_path
+    }.should raise_error(Gitorious::SSH::AccessDeniedError)
+  end
+  
+  it "raises if the real path isn't returned" do
+    client = Gitorious::SSH::Client.new(@strainer, "johan")
+    connection_stub = stub_everything("connection_stub")
+    connection_stub.expects(:get) \
+      .with("/foo/bar/writable_by?username=johan") \
+      .returns(@not_ok_stub)
+    client.expects(:connection).once.returns(connection_stub)
+    proc {
+      client.real_path
+    }.should raise_error(Gitorious::SSH::AccessDeniedError)
+  end
+  
   it "returns the command we can safely execute with git-shell" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    repos_path = File.join(GitoriousConfig["repository_base_path"], @strainer.path)
-    client.to_git_shell_argument.should == "git-upload-pack '#{repos_path}'"
+    connection_stub = stub_everything("connection_stub")
+    connection_stub.expects(:get) \
+      .with("/foo/bar/writable_by?username=johan") \
+      .returns(@ok_stub)
+    client.expects(:connection).once.returns(connection_stub)
+    File.expects(:exist?).with(@full_real_path).returns(true)
+    client.to_git_shell_argument.should == "git-upload-pack '#{@full_real_path}'"
   end
   
 end

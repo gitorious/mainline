@@ -459,20 +459,20 @@ describe RepositoriesController, "writable_by" do
   it "get projects/1/repositories/3/writable_by?username=johan is true" do
     do_get :username => "johan"
     response.should be_success
-    response.body.should == "true"
+    response.body.should == "true #{@repository.real_gitdir}"
   end
   
   it "get projects/1/repositories/2/writable_by?username=johan is false" do
     do_get :username => "johan", :project_id => projects(:moes).slug, 
       :id => projects(:moes).repositories.first.name
     response.should be_success
-    response.body.should == "false"
+    response.body.should == "false nil"
   end
   
   it "get projects/1/repositories/2/writable_by?username=nonexistinguser is false" do
     do_get :username => "nonexistinguser"
     response.should be_success
-    response.body.should == "false"
+    response.body.should == "false nil"
   end
 end
 

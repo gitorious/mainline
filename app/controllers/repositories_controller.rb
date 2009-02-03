@@ -112,9 +112,9 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name!(params[:id])
     user = User.find_by_login(params[:username])
     if user && user.can_write_to?(@repository)
-      render :text => "true"
+      render :text => "true #{@repository.real_gitdir}"
     else
-      render :text => "false"
+      render :text => "false nil"
     end
   end
   

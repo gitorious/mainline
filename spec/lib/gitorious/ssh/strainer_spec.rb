@@ -85,12 +85,6 @@ describe Gitorious::SSH::Strainer do
     strainer2.should == strainer
   end
   
-  it "has the full path prepended with the gitorious.yml file setting" do
-    strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
-    strainer.full_path.should == 
-      File.join(GitoriousConfig["repository_base_path"], "foo", "bar.git")
-  end
-  
   it "sets the path of the parsed command" do
     cmd = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
     cmd.path.should == "foo/bar.git"

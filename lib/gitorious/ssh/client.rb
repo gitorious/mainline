@@ -31,9 +31,8 @@ module Gitorious
       attr_accessor :project_name, :repository_name, :user_name
     
       def writable_by_user?
-        $stderr.puts "Querying #{query_url}" if $DEBUG
-        resp = connection.get(query_url)
-        resp.body == "true"
+        query_for_permission_and_path
+        @writable == "true"
       end
     
       def assure_user_can_write!
@@ -46,9 +45,26 @@ module Gitorious
         url << "writable_by?username=#{@user_name}"
         url.join("/")
       end
+      
+      def real_path
+        query_for_permission_and_path
+        full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
+        if !@real_path || @real_path == "nil" || !File.exist?(full_real_path)
+          raise AccessDeniedError
+        end
+        full_real_path
+      end
     
       def to_git_shell_argument
-        "#{@strainer.verb} '#{@strainer.full_path}'"
+        "#{@strainer.verb} '#{real_path}'"
+      end
+      
+      def query_for_permission_and_path
+        if !@writable || !@real_path
+          $stderr.puts "Querying #{query_url}" if $DEBUG
+          resp = connection.get(query_url)
+          @writable, @real_path = resp.body.split(" ")
+        end
       end
     
       protected
