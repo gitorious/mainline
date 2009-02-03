@@ -220,18 +220,37 @@ describe Repository do
     }.should raise_error(ActiveRecord::RecordNotFound)
   end
   
-  it "finds a repository by its path" do
-    repo = projects(:johans).repositories.mainlines.first
-    path = File.join(GitoriousConfig['repository_base_path'], 
-                      projects(:johans).slug, "#{repo.name}.git")
-    Repository.find_by_path(path).should == repo
-  end
+  describe "find_by_path" do
+    it "finds a repository by its path" do
+      repo = projects(:johans).repositories.mainlines.first
+      path = File.join(GitoriousConfig['repository_base_path'], 
+                        projects(:johans).slug, "#{repo.name}.git")
+      Repository.find_by_path(path).should == repo
+    end
+    
+    it "finds a repository by its path, regardless of repository kind" do
+      pending "TODO"
+      repo = projects(:johans).wiki_repository
+      path = File.join(GitoriousConfig['repository_base_path'].chomp("/"), 
+                        projects(:johans).slug, "#{repo.name}.git")
+      Repository.find_by_path(path).should == repo
+    end
   
-  it "finds a repository by its path, regardless of repository kind" do
-    repo = projects(:johans).wiki_repository
-    path = File.join(GitoriousConfig['repository_base_path'].chomp("/"), 
-                      projects(:johans).slug, "#{repo.name}.git")
-    Repository.find_by_path(path).should == repo
+    it "finds a group repository by its path" do
+      repo = repositories(:johans)
+      repo.owner = groups(:johans_team_thunderbird)
+      repo.save!
+      path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
+      Repository.find_by_path(path).should == repo    
+    end
+  
+    it "finds a user repository by its path" do
+      repo = repositories(:johans)
+      repo.owner = users(:johan)
+      repo.save!
+      path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
+      Repository.find_by_path(path).should == repo
+    end
   end
   
   it "xmlilizes git paths as well" do

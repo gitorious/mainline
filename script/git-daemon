@@ -72,15 +72,42 @@ module Git
         base_path = $3
         host = $4
       
-        path = File.expand_path("#{BASE_PATH}/#{base_path}")
-        if !path.index(BASE_PATH) == 0 || !File.directory?(path)
-          log(Process.pid, "Invalid path: #{base_path}")
+        path = File.expand_path("#{BASE_PATH}/#{base_path}")        
+        repository = nil
+        
+        begin
+          repository = ::Repository.find_by_path(path)
+        rescue => e
+          log(Process.pid, "AR error: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
+        end
+        
+        log(Process.pid, "Connection from #{ip} for #{base_path.inspect}")
+        
+        if repository
+          if ip_family == "AF_INET6"
+            repository.cloned_from(ip)
+          else
+            geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
+            localization = geoip.country(ip)
+            repository.cloned_from(ip, localization[3], localization[5])
+          end
+        else
+          log(Process.pid, "Cannot find repository: #{path}")
+          session.close
+          return
+        end
+
+        real_path = repository.full_repository_path
+        log(Process.pid, "#{ip} wants #{path.inspect} => #{real_path.inspect}")
+        
+        if !real_path.index(BASE_PATH) == 0 || !File.directory?(real_path)
+          log(Process.pid, "Invalid path: #{real_path}")
           session.close
           $children_active -= 1
           return
         end
       
-        if !File.exist?(File.join(path, "git-daemon-export-ok"))
+        if !File.exist?(File.join(real_path, "git-daemon-export-ok"))
           session.close
           $children_active -= 1
           return
@@ -106,7 +133,7 @@ module Git
         end
         
       
-        Dir.chdir(path) do
+        Dir.chdir(real_path) do
           cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
           
           child_pid = fork do

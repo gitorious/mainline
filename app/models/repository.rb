@@ -72,10 +72,23 @@ class Repository < ActiveRecord::Base
   
   def self.find_by_path(path)
     base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
-    repo_name, project_name = base_path.split("/").reverse
-      
-    project = Project.find_by_slug!(project_name)
-    Repository.find_by_name_and_project_id(repo_name.sub(/\.git/, ""), project.id)
+    repo_name, owner_name = base_path.split("/").reverse
+    repo_name.sub!(/\.git/, "")
+    
+    owner = case owner_name[0].chr
+      when "+"
+        Group.find_by_name!(owner_name.sub(/^\+/, ""))
+      when "~"
+        User.find_by_login!(owner_name.sub(/^~/, ""))
+      else
+        Project.find_by_slug!(owner_name)
+      end
+    
+    Repository.find(:first, :conditions => {
+      :name => repo_name,
+      :owner_type => owner.class.name,
+      :owner_id => owner.id,
+    })
   end
   
   def self.create_git_repository(path)
