@@ -9,5 +9,6 @@ ActiveMessaging::Gateway.define do |s|
   
   s.destination :create_repo, '/queue/GitoriousRepositoryCreation'
   s.destination :destroy_repo, '/queue/GitoriousRepositoryDeletion'
+  s.destination :push_event, '/queue/GitoriousPushEvent'
   
 end
