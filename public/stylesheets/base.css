@@ -659,29 +659,34 @@ ul .user {
   padding-left: 2px;
 }
 
-/* sidebar repository list */
-
-#sidebar ul.repository_list li {
-  padding-left: 18px;
-  margin-bottom: 10px;
-}
-#sidebar ul.repository_list li.mainline {
-  background: url("/images/silk/database_star.png") 0 0 no-repeat;
-}
-
-#sidebar ul.repository_list li.clone {
-  background: url("/images/silk/database.png") 0 0 no-repeat;
-}
+/* Repository list */
 
 #sidebar ul.repository_list ul {
   margin-left: 10px;
 }
-#sidebar ul.repository_list .user img, #sidebar ul.repository_list .group img {
+
+.repository_meta ul.repository_list {
+  margin: 0;
+}
+
+ul.repository_list li {
+  padding-left: 18px;
+  margin-bottom: 10px;
+}
+ul.repository_list li.mainline {
+  background: url("/images/silk/database_star.png") 0 0 no-repeat;
+}
+
+ul.repository_list li.clone {
+  background: url("/images/silk/database.png") 0 0 no-repeat;
+}
+
+ul.repository_list .user img, ul.repository_list .group img {
   float: left;
   margin-top: 1px;
 }
 
-#sidebar ul.repository_list .user a, #sidebar ul.repository_list .group a {
+ul.repository_list .user a, ul.repository_list .group a {
   color: #555;
   margin: 0 0 0 5px;
   padding:0;
@@ -748,8 +753,12 @@ ul.horizontal.meta li > a {
   font-size: 11px;
 }
 
-.meta-info ul.horizontal li > a{
-  font-size: 11px;
+div.meta-info {
+  text-align: right;
+}
+
+.meta-info ul.horizontal li > a {
+  font-size: 10px;
   background-image: none !important;
   padding: 0 !important;
 }
@@ -1460,7 +1469,7 @@ li.event_instance.delete_merge_request { background-image: url("/images/silk/cha
 .event_instance .event_category.project  { background: #98a49f; }
 .event_instance .event_category.merge_request { background: #a2a498; }
 
-/* repository meta (overview apge) */
+/* repository meta (overview page) */
 table.repository_meta {
 /*  border: 1px solid #ddd;*/
   padding: 0;
@@ -1499,6 +1508,13 @@ table.repository_meta .meta td .bignum {
   font-size: 20px;
 }
 table.repository_meta .graph td { text-align:center; }
+
+table.repository_meta .clones td {
+  padding: 5px;
+}
+table.repository_meta .clones h5 {
+  text-align: center;
+}
 
 .feed_icon { margin: 0px 4px -1px 4px; }
 

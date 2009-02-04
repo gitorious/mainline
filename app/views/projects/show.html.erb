@@ -26,7 +26,7 @@
 </div>
 
 <% @project.repositories.mainlines.each do |repo| -%>
-  <%= render :partial => "repositories/statistics", :locals => {:repository => repo} -%>
+  <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
 <% end -%>
 
 <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>

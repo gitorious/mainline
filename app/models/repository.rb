@@ -29,6 +29,8 @@ class Repository < ActiveRecord::Base
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
   belongs_to  :parent, :class_name => "Repository"
+  has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id", 
+    :dependent => :nullify
   has_many    :comments, :dependent => :destroy
   has_many    :merge_requests, :foreign_key => 'target_repository_id', 
     :order => "status, id desc", :dependent => :destroy
