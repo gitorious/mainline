@@ -525,6 +525,7 @@ describe RepositoriesController, "new / create" do
     @project = projects(:johans)
     @user = users(:johan)
     @group = groups(:johans_team_thunderbird)
+    @group.add_member(@user, Role.admin)
     login_as :johan
   end
   
@@ -532,6 +533,33 @@ describe RepositoriesController, "new / create" do
     login_as nil
     get :new, :project_id => @project.to_param
     response.should redirect_to(new_sessions_path)
+  end
+  
+  it "should require adminship" do
+    login_as :moe
+    get :new, :project_id => @project.to_param
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(project_path(@project))
+    
+    get :new, :group_id => @group.to_param
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(group_path(@group))
+    
+    get :new, :user_id => @user.to_param
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(user_path(@user))
+    
+    post :create, :project_id => @project.to_param, :repository => {}
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(project_path(@project))
+    
+    post :create, :group_id => @group.to_param, :repository => {}
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(group_path(@group))
+    
+    post :create, :user_id => @user.to_param, :repository => {}
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(user_path(@user))
   end
   
   it "should GET new successfully, and set the owner to a project" do

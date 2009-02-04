@@ -19,7 +19,7 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :writable_by]
   before_filter :find_repository_owner
-  before_filter :require_adminship, :only => [:edit, :update]
+  before_filter :require_adminship, :only => [:edit, :update, :new, :create]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   session :off, :only => [:writable_by]
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
@@ -141,7 +141,7 @@ class RepositoriesController < ApplicationController
       unless @owner.admin?(current_user)
         respond_to do |format|
           flash[:error] = I18n.t "repositories_controller.adminship_error"
-          format.html { redirect_to(project_path(@owner)) }
+          format.html { redirect_to(@owner) }
           format.xml  { render :text => I18n.t( "repositories_controller.adminship_error"), :status => :forbidden }
         end
         return
