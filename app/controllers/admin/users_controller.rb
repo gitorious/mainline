@@ -1,6 +1,6 @@
 class Admin::UsersController < ApplicationController
   before_filter :login_required
-  before_filter :check_admin
+  before_filter :require_site_admin
   
   def index
     @users = User.paginate(:all, :order => 'suspended_at, login', 
@@ -70,8 +70,8 @@ class Admin::UsersController < ApplicationController
   
   private
   
-  def check_admin
-    unless current_user.admin?
+  def require_site_admin
+    unless current_user.site_admin?
       flash[:error] = I18n.t "admin.users_controller.check_admin"
       redirect_to root_path
     end

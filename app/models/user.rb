@@ -184,7 +184,7 @@ class User < ActiveRecord::Base
     !suspended_at.nil?
   end
   
-  def admin?
+  def site_admin?
     is_admin
   end
   

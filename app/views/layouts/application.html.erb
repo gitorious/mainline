@@ -50,7 +50,7 @@
       <% end -%>
       <% if logged_in? -%>
         <li><%= link_to t("views.layout.dashboard"), dashboard_path -%></li>
-		<% if current_user.admin? -%>
+		<% if current_user.site_admin? -%>
 		<li><%= link_to t("views.layout.admin"), admin_users_path -%></li>
 		<% end -%>
       <% end -%>

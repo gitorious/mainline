@@ -16,7 +16,7 @@
 		<td><%= user.created_at.to_s(:short) %></td>
 		<td><%= user.activated? ? user.activated_at.to_s(:short) : t("views.common.no") %></td>
 		<td><%= user.suspended? ? user.suspended_at.to_s(:short) : t("views.common.no") %></td>
-		<td><%= user.admin? ? t("views.common.yes") : t("views.common.no") %></td>
+		<td><%= user.site_admin? ? t("views.common.yes") : t("views.common.no") %></td>
 		<% if user.suspended? -%>
 		<td><%= link_to t("views.users.unsuspend"), unsuspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
 		<% else -%>
