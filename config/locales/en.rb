@@ -457,6 +457,19 @@
       :pm => 'PM',
     },
     :activerecord => {
+      :models => {
+        :comment => "Comment",
+        :event => "Event",
+        :group => "Team",
+        :membership => "Membership",
+        :merge_request => "Merge Request",
+        :project => "Project",
+        :repository => "Repository",
+        :role => "Role",
+        :ssh_key => "SSH Key",
+        :tags => "Category",
+        :user => "User",
+      },
       :attributes => {
         :user => {
           :login => "Login",

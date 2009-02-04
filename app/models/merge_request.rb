@@ -36,6 +36,10 @@ class MergeRequest < ActiveRecord::Base
   STATUS_MERGED = 1
   STATUS_REJECTED = 2
   
+  def self.human_name
+    I18n.t("activerecord.models.merge_request")
+  end
+  
   def self.statuses
     { "Open" => STATUS_OPEN, "Merged" => STATUS_MERGED, "Rejected" => STATUS_REJECTED }
   end

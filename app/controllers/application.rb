@@ -62,6 +62,9 @@ class ApplicationController < ActionController::Base
       else
         raise ActiveRecord::RecordNotFound
       end
+      if @owner.is_a?(Project)
+        @project = @owner
+      end
     end
     
     def find_repository_owner_and_repository

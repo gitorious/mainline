@@ -17,13 +17,13 @@
 #++
 %>
 
-<% @page_title = t("views.repos.page_title", :repo => @project.title) -%>
+<% @page_title = t("views.repos.page_title", :repo => @owner.title) -%>
 <h1><%= t("views.repos.title") %></h1>
 
-<% @project.repositories.mainlines.each do |repo| -%>
+<% @owner.repositories.each do |repo| -%>
   <%= render :partial => "repositories/statistics", :locals => {:repository => repo} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>
-  <%= render :partial => "projects/repositories" -%>
+  <%= render :partial => "projects/repositories" if @project -%>
 <% end -%>

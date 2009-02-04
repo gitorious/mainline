@@ -61,6 +61,10 @@ class User < ActiveRecord::Base
   aasm_event :accept_terms do
     transitions :to => :terms_accepted, :from => [:pending]
   end
+  
+  def self.human_name
+    I18n.t("activerecord.models.user")
+  end
 
   def self.find_by_login!(name)
     find_by_login(name) || raise(ActiveRecord::RecordNotFound)

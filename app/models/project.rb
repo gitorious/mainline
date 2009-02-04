@@ -99,6 +99,10 @@ class Project < ActiveRecord::Base
     'Other/Proprietary License',
     'None',
   ]
+  
+  def self.human_name
+    I18n.t("activerecord.models.project")
+  end
 
   def self.find_by_slug!(slug, opts = {})
     find_by_slug(slug, opts) || raise(ActiveRecord::RecordNotFound)

@@ -3,7 +3,7 @@
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
   <p class="hint">
-    The repository will be owned by <%= link_to @owner.title, @owner -%> (<%= @owner.class.name -%>)
+    The repository will be owned by <%= link_to @owner.title, @owner -%> (<%= @owner.class.human_name -%>)
   </p>
   <p>
     <%= f.label :name -%>:<br />

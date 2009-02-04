@@ -30,6 +30,10 @@ class Group < ActiveRecord::Base
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/, 
     :message => "Must be alphanumeric, and optional dash"
     
+  def self.human_name
+    I18n.t("activerecord.models.group")
+  end
+  
   def to_param
     name
   end

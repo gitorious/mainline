@@ -29,6 +29,10 @@ class SshKey < ActiveRecord::Base
   # we only allow people to create/destroy keys after_update  :create_update_task 
   after_destroy :create_delete_task
   
+  def self.human_name
+    I18n.t("activerecord.models.ssh_key")
+  end
+  
   def wrapped_key(cols=72)
     key.gsub(/(.{1,#{cols}})/, "\\1\n").strip
   end

@@ -61,6 +61,10 @@ class Repository < ActiveRecord::Base
   after_create  :post_repo_creation_message
   after_destroy :post_repo_deletion_message
   
+  def self.human_name
+    I18n.t("activerecord.models.repository")
+  end
+  
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}-clone" : nil
     new(:parent => other, :project => other.project, :name => suggested_name)
