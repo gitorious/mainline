@@ -29,11 +29,11 @@
 
 <%= will_paginate @projects -%>
 
-<% content_for :submenu do -%>
-  <li><%= link_to t("views.projects.new"), new_project_path -%></li>
-<% end -%>
-
-<% content_for :sidebar do -%>  
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li class="new_project"><%= link_to t("views.projects.new"), new_project_path -%></li>
+  </ul>
+ 
   <h4><%= t("views.projects.popular") %>:</h4>
   <ul class="tag_list">
     <% @tags.each do |tag| %>
