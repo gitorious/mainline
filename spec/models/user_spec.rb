@@ -238,6 +238,17 @@ describe User do
   it "has to_param_with_prefix" do
     users(:johan).to_param_with_prefix.should == "~#{users(:johan).to_param}"
   end
+  
+  it "knows who is a site admin" do
+    users(:mike).site_admin?.should == false
+    users(:mike).is_admin = true
+    users(:mike).site_admin?.should == true
+  end
+  
+  it "knows if a user is a an admin of itself" do
+    users(:mike).admin?(users(:mike)).should == true
+    users(:mike).admin?(users(:johan)).should == false
+  end
  
   protected
     def create_user(options = {})
