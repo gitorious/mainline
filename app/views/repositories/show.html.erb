@@ -55,6 +55,9 @@
     <% if @repository.can_be_deleted_by?(current_user) -%>
       <li><%= link_to t("views.repos.btn_delete_repo"), confirm_delete_project_repository_path(@owner, @repository) -%></li>
     <% end -%>
+    <% if @repository.owner.admin?(current_user) -%>
+      <li><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.owner, @repository] -%></li>
+    <% end -%>
   </ul>
   
   <h4><%= t("views.repos.committers") %></h4>    

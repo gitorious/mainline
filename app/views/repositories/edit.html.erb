@@ -1,14 +1,7 @@
-<h1>Add new repository to <%= link_to @owner.title, @owner -%></h1>
+<h1>Editing repository <%= link_to h(@repository.name), [@owner, @repository] -%></h1>
 
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
-  <p class="hint">
-    The repository will be owned by <%= link_to @owner.title, @owner -%> (<%= @owner.class.human_name -%>)
-  </p>
-  <p>
-    <%= f.label :name -%>:<br />
-    <%= f.text_field :name -%>
-  </p>
   <p>
     <small class="hint">
       <a href="http://daringfireball.net/projects/markdown/">Markdown</a> and basic html is allowed
@@ -16,6 +9,5 @@
     <%= f.label :description -%>:<br />
     <%= f.text_area :description, :class => "text wide tall" -%>
   </p>
-  
   <%= f.submit "Create repository" -%>
 <% end -%>

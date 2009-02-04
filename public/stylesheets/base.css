@@ -1310,6 +1310,15 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
 
+.repository-description .page {
+  margin: 0;
+  padding: 0;
+}
+
+.repository-description .page > p:last-child {
+  margin-bottom: 0;
+}
+
 
 /* Merge Requests */
 

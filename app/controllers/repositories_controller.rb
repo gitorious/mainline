@@ -19,7 +19,7 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :writable_by]
   before_filter :find_repository_owner
-  before_filter :require_adminship, :only => [:edit, :update, :new, :create]
+  before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   session :off, :only => [:writable_by]
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
@@ -105,6 +105,22 @@ class RepositoriesController < ApplicationController
         format.html { render :action => "clone" }
         format.xml  { render :xml => @repository.errors, :status => :unprocessable_entity }
       end
+    end
+  end
+  
+  def edit
+    @repository = @owner.repositories.find_by_name!(params[:id])
+  end
+  
+  def update
+    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository.description = params[:repository][:description]
+    
+    if @repository.save
+      flash[:success] = "Repository updated"
+      redirect_to [@owner, @repository]
+    else
+      render :action => "edit"
     end
   end
   

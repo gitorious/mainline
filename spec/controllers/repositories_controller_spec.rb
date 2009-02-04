@@ -608,6 +608,59 @@ describe RepositoriesController, "new / create" do
   end
 end
 
+describe RepositoriesController, "edit / update" do
+  before(:each) do
+    @project = projects(:johans)
+    @repository = @project.repositories.first
+    login_as :johan
+  end
+  
+  it "requires login" do
+    login_as nil
+    get :edit, :project_id => @project.to_param, :id => @repository.to_param
+    response.should redirect_to(new_sessions_path)
+    
+    put :update, :project_id => @project.to_param, :id => @repository.to_param
+    response.should redirect_to(new_sessions_path)
+  end
+    
+  it "requires adminship on the project if owner is a project" do
+    login_as :moe
+    get :edit, :project_id => @project.to_param, :id => @repository.to_param
+    flash[:error].should match(/only repository admins are allowed/)
+    response.should redirect_to(project_path(@project))
+  end
+    
+  it "requires adminship on the user if owner is a user" do
+    login_as :moe
+    @repository.owner = users(:moe)
+    @repository.save!
+    get :edit, :user_id => users(:moe).to_param, :id => @repository.to_param
+    response.should be_success
+  end
+    
+  it "requires adminship on the group, if the owner is a group" do
+    login_as :mike
+    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.save!
+    get :edit, :group_id => groups(:johans_team_thunderbird).to_param, :id => @repository.to_param
+    response.should be_success
+  end
+  
+  it "GETs edit/n successfully" do
+    get :edit, :project_id => @project.to_param, :id => @repository.to_param
+    response.should be_success
+    assigns(:repository).should == @repository
+  end
+  
+  it "PUT update successfully" do
+    put :update, :project_id => @project.to_param, :id => @repository.to_param,
+      :repository => {:description => "blablabla"}
+    response.should redirect_to(project_repository_path(@project, @repository))
+    @repository.reload.description.should == "blablabla"
+  end
+end
+
 describe RepositoriesController, "with committer (not owner) logged in" do
   integrate_views
   

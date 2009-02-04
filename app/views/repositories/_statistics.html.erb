@@ -16,6 +16,13 @@
       </ul>
     </td>
   </tr>
+  <tr>
+    <td colspan="3" class="repository-description">
+      <div class="page">
+        <%= paragraphs_with_more auto_link(markdown(sanitize(repository.description)), :urls) -%>
+      </div>
+    </td>
+  </tr>
   <tr class="meta">
     <td class="commit_count">
       <span class="bignum"><%= repository.events.count -%></span> <%= t("views.repos.activities", :count => repository.events.count) %>

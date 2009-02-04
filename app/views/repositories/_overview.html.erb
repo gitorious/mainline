@@ -17,6 +17,13 @@
     </td>
   </tr>
   <tr>
+    <td colspan="3" class="repository-description">
+      <div class="page">
+        <%= paragraphs_with_more auto_link(markdown(sanitize(repository.description)), :urls) -%>
+      </div>
+    </td>
+  </tr>
+  <tr>
     <td colspan="3" class="infobox">
       <ul>
         <li>

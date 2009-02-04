@@ -305,6 +305,7 @@
         :btn_request => "Request merge",
         :btn_add_committer => "Add committer",
         :btn_delete_repo => "Delete repository",
+        :btn_edit_repo => "Edit repository",
         :committers => "Committers",
         :remove => "Remove",
         :create_title => lambda { |this, clone, project| 

@@ -8,7 +8,7 @@ johans_team_thunderbird_mike:
   group: johans_team_thunderbird
   user_id: 3
 #  user: mike
-  role: committer
+  role: admin
   
 moes_moe:
   group: moes_core
