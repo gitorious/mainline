@@ -73,9 +73,10 @@ Install each of these Ruby libraries/bindings/gems:
 * rmagick       (in ubuntu I had to sudo apt-get install librmagick-ruby librmagick-ruby-doc)
 * ruby-openid   
 * ruby-iconv
+* stomp
 
   # gem install mysql RedCloth mime-types oniguruma textpow \
-      chronic rmagick geoip ultrasphinx ruby-openid 
+      chronic rmagick geoip ultrasphinx ruby-openid stomp
 
 === Database
 
@@ -175,6 +176,24 @@ RAILS_ENV=production rake ultrasphinx:daemon:start &
 * If you haven't set up your mailer, production mode will fail on login. Set
     config.action_mailer.delivery_method = :test
   for immediate gratification.
+
+=== Asynchronous messaging
+
+Gitorious uses the ActiveMessaging plugin, which supports a range of different messaging platforms, for sending demanding tasks for asynchronous processing. In order to these events to be processed, you need to run a messaging server when running Gitorious.
+
+A pretty reliable solution is to use Apache's ActiveMQ messaging queue system, located at http://activemq.apache.org/ . Download a version for you operating system, unpack, and follow the instructions to get running. On Unix-like systems, this is as easy as unpacking the tarball, going into it and running
+
+  bin/activemq
+  
+This will start the ActiveMQ server in a default setup, probably pretty well suited for development purposes. The ActiveMessaging plugin needs to know how to contact your MQ server, so it needs a config/broker.yml file. The Gitorious distribution provides an example (again, the defaults should work in a development environment). Just copy the config/broker.yml.example to config/broker.yml and start your server.
+
+The messages are sent to the server, in order to "consume" the messages, there is a script in scripts/poller that will run all registered "processors" (found in app/processors) that consume messages. In order to have eg. creation of repositories done automatically run
+
+  script/poller start
+  
+and the script will be started and daemonized.
+
+You're free to use other messaging protocols than the default Stomp protocol, which is required in config/environment.rb. The ActiveMessaging website (http://code.google.com/p/activemessaging/wiki/ActiveMessaging) has more information about how to set this up.
 
   
 === Run the server

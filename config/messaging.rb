@@ -7,7 +7,7 @@ ActiveMessaging::Gateway.define do |s|
   #s.filter :some_filter, :only=>:orders
   #s.processor_group :group1, :order_processor
   
-  s.destination :create_repo, '/queue/RepositoryCreation'
-  s.destination :destroy_repo, '/queue/RepositoryDeletion'
+  s.destination :create_repo, '/queue/GitoriousRepositoryCreation'
+  s.destination :destroy_repo, '/queue/GitoriousRepositoryDeletion'
   
 end

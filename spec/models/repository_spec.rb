@@ -282,52 +282,43 @@ describe Repository do
   end
   
   it 'publishes a message on create and update' do
-    destination = message_destination_by_name('/queue/RepositoryCreation')
-    messages = destination.messages
-    proc{
+    p = proc{
       @repository.save!
-    }.should change(messages, :size)
-    message = deserialize_message(messages.last)
+    }
+    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /#{@repository.real_gitdir}/) {p.call}
     message['command'].should == 'create_git_repository'
     message['arguments'].size.should == 1
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
     message['target_id'].to_i.should == @repository.id
   end
-  
-  it "creates a clone task if there's a parent" do
-    destination = message_destination_by_name('/queue/RepositoryCreation')
-    messages = destination.messages
-    proc{
+
+  it "publishes a message on clone" do
+    p = proc{
       @repository.parent = repositories(:johans)
       @repository.save!
-    }.should change(messages, :size)
-    message = deserialize_message(messages.last)
-
+    }
+    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /#{@repository.real_gitdir}/) {p.call}
     message['command'].should == "clone_git_repository"
     message['arguments'].size.should == 2
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
     message['target_id'].should == @repository.id
   end
   
-  it "creates a Task on destroy" do
+  it "creates a notification on destroy" do
     @repository.save!
-    destination = message_destination_by_name('/queue/RepositoryDeletion')
-    messages = destination.messages
-    proc{
-      @repository.destroy
-    }.should change(messages, :size)
-    message = deserialize_message(messages.last)
+    message = find_message_with_queue_and_regexp(
+      '/queue/GitoriousRepositoryDeletion', 
+      /#{@repository.real_gitdir}/) {@repository.destroy}
     message['command'].should == 'delete_git_repository'
     message['arguments'].size.should == 1
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
   end
   
-  def message_destination_by_name(name)
-    ActiveMessaging::Gateway.connection('default').find_destination(name)
-  end
-  
-  def deserialize_message(message)
-    ActiveSupport::JSON.decode(message.body)
+  def find_message_with_queue_and_regexp(queue_name, regexp)
+    yield
+    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
+    msg.should_not be_nil
+    return ActiveSupport::JSON.decode(msg.body)
   end
   
   it "has one recent commit" do
@@ -422,7 +413,7 @@ describe Repository do
     @repository.owner = groups(:johans_team_thunderbird)
     @repository.breadcrumb_parent.should == groups(:johans_team_thunderbird)
     @repository.owner = users(:johan)
-    @repository.breadcrumb_parent.should == users(:johan)
+    @repository.breadcrumb_parent.should == projects(:johans)
     @repository.owner = projects(:johans)
     @repository.breadcrumb_parent.should == projects(:johans)
   end

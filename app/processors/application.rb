@@ -6,11 +6,11 @@ class ApplicationProcessor < ActiveMessaging::Processor
   # Retry logic varies by broker - see individual adapter code and docs for how it will be treated
   def on_error(err)
     if (err.kind_of?(StandardError))
-      logger.error "ApplicationProcessor::on_error: #{err.class.name} rescued:\n" + \
+      logger.error "Processor::on_error: #{err.class.name} rescued:\n" + \
       err.message + "\n" + \
       "\t" + err.backtrace.join("\n\t")
     else
-      logger.error "ApplicationProcessor::on_error: #{err.class.name} raised: " + err.message
+      logger.error "Processor::on_error: #{err.class.name} raised: " + err.message
       raise err
     end
   end

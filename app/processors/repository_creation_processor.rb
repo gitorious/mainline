@@ -8,7 +8,7 @@ class RepositoryCreationProcessor < ApplicationProcessor
     command       = message_hash['command']
     arguments     = message_hash['arguments']
 
-    logger.info("Performing Task: #{target_class}(#{target_id.inspect})::#{command}(#{arguments.inspect}..)")
+    logger.info("Processor: #{target_class}(#{target_id.inspect})::#{command}(#{arguments.inspect}..)")
     target_class.constantize.send(command, *arguments)
     unless target_id.blank?
       obj = target_class.constantize.find_by_id(target_id)

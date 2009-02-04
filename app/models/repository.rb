@@ -319,7 +319,8 @@ class Repository < ActiveRecord::Base
   end
   
   def breadcrumb_parent
-    owner || project
+    owned_by_group? ? owner : project
+#    project || owner
   end
   
   def title
