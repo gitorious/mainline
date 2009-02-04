@@ -162,6 +162,24 @@ abbr {
   clear: right;
 }
 
+#header #searchbox .search-field, #header #searchbox .search-submit {
+  background: #1C1C1C;
+  border: 1px solid #666;
+  color: #fff;
+}
+#header #searchbox .search-submit {
+  color: #aaa;
+}
+#header #searchbox input {
+  margin: 0;
+  padding: 3px;
+}
+
+#header #searchbox .search-hint {
+  display: none;
+}
+
+
 #header #logo a { color: #666; }
 
 #header #project_title {
