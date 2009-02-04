@@ -42,6 +42,7 @@ module Git
       @socket = TCPServer.new(@options[:host], @options[:port])
       @socket.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
       log(Process.pid, "Listening on #{@options[:host]}:#{@options[:port]}...")
+      ActiveRecord::Base.verify_active_connections! if @options[:daemonize]
       run
     end
       
