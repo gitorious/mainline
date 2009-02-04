@@ -327,4 +327,15 @@ module ApplicationHelper
     
     content_tag(:ul, links.join("\n"), :class => 'links meta')
   end
+  
+  def paragraphs_with_more(text)
+    first, rest = text.split("</p>", 2)
+    if rest.blank?
+      first + "</p>"
+    else
+      %Q{#{first} 
+        <a href="#more" onclick="$('description-rest').toggle(); this.hide()">more&hellip;</a></p>
+        <div id="description-rest" style="display:none;">#{rest}</div>}
+    end
+  end
 end
