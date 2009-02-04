@@ -28,4 +28,9 @@
   <li><strong><%= t("views.commits.sha1") %>:</strong> <%=h @commit.id -%></li>
   <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id), 
     project_repository_tree_path(@project, @repository, @commit.id) -%></li>
+  <% @commit.parents.each do |parent_sha| -%>
+    <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent_sha),
+     project_repository_commit_path(@project, @repository, parent_sha) -%></li>
+  <% end -%>
+
 </ul>

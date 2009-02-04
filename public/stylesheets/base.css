@@ -681,12 +681,14 @@ ul.repository_list li.clone {
   background: url("/images/silk/database.png") 0 0 no-repeat;
 }
 
-ul.repository_list .user img, ul.repository_list .group img {
+ul.repository_list .user img, ul.repository_list .group img, 
+ul.committers .user img, ul.committers .group img {
   float: left;
   margin-top: 1px;
 }
 
-ul.repository_list .user a, ul.repository_list .group a {
+ul.repository_list .user a, ul.repository_list .group a,
+ul.committers .user a, ul.committers .group a {
   color: #555;
   margin: 0 0 0 5px;
   padding:0;

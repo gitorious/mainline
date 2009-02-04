@@ -239,6 +239,7 @@
         :author => "Author",
         :sha1 => "Commit SHA1",
         :tree_sha1 => "Tree SHA1",
+        :parent_sha1 => "Parent SHA1",
         :page_title => "Commit in {{repo}} in {{title}}",
         :title => "Commit {{commit}}",
         :message => lambda { |this, path| "This is the initial commit in this repository, " +
@@ -317,7 +318,6 @@
         },
         :edit_group => "Edit/show group members",
         :show_group => "Show group members",
-        :owner => "Owner of the cloned repository",
         :by_teams => "Teams",
         :by_users => "Users",
       },

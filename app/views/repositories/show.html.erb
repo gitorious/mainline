@@ -58,13 +58,16 @@
   </ul>
   
   <h4><%= t("views.repos.committers") %></h4>    
-  <ul>
+  <ul class="committers">
   <% @repository.committers.each do |user| -%>
     <li>
-      <%= link_to h(user.login), user -%> 
-      <% if @repository.user == user -%>
-      <small>(<%= t("views.repos.owner") %>)</small>
-      <% end -%>
+      <div class="user">
+        <%= gravatar(user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(user.title), user -%>
+        <% if @repository.user == user -%>
+          <small>(<%= t("views.repos.owner") %>)</small>
+        <% end -%>
+      </div>
     </li>
   <% end -%>
     <% if @repository.owned_by_group? -%>
