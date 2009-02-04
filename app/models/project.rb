@@ -23,6 +23,7 @@ class Project < ActiveRecord::Base
   acts_as_taggable
 
   belongs_to  :user
+  belongs_to  :owner, :polymorphic => true
   has_many    :comments, :dependent => :destroy
   
   has_many    :project_repositories, :order => "repositories.created_at asc",
@@ -55,7 +56,7 @@ class Project < ActiveRecord::Base
 
   URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
-  validates_presence_of :title, :user_id, :slug, :description
+  validates_presence_of :title, :user_id, :slug, :description, :owner_id
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")

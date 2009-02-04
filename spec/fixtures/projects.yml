@@ -7,6 +7,8 @@ johans:
   description: this is johans project yo
   user_id: 1
   created_at: <%= 5.days.ago.to_s(:db) %>
+  owner_type: User
+  owner_id: 1
   
 moes:
   id: 2
@@ -16,3 +18,5 @@ moes:
   description: moes fancy project
   user_id: 2
   created_at: <%= 5.days.ago.to_s(:db) %>
+  owner_type: User
+  owner_id: 2

@@ -62,11 +62,20 @@ class ProjectsController < ApplicationController
   end
   
   def new
+    @project = Project.new
+    @project.owner = current_user
   end
   
   def create
     @project = Project.new(params[:project])
     @project.user = current_user
+    @project.owner = case params[:project][:owner_type]
+      when "User"
+        current_user
+      when "Group"
+        current_user.groups.find(params[:project][:owner_id])
+      end
+        
     if @project.save
       @project.create_event(Action::CREATE_PROJECT, @project, current_user)
       redirect_to new_project_repository_path(@project)

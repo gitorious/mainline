@@ -26,7 +26,8 @@ describe Project do
       :title => "foo project",
       :slug => "foo",
       :description => "my little project",
-      :user => users(:johan)
+      :user => users(:johan),
+      :owner => users(:johan)
     }.merge(options))
   end
 

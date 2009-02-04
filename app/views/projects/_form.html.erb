@@ -24,6 +24,10 @@
 </p>
 <% unless ["edit", "update"].include?(controller.action_name) -%>
   <p>
+    <%= form.current_user_or_group :owner, t("views.projects.owner"), 
+          :hint => "Select the owner of this project; either yourself or a group you're a member of"-%>
+  </p>
+  <p>
     <%= form.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%><br />
     <%= form.text_field :slug, :class => "text" -%>
   </p>

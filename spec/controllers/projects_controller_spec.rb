@@ -157,11 +157,39 @@ describe ProjectsController do
   
   it "POST projects/create with valid data should create project" do
     login_as :johan
-    post :create, :project => {:title => "project x", :slug => "projectx", :description => "projectx's description"}
+    proc {
+      post :create, :project => {
+        :title => "project x", 
+        :slug => "projectx", 
+        :description => "projectx's description",
+        :owner_type => "User"
+      }
+    }.should change(Project, :count)
     response.should be_redirect
     response.should redirect_to(new_project_repository_path(assigns(:project)))
     
-    Project.find_by_title("project x").user.should == users(:johan)
+    assigns(:project).user.should == users(:johan)
+    assigns(:project).owner.should == users(:johan)
+  end
+  
+  it "POST projects/create with valid data should create project, owned by a group" do
+    login_as :johan
+    group = groups(:johans_team_thunderbird)
+    group.add_member(users(:johan), Role.admin)
+    proc {
+      post :create, :project => {
+        :title => "project x", 
+        :slug => "projectx", 
+        :description => "projectx's description",
+        :owner_type => "Group",
+        :owner_id => group.id
+      }
+    }.should change(Project, :count)
+    response.should be_redirect
+    response.should redirect_to(new_project_repository_path(assigns(:project)))
+    
+    assigns(:project).user.should == users(:johan)
+    assigns(:project).owner.should == group
   end
   
   it "GET projects/create should redirect to new_account_key_path if no keys on user" do

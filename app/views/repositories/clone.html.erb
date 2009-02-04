@@ -37,16 +37,11 @@
 <%= error_messages_for :repository -%>
 
 <% form_for @repository, :repository, 
-      :url => create_clone_project_repository_path(@owner, @repository_to_clone) do |f| -%>
+      :url => create_clone_project_repository_path(@owner, @repository_to_clone),
+      :builder => GitoriousFormBuilder do |f| -%>
   <p>
-    <%= f.label :owner, t("views.repos.owner") -%>:
-    <br />
-    Me: <%= f.radio_button :owner_type, "User" -%>
-    Group: <%= f.radio_button :owner_type, "Group" -%>
-    <%= f.select :owner_id, current_user.groups.map{|g| [g.name, g.id] }, {},
-                  :id => "repository_owner_id_group_select" -%>
-    
-    <p class="hint">Clone the repository as either yourself or a group you're in</p>
+    <%= f.current_user_or_group :owner, t("views.repos.owner"), 
+          :hint => "Clone the repository as either yourself or a group you're in"-%>
   </p>
   <p>
     <%= f.label :name, t("views.repos.name", :name => current_user.login) -%>:<br />

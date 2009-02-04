@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -41,7 +41,13 @@
       <li><strong><%= t("views.projects.labels") %>:</strong> 
         <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
       <li><strong><%= t("views.projects.license") %>:</strong> <%= h(@project.license) -%></li>
-      <li><strong><%= t("views.projects.owner") %>:</strong> <%= link_to h(@project.user.login), user_path(@project.user) -%></li>
+      <li>
+        <strong><%= t("views.projects.owner") %>:</strong> 
+        <%= link_to h(@project.owner.to_param_with_prefix), @project.owner -%>
+        <% if @project.owner.is_a?(Group) && @project.owner.member?(current_user) -%>
+          <br /><small>(Created by <%= link_to @project.user.login, @project.user -%>)</small>
+        <% end -%>
+      </li>
       <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.to_s(:short) -%></li>
       <% unless @project.home_url.blank? -%>
       <li><strong><%= t("views.projects.website") %></strong> 
