@@ -18,18 +18,17 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe RepositoryDeletionProcessor do
+describe PushEventProcessor do
   before(:each) do
-    @processor = RepositoryDeletionProcessor.new    
+    @processor = PushEventProcessor.new    
   end
   
-  it "should process deletion of repositories" do
-    Repository.expects('delete_git_repository').with('foo')
-    message = ActiveSupport::JSON.encode({:arguments => ['foo']})
-    @processor.on_message(message)
-  end
-  
-  after(:each) do
-    @processor = nil
+  it 'classifies a commit by type' do
+    @processor.commit_summary = "#{'0'*40} #{'a'*40} refs/heads/master"
+    @processor.event_type.should == Action::CREATE_BRANCH
+    @processor.commit_summary = "#{'b'*40} #{'0'*40} refs/heads/master"
+    @processor.event_type.should == Action::DELETE_BRANCH
+    @processor.commit_summary = "#{'a'*40} #{'b'*40} refs/heads/master"
+    @processor.event_type.should == Action::COMMIT
   end
 end
