@@ -181,6 +181,13 @@ describe Project do
     projects(:johans).to_param_with_prefix.should == projects(:johans).to_param
   end
   
+  it "should change the owner of the wiki repo as well" do
+    project = projects(:johans)
+    project.change_owner_to(groups(:team_thunderbird))
+    project.owner.should == groups(:team_thunderbird)
+    project.wiki_repository.owner.should == groups(:team_thunderbird)
+  end
+  
   describe "Project events" do
     before(:each) do 
       @project = projects(:johans)

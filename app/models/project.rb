@@ -192,6 +192,11 @@ class Project < ActiveRecord::Base
   def breadcrumb_parent
     nil
   end
+  
+  def change_owner_to(another_owner)
+    self.owner = another_owner
+    self.wiki_repository.owner = another_owner
+  end
 
   protected    
     def create_wiki_repository

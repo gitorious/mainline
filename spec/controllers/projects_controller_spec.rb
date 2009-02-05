@@ -341,6 +341,7 @@ describe ProjectsController, "Changing owner" do
     }
     response.should redirect_to(project_path(@project))
     @project.reload.owner.should == @group
+    @project.wiki_repository.owner.should == @group
   end
   
   it "changes the owner, only if the original owner was a user" do

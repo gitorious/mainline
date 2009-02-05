@@ -94,11 +94,11 @@ class ProjectsController < ApplicationController
     
     # change group, if requested
     if !@project.owned_by_group? && !params[:project][:owner_id].blank?
-      @project.owner = current_user.groups.find(params[:project][:owner_id])
+      @project.change_owner_to(current_user.groups.find(params[:project][:owner_id]))
     end
     
     @project.attributes = params[:project]
-    if @project.save
+    if @project.save && @project.wiki_repository.save
       @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
       redirect_to project_path(@project)
     else
