@@ -84,7 +84,7 @@ describe Repository do
   end
   
   it "doesn't set itself as mainline if the owner is a Group" do
-    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.owner = groups(:team_thunderbird)
     @repository.save
     @repository.mainline?.should == false
   end
@@ -240,7 +240,7 @@ describe Repository do
   
     it "finds a group repository by its path" do
       repo = repositories(:johans)
-      repo.owner = groups(:johans_team_thunderbird)
+      repo.owner = groups(:team_thunderbird)
       repo.save!
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
       Repository.find_by_path(path).should == repo    
@@ -266,7 +266,7 @@ describe Repository do
     @repository.writable_by?(users(:johan)).should == true
     @repository.writable_by?(users(:mike)).should == false
     
-    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.owner = groups(:team_thunderbird)
     @repository.writable_by?(users(:johan)).should == false
     @repository.owner.add_member(users(:mike), Role.committer)
     @repository.writable_by?(users(:mike)).should == true
@@ -405,8 +405,8 @@ describe Repository do
   end
   
   it 'has a parent, which is the owner' do
-    @repository.owner = groups(:johans_team_thunderbird)
-    @repository.breadcrumb_parent.should == groups(:johans_team_thunderbird)
+    @repository.owner = groups(:team_thunderbird)
+    @repository.breadcrumb_parent.should == groups(:team_thunderbird)
     @repository.owner = users(:johan)
     @repository.breadcrumb_parent.should == projects(:johans)
     @repository.owner = projects(:johans)
@@ -426,8 +426,8 @@ describe Repository do
     repo.owner = users(:johan)
     repo.committers.should == [users(:johan)]
     
-    repo.owner = groups(:johans_team_thunderbird)
-    repo.committers.should == groups(:johans_team_thunderbird).members
+    repo.owner = groups(:team_thunderbird)
+    repo.committers.should == groups(:team_thunderbird).members
     
     repo.owner.add_member(users(:moe), Role.committer)
     repo.reload

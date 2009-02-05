@@ -101,7 +101,7 @@ describe Project do
   it "knows if a user is a admin on a project" do
     project = projects(:johans)
     project.admin?(users(:johan)).should == true
-    project.owner = groups(:johans_team_thunderbird)
+    project.owner = groups(:team_thunderbird)
     project.admin?(users(:johan)).should == false
     project.owner.add_member(users(:johan), Role.admin)
     project.admin?(users(:johan)).should == true

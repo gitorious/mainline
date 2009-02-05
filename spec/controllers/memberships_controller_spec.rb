@@ -19,7 +19,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe MembershipsController, "Routing" do
   before(:each) do
-    @group = groups(:johans_team_thunderbird)
+    @group = groups(:team_thunderbird)
   end
   
   it "recognizes routing like /+team-name/memberships" do
@@ -55,7 +55,7 @@ end
 describe MembershipsController do
   before(:each) do 
     login_as :mike
-    @group = groups(:johans_team_thunderbird)
+    @group = groups(:team_thunderbird)
   end
   
   describe "GET /groups/N/memberships.html" do    
@@ -151,7 +151,7 @@ describe MembershipsController do
   
   describe "autocomplete username" do
     it "finds user by login" do
-      post :auto_complete_for_user_login, :group_id => groups(:johans_team_thunderbird).to_param, 
+      post :auto_complete_for_user_login, :group_id => groups(:team_thunderbird).to_param, 
         :user => { :login => "mik" }, :format => "js"
       assigns(:users).should == [users(:mike)]
     end

@@ -21,7 +21,7 @@ johans2:
   updated_at: 2007-11-18 01:21:21
   mainline: false
   owner_type: Group
-  owner_id: <%= Fixtures.identify(:johans_team_thunderbird) %>
+  owner_id: <%= Fixtures.identify(:team_thunderbird) %>
   hashed_path: <%= Digest::SHA1.hexdigest("johans2") %>
 
 moes:

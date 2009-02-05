@@ -19,7 +19,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe GroupsController, "Routing" do
   before(:each) do
-    @group = groups(:johans_team_thunderbird)
+    @group = groups(:team_thunderbird)
   end
   
   it "recognizes routes starting with plus as teams/show/<name>" do
@@ -37,7 +37,7 @@ end
 
 describe GroupsController do
   before(:each) do
-    @group = groups(:johans_team_thunderbird)
+    @group = groups(:team_thunderbird)
   end
   
   describe "GET index" do

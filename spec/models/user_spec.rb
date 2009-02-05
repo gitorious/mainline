@@ -225,13 +225,13 @@ describe User do
   end
   
   it "should have many memberships" do
-    groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
+    groups(:team_thunderbird).add_member(users(:johan), Role.admin)
     users(:johan).memberships.count.should == 1
   end
   
   it "has many groups through the memberships" do
-    groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
-    users(:johan).groups.should == [groups(:johans_team_thunderbird)]
+    groups(:team_thunderbird).add_member(users(:johan), Role.admin)
+    users(:johan).groups.should == [groups(:team_thunderbird)]
   end
   
   it "has to_param_with_prefix" do

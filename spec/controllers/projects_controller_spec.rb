@@ -174,7 +174,7 @@ describe ProjectsController do
   
   it "POST projects/create with valid data should create project, owned by a group" do
     login_as :johan
-    group = groups(:johans_team_thunderbird)
+    group = groups(:team_thunderbird)
     group.add_member(users(:johan), Role.admin)
     proc {
       post :create, :project => {

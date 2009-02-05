@@ -19,7 +19,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Membership do
   it "has valid associations" do
-    memberships(:team_thunderbird_mike).group.should == groups(:johans_team_thunderbird)
+    memberships(:team_thunderbird_mike).group.should == groups(:team_thunderbird)
     memberships(:team_thunderbird_mike).role.should == roles(:admin)
     memberships(:team_thunderbird_mike).user.should == users(:mike)
   end

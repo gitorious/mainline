@@ -357,7 +357,7 @@ describe MergeRequestsController do
 	before(:each) do
 	  login_as :johan
 		@project = projects(:johans)
-		@project.owner = groups(:johans_team_thunderbird)
+		@project.owner = groups(:team_thunderbird)
 		@project.owner.add_member(users(:johan), Role.committer)
 		@repository = repositories(:johans2)
 		@mainline_repository = repositories(:johans)

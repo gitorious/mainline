@@ -21,13 +21,13 @@ describe Group do
   
   describe "in general" do
     it "uses the name as to_param" do
-      groups(:johans_team_thunderbird).to_param.should == groups(:johans_team_thunderbird).name
+      groups(:team_thunderbird).to_param.should == groups(:team_thunderbird).name
     end
   end
   
   describe "members" do
     before(:each) do
-      @group = groups(:johans_team_thunderbird)
+      @group = groups(:team_thunderbird)
     end
     
     it "knows if a user is a member" do
@@ -54,24 +54,24 @@ describe Group do
   
   describe "repositories" do
     it "has many repositories" do
-      groups(:johans_team_thunderbird).repositories.should include(repositories(:johans2))
+      groups(:team_thunderbird).repositories.should include(repositories(:johans2))
     end
   end
   
   it "has to_param_with_prefix" do
-    grp = groups(:johans_team_thunderbird)
+    grp = groups(:team_thunderbird)
     grp.to_param_with_prefix.should == "+#{grp.to_param}"
   end
   
   it "has no breadcrumb parent" do
-    groups(:johans_team_thunderbird).breadcrumb_parent.should == nil
+    groups(:team_thunderbird).breadcrumb_parent.should == nil
   end
   
   describe "validations" do
     it "should have a unique name" do
       group = Group.new({
         :project => projects(:johans), 
-        :name => groups(:johans_team_thunderbird).name
+        :name => groups(:team_thunderbird).name
       })
       group.should_not be_valid
       group.errors_on(:name).should_not == nil

@@ -30,4 +30,4 @@ thunderbird:
   user_id: 3
   created_at: <%= 5.days.ago.to_s(:db) %>
   owner_type: Group
-  owner_id: <%= Fixtures.identify(:johans_team_thunderbird) %>
+  owner_id: <%= Fixtures.identify(:team_thunderbird) %>

@@ -160,7 +160,7 @@ describe RepositoriesController, "Routing" do
   end
   
   it "recognizes routing like /+teamname/repositories" do
-    team = groups(:johans_team_thunderbird)
+    team = groups(:team_thunderbird)
     params_from(:get, "/+#{team.to_param}/repositories").should == {
       :controller => "repositories",
       :action => "index", 
@@ -175,7 +175,7 @@ describe RepositoriesController, "Routing" do
   end
   
   it "recognizes routing like /+teamname/repositories, with a non-html format" do
-    team = groups(:johans_team_thunderbird)
+    team = groups(:team_thunderbird)
     params_from(:get, "/+#{team.to_param}/repositories.xml").should == {
       :controller => "repositories",
       :action => "index", 
@@ -221,7 +221,7 @@ end
 
 describe RepositoriesController, "showing a team namespaced repo" do
   before(:each) do
-    @group = groups(:johans_team_thunderbird)
+    @group = groups(:team_thunderbird)
   end
   
   it "GET teams/foo/repositories/bar is successful" do
@@ -381,11 +381,11 @@ describe RepositoriesController, "create_clone" do
   end
   
   it "post projects/1/repositories/3/create_clone is successful sets the owner to the group" do
-    groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
+    groups(:team_thunderbird).add_member(users(:johan), Role.admin)
     Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
     @repository.stubs(:has_commits?).returns(true)
     @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-    do_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:johans_team_thunderbird).id)
+    do_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:team_thunderbird).id)
     response.should be_redirect
     assigns(:repository).owner.should == users(:johan).groups.first
   end
@@ -525,7 +525,7 @@ describe RepositoriesController, "new / create" do
   before(:each) do
     @project = projects(:johans)
     @user = users(:johan)
-    @group = groups(:johans_team_thunderbird)
+    @group = groups(:team_thunderbird)
     @group.add_member(@user, Role.admin)
     login_as :johan
   end
@@ -642,9 +642,9 @@ describe RepositoriesController, "edit / update" do
     
   it "requires adminship on the group, if the owner is a group" do
     login_as :mike
-    @repository.owner = groups(:johans_team_thunderbird)
+    @repository.owner = groups(:team_thunderbird)
     @repository.save!
-    get :edit, :group_id => groups(:johans_team_thunderbird).to_param, :id => @repository.to_param
+    get :edit, :group_id => groups(:team_thunderbird).to_param, :id => @repository.to_param
     response.should be_success
   end
   
@@ -668,7 +668,7 @@ describe RepositoriesController, "with committer (not owner) logged in" do
   it "should GET projects/1/repositories/3 and have merge request link" do
     login_as :mike
     project = projects(:johans)
-    project.owner = groups(:johans_team_thunderbird)
+    project.owner = groups(:team_thunderbird)
     project.owner.add_member(users(:mike), Role.committer)
     project.save!
     repository = project.repositories.first
