@@ -86,9 +86,17 @@ class ProjectsController < ApplicationController
   end
   
   def edit
+    @groups = current_user.groups
   end
   
   def update
+    @groups = current_user.groups
+    
+    # change group, if requested
+    if !@project.owned_by_group? && !params[:project][:owner_id].blank?
+      @project.owner = current_user.groups.find(params[:project][:owner_id])
+    end
+    
     @project.attributes = params[:project]
     if @project.save
       @project.create_event(Action::UPDATE_PROJECT, @project, current_user)

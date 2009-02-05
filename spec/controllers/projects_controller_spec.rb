@@ -315,6 +315,48 @@ describe ProjectsController do
   end
 end
 
+describe ProjectsController, "Changing owner" do
+  before(:each) do
+    @project = projects(:johans)
+    @project.owner = users(:mike)
+    @project.save
+    @group = users(:mike).groups.first
+    login_as :mike
+  end
+  
+  it "gets a list of the users' groups on edit" do
+    get :edit, :id => @project.to_param
+    response.should be_success
+    assigns(:groups).should == users(:mike).groups
+  end
+  
+  it "gets a list of the users' groups on update" do
+    put :update, :id => @project.to_param, :project => {:title => "foo"}
+    assigns(:groups).should == users(:mike).groups
+  end
+  
+  it "changes the owner" do
+    put :update, :id => @project.to_param, :project => {
+      :owner_id => @group.id
+    }
+    response.should redirect_to(project_path(@project))
+    @project.reload.owner.should == @group
+  end
+  
+  it "changes the owner, only if the original owner was a user" do
+    @project.owner = @group
+    @project.save!
+    new_group = Group.create!(:name => "temp")
+    new_group.add_member(users(:mike), Role.admin)
+    
+    put :update, :id => @project.to_param, :project => {
+      :owner_id => new_group.id
+    }
+    response.should redirect_to(project_path(@project))
+    @project.reload.owner.should == @group
+  end
+end
+
 describe ProjectsController, "in Private Mode" do
   before(:each) do
     GitoriousConfig['public_mode'] = false

@@ -34,9 +34,10 @@ class Project < ActiveRecord::Base
     }, :order => "repositories.created_at asc", :dependent => :destroy
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository", 
-    :conditions => ["kind = ?", Repository::KIND_WIKI]
-  
+    :conditions => ["kind = ?", Repository::KIND_WIKI]  
   has_many  :groups
+  
+  attr_protected :owner_id, :user_id
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
