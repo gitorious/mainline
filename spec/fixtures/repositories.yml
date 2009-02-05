@@ -58,6 +58,6 @@ johans_wiki:
   mainline: false
   kind: <%= "#{Repository::KIND_WIKI}" %>
   ready: true
-  owner_type: Group
-  owner_id: <%= Fixtures.identify(:johans_core) %>
+  owner_type: User
+  owner_id: 1
   hashed_path: <%= Digest::SHA1.hexdigest("johans_wiki") %>

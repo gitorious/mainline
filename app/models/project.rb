@@ -36,8 +36,7 @@ class Project < ActiveRecord::Base
   has_one     :wiki_repository, :class_name => "Repository", 
     :conditions => ["kind = ?", Repository::KIND_WIKI]
   
-  has_one   :group, :conditions => { :public => false }
-  has_many  :groups, :conditions => { :public => true }
+  has_many  :groups
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
@@ -72,7 +71,6 @@ class Project < ActiveRecord::Base
     :message => I18n.t( "project.ssl_required")
 
   before_validation :downcase_slug
-  before_create :create_core_group
   after_create :create_wiki_repository
 
   LICENSES = [
@@ -124,7 +122,20 @@ class Project < ActiveRecord::Base
   end
 
   def admin?(candidate)
-    group.admin?(candidate)
+    case owner
+    when User
+      candidate == self.owner
+    when Group
+      owner.admin?(candidate)
+    end
+  end
+  
+  def committer?(candidate)
+    owner == User ? owner == candidate : owner.committer?(candidate)
+  end
+  
+  def owned_by_group?
+    owner === Group
   end
 
   def can_be_deleted_by?(candidate)
@@ -181,26 +192,14 @@ class Project < ActiveRecord::Base
     nil
   end
 
-  protected
-    def create_core_group
-      core_group = Group.create!(:name => self.slug + "-core")
-      core_group.project = self
-      core_group.creator = self.user
-      core_group.public = false
-      core_group.memberships.create!({
-        :user => self.user,
-        :role => Role.admin,
-      })
-      self.group = core_group
-    end
-    
+  protected    
     def create_wiki_repository
       self.wiki_repository = Repository.create!({
         :user => self.user, 
         :name => self.slug + Repository::WIKI_NAME_SUFFIX,
         :kind => Repository::KIND_WIKI,
         :project => self,
-        :owner => self.group,
+        :owner => self.owner,
       })
     end
 

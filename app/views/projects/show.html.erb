@@ -67,10 +67,12 @@
       <li class="wiki_page">
         <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
       </li>
-      <li class="project_members">
-        <%= link_to t("views.projects.project_members"), 
-          group_memberships_path(@project.group) -%>
-      </li>
+      <% if @project.owned_by_group? -%>
+        <li class="project_members">
+          <%= link_to t("views.projects.project_members"), 
+            group_memberships_path(@project.owner) -%>
+        </li>
+      <% end -%>
     </ul>
   
     <ul class="links actions">

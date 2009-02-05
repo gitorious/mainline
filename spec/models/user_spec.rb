@@ -137,11 +137,11 @@ describe User do
   end
   
   it "knows if a user has write access to a repository" do
-    u = users(:johan)
-    repo = repositories(:johans)
+    u = users(:mike)
+    repo = repositories(:johans2)
     u.can_write_to?(repo).should == true
     u.can_write_to?(repositories(:moes)).should == false
-    repo.owner.group.add_member(users(:moe), Role.committer)
+    repo.owner.add_member(users(:moe), Role.committer)
     users(:moe).can_write_to?(repo).should == true
     
   end
@@ -225,14 +225,13 @@ describe User do
   end
   
   it "should have many memberships" do
-    users(:johan).memberships.should == [memberships(:johans_johan)]
     groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
-    users(:johan).memberships.count.should == 2
+    users(:johan).memberships.count.should == 1
   end
   
   it "has many groups through the memberships" do
     groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
-    users(:johan).groups.should == groups(:johans_team_thunderbird, :johans_core)
+    users(:johan).groups.should == [groups(:johans_team_thunderbird)]
   end
   
   it "has to_param_with_prefix" do
@@ -248,6 +247,11 @@ describe User do
   it "knows if a user is a an admin of itself" do
     users(:mike).admin?(users(:mike)).should == true
     users(:mike).admin?(users(:johan)).should == false
+  end
+  
+  it "knows if a user is a a committer of itself" do
+    users(:mike).committer?(users(:mike)).should == true
+    users(:mike).committer?(users(:johan)).should == false
   end
  
   protected

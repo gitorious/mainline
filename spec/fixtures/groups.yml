@@ -1,23 +1,6 @@
-johans_core:
-  name: johans-project-core
-  public: false
-#  project: johans
-#  creator: johan
-  project_id: 1
-  user_id: 1
-  
 johans_team_thunderbird:
   name: team-thunderbird
-  public: true
 #  project: johans
 #  creator: johan
   project_id: 1
   user_id: 1
-
-moes_core:
-  name: moes-project-core
-  public: false
-#  project: moes
-#  creator: moe
-  project_id: 2
-  user_id: 2

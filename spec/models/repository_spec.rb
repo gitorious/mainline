@@ -265,13 +265,6 @@ describe Repository do
     @repository.save!
     @repository.writable_by?(users(:johan)).should == true
     @repository.writable_by?(users(:mike)).should == false
-    @repository.owner.group.add_member(users(:mike), Role.committer)
-    @repository.writable_by?(users(:mike)).should == true
-    
-    @repository.owner = groups(:johans_core)
-    @repository.writable_by?(users(:johan)).should == true
-    @repository.owner.add_member(users(:moe), Role.committer)
-    @repository.writable_by?(users(:moe)).should == true
     
     @repository.owner = groups(:johans_team_thunderbird)
     @repository.writable_by?(users(:johan)).should == false
@@ -425,15 +418,20 @@ describe Repository do
   end
   
   it "returns a list of committers depending on owner type" do
-    repo = repositories(:johans)
-    repo.owner.group.add_member(users(:mike), Role.admin)
-    repo.committers.should == groups(:johans_core).members
+    repo = repositories(:johans2)
+    
+    repo.owner = projects(:johans)
+    repo.committers.should == [users(:johan)]
     
     repo.owner = users(:johan)
     repo.committers.should == [users(:johan)]
     
     repo.owner = groups(:johans_team_thunderbird)
     repo.committers.should == groups(:johans_team_thunderbird).members
+    
+    repo.owner.add_member(users(:moe), Role.committer)
+    repo.reload
+    repo.committers.map(&:login).should include(users(:moe).login)
   end
   
   it "sets a hash on create" do

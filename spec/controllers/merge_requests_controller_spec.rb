@@ -355,9 +355,10 @@ describe MergeRequestsController do
 	integrate_views
 	
 	before(:each) do
-	  login_as :mike
+	  login_as :johan
 		@project = projects(:johans)
-		@project.group.add_member(users(:mike), Role.committer)
+		@project.owner = groups(:johans_team_thunderbird)
+		@project.owner.add_member(users(:johan), Role.committer)
 		@repository = repositories(:johans2)
 		@mainline_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans)

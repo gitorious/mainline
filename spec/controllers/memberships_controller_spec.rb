@@ -54,8 +54,8 @@ end
 
 describe MembershipsController do
   before(:each) do 
-    login_as :johan
-    @group = groups(:johans_core)
+    login_as :mike
+    @group = groups(:johans_team_thunderbird)
   end
   
   describe "GET /groups/N/memberships.html" do    
@@ -151,7 +151,7 @@ describe MembershipsController do
   
   describe "autocomplete username" do
     it "finds user by login" do
-      post :auto_complete_for_user_login, :group_id => groups(:johans_core).to_param, 
+      post :auto_complete_for_user_login, :group_id => groups(:johans_team_thunderbird).to_param, 
         :user => { :login => "mik" }, :format => "js"
       assigns(:users).should == [users(:mike)]
     end

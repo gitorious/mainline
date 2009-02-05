@@ -191,10 +191,8 @@ class Repository < ActiveRecord::Base
     case owner
     when User
       self.owner == a_user
-    when Group
+    when Group, Project
       self.owner.committer?(a_user)
-    when Project
-      self.owner.group.committer?(a_user)
     else
       user == a_user
     end
@@ -305,12 +303,12 @@ class Repository < ActiveRecord::Base
   end
   
   def committers
-    #owner === Group ? owner.members : [owner]
     case owner
     when Group
       owner.members
     when Project
-      owner.group.members
+      project_owner = owner.owner
+      project_owner === User ? [project_owner] : project_owner.members
     else
       [owner]
     end

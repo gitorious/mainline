@@ -198,6 +198,12 @@ class User < ActiveRecord::Base
     self == a_user
   end
   
+  # is +a_user+ a committer within this users realm
+  # (for duck-typing repository etc access related things)
+  def committer?(a_user)
+    self == a_user
+  end
+  
   def to_grit_actor
     Grit::Actor.new(fullname.blank? ? login : fullname, email)
   end

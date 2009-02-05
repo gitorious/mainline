@@ -84,6 +84,7 @@ class RepositoriesController < ApplicationController
       end
       return
     end
+
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]
     @repository.user = current_user

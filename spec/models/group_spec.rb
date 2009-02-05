@@ -21,34 +21,34 @@ describe Group do
   
   describe "in general" do
     it "uses the name as to_param" do
-      groups(:johans_core).to_param.should == groups(:johans_core).name
+      groups(:johans_team_thunderbird).to_param.should == groups(:johans_team_thunderbird).name
     end
   end
   
   describe "members" do
     before(:each) do
-      @group = groups(:johans_core)
+      @group = groups(:johans_team_thunderbird)
     end
     
     it "knows if a user is a member" do
-      @group.member?(users(:johan)).should == true
-      @group.member?(users(:mike)).should == false
+      @group.member?(users(:johan)).should == false
+      @group.member?(users(:mike)).should == true
     end
     
     it "know the role of a member" do
-      @group.role_of_user(users(:mike)).should == nil
-      @group.role_of_user(users(:johan)).should == roles(:admin)
-      @group.admin?(users(:mike)).should == false
-      @group.admin?(users(:johan)).should == true
+      @group.role_of_user(users(:johan)).should == nil
+      @group.role_of_user(users(:mike)).should == roles(:admin)
+      @group.admin?(users(:johan)).should == false
+      @group.admin?(users(:mike)).should == true
       
-      @group.committer?(users(:mike)).should == false
-      @group.committer?(users(:johan)).should == true
+      @group.committer?(users(:johan)).should == false
+      @group.committer?(users(:mike)).should == true
     end
     
     it "can add a user with a role using add_member" do
-      @group.member?(users(:mike)).should == false
-      @group.add_member(users(:mike), Role.committer)
-      @group.reload.member?(users(:mike)).should == true
+      @group.member?(users(:johan)).should == false
+      @group.add_member(users(:johan), Role.committer)
+      @group.reload.member?(users(:johan)).should == true
     end
   end
   
@@ -63,13 +63,8 @@ describe Group do
     grp.to_param_with_prefix.should == "+#{grp.to_param}"
   end
   
-  it "has a breadcrumb parent" do
-    group = groups(:johans_team_thunderbird)
-    group.project.should_not == nil
-    group.public = true
-    group.breadcrumb_parent.should == nil
-    group.public = false
-    group.breadcrumb_parent.should == group.project
+  it "has no breadcrumb parent" do
+    groups(:johans_team_thunderbird).breadcrumb_parent.should == nil
   end
   
   describe "validations" do

@@ -381,10 +381,11 @@ describe RepositoriesController, "create_clone" do
   end
   
   it "post projects/1/repositories/3/create_clone is successful sets the owner to the group" do
+    groups(:johans_team_thunderbird).add_member(users(:johan), Role.admin)
     Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
     @repository.stubs(:has_commits?).returns(true)
     @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
-    do_post(:name => "foo-clone", :owner_type => "Group", :owner_id => users(:johan).groups.first.id)
+    do_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:johans_team_thunderbird).id)
     response.should be_redirect
     assigns(:repository).owner.should == users(:johan).groups.first
   end
@@ -663,22 +664,18 @@ end
 
 describe RepositoriesController, "with committer (not owner) logged in" do
   integrate_views
-  
-  before(:each) do
-    login_as :mike
-    @project = projects(:johans)
-    @project.group.add_member(users(:mike), Role.committer)
-    @repository = @project.repositories.first
-  end
-  
-  def do_get()
-    get :show, :project_id => @project.to_param, :id => @repository.to_param
-  end
     
   it "should GET projects/1/repositories/3 and have merge request link" do
-    Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-    @repository.stubs(:has_commits?).returns(true)
-    do_get
+    login_as :mike
+    project = projects(:johans)
+    project.owner = groups(:johans_team_thunderbird)
+    project.owner.add_member(users(:mike), Role.committer)
+    project.save!
+    repository = project.repositories.first
+    Project.expects(:find_by_slug!).with(project.slug).returns(project)
+    repository.stubs(:has_commits?).returns(true)
+    
+    get :show, :project_id => project.to_param, :id => repository.to_param
     flash[:error].should == nil
     response.body.should match(/Request merge/)
   end

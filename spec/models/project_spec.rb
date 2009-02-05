@@ -84,7 +84,7 @@ describe Project do
     project.wiki_repository.name.should == "my-new-project#{Repository::WIKI_NAME_SUFFIX}"
     project.wiki_repository.kind.should == Repository::KIND_WIKI
     project.repositories.should_not include(project.wiki_repository)
-    project.wiki_repository.owner.should == project.group
+    project.wiki_repository.owner.should == project.owner
   end
 
   it "finds a project by slug or raises" do
@@ -101,19 +101,18 @@ describe Project do
   it "knows if a user is a admin on a project" do
     project = projects(:johans)
     project.admin?(users(:johan)).should == true
-    project.group.memberships.create!({
-      :user => users(:mike), 
-      :role => Role.admin
-    })
-    project.admin?(users(:mike)).should == true
+    project.owner = groups(:johans_team_thunderbird)
+    project.admin?(users(:johan)).should == false
+    project.owner.add_member(users(:johan), Role.admin)
+    project.admin?(users(:johan)).should == true
     
     project.admin?(users(:moe)).should == false
-    project.group.memberships.create!({
-      :user => users(:moe), 
-      :role => Role.committer
-    })
+    project.owner.add_member(users(:moe), Role.committer)
     project.admin?(users(:moe)).should == false
+    # be able to deal with AuthenticatedSystem's quirky design:
     project.admin?(:false).should == false
+    project.admin?(false).should == false
+    project.admin?(nil).should == false
   end
 
   it "knows if a user can delete the project" do
@@ -180,23 +179,6 @@ describe Project do
   
   it "has to_param_with_prefix" do
     projects(:johans).to_param_with_prefix.should == projects(:johans).to_param
-  end
-  
-  describe "master group" do
-    it "should create a non-public group on create" do
-      project = create_project
-      project.save!
-      project.group.should_not == nil
-      project.group.public?.should == false
-      project.group.creator.should == project.user
-    end
-    
-    it "should create a group with the creator as a admin member" do
-      project = create_project(:user => users(:moe))
-      project.save!
-      project.group.members.should == [users(:moe)]
-      project.group.role_of_user(users(:moe)).should == roles(:admin)
-    end
   end
   
   describe "Project events" do

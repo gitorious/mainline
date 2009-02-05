@@ -78,7 +78,7 @@ describe MergeRequest do
   
   it "knows who can resolve itself" do
     @merge_request.resolvable_by?(users(:johan)).should == true # owns the mainline repos
-    @merge_request.target_repository.owner.group.add_member(users(:mike), Role.committer)
+    @merge_request.target_repository.owner = groups(:johans_team_thunderbird)
     @merge_request.resolvable_by?(users(:mike)).should == true # is commiter of mainline repos
     @merge_request.resolvable_by?(users(:moe)).should == false
   end
