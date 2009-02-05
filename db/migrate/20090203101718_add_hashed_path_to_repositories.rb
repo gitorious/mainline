@@ -3,9 +3,11 @@ class AddHashedPathToRepositories < ActiveRecord::Migration
     transaction do
       add_column :repositories, :hashed_path, :string
       add_index :repositories, :hashed_path
-      Repository.find(:all).each do |repo|
-        repo.send(:set_repository_hash)
-        repo.save!
+      
+      Repository.reset_column_information
+      
+      Repository.all.each do |repo|
+        repo.update_attribute(:hashed_path, repo.send(:set_repository_hash))
       end
       say "\e[1;31m===> Now go and run script/shard_git_repositories_by_hash as the #{GitoriousConfig['gitorious_user'].inspect} user <===\e[0m"
     end
