@@ -3,18 +3,18 @@
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
   <p class="hint">
-    The repository will be owned by <%= link_to @owner.title, @owner -%> (<%= @owner.class.human_name -%>)
+    The repository will be owned by <%= link_to @owner.title, @owner -%> (a <%= @owner.class.human_name.downcase -%>)
   </p>
   <p>
     <%= f.label :name -%>:<br />
-    <%= f.text_field :name -%>
+    <%= f.text_field :name, :class => "text" -%>
   </p>
   <p>
     <small class="hint">
       <a href="http://daringfireball.net/projects/markdown/">Markdown</a> and basic html is allowed
     </small><br />
     <%= f.label :description -%>:<br />
-    <%= f.text_area :description, :class => "text wide tall" -%>
+    <%= f.text_area :description, :class => "text shorter" -%>
   </p>
   
   <%= f.submit "Create repository" -%>
