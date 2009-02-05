@@ -76,9 +76,11 @@ describe Repository do
   end
   
   it "sets itself as mainline if the owner is Project" do
+    @repository.project = nil
     @repository.owner = projects(:johans)
     @repository.save
     @repository.mainline?.should == true
+    @repository.project.should == projects(:johans)
   end
   
   it "doesn't set itself as mainline if the owner is a Group" do

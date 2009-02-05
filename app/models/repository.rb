@@ -345,6 +345,7 @@ class Repository < ActiveRecord::Base
     def set_as_mainline_if_project_repository
       if owner.is_a?(Project)
         self.mainline = true
+        self.project = owner
       end
     end
     
