@@ -4,10 +4,11 @@ class PushEventProcessor < ApplicationProcessor
 
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
-    if repository = Repository.find_by_hashed_path(hash['gitdir'] + "e")
+    logger.debug("Processor on message #{hash.inspect}")
+    if repository = Repository.find_by_hashed_path(hash['gitdir'])
       logger.debug("Processor found repository #{repository}")
     else
-      logger.debug("Processor received message #{hash['gitdir']}: #{hash['message']}")
+      logger.debug("Processor received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
     end
     
     # if repository = Repository.find_by_path(gitdir)

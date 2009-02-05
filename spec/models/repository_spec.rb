@@ -443,7 +443,7 @@ describe Repository do
   
   it "know the full hashed path" do
     @repository.hashed_path = "a"*40
-    @repository.full_hashed_path.should == "aaa/aaa/#{'a'*33}"
+    @repository.full_hashed_path.should == "aaa/aaa/#{'a'*34}"
   end
   
   describe "observers" do

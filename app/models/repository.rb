@@ -330,8 +330,11 @@ class Repository < ActiveRecord::Base
   end
   
   def full_hashed_path
-    splitted = (hashed_path || set_repository_hash).scan(/.../)
-    splitted[0..2].join("/") + splitted[3..-1].join
+    h = (hashed_path || set_repository_hash)
+    first = h[0,3]
+    second = h[3,3]
+    last = h[-34, 34]
+    return "#{first}/#{second}/#{last}"
   end
   
   def set_repository_hash
