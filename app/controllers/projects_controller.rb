@@ -18,6 +18,7 @@
 
 class ProjectsController < ApplicationController  
   before_filter :login_required, :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
+  before_filter :find_project_and_assure_adminship, :only => [:edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   
   def index
@@ -85,15 +86,9 @@ class ProjectsController < ApplicationController
   end
   
   def edit
-    @project = Project.find_by_slug!(params[:id])
   end
   
   def update
-    @project = Project.find_by_slug!(params[:id])
-    if @project.user != current_user
-      flash[:error] = I18n.t "projects_controller.update_error"
-      redirect_to(project_path(@project)) and return
-    end
     @project.attributes = params[:project]
     if @project.save
       @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
@@ -118,4 +113,13 @@ class ProjectsController < ApplicationController
     end
     redirect_to projects_path
   end
+  
+  protected
+    def find_project_and_assure_adminship
+      @project = Project.find_by_slug!(params[:id])
+      if !@project.admin?(current_user)
+        flash[:error] = I18n.t "projects_controller.update_error"
+        redirect_to(project_path(@project)) and return
+      end
+    end
 end

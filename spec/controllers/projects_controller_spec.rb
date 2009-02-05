@@ -192,7 +192,7 @@ describe ProjectsController do
     assigns(:project).owner.should == group
   end
   
-  it "GET projects/create should redirect to new_account_key_path if no keys on user" do
+  it "POST projects/create should redirect to new_account_key_path if no keys on user" do
     users(:johan).ssh_keys.destroy_all
     login_as :johan
     post :create
@@ -209,11 +209,39 @@ describe ProjectsController do
     response.should redirect_to(new_sessions_path)
   end
   
-  it "PUT projects/update can only be done by project owner" do
+  it "GET projects/N/edit is only for project owner" do
     login_as :moe
-    put :update, :id => projects(:johans).slug, :project => {:title => "new name", :slug => "foo", :description => "bar"}
+    get :edit, :id => projects(:johans).to_param
     flash[:error].should match(/you're not the owner of this project/i)
     response.should redirect_to(project_path(projects(:johans)))
+  end
+  
+  it "GET projects/N/edit is only for project owner" do
+    login_as :moe
+    get :edit, :id => projects(:johans).to_param
+    flash[:error].should match(/you're not the owner of this project/i)
+    response.should redirect_to(project_path(projects(:johans)))
+  end
+  
+  it "PUT projects/update can only be done by project owner" do
+    project = projects(:johans)
+    project.owner = groups(:team_thunderbird)
+    project.save!
+    login_as :mike
+    get :edit, :id => project.to_param
+    response.should be_success
+  end
+  
+  it "PUT projects/update can only be done by project group admins" do
+    project = projects(:johans)
+    project.owner = groups(:team_thunderbird)
+    project.save!
+    login_as :mike
+    put :update, :id => project.to_param, :project => {
+      :description => "bar"
+    }
+    assigns(:project).reload.description.should == "bar"
+    response.should redirect_to(project_path(project))
   end
   
   it "PUT projects/update with valid data should update record" do
