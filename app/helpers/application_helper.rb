@@ -329,6 +329,7 @@ module ApplicationHelper
   end
   
   def paragraphs_with_more(text)
+    return if text.blank?
     first, rest = text.split("</p>", 2)
     if rest.blank?
       first + "</p>"
