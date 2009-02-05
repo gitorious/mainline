@@ -38,6 +38,30 @@ cd ImageMagick-6.4.6-9
 ./configure && make && make install
 cd ..
 
+1.2.3 Set up ActiveMQ
+
+apt-get install uuid uuid-dev openjdk-6-jre
+wget http://www.powertech.no/apache/dist/activemq/apache-activemq/5.2.0/apache-activemq-5.2.0-bin.tar.gz
+tar xzvf apache-activemq-5.2.0-bin.tar.gz  -C /usr/local/
+echo "export ACTIVEMQ_HOME=/usr/local/apache-activemq-5.2.0" >> /etc/activemq.conf
+echo "export JAVA_HOME=/usr/" >> /etc/activemq.conf
+adduser --system --no-create-home  activemq
+chown -R activemq /usr/local/apache-activemq-5.2.0/data
+
+# turn off the default multicasting activemq does, or other brokers on the
+# same network will receive your queue items
+vim /usr/local/apache-activemq-5.2.0/conf/activemq.xml
+# edit the networkConnectors conf to something like this:
+<networkConnectors>
+    <!-- by default just auto discover the other brokers -->
+    <!-- <networkConnector name="default-nc" uri="multicast://default"/> -->
+    <!-- Example of a static configuration: -->
+    <networkConnector name="localhost" uri="static://(tcp://127.0.0.1:61616)"/>
+</networkConnectors>
+wget http://launchpadlibrarian.net/15645459/activemq
+mv activemq /etc/init.d/activemq
+chmod +x /etc/init.d/activemq
+
 2.1 Install Ruby Enterprise Edition
 
 wget http://rubyforge.org/frs/download.php/48625/ruby-enterprise_1.8.6-20081215-i386.deb
