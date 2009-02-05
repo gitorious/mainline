@@ -37,8 +37,21 @@ class PushEventProcessor < ApplicationProcessor
     return result
   end
   
+  def emails_and_messages
+    git_spec = case event_type
+    when Action::COMMIT
+      "#{@oldrev}..#{@newrev}"
+    else
+      @newrev
+    end
+#    revs = git.rev_list({}, git_spec).split("\n")
+    addresses, messages, dates, revs = git.log({:pretty => 'format:%ce;%s;%ct;%H'}, git_spec).split("\n").collect{|line|line.split(';')}
+    return [addresses, messages, dates, revs]
+  end
+  
   def committer
     logger.debug("Processor looking for user with email: '#{committer_email}'")
+    logger.debug("Processor processing commits #{emails_and_messages}")
     User.find_by_email(committer_email)
   end
   
@@ -55,11 +68,16 @@ class PushEventProcessor < ApplicationProcessor
     return action
   end
   
+  
   protected
   def extract_event(a_repo, message)
     project = Project.find_by_slug('bar')
     begin 
-      project.create_event(Action::COMMIT, a_repo, committer, revision, 'Unknown', Time.now)
+      emails_and_messages.each do |address, message, date, rev|
+        logger.debug("Processor got #{address}, #{message}, #{date}, #{rev}")
+        project.create_event(event_type, a_repo, User.find_by_email(address), rev, message, Time.at(date.to_i).utc)
+      end
+      # project.create_event(event_type, a_repo, committer, revision, 'Unknown', Time.now)
     rescue
       logger.error("Processor got error #{$!}")
     end

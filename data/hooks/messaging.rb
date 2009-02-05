@@ -3,6 +3,7 @@ require 'stomp'
 require 'json'
 require 'grit'
 
+print "=> Syncing Gitorious... "
 
 
 class Publisher
@@ -15,6 +16,5 @@ class Publisher
   def post_message(message)
     connect unless @connected
     @connection.send '/queue/GitoriousPushEvent', message, {'persistent' => true}
-    $stdout.print "Sent #{message}"
   end
 end
