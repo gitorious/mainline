@@ -63,6 +63,15 @@ describe Group do
     grp.to_param_with_prefix.should == "+#{grp.to_param}"
   end
   
+  it "has a breadcrumb parent" do
+    group = groups(:johans_team_thunderbird)
+    group.project.should_not == nil
+    group.public = true
+    group.breadcrumb_parent.should == nil
+    group.public = false
+    group.breadcrumb_parent.should == group.project
+  end
+  
   describe "validations" do
     it "should have a unique name" do
       group = Group.new({

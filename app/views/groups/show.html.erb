@@ -17,6 +17,10 @@
 #++
 %>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @group} -%>
+<% end -%>
+
 <h1><%=h @group.name -%></h1>
 
 <h3>Repositories (<%= @group.repositories.count -%>)</h3>

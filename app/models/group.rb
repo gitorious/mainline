@@ -47,7 +47,7 @@ class Group < ActiveRecord::Base
   end
   
   def breadcrumb_parent
-    nil
+    public? ? nil : project
   end
   
   # is this +user+ a member of this group?
