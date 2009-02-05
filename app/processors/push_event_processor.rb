@@ -21,7 +21,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def log_event(an_event)
-    @project ||= Project.find_by_slug("bar")
+    @project ||= Project.first#find_by_slug("bar")
     logger.debug("Processor: adding event #{an_event.message} from #{an_event.email}")
     @project.create_event(an_event.event_type, @repository, User.find_by_email(an_event.email), an_event.identifier, an_event.message, an_event.commit_time)
   end
