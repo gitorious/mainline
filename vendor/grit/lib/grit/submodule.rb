@@ -76,8 +76,8 @@ module Grit
     end
     
     def basename
-      File.basename(@name)
-    end
+      File.basename(name)
+    end    
     
     # Pretty object inspection
     def inspect

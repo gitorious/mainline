@@ -33,7 +33,7 @@ Rails::Initializer.run do |config|
   config.gem "daemons",      :lib => false
   config.gem "hoe",          :lib => false
   config.gem "echoe",        :lib => false
-  config.gem "RedCloth",     :lib => "redcloth"
+#  config.gem "RedCloth",     :lib => "redcloth"
   config.gem "ruby-openid",  :lib => "openid"
   config.gem "rdiscount",    :version => "1.3.1.1"
   config.gem 'stomp'

@@ -213,20 +213,15 @@ module Grit
     #
     # Returns Grit::Commit[]
     def commit_deltas_from(other_repo, ref = "master", other_ref = "master")
+      # TODO: we should be able to figure out the branch point, rather than
+      # rev-list'ing the whole thing
       repo_refs       = self.git.rev_list({}, ref).strip.split("\n")
       other_repo_refs = other_repo.git.rev_list({}, other_ref).strip.split("\n")
       
       (other_repo_refs - repo_refs).map do |ref|
         Commit.find_all(other_repo, ref, {:max_count => 1}).first
       end
-      
-      # commits = []
-      # (other_repo_refs - repo_refs).each_slice(5) do |refs| # due to cmdline arg length
-      #   commits.concat Commit.find_all(self, refs.join(" "), {:max_count => refs.size})
-      # end
-      # commits
     end
-    
     
     # The Tree object for the given treeish reference
     #   +treeish+ is the reference (default 'master')

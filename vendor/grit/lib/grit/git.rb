@@ -36,7 +36,7 @@ module Grit
     end
     
     def shell_escape(str)
-      str.to_s.gsub("'", "\\\\'")
+      str.to_s.gsub("'", "\\\\'").gsub(";", '\\;')
     end
     alias_method :e, :shell_escape
     
@@ -61,7 +61,7 @@ module Grit
       opt_args = transform_options(options)
       ext_args = args.reject { |a| a.empty? }.map { |a| (a == '--' || a[0].chr == '|') ? a : "'#{e(a)}'" }
 
-      call = "#{prefix}#{Git.git_binary} --git-dir='#{self.git_dir}' #{cmd.to_s.gsub(/_/, '-')} #{(opt_args + ext_args).join(' ')}#{postfix}"
+      call = "#{prefix}#{Git.git_binary} --git-dir='#{self.git_dir}' #{cmd.to_s.gsub(/_/, '-')} #{(opt_args + ext_args).join(' ')}#{e(postfix)}"
       Grit.log(call) if Grit.debug
       response, err = timeout ? sh(call) : wild_sh(call)
       Grit.log(response) if Grit.debug

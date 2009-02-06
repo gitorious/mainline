@@ -1,3 +1,15 @@
+== 1.0.2 / 2009-02-10
+  * Minor Enhancements
+    * Implement Grit.version to use VERSION.yml file
+
+== 1.0.1 / 2009-02-10
+  * Bug Fixes
+    * Add diff-lcs as a dependency
+
+== 1.0.0 / 2009-01-27
+  * Tons of awesome in here. Also, we suck at updating the history.
+  * Let's do better at that from now on.
+
 == 0.8.3 / 2008-07-07
   * Capture stderr and log if debug is true (rsanheim)
   
@@ -9,5 +21,3 @@
 
 == 0.7.0 / 2008-01-07
   * First public release!
-
- 

@@ -72,8 +72,8 @@ module Grit
         (sha1, sha2) = string.split('..')
         return [rev_parse({}, sha1), rev_parse({}, sha2)]
       end
-      
-      if /\w{40}/.match(string)  # passing in a sha - just no-op it
+
+      if /^[0-9a-f]{40}$/.match(string)  # passing in a sha - just no-op it
         return string.chomp
       end
 
@@ -113,7 +113,7 @@ module Grit
     
     def blame_tree(commit, path = nil)
       begin
-        path = path.to_a.join('/').to_s + '/' if (path && path != '')
+        path = [path].join('/').to_s + '/' if (path && path != '')
         path = '' if !path.is_a? String
         commits = file_index.last_commits(rev_parse({}, commit), looking_for(commit, path))
         clean_paths(commits)

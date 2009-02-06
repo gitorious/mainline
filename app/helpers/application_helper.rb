@@ -24,6 +24,11 @@ module ApplicationHelper
   include UsersHelper
   include BreadcrumbsHelper
   
+  def markdown(text, options = [:smart])
+    rd = RDiscount.new(text.to_s, *options)
+    rd.to_html
+  end
+  
   def feed_icon(url, alt_title = "Atom feed", size = :small)
     link_to image_tag("feed_12.png", :class => "feed_icon"), url, 
       :alt => alt_title, :title => alt_title
@@ -170,7 +175,7 @@ module ApplicationHelper
         category = "project"
       when Action::CLONE_REPOSITORY
         original_repo = Repository.find_by_id(event.data.to_i)
-        next if original_repo.nil?
+        return if original_repo.nil?
         
         project = target.project
         
@@ -220,7 +225,7 @@ module ApplicationHelper
         category = "repository"
       when Action::REMOVE_COMMITTER
         user = User.find_by_id(event.data.to_i)
-        next unless user
+        return unless user
         
         project = target.project
         action = "<strong>#{I18n.t("application_helper.event_committer_removed")}</strong> #{link_to user.login, user_path(user)} from #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"

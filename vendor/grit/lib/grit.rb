@@ -17,7 +17,11 @@ end
 
 # third party
 require 'rubygems'
+gem "mime-types", ">=0"
 require 'mime/types'
+
+# ruby 1.9 compatibility
+require 'grit/ruby1.9'
 
 # internal requires
 require 'grit/lazy'
@@ -41,7 +45,6 @@ require 'grit/merge'
 
 
 module Grit
-  
   class << self
     # Set +debug+ to true to log all git calls and responses
     attr_accessor :debug
@@ -57,5 +60,8 @@ module Grit
   
   @logger ||= ::Logger.new(STDOUT)
   
-  VERSION = '0.9.4'
+  def self.version
+    yml = YAML.load(File.read(File.join(File.dirname(__FILE__), *%w[.. VERSION.yml])))
+    "#{yml[:major]}.#{yml[:minor]}.#{yml[:patch]}"
+  end
 end

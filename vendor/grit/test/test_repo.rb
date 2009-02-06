@@ -61,7 +61,7 @@ class TestRepo < Test::Unit::TestCase
 
   def test_refs_should_return_array_of_ref_objects
     @r.refs.each do |ref|
-      assert ref.is_a? Grit::Ref
+      assert ref.is_a?(Grit::Ref)
     end
   end
 
@@ -344,5 +344,4 @@ class TestRepo < Test::Unit::TestCase
     delta_commits = @r.commit_deltas_from(other_repo)
     assert_equal 3, delta_commits.size
   end
-  
 end
