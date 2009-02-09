@@ -285,6 +285,7 @@
         :push_url => "Push url",
         :help_push => lambda { |repo| "You can run \"<code>git push #{repo}</code>\", or you can setup a remote by doing the following:" },
         :owner => "Owner",
+        :creator => "creator",
         :project => "Project",
         :confirm_delete => "Please confirm deletion of {{repo}} in {{title}}",
         :message_delete => "Once you press this button the repository will be deleted",

@@ -6,7 +6,7 @@
       <%= gravatar(user.email, :size => 16, :style => "tiny") %>
       <%= link_to h(user.title), user -%>
       <% if @repository.user == user -%>
-        <small>(<%= t("views.repos.owner") %>)</small>
+        <small class="hint">(<%= t("views.repos.creator") %>)</small>
       <% end -%>
     </div>
   </li>

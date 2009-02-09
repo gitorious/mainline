@@ -44,6 +44,11 @@
     <li>
       <strong><%= t("views.repos.owner") %>:</strong> 
       <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
+      <% if @repository.owned_by_group? -%>
+      <small class="hint">
+        (through <%= link_to h(@repository.user.to_param_with_prefix), @repository.user -%>)
+      </small>
+      <% end -%>
     </li>
     <% if @repository.parent -%>
     <li>
@@ -73,31 +78,7 @@
     <% end -%>
   </ul>
   
-  <h4><%= t("views.repos.committers") %></h4>    
-  <ul class="committers">
-  <% @repository.committers(:exclude_groups => true).each do |user| -%>
-    <li>
-      <div class="user">
-        <%= gravatar(user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(user.title), user -%>
-        <% if @repository.user == user -%>
-          <small>(<%= t("views.repos.owner") %>)</small>
-        <% end -%>
-      </div>
-    </li>
-  <% end -%>
-  <% if @repository.owned_by_group? -%>
-    <li><small><%= link_to edit_or_show_group_text, group_memberships_path(@repository.owner) -%></small></li>
-  <% end -%>
-  <% @repository.groups.each do |group| -%>
-    <li>
-      <div class="group">
-        <%= image_tag("silk/group.png") %>
-        <%= link_to h(group.to_param_with_prefix), group -%>
-      </div>
-    </li>
-  <% end -%>
-  </ul>
+  <%= render :partial => "committers_sidebar" -%>
 
   <% unless @commits.blank? -%>
     <h4><%= t("views.logs.branches") %>:</h4>

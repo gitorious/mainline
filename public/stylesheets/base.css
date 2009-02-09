@@ -1077,6 +1077,10 @@ ul.tab_menu li.selected {
 }
 small.hint { font-size: 83%;}
 
+#sidebar .hint {
+  color: #868F97;
+}
+
 .info_hint {
   font-size: 95%;
   color: #666;
