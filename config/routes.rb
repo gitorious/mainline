@@ -22,9 +22,14 @@ ActionController::Routing::Routes.draw do |map|
   
   repository_proc = proc do |repo|
     repo.resources :comments, :member => { :commmit => :get  }
-    repo.resources :merge_requests, :member => { :resolve => :put }, :collection => { :create => :post, :commit_list => :get }
     repo.commit_comment "comments/commit/:sha", :controller => "comments", 
       :action => "commit", :conditions => { :method => :get }
+    repo.resources :merge_requests, :member => { 
+      :resolve => :put 
+    }, :collection => { 
+      :create => :post, 
+      :commit_list => :get 
+    }
     
     repo.formatted_commits_feed "commits/*branch/feed.:format", 
         :controller => "commits", :action => "feed", :conditions => {:feed => :get}
