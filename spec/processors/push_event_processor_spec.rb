@@ -49,7 +49,7 @@ describe PushEventProcessor do
   
   it 'returns the correct type and a set of events for a commit' do
     git = mock
-    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::GIT_SEPARATOR) + "\n"
+    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR) + "\n"
     git.stubs(:log).returns(output*3)
     @processor.stubs(:git).returns(git)
     @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
@@ -92,7 +92,7 @@ describe PushEventProcessor do
   
   def stub_git_show
     git = mock
-    output = ["a9934c1d3a56edfa8f45e5f157869874c8dc2c34","john@nowhere.com","1233842115","Whoops, deleting the tag"].join(PushEventProcessor::GIT_SEPARATOR)
+    output = ["a9934c1d3a56edfa8f45e5f157869874c8dc2c34","john@nowhere.com","1233842115","Whoops, deleting the tag"].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR)
     git.stubs(:show).returns(output)
     @processor.stubs(:git).returns(git)    
   end

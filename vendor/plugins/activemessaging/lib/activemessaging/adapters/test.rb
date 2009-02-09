@@ -79,6 +79,11 @@ module ActiveMessaging
           end
         end
         
+        # Method added by Marius Mathiesen. Clears the messages for easier testing
+        def clear_messages
+          @destinations.each{|d|d.messages.clear}
+        end
+        
         def open_destination destination_name
           unless find_destination destination_name
             @destinations << Destination.new(destination_name)

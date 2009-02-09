@@ -134,26 +134,36 @@ EOS
     SshKey.delete_from_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   
-  it "creates a Task on create and update" do
+  
+  it 'sends a message on create and update' do
     ssh_key = new_key
-    proc{
+    p = proc{
       ssh_key.save!
-    }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
-    task.command.should == "add_to_authorized_keys"
-    task.arguments.should == [ssh_key.to_key]
-    task.target_id.should == ssh_key.id
+    }
+    message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
+    message['command'].should == 'add_to_authorized_keys'
+    message['arguments'].should == [ssh_key.to_key]
+    message['target_id'].should == ssh_key.id
   end
   
-  it "creates a Task on destroy" do
+  it 'sends a message on destroy' do
     ssh_key = new_key
     ssh_key.save!
     keydata = ssh_key.to_key.dup
-    proc{
+    p = proc{
       ssh_key.destroy
-    }.should change(Task, :count)
-    task = Task.find(:first, :conditions => ["target_class = 'SshKey'"], :order => "id desc")
-    task.command.should == "delete_from_authorized_keys"
-    task.arguments.should == [keydata]
+    }
+    message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
+    message['command'].should == 'delete_from_authorized_keys'
+    message['arguments'].should == [keydata]
   end
+  
+  def message_created_in_queue(queue_name, regexp)
+    ActiveMessaging::Gateway.connection.clear_messages
+    yield
+    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
+    msg.should_not be_nil
+    return ActiveSupport::JSON.decode(msg.body)    
+  end
+  
 end

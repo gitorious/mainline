@@ -20,6 +20,8 @@ class PushEventProcessor < ApplicationProcessor
 
   subscribes_to :push_event
   attr_reader :oldrev, :newrev, :action
+
+  GIT_OUTPUT_SEPARATOR = ";;"
   
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
@@ -106,11 +108,9 @@ class PushEventProcessor < ApplicationProcessor
       events_from_git_log
     end
   end
-  
-  GIT_SEPARATOR = ";;"
-  
+    
   def fetch_commit_details(an_event, commit_sha)
-    sha, email, timestamp, message = git.show({:pretty => git_pretty_format, :s => true}, commit_sha).split(GIT_SEPARATOR)
+    sha, email, timestamp, message = git.show({:pretty => git_pretty_format, :s => true}, commit_sha).split(GIT_OUTPUT_SEPARATOR)
     an_event.email        = email
     an_event.commit_time  = Time.at(timestamp.to_i).utc
     an_event.message      = message
@@ -121,7 +121,7 @@ class PushEventProcessor < ApplicationProcessor
     result = []
     commits = git.log({:pretty => git_pretty_format, :s => true}, "#{@oldrev}..#{@newrev}").split("\n")
     commits.each do |c|
-      sha, email, timestamp, message = c.split(GIT_SEPARATOR)
+      sha, email, timestamp, message = c.split(GIT_OUTPUT_SEPARATOR)
       e = EventForLogging.new
       e.identifier    = sha
       e.email         = email
@@ -138,7 +138,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def git_pretty_format
-    fmt = ['%H','%ce','%at','%s'].join(GIT_SEPARATOR)
+    fmt = ['%H','%ce','%at','%s'].join(GIT_OUTPUT_SEPARATOR)
     "format:#{fmt}"
   end
 end

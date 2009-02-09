@@ -1,6 +1,6 @@
 #--
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
+#   Copyright (C) 2008 Marius Mathiesen <marius.mathiesen@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
