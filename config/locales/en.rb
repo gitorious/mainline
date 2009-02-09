@@ -301,14 +301,25 @@
         :back => "Back to repository",
         :show_page_title => "{{repo}} in {{title}}",
         :show_title => "&quot;{{repo}}&quot; repository in {{title}}",
+        :committers_title => "Add committers to {{repo}} in {{title}}",
+        :committers_manage_group_members => "Manage group members for {{group}}",
+        :committers_howto => "There are two ways to add committers to a repository, either by adding 
+                              members to the group owning the repository, or to add another group as 
+                              committers.",
+        :transfer_owner => "Transfer owner",
+        :transfer_owner_howto => "The repository is currrently owned by you, if you wish you can transfer ownership
+                                  of this repository to a group you're an administrator of. That way you can add
+                                  multiple users as committers, without requiring them to start a group.",
         :activities => "Activities",
         :clone_of => "Clone of",
         :created => "Created",
         :btn_request => "Request merge",
         :btn_add_committer => "Add committer",
+        :btn_add_committers => "Add committers",
         :btn_delete_repo => "Delete repository",
         :btn_edit_repo => "Edit repository",
         :committers => "Committers",
+        :current_committers => "Current committers",
         :remove => "Remove",
         :create_title => lambda { |this, clone, project| 
           "Create a clone of #{this.link_to( h(clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to h(project.title), this.send(:project_path, project)}</small>"
@@ -422,6 +433,12 @@
         :new_team_after_create_hint => "You can add more members to the team, after you've created it",
         :edit_memberships => "Edit memberships",
       },
+      :participations => {
+        :add_new => "Add new team as committers",
+        :title => "Team with commit rights to \"{{repo_name}}\"",
+        :btn_add_as_committer => "Add all team members as committers",
+        :return_to => "return to", 
+      }
     },
     :date => {
       :formats => {
@@ -523,6 +540,12 @@
         :memberships => {
           :created_at => "Created at"
         },
+        :participations => {
+          :created_at => "Created at",
+          :group => "Group",
+          :repository => "Repository",
+          :creator => "Created by",
+        }
       },
     }
   }

@@ -19,7 +19,7 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :writable_by]
   before_filter :find_repository_owner
-  before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update]
+  before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update, :committers]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   session :off, :only => [:writable_by]
@@ -153,6 +153,10 @@ class RepositoriesController < ApplicationController
       flash[:error] = I18n.t "repositories_controller.destroy_error"
     end
     redirect_to @owner
+  end
+  
+  def committers
+    @repository = @owner.repositories.find_by_name!(params[:id])
   end
   
   private    

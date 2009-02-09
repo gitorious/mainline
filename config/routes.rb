@@ -30,6 +30,7 @@ ActionController::Routing::Routes.draw do |map|
       :create => :post, 
       :commit_list => :get 
     }
+    repo.resources :participations, :collection => {:auto_complete_for_group_name => :post}
     
     repo.formatted_commits_feed "commits/*branch/feed.:format", 
         :controller => "commits", :action => "feed", :conditions => {:feed => :get}
@@ -48,7 +49,8 @@ ActionController::Routing::Routes.draw do |map|
     :member => {
       :clone => :get, :create_clone => :post,
       :writable_by => :get, 
-      :confirm_delete => :get
+      :confirm_delete => :get,
+      :committers => :get,
     }
   }
   

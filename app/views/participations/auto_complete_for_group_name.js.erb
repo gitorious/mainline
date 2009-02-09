@@ -1,3 +1,4 @@
+<%
 #--
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
@@ -14,11 +15,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+%>
 
-class Participation < ActiveRecord::Base
-  belongs_to :group
-  belongs_to :repository
-  belongs_to :creator, :class_name => 'User'
-  
-  validates_presence_of :group_id, :repository_id
-end
+<ul>
+<% @groups.each do |group| -%>
+<li class="committers">
+  <div class="name"><%=h group.name -%></div>
+  <div class="hint">(<%= pluralize group.members.count, "member", "members" -%>)</div>
+</li>
+<% end -%>
+</ul>

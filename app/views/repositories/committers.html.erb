@@ -1,0 +1,49 @@
+<h1><%= t("views.repos.committers_title", :repo => h(@repository.name), 
+            :title => h(@repository.owner.title)) %></h1>
+
+<p class="hint">
+  <%= t("views.repos.committers_howto") -%>
+</p>
+
+<ol>
+<% if @repository.owned_by_group? -%>
+  <li>
+    <%= link_to h(t("views.repos.committers_manage_group_members", :group => @repository.owner.to_param_with_prefix)), 
+            [@repository.owner, :memberships] -%>
+  </li>
+<% else -%>
+  <li>
+    <%= t("views.repos.transfer_owner_howto") -%> <br />
+    <%= link_to t("views.repos.transfer_owner"), [:edit, @repository.owner, @repository]  -%>
+  </li>
+<% end -%>
+
+  <li>
+    <%= link_to "Add/edit a group as committers", [@repository.owner, @repository, :participations] -%>
+  </li>
+</ol>
+
+<% content_for :sidebar do -%>
+  <h4><%= t("views.repos.current_committers") %></h4>    
+  <ul class="committers">
+  <% @repository.committers(:exclude_groups => true).each do |user| -%>
+    <li>
+      <div class="user">
+        <%= gravatar(user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(user.title), user -%>
+        <% if @repository.user == user -%>
+          <small>(<%= t("views.repos.owner") %>)</small>
+        <% end -%>
+      </div>
+    </li>
+  <% end -%>
+  <% @repository.groups.each do |group| -%>
+    <li>
+      <div class="group">
+        <%= image_tag("silk/group.png") %>
+        <%= link_to h(group.to_param_with_prefix), group -%>
+      </div>
+    </li>
+  <% end -%>
+  </ul>
+<% end -%>

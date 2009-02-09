@@ -1,3 +1,4 @@
+<%
 #--
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
@@ -14,11 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+%>
 
-class Participation < ActiveRecord::Base
-  belongs_to :group
-  belongs_to :repository
-  belongs_to :creator, :class_name => 'User'
-  
-  validates_presence_of :group_id, :repository_id
-end
+<%= error_messages_for :participation -%>
+<% form_for [@owner, @repository, @participation] do |f| -%>
+  <p>
+    <%= f.label :group_name, t("views.groups.team_name") -%>:<br />
+    <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
+  </p>
+
+  <%= f.submit t("views.participations.btn_add_as_committer") -%>
+<% end -%>

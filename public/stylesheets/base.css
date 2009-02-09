@@ -116,6 +116,11 @@ ul {
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
+
+ol li {
+  list-style-type: decimal;
+  margin-left: 35px;
+}
 pre {
   margin-left: 2em;
   margin-right: 2em;

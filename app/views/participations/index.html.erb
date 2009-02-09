@@ -1,0 +1,48 @@
+<%
+#--
+#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<h1>
+  <%= t("views.participations.title", :repo_name => @repository.name)  -%>
+</h1>
+
+<table class="listing tree">
+	<tr>
+		<th><%= t(:created_at, :scope => "activerecord.attributes.participations").humanize %></th>
+		<th><%= t(:group, :scope => "activerecord.attributes.participations").humanize %></th>
+		<th><%= t(:creator, :scope => "activerecord.attributes.participations").humanize %></th>
+		<th></th>
+	</tr>
+	<% @participations.each do |participation| -%>
+	<tr>
+	  <td><%= participation.created_at.to_s(:short) -%></td>
+	  <td><%= link_to h(participation.group.name), participation.group -%></td>
+	  <td><%= link_to(h(participation.creator.login), participation.creator) if participation.creator -%>
+	  <td><%= button_to(t("views.common.delete"), [@owner, @repository, participation], :method => :delete) -%></td>
+	</tr>
+	<% end -%>
+</table>
+
+<%= will_paginate @participations -%>
+
+<p>
+  <strong><%= link_to t("views.participations.add_new"), [:new, @owner, @repository, :participation] -%> </strong>
+</p>
+<p>
+  <%= t("views.participations.return_to") -%> <%= link_to h(@repository.name), [@owner, @repository] -%>
+</p>
