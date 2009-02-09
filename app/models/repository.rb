@@ -201,7 +201,9 @@ class Repository < ActiveRecord::Base
   end
   
   def change_owner_to(another_owner)
-    self.owner = another_owner
+    unless owned_by_group?
+      self.owner = another_owner
+    end
   end
   
   def post_repo_creation_message

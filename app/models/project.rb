@@ -194,8 +194,10 @@ class Project < ActiveRecord::Base
   end
   
   def change_owner_to(another_owner)
-    self.owner = another_owner
-    self.wiki_repository.owner = another_owner
+    unless owned_by_group?
+      self.owner = another_owner
+      self.wiki_repository.owner = another_owner
+    end
   end
 
   protected    

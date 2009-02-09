@@ -447,6 +447,14 @@ describe Repository do
     @repository.full_hashed_path.should == "aaa/aaa/#{'a'*34}"
   end
   
+  it "should allow changing ownership from a user to a group" do
+    repo = repositories(:johans)
+    repo.change_owner_to(groups(:team_thunderbird))
+    repo.owner.should == groups(:team_thunderbird)
+    repo.change_owner_to(users(:johan))
+    repo.owner.should == groups(:team_thunderbird)
+  end
+  
   describe "participant groups" do
     before(:each) do
       @repo = repositories(:moes)

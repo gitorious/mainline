@@ -93,7 +93,7 @@ class ProjectsController < ApplicationController
     @groups = current_user.groups
     
     # change group, if requested
-    if !@project.owned_by_group? && !params[:project][:owner_id].blank?
+    unless params[:project][:owner_id].blank?
       @project.change_owner_to(current_user.groups.find(params[:project][:owner_id]))
     end
     

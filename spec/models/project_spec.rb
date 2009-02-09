@@ -188,6 +188,14 @@ describe Project do
     project.wiki_repository.owner.should == groups(:team_thunderbird)
   end
   
+  it "should allow changing ownership from a user to a group, but not the other way around" do
+    p = projects(:johans)
+    p.change_owner_to(groups(:team_thunderbird))
+    p.owner.should == groups(:team_thunderbird)
+    p.change_owner_to(users(:johan))
+    p.owner.should == groups(:team_thunderbird)
+  end
+  
   describe "Project events" do
     before(:each) do 
       @project = projects(:johans)

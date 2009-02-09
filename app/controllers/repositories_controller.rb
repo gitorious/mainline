@@ -121,7 +121,7 @@ class RepositoriesController < ApplicationController
     
     @repository.description = params[:repository][:description]    
     # change group, if requested
-    if !@repository.owned_by_group? && !params[:repository][:owner_id].blank?
+    unless params[:repository][:owner_id].blank?
       @repository.change_owner_to(current_user.groups.find(params[:repository][:owner_id]))
     end
     
