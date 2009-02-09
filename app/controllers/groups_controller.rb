@@ -34,7 +34,6 @@ class GroupsController < ApplicationController
     @group = Group.new(params[:group])
     @group.transaction do
       @group.creator = current_user
-      @group.project = Project.find_by_slug!(params[:project][:slug])
       @group.save!
       @group.memberships.create!({
         :user => current_user,

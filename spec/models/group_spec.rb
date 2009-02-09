@@ -52,6 +52,18 @@ describe Group do
     end
   end
   
+  describe "participations" do
+    before(:each) do
+      @group = groups(:team_thunderbird)
+    end
+    
+    it "has a participation with a repository" do
+      participations(:thunderbird_moes).repository.should == repositories(:moes)
+      participations(:thunderbird_moes).group.should == groups(:team_thunderbird)
+      @group.participated_repositories.should include(repositories(:moes))
+    end
+  end
+  
   describe "repositories" do
     it "has many repositories" do
       groups(:team_thunderbird).repositories.should include(repositories(:johans2))
@@ -70,7 +82,6 @@ describe Group do
   describe "validations" do
     it "should have a unique name" do
       group = Group.new({
-        :project => projects(:johans), 
         :name => groups(:team_thunderbird).name
       })
       group.should_not be_valid
@@ -79,7 +90,6 @@ describe Group do
     
     it "should have a alphanumeric name" do
       group = Group.new({
-        :project => projects(:johans), 
         :name => "fu bar"
       })
       group.valid?.should == false

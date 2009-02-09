@@ -16,7 +16,9 @@
 #++
 
 class Group < ActiveRecord::Base
-  belongs_to :project
+  has_many :participations
+  has_many :participated_repositories, :through => :participations, 
+    :source => :repository, :class_name => 'Repository'  
   belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
   has_many :memberships
   has_many :members, :through => :memberships, :source => :user

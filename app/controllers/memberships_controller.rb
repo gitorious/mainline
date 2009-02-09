@@ -17,7 +17,7 @@
 
 class MembershipsController < ApplicationController
   before_filter :find_group
-  before_filter :ensure_group_adminship, :except => [:index, :show, :auto_complete_for_user_login]
+  before_filter :ensure_group_adminship, :except => [:index, :show]
   
   def index
     @memberships = @group.memberships.paginate(:all, :page => params[:page])
@@ -73,18 +73,9 @@ class MembershipsController < ApplicationController
     redirect_to group_memberships_path(@group)
   end
   
-  def auto_complete_for_user_login
-    login = params[:user][:login]
-    @users = User.find(:all, 
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ],
-      :limit => 10)
-    render :layout => false
-  end
-  
   protected
     def find_group
       @group = Group.find_by_name!(params[:group_id])
-      @project = @group.project
     end
     
     def ensure_group_adminship

@@ -34,6 +34,11 @@
 </ul>
 
 <% content_for :sidebar do -%>
+  <ul class="links">
+    <% if @group.admin?(current_user) -%>
+      <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
+    <% end -%>
+  </ul>
   <h3>Members (<%= @group.members.count -%>)</h3>
   <ul class="repository_list">
     <% @group.members.each do |user| -%>

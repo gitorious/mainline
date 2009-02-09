@@ -28,6 +28,8 @@ class Repository < ActiveRecord::Base
   belongs_to  :user # TODO: rename to creator..
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
+  has_many    :participations
+  has_many    :groups, :through => :participations, :source => :group
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id", 
     :dependent => :nullify
@@ -302,16 +304,24 @@ class Repository < ActiveRecord::Base
     kind == KIND_PROJECT_REPO
   end
   
+  # returns all the members from all the associated groups
+  def group_members
+    groups.collect{|g| g.members }.flatten
+  end
+  
+  # returns an array of users who have commit bits to this repository either 
+  # directly through the owner, or "indirectly" through the associated groups
   def committers
-    case owner
-    when Group
-      owner.members
-    when Project
-      project_owner = owner.owner
-      project_owner === User ? [project_owner] : project_owner.members
-    else
-      [owner]
-    end
+    owner_committers = case owner
+      when Group
+        owner.members
+      when Project
+        project_owner = owner.owner
+        project_owner === User ? [project_owner] : project_owner.members
+      else
+        [owner]
+      end
+    owner_committers + group_members
   end
   
   def owned_by_group?

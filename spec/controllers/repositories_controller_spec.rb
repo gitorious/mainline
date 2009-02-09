@@ -519,6 +519,17 @@ describe RepositoriesController, "destroy" do
     flash[:notice].should == "The repository was deleted"
     response.should redirect_to(group_path(repo.owner))
   end
+  
+  it "destroying a project creates an event in the project" do
+    login_as :johan
+    repo = repositories(:johans2)
+    repo.user = users(:johan)
+    repo.save!
+    proc {
+      delete :destroy, :group_id => repo.owner.to_param, :id => repo.to_param
+    }.should change(repo.project.events, :count)
+        
+  end
 end
 
 describe RepositoriesController, "new / create" do

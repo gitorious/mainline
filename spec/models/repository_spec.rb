@@ -447,6 +447,24 @@ describe Repository do
     @repository.full_hashed_path.should == "aaa/aaa/#{'a'*34}"
   end
   
+  describe "participant groups" do
+    before(:each) do
+      @repo = repositories(:moes)
+    end
+    
+    it "has a set of groups" do
+      @repo.groups.should == [groups(:team_thunderbird)]
+    end
+    
+    it "collects all the groups' members" do
+      @repo.group_members.should == groups(:team_thunderbird).members
+    end
+    
+    it "includes the groups' members in #committers" do
+      @repo.committers.should include(groups(:team_thunderbird).members.first)
+    end
+  end
+  
   describe "observers" do
     it "sends an email to the admin if there's a parent" do
       Mailer.expects(:deliver_new_repository_clone).with(@repository).returns(true)

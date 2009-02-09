@@ -25,9 +25,11 @@
     <%= f.label :name, t("views.groups.team_name") -%>:<br />
     <%= f.text_field :name -%>
   </p>
-  <p>
-    <%= f.label :slug, t("views.groups.project_name") -%>:<br />
-    <%= text_field_with_auto_complete :project, :slug, {}, :skip_style => true, :select => :slug -%>
+  <p class="hint">
+    <%= t("views.groups.new_team_after_create_hint") -%>
   </p>
+
+  <% # TODO: be able to add a bunch of members right away -%>
+  
   <p><%= f.submit t("views.groups.create_team_submit") -%></p>
 <% end -%>

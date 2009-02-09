@@ -74,18 +74,9 @@ describe GroupsController do
           :project => {:slug => projects(:johans).slug}
       }.should change(Group, :count)
       flash[:success].should_not == nil
-      Group.last.name.should == "foo-hackers"
-      Group.last.members.should == [users(:mike)]
-    end
-    
-    it "POST creates a new group with a project" do
-      login_as :mike
-      proc {
-        post :create, :group => {:name => "foo-hackers"}, 
-          :project => {:slug => projects(:johans).slug}
-      }.should change(Group, :count)
-      flash[:success].should_not == nil
-      Group.last.project.should == projects(:johans)
+      assigns(:group).new_record?.should == false
+      assigns(:group).name.should == "foo-hackers"
+      assigns(:group).members.should == [users(:mike)]
     end
   end
 end

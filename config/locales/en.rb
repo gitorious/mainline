@@ -418,6 +418,8 @@
         :member_plural => "members",
         :repo_singular => "repository",
         :repo_plural => "repositories",
+        :new_team_after_create_hint => "You can add more members to the team, after you've created it",
+        :edit_memberships => "Edit memberships",
       },
     },
     :date => {

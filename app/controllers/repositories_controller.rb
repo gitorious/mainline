@@ -147,7 +147,8 @@ class RepositoriesController < ApplicationController
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
       @repository.destroy
-      @owner.create_event(Action::DELETE_REPOSITORY, @owner, current_user, repo_name)
+      @repository.project.create_event(Action::DELETE_REPOSITORY, @owner, 
+                                        current_user, repo_name)
     else
       flash[:error] = I18n.t "repositories_controller.destroy_error"
     end
