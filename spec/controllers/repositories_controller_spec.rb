@@ -174,6 +174,24 @@ describe RepositoriesController, "Routing" do
     }).should == "/+#{team.to_param}/repositories"
   end
   
+  it "recognizes routing like /+teamname/repo/action" do
+    team = groups(:team_thunderbird)
+    repo = team.repositories.first
+    params_from(:get, "/+#{team.to_param}/#{repo.to_param}/clone").should == {
+      :controller => "repositories",
+      :action => "clone", 
+      :group_id => team.to_param,
+      :id => repo.to_param
+    }
+    
+    route_for({
+      :controller => "repositories", 
+      :action => "clone", 
+      :group_id => team.to_param,
+      :id => repo.to_param
+    }).should == "/+#{team.to_param}/#{repo.to_param}/clone"
+  end
+  
   it "recognizes routing like /+teamname/repositories, with a non-html format" do
     team = groups(:team_thunderbird)
     params_from(:get, "/+#{team.to_param}/repositories.xml").should == {

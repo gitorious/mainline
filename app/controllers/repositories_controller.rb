@@ -63,7 +63,7 @@ class RepositoriesController < ApplicationController
     @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_clone_error"
-      redirect_to project_repository_path(@owner, @repository_to_clone)
+      redirect_to [@owner, @repository_to_clone]
       return
     end
     @repository = Repository.new_by_cloning(@repository_to_clone, current_user.login)
@@ -72,15 +72,14 @@ class RepositoriesController < ApplicationController
   def create_clone
     @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?
-      target_path = project_repository_path(@owner, @repository_to_clone)
       respond_to do |format|
         format.html do
           flash[:error] = I18n.t "repositories_controller.create_clone_error"
-          redirect_to target_path
+          redirect_to [@owner, @repository_to_clone]
         end
         format.xml do 
           render :text => I18n.t("repositories_controller.create_clone_error"), 
-            :location => target_path, :status => :unprocessable_entity
+            :location => [@owner, @repository_to_clone], :status => :unprocessable_entity
         end
       end
       return
