@@ -1619,6 +1619,12 @@ tr.commit_row td,
 tr.selected td
 {
   background-color: #fff;
+  text-decoration: line-through;
+}
+tr.selected td
+{
+  text-decoration: none;
+  
 }
 tr.commit_row td.selection
 {

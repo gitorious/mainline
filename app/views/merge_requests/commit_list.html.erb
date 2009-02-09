@@ -1,20 +1,20 @@
 <label>Select commits</label>
-<table class="select_commits_from_list">
+<table class="select_commits_from_list" id="commit_table">
   <tr>
-    <th>From</th>
+    <!-- <th>From</th> -->
     <th>To</th>
     <th>Summary</th>
     <th>&nbsp;</th>
   </tr>
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
-    <td>
+    <!-- <td>
       <input 
       name="merge_request[starting_commit]" 
       type="radio" 
       value="<%= commit.id -%>" 
       onclick="selectableRange.startSelected(this)" />
-    </td>
+    </td> -->
     <td><input 
       name="merge_request[ending_commit]" 
       type="radio" 

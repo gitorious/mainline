@@ -114,11 +114,6 @@ function SelectableRange()
 {
   this.startsAt = null;
   this.endsAt = null;
-  this.startSelected = function(el)
-  {
-    this.startsAt = el;
-    this.update();
-  };
   this.endSelected = function(el)
   {
     this.endsAt = el;
@@ -126,26 +121,15 @@ function SelectableRange()
   };
   this.update = function()
   {
-    if (this.startsAt && this.endsAt)
+    if (this.endsAt)
     {
       $$(".commit_row").each(function(el){el.removeClassName('selected')});
-      var firstId = parseInt(this.startsAt.up().up().id.split("_")[1]);
-      var lastId = parseInt(this.endsAt.up().up().id.split("_")[1]);
-      if (lastId < firstId)
+      var firstTr = this.endsAt.up().up();
+      firstTr.addClassName('selected');
+      firstTr.previousSiblings().each(function(tr)
       {
-        $("commit_selection_error").show();
-        console.debug("Showing it");
-        return;
-      }
-      else
-      {
-        console.debug("Hiding it");
-        $("commit_selection_error").hide();        
-      }
-      for (i = firstId; i <= lastId; i++)
-      {
-        $('commit_' + i).addClassName("selected");
-      }
+        tr.addClassName('selected');        
+      })
     }
   }
 }
