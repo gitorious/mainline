@@ -455,6 +455,12 @@ describe Repository do
     repo.owner.should == groups(:team_thunderbird)
   end
   
+  it "downcases the name before validation" do
+    repo = new_repos(:name => "FOOBAR")
+    repo.save!
+    repo.reload.name.should == "foobar"
+  end
+  
   describe "participant groups" do
     before(:each) do
       @repo = repositories(:moes)

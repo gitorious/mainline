@@ -61,7 +61,9 @@ class Repository < ActiveRecord::Base
   validates_exclusion_of :name, :in => Gitorious::Reservations::REPOSITORY_NAMES
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
-  before_save   :set_as_mainline_if_first
+  before_validation :downcase_name
+  before_save   :set_as_mainline_if_project_repository
+  before_create :set_repository_hash
   after_create  :post_repo_creation_message
   after_destroy :post_repo_deletion_message
   
@@ -366,6 +368,10 @@ class Repository < ActiveRecord::Base
     
     def self.full_path_from_partial_path(path)
       File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
+    end
+    
+    def downcase_name
+      name.downcase! if name
     end
     
   private
