@@ -37,7 +37,7 @@ Rails::Initializer.run do |config|
   config.gem "echoe",        :lib => false
   config.gem "RedCloth",     :lib => "redcloth"
   config.gem "ruby-openid",  :lib => "openid"
-  config.gem "rdiscount"    
+  config.gem "rdiscount",    :version => "1.3.1.1"
   config.gem 'stomp'
   
   # vendorized directly in vendor/ -- need to research if can be removed from there
