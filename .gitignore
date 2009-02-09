@@ -21,3 +21,4 @@ vendor/plugins/activemessaging/doc/*
 qtorious.todo
 tmp/poller.log
 tmp/poller.output
+public/javascripts/all.js
