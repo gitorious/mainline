@@ -630,6 +630,7 @@ describe RepositoriesController, "edit / update" do
     @project = projects(:johans)
     @repository = @project.repositories.first
     login_as :johan
+    groups(:team_thunderbird).add_member(users(:johan), Role.admin)
   end
   
   it "requires login" do
@@ -675,6 +676,41 @@ describe RepositoriesController, "edit / update" do
       :repository => {:description => "blablabla"}
     response.should redirect_to(project_repository_path(@project, @repository))
     @repository.reload.description.should == "blablabla"
+  end
+  
+  it "gets a list of the users' groups on edit" do
+    get :edit, :project_id => @project.to_param, :id => @repository.to_param
+    response.should be_success
+    assigns(:groups).should == users(:johan).groups
+  end
+  
+  it "gets a list of the users' groups on update" do
+    put :update, :project_id => @project.to_param, :id => @repository.to_param, 
+          :repository => {:description => "foo"}
+    assigns(:groups).should == users(:johan).groups
+  end
+  
+  it "changes the owner" do
+    group = groups(:team_thunderbird)
+    put :update, :project_id => @project.to_param, :id => @repository.to_param, :repository => {
+      :owner_id => group.id,
+    }
+    response.should redirect_to(group_repository_path(group, @repository))
+    @repository.reload.owner.should == group
+  end
+  
+  it "changes the owner, only if the original owner was a user" do
+    group = groups(:team_thunderbird)
+    @repository.owner = group
+    @repository.save!
+    new_group = Group.create!(:name => "temp")
+    new_group.add_member(users(:johan), Role.admin)
+    
+    put :update, :group_id => group.to_param, :id => @repository.to_param, :repository => {
+      :owner_id => new_group.id
+    }
+    @repository.reload.owner.should == group
+    response.should redirect_to(group_repository_path(group, @repository))
   end
 end
 

@@ -25,7 +25,7 @@
   <%= render :partial => "form", :locals => {:form => f} -%>
   <% unless @project.owned_by_group? -%>
     <p>
-      <%= f.label :owner_id, "Change ownership to a group" -%>:<br />
+      <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
       <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]}, 
             :include_blank => true, :selected => nil -%>
       <br /><small class="hint">

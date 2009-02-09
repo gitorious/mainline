@@ -200,6 +200,10 @@ class Repository < ActiveRecord::Base
     end
   end
   
+  def change_owner_to(another_owner)
+    self.owner = another_owner
+  end
+  
   def post_repo_creation_message
     options = {:target_class => self.class.name, :target_id => self.id}
     options[:command] = parent ? 'clone_git_repository' : 'create_git_repository'

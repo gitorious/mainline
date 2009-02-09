@@ -112,15 +112,22 @@ class RepositoriesController < ApplicationController
   
   def edit
     @repository = @owner.repositories.find_by_name!(params[:id])
+    @groups = current_user.groups
   end
   
   def update
     @repository = @owner.repositories.find_by_name!(params[:id])
-    @repository.description = params[:repository][:description]
+    @groups = current_user.groups
+    
+    @repository.description = params[:repository][:description]    
+    # change group, if requested
+    if !@repository.owned_by_group? && !params[:repository][:owner_id].blank?
+      @repository.change_owner_to(current_user.groups.find(params[:repository][:owner_id]))
+    end
     
     if @repository.save
       flash[:success] = "Repository updated"
-      redirect_to [@owner, @repository]
+      redirect_to [@repository.owner, @repository]
     else
       render :action => "edit"
     end
