@@ -57,6 +57,7 @@
       :destroy_notice => "The repository was deleted",
       :destroy_error => "You're not the owner of this repository",
       :adminship_error => "Sorry, only repository admins are allowed to do that",
+      :only_projects_create_new_error => "You can only add new repositories directly to a project",
     },
     :trees_controller => {
       :archive_error => "The given repository or sha is invalid"

@@ -542,61 +542,66 @@ describe RepositoriesController, "new / create" do
     flash[:error].should match(/only repository admins are allowed/)
     response.should redirect_to(project_path(@project))
     
-    get :new, :group_id => @group.to_param
-    flash[:error].should match(/only repository admins are allowed/)
-    response.should redirect_to(group_path(@group))
-    
-    get :new, :user_id => @user.to_param
-    flash[:error].should match(/only repository admins are allowed/)
-    response.should redirect_to(user_path(@user))
-    
     post :create, :project_id => @project.to_param, :repository => {}
     flash[:error].should match(/only repository admins are allowed/)
     response.should redirect_to(project_path(@project))
+  end
+  
+  it "should only be allowed to add new repositories to Project" do 
+    get :new, :group_id => @group.to_param
+    flash[:error].should match(/can only add new repositories directly to a project/)
+    response.should redirect_to(group_path(@group))
+    
+    get :new, :user_id => @user.to_param
+    flash[:error].should match(/can only add new repositories directly to a project/)
+    response.should redirect_to(user_path(@user))
     
     post :create, :group_id => @group.to_param, :repository => {}
-    flash[:error].should match(/only repository admins are allowed/)
+    flash[:error].should match(/can only add new repositories directly to a project/)
     response.should redirect_to(group_path(@group))
     
     post :create, :user_id => @user.to_param, :repository => {}
-    flash[:error].should match(/only repository admins are allowed/)
+    flash[:error].should match(/can only add new repositories directly to a project/)
     response.should redirect_to(user_path(@user))
   end
+  
+  # See example "should only be allowed to add new repositories to Project"
+  # for why this is commented out
+  # 
+  # it "should GET new successfully, and set the owner to a user" do
+  #   get :new, :user_id => @user.to_param
+  #   response.should be_success
+  #   assigns(:owner).should == @user
+  # end
+  # 
+  # it "should GET new successfully, and set the owner to a group" do
+  #   get :new, :group_id => @group.to_param
+  #   response.should be_success
+  #   assigns(:owner).should == @group
+  # end
+  # 
+  # it "creates a new repository belonging to a user" do
+  #   proc {
+  #     post :create, :user_id => @user.to_param, :repository => {:name => "my-new-repo"}
+  #   }.should change(Repository, :count)
+  #   assigns(:repository).owner.should == @user
+  #   response.should be_redirect
+  #   response.should redirect_to(user_repository_path(@user, assigns(:repository)))
+  # end
+  # 
+  # it "creates a new repository belonging to a group" do
+  #   proc {
+  #     post :create, :group_id => @group.to_param, :repository => {:name => "my-new-repo"}
+  #   }.should change(Repository, :count)
+  #   assigns(:repository).owner.should == @group
+  #   response.should be_redirect
+  #   response.should redirect_to(group_repository_path(@group, assigns(:repository)))
+  # end
   
   it "should GET new successfully, and set the owner to a project" do
     get :new, :project_id => @project.to_param
     response.should be_success
     assigns(:owner).should == @project
-  end
-  
-  it "should GET new successfully, and set the owner to a user" do
-    get :new, :user_id => @user.to_param
-    response.should be_success
-    assigns(:owner).should == @user
-  end
-  
-  it "should GET new successfully, and set the owner to a group" do
-    get :new, :group_id => @group.to_param
-    response.should be_success
-    assigns(:owner).should == @group
-  end
-  
-  it "creates a new repository belonging to a user" do
-    proc {
-      post :create, :user_id => @user.to_param, :repository => {:name => "my-new-repo"}
-    }.should change(Repository, :count)
-    assigns(:repository).owner.should == @user
-    response.should be_redirect
-    response.should redirect_to(user_repository_path(@user, assigns(:repository)))
-  end
-  
-  it "creates a new repository belonging to a group" do
-    proc {
-      post :create, :group_id => @group.to_param, :repository => {:name => "my-new-repo"}
-    }.should change(Repository, :count)
-    assigns(:repository).owner.should == @group
-    response.should be_redirect
-    response.should redirect_to(group_repository_path(@group, assigns(:repository)))
   end
   
   it "creates a new repository belonging to a Project" do
