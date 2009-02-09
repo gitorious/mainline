@@ -321,7 +321,7 @@ class Repository < ActiveRecord::Base
       else
         [owner]
       end
-    owner_committers + group_members
+    owner_committers | group_members
   end
   
   def owned_by_group?

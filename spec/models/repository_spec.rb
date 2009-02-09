@@ -463,6 +463,11 @@ describe Repository do
     it "includes the groups' members in #committers" do
       @repo.committers.should include(groups(:team_thunderbird).members.first)
     end
+    
+    it "only include unique users in #committers" do
+      groups(:team_thunderbird).add_member(users(:moe), Role.committer)
+      @repo.committers.select{|u| u == users(:moe)}.size.should == 1
+    end
   end
   
   describe "observers" do
