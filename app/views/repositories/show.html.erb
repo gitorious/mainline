@@ -74,7 +74,7 @@
   
   <h4><%= t("views.repos.committers") %></h4>    
   <ul class="committers">
-  <% @repository.committers.each do |user| -%>
+  <% @repository.committers(:exclude_groups => true).each do |user| -%>
     <li>
       <div class="user">
         <%= gravatar(user.email, :size => 16, :style => "tiny") %>
@@ -85,9 +85,17 @@
       </div>
     </li>
   <% end -%>
-    <% if @repository.owned_by_group? -%>
-      <li><small><%= link_to edit_or_show_group_text, group_memberships_path(@repository.owner) -%></small></li>
-    <% end -%>
+  <% if @repository.owned_by_group? -%>
+    <li><small><%= link_to edit_or_show_group_text, group_memberships_path(@repository.owner) -%></small></li>
+  <% end -%>
+  <% @repository.groups.each do |group| -%>
+    <li>
+      <div class="group">
+        <%= image_tag("silk/group.png") %>
+        <%= link_to h(group.to_param_with_prefix), group -%>
+      </div>
+    </li>
+  <% end -%>
   </ul>
 
   <% unless @commits.blank? -%>

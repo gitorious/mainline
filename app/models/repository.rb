@@ -311,7 +311,8 @@ class Repository < ActiveRecord::Base
   
   # returns an array of users who have commit bits to this repository either 
   # directly through the owner, or "indirectly" through the associated groups
-  def committers
+  def committers(options = {})
+    exclude_groups = options.delete(:exclude_groups)
     owner_committers = case owner
       when Group
         owner.members
@@ -321,7 +322,7 @@ class Repository < ActiveRecord::Base
       else
         [owner]
       end
-    owner_committers | group_members
+    exclude_groups ? owner_committers : (owner_committers | group_members)
   end
   
   def owned_by_group?

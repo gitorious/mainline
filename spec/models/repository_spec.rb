@@ -468,6 +468,11 @@ describe Repository do
       groups(:team_thunderbird).add_member(users(:moe), Role.committer)
       @repo.committers.select{|u| u == users(:moe)}.size.should == 1
     end
+    
+    it "should be possible to exclude the groups in #committers" do
+      users = @repo.committers(:exclude_groups => true).map(&:login)
+      users.should_not include(groups(:team_thunderbird).members.first.login)
+    end
   end
   
   describe "observers" do
