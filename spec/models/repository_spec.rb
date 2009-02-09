@@ -201,6 +201,7 @@ describe Repository do
     repos = Repository.new_by_cloning(@repository)
     repos.parent.should == @repository
     repos.project.should == @repository.project
+    repos.new_record?.should be(true)
   end
   
   it "suggests a decent name for a cloned repository bsed on username" do
