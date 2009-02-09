@@ -37,12 +37,24 @@
 
 <% content_for :sidebar do -%>
   <ul>
-    <li><strong><%= t("views.logs.owner") %>:</strong> <%= link_to h(@repository.owner.title), @repository.owner -%></li>
-    <li><strong><%= t("views.logs.maintainer") %>:</strong> <%= link_to h(@repository.user.login), user_path(@repository.user) -%></li>
+    <li>
+      <strong><%= t("views.repos.project") %>:</strong> 
+      <%= link_to h(@repository.project.slug), @repository.project -%>
+    </li>    
+    <li>
+      <strong><%= t("views.repos.owner") %>:</strong> 
+      <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
+    </li>
     <% if @repository.parent -%>
-    <li><strong><%= t("views.repos.clone_of") %>:</strong> <%= link_to h(@repository.parent.gitdir), project_repository_path(@owner, @repository.parent) -%>
+    <li>
+      <strong><%= t("views.repos.clone_of") %>:</strong> 
+      <%= link_to h(@repository.parent.gitdir), project_repository_path(@owner, @repository.parent) -%>
+    </li>
     <% end -%>
-    <li><strong><%= t("views.repos.created") %>:</strong> <%= @repository.created_at.to_s(:short) -%></li>
+    <li>
+      <strong><%= t("views.repos.created") %>:</strong> 
+      <%= @repository.created_at.to_s(:short) -%>
+    </li>
   </li>
   
   <ul class="links">
