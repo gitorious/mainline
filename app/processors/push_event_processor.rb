@@ -67,6 +67,7 @@ class PushEventProcessor < ApplicationProcessor
       e = EventForLogging.new
       e.event_type = action == :create ? Action::CREATE_TAG : Action::DELETE_TAG
       e.identifier = @identifier
+      rev = action == :create ? @newrev : @oldrev
       fetch_commit_details(e, @newrev)
       return [e]
     elsif action == :create
