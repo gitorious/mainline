@@ -24,26 +24,5 @@
 </ol>
 
 <% content_for :sidebar do -%>
-  <h4><%= t("views.repos.current_committers") %></h4>    
-  <ul class="committers">
-  <% @repository.committers(:exclude_groups => true).each do |user| -%>
-    <li>
-      <div class="user">
-        <%= gravatar(user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(user.title), user -%>
-        <% if @repository.user == user -%>
-          <small>(<%= t("views.repos.owner") %>)</small>
-        <% end -%>
-      </div>
-    </li>
-  <% end -%>
-  <% @repository.groups.each do |group| -%>
-    <li>
-      <div class="group">
-        <%= image_tag("silk/group.png") %>
-        <%= link_to h(group.to_param_with_prefix), group -%>
-      </div>
-    </li>
-  <% end -%>
-  </ul>
+  <%= render :partial => "committers_sidebar" -%>
 <% end -%>

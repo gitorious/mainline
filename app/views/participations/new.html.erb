@@ -17,12 +17,26 @@
 #++
 %>
 
+<h1>
+  <%= t("views.participations.new_title", :repo_name => @repository.name)  -%>
+</h1>
+
 <%= error_messages_for :participation -%>
 <% form_for [@owner, @repository, @participation] do |f| -%>
   <p>
     <%= f.label :group_name, t("views.groups.team_name") -%>:<br />
     <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
   </p>
+  <p class="hint">
+    <%= t("views.participations.add_tema_note") -%>
+  </p>
+  <p>
+    <%= f.submit t("views.participations.btn_add_as_committer") -%> 
+    <%= t("views.participations.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :participations] -%>
+  </p>
+  
+<% end -%>
 
-  <%= f.submit t("views.participations.btn_add_as_committer") -%>
+<% content_for :sidebar do -%>
+  <%= render :partial => "repositories/committers_sidebar" -%>
 <% end -%>

@@ -436,8 +436,12 @@
       :participations => {
         :add_new => "Add new team as committers",
         :title => "Team with commit rights to \"{{repo_name}}\"",
+        :new_title => "Add a team as committers to {{repo_name}}",
         :btn_add_as_committer => "Add all team members as committers",
         :return_to => "return to", 
+        :or_return_to => "or return to", 
+        :add_tema_note => "<strong>Note</strong> that adding a team will give
+                          everyone in that team commit rights to your repository",
       }
     },
     :date => {
