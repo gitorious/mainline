@@ -1,4 +1,21 @@
 #!/usr/bin/env ruby
+#--
+#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Marius Mårnes Mathiesen <marius.mathiesen@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
 
 incpath = File.dirname(__FILE__)
 $: << incpath
@@ -6,138 +23,12 @@ $: << incpath
 require 'messaging'
 require 'json'
 
-# require 'date'
 @publisher = Publisher.new
 gitdir = File.expand_path(File.join(incpath, ".."))
 hashed_dir = gitdir.split('/')[-3,3].join('').split('.').first # Equivalent to the hash in the model
 
-# repository = Repository.find_by_path(gitdir)
-# 
-# if repository.nil?
-#   $stderr.puts "Unknown repository"
-#   exit 0
-# end
-# 
-# project = repository.project
-# git = Grit::Git.new(gitdir)
 
 while line = gets
-#   puts "@@> #{line.inspect}"
-  # 3b480c5c30962c9f5b82a9c61a75992dc605de21 ee27ee3a022802c0569f9cdef6e9ad29aea096a8 refs/heads/master\n
-  # oldrev, newrev, revname = line.split(" ") 
-  # current_rev = newrev
-  # newtype = oldtype = current_rev_type = "commit"
-  # 
-  # action = :create
-  # if oldrev =~ /^0+$/
-  #   action = :create
-  # else
-  #   if newrev =~ /^0+$/
-  #     action = :delete
-  #   else
-  #     action = :update
-  #   end
-  # end
-  # 
-  # if action != :delete
-  #   newtype = git.cat_file({:t => true}, newrev)
-  # end
-  # 
-  # if action == :update
-  #   oldtype = git.cat_file({:t => true}, oldrev)
-  # end
-  # 
-  # if action == :delete
-  #     current_rev = oldrev
-  #     current_rev_type = oldtype
-  # end
-  # 
-  # # type => heads, tags, remotes
-  # # name => branch name
-  # path, type, name = revname.split("/")
-  # revs = [ current_rev ]
-  # emails = [git.show({:pretty => "format:%ce", :s => true}, current_rev)]
-  # 
-  # if type == "heads"
-  #   if action == :update
-  #     revs = git.rev_list({}, "#{oldrev}..#{newrev}").split("\n")
-  #     emails = git.log({:pretty => "format:%ce"}, "#{oldrev}..#{newrev}").split("\n")
-  #   elsif action == :create && name == "master"
-  #     revs = git.rev_list({}, current_rev).split("\n")
-  #     emails = git.log({:pretty => "format:%ce"}, current_rev).split("\n")
-  #   end
-  # end
-  # 
-  # #users = repository.committers.find(:all, :conditions => ["email in (?)", emails])
-  # users = repository.committers.select{|u| emails.flatten.uniq.include?(u.email) }
-  # user_map = users.inject({}) { |hash, user| hash[user.email] = user; hash }
-  # 
-  # revs.each do |sha1|
-  #   info = git.show({ :pretty => "format:author: %cn%nemail: %ce%ndate: %ct%nmessage: %s", :s => true}, sha1)
-  #   
-  #   hash = {}
-  #   info.each { |line|
-  #     if line =~ /(\w+):\s(.*)$/
-  #       key = $1.to_sym
-  #       value = $2
-  #       
-  #       value = Time.at(value.to_i).utc if key == :date
-  #       
-  #       hash[key] = value
-  #     end
-  #   }
-  #   
-  #   # action => create, delete, update
-  #   # rev_type => commit, tag
-  #   
-  #   user = user_map[hash[:email]]
-  #   if user.nil?
-  #     # TODO: no user should be ok, no need to skip
-  #     # $stdout.puts "** The email '#{hash[:email]}' is not registered."
-  #     next
-  #   end
-  #   
-  #   action_id = nil
-  #   ref = nil
-  #   if current_rev_type == "commit"
-  #     if type == "heads"
-  #       case action
-  #         when :create
-  #           action_id = Action::CREATE_BRANCH
-  #           ref = name
-  #         when :update
-  #           action_id = Action::COMMIT
-  #           ref = sha1
-  #         when :delete
-  #           action_id = Action::DELETE_BRANCH
-  #           ref = name
-  #       end
-  #     elsif type == "tags"
-  #       if action == :create
-  #         action_id = Action::CREATE_TAG
-  #         ref = name
-  #       elsif action == :delete
-  #         action_id = Action::DELETE_TAG
-  #         ref = name
-  #       end
-  #     end
-  #   elsif current_rev_type == "tag"
-  #     if type == "tags"
-  #       if action == :create
-  #         action_id = Action::CREATE_TAG
-  #         ref = name
-  #       elsif action == :delete
-  #         action_id = Action::DELETE_TAG
-  #         ref = name
-  #       end
-  #     end
-  #   end
-  #   
-  #   next unless action_id
-  #   
-  #   project.create_event(action_id, repository, user, ref, hash[:message], hash[:date])
-  #   action = :update
-  # end
   message = JSON.unparse({:gitdir => hashed_dir, :message => line.chomp})
   @publisher.post_message(message)
 end

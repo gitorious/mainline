@@ -73,7 +73,7 @@ describe PushEventProcessor do
     @processor.events.first.event_type.should == Action::DELETE_TAG
     @processor.events.first.identifier.should == 'r1.1'
     @processor.events.first.email.should == 'john@nowhere.com'
-    @processor.events.first.message.should == 'Whoops, deleting the tag'
+    @processor.events.first.message.should == 'Deleted branch r1.1'
     @processor.expects(:log_event).once
     @processor.log_events
   end

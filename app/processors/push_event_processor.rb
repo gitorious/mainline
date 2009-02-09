@@ -1,3 +1,21 @@
+#--
+#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Marius Mårnes Mathiesen <marius.mathiesen@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
 class PushEventProcessor < ApplicationProcessor
 
   subscribes_to :push_event
@@ -22,7 +40,7 @@ class PushEventProcessor < ApplicationProcessor
   
   def log_event(an_event)
     @project ||= Project.first#find_by_slug("bar")
-    logger.debug("Processor: adding event #{an_event.message} from #{an_event.email}")
+    logger.debug("Processor: adding event #{an_event.message} from #{an_event.email} (#{an_event.to_s})")
     @project.create_event(an_event.event_type, @repository, User.find_by_email(an_event.email), an_event.identifier, an_event.message, an_event.commit_time)
   end
   
@@ -67,8 +85,10 @@ class PushEventProcessor < ApplicationProcessor
       e = EventForLogging.new
       e.event_type = action == :create ? Action::CREATE_TAG : Action::DELETE_TAG
       e.identifier = @identifier
-      rev = action == :create ? @newrev : @oldrev
-      fetch_commit_details(e, @newrev)
+      rev, message = action == :create ? [@newrev, "Created tag #{@identifier}"] : [@oldrev, "Deleted branch #{@identifier}"]
+      logger.debug("Processor: action is #{action}, identifier is #{@identifier}, rev is #{rev}")
+      fetch_commit_details(e, rev)
+      e.message = message
       return [e]
     elsif action == :create
       e = EventForLogging.new
