@@ -31,6 +31,7 @@ config.action_controller.cache_store = :file_store, File.join(cache_dir, "fragme
 # If you don't have outgoing email set up, uncomment the following two lines:
 # config.action_mailer.delivery_method = :test
 # config.action_mailer.raise_delivery_errors = false
+config.action_mailer.delivery_method = :sendmail
 
 ActionMailer::Base.default_url_options[:host] =
   YAML.load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))["gitorious_host"]
