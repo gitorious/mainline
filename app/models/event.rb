@@ -33,6 +33,10 @@ class Event < ActiveRecord::Base
   def email
     user_email || user.email
   end
+  
+  def email_display
+    email.split("@").first
+  end
 
   protected
   def user_email_set?

@@ -47,6 +47,7 @@ describe Event do
     event.email = 'foo@bar.com'
     event.user.should be_nil
     event.should be_valid
+    event.email_display.should == 'foo'
   end
   
 end

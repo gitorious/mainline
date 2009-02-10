@@ -27,7 +27,7 @@
     <p>
     <% unless action.empty? %>
       <% if event.user.nil? %>
-        <%= event.email %>
+        <%= event.email_display %>
       <% else %>
         <%= link_to event.user.login, user_path(event.user) %> 
       <% end %>

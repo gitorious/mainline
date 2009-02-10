@@ -49,8 +49,8 @@ class PushEventProcessor < ApplicationProcessor
       :action => an_event.event_type, 
       :target => @repository, 
       :email => an_event.email,
-      :body => an_event.identifier,
-      :data => an_event.message,
+      :body => an_event.message,
+      :data => an_event.identifier,
       :created_at => an_event.commit_time
       )
     logger.debug("Processor: created event #{event}")
@@ -105,6 +105,7 @@ class PushEventProcessor < ApplicationProcessor
     elsif action == :create
       e = EventForLogging.new
       e.event_type = Action::CREATE_BRANCH
+      e.message = "New branch"
       e.identifier = @identifier
       e.email = @repository.user.email
       result = [e]
@@ -134,7 +135,6 @@ class PushEventProcessor < ApplicationProcessor
     commits = git.log({:pretty => git_pretty_format, :s => true}, revspec).split("\n")
     commits.each do |c|
       sha, email, timestamp, message = c.split(GIT_OUTPUT_SEPARATOR)
-      logger.info("Debugging commits: #{sha}: #{email}")
       e = EventForLogging.new
       e.identifier    = sha
       e.email         = email
