@@ -29,6 +29,9 @@
     <li>
       <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
       <%= link_to h(repository.name), group_repository_path(@group, repository) -%>
+      <div class="hint page">
+        <%= markdown(sanitize(repository.description)) -%>
+      </div>
     </li>
   <% end -%>
 </ul>
