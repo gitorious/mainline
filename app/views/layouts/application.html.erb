@@ -76,9 +76,9 @@
         <li class="secondary"><%= link_to t("views.layout.logout"), logout_path -%></li>
       <%- else -%>
 		<% if GitoriousConfig['public_mode'] -%>
-        	<li class="secondary"><%= link_to "Register", new_user_path -%></li>
+        	<li class="secondary"><%= link_to t("views.layout.register"), new_user_path -%></li>
 		<% end -%>
-        <li class="secondary"><%= link_to "Login", login_path -%></li>
+        <li class="secondary"><%= link_to t("views.layout.login"), login_path -%></li>
       <%- end -%>
     </ul>
     

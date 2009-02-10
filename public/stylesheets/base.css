@@ -164,7 +164,7 @@ abbr {
   float: right;
   margin-top: 15px;
   padding: 0px;
-  margin-right: 20px;
+  margin-right: 45px;
   list-style: none;
   padding-top: 2px;
 }
@@ -342,7 +342,7 @@ abbr {
 
 #menu {
   float: right;
-  margin-right: 15px;
+  margin-right: 40px;
   margin-top: 20px;
   clear: right;
 }
