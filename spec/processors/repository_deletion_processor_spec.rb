@@ -25,7 +25,7 @@ describe RepositoryDeletionProcessor do
   
   it "should process deletion of repositories" do
     Repository.expects('delete_git_repository').with('foo')
-    message = ActiveSupport::JSON.encode({:arguments => ['foo']})
+    message = {:arguments => ['foo']}.to_json
     @processor.on_message(message)
   end
   

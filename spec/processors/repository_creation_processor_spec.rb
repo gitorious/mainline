@@ -34,22 +34,23 @@ describe RepositoryCreationProcessor do
   
   it "supplies two repos when cloning an existing repository" do
     Repository.expects(:clone_git_repository).with('foo', 'bar')
-    message = ActiveSupport::JSON.encode({
+    options = {
       :target_class => 'Repository', 
       :target_id => @clone.id, 
       :command => 'clone_git_repository', 
-      :arguments => ['foo', 'bar']})
+      :arguments => ['foo', 'bar']}
+    message = options.to_json
     @processor.on_message(message)
   end
   
   it 'supplies one repo when creating a new repo' do
     Repository.expects(:create_git_repository).with('foo')
-    
-    message = ActiveSupport::JSON.encode({
+    options = {
       :target_class => 'Repository', 
       :target_id => @clone.id, 
       :command => 'create_git_repository', 
-      :arguments => ['foo']})
+      :arguments => ['foo']}
+    message = options.to_json
     @processor.on_message(message)
   end
   

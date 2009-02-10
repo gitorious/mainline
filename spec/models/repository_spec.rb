@@ -281,7 +281,7 @@ describe Repository do
     p = proc{
       @repository.save!
     }
-    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /#{@repository.real_gitdir}/) {p.call}
+    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /create_git_repository/) {p.call}
     message['command'].should == 'create_git_repository'
     message['arguments'].size.should == 1
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
@@ -293,7 +293,7 @@ describe Repository do
       @repository.parent = repositories(:johans)
       @repository.save!
     }
-    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /#{@repository.real_gitdir}/) {p.call}
+    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /clone_git_repository/) {p.call}
     message['command'].should == "clone_git_repository"
     message['arguments'].size.should == 2
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
@@ -304,13 +304,14 @@ describe Repository do
     @repository.save!
     message = find_message_with_queue_and_regexp(
       '/queue/GitoriousRepositoryDeletion', 
-      /#{@repository.real_gitdir}/) {@repository.destroy}
+      /delete_git_repository/) {@repository.destroy}
     message['command'].should == 'delete_git_repository'
     message['arguments'].size.should == 1
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
   end
   
   def find_message_with_queue_and_regexp(queue_name, regexp)
+    ActiveMessaging::Gateway.connection.clear_messages
     yield
     msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
     msg.should_not be_nil
