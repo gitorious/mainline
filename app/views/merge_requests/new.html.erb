@@ -27,7 +27,7 @@
 <% end -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => Breadcrumb::MergeRequests.new(@repository)} -%>
 <% end -%>
 
 <script type="text/javascript" charset="utf-8">
