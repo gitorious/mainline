@@ -34,11 +34,11 @@ class UsersController < ApplicationController
     
     @commits_last_week = @user.events.count(:all, 
       :conditions => ["created_at > ? AND action = ?", 7.days.ago, Action::COMMIT])
-    @atom_auto_discovery_url = formatted_feed_user_path(@user, :atom)
+    @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
     
     respond_to do |format|
       format.html { }
-      format.atom { redirect_to formatted_feed_user_path(@user, :atom) }
+      format.atom { redirect_to feed_user_path(@user, :format => :atom) }
     end
   end
   

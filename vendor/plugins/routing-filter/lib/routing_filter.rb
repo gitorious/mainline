@@ -28,11 +28,12 @@ ActionController::Routing::RouteSet::NamedRouteCollection.class_eval do
   # gosh. monkey engineering optimization code
   def generate_optimisation_block_with_filtering(*args)
     code = generate_optimisation_block_without_filtering *args
-    if match = code.match(%r(^return (.*) if (.*)))
+    #if match = code.match(%r{^return (.*) if (.*)})
+    if match = code.match(%r{^return "(.*)" if (.*)\s+#})
       <<-code
         if #{match[2]}
-          result = #{match[1]}
-          ActionController::Routing::Routes.filters.run :around_generate, *args, &lambda{ result }
+          result = "#{match[1]}"
+          ActionController::Routing::Routes.filters.run(:around_generate, *args, &lambda{ result })
           return result
         end
       code

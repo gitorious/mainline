@@ -161,7 +161,7 @@ describe UsersController do
   it "#show sets atom feed autodiscovery" do
     user = users(:johan)
     get :show, :id => user.login
-    assigns[:atom_auto_discovery_url].should == formatted_feed_user_path(user, :atom)
+    assigns[:atom_auto_discovery_url].should == feed_user_path(user, :format => :atom)
   end
   
   it "has an atom feed" do

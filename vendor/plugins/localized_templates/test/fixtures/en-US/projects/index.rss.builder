@@ -1,1 +1,0 @@
-xml.en_US "text"

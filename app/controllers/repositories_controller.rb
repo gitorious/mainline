@@ -22,7 +22,6 @@ class RepositoriesController < ApplicationController
   before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update, :committers]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
-  session :off, :only => [:writable_by]
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
   
   def index
@@ -34,7 +33,7 @@ class RepositoriesController < ApplicationController
     @events = @repository.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
-    @atom_auto_discovery_url = formatted_project_repository_path(@owner, @repository, :atom)
+    @atom_auto_discovery_url = project_repository_path(@owner, @repository, :format => :atom)
     response.headers['Refresh'] = 5 unless @repository.ready
     respond_to do |format|
       format.html

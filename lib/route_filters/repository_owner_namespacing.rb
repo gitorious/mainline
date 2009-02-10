@@ -22,15 +22,16 @@ module RoutingFilter
            name = $2
            rest = $3
            if rest && !reserved_action_name?(name, controller) && !reserved?(rest, controller) && repository_scope?(rest)
-             path.replace "/#{controller}/#{name}/repositories#{rest}"
+             path.replace "/#{controller}/#{name}/repositories#{rest}".chomp("/")
            else
-             path.replace "/#{controller}/#{name}#{rest}"
+             path.replace "/#{controller}/#{name}#{rest}".chomp("/")
            end
          end
       end
-      returning yield(path, env) do |params|
-        params
-      end
+      yield
+      # returning yield(path, env) do |params|
+      #   params
+      # end
     end
     
     def around_generate(*args, &block)

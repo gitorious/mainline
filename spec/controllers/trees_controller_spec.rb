@@ -87,7 +87,7 @@ describe TreesController do
         :repository_id => @repository.name, :branch => ["master"]
       response.should be_success
       
-      response.headers["type"].should == "application/x-gzip"
+      response.headers["Content-Type"].should == "application/x-gzip"
       response.headers["Content-Transfer-Encoding"].should == "binary"
     end
     
@@ -97,8 +97,8 @@ describe TreesController do
       get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
         :branch => %w[foo bar], :format => "tar.gz"
       response.should be_success
-      
-      response.headers["type"].should == "application/x-gzip"
+
+      response.headers["Content-Type"].should == "application/x-gzip"
       response.headers["Content-Transfer-Encoding"].should == "binary"
     end
   end

@@ -1,5 +1,0 @@
-require 'localized_rescue/actioncontroller/rescue'
-require 'localized_templates/actioncontroller/base'
-require 'localized_templates/actioncontroller/layout'
-require 'localized_templates/actionview/base'
-require 'localized_templates/actionview/partials'
