@@ -39,12 +39,15 @@
       <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
     <% end -%>
   </ul>
+  
   <h3>Members (<%= @group.members.count -%>)</h3>
   <ul class="repository_list">
     <% @group.members.each do |user| -%>
-      <li class="user">
-        <%= gravatar(user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(user.login), user_path(user) -%>
+      <li>
+        <div class="user">
+          <%= gravatar(user.email, :size => 16, :style => "tiny") %>
+          <%= link_to h(user.login), user_path(user) -%>
+        </div>
       </li>
     <% end -%>
   </ul>
