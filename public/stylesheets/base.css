@@ -1014,6 +1014,7 @@ span.tag {
 
 a.more_info img {
   display: inline;
+  margin-right: 3px;
 }
 
 table.tree tr td {

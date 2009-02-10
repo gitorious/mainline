@@ -81,4 +81,26 @@ module RepositoriesHelper
     content_tag(:li, link_to("Download as .tar.gz", gz_link), :class => "gz") + 
     content_tag(:li, link_to("Download as .zip", zip_link), :class => "zip") 
   end
+  
+  def toggle_more_repository_urls(repository)
+    js = <<-eos
+    <script type="text/javascript" charset="utf-8">
+      $('repo-#{repository.id}-url-toggle').observe('click', function(event) {
+        $('repo-#{repository.id}-http-url').toggle();
+        if ($('repo-#{repository.id}-push-url'))
+          $('repo-#{repository.id}-push-url').toggle();
+        Event.stop(event);
+      });
+    </script>
+    eos
+    if logged_in? && current_user.can_write_to?(repository)
+      text = "Show HTTP clone url &amp; SSH push url"
+    else
+      text = "Show HTTP clone url"
+    end
+    img = image_tag("silk/database_key.png", :alt => text, :title => text)
+    content_tag(:a, img, :href => "#more-urls", 
+                          :id => "repo-#{repository.id}-url-toggle",
+                          :class => "hint") + js
+  end
 end
