@@ -568,6 +568,9 @@ form {
   margin-bottom: 1.5em;
 }
 
+form.button-to, form.button-to div { display: inline; }
+form.button-to div { margin: 0 5px 0 5px; }
+
 input.text { 
   padding: 3px; 
   width: 350px; 

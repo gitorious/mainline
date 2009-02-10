@@ -66,7 +66,7 @@ class MembershipsController < ApplicationController
     @membership = @group.memberships.find(params[:id])
     
     if @membership.destroy
-      flash[:success] = I18n.t("memberships_controller.membership_updated")
+      flash[:success] = I18n.t("memberships_controller.membership_destroyed")
     else
       flash[:error] = I18n.t("memberships_controller.failed_to_destroy")
     end

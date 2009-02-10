@@ -116,14 +116,14 @@ describe MembershipsController do
       assigns(:membership).should == membership
     end
     
-    it "requires adminship on create" do
+    it "requires adminship on update" do
       login_as :moe
       put :update, :group_id => @group.to_param, :id =>  @group.memberships.first.id,
         :membership => {}
       response.should redirect_to(new_sessions_path)
     end
     
-    it "PUTs update" do
+    it "PUTs update updates the role of the user" do
       membership = @group.memberships.first
       put :update, :group_id => @group.to_param, :id => membership.id,
         :membership => {:role_id => Role.committer.id}

@@ -78,6 +78,7 @@
       :membership_created => "Membership was successfully created",
       :membership_updated => "Membership was updated",
       :failed_to_destroy => "Failed to destroy membership",
+      :membership_destroyed => "Membership deleted",
     },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
@@ -420,6 +421,7 @@
       :memberships => {
         :add_new_member => "Add new member",
         :role => "Role",
+        :header_title => "Members in {{group_name}}",
       },
       :groups => {
         :create_team => "Create a new team",
