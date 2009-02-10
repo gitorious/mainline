@@ -40,5 +40,14 @@ describe Event do
     @event.should have_valid_associations
   end  
   
+  it 'should belong to a user or have an author email' do
+    event = Event.new(:target => repositories(:johans), :body => 'blabla', :project => @project, :action => Action::COMMIT)
+    event.user.should be_nil
+    event.should_not be_valid
+    event.email = 'foo@bar.com'
+    event.user.should be_nil
+    event.should be_valid
+  end
+  
 end
 

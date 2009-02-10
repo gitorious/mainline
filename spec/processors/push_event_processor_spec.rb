@@ -36,22 +36,21 @@ describe PushEventProcessor do
   end
   
   it 'returns the correct type and identifier for a new branch' do
-    stub_git_show
+    stub_git_log
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
+    @processor.repository = Repository.first
     @processor.action.should == :create
     @processor.should be_head
-    @processor.events.size.should == 1
+    @processor.events.size.should == 4
     @processor.events.first.event_type.should == Action::CREATE_BRANCH
     @processor.events.first.identifier.should == 'foo_branch'
-    @processor.expects(:log_event).once
+    @processor.events[1].event_type.should == Action::COMMIT
+    @processor.expects(:log_event).times(4)
     @processor.log_events    
   end
   
   it 'returns the correct type and a set of events for a commit' do
-    git = mock
-    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR) + "\n"
-    git.stubs(:log).returns(output*3)
-    @processor.stubs(:git).returns(git)
+    stub_git_log
     @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
     @processor.action.should == :update
     @processor.should be_head
@@ -62,6 +61,18 @@ describe PushEventProcessor do
     first_event.email.should == 'john@nowhere.com'
     @processor.expects(:log_event).times(3)
     @processor.log_events
+  end
+  
+  it 'creates commit events even if the committer is unknown' do
+    stub_git_log
+    @processor.repository = Repository.first
+    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
+    @processor.action.should == :create
+    @processor.events.size.should == 4
+    @processor.events.first.email.should == 'johan@johansorensen.com'
+    @processor.events[1..4].each do |e|
+      e.email.should == 'john@nowhere.com'
+    end
   end
   
   it 'returns the correct type and identifier for the deletion of a tag' do
@@ -88,6 +99,13 @@ describe PushEventProcessor do
     @processor.events.first.identifier.should == 'foo_branch'
     @processor.expects(:log_event).once
     @processor.log_events
+  end
+  
+  def stub_git_log
+    git = mock
+    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR) + "\n"
+    git.stubs(:log).returns(output*3)
+    @processor.stubs(:git).returns(git)
   end
   
   def stub_git_show

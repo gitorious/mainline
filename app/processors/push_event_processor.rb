@@ -20,6 +20,7 @@ class PushEventProcessor < ApplicationProcessor
 
   subscribes_to :push_event
   attr_reader :oldrev, :newrev, :action
+  attr_writer :repository
 
   GIT_OUTPUT_SEPARATOR = ";;"
   
@@ -35,6 +36,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def log_events
+    logger.info("Processor logging #{events.size} events")
     events.each do |e|
       log_event(e)
     end
@@ -42,8 +44,16 @@ class PushEventProcessor < ApplicationProcessor
   
   def log_event(an_event)
     @project ||= @repository.project
-    logger.debug("Processor: adding event #{an_event.message} from #{an_event.email} (#{an_event.to_s})")
-    @project.create_event(an_event.event_type, @repository, User.find_by_email(an_event.email), an_event.identifier, an_event.message, an_event.commit_time)
+    logger.debug("Processor: about to create an event")
+    event = @project.events.create!(
+      :action => an_event.event_type, 
+      :target => @repository, 
+      :email => an_event.email,
+      :body => an_event.identifier,
+      :data => an_event.message,
+      :created_at => an_event.commit_time
+      )
+    logger.debug("Processor: created event #{event}")
   end
   
   # Sets the commit summary, as served from git
@@ -96,8 +106,10 @@ class PushEventProcessor < ApplicationProcessor
       e = EventForLogging.new
       e.event_type = Action::CREATE_BRANCH
       e.identifier = @identifier
-      fetch_commit_details(e, @newrev)
-      return [e]
+      e.email = @repository.user.email
+      result = [e]
+      result = result + events_from_git_log(@newrev)
+      return result
     elsif action == :delete
       e = EventForLogging.new
       e.event_type = Action::DELETE_BRANCH
@@ -105,7 +117,7 @@ class PushEventProcessor < ApplicationProcessor
       fetch_commit_details(e, @oldrev)
       return [e]
     else
-      events_from_git_log
+      events_from_git_log("#{@oldrev}..#{@newrev}")
     end
   end
     
@@ -117,11 +129,12 @@ class PushEventProcessor < ApplicationProcessor
     logger.info("Processor returning #{an_event}")
   end
   
-  def events_from_git_log
+  def events_from_git_log(revspec)
     result = []
-    commits = git.log({:pretty => git_pretty_format, :s => true}, "#{@oldrev}..#{@newrev}").split("\n")
+    commits = git.log({:pretty => git_pretty_format, :s => true}, revspec).split("\n")
     commits.each do |c|
       sha, email, timestamp, message = c.split(GIT_OUTPUT_SEPARATOR)
+      logger.info("Debugging commits: #{sha}: #{email}")
       e = EventForLogging.new
       e.identifier    = sha
       e.email         = email

@@ -20,4 +20,22 @@ class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
   belongs_to :target, :polymorphic => true
+  validates_presence_of :user_id, :unless => :user_email_set?
+
+  def email=(an_email)
+    if u = User.find_by_email(an_email)
+      self.user = u
+    else
+      self.user_email = an_email
+    end
+  end
+
+  def email
+    user_email || user.email
+  end
+
+  protected
+  def user_email_set?
+    !!user_email
+  end
 end

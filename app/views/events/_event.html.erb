@@ -21,12 +21,16 @@
 <% action, body, category = action_and_body_for_event(event) %>
 <li class="event_instance">
   <p class="event_date"><%= event.created_at.to_s(:short_time) %></p>
-  <%= gravatar(event.user.email, :size => 16)  %>
+  <%= gravatar(event.email, :size => 16)  %>
   <p class="event_category <%= category -%>"><%= category.humanize -%></p>
   <div class="event_meta">
     <p>
     <% unless action.empty? %>
-      <%= link_to event.user.login, user_path(event.user) %> 
+      <% if event.user.nil? %>
+        <%= event.email %>
+      <% else %>
+        <%= link_to event.user.login, user_path(event.user) %> 
+      <% end %>
       <%= action %> 
     <% end %>
     </p>
