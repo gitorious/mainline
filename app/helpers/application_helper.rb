@@ -22,6 +22,7 @@
 module ApplicationHelper
   include TagsHelper
   include UsersHelper
+  include BreadcrumbsHelper
   
   def feed_icon(url, alt_title = "Atom feed", size = :small)
     link_to image_tag("feed_12.png", :class => "feed_icon"), url, 

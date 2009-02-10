@@ -16,5 +16,5 @@
 #++
 
 module MergeRequestsHelper
-  include BreadcrumbsHelper
+
 end

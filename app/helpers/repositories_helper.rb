@@ -17,7 +17,7 @@
 #++
 
 module RepositoriesHelper  
-  include BreadcrumbsHelper
+  
   def log_path(objectish = "master", options = {})
     objectish = ensplat_path(objectish)
     if options.blank? # just to avoid the ? being tacked onto the url
