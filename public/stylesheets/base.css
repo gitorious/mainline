@@ -1295,8 +1295,8 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 
 #system_message {
   background: #ffc;
-  border-bottom: 1px solid #aaa;
-  margin-bottom: 1em;
+  border-bottom: 1px solid #333;
+  margin: 0;
 }
 #system_message p {
   text-align: center;
