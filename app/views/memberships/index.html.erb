@@ -23,7 +23,7 @@
 
 <h1><%= t("views.memberships.header_title", :group_name => link_to(h(@group.name), @group)) -%></h1>
 
-<table class="listing tree">
+<table class="listing">
 	<thead>
 		<th><%= t(:created_at, :scope => "activerecord.attributes.memberships").humanize %></th>
 		<th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>

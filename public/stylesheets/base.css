@@ -572,6 +572,18 @@ form {
 
 form.button-to, form.button-to div { display: inline; }
 form.button-to div { margin: 0 5px 0 5px; }
+form.button-to div input { 
+  background: #dedede;
+  border: 1px solid #bbb;
+  color: #390;
+  padding: 2px 3px 2px 3px;
+  border-top-style: outset;
+  border-left-style: outset;
+}
+form.button-to div input:hover { 
+  background: #390;
+  color: #fff;
+}
 
 input.text { 
   padding: 3px; 
