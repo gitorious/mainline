@@ -104,4 +104,13 @@ class MergeRequest < ActiveRecord::Base
       return commits_for_selection
     end
   end
+  
+  def breadcrumb_parent
+    Breadcrumb::MergeRequests.new(target_repository)
+  end
+  
+  def title
+    "#{source_repository.name}"
+  end
+  
 end

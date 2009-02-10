@@ -143,4 +143,23 @@ module Breadcrumb
       "Commit teams"
     end
   end
+  
+  class MergeRequests
+    def initialize(repository)
+      @repository = repository
+    end
+    
+    def breadcrumb_parent
+      @repository
+    end
+    
+    def title
+      "Merge requests"
+    end
+
+    def breadcrumb_css_class
+      "merge_requests"
+    end
+    
+  end
 end

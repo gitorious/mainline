@@ -60,5 +60,5 @@ git push origin master
 <% end -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @merge_request} -%>
 <% end -%>

@@ -43,6 +43,10 @@ module BreadcrumbsHelper
       group_memberships_path(@group)
     when Membership
       edit_group_membership_path(@group, @membership)
+    when Breadcrumb::MergeRequests
+      [@owner, @repository, :merge_requests]
+    when MergeRequest 
+      [@owner, @repository, @merge_request]
     when Breadcrumb::Participations
       [@owner, @repository, :participations]
     when Participation
