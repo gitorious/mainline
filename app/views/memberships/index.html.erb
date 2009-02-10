@@ -17,7 +17,7 @@
 #++
 %>
 
-<h1><%= t("views.memberships.header_title", :group_name => h(@group.name)) -%></h1>
+<h1><%= t("views.memberships.header_title", :group_name => link_to(h(@group.name), @group)) -%></h1>
 
 <table class="listing tree">
 	<tr>
