@@ -109,15 +109,32 @@ Event.observe(window, "load", function(e){
 });
 
 
-// A class used for selecting ranges of objects
-function SelectableRange()
+function sourceBranchSelected(form, value)
 {
-  this.startsAt = null;
+  if (sourceBranch = $F('merge_request_source_branch'))
+  {
+    selectableRange.sourceBranchSelected(sourceBranch);
+  }
+}
+// A class used for selecting ranges of objects
+function SelectableRange(commitListUrl)
+{
+  this.commitListUrl = commitListUrl
   this.endsAt = null;
+  this.sourceBranchName = null;
   this.endSelected = function(el)
   {
     this.endsAt = el;
     this.update();
+  };
+  this.sourceBranchSelected = function(branchName)
+  {
+    if (branchName != this.sourceBranchName)
+    {
+      console.debug("New source branch selected");
+      this.sourceBranchName = branchName;
+      new Ajax.Updater('commit_selection', this.commitListUrl, {method:'get', parameters: Form.serialize($('new_merge_request'))});    
+    }
   };
   this.update = function()
   {

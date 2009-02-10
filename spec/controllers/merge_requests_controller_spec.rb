@@ -28,6 +28,7 @@ describe MergeRequestsController do
 		@source_repository = repositories(:johans2)
 		@target_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans)
+		@merge_request.stubs(:commits_for_selection).returns([])
 	end
 	
 	describe "#index (GET)" do
@@ -72,20 +73,14 @@ describe MergeRequestsController do
 		
 		it "gets a list of the commits to be merged" do
 			MergeRequest.expects(:find).returns(@merge_request)
-			commits = [mock("commit"), mock("commit")]
-			
-			target_repo = mock("target repo")
-			@merge_request.target_repository.stubs(:git).returns(target_repo)
-			
-			src_repo = mock("src repo")
-			@merge_request.source_repository.stubs(:git).returns(src_repo)
-			
-			target_repo.expects(:commit_deltas_from).with(
-				src_repo, @merge_request.target_branch, @merge_request.source_branch
-			).returns(commits)
-			
+      commits = %w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07).collect do |sha|
+        m = mock
+        m.stubs(:id).returns(sha)
+        m
+      end
+      @merge_request.stubs(:commits_for_selection).returns(commits)
 			do_get
-			assigns[:commits].should == commits
+			assigns[:commits].size.should == 4
 		end
 	end
 
@@ -125,6 +120,7 @@ describe MergeRequestsController do
 			post :create, :project_id => @project.to_param, 
 				:repository_id => @source_repository.to_param, :merge_request => {
 					:target_repository_id => @target_repository.id,
+					:ending_commit => '6823e6622e1da9751c87380ff01a1db1'
 				}.merge(data)
 		end
 		

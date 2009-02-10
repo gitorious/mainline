@@ -8,15 +8,9 @@
   </tr>
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
-    <!-- <td>
-      <input 
-      name="merge_request[starting_commit]" 
-      type="radio" 
-      value="<%= commit.id -%>" 
-      onclick="selectableRange.startSelected(this)" />
-    </td> -->
     <td><input 
       name="merge_request[ending_commit]" 
+      id="merge_request_ending_commit"
       type="radio" 
       value="<%= commit.id -%>" 
       class="merge_to" 

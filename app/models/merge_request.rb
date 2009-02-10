@@ -30,7 +30,7 @@ class MergeRequest < ActiveRecord::Base
   
   attr_protected :user_id, :status
     
-  validates_presence_of :user, :source_repository, :target_repository
+  validates_presence_of :user, :source_repository, :target_repository, :ending_commit
   
   STATUS_OPEN = 0
   STATUS_MERGED = 1
@@ -93,14 +93,13 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def applies_to_specific_commits?
-    starting_commit && ending_commit
+    !!ending_commit
   end
   
   def commits_to_be_merged
     if applies_to_specific_commits?
-      f = commits_for_selection.index(commits_for_selection.find{|c|c.id == starting_commit})
       l = commits_for_selection.index(commits_for_selection.find{|c|c.id == ending_commit})
-      return (f && l) ? commits_for_selection[f..l] : commits_for_selection
+      return l ? commits_for_selection[0..l] : commits_for_selection
     else
       return commits_for_selection
     end

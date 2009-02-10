@@ -51,6 +51,7 @@ class MergeRequestsController < ApplicationController
   
   def create
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
+    @branches = @repository.git.branches
     @merge_request.user = current_user
     respond_to do |format|
       if @merge_request.save

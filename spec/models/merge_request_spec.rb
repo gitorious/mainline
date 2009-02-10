@@ -20,6 +20,12 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe MergeRequest do
   before(:each) do
     @merge_request = merge_requests(:moes_to_johans)
+    commits = %w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07).collect do |sha|
+      m = mock
+      m.stubs(:id).returns(sha)
+      m
+    end
+    @merge_request.stubs(:commits_for_selection).returns(commits)
   end
 
   it "should have valid associations" do
@@ -116,29 +122,20 @@ describe MergeRequest do
   
   describe "with specific starting and ending commits" do
     before(:each) do
-      commits = %w(ffc ccf 00f 0fc).collect do |sha|
-        m = mock
-        m.stubs(:id).returns(sha)
-        m
-      end
-      @merge_request.stubs(:commits_for_selection).returns(commits)
+      @merge_request.ending_commit = '6823e6622e1da9751c87380ff01a1db1'
     end
-
     it "should suggest relevant commits to be merged" do
       assert_equal(4, @merge_request.commits_for_selection.size)
     end
     
     it "should know that it applies to specific commits" do
-      assert_equal(4, @merge_request.commits_to_be_merged.size)
-      @merge_request.starting_commit = 'ffc'
-      @merge_request.ending_commit = '00f'
-      assert_equal(%w(ffc ccf 00f), @merge_request.commits_to_be_merged.collect(&:id))
+      assert_equal(2, @merge_request.commits_to_be_merged.size)
+      assert_equal(%w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1), @merge_request.commits_to_be_merged.collect(&:id))
     end
     
     it "should return the full set of commits if ending_commit or starting_commit don't exist" do
-      @merge_request.starting_commit = 'foo'
-      @merge_request.ending_commit = '00f'
-      assert_equal(4, @merge_request.commits_to_be_merged.size)
+      @merge_request.ending_commit = '526fa6c0b3182116d8ca2dc80dedeafb'
+      assert_equal(3, @merge_request.commits_to_be_merged.size)
     end
   end
 end
