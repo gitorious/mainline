@@ -24,7 +24,7 @@
 <h1><%=h @group.name -%></h1>
 
 <h3>Repositories (<%= @group.repositories.count -%>)</h3>
-<ul>
+<ul class="repository_list">
   <% @group.repositories.each do |repository| -%>
     <li>
       <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
@@ -32,6 +32,9 @@
     </li>
   <% end -%>
 </ul>
+
+<h3>Team activity</h3>
+<%= render :partial => "events/events", :locals => { :events => @events } -%>
 
 <% content_for :sidebar do -%>
   <ul class="links">

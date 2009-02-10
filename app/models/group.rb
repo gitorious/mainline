@@ -23,6 +23,7 @@ class Group < ActiveRecord::Base
   has_many :memberships
   has_many :members, :through => :memberships, :source => :user
   has_many :repositories, :as => :owner, :conditions => { :kind => Repository::KIND_PROJECT_REPO }
+  has_many :projects, :as => :owner
   
   attr_protected :public, :role_id, :user_id
   
