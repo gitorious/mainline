@@ -44,6 +44,13 @@
     <h1 id="logo">
       <%= link_to image_tag("/images/qt-logo.png"), root_path -%> 
     </h1>
+    
+    <% if GitoriousConfig['public_mode'] -%>
+  	  <div id="searchbox">
+      	<%= render :partial => "/searches/search_box" -%>
+      </div>
+  	<% end -%>
+    
     <ul id="menu">
       <% unless logged_in? -%>
         <li><%= link_to t("views.layout.home"), root_path -%></li>
@@ -65,8 +72,8 @@
         <li><%= link_to t("views.layout.about"), about_path -%></li>
       <% end -%>
       <%- if logged_in? -%>
-        <li class="secondary">( <%= link_to t("views.layout.my_account"), account_path -%></li>
-        <li class="secondary"><%= link_to t("views.layout.logout"), logout_path -%> )</li>
+        <li class="secondary"><%= link_to t("views.layout.my_account"), account_path -%></li>
+        <li class="secondary"><%= link_to t("views.layout.logout"), logout_path -%></li>
       <%- else -%>
 		<% if GitoriousConfig['public_mode'] -%>
         	<li class="secondary"><%= link_to "Register", new_user_path -%></li>
@@ -74,12 +81,6 @@
         <li class="secondary"><%= link_to "Login", login_path -%></li>
       <%- end -%>
     </ul>
-    
-	<% if GitoriousConfig['public_mode'] || logged_in? -%>
-	  <div id="searchbox">
-    	<%= render :partial => "/searches/search_box" -%>
-    </div>
-	<% end -%>
     
     <% if @project && false -%>
     <h2 id="project_title"><%= link_to h(@project.title), @project -%></h2>

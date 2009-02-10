@@ -147,13 +147,13 @@ abbr {
 
 #header {
   background: #292929;
-  height: 125px;
+  height: 110px;
   background-image: url("/images/header_bg.png");
   background-repeat: repeat-x;
 }
 
 #header #logo {
-  padding: 20px 0 0 20px;
+  padding: 15px 0 0 20px;
   line-height: 25px;
   margin:0;
   float: left;
@@ -162,13 +162,15 @@ abbr {
 
 #header #searchbox {
   float: right;
-  margin-right: 23px;
-  margin-top: 5px;
-  clear: right;
+  margin-top: 15px;
+  padding: 0px;
+  margin-right: 20px;
+  list-style: none;
+  padding-top: 2px;
 }
 
 #header #searchbox .search-field, #header #searchbox .search-submit {
-  background: #1C1C1C;
+  background: #1F1F1F;
   border: 1px solid #666;
   color: #fff;
 }
@@ -340,11 +342,9 @@ abbr {
 
 #menu {
   float: right;
-  margin-top: 13px;
-  padding: 0px;
-  margin-right: 20px;
-  list-style: none;
-  padding-top: 2px;
+  margin-right: 15px;
+  margin-top: 20px;
+  clear: right;
 }
 
 #menu li {
