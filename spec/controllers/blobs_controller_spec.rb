@@ -24,8 +24,8 @@ describe BlobsController do
     @repository.stubs(:full_repository_path).returns(repo_path)
 
     Project.stubs(:find_by_slug!).with(@project.slug).returns(@project)
-    @project.repositories.expects(:find_by_name!) \
-      .with(@repository.name).returns(@repository)
+    Repository.expects(:find_by_name_and_project_id!) \
+        .with(@repository.name, @project.id).returns(@repository)
     @repository.stubs(:has_commits?).returns(true)
 
     @git = stub_everything("Grit mock")

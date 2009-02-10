@@ -1,21 +1,22 @@
 <table class="repository_meta">
   <tr class="name">
     <td colspan="3" class="<%= repository.mainline? ? "mainline" : "clone" -%>">
-      <h2 style="display: inline;"><%= link_to h(repository.name), [@owner, repository] -%></h2>
+      <h2 style="display: inline;"><%= link_to h(repository.name), [repository.project, repository] -%></h2>
       <ul class="horizontal" style="position: relative; top: -2px; padding-left: 10px">
-        <li class="commit"><%= link_to "Commit log", [@owner, repository, :commits] -%></li>
-        <li class="tree"><%= link_to "Source tree", [@owner, repository, :trees] -%></li>
+        <li class="commit"><%= link_to "Commit log", [repository.project, repository, :commits] -%></li>
+        <li class="tree"><%= link_to "Source tree", [repository.project, repository, :trees] -%></li>
         <li class="merge_requests">
-          <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", [@owner, repository, :merge_requests] -%>
+          <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", [repository.project, repository, :merge_requests] -%>
         </li>
         <% if repository.parent -%>
         <li class="clone">
-          <%= link_to "Clone of #{h(repository.parent.name)}", [repository.parent.owner, repository.parent] -%>
+          <%= link_to "Clone of #{h(repository.parent.name)}", [repository.parent.project, repository.parent] -%>
         </li>
         <% end -%>
       </ul>
     </td>
   </tr>
+  <% unless repository.description.blank? -%>
   <tr>
     <td colspan="3" class="repository-description">
       <div class="page">
@@ -23,24 +24,7 @@
       </div>
     </td>
   </tr>
-  <tr class="meta">
-    <td class="commit_count">
-      <span class="bignum"><%= repository.events.count -%></span> <%= t("views.repos.activities", :count => repository.events.count) %>
-    </td>
-    <td class="branch_count">
-	<% @branch_count = repository.ready? ? repository.git.heads.size : 0 -%>
-      <span class="bignum"><%= @branch_count -%></span> <%= t("views.repos.branches", :count => @branch_count) %>
-    </td>
-    <td class="author_count">
-	<% @author_count = repository.ready? ? repository.commit_graph_data_by_author.keys.size : 0 -%>
-      <span class="bignum"><%= @author_count -%></span> <%= t("views.repos.authors", :count => @author_count) %>
-    </td>
-  </tr>
-  <tr class="graph">
-    <td colspan="3"><%= commit_graph_tag(repository) %></td>
-  </tr>
-  <% # TODO: Clone stats -%>
-  <% # TODO: divergence from mainline in +/- -%>
+  <% end -%>
   <tr>
     <td colspan="3" class="infobox">
       <ul>
@@ -80,11 +64,33 @@
           </li>
         <% end -%>
       </ul>
+      <% if repository.has_commits? -%>
       <div class="meta-info">
         <ul class="horizontal">
-          <%= download_archive_links(repository) if repository.has_commits? -%>
+          <%= download_archive_links(repository) -%>
         </ul>
       </div>
+      <% end -%>
     </td>
   </tr>
+  <% if false -%>
+  <tr class="meta">
+    <td class="commit_count">
+      <span class="bignum"><%= repository.events.count -%></span> <%= t("views.repos.activities", :count => repository.events.count) %>
+    </td>
+    <td class="branch_count">
+  <% @branch_count = repository.ready? ? repository.git.heads.size : 0 -%>
+      <span class="bignum"><%= @branch_count -%></span> <%= t("views.repos.branches", :count => @branch_count) %>
+    </td>
+    <td class="author_count">
+  <% @author_count = repository.ready? ? repository.commit_graph_data_by_author.keys.size : 0 -%>
+      <span class="bignum"><%= @author_count -%></span> <%= t("views.repos.authors", :count => @author_count) %>
+    </td>
+  </tr>
+  <% end -%>
+  <tr class="graph">
+    <td colspan="3"><%= commit_graph_tag(repository) %></td>
+  </tr>
+  <% # TODO: Clone stats -%>
+  <% # TODO: divergence from mainline in +/- -%>
 </table>

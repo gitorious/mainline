@@ -79,7 +79,9 @@ class ApplicationController < ActionController::Base
     
     def find_project_and_repository
       @project = Project.find_by_slug!(params[:project_id])
-      @repository = @project.repositories.find_by_name!(params[:repository_id])
+      # We want to look in all repositories that's somehow within this project
+      # realm, not just @project.repositories
+      @repository = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)
     end
     
     def check_repository_for_commits
