@@ -25,15 +25,11 @@ class GroupsController < ApplicationController
   def show
     @group = Group.find_by_name!(params[:id], 
               :include => [:members, :projects, :repositories, :participations])
-    project_ids = @group.projects.map{|p| p.id }
-    project_ids << @group.repositories.map{|r| r.project_id }
-    project_ids << @group.participations.map{|p| p.repository.project_id }
-    project_ids.flatten!.uniq!
     @events = Event.paginate(:all, 
       :page => params[:page],
       :conditions => ["events.user_id in (:user_ids) and events.project_id in (:project_ids)", {
         :user_ids => @group.members.map{|u| u.id },
-        :project_ids => project_ids,
+        :project_ids => @group.all_related_project_ids,
       }], 
       :order => "events.created_at desc", 
       :include => [:user, :project, :target])

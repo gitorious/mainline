@@ -37,6 +37,14 @@ class Group < ActiveRecord::Base
     I18n.t("activerecord.models.group")
   end
   
+  def all_related_project_ids
+    all_project_ids = projects.map{|p| p.id }
+    all_project_ids << repositories.map{|r| r.project_id }
+    all_project_ids << participations.map{|p| p.repository.project_id }
+    all_project_ids.flatten!.uniq!
+    all_project_ids
+  end
+  
   def to_param
     name
   end

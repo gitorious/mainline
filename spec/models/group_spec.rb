@@ -79,6 +79,13 @@ describe Group do
     groups(:team_thunderbird).breadcrumb_parent.should == nil
   end
   
+  it "has a collection of project ids, of all projects it's somehow associated with" do
+    group = groups(:team_thunderbird)
+    group.all_related_project_ids.should include(projects(:thunderbird).id)
+    group.all_related_project_ids.should include(repositories(:johans2).project_id)
+    group.all_related_project_ids.should include(projects(:moes).id)
+  end
+  
   describe "validations" do
     it "should have a unique name" do
       group = Group.new({
