@@ -39,6 +39,7 @@ Rails::Initializer.run do |config|
   config.gem "ruby-openid",  :lib => "openid"
   config.gem "rdiscount",    :version => "1.3.1.1"
   config.gem 'stomp'
+  config.gem 'json'
   
   # vendorized directly in vendor/ -- need to research if can be removed from there
   #config.gem "ultraviolet",  :version => '0.10.2', :lib => "uv"
