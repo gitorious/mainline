@@ -56,7 +56,23 @@ describe Gitorious::SSH::Strainer do
     }.should raise_error(Gitorious::SSH::BadCommandError)
     
     proc {
+      Gitorious::SSH::Strainer.new("git-upload-pack '+/evil/path'").parse!
+    }.should raise_error(Gitorious::SSH::BadCommandError)
+    
+    proc {
+      Gitorious::SSH::Strainer.new("git-upload-pack '~/evil/path'").parse!
+    }.should raise_error(Gitorious::SSH::BadCommandError)
+    
+    proc {
       Gitorious::SSH::Strainer.new("git-upload-pack /evil/\\\\\\//path").parse!
+    }.should raise_error(Gitorious::SSH::BadCommandError)
+    
+    proc {
+      Gitorious::SSH::Strainer.new("git-upload-pack +/evil/\\\\\\//path").parse!
+    }.should raise_error(Gitorious::SSH::BadCommandError)
+    
+    proc {
+      Gitorious::SSH::Strainer.new("git-upload-pack ~/evil/\\\\\\//path").parse!
     }.should raise_error(Gitorious::SSH::BadCommandError)
     
     proc {
@@ -65,6 +81,14 @@ describe Gitorious::SSH::Strainer do
     
     proc {
       Gitorious::SSH::Strainer.new("git-upload-pack 'evil/path.git.bar'").parse!
+    }.should raise_error(Gitorious::SSH::BadCommandError)
+    
+    proc {
+      Gitorious::SSH::Strainer.new("git-upload-pack +../../evil/path").parse!
+    }.should raise_error(Gitorious::SSH::BadCommandError)
+    
+    proc {
+      Gitorious::SSH::Strainer.new("git-upload-pack ~../../evil/path").parse!
     }.should raise_error(Gitorious::SSH::BadCommandError)
   end
   
@@ -90,5 +114,17 @@ describe Gitorious::SSH::Strainer do
     cmd.path.should == "foo/bar.git"
   end
 
+  it "can parse user-style urls prefixed with a tilde" do
+    proc {
+      cmd = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar.git'").parse!
+      cmd.path.should == "~foo/bar.git"
+    }.should_not raise_error(Gitorious::SSH::BadCommandError)
+  end
   
+  it "can parse team-style urls prefixed with a plus" do
+    proc {
+      cmd = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar.git'").parse!
+      cmd.path.should == "+foo/bar.git"
+    }.should_not raise_error(Gitorious::SSH::BadCommandError)
+  end
 end
