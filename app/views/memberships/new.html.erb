@@ -17,6 +17,11 @@
 #++
 %>
 
+<h1>
+  <%= t("views.memberships.new_title", 
+        :group_memberships => link_to(h(@group.name), [@group, :memberships])) -%>
+</h1>
+
 <%= error_messages_for :group, :membership -%>
 <% form_for [@group, @membership] do |f| -%>
   <p>

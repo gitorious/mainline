@@ -407,6 +407,7 @@
         :update => "Update",
         :cancel => "cancel",
         :or => "or",
+        :remove => "remove",
       },
       :pages => {
         :page => "page",
@@ -422,6 +423,7 @@
         :add_new_member => "Add new member",
         :role => "Role",
         :header_title => "Members in {{group_name}}",
+        :new_title => "Add new member to {{group_memberships}}",
       },
       :groups => {
         :create_team => "Create a new team",
@@ -438,7 +440,7 @@
       },
       :participations => {
         :add_new => "Add new team as committers",
-        :title => "Team with commit rights to \"{{repo_name}}\"",
+        :title => "Team with commit rights to {{repo_name}}",
         :new_title => "Add a team as committers to {{repo_name}}",
         :btn_add_as_committer => "Add all team members as committers",
         :return_to => "return to", 

@@ -20,22 +20,22 @@
 <h1><%= t("views.memberships.header_title", :group_name => link_to(h(@group.name), @group)) -%></h1>
 
 <table class="listing tree">
-	<tr>
+	<thead>
 		<th><%= t(:created_at, :scope => "activerecord.attributes.memberships").humanize %></th>
 		<th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
 		<th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
 		<th><%= t(:name, :scope => "activerecord.attributes.roles").humanize %></th>
 		<th></th>
-	</tr>
+	</thead>
 	<% @memberships.each do |membership| -%>
-	<tr>
+	<tr class="<%= cycle('even', 'odd') -%>">
 	  <td><%= membership.created_at.to_s(:short) -%></td>
 	  <td><%=h membership.user.login -%></td>
 	  <td><%=h membership.user.email -%></td>
 	  <td><%=h membership.role.name -%></td>
 	  <td>
 	    <%= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
-	    <%= button_to(t("views.common.delete"), group_membership_path(@group, membership), :method => :delete) -%>
+	    <%= button_to(t("views.common.remove"), group_membership_path(@group, membership), :method => :delete) -%>
 	  </td>
 	</tr>
 	<% end -%>
