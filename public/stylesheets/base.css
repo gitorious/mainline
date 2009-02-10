@@ -1196,7 +1196,6 @@ table.sidebyside {
   table-layout: fixed;
 }
 table.sidebyside tr td.code {
-  white-space: normal;
   padding: 2px;
 }
 
