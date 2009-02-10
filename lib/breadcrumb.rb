@@ -110,4 +110,37 @@ module Breadcrumb
       'file'
     end
   end
+  
+  class Memberships
+    def initialize(group)
+      @group = group
+    end
+    attr_reader :group
+    
+    def breadcrumb_parent
+      @group
+    end
+    
+    def title
+      "Members"
+    end
+    
+    def breadcrumb_css_class
+      "memberships"
+    end
+  end
+  
+  class Participations
+    def initialize(repository)
+      @repository = repository
+    end
+    
+    def breadcrumb_parent
+      @repository
+    end
+    
+    def title
+      "Commit teams"
+    end
+  end
 end

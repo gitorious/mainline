@@ -107,3 +107,33 @@ describe Breadcrumb::Page do
     @page.title.should == 'Home'
   end
 end
+
+describe Breadcrumb::Memberships do
+  before(:each) do
+    @group = mock("Group")
+    @crumb = Breadcrumb::Memberships.new(@group)
+  end
+  
+  it 'should return a Froup as its parent' do
+    @crumb.breadcrumb_parent.should == @group
+  end
+  
+  it 'should return its title' do
+    @crumb.title.should == 'Members'
+  end
+end
+
+describe Breadcrumb::Participations do
+  before(:each) do
+    @repo = mock("Repostitory")
+    @crumb = Breadcrumb::Participations.new(@repo)
+  end
+  
+  it 'should return a Froup as its parent' do
+    @crumb.breadcrumb_parent.should == @repo
+  end
+  
+  it 'should return its title' do
+    @crumb.title.should == 'Commit teams'
+  end
+end

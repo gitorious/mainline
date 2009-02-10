@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   session :session_key => '_ks1_session_id', :secret => YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["cookie_secret"]
   include AuthenticatedSystem
   include ExceptionNotifiable
+  
   before_filter :public_and_logged_in
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found

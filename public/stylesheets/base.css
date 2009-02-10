@@ -528,6 +528,8 @@ table.tree tr td.image-file a, li.image-file > a { background-image: url("/image
 table.tree tr td.submodule a { background-image: url("/images/silk/folder_database.png"); }
 
 li.wiki a {background-image: url('/images/silk/page_white_stack.png');}
+li.memberships a, li.participations a {background-image: url('/images/silk/group_gear.png');}
+li.membership a, li.participation a {background-image: url('/images/silk/group_edit.png');}
 
 #contextmenu li a {
   color: #555;

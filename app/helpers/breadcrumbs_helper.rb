@@ -39,6 +39,14 @@ module BreadcrumbsHelper
       project_pages_path(an_object.project)
     when Breadcrumb::Page
       project_page_path(an_object.project, an_object.page.to_param)
+    when Breadcrumb::Memberships
+      group_memberships_path(@group)
+    when Membership
+      edit_group_membership_path(@group, @membership)
+    when Breadcrumb::Participations
+      [@owner, @repository, :participations]
+    when Participation
+      [@owner, @repository, @participation]
     else
       "/"
     end

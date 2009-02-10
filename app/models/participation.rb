@@ -21,4 +21,12 @@ class Participation < ActiveRecord::Base
   belongs_to :creator, :class_name => 'User'
   
   validates_presence_of :group_id, :repository_id
+  
+  def breadcrumb_parent
+    Breadcrumb::Participations.new(repository)
+  end
+  
+  def title
+    new_record? ? "New commit team" : "Commit team"
+  end
 end

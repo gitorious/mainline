@@ -17,6 +17,10 @@
 #++
 %>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
+
 <h1>
   <%= t("views.participations.title", 
         :repo_name => link_to(h(@repository.name), [@owner, @repository]))  -%>

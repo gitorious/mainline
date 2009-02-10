@@ -17,6 +17,10 @@
 #++
 %>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @participation} -%>
+<% end -%>
+
 <h1>
   <%= t("views.participations.new_title", :repo_name => @repository.name)  -%>
 </h1>

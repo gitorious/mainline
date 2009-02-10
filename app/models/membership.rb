@@ -21,4 +21,12 @@ class Membership < ActiveRecord::Base
   belongs_to :role
   
   validates_presence_of :group_id, :user_id, :role_id
+  
+  def breadcrumb_parent
+    Breadcrumb::Memberships.new(group)
+  end
+  
+  def title
+    "Member"
+  end
 end

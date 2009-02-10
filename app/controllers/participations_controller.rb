@@ -22,6 +22,7 @@ class ParticipationsController < ApplicationController
   
   def index
     @participations = @repository.participations.paginate(:all, :page => params[:page])
+    @root = Breadcrumb::Participations.new(@repository)
   end
   
   def new

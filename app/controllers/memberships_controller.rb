@@ -21,6 +21,7 @@ class MembershipsController < ApplicationController
   
   def index
     @memberships = @group.memberships.paginate(:all, :page => params[:page])
+    @root = Breadcrumb::Memberships.new(@group)
   end
   
   def show
