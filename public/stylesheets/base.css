@@ -1159,7 +1159,7 @@ table tr .line-numbers {
  padding: 0 3px 0 2px;
  width: 35px;
  border-right: 1px solid #ccc;
-/* border-bottom: 1px solid #ddd;*/
+ border-bottom: 1px solid #cdcdcd;
 }
 table tr td.code {
  width: 95%;
