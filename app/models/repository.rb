@@ -176,7 +176,7 @@ class Repository < ActiveRecord::Base
   
   def head_candidate_name
     if head = head_candidate
-      head.name.include?("/") ? head.commit.id : head.name
+      head.name
     end
   end
   

@@ -356,14 +356,11 @@ describe Repository do
     git.expects(:heads).returns([heads_stub])
     @repository.expects(:has_commits?).returns(true)
     @repository.head_candidate.should == heads_stub
-  end
-  
-  it "has a head_candidate_name that returns the commit id if the branch contains slashes" do
+    
     heads_stub = mock("head")
     heads_stub.stubs(:name).returns("foo/bar")
-    heads_stub.stubs(:commit).returns(mock("commit", :id => "asdf1234"))
     @repository.expects(:head_candidate).returns(heads_stub)
-    @repository.head_candidate_name.should == "asdf1234"
+    @repository.head_candidate_name.should == "foo/bar"
   end
   
   it "has a head_candidate, unless it doesn't have commits" do
