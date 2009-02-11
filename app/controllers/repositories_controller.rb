@@ -34,7 +34,8 @@ class RepositoriesController < ApplicationController
       :order => "created_at desc")
     
     @atom_auto_discovery_url = project_repository_path(@owner, @repository, :format => :atom)
-    response.headers['Refresh'] = 5 unless @repository.ready
+    response.headers['Refresh'] = "5" unless @repository.ready
+    
     respond_to do |format|
       format.html
       format.xml  { render :xml => @repository }
