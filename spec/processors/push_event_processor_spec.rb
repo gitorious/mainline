@@ -36,7 +36,7 @@ describe PushEventProcessor do
   end
   
   it 'returns the correct type and identifier for a new branch' do
-    stub_git_log
+    stub_git_log_and_user
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
     @processor.repository = Repository.first
     @processor.action.should == :create
@@ -50,21 +50,20 @@ describe PushEventProcessor do
   end
   
   it 'returns the correct type and a set of events for a commit' do
-    stub_git_log
+    stub_git_log_and_user
     @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
     @processor.action.should == :update
     @processor.should be_head
-    @processor.events.size.should == 3
+    @processor.events.size.should == 4
     first_event = @processor.events.first
-    first_event.event_type.should == Action::COMMIT
-    first_event.identifier.should == '33f746e21ef5122511a5a69f381bfdf017f4d66c'
-    first_event.email.should == 'john@nowhere.com'
-    @processor.expects(:log_event).times(3)
+    first_event.event_type.should == Action::PUSH
+    first_event.email.should == users(:johan).email
+    @processor.expects(:log_event).times(4)
     @processor.log_events
   end
   
   it 'creates commit events even if the committer is unknown' do
-    stub_git_log
+    stub_git_log_and_user
     @processor.repository = Repository.first
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
     @processor.action.should == :create
@@ -101,11 +100,12 @@ describe PushEventProcessor do
     @processor.log_events
   end
   
-  def stub_git_log
+  def stub_git_log_and_user
     git = mock
     output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR) + "\n"
     git.stubs(:log).returns(output*3)
     @processor.stubs(:git).returns(git)
+    @processor.stubs(:user).returns(users(:johan))
   end
   
   def stub_git_show

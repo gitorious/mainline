@@ -102,6 +102,8 @@
       :event_deleted_merge_request => "deleted merge request",
       :event_status_push_wiki => "pushed wiki content",
       :event_updated_wiki_page => "edited wiki page",
+      :event_status_pushed => 'pushed some commits',
+      :event_status_committed => 'committed',
       :more_info => "More info…",
     },
     :project => {

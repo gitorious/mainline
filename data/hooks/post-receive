@@ -23,13 +23,14 @@ $: << incpath
 require 'messaging'
 require 'json'
 
+
 @publisher = Publisher.new
 gitdir = File.expand_path(File.join(incpath, ".."))
 hashed_dir = gitdir.split('/')[-3,3].join('').split('.').first # Equivalent to the hash in the model
 
 
 while line = gets
-  message = JSON.unparse({:gitdir => hashed_dir, :message => line.chomp})
+  message = JSON.unparse({:gitdir => hashed_dir, :message => line.chomp, :username => ENV['GITORIOUS_USER']})
   @publisher.post_message(message)
 end
 

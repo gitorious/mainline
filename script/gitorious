@@ -50,6 +50,7 @@ begin
   if client.assure_user_can_write!
     args = client.to_git_shell_argument
     $stderr.puts "git-shell -c #{args.inspect}" if $DEBUG
+    ENV['GITORIOUS_USER'] = user
     exec("git-shell", "-c", args)
   end
   

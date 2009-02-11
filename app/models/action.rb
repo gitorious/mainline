@@ -35,6 +35,7 @@ class Action
   UPDATE_MERGE_REQUEST = 15
   DELETE_MERGE_REQUEST = 16
   UPDATE_WIKI_PAGE = 17
+  PUSH = 18
   
   def self.name(action_id)
     case action_id
@@ -72,6 +73,8 @@ class Action
         "update merge request"
       when DELETE_MERGE_REQUEST
         "delete merge request"
+      when PUSH
+        'push'
     end
   end
 end

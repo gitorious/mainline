@@ -19,7 +19,7 @@
 class PushEventProcessor < ApplicationProcessor
 
   subscribes_to :push_event
-  attr_reader :oldrev, :newrev, :action
+  attr_reader :oldrev, :newrev, :action, :user
   attr_writer :repository
 
   GIT_OUTPUT_SEPARATOR = ";;"
@@ -28,6 +28,7 @@ class PushEventProcessor < ApplicationProcessor
     hash = ActiveSupport::JSON.decode(message)
     logger.debug("Processor on message #{hash.inspect}")
     if @repository = Repository.find_by_hashed_path(hash['gitdir'])
+      @user = User.find_by_login(hash['username'])
       self.commit_summary = hash['message']
       log_events
     else
@@ -107,7 +108,7 @@ class PushEventProcessor < ApplicationProcessor
       e.event_type = Action::CREATE_BRANCH
       e.message = "New branch"
       e.identifier = @identifier
-      e.email = @repository.user.email
+      e.email = user.email
       result = [e]
       result = result + events_from_git_log(@newrev)
       return result
@@ -118,7 +119,13 @@ class PushEventProcessor < ApplicationProcessor
       fetch_commit_details(e, @oldrev)
       return [e]
     else
-      events_from_git_log("#{@oldrev}..#{@newrev}")
+      e = EventForLogging.new
+      e.event_type = Action::PUSH
+      e.message = "Pushed some changes"
+      e.identifier = @identifier
+      e.email = user.email
+      result = [e]
+      result = result + events_from_git_log("#{@oldrev}..#{@newrev}")
     end
   end
     
