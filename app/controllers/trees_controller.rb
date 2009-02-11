@@ -32,7 +32,8 @@ class TreesController < ApplicationController
       redirect_to project_repository_tree_path(@project, @repository, 
                       branch_with_tree("HEAD", @path)) and return
     end
-    @root = Breadcrumb::Folder.new({:paths => @path, :head => @git.get_head(@ref), 
+    head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+    @root = Breadcrumb::Folder.new({:paths => @path, :head => head, 
                                     :repository => @repository})
     path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
     @tree = @git.tree(@commit.tree.id, path)

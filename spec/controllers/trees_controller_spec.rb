@@ -58,24 +58,43 @@ describe TreesController do
       @commit_mock.stubs(:tree).returns(tree_mock)
       @git.expects(:commit).with("master").returns(@commit_mock)
       @git.expects(:tree).with(tree_mock.id, ["foo/bar/"]).returns(tree_mock)
-      @git.expects(:heads).returns(mock("head", :name => "master"))
+      @git.stubs(:get_head).returns(stub("head", :name => "master"))
+      
       get :show, :project_id => @project.to_param, 
         :repository_id => @repository.to_param, :branch_and_path => ["master", "foo", "bar"]
-        
+      
       response.should be_success
-      assigns[:git].should == @git
-      assigns[:tree].should == tree_mock
+      assigns(:git).should == @git
+      assigns(:tree).should == tree_mock
       assigns(:ref).should == "master"
       assigns(:path).should == ["foo", "bar"]
     end
     
     it "redirects to HEAD if provided sha was not found (backwards compat)" do
       @git.expects(:commit).with("a"*40).returns(nil)
-      @git.expects(:heads).returns(mock("head", :name => "master"))
+      @git.stubs(:get_head).returns(stub("head", :name => "master"))
       get :show, :project_id => @project.slug, 
         :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo"]
       
       response.should redirect_to(project_repository_tree_path(@project, @repository, ["HEAD", "foo"]))
+    end
+    
+    it "sets a pseudo-head if the tree ref is a sha" do
+      ref = "a"*20 + "1"*20
+      tree_mock = mock("tree")
+      tree_mock.stubs(:id).returns("123")
+      @commit_mock = mock("commit")
+      @commit_mock.stubs(:tree).returns(tree_mock)
+      @commit_mock.stubs(:id_abbrev).returns(ref[0..7])
+      @git.expects(:get_head).with(ref).returns(nil)
+      @git.expects(:commit).with(ref).returns(@commit_mock)
+      @git.expects(:tree).with(tree_mock.id, []).returns(tree_mock)
+      
+      get :show, :project_id => @project.to_param, 
+        :repository_id => @repository.to_param, :branch_and_path => [ref]
+        
+      response.should be_success
+      assigns(:root).breadcrumb_parent.title.should == ref[0..7]
     end
   end
   
