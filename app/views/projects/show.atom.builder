@@ -23,13 +23,24 @@ atom_feed do |feed|
     action, body, category = action_and_body_for_event(event)
     item_url = "http://#{GitoriousConfig['gitorious_host']}" + project_path(@project)
     feed.entry(event, :url => item_url) do |entry|
-      entry.title("#{h(event.user.login)} #{strip_tags(action)}")
-      entry.content(<<-EOS, :type => 'html')
-<p>#{link_to event.user.login, user_path(event.user)} #{action}</p>
-<p>#{body}<p>
-EOS
-      entry.author do |author|
-        author.name(event.user.login)
+      if event.user
+        entry.title("#{h(event.user.login)} #{strip_tags(action)}")
+        entry.content(<<-EOS, :type => 'html')
+  <p>#{link_to event.user.login, user_path(event.user)} #{action}</p>
+  <p>#{body}<p>
+  EOS
+        entry.author do |author|
+          author.name(event.user.login)
+        end
+      else
+        entry.title("#{h(event.email_display)} #{strip_tags(action)}")
+        entry.content(<<-EOS, :type => 'html')
+          <p>#{action}</p>
+          <p>#{body}</p>
+        EOS
+        entry.author do |author|
+          author.name(event.email_display)
+        end
       end
     end
   end
