@@ -20,6 +20,48 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe TreesController do
   
+  describe "routing" do
+    it "recognizes a single glob with a format" do
+      pending "fix rails bug #1939"
+      params_from(:get, "/proj/repo/archive/foo.tar.gz").should == {
+        :controller => "trees",
+        :action => "archive", 
+        :project_id => "proj",
+        :repository_id => "repo",
+        :branch => ["foo"],
+        :format => "tar.gz",        
+      }
+      params_from(:get, "/proj/repo/archive/foo.zip").should == {
+        :controller => "trees",
+        :action => "archive", 
+        :project_id => "proj",
+        :repository_id => "repo",
+        :branch => ["foo"],
+        :format => "zip",
+      }
+    end
+    
+    it "recognizes multiple globs with a format" do
+      pending "fix rails bug #1939"
+      params_from(:get, "/proj/repo/archive/foo/bar.zip").should == {
+        :controller => "trees",
+        :action => "archive", 
+        :project_id => "proj",
+        :repository_id => "repo",
+        :branch => ["foo", "bar"],
+        :format => "zip",
+      }
+      params_from(:get, "/proj/repo/archive/foo/bar.tar.gz").should == {
+        :controller => "trees",
+        :action => "archive", 
+        :project_id => "proj",
+        :repository_id => "repo",
+        :branch => ["foo", "bar"],
+        :format => "tar.gz",        
+      }
+    end
+  end
+  
   before(:each) do
     @project = projects(:johans)
     @repository = @project.repositories.first

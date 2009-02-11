@@ -40,8 +40,10 @@ class TreesController < ApplicationController
   end
   
   def archive
-    @git = @repository.git    
-    @commit = @git.commit(desplat_path(params[:branch]))
+    @git = @repository.git
+    # FIXME: update route when we've fixed rails bug #1939
+    ref, ext = desplat_path(params[:branch]).split(".", 2)
+    @commit = @git.commit(ref)
     
     if @commit
       prefix = "#{@project.slug}-#{@repository.name}"
