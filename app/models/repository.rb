@@ -180,11 +180,18 @@ class Repository < ActiveRecord::Base
     end
   end
   
-  def last_commit
+  def last_commit(ref = nil)
     if has_commits?
-      @last_commit ||= git.commits(head_candidate.name, 1).first
+      @last_commit ||= Array(git.commits(ref || head_candidate.name, 1)).first
     end
     @last_commit
+  end
+  
+  def commit_for_tree_path(ref, commit_id, path)
+    # Rails.cache.fetch("treecommit:#{commit_id}:#{Digest::SHA1.hexdigest(path)}") do
+    #   git.log(ref, path, {:max_count => 1}).first
+    # end
+    git.log(ref, path, {:max_count => 1}).first
   end
   
   def can_be_deleted_by?(candidate)
@@ -224,16 +231,33 @@ class Repository < ActiveRecord::Base
     events.count(:conditions => {:action => Action::COMMIT})
   end
   
-  def paginated_commits(tree_name, page, per_page = 30)
+  def paginated_commits(ref, page, per_page = 30)
     page    = (page || 1).to_i
     begin
-      total   = git.commit_count(tree_name)
+      total = git.commit_count(ref)
     rescue Grit::Git::GitTimeout
       total = 2046
     end
     offset  = (page - 1) * per_page
     commits = WillPaginate::Collection.new(page, per_page, total)
-    commits.replace git.commits(tree_name, per_page, offset)
+    commits.replace git.commits(ref, per_page, offset)
+  end
+  
+  def cached_paginated_commits(ref, page, per_page = 30)
+    page = (page || 1).to_i
+    last_commit_id = last_commit(ref) ? last_commit(ref).id : nil
+    total = Rails.cache.fetch("paglogtotal:#{self.id}:#{last_commit_id}:#{ref}") do
+      begin
+        git.commit_count(ref)
+      rescue Grit::Git::GitTimeout
+        2046
+      end
+    end
+    Rails.cache.fetch("paglog:#{page}:#{self.id}:#{last_commit_id}:#{ref}") do
+      offset = (page - 1) * per_page
+      commits = WillPaginate::Collection.new(page, per_page, total)
+      commits.replace git.commits(ref, per_page, offset)
+    end
   end
   
   def count_commits_from_last_week_by_user(user)

@@ -20,3 +20,7 @@ config.action_mailer.raise_delivery_errors = false
 config.action_mailer.delivery_method = :test
 ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT,
   "config/gitorious.yml"))["exception_notification_emails"]
+
+# config.cache_store = :mem_cache_store, ['localhost:11211'], { 
+#   :namespace => 'ks1' 
+# }

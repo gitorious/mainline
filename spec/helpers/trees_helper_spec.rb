@@ -28,10 +28,10 @@ describe TreesHelper do
   
   describe "commit_for_tree_path" do
     it "fetches the most recent commit from the path" do
+      @commit = mock("commit", :id => "123")
+      @ref = "abc"
       repo = mock("repository")
-      git = mock("Git")
-      repo.expects(:git).returns(git)
-      git.expects(:log).returns([mock("commit")])
+      repo.expects(:commit_for_tree_path).with("abc", "123", "foo/bar/baz.rb").returns(nil)
       commit_for_tree_path(repo, "foo/bar/baz.rb")
     end
   end

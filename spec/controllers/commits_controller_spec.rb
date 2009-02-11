@@ -112,12 +112,12 @@ describe CommitsController, "listing commits" do
     end
 
     it "GETs the commits successfully" do
-      commits = [mock("commits")]
+      commits = [stub("commit")]
       @git.expects(:commits).with("master", 30, 0).returns(commits)
       do_get
       response.should be_success
       assigns[:git].should == @git
-      assigns[:commits].should == commits
+      assigns(:commits).should == commits
     end
     
     

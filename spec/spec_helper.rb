@@ -22,6 +22,10 @@ Spec::Runner.configure do |config|
   #     `rm -rf #{dir}`
   #   end
   # end
+  
+  config.after(:each) do
+    Rails.cache.clear
+  end
 
   # You can declare fixtures for each behaviour like this:
   #   describe "...." do

@@ -322,14 +322,24 @@ describe Repository do
     @repository.save!
     repos_mock = mock("Git mock")
     commit_mock = stub_everything("Git::Commit mock")
-    repos_mock.expects(:commits).with("master", 1).returns(commit_mock)
-    commit_mock.expects(:first).returns(commit_mock)
+    repos_mock.expects(:commits).with("master", 1).returns([commit_mock])
     @repository.stubs(:git).returns(repos_mock)
     @repository.stubs(:has_commits?).returns(true)
     heads_stub = mock("head")
     heads_stub.stubs(:name).returns("master")    
     @repository.stubs(:head_candidate).returns(heads_stub)
     @repository.last_commit.should == commit_mock
+  end
+  
+  it "has one recent commit within a given ref" do
+    @repository.save!
+    repos_mock = mock("Git mock")
+    commit_mock = stub_everything("Git::Commit mock")
+    repos_mock.expects(:commits).with("foo", 1).returns([commit_mock])
+    @repository.stubs(:git).returns(repos_mock)
+    @repository.stubs(:has_commits?).returns(true)   
+    @repository.expects(:head_candidate).never
+    @repository.last_commit("foo").should == commit_mock
   end
   
   it "knows who can delete it" do
