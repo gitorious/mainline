@@ -47,7 +47,7 @@
       <td class="meta"></td>
       <td class="meta commit_message">submodule: <%= h(node.url(@ref)) -%></td>
     <% else -%>
-      <% if last_commit = commit_for_tree_path(@repository, node.name) -%>
+      <% if !too_many_entries_for_log?(@tree) && last_commit = commit_for_tree_path(@repository, node.name) -%>
         <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
         <td class="meta commit_message">
           <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>

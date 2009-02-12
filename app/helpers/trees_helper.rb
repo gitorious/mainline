@@ -18,6 +18,8 @@
 module TreesHelper
   include RepositoriesHelper
   
+  MAX_TREE_ENTRIES_FOR_LAST_COMMIT_LOG = 40
+  
   def current_path
     @path.dup
   end
@@ -56,5 +58,9 @@ module TreesHelper
   
   def commit_for_tree_path(repository, path)
     repository.commit_for_tree_path(@ref, @commit.id, path)
+  end
+  
+  def too_many_entries_for_log?(tree)
+    tree.contents.length >= MAX_TREE_ENTRIES_FOR_LAST_COMMIT_LOG
   end
 end
