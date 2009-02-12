@@ -139,16 +139,18 @@ class PushEventProcessor < ApplicationProcessor
   
   def events_from_git_log(revspec)
     result = []
-    commits = git.log({:pretty => git_pretty_format, :s => true}, revspec).split("\n")
-    commits.each do |c|
-      sha, email, timestamp, message = c.split(GIT_OUTPUT_SEPARATOR)
-      e = EventForLogging.new
-      e.identifier    = sha
-      e.email         = email
-      e.commit_time   = Time.at(timestamp.to_i).utc
-      e.event_type    = Action::COMMIT
-      e.message       = message
-      result << e
+    Grit::Git.with_timeout(nil) do
+      commits = git.log({:pretty => git_pretty_format, :s => true}, revspec).split("\n")
+      commits.each do |c|
+        sha, email, timestamp, message = c.split(GIT_OUTPUT_SEPARATOR)
+        e = EventForLogging.new
+        e.identifier    = sha
+        e.email         = email
+        e.commit_time   = Time.at(timestamp.to_i).utc
+        e.event_type    = Action::COMMIT
+        e.message       = message
+        result << e
+      end
     end
     return result
   end
