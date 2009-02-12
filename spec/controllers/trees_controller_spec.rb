@@ -167,7 +167,9 @@ describe TreesController do
       commit.stubs(:id).returns("abc123")
       @git.stubs(:commit).returns(commit)
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], "#{@repository.hashed_path}-#{commit.id}.tar.gz")
+      work_path = File.join(GitoriousConfig["archive_work_dir"], "#{@repository.hashed_path}-#{commit.id}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
+      File.expects(:exist?).with(work_path).returns(false)
       
       get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
         :branch => %w[foo bar], :archive_format => "tar.gz"
@@ -184,6 +186,23 @@ describe TreesController do
       msg_hash["output_path"].should == cached_path
       msg_hash["commit_sha"].should == commit.id
       msg_hash["format"].should == "tar.gz"
+    end
+    
+    it "enqueues a job when the tarball isn't cached, unless work has already begun" do
+      commit = mock("commit")
+      commit.stubs(:id).returns("abc123")
+      @git.stubs(:commit).returns(commit)
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"], "#{@repository.hashed_path}-#{commit.id}.tar.gz")
+      work_path = File.join(GitoriousConfig["archive_work_dir"], "#{@repository.hashed_path}-#{commit.id}.tar.gz")
+      File.expects(:exist?).with(cached_path).returns(false)
+      File.expects(:exist?).with(work_path).returns(true)
+      
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
+        :branch => %w[foo bar], :archive_format => "tar.gz"
+
+      response.code.to_i.should == 202 # Accepted
+      msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving", /#{commit.id}/)
+      msg.should be_nil
     end
   end
 
