@@ -429,7 +429,20 @@ describe Repository do
     @repository.owner = groups(:team_thunderbird)
     @repository.breadcrumb_parent.should == groups(:team_thunderbird)
     @repository.owner = users(:johan)
+    @repository.breadcrumb_parent.should == users(:johan)
+    @repository.owner = projects(:johans)
     @repository.breadcrumb_parent.should == projects(:johans)
+  end
+  
+  it 'has a parent, which is the project for mainlines' do
+    @repository.mainline = true
+    @repository.owner = groups(:team_thunderbird)
+    @repository.breadcrumb_parent.should == projects(:johans)
+    @repository.owner = users(:johan)
+    @repository.breadcrumb_parent.should == projects(:johans)
+    @repository.owner = projects(:johans)
+    @repository.breadcrumb_parent.should == projects(:johans)
+    @repository.mainline = false
     @repository.owner = projects(:johans)
     @repository.breadcrumb_parent.should == projects(:johans)
   end

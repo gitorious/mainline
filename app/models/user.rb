@@ -123,6 +123,10 @@ class User < ActiveRecord::Base
   def authenticated?(password)
     crypted_password == encrypt(password)
   end
+  
+  def breadcrumb_parent
+    nil
+  end
 
   def eula=(ok)
     @eula = ok
