@@ -44,7 +44,7 @@ class Event < ActiveRecord::Base
     else
       a = Grit::Actor.from_string(user_email)
       if a.email.blank?
-        return Grit::Actor.new(a.name.split('@').first, a.name)
+        return Grit::Actor.new(a.name.to_s.split('@').first, a.name)
       else
         return a
       end
