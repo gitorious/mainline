@@ -111,6 +111,24 @@ describe Repository do
     @repository.http_clone_url.should == "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
   end
   
+  it "has a clone url with the project name, if it's a mainline" do
+    @repository.owner = groups(:team_thunderbird)
+    @repository.mainline = true
+    @repository.clone_url.should == "git://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
+  end
+  
+  it "has a push url with the project name, if it's a mainline" do
+    @repository.owner = groups(:team_thunderbird)
+    @repository.mainline = true
+    @repository.push_url.should == "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git"
+  end
+  
+  it "has a http clone url with the project name, if it's a mainline" do
+    @repository.owner = groups(:team_thunderbird)
+    @repository.mainline = true
+    @repository.http_clone_url.should == "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git"
+  end
+  
   it "has a full repository_path" do
     expected_dir = File.expand_path(File.join(GitoriousConfig["repository_base_path"], 
       "#{@repository.full_hashed_path}.git"))
@@ -242,6 +260,7 @@ describe Repository do
     it "finds a group repository by its path" do
       repo = repositories(:johans)
       repo.owner = groups(:team_thunderbird)
+      repo.mainline = false
       repo.save!
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
       Repository.find_by_path(path).should == repo    
@@ -250,6 +269,7 @@ describe Repository do
     it "finds a user repository by its path" do
       repo = repositories(:johans)
       repo.owner = users(:johan)
+      repo.mainline = false
       repo.save!
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
       Repository.find_by_path(path).should == repo

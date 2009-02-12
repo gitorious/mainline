@@ -134,7 +134,11 @@ class RepositoriesController < ApplicationController
   
   # Used internally to check write permissions by gitorious
   def writable_by
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    if @project
+      @repository = @project.project_repositories.find_by_name!(params[:id])
+    else
+      @repository = @owner.repositories.find_by_name!(params[:id])
+    end
     user = User.find_by_login(params[:username])
     if user && user.can_write_to?(@repository)
       render :text => "true #{@repository.real_gitdir}"

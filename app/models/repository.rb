@@ -121,7 +121,11 @@ class Repository < ActiveRecord::Base
   end
   
   def gitdir
-    File.join(owner.to_param_with_prefix, "#{name}.git")
+    if mainline?
+      File.join(project.to_param_with_prefix, "#{name}.git")
+    else
+      File.join(owner.to_param_with_prefix, "#{name}.git")
+    end
   end
   
   def real_gitdir

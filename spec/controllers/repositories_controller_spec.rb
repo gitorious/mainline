@@ -501,6 +501,15 @@ describe RepositoriesController, "writable_by" do
     response.should be_success
     response.body.should == "false nil"
   end
+  
+  it "finds the repository in the whole project realm, if the (url) root is a project" do
+    # in case someone changes a mainline to be owned by a group
+    repositories(:johans2).project.should == @project
+    do_get :id => repositories(:johans2).to_param
+    response.should be_success
+    assigns(:project).should == @project
+    assigns(:repository).should == repositories(:johans2)
+  end
 end
 
 describe RepositoriesController, "destroy" do
