@@ -30,12 +30,33 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def email
-    user_email || user.email
+  def git_actor
+    @git_actor ||= find_git_actor
+  end
+
+  # Initialize a Grit::Actor object:
+  # If only the email is provided, we will give back anything before @ as name and email as email
+  # If both name and email is provided, we will give an Actor with both
+  # If a User object, an Actor with name and email
+  def find_git_actor
+    if user
+      Grit::Actor.new(user.fullname, user.email)
+    else
+      a = Grit::Actor.from_string(user_email)
+      if a.email.blank?
+        return Grit::Actor.new(a.name.split('@').first, a.name)
+      else
+        return a
+      end
+    end    
   end
   
-  def email_display
-    email.split("@").first
+  def email
+    git_actor.email
+  end
+
+  def actor_display
+    git_actor.name
   end
 
   protected

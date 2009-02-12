@@ -33,13 +33,13 @@ atom_feed do |feed|
           author.name(event.user.login)
         end
       else
-        entry.title("#{h(event.email_display)} #{strip_tags(action)}")
+        entry.title("#{h(event.actor_display)} #{strip_tags(action)}")
         entry.content(<<-EOS, :type => 'html')
           <p>#{action}</p>
           <p>#{body}</p>
         EOS
         entry.author do |author|
-          author.name(event.email_display)
+          author.name(event.actor_display)
         end
       end
     end

@@ -47,8 +47,23 @@ describe Event do
     event.email = 'foo@bar.com'
     event.user.should be_nil
     event.should be_valid
-    event.email_display.should == 'foo'
+    event.git_actor.email.should == 'foo@bar.com'
   end
   
+  it 'handles setting the actor from a string' do
+    event = Event.new
+    event.email = "marius@stones.com"
+    event.actor_display.should == 'marius'
+    event = Event.new
+    event.email = 'Marius Mathiesen <marius@stones.com>'
+    event.actor_display.should == 'Marius Mathiesen'
+  end
+  
+  it 'provides an actor_display for User objects too' do
+    event = Event.new
+    user = User.new(:fullname => 'Johan Sørensen', :email => 'johan@johansorensen.com')
+    event.user = user
+    event.actor_display.should == 'Johan Sørensen'
+  end
 end
 

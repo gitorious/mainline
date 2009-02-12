@@ -160,7 +160,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def git_pretty_format
-    fmt = ['%H','%ce','%at','%s'].join(GIT_OUTPUT_SEPARATOR)
+    fmt = ['%H','%cn <%ce>','%at','%s'].join(GIT_OUTPUT_SEPARATOR)
     "format:#{fmt}"
   end
 end
