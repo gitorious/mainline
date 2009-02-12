@@ -74,12 +74,6 @@ describe RepositoriesHelper do
   #     @project, @repository, generic_sha, ["a","b"])
   # end
   
-  it "has a archive_tree_path shortcut" do
-    archive_tree_path.should == project_repository_archive_tree_path(@project, @repository, "master", "tar.gz")
-    archive_tree_path("foo").should == project_repository_archive_tree_path(@project, @repository, "foo", "tar.gz")
-    archive_tree_path("foo", "zip").should == project_repository_archive_tree_path(@project, @repository, "foo", "zip")
-  end
-  
   it "knows if a branch is namespaced" do 
     helper.namespaced_branch?("foo").should == false
     helper.namespaced_branch?("foo/bar").should == true

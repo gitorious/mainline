@@ -83,6 +83,31 @@ var Gitorious = {
         Gitorious.Wordwrapper.unwrap(elements);
       }
     }
+  },
+  
+  DownloadChecker: {
+    checkURL: function(url, container) {
+      var element = $(container);
+      element.absolutize();
+      var sourceLink = element.previous();
+      // Position the box
+      if (sourceLink) {
+        element.clonePosition(sourceLink);
+        element.setStyle({
+          top: parseInt(element.style.top) - (element.getHeight()+10) + "px",
+          width: "175px",
+          height: "70px"
+        });
+      }
+      // load the status
+      new Ajax.Request(url, {
+        onSuccess: function(transport) {
+          $(container).update(transport.responseText);
+          $(container).show();
+        }
+      });
+      return false;
+    }
   }
 };
 

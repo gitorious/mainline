@@ -63,8 +63,10 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <h5><%= t("views.logs.branches") %>:</h5>
+  <%= render_download_links(@repository.project, @repository, @ref,
+          :except => :source_tree) -%>
   
+  <h5><%= t("views.logs.branches") %>:</h5>
   
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>

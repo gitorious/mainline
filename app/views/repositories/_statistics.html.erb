@@ -66,9 +66,8 @@
       </ul>
       <% if repository.has_commits? -%>
       <div class="meta-info">
-        <ul class="horizontal">
-          <%= download_archive_links(repository) -%>
-        </ul>
+        <%= render_download_links(repository.project, repository, repository.head_candidate_name,
+                :except => :source_tree, :class => "horizontal") -%>
       </div>
       <% end -%>
     </td>

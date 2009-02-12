@@ -36,6 +36,14 @@ Spec::Runner.configure do |config|
   #
   config.global_fixtures = :all
   
+  def find_message_with_queue_and_regexp(queue_name, regexp)
+    ActiveMessaging::Gateway.connection.clear_messages
+    yield
+    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
+    msg.should_not be_nil
+    return ActiveSupport::JSON.decode(msg.body)
+  end
+  
   def repo_path
     File.join(File.dirname(__FILE__), "..", ".git")
   end

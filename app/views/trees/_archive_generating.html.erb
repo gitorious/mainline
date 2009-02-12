@@ -1,0 +1,19 @@
+<h4>Please wait</h4>
+  
+<p>generating tarball&hellip;</p>
+
+<p class="spin"><%= image_tag("spinner.gif") -%></p>
+
+<script type="text/javascript" charset="utf-8">
+new PeriodicalExecuter(function(pe) {
+  var url = '<%= self.send("project_repository_archive_#{params[:archive_format] == "tar.gz" ? "tar" : zip}_path", @repository.project, @repository, @ref, :format => :js) -%>';
+  var container = $('archive-box-<%= @ref -%>');
+  new Ajax.Request(url, {
+    onSuccess: function(transport) {
+      pe.stop();
+      $(container).update(transport.responseText);
+      $(container).show();
+    }
+  });
+}, 5);
+</script>

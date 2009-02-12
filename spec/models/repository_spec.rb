@@ -310,14 +310,6 @@ describe Repository do
     message['arguments'].first.should match(/#{@repository.gitdir}$/)
   end
   
-  def find_message_with_queue_and_regexp(queue_name, regexp)
-    ActiveMessaging::Gateway.connection.clear_messages
-    yield
-    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
-    msg.should_not be_nil
-    return ActiveSupport::JSON.decode(msg.body)
-  end
-  
   it "has one recent commit" do
     @repository.save!
     repos_mock = mock("Git mock")

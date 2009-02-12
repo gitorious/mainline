@@ -140,27 +140,50 @@ describe TreesController do
     end
   end
   
-  describe "#archive" do    
-    it "archives the source tree" do
-      @git.expects(:commit).with("master").returns(true)
-      @git.expects(:archive_tar_gz).returns("the data")
-      get :archive, :project_id => @project.slug, :format => "tar.gz",
-        :repository_id => @repository.name, :branch => ["master"]
-      response.should be_success
-      
-      response.headers["Content-Type"].should == "application/x-gzip"
-      response.headers["Content-Transfer-Encoding"].should == "binary"
+  describe "Archive downloads" do
+    before(:each) do
+      ActiveMessaging::Gateway.connection.clear_messages
     end
     
-    it "archives the source tree even if the branch is namespaced" do
-      @git.expects(:commit).with("foo/bar").returns(true)
-      @git.expects(:archive_tar_gz).returns("the data")
+    it "returns the correct for an existing cached tarball" do
+      commit = mock("commit")
+      commit.stubs(:id).returns("abc123")
+      @git.stubs(:commit).returns(commit)
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"], "#{@repository.hashed_path}-#{commit.id}.tar.gz")
+      File.expects(:exist?).with(cached_path).returns(true)
+      
       get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
-        :branch => %w[foo bar], :format => "tar.gz"
-      response.should be_success
+        :branch => %w[foo bar], :archive_format => "tar.gz"
 
-      response.headers["Content-Type"].should == "application/x-gzip"
-      response.headers["Content-Transfer-Encoding"].should == "binary"
+      response.should be_success      
+      response.headers["X-Sendfile"].should == cached_path
+      response.headers["Content-Type"].should == "application/x-gzip; charset=utf-8"
+      exp_filename = "#{@repository.owner.to_param}-#{@repository.to_param}-foo_bar.tar.gz"
+      response.headers["Content-Disposition"].should == "Content-Disposition: attachment; file=\"#{exp_filename}\""
+    end
+    
+    it "enqueues a job when the tarball isn't cached" do
+      commit = mock("commit")
+      commit.stubs(:id).returns("abc123")
+      @git.stubs(:commit).returns(commit)
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"], "#{@repository.hashed_path}-#{commit.id}.tar.gz")
+      File.expects(:exist?).with(cached_path).returns(false)
+      
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
+        :branch => %w[foo bar], :archive_format => "tar.gz"
+
+      response.code.to_i.should == 202 # Accepted
+      response.body.should match(/is currently being generated, try again later/)
+      response.headers["Content-Type"].should == "text/plain; charset=utf-8"
+      #response.headers["Content-Disposition"].should == "Content-Disposition: inline; file=\"in_progress.txt\""
+      
+      msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving", /#{commit.id}/)
+      msg.should_not be_nil
+      msg_hash = ActiveSupport::JSON.decode(msg.body)
+      msg_hash["full_repository_path"].should == @repository.full_repository_path
+      msg_hash["output_path"].should == cached_path
+      msg_hash["commit_sha"].should == commit.id
+      msg_hash["format"].should == "tar.gz"
     end
   end
 

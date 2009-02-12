@@ -1,0 +1,13 @@
+<script type="text/javascript" charset="utf-8">
+  <% if params[:archive_format] == "tar.gz" -%>
+    window.location = "<%= project_repository_archive_tar_path(@repository.project, @repository, @ref) -%>";
+  <% else -%>
+    window.location = "<%= project_repository_archive_zip_path(@repository.project, @repository, @ref) -%>";
+  <% end -%>
+</script>
+
+<h4>Download ready</h4>
+
+<%= render_download_links(@repository.project, @repository, @ref, 
+      :except => :source_tree) -%>
+  

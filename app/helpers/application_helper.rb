@@ -324,14 +324,24 @@ module ApplicationHelper
       links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}", tree_path(head)))
     end
     
-    ['tar.gz', 'zip'].each do |extension|
-      links << content_tag(:li, 
-        link_to("Download #{head} as #{extension}", 
-          project_repository_archive_tree_path(project, repository, head, extension)
-        ), :class => extension.split('.').last)
+    if head =~ /^[a-z0-9]{40}$/ # it looks like a SHA1
+      head = head[0..7]
     end
     
-    content_tag(:ul, links.join("\n"), :class => 'links meta')
+    {
+      'tar.gz' => 'tar',
+      # 'zip' => 'zip',
+    }.each do |extension, url_key|
+      archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, head)
+      link_html = link_to("Download #{head} as #{extension}", archive_path, 
+                                  :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head}');return false",
+                                  :class => "download-link")
+      link_callback_box = content_tag(:div, "", :class => "archive-download-box round-5 shadow-5", 
+        :id => "archive-box-#{head}", :style => "display:none;")
+      links << content_tag(:li, link_html+link_callback_box, :class => extension.split('.').last)
+    end
+    
+    content_tag(:ul, links.join("\n"), :class => "links meta #{options[:class]}")
   end
   
   def paragraphs_with_more(text)

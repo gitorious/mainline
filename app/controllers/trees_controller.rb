@@ -16,6 +16,7 @@
 #++
 
 class TreesController < ApplicationController
+  include ActiveMessaging::MessageSender
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   
@@ -42,17 +43,60 @@ class TreesController < ApplicationController
   def archive
     @git = @repository.git
     # FIXME: update route when we've fixed rails bug #1939
-    ref, ext = desplat_path(params[:branch]).split(".", 2)
-    @commit = @git.commit(ref)
+    @ref = desplat_path(params[:branch])
+    ext = params[:archive_format]
+    @commit = @git.commit(@ref)
     
-    if @commit
-      prefix = "#{@project.slug}-#{@repository.name}"
-      data = @git.archive_tar_gz(desplat_path(params[:branch]), prefix + "/")      
-      send_data(data, :type => 'application/x-gzip', 
-        :filename => "#{prefix}.tar.gz") 
-    else
+    if !@commit
       flash[:error] = I18n.t "trees_controller.archive_error"
       redirect_to project_repository_path(@project, @repository) and return
     end
+    
+    user_path = "#{@repository.owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
+    disk_path = "#{@repository.hashed_path}-#{@commit.id}.#{ext}"
+    if File.exist?(File.join(GitoriousConfig["archive_cache_dir"], disk_path))
+      respond_to do |format|
+        format.html {
+          set_xsendfile_headers(disk_path, user_path)
+          render :nothing => true, :status => :ok and return
+        }
+        format.js {
+          render :partial => "archive_ready"
+        }
+      end
+    else
+      # enqueue the creation of the tarball, and send an accepted response
+      publish_archive_message(@repository, disk_path, @commit)
+      
+      respond_to do |format|
+        format.html {
+          # FIXME: This doesn't fly with wget/curl/etc type clients
+          render :text => "The archive is currently being generated, try again later",
+            :status => :accepted, :content_type => "text/plain" and return
+        }
+        format.js {
+          render :partial => "archive_generating"
+        }
+      end
+    end
   end
+  
+  protected
+    def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
+      response.headers["X-Sendfile"] = File.join(GitoriousConfig["archive_cache_dir"], real_path)
+      response.headers["Content-Type"] = content_type
+      user_path = user_path.gsub("/", "_")
+      response.headers["Content-Disposition"] = "Content-Disposition: attachment; file=\"#{user_path}\""
+    end
+    
+    def publish_archive_message(repo, disk_path, commit)
+      payload = {
+        :full_repository_path => repo.full_repository_path,
+        :output_path => File.join(GitoriousConfig["archive_cache_dir"], disk_path),
+        :work_path => File.join(GitoriousConfig["archive_work_dir"], disk_path),
+        :commit_sha => commit.id,
+        :format => "tar.gz",
+      }
+      publish :archive_repo, payload.to_json
+    end
 end

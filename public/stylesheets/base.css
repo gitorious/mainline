@@ -396,6 +396,12 @@ abbr {
   -webkit-border-radius: 5px;
 }
 
+.shadow-5 {
+  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5)
+  -moz-box-shadow: 2px 2px21px rgba(0,0,0,0.5)
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.5)
+}
+
 
 /* submenu */
 #submenu {
@@ -1668,4 +1674,30 @@ tr.selected td.selection
 {
   border: 1px solid red;
   padding: 1em;
+}
+
+div.archive-download-box {
+  background: #eee;
+  border: 2px solid #666;
+  margin: 10px;
+  padding: 10px;
+  z-index: 100000;
+}
+
+div.archive-download-box .spin {
+  text-align: center;
+  margin: 10px auto 10px auto;
+}
+div.archive-download-box h4 {
+  text-align: center;
+}
+
+div.archive-download-box ul.links {
+  margin-left: 0 !important;
+}
+
+div.archive-download-box p {
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }

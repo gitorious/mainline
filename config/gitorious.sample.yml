@@ -34,3 +34,10 @@ public_mode: true
 
 # Define your locale
 locale: en
+
+# Where so we store generated tarballs?
+# (should be readable by webserver, since we tell it to send the file using X-Sendfile)
+archive_cache_dir: "/path/to/tarballs-cache"
+# Which directory should we work in when we generate tarballs, before moving 
+# them to the above dir?
+archive_work_dir: "/path/to/tarballs-work"

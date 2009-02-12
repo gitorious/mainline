@@ -40,7 +40,8 @@ ActionController::Routing::Routes.draw do |map|
     repo.trees          "tree/", :controller => "trees", :action => "index"
     repo.tree           "tree/*branch_and_path", :controller => "trees", :action => "show"
     repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
-    repo.archive_tree   "archive/*branch.:format", :controller => "trees", :action => "archive"
+    repo.archive_tar    "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
+    #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
     repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
     repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
   end
