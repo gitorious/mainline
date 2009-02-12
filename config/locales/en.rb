@@ -538,7 +538,8 @@
           :home_url => "Home URL (if any)",
           :mailinglist_url => "Mailinglist URL (if any)",
           :bugtracker_url => "Bugtracker URL (if any)",
-          :tag_list => "Categories (space separated)",
+          :wiki_enabled => "Should the wiki be enabled?",
+          :tag_list => "Categories (space seperated)",
         },
         :comment => {
           :body => "Body",

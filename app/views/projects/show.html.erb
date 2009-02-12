@@ -64,9 +64,11 @@
     </ul>
     
     <ul class="links">
+      <% if @project.wiki_enabled? -%>
       <li class="wiki_page">
         <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
       </li>
+      <% end -%>
       <% if @project.owned_by_group? -%>
         <li class="project_members">
           <%= link_to t("views.projects.project_members"), 

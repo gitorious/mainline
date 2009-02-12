@@ -56,6 +56,10 @@
   <%= form.text_field :bugtracker_url, :class => "text" -%>
 </p>
 <p>
+  <%= form.label :wiki_enabled, t(:wiki_enabled, :scope => 'activerecord.attributes.project') -%><br />
+  <%= form.check_box :wiki_enabled -%>
+</p>
+<p>
   <%= form.label :description, t(:description, :scope => 'activerecord.attributes.project') -%><br />
   <small class="hint"><%= t("views.projects.hint") %></small><br />
   <%= form.text_area :description, :class => "text wide tall" -%>

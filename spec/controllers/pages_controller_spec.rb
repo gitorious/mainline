@@ -50,6 +50,12 @@ describe PagesController do
       get :index, :project_id => @project.to_param
       response.should be_success
     end
+    
+    it "redirects to the project if wiki is disabled for this projcet" do
+      @project.update_attribute(:wiki_enabled, false)
+      get :index, :project_id => @project.to_param
+      response.should redirect_to(project_path(@project))
+    end
   end
   
   describe "show" do
@@ -61,6 +67,12 @@ describe PagesController do
       
       get :show, :project_id => @project.to_param, :id => "Home"
       response.should redirect_to(edit_project_page_path(@project, "Home"))
+    end
+    
+    it "redirects to the project if wiki is disabled for this projcet" do
+      @project.update_attribute(:wiki_enabled, false)
+      get :show, :project_id => @project.to_param, :id => "Foo"
+      response.should redirect_to(project_path(@project))
     end
   end
   

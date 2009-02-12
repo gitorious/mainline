@@ -18,6 +18,7 @@
 class PagesController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_project
+  before_filter :check_if_wiki_enabled
   before_filter :assert_readyness
   
   def index
@@ -71,6 +72,12 @@ class PagesController < ApplicationController
     def assert_readyness
       unless @project.wiki_repository.ready?
         flash[:notice] = I18n.t("pages_controller.repository_not_ready")
+        redirect_to project_path(@project) and return
+      end
+    end
+    
+    def check_if_wiki_enabled
+      unless @project.wiki_enabled?
         redirect_to project_path(@project) and return
       end
     end
