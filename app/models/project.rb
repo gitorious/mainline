@@ -28,7 +28,7 @@ class Project < ActiveRecord::Base
   
   has_many    :project_repositories, :order => "repositories.created_at asc",
       :conditions => ["kind = ?", Repository::KIND_PROJECT_REPO], 
-      :class_name => "Repository", :dependent => :destroy
+      :class_name => "Repository"
   has_many  :repositories, :as => :owner, :conditions => { 
       :kind => Repository::KIND_PROJECT_REPO 
     }, :order => "repositories.created_at asc", :dependent => :destroy

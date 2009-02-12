@@ -13,12 +13,18 @@
   </li>
 <% else -%>
   <li>
+    <% if @repository.owner === Project -%>
+      <%= t("views.repos.current_owner_project", :project_name => @repository.owner.title) -%>
+    <% else -%>
+      <%= t("views.repos.current_owner_user") -%>
+    <% end -%>
     <%= t("views.repos.transfer_owner_howto") -%> <br />
     <%= link_to t("views.repos.transfer_owner"), [:edit, @repository.owner, @repository]  -%>
   </li>
 <% end -%>
 
   <li>
+    <%= t("views.repos.add_committer_group") -%> <br />
     <%= link_to "Add/edit a group as committers", [@repository.owner, @repository, :participations] -%>
   </li>
 </ol>

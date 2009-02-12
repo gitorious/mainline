@@ -11,6 +11,7 @@
       </div>
     </li>
   <% end -%>
+  <% unless @project.project_repositories.by_groups.blank? -%>
   <li>
     <h4><%= t("views.repos.by_teams") -%></h4>
     <ul>
@@ -20,6 +21,8 @@
       <% end -%>
     </ul>
   </li>
+  <% end -%>
+  <% unless @project.project_repositories.by_users.blank? -%>
   <li>
     <h4><%= t("views.repos.by_users") -%></h4>
     <ul>
@@ -29,4 +32,5 @@
       <% end -%>
     <ul>
   </li>
+  <% end -%>
 </ul>  

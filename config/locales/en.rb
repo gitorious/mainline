@@ -313,9 +313,13 @@
                               members to the group owning the repository, or to add another group as 
                               committers.",
         :transfer_owner => "Transfer owner",
-        :transfer_owner_howto => "The repository is currrently owned by you, if you wish you can transfer ownership
+        :current_owner_project => "The repository is currrently owned by the {{project_name}} project (which you own).",
+        :current_owner_user => "The repository is currrently owned by you.",
+        :transfer_owner_howto => "If you wish, you can transfer ownership
                                   of this repository to a group you're an administrator of. That way you can add
                                   multiple users as committers, without requiring them to start a group.",
+        :add_committer_group => "Or you can add an existing group as committers to the repository, 
+                                thus giving all the members commit access.",
         :activities => "Activities",
         :clone_of => "Clone of",
         :created => "Created",

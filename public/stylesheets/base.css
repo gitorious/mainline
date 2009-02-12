@@ -396,10 +396,10 @@ abbr {
   -webkit-border-radius: 5px;
 }
 
-.shadow-5 {
-  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5)
-  -moz-box-shadow: 2px 2px21px rgba(0,0,0,0.5)
-  box-shadow: 2px 2px 2px rgba(0,0,0,0.5)
+.shadow-2 {
+  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+  -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
 }
 
 

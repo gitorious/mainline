@@ -25,7 +25,7 @@
   <%= paragraphs_with_more auto_link(markdown(sanitize(@project.description)), :urls) -%>
 </div>
 
-<% @project.repositories.mainlines.each do |repo| -%>
+<% @project.project_repositories.mainlines.each do |repo| -%>
   <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
 <% end -%>
 
