@@ -99,11 +99,13 @@ var Gitorious = {
           height: "70px"
         });
       }
+      
+      element.show();
+      element.innerHTML = '<p class="spin"><img src="/images/spinner.gif" /></p>'
       // load the status
       new Ajax.Request(url, {
         onSuccess: function(transport) {
           $(container).update(transport.responseText);
-          $(container).show();
         }
       });
       return false;

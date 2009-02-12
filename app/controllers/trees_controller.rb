@@ -66,7 +66,9 @@ class TreesController < ApplicationController
       end
     else
       # enqueue the creation of the tarball, and send an accepted response
-      publish_archive_message(@repository, disk_path, @commit)
+      if !File.exist?(File.join(GitoriousConfig["archive_work_dir"], disk_path))
+        publish_archive_message(@repository, disk_path, @commit)
+      end
       
       respond_to do |format|
         format.html {
