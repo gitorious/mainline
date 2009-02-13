@@ -134,7 +134,9 @@ module ApplicationHelper
   end
   
   def flashes
-    flash.map { |type, content| content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")}
+    flash.map do |type, content| 
+      content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")
+    end.join("\n")
   end
   
   def commit_graph_tag(repository, ref = "master")
@@ -324,7 +326,7 @@ module ApplicationHelper
   
   def render_download_links(project, repository, head, options={})
     links = []
-    exceptions = options[:except].to_a
+    exceptions = Array(options[:except])
     unless exceptions.include?(:source_tree)
       links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}", tree_path(head)))
     end
