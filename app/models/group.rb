@@ -68,7 +68,9 @@ class Group < ActiveRecord::Base
   
   # returns the Role of +user+ in this group
   def role_of_user(candidate)
-    return unless candidate
+    if !candidate || candidate == :false
+      return
+    end
     membership = memberships.find_by_user_id(candidate.id)
     return unless membership
     membership.role
