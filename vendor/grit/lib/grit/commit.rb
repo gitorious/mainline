@@ -181,6 +181,10 @@ module Grit
       end
     end
     
+    def stats
+      stats = @repo.commit_stats(self.sha, 1)[0][-1]
+    end
+    
     # Convert this Commit to a String which is just the SHA1 id
     def to_s
       @id
