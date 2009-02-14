@@ -46,6 +46,7 @@ describe BlobsController do
       commit_stub.stubs(:tree).returns(commit_stub)
       @git.expects(:commit).returns(commit_stub)
       @git.expects(:tree).returns(blob_mock)
+      @git.stubs(:get_head).returns(stub("head", :name => "master"))
       
       get :show, {:project_id => @project.slug, 
           :repository_id => @repository.name, :branch_and_path => ["a"*40, "README"]}

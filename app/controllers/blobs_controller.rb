@@ -28,7 +28,8 @@ class BlobsController < ApplicationController
                     branch_with_tree("HEAD", @path)) and return
     end
     @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
-    @root = Breadcrumb::Blob.new(:paths => @path, :head => @git.get_head(@ref), 
+    head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+    @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
                 :repository => @repository, :name => @blob.basename)
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
