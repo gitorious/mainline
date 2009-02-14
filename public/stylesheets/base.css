@@ -353,6 +353,7 @@ abbr {
   float: right;
   margin-right: 40px;
   margin-top: 20px;
+  margin-bottom: 0;
   clear: right;
 }
 
@@ -1167,6 +1168,7 @@ table tr .line-numbers {
  border-right: 1px solid #ccc;
  border-bottom: 1px solid #cdcdcd;
 }
+
 table tr td.code {
  width: 95%;
  padding-left: 10px;
@@ -1179,6 +1181,13 @@ table tr td.code {
  background: #fff;
  font: 95%/110% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
  border-right: 1px solid #999;
+}
+
+table tr td.code pre {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 table tr td.unwrapped {

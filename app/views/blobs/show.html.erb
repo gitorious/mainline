@@ -18,12 +18,26 @@
 %>
 
 <% @page_title = t("views.blobs.page_title", :path => current_path.join("/"), :repo => @repository.name, :title => @project.title) -%>
-<% @load_syntax_themes = true -%>
+
+<% content_for :extra_head do -%>
+  <%= stylesheet_link_tag("prettify/prettify.css") -%>
+  <%= javascript_include_tag("prettify/prettify.js") -%>
+  <% if hl = language_of_file(current_path.last) -%>
+    <%= javascript_include_tag("prettify/lang-#{hl}.js", :cache => false) -%>
+  <% end -%>
+<% end -%>
+
+<script type="text/javascript" charset="utf-8">
+  Event.observe(window, "load", function(e){
+    prettyPrint();
+  });
+</script>
 
 <% content_for :submenu do -%>
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
+<% if false -%>
 <ul class="mode_selector">
   <li class="list_header">
     <%= t("views.blobs.wrap") %>:
@@ -32,6 +46,7 @@
     <%= link_to_function t("views.common.toggle"), "Gitorious.Wordwrapper.toggle($$('table#codeblob td.code'))" -%>
   </li>
 </ul>
+<% end -%>
 
 <h1>
   <%= t("views.blobs.title", :path => current_path.join("/")) %>

@@ -19,35 +19,37 @@ module BlobsHelper
   include RepositoriesHelper
   include TreesHelper
   
-  def line_numbers_for(data, code_theme_class = nil)
+  HIGHLIGHTER_TO_EXT = {
+    "list"  => /\.(lisp|cl|l|mud|el)$/,
+    "hs"    => /\.hs$/,
+    "css"   => /\.css$/,
+    "lua"   => /\.lua$/,
+    "ml"    => /\.(ml|mli)$/,
+    "proto" => /\.proto$/,
+    "sql"   => /\.(sql|ddl|dml)$/,
+    "vb"    => /\.vb$/,
+    "wiki"  => /\.(mediawiki|wikipedia|wiki)$/,
+  }
+  
+  def language_of_file(filename)
+    HIGHLIGHTER_TO_EXT.find{|lang, matcher| filename =~ matcher }
+  end
+  
+  def render_highlighted(text, filename, code_theme_class = nil)
     out = []
-    #yield.split("\n").each_with_index{ |s,i| out << "#{i+1}: #{s}" }
     out << %Q{<table id="codeblob" class="highlighted">}
-    data.to_s.split("\n").each_with_index do |line, count|
+    text.to_s.split("\n").each_with_index do |line, count|
       lineno = count + 1
       out << %Q{<tr id="line#{lineno}">}
       out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>} 
       code_classes = "code"
       code_classes << " #{code_theme_class}" if code_theme_class
-      out << %Q{<td class="#{code_classes}">#{line}</td>}
+      ext = File.extname(filename).sub(/^\./, '')
+      out << %Q{<td class="#{code_classes}"><pre class="prettyprint lang-#{ext}">#{h(line)}</pre></td>}
       out << "</tr>"
     end
     out << "</table>"
     out.join("\n")
-  end
-  
-  def render_highlighted(text, filename, theme = "idle")
-    syntax_name = Uv.syntax_names_for_data(filename, text).first #TODO: render a choice select box if > 1
-    begin
-      highlighted = Uv.parse(text, "xhtml", syntax_name, false, theme)
-    rescue => e
-      if e.to_s =~ /Oniguruma Error/
-        highlighted = text
-      else
-        raise e
-      end
-    end
-    line_numbers_for(highlighted, theme)
   end
   
   def too_big_to_render?(size)
