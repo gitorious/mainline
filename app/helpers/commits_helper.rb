@@ -87,8 +87,8 @@ module CommitsHelper
     out = %Q{<ul class="diff_stats">\n}
     stats.files.each do |filename, adds, deletes, total|
       out << %Q{<li><a href="##{h(filename)}">#{h(filename)}</a>&nbsp;#{total}&nbsp;}
-      out << %Q{<small class="deletions">#{(0...deletes).map{|i| "-" }}</small>}
-      out << %Q{<small class="insertions">#{(0...adds).map{|i| "+" }}</small>}
+      out << %Q{<small class="deletions">#{(0...deletes).map{|i| "-" }.join}</small>}
+      out << %Q{<small class="insertions">#{(0...adds).map{|i| "+" }.join}</small>}
       out << %Q{</li>}
     end
     out << "</ul>\n"

@@ -37,7 +37,9 @@ Rails::Initializer.run do |config|
   config.gem "ruby-openid",  :lib => "openid"
   config.gem "rdiscount",    :version => "1.3.1.1"
   config.gem 'stomp'
-  config.gem 'json'
+  if RUBY_VERSION < '1.9'
+    config.gem 'json'
+  end
   
   # vendorized directly in vendor/ -- need to research if can be removed from there
   #config.gem "ultraviolet",  :version => '0.10.2', :lib => "uv"
@@ -69,10 +71,10 @@ Rails::Initializer.run do |config|
   # If you change this key, all old sessions will become invalid!
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
-  # config.action_controller.session = {
-  #   :session_key => '_ks1_session_id', 
-  #   :secret => ''
-  # }
+  config.action_controller.session = {
+    :key    => '_ks1_session_id',
+    :secret => YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["cookie_secret"]
+  }
 
   # Use the database for sessions instead of the cookie-based default,
   # which shouldn't be used to store highly confidential information

@@ -16,9 +16,9 @@ module Diff::Display
     
     # Runs the generator on a diff and returns a Data object
     def self.run(udiff)
-      raise ArgumentError, "Object must be enumerable" unless udiff.respond_to?(:each)
+      raise ArgumentError, "Object must be enumerable" unless udiff.respond_to?(:each_line)
       generator = new
-      udiff.each {|line| generator.process(line.chomp)}
+      udiff.each_line {|line| generator.process(line.chomp)}
       generator.data
     end
     
