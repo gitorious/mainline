@@ -33,41 +33,15 @@ class BlobsHelperTest < ActionView::TestCase
     assert included_modules.include?(TreesHelper)
   end  
   
-  context "line_numbers_for" do
-    should "renders something with line numbers" do
-      numbered = line_numbers_for("foo\nbar\nbaz")
-      assert numbered.include?(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>})
-      assert numbered.include?(%Q{<td class="code">bar</td>})
-    end
-  
-    should "renders one line with line numbers" do
-      numbered = line_numbers_for("foo")
-      assert numbered.include?(%Q{<td class="line-numbers"><a href="#line1" name="line1">1</a></td>})
-      assert numbered.include?(%Q{<td class="code">foo</td>})
-    end
-  
-    should "doesn't blow up when with_line_numbers receives nil" do
-      assert_nothing_raised do
-        assert_equal %Q{<table id="codeblob" class="highlighted">\n</table>}, line_numbers_for(nil)
-      end
-    end
-  end
-  
   context "render_highlighted()" do
-    should "tries to figure out the filetype" do
-      Uv.expects(:syntax_names_for_data).with("foo.rb", "puts 'foo'").returns(["ruby"])
-      render_highlighted("puts 'foo'", "foo.rb")
+    should "html escape the line & add the proper class" do
+      res = render_highlighted("puts '<foo>'", "foo.rb")
+      assert res.include?(%Q{<td class="code"><pre class="prettyprint lang-rb">puts '&lt;foo&gt;'</pre></td>}), res
     end
     
-    should "parses the text" do
-      Uv.expects(:syntax_names_for_data).with("foo.rb", "puts 'foo'").returns(["ruby"])
-      Uv.expects(:parse).returns("puts 'foo'")
-      render_highlighted("puts 'foo'", "foo.rb")
-    end
-    
-    should "adds linenumbers" do
-      expects(:line_numbers_for).returns(123)
-      render_highlighted("puts 'foo'", "foo.rb")
+    should "add line numbers" do
+      res = render_highlighted("alert('moo')\nalert('moo')", "foo.js")
+      assert res.include?(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>} ), res
     end
   end
   

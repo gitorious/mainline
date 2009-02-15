@@ -332,7 +332,7 @@
         :current_committers => "Current committers",
         :remove => "Remove",
         :create_title => lambda { |this, clone, project| 
-          "Create a clone of #{this.link_to( h(clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to h(project.title), this.send(:project_path, project)}</small>"
+          "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
         },
         :clone_note => %Q{
           <em><strong>Note:</strong> Repository clones that haven't had anything pushed 
