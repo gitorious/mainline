@@ -2,7 +2,16 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 
+require "shoulda"
+require "mocha"
+begin
+  require "redgreen"
+rescue LoadError
+end
+
 class ActiveSupport::TestCase
+  include AuthenticatedTestHelper
+  
   # Transactional fixtures accelerate your tests by wrapping each test method
   # in a transaction that's rolled back on completion.  This ensures that the
   # test database remains unchanged so your fixtures don't have to be reloaded
@@ -35,4 +44,20 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+  
+  def find_message_with_queue_and_regexp(queue_name, regexp)
+    ActiveMessaging::Gateway.connection.clear_messages
+    yield
+    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
+    assert_not_nil msg, "Message #{regexp.source} in #{queue_name} was not found"
+    return ActiveSupport::JSON.decode(msg.body)
+  end
+  
+  def repo_path
+    File.join(File.dirname(__FILE__), "..", ".git")
+  end
+  
+  def grit_test_repo(name)
+    File.join(RAILS_ROOT, "vendor/grit/test", name )
+  end
 end

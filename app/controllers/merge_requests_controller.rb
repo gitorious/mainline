@@ -85,6 +85,7 @@ class MergeRequestsController < ApplicationController
   def edit
     @repositories = Repository.all_by_owner(@owner).find(:all, 
                       :conditions => ["id != ?", @repository.id])
+    @branches = @repository.git.branches
   end
   
   def update
@@ -96,6 +97,7 @@ class MergeRequestsController < ApplicationController
     else
       @repositories = Repository.all_by_owner(@owner).find(:all, 
                         :conditions => ["id != ?", @repository.id])
+      @branches = @repository.git.branches
       render :action => "edit"
     end
   end

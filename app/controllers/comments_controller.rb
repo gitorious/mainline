@@ -18,7 +18,7 @@
 
 class CommentsController < ApplicationController
   before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
-  before_filter :find_project
+  before_filter :find_repository_owner
   before_filter :find_repository
   
   def index
@@ -60,6 +60,6 @@ class CommentsController < ApplicationController
   
   protected
     def find_repository
-      @repository = @project.repositories.find_by_name!(params[:repository_id])
+      @repository = @owner.repositories.find_by_name!(params[:repository_id])
     end
 end
