@@ -25,7 +25,8 @@ class UsersHelperTest < ActionView::TestCase
   should " encode email" do
     email = "aAT@NOSPAM@bDOTcom"
     encoded = (0...email.length).inject("") do |result, index|
-      result << sprintf("%%%x",email[index])
+      i = RUBY_VERSION > '1.9' ? email[index].ord : email[index]
+      result << sprintf("%%%x", i)
     end
     assert_match(/#{encoded}/, encoded_mail_to("a@b.com"))
   end

@@ -67,7 +67,7 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   should "cannot have a reserved name as slug" do
-    project = create_project(:slug => Gitorious::Reservations::PROJECT_NAMES.first)
+    project = create_project(:slug => Gitorious::Reservations.project_names.first)
     project.valid?
     assert_not_nil project.errors.on(:slug)
     

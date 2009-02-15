@@ -4,8 +4,8 @@ require 'routing_filter/base'
 module RoutingFilter
   class RepositoryOwnerNamespacing < Base
     
-    RESERVED_NAMES = Gitorious::Reservations::RESERVED_ROOT_NAMES
-    CONTROLLER_NAMES = Gitorious::Reservations::CONTROLLER_NAMES + RESERVED_NAMES
+    RESERVED_NAMES = Gitorious::Reservations.reserved_root_names
+    CONTROLLER_NAMES = Gitorious::Reservations.controller_names + RESERVED_NAMES
     NAME_WITH_FORMAT_RE = /[a-z0-9_\-\.]+/i
     PREFIXES_TO_CONTROLLER = {
       "~" => "users",
@@ -71,7 +71,7 @@ module RoutingFilter
       end
       
       def repository_scope?(path)
-        !Gitorious::Reservations::PROJECTS_MEMBER_ACTIONS.include?(path.sub("/", "")) && 
+        !Gitorious::Reservations.projects_member_actions.include?(path.sub("/", "")) && 
           path =~ /^\/(#{NAME_WITH_FORMAT_RE})(.+)?$/i
       end
   end

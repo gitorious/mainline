@@ -68,7 +68,7 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "cannot have a reserved name" do
-    repo = new_repos(:name => Gitorious::Reservations::REPOSITORY_NAMES.first)
+    repo = new_repos(:name => Gitorious::Reservations.repository_names.first)
     repo.valid?
     assert_not_nil repo.errors.on(:name)
   end
