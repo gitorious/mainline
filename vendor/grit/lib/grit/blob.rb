@@ -1,6 +1,7 @@
 module Grit
   
   class Blob
+    include Comparable
     DEFAULT_MIME_TYPE = "text/plain"
     
     attr_reader :id
@@ -51,8 +52,12 @@ module Grit
       guesses.first ? guesses.first.simplified : DEFAULT_MIME_TYPE
     end
     
-    def basename
-      File.basename(@name)
+    def sha
+      @id
+    end
+    
+    def <=>(other)
+      sha <=> other.sha
     end
     
     # The blame information for the given file at the given commit
@@ -110,6 +115,10 @@ module Grit
       end
       
       blames
+    end
+    
+    def basename
+      File.basename(name)
     end
     
     # Pretty object inspection

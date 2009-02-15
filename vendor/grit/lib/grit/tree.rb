@@ -1,6 +1,8 @@
 module Grit
   
   class Tree
+    include Comparable
+    
     lazy_reader :contents
     attr_reader :id
     attr_reader :mode
@@ -96,7 +98,15 @@ module Grit
     end
     
     def basename
-      File.basename(@name)
+      File.basename(name)
+    end
+    
+    def sha
+      @id
+    end
+    
+    def <=>(other)
+      sha <=> other.sha
     end
     
     # Pretty object inspection

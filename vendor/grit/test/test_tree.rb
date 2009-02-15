@@ -93,4 +93,15 @@ class TestTree < Test::Unit::TestCase
     @t = Tree.create(@r, :id => 'abc')
     assert_equal %Q{#<Grit::Tree "abc">}, @t.inspect
   end
+  
+  def test_basename
+    @t = Tree.create(@r, :name => 'foo/bar')
+    assert_equal "bar", @t.basename
+  end
+  
+  def test_should_be_comparable
+    tree1 = Tree.create(@r, :name => 'foo/bar', :id => "f623ee576a09ca491c4a27e48c0dfe04be5f4a2e")
+    tree2 = Tree.create(@r, :name => 'foo/bar', :id => "f623ee576a09ca491c4a27e48c0dfe04be5f4a2e")
+    assert_equal tree1, tree2
+  end
 end
