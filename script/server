@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 require File.dirname(__FILE__) + '/../config/boot'
+gem("mongrel", ">=0")
 require 'commands/server'

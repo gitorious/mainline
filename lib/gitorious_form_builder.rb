@@ -11,6 +11,6 @@ class GitoriousFormBuilder < ActionView::Helpers::FormBuilder
     if options[:hint]
       result << content_tag(:p, options[:hint], :class => "hint")
     end
-    result
+    result.join("\n")
   end
 end
