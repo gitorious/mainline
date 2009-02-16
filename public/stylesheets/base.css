@@ -944,6 +944,10 @@ div.being_constructed {
   background: #eee;
 }
 
+div.being_constructed .spin {
+  text-align: center;
+  margin: 10px auto 0 auto;
+}
 
 /* auto completions */
 
