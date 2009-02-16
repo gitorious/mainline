@@ -71,7 +71,7 @@ module ActionView
 
         source = <<-end_src
           def #{render_symbol}(local_assigns)
-            old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
+            old_output_buffer = output_buffer;#{locals_code};#{compiled_source.respond_to?(:force_encoding) ? compiled_source.force_encoding(Encoding::UTF_8) : compiled_source}
           ensure
             self.output_buffer = old_output_buffer
           end
