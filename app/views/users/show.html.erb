@@ -22,6 +22,10 @@
 
 <% @page_title = h(@user.login) -%>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @user} -%>
+<% end -%>
+
 <% unless @events.empty? -%>
   <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>  
@@ -42,6 +46,12 @@
     <li><strong><%= t("views.users.member_for") %></strong> <%= t("views.users.about", :about => time_ago_in_words(@user.created_at)) %></li>
     <li><strong><%= @commits_last_week -%></strong> <%= t("views.users.this_week", :count => @commits_last_week) %>.</li>
   </ul>
+  
+  <ul class="links">
+    <% if current_user && (current_user == @user)  -%>
+      <li class="home"><%= link_to t("views.account.edit_title"), edit_account_url -%>
+    <% end -%>
+  </ul>
 
 
   <% unless @projects.blank? -%>
@@ -60,11 +70,5 @@
       <li><%= link_to h("#{repo.project.slug}/#{repo.name}"), [repo.project, repo] -%></li>
     <% end -%>
     </ul>
-  <% end -%>
-<% end -%>
-
-<% if current_user && (current_user == @user)  -%>
-  <% content_for :submenu do -%>
-    <li class="home"><%= link_to t("views.account.edit_title"), edit_account_url -%>
   <% end -%>
 <% end -%>

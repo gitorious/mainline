@@ -27,6 +27,8 @@ module BreadcrumbsHelper
       project_path(an_object)
     when Group
       group_path(an_object)
+    when User
+      user_path(an_object)
     when Breadcrumb::Branch
       project_repository_commits_in_ref_path(@project, @repository, ensplat_path(an_object.title))
     when Breadcrumb::Folder
