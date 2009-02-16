@@ -51,7 +51,8 @@ class CommitsController < ApplicationController
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
     respond_to do |format|
       format.html
-      # TODO: format.diff { render :content_type => "text/plain" }
+      format.diff  { render :text => @diffs.map{|d| d.diff}.join("\n"), :content_type => "text/plain" }
+      format.patch{ render :text => @commit.to_patch, :content_type => "text/plain" }
     end
   end
   

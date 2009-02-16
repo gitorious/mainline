@@ -36,7 +36,7 @@ ActionController::Routing::Routes.draw do |map|
         :controller => "commits", :action => "feed", :conditions => {:feed => :get}
     repo.commits        "commits", :controller => "commits", :action => "index"
     repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
-    repo.commit         "commit/:id", :controller => "commits", :action => "show"
+    repo.commit         "commit/:id.:format", :controller => "commits", :action => "show"
     repo.trees          "tree/", :controller => "trees", :action => "index"
     repo.tree           "tree/*branch_and_path", :controller => "trees", :action => "show"
     repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"

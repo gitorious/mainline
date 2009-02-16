@@ -65,6 +65,86 @@ class CommitsControllerTest < ActionController::TestCase
           :repository_id => @repository.name, :id => @sha, :diffmode => "sidebyside" }
       assert_equal "sidebyside", assigns(:diffmode)
     end
+    
+    should "get it in diff format" do
+      get :show, :project_id => @project.slug, 
+          :repository_id => @repository.name, :id => @sha, :format => "diff"
+      assert_response :success
+      assert_equal "text/plain", @response.content_type
+      assert_equal @repository.git.commit(@sha).diffs.map{|d| d.diff}.join("\n"), @response.body
+    end
+    
+    should "get it in patch format" do
+      get :show, :project_id => @project.slug, 
+          :repository_id => @repository.name, :id => @sha, :format => "patch"
+      assert_response :success
+      assert_equal "text/plain", @response.content_type
+      assert_equal @repository.git.commit(@sha).to_patch, @response.body
+    end
+  end
+  
+  context "Routing" do
+    setup do
+      @project = projects(:johans)
+      @repository = @project.repositories.first
+      @repository.update_attribute(:ready, true)
+      @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
+    end
+    
+    should "route commits format" do
+      assert_recognizes({
+        :controller => "commits", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", :method => :get})
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
+        :controller => "commits", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+      })
+    end
+
+    should "route diff format" do
+      assert_recognizes({
+        :controller => "commits", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+        :format => "diff",
+      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.diff", :method => :get})
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.diff", {
+        :controller => "commits", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+        :format => "diff"
+      })
+    end
+    
+    should "route patch format" do
+      assert_recognizes({
+        :controller => "commits", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+        :format => "patch",
+      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.patch", :method => :get})
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.patch", {
+        :controller => "commits", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+        :format => "patch"
+      })
+    end
   end
 
 

@@ -21,7 +21,7 @@
 <% @page_title = @project.title -%>
 <h1><%=h @project.title -%></h1>
 
-<div class="page">
+<div id="project-description" class="page">
   <%= paragraphs_with_more auto_link(markdown(sanitize(@project.description)), :urls) -%>
 </div>
 
