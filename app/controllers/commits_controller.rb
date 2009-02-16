@@ -27,8 +27,15 @@ class CommitsController < ApplicationController
       return
     end
     @git = @repository.git
-    @root = Breadcrumb::Branch.new(@git.head, @repository)
-    @commits = @repository.cached_paginated_commits(desplat_path(params[:branch]), params[:page])
+    @ref, _ = branch_and_path(params[:branch], @git)
+    if h = @git.get_head(@ref)
+      head = h
+    else
+      commit = @git.commit(@ref)
+      head = Grit::Head.new(commit.id_abbrev, commit)
+    end
+    @root = Breadcrumb::Branch.new(head, @repository)
+    @commits = @repository.cached_paginated_commits(@ref, params[:page])
     @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
     respond_to do |format|
       format.html

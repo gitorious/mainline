@@ -37,8 +37,8 @@ Rails::Initializer.run do |config|
   config.gem "ruby-openid",  :lib => "openid"
   config.gem "rdiscount",    :version => "1.3.1.1"
   config.gem 'stomp',        :version => "1.1"
-  config.gem "mime-types"
-  config.gem "diff-lcs"
+  #config.gem "mime-types"
+  #config.gem "diff-lcs"
   if RUBY_VERSION < '1.9'
     config.gem 'json'
   end

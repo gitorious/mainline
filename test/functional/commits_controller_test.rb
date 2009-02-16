@@ -103,8 +103,19 @@ class CommitsControllerTest < ActionController::TestCase
         get :index, {:project_id => @project.slug, 
           :repository_id => @repository.name, :page => nil, :branch => ["master"]}
         assert_response :success
+        assert_equal "master", assigns(:root).title
         assert_equal @repository.git, assigns(:git)
         assert_equal @repository.git.commits("master", 30, 0), assigns(:commits)
+      end
+      
+      should "GET the commits of a namedspaced branch successfully" do
+        get :index, {:project_id => @project.slug, 
+          :repository_id => @repository.name, :page => nil, :branch => ["test", "master"]}
+        assert_response :success
+        assert_equal "test/master", assigns(:ref)
+        assert_equal "test/master", assigns(:root).title
+        assert_equal @repository.git, assigns(:git)
+        assert_equal @repository.git.commits("test/master", 30, 0), assigns(:commits)
       end
       
       should "have a proper id in the atom feed" do
