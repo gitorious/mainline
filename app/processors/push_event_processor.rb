@@ -22,7 +22,7 @@ class PushEventProcessor < ApplicationProcessor
   attr_reader :oldrev, :newrev, :action, :user
   attr_writer :repository
 
-  GIT_OUTPUT_SEPARATOR = ";;"
+  GIT_OUTPUT_SEPARATOR = "$$"
   
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
