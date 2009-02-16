@@ -1545,6 +1545,11 @@ table.repository_meta .name td h2 {
 }
 
 table.repository_meta .name td.mainline h2 { font-weight: bold; }
+table.repository_meta .name td h2 img{
+  vertical-align: middle;
+  margin-left: 3px;
+  margin-right: 3px;
+}
 
 table.repository_meta td {
   padding: 10px;

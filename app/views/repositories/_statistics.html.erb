@@ -1,7 +1,9 @@
 <table class="repository_meta">
   <tr class="name">
     <td colspan="3" class="<%= repository.mainline? ? "mainline" : "clone" -%>">
-      <h2 style="display: inline;"><%= link_to h(repository.name), [repository.project, repository] -%></h2>
+      <h2 style="display: inline;">
+        <%= link_to h(repository.project.to_param), repository.project -%><%= image_tag("silk/arrow_right.png") -%><%= link_to h(repository.name), [repository.project, repository] -%>
+      </h2>
       <ul class="horizontal" style="position: relative; top: -2px; padding-left: 10px">
         <li class="commit"><%= link_to "Commit log", [repository.project, repository, :commits] -%></li>
         <li class="tree"><%= link_to "Source tree", [repository.project, repository, :trees] -%></li>
