@@ -1658,6 +1658,11 @@ table.repository_meta .clones h5 {
 .page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
 
+#project-description {
+  margin: 0;
+  padding: 0;
+}
+
 
 table.select_commits_from_list th
 {
