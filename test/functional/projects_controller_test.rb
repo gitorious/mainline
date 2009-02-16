@@ -212,13 +212,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to(project_path(projects(:johans)))
     end
   
-    should "GET projects/N/edit is only for project owner" do
-      login_as :moe
-      get :edit, :id => projects(:johans).to_param
-      assert_match(/you're not the owner of this project/i, flash[:error])
-      assert_redirected_to(project_path(projects(:johans)))
-    end
-  
     should "PUT projects/update can only be done by project owner" do
       project = projects(:johans)
       project.owner = groups(:team_thunderbird)
