@@ -370,4 +370,52 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_match(/Action requires login/, flash[:error])
     end
   end
+  
+  context "when only admins are allowed to create new projects" do
+    setup do
+      GitoriousConfig["only_site_admins_can_create_projects"] = true 
+      users(:johan).update_attribute(:is_admin, true)
+      users(:moe).update_attribute(:is_admin, false)
+    end
+    
+    teardown do
+      GitoriousConfig["only_site_admins_can_create_projects"] = false
+    end
+    
+    should "redirect if the user is not a site admin on GET #new" do
+      login_as :moe
+      get :new
+      assert_response :redirect
+      assert_match(/only site administrators/i, flash[:error])
+      assert_redirected_to projects_path
+    end
+    
+    should "be succesful on #new if the user is a site_admin" do
+      login_as :johan
+      get :new
+      assert_nil flash[:error]
+      assert_response :success
+    end
+    
+    should "redirect if the user is not a site admin on POST #create" do
+      login_as :moe
+      post :create, :project => {}
+      assert_response :redirect
+      assert_match(/only site administrators/i, flash[:error])
+      assert_redirected_to projects_path
+    end
+    
+    should "be succesful on POST #create if the user is a site_admin" do
+      login_as :johan
+      post :create, :project => {
+        :title => "project x", 
+        :slug => "projectx", 
+        :description => "projectx's description",
+        :owner_type => "User"
+      }
+      assert_nil flash[:error]
+      assert_response :redirect
+      assert_redirected_to new_project_repository_path(assigns(:project))
+    end
+  end
 end

@@ -18,6 +18,7 @@
 
 class ProjectsController < ApplicationController  
   before_filter :login_required, :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
+  before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   before_filter :find_project_and_assure_adminship, :only => [:edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   
@@ -128,6 +129,16 @@ class ProjectsController < ApplicationController
       if !@project.admin?(current_user)
         flash[:error] = I18n.t "projects_controller.update_error"
         redirect_to(project_path(@project)) and return
+      end
+    end
+    
+    def check_if_only_site_admins_can_create
+      if GitoriousConfig["only_site_admins_can_create_projects"]
+        unless current_user.site_admin?
+          flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
+          redirect_to projects_path
+          return false
+        end
       end
     end
 end

@@ -31,7 +31,9 @@
 
 <% content_for :sidebar do -%>
   <ul class="links">
+    <% if show_new_project_link? -%>
     <li class="new_project"><%= link_to t("views.projects.new"), new_project_path -%></li>
+    <% end -%>
   </ul>
  
   <h4><%= t("views.projects.popular") %>:</h4>

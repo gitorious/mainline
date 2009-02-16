@@ -50,6 +50,7 @@
     :projects_controller => {
       :update_error => "You're not the owner of this project",
       :destroy_error => "You're not the owner of this project, or the project has clones",
+      :create_only_for_site_admins => "Only site administrators are allowed to create new projects",
     },
     :repositories_controller => {
       :new_clone_error => "Sorry, can't clone an empty repository",
