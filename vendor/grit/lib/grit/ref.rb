@@ -63,6 +63,10 @@ module Grit
       @name = name
       @commit = commit
     end
+    
+    def ==(other)
+      name == other.name && commit == other.commit
+    end
 
     # Pretty object inspection
     def inspect
