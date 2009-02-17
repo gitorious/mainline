@@ -193,7 +193,6 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
   
   this.targetBranchSelected = function(branchName) {
     if (branchName != this.targetBranchName) {
-      console.debug("New target branch selected");
       this.targetBranchName = branchName;
       this._updateCommitList();
     }
@@ -201,7 +200,6 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
   
   this.sourceBranchSelected = function(branchName) {
     if (branchName != this.sourceBranchName) {
-      console.debug("New source branch selected");
       this.sourceBranchName = branchName;
       this._updateCommitList();
     }
