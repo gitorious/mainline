@@ -16,18 +16,19 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", 
+        :locals => { :root => Breadcrumb::MergeRequests.new(@repository) } -%>
+<% end -%>
+
 <h1><%= t("views.merges.create_title") %></h1>
 
 <%= error_messages_for :merge_request -%>
-
 <% form_for [@project, @repository, @merge_request] do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
   
   <%= f.submit t("views.merges.create_btn") -%>
-<% end -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => Breadcrumb::MergeRequests.new(@repository) } -%>
 <% end -%>
 
 <script type="text/javascript" charset="utf-8">

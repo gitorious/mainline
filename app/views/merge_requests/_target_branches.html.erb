@@ -1,0 +1,6 @@
+<p>
+  <%= label :merge_request, :target_branch, 
+        t(:target_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.target_branch") %></small><br />
+  <%= select(:merge_request, :target_branch, @target_branches.collect(&:name)) %>
+</p>

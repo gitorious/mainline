@@ -89,7 +89,8 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def commits_for_selection
-    @commits_for_selection ||= target_repository.git.commit_deltas_from(source_repository.git, target_branch, source_branch)
+    return [] if !target_repository
+    target_repository.git.commit_deltas_from(source_repository.git, target_branch, source_branch)
   end
   
   def applies_to_specific_commits?
@@ -103,6 +104,11 @@ class MergeRequest < ActiveRecord::Base
     else
       return commits_for_selection
     end
+  end
+  
+  def target_branches
+    return [] unless target_repository
+    target_repository.git.branches || []
   end
   
   def breadcrumb_parent

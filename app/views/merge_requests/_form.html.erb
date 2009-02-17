@@ -27,16 +27,23 @@
   <small class="hint"><%= t("views.merges.info.target_repos") %></small><br />
   <%= form.select :target_repository_id, @repositories.map{|r| [r.name, r.id] } -%>
 </p>
-<p>
+<div id="target_branch_selection">
+  <% if false -%>
   <%= form.label :target_branch, t(:target_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
   <small class="hint"><%= t("views.merges.info.target_branch") %></small><br />
   <%= form.text_field :target_branch, :class => "text", :value => form.object.target_branch -%>
-</p>
+  <% end -%>
+  <%= render :partial => "target_branches" -%>
+</div>
 <p>
   <%= form.label :source_branch, t(:source_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
   <small class="hint"><%= t("views.merges.info.source_branch") %></small><br />
-  <%= form.select :source_branch, @branches.collect(&:name), {:include_blank => true} %>
+  <%= form.select :source_branch, @source_branches.collect(&:name), {:include_blank => true} %>
 </p>
 <div id="commit_selection">
-  <%= link_to_remote "Fetch commits", :update => 'commit_selection', :url => commit_list_project_repository_merge_requests_path, :method => :get, :with => 'Form.serialize(document.forms[1])'%>
+  <%= link_to_remote "Fetch commits", :update => 'commit_selection', 
+        :url => commit_list_project_repository_merge_requests_path, 
+        :method => :get, 
+        :with => 'Form.serialize(document.forms[1])' if false-%>
+  <%= render :partial => "commit_list" -%>
 </div>

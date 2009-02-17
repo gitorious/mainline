@@ -156,34 +156,53 @@ Event.observe(window, "load", function(e){
 });
 
 
-function sourceBranchSelected(form, value)
-{
-  if (sourceBranch = $F('merge_request_source_branch'))
-  {
-    selectableRange.sourceBranchSelected(sourceBranch);
-  }
-}
 // A class used for selecting ranges of objects
-function SelectableRange(commitListUrl, statusElement)
+function SelectableRange(commitListUrl, targetBranchesUrl)
 {
   this.commitListUrl = commitListUrl
-  this.statusElement = statusElement;
+  this.targetBranchesUrl = targetBranchesUrl;
   this.endsAt = null;
   this.sourceBranchName = null;
+  this.targetBranchName = null;
   
   this.endSelected = function(el) {
     this.endsAt = el;
     this.update();
   };
   
+  this.onSourceBranchChange = function(event) {
+    if (sourceBranch = $F('merge_request_source_branch')) {
+      this.sourceBranchSelected(sourceBranch);
+    }
+  };
+  
+  this.onTargetRepositoryChange = function(event) {
+    new Ajax.Updater('target_branch_selection', this.targetBranchesUrl, {
+      method: 'post', 
+      parameters: Form.serialize($('new_merge_request'))
+    });
+    this._updateCommitList();
+  };
+  
+  this.onTargetBranchChange = function(event) {
+    if (targetBranch = $F('merge_request_target_branch')) {
+      this.targetBranchSelected(targetBranch);
+    }
+  };
+  
+  this.targetBranchSelected = function(branchName) {
+    if (branchName != this.targetBranchName) {
+      console.debug("New target branch selected");
+      this.targetBranchName = branchName;
+      this._updateCommitList();
+    }
+  };
+  
   this.sourceBranchSelected = function(branchName) {
     if (branchName != this.sourceBranchName) {
       console.debug("New source branch selected");
       this.sourceBranchName = branchName;
-      new Ajax.Updater('commit_selection', this.commitListUrl, {
-        method: 'get', 
-        parameters: Form.serialize($('new_merge_request'))
-      });    
+      this._updateCommitList();
     }
   };
   
@@ -206,5 +225,12 @@ function SelectableRange(commitListUrl, statusElement)
       }
       $(this.statusElement).update(from + ".." + to);
     }
+  };
+  
+  this._updateCommitList = function() {
+    new Ajax.Updater('commit_selection', this.commitListUrl, {
+      method: 'post', 
+      parameters: Form.serialize($('new_merge_request'))
+    });
   }
 }

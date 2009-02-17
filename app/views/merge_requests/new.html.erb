@@ -16,22 +16,31 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", 
+        :locals => { :root => Breadcrumb::MergeRequests.new(@repository) } -%>
+<% end -%>
+
 <h1><%= t("views.merges.create_title") %></h1>
 
 <%= error_messages_for :merge_request -%>
-
 <% form_for [@project, @repository, @merge_request] do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
   
   <%= f.submit t("views.merges.create_btn") -%>
 <% end -%>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => Breadcrumb::MergeRequests.new(@repository) } -%>
-<% end -%>
-
 <script type="text/javascript" charset="utf-8">
-var selectableRange = new SelectableRange('<%= commit_list_project_repository_merge_requests_path %>', "commit_list_status");
-new Form.Observer('new_merge_request', 0.3, sourceBranchSelected);
-Event.observe(window, 'load', sourceBranchSelected);
+  var selectableRange = new SelectableRange(
+    '<%= commit_list_project_repository_merge_requests_path %>',
+    '<%= target_branches_project_repository_merge_requests_path %>'
+  );
+  $("merge_request_source_branch").observe("change", selectableRange.onSourceBranchChange.bindAsEventListener(selectableRange));
+  //Event.observe(window, 'load', selectableRange.onSourceBranchChange.bindAsEventListener(selectableRange));
+  
+  $("merge_request_target_branch").observe("change", selectableRange.onTargetBranchChange.bindAsEventListener(selectableRange));
+  //Event.observe(window, 'load', selectableRange.onTargetBranchChange.bindAsEventListener(selectableRange));
+    
+  $("merge_request_target_repository_id").observe("change", selectableRange.onTargetRepositoryChange.bindAsEventListener(selectableRange));
+  //Event.observe(window, 'load', selectableRange.onTargetRepositoryChange.bindAsEventListener(selectableRange));
 </script>

@@ -107,10 +107,31 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_equal "#{@merge_request.target_repository.name}:foo", @merge_request.target_name
   end
   
+  should "have an empty set of target branches, if the target_repository is nil" do
+    @merge_request.target_repository = nil
+    assert_equal [], @merge_request.target_branches
+  end
+  
+  should "have a set of target branches" do
+    repo = repositories(:johans)
+    @merge_request.target_repository = repo
+    grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    repo.stubs(:git).returns(grit)
+    assert_equal grit.heads, @merge_request.target_branches
+  end
+  
   context "with specific starting and ending commits" do
     setup do
       @merge_request.ending_commit = '6823e6622e1da9751c87380ff01a1db1'
     end
+    
+    should "not blow up if there's no target repository" do
+      mr = MergeRequest.new
+      assert_nothing_raised do
+        assert_equal [], mr.commits_for_selection
+      end
+    end
+    
     should " suggest relevant commits to be merged" do
       assert_equal(4, @merge_request.commits_for_selection.size)
     end

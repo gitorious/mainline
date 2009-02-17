@@ -25,9 +25,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
   
 	def setup
 		@project = projects(:johans)
-		git = mock
-		git.stubs(:branches).returns([])
-		Repository.any_instance.stubs(:git).returns(git)
+    grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    Repository.any_instance.stubs(:git).returns(grit)
 		@source_repository = repositories(:johans2)
 		@target_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans)
@@ -140,6 +139,12 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				:repository_id => @source_repository.to_param
 			assert_equal [repositories(:johans)], assigns(:repositories)
 		end
+		
+		should "set a default mainline target repo id" do
+		  login_as :johan
+		  get :new, :project_id => @project.to_param, :repository_id => @source_repository.to_param
+		  assert_equal repositories(:johans).id, assigns(:merge_request).target_repository_id
+	  end
 	end
 	
 	def do_post(data={})
@@ -335,10 +340,24 @@ class MergeRequestsControllerTest < ActionController::TestCase
     
 	  should " render a list of commits that can be merged" do
 	    login_as :johan
-			get :commit_list, :project_id => @project.to_param, 
+			post :commit_list, :project_id => @project.to_param, 
 				:repository_id => @target_repository.to_param,
 				:merge_request => {}
 			assert_equal @commits, assigns(:commits)
+    end
+  end
+  
+  context "GET #target_branches" do
+    should "retrive a list of the target repository branches" do
+      grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      MergeRequest.any_instance.expects(:target_branches).returns(grit.branches)
+      
+      login_as :johan
+			post :target_branches, :project_id => @project.to_param, 
+				:repository_id => @target_repository.to_param,
+				:merge_request => {:target_repository_id => repositories(:johans).id}
+			assert_response :success
+			assert_equal grit.branches, assigns(:target_branches)
     end
   end
 	

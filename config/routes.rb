@@ -28,7 +28,8 @@ ActionController::Routing::Routes.draw do |map|
       :resolve => :put 
     }, :collection => { 
       :create => :post, 
-      :commit_list => :get 
+      :commit_list => :post,
+      :target_branches => :post,
     }
     repo.resources :participations, :collection => {:auto_complete_for_group_name => :post}
     
