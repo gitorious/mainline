@@ -1427,17 +1427,16 @@ table.select_commits_from_list th#commit_list_status {
   text-align: right;
   font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
 }
-table.select_commits_from_list tr.commit_row td {
-  color: #888;
+table.select_commits_from_list tr.commit_row td, 
+table.select_commits_from_list tr.commit_row td .selection {
+  
 }
 table.select_commits_from_list tr.commit_row td, tr.selected td {
-  background-color: #fff;
   padding: 5px 0 5px 0;
   border-bottom: 1px solid #ddd;
 }
 table.select_commits_from_list tr.selected td {
   background-color: #ffc;
-  color: #000;
 }
 table.select_commits_from_list td.merge_to_container {
   width: 40px;
