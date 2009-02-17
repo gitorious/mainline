@@ -31,7 +31,7 @@
 <% end -%>
 
 <script type="text/javascript" charset="utf-8">
-var selectableRange = new SelectableRange('<%= commit_list_project_repository_merge_requests_path %>');
+var selectableRange = new SelectableRange('<%= commit_list_project_repository_merge_requests_path %>', "commit_list_status");
 new Form.Observer('new_merge_request', 0.3, sourceBranchSelected);
 Event.observe(window, 'load', sourceBranchSelected);
 </script>

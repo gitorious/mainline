@@ -1,3 +1,23 @@
+/*
+#--
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-- 
+*/
+
 var ProjectSluggorizer = Class.create({
   initialize: function(source, target) {
    this.source = $(source);
@@ -144,11 +164,13 @@ function sourceBranchSelected(form, value)
   }
 }
 // A class used for selecting ranges of objects
-function SelectableRange(commitListUrl)
+function SelectableRange(commitListUrl, statusElement)
 {
   this.commitListUrl = commitListUrl
+  this.statusElement = statusElement;
   this.endsAt = null;
   this.sourceBranchName = null;
+  
   this.endSelected = function(el) {
     this.endsAt = el;
     this.update();
@@ -167,12 +189,22 @@ function SelectableRange(commitListUrl)
   
   this.update = function() {
     if (this.endsAt) {
-      $$(".commit_row").each(function(el){ el.removeClassName('selected') });
+      var commitRows = $$(".commit_row");
+      commitRows.each(function(el){ el.removeClassName('selected') });
       var firstTr = this.endsAt.up().up();
       firstTr.addClassName('selected');
       firstTr.nextSiblings().each(function(tr) {
         tr.addClassName('selected');        
       });
+      // update the status field with the selected range
+      var to = firstTr.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
+      if (commitRows.last() == firstTr) {
+        var from = firstTr.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
+      } else {
+        var lastSibling = firstTr.siblings().last();
+        var from = lastSibling.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
+      }
+      $(this.statusElement).update(from + ".." + to);
     }
   }
 }

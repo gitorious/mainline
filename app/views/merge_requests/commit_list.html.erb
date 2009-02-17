@@ -1,3 +1,23 @@
+<%
+#--
+#   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
+#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
 <label>Select commits</label>
 <p class="hint">
   Select the range of commits you want to be included in the merge request
@@ -6,8 +26,7 @@
   <tr>
     <th>To</th>
     <th>Summary</th>
-    <th></th>
-    <th></th>
+    <th id="commit_list_status" colspan="2">No range selected yet</th>
   </tr>
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
@@ -35,7 +54,6 @@
   </tr>
 <% end %>
 </table>
-
 
 <div id="commit_selection_error" style="display:none">
   Please select which commit to start from and which to end at. The last 
