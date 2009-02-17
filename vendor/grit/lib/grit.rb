@@ -48,6 +48,8 @@ module Grit
   class << self
     # Set +debug+ to true to log all git calls and responses
     attr_accessor :debug
+    # Set +log_calls+ to true to log calling of `git` commands to +logger+
+    attr_accessor :log_calls
     attr_accessor :use_git_ruby
     # The standard +logger+ for debugging git calls - this defaults to a plain STDOUT logger
     attr_accessor :logger
