@@ -1432,11 +1432,11 @@ table.select_commits_from_list td.merge_to_container {
   text-align: center;
 }
 table.select_commits_from_list tr.commit_row td.selection {
-  background: url(/images/silk/cancel.png) no-repeat center center;
+  background: url("/images/silk/brick.png") no-repeat center center;
   width: 40px;
 }
 table.select_commits_from_list tr.selected td.selection {
-  background-image: url(/images/silk/accept.png);  
+  background-image: url("/images/silk/brick_add.png");  
   background-color: #ffc;
 }
 

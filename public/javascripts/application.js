@@ -149,31 +149,30 @@ function SelectableRange(commitListUrl)
   this.commitListUrl = commitListUrl
   this.endsAt = null;
   this.sourceBranchName = null;
-  this.endSelected = function(el)
-  {
+  this.endSelected = function(el) {
     this.endsAt = el;
     this.update();
   };
-  this.sourceBranchSelected = function(branchName)
-  {
-    if (branchName != this.sourceBranchName)
-    {
+  
+  this.sourceBranchSelected = function(branchName) {
+    if (branchName != this.sourceBranchName) {
       console.debug("New source branch selected");
       this.sourceBranchName = branchName;
-      new Ajax.Updater('commit_selection', this.commitListUrl, {method:'get', parameters: Form.serialize($('new_merge_request'))});    
+      new Ajax.Updater('commit_selection', this.commitListUrl, {
+        method: 'get', 
+        parameters: Form.serialize($('new_merge_request'))
+      });    
     }
   };
-  this.update = function()
-  {
-    if (this.endsAt)
-    {
-      $$(".commit_row").each(function(el){el.removeClassName('selected')});
+  
+  this.update = function() {
+    if (this.endsAt) {
+      $$(".commit_row").each(function(el){ el.removeClassName('selected') });
       var firstTr = this.endsAt.up().up();
       firstTr.addClassName('selected');
-      firstTr.previousSiblings().each(function(tr)
-      {
+      firstTr.nextSiblings().each(function(tr) {
         tr.addClassName('selected');        
-      })
+      });
     }
   }
 }
