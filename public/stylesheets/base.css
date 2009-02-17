@@ -831,6 +831,10 @@ small.commit_message {
   font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
 }
 
+.commit_message.inline, .commit_message.inline p {
+  display: inline;
+}
+
 .commit_message a {
   color: #000;
 }
@@ -1410,6 +1414,64 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .merge_request_summary.merged .status span 		{ color: #48BA1C; }
 .merge_request_summary.rejected .status span	{ color: #F00; }
 
+table.select_commits_from_list th {
+  background-color: #ddd;
+  padding: 0.2em 0.4em;
+  font-weight: bold;
+}
+table.select_commits_from_list tr.commit_row td, tr.selected td {
+  background-color: #fff;
+  padding: 5px 0 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+table.select_commits_from_list tr.selected td {
+  background-color: #ffc;
+}
+table.select_commits_from_list td.merge_to_container {
+  width: 40px;
+  text-align: center;
+}
+table.select_commits_from_list tr.commit_row td.selection {
+  background: url(/images/silk/cancel.png) no-repeat center center;
+  width: 40px;
+}
+table.select_commits_from_list tr.selected td.selection {
+  background-image: url(/images/silk/accept.png);  
+  background-color: #ffc;
+}
+
+table.select_commits_from_list tr.commit_row td.commit-details ul {
+  margin: 0;
+  padding: 0;
+}
+
+table.select_commits_from_list tr.commit_row .commit-details ul li {
+  margin-right: 5px;
+  display: inline;
+}
+table.select_commits_from_list tr.commit_row .commit-details.meta {
+  width: 180px;
+}
+table.select_commits_from_list tr.commit_row .commit-details.message {
+  vertical-align: top;
+}
+table.select_commits_from_list tr.commit_row .commit-details .sha-abbrev {
+}                                                            
+table.select_commits_from_list tr.commit_row .commit-details .committer {
+}                                                            
+table.select_commits_from_list tr.commit_row .commit-details .timestamp {
+}                                                            
+table.select_commits_from_list tr.commit_row .commit-details .commit_message {
+  margin: 0;
+}
+
+#commit_selection_error {
+  border: 1px solid red;
+  padding: 1em;
+}
+
+
+
 #repositories #branches {
   float: right;
   margin: 0 10px 10px 10px;
@@ -1661,42 +1723,6 @@ table.repository_meta .clones h5 {
 #project-description {
   margin: 0;
   padding: 0;
-}
-
-
-table.select_commits_from_list th
-{
-  background-color: #ddd;
-  padding: 0.2em 0.4em;
-  font-weight: bold;
-}
-tr.commit_row td,
-tr.selected td
-{
-  background-color: #fff;
-  text-decoration: line-through;
-}
-tr.selected td
-{
-  text-decoration: none;
-  
-}
-tr.commit_row td.selection
-{
-  background-image: url(/images/silk/cancel.png);
-  background-position: top 10px;
-  background-repeat: no-repeat;
-  width: 40px;
-}
-tr.selected td.selection
-{
-  background-image: url(/images/silk/accept.png);  
-}
-
-#commit_selection_error
-{
-  border: 1px solid red;
-  padding: 1em;
 }
 
 div.archive-download-box {

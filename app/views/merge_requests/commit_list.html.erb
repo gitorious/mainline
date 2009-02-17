@@ -1,14 +1,14 @@
 <label>Select commits</label>
 <table class="select_commits_from_list" id="commit_table">
   <tr>
-    <!-- <th>From</th> -->
     <th>To</th>
     <th>Summary</th>
-    <th>&nbsp;</th>
+    <th></th>
+    <th></th>
   </tr>
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
-    <td><input 
+    <td class="merge_to_container"><input 
       name="merge_request[ending_commit]" 
       id="merge_request_ending_commit"
       type="radio" 
@@ -16,12 +16,17 @@
       class="merge_to" 
       onclick="selectableRange.endSelected(this)"/>
     </td>
-    <td>
-      <%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit) %>
-      <strong><%= commit.committer %></strong> <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago
-      <div class="commit_message">
-        <p><%= h(commit.message) %></p>
-      </div>      
+    <td class="commit-details meta">
+      <ul>
+        <li class="sha-abbrev"><%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit) %></li>
+        <li class="committer"><strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong></li>
+      </ul>
+      <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
+    </td>
+    <td class="commit-details message">
+      <div class="commit_message inline">
+        <%=h truncate(commit.message, :length => 140) %>
+      </div>
     </td>
     <td class="selection">&nbsp;</td>
   </tr>
