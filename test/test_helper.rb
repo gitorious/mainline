@@ -60,4 +60,11 @@ class ActiveSupport::TestCase
   def grit_test_repo(name)
     File.join(RAILS_ROOT, "vendor/grit/test", name )
   end
+  
+  def assert_incremented_by(obj, meth, value)
+    value_before = obj.send(meth)
+    yield
+    value_after = obj.send(meth)
+    assert_equal(value, (value_after - value_before), "#{obj}##{meth} should be incremented by #{value} but was incremented by #{(value_after - value_before)}")
+  end
 end

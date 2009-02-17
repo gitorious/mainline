@@ -21,6 +21,22 @@ class Event < ActiveRecord::Base
   belongs_to :project
   belongs_to :target, :polymorphic => true
   validates_presence_of :user_id, :unless => :user_email_set?
+  
+  has_many :events, :as => :target do
+    def commits
+      find(:all, :conditions => {:action => Action::COMMIT})
+    end
+  end
+
+  def build_commit(options={})
+    e = self.class.new(options.merge({:action => Action::COMMIT, :project_id => project_id}))
+    e.target = self
+    return e
+  end
+  
+  def has_commits?
+    !events.commits.blank?
+  end
 
   def email=(an_email)
     if u = User.find_by_email(an_email)

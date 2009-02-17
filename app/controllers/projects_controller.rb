@@ -53,7 +53,7 @@ class ProjectsController < ApplicationController
     @project = Project.find_by_slug!(params[:id], :include => [:repositories])
     @owner = @project
     @events = @project.events.paginate(:all, :page => params[:page], 
-      :order => "created_at desc", :include => [:user, :project])
+      :order => "created_at desc", :include => [:user, :project], :conditions => ['target_type !=?','Event'])
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     
     respond_to do |format|

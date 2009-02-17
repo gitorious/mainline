@@ -274,7 +274,7 @@ module ApplicationHelper
         category = "wiki"
       when Action::PUSH
         project = target.project
-        action = "<strong>#{I18n.t("application_helper.event_status_pushed")}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        action = "<strong>pushed #{pluralize(event.events.size, 'commit')}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
         body = event.body
         category = 'push'
     end

@@ -45,7 +45,6 @@ class PushEventProcessor < ApplicationProcessor
   
   def log_event(an_event)
     @project ||= @repository.project
-    logger.debug("Processor: about to create an event")
     event = @project.events.create!(
       :action => an_event.event_type, 
       :target => @repository, 
@@ -54,7 +53,12 @@ class PushEventProcessor < ApplicationProcessor
       :data => an_event.identifier,
       :created_at => an_event.commit_time
       )
-    logger.debug("Processor: created event #{event}")
+    if commits = an_event.commits
+      commits.each do |c|
+        commit_event = event.build_commit(:email => c.email, :body => c.message, :data => c.identifier)
+        commit_event.save!
+      end
+    end
   end
   
   # Sets the commit summary, as served from git
@@ -88,8 +92,13 @@ class PushEventProcessor < ApplicationProcessor
   
   class EventForLogging
     attr_accessor :event_type, :identifier, :email, :message, :commit_time
+    attr_reader :commits
     def to_s
       "Type: #{event_type} by #{email} at #{commit_time} with #{identifier}"
+    end
+    
+    def commits=(commits)
+      @commits = commits
     end
   end
   
@@ -124,8 +133,8 @@ class PushEventProcessor < ApplicationProcessor
       e.message = "Pushed some changes"
       e.identifier = @identifier
       e.email = user.email
-      result = [e]
-      result = result + events_from_git_log("#{@oldrev}..#{@newrev}")
+      e.commits = events_from_git_log("#{@oldrev}..#{@newrev}")
+      return [e]
     end
   end
     

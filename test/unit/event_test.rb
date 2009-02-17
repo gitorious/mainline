@@ -64,4 +64,21 @@ class EventTest < ActiveSupport::TestCase
     event.user = user
     assert_equal 'Johan Sørensen', event.actor_display
   end
+  context 'A push event' do
+    setup do
+      @event = new_event(:action => Action::PUSH)
+      assert @event.save
+    end
+    
+    should 'have a method for attaching commit events' do
+      commit = @event.build_commit(
+        :email  => 'Linus Torvalds <linus@kernel.org>',
+        :data   => 'ffc0fa98',
+        :body   => 'Adding README')
+      assert commit.save
+      assert_equal(@event, commit.target)
+      assert @event.has_commits?
+      assert @event.events.commits.include?(commit)
+    end
+  end
 end

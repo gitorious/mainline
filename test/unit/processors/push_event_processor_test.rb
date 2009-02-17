@@ -54,14 +54,18 @@ class PushEventProcessorTest < ActiveSupport::TestCase
  should "returns the correct type and a set of events for a commit" do
     stub_git_log_and_user
     @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
+    @processor.repository = Repository.first
     assert_equal :update, @processor.action
     assert @processor.head?
-    assert_equal 4, @processor.events.size
+    assert_equal 1, @processor.events.size
     first_event = @processor.events.first
     assert_equal Action::PUSH, first_event.event_type
     assert_equal users(:johan).email, first_event.email
-    @processor.expects(:log_event).times(4)
-    @processor.log_events
+    assert_equal(3, first_event.commits.size)
+    
+    assert_incremented_by(Event, :count, 4) do
+      @processor.log_events
+    end
   end
   
  should "creates commit events even if the committer is unknown" do
