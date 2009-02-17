@@ -32,7 +32,8 @@ class MergeRequestsController < ApplicationController
   end
   
   def commit_list
-    @merge_request = @repository.proposed_merge_requests.new(params[:merge_request].merge(:user => current_user))
+    @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
+    @merge_request.user = current_user
     @commits = @merge_request.commits_for_selection
     render :layout => false
   end
@@ -43,7 +44,8 @@ class MergeRequestsController < ApplicationController
   end
   
   def new
-    @merge_request = @repository.proposed_merge_requests.new(:user => current_user)
+    @merge_request = @repository.proposed_merge_requests.new
+    @merge_request.user = current_user
     @repositories = Repository.all_by_owner(@owner).find(:all, 
                       :conditions => ["id != ?", @repository.id])
     @branches = @repository.git.branches

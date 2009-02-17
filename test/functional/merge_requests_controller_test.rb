@@ -318,7 +318,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	
 	context "#get commit_list" do
 	  setup do
-	    commits = %w(ffcffcffc ff0ff0ff0).collect do |sha|
+	    @commits = %w(ffcffcffc ff0ff0ff0).collect do |sha|
 	      m = mock
 	      m.stubs(:id).returns(sha)
 	      m.stubs(:id_abbrev).returns(sha[0..7])
@@ -328,9 +328,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	      m.stubs(:committed_date).returns(3.days.ago)
 	      m
       end
-	    merge_request = mock
-	    merge_request.stubs(:commits_for_selection).returns(commits)
-	    MergeRequest.stubs(:new).returns(merge_request)
+	    merge_request = MergeRequest.new
+	    merge_request.stubs(:commits_for_selection).returns(@commits)
+	    MergeRequest.expects(:new).returns(merge_request)
     end
     
 	  should " render a list of commits that can be merged" do
@@ -338,6 +338,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			get :commit_list, :project_id => @project.to_param, 
 				:repository_id => @target_repository.to_param,
 				:merge_request => {}
+			assert_equal @commits, assigns(:commits)
     end
   end
 	
