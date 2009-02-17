@@ -157,10 +157,11 @@ Event.observe(window, "load", function(e){
 
 
 // A class used for selecting ranges of objects
-function SelectableRange(commitListUrl, targetBranchesUrl)
+function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
 {
   this.commitListUrl = commitListUrl
   this.targetBranchesUrl = targetBranchesUrl;
+  this.statusElement = statusElement;
   this.endsAt = null;
   this.sourceBranchName = null;
   this.targetBranchName = null;
@@ -217,13 +218,10 @@ function SelectableRange(commitListUrl, targetBranchesUrl)
       });
       // update the status field with the selected range
       var to = firstTr.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
-      if (commitRows.last() == firstTr) {
-        var from = firstTr.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
-      } else {
-        var lastSibling = firstTr.siblings().last();
-        var from = lastSibling.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
-      }
-      $(this.statusElement).update(from + ".." + to);
+      var from = commitRows.last().getElementsBySelector(".sha-abbrev a")[0].innerHTML;
+      $$("." + this.statusElement).each(function(e) {
+        e.update(from + ".." + to);
+      });
     }
   };
   

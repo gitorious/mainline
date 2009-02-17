@@ -26,7 +26,7 @@
   <tr>
     <th>To</th>
     <th>Summary</th>
-    <th id="commit_list_status" colspan="2">No range selected yet</th>
+    <th class="commit_list_status" colspan="2">No range selected yet</th>
   </tr>
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
@@ -53,6 +53,11 @@
     <td class="selection">&nbsp;</td>
   </tr>
 <% end %>
+  <tr>
+    <th></th>
+    <th></th>
+    <th class="commit_list_status" colspan="2">No range selected yet</th>
+  </tr>
 </table>
 
 <div id="commit_selection_error" style="display:none">

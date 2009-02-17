@@ -1415,21 +1415,20 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .merge_request_summary.rejected .status span	{ color: #F00; }
 
 table.select_commits_from_list th {
-  background-color: #ddd;
-  padding: 0.2em 0.4em;
-  padding-bottom: 0;
+  background: #999;
+  color: #fff;
+  font-size: 11px;
+  padding: 5px 10px 3px;
+  text-transform: uppercase;
   font-weight: bold;
 }
-table.select_commits_from_list th#commit_list_status {
+table.select_commits_from_list th.commit_list_status {
   font-weight: normal;
+  text-transform: lowercase;
   padding-left: 10px;
   padding-right: 10px;
   text-align: right;
   font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
-}
-table.select_commits_from_list tr.commit_row td, 
-table.select_commits_from_list tr.commit_row td .selection {
-  
 }
 table.select_commits_from_list tr.commit_row td, tr.selected td {
   padding: 5px 0 5px 0;
@@ -1465,13 +1464,7 @@ table.select_commits_from_list tr.commit_row .commit-details.meta {
 }
 table.select_commits_from_list tr.commit_row .commit-details.message {
   vertical-align: top;
-}
-table.select_commits_from_list tr.commit_row .commit-details .sha-abbrev {
-}                                                            
-table.select_commits_from_list tr.commit_row .commit-details .committer {
-}                                                            
-table.select_commits_from_list tr.commit_row .commit-details .timestamp {
-}                                                            
+}                                                
 table.select_commits_from_list tr.commit_row .commit-details .commit_message {
   margin: 0;
 }
@@ -1480,7 +1473,6 @@ table.select_commits_from_list tr.commit_row .commit-details .commit_message {
   border: 1px solid red;
   padding: 1em;
 }
-
 
 
 #repositories #branches {
