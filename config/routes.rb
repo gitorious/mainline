@@ -66,7 +66,7 @@ ActionController::Routing::Routes.draw do |map|
   }, :member => { :feed => :get }) do |user|
     user.resources(:repositories, repository_options, &repository_proc)
   end
-  map.resources  :events
+  map.resources  :events, :member => {:commits => :get}
   
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
   map.resource  :sessions

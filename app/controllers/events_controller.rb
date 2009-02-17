@@ -28,4 +28,12 @@ class EventsController < ApplicationController
     end
   end
   
+  def commits
+    @event = Event.find(params[:id])
+    @commits = @event.events.commits.paginate(:page => params[:page])
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
 end

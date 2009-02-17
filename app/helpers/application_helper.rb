@@ -198,6 +198,10 @@ module ApplicationHelper
           action = "<strong>#{I18n.t("application_helper.event_status_push_wiki")}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(t("views.layout.pages")), project_pages_url(project)}"
           body = h(truncate(event.body, :length => 150))
           category = "wiki"
+        when 'commit'
+          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug)}"
+          body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
+          category = "commit"
         end
       when Action::CREATE_BRANCH
         project = target.project
@@ -274,12 +278,21 @@ module ApplicationHelper
         category = "wiki"
       when Action::PUSH
         project = target.project
-        action = "<strong>pushed #{pluralize(event.events.size, 'commit')}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = event.body
+        commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), :url => commits_event_path(event.to_param), :method => :get, :update => "commits_in_event_#{event.to_param}", :before => "$('commits_in_event_#{event.to_param}').show()")
+        action = "<strong>pushed #{commit_link}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        body = "#{event.body}"
         category = 'push'
     end
       
     [action, body, category]
+  end
+  
+  def link_to_remote_if(condition, name, options)
+    if condition
+      link_to_remote(name, options)
+    else
+      content_tag(:span, name)
+    end
   end
   
   def sidebar_content?

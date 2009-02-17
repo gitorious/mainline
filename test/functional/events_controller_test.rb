@@ -34,4 +34,19 @@ class EventsControllerTest < ActionController::TestCase
       assert_equal 1, assigns(:events).size
     end
   end
+  
+  context '#children' do
+    setup do
+      @push_event = @project.create_event(Action::PUSH, @repository, User.first, "", "A push event", 10.days.ago)
+      10.times do |n|
+#(:email => c.email, :body => c.message, :data => c.identifier)
+        c = @push_event.build_commit(:email => 'John Doe <john@doe.org>', :body => "Commit number #{n}", :data => "ffc0#{n}")
+        c.save
+      end
+    end
+    should 'show commits under a push event' do
+      get :commits, :id => @push_event.to_param, :format => 'js'
+      assert_response :success
+    end
+  end
 end

@@ -79,6 +79,7 @@ class EventTest < ActiveSupport::TestCase
       assert_equal(@event, commit.target)
       assert @event.has_commits?
       assert @event.events.commits.include?(commit)
+      assert_equal('commit', commit.kind)
     end
   end
 end

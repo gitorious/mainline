@@ -37,6 +37,10 @@ class Event < ActiveRecord::Base
   def has_commits?
     !events.commits.blank?
   end
+  
+  def kind
+    'commit'
+  end
 
   def email=(an_email)
     if u = User.find_by_email(an_email)

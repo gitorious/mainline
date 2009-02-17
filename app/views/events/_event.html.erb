@@ -37,5 +37,11 @@
     <div class="<%= event.action == Action::COMMIT ? "commit_message" : "" -%>">
       <%= simple_format(sanitize(body)) %>
     </div>
+    <% if event.has_commits? %>
+    <div id="commits_in_event_<%= event.to_param %>" style="display:none">
+      <%= image_tag("spinner.gif") %>
+    </div>
+    <% end %>
+    
   </div>
 </li>
