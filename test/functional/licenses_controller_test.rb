@@ -22,12 +22,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 class LicensesControllerTest < ActionController::TestCase
   context 'Accepting (current) end user license agreement' do
     setup do
-      license = stub("End user license agreement")
-      license.stubs(:checksum).returns("ff0023902")
-      license.stubs(:contents).returns("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-      EndUserLicenseAgreement.stubs(:current_version).returns(license)          
-      @user = users(:johan)
-      login_as :johan
+      @user = users(:moe)
+      login_as :moe
     end
     
     should 'render the current license version if this has been accepted' do

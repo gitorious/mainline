@@ -24,9 +24,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 class ProjectsControllerTest < ActionController::TestCase
 
   def setup
-    license = mock("End user license agreement")
-    license.stubs(:checksum).returns("213")
-    EndUserLicenseAgreement.stubs(:current_version).returns(license)
     @project = projects(:johans)
   end
   

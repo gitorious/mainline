@@ -10,7 +10,7 @@ johan:
   ssh_key_id: 1
   is_admin: <%= true %>
   aasm_state: terms_accepted
-  accepted_license_agreement_version: 213
+  accepted_license_agreement_version: 66c070833243bb8cf061bdc4165a29a8c8688ace  # the checksum of the contents of data/gitorious.test.license
 moe:
   id: 2
   login: moe

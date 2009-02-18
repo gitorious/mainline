@@ -21,11 +21,11 @@ require File.dirname(__FILE__) + '/../test_helper'
 class EndUserLicenseAgreementTest < ActiveSupport::TestCase
   context 'The end user license agreement' do
     setup do
-      File.open(EndUserLicenseAgreement.filename, "w"){|f| f.write("This is the license")}
+#      File.open(EndUserLicenseAgreement.filename, "w"){|f| f.write("This is the license")}
     end
     
     teardown do
-      FileUtils.rm(EndUserLicenseAgreement.filename) if File.exist?(EndUserLicenseAgreement.filename)
+#      FileUtils.rm(EndUserLicenseAgreement.filename) if File.exist?(EndUserLicenseAgreement.filename)
       EndUserLicenseAgreement.reset
     end
     
