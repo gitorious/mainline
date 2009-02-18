@@ -34,14 +34,14 @@ class EndUserLicenseAgreement
       if File.exist?(filename)
         l.contents = File.read(self.filename)
       else
-        raise EndUserLicenseAgreementError, "The license file could not be found"
+        raise EndUserLicenseAgreementError, "The license file (#{filename}) could not be found"
       end
       l.calculate_checksum
     end
   end
   
   def self.filename
-    File.join(Rails.root, "data", Rails.env == "test" ? "eula.license" : "eula_test.license")
+    File.join(Rails.root, "data", "eula.#{Rails.env}.license")
   end
   
   def calculate_checksum

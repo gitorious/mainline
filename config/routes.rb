@@ -59,6 +59,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
     account.resources :keys
+    account.resource :license
   end
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/ }, :collection => {

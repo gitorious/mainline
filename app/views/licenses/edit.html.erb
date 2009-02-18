@@ -1,0 +1,24 @@
+<h1><%= t("views.license.show_title") %></h1>
+<p>
+  <strong><%= t('views.license.terms_not_accepted') %>:</strong>
+</p>
+
+<div>
+  <% form_for(current_user, :url => account_license_path, :method => :put) do |f| %>
+    <div class="eula">
+      <%= simple_format(EndUserLicenseAgreement.current_version.contents) %>    
+    </div>
+
+    <p>
+      <input type="checkbox" id="eula_version" name="eula_version" value="<%= EndUserLicenseAgreement.current_version.checksum %>" />
+      <label for="eula_version">I accept the End User License Agreement</label>
+    </p>
+    <p>
+      <%= f.submit "Accept" %>
+    </p>
+  <% end %>
+</div>
+
+<% content_for :submenu do -%>
+  <li><%= link_to t("views.account.my_account"), account_path -%></li>
+<% end -%>

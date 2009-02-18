@@ -39,4 +39,5 @@
 <% content_for :submenu do -%>
   <li><%= link_to t("views.account.edit_details"), edit_account_path -%></li>
   <li><%= link_to t("views.keys.add_ssh_key"), new_account_key_path -%></li>
+  <li><%= link_to t('views.account.license'), account_license_path %></li>
 <% end -%>

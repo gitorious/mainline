@@ -177,7 +177,13 @@
         :edit_link => "edit",
         :username => "Username",
         :create => "create an account",
-        :eula => 'I accept the End user License agreement',
+        :license => 'End User License Agreement'
+      },
+      :license => {
+        :show_title => 'End User License Agreement',
+        :terms_accepted => 'You have accepted the current End User License Agreement',
+        :terms_not_accepted => 'You need to accept the current End User License Agreement',
+        :terms_already_accepted => 'You have already accepted the latest agreement'
       },
       :keys => {
         :edit_title => "Edit a SSH key",

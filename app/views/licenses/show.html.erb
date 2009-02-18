@@ -1,0 +1,12 @@
+<h1><%= t("views.license.show_title") %></h1>
+<p>
+  <strong><%= t('views.license.terms_accepted') %>:</strong>
+</p>
+
+<div class="eula">
+  <%= simple_format(EndUserLicenseAgreement.current_version.contents) %>
+</div>
+
+<% content_for :submenu do -%>
+  <li><%= link_to t("views.account.my_account"), account_path -%></li>
+<% end -%>

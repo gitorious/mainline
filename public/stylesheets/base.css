@@ -1753,3 +1753,13 @@ div.archive-download-box p {
   padding: 0;
   text-align: center;
 }
+
+
+/*Styling of EULA*/
+
+.eula
+{
+  padding: 1em 2em;
+  height: 20em;
+  overflow-y: auto;
+}

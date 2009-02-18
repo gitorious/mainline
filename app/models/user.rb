@@ -134,9 +134,13 @@ class User < ActiveRecord::Base
   
   def eula_version=(checksum)
     self.accepted_license_agreement_version = checksum
-    if current_license_agreement_accepted?
+    if current_license_agreement_accepted? && self.pending?
       self.accept_terms!
     end
+  end
+  
+  def eula_version
+    accepted_license_agreement_version
   end
 
   def remember_token?
