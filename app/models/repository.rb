@@ -29,11 +29,6 @@ class Repository < ActiveRecord::Base
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
   has_many    :committerships
- # has_many    :groups, :through => :committerships, :source => :committer
- # FIXME: TEMP HAXX
- def groups
-   committerships.groups.map{|c| c.committer }
- end
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id", 
     :dependent => :nullify

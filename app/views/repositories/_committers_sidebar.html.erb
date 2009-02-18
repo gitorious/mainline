@@ -1,21 +1,21 @@
 <h4><%= t("views.repos.current_committers") %></h4>    
 <ul class="committers">
-<% @repository.committers(:exclude_groups => true).each do |user| -%>
+<% @repository.committerships.users.each do |cs| -%>
   <li>
     <div class="user">
-      <%= gravatar(user.email, :size => 16, :style => "tiny") %>
-      <%= link_to h(user.title), user -%>
-      <% if @repository.user == user -%>
+      <%= gravatar(cs.committer.email, :size => 16, :style => "tiny") %>
+      <%= link_to h(cs.committer.title), cs.committer -%>
+      <% if @repository.user == cs.committer -%>
         <small class="hint">(<%= t("views.repos.creator") %>)</small>
       <% end -%>
     </div>
   </li>
 <% end -%>
-<% @repository.groups.each do |group| -%>
+<% @repository.committerships.groups.each do |cs| -%>
   <li>
     <div class="group">
       <%= image_tag("silk/group.png") %>
-      <%= link_to h(group.to_param_with_prefix), group -%>
+      <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>
     </div>
   </li>
 <% end -%>
