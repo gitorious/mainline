@@ -125,10 +125,10 @@ class BreadcrumbTest < ActiveSupport::TestCase
     end
   end
 
-  context "Breadcrumb::Participations" do
+  context "Breadcrumb::Committerships" do
     setup do
       @repo = mock("Repostitory")
-      @crumb = Breadcrumb::Participations.new(@repo)
+      @crumb = Breadcrumb::Committerships.new(@repo)
     end
   
    should " return a Froup as its parent" do

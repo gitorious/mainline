@@ -31,7 +31,7 @@ ActionController::Routing::Routes.draw do |map|
       :commit_list => :post,
       :target_branches => :post,
     }
-    repo.resources :participations, :collection => {:auto_complete_for_group_name => :post}
+    repo.resources :committerships, :collection => {:auto_complete_for_group_name => :post}
     
     repo.formatted_commits_feed "commits/*branch/feed.:format", 
         :controller => "commits", :action => "feed", :conditions => {:feed => :get}

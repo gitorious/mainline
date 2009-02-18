@@ -22,29 +22,29 @@
 <% end -%>
 
 <h1>
-  <%= t("views.participations.title", 
+  <%= t("views.committerships.title", 
         :repo_name => link_to(h(@repository.name), [@owner, @repository]))  -%>
 </h1>
 
 <table class="listing">
 	<thead>
-		<th><%= t(:created_at, :scope => "activerecord.attributes.participations").humanize %></th>
-		<th><%= t(:group, :scope => "activerecord.attributes.participations").humanize %></th>
-		<th><%= t(:creator, :scope => "activerecord.attributes.participations").humanize %></th>
+		<th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
+		<th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
+		<th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th></th>
 	</thead>
-	<% @participations.each do |participation| -%>
+	<% @committerships.each do |committership| -%>
 	<tr class="<%= cycle('even', 'odd') -%>">
-	  <td><%= participation.created_at.to_s(:short) -%></td>
-	  <td><%= link_to h(participation.group.name), participation.group -%></td>
-	  <td><%= link_to(h(participation.creator.login), participation.creator) if participation.creator -%>
-	  <td><%= button_to(t("views.common.remove"), [@owner, @repository, participation], :method => :delete) -%></td>
+	  <td><%= committership.created_at.to_s(:short) -%></td>
+	  <td><%= link_to h(committership.committer.title), committership.committer -%></td>
+	  <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
+	  <td><%= button_to(t("views.common.remove"), [@owner, @repository, committership], :method => :delete) -%></td>
 	</tr>
 	<% end -%>
 </table>
 
-<%= will_paginate @participations -%>
+<%= will_paginate @committerships -%>
 
 <p>
-  <strong><%= link_to t("views.participations.add_new"), [:new, @owner, @repository, :participation] -%> </strong>
+  <strong><%= link_to t("views.committerships.add_new"), [:new, @owner, @repository, :committership] -%> </strong>
 </p>

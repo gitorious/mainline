@@ -454,7 +454,7 @@
         :new_team_after_create_hint => "You can add more members to the team, after you've created it",
         :edit_memberships => "Edit memberships",
       },
-      :participations => {
+      :committerships => {
         :add_new => "Add new team as committers",
         :title => "Team with commit rights to {{repo_name}}",
         :new_title => "Add a team as committers to {{repo_name}}",
@@ -566,9 +566,9 @@
         :memberships => {
           :created_at => "Created at"
         },
-        :participations => {
+        :committerships => {
           :created_at => "Created at",
-          :group => "Group",
+          :committer => "committer",
           :repository => "Repository",
           :creator => "Created by",
         }

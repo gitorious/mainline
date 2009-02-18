@@ -54,14 +54,14 @@ class GroupTest < ActiveSupport::TestCase
     end
   end
   
-  context "participations" do
+  context "Committerships" do
     setup do
       @group = groups(:team_thunderbird)
     end
     
-    should "has a participation with a repository" do
-      assert_equal repositories(:moes), participations(:thunderbird_moes).repository
-      assert_equal groups(:team_thunderbird), participations(:thunderbird_moes).group
+    should "has a committership with a repository" do
+      assert_equal repositories(:moes), committerships(:thunderbird_moes).repository
+      assert_equal groups(:team_thunderbird), committerships(:thunderbird_moes).committer
       assert @group.participated_repositories.include?(repositories(:moes))
     end
   end

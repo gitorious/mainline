@@ -49,10 +49,10 @@ module BreadcrumbsHelper
       [@owner, @repository, :merge_requests]
     when MergeRequest 
       [@owner, @repository, @merge_request]
-    when Breadcrumb::Participations
-      [@owner, @repository, :participations]
-    when Participation
-      [@owner, @repository, @participation]
+    when Breadcrumb::Committerships
+      [@owner, @repository, :committerships]
+    when Committership
+      [@owner, @repository, @committership]
     else
       "/"
     end

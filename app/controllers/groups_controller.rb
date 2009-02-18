@@ -24,7 +24,7 @@ class GroupsController < ApplicationController
   
   def show
     @group = Group.find_by_name!(params[:id], 
-              :include => [:members, :projects, :repositories, :participations])
+              :include => [:members, :projects, :repositories, :committerships])
     @events = Event.paginate(:all, 
       :page => params[:page],
       :conditions => ["events.user_id in (:user_ids) and events.project_id in (:project_ids)", {

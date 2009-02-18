@@ -15,18 +15,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Participation < ActiveRecord::Base
-  belongs_to :group
+class Committership < ActiveRecord::Base
+  belongs_to :committer, :polymorphic => true
   belongs_to :repository
   belongs_to :creator, :class_name => 'User'
   
-  validates_presence_of :group_id, :repository_id
+  validates_presence_of :committer_id, :committer_type, :repository_id
   
   def breadcrumb_parent
-    Breadcrumb::Participations.new(repository)
+    Breadcrumb::Committerships.new(repository)
   end
   
   def title
     new_record? ? "New commit team" : "Commit team"
+  end
+  
+  # returns all the users in this committership, eg if it's a group it'll 
+  # return an array of the group members, otherwise a single-member array of
+  # the user
+  def members
+    case committer
+    when Group
+      committer.members
+    else
+      [committer]
+    end
   end
 end

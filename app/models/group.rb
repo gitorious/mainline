@@ -16,8 +16,8 @@
 #++
 
 class Group < ActiveRecord::Base
-  has_many :participations
-  has_many :participated_repositories, :through => :participations, 
+  has_many :committerships, :as => :committer
+  has_many :participated_repositories, :through => :committerships, 
     :source => :repository, :class_name => 'Repository'  
   belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
   has_many :memberships
@@ -40,7 +40,7 @@ class Group < ActiveRecord::Base
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }
     all_project_ids << repositories.map{|r| r.project_id }
-    all_project_ids << participations.map{|p| p.repository.project_id }
+    all_project_ids << committerships.map{|p| p.repository.project_id }
     all_project_ids.flatten!.uniq!
     all_project_ids
   end

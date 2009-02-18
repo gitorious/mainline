@@ -15,39 +15,39 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ParticipationsController < ApplicationController
+class CommittershipsController < ApplicationController
   before_filter :find_repository_owner, :except => [:auto_complete_for_group_name]
   before_filter :find_repository, :except => [:auto_complete_for_group_name]
   before_filter :require_adminship, :except => [:auto_complete_for_group_name]
   
   def index
-    @participations = @repository.participations.paginate(:all, :page => params[:page])
-    @root = Breadcrumb::Participations.new(@repository)
+    @committerships = @repository.committerships.paginate(:all, :page => params[:page])
+    @root = Breadcrumb::Committerships.new(@repository)
   end
   
   def new
-    @participation = @repository.participations.new
+    @committership = @repository.committerships.new
   end
   
   def create
-    @participation = @repository.participations.new
-    @participation.group = Group.find_by_name(params[:group][:name])
-    @participation.creator = current_user
+    @committership = @repository.committerships.new
+    @committership.committer = Group.find_by_name(params[:group][:name])
+    @committership.creator = current_user
     
-    if @participation.save
+    if @committership.save
       flash[:success] = "Team added as committers"
-      redirect_to([@owner, @repository, :participations])
+      redirect_to([@owner, @repository, :committerships])
     else
       render :action => "new"
     end
   end
   
   def destroy
-    @participation = @repository.participations.find(params[:id])
-    if @participation.destroy
+    @committership = @repository.committerships.find(params[:id])
+    if @committership.destroy
       flash[:notice] = "The team was removed as a committer"
     end
-    redirect_to([@owner, @repository, :participations])
+    redirect_to([@owner, @repository, :committerships])
   end
   
   def auto_complete_for_group_name

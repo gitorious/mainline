@@ -19,7 +19,7 @@
 
 require File.dirname(__FILE__) + '/../test_helper'
 
-class ParticipationsControllerTest < ActionController::TestCase
+class CommittershipsControllerTest < ActionController::TestCase
 
   def setup
     @project = projects(:johans)
@@ -72,14 +72,14 @@ class ParticipationsControllerTest < ActionController::TestCase
       assigns(:repository) == @repository
     end
     
-    should "lists the participations" do
+    should "lists the committerships" do
       repo = repositories(:moes)
       repo.owner = @group
       repo.save!
       @group.add_member(@user, Role.admin)
       get :index, :group_id => @group.to_param, :repository_id => repo.to_param
       assert_response :success
-      assert_equal @group.participations, assigns(:participations)
+      assert_equal @group.committerships, assigns(:committerships)
     end
   end
 
@@ -87,22 +87,22 @@ class ParticipationsControllerTest < ActionController::TestCase
     should "is successful" do
       get :new, :project_id => @project.to_param, :repository_id => @repository.to_param
       assert_response :success
-      assert_not_equal nil, assigns(:participation)
-      assert_equal @repository, assigns(:participation).repository
-      assert assigns(:participation).new_record?, 'assigns(:participation).new_record? should be true'
+      assert_not_equal nil, assigns(:committership)
+      assert_equal @repository, assigns(:committership).repository
+      assert assigns(:committership).new_record?, 'assigns(:committership).new_record? should be true'
     end
   end
   
   context "POST create" do
     should "adds a group as participant" do
-      assert_difference("@repository.participations.count") do
+      assert_difference("@repository.committerships.count") do
         post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
               :group => {:name => @group.name}
       end
       assert_response :redirect
-      assert !assigns(:participation).new_record?, 'new_record? should be false'
-      assert_equal @group, assigns(:participation).group
-      assert_equal @user, assigns(:participation).creator
+      assert !assigns(:committership).new_record?, 'new_record? should be false'
+      assert_equal @group, assigns(:committership).committer
+      assert_equal @user, assigns(:committership).creator
     end
   end
   
@@ -117,19 +117,19 @@ class ParticipationsControllerTest < ActionController::TestCase
     should "requires login" do
       login_as nil
       delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param,
-        :id => Participation.first.id
+        :id => Committership.first.id
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))
     end
 
-    should "deletes the participation" do
-      participation = @repository.participations.create!({
-        :group => @group,
+    should "deletes the committership" do
+      committership = @repository.committerships.create!({
+        :committer => @group,
         :creator => @user
       })
-      assert_difference("@repository.participations.count", -1) do
+      assert_difference("@repository.committerships.count", -1) do
         delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param,
-          :id => participation.id
+          :id => committership.id
       end
       assert_match(/team was removed as a committer/, flash[:notice])
       assert_response :redirect

@@ -28,8 +28,11 @@ class Repository < ActiveRecord::Base
   belongs_to  :user # TODO: rename to creator..
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
-  has_many    :participations
-  has_many    :groups, :through => :participations, :source => :group
+  has_many    :committerships
+ # has_many    :groups, :through => :committerships, :source => :committer
+ def groups
+  committerships
+ end
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id", 
     :dependent => :nullify

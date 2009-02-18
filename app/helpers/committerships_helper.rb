@@ -1,0 +1,2 @@
+module CommittershipsHelper
+end

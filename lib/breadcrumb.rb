@@ -130,7 +130,7 @@ module Breadcrumb
     end
   end
   
-  class Participations
+  class Committerships
     def initialize(repository)
       @repository = repository
     end

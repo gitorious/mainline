@@ -18,25 +18,25 @@
 %>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @participation} -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @committership} -%>
 <% end -%>
 
 <h1>
-  <%= t("views.participations.new_title", :repo_name => @repository.name)  -%>
+  <%= t("views.committerships.new_title", :repo_name => @repository.name)  -%>
 </h1>
 
-<%= error_messages_for :participation -%>
-<% form_for [@owner, @repository, @participation] do |f| -%>
+<%= error_messages_for :committership -%>
+<% form_for [@owner, @repository, @committership] do |f| -%>
   <p>
     <%= f.label :group_name, t("views.groups.team_name") -%>:<br />
     <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
   </p>
   <p class="hint">
-    <%= t("views.participations.add_tema_note") -%>
+    <%= t("views.committerships.add_tema_note") -%>
   </p>
   <p>
-    <%= f.submit t("views.participations.btn_add_as_committer") -%> 
-    <%= t("views.participations.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :participations] -%>
+    <%= f.submit t("views.committerships.btn_add_as_committer") -%> 
+    <%= t("views.committerships.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :committerships] -%>
   </p>
   
 <% end -%>
