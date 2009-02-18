@@ -203,14 +203,7 @@ class Repository < ActiveRecord::Base
   end
   
   def writable_by?(a_user)
-    case owner
-    when User
-      self.owner == a_user
-    when Group, Project
-      self.owner.committer?(a_user)
-    else
-      user == a_user
-    end
+    committers.include?(a_user)
   end
   
   def change_owner_to(another_owner)
