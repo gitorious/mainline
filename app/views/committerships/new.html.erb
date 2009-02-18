@@ -28,7 +28,7 @@
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
   <p>
-    <%= f.label :group_name, t("views.groups.team_name") -%>:<br />
+    <%= f.label :group_name, t("views.committerships.committer_name") -%>:<br />
     <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
   </p>
   <p class="hint">

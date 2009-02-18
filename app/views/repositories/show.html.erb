@@ -75,7 +75,7 @@
     <% end -%>
     <% if @repository.owner.admin?(current_user) -%>
       <li><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.owner, @repository] -%></li>
-      <li><%= link_to t("views.repos.btn_add_committers"), [:committers, @repository.owner, @repository] -%></li>
+      <li><%= link_to t("views.repos.btn_manage_committers"), [@repository.owner, @repository, :committerships] -%></li>
     <% end -%>
   </ul>
   

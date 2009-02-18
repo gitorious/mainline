@@ -334,6 +334,7 @@
         :btn_request => "Request merge",
         :btn_add_committer => "Add committer",
         :btn_add_committers => "Add committers",
+        :btn_manage_committers => "Manage committers",
         :btn_delete_repo => "Delete repository",
         :btn_edit_repo => "Edit repository",
         :committers => "Committers",
@@ -455,10 +456,11 @@
         :edit_memberships => "Edit memberships",
       },
       :committerships => {
-        :add_new => "Add new team as committers",
-        :title => "Team with commit rights to {{repo_name}}",
-        :new_title => "Add a team as committers to {{repo_name}}",
-        :btn_add_as_committer => "Add all team members as committers",
+        :add_new => "Add committers",
+        :title => "Users &amp; teams with commit rights to {{repo_name}}",
+        :committer_name => "Committer",
+        :new_title => "Add a user or team as committers to {{repo_name}}",
+        :btn_add_as_committer => "Add as committers",
         :return_to => "return to", 
         :or_return_to => "or return to", 
         :add_tema_note => "<strong>Note</strong> that adding a team will give
@@ -569,8 +571,9 @@
         :committerships => {
           :created_at => "Created at",
           :committer => "committer",
+          :committer_type => "Committer type",
           :repository => "Repository",
-          :creator => "Created by",
+          :creator => "Added by",
         }
       },
     }

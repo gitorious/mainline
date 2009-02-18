@@ -32,7 +32,7 @@ class GroupsController < ApplicationController
         :project_ids => @group.all_related_project_ids,
       }], 
       :order => "events.created_at desc", 
-      :include => [:user, :project, :target])
+      :include => [:user, :project])
   end
   
   def new

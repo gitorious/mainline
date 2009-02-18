@@ -46,6 +46,16 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_equal groups(:team_thunderbird).members, c.members
   end
   
+  should "have a named scope for only getting groups" do
+    c1 = new_committership(:committer => groups(:team_thunderbird))
+    c2 = new_committership(:committer => users(:johan))
+    [c1, c2].each(&:save)
+    repo = repositories(:johans)
+    
+    assert_equal [c1], repo.committerships.groups
+    assert_equal [c2], repo.committerships.users
+  end
+  
   def new_committership(opts = {})
     Committership.new({
       :repository => repositories(:johans),

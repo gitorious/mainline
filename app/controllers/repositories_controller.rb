@@ -165,10 +165,6 @@ class RepositoriesController < ApplicationController
     redirect_to @owner
   end
   
-  def committers
-    @repository = @owner.repositories.find_by_name!(params[:id])
-  end
-  
   private    
     def require_adminship
       unless @owner.admin?(current_user)

@@ -29,6 +29,7 @@
 <table class="listing">
 	<thead>
 		<th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
+		<th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th></th>
@@ -36,6 +37,7 @@
 	<% @committerships.each do |committership| -%>
 	<tr class="<%= cycle('even', 'odd') -%>">
 	  <td><%= committership.created_at.to_s(:short) -%></td>
+	  <td><%= committership.committer.class.human_name -%></td>
 	  <td><%= link_to h(committership.committer.title), committership.committer -%></td>
 	  <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
 	  <td><%= button_to(t("views.common.remove"), [@owner, @repository, committership], :method => :delete) -%></td>
@@ -45,6 +47,11 @@
 
 <%= will_paginate @committerships -%>
 
-<p>
-  <strong><%= link_to t("views.committerships.add_new"), [:new, @owner, @repository, :committership] -%> </strong>
-</p>
+<% content_for :sidebar do -%>
+  <ul class="links actions">
+    <li>
+      <%= link_to t("views.committerships.add_new"), 
+            [:new, @owner, @repository, :committership] -%>
+    </li>
+  </ul>
+<% end -%>

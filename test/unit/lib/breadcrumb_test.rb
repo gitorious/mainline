@@ -131,12 +131,12 @@ class BreadcrumbTest < ActiveSupport::TestCase
       @crumb = Breadcrumb::Committerships.new(@repo)
     end
   
-   should " return a Froup as its parent" do
+   should "return a Froup as its parent" do
       assert_equal @repo, @crumb.breadcrumb_parent
     end
   
-   should " return its title" do
-      assert_equal 'Commit teams', @crumb.title
+   should "return its title" do
+      assert_equal 'Committers', @crumb.title
     end
   end
 end

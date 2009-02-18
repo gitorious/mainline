@@ -22,12 +22,15 @@ class Committership < ActiveRecord::Base
   
   validates_presence_of :committer_id, :committer_type, :repository_id
   
+  named_scope :groups, :conditions => { :committer_type => "Group" }
+  named_scope :users,  :conditions => { :committer_type => "User" }  
+  
   def breadcrumb_parent
     Breadcrumb::Committerships.new(repository)
   end
   
   def title
-    new_record? ? "New commit team" : "Commit team"
+    new_record? ? "New committer" : "Committer"
   end
   
   # returns all the users in this committership, eg if it's a group it'll 

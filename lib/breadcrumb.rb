@@ -140,7 +140,7 @@ module Breadcrumb
     end
     
     def title
-      "Commit teams"
+      "Committers"
     end
   end
   
