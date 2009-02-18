@@ -106,7 +106,7 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  def target_branches
+  def target_branches_for_selection
     return [] unless target_repository
     target_repository.git.branches || []
   end

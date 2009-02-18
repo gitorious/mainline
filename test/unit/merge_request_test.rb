@@ -109,7 +109,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   
   should "have an empty set of target branches, if the target_repository is nil" do
     @merge_request.target_repository = nil
-    assert_equal [], @merge_request.target_branches
+    assert_equal [], @merge_request.target_branches_for_selection
   end
   
   should "have a set of target branches" do
@@ -117,7 +117,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.target_repository = repo
     grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
     repo.stubs(:git).returns(grit)
-    assert_equal grit.heads, @merge_request.target_branches
+    assert_equal grit.heads, @merge_request.target_branches_for_selection
   end
   
   context "with specific starting and ending commits" do

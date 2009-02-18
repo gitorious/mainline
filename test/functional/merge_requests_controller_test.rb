@@ -350,7 +350,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context "GET #target_branches" do
     should "retrive a list of the target repository branches" do
       grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-      MergeRequest.any_instance.expects(:target_branches).returns(grit.branches)
+      MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)
       
       login_as :johan
 			post :target_branches, :project_id => @project.to_param, 

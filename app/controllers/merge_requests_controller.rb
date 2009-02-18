@@ -44,7 +44,7 @@ class MergeRequestsController < ApplicationController
   def target_branches
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    @target_branches = @merge_request.target_branches
+    @target_branches = @merge_request.target_branches_for_selection
     render :partial => "target_branches", :layout => false
   end
   
@@ -61,17 +61,12 @@ class MergeRequestsController < ApplicationController
     if first = @repositories.find{|r| r.mainline? } || @repositories.first
       @merge_request.target_repository_id = first.id
     end
-    @source_branches = @repository.git.branches
-    @target_branches = @merge_request.target_branches
-    @commits = @merge_request.commits_for_selection
+    get_branches_and_commits_for_selection
   end
   
   def create
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    @source_branches = @repository.git.branches
-    @target_branches = @merge_request.target_branches
-    @commits = @merge_request.commits_for_selection
     respond_to do |format|
       if @merge_request.save
         @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
@@ -84,6 +79,7 @@ class MergeRequestsController < ApplicationController
         format.html {
           @repositories = Repository.all_by_owner(@owner).find(:all, 
                             :conditions => ["id != ?", @repository.id])
+          get_branches_and_commits_for_selection
           render :action => "new"
         }
         format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
@@ -104,10 +100,7 @@ class MergeRequestsController < ApplicationController
   def edit
     @repositories = Repository.all_by_owner(@owner).find(:all, 
                       :conditions => ["id != ?", @repository.id])
-    @source_branches = @repository.git.branches
-    @source_branches = @repository.git.branches
-    @target_branches = @merge_request.target_branches
-    @commits = @merge_request.commits_for_selection
+    get_branches_and_commits_for_selection
   end
   
   def update
@@ -119,10 +112,7 @@ class MergeRequestsController < ApplicationController
     else
       @repositories = Repository.all_by_owner(@owner).find(:all, 
                         :conditions => ["id != ?", @repository.id])
-      @source_branches = @repository.git.branches
-      @source_branches = @repository.git.branches
-      @target_branches = @merge_request.target_branches
-      @commits = @merge_request.commits_for_selection
+      get_branches_and_commits_for_selection
       render :action => "edit"
     end
   end
@@ -163,6 +153,12 @@ class MergeRequestsController < ApplicationController
         end
         return
       end
+    end
+    
+    def get_branches_and_commits_for_selection
+      @source_branches = @repository.git.branches
+      @target_branches = @merge_request.target_branches_for_selection
+      @commits = @merge_request.commits_for_selection
     end
   
 end
