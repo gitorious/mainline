@@ -30,13 +30,17 @@
   </tr>
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
-    <td class="merge_to_container"><input 
-      name="merge_request[ending_commit]" 
-      id="merge_request_ending_commit"
-      type="radio" 
-      value="<%= commit.id -%>" 
-      class="merge_to" 
-      onclick="selectableRange.endSelected(this)"/>
+    <td class="merge_to_container">
+      <input 
+        name="merge_request[ending_commit]" 
+        id="merge_request_ending_commit"
+        type="radio" 
+        value="<%= commit.id -%>" 
+        class="merge_to"
+        <% if commit.id == @merge_request.ending_commit -%>
+        checked="checked"
+        <% end -%>
+        onclick="selectableRange.endSelected(this)" />
     </td>
     <td class="commit-details meta">
       <ul>

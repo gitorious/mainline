@@ -30,16 +30,4 @@
   <%= f.submit t("views.merges.create_btn") -%>
 <% end -%>
 
-<script type="text/javascript" charset="utf-8">
-  var selectableRange = new SelectableRange(
-    '<%= commit_list_project_repository_merge_requests_path %>',
-    '<%= target_branches_project_repository_merge_requests_path %>',
-    "commit_list_status"
-  );
-  $("merge_request_source_branch").observe("change", 
-      selectableRange.onSourceBranchChange.bindAsEventListener(selectableRange));
-  $("merge_request_target_branch").observe("change", 
-      selectableRange.onTargetBranchChange.bindAsEventListener(selectableRange));
-  $("merge_request_target_repository_id").observe("change", 
-      selectableRange.onTargetRepositoryChange.bindAsEventListener(selectableRange));
-</script>
+<%= render :partial => "commit_list_js" -%>
