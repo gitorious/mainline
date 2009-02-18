@@ -448,6 +448,16 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal @repository.title, @repository.name
   end
   
+  should "return the project title as owner_title if it's a mainline" do
+    @repository.mainline = true
+    assert_equal @repository.project.title, @repository.owner_title
+  end
+  
+  should "return the owner title as owner_title if it's not a mainline" do
+    @repository.mainline = false
+    assert_equal @repository.owner.title, @repository.owner_title
+  end
+  
   should "returns a list of committers depending on owner type" do
     repo = repositories(:johans2)
     

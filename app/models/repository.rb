@@ -370,6 +370,10 @@ class Repository < ActiveRecord::Base
     name
   end
   
+  def owner_title
+    mainline? ? project.title : owner.title
+  end
+  
   def full_hashed_path
     h = (hashed_path || set_repository_hash)
     first = h[0,3]
