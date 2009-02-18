@@ -112,9 +112,11 @@ class UserTest < ActiveSupport::TestCase
     u = users(:mike)
     repo = repositories(:johans2)
     assert u.can_write_to?(repo)
-    assert !u.can_write_to?(repositories(:moes))
-    repo.owner.add_member(users(:moe), Role.committer)
-    assert users(:moe).can_write_to?(repo)
+    assert !users(:johan).can_write_to?(repo)
+    repo.owner.add_member(users(:johan), Role.committer)
+    repo.reload
+    assert repo.committers.include?(users(:johan))
+    assert users(:johan).can_write_to?(repo)
   end
   
   should "only have project repo as #repositories" do
