@@ -21,38 +21,34 @@ require File.dirname(__FILE__) + '/../test_helper'
 class EndUserLicenseAgreementTest < ActiveSupport::TestCase
   context 'The end user license agreement' do
     setup do
-      EndUserLicenseAgreement.stubs(:filename).returns(File.join("tmp", "gitorious.license"))
-      @license_agreement = EndUserLicenseAgreement.current_version
-      assert_not_nil(@license_agreement.checksum)
+      @filename = File.join("tmp", "gitorious.license")
+      File.open(@filename, "w"){|f| f.write("This is the license")}
+      EndUserLicenseAgreement.stubs(:filename).returns(@filename)
     end
     
     teardown do
       FileUtils.rm(EndUserLicenseAgreement.filename) if File.exist?(EndUserLicenseAgreement.filename)
-      @license_agreement.contents = ""
+      EndUserLicenseAgreement.reset
     end
     
     should 'calculate a checksum based on its contents' do
-      @license_agreement.expects(:recalculate_checksum).once
-      @license_agreement.contents = "We have some changes here"
-      @license_agreement.save
+      license = EndUserLicenseAgreement.current_version
+      assert_equal(Digest::SHA1.hexdigest(File.read(@filename)), license.checksum)
     end
     
-    should 'persist its contents' do
-      assert_equal('', @license_agreement.contents)
-      contents = "This is a foo"
-      @license_agreement.contents = contents
-      @license_agreement.save
-      assert_equal(contents, EndUserLicenseAgreement.current_version.contents)
+  end
+  
+  context 'With an invalid filename' do
+    setup do
+      @filename = File.join("tmp", "gitorious.license")
+      EndUserLicenseAgreement.stubs(:filename).returns(@filename)
     end
     
-    should 'not change the SHA unless the contents have actually changed' do
-      boilerplate = "This is legal stuff"
-      @license_agreement.contents = boilerplate
-      @license_agreement.save
-      checksum_before = @license_agreement.checksum
-      @license_agreement.contents = boilerplate
-      @license_agreement.save
-      assert_equal(checksum_before, @license_agreement.checksum)
+    should 'raise an error if the license file does not exist' do
+      EndUserLicenseAgreement.stubs(:filename).returns(File.join("tmp", "gitorious.error"))
+      assert_raises EndUserLicenseAgreementError do
+        license = EndUserLicenseAgreement.current_version
+      end
     end
   end
 end

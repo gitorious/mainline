@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+class EndUserLicenseAgreementError < StandardError;end
 class EndUserLicenseAgreement
   attr_accessor :contents
   attr_reader :checksum
@@ -24,15 +25,18 @@ class EndUserLicenseAgreement
     @current_version ||= find_current_version
   end
   
+  def self.reset
+    @current_version = nil
+  end
+  
   def self.find_current_version
     returning new do |l|
       if File.exist?(filename)
         l.contents = File.read(self.filename)
       else
-        create_license_file
-        l.contents = ""
+        raise EndUserLicenseAgreementError, "The license file could not be found"
       end
-      l.recalculate_checksum
+      l.calculate_checksum
     end
   end
   
@@ -40,16 +44,7 @@ class EndUserLicenseAgreement
     File.join(Rails.root, "data", "eula.txt")
   end
   
-  def self.create_license_file
-    FileUtils.touch(filename)
-  end
-  
-  def save
-    File.open(self.class.filename, "w"){|f|f.write(contents)}
-    recalculate_checksum
-  end
-  
-  def recalculate_checksum
+  def calculate_checksum
     @checksum = Digest::SHA1.hexdigest(contents)
   end
 end
