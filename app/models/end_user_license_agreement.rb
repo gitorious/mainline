@@ -41,7 +41,7 @@ class EndUserLicenseAgreement
   end
   
   def self.filename
-    File.join(Rails.root, "data", "eula.txt")
+    File.join(Rails.root, "data", Rails.env == "test" ? "eula.license" : "eula_test.license")
   end
   
   def calculate_checksum

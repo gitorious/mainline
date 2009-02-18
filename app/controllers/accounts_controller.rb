@@ -30,13 +30,8 @@ class AccountsController < ApplicationController
     @user = current_user
     @user.attributes = params[:user]
     if current_user.save
-      if current_user.pending?
-        flash[:notice] = "Please accept the license agreement"
-        redirect_to edit_account_path and return
-      else
-        flash[:notice] = "Your account details were updated"
-        redirect_to account_path
-      end
+      flash[:notice] = "Your account details were updated"
+      redirect_to account_path
     else
       render :action => "edit"
     end

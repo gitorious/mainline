@@ -128,9 +128,13 @@ class User < ActiveRecord::Base
     nil
   end
 
-  def eula=(ok)
-    @eula = ok
-    if ok.to_i == 1
+  def current_license_agreement_accepted?
+    EndUserLicenseAgreement.current_version.checksum == accepted_license_agreement_version
+  end
+  
+  def eula_version=(checksum)
+    self.accepted_license_agreement_version = checksum
+    if current_license_agreement_accepted?
       self.accept_terms!
     end
   end

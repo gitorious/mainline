@@ -188,14 +188,23 @@ class UserTest < ActiveSupport::TestCase
     end
   end
   
+  should 'need to accept the current EULA version' do
+    stub_license_agreement
+    u = create_user
+    assert !u.current_license_agreement_accepted?
+    u.accepted_license_agreement_version = EndUserLicenseAgreement.current_version.checksum
+    assert u.current_license_agreement_accepted?
+  end
+  
   should 'initially be pending' do
     u = create_user
     assert u.pending?
   end
   
   should 'have its state transformed when accepting the eula' do
+    stub_license_agreement
     u = create_user
-    u.eula = '1'
+    u.eula_version = EndUserLicenseAgreement.current_version.checksum
     assert u.terms_accepted?
   end
   
@@ -242,4 +251,9 @@ class UserTest < ActiveSupport::TestCase
       u
     end
   
+    def stub_license_agreement
+      license = stub("End user license agreement")
+      license.stubs(:checksum).returns("ff0023902")
+      EndUserLicenseAgreement.stubs(:current_version).returns(license)    
+    end
 end

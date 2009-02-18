@@ -49,10 +49,10 @@ class AccountsControllerTest < ActionController::TestCase
     assert_redirected_to(account_path)
   end
   
- should "PUT /account with confirmation of terms of service should redirect to show" do
+ should "PUT /account should redirect to show" do
     u = users(:johan)
     u.update_attributes(:aasm_state => 'pending')
-    put :update, :user => {:eula => '1'}
+    put :update, :user => {}
     assert !flash[:notice].nil?
     assert_redirected_to(account_path)
   end

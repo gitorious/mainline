@@ -21,9 +21,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class EndUserLicenseAgreementTest < ActiveSupport::TestCase
   context 'The end user license agreement' do
     setup do
-      @filename = File.join("tmp", "gitorious.license")
-      File.open(@filename, "w"){|f| f.write("This is the license")}
-      EndUserLicenseAgreement.stubs(:filename).returns(@filename)
+      File.open(EndUserLicenseAgreement.filename, "w"){|f| f.write("This is the license")}
     end
     
     teardown do
@@ -33,7 +31,7 @@ class EndUserLicenseAgreementTest < ActiveSupport::TestCase
     
     should 'calculate a checksum based on its contents' do
       license = EndUserLicenseAgreement.current_version
-      assert_equal(Digest::SHA1.hexdigest(File.read(@filename)), license.checksum)
+      assert_equal(Digest::SHA1.hexdigest(File.read(EndUserLicenseAgreement.filename)), license.checksum)
     end
     
   end
