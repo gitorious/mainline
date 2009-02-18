@@ -1760,6 +1760,6 @@ div.archive-download-box p {
 .eula
 {
   padding: 1em 2em;
-  height: 20em;
+  max-height: 20em;
   overflow-y: auto;
 }

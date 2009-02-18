@@ -52,6 +52,15 @@ class ApplicationController < ActionController::Base
       end
     end
     
+    def require_current_eula
+      unless current_user.current_license_agreement_accepted?
+        store_location
+        flash[:error] = I18n.t "views.license.terms_not_accepted"
+        redirect_to account_license_path
+        return
+      end
+    end
+    
     def find_repository_owner
       if params[:project_id]
         @owner = Project.find_by_slug!(params[:project_id])

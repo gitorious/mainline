@@ -38,7 +38,7 @@ class LicensesController < ApplicationController
     if current_user.current_license_agreement_accepted?
       flash[:notice] = t("views.license.terms_accepted")
       current_user.save!
-      redirect_to :action => :show
+      redirect_back_or_default :action => :show
     else
       flash[:errors] = "You need to accept the latest agreement"
       redirect_to :action => :edit

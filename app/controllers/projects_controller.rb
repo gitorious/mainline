@@ -21,6 +21,7 @@ class ProjectsController < ApplicationController
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   before_filter :find_project_and_assure_adminship, :only => [:edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
+  before_filter :require_current_eula, :only => [:new, :create]
   
   def index
     @projects = Project.paginate(:all, :order => "projects.created_at desc", 

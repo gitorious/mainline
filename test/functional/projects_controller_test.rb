@@ -24,6 +24,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 class ProjectsControllerTest < ActionController::TestCase
 
   def setup
+    license = mock("End user license agreement")
+    license.stubs(:checksum).returns("213")
+    EndUserLicenseAgreement.stubs(:current_version).returns(license)
     @project = projects(:johans)
   end
   
@@ -193,6 +196,13 @@ class ProjectsControllerTest < ActionController::TestCase
       login_as :johan
       post :create
       assert_redirected_to(new_account_key_path)
+    end
+    
+    should 'POST projects/create should redirect to acceptance of EULA if this has not been done' do
+      users(:johan).update_attributes(:accepted_license_agreement_version => '222')
+      login_as :johan
+      post :create
+      assert_redirected_to(account_license_path)
     end
   
     should "projects/create should require login" do
