@@ -89,6 +89,11 @@ class PageTest < ActiveSupport::TestCase
     assert_equal p.title, p.to_param
   end
   
+  should 'alias id to to_param' do
+    p = Page.find('HowTo', @repo)
+    assert_equal(p.to_param, p.id)
+  end
+  
   should " have a commit" do
     p = Page.find("HowTo", @repo)
     assert_instance_of Grit::Commit, p.commit

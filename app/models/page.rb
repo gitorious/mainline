@@ -64,6 +64,7 @@ class Page
   def to_param
     title
   end
+  alias_method :id, :to_param
   
   def title
     name.sub(/\.#{DEFAULT_FORMAT}$/, "")

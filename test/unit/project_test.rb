@@ -205,6 +205,14 @@ class ProjectTest < ActiveSupport::TestCase
     should " create an event from the action name" do
       assert_not_equal nil, @project.create_event(Action::CREATE_PROJECT, @repository, @user, "", "")
     end
+    
+    should 'allow optional creation of events' do
+      assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
+      event = @project.create_event(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage', Time.now)
+      assert !@project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
+      event.update_attributes(:created_at => 2.hours.ago)
+      assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
+    end
   
     should " create an event even without a valid id" do
       assert_not_equal nil, @project.create_event(52342, @repository, @user)
