@@ -152,4 +152,8 @@ class ApplicationController < ActionController::Base
       end
       [branch_ref, path]
     end
+    
+    def cache_for(ttl=60.seconds)
+      headers['Cache-Control'] = "max-age:#{ttl.to_i}"
+    end
 end

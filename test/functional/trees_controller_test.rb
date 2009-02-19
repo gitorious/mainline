@@ -115,6 +115,14 @@ class TreesControllerTest < ActionController::TestCase
       assert_equal "test/master", assigns(:root).breadcrumb_parent.breadcrumb_parent.title
       assert_equal ["lib"], assigns(:path)
     end
+    
+    should 'cache the tree' do
+      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param, 
+            :branch_and_path => ["test", "master", "lib"]
+        
+      assert_response :success
+      assert_equal "max-age:30", @response.headers['Cache-Control']
+    end
   end
   
   context "Archive downloads" do

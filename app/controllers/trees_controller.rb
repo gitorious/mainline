@@ -38,6 +38,7 @@ class TreesController < ApplicationController
                                     :repository => @repository})
     path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
     @tree = @git.tree(@commit.tree.id, path)
+    cache_for 30.seconds
   end
   
   def archive
