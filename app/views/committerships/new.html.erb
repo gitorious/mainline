@@ -27,10 +27,25 @@
 
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
+  <div id="add_group">
   <p>
-    <%= f.label :group_name, t("views.committerships.committer_name") -%>:<br />
+    <%= f.label :group_name, t("views.committerships.group_name") -%>
+    <small class="hint"><a href="#add_user" onclick="$('add_user').show(); $('add_group').hide();return false;">
+      <%= t("views.committerships.add_user_instead") -%>
+    </a></small><br />
     <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
   </p>
+  </div>
+  <div id="add_user" style="display:none;">
+  <p>
+    <%= f.label :group_name, t("views.committerships.user_login") -%>
+    <small class="hint"><a href="#add_group" onclick="$('add_user').hide(); $('add_group').show();return false;">
+      <%= t("views.committerships.add_team_instead") -%>
+    </a></small><br />
+    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
+  </p>
+  </div>
+  
   <p class="hint">
     <%= t("views.committerships.add_tema_note") -%>
   </p>

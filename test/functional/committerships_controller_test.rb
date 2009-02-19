@@ -98,22 +98,39 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
   
   context "POST create" do
-    should "adds a group as participant" do
+    should "add a Group as having committership" do
       assert_difference("@repository.committerships.count") do
         post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
-              :group => {:name => @group.name}
+              :group => {:name => @group.name}, :user => {}
       end
       assert_response :redirect
       assert !assigns(:committership).new_record?, 'new_record? should be false'
       assert_equal @group, assigns(:committership).committer
       assert_equal @user, assigns(:committership).creator
     end
+    
+    should "add a User as having committership" do
+      assert_difference("@repository.committerships.count") do
+        post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
+              :user => {:login => @user.login}, :group => {}
+      end
+      assert_response :redirect
+      assert !assigns(:committership).new_record?, 'new_record? should be false'
+      assert_equal @user, assigns(:committership).committer
+      assert_equal @user, assigns(:committership).creator
+    end
   end
   
-  context "autocomplete group name" do
-    should "finds user by login" do
+  context "autocompletion" do
+    should "find a group by name" do
       post :auto_complete_for_group_name, :group => { :name => "thunder" }, :format => "js"
       assert_equal [groups(:team_thunderbird)], assigns(:groups)
+    end
+
+    should "finds user by login" do    
+      post :auto_complete_for_user_login, :user => { :login => "joha" }, :format => "js"
+      assert_equal [users(:johan)], assigns(:users)
+      assert_template "memberships/auto_complete_for_user_login.js.erb"
     end
   end
   

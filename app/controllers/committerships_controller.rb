@@ -16,9 +16,9 @@
 #++
 
 class CommittershipsController < ApplicationController
-  before_filter :find_repository_owner, :except => [:auto_complete_for_group_name]
-  before_filter :find_repository, :except => [:auto_complete_for_group_name]
-  before_filter :require_adminship, :except => [:auto_complete_for_group_name]
+  before_filter :find_repository_owner, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :find_repository, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :require_adminship, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
   
   def index
     @committerships = @repository.committerships.paginate(:all, :page => params[:page])
@@ -31,7 +31,11 @@ class CommittershipsController < ApplicationController
   
   def create
     @committership = @repository.committerships.new
-    @committership.committer = Group.find_by_name(params[:group][:name])
+    if params[:group][:name].blank? && !params[:user][:login].blank?
+      @committership.committer = User.find_by_login(params[:user][:login])
+    else
+      @committership.committer = Group.find_by_name(params[:group][:name])
+    end
     @committership.creator = current_user
     
     if @committership.save
@@ -55,6 +59,13 @@ class CommittershipsController < ApplicationController
       :conditions => [ 'LOWER(name) LIKE ?', '%' + params[:group][:name].downcase + '%' ],
       :limit => 10)
     render :layout => false
+  end
+  
+  def auto_complete_for_user_login
+    @users = User.find(:all, 
+      :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:user][:login].downcase + '%' ],
+      :limit => 10)
+    render "/memberships/auto_complete_for_user_login", :layout => false
   end
   
   protected
