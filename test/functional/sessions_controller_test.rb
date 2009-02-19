@@ -122,4 +122,18 @@ class SessionsControllerTest < ActionController::TestCase
     # response.body.should have_tag("div.flash_message", /please try again/)
     # rspec.should test(flash.now)
   end
+  
+  context 'Bypassing cachíng for authenticated users' do
+    should 'be set when logging in' do
+      post :create, :email => "johan@johansorensen.com", :password => "test"
+      assert_not_nil cookies['authenticated']
+    end
+    
+    should 'be removed when logging out' do
+      post :create, :email => "johan@johansorensen.com", :password => "test"
+      assert_not_nil cookies['authenticated']
+      delete :destroy
+      assert_nil cookies['authenticated']
+    end
+  end
 end
