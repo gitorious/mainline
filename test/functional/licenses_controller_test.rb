@@ -22,8 +22,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 class LicensesControllerTest < ActionController::TestCase
   context 'Accepting (current) end user license agreement' do
     setup do
-      @user = users(:moe)
-      login_as :moe
+      @user = users(:old_timer)
+      login_as :old_timer
     end
     
     should 'render the current license version if this has been accepted' do

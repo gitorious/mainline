@@ -21,6 +21,7 @@ class RepositoriesController < ApplicationController
   before_filter :find_repository_owner
   before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update, :committers]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
+  before_filter :require_current_eula, :except => [:index, :show, :writable_by]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
   
