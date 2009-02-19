@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008-2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -21,6 +21,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class CommentTest < ActiveSupport::TestCase
     
-  should_validate_presence_of :repository_id, :user_id, :body, :project_id
+  should_validate_presence_of :target, :user_id, :body, :project_id
   
 end

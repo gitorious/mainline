@@ -36,7 +36,7 @@ class Repository < ActiveRecord::Base
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id", 
     :dependent => :nullify
-  has_many    :comments, :dependent => :destroy
+  has_many    :comments, :as => :target, :dependent => :destroy
   has_many    :merge_requests, :foreign_key => 'target_repository_id', 
     :order => "status, id desc", :dependent => :destroy
   has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id', 

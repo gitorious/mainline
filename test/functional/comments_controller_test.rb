@@ -48,7 +48,7 @@ class CommentsControllerTest < ActionController::TestCase
       get :new, :project_id => @project.slug, 
         :repository_id => @repository.name
       assert_response :success
-      assert_equal @repository, assigns(:comment).repository
+      assert_equal @repository, assigns(:comment).target
     end
   end
   
@@ -64,7 +64,7 @@ class CommentsControllerTest < ActionController::TestCase
       login_as :johan
       get :create, :project_id => @project.slug, 
         :repository_id => @repository.name, :comment => { :body => "blabla" }
-      assert_equal @repository, assigns(:comment).repository
+      assert_equal @repository, assigns(:comment).target
     end
     
     should "assigns the comment to the current_user" do
