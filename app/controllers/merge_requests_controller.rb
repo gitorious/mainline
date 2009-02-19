@@ -29,9 +29,9 @@ class MergeRequestsController < ApplicationController
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   
   def index
-    @merge_requests = @repository.merge_requests
+    @open_merge_requests = @repository.merge_requests.open
+    @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, :limit => 10)
     @comment_count = @repository.comments.count
-    #@proposed_merge_requests = @repository.proposed_merge_requests
   end
   
   def commit_list
@@ -86,7 +86,6 @@ class MergeRequestsController < ApplicationController
   end
   
   def resolve
-    # TODO: put to change status
     @merge_request.status = params[:merge_request][:status]
     if @merge_request.save
       @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)

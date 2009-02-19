@@ -44,7 +44,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		should "gets all the merge requests in the repository" do
 			get :index, :project_id => @project.to_param,
 				:repository_id => @target_repository.to_param
-			assert_equal @target_repository.merge_requests, assigns(:merge_requests)
+			assert_equal @target_repository.merge_requests.open, assigns(:open_merge_requests)
+			assert_equal @target_repository.merge_requests.closed, assigns(:recently_closed_merge_requests)
 		end
 		
 		should "gets a comment count for" do

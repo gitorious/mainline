@@ -1,5 +1,5 @@
 #--
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008-2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,9 @@ class MergeRequest < ActiveRecord::Base
   STATUS_OPEN = 0
   STATUS_MERGED = 1
   STATUS_REJECTED = 2
+  
+  named_scope :open, :conditions => { :status => STATUS_OPEN }
+  named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
   
   def self.human_name
     I18n.t("activerecord.models.merge_request")
