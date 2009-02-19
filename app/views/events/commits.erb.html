@@ -1,6 +1,6 @@
 <table style="margin-top: 1em">
 <% @commits.each do |c| %>
-  <tr>
+  <tr id="<%= dom_id(c) -%>">
     <td valign="top" style="padding-right: 1em">
       <%= gravatar(c.email, :size => 16)  %>    
     </td>
