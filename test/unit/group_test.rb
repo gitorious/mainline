@@ -49,7 +49,7 @@ class GroupTest < ActiveSupport::TestCase
     
     should "can add a user with a role using add_member" do
       assert !@group.member?(users(:johan)), '@group.member?(users(:johan)) should be false'
-      @group.add_member(users(:johan), Role.committer)
+      @group.add_member(users(:johan), Role.member)
       assert @group.reload.member?(users(:johan)), '@group.reload.member?(users(:johan)) should be true'
     end
   end

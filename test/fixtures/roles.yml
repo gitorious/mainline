@@ -2,6 +2,6 @@ admin:
   name: Administrator
   kind: <%= Role::KIND_ADMIN %>
   
-committer:
-  name: Committer
-  kind: <%= Role::KIND_COMMITTER %>
+member:
+  name: Member
+  kind: <%= Role::KIND_MEMBER %>

@@ -84,7 +84,7 @@ class Group < ActiveRecord::Base
   
   # is +candidate+ a committer (or admin) in this group?
   def committer?(candidate)
-    [Role.admin, Role.committer].include?(role_of_user(candidate))
+    [Role.admin, Role.member].include?(role_of_user(candidate))
   end
   
   # Adds +a_user+ as a member to this group with a role of +a_role+

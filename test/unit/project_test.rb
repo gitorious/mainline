@@ -106,7 +106,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert project.admin?(users(:johan)), 'project.admin?(users(:johan)) should be true'
     
     assert !project.admin?(users(:moe)), 'project.admin?(users(:moe)) should be false'
-    project.owner.add_member(users(:moe), Role.committer)
+    project.owner.add_member(users(:moe), Role.member)
     assert !project.admin?(users(:moe)), 'project.admin?(users(:moe)) should be false'
     # be able to deal with AuthenticatedSystem's quirky design:
     assert !project.admin?(:false), 'project.admin?(:false) should be false'

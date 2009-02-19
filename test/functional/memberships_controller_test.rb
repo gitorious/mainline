@@ -130,8 +130,8 @@ class MembershipsControllerTest < ActionController::TestCase
       should "PUTs update updates the role of the user" do
         membership = @group.memberships.first
         put :update, :group_id => @group.to_param, :id => membership.id,
-          :membership => {:role_id => Role.committer.id}
-        assert_equal Role.committer, membership.reload.role
+          :membership => {:role_id => Role.member.id}
+        assert_equal Role.member, membership.reload.role
         assert_redirected_to(group_memberships_path(@group))
       end
     end
@@ -165,7 +165,7 @@ class MembershipsControllerTest < ActionController::TestCase
   def valid_membership(opts = {})
     {
       :user_id => users(:mike).id,
-      :role_id => Role.committer.id
+      :role_id => Role.member.id
     }
   end
   

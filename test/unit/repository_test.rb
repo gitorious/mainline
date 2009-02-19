@@ -297,7 +297,7 @@ class RepositoryTest < ActiveSupport::TestCase
     @repository.change_owner_to!(groups(:team_thunderbird))
     @repository.save!
     assert !@repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be false'
-    @repository.owner.add_member(users(:mike), Role.committer)
+    @repository.owner.add_member(users(:mike), Role.member)
     assert @repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be true'
   end
   
@@ -553,7 +553,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
     
     should "only include unique users in #committers" do
-      groups(:team_thunderbird).add_member(users(:moe), Role.committer)
+      groups(:team_thunderbird).add_member(users(:moe), Role.member)
       assert_equal 1, @repo.committers.select{|u| u == users(:moe)}.size
     end
   end

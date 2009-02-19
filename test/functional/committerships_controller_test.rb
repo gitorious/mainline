@@ -40,7 +40,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     should "requires adminship" do
       @repository.owner = @group
       @repository.save
-      @group.add_member(@user, Role.committer)
+      @group.add_member(@user, Role.member)
       get :index, :group_id => @group.to_param, :repository_id => @repository.to_param
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(group_repository_path(@group, @repository))

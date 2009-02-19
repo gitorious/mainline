@@ -113,7 +113,7 @@ class UserTest < ActiveSupport::TestCase
     repo = repositories(:johans2)
     assert u.can_write_to?(repo)
     assert !users(:johan).can_write_to?(repo)
-    repo.owner.add_member(users(:johan), Role.committer)
+    repo.owner.add_member(users(:johan), Role.member)
     repo.reload
     assert repo.committers.include?(users(:johan))
     assert users(:johan).can_write_to?(repo)

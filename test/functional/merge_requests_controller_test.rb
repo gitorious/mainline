@@ -90,7 +90,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		  login_as :johan
   		@project = projects(:johans)
   		@project.owner = groups(:team_thunderbird)
-  		@project.owner.add_member(users(:johan), Role.committer)
+  		@project.owner.add_member(users(:johan), Role.member)
   		@repository = repositories(:johans2)
   		@mainline_repository = repositories(:johans)
   		@merge_request = merge_requests(:moes_to_johans)
