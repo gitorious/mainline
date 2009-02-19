@@ -29,7 +29,7 @@ class RepositoriesController < ApplicationController
   end
     
   def show
-    @repository = Repository.all_by_owner(@owner).find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name!(params[:id])
     @events = @repository.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
@@ -44,16 +44,33 @@ class RepositoriesController < ApplicationController
   end
   
   def new
+    # TODO: extract into model
+    if @project
+      @repository = @project.repositories.new(params[:repository])
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      @repository.owner = @project.owner
+    else
+      @repository = @owner.repositories.new(params[:repository])
+      @repository.kind = @owner === Group ? Repository::KIND_TEAM_REPO : Repository::KIND_USER_REPO
+    end
     @repository = @owner.repositories.new
   end
   
   def create
-    @repository = @owner.repositories.new(params[:repository])
+    # TODO: extract into model
+    if @project
+      @repository = @project.repositories.new(params[:repository])
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      @repository.owner = @project.owner
+    else
+      @repository = @owner.repositories.new(params[:repository])
+      @repository.kind = @owner === Group ? Repository::KIND_TEAM_REPO : Repository::KIND_USER_REPO
+    end
     @repository.user = current_user
     
     if @repository.save
       flash[:success] = I18n.t("repositories_controller.create_success")
-      redirect_to [@owner, @repository]
+      redirect_to [@repository.project_or_owner, @repository]
     else
       render :action => "new"
     end
@@ -120,25 +137,27 @@ class RepositoriesController < ApplicationController
     
     @repository.description = params[:repository][:description]    
     # change group, if requested
-    unless params[:repository][:owner_id].blank?
-      @repository.change_owner_to(current_user.groups.find(params[:repository][:owner_id]))
-    end
+    Repository.transaction do
+      unless params[:repository][:owner_id].blank?
+        @repository.change_owner_to!(current_user.groups.find(params[:repository][:owner_id]))
+      end
     
-    if @repository.save
+      @repository.save!
       flash[:success] = "Repository updated"
-      redirect_to [@repository.owner, @repository]
-    else
-      render :action => "edit"
+      redirect_to [@repository.project_or_owner, @repository]
     end
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
+    render :action => "edit"
   end
   
   # Used internally to check write permissions by gitorious
   def writable_by
-    if @project
-      @repository = @project.project_repositories.find_by_name!(params[:id])
-    else
-      @repository = @owner.repositories.find_by_name!(params[:id])
-    end
+    # if @project
+    #   @repository = @project.repositories.find_by_name!(params[:id])
+    # else
+    #   @repository = @owner.repositories.find_by_name!(params[:id])
+    # end
+    @repository = @owner.repositories.find_by_name!(params[:id])
     user = User.find_by_login(params[:username])
     if user && user.can_write_to?(@repository)
       render :text => "true #{@repository.real_gitdir}"

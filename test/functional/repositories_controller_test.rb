@@ -258,12 +258,12 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "#show" do
     setup do
       @project = projects(:johans)
+      @repo = @project.repositories.mainlines.first 
     end
   
     should "GET projects/1/repositories/1 is successful" do
-      repo = @project.repositories.first
-      repo.stubs(:git).returns(stub_everything("git mock"))
-      do_show_get repo
+      @repo.stubs(:git).returns(stub_everything("git mock"))
+      do_show_get @repo
       assert_response :success
     end
   
@@ -274,16 +274,9 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 404
     end
   
-    should "counts the number of merge requests" do
-      repo = @project.repositories.first
-      repo.stubs(:git).returns(stub_everything("git mock"))
-      do_show_get repo
-    end
-  
     should "issues a Refresh header if repo isn't ready yet" do
-      repo = @project.repositories.first
-      repo.stubs(:ready).returns(false)
-      do_show_get repo
+      @repo.stubs(:ready).returns(false)
+      do_show_get @repo
       assert_response :success
       assert_not_nil @response.headers['Refresh']
     end
@@ -296,7 +289,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   
     should "GET projects/1/repositories/1.xml is successful" do
-      repo = @project.repositories.first
+      repo = @project.repositories.mainlines.first
       repo.stubs(:has_commits?).returns(false)
       repo.stubs(:git).returns(stub_everything("git mock"))
       get :show, :project_id => @project.to_param, :id => repo.to_param, :format => "xml"
@@ -315,7 +308,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     setup do
       login_as :johan
       @project = projects(:johans)
-      @repository = @project.repositories.first
+      @repository = @project.repositories.mainlines.first
     end
   
     should " require login" do
@@ -363,7 +356,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     setup do
       login_as :johan
       @project = projects(:johans)
-      @repository = @project.repositories.first
+      @repository = @project.repositories.mainlines.first
     end
   
     should " require login" do
@@ -422,7 +415,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     setup do
       authorize_as :johan
       @project = projects(:johans)
-      @repository = @project.repositories.first
+      @repository = @project.repositories.mainlines.first
       @request.env["HTTP_ACCEPT"] = "application/xml"
     end
   
@@ -459,7 +452,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     setup do
       login_as :johan
       @project = projects(:johans)
-      @repository = @project.repositories.first
+      @repository = @project.repositories.mainlines.first
     end
   
     should " not require login" do
@@ -508,7 +501,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   
     should " require login" do
       session[:user_id] = nil
-      do_delete(@project.repositories.first)
+      do_delete(@project.repositories.mainlines.first)
       assert_redirected_to(new_sessions_path)
     end
   
@@ -557,7 +550,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(new_sessions_path)
     end
   
-    should " require adminship" do
+    should "require adminship" do
       login_as :moe
       get :new, :project_id => @project.to_param
       assert_match(/only repository admins are allowed/, flash[:error])
@@ -568,7 +561,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(project_path(@project))
     end
   
-    should " only be allowed to add new repositories to Project" do
+    should "only be allowed to add new repositories to Project" do
       get :new, :group_id => @group.to_param
       assert_match(/can only add new repositories directly to a project/, flash[:error])
       assert_redirected_to(group_path(@group))
@@ -586,7 +579,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(user_path(@user))
     end
   
-    # See example "should only be allowed to add new repositories to Project"
+    # See the above example ("should only be allowed to add new repositories to Project")
     # for why this is commented out
     # 
     # it "should GET new successfully, and set the owner to a user" do
@@ -629,7 +622,8 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_difference("Repository.count") do
         post :create, :project_id => @project.to_param, :repository => {:name => "my-new-repo"}
       end
-      assert_equal @project, assigns(:repository).owner
+      assert_equal @project.owner, assigns(:repository).owner
+      assert_equal Repository::KIND_PROJECT_REPO, assigns(:repository).kind
       assert_response :redirect
       assert_redirected_to(project_repository_path(@project, assigns(:repository)))
     end
@@ -638,7 +632,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "edit / update" do
     setup do
       @project = projects(:johans)
-      @repository = @project.repositories.first
+      @repository = @project.repositories.mainlines.first
       login_as :johan
       groups(:team_thunderbird).add_member(users(:johan), Role.admin)
     end
@@ -662,6 +656,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "requires adminship on the user if owner is a user" do
       login_as :moe
       @repository.owner = users(:moe)
+      @repository.kind = Repository::KIND_USER_REPO
       @repository.save!
       get :edit, :user_id => users(:moe).to_param, :id => @repository.to_param
       assert_response :success
@@ -670,6 +665,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "requires adminship on the group, if the owner is a group" do
       login_as :mike
       @repository.owner = groups(:team_thunderbird)
+      @repository.kind = Repository::KIND_TEAM_REPO
       @repository.save!
       get :edit, :group_id => groups(:team_thunderbird).to_param, :id => @repository.to_param
       assert_response :success
@@ -705,13 +701,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       put :update, :project_id => @project.to_param, :id => @repository.to_param, :repository => {
         :owner_id => group.id,
       }
-      assert_redirected_to(group_repository_path(group, @repository))
+      assert_redirected_to(project_repository_path(@repository.project, @repository))
       assert_equal group, @repository.reload.owner
     end
   
     should "changes the owner, only if the original owner was a user" do
       group = groups(:team_thunderbird)
       @repository.owner = group
+      @repository.kind = Repository::KIND_TEAM_REPO
       @repository.save!
       new_group = Group.create!(:name => "temp")
       new_group.add_member(users(:johan), Role.admin)
@@ -719,26 +716,27 @@ class RepositoriesControllerTest < ActionController::TestCase
       put :update, :group_id => group.to_param, :id => @repository.to_param, :repository => {
         :owner_id => new_group.id
       }
-      assert_equal group, @repository.reload.owner
+      assert_response :redirect
       assert_redirected_to(group_repository_path(group, @repository))
+      assert_equal group, @repository.reload.owner
     end
   end
 
   context "with committer (not owner) logged in" do
-    
-    should " GET projects/1/repositories/3 and have merge request link" do
+    should "GET projects/1/repositories/3 and have merge request link" do
       login_as :mike
       project = projects(:johans)
-      project.owner = groups(:team_thunderbird)
-      project.owner.add_member(users(:mike), Role.committer)
-      project.save!
-      repository = project.repositories.first
+      repository = project.repositories.mainlines.first
+      repository.committerships.create!(:committer => users(:mike))
+      
       Project.expects(:find_by_slug!).with(project.slug).returns(project)
       repository.stubs(:has_commits?).returns(true)
     
       get :show, :project_id => project.to_param, :id => repository.to_param
       assert_equal nil, flash[:error]
-      assert_match(/Request merge/, @response.body)
+      assert_select("#sidebar ul.links li a[href=?]", 
+        new_project_repository_merge_request_path(project, repository),
+        :content => "Request merge")
     end
   end
 end

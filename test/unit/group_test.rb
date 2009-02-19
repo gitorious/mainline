@@ -70,6 +70,13 @@ class GroupTest < ActiveSupport::TestCase
     should "has many repositories" do
       assert groups(:team_thunderbird).repositories.include?(repositories(:johans2))
     end
+    
+    should "not have wiki repositories in #repositories" do
+      wiki = repositories(:johans_wiki)
+      wiki.owner = groups(:team_thunderbird)
+      wiki.save!
+      assert !groups(:team_thunderbird).repositories.include?(wiki)
+    end
   end
   
   should "has to_param_with_prefix" do

@@ -119,7 +119,7 @@ class UserTest < ActiveSupport::TestCase
     assert users(:johan).can_write_to?(repo)
   end
   
-  should "only have project repo as #repositories" do
+  should "not have wiki repositories in #repositories" do
     assert !users(:johan).repositories.include?(repositories(:johans_wiki))
   end
   

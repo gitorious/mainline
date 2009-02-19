@@ -26,7 +26,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find_by_login!(params[:id])
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
-    @repositories = @user.repositories.find(:all, :conditions => ["mainline = ?", false])
+    @repositories = @user.repositories.clones
     @events = @user.events.paginate(:all, 
       :page => params[:page],
       :order => "events.created_at desc", 

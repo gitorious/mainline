@@ -22,7 +22,7 @@ class BlobsControllerTest < ActionController::TestCase
 
   def setup
     @project = projects(:johans)
-    @repository = @project.repositories.first
+    @repository = @project.repositories.mainlines.first
     @repository.stubs(:full_repository_path).returns(repo_path)
 
     Project.stubs(:find_by_slug!).with(@project.slug).returns(@project)

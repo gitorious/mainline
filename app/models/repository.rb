@@ -21,8 +21,12 @@
 
 class Repository < ActiveRecord::Base
   include ActiveMessaging::MessageSender
+  
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1
+  KIND_TEAM_REPO = 2
+  KIND_USER_REPO = 3
+  
   WIKI_NAME_SUFFIX = "-gitorious-wiki"
   
   belongs_to  :user # TODO: rename to creator..
@@ -40,18 +44,10 @@ class Repository < ActiveRecord::Base
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   
-  named_scope :by_users,  :conditions => { :owner_type => "User", :mainline => false }
-  named_scope :by_groups, :conditions => { :owner_type => "Group", :mainline => false }
-  named_scope :mainlines, :conditions => { :mainline => true }
-  named_scope :all_by_owner, lambda{|owner|
-    if owner.is_a?(Project)
-      {:conditions => ["((owner_type = 'Project' AND owner_id = :owner_id) OR project_id = :owner_id) AND kind = :kind", {
-        :owner_id => owner.id, :kind => KIND_PROJECT_REPO
-      }]}
-    else
-      { :conditions => { :owner_type => owner.class.name, :owner_id => owner.id, :kind => KIND_PROJECT_REPO } }
-    end
-  }
+  named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO }
+  named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }
+  named_scope :clones,    :conditions => ["kind != ? and parent_id is not null", KIND_PROJECT_REPO]
+  named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
   
   NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
   validates_presence_of :user_id, :name, :owner_id#, :project_id
@@ -61,7 +57,6 @@ class Repository < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   
   before_validation :downcase_name
-  before_save   :set_as_mainline_if_project_repository
   before_create :set_repository_hash
   after_create :create_initial_committership
   after_create  :post_repo_creation_message
@@ -121,8 +116,12 @@ class Repository < ActiveRecord::Base
     git_backend.delete!(full_path_from_partial_path(path))
   end
   
+  def method_name
+    
+  end
+  
   def gitdir
-    if mainline?
+    if project_repo?
       File.join(project.to_param_with_prefix, "#{name}.git")
     else
       File.join(owner.to_param_with_prefix, "#{name}.git")
@@ -327,7 +326,6 @@ class Repository < ActiveRecord::Base
     users_by_email
   end
   
-  
   def cloned_from(ip, country_code = "--", country_name = nil)
     cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name)
   end
@@ -338,6 +336,18 @@ class Repository < ActiveRecord::Base
   
   def project_repo?
     kind == KIND_PROJECT_REPO
+  end
+  
+  def mainline?
+    project_repo?
+  end
+  
+  def team_repo?
+    kind == KIND_TEAM_REPO
+  end
+  
+  def user_repo?
+    kind == KIND_USER_REPO
   end
   
   # returns an array of users who have commit bits to this repository either 
@@ -370,6 +380,11 @@ class Repository < ActiveRecord::Base
     mainline? ? project.title : owner.title
   end
   
+  # returns the project if it's a KIND_PROJECT_REPO, otherwise the owner
+  def project_or_owner
+    project_repo? ? project : owner
+  end
+  
   def full_hashed_path
     h = (hashed_path || set_repository_hash)
     first = h[0,3]
@@ -383,13 +398,6 @@ class Repository < ActiveRecord::Base
   end
   
   protected    
-    def set_as_mainline_if_project_repository
-      if owner.is_a?(Project)
-        self.mainline = true
-        self.project ||= owner
-      end
-    end
-    
     def create_initial_committership
       self.committerships.create!(:committer => self.owner)
     end

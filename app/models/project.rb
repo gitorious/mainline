@@ -26,15 +26,11 @@ class Project < ActiveRecord::Base
   belongs_to  :owner, :polymorphic => true
   has_many    :comments, :dependent => :destroy
   
-  has_many    :project_repositories, :order => "repositories.created_at asc",
-      :conditions => ["kind = ?", Repository::KIND_PROJECT_REPO], 
-      :class_name => "Repository"
-  has_many  :repositories, :as => :owner, :conditions => { 
-      :kind => Repository::KIND_PROJECT_REPO 
-    }, :order => "repositories.created_at asc", :dependent => :destroy
-  has_many    :events, :order => "created_at asc", :dependent => :destroy
+  has_many    :repositories, :order => "repositories.created_at asc", 
+      :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :nullify
   has_one     :wiki_repository, :class_name => "Repository", 
     :conditions => ["kind = ?", Repository::KIND_WIKI]  
+  has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many  :groups
   
   attr_protected :owner_id, :user_id
@@ -140,7 +136,7 @@ class Project < ActiveRecord::Base
   end
 
   def can_be_deleted_by?(candidate)
-    (candidate == user) && (Repository.all_by_owner(self) - self.repositories).length == 0
+    admin?(candidate) && repositories.clones.count == 0
   end
 
   def tag_list=(tag_list)

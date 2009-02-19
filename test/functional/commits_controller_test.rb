@@ -24,7 +24,7 @@ class CommitsControllerTest < ActionController::TestCase
   context "showing a single commit" do
     setup do
       @project = projects(:johans)
-      @repository = @project.repositories.first
+      @repository = @project.repositories.mainlines.first
       @repository.update_attribute(:ready, true)
           
       Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))

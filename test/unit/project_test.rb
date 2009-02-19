@@ -116,10 +116,10 @@ class ProjectTest < ActiveSupport::TestCase
 
   should "knows if a user can delete the project" do
     project = projects(:johans)
-    assert !project.can_be_deleted_by?(users(:moe)), 'project.can_be_deleted_by?(users(:moe)) should be false'
-    assert !project.can_be_deleted_by?(users(:johan)), 'project.can_be_deleted_by?(users(:johan)) should be false'
-    (Repository.all_by_owner(project)-project.repositories).each(&:destroy)
-    assert project.reload.can_be_deleted_by?(users(:johan)), 'project.reload.can_be_deleted_by?(users(:johan)) should be true'
+    assert !project.can_be_deleted_by?(users(:moe))
+    assert !project.can_be_deleted_by?(users(:johan)) # it has clones..
+    project.repositories.clones.each(&:destroy)
+    assert project.reload.can_be_deleted_by?(users(:johan)) # the clones are clone
   end
 
   should " strip html tags" do

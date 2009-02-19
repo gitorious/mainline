@@ -56,8 +56,7 @@ class MergeRequestsController < ApplicationController
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
-    @repositories = Repository.all_by_owner(@owner).find(:all, 
-                      :conditions => ["id != ?", @repository.id])
+    @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
     if first = @repositories.find{|r| r.mainline? } || @repositories.first
       @merge_request.target_repository_id = first.id
     end
@@ -77,8 +76,7 @@ class MergeRequestsController < ApplicationController
         format.xml { render :xml => @merge_request, :status => :created }
       else
         format.html {
-          @repositories = Repository.all_by_owner(@owner).find(:all, 
-                            :conditions => ["id != ?", @repository.id])
+          @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
           get_branches_and_commits_for_selection
           render :action => "new"
         }
@@ -98,8 +96,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def edit
-    @repositories = Repository.all_by_owner(@owner).find(:all, 
-                      :conditions => ["id != ?", @repository.id])
+    @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
     get_branches_and_commits_for_selection
   end
   
@@ -110,8 +107,7 @@ class MergeRequestsController < ApplicationController
       flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@owner, @repository, @merge_request]
     else
-      @repositories = Repository.all_by_owner(@owner).find(:all, 
-                        :conditions => ["id != ?", @repository.id])
+      @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
       get_branches_and_commits_for_selection
       render :action => "edit"
     end
@@ -126,7 +122,7 @@ class MergeRequestsController < ApplicationController
   
   protected    
     def find_repository
-      @repository = Repository.all_by_owner(@owner).find_by_name!(params[:repository_id])
+      @repository = @owner.repositories.find_by_name!(params[:repository_id])
     end
     
     def find_merge_request

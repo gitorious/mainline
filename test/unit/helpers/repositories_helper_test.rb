@@ -24,7 +24,7 @@ class RepositoriesHelperTest < ActionView::TestCase
   
   def setup
     @project = projects(:johans)
-    @repository = @project.repositories.first
+    @repository = @project.repositories.mainlines.first
   end
   
   def generic_sha(letter = "a")

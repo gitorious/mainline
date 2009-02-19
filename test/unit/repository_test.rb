@@ -73,64 +73,72 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_not_nil repo.errors.on(:name)
   end
   
-  should "sets itself as mainline if the owner is Project" do
-    @repository.project = nil
-    @repository.owner = projects(:johans)
-    @repository.save
-    assert @repository.mainline?, '@repository.mainline? should be true'
-    assert_equal projects(:johans), @repository.project
-  end
+  context "git urls" do  
+    setup do
+      @host_with_user = "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}"
+      @host = "#{GitoriousConfig['gitorious_host']}"
+    end
+    
+    should "has a gitdir name" do
+      assert_equal "#{@repository.project.slug}/foo.git", @repository.gitdir
+    end
   
-  should "doesn't set itself as mainline if the owner is a Group" do
-    @repository.owner = groups(:team_thunderbird)
-    @repository.save
-    assert !@repository.mainline?, '@repository.mainline? should be false'
-  end
+    should "has a push url" do
+      assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+    end
   
-  should "doesn't set itself as mainline if the owner is a User" do
-    @repository.owner = users(:johan)
-    @repository.save
-    assert !@repository.mainline?, '@repository.mainline? should be false'
-  end
+    should "has a clone url" do
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+    end
   
-  should "has a gitdir name" do
-    assert_equal "#{@repository.project.slug}/foo.git", @repository.gitdir
-  end
+    should "has a http url" do
+      assert_equal "http://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+    end
   
-  should "has a push url" do
-    assert_equal "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git", @repository.push_url
-  end
+    should "has a clone url with the project name, if it's a mainline" do
+      @repository.owner = groups(:team_thunderbird)
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+      
+      @repository.kind = Repository::KIND_TEAM_REPO
+      assert_equal "git://#{@host}/#{@repository.owner.to_param_with_prefix}/foo.git", @repository.clone_url
+      
+      @repository.kind = Repository::KIND_USER_REPO
+      @repository.owner = users(:johan)
+      assert_equal "git://#{@host}/#{users(:johan).to_param_with_prefix}/foo.git", @repository.clone_url
+    end
   
-  should "has a clone url" do
-    assert_equal "git://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git", @repository.clone_url
-  end
+    should "has a push url with the project name, if it's a mainline" do
+      @repository.owner = groups(:team_thunderbird)
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+      
+      @repository.kind = Repository::KIND_TEAM_REPO
+      assert_equal "#{@host_with_user}:#{groups(:team_thunderbird).to_param_with_prefix}/foo.git", @repository.push_url
+      
+      @repository.kind = Repository::KIND_USER_REPO
+      @repository.owner = users(:johan)
+      assert_equal "#{@host_with_user}:#{users(:johan).to_param_with_prefix}/foo.git", @repository.push_url
+    end
   
-  should "has a http url" do
-    assert_equal "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
-  end
+    should "has a http clone url with the project name, if it's a mainline" do
+      @repository.owner = groups(:team_thunderbird)
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      assert_equal "http://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      
+      @repository.kind = Repository::KIND_TEAM_REPO
+      assert_equal "http://git.#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/foo.git", @repository.http_clone_url
+      
+      @repository.owner = users(:johan)
+      @repository.kind = Repository::KIND_USER_REPO
+      assert_equal "http://git.#{@host}/#{users(:johan).to_param_with_prefix}/foo.git", @repository.http_clone_url
+    end
   
-  should "has a clone url with the project name, if it's a mainline" do
-    @repository.owner = groups(:team_thunderbird)
-    @repository.mainline = true
-    assert_equal "git://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git", @repository.clone_url
-  end
-  
-  should "has a push url with the project name, if it's a mainline" do
-    @repository.owner = groups(:team_thunderbird)
-    @repository.mainline = true
-    assert_equal "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{@repository.project.slug}/foo.git", @repository.push_url
-  end
-  
-  should "has a http clone url with the project name, if it's a mainline" do
-    @repository.owner = groups(:team_thunderbird)
-    @repository.mainline = true
-    assert_equal "http://git.#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
-  end
-  
-  should "has a full repository_path" do
-    expected_dir = File.expand_path(File.join(GitoriousConfig["repository_base_path"], 
-      "#{@repository.full_hashed_path}.git"))
-    assert_equal expected_dir, @repository.full_repository_path
+    should "has a full repository_path" do
+      expected_dir = File.expand_path(File.join(GitoriousConfig["repository_base_path"], 
+        "#{@repository.full_hashed_path}.git"))
+      assert_equal expected_dir, @repository.full_repository_path
+    end
   end
   
   should "inits the git repository" do
@@ -257,7 +265,7 @@ class RepositoryTest < ActiveSupport::TestCase
     should "finds a group repository by its path" do
       repo = repositories(:johans)
       repo.owner = groups(:team_thunderbird)
-      repo.mainline = false
+      repo.kind = Repository::KIND_TEAM_REPO
       repo.save!
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
       assert_equal repo    , Repository.find_by_path(path)
@@ -266,7 +274,7 @@ class RepositoryTest < ActiveSupport::TestCase
     should "finds a user repository by its path" do
       repo = repositories(:johans)
       repo.owner = users(:johan)
-      repo.mainline = false
+      repo.kind = Repository::KIND_USER_REPO
       repo.save!
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
@@ -351,11 +359,11 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "knows who can delete it" do
-    @repository.mainline = true
-    assert !@repository.can_be_deleted_by?(users(:johan)), '@repository.can_be_deleted_by?(users(:johan)) should be false'
-    @repository.mainline = false
-    assert !@repository.can_be_deleted_by?(users(:moe)), '@repository.can_be_deleted_by?(users(:moe)) should be false'
-    assert @repository.can_be_deleted_by?(users(:johan)), '@repository.can_be_deleted_by?(users(:johan)) should be true'
+    @repository.kind = Repository::KIND_PROJECT_REPO
+    assert !@repository.can_be_deleted_by?(users(:johan))
+    @repository.kind = Repository::KIND_TEAM_REPO
+    assert !@repository.can_be_deleted_by?(users(:moe))
+    assert @repository.can_be_deleted_by?(users(:johan))
   end
   
   should "have a git method that accesses the repository" do
@@ -422,24 +430,21 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "has a parent, which is the owner" do
+    @repository.kind = Repository::KIND_TEAM_REPO
     @repository.owner = groups(:team_thunderbird)
     assert_equal groups(:team_thunderbird), @repository.breadcrumb_parent
+
+    @repository.kind = Repository::KIND_USER_REPO
     @repository.owner = users(:johan)
     assert_equal users(:johan), @repository.breadcrumb_parent
-    @repository.owner = projects(:johans)
-    assert_equal projects(:johans), @repository.breadcrumb_parent
   end
   
   should "has a parent, which is the project for mainlines" do
-    @repository.mainline = true
+    @repository.kind = Repository::KIND_PROJECT_REPO
     @repository.owner = groups(:team_thunderbird)
     assert_equal projects(:johans), @repository.breadcrumb_parent
+    
     @repository.owner = users(:johan)
-    assert_equal projects(:johans), @repository.breadcrumb_parent
-    @repository.owner = projects(:johans)
-    assert_equal projects(:johans), @repository.breadcrumb_parent
-    @repository.mainline = false
-    @repository.owner = projects(:johans)
     assert_equal projects(:johans), @repository.breadcrumb_parent
   end
   
@@ -448,12 +453,12 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "return the project title as owner_title if it's a mainline" do
-    @repository.mainline = true
+    @repository.kind = Repository::KIND_PROJECT_REPO
     assert_equal @repository.project.title, @repository.owner_title
   end
   
   should "return the owner title as owner_title if it's not a mainline" do
-    @repository.mainline = false
+    @repository.kind = Repository::KIND_TEAM_REPO
     assert_equal @repository.owner.title, @repository.owner_title
   end
   
@@ -522,6 +527,20 @@ class RepositoryTest < ActiveSupport::TestCase
     repo = new_repos(:name => "FOOBAR")
     repo.save!
     assert_equal "foobar", repo.reload.name
+  end
+  
+  should "have a project_or_owner" do
+    repo = repositories(:johans)
+    assert repo.project_repo?
+    assert_equal repo.project, repo.project_or_owner
+
+    repo.kind = Repository::KIND_TEAM_REPO
+    repo.owner = groups(:team_thunderbird)
+    assert_equal repo.owner, repo.project_or_owner
+    
+    repo.kind = Repository::KIND_TEAM_REPO
+    repo.owner = groups(:team_thunderbird)
+    assert_equal repo.owner, repo.project_or_owner
   end
   
   context "participant groups" do

@@ -79,7 +79,11 @@ class CommittershipsControllerTest < ActionController::TestCase
       @group.add_member(@user, Role.admin)
       get :index, :group_id => @group.to_param, :repository_id => repo.to_param
       assert_response :success
-      assert_equal @group.committerships, assigns(:committerships)
+      exp = repo.committerships.find(:all, :conditions => {
+        :committer_type => "Group", 
+        :committer_id => @group.id
+      })
+      assert_equal exp, assigns(:committerships)
     end
   end
 

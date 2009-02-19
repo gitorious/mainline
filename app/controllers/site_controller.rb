@@ -30,8 +30,7 @@ class SiteController < ApplicationController
   
   def dashboard
     @projects = current_user.projects
-    @repositories = current_user.repositories.find(:all, 
-      :conditions => ["mainline = ?", false])
+    @repositories = current_user.repositories.by_users
     event_project_ids = (@projects.map(&:id) + @repositories.map(&:project_id)).uniq
     @events = Event.paginate(:all, 
       :page => params[:page],
