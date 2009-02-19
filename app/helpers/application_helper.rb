@@ -344,6 +344,8 @@ module ApplicationHelper
     unless exceptions.include?(:source_tree)
       links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}", tree_path(head)))
     end
+
+    head = desplat_path(head) if head.is_a?(Array)
     
     if head =~ /^[a-z0-9]{40}$/ # it looks like a SHA1
       head = head[0..7]
