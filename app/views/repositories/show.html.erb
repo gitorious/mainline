@@ -19,8 +19,6 @@
 %>
 
 <% @page_title = t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>
-<h1><%= t("views.repos.show_title", :repo => h(@repository.name), 
-  :title => h(@repository.owner_title)) %></h1>
 
 <% render_if_ready(@repository) do -%>
 
