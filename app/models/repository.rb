@@ -63,6 +63,7 @@ class Repository < ActiveRecord::Base
   before_validation :downcase_name
   before_save   :set_as_mainline_if_project_repository
   before_create :set_repository_hash
+  after_create :create_initial_committership
   after_create  :post_repo_creation_message
   after_destroy :post_repo_deletion_message
   
@@ -93,11 +94,12 @@ class Repository < ActiveRecord::Base
         Project.find_by_slug!(owner_name)
       end
     
-    Repository.find(:first, :conditions => {
-      :name => repo_name,
-      :owner_type => owner.class.name,
-      :owner_id => owner.id,
-    })
+    if owner.is_a?(Project)
+      owner_conditions = { :project_id => owner.id }
+    else
+      owner_conditions = { :owner_type => owner.class.name, :owner_id => owner.id }
+    end
+    Repository.find(:first, :conditions => {:name => repo_name}.merge(owner_conditions))
   end
   
   def self.create_git_repository(path)
@@ -201,13 +203,19 @@ class Repository < ActiveRecord::Base
     !mainline? && (candidate == user)
   end
   
-  def writable_by?(a_user)
-    committers.include?(a_user)
-  end
-  
-  def change_owner_to(another_owner)
+  # changes the owner to +another_owner+, removes the old owner as committer
+  # and adds +another_owner+ as committer
+  def change_owner_to!(another_owner)
     unless owned_by_group?
-      self.owner = another_owner
+      transaction do
+        if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
+          committerships.delete(existing)
+        end
+        self.owner = another_owner
+        committerships.create!(:committer => another_owner)
+        save!
+        reload
+      end
     end
   end
   
@@ -332,25 +340,14 @@ class Repository < ActiveRecord::Base
     kind == KIND_PROJECT_REPO
   end
   
-  # returns all the members from all the associated groups
-  def group_members
-    groups.collect{|g| g.members }.flatten
-  end
-  
   # returns an array of users who have commit bits to this repository either 
   # directly through the owner, or "indirectly" through the associated groups
-  def committers(options = {})
-    exclude_groups = options.delete(:exclude_groups)
-    owner_committers = case owner
-      when Group
-        owner.members
-      when Project
-        project_owner = owner.owner
-        project_owner === User ? [project_owner] : project_owner.members
-      else
-        [owner]
-      end
-    exclude_groups ? owner_committers : (owner_committers | group_members)
+  def committers
+    committerships.map{|c| c.members }.flatten.compact.uniq
+  end
+  
+  def writable_by?(a_user)
+    committers.include?(a_user)
   end
   
   def owned_by_group?
@@ -391,6 +388,10 @@ class Repository < ActiveRecord::Base
         self.mainline = true
         self.project ||= owner
       end
+    end
+    
+    def create_initial_committership
+      self.committerships.create!(:committer => self.owner)
     end
     
     def self.full_path_from_partial_path(path)

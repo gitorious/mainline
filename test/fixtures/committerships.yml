@@ -1,5 +1,27 @@
+johan_johans:
+  committer_id: 1
+  committer_type: User
+  repository_id: 1
+  creator_id: 1
+  
+thunderbird_johans:
+  committer: team_thunderbird (Group)
+  repository_id: 2
+  creator_id: 1
+
 thunderbird_moes:
-  committer: team_thunderbird
-  committer_type: Group
+  committer: team_thunderbird (Group)
   repository_id: 3
+  creator_id: 1
+
+johan_johans_moe_clone:
+  committer_id: 2
+  committer_type: User
+  repository_id: 4
+  creator_id: 1
+
+johan_johans_moe_clone:
+  committer_id: 1
+  committer_type: User
+  repository_id: 5
   creator_id: 1

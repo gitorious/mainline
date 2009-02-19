@@ -47,6 +47,7 @@ class CommittershipTest < ActiveSupport::TestCase
   end
   
   should "have a named scope for only getting groups" do
+    Committership.delete_all
     c1 = new_committership(:committer => groups(:team_thunderbird))
     c2 = new_committership(:committer => users(:johan))
     [c1, c2].each(&:save)

@@ -30,7 +30,7 @@ class RepositoryTest < ActiveSupport::TestCase
       :name => "foo",
       :project => projects(:johans),
       :user => users(:johan),
-      :owner => projects(:johans)
+      :owner => users(:johan)
     }.merge(opts))
   end
 
@@ -241,7 +241,7 @@ class RepositoryTest < ActiveSupport::TestCase
   
   context "find_by_path" do
     should "finds a repository by its path" do
-      repo = projects(:johans).repositories.mainlines.first
+      repo = repositories(:johans)
       path = File.join(GitoriousConfig['repository_base_path'], 
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
@@ -280,18 +280,17 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "knows if a user can write to self" do
+    @repository.owner = users(:johan)
     @repository.save!
+    @repository.reload
     assert @repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be true'
     assert !@repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be false'
     
-    @repository.owner = groups(:team_thunderbird)
+    @repository.change_owner_to!(groups(:team_thunderbird))
+    @repository.save!
     assert !@repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be false'
     @repository.owner.add_member(users(:mike), Role.committer)
     assert @repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be true'
-    
-    @repository.owner = users(:johan)
-    assert @repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be true'
-    assert !@repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be false'
   end
   
   should "publishes a message on create and update" do
@@ -460,19 +459,20 @@ class RepositoryTest < ActiveSupport::TestCase
   
   should "returns a list of committers depending on owner type" do
     repo = repositories(:johans2)
-    
-    repo.owner = projects(:johans)
-    assert_equal [users(:johan)], repo.committers
-    
-    repo.owner = users(:johan)
-    assert_equal [users(:johan)], repo.committers
-    
-    repo.owner = groups(:team_thunderbird)
-    assert_equal groups(:team_thunderbird).members, repo.committers
-    
-    repo.owner.add_member(users(:moe), Role.committer)
+    repo.committerships.each(&:delete)
     repo.reload
-    assert repo.committers.map(&:login).include?(users(:moe).login)
+    assert !repo.committers.include?(users(:moe))
+
+    repo.committerships.create(:committer => users(:johan))
+    assert_equal [users(:johan).login], repo.committers.map(&:login)
+    
+    repo.committerships.create(:committer => groups(:team_thunderbird))
+    exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
+    assert_equal exp_users.map(&:login), repo.committers.map(&:login)
+    
+    groups(:team_thunderbird).add_member(users(:moe), Role.admin)
+    repo.reload
+    assert repo.committers.include?(users(:moe))
   end
   
   should "sets a hash on create" do
@@ -482,17 +482,40 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_match(/[a-z0-9]{40}/, @repository.hashed_path)
   end
   
+  should "create the initial committership on create for owner" do
+    group_repo = new_repos(:owner => groups(:team_thunderbird))
+    assert_difference("Committership.count") do
+      group_repo.save!
+      assert_equal 1, group_repo.committerships.count
+      assert_equal groups(:team_thunderbird), group_repo.committerships.first.committer
+    end
+    
+    user_repo = new_repos(:owner => users(:johan), :name => "foo2")
+    assert_difference("Committership.count") do
+      user_repo.save!
+      assert_equal 1, user_repo.committerships.count
+      assert_equal users(:johan), user_repo.committerships.first.committer
+    end
+  end
+  
   should "know the full hashed path" do
     @repository.hashed_path = "a"*40
     assert_equal "aaa/aaa/#{'a'*34}", @repository.full_hashed_path
   end
   
-  should " allow changing ownership from a user to a group" do
+  should "allow changing ownership from a user to a group" do
     repo = repositories(:johans)
-    repo.change_owner_to(groups(:team_thunderbird))
+    repo.change_owner_to!(groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird), repo.owner
-    repo.change_owner_to(users(:johan))
+    repo.change_owner_to!(users(:johan))
     assert_equal groups(:team_thunderbird), repo.owner
+  end
+  
+  should "changing ownership adds the new owner to the committerships" do
+    repo = repositories(:johans)
+    old_committer = repo.owner
+    repo.change_owner_to!(groups(:team_thunderbird))
+    assert !repo.committers.include?(old_committer)
   end
   
   should "downcases the name before validation" do
@@ -506,14 +529,6 @@ class RepositoryTest < ActiveSupport::TestCase
       @repo = repositories(:moes)
     end
     
-    should "has a set of groups" do
-      assert_equal [groups(:team_thunderbird)], @repo.groups
-    end
-    
-    should "collects all the groups' members" do
-      assert_equal groups(:team_thunderbird).members, @repo.group_members
-    end
-    
     should "includes the groups' members in #committers" do
       assert @repo.committers.include?(groups(:team_thunderbird).members.first)
     end
@@ -521,11 +536,6 @@ class RepositoryTest < ActiveSupport::TestCase
     should "only include unique users in #committers" do
       groups(:team_thunderbird).add_member(users(:moe), Role.committer)
       assert_equal 1, @repo.committers.select{|u| u == users(:moe)}.size
-    end
-    
-    should " be possible to exclude the groups in #committers" do
-      users = @repo.committers(:exclude_groups => true).map(&:login)
-      assert !users.include?(groups(:team_thunderbird).members.first.login)
     end
   end
   

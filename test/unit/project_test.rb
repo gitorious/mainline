@@ -199,7 +199,7 @@ class ProjectTest < ActiveSupport::TestCase
     setup do
       @project = projects(:johans)
       @user = users(:johan)
-      @repository = @project.repositories.first
+      @repository = repositories(:johans)
     end
     
     should " create an event from the action name" do

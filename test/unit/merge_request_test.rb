@@ -71,7 +71,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   
   should "knows who can resolve itself" do
     assert @merge_request.resolvable_by?(users(:johan)), '@merge_request.resolvable_by?(users(:johan)) should be true'
-    @merge_request.target_repository.owner = groups(:team_thunderbird)
+    @merge_request.target_repository.committerships.create!(:committer => groups(:team_thunderbird))
     assert @merge_request.resolvable_by?(users(:mike)), '@merge_request.resolvable_by?(users(:mike)) should be true'
     assert !@merge_request.resolvable_by?(users(:moe)), '@merge_request.resolvable_by?(users(:moe)) should be false'
   end

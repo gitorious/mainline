@@ -192,7 +192,14 @@ class Project < ActiveRecord::Base
   def new_event_required?(action_id, target, user, data)
     events_count = events.count(:all, :conditions => [
       "action = :action_id AND target_id = :target_id AND target_type = :target_type AND user_id = :user_id and data = :data AND created_at > :date_threshold",
-      {:action_id => action_id, :target_id => target.id, :target_type => target.class.name, :user_id => user.id, :data => data, :date_threshold => 1.hour.ago}])
+      {
+        :action_id => action_id, 
+        :target_id => target.id, 
+        :target_type => target.class.name, 
+        :user_id => user.id, 
+        :data => data, 
+        :date_threshold => 1.hour.ago
+      }])
     return events_count < 1
   end
   

@@ -7,7 +7,7 @@ johans:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: true
-  owner_type: Project
+  owner_type: User
   owner_id: 1
   hashed_path: <%= Digest::SHA1.hexdigest("johans") %>
 
@@ -32,7 +32,7 @@ moes:
   created_at: 2007-11-18 01:21:21
   updated_at: 2007-11-18 01:21:21
   mainline: true
-  owner_type: Project
+  owner_type: User
   owner_id: 2
   hashed_path: <%= Digest::SHA1.hexdigest("moes") %>
   
