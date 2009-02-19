@@ -100,10 +100,6 @@ class Project < ActiveRecord::Base
     I18n.t("activerecord.models.project")
   end
 
-  def self.find_by_slug!(slug, opts = {})
-    find_by_slug(slug, opts) || raise(ActiveRecord::RecordNotFound)
-  end
-
   def self.per_page() 20 end
 
   def self.top_tags(limit = 10)

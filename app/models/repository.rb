@@ -29,7 +29,7 @@ class Repository < ActiveRecord::Base
   
   WIKI_NAME_SUFFIX = "-gitorious-wiki"
   
-  belongs_to  :user # TODO: rename to creator..
+  belongs_to  :user
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
   has_many    :committerships
@@ -44,11 +44,6 @@ class Repository < ActiveRecord::Base
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   
-  named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO }
-  named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }
-  named_scope :clones,    :conditions => ["kind != ? and parent_id is not null", KIND_PROJECT_REPO]
-  named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
-  
   NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
   validates_presence_of :user_id, :name, :owner_id#, :project_id
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
@@ -62,6 +57,11 @@ class Repository < ActiveRecord::Base
   after_create  :post_repo_creation_message
   after_destroy :post_repo_deletion_message
   
+  named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO }
+  named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }
+  named_scope :clones,    :conditions => ["kind != ? and parent_id is not null", KIND_PROJECT_REPO]
+  named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
+  
   def self.human_name
     I18n.t("activerecord.models.repository")
   end
@@ -69,10 +69,6 @@ class Repository < ActiveRecord::Base
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}-clone" : nil
     new(:parent => other, :project => other.project, :name => suggested_name)
-  end
-  
-  def self.find_by_name!(name)
-    find_by_name(name) || raise(ActiveRecord::RecordNotFound)
   end
   
   def self.find_by_path(path)

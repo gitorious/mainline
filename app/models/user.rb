@@ -66,10 +66,6 @@ class User < ActiveRecord::Base
     I18n.t("activerecord.models.user")
   end
 
-  def self.find_by_login!(name)
-    find_by_login(name) || raise(ActiveRecord::RecordNotFound)
-  end
-
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
     u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL and suspended_at IS NULL', email] # need to get the salt
