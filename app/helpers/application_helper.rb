@@ -30,7 +30,7 @@ module ApplicationHelper
   end
   
   def feed_icon(url, alt_title = "Atom feed", size = :small)
-    link_to image_tag("feed_12.png", :class => "feed_icon"), url, 
+    link_to image_tag("silk/feed.png", :class => "feed_icon"), url,
       :alt => alt_title, :title => alt_title
   end
   
