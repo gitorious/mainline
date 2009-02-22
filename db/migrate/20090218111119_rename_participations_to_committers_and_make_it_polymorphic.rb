@@ -5,7 +5,7 @@ class RenameParticipationsToCommittersAndMakeItPolymorphic < ActiveRecord::Migra
     add_column :committerships, :committer_type, :string
     add_index :committerships, [:committer_id, :committer_type]
 
-    ActiveRecord::Base.reload_column_information
+    ActiveRecord::Base.reset_column_information
     Committership.update_all("committer_type = 'Group'")
   end
 
