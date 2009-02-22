@@ -21,16 +21,19 @@
 
 <h1><%= t("views.keys.ssh_keys") %></h1>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+<% end -%>
+
 <ul>
 <% @ssh_keys.each do |ssh_key| -%>
   <li><%= render :partial => "key", :locals => {:ssh_key => ssh_key} -%></li>
 <% end -%>
 </ul>
 
-<p><%= link_to t("views.common.add"), new_account_key_path  -%></p>
-
-<% content_for :submenu do -%>
-  <ul>
-    <li><%= link_to t("views.account.show_title"), account_path -%></li>
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li class="new_key"><%= link_to t("views.keys.add_ssh_key"), new_user_key_path(current_user) -%></li>
   </ul>
 <% end -%>
+

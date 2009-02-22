@@ -21,7 +21,7 @@
 
 <%= error_messages_for :ssh_key -%>
 
-<% form_for @ssh_key, :url => account_key_path(@ssh_key) do |f| -%>
+<% form_for @ssh_key, :url => user_key_path(@ssh_key) do |f| -%>
   <p>
     <%= f.label :key, t(:key, :scope => "activerecord.attributes.keys") -%><br />
     <%= f.text_area :key, :class => "text medium" -%>
@@ -31,6 +31,6 @@
 
 <% content_for :submenu do -%>
   <ul>
-    <li><%= link_to t("views.account.show_title"), account_path -%></li>
+    <li><%= link_to t("views.users.show_title"), user_path -%></li>
   </ul>
 <% end -%>

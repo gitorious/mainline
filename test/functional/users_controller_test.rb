@@ -248,4 +248,91 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success
     end
   end
+
+  context "account-related tests" do
+    setup do
+      login_as :johan
+    end
+  
+#  should "GET /account should require login" do
+#    session[:user_id] = nil
+#    get :show
+#    assert_response :redirect
+#    assert_redirected_to new_sessions_path
+#  end
+  
+#  should "GET /account is successful" do
+#    get :show
+#    assert_response :success
+#  end
+  
+    should "GET /users/johan/edit is successful" do
+      get :edit
+      assert_response :success
+    end
+  
+    should "PUT /users/create with valid data is successful" do
+      put :update, :user => {:password => "fubar", :password_confirmation => "fubar"}
+      assert !flash[:notice].nil?
+      assert_redirected_to(account_path)
+    end
+  
+# should "PUT /user should redirect to show" do
+#    u = users(:johan)
+#    u.update_attributes(:aasm_state => 'pending')
+#    put :update, :user => {}
+#    assert !flash[:notice].nil?
+#    assert_redirected_to(account_path)
+#  end
+  
+    should "GET /users/johan/password is a-ok" do
+      get :password
+      assert_response :success
+      assert_equal users(:johan), assigns(:user)
+    end
+  
+    should "PUT /users/joan/update_password updates password if old one matches" do
+      put :update_password, :user => {
+        :current_password => "test", 
+        :password => "fubar",
+        :password_confirmation => "fubar" }
+      assert_redirected_to(account_path)
+      assert_match(/Your password has been changed/i, flash[:notice])
+      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+    end
+  
+    should "PUT /users/johan/update_password does not update password if old one is wrong" do
+      put :update_password, :user => {
+        :current_password => "notthecurrentpassword", 
+        :password => "fubar",
+        :password_confirmation => "fubar" }
+      assert_nil flash[:notice]
+      assert_match(/doesn't seem to match/, flash[:error])
+      assert_template("accounts/password")
+      assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
+      assert_nil User.authenticate(users(:johan).email, "fubar")
+    end
+  
+    should " be able to update password, even if user is openid enabled" do
+      user = users(:johan)
+      user.update_attribute(:identity_url, "http://johan.someprovider.com/")
+      put :update_password, :user => {
+        :current_password => "test", 
+        :password => "fubar",
+        :password_confirmation => "fubar" }
+      assert_match(/Your password has been changed/i, flash[:notice])
+      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+    end 
+
+    should " be able to update password, even if user created his account with openid" do
+      user = users(:johan)
+      user.update_attribute(:crypted_password, nil)
+      put :update_password, :user => {
+        :password => "fubar",
+        :password_confirmation => "fubar" }
+      assert_match(/Your password has been changed/i, flash[:notice])
+      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+    end
+  end
+
 end

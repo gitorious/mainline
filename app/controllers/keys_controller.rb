@@ -17,7 +17,12 @@
 
 class KeysController < ApplicationController
   before_filter :login_required
-  
+  before_filter :require_current_user 
+ 
+  def params_user
+    @user = User.find_by_login!(params[:user_id])
+  end
+
   def index
     @ssh_keys = current_user.ssh_keys
     respond_to do |format|
@@ -37,8 +42,8 @@ class KeysController < ApplicationController
     respond_to do |format|
       if @ssh_key.save
         flash[:notice] = I18n.t "keys_controller.create_notice"
-        format.html { redirect_to account_path }
-        format.xml  { render :xml => @ssh_key, :status => :created, :location => account_key_path(@ssh_key) }
+        format.html { redirect_to user_keys_path(current_user) }
+        format.xml  { render :xml => @ssh_key, :status => :created, :location => user_key_path(current_user, @ssh_key) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @ssh_key.errors, :status => :unprocessable_entity }
@@ -66,7 +71,7 @@ class KeysController < ApplicationController
   #   @ssh_key.key = params[:ssh_key][:key]
   #   if @ssh_key.save
   #     flash[:notice] = "Key updated"
-  #     redirect_to account_path
+  #     redirect_to user_path(current_user)
   #   else
   #     render :action => "new"
   #   end
@@ -77,6 +82,6 @@ class KeysController < ApplicationController
     if @ssh_key.destroy
       flash[:notice] = I18n.t "keys_controller.destroy_notice"
     end
-    redirect_to account_path    
+    redirect_to user_keys_path(current_user) 
   end
 end

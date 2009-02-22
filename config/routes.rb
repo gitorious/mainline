@@ -60,15 +60,13 @@ ActionController::Routing::Routes.draw do |map|
   
   map.root :controller => "site", :action => "index"
   
-  map.resource :account, :member => {:password => :get, :update_password => :put} do |account|
-    account.resources :keys
-    account.resource :license
-  end
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/ }, :collection => {
     :forgot_password => :get,
     :reset_password => :post
-  }, :member => { :feed => :get }) do |user|
+  }, :member => { :feed => :get, :password => :get, :update_password => :put }) do |user|
+    user.resources :keys
+    user.resource :license
     user.resources(:repositories, repository_options, &repository_proc)
   end
   map.resources  :events, :member => {:commits => :get}

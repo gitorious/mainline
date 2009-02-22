@@ -25,7 +25,7 @@
 <%= error_messages_for :group, :membership -%>
 <% form_for [@group, @membership] do |f| -%>
   <p>
-    <%= f.label :login, t("views.account.username") -%><br />
+    <%= f.label :login, t("views.users.username") -%><br />
     <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
   </p>
   <p>

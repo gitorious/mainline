@@ -66,7 +66,7 @@
         <li><%= link_to t("views.layout.about"), about_path -%></li>
       <% end -%>
       <%- if logged_in? -%>
-        <li class="secondary"><%= link_to t("views.layout.my_account"), account_path -%></li>
+        <li class="secondary"><%= link_to t("views.layout.my_account"), user_path(current_user) -%></li>
         <li class="secondary"><%= link_to t("views.layout.logout"), logout_path -%></li>
       <%- else -%>
 		<% if GitoriousConfig['public_mode'] -%>

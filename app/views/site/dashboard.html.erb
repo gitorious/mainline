@@ -54,6 +54,5 @@
 <% end -%>
 
 <% content_for :submenu do -%>
-  <li><%= link_to t("views.site.dashboard.your_account"), account_path -%></li>
   <li><%= link_to t("views.site.dashboard.your_profile"), user_path(current_user) -%></li>
 <% end -%>

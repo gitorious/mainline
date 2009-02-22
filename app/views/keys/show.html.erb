@@ -17,8 +17,9 @@
 #++
 %>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+<% end -%>
+
 <%= render :partial => "key", :locals => {:ssh_key => @ssh_key} -%>
 
-<% content_for :submenu do -%>
-  <li><%= link_to t("views.account.my_account"), account_path -%></li>
-<% end -%>

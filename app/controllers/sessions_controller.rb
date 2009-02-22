@@ -60,7 +60,7 @@ class SessionsController < ApplicationController
           @user.activate
           self.current_user = @user
           flash[:notice] = "You now need to accept the End User License Agreement"
-          redirect_to edit_account_path and return
+          redirect_to edit_user_path and return
         end
         self.current_user = @user
         successful_login
@@ -105,7 +105,7 @@ class SessionsController < ApplicationController
   def check_state_and_redirect(redirection_url)
     if current_user.pending?
       flash[:notice] = "You need to accept the terms"
-      redirect_to edit_account_path and return
+      redirect_to edit_user_path and return
     else
       flash[:notice] = "Logged in successfully"
       redirect_back_or_default(redirection_url)

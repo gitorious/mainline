@@ -138,11 +138,11 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_template(("new"))
     end
   
-    should "GET projects/new should redirect to new_account_key_path if no keys on user" do
+    should "GET projects/new should redirect to new_user_key_path if no keys on user" do
       users(:johan).ssh_keys.destroy_all
       login_as :johan
       get :new
-      assert_redirected_to(new_account_key_path)
+      assert_redirected_to(new_user_key_path(users(:johan)))
     end
   
     should "GET projects/new should require login" do
@@ -188,18 +188,18 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal group, assigns(:project).owner
     end
   
-    should "POST projects/create should redirect to new_account_key_path if no keys on user" do
+    should "POST projects/create should redirect to new_user_key_path if no keys on user" do
       users(:johan).ssh_keys.destroy_all
       login_as :johan
       post :create
-      assert_redirected_to(new_account_key_path)
+      assert_redirected_to(new_user_key_path(users(:johan)))
     end
     
     should 'POST projects/create should redirect to acceptance of EULA if this has not been done' do
       users(:johan).update_attributes(:accepted_license_agreement_version => '222')
       login_as :johan
       post :create
-      assert_redirected_to(account_license_path)
+      assert_redirected_to(user_license_path)
     end
   
     should "projects/create should require login" do

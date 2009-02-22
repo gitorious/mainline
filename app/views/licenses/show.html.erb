@@ -3,10 +3,11 @@
   <strong><%= t('views.license.terms_accepted') %>:</strong>
 </p>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+<% end -%>
+
 <div class="eula">
   <%= simple_format(EndUserLicenseAgreement.current_version.contents) %>
 </div>
 
-<% content_for :submenu do -%>
-  <li><%= link_to t("views.account.my_account"), account_path -%></li>
-<% end -%>
