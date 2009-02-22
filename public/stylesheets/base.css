@@ -147,7 +147,7 @@ abbr {
 
 #header {
   background: #292929;
-  height: 110px;
+  height: 112px;
   background-image: url("/images/header_bg.png");
   background-repeat: repeat-x;
 }
@@ -164,9 +164,10 @@ abbr {
   float: right;
   margin-top: 15px;
   padding: 0px;
-  margin-right: 45px;
+  margin-right: 24px;
   list-style: none;
   padding-top: 2px;
+  clear: right;
 }
 
 #header #searchbox .search-field, #header #searchbox .search-submit {
@@ -351,10 +352,9 @@ abbr {
 
 #menu {
   float: right;
-  margin-right: 40px;
+  margin-right: 20px;
   margin-top: 20px;
   margin-bottom: 0;
-  clear: right;
 }
 
 #menu li {
