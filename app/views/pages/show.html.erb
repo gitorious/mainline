@@ -3,7 +3,6 @@
 <% end -%>
 
 <div class="page-header">
-  <%= page_crumbs(@page) -%>
   <h1>
     <%= h(@page.title) -%> 
   </h1>
@@ -11,18 +10,28 @@
 
 <%= wikize(@page.content) -%>
 
-
 <% if commit = @page.commit -%>
-<div class="page-meta">
-  <%= render :partial => "actions" -%>
-  <p>
-    <% if @page.committed_by_user -%>
-      <%= t("views.pages.last_edited_by", 
-          :link_or_name => link_to(@page.committed_by_user.title, user_path(@page.committed_by_user))) -%>
-    <% else -%>
-      <%= t("views.pages.last_edited_by", :link_or_name => h(commit.committer.name)) -%>
+  <% content_for :sidebar do -%>
+    <ul>
+      <li>
+        <strong><%= t("views.pages.last_edited_by") %>:</strong> 
+        <% if @page.committed_by_user -%>
+          <%= link_to(@page.committed_by_user.title, user_path(@page.committed_by_user)) -%>
+        <% else -%>
+          <%= h(commit.committer.name) -%>
+        <% end -%>
+        
+        <%= commit.date.to_s(:short) -%>
+	
+	</li>
+    </ul>
+
+    <% if logged_in? -%>
+      <ul class="links">
+        <li class="edit_wiki_page"><%= edit_link(@page) -%></li>
+        <li class="wiki_page_history"><%= link_to(t("views.pages.history"), history_project_page_path(@project, @page.title)) -%></li>
+      </ul>
     <% end -%>
-    <%= commit.date.to_s(:short) -%>
-  </p>
-</div>
+  <% end -%>
 <% end -%>
+

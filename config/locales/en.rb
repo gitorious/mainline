@@ -132,7 +132,7 @@
         :register => "Register",
         :project_overview => "Project Overview",
         :repositories => "Repositories",
-        :pages => "Wiki pages",
+        :pages => "Wiki",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
         :teams => "Teams",
@@ -428,7 +428,7 @@
       },
       :pages => {
         :page => "page",
-        :last_edited_by => "Last edited by {{link_or_name}}",
+        :last_edited_by => "Last edited by",
         :or_back_to_page => "or return to {{page_link}}",
         :history => "History",
         :last_n_edits => "Last {{n}} edits on {{title}}",

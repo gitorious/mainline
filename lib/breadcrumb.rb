@@ -84,7 +84,7 @@ module Breadcrumb
     end
     
     def title
-      "Wiki pages"
+      "Wiki"
     end
 
     def breadcrumb_css_class
