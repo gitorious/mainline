@@ -531,6 +531,7 @@ li.event_instance.request_merge { background-image: url("/images/silk/chart_line
 li.event_instance.resolve_merge_request { background-image: url("/images/silk/arrow_merge.png") !important; }
 li.event_instance.update_merge_request { background-image: url("/images/silk/chart_line_edit.png") !important; }
 li.event_instance.delete_merge_request { background-image: url("/images/silk/chart_line_delete.png") !important; }
+li.event_instance.push { background-image: url("/images/silk/bricks.png") !important; }
 
 /* Icons used for file types in breadcrumb and tree view */
 table.tree tr td.file a, li.file > a { background-image: url("/images/silk/page_white_text.png"); }

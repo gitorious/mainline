@@ -73,8 +73,16 @@ class Action
         "update merge request"
       when DELETE_MERGE_REQUEST
         "delete merge request"
+      when UPDATE_WIKI_PAGE
+        "edit wiki page"
       when PUSH
-        'push'
+        "push"
+      else
+        "unknown event"
     end
+  end
+
+  def self.css_class(action_id)
+    self.name(action_id).gsub(/ /, '_')
   end
 end

@@ -19,7 +19,7 @@
 %>
 
 <% action, body, category = action_and_body_for_event(event) %>
-<li class="event_instance" id="<%= dom_id(event) -%>">
+<li class="event_instance <%= Action::css_class(event.action) -%>" id="<%= dom_id(event) -%>">
   <p class="event_date"><%= event.created_at.to_s(:short_time) %></p>
   <%= gravatar(event.email, :size => 16)  %>
   <p class="event_category <%= category -%>"><%= category.humanize -%></p>
