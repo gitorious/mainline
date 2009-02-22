@@ -20,7 +20,7 @@ class CreateGroups < ActiveRecord::Migration
     
       ActiveRecord::Base.reset_column_information
       Role.create!(:name => "Administrator", :kind => Role::KIND_ADMIN)
-      Role.create!(:name => "Committer", :kind => Role::KIND_COMMITTER)
+      Role.create!(:name => "Committer", :kind => Role::KIND_MEMBER)
     
       create_table :memberships do |t|
         t.integer     :group_id
