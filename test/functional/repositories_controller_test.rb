@@ -333,7 +333,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       users(:johan).ssh_keys.destroy_all
       login_as :johan
       do_clone_get
-      assert_redirected_to(new_account_key_path)
+      assert_redirected_to(new_user_key_path(users(:johan)))
     end
   
     should "redirects with a flash if repos can't be cloned" do
@@ -392,11 +392,11 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal users(:johan).groups.first, assigns(:repository).owner
     end
   
-    should "redirects to new_account_key_path if no keys on user" do
+    should "redirects to new_user_key_path if no keys on user" do
       users(:johan).ssh_keys.destroy_all
       login_as :johan
       do_create_clone_post
-      assert_redirected_to(new_account_key_path)
+      assert_redirected_to(new_user_key_path(users(:johan)))
     end
   
     should "redirects with a flash if repos can't be cloned" do

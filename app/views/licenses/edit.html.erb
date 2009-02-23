@@ -8,7 +8,7 @@
 <% end -%>
 
 <div>
-  <% form_for(current_user, :url => user_license_path, :method => :put) do |f| %>
+  <% form_for(current_user, :url => user_license_path(current_user), :method => :put) do |f| %>
     <div class="eula">
       <%= simple_format(EndUserLicenseAgreement.current_version.contents) %>    
     </div>

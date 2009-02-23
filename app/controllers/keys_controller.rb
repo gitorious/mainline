@@ -17,11 +17,9 @@
 
 class KeysController < ApplicationController
   before_filter :login_required
+  before_filter :find_user
   before_filter :require_current_user 
  
-  def params_user
-    @user = User.find_by_login!(params[:user_id])
-  end
 
   def index
     @ssh_keys = current_user.ssh_keys
@@ -84,4 +82,9 @@ class KeysController < ApplicationController
     end
     redirect_to user_keys_path(current_user) 
   end
+  
+  protected
+    def find_user
+      @user = User.find_by_login!(params[:user_id])
+    end
 end

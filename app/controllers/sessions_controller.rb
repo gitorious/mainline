@@ -60,7 +60,7 @@ class SessionsController < ApplicationController
           @user.activate
           self.current_user = @user
           flash[:notice] = "You now need to accept the End User License Agreement"
-          redirect_to edit_user_path and return
+          redirect_to edit_user_path(@user) and return
         end
         self.current_user = @user
         successful_login

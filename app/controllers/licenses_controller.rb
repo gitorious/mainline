@@ -19,6 +19,7 @@
 
 class LicensesController < ApplicationController
   before_filter :login_required
+  
   def show
     if !current_user.current_license_agreement_accepted?
       flash[:errors] = t("views.license.terms_not_accepted")

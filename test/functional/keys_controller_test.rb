@@ -20,6 +20,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class KeysControllerTest < ActionController::TestCase
+  
+  def setup
+    @user = users(:johan)
+  end
 
   context "index" do
     setup do
@@ -28,18 +32,25 @@ class KeysControllerTest < ActionController::TestCase
   
     should "requires login" do
       session[:user_id] = nil
-      get :index
+      get :index, :user_id => @user.to_param
       assert_response :redirect
       assert_redirected_to(new_sessions_path)
     end
+    
+    should "require current_user" do
+      login_as :moe
+      get :index, :user_id => @user.to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
+    end
   
     should "GET account/keys is successful" do
-      get :index
+      get :index, :user_id => @user.to_param
       assert_response :success
     end
   
     should "scopes to the current_users keys" do
-      get :index
+      get :index, :user_id => @user.to_param
       assert_equal users(:johan).ssh_keys, assigns(:ssh_keys)
     end
   end
@@ -51,17 +62,24 @@ class KeysControllerTest < ActionController::TestCase
   
     should "requires login" do
       authorize_as(nil)
-      get :index, :format => "xml"
+      get :index, :format => "xml", :user_id => @user.to_param
       assert_response 401
+    end
+    
+    should "require current_user" do
+      login_as :moe
+      get :index, :format => "xml", :user_id => @user.to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
     end
   
     should "GET account/keys is successful" do
-      get :index, :format => "xml"
+      get :index, :format => "xml", :user_id => @user.to_param
       assert_response :success
     end
   
     should "scopes to the current_users keys" do
-      get :index, :format => "xml"
+      get :index, :format => "xml", :user_id => @user.to_param
       assert_equal users(:johan).ssh_keys.to_xml, @response.body
     end
   end
@@ -77,14 +95,21 @@ class KeysControllerTest < ActionController::TestCase
       get :new
       assert_redirected_to (new_sessions_path)
     end
+    
+    should "require current_user" do
+      login_as :moe
+      get :new, :user_id => @user.to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
+    end
   
     should "GET account/keys is successful" do
-      get :new
+      get :new, :user_id => @user.to_param
       assert_response :success
     end
   
     should "scopes to the current_user" do
-      get :new
+      get :new, :user_id => @user.to_param
       assert_equal users(:johan).id, assigns(:ssh_key).user_id
     end
   end
@@ -116,14 +141,21 @@ end
       post :create, :ssh_key => {:key => valid_key}
       assert_redirected_to(new_sessions_path)
     end
+    
+    should "require current_user" do
+      login_as :moe
+      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
+    end
   
     should "scopes to the current_user" do
-      post :create, :ssh_key => {:key => valid_key}
+      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
       assert_equal users(:johan).id, assigns(:ssh_key).user_id
     end
   
     should "POST account/keys/create is successful" do
-      post :create, :ssh_key => {:key => valid_key}
+      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
       assert_response :redirect
     end
   end
@@ -137,17 +169,24 @@ end
   
     should " require login" do
       authorize_as(nil)
-      post :create, :ssh_key => {:key => valid_key}, :format => "xml"
+      post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 401
+    end
+    
+    should "require current_user" do
+      login_as :moe
+      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param, :format => "xml"
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
     end
   
     should "scopes to the current_user" do
-      post :create, :ssh_key => {:key => valid_key}, :format => "xml"
+      post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_equal users(:johan).id, assigns(:ssh_key).user_id
     end
   
     should "POST account/keys/create is successful" do
-      post :create, :ssh_key => {:key => valid_key}, :format => "xml"
+      post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 201
     end
   end

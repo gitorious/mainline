@@ -18,11 +18,9 @@
 
 class UsersController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [:activate, :forgot_password, :reset_password]
+  before_filter :login_required, :only => [:edit, :update, :password, :update_password]
+  before_filter :find_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
- 
-  def params_user
-    User.find_by_login!(params[:id])
-  end
  
   # render new.rhtml
   def new
@@ -122,7 +120,7 @@ class UsersController < ApplicationController
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
         flash[:notice] = "Your password has been changed"
-        redirect_to user_path
+        redirect_to user_path(@user)
       else
         render :action => "password"
       end
@@ -131,6 +129,11 @@ class UsersController < ApplicationController
       render :action => "password"
     end
   end
+  
+  protected
+    def find_user
+      @user = User.find_by_login!(params[:id])
+    end
 
 
 end

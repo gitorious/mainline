@@ -199,7 +199,7 @@ class ProjectsControllerTest < ActionController::TestCase
       users(:johan).update_attributes(:accepted_license_agreement_version => '222')
       login_as :johan
       post :create
-      assert_redirected_to(user_license_path)
+      assert_redirected_to(user_license_path(users(:johan)))
     end
   
     should "projects/create should require login" do

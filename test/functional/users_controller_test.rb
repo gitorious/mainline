@@ -253,62 +253,70 @@ class UsersControllerTest < ActionController::TestCase
     setup do
       login_as :johan
     end
-  
-#  should "GET /account should require login" do
-#    session[:user_id] = nil
-#    get :show
-#    assert_response :redirect
-#    assert_redirected_to new_sessions_path
-#  end
-  
-#  should "GET /account is successful" do
-#    get :show
-#    assert_response :success
-#  end
+    
+    should "require current_user" do
+      login_as :moe
+      get :edit, :id => users(:johan).to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
+    end
   
     should "GET /users/johan/edit is successful" do
-      get :edit
+      get :edit, :id => users(:johan).to_param
       assert_response :success
     end
   
     should "PUT /users/create with valid data is successful" do
-      put :update, :user => {:password => "fubar", :password_confirmation => "fubar"}
+      put :update, :id => users(:johan).to_param, :user => {
+        :password => "fubar", 
+        :password_confirmation => "fubar"
+      }
       assert !flash[:notice].nil?
-      assert_redirected_to(account_path)
+      assert_redirected_to(user_path(assigns(:user)))
+    end
+
+    should "GET require current_user" do
+      login_as :moe
+      get :password, :id => users(:johan).to_param
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
     end
   
-# should "PUT /user should redirect to show" do
-#    u = users(:johan)
-#    u.update_attributes(:aasm_state => 'pending')
-#    put :update, :user => {}
-#    assert !flash[:notice].nil?
-#    assert_redirected_to(account_path)
-#  end
-  
     should "GET /users/johan/password is a-ok" do
-      get :password
+      get :password, :id => users(:johan).to_param
       assert_response :success
       assert_equal users(:johan), assigns(:user)
     end
-  
-    should "PUT /users/joan/update_password updates password if old one matches" do
-      put :update_password, :user => {
+    
+    should "PUT requires current_user" do
+      login_as :moe
+      put :update_password, :id => users(:johan).to_param, :user => {
         :current_password => "test", 
         :password => "fubar",
         :password_confirmation => "fubar" }
-      assert_redirected_to(account_path)
+      assert_response :redirect
+      assert_redirected_to user_path(users(:moe))
+    end
+  
+    should "PUT /users/joan/update_password updates password if old one matches" do
+      user = users(:johan)
+      put :update_password, :id => user.to_param, :user => {
+        :current_password => "test", 
+        :password => "fubar",
+        :password_confirmation => "fubar" }
+      assert_redirected_to(user_path(user))
       assert_match(/Your password has been changed/i, flash[:notice])
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+      assert_equal user, User.authenticate(user.email, "fubar")
     end
   
     should "PUT /users/johan/update_password does not update password if old one is wrong" do
-      put :update_password, :user => {
+      put :update_password, :id => users(:johan).to_param, :user => {
         :current_password => "notthecurrentpassword", 
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_nil flash[:notice]
       assert_match(/doesn't seem to match/, flash[:error])
-      assert_template("accounts/password")
+      assert_template("users/password")
       assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
       assert_nil User.authenticate(users(:johan).email, "fubar")
     end
@@ -316,7 +324,7 @@ class UsersControllerTest < ActionController::TestCase
     should " be able to update password, even if user is openid enabled" do
       user = users(:johan)
       user.update_attribute(:identity_url, "http://johan.someprovider.com/")
-      put :update_password, :user => {
+      put :update_password, :id => user.to_param, :user => {
         :current_password => "test", 
         :password => "fubar",
         :password_confirmation => "fubar" }
@@ -324,12 +332,13 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end 
 
-    should " be able to update password, even if user created his account with openid" do
+    should "be able to update password, even if user created his account with openid" do
       user = users(:johan)
       user.update_attribute(:crypted_password, nil)
-      put :update_password, :user => {
+      put :update_password, :id => user.to_param, :user => {
         :password => "fubar",
         :password_confirmation => "fubar" }
+      assert_redirected_to user_path(user)
       assert_match(/Your password has been changed/i, flash[:notice])
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end

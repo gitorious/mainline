@@ -47,13 +47,13 @@ class ApplicationController < ActionController::Base
     def require_user_has_ssh_keys
       unless current_user.ssh_keys.count > 0
         flash[:error] = I18n.t "application.require_ssh_keys_error"
-        redirect_to new_user_key_path
+        redirect_to new_user_key_path(current_user)
         return 
       end
     end
 
     def require_current_user
-      unless params_user == current_user
+      unless @user == current_user
         flash[:error] = I18n.t "application.require_current_user", :title => current_user.title
         redirect_to user_path(current_user)
         return
@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
       unless current_user.current_license_agreement_accepted?
         store_location
         flash[:error] = I18n.t "views.license.terms_not_accepted"
-        redirect_to user_license_path
+        redirect_to user_license_path(current_user)
         return
       end
     end
