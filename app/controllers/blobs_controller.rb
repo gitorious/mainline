@@ -35,6 +35,7 @@ class BlobsController < ApplicationController
     unless @blob.respond_to?(:data) # it's a tree
       redirect_to project_repository_tree_path(@project, @repository, @commit.id, @path)
     end
+    cache_for 2.minutes
   end
 
   def raw
@@ -51,6 +52,7 @@ class BlobsController < ApplicationController
       flash[:error] = I18n.t "blogs_controller.raw_error"
       redirect_to project_repository_path(@project, @repository) and return
     end
+    cache_for 2.minutes
     render :text => @blob.data, :content_type => @blob.mime_type
   end
   
