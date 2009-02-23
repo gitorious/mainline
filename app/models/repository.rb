@@ -204,7 +204,7 @@ class Repository < ActiveRecord::Base
     unless owned_by_group?
       transaction do
         if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
-          committerships.delete(existing)
+          existing.destroy
         end
         self.owner = another_owner
         committerships.create!(:committer => another_owner)
