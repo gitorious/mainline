@@ -11,7 +11,7 @@ else
   conf_file = File.join(BASE_DIR, "config/gitorious.yml")
 end
 
-GitoriousConfig = YAML.load_file(conf_file)
+GitoriousConfig = YAML::load_file(conf_file)['production']
 
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
