@@ -28,7 +28,7 @@
   <% @group.repositories.each do |repository| -%>
     <li>
       <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
-      <%= link_to h(repository.name), group_repository_path(@group, repository) -%>
+      <%= link_to h(repository.name), group_project_repository_path(@group, repository.project, repository) -%>
       <div class="hint page">
         <%= markdown(sanitize(repository.description)) -%>
       </div>

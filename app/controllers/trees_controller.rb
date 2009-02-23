@@ -21,8 +21,8 @@ class TreesController < ApplicationController
   before_filter :check_repository_for_commits
   
   def index
-    redirect_to(project_repository_tree_path(@project, @repository, 
-        branch_with_tree(@repository.head_candidate_name, [])))
+    redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
+                  @project, @repository, branch_with_tree(@repository.head_candidate_name, []))
   end
   
   def show

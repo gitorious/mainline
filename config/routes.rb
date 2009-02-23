@@ -41,8 +41,8 @@ ActionController::Routing::Routes.draw do |map|
     repo.commits        "commits", :controller => "commits", :action => "index"
     repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
     repo.commit         "commit/:id.:format", :controller => "commits", :action => "show"
-    repo.trees          "tree/", :controller => "trees", :action => "index"
-    repo.tree           "tree/*branch_and_path", :controller => "trees", :action => "show"
+    repo.trees          "trees/", :controller => "trees", :action => "index"
+    repo.tree           "trees/*branch_and_path", :controller => "trees", :action => "show"
     repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
     repo.archive_tar    "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
     #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
@@ -58,6 +58,7 @@ ActionController::Routing::Routes.draw do |map|
     }
   }
   
+    
   map.root :controller => "site", :action => "index"
   
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
@@ -84,9 +85,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :groups, :as => "teams" do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
     grp.resources(:repositories, repository_options, &repository_proc)
-    # grp.resources :projects do |p|
-    #   p.resources(:repositories, repository_options, &repository_proc)
-    # end
+    grp.resources :projects do |p|
+      p.resources(:repositories, repository_options, &repository_proc)
+    end
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
     projects.resources :pages, :member => { :history => :get }
@@ -99,19 +100,19 @@ ActionController::Routing::Routes.draw do |map|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'
   end
-
+  
   map.dashboard "dashboard", :controller => "site", :action => "dashboard"  
   map.about "about", :controller => "site", :action => "about"
   map.faq "about/faq", :controller => "site", :action => "faq"
-
+  
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
   end
-
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
-  
+    
   # See the routing_filter plugin and lib/route_filters/*
   map.filter "repository_owner_namespacing", :file => "route_filters/repository_owner_namespacing"
 end

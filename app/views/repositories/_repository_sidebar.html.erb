@@ -1,6 +1,6 @@
 <li class="clone">
   <div class="name">
-    <%= link_to h(repository.name), [@owner, repository] -%>
+    <%= link_to h(repository.name), [repository.owner, repository.project, repository] -%>
   </div>
   <% if repository.owned_by_group? -%>
     <div class="group">

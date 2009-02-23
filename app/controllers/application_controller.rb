@@ -44,6 +44,33 @@ class ApplicationController < ActionController::Base
   end
   
   protected
+    # return the url with the +repo+.owner prefixed if it's a mainline repo,
+    # otherwise return the +path_spec+
+    # if +path_spec+ is an array (and no +args+ given) it'll use that as the 
+    # polymorphic-url-style (eg [@project, @repo, @foo])
+    def repo_owner_path(repo, path_spec, *args)
+      if repo.team_repo?
+        if path_spec.is_a?(Symbol)
+          return send("group_#{path_spec}", *args.unshift(repo.owner))
+        else
+          return *path_spec.unshift(repo.owner)
+        end
+      elsif repo.user_repo?
+        if path_spec.is_a?(Symbol)
+          return send("user_#{path_spec}", *args.unshift(repo.owner))
+        else
+          return *path_spec.unshift(repo.owner)
+        end
+      else
+        if path_spec.is_a?(Symbol)
+          return send(path_spec, *args)
+        else
+          return *path_spec
+        end
+      end
+    end
+    helper_method :repo_owner_path
+  
     def require_user_has_ssh_keys
       unless current_user.ssh_keys.count > 0
         flash[:error] = I18n.t "application.require_ssh_keys_error"

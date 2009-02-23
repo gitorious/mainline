@@ -30,7 +30,7 @@
 <ul class="tab_menu">
   <li class="selected"><%= t("views.comments.diff") %></li>
   <li><%= link_to t("views.comments.total", :total => @comment_count), 
-            project_repository_commit_comment_path(@project, @repository, @commit.id) -%></li>
+            repo_owner_path(@repository, :project_repository_commit_comment_path, @project, @repository, @commit.id) -%></li>
 </ul>
 
 

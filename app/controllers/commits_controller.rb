@@ -22,8 +22,8 @@ class CommitsController < ApplicationController
   
   def index
     if params[:branch].blank?
-      redirect_to project_repository_commits_in_ref_path(@project, 
-                    @repository, @repository.head_candidate.name)
+      redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, 
+                      @repository, @repository.head_candidate.name)
       return
     end
     @git = @repository.git
@@ -66,4 +66,6 @@ class CommitsController < ApplicationController
     end
   end
   
+  protected
+    
 end

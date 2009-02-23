@@ -47,14 +47,14 @@ class RepositoriesControllerTest < ActionController::TestCase
         :id => @repo.to_param,
       })
     
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}/tree", {
+      assert_generates("/#{@project.to_param}/#{@repo.to_param}/trees", {
         :controller => "trees", 
         :action => "index", 
         :project_id => @project.to_param,
         :repository_id => @repo.to_param,
       })
 
-      assert_generates("/#{@project.to_param}/#{@repo.to_param}/tree/foo/bar/baz", {
+      assert_generates("/#{@project.to_param}/#{@repo.to_param}/trees/foo/bar/baz", {
         :controller => "trees", 
         :action => "show", 
         :project_id => @project.to_param,
