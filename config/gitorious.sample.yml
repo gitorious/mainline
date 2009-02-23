@@ -1,46 +1,51 @@
-# The session secret key (`apg -m 64` is always useful for this kinda stuff)
-cookie_secret: ssssht
-
-# The path where git repositories are stored. The actual (bare) repositories resides
-# in repository_base_path/#{project.slug}/#{repository.name}.git/:
-repository_base_path: "/tmp/git-repos"
-
-# Stuff that's in the html <head>. custom stats javascript code etc
-extra_html_head_data: 
+development:
   
-# System message that will appear on all pages if present
-system_message: 
+production: 
   
-# Port the ./script/gitorious script should use:
-gitorious_client_port: 3000
+test:
+  # The session secret key (`apg -m 64` is always useful for this kinda stuff)
+  cookie_secret: ssssht
 
-# Host the ./script/gitorious script should use:
-gitorious_client_host: localhost
+  # The path where git repositories are stored. The actual (bare) repositories resides
+  # in repository_base_path/#{project.slug}/#{repository.name}.git/:
+  repository_base_path: "/tmp/git-repos"
 
-# Host which is serving the gitorious app, eg "gitorious.org"
-gitorious_host: gitorious.org
+  # Stuff that's in the html <head>. custom stats javascript code etc
+  extra_html_head_data: 
+  
+  # System message that will appear on all pages if present
+  system_message: 
+  
+  # Port the ./script/gitorious script should use:
+  gitorious_client_port: 3000
 
-# User which is running git daemon
-gitorious_user: git
+  # Host the ./script/gitorious script should use:
+  gitorious_client_host: localhost
 
-# Email spam on server errors to:
-exception_notification_emails:  
+  # Host which is serving the gitorious app, eg "gitorious.org"
+  gitorious_host: gitorious.org
 
-# Mangle visible e-mail addresses (spam protection)
-mangle_email_addresses: true
+  # User which is running git daemon
+  gitorious_user: git
 
-# Enable or Disable Public Mode (true) or Private Mode (false)
-public_mode: true
+  # Email spam on server errors to:
+  exception_notification_emails:  
 
-# Define your locale
-locale: en
+  # Mangle visible e-mail addresses (spam protection)
+  mangle_email_addresses: true
 
-# Where should we store generated tarballs?
-# (should be readable by webserver, since we tell it to send the file using X-Sendfile)
-archive_cache_dir: "/path/to/tarballs-cache"
-# Which directory should we work in when we generate tarballs, before moving 
-# them to the above dir?
-archive_work_dir: "/path/to/tarballs-work"
+  # Enable or Disable Public Mode (true) or Private Mode (false)
+  public_mode: true
 
-# is it only site admins who can create new projects?
-only_site_admins_can_create_projects: false
+  # Define your locale
+  locale: en
+
+  # Where should we store generated tarballs?
+  # (should be readable by webserver, since we tell it to send the file using X-Sendfile)
+  archive_cache_dir: "/path/to/tarballs-cache"
+  # Which directory should we work in when we generate tarballs, before moving 
+  # them to the above dir?
+  archive_work_dir: "/path/to/tarballs-work"
+
+  # is it only site admins who can create new projects?
+  only_site_admins_can_create_projects: false

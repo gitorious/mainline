@@ -18,7 +18,7 @@ config.action_controller.allow_forgery_protection    = false
 
 # ActionMailer::Base.default_url_options[:protocol] = 'https'
 ActionMailer::Base.default_url_options[:host] =
-  YAML.load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))["gitorious_host"]
+  YAML.load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))[RAILS_ENV]["gitorious_host"]
 # Tell ActionMailer not to deliver emails to the real world.
 # The :test delivery method accumulates sent emails in the
 # ActionMailer::Base.deliveries array.

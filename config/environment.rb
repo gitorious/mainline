@@ -73,10 +73,6 @@ Rails::Initializer.run do |config|
   # If you change this key, all old sessions will become invalid!
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
-  config.action_controller.session = {
-    :key    => '_ks1_session_id',
-    :secret => YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))["cookie_secret"]
-  }
 
   # Use the database for sessions instead of the cookie-based default,
   # which shouldn't be used to store highly confidential information
