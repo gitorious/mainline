@@ -196,6 +196,44 @@ class RepositoriesControllerTest < ActionController::TestCase
         :id => @repo.to_param,
       })
     end
+    
+    should "recognize routing like /~user/projectname/reponame" do
+      user = users(:johan)
+      assert_recognizes({
+        :controller => "repositories",
+        :action => "show", 
+        :project_id => @project.to_param,
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      }, "/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}")
+    
+      assert_generates("/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}", {
+        :controller => "repositories", 
+        :action => "show", 
+        :project_id => @project.to_param,
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      })
+    end
+    
+    should "recognize routing like /~user/projectname/reponame/action" do
+      user = users(:johan)
+      assert_recognizes({
+        :controller => "repositories",
+        :action => "clone", 
+        :project_id => @project.to_param,
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      }, "/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}/clone")
+    
+      assert_generates("/~#{user.to_param}/#{@project.to_param}/#{@repo.to_param}/clone", {
+        :controller => "repositories", 
+        :action => "clone", 
+        :project_id => @project.to_param,
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      })
+    end
   end
   
   context "Routing, by teams" do

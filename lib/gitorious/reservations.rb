@@ -2,7 +2,8 @@ module Gitorious
   class Reservations
     class << self
       def unaccounted_root_names
-        ["teams", "dashboard", "about", "login", "logout"]
+        [ "teams", "dashboard", "about", "login", "logout", "commit", 
+          "commits", "tree", "archive-tarball", "archive-zip" ]
       end
       
       def reserved_root_names

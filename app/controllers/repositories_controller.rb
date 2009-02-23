@@ -77,6 +77,8 @@ class RepositoriesController < ApplicationController
     end
   end
   
+  undef_method :clone
+  
   def clone
     @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
     unless @repository_to_clone.has_commits?

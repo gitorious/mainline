@@ -68,7 +68,11 @@ ActionController::Routing::Routes.draw do |map|
     user.resources :keys
     user.resource :license
     user.resources(:repositories, repository_options, &repository_proc)
+    user.resources :projects do |p|
+      p.resources(:repositories, repository_options, &repository_proc)
+    end
   end
+  
   map.resources  :events, :member => {:commits => :get}
   
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
@@ -80,6 +84,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :groups, :as => "teams" do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
     grp.resources(:repositories, repository_options, &repository_proc)
+    # grp.resources :projects do |p|
+    #   p.resources(:repositories, repository_options, &repository_proc)
+    # end
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
     projects.resources :pages, :member => { :history => :get }

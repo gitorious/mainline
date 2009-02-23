@@ -15,6 +15,8 @@ module RoutingFilter
     PREFIXES_RE = Regexp.union(*PREFIXES_TO_CONTROLLER.keys)
     CONTROLLER_RE = Regexp.union(*PREFIXES_TO_CONTROLLER.invert.keys)
     
+    # TODO: There's a special place in hell for this kinda logic; clean up
+    
     def around_recognize(path, env, &block)
       if !reserved?(path)
          if path =~ /^\/(#{PREFIXES_RE})(#{NAME_WITH_FORMAT_RE})(\/.+)?/
@@ -22,7 +24,26 @@ module RoutingFilter
            name = $2
            rest = $3
            if rest && !reserved_action_name?(name, controller) && !reserved?(rest, controller) && repository_scope?(rest)
-             path.replace "/#{controller}/#{name}/repositories#{rest}".chomp("/")
+             # Handle repositories namespaced like ":user_or_team_id/:project_id/:repo_id"
+             rest, project_or_repoish = rest.sub(/^\//, '').split("/", 2).reverse
+             if !project_or_repoish.blank? && !rest.blank? && !reserved_action_name?(rest, "repositories") # got something that looks namespaced
+               if reserved_action_name?(rest, controller) # we're looking for an action on repositories
+                 path.replace "/#{controller}/#{name}/repositories/#{project_or_repoish}/#{rest}".chomp("/")
+               else # We're in the /user_or_team/projectname/... scope
+                 # We actually wanted another controller under repositories, not a repo:
+                 if CONTROLLER_NAMES.include?(rest.split(".", 2).first.split("/")[0])
+                   path.replace "/#{controller}/#{name}/repositories/#{project_or_repoish}/#{rest}".chomp("/")
+                 else
+                   path.replace "/#{controller}/#{name}/projects/#{project_or_repoish}/repositories/#{rest}".chomp("/")
+                 end
+               end
+             else
+               if project_or_repoish
+                 path.replace "/#{controller}/#{name}/repositories/#{project_or_repoish}/#{rest}".chomp("/")
+               else
+                 path.replace "/#{controller}/#{name}/repositories/#{rest}".chomp("/")
+               end
+             end
            else
              path.replace "/#{controller}/#{name}#{rest}".chomp("/")
            end
@@ -41,7 +62,13 @@ module RoutingFilter
         if result =~ /^\/(#{CONTROLLER_RE})\/(#{NAME_WITH_FORMAT_RE})\/repositories\/(#{NAME_WITH_FORMAT_RE})(.+)?/ && !reserved_action_name?($3, $1)
           result.replace "/#{PREFIXES_TO_CONTROLLER.invert[$1]}#{$2}/#{$3}#{$4}"
         elsif result =~ /^\/(#{CONTROLLER_RE})\/(#{NAME_WITH_FORMAT_RE})(.+)?/ && !reserved_action_name?($2, $1)
-          result.replace "/#{PREFIXES_TO_CONTROLLER.invert[$1]}#{$2}#{$3}"
+          controller, id, repo = [$1, $2, $3]
+          if repo =~ /\/projects\/(#{NAME_WITH_FORMAT_RE})\/repositories\/(#{NAME_WITH_FORMAT_RE})(.+)?/
+            #result.replace "/#{PREFIXES_TO_CONTROLLER.invert[controller]}#{id}#{repo}"
+            result.replace "/#{PREFIXES_TO_CONTROLLER.invert[controller]}#{id}/#{$1}/#{$2}#{$3}"
+          else
+            result.replace "/#{PREFIXES_TO_CONTROLLER.invert[controller]}#{id}#{repo}"
+          end
         end
       end
     end
@@ -65,6 +92,8 @@ module RoutingFilter
           ProjectsController.action_methods.to_a
         when "groups", "teams"
           GroupsController.action_methods.to_a
+        when "repositories"
+          RepositoriesController.action_methods.to_a
         else
           []
         end
