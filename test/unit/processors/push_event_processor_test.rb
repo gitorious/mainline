@@ -43,13 +43,28 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.repository = Repository.first
     assert_equal :create, @processor.action
     assert @processor.head?
-    assert_equal 4, @processor.events.size
+    assert_equal 1, @processor.events.size
     assert_equal Action::CREATE_BRANCH, @processor.events.first.event_type
     assert_equal 'foo_branch', @processor.events.first.identifier
+    @processor.expects(:log_event).times(1)
+    @processor.log_events    
+  end
+  
+  should 'only fetch commits for new branches when the new branch is master' do
+    stub_git_log_and_user
+    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
+    @processor.repository = Repository.first
+    assert_equal :create, @processor.action
+    assert @processor.head?
+    assert_equal 4, @processor.events.size
+    assert_equal Action::CREATE_BRANCH, @processor.events.first.event_type
+    assert_equal 'master', @processor.events.first.identifier
     assert_equal Action::COMMIT, @processor.events[1].event_type
     @processor.expects(:log_event).times(4)
     @processor.log_events    
   end
+  
+  
   
  should "returns the correct type and a set of events for a commit" do
     stub_git_log_and_user
@@ -71,7 +86,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
  should "creates commit events even if the committer is unknown" do
     stub_git_log_and_user
     @processor.repository = Repository.first
-    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
+    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
     assert_equal :create, @processor.action
     assert_equal 4, @processor.events.size
     assert_equal 'johan@johansorensen.com', @processor.events.first.email

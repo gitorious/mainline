@@ -119,7 +119,9 @@ class PushEventProcessor < ApplicationProcessor
       e.identifier = @identifier
       e.email = user.email
       result = [e]
-      result = result + events_from_git_log(@newrev)
+      if @identifier == 'master'
+        result = result + events_from_git_log(@newrev) 
+      end
       return result
     elsif action == :delete
       e = EventForLogging.new
