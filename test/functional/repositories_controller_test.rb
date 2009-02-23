@@ -26,7 +26,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     @repo = repositories(:johans)
   end
   
-  context "Routing" do
+  context "Routing, by projects" do
     should "recognizes routing like /projectname/reponame" do
       assert_recognizes({
         :controller => "repositories", 
@@ -46,7 +46,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :project_id => @project.to_param,
         :id => @repo.to_param,
       })
-      
+    
       assert_generates("/#{@project.to_param}/#{@repo.to_param}/tree", {
         :controller => "trees", 
         :action => "index", 
@@ -62,14 +62,14 @@ class RepositoriesControllerTest < ActionController::TestCase
         :branch_and_path => %w[foo bar baz]
       })
     end
-  
+
     should "recognizes routing like /projectname/repositories" do
       assert_recognizes({
         :controller => "repositories",
         :action => "index", 
         :project_id => @project.to_param
       }, "/#{@project.to_param}/repositories")
-    
+  
       assert_recognizes({
         :controller => "repositories",
         :action => "index", 
@@ -81,7 +81,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :project_id => @project.to_param
       })
     end
-  
+
     should "recognizes routing like /projectname/reponame, with a non-html format" do
       assert_recognizes({
         :controller => "repositories", 
@@ -97,7 +97,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :project_id => @project.to_param,
         :repository_id => @repo.to_param,
       }, "/#{@project.to_param}/#{@repo.to_param}/merge_requests.xml")
-      
+    
       assert_generates("/#{@project.to_param}/#{@repo.to_param}.xml", {
         :controller => "repositories", 
         :action => "show", 
@@ -112,7 +112,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :repository_id => @repo.to_param,
       })
     end
-  
+
     should "recognizes routing like /projectname/repositories, with a non-html format" do
       assert_recognizes({
         :controller => "repositories",
@@ -120,7 +120,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :format => "xml",
         :project_id => @project.to_param
       }, "/#{@project.to_param}/repositories.xml")
-      
+    
       assert_generates("/#{@project.to_param}/repositories.xml", {
         :controller => "repositories", 
         :action => "index", 
@@ -128,7 +128,9 @@ class RepositoriesControllerTest < ActionController::TestCase
         :format => "xml",
       })
     end
+  end
   
+  context "Routing, by users" do
     should "recognizes routing like /~username/repositories" do
       user = users(:johan)
       assert_recognizes({
@@ -136,14 +138,14 @@ class RepositoriesControllerTest < ActionController::TestCase
         :action => "index", 
         :user_id => user.to_param
       }, "/~#{user.to_param}/repositories")
-      
+    
       assert_generates("/~#{user.to_param}/repositories", {
         :controller => "repositories", 
         :action => "index", 
         :user_id => user.to_param,
       })
     end
-  
+
     should "recognizes routing like /~username/repositories, with a non-html format" do
       user = users(:johan)
       assert_recognizes({
@@ -152,7 +154,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :format => "xml",
         :user_id => user.to_param
       }, "/~#{user.to_param}/repositories.xml")
-      
+    
       assert_generates("/~#{user.to_param}/repositories.xml", {
         :controller => "repositories", 
         :action => "index", 
@@ -160,7 +162,43 @@ class RepositoriesControllerTest < ActionController::TestCase
         :format => "xml",
       })
     end
+    
+    should "recognize routing like /~user/reponame" do
+      user = users(:johan)
+      assert_recognizes({
+        :controller => "repositories",
+        :action => "show", 
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      }, "/~#{user.to_param}/#{@repo.to_param}")
+    
+      assert_generates("/~#{user.to_param}/#{@repo.to_param}", {
+        :controller => "repositories", 
+        :action => "show", 
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      })
+    end
+    
+    should "recognize routing like /~user/reponame/action" do
+      user = users(:johan)
+      assert_recognizes({
+        :controller => "repositories",
+        :action => "edit", 
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      }, "/~#{user.to_param}/#{@repo.to_param}/edit")
+    
+      assert_generates("/~#{user.to_param}/#{@repo.to_param}/edit", {
+        :controller => "repositories", 
+        :action => "edit", 
+        :user_id => user.to_param,
+        :id => @repo.to_param,
+      })
+    end
+  end
   
+  context "Routing, by teams" do
     should "recognizes routing like /+teamname/repositories" do
       team = groups(:team_thunderbird)
       assert_recognizes({
@@ -168,14 +206,32 @@ class RepositoriesControllerTest < ActionController::TestCase
         :action => "index", 
         :group_id => team.to_param
       }, "/+#{team.to_param}/repositories")
-      
+    
       assert_generates("/+#{team.to_param}/repositories", {
         :controller => "repositories", 
         :action => "index", 
         :group_id => team.to_param,
       })
     end
-  
+    
+    should "recognizes routing like /+teamname/repo" do
+      team = groups(:team_thunderbird)
+      repo = team.repositories.first
+      assert_recognizes({
+        :controller => "repositories",
+        :action => "show", 
+        :group_id => team.to_param,
+        :id => repo.to_param
+      }, "/+#{team.to_param}/#{repo.to_param}")
+    
+      assert_generates("/+#{team.to_param}/#{repo.to_param}", {
+        :controller => "repositories", 
+        :action => "show", 
+        :group_id => team.to_param,
+        :id => repo.to_param
+      })
+    end
+
     should "recognizes routing like /+teamname/repo/action" do
       team = groups(:team_thunderbird)
       repo = team.repositories.first
@@ -185,7 +241,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :group_id => team.to_param,
         :id => repo.to_param
       }, "/+#{team.to_param}/#{repo.to_param}/clone")
-      
+    
       assert_generates("/+#{team.to_param}/#{repo.to_param}/clone", {
         :controller => "repositories", 
         :action => "clone", 
@@ -193,7 +249,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :id => repo.to_param
       })
     end
-  
+
     should "recognizes routing like /+teamname/repositories, with a non-html format" do
       team = groups(:team_thunderbird)
       assert_recognizes({
