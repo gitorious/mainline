@@ -23,7 +23,7 @@ module UsersHelper
   end
 
   def encoded_mail(email)
-    email.gsub!(/@/,"AT@NOSPAM@")
-    email.gsub!(/\./,"DOT")
+    email = email.gsub(/@/,"AT@NOSPAM@")
+    email.gsub(/\./,"DOT")
   end
 end
