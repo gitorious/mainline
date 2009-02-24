@@ -43,11 +43,6 @@ module CommitsHelper
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
     out << differ.render(Gitorious::Diff::InlineTableCallback.new)
-    out << %Q{<tr class="toggle_diff"><td colspan="3">}
-    out << %Q{<small>#{link_to_function "toggle raw diff", "$('diff#{udiff.object_id}').toggle()"}</small></td></tr>}
-    out << %Q{<tr class="raw_diff"><td colspan="3" style="display:none" id="diff#{udiff.object_id}">}
-    out << %Q{<pre>#{h(udiff)}</pre>}
-    out << "</td></tr>"
     out << "</table>"
     out
   end
@@ -60,11 +55,6 @@ module CommitsHelper
     out << %Q{<thead><th class="line-numbers"></th><th></th>}
     out << %Q{<th class="line-numbers"></th><th></th></thead>}
     out << differ.render(Gitorious::Diff::SidebysideTableCallback.new)
-    out << %Q{<tr class="toggle_diff"><td colspan="4">}
-    out << %Q{<small>#{link_to_function "toggle raw diff", "$('diff#{udiff.object_id}').toggle()"}</small></td></tr>}
-    out << %Q{<tr class="raw_diff"><td colspan="4" style="display:none" id="diff#{udiff.object_id}">}
-    out << %Q{<pre>#{h(udiff)}</pre>}
-    out << "</td></tr>"
     out << "</table>"
     out
   end

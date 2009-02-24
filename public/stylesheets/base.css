@@ -1243,7 +1243,7 @@ table tr td.code {
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
  background: #fff;
  font: 95%/110% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
- border-right: 1px solid #999;
+ border-right: 1px solid #ccc;
 }
 
 table tr td.code pre {

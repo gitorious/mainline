@@ -63,13 +63,16 @@
       <% end -%>
     </ul>
     <ul class="meta">
-      <li><strong><%= t("views.commits.sha1") %>:</strong> <%=h @commit.id[0,7] -%></li>
       <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id[0,7]), 
         repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, @commit.id) -%></li>
       <% @commit.parents.each do |parent_sha| -%>
         <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent_sha.id[0,7]),
          repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, parent_sha) -%></li>
       <% end -%>
+      <li>
+        <%= link_to "raw diff", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :diff) -%> 
+        | <%= link_to "raw patch", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :patch) -%>
+      </li>
     </ul>
   </div>
   <div class="clear"></div>
