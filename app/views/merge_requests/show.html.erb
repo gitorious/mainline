@@ -49,14 +49,31 @@ git push origin master
 <% if @merge_request.open? -%>
 <h2><%= t("views.merges.commits") %>:</h2>
 
-<ul class="shortlog">
-  <% @commits.each do |commit| -%>
-    <li><a href=""><%= link_to h(commit.id_abbrev), 
-      project_repository_commit_path(@project, @merge_request.source_repository, commit.id) -%></a> 
-    by <strong><%=h commit.committer.name -%></strong> <%=h time_ago_in_words(commit.committed_date) -%> ago
-    <div class="commit_message"><%= simple_format(h(commit.message)) -%></div></li>
-  <% end -%>
-</ul>
+<table class="select_commits_from_list">
+<% @commits.each_with_index do |commit, i| %>
+  <tr id="commit_<%= i -%>" class="commit_row">
+    <td class="commit-details meta">
+      <ul>
+        <li class="sha-abbrev">
+          <%= link_to commit.id_abbrev, 
+                repo_owner_path(@repository, :project_repository_commit_path, @project, @merge_request.source_repository, commit) %>
+        </li>
+        <li class="committer">
+          <strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong>
+        </li>
+      </ul>
+      <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
+    </td>
+    <td class="commit-details message">
+      <div class="commit_message inline">
+        <%= link_to h(truncate(commit.message, :length => 140)), 
+              repo_owner_path(@repository, :project_repository_commit_path, @project, @merge_request.source_repository, commit)  %>
+      </div>
+    </td>
+  </tr>
+<% end %>
+</table>
+
 <% end -%>
 
 <% content_for :submenu do -%>

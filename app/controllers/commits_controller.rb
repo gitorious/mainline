@@ -49,6 +49,8 @@ class CommitsController < ApplicationController
     @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
     @diffs = @commit.diffs
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
+    @committer_user = User.find_by_email(@commit.committer.email)
+    @author_user = User.find_by_email(@commit.author.email)
     respond_to do |format|
       format.html
       format.diff  { render :text => @diffs.map{|d| d.diff}.join("\n"), :content_type => "text/plain" }

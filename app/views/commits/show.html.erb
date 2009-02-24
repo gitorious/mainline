@@ -23,9 +23,7 @@
 
 <h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
 
-<a name="infobox"></a>
 <%= render :partial => "commit_infobox" -%>
-<div class="commit_message"><%= simple_format(h(@commit.message)) -%></div>
 
 <ul class="tab_menu">
   <li class="selected"><%= t("views.comments.diff") %></li>

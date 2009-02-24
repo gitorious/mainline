@@ -751,11 +751,15 @@ ul.icon_list li a {
 ul.infobox {
   background: #efefef;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
 }
 
 ul.infobox li {
-  margin-bottom: 0.2em;
+  margin-bottom: 0;
+}
+
+ul.infobox li.meta {
+  font-size: 11px;
 }
 
 table.repository_meta .infobox {
@@ -766,12 +770,60 @@ table.repository_meta .infobox ul {
   margin: 0;
 }
 
+/* commit info boxes*/
 
-#projects .infobox {
+.commit-infobox {
+  clear: both;
+  margin-top: 20px;
 }
 
-#projects .infobox ul {
+.commit-infobox .commit_message {
+  float: left;
+  margin: 0;
+  width: 550px;
 }
+.commit-infobox .commit_message p {
+  margin-top: 0;
+}
+
+.commit-infobox .commit-meta {
+  float: left;
+  border-left: 1px solid #ddd;
+  padding-left: 20px;
+  min-width: 350px;
+}
+
+.commit-infobox .commit-meta .people {
+  margin:0;
+}
+.commit-infobox .commit-meta .people small {
+  color: #666;
+}
+
+.commit-infobox .commit-meta .people .meta {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  /*color: #666;*/
+}
+
+.commit-infobox ul li.avatar div {
+  float: left;
+  display: inline; 
+  padding-right: 10px;
+  margin-top: 3px;
+}
+
+.commit-infobox ul.meta {
+  font-size: 12px;
+  color: #666;
+}
+
+.commit-infobox ul.meta li strong {
+  font-weight: normal;
+}
+
+
 
 ul.horizontal {
   display: inline;

@@ -26,4 +26,11 @@ module UsersHelper
     email = email.gsub(/@/,"AT@NOSPAM@")
     email.gsub(/\./,"DOT")
   end
+  
+  def mangled_mail(email)
+    user, domain = h(email).split("@", 2)
+    domain, ext = domain.split(".", 2)
+    user + " @" + domain[0, domain.length/2] + 
+      "&hellip;" + domain[-(domain.length/3)..-1] + ".#{ext}"
+  end
 end

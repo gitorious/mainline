@@ -18,19 +18,59 @@
 #++
 %>
 
-<ul class="infobox">
-  <li><div style="float: right; display: inline;"><%= link_to(gravatar(@commit.author.email, { :size => 64 }), :action => "show") %></div></li>
-  <li><strong><%= t("views.commits.date") %>:</strong> <%=h @commit.committed_date -%></li>
-  <li><strong><%= t("views.commits.committer") %>:</strong> <%=h @commit.committer.name -%>
-    (<%=h GitoriousConfig["mangle_email_addresses"] ? encoded_mail(@commit.committer.email) : @commit.committer.email -%>)</li>
-  <li><strong><%= t("views.commits.author") %>:</strong> <%=h @commit.author.name -%>
-    (<%=h GitoriousConfig["mangle_email_addresses"] ? encoded_mail(@commit.author.email) : @commit.author.email -%>)</li>
-  <li><strong><%= t("views.commits.sha1") %>:</strong> <%=h @commit.id -%></li>
-  <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id), 
-    repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, @commit.id) -%></li>
-  <% @commit.parents.each do |parent_sha| -%>
-    <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent_sha),
-     repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, parent_sha) -%></li>
-  <% end -%>
-
-</ul>
+<a name="infobox"></a>
+<div class="commit-infobox">
+  <div class="commit_message">
+    <%= simple_format(h(@commit.message)) -%>
+  </div>
+  
+  <div class="commit-meta">
+    <ul class="people">
+      <li class="avatar">
+        <div>
+          <%= link_to(gravatar(@commit.committer.email, { :size => 32 }), :action => "show") %>
+        </div>
+      </li>
+      <li>
+        <% if @committer_user -%>
+          <%= link_to h(@committer_user.title), @committer_user -%>
+        <% else -%>
+          <%=h @commit.committer.name -%>
+          &lt;<%= GitoriousConfig["mangle_email_addresses"] ? mangled_mail(@commit.committer.email) : h(@commit.committer.email) -%>&gt;
+        <% end -%>
+        <% if @commit.committer != @commit.author -%>
+          <small>(<%= t("views.commits.committer") %>)</small>
+        <% end -%>
+      </li>
+      <li class="meta"><%=h time_ago_in_words @commit.committed_date -%> ago</li>
+      <% if @commit.committer != @commit.author -%>
+        <li class="clear"></li>
+        <li class="avatar">
+          <div>
+            <%= link_to(gravatar(@commit.author.email, { :size => 32 }), :action => "show") %>
+          </div>
+        </li>
+        <li>
+          <% if @author_user -%> 
+            <%= link_to h(@author_user.title), @author_user -%>
+          <% else -%>
+            <%=h @commit.author.name -%>
+            &lt;<%= GitoriousConfig["mangle_email_addresses"] ? mangled_mail(@commit.author.email) : h(@commit.author.email) -%>&gt;
+          <% end -%>
+          <small>(<%= t("views.commits.author") %>)</small>
+        </li>
+        <li class="meta"><%=h time_ago_in_words @commit.authored_date -%> ago</li>
+      <% end -%>
+    </ul>
+    <ul class="meta">
+      <li><strong><%= t("views.commits.sha1") %>:</strong> <%=h @commit.id[0,7] -%></li>
+      <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id[0,7]), 
+        repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, @commit.id) -%></li>
+      <% @commit.parents.each do |parent_sha| -%>
+        <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent_sha.id[0,7]),
+         repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, parent_sha) -%></li>
+      <% end -%>
+    </ul>
+  </div>
+  <div class="clear"></div>
+</div>

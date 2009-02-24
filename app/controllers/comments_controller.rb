@@ -34,6 +34,8 @@ class CommentsController < ApplicationController
   def commit
     @git = @repository.git
     @commit = @git.commit(params[:sha])
+    @committer_user = User.find_by_email(@commit.committer.email)
+    @author_user = User.find_by_email(@commit.author.email)
     @comments = @repository.comments.find_all_by_sha1(params[:sha], :include => :user)
   end
   
