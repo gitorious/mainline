@@ -17,6 +17,10 @@
 #++
 %>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @repository_to_clone} -%>
+<% end -%>
+
 <script type="text/javascript" charset="utf-8">
   Event.observe(window, "dom:loaded", function() {
     $("repository_owner_id_group_select").observe("change", function(e) {
@@ -52,6 +56,3 @@
 
 <p><%= t("views.repos.clone_note") %></p>
 
-<% content_for :submenu do -%>
-  <li><%= link_to t("views.repos.back"), [@owner, @repository_to_clone] -%>
-<% end -%>

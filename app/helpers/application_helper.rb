@@ -239,9 +239,12 @@ module ApplicationHelper
         category = "repository"
       when Action::COMMENT
         project = target.project
-        repo = target.repository
+        repo = target.target.target
         
-        action = "<strong>#{I18n.t("application_helper.event_commented")}</strong> on #{link_to h(project.slug), project_path(project)}/#{link_to h(repo.name), project_repository_url(project, repo)}"
+        action = "<strong>#{I18n.t("application_helper.event_commented")}</strong> on #{link_to h(project.slug), project_path(project)}/#{link_to h(repo.name), [project, repo]}"
+        unless target.sha1.blank?
+          action << "/" + link_to(h(target.sha1[0,7]), repo_owner_path(repo, :project_repository_commit_path, project, repo, target.sha1))
+        end
         body = truncate(h(target.body), :length => 150)
         category = "comment"
       when Action::REQUEST_MERGE
