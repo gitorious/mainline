@@ -281,8 +281,8 @@ module ApplicationHelper
         category = "wiki"
       when Action::PUSH
         project = target.project
-        commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), :url => commits_event_path(event.to_param), :method => :get, :update => "commits_in_event_#{event.to_param}", :before => "$('commits_in_event_#{event.to_param}').show()")
-        action = "<strong>pushed #{commit_link}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
+        commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), :url => commits_event_path(event.to_param), :method => :get, :update => "commits_in_event_#{event.to_param}", :before => "$('commits_in_event_#{event.to_param}').toggle()")
+        action = "<strong>pushed #{commit_link}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name+':'+event.data), repo_owner_path(target, :project_repository_commits_in_ref_path, project, target, ensplat_path(event.data))}"
         body = "#{event.body}"
         category = 'push'
     end

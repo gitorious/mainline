@@ -132,7 +132,7 @@ class PushEventProcessor < ApplicationProcessor
     else
       e = EventForLogging.new
       e.event_type = Action::PUSH
-      e.message = "Pushed some changes"
+      e.message = "HEAD changed from #{@oldrev[0,7]} to #{@newrev[0,7]}"
       e.identifier = @identifier
       e.email = user.email
       e.commits = events_from_git_log("#{@oldrev}..#{@newrev}")
