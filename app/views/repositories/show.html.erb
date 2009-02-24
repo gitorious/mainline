@@ -71,6 +71,10 @@
     <% end -%>
     <% if @repository.owner.admin?(current_user) -%>
       <li class="add_committer"><%= link_to t("views.repos.btn_manage_committers"), [@repository.owner, @repository, :committerships] -%></li>
+    <% end -%>
+  </ul>
+  <ul class="links">
+    <% if @repository.owner.admin?(current_user) -%>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.owner, @repository] -%></li>
     <% end -%>
     <% if @repository.can_be_deleted_by?(current_user) -%>
