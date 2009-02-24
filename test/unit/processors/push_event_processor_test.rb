@@ -50,6 +50,12 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.log_events    
   end
   
+  should "return the correct namespaced identifier for a new branch" do
+     stub_git_log_and_user
+     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo/bar_branch'
+     assert_equal 'foo/bar_branch', @processor.events.first.identifier
+   end
+  
   should 'only fetch commits for new branches when the new branch is master' do
     stub_git_log_and_user
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'

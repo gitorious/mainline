@@ -64,7 +64,7 @@ class PushEventProcessor < ApplicationProcessor
   # Sets the commit summary, as served from git
   def commit_summary=(spec)
     @oldrev, @newrev, revname = spec.split(' ')
-    r, name, @identifier = revname.split("/")
+    r, name, @identifier = revname.split("/", 3)
     @head_or_tag = name == 'tags' ? :tag : :head
   end
   
