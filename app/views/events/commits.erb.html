@@ -1,7 +1,7 @@
-<table style="margin-top: 1em">
+<table class="commits_in_event">
 <% @commits.each do |c| %>
   <tr id="<%= dom_id(c) -%>">
-    <td valign="top" style="padding-right: 1em">
+    <td valign="top" class="avatar">
       <%= gravatar(c.email, :size => 16)  %>    
     </td>
     <td valign="top">
@@ -11,12 +11,12 @@
         <% else %>
           <%= link_to c.user.login, user_path(c.user) %> 
         <% end %>    
-        <strong>committed</strong> <%= link_to(c.data[0,8], project_repository_commit_path(c.project, c.target.target.target, c.data)) %>
+        <strong>committed</strong> <%= link_to(c.data[0,8], repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
         at <%= c.created_at.to_s(:short_time) %>
       </p>
-      <p>
-        <%= simple_format(sanitize(c.body)) %>      
-      </p>
+      <div class="commit_message">
+        <%= link_to(simple_format(sanitize(c.body)), repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
+      </div>
     </td>
   </tr>
 <% end %>
