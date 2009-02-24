@@ -30,14 +30,33 @@ class SSHClientTest < ActiveSupport::TestCase
     @not_ok_stub = stub("ok response mock", :body => "false nil")
   end
   
-  should "parses the project name from the passed in Strainer" do
+  should "parse the project name from the passed in Strainer" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal "foo", client.project_name
   end
-  
-  should "parses the repository name from the passed in Strainer" do
+
+  should "parse the repository name from the passed in Strainer" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal "bar", client.repository_name
+  end
+    
+  context "namespacing" do
+    setup do
+      @team_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'").parse!
+      @user_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'").parse!
+    end
+    
+    should "parse the project name from a team namespaced repo" do
+      client = Gitorious::SSH::Client.new(@team_strainer, "johan")
+      assert_equal "+foo", client.project_name
+      assert_equal "bar/baz", client.repository_name
+    end
+    
+    should "parse the project name from a user namespaced repo" do
+      client = Gitorious::SSH::Client.new(@user_strainer, "johan")
+      assert_equal "~foo", client.project_name
+      assert_equal "bar/baz", client.repository_name
+    end
   end
   
   should "sets the username that was passed into it" do

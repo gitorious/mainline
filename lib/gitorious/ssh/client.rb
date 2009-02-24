@@ -24,7 +24,7 @@ module Gitorious
     class Client
       def initialize(strainer, username)
         @strainer = strainer
-        @project_name, @repository_name = strainer.path.split("/")
+        @project_name, @repository_name = strainer.path.split("/", 2)
         @repository_name.gsub!(/\.git$/, "")
         @user_name = username
       end

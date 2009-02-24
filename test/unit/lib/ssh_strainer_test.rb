@@ -131,4 +131,18 @@ class SSHStrainerTest < ActiveSupport::TestCase
       assert_equal "+foo/bar.git", cmd.path
     end
   end
+  
+  should "can parse user-style urls with project name and prefixed with a tilde" do
+    assert_nothing_raised(Gitorious::SSH::BadCommandError) do
+      cmd = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'").parse!
+      assert_equal "~foo/bar/baz.git", cmd.path
+    end
+  end
+  
+  should "can parse team-style urls with project name and prefixed with a plus" do
+    assert_nothing_raised(Gitorious::SSH::BadCommandError) do
+      cmd = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'").parse!
+      assert_equal "+foo/bar/baz.git", cmd.path
+    end
+  end
 end

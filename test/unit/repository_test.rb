@@ -99,39 +99,53 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
+    end
       
+    should "have a clone url with the team/user, if it's not a mainline" do
       @repository.kind = Repository::KIND_TEAM_REPO
-      assert_equal "git://#{@host}/#{@repository.owner.to_param_with_prefix}/foo.git", @repository.clone_url
+      url = "git://#{@host}/#{@repository.owner.to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      assert_equal url, @repository.clone_url
       
       @repository.kind = Repository::KIND_USER_REPO
       @repository.owner = users(:johan)
-      assert_equal "git://#{@host}/#{users(:johan).to_param_with_prefix}/foo.git", @repository.clone_url
+      url = "git://#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      assert_equal url, @repository.clone_url
     end
   
     should "has a push url with the project name, if it's a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+    end
       
+    should "have a push url with the team/user, if it's not a mainline" do
+      @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
-      assert_equal "#{@host_with_user}:#{groups(:team_thunderbird).to_param_with_prefix}/foo.git", @repository.push_url
+      url = "#{@host_with_user}:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      assert_equal url, @repository.push_url
       
       @repository.kind = Repository::KIND_USER_REPO
       @repository.owner = users(:johan)
-      assert_equal "#{@host_with_user}:#{users(:johan).to_param_with_prefix}/foo.git", @repository.push_url
+      url = "#{@host_with_user}:#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      assert_equal url, @repository.push_url
     end
   
     should "has a http clone url with the project name, if it's a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "http://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+    end
       
+    should "have a http clone url with the team/user, if it's not a mainline" do
+      @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
-      assert_equal "http://git.#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/foo.git", @repository.http_clone_url
+      url = "http://git.#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      assert_equal url, @repository.http_clone_url
       
       @repository.owner = users(:johan)
       @repository.kind = Repository::KIND_USER_REPO
-      assert_equal "http://git.#{@host}/#{users(:johan).to_param_with_prefix}/foo.git", @repository.http_clone_url
+      url = "http://git.#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      assert_equal url, @repository.http_clone_url
     end
   
     should "has a full repository_path" do

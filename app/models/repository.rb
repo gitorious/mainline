@@ -120,7 +120,7 @@ class Repository < ActiveRecord::Base
     if project_repo?
       File.join(project.to_param_with_prefix, "#{name}.git")
     else
-      File.join(owner.to_param_with_prefix, "#{name}.git")
+      File.join(owner.to_param_with_prefix, project.slug, "#{name}.git")
     end
   end
   
