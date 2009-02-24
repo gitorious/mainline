@@ -1224,7 +1224,7 @@ table tr .line-numbers {
  text-align: right;
  vertical-align: top;
  background: #eee;
- color: #555;
+ color: #777;
  font-size: 92%;  
  padding: 0 3px 0 2px;
  width: 35px;
@@ -1356,6 +1356,34 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-top: 1.5em;
 }
 
+/* Comments */
+
+.comments {
+  margin-bottom: 20px;
+}
+
+.comment {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.comment .byline {
+  margin-bottom: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.comment .byline .avatar {
+  float: left;
+  display: inline;
+  padding-right: 5px;
+}
+
+.comment .byline .permalink a {
+  color: #666;
+}
 
 #site #recent_comments {
   width: 48%;

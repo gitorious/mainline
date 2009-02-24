@@ -19,14 +19,12 @@
 
 <div class="comment">
   <a name="<%= dom_id(comment) -%>"></a>
-  <div class="body"><%= simple_format(sanitize(comment.body)) -%></div>
+  <div class="body"><%= markdown(sanitize(comment.body)) -%></div>
   <p class="byline">
+    <span class="avatar">
+      <%= link_to(gravatar(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
+    </span>
     <%= link_to(h(comment.user.login), comment.user) -%> | 
-    <%= comment.created_at.to_s(:short) -%> 
-    <% unless comment.sha1.blank? -%>
-    | <%= link_to t("views.comments.commit", :sha1 => comment.sha1[0..7]), project_repository_commit_path(comment.project, comment.target, comment.sha1) -%> 
-    <% end -%>
-    | <%= link_to t("views.comments.permalink"), 
-            project_repository_comments_path(comment.project, comment.target, :anchor => dom_id(comment)) -%>
+    <span class="permalink"><%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%></span>
   </p>
 </div>

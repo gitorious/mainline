@@ -21,7 +21,7 @@ ActionController::Routing::Routes.draw do |map|
   VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_\/]+/
   
   repository_proc = proc do |repo|
-    repo.resources :comments, :member => { :commmit => :get  }
+    repo.resources :comments
     repo.commit_comment "comments/commit/:sha", :controller => "comments", 
       :action => "commit", :conditions => { :method => :get }
     repo.resources :merge_requests, :member => { 

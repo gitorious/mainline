@@ -20,36 +20,32 @@
 %>
 
 <% @page_title = t("views.commits.page_title", :repo => @repository.name, :title => @project.title) -%>
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
 
 <h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
 
 <%= render :partial => "commit_infobox" -%>
-
-<ul class="tab_menu">
-  <li class="selected"><%= t("views.comments.diff") %></li>
-  <li><%= link_to t("views.comments.total", :total => @comment_count), 
-            repo_owner_path(@repository, :project_repository_commit_comment_path, @project, @repository, @commit.id) -%></li>
-</ul>
-
-
 
 <% if @diffs.blank? -%>
   <p>
 	<%= t("views.commits.message").call(self, tree_path(@commit.id)) %>
   </p>
 <% else -%>
-<% cache({:diffmode => @diffmode}) do -%>
-  <%= render_diff_stats(@commit.stats) -%>
-  <h2>Commit diff</h2>
-  <%= render_diffmode_selector -%>
-  <% @diffs.each do |file| -%>
-    <a name="<%= h(file.a_path) -%>"></a>
-    <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, @commit.id) -%></h4>
-    <%= render_diff(file.diff, @diffmode) -%>
+  <% cache({:diffmode => @diffmode}) do -%>
+    <%= render_diff_stats(@commit.stats) -%>
+    <%= render_diffmode_selector -%>
+    <% @diffs.each do |file| -%>
+      <a name="<%= h(file.a_path) -%>"></a>
+      <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, @commit.id) -%></h4>
+      <%= render_diff(file.diff, @diffmode) -%>
+    <% end -%>
   <% end -%>
 <% end -%>
-<% end -%>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<h2 id="comments">Comments</h2>
+<div class="comments">
+  <%= render :partial => @comments -%>
+</div>
+<%= render :partial => "comments/form", :locals => {:sha1 => @commit.id} -%>

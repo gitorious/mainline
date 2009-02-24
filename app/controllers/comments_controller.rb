@@ -18,8 +18,7 @@
 
 class CommentsController < ApplicationController
   before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
-  before_filter :find_repository_owner
-  before_filter :find_repository
+  before_filter :find_project_and_repository
   
   def index
     @comments = @repository.comments.find(:all, :include => :user)
@@ -31,14 +30,6 @@ class CommentsController < ApplicationController
     end
   end
   
-  def commit
-    @git = @repository.git
-    @commit = @git.commit(params[:sha])
-    @committer_user = User.find_by_email(@commit.committer.email)
-    @author_user = User.find_by_email(@commit.author.email)
-    @comments = @repository.comments.find_all_by_sha1(params[:sha], :include => :user)
-  end
-  
   def new
     @comment = @repository.comments.new
   end
@@ -47,12 +38,17 @@ class CommentsController < ApplicationController
     @comment = @repository.comments.new(params[:comment])
     @comment.user = current_user
     @comment.project = @project
+    @comment.target = @repository
     respond_to do |format|
       if @comment.save
         @project.create_event(Action::COMMENT, @comment, current_user)
         format.html do
           flash[:success] = I18n.t "comments_controller.create_success"
-          redirect_to project_repository_comments_path(@project, @repository)
+          if @comment.sha1.blank?
+            redirect_to project_repository_comments_path(@project, @repository)
+          else
+            redirect_to repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @comment.sha1)
+          end
         end
       else
         format.html { render :action => "new" }

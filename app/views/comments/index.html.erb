@@ -22,9 +22,7 @@
   <%= t("views.comments.page_title_3", :repo => h(@repository.name), :title => h(@repository.project.title)) %>
 </h1>
 
-<%= render :partial => @comments -%>
-<%= render :partial => "form" -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "repositories/context_menu" -%>
+<% @comments.each do |comment| -%>
+  <%= render comment -%>
 <% end -%>
+
