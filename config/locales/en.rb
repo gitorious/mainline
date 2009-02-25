@@ -397,7 +397,7 @@
         :no_merge => "No merge requests yet",
         :create_title => "Create a merge request",
         :create_btn => "Create merge request",
-        :show_title => "Reviewing merge request {{source}} &#x2192; \"{{target}}\"",
+        :show_title => "Reviewing merge request {{source}} &#x2192; {{target}}",
         :update_btn => "Update merge request",
         :help => "The recommended way to merge in these changes is to pull them into a local branch for review and them merge to back to master:",
         :commits => "Commits that would be merged",
@@ -426,6 +426,7 @@
         :cancel => "cancel",
         :or => "or",
         :remove => "remove",
+        :format_using_markdown => %Q(Use {{markdown}} for formatting),
       },
       :pages => {
         :page => "page",

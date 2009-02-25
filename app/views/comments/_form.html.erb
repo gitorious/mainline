@@ -30,8 +30,11 @@
       <%= f.hidden_field :sha1, :value => sha1 -%>
     <% end -%>
     <p>
-      <%= f.label :body, t("views.comments.body") -%><br />
-      <%= f.text_area :body, :class => "text medium" -%>
+      <%= f.label :body, t("views.comments.body") -%>
+      <span class="hint">
+        (<%= markdown_hint -%>)
+      </span><br />
+      <%= f.text_area :body, :class => "text medium" -%><br />
     </p>
     <p>
       <%= f.submit t("views.comments.add") -%>

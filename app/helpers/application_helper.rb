@@ -387,4 +387,9 @@ module ApplicationHelper
         <div id="description-rest" style="display:none;">#{rest}</div>}
     end
   end
+  
+  def markdown_hint
+    t("views.common.format_using_markdown", 
+      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>))
+  end
 end
