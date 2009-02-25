@@ -49,8 +49,10 @@ class MergeRequestsController < ApplicationController
   end
   
   def show
-    @merge_request = @repository.merge_requests.find(params[:id])
+    @merge_request = @repository.merge_requests.find(params[:id], 
+                      :include => [:source_repository, :target_repository])
     @commits = @merge_request.commits_to_be_merged
+    @comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
   end
   
   def new

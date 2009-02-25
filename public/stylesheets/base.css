@@ -1536,6 +1536,10 @@ table.commits_in_event tr .commit_message {
   margin-bottom: 10px;
 }
 
+table.select_commits_from_list {
+  margin-right: 10px;
+}
+
 table.select_commits_from_list th {
   background: #999;
   color: #fff;
@@ -1581,14 +1585,34 @@ table.select_commits_from_list tr.commit_row .commit-details ul li {
   margin-right: 5px;
   display: inline;
 }
+table.select_commits_from_list tr.commit_row .commit-details ul li img {
+  display: inline;
+}
 table.select_commits_from_list tr.commit_row .commit-details.meta {
   width: 180px;
+  vertical-align: top;
 }
 table.select_commits_from_list tr.commit_row .commit-details.message {
   vertical-align: top;
 }                                                
 table.select_commits_from_list tr.commit_row .commit-details .commit_message {
   margin: 0;
+}
+table.select_commits_from_list tr.commit_comments .commit-details.body {
+ vertical-align: top;
+}
+
+table.select_commits_from_list tr.commit_row.with_comments td.meta,
+table.select_commits_from_list tr.commit_comments td.meta {
+  border-left: 4px solid #888;
+  padding-left: 5px;
+}
+table.select_commits_from_list tr.commit_comments .commit-details .author a {
+  font-weight:bold;
+}
+table.select_commits_from_list tr.commit_comments .commit-details .author a,
+table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
+  color: #000;
 }
 
 #commit_selection_error {

@@ -32,4 +32,8 @@ class Comment < ActiveRecord::Base
     
   validates_presence_of :user_id, :target, :body, :project_id
   
+  named_scope :with_shas, proc{|*shas| 
+    {:conditions => { :sha1 => shas.flatten }, :include => :user}
+  }
+  
 end

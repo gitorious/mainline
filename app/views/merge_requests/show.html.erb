@@ -17,6 +17,10 @@
 #++
 %>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @merge_request} -%>
+<% end -%>
+
 <h1><%= t("views.merges.show_title", :source => h(@merge_request.source_repository.name), :target => h(@merge_request.target_repository.name)) -%></h1>
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
@@ -49,6 +53,19 @@ git push origin master
 <% if @merge_request.open? -%>
 <h2><%= t("views.merges.commits") %>:</h2>
 
+<script type="text/javascript" charset="utf-8">
+  function toggleComments(index) {
+    if ($("commit_" + index).hasClassName("with_comments")) {
+      $("commit_" + index).removeClassName("with_comments")
+    } else {
+      $("commit_" + index).addClassName("with_comments")
+    }
+    $$('.comment_for_commit_' + index).each(function(e){ 
+      e.toggle();
+    })
+  }
+</script>
+
 <table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" class="commit_row">
@@ -62,7 +79,13 @@ git push origin master
           <strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong>
         </li>
       </ul>
-      <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
+      <small>
+        <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago 
+        <% if (comment_count = @comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
+          (<%= link_to_function pluralize(comment_count, "comment", "comments"), 
+                "toggleComments(#{i})" -%>)
+        <% end -%>
+      </small>
     </td>
     <td class="commit-details message">
       <div class="commit_message inline">
@@ -71,11 +94,32 @@ git push origin master
       </div>
     </td>
   </tr>
+  <% @comments.select{|c| c.sha1 == commit.id }.each do |comment| -%>
+    <tr class="comment_for_commit_<%= i -%> commit_comments commit_row" style="display:none">
+      <td class="commit-details meta">
+        <ul>
+          <li class="avatar">
+            <%= link_to(gravatar(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
+          </li>
+          <li class="author">
+            <%= link_to(h(comment.user.title), comment.user) -%>
+          </li>
+        </ul>
+        <small class="permalink">
+          <%= link_to "about " + time_ago_in_words(comment.created_at) + " ago", 
+                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, 
+                      @repository.project, @merge_request.source_repository, comment.sha1) + "##{dom_id(comment)}" -%>
+        </small>
+      </td>
+      <td class="commit-details body">
+        <div class="inline">
+          <%= link_to truncate(sanitize(comment.body), :length => 70), 
+                repo_owner_path(@repository, :project_repository_commit_path, @project,
+                  @merge_request.source_repository, commit) + "##{dom_id(comment)}" %>
+        </div>
+      </td>
+    <tr>
+  <% end -%>
 <% end %>
 </table>
-
-<% end -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @merge_request} -%>
 <% end -%>
