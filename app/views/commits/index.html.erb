@@ -39,22 +39,34 @@
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
-<% content_for :sidebar do -%>  
-
+<% content_for :sidebar do -%>
   <ul>
-    <li><strong><%= t("views.logs.project") %>:</strong> <%= link_to h(@repository.project.title), @repository.project -%></li>
-    <li><strong><%= t("views.logs.maintainer") %>:</strong> <%= link_to h(@repository.user.login), @repository.user -%></li>
+    <li>
+      <strong><%= t("views.logs.project") %>:</strong> 
+      <%= link_to h(@repository.project.title), @repository.project -%>
+    </li>
+    <li>
+      <strong><%= t("views.repos.owner") %>:</strong> 
+      <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
+    </li>
     <% unless @commits.blank? -%>
-    <li><strong><%= t("views.logs.head_tree") %>:</strong> <%= link_to h(@commits.first.tree.id[0,7]), 
-      tree_path(branch_with_tree(@commits.first.id, [])) -%></li>
+    <li>
+      <strong><%= t("views.logs.head_tree") %>:</strong> 
+      <%= link_to h(@commits.first.tree.id[0,7]), tree_path(branch_with_tree(@commits.first.id, [])) -%>
+    </li>
     <% end -%>
   </ul>
-
-  <%= render_download_links(@project, @repository, params[:branch]) %>
+  
+  <ul class="links">
+    <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
+    <li class="comment_link">
+      <%= link_to "Comments", repo_owner_path(@repository, [@project, @repository, :comments]) -%>
+    </li>
+  </ul>
 
   
   <h5><%= t("views.logs.branches") %>:</h5>
-  <ul class="icon_list">
+  <ul class="icon_list links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
       <li class="branch"><%= link_to h(branch.name), log_path(branch.name) -%></li>
     <% end -%>
@@ -62,7 +74,7 @@
 
   <% unless @git.tags.blank? -%>
   <h5><%= t("views.logs.tags") %>:</h5>
-  <ul>
+  <ul class="icon_list links">
   <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
     <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
   <% end -%>

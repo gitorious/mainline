@@ -283,6 +283,7 @@
         :page_title => "Tree for {{repo}} in {{title}}",
         :title => "Tree of {{repo}} repository in {{title}}",
         :download => "Download as gzipped tarball",
+        :branch => "Branch",
       },
       :repos => {
         :overview => "Overview",

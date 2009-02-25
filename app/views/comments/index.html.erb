@@ -27,6 +27,10 @@
   <%= t("views.comments.page_title_3", :repo => h(@repository.name), :title => h(@repository.project.title)) %>
 </h1>
 
+<% if @comments.blank? -%>
+  <p><em>No comments yet, be the first to add one to a commit</em></p>
+<% end -%>
+
 <% @comments.each do |comment| -%>
 <div class="comment">
   <a name="<%= dom_id(comment) -%>"></a>

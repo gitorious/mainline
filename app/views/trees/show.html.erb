@@ -19,11 +19,6 @@
 %>
 
 <% @page_title = t("views.trees.page_title", :repo => @repository.name, :title => @project.title) -%>
-<ul class="horizontal meta" style="float:right">
-  <li class="commit">
-    <%= link_to "Commit log", repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, ensplat_path(@ref)) -%>
-  </li>
-</ul>
 <h1>
   <%= t("views.trees.title", :repo => h(@repository.name), :title => h(@project.title)) %>
 </h1>
@@ -63,8 +58,28 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <%= render_download_links(@repository.project, @repository, @ref,
-          :except => :source_tree) -%>
+  <ul>
+    <li>
+      <strong><%= t("views.trees.branch") %>:</strong> 
+      <%=h @ref -%>
+    </li>
+    <li>
+      <strong>HEAD:</strong> 
+      <%= link_to h(@commit.id[0,7]), commit_path(@commit.id) -%>
+    </li>
+    <li>
+      <strong><%= t("views.logs.head_tree") %>:</strong> 
+      <%= link_to h(@commit.tree.id[0,7]), tree_path(branch_with_tree(@commit.id, [])) -%>
+    </li>
+  </ul>
+
+  <ul class="links">
+    <li class="commit">
+      <%= link_to "Commit log", repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, ensplat_path(@ref)) -%>
+    </li>    
+    <%= render_download_links(@repository.project, @repository, @ref,
+          :except => :source_tree, :only_list_items => true) -%>
+  </ul>
   
   <h5><%= t("views.logs.branches") %>:</h5>
   
@@ -82,7 +97,5 @@
     <% end -%>
     </ul>
   <% end -%>
-  
-  <%= render_download_links(@project, @repository, ensplat_path(@ref), :except => :source_tree) %>
 <% end -%>
 

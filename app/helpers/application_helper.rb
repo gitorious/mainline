@@ -345,7 +345,8 @@ module ApplicationHelper
     links = []
     exceptions = Array(options[:except])
     unless exceptions.include?(:source_tree)
-      links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}", tree_path(head)))
+      links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}", 
+                  tree_path(head)), :class => "tree")
     end
 
     head = desplat_path(head) if head.is_a?(Array)
@@ -367,7 +368,12 @@ module ApplicationHelper
       links << content_tag(:li, link_html+link_callback_box, :class => extension.split('.').last)
     end
     
-    content_tag(:ul, links.join("\n"), :class => "links meta #{options[:class]}")
+    if options.delete(:only_list_items)
+      links.join("\n")
+    else
+      css_classes = options[:class] || "meta"
+      content_tag(:ul, links.join("\n"), :class => "links #{css_classes}")
+    end
   end
   
   def paragraphs_with_more(text)
