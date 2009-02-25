@@ -31,6 +31,7 @@
   <p><em>No comments yet, be the first to add one to a commit</em></p>
 <% end -%>
 
+<div class="comments">
 <% @comments.each do |comment| -%>
 <div class="comment">
   <a name="<%= dom_id(comment) -%>"></a>
@@ -49,4 +50,4 @@
   </p>
 </div>
 <% end -%>
-
+</div>
