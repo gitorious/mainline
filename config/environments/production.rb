@@ -34,7 +34,7 @@ config.action_controller.cache_store = :file_store, File.join(cache_dir, "fragme
 config.action_mailer.delivery_method = :sendmail
 
 ActionMailer::Base.default_url_options[:host] =
-  YAML.load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))["gitorious_host"]
+  YAML.load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))[RAILS_ENV]["gitorious_host"]
 # ActionMailer::Base.default_url_options[:protocol] = 'https'
 # Disable delivery errors, bad email addresses will be ignored
 config.after_initialize do
