@@ -344,16 +344,10 @@
         :create_title => lambda { |this, clone, project| 
           "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
         },
-        :clone_note => %Q{
-          <em><strong>Note:</strong> Repository clones that haven't had anything pushed 
-          to them within 7 days are automatically removed (so the project don't end up 
-          with lots of empty repositories), so it's a good idea to wait with creating 
-          the clone here until there's something to push.</em>          
-        },
         :edit_group => "Edit/show group members",
         :show_group => "Show group members",
         :by_teams => "Teams",
-        :by_users => "Users",
+        :by_users => "Personal",
       },
       :projects => {
         :title => "Projects",

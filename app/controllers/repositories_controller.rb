@@ -108,18 +108,20 @@ class RepositoriesController < ApplicationController
     @repository = Repository.new_by_cloning(@repository_to_clone)
     @repository.name = params[:repository][:name]
     @repository.user = current_user
-    @repository.owner = case params[:repository][:owner_type]
+    case params[:repository][:owner_type]
     when "User"
-      current_user
+      @repository.owner = current_user
+      @repository.kind = Repository::KIND_USER_REPO
     when "Group"
-      current_user.groups.find(params[:repository][:owner_id])
+      @repository.owner = current_user.groups.find(params[:repository][:owner_id])
+      @repository.kind = Repository::KIND_TEAM_REPO
     end
     
     respond_to do |format|
       if @repository.save
         @owner.create_event(Action::CLONE_REPOSITORY, @repository, current_user, @repository_to_clone.id)
         
-        location = project_repository_path(@owner, @repository)
+        location = repo_owner_path(@repository, :project_repository_path, @owner, @repository)
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }        
       else

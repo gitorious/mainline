@@ -474,6 +474,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       do_create_clone_post(:name => "foo-clone", :owner_type => "User")
       assert_response :redirect
       assert_equal users(:johan), assigns(:repository).owner
+      assert_equal Repository::KIND_USER_REPO, assigns(:repository).kind
     end
   
     should "post projects/1/repositories/3/create_clone is successful sets the owner to the group" do
@@ -484,6 +485,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       do_create_clone_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:team_thunderbird).id)
       assert_response :redirect
       assert_equal users(:johan).groups.first, assigns(:repository).owner
+      assert_equal Repository::KIND_TEAM_REPO, assigns(:repository).kind
     end
   
     should "redirects to new_user_key_path if no keys on user" do
