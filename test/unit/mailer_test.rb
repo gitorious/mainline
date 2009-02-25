@@ -96,5 +96,19 @@ class MailerTest < ActiveSupport::TestCase
     Mailer.deliver(mail)
     assert_equal [mail], Mailer.deliveries
   end
+  
+  should "sends new_email_alias" do
+    email = emails(:johans1)
+    email.update_attribute(:confirmation_code, Digest::SHA1.hexdigest("borkborkbork"))
+    mail = Mailer.create_new_email_alias(email)
+    
+    assert_equal [email.address], mail.to
+    assert_equal "[Gitorious] Please confirm this email alias", mail.subject
+    assert_match(/in order to activate your email alias/i, mail.body)
+    assert_match(/#{email.confirmation_code}/, mail.body)
+    
+    Mailer.deliver(mail)
+    assert_equal [mail], Mailer.deliveries
+  end
 
 end

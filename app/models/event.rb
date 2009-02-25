@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
   end
 
   def email=(an_email)
-    if u = User.find_by_email(an_email)
+    if u = User.find_by_email_with_aliases(an_email)
       self.user = u
     else
       self.user_email = an_email

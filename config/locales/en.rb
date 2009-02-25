@@ -465,7 +465,12 @@
         :or_return_to => "or return to", 
         :add_tema_note => "<strong>Note</strong> that adding a team will give
                           everyone in that team commit rights to your repository",
-      }
+      },
+      :emails => {
+        :aliases_title => "Email aliases",
+        :new_alias => "New email alias",
+        :manage_emails => "Manage email aliases"
+      },
     },
     :date => {
       :formats => {

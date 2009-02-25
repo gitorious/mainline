@@ -1,0 +1,38 @@
+<% @page_title = t("views.emails.aliases_title") -%>
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+<% end -%>
+
+<h1><%= t("views.emails.aliases_title") -%></h1>
+
+<p>
+  Email aliases are used to associate your commits with your Gitorious user account.
+  Useful if you commit under more than one email. Any communication sent to you from
+  Gitorious will still go to your primary email only (<strong><%= h(@user.email) -%></strong>)
+</p>
+
+<table class="listing">
+	<thead>
+		<th>Added</th>
+		<th>Address</th>
+		<th>State</th>
+		<th></th>
+	</thead>
+	<% @emails.each do |email| -%>
+	<tr class="<%= cycle('even', 'odd') -%>">
+	  <td><%= email.created_at.to_s(:short) -%></td>
+	  <td>&lt;<%= h(email.address) -%>&gt;</td>
+	  <td>
+	    <%= image_tag(email.confirmed? ? "silk/accept.png" : "silk/stop.png", 
+	          :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') -%>
+	  </td>
+	  <td><%= button_to(t("views.common.remove"), [@user, email], :method => :delete) -%></td>
+	</tr>
+	<% end -%>
+</table>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li class="new_email"><%= link_to "Add email alias", new_user_email_path(@user) -%>
+  </ul>
+<% end -%>

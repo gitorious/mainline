@@ -63,6 +63,15 @@ class Mailer < ActionMailer::Base
     @subject += I18n.t "mailer.new_password"
     @body[:password] = password
   end
+  
+  def new_email_alias(email)
+    @from       = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
+    @subject    = "[Gitorious] Please confirm this email alias"
+    @sent_on    = Time.now
+    @recipients = email.address
+    @body[:email] = email
+    @body[:url] = confirm_user_email_url(email.user, email.confirmation_code)
+  end
 
   protected
     def setup_email(user)

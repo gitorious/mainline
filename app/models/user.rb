@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
   has_many :ssh_keys, :order => "id desc"
   has_many :comments
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
+  has_many :email_aliases, :class_name => "Email"
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
@@ -37,7 +38,7 @@ class User < ActiveRecord::Base
   USERNAME_FORMAT = /[a-z0-9\-_\.]+/.freeze
   validates_presence_of     :login, :email,               :if => :password_required?
   validates_format_of       :login, :with => /^#{USERNAME_FORMAT}$/i
-  validates_format_of       :email, :with => /^[^@\s]+@([\-a-z0-9]+\.)+[a-z]{2,}$/i
+  validates_format_of       :email, :with => Email::FORMAT
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
   validates_length_of       :password, :within => 4..40, :if => :password_required?
@@ -82,6 +83,17 @@ class User < ActiveRecord::Base
     (0...password_size).collect do |char|
       characters[rand(characters.length)]
     end.join
+  end
+  
+  # Finds a user either by his/her primary email, or one of his/hers aliases
+  def self.find_by_email_with_aliases(email)
+    user = User.find_by_email(email)
+    unless user
+      if email_alias = Email.find_by_address(email)
+        user = email_alias.user
+      end
+    end
+    user
   end
   
   def validate

@@ -503,6 +503,9 @@ li.zip > a { background-image: url("/images/silk/page_white_zip.png") !important
 li.gz > a { background-image: url("/images/silk/page_white_compressed.png") !important; }
 li.merge_requests > a { background-image: url("/images/silk/arrow_merge.png") !important; }
 li.clone > a { background-image: url("/images/silk/database_clone.png") !important; }
+li.comment_link > a { background-image: url("/images/silk/comment.png") !important; }
+li.merge_request > a { background-image: url("/images/silk/arrow_merge.png") !important; }
+li.emails > a { background-image: url("/images/silk/email.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
 li.event_instance.create_repository, li.create_repository > a { background-image: url("/images/silk/database_add.png") !important; }
@@ -519,8 +522,6 @@ li.event_instance.project_members, li.project_members > a { background-image: ur
 li.event_instance.wiki_page, li.wiki_page > a { background-image: url("/images/silk/book_open.png") !important; }
 li.event_instance.wiki_page_history, li.wiki_page_history > a { background-image: url("/images/silk/time.png") !important; }
 li.event_instance.edit_wiki_page, li.edit_wiki_page > a { background-image: url("/images/silk/page_white_text_edit.png") !important; }
-li.comment_link > a { background-image: url("/images/silk/comment.png") !important; }
-li.merge_request > a { background-image: url("/images/silk/arrow_merge.png") !important; }
 
 /* Icons used for events only */
 li.event_instance.create_branch { background-image: url("/images/silk/arrow_branch.png") !important; }

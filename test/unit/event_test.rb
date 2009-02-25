@@ -49,6 +49,14 @@ class EventTest < ActiveSupport::TestCase
     assert_equal 'foo@bar.com', event.git_actor.email
   end
   
+  should "belong to a user who commits with an aliased email" do
+    event = Event.new(:target => repositories(:johans), :body => 'blabla', 
+              :project => @project, :action => Action::COMMIT)
+    assert_nil event.user
+    event.email = emails(:johans1).address
+    assert_equal users(:johan), event.user
+  end
+  
   should "handles setting the actor from a string" do
     event = Event.new
     event.email = "marius@stones.com"
@@ -64,6 +72,7 @@ class EventTest < ActiveSupport::TestCase
     event.user = user
     assert_equal 'Johan Sørensen', event.actor_display
   end
+  
   context 'A push event' do
     setup do
       @event = new_event(:action => Action::PUSH)

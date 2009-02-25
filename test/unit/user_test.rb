@@ -32,6 +32,7 @@ class UserTest < ActiveSupport::TestCase
     end
   end
   
+  should_have_many :email_aliases
   should_validate_presence_of :login, :password, :password_confirmation, :email
   
   should "require a username without spaces" do
@@ -236,6 +237,20 @@ class UserTest < ActiveSupport::TestCase
   should "know if a user is a a committer of itself" do
     assert users(:mike).committer?(users(:mike))
     assert !users(:mike).committer?(users(:johan))
+  end
+  
+  context "find_by_email_with_aliases" do
+    should "find a user by primary email" do
+      assert_equal users(:johan), User.find_by_email_with_aliases("johan@johansorensen.com")
+    end
+    
+    should "find a user by email alias" do
+      assert_equal users(:johan), User.find_by_email_with_aliases("johan@shortcut.no")
+    end
+    
+    should "return nil when there's no user with that email or alias" do
+      assert_nil User.find_by_email_with_aliases("wtf@fubar.no")
+    end
   end
    
   protected

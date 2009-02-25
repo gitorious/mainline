@@ -1,0 +1,4 @@
+johans1:
+  user_id: 1
+  address: johan@shortcut.no
+  aasm_state: confirmed

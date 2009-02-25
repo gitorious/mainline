@@ -49,8 +49,8 @@ class CommitsController < ApplicationController
     @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
     @diffs = @commit.diffs
     @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
-    @committer_user = User.find_by_email(@commit.committer.email)
-    @author_user = User.find_by_email(@commit.author.email)
+    @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
+    @author_user = User.find_by_email_with_aliases(@commit.author.email)
     @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
     respond_to do |format|
       format.html

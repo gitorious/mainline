@@ -83,7 +83,7 @@ class Page
   
   def committed_by_user
     return user if new?
-    User.find_by_email(commit.committer.email)
+    User.find_by_email_with_aliases(commit.committer.email)
   end
   
   def valid?
