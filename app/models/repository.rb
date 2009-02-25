@@ -195,7 +195,12 @@ class Repository < ActiveRecord::Base
   end
   
   def can_be_deleted_by?(candidate)
-    !mainline? && (candidate == user)
+    if mainline?
+      return false if project.repositories.mainlines.count == 1
+      owner.admin?(candidate)
+    else
+      candidate == user
+    end
   end
   
   # changes the owner to +another_owner+, removes the old owner as committer

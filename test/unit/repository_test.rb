@@ -375,6 +375,9 @@ class RepositoryTest < ActiveSupport::TestCase
   should "knows who can delete it" do
     @repository.kind = Repository::KIND_PROJECT_REPO
     assert !@repository.can_be_deleted_by?(users(:johan))
+    @repository.project.repositories << new_repos(:name => "another")
+    assert @repository.can_be_deleted_by?(users(:johan))
+    
     @repository.kind = Repository::KIND_TEAM_REPO
     assert !@repository.can_be_deleted_by?(users(:moe))
     assert @repository.can_be_deleted_by?(users(:johan))
