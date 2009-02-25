@@ -224,6 +224,16 @@ module RenderTestCases
     assert_equal 'source: Hello, <%= name %>!; locals: {:name=>"Josh"}', @view.render(:inline => "Hello, <%= name %>!", :locals => { :name => "Josh" }, :type => :foo)
   end
 
+  def test_render_ignores_templates_with_malformed_template_handlers
+    %w(malformed malformed.erb malformed.html.erb malformed.en.html.erb).each do |name|
+      assert_raise(ActionView::MissingTemplate) { @view.render(:file => "test/malformed/#{name}") }
+    end
+  end
+
+  def test_template_with_malformed_template_handler_is_reachable_trough_its_exact_filename
+    assert_equal "Don't render me!", @view.render(:file => 'test/malformed/malformed.html.erb~')
+  end
+
   def test_render_with_layout
     assert_equal %(<title></title>\nHello world!\n),
       @view.render(:file => "test/hello_world.erb", :layout => "layouts/yield")
@@ -236,17 +246,9 @@ module RenderTestCases
 
   if '1.9'.respond_to?(:force_encoding)
     def test_render_utf8_template
-      result = @view.render(:file => "test/utf8.html.erb", :layout => "layouts/yield")
-      assert_equal "<title></title>\nРусский текст\n日本語のテキスト\n", result
+      result = @view.render(:file => "test/utf8.html.erb", :layouts => "layouts/yield")
+      assert_equal "Русский текст\n日本語のテキスト", result
       assert_equal Encoding::UTF_8, result.encoding
-    end
-    
-    def test_render_utf8_template_with_named_yield_and_a_partial
-      assert_nothing_raised do
-        result = @view.render(:file => "test/content_for_utf8.html.erb", :layout => "layouts/yield")
-        assert_equal "<title>Русский текст\nInside from partial ( 日本語のテキスト)</title>\nyay?\n", result
-        assert_equal Encoding::UTF_8, result.encoding
-      end
     end
   end
 end
