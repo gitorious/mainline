@@ -73,7 +73,8 @@ class MergeRequestsController < ApplicationController
         @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         format.html {
           flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
-          redirect_to [@owner, @repository] and return
+          redirect_to repo_owner_path(@repository, [@repository.project, @repository])
+          return
         }
         format.xml { render :xml => @merge_request, :status => :created }
       else

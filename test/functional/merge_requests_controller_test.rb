@@ -183,7 +183,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			login_as :johan
 			assert_difference("MergeRequest.count") do
 				do_post
-				assert_redirected_to(project_repository_path(@project, @source_repository))
+				assert_redirected_to(group_project_repository_path(@source_repository.owner, @project, @source_repository))
 				assert_match(/sent a merge request to "#{@target_repository.name}"/i, flash[:success])
       end
 		end

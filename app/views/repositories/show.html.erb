@@ -63,22 +63,25 @@
   
   <ul class="links">
     <% if @repository.ready? -%>
-      <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), [:clone, @repository.project, @repository] -%></li>
+      <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
       <li class="comment_link"><%= link_to "Comments", repo_owner_path(@repository, [@repository.project, @repository, :comments]) -%></li>
     <% end -%>
     <% if @repository.writable_by?(current_user) -%>
-      <li class="merge_request"><%= link_to t("views.repos.btn_request"), new_project_repository_merge_request_path(@owner, @repository) -%></li>
+      <li class="merge_request">
+        <%#= link_to t("views.repos.btn_request"), repo_owner_path(@repository, :new_project_repository_merge_request_path, @owner, @repository) -%>
+        <%= link_to t("views.repos.btn_request"), repo_owner_path(@repository, [:new, @repository.project, @repository, :merge_request]) -%>
+      </li>
     <% end -%>
     <% if @repository.owner.admin?(current_user) -%>
-      <li class="add_committer"><%= link_to t("views.repos.btn_manage_committers"), [@repository.owner, @repository, :committerships] -%></li>
+      <li class="add_committer"><%= link_to t("views.repos.btn_manage_committers"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
     <% end -%>
   </ul>
   <ul class="links">
     <% if @repository.owner.admin?(current_user) -%>
-      <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.owner, @repository] -%></li>
+      <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
     <% end -%>
     <% if @repository.can_be_deleted_by?(current_user) -%>
-      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), confirm_delete_project_repository_path(@owner, @repository) -%></li>
+      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>
   

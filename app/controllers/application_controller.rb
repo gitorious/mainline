@@ -53,13 +53,13 @@ class ApplicationController < ActionController::Base
         if path_spec.is_a?(Symbol)
           return send("group_#{path_spec}", *args.unshift(repo.owner))
         else
-          return *path_spec.unshift(repo.owner)
+          return *unshifted_polymorphic_path(repo, path_spec)
         end
       elsif repo.user_repo?
         if path_spec.is_a?(Symbol)
           return send("user_#{path_spec}", *args.unshift(repo.owner))
         else
-          return *path_spec.unshift(repo.owner)
+          return *unshifted_polymorphic_path(repo, path_spec)
         end
       else
         if path_spec.is_a?(Symbol)
@@ -182,5 +182,15 @@ class ApplicationController < ActionController::Base
     
     def cache_for(ttl=60.seconds)
       headers['Cache-Control'] = "max-age:#{ttl.to_i}"
+    end
+    
+  private
+  
+    def unshifted_polymorphic_path(repo, path_spec)
+      if path_spec[0].is_a?(Symbol)
+        path_spec.insert(1, repo.owner)
+      else
+        path_spec.unshift(repo.owner)
+      end
     end
 end
