@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'rubygems'
+require 'rubygems' if RUBY_VERSION < '1.9'
 require 'daemons'
 
 APP_ROOT = File.expand_path(File.dirname(__FILE__) + '/..')
