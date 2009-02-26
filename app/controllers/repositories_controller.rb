@@ -50,7 +50,9 @@ class RepositoriesController < ApplicationController
       @repository = @project.repositories.new
       @repository.kind = Repository::KIND_PROJECT_REPO
       @repository.owner = @project.owner
-      @repository.name = @project.slug
+      if @project.repositories.mainlines.count == 0
+        @repository.name = @project.slug
+      end
     else
       @repository = @owner.repositories.new
       @repository.kind = @owner === Group ? Repository::KIND_TEAM_REPO : Repository::KIND_USER_REPO

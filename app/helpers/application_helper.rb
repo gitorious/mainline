@@ -285,6 +285,11 @@ module ApplicationHelper
         action = "<strong>pushed #{commit_link}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name+':'+event.data), repo_owner_path(target, :project_repository_commits_in_ref_path, project, target, ensplat_path(event.data))}"
         body = "#{event.body}"
         category = 'push'
+      when Action::ADD_PROJECT_REPOSITORY
+        action = "<strong>" + I18n.t("application_helper.event_status_add_project_repository") + "</strong> " +  link_to(h(target.name), project_repository_path(event.project, target)) + 
+                  " to " + link_to(h(event.project.title), project_path(event.project))
+        body = truncate(sanitize(target.description), :length => 100)
+        category = "repository"
     end
       
     [action, body, category]

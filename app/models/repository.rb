@@ -54,6 +54,7 @@ class Repository < ActiveRecord::Base
   before_validation :downcase_name
   before_create :set_repository_hash
   after_create :create_initial_committership
+  after_create :create_add_event_if_project_repo
   after_create  :post_repo_creation_message
   after_destroy :post_repo_deletion_message
   
@@ -409,6 +410,14 @@ class Repository < ActiveRecord::Base
     
     def downcase_name
       name.downcase! if name
+    end
+    
+    def create_add_event_if_project_repo
+      if project_repo?
+        #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)        
+        self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user, 
+              nil, nil, date = created_at)
+      end
     end
     
   private

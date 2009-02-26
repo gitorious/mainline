@@ -575,6 +575,16 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
   
+  should "create an event on create if it's a project repo" do
+    repo = new_repos
+    repo.kind = Repository::KIND_PROJECT_REPO
+    assert_difference("repo.project.events.count") do
+      repo.save!
+    end
+    assert_equal repo, Event.last.target
+    assert_equal Action::ADD_PROJECT_REPOSITORY, Event.last.action
+  end
+  
   context "observers" do
     should "sends an email to the admin if there's a parent" do
       Mailer.expects(:deliver_new_repository_clone).with(@repository).returns(true)
