@@ -32,7 +32,7 @@ module ActiveMessaging
       return on_message(message.body)
     rescue Object=>err
       begin
-        on_error(err)
+        on_error(err, message.body)
       rescue ActiveMessaging::AbortMessageException => rpe
         logger.error "Processor:process! - AbortMessageException caught."
         raise rpe
