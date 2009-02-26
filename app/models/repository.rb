@@ -137,6 +137,10 @@ class Repository < ActiveRecord::Base
     "http://git.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
   
+  def http_cloning?
+    !!GitoriousConfig["hide_http_clone_urls"]
+  end
+  
   def push_url
     "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{gitdir}"
   end

@@ -39,6 +39,7 @@
             <code>git clone <%= repository.clone_url -%></code>
           </div>
         </li>
+        <% if repository.http_cloning? -%>
         <li>
           <strong><%= t("views.repos.http_url") %>:</strong> 
           <a href="<%= repository.http_clone_url-%>" class="link_noop"><code><%=h repository.http_clone_url -%></code></a> 
@@ -49,6 +50,7 @@
               <small>(<%= t("views.repos.help_clone_http") %>)</small>
           </div>
         </li>
+        <% end -%>
         <% if logged_in? && current_user.can_write_to?(repository) -%>
           <li>
             <strong><%= t("views.repos.push_url") %>:</strong> <code><%=h repository.push_url -%></code>

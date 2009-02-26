@@ -49,3 +49,6 @@ test:
 
   # is it only site admins who can create new projects?
   only_site_admins_can_create_projects: false
+  
+  # Should we hide HTTP clone urls?
+  hide_http_clone_urls: false
