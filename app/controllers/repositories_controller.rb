@@ -47,14 +47,14 @@ class RepositoriesController < ApplicationController
   def new
     # TODO: extract into model
     if @project
-      @repository = @project.repositories.new(params[:repository])
+      @repository = @project.repositories.new
       @repository.kind = Repository::KIND_PROJECT_REPO
       @repository.owner = @project.owner
+      @repository.name = @project.slug
     else
-      @repository = @owner.repositories.new(params[:repository])
+      @repository = @owner.repositories.new
       @repository.kind = @owner === Group ? Repository::KIND_TEAM_REPO : Repository::KIND_USER_REPO
     end
-    @repository = @owner.repositories.new
   end
   
   def create
