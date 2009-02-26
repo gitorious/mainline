@@ -136,6 +136,14 @@ class UsersControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal users(:johan), assigns(:user)
   end
+  
+  should "not display the users email if he decides so" do
+    user = users(:johan)
+    user.update_attribute(:public_email, false)
+    get :show, :id => user.to_param
+    assert_response :success
+    assert_select "#sidebar ul li.email", 0
+  end
 
   should "recognizes routing with dots in it" do
     assert_recognizes({

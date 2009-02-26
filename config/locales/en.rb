@@ -538,6 +538,7 @@
           :activated_at => "Activated At",
           :fullname => "Full name",
           :url => "Url",
+          :public_email => "Show email in public?"
         },
         :merge_request => {
           :target_repository_id => "Target Repository",

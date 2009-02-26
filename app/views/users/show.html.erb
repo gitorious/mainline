@@ -32,18 +32,22 @@
 <% end -%>
 
 <% content_for :sidebar do -%>
+  <div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 64 }), :action => "show") %></div>
   <h1>
     <%=h @user.login -%> 
     <small><%= @user.fullname.blank? ? "" : "(#{h(@user.fullname)})" -%></small>
   </h1>
 
-  <div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 64 }), :action => "show") %></div>
   <ul>
-    <li><strong>Email:</strong> <%= GitoriousConfig["mangle_email_addresses"] ? encoded_mail_to(@user.email) : mail_to(@user.email) -%></li>
-    <% if @user.url %>
-      <li><strong>Url:</strong> <a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+    <% if @user.public_email? -%>
+    <li class="email">
+      <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
+    </li>
     <% end -%>
-    <li><strong><%= t("views.users.member_for") %></strong> <%= t("views.users.about", :about => time_ago_in_words(@user.created_at)) %></li>
+    <% if @user.url %>
+      <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+    <% end -%>
+    <li><%= t("views.users.member_for") %> <%= t("views.users.about", :about => time_ago_in_words(@user.created_at)) %></li>
     <li><strong><%= @commits_last_week -%></strong> <%= t("views.users.this_week", :count => @commits_last_week) %>.</li>
   </ul>
   
