@@ -138,7 +138,7 @@ class Repository < ActiveRecord::Base
   end
   
   def http_cloning?
-    !!GitoriousConfig["hide_http_clone_urls"]
+    !GitoriousConfig["hide_http_clone_urls"]
   end
   
   def push_url
