@@ -1,7 +1,21 @@
 class ApplicationProcessor < ActiveMessaging::Processor
   
   def ActiveMessaging.logger
-    @@logger = Logger.new(File.join(RAILS_ROOT, "log", "message_processing.log"))
+    @@logger ||= begin
+      logger = ActiveSupport::BufferedLogger.new(File.join(RAILS_ROOT, "log", "message_processing.log"))
+      logger.level = ActiveSupport::BufferedLogger.const_get(Rails.configuration.log_level.to_s.upcase)
+      if Rails.configuration.environment == "production"
+        logger.auto_flushing = false
+      end
+      logger
+    rescue StandardError => e
+      logger = ActiveSupport::BufferedLogger.new(STDERR)
+      logger.level = ActiveSupport::BufferedLogger::WARN
+      logger.warn(
+        "Rails Error: Unable to access log file. Please ensure that #{configuration.log_path} exists and is chmod 0666. " +
+        "The log level has been raised to WARN and the output directed to STDERR until the problem is fixed."
+      )
+    end
   end
   
   # Default on_error implementation - logs standard errors but keeps processing. Other exceptions are raised.
