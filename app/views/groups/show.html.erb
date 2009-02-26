@@ -25,12 +25,23 @@
 
 <h3>Repositories (<%= @group.repositories.count -%>)</h3>
 <ul class="repository_list">
-  <% @group.repositories.each do |repository| -%>
+  <h4>Project repositories</h4>
+  <% @group.repositories.mainlines.each do |repository| -%>
     <li>
       <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
       <%= link_to h(repository.name), group_project_repository_path(@group, repository.project, repository) -%>
-      <div class="hint page">
-        <%= markdown(sanitize(repository.description)) -%>
+      <div class="hint">
+        <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
+      </div>
+    </li>
+  <% end -%>
+  <h4>Repository clones</h4>
+  <% @group.repositories.clones.each do |repository| -%>
+    <li>
+      <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
+      <%= link_to h(repository.name), group_project_repository_path(@group, repository.project, repository) -%>
+      <div class="hint">
+        <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
       </div>
     </li>
   <% end -%>
@@ -47,12 +58,12 @@
   </ul>
   
   <h3>Members (<%= @group.members.count -%>)</h3>
-  <ul class="repository_list">
+  <ul class="committers">
     <% @group.members.each do |user| -%>
       <li>
         <div class="user">
           <%= gravatar(user.email, :size => 16, :style => "tiny") %>
-          <%= link_to h(user.login), user_path(user) -%>
+          <%= link_to h(user.title), user_path(user) -%>
         </div>
       </li>
     <% end -%>
