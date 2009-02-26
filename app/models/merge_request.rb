@@ -32,9 +32,10 @@ class MergeRequest < ActiveRecord::Base
     
   validates_presence_of :user, :source_repository, :target_repository, :ending_commit
   
-  STATUS_OPEN = 0
-  STATUS_MERGED = 1
-  STATUS_REJECTED = 2
+  STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
+  STATUS_OPEN = 1
+  STATUS_MERGED = 2
+  STATUS_REJECTED = 3
   
   named_scope :open, :conditions => { :status => STATUS_OPEN }
   named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
@@ -44,7 +45,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def self.statuses
-    { "Open" => STATUS_OPEN, "Merged" => STATUS_MERGED, "Rejected" => STATUS_REJECTED }
+    { "Open" => STATUS_OPEN, "Merged" => STATUS_MERGED, "Rejected" => STATUS_REJECTED, 'Pending' => STATUS_PENDING_ACCEPTANCE_OF_TERMS }
   end
   
   def self.count_open
@@ -65,6 +66,10 @@ class MergeRequest < ActiveRecord::Base
   
   def rejected?
     status == STATUS_REJECTED
+  end
+  
+  def pending_acceptance_of_terms?
+    status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
   end
   
   def source_branch
@@ -120,6 +125,20 @@ class MergeRequest < ActiveRecord::Base
   
   def title
     "#{source_repository.name}"
+  end
+  
+  def terms_accepted(oauth_request_token, oauth_request_secret)
+    validate_through_oauth(oauth_request_token, oauth_request_secret) do
+      self.status = STATUS_OPEN
+    end
+  end
+  
+  def validate_through_oauth(token, secret)
+    yield if valid_oauth_credentials?(token, secret)
+  end
+  
+  def valid_oauth_credentials?(token, secret)
+    return true   # TODO, obviously
   end
   
 end

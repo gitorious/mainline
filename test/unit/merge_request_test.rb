@@ -29,6 +29,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       m
     end
     @merge_request.stubs(:commits_for_selection).returns(commits)
+    assert @merge_request.pending_acceptance_of_terms?
   end
   
   should_validate_presence_of :user, :source_repository, :target_repository, 
@@ -57,6 +58,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
   
   should "has a statuses class method" do
+    assert_equal MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS, MergeRequest.statuses["Pending"]
     assert_equal MergeRequest::STATUS_OPEN, MergeRequest.statuses["Open"]
     assert_equal MergeRequest::STATUS_MERGED, MergeRequest.statuses["Merged"]
     assert_equal MergeRequest::STATUS_REJECTED, MergeRequest.statuses["Rejected"]
@@ -80,7 +82,21 @@ class MergeRequestTest < ActiveSupport::TestCase
     mr = @merge_request.clone
     mr.status = MergeRequest::STATUS_REJECTED
     mr.save
-    assert_equal 1, MergeRequest.count_open
+    assert_equal 0, MergeRequest.count_open
+  end
+  
+  should 'have a transition from pending to open' do
+    mr = @merge_request.clone
+    assert mr.pending_acceptance_of_terms?
+    mr.terms_accepted('key', 'secret')
+    assert mr.open?
+  end
+  
+  should 'not be set to open if OAuth validation fails' do
+    mr = @merge_request.clone
+    mr.stubs(:valid_oauth_credentials?).returns(false)
+    mr.terms_accepted('key', 'invalid secret')
+    assert !mr.open?
   end
   
   should "it defaults to master for the source_branch" do
