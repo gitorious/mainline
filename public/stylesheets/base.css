@@ -506,6 +506,7 @@ li.clone > a { background-image: url("/images/silk/database_clone.png") !importa
 li.comment_link > a { background-image: url("/images/silk/comment.png") !important; }
 li.merge_request > a { background-image: url("/images/silk/arrow_merge.png") !important; }
 li.emails > a { background-image: url("/images/silk/email.png") !important; }
+li.new_email > a { background-image: url("/images/silk/email_add.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
 li.event_instance.create_repository, li.create_repository > a { background-image: url("/images/silk/database_add.png") !important; }

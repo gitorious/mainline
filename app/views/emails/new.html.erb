@@ -11,5 +11,10 @@
     <%= f.text_field :address, :class => "text" -%>
   </p>
   
+  <p class="hint">
+    You will be sent an email asking you to confirm this email after it has 
+    been created.
+  </p>
+  
   <p><%= f.submit("Add email alias") -%> or <%= link_to "go back", user_emails_path(@user) -%></p>
 <% end -%>
