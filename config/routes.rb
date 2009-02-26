@@ -25,7 +25,8 @@ ActionController::Routing::Routes.draw do |map|
     repo.commit_comment "comments/commit/:sha", :controller => "comments", 
       :action => "commit", :conditions => { :method => :get }
     repo.resources :merge_requests, :member => { 
-      :resolve => :put 
+      :resolve => :put,
+      :terms_accepted => :get 
     }, :collection => { 
       :create => :post, 
       :commit_list => :post,

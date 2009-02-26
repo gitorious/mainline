@@ -130,6 +130,7 @@ class MergeRequest < ActiveRecord::Base
   def terms_accepted(oauth_request_token, oauth_request_secret)
     validate_through_oauth(oauth_request_token, oauth_request_secret) do
       self.status = STATUS_OPEN
+      save
     end
   end
   

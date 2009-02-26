@@ -94,4 +94,11 @@ Rails::Initializer.run do |config|
       :repository_observer, 
       :merge_request_observer
   ]
+  
+  config.after_initialize do
+    OAuth::Consumer::CA_FILE = nil
+    CONSUMER=OAuth::Consumer.new "40Issa29D3Vo", 
+                                  "e44EovVJDfUa8YDbXCaxwaCaAEuOW3v5", 
+                                  {:site=>"https://fireeagle.yahooapis.com"}
+  end  
 end

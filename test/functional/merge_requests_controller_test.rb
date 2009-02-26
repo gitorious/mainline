@@ -161,32 +161,40 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	    Grit::Repo.any_instance.stubs(:heads).returns([])
     end
     
-		should "requires login" do
+		should "require login" do
 			session[:user_id] = nil
 			do_post
 			assert_redirected_to(new_sessions_path)
 		end
 		
-		should "scopes to the source_repository" do
+		should "scope to the source_repository" do
 			login_as :johan
 			do_post
 			assert_equal @source_repository, assigns(:merge_request).source_repository
 		end
 		
-		should "scopes to the current_user" do
+		should "scope to the current_user" do
 			login_as :johan
 			do_post
 			assert_equal users(:johan), assigns(:merge_request).user
 		end
 		
-		should "creates the record on successful data" do
+		should "create the record on successful data" do
 			login_as :johan
+			mock_token = mock("Mocked access token")
+			mock_token.stubs(:key).returns("key")
+			mock_token.stubs(:secret).returns("secret")
+			mock_token.stubs(:authorize_url).returns("http://nowhere.com/authorize")
+			@controller.expects(:obtain_oauth_request_token).returns(mock_token)
 			assert_difference("MergeRequest.count") do
 				do_post
-				assert_redirected_to(group_project_repository_path(@source_repository.owner, @project, @source_repository))
+				assert_response :redirect
+				result = assigns(:merge_request)
+				assert_equal(terms_accepted_project_repository_merge_request_path(@source_repository.project, @source_repository, result), session[:return_to])
 				assert_match(/sent a merge request to "#{@target_repository.name}"/i, flash[:success])
       end
 		end
+		
 		
 		should "it re-renders on invalid data, with the target repos list" do
 			login_as :johan
@@ -196,6 +204,32 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_equal [repositories(:johans)], assigns(:repositories)
 		end
 	end
+	
+	context 'Terms accepted (GET)' do
+	  setup do
+		  @merge_request = @source_repository.proposed_merge_requests.new(:proposal => 'Would like this to be merged', :user => users(:johan), :ending_commit => '6823e6622e1da9751c87380ff01a1db1', :target_repository => @target_repository)
+		  assert @merge_request.save
+		  MergeRequest.stubs(:find).returns(@merge_request)
+		  login_as :johan
+    end
+
+		should 'set the status to open when done authenticating thru OAuth' do
+      get :terms_accepted, :project_id => @project.to_param,
+        :repository_id => @target_repository.to_param,
+        :id => @merge_request.to_param
+      assert_response :success
+      assert @merge_request.open?
+	  end
+	  
+	  should 'not set the status to open if OAuth authentication has not been performed' do
+	    @merge_request.stubs(:valid_oauth_credentials?).returns(false)
+      get :terms_accepted, :project_id => @project.to_param,
+        :repository_id => @target_repository.to_param,
+        :id => @merge_request.to_param
+      assert_response :success
+      assert !@merge_request.open?
+    end
+  end
 	
 	context "#edit (GET)" do		
 		should "requires login" do

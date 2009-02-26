@@ -65,6 +65,12 @@ class MergeRequestsController < ApplicationController
     get_branches_and_commits_for_selection
   end
   
+  def terms_accepted
+    @merge_request = @repository.merge_requests.find(params[:id])
+    @merge_request.terms_accepted(session[:oauth_key], session[:oauth_secret])
+    render :text => 'This is nice'
+  end
+  
   def create
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
@@ -72,8 +78,11 @@ class MergeRequestsController < ApplicationController
       if @merge_request.save
         @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         format.html {
+          request_token = obtain_oauth_request_token
           flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
-          redirect_to repo_owner_path(@repository, [@repository.project, @repository])
+          redirection_path = terms_accepted_project_repository_merge_request_path(@repository.project, @repository, @merge_request)
+          store_location(redirection_path)
+          redirect_to request_token.authorize_url
           return
         }
         format.xml { render :xml => @merge_request, :status => :created }
@@ -129,6 +138,13 @@ class MergeRequestsController < ApplicationController
     
     def find_merge_request
       @merge_request = @repository.merge_requests.find(params[:id])
+    end
+    
+    def obtain_oauth_request_token
+      request_token = CONSUMER.get_request_token
+      session[:oauth_key]     = request_token.token
+      session[:oauth_secret]  = request_token.secret
+      return request_token
     end
     
     def assert_merge_request_resolvable
