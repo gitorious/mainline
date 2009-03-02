@@ -180,10 +180,6 @@ class ApplicationController < ActionController::Base
       [branch_ref, path]
     end
     
-    def cache_for(ttl=60.seconds)
-      headers['Cache-Control'] = "max-age:#{ttl.to_i}"
-    end
-    
   private
   
     def unshifted_polymorphic_path(repo, path_spec)

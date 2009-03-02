@@ -121,7 +121,7 @@ class TreesControllerTest < ActionController::TestCase
             :branch_and_path => ["test", "master", "lib"]
         
       assert_response :success
-      assert_equal "max-age:30", @response.headers['Cache-Control']
+      assert_equal "max-age=30, private", @response.headers['Cache-Control']
     end
   end
   

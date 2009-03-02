@@ -58,7 +58,7 @@ class BlobsControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal @git, assigns(:git)
       assert_equal blob_mock, assigns(:blob)
-      assert_equal "max-age:120", @response.headers['Cache-Control']      
+      assert_equal "max-age=120, private", @response.headers['Cache-Control']      
     end 
     
     should "redirects to HEAD if provided sha was not found (backwards compat)" do
@@ -92,7 +92,7 @@ class BlobsControllerTest < ActionController::TestCase
       assert_equal blob_mock, assigns(:blob)
       assert_equal "blabla", @response.body
       assert_equal "text/plain", @response.content_type
-      assert_equal "max-age:120", @response.headers['Cache-Control']      
+      assert_equal "max-age=120, private", @response.headers['Cache-Control']      
     end
     
     should "redirects to HEAD if provided sha was not found (backwards compat)" do
