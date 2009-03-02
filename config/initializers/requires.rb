@@ -1,7 +1,7 @@
 require "core_ext"
 require "fileutils"
 require "diff-display/lib/diff-display"
-require 'oauth'
+require 'oauth/oauth'
 
 gem "ruby-yadis", ">=0"
 gem "rdiscount", ">=0"
