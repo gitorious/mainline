@@ -61,8 +61,8 @@ class CommitsController < ApplicationController
   
   def feed
     @git = @repository.git
-    branch_ref = desplat_path(params[:branch])
-    @commits = @repository.git.commits(branch_ref)
+    @ref = desplat_path(params[:branch])
+    @commits = @repository.git.commits(@ref, 50)
     expires_in 30.minutes
     if stale?(:etag => @commits.first.id, :last_modified => @commits.first.committed_date.utc)
       respond_to do |format|

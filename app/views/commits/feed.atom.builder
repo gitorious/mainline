@@ -16,37 +16,33 @@
 #++
 
 atom_feed do |feed|
-  feed.title("Gitorious: #{@project.title} - #{@repository.name}")
+  feed.title("Gitorious: #{@repository.gitdir}")
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 	
   @commits.each do |commit|
-    item_url = "http://#{GitoriousConfig['gitorious_host']}" +  project_repository_commit_path(@project, @repository, commit.id)
-    #stats.files.each do |filename, adds, deletes, total|
-		commit_stat_data = commit.stats.files.map do |file, insertions, deletions, total| 
-			[insertions.to_s.ljust(8, " "), deletions.to_s.ljust(8, " "), file].join
-		end
+    item_url = "http://#{GitoriousConfig['gitorious_host']}"
+    item_url << repo_owner_path(@repository, :project_repository_commit_path, 
+                                @project, @repository, commit.id)
     feed.entry(commit, {
       :url => item_url, 
-      :updated => commit.committed_date, 
-      :published => commit.committed_date
+      :updated => commit.committed_date.utc, 
+      :published => commit.committed_date.utc
     }) do |entry|
-      entry.title(truncate(commit.message, :length => 75))
+      entry.title(truncate(commit.message, :length => 100))
       entry.content(<<-EOS, :type => 'html')
-<h1>In #{@repository.gitdir} #{params[:id]}</h1>
+<h2>In #{@repository.gitdir}:#{h(@ref)}</h2>
+
+<ul>
+  <li><strong>Commit:</strong> #{link_to(commit.id, item_url)}</li>
+  <li><strong>Date:</strong> #{commit.committed_date.utc.strftime("%Y-%m-%d %H:%M")}</li>
+  <li><strong>Author:</strong> #{commit.author.name}</li>
+  <li><strong>Committer:</strong> #{commit.committer.name}</li>
+</ul>
+
 <pre>
-#{word_wrap commit.message}
-
-
-Date:   #{commit.committed_date.strftime("%Y-%m-%d %H:%M")}
-Author: #{commit.author.name}
-Committer: #{commit.committer.name}
-
-#{commit.stats.total} lines changed in #{commit.stats.files.length} files:
-------------------------------------------------------------------------------
-adds   dels     file
-------------------------------------------------------------------------------
-#{commit_stat_data.join("\n")}
+#{h word_wrap(commit.message)}
 <pre>
+
 EOS
       entry.author do |author|
         author.name(commit.author.name)
