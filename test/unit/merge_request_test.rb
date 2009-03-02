@@ -149,18 +149,23 @@ class MergeRequestTest < ActiveSupport::TestCase
       end
     end
     
-    should " suggest relevant commits to be merged" do
+    should "suggest relevant commits to be merged" do
       assert_equal(4, @merge_request.commits_for_selection.size)
     end
     
-    should " know that it applies to specific commits" do
+    should "know that it applies to specific commits" do
       assert_equal(2, @merge_request.commits_to_be_merged.size)
       assert_equal(%w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1), @merge_request.commits_to_be_merged.collect(&:id))
     end
     
-    should " return the full set of commits if ending_commit or starting_commit don't exist" do
+    should "return the full set of commits if ending_commit don't exist" do
       @merge_request.ending_commit = '526fa6c0b3182116d8ca2dc80dedeafb'
       assert_equal(3, @merge_request.commits_to_be_merged.size)
+    end
+    
+    should "return an empty set of the ending_commit is already merged" do
+      @merge_request.ending_commit = 'alreadymerged'
+      assert_equal(0, @merge_request.commits_to_be_merged.size)
     end
   end
 end

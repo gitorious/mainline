@@ -98,7 +98,7 @@ class MergeRequest < ActiveRecord::Base
   
   def commits_for_selection
     return [] if !target_repository
-    target_repository.git.commit_deltas_from(source_repository.git, target_branch, source_branch)
+    @commits_for_selection ||= target_repository.git.commit_deltas_from(source_repository.git, target_branch, source_branch)
   end
   
   def applies_to_specific_commits?
@@ -107,8 +107,8 @@ class MergeRequest < ActiveRecord::Base
   
   def commits_to_be_merged
     if applies_to_specific_commits?
-      l = commits_for_selection.index(commits_for_selection.find{|c|c.id == ending_commit})
-      return l ? commits_for_selection[0..l] : commits_for_selection
+      idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
+      return idx ? commits_for_selection[0..idx] : []
     else
       return commits_for_selection
     end
