@@ -204,8 +204,7 @@ class CommitsControllerTest < ActionController::TestCase
                       stub_everything("author"), Time.now, 
                       stub_everything("comitter"), Time.now, 
                       "my commit message".split(" "))
-        @repository.git.expects(:commits).returns([commit])
-        commit.stubs(:stats).returns(stub_everything("stats", :files => []))
+        @repository.git.expects(:commits).twice.returns([commit])
       
         get :feed, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "master", :format => "atom"}
