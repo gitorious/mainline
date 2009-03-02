@@ -143,8 +143,8 @@ class TreesControllerTest < ActionController::TestCase
       assert_response :success      
       assert_equal cached_path, @response.headers["X-Sendfile"]
       assert_equal "application/x-gzip; charset=utf-8", @response.headers["Content-Type"]
-      exp_filename = "#{@repository.owner.to_param}-#{@repository.to_param}-master.tar.gz"
-      assert_equal "Content-Disposition: attachment; file=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
+      exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.tar.gz"
+      assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
     end
     
     should "enqueues a job when the tarball isn't cached" do
@@ -161,7 +161,6 @@ class TreesControllerTest < ActionController::TestCase
       assert_response 202 # Accepted
       assert_match(/is currently being generated, try again later/, @response.body)
       assert_equal "text/plain; charset=utf-8", @response.headers["Content-Type"]
-      # assert_equal "Content-Disposition: inline; file=\"in_progress.txt\"", @response.headers["Content-Disposition"]
       
       msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving", 
                                                               /#{@test_master_sha}/)

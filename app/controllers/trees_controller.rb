@@ -55,13 +55,13 @@ class TreesController < ApplicationController
       redirect_to project_repository_path(@project, @repository) and return
     end
     
-    user_path = "#{@repository.owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
+    user_path = "#{@repository.project_or_owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
     disk_path = "#{@repository.hashed_path}-#{@commit.id}.#{ext}"
     if File.exist?(File.join(GitoriousConfig["archive_cache_dir"], disk_path))
       respond_to do |format|
         format.html {
           set_xsendfile_headers(disk_path, user_path)
-          render :nothing => true, :status => :ok and return
+          head(:ok) and return
         }
         format.js {
           render :partial => "archive_ready"
@@ -91,7 +91,7 @@ class TreesController < ApplicationController
       response.headers["X-Sendfile"] = File.join(GitoriousConfig["archive_cache_dir"], real_path)
       response.headers["Content-Type"] = content_type
       user_path = user_path.gsub("/", "_")
-      response.headers["Content-Disposition"] = "Content-Disposition: attachment; file=\"#{user_path}\""
+      response.headers["Content-Disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
     end
     
     def publish_archive_message(repo, disk_path, commit)
