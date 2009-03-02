@@ -124,7 +124,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def title
-    "#{source_repository.name}"
+    source_repository.name
   end
   
   def terms_accepted(oauth_request_token, oauth_request_secret)
