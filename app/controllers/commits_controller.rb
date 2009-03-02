@@ -63,9 +63,12 @@ class CommitsController < ApplicationController
     @git = @repository.git
     branch_ref = desplat_path(params[:branch])
     @commits = @repository.git.commits(branch_ref)
-    respond_to do |format|
-      format.html { redirect_to(project_repository_commits_in_ref_path(@project, @repository, params[:branch]))}
-      format.atom
+    expires_in 30.minutes
+    if stale?(:etag => @commits.first.id, :last_modified => @commits.first.committed_date.utc)
+      respond_to do |format|
+        format.html { redirect_to(project_repository_commits_in_ref_path(@project, @repository, params[:branch]))}
+        format.atom
+      end
     end
   end
   
