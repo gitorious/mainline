@@ -47,7 +47,7 @@ module Git
     end
       
     def run
-      while session = @socket.accept
+      while session = accept_socket
         connections = $children_active - $children_reaped
         if connections > MAX_CHILDREN
           log(Process.pid, "too many active children #{connections}/#{MAX_CHILDREN}")
@@ -63,7 +63,7 @@ module Git
       $children_active += 1
       ip_family, port, name, ip = session.peeraddr
       
-      line = session.recv(1000)
+      line = receive_data(session)
       
       if line =~ SERVICE_REGEXP
         start_time = Time.now
@@ -166,6 +166,38 @@ module Git
   
     def log(pid, msg)
       $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
+    end
+    
+    def accept_socket
+      if RUBY_VERSION < '1.9'
+        @socket.accept
+      else
+        begin
+          @socket.accept_nonblock
+        rescue Errno::EAGAIN, Errno::EWOULDBLOCK, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR => e
+          if IO.select([@socket])
+            retry
+          else
+            raise e
+          end
+        end
+      end
+    end
+    
+    def receive_data(session)
+      if RUBY_VERSION < '1.9'
+        session.recv(1000)
+      else
+        begin
+          session.recv_nonblock(1000)
+        rescue Errno::EAGAIN, Errno::EWOULDBLOCK, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
+          if IO.select([@socket])
+            retry
+          else
+            return ""
+          end
+        end
+      end
     end
   
   end
