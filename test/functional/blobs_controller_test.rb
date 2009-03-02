@@ -48,6 +48,7 @@ class BlobsControllerTest < ActionController::TestCase
       commit_stub = mock("commit")
       commit_stub.stubs(:id).returns("a"*40)
       commit_stub.stubs(:tree).returns(commit_stub)
+      commit_stub.stubs(:committed_date).returns(2.days.ago)
       @git.expects(:commit).returns(commit_stub)
       @git.expects(:tree).returns(blob_mock)
       @git.stubs(:get_head).returns(stub("head", :name => "master"))
@@ -81,6 +82,7 @@ class BlobsControllerTest < ActionController::TestCase
       commit_stub = mock("commit")
       commit_stub.stubs(:id).returns("a"*40)
       commit_stub.stubs(:tree).returns(commit_stub)
+      commit_stub.stubs(:committed_date).returns(2.days.ago)
       @git.expects(:commit).returns(commit_stub)
       @git.expects(:tree).returns(blob_mock)
       
@@ -110,6 +112,7 @@ class BlobsControllerTest < ActionController::TestCase
       commit_stub = mock("commit")
       commit_stub.stubs(:id).returns("a"*40)
       commit_stub.stubs(:tree).returns(commit_stub)
+      commit_stub.stubs(:committed_date).returns(2.days.ago)
       @git.expects(:commit).returns(commit_stub)
       @git.expects(:tree).returns(blob_mock)
       

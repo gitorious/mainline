@@ -33,12 +33,14 @@ class TreesController < ApplicationController
       redirect_to project_repository_tree_path(@project, @repository, 
                       branch_with_tree("HEAD", @path)) and return
     end
-    head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-    @root = Breadcrumb::Folder.new({:paths => @path, :head => head, 
-                                    :repository => @repository})
-    path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
-    @tree = @git.tree(@commit.tree.id, path)
-    expires_in 30.seconds
+    if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
+      head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+      @root = Breadcrumb::Folder.new({:paths => @path, :head => head, 
+                                      :repository => @repository})
+      path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
+      @tree = @git.tree(@commit.tree.id, path)
+      expires_in 30.seconds
+    end
   end
   
   def archive

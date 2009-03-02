@@ -27,15 +27,17 @@ class BlobsController < ApplicationController
       redirect_to project_repository_blob_path(@project, @repository, 
                     branch_with_tree("HEAD", @path)) and return
     end
-    @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
-    head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-    @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
-                :repository => @repository, :name => @blob.basename)
-    render_not_found and return unless @blob
-    unless @blob.respond_to?(:data) # it's a tree
-      redirect_to project_repository_tree_path(@project, @repository, @commit.id, @path)
+    if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
+      @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+      head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+      @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
+                  :repository => @repository, :name => @blob.basename)
+      render_not_found and return unless @blob
+      unless @blob.respond_to?(:data) # it's a tree
+        redirect_to project_repository_tree_path(@project, @repository, @commit.id, @path)
+      end
+      expires_in 2.minutes
     end
-    expires_in 2.minutes
   end
 
   def raw
@@ -46,16 +48,16 @@ class BlobsController < ApplicationController
       redirect_to project_repository_raw_blob_path(@project, @repository, 
                     branch_with_tree("HEAD", @path)) and return
     end
-    @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
-    render_not_found and return unless @blob
-    if @blob.size > 500.kilobytes
-      flash[:error] = I18n.t "blogs_controller.raw_error"
-      redirect_to project_repository_path(@project, @repository) and return
+    if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
+      @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+      render_not_found and return unless @blob
+      if @blob.size > 500.kilobytes
+        flash[:error] = I18n.t "blogs_controller.raw_error"
+        redirect_to project_repository_path(@project, @repository) and return
+      end
+      expires_in 2.minutes
+      render :text => @blob.data, :content_type => @blob.mime_type
     end
-    expires_in 2.minutes
-    render :text => @blob.data, :content_type => @blob.mime_type
   end
   
-  # def text
-  # end
 end
