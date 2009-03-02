@@ -34,11 +34,13 @@ class CommitsController < ApplicationController
       commit = @git.commit(@ref)
       head = Grit::Head.new(commit.id_abbrev, commit)
     end
-    @root = Breadcrumb::Branch.new(head, @repository)
-    @commits = @repository.cached_paginated_commits(@ref, params[:page])
-    @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
-    respond_to do |format|
-      format.html
+    if stale?(:etag => head.commit.id, :last_modified => head.commit.committed_date.utc)
+      @root = Breadcrumb::Branch.new(head, @repository)
+      @commits = @repository.cached_paginated_commits(@ref, params[:page])
+      @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
+      respond_to do |format|
+        format.html
+      end
     end
   end
 
@@ -46,16 +48,18 @@ class CommitsController < ApplicationController
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
     @commit = @git.commit(params[:id])
-    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
-    @diffs = @commit.diffs
-    @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
-    @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
-    @author_user = User.find_by_email_with_aliases(@commit.author.email)
-    @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
-    respond_to do |format|
-      format.html
-      format.diff  { render :text => @diffs.map{|d| d.diff}.join("\n"), :content_type => "text/plain" }
-      format.patch { render :text => @commit.to_patch, :content_type => "text/plain" }
+    if stale?(:etag => @commit.id, :last_modified => @commit.committed_date.utc)
+      @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
+      @diffs = @commit.diffs
+      @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
+      @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
+      @author_user = User.find_by_email_with_aliases(@commit.author.email)
+      @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
+      respond_to do |format|
+        format.html
+        format.diff  { render :text => @diffs.map{|d| d.diff}.join("\n"), :content_type => "text/plain" }
+        format.patch { render :text => @commit.to_patch, :content_type => "text/plain" }
+      end
     end
   end
   
