@@ -84,6 +84,8 @@ module Git
         
         unless repository
           log(Process.pid, "Cannot find repository: #{path}")
+          write_error_message(session, "Cannot find repository: #{base_path}")
+          $children_active -= 1
           session.close
           return
         end
@@ -93,6 +95,7 @@ module Git
         
         if real_path.index(BASE_PATH) != 0 || !File.directory?(real_path)
           log(Process.pid, "Invalid path: #{real_path}")
+          write_error_message(session, "Cannot find repository: #{base_path}")
           session.close
           $children_active -= 1
           return
@@ -166,6 +169,17 @@ module Git
   
     def log(pid, msg)
       $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
+    end
+    
+    def write_error_message(session, msg)
+      message = ["\n----------------------------------------------"]
+      message << msg
+      message << "----------------------------------------------\n"
+      write_into_sideband(session, message.join("\n"), 2)
+    end
+    
+    def write_into_sideband(session, message, channel)
+
     end
     
     def accept_socket
