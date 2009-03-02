@@ -26,7 +26,7 @@ module Git
   class Daemon
     include Daemonize
     
-    SERVICE_REGEXP = /(\w{4})(git\-upload\-pack)\s(.+)\x0host=([\w\.\-]+)/.freeze
+    SERVICE_REGEXP = /^(git\-upload\-pack)\s(.+)\x00host=([\w\.\-]+)/.freeze
     
     def initialize(options)
       @options = options
@@ -67,10 +67,9 @@ module Git
       
       if line =~ SERVICE_REGEXP
         start_time = Time.now
-        code = $1
-        service = $2
-        base_path = $3
-        host = $4
+        service = $1
+        base_path = $2
+        host = $3
       
         path = File.expand_path("#{BASE_PATH}/#{base_path}")
         log(Process.pid, "Connection from #{ip} for #{base_path.inspect}")
@@ -201,16 +200,28 @@ module Git
     
     def receive_data(session)
       if RUBY_VERSION < '1.9'
-        session.recv(1000)
+        read_data(session)
       else
-        begin
-          session.recv_nonblock(1000)
-        rescue Errno::EAGAIN, Errno::EWOULDBLOCK, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
-          if IO.select([@socket])
-            retry
-          else
-            return ""
-          end
+        read_data_nonblock(session)
+      end
+    end
+    
+    def read_data(session)
+      size_string = session.recv(4)
+      return false if !size_string || size_string == ""
+      session.recv(size_string.to_i(16) - 4)
+    end
+    
+    def read_data_nonblock(session)
+      begin
+        size_string = session.recv_nonblock(4)
+        return false if !size_string || size_string == ""
+        session.recv_nonblock(size_string.to_i(16) - 4)
+      rescue Errno::EAGAIN, Errno::EWOULDBLOCK, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
+        if IO.select([@socket])
+          retry
+        else
+          return ""
         end
       end
     end
