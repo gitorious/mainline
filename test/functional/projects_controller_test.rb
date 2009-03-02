@@ -167,6 +167,21 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal users(:johan), assigns(:project).user
       assert_equal users(:johan), assigns(:project).owner
     end
+    
+    should "Create an event when POSTing successfully to create" do
+      login_as :johan
+      assert_difference("Event.count") do
+        post :create, :project => {
+          :title => "project x", 
+          :slug => "projectx", 
+          :description => "projectx's description",
+          :owner_type => "User"
+        }
+      end
+      assert_equal 1, assigns(:project).reload.events.count
+      event = assigns(:project).events.first
+      assert_equal Action::CREATE_PROJECT, event.action
+    end
   
     should "POST projects/create with valid data should create project, owned by a group" do
       login_as :johan
