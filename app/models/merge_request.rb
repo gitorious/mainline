@@ -139,7 +139,9 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def valid_oauth_credentials?(token, secret)
-    return true   # TODO, obviously
+    access_token = CONSUMER.build_access_token(token, secret)
+    response = access_token.get("/")
+    return Net::HTTPSuccess === response
   end
   
 end

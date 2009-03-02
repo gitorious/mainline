@@ -75,7 +75,20 @@ module OAuth
         opts
       })
     end
-
+    
+    # Initialize an instance from a set of options. Lets us stub out for testing purposes
+    def self.from_options(options)
+      if options['adapter'].to_s == 'test'
+        return OAuth::TestConsumer.new(options)
+      end
+      return new(options['consumer_key'], options['consumer_secret'], options['options'])
+    end
+    
+    # Convenience method
+    def build_access_token(token, secret)
+      AccessToken.new(self, token, secret)
+    end
+    
     # The default http method
     def http_method
       @http_method ||= @options[:http_method] || :post

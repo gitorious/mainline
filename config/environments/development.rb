@@ -24,3 +24,4 @@ ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT,
 # config.cache_store = :mem_cache_store, ['localhost:11211'], { 
 #   :namespace => 'ks1' 
 # }
+
