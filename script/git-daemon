@@ -179,7 +179,8 @@ module Git
     end
     
     def write_into_sideband(session, message, channel)
-
+      msg = "%s%s" % [channel.chr, message]
+      session.write("%04x%s" % [msg.length+4, msg])
     end
     
     def accept_socket
