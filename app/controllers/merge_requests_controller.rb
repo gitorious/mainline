@@ -84,18 +84,10 @@ class MergeRequestsController < ApplicationController
   def create
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    respond_to do |format|
-      if @merge_request.save
-        format.html {
-          request_token = obtain_oauth_request_token
-          flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
-          redirection_path = terms_accepted_project_repository_merge_request_path(@repository.project, @merge_request.target_repository, @merge_request)
-          store_location(redirection_path)
-          redirect_to request_token.authorize_url
-          return
-        }
-        format.xml { render :xml => @merge_request, :status => :created }
-      else
+    if @merge_request.save
+      merge_request_created
+    else
+      respond_to do |format|
         format.html {
           @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
           get_branches_and_commits_for_selection
@@ -143,6 +135,26 @@ class MergeRequestsController < ApplicationController
   protected    
     def find_repository
       @repository = @owner.repositories.find_by_name!(params[:repository_id])
+    end
+    
+    def merge_request_created
+      if @merge_request.acceptance_of_terms_required?
+        request_token = obtain_oauth_request_token
+        @redirection_path = terms_accepted_project_repository_merge_request_path(@repository.project, @merge_request.target_repository, @merge_request)
+        store_location(@redirection_path)
+      else
+        flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
+        @merge_request.confirmed_by_user
+        @redirection_path =  polymorphic_path([@owner, @repository])
+      end
+
+      respond_to do |format|
+        format.html {
+          redirect_to @redirection_path
+          return
+        }
+        format.xml { render :xml => @merge_request, :status => :created }      
+      end
     end
     
     def find_merge_request

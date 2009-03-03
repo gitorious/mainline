@@ -191,10 +191,21 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				assert_response :redirect
 				result = assigns(:merge_request)
 				assert_equal(terms_accepted_project_repository_merge_request_path(@source_repository.project, @target_repository, result), session[:return_to])
-				assert_match(/sent a merge request to "#{@target_repository.name}"/i, flash[:success])
       end
 		end
 		
+		should 'not require off-site signoff of terms unless the repository needs it' do
+		  login_as(:johan)
+      post :create, :project_id => @project.to_param, 
+              :repository_id => @target_repository.to_param, :merge_request => {
+                :target_repository_id => @source_repository.id,
+                :ending_commit => '6823e6622e1da9751c87380ff01a1db1'
+              }
+		  result = assigns(:merge_request)
+		  assert !result.acceptance_of_terms_required?
+		  assert result.open?
+			assert_match(/sent a merge request to "#{@source_repository.name}"/i, flash[:success])
+	  end
 		
 		should "it re-renders on invalid data, with the target repos list" do
 			login_as :johan
