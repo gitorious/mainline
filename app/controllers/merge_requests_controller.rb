@@ -73,6 +73,7 @@ class MergeRequestsController < ApplicationController
   def terms_accepted
     @merge_request = @repository.merge_requests.find(params[:id])
     if @merge_request.terms_accepted(session[:oauth_key], session[:oauth_secret])
+      @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
       flash[:notice] = "Your merge request has been submitted"
     else
       flash[:error] = "You need to accept the contribution agreement"
@@ -85,7 +86,6 @@ class MergeRequestsController < ApplicationController
     @merge_request.user = current_user
     respond_to do |format|
       if @merge_request.save
-        @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         format.html {
           request_token = obtain_oauth_request_token
           flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name

@@ -131,6 +131,7 @@ class MergeRequest < ActiveRecord::Base
     validate_through_oauth(oauth_request_token, oauth_request_secret) do
       self.status = STATUS_OPEN
       save
+      Mailer.deliver_merge_request_notification(self)
     end
   end
   

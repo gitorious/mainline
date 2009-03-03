@@ -35,10 +35,12 @@ class MergeRequestTest < ActiveSupport::TestCase
   should_validate_presence_of :user, :source_repository, :target_repository, 
                               :ending_commit
   
-  should "emails the owner of the target_repository on create" do
+  should "emails the owner of the target_repository after the terms are accepted" do
     Mailer.deliveries = []
     mr = @merge_request.clone
+    mr.stubs(:valid_oauth_credentials?).returns(true)
     mr.save
+    mr.terms_accepted("key","secret")
     assert !Mailer.deliveries.empty?, 'empty? should be false'
   end
   

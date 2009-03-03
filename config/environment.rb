@@ -91,8 +91,7 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   config.active_record.observers = [
       :user_observer, 
-      :repository_observer, 
-      :merge_request_observer
+      :repository_observer
   ]
   config.after_initialize do
     OAuth::Consumer::CA_FILE = nil
