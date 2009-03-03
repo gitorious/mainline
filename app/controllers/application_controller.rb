@@ -220,7 +220,7 @@ class ApplicationController < ActionController::Base
       if !current_site.subdomain.blank?
         if subdomain_without_common != current_site.subdomain
           redirect_to(:only_path => false, 
-            :host => "#{current_site.subdomain}.#{request.host_with_port}")
+            :host => "#{current_site.subdomain}.#{request.domain}#{request.port_string}")
         end
       elsif !subdomain_without_common.blank?
         host_without_subdomain = {
