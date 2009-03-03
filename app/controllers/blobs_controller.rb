@@ -30,13 +30,14 @@ class BlobsController < ApplicationController
     end
     if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+      unless @blob.respond_to?(:data) # it's a tree
+        redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
+          @project, @repository, params[:branch_and_path])
+      end
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
                   :repository => @repository, :name => @blob.basename)
       render_not_found and return unless @blob
-      unless @blob.respond_to?(:data) # it's a tree
-        redirect_to project_repository_tree_path(@project, @repository, @commit.id, @path)
-      end
       expires_in 2.minutes
     end
   end
