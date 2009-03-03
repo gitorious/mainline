@@ -403,6 +403,10 @@ class Repository < ActiveRecord::Base
     self.hashed_path ||= Digest::SHA1.hexdigest(owner.to_param + self.to_param + Time.now.to_f.to_s)
   end
   
+  def requires_signoff_on_merge_requests?
+    mainline? && project.merge_requests_need_signoff?
+  end
+  
   protected    
     def create_initial_committership
       self.committerships.create!(:committer => self.owner)

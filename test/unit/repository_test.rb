@@ -598,4 +598,22 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.save!
     end
   end
+  
+  context 'Signoff of merge requests' do
+    setup do
+      @project = projects(:johans)
+      @mainline_repository = repositories(:johans)
+      @other_repository = repositories(:johans2)
+    end
+    
+    should 'know that the mainline repository requires signoff of merge requests' do
+      assert @mainline_repository.mainline?
+      assert @mainline_repository.requires_signoff_on_merge_requests?
+    end
+    
+    should 'not require signoff of merge requests in other repositories' do
+      assert !@other_repository.mainline?
+      assert !@other_repository.requires_signoff_on_merge_requests?
+    end
+  end
 end

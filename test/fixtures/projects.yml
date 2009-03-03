@@ -9,7 +9,7 @@ johans:
   created_at: <%= 5.days.ago.to_s(:db) %>
   owner_type: User
   owner_id: 1
-  
+  merge_requests_need_signoff: true
 moes:
   id: 2
   title: moes project
@@ -20,6 +20,7 @@ moes:
   created_at: <%= 5.days.ago.to_s(:db) %>
   owner_type: User
   owner_id: 2
+  merge_requests_need_signoff: true
 
 thunderbird:
   id: 3
@@ -31,3 +32,4 @@ thunderbird:
   created_at: <%= 5.days.ago.to_s(:db) %>
   owner_type: Group
   owner_id: <%= Fixtures.identify(:team_thunderbird) %>
+  merge_requests_need_signoff: true
