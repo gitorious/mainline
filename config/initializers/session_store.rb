@@ -7,7 +7,9 @@
 gitorious_yaml = YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))[RAILS_ENV]
 ActionController::Base.session = {
   :key    => '_ks1_session_id',
-  :secret => gitorious_yaml['cookie_secret']
+  :secret => gitorious_yaml['cookie_secret'],
+  :domain => ".#{gitorious_yaml["gitorious_host"]}",
+  :expire_after => 3.weeks,
 }
 
 # Use the database for sessions instead of the cookie-based default,
