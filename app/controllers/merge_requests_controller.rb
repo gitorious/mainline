@@ -141,8 +141,9 @@ class MergeRequestsController < ApplicationController
     def merge_request_created
       if @merge_request.acceptance_of_terms_required?
         request_token = obtain_oauth_request_token
-        @redirection_path = terms_accepted_project_repository_merge_request_path(@repository.project, @merge_request.target_repository, @merge_request)
-        store_location(@redirection_path)
+        returning_page = terms_accepted_project_repository_merge_request_path(@repository.project, @merge_request.target_repository, @merge_request)
+        store_location(returning_page)
+        @redirection_path = request_token.authorize_url
       else
         flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
         @merge_request.confirmed_by_user
