@@ -3,6 +3,8 @@ class Site < ActiveRecord::Base
   
   validates_presence_of :title
   
+  attr_protected :subdomain
+  
   def self.default
     new(:title => "Gitorious", :subdomain => nil)
   end
