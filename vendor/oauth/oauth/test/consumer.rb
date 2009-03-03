@@ -17,7 +17,7 @@ module OAuth
     end
     
     # For testing: this is the key and secret required in order to obtain a valid access token
-    def valid_outh_credentials=(options)
+    def valid_oauth_credentials=(options)
       @valid_oauth_key = options[:key]
       @valid_oauth_secret = options[:secret]
     end
