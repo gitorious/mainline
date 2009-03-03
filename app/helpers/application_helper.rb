@@ -202,6 +202,10 @@ module ApplicationHelper
           action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug)}"
           body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
           category = "commit"
+        when Repository::KIND_USER_REPO, Repository::KIND_TEAM_REPO
+          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug)}"
+          body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
+          category = "commit"
         end
       when Action::CREATE_BRANCH
         project = target.project

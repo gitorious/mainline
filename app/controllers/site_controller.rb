@@ -42,6 +42,7 @@ class SiteController < ApplicationController
       :page => params[:page],
       :conditions => ["events.project_id in (?)", event_project_ids], 
       :order => "events.created_at desc", 
+      :conditions => ['target_type !=?','Event'],
       :include => [:user, :project])    
   end
   
