@@ -21,10 +21,15 @@ class SiteController < ApplicationController
   before_filter :login_required, :only => [:dashboard]
   
   def index
-    @projects = if GitoriousConfig['public_mode'] || logged_in?
-      Project.find(:all, :limit => 10, :order => "id desc")
+    if !current_site.subdomain.blank?
+      @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
+      render "site/#{current_site.subdomain}/index"
     else
-      []
+      @projects = if GitoriousConfig['public_mode'] || logged_in?
+        Project.find(:all, :limit => 10, :order => "id desc")
+      else
+        []
+      end
     end
   end
   

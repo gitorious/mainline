@@ -27,11 +27,31 @@ class SiteControllerTest < ActionController::TestCase
     should "GETs sucessfully" do
       get :index
       assert_response :success
+      assert_template "index"
     end
     
     should "gets a list of the most recent projects" do
       get :index
       assert_equal Project.find(:all, :limit => 5, :order => "id desc"), assigns(:projects)
+    end
+  end
+  
+  context "#index, with a non-default site" do
+    setup do
+      @site = sites(:qt)
+    end
+    
+    should "render the Site specific template" do
+      @request.host = "#{@site.subdomain}.gitorious.test"
+      get :index
+      assert_response :success
+      assert_template "#{@site.subdomain}/index"
+    end
+    
+    should "scope the projects to the current site" do
+      @request.host = "#{@site.subdomain}.gitorious.test"
+      get :index
+      assert_equal @site.projects, assigns(:projects)
     end
   end
   
