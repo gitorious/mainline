@@ -127,6 +127,10 @@ class MergeRequest < ActiveRecord::Base
     source_repository.name
   end
   
+  def acceptance_of_terms_required?
+    target_repository.requires_signoff_on_merge_requests?
+  end
+  
   def terms_accepted(oauth_request_token, oauth_request_secret)
     validate_through_oauth(oauth_request_token, oauth_request_secret) do
       self.status = STATUS_OPEN

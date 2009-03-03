@@ -102,6 +102,16 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert !mr.open?
   end
   
+  should 'require signoff when target repository requires it' do
+    mr = @merge_request.clone
+    assert mr.acceptance_of_terms_required?
+  end
+  
+  should 'not require signoff when target repository does not require so' do
+    mr = MergeRequest.new(:source_repository => repositories(:johans), :target_repository => repositories(:johans2), :ending_commit => '00ffcc')
+    assert !mr.acceptance_of_terms_required?
+  end
+  
   should "it defaults to master for the source_branch" do
     mr = MergeRequest.new
     assert_equal "master", mr.source_branch
