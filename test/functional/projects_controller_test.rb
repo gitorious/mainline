@@ -453,15 +453,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal sites(:qt), @controller.send(:current_site)
     end
     
-    #apparantly append_before_filter isn't run properly in test mode
-    should_eventually "render with the site specific layout, if there's a containing site on the project" do
-      get :show, :id => projects(:thunderbird).to_param
-      assert_response :success
-      assert_equal "layouts/qt", @response.layout
-      assert_equal sites(:qt), assigns(:current_site)
-      assert_equal sites(:qt), @controller.send(:current_site)
-    end
-    
     should "redirect to the proper subdomain if the current site has one" do
       @request.host = "gitorious.test"
       get :show, :id => projects(:thunderbird).to_param
