@@ -188,10 +188,10 @@ class ApplicationController < ActionController::Base
     
     def find_current_site
       @current_site ||= begin
-        if subdomain_without_www.blank?
+        if subdomain_without_common.blank?
           @project ? @project.site : Site.default
         else
-          Site.find_by_subdomain(subdomain_without_www) || Site.default
+          Site.find_by_subdomain(subdomain_without_common) || Site.default
         end
       end
     end
@@ -204,11 +204,11 @@ class ApplicationController < ActionController::Base
       end
     end
     
-  private
-    def subdomain_without_www
+    def subdomain_without_common
       request.subdomains.select{|s| s !~ /^(ww.|secure)$/}.first
     end
-  
+    
+  private  
     def unshifted_polymorphic_path(repo, path_spec)
       if path_spec[0].is_a?(Symbol)
         path_spec.insert(1, repo.owner)
