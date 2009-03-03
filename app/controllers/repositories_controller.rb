@@ -24,6 +24,7 @@ class RepositoriesController < ApplicationController
   before_filter :require_current_eula, :except => [:index, :show, :writable_by]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   skip_before_filter :public_and_logged_in, :only => [:writable_by]
+  install_site_before_filters
   
   def index
     @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])

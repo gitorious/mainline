@@ -27,6 +27,7 @@ class MergeRequestsController < ApplicationController
   before_filter :assert_merge_request_ownership, 
     :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches, :oauth_return]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
+  install_site_before_filters
   
   def index
     @open_merge_requests = @repository.merge_requests.open

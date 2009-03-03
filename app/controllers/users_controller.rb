@@ -21,6 +21,7 @@ class UsersController < ApplicationController
   before_filter :login_required, :only => [:edit, :update, :password, :update_password]
   before_filter :find_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
+  install_site_before_filters
  
   # render new.rhtml
   def new

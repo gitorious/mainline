@@ -17,11 +17,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-  require "openid"
-  require "yadis"
+require "openid"
+require "yadis"
+
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
   skip_before_filter :public_and_logged_in
+  install_site_before_filters
   
   # render new.rhtml
   def new

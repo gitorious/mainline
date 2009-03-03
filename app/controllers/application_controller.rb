@@ -23,8 +23,6 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   
   before_filter :public_and_logged_in
-  append_before_filter :find_current_site
-  #TODO: append_before_filter :redirect_to_current_site_subdomain
   
   layout :pick_layout_based_on_site
   
@@ -33,8 +31,6 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::UnknownAction, :with => :render_not_found
   rescue_from Grit::GitRuby::Repository::NoSuchPath, :with => :render_not_found
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
-  
-  attr_reader :current_site
   
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -49,7 +45,16 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def current_site
+    @current_site || Site.default
+  end
+  
   protected
+    def self.install_site_before_filters
+      before_filter :find_current_site
+      before_filter :redirect_to_current_site_subdomain
+    end
+  
     # return the url with the +repo+.owner prefixed if it's a mainline repo,
     # otherwise return the +path_spec+
     # if +path_spec+ is an array (and no +args+ given) it'll use that as the 
@@ -189,9 +194,9 @@ class ApplicationController < ActionController::Base
     def find_current_site
       @current_site ||= begin
         if subdomain_without_common.blank?
-          @project ? @project.site : Site.default
+          @project.site if @project
         else
-          Site.find_by_subdomain(subdomain_without_common) || Site.default
+          Site.find_by_subdomain(subdomain_without_common)
         end
       end
     end
@@ -206,6 +211,22 @@ class ApplicationController < ActionController::Base
     
     def subdomain_without_common
       request.subdomains.select{|s| s !~ /^(ww.|secure)$/}.first
+    end
+    
+    def redirect_to_current_site_subdomain
+      return unless request.get?
+      if !current_site.subdomain.blank?
+        if subdomain_without_common != current_site.subdomain
+          host_with_subdomain = {
+            :only_path => false, 
+            :host => "#{current_site.subdomain}.#{request.host}"
+          }
+          if ![80, 443].include?(request.port)
+            host_with_subdomain[:host] << ":#{request.port}"
+          end
+          redirect_to host_with_subdomain
+        end
+      end
     end
     
   private  

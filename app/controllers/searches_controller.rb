@@ -16,6 +16,7 @@
 #++
 
 class SearchesController < ApplicationController
+  install_site_before_filters
   
   def show
     unless params[:q].blank?

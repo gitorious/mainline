@@ -19,6 +19,7 @@
 class CommentsController < ApplicationController
   before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
   before_filter :find_project_and_repository
+  install_site_before_filters
   
   def index
     @comments = @repository.comments.find(:all, :include => :user)

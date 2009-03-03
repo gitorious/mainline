@@ -461,5 +461,13 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal sites(:qt), assigns(:current_site)
       assert_equal sites(:qt), @controller.send(:current_site)
     end
+    
+    should "redirect to the proper subdomain if the current site has one" do
+      @request.host = "gitorious.test"
+      get :show, :id => projects(:thunderbird).to_param
+      assert_response :redirect
+      assert_redirected_to project_path(projects(:thunderbird), 
+        :only_path => false, :host => "#{sites(:qt).subdomain}.gitorious.test")
+    end
   end
 end

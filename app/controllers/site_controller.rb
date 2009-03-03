@@ -19,6 +19,7 @@
 class SiteController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq]
   before_filter :login_required, :only => [:dashboard]
+  install_site_before_filters
   
   def index
     if !current_site.subdomain.blank?

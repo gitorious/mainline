@@ -18,6 +18,7 @@
 class MembershipsController < ApplicationController
   before_filter :find_group
   before_filter :ensure_group_adminship, :except => [:index, :show, :auto_complete_for_user_login]
+  install_site_before_filters
   
   def index
     @memberships = @group.memberships.paginate(:all, :page => params[:page])
