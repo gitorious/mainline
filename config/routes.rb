@@ -111,6 +111,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
   end
   
+  map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'

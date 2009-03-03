@@ -140,7 +140,7 @@ class MergeRequest < ActiveRecord::Base
   
   def valid_oauth_credentials?(token, secret)
     access_token = CONSUMER.build_access_token(token, secret)
-    response = access_token.get("/")
+    response = access_token.get("/agreements.xml")
     return Net::HTTPSuccess === response
   end
   

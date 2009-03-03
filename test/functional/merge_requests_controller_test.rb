@@ -190,7 +190,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				do_post
 				assert_response :redirect
 				result = assigns(:merge_request)
-				assert_equal(terms_accepted_project_repository_merge_request_path(@source_repository.project, @source_repository, result), session[:return_to])
+				assert_equal(terms_accepted_project_repository_merge_request_path(@source_repository.project, @target_repository, result), session[:return_to])
 				assert_match(/sent a merge request to "#{@target_repository.name}"/i, flash[:success])
       end
 		end
@@ -214,10 +214,11 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
 		should 'set the status to open when done authenticating thru OAuth' do
-      get :terms_accepted, :project_id => @project.to_param,
+	    @merge_request.stubs(:valid_oauth_credentials?).returns(true)
+      get :terms_accepted, {:project_id => @project.to_param,
         :repository_id => @target_repository.to_param,
-        :id => @merge_request.to_param
-      assert_response :success
+        :id => @merge_request.to_param}
+      assert_response :redirect
       assert @merge_request.open?
 	  end
 	  
@@ -226,7 +227,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       get :terms_accepted, :project_id => @project.to_param,
         :repository_id => @target_repository.to_param,
         :id => @merge_request.to_param
-      assert_response :success
+      assert_response :redirect
       assert !@merge_request.open?
     end
   end

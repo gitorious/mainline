@@ -20,12 +20,12 @@
 
 class MergeRequestsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
-  before_filter :find_repository_owner
-  before_filter :find_repository
+  before_filter :find_repository_owner, :except => [:oauth_return]
+  before_filter :find_repository, :except => [:oauth_return]
   before_filter :find_merge_request,  
-    :except => [:index, :show, :new, :create, :commit_list, :target_branches]
+    :except => [:index, :show, :new, :create, :commit_list, :target_branches, :oauth_return]
   before_filter :assert_merge_request_ownership, 
-    :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches]
+    :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches, :oauth_return]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   
   def index
@@ -65,10 +65,19 @@ class MergeRequestsController < ApplicationController
     get_branches_and_commits_for_selection
   end
   
+  # This is a static URL the user returns to after accepting the terms for a merge request
+  def oauth_return
+    redirect_back_or_default '/'
+  end
+  
   def terms_accepted
     @merge_request = @repository.merge_requests.find(params[:id])
-    @merge_request.terms_accepted(session[:oauth_key], session[:oauth_secret])
-    render :text => 'This is nice'
+    if @merge_request.terms_accepted(session[:oauth_key], session[:oauth_secret])
+      flash[:notice] = "Your merge request has been submitted"
+    else
+      flash[:error] = "You need to accept the contribution agreement"
+    end
+    redirect_to [@repository.project, @repository]
   end
   
   def create
@@ -80,7 +89,7 @@ class MergeRequestsController < ApplicationController
         format.html {
           request_token = obtain_oauth_request_token
           flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
-          redirection_path = terms_accepted_project_repository_merge_request_path(@repository.project, @repository, @merge_request)
+          redirection_path = terms_accepted_project_repository_merge_request_path(@repository.project, @merge_request.target_repository, @merge_request)
           store_location(redirection_path)
           redirect_to request_token.authorize_url
           return
