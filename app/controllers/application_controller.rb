@@ -193,10 +193,12 @@ class ApplicationController < ActionController::Base
     
     def find_current_site
       @current_site ||= begin
-        if subdomain_without_common.blank?
-          @project.site if @project
+        if @project
+          @project.site
         else
-          Site.find_by_subdomain(subdomain_without_common)
+          if !subdomain_without_common.blank?
+            Site.find_by_subdomain(subdomain_without_common)
+          end
         end
       end
     end
@@ -217,15 +219,18 @@ class ApplicationController < ActionController::Base
       return unless request.get?
       if !current_site.subdomain.blank?
         if subdomain_without_common != current_site.subdomain
-          host_with_subdomain = {
-            :only_path => false, 
-            :host => "#{current_site.subdomain}.#{request.host}"
-          }
-          if ![80, 443].include?(request.port)
-            host_with_subdomain[:host] << ":#{request.port}"
-          end
-          redirect_to host_with_subdomain
+          redirect_to(:only_path => false, 
+            :host => "#{current_site.subdomain}.#{request.host_with_port}")
         end
+      elsif !subdomain_without_common.blank?
+        host_without_subdomain = {
+          :only_path => false, 
+          :host => "#{request.domain}"
+        }
+        if ![80, 443].include?(request.port)
+          host_without_subdomain[:host] << ":#{request.port}"
+        end
+        redirect_to host_without_subdomain
       end
     end
     

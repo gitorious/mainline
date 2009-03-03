@@ -127,7 +127,7 @@ class ProjectsController < ApplicationController
   
   protected
     def find_project
-      @project = Project.find_by_slug!(params[:id], :include => [:repositories])
+      @project = Project.find_by_slug!(params[:id], :include => [:repositories, :events])
     end
     
     def assure_adminship

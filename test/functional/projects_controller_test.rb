@@ -469,5 +469,13 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to project_path(projects(:thunderbird), 
         :only_path => false, :host => "#{sites(:qt).subdomain}.gitorious.test")
     end
+    
+    should "redirect to the main domain if the current_site doesn't have a subdomain" do
+      @request.host = "qt.gitorious.test"
+      get :show, :id => projects(:johans).to_param
+      assert_response :redirect
+      assert_redirected_to project_path(projects(:johans), :only_path => false,
+                            :host => "gitorious.test")
+    end
   end
 end
