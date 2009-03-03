@@ -23,12 +23,18 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   
   before_filter :public_and_logged_in
+  append_before_filter :find_current_site
+  #TODO: append_before_filter :redirect_to_current_site_subdomain
+  
+  layout :pick_layout_based_on_site
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
   rescue_from ActionController::UnknownAction, :with => :render_not_found
   rescue_from Grit::GitRuby::Repository::NoSuchPath, :with => :render_not_found
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
+  
+  attr_reader :current_site
   
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -180,7 +186,28 @@ class ApplicationController < ActionController::Base
       [branch_ref, path]
     end
     
+    def find_current_site
+      @current_site ||= begin
+        if subdomain_without_www.blank?
+          @project ? @project.site : Site.default
+        else
+          Site.find_by_subdomain(subdomain_without_www) || Site.default
+        end
+      end
+    end
+    
+    def pick_layout_based_on_site
+      if current_site && current_site.subdomain
+        current_site.subdomain
+      else
+        "application"
+      end
+    end
+    
   private
+    def subdomain_without_www
+      request.subdomains.select{|s| s !~ /^(ww.|secure)$/}.first
+    end
   
     def unshifted_polymorphic_path(repo, path_spec)
       if path_spec[0].is_a?(Symbol)

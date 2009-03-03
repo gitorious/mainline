@@ -33,3 +33,4 @@ thunderbird:
   owner_type: Group
   owner_id: <%= Fixtures.identify(:team_thunderbird) %>
   merge_requests_need_signoff: true
+  containing_site: qt

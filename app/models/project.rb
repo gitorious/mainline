@@ -31,9 +31,10 @@ class Project < ActiveRecord::Base
   has_one     :wiki_repository, :class_name => "Repository", 
     :conditions => ["kind = ?", Repository::KIND_WIKI]  
   has_many    :events, :order => "created_at asc", :dependent => :destroy
-  has_many  :groups
+  has_many    :groups
+  belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
   
-  attr_protected :owner_id, :user_id
+  attr_protected :owner_id, :user_id, :site_id
   
   is_indexed :fields => ["title", "description", "slug"], 
     :concatenate => [
@@ -112,6 +113,10 @@ class Project < ActiveRecord::Base
   
   def to_param_with_prefix
     to_param
+  end
+  
+  def site
+    containing_site || Site.default
   end
 
   def admin?(candidate)

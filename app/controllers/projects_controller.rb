@@ -19,7 +19,8 @@
 class ProjectsController < ApplicationController  
   before_filter :login_required, :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
-  before_filter :find_project_and_assure_adminship, :only => [:edit, :update]
+  before_filter :find_project, :only => [:show, :edit, :update, :confirm_delete]
+  before_filter :assure_adminship, :only => [:edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   before_filter :require_current_eula, :only => [:new, :create]
   
@@ -51,7 +52,6 @@ class ProjectsController < ApplicationController
   end
   
   def show
-    @project = Project.find_by_slug!(params[:id], :include => [:repositories])
     @owner = @project
     @events = @project.events.paginate(:all, :page => params[:page], 
       :order => "created_at desc", :include => [:user, :project], :conditions => ['target_type !=?','Event'])
@@ -125,8 +125,11 @@ class ProjectsController < ApplicationController
   end
   
   protected
-    def find_project_and_assure_adminship
-      @project = Project.find_by_slug!(params[:id])
+    def find_project
+      @project = Project.find_by_slug!(params[:id], :include => [:repositories])
+    end
+    
+    def assure_adminship
       if !@project.admin?(current_user)
         flash[:error] = I18n.t "projects_controller.update_error"
         redirect_to(project_path(@project)) and return

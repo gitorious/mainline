@@ -33,6 +33,8 @@ class ProjectTest < ActiveSupport::TestCase
       :owner => users(:johan)
     }.merge(options))
   end
+  
+  should_belong_to :containing_site
 
   should " have a title to be valid" do
     project = create_project(:title => nil)
@@ -229,6 +231,16 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal @user, e.user
       assert_equal "somedata", e.data
       assert_equal "a body", e.body
+    end
+  end
+  
+  context "Containing Site" do
+    should "have a site" do
+      assert_equal sites(:qt), projects(:thunderbird).site
+    end
+    
+    should "have a default site if site_id is nil" do
+      assert_equal Site.default.title, projects(:johans).site.title
     end
   end
 

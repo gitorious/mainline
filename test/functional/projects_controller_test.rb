@@ -433,4 +433,33 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to new_project_repository_path(assigns(:project))
     end
   end
+  
+  context "with a site specific layout" do
+    should "render with the application layout if there's no containing site" do
+      get :show, :id => projects(:johans).to_param
+      assert_response :success
+      assert_equal "layouts/application", @response.layout
+      assert_not_nil assigns(:current_site)
+      assert_not_nil @controller.send(:current_site)
+      assert_equal Site.default.title, @controller.send(:current_site).title
+    end
+    
+    should "render the site specific layout if a subdomain is given" do
+      @request.host = "#{sites(:qt).subdomain}.gitorious.test"
+      get :index
+      assert_response :success
+      assert_equal "layouts/qt", @response.layout
+      assert_equal sites(:qt), assigns(:current_site)
+      assert_equal sites(:qt), @controller.send(:current_site)
+    end
+    
+    #apparantly append_before_filter isn't run properly in test mode
+    should_eventually "render with the site specific layout, if there's a containing site on the project" do
+      get :show, :id => projects(:thunderbird).to_param
+      assert_response :success
+      assert_equal "layouts/qt", @response.layout
+      assert_equal sites(:qt), assigns(:current_site)
+      assert_equal sites(:qt), @controller.send(:current_site)
+    end
+  end
 end
