@@ -18,11 +18,13 @@
 
 class PushEventProcessor < ApplicationProcessor
 
+  # ActiveMessaging has the ActionControllerDispatcher reload each Processor on every request
+  # Therefore, we only define the separator unless it has already been defined
+  GIT_OUTPUT_SEPARATOR = "$$" unless defined?(GIT_OUTPUT_SEPARATOR) 
   subscribes_to :push_event
   attr_reader :oldrev, :newrev, :action, :user
   attr_writer :repository
 
-  GIT_OUTPUT_SEPARATOR = "$$"
   
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
