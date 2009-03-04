@@ -24,16 +24,32 @@ class MessageTest < ActiveSupport::TestCase
   should_belong_to :notifiable
   
   context 'The state machine' do
-    should 'have all the required states' do
-      registered_state_names = Message.aasm_states.collect(&:name)
-      [:unread, :read].each do |state|
-        assert registered_state_names.include?(state)
+    context 'class level' do
+      should 'have all the required states' do
+        registered_state_names = Message.aasm_states.collect(&:name)
+        [:unread, :read].each do |state|
+          assert registered_state_names.include?(state)
+        end
+      end
+    
+      should 'have all the required events' do
+        registered_event_names = Message.aasm_events.keys
+        [:read].each {|e| assert registered_event_names.include?(e)}
       end
     end
     
-    should 'have all the required events' do
-      registered_event_names = Message.aasm_events.keys
-      [:read].each {|e| assert registered_event_names.include?(e)}
+    context 'instance level' do
+      setup do 
+        @message = messages(:johans_message_to_moe)
+        @recipient = @message.recipient
+        assert_not_nil(@recipient)
+      end
+      
+      should 'transition to read when the user reads it' do
+        unread_message_count = @recipient.received_messages.unread_count
+        @message.read!
+        assert_equal(unread_message_count - 1, @recipient.received_messages.unread_count)
+      end
     end
   end
   

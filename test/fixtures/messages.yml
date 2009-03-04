@@ -1,5 +1,6 @@
 johans_message_to_moe:
-  sender: johan 
-  recipient: moe
+  sender_id: 1
+  recipient_id: 2
   subject:  Hello
   body: World. This is obviously a test message
+  aasm_state: unread

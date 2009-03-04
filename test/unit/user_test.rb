@@ -253,6 +253,26 @@ class UserTest < ActiveSupport::TestCase
     end
   end
    
+  context 'Messages' do
+    setup do
+      @message = messages(:johans_message_to_moe)
+      @sender = users(:johan)
+      @recipient = users(:moe)
+    end
+    
+    should 'know of its received messages' do
+      assert @sender.sent_messages.include?(@message)
+    end
+    
+    should 'know of its sent messages' do
+      assert @recipient.received_messages.include?(@message)
+    end
+    
+    should 'keep track of the number of unread messages' do
+      assert_equal(1, @recipient.received_messages.unread_count)
+    end
+  end
+  
   protected
     def create_user(options = {})
       u = User.new({ 

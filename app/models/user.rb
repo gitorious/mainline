@@ -63,6 +63,18 @@ class User < ActiveRecord::Base
     transitions :to => :terms_accepted, :from => [:pending]
   end
   
+  has_many :received_messages, :class_name => "Message", :foreign_key => 'recipient_id' do
+    def unread
+      find(:all, :conditions => {:aasm_state => "unread"})
+    end
+    
+    def unread_count
+      count(:all, :conditions => {:aasm_state => "unread"})
+    end
+  end
+  
+  has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id" 
+  
   def self.human_name
     I18n.t("activerecord.models.user")
   end
