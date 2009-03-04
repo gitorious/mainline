@@ -1,0 +1,5 @@
+johans_message_to_moe:
+  sender: johan 
+  recipient: moe
+  subject:  Hello
+  body: World. This is obviously a test message
