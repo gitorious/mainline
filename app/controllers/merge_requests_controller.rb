@@ -80,7 +80,7 @@ class MergeRequestsController < ApplicationController
     else
       flash[:error] = I18n.t "merge_requests_controller.need_contribution_agreement"
     end
-    redirect_to [@repository.project, @merge_request.source_repository]
+    redirect_to project_repository_merge_request_path(@repository.project, @repository, @merge_request)
   end
   
   def create
@@ -151,7 +151,7 @@ class MergeRequestsController < ApplicationController
       else
         flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
         @merge_request.confirmed_by_user
-        @redirection_path =  polymorphic_path([@owner, @repository])
+        @redirection_path =  project_repository_merge_request_path(@repository.project, @repository, @merge_request)        
       end
 
       respond_to do |format|
