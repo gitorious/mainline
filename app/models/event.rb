@@ -27,6 +27,12 @@ class Event < ActiveRecord::Base
       find(:all, :conditions => {:action => Action::COMMIT})
     end
   end
+  
+  def self.latest(count)
+    find(:all, :order => "events.created_at desc", :limit => count, 
+          :include => [:user, :project], 
+          :conditions => ['events.target_type != ?', 'Event'])
+  end
 
   def build_commit(options={})
     e = self.class.new(options.merge({:action => Action::COMMIT, :project_id => project_id}))
