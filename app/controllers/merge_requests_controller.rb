@@ -27,6 +27,7 @@ class MergeRequestsController < ApplicationController
   before_filter :assert_merge_request_ownership, 
     :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches, :oauth_return]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
+  before_filter :require_current_eula, :only => [:new, :create, :terms_accepted, :update, :edit]
   install_site_before_filters
   
   def index
@@ -75,11 +76,11 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.find(params[:id])
     if @merge_request.terms_accepted(session[:oauth_key], session[:oauth_secret])
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
-      flash[:notice] = "Your merge request has been submitted"
+      flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
     else
-      flash[:error] = "You need to accept the contribution agreement"
+      flash[:error] = I18n.t "merge_requests_controller.need_contribution_agreement"
     end
-    redirect_to [@repository.project, @repository]
+    redirect_to [@repository.project, @merge_request.source_repository]
   end
   
   def create
@@ -141,7 +142,10 @@ class MergeRequestsController < ApplicationController
     def merge_request_created
       if @merge_request.acceptance_of_terms_required?
         request_token = obtain_oauth_request_token
-        returning_page = terms_accepted_project_repository_merge_request_path(@repository.project, @merge_request.target_repository, @merge_request)
+        returning_page = terms_accepted_project_repository_merge_request_path(
+            @repository.project, 
+            @merge_request.target_repository, 
+            @merge_request)
         store_location(returning_page)
         @redirection_path = request_token.authorize_url
       else

@@ -46,7 +46,8 @@
       :update_success => "Merge request was updated",
       :destroy_success => "Merge request was retracted",
       :assert_resolvable_error => "You're not permitted to resolve this merge request",
-      :assert_ownership_error => "You're not the owner of this merge request"
+      :assert_ownership_error => "You're not the owner of this merge request",
+      :need_contribution_agreement => "You need to accept the contribution agreement"
     },
     :projects_controller => {
       :update_error => "You're not the owner of this project",
