@@ -22,6 +22,7 @@ class Message < ActiveRecord::Base
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
   
   validates_presence_of :subject, :body
+  validates_presence_of :recipient, :sender
 
   include AASM
   aasm_initial_state :unread

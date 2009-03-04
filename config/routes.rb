@@ -98,6 +98,10 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resource :search
   
+  map.resources :messages, 
+    :member => {:reply => :post}, 
+    :collection => {:auto_complete_for_recipient_login => :post}
+  
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'

@@ -1915,3 +1915,40 @@ div.archive-download-box p {
   max-height: 20em;
   overflow-y: auto;
 }
+
+
+.message_listing
+{
+  
+}
+.message_listing .date
+{
+  float: left;
+  width: 7em;
+  font-size: 80%;
+}
+.message_listing img
+{
+  float: left;
+  margin-right: 0.4em;
+}
+.message_listing .message
+{
+  margin-left: 8em;
+}
+.message_listing .message .subject
+{
+  font-weight: bold;
+  margin: 0.2em 0;
+}
+.message_listing .message .body
+{
+  margin: 0.2em 0;
+  padding-left: 1em;
+  border-left: 2px solid #ddd;
+}
+.message_listing .unread
+{
+  background: #fff url(/images/silk/email.png) top left no-repeat;
+  padding-left: 1.6em;
+}

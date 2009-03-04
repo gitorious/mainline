@@ -137,7 +137,7 @@
         :pages => "Wiki",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
-        :teams => "Teams",
+        :teams => "Teams"
       },
       :site => {
         :page_title => "Free open source project hosting",
@@ -473,6 +473,18 @@
         :new_alias => "New email alias",
         :manage_emails => "Manage email aliases"
       },
+      :messages => {
+        :title_new  => "Compose a message",
+        :subject  => "Subject",
+        :body => "Message body",
+        :recipient => "Choose a recipient",
+        :submit => "Send message",
+        :index_message => "Your inbox",
+        :reply => "Reply",
+        :received_messages => "Inbox",
+        :sent_messages => "Sent messages",
+        :new => "Compose a message"
+      }
     },
     :date => {
       :formats => {

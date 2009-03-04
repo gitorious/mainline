@@ -1,0 +1,24 @@
+<h1><%= t "views.messages.index_message" %></h1>
+
+<%= render :partial => "messages" %>
+
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => nil} -%>
+<% end -%>
+
+
+<% content_for(:sidebar) do %>
+    <ul class="links">
+      <li>
+        <%= link_to "Your inbox", messages_path %>
+      </li>
+      <li>
+        <%= link_to t("views.messages.sent_messages"), messages_path %>
+      </li>
+      <li>
+        <%= link_to(t("views.messages.new"), new_message_path) %>
+      </li>
+    </ul>
+<% end %>
+
+<%= will_paginate(@messages) %>
