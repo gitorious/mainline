@@ -808,7 +808,8 @@ table.repository_meta .infobox ul {
   border-bottom: 1px solid #ddd;
   margin-bottom: 5px;
   padding-bottom: 5px;
-  /*color: #666;*/
+  color: #666;
+  font-size: 12px;
 }
 
 .commit-infobox ul li.avatar div {
@@ -1248,6 +1249,9 @@ table tr td.code {
  background: #fff;
  font: 95%/110% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
  border-right: 1px solid #ccc;
+}
+table#codeblob tr td.code {
+  border-right: none;
 }
 
 table tr td.code pre {
