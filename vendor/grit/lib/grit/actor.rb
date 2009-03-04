@@ -27,13 +27,13 @@ module Grit
       end
     end
     
-    def ==(other)
-      name == other.name && email == other.email
-    end
-    
     # Pretty object inspection
     def inspect
       %Q{#<Grit::Actor "#{@name} <#{@email}>">}
+    end
+    
+    def ==(other)
+      name == other.name && email == other.email
     end
   end # Actor
   

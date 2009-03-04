@@ -113,7 +113,7 @@ module Grit
             info = nil
         end
       end
-      
+
       blames
     end
     
@@ -125,6 +125,11 @@ module Grit
     def inspect
       %Q{#<Grit::Blob "#{@id}">}
     end
+
+    # Compares blobs by name
+    def <=>(other)
+      sha <=> other.sha
+    end
   end # Blob
-  
+
 end # Grit

@@ -32,4 +32,11 @@ class TestActor < Test::Unit::TestCase
     a = Actor.from_string("Tom Werner <tom@example.com>")
     assert_equal a.name, a.to_s
   end
+  
+  def test_equality
+    a1 = Actor.from_string("Tom Werner <tom@example.com>")
+    a2 = Actor.from_string("Tom Werner <tom@example.com>")
+    assert_equal a1, a2
+    assert a1 == a2
+  end
 end

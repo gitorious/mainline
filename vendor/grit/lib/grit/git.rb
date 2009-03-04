@@ -15,11 +15,12 @@ module Grit
     include GitRuby
     
     class << self
-      attr_accessor :git_binary, :git_timeout
+      attr_accessor :git_binary, :git_timeout, :git_max_size
     end
   
-    self.git_binary  = "/usr/bin/env git"
-    self.git_timeout = 10
+    self.git_binary   = "/usr/bin/env git"
+    self.git_timeout  = 10
+    self.git_max_size = 5242880 # 5.megabytes
     
     def self.with_timeout(timeout = 10.seconds)
       old_timeout = Grit::Git.git_timeout
@@ -36,7 +37,7 @@ module Grit
     end
     
     def shell_escape(str)
-      str.to_s.gsub("'", "\\\\'").gsub(";", '\\;')
+      str.to_s.gsub(/([^A-Za-z0-9_\-.,:\/@\n\ ])/n, "\\\\\\1").gsub(/\n/, "'\n'")
     end
     alias_method :e, :shell_escape
     
@@ -76,7 +77,7 @@ module Grit
         Timeout.timeout(self.class.git_timeout) do
           while tmp = stdout.read(1024)
             ret += tmp
-            if (@bytes_read += tmp.size) > 5242880 # 5.megabytes
+            if (@bytes_read += tmp.size) > self.class.git_max_size
               bytes = @bytes_read
               @bytes_read = 0
               raise GitTimeout.new(command, bytes)

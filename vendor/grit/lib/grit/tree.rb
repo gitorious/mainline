@@ -113,6 +113,21 @@ module Grit
     def inspect
       %Q{#<Grit::Tree "#{@id}">}
     end
+
+    # Find only Tree objects from contents
+    def trees
+      contents.select {|v| v.kind_of? Tree}
+    end
+
+    # Find only Blob objects from contents
+    def blobs
+      contents.select {|v| v.kind_of? Blob}
+    end
+
+    # Compares trees by name
+    def <=>(other)
+      sha <=> other.sha
+    end
   end # Tree
-  
+
 end # Grit
