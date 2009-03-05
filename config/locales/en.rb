@@ -428,7 +428,7 @@
       },
       :pages => {
         :page => "page",
-        :last_edited_by => "Last edited by",
+        :last_edited_by => "Last edited by {{link_or_name}}",
         :or_back_to_page => "or return to {{page_link}}",
         :history => "History",
         :last_n_edits => "Last {{n}} edits on {{title}}",
