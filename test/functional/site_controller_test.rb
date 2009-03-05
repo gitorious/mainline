@@ -60,26 +60,16 @@ class SiteControllerTest < ActionController::TestCase
       login_as :johan
     end
     
-    should "GETs successfully" do
-      get :dashboard
-      assert_response :success
-      assert_template("site/dashboard")
-    end
-    
     should "requires login" do
       login_as nil
       get :dashboard
       assert_redirected_to(new_sessions_path)
     end
     
-    should "get a list of the current_users projects" do
+    should "redirects to the user page" do
       get :dashboard
-      assert_equal [*projects(:johans)], assigns(:projects)
-    end
-    
-    should "get a list of the current_users repositories, that's not mainline" do
-      get :dashboard
-      assert_equal [repositories(:johans_moe_clone)], assigns(:repositories)
+      assert_response :redirect
+      assert_redirected_to user_path(users(:johan))
     end
   end
   

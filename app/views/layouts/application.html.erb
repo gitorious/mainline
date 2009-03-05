@@ -40,12 +40,6 @@
       <% unless logged_in? -%>
         <li><%= link_to t("views.layout.home"), root_path -%></li>
       <% end -%>
-      <% if logged_in? -%>
-        <li><%= link_to t("views.layout.dashboard"), dashboard_path -%></li>
-		<% if current_user.site_admin? -%>
-		<li><%= link_to t("views.layout.admin"), admin_users_path -%></li>
-		<% end -%>
-      <% end -%>
       <% if GitoriousConfig['public_mode'] || logged_in? -%>
         <li><%= link_to t("views.layout.projects"), projects_path -%></li>
         <li><%= link_to t("views.layout.teams"), groups_path -%></li>
@@ -57,6 +51,9 @@
         <li><%= link_to t("views.layout.about"), about_path -%></li>
       <% end -%>
       <%- if logged_in? -%>
+		    <% if current_user.site_admin? -%>
+		      <li><%= link_to t("views.layout.admin"), admin_users_path -%></li>
+		    <% end -%>
         <li class="secondary"><%= link_to t("views.layout.my_account"), user_path(current_user) -%></li>
         <li class="secondary"><%= link_to t("views.layout.logout"), logout_path -%></li>
         <li class="secondary"><%= link_to "#{image_tag("/images/silk/email.png")}", messages_path -%></li>

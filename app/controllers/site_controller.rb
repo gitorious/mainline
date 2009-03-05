@@ -35,15 +35,7 @@ class SiteController < ApplicationController
   end
   
   def dashboard
-    @projects = current_user.projects
-    @repositories = current_user.repositories.by_users
-    event_project_ids = (@projects.map(&:id) + @repositories.map(&:project_id)).uniq
-    @events = Event.paginate(:all, 
-      :page => params[:page],
-      :conditions => ["events.project_id in (?)", event_project_ids], 
-      :order => "events.created_at desc", 
-      :conditions => ['target_type !=?','Event'],
-      :include => [:user, :project])    
+    redirect_to current_user
   end
   
   def about
