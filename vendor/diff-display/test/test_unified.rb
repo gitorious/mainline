@@ -1,21 +1,22 @@
-require File.dirname(__FILE__) + '/spec_helper.rb'
+require File.dirname(__FILE__) + "/test_helper"
 
-describe Diff::Display::Unified do
+class TestUnified < Test::Unit::TestCase
+  include DiffFixtureHelper
   
-  it "generates its data structure via the Generator" do
+  def test_generates_its_data_structure_via_the_generator
     generator_data = mock("Generator mock")
     Diff::Display::Unified::Generator.expects(:run).returns(generator_data)
     diff = Diff::Display::Unified.new(load_diff("simple"))
-    diff.data.should == generator_data
+    assert_equal generator_data, diff.data
   end
   
-  it "renders a diff via a callback and renders it to a stringlike object" do
+  def test_renders_a_diff_via_a_callback_and_renders_it_to_a_stringlike_object
     diff = Diff::Display::Unified.new(load_diff("simple"))
     callback = mock()
     callback.expects(:render).returns("foo")
     output = ""
     diff.render(callback, output)
-    output.should == "foo"
+    assert_equal "foo", output
   end
   
 end

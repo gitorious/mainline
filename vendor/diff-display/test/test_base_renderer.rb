@@ -1,98 +1,101 @@
-require File.dirname(__FILE__) + '/../spec_helper.rb'
+# encoding: utf-8
 
-describe Diff::Renderer::Base do
+require File.dirname(__FILE__) + "/test_helper"
+
+class TestBaseRenderer < Test::Unit::TestCase
+  include DiffFixtureHelper
   
-  before(:each) do
+  def setup
     @data = Diff::Display::Unified::Generator.run(load_diff("big"))
     @base_renderer = Diff::Renderer::Base.new
   end
   
-  it "classifies a classname" do
-    @base_renderer.send(:classify, Diff::Display::RemBlock.new).should == "remblock"
+  def test_it_classifies_a_classname
+    assert_equal "remblock", @base_renderer.send(:classify, Diff::Display::RemBlock.new)
   end
   
-  it "calls the before_headerblock" do
+  def test_it_calls_the_before_headerblock
     @base_renderer.expects(:before_headerblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  # it "calls the before_sepblock" do
+  # def test_it_calls_the_before_sepblock
   #   @base_renderer.expects(:before_sepblock).at_least_once
   #   @base_renderer.render(@data)
   # end
   
-  # it "calls the before_modblock" do
+  # def test_it_calls_the_before_modblock
   #   @base_renderer.expects(:before_modblock).at_least_once
   #   @base_renderer.render(@data)
   # end
   
-  it "calls the before_unmodblock" do
+  def test_calls_the_before_unmodblock
     @base_renderer.expects(:before_unmodblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls the before_addblock" do
+  def test_should_calls_the_before_addblock
     @base_renderer.expects(:before_addblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls the before_remblock" do
+  def test_calls_the_before_remblock
     @base_renderer.expects(:before_remblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls headerline" do
+  def test_calls_headerline
     @base_renderer.expects(:headerline).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls unmodline" do
+  def test_calls_unmodline
     @base_renderer.expects(:unmodline).at_least_once
     @base_renderer.render(@data)
   end  
   
-  it "calls addline" do
+  def test_calls_addline
     @base_renderer.expects(:addline).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls remline" do
+  def test_calls_remline
     @base_renderer.expects(:remline).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls the after_headerblock" do
+  def test_calls_the_after_headerblock
     @base_renderer.expects(:after_headerblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  # it "calls the after_sepblock" do
+  # def test_calls_the_after_sepblock
   #   @base_renderer.expects(:after_sepblock).at_least_once
   #   @base_renderer.render(@data)
   # end
   
-  # it "calls the after_modblock" do
+  # def test_calls_the_after_modblock
   #   @base_renderer.expects(:after_modblock).at_least_once
   #   @base_renderer.render(@data)
   # end
   
-  it "calls the after_unmodblock" do
+  def test_calls_the_after_unmodblock
     @base_renderer.expects(:after_unmodblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls the after_addblock" do
+  def test_calls_the_after_addblock
     @base_renderer.expects(:after_addblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "calls the after_remblock" do
+  def test_calls_the_after_remblock
     @base_renderer.expects(:after_remblock).at_least_once
     @base_renderer.render(@data)
   end
   
-  it "renders a basic datastructure" do
+  def test_renders_a_basic_datastructure
     output = @base_renderer.render(@data)
-    output.should_not == nil
+    assert_not_equal nil, output
   end
 end

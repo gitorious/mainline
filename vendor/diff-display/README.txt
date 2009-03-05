@@ -49,7 +49,7 @@ See Diff::Renderer::Base for what methods your callback needs to implement
 Git Repository
 ===============
 
-http://GitoriousConfig['gitorious_host']/projects/diff-display/
+http://gitorious.org/projects/diff-display/
 
 
 License

@@ -44,6 +44,7 @@ module CommitsHelper
     out << "</thead>\n"
     out << differ.render(Gitorious::Diff::InlineTableCallback.new)
     out << "</table>"
+    # out << "<pre>" + udiff + "</pre>"
     out
   end
   

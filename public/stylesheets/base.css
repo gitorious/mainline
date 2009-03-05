@@ -1308,10 +1308,14 @@ table.codediff .cut-line {
 }
 table.codediff td.hidden del { display:none; }
 table.codediff td.del { background: #ffdddd; }
+table.codediff td.del span.idiff { background: #F2ACAD; }
 table.codediff td.ins { background: #ddffdd; }
+table.codediff td.ins span.idiff { background: #BAFBAD; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td { background: #fe9; }
-table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del{ background: #fd4; }
+table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del { background: inherit; }
+/*table.sidebyside tbody.mod td ins span.idiff, 
+  table.sidebyside tbody.mod td del span.idiff { background: #fd4; }*/
 table.codediff td.del del { text-decoration: none; }
 table.codediff td.ins ins { text-decoration: none; }
 table.sidebyside td.del del { background: #ffaaaa; }

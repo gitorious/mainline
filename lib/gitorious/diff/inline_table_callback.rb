@@ -17,33 +17,37 @@
 
 module Gitorious
   module Diff
-    class InlineTableCallback < BaseCallback
+    class InlineTableCallback < BaseCallback      
       def addline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
-        %Q{<td class="code ins"><ins>#{escape(line)}</ins></td></tr>}
+        %Q{<td class="code ins"><ins>} +
+          render_line(line) +
+        %Q{</ins></td></tr>}
       end
       
       def remline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
-        %Q{<td class="code del"><del>#{escape(line)}</del></td></tr>}
+        %Q{<td class="code del"><del>} + 
+          render_line(line) + 
+        %Q{</del></td></tr>}
       end
       
       def modline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
-        %Q{<td class="code unchanged mod">#{escape(line)}</td></tr>}
+        %Q{<td class="code unchanged mod">#{render_line(line)}</td></tr>}
       end
       
       def unmodline(line)
         %Q{<tr class="changes">} + 
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
-        %Q{<td class="code unchanged unmod">#{escape(line)}</td></tr>}
+        %Q{<td class="code unchanged unmod">#{render_line(line)}</td></tr>}
       end
       
       def sepline(line)
