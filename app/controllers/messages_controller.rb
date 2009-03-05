@@ -2,9 +2,29 @@ class MessagesController < ApplicationController
   before_filter :login_required
   
   def index
-    @messages = current_user.received_messages.paginate(:all, 
+    @messages = current_user.top_level_messages.paginate(:page => params[:page])
+    @root = Breadcrumb::ReceivedMessages.new
+  end
+  
+  def sent
+    @messages = current_user.sent_messages.paginate(:all,
       :page => params[:page])
-    
+    @root = Breadcrumb::SentMessages.new
+  end
+  
+  def read
+    @message = current_user.received_messages.find(params[:id])
+    @message.read!
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
+  def show
+    @message = Message.find(params[:id])
+    unless @message.sender == current_user or @message.recipient == current_user
+      raise ActiveRecord::RecordNotFound and return
+    end
   end
 
   def create
@@ -28,6 +48,7 @@ class MessagesController < ApplicationController
   def reply
     original_message = current_user.received_messages.find(params[:id])
     @message = original_message.build_reply(params[:message])
+    original_message.read! unless original_message.read?
     if @message.save
       flash[:notice] = "Your reply was sent"
       redirect_to :action => :index

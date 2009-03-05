@@ -53,6 +53,14 @@ module BreadcrumbsHelper
       [@owner, @repository, :committerships]
     when Committership
       [@owner, @repository, @committership]
+    when Breadcrumb::Messages
+      messages_path
+    when Breadcrumb::ReceivedMessages
+      messages_path
+    when Breadcrumb::SentMessages 
+      sent_messages_path
+    when Message
+      an_object.new_record? ? new_message_path : message_path(an_object)
     else
       "/"
     end

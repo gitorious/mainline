@@ -29,6 +29,48 @@ class MessagesControllerTest < ActionController::TestCase
     should_render_template :index
   end
   
+  context 'On GET to sent' do
+    setup do
+      login_as :moe
+      get :sent
+    end
+    
+    should_respond_with :success
+    should_assign_to :messages
+    should_render_template :sent
+  end
+  
+  context 'On GET to show' do
+    setup do 
+      @message = messages(:johans_message_to_moe)
+      login_as :moe
+      get :show, :id => @message.to_param
+    end
+    
+    should_respond_with :success
+    should_assign_to :message
+  end
+
+  context 'Trying to peek at other peoples messages' do
+    setup do
+      login_as :mike
+      get :show, :id => @message.to_param
+    end
+    
+    should_respond_with :not_found
+  end
+  
+  context 'On PUT to read' do
+    setup do
+      login_as :moe
+      @message = messages(:johans_message_to_moe)
+      put :read, :id => @message.to_param, :format => 'js'
+    end
+    
+    should_respond_with :success
+    should_assign_to :message#, @message)
+  end
+  
   context 'On POST to create' do
     setup do
       login_as :moe 

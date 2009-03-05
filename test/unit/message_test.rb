@@ -22,6 +22,7 @@ class MessageTest < ActiveSupport::TestCase
   should_belong_to :recipient
   should_require_attributes :subject, :body
   should_belong_to :notifiable
+  should_have_many :replies
   
   context 'The state machine' do
     context 'class level' do
@@ -72,6 +73,11 @@ class MessageTest < ActiveSupport::TestCase
 
     should 'flag which message the reply relates to' do
       assert_equal @message, @reply.in_reply_to
+    end
+    
+    should "add to its original messages's responses" do
+      assert @reply.save
+      assert @message.replies.include?(@reply)
     end
   end
   

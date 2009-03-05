@@ -21,6 +21,8 @@ class Message < ActiveRecord::Base
   belongs_to :recipient, :class_name => "User", :foreign_key => :recipient_id
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
   
+  has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
+  
   validates_presence_of :subject, :body
   validates_presence_of :recipient, :sender
 
@@ -35,8 +37,21 @@ class Message < ActiveRecord::Base
   
   def build_reply(options={})
     reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}
-    reply = Message.new(reply_options.merge(options))
+    reply = Message.new(options.merge(reply_options))
     reply.in_reply_to = self
     return reply
+  end
+  
+  def breadcrumb_parent
+    in_reply_to || Breadcrumb::Messages.new
+  end
+  
+  # Used in breadcrumbs
+  def title
+    subject || I18n.t("views.messages.new")
+  end
+  
+  def breadcrumb_css_class
+    "new_email"
   end
 end

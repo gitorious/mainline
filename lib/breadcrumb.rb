@@ -160,6 +160,42 @@ module Breadcrumb
     def breadcrumb_css_class
       "merge_requests"
     end
+  end
+  
+  class Messages
+    def title
+      I18n.t("views.messages.collection_title")
+    end
+    def breadcrumb_parent
+      nil
+    end
+    def breadcrumb_css_class
+      "emails"
+    end
+  end
+  
+  class Mailbox
+    def breadcrumb_parent
+      Messages.new
+    end
+  end
+  
+  class ReceivedMessages < Mailbox
+    def title
+      I18n.t("views.messages.received_messages")
+    end
     
+    def breadcrumb_css_class
+      "received_emails"
+    end
+  end
+  
+  class SentMessages < Mailbox
+    def title
+      I18n.t("views.messages.sent_messages")
+    end
+    def breadcrumb_css_class
+      "sent_emails"
+    end
   end
 end

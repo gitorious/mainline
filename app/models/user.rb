@@ -63,9 +63,13 @@ class User < ActiveRecord::Base
     transitions :to => :terms_accepted, :from => [:pending]
   end
   
-  has_many :received_messages, :class_name => "Message", :foreign_key => 'recipient_id' do
+  has_many :received_messages, :class_name => "Message", :foreign_key => 'recipient_id', :order => "created_at DESC" do
     def unread
       find(:all, :conditions => {:aasm_state => "unread"})
+    end
+    
+    def top_level
+      find(:all, :conditions => {:in_reply_to_id => nil})
     end
     
     def unread_count
@@ -73,7 +77,15 @@ class User < ActiveRecord::Base
     end
   end
   
-  has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id" 
+  def top_level_messages
+    sent_messages.top_level + received_messages.top_level
+  end
+  
+  has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id", :order => "created_at DESC" do
+    def top_level
+      find(:all, :conditions => {:in_reply_to_id => nil})
+    end
+  end
   
   def self.human_name
     I18n.t("activerecord.models.user")

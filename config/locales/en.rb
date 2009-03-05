@@ -474,6 +474,7 @@
         :manage_emails => "Manage email aliases"
       },
       :messages => {
+        :collection_title => "Messages",
         :title_new  => "Compose a message",
         :subject  => "Subject",
         :body => "Message body",
@@ -483,7 +484,8 @@
         :reply => "Reply",
         :received_messages => "Inbox",
         :sent_messages => "Sent messages",
-        :new => "Compose a message"
+        :new => "Compose a message",
+        :mark_as_read => "Mark as read"
       }
     },
     :date => {

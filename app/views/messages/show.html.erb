@@ -1,12 +1,10 @@
-<h1><%= t "views.messages.title_new" %></h1>
-
-<%= render :partial => "form" %>
+<h1><%= h(@message.subject) %></h1>
+<%= render :partial => @message %>
 
 <% content_for :submenu do -%>
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @message} -%>
 <% end -%>
 
-
-<% content_for(:sidebar) do %>
+<%- content_for(:sidebar) do -%>
   <%= render :partial => "sidebar" %>
-<% end %>
+<%- end -%>

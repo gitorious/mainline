@@ -1,41 +1,7 @@
 <ul class="message_listing">
 <% messages.each do |message| %>
-  <li class="unread">
-    <p class="date"><%= message.created_at.to_s(:short) %></p>
-    <%= gravatar message.sender.email, :size => 20 -%>
-    <div class="message">
-      <p class="sender">
-        <%=link_to(h(message.sender.fullname), user_path(message.sender)) -%>
-      </p>
-      <p class="subject">
-        <%= h(message.subject) %>
-      </p>
-      <div class="body">
-        <%= simple_format(h(message.body)) %>
-      </div>
-      <% unless message.sender == current_user -%>
-        <p>
-          <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
-        </p>
-      <% end %>
-      <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
-        <% form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
-          <p>
-            <%= f.label :subject, t("views.messages.subject") %><br/>
-            <%= f.text_field :subject %>
-          </p>
-          <p>
-            <%= f.label :subject, t("views.messages.body") %><br/>
-            <%= f.text_area :body %>
-          </p>
-
-          <p>
-            <%= f.submit t("views.messages.submit") %>
-          </p>
-        <% end %>
-      </div>
-
-    </div>
+  <li class="<%= message.aasm_state -%>" id="<%= dom_id(message) -%>">
+    <%= render :partial => message %>
   </li>
 <% end %>
 </ul>

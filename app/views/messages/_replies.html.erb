@@ -1,0 +1,10 @@
+<%- unless replies.blank? -%>
+<ul class="replies">
+  <%- for reply in replies -%>
+    <li class="reply_<%= reply.aasm_state -%>">  
+      <%= link_to h(reply.subject), reply %> <span class="date_display">(<%= reply.created_at.to_s(:short) %>)</span>
+      <%= render :partial => 'replies', :locals => {:replies => reply.replies} %>
+    </li>
+  <%- end -%>
+</ul>
+<%- end -%>
