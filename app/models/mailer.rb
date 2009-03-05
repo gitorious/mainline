@@ -57,6 +57,16 @@ class Mailer < ActionMailer::Base
         merge_request
       )
   end
+  
+  def notification_copy(recipient, sender, subject, body)
+    @recipients       =  recipient.email
+    @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
+    @subject          = subject
+    @body[:recipient] = recipient.fullname
+    @body[:url]       = "http://#{GitoriousConfig['gitorious_host']}/messages"
+    @body[:body]   = body
+    @body[:sender]    = sender.fullname
+  end
 
   def forgotten_password(user, password)
     setup_email(user)

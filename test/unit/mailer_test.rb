@@ -110,5 +110,12 @@ class MailerTest < ActiveSupport::TestCase
     Mailer.deliver(mail)
     assert_equal [mail], Mailer.deliveries
   end
-
+  
+  should 'send a notification of new messages' do
+    recipient = users(:moe)
+    sender = users(:mike)
+    mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text")
+    assert_equal([recipient.email], mail.to)
+    assert_match /#{sender.fullname} has sent you a message on Gitorious: /, mail.body
+  end
 end
