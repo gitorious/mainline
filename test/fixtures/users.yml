@@ -33,6 +33,7 @@ mike:
   ssh_key_id: 3
   is_admin: <%= false %>
   accepted_license_agreement_version: 66c070833243bb8cf061bdc4165a29a8c8688ace  # the checksum of the contents of data/gitorious.test.license
+  wants_email_notifications: <%= true %>
 old_timer:
   id: 4
   login: old_timer

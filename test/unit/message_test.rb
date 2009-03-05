@@ -82,11 +82,43 @@ class MessageTest < ActiveSupport::TestCase
   end
   
   context 'Email notifications' do
-    should_eventually "deliver email notifications after create if the recipient wants them"
-    should_eventually "skip email delivery after create if the recipient doesn't want them"
+    setup do 
+      @moe = users(:moe)
+      @mike = users(:mike)
+      @message = Message.new(:subject => "Hello", :body => "World")
+    end
+    
+    should 'fire a notification event on message creation' do
+      assert @mike.wants_email_notifications?
+      @message.sender = @moe
+      @message.recipient = @mike
+      @message.expects(:schedule_email_delivery).once
+      @message.save
+    end
+    
+    should 'not fire a notification event for opt-out users' do
+      assert !@moe.wants_email_notifications?
+      @message.sender = @mike
+      @message.recipient = @moe
+      @message.expects(:schedule_email_delivery).never
+      @message.save
+    end
+    
+    should 'actually send the message to the queue' do
+      p = proc{
+        @message.sender = @moe
+        @message.recipient = @mike
+        @message.save
+      }
+      message = find_message_with_queue_and_regexp('/queue/GitoriousEmailNotifications', /email_delivery/) {p.call}
+      assert_equal(@moe.id, message['sender_id'])
+      assert_equal(@mike.id, message['recipient_id'])
+      assert_equal(@message.subject, message['subject'])
+    end
   end
   
   context 'Mass email delivery' do
     should_eventually 'create n messages when supplying several recipients'
-  end
+  end 
+
 end

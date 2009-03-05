@@ -14,7 +14,7 @@
       <%= link_to h(message.subject), message_path(message) %>
     </p>
     <div class="body">
-      <%= truncate h(message.body), 200 %>
+      <%= truncate h(message.body), :length => 200 %>
     </div>
   
     <ul class="message_actions">

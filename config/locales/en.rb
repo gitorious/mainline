@@ -194,6 +194,8 @@
         :create_title => lambda { |this, path| "Create new user or " + 
           this.link_to( "login directly with your OpenID", path ) },
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
+        :wants_email_notifications => 'Send email notifications?',
+        :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
         :member_for => "Member for",
         :this_week => {
           :one => "commit so far this week",

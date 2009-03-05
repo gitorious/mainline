@@ -20,12 +20,14 @@ class Message < ActiveRecord::Base
   belongs_to :sender, :class_name => "User", :foreign_key => :sender_id
   belongs_to :recipient, :class_name => "User", :foreign_key => :recipient_id
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
+  after_create :send_email_notification_if_required
   
   has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
   
   validates_presence_of :subject, :body
   validates_presence_of :recipient, :sender
 
+  include ActiveMessaging::MessageSender
   include AASM
   aasm_initial_state :unread
   aasm_state :unread
@@ -64,4 +66,16 @@ class Message < ActiveRecord::Base
   def breadcrumb_css_class
     "new_email"
   end
+  
+  protected
+    def send_email_notification_if_required
+      if recipient.wants_email_notifications?
+        schedule_email_delivery
+      end
+    end
+    
+    def schedule_email_delivery
+      options = {:sender_id => sender.id, :recipient_id => recipient.id, :subject => subject, :body => body, :created_at => created_at, :identifier => "email_delivery"}
+      publish :cc_message, options.to_json
+    end
 end

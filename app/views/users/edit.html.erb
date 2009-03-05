@@ -50,6 +50,15 @@
     <%= f.text_field :identity_url, :class => "text" -%>
   </p>
   
+  <p>
+    <%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
+    <span class="hint">
+      <%= t("views.users.describe_email_notifications") -%>
+    </span>
+    <br />
+    <%= f.check_box :wants_email_notifications %>
+  </p>
+  
   <%= f.submit t("views.common.save") -%>
 <% end -%>
 
