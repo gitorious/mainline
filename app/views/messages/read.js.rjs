@@ -1,1 +1,2 @@
 page << "$('#{dom_id(@message)}').removeClassName('unread')"
+page.visual_effect(:puff, dom_id(@message, "mark_as_read"))

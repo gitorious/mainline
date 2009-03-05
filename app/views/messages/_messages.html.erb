@@ -1,7 +1,5 @@
 <ul class="message_listing">
 <% messages.each do |message| %>
-  <li class="<%= message.aasm_state -%>" id="<%= dom_id(message) -%>">
     <%= render :partial => message %>
-  </li>
 <% end %>
 </ul>

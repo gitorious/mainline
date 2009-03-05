@@ -1,53 +1,60 @@
-<%= gravatar message.sender.email, :size => 20 -%>
-<div class="message">
-  <p class="sender">
-    <% if message.recipient == current_user %>
-      To <strong>You</strong>
-    <% else %>
-      From <%=link_to(h(message.sender.fullname), user_path(message.sender)) -%>
-    <% end %>
-    <%= distance_of_time_in_words_to_now(message.created_at) %> ago
-  </p>
-  <p class="subject">
-    <%= link_to h(message.subject), message_path(message) %>
-  </p>
-  <div class="body">
-    <%= simple_format(h(message.body)) %>
-  </div>
-  
-  <% if message.unread? and message.recipient == current_user %>
-    <%= link_to_remote(t('views.messages.mark_as_read'), :url => read_message_path(message), :method => :put) %>
-  <% end %>
-  
-  <%- if original_message = message.in_reply_to -%>
-    <div>
-      This is in reply to <%= link_to(h(original_message.subject), message_path(original_message)) %>
-    </div>
-  <%- end -%>
-  
-  <%= render :partial => "replies", :locals => {:replies => message.replies}  %>
-
-  
-  <% unless message.sender == current_user -%>
-    <p>
-      <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
-    </p>
-    <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
-      <% form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
-        <p>
-          <%= f.label :subject, t("views.messages.subject") %><br/>
-          <%= f.text_field :subject %>
-        </p>
-        <p>
-          <%= f.label :subject, t("views.messages.body") %><br/>
-          <%= f.text_area :body %>
-        </p>
-
-        <p>
-          <%= f.submit t("views.messages.submit") %>
-        </p>
+<li class="<%= message.aasm_state -%>" id="<%= dom_id(message) -%>">
+  <% actor = (message.recipient == current_user) ? message.sender : message.recipient %>
+  <%= gravatar actor.email, :size => 32 -%>
+  <div class="message">
+    <p class="sender">
+      <% if message.recipient == current_user %>
+        <strong><%=link_to(h(message.sender.fullname), user_path(message.sender)) -%></strong> sent <strong>you</strong> a message
+      <% else %>
+        <strong>You</strong> sent <strong><%= h(message.recipient.fullname) %></strong> a message
       <% end %>
+      <%= distance_of_time_in_words_to_now(message.created_at) %> ago
+    </p>
+    <p class="subject">
+      <%= link_to h(message.subject), message_path(message) %>
+    </p>
+    <div class="body">
+      <%= truncate h(message.body), 200 %>
     </div>
-  <% end %>
+  
+    <ul class="message_actions">
+      <% if message.unread? and message.recipient == current_user %>
+        <li id="<%= dom_id(message, 'mark_as_read') -%>">
+          <%= link_to_remote(t('views.messages.mark_as_read'), :url => read_message_path(message), :method => :put) %>
+        </li>
+      <% end %>
+  
+      <%- if original_message = message.in_reply_to -%>
+        <li>This is in reply to <%= link_to(h(original_message.subject), message_path(original_message)) %></li>
+      <%- end -%>
 
-</div>
+      <%- unless message.sender == current_user -%>
+        <li>
+          <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
+        </li>    
+      <%- end -%>
+    </ul>
+    <%= render :partial => "replies", :locals => {:replies => message.replies}  %>
+
+  
+    <% unless message.sender == current_user -%>
+      <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
+        <% form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
+          <p>
+            <%= f.label :subject, t("views.messages.subject") %><br/>
+            <%= f.text_field :subject %>
+          </p>
+          <p>
+            <%= f.label :subject, t("views.messages.body") %><br/>
+            <%= f.text_area :body %>
+          </p>
+
+          <p>
+            <%= f.submit t("views.messages.submit") %>
+          </p>
+        <% end %>
+      </div>
+    <% end %>
+
+  </div>
+</li>

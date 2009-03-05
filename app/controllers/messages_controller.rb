@@ -25,6 +25,10 @@ class MessagesController < ApplicationController
     unless @message.sender == current_user or @message.recipient == current_user
       raise ActiveRecord::RecordNotFound and return
     end
+    respond_to do |wants|
+      wants.html
+      wants.js {render :partial => "message", :layout => false}
+    end
   end
 
   def create

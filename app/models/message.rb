@@ -46,6 +46,16 @@ class Message < ActiveRecord::Base
     in_reply_to || Breadcrumb::Messages.new
   end
   
+  def display_state_for(a_user)
+    if a_user == sender
+      return "not_mine"
+    end
+    if unread?
+      return "unread"
+    end
+    return "read"
+  end
+  
   # Used in breadcrumbs
   def title
     subject || I18n.t("views.messages.new")

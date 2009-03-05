@@ -77,8 +77,9 @@ class User < ActiveRecord::Base
     end
   end
   
+  # Top level messages either from or to me
   def top_level_messages
-    sent_messages.top_level + received_messages.top_level
+    Message.find_by_sql(["SELECT * FROM messages WHERE (sender_id=? OR recipient_id=?) AND in_reply_to_id IS NULL ORDER BY created_at DESC", self,self])
   end
   
   has_many :sent_messages, :class_name => "Message", :foreign_key => "sender_id", :order => "created_at DESC" do
