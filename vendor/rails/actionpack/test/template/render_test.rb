@@ -145,6 +145,10 @@ module RenderTestCases
     assert_equal File.expand_path("#{FIXTURE_LOAD_PATH}/test/_raise.html.erb"), e.file_name
   end
 
+  def test_render_object
+    assert_equal "Hello: david", @view.render(:partial => "test/customer", :object => Customer.new("david"))
+  end
+
   def test_render_partial_collection
     assert_equal "Hello: davidHello: mary", @view.render(:partial => "test/customer", :collection => [ Customer.new("david"), Customer.new("mary") ])
   end
@@ -230,7 +234,7 @@ module RenderTestCases
     end
   end
 
-  def test_template_with_malformed_template_handler_is_reachable_trough_its_exact_filename
+  def test_template_with_malformed_template_handler_is_reachable_through_its_exact_filename
     assert_equal "Don't render me!", @view.render(:file => 'test/malformed/malformed.html.erb~')
   end
 

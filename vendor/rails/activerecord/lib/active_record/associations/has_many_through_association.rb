@@ -23,8 +23,8 @@ module ActiveRecord
       end
 
       # Returns the size of the collection by executing a SELECT COUNT(*) query if the collection hasn't been loaded and
-      # calling collection.size if it has. If it's more likely than not that the collection does have a size larger than zero
-      # and you need to fetch that collection afterwards, it'll take one less SELECT query if you use length.
+      # calling collection.size if it has. If it's more likely than not that the collection does have a size larger than zero,
+      # and you need to fetch that collection afterwards, it'll take one fewer SELECT query if you use #length.
       def size
         return @owner.send(:read_attribute, cached_counter_attribute_name) if has_cached_counter?
         return @target.size if loaded?
@@ -47,12 +47,12 @@ module ActiveRecord
           options[:include] = @reflection.source_reflection.options[:include] if options[:include].nil?
         end
         
-        def insert_record(record, force=true)
+        def insert_record(record, force = true, validate = true)
           if record.new_record?
             if force
               record.save!
             else
-              return false unless record.save
+              return false unless record.save(validate)
             end
           end
           through_reflection = @reflection.through_reflection

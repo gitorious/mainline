@@ -1,0 +1,47 @@
+From 55adc912c86d821b2d8ddf183386f4aa99a76afb Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?Johan=20S=C3=B8rensen?= <johan@johansorensen.com>
+Date: Fri, 6 Mar 2009 10:17:20 +0100
+Subject: [PATCH] Make sure that an expires_in without a :public key sets the Cache-Control
+ header to private, instead of no-cache.
+
+This fixes a regression introduced in f2a32bd0, which wasn't exposed due to two
+test methods having the same name.
+---
+ actionpack/lib/action_controller/base.rb  |    4 +++-
+ actionpack/test/controller/render_test.rb |    2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/actionpack/lib/action_controller/base.rb b/actionpack/lib/action_controller/base.rb
+index 5da47ce..9d06d05 100644
+--- a/actionpack/lib/action_controller/base.rb
++++ b/actionpack/lib/action_controller/base.rb
+@@ -1205,10 +1205,12 @@ module ActionController #:nodoc:
+         cache_control = response.headers["Cache-Control"].split(",").map {|k| k.strip }
+ 
+         cache_control << "max-age=#{seconds}"
++        cache_control.delete("no-cache")
+         if options[:public]
+           cache_control.delete("private")
+-          cache_control.delete("no-cache")
+           cache_control << "public"
++        else
++          cache_control << "private"
+         end
+         
+         # This allows for additional headers to be passed through like 'max-stale' => 5.hours
+diff --git a/actionpack/test/controller/render_test.rb b/actionpack/test/controller/render_test.rb
+index 02ae8ac..2f4cc5a 100644
+--- a/actionpack/test/controller/render_test.rb
++++ b/actionpack/test/controller/render_test.rb
+@@ -1509,7 +1509,7 @@ class ExpiresInRenderTest < ActionController::TestCase
+     assert_equal "max-age=60, private", @response.headers["Cache-Control"]
+   end
+   
+-  def test_expires_in_header
++  def test_expires_in_header_with_public
+     get :conditional_hello_with_expires_in_with_public
+     assert_equal "max-age=60, public", @response.headers["Cache-Control"]
+   end
+-- 
+1.6.1
+

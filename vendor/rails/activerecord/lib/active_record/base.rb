@@ -1690,7 +1690,7 @@ module ActiveRecord #:nodoc:
         def construct_finder_sql(options)
           scope = scope(:find)
           sql  = "SELECT #{options[:select] || (scope && scope[:select]) || default_select(options[:joins] || (scope && scope[:joins]))} "
-          sql << "FROM #{(scope && scope[:from]) || options[:from] || quoted_table_name} "
+          sql << "FROM #{options[:from]  || (scope && scope[:from]) || quoted_table_name} "
 
           add_joins!(sql, options[:joins], scope)
           add_conditions!(sql, options[:conditions], scope)
@@ -1754,12 +1754,12 @@ module ActiveRecord #:nodoc:
         def add_group!(sql, group, having, scope = :auto)
           if group
             sql << " GROUP BY #{group}"
-            sql << " HAVING #{having}" if having
+            sql << " HAVING #{sanitize_sql_for_conditions(having)}" if having
           else
             scope = scope(:find) if :auto == scope
             if scope && (scoped_group = scope[:group])
               sql << " GROUP BY #{scoped_group}"
-              sql << " HAVING #{scoped_having}" if (scoped_having = scope[:having])
+              sql << " HAVING #{sanitize_sql_for_conditions(scope[:having])}" if scope[:having]
             end
           end
         end
