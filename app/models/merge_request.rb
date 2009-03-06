@@ -134,7 +134,13 @@ class MergeRequest < ActiveRecord::Base
   def confirmed_by_user
     self.status = STATUS_OPEN
     save
-    Mailer.deliver_merge_request_notification(self)    
+    Mailer.deliver_merge_request_notification(self)
+    message = Message.new(
+      :sender => user, 
+      :recipient => target_repository.user,
+      :subject => "New Merge Request submitted",
+      :body => proposal)    
+    message.save
   end
   
   def terms_accepted(oauth_request_token, oauth_request_secret)
