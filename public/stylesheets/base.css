@@ -1936,11 +1936,12 @@ div.archive-download-box p {
 .message_listing img
 {
   float: left;
-  margin-right: 0.4em;
+  margin-right: 1.0em;
+  margin-left: 1em;
 }
 .message_listing .message
 {
-  margin-left: 3.4em;
+  margin-left: 2.4em;
 }
 .message_listing .message .sender
 {
@@ -1949,12 +1950,12 @@ div.archive-download-box p {
 .message_listing .message .subject
 {
   font-style: italic;
-  margin: 0 0 0 1em;
+  margin: 0 0 0 0em;
 }
 .message_listing .message .body
 {
   margin: 0 0 1em 1em;
-  padding-left: 1em;
+  padding-left: 2em;
 }
 .message_listing > li
 {
@@ -1962,6 +1963,12 @@ div.archive-download-box p {
   padding: 1em;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
+  background-position: 15px left;
+  background-repeat: no-repeat;
+}
+.message_listing > li.merge_request
+{
+  background-image: url("/images/silk/arrow_merge.png") !important;   
 }
 .message_listing li
 {
@@ -1971,18 +1978,15 @@ div.archive-download-box p {
 .message_listing .message_actions li
 {
   margin: 0;
-  display: inline-block;
+/*  display: inline-block;*/
+  text-align: right;
   margin: 0 0.4em 0 0;
 }
 .message_listing .unread
 {  
   
   background-color: #d9e8fa;
-/*  background-image: url(/images/silk/information.png);
-  background-position: 20px left;
-  background-repeat: no-repeat;
-  padding-left: 1.6em;
-*/}
+}
 .message_listing .replies
 {
   margin: 0;
@@ -2000,4 +2004,13 @@ div.archive-download-box p {
 .message_listing .replies .reply_unread
 {
   font-weight: bold;
+}
+.message_listing .notifiable a
+{
+  background-repeat: no-repeat;
+  padding-left: 1.4em;
+}
+.message_listing .notifiable a.merge_request 
+{ 
+  background-image: url("/images/silk/arrow_merge.png") !important; 
 }

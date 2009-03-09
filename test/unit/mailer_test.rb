@@ -98,8 +98,10 @@ class MailerTest < ActiveSupport::TestCase
   should 'send a notification of new messages' do
     recipient = users(:moe)
     sender = users(:mike)
-    mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text")
+    merge_request = merge_requests(:moes_to_johans)
+    mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text", merge_request)
     assert_equal([recipient.email], mail.to)
     assert_match /#{sender.fullname} has sent you a message on Gitorious: /, mail.body
+    assert_match /Address: .*\/#{merge_request.target_repository.project.slug}\//i, mail.body
   end
 end

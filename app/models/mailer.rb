@@ -44,14 +44,17 @@ class Mailer < ActionMailer::Base
     @body[:url] =  project_repository_url(repository.project, repository)
   end
 
-  def notification_copy(recipient, sender, subject, body)
+  def notification_copy(recipient, sender, subject, body, notifiable)
     @recipients       =  recipient.email
     @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
     @subject          = subject
     @body[:recipient] = recipient.fullname
     @body[:url]       = "http://#{GitoriousConfig['gitorious_host']}/messages"
-    @body[:body]   = body
+    @body[:body]      = body
     @body[:sender]    = sender.fullname
+    if notifiable
+      @body[:notifiable_url] = project_repository_merge_request_url(notifiable.target_repository.project, notifiable.target_repository, notifiable)
+    end
   end
 
   def forgotten_password(user, password)

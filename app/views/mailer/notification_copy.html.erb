@@ -4,4 +4,8 @@ Dear <%= @recipient %>
 
 <%= @body %>
 
+<% if @notifiable_url %>
+  Address: <%= @notifiable_url %>
+<% end %>
+
 You will find this and other messages on <%= @url %>

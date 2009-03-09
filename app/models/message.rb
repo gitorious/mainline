@@ -61,6 +61,10 @@ class Message < ActiveRecord::Base
   def description
     (notifiable || self).class.name.titleize.downcase
   end
+  
+  def css_class
+    (notifiable || self).class.name.underscore
+  end
 
   # Used in breadcrumbs
   def title

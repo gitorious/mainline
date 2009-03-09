@@ -1,12 +1,13 @@
-<li class="<%= message.aasm_state -%>" id="<%= dom_id(message) -%>">
+<li class="<%= message.aasm_state -%> <%= message.css_class -%>" id="<%= dom_id(message) -%>">
   <% actor = (message.recipient == current_user) ? message.sender : message.recipient %>
+  <% message_title = message.notifiable ? link_to_notifiable(message.notifiable) : "a message" %>
   <%= gravatar actor.email, :size => 32 -%>
   <div class="message">
     <p class="sender">
       <% if message.recipient == current_user %>
-        <strong><%=link_to(h(message.sender.fullname), user_path(message.sender)) -%></strong> sent <strong>you</strong> a <%= message.description %>
+        <strong><%=link_to(h(message.sender.fullname), user_path(message.sender)) -%></strong> sent <strong>you</strong> <%= message_title %>
       <% else %>
-        <strong>You</strong> sent <strong><%= h(message.recipient.fullname) %></strong> a <%= message.description %>
+        <strong>You</strong> sent <strong><%= h(message.recipient.fullname) %></strong> <%= message_title %>
       <% end %>
       <%= distance_of_time_in_words_to_now(message.created_at) %> ago
     </p>
@@ -16,7 +17,7 @@
     <div class="body">
       <%= truncate h(message.body), :length => 200 %>
     </div>
-  
+      
     <ul class="message_actions">
       <% if message.unread? and message.recipient == current_user %>
         <li id="<%= dom_id(message, 'mark_as_read') -%>">
