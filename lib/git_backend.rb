@@ -17,9 +17,11 @@ class GitBackend
     # Clones a new bare Git repository at +target-path+ from +source_path+
     # sets git-daemon-export-ok if +set_export_ok+ is true (default)
     def clone(target_path, source_path, set_export_ok = true)
+      parent_path = File.expand_path(File.join(target_path, ".."))
+      FileUtils.mkdir_p(parent_path, :mode => 0750)
       template = File.expand_path(File.join(File.dirname(__FILE__), "../data/git-template"))
       git = Grit::Git.new(target_path)
-      git.clone({:bare => true}, "--template=#{template}", source_path, target_path)
+      git.clone({:bare => true, :template => template}, source_path, target_path)
       post_create(target_path) if set_export_ok
     end
     
