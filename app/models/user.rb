@@ -114,7 +114,7 @@ class User < ActiveRecord::Base
   def self.find_by_email_with_aliases(email)
     user = User.find_by_email(email)
     unless user
-      if email_alias = Email.find_by_address(email)
+      if email_alias = Email.find_confirmed_by_address(email)
         user = email_alias.user
       end
     end

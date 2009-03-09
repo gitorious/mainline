@@ -251,6 +251,11 @@ class UserTest < ActiveSupport::TestCase
     should "return nil when there's no user with that email or alias" do
       assert_nil User.find_by_email_with_aliases("wtf@fubar.no")
     end
+    
+    should "not include pending emails" do
+      Email.create!(:user => users(:johan), :address => "foo@bar.com")
+      assert_nil User.find_by_email_with_aliases("foo@bar.com")
+    end
   end
    
   context 'Messages' do

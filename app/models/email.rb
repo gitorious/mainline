@@ -22,6 +22,10 @@ class Email < ActiveRecord::Base
     transitions :to => :confirmed, :from => [:pending]
   end
   
+  def self.find_confirmed_by_address(addr)
+    find_in_state(:first, :confirmed, :conditions => { :address => addr })
+  end
+  
   protected
     def send_confirmation_email
       Mailer.deliver_new_email_alias(self)

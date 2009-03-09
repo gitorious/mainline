@@ -32,4 +32,12 @@ class EmailTest < ActiveSupport::TestCase
     email.confirm!
     assert_nil email.confirmation_code
   end
+  
+  should "find confirmed email by address" do
+    email = Email.create!(:address => "foo@bar.com", :user => users(:johan))
+    assert_nil Email.find_confirmed_by_address("foo@bar.com")
+    email.confirm!
+    assert email.reload.confirmed?
+    assert_equal email, Email.find_confirmed_by_address("foo@bar.com")
+  end
 end
