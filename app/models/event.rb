@@ -28,6 +28,8 @@ class Event < ActiveRecord::Base
     end
   end
   
+  named_scope :top, {:conditions => ['target_type != ?', 'Event']}
+  
   def self.latest(count)
     find(:all, :order => "events.created_at desc", :limit => count, 
           :include => [:user, :project], 

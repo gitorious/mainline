@@ -32,7 +32,7 @@ class RepositoriesController < ApplicationController
     
   def show
     @repository = @owner.repositories.find_by_name!(params[:id])
-    @events = @repository.events.paginate(:all, :page => params[:page], 
+    @events = @repository.events.top.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
     @atom_auto_discovery_url = project_repository_path(@owner, @repository, :format => :atom)

@@ -54,8 +54,8 @@ class ProjectsController < ApplicationController
   
   def show
     @owner = @project
-    @events = @project.events.paginate(:all, :page => params[:page], 
-      :order => "created_at desc", :include => [:user, :project], :conditions => ['target_type !=?','Event'])
+    @events = @project.events.top.paginate(:all, :page => params[:page], 
+      :order => "created_at desc", :include => [:user, :project])
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     
     respond_to do |format|
