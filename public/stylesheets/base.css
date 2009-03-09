@@ -517,6 +517,7 @@ li.event_instance.add_committer, li.add_committer > a { background-image: url("/
 li.event_instance.update_repository, li.update_repository > a { background-image: url("/images/silk/database_edit.png") !important; }
 li.event_instance.delete_repository, li.delete_repository > a { background-image: url("/images/silk/database_delete.png") !important; }
 li.event_instance.commit, li.commit > a { background-image: url("/images/silk/brick.png") !important; }
+li.event_instance.merge_commit, li.merge_commit > a { background-image: url("/images/silk/arrow_merge.png") !important; }
 li.event_instance.create_project, li.create_project > a { background-image: url("/images/silk/report_add.png") !important; }
 li.event_instance.delete_project, li.delete_project > a { background-image: url("/images/silk/report_delete.png") !important; }
 li.event_instance.update_project, li.update_project > a { background-image: url("/images/silk/report_edit.png") !important; }
@@ -830,6 +831,11 @@ table.repository_meta .infobox ul {
   font-weight: normal;
 }
 
+.merge_commit_message {
+  font-size: 13px;
+  margin: 10px;
+  margin-bottom: 50px;
+}
 
 
 ul.horizontal {

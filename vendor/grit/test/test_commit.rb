@@ -213,4 +213,17 @@ class TestCommit < Test::Unit::TestCase
     assert_equal commit1, commit2
     assert commit1 == commit2
   end
+  
+  def test_is_merge_commit
+    commit = Commit.create(@r, {
+      :id => '4c8124ffcf4039d292442eeccabdeca5af5c5017',
+      :parents => ["a"*40]
+    })
+    merge_commit = Commit.create(@r, {
+      :id => "4c8124ffcf4039d292442eeccabdeca5af5c5017", 
+      :parents => ["a"*40, "b"*40],
+    })
+    assert !commit.merge?
+    assert merge_commit.merge?
+  end
 end

@@ -205,6 +205,11 @@ module Grit
     def to_patch
       @repo.git.format_patch({'1' => true, :stdout => true}, to_s)
     end
+    
+    # Is this commit a merge commit? Eg does it have more than one parent
+    def merge?
+      parents.length > 1
+    end
 
     # Pretty object inspection
     def inspect
