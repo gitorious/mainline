@@ -26,14 +26,14 @@
   </li>
 </ul>
 <h1>
-  <%= t("views.logs.commitlog", :repo => h(@repository.name), :param => h(params[:id]), :title => h(@project.title)) -%>
+  <%= t("views.logs.commitlog", :repo => h(@repository.name), :param => h(@ref), :title => h(@project.title)) -%>
 </h1>
 
 <div class="commit_graph">
   <%= commit_graph_tag(@repository) %>
 </div>
 
-<% cache([repo_owner_path(@repository, [@project, @repository]), :commits, @commits.current_page], {:ttl => 10.minutes}) do -%>
+<% cache([repo_owner_path(@repository, [@project, @repository]), :commits, @ref, @commits.current_page], {:ttl => 10.minutes}) do -%>
   <%= render :partial => "log" -%>
 <% end -%>
 
