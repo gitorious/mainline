@@ -40,6 +40,7 @@ module Git
         end
       end
       @socket = TCPServer.new(@options[:host], @options[:port])
+      @socket.setsockopt(Socket::SOL_SOCKET,Socket::SO_REUSEADDR, !!@options[:reuseaddr])
       @socket.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
       log(Process.pid, "Listening on #{@options[:host]}:#{@options[:port]}...")
       ActiveRecord::Base.verify_active_connections! if @options[:daemonize]
@@ -234,8 +235,8 @@ options = {
   :host => "0.0.0.0",
   :logfile => File.join(RAILS_ROOT, "log", "git-daemon.log"),
   :pidfile => File.join(RAILS_ROOT, "log", "git-daemon.pid"),
-  :daemonize => false
-  
+  :daemonize => false,
+  :reuseaddr => true,
 }
 
 OptionParser.new do |opts|
@@ -259,6 +260,10 @@ OptionParser.new do |opts|
   
   opts.on("-d", "--daemonize", "Daemonize or run in foreground", "Default: #{options[:daemonize]}") do |o|
     options[:daemonize] = o
+  end
+  
+  opts.on("-r", "--reuseaddr", "Re-use addresses", "Default: #{options[:reuseaddr].inspect}") do |o|
+    options[:reuseaddr] = o
   end
   
   opts.on_tail("-h", "--help", "Show this help message.") do
