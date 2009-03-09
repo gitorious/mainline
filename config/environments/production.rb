@@ -22,7 +22,8 @@ cache_dir = File.expand_path(File.join(RAILS_ROOT, 'public', 'cache'))
 # Make sure these are writeable by your webserver daemon user
 #
 config.action_controller.page_cache_directory = cache_dir
-config.action_controller.cache_store = :file_store, File.join(cache_dir, "fragments")
+#config.action_controller.cache_store = :file_store, File.join(cache_dir, "fragments")
+config.cache_store = :mem_cache_store, "localhost"
 
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"

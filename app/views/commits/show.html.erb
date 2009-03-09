@@ -26,20 +26,19 @@
 
 <h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
 
-<%= render :partial => "commit_infobox" -%>
-
-<% if @diffs.blank? -%>
-  <p>
-	<%= t("views.commits.message").call(self, tree_path(@commit.id)) %>
-  </p>
-<% else -%>
-  <% cache({:diffmode => @diffmode}) do -%>
-    <%= render_diff_stats(@commit.stats) -%>
-    <%= render_diffmode_selector -%>
-    <% @diffs.each do |file| -%>
-      <a name="<%= h(file.a_path) -%>"></a>
-      <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, @commit.id) -%></h4>
-      <%= render_diff(file.diff, @diffmode) -%>
+<% cache({:diffmode => @diffmode}) do -%>
+  <%= render :partial => "commit_infobox" -%>
+  <% if @diffs.blank? -%>
+    <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
+  <% else -%>
+    <% unless @commit.merge? -%>>
+      <%= render_diff_stats(@commit.stats) -%>
+      <%= render_diffmode_selector -%>
+      <% @diffs.each do |file| -%>
+        <a name="<%= h(file.a_path) -%>"></a>
+        <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, @commit.id) -%></h4>
+        <%= render_diff(file.diff, @diffmode) -%>
+      <% end -%>
     <% end -%>
   <% end -%>
 <% end -%>
