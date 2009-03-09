@@ -19,6 +19,8 @@ class Membership < ActiveRecord::Base
   belongs_to :group
   belongs_to :user
   belongs_to :role
+  after_create :send_notification_if_invited
+  attr_accessor :inviter
   
   validates_presence_of :group_id, :user_id, :role_id
   
@@ -29,4 +31,22 @@ class Membership < ActiveRecord::Base
   def title
     "Member"
   end
+  
+  def self.build_invitation(inviter, options)
+    result = new(options.merge(:inviter => inviter))
+    return result
+  end
+  
+  
+  protected
+    def send_notification_if_invited
+      if inviter
+        send_notification
+      end
+    end
+    
+    def send_notification
+      message = Message.new(:sender => inviter, :recipient => user, :subject => "You have been added to a group", :body => "Welcome", :notifiable => self)
+      message.save      
+    end
 end

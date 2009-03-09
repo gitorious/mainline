@@ -25,4 +25,26 @@ class MembershipTest < ActiveSupport::TestCase
     assert_equal roles(:admin), memberships(:team_thunderbird_mike).role
     assert_equal users(:mike), memberships(:team_thunderbird_mike).user
   end
+  
+  context 'Adding members to a group' do
+    setup do
+      @group = groups(:team_thunderbird)
+      @user = users(:mike)
+      @inviter = users(:johan)
+    end
+    
+    should 'send a message to a newly added member after he is added to the group' do
+      membership = Membership.build_invitation(@inviter, :user => @user, :group => @group, :role => roles(:member))
+      assert membership.save
+      message = @user.received_messages.last
+      assert_equal(@inviter, message.sender)
+      assert_equal(membership, message.notifiable)
+    end
+    
+    should 'not send a notification if no inviter is set' do
+      membership = Membership.new(:user => @user, :group => @group, :role => roles(:member))
+      membership.expects(:send_notification).never
+      membership.save
+    end
+  end
 end

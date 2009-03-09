@@ -1,9 +1,18 @@
 module MessagesHelper
-  def link_to_notifiable(a_notifiable)
-    case a_notifiable
-    when MergeRequest
-      link_to("a merge request", [a_notifiable.target_repository.project, a_notifiable.target_repository, a_notifiable], :class => "merge_request")
+  def message_title(message)
+    sender, recipient = if message.recipient == current_user
+      [message.sender.fullname, "you"]
     else
+      ["You", message.recipient.fullname]
+    end
+    
+    case message.notifiable
+    when MergeRequest
+      "<strong>#{sender}</strong> sent <strong>#{recipient}</strong> a #{link_to('merge request', [message.notifiable.target_repository.project, message.notifiable.target_repository, message.notifiable])}"
+    when Membership 
+      %Q{<strong>#{sender}</strong> added <strong>#{recipient}</strong> to the group #{link_to("#{message.notifiable.group.name}", message.notifiable.group)}}
+    else
+      "<strong>#{sender}</strong> sent <strong>#{recipient}</strong> a #{link_to 'message', message}"
     end
   end
 end

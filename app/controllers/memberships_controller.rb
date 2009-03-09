@@ -34,9 +34,10 @@ class MembershipsController < ApplicationController
   end
   
   def create
-    @membership = @group.memberships.new
-    @membership.user = User.find_by_login!(params[:user][:login])
-    @membership.role = Role.find(params[:membership][:role_id])
+    @membership = Membership.build_invitation(current_user, 
+      :group  => @group, 
+      :user   => User.find_by_login!(params[:user][:login]),
+      :role   => Role.find(params[:membership][:role_id]))
     
     if @membership.save
       flash[:success] = I18n.t("memberships_controller.membership_created")
