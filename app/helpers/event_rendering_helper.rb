@@ -192,7 +192,7 @@ module EventRenderingHelper
     target_repository = event.target.target_repository
     
     action = action_for_event(:event_resolved_merge_request) do
-      "as " + "[#{target.status_string}] from " + 
+      "as " + "[#{event.target.status_string}] from " + 
       link_to(h(project.slug), project_path(project)) + "/" + 
       link_to(h(source_repository.name), project_repository_url(project, source_repository))
     end
