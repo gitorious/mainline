@@ -325,6 +325,21 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal projects(:johans), assigns(:project)
     end
+    
+    should "GET show with an etag based on the event" do
+      50.times do |i|
+        projects(:johans).events.create!({
+          :action => Action::CREATE_BRANCH,:target => repositories(:johans),
+          :data => "branch-#{i}", :body => "branch-#{i}", :user => users(:moe)
+        })
+      end
+      get :show, :id => projects(:johans).slug
+      page_one_etag = @response.etag
+      assert_not_nil page_one_etag
+      
+      get :show, :id => projects(:johans).slug, :page => 2
+      assert_not_equal page_one_etag, @response.etag
+    end
   end
 
   context "Changing owner" do

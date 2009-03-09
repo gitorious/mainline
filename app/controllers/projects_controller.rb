@@ -54,14 +54,16 @@ class ProjectsController < ApplicationController
   
   def show
     @owner = @project
-    @events = @project.events.top.paginate(:all, :page => params[:page], 
-      :order => "created_at desc", :include => [:user, :project])
+    @events = @project.events.top.paginate(:all, :page => params[:page],
+                :order => "created_at desc", :include => [:user, :project],)
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
-    
-    respond_to do |format|
-      format.html
-      format.xml  { render :xml => @project }
-      format.atom { }
+    if stale?(:etag => [@project, @events.first], 
+              :last_modified => (@events.first || @project).created_at)
+      respond_to do |format|
+        format.html
+        format.xml  { render :xml => @project }
+        format.atom { }
+      end
     end
   end
   
@@ -127,7 +129,7 @@ class ProjectsController < ApplicationController
   
   protected
     def find_project
-      @project = Project.find_by_slug!(params[:id], :include => [:repositories, :events])
+      @project = Project.find_by_slug!(params[:id], :include => [:repositories])
     end
     
     def assure_adminship
