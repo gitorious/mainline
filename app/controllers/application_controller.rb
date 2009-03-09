@@ -212,7 +212,8 @@ class ApplicationController < ActionController::Base
     end
     
     def subdomain_without_common
-      request.subdomains.select{|s| s !~ /^(ww.|secure)$/}.first
+      tld_length = GitoriousConfig["gitorious_host"].split(".").length
+      request.subdomains(tld_length).select{|s| s !~ /^(ww.|secure)$/}.first
     end
     
     def redirect_to_current_site_subdomain
