@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
   end
   
   def has_commits?
-    !events.commits.blank?
+    !events.blank? && !events.commits.blank?
   end
   
   def kind

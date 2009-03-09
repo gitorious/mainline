@@ -109,6 +109,7 @@
       :event_updated_wiki_page => "edited wiki page",
       :event_status_pushed => 'pushed some commits',
       :event_status_committed => 'committed',
+      :event_pushed_n => "pushed {{commit_link}}",
       :more_info => "More info…",
     },
     :project => {

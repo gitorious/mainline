@@ -23,6 +23,7 @@ module ApplicationHelper
   include TagsHelper
   include UsersHelper
   include BreadcrumbsHelper
+  include EventRenderingHelper
   
   def markdown(text, options = [:smart])
     rd = RDiscount.new(text.to_s, *options)
@@ -156,147 +157,11 @@ module ApplicationHelper
   
   def action_and_body_for_event(event)
     target = event.target
-    action = ""
-    body = ""
-    category = ""
-
     if target.nil?
       return [action, body, category]
     end
-
-    # FIXME: I'm screaming for some refactoring!
-    case event.action
-      when Action::CREATE_PROJECT
-        action = "<strong>#{I18n.t("application_helper.event_status_created")}</strong> #{link_to h(target.title), project_path(target)}"
-        body = truncate(target.stripped_description, :length => 100)
-        category = "project"
-      when Action::DELETE_PROJECT
-        action = "<strong>#{I18n.t("application_helper.event_status_deleted")}</strong> #{h(event.data)}"
-        category = "project"
-      when Action::UPDATE_PROJECT
-        action = "<strong>#{I18n.t("application_helper.event_status_updated")}</strong> #{link_to h(target.title), project_path(target)}"
-        category = "project"
-      when Action::CLONE_REPOSITORY
-        original_repo = Repository.find_by_id(event.data.to_i)
-        return if original_repo.nil?
-        
-        project = target.project
-        
-        action = "<strong>#{I18n.t("application_helper.event_status_cloned")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(original_repo.name), project_repository_url(project, original_repo)} in #{link_to h(target.name), project_repository_url(project, target)}"
-        category = "repository"
-      when Action::DELETE_REPOSITORY
-        action = "<strong>#{I18n.t("application_helper.event_status_deleted")}</strong> #{link_to h(target.title), project_path(target)}/#{event.data}"
-        category = "project"
-      when Action::COMMIT
-        project = event.project
-        case target.kind
-        when Repository::KIND_PROJECT_REPO
-          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-          body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
-          category = "commit"
-        when Repository::KIND_WIKI
-          action = "<strong>#{I18n.t("application_helper.event_status_push_wiki")}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(t("views.layout.pages")), project_pages_url(project)}"
-          body = h(truncate(event.body, :length => 150))
-          category = "wiki"
-        when 'commit'
-          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug)}"
-          body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
-          category = "commit"
-        when Repository::KIND_USER_REPO, Repository::KIND_TEAM_REPO
-          action = "<strong>#{I18n.t("application_helper.event_status_committed")}</strong> #{link_to event.data[0,8], project_repository_commit_path(project, target, event.data)} to #{link_to h(project.slug)}"
-          body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, target, event.data))
-          category = "commit"
-        end
-      when Action::CREATE_BRANCH
-        project = target.project
-        if event.data == "master"
-          action = "<strong>#{I18n.t("application_helper.event_status_started")}</strong> of #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-          body = event.body
-        else
-          action = "<strong>#{I18n.t("application_helper.event_branch_created")}</strong> #{link_to h(event.data), project_repository_tree_path(project, target, event.data)} on #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        end
-        category = "commit"
-      when Action::DELETE_BRANCH
-        project = target.project
-        action = "<strong>#{I18n.t("application_helper.event_branch_deleted")}</strong> #{event.data} on #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        category = "commit"
-      when Action::CREATE_TAG
-        project = target.project
-        action = "<strong>#{I18n.t("application_helper.event_tagged")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        body = "#{link_to event.data, project_repository_commit_path(project, target, event.data)}<br/>#{event.body}"
-        category = "commit"
-      when Action::DELETE_TAG
-        project = target.project
-        action = "<strong>#{I18n.t("application_helper.event_tag_deleted")}</strong> #{event.data} on #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        category = "commit"
-      when Action::ADD_COMMITTER
-        user = target.user
-        repo = target.repository
-        action = "<strong>#{I18n.t("application_helper.event_committer_added")}</strong> #{link_to user.login, user_path(user)} to #{link_to h(repo.project.slug), project_path(repo.project)}/#{link_to h(repo.name), project_repository_url(repo.project, repo)}"
-        category = "repository"
-      when Action::REMOVE_COMMITTER
-        user = User.find_by_id(event.data.to_i)
-        return unless user
-        
-        project = target.project
-        action = "<strong>#{I18n.t("application_helper.event_committer_removed")}</strong> #{link_to user.login, user_path(user)} from #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        category = "repository"
-      when Action::COMMENT
-        project = target.project
-        repo = target.target.target
-        
-        action = "<strong>#{I18n.t("application_helper.event_commented")}</strong> on #{link_to h(project.slug), project_path(project)}/#{link_to h(repo.name), [project, repo]}"
-        unless target.sha1.blank?
-          action << "/" + link_to(h(target.sha1[0,7]), repo_owner_path(repo, :project_repository_commit_path, project, repo, target.sha1))
-        end
-        body = truncate(h(target.body), :length => 150)
-        category = "comment"
-      when Action::REQUEST_MERGE
-        source_repository = target.source_repository
-        project = source_repository.project
-        target_repository = target.target_repository
-        
-        action = "<strong>#{I18n.t("application_helper.event_requested_merge_of")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)} with #{link_to h(project.slug), project_path(project)}/#{link_to h(target_repository.name)}"
-        body = "#{link_to truncate(h(target.proposal), :length => 100), [project, target_repository, target]}"
-        category = "merge_request"
-      when Action::RESOLVE_MERGE_REQUEST
-        source_repository = target.source_repository
-        project = source_repository.project
-        target_repository = target.target_repository
-        
-        action = "<strong>#{I18n.t("application_helper.event_resolved_merge_request")}</strong> as [#{target.status_string}] from #{link_to h(project.slug), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)}"
-        body = "#{link_to truncate(h(target.proposal), :length => 100), [project, target_repository, target]}"
-        category = "merge_request"
-      when Action::UPDATE_MERGE_REQUEST
-        source_repository = target.source_repository
-        project = source_repository.project
-        target_repository = target.target_repository
-        
-        action = "<strong>#{I18n.t("application_helper.event_updated_merge_request")}</strong> from #{link_to h(project.title), project_path(project)}/#{link_to h(source_repository.name), project_repository_url(project, source_repository)}"
-        category = "merge_request"
-      when Action::DELETE_MERGE_REQUEST
-        project = target.project
-        
-        action = "<strong>#{I18n.t("application_helper.event_deleted_merge_request")}</strong> from #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name), project_repository_url(project, target)}"
-        category = "merge_request"
-      when Action::UPDATE_WIKI_PAGE
-        project = event.target
-        action = "<strong>#{I18n.t("application_helper.event_updated_wiki_page")}</strong> #{link_to h(project.slug), project_path(project)}/#{link_to(h(event.data), project_page_path(project, event.data))}"
-        category = "wiki"
-      when Action::PUSH
-        project = target.project
-        commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), :url => commits_event_path(event.to_param), :method => :get, :update => "commits_in_event_#{event.to_param}", :before => "$('commits_in_event_#{event.to_param}').toggle()")
-        action = "<strong>pushed #{commit_link}</strong> to #{link_to h(project.slug), project_path(project)}/#{link_to h(target.name+':'+event.data), repo_owner_path(target, :project_repository_commits_in_ref_path, project, target, ensplat_path(event.data))}"
-        body = "#{event.body}"
-        category = 'push'
-      when Action::ADD_PROJECT_REPOSITORY
-        action = "<strong>" + I18n.t("application_helper.event_status_add_project_repository") + "</strong> " +  link_to(h(target.name), project_repository_path(event.project, target)) + 
-                  " to " + link_to(h(event.project.title), project_path(event.project))
-        body = truncate(sanitize(target.description), :length => 100)
-        category = "repository"
-    end
-      
-    [action, body, category]
+    # These are defined in event_rendering_helper.rb:
+    self.send("render_event_#{Action::css_class(event.action)}", event)
   end
   
   def link_to_remote_if(condition, name, options)

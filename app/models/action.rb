@@ -78,6 +78,8 @@ class Action
         "edit wiki page"
       when PUSH
         "push"
+      when ADD_PROJECT_REPOSITORY
+        "add project repository"
       else
         "unknown event"
     end
