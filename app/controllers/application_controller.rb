@@ -157,7 +157,7 @@ class ApplicationController < ActionController::Base
     
     # turns ["foo", "bar"] route globbing parameters into "foo/bar"
     def desplat_path(*paths)
-      paths.join("/")
+      paths.flatten.compact.map{|p| CGI.unescape(p) }.join("/")
     end
     helper_method :desplat_path
     

@@ -125,6 +125,25 @@ class TreesControllerTest < ActionController::TestCase
     end
   end
   
+  context "Branch names containing a # character" do
+    should "show branches with a # in them with great success" do
+      git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      @repository.git.expects(:commit).with("ticket-#42") \
+        .returns(git_repo.commit("master"))
+      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param,
+        :branch_and_path => ["ticket-%2342"]
+      assert_response :success
+      assert_equal "ticket-#42", assigns(:ref)
+    end
+    
+    should "urlencode # in branch names" do
+      Repository.any_instance.expects(:head_candidate_name).returns("ticket-#42")
+      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+      assert_response :redirect
+      assert_redirected_to project_repository_tree_path(@project, @repository, ["ticket-#42"])
+    end
+  end
+  
   context "Archive downloads" do
     setup do
       ActiveMessaging::Gateway.connection.clear_messages

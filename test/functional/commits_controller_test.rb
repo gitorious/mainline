@@ -149,7 +149,6 @@ class CommitsControllerTest < ActionController::TestCase
 
 
   context "listing commits" do
-
     setup do
       @project = projects(:johans)
       @repository = @project.repositories.first
@@ -209,6 +208,16 @@ class CommitsControllerTest < ActionController::TestCase
         get :feed, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => "master", :format => "atom"}
         assert @response.body.include?(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})
+      end
+      
+      should "show branches with a # in them with great success" do
+        git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+        @repository.git.expects(:commit).with("ticket-#42") \
+          .returns(git_repo.commit("master"))
+        get :index, :project_id => @project.to_param, :repository_id => @repository.to_param,
+          :branch => ["ticket-%2342"]
+        assert_response :success
+        assert_equal "ticket-#42", assigns(:ref)
       end
     end
   end
