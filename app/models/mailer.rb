@@ -44,20 +44,6 @@ class Mailer < ActionMailer::Base
     @body[:url] =  project_repository_url(repository.project, repository)
   end
 
-  def merge_request_notification(merge_request)
-    setup_email(merge_request.target_repository.user)
-    @subject += I18n.t "mailer.request_notification", :login => merge_request.source_repository.user.login,
-      :title => merge_request.target_repository.project.title
-    @body[:merge_request] = merge_request
-    @body[:project] = merge_request.target_repository.project
-    @body[:url] =
-      project_repository_merge_request_url(
-        merge_request.target_repository.project,
-        merge_request.target_repository,
-        merge_request
-      )
-  end
-  
   def notification_copy(recipient, sender, subject, body)
     @recipients       =  recipient.email
     @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"

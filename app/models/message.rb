@@ -58,6 +58,10 @@ class Message < ActiveRecord::Base
     return "read"
   end
   
+  def description
+    (notifiable || self).class.name.titleize.downcase
+  end
+
   # Used in breadcrumbs
   def title
     subject || I18n.t("views.messages.new")

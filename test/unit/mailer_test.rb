@@ -69,22 +69,6 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal [mail], Mailer.deliveries
   end
 
-  should "sends merge_request_notification" do
-    merge_request = merge_requests(:moes_to_johans)
-    url = "#{URL_BASE}/#{merge_request.target_repository.project.to_param}/#{merge_request.target_repository.to_param}/merge_requests/#{merge_request.id}"
-    mail = Mailer.create_merge_request_notification(merge_request)
-
-    assert_equal [merge_request.target_repository.user.email], mail.to
-    assert_equal "[Gitorious] moe has requested a merge in johans project", mail.subject
-    assert_match(/moe has requested that you merge #{merge_request.source_repository.name} with #{merge_request.target_repository.name}/, mail.body)
-    assert_match(/in the #{merge_request.target_repository.project.title} project/, mail.body)
-    assert mail.body.include?(merge_request.proposal)
-    assert mail.body.include?(url)
-
-    Mailer.deliver(mail)
-    assert_equal [mail], Mailer.deliveries
-  end
-  
   should "sends forgotten_password" do
     user = users(:johan)
     mail = Mailer.create_forgotten_password(user, "newpassword")

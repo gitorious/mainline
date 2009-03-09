@@ -21,6 +21,7 @@ class MergeRequest < ActiveRecord::Base
   belongs_to :source_repository, :class_name => 'Repository'
   belongs_to :target_repository, :class_name => 'Repository'
   has_many   :events, :as => :target, :dependent => :destroy
+  has_many :messages, :as => :notifiable
   
   is_indexed :fields => ["proposal"], :include => [{
       :association_name => "user",
@@ -134,12 +135,12 @@ class MergeRequest < ActiveRecord::Base
   def confirmed_by_user
     self.status = STATUS_OPEN
     save
-    Mailer.deliver_merge_request_notification(self)
-    message = Message.new(
+    message = messages.build(
       :sender => user, 
       :recipient => target_repository.user,
-      :subject => "New Merge Request submitted",
-      :body => proposal)    
+      :subject => I18n.t("mailer.request_notification", :login => source_repository.user.login, :title => target_repository.project.title),
+      :body => proposal,
+      :notifiable => self)    
     message.save
   end
   

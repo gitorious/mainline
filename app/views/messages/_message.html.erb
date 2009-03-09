@@ -4,9 +4,9 @@
   <div class="message">
     <p class="sender">
       <% if message.recipient == current_user %>
-        <strong><%=link_to(h(message.sender.fullname), user_path(message.sender)) -%></strong> sent <strong>you</strong> a message
+        <strong><%=link_to(h(message.sender.fullname), user_path(message.sender)) -%></strong> sent <strong>you</strong> a <%= message.description %>
       <% else %>
-        <strong>You</strong> sent <strong><%= h(message.recipient.fullname) %></strong> a message
+        <strong>You</strong> sent <strong><%= h(message.recipient.fullname) %></strong> a <%= message.description %>
       <% end %>
       <%= distance_of_time_in_words_to_now(message.created_at) %> ago
     </p>
