@@ -29,7 +29,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     Repository.any_instance.stubs(:git).returns(grit)
 		@source_repository = repositories(:johans2)
 		@target_repository = repositories(:johans)
-		@merge_request = merge_requests(:moes_to_johans)
+		@merge_request = merge_requests(:moes_to_johans_open)
 		@merge_request.stubs(:commits_for_selection).returns([])
 	end
 	
@@ -335,6 +335,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				assert_match(/You're not the owner of this merge request/i, flash[:error])
       end
 		end
+		
 	end
 	
 	def do_resolve_put(data={})
@@ -366,6 +367,13 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_equal "The merge request was marked as merged", flash[:notice]
 			assert_response :redirect
 		end
+		
+		should 'not update the status if the merge request does not allow transitioning' do
+		  MergeRequest.any_instance.stubs(:can_transition_to?).returns(false)
+		  login_as :johan
+		  do_resolve_put
+		  assert_equal "The merge request could not be marked as merged", flash[:error]
+	  end
 	end
 	
 	context "#get commit_list" do

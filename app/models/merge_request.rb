@@ -54,7 +54,11 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def status_string
-    self.class.statuses.invert[status].downcase
+    self.class.status_string(status)
+  end
+  
+  def self.status_string(status_code)
+    statuses.invert[status_code.to_i].downcase
   end
   
   def open?
@@ -71,6 +75,22 @@ class MergeRequest < ActiveRecord::Base
   
   def pending_acceptance_of_terms?
     status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
+  end
+
+  def can_transition_to?(new_state)
+    if status == STATUS_OPEN
+      return [STATUS_MERGED, STATUS_REJECTED].include?(new_state)
+    else
+      return status == STATUS_PENDING_ACCEPTANCE_OF_TERMS && new_state == STATUS_OPEN
+    end
+  end
+  
+  def transition_to(status)
+    if can_transition_to?(status)
+      self.status = status
+      yield
+      return true
+    end
   end
   
   def source_branch

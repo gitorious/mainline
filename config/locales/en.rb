@@ -43,6 +43,7 @@
     :merge_requests_controller => {
       :create_success => "You sent a merge request to \"{{name}}\"",
       :resolve_notice => "The merge request was marked as {{status}}",
+      :resolve_disallowed => "The merge request could not be marked as {{status}}",
       :update_success => "Merge request was updated",
       :destroy_success => "Merge request was retracted",
       :assert_resolvable_error => "You're not permitted to resolve this merge request",
