@@ -41,6 +41,16 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_equal [users(:johan)], c.members
   end
   
+  should 'notify all admin committers in the repository when a new committership is added' do
+    # raise repositories(:johans).committerships.inspect
+    # Find repository#owner. If group: notify each group member, else notify owner
+    owner = users(:johan)
+    assert_incremented_by(owner.received_messages, :count, 1) do
+      c = new_committership(:committer => groups(:team_thunderbird))
+      c.save
+    end
+  end
+  
   should "have a members attribute that's the group members if the committer is a Group" do
     c = new_committership(:committer => groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird).members, c.members

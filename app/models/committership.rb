@@ -21,6 +21,7 @@ class Committership < ActiveRecord::Base
   belongs_to :creator, :class_name => 'User'
   
   validates_presence_of :committer_id, :committer_type, :repository_id
+  after_create :notify_repository_owners
   
   named_scope :groups, :conditions => { :committer_type => "Group" }
   named_scope :users,  :conditions => { :committer_type => "User" }  
@@ -44,4 +45,14 @@ class Committership < ActiveRecord::Base
       [committer]
     end
   end
+  
+  protected
+    def notify_repository_owners
+      return unless creator
+      recipients = repository.owners
+      recipients.each do |r|
+        message = Message.new(:sender => creator, :recipient => r, :subject => "A new committer has been added", :body => "The more, the merrier", :notifiable => self)
+        message.save
+      end
+    end
 end

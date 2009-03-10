@@ -38,8 +38,8 @@ class Message < ActiveRecord::Base
   end
   
   def build_reply(options={})
-    reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}
-    reply = Message.new(options.merge(reply_options))
+    reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}.with_indifferent_access
+    reply = Message.new(reply_options.merge(options))
     reply.in_reply_to = self
     return reply
   end

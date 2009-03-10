@@ -53,7 +53,7 @@ class Mailer < ActionMailer::Base
     @body[:body]      = body
     @body[:sender]    = sender.fullname
     if notifiable
-      @body[:notifiable_url] = project_repository_merge_request_url(notifiable.target_repository.project, notifiable.target_repository, notifiable)
+      @body[:notifiable_url] = build_notifiable_url(notifiable) 
     end
   end
 
@@ -79,5 +79,16 @@ class Mailer < ActionMailer::Base
       @subject     = "[Gitorious] "
       @sent_on     = Time.now
       @body[:user] = user
+    end
+    
+    def build_notifiable_url(a_notifiable)
+      result = case a_notifiable
+      when MergeRequest
+        project_repository_merge_request_url(a_notifiable.target_repository.project, a_notifiable.target_repository, a_notifiable)        
+      when Membership
+        group_path(a_notifiable.group)
+      end
+      
+      return result
     end
 end

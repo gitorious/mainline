@@ -399,6 +399,18 @@ class Repository < ActiveRecord::Base
     return "#{first}/#{second}/#{last}"
   end
   
+  # Returns a list of users being either the owner (if User) or each admin member (if Group)
+  def owners
+    result = if owned_by_group?
+      owner.members.select do |member|
+        owner.admin?(member)
+      end
+    else
+      [owner]
+    end
+    return result
+  end
+  
   def set_repository_hash
     self.hashed_path ||= Digest::SHA1.hexdigest(owner.to_param + self.to_param + Time.now.to_f.to_s)
   end

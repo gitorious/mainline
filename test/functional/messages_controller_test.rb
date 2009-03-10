@@ -86,12 +86,17 @@ class MessagesControllerTest < ActionController::TestCase
     setup do
       login_as :moe
       @original_message = messages(:johans_message_to_moe)
-      post :reply, :id => @original_message.to_param, :message => {:body => "Yeah, great idea"}
+      post :reply, :id => @original_message.to_param, :message => {:body => "Yeah, great idea", :subject => "Well"}
     end
     
     should_assign_to :message
     should_respond_with :redirect
     should_set_the_flash_to(/sent/i)
+    
+    should 'set the correct subject' do
+      result = assigns(:message)
+      assert_equal("Well", result.subject)
+    end
   end
   
   context 'On GET to new' do

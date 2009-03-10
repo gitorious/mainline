@@ -19,6 +19,8 @@ class Membership < ActiveRecord::Base
   belongs_to :group
   belongs_to :user
   belongs_to :role
+  has_many :messages, :as => :notifiable, :dependent => :destroy
+
   after_create :send_notification_if_invited
   attr_accessor :inviter
   

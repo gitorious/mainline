@@ -575,6 +575,22 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
   
+  context 'owners as User or Group' do
+    setup do
+      @repo = repositories(:moes)
+    end
+    
+    should "return a list of the users who are admin for the repository if owned_by_group?" do
+      @repo.change_owner_to!(groups(:team_thunderbird))
+      assert_equal([users(:mike)], @repo.owners)
+    end
+    
+    should 'return the owner if owned by user' do
+      @repo.change_owner_to!(users(:moe))
+      assert_equal([users(:moe)], @repo.owners)
+    end
+  end
+  
   should "create an event on create if it's a project repo" do
     repo = new_repos
     repo.kind = Repository::KIND_PROJECT_REPO

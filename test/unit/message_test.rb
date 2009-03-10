@@ -66,6 +66,11 @@ class MessageTest < ActiveSupport::TestCase
       assert_equal @message.recipient, @reply.sender
       assert_equal @message.sender, @reply.recipient
     end
+    
+    should 'be able to override the subject of a message' do
+      @reply = @message.build_reply(:body => "Thanks. That's much appreciated", :subject => "WTF")
+      assert_equal("WTF", @reply.subject)
+    end
 
     should 'set a default subject when replying to a message' do
       assert_equal("Re: #{@message.subject}", @reply.subject)
