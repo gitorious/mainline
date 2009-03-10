@@ -25,7 +25,7 @@
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 
-<% if logged_in? && @merge_request.resolvable_by?(current_user) -%>
+<% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
   <% form_for @merge_request, 
       :url => resolve_project_repository_merge_request_path(@project, 
               @repository, @merge_request) do |f| -%>

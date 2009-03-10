@@ -106,6 +106,7 @@ class MergeRequestsController < ApplicationController
       reason = params[:merge_request][:reason]
       @merge_request.reason = reason unless reason.blank?
       @merge_request.save!
+      @merge_request.deliver_status_update(current_user)
       @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
     end
     if state_changed

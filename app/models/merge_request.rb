@@ -77,16 +77,23 @@ class MergeRequest < ActiveRecord::Base
     status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
   end
 
-  def can_transition_to?(new_state)
-    if status == STATUS_OPEN
-      return [STATUS_MERGED, STATUS_REJECTED].include?(new_state)
+  def possible_next_states
+    result = if status == STATUS_OPEN
+      [STATUS_MERGED, STATUS_REJECTED]
+    elsif status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
+      [STATUS_OPEN]
     else
-      return status == STATUS_PENDING_ACCEPTANCE_OF_TERMS && new_state == STATUS_OPEN
+      []
     end
+    return result
+  end
+
+  def can_transition_to?(new_state)
+    return possible_next_states.include?(new_state.to_i)
   end
   
   def transition_to(status)
-    if can_transition_to?(status.to_i)
+    if can_transition_to?(status)
       self.status = status
       yield 
       return true
@@ -99,6 +106,11 @@ class MergeRequest < ActiveRecord::Base
   
   def target_branch
     super || "master"
+  end
+  
+  def deliver_status_update(a_user)
+    message = Message.new(:sender => a_user, :recipient => user, :subject => "Your merge request was updated", :body => "The merge request is now #{status_string}. \n#{reason}", :notifiable => self)
+    message.save
   end
   
   def source_name
@@ -179,5 +191,6 @@ class MergeRequest < ActiveRecord::Base
     response = access_token.get("/agreements.xml")
     return Net::HTTPSuccess === response
   end
+  
   
 end
