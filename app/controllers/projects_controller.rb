@@ -55,7 +55,7 @@ class ProjectsController < ApplicationController
   def show
     @owner = @project
     @events = @project.events.top.paginate(:all, :page => params[:page],
-                :order => "created_at desc", :include => [:user, :project],)
+                :order => "created_at desc", :include => [:user, :project])
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     if stale?(:etag => [@project, @events.first], 
               :last_modified => (@events.first || @project).created_at)
