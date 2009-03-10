@@ -102,10 +102,13 @@ class MergeRequestsController < ApplicationController
   
   def resolve
     new_state = params[:merge_request][:status]
-    if @merge_request.can_transition_to?(new_state)
-      @merge_request.status = new_state
-      @merge_request.save
+    state_changed = @merge_request.transition_to(new_state) do
+      reason = params[:merge_request][:reason]
+      @merge_request.reason = reason unless reason.blank?
+      @merge_request.save!
       @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
+    end
+    if state_changed
       flash[:notice] = I18n.t "merge_requests_controller.resolve_notice", :status => @merge_request.status_string
     else
       flash[:error] = I18n.t "merge_requests_controller.resolve_disallowed", :status => MergeRequest.status_string(new_state)

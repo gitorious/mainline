@@ -86,9 +86,9 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def transition_to(status)
-    if can_transition_to?(status)
+    if can_transition_to?(status.to_i)
       self.status = status
-      yield
+      yield 
       return true
     end
   end

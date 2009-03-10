@@ -374,6 +374,19 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		  do_resolve_put
 		  assert_equal "The merge request could not be marked as merged", flash[:error]
 	  end
+	  
+	  should 'set the reason when resolving with a message' do
+	    login_as :johan
+	    put :resolve, :project_id => @project.to_param, 
+  			:repository_id => @target_repository.to_param, 
+  			:id => @merge_request,
+  			:merge_request => {
+  				:status => MergeRequest::STATUS_MERGED,
+  				:reason => 'Not too good'
+  			}
+			assert_equal "The merge request was marked as merged", flash[:notice]
+	    assert_equal("Not too good", assigns(:merge_request).reason)
+    end
 	end
 	
 	context "#get commit_list" do

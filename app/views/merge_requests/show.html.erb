@@ -32,6 +32,10 @@
     <p>
       <%= f.label :status -%><br />
       <%= f.select :status, MergeRequest.statuses.sort_by{|k,v| v } -%><br />
+      
+      <%= f.label :reason -%><br />
+      <%= f.text_area :reason %><br />
+      
       <%= f.submit t("views.merges.update_btn") -%></p>
   <% end -%>
 
