@@ -209,15 +209,21 @@ module Git
     
     def read_data(session)
       size_string = session.recv(4)
-      return false if !size_string || size_string == ""
-      session.recv(size_string.to_i(16) - 4)
+      return "" if !size_string
+      size = size_string.to_i(16)
+      return "" unless size > 4
+      session.recv(size - 4)
+    rescue Errno::ECONNRESET
+      return ""
     end
     
     def read_data_nonblock(session)
       begin
         size_string = session.recv_nonblock(4)
-        return false if !size_string || size_string == ""
-        session.recv_nonblock(size_string.to_i(16) - 4)
+        return "" if !size_string
+        size = size_string.to_i(16)
+        return "" unless size > 4
+        session.recv_nonblock(size - 4)
       rescue Errno::EAGAIN, Errno::EWOULDBLOCK, Errno::ECONNABORTED, Errno::EPROTO, Errno::EINTR
         if IO.select([@socket])
           retry
