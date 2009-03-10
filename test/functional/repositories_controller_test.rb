@@ -584,6 +584,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal @project, assigns(:project)
       assert_equal repositories(:johans2), assigns(:repository)
     end
+    
+    should "not require any particular subdomain (if Project belongs_to a site)" do
+      project = projects(:johans)
+      assert_not_nil project.site
+      do_writable_by_get :project_id => project.to_param,
+        :id => project.repositories.mainlines.first.to_param
+      assert_response :success
+    end
   end
   
   def do_delete(repos)

@@ -50,9 +50,9 @@ class ApplicationController < ActionController::Base
   end
   
   protected
-    def self.install_site_before_filters
-      before_filter :find_current_site
-      before_filter :redirect_to_current_site_subdomain
+    def self.install_site_before_filters(opts = {})
+      before_filter :find_current_site, opts
+      before_filter :redirect_to_current_site_subdomain, opts
     end
   
     # return the url with the +repo+.owner prefixed if it's a mainline repo,
