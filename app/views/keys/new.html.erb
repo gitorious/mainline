@@ -34,3 +34,8 @@
   <%= f.submit t("views.common.save") -%>
 <% end -%>
 
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <li class="key"><%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%></li>
+  </ul>
+<% end -%>

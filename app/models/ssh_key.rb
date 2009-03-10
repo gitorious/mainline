@@ -73,6 +73,18 @@ class SshKey < ActiveRecord::Base
     publish :ssh_key_generation, options.to_json
   end
   
+  def algorithm
+    key.strip.split(" ").first
+  end
+  
+  def username_and_host
+    key.strip.split(" ").last
+  end
+  
+  def encoded_key
+    key.strip.split(" ").second
+  end
+  
   protected
     def lint_key!
       self.key.gsub!(/(\r|\n)*/m, "")

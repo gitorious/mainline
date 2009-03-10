@@ -135,6 +135,18 @@ EOS
     SshKey.delete_from_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   
+  should "parse out the algorithm" do
+    assert_equal "ssh-rsa", new_key.algorithm
+  end
+  
+  should "parse out the username+host" do
+    assert_equal "foo@example.com", new_key.username_and_host
+  end
+  
+  should "parse out the content" do
+    expected_content = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
+    assert_equal expected_content, new_key.encoded_key
+  end
   
   should 'send a message on create and update' do
     ssh_key = new_key
