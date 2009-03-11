@@ -122,6 +122,10 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
   
   context "autocompletion" do
+    setup do
+      @user = users(:johan)
+    end
+    
     should "find a group by name" do
       post :auto_complete_for_group_name, :group => { :name => "thunder" }, :format => "js"
       assert_equal [groups(:team_thunderbird)], assigns(:groups)
@@ -129,7 +133,16 @@ class CommittershipsControllerTest < ActionController::TestCase
 
     should "finds user by login" do    
       post :auto_complete_for_user_login, :user => { :login => "joha" }, :format => "js"
-      assert_equal [users(:johan)], assigns(:users)
+      assert_equal [@user], assigns(:users)
+      assert_template "memberships/auto_complete_for_user_login.js.erb"
+    end
+    
+    should "find a user by email" do
+      @user.email = "dr_awesome@example.com"
+      @user.save!
+      post :auto_complete_for_user_login, 
+        :user => { :login => @user.email[0..4] }, :format => "js"
+      assert_equal [@user], assigns(:users)
       assert_template "memberships/auto_complete_for_user_login.js.erb"
     end
   end
