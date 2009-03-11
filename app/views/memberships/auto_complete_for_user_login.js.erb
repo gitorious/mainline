@@ -21,10 +21,7 @@
 <% @users.each do |user| -%>
 <li class="committer">
   <div class="image"><%= gravatar user.email, :size => 32 -%></div>
-  <div class="login">
-    <%=h user.login -%> 
-    <% unless user.fullname.blank? -%><small>(<%=h user.fullname -%>)</small><% end -%>
-  </div>
+  <div class="login"><%=h user.login -%></div>
   <% if user.public_email? -%>
     <div class="email"><span class="informal"><%=h user.email -%></span></div>
   <% end -%>
