@@ -1,9 +1,12 @@
-<tr class="<%= message.aasm_state -%> <%= message.css_class -%>" id="<%= dom_id(message) -%>">
+<tr class="<%= message.aasm_state_for_user(current_user) -%>" id="<%= dom_id(message) -%>">
   <td>
-    <%= sender_and_recipient_display(message) %>
+    <%= sender_and_recipient_display(message) %> (<%= message.number_of_messages_in_thread %>)
   </td>
   <td>
-    <%= link_to(h(message.title), message) %> (<%= message.number_of_messages_in_thread %>)
+    <%= link_to(h(message.title), message) %> - 
+    <span class="preview">
+      <%= truncate(h(message.body), :length => 25) %>
+    </span>
   </td>
   <td>
     <%= distance_of_time_in_words_to_now(message.created_at) %> ago    

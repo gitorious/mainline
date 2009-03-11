@@ -1944,11 +1944,6 @@ div.archive-download-box p {
 }
 
 
-.message_list .unread
-{
-  color: blue;
-}
-
 .message_list tr
 {
   border-bottom: 1px solid #ddd;
@@ -1962,6 +1957,12 @@ div.archive-download-box p {
 .message_list th
 {
   padding: 0.2em 0.4em;
+}
+.message_list .preview
+{
+  font-size: 80%;
+  color: #333;
+  font-weight: normal;
 }
 .message_list .unread
 {

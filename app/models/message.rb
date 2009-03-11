@@ -93,6 +93,15 @@ class Message < ActiveRecord::Base
     !unread_messages_in_thread.blank?
   end
   
+  # Displays whether there are any unread messages in this message's thread for +a_user+
+  def aasm_state_for_user(a_user)
+    if unread_messages_in_thread.any?{|msg|msg.recipient == a_user}
+      "unread"
+    else
+      "read"
+    end
+  end
+  
   protected
     def send_email_notification_if_required
       if recipient.wants_email_notifications?
