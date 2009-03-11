@@ -226,5 +226,11 @@ class MergeRequestTest < ActiveSupport::TestCase
       status_changed = @merge_request.transition_to(MergeRequest::STATUS_MERGED)
       assert !status_changed
     end
+    
+    should 'deliver a status update to the user who initiated it' do
+      assert_incremented_by(@merge_request.user.received_messages, :count, 1) do
+        @merge_request.deliver_status_update(users(:moe))
+      end
+    end
   end
 end
