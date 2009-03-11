@@ -75,6 +75,24 @@ class Message < ActiveRecord::Base
     "new_email"
   end
   
+  def number_of_messages_in_thread
+    messages_in_thread.size
+  end
+  
+  def messages_in_thread
+    replies.inject([self]) do |result, message|
+      result << message.messages_in_thread
+    end.flatten
+  end
+  
+  def unread_messages_in_thread
+    messages_in_thread.select(&:unread?)
+  end
+  
+  def unread_messages?
+    !unread_messages_in_thread.blank?
+  end
+  
   protected
     def send_email_notification_if_required
       if recipient.wants_email_notifications?

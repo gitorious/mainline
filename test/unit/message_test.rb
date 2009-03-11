@@ -86,6 +86,48 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
   
+  context 'Calculating the number of messages in a thread' do
+    setup do
+      @sender     = users(:johan)
+      @recipient  = users(:moe)
+      @message    = messages(:johans_message_to_moe)
+    end
+    
+    should 'calculate the number of unread messages' do
+      assert_equal(1, @message.number_of_messages_in_thread)
+      reply = @message.build_reply(:body => "Thanks so much")
+      assert reply.save
+      10.times do 
+        new_reply = reply.build_reply(:body => "That's nothing")
+        new_reply.save
+        reply = new_reply
+      end
+      @message.replies.reload
+      assert_equal(12, @message.number_of_messages_in_thread)      
+    end
+    
+    should 'know which messages are in the same thread' do
+      reply = @message.build_reply(:body => 'Yeah')
+      reply.save
+      reply_to_reply = reply.build_reply(:body=>"Nope")
+      reply_to_reply.save
+      assert @message.messages_in_thread.include?(reply_to_reply)
+    end
+    
+    should 'know whether there are any unread messages in the thread' do
+      @message.read!
+      assert !@message.unread_messages?
+      reply = @message.build_reply(:body => "This isn't read yet")
+      reply.save
+      @message.replies.reload
+      assert @message.unread_messages?
+      reply.read!
+      @message.replies.reload
+      assert !@message.unread_messages?
+    end
+  end
+  
+  
   context 'Email notifications' do
     setup do 
       @moe = users(:moe)
