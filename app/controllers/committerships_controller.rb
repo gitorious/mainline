@@ -40,7 +40,11 @@ class CommittershipsController < ApplicationController
     @committership.creator = current_user
     
     if @committership.save
-      flash[:success] = "Team added as committers"
+      if @committership.committer.is_a?(User)
+        flash[:success] = "User added as committer"
+      else
+        flash[:success] = "Team added as committers"
+      end
       redirect_to([@owner, @repository, :committerships])
     else
       render :action => "new"

@@ -107,6 +107,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert !assigns(:committership).new_record?, 'new_record? should be false'
       assert_equal @group, assigns(:committership).committer
       assert_equal @user, assigns(:committership).creator
+      assert_equal "Team added as committers", flash[:success]
     end
     
     should "add a User as having committership" do
@@ -118,6 +119,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert !assigns(:committership).new_record?, 'new_record? should be false'
       assert_equal @user, assigns(:committership).committer
       assert_equal @user, assigns(:committership).creator
+      assert_equal "User added as committer", flash[:success]
     end
   end
   
