@@ -50,6 +50,7 @@ class Repository < ActiveRecord::Base
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
   validates_exclusion_of :name, :in => Gitorious::Reservations.repository_names
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
+  validates_uniqueness_of :hashed_path, :case_sensitive => false
   
   before_validation :downcase_name
   before_create :set_repository_hash

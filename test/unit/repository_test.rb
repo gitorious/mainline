@@ -38,11 +38,10 @@ class RepositoryTest < ActiveSupport::TestCase
     @repository = new_repos
     FileUtils.mkdir_p(@repository.full_repository_path, :mode => 0755)
   end
-
-  should " have a name to be valid" do
-    @repository.name = nil
-    assert !@repository.valid?, 'valid? should be false'
-  end
+  
+  should_validate_presence_of :user_id, :name, :owner_id
+  should_validate_uniqueness_of :hashed_path
+  should_validate_uniqueness_of :name, :scoped_to => :project_id, :case_sensitive => false
   
   should " only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
