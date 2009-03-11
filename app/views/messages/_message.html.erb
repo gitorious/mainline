@@ -1,56 +1,11 @@
-<li class="<%= message.aasm_state -%> <%= message.css_class -%>" id="<%= dom_id(message) -%>">
-  <% actor = (message.recipient == current_user) ? message.sender : message.recipient %>
-  <%= gravatar actor.email, :size => 32 -%>
-  <div class="message">
-    <p class="sender">
-      <%= message_title(message) %>
-      <%= distance_of_time_in_words_to_now(message.created_at) %> ago
-    </p>
-    <p class="subject">
-      <%= link_to h(message.subject), message_path(message) %>
-    </p>
-    <div class="body">
-      <%= truncate h(message.body), :length => 200 %>
-    </div>
-      
-    <ul class="message_actions">
-      <% if message.unread? and message.recipient == current_user %>
-        <li id="<%= dom_id(message, 'mark_as_read') -%>">
-          <%= link_to_remote(t('views.messages.mark_as_read'), :url => read_message_path(message), :method => :put) %>
-        </li>
-      <% end %>
-  
-      <%- if original_message = message.in_reply_to -%>
-        <li>This is in reply to <%= link_to(h(original_message.subject), message_path(original_message)) %></li>
-      <%- end -%>
-
-      <%- unless message.sender == current_user -%>
-        <li>
-          <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
-        </li>    
-      <%- end -%>
-    </ul>
-    <%= render :partial => "replies", :locals => {:replies => message.replies}  %>
-
-  
-    <% unless message.sender == current_user -%>
-      <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
-        <% form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
-          <p>
-            <%= f.label :subject, t("views.messages.subject") %><br/>
-            <%= f.text_field :subject %>
-          </p>
-          <p>
-            <%= f.label :subject, t("views.messages.body") %><br/>
-            <%= f.text_area :body %>
-          </p>
-
-          <p>
-            <%= f.submit t("views.messages.submit") %>
-          </p>
-        <% end %>
-      </div>
-    <% end %>
-
-  </div>
-</li>
+<tr class="<%= message.aasm_state -%> <%= message.css_class -%>" id="<%= dom_id(message) -%>">
+  <td>
+    <%= sender_and_recipient_display(message) %>
+  </td>
+  <td>
+    <%= link_to(h(message.title), message) %> (<%= message.number_of_messages_in_thread %>)
+  </td>
+  <td>
+    <%= distance_of_time_in_words_to_now(message.created_at) %> ago    
+  </td>
+</tr>

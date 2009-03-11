@@ -1944,95 +1944,52 @@ div.archive-download-box p {
 }
 
 
-.message_listing
+.message_list .unread
 {
-  
+  color: blue;
 }
-.message_listing img
+
+.message_list tr
 {
-  float: left;
-  margin-right: 1.0em;
-  margin-left: 1em;
+  border-bottom: 1px solid #ddd;
 }
-.message_listing .message
+.message_list th
 {
-  margin-left: 2.4em;
+  background-color: #eee;
+  font-weight: bold;
 }
-.message_listing .message .sender
+.message_list td,
+.message_list th
 {
-  margin: 0;
+  padding: 0.2em 0.4em;
 }
-.message_listing .message .subject
-{
-  font-style: italic;
-  margin: 0 0 0 0em;
-}
-.message_listing .message .body
-{
-  margin: 0 0 1em 1em;
-  padding-left: 2em;
-}
-.message_listing > li
-{
-  border: 1px solid #9EA8B6;
-  padding: 1em;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  background-position: 2px 10px;
-  background-repeat: no-repeat;
-}
-.message_listing > li.merge_request
-{
-  background-image: url("/images/silk/arrow_merge.png") !important;   
-}
-.message_listing > li.membership
-{
-  background-image: url("/images/silk/group_add.png") !important;   
-}
-.message_listing li
-{
-  padding-bottom: 1em;
-  margin: 0 0 1em 1em;
-}
-.message_listing li a
-{
-  background-image: none;
-}
-.message_listing .message_actions li
-{
-  margin: 0;
-  text-align: right;
-  margin: 0 0.4em 0 0;
-}
-.message_listing .unread
-{  
-  
-  background-color: #d9e8fa;
-}
-.message_listing .replies
-{
-  margin: 0;
-}
-.message_listing .replies li
-{
-  margin: 0 0 0 0.4em;
-  padding: 0 0 0 0.4em;
-/*  border-left: 1px solid #ddd;*/
-}
-.message_listing .replies li .date_display
-{
-  font-size: 80%;
-}
-.message_listing .replies .reply_unread
+.message_list .unread
 {
   font-weight: bold;
 }
-.message_listing .notifiable a
+.message_full
 {
-  background-repeat: no-repeat;
-  padding-left: 1.4em;
+  border: 1px solid #ddd;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  padding: 0.4em;
+  margin-bottom: 1em;
+  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
 }
-.message_listing .notifiable a.merge_request 
-{ 
-  background-image: url("/images/silk/arrow_merge.png") !important; 
+.message_full .avatar
+{
+  float: left;
+  width: 50px;
+}
+.message_full .message
+{
+  margin: 0 0 0 50px;
+}
+.message_full .message .body
+{
+  padding-left: 1em;
+}
+.unread
+{
+  background-color: #D9E8FA;
 }

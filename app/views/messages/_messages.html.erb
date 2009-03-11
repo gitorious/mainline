@@ -1,5 +1,11 @@
-<ul class="message_listing">
-<% messages.each do |message| %>
-    <%= render :partial => message %>
-<% end %>
-</ul>
+<table class="message_list">
+  <tr>
+    <th>Who</th>
+    <th>What</th>
+    <th>When</th>
+  </tr>
+  <% messages.each do |message| %>
+      <%= render :partial => message %>
+  <% end %>
+</table>
+

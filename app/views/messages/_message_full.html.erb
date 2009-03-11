@@ -1,0 +1,46 @@
+<div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
+  <div class="avatar">
+    <% actor = (message.recipient == current_user) ? message.sender : message.recipient %>
+    <%= gravatar actor.email, :size => 32 -%>
+  </div>
+  <div class="message">
+    <p>
+      <%= message_title(message) %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago <br />
+      <strong><%= h(message.title) %></strong><br />
+    </p>
+    <p class="body">
+      <%= h(message.body) %>
+    </p>
+    <ul class="message_actions">
+      <% if message.unread? and message.recipient == current_user %>
+        <li id="<%= dom_id(message, 'mark_as_read') -%>">
+          <%= link_to_remote(t('views.messages.mark_as_read'), :url => read_message_path(message), :method => :put) %>
+        </li>
+      <% end %>
+
+      <%- unless message.sender == current_user -%>
+        <li>
+          <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
+        </li>    
+      <%- end -%>
+    </ul>
+      <% unless message.sender == current_user -%>
+        <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
+          <% form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
+            <p>
+              <%= f.label :subject, t("views.messages.subject") %><br/>
+              <%= f.text_field :subject %>
+            </p>
+            <p>
+              <%= f.label :subject, t("views.messages.body") %><br/>
+              <%= f.text_area :body %>
+            </p>
+
+            <p>
+              <%= f.submit t("views.messages.submit") %>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+  </div>
+</div> 

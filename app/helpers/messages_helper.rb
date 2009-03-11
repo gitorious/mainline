@@ -1,10 +1,19 @@
 module MessagesHelper
-  def message_title(message)
+  def sender_and_recipient_display(message)
+    sender_and_recipient_for(message).collect(&:capitalize).join(",")
+  end
+  
+  def sender_and_recipient_for(message)
     sender, recipient = if message.recipient == current_user
-      [message.sender.fullname, "you"]
+      [message.sender.title, "you"]
     else
-      ["You", message.recipient.fullname]
+      ["You", message.recipient.title]
     end
+    return [sender, recipient]    
+  end
+  
+  def message_title(message)
+    sender, recipient = sender_and_recipient_for(message)
     
     case message.notifiable
     when MergeRequest

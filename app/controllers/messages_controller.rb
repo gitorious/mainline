@@ -25,6 +25,7 @@ class MessagesController < ApplicationController
     unless @message.sender == current_user or @message.recipient == current_user
       raise ActiveRecord::RecordNotFound and return
     end
+    @message.read! if !@message.read? and @message.recipient == current_user
     respond_to do |wants|
       wants.html
       wants.js {render :partial => "message", :layout => false}
@@ -55,7 +56,7 @@ class MessagesController < ApplicationController
     original_message.read! unless original_message.read?
     if @message.save
       flash[:notice] = "Your reply was sent"
-      redirect_to :action => :index
+      redirect_to :action => :show, :id => original_message
     else
       flash[:error] = "Your message could not be sent"
       redirect_to :action => :index
