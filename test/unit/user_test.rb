@@ -181,13 +181,6 @@ class UserTest < ActiveSupport::TestCase
     assert_equal js.fullname, js.to_grit_actor.name
   end
   
-  should 'require acceptance of terms' do
-    assert_no_difference("User.count") do
-      u = create_user(:eula => nil)
-      assert !u.valid?
-      assert_not_nil u.errors.on(:eula)
-    end
-  end
   
   should 'need to accept the current EULA version' do
     stub_license_agreement
@@ -283,8 +276,7 @@ class UserTest < ActiveSupport::TestCase
       u = User.new({ 
         :email => 'quire@example.com', 
         :password => 'quire', 
-        :password_confirmation => 'quire',
-        :eula => '1'
+        :password_confirmation => 'quire'
       }.merge(options))
       u.login = options[:login] || "quire"
       u.save

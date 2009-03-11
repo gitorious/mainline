@@ -551,7 +551,6 @@
           :current_password => "Current Password",
           :password => "Password",
           :password_confirmation => "Password Confirmation",
-          :eula => 'End User License Agreement',
           :created_at => "Created At",
           :updated_at => "Updated At",
           :activation_code => "Activation Code",

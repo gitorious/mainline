@@ -69,7 +69,7 @@ class UsersControllerTest < ActionController::TestCase
   
   def create_user(options = {})
     post :create, :user => { :login => 'quire', :email => 'quire@example.com',
-      :password => 'quire', :password_confirmation => 'quire', :eula => '1' }.merge(options)
+      :password => 'quire', :password_confirmation => 'quire' }.merge(options)
   end
 
   should " allow signups" do
@@ -107,14 +107,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_no_difference("User.count") do
       create_user(:email => nil)
       assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
-      assert_template(("users/new"))
-    end
-  end
-
-  should " require confirmation of EULA on signup" do
-    assert_no_difference("User.count") do
-      create_user(:eula => '0')
-      assert !assigns(:user).errors.on(:eula).empty?, 'empty? should be false'
       assert_template(("users/new"))
     end
   end
