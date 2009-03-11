@@ -21,30 +21,50 @@
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @committership} -%>
 <% end -%>
 
+<% content_for :extra_head do -%>
+<script type="text/javascript" charset="utf-8">
+  Event.observe(document, "dom:loaded", function(e) {
+    $("add_group_link").observe("click", function(event) {
+      $('add_user').hide();
+      $('add_group').show();
+      $("add_user_tab").removeClassName("selected");
+      $("add_group_tab").addClassName("selected");
+      Event.stop(event);
+    });
+    $("add_user_link").observe("click", function(event) {
+      $('add_group').hide();
+      $('add_user').show();
+      $("add_group_tab").removeClassName("selected");
+      $("add_user_tab").addClassName("selected");
+      Event.stop(event);
+    });
+  });
+</script>
+<% end -%>
+
 <h1>
   <%= t("views.committerships.new_title", :repo_name => @repository.name)  -%>
 </h1>
 
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
-  <div id="add_group">
-  <p>
-    <%= f.label :group_name, t("views.committerships.group_name") -%>
-    <small class="hint"><a href="#add_user" onclick="$('add_user').show(); $('add_group').hide();return false;">
-      <%= t("views.committerships.add_user_instead") -%>
-    </a></small><br />
+  <ul class="tab_menu inline_tabs">
+    <li class="selected" id="add_group_tab">
+      <a href="#add_group" id="add_group_link"><%= t("views.committerships.add_team") -%></a>
+    </a>
+    <li id="add_user_tab">
+      <a href="#add_user" id="add_user_link"><%= t("views.committerships.add_user") -%></a>
+    </li>
+  </ul>
+
+  <p id="add_group">
+    <%= f.label :group_name, t("views.committerships.group_name") -%>: 
     <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
   </p>
-  </div>
-  <div id="add_user" style="display:none;">
-  <p>
-    <%= f.label :group_name, t("views.committerships.user_login") -%>
-    <small class="hint"><a href="#add_group" onclick="$('add_user').hide(); $('add_group').show();return false;">
-      <%= t("views.committerships.add_team_instead") -%>
-    </a></small><br />
+  <p id="add_user" style="display:none;">
+    <%= f.label :group_name, t("views.committerships.user_login") -%>: 
     <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
   </p>
-  </div>
   
   <p class="hint">
     <%= t("views.committerships.add_tema_note") -%>
