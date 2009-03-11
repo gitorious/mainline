@@ -145,6 +145,15 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_equal [@user], assigns(:users)
       assert_template "memberships/auto_complete_for_user_login.js.erb"
     end
+    
+    should "not display emails if user has opted not to have it displayed" do
+      @user.update_attribute(:public_email, false)
+      post :auto_complete_for_user_login, 
+        :user => { :login => @user.email[0..4] }, :format => "js"
+      assert_equal [@user], assigns(:users)
+      assert_template "memberships/auto_complete_for_user_login.js.erb"
+      assert_no_match(/email/, @response.body)
+    end
   end
   
   context "DELETE destroy" do
