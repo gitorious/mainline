@@ -21,7 +21,7 @@
 <a name="infobox"></a>
 <div class="commit-infobox">
   <div class="commit_message">
-    <%= simple_format(h(@commit.message)) -%>
+    <%= format_commit_message(h(@commit.message)) -%>
   </div>
   
   <div class="commit-meta">

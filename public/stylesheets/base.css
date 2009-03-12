@@ -906,6 +906,9 @@ small.commit_message {
 .commit_message a {
   color: #000;
 }
+.commit_message a.sha {
+  text-decoration: underline;
+}
 
 .gravatar {
   background-color: white;
