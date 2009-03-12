@@ -343,7 +343,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			:repository_id => @target_repository.to_param, 
 			:id => @merge_request,
 			:merge_request => {
-				:status => MergeRequest::STATUS_MERGED,
+				:status => 'merge',
 			}.merge(data)
 	end
 	
@@ -381,7 +381,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   			:repository_id => @target_repository.to_param, 
   			:id => @merge_request,
   			:merge_request => {
-  				:status => MergeRequest::STATUS_MERGED,
+  				:status => 'merge',
   				:reason => 'Not too good'
   			}
 			assert_equal "The merge request was marked as merged", flash[:notice]

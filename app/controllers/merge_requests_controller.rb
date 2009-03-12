@@ -112,7 +112,7 @@ class MergeRequestsController < ApplicationController
     if state_changed
       flash[:notice] = I18n.t "merge_requests_controller.resolve_notice", :status => @merge_request.status_string
     else
-      flash[:error] = I18n.t "merge_requests_controller.resolve_disallowed", :status => MergeRequest.status_string(new_state)
+      flash[:error] = I18n.t "merge_requests_controller.resolve_disallowed", :status => "#{new_state}d"
     end
     redirect_to [@owner, @repository, @merge_request]      
   end

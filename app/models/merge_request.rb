@@ -38,6 +38,25 @@ class MergeRequest < ActiveRecord::Base
   STATUS_MERGED = 2
   STATUS_REJECTED = 3
   
+  state_machine :status, :initial => :pending do
+    state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
+    state :open, :value => ::MergeRequest::STATUS_OPEN
+    state :merged, :value => ::MergeRequest::STATUS_MERGED
+    state :rejected, :value => ::MergeRequest::STATUS_REJECTED
+    
+    event :open do
+      transition :pending => :open
+    end
+    
+    event :reject do
+      transition :open => :rejected
+    end
+    
+    event :merge do
+      transition :open => :merged
+    end
+  end
+  
   named_scope :open, :conditions => { :status => STATUS_OPEN }
   named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
   
@@ -45,12 +64,15 @@ class MergeRequest < ActiveRecord::Base
     I18n.t("activerecord.models.merge_request")
   end
   
-  def self.statuses
-    { "Open" => STATUS_OPEN, "Merged" => STATUS_MERGED, "Rejected" => STATUS_REJECTED, 'Pending' => STATUS_PENDING_ACCEPTANCE_OF_TERMS }
-  end
-  
   def self.count_open
     count(:all, :conditions => {:status => STATUS_OPEN})
+  end
+  
+  def self.statuses
+    @statuses ||= state_machines[:status].states.inject({}){ |result, state |
+      result[state.name.to_s.capitalize] = state.value
+      result
+    }
   end
   
   def status_string
@@ -61,20 +83,20 @@ class MergeRequest < ActiveRecord::Base
     statuses.invert[status_code.to_i].downcase
   end
   
-  def open?
-    status == STATUS_OPEN
-  end
+  # def open?
+  #   status == STATUS_OPEN
+  # end
   
-  def merged?
-    status == STATUS_MERGED
-  end
-  
-  def rejected?
-    status == STATUS_REJECTED
-  end
+  # def merged?
+  #   status == STATUS_MERGED
+  # end
+  # 
+  # def rejected?
+  #   status == STATUS_REJECTED
+  # end
   
   def pending_acceptance_of_terms?
-    status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
+    pending?
   end
 
   def possible_next_states
@@ -89,12 +111,13 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def can_transition_to?(new_state)
-    return possible_next_states.include?(new_state.to_i)
+    send("can_#{new_state}?")
   end
+  
   
   def transition_to(status)
     if can_transition_to?(status)
-      self.status = status
+      send(status)
       yield 
       return true
     end

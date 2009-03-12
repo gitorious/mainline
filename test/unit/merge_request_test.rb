@@ -187,35 +187,37 @@ class MergeRequestTest < ActiveSupport::TestCase
     setup {@merge_request = merge_requests(:moes_to_johans)}
     
     should 'allow transition to other states as long as it is not rejected or merged' do
-      @merge_request.status = MergeRequest::STATUS_OPEN
-      assert @merge_request.can_transition_to?(MergeRequest::STATUS_MERGED)
-      assert @merge_request.can_transition_to?(MergeRequest::STATUS_REJECTED)
+      @merge_request.open!
+      assert @merge_request.can_transition_to?('merge')
+      assert @merge_request.can_transition_to?('reject')
     end
     
     should 'not allow transition to other states when rejected' do
-      @merge_request.status = MergeRequest::STATUS_MERGED
-      assert !@merge_request.can_transition_to?(MergeRequest::STATUS_MERGED)
-      assert !@merge_request.can_transition_to?(MergeRequest::STATUS_REJECTED)
+      @merge_request.open!
+      @merge_request.reject!
+      assert !@merge_request.can_transition_to?('merge')
+      assert !@merge_request.can_transition_to?('reject')
     end
     
     should 'not allow transitions to other states when merged' do
-      @merge_request.status = MergeRequest::STATUS_REJECTED
-      assert !@merge_request.can_transition_to?(MergeRequest::STATUS_MERGED)
-      assert !@merge_request.can_transition_to?(MergeRequest::STATUS_REJECTED)
+      @merge_request.open!
+      @merge_request.reject!
+      assert !@merge_request.can_transition_to?('merge')
+      assert !@merge_request.can_transition_to?('reject')
     end
     
     should 'optionally take a block when performing a transition' do
-      @merge_request.status = MergeRequest::STATUS_OPEN
+      @merge_request.open!
       @merge_request.expects(:foo=).once
-      @merge_request.transition_to(MergeRequest::STATUS_PENDING) do
+      @merge_request.transition_to('pending') do
         @merge_request.foo = "Hello world"
       end
     end
 
     should 'optionally take a block when performing a transition' do
-      @merge_request.status = MergeRequest::STATUS_OPEN
+      @merge_request.open!
       @merge_request.expects(:foo=).once
-      status_changed = @merge_request.transition_to(MergeRequest::STATUS_MERGED) do
+      status_changed = @merge_request.transition_to('merge') do
         @merge_request.foo = "Hello world"
       end
       assert status_changed
