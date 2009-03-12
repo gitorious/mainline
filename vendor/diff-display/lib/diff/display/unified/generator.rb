@@ -135,13 +135,17 @@ module Diff::Display
       def process_lines_with_differences(oldline, newline)
         start, ending = get_change_extent(oldline, newline)
         
-        # -
-        line = inline_diff(oldline, start, ending)
-        process_line(line, :rem, true)
-
-        # +
-        line = inline_diff(newline, start, ending)
-        process_line(line, :add, true)
+        if start.zero? && ending.zero?
+          process_line(oldline, :rem, false) # -
+          process_line(newline, :add, false) # +
+        else
+          # -
+          line = inline_diff(oldline, start, ending)
+          process_line(line, :rem, true)
+          # +
+          line = inline_diff(newline, start, ending)
+          process_line(line, :add, true)
+        end
       end
       
       # Inserts string formating characters around the section of a string

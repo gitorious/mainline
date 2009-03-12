@@ -108,7 +108,23 @@ class TestGenerator < Test::Unit::TestCase
     ]
     assert_equal expected, line_numbers_for(:simple)
   end
+  
+  def test_rewrite_line_does_not_set_inline_changes
+    diff_data = load_diff("simple_rewrite")
+    data = Diff::Display::Unified::Generator.run(diff_data)
+    
+    assert_equal diff_data.chomp, data.to_diff
+    modblock = data[5]
+    assert_instance_of Diff::Display::ModBlock, modblock
+    
+    assert_instance_of Diff::Display::RemLine, rem = modblock[0]
+    assert_instance_of Diff::Display::AddLine, add = modblock[1]
+    
+    assert !rem.inline_changes?, "rem has inline changes"
+    assert !add.inline_changes?, "add has inline_changes"
+  end
 
+  protected
   def line_numbers_for(diff)
     diff_data = load_diff(diff)
     data = Diff::Display::Unified::Generator.run(diff_data)

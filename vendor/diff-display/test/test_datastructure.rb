@@ -53,6 +53,17 @@ class TestDatastructure < Test::Unit::TestCase
     assert_equal :nonewline, Diff::Display::Line.nonewline("foo").identifier
   end
   
+  def test_expands_inline_changes
+    line = Diff::Display::AddLine.new('the \\0quick \\1brown fox', 42, true)
+    expanded = line.expand_inline_changes_with("START", "END")
+    assert_equal "the STARTquick ENDbrown fox", expanded.to_s
+  end
+  
+  def test_segments
+    line = Diff::Display::AddLine.new('the \\0quick \\1brown fox', 42, true)
+    assert_equal ["the ", "quick ", "brown fox"], line.segments
+  end
+  
   # Block
   def test_block_behaves_like_an_array
     block = Diff::Display::Block.new
