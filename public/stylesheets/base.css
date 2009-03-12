@@ -787,16 +787,17 @@ table.repository_meta .infobox ul {
 .commit-infobox .commit_message {
   float: left;
   margin: 0;
-  width: 550px;
 }
 .commit-infobox .commit_message p {
   margin-top: 0;
 }
 
 .commit-infobox .commit-meta {
-  float: left;
+  float: right;
   border-left: 1px solid #ddd;
   padding-left: 20px;
+  margin-left: 20px;
+  margin-right: 70px;
   min-width: 350px;
 }
 
