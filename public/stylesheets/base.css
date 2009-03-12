@@ -1424,6 +1424,37 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   color: #666;
 }
 
+.markdown_help_link {
+  float: left;
+  padding: 0;
+  margin: -25px 0 0 355px;
+}
+table.markdown_help {
+  margin-top: -20px;
+  margin-bottom: 20px;
+  font-size: 11px;
+  width: 300px;
+}
+.markdown_help td {
+  padding: 2px 10px 2px 10px;
+  border-bottom: 1px solid #ccc;
+}
+.markdown_help td ul li {
+  list-style: disc;
+}
+.markdown_help td ul, table.markdown_help td ol {
+  margin: 0;
+  padding: 0;
+}
+.markdown_help td li {
+  padding: 0;
+  margin: 0;
+  margin-left: 15px;
+}
+.markdown_help td pre {
+  margin: 0;
+}
+
 #site #recent_comments {
   width: 48%;
   float: left;
