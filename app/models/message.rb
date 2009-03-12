@@ -27,15 +27,13 @@ class Message < ActiveRecord::Base
   validates_presence_of :subject, :body
   validates_presence_of :recipient, :sender
 
-  include ActiveMessaging::MessageSender
-  include AASM
-  aasm_initial_state :unread
-  aasm_state :unread
-  aasm_state :read
-  
-  aasm_event :read do 
-    transitions :from => :unread, :to => :read
+  state_machine :aasm_state, :initial => :unread do
+    event :read do
+      transition :unread => :read
+    end
   end
+
+  include ActiveMessaging::MessageSender
   
   def build_reply(options={})
     reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}.with_indifferent_access

@@ -27,14 +27,15 @@ class MessageTest < ActiveSupport::TestCase
   context 'The state machine' do
     context 'class level' do
       should 'have all the required states' do
-        registered_state_names = Message.aasm_states.collect(&:name)
+        registered_state_names = Message.state_machines[:aasm_state].states.collect(&:name)
         [:unread, :read].each do |state|
           assert registered_state_names.include?(state)
         end
       end
     
       should 'have all the required events' do
-        registered_event_names = Message.aasm_events.keys
+        # Yeah, I know this is a bit brute, will refactor once all the models are migrated
+        registered_event_names = Message.state_machines[:aasm_state].events.instance_variable_get("@nodes").collect(&:name)
         [:read].each {|e| assert registered_event_names.include?(e)}
       end
     end

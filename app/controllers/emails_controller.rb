@@ -23,8 +23,7 @@ class EmailsController < ApplicationController
   end
   
   def confirm
-    email = current_user.email_aliases.find_in_state(:first, :pending, 
-              :conditions => {:confirmation_code => params[:id]})
+    email = current_user.email_aliases.with_aasm_state(:pending).first(:conditions => {:confirmation_code => params[:id]})
     if email
       email.confirm!
       flash[:success] = "#{email.address} is now confirmed as belonging to you"
