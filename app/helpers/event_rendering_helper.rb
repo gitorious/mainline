@@ -250,12 +250,12 @@ module EventRenderingHelper
   
   def render_event_add_project_repository(event)
     action = action_for_event(:event_status_add_project_repository) do
-      link_to(h(target.name), project_repository_path(event.project, target)) + 
+      link_to(h(event.target.name), project_repository_path(event.project, event.target)) + 
               " to " + link_to(h(event.project.title), project_path(event.project))
     end
-    body = truncate(sanitize(target.description), :length => 100)
+    body = truncate(sanitize(event.target.description), :length => 100)
     category = "repository"
-    [action, event, category]
+    [action, body, category]
   end
   
   protected
