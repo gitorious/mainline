@@ -31,7 +31,7 @@
   <% if @diffs.blank? -%>
     <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
   <% else -%>
-    <% unless @commit.merge? -%>>
+    <% unless @commit.merge? -%>
       <%= render_diff_stats(@commit.stats) -%>
       <%= render_diffmode_selector -%>
       <% @diffs.each do |file| -%>
