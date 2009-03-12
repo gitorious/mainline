@@ -51,14 +51,13 @@ class User < ActiveRecord::Base
   before_create :make_activation_code
   before_validation :lint_identity_url
 
-  include AASM
-  aasm_initial_state :pending
-
-  aasm_state :pending
-  aasm_state :terms_accepted
-  
-  aasm_event :accept_terms do
-    transitions :to => :terms_accepted, :from => [:pending]
+  state_machine :aasm_state, :initial => :pending do
+    state :terms_accepted
+    
+    event :accept_terms do
+      transition :pending => :terms_accepted
+    end
+    
   end
   
   has_many :received_messages, :class_name => "Message", :foreign_key => 'recipient_id', :order => "created_at DESC" do
