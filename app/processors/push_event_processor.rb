@@ -54,7 +54,12 @@ class PushEventProcessor < ApplicationProcessor
       )
     if commits = an_event.commits
       commits.each do |c|
-        commit_event = event.build_commit(:email => c.email, :body => c.message, :data => c.identifier)
+        commit_event = event.build_commit({
+          :user => c.user,
+          :email => c.email,
+          :body => c.message,
+          :data => c.identifier
+        })
         commit_event.save!
       end
     end
@@ -90,10 +95,10 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   class EventForLogging
-    attr_accessor :event_type, :identifier, :email, :message, :commit_time
+    attr_accessor :event_type, :identifier, :email, :message, :commit_time, :user
     attr_reader :commits
     def to_s
-      "Type: #{event_type} by #{email} at #{commit_time} with #{identifier}"
+      "<PushEventProcessor:EventForLogging type: #{event_type} by #{email} at #{commit_time} with #{identifier}>"
     end
     
     def commits=(commits)
@@ -154,8 +159,15 @@ class PushEventProcessor < ApplicationProcessor
       commits.each do |c|
         sha, email, timestamp, message = c.split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
         e = EventForLogging.new
+        if email
+          email = email.gsub(/\\(<|>)/, '\1')
+          if user = User.find_by_email_with_aliases(Grit::Actor.from_string(email).email || Grit::Actor.from_string(email).name)
+            e.user = user
+          else
+            e.email = email
+          end
+        end
         e.identifier    = sha
-        e.email         = email ? email.gsub(/\\(<|>)/, '\1') : email
         e.commit_time   = Time.at(timestamp.to_i).utc
         e.event_type    = Action::COMMIT
         e.message       = message

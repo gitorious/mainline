@@ -89,6 +89,18 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     end
   end
   
+  should "set the correct user for the commit subevent, if a user exists with that email" do
+    emails(:johans1).update_attribute(:address, "john@nowhere.com")
+    stub_git_log_and_user
+    @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
+    @processor.repository = Repository.first
+    first_event = @processor.events.first
+    assert_equal users(:johan).email, first_event.email
+    assert_equal(3, first_event.commits.size)
+    assert_nil first_event.commits.first.email
+    assert_equal users(:johan), first_event.commits.first.user
+  end
+  
   should "creates commit events even if the committer is unknown" do
     stub_git_log_and_user
     @processor.repository = Repository.first
