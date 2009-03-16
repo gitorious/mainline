@@ -29,7 +29,7 @@ class Project < ActiveRecord::Base
   has_many    :repositories, :order => "repositories.created_at asc", 
       :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :nullify
   has_one     :wiki_repository, :class_name => "Repository", 
-    :conditions => ["kind = ?", Repository::KIND_WIKI]  
+    :conditions => ["kind = ?", Repository::KIND_WIKI], :dependent => :destroy
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
