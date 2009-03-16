@@ -114,10 +114,6 @@ class Repository < ActiveRecord::Base
     git_backend.delete!(full_path_from_partial_path(path))
   end
   
-  def method_name
-    
-  end
-  
   def gitdir
     if project_repo?
       File.join(project.to_param_with_prefix, "#{name}.git")
