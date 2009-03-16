@@ -37,7 +37,7 @@ module Grit
     end
     
     def shell_escape(str)
-      str.to_s.gsub(/([^A-Za-z0-9_\-.,:\/@\n\ ])/n, "\\\\\\1").gsub(/\n/, "'\n'")
+      str.to_s.gsub(/([^A-Za-z0-9_\-.,:\/@\n\ %])/n, "\\\\\\1").gsub(/\n/, "'\n'")
     end
     alias_method :e, :shell_escape
     
