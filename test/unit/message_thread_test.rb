@@ -56,6 +56,7 @@ class MessageThreadTest < ActiveSupport::TestCase
     
     should 'return a Message object with a string of recipients set' do
       result = @thread.message
+      assert_equal('mike,moe', result.recipients)
     end
   end
 end

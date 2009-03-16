@@ -34,8 +34,7 @@ class MessagesController < ApplicationController
   end
 
   def create
-    thread_options = params[:message].merge({:recipients => params[:recipient][:login], :sender => current_user})
-    logger.debug(thread_options)
+    thread_options = params[:message].merge({:recipients => params[:message][:recipients], :sender => current_user})
     @messages = MessageThread.new(thread_options)
     if @messages.save
       flash[:notice] =  "#{@messages.title} sent"
@@ -64,8 +63,8 @@ class MessagesController < ApplicationController
     end
   end
   
-  def auto_complete_for_recipient_login
-    login = params[:recipient][:login]
+  def auto_complete_for_message_recipients
+    login = params[:message][:recipients]
     @users = User.find(:all, 
       :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ],
       :limit => 10).reject{|u|u == current_user}

@@ -77,7 +77,7 @@ class MessagesControllerTest < ActionController::TestCase
   context 'On POST to create' do
     setup do
       login_as :moe 
-      post :create, :message => {:subject => "Hello", :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."}, :recipient => {:login => "johan"}
+      post :create, :message => {:subject => "Hello", :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", :recipients => 'johan'}
     end
     
     should_respond_with :redirect
@@ -91,7 +91,7 @@ class MessagesControllerTest < ActionController::TestCase
     should 'allow separating recipients with various separating tokens' do
       [',',' ','.'].each do |token|
         assert_incremented_by Message, :count, 2 do
-          post :create, :message => {:subject => 'Hello', :body => 'This is for several recipients'}, :recipient => {:login => %w(johan mike).join(token)}
+          post :create, :message => {:subject => 'Hello', :body => 'This is for several recipients', :recipients => %w(johan mike).join(token)}
         end
       end
     end
@@ -127,18 +127,18 @@ class MessagesControllerTest < ActionController::TestCase
     should_render_template :new
   end
   
-  context 'On POST to auto_complete_for_recipient_login' do
+  context 'On POST to auto_complete_for_message_recipients' do
     setup do
       login_as :johan
     end
 
     should 'not include current_user when looking up' do
-      post :auto_complete_for_recipient_login, :recipient => {:login => "joh"}, :format => "js"
+      post :auto_complete_for_message_recipients, :message => {:recipients => "joh"}, :format => "js"
       assert_equal([], assigns(:users))
     end
     
     should 'assign an array of users when looking up' do
-      post :auto_complete_for_recipient_login, :recipient => {:login => "mik"}, :format => "js"
+      post :auto_complete_for_message_recipients, :message => {:recipients => "mik"}, :format => "js"
       assert_equal([users(:mike)], assigns(:users))
     end
     

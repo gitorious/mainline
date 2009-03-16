@@ -482,7 +482,7 @@
         :title_new  => "Compose a message",
         :subject  => "Subject",
         :body => "Message body",
-        :recipient => "Choose a recipient",
+        :recipient => "Choose one or more recipients, separate with comma",
         :submit => "Send message",
         :index_message => "Your inbox",
         :reply => "Reply",

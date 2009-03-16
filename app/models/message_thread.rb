@@ -32,7 +32,7 @@ class MessageThread
   
   # Returns a message object, used in views etc
   def message
-    Message.new(:sender => @sender, :subject => @subject, :body => @body)
+    Message.new(:sender => @sender, :subject => @subject, :body => @body, :recipients => recipients.join(','))
   end
   
   def save

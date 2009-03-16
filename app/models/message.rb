@@ -77,6 +77,14 @@ class Message < ActiveRecord::Base
     messages_in_thread.size
   end
   
+  def recipients=(recipients_string)
+    @recipients = recipients_string
+  end
+  
+  def recipients
+    @recipients || recipient.try{login}
+  end
+  
   def messages_in_thread
     replies.inject([self]) do |result, message|
       result << message.messages_in_thread
