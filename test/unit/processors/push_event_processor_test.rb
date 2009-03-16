@@ -25,7 +25,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor = PushEventProcessor.new    
   end
   
- should "returns the correct type and identifier for a new tag" do
+  should "returns the correct type and identifier for a new tag" do
     stub_git_show
     @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/tags/r1.1"
     assert_equal :create, @processor.action
@@ -37,7 +37,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.log_events
   end
   
- should "returns the correct type and identifier for a new branch" do
+  should "returns the correct type and identifier for a new branch" do
     stub_git_log_and_user
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
     @processor.repository = Repository.first
@@ -72,7 +72,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   
   
- should "returns the correct type and a set of events for a commit" do
+  should "returns the correct type and a set of events for a commit" do
     stub_git_log_and_user
     @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
     @processor.repository = Repository.first
@@ -89,7 +89,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     end
   end
   
- should "creates commit events even if the committer is unknown" do
+  should "creates commit events even if the committer is unknown" do
     stub_git_log_and_user
     @processor.repository = Repository.first
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
@@ -101,7 +101,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     end
   end
   
- should "returns the correct type and identifier for the deletion of a tag" do
+  should "returns the correct type and identifier for the deletion of a tag" do
     stub_git_show
     @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/tags/r1.1"
     assert_equal :delete, @processor.action
@@ -115,7 +115,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.log_events
   end
   
- should "returns the correct type and identifier for the deletion of a branch" do
+  should "returns the correct type and identifier for the deletion of a branch" do
     stub_git_show
     @processor.commit_summary = 'a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/heads/foo_branch'
     assert_equal :delete, @processor.action
@@ -141,16 +141,22 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     assert_equal Action::PUSH, first_event.event_type
     assert_equal users(:johan).email, first_event.email
     assert_equal(2, first_event.commits.size)
-    assert_instance_of PushEventProcessor::EventForLogging, commit_event = first_event.commits.first
+    commit_event = first_event.commits.first
     assert_equal "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a", commit_event.identifier
     assert_equal "Scott Chacon <schacon@gmail.com>", commit_event.email
     assert_equal Time.at(1208561228), commit_event.commit_time
-    assert_equal "added a pure-ruby git library and converted the cat_file commands to use it", commit_event.message
+    exp_msg = "added a pure-ruby git library and converted the cat_file commands to use it"
+    assert_equal exp_msg, commit_event.message
   end
   
   def stub_git_log_and_user
     git = mock
-    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED) + "\n"
+    output = [
+      '33f746e21ef5122511a5a69f381bfdf017f4d66c',
+      'john@nowhere.com',
+      '1233842115',
+      'This is really nice'
+    ].join(PushEventProcessor::PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED) + "\n"
     git.stubs(:log).returns(output*3)
     @processor.stubs(:git).returns(git)
     @processor.stubs(:user).returns(users(:johan))
@@ -158,7 +164,12 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   def stub_git_show
     git = mock
-    output = ["a9934c1d3a56edfa8f45e5f157869874c8dc2c34","john@nowhere.com","1233842115","Whoops, deleting the tag"].join(PushEventProcessor::PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
+    output = [
+      "a9934c1d3a56edfa8f45e5f157869874c8dc2c34",
+      "john@nowhere.com",
+      "1233842115",
+      "Whoops, deleting the tag"
+    ].join(PushEventProcessor::PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
     git.stubs(:show).returns(output)
     @processor.stubs(:git).returns(git)    
   end
