@@ -22,7 +22,23 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class PushEventProcessorTest < ActiveSupport::TestCase
 
   def setup
-    @processor = PushEventProcessor.new    
+    @processor = PushEventProcessor.new
+  end
+  
+  should "update the last_pushed_at attribute on initial push" do
+    repo = repositories(:johans)
+    repo.update_attribute(:last_pushed_at, nil)
+    @processor.expects(:log_events).returns(true)
+    json = {
+      :gitdir => repo.hashed_path,
+      :username => "johan",
+      :message => '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master',
+    }.to_json
+    @processor.on_message(json)
+    assert_equal users(:johan), @processor.user
+    assert_equal repo, @processor.repository
+    assert_not_nil repo.reload.last_pushed_at
+    assert repo.last_pushed_at > 5.minutes.ago
   end
   
   should "returns the correct type and identifier for a new tag" do
@@ -67,10 +83,8 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     assert_equal 'master', @processor.events.first.identifier
     assert_equal Action::COMMIT, @processor.events[1].event_type
     @processor.expects(:log_event).times(4)
-    @processor.log_events    
+    @processor.log_events
   end
-  
-  
   
   should "returns the correct type and a set of events for a commit" do
     stub_git_log_and_user

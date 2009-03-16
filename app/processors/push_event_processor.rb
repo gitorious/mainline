@@ -21,13 +21,14 @@ class PushEventProcessor < ApplicationProcessor
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
   subscribes_to :push_event
   attr_reader :oldrev, :newrev, :action, :user
-  attr_writer :repository
+  attr_accessor :repository
   
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
     logger.debug("Processor on message #{hash.inspect}")
     if @repository = Repository.find_by_hashed_path(hash['gitdir'])
       @user = User.find_by_login(hash['username'])
+      @repository.update_attribute(:last_pushed_at, Time.now.utc)
       self.commit_summary = hash['message']
       log_events
     else
@@ -149,7 +150,6 @@ class PushEventProcessor < ApplicationProcessor
     an_event.email        = email
     an_event.commit_time  = Time.at(timestamp.to_i).utc
     an_event.message      = message
-    logger.info("Processor returning #{an_event}")
   end
   
   def events_from_git_log(revspec)
