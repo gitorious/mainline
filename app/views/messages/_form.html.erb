@@ -1,7 +1,7 @@
 <% form_for(@message) do |f| %>
   <p>
     <%= label :recipient, :login, t("views.messages.recipient") %> <br/>
-    <%= text_field_with_auto_complete :recipient, :login, {}, :skip_style => true, :select => :login -%>
+    <%= text_field_with_auto_complete :recipient, :login, {}, :skip_style => true, :select => :login, :tokens => [',',';',' '] -%>
   </p>
   
   <p>

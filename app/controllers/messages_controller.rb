@@ -34,14 +34,14 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @message = Message.new(params[:message])
-    @message.sender = current_user
-    recipient = User.find_by_login(params[:recipient][:login])
-    @message.recipient = recipient
-    if @message.save
-      flash[:notice] = "Your message was sent"
+    thread_options = params[:message].merge({:recipients => params[:recipient][:login], :sender => current_user})
+    logger.debug(thread_options)
+    @messages = MessageThread.new(thread_options)
+    if @messages.save
+      flash[:notice] =  "#{@messages.title} sent"
       redirect_to :action => :index
     else
+      @message = @messages.message
       render :action => :new
     end
   end
@@ -50,7 +50,7 @@ class MessagesController < ApplicationController
     @message = Message.new
   end
   
-  # POST /messges/<id>/reply
+  # POST /messages/<id>/reply
   def reply
     original_message = current_user.received_messages.find(params[:id])
     @message = original_message.build_reply(params[:message])
@@ -68,7 +68,7 @@ class MessagesController < ApplicationController
     login = params[:recipient][:login]
     @users = User.find(:all, 
       :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ],
-      :limit => 10)
+      :limit => 10).reject{|u|u == current_user}
     render :layout => false
   end
 end

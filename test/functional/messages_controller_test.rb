@@ -81,9 +81,23 @@ class MessagesControllerTest < ActionController::TestCase
     end
     
     should_respond_with :redirect
-    should_assign_to :message
+    should_assign_to :messages
     should_set_the_flash_to(/sent/i)
   end
+  
+  context 'On POST to create with several recipients' do
+    setup {login_as :moe}
+    
+    should 'allow separating recipients with various separating tokens' do
+      [',',' ','.'].each do |token|
+        assert_incremented_by Message, :count, 2 do
+          post :create, :message => {:subject => 'Hello', :body => 'This is for several recipients'}, :recipient => {:login => %w(johan mike).join(token)}
+        end
+      end
+    end
+
+  end
+  
   
   context 'On POST to reply' do # POST /messages/2/reply
     setup do
@@ -116,12 +130,18 @@ class MessagesControllerTest < ActionController::TestCase
   context 'On POST to auto_complete_for_recipient_login' do
     setup do
       login_as :johan
-      post :auto_complete_for_recipient_login, :recipient => {:login => "joh"}, :format => "js"
     end
 
-    should 'assign an array of users' do
-      assert_equal([users(:johan)], assigns(:users))
+    should 'not include current_user when looking up' do
+      post :auto_complete_for_recipient_login, :recipient => {:login => "joh"}, :format => "js"
+      assert_equal([], assigns(:users))
     end
+    
+    should 'assign an array of users when looking up' do
+      post :auto_complete_for_recipient_login, :recipient => {:login => "mik"}, :format => "js"
+      assert_equal([users(:mike)], assigns(:users))
+    end
+    
   end
   
   context 'Unauthenticated GET to index' do
