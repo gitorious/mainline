@@ -50,19 +50,7 @@
       <% else -%>
         <li><%= link_to t("views.layout.about"), about_path -%></li>
       <% end -%>
-      <%- if logged_in? -%>
-		    <% if current_user.site_admin? -%>
-		      <li><%= link_to t("views.layout.admin"), admin_users_path -%></li>
-		    <% end -%>
-        <li class="secondary"><%= link_to t("views.layout.my_account"), user_path(current_user) -%></li>
-        <li class="secondary"><%= link_to t("views.layout.logout"), logout_path -%></li>
-        <li class="secondary"><%= link_to "#{image_tag("/images/silk/email.png")}", messages_path -%></li>
-      <%- else -%>
-		<% if GitoriousConfig['public_mode'] -%>
-        	<li class="secondary"><%= link_to t("views.layout.register"), new_user_path -%></li>
-		<% end -%>
-        <li class="secondary"><%= link_to t("views.layout.login"), login_path -%></li>
-      <%- end -%>
+      <%= render "layouts/login_logout" -%>
     </ul>
     
     <% if GitoriousConfig['public_mode'] -%>
