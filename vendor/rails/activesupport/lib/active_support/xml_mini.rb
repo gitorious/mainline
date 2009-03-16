@@ -1,21 +1,31 @@
-# = XmlMini
 module ActiveSupport
+  # = XmlMini
+  #
+  # To use the much faster libxml parser:
+  #   gem 'libxml-ruby', '=0.9.7'
+  #   XmlMini.backend = 'LibXML'
   module XmlMini
     extend self
 
-    CONTENT_KEY = '__content__'.freeze
+    attr_reader :backend
+    delegate :parse, :to => :backend
 
-    # Hook the correct parser into XmlMini
-    def hook_parser
-      begin
-        require 'xml/libxml' unless defined? LibXML
-        require "active_support/xml_mini/libxml.rb"
-      rescue MissingSourceFile => e
-        require "active_support/xml_mini/rexml.rb"
+    def backend=(name)
+      if name.is_a?(Module)
+        @backend = name
+      else
+        require "active_support/xml_mini/#{name.to_s.downcase}.rb"
+        @backend = ActiveSupport.const_get("XmlMini_#{name}")
       end
     end
 
-    hook_parser
-
+    def with_backend(name)
+      old_backend, self.backend = backend, name
+      yield
+    ensure
+      self.backend = old_backend
+    end
   end
+
+  XmlMini.backend = 'REXML'
 end

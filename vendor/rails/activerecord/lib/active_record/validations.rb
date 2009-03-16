@@ -89,7 +89,7 @@ module ActiveRecord
 
       message, options[:default] = options[:default], message if options[:default].is_a?(Symbol)
 
-      defaults = @base.class.self_and_descendents_from_active_record.map do |klass| 
+      defaults = @base.class.self_and_descendants_from_active_record.map do |klass|
         [ :"models.#{klass.name.underscore}.attributes.#{attribute}.#{message}", 
           :"models.#{klass.name.underscore}.#{message}" ]
       end
@@ -802,7 +802,7 @@ module ActiveRecord
       # Validates whether the value of the specified attribute is available in a particular enumerable object.
       #
       #   class Person < ActiveRecord::Base
-      #     validates_inclusion_of :gender, :in => %w( m f ), :message => "woah! what are you then!??!!"
+      #     validates_inclusion_of :gender, :in => %w( m f )
       #     validates_inclusion_of :age, :in => 0..99
       #     validates_inclusion_of :format, :in => %w( jpg gif png ), :message => "extension {{value}} is not included in the list"
       #   end

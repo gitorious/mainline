@@ -1,4 +1,4 @@
-From 8639f83ce1b4c4a0586ff7e51bfa7825e1473e1c Mon Sep 17 00:00:00 2001
+From ec3250236bbc2b2722e168be065d2d2d39ec8311 Mon Sep 17 00:00:00 2001
 From: =?utf-8?q?Johan=20S=C3=B8rensen?= <johan@johansorensen.com>
 Date: Mon, 16 Feb 2009 14:05:24 +0100
 Subject: [PATCH] Make partial rendering from within a content_for capture work with ruby 1.9 encodings
@@ -11,20 +11,20 @@ Subject: [PATCH] Make partial rendering from within a content_for capture work w
  create mode 100644 actionpack/test/fixtures/test/content_for_utf8.html.erb
 
 diff --git a/actionpack/lib/action_view/renderable.rb b/actionpack/lib/action_view/renderable.rb
-index 41080ed..ef3d792 100644
+index ff7bc7d..caa7719 100644
 --- a/actionpack/lib/action_view/renderable.rb
 +++ b/actionpack/lib/action_view/renderable.rb
-@@ -38,7 +38,8 @@ module ActionView
-         if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
-           view.capture(*names, &proc)
-         elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
--          view.instance_variable_get(ivar)
-+          res = view.instance_variable_get(ivar)
-+          res.respond_to?(:force_encoding) ? res.force_encoding(Encoding::UTF_8) : res
+@@ -36,7 +36,8 @@ module ActionView
+           if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
+             view.capture(*names, &proc)
+           elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
+-            view.instance_variable_get(ivar)
++            res = view.instance_variable_get(ivar)
++            res.respond_to?(:force_encoding) ? res.force_encoding(Encoding::UTF_8) : res
+           end
          end
        end
- 
-@@ -71,7 +72,7 @@ module ActionView
+@@ -67,7 +68,7 @@ module ActionView
  
          source = <<-end_src
            def #{render_symbol}(local_assigns)
@@ -46,10 +46,10 @@ index 0000000..3a91f38
 +yay?
 \ No newline at end of file
 diff --git a/actionpack/test/template/render_test.rb b/actionpack/test/template/render_test.rb
-index b042eb3..8fe2325 100644
+index 9adf053..eae55a4 100644
 --- a/actionpack/test/template/render_test.rb
 +++ b/actionpack/test/template/render_test.rb
-@@ -246,10 +246,18 @@ module RenderTestCases
+@@ -250,10 +250,18 @@ module RenderTestCases
  
    if '1.9'.respond_to?(:force_encoding)
      def test_render_utf8_template
