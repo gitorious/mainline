@@ -190,13 +190,15 @@ class MergeRequest < ActiveRecord::Base
   def confirmed_by_user
     self.status = STATUS_OPEN
     save
-    message = messages.build(
-      :sender => user, 
-      :recipient => target_repository.user,
-      :subject => I18n.t("mailer.request_notification", :login => source_repository.user.login, :title => target_repository.project.title),
-      :body => proposal,
-      :notifiable => self)    
-    message.save
+    target_repository.committers.uniq.reject{|c|c == user}.each do |committer|
+      message = messages.build(
+        :sender => user, 
+        :recipient => committer,
+        :subject => I18n.t("mailer.request_notification", :login => source_repository.user.login, :title => target_repository.project.title),
+        :body => proposal,
+        :notifiable => self)    
+      message.save
+    end
   end
   
   def terms_accepted(oauth_request_token, oauth_request_secret)

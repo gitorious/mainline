@@ -35,10 +35,10 @@ class MergeRequestTest < ActiveSupport::TestCase
   should_validate_presence_of :user, :source_repository, :target_repository, 
                               :ending_commit
   
-  should "email the owner of the target_repository after the terms are accepted" do
-    # Mailer.deliveries = []
+  should "email all committers in the target_repository after the terms are accepted" do
     assert_incremented_by(Message, :count, 1) do
       mr = @merge_request.clone
+      mr.target_repository = repositories(:johans2) # doesn't deliver messages to the actor
       mr.stubs(:valid_oauth_credentials?).returns(true)
       mr.save
       mr.terms_accepted("key","secret")
