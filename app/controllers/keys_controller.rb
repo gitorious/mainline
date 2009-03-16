@@ -19,7 +19,7 @@ class KeysController < ApplicationController
   before_filter :login_required
   before_filter :find_user
   before_filter :require_current_user 
- 
+  renders_in_global_context
 
   def index
     @ssh_keys = current_user.ssh_keys

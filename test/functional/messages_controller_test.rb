@@ -18,6 +18,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MessagesControllerTest < ActionController::TestCase
+  
+  should_render_in_global_context
+  
   context 'On GET to index' do
     setup do
       login_as :moe

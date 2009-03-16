@@ -17,7 +17,7 @@
 
 class GroupsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
-  install_site_before_filters
+  renders_in_global_context
   
   def index
     @groups = Group.paginate(:all, :page => params[:page])

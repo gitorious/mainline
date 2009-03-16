@@ -19,6 +19,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class GroupsControllerTest < ActionController::TestCase
+  
+  should_render_in_global_context
 
   def setup
     @group = groups(:team_thunderbird)

@@ -28,7 +28,7 @@ class MergeRequestsController < ApplicationController
     :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches, :oauth_return]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   before_filter :require_current_eula, :only => [:new, :create, :terms_accepted, :update, :edit]
-  install_site_before_filters
+  renders_in_site_specific_context
   
   def index
     @open_merge_requests = @repository.merge_requests.open

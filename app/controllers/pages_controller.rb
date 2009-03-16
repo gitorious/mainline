@@ -20,7 +20,7 @@ class PagesController < ApplicationController
   before_filter :find_project
   before_filter :check_if_wiki_enabled
   before_filter :assert_readyness
-  install_site_before_filters
+  renders_in_site_specific_context
   
   def index
     @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|

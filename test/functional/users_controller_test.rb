@@ -21,6 +21,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UsersControllerTest < ActionController::TestCase
+  
+  should_render_in_global_context
 
   should " activate user" do
     assert_nil User.authenticate('moe', 'test')

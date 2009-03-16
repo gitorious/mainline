@@ -23,6 +23,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class MergeRequestsControllerTest < ActionController::TestCase
   
+  should_render_in_site_specific_context
+  
 	def setup
 		@project = projects(:johans)
     grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)

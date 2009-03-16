@@ -21,6 +21,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class KeysControllerTest < ActionController::TestCase
   
+  should_render_in_global_context
+  
   def setup
     @user = users(:johan)
   end

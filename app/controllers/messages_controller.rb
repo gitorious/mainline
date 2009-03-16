@@ -1,5 +1,6 @@
 class MessagesController < ApplicationController
   before_filter :login_required
+  renders_in_global_context
   
   def index
     @messages = current_user.top_level_messages.paginate(:page => params[:page])

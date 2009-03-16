@@ -22,6 +22,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ProjectsControllerTest < ActionController::TestCase
+  
+  should_render_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
+  should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete]
 
   def setup
     @project = projects(:johans)
@@ -457,15 +460,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_not_nil assigns(:current_site)
       assert_not_nil @controller.send(:current_site)
       assert_equal Site.default.title, @controller.send(:current_site).title
-    end
-    
-    should "render the site specific layout if a subdomain is given" do
-      @request.host = "#{sites(:qt).subdomain}.gitorious.test"
-      get :index
-      assert_response :success
-      assert_equal "layouts/qt", @response.layout
-      assert_equal sites(:qt), assigns(:current_site)
-      assert_equal sites(:qt), @controller.send(:current_site)
     end
     
     should "redirect to the proper subdomain if the current site has one" do

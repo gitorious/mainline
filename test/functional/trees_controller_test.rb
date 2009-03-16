@@ -22,6 +22,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class TreesControllerTest < ActionController::TestCase
   
+  should_render_in_site_specific_context
+  
   context "routing" do
     should_eventually "recognizes a single glob with a format" do
       pending "fix rails bug #1939"

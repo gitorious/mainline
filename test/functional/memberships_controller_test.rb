@@ -20,6 +20,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MembershipsControllerTest < ActionController::TestCase
+  
+  should_render_in_global_context
 
   context "Routing" do
     setup do

@@ -50,9 +50,18 @@ class ApplicationController < ActionController::Base
   end
   
   protected
-    def self.install_site_before_filters(opts = {})
-      before_filter :find_current_site, opts
-      before_filter :redirect_to_current_site_subdomain, opts
+    # Sets the before_filters needed to be able to render in a Site specific
+    # context. +options+ is the options for the before_filters
+    def self.renders_in_site_specific_context(options = {})
+      before_filter :find_current_site, options
+      before_filter :redirect_to_current_site_subdomain, options
+    end
+    
+    # Sets the before_filters needed to make sure the requests are rendered
+    # in the "global" (eg without any Site specific layouts + subdomains).
+    # +options+ is the options for the before_filter
+    def self.renders_in_global_context(options = {})
+      before_filter :require_global_site_context, options
     end
   
     # return the url with the +repo+.owner prefixed if it's a mainline repo,
@@ -224,15 +233,25 @@ class ApplicationController < ActionController::Base
             :host => "#{current_site.subdomain}.#{request.domain}#{request.port_string}")
         end
       elsif !subdomain_without_common.blank?
-        host_without_subdomain = {
-          :only_path => false, 
-          :host => "#{request.domain}"
-        }
-        if ![80, 443].include?(request.port)
-          host_without_subdomain[:host] << ":#{request.port}"
-        end
-        redirect_to host_without_subdomain
+        redirect_to_top_domain
       end
+    end
+    
+    def require_global_site_context
+      unless subdomain_without_common.blank?
+        redirect_to_top_domain
+      end
+    end
+    
+    def redirect_to_top_domain
+      host_without_subdomain = {
+        :only_path => false, 
+        :host => "#{request.domain}"
+      }
+      if ![80, 443].include?(request.port)
+        host_without_subdomain[:host] << ":#{request.port}"
+      end
+      redirect_to host_without_subdomain
     end
     
   private  

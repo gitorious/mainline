@@ -20,7 +20,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class SearchesControllerTest < ActionController::TestCase
-
+  
+  should_render_in_global_context
 
   context "#show" do
     should "searches for the given query" do

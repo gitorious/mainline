@@ -20,7 +20,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class PagesControllerTest < ActionController::TestCase
-
+  
+  should_render_in_site_specific_context
 
   def setup
     @project = projects(:johans)

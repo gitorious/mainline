@@ -16,7 +16,7 @@
 #++
 
 class SearchesController < ApplicationController
-  install_site_before_filters
+  renders_in_global_context
   
   def show
     unless params[:q].blank?

@@ -23,7 +23,7 @@ require "yadis"
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
   skip_before_filter :public_and_logged_in
-  install_site_before_filters
+  renders_in_site_specific_context
   
   # render new.rhtml
   def new

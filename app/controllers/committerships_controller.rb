@@ -19,7 +19,7 @@ class CommittershipsController < ApplicationController
   before_filter :find_repository_owner, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
   before_filter :find_repository, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
   before_filter :require_adminship, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  install_site_before_filters
+  renders_in_site_specific_context
   
   def index
     @committerships = @repository.committerships.paginate(:all, :page => params[:page])

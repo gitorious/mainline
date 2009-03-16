@@ -26,6 +26,8 @@ class RepositoriesControllerTest < ActionController::TestCase
     @repo = repositories(:johans)
   end
   
+  should_render_in_site_specific_context :except => :writable_by
+  
   context "Routing, by projects" do
     should "recognizes routing like /projectname/reponame" do
       assert_recognizes({
