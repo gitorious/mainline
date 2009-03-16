@@ -127,9 +127,30 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.log_events
   end
   
+  should "parse the git output correctly in the real world" do
+    grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    @processor.stubs(:git).returns(grit.git)
+    @processor.stubs(:user).returns(users(:johan))
+    
+    @processor.commit_summary = "2d3acf90f35989df8f262dc50beadc4ee3ae1560 ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a refs/heads/master"
+    @processor.repository = Repository.first
+    assert_equal :update, @processor.action
+    assert @processor.head?
+    assert_equal 1, @processor.events.size
+    first_event = @processor.events.first
+    assert_equal Action::PUSH, first_event.event_type
+    assert_equal users(:johan).email, first_event.email
+    assert_equal(2, first_event.commits.size)
+    assert_instance_of PushEventProcessor::EventForLogging, commit_event = first_event.commits.first
+    assert_equal "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a", commit_event.identifier
+    assert_equal "Scott Chacon <schacon@gmail.com>", commit_event.email
+    assert_equal Time.at(1208561228), commit_event.commit_time
+    assert_equal "added a pure-ruby git library and converted the cat_file commands to use it", commit_event.message
+  end
+  
   def stub_git_log_and_user
     git = mock
-    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR) + "\n"
+    output = ['33f746e21ef5122511a5a69f381bfdf017f4d66c', 'john@nowhere.com','1233842115','This is really nice'].join(PushEventProcessor::PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED) + "\n"
     git.stubs(:log).returns(output*3)
     @processor.stubs(:git).returns(git)
     @processor.stubs(:user).returns(users(:johan))
@@ -137,7 +158,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   def stub_git_show
     git = mock
-    output = ["a9934c1d3a56edfa8f45e5f157869874c8dc2c34","john@nowhere.com","1233842115","Whoops, deleting the tag"].join(PushEventProcessor::GIT_OUTPUT_SEPARATOR)
+    output = ["a9934c1d3a56edfa8f45e5f157869874c8dc2c34","john@nowhere.com","1233842115","Whoops, deleting the tag"].join(PushEventProcessor::PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
     git.stubs(:show).returns(output)
     @processor.stubs(:git).returns(git)    
   end

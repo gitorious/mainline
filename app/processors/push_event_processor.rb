@@ -17,14 +17,11 @@
 #++
 
 class PushEventProcessor < ApplicationProcessor
-
-  # ActiveMessaging has the ActionControllerDispatcher reload each Processor on every request
-  # Therefore, we only define the separator unless it has already been defined
-  GIT_OUTPUT_SEPARATOR = "$$" unless defined?(GIT_OUTPUT_SEPARATOR) 
+  PUSH_EVENT_GIT_OUTPUT_SEPARATOR = "\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR) 
+  PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
   subscribes_to :push_event
   attr_reader :oldrev, :newrev, :action, :user
   attr_writer :repository
-
   
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
@@ -143,7 +140,7 @@ class PushEventProcessor < ApplicationProcessor
   end
     
   def fetch_commit_details(an_event, commit_sha)
-    sha, email, timestamp, message = git.show({:pretty => git_pretty_format, :s => true}, commit_sha).split(GIT_OUTPUT_SEPARATOR)
+    sha, email, timestamp, message = git.show({:pretty => git_pretty_format, :s => true}, commit_sha).split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
     an_event.email        = email
     an_event.commit_time  = Time.at(timestamp.to_i).utc
     an_event.message      = message
@@ -155,10 +152,10 @@ class PushEventProcessor < ApplicationProcessor
     Grit::Git.with_timeout(nil) do
       commits = git.log({:pretty => git_pretty_format, :s => true}, revspec).split("\n")
       commits.each do |c|
-        sha, email, timestamp, message = c.split(GIT_OUTPUT_SEPARATOR)
+        sha, email, timestamp, message = c.split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
         e = EventForLogging.new
         e.identifier    = sha
-        e.email         = email
+        e.email         = email ? email.gsub(/\\(<|>)/, '\1') : email
         e.commit_time   = Time.at(timestamp.to_i).utc
         e.event_type    = Action::COMMIT
         e.message       = message
@@ -173,7 +170,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def git_pretty_format
-    fmt = ['%H','%cn <%ce>','%at','%s'].join(GIT_OUTPUT_SEPARATOR)
+    fmt = ['%H','%cn <%ce>','%at','%s'].join(PUSH_EVENT_GIT_OUTPUT_SEPARATOR)
     "format:#{fmt}"
   end
 end
