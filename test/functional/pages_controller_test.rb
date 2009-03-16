@@ -60,6 +60,16 @@ class PagesControllerTest < ActionController::TestCase
       get :index, :project_id => @project.to_param
       assert_redirected_to(project_path(@project))
     end
+    
+    should "render the history atom feed" do
+      grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      Repository.any_instance.stubs(:git).returns(grit)
+      get :index, :project_id => @project.to_param, :format => "atom"
+      assert_response :success
+      assert_equal grit.commits("master", 30), assigns(:commits)
+      assert_template "index.atom.builder"
+      assert_equal "max-age=1800, private", @response.headers['Cache-Control']
+    end
   end
   
   context "show" do

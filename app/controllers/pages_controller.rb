@@ -23,13 +23,23 @@ class PagesController < ApplicationController
   renders_in_site_specific_context
   
   def index
-    @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|
-      n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
-    }
-    @root = Breadcrumb::Wiki.new(@project)
+    respond_to do |format|
+      format.html do
+        @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|
+          n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
+        }
+        @root = Breadcrumb::Wiki.new(@project)
+        @atom_auto_discovery_url = project_pages_path(:format => :atom)
+      end
+      format.atom do
+        @commits = @project.wiki_repository.git.commits("master", 30)
+        expires_in 30.minutes
+      end
+    end
   end
   
   def show
+    @atom_auto_discovery_url = project_pages_path(:format => :atom)
     @page, @root = page_and_root
     if @page.new?
       redirect_to edit_project_page_path(@project, params[:id]) and return
