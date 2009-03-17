@@ -303,7 +303,7 @@
         :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you're behind a firewall",
         :http_url => "HTTP clone url",
         :push_url => "Push url",
-        :help_push => lambda { |repo| "You can run \"<code>git push #{repo}</code>\", or you can setup a remote by doing the following:" },
+        :help_push => "You can run <code>git push {{repo}} master</code><br /> Or you can setup a remote like this:",
         :owner => "Owner",
         :creator => "creator",
         :project => "Project",

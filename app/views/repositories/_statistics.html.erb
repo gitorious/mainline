@@ -56,7 +56,7 @@
             <strong><%= t("views.repos.push_url") %>:</strong> <code><%=h repository.push_url -%></code>
             <small><%= link_to_help_toggle('detailed_push_info') -%></small>
             <div id="detailed_push_info" class="info_hint" style="display:none">
-      		<%= t("views.repos.help_push").call(repository.push_url) %>
+          <%= t("views.repos.help_push", :repo => repository.push_url) %>
       <pre>
       git remote add origin <%= repository.push_url %>
       # to push the master branch to the origin remote we added above:
