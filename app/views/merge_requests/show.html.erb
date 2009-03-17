@@ -46,6 +46,9 @@ git checkout master
 git checkout -b review/master
 git remote add review <%= @merge_request.source_repository.clone_url %>
 git pull review <%= @merge_request.source_branch %>
+<% if @merge_request.applies_to_specific_commits? -%>
+git reset --hard <%=h @merge_request.ending_commit -%>
+<% end %>
 # review changes, assess they are ok
 git checkout master
 git merge review/master
