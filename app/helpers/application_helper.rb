@@ -25,6 +25,13 @@ module ApplicationHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
   
+  def help_box(&block)
+    out = %Q{<div class="help-side-box round-5"><div class="icon"></div>}
+    out << capture(&block)
+    out << "</div>"
+    concat(out, block.binding)
+  end
+  
   def markdown(text, options = [:smart])
     rd = RDiscount.new(text.to_s, *options)
     rd.to_html

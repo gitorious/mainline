@@ -578,6 +578,27 @@ li.membership a, li.committership a {background-image: url('/images/silk/group_e
   color: #390;
 }
 
+.help-side-box {
+  float: right;
+  margin-right: 20px;
+  width: 350px;
+  border: 1px solid #ccc;
+  background: #E9F1F6;
+  padding: 10px;
+  color: #333;
+}
+.help-side-box .icon {
+  width: 16px;
+  height: 16px;
+  float: right;
+  margin: 0 0 2px 2px;
+  background: transparent url('/images/silk/help.png') no-repeat 0 0;
+}
+
+.help-side-box :last-child {
+  margin-bottom: 0;
+}
+
 /* Forms */
 
 textarea {
