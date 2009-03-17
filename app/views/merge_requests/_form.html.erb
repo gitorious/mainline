@@ -26,13 +26,9 @@
   <%= form.label :target_repository_id, t(:target_repository_id, :scope => 'activerecord.attributes.merge_request') -%><br />
   <small class="hint"><%= t("views.merges.info.target_repos") %></small><br />
   <%= form.select :target_repository_id, @repositories.map{|r| [r.name, r.id] } -%>
+  <span id="spinner" style="display:none;"><%= image_tag("spinner.gif") -%></span>
 </p>
 <div id="target_branch_selection">
-  <% if false -%>
-  <%= form.label :target_branch, t(:target_branch, :scope => 'activerecord.attributes.merge_request') -%><br />
-  <small class="hint"><%= t("views.merges.info.target_branch") %></small><br />
-  <%= form.text_field :target_branch, :class => "text", :value => form.object.target_branch -%>
-  <% end -%>
   <%= render :partial => "target_branches" -%>
 </div>
 <p>

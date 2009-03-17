@@ -165,6 +165,19 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
   this.endsAt = null;
   this.sourceBranchName = null;
   this.targetBranchName = null;
+  this.registerResponders = function() {
+    Ajax.Responders.register({
+      onCreate: function() {
+      if ($("spinner") && Ajax.activeRequestCount > 0)
+        Effect.Appear("spinner", { duration:0.3 })
+      },
+      onComplete: function() {
+        if ($("spinner") && Ajax.activeRequestCount == 0)
+          Effect.Fade("spinner", { duration:0.3 })
+      },
+    });
+  };
+  this.registerResponders();
   
   this.endSelected = function(el) {
     this.endsAt = el;
