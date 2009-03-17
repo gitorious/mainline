@@ -2,7 +2,7 @@ class ApplicationProcessor < ActiveMessaging::Processor
   
   def ActiveMessaging.logger
     @@logger ||= begin
-      io = RAILS_ENV == "production" ? File.join(RAILS_ROOT, "log", "message_processing.log") : STDOUT
+      io = RAILS_ENV == "development" ? STDOUT : File.join(RAILS_ROOT, "log", "message_processing.log")
       logger = ActiveSupport::BufferedLogger.new(io)
       logger.level = ActiveSupport::BufferedLogger.const_get(Rails.configuration.log_level.to_s.upcase)
       if RAILS_ENV == "production"
