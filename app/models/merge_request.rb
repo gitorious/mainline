@@ -179,6 +179,10 @@ class MergeRequest < ActiveRecord::Base
     Breadcrumb::MergeRequests.new(target_repository)
   end
   
+  def breadcrumb_css_class
+    "merge_request"
+  end
+  
   def title
     source_repository.name
   end

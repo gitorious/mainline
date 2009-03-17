@@ -514,7 +514,7 @@ li.edit_key > a { background-image: url("/images/silk/key_edit.png") !important;
 li.key > a { background-image: url("/images/silk/key.png") !important; }
 li.zip > a { background-image: url("/images/silk/page_white_zip.png") !important; }
 li.gz > a { background-image: url("/images/silk/page_white_compressed.png") !important; }
-li.merge_requests > a { background-image: url("/images/silk/arrow_merge.png") !important; }
+li.merge_requests > a { background-image: url("/images/silk/arrow_in.png") !important; }
 li.clone > a { background-image: url("/images/silk/database_clone.png") !important; }
 li.comment_link > a { background-image: url("/images/silk/comment.png") !important; }
 li.merge_request > a { background-image: url("/images/silk/arrow_merge.png") !important; }
