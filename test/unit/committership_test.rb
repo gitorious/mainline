@@ -67,6 +67,28 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_equal [c2], repo.committerships.users
   end
   
+  context "Event hooks" do
+    setup do
+      @committership = new_committership
+      @project = @committership.repository.project
+    end
+    
+    should "create an 'added committer' event on create" do
+      assert_difference("@project.events.count") do
+        @committership.save!
+      end
+      assert_equal Action::ADD_COMMITTER, Event.last.action
+    end
+  
+    should "create a 'removed committer' event on destroy" do
+      @committership.save!
+      assert_difference("@project.events.count") do
+        @committership.destroy
+      end
+      assert_equal Action::REMOVE_COMMITTER, Event.last.action
+    end
+  end
+  
   def new_committership(opts = {})
     Committership.new({
       :repository => repositories(:johans),

@@ -128,11 +128,9 @@ module EventRenderingHelper
   end
   
   def render_event_add_committer(event)
-    user = event.target.user
-    repo = event.target.repository
-    action = action_for_event(:event_committer_added) do
-      link_to(user.login, user_path(user)) + " to " +
-      link_to(h(repo.project.slug), project_path(repo.project)) + "/" + 
+    repo = event.target
+    action = action_for_event(:event_committer_added, :committer => h(event.data)) do
+      " to " + link_to(h(repo.project.slug), project_path(repo.project)) + "/" + 
       link_to(h(repo.name), project_repository_url(repo.project, repo))
     end
     category = "repository"
@@ -140,14 +138,10 @@ module EventRenderingHelper
   end
   
   def render_event_remove_committer(event)
-    user = User.find_by_id(event.data.to_i)
-    return unless user
-    
-    project = event.target.project
-    action = action_for_event(:event_committer_removed) do
-      link_to(user.login, user_path(user)) + " from " +
-      link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(event.target.name), project_repository_url(project, event.target))
+    repo = event.target
+    action = action_for_event(:event_committer_removed, :committer => h(event.data)) do
+      " from " + link_to(h(repo.project.slug), project_path(repo.project)) + "/" + 
+      link_to(h(repo.name), project_repository_url(repo.project, repo))
     end
     category = "repository"
     [action, "", category]

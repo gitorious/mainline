@@ -22,6 +22,8 @@ class Committership < ActiveRecord::Base
   
   validates_presence_of :committer_id, :committer_type, :repository_id
   after_create :notify_repository_owners
+  after_create :add_new_committer_event
+  after_destroy :add_removed_committer_event
   
   named_scope :groups, :conditions => { :committer_type => "Group" }
   named_scope :users,  :conditions => { :committer_type => "User" }  
@@ -54,5 +56,15 @@ class Committership < ActiveRecord::Base
         message = Message.new(:sender => creator, :recipient => r, :subject => "A new committer has been added", :body => "The more, the merrier", :notifiable => self)
         message.save
       end
+    end
+    
+    def add_new_committer_event
+      repository.project.create_event(Action::ADD_COMMITTER, repository, 
+                                      creator, committer.title)
+    end
+    
+    def add_removed_committer_event
+      repository.project.create_event(Action::REMOVE_COMMITTER, repository, 
+                                      creator, committer.title)
     end
 end
