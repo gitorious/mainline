@@ -29,7 +29,7 @@ module ApplicationHelper
     out = %Q{<div class="help-side-box round-5"><div class="icon"></div>}
     out << capture(&block)
     out << "</div>"
-    concat(out, block.binding)
+    concat(out)
   end
   
   def markdown(text, options = [:smart])
