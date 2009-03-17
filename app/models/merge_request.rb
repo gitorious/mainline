@@ -158,13 +158,13 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def applies_to_specific_commits?
-    !!ending_commit
+    !ending_commit.blank?
   end
   
   def commits_to_be_merged
     if applies_to_specific_commits?
       idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
-      return idx ? commits_for_selection[0..idx] : []
+      return idx ? commits_for_selection[idx..-1] : []
     else
       return commits_for_selection
     end

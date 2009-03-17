@@ -86,7 +86,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			get :show, :project_id => @project.to_param, 
 				:repository_id => @target_repository.to_param,
 				:id => @merge_request.id
-			assert_equal 4, assigns(:commits).size
+			assert_equal 1, assigns(:commits).size
 		end
 		
 		should "allow committers to change status" do
