@@ -47,6 +47,18 @@ class Group < ActiveRecord::Base
     }, :limit => limit).map{|c| c.committer }
   end
   
+  # Finds the most active groups by activity in repositories they're committers in
+  def self.most_active(limit = 10)
+    # FIXME: there's a certain element of approximation in here
+    find(:all, :joins => [{:committerships => {:repository => :events}}],
+      :select => %Q{groups.*, committerships.repository_id, repositories.id, events.id, 
+        events.target_id, events.target_type, count(events.id) as event_count},
+      :group => "groups.id",
+      :conditions => "committerships.repository_id = events.target_id and events.target_type = 'Repository'",
+      :order => "event_count desc",
+      :limit => limit)
+  end
+  
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }
     all_project_ids << repositories.map{|r| r.project_id }

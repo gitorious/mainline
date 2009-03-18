@@ -118,6 +118,12 @@ class User < ActiveRecord::Base
     user
   end
   
+  def self.most_active(limit = 10)
+    find(:all, :select => "users.*, count(events.id) as event_count",
+      :joins => :events, :group => "users.id", :order => "event_count desc",
+      :limit => limit)
+  end
+  
   def validate
     if !not_openid?
       begin

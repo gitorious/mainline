@@ -19,10 +19,9 @@
 %>
 
 <% @page_title = t("views.site.page_title") -%>
+
 <div id="site_intro">
-<p>
-	<%= t("views.site.description") %>
-</p>
+  <p><%= t("views.site.description") %></p>
 </div>
 
 <div id="site_overview">
@@ -46,9 +45,62 @@
   <% end -%>
 </div>
 
-<% if GitoriousConfig['public_mode'] || logged_in? -%>
-<div id="newest_projects">
-  <h2><%= t("views.site.newest_projects") %></h2>
+<% if GitoriousConfig['public_mode'] -%>
+<div id="left">
+  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
+    <ul class="with_icons">
+      <% @active_recently.each do |project| -%>
+        <li class="project"><%= link_to h(project.title), project -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box("Recent activities") do -%>
+    <ul class="events inline">
+    <% @latest_events.each do |event| -%>
+      <%= render event -%>
+    <% end -%>
+    </ul>
+  <% end -%>
+</div>
+
+<div id="right">
+  <% pull_box("Active projects <small>(overall)</small>") do -%>
+    <ul class="with_icons">
+      <% @active_overall.each do |project| -%>
+        <li class="project"><%= link_to h(project.title), project -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box("Most active repository clones") do -%>
+    <ul class="with_icons">
+      <% @top_repository_clones.each do |repo| -%>
+        <li class="clone">
+          <%= link_to h(repo.title), repo_owner_path(repo, :project_repository_path, repo.project, repo) -%>
+          <small class="hint"><%= truncate(h(strip_tags(repo.description)), :length => 100) -%></small>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box("Active teams") do -%>
+    <ul class="with_icons">
+      <% @active_groups.each do |group| -%>
+        <li class="group"><%= link_to h(group.title), group -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box("Active users") do -%>
+    <ul class="with_icons">
+      <% @active_users.each do |user| -%>
+        <li class="user"><%= link_to h(user.title), user -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box(t("views.site.newest_projects")) do -%>
   <ul>
     <% @projects.each do |project| -%>
       <li>
@@ -56,7 +108,8 @@
         <small class="hint"><%= truncate(h(project.stripped_description), :length => 100) -%></small>
       </li>
     <% end -%>
+    <li><%= link_to t("views.site.view_more"), projects_path -%></li>
   </ul>
-  <p><%= link_to t("views.site.view_more"), projects_path -%></p>
+  <% end -%>
 </div>
 <% end -%>
