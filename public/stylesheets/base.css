@@ -311,6 +311,10 @@ abbr {
   border-top: 1px solid #d1d5d8;
 }
 
+#container #footer a {
+  color: #92B92D;
+}
+
 #container #footer ul {
   margin: 0;
 }
