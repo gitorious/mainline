@@ -90,5 +90,15 @@ class EventTest < ActiveSupport::TestCase
       assert @event.events.commits.include?(commit)
       assert_equal('commit', commit.kind)
     end
+    
+    should "return false for has_commits? unless it's a push event" do
+      commit = @event.build_commit(
+        :email  => 'Linus Torvalds <linus@kernel.org>',
+        :data   => 'ffc0fa98',
+        :body   => 'Adding README')
+      assert commit.save
+      @event.action = Action::COMMENT
+      assert_false @event.has_commits?
+    end
   end
 end

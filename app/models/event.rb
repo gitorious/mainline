@@ -43,6 +43,7 @@ class Event < ActiveRecord::Base
   end
   
   def has_commits?
+    return false if self.action != Action::PUSH
     !events.blank? && !events.commits.blank?
   end
   
