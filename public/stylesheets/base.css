@@ -1166,6 +1166,7 @@ table.tree tr td.node a {
   margin: 2em auto 2em auto;
   font-size: 1.5em;
 }
+
 #site_intro .hint {
   font-size: 55%;
 }
@@ -1413,6 +1414,18 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   text-align:center;
 }
 
+#site_columns ul, #site_columns p {
+  text-align: left;
+}
+#site_columns .with_icons li {
+  margin-bottom: 5px;
+}
+#site_columns .with_icons li a {
+  background-repeat: no-repeat;
+  background-position: 0 3px;
+  padding: 5px 5px 5px 25px;
+}
+
 #site_overview table td, #site_overview table th {
   text-align:center;
 }
@@ -1537,6 +1550,14 @@ table.markdown_help {
   float:right;
   width: 48%;
   clear:right; 
+}
+
+#site #left {
+  width: 43%;
+}
+
+#site #right {
+  width: 53%;
 }
 
 .important_message {
@@ -1777,17 +1798,19 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   font-size: 11px;
 }
 
-.events .event_instances {
+.events .event_instances, .events .event_instance {
   margin: 0px 0px 0px 15px;
-}
-
-.events .event_instance {
   background-repeat: no-repeat;
   background-position: 2px 4px;
   padding-bottom: 1px;
 }
 
-.events .event_instances strong { 
+.events.inline .event_instance {
+  background-image: none !important;
+  margin: 0;
+}
+
+.events .event_instances strong, .events .event_instance strong { 
   color: #555; 
 }
 
@@ -1799,6 +1822,9 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   font-size: 11px;
   color: #898989;
 }
+.events.inline .event_instance .event_date {
+  width: 45px;
+}
 .events .event_instance img {
   float: left;
   margin-top: 3px;
@@ -1807,6 +1833,15 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 .events .event_instance .event_meta p { padding: 0; margin: 0;}
 .events .event_instance .event_meta {
   margin: 0 100px 20px 105px;
+}
+
+.events.inline .event_instance .event_meta {
+  margin: 0 0 20px 70px;
+  text-align: left;
+}
+
+.events.inline .event_instance .event_meta * > p {
+  text-align: left;
 }
 
 .events .event_instance .event_category {
@@ -1818,6 +1853,13 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   text-transform: uppercase;
   color: #fff;
   background: #b6babc;
+}
+
+.events.inline .event_instance .event_category {
+  width: 0;
+  display: none;
+  margin: 0;
+  padding: 0;
 }
 
 li.event_instance.create_project { background-image: url("/images/silk/report_add.png"); }
@@ -2066,3 +2108,31 @@ div.archive-download-box p {
 {
   background-color: #D9E8FA;
 }
+
+
+/* pull boxes */
+
+.pull-box {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 20px;
+}
+
+.pull-box .pull-box-content {
+  margin: 0 10px 0 10px;
+}
+
+.pull-box h3 {
+  background: #b6babc;
+  color: #fff;
+  text-align: center;
+  padding: 6px 0 5px 0;
+  margin: 0 0 10px 0;
+  text-shadow: #999 -1px 1px 2px;
+}
+.pull-box h3 a {
+  color: #fff;
+}
+
+.pull-box.expose p, .pull-box.expose li { font-size: 16px; }
+.pull-box.expose li                     { margin-bottom: 10px; }

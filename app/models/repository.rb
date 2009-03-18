@@ -114,6 +114,18 @@ class Repository < ActiveRecord::Base
     git_backend.delete!(full_path_from_partial_path(path))
   end
   
+  def self.most_active_clones_in_projects(projects, limit = 5)
+    clone_ids = projects.map do |project|
+      project.repositories.clones.map{|r| r.id }
+    end.flatten
+    find(:all, :limit => limit, 
+      :select => 'distinct repositories.*, count(events.id) as event_count', 
+      :order => "event_count desc", :group => "repositories.id",
+      :conditions => ["repositories.id in (?) and events.created_at > ?", clone_ids, 30.days.ago], 
+      #:conditions => { :id => clone_ids },
+      :joins => :events, :include => :project)
+  end
+  
   def gitdir
     if project_repo?
       File.join(project.to_param_with_prefix, "#{name}.git")

@@ -38,6 +38,15 @@ class Group < ActiveRecord::Base
     I18n.t("activerecord.models.group")
   end
   
+  def self.all_participating_in_projects(projects, limit = 5)
+    mainline_ids = projects.map do |project|
+      project.repositories.mainlines.map{|r| r.id }
+    end.flatten
+    Committership.groups.find(:all, :conditions => {
+      :repository_id => mainline_ids
+    }, :limit => limit).map{|c| c.committer }
+  end
+  
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }
     all_project_ids << repositories.map{|r| r.project_id }

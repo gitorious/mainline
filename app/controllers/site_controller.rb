@@ -24,7 +24,9 @@ class SiteController < ApplicationController
   def index
     if !current_site.subdomain.blank?
       @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
-      render "site/#{current_site.subdomain}/index"
+      @teams = Group.all_participating_in_projects(@projects)
+      @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
+      render "site/#{current_site.subdomain}/index" and return
     else
       @projects = if GitoriousConfig['public_mode'] || logged_in?
         Project.find(:all, :limit => 10, :order => "id desc")
