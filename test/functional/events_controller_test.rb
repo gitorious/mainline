@@ -37,16 +37,27 @@ class EventsControllerTest < ActionController::TestCase
   
   context '#children' do
     setup do
-      @push_event = @project.create_event(Action::PUSH, @repository, User.first, "", "A push event", 10.days.ago)
+      @push_event = @project.create_event(Action::PUSH, @repository, User.first,
+                                          "", "A push event", 10.days.ago)
       10.times do |n|
-#(:email => c.email, :body => c.message, :data => c.identifier)
-        c = @push_event.build_commit(:email => 'John Doe <john@doe.org>', :body => "Commit number #{n}", :data => "ffc0#{n}")
+        c = @push_event.build_commit({
+          :email => 'John Doe <john@doe.org>',
+          :body => "Commit number #{n}",
+          :data => "ffc0#{n}"
+        })
         c.save
       end
     end
+    
     should 'show commits under a push event' do
       get :commits, :id => @push_event.to_param, :format => 'js'
       assert_response :success
+    end
+    
+    should "cache the commit events" do
+      get :commits, :id => @push_event.to_param, :format => 'js'
+      assert_response :success
+      assert_equal "max-age=1800, private", @response.headers['Cache-Control']
     end
   end
 end

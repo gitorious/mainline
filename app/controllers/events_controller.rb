@@ -30,10 +30,12 @@ class EventsController < ApplicationController
   
   def commits
     @event = Event.find(params[:id])
-    @commits = @event.events.commits.paginate(:page => params[:page])
-    respond_to do |wants|
-      wants.js
+    if stale?(:etag => @event, :last_modified => @event.created_at)
+      @commits = @event.events.commits.paginate(:page => params[:page])
+      respond_to do |wants|
+        wants.js
+      end
+      expires_in 30.minutes
     end
-  end
-  
+  end  
 end
