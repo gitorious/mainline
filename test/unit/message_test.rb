@@ -165,6 +165,14 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
   
+  context 'Rendering XML' do
+    setup {@message = Message.first}
+    should 'include required attributes' do
+      result = @message.to_xml
+      assert_match /<recipient_name>#{@message.recipient.title}<\/recipient_name>/, result
+    end
+  end
+  
   context 'Mass email delivery' do
     should_eventually 'create n messages when supplying several recipients'
   end 

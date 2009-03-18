@@ -42,6 +42,31 @@ class Message < ActiveRecord::Base
     return reply
   end
   
+  def to_xml(options = {})
+#.to_xml(:methods => [:read, :description,  :recipient_name, :sender_name], :except => [:aasm_state, :notifiable_id, :notifiable_type])
+    options[:indent] ||= 2
+    xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    xml.message do
+      xml.tag!(:id, to_param)
+      xml.tag!(:subject, subject)
+      xml.tag!(:body, body)
+      xml.tag!(:read, read?)
+      xml.tag!(:notifiable, notifiable.class.name) if notifiable
+      xml.tag!(:description, description)
+      xml.tag!(:recipient_name, recipient.title)
+      xml.tag!(:sender_name, sender.title)
+    end
+  end
+
+  def recipient_name
+    recipient.title
+  end
+  
+  def sender_name
+    sender.title
+  end
+  
   def breadcrumb_parent
     in_reply_to || Breadcrumb::Messages.new
   end

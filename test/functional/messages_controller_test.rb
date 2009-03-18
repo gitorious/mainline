@@ -32,6 +32,15 @@ class MessagesControllerTest < ActionController::TestCase
     should_render_template :index
   end
   
+  context 'On GET to index with XML' do
+    setup do
+      login_as :moe
+      get :index, :format => 'xml'
+    end
+    should_respond_with :success
+    should_assign_to :messages
+  end
+  
   context 'On GET to sent' do
     setup do
       login_as :moe
@@ -48,6 +57,17 @@ class MessagesControllerTest < ActionController::TestCase
       @message = messages(:johans_message_to_moe)
       login_as :moe
       get :show, :id => @message.to_param
+    end
+    
+    should_respond_with :success
+    should_assign_to :message
+  end
+  
+  context 'On GET to show in XML' do
+    setup do 
+      @message = messages(:johans_message_to_moe)
+      login_as :moe
+      get :show, :id => @message.to_param, :format => 'xml'
     end
     
     should_respond_with :success

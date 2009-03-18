@@ -5,6 +5,10 @@ class MessagesController < ApplicationController
   def index
     @messages = current_user.top_level_messages.paginate(:page => params[:page])
     @root = Breadcrumb::ReceivedMessages.new
+    respond_to do |wants|
+      wants.html
+      wants.xml {render :xml => @messages}
+    end
   end
   
   def sent
@@ -26,9 +30,10 @@ class MessagesController < ApplicationController
     unless @message.sender == current_user or @message.recipient == current_user
       raise ActiveRecord::RecordNotFound and return
     end
-    @message.read! if !@message.read? and @message.recipient == current_user
+    @message.read if @message.recipient == current_user
     respond_to do |wants|
       wants.html
+      wants.xml {render :xml => @message}
       wants.js {render :partial => "message", :layout => false}
     end
   end
