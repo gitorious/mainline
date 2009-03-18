@@ -2133,7 +2133,7 @@ div.archive-download-box p {
 }
 
 .pull-box h3 {
-  background: #b6babc;
+  background: #999; /*#696C6D*/
   color: #fff;
   text-align: center;
   padding: 6px 0 5px 0;
