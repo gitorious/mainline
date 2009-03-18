@@ -103,12 +103,16 @@
     </div>
     <% end -%>
     <div id="footer">
+      <div class="powered-by">
+        <%= link_to image_tag("powered_by_gitorious.png"), "http://gitorious.org" -%>
+      </div>
       <ul>
         <li><%= link_to t("views.layout.home"), root_path -%> | </li>
         <li><%= link_to t("views.layout.about"), about_path -%> | </li>
         <li><%= link_to t("views.layout.faq"), faq_path -%> | </li>
         <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
       </ul>
+      <div class="clear"></div>
     </div>
   </div>
 </body>

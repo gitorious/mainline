@@ -306,7 +306,8 @@ abbr {
   color: #666;
   text-align: center;
   clear: both;
-  background: #EEF2F5;
+  /*background: #EEF2F5;*/
+  background: #222 url("/images/header_bg.png") repeat-x;
   border-top: 1px solid #d1d5d8;
 }
 
@@ -315,6 +316,11 @@ abbr {
 }
 #container #footer ul li {
   display: inline;
+}
+
+#container #footer .powered-by {
+  float: right;
+  margin: 10px;
 }
 
 .flash_message {
