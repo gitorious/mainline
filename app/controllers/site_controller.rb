@@ -26,8 +26,13 @@ class SiteController < ApplicationController
       @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
       @teams = Group.all_participating_in_projects(@projects)
       @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
-      render "site/#{current_site.subdomain}/index" and return
-    else
+      expires_in 10.minutes
+      render "site/#{current_site.subdomain}/index" 
+      return
+    end
+    
+    last_event = Event.latest(1).first || Project.first
+    if stale?(:etag => last_event, :last_modified => last_event.created_at)
       @projects = Project.find(:all, :limit => 10, :order => "id desc")
       @top_repository_clones = Repository.most_active_clones
       @active_recently = Project.most_active_recently
@@ -35,6 +40,7 @@ class SiteController < ApplicationController
       @active_users = User.most_active
       @active_groups = Group.most_active
       @latest_events = Event.latest(15)
+      expires_in 10.minutes
     end
   end
   
