@@ -14,6 +14,7 @@ db/schema.rb
 db/*.sqlite3
 .autotest
 db/sphinx/*
+doc/api
 tmp/repos/*
 tmp/graph_generator.status
 tmp/poller*.pid
