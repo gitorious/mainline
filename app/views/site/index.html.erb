@@ -50,7 +50,10 @@
   <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
     <ul class="with_icons">
       <% @active_recently.each do |project| -%>
-        <li class="project"><%= link_to h(project.title), project -%></li>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
       <% end -%>
     </ul>
   <% end -%>
@@ -68,7 +71,10 @@
   <% pull_box("Active projects <small>(overall)</small>") do -%>
     <ul class="with_icons">
       <% @active_overall.each do |project| -%>
-        <li class="project"><%= link_to h(project.title), project -%></li>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
       <% end -%>
     </ul>
   <% end -%>
@@ -79,7 +85,7 @@
         <li class="clone">
           <%= link_to h(repo.title), repo_owner_path(repo, :project_repository_path, repo.project, repo) -%>
           <span class="hint">(<%= link_to h(repo.project.title), repo.project -%>)</span>
-          <small class="hint"><%= truncate(h(strip_tags(repo.description)), :length => 100) -%></small>
+          <small class="hint"><%= truncate(h(strip_tags(repo.description)), :length => 65) -%></small>
         </li>
       <% end -%>
     </ul>
@@ -106,7 +112,7 @@
     <% @projects.each do |project| -%>
       <li>
         <strong><%= link_to h(project.title), project -%></strong>
-        <small class="hint"><%= truncate(h(project.stripped_description), :length => 100) -%></small>
+        <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
       </li>
     <% end -%>
     <li><%= link_to t("views.site.view_more"), projects_path -%></li>
