@@ -121,16 +121,11 @@ class ProjectsControllerTest < ActionController::TestCase
     end
   end
 
-  context "ProjectsController" do
-    setup do
-      @projects = [projects(:johans), projects(:moes)]
-    end
-  
+  context "ProjectsController" do  
     should "GET projects/ should be succesful" do
-      Project.expects(:find).returns(@projects)
       get :index
       assert_response :success
-      assert_equal @projects, assigns(:projects)
+      assert !assigns(:projects).empty?
       assert_template(("index"))
     end
   

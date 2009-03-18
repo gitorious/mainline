@@ -106,6 +106,22 @@ class Project < ActiveRecord::Base
   def self.top_tags(limit = 10)
     tag_counts(:limit => limit, :order => "count desc")
   end
+  
+  # Returns the projects limited by +limit+ who has the most activity within
+  # the +cutoff+ period
+  def self.most_active_recently(limit = 10, cutoff = 14.days.ago)
+    find(:all, :joins => :events, :limit => limit,
+      :select => 'distinct projects.*, count(events.id) as event_count', 
+      :order => "event_count desc", :group => "projects.id",
+      :conditions => ["events.created_at > ?", cutoff])
+  end
+  
+  # Finds the most active projects on an overall basis
+  def self.most_active_overall(limit = 10)
+    find(:all, :joins => :events, :limit => limit,
+      :select => 'distinct projects.*, count(events.id) as event_count', 
+      :order => "event_count desc", :group => "projects.id")
+  end
 
   def to_param
     slug
