@@ -849,7 +849,6 @@ table.repository_meta .infobox ul {
 }
 
 .commit-infobox .commit_message {
-  float: left;
   margin: 0;
 }
 .commit-infobox .commit_message p {
@@ -857,11 +856,7 @@ table.repository_meta .infobox ul {
 }
 
 .commit-infobox .commit-meta {
-  float: right;
-  border-left: 1px solid #ddd;
-  padding-left: 20px;
-  margin-left: 20px;
-  margin-right: 70px;
+  margin: 10px 0 30px 20px;
   min-width: 350px;
 }
 
@@ -878,6 +873,7 @@ table.repository_meta .infobox ul {
   padding-bottom: 5px;
   color: #666;
   font-size: 12px;
+  max-width: 500px;
 }
 
 .commit-infobox ul li.avatar div {
@@ -1415,7 +1411,6 @@ table.codediff col.lines {
 }
 
 ul.diff_stats {
-  margin-left: 20px;
   font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
   color: #888;
 }
