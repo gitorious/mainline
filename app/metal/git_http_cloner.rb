@@ -18,6 +18,7 @@ class GitHttpCloner
         rest = match[2]
         begin
           repo = Repository.find_by_path(path)
+          repo.cloned_from(remote_ip(env)) if rest == '/HEAD'          
           full_path = File.join(GitoriousConfig['repository_base_path'], repo.real_gitdir, rest)
           return [200, {"X-Sendfile" => full_path, 'Content-Type' => 'application/octet-stream'}, []]
         rescue ActiveRecord::RecordNotFound   
@@ -27,4 +28,32 @@ class GitHttpCloner
     end
     return [404, {"Content-Type" => "text/html"},[]]
   end
+
+  TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
+  
+  protected 
+    # Borrowed from ActionController::Request. Extract proxy addresses and stuff (except our own)
+    # Does not do ip spoofing checks
+    def self.remote_ip(env)
+      remote_addr_list = env['REMOTE_ADDR'] && env['REMOTE_ADDR'].scan(/[^,\s]+/)
+      unless remote_addr_list.blank?
+        not_trusted_addrs = remote_addr_list.reject {|addr| addr =~ TRUSTED_PROXIES}
+        return not_trusted_addrs.first unless not_trusted_addrs.empty?
+      end
+
+      remote_ips = env['HTTP_X_FORWARDED_FOR'] && env['HTTP_X_FORWARDED_FOR'].split(',')
+
+      if env.include? 'HTTP_CLIENT_IP'
+        return env['HTTP_CLIENT_IP']
+      end
+
+      if remote_ips
+        while remote_ips.size > 1 && TRUSTED_PROXIES =~ remote_ips.last.strip
+          remote_ips.pop
+        end
+        return remote_ips.last.strip
+      end
+
+      env['REMOTE_ADDR']
+    end
 end

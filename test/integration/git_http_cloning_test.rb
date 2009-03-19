@@ -9,7 +9,11 @@ class GitHttpCloningTest < ActionController::IntegrationTest
 
     should 'set X-Sendfile headers for subdomains allowing HTTP cloning' do
       ['git.gitorious.org','git.gitorious.local','git.foo.com'].each do |host|
-        get @request_uri, {}, :host => host
+        assert_incremented_by(@repository.cloners, :count, 1) do
+          get @request_uri, {}, :host => host, :remote_addr => '192.71.1.2'
+          last_cloner = @repository.cloners.last
+          assert_equal('192.71.1.2', last_cloner.ip)
+        end
         assert_response :success
         assert_not_nil(headers['X-Sendfile'])
         assert_equal(File.join(GitoriousConfig['repository_base_path'], @repository.real_gitdir, "HEAD"), headers['X-Sendfile'])
