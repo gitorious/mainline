@@ -2,7 +2,8 @@ class Site < ActiveRecord::Base
   has_many :projects
   
   validates_presence_of :title
-  validates_exclusion_of :subdomain, :in => ['http']
+  HTTP_CLONING_SUBDOMAIN = 'git'
+  validates_exclusion_of :subdomain, :in => [HTTP_CLONING_SUBDOMAIN]
   
   attr_protected :subdomain
   

@@ -11,7 +11,7 @@ require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Ra
 
 class GitHttpCloner
   def self.call(env)
-    perform_http_cloning = env['HTTP_HOST'] =~ /^http.*/
+    perform_http_cloning = env['HTTP_HOST'] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
     if perform_http_cloning
       if match = /(.*\.git)(.*)/.match(env['PATH_INFO'])
         path = match[1]

@@ -14,7 +14,7 @@ class SiteTest < ActiveSupport::TestCase
   
   should 'not allow sites with http as subdomain' do
     site = Site.new
-    site.subdomain = 'http'
+    site.subdomain = Site::HTTP_CLONING_SUBDOMAIN
     assert !site.save
     assert_not_nil site.errors.on(:subdomain)
   end
