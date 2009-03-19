@@ -711,7 +711,7 @@ input#openid_url {
    padding-left: 18px;
 }
 
-.fieldWithErrors { margin: 0; display: block;}
+.fieldWithErrors { margin: 0; display: inline-block;}
 .fieldWithErrors input, .fieldWithErrors textarea,
 .fieldWithErrors select {
   border: 1px solid #c30000;

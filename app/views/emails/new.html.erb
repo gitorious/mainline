@@ -5,6 +5,7 @@
 
 <h1><%= t("views.emails.new_alias") -%></h1>
 
+<%= error_messages_for :email -%>
 <% form_for([@user, @email]) do |f| -%>
   <p>
     <%= f.label :address -%>:
