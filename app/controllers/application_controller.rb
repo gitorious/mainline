@@ -250,7 +250,7 @@ class ApplicationController < ActionController::Base
     def redirect_to_top_domain
       host_without_subdomain = {
         :only_path => false, 
-        :host => "#{request.domain}"
+        :host => GitoriousConfig["gitorious_host"]
       }
       if ![80, 443].include?(request.port)
         host_without_subdomain[:host] << ":#{request.port}"
