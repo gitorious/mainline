@@ -13,6 +13,7 @@ class GitHttpCloningTest < ActionController::IntegrationTest
           get @request_uri, {}, :host => host, :remote_addr => '192.71.1.2'
           last_cloner = @repository.cloners.last
           assert_equal('192.71.1.2', last_cloner.ip)
+          assert_equal('http', last_cloner.protocol)
         end
         assert_response :success
         assert_not_nil(headers['X-Sendfile'])

@@ -18,7 +18,7 @@ class GitHttpCloner
         rest = match[2]
         begin
           repo = Repository.find_by_path(path)
-          repo.cloned_from(remote_ip(env)) if rest == '/HEAD'          
+          repo.cloned_from(remote_ip(env), nil, nil, 'http') if rest == '/HEAD'          
           full_path = File.join(GitoriousConfig['repository_base_path'], repo.real_gitdir, rest)
           return [200, {"X-Sendfile" => full_path, 'Content-Type' => 'application/octet-stream'}, []]
         rescue ActiveRecord::RecordNotFound   

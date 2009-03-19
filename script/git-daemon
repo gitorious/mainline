@@ -112,7 +112,7 @@ module Git
         else
           geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
           localization = geoip.country(ip)
-          repository.cloned_from(ip, localization[3], localization[5])
+          repository.cloned_from(ip, localization[3], localization[5], 'git')
         end
       
         Dir.chdir(real_path) do

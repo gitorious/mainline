@@ -351,8 +351,8 @@ class Repository < ActiveRecord::Base
     users_by_email
   end
   
-  def cloned_from(ip, country_code = "--", country_name = nil)
-    cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name)
+  def cloned_from(ip, country_code = "--", country_name = nil, protocol = 'git')
+    cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name, :protocol => protocol)
   end
   
   def wiki?
