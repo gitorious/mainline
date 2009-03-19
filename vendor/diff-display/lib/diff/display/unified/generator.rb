@@ -18,7 +18,13 @@ module Diff::Display
     def self.run(udiff)
       raise ArgumentError, "Object must be enumerable" unless udiff.respond_to?(:each_line)
       generator = new
-      udiff.each_line {|line| generator.process(line.chomp)}
+      udiff.each_line do |line|
+        begin
+          generator.process(line.chomp)
+        rescue ArgumentError => e
+          e.message =~ /^invalid byte sequence/ ? next : raise(e)
+        end
+      end
       generator.finish
       generator.data
     end

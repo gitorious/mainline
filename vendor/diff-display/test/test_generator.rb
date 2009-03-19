@@ -123,6 +123,13 @@ class TestGenerator < Test::Unit::TestCase
     assert !rem.inline_changes?, "rem has inline changes"
     assert !add.inline_changes?, "add has inline_changes"
   end
+  
+  def test_should_not_explode_on_invalid_byte_sequences
+    diff_data = "+s\x8B\xB5\x13\n"
+    assert_nothing_raised do
+      Diff::Display::Unified::Generator.run(diff_data)
+    end
+  end
 
   protected
   def line_numbers_for(diff)
