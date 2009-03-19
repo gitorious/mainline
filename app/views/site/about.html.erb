@@ -22,40 +22,52 @@
 <div class="section">
   <a name="about"></a><h1>About Gitorious</h1>
 
-  <p><strong><a href="/p/gitorious">Gitorious</a> aims to provide a great way of doing distributed opensource 
-    code collaboration</strong></p>
-  
-  <h2>The idea</h2>
-  <p>Traditional code- and project forges offer many great things and has without 
-    a question helped developers of open source software. However, there's always 
-    the issue of long-term maintainability; as humans we always get distracted, 
-    busy and or just plain tired of working with things in the long run.</p>
-  
-  <p>Distributed version control provides a way around this by making everyones 
-    copy a full repository, so if people like someone elses stuff better, or 
-    that someone else is actively maintaining the project they can just pull from 
-    that person instead of the "official" repository. And if the project 
-    maintainer decides to, he can pull those changes into his mainline branch. 
-    That's what makes open source great.</p>
-  
-  <p><strong><a href="/p/gitorious">Gitorious</a></strong> provides a 
-    way of keeping track of these clones easily by:</p>
-  
-  <ul class="bullet_list">
-  	<li>Seeing what they're doing</li>
-  	<li>Knowing where they can be found</li>
-  	<li>Allowing anyone to contribute without being blessed with "commit bits"</li>
-  	<li>Making it easier for maintainers to accept contributions</li>
-  </ul>
-  
-  <p>Gitorious is still under development and there's many many more things I'd like 
-    to do with it. If you have ideas for improvements or technical issues please 
-    do stop by the <a href="http://groups.google.com/group/gitorious">discussion group</a>.</p>
+  <p><%= t("views.site.description") %></p>
   
   <p>
-    Regards,<br />
-    <a href="/users/johan">Johan Sørensen</a><br />
-    <small>Gitorious.org maintainer</small>
+    Gitorious provides open source infrastructure for hosting open source projects
+    that use Git. The central entity in Gitorious is the project, which contains 
+    one or more top-level repositories and any repositories managed by the project's
+    contributors. <br />
+    This allows you, as a project administrator, to keep an eye on what people
+    are working on in their individual clones of your repositories. It also lets 
+    you merge or provide feedback on their contributions. <br />
+    Likewise, as a project contributor, you get a place to host your contributions
+    and provide feedback back into the projects ecosystem and easily collaborate
+    with others on the same project. You get your own personal clone of the project
+    on the site that you can work freely in and a way to package up your changes 
+    and notify the other project members about your changes.
+  </p>
+  
+  <h2>Features</h2>
+  
+  <ul class="bullet_list">
+    <li>Project hosting</li>
+    <li>Hosting of official project repositories</li>
+    <li>Hosting of project repository clones</li>
+    <li>Project wikis</li>
+    <li>Public merge requests and code review</li>
+    <li>Project activity timeline</li>
+    <li>Developer profiles and activity timelines</li>
+    <li>Built in notification systems</li>
+    <li>Free for opensource projects</li>
+    <li>Commercial support and customizations available</li>
+  </ul>
+  
+  <h2>History</h2>
+  <p>
+    Gitorious was started by Johan Sørensen in the end of 2007 as a way to easily
+    host Git repositories for himself. The idea turned out to be so useful that 
+    Gitorius began to offer hosting for other projects as well, for free, 
+    eventually opening up for anyone to create an account.
+  </p>
+  <p>
+    In March 2009 Gitorious.org was folded into <a href="http://shortcut.no">Shortcut AS</a>, 
+    a software company co-founded by Johan. The intention was to improve 
+    Gitorious  beyond what was feasible for a single developer to manage. 
+    Shortcut AS now  officially supports and develops Gitorious in cooperation 
+    with contributors outside the company, while still being 100% open source 
+    under the <a href="http://www.gnu.org/licenses/agpl.txt">GNU Affero General Public License</a>.
   </p>
 </div>
 
