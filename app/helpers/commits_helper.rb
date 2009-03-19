@@ -29,7 +29,12 @@ module CommitsHelper
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
     return if udiff.blank?
-
+    
+    if udiff.respond_to?(:force_encoding)
+      # TODO: move into the diff library?
+      udiff = udiff.force_encoding(Encoding::UTF_8)
+    end
+    
     case display_mode
     when "sidebyside"
       render_sidebyside_diff(udiff)
@@ -38,8 +43,6 @@ module CommitsHelper
     end
   end
   
-  #diff = Diff::Display::Unified.new(load_diff("simple"))
-  #diff.render(Diff::Renderer::Base.new)
   def render_inline_diff(udiff)
     differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
@@ -51,7 +54,6 @@ module CommitsHelper
     out << "</thead>\n"
     out << differ.render(Gitorious::Diff::InlineTableCallback.new)
     out << "</table>"
-    # out << "<pre>" + udiff + "</pre>"
     out
   end
   
