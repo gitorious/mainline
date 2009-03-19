@@ -22,7 +22,6 @@ class ProjectsController < ApplicationController
   before_filter :find_project, :only => [:show, :edit, :update, :confirm_delete]
   before_filter :assure_adminship, :only => [:edit, :update]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
-  before_filter :require_current_eula, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
   

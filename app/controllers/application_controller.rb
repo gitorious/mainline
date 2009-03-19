@@ -23,6 +23,7 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   
   before_filter :public_and_logged_in
+  before_filter :require_current_eula
   
   layout :pick_layout_based_on_site
   
@@ -108,12 +109,15 @@ class ApplicationController < ActionController::Base
     end
     
     def require_current_eula
-      unless current_user.current_license_agreement_accepted?
-        store_location
-        flash[:error] = I18n.t "views.license.terms_not_accepted"
-        redirect_to user_license_path(current_user)
-        return
+      if logged_in?
+        unless current_user.current_license_agreement_accepted?
+          store_location
+          flash[:error] = I18n.t "views.license.terms_not_accepted"
+          redirect_to user_license_path(current_user)
+          return
+        end
       end
+      return true
     end
     
     def find_repository_owner

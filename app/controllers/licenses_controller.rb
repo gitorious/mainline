@@ -19,6 +19,7 @@
 
 class LicensesController < ApplicationController
   before_filter :login_required
+  skip_before_filter :require_current_eula
   
   def show
     if !current_user.current_license_agreement_accepted?
