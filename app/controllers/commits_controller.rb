@@ -47,7 +47,9 @@ class CommitsController < ApplicationController
   def show
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
-    @commit = @git.commit(params[:id])
+    unless @commit = @git.commit(params[:id])
+      handle_missing_sha and return
+    end
     if stale?(:etag => @commit.id, :last_modified => @commit.committed_date.utc)
       @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
       @diffs = @commit.diffs
@@ -78,5 +80,9 @@ class CommitsController < ApplicationController
   end
   
   protected
-    
+    def handle_missing_sha
+      flash[:error] = "No such SHA1 was found"
+      redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project, 
+                      @repository)
+    end
 end

@@ -28,7 +28,8 @@ class CommitsControllerTest < ActionController::TestCase
       @repository.update_attribute(:ready, true)
           
       Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
-      Repository.any_instance.stubs(:git).returns(Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true))
+      @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      Repository.any_instance.stubs(:git).returns(@grit)
       @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
     end
     
@@ -80,6 +81,15 @@ class CommitsControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal "text/plain", @response.content_type
       assert_equal @repository.git.commit(@sha).to_patch, @response.body
+    end
+    
+    should "redirect to the commit log with a msg if the SHA1 was not found" do
+      @grit.expects(:commit).with("123").returns(nil)
+      get :show, :project_id => @project.slug, 
+          :repository_id => @repository.name, :id => "123"
+      assert_response :redirect
+      assert_match(/no such sha/i, flash[:error])
+      assert_redirected_to project_repository_commits_path(@project, @repository)
     end
   end
   
