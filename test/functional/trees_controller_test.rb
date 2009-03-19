@@ -72,7 +72,8 @@ class TreesControllerTest < ActionController::TestCase
     @repository.update_attribute(:ready, true)
     
     Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
-    Repository.any_instance.stubs(:git).returns(Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true))
+    @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    Repository.any_instance.stubs(:git).returns(@grit)
   end
   
   context "#index" do
@@ -124,6 +125,14 @@ class TreesControllerTest < ActionController::TestCase
         
       assert_response :success
       assert_equal "max-age=30, private", @response.headers['Cache-Control']
+    end
+    
+    should "redirect to the tree index with a msg if the tree SHA1 was not found" do
+      @grit.expects(:commit).with("master").returns(nil)
+      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param, 
+            :branch_and_path => ["master", "lib"]
+      assert_response :redirect
+      assert_match(/no such tree sha/i, flash[:error])
     end
   end
   

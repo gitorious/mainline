@@ -29,10 +29,8 @@ class TreesController < ApplicationController
   def show
     @git = @repository.git
     @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    @commit = @git.commit(@ref)
-    unless @commit
-      redirect_to project_repository_tree_path(@project, @repository, 
-                      branch_with_tree("HEAD", @path)) and return
+    unless @commit = @git.commit(@ref)
+      handle_missing_tree_sha and return
     end
     if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
@@ -49,7 +47,9 @@ class TreesController < ApplicationController
     # FIXME: update route when we've fixed rails bug #1939
     @ref = desplat_path(params[:branch])
     ext = params[:archive_format]
-    @commit = @git.commit(@ref)
+    unless @commit = @git.commit(@ref)
+      handle_missing_tree_sha and return
+    end
     
     if !@commit
       flash[:error] = I18n.t "trees_controller.archive_error"
@@ -104,5 +104,11 @@ class TreesController < ApplicationController
         :format => "tar.gz",
       }
       publish :archive_repo, payload.to_json
+    end
+    
+    def handle_missing_tree_sha
+      flash[:error] = "No such tree SHA1 was found"
+      redirect_to project_repository_tree_path(@project, @repository, 
+                      branch_with_tree("HEAD", @path))
     end
 end
