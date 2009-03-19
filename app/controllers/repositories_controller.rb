@@ -45,30 +45,18 @@ class RepositoriesController < ApplicationController
   end
   
   def new
-    # TODO: extract into model
-    if @project
-      @repository = @project.repositories.new
-      @repository.kind = Repository::KIND_PROJECT_REPO
-      @repository.owner = @project.owner
-      if @project.repositories.mainlines.count == 0
-        @repository.name = @project.slug
-      end
-    else
-      @repository = @owner.repositories.new
-      @repository.kind = @owner === Group ? Repository::KIND_TEAM_REPO : Repository::KIND_USER_REPO
+    @repository = @project.repositories.new
+    @repository.kind = Repository::KIND_PROJECT_REPO
+    @repository.owner = @project.owner
+    if @project.repositories.mainlines.count == 0
+      @repository.name = @project.slug
     end
   end
   
   def create
-    # TODO: extract into model
-    if @project
-      @repository = @project.repositories.new(params[:repository])
-      @repository.kind = Repository::KIND_PROJECT_REPO
-      @repository.owner = @project.owner
-    else
-      @repository = @owner.repositories.new(params[:repository])
-      @repository.kind = @owner === Group ? Repository::KIND_TEAM_REPO : Repository::KIND_USER_REPO
-    end
+    @repository = @project.repositories.new(params[:repository])
+    @repository.kind = Repository::KIND_PROJECT_REPO
+    @repository.owner = @project.owner
     @repository.user = current_user
     
     if @repository.save
