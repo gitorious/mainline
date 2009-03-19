@@ -47,15 +47,14 @@
 
 <% if GitoriousConfig['public_mode'] -%>
 <div id="left">
-  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
-    <ul class="with_icons">
-      <% @active_recently.each do |project| -%>
-        <li class="project">
-          <%= link_to h(project.title), project -%>
-          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
-        </li>
-      <% end -%>
-    </ul>
+  <% pull_box(nil, :class => "expose") do -%>
+    <p>
+      Gitorious provides infrastructure for opensource projects who uses 
+      <a href="http://git.or.cz">Git</a>. We're strong proponents of FLOSS 
+      software, therefore Gitorious itself 
+      <a href="/gitorious">is of course opensource</a> as 
+      well. <small><a href="/about">Read more&hellip;</a></small>
+    </p>
   <% end -%>
   
   <% pull_box("Recent activities") do -%>
@@ -71,6 +70,17 @@
   <% pull_box("Active projects <small>(overall)</small>") do -%>
     <ul class="with_icons">
       <% @active_overall.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
+    <ul class="with_icons">
+      <% @active_recently.each do |project| -%>
         <li class="project">
           <%= link_to h(project.title), project -%>
           <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
