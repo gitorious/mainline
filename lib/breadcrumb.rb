@@ -179,6 +179,24 @@ module Breadcrumb
       "edit_account"
     end
   end
+
+  class UserChangePassword
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      @user
+    end
+
+    def title
+      I18n.t("views.users.chg_passwd_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "edit_account_password"
+    end
+  end
  
   class Messages
     def title
