@@ -387,7 +387,7 @@ abbr {
 }
 
 #menu li.secondary.messages {
-  background: transparent url('/images/silk/email.png') no-repeat 0 0;
+  background: transparent url('/images/silk/email.png') no-repeat 0px 1px;
 }
 #menu li.secondary.messages a > span {
   color: #666;
