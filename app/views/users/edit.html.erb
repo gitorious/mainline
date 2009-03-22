@@ -27,19 +27,19 @@
 
 <% form_for @user, :url => user_path do |f| -%>
   <p>
-    <%= f.label :email, t(:email, :scope => 'activerecord.attributes.user') -%><br />
+    <%= f.label :fullname, t("views.users.realname") -%><br />
+    <%= f.text_field :fullname, :class => "text" -%>
+  </p>
+  <p>
+    <%= f.label :email, t(:email, :scope => 'views.users') -%><br />
     <%= f.text_field :email, :class => "text" -%>
   </p>
   <p>
+    <%= f.check_box :public_email -%>
     <%= f.label :public_email, t(:public_email, :scope => 'activerecord.attributes.user') -%>
     <span class="hint">
       (The email will be encoded to prevent scraping)
     </span><br />
-    <%= f.check_box :public_email -%>
-  </p>
-  <p>
-    <%= f.label :fullname, t("views.users.realname") -%><br />
-    <%= f.text_field :fullname, :class => "text" -%>
   </p>
   <p>
     <%= f.label :url, t("views.users.url") -%><br />
@@ -51,12 +51,12 @@
   </p>
   
   <p>
+    <%= f.check_box :wants_email_notifications %>
     <%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
     <span class="hint">
       <%= t("views.users.describe_email_notifications") -%>
     </span>
     <br />
-    <%= f.check_box :wants_email_notifications %>
   </p>
   
   <%= f.submit t("views.common.save") -%>
