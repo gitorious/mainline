@@ -22,7 +22,7 @@
 <%= error_messages_for :user -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @user} -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => Breadcrumb::UserEdit.new(@user)} -%>
 <% end -%>
 
 <% form_for @user, :url => user_path do |f| -%>

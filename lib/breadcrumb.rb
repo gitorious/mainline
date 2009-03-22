@@ -154,14 +154,32 @@ module Breadcrumb
     end
     
     def title
-      "Merge requests"
+      "Merge Requests"
     end
 
     def breadcrumb_css_class
       "merge_requests"
     end
   end
-  
+ 
+  class UserEdit
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      @user
+    end
+
+    def title
+      I18n.t("views.users.edit_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "edit_account"
+    end
+  end
+ 
   class Messages
     def title
       I18n.t("views.messages.collection_title")
