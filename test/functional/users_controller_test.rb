@@ -22,6 +22,45 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class UsersControllerTest < ActionController::TestCase
   
+  def turn_ssl_on
+    @request.env["HTTPS"] = "on"
+  end
+  
+  without_ssl_context do
+    context "GET :new" do
+      setup { get :new }
+      should_redirect_to_ssl
+    end
+    context "POST :create" do
+      setup { post :create }
+      should_redirect_to_ssl
+    end
+    context "GET :edit" do
+      setup { get :edit }
+      should_redirect_to_ssl
+    end
+    context "PUT :update" do
+      setup { put :update }
+      should_redirect_to_ssl
+    end
+    context "GET :password" do
+      setup { get :password }
+      should_redirect_to_ssl
+    end
+    context "POST :reset_password" do
+      setup { post :reset_password }
+      should_redirect_to_ssl
+    end
+    context "PUT :update_password" do
+      setup { put :update_password }
+      should_redirect_to_ssl
+    end
+    context "GET :forgot_password" do
+      setup { get :forgot_password }
+      should_redirect_to_ssl
+    end
+  end
+  
   should_render_in_global_context
 
   should " activate user" do
@@ -74,55 +113,57 @@ class UsersControllerTest < ActionController::TestCase
       :password => 'quire', :password_confirmation => 'quire' }.merge(options)
   end
 
-  should " allow signups" do
-    assert_difference("User.count") do
+  with_ssl_context do
+    should "allow signups" do
+      assert_difference("User.count") do
+        create_user
+        assert_response :redirect
+      end
+    end
+
+    should "require login on signup" do
+      assert_no_difference("User.count") do
+        create_user(:login => nil)
+        assert_not_nil assigns(:user).errors.on(:login)
+        assert_template("users/new")
+      end
+    end
+
+    should "require password on signup" do
+      assert_no_difference("User.count") do
+        create_user(:password => nil)
+        assert !assigns(:user).errors.on(:password).empty?
+        assert_template(("users/new"))
+      end
+    end
+
+    should "require password confirmation on signup" do
+      assert_no_difference("User.count") do
+        create_user(:password_confirmation => nil)
+        assert !assigns(:user).errors.on(:password_confirmation).empty?, 'empty? should be false'
+        assert_template(("users/new"))
+      end
+    end
+
+    should "require email on signup" do
+      assert_no_difference("User.count") do
+        create_user(:email => nil)
+        assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
+        assert_template(("users/new"))
+      end
+    end
+
+    should "be successful with valid data" do
+      assert_difference("User.count") do
+        create_user
+      end
+    end
+
+    should "requires the user to activate himself after posting valid data" do
       create_user
-      assert_response :redirect
+      assert_equal nil, User.authenticate('quire@example.com', 'quire')
+      assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
     end
-  end
-
-  should " require login on signup" do
-    assert_no_difference("User.count") do
-      create_user(:login => nil)
-      assert_not_nil assigns(:user).errors.on(:login)
-      assert_template("users/new")
-    end
-  end
-
-  should " require password on signup" do
-    assert_no_difference("User.count") do
-      create_user(:password => nil)
-      assert !assigns(:user).errors.on(:password).empty?
-      assert_template(("users/new"))
-    end
-  end
-
-  should " require password confirmation on signup" do
-    assert_no_difference("User.count") do
-      create_user(:password_confirmation => nil)
-      assert !assigns(:user).errors.on(:password_confirmation).empty?, 'empty? should be false'
-      assert_template(("users/new"))
-    end
-  end
-
-  should " require email on signup" do
-    assert_no_difference("User.count") do
-      create_user(:email => nil)
-      assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
-      assert_template(("users/new"))
-    end
-  end
-
-  should " be successful with valid data" do
-    assert_difference("User.count") do
-      create_user
-    end
-  end
-
-  should "requires the user to activate himself after posting valid data" do
-    create_user
-    assert_equal nil, User.authenticate('quire@example.com', 'quire')
-    assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
   end
 
   should "shows the user" do
@@ -181,30 +222,32 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal user.events.find(:all, :limit => 30, :order => "created_at desc"), assigns(:events)
   end
 
-  context "#forgot_password" do
-    should "GETs the page fine for everyone" do
-      get :forgot_password
-      assert_response :success
-      assert_template(("forgot_password"))
+  with_ssl_context do
+    context "#forgot_password" do
+      should "GETs the page fine for everyone" do
+        get :forgot_password
+        assert_response :success
+        assert_template(("forgot_password"))
+      end
     end
-  end
 
-  context "#reset_password" do
-    should "redirects to forgot_password if nothing was found" do
-      post :reset_password, :user => {:email => "xxx"}
-      assert_redirected_to(forgot_password_users_path)
-      assert_match(/invalid email/i, flash[:error])
-    end
+    context "#reset_password" do
+      should "redirects to forgot_password if nothing was found" do
+        post :reset_password, :user => {:email => "xxx"}
+        assert_redirected_to(forgot_password_users_path)
+        assert_match(/invalid email/i, flash[:error])
+      end
   
-    should "sends a new password if email was found" do
-      u = users(:johan)
-      User.expects(:generate_random_password).returns("secret")
-      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
-      post :reset_password, :user => {:email => u.email}
-      assert_redirected_to(root_path)
-      assert_equal "A new password has been sent to your email", flash[:notice]
+      should "sends a new password if email was found" do
+        u = users(:johan)
+        User.expects(:generate_random_password).returns("secret")
+        Mailer.expects(:deliver_forgotten_password).with(u, "secret")
+        post :reset_password, :user => {:email => u.email}
+        assert_redirected_to(root_path)
+        assert_equal "A new password has been sent to your email", flash[:notice]
     
-      assert_not_nil User.authenticate(u.email, "secret")
+        assert_not_nil User.authenticate(u.email, "secret")
+      end
     end
   end
 
@@ -217,7 +260,7 @@ class UsersControllerTest < ActionController::TestCase
       GitoriousConfig['public_mode'] = true
     end
   
-    should " activate user" do
+    should "activate user" do
       assert_nil User.authenticate('moe', 'test')
       get :activate, :activation_code => users(:moe).activation_code
       assert_redirected_to('/')
@@ -233,19 +276,21 @@ class UsersControllerTest < ActionController::TestCase
       assert_nil User.authenticate('moe@example.com', 'test')
     end
   
-    should "GET /users/new" do
-      get :new
-      assert_redirected_to(root_path)
-      assert_match(/Action requires login/, flash[:error])
-    end
-  
     should "GET /users/johan" do
       get :show, :id => users(:johan).to_param
       assert_redirected_to(root_path)
       assert_match(/Action requires login/, flash[:error])
     end
     
+    should "GET /users/new" do
+      turn_ssl_on
+      get :new
+      assert_redirected_to(root_path)
+      assert_match(/Action requires login/, flash[:error])
+    end
+  
     should "GET /users/forgot_password" do
+      turn_ssl_on
       get :forgot_password
       assert_response :success
     end
@@ -254,6 +299,7 @@ class UsersControllerTest < ActionController::TestCase
   context "account-related tests" do
     setup do
       login_as :johan
+      turn_ssl_on
     end
     
     should "require current_user" do
@@ -262,12 +308,12 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
-  
+
     should "GET /users/johan/edit is successful" do
       get :edit, :id => users(:johan).to_param
       assert_response :success
     end
-  
+
     should "PUT /users/create with valid data is successful" do
       put :update, :id => users(:johan).to_param, :user => {
         :password => "fubar", 
@@ -283,13 +329,13 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
-  
+
     should "GET /users/johan/password is a-ok" do
       get :password, :id => users(:johan).to_param
       assert_response :success
       assert_equal users(:johan), assigns(:user)
     end
-    
+  
     should "PUT requires current_user" do
       login_as :moe
       put :update_password, :id => users(:johan).to_param, :user => {
@@ -299,7 +345,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
-  
+
     should "PUT /users/joan/update_password updates password if old one matches" do
       user = users(:johan)
       put :update_password, :id => user.to_param, :user => {
@@ -310,7 +356,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_match(/Your password has been changed/i, flash[:notice])
       assert_equal user, User.authenticate(user.email, "fubar")
     end
-  
+
     should "PUT /users/johan/update_password does not update password if old one is wrong" do
       put :update_password, :id => users(:johan).to_param, :user => {
         :current_password => "notthecurrentpassword", 
@@ -322,7 +368,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
       assert_nil User.authenticate(users(:johan).email, "fubar")
     end
-  
+
     should " be able to update password, even if user is openid enabled" do
       user = users(:johan)
       user.update_attribute(:identity_url, "http://johan.someprovider.com/")

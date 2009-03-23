@@ -25,6 +25,45 @@ class KeysControllerTest < ActionController::TestCase
   
   def setup
     @user = users(:johan)
+    @request.env["HTTPS"] = "on"
+  end
+  
+  without_ssl_context do
+    context "GET :index" do
+      setup do
+        login_as :johan
+        get :index
+      end
+      should_redirect_to_ssl
+    end    
+    context "GET :new" do
+      setup do
+        login_as :johan
+        get :new
+      end
+      should_redirect_to_ssl
+    end    
+    context "POST :create" do
+      setup do
+        login_as :johan
+        post :create
+      end
+      should_redirect_to_ssl
+    end
+    context "GET :show" do
+      setup do
+        login_as :johan
+        get :show
+      end
+      should_redirect_to_ssl
+    end
+    context "DELETE :destroy" do
+      setup do 
+        login_as :johan
+        delete :destroy
+      end
+      should_redirect_to_ssl
+    end
   end
 
   context "index" do

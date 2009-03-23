@@ -25,3 +25,4 @@ ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT,
 #   :namespace => 'ks1' 
 # }
 
+SslRequirement.disable_ssl_check = true

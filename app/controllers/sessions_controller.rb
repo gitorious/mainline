@@ -24,6 +24,7 @@ require "yadis"
 class SessionsController < ApplicationController
   skip_before_filter :public_and_logged_in
   renders_in_site_specific_context
+  ssl_required :new, :create, :destroy
   
   # render new.rhtml
   def new

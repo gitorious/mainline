@@ -22,6 +22,8 @@ class UsersController < ApplicationController
   before_filter :find_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
   renders_in_global_context
+  ssl_required :new, :create, :edit, :update, :password, :reset_password, 
+                :forgot_password, :update_password
  
   # render new.rhtml
   def new

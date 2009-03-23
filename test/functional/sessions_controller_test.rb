@@ -30,6 +30,27 @@ class SessionsControllerTest < ActionController::TestCase
   def cookie_for(user)
     auth_token users(user).remember_token
   end
+  
+  def setup
+    @request.env['HTTPS'] = "on"
+  end
+  
+  without_ssl_context do
+    context "GET to :new" do
+      setup { get :new }
+      should_redirect_to_ssl
+    end
+    
+    context "POST to :create" do
+      setup { post :new }
+      should_redirect_to_ssl
+    end
+    
+    context "DELETE to :destroy" do
+      setup { delete :destroy }
+      should_redirect_to_ssl
+    end
+  end
 
   should " login and redirect" do
     @controller.stubs(:using_open_id?).returns(false)
