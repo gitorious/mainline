@@ -32,7 +32,7 @@ class SiteController < ApplicationController
     end
     
     last_event = Event.latest(1).first || Project.first
-    if last_event.nil? or stale?(:etag => last_event, :last_modified => last_event.created_at)
+    if last_event.nil? || stale_conditional?(last_event, last_event.created_at)
       @projects = Project.find(:all, :limit => 10, :order => "id desc")
       @top_repository_clones = Repository.most_active_clones
       @active_recently = Project.most_active_recently

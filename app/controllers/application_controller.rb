@@ -268,6 +268,13 @@ class ApplicationController < ActionController::Base
       redirect_to host_without_subdomain
     end
     
+    # A wrapper around ActionPack's #stale?, that always returns true
+    # if there's data in the flash hash
+    def stale_conditional?(etag, last_modified)
+      return true unless flash.empty?
+      stale?(:etag => etag, :last_modified => last_modified)
+    end
+    
   private  
     def unshifted_polymorphic_path(repo, path_spec)
       if path_spec[0].is_a?(Symbol)

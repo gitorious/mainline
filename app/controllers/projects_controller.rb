@@ -61,8 +61,7 @@ class ProjectsController < ApplicationController
     @events = @project.events.top.paginate(:all, :page => params[:page],
                 :order => "created_at desc", :include => [:user, :project])
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
-    if stale?(:etag => [@project, @events.first], 
-              :last_modified => (@events.first || @project).created_at)
+    if stale_conditional?([@project, @events.first], (@events.first || @project).created_at)
       respond_to do |format|
         format.html
         format.xml  { render :xml => @project }
@@ -109,6 +108,7 @@ class ProjectsController < ApplicationController
     @project.attributes = params[:project]
     if @project.save && @project.wiki_repository.save
       @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
+      flash[:success] = "Project details updated"
       redirect_to project_path(@project)
     else
       render :action => 'new'

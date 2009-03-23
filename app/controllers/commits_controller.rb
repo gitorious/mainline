@@ -34,7 +34,7 @@ class CommitsController < ApplicationController
       commit = @git.commit(@ref)
       head = Grit::Head.new(commit.id_abbrev, commit)
     end
-    if stale?(:etag => head.commit.id, :last_modified => head.commit.committed_date.utc)
+    if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
       @root = Breadcrumb::Branch.new(head, @repository)
       @commits = @repository.cached_paginated_commits(@ref, params[:page])
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
@@ -50,7 +50,7 @@ class CommitsController < ApplicationController
     unless @commit = @git.commit(params[:id])
       handle_missing_sha and return
     end
-    if stale?(:etag => @commit.id, :last_modified => @commit.committed_date.utc)
+    if stale_conditional?(@commit.id, @commit.committed_date.utc)
       @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
       @diffs = @commit.diffs
       @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
