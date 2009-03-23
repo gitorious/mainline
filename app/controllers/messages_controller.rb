@@ -75,4 +75,10 @@ class MessagesController < ApplicationController
       :limit => 10).reject{|u|u == current_user}
     render :layout => false
   end
+  
+  protected
+    def ssl_required?
+      # Always required.
+      true
+    end
 end
