@@ -26,6 +26,28 @@
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @user} -%>
 <% end -%>
 
+<div class="with_divider">
+  <div id="left">
+    <% pull_box(t("views.site.dashboard.projects")) do -%>
+      <ul class="with_icons">
+        <% @projects.each do |project| -%>
+          <li class="project"><%= link_to h(project.slug), project -%></li>
+        <% end -%>
+      </ul>
+    <% end -%>
+  </div>
+  <div id="right">
+    <% pull_box(t("views.site.dashboard.clones")) do -%>
+      <ul class="with_icons">
+        <% @repositories.each do |repo| -%>
+          <li class="clone"><%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%></li>
+        <% end -%>
+      </ul>
+    <% end -%>
+  </div>
+  <div class="clear"></div>
+</div>
+
 <% unless @events.empty? -%>
   <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>  
@@ -59,23 +81,11 @@
       <li class="edit_account_password"><%= link_to t("views.users.chg_passwd_action"), password_user_path -%></li>
     <% end -%>
   </ul>
-
-
-  <% unless @projects.blank? -%>
-    <h4><%= t("views.site.dashboard.projects") %>:</h4>
-    <ul>
-    <% @projects.each do |project| -%>
-      <li><%= link_to h(project.slug), project -%></li>
-    <% end -%>
-    </ul>
-  <% end -%>
   
-  <% unless @repositories.blank? -%>
-    <h4><%= t("views.site.dashboard.clones") %></h4>
-    <ul>
-    <% @repositories.each do |repo| -%>
-      <li><%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%></li>
+  <h4>Team memberships</h4>
+  <ul>
+    <% @user.groups.each do |group| -%>
+      <li><%= link_to h(group.title), group -%>
     <% end -%>
-    </ul>
-  <% end -%>
+  </ul>
 <% end -%>
