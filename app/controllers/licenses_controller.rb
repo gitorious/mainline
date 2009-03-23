@@ -23,26 +23,26 @@ class LicensesController < ApplicationController
   
   def show
     if !current_user.current_license_agreement_accepted?
-      flash[:errors] = t("views.license.terms_not_accepted")
+      flash[:notice] = t("views.license.terms_not_accepted")
       redirect_to :action => 'edit' and return
     end
   end
   
   def edit
     if current_user.current_license_agreement_accepted?
-      flash[:errors] = t("views.license.terms_already_accepted")
+      flash[:notice] = t("views.license.terms_already_accepted")
       redirect_to :action => :show and return
     end
   end
   
   def update
-    current_user.eula_version = params[:eula_version]
+    current_user.eula_version = params[:user][:accepted_license_agreement_version]
     if current_user.current_license_agreement_accepted?
-      flash[:notice] = t("views.license.terms_accepted")
+      flash[:success] = t("views.license.terms_accepted")
       current_user.save!
       redirect_back_or_default :action => :show
     else
-      flash[:errors] = "You need to accept the latest agreement"
+      flash[:error] = t("views.license.terms_not_accepted")
       redirect_to :action => :edit
     end
   end
