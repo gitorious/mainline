@@ -40,7 +40,6 @@ class SessionsController < ApplicationController
   def destroy
     self.current_user.forget_me if logged_in?
     cookies.delete :auth_token
-    clear_varnish_auth_cookie
     reset_session
     flash[:notice] = "You have been logged out."
     redirect_back_or_default('/')

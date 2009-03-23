@@ -126,14 +126,17 @@ class SessionsControllerTest < ActionController::TestCase
   context 'Bypassing cachíng for authenticated users' do
     should 'be set when logging in' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies['authenticated']
+      assert_not_nil @response.headers['X-Logged-In']
     end
     
     should 'be removed when logging out' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies['authenticated']
-      delete :destroy
-      assert_nil cookies['authenticated']
+      assert_not_nil @response.headers['X-Logged-In']
+    end
+    
+    should 'not be set when logging in with incorrect password' do
+      get :create, :email => 'johan@johansorensen.com', :password => 'haxx'
+      assert_nil @response.headers['X-Logged-In']
     end
   end
 end
