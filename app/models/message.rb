@@ -68,7 +68,7 @@ class Message < ActiveRecord::Base
   end
   
   def breadcrumb_parent
-    in_reply_to || Breadcrumb::Messages.new
+    in_reply_to || Breadcrumb::Messages.new(sender)
   end
   
   def display_state_for(a_user)

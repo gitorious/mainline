@@ -199,20 +199,30 @@ module Breadcrumb
   end
  
   class Messages
+    def initialize(user)
+      @user = user
+    end
+    
     def title
       I18n.t("views.messages.collection_title")
     end
+    
     def breadcrumb_parent
-      nil
+      @user
     end
+    
     def breadcrumb_css_class
       "emails"
     end
   end
   
   class Mailbox
+    def initialize(user)
+      @user = user
+    end
+    
     def breadcrumb_parent
-      Messages.new
+      Messages.new(@user)
     end
   end
   
@@ -230,6 +240,7 @@ module Breadcrumb
     def title
       I18n.t("views.messages.sent_messages")
     end
+    
     def breadcrumb_css_class
       "sent_emails"
     end

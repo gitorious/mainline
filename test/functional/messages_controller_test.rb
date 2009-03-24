@@ -186,6 +186,10 @@ class MessagesControllerTest < ActionController::TestCase
     should_assign_to :message
     should_respond_with :success
     should_render_template :new
+    
+    should "set the sender" do
+      assert_equal users(:johan), assigns(:message).sender
+    end
   end
   
   context 'On POST to auto_complete_for_message_recipients' do

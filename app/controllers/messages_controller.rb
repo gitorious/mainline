@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
   
   def index
     @messages = current_user.top_level_messages.paginate(:page => params[:page])
-    @root = Breadcrumb::ReceivedMessages.new
+    @root = Breadcrumb::ReceivedMessages.new(current_user)
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @messages}
@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
   def sent
     @messages = current_user.sent_messages.paginate(:all,
       :page => params[:page])
-    @root = Breadcrumb::SentMessages.new
+    @root = Breadcrumb::SentMessages.new(current_user)
   end
   
   def read
@@ -39,7 +39,10 @@ class MessagesController < ApplicationController
   end
 
   def create
-    thread_options = params[:message].merge({:recipients => params[:message][:recipients], :sender => current_user})
+    thread_options = params[:message].merge({
+      :recipients => params[:message][:recipients], 
+      :sender => current_user
+    })
     @messages = MessageThread.new(thread_options)
     if @messages.save
       flash[:notice] =  "#{@messages.title} sent"
@@ -51,7 +54,7 @@ class MessagesController < ApplicationController
   end
   
   def new
-    @message = Message.new
+    @message = current_user.sent_messages.new
   end
   
   # POST /messages/<id>/reply
