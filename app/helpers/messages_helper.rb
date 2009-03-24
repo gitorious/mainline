@@ -4,12 +4,11 @@ module MessagesHelper
   end
   
   def sender_and_recipient_for(message)
-    sender, recipient = if message.recipient == current_user
+    if message.recipient == current_user
       [message.sender.title, "me"]
     else
       ["me", message.recipient.title]
     end
-    return [sender, recipient]    
   end
   
   def message_title(message)
