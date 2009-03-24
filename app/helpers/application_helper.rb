@@ -42,6 +42,16 @@ module ApplicationHelper
     concat(out)
   end
   
+  def dialog_box(title, options = {}, &block)
+    css_class = options.delete(:class)
+    out = %Q{<div class="dialog-box #{css_class}">}
+    out << %Q{<h3 class="round-top-5 dialog-box-header">#{title}</h3>} if title
+    out << %Q{<div class="dialog-box-content">}
+    out << capture(&block)
+    out << "</div></div>"
+    concat(out)
+  end
+  
   def markdown(text, options = [:smart])
     rd = RDiscount.new(text.to_s, *options)
     rd.to_html

@@ -216,7 +216,7 @@ abbr {
 
 #container #content {
   padding: 20px;
-  min-height: 300px;
+  min-height: 500px;
 }
 
 #container #content.with_sidebar {
@@ -2153,3 +2153,26 @@ div.archive-download-box p {
 
 .pull-box.expose p, .pull-box.expose li { font-size: 16px; }
 .pull-box.expose li                     { margin-bottom: 10px; }
+
+/* Dialog boxes */
+
+.dialog-box {
+  padding: 0;
+  margin: 20px auto 150px auto;
+  width: 500px;
+  background: transparent url("/images/dialog_bg_bottom.png") repeat-x left bottom;
+}
+
+.dialog-box .dialog-box-content {
+  padding: 20px;
+  border: 2px solid #4e4e4e;
+  background: transparent url("/images/dialog_bg_top.png") repeat-x left top;
+}
+
+.dialog-box .dialog-box-header {
+  background: #4e4e4e url("/images/dialog_header_bg.png") repeat-x;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0 5px 0;
+  margin: 0;
+}

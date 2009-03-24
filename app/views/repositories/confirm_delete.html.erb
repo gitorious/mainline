@@ -17,8 +17,7 @@
 #++
 %>
 
-<h1><%= t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@owner.title)) %></h1>
-
+<% dialog_box(t("views.repos.confirm_delete", :repo => @repository.name, :title => h(@owner.title))) do %>
 <p class="important_message">
   <%= t("views.repos.message_delete") %>
   
@@ -26,6 +25,7 @@
     <%= f.submit(t("views.repos.btn_delete")) -%>
   <% end -%>
 </p>
+<% end -%>
 
 <% content_for :sidebar do -%>
   <ul class="links">
