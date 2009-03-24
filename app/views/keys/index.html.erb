@@ -27,6 +27,7 @@
 
 <table class="listing">
 	<thead>
+	  <th>State</th>
 		<th>Name</th>
 		<th>Algorithm</th>
 		<th>Content</th>
@@ -35,6 +36,10 @@
 	</thead>
 	<% @ssh_keys.each do |ssh_key| -%>
 	<tr class="<%= cycle('even', 'odd') -%>">
+	  <td>
+	    <%= image_tag(ssh_key.ready? ? "silk/accept.png" : "silk/stop.png", 
+	          :title => ssh_key.ready? ? 'Ready' : 'Not ready') -%>
+	  </td>
 	  <td><%=h ssh_key.username_and_host -%></td>
 	  <td><%=h ssh_key.algorithm -%></td>
 	  <td>
