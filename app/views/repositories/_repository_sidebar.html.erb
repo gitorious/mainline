@@ -10,7 +10,7 @@
   <% else -%>
     <div class="user">
       <%= gravatar(repository.user.email, :size => 16, :style => "tiny") %>
-      <%= link_to h(repository.user.login), repository.user -%>
+      <%= link_to h(repository.user.title), repository.user -%>
     </div>
   <% end -%>
 </li>

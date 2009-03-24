@@ -357,8 +357,8 @@
         },
         :edit_group => "Edit/show group members",
         :show_group => "Show group members",
-        :by_teams => "Teams",
-        :by_users => "Personal",
+        :by_teams => "Team clones",
+        :by_users => "Personal clones",
       },
       :projects => {
         :title => "Projects",
