@@ -23,49 +23,93 @@
 
 <h1><%=h @group.name -%></h1>
 
-<h3>Repositories (<%= @group.repositories.count -%>)</h3>
-<ul class="repository_list">
-  <h4>Project repositories</h4>
-  <% @group.repositories.mainlines.each do |repository| -%>
-    <li>
-      <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
-      <%= link_to h(repository.name), group_project_repository_path(@group, repository.project, repository) -%>
-      <div class="hint">
-        <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
-      </div>
-    </li>
+<div class="with_divider">
+  <div id="left">
+  <% pull_box("Members") do -%>
+    <ul>
+      <% if @memberships.empty? -%>
+        <li><em>None</em></li>
+      <% end -%>
+      <% @memberships.each do |membership| -%>
+        <li>
+          <div class="user">
+            <%= gravatar(membership.user.email, :size => 16, :style => "tiny") %>
+            <%= link_to h(membership.user.title), user_path(membership.user) -%>
+            <small class="hint">(<%= membership.role.name -%>)</small>
+          </div>
+        </li>
+      <% end -%>
+    </ul>
   <% end -%>
-  <h4>Repository clones</h4>
-  <% @group.repositories.clones.each do |repository| -%>
-    <li>
-      <%= link_to(h(repository.project.title), project_path(repository.project)) -%>: 
-      <%= link_to h(repository.name), group_project_repository_path(@group, repository.project, repository) -%>
-      <div class="hint">
-        <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
-      </div>
-    </li>
+  
+  <% pull_box("Repository mainlines") do -%></h4>
+    <ul class="with_icons">
+      <% if @group.repositories.mainlines.empty? -%>
+        <li><em>None</em></li>
+      <% end -%>
+      <% @group.repositories.mainlines.each do |repository| -%>
+      <li class="repository">
+        <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}", 
+              group_project_repository_path(@group, repository.project, repository) -%>
+        <span class="hint">
+          <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
+        </span>
+      </li>
+      <% end -%>
+    </ul>
   <% end -%>
-</ul>
-
+  </div>
+  <div id="right">
+  <% pull_box("Projects") do -%>
+    <ul class="with_icons">
+      <% if @group.projects.empty? -%>
+        <li><em>None</em></li>
+      <% end -%>
+      <% @group.projects.each do |project| -%>
+        <li class="project"><%= link_to h(project.title), project -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  
+  <% pull_box("Repository clones") do -%>
+    <ul class="with_icons">
+    <% if @group.repositories.clones.empty? -%>
+      <li><em>None</em></li>
+    <% end -%>
+    <% @group.repositories.clones.each do |repository| -%>
+      <li class="clone">
+        <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}", 
+              group_project_repository_path(@group, repository.project, repository) -%>
+        <div class="hint">
+          <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
+        </div>
+      </li>
+    <% end -%>
+    </ul>
+  <% end -%>
+  </div>
+  <div class="clear"></div>
+</div>  
+  
 <h3>Team activity</h3>
 <%= render :partial => "events/events", :locals => { :events => @events } -%>
 
 <% content_for :sidebar do -%>
+  <ul>
+    <% if @group.creator -%>
+    <li>
+      <strong>Started by:</strong> 
+      <%= link_to h(@group.creator.title), @group.creator -%>
+    </li>
+    <% end -%>
+    <li>
+      <strong>Created:</strong>
+      <%= @group.created_at.to_s(:short) -%>
+    </li>
+  </ul>
   <ul class="links">
     <% if @group.admin?(current_user) -%>
       <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
-    <% end -%>
-  </ul>
-  
-  <h3>Members (<%= @group.members.count -%>)</h3>
-  <ul class="committers">
-    <% @group.members.each do |user| -%>
-      <li>
-        <div class="user">
-          <%= gravatar(user.email, :size => 16, :style => "tiny") %>
-          <%= link_to h(user.title), user_path(user) -%>
-        </div>
-      </li>
     <% end -%>
   </ul>
 <% end -%>
