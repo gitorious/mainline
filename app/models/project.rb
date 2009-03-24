@@ -226,6 +226,16 @@ class Project < ActiveRecord::Base
       self.wiki_repository.owner = another_owner
     end
   end
+  
+  # TODO: Add tests
+  def oauth_consumer
+    case Rails.env
+    when "test"
+      @oauth_consumer ||= OAuth::TestConsumer.new
+    else
+      @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, :site => oauth_signoff_site)
+    end
+  end
 
   protected    
     def create_wiki_repository

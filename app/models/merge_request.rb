@@ -205,24 +205,34 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  def terms_accepted(oauth_request_token, oauth_request_secret)
-    validate_through_oauth(oauth_request_token, oauth_request_secret) do
+  def oauth_request_token=(token)
+    self.oauth_token = token.token
+    self.oauth_secret = token.secret
+  end
+  
+  def terms_accepted
+    validate_through_oauth do
       confirmed_by_user
+      callback_response = access_token.post('/merge_requests', {'commit_id' => ending_commit, 'user_name' => user.title, 'user_email' => user.email})
+      update_attributes(:contribution_agreement_version => callback_response.body)
     end
   end
   
-  def validate_through_oauth(token, secret)
-    yield if valid_oauth_credentials?(token, secret)
+  def validate_through_oauth
+    yield if valid_oauth_credentials?
   end
   
-  def valid_oauth_credentials?(token, secret)
-    access_token = CONSUMER.build_access_token(token, secret)
+  
+  def access_token
+    @access_token ||= oauth_consumer.build_access_token(oauth_token, oauth_secret)
+  end
+  
+  def oauth_consumer
+    target_repository.project.oauth_consumer
+  end
+  
+  def valid_oauth_credentials?
     response = access_token.get("/merge_requests.xml")
-    RAILS_DEFAULT_LOGGER.debug("OAuth: Sending off request")
-    post_response = access_token.post('/merge_requests', {'commit_id' => ending_commit, 'user_name' => user.title, 'user_email' => user.email})
-    RAILS_DEFAULT_LOGGER.debug("OAuth: Sent request, got #{post_response.body}")
-    return Net::HTTPSuccess === post_response
+    return Net::HTTPSuccess === response
   end
-  
-  
 end

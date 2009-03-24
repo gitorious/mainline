@@ -73,7 +73,7 @@ class MergeRequestsController < ApplicationController
   
   def terms_accepted
     @merge_request = @repository.merge_requests.find(params[:id])
-    if @merge_request.terms_accepted(session[:oauth_key], session[:oauth_secret])
+    if @merge_request.terms_accepted
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
       flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
     else
@@ -149,6 +149,8 @@ class MergeRequestsController < ApplicationController
     def merge_request_created
       if @merge_request.acceptance_of_terms_required?
         request_token = obtain_oauth_request_token
+        @merge_request.oauth_request_token = request_token
+        @merge_request.save
         returning_page = terms_accepted_project_repository_merge_request_path(
             @repository.project, 
             @merge_request.target_repository, 
@@ -177,9 +179,7 @@ class MergeRequestsController < ApplicationController
     end
     
     def obtain_oauth_request_token
-      request_token = CONSUMER.get_request_token
-      session[:oauth_key]     = request_token.token
-      session[:oauth_secret]  = request_token.secret
+      request_token = @merge_request.oauth_consumer.get_request_token
       return request_token
     end
     

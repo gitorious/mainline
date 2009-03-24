@@ -184,9 +184,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		should "create the record on successful data" do
 			login_as :johan
 			mock_token = mock("Mocked access token")
-			mock_token.stubs(:key).returns("key")
+			mock_token.stubs(:token).returns("key")
 			mock_token.stubs(:secret).returns("secret")
-			mock_token.stubs(:authorize_url).returns("http://nowhere.com/authorize")
+			mock_token.stubs(:authorize_url).returns("http://oauth.example/authorize?key=123")
 			@controller.expects(:obtain_oauth_request_token).returns(mock_token)
 			assert_difference("MergeRequest.count") do
 				do_post

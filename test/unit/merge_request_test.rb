@@ -41,9 +41,8 @@ class MergeRequestTest < ActiveSupport::TestCase
       mr.target_repository = repositories(:johans2) # doesn't deliver messages to the actor
       mr.stubs(:valid_oauth_credentials?).returns(true)
       mr.save
-      mr.terms_accepted("key","secret")
+      mr.terms_accepted
     end
-    # assert !Mailer.deliveries.empty?, 'empty? should be false'
   end
   
   should "has a merged? status" do
@@ -92,15 +91,16 @@ class MergeRequestTest < ActiveSupport::TestCase
   should 'have a transition from pending to open' do
     mr = @merge_request.clone
     assert mr.pending_acceptance_of_terms?
-    CONSUMER.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
-    mr.terms_accepted('key', 'secret')
+    @merge_request.oauth_consumer.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
+    mr.terms_accepted
     assert mr.open?
   end
   
   should 'not be set to open if OAuth validation fails' do
     mr = @merge_request.clone
-    CONSUMER.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
-    mr.terms_accepted('key', 'invalid secret')
+    mr.oauth_token = "key"
+    mr.oauth_secret = "invalid_secret"
+    mr.oauth_consumer.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
     assert !mr.open?
   end
   

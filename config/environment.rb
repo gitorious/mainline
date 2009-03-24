@@ -95,7 +95,6 @@ Rails::Initializer.run do |config|
   ]
   config.after_initialize do
     OAuth::Consumer::CA_FILE = nil
-    CONSUMER = OAuth::Consumer.from_options(GitoriousConfig['oauth'])
   end  
   
 end
