@@ -52,7 +52,7 @@ class CommitsController < ApplicationController
     end
     if stale_conditional?(@commit.id, @commit.committed_date.utc)
       @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
-      @diffs = @commit.diffs
+      @diffs = @commit.parents.empty? ? [] : @commit.diffs
       @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
       @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
       @author_user = User.find_by_email_with_aliases(@commit.author.email)

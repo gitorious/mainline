@@ -91,6 +91,16 @@ class CommitsControllerTest < ActionController::TestCase
       assert_match(/no such sha/i, flash[:error])
       assert_redirected_to project_repository_commits_path(@project, @repository)
     end
+    
+    should "not show diffs for the initial commit" do
+      commit = @grit.commit(@sha)
+      commit.stubs(:parents).returns([])
+      @grit.expects(:commit).returns(commit)
+      get :show, {:project_id => @project.to_param, 
+          :repository_id => @repository.to_param, :id => @sha}
+      assert_equal [], assigns(:diffs)
+      assert_select "#content p", /This is the initial commit in this repository/
+    end
   end
   
   context "Routing" do
