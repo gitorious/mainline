@@ -4,7 +4,8 @@ class ApplicationProcessor < ActiveMessaging::Processor
     @@logger ||= begin
       io = RAILS_ENV == "development" ? STDOUT : File.join(RAILS_ROOT, "log", "message_processing.log")
       logger = ActiveSupport::BufferedLogger.new(io)
-      logger.level = ActiveSupport::BufferedLogger.const_get(Rails.configuration.log_level.to_s.upcase)
+      #logger.level = ActiveSupport::BufferedLogger.const_get(Rails.configuration.log_level.to_s.upcase)
+      logger.level = ActiveSupport::BufferedLogger::INFO
       if RAILS_ENV == "production"
         logger.auto_flushing = false
       end
