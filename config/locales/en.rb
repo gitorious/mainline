@@ -489,7 +489,7 @@
         :body => "Message body",
         :recipient => "Choose one or more recipients, separate with comma",
         :submit => "Send message",
-        :index_message => "Your inbox",
+        :index_message => "Inbox",
         :reply => "Reply",
         :received_messages => "Inbox",
         :sent_messages => "Sent messages",

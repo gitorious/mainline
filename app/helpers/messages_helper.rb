@@ -5,9 +5,9 @@ module MessagesHelper
   
   def sender_and_recipient_for(message)
     sender, recipient = if message.recipient == current_user
-      [message.sender.title, "you"]
+      [message.sender.title, "me"]
     else
-      ["You", message.recipient.title]
+      ["me", message.recipient.title]
     end
     return [sender, recipient]    
   end
