@@ -38,7 +38,7 @@ module OAuth
       if valid?
         result = Net::HTTPSuccess.new(nil, nil, nil)
         def result.body
-          "foo"
+          "valid_version_sha"
         end
         result
       else

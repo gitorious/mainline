@@ -94,6 +94,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.oauth_consumer.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
     mr.terms_accepted
     assert mr.open?
+    assert_equal('valid_version_sha', mr.contribution_agreement_version)
   end
   
   should 'not be set to open if OAuth validation fails' do
