@@ -5,9 +5,9 @@ module MessagesHelper
   
   def sender_and_recipient_for(message)
     if message.recipient == current_user
-      [message.sender.title, "me"]
+      [h(message.sender.title), "me"]
     else
-      ["me", message.recipient.title]
+      ["me", h(message.recipient.title)]
     end
   end
   
@@ -16,14 +16,14 @@ module MessagesHelper
     
     case message.notifiable
     when MergeRequest
-      "<strong>#{sender}</strong> sent <strong>#{recipient}</strong> a #{link_to('merge request', [message.notifiable.target_repository.project, message.notifiable.target_repository, message.notifiable])}"
+      "From <strong>#{sender}</strong> to <strong>#{recipient}</strong> a #{link_to('merge request', [message.notifiable.target_repository.project, message.notifiable.target_repository, message.notifiable])}"
     when Membership 
       %Q{<strong>#{sender}</strong> added <strong>#{recipient}</strong> to the group #{link_to("#{message.notifiable.group.name}", message.notifiable.group)}}
     when Committership
       committership = message.notifiable
       %Q{<strong>#{sender}</strong> added #{link_to(committership.committer.title, [committership.repository.project,committership.repository,:committerships])} as committer in <strong>#{committership.repository.name}</strong>}
     else
-      "<strong>#{sender}</strong> sent <strong>#{recipient}</strong> a #{link_to 'message', message}"
+      "#{link_to('message', message)} from <strong>#{sender}</strong> to <strong>#{recipient}</strong>"
     end
   end
 end

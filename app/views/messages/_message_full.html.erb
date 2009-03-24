@@ -1,7 +1,6 @@
 <div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
   <div class="avatar">
-    <% actor = (message.recipient == current_user) ? message.sender : message.recipient %>
-    <%= gravatar actor.email, :size => 32 -%>
+    <%= gravatar message.sender.email, :size => 32 -%>
   </div>
   <div class="message">
     <p>
