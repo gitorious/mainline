@@ -175,7 +175,7 @@ module ApplicationHelper
   def action_and_body_for_event(event)
     target = event.target
     if target.nil?
-      return [action, body, category]
+      return ["", "", ""]
     end
     # These are defined in event_rendering_helper.rb:
     self.send("render_event_#{Action::css_class(event.action)}", event)

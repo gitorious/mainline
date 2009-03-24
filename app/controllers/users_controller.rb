@@ -33,7 +33,7 @@ class UsersController < ApplicationController
     @user = User.find_by_login!(params[:id])
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.clones
-    @events = @user.events.paginate(:all, 
+    @events = @user.events.top.paginate(:all, 
       :page => params[:page],
       :order => "events.created_at desc", 
       :include => [:user, :project])
