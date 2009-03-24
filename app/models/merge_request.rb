@@ -217,8 +217,11 @@ class MergeRequest < ActiveRecord::Base
   
   def valid_oauth_credentials?(token, secret)
     access_token = CONSUMER.build_access_token(token, secret)
-    response = access_token.get("/agreements.xml")
-    return Net::HTTPSuccess === response
+    response = access_token.get("/merge_requests.xml")
+    RAILS_DEFAULT_LOGGER.debug("OAuth: Sending off request")
+    post_response = access_token.post('/merge_requests', {'commit_id' => ending_commit, 'user_name' => user.title, 'user_email' => user.email})
+    RAILS_DEFAULT_LOGGER.debug("OAuth: Sent request, got #{post_response.body}")
+    return Net::HTTPSuccess === post_response
   end
   
   

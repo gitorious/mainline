@@ -34,12 +34,28 @@ module OAuth
       @valid 
     end
     
-    def get(path)
+    def request(path, options)
       if valid?
-        Net::HTTPSuccess.new(nil, nil, nil)
+        result = Net::HTTPSuccess.new(nil, nil, nil)
+        def result.body
+          "foo"
+        end
+        result
       else
-        Net::HTTPFound.new(nil, nil, nil)
+        result = Net::HTTPFound.new(nil, nil, nil)
+        def result.body
+          "foo"
+        end
+        result
       end
+    end
+    
+    def get(path, options={})
+      request(path, options)
+    end
+    
+    def post(path, options={})
+      request(path, options)
     end
     
   end
