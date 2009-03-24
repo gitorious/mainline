@@ -16,11 +16,11 @@
 #++
 
 class Group < ActiveRecord::Base
-  has_many :committerships, :as => :committer
+  has_many :committerships, :as => :committer, :dependent => :destroy
   has_many :participated_repositories, :through => :committerships, 
     :source => :repository, :class_name => 'Repository'  
   belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
-  has_many :memberships
+  has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
   has_many :repositories, :as => :owner, :conditions => ["kind != ?", Repository::KIND_WIKI],
     :dependent => :destroy
