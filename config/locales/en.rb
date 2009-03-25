@@ -150,7 +150,7 @@
         :creating_account => lambda { |this, path| 
           this.link_to("Creating a user account", path) + 
           " allows you to create your own project or participate in the development of any project." },
-        :newest_projects => "Newest projects",
+        :newest_projects => "Latest projects",
         :view_more => "View more &raquo;",
         :dashboard => {
           :page_title => "{{login}}'s dashboard",

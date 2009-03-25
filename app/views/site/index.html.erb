@@ -116,13 +116,13 @@
   <% end -%>
   
   <% pull_box(t("views.site.newest_projects")) do -%>
-  <ul>
-    <% @projects.each do |project| -%>
-      <li>
-        <strong><%= link_to h(project.title), project -%></strong>
-        <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
-      </li>
-    <% end -%>
+    <ul class="with_icons">
+      <% @projects.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
+      <% end -%>
     <li><%= link_to t("views.site.view_more"), projects_path -%></li>
   </ul>
   <% end -%>
