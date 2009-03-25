@@ -582,12 +582,12 @@ li.memberships a, li.committerships a {background-image: url('/images/silk/group
 li.membership a, li.committership a {background-image: url('/images/silk/group_edit.png');}
 
 .with_icons li {
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 .with_icons li a {
+  padding-left: 25px;
   background-repeat: no-repeat;
-  background-position: 0 3px;
-  padding: 5px 5px 5px 25px;
+  background-position: 2px 0px;
 }
 
 .with_icons li span a {
@@ -1817,7 +1817,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 }
 
 .events .event_instances, .events .event_instance {
-  margin: 0px 0px 0px 15px;
+  margin: 0px 0px 0px 5px;
   background-repeat: no-repeat;
   background-position: 2px 4px;
   padding-bottom: 1px;
