@@ -47,6 +47,8 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   
+  validates_acceptance_of :end_user_license_agreement, :on => :create, :allow_nil => false
+  
   before_save :encrypt_password
   before_create :make_activation_code
   before_validation :lint_identity_url

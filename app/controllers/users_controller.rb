@@ -62,6 +62,7 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
     @user.save!    
+    @user.eula_version = EndUserLicenseAgreement.current_version.checksum
     flash[:notice] = I18n.t "users_controller.create_notice"
     redirect_to root_path
   rescue ActiveRecord::RecordInvalid

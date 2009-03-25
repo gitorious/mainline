@@ -276,7 +276,8 @@ class UserTest < ActiveSupport::TestCase
       u = User.new({ 
         :email => 'quire@example.com', 
         :password => 'quire', 
-        :password_confirmation => 'quire'
+        :password_confirmation => 'quire',
+        :end_user_license_agreement => '1'
       }.merge(options))
       u.login = options[:login] || "quire"
       u.save
