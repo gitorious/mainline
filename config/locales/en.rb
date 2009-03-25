@@ -67,6 +67,9 @@
     :trees_controller => {
       :archive_error => "The given repository or sha is invalid"
     },
+    :groups_controller => {
+      :group_created => "Team created",
+    },
     :users_controller => {
       :create_notice => "Thanks for signing up! You will receive an account activation email soon",
       :activate_notice => "Your account has been activated, welcome!",
@@ -462,7 +465,7 @@
         :member_plural => "members",
         :repo_singular => "repository",
         :repo_plural => "repositories",
-        :new_team_after_create_hint => "You can add more members to the team, after you've created it",
+        :new_team_after_create_hint => "You can add more members to the team after you've created it",
         :edit_memberships => "Edit memberships",
       },
       :committerships => {

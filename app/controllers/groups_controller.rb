@@ -51,7 +51,7 @@ class GroupsController < ApplicationController
         :role => Role.admin,
       })
     end
-    flash[:success] = "Group created"
+    flash[:success] = I18n.t "groups_controller.group_created"
     redirect_to group_path(@group)
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
     render :action => "new"
