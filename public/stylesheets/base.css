@@ -479,7 +479,7 @@ abbr {
   margin: 0;
   line-height: 100%;
   margin-left: 0px;
-  background: #dee7ed url("/images/contextmenu_bg.png") repeat-x;
+  background: #dee7ed;
   height: 29px;
   border-top: 1px solid #AAA;
 }
