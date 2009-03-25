@@ -5,10 +5,7 @@ public/cache/*
 public/images/graphs/*
 config/database.yml
 config/gitorious.yml
-config/ultrasphinx/development.conf
-config/ultrasphinx/test.conf
-config/ultrasphinx/production.conf
-config/ultrasphinx/staging.conf
+config/ultrasphinx/*.conf
 config/broker.yml
 db/schema.rb
 db/*.sqlite3
@@ -23,3 +20,7 @@ qtorious.todo
 tmp/poller.log
 tmp/poller.output
 public/javascripts/all.js
+#vendor/plugins/*_site
+public/images/sites/*
+public/stylesheets/sites/*
+public/javascripts/sites/*

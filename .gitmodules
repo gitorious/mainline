@@ -1,0 +1,3 @@
+[submodule "vendor/plugins/gitorious_sites"]
+	path = vendor/plugins/gitorious_sites
+	url = ../gitorious_sites_plugin.git

@@ -22,6 +22,7 @@ class SiteController < ApplicationController
   renders_in_site_specific_context
   
   def index
+    # Render a Site-specific template
     if !current_site.subdomain.blank?
       @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
       @teams = Group.all_participating_in_projects(@projects)
