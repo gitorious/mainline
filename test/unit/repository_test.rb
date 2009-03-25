@@ -391,18 +391,14 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "have a head_candidate" do
-    heads_stub = mock("head")
-    heads_stub.stubs(:name).returns("master")
+    head_stub = mock("head")
+    head_stub.stubs(:name).returns("master")
     git = mock("git backend")
     @repository.stubs(:git).returns(git)
-    git.expects(:heads).returns([heads_stub])
+    git.expects(:head).returns(head_stub)
     @repository.expects(:has_commits?).returns(true)
-    assert_equal heads_stub, @repository.head_candidate
     
-    heads_stub = mock("head")
-    heads_stub.stubs(:name).returns("foo/bar")
-    @repository.expects(:head_candidate).returns(heads_stub)
-    assert_equal "foo/bar", @repository.head_candidate_name
+    assert_equal head_stub, @repository.head_candidate
   end
   
   should "have a head_candidate, unless it doesn't have commits" do

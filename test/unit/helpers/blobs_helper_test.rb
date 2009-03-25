@@ -48,7 +48,7 @@ class BlobsHelperTest < ActionView::TestCase
   context "too_big_to_render" do
     should "knows when a blob is too big to be rendered within reasonable time" do
       assert !too_big_to_render?(1.kilobyte)
-      assert too_big_to_render?(150.kilobyte+1)
+      assert too_big_to_render?(350.kilobyte+1)
     end
   end
   

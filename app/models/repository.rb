@@ -195,7 +195,7 @@ class Repository < ActiveRecord::Base
   
   def head_candidate
     return nil unless has_commits?
-    @head_candidate ||= git.heads.find{|h| h.name == "master"} || git.heads.first
+    @head_candidate ||= git.head || git.heads.first
   end
   
   def head_candidate_name
