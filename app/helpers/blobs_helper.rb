@@ -53,6 +53,6 @@ module BlobsHelper
   end
   
   def too_big_to_render?(size)
-    size > 150.kilobytes
+    size > 350.kilobytes
   end
 end
