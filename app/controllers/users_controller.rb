@@ -63,7 +63,7 @@ class UsersController < ApplicationController
     @user.login = params[:user][:login]
     @user.save!    
     @user.eula_version = EndUserLicenseAgreement.current_version.checksum
-    flash[:notice] = I18n.t "users_controller.create_notice"
+    flash[:success] = I18n.t "users_controller.create_notice"
     redirect_to root_path
   rescue ActiveRecord::RecordInvalid
     render :action => 'new'
@@ -90,7 +90,7 @@ class UsersController < ApplicationController
       # FIXME: should really be a two-step process: receive link, visiting it resets password
       generated_password = user.reset_password!
       Mailer.deliver_forgotten_password(user, generated_password)
-      flash[:notice] = I18n.t "users_controller.reset_password_notice"
+      flash[:success] = I18n.t "users_controller.reset_password_notice"
       redirect_to(root_path)
     else
       flash[:error] = I18n.t "users_controller.reset_password_error"
@@ -106,7 +106,7 @@ class UsersController < ApplicationController
     @user = current_user
     @user.attributes = params[:user]
     if current_user.save
-      flash[:notice] = "Your account details were updated"
+      flash[:success] = "Your account details were updated"
       redirect_to user_path
     else
       render :action => "edit"
@@ -123,7 +123,7 @@ class UsersController < ApplicationController
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
-        flash[:notice] = "Your password has been changed"
+        flash[:success] = "Your password has been changed"
         redirect_to user_path(@user)
       else
         render :action => "password"
