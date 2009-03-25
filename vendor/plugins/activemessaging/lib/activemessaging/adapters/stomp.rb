@@ -73,7 +73,7 @@ module ActiveMessaging
                 retry_headers.delete('message-id')
                 self.send @deadLetterQueue, message.body, retry_headers
               end
-            else
+            elsif @deadLetterQueue
               retry_headers = message.headers.stringify_keys
               retry_headers['transaction']= transaction_id
               retry_headers.delete('content-length')
