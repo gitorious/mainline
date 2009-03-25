@@ -87,7 +87,7 @@
     },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
-      :event_status_add_project_repository => "added repository",
+      :event_status_add_project_repository => "created repository",
       :event_status_created => "created project",
       :event_status_deleted => "deleted project",
       :event_status_updated => "updated project",
@@ -386,7 +386,7 @@
         :bugtracker => "Bugtracker at ",
         :repos => "Repositories",
         :project_members => "Project members",
-        :add_repository => "Add mainline repository"
+        :add_repository => "Add repository"
       },
       :merges => {
         :info => {
