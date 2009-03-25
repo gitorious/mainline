@@ -33,7 +33,7 @@ class SiteControllerTest < ActionController::TestCase
     should "gets a list of the most recent projects" do
       get :index
       assert_equal Project.find(:all, :limit => 5, :order => "id desc"), assigns(:projects)
-      assert_equal "max-age=600, private", @response.headers['Cache-Control']
+      assert_not_nil @response.headers['Last-Modified']
     end
   end
   
@@ -47,7 +47,7 @@ class SiteControllerTest < ActionController::TestCase
       get :index
       assert_response :success
       assert_template "#{@site.subdomain}/index"
-      assert_equal "max-age=600, private", @response.headers['Cache-Control']
+      assert_not_nil @response.headers['Last-Modified']
     end
     
     should "scope the projects to the current site" do

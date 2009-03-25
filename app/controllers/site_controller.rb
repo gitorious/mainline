@@ -22,26 +22,10 @@ class SiteController < ApplicationController
   renders_in_site_specific_context
   
   def index
-    # Render a Site-specific template
     if !current_site.subdomain.blank?
-      @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
-      @teams = Group.all_participating_in_projects(@projects)
-      @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
-      expires_in 10.minutes
-      render "site/#{current_site.subdomain}/index" 
-      return
-    end
-    
-    last_event = Event.latest(1).first || Project.first
-    if last_event.nil? || stale_conditional?(last_event, last_event.created_at)
-      @projects = Project.find(:all, :limit => 10, :order => "id desc")
-      @top_repository_clones = Repository.most_active_clones
-      @active_recently = Project.most_active_recently
-      @active_overall = Project.most_active_overall(@active_recently.size)
-      @active_users = User.most_active
-      @active_groups = Group.most_active
-      @latest_events = Event.latest(15)
-      expires_in 10.minutes
+      render_site_index and return
+    else
+      render_global_index
     end
   end
   
@@ -54,5 +38,37 @@ class SiteController < ApplicationController
   
   def faq    
   end
+  
+  protected
+  
+    # Render a Site-specific index template
+    def render_site_index
+      @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
+      # pick the newest event
+      top_events = @projects.map{|p| p.events.first(:order => "id desc") }.flatten.compact
+      last_event = (top_events.empty? ? @projects : top_events).max do |a,b| 
+        a.created_at <=> b.created_at
+      end
+      
+      if stale_conditional?(last_event, last_event.created_at)
+        @teams = Group.all_participating_in_projects(@projects)
+        @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
+        render "site/#{current_site.subdomain}/index"
+      end
+    end
+
+    # Render the global index template
+    def render_global_index
+      last_event = Event.latest(1).first || Project.first
+      if last_event.nil? || stale_conditional?(last_event, last_event.created_at)
+        @projects = Project.find(:all, :limit => 10, :order => "id desc")
+        @top_repository_clones = Repository.most_active_clones
+        @active_recently = Project.most_active_recently
+        @active_overall = Project.most_active_overall(@active_recently.size)
+        @active_users = User.most_active
+        @active_groups = Group.most_active
+        @latest_events = Event.latest(15)
+      end
+    end
   
 end
