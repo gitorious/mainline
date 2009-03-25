@@ -334,17 +334,17 @@
         :show_page_title => "{{repo}} in {{title}}",
         :show_title => "&quot;{{repo}}&quot; repository in {{title}}",
         :committers_title => "Add committers to {{repo}} in {{title}}",
-        :committers_manage_group_members => "Manage group members for {{group}}",
+        :committers_manage_group_members => "Manage team members for {{group}}",
         :committers_howto => "There are two ways to add committers to a repository, either by adding 
-                              members to the group owning the repository, or to add another group as 
+                              members to the team owning the repository, or to add another team as 
                               committers.",
         :transfer_owner => "Transfer owner",
         :current_owner_project => "The repository is currrently owned by the {{project_name}} project (which you own).",
         :current_owner_user => "The repository is currrently owned by you.",
         :transfer_owner_howto => "If you wish, you can transfer ownership
-                                  of this repository to a group you're an administrator of. That way you can add
-                                  multiple users as committers, without requiring them to start a group.",
-        :add_committer_group => "Or you can add an existing group as committers to the repository, 
+                                  of this repository to a team you're an administrator of. That way you can add
+                                  multiple users as committers, without requiring them to start a team.",
+        :add_committer_group => "Or you can add an existing team as committers to the repository, 
                                 thus giving all the members commit access.",
         :activities => "Activities",
         :clone_of => "Clone of",
@@ -361,8 +361,8 @@
         :create_title => lambda { |this, clone, project| 
           "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
         },
-        :edit_group => "Edit/show group members",
-        :show_group => "Show group members",
+        :edit_group => "Edit/show team members",
+        :show_group => "Show team members",
         :by_teams => "Team clones",
         :by_users => "Personal clones",
       },

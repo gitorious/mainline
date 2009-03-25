@@ -48,7 +48,7 @@ class Membership < ActiveRecord::Base
     end
     
     def send_notification
-      message = Message.new(:sender => inviter, :recipient => user, :subject => "You have been added to a group", :body => "Welcome", :notifiable => self)
+      message = Message.new(:sender => inviter, :recipient => user, :subject => "You have been added to a team", :body => "Welcome", :notifiable => self)
       message.save      
     end
 end
