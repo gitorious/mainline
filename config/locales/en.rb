@@ -356,7 +356,7 @@
         :btn_delete_repo => "Delete repository",
         :btn_edit_repo => "Edit repository",
         :committers => "Committers",
-        :current_committers => "Current committers",
+        :current_committers => "Committers",
         :remove => "Remove",
         :create_title => lambda { |this, clone, project| 
           "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
