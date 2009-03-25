@@ -83,9 +83,9 @@
   </ul>
   
   <h4>Team memberships</h4>
-  <ul>
+  <ul class="icon_list">
     <% @user.groups.each do |group| -%>
-      <li><%= link_to h(group.title), group -%>
+      <li class="group"><%= link_to h(group.title), group -%>
     <% end -%>
   </ul>
 <% end -%>
