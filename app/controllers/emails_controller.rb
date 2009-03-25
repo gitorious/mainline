@@ -6,10 +6,12 @@ class EmailsController < ApplicationController
   
   def index
     @emails = @user.email_aliases
+    @root = Breadcrumb::Aliases.new(current_user)
   end
   
   def new
     @email = @user.email_aliases.new
+    @root = Breadcrumb::NewAlias.new(current_user)
   end
   
   def create

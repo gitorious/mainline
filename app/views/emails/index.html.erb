@@ -1,6 +1,6 @@
 <% @page_title = t("views.aliases.aliases_title") -%>
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => Breadcrumb::UserAliases.new(current_user) } -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root } -%>
 <% end -%>
 
 <h1><%= t("views.aliases.aliases_title") -%></h1>

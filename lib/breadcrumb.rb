@@ -198,7 +198,7 @@ module Breadcrumb
     end
   end
 
-  class UserAliases
+  class Aliases
     def initialize(user)
       @user = user
     end
@@ -216,13 +216,13 @@ module Breadcrumb
     end
   end
 
-  class UserNewAlias
-    def initialize(user)
+  class NewAlias
+  def initialize(user)
       @user = user
     end
 
     def breadcrumb_parent
-      Breadcrumb::UserAliases.new(@user)
+      Aliases.new(@user)
     end
 
     def title
