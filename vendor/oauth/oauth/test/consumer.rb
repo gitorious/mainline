@@ -44,7 +44,7 @@ module OAuth
       else
         result = Net::HTTPFound.new(nil, nil, nil)
         def result.body
-          "foo"
+          ""
         end
         result
       end

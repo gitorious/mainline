@@ -213,9 +213,14 @@ class MergeRequest < ActiveRecord::Base
   def terms_accepted
     validate_through_oauth do
       confirmed_by_user
-      callback_response = access_token.post('/merge_requests', {'commit_id' => ending_commit, 'user_name' => user.title, 'user_email' => user.email})
+      callback_response = access_token.post('/merge_requests', oauth_signoff_parameters)
       update_attributes(:contribution_agreement_version => callback_response.body)
     end
+  end
+  
+  # Returns the parameters that are passed on to the contribution agreement site
+  def oauth_signoff_parameters
+    {'commit_id' => ending_commit, 'user_name' => user.title, 'user_email' => user.email, 'commit_shas' => commits_to_be_merged.collect(&:id).join(","), 'proposal' => proposal, 'project_name' => source_repository.project.slug,'repository_name' => source_repository.name, 'merge_request_id' => id}
   end
   
   def validate_through_oauth

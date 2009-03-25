@@ -18,3 +18,13 @@
     <%= f.password_field :password_confirmation, :class => "text" %>
   </p>
   
+
+
+  <div class="eula">
+    <%= markdown(EndUserLicenseAgreement.current_version.contents) %>    
+  </div>
+
+  <p>
+    <%= f.check_box :accepted_license_agreement_version, {}, EndUserLicenseAgreement.current_version.checksum  -%>
+    <label for="eula_version">I accept the End User License Agreement</label>
+  </p>

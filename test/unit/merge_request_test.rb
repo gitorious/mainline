@@ -40,6 +40,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       mr = @merge_request.clone
       mr.target_repository = repositories(:johans2) # doesn't deliver messages to the actor
       mr.stubs(:valid_oauth_credentials?).returns(true)
+      mr.stubs(:oauth_signoff_parameters).returns({})
       mr.save
       mr.terms_accepted
     end
@@ -92,6 +93,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     mr = @merge_request.clone
     assert mr.pending_acceptance_of_terms?
     @merge_request.oauth_consumer.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
+    mr.stubs(:oauth_signoff_parameters).returns({})
     mr.terms_accepted
     assert mr.open?
     assert_equal('valid_version_sha', mr.contribution_agreement_version)
