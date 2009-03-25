@@ -27,25 +27,25 @@
 
 <table class="listing">
 	<thead>
-	  <th>State</th>
+		<th>Uploaded</th>
 		<th>Name</th>
 		<th>Algorithm</th>
 		<th>Content</th>
-		<th>Uploaded</th>
+	  <th>State</th>
 		<th></th>
 	</thead>
 	<% @ssh_keys.each do |ssh_key| -%>
 	<tr class="<%= cycle('even', 'odd') -%>">
-	  <td>
-	    <%= image_tag(ssh_key.ready? ? "silk/accept.png" : "silk/stop.png", 
-	          :title => ssh_key.ready? ? 'Ready' : 'Not ready') -%>
-	  </td>
+	  <td><%= ssh_key.created_at.to_s(:short) -%></td>
 	  <td><%=h ssh_key.username_and_host -%></td>
 	  <td><%=h ssh_key.algorithm -%></td>
 	  <td>
 	    <%= truncate(h(ssh_key.encoded_key), :length => 40) -%>
 	  </td>
-	  <td><%= ssh_key.created_at.to_s(:short) -%></td>
+	  <td>
+	    <%= image_tag(ssh_key.ready? ? "silk/tick.png" : "silk/cross.png", 
+	          :title => ssh_key.ready? ? 'Ready' : 'Not ready') -%>
+	  </td>
 	  <td>
 	    <%#= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
       <%= button_to t("views.common.delete"), user_key_path(current_user, ssh_key),
