@@ -59,6 +59,8 @@ module BreadcrumbsHelper
       messages_path
     when Breadcrumb::SentMessages 
       sent_messages_path
+    when Breadcrumb::UserAliases
+      user_emails_path
     when Message
       an_object.new_record? ? new_message_path : message_path(an_object)
     else

@@ -197,7 +197,43 @@ module Breadcrumb
       "edit_account_password"
     end
   end
- 
+
+  class UserAliases
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      @user
+    end
+
+    def title
+      I18n.t("views.aliases.aliases_title")
+    end
+
+    def breadcrumb_css_class
+      "alias"
+    end
+  end
+
+  class UserNewAlias
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      Breadcrumb::UserAliases.new(@user)
+    end
+
+    def title
+      I18n.t("views.aliases.new_alias_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "new_alias"
+    end
+  end
+
   class Messages
     def initialize(user)
       @user = user

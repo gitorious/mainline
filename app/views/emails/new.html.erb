@@ -1,9 +1,9 @@
 <% @page_title = t("views.emails.new_alias") -%>
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => Breadcrumb::UserNewAlias.new(current_user)} -%>
 <% end -%>
 
-<h1><%= t("views.emails.new_alias") -%></h1>
+<h1><%= t("views.aliases.new_alias") -%></h1>
 
 <%= error_messages_for :email -%>
 <% form_for([@user, @email]) do |f| -%>
@@ -17,5 +17,5 @@
     been created.
   </p>
   
-  <p><%= f.submit("Add email alias") -%> or <%= link_to "go back", user_emails_path(@user) -%></p>
+  <p><%= f.submit("Add alias") -%> or <%= link_to "go back", user_emails_path(@user) -%></p>
 <% end -%>

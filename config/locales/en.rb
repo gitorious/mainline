@@ -478,10 +478,11 @@
         :add_tema_note => "<strong>Note</strong> that adding a team will give
                           everyone in that team commit rights to your repository",
       },
-      :emails => {
-        :aliases_title => "Email aliases",
-        :new_alias => "New email alias",
-        :manage_emails => "Manage email aliases"
+      :aliases => {
+        :aliases_title => "Aliases",
+        :new_alias => "New alias",
+        :new_alias_breadcrumb => "New Alias",
+        :manage_aliases => "Manage aliases"
       },
       :messages => {
         :collection_title => "Messages",

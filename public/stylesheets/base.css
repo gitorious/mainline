@@ -528,6 +528,8 @@ li.merge_requests > a { background-image: url("/images/silk/arrow_in.png") !impo
 li.clone > a { background-image: url("/images/silk/database_clone.png") !important; }
 li.comment_link > a { background-image: url("/images/silk/comment.png") !important; }
 li.merge_request > a { background-image: url("/images/silk/arrow_merge.png") !important; }
+li.alias > a { background-image: url("/images/silk/vcard.png") !important; }
+li.new_alias > a { background-image: url("/images/silk/vcard_add.png") !important; }
 li.emails > a { background-image: url("/images/silk/email.png") !important; }
 li.new_email > a { background-image: url("/images/silk/email_add.png") !important; }
 li.sent_emails > a { background-image: url("/images/silk/email_go.png") !important; }
