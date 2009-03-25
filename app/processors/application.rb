@@ -22,6 +22,7 @@ class ApplicationProcessor < ActiveMessaging::Processor
       logger.error "Processor::on_error for msg: #{message_body}: \n" + 
       " #{err.class.name}: " + err.message + "\n" + \
       "\t" + err.backtrace.join("\n\t")
+      raise ActiveMessaging::AbortMessageException
     else
       logger.error "Processor::on_error: #{err.class.name} raised: " + err.message
       raise err

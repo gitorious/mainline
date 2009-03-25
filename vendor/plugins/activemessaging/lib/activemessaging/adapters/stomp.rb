@@ -73,7 +73,15 @@ module ActiveMessaging
                 retry_headers.delete('message-id')
                 self.send @deadLetterQueue, message.body, retry_headers
               end
-
+            else
+              retry_headers = message.headers.stringify_keys
+              retry_headers['transaction']= transaction_id
+              retry_headers.delete('content-length')
+              retry_headers.delete('content-type')
+              # send the 'poison pill' message to the dead letter queue
+              retry_headers['a13g-original-destination'] = retry_headers.delete('destination')
+              retry_headers.delete('message-id')
+              self.send(@deadLetterQueue, message.body, retry_headers)
             end
 
             #check to see if the ack mode is client, and if it is, ack it in this transaction

@@ -9,6 +9,7 @@ development:
     # Stomp Adapter Properties #
     ############################
     adapter: stomp
+    deadLetterQueue: '/queue/GitoriousDeadLetter'
 
     ## properties below are all defaults for this adapter
     # login: ""
