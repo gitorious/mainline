@@ -38,8 +38,10 @@
 	  <td><%=h membership.user.email -%></td>
 	  <td><%=h membership.role.name -%></td>
 	  <td>
-	    <%= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
-	    <%= button_to(t("views.common.remove"), group_membership_path(@group, membership), :method => :delete) -%>
+	    <%- if @group.admin?(current_user) -%>
+	      <%= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
+	      <%= button_to(t("views.common.remove"), group_membership_path(@group, membership), :method => :delete) -%>
+	    <%- end -%>
 	  </td>
 	</tr>
 	<% end -%>
