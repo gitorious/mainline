@@ -129,15 +129,20 @@ class RepositoriesController < ApplicationController
   def update
     @repository = @owner.repositories.find_by_name!(params[:id])
     @groups = current_user.groups
-    
+    prior_description = @repository.description
     @repository.description = params[:repository][:description]    
     # change group, if requested
     Repository.transaction do
       unless params[:repository][:owner_id].blank?
         @repository.change_owner_to!(current_user.groups.find(params[:repository][:owner_id]))
       end
-    
+      # events.create(:action => action_id, :target => target, :user => user,
+      #               :body => body, :data => data, :created_at => date)
+
       @repository.save!
+      if @repository.description != prior_description
+        @repository.events.create!(:action => Action::UPDATE_REPOSITORY, :user => current_user, :project => @repository.project, :body => 'Changed the repository description')
+      end
       flash[:success] = "Repository updated"
       redirect_to [@repository.project_or_owner, @repository]
     end

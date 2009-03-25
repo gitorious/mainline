@@ -783,11 +783,22 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal @repository, assigns(:repository)
     end
   
-    should "PUT update successfully" do
-      put :update, :project_id => @project.to_param, :id => @repository.to_param,
-        :repository => {:description => "blablabla"}
+    should "PUT update successfully and creates an event when changing the description" do
+      assert_incremented_by(@repository.events, :size, 1) do
+        put :update, :project_id => @project.to_param, :id => @repository.to_param,
+          :repository => {:description => "blablabla"}
+        @repository.events.reload
+      end
       assert_redirected_to(project_repository_path(@project, @repository))
       assert_equal "blablabla", @repository.reload.description
+    end
+    
+    should 'not create an event on update if the description is not changed' do
+      assert_no_difference("@repository.events.size") do
+        put :update, :project_id => @project.to_param, :id => @repository.to_param,
+          :repository => {:description => @repository.description}
+        @repository.events.reload
+      end
     end
   
     should "gets a list of the users' groups on edit" do

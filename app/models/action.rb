@@ -37,6 +37,7 @@ class Action
   UPDATE_WIKI_PAGE = 17
   PUSH = 18
   ADD_PROJECT_REPOSITORY = 19
+  UPDATE_REPOSITORY = 20
   
   def self.name(action_id)
     case action_id
@@ -80,6 +81,8 @@ class Action
         "push"
       when ADD_PROJECT_REPOSITORY
         "add project repository"
+      when UPDATE_REPOSITORY
+        "update repository"
       else
         "unknown event"
     end

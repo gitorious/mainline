@@ -22,6 +22,14 @@ module EventRenderingHelper
     [action, "", category]
   end
   
+  def render_event_update_repository(event)
+    action = action_for_event(:event_updated_repository) do
+      link_to h(event.target.title), project_repository_path(event.target.project, event.target)
+    end
+    category = 'repository'
+    [action, event.body, category]
+  end
+  
   def render_event_clone_repository(event)
     original_repo = Repository.find_by_id(event.data.to_i)
     return ["", "", ""] if original_repo.nil?

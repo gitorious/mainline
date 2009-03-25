@@ -92,6 +92,7 @@
       :event_status_deleted => "deleted project",
       :event_status_updated => "updated project",
       :event_status_cloned => "cloned",
+      :event_updated_repository => 'updated repository',
       :event_status_deleted => "deleted",
       :event_status_pushed => "pushed",
       :event_status_started => "started development",
