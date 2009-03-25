@@ -22,7 +22,7 @@
 <%= error_messages_for :ssh_key -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% form_for @ssh_key, :url => user_keys_path() do |f| -%>
@@ -34,8 +34,3 @@
   <%= f.submit t("views.common.save") -%>
 <% end -%>
 
-<% content_for :sidebar do -%>
-  <ul class="links">
-    <li class="key"><%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%></li>
-  </ul>
-<% end -%>

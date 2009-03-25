@@ -22,7 +22,7 @@
 <h1><%= t("views.keys.ssh_keys") %></h1>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root } -%>
 <% end -%>
 
 <table class="listing">

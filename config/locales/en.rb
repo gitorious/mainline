@@ -177,8 +177,10 @@
       :keys => {
         :edit_title => "Edit a SSH key",
         :ssh_keys => "Your SSH Keys",
+        :ssh_keys_breadcrumb => "SSH Keys",
         :manage_ssh_keys => "Manage SSH keys",
         :add_ssh_key => "Add SSH key",
+        :add_ssh_key_breadcrumb => "Add SSH Key",
         :add_title => "Add a new public SSH key",
         :your_public_key => "Your public key",
         :hint => "It's generally located in ~/.ssh/id_rsa.pub or ~/.ssh/id_dsa.pub. If you want to use multiple keys you'll have to add each of them seperately. <br />The key should be in the format of: <br /><code>ssh-algorithm base64-content you@somehost</code>",

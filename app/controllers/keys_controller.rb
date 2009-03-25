@@ -24,6 +24,7 @@ class KeysController < ApplicationController
 
   def index
     @ssh_keys = current_user.ssh_keys
+    @root = Breadcrumb::Keys.new(current_user)
     respond_to do |format|
       format.html
       format.xml { render :xml => @ssh_keys }
@@ -32,11 +33,13 @@ class KeysController < ApplicationController
   
   def new
     @ssh_key = current_user.ssh_keys.new
+    @root = Breadcrumb::NewKey.new(current_user)
   end
   
   def create
     @ssh_key = current_user.ssh_keys.new
     @ssh_key.key = params[:ssh_key][:key]
+    @root = Breadcrumb::NewKey.new(current_user)
     
     respond_to do |format|
       if @ssh_key.save

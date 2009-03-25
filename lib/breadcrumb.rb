@@ -234,6 +234,42 @@ module Breadcrumb
     end
   end
 
+ class Keys
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      @user
+    end
+
+    def title
+      I18n.t("views.keys.ssh_keys_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "key"
+    end
+  end
+
+  class NewKey
+  def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      Keys.new(@user)
+    end
+
+    def title
+      I18n.t("views.keys.add_ssh_key_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "new_key"
+    end
+  end
+
   class Messages
     def initialize(user)
       @user = user
