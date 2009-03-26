@@ -58,7 +58,7 @@
   <% pull_box("Recent activities") do -%>
     <ul class="events inline">
     <% @latest_events.each do |event| -%>
-      <%= render event -%>
+      <%= render :partial => event, :locals => { :relative_time => true } -%>
     <% end -%>
     </ul>
   <% end -%>

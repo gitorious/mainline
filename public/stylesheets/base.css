@@ -1834,6 +1834,10 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   font-size: 11px;
 }
 
+.events.inline {
+  margin-left: 0px;
+}
+
 .events .event_instances, .events .event_instance {
   margin: 0px 0px 0px 5px;
   background-repeat: no-repeat;
@@ -1843,6 +1847,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 
 .events.inline .event_instance {
   background-image: none !important;
+  clear: both;
   margin: 0;
 }
 
@@ -1859,7 +1864,8 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   color: #898989;
 }
 .events.inline .event_instance .event_date {
-  width: 45px;
+  width: 60px;
+  padding-right: 10px;
 }
 .events .event_instance img {
   float: left;
@@ -1872,7 +1878,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 }
 
 .events.inline .event_instance .event_meta {
-  margin: 0 0 20px 70px;
+  margin: 0 0px 20px 95px;
   text-align: left;
 }
 
