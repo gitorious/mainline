@@ -1931,9 +1931,13 @@ table.repository_meta .name td h2 img{
 }
 
 table.repository_meta td {
-  padding: 10px;
+  padding: 10px 10px 0 10px;
+}
+
+table.repository_meta tr:last-child td {
   border-bottom: 1px solid #ddd;
 }
+
 table.repository_meta .name td { 
   border-bottom: 2px solid #ddd; 
   color: #888;
