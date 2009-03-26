@@ -864,7 +864,7 @@ table.repository_meta .infobox ul {
 }
 
 .commit-infobox .commit-meta {
-  margin: 10px 0 30px 20px;
+  margin: 10px 1px 0px 5px;
   min-width: 350px;
 }
 

@@ -23,10 +23,6 @@
 
 <a name="infobox"></a>
 <div class="commit-infobox">
-  <div class="commit_message">
-    <%= format_commit_message(h(@commit.message)) -%>
-  </div>
-  
   <div class="commit-meta">
     <ul class="people">
       <li class="avatar">
@@ -82,4 +78,8 @@
       <% end -%>
     </ul>
   </div>
+  <div class="commit_message">
+    <%= format_commit_message(h(@commit.message)) -%>
+  </div>
+  
 </div>
