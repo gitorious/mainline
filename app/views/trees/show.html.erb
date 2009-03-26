@@ -93,8 +93,9 @@
           :except => :source_tree, :only_list_items => true) -%>
   </ul>
   
+<% cache([tree_path(@commit.id), :tags_and_branches], 
+        {:expires_in => 10.minutes}) do -%>
   <h5><%= t("views.logs.branches") %>:</h5>
-  
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
       <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
@@ -109,5 +110,6 @@
     <% end -%>
     </ul>
   <% end -%>
+<% end # cache() -%>
 <% end -%>
 
