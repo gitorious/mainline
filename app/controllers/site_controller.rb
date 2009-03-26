@@ -53,6 +53,7 @@ class SiteController < ApplicationController
       if stale_conditional?(last_event, last_event.created_at)
         @teams = Group.all_participating_in_projects(@projects)
         @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
+        @latest_events = Event.latest_in_projects(15, @projects.map{|p| p.id })
         render "site/#{current_site.subdomain}/index"
       end
     end
