@@ -39,6 +39,9 @@ class SiteController < ApplicationController
   def faq    
   end
   
+  def contact    
+  end
+  
   protected
   
     # Render a Site-specific index template

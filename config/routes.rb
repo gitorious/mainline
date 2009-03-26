@@ -110,6 +110,7 @@ ActionController::Routing::Routes.draw do |map|
   map.dashboard "dashboard", :controller => "site", :action => "dashboard"  
   map.about "about", :controller => "site", :action => "about"
   map.faq "about/faq", :controller => "site", :action => "faq"
+  map.contact "contact", :controller => "site", :action => "contact"
   
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }

@@ -3,7 +3,8 @@ module Gitorious
     class << self
       def unaccounted_root_names
         [ "teams", "dashboard", "about", "login", "logout", "commit", 
-          "commits", "tree", "archive-tarball", "archive-zip" ]
+          "commits", "tree", "archive-tarball", "archive-zip", "contact",
+          "register", "signup", "blog" ]
       end
       
       def reserved_root_names
