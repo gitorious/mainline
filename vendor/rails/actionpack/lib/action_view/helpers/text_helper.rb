@@ -29,7 +29,11 @@ module ActionView
           ActiveSupport::Deprecation.warn("The binding argument of #concat is no longer needed.  Please remove it from your views and helpers.", caller)
         end
 
-        output_buffer << string
+        if string.respond_to?(:force_encoding)
+          output_buffer << string.force_encoding(Encoding::UTF_8)
+        else
+          output_buffer << string
+        end
       end
 
       # Truncates a given +text+ after a given <tt>:length</tt> if +text+ is longer than <tt>:length</tt>
