@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by

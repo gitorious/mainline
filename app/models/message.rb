@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2008-2009 Marius Mathiesen <marius.mathiesen@gmail.com>
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
