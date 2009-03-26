@@ -695,6 +695,7 @@ textarea {
 textarea.text { height: 60px; }
 textarea.wide { width: 500px; }
 textarea.tall { height: 300px; }
+textarea.taller {height: 500px;}
 textarea.medium { width: 450px; height: 250px; }
 textarea.fill { width: 95%; }
 select        { width: 200px; }
