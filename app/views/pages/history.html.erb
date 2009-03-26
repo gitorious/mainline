@@ -30,7 +30,12 @@
 <% @commits.each do |commit| -%>
   <div class="page-meta page-history">
     <p>
-      <%= h(commit.committer.name) -%>
+      <%= gravatar(commit.committer.email, :size => 20) %>
+      <%- if user = @user_and_email_map[commit.committer.email] -%>
+        <%= link_to(h(commit.committer.name), user) -%>
+      <%- else -%>
+        <%= h(commit.committer.name) -%>
+      <%- end -%>
       <%= commit.date.to_s(:short) -%>
     </p>
     <p><em><%= h(commit.message) -%></em></p>

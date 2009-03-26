@@ -80,6 +80,7 @@ class PagesController < ApplicationController
     end
     
     @commits = @page.history(30)
+    @user_and_email_map = @project.wiki_repository.users_by_commits(@commits)
   end
   
   protected
