@@ -74,10 +74,12 @@ module ApplicationHelper
   end
   
   def build_notice_for(object)
-    out =  %Q{<div class="being_constructed">}
+    out =  %Q{<div class="being_constructed round-10">}
+    out <<  %Q{<div class="being_constructed_content round-10">}
     out << %Q{  <p>#{I18n.t( "application_helper.notice_for").call(object.class.name.humanize.downcase)}</p>}
     out << %Q{  <p class="spin">#{image_tag("spinner.gif")}</p>}
-    out << %Q{</div>}
+    out << %Q{  <p class="hint">If this message persist beyond what's reasonable, feel free to #{link_to("contact us", contact_path)}</p>}
+    out << %Q{</div></div>}
     out
   end
   
