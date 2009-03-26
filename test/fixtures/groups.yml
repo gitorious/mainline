@@ -3,3 +3,7 @@ team_thunderbird:
 #  project: johans
 #  creator: johan
   user_id: 1
+  description: |
+    Descriptions can contain *markdown*:
+    * like lists
+    * and stuff

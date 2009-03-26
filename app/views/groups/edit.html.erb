@@ -17,24 +17,17 @@
 #++
 %>
 
-<h1><%= t("views.groups.create_team") -%></h1>
+<h1><%= t("views.groups.update_team") -%></h1>
 
 <%= error_messages_for :group -%>
 <% form_for @group do |f| -%>
   <p>
-    <%= f.label :name, t("views.groups.team_name") -%>:<br />
-    <%= f.text_field :name -%>
-  </p>
-  
-  <p>
-    <%= f.label :description, t('views.groups.description') -%>:<br />
+    <%= f.label :description, t('views.groups.description') -%>:<br/>
+    <span class="hint">
+      <%= t("views.common.format_using_markdown", :markdown => 'markdown') -%>
+    </span><br />
     <%= f.text_area :description %>
   </p>
-  <p class="hint">
-    <%= t("views.groups.new_team_after_create_hint") -%>
-  </p>
-
-  <% # TODO: be able to add a bunch of members right away -%>
   
-  <p><%= f.submit t("views.groups.create_team_submit") -%></p>
+  <p><%= f.submit t("views.groups.update_team_submit") -%></p>
 <% end -%>

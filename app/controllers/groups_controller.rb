@@ -17,6 +17,7 @@
 
 class GroupsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
+  before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update]
   renders_in_global_context
   
   def index
@@ -41,6 +42,17 @@ class GroupsController < ApplicationController
     @group = Group.new
   end
   
+  def edit
+  end
+  
+  def update
+    @group.description = params[:group][:description]
+    @group.save!
+    redirect_to group_path(@group)
+    rescue ActiveRecord::RecordInvalid
+      render :action => 'edit'
+  end
+  
   def create
     @group = Group.new(params[:group])
     @group.transaction do
@@ -63,5 +75,12 @@ class GroupsController < ApplicationController
       :limit => 10)
     render :layout => false
   end
-  
+
+  protected
+    def find_group_and_ensure_group_adminship
+      @group = Group.find_by_name!(params[:id])
+      unless @group.admin?(current_user)
+        access_denied and return
+      end
+    end
 end

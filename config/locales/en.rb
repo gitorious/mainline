@@ -457,9 +457,11 @@
       },
       :groups => {
         :create_team => "Create a new team",
+        :update_team => 'Update a team',
         :team_name => "Team name",
         :project_name => "Project name",
         :create_team_submit => "Create team",
+        :update_team_submit => 'Update team',
         :teams => "Teams",
         :member_singular => "member",
         :member_plural => "members",
@@ -467,6 +469,8 @@
         :repo_plural => "repositories",
         :new_team_after_create_hint => "You can add more members to the team after you've created it",
         :edit_memberships => "Edit memberships",
+        :edit_team  => 'Edit team',
+        :description => 'Team description'
       },
       :committerships => {
         :add_new => "Add committers",

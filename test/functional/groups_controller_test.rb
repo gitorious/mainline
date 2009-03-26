@@ -50,6 +50,37 @@ class GroupsControllerTest < ActionController::TestCase
     end
   end
   
+  context 'GET to edit' do
+    setup do
+      login_as :mike
+      get :edit, :id => @group.to_param
+    end
+    should_assign_to :group
+    should_respond_with :success
+  end
+  
+  context 'PUT do update' do
+    should 'require user to be admin of group' do
+      put :update, :id => @group.to_param, :group => {:description => "Unskilled and unprofessional"}
+      assert_redirected_to :controller => 'sessions', :action => 'new'
+    end
+    
+    should 'only update the description, not the name' do
+      login_as :mike
+      put :update, :id => @group.to_param, :group => {:name => 'hackers'}
+      assert_redirected_to :action => 'show'
+      assert_equal('team-thunderbird', @group.name)
+    end
+    
+    should 'update successfully' do
+      login_as :mike
+      new_description = 'We save lives'
+      put :update, :id => @group.to_param, :group => {:description => new_description}
+      assert_redirected_to :action => 'show'
+      assert_equal(new_description, @group.reload.description)
+    end
+  end
+  
   context "creating a group" do
     should "requires login" do
       get :new
@@ -65,7 +96,7 @@ class GroupsControllerTest < ActionController::TestCase
     should "POST create creates a new group" do
       login_as :mike
       assert_difference("Group.count") do
-        post :create, :group => {:name => "foo-hackers"},
+        post :create, :group => {:name => "foo-hackers", :description => 'Hacking the foos for your bars'},
           :project => {:slug => projects(:johans).slug}
       end
       assert_not_equal nil, flash[:success]

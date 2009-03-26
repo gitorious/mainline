@@ -23,6 +23,10 @@
 
 <h1><%=h @group.name -%></h1>
 
+<div>
+  <%= markdown(sanitize(@group.description)) %>
+</div>
+
 <div class="with_divider">
   <div id="left">
   <% pull_box("Members") do -%>
@@ -110,6 +114,7 @@
   <ul class="links">
     <% if @group.admin?(current_user) -%>
       <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
+      <li><%= link_to t('views.groups.edit_team'), [:edit, @group] %></li>
     <% end -%>
   </ul>
 <% end -%>
