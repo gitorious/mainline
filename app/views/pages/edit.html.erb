@@ -28,10 +28,14 @@
 
 <% form_for [@project, @page] do |f| -%>
   <p class="hint">
-    <%= t("views.pages.format_using_markdown", 
-      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>)) -%><br />
+    <%= t("views.common.markdown_format_with_help") -%>
+    <a href="#markdown-help" onclick="$$('.markdown_help')[0].toggle();return false">Markdown</a>. 
     <%= t("views.pages.wikiwords_syntax") -%>
   </p>
+  <p>
+    <%= render_markdown_help -%>
+  </p>
+
   <%= f.text_area :content, :class => "text fill taller" -%><br />
   <%= f.submit -%> 
   <%= t("views.pages.or_back_to_page", 

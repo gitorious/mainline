@@ -220,6 +220,10 @@ module ApplicationHelper
     markdown(text) rescue simple_format(sanitize(text))
   end
   
+  def render_markdown_help
+    render :partial => '/site/markdown_help'
+  end
+  
   def file_path(repository, filename, head = "master")
     project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
   end

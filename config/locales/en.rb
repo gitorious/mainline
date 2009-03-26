@@ -438,6 +438,7 @@
         :or => "or",
         :remove => "remove",
         :format_using_markdown => %Q(Use {{markdown}} for formatting),
+        :markdown_format_with_help => %Q(Format pages using <a href="#markdown-help" onclick="$$('.markdown_help')[0].toggle();return false>Markdown</a>"),
       },
       :pages => {
         :page => "page",
