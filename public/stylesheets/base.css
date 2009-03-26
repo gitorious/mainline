@@ -588,7 +588,7 @@ li.memberships a, li.committerships a {background-image: url('/images/silk/group
 li.membership a, li.committership a {background-image: url('/images/silk/group_edit.png');}
 
 .with_icons li {
-  margin-bottom: 3px;
+  padding-bottom: 3px;
 }
 .with_icons li a {
   padding-left: 25px;
