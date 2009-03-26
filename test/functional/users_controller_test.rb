@@ -250,7 +250,7 @@ class UsersControllerTest < ActionController::TestCase
         Mailer.expects(:deliver_forgotten_password).with(u, "secret")
         post :reset_password, :user => {:email => u.email}
         assert_redirected_to(root_path)
-        assert_equal "A new password has been sent to your email", flash[:notice]
+        assert_equal "A new password has been sent to your email", flash[:success]
     
         assert_not_nil User.authenticate(u.email, "secret")
       end
@@ -325,7 +325,7 @@ class UsersControllerTest < ActionController::TestCase
         :password => "fubar", 
         :password_confirmation => "fubar"
       }
-      assert !flash[:notice].nil?
+      assert !flash[:success].nil?
       assert_redirected_to(user_path(assigns(:user)))
     end
 
@@ -359,7 +359,7 @@ class UsersControllerTest < ActionController::TestCase
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_redirected_to(user_path(user))
-      assert_match(/Your password has been changed/i, flash[:notice])
+      assert_match(/Your password has been changed/i, flash[:success])
       assert_equal user, User.authenticate(user.email, "fubar")
     end
 
@@ -382,7 +382,7 @@ class UsersControllerTest < ActionController::TestCase
         :current_password => "test", 
         :password => "fubar",
         :password_confirmation => "fubar" }
-      assert_match(/Your password has been changed/i, flash[:notice])
+      assert_match(/Your password has been changed/i, flash[:success])
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end 
 
@@ -393,7 +393,7 @@ class UsersControllerTest < ActionController::TestCase
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_redirected_to user_path(user)
-      assert_match(/Your password has been changed/i, flash[:notice])
+      assert_match(/Your password has been changed/i, flash[:success])
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end
   end
