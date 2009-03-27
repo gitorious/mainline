@@ -181,7 +181,7 @@ module EventRenderingHelper
       link_to(h(repo.name), [project, repo])
     end
     unless event.target.sha1.blank?
-      action << "/" + link_to(h(event.target.sha1[0,7]), 
+      action << ":" + link_to(h(event.target.sha1[0,7]), 
           repo_owner_path(repo, :project_repository_commit_path, project, repo, event.target.sha1))
     end
     body = truncate(h(event.target.body), :length => 150)
