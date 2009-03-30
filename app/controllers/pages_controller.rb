@@ -43,7 +43,11 @@ class PagesController < ApplicationController
     @atom_auto_discovery_url = project_pages_path(:format => :atom)
     @page, @root = page_and_root
     if @page.new?
-      redirect_to edit_project_page_path(@project, params[:id]) and return
+      if logged_in?
+        redirect_to edit_project_page_path(@project, params[:id]) and return
+      else
+        render "no_page" and return
+      end
     end
   end
   

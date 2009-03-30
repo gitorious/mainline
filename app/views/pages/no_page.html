@@ -18,32 +18,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+
 <% content_for :submenu do -%>
   <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 <h1>
-  <%= @page.new? ? t("views.common.creating") : t("views.common.editing") -%> 
-  <%= t("views.pages.page") -%> <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
+  <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
+  doesn't exist
 </h1>
 
 <% help_box(:middle, :error) do -%>
-  <p>The page "<%=h params[:id] -%>" doesn't exist yet, you can create it below if
-  you like.</p>
+  <p>The page "<%=h params[:id] -%>" doesn't exist yet. If you would like to create
+  it you must <%= link_to "log in", new_sessions_path -%> first.</p>
 <% end -%>
-
-<% form_for [@project, @page] do |f| -%>
-  <p class="hint">
-    <%= t("views.common.markdown_format_with_help") -%>
-    <a href="#markdown-help" onclick="$$('.markdown_help')[0].toggle();return false">Markdown</a>. 
-    <%= t("views.pages.wikiwords_syntax") -%>
-  </p>
-  <p>
-    <%= render_markdown_help -%>
-  </p>
-
-  <%= f.text_area :content, :class => "text fill taller" -%><br />
-  <%= f.submit -%> 
-  <%= t("views.pages.or_back_to_page", 
-        :page_link => link_to(@page.title, project_page_path(@project, @page.title))) -%>
-<% end -%>
-
