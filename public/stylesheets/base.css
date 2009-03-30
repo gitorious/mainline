@@ -164,7 +164,7 @@ abbr {
   float: right;
   margin-top: 15px;
   padding: 0px;
-  margin-right: 44px;
+  margin-right: 24px;
   list-style: none;
   padding-top: 2px;
   clear: right;
@@ -207,8 +207,9 @@ abbr {
 
 #container {
   min-height: 300px;
-  margin-right: 40px;
-  background: #fff url("/images/maincontent-border-right.gif") top right repeat-y;
+/*  margin-right: 40px;
+  background: #fff url("/images/maincontent-border-right.gif") top right repeat-y;*/
+  background: #fff;
 }
 #container.in-context-mode {
   border-top: 1px solid #a7afb5;
@@ -222,7 +223,7 @@ abbr {
 #container #content.with_sidebar {
   float: left;
   position: relative;
-  width: 67%;
+  width: 69%;
   margin: 20px 0 20px 20px;
   padding:0;
 }
@@ -230,7 +231,7 @@ abbr {
 #container #sidebar {
   border-left: 1px solid #d1d5d8;
   position: relative;
-  margin: 0 2px 0 70%;
+  margin: 0 2px 0 72%;
   padding: 20px;
   background: #eef2f5;
   color: #555;
@@ -302,13 +303,11 @@ abbr {
 #container #footer {
   padding: 20px;
   font-size: 11px;
-  margin-right: 2px;
   color: #666;
   text-align: center;
   clear: both;
   /*background: #EEF2F5;*/
   background: #222 url("/images/header_bg.png") repeat-x;
-  border-top: 1px solid #d1d5d8;
 }
 
 #container #footer a {
@@ -362,7 +361,7 @@ abbr {
 
 #menu {
   float: right;
-  margin-right: 40px;
+  margin-right: 20px;
   margin-top: 20px;
   margin-bottom: 0;
 }
@@ -484,8 +483,9 @@ abbr {
   line-height: 100%;
   margin-left: 0px;
   height: 29px;
-  margin-right: 40px;
-  background: #DEE1E3 url("/images/maincontent-border-right.gif") top right repeat-y;
+/*  margin-right: 40px;
+  background: #DEE1E3 url("/images/maincontent-border-right.gif") top right repeat-y;*/
+  background: #dee7ed;
 }
 
 #contextmenu li {
