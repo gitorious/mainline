@@ -164,7 +164,7 @@ abbr {
   float: right;
   margin-top: 15px;
   padding: 0px;
-  margin-right: 24px;
+  margin-right: 44px;
   list-style: none;
   padding-top: 2px;
   clear: right;
@@ -362,7 +362,7 @@ abbr {
 
 #menu {
   float: right;
-  margin-right: 20px;
+  margin-right: 40px;
   margin-top: 20px;
   margin-bottom: 0;
 }
@@ -483,9 +483,9 @@ abbr {
   margin: 0;
   line-height: 100%;
   margin-left: 0px;
-  background: #dee7ed;
   height: 29px;
-  border-top: 1px solid #AAA;
+  margin-right: 40px;
+  background: #DEE1E3 url("/images/maincontent-border-right.gif") top right repeat-y;
 }
 
 #contextmenu li {
