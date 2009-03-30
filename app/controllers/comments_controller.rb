@@ -46,7 +46,8 @@ class CommentsController < ApplicationController
     @comment.target = @repository
     respond_to do |format|
       if @comment.save
-        @project.create_event(Action::COMMENT, @comment, current_user)
+#        def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)"
+        @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param)
         format.html do
           flash[:success] = I18n.t "comments_controller.create_success"
           if @comment.sha1.blank?

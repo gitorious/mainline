@@ -173,18 +173,20 @@ module EventRenderingHelper
   end
   
   def render_event_comment(event)
+    comment = Comment.find(event.data)
+    
     project = event.target.project
-    repo = event.target.target.target
+    repo = event.target
     
     action = action_for_event(:event_commented) do
       " on " +  link_to(h(project.slug), project_path(project)) + "/" + 
       link_to(h(repo.name), [project, repo])
     end
-    unless event.target.sha1.blank?
-      action << ":" + link_to(h(event.target.sha1[0,7]), 
-          repo_owner_path(repo, :project_repository_commit_path, project, repo, event.target.sha1))
+    unless comment.sha1.blank?
+      action << "/" + link_to(h(comment.sha1[0,7]), 
+          repo_owner_path(repo, :project_repository_commit_path, project, repo, comment.sha1))
     end
-    body = truncate(h(event.target.body), :length => 150)
+    body = truncate(h(comment.body), :length => 150)
     category = "comment"
     [action, body, category]
   end
