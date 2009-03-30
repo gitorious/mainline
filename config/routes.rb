@@ -68,7 +68,7 @@ ActionController::Routing::Routes.draw do |map|
     :reset_password => :post
   }, :member => { :feed => :get, :password => :get, :update_password => :put }) do |user|
     user.resources :keys
-    user.resources :emails, :member => { :confirm => :get }
+    user.resources :aliases, :member => { :confirm => :get }
     user.resource :license
     user.resources(:repositories, repository_options, &repository_proc)
     user.resources :projects do |p|

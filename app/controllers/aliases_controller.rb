@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class EmailsController < ApplicationController
+class AliasesController < ApplicationController
   before_filter :login_required
   before_filter :find_user
   before_filter :require_current_user
@@ -36,7 +36,7 @@ class EmailsController < ApplicationController
     
     if @email.save
       flash[:success] = "You will receive an email asking you to confirm ownership of #{@email.address}"
-      redirect_to user_emails_path(@user)
+      redirect_to user_aliases_path(@user)
     else
       render "new"
     end
@@ -47,7 +47,7 @@ class EmailsController < ApplicationController
     if email
       email.confirm!
       flash[:success] = "#{email.address} is now confirmed as belonging to you"
-      redirect_to user_emails_path(@user) and return
+      redirect_to user_aliases_path(@user) and return
     else
       flash[:error] = "The confirmation is incorrect"
       redirect_to user_path(@user)
@@ -59,7 +59,7 @@ class EmailsController < ApplicationController
     if @email.destroy
       flash[:success] = "Email alias deleted"
     end
-    redirect_to user_emails_path(@user)
+    redirect_to user_aliases_path(@user)
   end
   
   protected

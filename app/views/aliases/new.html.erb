@@ -24,7 +24,7 @@
 <h1><%= t("views.aliases.new_alias") -%></h1>
 
 <%= error_messages_for :email -%>
-<% form_for([@user, @email]) do |f| -%>
+<% form_for(@email, :url => user_aliases_path(@user, @email)) do |f| -%>
   <p>
     <%= f.label :address -%>:
     <%= f.text_field :address, :class => "text" -%>
@@ -35,5 +35,5 @@
     been created.
   </p>
   
-  <p><%= f.submit("Add alias") -%> or <%= link_to "go back", user_emails_path(@user) -%></p>
+  <p><%= f.submit("Add alias") -%> or <%= link_to "go back", user_aliases_path(@user) -%></p>
 <% end -%>

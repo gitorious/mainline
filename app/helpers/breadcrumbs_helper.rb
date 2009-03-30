@@ -77,7 +77,7 @@ module BreadcrumbsHelper
     when Breadcrumb::SentMessages 
       sent_messages_path
     when Breadcrumb::Aliases
-      user_emails_path
+      user_aliases_path
     when Breadcrumb::Keys
       user_keys_path
     when Message

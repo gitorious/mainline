@@ -44,13 +44,15 @@
 	    <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png", 
 	          :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') -%>
 	  </td>
-	  <td><%= button_to(t("views.common.remove"), [@user, email], :method => :delete) -%></td>
+	  <td><%= button_to(t("views.common.remove"), 
+							user_alias_path(@user, email), :method => :delete, 
+							:confirm => t("views.common.confirm")) -%></td>
 	</tr>
 	<% end -%>
 </table>
 
 <% content_for :sidebar do -%>
   <ul class="links">
-    <li class="new_alias"><%= link_to t("views.aliases.new_alias"), new_user_email_path(@user) -%>
+    <li class="new_alias"><%= link_to t("views.aliases.new_alias"), new_user_alias_path(@user) -%>
   </ul>
 <% end -%>

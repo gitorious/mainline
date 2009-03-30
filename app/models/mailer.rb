@@ -73,7 +73,7 @@ class Mailer < ActionMailer::Base
     @sent_on    = Time.now
     @recipients = email.address
     @body[:email] = email
-    @body[:url] = confirm_user_email_url(email.user, email.confirmation_code)
+    @body[:url] = confirm_user_alias_url(email.user, email.confirmation_code)
   end
 
   protected

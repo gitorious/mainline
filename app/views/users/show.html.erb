@@ -79,7 +79,7 @@
   <ul class="links">
     <% if current_user && (current_user == @user)  -%>
       <li class="key"><%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%></li>
-      <li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_emails_path(current_user) -%></li>
+      <li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%></li>
       <li class="edit_account"><%= link_to t("views.users.edit_action"), edit_user_url -%>
       <li class="edit_account_password"><%= link_to t("views.users.chg_passwd_action"), password_user_path -%></li>
     <% end -%>

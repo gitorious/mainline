@@ -17,7 +17,7 @@
 #++
 require File.dirname(__FILE__) + '/../test_helper'
 
-class EmailsControllerTest < ActionController::TestCase
+class AliasesControllerTest < ActionController::TestCase
   
   should_render_in_global_context
   
@@ -86,7 +86,7 @@ class EmailsControllerTest < ActionController::TestCase
         post :create, :user_id => @user.to_param, :email => {:address => "bob@example.com"}
       end
       assert_response :redirect
-      assert_redirected_to user_emails_path(@user)
+      assert_redirected_to user_aliases_path(@user)
       assert_match(/receive an email asking you to confirm.+bob@example\.com/, flash[:success])
     end
     
@@ -118,7 +118,7 @@ class EmailsControllerTest < ActionController::TestCase
         assert_response :redirect
       end
       assert_equal "Email alias deleted", flash[:success]
-      assert_redirected_to user_emails_path(@user)
+      assert_redirected_to user_aliases_path(@user)
     end
   end
   
@@ -152,7 +152,7 @@ class EmailsControllerTest < ActionController::TestCase
       login_as :johan
       get :confirm, :user_id => users(:johan).to_param, :id => @email.confirmation_code
       assert_response :redirect
-      assert_redirected_to user_emails_path(users(:johan))
+      assert_redirected_to user_aliases_path(users(:johan))
       assert_nil flash[:error]
       assert_match(/is now confirmed as belonging to you/, flash[:success])
       assert @email.reload.confirmed?
