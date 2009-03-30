@@ -36,7 +36,7 @@
 <%= render :partial => "events/events", :locals => { :events => @events } -%>
 
 <% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @project} -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>
@@ -83,7 +83,7 @@
     <ul class="links actions">
       <% if @project.admin?(current_user) -%>
         <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
-        <li class="update_project"><%= link_to t("views.projects.settings"), edit_project_path(@project) -%></li>
+        <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
       <% end -%>
     </ul>
   

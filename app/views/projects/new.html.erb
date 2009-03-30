@@ -24,6 +24,10 @@
 
 <%= error_messages_for :project -%>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
+
 <% form_for @project, :url => projects_path, :builder => GitoriousFormBuilder  do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
   

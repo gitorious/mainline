@@ -63,6 +63,7 @@ class ProjectsController < ApplicationController
   
   def show
     @owner = @project
+    @root = @project
     @events = @project.events.top.paginate(:all, :page => params[:page],
                 :order => "created_at desc", :include => [:user, :project])
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
@@ -78,10 +79,12 @@ class ProjectsController < ApplicationController
   def new
     @project = Project.new
     @project.owner = current_user
+    @root = Breadcrumb::NewProject.new
   end
   
   def create
     @project = Project.new(params[:project])
+    @root = Breadcrumb::NewProject
     @project.user = current_user
     @project.owner = case params[:project][:owner_type]
       when "User"
@@ -100,10 +103,12 @@ class ProjectsController < ApplicationController
   
   def edit
     @groups = current_user.groups
+    @root = Breadcrumb::EditProject.new(@project)
   end
   
   def update
     @groups = current_user.groups
+    @root = Breadcrumb::EditProject.new(@project)
     
     # change group, if requested
     unless params[:project][:owner_id].blank?

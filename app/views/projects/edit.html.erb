@@ -42,7 +42,7 @@
 <% end -%>
 
 <% content_for :submenu do -%>
-  <li class="selected"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>

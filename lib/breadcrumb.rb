@@ -161,7 +161,42 @@ module Breadcrumb
       "merge_requests"
     end
   end
- 
+
+  class EditProject
+    def initialize(project)
+      @project = project
+    end
+
+    def breadcrumb_parent
+      @project
+    end
+
+    def title
+      I18n.t("views.projects.edit_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "edit_project"
+    end
+  end
+
+  class NewProject
+    def initialize
+    end
+
+    def breadcrumb_parent
+      nil 
+    end
+
+    def title
+      I18n.t("views.projects.new_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "new_project"
+    end
+  end
+
   class UserEdit
     def initialize(user)
       @user = user

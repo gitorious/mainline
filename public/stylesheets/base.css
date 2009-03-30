@@ -509,6 +509,7 @@ abbr {
 
 /* Icons used for actions and breadcrums */
 li.new_project > a { background-image: url("/images/silk/report_add.png") !important; }
+li.edit_project > a { background-image: url("/images/silk/report_edit.png") !important; }
 li.project > a { background-image: url("/images/silk/report.png") !important; }
 li.project_personal > a { background-image: url("/images/silk/report_user.png") !important; }
 li.project_research > a { background-image: url("/images/silk/report_magnify.png") !important; }
