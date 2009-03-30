@@ -35,6 +35,7 @@ class Group < ActiveRecord::Base
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/, 
     :message => "Must be alphanumeric, and optional dash"
     
+  before_validation :downcase_name
   def self.human_name
     I18n.t("activerecord.models.group")
   end
@@ -113,4 +114,9 @@ class Group < ActiveRecord::Base
   def add_member(a_user, a_role)
     memberships.create!(:user => a_user, :role => a_role)
   end
+  
+  protected
+    def downcase_name
+      name.downcase! if name
+    end
 end

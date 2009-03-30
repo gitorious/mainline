@@ -21,10 +21,13 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class GroupTest < ActiveSupport::TestCase
     
+  
+  
   context "in general" do
     should "uses the name as to_param" do
       assert_equal groups(:team_thunderbird).name, groups(:team_thunderbird).to_param
     end
+
   end
   
   context "members" do
@@ -110,9 +113,21 @@ class GroupTest < ActiveSupport::TestCase
       })
       assert !group.valid?, 'group.valid? should be false'
       assert_not_nil group.errors.on(:name)
-      group.name = "Foo"
-      assert !group.valid?, 'group.valid? should be false'
-      assert_not_nil group.errors.on(:name)
     end
+
+    should 'require valid names' do
+      ['foo_bar', 'foo.bar', 'foo bar'].each do |name|
+        g = Group.new
+        g.name = name
+        assert !g.save
+        assert_not_nil(g.errors.on(:name), "#{name} should not be a valid name")
+      end
+    end
+    
+    should 'automatically downcase the group name before validation' do
+      g = Group.create(:name => 'FooWorkers')
+      assert_equal('fooworkers', g.name)
+    end
+
   end
 end

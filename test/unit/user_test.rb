@@ -35,6 +35,16 @@ class UserTest < ActiveSupport::TestCase
   should_have_many :email_aliases
   should_validate_presence_of :login, :password, :password_confirmation, :email
   
+  should_not_allow_values_for :login, 'john.doe', 'john_doe'
+  should_allow_values_for :login, 'JohnDoe', 'john-doe', 'john999'
+  
+  should 'downcase the login before validation' do
+    u = User.new
+    u.login = 'FooBar'
+    assert !u.valid?
+    assert_equal('foobar', u.login)
+  end
+  
   should "require a username without spaces" do
     assert_no_difference("User.count") do
       u = create_user(:login => "joe schmoe")

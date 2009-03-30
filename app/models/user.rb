@@ -39,9 +39,12 @@ class User < ActiveRecord::Base
 
   attr_protected :login, :is_admin
 
+  # For new users we are a little more strict than for existing ones. 
   USERNAME_FORMAT = /[a-z0-9\-_\.]+/.freeze
+  USERNAME_FORMAT_ON_CREATE = /[a-z0-9\-]+/.freeze
   validates_presence_of     :login, :email,               :if => :password_required?
-  validates_format_of       :login, :with => /^#{USERNAME_FORMAT}$/i
+  validates_format_of       :login, :with => /^#{USERNAME_FORMAT_ON_CREATE}$/i, :on => :create
+  validates_format_of       :login, :with => /^#{USERNAME_FORMAT}$/i, :on => :update
   validates_format_of       :email, :with => Email::FORMAT
   validates_presence_of     :password,                   :if => :password_required?
   validates_presence_of     :password_confirmation,      :if => :password_required?
@@ -55,7 +58,7 @@ class User < ActiveRecord::Base
   
   before_save :encrypt_password
   before_create :make_activation_code
-  before_validation :lint_identity_url
+  before_validation :lint_identity_url, :downcase_login
 
   state_machine :aasm_state, :initial => :pending do
     state :terms_accepted
@@ -299,5 +302,9 @@ class User < ActiveRecord::Base
       self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
     rescue OpenIdAuthentication::InvalidOpenId
       # validate will catch it instead
+    end
+    
+    def downcase_login
+      login.downcase! if login
     end
 end
