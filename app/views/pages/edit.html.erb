@@ -26,9 +26,11 @@
   <%= t("views.pages.page") -%> <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
 </h1>
 
-<% help_box(:middle, :error) do -%>
-  <p>The page "<%=h params[:id] -%>" doesn't exist yet, you can create it below if
-  you like.</p>
+<% if @page.new? -%>
+  <% help_box(:middle, :error) do -%>
+    <p>The page "<%=h params[:id] -%>" doesn't exist yet, you can create it below if
+    you like.</p>
+  <% end -%>
 <% end -%>
 
 <% form_for [@project, @page] do |f| -%>
