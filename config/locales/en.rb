@@ -355,9 +355,11 @@
         :btn_manage_committers => "Manage committers",
         :btn_delete_repo => "Delete repository",
         :btn_edit_repo => "Edit repository",
+        :edit_breadcrumb => "Edit Repository",
         :committers => "Committers",
         :current_committers => "Committers",
         :remove => "Remove",
+        :clone_breadcrumb => "Clone Repository",
         :create_title => lambda { |this, clone, project| 
           "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
         },
@@ -393,7 +395,8 @@
         :bugtracker => "Bugtracker at ",
         :repos => "Repositories",
         :project_members => "Project members",
-        :add_repository => "Add repository"
+        :add_repository => "Add repository",
+        :add_repository_breadcrumb => "Add Repository"
       },
       :merges => {
         :info => {

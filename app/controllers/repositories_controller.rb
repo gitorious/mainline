@@ -35,6 +35,7 @@ class RepositoriesController < ApplicationController
     
   def show
     @repository = @owner.repositories.find_by_name!(params[:id])
+    @root = @repository
     @events = @repository.events.top.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
@@ -50,6 +51,7 @@ class RepositoriesController < ApplicationController
   
   def new
     @repository = @project.repositories.new
+    @root = Breadcrumb::NewRepository.new(@project)
     @repository.kind = Repository::KIND_PROJECT_REPO
     @repository.owner = @project.owner
     if @project.repositories.mainlines.count == 0
@@ -59,6 +61,7 @@ class RepositoriesController < ApplicationController
   
   def create
     @repository = @project.repositories.new(params[:repository])
+    @root = Breadcrumb::NewRepository.new(@project)
     @repository.kind = Repository::KIND_PROJECT_REPO
     @repository.owner = @project.owner
     @repository.user = current_user
@@ -75,6 +78,7 @@ class RepositoriesController < ApplicationController
   
   def clone
     @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
+    @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_clone_error"
       redirect_to [@owner, @repository_to_clone]
@@ -85,6 +89,7 @@ class RepositoriesController < ApplicationController
   
   def create_clone
     @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
+    @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       respond_to do |format|
         format.html do
@@ -127,11 +132,13 @@ class RepositoriesController < ApplicationController
   
   def edit
     @repository = @owner.repositories.find_by_name!(params[:id])
+    @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
   end
   
   def update
     @repository = @owner.repositories.find_by_name!(params[:id])
+    @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
     prior_description = @repository.description
     @repository.description = params[:repository][:description]    

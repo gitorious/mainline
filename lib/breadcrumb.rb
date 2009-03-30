@@ -162,6 +162,60 @@ module Breadcrumb
     end
   end
 
+  class EditRepository
+    def initialize(repository)
+      @repository = repository
+    end
+
+    def breadcrumb_parent
+      @repository
+    end
+
+    def title
+      I18n.t("views.repos.edit_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "update_repository"
+    end
+  end
+
+  class NewRepository
+    def initialize(project)
+      @project = project
+    end
+
+    def breadcrumb_parent
+      @project
+    end
+
+    def title
+      I18n.t("views.projects.add_repository_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "add_project_repository"
+    end
+  end
+
+  class CloneRepository
+    def initialize(repository)
+      @repository = repository
+    end
+
+    def breadcrumb_parent
+      @repository
+    end
+
+    def title
+      I18n.t("views.repos.clone_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "clone_repository"
+    end
+  end
+
   class EditProject
     def initialize(project)
       @project = project

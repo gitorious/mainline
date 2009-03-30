@@ -21,6 +21,10 @@
 %>
 <h1>Add new repository to <%= link_to @owner.title, @owner -%></h1>
 
+<% content_for :submenu do -%>
+  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
+<% end -%>
+
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
   <p class="hint">
