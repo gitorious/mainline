@@ -17,6 +17,10 @@ module Diff
         "+#{line}"
       end
       
+      def nonewlineline(line)
+        line.to_s
+      end
+      
       def new_line
         "\n"
       end

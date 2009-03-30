@@ -59,6 +59,13 @@ module Gitorious
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
         %Q{<td class="code cut-line"></td></tr>}
       end
+      
+      def nonewlineline(line)
+        %Q{<tr class="changes">} + 
+        %Q{<td class="line-numbers">#{line.old_number}</td>} + 
+        %Q{<td class="line-numbers">#{line.new_number}</td>} + 
+        %Q{<td class="code mod unmod">#{render_line(line)}</td></tr>}
+      end
     end
   end
 end

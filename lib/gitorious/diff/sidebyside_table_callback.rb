@@ -103,6 +103,13 @@ module Gitorious
         %Q{<th class="line-numbers line-num-cut">&hellip;</th>} + 
         %Q{<td class="code cut-line"></td></tr>}
       end
+      
+      def nonewlineline(line)
+        %Q{<th class="line-numbers line-num-cut">&hellip;</th>} + 
+        %Q{<td class="code mod"></td>} + 
+        %Q{<th class="line-numbers line-num-cut">&hellip;</th>} + 
+        %Q{<td class="code mod">#{line}</td></tr>}
+      end
     end
   end
 end
