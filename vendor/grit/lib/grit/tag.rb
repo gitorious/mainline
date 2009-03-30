@@ -2,6 +2,7 @@ module Grit
 
   class Tag < Ref
     def self.find_all(repo, options = {})
+      git_ruby_repo = GitRuby::Repository.new(repo.path)
       refs = []
       already = {}
 
@@ -13,7 +14,7 @@ module Grit
 
           id = File.read(ref).chomp
           name = ref.sub("#{prefix}/", '')
-          commit = commit_from_sha(repo, id)
+          commit = commit_from_sha(repo, git_ruby_repo, id)
 
           if !already[name]
             refs << self.new(name, commit)
@@ -34,7 +35,7 @@ module Grit
               if next_line && next_line[0] == ?^
                 commit = Commit.create(repo, :id => next_line[1..-1].chomp)
               else
-                commit = commit_from_sha(repo, m[1])
+                commit = commit_from_sha(repo, git_ruby_repo, m[1])
               end
 
               if !already[name]
@@ -49,8 +50,7 @@ module Grit
       refs
     end
 
-    def self.commit_from_sha(repo, id)
-      git_ruby_repo = GitRuby::Repository.new(repo.path)
+    def self.commit_from_sha(repo, git_ruby_repo, id)
       object = git_ruby_repo.get_object_by_sha1(id)
 
       if object.type == :commit
