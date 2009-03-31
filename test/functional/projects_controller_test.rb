@@ -164,6 +164,16 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal users(:johan), assigns(:project).owner
     end
     
+    should "POST projects/create with invalid data should re-render the template" do
+      login_as :johan
+      assert_no_difference("Project.count") do
+        post :create, :project => {}
+      end
+      assert_response :success
+      assert_template "projects/new"
+      assert !assigns(:project).valid?
+    end
+    
     should "Create an event when POSTing successfully to create" do
       login_as :johan
       assert_difference("Event.count") do

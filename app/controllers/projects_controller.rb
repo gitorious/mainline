@@ -84,7 +84,7 @@ class ProjectsController < ApplicationController
   
   def create
     @project = Project.new(params[:project])
-    @root = Breadcrumb::NewProject
+    @root = Breadcrumb::NewProject.new
     @project.user = current_user
     @project.owner = case params[:project][:owner_type]
       when "User"
