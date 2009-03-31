@@ -9,13 +9,14 @@
         <% if c.user.nil? %>
           <%= c.actor_display %>
         <% else %>
-          <%= link_to c.user.login, user_path(c.user) %> 
+          <%= link_to h(c.user.title), user_path(c.user) %> 
         <% end %>    
         <strong>committed</strong> <%= link_to(c.data[0,8], repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
         at <%= c.created_at.to_s(:short_time) %>
       </p>
       <div class="commit_message">
-        <%= link_to(simple_format(sanitize(c.body)), repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
+        <%= link_to(simple_format(h(c.body)), 
+              repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
       </div>
     </td>
   </tr>

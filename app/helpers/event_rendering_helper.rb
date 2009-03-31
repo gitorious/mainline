@@ -92,7 +92,7 @@ module EventRenderingHelper
       category = "commit"
     else
       action = action_for_event(:event_status_committed) do
-        link_to(event.data[0,8], repo_owner_path(repo, :project_repository_commit_path, project, repo, event.data)) +
+        link_to(h(event.data[0,8]), repo_owner_path(repo, :project_repository_commit_path, project, repo, event.data)) +
         " to " + link_to(h(project.slug), project)
       end
       body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, repo, event.data))
@@ -274,7 +274,7 @@ module EventRenderingHelper
       link_to(h(event.target.name), project_repository_path(event.project, event.target)) + 
               " in " + link_to(h(event.project.title), project_path(event.project))
     end
-    body = truncate(sanitize(event.target.description), :length => 100)
+    body = truncate(sanitize(event.target.description, :tags => %w[a em i strong b]), :length => 100)
     category = "repository"
     [action, body, category]
   end

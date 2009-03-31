@@ -194,7 +194,10 @@ module ApplicationHelper
       return ["", "", ""]
     end
     # These are defined in event_rendering_helper.rb:
-    self.send("render_event_#{Action::css_class(event.action)}", event)
+    action, body, category = self.send("render_event_#{Action::css_class(event.action)}", event)
+    
+    body = sanitize(body, :tags => %w[a em i strong b])
+    [action, body, category]
   end
   
   def link_to_remote_if(condition, name, options)
