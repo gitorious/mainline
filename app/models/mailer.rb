@@ -63,10 +63,10 @@ class Mailer < ActionMailer::Base
     end
   end
 
-  def forgotten_password(user, password)
+  def forgotten_password(user, password_key)
     setup_email(user)
     @subject += I18n.t "mailer.new_password"
-    @body[:password] = password
+    @body[:url] = reset_password_url(password_key)
   end
   
   def new_email_alias(email)

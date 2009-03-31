@@ -158,6 +158,12 @@ class UserTest < ActiveSupport::TestCase
     assert_equal u, User.authenticate(u.email, password)
   end
   
+  should "set the password key with forgot_password!" do
+    u  = users(:johan)
+    key = u.forgot_password!
+    assert_equal key, u.reload.password_key
+  end
+  
   should "normalize identity urls" do
     u = users(:johan)
     u.identity_url = "http://johan.someprovider.com"

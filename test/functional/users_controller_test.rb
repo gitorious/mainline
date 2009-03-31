@@ -47,8 +47,8 @@ class UsersControllerTest < ActionController::TestCase
       setup { get :password }
       should_redirect_to_ssl
     end
-    context "POST :reset_password" do
-      setup { post :reset_password }
+    context "POST :forgot_password_create" do
+      setup { post :forgot_password_create }
       should_redirect_to_ssl
     end
     context "PUT :update_password" do
@@ -57,6 +57,11 @@ class UsersControllerTest < ActionController::TestCase
     end
     context "GET :forgot_password" do
       setup { get :forgot_password }
+      should_redirect_to_ssl
+    end
+    
+    context "GET :reset_password" do
+      setup { get :reset_password }
       should_redirect_to_ssl
     end
   end
@@ -236,23 +241,64 @@ class UsersControllerTest < ActionController::TestCase
         assert_template(("forgot_password"))
       end
     end
+    
+    context "#reset" do
+      setup do
+        @user = users(:johan)
+        @user.update_attribute(:password_key, "s3kr1t")
+        turn_ssl_on
+      end
+      
+      should "redirect if the token is invalid" do
+        get :reset_password, :token => "invalid"
+        assert_response :redirect
+        assert_redirected_to forgot_password_users_path
+        assert_not_nil flash[:error]
+      end
+      
+      should "render the form if the token is valid" do
+        get :reset_password, :token => "s3kr1t"
+        assert_response :success
+        assert_equal @user, assigns(:user)
+        assert_nil flash[:error]
+      end
+      
+      should "re-render if password confirmation doesn't match" do
+        put :reset_password, :token => "s3kr1t", :user => {
+          :password => "qwertyasdf",
+          :password_confirmation => "asdf"
+        }
+        assert_response :success
+        assert !assigns(:user).valid?
+        assert_nil User.authenticate(@user.email, "qwertyasdf")
+      end
+      
+      should "update the password" do
+        put :reset_password, :token => "s3kr1t", :user => {
+          :password => "qwertyasdf",
+          :password_confirmation => "qwertyasdf"
+        }
+        assert_response :redirect
+        assert_redirected_to new_sessions_path
+        assert User.authenticate(@user.email, "qwertyasdf")
+        assert_match(/Password updated/i, flash[:success])
+      end
+    end
 
-    context "#reset_password" do
+    context "#forgot_password_create" do
       should "redirects to forgot_password if nothing was found" do
-        post :reset_password, :user => {:email => "xxx"}
+        post :forgot_password_create, :user => {:email => "xxx"}
         assert_redirected_to(forgot_password_users_path)
         assert_match(/invalid email/i, flash[:error])
       end
   
       should "sends a new password if email was found" do
         u = users(:johan)
-        User.expects(:generate_random_password).returns("secret")
+        User.expects(:generate_reset_password_key).returns("secret")
         Mailer.expects(:deliver_forgotten_password).with(u, "secret")
-        post :reset_password, :user => {:email => u.email}
+        post :forgot_password_create, :user => {:email => u.email}
         assert_redirected_to(root_path)
-        assert_equal "A new password has been sent to your email", flash[:success]
-    
-        assert_not_nil User.authenticate(u.email, "secret")
+        assert_match(/A password confirmation link has been sent/, flash[:success])
       end
     end
   end

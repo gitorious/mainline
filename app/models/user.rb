@@ -113,6 +113,10 @@ class User < ActiveRecord::Base
     ActiveSupport::SecureRandom.hex(n)
   end
   
+  def self.generate_reset_password_key(n = 16)
+    ActiveSupport::SecureRandom.hex(n)
+  end
+  
   # Finds a user either by his/her primary email, or one of his/hers aliases
   def self.find_by_email_with_aliases(email)
     user = User.find_by_email(email)
@@ -216,6 +220,13 @@ class User < ActiveRecord::Base
     self.password_confirmation = generated
     self.save!
     generated
+  end
+  
+  def forgot_password!
+    generated_key = User.generate_reset_password_key
+    self.password_key = generated_key
+    self.save!
+    generated_key
   end
 
   def can_write_to?(repository)

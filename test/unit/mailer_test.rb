@@ -70,11 +70,12 @@ class MailerTest < ActiveSupport::TestCase
 
   should "sends forgotten_password" do
     user = users(:johan)
-    mail = Mailer.create_forgotten_password(user, "newpassword")
+    mail = Mailer.create_forgotten_password(user, "secret")
     
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Your new password", mail.subject
-    assert_match(/your new password is: newpassword/i, mail.body)
+    assert_match(/requested a new password for your/i, mail.body)
+    assert_match(/reset your password: .+\/users\/reset_password\/secret/i, mail.body)
     
     Mailer.deliver(mail)
     assert_equal [mail], Mailer.deliveries

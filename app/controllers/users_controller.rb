@@ -21,14 +21,16 @@
 #++
 
 class UsersController < ApplicationController
-  skip_before_filter :public_and_logged_in, :only => [:activate, :forgot_password, :reset_password]
+  skip_before_filter :public_and_logged_in, :only => [
+    :activate, :forgot_password, :forgot_password_create, :reset_password 
+  ]
   before_filter :login_required, :only => [:edit, :update, :password, :update_password]
   before_filter :find_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   renders_in_global_context
-  ssl_required :new, :create, :edit, :update, :password, :reset_password, 
-                :forgot_password, :update_password
+  ssl_required :new, :create, :edit, :update, :password, :forgot_password_create, 
+                :forgot_password, :update_password, :reset_password
  
   # render new.rhtml
   def new
@@ -90,16 +92,33 @@ class UsersController < ApplicationController
   def forgot_password
   end
     
-  def reset_password
+  def forgot_password_create
     if params[:user] && user = User.find_by_email(params[:user][:email])
-      # FIXME: should really be a two-step process: receive link, visiting it resets password
-      generated_password = user.reset_password!
-      Mailer.deliver_forgotten_password(user, generated_password)
-      flash[:success] = I18n.t "users_controller.reset_password_notice"
+      password_key = user.forgot_password!
+      Mailer.deliver_forgotten_password(user, password_key)
+      flash[:success] = "A password confirmation link has been sent to your email address"
       redirect_to(root_path)
     else
       flash[:error] = I18n.t "users_controller.reset_password_error"
       redirect_to forgot_password_users_path
+    end
+  end
+  
+  def reset_password
+    @user = User.find_by_password_key(params[:token])
+    unless @user
+      flash[:error] = I18n.t "users_controller.reset_password_error"
+      redirect_to forgot_password_users_path
+      return
+    end
+    
+    if request.put?
+      @user.password = params[:user][:password]
+      @user.password_confirmation = params[:user][:password_confirmation]
+      if @user.save
+        flash[:success] = "Password updated"
+        redirect_to(new_sessions_path)
+      end
     end
   end
 
