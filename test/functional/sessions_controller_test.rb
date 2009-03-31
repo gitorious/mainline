@@ -58,7 +58,7 @@ class SessionsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
  
-  should " login with openid and redirect" do
+  should "login with openid and redirect to new user page" do
     identity_url = "http://patcito.myopenid.com"
     @controller.stubs(:using_open_id?).returns(true)
     @controller.stubs(:successful?).returns(false)
@@ -72,8 +72,13 @@ class SessionsControllerTest < ActionController::TestCase
       }
     )
     post :create, :openid_url => identity_url
-    assert_not_nil !session[:user_id]
+    assert_nil session[:user_id]
+    assert_equal identity_url, session[:openid_url]
+    assert_equal 'patcito', session[:openid_nickname]
+    assert_equal 'patcito@gmail.com', session[:openid_email]
+    assert_equal 'Patrick Aljord', session[:openid_fullname]
     assert_response :redirect
+    assert_redirected_to :controller => 'users', :action => 'openid_build'
   end
    
   should " fail login and not redirect" do

@@ -1,0 +1,50 @@
+<%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<h1><%= t("views.users.openid_build_title") %></h1>
+<p><%= t("views.users.openid_build_description") %></p>
+
+<%= error_messages_for :user %>
+
+  <%- form_for(@user, :url => {:action => 'openid_create'}) do |f| -%>
+  <p>
+    <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%><br/>
+    <%= f.text_field :login, :class => "text" -%>
+  </p>
+
+  <p>
+    <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%><br/>
+    <%= f.text_field :email, :class => "text" -%>
+  </p>
+
+  <p>
+    <%= f.label :fullname, t(:fullname, :scope => 'activerecord.attributes.user') -%><br/>
+    <%= f.text_field :fullname, :class => 'text' -%>
+  </p>
+
+  <div class="eula">
+    <%= markdown(EndUserLicenseAgreement.current_version.contents) %>    
+  </div>
+
+  <p>
+    <%= f.check_box :end_user_license_agreement  -%>
+    <label for="eula_version">I accept the End User License Agreement</label>
+  </p>
+  
+  <p><%= f.submit t("views.common.signup") %></p>
+<%- end -%>

@@ -199,6 +199,8 @@
         :is_admin => "Is Administrator?",
         :forgot_title => "Forgot your password?",
         :send_new_passwd => 'Send me a new password',
+        :openid_build_title => 'Complete your registration',
+        :openid_build_description => 'You need enter the following details:',
         :create_title => lambda { |this, path| "Create new user or " + 
           this.link_to( "login directly with your OpenID", path ) },
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",

@@ -25,6 +25,7 @@ class UsersController < ApplicationController
   before_filter :login_required, :only => [:edit, :update, :password, :update_password]
   before_filter :find_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
+  before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   renders_in_global_context
   ssl_required :new, :create, :edit, :update, :password, :reset_password, 
                 :forgot_password, :update_password
@@ -138,9 +139,36 @@ class UsersController < ApplicationController
     end
   end
   
+  def openid_build
+    @user = User.new(:identity_url => session[:openid_url], :email => session[:openid_email], :login => session[:openid_nickname], :fullname => session[:openid_fullname])
+  end
+  
+  def openid_create
+    @user = User.new(params[:user])
+    @user.login = params[:user][:login]
+    @user.identity_url = session[:openid_url]
+    if @user.save
+      @user.eula_version = EndUserLicenseAgreement.current_version.checksum      
+      @user.activate
+      [:openid_url, :openid_email, :openid_nickname, :openid_fullname].each do |k|
+        session.delete(k)
+      end
+      self.current_user = @user
+      redirect_back_or_default '/'
+    else
+      render :action => 'openid_build'
+    end
+  end
+  
   protected
     def find_user
       @user = User.find_by_login!(params[:id])
+    end
+    
+    def require_identity_url_in_session
+      if session[:openid_url].blank?
+        redirect_to :action => "new" and return
+      end
     end
 
 

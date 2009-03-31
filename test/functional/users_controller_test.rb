@@ -397,5 +397,40 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end
   end
+  
+  context 'Creation from OpenID' do
+    setup do
+      @valid_session_options = {:openid_url => 'http://moe.example/', :openid_nickname => 'schmoe'}
+    end
+    should 'deny access unless OpenID information is present in the session' do
+      get :openid_build
+      assert_response :redirect
+    end
+    
+    should 'build a user from the OpenID information and render the form' do
+      get :openid_build, {}, @valid_session_options
+      user = assigns(:user)
+      assert_not_nil user
+      assert_equal 'http://moe.example/', user.identity_url
+      assert_response :success
+    end
+    
+    should 'render the form unless all required fields have been filled' do
+      post :openid_create, {:user => {}}, @valid_session_options
+      user = assigns(:user)
+      assert_response :success
+      assert_template 'users/openid_build'
+    end
+    
+    should 'create a user with the provided credentials and openid url on success' do
+      post :openid_create, {:user => {:fullname => 'Moe Schmoe', :email => 'moe@schmoe.example', :login => 'schmoe', :end_user_license_agreement => '1'}}, @valid_session_options
+      user = assigns(:user)
+      assert user.activated?
+      assert user.terms_accepted?
+      assert_nil session[:openid_url]
+      assert_equal user, @controller.send(:current_user)
+      assert_response :redirect
+    end
+  end
 
 end

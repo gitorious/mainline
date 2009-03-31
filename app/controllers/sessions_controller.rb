@@ -59,15 +59,13 @@ class SessionsController < ApplicationController
       if result.successful?
         @user = User.find_or_initialize_by_identity_url(identity_url)
         if @user.new_record?
-          @user.login = registration['nickname']
-          @user.fullname = registration['fullname']
-          @user.email = registration['email']
-          @user.in_openid_import_phase!
-          @user.save!
-          @user.activate
-          self.current_user = @user
-          flash[:notice] = "You now need to accept the End User License Agreement"
-          redirect_to edit_user_path(@user) and return
+
+          session[:openid_nickname] = registration['nickname']
+          session[:openid_email]    = registration['email']
+          session[:openid_fullname] = registration['fullname']
+          session[:openid_url]      = identity_url
+          flash[:notice] = "You now need to finalize your account"
+          redirect_to :controller => 'users', :action => 'openid_build' and return
         end
         self.current_user = @user
         successful_login

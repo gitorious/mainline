@@ -65,7 +65,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/ }, :collection => {
     :forgot_password => :get,
-    :reset_password => :post
+    :reset_password => :post,
+    :openid_build => :get,
+    :openid_create => :post
   }, :member => { :feed => :get, :password => :get, :update_password => :put }) do |user|
     user.resources :keys
     user.resources :aliases, :member => { :confirm => :get }
