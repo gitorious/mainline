@@ -41,7 +41,8 @@ module EventRenderingHelper
   
   def render_event_update_repository(event)
     action = action_for_event(:event_updated_repository) do
-      link_to h(event.target.title), project_repository_path(event.target.project, event.target)
+      link_to(h(event.target.url_path), 
+        repo_owner_path(event.target, :project_repository_path, event.target.project, event.target))
     end
     category = 'repository'
     [action, event.body, category]
@@ -54,12 +55,11 @@ module EventRenderingHelper
     project = event.target.project
     
     action = action_for_event(:event_status_cloned) do
-      link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(original_repo.name), project_repository_url(project, original_repo)) + 
-      " in " + link_to(h(event.target.name), project_repository_url(project, event.target))
+      link_to(h(original_repo.url_path), repo_owner_path(original_repo, [project, original_repo]))
     end
+    body = "New repository is in " + link_to(h(event.target.name), repo_owner_path(event.target, [project, event.target]))
     category = "repository"
-    [action, "", category]
+    [action, body, category]
   end
   
   def render_event_delete_repository(event)
@@ -155,8 +155,7 @@ module EventRenderingHelper
   def render_event_add_committer(event)
     repo = event.target
     action = action_for_event(:event_committer_added, :committer => h(event.data)) do
-      " to " + link_to(h(repo.project.slug), project_path(repo.project)) + "/" + 
-      link_to(h(repo.name), project_repository_url(repo.project, repo))
+      " to " + link_to(repo_title(repo, event.project), repo_owner_path(repo, [repo.project, repo]))
     end
     category = "repository"
     [action, "", category]
@@ -165,8 +164,7 @@ module EventRenderingHelper
   def render_event_remove_committer(event)
     repo = event.target
     action = action_for_event(:event_committer_removed, :committer => h(event.data)) do
-      " from " + link_to(h(repo.project.slug), project_path(repo.project)) + "/" + 
-      link_to(h(repo.name), project_repository_url(repo.project, repo))
+      " from " + link_to(repo_title(repo, event.project), repo_owner_path(repo, [repo.project, repo]))
     end
     category = "repository"
     [action, "", category]
@@ -178,13 +176,15 @@ module EventRenderingHelper
     project = event.target.project
     repo = event.target
     
-    action = action_for_event(:event_commented) do
-      " on " +  link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(repo.name), [project, repo])
-    end
-    unless comment.sha1.blank?
-      action << "/" + link_to(h(comment.sha1[0,7]), 
-          repo_owner_path(repo, :project_repository_commit_path, project, repo, comment.sha1))
+    if comment.sha1.blank?
+      action = action_for_event(:event_commented) do
+        " on " +  link_to(h(repo.url_path), repo_owner_path(repo, [project, repo]))
+      end
+    else
+      action = action_for_event(:event_commented) do
+        " on " +  link_to(h(repo.url_path + '/' + comment.sha1[0,7]), 
+          repo_owner_path(repo, :project_repository_commit_path, project, repo, comment.sha1)+"##{dom_id(comment)}")
+      end
     end
     body = truncate(h(comment.body), :length => 150)
     category = "comment"
@@ -197,10 +197,10 @@ module EventRenderingHelper
     target_repository = event.target.target_repository
     
     action = action_for_event(:event_requested_merge_of) do
-      link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(source_repository.name), project_repository_url(project, source_repository)) + 
-      " with " + link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(target_repository.name))
+      link_to(repo_title(source_repository, project), 
+        repo_owner_path(source_repository, [project, source_repository])) + 
+      " with " + link_to(h(target_repository.name), 
+        repo_owner_path(target_repository, [project, target_repository]))
     end
     body = link_to truncate(h(event.target.proposal), :length => 100), [project, target_repository, event.target]
     category = "merge_request"
@@ -213,9 +213,9 @@ module EventRenderingHelper
     target_repository = event.target.target_repository
     
     action = action_for_event(:event_resolved_merge_request) do
-      "as " + "[#{event.target.status_string}] from " + 
-      link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(source_repository.name), project_repository_url(project, source_repository))
+      "as " + "<em>#{event.target.status_string}</em> from " +
+      link_to(repo_title(source_repository, project), 
+        repo_owner_path(source_repository, [project, source_repository]))
     end
     body = link_to truncate(h(event.target.proposal), :length => 100), [project, target_repository, event.target]
     category = "merge_request"
@@ -261,8 +261,9 @@ module EventRenderingHelper
     project = event.target.project
     commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), :url => commits_event_path(event.to_param), :method => :get, :update => "commits_in_event_#{event.to_param}", :before => "$('commits_in_event_#{event.to_param}').toggle()")
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
-      " to " + link_to(h(project.slug), project_path(project)) + "/" + 
-      link_to(h(event.target.name+':'+event.data), repo_owner_path(event.target, :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data)))
+      title = repo_title(event.target, project)
+      " to " + link_to(h(title+':'+event.data), repo_owner_path(event.target, 
+        :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data)))
     end
     body = h(event.body)
     category = 'push'
@@ -283,5 +284,13 @@ module EventRenderingHelper
     def action_for_event(i18n_key, opts = {}, &block)
       header = "<strong>" + I18n.t("application_helper.#{i18n_key}", opts) + "</strong> "
       header + capture(&block)
+    end
+    
+    def repo_title(repo, project)
+      if repo.project_repo?
+        h(File.join(project.to_param_with_prefix, repo.name))
+      else
+        h(File.join(repo.owner.to_param_with_prefix, project.slug, repo.name))
+      end
     end
 end
