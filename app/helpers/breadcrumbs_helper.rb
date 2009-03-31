@@ -85,6 +85,6 @@ module BreadcrumbsHelper
     else
       "" # Current path
     end
-    link_to(an_object.title, url)
+    link_to(h(an_object.title), url)
   end
 end

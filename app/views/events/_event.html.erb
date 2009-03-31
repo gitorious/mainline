@@ -35,7 +35,7 @@
       <% if event.user.nil? %>
         <%= event.actor_display %>
       <% else %>
-        <%= link_to event.user.title, user_path(event.user) %> 
+        <%= link_to h(event.user.title), user_path(event.user) %>
       <% end %>
       <%= action %> 
     <% end %>
