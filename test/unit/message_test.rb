@@ -163,6 +163,13 @@ class MessageTest < ActiveSupport::TestCase
       assert_equal(@mike.id, message['recipient_id'])
       assert_equal(@message.subject, message['subject'])
     end
+    
+    should 'not send a notification when the sender and recipient is the same person' do
+      @message.sender = @message.recipient = @mike
+      assert @message.recipient.wants_email_notifications?
+      @message.expects(:schedule_email_delivery).never
+      @message.save
+    end
   end
   
   context 'Rendering XML' do

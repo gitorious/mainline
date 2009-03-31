@@ -135,7 +135,7 @@ class Message < ActiveRecord::Base
   
   protected
     def send_email_notification_if_required
-      if recipient.wants_email_notifications?
+      if recipient.wants_email_notifications? and (recipient != sender)
         schedule_email_delivery
       end
     end
