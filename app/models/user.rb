@@ -109,11 +109,8 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest("--#{salt}--#{password}--")
   end
 
-  def self.generate_random_password(password_size = 12)
-    characters = (("a".."z").to_a + ("0".."9").to_a) - %w[0 o i l 1]
-    (0...password_size).collect do |char|
-      characters[rand(characters.length)]
-    end.join
+  def self.generate_random_password(n = 12)
+    ActiveSupport::SecureRandom.hex(n)
   end
   
   # Finds a user either by his/her primary email, or one of his/hers aliases

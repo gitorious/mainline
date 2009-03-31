@@ -147,9 +147,9 @@ class UserTest < ActiveSupport::TestCase
   
   should "generate some randomly password" do
     assert_match(/\w+/, User.generate_random_password)
-    assert_equal 12, User.generate_random_password.length
-    assert_equal 16, User.generate_random_password(16).length
-    assert_equal 5, User.generate_random_password(5).length
+    assert_equal 24, User.generate_random_password.length
+    assert_equal 32, User.generate_random_password(16).length
+    assert_equal 10, User.generate_random_password(5).length
   end
   
   should "reset a password to something" do
