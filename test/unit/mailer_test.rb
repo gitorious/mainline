@@ -103,4 +103,15 @@ class MailerTest < ActiveSupport::TestCase
     assert_match /#{sender.fullname} has sent you a message on Gitorious: /, mail.body
     assert_match /Address: .*\/#{merge_request.target_repository.project.slug}\//i, mail.body
   end
+  
+  should 'sanitize the contents of notifications' do
+    recipient = users(:moe)
+    sender = users(:mike)
+    subject = %Q(<script type="text/javascript">alert(document.cookie)</script>Hello)
+    body = %Q(<script type="text/javascript">alert('foo')</script>This is the actual message)
+    mail = Mailer.create_notification_copy(recipient, sender, subject, body, nil)
+    assert_no_match /alert/, mail.body
+    assert_no_match /document\.cookie/, mail.subject
+    assert_match /Hello/, mail.subject
+  end
 end
