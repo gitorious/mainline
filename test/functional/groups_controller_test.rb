@@ -105,4 +105,50 @@ class GroupsControllerTest < ActionController::TestCase
       assert_equal [users(:mike)], assigns(:group).members
     end
   end
+  
+  context "deleting a group" do
+    setup do
+      @group = groups(:team_thunderbird)
+      @user = users(:mike)
+      assert @group.admin?(@user)
+    end
+    
+    should "be deletable if there's only one member" do
+      assert_equal 1, @group.members.count
+      login_as :mike
+      assert_difference("Group.count", -1) do
+        delete :destroy, :id => @group.to_param
+        assert_response :redirect
+      end
+      assert_redirected_to groups_path
+      assert_match(/team was deleted/, flash[:success])
+    end
+    
+    should "not be deletable if there's more than one member" do
+      @group.add_member(users(:johan), Role.member)
+      assert_equal 2, @group.members.count
+      login_as :mike
+      assert_no_difference("Group.count", -1) do
+        delete :destroy, :id => @group.to_param
+        assert_response :redirect
+      end
+      assert_redirected_to group_path(@group)
+      assert_match(/team can't be deleted/, flash[:error])
+    end
+    
+    should "be deletable if there's more than one member and user is site_admin" do
+      assert users(:johan).site_admin?
+      @group.add_member(users(:johan), Role.member)
+      assert_equal 2, @group.members.count
+      
+      login_as :johan
+      assert_difference("Group.count", -1) do
+        delete :destroy, :id => @group.to_param
+      end
+      assert_response :redirect
+      assert_redirected_to groups_path
+      assert_match(/team was deleted/, flash[:success])
+    end
+    
+  end
 end

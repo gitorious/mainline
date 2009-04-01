@@ -31,3 +31,12 @@
   
   <p><%= f.submit t("views.groups.update_team_submit") -%></p>
 <% end -%>
+
+<% content_for :sidebar do -%>
+  <% if current_user.site_admin? || (@group.admin?(current_user) && @group.deletable?) -%>
+    <p>
+      <%= button_to("Delete this group permanently", group_path(@group), 
+            :method => :delete, :confirm => "Do you really wish to DELETE this group?") -%>
+    </p>
+  <% end -%>
+<% end -%>

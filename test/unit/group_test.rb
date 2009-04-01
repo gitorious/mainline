@@ -98,6 +98,13 @@ class GroupTest < ActiveSupport::TestCase
     assert group.all_related_project_ids.include?(projects(:moes).id)
   end
   
+  should "know when it's deletable" do
+    assert_equal 1, groups(:team_thunderbird).members.count
+    assert groups(:team_thunderbird).deletable?
+    groups(:team_thunderbird).add_member(users(:johan), Role.member)
+    assert !groups(:team_thunderbird).deletable?
+  end
+  
   context "validations" do
     should " have a unique name" do
       group = Group.new({

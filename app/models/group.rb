@@ -36,6 +36,7 @@ class Group < ActiveRecord::Base
     :message => "Must be alphanumeric, and optional dash"
     
   before_validation :downcase_name
+  
   def self.human_name
     I18n.t("activerecord.models.group")
   end
@@ -113,6 +114,10 @@ class Group < ActiveRecord::Base
   # Adds +a_user+ as a member to this group with a role of +a_role+
   def add_member(a_user, a_role)
     memberships.create!(:user => a_user, :role => a_role)
+  end
+  
+  def deletable?
+    members.count <= 1
   end
   
   protected
