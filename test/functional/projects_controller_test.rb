@@ -188,6 +188,22 @@ class ProjectsControllerTest < ActionController::TestCase
       event = assigns(:project).events.first
       assert_equal Action::CREATE_PROJECT, event.action
     end
+    
+    should "render a error page if the create was throttled" do
+      login_as :johan
+      Project.any_instance.expects(:save).raises(RecordThrottling::LimitReachedError)
+      assert_no_difference("Project.count") do
+        post :create, :project =>  {
+          :title => "project x",
+          :slug => "projectx",
+          :description => "projectx's description",
+          :owner_type => "User"
+        }
+      end
+      assert_response :precondition_failed
+      assert_select "h1", /slow down/i
+      assert_select "p", /denied your request due to excessive usage/i
+    end
   
     should "POST projects/create with valid data should create project, owned by a group" do
       login_as :johan
