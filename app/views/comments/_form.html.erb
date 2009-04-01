@@ -43,7 +43,11 @@
       <a href="#markdown-help" onclick="$$('.markdown_help')[0].toggle();return false">Toggle Markdown help</a>
     </small></p>
     <%= render_markdown_help %>
+    <div id="comment_preview">
+      
+    </div>
     <p>
+      <%= button_to_remote("Preview", :url => repo_owner_path(@repository, [@project, @repository, :comments, :preview]), :method => :post, :with => 'Form.serialize(this.form)') %>
       <%= f.submit t("views.comments.add") -%>
     </p>
   <% end -%>

@@ -35,6 +35,13 @@ class CommentsController < ApplicationController
     end
   end
   
+  def preview
+    @comment = Comment.new(params[:comment])
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
   def new
     @comment = @repository.comments.new
   end
