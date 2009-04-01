@@ -25,6 +25,7 @@
 
 class Repository < ActiveRecord::Base
   include ActiveMessaging::MessageSender
+  include RecordThrottling
   
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1
@@ -62,6 +63,11 @@ class Repository < ActiveRecord::Base
   after_create :create_add_event_if_project_repo
   after_create  :post_repo_creation_message
   after_destroy :post_repo_deletion_message
+  
+  throttle_records :create, :limit => 5,
+    :counter => proc{|record| record.user.repositories.count },
+    :conditions => proc{|record| {:user_id => record.user.id} },
+    :timeframe => 5.minutes
   
   named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO }
   named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }

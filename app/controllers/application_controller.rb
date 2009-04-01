@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::UnknownAction, :with => :render_not_found
   rescue_from Grit::GitRuby::Repository::NoSuchPath, :with => :render_not_found
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
+  rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
   
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -168,6 +169,10 @@ class ApplicationController < ActionController::Base
     
     def render_git_timeout
       render :partial => "/projects/git_timeout", :layout => "application" and return
+    end
+    
+    def render_throttled_record
+      render :partial => "/projects/throttled_record", :layout => "application" and return
     end
     
     def public_and_logged_in

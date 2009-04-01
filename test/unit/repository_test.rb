@@ -623,4 +623,20 @@ class RepositoryTest < ActiveSupport::TestCase
       assert !@other_repository.requires_signoff_on_merge_requests?
     end
   end
+  
+  context "Thottling" do
+    setup{ Repository.destroy_all }
+    
+    should "throttle on create" do      
+      assert_nothing_raised do
+        5.times{|i| new_repos(:name => "wifebeater#{i}").save! }
+      end
+      
+      assert_no_difference("Repository.count") do
+        assert_raises(RecordThrottling::LimitReachedError) do
+          new_repos(:name => "wtf-are-you-doing-bro").save!
+        end
+      end
+    end
+  end
 end

@@ -25,6 +25,7 @@
 
 class Project < ActiveRecord::Base
   acts_as_taggable
+  include RecordThrottling
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
@@ -74,6 +75,11 @@ class Project < ActiveRecord::Base
 
   before_validation :downcase_slug
   after_create :create_wiki_repository
+  
+  throttle_records :create, :limit => 5,
+    :counter => proc{|record| record.user.projects.count },
+    :conditions => proc{|record| {:user_id => record.user.id} },
+    :timeframe => 5.minutes
 
   LICENSES = [
     'Academic Free License v3.0',
