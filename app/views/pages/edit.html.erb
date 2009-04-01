@@ -45,14 +45,11 @@
     <%= render_markdown_help -%>
   </p>
 
-  <p class="preview_toggle">
-    <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler") %>
-  </p>
-
   <div id="page_preview" style="display:none">
   </div>
 
   <%= f.text_area :content, :class => "text fill taller" -%><br />
+  <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler") %>
   <%= f.submit -%> 
   
   <%= t("views.pages.or_back_to_page", 
