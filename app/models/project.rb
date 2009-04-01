@@ -246,8 +246,18 @@ class Project < ActiveRecord::Base
     when "test"
       @oauth_consumer ||= OAuth::TestConsumer.new
     else
-      @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, :site => oauth_signoff_site)
+      @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, oauth_consumer_options)
     end
+  end
+  
+  def oauth_consumer_options
+    result = {:site => oauth_signoff_site}
+    unless oauth_path_prefix.blank?
+      %w(request_token authorize_path access_token_path).each do |p|
+        result[:"#{p}_path"] = File.join("/", oauth_path_prefix, p)
+      end
+    end
+    result
   end
 
   protected    

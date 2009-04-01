@@ -257,4 +257,27 @@ class ProjectTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  context 'Oauth' do
+    setup do
+      @project = projects(:johans)
+      @project.oauth_signoff_site = 'http://oauth.example'
+    end
+    
+    should 'return oauth_consumer_options with default paths' do
+      assert_equal({:site => @project.oauth_signoff_site}, @project.oauth_consumer_options)
+    end
+    
+    should 'append correct paths when a prefix is supplied' do
+      @project.oauth_path_prefix = "/path/to/oauth"
+      consumer_options = @project.oauth_consumer_options
+      assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
+    end
+    
+    should 'append a correct path even with strange options' do
+      @project.oauth_path_prefix = "path/to/oauth/"
+      consumer_options = @project.oauth_consumer_options
+      assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
+    end
+  end
 end
