@@ -211,18 +211,30 @@ class UsersControllerTest < ActionController::TestCase
       :activation_code => "abc123",
     }, "/users/activate/abc123")
   end
+  
+  context "GET show" do
+    should "counts the number of commits in the last week" do
+      get :show, :id => users(:johan).login
+      assert_response :success
+      assert_instance_of Fixnum, assigns(:commits_last_week)
+      assert (assigns(:commits_last_week) >= 0), '(assigns[:commits_last_week] >= 0) should be true'
+    end
 
-  should "counts the number of commits in the last week" do
-    get :show, :id => users(:johan).login
-    assert_response :success
-    assert_instance_of Fixnum, assigns(:commits_last_week)
-    assert (assigns(:commits_last_week) >= 0), '(assigns[:commits_last_week] >= 0) should be true'
-  end
-
-  should "#show sets atom feed autodiscovery" do
-    user = users(:johan)
-    get :show, :id => user.login
-    assert_equal feed_user_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
+    should "#show sets atom feed autodiscovery" do
+      user = users(:johan)
+      get :show, :id => user.login
+      assert_equal feed_user_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
+    end
+    
+    should "not display inactive users" do
+      user = users(:johan)
+      user.update_attribute(:activation_code, "123")
+      assert !user.activated?
+      
+      get :show, :id => user.to_param
+      assert_response :redirect
+      assert_match(/is not public/, flash[:notice])
+    end
   end
 
   should "has an atom feed" do

@@ -25,9 +25,10 @@ class UsersController < ApplicationController
     :activate, :forgot_password, :forgot_password_create, :reset_password 
   ]
   before_filter :login_required, :only => [:edit, :update, :password, :update_password]
-  before_filter :find_user, :only => [:edit, :update, :password, :update_password]
+  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password]
   before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
+  before_filter :require_public_user, :only => :show
   renders_in_global_context
   ssl_required :new, :create, :edit, :update, :password, :forgot_password_create, 
                 :forgot_password, :update_password, :reset_password
@@ -37,7 +38,6 @@ class UsersController < ApplicationController
   end
   
   def show
-    @user = User.find_by_login!(params[:id])
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.repositories.clones
     @events = @user.events.top.paginate(:all, 
@@ -189,6 +189,11 @@ class UsersController < ApplicationController
         redirect_to :action => "new" and return
       end
     end
-
-
+    
+    def require_public_user
+      unless @user.public?
+        flash[:notice] = "This user profile is not public"
+        redirect_back_or_default root_path
+      end
+    end
 end

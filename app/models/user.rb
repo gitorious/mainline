@@ -160,6 +160,11 @@ class User < ActiveRecord::Base
   def recently_activated?
     @activated
   end
+  
+  # Can this user be shown in public
+  def public?
+    activated? && !pending?
+  end
 
   # Encrypts the password with the user salt
   def encrypt(password)
