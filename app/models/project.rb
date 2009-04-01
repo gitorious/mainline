@@ -77,7 +77,9 @@ class Project < ActiveRecord::Base
   after_create :create_wiki_repository
   
   throttle_records :create, :limit => 5,
-    :counter => proc{|record| record.user.projects.count },
+    :counter => proc{|record|
+      record.user.projects.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+    },
     :conditions => proc{|record| {:user_id => record.user.id} },
     :timeframe => 5.minutes
 

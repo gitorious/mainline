@@ -65,7 +65,9 @@ class Repository < ActiveRecord::Base
   after_destroy :post_repo_deletion_message
   
   throttle_records :create, :limit => 5,
-    :counter => proc{|record| record.user.repositories.count },
+    :counter => proc{|record|
+      record.user.repositories.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+    },
     :conditions => proc{|record| {:user_id => record.user.id} },
     :timeframe => 5.minutes
   
