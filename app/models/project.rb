@@ -26,6 +26,7 @@
 class Project < ActiveRecord::Base
   acts_as_taggable
   include RecordThrottling
+  include UrlLinting
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
@@ -262,15 +263,5 @@ class Project < ActiveRecord::Base
 
     def downcase_slug
       slug.downcase! if slug
-    end
-
-    # Try our best to guess the url
-    def clean_url(url)
-      return if url.blank?
-      begin
-        url = "http://#{url}" if URI.parse(url).class == URI::Generic
-      rescue
-      end
-      url
     end
 end

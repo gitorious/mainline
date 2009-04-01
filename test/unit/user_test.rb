@@ -248,6 +248,16 @@ class UserTest < ActiveSupport::TestCase
     assert !users(:mike).committer?(users(:johan))
   end
   
+  should "prepend http:// to the url if needed" do
+    user = users(:johan)
+    assert user.valid?
+    user.url = 'http://blah.com'
+    assert user.valid?
+    user.url = 'blah.com'
+    assert user.valid?
+    assert_equal 'http://blah.com', user.url
+  end
+  
   context "find_by_email_with_aliases" do
     should "find a user by primary email" do
       assert_equal users(:johan), User.find_by_email_with_aliases("johan@johansorensen.com")

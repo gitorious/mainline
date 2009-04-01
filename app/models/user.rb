@@ -24,6 +24,8 @@
 require 'digest/sha1'
 
 class User < ActiveRecord::Base
+  include UrlLinting
+  
   has_many :projects
   has_many :memberships, :dependent => :destroy
   has_many :groups, :through => :memberships
@@ -288,6 +290,10 @@ class User < ActiveRecord::Base
 
   def in_openid_import_phase?
     return @in_openid_import_phase
+  end
+  
+  def url=(an_url)
+    self[:url] = clean_url(an_url)
   end
 
   protected
