@@ -56,6 +56,14 @@ class PagesController < ApplicationController
     @page.user = current_user
   end
   
+  def preview
+    @page, @root = page_and_root
+    @page.content = params[:page][:content]
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
   def update
     @page = Page.find(params[:id], @project.wiki_repository.git)
     @page.user = current_user

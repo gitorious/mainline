@@ -33,18 +33,28 @@
   <% end -%>
 <% end -%>
 
+
 <% form_for [@project, @page] do |f| -%>
   <p class="hint">
     <%= t("views.common.markdown_format_with_help") -%>
     <a href="#markdown-help" onclick="$$('.markdown_help')[0].toggle();return false">Markdown</a>. 
     <%= t("views.pages.wikiwords_syntax") -%>
   </p>
+
   <p>
     <%= render_markdown_help -%>
   </p>
 
+  <p class="preview_toggle">
+    <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler") %>
+  </p>
+
+  <div id="page_preview" style="display:none">
+  </div>
+
   <%= f.text_area :content, :class => "text fill taller" -%><br />
   <%= f.submit -%> 
+  
   <%= t("views.pages.or_back_to_page", 
         :page_link => link_to(@page.title, project_page_path(@project, @page.title))) -%>
 <% end -%>

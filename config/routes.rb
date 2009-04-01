@@ -99,7 +99,7 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
-    projects.resources :pages, :member => { :history => :get }
+    projects.resources :pages, :member => { :history => :get,:preview => :put }
     projects.resources(:repositories, repository_options, &repository_proc)
   end
   

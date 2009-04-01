@@ -243,3 +243,22 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
     });
   }
 }
+
+function toggle_wiki_preview(target_url)
+{
+  var wiki_preview = $('page_preview');
+  var wiki_edit = $('page_content');
+  var wiki_form = wiki_edit.form;
+  var toggler = $('wiki_preview_toggler');
+  if (wiki_preview.visible()) // Will hide preview
+  {
+    toggler.value = "Show preview"
+  }
+  else
+  {
+    toggler.value = "Hide preview"
+    wiki_preview.innerHTML = "";
+    new Ajax.Request(target_url, {asynchronous:true, evalScripts:true, method:'post', parameters:Form.serialize(wiki_form)});
+  }
+  [wiki_preview,wiki_edit].each(function(e){e.toggle()});
+}

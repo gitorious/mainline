@@ -1,0 +1,4 @@
+result = ""
+result << content_tag(:h3, "Wiki preview")
+result << content_tag(:div, wikize(@page.content))
+page.replace_html('page_preview',result)

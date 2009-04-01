@@ -103,4 +103,21 @@ class PagesControllerTest < ActionController::TestCase
       assert_redirected_to(project_path(@project))
     end
   end
+  
+  context 'Preview' do
+    setup do
+      page_stub = mock("page stub")
+      page_stub.expects(:content=)
+      page_stub.expects(:content).returns("Messing around with wiki markup")
+      page_stub.expects(:save).never
+      Repository.any_instance.expects(:git).returns(mock("git"))
+      Page.expects(:find).returns(page_stub)
+    end
+    
+    should 'render the preview for an existing page' do
+      login_as :johan
+      put :preview, :project_id => @project.to_param, :id => "Sandbox", :format => 'js', :page => {:content => 'Foo'}
+      assert_response :success
+    end
+  end
 end
