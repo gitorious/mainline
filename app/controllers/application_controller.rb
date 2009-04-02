@@ -30,6 +30,7 @@ class ApplicationController < ActionController::Base
   include SslRequirement # Need to be included after the above
   
   after_filter :mark_login_status
+  after_filter :mark_flash_status
   
   layout :pick_layout_based_on_site
   
@@ -184,6 +185,12 @@ class ApplicationController < ActionController::Base
     def mark_login_status
       if logged_in?
         headers['X-Logged-In'] = "true" 
+      end
+    end
+    
+    def mark_flash_status
+      unless flash.empty?
+        headers['X-Has-Flash'] = "true"
       end
     end
     

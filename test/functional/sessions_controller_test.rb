@@ -148,6 +148,14 @@ class SessionsControllerTest < ActionController::TestCase
     # rspec.should test(flash.now)
   end
   
+  context "Setting a magic header when there's a flash message" do
+    should "set the header if there's a flash" do
+      post :create, :email => "johan@johansorensen.com", :password => "test"
+      assert_not_nil flash[:notice]
+      assert_equal "true", @response.headers["X-Has-Flash"]
+    end
+  end
+  
   context 'Bypassing cachíng for authenticated users' do
     should 'be set when logging in' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
