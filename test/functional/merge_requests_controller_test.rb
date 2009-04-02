@@ -466,5 +466,20 @@ class MergeRequestsControllerTest < ActionController::TestCase
       end
 		end
 	end
+	
+	context 'Redirection from the outside' do
+	  setup do
+	    @merge_request = merge_requests(:moes_to_johans)
+    end
+    
+    should 'redirect to the correct URL when supplying only an id' do
+      get :direct_access, :id => @merge_request.to_param
+      assert_redirected_to({
+        :action => 'show', 
+        :project_id => @merge_request.target_repository.project,
+        :repository_id => @merge_request.target_repository,
+        :id => @merge_request})
+    end
+  end
 
 end

@@ -127,6 +127,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'
   
+  map.merge_request_direct_access '/merge_requests/:id', :controller => 'merge_requests', :action => 'direct_access'
+  
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
