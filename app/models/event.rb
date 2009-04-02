@@ -27,10 +27,10 @@ class Event < ActiveRecord::Base
   
   has_many :events, :as => :target do
     def commits
-      find(:all, :conditions => {:action => Action::COMMIT})
+      all.select{|e|e.action == Action::COMMIT}
     end
   end
-  
+
   named_scope :top, {:conditions => ['target_type != ?', 'Event']}
   
   def self.latest(count)
