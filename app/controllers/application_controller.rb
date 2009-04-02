@@ -28,8 +28,7 @@ class ApplicationController < ActionController::Base
   before_filter :require_current_eula
   
   include SslRequirement # Need to be included after the above
-  
-  after_filter :mark_login_status
+
   after_filter :mark_flash_status
   
   layout :pick_layout_based_on_site
@@ -180,12 +179,6 @@ class ApplicationController < ActionController::Base
     
     def public_and_logged_in
       login_required unless GitoriousConfig['public_mode']
-    end
-    
-    def mark_login_status
-      if logged_in?
-        headers['X-Logged-In'] = "true" 
-      end
     end
     
     def mark_flash_status
