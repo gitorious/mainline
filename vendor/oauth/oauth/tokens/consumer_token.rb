@@ -1,3 +1,4 @@
+# encoding: utf-8
 module OAuth
   # Superclass for tokens used by OAuth Clients
   class ConsumerToken < Token

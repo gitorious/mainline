@@ -253,7 +253,7 @@ class Project < ActiveRecord::Base
   def oauth_consumer_options
     result = {:site => oauth_signoff_site}
     unless oauth_path_prefix.blank?
-      %w(request_token authorize_path access_token_path).each do |p|
+      %w(request_token authorize access_token).each do |p|
         result[:"#{p}_path"] = File.join("/", oauth_path_prefix, p)
       end
     end

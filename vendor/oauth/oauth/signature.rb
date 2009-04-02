@@ -1,3 +1,4 @@
+# encoding: utf-8
 module OAuth
   module Signature
     def self.available_methods

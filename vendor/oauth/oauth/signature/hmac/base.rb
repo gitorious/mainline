@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'oauth/signature/base'
 
 module OAuth::Signature::HMAC
