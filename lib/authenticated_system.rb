@@ -20,15 +20,16 @@ module AuthenticatedSystem
     end
     
     def set_varnish_auth_cookie
-      cookies[:authenticated] = {
+      cookies["_authenticated"] = {
         :value => "true",
         :domain => ".#{GitoriousConfig['gitorious_host']}",
         :expires => 3.weeks.from_now,
+        :httponly => true,
       }
     end
     
     def clear_varnish_auth_cookie
-      cookies.delete :authenticated, :domain => ".#{GitoriousConfig['gitorious_host']}"
+      cookies.delete "_authenticated", :domain => ".#{GitoriousConfig['gitorious_host']}"
     end
     
     # Check if the user is authorized

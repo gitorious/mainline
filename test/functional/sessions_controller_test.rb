@@ -159,20 +159,20 @@ class SessionsControllerTest < ActionController::TestCase
   context 'Bypassing cachíng for authenticated users' do
     should 'be set when logging in' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_equal "true", cookies['authenticated']
+      assert_equal "true", cookies['_authenticated']
     end
     
     should 'be removed when logging out' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies['authenticated']
+      assert_not_nil cookies['_authenticated']
       delete :destroy
-      assert_nil cookies['authenticated']
+      assert_nil cookies['_authenticated']
     end
     
     should "remove the cookie when logging out" do
-      @request.cookies["authenticated"] = "true"
+      @request.cookies["_authenticated"] = "true"
       delete :destroy
-      assert_nil @response.cookies["authenticated"]
+      assert_nil @response.cookies["_authenticated"]
     end
     
     should "set the authenticated cookie when logging in with an auth token" do
@@ -180,7 +180,7 @@ class SessionsControllerTest < ActionController::TestCase
       @request.cookies["auth_token"] = cookie_for(:johan)
       get :new
       assert @controller.send(:logged_in?)
-      assert_equal "true", @response.cookies["authenticated"]
+      assert_equal "true", @response.cookies["_authenticated"]
     end
   end
 end
