@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   attr_protected :login, :is_admin
 
   # For new users we are a little more strict than for existing ones. 
-  USERNAME_FORMAT = /[a-z0-9\-_\.]+/.freeze
+  USERNAME_FORMAT = /[a-z0-9\-_\.]+/i.freeze
   USERNAME_FORMAT_ON_CREATE = /[a-z0-9\-]+/.freeze
   validates_presence_of     :login, :email,               :if => :password_required?
   validates_format_of       :login, :with => /^#{USERNAME_FORMAT_ON_CREATE}$/i, :on => :create
