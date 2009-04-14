@@ -66,7 +66,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.reset_password "users/reset_password/:token", :controller => "users", :action => "reset_password"
-  map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/ }, :collection => {
+  map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/i }, :collection => {
     :forgot_password => :get,
     :forgot_password_create => :post,
     :openid_build => :get,
