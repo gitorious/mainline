@@ -1,17 +1,20 @@
 class RenameParticipationsToCommittersAndMakeItPolymorphic < ActiveRecord::Migration
   def self.up
-    rename_table :participations, :committerships
-    rename_column :committerships, :group_id, :committer_id
-    add_column :committerships, :committer_type, :string
+    rename_column :committerships, :user_id, :committer_id
+    change_column :committerships, :committer_id, :integer, :null => true
+    add_column :committerships, :committer_type, :string, :null => false
+    add_column :committerships, :creator_id, :integer
+    
     add_index :committerships, [:committer_id, :committer_type]
-
+    add_index :committerships, :repository_id
+    
     ActiveRecord::Base.reset_column_information
-    Committership.update_all("committer_type = 'Group'")
+    Committership.update_all("committer_type = 'User'")
   end
 
   def self.down
-    rename_table :committerships, :participations
-    rename_column :committerships, :committer_id, :group_id
+    rename_column :committerships, :committer_id, :user_id
     remove_column :committerships, :committer_type
+    remove_column :committerships, :creator_id
   end
 end
