@@ -1,6 +1,5 @@
 # encoding: utf-8
 require 'oauth/client'
-require 'oauth/oauth'
 require 'oauth/consumer'
 require 'oauth/helper'
 require 'oauth/token'
