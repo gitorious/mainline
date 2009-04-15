@@ -492,13 +492,14 @@ abbr {
   float: left;
   background-repeat: no-repeat;
   background-position: right 0px; 
-  padding: 9px 15px 7px 10px;
+  padding: 0 15px 0 10px;
   display: list-item;
   background-image: url("/images/breadcrumb.png");
 }
 
 #breadcrumbs li a {
-  padding-left: 22px;
+  padding: 9px 0 7px 22px;
+  display: block;
   background-repeat: no-repeat;
   background-position: center left;
 }
