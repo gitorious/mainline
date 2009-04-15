@@ -84,9 +84,9 @@
     </ul>
 	<% end -%>
   </div>
-  <% unless @content_for_submenu.blank? -%>
-  <ul id="contextmenu">
-    <%= yield :submenu -%>
+  <% unless @content_for_breadcrumbs.blank? -%>
+  <ul id="breadcrumbs">
+    <%= yield :breadcrumbs -%>
   </ul>
   <% end -%>
   <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">

@@ -38,7 +38,7 @@ module BreadcrumbsHelper
   
   # Renders breadcrumbs starting from +root+
   def breadcrumbs_from(root)
-    content_for(:submenu) do
+    content_for(:breadcrumbs) do
       render_breadcrumb_starting_from(root)
     end
   end

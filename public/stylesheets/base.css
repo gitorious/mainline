@@ -476,9 +476,9 @@ abbr {
   color: #000;
 }
 
-/* context menu */
+/* breadcrumbs */
 
-#contextmenu {
+#breadcrumbs {
   margin: 0;
   line-height: 100%;
   margin-left: 0px;
@@ -488,7 +488,7 @@ abbr {
   background: #dee7ed;
 }
 
-#contextmenu li {
+#breadcrumbs li {
   float: left;
   background-repeat: no-repeat;
   background-position: right 0px; 
@@ -497,14 +497,22 @@ abbr {
   background-image: url("/images/breadcrumb.png");
 }
 
-#contextmenu li a {
+#breadcrumbs li a {
   padding-left: 22px;
   background-repeat: no-repeat;
   background-position: center left;
 }
 
-#contextmenu li:last-child {
+#breadcrumbs li:last-child {
   background-image: none;
+}
+
+#breadcrumbs li a {
+  color: #555;
+}
+#breadcrumbs li a:hover {
+  text-decoration: none;
+  color: #390;
 }
 
 /* Icons used for actions and breadcrums */
@@ -606,14 +614,6 @@ li.membership a, li.committership a {background-image: url('/images/silk/group_e
   padding-bottom: 10px;
   margin-bottom: 20px;
   border-bottom: 4px solid #ccc;
-}
-
-#contextmenu li a {
-  color: #555;
-}
-#contextmenu li a:hover {
-  text-decoration: none;
-  color: #390;
 }
 
 .help-box {
