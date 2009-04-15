@@ -39,7 +39,7 @@ class UsersController < ApplicationController
   
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
-    @repositories = @user.repositories.clones
+    @repositories = @user.commit_repositories
     @events = @user.events.top.paginate(:all, 
       :page => params[:page],
       :order => "events.created_at desc", 

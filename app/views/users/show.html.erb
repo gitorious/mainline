@@ -40,7 +40,7 @@
     <% end -%>
   </div>
   <div id="right">
-    <% pull_box(t("views.site.dashboard.clones")) do -%>
+    <% pull_box(t("views.site.dashboard.repositories")) do -%>
       <ul class="with_icons">
         <% @repositories.each do |repo| -%>
           <li class="repository"><%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%></li>

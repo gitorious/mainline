@@ -33,6 +33,8 @@ class UserTest < ActiveSupport::TestCase
   end
   
   should_have_many :email_aliases
+  should_have_many :committerships
+  should_have_many :commit_repositories
   should_validate_presence_of :login, :password, :password_confirmation, :email
   
   should_not_allow_values_for :login, 'john.doe', 'john_doe'

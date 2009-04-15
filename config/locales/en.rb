@@ -163,7 +163,7 @@
           :your_account => "Your Account",
           :your_profile => "Your Profile",
           :projects => "Projects",
-          :clones => "Repository clones",
+          :repositories => "Repositories",
         },
       },
       :events => {
