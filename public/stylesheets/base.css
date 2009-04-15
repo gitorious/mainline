@@ -1535,6 +1535,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 10px;
 }
 
+.comments .comment img {
+  max-width: 500px; max-height: 500px;
+}
+
 .comments .comment .byline {
   margin-bottom: 0;
   font-size: 12px;
