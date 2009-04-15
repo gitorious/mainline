@@ -34,7 +34,7 @@ class EventsController < ApplicationController
   def commits
     @event = Event.find(params[:id])
     if stale?(:etag => @event, :last_modified => @event.created_at)
-      @commits = @event.events.commits.paginate(:page => params[:page])
+      @commits = @event.events.commits
       respond_to do |wants|
         wants.js
       end

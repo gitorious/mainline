@@ -1,25 +1,42 @@
 <table class="commits_in_event">
-<% @commits.each do |c| %>
-  <tr id="<%= dom_id(c) -%>">
-    <td valign="top" class="avatar">
-      <%= gravatar(c.email, :size => 16)  %>    
-    </td>
-    <td valign="top">
-      <p>
-        <% if c.user.nil? %>
-          <%= c.actor_display %>
-        <% else %>
-          <%= link_to h(c.user.title), user_path(c.user) %> 
-        <% end %>    
-        <strong>committed</strong> <%= link_to(c.data[0,8], repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
-        at <%= c.created_at.to_s(:short_time) %>
-      </p>
-      <div class="commit_message">
-        <%= link_to(simple_format(h(c.body)), 
-              repo_owner_path(c.target.target.target, :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
-      </div>
-    </td>
-  </tr>
+<% @commits.each_with_index do |c, index| %>
+  <% if index+1 > Event::MAX_COMMIT_EVENTS -%>
+    <tr>
+      <td valign="top" class="avatar">
+        
+      </td>
+      <td valign="top">
+          <%= link_to("And #{@event.events.count - @commits.count} more commits&hellip;",
+              repo_owner_path(c.target.target.target,
+                    :project_repository_commits_in_ref_path, c.project,
+                    c.target.target.target, ensplat_path(@event.data))) -%>
+      </td>
+    </tr>
+  <% else -%>
+    <tr id="<%= dom_id(c) -%>">
+      <td valign="top" class="avatar">
+        <%= gravatar(c.email, :size => 16)  %>
+      </td>
+      <td valign="top">
+        <p>
+          <% if c.user.nil? %>
+            <%= c.actor_display %>
+          <% else %>
+            <%= link_to h(c.user.title), user_path(c.user) %>
+          <% end %>
+          <strong>committed</strong>
+          <%= link_to(c.data[0,8], repo_owner_path(c.target.target.target, 
+                :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
+          at <%= c.created_at.to_s(:short_time) %>
+        </p>
+        <div class="commit_message">
+          <%= link_to(simple_format(h(c.body)),
+                repo_owner_path(c.target.target.target,
+                  :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
+        </div>
+      </td>
+    </tr>
+  <% end -%>
 <% end %>
 </table>
 

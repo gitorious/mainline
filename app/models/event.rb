@@ -20,6 +20,9 @@
 #++
 
 class Event < ActiveRecord::Base
+  
+  MAX_COMMIT_EVENTS = 25
+  
   belongs_to :user
   belongs_to :project
   belongs_to :target, :polymorphic => true
@@ -27,7 +30,7 @@ class Event < ActiveRecord::Base
   
   has_many :events, :as => :target do
     def commits
-      all.select{|e|e.action == Action::COMMIT}
+      all(:limit => Event::MAX_COMMIT_EVENTS+1).select{|e|e.action == Action::COMMIT}
     end
   end
 
