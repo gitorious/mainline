@@ -96,6 +96,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     first_event = @processor.events.first
     assert_equal Action::PUSH, first_event.event_type
     assert_equal users(:johan).email, first_event.email
+    assert_match(/foo_branch changed/, first_event.message)
     assert_equal(3, first_event.commits.size)
     
     assert_incremented_by(Event, :count, 4) do
