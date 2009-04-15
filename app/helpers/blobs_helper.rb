@@ -41,7 +41,7 @@ module BlobsHelper
     if types.first && types.first.ascii?
       return true
     end
-    if ASCII_MIME_TYPES_EXCEPTIONS.select{|r| r =~ blob.mime_type }.size > 0
+    if ASCII_MIME_TYPES_EXCEPTIONS.find{|r| r =~ blob.mime_type }
       return true
     end
     false
