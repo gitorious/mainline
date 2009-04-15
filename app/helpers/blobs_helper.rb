@@ -51,6 +51,16 @@ module BlobsHelper
     blob.mime_type =~ /^image/
   end
   
+  def highlightable?(blob)
+    if File.extname(blob.name) == ""
+      return false
+    end
+    if %w[.txt .textile .md .rdoc .markdown].include?(File.extname(blob.name))
+      return false
+    end
+    true
+  end
+  
   def language_of_file(filename)
     HIGHLIGHTER_TO_EXT.find{|lang, matcher| filename =~ matcher }
   end

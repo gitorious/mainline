@@ -45,6 +45,7 @@ class BlobsControllerTest < ActionController::TestCase
         blob_mock = mock("blob")
         blob_mock.stubs(:contents).returns([blob_mock]) #meh
         blob_mock.stubs(:data).returns("blob contents")
+        blob_mock.stubs(:name).returns("README")
         blob_mock.stubs(:basename).returns("README")
         blob_mock.stubs(:mime_type).returns("text/plain")
         blob_mock.stubs(:size).returns(666)

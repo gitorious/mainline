@@ -24,16 +24,18 @@
 <%= breadcrumbs_from(@root) -%>
 
 <% content_for :extra_head do -%>
-  <%= stylesheet_link_tag("prettify/prettify.css") -%>
-  <%= javascript_include_tag("prettify/prettify.js") -%>
-  <% if hl = language_of_file(current_path.last) -%>
-    <%= javascript_include_tag("prettify/lang-#{hl}.js", :cache => false) -%>
+  <% if highlightable?(@blob) -%>
+    <%= stylesheet_link_tag("prettify/prettify.css") -%>
+    <%= javascript_include_tag("prettify/prettify.js") -%>
+    <% if hl = language_of_file(current_path.last) -%>
+      <%= javascript_include_tag("prettify/lang-#{hl}.js", :cache => false) -%>
+    <% end -%>
+    <script type="text/javascript" charset="utf-8">
+      Event.observe(window, "dom:loaded", function(e){
+        prettyPrint();
+      });
+    </script>
   <% end -%>
-  <script type="text/javascript" charset="utf-8">
-    Event.observe(window, "dom:loaded", function(e){
-      prettyPrint();
-    });
-  </script>
 <% end -%>
 
 <% if false -%>

@@ -77,6 +77,25 @@ class BlobsHelperTest < ActionView::TestCase
     end
   end
   
+  context "highlightable?" do
+    should "be highlightable if it's codeish" do
+      assert highlightable?(blob_with_name("foo.rb"))
+      assert highlightable?(blob_with_name("foo.c"))
+      assert highlightable?(blob_with_name("foo.h"))
+      assert highlightable?(blob_with_name("foo.py"))
+      assert highlightable?(blob_with_name("foo.css"))
+    end
+    
+    should "not be highlightable if there's not file name extension" do
+      assert !highlightable?(blob_with_name("README"))
+    end
+    
+    should "not be highlightable if it's a plaintext file" do
+      assert !highlightable?(blob_with_name("info.txt"))
+      assert !highlightable?(blob_with_name("info.textile"))
+    end
+  end
+  
   def blob_with_name(name)
     repo = mock("grit repo")
     Grit::Blob.create(repo, {:name => name})
