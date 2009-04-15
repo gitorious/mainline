@@ -17,15 +17,7 @@
 #++
 %>
 <h4><%= link_to t("views.projects.repos"), project_repositories_path(@project) -%></h4>
-<ul class="repository_list">
-  <% @project.repositories.mainlines.each do |mainline| -%>
-    <li class="mainline">
-      <div class="name">
-        <strong><%= link_to h(mainline.name), [@project, mainline] -%></strong>
-      </div>
-    </li>
-  <% end -%>
-</ul>
+
 <% unless @project.repositories.by_groups.blank? -%>
   <h5><%= t("views.repos.by_teams") -%></h5>
   <ul class="repository_list">
