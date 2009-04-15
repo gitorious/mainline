@@ -23,7 +23,7 @@ module BlobsHelper
   include TreesHelper
   
   HIGHLIGHTER_TO_EXT = {
-    "list"  => /\.(lisp|cl|l|mud|el)$/,
+    "list"  => /\.(lisp|cl|l|mud|el|clj)$/,
     "hs"    => /\.hs$/,
     "css"   => /\.css$/,
     "lua"   => /\.lua$/,
