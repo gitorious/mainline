@@ -34,6 +34,23 @@ module BlobsHelper
     "wiki"  => /\.(mediawiki|wikipedia|wiki)$/,
   }
   
+  ASCII_MIME_TYPES_EXCEPTIONS = [ /^text/ ]
+  
+  def textual?(blob)
+    types = MIME::Types.type_for(blob.name)
+    if types.first && types.first.ascii?
+      return true
+    end
+    if ASCII_MIME_TYPES_EXCEPTIONS.select{|r| r =~ blob.mime_type }.size > 0
+      return true
+    end
+    false
+  end
+  
+  def image?(blob)
+    blob.mime_type =~ /^image/
+  end
+  
   def language_of_file(filename)
     HIGHLIGHTER_TO_EXT.find{|lang, matcher| filename =~ matcher }
   end

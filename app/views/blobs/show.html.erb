@@ -47,17 +47,17 @@
 </ul>
 <% end -%>
 
-<!-- <%= @blob.mime_type -%> -->
+<!-- mime: <%= @blob.mime_type -%> -->
 
-<% if @blob.mime_type =~ /^text/ && !too_big_to_render?(@blob.size) -%>
+<% if textual?(@blob) && !too_big_to_render?(@blob.size) -%>
   <% cache(blob_path(@commit.id, @path)) do -%>
     <%= render_highlighted(@blob.data, current_path.last || "") -%>
   <% end -%>
-<% elsif too_big_to_render?(@blob.size) && @blob.mime_type =~ /^text/ -%>
+<% elsif textual?(@blob) && too_big_to_render?(@blob.size) -%>
   <p>
 	<%= t("views.blobs.too_big").call(self, raw_blob_path(@commit.id, current_path)) %>
   </p>
-<% elsif @blob.mime_type =~ /^image/ -%>
+<% elsif image?(@blob) -%>
   <% cache(blob_path(@commit.id, @path)) do -%>
     <%= image_tag raw_blob_path(@commit.id, current_path) -%>
   <% end -%>

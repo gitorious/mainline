@@ -52,4 +52,34 @@ class BlobsHelperTest < ActionView::TestCase
     end
   end
   
+  context "ascii/binary detection" do
+    should "know that a plain text file is fine" do
+      assert textual?(blob_with_name("foo.txt"))
+    end
+    
+    should "know that a ruby and python file is fine" do
+      assert textual?(blob_with_name("foo.rb"))
+      assert textual?(blob_with_name("foo.py"))
+      assert textual?(blob_with_name("foo.c"))
+      assert textual?(blob_with_name("foo.h"))
+      assert textual?(blob_with_name("foo.cpp"))
+      assert textual?(blob_with_name("foo.m"))
+    end
+    
+    should "know that binary aren't ok" do
+      assert !textual?(blob_with_name("foo.png"))
+      assert !textual?(blob_with_name("foo.gif"))
+      assert !textual?(blob_with_name("foo.exe"))
+      
+      assert image?(blob_with_name("foo.png"))
+      assert image?(blob_with_name("foo.gif"))
+      assert !image?(blob_with_name("foo.exe"))
+    end
+  end
+  
+  def blob_with_name(name)
+    repo = mock("grit repo")
+    Grit::Blob.create(repo, {:name => name})
+  end
+  
 end
