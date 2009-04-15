@@ -164,6 +164,7 @@
           :your_profile => "Your Profile",
           :projects => "Projects",
           :repositories => "Repositories",
+          :team_memberships => "Team memberships",
         },
       },
       :events => {

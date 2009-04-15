@@ -85,10 +85,12 @@
     <% end -%>
   </ul>
   
-  <h4>Team memberships</h4>
-  <ul class="icon_list">
-    <% @user.groups.each do |group| -%>
-      <li class="group"><%= link_to h(group.title), group -%>
-    <% end -%>
-  </ul>
+  <% unless @user.groups.empty? -%>
+    <h4><%= t("views.site.dashboard.team_memberships") -%></h4>
+    <ul class="icon_list">
+      <% @user.groups.each do |group| -%>
+        <li class="group"><%= link_to h(group.title), group -%>
+      <% end -%>
+    </ul>
+  <% end -%>
 <% end -%>
