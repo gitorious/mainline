@@ -384,6 +384,7 @@
         :edit_breadcrumb => "Edit Project",
         :update_title => "Edit project {{link}}",
         :new => "New project",
+        :create_new => "Create a new project",
         :popular => "Popular Categories",
         :new_breadcrumb => "New Project",
         :new_title => "Create a new project",

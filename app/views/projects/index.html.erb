@@ -43,6 +43,11 @@
       </ul>
     <% end -%>
   </div>
+  <% if show_new_project_link? -%>
+    <div id="new-project-button" class="round-10">
+      <%= link_to t("views.projects.create_new"), new_project_path, :class => "shadow-2 round-10" -%>
+    </div>
+  <% end -%>
   <div class="clear"></div>
 </div>
 
@@ -57,12 +62,6 @@
 <%= will_paginate @projects -%>
 
 <% content_for :sidebar do -%>
-  <ul class="links">
-    <% if show_new_project_link? -%>
-    <li class="new_project"><%= link_to t("views.projects.new"), new_project_path -%></li>
-    <% end -%>
-  </ul>
- 
   <h4><%= t("views.projects.popular") %>:</h4>
   <ul class="tag_list">
     <% @tags.each do |tag| %>

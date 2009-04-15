@@ -658,6 +658,27 @@ li.membership a, li.committership a {background-image: url('/images/silk/group_e
   margin-bottom: 0;
 }
 
+#new-project-button {
+  margin: 10px 20px 10px 20px;
+  text-align:center;
+  width: 250px;
+  float: right;
+  background: #fff url('/images/dialog_bg_bottom.png') repeat-x bottom left;
+}
+#new-project-button a {
+  font-size: 18px;
+  display: block;
+  padding: 10px 10px 8px 10px;
+  border: 1px solid #ccc;
+  background: transparent url("/images/silk/report_add.png") no-repeat 220px center;
+}
+
+#new-project-button a:hover {
+  text-decoration: none;
+  background-color: #390;
+  color: #fff;
+}
+
 /* Forms */
 
 textarea {
