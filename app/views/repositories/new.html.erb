@@ -19,11 +19,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h1>Add new repository to <%= link_to @owner.title, @owner -%></h1>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
+
+<h1>Add new repository to <%= link_to @owner.title, @owner -%></h1>
 
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>

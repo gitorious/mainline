@@ -16,9 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+
+<%= breadcrumbs_from(@root) -%>
 
 <ul>
 <% @tree_nodes.each do |node| -%>

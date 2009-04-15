@@ -20,6 +20,8 @@
 #++
 %>
 
+<%= breadcrumbs_from(current_user) -%>
+
 <h1><%= t("views.keys.edit_title") %></h1>
 
 <%= error_messages_for :ssh_key -%>
@@ -30,10 +32,4 @@
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
   <%= f.submit t("views.common.save") -%>
-<% end -%>
-
-<% content_for :submenu do -%>
-  <ul>
-    <li><%= link_to t("views.users.show_title"), user_path -%></li>
-  </ul>
 <% end -%>

@@ -18,9 +18,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+
+<%= breadcrumbs_from(@root) -%>
+
 <h1>
   <%= @page.new? ? t("views.common.creating") : t("views.common.editing") -%> 
   <%= t("views.pages.page") -%> <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>

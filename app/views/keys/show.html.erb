@@ -20,9 +20,7 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => current_user} -%>
-<% end -%>
+<%= breadcrumbs_from(current_user) -%>
 
 <%= render :partial => "key", :locals => {:ssh_key => @ssh_key} -%>
 

@@ -21,6 +21,7 @@
 %>
 
 <% @page_title = t("views.blobs.page_title", :path => current_path.join("/"), :repo => @repository.name, :title => @project.title) -%>
+<%= breadcrumbs_from(@root) -%>
 
 <% content_for :extra_head do -%>
   <%= stylesheet_link_tag("prettify/prettify.css") -%>
@@ -33,10 +34,6 @@
       prettyPrint();
     });
   </script>
-<% end -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% if false -%>

@@ -17,9 +17,7 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @group} -%>
-<% end -%>
+<%= breadcrumbs_from(@group) -%>
 
 <h1><%=h @group.name -%></h1>
 

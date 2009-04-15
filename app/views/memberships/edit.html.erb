@@ -17,9 +17,7 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @membership} -%>
-<% end -%>
+<%= breadcrumbs_from(@membership) -%>
 
 <%= error_messages_for :group, :membership -%>
 <% form_for [@group, @membership] do |f| -%>

@@ -17,9 +17,7 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
 
 <h1>Editing repository <%= link_to h(@repository.name), [@owner, @repository] -%></h1>
 

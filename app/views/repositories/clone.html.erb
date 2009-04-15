@@ -17,9 +17,7 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
 
 <script type="text/javascript" charset="utf-8">
   Event.observe(window, "dom:loaded", function() {

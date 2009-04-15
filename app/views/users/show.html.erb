@@ -24,10 +24,7 @@
 %>
 
 <% @page_title = h(@user.login) -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @user} -%>
-<% end -%>
+<%= breadcrumbs_from(@user) -%>
 
 <div class="with_divider">
   <div id="left">

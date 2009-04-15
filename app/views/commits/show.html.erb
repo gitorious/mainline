@@ -23,9 +23,7 @@
 %>
 
 <% @page_title = t("views.commits.page_title", :repo => @repository.name, :title => @project.title) -%>
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
 
 <h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
 

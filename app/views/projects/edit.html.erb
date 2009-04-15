@@ -21,6 +21,8 @@
 #++
 %>
 
+<%= breadcrumbs_from(@root) -%>
+
 <h1><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h1>
 
 <%= error_messages_for :project -%>
@@ -39,10 +41,6 @@
     </p>
   <% end -%>
   <%= f.submit t("views.common.update") -%>
-<% end -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>

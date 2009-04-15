@@ -17,9 +17,7 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @committership} -%>
-<% end -%>
+<%= breadcrumbs_from(@committership) -%>
 
 <% content_for :extra_head do -%>
 <script type="text/javascript" charset="utf-8">

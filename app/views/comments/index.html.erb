@@ -21,9 +21,7 @@
 %>
 
 <% @page_title = t("views.comments.page_title_2", :title => @project.title) -%>
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @repository} -%>
-<% end -%>
+<%= breadcrumbs_from(@repository) -%>
 
 
 <h1>

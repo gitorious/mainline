@@ -16,14 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+
+<%= breadcrumbs_from(@message) -%>
+
 <h1><%= h(@message.subject) %></h1>
 <%- @message.messages_in_thread.each do |message| -%>
   <%= render :partial => "message_full", :locals => {:message => message} %>
 <%- end -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @message} -%>
-<% end -%>
 
 <%- content_for(:sidebar) do -%>
   <%= render :partial => "sidebar" %>

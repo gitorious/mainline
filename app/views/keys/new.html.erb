@@ -20,14 +20,11 @@
 #++
 %>
 
+<%= breadcrumbs_from(@root) -%>
+
 <h1><%= t("views.keys.add_title") %></h1>
 
 <%= error_messages_for :ssh_key -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
-
 <% form_for @ssh_key, :url => user_keys_path() do |f| -%>
   <p>
     <%= f.label :key, t("views.keys.your_public_key") -%><br />

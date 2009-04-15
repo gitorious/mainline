@@ -24,9 +24,7 @@
 
 <% @page_title = t("views.trees.page_title", :repo => @repository.name, :title => @project.title) -%>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
 
 <% cache(tree_path(@commit.id, @path)) do -%>
 <table class="listing tree">

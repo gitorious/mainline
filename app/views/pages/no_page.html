@@ -19,9 +19,8 @@
 #++
 %>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
+
 <h1>
   <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
   doesn't exist

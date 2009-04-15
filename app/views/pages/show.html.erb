@@ -16,11 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<% @page_title = h(@project.title) + " - " + h(@page.title) + " - " + t("views.layout.pages")  -%>
 
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
+<% @page_title = h(@project.title) + " - " + h(@page.title) + " - " + t("views.layout.pages")  -%>
+<%= breadcrumbs_from(@root) -%>
 
 <div class="page-header">
   <h1>

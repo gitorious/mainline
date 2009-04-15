@@ -16,14 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+
+<%= breadcrumbs_from(@message) -%>
+
 <h1><%= t "views.messages.title_new" %></h1>
 
 <%= render :partial => "form" %>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @message} -%>
-<% end -%>
-
 
 <% content_for(:sidebar) do %>
   <%= render :partial => "sidebar" %>

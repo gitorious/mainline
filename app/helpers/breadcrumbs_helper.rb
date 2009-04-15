@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-module BreadcrumbsHelper
+module BreadcrumbsHelper  
   def render_breadcrumb_starting_from(root)
     result = []
     html = ''
@@ -33,7 +33,14 @@ module BreadcrumbsHelper
       end
       html << content_tag(:li, breadcrumb_link_to(crumb), :class => css_klass)
     end
-    return html
+    html
+  end
+  
+  # Renders breadcrumbs starting from +root+
+  def breadcrumbs_from(root)
+    content_for(:submenu) do
+      render_breadcrumb_starting_from(root)
+    end
   end
   
   def breadcrumb_link_to(an_object)

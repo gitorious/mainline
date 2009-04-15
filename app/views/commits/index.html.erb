@@ -18,6 +18,7 @@
 %>
 
 <% @page_title = t("views.logs.page_title", :repo => h(@repository.name), :title => h(@project.title)) -%>
+<%= breadcrumbs_from(@root) -%>
 
 <ul class="horizontal meta" style="float:right">
   <li class="tree">
@@ -34,10 +35,6 @@
 
 <% cache([repo_owner_path(@repository, [@project, @repository]), :commits, @ref, @commits.current_page], {:expires_in => 10.minutes}) do -%>
   <%= render :partial => "log" -%>
-<% end -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>

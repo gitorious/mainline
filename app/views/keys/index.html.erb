@@ -21,12 +21,9 @@
 %>
 
 <% @page_title = "SSH Keys" -%>
+<%= breadcrumbs_from(@root) -%>
 
 <h1><%= t("views.keys.ssh_keys") %></h1>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root } -%>
-<% end -%>
 
 <table class="listing">
 	<thead>

@@ -17,9 +17,7 @@
 #++
 %>
 <% @page_title = t("views.aliases.aliases_title") -%>
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root } -%>
-<% end -%>
+<%= breadcrumbs_from(@root) -%>
 
 <h1><%= t("views.aliases.aliases_title") -%></h1>
 

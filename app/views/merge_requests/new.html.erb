@@ -19,10 +19,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", 
-        :locals => { :root => Breadcrumb::MergeRequests.new(@repository) } -%>
-<% end -%>
+
+<%= breadcrumbs_from(Breadcrumb::MergeRequests.new(@repository)) -%>
 
 <h1><%= t("views.merges.create_title") %></h1>
 

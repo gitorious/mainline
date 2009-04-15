@@ -22,6 +22,8 @@
 %>
 
 <% @page_title = @project.title -%>
+<%= breadcrumbs_from(@root) -%>
+
 <h1><%=h @project.title -%></h1>
 
 <div id="project-description" class="page">
@@ -34,10 +36,6 @@
 
 <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
 <%= render :partial => "events/events", :locals => { :events => @events } -%>
-
-<% content_for :submenu do -%>
-  <%= render :partial => "site/breadcrumbs", :locals => {:root => @root} -%>
-<% end -%>
 
 <% content_for :sidebar do -%>
     <ul>
