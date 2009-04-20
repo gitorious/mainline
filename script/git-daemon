@@ -132,7 +132,7 @@ module Git
           end
         end rescue Errno::EAGAIN
       else
-        $stderr.puts "Invalid request from #{ip}: #{line}"
+        # $stderr.puts "Invalid request from #{ip}: #{line.inspect}"
         $children_active -= 1
       end
       session.close
