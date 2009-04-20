@@ -43,7 +43,7 @@ class BlobsController < ApplicationController
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
                   :repository => @repository, :name => @blob.basename)
       render_not_found and return unless @blob
-      expires_in 2.minutes
+      expires_in 10.minutes
     end
   end
 
@@ -62,7 +62,7 @@ class BlobsController < ApplicationController
         flash[:error] = I18n.t "blogs_controller.raw_error"
         redirect_to project_repository_path(@project, @repository) and return
       end
-      expires_in 2.minutes
+      expires_in 30.minutes
       render :text => @blob.data, :content_type => @blob.mime_type
     end
   end
