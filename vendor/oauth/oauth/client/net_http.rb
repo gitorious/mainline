@@ -8,7 +8,7 @@ class Net::HTTPRequest
 
   attr_reader :oauth_helper
 
-  def oauth!(http, consumer = nil, token = nil, options = {})
+  def oauth!(http, consumer = nil, token = nil, options = {}, request_parameters = {})
     options = { :request_uri      => oauth_full_request_uri(http),
                 :consumer         => consumer,
                 :token            => token,
@@ -17,7 +17,7 @@ class Net::HTTPRequest
                 :nonce            => nil,
                 :timestamp        => nil }.merge(options)
 
-    @oauth_helper = OAuth::Client::Helper.new(self, options)
+    @oauth_helper = OAuth::Client::Helper.new(self, options, request_parameters)
     self.send("set_oauth_#{options[:scheme]}")
   end
 

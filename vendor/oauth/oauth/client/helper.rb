@@ -9,12 +9,13 @@ module OAuth::Client
   class Helper
     include OAuth::Helper
 
-    def initialize(request, options = {})
+    def initialize(request, options = {}, request_parameters = {})
       @request = request
       @options = options
       @options[:signature_method] ||= 'HMAC-SHA1'
+      @additional_parameters = request_parameters
     end
-
+    
     def options
       @options
     end
@@ -54,6 +55,7 @@ module OAuth::Client
     def header
       parameters = oauth_parameters
       parameters.merge!('oauth_signature' => signature(options.merge(:parameters => parameters)))
+      parameters.merge!(@additional_parameters)
 
       header_params_str = parameters.map { |k,v| "#{k}=\"#{escape(v)}\"" }.join(', ')
 

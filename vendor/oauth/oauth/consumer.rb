@@ -184,7 +184,7 @@ module OAuth
 
     # Sign the Request object. Use this if you have an externally generated http request object you want to sign.
     def sign!(request, token = nil, request_options = {})
-      request.oauth!(http, self, token, options.merge(request_options))
+      request.oauth!(http, self, token, options, request_options)
     end
 
     # Return the signature_base_string
