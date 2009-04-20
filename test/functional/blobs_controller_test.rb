@@ -55,7 +55,6 @@ class BlobsControllerTest < ActionController::TestCase
         commit_stub.stubs(:committed_date).returns(2.days.ago)
         @git.expects(:commit).returns(commit_stub)
         @git.expects(:tree).returns(blob_mock)
-        @git.expects(:log).returns([])
         @git.stubs(:get_head).returns(stub("head", :name => "master"))
       
         get :show, {:project_id => @project.slug, 

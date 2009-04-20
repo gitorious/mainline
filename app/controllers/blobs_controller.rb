@@ -35,7 +35,6 @@ class BlobsController < ApplicationController
     if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
                           @commit.committed_date.utc)
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
-      @other_commits = @git.log({}, @path.join("/"))#.collect(&:sha)
       unless @blob.respond_to?(:data) # it's a tree
         redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
           @project, @repository, params[:branch_and_path])

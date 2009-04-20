@@ -69,16 +69,6 @@
   </p>
 <% end -%>
 
-<h4>Other versions:</h4>
-<ul>
-  <%- for commit in @other_commits -%>
-  <li>
-    <%= link_to_unless(@ref == commit.sha, commit.sha[0..10], file_path(@repository, @path, commit.sha)) %> 
-    <small><%= truncate(commit.message, :length => 100) %>. Authored <%= distance_of_time_in_words_to_now(commit.authored_date) %> ago</small>
-  </li>
-  <%- end -%>
-</ul>
-
 <div class="page-meta">
   <ul class="page-actions">
     <li><%= link_to t("views.blobs.raw"), raw_blob_path(@ref, current_path) -%></li>
