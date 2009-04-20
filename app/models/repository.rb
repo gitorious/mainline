@@ -33,6 +33,8 @@ class Repository < ActiveRecord::Base
   KIND_USER_REPO = 3
   
   WIKI_NAME_SUFFIX = "-gitorious-wiki"
+  WIKI_WRITABLE_EVERYONE = 0
+  WIKI_WRITABLE_PROJECT_MEMBERS = 1
   
   belongs_to  :user
   belongs_to  :project
@@ -397,8 +399,14 @@ class Repository < ActiveRecord::Base
     committerships.map{|c| c.members }.flatten.compact.uniq
   end
   
+  # Is this repo writable by +a_user+, eg. does he have push permissions here
+  # NOTE: this may be context-sensitive depending on the kind of repo
   def writable_by?(a_user)
-    committers.include?(a_user)
+    if wiki?
+      wiki_writable_by?(a_user)
+    else
+      committers.include?(a_user)
+    end
   end
   
   def owned_by_group?
@@ -472,6 +480,16 @@ class Repository < ActiveRecord::Base
         #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)        
         self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user, 
               nil, nil, date = created_at)
+      end
+    end
+    
+    # Special permission check for KIND_WIKI repositories
+    def wiki_writable_by?(a_user)
+      case self.wiki_permissions
+      when WIKI_WRITABLE_EVERYONE
+        return true
+      when WIKI_WRITABLE_PROJECT_MEMBERS
+        return self.project.member?(a_user)
       end
     end
     

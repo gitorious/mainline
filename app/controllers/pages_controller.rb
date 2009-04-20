@@ -21,6 +21,7 @@ class PagesController < ApplicationController
   before_filter :find_project
   before_filter :check_if_wiki_enabled
   before_filter :assert_readyness
+  before_filter :require_write_permissions, :only => [:edit, :update]
   renders_in_site_specific_context
   
   def index
@@ -113,5 +114,12 @@ class PagesController < ApplicationController
       page = Page.find(params[:id], @project.wiki_repository.git)    
       root = Breadcrumb::Page.new(page, @project)
       return page, root
+    end
+    
+    def require_write_permissions
+      unless @project.wiki_repository.writable_by?(current_user)
+        flash[:error] = "This project has restricted wiki updates to project members"
+        redirect_to project_page_path(@project, params[:id])
+      end
     end
 end

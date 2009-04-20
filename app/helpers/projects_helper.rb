@@ -31,4 +31,11 @@ module ProjectsHelper
     end
     true
   end
+  
+  def wiki_permission_choices
+    [
+      ["Writable by everyone", Repository::WIKI_WRITABLE_EVERYONE],
+      ["Writable by project members", Repository::WIKI_WRITABLE_PROJECT_MEMBERS],
+    ]
+  end
 end

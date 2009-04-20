@@ -296,18 +296,42 @@ class RepositoryTest < ActiveSupport::TestCase
     assert @repository.to_xml.include?("<push-url>")
   end
   
-  should "knows if a user can write to self" do
-    @repository.owner = users(:johan)
-    @repository.save!
-    @repository.reload
-    assert @repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be true'
-    assert !@repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be false'
+  context "#writable_by?" do
+    should "knows if a user can write to self" do
+      @repository.owner = users(:johan)
+      @repository.save!
+      @repository.reload
+      assert @repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be true'
+      assert !@repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be false'
     
-    @repository.change_owner_to!(groups(:team_thunderbird))
-    @repository.save!
-    assert !@repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be false'
-    @repository.owner.add_member(users(:mike), Role.member)
-    assert @repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be true'
+      @repository.change_owner_to!(groups(:team_thunderbird))
+      @repository.save!
+      assert !@repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be false'
+      @repository.owner.add_member(users(:mike), Role.member)
+      assert @repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be true'
+    end
+    
+    context "a wiki repository" do
+      setup do
+        @repository.kind = Repository::KIND_WIKI
+      end
+      
+      should "be writable by everyone" do
+        @repository.wiki_permissions = Repository::WIKI_WRITABLE_EVERYONE
+        [:johan, :mike, :moe].each do |login|
+          assert @repository.writable_by?(users(login)), "not writable_by #{login}"
+        end
+      end
+      
+      should "only be writable by project members" do
+        @repository.wiki_permissions = Repository::WIKI_WRITABLE_PROJECT_MEMBERS
+        assert @repository.project.member?(users(:johan))
+        assert @repository.writable_by?(users(:johan))
+        
+        assert !@repository.project.member?(users(:moe))
+        assert !@repository.writable_by?(users(:moe))
+      end
+    end
   end
   
   should "publishes a message on create and update" do

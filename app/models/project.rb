@@ -157,6 +157,15 @@ class Project < ActiveRecord::Base
     end
   end
   
+  def member?(candidate)
+    case owner
+    when User
+      candidate == self.owner
+    when Group
+      owner.member?(candidate)
+    end
+  end
+  
   def committer?(candidate)
     owner == User ? owner == candidate : owner.committer?(candidate)
   end
@@ -258,6 +267,14 @@ class Project < ActiveRecord::Base
       end
     end
     result
+  end
+  
+  def wiki_permissions
+    wiki_repository.wiki_permissions
+  end
+  
+  def wiki_permissions=(perms)
+    wiki_repository.wiki_permissions = perms
   end
 
   protected    

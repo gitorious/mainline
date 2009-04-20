@@ -113,6 +113,23 @@ class ProjectTest < ActiveSupport::TestCase
     assert !project.admin?(false)
     assert !project.admin?(nil)
   end
+  
+  should "knows if a user is a member on a project" do
+    project = projects(:johans)
+    assert project.member?(users(:johan))
+    project.owner = groups(:team_thunderbird)
+    assert !project.member?(users(:johan))
+    project.owner.add_member(users(:johan), Role.member)
+    assert project.member?(users(:johan))
+    
+    assert !project.member?(users(:moe))
+    project.owner.add_member(users(:moe), Role.member)
+    assert !project.admin?(users(:moe))
+    # be able to deal with AuthenticatedSystem's quirky design:
+    assert !project.member?(:false)
+    assert !project.member?(false)
+    assert !project.member?(nil)
+  end
 
   should "knows if a user can delete the project" do
     project = projects(:johans)
@@ -193,6 +210,13 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal groups(:team_thunderbird), p.owner
     p.change_owner_to(users(:johan))
     assert_equal groups(:team_thunderbird), p.owner
+  end
+  
+  should "delegate wiki permissions to the wiki repository" do
+    project = projects(:johans)
+    assert_equal project.wiki_repository.wiki_permissions, project.wiki_permissions
+    project.wiki_permissions = 2
+    assert_equal 2, project.wiki_permissions
   end
   
   context "Project events" do

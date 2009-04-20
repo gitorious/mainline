@@ -607,6 +607,7 @@
         :repository => {
           :name => "Name",
           :ready => "Ready",
+          :wiki_permissions => "Wiki permissions",
         },
         :keys => {
           :key => "Key",

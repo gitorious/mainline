@@ -26,7 +26,6 @@ class PagesControllerTest < ActionController::TestCase
   def setup
     @project = projects(:johans)
     @repo = @project.wiki_repository
-    #authorize_as :johan
   end
   
   context "repository readyness" do
@@ -118,6 +117,21 @@ class PagesControllerTest < ActionController::TestCase
       login_as :johan
       put :preview, :project_id => @project.to_param, :id => "Sandbox", :format => 'js', :page => {:content => 'Foo'}
       assert_response :success
+    end
+  end
+  
+  context "write permissions restricted to project members" do
+    setup do
+      @repo.update_attribute(:wiki_permissions, Repository::WIKI_WRITABLE_PROJECT_MEMBERS)
+    end
+    
+    should "redirect back for non-projectmembers" do
+      assert !@project.member?(users(:mike))
+      login_as :mike
+      get :edit, :project_id => @project.to_param, :id => "NotHere"
+      assert_response :redirect
+      assert_match(/restricted wiki updates to project members/, flash[:error])
+      assert_redirected_to project_page_path(@project, "NotHere")
     end
   end
 end

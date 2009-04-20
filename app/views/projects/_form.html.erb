@@ -62,6 +62,12 @@
   <%= form.label :wiki_enabled, t(:wiki_enabled, :scope => 'activerecord.attributes.project') -%><br />
   <%= form.check_box :wiki_enabled -%>
 </p>
+<% unless form.object.new_record? -%>
+  <p>
+    <%= form.label :wiki_permissions, t(:wiki_permissions, :scope => 'activerecord.attributes.repository') -%><br />
+    <%= form.select :wiki_permissions, wiki_permission_choices -%>
+  </p>
+<% end -%>
 <p>
   <%= form.label :description, t(:description, :scope => 'activerecord.attributes.project') -%><br />
   <small class="hint"><%= t("views.projects.hint") %></small><br />
