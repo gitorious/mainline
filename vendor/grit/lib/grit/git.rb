@@ -1,3 +1,5 @@
+require "benchmark"
+
 module Grit
   
   class Git
@@ -64,8 +66,11 @@ module Grit
 
       call = "#{prefix}#{Git.git_binary} --git-dir='#{self.git_dir}' #{cmd.to_s.gsub(/_/, '-')} #{(opt_args + ext_args).join(' ')}#{e(postfix)}"
       # Grit.log(call) if Grit.debug
-      Grit.logger.debug("Grit::Git=> #{call}") if Grit.log_calls
-      response, err = timeout ? sh(call) : wild_sh(call)
+      response = err = nil
+      bm = Benchmark.measure do
+        response, err = timeout ? sh(call) : wild_sh(call)
+      end
+      Grit.logger.debug("Grit::Git (#{"%.2f" % bm.real}): #{call}") if Grit.log_calls
       Grit.log(response) if Grit.debug
       Grit.log(err) if Grit.debug
       response
