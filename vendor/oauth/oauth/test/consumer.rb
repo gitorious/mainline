@@ -4,7 +4,7 @@ module OAuth
     
     end
     
-    def get_request_token
+    def get_request_token(options={})
       TestRequestToken.new
     end
 
