@@ -146,14 +146,13 @@ abbr {
 }
 
 #header {
-  background: #292929;
   height: 112px;
-  background-image: url("/images/header_bg.png");
-  background-repeat: repeat-x;
+  background: #111 url("/images/header_bg.png") repeat-x 0 0;
+  overflow: hidden;
 }
 
 #header #logo {
-  padding: 15px 0 0 20px;
+  padding: 10px 0 0 20px;
   line-height: 25px;
   margin:0;
   float: left;
@@ -306,7 +305,6 @@ abbr {
   color: #666;
   text-align: center;
   clear: both;
-  /*background: #EEF2F5;*/
   background: #222 url("/images/header_bg.png") repeat-x;
 }
 
