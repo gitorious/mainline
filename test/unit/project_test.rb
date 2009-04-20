@@ -99,19 +99,19 @@ class ProjectTest < ActiveSupport::TestCase
 
   should "knows if a user is a admin on a project" do
     project = projects(:johans)
-    assert project.admin?(users(:johan)), 'project.admin?(users(:johan)) should be true'
+    assert project.admin?(users(:johan))
     project.owner = groups(:team_thunderbird)
-    assert !project.admin?(users(:johan)), 'project.admin?(users(:johan)) should be false'
+    assert !project.admin?(users(:johan))
     project.owner.add_member(users(:johan), Role.admin)
-    assert project.admin?(users(:johan)), 'project.admin?(users(:johan)) should be true'
+    assert project.admin?(users(:johan))
     
-    assert !project.admin?(users(:moe)), 'project.admin?(users(:moe)) should be false'
+    assert !project.admin?(users(:moe))
     project.owner.add_member(users(:moe), Role.member)
-    assert !project.admin?(users(:moe)), 'project.admin?(users(:moe)) should be false'
+    assert !project.admin?(users(:moe))
     # be able to deal with AuthenticatedSystem's quirky design:
-    assert !project.admin?(:false), 'project.admin?(:false) should be false'
-    assert !project.admin?(false), 'project.admin?(false) should be false'
-    assert !project.admin?(nil), 'project.admin?(nil) should be false'
+    assert !project.admin?(:false)
+    assert !project.admin?(false)
+    assert !project.admin?(nil)
   end
 
   should "knows if a user can delete the project" do
