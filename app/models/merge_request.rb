@@ -227,6 +227,7 @@ class MergeRequest < ActiveRecord::Base
     {
       'commit_id' => ending_commit, 
       'user_email' => user.email, 
+      'user_login'  => user.login,
       'user_name' => URI.escape(user.title), 
       'commit_shas' => commits_to_be_merged.collect(&:id).join(","), 
       'proposal' => URI.escape(proposal), 
