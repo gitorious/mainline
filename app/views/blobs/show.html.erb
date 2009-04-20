@@ -69,8 +69,4 @@
   </p>
 <% end -%>
 
-<div class="page-meta">
-  <ul class="page-actions">
-    <li><%= link_to t("views.blobs.raw"), raw_blob_path(@ref, current_path) -%></li>
-  </ul>
-</div>
+<%= render "menu" -%>

@@ -18,6 +18,7 @@
 %>
 
 <% users_by_email = @repository.users_by_commits(@commits) %>
+<% no_pagination ||= false -%>
 <ul class="events">
 <% @commits.group_by{|c| c.committed_date.to_s(:human) }.each do |day, commits| -%>
   <li>
@@ -47,4 +48,4 @@
   </li>
 <% end -%>
 </ul>
-<%= will_paginate @commits -%>
+<%= will_paginate(@commits) unless no_pagination -%>

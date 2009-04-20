@@ -30,7 +30,7 @@ class CommitsController < ApplicationController
                       @repository, @repository.head_candidate.name) and return
     end
     @git = @repository.git
-    @ref, _ = branch_and_path(params[:branch], @git)
+    @ref, @path = branch_and_path(params[:branch], @git)
     if h = @git.get_head(@ref)
       head = h
     else

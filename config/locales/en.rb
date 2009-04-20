@@ -248,7 +248,10 @@
         :page_title => "{{path}} - {{repo}} in {{title}}",
         :wrap => "Softwrap mode",
         :title => "Blob of <code>{{path}}</code>",
-        :raw => "raw blob data",
+        :raw => "Raw blob data",
+        :show => "Blob contents",
+        :history => "Blob history",
+        :heading => "History for {{ref}}:{{path}}",
         :too_big => lambda { |this, path| "This file is too big to be rendered within reasonable time, " +
           this.link_to("try viewing the raw data", path) },
         :message => lambda { |this, mime, path| "Not sure we can display this blob nicely (it's a \"#{mime}\" mimetype), " +

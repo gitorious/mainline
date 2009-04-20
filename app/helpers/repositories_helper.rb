@@ -53,6 +53,10 @@ module RepositoriesHelper
     repo_owner_path(@repository, :project_repository_raw_blob_path, @project, @repository, branch_with_tree(shaish, path))
   end
   
+  def blob_history_path(shaish, path)
+    repo_owner_path(@repository, :project_repository_blob_history_path, @project, @repository, branch_with_tree(shaish, path))
+  end
+  
   def namespaced_branch?(branchname)
     branchname.include?("/")
   end

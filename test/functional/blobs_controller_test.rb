@@ -126,5 +126,24 @@ class BlobsControllerTest < ActionController::TestCase
         assert_redirected_to (project_repository_path(@project, @repository))
       end
     end
+    
+    
+    context "#history" do
+      setup do
+        @repository.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
+        @repository.stubs(:git).returns(Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true))
+      end
+      
+      should "get the history of a single file" do
+        get :history, :project_id => @project.to_param, :repository_id => @repository.to_param,
+          :branch_and_path => ["master", "README.txt"]
+        
+        assert_response :success
+        assert_equal "master", assigns(:ref)
+        assert_equal ["README.txt"], assigns(:path)
+        assert_equal 5, assigns(:commits).size
+        assert_match(/max-age=\d+, private/, @response.headers['Cache-Control'])
+      end
+    end
   end
 end

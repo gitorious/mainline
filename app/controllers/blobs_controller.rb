@@ -29,12 +29,12 @@ class BlobsController < ApplicationController
     @ref, @path = branch_and_path(params[:branch_and_path], @git)
     @commit = @git.commit(@ref)
     unless @commit
-      redirect_to project_repository_blob_path(@project, @repository, 
-                    branch_with_tree("HEAD", @path)) and return
+      redirect_to_head and return
     end
     if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
                           @commit.committed_date.utc)
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+      render_not_found and return unless @blob
       unless @blob.respond_to?(:data) # it's a tree
         redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
           @project, @repository, params[:branch_and_path])
@@ -42,7 +42,6 @@ class BlobsController < ApplicationController
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
                   :repository => @repository, :name => @blob.basename)
-      render_not_found and return unless @blob
       expires_in 10.minutes
     end
   end
@@ -67,4 +66,33 @@ class BlobsController < ApplicationController
     end
   end
   
+  def history
+    @git = @repository.git
+    @ref, @path = branch_and_path(params[:branch_and_path], @git)
+    @commit = @git.commit(@ref)
+    unless @commit
+      redirect_to_head and return
+    end
+    @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+    render_not_found and return unless @blob
+    unless @blob.respond_to?(:data) # it's a tree
+      redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
+        @project, @repository, params[:branch_and_path])
+    end
+    
+    @root = Breadcrumb::Blob.new({
+      :paths => @path,
+      :head => @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit),
+      :repository => @repository, 
+      :name => @blob.basename
+    })
+    @commits = @git.log(@ref, desplat_path(@path))
+    expires_in 30.minutes    
+  end
+  
+  protected
+    def redirect_to_head
+      redirect_to project_repository_blob_path(@project, @repository, 
+                    branch_with_tree("HEAD", @path))
+    end
 end
