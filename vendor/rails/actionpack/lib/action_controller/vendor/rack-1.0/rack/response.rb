@@ -61,7 +61,7 @@ module Rack
         # According to RFC 2109, we need dashes here.
         # N.B.: cgi.rb uses spaces...
         expires = "; expires=" + value[:expires].clone.gmtime.
-          strftime("%a, %d-%b-%Y %H:%M:%S GMT")    if value[:expires]
+          strftime("%a, %d %b %Y %H:%M:%S GMT")    if value[:expires]
         secure = "; secure"  if value[:secure]
         httponly = "; HttpOnly" if value[:httponly]
         value = value[:value]
