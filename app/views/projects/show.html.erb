@@ -85,8 +85,10 @@
       <% end -%>
     </ul>
   
-  <% benchmark("Repositories (sidebar)") do  -%>
-    <%= render :partial => "repositories" -%>
+  <% cache([@project, :clone_list], :expires_in => 2.minutes) do -%>
+    <% benchmark("Repositories (sidebar)") do  -%>
+      <%= render :partial => "repositories" -%>
+    <% end -%>
   <% end -%>
   
 <% end -%>

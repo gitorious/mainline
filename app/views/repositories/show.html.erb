@@ -95,4 +95,8 @@
       <% end -%>
     </ul>
   <% end -%>
+
+  <% cache([@project, @repository, :clone_list], :expires_in => 5.minutes) do -%>
+    <%= render "clone_list" -%>
+  <% end -%>
 <% end -%>
