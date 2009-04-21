@@ -57,7 +57,18 @@ class Committership < ActiveRecord::Base
       return unless creator
       recipients = repository.owners
       recipients.each do |r|
-        message = Message.new(:sender => creator, :recipient => r, :subject => "A new committer has been added", :body => "The more, the merrier", :notifiable => self)
+        message = Message.new({
+          :sender => creator,
+          :recipient => r,
+          :subject => I18n.t("committership.notification_subject"),
+          :body => I18n.t("committership.notification_body", {
+            :inviter => creator.title,
+            :user => committer.title,
+            :repository => repository.name,
+            :project => repository.project.title
+          }),
+          :notifiable => self
+        })
         message.save
       end
     end

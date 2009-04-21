@@ -124,6 +124,14 @@
     :user => {
       :invalid_url => "Invalid url",
     },
+    :membership => {
+      :notification_subject => "You have been added to a team",
+      :notification_body => "{{inviter}} added you to the \"{{group}}\" team, as a {{role}}",
+    },
+    :committership => {
+      :notification_subject => "A new committer has been added",
+      :notification_body => "{{inviter}} added {{user}} as a committer to the {{repository}} in the {{project}} project",
+    },
     :views => {
       :layout => {
         :system_notice => "System notice",

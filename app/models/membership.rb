@@ -49,7 +49,17 @@ class Membership < ActiveRecord::Base
     end
     
     def send_notification
-      message = Message.new(:sender => inviter, :recipient => user, :subject => "You have been added to a team", :body => "Welcome", :notifiable => self)
+      message = Message.new({
+        :sender => inviter,
+        :recipient => user,
+        :subject => I18n.t("membership.notification_subject"),
+        :body => I18n.t("membership.notification_body", {
+          :inviter => inviter.title,
+          :group => group.title,
+          :role => role.admin? ? 'administrator' : 'member'
+        }),
+        :notifiable => self
+      })
       message.save      
     end
 end
