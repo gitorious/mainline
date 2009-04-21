@@ -401,6 +401,8 @@
         :mailing => "Mailinglist at ",
         :bugtracker => "Bugtracker at ",
         :repos => "Repositories",
+        :repository_clones => "Repository clones",
+        :no_clones_yet => "No clones on Gitorious yet of this project",
         :project_members => "Project members",
         :add_repository => "Add repository",
         :add_repository_breadcrumb => "Add Repository"

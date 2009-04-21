@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h4><%= link_to t("views.projects.repos"), project_repositories_path(@project) -%></h4>
+<h4><%= link_to t("views.projects.repository_clones"), project_repositories_path(@project) -%></h4>
 
 <% unless @project.repositories.by_groups.blank? -%>
   <h5><%= t("views.repos.by_teams") -%></h5>
@@ -35,4 +35,10 @@
             :locals => {:repository => repo} -%>
     <% end -%>
   <ul>
+<% end -%>
+
+<% if @project.repositories.by_groups.blank? && @project.repositories.by_users.blank? -%>
+  <ul>
+    <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
+  </ul>    
 <% end -%>
