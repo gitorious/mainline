@@ -47,21 +47,21 @@
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
   <ul class="tab_menu inline_tabs">
-    <li class="selected" id="add_group_tab">
-      <a href="#add_group" id="add_group_link"><%= t("views.committerships.add_team") -%></a>
-    </a>
-    <li id="add_user_tab">
+    <li class="selected"  id="add_user_tab">
       <a href="#add_user" id="add_user_link"><%= t("views.committerships.add_user") -%></a>
     </li>
+    <li id="add_group_tab">
+      <a href="#add_group" id="add_group_link"><%= t("views.committerships.add_team") -%></a>
+    </a>
   </ul>
 
-  <p id="add_group">
-    <%= f.label :group_name, t("views.committerships.group_name") -%>: 
-    <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
-  </p>
-  <p id="add_user" style="display:none;">
+  <p id="add_user">
     <%= f.label :group_name, t("views.committerships.user_login") -%>: 
     <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
+  </p>
+  <p id="add_group" style="display:none;">
+    <%= f.label :group_name, t("views.committerships.group_name") -%>: 
+    <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
   </p>
   
   <p class="hint">
