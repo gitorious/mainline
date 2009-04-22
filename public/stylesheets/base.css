@@ -481,9 +481,8 @@ abbr {
   line-height: 100%;
   margin-left: 0px;
   height: 29px;
-/*  margin-right: 40px;
-  background: #DEE1E3 url("/images/maincontent-border-right.gif") top right repeat-y;*/
   background: #dee7ed;
+  border-bottom: 1px solid #D1D5D8;
 }
 
 #breadcrumbs li {
