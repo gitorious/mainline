@@ -627,6 +627,11 @@ li.membership a, li.committership a {background-image: url('/images/silk/group_e
   width: 350px;
 }
 
+.help-box.left {
+  width: 500px;
+  margin-bottom: 20px;
+}
+
 .help-box.middle {
   margin: 10px auto 30px auto;
   width: 450px;

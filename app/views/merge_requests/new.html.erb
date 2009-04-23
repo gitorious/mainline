@@ -37,6 +37,22 @@
   <% end -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
   
+  <% if @project.merge_requests_need_signoff? -%>
+    <% help_box(:left) do -%>
+      <p>
+        This project requires that users who submit merge requests should accept
+        a contribution agreement. <strong>You will get redirected to a third-party site
+        in order to review and accept their contribution agreement</strong>.
+        If you do not accept that contribution agreement, the merge request will
+        not be accepted. If you already accepted that once agreement before you may
+        not need to accept it again, unless it has changed.<br />
+        Note that the thirdparty may receive your fullname and email in order
+        to identify  your contributions to their project, if you accept the
+        agreement.
+      </p>
+    <% end -%>
+  <% end -%>
+  
   <%= f.submit t("views.merges.create_btn") -%>
 <% end -%>
 
