@@ -42,3 +42,11 @@
   <% end -%>
   <%= f.submit t("views.repos.btn_edit_repo") -%>
 <% end -%>
+
+<% content_for :sidebar do -%>
+  <ul class="links">
+    <% if @repository.can_be_deleted_by?(current_user) -%>
+      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
+    <% end -%>
+  </ul>
+<% end -%>

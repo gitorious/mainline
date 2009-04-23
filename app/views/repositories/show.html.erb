@@ -68,20 +68,17 @@
     <% end -%>
     <% if @repository.writable_by?(current_user) -%>
       <li class="merge_request">
-        <%#= link_to t("views.repos.btn_request"), repo_owner_path(@repository, :new_project_repository_merge_request_path, @owner, @repository) -%>
         <%= link_to t("views.repos.btn_request"), repo_owner_path(@repository, [:new, @repository.project, @repository, :merge_request]) -%>
       </li>
     <% end -%>
+  </ul>
+  
+  <ul class="links">
     <% if @repository.owner.admin?(current_user) -%>
       <li class="add_committer"><%= link_to t("views.repos.btn_manage_committers"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
     <% end -%>
-  </ul>
-  <ul class="links">
     <% if @repository.owner.admin?(current_user) -%>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
-    <% end -%>
-    <% if @repository.can_be_deleted_by?(current_user) -%>
-      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>
   
