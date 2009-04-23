@@ -9,7 +9,7 @@ johans:
   kind: <%= Repository::KIND_PROJECT_REPO %>
   owner_type: User
   owner_id: 1
-  hashed_path: <%= Digest::SHA1.hexdigest("johans") %>
+  hashed_path: c2a/943/aad718337973577b555383db50ae03e01c
 
 johans2:
   id: 2
@@ -22,7 +22,7 @@ johans2:
   kind: <%= Repository::KIND_TEAM_REPO %>
   owner_type: Group
   owner_id: <%= Fixtures.identify(:team_thunderbird) %>
-  hashed_path: <%= Digest::SHA1.hexdigest("johans2") %>
+  hashed_path: b0c/554/5de8afee2a86064d372c17a113f2984c6b
 
 moes:
   id: 3
@@ -34,7 +34,7 @@ moes:
   kind: <%= Repository::KIND_PROJECT_REPO %>
   owner_type: User
   owner_id: 2
-  hashed_path: <%= Digest::SHA1.hexdigest("moes") %>
+  hashed_path: b13/de7/574a4a04fb250257dcb5a7d6ef01dcf290
   
 johans_moe_clone:
   id: 4
@@ -47,7 +47,7 @@ johans_moe_clone:
   parent_id: 3
   owner_type: User
   owner_id: 1
-  hashed_path: <%= Digest::SHA1.hexdigest("johans_moe_clone") %>
+  hashed_path: e9c/217/f61aac09621d9fdb68665acd359b4d0686
   
 johans_wiki:
   name: <%= "mainline#{Repository::WIKI_NAME_SUFFIX}" %>
@@ -59,4 +59,4 @@ johans_wiki:
   ready: true
   owner_type: User
   owner_id: 1
-  hashed_path: <%= Digest::SHA1.hexdigest("johans_wiki") %>
+  hashed_path: 38a/c01/a7e6beb09dc14d7f2bf1346be1ee727c92

@@ -89,7 +89,8 @@ class Repository < ActiveRecord::Base
   
   def self.find_by_path(path)
     base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
-    repo_name, owner_name = base_path.split("/").reverse
+    path_components = base_path.split("/").reject{|p| p.blank? }
+    repo_name, owner_name = [path_components.last, path_components.first]
     repo_name.sub!(/\.git/, "")
     
     owner = case owner_name[0].chr
@@ -435,11 +436,7 @@ class Repository < ActiveRecord::Base
   end
   
   def full_hashed_path
-    h = (hashed_path || set_repository_hash)
-    first = h[0,3]
-    second = h[3,3]
-    last = h[-34, 34]
-    return "#{first}/#{second}/#{last}"
+    hashed_path || set_repository_hash
   end
   
   # Returns a list of users being either the owner (if User) or each admin member (if Group)
@@ -455,14 +452,25 @@ class Repository < ActiveRecord::Base
   end
   
   def set_repository_hash
-    self.hashed_path ||= Digest::SHA1.hexdigest(owner.to_param + self.to_param + Time.now.to_f.to_s)
+    self.hashed_path ||= begin
+      raw_hash = Digest::SHA1.hexdigest(owner.to_param + self.to_param + Time.now.to_f.to_s)
+      sharded_hash = sharded_hashed_path(raw_hash)
+      sharded_hash
+    end
   end
   
   def requires_signoff_on_merge_requests?
     mainline? && project.merge_requests_need_signoff?
   end
   
-  protected    
+  protected
+    def sharded_hashed_path(h)
+      first = h[0,3]
+      second = h[3,3]
+      last = h[-34, 34]
+      "#{first}/#{second}/#{last}"
+    end
+    
     def create_initial_committership
       self.committerships.create!(:committer => self.owner)
     end

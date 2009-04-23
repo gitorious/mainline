@@ -277,7 +277,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.kind = Repository::KIND_TEAM_REPO
       repo.save!
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
-      assert_equal repo    , Repository.find_by_path(path)
+      assert_equal repo, Repository.find_by_path(path)
     end
   
     should "finds a user repository by its path" do
@@ -515,8 +515,9 @@ class RepositoryTest < ActiveSupport::TestCase
   should "sets a hash on create" do
     assert @repository.new_record?, '@repository.new_record? should be true'
     @repository.save!
-    assert_not_equal nil, @repository.hashed_path
-    assert_match(/[a-z0-9]{40}/, @repository.hashed_path)
+    assert_not_nil @repository.hashed_path
+    assert_equal 3, @repository.hashed_path.split("/").length
+    assert_match(/[a-z0-9\/]{42}/, @repository.hashed_path)
   end
   
   should "create the initial committership on create for owner" do
@@ -536,8 +537,7 @@ class RepositoryTest < ActiveSupport::TestCase
   end
   
   should "know the full hashed path" do
-    @repository.hashed_path = "a"*40
-    assert_equal "aaa/aaa/#{'a'*34}", @repository.full_hashed_path
+    assert_equal @repository.hashed_path, @repository.full_hashed_path
   end
   
   should "allow changing ownership from a user to a group" do
