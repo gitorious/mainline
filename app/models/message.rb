@@ -16,6 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class Message < ActiveRecord::Base
+  include RecordThrottling
+  
   belongs_to :notifiable, :polymorphic => true
   belongs_to :sender, :class_name => "User", :foreign_key => :sender_id
   belongs_to :recipient, :class_name => "User", :foreign_key => :recipient_id
@@ -26,6 +28,13 @@ class Message < ActiveRecord::Base
   
   validates_presence_of :subject, :body
   validates_presence_of :recipient, :sender
+  
+  throttle_records :create, :limit => 10,
+    :counter => proc{|msg|
+      msg.sender.sent_messages.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+    },
+    :conditions => proc{|msg| {:sender_id => msg.sender.id} },
+    :timeframe => 5.minutes
 
   state_machine :aasm_state, :initial => :unread do
     event :read do
@@ -43,7 +52,6 @@ class Message < ActiveRecord::Base
   end
   
   def to_xml(options = {})
-#.to_xml(:methods => [:read, :description,  :recipient_name, :sender_name], :except => [:aasm_state, :notifiable_id, :notifiable_type])
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]

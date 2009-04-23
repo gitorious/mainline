@@ -182,6 +182,42 @@ class MessageTest < ActiveSupport::TestCase
   
   context 'Mass email delivery' do
     should_eventually 'create n messages when supplying several recipients'
-  end 
+  end
+  
+  context "Thottling" do
+    setup do
+      Message.destroy_all
+    end
+    
+    should "throttle on create" do
+      assert_nothing_raised do
+        10.times{|i|
+          @message = Message.new({:subject => "Hello#{i}", :body => "World"})
+          @message.sender = users(:moe)
+          @message.recipient = users(:mike)
+          @message.save!
+        }
+      end
+      
+      assert_no_difference("Message.count") do
+        assert_raises(RecordThrottling::LimitReachedError) do
+          @message = Message.new({:subject => "spam much?", :body => "World"})
+          @message.sender = users(:moe)
+          @message.recipient = users(:mike)
+          @message.save!
+        end
+      end
+      
+      # Should inflict with others
+      assert_difference("Message.count") do
+        assert_nothing_raised do
+          @message = Message.new({:subject => "spam much?", :body => "World"})
+          @message.sender = users(:mike)
+          @message.recipient = users(:moe)
+          @message.save!
+        end
+      end
+    end
+  end
 
 end
