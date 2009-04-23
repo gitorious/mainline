@@ -39,7 +39,7 @@ class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
-  has_many    :committerships
+  has_many    :committerships, :dependent => :destroy
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id", 
     :dependent => :nullify
