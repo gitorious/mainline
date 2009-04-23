@@ -2219,7 +2219,7 @@ div.archive-download-box p {
 }
 
 .pull-box h3.pull-box-header {
-  background: #999; /*#696C6D*/
+  background: #696C6D url('/images/dialog_bg_top.png') repeat-x;
   color: #fff;
   text-align: center;
   padding: 6px 0 5px 0;
