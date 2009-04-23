@@ -288,6 +288,21 @@ class RepositoryTest < ActiveSupport::TestCase
       path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
+    
+    should "scope the find by project id" do
+      repo = repositories(:johans)
+      repo.owner = groups(:team_thunderbird)
+      repo.kind = Repository::KIND_TEAM_REPO
+      repo.save!
+      same_name_repo = new_repos(:name => repo.name)
+      same_name_repo
+      same_name_repo.project = projects(:moes)
+      same_name_repo.owner = groups(:team_thunderbird)
+      same_name_repo.kind = Repository::KIND_TEAM_REPO
+      same_name_repo.save!
+      path = File.join(GitoriousConfig['repository_base_path'], same_name_repo.gitdir)
+      assert_equal same_name_repo, Repository.find_by_path(path)
+    end
   end
   
   should "xmlilizes git paths as well" do

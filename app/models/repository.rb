@@ -52,7 +52,7 @@ class Repository < ActiveRecord::Base
   has_many    :events, :as => :target, :dependent => :destroy
   
   NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
-  validates_presence_of :user_id, :name, :owner_id#, :project_id
+  validates_presence_of :user_id, :name, :owner_id, :project_id
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
   validates_exclusion_of :name, :in => Gitorious::Reservations.repository_names
@@ -90,7 +90,8 @@ class Repository < ActiveRecord::Base
   def self.find_by_path(path)
     base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
     path_components = base_path.split("/").reject{|p| p.blank? }
-    repo_name, owner_name = [path_components.last, path_components.first]
+    repo_name, owner_name = [path_components.pop, path_components.shift]
+    project_name = path_components.pop
     repo_name.sub!(/\.git/, "")
     
     owner = case owner_name[0].chr
@@ -106,6 +107,11 @@ class Repository < ActiveRecord::Base
       owner_conditions = { :project_id => owner.id }
     else
       owner_conditions = { :owner_type => owner.class.name, :owner_id => owner.id }
+    end
+    if project_name
+      if project = Project.find_by_slug(project_name)
+        owner_conditions.merge!(:project_id => project.id)
+      end
     end
     Repository.find(:first, :conditions => {:name => repo_name}.merge(owner_conditions))
   end
