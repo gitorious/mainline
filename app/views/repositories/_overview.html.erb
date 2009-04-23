@@ -49,8 +49,8 @@
     <td colspan="3" class="infobox">
       <ul>
         <li>
-          <strong><%= t("views.repos.public_url") %>:</strong> 
-          <a href="<%= repository.clone_url-%>" class="link_noop"><code><%=h repository.clone_url -%></code></a> 
+            <strong><%= t("views.repos.public_url") %>:</strong>
+            <a href="<%= repository.clone_url-%>" class="link_noop"><code><%=h repository.clone_url -%></code></a> 
           <small>
             <%= link_to_help_toggle('detailed_clone_info') -%>
             <%= toggle_more_repository_urls(repository) -%>
@@ -61,6 +61,12 @@
             <code>git clone <%= repository.clone_url -%></code>
           </div>
         </li>
+        <% if logged_in? && repository.writable_by?(current_user) -%>
+          <li>
+            <strong><%= t("views.repos.your_clone_url") %>:</strong>
+            <code><%=h repository.push_url -%></code>
+          </li>
+        <% end -%>
         <li id="repo-<%= repository.id -%>-http-url" style="display:none">
         <% if repository.http_cloning? -%>
           <strong><%= t("views.repos.http_url") %>:</strong> 

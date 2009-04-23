@@ -323,6 +323,7 @@
         :comments => "Comments ({{count}})",
         :requests => "Merge requests ({{count}})",
         :public_url => "Public clone url",
+        :your_clone_url => "Your clone url",
         :more_info => "More info…",
         :help_clone => "You can clone this repository with the following command",
         :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you're behind a firewall",
