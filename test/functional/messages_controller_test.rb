@@ -192,6 +192,12 @@ class MessagesControllerTest < ActionController::TestCase
     end
   end
   
+  should "insert the username on GET new if the to querystring param is given" do
+    login_as :johan
+    get :new, :to => users(:mike).login
+    assert_select "#message_recipients[value=?]", users(:mike).login
+  end
+  
   context 'On POST to auto_complete_for_message_recipients' do
     setup do
       login_as :johan

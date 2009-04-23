@@ -74,6 +74,12 @@
   </ul>
   
   <ul class="links">
+    <% if logged_in? && (current_user != @user) -%>
+      <li class="new_email">
+        <%= link_to t("views.users.send_user_msg", :username => h(@user.login)), 
+              new_message_path(:to => @user.login) -%>
+      </li>
+    <% end -%>
     <% if current_user && (current_user == @user)  -%>
       <li class="key"><%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%></li>
       <li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%></li>

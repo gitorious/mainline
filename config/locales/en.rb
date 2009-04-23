@@ -240,7 +240,8 @@
         :edit_link => "edit",
         :username => "Username",
         :create => "create an account",
-        :license => 'End User License Agreement'
+        :license => 'End User License Agreement',
+        :send_user_msg => "Send {{username}} a message",
       },
       :logs => {
         :page_title => "Commits in {{repo}} in {{title}}",

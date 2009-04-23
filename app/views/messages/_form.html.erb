@@ -16,10 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+
 <% form_for(@message) do |f| %>
   <p>
     <%= label :recipient, t("views.messages.recipient") %> <br/>
-    <%= text_field_with_auto_complete :message, :recipients, {}, :skip_style => true, :select => :login, :tokens => [',',';',' '] -%>
+    <%= text_field_with_auto_complete :message, :recipients, {}, 
+          :skip_style => true, :select => :login, :tokens => [',',';',' '] -%>
   </p>
   
   <p>
