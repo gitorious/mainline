@@ -19,20 +19,29 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<script type="text/javascript" charset="utf-8">
-  Event.observe(window, "dom:loaded", function() {
-    $("repository_owner_id_group_select").observe("change", function(e) {
-      var sel = $A(e.element().options).find(function(el){ 
-        return el.value == e.element().value;
+<% content_for :extra_head do -%>
+  <script type="text/javascript" charset="utf-8">
+    Event.observe(window, "dom:loaded", function() {
+      var group_selection_changed = function() {
+        var select_element = $("repository_owner_id_group_select");
+        var sel = $A(select_element.options).find(function(el){
+          return el.value == select_element.value;
+        })
+        $("repository_name").value = sel.text + "-clone";
+        $("repository_owner_type_group").checked = true;
+      };
+      $("repository_owner_id_group_select").observe("change", function(e) {
+        group_selection_changed();
+      });
+      $("repository_owner_type_group").observe("click", function(e) {
+        group_selection_changed();
+      });
+      $("repository_owner_type_user").observe("click", function(e) {
+        $("repository_name").value = "<%= current_user.login -%>s-clone";
       })
-      $("repository_name").value = sel.text + "-clone";
-      $("repository_owner_type_group").checked = true;
     });
-    $("repository_owner_type_user").observe("click", function(e) {
-      $("repository_name").value = "<%= current_user.login -%>s-clone";
-    })
-  });
-</script>
+  </script>
+<% end -%>
 
 <h1><%= t("views.repos.create_title").call(self, @repository_to_clone, @owner) %></h1>
 
@@ -43,7 +52,8 @@
       :builder => GitoriousFormBuilder do |f| -%>
   <p>
     <%= f.current_user_or_group :owner, t("views.repos.owner"), 
-          :hint => "Clone the repository as either yourself or a group you're in"-%>
+          :hint => "Clone the repository as either yourself or a group you're in",
+          :default => :user -%>
   </p>
   <p>
     <%= f.label :name, t("views.repos.name", :name => current_user.login) -%>:<br />
