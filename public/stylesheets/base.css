@@ -1521,7 +1521,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 #site_overview p.create_account_hint {
-  margin-top: 1.5em;
+  margin-top: 10px;
 }
 
 /* Comments */
