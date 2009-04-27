@@ -215,7 +215,18 @@ class Repository < ActiveRecord::Base
   end
   
   def to_xml(opts = {})
-    super({:methods => [:gitdir, :clone_url, :push_url]}.merge(opts))
+    info_proc = Proc.new do |options|
+      builder = options[:builder]
+      builder.owner(owner.to_param, :kind => (owned_by_group? ? "Team" : "User"))
+      builder.kind(["mainline", "wiki", "team", "user"][self.kind])
+      builder.project(project.to_param)
+    end
+    
+    super({
+      :procs => [info_proc],
+      :only => [:name, :created_at, :ready, :description, :last_pushed_at],
+      :methods => [:clone_url, :push_url, :parent]
+    }.merge(opts))
   end
   
   def head_candidate

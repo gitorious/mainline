@@ -305,10 +305,25 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
   
-  should "xmlilizes git paths as well" do
-    assert @repository.to_xml.include?("<gitdir>")
-    assert @repository.to_xml.include?("<clone-url>")
-    assert @repository.to_xml.include?("<push-url>")
+  context "#to_xml" do
+    should "xmlilizes git paths as well" do
+      assert @repository.to_xml.include?("<clone-url>")
+      assert @repository.to_xml.include?("<push-url>")
+    end
+    
+    should "include a description of the kind" do
+      assert_match(/<kind>mainline<\/kind>/, @repository.to_xml)
+      @repository.kind = Repository::KIND_TEAM_REPO
+      assert_match(/<kind>team<\/kind>/, @repository.to_xml)
+    end
+    
+    should "include the project name" do
+      assert_match(/<project>#{@repository.project.slug}<\/project>/, @repository.to_xml)
+    end
+    
+    should "include the owner" do
+      assert_match(/<owner kind="User">johan<\/owner>/, @repository.to_xml)
+    end
   end
   
   context "#writable_by?" do
