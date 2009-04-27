@@ -204,19 +204,36 @@ class Project < ActiveRecord::Base
   def to_xml(opts = {})
     info = Proc.new { |options|
       builder = options[:builder]
-      builder.owner user.login
-
-      builder.repositories :type => "array" do
-        repositories.each { |repo|
-          builder.repository do
-            builder.id repo.id
-            builder.name repo.name
-            builder.owner repo.user.login
-          end
-        }
+      builder.owner(owner.to_param, :kind => (owned_by_group? ? "Team" : "User"))
+      
+      builder.repositories(:type => "array") do |repos|
+        builder.mainlines :type => "array" do
+          repositories.mainlines.each { |repo|
+            builder.repository do
+              builder.id repo.id
+              builder.name repo.name
+              builder.owner repo.owner.to_param, :kind => (repo.owned_by_group? ? "Team" : "User")
+              builder.clone_url repo.clone_url
+            end
+          }
+        end
+        builder.clones :type => "array" do
+          repositories.clones.each { |repo|
+            builder.repository do
+              builder.id repo.id
+              builder.name repo.name
+              builder.owner repo.owner.to_param, :kind => (repo.owned_by_group? ? "Team" : "User")
+              builder.clone_url repo.clone_url
+            end
+          }
+        end
       end
     }
-    super({:procs => [info]}.merge(opts))
+    super({
+      :procs => [info],
+      :only => [:slug, :title, :description, :license, :home_url, :wiki_enabled,
+                :created_at, :bugtracker_url, :mailinglist_url, :bugtracker_url],
+    }.merge(opts))
   end
   
   def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)

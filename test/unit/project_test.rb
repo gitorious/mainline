@@ -304,4 +304,23 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
     end
   end
+  
+  context "#to_xml" do
+    setup do
+      @project = projects(:johans)
+    end
+    
+    should "not include oauth keys" do
+      assert_no_match(/<oauth/, @project.to_xml)
+      assert_no_match(/<merge-requests-need-signoff/, @project.to_xml)
+    end
+    
+    should "include a list of the mainline repositories" do
+      assert_match(/<mainlines/, @project.to_xml)
+    end
+    
+    should "include a list of the repository clones" do
+      assert_match(/<clones/, @project.to_xml)
+    end
+  end
 end
