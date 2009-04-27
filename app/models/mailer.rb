@@ -79,7 +79,7 @@ class Mailer < ActionMailer::Base
   end
   
   def message_processor_error(processor, err, message_body)
-      subject     "[Gitorious Processor] fail #{err.class.name}"
+      subject     "[Gitorious Processor] fail in #{processor.class.name}"
       from        "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
       recipients  GitoriousConfig['exception_notification_emails']
       body        :error => err, :message => message_body, :processor => processor

@@ -1,7 +1,7 @@
-An exception occured in <%= @processor -%>!
+An exception occured in <%= PP.pp(@processor, '') -%>!
 
-<%= @message -%>
+<%= @message %>
 
-<%= @error.class.name -%>: <%= @error.message -%>
+<%= @error.class.name -%>: <%= @error.message %>
 
-<%= @error.backtrace.join("\n\t") -%>
+<%= @error.backtrace.join("\n\t") %>
