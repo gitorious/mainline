@@ -35,6 +35,7 @@ class ApplicationProcessor < ActiveMessaging::Processor
   # meaning that it can and should be retried (idempotency matters here).
   # Retry logic varies by broker - see individual adapter code and docs for how it will be treated
   def on_error(err, message_body)
+    notify_on_error(err, message_body)
     if (err.kind_of?(StandardError))
       logger.error "Processor::on_error for msg: #{message_body}: \n" + 
       " #{err.class.name}: " + err.message + "\n" + \
@@ -45,5 +46,10 @@ class ApplicationProcessor < ActiveMessaging::Processor
       raise err
     end
   end
+  
+  protected
+    def notify_on_error(err, message_body)
+      Mailer.deliver_message_processor_error(self, err, message_body)
+    end
 
 end
