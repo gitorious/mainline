@@ -252,7 +252,7 @@ class User < ActiveRecord::Base
   end
 
   def to_xml(opts = {})
-    super({:except => [:activation_code, :crypted_password, :remember_token, :remember_token_expires_at, :salt, :ssh_key_id]}.merge(opts))
+    super({ :only => [:login, :created_at, :fullname, :url] }.merge(opts))
   end
   
   def is_openid_only?
