@@ -17,7 +17,7 @@
 #++
 %>
 
-<% @page_title = t("views.logs.page_title", :repo => h(@repository.name), :title => h(@project.title)) -%>
+<% @page_title = t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 <%= breadcrumbs_from(@root) -%>
 
 <ul class="horizontal meta" style="float:right">
@@ -26,7 +26,7 @@
   </li>
 </ul>
 <h1>
-  <%= t("views.logs.commitlog", :repo => h(@repository.name), :param => h(@ref), :title => h(@project.title)) -%>
+  <%= t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
 
 <div class="commit_graph">

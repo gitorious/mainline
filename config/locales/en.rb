@@ -244,8 +244,7 @@
         :send_user_msg => "Send {{username}} a message",
       },
       :logs => {
-        :page_title => "Commits in {{repo}} in {{title}}",
-        :commitlog => "Commitlog for {{repo}}:{{param}} in {{title}}",
+        :title => "Commits in {{repo_url}}:{{ref}}",
         :project => "Project",
         :maintainer => "Maintainer",
         :head_tree => "HEAD tree",
