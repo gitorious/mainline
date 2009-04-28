@@ -1885,7 +1885,8 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 }
 
 .events.inline {
-  margin-left: 0px;
+  margin-left: 0;
+  margin-bottom: 0;
 }
 
 .events .event_instances, .events .event_instance {

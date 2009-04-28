@@ -75,7 +75,7 @@ class SiteController < ApplicationController
         @active_overall = Project.most_active_overall(@active_recently.size)
         @active_users = User.most_active
         @active_groups = Group.most_active
-        @latest_events = Event.latest(15)
+        @latest_events = Event.latest(25)
       end
     end
   
