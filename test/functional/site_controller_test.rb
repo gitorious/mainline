@@ -21,6 +21,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class SiteControllerTest < ActionController::TestCase
 
+  should_render_in_site_specific_context :except => [:about, :faq, :contact]
+  should_render_in_global_context :only => [:about, :faq, :contact]
 
   context "#index" do
     should "GETs sucessfully" do
