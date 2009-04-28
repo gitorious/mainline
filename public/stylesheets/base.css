@@ -319,6 +319,13 @@ abbr {
   display: inline;
 }
 
+#container #footer ul.legal { margin-top: 5px; }
+#container #footer ul.legal a {
+  color: #666;
+  font-size: 10px;
+}
+#container #footer ul.legal a:hover { color: #92B92D; }
+
 #container #footer .powered-by {
   float: right;
   margin: 10px;
