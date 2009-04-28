@@ -34,6 +34,7 @@ module ActionView
         else
           output_buffer << string
         end
+
       end
 
       # Truncates a given +text+ after a given <tt>:length</tt> if +text+ is longer than <tt>:length</tt>

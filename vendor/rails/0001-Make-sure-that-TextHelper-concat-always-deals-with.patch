@@ -1,0 +1,30 @@
+From 02d5a6e3fe6cffb1ad028a4adb18d0346f66b92d Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?Johan=20S=C3=B8rensen?= <johan@johansorensen.com>
+Date: Tue, 28 Apr 2009 13:20:06 +0200
+Subject: [PATCH] Make sure that TextHelper #concat always deals with UTF8 content in Ruby 1.9
+
+---
+ actionpack/lib/action_view/helpers/text_helper.rb |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
+
+diff --git a/actionpack/lib/action_view/helpers/text_helper.rb b/actionpack/lib/action_view/helpers/text_helper.rb
+index 48bf471..e8fb457 100644
+--- a/actionpack/lib/action_view/helpers/text_helper.rb
++++ b/actionpack/lib/action_view/helpers/text_helper.rb
+@@ -29,7 +29,12 @@ module ActionView
+           ActiveSupport::Deprecation.warn("The binding argument of #concat is no longer needed.  Please remove it from your views and helpers.", caller)
+         end
+ 
+-        output_buffer << string
++        if string.respond_to?(:force_encoding)
++          output_buffer << string.force_encoding(Encoding::UTF_8)
++        else
++          output_buffer << string
++        end
++
+       end
+ 
+       # Truncates a given +text+ after a given <tt>:length</tt> if +text+ is longer than <tt>:length</tt>
+-- 
+1.6.1
+
