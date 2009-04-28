@@ -96,7 +96,9 @@
   <h5><%= t("views.logs.branches") %>:</h5>
   <ul class="links">
     <% @git.branches.sort{|a, b| a.name <=> b.name }.each do |branch| -%>
-      <li><%= link_to h(branch.name), tree_path(branch.name) -%></li>
+      <li class="branch <%= highlight_if_head(branch, @repository) -%>">
+        <%= link_to h(branch.name), tree_path(branch.name) -%>
+      </li>
     <% end -%>
   </ul>
 

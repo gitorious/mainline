@@ -90,4 +90,10 @@ module RepositoriesHelper
                           :id => "repo-#{repository.id}-url-toggle",
                           :class => "hint") + js
   end
+  
+  def highlight_if_head(branch, repository)
+    if branch.name == repository.head_candidate_name
+      "head"
+    end
+  end
 end

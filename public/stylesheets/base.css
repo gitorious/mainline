@@ -601,6 +601,10 @@ li.wiki a {background-image: url('/images/silk/book_open.png');}
 li.memberships a, li.committerships a {background-image: url('/images/silk/group_gear.png');}
 li.membership a, li.committership a {background-image: url('/images/silk/group_edit.png');}
 
+li.branch.head {
+  font-weight: bold;
+}
+
 .with_icons li {
   padding-bottom: 3px;
 }
