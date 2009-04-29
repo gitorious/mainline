@@ -95,6 +95,10 @@ module Grit
         self.new($1, repo.git.rev_parse(options, 'HEAD'))
       end
     end
+    
+    def head?
+      self.name == self.class.current(@commit.repo).name
+    end
 
   end # Head
 

@@ -34,6 +34,11 @@ class TestHead < Test::Unit::TestCase
     assert @r.is_head?('test/chacon')
     assert !@r.is_head?('masterblah')
   end
+  
+  def test_head?
+    assert @r.heads.find{|h| h.name == "master" }.head?
+    assert !@r.heads.find{|h| h.name == "testing" }.head?
+  end
 
   def test_head_count
     assert_equal 5, @r.heads.size

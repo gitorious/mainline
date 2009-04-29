@@ -531,6 +531,7 @@ li.group > a { background-image: url("/images/silk/group.png") !important; }
 li.repository > a { background-image: url("/images/silk/database.png") !important; }
 li.repository.mainline > a { background-image: url("/images/silk/database_star.png") !important; }
 li.branch > a { background-image: url("/images/silk/arrow_branch.png") !important; }
+li.branch.head > a { background-image: url("/images/arrow_branch_head.png") !important; }
 li.tag > a { background-image: url("/images/silk/tag_blue.png") !important; }
 li.tree > a { background-image: url("/images/silk/chart_organisation.png") !important; }
 li.home > a { background-image: url("/images/silk/house.png") !important; }
@@ -600,10 +601,6 @@ table.tree tr td.submodule a { background-image: url("/images/silk/folder_databa
 li.wiki a {background-image: url('/images/silk/book_open.png');}
 li.memberships a, li.committerships a {background-image: url('/images/silk/group_gear.png');}
 li.membership a, li.committership a {background-image: url('/images/silk/group_edit.png');}
-
-li.branch.head {
-  font-weight: bold;
-}
 
 .with_icons li {
   padding-bottom: 3px;
@@ -1342,6 +1339,10 @@ ul.tab_menu li.selected, ul.tab_menu li.selected a {
   font-size: 90%;
 }
 small.hint { font-size: 83%;}
+
+.caps {
+  font-variant: small-caps;
+}
 
 #sidebar .hint {
   color: #868F97;

@@ -4,6 +4,7 @@ module Grit
     include Comparable
     
     attr_reader :id
+    attr_reader :repo
     lazy_reader :parents
     lazy_reader :tree
     lazy_reader :author

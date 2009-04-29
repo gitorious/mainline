@@ -91,9 +91,21 @@ module RepositoriesHelper
                           :class => "hint") + js
   end
   
-  def highlight_if_head(branch, repository)
-    if branch.name == repository.head_candidate_name
+  def render_branch_list_items(branches)
+    branches.sort{|a, b| a.name <=> b.name }.map do |branch|
+      content_tag(:li, 
+        link_to(h(branch.name), log_path(branch.name), :title => branch_link_title_text(branch)),
+        :class => "branch #{highlight_if_head(branch)}")
+    end.join("\n  ")
+  end
+  
+  def highlight_if_head(branch)
+    if branch.head?
       "head"
     end
+  end
+  
+  def branch_link_title_text(branch)
+    "branch " + h(branch.name) + (branch.head? ? " (HEAD)" : "")
   end
 end
