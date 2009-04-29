@@ -26,7 +26,7 @@
         <li class="commit"><%= link_to "Commit log", repo_owner_path(repository, [repository.project, repository, :commits]) -%></li>
         <li class="tree"><%= link_to "Source tree", repo_owner_path(repository, [repository.project, repository, :trees]) -%></li>
         <li class="merge_requests">
-          <%= link_to "Merge requests <small>(#{repository.merge_requests.count})</small>", repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
+          <%= link_to "Merge requests <small>(#{repository.merge_requests.open.count})</small>", repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
         </li>
         <% if repository.parent -%>
         <li class="clone">
