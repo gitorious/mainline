@@ -242,6 +242,7 @@
         :create => "create an account",
         :license => 'End User License Agreement',
         :send_user_msg => "Send {{username}} a message",
+        :avatar => 'Profile image'
       },
       :logs => {
         :title => "Commits in {{repo_url}}:{{ref}}",

@@ -154,6 +154,20 @@ module ApplicationHelper
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
   
+  # For a User object, return either his/her avatar or the gravatar for her email address
+  # Options
+  # - Pass on :size for the height+width of the image in pixels
+  # - Pass on :version for a named version/style of the avatar
+  def avatar(user, options={})
+    if user.avatar?
+      avatar_style = options.delete(:version) || :thumb
+      image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
+      image_tag(user.avatar.url(avatar_style), image_options)
+    else
+      gravatar(user.email, options)
+    end
+  end
+  
   def gravatar(email, options = {})
     size = options[:size]
     image_options = { :alt => "avatar" }

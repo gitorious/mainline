@@ -54,7 +54,7 @@
 <% end -%>
 
 <% content_for :sidebar do -%>
-  <div style="float: right;"><%= link_to(gravatar(@user.email, { :size => 64 }), :action => "show") %></div>
+  <div style="float: right;"><%= link_to(avatar(@user, { :size => 64 }), :action => "show") %></div>
   <h1>
     <%=h @user.login -%> 
     <small><%= @user.fullname.blank? ? "" : "(#{h(@user.fullname)})" -%></small>

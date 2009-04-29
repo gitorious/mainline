@@ -299,6 +299,15 @@ class UserTest < ActiveSupport::TestCase
     end
   end
   
+  context 'Avatars' do
+    setup {@user = users(:johan)}
+    
+    should "generate a avatar path based on the user's login" do
+      @user.avatar_file_name = 'foo.png'
+      assert_equal "/system/avatars/#{@user.login}/original/foo.png", @user.avatar.url
+    end
+  end
+  
   protected
     def create_user(options = {})
       u = User.new({ 

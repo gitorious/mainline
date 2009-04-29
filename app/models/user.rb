@@ -87,7 +87,15 @@ class User < ActiveRecord::Base
       count(:all, :conditions => {:aasm_state => "unread"})
     end
   end
+
+  Paperclip::Attachment.interpolations['login'] = lambda{|attachment,style| attachment.instance.login}
   
+  avatar_local_path = '/system/:attachment/:login/:style/:basename.:extension'
+  has_attached_file :avatar, 
+    :styles => { :medium => "300x300>", :thumb => "64x64>" },
+    :url => avatar_local_path,
+    :path => ":rails_root/public#{avatar_local_path}"
+
   # Top level messages either from or to me
   def top_level_messages
     Message.find_by_sql(["SELECT * FROM messages WHERE (sender_id=? OR recipient_id=?) AND in_reply_to_id IS NULL ORDER BY created_at DESC", self,self])
