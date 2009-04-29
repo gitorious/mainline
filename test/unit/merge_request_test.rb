@@ -34,6 +34,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   
   should_validate_presence_of :user, :source_repository, :target_repository, 
                               :ending_commit
+  should_have_many :comments
   
   should "email all committers in the target_repository after the terms are accepted" do
     assert_incremented_by(Message, :count, 1) do

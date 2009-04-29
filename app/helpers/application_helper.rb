@@ -324,4 +324,12 @@ module ApplicationHelper
   def current_site
     @controller.current_site
   end
+  
+  def new_polymorphic_comment_path(parent, comment)
+    if parent
+      repo_owner_path(@repository, [@project, @repository, parent, comment])
+    else
+      repo_owner_path(@repository, [@project, @repository, comment])
+    end
+  end
 end

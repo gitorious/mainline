@@ -66,6 +66,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				:repository_id => @target_repository.to_param,
 				:id => @merge_request.id
 			assert_response :success
+			assert_select "h3", :content => "Add a new comment:"
 		end
 		
 		should "gets a list of the commits to be merged" do

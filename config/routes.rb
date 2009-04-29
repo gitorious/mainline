@@ -33,7 +33,7 @@ ActionController::Routing::Routes.draw do |map|
       :create => :post, 
       :commit_list => :post,
       :target_branches => :post,
-    }
+    }, :has_many => :comments
     repo.resources :committerships, :collection => {
       :auto_complete_for_group_name => :post,
       :auto_complete_for_user_login => :post

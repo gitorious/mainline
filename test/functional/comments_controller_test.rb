@@ -103,4 +103,35 @@ class CommentsControllerTest < ActionController::TestCase
       assert_template("comments/preview")
     end
   end
+  
+  context "polymorphic creation" do
+    setup do
+      login_as :johan
+      assert @merge_request = @repository.merge_requests.first
+    end
+    
+    should "find set the repository as the polymorphic parent by default" do
+      get :new, :project_id => @project.slug, :repository_id => @repository.to_param
+      assert_response :success
+      assert_equal @repository, assigns(:target)
+      assert_equal @repository, assigns(:comment).target
+    end
+    
+    should "find set the repository as the polymorphic parent by default" do
+      get :new, :project_id => @project.slug, :repository_id => @repository.to_param,
+        :merge_request_id => @merge_request.to_param
+      assert_response :success
+      assert_equal @merge_request, assigns(:target)
+      assert_equal @merge_request, assigns(:comment).target
+    end
+    
+    should "redirect back to the merge request on POST create if that's the target" do
+      post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome"}
+      assert_response :redirect
+      assert_equal @merge_request, assigns(:target)
+      assert_equal @merge_request, assigns(:comment).target
+      assert_redirected_to project_repository_merge_request_path(@project, @repository, @merge_request)
+    end
+  end
 end

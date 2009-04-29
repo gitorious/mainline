@@ -23,6 +23,7 @@
 class CommentsController < ApplicationController
   before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
   before_filter :find_project_and_repository
+  before_filter :find_polymorphic_parent
   renders_in_site_specific_context
   
   def index
@@ -43,22 +44,22 @@ class CommentsController < ApplicationController
   end
   
   def new
-    @comment = @repository.comments.new
+    @comment = @target.comments.new
   end
   
   def create
-    @comment = @repository.comments.new(params[:comment])
+    @comment = @target.comments.new(params[:comment])
     @comment.user = current_user
     @comment.project = @project
-    @comment.target = @repository
+
     respond_to do |format|
       if @comment.save
 #        def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)"
-        @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param)
+        @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param) if @target == @repository
         format.html do
           flash[:success] = I18n.t "comments_controller.create_success"
           if @comment.sha1.blank?
-            redirect_to project_repository_comments_path(@project, @repository)
+            redirect_to_repository_or_target
           else
             redirect_to repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @comment.sha1)
           end
@@ -72,5 +73,21 @@ class CommentsController < ApplicationController
   protected
     def find_repository
       @repository = @owner.repositories.find_by_name!(params[:repository_id])
+    end
+    
+    def find_polymorphic_parent
+      if params[:merge_request_id]
+        @target = @repository.merge_requests.find(params[:merge_request_id])
+      else
+        @target = @repository
+      end
+    end
+    
+    def redirect_to_repository_or_target
+      if @target == @repository
+        redirect_to repo_owner_path(@repository, [@project, @target, :comments])
+      else
+        redirect_to repo_owner_path(@repository, [@project, @repository, @target])
+      end
     end
 end

@@ -98,7 +98,7 @@ git push origin master
         </ul>
         <small>
           <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago 
-          <% if (comment_count = @comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
+          <% if (comment_count = @commit_comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
             (<%= link_to_function pluralize(comment_count, "comment", "comments"), 
                   "toggleComments(#{i})" -%>)
           <% end -%>
@@ -111,7 +111,7 @@ git push origin master
         </div>
       </td>
     </tr>
-    <% @comments.select{|c| c.sha1 == commit.id }.each do |comment| -%>
+    <% @commit_comments.select{|c| c.sha1 == commit.id }.each do |comment| -%>
       <tr class="comment_for_commit_<%= i -%> commit_comments commit_row" style="display:none">
         <td class="commit-details meta">
           <ul>
@@ -142,3 +142,9 @@ git push origin master
   </table>
   <% end -%>
 <% end -%>
+
+<h2 id="comments">Comments</h2>
+<div class="comments">
+  <%= render :partial => @merge_request.comments -%>
+</div>
+<%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
