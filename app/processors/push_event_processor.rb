@@ -25,19 +25,19 @@ class PushEventProcessor < ApplicationProcessor
   
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
-    logger.debug("Processor on message #{hash.inspect}")
+    logger.debug("#{self.class.name} on message #{hash.inspect}")
     if @repository = Repository.find_by_hashed_path(hash['gitdir'])
       @user = User.find_by_login(hash['username'])
       @repository.update_attribute(:last_pushed_at, Time.now.utc)
       self.commit_summary = hash['message']
       log_events
     else
-      logger.error("Processor received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
+      logger.error("#{self.class.name} received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
     end
   end
   
   def log_events
-    logger.info("Processor logging #{events.size} events")
+    logger.info("#{self.class.name} logging #{events.size} events")
     events.each do |e|
       log_event(e)
     end
