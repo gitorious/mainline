@@ -27,7 +27,7 @@
     <ul class="people">
       <li class="avatar">
         <div>
-          <%= link_to(gravatar(@commit.committer.email, { :size => 32 }), :action => "show") %>
+          <%= link_to(avatar_from_email(@commit.committer.email, { :size => 32 }), :action => "show") %>
         </div>
       </li>
       <li>
@@ -46,7 +46,7 @@
         <li class="clear"></li>
         <li class="avatar">
           <div>
-            <%= link_to(gravatar(@commit.author.email, { :size => 32 }), :action => "show") %>
+            <%= link_to(avatar_from_email(@commit.author.email, { :size => 32 }), :action => "show") %>
           </div>
         </li>
         <li>

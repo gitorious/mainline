@@ -21,7 +21,7 @@
 <% @repository.committerships.users.each do |cs| -%>
   <li>
     <div class="user">
-      <%= gravatar(cs.committer.email, :size => 16, :style => "tiny") %>
+      <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
       <%= link_to h(cs.committer.title), cs.committer -%>
       <% if @repository.user == cs.committer -%>
         <small class="hint">(<%= t("views.repos.creator") %>)</small>

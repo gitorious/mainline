@@ -28,7 +28,7 @@
         <% user = users_by_email[commit.author.email] %>
         <li class="event_instance <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
           <p class="event_date"><%= commit.committed_date.to_s(:short_time) %></p>
-          <%= gravatar(commit.author.email, :size => 16)  %>
+          <%= avatar_from_email(commit.author.email, :size => 16)  %>
           <div class="event_meta">
             <p>
               <%= user ? link_to(user.login, user_path(user)) : h(commit.author.name) -%>

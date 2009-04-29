@@ -15,7 +15,7 @@
   <% else -%>
     <tr id="<%= dom_id(c) -%>">
       <td valign="top" class="avatar">
-        <%= gravatar(c.email, :size => 16)  %>
+        <%= avatar_from_email(c.email, :size => 16)  %>
       </td>
       <td valign="top">
         <p>

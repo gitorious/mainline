@@ -168,6 +168,18 @@ module ApplicationHelper
     end
   end
   
+  # Returns an avatar from an email address (for instance from a commit) where we don't have an actual User object
+  def avatar_from_email(email, options={})
+    avatar_style = options.delete(:version) || :thumb
+    image = User.find_avatar_for_email(email, avatar_style)
+    if image == :nil
+      gravatar(email, options)
+    else
+      image_options = { :alt => 'avatar'}.merge(:width => options[:size], :height => options[:size])
+      image_tag(image, image_options)
+    end
+  end
+  
   def gravatar(email, options = {})
     size = options[:size]
     image_options = { :alt => "avatar" }

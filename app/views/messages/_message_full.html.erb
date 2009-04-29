@@ -18,7 +18,7 @@
 %>
 <div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
   <div class="avatar">
-    <%= gravatar message.sender.email, :size => 32 -%>
+    <%= avatar_from_email message.sender.email, :size => 32 -%>
   </div>
   <div class="message">
     <p>

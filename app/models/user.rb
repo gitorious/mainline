@@ -130,6 +130,17 @@ class User < ActiveRecord::Base
     ActiveSupport::SecureRandom.hex(n)
   end
   
+  def self.find_avatar_for_email(email, version)
+    Rails.cache.fetch("avatar_for_#{email}_#{version.to_s}") do
+      result = if u = find_by_email_with_aliases(email)
+        if u.avatar?
+          u.avatar.url(version)
+        end
+      end
+      result || :nil
+    end
+  end
+  
   # Finds a user either by his/her primary email, or one of his/hers aliases
   def self.find_by_email_with_aliases(email)
     user = User.find_by_email(email)

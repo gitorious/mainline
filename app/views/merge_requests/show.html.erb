@@ -116,7 +116,7 @@ git push origin master
         <td class="commit-details meta">
           <ul>
             <li class="avatar">
-              <%= link_to(gravatar(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
+              <%= link_to(avatar_from_email(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
             </li>
             <li class="author">
               <%= link_to(h(comment.user.title), comment.user) -%>

@@ -29,7 +29,7 @@
 <% @commits.each do |commit| -%>
   <div class="page-meta page-history">
     <p>
-      <%= gravatar(commit.committer.email, :size => 20) %>
+      <%= avatar_from_email(commit.committer.email, :size => 20) %>
       <%- if user = @user_and_email_map[commit.committer.email] -%>
         <%= link_to(h(commit.committer.name), user) -%>
       <%- else -%>

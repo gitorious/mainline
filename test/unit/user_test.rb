@@ -306,6 +306,22 @@ class UserTest < ActiveSupport::TestCase
       @user.avatar_file_name = 'foo.png'
       assert_equal "/system/avatars/#{@user.login}/original/foo.png", @user.avatar.url
     end
+    
+    context 'finding an avatar from an email' do
+      should "return :nil when a user doesn't have an avatar" do
+        assert_equal :nil, User.find_avatar_for_email(@user.email, :thumb)
+      end
+      
+      should "return that user's avatar when the user has an avatar" do
+        @user.update_attribute(:avatar_file_name, 'foo.png')
+        Rails.cache.clear
+        assert_equal @user.avatar.url(:thumb), User.find_avatar_for_email(@user.email, :thumb)
+      end
+      
+      should "return :nil when an unknown email address is requested" do
+        assert_equal :nil, User.find_avatar_for_email('noone@nowhere.com', :thumb)
+      end
+    end
   end
   
   protected

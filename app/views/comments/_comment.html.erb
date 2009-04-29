@@ -25,7 +25,7 @@
   <div class="body"><%= markdown(sanitize(comment.body)) -%></div>
   <p class="byline">
     <span class="avatar">
-      <%= link_to(gravatar(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
+      <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
     </span>
     <%= link_to(h(comment.user.login), comment.user) -%> | 
     <span class="permalink"><%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%></span>
