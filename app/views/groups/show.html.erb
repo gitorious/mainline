@@ -20,7 +20,6 @@
 <%= breadcrumbs_from(@group) -%>
 
 <h1><%=h @group.name -%></h1>
-
 <div>
   <%= markdown(sanitize(@group.description)) %>
 </div>
@@ -98,6 +97,9 @@
 
 <% content_for :sidebar do -%>
   <ul>
+    <li>
+      <%= image_tag @group.avatar.url(:thumb) %>      
+    </li>
     <% if @group.creator -%>
     <li>
       <strong>Started by:</strong> 

@@ -20,7 +20,7 @@
 <h1><%= t("views.groups.create_team") -%></h1>
 
 <%= error_messages_for :group -%>
-<% form_for @group do |f| -%>
+<% form_for @group, :html => {:multipart => true} do |f| -%>
   <p>
     <%= f.label :name, t("views.groups.team_name") -%>:<br />
     <%= f.text_field :name -%>
@@ -32,6 +32,11 @@
   </p>
   <p class="hint">
     <%= t("views.groups.new_team_after_create_hint") -%>
+  </p>
+
+  <p>
+    <%= f.label :avatar, t('views.groups.avatar') -%> <br />
+    <%= f.file_field :avatar %>
   </p>
 
   <% # TODO: be able to add a bunch of members right away -%>

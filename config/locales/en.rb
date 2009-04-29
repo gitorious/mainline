@@ -494,7 +494,8 @@
         :new_team_after_create_hint => "You can add more members to the team after you've created it",
         :edit_memberships => "Edit memberships",
         :edit_team  => 'Edit team',
-        :description => 'Team description'
+        :description => 'Team description',
+        :avatar => 'Team image/logo:'
       },
       :committerships => {
         :add_new => "Add committers",

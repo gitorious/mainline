@@ -135,6 +135,20 @@ class GroupTest < ActiveSupport::TestCase
       g = Group.create(:name => 'FooWorkers')
       assert_equal('fooworkers', g.name)
     end
-
+  end
+  
+  context 'Avatars' do
+    setup {
+      @group = groups(:team_thunderbird)
+    }
+    
+    should 'have a default avatar' do
+      assert_equal '/images/default_group_avatar.png', @group.avatar.url
+    end
+    
+    should 'use the correct path when an avatar is set' do
+      @group.avatar_file_name = 'foo.png'
+      assert_equal '/system/group_avatars/team-thunderbird/original/foo.png', @group.avatar.url
+    end
   end
 end

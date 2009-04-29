@@ -48,6 +48,7 @@ class GroupsController < ApplicationController
   
   def update
     @group.description = params[:group][:description]
+    @group.avatar = params[:group][:avatar]
     @group.save!
     redirect_to group_path(@group)
     rescue ActiveRecord::RecordInvalid

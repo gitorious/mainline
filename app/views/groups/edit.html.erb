@@ -20,13 +20,19 @@
 <h1><%= t("views.groups.update_team") -%></h1>
 
 <%= error_messages_for :group -%>
-<% form_for @group do |f| -%>
+<% form_for @group, :html => {:multipart => true} do |f| -%>
   <p>
     <%= f.label :description, t('views.groups.description') -%>:<br/>
     <span class="hint">
       <%= t("views.common.format_using_markdown", :markdown => 'markdown') -%>
     </span><br />
     <%= f.text_area :description %>
+  </p>
+  
+  <p>
+    <%= f.label :avatar, t('views.groups.avatar') -%> <br />
+    <%= image_tag @group.avatar.url(:thumb) %> <br />
+    <%= f.file_field :avatar %>
   </p>
   
   <p><%= f.submit t("views.groups.update_team_submit") -%></p>

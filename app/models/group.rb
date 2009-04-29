@@ -37,6 +37,16 @@ class Group < ActiveRecord::Base
     
   before_validation :downcase_name
   
+  Paperclip::Attachment.interpolations['group_name'] = lambda{|attachment,style| attachment.instance.name}
+  
+  avatar_local_path = '/system/group_avatars/:group_name/:style/:basename.:extension'
+  has_attached_file :avatar, 
+    :default_url  =>'/images/default_group_avatar.png',
+    :styles => { :normal => "300x300>", :medium => "64x64>", :thumb => '32x32>' },
+    :url => avatar_local_path,
+    :path => ":rails_root/public#{avatar_local_path}"
+  
+  
   def self.human_name
     I18n.t("activerecord.models.group")
   end
