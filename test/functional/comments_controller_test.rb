@@ -133,5 +133,14 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @merge_request, assigns(:comment).target
       assert_redirected_to project_repository_merge_request_path(@project, @repository, @merge_request)
     end
+    
+    should "create an event the parent class name as the body" do
+      assert_difference("Event.count") do
+        post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+          :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome"}
+      end
+      assert_equal @merge_request, Event.last.target
+      assert_equal "MergeRequest", Event.last.body
+    end
   end
 end

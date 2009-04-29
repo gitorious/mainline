@@ -54,8 +54,7 @@ class CommentsController < ApplicationController
 
     respond_to do |format|
       if @comment.save
-#        def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)"
-        @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param) if @target == @repository
+        create_new_commented_posted_event
         format.html do
           flash[:success] = I18n.t "comments_controller.create_success"
           if @comment.sha1.blank?
@@ -88,6 +87,15 @@ class CommentsController < ApplicationController
         redirect_to repo_owner_path(@repository, [@project, @target, :comments])
       else
         redirect_to repo_owner_path(@repository, [@project, @repository, @target])
+      end
+    end
+    
+    def create_new_commented_posted_event
+      # def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
+      if @target == @repository
+        @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param, "Repository")
+      else
+        @project.create_event(Action::COMMENT, @target, current_user, @comment.to_param, "MergeRequest")
       end
     end
 end

@@ -173,12 +173,24 @@ module EventRenderingHelper
   def render_event_comment(event)
     comment = Comment.find(event.data)
     
-    project = event.target.project
-    repo = event.target
+    if event.body == "MergeRequest"
+      repo = event.target.target_repository
+      project = repo.project
+    else
+      project = event.target.project
+      repo = event.target
+    end
     
     if comment.sha1.blank?
-      action = action_for_event(:event_commented) do
-        " on " +  link_to(h(repo.url_path), repo_owner_path(repo, [project, repo]))
+      if event.body == "MergeRequest"
+        action = action_for_event(:event_commented) do
+          " on " +  link_to(h("merge request ##{event.target.to_param}"), 
+            repo_owner_path(repo, :project_repository_merge_request_path, project, repo, event.target)+"##{dom_id(comment)}")
+        end
+      else
+        action = action_for_event(:event_commented) do
+          " on " +  link_to(h(repo.url_path), repo_owner_path(repo, [project, repo]))
+        end
       end
     else
       action = action_for_event(:event_commented) do
