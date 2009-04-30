@@ -92,7 +92,7 @@ class User < ActiveRecord::Base
   
   avatar_local_path = '/system/:attachment/:login/:style/:basename.:extension'
   has_attached_file :avatar, 
-    :styles => { :medium => "300x300>", :thumb => "64x64>" },
+    :styles => { :medium => "300x300>", :thumb => "64x64>", :tiny => "24x24>" },
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
 

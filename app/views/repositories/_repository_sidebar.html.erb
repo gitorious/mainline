@@ -22,12 +22,12 @@
   </div>
   <% if repository.owned_by_group? -%>
     <div class="group">
-      <%= image_tag("silk/group.png") %>
+      <%= image_tag(repository.owner.avatar.url(:thumb), :width => "16", :height => "16") %>
       <%= link_to h(repository.owner.name), repository.owner -%>
     </div>
   <% else -%>
     <div class="user">
-      <%= avatar(repository.user, :size => 16, :style => "tiny") %>
+      <%= avatar(repository.user, :size => 16, :version => "tiny") %>
       <%= link_to h(repository.user.title), repository.user -%>
     </div>
   <% end -%>
