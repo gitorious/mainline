@@ -281,7 +281,7 @@ class ApplicationController < ActionController::Base
     # if there's data in the flash hash
     def stale_conditional?(etag, last_modified)
       return true unless flash.empty?
-      stale?(:etag => etag, :last_modified => last_modified)
+      stale?(:etag => [etag, current_user], :last_modified => last_modified)
     end
     
   private  
