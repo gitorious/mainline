@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   
-  validates_acceptance_of :end_user_license_agreement, :on => :create, :allow_nil => false
+  validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false, :accept => true
   
   before_save :encrypt_password
   before_create :make_activation_code
@@ -201,21 +201,6 @@ class User < ActiveRecord::Base
   
   def breadcrumb_parent
     nil
-  end
-
-  def current_license_agreement_accepted?
-    EndUserLicenseAgreement.current_version.checksum == accepted_license_agreement_version
-  end
-  
-  def eula_version=(checksum)
-    self.accepted_license_agreement_version = checksum
-    if current_license_agreement_accepted? && self.pending?
-      self.accept_terms!
-    end
-  end
-  
-  def eula_version
-    accepted_license_agreement_version
   end
 
   def remember_token?

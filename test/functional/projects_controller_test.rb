@@ -233,7 +233,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
     
     should 'POST projects/create should redirect to acceptance of EULA if this has not been done' do
-      users(:johan).update_attributes(:accepted_license_agreement_version => '222')
+      users(:johan).update_attributes(:terms_of_use => nil)
       login_as :johan
       post :create
       assert_redirected_to(user_license_path(users(:johan)))

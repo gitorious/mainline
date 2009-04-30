@@ -28,13 +28,11 @@ class LicensesControllerTest < ActionController::TestCase
     should "GET show redirect to edit with a flash" do
       get :show
       assert_response :redirect
-      assert_equal "You need to accept the current End User License Agreement", flash[:notice]
+      assert_match(/You need to accept the/, flash[:notice])
     end
     
     should 'render the current license version if this has been accepted' do
-      @user.update_attributes({
-        :accepted_license_agreement_version => EndUserLicenseAgreement.current_version.checksum
-      })
+      @user.update_attributes({ :terms_of_use => "1" })
       get :edit
       assert_redirected_to :action => :show
     end
@@ -50,17 +48,15 @@ class LicensesControllerTest < ActionController::TestCase
     end
     
     should 'change the current version when selected' do
-      put :update, :user => {
-        :accepted_license_agreement_version => EndUserLicenseAgreement.current_version.checksum
-      }
+      put :update, :user => { :terms_of_use => "1" }
       assert_redirected_to :action => :show
-      assert @user.reload.current_license_agreement_accepted?
+      assert @user.reload.terms_of_use?
     end
     
     should "not change the current version if not selected" do
-      put :update, :user => {:accepted_license_agreement_version => nil}
-      assert !@user.reload.current_license_agreement_accepted?
-      assert_equal "You need to accept the current End User License Agreement", flash[:error]
+      put :update, :user => {:terms_of_use => ""}
+      assert !@user.reload.terms_of_use?
+      assert_match(/You need to accept the/, flash[:error])
     end
   end
 end

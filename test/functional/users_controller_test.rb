@@ -115,7 +115,8 @@ class UsersControllerTest < ActionController::TestCase
   
   def create_user(options = {})
     post :create, :user => { :login => 'quire', :email => 'quire@example.com',
-      :password => 'quire', :password_confirmation => 'quire', :end_user_license_agreement => '1' }.merge(options)
+      :password => 'quire', :password_confirmation => 'quire', 
+      :terms_of_use => '1' }.merge(options)
   end
 
   with_ssl_context do
@@ -160,7 +161,7 @@ class UsersControllerTest < ActionController::TestCase
     
     should 'require acceptance of end user license agreement' do
       assert_no_difference("User.count") do
-        create_user(:end_user_license_agreement => nil)
+        create_user(:terms_of_use => nil)
       end
     end
 
@@ -490,7 +491,13 @@ class UsersControllerTest < ActionController::TestCase
     end
     
     should 'create a user with the provided credentials and openid url on success' do
-      post :openid_create, {:user => {:fullname => 'Moe Schmoe', :email => 'moe@schmoe.example', :login => 'schmoe', :end_user_license_agreement => '1'}}, @valid_session_options
+      post :openid_create, {:user => {
+        :fullname => 'Moe Schmoe', 
+        :email => 'moe@schmoe.example', 
+        :login => 'schmoe', 
+        :terms_of_use => '1'
+        }
+      }, @valid_session_options
       user = assigns(:user)
       assert user.activated?
       assert user.terms_accepted?

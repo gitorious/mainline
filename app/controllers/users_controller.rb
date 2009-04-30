@@ -69,7 +69,9 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
     @user.save!    
-    @user.eula_version = EndUserLicenseAgreement.current_version.checksum
+    if !@user.terms_of_use.blank?
+      @user.accept_terms!
+    end
     flash[:success] = I18n.t "users_controller.create_notice"
     redirect_to root_path
   rescue ActiveRecord::RecordInvalid
@@ -167,7 +169,9 @@ class UsersController < ApplicationController
     @user.login = params[:user][:login]
     @user.identity_url = session[:openid_url]
     if @user.save
-      @user.eula_version = EndUserLicenseAgreement.current_version.checksum      
+      if !@user.terms_of_use.blank?
+        @user.accept_terms!
+      end
       @user.activate
       [:openid_url, :openid_email, :openid_nickname, :openid_fullname].each do |k|
         session.delete(k)

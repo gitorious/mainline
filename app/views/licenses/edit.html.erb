@@ -26,13 +26,14 @@
 <div>
   <% form_for(current_user, :url => user_license_path(current_user), :method => :put) do |f| %>
     <div class="eula">
-      <%= simple_format(EndUserLicenseAgreement.current_version.contents) %>    
+      <a href="http://en.gitorious.org/tos" target="_blank">Terms of Service</a>
     </div>
 
     <p>
-      <%= f.check_box :accepted_license_agreement_version, {}, EndUserLicenseAgreement.current_version.checksum  -%>
-      <label for="eula_version">I accept the End User License Agreement</label>
+      <%= f.check_box :terms_of_use  -%>
+      <label for="terms_of_use">I accept the Terms of Use</label>
     </p>
+    
     <p>
       <%= f.submit "Accept" %>
     </p>

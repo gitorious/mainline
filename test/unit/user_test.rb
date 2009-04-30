@@ -36,6 +36,7 @@ class UserTest < ActiveSupport::TestCase
   should_have_many :committerships
   should_have_many :commit_repositories
   should_validate_presence_of :login, :password, :password_confirmation, :email
+  should_validate_acceptance_of :terms_of_use
   
   should_not_allow_values_for :login, 'john.doe', 'john_doe'
   should_allow_values_for :login, 'JohnDoe', 'john-doe', 'john999'
@@ -199,25 +200,9 @@ class UserTest < ActiveSupport::TestCase
     assert_equal js.fullname, js.to_grit_actor.name
   end
   
-  
-  should 'need to accept the current EULA version' do
-    stub_license_agreement
-    u = create_user
-    assert !u.current_license_agreement_accepted?
-    u.accepted_license_agreement_version = EndUserLicenseAgreement.current_version.checksum
-    assert u.current_license_agreement_accepted?
-  end
-  
   should 'initially be pending' do
     u = create_user
     assert u.pending?
-  end
-  
-  should 'have its state transformed when accepting the eula' do
-    stub_license_agreement
-    u = create_user
-    u.eula_version = EndUserLicenseAgreement.current_version.checksum
-    assert u.terms_accepted?
   end
   
   should "have many memberships" do
@@ -330,16 +315,10 @@ class UserTest < ActiveSupport::TestCase
         :email => 'quire@example.com', 
         :password => 'quire', 
         :password_confirmation => 'quire',
-        :end_user_license_agreement => '1'
+        :terms_of_use => true,
       }.merge(options))
       u.login = options[:login] || "quire"
       u.save
       u
-    end
-  
-    def stub_license_agreement
-      license = stub("End user license agreement")
-      license.stubs(:checksum).returns("ff0023902")
-      EndUserLicenseAgreement.stubs(:current_version).returns(license)    
     end
 end
