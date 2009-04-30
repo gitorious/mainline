@@ -220,8 +220,28 @@ class MergeRequest < ActiveRecord::Base
     validate_through_oauth do
       confirmed_by_user
       callback_response = access_token.post(target_repository.project.oauth_path_prefix, oauth_signoff_parameters)
-      update_attributes(:contribution_agreement_version => callback_response.body)
+      
+      if Net::HTTPAccepted === callback_response
+        self.contribution_notice = callback_response.body
+      end
+      
+      contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
+      update_attributes(:contribution_agreement_version => contribution_agreement_version)
     end
+  end
+  
+  # If the contribution agreement site wants to remind the user of the current contribution license, 
+  # they respond with a Net::HTTPAccepted header along with a response body containing the notice
+  def contribution_notice=(notice)
+    @contribution_notice = notice
+  end
+  
+  def has_contribution_notice?
+    !contribution_notice.blank?
+  end
+  
+  def contribution_notice
+    @contribution_notice
   end
   
   # Returns the parameters that are passed on to the contribution agreement site

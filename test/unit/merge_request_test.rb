@@ -97,7 +97,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     mr.stubs(:oauth_signoff_parameters).returns({})
     mr.terms_accepted
     assert mr.open?
-    assert_equal('valid_version_sha', mr.contribution_agreement_version)
+    assert_equal 'valid_version_sha', mr.contribution_agreement_version
+    assert_equal 'Thank you for your contribution', mr.contribution_notice
   end
   
   should 'not be set to open if OAuth validation fails' do

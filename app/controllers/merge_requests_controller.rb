@@ -78,6 +78,9 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.find(params[:id])
     if @merge_request.terms_accepted
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
+      if @merge_request.has_contribution_notice?
+        flash[:notice] = @merge_request.contribution_notice
+      end
       flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
     else
       flash[:error] = I18n.t "merge_requests_controller.need_contribution_agreement"

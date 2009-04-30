@@ -36,9 +36,12 @@ module OAuth
     
     def request(path, options)
       if valid?
-        result = Net::HTTPSuccess.new(nil, nil, nil)
+        result = Net::HTTPAccepted.new(nil, nil, nil)
         def result.body
-          "valid_version_sha"
+          "Thank you for your contribution"
+        end
+        def result.[](key)
+          {'X-Contribution-Agreement-Version' => 'valid_version_sha'}[key]
         end
         result
       else
