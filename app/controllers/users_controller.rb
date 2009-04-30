@@ -24,14 +24,14 @@ class UsersController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [
     :activate, :forgot_password, :forgot_password_create, :reset_password 
   ]
-  before_filter :login_required, :only => [:edit, :update, :password, :update_password]
-  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password]
-  before_filter :require_current_user, :only => [:edit, :update, :password, :update_password]
+  before_filter :login_required, :only => [:edit, :update, :password, :update_password, :avatar]
+  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password, :avatar]
+  before_filter :require_current_user, :only => [:edit, :update, :password, :update_password, :avatar]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
   renders_in_global_context
   ssl_required :new, :create, :edit, :update, :password, :forgot_password_create, 
-                :forgot_password, :update_password, :reset_password
+                :forgot_password, :update_password, :reset_password, :avatar
  
   # render new.rhtml
   def new
@@ -177,6 +177,14 @@ class UsersController < ApplicationController
     else
       render :action => 'openid_build'
     end
+  end
+  
+  # DELETE avatar
+  def avatar
+    @user.avatar.destroy
+    @user.save
+    flash[:success] = "You profile image was deleted"
+    redirect_to user_path
   end
   
   protected

@@ -52,7 +52,13 @@
   <p>
     <%= f.label :avatar, t('views.users.avatar') %>
     <span class="hint">If you do not add an image, Gitorious will try to use your gravatar </span><br />
-    <%= avatar(@user, :version => :thumb, :size => '24') %> <br />
+    <%= avatar(@user, :version => :thumb, :size => '24') %>
+
+    <%- if @user.avatar? -%>
+      <%= button_to_function("Delete current profile image", "if (confirm('Are you sure you want to delete your profile image?')) $('delete_avatar').submit()") %> <br/>
+    <%- end -%>
+    <br />
+
     <%= f.file_field :avatar %>
   </p>
   <p>
@@ -67,3 +73,6 @@
   <%= f.submit t("views.common.save") -%>
 <% end -%>
 
+<%- form_for(@user, :url => avatar_user_path, :html => {:id => "delete_avatar", :method => :delete}) do |f| -%>
+  
+<%- end -%>

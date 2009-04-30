@@ -75,7 +75,8 @@ ActionController::Routing::Routes.draw do |map|
   }, :member => { 
     :feed => :get, 
     :password => :get, 
-    :update_password => :put
+    :update_password => :put,
+    :avatar => :delete
   }) do |user|
     user.resources :keys
     user.resources :aliases, :member => { :confirm => :get }

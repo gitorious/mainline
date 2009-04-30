@@ -454,6 +454,15 @@ class UsersControllerTest < ActionController::TestCase
       assert_match(/Your password has been changed/i, flash[:success])
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end
+    
+    should 'be able to delete his avatar' do
+      user = users(:johan)
+      user.update_attribute(:avatar_file_name, "foo.png")
+      assert user.avatar?
+      delete :avatar, :id => user.to_param
+      assert_redirected_to user_path(user)
+      assert !user.reload.avatar?
+    end
   end
   
   context 'Creation from OpenID' do
