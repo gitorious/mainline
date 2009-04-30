@@ -52,32 +52,21 @@ class SiteController < ApplicationController
     # Render a Site-specific index template
     def render_site_index
       @projects = current_site.projects.find(:all, :limit => 10, :order => "id desc")
-      # pick the newest event
-      top_events = @projects.map{|p| p.events.first(:order => "id desc") }.flatten.compact
-      last_event = (top_events.empty? ? @projects : top_events).max do |a,b| 
-        a.created_at <=> b.created_at
-      end
-      
-      if stale_conditional?(last_event, last_event.created_at)
-        @teams = Group.all_participating_in_projects(@projects)
-        @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
-        @latest_events = Event.latest_in_projects(15, @projects.map{|p| p.id })
-        render "site/#{current_site.subdomain}/index"
-      end
+      @teams = Group.all_participating_in_projects(@projects)
+      @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
+      @latest_events = Event.latest_in_projects(15, @projects.map{|p| p.id })
+      render "site/#{current_site.subdomain}/index"
     end
 
     # Render the global index template
     def render_global_index
-      last_event = Event.latest(1).first || Project.first
-      if last_event.nil? || stale_conditional?(last_event, last_event.created_at)
-        @projects = Project.find(:all, :limit => 10, :order => "id desc")
-        @top_repository_clones = Repository.most_active_clones
-        @active_recently = Project.most_active_recently
-        @active_overall = Project.most_active_overall(@active_recently.size)
-        @active_users = User.most_active
-        @active_groups = Group.most_active
-        @latest_events = Event.latest(25)
-      end
+      @projects = Project.find(:all, :limit => 10, :order => "id desc")
+      @top_repository_clones = Repository.most_active_clones
+      @active_recently = Project.most_active_recently
+      @active_overall = Project.most_active_overall(@active_recently.size)
+      @active_users = User.most_active
+      @active_groups = Group.most_active
+      @latest_events = Event.latest(25)
     end
   
 end
