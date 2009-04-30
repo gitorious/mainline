@@ -52,8 +52,7 @@
   <p>
     <%= f.label :avatar, t('views.users.avatar') %>
     <span class="hint">If you do not add an image, Gitorious will try to use your gravatar </span><br />
-  
-    <%= image_tag @user.avatar.url(:thumb) %> <br />
+    <%= avatar(@user, :version => :thumb, :size => '24') %> <br />
     <%= f.file_field :avatar %>
   </p>
   <p>
