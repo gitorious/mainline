@@ -322,14 +322,29 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "showing a user namespaced repo" do
     setup do
       @user = users(:johan)
+      @project = projects(:johans)
     end
   
     should "GET users/johan/repositories/foo is successful" do
       repo = @user.repositories.first
       repo.stubs(:git).returns(stub_everything("git mock"))
-      get :show, :user_id => @user.to_param, :id => repo.to_param
+      get :show, :user_id => @user.to_param, :project_id => repo.project.to_param,
+        :id => repo.to_param
       assert_response :success
       assert_equal @user, assigns(:owner)
+    end
+    
+    should "find the correct owner for clone, if the project is owned by someone else" do
+      clone_repo = @project.repositories.clones.first
+      clone_repo.owner = users(:moe)
+      clone_repo.save!
+      clone_repo.stubs(:git).returns(stub_everything("git mock"))
+      
+      get :show, :user_id => users(:moe).to_param, 
+        :project_id => clone_repo.project.to_param, :id => clone_repo.to_param
+      assert_response :success
+      assert_equal clone_repo, assigns(:repository)
+      assert_equal users(:moe), assigns(:owner)
     end
   end
 
