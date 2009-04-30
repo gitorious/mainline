@@ -1,3 +1,4 @@
+# coding=binary
 module Rack
   module Utils
     module Multipart
@@ -13,10 +14,9 @@ module Rack
           buf = ""
           content_length = env['CONTENT_LENGTH'].to_i
           input = env['rack.input']
-          input.set_encoding('ASCII-8BIT') if input.respond_to?(:set_encoding)
           input.rewind
 
-          boundary_size = boundary.size + EOL.size
+          boundary_size = Utils.bytesize(boundary) + EOL.size
           bufsize = 16384
 
           content_length -= boundary_size
@@ -24,7 +24,6 @@ module Rack
           read_buffer = ''
 
           status = input.read(boundary_size, read_buffer)
-          status.force_encoding('ASCII-8BIT') if status.respond_to?(:force_encoding)
 
           raise EOFError, "bad content body"  unless status == boundary + EOL
 
