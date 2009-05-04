@@ -32,7 +32,7 @@ class LicensesControllerTest < ActionController::TestCase
     end
     
     should 'render the current license version if this has been accepted' do
-      @user.update_attributes({ :terms_of_use => "1" })
+      @user.accept_terms!
       get :edit
       assert_redirected_to :action => :show
     end
@@ -50,12 +50,12 @@ class LicensesControllerTest < ActionController::TestCase
     should 'change the current version when selected' do
       put :update, :user => { :terms_of_use => "1" }
       assert_redirected_to :action => :show
-      assert @user.reload.terms_of_use?
+      assert @user.reload.terms_accepted?
     end
     
     should "not change the current version if not selected" do
       put :update, :user => {:terms_of_use => ""}
-      assert !@user.reload.terms_of_use?
+      assert !@user.reload.terms_accepted?
       assert_match(/You need to accept the/, flash[:error])
     end
   end

@@ -117,7 +117,7 @@ class ApplicationController < ActionController::Base
     
     def require_current_eula
       if logged_in?
-        unless current_user.terms_of_use?
+        unless current_user.terms_accepted?
           store_location
           flash[:error] = I18n.t "views.license.terms_not_accepted"
           redirect_to user_license_path(current_user)

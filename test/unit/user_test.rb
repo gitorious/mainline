@@ -315,7 +315,7 @@ class UserTest < ActiveSupport::TestCase
         :email => 'quire@example.com', 
         :password => 'quire', 
         :password_confirmation => 'quire',
-        :terms_of_use => true,
+        :terms_of_use => "1",
       }.merge(options))
       u.login = options[:login] || "quire"
       u.save

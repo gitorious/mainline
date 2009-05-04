@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   
-  validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false, :accept => true
+  validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false
   
   before_save :encrypt_password
   before_create :make_activation_code

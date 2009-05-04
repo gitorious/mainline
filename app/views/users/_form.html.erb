@@ -37,9 +37,7 @@
     <%= f.password_field :password_confirmation, :class => "text" %>
   </p>
   
-  <div class="eula">
-    <a href="http://en.gitorious.org/tos" target="_blank">Terms of Service</a>
-  </div>
+  <%= render :partial => "licenses/tos_link" -%>
 
   <p>
     <%= f.check_box :terms_of_use  -%>

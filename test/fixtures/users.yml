@@ -9,7 +9,6 @@ johan:
   ssh_key_id: 1
   is_admin: <%= true %>
   aasm_state: terms_accepted
-  terms_of_use: true
 moe:
   id: 2
   login: moe
@@ -20,7 +19,7 @@ moe:
   activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
   ssh_key_id: 2
   is_admin: <%= false %>
-  terms_of_use: true
+  aasm_state: terms_accepted
 mike:
   id: 3
   login: mike
@@ -31,8 +30,8 @@ mike:
   activation_code: 8f24789ae988411ccf33ab0c30fe9106fab32e9a 
   ssh_key_id: 3
   is_admin: <%= false %>
-  terms_of_use: true
   wants_email_notifications: <%= true %>
+  aasm_state: terms_accepted
 old_timer:
   id: 4
   login: old-timer
@@ -44,4 +43,3 @@ old_timer:
   ssh_key_id: 4
   is_admin: <%= false %>
   aasm_state: pending
-  terms_of_use: false
