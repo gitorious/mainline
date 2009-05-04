@@ -7,3 +7,7 @@ team_thunderbird:
     Descriptions can contain *markdown*:
     * like lists
     * and stuff
+a_team:
+  name: A-team
+  user_id: 1
+  description: The A-Team, known from television

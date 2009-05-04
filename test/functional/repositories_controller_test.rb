@@ -501,7 +501,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @project.repositories.expects(:find_by_name!).with(@repository.name).returns(@repository)
       do_create_clone_post(:name => "foo-clone", :owner_type => "Group", :owner_id => groups(:team_thunderbird).id)
       assert_response :redirect
-      assert_equal users(:johan).groups.first, assigns(:repository).owner
+      assert_equal groups(:team_thunderbird), assigns(:repository).owner
       assert_equal Repository::KIND_TEAM_REPO, assigns(:repository).kind
     end
   

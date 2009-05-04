@@ -19,6 +19,8 @@ class Role < ActiveRecord::Base
   KIND_ADMIN = 0
   KIND_MEMBER = 1
   
+  include Comparable
+  
   # TODO: use this when we upgrade to rails 2.3, and nuke the ::all override
   # default_scope :order => 'kind desc'
   
@@ -41,4 +43,8 @@ class Role < ActiveRecord::Base
   def member?
     kind == KIND_MEMBER
   end  
+  
+  def  <=>(another_role)
+    another_role.kind <=> kind
+  end
 end

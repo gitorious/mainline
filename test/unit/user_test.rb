@@ -207,12 +207,12 @@ class UserTest < ActiveSupport::TestCase
   
   should "have many memberships" do
     groups(:team_thunderbird).add_member(users(:johan), Role.admin)
-    assert_equal 1, users(:johan).memberships.count
+    assert_equal 2, users(:johan).memberships.count
   end
   
   should "have many groups through the memberships" do
     groups(:team_thunderbird).add_member(users(:johan), Role.admin)
-    assert_equal [groups(:team_thunderbird)], users(:johan).groups
+    assert_equal Set.new([groups(:a_team), groups(:team_thunderbird)]), Set.new(users(:johan).groups)
   end
   
   should "have a to_param_with_prefix" do

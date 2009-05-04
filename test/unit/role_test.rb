@@ -38,4 +38,12 @@ class RoleTest < ActiveSupport::TestCase
   should "gets the committer object" do
     assert_equal roles(:member), Role.member
   end
+  
+  context 'Comparing roles' do
+    should 'know if a role is "higher" than another role' do
+      assert roles(:member) < roles(:admin)
+      assert roles(:admin) > roles(:member)
+      assert roles(:admin) == roles(:admin)
+    end
+  end
 end

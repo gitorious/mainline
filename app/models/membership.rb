@@ -21,6 +21,8 @@ class Membership < ActiveRecord::Base
   belongs_to :user
   belongs_to :role
   has_many :messages, :as => :notifiable, :dependent => :destroy
+  before_validation_on_update :dont_demote_group_creator
+  before_destroy :dont_delete_group_creator
 
   after_create :send_notification_if_invited
   attr_accessor :inviter
@@ -61,5 +63,16 @@ class Membership < ActiveRecord::Base
         :notifiable => self
       })
       message.save      
+    end
+    
+    def dont_demote_group_creator
+      if user == group.creator and role == Role.member
+        errors.add(:role, "The group creator cannot be denoted")
+        return false
+      end
+    end
+    
+    def dont_delete_group_creator
+      return user != group.creator
     end
 end

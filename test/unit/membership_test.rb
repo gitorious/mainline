@@ -20,7 +20,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MembershipTest < ActiveSupport::TestCase
-  should "has valid associations" do
+  should "have valid associations" do
     assert_equal groups(:team_thunderbird), memberships(:team_thunderbird_mike).group
     assert_equal roles(:admin), memberships(:team_thunderbird_mike).role
     assert_equal users(:mike), memberships(:team_thunderbird_mike).user
@@ -45,6 +45,24 @@ class MembershipTest < ActiveSupport::TestCase
       membership = Membership.new(:user => @user, :group => @group, :role => roles(:member))
       membership.expects(:send_notification).never
       membership.save
+    end
+  end
+  
+  context 'The group creator' do
+    setup {
+      @group = groups(:a_team)
+      @creator = users(:johan)
+      @membership = @group.memberships.find_by_user_id(@creator.id)
+      assert_equal @creator, @group.creator      
+    }
+    should 'not be demotable' do
+      @membership.role = Role.member
+      assert !@membership.save
+      assert !@membership.valid?
+    end
+    
+    should 'not be deletable' do
+      assert !@membership.destroy
     end
   end
 end
