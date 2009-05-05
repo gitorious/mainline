@@ -192,7 +192,9 @@ class MergeRequestsController < ApplicationController
     end
     
     def obtain_oauth_request_token
-      request_token = @merge_request.oauth_consumer.get_request_token('user_login' => current_user.login)
+      request_token = @merge_request.oauth_consumer.get_request_token(
+        'user_login' => current_user.login, 
+        'merge_request_id' => @merge_request.id)
       return request_token
     end
     
