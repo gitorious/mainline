@@ -48,7 +48,7 @@
 <%= error_messages_for :repository -%>
 
 <% form_for @repository, :repository, 
-      :url => create_clone_project_repository_path(@owner, @repository_to_clone),
+      :url => create_clone_project_repository_path(@repository.project, @repository_to_clone),
       :builder => GitoriousFormBuilder do |f| -%>
   <p>
     <%= f.current_user_or_group :owner, t("views.repos.owner"), 
