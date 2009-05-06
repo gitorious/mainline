@@ -1,0 +1,47 @@
+<%
+# encoding: utf-8
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<h1>Edit OAuth settings</h1>
+<p>
+  This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable signoff, you will need to provide at least the <code>site</code>, <code>signoff key</code> and <code>signoff secret</code> options. For non-standard paths, also supply the <code>path prefix</code> option. In the column to the right you will find the current options used.<br/>
+  Leave the site field empty to deactivate the requirement of merge requests to be signed off.
+</p>
+
+<%- form_for(@project, :url => project_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
+  <%- @project.oauth_settings.each do |k, v| -%>
+    <p>
+      <label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label><br />
+      <input id="project_oauth_settings_<%= k %>" name="oauth_settings[<%= k %>]" value="<%= v %>" size="50" />
+    </p>
+  <%- end -%>
+  
+  <p>
+    <%= f.submit %>
+  </p>
+<%- end -%>
+
+<% content_for :sidebar do -%>
+  <h4>Current options</h4>
+  <h5>Signoff required:</h5>
+  <p><strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %></strong></p>
+  <%- @project.oauth_consumer_options.each do |k, v| -%>
+  <h5><%= k.to_s.humanize %></h5>
+  <p><%= v %></p>
+  <%- end -%>
+<% end -%>

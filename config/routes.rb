@@ -90,6 +90,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources  :events, :member => {:commits => :get}
   
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
+
+
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"
@@ -103,9 +105,12 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :projects, :member => {:confirm_delete => :get} do |projects|
+    projects.resource :oauth_settings
     projects.resources :pages, :member => { :history => :get,:preview => :put }
     projects.resources(:repositories, repository_options, &repository_proc)
   end
+
+
   
   map.resource :search
   

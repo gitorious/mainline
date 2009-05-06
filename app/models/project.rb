@@ -286,6 +286,24 @@ class Project < ActiveRecord::Base
     result
   end
   
+  def oauth_settings=(options)
+    self.merge_requests_need_signoff = !options[:site].blank?
+    self.oauth_path_prefix    = options[:path_prefix]
+    self.oauth_signoff_key    = options[:signoff_key]
+    self.oauth_signoff_secret = options[:signoff_secret]
+    self.oauth_signoff_site   = options[:site]
+  end
+  
+  def oauth_settings
+    {
+      :path_prefix    => oauth_path_prefix,
+      :signoff_key    => oauth_signoff_key,
+      :site           => oauth_signoff_site,
+      :signoff_secret => oauth_signoff_secret
+    }
+  end
+  
+  
   def wiki_permissions
     wiki_repository.wiki_permissions
   end

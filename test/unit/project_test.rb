@@ -303,6 +303,34 @@ class ProjectTest < ActiveSupport::TestCase
       consumer_options = @project.oauth_consumer_options
       assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
     end
+    
+    should 'be able to set the oauth options from a hash' do
+      new_settings = {
+        :path_prefix    => '/foo',
+        :signoff_key    => 'kee',
+        :site           => 'http://oauth.example.com',
+        :signoff_secret => 'secret'
+      }
+      @project.oauth_settings = new_settings
+      expected = {
+          :site                 => 'http://oauth.example.com',
+          :request_token_path   => '/foo/request_token',
+          :authorize_path       => '/foo/authorize',
+          :access_token_path    => '/foo/access_token'
+        }
+      assert @project.merge_requests_need_signoff?
+      assert_equal expected, @project.oauth_consumer_options
+      assert_equal 'kee', @project.oauth_signoff_key
+      assert_equal 'secret', @project.oauth_signoff_secret
+      assert_equal new_settings, @project.oauth_settings
+    end
+    
+    should 'deactivate signoff on merge requests when passing an empty :site option in oauth_settings' do
+      @project.oauth_settings = {:site => ''}
+      assert !@project.merge_requests_need_signoff?
+      @project.oauth_settings = {}
+      assert !@project.merge_requests_need_signoff?
+    end
   end
   
   context "#to_xml" do
