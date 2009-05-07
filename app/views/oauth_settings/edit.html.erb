@@ -17,9 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h1>Edit OAuth settings</h1>
+<h1>Edit contribution settings</h1>
 <p>
-  This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable signoff, you will need to provide at least the <code>site</code>, <code>signoff key</code> and <code>signoff secret</code> options. For non-standard paths, also supply the <code>path prefix</code> option. In the column to the right you will find the current options used.<br/>
+  This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
   Leave the site field empty to deactivate the requirement of merge requests to be signed off.
 </p>
 
@@ -41,7 +41,9 @@
   <h5>Signoff required:</h5>
   <p><strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %></strong></p>
   <%- @project.oauth_consumer_options.each do |k, v| -%>
-  <h5><%= k.to_s.humanize %></h5>
-  <p><%= v %></p>
+    <%- unless v.blank? -%>
+      <h5><%= k.to_s.humanize %></h5>
+      <p><%= v %></p>
+    <%- end -%>
   <%- end -%>
 <% end -%>
