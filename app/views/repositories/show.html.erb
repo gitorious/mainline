@@ -68,7 +68,7 @@
     <% end -%>
     <% if @repository.writable_by?(current_user) -%>
       <li class="merge_request">
-        <%= link_to t("views.repos.btn_request"), repo_owner_path(@repository, [:new, @repository.project, @repository, :merge_request]) -%>
+        <%= link_to t('views.repos.btn_request'), new_project_repository_merge_request_path(@repository.project, @repository) %>
       </li>
     <% end -%>
   </ul>
