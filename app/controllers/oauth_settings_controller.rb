@@ -20,15 +20,18 @@ class OauthSettingsController < ApplicationController
   before_filter :require_site_admin
   before_filter :find_project
 
+  def show
+    redirect_to :action => 'edit', :project_id => @project.to_param  
+  end
+  
   def edit
-    
   end
 
   def update
     @project.oauth_settings = params[:oauth_settings]
     @project.save
     flash[:notice] = "OAuth settings were updated"
-    redirect_to :action => 'edit', :project_id => @project.slug
+    redirect_to :action => 'edit', :project_id => @project.to_param
   end
 
   private

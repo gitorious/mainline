@@ -51,4 +51,13 @@ class OauthSettingsControllerTest < ActionController::TestCase
       assert_equal new_settings, @project.reload.oauth_settings
     end
   end
+  
+  context 'On get to show' do
+    should 'redirect to edit' do
+      project = projects(:johans)
+      login_as :johan
+      get :show, :project_id => project.to_param
+      assert_redirected_to :action => :edit, :project_id => project.to_param
+    end
+  end
 end
