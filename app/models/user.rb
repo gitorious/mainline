@@ -187,7 +187,7 @@ class User < ActiveRecord::Base
   
   # Can this user be shown in public
   def public?
-    activated? && !pending?
+    activated?# && !pending?
   end
 
   # Encrypts the password with the user salt
