@@ -78,7 +78,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
   
   context "#reset_password" do
     should "redirects to forgot_password if nothing was found" do
-      post :reset_password, :user => {:email => "xxx"}
+      post :reset_password, :id => 'invalid_user'
       assert_redirected_to(admin_users_path)
       assert_match(/invalid email/i, flash[:error])
     end
@@ -87,7 +87,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
       u = users(:johan)
       User.expects(:generate_random_password).returns("secret")
       Mailer.expects(:deliver_forgotten_password).with(u, "secret")
-      post :reset_password, :user => {:email => u.email}
+      post :reset_password, :id => u.to_param
       assert_redirected_to(admin_users_path)
       assert_equal "A new password has been sent to your email", flash[:notice]
       

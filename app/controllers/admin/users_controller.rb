@@ -75,7 +75,8 @@ class Admin::UsersController < ApplicationController
   end
 
   def reset_password
-    if params[:user] && user = User.find_by_email(params[:user][:email])
+#    if params[:user] && user = User.find_by_email(params[:user][:email])
+    if user = User.find_by_login(params[:id])
       # FIXME: should really be a two-step process: receive link, visiting it resets password
       generated_password = user.reset_password!
       Mailer.deliver_forgotten_password(user, generated_password)
