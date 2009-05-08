@@ -26,6 +26,7 @@ class PushEventProcessor < ApplicationProcessor
   def on_message(message)
     hash = ActiveSupport::JSON.decode(message)
     logger.debug("#{self.class.name} on message #{hash.inspect}")
+    logger.info "Push event. Username is #{hash['username']}, commit summary is #{hash['message']}, gitdir is #{hash['gitdir']}"
     if @repository = Repository.find_by_hashed_path(hash['gitdir'])
       @user = User.find_by_login(hash['username'])
       @repository.update_attribute(:last_pushed_at, Time.now.utc)

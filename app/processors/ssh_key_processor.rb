@@ -20,6 +20,7 @@ class SshKeyProcessor < ApplicationProcessor
 
   def on_message(message)
     json = ActiveSupport::JSON.decode(message)
+    logger.info "SshKeyProcessor consuming message. Command: #{json['command']}. Arguments: #{json['arguments']}. Target_id: #{json['target_id']}"
     logger.debug("Processor processing message #{json}")
     if %w(add_to_authorized_keys delete_from_authorized_keys).include?(json['command'])
       logger.debug("Processor sending message: #{json['command']} #{json['arguments']}")
