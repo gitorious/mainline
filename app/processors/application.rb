@@ -23,9 +23,6 @@ class ApplicationProcessor < ActiveMessaging::Processor
       logger = ActiveSupport::BufferedLogger.new(io)
       #logger.level = ActiveSupport::BufferedLogger.const_get(Rails.configuration.log_level.to_s.upcase)
       logger.level = ActiveSupport::BufferedLogger::INFO
-      if RAILS_ENV == "production"
-        logger.auto_flushing = false
-      end
       logger
     end
   end
