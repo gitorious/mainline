@@ -26,7 +26,10 @@ require 'json'
 
 @publisher = Publisher.new
 gitdir = File.expand_path(File.join(incpath, ".."))
-hashed_dir = gitdir.split('/')[-3,3].join('/').split('.').first # Equivalent to the hash in the model
+# Equivalent to the hash in the model
+hashed_dir = gitdir.split('/')[-3,3].join('/').split('.').first
+# compat with the old-style paths
+hashed_dir = hashed_dir.sub(/^repositories\//, "")
 
 
 while line = gets
