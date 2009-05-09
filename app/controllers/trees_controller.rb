@@ -62,7 +62,7 @@ class TreesController < ApplicationController
     end
     
     user_path = "#{@repository.project_or_owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
-    disk_path = "#{@repository.hashed_path.sub(/\//,'-')}-#{@commit.id}.#{ext}"
+    disk_path = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@commit.id}.#{ext}"
     if File.exist?(File.join(GitoriousConfig["archive_cache_dir"], disk_path))
       respond_to do |format|
         format.html {

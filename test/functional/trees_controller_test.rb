@@ -163,7 +163,7 @@ class TreesControllerTest < ActionController::TestCase
     
     should "returns the correct for an existing cached tarball" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
-                        "#{@repository.hashed_path}-#{@master_sha}.tar.gz")
+                        "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(true)
       
       get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
@@ -178,9 +178,9 @@ class TreesControllerTest < ActionController::TestCase
     
     should "enqueues a job when the tarball isn't cached" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
-                      "#{@repository.hashed_path}-#{@test_master_sha}.tar.gz")
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
       work_path = File.join(GitoriousConfig["archive_work_dir"], 
-                      "#{@repository.hashed_path}-#{@test_master_sha}.tar.gz")
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(false)
       
@@ -203,9 +203,9 @@ class TreesControllerTest < ActionController::TestCase
     
     should "enqueues a job when the tarball isn't cached, unless work has already begun" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
-                      "#{@repository.hashed_path}-#{@master_sha}.tar.gz")
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       work_path = File.join(GitoriousConfig["archive_work_dir"], 
-                      "#{@repository.hashed_path}-#{@master_sha}.tar.gz")
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(true)
       
