@@ -103,6 +103,6 @@ class Event < ActiveRecord::Base
 
   protected
   def user_email_set?
-    !!user_email
+    !user_email.blank?
   end
 end

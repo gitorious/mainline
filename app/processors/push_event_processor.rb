@@ -46,14 +46,18 @@ class PushEventProcessor < ApplicationProcessor
   
   def log_event(an_event)
     @project ||= @repository.project
-    event = @project.events.create!(
+    event = @project.events.new(
       :action => an_event.event_type, 
       :target => @repository, 
-      :email => an_event.email,
+      :user => an_event.user,
       :body => an_event.message,
       :data => an_event.identifier,
       :created_at => an_event.commit_time
       )
+    if event.user.blank?
+      event.email = an_event.email
+    end
+    event.save!
     if commits = an_event.commits
       commits.each do |c|
         commit_event = event.build_commit({
