@@ -153,7 +153,7 @@ module EventRenderingHelper
   end
   
   def render_event_add_committer(event)
-    repo = event.target
+    repo = event.target.is_a?(Repository) ? event.target : event.target.repository
     action = action_for_event(:event_committer_added, :committer => h(event.data)) do
       " to " + link_to(repo_title(repo, event.project), repo_owner_path(repo, [repo.project, repo]))
     end
