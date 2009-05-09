@@ -37,12 +37,12 @@ class ApplicationProcessor < ActiveMessaging::Processor
   def on_error(err, message_body)
     notify_on_error(err, message_body)
     if (err.kind_of?(StandardError))
-      logger.error "Processor::on_error for msg: #{message_body}: \n" + 
+      logger.error "#{self.class.name}::on_error for msg: #{message_body}: \n" + 
       " #{err.class.name}: " + err.message + "\n" + \
       "\t" + err.backtrace.join("\n\t")
       raise ActiveMessaging::AbortMessageException
     else
-      logger.error "Processor::on_error: #{err.class.name} raised: " + err.message
+      logger.error "#{self.class.name}::on_error: #{err.class.name} raised: " + err.message
       raise err
     end
   end
