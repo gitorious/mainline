@@ -77,6 +77,7 @@ module Git
         
         repository = nil        
         begin
+          ActiveRecord::Base.verify_active_connections!
           repository = ::Repository.find_by_path(path)
         rescue => e
           log(Process.pid, "AR error: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
