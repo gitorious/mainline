@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteRule ^projects/([a-zA-z0-9\-_]+)/?$ /$1 [R=301,L]
+RewriteRule ^projects/([a-zA-z0-9\-_]+)/repos/([a-zA-z0-9\-_]+)(.+)?$ /$1/$2$3 [R=301,L]
+RewriteRule ^users/([a-zA-z0-9\-_\.]+)/?$ /~$1 [R=301,L]
