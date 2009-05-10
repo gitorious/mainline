@@ -33,7 +33,7 @@ class Project < ActiveRecord::Base
   has_many    :comments, :dependent => :destroy
   
   has_many    :repositories, :order => "repositories.created_at asc", 
-      :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :nullify
+      :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository", 
     :conditions => ["kind = ?", Repository::KIND_WIKI], :dependent => :destroy
   has_many    :events, :order => "created_at asc", :dependent => :destroy
