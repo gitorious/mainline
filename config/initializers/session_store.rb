@@ -6,7 +6,7 @@
 # no regular words or you'll be exposed to dictionary attacks.
 gitorious_yaml = YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))[RAILS_ENV]
 ActionController::Base.session = {
-  :key    => '_ks1_session_id',
+  :key    => '_gts_sess',
   :secret => gitorious_yaml['cookie_secret'],
   :domain => ".#{gitorious_yaml["gitorious_host"]}",
   :expire_after => 3.weeks,
