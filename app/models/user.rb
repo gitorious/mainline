@@ -131,7 +131,7 @@ class User < ActiveRecord::Base
   end
   
   def self.find_avatar_for_email(email, version)
-    Rails.cache.fetch("avatar_for_#{email}_#{version.to_s}") do
+    Rails.cache.fetch("avatar_for_#{Digest::SHA1.hexdigest(email)}_#{version.to_s}") do
       result = if u = find_by_email_with_aliases(email)
         if u.avatar?
           u.avatar.url(version)
