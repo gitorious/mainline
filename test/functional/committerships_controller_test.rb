@@ -95,7 +95,18 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_response :success
       assert_not_equal nil, assigns(:committership)
       assert_equal @repository, assigns(:committership).repository
-      assert assigns(:committership).new_record?, 'assigns(:committership).new_record? should be true'
+      assert assigns(:committership).new_record?
+    end
+    
+    should "scope to the correct repository" do
+      login_as :mike
+      get :new, :group_id => repositories(:johans2).owner.to_param, 
+        :project_id => repositories(:johans2).project.to_param, 
+        :repository_id => repositories(:johans2).to_param
+      assert_response :success
+      assert_not_equal nil, assigns(:committership)
+      assert_equal repositories(:johans2), assigns(:committership).repository
+      assert assigns(:committership).new_record?
     end
   end
   

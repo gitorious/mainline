@@ -34,7 +34,7 @@ class RepositoriesController < ApplicationController
   end
     
   def show
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = @repository
     @events = @repository.events.top.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
@@ -77,7 +77,7 @@ class RepositoriesController < ApplicationController
   undef_method :clone
   
   def clone
-    @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
+    @repository_to_clone = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_clone_error"
@@ -88,7 +88,7 @@ class RepositoriesController < ApplicationController
   end
   
   def create_clone
-    @repository_to_clone = @owner.repositories.find_by_name!(params[:id])
+    @repository_to_clone = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       respond_to do |format|
@@ -131,13 +131,13 @@ class RepositoriesController < ApplicationController
   end
   
   def edit
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
   end
   
   def update
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
     prior_description = @repository.description
@@ -163,12 +163,7 @@ class RepositoriesController < ApplicationController
   
   # Used internally to check write permissions by gitorious
   def writable_by
-    # if @project
-    #   @repository = @project.repositories.find_by_name!(params[:id])
-    # else
-    #   @repository = @owner.repositories.find_by_name!(params[:id])
-    # end
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     user = User.find_by_login(params[:username])
     if user && user.can_write_to?(@repository)
       render :text => "true #{@repository.real_gitdir}"
@@ -178,11 +173,11 @@ class RepositoriesController < ApplicationController
   end
   
   def confirm_delete
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
   end
   
   def destroy
-    @repository = @owner.repositories.find_by_name!(params[:id])
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     if @repository.can_be_deleted_by?(current_user)
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"

@@ -30,7 +30,7 @@
 
 <% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
   <% form_for @merge_request, 
-      :url => resolve_project_repository_merge_request_path(@project, 
+      :url => resolve_project_repository_merge_request_path(@project || @containing_project, 
               @repository, @merge_request) do |f| -%>
     <p>
       <%= f.label :status -%><br />
@@ -90,7 +90,7 @@ git push origin master
         <ul>
           <li class="sha-abbrev">
             <%= link_to commit.id_abbrev, 
-                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project, @merge_request.source_repository, commit) %>
+                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit) %>
           </li>
           <li class="committer">
             <strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong>
@@ -107,7 +107,7 @@ git push origin master
       <td class="commit-details message">
         <div class="commit_message inline">
           <%= link_to h(truncate(commit.message, :length => 140)), 
-                repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project, @merge_request.source_repository, commit)  %>
+                repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit)  %>
         </div>
       </td>
     </tr>

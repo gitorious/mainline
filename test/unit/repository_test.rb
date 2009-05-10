@@ -646,6 +646,18 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal Action::ADD_PROJECT_REPOSITORY, Event.last.action
   end
   
+  context "find_by_name_in_project" do
+    should "find with a project" do
+      Repository.expects(:find_by_name_and_project_id!).with(repositories(:johans).name, projects(:johans).id).once
+      Repository.find_by_name_in_project!(repositories(:johans).name, projects(:johans))
+    end
+    
+    should "find without a project" do
+      Repository.expects(:find_by_name!).with(repositories(:johans).name).once
+      Repository.find_by_name_in_project!(repositories(:johans).name)
+    end    
+  end
+  
   context "observers" do
     should "sends an email to the admin if there's a parent" do
       Mailer.expects(:deliver_new_repository_clone).with(@repository).returns(true)

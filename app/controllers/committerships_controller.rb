@@ -93,6 +93,6 @@ class CommittershipsController < ApplicationController
     end
     
     def find_repository
-      @repository = @owner.repositories.find_by_name!(params[:repository_id])
+      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id], @containing_project)
     end
 end

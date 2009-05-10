@@ -87,6 +87,14 @@ class Repository < ActiveRecord::Base
     new(:parent => other, :project => other.project, :name => suggested_name)
   end
   
+  def self.find_by_name_in_project!(name, containing_project = nil)
+    if containing_project
+      find_by_name_and_project_id!(name, containing_project.id)
+    else
+      find_by_name!(name)
+    end
+  end
+  
   def self.find_by_path(path)
     base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
     path_components = base_path.split("/").reject{|p| p.blank? }
