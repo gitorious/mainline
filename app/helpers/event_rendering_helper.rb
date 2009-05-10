@@ -145,7 +145,7 @@ module EventRenderingHelper
   
   def render_event_delete_tag(event)
     action = action_for_event(:event_tag_deleted) do
-      h(event.data) + " on " + link_to(h(event.project.slug), project_path(event.project.project)) + 
+      h(event.data) + " on " + link_to(h(event.project.slug), project_path(event.project)) + 
       "/" + link_to(h(event.target.name), @template.project_repository_url(event.project, event.target))
     end
     category = "commit"
