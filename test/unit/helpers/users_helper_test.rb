@@ -29,4 +29,12 @@ class UsersHelperTest < ActionView::TestCase
     end
     assert_match(/#{encoded}/, encoded_mail_to("a@b.com"))
   end
+  
+  should "mangle email" do
+    assert mangled_mail("johan@example.com").include?("&hellip;")
+  end
+  
+  should "not mangle emails that doesn't look like emails" do
+    assert_equal "johan", mangled_mail("johan")
+  end
 end
