@@ -175,7 +175,7 @@ class RepositoriesController < ApplicationController
   def confirm_delete
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     unless @repository.can_be_deleted_by?(current_user)
-      flash[:error] = I18n.t("repositories_controller.only_projects_create_new_error")
+      flash[:error] = I18n.t "repositories_controller.adminship_error"
       redirect_to(@owner) and return
     end
   end
