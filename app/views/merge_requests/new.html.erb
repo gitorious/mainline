@@ -25,7 +25,7 @@
 <h1><%= t("views.merges.create_title") %></h1>
 
 <%= error_messages_for :merge_request -%>
-<% form_for [@project, @repository, @merge_request] do |f| -%>
+<% form_for [@repository.project, @repository, @merge_request] do |f| -%>
   <% help_box do -%>
     <p>
       By sending a merge request to another repository you're inviting the owners
