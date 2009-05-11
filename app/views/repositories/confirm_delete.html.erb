@@ -24,7 +24,7 @@
 <p class="important_message">
   <%= t("views.repos.message_delete") %>
   
-  <% form_for [@owner, @repository], :html => {:method => :delete} do |f| -%>
+  <% form_for repo_owner_path(@repository, [@repository.project, @repository]), :html => {:method => :delete} do |f| -%>
     <%= f.submit(t("views.repos.btn_delete")) -%>
   <% end -%>
 </p>
