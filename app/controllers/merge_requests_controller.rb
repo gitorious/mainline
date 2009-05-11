@@ -156,6 +156,7 @@ class MergeRequestsController < ApplicationController
   protected    
     def find_repository
       @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id], @containing_project)
+      @project = @repository.project
     end
     
     def merge_request_created

@@ -128,6 +128,15 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_response :success
 		end
 		
+		should 'assign to @project even when accessed through a user' do
+		  johan = users(:johan)
+		  login_as :johan
+		  @source_repository.owner = johan
+		  @source_repository.save!
+		  get :new, :user_id => johan.to_param, :repository_id => @source_repository.to_param, :project_id => @project.to_param
+		  assert_response :success
+	  end
+		
 		should "assigns the new merge_requests' source_repository" do
 			login_as :johan
 			get :new, :project_id => @project.to_param, 
