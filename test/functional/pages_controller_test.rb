@@ -130,8 +130,8 @@ class PagesControllerTest < ActionController::TestCase
       login_as :mike
       get :edit, :project_id => @project.to_param, :id => "NotHere"
       assert_response :redirect
-      assert_match(/restricted wiki updates to project members/, flash[:error])
-      assert_redirected_to project_page_path(@project, "NotHere")
+      assert_match(/restricted wiki editing to project members/, flash[:error])
+      assert_redirected_to project_pages_path(@project)
     end
   end
 end

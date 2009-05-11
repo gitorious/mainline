@@ -118,8 +118,8 @@ class PagesController < ApplicationController
     
     def require_write_permissions
       unless @project.wiki_repository.writable_by?(current_user)
-        flash[:error] = "This project has restricted wiki updates to project members"
-        redirect_to project_page_path(@project, params[:id])
+        flash[:error] = "This project has restricted wiki editing to project members"
+        redirect_to project_pages_path(@project)
       end
     end
 end
