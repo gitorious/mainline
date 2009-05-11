@@ -26,16 +26,19 @@ class CommitsController < ApplicationController
   
   def index
     if params[:branch].blank?
-      redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, 
-                      @repository, @repository.head_candidate.name) and return
+      redirect_to_ref(@repository.head_candidate.name) and return
     end
     @git = @repository.git
     @ref, @path = branch_and_path(params[:branch], @git)
     if h = @git.get_head(@ref)
       head = h
     else
-      commit = @git.commit(@ref)
-      head = Grit::Head.new(commit.id_abbrev, commit)
+      if commit = @git.commit(@ref)
+        head = Grit::Head.new(commit.id_abbrev, commit)
+      else
+        flash[:error] = "\"#{CGI.escapeHTML(@ref)}\" was not a valid ref, trying #{CGI.escapeHTML(@git.heads.first.name)} instead"
+        redirect_to_ref(@git.heads.first.name) and return
+      end
     end
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
       @root = Breadcrumb::Branch.new(head, @repository)
@@ -87,5 +90,10 @@ class CommitsController < ApplicationController
       flash[:error] = "No such SHA1 was found"
       redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project, 
                       @repository)
+    end
+    
+    def redirect_to_ref(ref)
+      redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path, 
+                      @project, @repository, ref)
     end
 end

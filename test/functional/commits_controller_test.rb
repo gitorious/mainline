@@ -179,7 +179,8 @@ class CommitsControllerTest < ActionController::TestCase
           .with(@repository.name, @project.id).returns(@repository)
       
       Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
-      Repository.any_instance.stubs(:git).returns(Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true))
+      @git = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      Repository.any_instance.stubs(:git).returns(@git)
     end
 
     context "#index" do
@@ -215,6 +216,17 @@ class CommitsControllerTest < ActionController::TestCase
         assert_equal "test/master", assigns(:root).title
         assert_equal @repository.git, assigns(:git)
         assert_equal @repository.git.commits("test/master", 30, 0), assigns(:commits)
+      end
+      
+      should "deal gracefully if HEAD file refers to a non-existant ref" do
+        @git.expects(:get_head).with("master").returns(nil)
+        @git.expects(:commit).with("master").returns(nil)
+        get :index, {:project_id => @project.slug, 
+          :repository_id => @repository.name, :page => nil, :branch => ["master"]}
+        assert_response :redirect
+        assert_redirected_to project_repository_commits_in_ref_path(@project, 
+                              @repository, @git.heads.first.name)
+        assert_match(/not a valid ref/, flash[:error])
       end
       
       should "have a proper id in the atom feed" do
