@@ -54,10 +54,10 @@ class Mailer < ActionMailer::Base
     @recipients       =  recipient.email
     @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
     @subject          = sanitize(subject)
-    @body[:recipient] = recipient.fullname
+    @body[:recipient] = recipient.fullname.to_s.force_encoding("utf-8")
     @body[:url]       = "http://#{GitoriousConfig['gitorious_host']}/messages"
     @body[:body]      = sanitize(body)
-    @body[:sender]    = sender.fullname
+    @body[:sender]    = sender.fullname.to_s.force_encoding("utf-8")
     if notifiable
       @body[:notifiable_url] = build_notifiable_url(notifiable) 
     end

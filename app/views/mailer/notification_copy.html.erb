@@ -19,9 +19,9 @@
 %>
 Dear <%= @recipient %>
 
-<%= @sender.to_s.force_encoding("utf-8") %> has sent you a message on Gitorious: 
+<%= @sender.to_s %> has sent you a message on Gitorious: 
 
-<%= @body.to_s.force_encoding("utf-8") %>
+<%= @body.to_s %>
 
 <% if @notifiable_url %>
   Address: <%= @notifiable_url %>
