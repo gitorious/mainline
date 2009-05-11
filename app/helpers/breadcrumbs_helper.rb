@@ -46,7 +46,7 @@ module BreadcrumbsHelper
   def breadcrumb_link_to(an_object)
     url = case an_object
     when Repository
-      repo_owner_path(an_object, [an_object.owner, an_object])
+      @owner ? [@owner, an_object] : project_repository_path(@project, an_object)
     when Project
       project_path(an_object)
     when Group
