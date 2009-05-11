@@ -32,8 +32,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert @merge_request.pending_acceptance_of_terms?
   end
   
-  should_validate_presence_of :user, :source_repository, :target_repository, 
-                              :ending_commit
+  should_validate_presence_of :user, :source_repository, :target_repository
+  
   should_have_many :comments
   
   should "email all committers in the target_repository after the terms are accepted" do
@@ -239,6 +239,26 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_incremented_by(@merge_request.user.received_messages, :count, 1) do
         @merge_request.deliver_status_update(users(:moe))
       end
+    end
+  end
+  
+  context 'Compatibility with existing records' do
+    setup do
+      @source_repo = repositories(:johans2)
+      @target_repo = repositories(:johans)
+      @user = users(:johan)
+      @merge_request = MergeRequest.new(:source_repository => @source_repo, :target_repository => @target_repo, :user => @user, :proposal => 'Please, mister postman')
+    end
+    
+    should 'require ending_commit for new records' do
+      assert !@merge_request.save
+      assert_not_nil @merge_request.errors.on(:ending_commit)
+    end
+    
+    should 'not consider a missing ending_commit a show stopper on update' do
+      @merge_request.save(false)
+      @merge_request.proposal = 'Yikes'
+      assert @merge_request.save
     end
   end
 end
