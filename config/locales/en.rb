@@ -155,7 +155,7 @@
       },
       :site => {
         :page_title => "Free open source project hosting",
-        :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed opensource projects",
+        :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
         :creating_account => lambda { |this, path| 
