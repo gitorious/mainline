@@ -159,33 +159,33 @@ class SessionsControllerTest < ActionController::TestCase
   context 'Bypassing cachíng for authenticated users' do
     should 'be set when logging in' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_equal "true", cookies['_authenticated']
+      assert_equal "true", cookies['_logged_in']
     end
     
     should 'be removed when logging out' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies['_authenticated']
+      assert_not_nil cookies['_logged_in']
       delete :destroy
-      assert_nil cookies['_authenticated']
+      assert_nil cookies['_logged_in']
     end
     
     should "remove the cookie when logging out" do
-      @request.cookies["_authenticated"] = "true"
+      @request.cookies["_logged_in"] = "true"
       delete :destroy
-      assert_nil @response.cookies["_authenticated"]
+      assert_nil @response.cookies["_logged_in"]
     end
     
-    should "set the authenticated cookie when logging in with an auth token" do
+    should "set the logged-in cookie when logging in with an auth token" do
       users(:johan).remember_me
       @request.cookies["auth_token"] = cookie_for(:johan)
       get :new
       assert @controller.send(:logged_in?)
-      assert_equal "true", @response.cookies["_authenticated"]
+      assert_equal "true", @response.cookies["_logged_in"]
     end
     
-    should "set the _authenticated cookie only on  succesful logins" do
+    should "set the _logged_in cookie only on  succesful logins" do
       post :create, :email => "johan@johansorensen.com", :password => "lulz"
-      assert_nil cookies['_authenticated']
+      assert_nil cookies['_logged_in']
     end
   end
 end
