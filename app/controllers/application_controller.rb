@@ -254,8 +254,8 @@ class ApplicationController < ActionController::Base
       return unless request.get?
       if !current_site.subdomain.blank?
         if subdomain_without_common != current_site.subdomain
-          redirect_to(:only_path => false, 
-            :host => "#{current_site.subdomain}.#{GitoriousConfig["gitorious_host"]}#{request.port_string}")
+          url_parameters = {:only_path => false, :host => "#{current_site.subdomain}.#{GitoriousConfig["gitorious_host"]}#{request.port_string}"}.merge(params)
+          redirect_to url_parameters
         end
       elsif !subdomain_without_common.blank?
         redirect_to_top_domain
