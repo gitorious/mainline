@@ -78,12 +78,14 @@ ActionController::Routing::Routes.draw do |map|
     :update_password => :put,
     :avatar => :delete
   }) do |user|
-    user.resources :keys
-    user.resources :aliases, :member => { :confirm => :get }
-    user.resource :license
-    user.resources(:repositories, repository_options, &repository_proc)
-    user.resources :projects do |p|
-      p.resources(:repositories, repository_options, &repository_proc)
+    user.with_options({:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}}) do |user_req|
+      user_req.resources :keys
+      user_req.resources :aliases, :member => { :confirm => :get }
+      user_req.resource :license
+      user_req.resources(:repositories, repository_options, &repository_proc)
+      user_req.resources :projects do |p|
+        p.resources(:repositories, repository_options, &repository_proc)
+      end
     end
   end
   

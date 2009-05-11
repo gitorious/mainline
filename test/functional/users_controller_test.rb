@@ -204,6 +204,19 @@ class UsersControllerTest < ActionController::TestCase
       :id => "j.s"
     }, "/~j.s")
   end
+  
+  should "recognizes sub-resource routing with dots in it" do
+    assert_recognizes({
+      :controller => "licenses",
+      :action => "edit",
+      :user_id => "j.s"
+    }, "/users/j.s/license/edit")
+    assert_recognizes({
+      :controller => "licenses",
+      :action => "edit",
+      :user_id => "j.s"
+    }, "/~j.s/license/edit")
+  end
 
   should "recognizes activate routes" do
     assert_recognizes({
