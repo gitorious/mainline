@@ -59,6 +59,7 @@
     </p>
   <% end -%>
   
+<% cache([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
   <% pull_box("Recent activities") do -%>
     <ul class="events inline">
     <% @latest_events.each do |event| -%>
@@ -66,9 +67,11 @@
     <% end -%>
     </ul>
   <% end -%>
+<% end -%>
 </div>
 
 <div id="right">
+<% cache([:site_index, :active_projects_overall], :expires_in => 1.hour) do -%>
   <% pull_box("Active projects <small>(overall)</small>") do -%>
     <ul class="with_icons">
       <% @active_overall.each do |project| -%>
@@ -79,7 +82,9 @@
       <% end -%>
     </ul>
   <% end -%>
-  
+<% end -%>
+
+<% cache([:site_index, :active_projects_two_weeks], :expires_in => 30.minutes) do -%>
   <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
     <ul class="with_icons">
       <% @active_recently.each do |project| -%>
@@ -90,7 +95,9 @@
       <% end -%>
     </ul>
   <% end -%>
+<% end -%>
   
+<% cache([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
   <% pull_box("Most active repository clones") do -%>
     <ul class="with_icons">
       <% @top_repository_clones.each do |repo| -%>
@@ -102,7 +109,9 @@
       <% end -%>
     </ul>
   <% end -%>
+<% end -%>
   
+<% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
   <% pull_box("Active teams") do -%>
     <ul class="with_icons">
       <% @active_groups.each do |group| -%>
@@ -110,7 +119,9 @@
       <% end -%>
     </ul>
   <% end -%>
-  
+<% end -%>
+ 
+<% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
   <% pull_box("Active users") do -%>
     <ul class="with_icons">
       <% @active_users.each do |user| -%>
@@ -118,7 +129,9 @@
       <% end -%>
     </ul>
   <% end -%>
-  
+<% end -%>
+
+<% cache([:site_index, :newest_projects], :expires_in => 5.minutes) do -%>
   <% pull_box(t("views.site.newest_projects")) do -%>
     <ul class="with_icons">
       <% @projects.each do |project| -%>
@@ -130,5 +143,6 @@
     <li><%= link_to t("views.site.view_more"), projects_path -%></li>
   </ul>
   <% end -%>
+<% end -%>
 </div>
 <% end -%>
