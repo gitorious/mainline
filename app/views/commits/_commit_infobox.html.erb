@@ -27,7 +27,11 @@
     <ul class="people">
       <li class="avatar">
         <div>
-          <%= link_to(avatar_from_email(@commit.committer.email, { :size => 32 }), :action => "show") %>
+	<% if @committer_user -%>
+	  <%= link_to(avatar_from_email(@commit.committer.email, { :size => 32 }), @committer_user) %>
+	<% else -%>
+          <%= avatar_from_email(@commit.committer.email, { :size => 32 }) %>
+	<% end -%>
         </div>
       </li>
       <li>
@@ -46,7 +50,11 @@
         <li class="clear"></li>
         <li class="avatar">
           <div>
-            <%= link_to(avatar_from_email(@commit.author.email, { :size => 32 }), :action => "show") %>
+	  <% if @author_user -%>
+            <%= link_to(avatar_from_email(@commit.author.email, { :size => 32 }), @author_user) %>
+          <% else -%>
+	    <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
+          <% end -%>
           </div>
         </li>
         <li>
