@@ -189,6 +189,18 @@ class MessageTest < ActiveSupport::TestCase
       Message.destroy_all
     end
     
+    should "not throttle system notifications" do
+      assert_nothing_raised do
+        15.times{|i|
+          @message = Message.new({:subject => "Hello#{i}", :body => "World"})
+          @message.sender = users(:moe)
+          @message.recipient = users(:mike)
+          @message.notifiable = MergeRequest.first
+          @message.save!
+        }
+      end
+    end
+    
     should "throttle on create" do
       assert_nothing_raised do
         10.times{|i|

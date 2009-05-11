@@ -31,9 +31,10 @@ class Message < ActiveRecord::Base
   
   throttle_records :create, :limit => 10,
     :counter => proc{|msg|
-      msg.sender.sent_messages.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+      msg.sender.sent_messages.count(:all,
+        :conditions => ["created_at > ?", 5.minutes.ago])
     },
-    :conditions => proc{|msg| {:sender_id => msg.sender.id} },
+    :conditions => proc{|msg| {:sender_id => msg.sender.id, :notifiable_type => nil} },
     :timeframe => 5.minutes
 
   state_machine :aasm_state, :initial => :unread do
