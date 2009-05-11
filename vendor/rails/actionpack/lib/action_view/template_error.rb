@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module ActionView
   # The TemplateError exception is raised when the compilation of the template fails. This exception then gathers a
   # bunch of intimate details and uses it to report a very precise exception message.
