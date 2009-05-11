@@ -319,6 +319,10 @@ abbr {
   display: inline;
 }
 
+#container #footer ul.footer-links li {
+  font-size: 13px;
+}
+
 #container #footer ul.legal { margin-top: 5px; }
 #container #footer ul.legal a {
   color: #666;

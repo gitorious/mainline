@@ -151,7 +151,8 @@
         :pages => "Wiki",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
-        :teams => "Teams"
+        :teams => "Teams",
+        :blog => "Blog",
       },
       :site => {
         :page_title => "Free open source project hosting",
