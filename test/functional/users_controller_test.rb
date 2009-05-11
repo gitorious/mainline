@@ -504,13 +504,15 @@ class UsersControllerTest < ActionController::TestCase
     end
     
     should 'create a user with the provided credentials and openid url on success' do
-      post :openid_create, {:user => {
-        :fullname => 'Moe Schmoe', 
-        :email => 'moe@schmoe.example', 
-        :login => 'schmoe', 
-        :terms_of_use => '1'
-        }
-      }, @valid_session_options
+      assert_incremented_by(ActionMailer::Base.deliveries, :size, 1) do
+        post :openid_create, {:user => {
+          :fullname => 'Moe Schmoe', 
+          :email => 'moe@schmoe.example', 
+          :login => 'schmoe', 
+          :terms_of_use => '1'
+          }
+        }, @valid_session_options
+      end
       user = assigns(:user)
       assert user.activated?
       assert user.terms_accepted?
