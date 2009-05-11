@@ -33,6 +33,14 @@
 
 <hr />
 
+<h3>What is the SSH key fingerprint of the server I'm pushing to?</h3>
+<p>
+  The SSH key fingerprint of the gitorious.org server is:<br />
+  <code>7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d</code>
+</p>
+
+<hr />
+
 <h3>How do I point my local Git repository at Gitorious?</h3>
 <p>
   Easiest way is to put something like the following in your <code>.git/config</code> 
@@ -62,10 +70,20 @@
 
 <hr />
 
-<h3>What is the SSH key fingerprint of the server I'm pushing to?</h3>
+<h3>What version of Git is Gitorious running?</h3>
 <p>
-  The SSH key fingerprint of the gitorious.org server is:<br />
-  <code>7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d</code>
+  <code>git version 1.6.1</code>
+</p>
+
+<hr />
+
+<h3>How did my avatar/mugshot end up on this site? I'm not even registered!</h3>
+<p>
+  We use <a href="http://gravatar.com">Gravatar.com</a> for user avatars. If you
+  haven't registered on Gitorious, someone else may have pushed commits with you
+  name and/or email in them which we in turn hash and send to to Gravatar.com to
+  find an avatar image. If you want it changed you should either register and 
+  upload an avatar of your own, or go to Gravatar.com and change it.
 </p>
 
 <hr />
@@ -93,7 +111,7 @@
 
 <h3>What version of Git is Gitorious running?</h3>
 <p>
-  <code>git version 1.5.4.4</code>
+  <code>git version 1.6.4.4</code>
 </p>
 
 <% content_for :sidebar do -%>
