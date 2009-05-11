@@ -10,7 +10,8 @@ module Ultrasphinx
   
         Dir.chdir "#{RAILS_ROOT}/app/models/" do
           Dir["**/*.rb"].each do |filename|
-            open(filename) do |file| 
+            read_arg = RUBY_VERSION > '1.9' ? "r:utf-8" : "r"
+            open(filename, read_arg) do |file|
               begin
                 if file.grep(/^\s+is_indexed/).any?
                   filename = filename[0..-4]
