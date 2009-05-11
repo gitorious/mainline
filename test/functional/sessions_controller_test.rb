@@ -182,5 +182,10 @@ class SessionsControllerTest < ActionController::TestCase
       assert @controller.send(:logged_in?)
       assert_equal "true", @response.cookies["_authenticated"]
     end
+    
+    should "set the _authenticated cookie only on  succesful logins" do
+      post :create, :email => "johan@johansorensen.com", :password => "lulz"
+      assert_nil cookies['_authenticated']
+    end
   end
 end
