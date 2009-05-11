@@ -142,7 +142,6 @@ class MergeRequestsController < ApplicationController
   
   def destroy
     @merge_request.destroy
-    @owner.create_event(Action::DELETE_MERGE_REQUEST, @repository, current_user)
     flash[:success] = I18n.t "merge_requests_controller.destroy_success"
     redirect_to [@owner, @repository]
   end

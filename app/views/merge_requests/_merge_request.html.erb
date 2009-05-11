@@ -35,6 +35,13 @@
   <p class="byline">
     <%= link_to(h(merge_request.user.login), merge_request.user) -%> | 
     <%= merge_request.created_at.to_s(:short) -%> 
+    
+    <%- if merge_request.user == current_user -%>
+      <%= link_to t('views.merges.delete_btn'), repo_owner_path(merge_request.target_repository,
+        [merge_request.source_repository.project,
+          merge_request.target_repository, merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %>
+    <%- end -%>
+    
     <% if !no_link && merge_request.open? -%>
       | <strong>
           <%= link_to t("views.merges.review"), 
