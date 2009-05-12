@@ -22,7 +22,7 @@
 <h1><%= t("views.aliases.new_alias") -%></h1>
 
 <%= error_messages_for :email -%>
-<% form_for(@email, :url => user_aliases_path(@user, @email)) do |f| -%>
+<% form_for(@email, :url => user_aliases_path(@user)) do |f| -%>
   <p>
     <%= f.label :address -%>:
     <%= f.text_field :address, :class => "text" -%>
