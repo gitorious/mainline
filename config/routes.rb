@@ -106,7 +106,7 @@ ActionController::Routing::Routes.draw do |map|
       p.resources(:repositories, repository_options, &repository_proc)
     end
   end
-  map.resources :projects, :member => {:confirm_delete => :get} do |projects|
+  map.resources :projects, :member => {:confirm_delete => :get, :preview => :put} do |projects|
     projects.resource :oauth_settings
     projects.resources :pages, :member => { :history => :get,:preview => :put }
     projects.resources(:repositories, repository_options, &repository_proc)

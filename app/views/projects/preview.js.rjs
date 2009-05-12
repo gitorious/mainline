@@ -1,0 +1,3 @@
+contents = content_tag(:h2, "Preview")
+contents << markdown(sanitize(@project.description))
+page.replace_html('project-preview', contents)

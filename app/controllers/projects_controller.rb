@@ -125,6 +125,14 @@ class ProjectsController < ApplicationController
     end
   end
   
+  def preview
+    @project = Project.new
+    @project.description = params[:project][:description]
+    respond_to do |wants|
+      wants.js
+    end
+  end
+  
   def confirm_delete
     @project = Project.find_by_slug!(params[:id])
   end

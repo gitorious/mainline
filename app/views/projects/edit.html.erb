@@ -40,8 +40,15 @@
       </small>
     </p>
   <% end -%>
+
+  <div id="project-preview">
+  </div>
+
+  <%= button_to_function("Preview", "new Ajax.Request('#{preview_project_path(@project)}', {parameters: Form.serialize($('#{dom_id(@project, :edit)}')), evalScripts: true})") %>
+
   <%= f.submit t("views.common.update") -%>
 <% end -%>
+
 
 <% content_for :sidebar do -%>
   <ul class="links">

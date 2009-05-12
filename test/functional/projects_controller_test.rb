@@ -286,6 +286,13 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to(project_path(project.reload))
       assert_equal "new name", project.reload.title
     end
+    
+    should 'PUT preview should render a preview of the project information' do
+      login_as :johan
+      project = projects(:johans)
+      put :preview, :id => project.to_param, :project => {:title => 'something new', :description => 'This is a long description'}, :format => 'js'
+      assert_response :success
+    end
   
     should "DELETE projects/destroy should require login" do
       delete :destroy
