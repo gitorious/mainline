@@ -216,6 +216,17 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		  assert result.open?
 			assert_match(/sent a merge request to "#{@source_repository.name}"/i, flash[:success])
 	  end
+	  
+	  should "create an event when the request doesn't require signof" do
+	    login_as :johan
+	    assert_difference("@project.events.count") do
+	      post :create, :project_id => @project.to_param, 
+                :repository_id => @target_repository.to_param, :merge_request => {
+                  :target_repository_id => @source_repository.id,
+                  :ending_commit => '6823e6622e1da9751c87380ff01a1db1'
+                }
+      end
+    end
 		
 		should "it re-renders on invalid data, with the target repos list" do
 			login_as :johan
