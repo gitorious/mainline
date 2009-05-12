@@ -46,6 +46,9 @@ class SshKeyTest < ActiveSupport::TestCase
     
     key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steakhouse.local"
     assert key.valid?
+    
+    key.key = 'ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steak_house.local'
+    assert key.valid?
   end
   
   should "allows a wider range of extended comments" do
