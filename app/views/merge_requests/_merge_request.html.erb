@@ -32,6 +32,7 @@
 	<%= t("views.merges.summary_title", :source => source, :target => target) -%>
   </h5>
   <div class="proposal"><%= sanitize(simple_format(merge_request.proposal)) -%></div>
+  
   <p class="byline">
     <%= link_to(h(merge_request.user.login), merge_request.user) -%> | 
     <%= merge_request.created_at.to_s(:short) -%> 

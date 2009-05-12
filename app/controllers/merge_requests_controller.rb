@@ -34,7 +34,9 @@ class MergeRequestsController < ApplicationController
   
   def index
     @open_merge_requests = @repository.merge_requests.open
-    @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, :limit => 10)
+    @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, {
+      :limit => 10, :order => "updated_at desc"
+    })
     @comment_count = @repository.comments.count
   end
   

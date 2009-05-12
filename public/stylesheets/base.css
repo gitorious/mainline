@@ -1711,6 +1711,18 @@ table.markdown_help {
 	margin-bottom: 20px;
 }
 
+.merge-request-reason {
+	width: 75%;
+	margin: 10px 0 20px 0;
+	padding: 10px;
+	border: 1px solid #D4D17E;
+	background-color: #FEFCAB;
+}
+
+.merge-request-reason p:last-child {
+  margin-bottom: 0;
+}
+
 .recently-closed-merge-requests { margin: 0; }
 .merge_request_summary_short {
   margin: 0;
@@ -1746,11 +1758,14 @@ table.markdown_help {
 	border: 1px solid #ddd;
 }
 .merge_request_summary.open .status span,
-.merge_request_summary_short.open .status span	 		{ color: #FF7F00; }
+.merge_request_summary_short.open .status span,
+.merge-request-reason	.open span	{ color: #FF7F00; }
 .merge_request_summary.merged .status span,
-.merge_request_summary_short.merged .status span 		{ color: #48BA1C; }
+.merge_request_summary_short.merged .status span,
+.merge-request-reason	.merged span 		{ color: #48BA1C; }
 .merge_request_summary.rejected .status span,
-.merge_request_summary_short.rejected .status span	{ color: #F00; }
+.merge_request_summary_short.rejected .status span,
+.merge-request-reason	.rejected span	{ color: #F00; }
 
 table.commits_in_event {
   margin-top: 1em
