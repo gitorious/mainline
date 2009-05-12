@@ -217,6 +217,15 @@ class TreesControllerTest < ActionController::TestCase
                                                               /#{@master_sha}/)
       assert_nil msg
     end
+    
+    should "redirect to the first tree when an invalid ref is requested" do
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
+        :branch => %w[foo], :archive_format => "tar.gz"
+      
+      assert_response :redirect
+      assert_redirected_to project_repository_tree_path(@project, @repository, 'HEAD')
+    end
+    
   end
 
 end

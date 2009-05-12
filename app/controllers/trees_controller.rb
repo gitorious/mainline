@@ -114,6 +114,6 @@ class TreesController < ApplicationController
     def handle_missing_tree_sha
       flash[:error] = "No such tree SHA1 was found"
       redirect_to project_repository_tree_path(@project, @repository, 
-                      branch_with_tree("HEAD", @path))
+                      branch_with_tree("HEAD", @path || []))
     end
 end
