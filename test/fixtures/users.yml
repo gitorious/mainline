@@ -20,6 +20,7 @@ moe:
   ssh_key_id: 2
   is_admin: <%= false %>
   aasm_state: terms_accepted
+  wants_email_notifications: false
 mike:
   id: 3
   login: mike
