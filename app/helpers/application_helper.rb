@@ -150,7 +150,7 @@ module ApplicationHelper
     "http://www.gravatar.com/avatar.php?gravatar_id=" << 
     (email.nil? ? "" : Digest::MD5.hexdigest(email)) <<
     "&amp;default=" <<
-    u("http://#{request.host}:#{request.port}/images/default_face.gif") <<
+    u("http://#{GitoriousConfig['gitorious_host']}:#{request.port}/images/default_face.gif") <<
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
   
