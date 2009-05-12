@@ -33,6 +33,6 @@
 <% content_for :sidebar do -%>
   <ul class="links">
     <li><%= link_to t("views.projects.back"), 
-	repo_owner_path(@repository, :edit_project_repository_path, @owner, @repository) -%></li>
+	repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
   </ul>
 <% end -%>

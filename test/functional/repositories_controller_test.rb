@@ -696,6 +696,17 @@ class RepositoriesControllerTest < ActionController::TestCase
         assert_response :redirect
       end
     end
+    
+    should "work for user/group clones" do
+      repo = repositories(:johans2)
+      repo.user = users(:mike)
+      repo.save!
+      login_as :mike
+      get :confirm_delete, :group_id => repo.owner.to_param, 
+        :project_id => repo.project.to_param, :id => repo.to_param
+      assert_response :success
+      assert_template "confirm_delete"
+    end
   end
 
   context "new / create" do
