@@ -53,6 +53,56 @@ class SSHStrainerTest < ActiveSupport::TestCase
     end
   end
   
+  should "only allow the specified readonly command" do
+    assert_raises(Gitorious::SSH::BadCommandError) do
+      Gitorious::SSH::Strainer.new("git-pull foo bar").parse!
+    end
+    
+    assert_raises(Gitorious::SSH::BadCommandError) do
+      Gitorious::SSH::Strainer.new("rm -rf /tmp/*").parse!
+    end
+  end
+  
+  should "accept non-dashed version git upload-pack" do
+    assert_nothing_raised do
+      s = Gitorious::SSH::Strainer.new("git upload-pack 'foo/bar.git'").parse!
+      assert_equal "git upload-pack", s.verb
+    end
+    
+    assert_nothing_raised do
+      s = Gitorious::SSH::Strainer.new("git upload-pack '~foo/bar.git'").parse!
+      assert_equal "git upload-pack", s.verb
+    end
+    
+    assert_nothing_raised do
+      s = Gitorious::SSH::Strainer.new("git upload-pack '+foo/bar.git'").parse!
+      assert_equal "git upload-pack", s.verb
+    end
+  end
+  
+  should "accept non-dashed version git receive-pack" do
+    assert_nothing_raised do
+      s = Gitorious::SSH::Strainer.new("git receive-pack 'foo/bar.git'").parse!
+      assert_equal "git receive-pack", s.verb
+    end
+    
+    assert_nothing_raised do
+      s = Gitorious::SSH::Strainer.new("git receive-pack '~foo/bar.git'").parse!
+      assert_equal "git receive-pack", s.verb
+    end
+    
+    assert_nothing_raised do
+      s = Gitorious::SSH::Strainer.new("git receive-pack '+foo/bar.git'").parse!
+      assert_equal "git receive-pack", s.verb
+    end
+  end
+  
+  should "raise if it receives too many arguments" do
+    assert_raises(Gitorious::SSH::BadCommandError) do
+      Gitorious::SSH::Strainer.new("git-receive-pack 'foo/bar.git' baz").parse!
+    end
+  end
+  
   should "raises if it receives an unsafe argument that almost looks kosher" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack '/evil/path'").parse!

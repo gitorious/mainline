@@ -34,8 +34,8 @@ module Gitorious
   
     class Strainer
     
-      COMMANDS_READONLY = [ 'git-upload-pack' ]
-      COMMANDS_WRITE    = [ 'git-receive-pack' ]
+      COMMANDS_READONLY = [ 'git-upload-pack', 'git upload-pack' ]
+      COMMANDS_WRITE    = [ 'git-receive-pack', 'git receive-pack' ]
       ALLOW_RE = /^'([a-z0-9\+~][a-z0-9@._\-]*(\/[a-z0-9][a-z0-9@\._\-]*)*\.git)'$/i.freeze
     
       def initialize(command)
@@ -50,8 +50,8 @@ module Gitorious
         if @command.include?("\n")
           raise BadCommandError
         end
-      
-        @verb, @argument = @command.split(" ")
+        
+        @verb, @argument = spliced_command
         if @argument.nil? || @argument.is_a?(Array)
           # all known commands take one argument; improve if/when needed
           raise BadCommandError
@@ -70,6 +70,18 @@ module Gitorious
       
         self
       end
+      
+      protected
+        def spliced_command
+          args =  @command.split(" ")
+          if args.length == 3
+            ["#{args[0]} #{args[1]}", args[2]]
+          elsif args.length == 2
+            args
+          else
+            raise BadCommandError
+          end
+        end
     end
   end
 end
