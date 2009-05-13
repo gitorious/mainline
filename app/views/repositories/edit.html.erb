@@ -26,7 +26,7 @@
   <p>
     <%= f.label :description -%>
     <span class="hint">(<%= markdown_hint -%>)</span>:<br />
-    <%= f.text_area :description, :class => "text wide shorter" -%>
+    <%= f.text_area :description, :class => "text wide medium" -%>
   </p>
   <% unless @repository.owned_by_group? -%>
     <p>
