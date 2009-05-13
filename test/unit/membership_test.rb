@@ -29,14 +29,15 @@ class MembershipTest < ActiveSupport::TestCase
   context 'Adding members to a group' do
     setup do
       @group = groups(:team_thunderbird)
-      @user = users(:mike)
+      @user = users(:moe)
       @inviter = users(:johan)
     end
     
     should 'send a message to a newly added member after he is added to the group' do
+      @user.received_messages.destroy_all
       membership = Membership.build_invitation(@inviter, :user => @user, :group => @group, :role => roles(:member))
       assert membership.save
-      message = @user.received_messages.last
+      assert_not_nil message = @user.received_messages.find(:first, :conditions => {:notifiable_id => membership.id, :notifiable_type => membership.class.name})
       assert_equal(@inviter, message.sender)
       assert_equal(membership, message.notifiable)
     end
@@ -63,6 +64,16 @@ class MembershipTest < ActiveSupport::TestCase
     
     should 'not be deletable' do
       assert !@membership.destroy
+    end
+  end
+  
+  context 'A membership' do
+    setup {
+      @membership = memberships(:team_thunderbird_mike)
+    }
+    should 'be unique for each user' do
+      duplicate_membership = Membership.new(:group => @membership.group, :user => @membership.user, :role => @membership.role)
+      assert !duplicate_membership.save
     end
   end
 end

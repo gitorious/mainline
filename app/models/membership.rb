@@ -29,6 +29,8 @@ class Membership < ActiveRecord::Base
   
   validates_presence_of :group_id, :user_id, :role_id
   
+  validates_uniqueness_of :user_id, :scope => :group_id, :message => 'is already member of this team'
+  
   def breadcrumb_parent
     Breadcrumb::Memberships.new(group)
   end

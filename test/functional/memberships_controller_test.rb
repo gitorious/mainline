@@ -100,9 +100,11 @@ class MembershipsControllerTest < ActionController::TestCase
       end
     
       should "creates a new membership sucessfully" do
+        user = users(:moe)
+        assert !@group.members.include?(user)
         assert_difference('@group.memberships.count') do
           post :create, :group_id => @group.to_param, :membership => {:role_id => Role.admin.id},
-            :user => {:login => users(:mike).login }
+            :user => {:login => user.login }
         end
         assert_redirected_to(group_memberships_path(@group))
       end
