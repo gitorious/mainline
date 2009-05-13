@@ -31,7 +31,7 @@
         </li>
         <% if repository.parent -%>
         <li class="clone">
-          <%= link_to "Clone of #{h(repository.parent.name)}", repo_owner_path(repository, [repository.parent.project, repository.parent]) -%>
+          <%= link_to "Clone of #{h(repository.parent.name)}", repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%>
         </li>
         <% end -%>
       </ul>
@@ -96,7 +96,8 @@
         <li class="heading">Branches: </li>
         <% repository.git.heads.sort{|a,b| a.head? ? -1 : 1 }.each do |head| -%>
           <li class="<%= highlight_if_head(head) -%>">
-            <%=link_to h(head.name), log_path(head.name) -%>
+            <%= link_to h(head.name), repo_owner_path(@repository, :project_repository_commits_in_ref_path,
+                  repository.project, repository, ensplat_path(head.name)) -%>
           </li>
         <% end -%>
       </ul>
