@@ -2072,6 +2072,18 @@ table.repository_meta .clones h5 {
   text-align: center;
 }
 
+table.repository_meta td.branches { padding: 0 0 0 5px;}
+table.repository_meta .branches ul {
+  margin: 0;
+  padding: 0;
+}
+table.repository_meta .branches ul li.heading { font-weight: bold; }
+table.repository_meta .branches ul li {
+  display: inline;
+  margin-right: 5px;
+}
+table.repository_meta .branches ul li.head { font-weight: bold; }
+
 .feed_icon { margin: 0px 4px -1px 4px; }
 
 /* Wiki Pages */
