@@ -159,27 +159,31 @@ class PushEventProcessor < ApplicationProcessor
   
   def events_from_git_log(revspec)
     result = []
-    Grit::Git.with_timeout(nil) do
-      commits = git.log({:pretty => git_pretty_format, :s => true}, revspec).split("\n")
-      commits.each do |c|
-        sha, email, timestamp, message = c.split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
-        e = EventForLogging.new
-        if email
-          email = email.gsub(/\\(<|>)/, '\1')
-          if user = User.find_by_email_with_aliases(Grit::Actor.from_string(email).email || Grit::Actor.from_string(email).name)
-            e.user = user
-          else
-            e.email = email
-          end
+    
+    commits = git.log({
+      :pretty => git_pretty_format, 
+      :s => true,
+      :timeout => false,
+    }, revspec).split("\n")
+    commits.each do |c|
+      sha, email, timestamp, message = c.split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
+      e = EventForLogging.new
+      if email
+        email = email.gsub(/\\(<|>)/, '\1')
+        if user = User.find_by_email_with_aliases(Grit::Actor.from_string(email).email || Grit::Actor.from_string(email).name)
+          e.user = user
+        else
+          e.email = email
         end
-        e.identifier    = sha
-        e.commit_time   = Time.at(timestamp.to_i).utc
-        e.event_type    = Action::COMMIT
-        e.message       = message
-        result << e
       end
+      e.identifier    = sha
+      e.commit_time   = Time.at(timestamp.to_i).utc
+      e.event_type    = Action::COMMIT
+      e.message       = message
+      result << e
     end
-    return result
+    
+    result
   end
   
   def git
