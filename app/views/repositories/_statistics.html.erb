@@ -96,7 +96,7 @@
         <li class="heading">Branches: </li>
         <% repository.git.heads.sort{|a,b| a.head? ? -1 : 1 }.each do |head| -%>
           <li class="<%= highlight_if_head(head) -%>">
-            <%= link_to h(head.name), repo_owner_path(@repository, :project_repository_commits_in_ref_path,
+            <%= link_to h(head.name), repo_owner_path(repository, :project_repository_commits_in_ref_path,
                   repository.project, repository, ensplat_path(head.name)) -%>
           </li>
         <% end -%>
