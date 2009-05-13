@@ -76,6 +76,7 @@
       :activate_error => "Invalid activation code",
       :reset_password_notice => "A new password has been sent to your email",
       :reset_password_error => "Invalid email",
+      :reset_password_inactive_account  => 'Your account has not been activated yet. Please check your mailbox (including your spam folder) for an activation message from Gitorious',
     },
     :pages_controller => {
       :invalid_page_error => "invalid page, badly formatted title or body",

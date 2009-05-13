@@ -326,6 +326,15 @@ class UsersControllerTest < ActionController::TestCase
         assert_redirected_to(root_path)
         assert_match(/A password confirmation link has been sent/, flash[:success])
       end
+      
+      should 'notify non-activated users that they need to activate their accounts before resetting the password' do
+        user = users(:johan)
+        user.expects(:'activated?').returns(false)
+        User.expects(:find_by_email).returns(user)
+        post :forgot_password_create, :user => {:email => user.email}
+        assert_redirected_to forgot_password_users_path
+        assert_match(/activated yet/, flash[:error])
+      end
     end
   end
 

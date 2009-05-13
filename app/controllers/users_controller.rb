@@ -96,10 +96,15 @@ class UsersController < ApplicationController
     
   def forgot_password_create
     if params[:user] && user = User.find_by_email(params[:user][:email])
-      password_key = user.forgot_password!
-      Mailer.deliver_forgotten_password(user, password_key)
-      flash[:success] = "A password confirmation link has been sent to your email address"
-      redirect_to(root_path)
+      if user.activated?
+        password_key = user.forgot_password!
+        Mailer.deliver_forgotten_password(user, password_key)
+        flash[:success] = "A password confirmation link has been sent to your email address"
+        redirect_to(root_path)
+      else
+        flash[:error] = I18n.t 'users_controller.reset_password_inactive_account'
+        redirect_to forgot_password_users_path
+      end
     else
       flash[:error] = I18n.t "users_controller.reset_password_error"
       redirect_to forgot_password_users_path
