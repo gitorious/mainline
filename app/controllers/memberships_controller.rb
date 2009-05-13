@@ -39,7 +39,6 @@ class MembershipsController < ApplicationController
       :group  => @group, 
       :user   => User.find_by_login!(params[:user][:login]),
       :role   => Role.find(params[:membership][:role_id]))
-    
     if @membership.save
       flash[:success] = I18n.t("memberships_controller.membership_created")
       redirect_to group_memberships_path(@group)
@@ -47,6 +46,8 @@ class MembershipsController < ApplicationController
       render :action => "new"
     end
   rescue ActiveRecord::RecordNotFound
+    flash[:error] = "No user was found with that username"
+    @membership = @group.memberships.new
     render :action => "new"
   end
   

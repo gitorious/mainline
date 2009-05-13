@@ -106,6 +106,18 @@ class MembershipsControllerTest < ActionController::TestCase
         end
         assert_redirected_to(group_memberships_path(@group))
       end
+      
+      should "handle validation errors" do
+        assert_no_difference('@group.memberships.count') do
+          post :create, :group_id => @group.to_param, 
+            :membership => {:role_id => Role.admin.id},
+            :user => {:login => "no-such-user" }
+        end
+        assert_response :success
+        assert_template "new"
+        assert_match(/No user was found/, flash[:error])
+        assert !assigns(:membership).valid?
+      end
     end
   
     context "updating membership" do
