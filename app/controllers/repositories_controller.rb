@@ -39,7 +39,8 @@ class RepositoriesController < ApplicationController
     @events = @repository.events.top.paginate(:all, :page => params[:page], 
       :order => "created_at desc")
     
-    @atom_auto_discovery_url = project_repository_path(@owner, @repository, :format => :atom)
+    @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
+                                  @repository.project, @repository, :format => :atom)
     response.headers['Refresh'] = "5" unless @repository.ready
     
     respond_to do |format|

@@ -334,6 +334,19 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal @user, assigns(:owner)
     end
     
+    should "set the correct atom feed discovery url" do
+      repo = @user.repositories.first
+      repo.kind = Repository::KIND_USER_REPO
+      repo.owner = @user
+      repo.save!
+      repo.stubs(:git).returns(stub_everything("git mock"))
+      get :show, :user_id => @user.to_param, :project_id => repo.project.to_param,
+        :id => repo.to_param
+      assert_response :success
+      atom_url = user_project_repository_path(@user, repo.project, repo, :format => :atom)
+      assert_equal atom_url, assigns(:atom_auto_discovery_url)
+    end
+    
     should "find the correct owner for clone, if the project is owned by someone else" do
       clone_repo = @project.repositories.clones.first
       clone_repo.owner = users(:moe)

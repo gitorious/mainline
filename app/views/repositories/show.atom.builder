@@ -19,7 +19,7 @@
 #++
 
 atom_feed do |feed|
-  feed.title("Gitorious: #{@owner.slug}/#{@repository.name} activity")
+  feed.title("Gitorious: #{@repository.url_path} activity")
   feed.updated((@events.blank? ? Time.now : @events.first.created_at))
 
   @events.each do |event|
