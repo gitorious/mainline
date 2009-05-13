@@ -43,7 +43,9 @@
               @repository, @merge_request) do |f| -%>
     <p>
       <%= f.label :status -%><br />
-      <%= f.select :status, {'Open' => 'open', 'Merged' => 'merge', 'Rejected' => 'reject'} -%><br />
+      <%= f.select :status, @merge_request.possible_next_states_hash -%><br />
+
+
       
       <%= f.label :reason -%><br />
       <%= f.text_area :reason %><br />

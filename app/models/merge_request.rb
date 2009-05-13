@@ -44,27 +44,33 @@ class MergeRequest < ActiveRecord::Base
   STATUS_OPEN = 1
   STATUS_MERGED = 2
   STATUS_REJECTED = 3
+  STATUS_VERIFYING = 4
   
   state_machine :status, :initial => :pending do
     state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
     state :open, :value => ::MergeRequest::STATUS_OPEN
     state :merged, :value => ::MergeRequest::STATUS_MERGED
     state :rejected, :value => ::MergeRequest::STATUS_REJECTED
+    state :verifying, :value => ::MergeRequest::STATUS_VERIFYING
     
     event :open do
       transition :pending => :open
     end
     
+    event :in_verification do
+      transition :open => :verifying
+    end
+    
     event :reject do
-      transition :open => :rejected
+      transition [:open, :verifying] => :rejected
     end
     
     event :merge do
-      transition :open => :merged
+      transition [:open, :verifying] => :merged
     end
   end
   
-  named_scope :open, :conditions => { :status => STATUS_OPEN }
+  named_scope :open, :conditions => ['status in (?)', [STATUS_OPEN, STATUS_VERIFYING]]
   named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
   
   def self.human_name
@@ -106,13 +112,37 @@ class MergeRequest < ActiveRecord::Base
     pending?
   end
 
+  def open_or_in_verification?
+    open? || verifying?
+  end
+
   def possible_next_states
     result = if status == STATUS_OPEN
+      [STATUS_MERGED, STATUS_REJECTED, STATUS_VERIFYING]
+    elsif status == STATUS_VERIFYING
       [STATUS_MERGED, STATUS_REJECTED]
     elsif status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
       [STATUS_OPEN]
     else
       []
+    end
+    return result
+  end
+  
+  # Returns a hash (for the view) of labels and event names for next states
+  # TODO: Obviously, putting the states and transitions inside a map is not all that DRY,
+  # but the state machine does not have a one-to-one relationship between states and events
+  def possible_next_states_hash
+    map = {
+        STATUS_OPEN => ['Open', 'open'],
+        STATUS_VERIFYING => ['Verifying', 'in_verification'],
+        STATUS_REJECTED => ['Rejected', 'reject'],
+        STATUS_MERGED => ['Merged', 'merge']
+        }
+    result = {}
+    possible_next_states.each do |s|
+      label, value = map[s]
+      result[label] = value
     end
     return result
   end

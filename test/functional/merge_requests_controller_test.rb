@@ -396,6 +396,24 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		  assert_equal "The merge request could not be marked as merged", flash[:error]
 	  end
 	  
+	  should 'send an email notification to the user when resolving a merge request' do
+	    login_as :johan
+	    @merge_request.status = MergeRequest::STATUS_OPEN
+	    @merge_request.save
+	    assert @merge_request.can_transition_to?(:'in_verification')
+	    assert_incremented_by(@merge_request.user.sent_messages, :size, 1) do
+  	    put :resolve, :project_id => @project.to_param, 
+    			:repository_id => @target_repository.to_param, 
+    			:id => @merge_request,
+    			:merge_request => {
+    				:status => 'in_verification',
+    				:reason => 'Not too good'
+    			}
+    		assert_response :redirect
+    	end
+  		assert @merge_request.reload.verifying?
+    end
+	  
 	  should 'set the reason when resolving with a message' do
 	    login_as :johan
 	    put :resolve, :project_id => @project.to_param, 

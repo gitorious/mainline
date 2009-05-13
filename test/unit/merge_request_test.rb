@@ -62,11 +62,17 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert @merge_request.open?, '@merge_request.open? should be true'
   end
   
+  should 'have a verifying? status' do
+    @merge_request.status = MergeRequest::STATUS_VERIFYING
+    assert @merge_request.verifying?, '@merge_request.verifying? should be true'
+  end
+  
   should "has a statuses class method" do
     assert_equal MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS, MergeRequest.statuses["Pending"]
     assert_equal MergeRequest::STATUS_OPEN, MergeRequest.statuses["Open"]
     assert_equal MergeRequest::STATUS_MERGED, MergeRequest.statuses["Merged"]
     assert_equal MergeRequest::STATUS_REJECTED, MergeRequest.statuses["Rejected"]
+    assert_equal MergeRequest::STATUS_VERIFYING, MergeRequest.statuses['Verifying']
   end
   
   should "has a status_string" do
@@ -196,6 +202,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open!
       assert @merge_request.can_transition_to?('merge')
       assert @merge_request.can_transition_to?('reject')
+      assert @merge_request.can_transition_to?('in_verification')
     end
     
     should 'not allow transition to other states when rejected' do
@@ -203,6 +210,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.reject!
       assert !@merge_request.can_transition_to?('merge')
       assert !@merge_request.can_transition_to?('reject')
+      assert !@merge_request.can_transition_to?('in_verification')
     end
     
     should 'not allow transitions to other states when merged' do
@@ -210,6 +218,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.reject!
       assert !@merge_request.can_transition_to?('merge')
       assert !@merge_request.can_transition_to?('reject')
+      assert !@merge_request.can_transition_to?('in_verification')
     end
     
     should 'optionally take a block when performing a transition' do
@@ -238,6 +247,26 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'deliver a status update to the user who initiated it' do
       assert_incremented_by(@merge_request.user.received_messages, :count, 1) do
         @merge_request.deliver_status_update(users(:moe))
+      end
+    end
+    
+    should 'provide a hash of labels and values for possible next states' do
+      @merge_request.status = MergeRequest::STATUS_VERIFYING
+      assert_equal({'Merged' => 'merge', 'Rejected' => 'reject'}, @merge_request.possible_next_states_hash)
+      @merge_request.status = MergeRequest::STATUS_OPEN
+      assert_equal({'Merged' => 'merge', 'Rejected' => 'reject', 'Verifying' => 'in_verification'}, @merge_request.possible_next_states_hash)
+      @merge_request.status = MergeRequest::STATUS_REJECTED
+      assert_equal({}, @merge_request.possible_next_states_hash)
+      @merge_request.status = MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
+      assert_equal({'Open' => 'open'}, @merge_request.possible_next_states_hash)
+      @merge_request.status = MergeRequest::STATUS_MERGED
+      assert_equal({}, @merge_request.possible_next_states_hash)
+    end
+    
+    should 'have a pseudo-open status' do
+      [MergeRequest::STATUS_VERIFYING, MergeRequest::STATUS_OPEN].each do |s|
+        @merge_request.status = s
+        assert @merge_request.open_or_in_verification?
       end
     end
   end
