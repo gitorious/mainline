@@ -280,7 +280,7 @@ class Repository < ActiveRecord::Base
           existing.destroy
         end
         self.owner = another_owner
-        committerships.create!(:committer => another_owner)
+        committerships.create!(:committer => another_owner) unless committerships.any?{|c|c.committer == another_owner}
         save!
         reload
       end

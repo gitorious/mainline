@@ -124,6 +124,9 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
     
     should "add a User as having committership" do
+      assert_not_nil old_committership = @repository.committerships.detect{|c|c.committer == @user}
+      old_committership.destroy
+      @repository.committerships.reload
       assert_difference("@repository.committerships.count") do
         post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
               :user => {:login => @user.login}, :group => {}

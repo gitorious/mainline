@@ -96,5 +96,33 @@ class CommittershipTest < ActiveSupport::TestCase
       :creator => users(:johan)
     }.merge(opts))
   end
+
+  context 'Committership uniqueness' do
+    setup{
+      @repository = repositories(:johans)
+      @repository.committerships.destroy_all
+      @owning_group = groups(:team_thunderbird)
+    }
+    
+    should 'not allow the same user to be added as a committer twice' do
+      user = users(:moe)
+      @repository.committerships.create!(:committer => user)
+      duplicate_committership = @repository.committerships.build(:committer => user)
+      assert !duplicate_committership.save, 'User is already committer'
+    end
+    
+    should 'not allow the same group to be added as a committer twice' do
+      @repository.committerships.create!(:committer => @owning_group)
+      duplicate_committership = @repository.committerships.build(:committer => @owning_group)
+      assert !duplicate_committership.save, 'Group is already committer'
+    end
+    
+    should 'not allow adding the team adding a repository as a committer' do
+      @repository.change_owner_to! @owning_group
+      assert_equal @owning_group, @repository.committerships.first.committer
+      new_committership = @repository.committerships.build(:committer => @owning_group)
+      assert !new_committership.save
+    end
+  end
   
 end
