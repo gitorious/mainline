@@ -65,6 +65,7 @@ module ActionView
 
       def compile!(render_symbol, local_assigns)
         locals_code = local_assigns.keys.map { |key| "#{key} = local_assigns[:#{key}];" }.join
+
         source = <<-end_src
           def #{render_symbol}(local_assigns)
             old_output_buffer = output_buffer;#{locals_code};#{compiled_source.respond_to?(:force_encoding) ? compiled_source.force_encoding(Encoding::UTF_8) : compiled_source}
