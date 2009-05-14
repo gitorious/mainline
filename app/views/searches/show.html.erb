@@ -1,4 +1,5 @@
 <%
+# encoding: utf-8
 #--
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -30,7 +31,7 @@
 <% if @search -%>
   
   <% if @results.empty? -%>
-    <p><%= t("views.searches.no_results", :term => h(params[:q])) %></p>
+    <p><%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %></p>
   <% else -%>
     <% @results.each do |result| -%>
     <div class="item">

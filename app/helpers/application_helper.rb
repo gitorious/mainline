@@ -345,4 +345,13 @@ module ApplicationHelper
       repo_owner_path(@repository, [@project, @repository, comment])
     end
   end
+  
+  def force_utf8(str)
+    if str.respond_to?(:force_encoding)
+      str.force_encoding("utf-8")
+    else
+      str.mb_chars
+    end
+      
+  end
 end

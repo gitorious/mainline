@@ -36,7 +36,7 @@
       <%= render_diff_stats(@commit.stats) -%>
       <%= render_diffmode_selector -%>
       <% @diffs.each do |file| -%>
-        <a name="<%= h(file.a_path) -%>"></a>
+        <a name="<%= h(force_utf8(file.a_path)) -%>"></a>
         <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, @commit.id) -%></h4>
         <%= render_diff(file.diff, @diffmode) -%>
       <% end -%>
