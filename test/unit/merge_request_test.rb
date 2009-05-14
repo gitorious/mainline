@@ -290,4 +290,20 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert @merge_request.save
     end
   end
+  
+  context 'Last updated by' do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans_open)
+    end
+    
+    should 'initially be the user' do
+      assert_equal users(:johan), @merge_request.updated_by
+    end
+
+    should 'have a setter and getter' do
+      @merge_request.updated_by = users(:mike)
+      assert_equal users(:mike), @merge_request.updated_by
+    end
+    
+  end
 end

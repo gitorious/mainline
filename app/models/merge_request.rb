@@ -96,18 +96,6 @@ class MergeRequest < ActiveRecord::Base
     statuses.invert[status_code.to_i].downcase
   end
   
-  # def open?
-  #   status == STATUS_OPEN
-  # end
-  
-  # def merged?
-  #   status == STATUS_MERGED
-  # end
-  # 
-  # def rejected?
-  #   status == STATUS_REJECTED
-  # end
-  
   def pending_acceptance_of_terms?
     pending?
   end
@@ -127,6 +115,18 @@ class MergeRequest < ActiveRecord::Base
       []
     end
     return result
+  end
+  
+  def updated_by=(user)
+    self.updated_by_user_id = user.id
+  end
+  
+  def updated_by
+    if updated_by_user_id.blank?
+      user
+    else
+      User.find(updated_by_user_id)
+    end
   end
   
   # Returns a hash (for the view) of labels and event names for next states

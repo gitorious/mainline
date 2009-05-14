@@ -426,6 +426,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_equal "The merge request was marked as merged", flash[:notice]
 	    assert_equal("Not too good", assigns(:merge_request).reason)
     end
+    
+    should 'set the updated_by to current_user when resolving' do
+	    @merge_request.user = users(:mike)
+	    assert @merge_request.save
+	    login_as :johan
+	    do_resolve_put
+	    assert_equal users(:johan), @merge_request.reload.updated_by
+    end
 	end
 	
 	context "#get commit_list" do

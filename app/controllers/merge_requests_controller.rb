@@ -111,6 +111,7 @@ class MergeRequestsController < ApplicationController
     new_state = params[:merge_request][:status]
     state_changed = @merge_request.transition_to(new_state) do
       reason = params[:merge_request][:reason]
+      @merge_request.updated_by = current_user
       @merge_request.reason = reason unless reason.blank?
       @merge_request.save!
       @merge_request.deliver_status_update(current_user)
