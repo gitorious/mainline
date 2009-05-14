@@ -240,12 +240,13 @@ module EventRenderingHelper
     target_repository = event.target.target_repository
     
     action = action_for_event(:event_updated_merge_request) do
-      "from " + 
+      "as " + "<em>#{event.data}</em> from " +
       link_to(h(project.title), project_path(project)) + "/" + 
       link_to(h(source_repository.name), project_repository_url(project, source_repository))
     end
+    body= link_to truncate(h(event.target.proposal), :length => 100), [project, target_repository, event.target]
     category = "merge_request"
-    [action, "", category]
+    [action, body, category]
   end
   
   def render_event_delete_merge_request(event)

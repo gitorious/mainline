@@ -114,7 +114,11 @@ class MergeRequestsController < ApplicationController
       @merge_request.reason = reason unless reason.blank?
       @merge_request.save!
       @merge_request.deliver_status_update(current_user)
-      @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
+      if @merge_request.open_or_in_verification?
+        @owner.create_event(Action::UPDATE_MERGE_REQUEST, @merge_request, current_user, @merge_request.status_string, reason)
+      else
+        @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
+      end
     end
     if state_changed
       flash[:notice] = I18n.t "merge_requests_controller.resolve_notice", :status => @merge_request.status_string
