@@ -58,7 +58,7 @@ module ApplicationHelper
   
   def markdown(text, options = [:smart])
     rd = RDiscount.new(text.to_s, *options)
-    rd.to_html
+    force_utf8(rd.to_html)
   end
   
   def feed_icon(url, alt_title = "Atom feed", size = :small)
@@ -263,6 +263,7 @@ module ApplicationHelper
       :alt => t("application_helper.more_info")
     }), "$('#{dom_id}').toggle()", :class => "more_info")
   end
+  
   FILE_EXTN_MAPPINGS = {
     '.cpp' => 'cplusplus-file', 
     '.c' => 'c-file',
