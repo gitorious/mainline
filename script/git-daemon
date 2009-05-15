@@ -35,9 +35,6 @@ module Git
     def start
       if @options[:daemonize]
         daemonize(@options[:logfile])
-        File.open(@options[:pidfile], "w") do |f| 
-          f.write(Process.pid)
-        end
       end
       @socket = TCPServer.new(@options[:host], @options[:port])
       @socket.setsockopt(Socket::SOL_SOCKET,Socket::SO_REUSEADDR, !!@options[:reuseaddr])
@@ -48,6 +45,12 @@ module Git
     end
       
     def run
+      Dir.chdir(GitoriousConfig["repository_base_path"])
+      if @options[:pidfile]
+        File.open(@options[:pidfile], "w") do |f|
+          f.write(Process.pid)
+        end
+      end
       while session = accept_socket
         connections = $children_active - $children_reaped
         if connections > MAX_CHILDREN
