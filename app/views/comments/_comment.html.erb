@@ -27,7 +27,7 @@
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
     </span>
-    <%= link_to(h(comment.user.login), comment.user) -%> | 
+    <%= link_to(h(force_utf8(comment.user.title)), comment.user) -%> | 
     <span class="permalink"><%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%></span>
   </p>
 </div>
