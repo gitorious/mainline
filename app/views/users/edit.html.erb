@@ -27,11 +27,11 @@
 <% form_for @user, :url => user_path, :html => {:multipart => true} do |f| -%>
   <p>
     <%= f.label :fullname, t("views.users.realname") -%><br />
-    <%= f.text_field :fullname, :class => "text" -%>
+    <%= f.text_field :fullname -%>
   </p>
   <p>
     <%= f.label :email, t(:email, :scope => 'views.users') -%><br />
-    <%= f.text_field :email, :class => "text" -%>
+    <%= f.text_field :email -%>
   </p>
   <p>
     <%= f.check_box :public_email -%>
@@ -42,11 +42,11 @@
   </p>
   <p>
     <%= f.label :url, t("views.users.url") -%><br />
-    <%= f.text_field :url, :class => "text" -%>
+    <%= f.text_field :url -%>
   </p>
   <p>
     <%= f.label :url, t("views.users.openid") -%><br />
-    <%= f.text_field :identity_url, :class => "text" -%>
+    <%= f.text_field :identity_url -%>
   </p>
   
   <p>

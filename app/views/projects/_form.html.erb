@@ -23,12 +23,12 @@
 
 <p>
   <%= form.label :title, t(:title, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.text_field :title, :class => "text" -%>
+  <%= form.text_field :title -%>
 </p>
 <% unless ["edit", "update"].include?(controller.action_name) -%>
   <p>
     <%= form.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%><br />
-    <%= form.text_field :slug, :class => "text" -%>
+    <%= form.text_field :slug -%>
   </p>
   <script type="text/javascript" charset="utf-8">
     var slugger = new ProjectSluggorizer("project_title", "project_slug");
@@ -40,7 +40,7 @@
 <% end -%>
 <p>
   <%= form.label :tag_list, t(:tag_list, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.text_field :tag_list, :class => "text" -%>
+  <%= form.text_field :tag_list -%>
 </p>
 <p>
   <%= form.label :license, t(:license, :scope => 'activerecord.attributes.project') -%><br />
@@ -48,15 +48,15 @@
 </p>
 <p>
   <%= form.label :home_url, t(:home_url, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.text_field :home_url, :class => "text" -%>
+  <%= form.text_field :home_url -%>
 </p>
 <p>
   <%= form.label :mailinglist_url, t(:mailinglist_url, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.text_field :mailinglist_url, :class => "text" -%>
+  <%= form.text_field :mailinglist_url -%>
 </p>
 <p>
   <%= form.label :bugtracker_url, t(:bugtracker_url, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.text_field :bugtracker_url, :class => "text" -%>
+  <%= form.text_field :bugtracker_url -%>
 </p>
 <p>
   <%= form.label :wiki_enabled, t(:wiki_enabled, :scope => 'activerecord.attributes.project') -%><br />

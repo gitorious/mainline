@@ -742,15 +742,15 @@ form.button-to div input:hover {
   color: #fff;
 }
 
-input.text { 
-  padding: 3px; 
-  width: 350px; 
+input[type='text'], input[type='password'] {
+  padding: 3px;
+  width: 350px;
 }
 
 textarea { 
-  width: 350px; 
-  height: 150px; 
-  padding: 3px; 
+  width: 350px;
+  height: 150px;
+  padding: 3px;
 }
 textarea.text { height: 60px; }
 textarea.wide { width: 500px; }
@@ -760,12 +760,12 @@ textarea.medium { width: 450px; height: 250px; }
 textarea.fill { width: 95%; }
 select        { width: 200px; }
 
-input.text, textarea, select {
+input[type='text'], input[type='password'], textarea, select {
   margin: 5px 0 10px 0;
   border: 1px solid #bbb;
 }
 
-input.text:focus, input.title:focus,
+input[type='text']:focus, input[type='password']:focus. input.title:focus,
 textarea:focus, select:focus {
   border: 1px solid #666;
 }

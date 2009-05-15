@@ -57,7 +57,7 @@
   </p>
   <p>
     <%= f.label :name, t("views.repos.name", :name => current_user.login) -%>:<br />
-    <%= f.text_field :name, :class => "text" -%>
+    <%= f.text_field :name -%>
   </p>
   <%= f.submit t("views.repos.btn_clone") -%>
 <% end -%>
