@@ -4,7 +4,7 @@ require 'daemons'
 
 APP_ROOT = File.expand_path(File.dirname(__FILE__) + '/..')
 script_file = File.join(File.expand_path(APP_ROOT),'vendor','plugins','activemessaging','poller.rb')
-tmp_dir = File.join(File.expand_path(APP_ROOT), 'tmp')
+tmp_dir = File.join(File.expand_path(APP_ROOT), 'tmp/pids')
 
 options = {
   :app_name   => "poller",
