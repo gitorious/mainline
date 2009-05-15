@@ -19,22 +19,22 @@
 %>
   <p>
     <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :login, :class => "text" -%>
+    <%= f.text_field :login -%>
   </p>
 
   <p>
     <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :email, :class => "text" -%>
+    <%= f.text_field :email -%>
   </p>
 
   <p>
     <%= f.label :password, t(:password, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.password_field :password, :class => "text" -%>
+    <%= f.password_field :password -%>
   </p>
 
   <p>
     <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.password_field :password_confirmation, :class => "text" %>
+    <%= f.password_field :password_confirmation %>
   </p>
   
   <%= render :partial => "licenses/tos_link" -%>

@@ -36,7 +36,7 @@ class MessagesController < ApplicationController
   
   def read
     @message = current_user.received_messages.find(params[:id])
-    @message.read!
+    @message.read
     respond_to do |wants|
       wants.js
     end

@@ -27,18 +27,18 @@
     <div id="regular_login_fields">
       <p>
         <label for="login"><%= t("views.sessions.label").call(self) %></label><br/>
-        <%= text_field_tag 'email', params[:email], :class => "text" %>
+        <%= text_field_tag 'email', params[:email] %>
       </p>
 
       <p>
         <label for="password"><%= t("views.sessions.passwd") %></label><br/>
-        <%= password_field_tag 'password', '', :class => "text" %>
+        <%= password_field_tag 'password', '' %>
       </p>
     </div>
     <div id="openid_login_fields" style="display:none;">
       <p>
         <label for="openid"><%= t("views.sessions.openid").call(self) %></label><br/>
-        <%= text_field_tag 'openid_url', params[:openid_url], :class => "text" -%>
+        <%= text_field_tag 'openid_url', params[:openid_url] -%>
       </p>
     </div>
     <p>

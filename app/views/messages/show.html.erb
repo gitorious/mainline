@@ -32,7 +32,7 @@
         <strong><%= h(message.title) %></strong><br />
       </p>
       <p class="body">
-        <%= h(message.body) %>
+        <%= simple_format h(message.body) %>
       </p>
       <ul class="message_actions">
         <% if message.unread? and message.recipient == current_user %>

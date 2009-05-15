@@ -24,17 +24,17 @@
   <%- form_for(@user, :url => {:action => 'openid_create'}) do |f| -%>
   <p>
     <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :login, :class => "text" -%>
+    <%= f.text_field :login -%>
   </p>
 
   <p>
     <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :email, :class => "text" -%>
+    <%= f.text_field :email -%>
   </p>
 
   <p>
     <%= f.label :fullname, t(:fullname, :scope => 'activerecord.attributes.user') -%><br/>
-    <%= f.text_field :fullname, :class => 'text' -%>
+    <%= f.text_field :fullname -%>
   </p>
 
   <div class="eula">
