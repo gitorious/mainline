@@ -14,7 +14,7 @@ options = {
   :ontop      => false,
   :mode       => :load,
   :backtrace  => true,
-  :monitor    => true,
+  :monitor    => false,
   :log_output => true
 }
 
