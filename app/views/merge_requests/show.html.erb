@@ -111,7 +111,7 @@ git push origin master
                   repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit) %>
           </li>
           <li class="committer">
-            <strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong>
+            <strong><%=h truncate(force_utf8(commit.committer.to_s), :length => 25) %></strong>
           </li>
         </ul>
         <small>
