@@ -31,6 +31,10 @@ class RepositoriesController < ApplicationController
   
   def index
     @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
+    respond_to do |wants|
+      wants.html
+      wants.xml {render :xml => @repositories.to_xml}
+    end
   end
     
   def show

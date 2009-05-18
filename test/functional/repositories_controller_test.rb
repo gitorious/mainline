@@ -317,6 +317,11 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal @project.repositories, assigns(:repositories)
     end
+    
+    should 'render xml if requested' do
+      get :index, :project_id => @project.slug, :format => 'xml'
+      assert_response :success
+    end
   end
 
   context "showing a user namespaced repo" do
