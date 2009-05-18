@@ -33,7 +33,8 @@ class MergeRequestsController < ApplicationController
   renders_in_site_specific_context
   
   def index
-    @open_merge_requests = @repository.merge_requests.open
+    #@open_merge_requests = @repository.merge_requests.open
+    @open_merge_requests = @repository.merge_requests.from_filter(params[:status])
     @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, {
       :limit => 10, :order => "updated_at desc"
     })

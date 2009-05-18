@@ -36,6 +36,13 @@
 <% end -%>
 
 <% content_for :sidebar do -%>
+  <h4>Filter</h4>
+  <ul class="links">
+    <% ["open", "merged", "rejected"].each do |status| -%>
+      <li class="merge_requests"><%= link_to_status(status) -%></li>
+    <% end -%>
+  </ul>
+  
   <h4>Recently handled merge requests</h4>
   <ul class="recently-closed-merge-requests">
     <% @recently_closed_merge_requests.each do |merge_request| -%>

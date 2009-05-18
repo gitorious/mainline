@@ -19,5 +19,13 @@
 #++
 
 module MergeRequestsHelper
-
+  def link_to_status(status)
+    if params[:status].blank? && status == "open"
+      link_to(status.titlecase, {:status => status}, {:class => "selected"})
+    elsif params[:status] == status
+      link_to(status.titlecase, {:status => status}, {:class => "selected"})
+    else
+      link_to(status.titlecase, {:status => status})
+    end
+  end
 end

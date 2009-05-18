@@ -303,7 +303,36 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'have a setter and getter' do
       @merge_request.updated_by = users(:mike)
       assert_equal users(:mike), @merge_request.updated_by
+    end    
+  end
+  
+  context "from_filter" do
+    setup do
+      @repo = repositories(:johans)
     end
     
+    should "default to open merge-requests" do
+      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_MERGED)
+      assert !@repo.merge_requests.from_filter(nil).include?(merge_requests(:moes_to_johans))
+      assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter(nil)
+    end
+    
+    should "fall back to open merge-requests on invalid filter name" do
+      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_MERGED)
+      assert !@repo.merge_requests.from_filter("kittens").include?(merge_requests(:moes_to_johans))
+      assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter("kittens")
+    end
+    
+    should "find merged merge-requests" do
+      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_MERGED)
+      assert !@repo.merge_requests.from_filter("merged").include?(merge_requests(:moes_to_johans_open))
+      assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("merged")
+    end
+    
+    should "find rejected merge-requests" do
+      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_REJECTED)
+      assert !@repo.merge_requests.from_filter("rejected").include?(merge_requests(:moes_to_johans_open))
+      assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("rejected")
+    end
   end
 end

@@ -38,7 +38,7 @@
     <%= merge_request.created_at.to_s(:short) -%> 
     
     
-    <% if !no_link && merge_request.open_or_in_verification? -%>
+    <% if !no_link -%>
       | <strong>
           <%= link_to t("views.merges.review"), 
                 repo_owner_path(merge_request.target_repository, 

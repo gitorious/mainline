@@ -53,6 +53,15 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				:repository_id => @target_repository.to_param
 			assert_equal @target_repository.comments.count, assigns(:comment_count)
 		end
+		
+		should "filter on status" do
+		  @merge_request.update_attribute(:status, MergeRequest::STATUS_MERGED)
+		  get :index, :project_id => @project.to_param,
+				:repository_id => @target_repository.to_param,
+				:status => "merged"
+			assert_response :success
+			assert_equal [@merge_request], assigns(:open_merge_requests)
+	  end
 	end
 	
 	context "#show (GET)" do		

@@ -72,6 +72,8 @@ class MergeRequest < ActiveRecord::Base
   
   named_scope :open, :conditions => ['status in (?)', [STATUS_OPEN, STATUS_VERIFYING]]
   named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
+  named_scope :merged, :conditions => ["status = ?", [STATUS_MERGED]]
+  named_scope :rejected, :conditions => ["status = ?", [STATUS_REJECTED]]
   
   def self.human_name
     I18n.t("activerecord.models.merge_request")
@@ -86,6 +88,19 @@ class MergeRequest < ActiveRecord::Base
       result[state.name.to_s.capitalize] = state.value
       result
     }
+  end
+  
+  def self.from_filter(filter_name = nil)
+    case filter_name
+    when "open"
+      open
+    when "merged"
+      merged
+    when "rejected"
+      rejected
+    else
+      open
+    end
   end
   
   def status_string
