@@ -63,8 +63,8 @@ module EventRenderingHelper
   end
   
   def render_event_delete_repository(event)
-    action = action_for_event(:event_status_deleted) do 
-      link_to(h(event.target.title), project_path(event.target)) + "/" + h(event.data)
+    action = action_for_event(:event_status_deleted) do
+      link_to(h(event.target.title), event.target) + "/" + h(event.data)
     end
     category = "project"
     [action, "", category]
