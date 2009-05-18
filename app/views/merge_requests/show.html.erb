@@ -124,7 +124,7 @@ git push origin master
       </td>
       <td class="commit-details message">
         <div class="commit_message inline">
-          <%= link_to h(truncate(commit.message, :length => 140)), 
+          <%= link_to h(truncate(force_utf8(commit.message), :length => 140)), 
                 repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit)  %>
         </div>
       </td>
@@ -137,7 +137,7 @@ git push origin master
               <%= link_to(avatar_from_email(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
             </li>
             <li class="author">
-              <%= link_to(h(comment.user.title), comment.user) -%>
+              <%= link_to(h(force_utf8(comment.user.title)), comment.user) -%>
             </li>
           </ul>
           <small class="permalink">
@@ -148,7 +148,7 @@ git push origin master
         </td>
         <td class="commit-details body">
           <div class="inline">
-            <%= link_to truncate(sanitize(comment.body), :length => 70), 
+            <%= link_to truncate(sanitize(force_utf8(comment.body)), :length => 70), 
                   repo_owner_path(@merge_request.source_repository, 
                     :project_repository_commit_path, @project,
                     @merge_request.source_repository, commit) + "##{dom_id(comment)}" %>
