@@ -95,7 +95,7 @@ ActionController::Routing::Routes.draw do |map|
       p.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     end
   end
-  map.resources :projects, :member => {:confirm_delete => :get, :preview => :put} do |projects|
+  map.resources :projects, :member => {:confirm_delete => :get, :preview => :put, :edit_slug => :any} do |projects|
     projects.resources :pages, :member => { :history => :get,:preview => :put }
     projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end

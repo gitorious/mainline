@@ -24,8 +24,8 @@
 class ProjectsController < ApplicationController  
   before_filter :login_required, :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
-  before_filter :find_project, :only => [:show, :edit, :update, :confirm_delete]
-  before_filter :assure_adminship, :only => [:edit, :update]
+  before_filter :find_project, :only => [:show, :edit, :update, :confirm_delete, :edit_slug]
+  before_filter :assure_adminship, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
@@ -104,6 +104,18 @@ class ProjectsController < ApplicationController
   def edit
     @groups = current_user.groups
     @root = Breadcrumb::EditProject.new(@project)
+  end
+  
+  def edit_slug
+    @root = Breadcrumb::EditProject.new(@project)
+    if request.put?
+      @project.slug = params[:project][:slug]
+      if @project.save
+        @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
+        flash[:success] = "Project slug updated"
+        redirect_to :action => :show, :id => @project.slug and return
+      end
+    end
   end
   
   def update

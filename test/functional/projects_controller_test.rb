@@ -276,6 +276,24 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal "bar", assigns(:project).reload.description
       assert_redirected_to(project_path(project))
     end
+    
+    should 'Non-admins for projects should be denied access to edit slug' do
+      login_as :moe
+      get :edit_slug, :id => projects(:johans).to_param
+      assert_response :redirect
+    end
+    
+    should 'allow project admins to change the slug' do
+      login_as :johan
+      @project = projects(:johans)
+      get :edit_slug, :id => @project.to_param
+      assert_response :success
+      put :edit_slug, :id => @project.to_param, :project => {:slug => "another_one"}
+      assert_redirected_to :action => :show, :id => @project.reload.slug
+      assert_equal 'another_one', projects(:johans).reload.slug
+    end
+    
+    
   
     should "PUT projects/update with valid data should update record" do
       login_as :johan

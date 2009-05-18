@@ -418,7 +418,10 @@
         :project_members => "Project members",
         :add_repository => "Add repository",
         :edit_oauth_settings => 'Edit contribution settings',
-        :add_repository_breadcrumb => "Add Repository"
+        :add_repository_breadcrumb => "Add Repository",
+        :edit_slug_title => 'Edit the slug (for URLs etc.)',
+        :edit_slug_disclaimer => 'Please note that by changing the slug <strong>all URLs, including git URLs, will be changed</strong>',
+        :update_slug => 'Update slug'
       },
       :merges => {
         :info => {
