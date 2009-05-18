@@ -127,6 +127,25 @@ class CommitsControllerTest < ActionController::TestCase
         :id => @sha,
       })
     end
+    
+    should "route user-namespaced commits index, with dots in the username" do
+      assert_recognizes({
+        :controller => "commits", 
+        :action => "show", 
+        :user_id => "mc.hammer",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+      }, {:path => "/~mc.hammer/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", :method => :get})
+      assert_generates("/~mc.hammer/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
+        :controller => "commits", 
+        :action => "show", 
+        :user_id => "mc.hammer",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @sha,
+      })
+    end
 
     should "route diff format" do
       assert_recognizes({

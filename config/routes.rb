@@ -1,57 +1,42 @@
 ActionController::Routing::Routes.draw do |map|
-
-  # The priority is based upon order of creation: first created -> highest priority.
-  
-  # Sample of regular route:
-  # map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  # map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # You can have the root of your site routed by hooking up '' 
-  # -- just remember to delete public/index.html.
-  # map.connect '', :controller => "welcome"
-
-  # Allow downloading Web Service WSDL as a file with an extension
-  # instead of a file named 'wsdl'
-  #map.connect ':controller/service.wsdl', :action => 'wsdl'
-  
   VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_\/]+/
   
-  repository_proc = proc do |repo|
-    repo.resources :comments
-    repo.commit_comment "comments/commit/:sha", :controller => "comments", 
-      :action => "commit", :conditions => { :method => :get }
-    repo.comments_preview 'comments/preview', :controller => 'comments',
-      :action => 'preview'#, :conditions => {:method => :put}
-    repo.resources :merge_requests, :member => { 
-      :resolve => :put,
-      :terms_accepted => :get 
-    }, :collection => { 
-      :create => :post, 
-      :commit_list => :post,
-      :target_branches => :post,
-    }, :has_many => :comments
-    repo.resources :committerships, :collection => {
-      :auto_complete_for_group_name => :post,
-      :auto_complete_for_user_login => :post
-    }
-    
-    repo.formatted_commits_feed "commits/*branch/feed.:format", 
-        :controller => "commits", :action => "feed", :conditions => {:feed => :get}
-    repo.commits        "commits", :controller => "commits", :action => "index"
-    repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
-    repo.commit         "commit/:id.:format", :controller => "commits", :action => "show"
-    repo.trees          "trees/", :controller => "trees", :action => "index"
-    repo.tree           "trees/*branch_and_path", :controller => "trees", :action => "show"
-    repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
-    repo.archive_tar    "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
-    #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
-    repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
-    repo.blob_history   "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
-    repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
+  # Builds up the common repository sub-routes that's shared between projects
+  # and user+team namespaced repositories
+  def build_repository_routes(repository, options = {})
+    repository.with_options(options) do |repo|
+      repo.resources :comments
+      repo.commit_comment "comments/commit/:sha", :controller => "comments", 
+        :action => "commit", :conditions => { :method => :get }
+      repo.comments_preview 'comments/preview', :controller => 'comments',
+        :action => 'preview'#, :conditions => {:method => :put}
+      repo.resources :merge_requests, :member => {
+        :resolve => :put,
+        :terms_accepted => :get 
+      }, :collection => { 
+        :create => :post, 
+        :commit_list => :post,
+        :target_branches => :post,
+      }, :has_many => :comments
+      repo.resources :committerships, :collection => {
+        :auto_complete_for_group_name => :post,
+        :auto_complete_for_user_login => :post
+      }
+
+      repo.formatted_commits_feed "commits/*branch/feed.:format",
+          :controller => "commits", :action => "feed", :conditions => {:feed => :get}
+      repo.commits        "commits", :controller => "commits", :action => "index"
+      repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
+      repo.commit         "commit/:id.:format", :controller => "commits", :action => "show"
+      repo.trees          "trees/", :controller => "trees", :action => "index"
+      repo.tree           "trees/*branch_and_path", :controller => "trees", :action => "show"
+      repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
+      repo.archive_tar    "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
+      #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
+      repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
+      repo.blob_history   "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
+      repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
+    end
   end
   repository_options = {
     :member => {
@@ -82,9 +67,13 @@ ActionController::Routing::Routes.draw do |map|
       user_req.resources :keys
       user_req.resources :aliases, :member => { :confirm => :get }
       user_req.resource :license
-      user_req.resources(:repositories, repository_options, &repository_proc)
+      user_req.resources(:repositories, repository_options){|r| build_repository_routes(r) }
       user_req.resources :projects do |p|
-        p.resources(:repositories, repository_options.merge(:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}), &repository_proc)
+        p.resources(:repositories, repository_options.merge({
+          :requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}
+        })) do |repo|
+          build_repository_routes(repo, {:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}})
+        end
       end
     end
   end
@@ -101,14 +90,14 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :groups, :as => "teams" do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
-    grp.resources(:repositories, repository_options, &repository_proc)
+    grp.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     grp.resources :projects do |p|
-      p.resources(:repositories, repository_options, &repository_proc)
+      p.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     end
   end
   map.resources :projects, :member => {:confirm_delete => :get, :preview => :put} do |projects|
     projects.resources :pages, :member => { :history => :get,:preview => :put }
-    projects.resources(:repositories, repository_options, &repository_proc)
+    projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end
 
 
