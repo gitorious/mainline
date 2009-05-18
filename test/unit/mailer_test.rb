@@ -96,14 +96,16 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal [mail], Mailer.deliveries
   end
   
-  should 'send a notification of new messages' do
+  should 'send a notification of new messages with a link to the message' do
+    message_id = 99
     recipient = users(:moe)
     sender = users(:mike)
     merge_request = merge_requests(:moes_to_johans)
-    mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text", merge_request)
+    mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text", merge_request, message_id)
     assert_equal([recipient.email], mail.to)
     assert_match /#{sender.fullname} has sent you a message on Gitorious: /, mail.body
     assert_match /Address: .*\/#{merge_request.target_repository.project.slug}\//i, mail.body
+    assert_match "http://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", mail.body
   end
   
   should 'sanitize the contents of notifications' do
@@ -111,7 +113,7 @@ class MailerTest < ActiveSupport::TestCase
     sender = users(:mike)
     subject = %Q(<script type="text/javascript">alert(document.cookie)</script>Hello)
     body = %Q(<script type="text/javascript">alert('foo')</script>This is the actual message)
-    mail = Mailer.create_notification_copy(recipient, sender, subject, body, nil)
+    mail = Mailer.create_notification_copy(recipient, sender, subject, body, nil, 9)
     assert_no_match /alert/, mail.body
     assert_no_match /document\.cookie/, mail.subject
     assert_match /Hello/, mail.subject

@@ -150,7 +150,7 @@ class Message < ActiveRecord::Base
     end
     
     def schedule_email_delivery
-      options = {:sender_id => sender.id, :recipient_id => recipient.id, :subject => subject, :body => body, :created_at => created_at, :identifier => "email_delivery"}
+      options = {:sender_id => sender.id, :recipient_id => recipient.id, :subject => subject, :body => body, :created_at => created_at, :identifier => "email_delivery", :message_id => self.id}
       publish :cc_message, options.to_json
     end
 end

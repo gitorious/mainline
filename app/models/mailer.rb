@@ -24,6 +24,7 @@
 class Mailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
+  include ActionController::UrlWriter
   def signup_notification(user)
     setup_email(user)
     @subject    += I18n.t "mailer.subject"
@@ -50,12 +51,12 @@ class Mailer < ActionMailer::Base
     @body[:url] =  project_repository_url(repository.project, repository)
   end
 
-  def notification_copy(recipient, sender, subject, body, notifiable)
+  def notification_copy(recipient, sender, subject, body, notifiable, message_id)
     @recipients       =  recipient.email
     @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
     @subject          = sanitize(subject)
     @body[:recipient] = recipient.fullname.to_s.force_encoding("utf-8")
-    @body[:url]       = "http://#{GitoriousConfig['gitorious_host']}/messages"
+    @body[:url]       = url_for(:controller => 'messages', :action => 'show', :id => message_id, :host => GitoriousConfig['gitorious_host'])
     @body[:body]      = sanitize(body)
     @body[:sender]    = sender.fullname.to_s.force_encoding("utf-8")
     if notifiable
