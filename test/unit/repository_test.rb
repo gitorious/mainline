@@ -712,4 +712,42 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  context 'Logging updates' do
+    setup {@repository = repositories(:johans)}
+    
+    should 'generate events for each value that is changed' do
+      assert_incremented_by(@repository.events, :size, 1) do
+        @repository.log_changes_with_user(users(:johan)) do
+          @repository.replace_value(:name, "new_name")
+        end
+        assert @repository.save
+      end
+      assert_equal 'new_name', @repository.reload.name
+    end
+    
+    should 'not generate events when blank values are provided' do
+      assert_incremented_by(@repository.events, :size, 0) do
+        @repository.log_changes_with_user(users(:johan)) do
+          @repository.replace_value(:name, "")
+        end
+      end
+    end
+    
+    should 'not generate events when invalid values are provided' do
+      assert_incremented_by(@repository.events, :size, 0) do
+        @repository.log_changes_with_user(users(:johan)) do
+          @repository.replace_value(:name, "Some illegal value")
+        end
+      end      
+    end
+    
+    should 'not generate events when a value is unchanged' do
+      assert_incremented_by(@repository.events, :size, 0) do
+        @repository.log_changes_with_user(users(:johan)) do
+          @repository.replace_value(:name, @repository.name)
+        end
+      end      
+    end
+  end
 end

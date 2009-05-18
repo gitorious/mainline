@@ -920,6 +920,20 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal "blablabla", @repository.reload.description
     end
     
+    should 'update the repository name and create an event if a new name is provided' do
+      description = @repository.description
+      assert_incremented_by(@repository.events, :size, 1) do
+        put :update, :project_id => @project.to_param, :id => @repository.to_param, 
+          :repository => {:name => 'new_name'}
+        @repository.events.reload
+        @repository.reload
+        assert_redirected_to project_repository_path(@project, @repository)
+      end
+      assert_equal 'new_name', @repository.name        
+      assert_equal description, @repository.description
+    end
+    
+    
     should 'not create an event on update if the description is not changed' do
       assert_no_difference("@repository.events.size") do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,

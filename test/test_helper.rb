@@ -65,7 +65,8 @@ class ActiveSupport::TestCase
     value_before = obj.send(meth)
     yield
     value_after = obj.send(meth)
-    assert_equal(value, (value_after - value_before), "#{obj}##{meth} should be incremented by #{value} but was incremented by #{(value_after - value_before)}")
+    error_msg = (value_before == value_after) ? "unchanged" : "incremented by #{(value_after - value_before)}"
+    assert_equal(value, (value_after - value_before), "#{obj}##{meth} should be incremented by #{value} but was #{error_msg}")
   end
   
   def self.should_render_in_global_context(options = {})

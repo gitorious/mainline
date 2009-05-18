@@ -145,20 +145,17 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
-    prior_description = @repository.description
-    @repository.description = params[:repository][:description]    
-    # change group, if requested
     Repository.transaction do
       unless params[:repository][:owner_id].blank?
         @repository.change_owner_to!(current_user.groups.find(params[:repository][:owner_id]))
       end
-      # events.create(:action => action_id, :target => target, :user => user,
-      #               :body => body, :data => data, :created_at => date)
+
+      @repository.log_changes_with_user(current_user) do
+        @repository.replace_value(:name, params[:repository][:name])
+        @repository.replace_value(:description, params[:repository][:description])
+      end
 
       @repository.save!
-      if @repository.description != prior_description
-        @repository.events.create!(:action => Action::UPDATE_REPOSITORY, :user => current_user, :project => @repository.project, :body => 'Changed the repository description')
-      end
       flash[:success] = "Repository updated"
       redirect_to [@repository.project_or_owner, @repository]
     end

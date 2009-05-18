@@ -487,6 +487,34 @@ class Repository < ActiveRecord::Base
     end
   end
   
+  # Creates a block within which we generate events for each attribute changed
+  # as long as it's changed to a legal value
+  def log_changes_with_user(a_user)
+    @updated_fields = []
+    yield
+    log_updates(a_user)
+  end
+  
+  # Replaces a value within a log_changes_with_user block
+  def replace_value(field, value)
+    old_value = read_attribute(field)
+    return if value.blank? or old_value == value
+    write_attribute(field, value)
+    valid?
+    if errors.on(field)
+      write_attribute(field, old_value)   #revert to old value
+    else
+      @updated_fields << field
+    end
+  end
+
+  # Logs events that occured within a log_changes_with_user block
+  def log_updates(a_user)
+    @updated_fields.each do |field_name|
+      events.build(:action => Action::UPDATE_REPOSITORY, :user => a_user, :project => project, :body => "Changed the repository #{field_name.to_s}")
+    end
+  end
+  
   def requires_signoff_on_merge_requests?
     mainline? && project.merge_requests_need_signoff?
   end

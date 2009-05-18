@@ -28,6 +28,14 @@
     <span class="hint">(<%= markdown_hint -%>)</span>:<br />
     <%= f.text_area :description, :class => "text wide medium" -%>
   </p>
+  <p>
+    <%= f.label :name %>
+    <span class="hint">Please note that if you change the name, all URLs will be updated immediately</span> <br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :name %>
+  </p>
   <% unless @repository.owned_by_group? -%>
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
