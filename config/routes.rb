@@ -84,7 +84,7 @@ ActionController::Routing::Routes.draw do |map|
       user_req.resource :license
       user_req.resources(:repositories, repository_options, &repository_proc)
       user_req.resources :projects do |p|
-        p.resources(:repositories, repository_options, &repository_proc)
+        p.resources(:repositories, repository_options.merge(:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}), &repository_proc)
       end
     end
   end
