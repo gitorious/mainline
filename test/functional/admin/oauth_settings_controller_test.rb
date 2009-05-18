@@ -15,9 +15,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + '/../../test_helper'
 
-class OauthSettingsControllerTest < ActionController::TestCase
+class Admin::OauthSettingsControllerTest < ActionController::TestCase
   context 'On get to edit' do
 
     should 'grant site admins access' do

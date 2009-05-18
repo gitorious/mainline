@@ -406,4 +406,23 @@ module Breadcrumb
       "sent_emails"
     end
   end
+  
+  class EditOAuthSettings
+    def initialize(project)
+      @project = project
+    end
+    
+    def breadcrumb_parent
+      @project
+    end
+    
+    def title
+      "Contribution settings"
+    end
+
+    def breadcrumb_css_class
+      "merge_requests"
+    end
+  end
+  
 end

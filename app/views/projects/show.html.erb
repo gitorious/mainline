@@ -85,7 +85,7 @@
       <% end -%>
       <%- if logged_in? && current_user.site_admin? -%>
       <li>
-        <%= link_to t('views.projects.edit_oauth_settings'), edit_project_oauth_settings_path(@project) %>
+        <%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
       </li>
       <%- end -%>
     </ul>

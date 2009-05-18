@@ -107,7 +107,6 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :projects, :member => {:confirm_delete => :get, :preview => :put} do |projects|
-    projects.resource :oauth_settings
     projects.resources :pages, :member => { :history => :get,:preview => :put }
     projects.resources(:repositories, repository_options, &repository_proc)
   end
@@ -132,6 +131,8 @@ ActionController::Routing::Routes.draw do |map|
   
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
+    admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
+    
   end
   
   map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'

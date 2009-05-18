@@ -17,13 +17,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<%= breadcrumbs_from(@root) -%>
+
 <h1>Edit contribution settings</h1>
 <p>
   This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
   Leave the site field empty to deactivate the requirement of merge requests to be signed off.
 </p>
 
-<%- form_for(@project, :url => project_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
+<%- form_for(@project, :url => admin_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
   <%- @project.oauth_settings.each do |k, v| -%>
     <p>
       <label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label><br />

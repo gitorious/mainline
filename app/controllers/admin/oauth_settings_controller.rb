@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class OauthSettingsController < ApplicationController
+class Admin::OauthSettingsController < ApplicationController
   before_filter :login_required
   before_filter :require_site_admin
   before_filter :find_project
@@ -25,6 +25,7 @@ class OauthSettingsController < ApplicationController
   end
   
   def edit
+    @root = Breadcrumb::EditOAuthSettings.new(@project)
   end
 
   def update
