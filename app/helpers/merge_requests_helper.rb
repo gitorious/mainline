@@ -19,13 +19,24 @@
 #++
 
 module MergeRequestsHelper
-  def link_to_status(status)
+  def link_to_status(repository, status)
     if params[:status].blank? && status == "open"
-      link_to(status.titlecase, {:status => status}, {:class => "selected"})
+      link_to_selected_status(repository, status)
     elsif params[:status] == status
-      link_to(status.titlecase, {:status => status}, {:class => "selected"})
+      link_to_selected_status(repository, status)
     else
-      link_to(status.titlecase, {:status => status})
+      link_to_not_selected_status(repository, status)
     end
+  end
+  
+  def link_to_not_selected_status(repository, status)
+    link_to(status.titlecase, repo_owner_path(repository, 
+      :project_repository_merge_requests_path, repository.project, repository, {:status => status}))
+  end
+  
+  def link_to_selected_status(repository, status)
+    link_to(status.titlecase, repo_owner_path(repository, 
+      :project_repository_merge_requests_path, repository.project, repository, {:status => status}),
+      {:class => "selected"})
   end
 end

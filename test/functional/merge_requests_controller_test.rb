@@ -537,5 +537,43 @@ class MergeRequestsControllerTest < ActionController::TestCase
         :id => @merge_request})
     end
   end
+  
+  context "routing" do
+    should "route for repositories thats owned by users with dots in their username on #index" do
+      assert_recognizes({
+        :controller => "merge_requests", 
+        :action => "index", 
+        :user_id => "mc.hammer",
+        :project_id => "myproject",
+        :repository_id => "myrepo",
+      }, {:path => "/~mc.hammer/myproject/myrepo/merge_requests", :method => :get})
+      assert_generates("/~mc.hammer/myproject/myrepo/merge_requests", {
+        :controller => "merge_requests", 
+        :action => "index", 
+        :user_id => "mc.hammer",
+        :project_id => "myproject",
+        :repository_id => "myrepo",
+      })
+    end
+    
+    should "route for repositories thats owned by users with dots in their username on #show" do
+      assert_recognizes({
+        :controller => "merge_requests", 
+        :action => "show", 
+        :user_id => "mc.hammer",
+        :project_id => "myproject",
+        :repository_id => "myrepo",
+        :id => "42"
+      }, {:path => "/~mc.hammer/myproject/myrepo/merge_requests/42", :method => :get})
+      assert_generates("/~mc.hammer/myproject/myrepo/merge_requests/42", {
+        :controller => "merge_requests", 
+        :action => "show", 
+        :user_id => "mc.hammer",
+        :project_id => "myproject",
+        :repository_id => "myrepo",
+        :id => "42"
+      })
+    end
+  end
 
 end
