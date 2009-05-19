@@ -48,7 +48,9 @@
       :destroy_success => "Merge request was retracted",
       :assert_resolvable_error => "You're not permitted to resolve this merge request",
       :assert_ownership_error => "You're not the owner of this merge request",
-      :need_contribution_agreement => "You need to accept the contribution agreement"
+      :need_contribution_agreement => "You need to accept the contribution agreement",
+      :reopened => 'Merge request was reopened',
+      :reopening_failed => 'Merge request could not be reopened'
     },
     :projects_controller => {
       :update_error => "You're not the owner of this project",
@@ -109,6 +111,7 @@
       :event_commented => "commented",
       :event_requested_merge_of => "requested merge of",
       :event_resolved_merge_request => "resolved merge request",
+      :event_reopened_merge_request => 'reopened merge request',
       :event_updated_merge_request => "updated merge request",
       :event_deleted_merge_request => "deleted merge request",
       :event_status_push_wiki => "pushed wiki content",
@@ -443,6 +446,7 @@
         :help => "The recommended way to merge in these changes is to pull them into a local branch for review and them merge to back to master:",
         :commits_to_merged => "Commits that would be merged",
         :commits => "Commits",
+        :reopen_btn => 'Reopen merge request',
       },
       :committers => {
         :title => "Give a user commit rights to {{repo}}",

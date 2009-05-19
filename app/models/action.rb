@@ -41,6 +41,7 @@ class Action
   PUSH = 18
   ADD_PROJECT_REPOSITORY = 19
   UPDATE_REPOSITORY = 20
+  REOPEN_MERGE_REQUEST = 21
   
   def self.name(action_id)
     case action_id
@@ -76,6 +77,8 @@ class Action
         "resolve merge request"
       when UPDATE_MERGE_REQUEST
         "update merge request"
+      when REOPEN_MERGE_REQUEST
+        "reopen merge request"
       when DELETE_MERGE_REQUEST
         "delete merge request"
       when UPDATE_WIKI_PAGE

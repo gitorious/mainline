@@ -12,7 +12,8 @@ ActionController::Routing::Routes.draw do |map|
         :action => 'preview'#, :conditions => {:method => :put}
       repo.resources :merge_requests, :member => {
         :resolve => :put,
-        :terms_accepted => :get 
+        :terms_accepted => :get,
+        :reopen => :put
       }, :collection => { 
         :create => :post, 
         :commit_list => :post,

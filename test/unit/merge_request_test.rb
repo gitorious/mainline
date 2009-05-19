@@ -238,6 +238,33 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert status_changed
     end
     
+    should 'allow admin users to re-open' do
+      @user = users(:johan)
+      @merge_request.open
+      @merge_request.reject
+      assert @merge_request.rejected?
+      assert @merge_request.can_be_reopened_by?(@user)
+      assert @merge_request.reopen_with_user(@user)
+      assert @merge_request.open?
+    end
+    
+    should 'not allow non-admin users to re-open' do
+      @user = users(:moe)
+      @merge_request.open
+      @merge_request.reject
+      assert @merge_request.rejected?
+      assert !@merge_request.can_be_reopened_by?(@user)
+      assert !@merge_request.reopen_with_user(@user)
+      assert !@merge_request.open?
+    end
+    
+    should 'not allow non-closed merge request to reopen' do
+      @merge_request.open
+      assert !@merge_request.can_reopen?
+      @merge_request.reject
+      assert @merge_request.can_reopen?
+    end
+    
     should 'return false from its transition_to method if the state change is disallowed' do
       @merge_request.stubs(:can_transition_to?).returns(false)
       status_changed = @merge_request.transition_to(MergeRequest::STATUS_MERGED)

@@ -68,12 +68,26 @@ class MergeRequest < ActiveRecord::Base
     event :merge do
       transition [:open, :verifying] => :merged
     end
+    
+    event :reopen do
+      transition [:merged, :rejected] => :open
+    end
   end
   
   named_scope :open, :conditions => ['status in (?)', [STATUS_OPEN, STATUS_VERIFYING]]
   named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
   named_scope :merged, :conditions => ["status = ?", [STATUS_MERGED]]
   named_scope :rejected, :conditions => ["status = ?", [STATUS_REJECTED]]
+  
+  def reopen_with_user(a_user)
+    if can_be_reopened_by?(a_user)
+      return reopen
+    end
+  end
+  
+  def can_be_reopened_by?(a_user)
+    return can_reopen? && resolvable_by?(a_user)
+  end
   
   def self.human_name
     I18n.t("activerecord.models.merge_request")

@@ -130,6 +130,17 @@ class MergeRequestsController < ApplicationController
     redirect_to [@owner, @repository, @merge_request]      
   end
   
+  def reopen
+    if @merge_request.reopen_with_user(current_user)
+      flash[:notice] = I18n.t 'merge_requests_controller.reopened'
+      @owner.create_event(Action::REOPEN_MERGE_REQUEST, @merge_request, current_user, "Merge request was reopened", "")      
+      @merge_request.save
+    else
+      flash[:error] = I18n.t 'merge_requests_controller.reopening_failed'
+    end
+    redirect_to [@owner, @repository, @merge_request]
+  end
+  
   def edit
     @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
     get_branches_and_commits_for_selection

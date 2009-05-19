@@ -471,6 +471,42 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
   
+  def do_reopen_put
+      put :reopen, :project_id => @project.to_param, 
+        :repository_id => @repository.to_param,
+        :id => @merge_request    
+  end
+  
+  context 'PUT #reopen' do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      @merge_request.reject
+      @repository = @merge_request.target_repository
+      @project = @repository.project
+    end
+    
+    should 'not be allowed for non-owners' do
+      username = :moe
+      assert !@merge_request.resolvable_by?(users(username))
+      login_as(username)
+      do_reopen_put
+      assert_response :redirect
+      assert @merge_request.reload.rejected?
+    end
+    
+    should 'allow owners to reopen merge requests and add an event' do
+      username = :johan
+      assert @merge_request.resolvable_by?(users(username))
+      login_as(username)
+      assert_incremented_by(@project.events, :size, 1) do
+        do_reopen_put
+        assert_response :redirect
+        assert @merge_request.reload.open?
+        @project.events.reload
+      end
+    end
+  end
+  
   context "GET #target_branches" do
     should "retrive a list of the target repository branches" do
       grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)

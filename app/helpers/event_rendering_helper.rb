@@ -249,6 +249,22 @@ module EventRenderingHelper
     [action, body, category]
   end
   
+  def render_event_reopen_merge_request(event)
+    source_repository = event.target.source_repository
+    project = source_repository.project
+    target_repository = event.target.target_repository
+    
+    action = action_for_event(:event_reopened_merge_request) do
+      "in " +
+      link_to(h(project.title), project_path(project)) + "/" + 
+      link_to(h(source_repository.name), project_repository_url(project, source_repository))
+    end
+    body= link_to truncate(h(event.target.proposal), :length => 100), [project, target_repository, event.target]
+    category = "merge_request"
+    [action, body, category]
+  end
+  
+
   def render_event_delete_merge_request(event)
     project = event.target.project
     
