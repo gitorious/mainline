@@ -33,7 +33,7 @@ module MessagesHelper
     
     case message.notifiable
     when MergeRequest
-      "From <strong>#{sender}</strong> to <strong>#{recipient}</strong> a #{link_to('merge request', [message.notifiable.target_repository.project, message.notifiable.target_repository, message.notifiable])}"
+      "From <strong>#{sender}</strong> to <strong>#{recipient}</strong>, about a #{link_to('merge request', [message.notifiable.target_repository.project, message.notifiable.target_repository, message.notifiable])}"
     when Membership 
       %Q{<strong>#{sender}</strong> added <strong>#{recipient}</strong> to the team #{link_to("#{message.notifiable.group.name}", message.notifiable.group)}}
     when Committership

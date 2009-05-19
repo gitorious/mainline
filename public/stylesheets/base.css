@@ -2250,6 +2250,15 @@ div.archive-download-box p {
 {
   padding-left: 1em;
 }
+.message .meta {
+  color: #555;
+  font-size: 12px;
+}
+.message h2.subject {
+  margin: 0 0 5px 0;
+  padding: 0;
+  font-size: 14px;
+}
 .unread
 {
   background-color: #D9E8FA;

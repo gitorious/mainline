@@ -27,9 +27,11 @@
       <%= avatar_from_email message.sender.email, :size => 32 -%>
     </div>
     <div class="message">
-      <p>
-        <%= message_title(message) %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago <br />
-        <strong><%= h(message.title) %></strong><br />
+      <% unless message.subject == @message.subject -%>
+        <h2 class="subject"><%=h message.subject -%></h2>
+      <% end -%>
+      <p class="meta">
+        <%= message_title(message) %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
       </p>
       <p class="body">
         <%= simple_format h(message.body) %>
