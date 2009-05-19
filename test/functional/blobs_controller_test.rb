@@ -49,6 +49,7 @@ class BlobsControllerTest < ActionController::TestCase
         blob_mock.stubs(:basename).returns("README")
         blob_mock.stubs(:mime_type).returns("text/plain")
         blob_mock.stubs(:size).returns(666)
+        blob_mock.stubs(:id).returns("a"*40)
         commit_stub = mock("commit")
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)
