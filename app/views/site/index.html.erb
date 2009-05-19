@@ -71,10 +71,10 @@
 </div>
 
 <div id="right">
-<% cache([:site_index, :active_projects_overall], :expires_in => 1.hour) do -%>
-  <% pull_box("Active projects <small>(overall)</small>") do -%>
+<% cache([:site_index, :active_projects_two_weeks], :expires_in => 30.minutes) do -%>
+  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
     <ul class="with_icons">
-      <% @active_overall.each do |project| -%>
+      <% @active_recently.each do |project| -%>
         <li class="project">
           <%= link_to h(project.title), project -%>
           <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
@@ -84,10 +84,10 @@
   <% end -%>
 <% end -%>
 
-<% cache([:site_index, :active_projects_two_weeks], :expires_in => 30.minutes) do -%>
-  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
+<% cache([:site_index, :active_projects_overall], :expires_in => 1.hour) do -%>
+  <% pull_box("Active projects <small>(overall)</small>") do -%>
     <ul class="with_icons">
-      <% @active_recently.each do |project| -%>
+      <% @active_overall.each do |project| -%>
         <li class="project">
           <%= link_to h(project.title), project -%>
           <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
