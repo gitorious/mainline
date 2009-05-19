@@ -37,16 +37,20 @@ class Event < ActiveRecord::Base
   named_scope :top, {:conditions => ['target_type != ?', 'Event']}
   
   def self.latest(count)
-    find(:all, :order => "events.created_at desc", :limit => count,
-          :include => [:user, :project],
-          :conditions => ["events.action != ?", Action::COMMIT])
+    Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do
+      find(:all, :order => "events.created_at desc", :limit => count,
+            :include => [:user, :project],
+            :conditions => ["events.action != ?", Action::COMMIT])
+    end
   end
   
   def self.latest_in_projects(count, project_ids)
-    find(:all, :order => "events.created_at desc", :limit => count, 
-          :include => [:user, :project], 
-          :conditions => ['events.action != ? and project_id in (?)', 
-                          Action::COMMIT, project_ids])
+    Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}", :expires_in => 10.minutes) do
+      find(:all, :order => "events.created_at desc", :limit => count, 
+            :include => [:user, :project], 
+            :conditions => ['events.action != ? and project_id in (?)', 
+                            Action::COMMIT, project_ids])
+    end
   end
 
   def build_commit(options={})

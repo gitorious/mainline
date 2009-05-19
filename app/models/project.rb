@@ -123,17 +123,21 @@ class Project < ActiveRecord::Base
   # Returns the projects limited by +limit+ who has the most activity within
   # the +cutoff+ period
   def self.most_active_recently(limit = 10, cutoff = 14.days.ago)
-    find(:all, :joins => :events, :limit => limit,
-      :select => 'distinct projects.*, count(events.id) as event_count', 
-      :order => "event_count desc", :group => "projects.id",
-      :conditions => ["events.created_at > ?", cutoff])
+    Rails.cache.fetch("projects:most_active_recently:#{limit}:#{cutoff.to_i}", :expires_in => 30.minutes) do
+      find(:all, :joins => :events, :limit => limit,
+        :select => 'distinct projects.*, count(events.id) as event_count', 
+        :order => "event_count desc", :group => "projects.id",
+        :conditions => ["events.created_at > ?", cutoff])
+    end
   end
   
   # Finds the most active projects on an overall basis
   def self.most_active_overall(limit = 10)
-    find(:all, :joins => :events, :limit => limit,
-      :select => 'distinct projects.*, count(events.id) as event_count', 
-      :order => "event_count desc", :group => "projects.id")
+    Rails.cache.fetch("projects:most_active_overall:#{limit}", :expires_in => 30.minutes) do
+      find(:all, :joins => :events, :limit => limit,
+        :select => 'distinct projects.*, count(events.id) as event_count', 
+        :order => "event_count desc", :group => "projects.id")
+    end
   end
 
   def to_param

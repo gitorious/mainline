@@ -153,9 +153,11 @@ class User < ActiveRecord::Base
   end
   
   def self.most_active(limit = 10)
-    find(:all, :select => "users.*, count(events.id) as event_count",
-      :joins => :events, :group => "users.id", :order => "event_count desc",
-      :limit => limit)
+    Rails.cache.fetch("users:most_active:#{limit}", :expires_in => 1.hour) do
+      find(:all, :select => "users.*, count(events.id) as event_count",
+        :joins => :events, :group => "users.id", :order => "event_count desc",
+        :limit => limit)
+    end
   end
   
   def validate
