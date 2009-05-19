@@ -33,6 +33,7 @@
   </p>
 <% else -%>
   <%= render :partial => @open_merge_requests -%>
+  <%= will_paginate @open_merge_requests %>
 <% end -%>
 
 <% content_for :sidebar do -%>
