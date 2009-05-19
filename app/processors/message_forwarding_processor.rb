@@ -21,6 +21,7 @@ class MessageForwardingProcessor < ApplicationProcessor
 
   def on_message(message)
     message_hash = ActiveSupport::JSON.decode(message)
+    logger.debug("#{self.class.name} on message #{hash.inspect}")
     recipient_id = message_hash['recipient_id']
     sender_id = message_hash['sender_id']
     subject = message_hash['subject']
@@ -34,6 +35,7 @@ class MessageForwardingProcessor < ApplicationProcessor
       notifiable = if !notifiable_type.blank?
         notifiable_type.constantize.find(notifiable_id)
       end
+      logger.info("#{self.class.name} sending Message:#{message_id.inspect} to #{recipient.login} from #{sender.login}")
       Mailer.deliver_notification_copy(recipient, sender, subject, body, notifiable, message_id)
     rescue ActiveRecord::RecordNotFound
       logger.error("Could not deliver message to #{recipient_id}")
