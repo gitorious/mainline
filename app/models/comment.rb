@@ -24,6 +24,7 @@ class Comment < ActiveRecord::Base
   belongs_to :target, :polymorphic => true
   belongs_to :project
   has_many   :events, :as => :target, :dependent => :destroy
+  after_create :notify_target_if_supported
   
   is_indexed :fields => ["body"], :include => [{
       :association_name => "user",
@@ -38,5 +39,26 @@ class Comment < ActiveRecord::Base
   named_scope :with_shas, proc{|*shas| 
     {:conditions => { :sha1 => shas.flatten }, :include => :user}
   }
+  
+  NOTIFICATION_TARGETS = [ MergeRequest ]
+  
+  def deliver_notification_to(another_user)
+    message = Message.new({
+      :sender => self.user,
+      :recipient => another_user,
+      :subject => "#{user.title} commented on your #{target.class.human_name.downcase}",
+      :body => "#{user.title} commented:\n\n#{body}",
+      :notifiable => self.target,
+    })
+    message.save
+  end
+  
+  protected
+    def notify_target_if_supported
+      if target && NOTIFICATION_TARGETS.include?(target.class)
+        return if target.user == user
+        deliver_notification_to(target.user)
+      end
+    end
   
 end
