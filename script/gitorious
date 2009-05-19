@@ -33,12 +33,14 @@ logger.info("Connection from #{ENV['SSH_CLIENT'].inspect} (#{user || nil}): #{or
 
 $stderr.puts "original_command: #{original_command.inspect}" if $DEBUG
 if original_command.nil? || original_command.strip.empty?
+  logger.info("Need SSH_ORIGINAL_COMMAND")
   $stderr.puts "Need SSH_ORIGINAL_COMMAND"
   exit!(1)
 end
 
 $stderr.puts "user: #{user.inspect}" if $DEBUG
 if user.nil? || user.strip.empty?
+  logger.info("Need user arg")
   $stderr.puts "Need user arg"
   exit!(1)
 end
@@ -53,17 +55,21 @@ begin
     args = client.to_git_shell_argument
     $stderr.puts "git-shell -c #{args.inspect}" if $DEBUG
     ENV['GITORIOUS_USER'] = user
+    logger.info("Accepted #{user.inspect} for #{args.inspect}")
     exec("git-shell", "-c", args)
   end
   
   unless $?.success?
+    logger.fatal("Failed to execute git command")
     $stderr.puts "Failed to execute git command"
     exit!(1)
   end
 rescue Gitorious::SSH::AccessDeniedError => e
+  logger.info("Access denied or bad repository path for #{user.inspect}: #{original_command.inspect}")
   $stderr.puts "Access denied or bad repository path"
   exit!(1)
 rescue Gitorious::SSH::BadCommandError => e
+  logger.info("Access denied or bad command for #{user.inspect}: #{original_command.inspect}")
   $stderr.puts "Access denied or bad command"
   exit!(1)
 rescue Object => e
@@ -71,6 +77,7 @@ rescue Object => e
     $stderr.puts "#{e.class.name} #{e.message}"
     $stderr.puts e.backtrace.join("  \n")
   end
+  logger.fatal("#{e.class.name} #{e.message}: #{e.backtrace.join("\n  ")}")
   $stderr.puts "fatal error"
   exit(1)
 end
