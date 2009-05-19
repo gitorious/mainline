@@ -22,7 +22,7 @@
 
 <h1><%= t("views.blobs.heading", :ref => h(desplat_path(@ref)), :path => h(desplat_path(@path))) -%></h1>
 
-<% cache([@project, @repository, :blob_history, @ref, @path], {:expires_in => 20.minutes}) do -%>
+<% cache([@project, @repository, :blob_history, @ref, @blob.id], {:expires_in => 20.minutes}) do -%>
   <%= render :partial => "commits/log", :locals => { :no_pagination => true } -%>
 <% end -%>
 

@@ -52,7 +52,7 @@
 <!-- mime: <%= @blob.mime_type -%> -->
 
 <% if textual?(@blob) && !too_big_to_render?(@blob.size) -%>
-  <% cache(blob_path(@commit.id, @path)) do -%>
+  <% cache([:blob_render, @commit.id, @blob.id]) do -%>
     <%= render_highlighted(@blob.data, current_path.last || "") -%>
   <% end -%>
 <% elsif textual?(@blob) && too_big_to_render?(@blob.size) -%>
