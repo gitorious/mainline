@@ -83,6 +83,22 @@ class RepositoriesControllerTest < ActionController::TestCase
         :project_id => @project.to_param
       })
     end
+    
+    should "recognize routing like /projectname/starts-with-reserved-name" do
+      assert_recognizes({
+        :controller => "repositories",
+        :action => "show",
+        :project_id => "myproject",
+        :id => "users-test-repo",
+      }, "/myproject/users-test-repo")
+
+      assert_generates("/myproject/users-test-repo", {
+        :controller => "repositories",
+        :action => "show",
+        :project_id => "myproject",
+        :id => "users-test-repo",
+      })
+    end
 
     should "recognizes routing like /projectname/reponame, with a non-html format" do
       assert_recognizes({
