@@ -117,8 +117,10 @@ git push origin master
         <small>
           <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago 
           <% if (comment_count = @commit_comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
-            (<%= link_to_function pluralize(comment_count, "comment", "comments"), 
-                  "toggleComments(#{i})" -%>)
+            (<%= link_to pluralize(comment_count, "comment", "comments"),
+                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
+                    @repository.project, @merge_request.source_repository, commit.id) + '#comments',
+                  :onclick => "toggleComments(#{i}); return false" -%>)
           <% end -%>
         </small>
       </td>
