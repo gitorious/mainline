@@ -1,30 +1,30 @@
 Gitorious.org
-=========================
+=============
 
 Contributing
--------------
+============
+
 Please see HACKING
 
 
 License
--------------
+=======
+
 Please see the LICENSE file
 
 
 Further documentation
----------------------
+=====================
 Also see the files in the doc/ folder, they contain further detailed information
 about setting up the application for specific linux distributions such as 
 CenOS and Ubuntu/Debian
 
 
-===========================================================================
-
 Installation to a production environment -- a partial walkthrough.
+==================================================================
 
-===========================================================================
-
-=== Make ready
+Make ready
+==========
 
 You may want to make separate directories, away from everything, to hold the
 site code and the git repository respectively.  In production, you'll be setting
@@ -41,17 +41,31 @@ All of these can be adjusted to suit: specifically, dirs within your home
 directory are fine, and (though MySQL has the best development coverage), the
 website code should be free of mysql-isms/quirks.
 
-=== Dependencies
+Prerequisites
+=============
+
+First of all, **we assume you have a working Ruby on Rails installation on your machine**. The Rails project has several resources about getting up and running with Rails, have a look at [getting started on rubyonrails.org](http://rubyonrails.org/download). Please ensure you're able to create a Rails project that uses your database of choice; this guide assumes your machine is ready to run Rails.
+
+Gitorious itself runs on either Ruby 1.8 or 1.9. Gitorious.org itself uses Ruby 1.9 and we recommend you do the same.
+
+
+Dependencies
+============
 
 First, install each of these Libraries/applications:
 
 * Git                   (http://git-scm.org)
-* Oniguruma C library   (http://www.geocities.jp/kosako3/oniguruma/)
+* Oniguruma C library   (http://www.geocities.jp/kosako3/oniguruma/, not required if you're running Ruby 1.9)
 * Sphinx                (http://sphinxsearch.com/)
 * MySQL                 (or whatever)
 * ImageMagick           (need version >= 6.3.0)
-* libyadis-ruby
 * aspell (optional)
+
+Next, you need to install a couple of gems:
+
+* rmagick. RMagick is used for generating the graphs in Gitorious. In order to install Rmagick (which is done with `gem install rmagick`), you need to have either ImageMagick or GraphicsMagick installed, along with the header files. Have a look at [the RMagick web site](http://rmagick.rubyforge.org/) for instructions on getting RMagick installed.
+* chronic: gem install chronic
+
 
 Next, get the gitorious code itself:
 
@@ -59,125 +73,79 @@ Next, get the gitorious code itself:
   # cd    /www/gitorious
   # git clone git://gitorious.org/gitorious/mainline.git gitorious
 
-Install each of these Ruby libraries/bindings/gems:
+Now you need edit a couple of configuration files.
 
-* mysql
-* RedCloth      (http://redcloth.org/)
-* mime-types    (http://rubyforge.org/projects/mime-types)
-* oniguruma     (http://rubyforge.org/projects/oniguruma)
-* textpow       (http://rubyforge.org/projects/textpow)
-* chronic       (http://rubyforge.org/projects/chronic)
-* rmagick       (http://rubyforge.org/projects/rmagick)
-* geoip
-* ultrasphinx
-* rmagick       (in ubuntu I had to sudo apt-get install librmagick-ruby librmagick-ruby-doc)
-* ruby-openid   
-* ruby-iconv
-* stomp
+config/database.yml
+------------------
 
-  # gem install mysql RedCloth mime-types oniguruma textpow \
-      chronic rmagick geoip ultrasphinx ruby-openid stomp
+This file contains settings for the databases used for Gitorious. The Gitorious distribution provides a sample config file - database.sample.yml - that you could copy to config/database.yml.
 
-=== Database
+Gitorious should be database agnostic, so feel free to use your database of choice. Gitorious.org uses MySQL, but there shouldn't be any MySQL specific code in Gitorious, so use whatever you're most comfortable with.
 
-First we need a database.  Use the mysql command line app, or phpMyAdmin, or
-whatever to create first a user.  Referring to
-http://www-css.fnal.gov/dsg/external/freeware/mysqlAdmin.html:
+config/gitorious.yml
+--------------------
 
-  # mysql -p  -u root -h localhost
-  CREATE USER 'git'@'localhost' IDENTIFIED BY 'awesome_password';
-  GRANT ALL PRIVILEGES ON `git\_%` . * TO 'git'@'localhost';
-  FLUSH PRIVILEGES;
-  CREATE DATABASE `git_dev`  DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
-  CREATE DATABASE `git_test` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
-  CREATE DATABASE `git_prod` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
-
-If you haven't set a password for the root user, now's a good time for that, too.
-
----
-
-Edit database.yml to reflect your local database connection.  This is a standard
-Ruby on Rails config file, not specific to gitorious -- if you have questions
-here they're answered on the web, or consult the rails IRC channel.  (One hint:
-NO TABS AT ALL in a .yml file.)  Our example:
-
-development: 
-  adapter:      mysql
-  username:     git
-  password:     awesome_password
-  host:         localhost
-  database:     git_dev
-
-# The 'test' database will be erased and re-generated from your development
-# database when you run 'rake'.  Must be different than the others!!
-test:
-  adapter:      mysql
-  username:     git
-  password:     awesome_password
-  host:         localhost
-  database:     git_test
-
-production:
-  adapter:      mysql
-  username:     git
-  password:     awesome_password
-  host:         localhost
-  database:     git_prod
-
----
-
-Use rake to create the databases, migrate each, and run the tests:
-
-rake db:create:all
-for RAILS_ENV in development test production ; do
-  rake db:migrate
-done
-rake test
-
-FTW!
-
-=== Gitorious config
-  
-* Copy the config/gitorious.sample.yml file to config/gitorious.yml
+This file holds Gitorious specific configuration for each Rails environment. There's a sample file in config/gitorious.sample.yml that describes what each instruction means. Do make sure you have a section for each Rails environment, especially if you're upgrading an existing Gitorious installation.
 
 * Create a directory to hold project files
  
   # sudo mkdir  /gitorious/repositories
   
+* Add the path to this directory under repository_base_path in gitorious.yml
 * Make a long, complicated string. You can run "apg -m 64", or if you lack 'apg'
     `dd if=/dev/random count=1 | md5sum` ,
   and put that on the 'cookie_secret' line (replacing the 'ssssht').
 
-* Here's an example gitorious.yml (omitting comments) for local testing:
 
-  cookie_secret: 26ee61bc4d6aa9870ab48d118a55e6ebcd11011dd6b61aa33536c024853c48d4e7c3d672aa57859
-  repository_base_path:         "/gitorious/repositories"
-  extra_html_head_data:
-  system_message:
-  gitorious_client_port:        3000
-  gitorious_client_host:        localhost
-  gitorious_host:               localhost       # gitorious.org
-  gitorious_user:               gitslave
+config/broker.yml
+-----------------
+
+This file contains information about the Message Queing system used in your Gitorious installation. There's a section about this further down in this document, but as a starting point you can use the supplied sample file in config/broker.yml.example (cp config/broker.yml.example config/broker.yml)
+
+Install the gems required by Gitorious
+======================================
+
+Rails now has a rake task for installing gems required by the application. 
+
+  [sudo] rake gems:install
   
+on your command line (within the Gitorious root) should take care of installing all gems required by Gitorious for you. 
 
-=== Get Sphinx going
-for RAILS_ENV in development test production ; do
-  RAILS_ENV=$RAILS_ENV rake ultrasphinx:configure
-  RAILS_ENV=$RAILS_ENV rake ultrasphinx:index
-done
-RAILS_ENV=production rake ultrasphinx:daemon:start &
+Create your database
+====================
 
-=== Tweak environment
+It is now time for creating the Gitorious database. 
 
-* In environment.rb, uncomment config.action_controller.session -- choose a new
-  session key string and generate your own secret key using something like
-    (uptime; date) |sha1sum
+  rake db:create:all
+  
+will create an empty database for you.
 
-* If you haven't set up your mailer, production mode will fail on login. Set
-    config.action_mailer.delivery_method = :test
-  for immediate gratification.
+Migrate your database
+=====================
 
-=== Asynchronous messaging
+Now that you have a database, it's time to add the database schema
+
+  rake db:migrate
+  
+will take care of this for you
+
+Run the tests
+=============
+
+Running all the tests will ensure your Gitorious installation is correctly set up. It takes less than a minute to run all the tests, and gives confidence that the code is working as intended.
+
+There is at the time being one gem that's required to run the tests, so start out with
+
+  [sudo] rake gems:install RAILS_ENV=test
+  
+to make sure the test specific gems are installed. Then run the entire test suite:
+
+  rake test
+  
+Once all the tests pass, you're almost ready.
+
+Messaging server
+================
 
 Gitorious uses the ActiveMessaging plugin, which supports a range of different messaging platforms, for sending demanding tasks for asynchronous processing. In order to these events to be processed, you need to run a messaging server when running Gitorious.
 
@@ -195,43 +163,69 @@ and the script will be started and daemonized.
 
 You're free to use other messaging protocols than the default Stomp protocol, which is required in config/environment.rb. The ActiveMessaging website (http://code.google.com/p/activemessaging/wiki/ActiveMessaging) has more information about how to set this up.
 
-  
-=== Run the server
 
-From the gitorious directory,
+Get Sphinx going
+================
 
-# ./script/server
+  for RAILS_ENV in development test production ; do
+    RAILS_ENV=$RAILS_ENV rake ultrasphinx:configure
+    RAILS_ENV=$RAILS_ENV rake ultrasphinx:index
+  done
+  RAILS_ENV=production rake ultrasphinx:daemon:start &
 
-# RAILS_ENV=production ./script/server
+Tweak environment
+=================
 
-It should start up on port 3000, listening only to local connections.  Ue "ssh
--L 3000:127.0.0.1:3000 -N you@yourbox.com" for testing.
+* If you haven't set up your mailer, production mode will fail on login. Set
+    config.action_mailer.delivery_method = :test
+  for immediate gratification.
 
-You can now visit the site, sign up with your OpenID, put in your ssh key, and
-poke around!  Once you get bored, make a test repository, wonder why nothing is
-there yet, and then....
 
-=== Hand-start the task_performer 
 
-Key adoption, repo generation and other tasks are handled by the
-'task_performer' script, which must be run periodically or on demand.
-Run the script/task_performer and let it create the repository for you.
+Start the server
+================
 
-  # ./script/task_performer
+Now that you have all the components running, it's time to try Gitorious on your local machine:
 
-   
-4. Get your git on!
+  ruby script/server    (for Mongrel/Webrick)
+  thin start            (for Thin)
 
-Push something to that repository (cd to a git repository with commits and do
-"git push path/to/the/bare/repository/you/just/created master").  The actual
-(bare) repos live in repository_base_path/#{project.slug}/#{repository.name}.git
-Ex: the fubar project's mainline fork sits in a directory called
-  
-    /gitorious/repositories/fubar/mainline/fubar.git
+Remember the values you put for gitorious_host and gitorious_port in config/gitorious.yml? Go to http://<gitorious_host>:<gitorious_port> to see the main page of your local Gitorious. You are now officially up and running, congratulations!
 
-This will be a 'bare' git repo -- you won't see files in it.
+Production setup
+================
 
-=== Button up
+In a production environment, you'll want to automate as much as possible. We use Capistrano for deploying to gitorious.org, and use custom Capistrano recipes for starting and stopping the various tasks in Gitorious.
+
+The doc/recipies directory contains instructions for setting up init scripts for these tasks for various platforms. Please consult these, and feel free to contribute your own!
+
+Sphinx
+------
+
+The sphinx deamon needs to be running in order for full text search to work.
+
+Git-deamon
+----------
+
+For cloning over the Git protocol, Gitorious includes a custom git daemon found in script/git-daemon. 
+
+script/poller
+-------------
+
+The script/poller script needs to be kept running. 
+
+Web/application server
+----------------------
+
+While Mongrel/thin is great for trying out Gitorious on a local install, in a production environment you'll probably want something a little more robust. Most Rails folks use Passenger with Apache or Nginx these days, Gitorious will play happily in such an environment. 
+
+Support for pushing via SSH
+===========================
+
+In order for people to be able to push to your repositories, you need an SSH daemon running. You'll also need a system user account that's used for git connections through SSH. Consult the recipies in doc/recipies for instructions on how to set this up. Until you've done this, the web frontend will work, but users won't be able to push their changes.
+
+Button up
+=========
 
 * In production, you'll want to have a limited-privileges user to run the git
   processes, just as you do for your webserver
@@ -243,12 +237,14 @@ This will be a 'bare' git repo -- you won't see files in it.
   backend if you see traffic.
 
 
-=== More Help
+More Help
+=========
 
 * Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in
   by #gitorious on irc.freenode.net if you have questions.
 
-=== Gotchas
+Gotchas
+=======
 
 Gitorious will add a 'forced command' to your ~/.ssh/authorized_keys file for
 the target host: if you start finding ssh oddities suspect this first.  Don't
