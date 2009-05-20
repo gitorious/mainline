@@ -57,7 +57,7 @@ Next, get the gitorious code itself:
 
   # mkdir /www/gitorious
   # cd    /www/gitorious
-  # git clone git://gitorious.org/gitorious/repositories/mainline.git gitorious
+  # git clone git://gitorious.org/gitorious/mainline.git gitorious
 
 Install each of these Ruby libraries/bindings/gems:
 
