@@ -33,7 +33,7 @@
     <h4 class="<%= @merge_request.status_string -%>">
         <span><%= @merge_request.status_string.titlecase -%></span>:
     </h4>
-    <%= simple_format(h(@merge_request.reason)) -%>
+    <%= simple_format(auto_link(h(@merge_request.reason), :urls)) -%>
   </div>
 <% end -%>
 

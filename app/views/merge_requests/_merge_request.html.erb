@@ -31,7 +31,7 @@
 	      repo_owner_path(merge_request.target_repository, [merge_request.source_repository.project, merge_request.target_repository]) -%>
 	<%= t("views.merges.summary_title", :source => source, :target => target) -%>
   </h5>
-  <div class="proposal"><%= simple_format(h(merge_request.proposal)) -%></div>
+  <div class="proposal"><%= simple_format(auto_link(h(merge_request.proposal), :urls)) -%></div>
   
   <p class="byline">
     <%= link_to(h(merge_request.user.title), merge_request.user) -%> | 
