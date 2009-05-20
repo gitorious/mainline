@@ -1,0 +1,148 @@
+<%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<% @page_title = t("views.site.page_title") -%>
+
+<div id="site_intro">
+  <p><%= t("views.site.description") %></p>
+</div>
+
+<div id="site_overview">
+  <% unless logged_in? -%>
+  <% if false -%>
+  <table>
+    <tr>
+      <th class="left"><h2><%= t("views.site.for_projects") %></h2></th>
+      <th class="right"><h2><%= t("views.site.for_contributors") %></h2></th>
+    </tr>
+    <tr>
+      <td class="left"><%= image_tag("overview_projects.png") -%></td>
+      <td class="right"><%= image_tag("overview_contributors.png") -%></td>
+    </tr>
+  </table>
+  <% end -%>
+	  <% if GitoriousConfig['public_mode'] || logged_in? -%>
+	  <p class="hint create_account_hint">
+		<%= t("views.site.creating_account").call(self, new_user_path) %>
+	  </p>
+	  <% end -%>
+  <% end -%>
+</div>
+
+<% if GitoriousConfig['public_mode'] -%>
+<div id="left">
+  <% pull_box(nil, :class => "expose") do -%>
+    <p>
+      Gitorious provides <a href="/gitorious">open source</a> infrastructure 
+      for open source projects which use Git.
+      <small><a href="/about">Read more&hellip;</a></small>
+    </p>
+  <% end -%>
+  
+<% cache([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
+  <% pull_box("Recent activities") do -%>
+    <ul class="events inline">
+    <% @latest_events.each do |event| -%>
+      <%= render :partial => event, :locals => { :relative_time => true } -%>
+    <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
+</div>
+
+<div id="right">
+<% cache([:site_index, :active_projects_two_weeks], :expires_in => 30.minutes) do -%>
+  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
+    <ul class="with_icons">
+      <% @active_recently.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
+
+<% cache([:site_index, :active_projects_overall], :expires_in => 1.hour) do -%>
+  <% pull_box("Active projects <small>(overall)</small>") do -%>
+    <ul class="with_icons">
+      <% @active_overall.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
+  
+<% cache([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
+  <% pull_box("Most active repository clones") do -%>
+    <ul class="with_icons">
+      <% @top_repository_clones.each do |repo| -%>
+        <li class="repository">
+          <%= link_to h(repo.title), repo_owner_path(repo, :project_repository_path, repo.project, repo) -%>
+          <span class="hint">(<%= link_to h(repo.project.title), repo.project -%>)</span>
+          <small class="hint"><%= truncate(h(strip_tags(repo.description)), :length => 65) -%></small>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
+  
+<% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
+  <% pull_box("Active teams") do -%>
+    <ul class="with_icons">
+      <% @active_groups.each do |group| -%>
+        <li class="group"><%= link_to h(group.title), group -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
+ 
+<% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
+  <% pull_box("Active users") do -%>
+    <ul class="with_icons">
+      <% @active_users.each do |user| -%>
+        <li class="user"><%= link_to h(user.title), user -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
+
+<% cache([:site_index, :newest_projects], :expires_in => 5.minutes) do -%>
+  <% pull_box(t("views.site.newest_projects")) do -%>
+    <ul class="with_icons">
+      <% @projects.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
+        </li>
+      <% end -%>
+    <li><%= link_to t("views.site.view_more"), projects_path -%></li>
+  </ul>
+  <% end -%>
+<% end -%>
+</div>
+<% end -%>

@@ -39,6 +39,9 @@ class SiteControllerTest < ActionController::TestCase
   
   context "#index, with a non-default site" do
     setup do
+      paths = ActionController::Base.view_paths
+      paths << File.join(Rails.root, "test", "fixtures", "views")
+      ActionController::Base.view_paths = paths
       @site = sites(:qt)
     end
     

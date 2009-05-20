@@ -23,7 +23,7 @@ test:
   gitorious_client_host: localhost
 
   # Host which is serving the gitorious app, eg "gitorious.org"
-  gitorious_host: gitorious.org
+  gitorious_host: gitorious.test
 
   # User which is running git daemon
   gitorious_user: git
