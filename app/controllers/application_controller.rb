@@ -170,11 +170,11 @@ class ApplicationController < ActionController::Base
     end
     
     def render_git_timeout
-      render :partial => "/projects/git_timeout", :layout => "application" and return
+      render :partial => "/shared/git_timeout", :layout => "application" and return
     end
     
     def render_throttled_record
-      render :partial => "/projects/throttled_record",
+      render :partial => "/shared/throttled_record",
         :layout => "application", :status => 412 # precondition failed
       return false
     end

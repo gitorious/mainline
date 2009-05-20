@@ -52,6 +52,3 @@ test:
   
   # Should we hide HTTP clone urls?
   hide_http_clone_urls: false
-  
-  # Should we include a link to the Terms of Use?
-  terms_of_use: false
