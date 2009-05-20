@@ -55,7 +55,6 @@ Dependencies
 First, install each of these Libraries/applications:
 
 * Git                   (http://git-scm.org)
-* Oniguruma C library   (http://www.geocities.jp/kosako3/oniguruma/, not required if you're running Ruby 1.9)
 * Sphinx                (http://sphinxsearch.com/)
 * MySQL                 (or whatever)
 * ImageMagick           (need version >= 6.3.0)
@@ -63,13 +62,13 @@ First, install each of these Libraries/applications:
 
 Next, you need to install a couple of gems:
 
-* rmagick. RMagick is used for generating the graphs in Gitorious. In order to install Rmagick (which is done with `gem install rmagick`), you need to have either ImageMagick or GraphicsMagick installed, along with the header files. Have a look at [the RMagick web site](http://rmagick.rubyforge.org/) for instructions on getting RMagick installed.
+* rmagick. RMagick is used for generating the non-gravatar avatars in Gitorious. In order to install Rmagick (which is done with `gem install rmagick`), you need to have either ImageMagick or GraphicsMagick installed, along with the header files. Have a look at [the RMagick web site](http://rmagick.rubyforge.org/) for instructions on getting RMagick installed.
 * chronic: gem install chronic
 
 
 Next, get the gitorious code itself:
 
-  # mkdir /www/gitorious
+  # mkdir /www/gitorious ;# or another location of your choice
   # cd    /www/gitorious
   # git clone git://gitorious.org/gitorious/mainline.git gitorious
 
