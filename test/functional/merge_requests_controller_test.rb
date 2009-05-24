@@ -246,6 +246,27 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		end
 	end
 	
+	context "Merge request landing page" do
+	  should "GET the mergerequest landing page" do
+		  login_as :johan
+		  session[:return_to] = "/foo/bar"
+		  get :oauth_return
+		  assert_response :redirect
+		  assert_redirected_to "/foo/bar"
+	  end
+	  
+	  should "route the merge_request_landing_page" do
+      assert_recognizes({
+        :controller => "merge_requests",
+        :action => "oauth_return",
+      }, "/merge_request_landing_page")
+    end
+    
+    should "have a named route" do
+      assert_equal "/merge_request_landing_page", merge_request_landing_page_path
+    end
+  end
+	
 	context 'Terms accepted (GET)' do
 	  setup do
 		  @merge_request = @source_repository.proposed_merge_requests.new(:proposal => 'Would like this to be merged', :user => users(:johan), :ending_commit => '6823e6622e1da9751c87380ff01a1db1', :target_repository => @target_repository)
