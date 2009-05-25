@@ -36,5 +36,6 @@ class UsersHelperTest < ActionView::TestCase
   
   should "not mangle emails that doesn't look like emails" do
     assert_equal "johan", mangled_mail("johan")
+    assert_equal "johan", mangled_mail("johan@")
   end
 end
