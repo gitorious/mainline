@@ -28,14 +28,14 @@ class MembershipTest < ActiveSupport::TestCase
   
   context 'Adding members to a group' do
     setup do
-      @group = groups(:team_thunderbird)
-      @user = users(:moe)
-      @inviter = users(:johan)
+      @group = Factory.create(:group)
+      @user = @group.creator
+      @inviter = Factory.create(:user)
     end
     
     should 'send a message to a newly added member after he is added to the group' do
       @user.received_messages.destroy_all
-      membership = Membership.build_invitation(@inviter, :user => @user, :group => @group, :role => roles(:member))
+      membership = Membership.build_invitation(@inviter, :user => @user, :group => @group, :role => Role.member)
       assert membership.save
       assert_not_nil message = @user.received_messages.find(:first, :conditions => {:notifiable_id => membership.id, :notifiable_type => membership.class.name})
       assert_equal(@inviter, message.sender)
@@ -50,12 +50,13 @@ class MembershipTest < ActiveSupport::TestCase
   end
   
   context 'The group creator' do
-    setup {
-      @group = groups(:a_team)
-      @creator = users(:johan)
-      @membership = @group.memberships.find_by_user_id(@creator.id)
+    setup do
+      @group = Factory.create(:group)
+      @creator = @group.creator
+      @membership = Factory.create(:membership, :user => @creator, :group => @group)
       assert_equal @creator, @group.creator      
-    }
+    end
+    
     should 'not be demotable' do
       @membership.role = Role.member
       assert !@membership.save
@@ -69,8 +70,10 @@ class MembershipTest < ActiveSupport::TestCase
   
   context 'A membership' do
     setup {
-      @membership = memberships(:team_thunderbird_mike)
+      @group = Factory.create(:group)
+      @membership = Factory.create(:membership, :user => @group.creator, :group => @group)
     }
+    
     should 'be unique for each user' do
       duplicate_membership = Membership.new(:group => @membership.group, :user => @membership.user, :role => @membership.role)
       assert !duplicate_membership.save

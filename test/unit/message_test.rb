@@ -25,6 +25,11 @@ class MessageTest < ActiveSupport::TestCase
   should_have_many :replies
   
   context 'The state machine' do
+    setup do
+      @recipient = Factory.create(:user)
+      @sender = Factory.create(:user)
+    end
+    
     context 'class level' do
       should 'have all the required states' do
         registered_state_names = Message.state_machines[:aasm_state].states.collect(&:name)
@@ -42,7 +47,7 @@ class MessageTest < ActiveSupport::TestCase
     
     context 'instance level' do
       setup do 
-        @message = messages(:johans_message_to_moe)
+        @message = Factory.create(:message, :sender => @sender, :recipient => @recipient)
         @recipient = @message.recipient
         assert_not_nil(@recipient)
       end
@@ -57,9 +62,7 @@ class MessageTest < ActiveSupport::TestCase
   
   context 'Replying to a message' do
     setup do
-      @sender     = users(:johan)
-      @recipient  = users(:moe)
-      @message    = messages(:johans_message_to_moe)
+      @message    = Factory.create(:message)
       @reply = @message.build_reply(:body => "Thanks. That's much appreciated")
     end
 
@@ -89,9 +92,7 @@ class MessageTest < ActiveSupport::TestCase
   
   context 'Calculating the number of messages in a thread' do
     setup do
-      @sender     = users(:johan)
-      @recipient  = users(:moe)
-      @message    = messages(:johans_message_to_moe)
+      @message = Factory.create(:message)
     end
     
     should 'calculate the number of unread messages' do
@@ -131,41 +132,43 @@ class MessageTest < ActiveSupport::TestCase
   
   context 'Email notifications' do
     setup do 
-      @moe = users(:moe)
-      @mike = users(:mike)
+      @privacy_lover = Factory.create(:user, :wants_email_notifications => false)
+      @email_lover = Factory.create(:user, :wants_email_notifications => true)
+      # @moe = users(:moe)
+      # @mike = users(:mike)
       @message = Message.new(:subject => "Hello", :body => "World")
     end
     
     should 'fire a notification event on message creation' do
-      assert @mike.wants_email_notifications?
-      @message.sender = @moe
-      @message.recipient = @mike
+      assert @email_lover.wants_email_notifications?
+      @message.sender = @privacy_lover
+      @message.recipient = @email_lover
       @message.expects(:schedule_email_delivery).once
       @message.save
     end
     
     should 'not fire a notification event for opt-out users' do
-      assert !@moe.wants_email_notifications?
-      @message.sender = @mike
-      @message.recipient = @moe
+      assert !@privacy_lover.wants_email_notifications?
+      @message.sender = @email_lover
+      @message.recipient = @privacy_lover
       @message.expects(:schedule_email_delivery).never
       @message.save
     end
     
     should 'actually send the message to the queue' do
       p = proc{
-        @message.sender = @moe
-        @message.recipient = @mike
+        @message.sender = @privacy_lover
+        @message.recipient = @email_lover
         @message.save
       }
       message = find_message_with_queue_and_regexp('/queue/GitoriousEmailNotifications', /email_delivery/) {p.call}
-      assert_equal(@moe.id, message['sender_id'])
-      assert_equal(@mike.id, message['recipient_id'])
+      assert_equal(@privacy_lover.id, message['sender_id'])
+      assert_equal(@email_lover.id, message['recipient_id'])
       assert_equal(@message.subject, message['subject'])
     end
     
     should 'not send a notification when the sender and recipient is the same person' do
-      @message.sender = @message.recipient = @mike
+      @message.sender = @message.recipient = @email_lover
       assert @message.recipient.wants_email_notifications?
       @message.expects(:schedule_email_delivery).never
       @message.save
@@ -173,7 +176,7 @@ class MessageTest < ActiveSupport::TestCase
   end
   
   context 'Rendering XML' do
-    setup {@message = Message.first}
+    setup {@message = Factory.create(:message)}
     should 'include required attributes' do
       result = @message.to_xml
       assert_match /<recipient_name>#{@message.recipient.title}<\/recipient_name>/, result
@@ -187,14 +190,16 @@ class MessageTest < ActiveSupport::TestCase
   context "Thottling" do
     setup do
       Message.destroy_all
+      @recipient = Factory.create(:user)
+      @sender = Factory.create(:user)
     end
     
     should "not throttle system notifications" do
       assert_nothing_raised do
         15.times{|i|
           @message = Message.new({:subject => "Hello#{i}", :body => "World"})
-          @message.sender = users(:moe)
-          @message.recipient = users(:mike)
+          @message.sender = @sender
+          @message.recipient = @recipient
           @message.notifiable = MergeRequest.first
           @message.save!
         }
@@ -205,8 +210,8 @@ class MessageTest < ActiveSupport::TestCase
       assert_nothing_raised do
         10.times{|i|
           @message = Message.new({:subject => "Hello#{i}", :body => "World"})
-          @message.sender = users(:moe)
-          @message.recipient = users(:mike)
+          @message.sender = @sender
+          @message.recipient = @recipient
           @message.save!
         }
       end
@@ -214,8 +219,8 @@ class MessageTest < ActiveSupport::TestCase
       assert_no_difference("Message.count") do
         assert_raises(RecordThrottling::LimitReachedError) do
           @message = Message.new({:subject => "spam much?", :body => "World"})
-          @message.sender = users(:moe)
-          @message.recipient = users(:mike)
+          @message.sender = @sender
+          @message.recipient = @recipient
           @message.save!
         end
       end
@@ -224,8 +229,8 @@ class MessageTest < ActiveSupport::TestCase
       assert_difference("Message.count") do
         assert_nothing_raised do
           @message = Message.new({:subject => "spam much?", :body => "World"})
-          @message.sender = users(:mike)
-          @message.recipient = users(:moe)
+          @message.sender = @recipient
+          @message.recipient = @sender
           @message.save!
         end
       end

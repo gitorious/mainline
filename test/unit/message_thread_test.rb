@@ -20,7 +20,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 class MessageThreadTest < ActiveSupport::TestCase
   context 'Building a message' do
     setup do
-      @thread = MessageThread.new(:subject => 'Hello world', :body => 'Lorem ipsum', :recipients => 'mike moe', :sender => users(:johan))
+      @sender = Factory.create(:user)
+      @john = Factory.create(:user, :login => 'john')
+      @jane = Factory.create(:user, :login => 'jane')
+      @thread = MessageThread.new(:subject => 'Hello world', :body => 'Lorem ipsum', :recipients => 'john jane', :sender => @sender)
     end
     
     should 'extract two recipients' do
@@ -56,7 +59,7 @@ class MessageThreadTest < ActiveSupport::TestCase
     
     should 'return a Message object with a string of recipients set' do
       result = @thread.message
-      assert_equal('mike,moe', result.recipients)
+      assert_equal('john,jane', result.recipients)
     end
   end
 end
