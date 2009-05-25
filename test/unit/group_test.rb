@@ -99,10 +99,20 @@ class GroupTest < ActiveSupport::TestCase
   end
   
   should "know when it's deletable" do
-    assert_equal 1, groups(:team_thunderbird).members.count
-    assert groups(:team_thunderbird).deletable?
-    groups(:team_thunderbird).add_member(users(:johan), Role.member)
-    assert !groups(:team_thunderbird).deletable?
+    assert_equal 1, groups(:a_team).members.count
+    assert groups(:a_team).deletable?
+    groups(:a_team).add_member(users(:moe), Role.member)
+    assert !groups(:a_team).deletable?
+  end
+  
+  should 'not be deletable if it has projects associated' do
+    group = groups(:a_team)
+    assert_equal [], group.projects
+    assert group.deletable?
+    project = group.projects.build(:title => 'Mr T', :slug => 'mr_t', :description => 'Mister Ts project', :user => users(:moe))
+    assert project.save
+    assert_equal [project], group.projects
+    assert !group.deletable?
   end
   
   context "validations" do

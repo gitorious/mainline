@@ -129,7 +129,7 @@ class Group < ActiveRecord::Base
   end
   
   def deletable?
-    members.count <= 1
+    members.count <= 1 && projects.blank?
   end
   
   protected

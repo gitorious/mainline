@@ -116,6 +116,8 @@ class GroupsControllerTest < ActionController::TestCase
     should "be deletable if there's only one member" do
       assert_equal 1, @group.members.count
       login_as :mike
+      @group.projects.destroy_all
+    
       assert_difference("Group.count", -1) do
         delete :destroy, :id => @group.to_param
         assert_response :redirect
