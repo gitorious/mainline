@@ -27,19 +27,33 @@ class MailerTest < ActiveSupport::TestCase
     Mailer.deliveries = []
   end
 
-  should "send new_repository_clone" do
-    repos = repositories(:johans2)
-    url = "#{URL_BASE}/#{repos.project.to_param}/#{repos.to_param}"
-    mail = Mailer.create_new_repository_clone(repos)
+  context 'Repository cloning notifications' do
+    should "send notification with user URL for user repos" do
+      repos = repositories(:johans_moe_clone)
+      url = "#{URL_BASE}/~#{repos.owner.login}/#{repos.project.to_param}/#{repos.to_param}"
+      mail = Mailer.create_new_repository_clone(repos)
 
-    assert_equal [repos.project.user.email], mail.to
-    assert_equal %Q{[Gitorious] #{repos.user.login} has cloned #{repos.project.slug}/#{repos.parent.name}}, mail.subject
-    assert_match(/#{repos.user.login} recently created a clone/, mail.body)
-    assert mail.body.include?(url)
+      assert_equal [repos.project.user.email], mail.to
+      assert_equal %Q{[Gitorious] #{repos.user.login} has cloned #{repos.project.slug}/#{repos.parent.name}}, mail.subject
+      assert_match(/#{repos.user.login} recently created a clone/, mail.body)
+      assert mail.body.include?(url)
 
-    Mailer.deliver(mail)
-    assert_equal [mail], Mailer.deliveries
+      Mailer.deliver(mail)
+      assert_equal [mail], Mailer.deliveries
+    end
+
+    should "send notification with group URL for group repos" do
+      repos = repositories(:johans2)
+      url = "#{URL_BASE}/+#{repos.owner.name}/#{repos.project.to_param}/#{repos.to_param}"
+      mail = Mailer.create_new_repository_clone(repos)
+
+      assert_equal [repos.project.user.email], mail.to
+      assert_equal %Q{[Gitorious] #{repos.user.login} has cloned #{repos.project.slug}/#{repos.parent.name}}, mail.subject
+      assert_match(/#{repos.user.login} recently created a clone/, mail.body)
+      assert mail.body.include?(url)
+    end
   end
+
 
   should "sends signup_notification" do
     user = users(:johan)
