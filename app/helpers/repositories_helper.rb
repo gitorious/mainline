@@ -113,7 +113,7 @@ module RepositoriesHelper
   def sorted_git_heads(heads)
     heads.select{|h| !h.head? }.sort{|a,b|
       a.name <=> b.name
-    }.unshift(heads.find{|h| h.head? })
+    }.unshift(heads.find{|h| h.head? }).compact
   end
   
   # Renders a set of list items, cut off at around +max_line_length+
