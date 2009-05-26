@@ -777,4 +777,32 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.head = the_head.name
     end
   end
+
+  context 'Merge request repositories' do
+    setup do
+      @project = Factory.create(:user_project)
+      @main_repo = Factory.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
+    end
+    
+    should 'initially not have a merge request repository' do
+      assert !@main_repo.has_merge_request_repository?
+    end
+    
+    should 'generate a merge request repository' do
+      @merge_repo = @main_repo.create_merge_request_repository
+      assert @main_repo.project_repo?
+      assert @merge_repo.merge_request_repo?
+      assert_equal @main_repo, @merge_repo.parent
+      assert_equal @main_repo.owner, @merge_repo.owner
+      assert_equal @main_repo.user, @merge_repo.user
+      assert @main_repo.has_merge_request_repository?
+      assert_equal @merge_repo, @main_repo.merge_request_repository
+    end
+    
+    should 'not post a repository creation message for merge request repositories' do
+      @merge_repo = @main_repo.build_merge_request_repository
+      @merge_repo.expects(:publish).never
+      assert @merge_repo.save
+    end
+  end
 end

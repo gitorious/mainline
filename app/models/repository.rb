@@ -31,6 +31,7 @@ class Repository < ActiveRecord::Base
   KIND_WIKI = 1
   KIND_TEAM_REPO = 2
   KIND_USER_REPO = 3
+  KIND_MERGE_REQUEST_REPO = 4
   
   WIKI_NAME_SUFFIX = "-gitorious-wiki"
   WIKI_WRITABLE_EVERYONE = 0
@@ -307,6 +308,7 @@ class Repository < ActiveRecord::Base
   end
   
   def post_repo_creation_message
+    return if merge_request_repo?
     options = {:target_class => self.class.name, :target_id => self.id}
     options[:command] = parent ? 'clone_git_repository' : 'create_git_repository'
     options[:arguments] = parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
@@ -438,6 +440,10 @@ class Repository < ActiveRecord::Base
     kind == KIND_USER_REPO
   end
   
+  def merge_request_repo?
+    kind == KIND_MERGE_REQUEST_REPO
+  end
+  
   # returns an array of users who have commit bits to this repository either 
   # directly through the owner, or "indirectly" through the associated groups
   def committers
@@ -536,6 +542,25 @@ class Repository < ActiveRecord::Base
   
   def requires_signoff_on_merge_requests?
     mainline? && project.merge_requests_need_signoff?
+  end
+  
+  def build_merge_request_repository
+    result = Repository.new(:parent => self, :user => user, :owner => owner, :kind => KIND_MERGE_REQUEST_REPO, :name => "merge_request_repository", :project => project)
+    return result
+  end
+  
+  def create_merge_request_repository
+    result = build_merge_request_repository
+    result.save!
+    return result
+  end
+  
+  def merge_request_repository
+    self.class.find(:first, :conditions => {:parent_id => self, :kind => KIND_MERGE_REQUEST_REPO})
+  end
+  
+  def has_merge_request_repository?
+    !merge_request_repository.nil?
   end
   
   protected
