@@ -20,15 +20,12 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class GroupTest < ActiveSupport::TestCase
-    
-  
   
   context "in general" do
     should "uses the name as to_param" do
       group = Factory.build(:group)
       assert_equal group.name, group.to_param
     end
-
   end
   
   context "members" do
@@ -157,9 +154,7 @@ class GroupTest < ActiveSupport::TestCase
   end
   
   context 'Avatars' do
-    setup {
-      @group = Factory.create(:group)
-    }
+    setup { @group = Factory.create(:group) }
     
     should 'have a default avatar' do
       assert_equal '/images/default_group_avatar.png', @group.avatar.url
@@ -169,5 +164,18 @@ class GroupTest < ActiveSupport::TestCase
       @group.avatar_file_name = 'foo.png'
       assert_equal "/system/group_avatars/#{@group.name}/original/foo.png", @group.avatar.url
     end
+  end
+  
+  should "not include duplicates in all_participating_in_projects" do
+    group = groups(:team_thunderbird)
+    r = projects(:johans).repositories.mainlines.first
+    r.owner = group
+    r.save!
+    projects(:moes).repositories.create!({
+      :name => "mainline2",
+      :owner => group,
+      :user => projects(:johans).user,
+    })
+    assert_equal [group], Group.all_participating_in_projects(projects(:johans, :moes))
   end
 end
