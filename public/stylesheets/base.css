@@ -621,6 +621,12 @@ li.merge_requests a.selected { color: #09460F;}
   background-position: 2px 0px;
 }
 
+.with_icons.inline_icons li a {
+  background-image: none !important;
+  margin: 0 0 0 5px;
+  padding: 0;
+}
+
 .with_icons li span a {
   background-image: none;
   padding: 0;
