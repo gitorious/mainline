@@ -1,4 +1,5 @@
 require 'active_support'
+$:.unshift(File.dirname(__FILE__))
 require 'factory_girl/proxy'
 require 'factory_girl/proxy/build'
 require 'factory_girl/proxy/create'
