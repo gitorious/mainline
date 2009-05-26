@@ -92,7 +92,7 @@ module RepositoriesHelper
   end
   
   def render_branch_list_items(branches)
-    branches.sort{|a, b| a.name <=> b.name }.map do |branch|
+    sorted_git_heads(branches).map do |branch|
       content_tag(:li, 
         link_to(h(branch.name), log_path(branch.name), :title => branch_link_title_text(branch)),
         :class => "branch #{highlight_if_head(branch)}")
@@ -107,5 +107,41 @@ module RepositoriesHelper
   
   def branch_link_title_text(branch)
     "branch " + h(branch.name) + (branch.head? ? " (HEAD)" : "")
+  end
+  
+  # Sorts the +heads+ alphanumerically with the HEAD first
+  def sorted_git_heads(heads)
+    heads.select{|h| !h.head? }.sort{|a,b|
+      a.name <=> b.name
+    }.unshift(heads.find{|h| h.head? })
+  end
+  
+  # Renders a set of list items, cut off at around +max_line_length+
+  def render_chunked_branch_list_items(repository, max_line_length = 110)
+    heads = sorted_git_heads(repository.git.heads)
+    
+    cumulative_line_length = 0
+    heads_to_display = heads.select do |h|
+      cumulative_line_length += (h.name.length + 2)
+      cumulative_line_length < max_line_length
+    end
+    
+    list_items = heads_to_display.map do |head|
+      li = %Q{<li class="#{highlight_if_head(head)}">}
+      li << link_to(h(head.name), repo_owner_path(repository, :project_repository_commits_in_ref_path,
+                 repository.project, repository, ensplat_path(head.name)),
+              :title => branch_link_title_text(head))
+      li << "</li>"
+      li
+    end
+    
+    if heads_to_display.size < repository.git.heads.size
+      rest_size = repository.git.heads.size - heads_to_display.size
+      list_items << %{<li class="rest-of-branches">
+                        <small>and #{rest_size} more&hellip;</small>
+                      </li>}
+    end
+    
+    list_items.join("\n")
   end
 end

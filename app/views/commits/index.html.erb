@@ -65,13 +65,13 @@
 
 <% cache([repo_owner_path(@repository, [@project, @repository]), :tags_and_branches], 
         {:expires_in => 10.minutes}) do -%>
-  <h5><%= t("views.logs.branches") %>:</h5>
+  <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
   <ul class="icon_list links">
     <%= render_branch_list_items(@git.branches) -%>
   </ul>
 
   <% unless @git.tags.blank? -%>
-  <h5><%= t("views.logs.tags") %>:</h5>
+  <h5 id="tags"><%= t("views.logs.tags") %>:</h5>
   <ul class="icon_list links">
   <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
     <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
