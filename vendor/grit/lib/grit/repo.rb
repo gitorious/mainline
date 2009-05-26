@@ -81,7 +81,7 @@ module Grit
     #
     # Returns Grit::Head (baked)
     def head
-      Head.current(self)
+      @__head ||= Head.current(self)
     end
 
 

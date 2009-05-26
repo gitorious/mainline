@@ -97,7 +97,7 @@ module Grit
     end
     
     def head?
-      self.name == self.class.current(@commit.repo).name
+      self.name == @commit.repo.head.name
     end
 
   end # Head
