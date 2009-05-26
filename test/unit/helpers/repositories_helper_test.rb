@@ -95,4 +95,24 @@ class RepositoriesHelperTest < ActionView::TestCase
     assert namespaced_branch?("foo/bar")
     assert namespaced_branch?("foo/bar/baz")
   end
+  
+  context "sorted git heads" do
+    should "sort by name, with the HEAD first" do
+      heads = [
+        stub("git head", :name => "c", :head? => true),
+        stub("git head", :name => "a", :head? => false),
+        stub("git head", :name => "b", :head? => false),
+      ]
+      assert_equal %w[c a b], sorted_git_heads(heads).map(&:name)
+    end
+    
+    should "not include a nil item when there's no head" do
+      heads = [
+        stub("git head", :name => "c", :head? => false),
+        stub("git head", :name => "a", :head? => false),
+        stub("git head", :name => "b", :head? => false),
+      ]
+      assert_equal %w[a b c], sorted_git_heads(heads).map(&:name)
+    end
+  end
 end
