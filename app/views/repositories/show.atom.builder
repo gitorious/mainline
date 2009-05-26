@@ -24,7 +24,7 @@ atom_feed do |feed|
 
   @events.each do |event|
     action, body, category = action_and_body_for_event(event)
-    item_url = repo_owner_path(@repository, :project_repository_commits_path, @owner, @repository, :only_path => false)
+    item_url = repo_owner_path(@repository, :project_repository_commits_path, @repository.project, @repository, :only_path => false)
     feed.entry(event, :url => item_url) do |entry|
       entry.title("#{h(event.actor_display)} #{strip_tags(action)}")
 entry_content = <<-EOS
@@ -35,7 +35,10 @@ EOS
       if event.has_commits?
         entry_content << "<ul>"
         event.events.commits.each do |commit_event|
-          entry_content << %Q{<li>#{h(commit_event.git_actor.name)} #{h(commit_event.data[0,7])}: #{truncate(h(commit_event.body), :length => 75)}</li>}
+          entry_content << %Q{<li>#{h(commit_event.git_actor.name)} }
+          commit_url = repo_owner_path(@repository, :project_repository_commit_path, @repository.project, @repository, commit_event.data)
+          entry_content << %Q{#{link_to(h(commit_event.data[0,7]), commit_url)}}
+          entry_content << %Q{: #{truncate(h(commit_event.body), :length => 75)}</li>}
         end
         entry_content << "</ul>"
       end

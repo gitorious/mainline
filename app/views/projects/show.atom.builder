@@ -35,7 +35,10 @@ atom_feed do |feed|
         if event.has_commits?
           entry_content << "<ul>"
           event.events.commits.each do |commit_event|
-            entry_content << %Q{<li>#{h(commit_event.git_actor.name)} #{h(commit_event.data[0,7])}: #{truncate(h(commit_event.body), :length => 75)}</li>}
+            entry_content << %Q{<li>#{h(commit_event.git_actor.name)} }
+            commit_url = repo_owner_path(event.target, :project_repository_commit_path, event.target.project, event.target, commit_event.data)
+            entry_content << %Q{#{link_to(h(commit_event.data[0,7]), commit_url)}}
+            entry_content << %Q{: #{truncate(h(commit_event.body), :length => 75)}</li>}
           end
           entry_content << "</ul>"
         end
