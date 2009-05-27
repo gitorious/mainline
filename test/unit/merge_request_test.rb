@@ -83,10 +83,14 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
   
   should "knows who can resolve itself" do
-    assert @merge_request.resolvable_by?(users(:johan)), '@merge_request.resolvable_by?(users(:johan)) should be true'
+    assert @merge_request.resolvable_by?(users(:johan))
     @merge_request.target_repository.committerships.create!(:committer => groups(:team_thunderbird))
-    assert @merge_request.resolvable_by?(users(:mike)), '@merge_request.resolvable_by?(users(:mike)) should be true'
-    assert !@merge_request.resolvable_by?(users(:moe)), '@merge_request.resolvable_by?(users(:moe)) should be false'
+    assert @merge_request.resolvable_by?(users(:mike))
+    assert !@merge_request.resolvable_by?(users(:moe))
+  end
+  
+  should "have a working resolvable_by? together with fucktard authentication systems" do
+    assert !@merge_request.resolvable_by?(:false)
   end
   
   should "counts open merge_requests" do
