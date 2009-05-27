@@ -47,6 +47,12 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
   
+  should 'send a MQ message when being confirmed by the user' do
+    p = proc {@merge_request.confirmed_by_user}
+    message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestCreation', /.*/) {p.call}
+    assert_equal({'merge_request_id' => @merge_request.id.to_s}, message)
+  end
+  
   should "has a merged? status" do
     @merge_request.status = MergeRequest::STATUS_MERGED
     assert @merge_request.merged?, '@merge_request.merged? should be true'
@@ -398,6 +404,26 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_match(/<status>#{@merge_request.status_string}<\/status>/, @merge_request.to_xml)
       assert_match(/<username>~#{@merge_request.user.title}<\/username>/, @merge_request.to_xml)
       assert_match(/<proposal>#{@merge_request.proposal}<\/proposal>/, @merge_request.to_xml)
+    end
+  end
+  
+  context 'Pushing changes to the merge request repository' do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans)
+    end
+    
+    should 'send a push command from the source repository to the merge request repository' do
+      merge_request_repo = @merge_request.target_repository.create_merge_request_repository
+      merge_request_repo_path = merge_request_repo.full_repository_path
+      branch_spec = [@merge_request.source_branch, "merge_requests/#{@merge_request.id}"].join(":")
+      
+      git = mock("Git")
+      git_backend = mock("Source repository git")
+      git.stubs(:git).returns(git_backend)
+      @merge_request.source_repository.stubs(:git).returns(git)
+      
+      git_backend.expects(:push).with({}, merge_request_repo_path, branch_spec).once
+      @merge_request.push_to_merge_request_repository!
     end
   end
 end

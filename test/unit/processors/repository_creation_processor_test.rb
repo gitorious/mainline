@@ -54,4 +54,21 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
     message = options.to_json
     @processor.on_message(message)
   end
+  
+  should 'resend another message if so instructed' do
+   Repository.expects(:create_git_repository).with('foo')
+    options = {
+      :target_class => 'Repository', 
+      :target_id => @clone.id, 
+      :command => 'create_git_repository', 
+      :arguments => ['foo'],
+      :resend_message_to => {
+        :destination => 'mirror_merge_requests',
+        :with => {:merge_request_id => '122'}
+      }
+      }
+    message = options.to_json
+    @processor.expects(:resend_message).with('mirror_merge_requests', {'merge_request_id' => '122'}).once
+    @processor.on_message(message)
+  end
 end

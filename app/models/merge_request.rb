@@ -21,6 +21,7 @@
 #++
 
 class MergeRequest < ActiveRecord::Base
+  include ActiveMessaging::MessageSender
   belongs_to :user
   belongs_to :source_repository, :class_name => 'Repository'
   belongs_to :target_repository, :class_name => 'Repository'
@@ -269,6 +270,7 @@ class MergeRequest < ActiveRecord::Base
   def confirmed_by_user
     self.status = STATUS_OPEN
     save
+    publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
     target_repository.committers.uniq.reject{|c|c == user}.each do |committer|
       message = messages.build(
         :sender => user, 
@@ -377,4 +379,9 @@ class MergeRequest < ActiveRecord::Base
     messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
   end
   
+  def push_to_merge_request_repository!
+    merge_request_repo = target_repository.merge_request_repository
+    branch_spec = "#{source_branch}:merge_requests/#{id}"
+    source_repository.git.git.push({}, merge_request_repo.full_repository_path, branch_spec)
+  end
 end

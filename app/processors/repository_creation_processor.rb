@@ -34,5 +34,8 @@ class RepositoryCreationProcessor < ApplicationProcessor
         obj.save!
       end
     end
+    if resend_options = message_hash['resend_message_to']
+      resend_message(resend_options['destination'], resend_options['with'])
+    end
   end
 end
