@@ -413,7 +413,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
     
     should 'send a push command from the source repository to the merge request repository' do
-      merge_request_repo = @merge_request.target_repository.create_merge_request_repository
+      merge_request_repo = @merge_request.target_repository.create_tracking_repository
       merge_request_repo_path = merge_request_repo.full_repository_path
       branch_spec = "#{@merge_request.ending_commit}:refs/heads/merge_requests/#{@merge_request.id}"
       
@@ -423,7 +423,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.source_repository.stubs(:git).returns(git)
       
       git_backend.expects(:push).with({}, merge_request_repo_path, branch_spec).once
-      @merge_request.push_to_merge_request_repository!
+      @merge_request.push_to_tracking_repository!
     end
   end
 end

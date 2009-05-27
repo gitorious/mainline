@@ -30,18 +30,18 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
   end
   
   should 'send a repository creation message when the target repo does not have a merge request repo' do
-    @target_repo.expects(:'has_merge_request_repository?').once.returns(false)
     message = {'merge_request_id' => @merge_request.to_param}.to_json
-    @processor.expects(:create_merge_request_branch).never
-    @processor.expects(:'push_to_merge_request_repository!').never
+    @target_repo.expects(:'has_tracking_repository?').once.returns(false)
+    @processor.expects(:create_tracking_branch).never
+    @processor.expects(:'push_to_tracking_repository!').never
     @processor.on_message(message)
   end
   
   should 'create a new branch from the merge request' do
     message = {'merge_request_id' => @merge_request.to_param}.to_json
-    @target_repo.expects(:'has_merge_request_repository?').once.returns(true)
+    @target_repo.expects(:'has_tracking_repository?').once.returns(true)
     @processor.expects(:post_repository_creation_message).never
-    @merge_request.expects(:'push_to_merge_request_repository!').once
+    @merge_request.expects(:'push_to_tracking_repository!').once
     @processor.on_message(message)
   end
 end

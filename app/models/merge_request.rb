@@ -379,8 +379,8 @@ class MergeRequest < ActiveRecord::Base
     messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
   end
   
-  def push_to_merge_request_repository!
-    merge_request_repo = target_repository.merge_request_repository
+  def push_to_tracking_repository!
+    merge_request_repo = target_repository.tracking_repository
     branch_spec = "#{ending_commit}:refs/heads/merge_requests/#{id}"
     source_repository.git.git.push({}, merge_request_repo.full_repository_path, branch_spec)
   end

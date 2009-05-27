@@ -8,5 +8,5 @@ Factory.define(:repository) do |r|
 end
 
 Factory.define(:merge_request_repository, :parent => :repository) do |r|
-  r.kind Repository::KIND_MERGE_REQUEST_REPO
+  r.kind Repository::KIND_TRACKING_REPO
 end
