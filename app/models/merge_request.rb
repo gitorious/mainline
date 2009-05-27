@@ -381,7 +381,7 @@ class MergeRequest < ActiveRecord::Base
   
   def push_to_merge_request_repository!
     merge_request_repo = target_repository.merge_request_repository
-    branch_spec = "#{source_branch}:merge_requests/#{id}"
+    branch_spec = "#{ending_commit}:refs/heads/merge_requests/#{id}"
     source_repository.git.git.push({}, merge_request_repo.full_repository_path, branch_spec)
   end
 end

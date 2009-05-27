@@ -415,7 +415,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'send a push command from the source repository to the merge request repository' do
       merge_request_repo = @merge_request.target_repository.create_merge_request_repository
       merge_request_repo_path = merge_request_repo.full_repository_path
-      branch_spec = [@merge_request.source_branch, "merge_requests/#{@merge_request.id}"].join(":")
+      branch_spec = "#{@merge_request.ending_commit}:refs/heads/merge_requests/#{@merge_request.id}"
       
       git = mock("Git")
       git_backend = mock("Source repository git")
