@@ -139,12 +139,12 @@ class Repository < ActiveRecord::Base
     self.create_hooks(full_path)
   end
   
-  def self.clone_git_repository(target_path, source_path)
+  def self.clone_git_repository(target_path, source_path, options = {})
     full_path = full_path_from_partial_path(target_path)
     git_backend.clone(full_path, 
       full_path_from_partial_path(source_path))
       
-    self.create_hooks(full_path)
+    self.create_hooks(full_path) unless options[:skip_hooks]
   end
   
   def self.delete_git_repository(path)

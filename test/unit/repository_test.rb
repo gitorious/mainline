@@ -178,6 +178,20 @@ class RepositoryTest < ActiveSupport::TestCase
     
     assert Repository.clone_git_repository(target.real_gitdir, source.real_gitdir)
   end
+
+  should "not create hooks if the :skip_hooks option is set to true" do
+    source = repositories(:johans)
+    target = @repository
+    target_path = @repository.full_repository_path
+    
+    git_backend = mock("Git backend")
+    Repository.expects(:git_backend).returns(git_backend)
+    git_backend.expects(:clone).with(target.full_repository_path, 
+      source.full_repository_path).returns(true)
+    Repository.expects(:create_hooks).never
+    
+    Repository.clone_git_repository(target.real_gitdir, source.real_gitdir, :skip_hooks => true)
+  end
   
   should " create the hooks" do
     hooks = "/path/to/hooks"

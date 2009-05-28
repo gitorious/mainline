@@ -22,31 +22,19 @@ class MergeRequestProcessor < ApplicationProcessor
     json = ActiveSupport::JSON.decode(message)
     merge_request_id = json['merge_request_id']
     merge_request = MergeRequest.find(merge_request_id)
-    if merge_request.target_repository.has_tracking_repository?
-      create_tracking_branch(merge_request)
-    else
-      post_repository_creation_message(merge_request)
+    if !merge_request.target_repository.has_tracking_repository?
+      create_tracking_repository(merge_request)
     end
+    logger.info("Pushing tracking branch for merge request #{merge_request.to_param} in repository #{merge_request.target_repository.name}'s tracking repository")
+    merge_request.push_to_tracking_repository!    
   end
   
-  # We're doing some pipelining here. The special repository for merge requests should be created
-  # when needed. Therefore, we send another message to the separate queue for creation of repositories 
-  # when necessary, and append information to the message that we want one back as soon as it's done
-  def post_repository_creation_message(merge_request)
-    merge_request_repo = merge_request.target_repository.create_tracking_repository
-    
-    options = {:target_class => 'Repository', :target_id => merge_request_repo.id}
-    options[:command] = 'clone_git_repository'
-    options[:arguments] = [merge_request_repo.real_gitdir, merge_request.target_repository.real_gitdir]
-    options[:resend_message_to] = {
-      :destination => 'mirror_merge_request', 
-      :with => {:merge_request_id => merge_request.id}
-    }
-    publish :create_repo, options.to_json    
-  end
-  
-  def create_tracking_branch(merge_request)
-    merge_request.push_to_tracking_repository!
-    logger.info("Creating merge request branch for MR no #{merge_request.id}")
+  def create_tracking_repository(merge_request)
+    tracking_repo = merge_request.target_repository.create_tracking_repository
+    logger.info("Creating tracking repository at #{tracking_repo.real_gitdir}")
+    Repository.clone_git_repository(
+      tracking_repo.real_gitdir, 
+      merge_request.target_repository.real_gitdir,
+      {:skip_hooks => true})
   end
 end

@@ -34,12 +34,5 @@ class RepositoryCreationProcessor < ApplicationProcessor
         obj.save!
       end
     end
-    if resend_options = message_hash['resend_message_to']
-      resend_message(resend_options['destination'], resend_options['with'])
-    end
-  end
-  
-  def resend_message(queue_name, options)
-    publish queue_name.to_sym, options.to_json
   end
 end
