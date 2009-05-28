@@ -42,6 +42,10 @@ class MergeRequestsController < ApplicationController
       :limit => 10, :order => "updated_at desc"
     })
     @comment_count = @repository.comments.count
+    respond_to do |wants|
+      wants.html
+      wants.xml {render :xml => @open_merge_requests.to_xml}
+    end
   end
   
   def commit_list
@@ -63,6 +67,11 @@ class MergeRequestsController < ApplicationController
                       :include => [:source_repository, :target_repository])
     @commits = @merge_request.commits_to_be_merged
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
+    respond_to do |wants|
+      wants.html
+      wants.xml {render :xml => @merge_request.to_xml}
+      wants.patch { render :text => @commits.collect(&:to_patch).join("\n"), :content_type => "text/plain" }
+    end
   end
   
   def new

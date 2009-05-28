@@ -366,4 +366,19 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("rejected")
     end
   end
+
+  context 'As XML' do
+    setup {@merge_request = merge_requests(:moes_to_johans_open)}
+    
+    should 'not include confidential information' do
+      assert !@merge_request.to_xml.include?('<contribution-agreement-version')
+      assert !@merge_request.to_xml.include?('<oauth-secret')
+    end
+    
+    should 'include enough information for our purposes' do
+      assert_match(/<status>#{@merge_request.status_string}<\/status>/, @merge_request.to_xml)
+      assert_match(/<username>~#{@merge_request.user.title}<\/username>/, @merge_request.to_xml)
+      assert_match(/<proposal>#{@merge_request.proposal}<\/proposal>/, @merge_request.to_xml)
+    end
+  end
 end

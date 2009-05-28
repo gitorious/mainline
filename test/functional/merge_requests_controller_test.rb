@@ -42,10 +42,13 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		end
 		
 		should "gets all the merge requests in the repository" do
-			get :index, :project_id => @project.to_param,
-				:repository_id => @target_repository.to_param
-			assert_equal @target_repository.merge_requests.open, assigns(:open_merge_requests)
-			assert_equal @target_repository.merge_requests.closed, assigns(:recently_closed_merge_requests)
+		  %w(html xml).each do |format|
+  			get :index, :project_id => @project.to_param,
+  				:repository_id => @target_repository.to_param,
+  				:format => format
+  			assert_equal @target_repository.merge_requests.open, assigns(:open_merge_requests)
+  			assert_equal @target_repository.merge_requests.closed, assigns(:recently_closed_merge_requests)
+  		end
 		end
 		
 		should "gets a comment count for" do
@@ -64,6 +67,21 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	  end
 	end
 	
+	def stub_commits(merge_request)
+    commits = %w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07).collect do |sha|
+      m = mock
+      m.stubs(:id).returns(sha)
+      m.stubs(:id_abbrev).returns(sha[0..7])
+      m.stubs(:committer).returns(Grit::Actor.new("bob", "bob@example.com"))
+      m.stubs(:author).returns(Grit::Actor.new("bob", "bob@example.com"))
+      m.stubs(:message).returns("bla bla")
+      m.stubs(:committed_date).returns(3.days.ago)
+      m.stubs(:to_patch).returns("From: #{sha}\nSubject: [PATCH]")
+      m
+    end
+	 merge_request.stubs(:commits_for_selection).returns(commits)
+	end
+	
 	context "#show (GET)" do		
 		should " not require login" do
 			session[:user_id] = nil
@@ -78,24 +96,19 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_select "h3", :content => "Add a new comment:"
 		end
 		
-		should "gets a list of the commits to be merged" do
-			MergeRequest.expects(:find).returns(@merge_request)
-      commits = %w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07).collect do |sha|
-	      m = mock
-	      m.stubs(:id).returns(sha)
-	      m.stubs(:id_abbrev).returns(sha[0..7])
-	      m.stubs(:committer).returns(Grit::Actor.new("bob", "bob@example.com"))
-	      m.stubs(:author).returns(Grit::Actor.new("bob", "bob@example.com"))
-	      m.stubs(:message).returns("bla bla")
-	      m.stubs(:committed_date).returns(3.days.ago)
-	      m
-      end
-      @merge_request.stubs(:commits_for_selection).returns(commits)
-			get :show, :project_id => @project.to_param, 
-				:repository_id => @target_repository.to_param,
-				:id => @merge_request.id
-			assert_equal 1, assigns(:commits).size
+		should "get a list of the commits to be merged" do
+      %w(html patch xml).each do |format|
+  			MergeRequest.expects(:find).returns(@merge_request)
+
+        stub_commits(@merge_request)
+  			get :show, :project_id => @project.to_param, 
+  				:repository_id => @target_repository.to_param,
+  				:id => @merge_request.id, :format => format
+  			assert_response :success
+  			assert_equal 1, assigns(:commits).size
+			end
 		end
+
 		
 		should "allow committers to change status" do
 		  login_as :johan

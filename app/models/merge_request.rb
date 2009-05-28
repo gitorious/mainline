@@ -333,6 +333,29 @@ class MergeRequest < ActiveRecord::Base
     target_repository.project.oauth_consumer
   end
   
+  def to_xml(opts = {})
+    info_proc = Proc.new do |options|
+      builder = options[:builder]
+      builder.status(status_string)
+      builder.username(user.to_param_with_prefix)
+      builder.source_repository do |source|
+        source.name(source_repository.name)
+        source.branch(source_branch)
+      end
+      builder.target_repository do |source|
+        source.name(target_repository.name)
+        source.branch(target_branch)
+      end
+    end
+    
+    super({
+      :procs => [info_proc],
+      :only => [:proposal, :created_at, :updated_at, :id, :ending_commit],
+      :methods => []
+    }.merge(opts))
+  end
+  
+  
   def valid_oauth_credentials?
     response = access_token.get("/")
     return Net::HTTPSuccess === response
