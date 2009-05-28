@@ -266,6 +266,7 @@ class CommitsControllerTest < ActionController::TestCase
         get :feed, {:project_id => @project.slug,
           :repository_id => @repository.name, :id => "master", :format => "atom"}
         assert_response :success
+        assert_select "feed title", /#{@repository.gitdir}/
       end
       
       should "show branches with a # in them with great success" do
