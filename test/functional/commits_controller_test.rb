@@ -261,6 +261,13 @@ class CommitsControllerTest < ActionController::TestCase
         assert @response.body.include?(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})
       end
       
+      should "not explode when there's no commits" do
+        @repository.git.expects(:commits).returns([])
+        get :feed, {:project_id => @project.slug,
+          :repository_id => @repository.name, :id => "master", :format => "atom"}
+        assert_response :success
+      end
+      
       should "show branches with a # in them with great success" do
         git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
         @repository.git.expects(:commit).with("ticket-#42") \
