@@ -545,7 +545,7 @@ class Repository < ActiveRecord::Base
   end
   
   def build_tracking_repository
-    result = Repository.new(:parent => self, :user => user, :owner => owner, :kind => KIND_TRACKING_REPO, :name => "tracking_repository", :project => project)
+    result = Repository.new(:parent => self, :user => user, :owner => owner, :kind => KIND_TRACKING_REPO, :name => "tracking_repository_for_#{id}", :project => project)
     return result
   end
   
@@ -629,4 +629,5 @@ class Repository < ActiveRecord::Base
       file << sp[sp.size-1, sp.size].join("/").sub(/\.git$/, "") << "\n"
     end
   end
+  
 end
