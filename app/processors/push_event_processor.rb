@@ -151,7 +151,10 @@ class PushEventProcessor < ApplicationProcessor
   end
     
   def fetch_commit_details(an_event, commit_sha)
-    sha, email, timestamp, message = git.show({:pretty => git_pretty_format, :s => true}, commit_sha).split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
+    sha, email, timestamp, message = git.show({
+      :pretty => git_pretty_format, 
+      :s => true
+    }, commit_sha).split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
     an_event.email        = email
     an_event.commit_time  = Time.at(timestamp.to_i).utc
     an_event.message      = message
@@ -160,11 +163,11 @@ class PushEventProcessor < ApplicationProcessor
   def events_from_git_log(revspec)
     result = []
     
-    commits = git.log({
+    commits = encode(git.log({
       :pretty => git_pretty_format, 
       :s => true,
       :timeout => false,
-    }, revspec).split("\n")
+    }, revspec)).split("\n")
     commits.each do |c|
       sha, email, timestamp, message = c.split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
       e = EventForLogging.new
@@ -193,5 +196,27 @@ class PushEventProcessor < ApplicationProcessor
   def git_pretty_format
     fmt = ['%H','%cn <%ce>','%at','%s'].join(PUSH_EVENT_GIT_OUTPUT_SEPARATOR)
     "format:#{fmt}"
+  end
+  
+  def encode(data)
+    if RUBY_VERSION > '1.9'
+      if !data.valid_encoding?
+        data = data.force_encoding("utf-8")
+        if !data.valid_encoding?
+          # If there's something wonky with the data encoding still then brute force
+          # conversion to utf-8, replacing bad chars (and potentially more)
+          ec = Encoding::Converter.new("ASCII-8BIT", "utf-8", {
+            :invalid => :replace, :undef => :replace
+          })
+          ec.convert(data)
+        else
+          data
+        end
+      else
+        data
+      end
+    else
+      data
+    end
   end
 end
