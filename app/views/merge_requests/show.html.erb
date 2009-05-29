@@ -139,7 +139,7 @@ git push origin master
               <%= link_to(avatar_from_email(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
             </li>
             <li class="author">
-              <%= link_to(h(omment.user.login), comment.user) -%>
+              <%= link_to(h(comment.user.login), comment.user) -%>
             </li>
           </ul>
           <small class="permalink">
