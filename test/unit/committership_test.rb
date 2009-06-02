@@ -51,6 +51,18 @@ class CommittershipTest < ActiveSupport::TestCase
     end
   end
   
+  should 'nullify notifiable_type and notifiable_id when destroyed' do
+    owner = users(:johan)
+    c = new_committership(:committer => groups(:team_thunderbird))
+    c.save
+    message = owner.received_messages.last
+    assert_equal c, message.notifiable
+    c.destroy
+    message.reload
+    assert_nil message.notifiable_type
+    assert_nil message.notifiable_id
+  end
+  
   should "have a members attribute that's the group members if the committer is a Group" do
     c = new_committership(:committer => groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird).members, c.members

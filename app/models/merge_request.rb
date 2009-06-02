@@ -25,8 +25,10 @@ class MergeRequest < ActiveRecord::Base
   belongs_to :source_repository, :class_name => 'Repository'
   belongs_to :target_repository, :class_name => 'Repository'
   has_many   :events, :as => :target, :dependent => :destroy
-  has_many :messages, :as => :notifiable, :dependent => :destroy
+  has_many :messages, :as => :notifiable
   has_many :comments, :as => :target, :dependent => :destroy
+  
+  before_destroy :nullify_messages
   
   is_indexed :fields => ["proposal"], :include => [{
       :association_name => "user",
@@ -360,4 +362,9 @@ class MergeRequest < ActiveRecord::Base
     response = access_token.get("/")
     return Net::HTTPSuccess === response
   end
+  
+  def nullify_messages
+    messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
+  end
+  
 end

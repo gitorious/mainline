@@ -281,6 +281,14 @@ class MergeRequestTest < ActiveSupport::TestCase
       end
     end
     
+    should 'nullify associated messages when deleted' do
+      @merge_request.deliver_status_update(users(:moe))
+      message = @merge_request.user.received_messages.last
+      @merge_request.destroy
+      message.reload
+      assert_nil message.notifiable
+    end
+    
     should 'provide a hash of labels and values for possible next states' do
       @merge_request.status = MergeRequest::STATUS_VERIFYING
       assert_equal({'Merged' => 'merge', 'Rejected' => 'reject'}, @merge_request.possible_next_states_hash)

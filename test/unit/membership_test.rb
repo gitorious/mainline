@@ -42,6 +42,17 @@ class MembershipTest < ActiveSupport::TestCase
       assert_equal(membership, message.notifiable)
     end
     
+    should 'nullify messages when deleted' do
+      @invitee = Factory.create(:user)
+      @user.received_messages.destroy_all
+      membership = Membership.build_invitation(@inviter, :user => @invitee, :group => @group, :role => Role.member)
+      membership.save
+      message = membership.messages.first
+      assert membership.destroy
+      assert_nil message.reload.notifiable_type
+      assert_nil message.notifiable_id
+    end
+    
     should 'not send a notification if no inviter is set' do
       membership = Membership.new(:user => @user, :group => @group, :role => roles(:member))
       membership.expects(:send_notification).never

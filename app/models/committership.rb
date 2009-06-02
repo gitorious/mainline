@@ -30,6 +30,8 @@ class Committership < ActiveRecord::Base
   after_create :notify_repository_owners
   after_create :add_new_committer_event
   after_destroy :add_removed_committer_event
+  has_many :messages, :as => :notifiable
+  before_destroy :nullify_messages
   
   named_scope :groups, :conditions => { :committer_type => "Group" }
   named_scope :users,  :conditions => { :committer_type => "User" }  
@@ -83,5 +85,9 @@ class Committership < ActiveRecord::Base
     def add_removed_committer_event
       repository.project.create_event(Action::REMOVE_COMMITTER, repository, 
                                       creator, committer.title)
+    end
+    
+    def nullify_messages
+      messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
     end
 end
