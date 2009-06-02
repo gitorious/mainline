@@ -97,6 +97,17 @@ class SSHStrainerTest < ActiveSupport::TestCase
     end
   end
   
+  should "accept git+ssh style urls" do
+    s = Gitorious::SSH::Strainer.new("git-receive-pack '/foo/bar.git'").parse!
+    assert_equal "foo/bar.git", s.path
+    
+    s = Gitorious::SSH::Strainer.new("git-receive-pack '/+foo/bar.git'").parse!
+    assert_equal "+foo/bar.git", s.path
+    
+    s = Gitorious::SSH::Strainer.new("git-receive-pack '/~foo/bar.git'").parse!
+    assert_equal "~foo/bar.git", s.path
+  end
+  
   should "raise if it receives too many arguments" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-receive-pack 'foo/bar.git' baz").parse!
