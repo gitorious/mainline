@@ -603,7 +603,7 @@ table.tree tr td.exec-file a, li.exec-file > a { background-image: url("/images/
 table.tree tr td.ruby-file a, li.ruby-file > a { background-image: url("/images/silk/page_white_ruby.png"); }
 table.tree tr td.compressed-file a, li.compressed-file > a { background-image: url("/images/silk/page_white_compressed.png"); }
 table.tree tr td.image-file a, li.image-file > a { background-image: url("/images/silk/page_white_picture.png"); }
-table.tree tr td.submodule a { background-image: url("/images/silk/folder_database.png"); }
+table.tree tr td.submodule a { background-image: url("/images/silk/folder_go.png"); }
 
 li.wiki a {background-image: url('/images/silk/book_open.png');}
 li.memberships a, li.committerships a {background-image: url('/images/silk/group_gear.png');}
