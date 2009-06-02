@@ -53,6 +53,16 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.log_events
   end
   
+  should 'identify non-standard (review) branches, and exclude these from logging' do
+    stub_git_show 
+    @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/reviews/123"
+    assert_equal :review, @processor.action
+    assert @processor.head?
+    assert_equal 0, @processor.events.size
+    @processor.expects(:log_event).never
+    @processor.log_events
+  end
+  
   should "returns the correct type and identifier for a new branch" do
     stub_git_log_and_user
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'

@@ -73,8 +73,8 @@ class PushEventProcessor < ApplicationProcessor
   
   # Sets the commit summary, as served from git
   def commit_summary=(spec)
-    @oldrev, @newrev, revname = spec.split(' ')
-    r, name, @identifier = revname.split("/", 3)
+    @oldrev, @newrev, @revname = spec.split(' ')
+    r, name, @identifier = @revname.split("/", 3)
     @head_or_tag = name == 'tags' ? :tag : :head
   end
   
@@ -87,7 +87,9 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def action
-    @action ||= if oldrev =~ /^0+$/
+    @action ||= if @revname =~ /refs\/reviews\/.*/
+      :review
+    elsif oldrev =~ /^0+$/
       :create
     elsif newrev =~ /^0+$/
       :delete
@@ -123,6 +125,8 @@ class PushEventProcessor < ApplicationProcessor
       e.user = user
       e.message = message
       return [e]
+    elsif action == :review
+      return []
     elsif action == :create
       e = EventForLogging.new
       e.event_type = Action::CREATE_BRANCH

@@ -802,7 +802,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert !@main_repo.has_tracking_repository?
     end
     
-    should 'generate a merge request repository' do
+    should 'generate a tracking repository' do
       @merge_repo = @main_repo.create_tracking_repository
       assert @main_repo.project_repo?
       assert @merge_repo.tracking_repo?
