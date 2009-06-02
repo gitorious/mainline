@@ -23,7 +23,7 @@ module CommitsHelper
   include RepositoriesHelper
   
   def format_commit_message(message)
-    simple_format(message).gsub(/\b[a-z0-9]{40}\b/) do |match|
+    message.gsub(/\b[a-z0-9]{40}\b/) do |match|
       link_to(match, repo_owner_path(@repository, :project_repository_commit_path, 
                                      @project, @repository, match), :class => "sha")
     end

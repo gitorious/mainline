@@ -86,8 +86,6 @@
       <% end -%>
     </ul>
   </div>
-  <div class="commit_message">
-    <%= format_commit_message(h(@commit.message)) -%>
-  </div>
+  <pre class="commit_message"><%= format_commit_message(h(@commit.message)) -%></pre>
   
 </div>

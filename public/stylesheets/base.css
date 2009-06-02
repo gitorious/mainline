@@ -928,6 +928,9 @@ table.repository_meta .infobox ul {
 .commit-infobox .commit_message {
   margin: 0;
 }
+.commit-infobox pre.commit_message {
+  margin: 0 0 20px 20px;
+}
 .commit-infobox .commit_message p {
   margin-top: 0;
 }
