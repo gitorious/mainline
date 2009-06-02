@@ -40,7 +40,7 @@ class LicensesController < ApplicationController
       current_user.save!
       flash[:success] = t("views.license.terms_accepted")
       if !current_user.terms_of_use.blank?
-        current_user.accept_terms!
+        current_user.accept_terms
       end
       redirect_back_or_default :action => :show
     else
