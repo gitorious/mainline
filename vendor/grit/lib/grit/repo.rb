@@ -84,7 +84,6 @@ module Grit
       @__head ||= Head.current(self)
     end
 
-
     # Commits current index
     #
     # Returns true/false if commit worked
@@ -426,6 +425,18 @@ module Grit
       end
       commit_sha
 
+    end
+    
+    # Updates the HEAD symref to point to +target_head+
+    def update_head(target_head)
+      if heads.include?(target_head)
+        File.open(File.join(self.path, "HEAD"), 'w') do |f|
+          f.puts "ref: refs/heads/#{target_head.name}"
+        end
+        @__head = nil
+        return true
+      end
+      false
     end
     
     # Pretty object inspection

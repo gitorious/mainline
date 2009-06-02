@@ -34,7 +34,10 @@
     <%= f.text_field :name %>
   </p>
   <p>
-    <%= f.label :name %>
+    <%= f.label :head %>
+    <span class="hint">Change the symbolic ref the HEAD in the git repository points to</span>:<br />
+    <%= f.select(:head, @heads.map{|h| [h.name, h.name] }, 
+          :selected => @repository.head ? @repository.head.name : nil) -%>
   </p>
   <% unless @repository.owned_by_group? -%>
     <p>

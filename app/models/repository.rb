@@ -239,12 +239,24 @@ class Repository < ActiveRecord::Base
   
   def head_candidate
     return nil unless has_commits?
-    @head_candidate ||= git.head || git.heads.first
+    @head_candidate ||= head || git.heads.first
   end
   
   def head_candidate_name
     if head = head_candidate
       head.name
+    end
+  end
+  
+  def head
+    git.head
+  end
+  
+  def head=(head_name)
+    if new_head = git.heads.find{|h| h.name == head_name }
+      unless git.head == new_head
+        git.update_head(new_head)
+      end
     end
   end
   

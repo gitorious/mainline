@@ -139,16 +139,21 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
+    @heads = @repository.git.heads
   end
   
   def update
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
+    @heads = @repository.git.heads
+    
     Repository.transaction do
       unless params[:repository][:owner_id].blank?
         @repository.change_owner_to!(current_user.groups.find(params[:repository][:owner_id]))
       end
+      
+      @repository.head = params[:repository][:head]
 
       @repository.log_changes_with_user(current_user) do
         @repository.replace_value(:name, params[:repository][:name])

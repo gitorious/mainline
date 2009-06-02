@@ -24,6 +24,8 @@ class RepositoriesControllerTest < ActionController::TestCase
   def setup
     @project = projects(:johans)
     @repo = repositories(:johans)
+    @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    Repository.any_instance.stubs(:git).returns(@grit)
   end
   
   should_render_in_site_specific_context :except => :writable_by
@@ -924,6 +926,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
       assert_response :success
       assert_equal @repository, assigns(:repository)
+      assert_equal @grit.heads, assigns(:heads)
     end
   
     should "PUT update successfully and creates an event when changing the description" do
@@ -994,6 +997,16 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to(group_repository_path(group, @repository))
       assert_equal group, @repository.reload.owner
+    end
+    
+    context "Changing the HEAD" do
+      should "update the HEAD if it's changed" do
+        the_head = @grit.get_head("test/master")
+        @grit.expects(:update_head).with(the_head).returns(true)
+        put :update, :project_id => @project.to_param, :id => @repository.to_param, 
+              :repository => { :head => the_head.name }
+        assert_equal @grit.heads, assigns(:heads)
+      end
     end
   end
 

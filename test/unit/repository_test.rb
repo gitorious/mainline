@@ -750,4 +750,31 @@ class RepositoryTest < ActiveSupport::TestCase
       end      
     end
   end
+  
+  context "changing the HEAD" do
+    setup do
+      @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      @repository.stubs(:git).returns(@grit)
+    end
+    
+    should "change the head" do
+      assert the_head = @grit.get_head("test/master")
+      @grit.expects(:update_head).with(the_head).returns(true)
+      @repository.head = the_head.name
+    end
+    
+    should "not change the head if given a nonexistant ref" do
+      @grit.expects(:update_head).never
+      @repository.head = "non-existant"
+      @repository.head = nil
+      @repository.head = ""
+    end
+    
+    should "change the head, even if the current head is nil" do
+      assert the_head = @grit.get_head("test/master")
+      @grit.expects(:head).returns(nil)
+      @grit.expects(:update_head).with(the_head).returns(true)
+      @repository.head = the_head.name
+    end
+  end
 end

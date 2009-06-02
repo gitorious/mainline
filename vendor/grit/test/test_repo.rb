@@ -3,6 +3,13 @@ require File.dirname(__FILE__) + '/helper'
 class TestRepo < Test::Unit::TestCase
   def setup
     @r = Repo.new(GRIT_REPO)
+    
+    head = File.join(@r.path, "HEAD")
+    if File.read(head).chomp != "ref: refs/heads/master"
+      File.open(head, "w") do |f|
+        f.puts "ref: refs/heads/master"
+      end
+    end
   end
 
   def create_temp_repo(clone_path)
@@ -343,5 +350,17 @@ class TestRepo < Test::Unit::TestCase
     end
     delta_blobs = @r.commit_deltas_from(other_repo)
     assert_equal 3, delta_blobs.size
+  end
+  
+  def test_update_head
+    assert_not_equal @r.head.name, @r.heads.first.name
+    assert @r.update_head(@r.heads.first)
+    assert_equal @r.heads.first.name, @r.head.name
+  end
+  
+  def test_update_head_wants_valid_ref
+    h = Grit::Head.new("fubar", "abc123")
+    assert !@r.update_head(h)
+    assert_equal "master", @r.head.name
   end
 end
