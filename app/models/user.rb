@@ -152,10 +152,11 @@ class User < ActiveRecord::Base
     user
   end
   
-  def self.most_active(limit = 10)
-    Rails.cache.fetch("users:most_active:#{limit}", :expires_in => 1.hour) do
-      find(:all, :select => "users.*, count(events.id) as event_count",
+  def self.most_active_pushers(limit = 10)
+    Rails.cache.fetch("users:most_active_pushers:#{limit}", :expires_in => 1.hour) do
+      find(:all, :select => "users.*, events.action, count(events.id) as event_count",
         :joins => :events, :group => "users.id", :order => "event_count desc",
+        :conditions => ["events.action = ?", Action::PUSH],
         :limit => limit)
     end
   end
