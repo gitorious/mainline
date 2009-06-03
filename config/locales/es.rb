@@ -385,7 +385,7 @@
         :short => lambda { |time| "#{time.day}/%m, %H:%M hs" },
         :long => lambda { |time| "%A, #{time.day} de %B de %Y, %H:%M hs" },
         :only_second => "%S",
-        :human => "%A, %d de %B",
+        :human => "%A, %d de %B %Y",
         :short_time => "%H:%M",
         :datetime => {
           :formats => {
