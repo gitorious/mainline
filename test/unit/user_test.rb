@@ -282,6 +282,32 @@ class UserTest < ActiveSupport::TestCase
     should 'keep track of the number of unread messages' do
       assert_equal(1, @recipient.received_messages.unread_count)
     end
+    
+    context 'Top level messages' do
+      setup do
+        @sender = Factory.create(:user)
+        @recipient = Factory.create(:user)
+        @other_user = Factory.create(:user)
+        @message = Message.create(:sender => @sender, :recipient => @recipient, :subject => 'Hello', :body => 'World')
+      end
+      
+      should 'include messages to self' do
+        assert @recipient.top_level_messages.include?(@message)
+      end
+      
+      should 'include messages from self with unread replies' do
+        reply = @message.build_reply(:body => "Thx")
+        assert reply.save
+        assert @recipient.top_level_messages.include?(@message)
+      end
+      
+      should 'not include messages from someone else with unread replies' do
+        another_message = Message.create(:sender => @other_user, :recipient => @recipient, :subject => "Foo", :body => "Bar")
+        another_reply = another_message.build_reply(:body => "Not for you")
+        assert another_reply.save
+        assert !@sender.top_level_messages.include?(another_message)
+      end
+    end
   end
   
   context 'Avatars' do
