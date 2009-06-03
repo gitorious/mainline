@@ -26,7 +26,8 @@ module Git
   class Daemon
     include Daemonize
     
-    SERVICE_REGEXP = /^(git\-upload\-pack)\s(.+)\x00host=([\w\.\-]+)/.freeze
+    SERVICE_READ_REGEXP = /^(git\-upload\-pack|git\ upload\-pack)\s(.+)\x00host=([\w\.\-]+)/.freeze
+    SERVICE_WRITE_REGEXP = /^(git\-receive\-pack|git\ receive\-pack)\s(.+)\x00host=([\w\.\-]+)/.freeze
     
     def initialize(options)
       @options = options
@@ -69,12 +70,12 @@ module Git
       
       line = receive_data(session)
       
-      if line =~ SERVICE_REGEXP
+      if line =~ SERVICE_READ_REGEXP
         start_time = Time.now
         service = $1
         base_path = $2
         host = $3
-      
+
         path = File.expand_path("#{BASE_PATH}/#{base_path}")
         log(Process.pid, "Connection from #{ip} for #{base_path.inspect}")
         
@@ -135,6 +136,15 @@ module Git
             exit!
           end
         end rescue Errno::EAGAIN
+      elsif line =~ SERVICE_WRITE_REGEXP
+        service, base_path, host = $1, $2, $3
+        log(Process.pid, "Not accepting #{service.inspect} for #{base_path.inspect}")
+        write_error_message(session, "The git:// url is read-only. Please see " +
+          "http://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')} " +
+          "for the push url, if you're a committer.")
+        $children_active -= 1
+        session.close
+        return
       else
         # $stderr.puts "Invalid request from #{ip}: #{line.inspect}"
         $children_active -= 1
