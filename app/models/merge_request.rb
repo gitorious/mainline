@@ -382,7 +382,7 @@ class MergeRequest < ActiveRecord::Base
   def push_to_tracking_repository!
     merge_request_repo = target_repository.tracking_repository
     branch_spec = "#{ending_commit}:refs/reviews/#{id}"
-    source_repository.git.git.push({}, merge_request_repo.full_repository_path, branch_spec)
+    source_repository.git.git.push({}, merge_request_repo.full_repository_path, "#{branch_spec}/1")
     source_repository.git.git.push({}, target_repository.full_repository_path, branch_spec)
   end
 end
