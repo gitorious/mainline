@@ -52,7 +52,8 @@
     <% if @repository.parent -%>
     <li>
       <strong><%= t("views.repos.clone_of") %>:</strong> 
-      <%= link_to h(@repository.parent.gitdir), project_repository_path(@owner, @repository.parent) -%>
+      <%= link_to h(@repository.parent.gitdir),
+            repo_owner_path(@repository.parent, [@repository.parent.project, @repository.parent]) -%>
     </li>
     <% end -%>
     <li>
