@@ -88,6 +88,21 @@ class MessageTest < ActiveSupport::TestCase
       assert @reply.save
       assert @message.replies.include?(@reply)
     end
+    
+    should 'set the root message' do
+      assert @reply.save
+      assert_equal @message, @reply.root_message
+    end
+    
+    should 'flag the root message as having unread messages when a new reply is created' do
+      assert !@message.has_unread_replies?
+      assert @reply.save
+      assert @message.reload.has_unread_replies?
+      @message.update_attribute(:has_unread_replies, false)
+      reply_to_reply = @reply.build_reply(:body => 'All right!', :subject => 'Feeling chatty')
+      assert reply_to_reply.save
+      assert !@message.reload.has_unread_replies?
+    end
   end
   
   context 'Calculating the number of messages in a thread' do

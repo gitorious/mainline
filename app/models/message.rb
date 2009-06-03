@@ -22,7 +22,9 @@ class Message < ActiveRecord::Base
   belongs_to :sender, :class_name => "User", :foreign_key => :sender_id
   belongs_to :recipient, :class_name => "User", :foreign_key => :recipient_id
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
+  belongs_to :root_message, :class_name => 'Message', :foreign_key => :root_message_id
   after_create :send_email_notification_if_required
+  after_create :flag_root_message_if_required
   
   has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
   
@@ -49,6 +51,7 @@ class Message < ActiveRecord::Base
     reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}.with_indifferent_access
     reply = Message.new(reply_options.merge(options))
     reply.in_reply_to = self
+    reply.root_message_id = root_message_id || id
     return reply
   end
   
@@ -152,5 +155,14 @@ class Message < ActiveRecord::Base
     def schedule_email_delivery
       options = {:sender_id => sender.id, :recipient_id => recipient.id, :subject => subject, :body => body, :created_at => created_at, :identifier => "email_delivery", :message_id => self.id}
       publish :cc_message, options.to_json
+    end
+    
+    def flag_root_message_if_required
+      if root_message
+        if root_message.sender == recipient
+          root_message.has_unread_replies = true
+          root_message.save
+        end
+      end
     end
 end
