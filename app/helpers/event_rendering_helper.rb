@@ -114,7 +114,8 @@ module EventRenderingHelper
       action = action_for_event(:event_branch_created) do
         link_to(h(event.data), project_repository_tree_path(project, event.target, event.data)) + 
         " on " + link_to(h(project.slug), project_path(project)) + "/" + 
-        link_to(h(event.target.name), project_repository_url(project, event.target))
+        link_to(h(event.target.name),
+          repo_owner_path(event.target, :project_repository_url, project, event.target))
       end
     end
     category = "commit"
@@ -125,7 +126,8 @@ module EventRenderingHelper
     project = event.target.project
     action = action_for_event(:event_branch_deleted) do 
       h(event.data)  + " on " + link_to(h(project.slug), project_path(project)) + 
-      "/" + link_to(h(event.target.name), project_repository_url(project, event.target))
+      "/" + link_to(h(event.target.name),
+              repo_owner_path(event.target, :project_repository_url, project, event.target))
     end
     category = "commit"
     [action, "", category]
