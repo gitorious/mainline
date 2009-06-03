@@ -18,6 +18,11 @@
 %>
 <tr class="<%= message.aasm_state_for_user(current_user) -%>" id="<%= dom_id(message) -%>">
   <td>
+    <%- if message.recipient == current_user and message.unread? -%>
+      <input type="checkbox" name="message_ids[]" value="<%= message.id -%>" class="select_msg" />
+    <%- end -%>
+  </td>
+  <td>
     <%= sender_and_recipient_display(message) %> (<%= message.number_of_messages_in_thread %>)
   </td>
   <td>

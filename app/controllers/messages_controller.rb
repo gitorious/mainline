@@ -41,6 +41,17 @@ class MessagesController < ApplicationController
       wants.js
     end
   end
+
+  def bulk_update
+    message_ids = params[:message_ids].to_a
+    message_ids.each do |message_id|
+      if message = current_user.received_messages.find(message_id)
+        message.read
+      end
+    end
+    redirect_to :action => :index
+  end
+
   
   def show
     @message = Message.find(params[:id])
@@ -54,6 +65,7 @@ class MessagesController < ApplicationController
       wants.js {render :partial => "message", :layout => false}
     end
   end
+  
 
   def create
     thread_options = params[:message].merge({

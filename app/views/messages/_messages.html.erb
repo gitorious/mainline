@@ -16,8 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<%= form_tag(bulk_update_messages_path) %>
+<div>
+  <%= link_to_function("Select all unread messages", "$$('.select_msg').each(function(c){c.checked='checked'})") %>
+</div>
 <table class="message_list">
   <tr>
+    <th></th>
     <th>Who</th>
     <th>What</th>
     <th>When</th>
@@ -27,3 +32,5 @@
   <% end %>
 </table>
 
+<input type="submit" value="Mark selected messages as read" />
+</form>

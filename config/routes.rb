@@ -107,7 +107,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :messages, 
     :member => {:reply => :post, :read => :put}, 
-    :collection => {:auto_complete_for_recipient_login => :post, :sent => :get}
+    :collection => {:auto_complete_for_recipient_login => :post, :sent => :get, :bulk_update => :put}
   
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'

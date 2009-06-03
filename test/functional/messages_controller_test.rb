@@ -212,7 +212,25 @@ class MessagesControllerTest < ActionController::TestCase
       post :auto_complete_for_message_recipients, :message => {:recipients => "mik"}, :format => "js"
       assert_equal([users(:mike)], assigns(:users))
     end
+  end
+  
+  context 'On PUT to bulk_update' do
+    setup do
+      @sender = Factory.create(:user)
+      @recipient = Factory.create(:user)
+      @messages = 10.times.collect{ |i|
+        Message.create(:sender => @sender, :recipient => @recipient, :subject => "Message #{i}", :body => "Hello world")
+      }
+    end
     
+    should 'should mark the selected messages as read' do
+      @request.session[:user_id] = @recipient.id
+      put :bulk_update, :message_ids => @messages.collect(&:id)
+      assert_response :redirect
+      @messages.each do |msg|
+        assert msg.reload.read?
+      end
+    end
   end
   
   context 'Unauthenticated GET to index' do
