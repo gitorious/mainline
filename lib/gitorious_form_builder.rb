@@ -5,12 +5,23 @@ class GitoriousFormBuilder < ActionView::Helpers::FormBuilder
   def current_user_or_group(field, label_title, hint = nil, options = {})
     result = [label(field, label_title), "<br />"]
     result << "Me: " + radio_button("#{field}_type", "User", {:checked => true})
-    result << "Group: " + radio_button("#{field}_type", "Group")
-    result << select("#{field}_id", @template.current_user.groups.map{|g| [g.name, g.id] }, 
-                      {}, :id => "#{object_name}_#{field}_id_group_select")
+    result << select_group_membership(field)
     if options[:hint]
       result << content_tag(:p, options[:hint], :class => "hint")
     end
     result.join("\n")
+  end
+  
+  private
+
+  def select_group_membership(field)
+    admin_groups = @template.current_user.groups.select {|g| g.admin? @template.current_user }
+    result = ""
+    unless admin_groups.empty?
+      result << "Group: " + radio_button("#{field}_type", "Group")
+      result << select("#{field}_id", admin_groups.map{|g| [g.name, g.id] }, 
+                        {}, :id => "#{object_name}_#{field}_id_group_select")
+    end
+    result    
   end
 end
