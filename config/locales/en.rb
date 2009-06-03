@@ -567,7 +567,7 @@
         :short => "%d %b %H:%M",
         :long => "%B %d, %Y %H:%M",
         :only_second => "%S",
-        :human => "%A %B %d",
+        :human => "%A %B %d %Y",
         :short_time => "%H:%M",
         :datetime => {
           :formats => {
