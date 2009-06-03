@@ -144,12 +144,15 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should "returns the correct type and identifier for the deletion of a branch" do
     stub_git_show
+    frozen_now = Time.now
+    Time.expects(:now).returns(frozen_now)
     @processor.commit_summary = 'a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/heads/foo_branch'
     assert_equal :delete, @processor.action
     assert @processor.head?
     assert_equal 1, @processor.events.size
     assert_equal Action::DELETE_BRANCH, @processor.events.first.event_type
     assert_equal 'foo_branch', @processor.events.first.identifier
+    assert_equal frozen_now.utc, @processor.events.first.commit_time
     @processor.expects(:log_event).once
     @processor.log_events
   end

@@ -137,7 +137,7 @@ class PushEventProcessor < ApplicationProcessor
       e = EventForLogging.new
       e.event_type = Action::DELETE_BRANCH
       e.identifier = @identifier
-      fetch_commit_details(e, @oldrev)
+      fetch_commit_details(e, @oldrev, Time.now.utc)
       return [e]
     else
       e = EventForLogging.new
@@ -150,13 +150,13 @@ class PushEventProcessor < ApplicationProcessor
     end
   end
     
-  def fetch_commit_details(an_event, commit_sha)
+  def fetch_commit_details(an_event, commit_sha, event_timestamp = nil)
     sha, email, timestamp, message = git.show({
       :pretty => git_pretty_format, 
       :s => true
     }, commit_sha).split(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
     an_event.email        = email
-    an_event.commit_time  = Time.at(timestamp.to_i).utc
+    an_event.commit_time  = event_timestamp || Time.at(timestamp.to_i).utc
     an_event.message      = message
   end
   
