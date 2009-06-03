@@ -50,7 +50,7 @@
       <%= render "layouts/login_logout" -%>
     </ul>
     
-    <% if GitoriousConfig['public_mode'] -%>
+    <% if GitoriousConfig['public_mode'] || logged_in? -%>
       <div id="searchbox">
         <%= render :partial => "/searches/search_box" -%>
       </div>
