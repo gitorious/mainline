@@ -443,7 +443,11 @@
         :show_title => "Reviewing merge request {{source}} &#x2192; {{target}}",
         :update_btn => "Update merge request",
         :delete_btn => 'Delete merge request',
-        :help => "The recommended way to merge in these changes is to pull them into a local branch for review and them merge to back to master:",
+        :help => "One way to merge in these changes is to pull them into a local " +
+                  "branch for review, verifying the changes and then merge to back " + 
+                  "to master. Your project may or may not use another method for " +
+                  "integrating merge requests.",
+        :example => "Show example workflow",
         :commits_to_merged => "Commits that would be merged",
         :commits => "Commits",
         :reopen_btn => 'Reopen merge request',
