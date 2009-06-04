@@ -78,6 +78,13 @@ class Repository < ActiveRecord::Base
   named_scope :clones,    :conditions => ["kind != ? and parent_id is not null", KIND_PROJECT_REPO]
   named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
   
+  is_indexed :fields => ["name", "description"],
+    :include => [{
+      :association_name => "project",
+      :field => "slug",
+      :as => "project"
+    }], :conditions => "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
+  
   def self.human_name
     I18n.t("activerecord.models.repository")
   end
