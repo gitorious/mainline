@@ -62,6 +62,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     assert_equal 1, @processor.events.size
     assert_equal Action::CREATE_BRANCH, @processor.events.first.event_type
     assert_equal 'foo_branch', @processor.events.first.identifier
+    assert_equal users(:johan), @processor.events.first.user
     @processor.expects(:log_event).times(1)
     @processor.log_events    
   end
@@ -122,7 +123,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
     assert_equal :create, @processor.action
     assert_equal 4, @processor.events.size
-    assert_equal 'johan@johansorensen.com', @processor.events.first.email
+    assert_equal users(:johan), @processor.events.first.user
     @processor.events[1..4].each do |e|
       assert_equal 'john@nowhere.com', e.email
     end
