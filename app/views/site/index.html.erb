@@ -49,7 +49,7 @@
   <% end -%>
 </div>
 
-<% if GitoriousConfig['public_mode'] -%>
+<% if GitoriousConfig['public_mode'] || logged_in? -%>
 <div id="left">
   <% pull_box(nil, :class => "expose") do -%>
     <p>
