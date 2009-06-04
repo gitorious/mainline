@@ -56,13 +56,13 @@ class CommitsController < ApplicationController
     unless @commit = @git.commit(params[:id])
       handle_missing_sha and return
     end
-    if stale_conditional?(@commit.id, @commit.committed_date.utc)
+    @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
+    if stale_conditional?([@commit.id, @comments.size], @commit.committed_date.utc)
       @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
       @diffs = @commit.parents.empty? ? [] : @commit.diffs
       @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
       @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
       @author_user = User.find_by_email_with_aliases(@commit.author.email)
-      @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
       respond_to do |format|
         format.html
         format.diff  { render :text => @diffs.map{|d| d.diff}.join("\n"), :content_type => "text/plain" }
