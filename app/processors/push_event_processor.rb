@@ -120,6 +120,7 @@ class PushEventProcessor < ApplicationProcessor
       rev, message = action == :create ? [@newrev, "Created tag #{@identifier}"] : [@oldrev, "Deleted branch #{@identifier}"]
       logger.debug("Processor: action is #{action}, identifier is #{@identifier}, rev is #{rev}")
       fetch_commit_details(e, rev)
+      e.user = user
       e.message = message
       return [e]
     elsif action == :create
@@ -127,7 +128,7 @@ class PushEventProcessor < ApplicationProcessor
       e.event_type = Action::CREATE_BRANCH
       e.message = "New branch"
       e.identifier = @identifier
-      e.email = user.email
+      e.user = user
       result = [e]
       if @identifier == 'master'
         result = result + events_from_git_log(@newrev) 
@@ -138,6 +139,7 @@ class PushEventProcessor < ApplicationProcessor
       e.event_type = Action::DELETE_BRANCH
       e.identifier = @identifier
       fetch_commit_details(e, @oldrev, Time.now.utc)
+      e.user = user
       return [e]
     else
       e = EventForLogging.new

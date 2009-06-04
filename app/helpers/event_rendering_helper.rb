@@ -139,8 +139,7 @@ module EventRenderingHelper
       link_to(h(project.slug), project_path(project))  + "/" + 
       link_to(h(event.target.name), project_repository_url(project, event.target))
     end
-    body = link_to(h(event.data), project_repository_commit_path(project, event.target, h(event.data))) + 
-            "<br/>" + h(event.body)
+    body = link_to(h(event.data) + ": " + h(event.body), project_repository_commit_path(project, event.target, h(event.data)))
     category = "commit"
     [action, body, category]
   end
