@@ -32,6 +32,11 @@
   <p>
     <%= f.label :avatar, t('views.groups.avatar') -%> <br />
     <%= image_tag @group.avatar.url(:thumb) %> <br />
+    <%- if @group.avatar? -%>
+      <%= button_to_function("Delete current team image", 
+        "if (confirm('Are you sure you want to delete the team image?')) $('delete_avatar').submit()") %> <br/>
+    <%- end -%>
+    <br />
     <%= f.file_field :avatar %>
   </p>
   
@@ -41,8 +46,12 @@
 <% content_for :sidebar do -%>
   <% if current_user.site_admin? || (@group.admin?(current_user) && @group.deletable?) -%>
     <p>
-      <%= button_to("Delete this group permanently", group_path(@group), 
+      <%= button_to("Delete this group permanently", group_path(@group),
             :method => :delete, :confirm => "Do you really wish to DELETE this group?") -%>
     </p>
   <% end -%>
+<% end -%>
+
+<% form_for(@group, :url => avatar_group_path,
+  :html => {:id => "delete_avatar", :method => :delete}) do |f| -%>
 <% end -%>

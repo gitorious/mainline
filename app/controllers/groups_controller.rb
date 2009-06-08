@@ -18,7 +18,7 @@
 
 class GroupsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
-  before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update]
+  before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update, :avatar]
   renders_in_global_context
   
   def index
@@ -81,6 +81,14 @@ class GroupsController < ApplicationController
       flash[:error] = "The team can't be deleted, since there's other members in it"
       redirect_to group_path(@group)
     end
+  end
+  
+  # DELETE avatar
+  def avatar
+    @group.avatar.destroy
+    @group.save
+    flash[:success] = "The team image was deleted"
+    redirect_to group_path(@group)
   end
   
   def auto_complete_for_project_slug

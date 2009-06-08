@@ -152,5 +152,13 @@ class GroupsControllerTest < ActionController::TestCase
       assert_match(/team was deleted/, flash[:success])
     end
     
+    should 'be able to delete the team avatar' do
+      login_as :mike
+      @group.update_attribute(:avatar_file_name, "foo.png")
+      assert @group.avatar?
+      delete :avatar, :id => @group.to_param
+      assert_redirected_to group_path(@group)
+      assert !@group.reload.avatar?
+    end
   end
 end

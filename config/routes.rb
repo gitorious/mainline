@@ -89,7 +89,7 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.projects_category "projects/category/:id"
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
-  map.resources :groups, :as => "teams" do |grp|
+  map.resources :groups, :as => "teams", :member => {:avatar => :delete}  do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
     grp.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     grp.resources :projects do |p|
