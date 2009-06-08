@@ -28,7 +28,9 @@
 
   <%= render :partial => "repositories/statistics", :locals => {:repository => @repository} -%>
   
-  <%#= render_readme(@repository) %>
+  <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
+<%= render "getting_started" -%>
+  <% end -%>
   
   <h2><%= t("views.repos.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>

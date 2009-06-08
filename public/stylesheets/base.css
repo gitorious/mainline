@@ -125,6 +125,10 @@ pre {
   margin-left: 2em;
   margin-right: 2em;
 }
+pre.no-indent {
+  margin-left: 0;
+  padding-left: 0;
+}
 
 ul li h1, ul li h2, ul li h3, ul li h4 {
   margin-bottom: 0.5em;
@@ -659,6 +663,11 @@ li.merge_requests a.selected { color: #09460F;}
 .help-box.middle {
   margin: 10px auto 30px auto;
   width: 450px;
+}
+
+.help-box.full {
+  margin: 0 auto 30px auto;
+  width: 90%;
 }
 
 .help-box.error {
