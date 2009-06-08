@@ -44,9 +44,15 @@ website code should be free of mysql-isms/quirks.
 Prerequisites
 =============
 
-First of all, **we assume you have a working Ruby on Rails installation on your machine**. The Rails project has several resources about getting up and running with Rails, have a look at [getting started on rubyonrails.org](http://rubyonrails.org/download). Please ensure you're able to create a Rails project that uses your database of choice; this guide assumes your machine is ready to run Rails.
+First of all, **we assume you have a working Ruby on Rails installation on
+your machine**. The Rails project has several resources about getting up and
+running with Rails, have a look at [getting started on
+rubyonrails.org](http://rubyonrails.org/download). Please ensure you're able
+to create a Rails project that uses your database of choice; this guide
+assumes your machine is ready to run Rails.
 
-Gitorious itself runs on either Ruby 1.8 or 1.9. Gitorious.org itself uses Ruby 1.9 and we recommend you do the same.
+Gitorious itself runs on either Ruby 1.8 or 1.9. Gitorious.org itself uses
+Ruby 1.9 and we recommend you do the same.
 
 
 Dependencies
@@ -60,11 +66,13 @@ First, install each of these Libraries/applications:
 * ImageMagick           (need version >= 6.3.0)
 * aspell (optional)
 
-Next, you need to install a couple of gems:
+An ActiveMessaging (http://code.google.com/p/activemessaging/wiki/Installation) compatible queue
+server. Gitorious.org runs ActiveMQ and STOMP, stompserver might be a nice
+flyweight alternative for your needs
 
-* rmagick. RMagick is used for generating the non-gravatar avatars in Gitorious. In order to install Rmagick (which is done with `gem install rmagick`), you need to have either ImageMagick or GraphicsMagick installed, along with the header files. Have a look at [the RMagick web site](http://rmagick.rubyforge.org/) for instructions on getting RMagick installed.
-* chronic: gem install chronic
 
+Getting the code
+================
 
 Next, get the gitorious code itself:
 
@@ -77,14 +85,21 @@ Now you need edit a couple of configuration files.
 config/database.yml
 ------------------
 
-This file contains settings for the databases used for Gitorious. The Gitorious distribution provides a sample config file - database.sample.yml - that you could copy to config/database.yml.
+This file contains settings for the databases used for Gitorious. The
+Gitorious distribution provides a sample config file - database.sample.yml -
+that you could copy to config/database.yml.
 
-Gitorious should be database agnostic, so feel free to use your database of choice. Gitorious.org uses MySQL, but there shouldn't be any MySQL specific code in Gitorious, so use whatever you're most comfortable with.
+Gitorious should be database agnostic, so feel free to use your database of
+choice. Gitorious.org uses MySQL, but there shouldn't be any MySQL specific
+code in Gitorious, so use whatever you're most comfortable with.
 
 config/gitorious.yml
 --------------------
 
-This file holds Gitorious specific configuration for each Rails environment. There's a sample file in config/gitorious.sample.yml that describes what each instruction means. Do make sure you have a section for each Rails environment, especially if you're upgrading an existing Gitorious installation.
+This file holds Gitorious specific configuration for each Rails environment.
+There's a sample file in config/gitorious.sample.yml that describes what each
+instruction means. Do make sure you have a section for each Rails environment,
+especially if you're upgrading an existing Gitorious installation.
 
 * Create a directory to hold project files
  
@@ -99,16 +114,39 @@ This file holds Gitorious specific configuration for each Rails environment. The
 config/broker.yml
 -----------------
 
-This file contains information about the Message Queing system used in your Gitorious installation. There's a section about this further down in this document, but as a starting point you can use the supplied sample file in config/broker.yml.example (cp config/broker.yml.example config/broker.yml)
+This file contains information about the Message Queing system used in your
+Gitorious installation. There's a section about this further down in this
+document, but as a starting point you can use the supplied sample file in
+config/broker.yml.example (cp config/broker.yml.example config/broker.yml)
 
 Install the gems required by Gitorious
 ======================================
 
-Rails now has a rake task for installing gems required by the application. 
+Next, you need to install a couple of gems:
 
-  [sudo] rake gems:install
-  
-on your command line (within the Gitorious root) should take care of installing all gems required by Gitorious for you. 
+  * chronic
+  * daemons
+  * diff-lcs
+  * echoe
+  * fastthread
+  * geoip
+  * highline
+  * hoe
+  * mime-types
+  * oauth
+  * rack >= 1.0.0
+  * rake
+  * rdiscount >= 1.3.1.1
+  * RedCloth
+  * rmagick
+  * ruby-hmac
+  * ruby-openid
+  * ruby-yadis
+  * stomp >= 1.1
+
+Most of these can be installed using 
+    $ [sudo] rake gems:install
+
 
 Create your database
 ====================
@@ -119,6 +157,7 @@ It is now time for creating the Gitorious database.
   
 will create an empty database for you.
 
+
 Migrate your database
 =====================
 
@@ -128,16 +167,21 @@ Now that you have a database, it's time to add the database schema
   
 will take care of this for you
 
+
 Run the tests
 =============
 
-Running all the tests will ensure your Gitorious installation is correctly set up. It takes less than a minute to run all the tests, and gives confidence that the code is working as intended.
+Running all the tests will ensure your Gitorious installation is correctly set
+up. It takes less than a minute to run all the tests, and gives confidence
+that the code is working as intended.
 
-There is at the time being one gem that's required to run the tests, so start out with
+There is at the time being one gem that's required to run the tests, so start
+out with
 
   [sudo] rake gems:install RAILS_ENV=test
   
-to make sure the test specific gems are installed. Then run the entire test suite:
+to make sure the test specific gems are installed. Then run the entire test
+suite:
 
   rake test
   
@@ -146,31 +190,50 @@ Once all the tests pass, you're almost ready.
 Messaging server
 ================
 
-Gitorious uses the ActiveMessaging plugin, which supports a range of different messaging platforms, for sending demanding tasks for asynchronous processing. In order to these events to be processed, you need to run a messaging server when running Gitorious.
+Gitorious uses the ActiveMessaging plugin, which supports a range of different
+messaging platforms, for sending demanding tasks for asynchronous processing.
+In order to these events to be processed, you need to run a messaging server
+when running Gitorious.
 
-A pretty reliable solution is to use Apache's ActiveMQ messaging queue system, located at http://activemq.apache.org/ . Download a version for you operating system, unpack, and follow the instructions to get running. On Unix-like systems, this is as easy as unpacking the tarball, going into it and running
+A pretty reliable solution is to use Apache's ActiveMQ messaging queue system,
+located at http://activemq.apache.org/ . Download a version for you operating
+system, unpack, and follow the instructions to get running. On Unix-like
+systems, this is as easy as unpacking the tarball, going into it and running
 
   bin/activemq
   
-This will start the ActiveMQ server in a default setup, probably pretty well suited for development purposes. The ActiveMessaging plugin needs to know how to contact your MQ server, so it needs a config/broker.yml file. The Gitorious distribution provides an example (again, the defaults should work in a development environment). Just copy the config/broker.yml.example to config/broker.yml and start your server.
+This will start the ActiveMQ server in a default setup, probably pretty well
+suited for development purposes. The ActiveMessaging plugin needs to know how
+to contact your MQ server, so it needs a config/broker.yml file. The Gitorious
+distribution provides an example (again, the defaults should work in a
+development environment). Just copy the config/broker.yml.example to
+config/broker.yml and start your server.
 
-The messages are sent to the server, in order to "consume" the messages, there is a script in scripts/poller that will run all registered "processors" (found in app/processors) that consume messages. In order to have eg. creation of repositories done automatically run
+The messages are sent to the server, in order to "consume" the messages, there
+is a script in scripts/poller that will run all registered "processors" (found
+in app/processors) that consume messages. In order to have eg. creation of
+repositories done automatically run
 
   script/poller start
   
 and the script will be started and daemonized.
 
-You're free to use other messaging protocols than the default Stomp protocol, which is required in config/environment.rb. The ActiveMessaging website (http://code.google.com/p/activemessaging/wiki/ActiveMessaging) has more information about how to set this up.
+You're free to use other messaging protocols than the default Stomp protocol,
+which is required in config/environment.rb. The ActiveMessaging website
+(http://code.google.com/p/activemessaging/wiki/ActiveMessaging) has more
+information about how to set this up.
 
 
 Get Sphinx going
 ================
 
-  for RAILS_ENV in development test production ; do
-    RAILS_ENV=$RAILS_ENV rake ultrasphinx:configure
-    RAILS_ENV=$RAILS_ENV rake ultrasphinx:index
-  done
-  RAILS_ENV=production rake ultrasphinx:daemon:start &
+    $ env RAILS_ENV=production rake ultrasphinx:configure
+    $ env RAILS_ENV=production rake ultrasphinx:index
+    $ env RAILS_ENV=production rake ultrasphinx:daemon:start
+    
+This sequence of commands will configure, index the database and start the
+sphinx daemon
+  
 
 Tweak environment
 =================
@@ -184,19 +247,27 @@ Tweak environment
 Start the server
 ================
 
-Now that you have all the components running, it's time to try Gitorious on your local machine:
+Now that you have all the components running, it's time to try Gitorious on
+your local machine:
 
   ruby script/server    (for Mongrel/Webrick)
   thin start            (for Thin)
 
-Remember the values you put for gitorious_host and gitorious_port in config/gitorious.yml? Go to http://<gitorious_host>:<gitorious_port> to see the main page of your local Gitorious. You are now officially up and running, congratulations!
+Remember the values you put for gitorious_host and gitorious_port in
+config/gitorious.yml? Go to http://<gitorious_host>:<gitorious_port> to see
+the main page of your local Gitorious. You are now officially up and running,
+congratulations!
 
 Production setup
 ================
 
-In a production environment, you'll want to automate as much as possible. We use Capistrano for deploying to gitorious.org, and use custom Capistrano recipes for starting and stopping the various tasks in Gitorious.
+In a production environment, you'll want to automate as much as possible. We
+use Capistrano for deploying to gitorious.org, and use custom Capistrano
+recipes for starting and stopping the various tasks in Gitorious.
 
-The doc/recipies directory contains instructions for setting up init scripts for these tasks for various platforms. Please consult these, and feel free to contribute your own!
+The doc/recipies directory contains instructions for setting up init scripts
+for these tasks for various platforms. Please consult these, and feel free to
+contribute your own!
 
 Sphinx
 ------
@@ -206,7 +277,8 @@ The sphinx deamon needs to be running in order for full text search to work.
 Git-deamon
 ----------
 
-For cloning over the Git protocol, Gitorious includes a custom git daemon found in script/git-daemon. 
+For cloning over the Git protocol, Gitorious includes a custom git daemon
+found in script/git-daemon. 
 
 script/poller
 -------------
@@ -216,12 +288,19 @@ The script/poller script needs to be kept running.
 Web/application server
 ----------------------
 
-While Mongrel/thin is great for trying out Gitorious on a local install, in a production environment you'll probably want something a little more robust. Most Rails folks use Passenger with Apache or Nginx these days, Gitorious will play happily in such an environment. 
+While Mongrel/thin is great for trying out Gitorious on a local install, in a
+production environment you'll probably want something a little more robust.
+Most Rails folks use Passenger with Apache or Nginx these days, Gitorious will
+play happily in such an environment. 
 
 Support for pushing via SSH
 ===========================
 
-In order for people to be able to push to your repositories, you need an SSH daemon running. You'll also need a system user account that's used for git connections through SSH. Consult the recipies in doc/recipies for instructions on how to set this up. Until you've done this, the web frontend will work, but users won't be able to push their changes.
+In order for people to be able to push to your repositories, you need an SSH
+daemon running. You'll also need a system user account that's used for git
+connections through SSH. Consult the recipies in doc/recipies for instructions
+on how to set this up. Until you've done this, the web frontend will work, but
+users won't be able to push their changes.
 
 Button up
 =========
@@ -229,17 +308,19 @@ Button up
 * In production, you'll want to have a limited-privileges user to run the git
   processes, just as you do for your webserver
 
-* Make the tree invisible to any other non-root user; make the tree read-only by
-  that user; but grant write access to the /tmp and /public/cache directories.
+* Make the tree invisible to any other non-root user; make the tree read-only
+  by that user; but grant write access to the /tmp and /public/cache
+  directories.
 
-* Consider setting up the standard (lighttpd|nginx|apache) frontend <=> mongrel
-  backend if you see traffic.
+* Consider setting up the standard (lighttpd|nginx|apache) 
+  frontend <=> mongrel backend if you see traffic (or configure 
+  mod_passenger for apache2).
 
 
 More Help
 =========
 
-* Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in
+* Consult the mailinglist (http://groups.google.com/group/gitorious) or drop 
   by #gitorious on irc.freenode.net if you have questions.
 
 Gotchas
