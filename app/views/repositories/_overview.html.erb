@@ -52,11 +52,11 @@
             <strong><%= t("views.repos.public_url") %>:</strong>
             <a href="<%= repository.clone_url-%>" class="link_noop"><code><%=h repository.clone_url -%></code></a> 
           <small>
-            <%= link_to_help_toggle('detailed_clone_info') -%>
+            <%= link_to_help_toggle("detailed_clone_info_#{dom_id(repository)}") -%>
             <%= toggle_more_repository_urls(repository) -%>
             
           </small>
-          <div id="detailed_clone_info" class="info_hint" style="display:none">
+          <div id="detailed_clone_info_<%= dom_id(repository) -%>" class="info_hint" style="display:none">
             <%= t("views.repos.help_clone") %>:<br />
             <code>git clone <%= repository.clone_url -%></code>
           </div>
@@ -71,8 +71,8 @@
         <% if repository.http_cloning? -%>
           <strong><%= t("views.repos.http_url") %>:</strong> 
           <a href="<%= repository.http_clone_url-%>" class="link_noop"><code><%=h repository.http_clone_url -%></code></a> 
-          <small><%= link_to_help_toggle('detailed_http_clone_info') -%></small>
-          <div id="detailed_http_clone_info" class="info_hint" style="display:none">
+          <small><%= link_to_help_toggle("detailed_http_clone_info_#{dom_id(repository)}") -%></small>
+          <div id="detailed_http_clone_info_<%= dom_id(repository) -%>" class="info_hint" style="display:none">
             <%= t("views.repos.help_clone") %>:<br />
               <code>git clone <%= repository.http_clone_url -%></code><br />
               <small>(<%= t("views.repos.help_clone_http") %>)</small>
@@ -82,8 +82,8 @@
         <% if logged_in? && current_user.can_write_to?(repository) -%>
           <li id="repo-<%= repository.id -%>-push-url" style="display:none">
             <strong><%= t("views.repos.push_url") %>:</strong> <code><%=h repository.push_url -%></code>
-            <small><%= link_to_help_toggle('detailed_push_info') -%></small>
-            <div id="detailed_push_info" class="info_hint" style="display:none">
+            <small><%= link_to_help_toggle("detailed_push_info_#{dom_id(repository)}") -%></small>
+            <div id="detailed_push_info_<%= dom_id(repository) -%>" class="info_hint" style="display:none">
           <%= t("views.repos.help_push", :repo => repository.push_url) %>
       <pre>
       git remote add origin <%= repository.push_url %>
