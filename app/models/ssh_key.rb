@@ -23,13 +23,12 @@ class SshKey < ActiveRecord::Base
   include ActiveMessaging::MessageSender
   belongs_to :user
   
-  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ [a-z0-9_\.\-\ \+\/:]*(@[a-z0-9\.\-_]*)?$/ims
+  SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ SshKey:(\d+)?-User:(\d+)?$/ims.freeze
   
   validates_presence_of :user_id, :key
-  validates_format_of   :key, :with => SSH_KEY_FORMAT
   
   before_validation { |k| k.key.to_s.strip! }
-  before_validation   :lint_key!
+  before_validation :lint_key!
   after_create  :publish_creation_message
   # we only allow people to create/destroy keys after_update  :create_update_task 
   after_destroy :publish_deletion_message
@@ -38,16 +37,27 @@ class SshKey < ActiveRecord::Base
     I18n.t("activerecord.models.ssh_key")
   end
   
+  def validate
+    if self.to_keyfile_format !~ SSH_KEY_FORMAT
+      errors.add(:key, I18n.t("ssh_key.key_format_validation_message"))
+    end
+  end
+  
   def wrapped_key(cols=72)
     key.gsub(/(.{1,#{cols}})/, "\\1\n").strip
   end
   
   def to_key
-    %Q{### START KEY #{self.id || "nil"} ###\n} + 
-    %Q{command="gitorious #{user.login}",no-port-forwarding,} + 
-    %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{key}} + 
+    %Q{### START KEY #{self.id || "nil"} ###\n} +
+    %Q{command="gitorious #{user.login}",no-port-forwarding,} +
+    %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{to_keyfile_format}} +
     %Q{\n### END KEY #{self.id || "nil"} ###\n}
-  end 
+  end
+  
+  # The internal format we use to represent the pubkey for the sshd daemon
+  def to_keyfile_format
+    %Q{#{self.algorithm} #{self.encoded_key} SshKey:#{self.id}-User:#{self.user_id}}
+  end
   
   def self.add_to_authorized_keys(keydata, key_file_class=SshKeyFile)
     key_file = key_file_class.new
@@ -77,20 +87,24 @@ class SshKey < ActiveRecord::Base
     publish :ssh_key_generation, options.to_json
   end
   
-  def algorithm
-    key.strip.split(" ").first
+  def components
+    key.to_s.strip.split(" ", 3)
   end
   
-  def username_and_host
-    key.strip.split(" ").last
+  def algorithm
+    components.first
   end
   
   def encoded_key
-    key.strip.split(" ").second
+    components.second
+  end
+  
+  def comment
+    components.last
   end
   
   protected
     def lint_key!
-      self.key.gsub!(/(\r|\n)*/m, "")
+      self.key.to_s.gsub!(/(\r|\n)*/m, "")
     end
 end

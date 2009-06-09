@@ -848,6 +848,9 @@ table.listing thead th {
   padding: 3px;
   border-bottom: 2px solid #888;
 }
+table.listing td.icon {
+  text-align: center;
+}
 
 ul.committers_list li {
   margin-bottom: 2px;

@@ -136,6 +136,9 @@
       :notification_subject => "A new committer has been added",
       :notification_body => "{{inviter}} added {{user}} as a committer to the {{repository}} in the {{project}} project",
     },
+    :ssh_key => {
+      :key_format_validation_message => "does not appear to be a valid public key",
+    },
     :views => {
       :layout => {
         :system_notice => "System notice",

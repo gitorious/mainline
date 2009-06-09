@@ -26,6 +26,8 @@ class SshKeyTest < ActiveSupport::TestCase
       :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com",
     }.merge(opts))
   end
+  
+  should_validate_presence_of :user_id, :key
 
   should " have a valid ssh key" do
     key = new_key
@@ -64,21 +66,19 @@ class SshKeyTest < ActiveSupport::TestCase
     assert key.valid?
   end
   
-  should " have a user to be valid" do
-    key = new_key
-    key.user_id = nil
-    assert !key.valid?
-    
-    key.user_id = users(:johan).id
-    key.valid?
-    assert key.valid?
-  end
-  
   should "cant contain multiple keys" do
-    k = "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com"
-    key = "#{k}\r#{k}"
-    ssh = new_key(:key => key)
-    assert !ssh.valid?
+    encoded_key = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
+    k = "ssh-rsa #{encoded_key} foo@example.com"
+    ssh = new_key(:key => "#{k}\r#{k}")
+    assert ssh.valid?
+    assert_equal "ssh-rsa", ssh.algorithm
+    assert_equal encoded_key, ssh.encoded_key
+    assert_equal "ssh-rsa #{encoded_key}", ssh.to_keyfile_format.split(" ")[0..1].join(" ")
+    ssh = new_key(:key => "#{k}\n#{k}")
+    assert ssh.valid?
+    assert_equal "ssh-rsa", ssh.algorithm
+    assert_equal encoded_key, ssh.encoded_key
+    assert_equal "ssh-rsa #{encoded_key}", ssh.to_keyfile_format.split(" ")[0..1].join(" ")
   end
   
   should "strips newlines before save" do
@@ -101,7 +101,7 @@ class SshKeyTest < ActiveSupport::TestCase
     assert_equal "ssh-rsa asdfsomekey foo@example.com", ssh.key
   end
     
-  should "wraps the key at 72 for display" do
+  should "wraps the key at 72 columns for display" do
     ssh = new_key
     expected_wrapped = <<EOS
 ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dk
@@ -111,12 +111,19 @@ EOS
     assert_equal expected_wrapped.strip, ssh.wrapped_key
   end
   
+  should "return the algorithm and encoded key with our own comment with to_keyfile" do
+    key = new_key
+    key.save!
+    expected_format = "#{key.algorithm} #{key.encoded_key} SshKey:#{key.id}-User:#{key.user_id}"
+    assert_equal expected_format, key.to_keyfile_format
+  end
+  
   should "returns a proper ssh key with to_key" do
     ssh_key = new_key
     ssh_key.save!
-    exp_key = %Q{### START KEY #{ssh_key.id} ###\n} + 
-      %Q{command="gitorious #{users(:johan).login}",no-port-forwarding,} + 
-      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{ssh_key.key}} + 
+    exp_key = %Q{### START KEY #{ssh_key.id} ###\n} +
+      %Q{command="gitorious #{users(:johan).login}",no-port-forwarding,} +
+      %Q{no-X11-forwarding,no-agent-forwarding,no-pty #{ssh_key.to_keyfile_format}} +
       %Q{\n### END KEY #{ssh_key.id} ###\n}
     assert_equal exp_key, ssh_key.to_key
   end
@@ -137,40 +144,64 @@ EOS
     SshKey.delete_from_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
   
-  should "parse out the algorithm" do
-    assert_equal "ssh-rsa", new_key.algorithm
+  def key_with_content(algo = nil, key = nil, comment = nil)
+    algo ||= "ssh-rsa"
+    key ||= "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
+    comment ||= "foo@bar.com"
+    new_key({
+      :key => "#{algo} #{key} #{comment}",
+    })
   end
   
-  should "parse out the username+host" do
-    assert_equal "foo@example.com", new_key.username_and_host
+  context "Parsing the key" do
+    should "parse out the key into its components" do
+      assert_equal 3, new_key.components.size
+      key = key_with_content(nil, nil, "the quick brown fox jumped")
+      assert_equal 3, key.components.size
+      assert_equal "the quick brown fox jumped", key.components.last
+      assert_nothing_raised do
+        key.key = nil
+        key.components
+      end
+    end
+    
+    should "parse out the algorithm" do
+      assert_equal "ssh-rsa", new_key.algorithm
+    end
+  
+    should "parse out the username+host comment" do
+      assert_equal "foo@example.com", new_key.comment
+    end
+  
+    should "parse out the content" do
+      expected_content = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
+      assert_equal expected_content, new_key.encoded_key
+    end
   end
   
-  should "parse out the content" do
-    expected_content = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
-    assert_equal expected_content, new_key.encoded_key
-  end
+  context "Message sending" do
+    should 'send a message on create and update' do
+      ssh_key = new_key
+      p = proc{
+        ssh_key.save!
+      }
+      message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
+      assert_equal 'add_to_authorized_keys', message['command']
+      assert_equal [ssh_key.to_key], message['arguments']
+      assert_equal ssh_key.id, message['target_id']
+    end
   
-  should 'send a message on create and update' do
-    ssh_key = new_key
-    p = proc{
+    should 'sends a message on destroy' do
+      ssh_key = new_key
       ssh_key.save!
-    }
-    message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
-    assert_equal 'add_to_authorized_keys', message['command']
-    assert_equal [ssh_key.to_key], message['arguments']
-    assert_equal ssh_key.id, message['target_id']
-  end
-  
-  should 'sends a message on destroy' do
-    ssh_key = new_key
-    ssh_key.save!
-    keydata = ssh_key.to_key.dup
-    p = proc{
-      ssh_key.destroy
-    }
-    message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
-    assert_equal 'delete_from_authorized_keys', message['command']
-    assert_equal [keydata], message['arguments']
+      keydata = ssh_key.to_key.dup
+      p = proc{
+        ssh_key.destroy
+      }
+      message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
+      assert_equal 'delete_from_authorized_keys', message['command']
+      assert_equal [keydata], message['arguments']
+    end
   end
   
   def message_created_in_queue(queue_name, regexp)
