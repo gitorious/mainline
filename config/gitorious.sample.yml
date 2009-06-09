@@ -52,3 +52,6 @@ test:
   
   # Should we hide HTTP clone urls?
   hide_http_clone_urls: false
+
+  # Is this gitorious.org? Read: should we have a very flashy homepage?
+  is_gitorious_dot_org: true
