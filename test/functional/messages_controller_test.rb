@@ -198,6 +198,15 @@ class MessagesControllerTest < ActionController::TestCase
     assert_select "#message_recipients[value=?]", users(:mike).login
   end
   
+  context 'On GET to all' do
+    setup {
+      login_as :johan
+      get :all
+    }
+    should_assign_to :messages 
+    should_respond_with :success
+    should_render_template :all
+  end
   context 'On POST to auto_complete_for_message_recipients' do
     setup do
       login_as :johan
