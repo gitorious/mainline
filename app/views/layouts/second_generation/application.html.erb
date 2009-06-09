@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
+  <%= stylesheet_link_tag "screen" %>
+  <%= javascript_include_tag :defaults, :cache => true -%>
+</head>
+
+<body id="<%= controller.controller_name -%>">
+  <div id="big_header">
+    <div class="marginizer">
+      <div id="main_menu">
+        <ul class="simple left">
+          <li><%= link_to t("views.layout.projects"), projects_path %></li>
+          <li><%= link_to t("views.layout.teams"), groups_path %></li>
+          <li><%= link_to t("views.layout.faq"), faq_path %></li>
+          <li><%= link_to t("views.layout.about"), about_path %></li>
+          <li><%= link_to t("views.layout.register"), new_user_path %></li>
+          <li>
+            <% form_for :search,
+              :url => search_path(:only_path => false, :host => GitoriousConfig["gitorious_host"]),
+              :html => {:method => "get", :id => "main_menu_search_form"} do |f|
+            %>
+              
+              <%= text_field_tag :q, params[:q], :id => "main_menu_search_form_query" %>
+              <%= submit_tag "Search" %>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="clear"></div>
+    
+      <h1 id="logo_image"><span>Gitorious</span></h1>
+      <%= link_to "", root_path, :id => "logo_hit_area" %>
+    
+      <div id="big_header_content">
+        <div id="big_header_meta">
+          <h2 id="big_header_pay_off"><span>The best way to collaborate on open source projects</span></h2>
+          
+          <div id="big_header_signup_link">
+            <%= button_link :big, t("views.site.dashboard.registration_button"), new_user_path %>
+          </div>
+          
+          <div><%= t("views.site.pay_off").call("/gitorious", about_path) %></div>
+        </div>
+    
+        <div id="big_header_login">
+          <h2 id="big_header_login_box_header"><span><%= t("views.site.login_box_header") %></span></h2>
+          
+          <div id="big_header_login_box">
+            <%= render :partial => "sessions/form" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

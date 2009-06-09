@@ -67,6 +67,10 @@ class SiteController < ApplicationController
       @active_users = User.most_active_pushers
       @active_groups = Group.most_active
       @latest_events = Event.latest(25)
+      
+      if GitoriousConfig["is_gitorious_dot_org"]
+        render :layout => "second_generation/application"
+      end
     end
   
 end

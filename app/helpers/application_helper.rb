@@ -362,4 +362,18 @@ module ApplicationHelper
     end
       
   end
+  
+  # Creates a CSS styled <button>.
+  #
+  #  <%= styled_button :big, "Create user" %>
+  #  <%= styled_button :medium, "Do something!", :class => "foo", :id => "bar" %>
+  def styled_button(size_identifier, label, options = {})
+    options.reverse_merge!(:type => "submit", :class => size_identifier.to_s)
+    content_tag(:button, %{<span>#{label}</span>}, options)
+  end
+  
+  def button_link(size_identifier, label, url, options = {})
+    options[:class] = "#{size_identifier} button_link"
+    link_to(%{<span>#{label}</span>}, url, options)
+  end
 end

@@ -80,10 +80,12 @@ class SiteControllerTest < ActionController::TestCase
   context "in Private Mode" do
     setup do
       GitoriousConfig['public_mode'] = false
+      GitoriousConfig['is_gitorious_dot_org'] = false
     end
 
     teardown do
       GitoriousConfig['public_mode'] = true
+      GitoriousConfig['is_gitorious_dot_org'] = true
     end
 
     should "GET / should not show private content in the homepage" do

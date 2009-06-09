@@ -153,6 +153,68 @@ Event.observe(window, "load", function(e){
       return false;
     })
   })
+
+  // Unobtrusively hooking the regular/OpenID login box stuff, so that it works
+  // in a semi-sensible way with javascript disabled.
+  var loginBox = $("big_header_login");
+  if (loginBox) {
+    var openIdLoginBox  = $("big_header_login_box_openid");
+    var regularLoginBox   = $("big_header_login_box_regular");
+    
+    // Only showing the regular login
+    openIdLoginBox.hide();
+    
+    // Hiding the headers
+    $$("#big_header_login h3").each(function(header){
+      header.hide();
+    });
+    
+    // Toggle between the two
+    var loginBoxToggler = function(e){
+      Effect.toggle(openIdLoginBox, "appear", {duration: 0.3 });
+      Effect.toggle(regularLoginBox, "appear", {duration: 0.3 });
+      Event.stop(e);
+      return false;
+    }
+    
+    $("big_header_login_box_to_openid").observe("click", loginBoxToggler);
+    $("big_header_login_box_to_regular").observe("click", loginBoxToggler);
+  }
+  
+  var headerSearchForm = $("main_menu_search_form")
+  if (headerSearchForm) {
+    // The "Search..." label
+    var labelText = "Search..."
+    var searchInput = $("main_menu_search_form_query");
+    searchInput.value = labelText;
+    searchInput.observe("focus", function(){
+      if (searchInput.value == labelText) {
+        searchInput.value = "";
+      }
+    });
+    
+    searchInput.observe("blur", function(){
+      if (searchInput.value == "") {
+        searchInput.value = labelText;
+      }
+    });
+    
+    // Hide the regular native submit button
+    var nativeSubmitButton = headerSearchForm.getElementsBySelector("input[type=submit]")[0];
+    nativeSubmitButton.hide();
+    
+    // Create our own awesome submit button.
+    var awesomeSubmitButton = $(document.createElement("a"));
+    awesomeSubmitButton.writeAttribute("id", "main_menu_search_form_graphic_submit");
+    awesomeSubmitButton.writeAttribute("href", "#");
+    awesomeSubmitButton.observe("click", function(e){
+      headerSearchForm.submit();
+      Event.stop(e);
+      return false;
+    });
+    
+    nativeSubmitButton.insert({after: awesomeSubmitButton});
+  }
 });
 
 

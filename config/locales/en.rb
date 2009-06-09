@@ -145,10 +145,10 @@
         :home => "Home",
         :dashboard => "Dashboard",
         :admin => "Administration",
-        :projects => "Projects",
+        :projects => "All Projects",
         :search => "Search",
         :faq => "FAQ",
-        :about => "About",
+        :about => "About Gitorious",
         :my_account => "My Account",
         :logout => "Logout",
         :login => "Login",
@@ -158,10 +158,14 @@
         :pages => "Wiki",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
-        :teams => "Teams",
+        :teams => "All Teams",
         :blog => "Blog",
       },
       :site => {
+        :pay_off => lambda {|gitorious_repo_path, read_more_path|
+          %{Gitorious provides free <a href="#{gitorious_repo_path}">open source</a> infrastructure for open source projects that use Git. <a href="#{read_more_path}">Read more &raquo;</a>}
+        },
+        :login_box_header => "Already registered?",
         :page_title => "Free open source project hosting",
         :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
@@ -181,6 +185,7 @@
           :projects => "Projects",
           :repositories => "Repositories",
           :team_memberships => "Team memberships",
+          :registration_button => "Register now"
         },
       },
       :events => {
@@ -309,6 +314,10 @@
         :submit => 'Log in',
         :register => "Register",
         :forgot => "Forgotten your password?",
+        :openid_url => "OpenID URL",
+        :email => "E-mail",
+        :to_openid => "Switch to OpenID",
+        :to_regular => "Switch to regular login"
       },
       :searches => {
         :search => "Search",
