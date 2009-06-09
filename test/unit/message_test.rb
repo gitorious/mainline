@@ -251,5 +251,58 @@ class MessageTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  context 'Archive state' do
+    setup do
+      @sender = Factory.create(:user)
+      @recipient = Factory.create(:user)
+      @message = Factory.create(:message, :sender => @sender, :recipient => @recipient)
+    end
+    
+    should 'be marked as archived by both sender and recipient when it is the same user' do
+      @message = Factory.create(:message, :sender => @sender, :recipient => @sender)
+      @message.archived_by(@sender)
+      assert @message.archived_by_sender?
+      assert @message.archived_by_recipient?
+    end
+    
+    should 'initially be unread_by_both' do
+      assert !@message.archived_by_sender?
+      assert !@message.archived_by_recipient?
+    end
+    
+    should 'be archived by sender' do
+      @message.archived_by(@sender)
+      assert @message.archived_by_sender?
+      assert !@message.archived_by_recipient?
+    end
+    
+    should 'be archived by recipient' do
+      @message.archived_by(@recipient)
+      assert @message.archived_by_recipient?
+      assert !@message.archived_by_sender?
+    end
+    
+    should 'be archived by both sender and recipient' do
+      @message.archived_by(@sender)
+      @message.archived_by(@recipient)
+      assert @message.archived_by_sender?
+      assert @message.archived_by_recipient?
+    end
+    
+    should 'be reset when a reply is created' do
+      @message.archived_by(@sender)
+      @message.save
+      reply = @message.build_reply(:body => "Foo")
+      assert reply.save
+      assert !@message.reload.archived_by_sender?
+      
+      @message.archived_by(@recipient)
+      @message.save
+      reply_to_reply = reply.build_reply(:body => "Kthxbye")
+      assert reply_to_reply.save
+      assert !@message.reload.archived_by_recipient?
+    end
+  end
 
 end

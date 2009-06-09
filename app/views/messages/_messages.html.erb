@@ -18,7 +18,9 @@
 %>
 <%= form_tag(bulk_update_messages_path) %>
 <div>
-  <%= link_to_function("Select all unread messages", "$$('.select_msg').each(function(c){c.checked='checked'})") %>
+  Select 
+  <%= link_to_function("All messages", "$$('.select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>,
+  <%= link_to_function("All unread messages", "$$('.unread .select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>
 </div>
 <table class="message_list">
   <tr>
@@ -31,6 +33,12 @@
       <%= render :partial => message %>
   <% end %>
 </table>
-
-<input type="submit" value="Mark selected messages as read" />
+<label>
+  Action:
+</label>
+<select name="requested_action">
+  <option value="">Read</option>
+  <option value="archive">Archive</option>
+</select>
+<input type="submit" value="Apply to selected messages" />
 </form>

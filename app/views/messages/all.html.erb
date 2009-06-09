@@ -16,20 +16,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<tr class="<%= message.aasm_state_for_user(current_user) -%> <%= message.css_class %>" id="<%= dom_id(message) -%>">
-  <td>
-    <input type="checkbox" name="message_ids[]" value="<%= message.id -%>" class="select_msg" />
-  </td>
-  <td class="who">
-    <%= sender_and_recipient_display(message) %> (<%= message.number_of_messages_in_thread %>)
-  </td>
-  <td>
-    <%= link_to(h(message.title), message) %> - 
-    <span class="preview">
-      <%= truncate(h(message.body), :length => 25) %>
-    </span>
-  </td>
-  <td>
-    <%= distance_of_time_in_words_to_now(message.created_at) %> ago    
-  </td>
-</tr>
+
+<%= breadcrumbs_from(@root) -%>
+
+<h1><%= t "views.messages.all_messages" %></h1>
+
+<%= render :partial => "messages", :locals => {:messages => @messages} %>
+
+<% content_for(:sidebar) do %>
+  <%= render :partial => "sidebar" %>
+<% end %>
+
+<%= will_paginate(@messages) %>

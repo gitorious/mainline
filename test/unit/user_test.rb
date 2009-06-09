@@ -277,6 +277,12 @@ class UserTest < ActiveSupport::TestCase
       assert @sender.sent_messages.include?(@message)
     end
     
+    should 'have an all_messages method that returns all messages to or from self' do
+      assert @sender.all_messages.include?(@message)
+      assert @recipient.all_messages.include?(@message)
+      assert !users(:mike).all_messages.include?(@message)
+    end
+    
     should 'know of its sent messages' do
       assert @recipient.received_messages.include?(@message)
     end
@@ -295,12 +301,22 @@ class UserTest < ActiveSupport::TestCase
       
       should 'include messages to self' do
         assert @recipient.top_level_messages.include?(@message)
+        assert_equal @recipient, @message.recipient
+        assert !@message.archived_by_recipient?
+        assert @recipient.messages_in_inbox.include?(@message)
+        @message.archived_by(@recipient)
+        assert @message.save
+        assert !@recipient.messages_in_inbox.include?(@message)
       end
       
       should 'include messages from self with unread replies' do
         reply = @message.build_reply(:body => "Thx")
         assert reply.save
-        assert @recipient.top_level_messages.include?(@message)
+        assert @sender.top_level_messages.include?(@message)
+        assert @sender.messages_in_inbox.include?(@message)
+        @message.archived_by(@sender)
+        assert @message.save
+        assert !@sender.messages_in_inbox.include?(@message)
       end
       
       should 'not include messages from someone else with unread replies' do
@@ -308,9 +324,11 @@ class UserTest < ActiveSupport::TestCase
         another_reply = another_message.build_reply(:body => "Not for you")
         assert another_reply.save
         assert !@sender.top_level_messages.include?(another_message)
+        assert !@sender.messages_in_inbox.include?(another_message)
       end
     end
   end
+  
   
   context 'Avatars' do
     setup {@user = users(:johan)}

@@ -24,7 +24,7 @@ class Message < ActiveRecord::Base
   belongs_to :in_reply_to, :class_name => 'Message', :foreign_key => :in_reply_to_id
   belongs_to :root_message, :class_name => 'Message', :foreign_key => :root_message_id
   after_create :send_email_notification_if_required
-  after_create :flag_root_message_if_required
+  before_create :flag_root_message_if_required
   
   has_many :replies, :class_name => 'Message', :foreign_key => :in_reply_to_id
   
@@ -44,7 +44,7 @@ class Message < ActiveRecord::Base
       transition :unread => :read
     end
   end
-
+  
   include ActiveMessaging::MessageSender
   
   def build_reply(options={})
@@ -145,6 +145,14 @@ class Message < ActiveRecord::Base
     end
   end
   
+  def archived_by(a_user)
+    if a_user == sender
+      self.archived_by_sender = true
+    end
+    if a_user == recipient
+      self.archived_by_recipient = true
+    end
+  end
   protected
     def send_email_notification_if_required
       if recipient.wants_email_notifications? and (recipient != sender)
@@ -161,8 +169,11 @@ class Message < ActiveRecord::Base
       if root_message
         if root_message.sender == recipient
           root_message.has_unread_replies = true
-          root_message.save
+          root_message.archived_by_sender = false
+        else
+          root_message.archived_by_recipient = false
         end
+        root_message.save
       end
     end
 end

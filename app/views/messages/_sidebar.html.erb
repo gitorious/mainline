@@ -36,4 +36,9 @@
         link_to(t("views.messages.sent_messages"), sent_messages_path, :class => "current")
     end -%>
   </li>
+  <li class="all_emails">
+    <%= link_to_unless_current t("views.messages.all_messages"), all_messages_path do 
+        link_to(t("views.messages.all_messages"), all_messages_path, :class => "current")
+    end -%>
+  </li>
 </ul>

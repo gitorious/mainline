@@ -20,12 +20,17 @@ class MessagesController < ApplicationController
   renders_in_global_context
   
   def index
-    @messages = current_user.top_level_messages.paginate(:page => params[:page])
+    @messages = current_user.messages_in_inbox.paginate(:page => params[:page])
     @root = Breadcrumb::ReceivedMessages.new(current_user)
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @messages}
     end
+  end
+  
+  def all
+    @messages = current_user.top_level_messages.paginate(:page => params[:page])
+    @root = Breadcrumb::ReceivedMessages.new(current_user)
   end
   
   def sent
@@ -45,8 +50,15 @@ class MessagesController < ApplicationController
   def bulk_update
     message_ids = params[:message_ids].to_a
     message_ids.each do |message_id|
-      if message = current_user.received_messages.find(message_id)
-        message.read
+      # if message = current_user.all_messages.find(message_id)
+      if message = Message.find(:first, :conditions => ['(recipient_id=? OR sender_id=?) AND id=?', current_user, current_user, message_id])
+        if params[:requested_action] == 'archive'
+          message.archived_by(current_user)
+          message.save!
+        else
+          logger.info("Marking message #{message_id} as read")
+          message.read
+        end
       end
     end
     redirect_to :action => :index

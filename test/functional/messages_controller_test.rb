@@ -223,12 +223,21 @@ class MessagesControllerTest < ActionController::TestCase
       }
     end
     
-    should 'should mark the selected messages as read' do
+    should 'mark the selected messages as read when supplying no action' do
       @request.session[:user_id] = @recipient.id
       put :bulk_update, :message_ids => @messages.collect(&:id)
       assert_response :redirect
       @messages.each do |msg|
         assert msg.reload.read?
+      end
+    end
+    
+    should 'archive the selected messages for the current user' do
+      @request.session[:user_id] = @recipient.id
+      put :bulk_update, :message_ids => @messages.collect(&:id), :requested_action => 'archive'
+      assert_response :redirect
+      @messages.each do |msg|
+        assert msg.reload.archived_by_recipient?
       end
     end
   end

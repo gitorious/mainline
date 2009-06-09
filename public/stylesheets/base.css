@@ -563,6 +563,7 @@ li.emails > a { background-image: url("/images/silk/email.png") !important; }
 li.new_email > a { background-image: url("/images/silk/email_add.png") !important; }
 li.sent_emails > a { background-image: url("/images/silk/email_go.png") !important; }
 li.received_emails > a { background-image: url("/images/silk/email_open.png") !important; }
+li.all_emails > a { background-image: url("/images/silk/folder.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
 li.event_instance.create_repository, li.create_repository > a { background-image: url("/images/silk/database_add.png") !important; }
@@ -2248,6 +2249,22 @@ div.archive-download-box p {
 .message_list .unread
 {
   font-weight: bold;
+}
+.message_list td.who
+{
+  padding-left: 22px;
+  background-position: 2px 2px;
+  background-repeat: no-repeat;
+}
+.message_list tr.merge_request td.who,
+.message_list tr.membership td.who,
+.message_list tr.committership td.who
+{
+  background-image: url(/images/silk/server.png);
+}
+.message_list tr.message td.who
+{
+  background-image: url(/images/silk/comments.png);
 }
 .message_full
 {
