@@ -45,6 +45,10 @@ Big header
   float:left;
   width:100%;
   
+  /* IE7 adds a strange margin here. Dunno why. This "fixes" it. */
+  height:500px;
+  overflow:hidden;
+  
   background-image:url(../images/big_header_gloss.png);
   background-repeat:repeat-x;
   background-color:#000;
@@ -69,6 +73,7 @@ Big header
 }
 
 #main_menu_search_form{
+  margin-top:14px;
 }
 
 #main_menu_search_form_query{
@@ -77,6 +82,9 @@ Big header
   color:#F0F0F0;
   background-color:#2B2728;
   border:1px solid #6B6B6B;
+  float:left;
+  font-size:11px;
+  margin:0px;
   
   -webkit-border-radius:3px;
   -moz-border-radius:3px;
@@ -85,13 +93,11 @@ Big header
 #main_menu_search_form_graphic_submit{
   width:20px;
   height:20px;
+  margin-left:2px;
   background-image:url(../images/button_search.png);
   background-repeat:no-repeat;
-  display:inline-block;
-  
-  /* This is probably quite render error prone */
-  position:relative;
-  top:5px;
+  display:block;
+  float:left;
 }
 
 #main_menu_search_form_graphic_submit:active{
@@ -100,6 +106,7 @@ Big header
 
 #big_header .marginizer{
   position:relative; /* Restraining the absolutely positioned logo */
+  overflow:hidden;
 }
 
 #logo_image{
@@ -183,6 +190,11 @@ Big header
   position:absolute;
 }
 
+#big_header_login_box_form{
+  margin:0;
+  padding:0;
+}
+
 #big_header_login_box{
   padding:15px;
   padding-bottom:5px;
@@ -218,7 +230,12 @@ Big header
 }
 
 #big_header_login_box_fields label{
- color:#B2B2B2;
+  display:block;
+  color:#B2B2B2;
+}
+
+#big_header_login_box_fields a{
+  display:block;
 }
 
 #big_header_login_box_to_openid,
