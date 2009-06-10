@@ -51,7 +51,7 @@ class MergeRequestsController < ApplicationController
   def commit_list
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    @commits = @merge_request.commits_to_be_merged
+    @commits = @merge_request.potential_commits
     render :partial => "commit_list", :layout => false
   end
   

@@ -36,10 +36,10 @@ class PushEventProcessor < ApplicationProcessor
       logger.error("#{self.class.name} received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
     end
   end
-  
+
   def log_events
     logger.info("#{self.class.name} logging #{events.size} events")
-    events.each do |e|
+    @events.each do |e|
       log_event(e)
     end
   end
@@ -75,21 +75,24 @@ class PushEventProcessor < ApplicationProcessor
   def commit_summary=(spec)
     @oldrev, @newrev, @revname = spec.split(' ')
     r, name, @identifier = @revname.split("/", 3)
-    @head_or_tag = name == 'tags' ? :tag : :head
+    @target = {'tags' => :tag, 'heads' => :head, 'reviews' => :review}[name]
+    process_push
   end
   
   def head?
-    @head_or_tag == :head
+    @target == :head
   end
   
   def tag?
-    @head_or_tag == :tag
+    @target == :tag
+  end
+  
+  def review?
+    @target == :review
   end
   
   def action
-    @action ||= if @revname =~ /refs\/reviews\/.*/
-      :review
-    elsif oldrev =~ /^0+$/
+    @action ||= if oldrev =~ /^0+$/
       :create
     elsif newrev =~ /^0+$/
       :delete
@@ -99,7 +102,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   def events
-    @events ||= fetch_events
+    @events
   end
   
   class EventForLogging
@@ -113,46 +116,70 @@ class PushEventProcessor < ApplicationProcessor
       @commits = commits
     end
   end
-  
-  def fetch_events
-    if tag?
-      e = EventForLogging.new
-      e.event_type = action == :create ? Action::CREATE_TAG : Action::DELETE_TAG
-      e.identifier = @identifier
-      rev, message = action == :create ? [@newrev, "Created tag #{@identifier}"] : [@oldrev, "Deleted branch #{@identifier}"]
-      logger.debug("Processor: action is #{action}, identifier is #{@identifier}, rev is #{rev}")
-      fetch_commit_details(e, rev)
-      e.user = user
-      e.message = message
-      return [e]
-    elsif action == :review
-      return []
-    elsif action == :create
-      e = EventForLogging.new
-      e.event_type = Action::CREATE_BRANCH
-      e.message = "New branch"
-      e.identifier = @identifier
-      e.user = user
-      result = [e]
-      if @identifier == 'master'
-        result = result + events_from_git_log(@newrev) 
+
+  def process_push
+    @events = []
+    case action
+    when :create
+      case @target
+      when :head
+        e = EventForLogging.new
+        e.event_type = Action::CREATE_BRANCH
+        e.message = "New branch"
+        e.identifier = @identifier
+        e.user = user
+        result = [e]
+        if @identifier == 'master'
+          result = result + events_from_git_log(@newrev) 
+        end
+        result.each{|ev|@events << ev}
+      when :tag
+        e = EventForLogging.new
+        e.event_type = Action::CREATE_TAG
+        e.identifier = @identifier
+        rev, message = [@newrev, "Created tag #{@identifier}"]
+        logger.debug("Processor: action is #{action}, identifier is #{@identifier}, rev is #{rev}")
+        fetch_commit_details(e, rev)
+        e.user = user
+        e.message = message
+        @events << e        
+      when :review        
       end
-      return result
-    elsif action == :delete
-      e = EventForLogging.new
-      e.event_type = Action::DELETE_BRANCH
-      e.identifier = @identifier
-      fetch_commit_details(e, @oldrev, Time.now.utc)
-      e.user = user
-      return [e]
-    else
-      e = EventForLogging.new
-      e.event_type = Action::PUSH
-      e.message = "#{@identifier} changed from #{@oldrev[0,7]} to #{@newrev[0,7]}"
-      e.identifier = @identifier
-      e.email = user.email
-      e.commits = events_from_git_log("#{@oldrev}..#{@newrev}")
-      return [e]
+    when :update
+      case @target
+      when :head
+        e = EventForLogging.new
+        e.event_type = Action::PUSH
+        e.message = "#{@identifier} changed from #{@oldrev[0,7]} to #{@newrev[0,7]}"
+        e.identifier = @identifier
+        e.email = user.email
+        e.commits = events_from_git_log("#{@oldrev}..#{@newrev}")
+        @events << e
+      when :tag
+      when :review
+        merge_request = MergeRequest.find(@identifier)
+        merge_request.update_from_push!
+      end
+    when :delete
+      case @target
+      when :head
+        e = EventForLogging.new
+        e.event_type = Action::DELETE_BRANCH
+        e.identifier = @identifier
+        fetch_commit_details(e, @oldrev, Time.now.utc)
+        e.user = user
+        @events << e
+      when :tag
+        e = EventForLogging.new
+        e.event_type = Action::DELETE_TAG
+        e.identifier = @identifier
+        rev, message = [@oldrev, "Deleted tag #{@identifier}"]
+        logger.debug("Processor: action is #{action}, identifier is #{@identifier}, rev is #{rev}")
+        fetch_commit_details(e, rev)
+        e.message = message
+        @events << e
+      when :review
+      end
     end
   end
     

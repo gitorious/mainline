@@ -80,12 +80,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
       m
     end
 	 merge_request.stubs(:commits_for_selection).returns(commits)
+	 merge_request.stubs(:commits_to_be_merged).returns(commits[0..1])
 	end
 	
 	context "#show (GET)" do		
 		should " not require login" do
 			session[:user_id] = nil
 			MergeRequest.expects(:find).returns(@merge_request)
+			stub_commits(@merge_request)
 			[@merge_request.source_repository, @merge_request.target_repository].each do |r|
 				r.stubs(:git).returns(stub_everything("Git"))
 			end
@@ -99,13 +101,12 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		should "get a list of the commits to be merged" do
       %w(html patch xml).each do |format|
   			MergeRequest.expects(:find).returns(@merge_request)
-
         stub_commits(@merge_request)
   			get :show, :project_id => @project.to_param, 
   				:repository_id => @target_repository.to_param,
   				:id => @merge_request.id, :format => format
   			assert_response :success
-  			assert_equal 1, assigns(:commits).size
+  			assert_equal 2, assigns(:commits).size
 			end
 		end
 
@@ -118,6 +119,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   		@repository = repositories(:johans2)
   		@mainline_repository = repositories(:johans)
   		@merge_request = merge_requests(:moes_to_johans)
+  		stub_commits(@merge_request)
   		
   		MergeRequest.expects(:find).returns(@merge_request)
   		git_stub = stub_everything("Grit", :commit_deltas_from => [])
@@ -284,6 +286,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	  setup do
 		  @merge_request = @source_repository.proposed_merge_requests.new(:proposal => 'Would like this to be merged', :user => users(:johan), :ending_commit => '6823e6622e1da9751c87380ff01a1db1', :target_repository => @target_repository)
 		  assert @merge_request.save
+		  @merge_request.stubs(:commits_to_be_merged).returns([])
 		  MergeRequest.stubs(:find).returns(@merge_request)
 		  login_as :johan
     end

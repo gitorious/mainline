@@ -30,6 +30,7 @@ class MergeRequest < ActiveRecord::Base
   has_many :comments, :as => :target, :dependent => :destroy
   
   before_destroy :nullify_messages
+
   
   is_indexed :fields => ["proposal"], :include => [{
       :association_name => "user",
@@ -238,6 +239,18 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def commits_to_be_merged
+    if version > 0
+      commit_diff_from_tracking_repo
+    else
+      []
+    end
+  end
+  
+  def commit_diff_from_tracking_repo
+    @commits_to_be_merged ||= target_repository.git.commit_deltas_from(target_repository.tracking_repository.git, target_branch, "refs/reviews/#{id}/#{version}")
+  end
+  
+  def potential_commits
     if applies_to_specific_commits?
       idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
       return idx ? commits_for_selection[idx..-1] : []
@@ -369,6 +382,10 @@ class MergeRequest < ActiveRecord::Base
     }.merge(opts))
   end
   
+  def update_from_push!
+    push_new_branch_to_tracking_repo
+    save
+  end
   
   def valid_oauth_credentials?
     response = access_token.get("/")
@@ -380,9 +397,16 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def push_to_tracking_repository!
-    merge_request_repo = target_repository.tracking_repository
     branch_spec = "#{ending_commit}:refs/reviews/#{id}"
-    source_repository.git.git.push({}, merge_request_repo.full_repository_path, "#{branch_spec}/1")
     source_repository.git.git.push({}, target_repository.full_repository_path, branch_spec)
+    push_new_branch_to_tracking_repo
   end
+
+  def push_new_branch_to_tracking_repo
+    self.version = self.version + 1
+    branch_spec = "refs/reviews/#{id}:refs/reviews/#{id}/#{version}"
+    target_repository.git.git.push({}, target_repository.tracking_repository.full_repository_path, branch_spec)
+  end
+  
+  
 end

@@ -47,6 +47,11 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
   
+  should 'by default set version to 1' do
+    assert @merge_request.save
+    assert_equal 1, @merge_request.version
+  end
+  
   should 'send a MQ message when being confirmed by the user' do
     p = proc {@merge_request.confirmed_by_user}
     message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestCreation', /.*/) {p.call}
@@ -56,6 +61,28 @@ class MergeRequestTest < ActiveSupport::TestCase
   should "has a merged? status" do
     @merge_request.status = MergeRequest::STATUS_MERGED
     assert @merge_request.merged?, '@merge_request.merged? should be true'
+  end
+  
+  should 'be able to update from a push event' do
+    @merge_request.expects(:push_new_branch_to_tracking_repo).once
+    @merge_request.update_from_push!
+    @merge_request.reload
+  end
+  
+  should 'push new branch to tracking repo' do
+    tracking_repo = mock
+    tracking_repo.stubs(:full_repository_path).returns("/tmp/foo.git")
+    @merge_request.target_repository.stubs(:tracking_repository).returns(tracking_repo)
+    git = mock("Target repository")
+    git.expects(:push).once.with({}, 
+      @merge_request.target_repository.tracking_repository.full_repository_path,
+      "refs/reviews/#{@merge_request.id}:refs/reviews/#{@merge_request.id}/#{@merge_request.version+1}")
+    _git = mock
+    _git.stubs(:git).returns(git)
+    @merge_request.target_repository.stubs(:git).returns(_git)
+    assert_incremented_by(@merge_request, :version, 1) do
+      @merge_request.push_new_branch_to_tracking_repo
+    end
   end
   
   should "has a rejected? status" do
@@ -188,20 +215,19 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal(4, @merge_request.commits_for_selection.size)
     end
     
-    should "know that it applies to specific commits" do
-      assert_equal(3, @merge_request.commits_to_be_merged.size)
-      exp = %w(6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07)
-      assert_equal(exp, @merge_request.commits_to_be_merged.collect(&:id))
+    should 'show a list of potential commits' do
+      assert_equal 3, @merge_request.potential_commits.size
     end
     
-    should "return the full set of commits if ending_commit don't exist" do
-      @merge_request.ending_commit = '526fa6c0b3182116d8ca2dc80dedeafb'
-      assert_equal(2, @merge_request.commits_to_be_merged.size)
+    should 'use the real commits if the target branch has been updated' do
+      @merge_request.version = 1
+      @merge_request.expects(:commit_diff_from_tracking_repo).once
+      @merge_request.commits_to_be_merged
     end
     
-    should "return an empty set of the ending_commit is already merged" do
-      @merge_request.ending_commit = 'alreadymerged'
-      assert_equal(0, @merge_request.commits_to_be_merged.size)
+    should 'return an empty list if the target branch has not been updated' do
+      @merge_request.version = 0
+      assert_equal [], @merge_request.commits_to_be_merged
     end
     
     should 'know if the specified commit exists in the source repository' do
@@ -423,8 +449,8 @@ class MergeRequestTest < ActiveSupport::TestCase
       git_backend = mock("Source repository git")
       git.stubs(:git).returns(git_backend)
       @merge_request.source_repository.stubs(:git).returns(git)
+      @merge_request.expects(:push_new_branch_to_tracking_repo).once
       
-      git_backend.expects(:push).with({}, merge_request_repo_path, tracking_branch_spec).once
       git_backend.expects(:push).with({}, @merge_request.target_repository.full_repository_path, branch_spec).once
       @merge_request.push_to_tracking_repository!
     end

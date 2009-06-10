@@ -26,6 +26,8 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   end
   
   should "update the last_pushed_at attribute on initial push" do
+    stub_git_show
+    stub_git_log_and_user
     repo = repositories(:johans)
     repo.update_attribute(:last_pushed_at, nil)
     @processor.expects(:log_events).returns(true)
@@ -46,9 +48,11 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/tags/r1.1"
     assert_equal :create, @processor.action
     assert @processor.tag?
+    
     assert_equal 1, @processor.events.size
     assert_equal Action::CREATE_TAG, @processor.events.first.event_type
     assert_equal 'r1.1', @processor.events.first.identifier
+    
     @processor.expects(:log_event).once
     @processor.log_events
   end
@@ -56,8 +60,8 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   should 'identify non-standard (review) branches, and exclude these from logging' do
     stub_git_show 
     @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/reviews/123"
-    assert_equal :review, @processor.action
-    assert @processor.head?
+    assert_equal :create, @processor.action
+    assert @processor.review?
     assert_equal 0, @processor.events.size
     @processor.expects(:log_event).never
     @processor.log_events
@@ -148,7 +152,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     assert_equal Action::DELETE_TAG, @processor.events.first.event_type
     assert_equal 'r1.1', @processor.events.first.identifier
     assert_equal 'john@nowhere.com', @processor.events.first.email
-    assert_equal 'Deleted branch r1.1', @processor.events.first.message
+    assert_equal 'Deleted tag r1.1', @processor.events.first.message
     @processor.expects(:log_event).once
     @processor.log_events
   end
