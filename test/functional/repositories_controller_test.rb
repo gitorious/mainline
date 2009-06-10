@@ -673,20 +673,20 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "get projects/1/repositories/3/writable_by?username=johan is true" do
       do_writable_by_get :username => "johan"
       assert_response :success
-      assert_equal "true #{@repository.real_gitdir}", @response.body
+      assert_equal "true", @response.body
     end
   
     should "get projects/1/repositories/2/writable_by?username=johan is false" do
       do_writable_by_get :username => "johan", :project_id => projects(:moes).slug, 
         :id => projects(:moes).repositories.first.name
       assert_response :success
-      assert_equal "false nil", @response.body
+      assert_equal "false", @response.body
     end
   
     should "get projects/1/repositories/2/writable_by?username=nonexistinguser is false" do
       do_writable_by_get :username => "nonexistinguser"
       assert_response :success
-      assert_equal "false nil", @response.body
+      assert_equal "false", @response.body
     end
   
     should "finds the repository in the whole project realm, if the (url) root is a project" do
@@ -725,6 +725,30 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
   
+  def do_real_path_get(options={})
+    get(:real_path, {:project_id => @project.slug, :id => @repository.name}.merge(options))
+  end
+
+  context "#real_path" do
+    setup do
+      login_as :johan
+      @project = projects(:johans)
+      @repository = @project.repositories.mainlines.first
+    end
+  
+    should " not require login" do
+      session[:user_id] = nil
+      do_real_path_get
+      assert_response :success
+    end
+  
+    should "get projects/1/repositories/3/real_path is true" do
+      do_real_path_get
+      assert_response :success
+      assert_equal @repository.real_gitdir, @response.body
+    end
+  end
+
   def do_delete(repos)
     delete :destroy, :project_id => @project.slug, :id => repos.name
   end

@@ -21,12 +21,12 @@
 #++
 
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :writable_by]
+  before_filter :login_required, :except => [:index, :show, :writable_by, :real_path]
   before_filter :find_repository_owner
   before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update, :committers]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
-  skip_before_filter :public_and_logged_in, :only => [:writable_by]
+  skip_before_filter :public_and_logged_in, :only => [:writable_by, :real_path]
   renders_in_site_specific_context :except => :writable_by
   
   def index
@@ -173,10 +173,15 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     user = User.find_by_login(params[:username])
     if user && user.can_write_to?(@repository)
-      render :text => "true #{@repository.real_gitdir}"
+      render :text => "true"
     else
-      render :text => "false nil"
+      render :text => "false"
     end
+  end
+  
+  def real_path
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    render :text => "#{@repository.real_gitdir}"
   end
   
   def confirm_delete
