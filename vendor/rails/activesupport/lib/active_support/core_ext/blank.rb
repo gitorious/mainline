@@ -48,6 +48,12 @@ end
 class String #:nodoc:
   def blank?
     self !~ /\S/
+  rescue ArgumentError => e
+    if e.message =~ /^(invalid\ byte\ sequence|incompatible\ character\ encodings)/
+      empty?
+    else
+      raise e
+    end
   end
 end
 

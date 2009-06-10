@@ -124,7 +124,11 @@ module ActionView
 
       # Use an alternate output buffer for the duration of the block.
       # Defaults to a new empty string.
-      def with_output_buffer(buf = '') #:nodoc:
+      def with_output_buffer(buf = nil) #:nodoc:
+        unless buf
+          buf = ''
+          buf.force_encoding(output_buffer.encoding) if buf.respond_to?(:force_encoding)
+        end
         self.output_buffer, old_buffer = buf, output_buffer
         yield
         output_buffer
