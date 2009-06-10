@@ -247,7 +247,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def commit_diff_from_tracking_repo
-    @commits_to_be_merged ||= target_repository.git.commit_deltas_from(target_repository.tracking_repository.git, target_branch, "refs/reviews/#{id}/#{version}")
+    @commits_to_be_merged ||= target_repository.git.commit_deltas_from(target_repository.tracking_repository.git, target_branch, "refs/merge-requests/#{id}/#{version}")
   end
   
   def potential_commits
@@ -397,14 +397,14 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def push_to_tracking_repository!
-    branch_spec = "#{ending_commit}:refs/reviews/#{id}"
+    branch_spec = "#{ending_commit}:refs/merge-requests/#{id}"
     source_repository.git.git.push({}, target_repository.full_repository_path, branch_spec)
     push_new_branch_to_tracking_repo
   end
 
   def push_new_branch_to_tracking_repo
     self.version = self.version + 1
-    branch_spec = "refs/reviews/#{id}:refs/reviews/#{id}/#{version}"
+    branch_spec = "refs/merge-requests/#{id}:refs/merge-requests/#{id}/#{version}"
     target_repository.git.git.push({}, target_repository.tracking_repository.full_repository_path, branch_spec)
   end
   

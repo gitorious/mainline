@@ -75,7 +75,7 @@ class PushEventProcessor < ApplicationProcessor
   def commit_summary=(spec)
     @oldrev, @newrev, @revname = spec.split(' ')
     r, name, @identifier = @revname.split("/", 3)
-    @target = {'tags' => :tag, 'heads' => :head, 'reviews' => :review}[name]
+    @target = {'tags' => :tag, 'heads' => :head, 'merge-requests' => :review}[name]
     process_push
   end
   

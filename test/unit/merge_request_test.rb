@@ -76,7 +76,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     git = mock("Target repository")
     git.expects(:push).once.with({}, 
       @merge_request.target_repository.tracking_repository.full_repository_path,
-      "refs/reviews/#{@merge_request.id}:refs/reviews/#{@merge_request.id}/#{@merge_request.version+1}")
+      "refs/merge-requests/#{@merge_request.id}:refs/merge-requests/#{@merge_request.id}/#{@merge_request.version+1}")
     _git = mock
     _git.stubs(:git).returns(git)
     @merge_request.target_repository.stubs(:git).returns(_git)
@@ -441,7 +441,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'send a push command from the source repository to the merge request repository' do
       merge_request_repo = @merge_request.target_repository.create_tracking_repository
       merge_request_repo_path = merge_request_repo.full_repository_path
-      branch_spec_base = "#{@merge_request.ending_commit}:refs/reviews"
+      branch_spec_base = "#{@merge_request.ending_commit}:refs/merge-requests"
       branch_spec = [branch_spec_base, @merge_request.id].join('/')
       tracking_branch_spec = [branch_spec_base, @merge_request.id, 1].join('/')
       

@@ -59,7 +59,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should 'identify non-standard (review) branches, and exclude these from logging' do
     stub_git_show 
-    @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/reviews/123"
+    @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/merge-requests/123"
     assert_equal :create, @processor.action
     assert @processor.review?
     assert_equal 0, @processor.events.size
