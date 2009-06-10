@@ -17,28 +17,29 @@
 #++
 %>
 <%= form_tag(bulk_update_messages_path) %>
-<div>
-  Select 
-  <%= link_to_function("All messages", "$$('.select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>,
-  <%= link_to_function("All unread messages", "$$('.unread .select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>
-</div>
-<table class="message_list">
-  <tr>
-    <th></th>
-    <th>Who</th>
-    <th>What</th>
-    <th>When</th>
-  </tr>
-  <% messages.each do |message| %>
-      <%= render :partial => message %>
-  <% end %>
-</table>
-<label>
-  Action:
-</label>
-<select name="requested_action">
-  <option value="">Read</option>
-  <option value="archive">Archive</option>
-</select>
-<input type="submit" value="Apply to selected messages" />
+  <table class="message_list">
+    <tr>
+      <th></th>
+      <th>Who</th>
+      <th>What</th>
+      <th>When</th>
+    </tr>
+    <% messages.each do |message| %>
+        <%= render :partial => message %>
+    <% end %>
+  </table>
+
+  <div class="message_list_actions">
+    <p>Select 
+      <%= link_to_function("All messages", 
+        "$$('.select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>,
+      <%= link_to_function("All unread messages", 
+        "$$('.unread .select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>
+    </p>
+    <select name="requested_action">
+      <option value="">Read</option>
+      <option value="archive">Archive</option>
+    </select>
+    <input type="submit" value="Apply to selected messages" />
+  </div>
 </form>

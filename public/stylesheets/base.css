@@ -2224,6 +2224,7 @@ div.archive-download-box p {
 
 .message_list {
   width: 100%;
+  margin-bottom: 0;
 }
 
 .message_list tr
@@ -2250,10 +2251,29 @@ div.archive-download-box p {
 {
   font-weight: bold;
 }
+.message_list td.timestamp {
+  font-size: 11px;
+  color: #555;
+  text-align: center;
+}
+.message_list_actions {
+  padding: 2px 5px 0 5px;
+  font-size: 12px;
+  background: #eee;
+}
+.message_list_actions p {
+  margin: 0;
+  padding: 0;
+  display: inline;
+  margin-right: 10px;
+}
+.message_list_actions input, .message_list_actions select {
+  display: inline;
+}
 .message_list td.who
 {
   padding-left: 22px;
-  background-position: 2px 2px;
+  background-position: 2px center;
   background-repeat: no-repeat;
 }
 .message_list tr.merge_request td.who,

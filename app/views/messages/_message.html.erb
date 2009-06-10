@@ -29,7 +29,7 @@
       <%= truncate(h(message.body), :length => 25) %>
     </span>
   </td>
-  <td>
+  <td class="timestamp">
     <%= distance_of_time_in_words_to_now(message.created_at) %> ago    
   </td>
 </tr>

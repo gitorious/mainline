@@ -547,7 +547,7 @@
         :index_message => "Inbox",
         :reply => "Reply",
         :received_messages => "Inbox",
-        :all_messages => 'Message archive',
+        :all_messages => 'Archive',
         :sent_messages => "Sent messages",
         :new => "Compose a message",
         :mark_as_read => "Mark as read"
