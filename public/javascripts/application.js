@@ -236,7 +236,7 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
       onComplete: function() {
         if ($("spinner") && Ajax.activeRequestCount == 0)
           Effect.Fade("spinner", { duration:0.3 })
-      },
+      }
     });
   };
   this.registerResponders();
