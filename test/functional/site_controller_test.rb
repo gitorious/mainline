@@ -25,15 +25,15 @@ class SiteControllerTest < ActionController::TestCase
   should_render_in_global_context :only => [:about, :faq, :contact]
 
   context "#index" do
-    should "GETs sucessfully" do
+    should "GETs sucessfully with funky layout" do
       get :index
       assert_response :success
-      assert_template "index"
+      assert_template "layouts/second_generation/application"
     end
     
     should "gets a list of the most recent projects" do
       get :index
-      assert_equal Project.find(:all, :limit => 5, :order => "id desc"), assigns(:projects)
+      assert assigns(:projects).is_a?(Array)
     end
   end
   

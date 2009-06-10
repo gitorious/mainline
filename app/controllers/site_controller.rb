@@ -60,16 +60,20 @@ class SiteController < ApplicationController
 
     # Render the global index template
     def render_global_index
-      @projects = Project.find(:all, :limit => 10, :order => "id desc")
-      @top_repository_clones = Repository.most_active_clones
-      @active_recently = Project.most_active_recently
-      @active_overall = Project.most_active_overall(@active_recently.size)
-      @active_users = User.most_active_pushers
-      @active_groups = Group.most_active
-      @latest_events = Event.latest(25)
-      
-      if GitoriousConfig["is_gitorious_dot_org"]
-        render :layout => "second_generation/application"
+      if GitoriousConfig["is_gitorious_dot_org"] && !logged_in?
+        @projects = Project.most_active_recently
+        @teams = Group.most_active
+        @users = User.most_active_pushers
+        
+        render :layout => "second_generation/application", :inline => ""
+      else
+        @projects = Project.find(:all, :limit => 10, :order => "id desc")
+        @top_repository_clones = Repository.most_active_clones
+        @active_recently = Project.most_active_recently
+        @active_overall = Project.most_active_overall(@active_recently.size)
+        @active_users = User.most_active_pushers
+        @active_groups = Group.most_active
+        @latest_events = Event.latest(25)
       end
     end
   
