@@ -147,10 +147,11 @@ module ApplicationHelper
   end
   
   def gravatar_url_for(email, options = {})
+    options.reverse_merge!(:default => "images/default_face.gif")
     "http://www.gravatar.com/avatar.php?gravatar_id=" << 
     (email.nil? ? "" : Digest::MD5.hexdigest(email)) <<
     "&amp;default=" <<
-    u("http://#{GitoriousConfig['gitorious_host']}:#{request.port}/images/default_face.gif") <<
+    u("http://#{GitoriousConfig['gitorious_host']}:#{request.port}/#{options.delete(:default)}") <<
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
   
@@ -372,8 +373,55 @@ module ApplicationHelper
     content_tag(:button, %{<span>#{label}</span>}, options)
   end
   
+  # Similar to styled_button, but creates a link_to <a>, not a <button>.
+  #
+  #  <%= button_link :big, "Sign up", new_user_path %>
   def button_link(size_identifier, label, url, options = {})
     options[:class] = "#{size_identifier} button_link"
     link_to(%{<span>#{label}</span>}, url, options)
+  end
+  
+  # Array => HTML list. The option hash is applied to the <ul> tag.
+  #
+  #  <%= list(items) {|i| i.title } %>
+  #  <%= list(items, :class => "foo") {|i| link_to i, foo_path }
+  def list(items, options = {})
+    list_items = items.map {|i| %{<li>#{yield(i)}</li>} }.join("\n")
+    content_tag(:ul, list_items, options)
+  end
+  
+  def summary_box(title, content, image)
+    %{
+      <div class="summary_box">
+        <div class="summary_box_image">
+          #{image}
+        </div>
+        
+        <div class="summary_box_content">
+          <strong>#{title}</strong>
+          #{content}
+        </div>
+        
+        <div class="clear"></div>
+      </div>
+    }
+  end
+  
+  def project_summary_box(project)
+    summary_box link_to(project.title, project),
+      truncate(project.descriptions_first_paragraph, 80),
+      image_tag("avatar_default.png", :width => 30, :height => 30)
+  end
+  
+  def team_summary_box(team)
+    summary_box link_to(team.name, group_path(team)),
+      "Team text", 
+      image_tag("avatar_default.png", :width => 30, :height => 30)
+  end
+  
+  def user_summary_box(user)
+    summary_box link_to(user.login, user),
+      "User text",
+      avatar(user, :size => 30, :default => "images/avatar_default.png") + "<span></span>"
   end
 end

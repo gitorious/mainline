@@ -32,12 +32,12 @@
       
       <div class="clear"></div>
     
-      <h1 id="logo_image"><span>Gitorious</span></h1>
+      <h1 id="logo_image" class="image_header"><span>Gitorious</span></h1>
       <%= link_to "", root_path, :id => "logo_hit_area" %>
     
       <div id="big_header_content">
         <div id="big_header_meta">
-          <h2 id="big_header_pay_off"><span>The best way to collaborate on open source projects</span></h2>
+          <h2 id="big_header_pay_off" class="image_header"><span>The best way to collaborate on open source projects</span></h2>
           
           <div id="big_header_signup_link">
             <%= button_link :big, t("views.site.dashboard.registration_button"), new_user_path %>
@@ -47,13 +47,44 @@
         </div>
     
         <div id="big_header_login">
-          <h2 id="big_header_login_box_header"><span><%= t("views.site.login_box_header") %></span></h2>
+          <h2 id="big_header_login_box_header" class="image_header"><span><%= t("views.site.login_box_header") %></span></h2>
           
           <div id="big_header_login_box">
             <%= render :partial => "sessions/form" %>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  
+  <div id="recent_activities">
+    <div class="marginizer">
+      Recent activities
+    </div>
+  </div>
+  
+  <div id="main">
+    <div class="marginizer">
+      <div class="homepage_listing" id="homepage_listed_left_column">
+        <h2 class="image_header"><span>Most Active Projects</span></h2>
+        <%= list(@projects, :class => "simple") {|p| project_summary_box(p) } %>
+      </div>
+      
+      <div class="homepage_listing" id="homepage_listed_middle_column">
+        <h2 class="image_header"><span>Most Active Teams</span></h2>
+        <%= list(@teams, :class => "simple") {|t| team_summary_box(t) } %>
+      </div>
+      
+      <div class="homepage_listing" id="homepage_listed_right_column">
+        <h2 class="image_header"><span>Most Active Users</span></h2>
+        <%= list(@users, :class => "simple") {|u| user_summary_box(u) } %>
+      </div>
+    </div>
+  </div>
+  
+  <div id="footer">
+    <div class="marginizer">
+      Footer.
     </div>
   </div>
 </body>
