@@ -219,6 +219,16 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal 2, project.wiki_permissions
   end
   
+  should "extract first paragraph from description" do
+    project = projects(:johans)
+    
+    project.description = "Hello.\nWorld."
+    assert_equal "Hello.", project.descriptions_first_paragraph
+    
+    project.description = "No newline."
+    assert_euqal "No newline.", project.descriptions_first_paragraph
+  end
+  
   context "Project events" do
     setup do
       @project = projects(:johans)

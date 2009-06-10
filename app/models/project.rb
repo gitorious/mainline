@@ -204,6 +204,10 @@ class Project < ActiveRecord::Base
     # sanitizer = HTML::WhiteListSanitizer.new
     # sanitizer.sanitize(description, :tags => %w(str), :attributes => %w(class))
   end
+  
+  def descriptions_first_paragraph
+    description[/^([^\n]+)/, 1]
+  end
 
   def to_xml(opts = {})
     info = Proc.new { |options|
