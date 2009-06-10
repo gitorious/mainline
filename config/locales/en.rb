@@ -317,7 +317,9 @@
         :openid_url => "OpenID URL",
         :email => "E-mail",
         :to_openid => "Switch to OpenID",
-        :to_regular => "Switch to regular login"
+        :to_regular => "Switch to regular login",
+        :regular_login_header => "Regular login",
+        :openid_login_header => "OpenID login"
       },
       :searches => {
         :search => "Search",
