@@ -258,10 +258,17 @@ module ApplicationHelper
     project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
   end
   
-  def link_to_help_toggle(dom_id)
-    link_to_function(image_tag("help_grey.png", {
-      :alt => t("application_helper.more_info")
-    }), "$('#{dom_id}').toggle()", :class => "more_info")
+  def link_to_help_toggle(dom_id, style = :image)
+    if style == :image
+      link_to_function(image_tag("help_grey.png", {
+        :alt => t("application_helper.more_info")
+      }), "$('#{dom_id}').toggle()", :class => "more_info")
+    else
+      %Q{<span class="hint">(} +
+      link_to_function("?", "$('#{dom_id}').toggle()", :class => "more_info") +
+      ")</span>"
+    end
+    
   end
   
   FILE_EXTN_MAPPINGS = {

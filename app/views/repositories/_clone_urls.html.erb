@@ -1,0 +1,75 @@
+<%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<ul>
+  <li>
+    <strong><%= t("views.repos.clone_this_repo") -%></strong>
+    <%- if repository.http_cloning? -%>
+    <small class="alt-clone-links">
+      (<a href ="#more-urls" class="hint" id="repo-<%= repository.id -%>-git-toggle">Git</a> / 
+      <a href ="#more-urls" class="hint" id="repo-<%= repository.id -%>-http-toggle">HTTP</a>)
+    </small><%- end -%>:
+    
+    <span id="repo-<%= repository.id -%>-git-url">
+      <code>
+        git clone <a href="<%= h(repository.clone_url) -%>" class="link_noop"><%= h(repository.clone_url) -%></a>
+      </code>
+    </span>
+    
+    <% if repository.http_cloning? -%>
+      <span id="repo-<%= repository.id -%>-http-url" style="display:none">
+        <code>git clone <a href="<%= h(repository.http_clone_url) -%>" class="link_noop">
+          <%= h(repository.http_clone_url) -%></a>
+        </code>
+      </span>
+    <% end -%>
+  </li>
+  
+  <% if logged_in? && current_user.can_write_to?(repository) -%>
+  <li>
+    <strong><%= t("views.repos.push_url") -%>:</strong>
+    <code><%= h(repository.push_url) -%></code>
+    <small><%= link_to_help_toggle("detailed_push_info_#{dom_id(repository)}", :text) -%></small>
+    <div id="detailed_push_info_<%= dom_id(repository) -%>" class="info_hint" style="display:none">
+      <%= t("views.repos.help_push", :repo => repository.push_url) %>
+<pre>
+git remote add origin <%= repository.push_url %>
+# to push the master branch to the origin remote we added above:
+git push origin master 
+# after that you can just do:
+git push
+</pre>
+      </div>
+    </li>
+  <% end -%>
+</ul>
+
+<script type="text/javascript" charset="utf-8">
+  $('repo-<%= repository.id -%>-git-toggle').observe('click', function(event) {
+    $('repo-<%= repository.id -%>-git-url').show();
+    if ($('repo-<%= repository.id -%>-http-url'))
+      $('repo-<%= repository.id -%>-http-url').hide();
+    Event.stop(event);
+  });
+  $('repo-<%= repository.id -%>-http-toggle').observe('click', function(event) {
+    $('repo-<%= repository.id -%>-http-url').show();
+    $('repo-<%= repository.id -%>-git-url').hide();
+    Event.stop(event);
+  });
+</script>

@@ -931,6 +931,10 @@ table.repository_meta .infobox ul {
   margin: 0;
 }
 
+.infobox .alt-clone-links {
+  color: #666;
+}
+
 /* commit info boxes*/
 
 .commit-infobox {
