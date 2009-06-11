@@ -64,6 +64,8 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   before_create :make_activation_code
   before_validation :lint_identity_url, :downcase_login
+  after_save :expire_avatar_email_caches_if_avatar_was_changed
+  after_destroy :expire_avatar_email_caches
 
   state_machine :aasm_state, :initial => :pending do
     state :terms_accepted
@@ -152,7 +154,7 @@ class User < ActiveRecord::Base
   end
   
   def self.find_avatar_for_email(email, version)
-    Rails.cache.fetch("avatar_for_#{Digest::SHA1.hexdigest(email)}_#{version.to_s}") do
+    Rails.cache.fetch(email_avatar_cache_key(email, version)) do
       result = if u = find_by_email_with_aliases(email)
         if u.avatar?
           u.avatar.url(version)
@@ -160,6 +162,10 @@ class User < ActiveRecord::Base
       end
       result || :nil
     end
+  end
+  
+  def self.email_avatar_cache_key(email, version)
+    "avatar_for_#{Digest::SHA1.hexdigest(email)}_#{version.to_s}"
   end
   
   # Finds a user either by his/her primary email, or one of his/hers aliases
@@ -325,6 +331,19 @@ class User < ActiveRecord::Base
   
   def url=(an_url)
     self[:url] = clean_url(an_url)
+  end
+  
+  def expire_avatar_email_caches_if_avatar_was_changed
+    return unless avatar_updated_at_changed?
+    expire_avatar_email_caches
+  end
+  
+  def expire_avatar_email_caches
+    avatar.styles.keys.each do |style|
+      (email_aliases.map(&:address) << email).each do |email|
+        Rails.cache.delete(self.class.email_avatar_cache_key(email, style))
+      end
+    end
   end
 
   protected
