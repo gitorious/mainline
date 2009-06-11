@@ -166,6 +166,7 @@ Big header
 }
 
 #big_header_login{
+  margin-top:4px;
   float:right;
   width:190px;
   text-align:center;
@@ -265,7 +266,7 @@ Recent activities
 #recent_activities_container{
   position:absolute;
   left:0;
-  top:13px;
+  top:16px;
   height:60px;
 }
 
@@ -273,14 +274,20 @@ Recent activities
   float:left;
 }
 
-.recent_activities_header{
+.recent_activities_header {
+  float:left;
+  background-image:url(../images/border_pixel_v.gif);
+  background-repeat:repeat-y;
+  background-position:top right;
+}
+
+.recent_activities_header_inner{
   width:186px;
   margin:0 20px;
   height:60px;
   background-image:url(../images/list_head_activities.png);
   background-repeat:no-repeat;
   background-position:left center;
-  float:left;
 }
 
 .recent_activity{
@@ -305,7 +312,8 @@ Recent activities
 .recent_activity_avatar{
   float:left;
   margin-top:12px;
-  margin-right:5px;
+  margin-right:10px;
+  margin-left:5px;
 }
 
 .recent_activity_meta{
@@ -372,12 +380,13 @@ Homepage lists
 
 .homepage_listing .summary_box_image{
   float:left;
-  margin:0 10px;
+  margin-right:18px;
+  margin-left:10px;
 }
 
 .homepage_listing .summary_box_content{
   float:left;
-  width:250px;
+  width:242px;
 }
 
 /*####################
