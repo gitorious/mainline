@@ -406,6 +406,7 @@ class MergeRequest < ActiveRecord::Base
     self.version = self.version + 1
     branch_spec = "refs/merge-requests/#{id}:refs/merge-requests/#{id}/#{version}"
     target_repository.git.git.push({}, target_repository.tracking_repository.full_repository_path, branch_spec)
+    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "New version is #{version}", "reason")
   end
   
   

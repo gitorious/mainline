@@ -72,7 +72,8 @@ ActionController::Routing::Routes.draw do |map|
   repository_options = {
     :member => {
       :clone => :get, :create_clone => :post,
-      :writable_by => :get, 
+      :writable_by => :get,
+      :real_path => :get, 
       :confirm_delete => :get,
       :committers => :get,
     }

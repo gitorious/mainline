@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+# encoding: utf-8
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
@@ -16,17 +16,35 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-incpath = File.dirname(__FILE__)
-$: << incpath
 
-require "pre_receive_guard"
+require "open-uri"
+require 'cgi'
 
-pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV['GITORIOUS_WRITABLE_BY_URL'].dup, gets)
-if pre_receive_guard.allow_push?
-  exit 0
-else
-  $stderr.puts " ! You do not have write access to this repository"
-  exit 1
+module Gitorious
+  module SSH  
+    class PreReceiveGuard
+      def initialize(query_url, git_spec)
+        @query_url  = query_url
+        @git_spec   = git_spec
+      end
+
+      # extract the target, eg. refs/heads/master
+      def git_target
+        @git_spec.split(/\s/).last
+      end
+
+      def authentication_url
+        @query_url << "&git_path=#{CGI.escape(git_target)}"
+      end
+  
+      def allow_push?
+        result = get_via_http(authentication_url)
+        return result == 'true'
+      end
+      
+      def get_via_http(url)
+        open(url).read
+      end
+    end
+  end
 end
-
-

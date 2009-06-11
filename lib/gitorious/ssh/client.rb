@@ -19,6 +19,7 @@
 #++
 
 require "net/http"
+require 'uri'
 
 module Gitorious
   module SSH  
@@ -42,15 +43,18 @@ module Gitorious
         writable_by_user? || raise(AccessDeniedError)
       end
     
-      def query_url
-        url = ["/#{@project_name}"]
-        url << @repository_name
-        url << "writable_by?username=#{@user_name}"
-        url.join("/")
+      # The full URL
+      def writable_by_query_url
+        writable_by_query_uri.to_s
+      end
+
+      # The path only
+      def writable_by_query_path
+        writable_by_query_uri.request_uri
       end
       
       def real_path
-        query_for_permission_and_path
+        query_for_real_path
         full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
         if !@real_path || @real_path == "nil" || !File.exist?(full_real_path)
           raise AccessDeniedError
@@ -62,11 +66,13 @@ module Gitorious
         "#{@strainer.verb} '#{real_path}'"
       end
       
-      def query_for_permission_and_path
-        if !@writable || !@real_path
-          $stderr.puts "Querying #{query_url}" if $DEBUG
+      def query_for_real_path
+        if !@real_path
+          query_url="/#{@project_name}/#{@repository_name}/real_path"
+          # $stderr.puts "Querying #{query_url}" if $DEBUG
           resp = connection.get(query_url)
-          @writable, @real_path = resp.body.split(" ")
+          # $stderr.puts resp
+          @real_path = resp.body
         end
       end
     
@@ -76,6 +82,17 @@ module Gitorious
           host = GitoriousConfig["gitorious_client_host"]
           @connection ||= Net::HTTP.start(host, port)
         end
+        
+        # Returns an actual URI object
+        def writable_by_query_uri
+          path = "/#{@project_name}/#{@repository_name}/writable_by"
+          query = "username=#{@user_name}"
+          host = GitoriousConfig['gitorious_client_host']
+          _port = GitoriousConfig['gitorious_client_port']
+          port = RUBY_VERSION > '1.9' ? _port : _port.to_s  # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well
+          URI::HTTP.build(:host => host, :port => port, :path => path, :query => query)
+        end
+        
     end
   end
 end

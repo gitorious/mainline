@@ -25,8 +25,8 @@ class SSHClientTest < ActiveSupport::TestCase
     @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
     @real_path = "abc/123/defg.git"
     @full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
-    @ok_stub = stub("ok response mock", :body => "true #{@real_path}")
-    @not_ok_stub = stub("ok response mock", :body => "false nil")
+    @ok_stub = stub("ok response mock", :body => "#{@real_path}")
+    @not_ok_stub = stub("ok response mock", :body => "nil")
   end
   
   should "parse the project name from the passed in Strainer" do
@@ -69,65 +69,31 @@ class SSHClientTest < ActiveSupport::TestCase
     request
   end
   
-  should "has a query_url" do
+  
+  should 'ask for the real path' do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    exp_url = "/foo/bar/writable_by?username=johan"
-    assert_equal exp_url, client.query_url
-    
-    request = make_request(client.query_url)
+    exp_path = "/foo/bar/writable_by?username=johan"
+    assert_equal exp_path, client.writable_by_query_path
+
+    request = make_request(client.writable_by_query_path)
     assert_equal RepositoriesController, ActionController::Routing::Routes.recognize(request)
-    # check against the actual routes
     assert_equal "writable_by", request.symbolized_path_parameters[:action]
     assert_equal "repositories", request.symbolized_path_parameters[:controller]
     assert_equal "foo", request.symbolized_path_parameters[:project_id]
     assert_equal "bar", request.symbolized_path_parameters[:id]
   end
   
-  should "asks the server if a user has permission" do
+  should 'return the correct authentication URL' do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    connection_stub = stub_everything("connection_stub")
-    connection_stub.expects(:get) \
-      .with("/foo/bar/writable_by?username=johan") \
-      .returns(@ok_stub)
-    client.expects(:connection).returns(connection_stub)
-
-    assert client.writable_by_user?, 'client.writable_by_user? should be true'
+    assert_equal "http://#{GitoriousConfig['gitorious_client_host']}:#{GitoriousConfig['gitorious_client_port']}/foo/bar/writable_by?username=johan", client.writable_by_query_url
   end
   
-  should "returns false if a user doesn't have write permissions" do
-    client = Gitorious::SSH::Client.new(@strainer, "johan")
-    connection_stub = stub_everything("connection stub")
-    connection_stub.expects(:get) \
-      .with("/foo/bar/writable_by?username=johan") \
-      .returns(@not_ok_stub)
-    client.expects(:connection).returns(connection_stub)
-
-    assert !client.writable_by_user?, 'client.writable_by_user? should be false'
-  end
-  
-  should "assure_user_can_write! raises if a user doesn't have write permissions" do
-    client = Gitorious::SSH::Client.new(@strainer, "johan")
-    client.expects(:writable_by_user?).returns(false)
-    
-    assert_raises(Gitorious::SSH::AccessDeniedError) do 
-      client.assure_user_can_write! 
-    end
-  end
-  
-  should "assure_user_can_write! doesn't raise if a  user have write permissions" do
-    client = Gitorious::SSH::Client.new(@strainer, "johan")
-    client.expects(:writable_by_user?).returns(true)
-
-    assert_nothing_raised(Gitorious::SSH::AccessDeniedError) do
-      client.assure_user_can_write!
-    end
-  end
   
   should "ask gets the real path from the query url" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection_stub")
     connection_stub.expects(:get) \
-      .with("/foo/bar/writable_by?username=johan") \
+      .with("/foo/bar/real_path") \
       .returns(@ok_stub)
     client.expects(:connection).once.returns(connection_stub)
     File.expects(:exist?).with(@full_real_path).returns(true)
@@ -138,7 +104,7 @@ class SSHClientTest < ActiveSupport::TestCase
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection_stub")
     connection_stub.expects(:get) \
-      .with("/foo/bar/writable_by?username=johan") \
+      .with("/foo/bar/real_path") \
       .returns(@ok_stub)
     client.expects(:connection).once.returns(connection_stub)
     File.expects(:exist?).with(@full_real_path).returns(false)
@@ -151,7 +117,7 @@ class SSHClientTest < ActiveSupport::TestCase
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection_stub")
     connection_stub.expects(:get) \
-      .with("/foo/bar/writable_by?username=johan") \
+      .with("/foo/bar/real_path") \
       .returns(@not_ok_stub)
     client.expects(:connection).once.returns(connection_stub)
     assert_raises(Gitorious::SSH::AccessDeniedError) do
@@ -163,7 +129,7 @@ class SSHClientTest < ActiveSupport::TestCase
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     connection_stub = stub_everything("connection_stub")
     connection_stub.expects(:get) \
-      .with("/foo/bar/writable_by?username=johan") \
+      .with("/foo/bar/real_path") \
       .returns(@ok_stub)
     client.expects(:connection).once.returns(connection_stub)
     File.expects(:exist?).with(@full_real_path).returns(true)

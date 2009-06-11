@@ -15,3 +15,12 @@ moes_to_johans_open:
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   ending_commit: 286e8afb9576366a2a43b12b94738f07
   status: <%= MergeRequest::STATUS_OPEN %>
+
+mikes_to_johans:
+  user_id: 3
+  source_repository_id: 2 # johans2
+  target_repository_id: 1
+  proposal: A merge in progress
+  sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  ending_commit: 286e8afb9576366a2a43b12b94738f07
+  status: <%= MergeRequest::STATUS_OPEN %>

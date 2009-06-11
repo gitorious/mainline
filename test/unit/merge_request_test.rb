@@ -126,11 +126,11 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert !@merge_request.resolvable_by?(:false)
   end
   
-  should "counts open merge_requests" do
+  should "count open merge_requests" do
     mr = @merge_request.clone
     mr.status = MergeRequest::STATUS_REJECTED
     mr.save
-    assert_equal 1, MergeRequest.count_open
+    assert_equal 2, MergeRequest.count_open
   end
   
   should 'have a transition from pending to open' do
@@ -391,6 +391,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   context "from_filter" do
     setup do
       @repo = repositories(:johans)
+      merge_requests(:mikes_to_johans).destroy
     end
     
     should "default to open merge-requests" do
