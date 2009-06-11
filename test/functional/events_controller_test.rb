@@ -59,4 +59,14 @@ class EventsControllerTest < ActionController::TestCase
       assert_equal "max-age=1800, private", @response.headers['Cache-Control']
     end
   end
+  
+  context '#recent' do
+    should "render recent_for_homepage" do
+      get :recent_for_homepage
+      assert_response :success
+      assert_template "events/recent_for_homepage"
+      assert assigns(:latest_events)
+      assert !@response.layout
+    end
+  end
 end

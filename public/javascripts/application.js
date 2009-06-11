@@ -209,6 +209,65 @@ Event.observe(window, "load", function(e){
     
     nativeSubmitButton.insert({after: awesomeSubmitButton});
   }
+  
+  var recentActivitiesTarget = $("recent_activities_container");
+  if (recentActivitiesTarget) {
+    var RECENT_ACTIVITY_WIDTH     = 280;
+    var NUM_RECENT_ACTIVITIES     = 8;
+    var RECENT_ACTIVITIES_HEADER  = 186 + (20 * 2);
+    var BAR_WIDTH                 = (RECENT_ACTIVITY_WIDTH * NUM_RECENT_ACTIVITIES) + RECENT_ACTIVITIES_HEADER;
+    
+    var FPS                       = 30;
+    var ANIMATION_STEP            = 2;
+    var LOAD_MORE_OFFSET          = 400;
+    
+    var currentIteration          = 0;
+    var shouldMonitorScroll       = true;
+    
+
+    var getWindowWidth = function(){
+      return (window.innerWidth || document.documentElement.clientWidth);
+    }
+    
+    recentActivitiesTarget.setStyle({left: getWindowWidth() + "px"});
+    
+    var fetchNewBar = function(callback){
+      new Ajax.Request("/events/recent_for_homepage", {
+        onSuccess: function(response) {
+          currentIteration++;
+          shouldMonitorScroll = true;
+          
+          // Expand the width of the container
+          recentActivitiesTarget.setStyle({width: BAR_WIDTH + parseInt(recentActivitiesTarget.getStyle("width")) + "px"});
+          
+          // Append the new bar
+          var newBar = response.responseText;
+          Element.insert(recentActivitiesTarget, newBar);
+          $$(".recent_activities_bar").each(function(element){
+            element.setStyle({width: BAR_WIDTH + "px"});
+          });
+          
+          if (callback) { callback.call() }
+        }
+      });
+    }
+    
+    fetchNewBar(function(){
+      var animateBar = function(){
+        var currentOffset = parseInt(recentActivitiesTarget.getStyle("left"));
+        var newOffset = currentOffset - ANIMATION_STEP
+        recentActivitiesTarget.setStyle({left: newOffset + "px"});
+        
+        if (shouldMonitorScroll && BAR_WIDTH - getWindowWidth() + (newOffset / currentIteration) <= LOAD_MORE_OFFSET) {
+          shouldMonitorScroll = false;
+          fetchNewBar();
+        }
+        
+        setTimeout(animateBar, FPS);
+      }
+      animateBar();
+    });
+  }
 });
 
 

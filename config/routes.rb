@@ -109,7 +109,7 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   
-  map.resources  :events, :member => {:commits => :get}
+  map.resources  :events, :member => {:commits => :get}, :collection => {:recent_for_homepage => :get}
   
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
 

@@ -253,8 +253,69 @@ Recent activities
 #recent_activities{
   float:left;
   width:100%;
-  background-color:#EBEFF2;
-  padding:20px 0;
+  background-image:url(../images/ticker_bg.png);
+  background-repeat:repeat-x;
+  background-position:top left;
+  background-color:#fff;
+  height:108px;
+  overflow:hidden;
+  position:relative;
+}
+
+#recent_activities_container{
+  position:absolute;
+  left:0;
+  top:13px;
+  height:60px;
+}
+
+.recent_activities_bar{
+  float:left;
+}
+
+.recent_activities_header{
+  width:186px;
+  margin:0 20px;
+  height:60px;
+  background-image:url(../images/list_head_activities.png);
+  background-repeat:no-repeat;
+  background-position:left center;
+  float:left;
+}
+
+.recent_activity{
+  background-image:url(../images/border_pixel_v.gif);
+  background-repeat:repeat-y;
+  background-position:top right;
+  width:240px;
+  padding:0 20px;
+  height:60px;
+  float:left;
+  font-size:11px;
+}
+
+.recent_activity_timestamp{
+  float:left;
+  width:40px;
+  margin-top:15px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.recent_activity_avatar{
+  float:left;
+  margin-top:12px;
+  margin-right:5px;
+}
+
+.recent_activity_meta{
+  float:left;
+  width:150px;
+  margin-top:10px;
+}
+
+.recent_activity_meta strong{
+  font-weight:normal;
 }
 
 /*####################
@@ -311,26 +372,13 @@ Homepage lists
 
 .homepage_listing .summary_box_image{
   float:left;
-  position:relative;
   margin:0 10px;
-}
-
-.homepage_listing .summary_box_image span{
-  position:absolute;
-  top:0;
-  left:0;
-  z-index:2;
-  width:30px;
-  height:30px;
-  background-image:url(../images/avatar_mask.png);
-  background-repeat:no-repeat;
 }
 
 .homepage_listing .summary_box_content{
   float:left;
   width:250px;
 }
-
 
 /*####################
 Main
@@ -353,6 +401,25 @@ Footer
   width:100%;
   color:#fff;
   padding:20px 0;
+}
+
+/*####################
+Avatars
+####################*/
+
+.glossy_avatar_wrapper{
+  position:relative;
+}
+
+.glossy_avatar_wrapper span{
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:2;
+  width:30px;
+  height:30px;
+  background-image:url(../images/avatar_mask.png);
+  background-repeat:no-repeat;
 }
 
 /*####################
