@@ -172,12 +172,20 @@ class RepositoriesController < ApplicationController
   def writable_by
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     user = User.find_by_login(params[:username])
-    if user && user.can_write_to?(@repository)
-      render :text => "true"
-    else
-      render :text => "false"
+    
+    if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s) # git_path could be a merge request
+      begin
+        if merge_request = MergeRequest.find(result[1]) and merge_request.user == user
+          render :text => "true" and return
+        end
+      rescue ActiveRecord::RecordNotFound # No such merge request
+      end
+    elsif user && user.can_write_to?(@repository)
+      render :text => "true" and return
     end
+    render :text => 'false' and return
   end
+  
   
   def real_path
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)

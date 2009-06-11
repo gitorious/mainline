@@ -723,6 +723,49 @@ class RepositoriesControllerTest < ActionController::TestCase
         :id => project.repositories.mainlines.first.to_param
       assert_response :success
     end
+    
+    should 'not identify a non-merge request git path as a merge request' do
+      do_writable_by_get({
+        :git_path => "refs/heads/master"})
+      assert_response :success
+      assert_equal 'true', @response.body
+    end
+    
+    should 'identify that a merge request is being pushed to' do
+      @merge_request = merge_requests(:mikes_to_johans)
+      assert !@merge_request.user.can_write_to?(@merge_request.target_repository)
+      do_writable_by_get({
+        :username => @merge_request.user.to_param, 
+        :project_id => @merge_request.target_repository.project.to_param,
+        :id => @merge_request.target_repository.to_param,
+        :git_path => "refs/merge-requests/#{@merge_request.id}"})
+      assert_response :success
+      assert_equal 'true', @response.body
+    end
+    
+    should 'not allow other users than the owner of a merge request push to a merge request' do
+      @merge_request = merge_requests(:mikes_to_johans)
+      do_writable_by_get({
+        :username => 'johan', 
+        :project_id => @merge_request.target_repository.project.to_param,
+        :id => @merge_request.target_repository.to_param,
+        :git_path => "refs/merge-requests/#{@merge_request.id}"})
+      assert_response :success
+      assert_equal 'false', @response.body
+    end
+    
+    should 'not allow pushes to non-existing merge requests' do
+      @merge_request = merge_requests(:mikes_to_johans)
+      do_writable_by_get({
+        :username => 'johan', 
+        :project_id => @merge_request.target_repository.project.to_param,
+        :id => @merge_request.target_repository.to_param,
+        :git_path => "refs/merge-requests/42"})
+      assert_response :success
+      assert_equal 'false', @response.body
+    end
+    
+    
   end
   
   def do_real_path_get(options={})
