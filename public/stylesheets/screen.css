@@ -20,6 +20,10 @@ a:hover{
   text-decoration:underline;
 }
 
+a img{
+  border:0;
+}
+
 .clear{ clear:both; }
 .image_header span { display:none; }
 
@@ -357,7 +361,7 @@ Homepage lists
   background-image:url(../images/list_head_users.png);
 }
 
-.homepage_listing ul{
+.homepage_listing > ul{
   background-image:url(../images/border_pixel_h.gif);
   background-repeat:repeat-x;
   background-position:left top;
@@ -374,7 +378,7 @@ Homepage lists
 
 .homepage_listing strong{
   display:block;
-  margin-bottom:5px;
+  margin-bottom:2px;
   font-size:16px;
 }
 

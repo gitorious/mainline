@@ -386,7 +386,7 @@ module ApplicationHelper
   #  <%= list(items) {|i| i.title } %>
   #  <%= list(items, :class => "foo") {|i| link_to i, foo_path }
   def list(items, options = {})
-    list_items = items.map {|i| %{<li>#{yield(i)}</li>} }.join("\n")
+    list_items = items.map {|i| %{<li>#{block_given? ? yield(i) : i}</li>} }.join("\n")
     content_tag(:ul, list_items, options)
   end
   
@@ -414,14 +414,24 @@ module ApplicationHelper
   end
   
   def team_summary_box(team)
+    text = list([
+      "Created: #{team.created_at.strftime("%B #{team.created_at.strftime("%d").to_i.ordinalize} %Y")}",
+      "Total activities: #{team.event_count}"
+    ], :class => "simple")
+    
     summary_box link_to(team.name, group_path(team)),
-      "Team text",
+      text,
       default_avatar
   end
   
   def user_summary_box(user)
+    text = text = list([
+      "Projects: #{user.projects.count}",
+      "Total activities: #{user.events.count}"
+    ], :class => "simple")
+    
     summary_box link_to(user.login, user),
-      "User text",
+      text,
       glossy_homepage_avatar(user)
   end
   
