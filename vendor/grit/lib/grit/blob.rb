@@ -52,6 +52,15 @@ module Grit
       guesses.first ? guesses.first.simplified : DEFAULT_MIME_TYPE
     end
     
+    # Returns true if the contents of this blob looks like
+    # binary data, false otherwise
+    def binary?
+      data[0..1024].include?("\000")
+    rescue Grit::Git::GitTimeout
+      # assuming binary for large blobs might be a tad too clever...
+      return true
+    end
+    
     def sha
       @id
     end

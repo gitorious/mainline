@@ -86,4 +86,22 @@ class TestBlob < Test::Unit::TestCase
     blob2 = Blob.create(@r, :name => 'foo/bar.rb', :id => "634396b2f541a9f2d58b00be1a07f0c358b999b3")
     assert_equal blob1, blob2
   end
+  
+  def test_should_know_if_something_is_binary
+    assert !Blob.create(@r, :name => "foo.rb", :data => "class Lulz; end").binary?
+    assert !Blob.create(@r, :name => "foo.m", :data => "[lulz isForTehLaffs:YES]").binary?
+    assert !Blob.create(@r, :name => "foo.txt", :data => "x"*5000).binary?
+    
+    assert Blob.create(@r, :name => "foo.gif", :data => "GIF89a\v\x00\r\x00\xD5!\x00\xBD").binary?
+    assert Blob.create(@r, :name => "foo.exe", :data => "rabuf\06si\000ezodniw").binary?
+    assert Blob.create(@r, :name => "foo", :data => "a"*1024 + "\000").binary?
+    assert Blob.create(@r, {
+      :name => "foo.data",
+      :data => File.read(File.join(File.dirname(__FILE__), "../test/dot_git/objects/pack/pack-c8881c2613522dc3ac69af9c7b4881a061aaec8c.pack"))
+    }).binary?
+    
+    blob = Blob.create(@r, :name => "foo")
+    blob.expects(:data).raises(Grit::Git::GitTimeout)
+    assert blob.binary?
+  end
 end

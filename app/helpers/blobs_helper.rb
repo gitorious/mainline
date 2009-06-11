@@ -41,7 +41,7 @@ module BlobsHelper
   end
   
   def binary?(blob)
-    blob.data[0..1024].include?("\000")
+    blob.binary?
   end
   
   def image?(blob)
