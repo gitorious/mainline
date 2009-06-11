@@ -54,25 +54,26 @@ class BlobsHelperTest < ActionView::TestCase
   
   context "ascii/binary detection" do
     should "know that a plain text file is fine" do
-      assert textual?(blob_with_name("foo.txt"))
+      assert textual?(blob_with_name("jack.txt", "all work and no play"))
     end
     
-    should "know that a ruby and python file is fine" do
-      assert textual?(blob_with_name("foo.rb"))
-      assert textual?(blob_with_name("foo.py"))
-      assert textual?(blob_with_name("foo.c"))
-      assert textual?(blob_with_name("foo.h"))
-      assert textual?(blob_with_name("foo.cpp"))
-      assert textual?(blob_with_name("foo.m"))
+    should "know that text files are fine" do
+      assert textual?(blob_with_name("foo.rb", "class Lulz; end"))
+      assert textual?(blob_with_name("foo.py", "class Lulz: pass"))
+      assert textual?(blob_with_name("foo.c", "void lulz()"))
+      assert textual?(blob_with_name("foo.m", "[lulz isForTehLaffs:YES]"))
     end
     
-    should "know that binary aren't ok" do
-      assert !textual?(blob_with_name("foo.png"))
-      assert !textual?(blob_with_name("foo.gif"))
-      assert !textual?(blob_with_name("foo.exe"))
+    should "know that binary aren't textual" do
+      assert !textual?(blob_with_name("foo.png", File.read(File.join(RAILS_ROOT, "public/images/rails.png"))))
+      assert !textual?(blob_with_name("foo.gif", "GIF89a\v\x00\r\x00\xD5!\x00\xBD"))
+      assert !textual?(blob_with_name("foo.exe", "rabuf\06si\000ezodniw"))
+      assert !textual?(blob_with_name("foo", "a"*1024 + "\000"))
       
       assert image?(blob_with_name("foo.png"))
       assert image?(blob_with_name("foo.gif"))
+      assert image?(blob_with_name("foo.jpg"))
+      assert image?(blob_with_name("foo.jpeg"))
       assert !image?(blob_with_name("foo.exe"))
     end
   end
@@ -96,9 +97,9 @@ class BlobsHelperTest < ActionView::TestCase
     end
   end
   
-  def blob_with_name(name)
+  def blob_with_name(name, data = "")
     repo = mock("grit repo")
-    Grit::Blob.create(repo, {:name => name})
+    Grit::Blob.create(repo, {:name => name, :data => data})
   end
   
 end

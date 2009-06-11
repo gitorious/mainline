@@ -58,7 +58,7 @@ class BlobsController < ApplicationController
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
       if @blob.size > 500.kilobytes
-        flash[:error] = I18n.t "blogs_controller.raw_error"
+        flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
         redirect_to project_repository_path(@project, @repository) and return
       end
       expires_in 30.minutes

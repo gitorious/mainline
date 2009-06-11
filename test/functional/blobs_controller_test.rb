@@ -113,7 +113,7 @@ class BlobsControllerTest < ActionController::TestCase
       should "redirects if blob is too big" do
         blob_mock = mock("blob")
         blob_mock.stubs(:contents).returns([blob_mock]) #meh
-        blob_mock.expects(:size).returns(501.kilobytes)
+        blob_mock.expects(:size).twice.returns(501.kilobytes)
         commit_stub = mock("commit")
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)

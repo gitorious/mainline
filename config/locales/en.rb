@@ -24,7 +24,7 @@
       :activated => 'Your account has been activated!',
     },
     :blobs_controller => {
-      :raw_error => "Blob is too big. Clone the repository locally to see it",
+      :raw_error => "Blob is too big ({{size}} bytes). Clone the repository locally to see it",
     },
     :comments_controller => {
       :create_success => "Your comment was added",
@@ -271,9 +271,10 @@
         :heading => "History for {{ref}}:{{path}}",
         :too_big => lambda { |this, path| "This file is too big to be rendered within reasonable time, " +
           this.link_to("try viewing the raw data", path) },
-        :message => lambda { |this, mime, path| "Not sure we can display this blob nicely (it's a \"#{mime}\" mimetype), " +
-          this.link_to("try viewing the raw data", path) + 
-          "and see if your browser figures it out." },
+        :message => lambda { |this, path|
+          "This blob appears to be binary data, if you like you can " +
+          this.link_to("download the raw data", path) + " (right click, save as)"
+        },
       },
       :comments => {
         :commit => "on commit {{sha1}}",

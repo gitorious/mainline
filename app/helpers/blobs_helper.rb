@@ -37,14 +37,11 @@ module BlobsHelper
   ASCII_MIME_TYPES_EXCEPTIONS = [ /^text/ ]
   
   def textual?(blob)
-    types = MIME::Types.type_for(blob.name)
-    if types.first && types.first.ascii?
-      return true
-    end
-    if ASCII_MIME_TYPES_EXCEPTIONS.find{|r| r =~ blob.mime_type }
-      return true
-    end
-    false
+    !binary?(blob)
+  end
+  
+  def binary?(blob)
+    blob.data[0..1024].include?("\000")
   end
   
   def image?(blob)
