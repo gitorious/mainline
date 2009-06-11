@@ -153,6 +153,7 @@ class Message < ActiveRecord::Base
       self.archived_by_recipient = true
     end
   end
+  
   protected
     def send_email_notification_if_required
       if recipient.wants_email_notifications? and (recipient != sender)

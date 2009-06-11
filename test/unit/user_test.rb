@@ -291,6 +291,13 @@ class UserTest < ActiveSupport::TestCase
       assert_equal(1, @recipient.received_messages.unread_count)
     end
     
+    should "not include archived messages in the unread count" do
+      msg = @recipient.received_messages.unread.first
+      msg.archived_by(@recipient)
+      msg.save!
+      assert_equal(0, @recipient.received_messages.unread_count)
+    end
+    
     context 'Top level messages' do
       setup do
         @sender = Factory.create(:user)
