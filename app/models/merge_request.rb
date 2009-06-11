@@ -405,9 +405,30 @@ class MergeRequest < ActiveRecord::Base
   def push_new_branch_to_tracking_repo
     self.version = self.version + 1
     branch_spec = "refs/merge-requests/#{id}:refs/merge-requests/#{id}/#{version}"
+    raise "No tracking repository exists for merge request #{id}" unless target_repository.tracking_repository
     target_repository.git.git.push({}, target_repository.tracking_repository.full_repository_path, branch_spec)
     target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "New version is #{version}", "reason")
   end
   
-  
+  # One time migration: 
+  # Since the backend is changed from using a diff between source and target repos, we need an actual branch which holds the MR:
+  # - Create the tracking repo for each target repository
+  # - Push the merge request to the tracking repo (eg. one branch in the target repo and one to the tracking repo)
+  def migrate_with_tracking_repository
+    if target_repository && source_repository
+      if !target_repository.has_tracking_repository?
+        tracking_repo = target_repository.create_tracking_repository
+        $stderr.puts "Creating tracking repo at #{tracking_repo.full_repository_path}"
+        Repository.clone_git_repository(tracking_repo.real_gitdir, target_repository.real_gitdir,{:skip_hooks => true})
+      end
+      $stderr.puts "Pushing to tracking repo for merge request #{id}"
+      begin
+        push_to_tracking_repository!    
+      rescue => e
+        $stderr.puts e
+      end
+    else
+      $stderr.puts "WARNING: Merge request #{id} lacks target or source repository"
+    end
+  end
 end
