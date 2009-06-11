@@ -426,11 +426,11 @@ module ApplicationHelper
   end
   
   def glossy_homepage_avatar(user)
-    avatar_wrapper(avatar(user, :size => 30, :default => "images/avatar_default.png") + "<span></span>")
+    avatar_wrapper(avatar(user, :size => 30, :default => "images/icon_default.png") + "<span></span>")
   end
   
   def default_avatar
-    avatar_wrapper(image_tag("avatar_default.png", :width => 30, :height => 30))
+    avatar_wrapper(image_tag("icon_default.png", :width => 30, :height => 30))
   end
   
   # This is pretty ugly, the 'avatar' helper should do this. But we need backwards compability.

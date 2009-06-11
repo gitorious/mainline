@@ -417,8 +417,8 @@ Avatars
   left:0;
   z-index:2;
   width:30px;
-  height:30px;
-  background-image:url(../images/avatar_mask.png);
+  height:31px;
+  background-image:url(../images/icon_avatar_mask.png);
   background-repeat:no-repeat;
 }
 
