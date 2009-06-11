@@ -171,6 +171,10 @@ Big header
   text-align:center;
 }
 
+#big_header_login h3{
+  display:none;
+}
+
 #big_header_login_box_header{
   margin:0;
   height:25px;

@@ -162,12 +162,6 @@ Event.observe(window, "load", function(e){
     var regularLoginBox   = $("big_header_login_box_regular");
     
     // Only showing the regular login
-    openIdLoginBox.hide();
-    
-    // Hiding the headers
-    $$("#big_header_login h3").each(function(header){
-      header.hide();
-    });
     
     // Toggle between the two
     var loginBoxToggler = function(e){
