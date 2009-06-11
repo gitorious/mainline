@@ -311,6 +311,7 @@ Recent activities
   margin-top:15px;
   text-align:center;
   font-weight:bold;
+  text-shadow:rgb(255, 255, 255) 0px 1px 0px; 
 }
 
 .recent_activity_avatar{
