@@ -410,7 +410,7 @@ module ApplicationHelper
   def project_summary_box(project)
     summary_box link_to(project.title, project),
       truncate(project.descriptions_first_paragraph, 80),
-      default_avatar
+      avatar_wrapper(default_avatar)
   end
   
   def team_summary_box(team)
@@ -421,7 +421,8 @@ module ApplicationHelper
     
     summary_box link_to(team.name, group_path(team)),
       text,
-      default_avatar
+      glossy_homepage_avatar(team.avatar? ? image_tag(team.avatar.url(:thumb), :width => 30, :height => 30) : default_avatar)
+      
   end
   
   def user_summary_box(user)
@@ -432,15 +433,19 @@ module ApplicationHelper
     
     summary_box link_to(user.login, user),
       text,
-      glossy_homepage_avatar(user)
+      glossy_homepage_avatar_for_user(user)
   end
   
-  def glossy_homepage_avatar(user)
-    avatar_wrapper(avatar(user, :size => 30, :default => "images/icon_default.png") + "<span></span>")
+  def glossy_homepage_avatar(avatar)
+    avatar_wrapper(avatar + "<span></span>")
+  end
+  
+  def glossy_homepage_avatar_for_user(user)
+    glossy_homepage_avatar(avatar(user, :size => 30, :default => "images/icon_default.png"))
   end
   
   def default_avatar
-    avatar_wrapper(image_tag("icon_default.png", :width => 30, :height => 30))
+    image_tag("icon_default.png", :width => 30, :height => 30)
   end
   
   # This is pretty ugly, the 'avatar' helper should do this. But we need backwards compability.
