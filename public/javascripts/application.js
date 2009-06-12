@@ -222,6 +222,7 @@ Event.observe(window, "load", function(e){
     var LOAD_MORE_OFFSET          = 400;
     
     var currentIteration          = 0;
+    var currentAnimTimeout
     
 
     var getWindowWidth = function(){
@@ -249,21 +250,31 @@ Event.observe(window, "load", function(e){
       });
     }
     
-    fetchNewBar(function(){
-      var animateBar = function(){
-        var currentOffset = parseInt(recentActivitiesTarget.getStyle("left"));
-        var newOffset = currentOffset - ANIMATION_STEP
-        recentActivitiesTarget.setStyle({left: newOffset + "px"});
-        
+    var animateBar = function(){
+      var currentOffset = parseInt(recentActivitiesTarget.getStyle("left"));
+      var newOffset = currentOffset - ANIMATION_STEP
+      recentActivitiesTarget.setStyle({left: newOffset + "px"});
+      
 
-        if ((BAR_WIDTH * currentIteration) - (getWindowWidth() - newOffset) <= LOAD_MORE_OFFSET) {
-          fetchNewBar();
-        }
-        
-        setTimeout(animateBar, FPS);
+      if ((BAR_WIDTH * currentIteration) - (getWindowWidth() - newOffset) <= LOAD_MORE_OFFSET) {
+        fetchNewBar();
       }
-      animateBar();
+      
+      currentAnimTimeout = setTimeout(animateBar, FPS);
+    }
+    
+
+    recentActivitiesTarget.observe("mouseover", function(e){
+      clearTimeout(currentAnimTimeout);
     });
+    
+    recentActivitiesTarget.observe("mouseout", function(e){
+      if (!e.relatedTarget || !e.relatedTarget.descendantOf(this)) {
+        animateBar();
+      }
+    })
+    
+    fetchNewBar(animateBar);
   }
 });
 
