@@ -387,6 +387,17 @@ class MergeRequest < ActiveRecord::Base
     save
   end
   
+  def update_status(options)
+    user = options[:user]
+    comment = comments.build(:body => options[:comment], :user => user)
+    if resolvable_by?(user) && new_tag = options[:tag]
+      comment.state_change = [status_tag, new_tag]
+      self.status_tag = new_tag
+    end
+    comment.save
+    save
+  end
+  
   def valid_oauth_credentials?
     response = access_token.get("/")
     return Net::HTTPSuccess === response

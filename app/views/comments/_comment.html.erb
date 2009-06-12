@@ -30,4 +30,9 @@
     <%= link_to(h(force_utf8(comment.user.title)), comment.user) -%> | 
     <span class="permalink"><%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%></span>
   </p>
+  <%- if comment.state_change -%>
+  <p>
+    State changed <%- if comment.state_changed_from -%>from <strong><%= comment.state_changed_from %></strong><%- end -%> to <strong><%= comment.state_changed_to %></strong>
+  </p>
+  <%- end -%>
 </div>

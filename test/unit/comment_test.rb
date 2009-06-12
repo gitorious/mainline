@@ -53,4 +53,49 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
   
+  context 'State change' do
+    should 'be a list of previous and new state' do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans), :state_change => ['Before', 'After'])
+      @comment.user = users(:johan)
+      assert @comment.save
+      assert_equal ['Before', 'After'], @comment.state_change
+      assert_equal 'After', @merge_request.reload.status_tag
+    end
+    
+    should 'change the state of its target' do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans))
+      @comment.state = 'After'
+      @comment.user = users(:johan)
+      assert_equal @merge_request, @comment.target
+      assert @comment.save!
+      assert_equal 'After', @merge_request.reload.status_tag
+    end
+    
+    should 'not change the state of its target unless the user can resolve it' do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      @merge_request.update_attribute(:status_tag, 'Before')
+      @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans))
+      @comment.state = 'After'
+      @comment.user = users(:moe)
+      assert_equal ['Before', 'After'], @comment.state_change
+      assert_equal 'After', @comment.state_changed_to
+      assert @comment.save
+      assert_equal 'Before', @merge_request.reload.status_tag
+    end
+    
+    should 'know of previous and new states' do
+      comment = Comment.new
+      assert_nil comment.state_changed_from
+      assert_nil comment.state_changed_to
+      comment.state_change = ['Invalid']
+      assert_nil comment.state_changed_from
+      assert_equal 'Invalid', comment.state_changed_to
+      comment.state_change = ['New', 'Closed']
+      assert_equal 'New', comment.state_changed_from
+      assert_equal 'Closed', comment.state_changed_to
+    end
+  end
+  
 end

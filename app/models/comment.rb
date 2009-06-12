@@ -25,6 +25,8 @@ class Comment < ActiveRecord::Base
   belongs_to :project
   has_many   :events, :as => :target, :dependent => :destroy
   after_create :notify_target_if_supported
+  after_create :update_state_in_target
+  serialize :state_change, Array
   
   is_indexed :fields => ["body"], :include => [{
       :association_name => "user",
@@ -53,11 +55,39 @@ class Comment < ActiveRecord::Base
     message.save
   end
   
+  def state=(s)
+    return if s.blank?
+    result = []
+    if applies_to_merge_request?
+      result << target.status_tag
+    end
+    result << s
+    self.state_change = result
+  end
+  
+  def state_changed_to
+    state_change.to_a.last
+  end
+  
+  def state_changed_from
+    state_change.to_a.size > 1 ? state_change.first : nil
+  end
+  
   protected
     def notify_target_if_supported
       if target && NOTIFICATION_TARGETS.include?(target.class)
         return if target.user == user
         deliver_notification_to(target.user)
+      end
+    end
+    
+    def applies_to_merge_request?
+      MergeRequest === target
+    end
+    
+    def update_state_in_target
+      if applies_to_merge_request? and state_change
+        target.update_attribute(:status_tag, state_changed_to) if target.resolvable_by?(user)
       end
     end
   

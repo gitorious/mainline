@@ -48,7 +48,9 @@ class CommentsController < ApplicationController
   end
   
   def create
+    state = params[:comment].delete(:state)
     @comment = @target.comments.new(params[:comment])
+    @comment.state = state
     @comment.user = current_user
     @comment.project = @project
 

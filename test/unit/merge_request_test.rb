@@ -122,6 +122,16 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert !@merge_request.resolvable_by?(users(:moe))
   end
   
+  should 'create a comment and update its status tag' do
+    user = users(:johan)
+    @merge_request.update_attribute(:status_tag, 'In progress')
+    @merge_request.update_status(:tag => "Needs verification", :comment => "Your indentation stinks.", :user => user)
+    assert_equal 'Needs verification', @merge_request.status_tag
+    comment = @merge_request.comments.last
+    assert_equal "Your indentation stinks.", comment.body
+    assert_equal ['In progress', 'Needs verification'], comment.state_change
+  end
+  
   should "have a working resolvable_by? together with fucktard authentication systems" do
     assert !@merge_request.resolvable_by?(:false)
   end
