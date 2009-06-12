@@ -226,7 +226,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal "Hello.", project.descriptions_first_paragraph
     
     project.description = "No newline."
-    assert_euqal "No newline.", project.descriptions_first_paragraph
+    assert_equal "No newline.", project.descriptions_first_paragraph
   end
   
   context "Project events" do
