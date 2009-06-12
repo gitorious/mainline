@@ -430,6 +430,14 @@ Footer
   padding:20px 0;
 }
 
+#footer li{
+  margin-right:2em;
+}
+
+#footer a{
+  color:#999;
+}
+
 /*####################
 Avatars
 ####################*/
