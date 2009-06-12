@@ -222,7 +222,6 @@ Event.observe(window, "load", function(e){
     var LOAD_MORE_OFFSET          = 400;
     
     var currentIteration          = 0;
-    var shouldMonitorScroll       = true;
     
 
     var getWindowWidth = function(){
@@ -232,11 +231,9 @@ Event.observe(window, "load", function(e){
     recentActivitiesTarget.setStyle({left: getWindowWidth() + "px"});
     
     var fetchNewBar = function(callback){
+      currentIteration++;
       new Ajax.Request("/events/recent_for_homepage", {
         onSuccess: function(response) {
-          currentIteration++;
-          shouldMonitorScroll = true;
-          
           // Expand the width of the container
           recentActivitiesTarget.setStyle({width: BAR_WIDTH + parseInt(recentActivitiesTarget.getStyle("width")) + "px"});
           
@@ -258,8 +255,8 @@ Event.observe(window, "load", function(e){
         var newOffset = currentOffset - ANIMATION_STEP
         recentActivitiesTarget.setStyle({left: newOffset + "px"});
         
-        if (shouldMonitorScroll && BAR_WIDTH - getWindowWidth() + (newOffset / currentIteration) <= LOAD_MORE_OFFSET) {
-          shouldMonitorScroll = false;
+
+        if ((BAR_WIDTH * currentIteration) - (getWindowWidth() - newOffset) <= LOAD_MORE_OFFSET) {
           fetchNewBar();
         }
         
