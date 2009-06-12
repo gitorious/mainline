@@ -62,12 +62,18 @@
   <div id="main">
     <div class="marginizer">
       <div class="homepage_listing" id="homepage_listed_left_column">
-        <h2 class="image_header"><span>Most Active Projects</span></h2>
+        <h2 class="image_header">
+          <span>Most Active Projects</span>
+          <%= link_to "See all &raquo;", projects_path, :class => "see_all" %>
+        </h2>
         <%= list(@projects, :class => "simple") {|p| project_summary_box(p) } %>
       </div>
       
       <div class="homepage_listing" id="homepage_listed_middle_column">
-        <h2 class="image_header"><span>Most Active Teams</span></h2>
+        <h2 class="image_header">
+          <span>Most Active Teams</span>
+          <%= link_to "See all &raquo;", groups_path, :class => "see_all" %>
+        </h2>
         <%= list(@teams, :class => "simple") {|t| team_summary_box(t) } %>
       </div>
       

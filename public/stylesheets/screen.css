@@ -345,7 +345,8 @@ Homepage lists
 }
 
 .homepage_listing h2{
-  width:250px;
+  width:300px;
+  background-repeat:no-repeat;
   height:60px;
   margin:0;
 }
@@ -368,6 +369,18 @@ Homepage lists
   background-position:left top;
 }
 
+.homepage_listing .see_all{
+  float:right;
+  font-size:11px;
+  color:#999;
+  font-weight:bold;
+  margin-top:48px;
+}
+
+.homepage_listing .see_all:hover{
+  color:#000;
+  text-decoration:none;
+}
 
 .homepage_listing .summary_box{
   background-image:url(../images/border_pixel_h.gif);
