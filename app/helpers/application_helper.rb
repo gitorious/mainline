@@ -452,4 +452,12 @@ module ApplicationHelper
   def avatar_wrapper(avatar)
     content_tag(:div, avatar, :class => "glossy_avatar_wrapper")
   end
+  
+  def secure_login_url
+    if SslRequirement.disable_ssl_check?
+      sessions_path
+    else
+      sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
+    end
+  end
 end

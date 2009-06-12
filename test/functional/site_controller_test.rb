@@ -31,6 +31,21 @@ class SiteControllerTest < ActionController::TestCase
       assert_template "layouts/second_generation/application"
     end
     
+    should "not use https if not configured to use https" do
+      SslRequirement.expects(:disable_ssl_check?).returns(true).at_least_once
+      get :index
+      assert_response :success
+      assert_select 'form#big_header_login_box_form[action=/sessions]'
+    end
+    
+    should "use https to login if configured" do
+      SslRequirement.expects(:disable_ssl_check?).returns(false).at_least_once
+      SslRequirement.expects(:ssl_host).returns("foo.gitorious.org").at_least_once
+      get :index
+      assert_response :success
+      assert_select 'form#big_header_login_box_form[action=https://foo.gitorious.org/sessions]'
+    end
+    
     should "gets a list of the most recent projects" do
       get :index
       assert assigns(:projects).is_a?(Array)
