@@ -184,12 +184,14 @@ Event.observe(window, "load", function(e){
     searchInput.observe("focus", function(){
       if (searchInput.value == labelText) {
         searchInput.value = "";
+        searchInput.removeClassName("unfocused")
       }
     });
     
     searchInput.observe("blur", function(){
       if (searchInput.value == "") {
         searchInput.value = labelText;
+        searchInput.addClassName("unfocused")
       }
     });
     

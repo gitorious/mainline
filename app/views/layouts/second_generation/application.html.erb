@@ -23,7 +23,8 @@
               :html => {:method => "get", :id => "main_menu_search_form"} do |f|
             %>
               
-              <%= text_field_tag :q, params[:q], :id => "main_menu_search_form_query" %>
+              <%= text_field_tag :q, params[:q],
+                :id => "main_menu_search_form_query", :class => "unfocused", %>
               <%= submit_tag "Search" %>
             <% end %>
           </li>
@@ -87,15 +88,17 @@
   <div id="footer">
     <div class="marginizer">
       <ul class="simple left">
-        <li><%= link_to image_tag("logo_shortcut_mini.png"), "http://shortcut.no/" %></li>
         <li><%= link_to "Contact", contact_path %> </li>
         <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" %></li>
         <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org/" %></li>
         
         <% if GitoriousConfig["terms_of_use"] -%>
-          <li><%= link_to "Terms of Service", "http://en.gitorious.org/tos" %></li>
-          <li><%= link_to "Privacy Policy", "http://en.gitorious.org/privacy_policy" %></li>
+          <li class="secondary"><%= link_to "Terms of Service", "http://en.gitorious.org/tos" %></li>
+          <li class="secondary"><%= link_to "Privacy Policy", "http://en.gitorious.org/privacy_policy" %></li>
         <% end %>
+      </ul>
+      <ul class="meta">
+                <li class="meta"><%= link_to image_tag("logo_shortcut_mini.png"), "http://shortcut.no/" %></li>
       </ul>
     </div>
   </div>
