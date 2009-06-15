@@ -289,11 +289,14 @@ module EventRenderingHelper
   
   def render_event_push(event)
     project = event.target.project
-    commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), :url => commits_event_path(event.to_param), :method => :get, :update => "commits_in_event_#{event.to_param}", :before => "$('commits_in_event_#{event.to_param}').toggle()")
+    commit_link = link_to_if(event.has_commits?, pluralize(event.events.size, 'commit'),
+      repo_owner_path(event.target, :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data)),
+      :onclick => "if ($('commits_in_event_#{event.to_param}')) {$('commits_in_event_#{event.to_param}').toggle(); return false;}"
+    )
+    
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
       title = repo_title(event.target, project)
-      " to " + link_to(h(title+':'+event.data), repo_owner_path(event.target, 
-        :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data)))
+      " to " + link_to(h(title+':'+event.data), repo_owner_path(event.target, :project_repository_path, event.target.project, event.target))
     end
     body = h(event.body)
     category = 'push'
