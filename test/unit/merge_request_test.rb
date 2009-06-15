@@ -122,16 +122,6 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert !@merge_request.resolvable_by?(users(:moe))
   end
   
-  should 'create a comment and update its status tag' do
-    user = users(:johan)
-    @merge_request.update_attribute(:status_tag, 'In progress')
-    @merge_request.update_status(:tag => "Needs verification", :comment => "Your indentation stinks.", :user => user)
-    assert_equal 'Needs verification', @merge_request.status_tag
-    comment = @merge_request.comments.last
-    assert_equal "Your indentation stinks.", comment.body
-    assert_equal ['In progress', 'Needs verification'], comment.state_change
-  end
-  
   should "have a working resolvable_by? together with fucktard authentication systems" do
     assert !@merge_request.resolvable_by?(:false)
   end
@@ -479,6 +469,19 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_match(/<status>#{@merge_request.status_string}<\/status>/, @merge_request.to_xml)
       assert_match(/<username>~#{@merge_request.user.title}<\/username>/, @merge_request.to_xml)
       assert_match(/<proposal>#{@merge_request.proposal}<\/proposal>/, @merge_request.to_xml)
+    end
+  end
+  
+  context 'Status tags' do
+    setup {@merge_request = merge_requests(:moes_to_johans_open)}
+    
+    should 'cascade to the actual state machine with given states' do
+      @merge_request.status_tag = 'merged'
+      assert @merge_request.reload.merged?
+      @merge_request.status_tag = 'rejected'
+      assert @merge_request.rejected?
+      @merge_request.status_tag = 'in_verification'
+      assert @merge_request.verifying?
     end
   end
 end

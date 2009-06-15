@@ -142,5 +142,26 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @merge_request, Event.last.target
       assert_equal "MergeRequest", Event.last.body
     end
+    
+    should 'transition the target if state is provided' do
+      post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
+      assert_equal [nil, 'Resolved'], assigns(:comment).state_change
+      assert_equal 'Resolved', @merge_request.reload.status_tag
+    end
+    
+    should 'not transition the target if an empty state if provided' do
+      post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => ''}
+      assert_nil @merge_request.reload.status_tag
+    end
+    
+    should 'not allow other users than the merge request owner to change the state' do
+      login_as :mike
+      post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
+      assert_response :redirect
+      assert_nil @merge_request.reload.status_tag
+    end
   end
 end

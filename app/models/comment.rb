@@ -87,7 +87,7 @@ class Comment < ActiveRecord::Base
     
     def update_state_in_target
       if applies_to_merge_request? and state_change
-        target.update_attribute(:status_tag, state_changed_to) if target.resolvable_by?(user)
+        target.status_tag = state_changed_to if target.resolvable_by?(user)
       end
     end
   

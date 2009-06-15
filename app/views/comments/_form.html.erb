@@ -49,7 +49,16 @@
     <%- if MergeRequest === parent and parent.resolvable_by?(current_user) -%>
     <p>
       <%= f.label :state, 'Status' %><br />
-      <%= f.text_field :state %>
+      <%= f.select :state, [
+        ['New        = Issue has not had initial review yet','new'],
+        ['Accepted   = Problem reproduced / Need acknowledged','accepted'],
+        ['Started    = Work on this issue has begun', 'started'],
+        ['Fixed      = Developer made source code changes. QA should verify','fixed'],
+        ['Verified   = QA has verified that the fix worked','in_verification'],
+        ['Invalid    = This was not a valid issue report','invalid'],
+        ['Duplicate  = This report duplicates an existing issue','duplicate'],
+        ['Merged     = The change was mergded', 'merged'],
+        ['Rejected    = We decided not to take action on this issue','rejected']], :include_blank => true %>
     </p>
     <%- end -%>
     <p>

@@ -162,6 +162,19 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
+  def status_tag=(s)
+    case s
+    when 'merged'
+      self.status = STATUS_MERGED
+    when 'rejected'
+      self.status = STATUS_REJECTED
+    when 'in_verification'
+      self.status = STATUS_VERIFYING
+    end
+    write_attribute(:status_tag, s)
+    save
+  end
+  
   # Returns a hash (for the view) of labels and event names for next states
   # TODO: Obviously, putting the states and transitions inside a map is not all that DRY,
   # but the state machine does not have a one-to-one relationship between states and events
@@ -387,17 +400,6 @@ class MergeRequest < ActiveRecord::Base
     save
   end
   
-  def update_status(options)
-    user = options[:user]
-    comment = comments.build(:body => options[:comment], :user => user)
-    if resolvable_by?(user) && new_tag = options[:tag]
-      comment.state_change = [status_tag, new_tag]
-      self.status_tag = new_tag
-    end
-    comment.save
-    save
-  end
-  
   def valid_oauth_credentials?
     response = access_token.get("/")
     return Net::HTTPSuccess === response
@@ -440,6 +442,17 @@ class MergeRequest < ActiveRecord::Base
       end
     else
       $stderr.puts "WARNING: Merge request #{id} lacks target or source repository"
+    end
+    migrate_decision_to_comment
+  end
+
+  # Another one time migration: 
+  # If we have a reason (that is someone who can resolve us) we will create a comment with this as body and set the state to be the current +status_string+
+  def migrate_decision_to_comment
+    unless reason.blank?
+      c = comments.build(:body => reason, :user => updated_by, :project => target_repository.project)
+      c.state = status_string
+      c.save!
     end
   end
 end
