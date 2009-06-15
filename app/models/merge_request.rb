@@ -34,7 +34,7 @@ class MergeRequest < ActiveRecord::Base
       :association_name => "user",
       :field => "login",
       :as => "proposed_by"
-    }], :conditions => "status = 0"
+    }], :conditions => "status != 0"
   
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
                   :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site
