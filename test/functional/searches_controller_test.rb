@@ -27,7 +27,7 @@ class SearchesControllerTest < ActionController::TestCase
     should "searches for the given query" do
       searcher = mock("ultrasphinx search")
       Ultrasphinx::Search.expects(:new).with({
-        :query => "foo", :page => 1
+        :query => "foo", :page => 1, :per_page => 30
       }).returns(searcher)
       searcher.expects(:run)
       searcher.expects(:results).returns([projects(:johans)])
