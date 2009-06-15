@@ -133,7 +133,7 @@ var Gitorious = {
   }
 };
 
-Event.observe(window, "load", function(e){
+Event.observe(window, "dom:loaded", function(e){
   var blobTable = $("codeblob")
   if (blobTable) {
     var highlighter = new Gitorious.LineHighlighter(blobTable);
