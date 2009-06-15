@@ -33,7 +33,7 @@ Main grid
 
 body{
   margin:0;
-  font-family:Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size:12px;
   background:#000; /* For the potentially ever expanding footer. The white is in #main */
 }
