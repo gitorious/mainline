@@ -20,6 +20,8 @@
 #++
 %>
 
+<% hide_tips ||= false -%>
+
 <div class="search_bar">
 <% form_for :search, :url => search_path(:only_path => false,
     :host => GitoriousConfig["gitorious_host"], :protocol => "http"),
@@ -28,6 +30,11 @@
   <%= text_field_tag :q, params[:q], :class => "text search-field round-5" -%> 
   <input type="submit" value="<%= t("views.searches.search") %>" class="search-submit round-5" />
 </p>  
-<p class="hint search-hint"><%= t("views.searches.hint") %></p>
+<p class="hint search-hint">
+  <%= t("views.searches.hint") %>
+  <% unless hide_tips -%>
+  - <small><a href="#advanced" onclick="$('search_help').toggle()">Advanced search tips</a></small>
+  <% end -%>
+</p>
 <% end -%>
 </div>

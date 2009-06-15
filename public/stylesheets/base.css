@@ -1898,6 +1898,10 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   margin: 0 10px 10px 10px;
 }
 
+.search_time {
+  float: right;
+}
+
 .search_results strong.highlight {
   background: #ff0;
   font-weight: normal;

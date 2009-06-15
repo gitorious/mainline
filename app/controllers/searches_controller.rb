@@ -24,7 +24,8 @@ class SearchesController < ApplicationController
   def show
     unless params[:q].blank?
       @search = Ultrasphinx::Search.new({
-        :query => params[:q], :page => (params[:page] || 1)
+        :query => params[:q], :page => (params[:page] || 1),
+        :per_page => 30,
       })
       @search.run
       @results = @search.results
