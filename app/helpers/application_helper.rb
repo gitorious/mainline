@@ -228,9 +228,9 @@ module ApplicationHelper
     [action, body, category]
   end
   
-  def link_to_remote_if(condition, name, options)
+  def link_to_remote_if(condition, name, options, html_options = {})
     if condition
-      link_to_remote(name, options)
+      link_to_remote(name, options, html_options)
     else
       content_tag(:span, name)
     end
