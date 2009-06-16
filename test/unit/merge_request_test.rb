@@ -58,6 +58,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_equal({'merge_request_id' => @merge_request.id.to_s}, message)
   end
   
+  should 'have a ready? method which tells whether it has been created in the background' do
+    @merge_request.update_attribute(:version, 0)
+    assert !@merge_request.ready?
+    @merge_request.update_attribute(:version, 1)
+    assert @merge_request.ready?
+  end
+  
   should "has a merged? status" do
     @merge_request.status = MergeRequest::STATUS_MERGED
     assert @merge_request.merged?, '@merge_request.merged? should be true'

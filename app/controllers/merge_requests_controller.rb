@@ -65,6 +65,9 @@ class MergeRequestsController < ApplicationController
   def show
     @merge_request = @repository.merge_requests.find(params[:id], 
                       :include => [:source_repository, :target_repository])
+
+    response.headers['Refresh'] = "5" unless @merge_request.ready?
+
     @commits = @merge_request.commits_to_be_merged
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
     respond_to do |wants|

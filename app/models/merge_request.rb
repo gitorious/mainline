@@ -252,11 +252,15 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def commits_to_be_merged
-    if version > 0
+    if ready?
       commit_diff_from_tracking_repo
     else
       []
     end
+  end
+  
+  def ready?
+    version > 0
   end
   
   def commit_diff_from_tracking_repo
@@ -421,6 +425,7 @@ class MergeRequest < ActiveRecord::Base
     raise "No tracking repository exists for merge request #{id}" unless target_repository.tracking_repository
     target_repository.git.git.push({}, target_repository.tracking_repository.full_repository_path, branch_spec)
     target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "New version is #{version}", "reason")
+    save
   end
   
   # One time migration: 

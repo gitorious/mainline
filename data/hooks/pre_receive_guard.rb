@@ -23,6 +23,7 @@ require 'cgi'
 module Gitorious
   module SSH  
     class PreReceiveGuard
+      # env is a Hash representing ENV
       def initialize(env, git_spec)
         @env  = env.dup
         @query_url = @env['GITORIOUS_WRITABLE_BY_URL']
