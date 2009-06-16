@@ -2389,3 +2389,14 @@ div.archive-download-box p {
   max-height: 200px;
   overflow-y: scroll;
 }
+
+ul#commit_selector
+{
+}
+ul#commit_selector li
+{
+}
+ul#commit_selector li a.current
+{
+  font-weight: bold;
+}

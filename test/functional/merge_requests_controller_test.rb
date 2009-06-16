@@ -557,6 +557,17 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_equal grit.branches, assigns(:target_branches)
     end
   end
+  
+  context 'GET #version' do
+    should 'retrieve the commits in a specific version' do
+      MergeRequest.stubs(:find).returns(@merge_request)
+      login_as :johan
+      @merge_request.expects(:commit_diff_from_tracking_repo).with(10).returns([])
+      get :version, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
+        :id => @merge_request.to_param, :version => 10
+      assert_response :success
+    end
+  end
 	
 	def do_delete
 		delete :destroy, :project_id => @project.to_param, 

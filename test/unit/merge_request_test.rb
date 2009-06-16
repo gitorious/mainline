@@ -52,6 +52,11 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_equal 1, @merge_request.version
   end
   
+  should 'have a versions method that returns all the versions as an array' do
+    @merge_request.version = 10
+    assert_equal [1,2,3,4,5,6,7,8,9,10].reverse, @merge_request.versions
+  end
+  
   should 'send a MQ message when being confirmed by the user' do
     p = proc {@merge_request.confirmed_by_user}
     message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestCreation', /.*/) {p.call}

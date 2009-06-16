@@ -1,0 +1,3 @@
+page.replace_html 'commits_to_be_merged', :partial => 'commits'
+page.visual_effect :highlight, 'commits_to_be_merged'
+page << "$$('#commit_selector li a').each(function(el){el.removeClassName('current')});$('commit_selector_item_#{@version}').addClassName('current')"

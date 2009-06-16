@@ -77,6 +77,18 @@ class MergeRequestsController < ApplicationController
     end
   end
   
+  def version
+    @merge_request = @repository.merge_requests.find(params[:id], 
+                      :include => [:source_repository, :target_repository])
+    @version = params[:version].to_i
+    @commit_comments = []
+    @commits = @merge_request.commit_diff_from_tracking_repo(@version)
+    respond_to do |wants|
+      wants.html {render :partial => 'commits', :layout => false}
+      wants.js
+    end    
+  end
+  
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user

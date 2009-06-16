@@ -263,8 +263,12 @@ class MergeRequest < ActiveRecord::Base
     version > 0
   end
   
-  def commit_diff_from_tracking_repo
-    @commits_to_be_merged ||= target_repository.git.commit_deltas_from(target_repository.tracking_repository.git, target_branch, "refs/merge-requests/#{id}/#{version}")
+  def versions
+    (1..version).to_a.reverse
+  end
+  
+  def commit_diff_from_tracking_repo(which_version=version)
+    @commits_to_be_merged ||= target_repository.git.commit_deltas_from(target_repository.tracking_repository.git, target_branch, "refs/merge-requests/#{id}/#{which_version}")
   end
   
   def potential_commits

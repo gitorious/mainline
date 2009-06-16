@@ -111,65 +111,16 @@
     <% end -%>
     </p>
   <% else -%>
-    <table class="select_commits_from_list">
-    <% @commits.each_with_index do |commit, i| %>
-      <tr id="commit_<%= i -%>" class="commit_row">
-        <td class="commit-details meta">
-          <ul>
-            <li class="sha-abbrev">
-              <%= link_to commit.id_abbrev, 
-                    repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit) %>
-            </li>
-            <li class="committer">
-              <strong><%=h truncate(force_utf8(commit.committer.to_s), :length => 25) %></strong>
-            </li>
-          </ul>
-          <small>
-            <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago 
-            <% if (comment_count = @commit_comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
-              (<%= link_to pluralize(comment_count, "comment", "comments"),
-                    repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
-                      @repository.project, @merge_request.source_repository, commit.id) + '#comments',
-                    :onclick => "toggleComments(#{i}); return false" -%>)
-            <% end -%>
-          </small>
-        </td>
-        <td class="commit-details message">
-          <div class="commit_message inline">
-            <%= link_to h(truncate(force_utf8(commit.message), :length => 140)), 
-                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit)  %>
-          </div>
-        </td>
-      </tr>
-      <% @commit_comments.select{|c| c.sha1 == commit.id }.each do |comment| -%>
-        <tr class="comment_for_commit_<%= i -%> commit_comments commit_row" style="display:none">
-          <td class="commit-details meta">
-            <ul>
-              <li class="avatar">
-                <%= link_to(avatar_from_email(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
-              </li>
-              <li class="author">
-                <%= link_to(h(comment.user.login), comment.user) -%>
-              </li>
-            </ul>
-            <small class="permalink">
-              <%= link_to "about " + time_ago_in_words(comment.created_at) + " ago", 
-                      repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, 
-                          @repository.project, @merge_request.source_repository, comment.sha1) + "##{dom_id(comment)}" -%>
-            </small>
-          </td>
-          <td class="commit-details body">
-            <div class="inline">
-              <%= link_to truncate(sanitize(force_utf8(comment.body)), :length => 70), 
-                    repo_owner_path(@merge_request.source_repository, 
-                      :project_repository_commit_path, @project,
-                      @merge_request.source_repository, commit) + "##{dom_id(comment)}" %>
-            </div>
-          </td>
-        <tr>
-      <% end -%>
-    <% end %>
-    </table>
+  <p><%= link_to_function("Display older versions", 'Element.toggle("commit_selector")') %></p>
+  <ul id="commit_selector" style="display:none">
+    <%- @merge_request.versions.each do |v| -%>
+    <li>
+      <%= link_to_remote "Version #{v}" + (v == @merge_request.version ? " (current version)" : ""), :url => polymorphic_path([:version, @merge_request.target_repository.project, @merge_request.target_repository, @merge_request], :version => v), :method => :get, :html => {:class => (v == @merge_request.version ? 'current' : ''), :id => "commit_selector_item_#{v}"} %>
+    </li>
+    <%- end -%>
+  </ul>
+  
+    <%= render :partial => 'commits' %>
    <% end # if @commits.blank? -%>
 
   <%- content_for(:sidebar) do -%>

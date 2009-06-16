@@ -43,7 +43,8 @@ ActionController::Routing::Routes.draw do |map|
       repo.resources :merge_requests, :member => {
         :resolve => :put,
         :terms_accepted => :get,
-        :reopen => :put
+        :reopen => :put,
+        :version => :get
       }, :collection => { 
         :create => :post, 
         :commit_list => :post,
