@@ -410,7 +410,7 @@ module ApplicationHelper
   def project_summary_box(project)
     summary_box link_to(project.title, project),
       truncate(project.descriptions_first_paragraph, 80),
-      avatar_wrapper(default_avatar)
+      glossy_homepage_avatar(default_avatar)
   end
   
   def team_summary_box(team)
@@ -437,7 +437,7 @@ module ApplicationHelper
   end
   
   def glossy_homepage_avatar(avatar)
-    avatar_wrapper(avatar + "<span></span>")
+    content_tag(:div, avatar + "<span></span>", :class => "glossy_avatar_wrapper")
   end
   
   def glossy_homepage_avatar_for_user(user)
@@ -447,12 +447,7 @@ module ApplicationHelper
   def default_avatar
     image_tag("icon_default.png", :width => 30, :height => 30)
   end
-  
-  # This is pretty ugly, the 'avatar' helper should do this. But we need backwards compability.
-  def avatar_wrapper(avatar)
-    content_tag(:div, avatar, :class => "glossy_avatar_wrapper")
-  end
-  
+
   def secure_login_url
     if SslRequirement.disable_ssl_check?
       sessions_path
