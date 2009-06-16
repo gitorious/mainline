@@ -21,7 +21,7 @@ $: << incpath
 
 require "pre_receive_guard"
 
-pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV['GITORIOUS_WRITABLE_BY_URL'].dup, gets)
+pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, gets)
 if pre_receive_guard.allow_push?
   exit 0
 else

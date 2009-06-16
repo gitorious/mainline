@@ -23,7 +23,18 @@ require File.dirname(__FILE__) + '/../../../data/hooks/pre_receive_guard'
 class PreReceiveGuardTest < ActiveSupport::TestCase
   context 'In general' do
     setup do
-      @guard = Gitorious::SSH::PreReceiveGuard.new('http://gitorious.example/repositories/writable_by?user=john', "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
+      @env = {
+          'GITORIOUS_WRITABLE_BY_URL' => 'http://gitorious.example/repositories/writable_by?user=john',
+          'SSH_ORIGINAL_COMMAND'  => 'git-receive-pack foo.git'}
+      @guard = Gitorious::SSH::PreReceiveGuard.new(@env, "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
+    end
+    
+    should 'know if the hook is called via SSH and allow pushes if local' do
+      assert !@guard.local_connection?
+      @env.delete('SSH_ORIGINAL_COMMAND')
+      @guard = Gitorious::SSH::PreReceiveGuard.new(@env, "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
+      assert @guard.local_connection?
+      assert @guard.allow_push?
     end
     
     should 'build the correct authentication URL' do

@@ -23,8 +23,9 @@ require 'cgi'
 module Gitorious
   module SSH  
     class PreReceiveGuard
-      def initialize(query_url, git_spec)
-        @query_url  = query_url
+      def initialize(env, git_spec)
+        @env  = env.dup
+        @query_url = @env['GITORIOUS_WRITABLE_BY_URL']
         @git_spec   = git_spec
       end
 
@@ -32,12 +33,17 @@ module Gitorious
       def git_target
         @git_spec.split(/\s/).last
       end
+      
+      def local_connection?
+        !@env.include? 'SSH_ORIGINAL_COMMAND'
+      end
 
       def authentication_url
-        @query_url << "&git_path=#{CGI.escape(git_target)}"
+        @query_url + "&git_path=#{CGI.escape(git_target)}"
       end
   
       def allow_push?
+        return true if local_connection?
         result = get_via_http(authentication_url)
         return result == 'true'
       end
