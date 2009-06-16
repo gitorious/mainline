@@ -66,6 +66,20 @@ module Gitorious
         "#{@strainer.verb} '#{real_path}'"
       end
       
+      def pre_receive_hook_exists?
+        filename = File.join(real_path, "hooks", "pre-receive")
+        if File.exist?(filename)
+          pre_receive_hook = if File.symlink?(filename)
+            File.readlink(filename)
+          else
+            filename
+          end
+          return File.executable?(pre_receive_hook)
+        else
+          return false
+        end
+      end
+      
       def query_for_real_path
         if !@real_path
           query_url="/#{@project_name}/#{@repository_name}/real_path"

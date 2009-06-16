@@ -57,7 +57,12 @@ begin
   
 
   logger.info("Accepted #{user.inspect} for #{args.inspect}")
-  exec("git-shell", "-c", args) # TODO: Buffer stdout, check error code, only output buffer i 0, else parse output/error code, etc
+  if client.pre_receive_hook_exists?
+    exec("git-shell", "-c", args) # TODO: Buffer stdout, check error code, only output buffer i 0, else parse output/error code, etc
+  else
+    logger.fatal("The pre-receive hook is not executable")
+    exit!(1)
+  end
   
   unless $?.success?
     logger.fatal("Failed to execute git command")
