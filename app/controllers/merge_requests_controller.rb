@@ -81,8 +81,8 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.find(params[:id], 
                       :include => [:source_repository, :target_repository])
     @version = params[:version].to_i
-    @commit_comments = []
     @commits = @merge_request.commit_diff_from_tracking_repo(@version)
+    @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
     respond_to do |wants|
       wants.html {render :partial => 'commits', :layout => false}
       wants.js
