@@ -23,21 +23,20 @@ class SshKeyProcessorTest < ActiveSupport::TestCase
 
   def setup
     @processor = SshKeyProcessor.new
+    @key = Factory.create(:ssh_key, :ready => false)
   end
   
   should "add to authorized keys" do
-    ssh_key = mock
-    ssh_key.expects(:ready=).returns(true)
-    ssh_key.expects(:save!).once.returns(true)
-    SshKey.stubs(:find_by_id).with(1).returns(ssh_key)
+    assert !@key.ready?
     SshKey.expects(:add_to_authorized_keys).with('fofofo')
     options = {
       :target_class => 'SshKey', 
       :command => 'add_to_authorized_keys', 
       :arguments => ['fofofo'],
-      :target_id => '1'}
+      :target_id => @key.id}
     json = options.to_json
     @processor.on_message(json)
+    assert @key.reload.ready?
   end
   
   should "remove from authorized keys" do

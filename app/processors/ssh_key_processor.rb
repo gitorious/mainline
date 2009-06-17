@@ -20,19 +20,18 @@ class SshKeyProcessor < ApplicationProcessor
 
   def on_message(message)
     json = ActiveSupport::JSON.decode(message)
-    logger.info "SshKeyProcessor consuming message. Command: #{json['command']}. Arguments: #{json['arguments']}. Target_id: #{json['target_id']}"
-    logger.debug("Processor processing message #{json}")
-    if %w(add_to_authorized_keys delete_from_authorized_keys).include?(json['command'])
-      logger.debug("Processor sending message: #{json['command']} #{json['arguments']}")
-      SshKey.send(json['command'], *json['arguments'])
-      if target_id = json['target_id']
-        if obj = json['target_class'].constantize.find_by_id(target_id.to_i)
-          obj.ready = true
-          obj.save!
-        end
-      end
-    else
+    logger.info "#{self.class.name} consuming message. Command: #{json['command']}. Arguments: #{json['arguments']}. Target_id: #{json['target_id']}"
+    logger.debug("#{self.class.name} processing message #{json}")
+    unless %w(add_to_authorized_keys delete_from_authorized_keys).include?(json['command'])
       raise "Unknown command"
+    end
+    logger.debug("Processor sending message: #{json['command']} #{json['arguments']}")
+    SshKey.send(json['command'], *json['arguments'])
+    if target_id = json['target_id']
+      if obj = SshKey.find_by_id(target_id.to_i)
+        obj.ready = true
+        obj.save!
+      end
     end
   end
 end
