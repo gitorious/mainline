@@ -441,11 +441,15 @@ class MergeRequest < ActiveRecord::Base
       if !target_repository.has_tracking_repository?
         tracking_repo = target_repository.create_tracking_repository
         $stderr.puts "Creating tracking repo at #{tracking_repo.full_repository_path}"
-        Repository.clone_git_repository(tracking_repo.real_gitdir, target_repository.real_gitdir,{:skip_hooks => true})
+        Repository.clone_git_repository(tracking_repo.real_gitdir, target_repository.real_gitdir,{:skip_hooks => true})        
       end
       $stderr.puts "Pushing to tracking repo for merge request #{id}"
       begin
-        push_to_tracking_repository!    
+        if ending_commit_exists?
+          push_to_tracking_repository!    
+        else
+          $stderr.puts "The ending commit (#{ending_commit}) for merge request #{id} does not exist in the source repository. Merge request was not migrated"
+        end
       rescue => e
         $stderr.puts e
       end
