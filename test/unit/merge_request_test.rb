@@ -197,6 +197,17 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.ending_commit = 'alreadymerged'
       assert_equal(0, @merge_request.commits_to_be_merged.size)
     end
+    
+    should 'know if the specified commit exists in the source repository' do
+      source_git = mock('Source repository Git repo')
+      source_git.expects(:commit).with('ff00ddca').returns(nil)
+      source_git.expects(:commit).with('ff00ddcb').returns(mock("Ending commit"))
+      @merge_request.source_repository.stubs(:git).returns(source_git)
+      @merge_request.ending_commit = 'ff00ddca'
+      assert !@merge_request.ending_commit_exists?
+      @merge_request.ending_commit = 'ff00ddcb'
+      assert @merge_request.ending_commit_exists?
+    end
   end
   
   context 'The state machine' do

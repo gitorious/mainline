@@ -335,6 +335,10 @@ class MergeRequest < ActiveRecord::Base
     target_repository.project.oauth_consumer
   end
   
+  def ending_commit_exists?
+    !source_repository.git.commit(ending_commit).nil?
+  end
+  
   def to_xml(opts = {})
     info_proc = Proc.new do |options|
       builder = options[:builder]
