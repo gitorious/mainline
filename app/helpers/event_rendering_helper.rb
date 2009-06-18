@@ -112,8 +112,10 @@ module EventRenderingHelper
       body = h(event.body)
     else
       action = action_for_event(:event_branch_created) do
-        link_to(h(event.data), project_repository_tree_path(project, event.target, event.data)) + 
-        " on " + link_to(h(project.slug), project_path(project)) + "/" + 
+        link_to(h(event.data),
+          repo_owner_path(event.target, :project_repository_commits_in_ref_path,
+            project, event.target, ensplat_path(event.data))) +
+        " on " + link_to(h(project.slug), project_path(project)) + "/" +
         link_to(h(event.target.name),
           repo_owner_path(event.target, :project_repository_url, project, event.target))
       end
