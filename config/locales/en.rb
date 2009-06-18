@@ -17,7 +17,7 @@
       },
     },
     :mailer => {
-      :repository_clone => "{{login}} has cloned {{slug}}/{{parent}}",
+      :repository_clone => "{{login}} has cloned {{slug}}",
       :request_notification => "{{login}} has requested a merge in {{title}}",
       :new_password => "Your new password",
       :subject  => 'Please activate your new account',

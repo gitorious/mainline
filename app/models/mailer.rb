@@ -41,10 +41,10 @@ class Mailer < ActionMailer::Base
   end
 
   def new_repository_clone(repository)
-    setup_email(repository.project.user)
+    setup_email(repository.parent.user)
     @subject += I18n.t "mailer.repository_clone", :login => repository.user.login,
-      :slug => repository.project.slug, :parent => repository.parent.name
-    @body[:user] = repository.project.user
+      :slug => repository.parent.url_path
+    @body[:user] = repository.parent.user
     @body[:cloner] = repository.user
     @body[:project] = repository.project
     @body[:repository] = repository
