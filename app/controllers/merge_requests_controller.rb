@@ -69,6 +69,7 @@ class MergeRequestsController < ApplicationController
     response.headers['Refresh'] = "5" unless @merge_request.ready?
 
     @commits = @merge_request.commits_to_be_merged
+    @version = @merge_request.versions.last.version
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
     respond_to do |wants|
       wants.html
@@ -81,6 +82,7 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.find(params[:id], 
                       :include => [:source_repository, :target_repository])
     @version = params[:version].to_i
+    logger.info("Merge request versions for #{@version}")
     @commits = @merge_request.commit_diff_from_tracking_repo(@version)
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
     respond_to do |wants|

@@ -1,6 +1,8 @@
-<table class="select_commits_from_list" id="commits_to_be_merged">
+<div id="commits_to_be_merged">
+<h2>Commits (version <%= @version -%>)</h2>
+<table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
-  <tr id="commit_<%= i -%>" class="commit_row">
+  <tr id="commit_<%= i -%>" class="commit_row <%= @merge_request.commit_merged?(commit.id) ? 'merged' : 'unmerged' -%>">
     <td class="commit-details meta">
       <ul>
         <li class="sha-abbrev">
@@ -57,3 +59,4 @@
   <% end -%>
 <% end %>
 </table>
+</div>

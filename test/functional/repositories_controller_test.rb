@@ -28,7 +28,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     Repository.any_instance.stubs(:git).returns(@grit)
   end
   
-  should_render_in_site_specific_context :except => :writable_by
+  should_render_in_site_specific_context :except => [:writable_by, :real_path]
   
   context "Routing, by projects" do
     should "recognizes routing like /projectname/reponame" do

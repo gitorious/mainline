@@ -30,7 +30,11 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		@source_repository = repositories(:johans2)
 		@target_repository = repositories(:johans)
 		@merge_request = merge_requests(:moes_to_johans_open)
+		@merge_request.stubs(:calculate_merge_base).returns("ff")
+		@merge_request.stubs(:commit_merged?).returns(true)
+		@merge_request.create_new_version
 		@merge_request.stubs(:commits_for_selection).returns([])
+		assert_not_nil @merge_request.versions.last
 	end
 	
 	context "#index (GET)" do		
@@ -119,6 +123,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
   		@repository = repositories(:johans2)
   		@mainline_repository = repositories(:johans)
   		@merge_request = merge_requests(:moes_to_johans)
+  		@merge_request.stubs(:calculate_merge_base).returns('ff0')
+  		@merge_request.create_new_version
+  		@merge_request.stubs(:commit_merged?).returns(true)
   		stub_commits(@merge_request)
   		
   		MergeRequest.expects(:find).returns(@merge_request)

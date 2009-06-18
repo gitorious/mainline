@@ -27,7 +27,7 @@ class RepositoriesController < ApplicationController
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   skip_before_filter :public_and_logged_in, :only => [:writable_by, :real_path]
-  renders_in_site_specific_context :except => :writable_by
+  renders_in_site_specific_context :except => [:writable_by, :real_path]
   
   def index
     @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])

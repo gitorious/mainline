@@ -28,6 +28,7 @@ class MergeRequest < ActiveRecord::Base
   has_many   :events, :as => :target, :dependent => :destroy
   has_many :messages, :as => :notifiable
   has_many :comments, :as => :target, :dependent => :destroy
+  has_many :versions, :class_name => 'MergeRequestVersion', :order => 'version'
   
   before_destroy :nullify_messages
 
@@ -260,15 +261,36 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def ready?
-    version > 0
+    !versions.blank?
   end
   
-  def versions
-    (1..version).to_a.reverse
+  # Returns the name for the merge request branch. version can be:
+  # - the number of a version,
+  # - :current for the latest version
+  # - nil for no version
+  def merge_branch_name(version=false)
+    result = ["refs","merge-requests",id]
+    case version
+    when :current
+      result << versions.last.version
+    when Fixnum
+      result << version
+    end
+    result.join("/")
   end
   
-  def commit_diff_from_tracking_repo(which_version=version)
-    @commits_to_be_merged ||= target_repository.git.commit_deltas_from(target_repository.tracking_repository.git, target_branch, "refs/merge-requests/#{id}/#{which_version}")
+  def commit_diff_from_tracking_repo(which_version=nil)
+    RAILS_DEFAULT_LOGGER.debug "Merge request looking for version #{which_version} in #{versions.collect(&:version)}"
+    version = if which_version
+      version_number(which_version)
+    else
+      versions.last
+    end
+    
+    merge_base_sha = version.merge_base_sha
+    
+    RAILS_DEFAULT_LOGGER.debug "Merge request history command: git log #{merge_base_sha}..#{merge_branch_name(version.version)}"
+    @commits_to_be_merged ||= tracking_repository.git.commits_between(merge_base_sha,merge_branch_name(version.version)).reverse
   end
   
   def potential_commits
@@ -418,54 +440,93 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def push_to_tracking_repository!
-    branch_spec = "#{ending_commit}:refs/merge-requests/#{id}"
+    branch_spec = "#{ending_commit}:#{merge_branch_name}"
     source_repository.git.git.push({}, target_repository.full_repository_path, branch_spec)
     push_new_branch_to_tracking_repo
   end
 
   def push_new_branch_to_tracking_repo
-    self.version = self.version + 1
-    branch_spec = "refs/merge-requests/#{id}:refs/merge-requests/#{id}/#{version}"
-    raise "No tracking repository exists for merge request #{id}" unless target_repository.tracking_repository
-    target_repository.git.git.push({}, target_repository.tracking_repository.full_repository_path, branch_spec)
+    branch_spec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
+    raise "No tracking repository exists for merge request #{id}" unless tracking_repository
+    target_repository.git.git.push({}, tracking_repository.full_repository_path, branch_spec)
     target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "New version is #{version}", "reason")
-    save
-  end
-  
-  # One time migration: 
-  # Since the backend is changed from using a diff between source and target repos, we need an actual branch which holds the MR:
-  # - Create the tracking repo for each target repository
-  # - Push the merge request to the tracking repo (eg. one branch in the target repo and one to the tracking repo)
-  def migrate_with_tracking_repository
-    if target_repository && source_repository
-      if !target_repository.has_tracking_repository?
-        tracking_repo = target_repository.create_tracking_repository
-        $stderr.puts "Creating tracking repo at #{tracking_repo.full_repository_path}"
-        Repository.clone_git_repository(tracking_repo.real_gitdir, target_repository.real_gitdir,{:skip_hooks => true})        
-      end
-      $stderr.puts "Pushing to tracking repo for merge request #{id}"
-      begin
-        if ending_commit_exists?
-          push_to_tracking_repository!    
-        else
-          $stderr.puts "The ending commit (#{ending_commit}) for merge request #{id} does not exist in the source repository. Merge request was not migrated"
-        end
-      rescue => e
-        $stderr.puts e
-      end
-    else
-      $stderr.puts "WARNING: Merge request #{id} lacks target or source repository"
-    end
-    migrate_decision_to_comment
+    create_new_version
   end
 
-  # Another one time migration: 
-  # If we have a reason (that is someone who can resolve us) we will create a comment with this as body and set the state to be the current +status_string+
-  def migrate_decision_to_comment
-    unless reason.blank?
-      c = comments.build(:body => reason, :user => updated_by, :project => target_repository.project)
-      c.state = status_string
-      c.save!
-    end
+  def tracking_repository
+    target_repository.create_tracking_repository unless target_repository.has_tracking_repository?
+    target_repository.tracking_repository
   end
+  
+  # Returns the version with version number +n+
+  def version_number(n)
+    versions.inject({}){|result,v|result[v.version]=v;result}[n]
+  end
+
+  def current_version_number
+    versions.last.version
+  end
+  
+  # TODO: This is obviously wrong
+  def commit_merged?(a_commit)
+    !target_repository.git.git.cherry({},target_branch, a_commit).nil?
+  end
+  
+  def create_new_version
+    result = build_new_version
+    result.merge_base_sha = calculate_merge_base
+    result.save
+    return result
+  end
+  
+  def calculate_merge_base
+    target_repository.git.git.merge_base({}, target_branch, merge_branch_name).strip    
+  end
+  
+  def build_new_version
+    versions.build(:version => next_version_number)
+  end
+  
+  def next_version_number
+    highest_version = versions.last
+    highest_version_number = highest_version ? highest_version.version : 0
+    highest_version_number + 1
+  end
+  
+  # # One time migration: 
+  # # Since the backend is changed from using a diff between source and target repos, we need an actual branch which holds the MR:
+  # # - Create the tracking repo for each target repository
+  # # - Push the merge request to the tracking repo (eg. one branch in the target repo and one to the tracking repo)
+  # def migrate_with_tracking_repository
+  #   if target_repository && source_repository
+  #     if !target_repository.has_tracking_repository?
+  #       tracking_repo = target_repository.create_tracking_repository
+  #       $stderr.puts "Creating tracking repo at #{tracking_repo.full_repository_path}"
+  #       Repository.clone_git_repository(tracking_repo.real_gitdir, target_repository.real_gitdir,{:skip_hooks => true})        
+  #     end
+  #     $stderr.puts "Pushing to tracking repo for merge request #{id}"
+  #     begin
+  #       if ending_commit_exists?
+  #         push_to_tracking_repository!    
+  #       else
+  #         $stderr.puts "The ending commit (#{ending_commit}) for merge request #{id} does not exist in the source repository. Merge request was not migrated"
+  #       end
+  #     rescue => e
+  #       $stderr.puts e
+  #     end
+  #   else
+  #     $stderr.puts "WARNING: Merge request #{id} lacks target or source repository"
+  #   end
+  #   migrate_decision_to_comment
+  # end
+  # 
+  # # Another one time migration: 
+  # # If we have a reason (that is someone who can resolve us) we will create a comment with this as body and set the state to be the current +status_string+
+  # def migrate_decision_to_comment
+  #   unless reason.blank?
+  #     c = comments.build(:body => reason, :user => updated_by, :project => target_repository.project)
+  #     c.state = status_string
+  #     c.save!
+  #   end
+  # end
 end
