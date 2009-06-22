@@ -60,7 +60,12 @@ class Mailer < ActionMailer::Base
     @recipients       =  recipient.email
     @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
     @subject          = sanitize(subject)
-    @body[:url]       = url_for(:controller => 'messages', :action => 'show', :id => message_id, :host => GitoriousConfig['gitorious_host'])
+    @body[:url]       = url_for({
+                                  :controller => 'messages',
+                                  :action => 'show',
+                                  :id => message_id,
+                                  :host => GitoriousConfig['gitorious_host']
+                                })
     @body[:body]      = sanitize(body)
     if '1.9'.respond_to?(:force_encoding)
       @body[:recipient] = recipient.title.to_s.force_encoding("utf-8")

@@ -24,8 +24,8 @@ Hello <%= @recipient %>
 
 <%= @body.to_s %>
 
-<% if @notifiable_url %>
-  Address: <%= @notifiable_url %>
-<% end %>
+<% if @notifiable_url -%>
+<%= @notifiable_url %>
+<% end -%>
 
 View this message on <%= @url %>

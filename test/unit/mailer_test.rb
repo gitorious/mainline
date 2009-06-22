@@ -121,7 +121,7 @@ class MailerTest < ActiveSupport::TestCase
     mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text", merge_request, message_id)
     assert_equal([recipient.email], mail.to)
     assert_match /#{sender.fullname} has sent you a message on Gitorious: /, mail.body
-    assert_match /Address: .*\/#{merge_request.target_repository.project.slug}\//i, mail.body
+    assert_match /http:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, mail.body
     assert_match "http://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", mail.body
   end
   

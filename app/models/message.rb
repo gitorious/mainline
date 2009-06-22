@@ -162,7 +162,21 @@ class Message < ActiveRecord::Base
     end
     
     def schedule_email_delivery
-      options = {:sender_id => sender.id, :recipient_id => recipient.id, :subject => subject, :body => body, :created_at => created_at, :identifier => "email_delivery", :message_id => self.id}
+      options = {
+        :sender_id => sender.id,
+        :recipient_id => recipient.id,
+        :subject => subject,
+        :body => body,
+        :created_at => created_at,
+        :identifier => "email_delivery",
+        :message_id => self.id,
+      }
+      if notifiable && notifiable.id
+        options.merge!({
+            :notifiable_type => notifiable.class.name,
+            :notifiable_id => notifiable.id,
+        })
+      end
       publish :cc_message, options.to_json
     end
     

@@ -200,7 +200,13 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def deliver_status_update(a_user)
-    message = Message.new(:sender => a_user, :recipient => user, :subject => "Your merge request was updated", :body => "The merge request is now #{status_string}. \n#{reason}", :notifiable => self)
+    message = Message.new({
+      :sender => a_user,
+      :recipient => user,
+      :subject => "Your merge request was updated",
+      :body => "The merge request is now #{status_string}. \n#{reason}",
+      :notifiable => self,
+    })
     message.save
   end
   
