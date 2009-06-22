@@ -449,8 +449,8 @@ class MergeRequest < ActiveRecord::Base
     branch_spec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
     raise "No tracking repository exists for merge request #{id}" unless tracking_repository
     target_repository.git.git.push({}, tracking_repository.full_repository_path, branch_spec)
-    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "New version is #{version}", "reason")
     create_new_version
+    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "new  version #{current_version_number}", "reason")
   end
 
   def tracking_repository
@@ -467,9 +467,12 @@ class MergeRequest < ActiveRecord::Base
     versions.last.version
   end
   
-  # TODO: This is obviously wrong
+  # Verify that +a_commit+ exists in target branch. Git cherry would return a list of commits if this is not the case
   def commit_merged?(a_commit)
-    !target_repository.git.git.cherry({},target_branch, a_commit).nil?
+    output = target_repository.git.git.cherry({},target_branch, a_commit)
+    return output.blank?
+    result = /^\+\s.*$/.match(output)
+    return result
   end
   
   def create_new_version

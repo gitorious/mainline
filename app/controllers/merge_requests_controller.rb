@@ -54,6 +54,13 @@ class MergeRequestsController < ApplicationController
     @commits = @merge_request.potential_commits
     render :partial => "commit_list", :layout => false
   end
+
+  def commit_status
+    @merge_request = @repository.merge_requests.find(params[:id], 
+                                                     :include => :target_repository)
+    result = @merge_request.commit_merged?(params[:commit_id]) ? 'true' : 'false'
+    render :text => result, :layout => false
+  end
   
   def target_branches
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])

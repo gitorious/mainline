@@ -153,6 +153,17 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.status = MergeRequest::STATUS_OPEN
     assert @merge_request.open?, '@merge_request.open? should be true'
   end
+
+  should 'know if a specific commit has been merged or not' do
+    repo = mock("Git repo")
+    git = mock("Git backend")
+    repo.stubs(:git).returns(git)
+    @merge_request.target_repository.stubs(:git).returns(repo)
+    git.expects(:cherry).with({}, @merge_request.target_branch, 'ff0').returns('')
+    git.expects(:cherry).with({}, @merge_request.target_branch, 'ffc').returns('+ bbacd')
+    assert !@merge_request.commit_merged?('ffc')
+    assert @merge_request.commit_merged?('ff0')
+  end
   
   should 'have a verifying? status' do
     @merge_request.status = MergeRequest::STATUS_VERIFYING

@@ -2400,3 +2400,18 @@ ul#commit_selector li a.current
 {
   font-weight: bold;
 }
+table.select_commits_from_list tr.merged td.meta,
+table.select_commits_from_list tr.unmerged td.meta
+{
+    background-position: 7px left;
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+table.select_commits_from_list tr.unmerged td.meta
+{
+    background-image: url(/images/silk/bullet_red.png);
+}
+table.select_commits_from_list tr.merged td.meta
+{
+    background-image: url(/images/silk/bullet_green.png);
+}

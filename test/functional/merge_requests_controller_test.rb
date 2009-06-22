@@ -356,6 +356,32 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				:target_repository_id => @target_repository.id,
 			}.merge(data)
 	end
+
+  def do_commit_status_get(data = {})
+    options = {:project_id => @project.to_param,:repository_id => @target_repository.to_param,:id => @merge_request.id}.merge(data)
+    get :commit_status, options
+  end
+  
+  context 'commit_merged (GET)' do
+    setup do
+      login_as :johan
+      @merge_request.stubs(:commit_merged?).with('ffc').returns(false)
+      @merge_request.stubs(:commit_merged?).with('ffo').returns(true)
+      MergeRequest.stubs(:find).returns(@merge_request)
+    end
+    
+    should 'return false if the given commit has not been merged' do
+      do_commit_status_get(:commit_id => 'ff0')
+      assert_response :success
+      assert_equal 'true', @response.body
+    end
+
+    should 'return true if the given commit has been merged' do
+      do_commit_status_get(:commit_id => 'ffc')
+      assert_response :success
+      assert_equal 'false', @response.body
+    end
+  end
 	
 	context "#update (PUT)" do		
 		should "requires login" do

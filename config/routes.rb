@@ -44,7 +44,8 @@ ActionController::Routing::Routes.draw do |map|
         :resolve => :put,
         :terms_accepted => :get,
         :reopen => :put,
-        :version => :get
+        :version => :get,
+        :commit_status => :get
       }, :collection => { 
         :create => :post, 
         :commit_list => :post,

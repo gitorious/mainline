@@ -2,7 +2,7 @@
 <h2>Commits (version <%= @version -%>)</h2>
 <table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
-  <tr id="commit_<%= i -%>" class="commit_row <%= @merge_request.commit_merged?(commit.id) ? 'merged' : 'unmerged' -%>">
+  <tr id="commit_<%= i -%>" data-merge-request-commit-id="<%= commit.id -%>">
     <td class="commit-details meta">
       <ul>
         <li class="sha-abbrev">
