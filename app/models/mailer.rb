@@ -63,11 +63,11 @@ class Mailer < ActionMailer::Base
     @body[:url]       = url_for(:controller => 'messages', :action => 'show', :id => message_id, :host => GitoriousConfig['gitorious_host'])
     @body[:body]      = sanitize(body)
     if '1.9'.respond_to?(:force_encoding)
-      @body[:recipient] = recipient.fullname.to_s.force_encoding("utf-8")
-      @body[:sender]    = sender.fullname.to_s.force_encoding("utf-8")
+      @body[:recipient] = recipient.title.to_s.force_encoding("utf-8")
+      @body[:sender]    = sender.title.to_s.force_encoding("utf-8")
     else
-      @body[:recipient] = recipient.fullname.to_s
-      @body[:sender]    = sender.fullname.to_s
+      @body[:recipient] = recipient.title.to_s
+      @body[:sender]    = sender.title.to_s
     end
     if notifiable
       @body[:notifiable_url] = build_notifiable_url(notifiable) 
