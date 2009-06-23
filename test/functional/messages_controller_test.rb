@@ -103,22 +103,6 @@ class MessagesControllerTest < ActionController::TestCase
     should_respond_with :success
     should_assign_to :message
   end
-
-  context "on GET show and marking a thread as read" do
-    setup do
-      @message = messages(:johans_message_to_moe)
-      @reply = @message.build_reply(:body => "thats fine", :sender => users(:mike))
-      @reply.save!
-      assert @message.messages_in_thread.include?(@reply)
-      login_as :moe
-    end
-    
-    should "mark the whole thread as read, while preserving markup" do
-      get :show, :id => @message.to_param
-      assert_select "#message_#{@reply.id}.unread"
-      assert @reply.reload.read?, "message wasn't marked read when viewed"
-    end
-  end
   
   context 'On GET to show in XML' do
     setup do 
