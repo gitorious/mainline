@@ -322,11 +322,16 @@ class MergeRequest < ActiveRecord::Base
   def acceptance_of_terms_required?
     target_repository.requires_signoff_on_merge_requests?
   end
+
+  # Publishes a notification, causing a new tracking branch (and version) to be created in the background
+  def publish_notification
+    publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
+  end
   
   def confirmed_by_user
     self.status = STATUS_OPEN
     save
-    publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
+    publish_notification
     target_repository.committers.uniq.reject{|c|c == user}.each do |committer|
       message = messages.build(
         :sender => user, 
@@ -439,9 +444,11 @@ class MergeRequest < ActiveRecord::Base
     messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
   end
   
-  def push_to_tracking_repository!
+  def push_to_tracking_repository!(force = false)
+    options = {}
+    options[:force] = true if force
     branch_spec = "#{ending_commit}:#{merge_branch_name}"
-    source_repository.git.git.push({}, target_repository.full_repository_path, branch_spec)
+    source_repository.git.git.push(options, target_repository.full_repository_path, branch_spec)
     push_new_branch_to_tracking_repo
   end
 

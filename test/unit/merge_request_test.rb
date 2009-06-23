@@ -528,10 +528,12 @@ class MergeRequestTest < ActiveSupport::TestCase
       git_backend = mock("Source repository git")
       git.stubs(:git).returns(git_backend)
       @merge_request.source_repository.stubs(:git).returns(git)
-      @merge_request.expects(:push_new_branch_to_tracking_repo).once
+      @merge_request.expects(:push_new_branch_to_tracking_repo).twice
       
       git_backend.expects(:push).with({}, @merge_request.target_repository.full_repository_path, branch_spec).once
       @merge_request.push_to_tracking_repository!
+      git_backend.expects(:push).with({:force => true}, @merge_request.target_repository.full_repository_path, branch_spec).once
+      @merge_request.push_to_tracking_repository!(true)
     end
   end
   

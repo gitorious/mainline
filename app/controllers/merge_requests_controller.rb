@@ -189,6 +189,7 @@ class MergeRequestsController < ApplicationController
   def update
     @merge_request.attributes = params[:merge_request]
     if @merge_request.save
+      @merge_request.publish_notification
       @owner.create_event(Action::UPDATE_MERGE_REQUEST, @merge_request, current_user)
       flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@owner, @repository, @merge_request]
