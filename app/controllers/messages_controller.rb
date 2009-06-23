@@ -17,6 +17,7 @@
 #++
 class MessagesController < ApplicationController
   before_filter :login_required
+  after_filter :mark_thread_as_read, :only => :show
   renders_in_global_context
   
   def index
@@ -64,7 +65,6 @@ class MessagesController < ApplicationController
     redirect_to :action => :index
   end
 
-  
   def show
     @message = Message.find(params[:id])
     unless @message.sender == current_user or @message.recipient == current_user
@@ -124,5 +124,12 @@ class MessagesController < ApplicationController
     def ssl_required?
       # Always required.
       true
+    end
+
+    def mark_thread_as_read
+      return unless @message
+      @message.messages_in_thread.each do |msg|
+        msg.read
+      end
     end
 end
