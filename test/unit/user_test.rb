@@ -337,7 +337,7 @@ class UserTest < ActiveSupport::TestCase
         another_reply = another_message.build_reply(:body => "Not for you")
         assert another_reply.save
         assert !@sender.top_level_messages.include?(another_message)
-        assert @sender.messages_in_inbox.include?(another_message)
+        assert !@sender.messages_in_inbox.include?(another_message)
       end
     end
   end
