@@ -464,7 +464,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def current_version_number
-    versions.last.version
+    versions.blank? ? nil : versions.last.version
   end
   
   # Verify that +a_commit+ exists in target branch. Git cherry would return a list of commits if this is not the case

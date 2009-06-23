@@ -1,5 +1,7 @@
 <div id="commits_to_be_merged">
+<%- if @version -%>
 <h2>Commits (version <%= @version -%>)</h2>
+<%- end -%>
 <table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
   <tr id="commit_<%= i -%>" data-merge-request-commit-id="<%= commit.id -%>">

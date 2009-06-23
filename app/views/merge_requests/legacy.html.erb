@@ -2,10 +2,6 @@
 # encoding: utf-8
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2009 Sven Eckelmann <sven.eckelmann@gmx.de>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -39,20 +35,6 @@
 
 
 <% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
-<% form_for @merge_request, 
-   :url => resolve_project_repository_merge_request_path(@project || @containing_project, 
-@repository, @merge_request) do |f| -%>
-<p>
-  <%= f.label :status -%><br />
-  <%= f.select :status, @merge_request.possible_next_states_hash -%><br />
-
-
-
-  <%= f.label :reason -%><br />
-  <%= f.text_area :reason %><br />
-
-  <%= f.submit t("views.merges.update_btn") -%></p>
-<% end -%>
 
 <% if @merge_request.open? -%>
 <% help_box(:left) do -%>
@@ -99,22 +81,20 @@
   }
 </script>
 
+<% if @commits.blank? -%>
+<p><em>
+    It appears that the commits in this merge request have already been merged 
+    into <%= link_to(@merge_request.target_repository.name, repo_owner_path(@merge_request.target_repository, 
+             [@merge_request.target_repository.project, @merge_request.target_repository])) -%>.    
+  </em><br />
+  <% if !@merge_request.ending_commit.blank? -%>
+  The ending commit of this merge request was <%=h @merge_request.ending_commit -%>.
+  <% end -%>
+</p>
+<% else -%>
 
-<%- if @merge_request.versions.size > 0 -%>
-  <form>
-    <label for="merge_request_version">Select version</label>:
-    <select id="merge_request_version" name="version" onchange="if(this.options[this.selectedIndex].value != ''){new Ajax.Request('<%= url_for(polymorphic_path([
-                                 :version,
-                                 @merge_request.target_repository.project,
-                                 @merge_request.target_repository,
-                                 @merge_request]))-%>?version=' + this.options[this.selectedIndex].value, {method:'get'})}">
-      <option value="">- Select version -</option>
-      <%= options_from_collection_for_select(@merge_request.versions, 'version', 'version', @merge_request.current_version_number) %>
-    </select>
-  </form>
-<%- end -%>
-
-<%= render :partial => 'commits' %>
+<%= render :partial => 'commits', :locals => {:skip_headings => true} %>
+<% end # if @commits.blank? -%>
 
 <%- content_for(:sidebar) do -%>
 <%- if @merge_request.user == current_user -%>
@@ -144,4 +124,5 @@
 <%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
 
   
+
 

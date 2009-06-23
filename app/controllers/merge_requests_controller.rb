@@ -73,13 +73,17 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.find(params[:id], 
                       :include => [:source_repository, :target_repository])
 
-    response.headers['Refresh'] = "5" unless @merge_request.ready?
+#     response.headers['Refresh'] = "5" unless @merge_request.ready? 
 
     @commits = @merge_request.commits_to_be_merged
-    @version = @merge_request.versions.last.version
+    @version = @merge_request.current_version_number
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
     respond_to do |wants|
-      wants.html
+      wants.html do
+        if @merge_request.versions.blank?
+          render :template => 'merge_requests/legacy' and return
+        end
+      end
       wants.xml {render :xml => @merge_request.to_xml}
       wants.patch { render :text => @commits.collect(&:to_patch).join("\n"), :content_type => "text/plain" }
     end
