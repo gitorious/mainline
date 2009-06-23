@@ -30,7 +30,7 @@ class MessagesController < ApplicationController
   
   def all
     @messages = current_user.top_level_messages.paginate(:page => params[:page])
-    @root = Breadcrumb::ReceivedMessages.new(current_user)
+    @root = Breadcrumb::AllMessages.new(current_user)
   end
   
   def sent

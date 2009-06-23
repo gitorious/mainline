@@ -396,6 +396,17 @@ module Breadcrumb
       "received_emails"
     end
   end
+
+  class AllMessages < Mailbox
+    def title
+      I18n.t("views.messages.all_messages")
+    end
+    
+    def breadcrumb_css_class
+      "all_emails"
+    end
+  end
+
   
   class SentMessages < Mailbox
     def title
