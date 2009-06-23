@@ -323,15 +323,21 @@ class UserTest < ActiveSupport::TestCase
         assert @sender.messages_in_inbox.include?(@message)
         @message.archived_by(@sender)
         assert @message.save
-        assert !@sender.messages_in_inbox.include?(@message)
+        assert @sender.messages_in_inbox.include?(@message)
       end
       
       should 'not include messages from someone else with unread replies' do
-        another_message = Message.create(:sender => @other_user, :recipient => @recipient, :subject => "Foo", :body => "Bar")
+        another_message = Message.create({
+            :sender => @other_user,
+            :recipient => @recipient,
+            :subject => "Foo",
+            :body => "Bar"
+          })
+        assert @recipient.messages_in_inbox.include?(another_message)
         another_reply = another_message.build_reply(:body => "Not for you")
         assert another_reply.save
         assert !@sender.top_level_messages.include?(another_message)
-        assert !@sender.messages_in_inbox.include?(another_message)
+        assert @sender.messages_in_inbox.include?(another_message)
       end
     end
   end

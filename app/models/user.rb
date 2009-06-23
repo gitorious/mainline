@@ -119,11 +119,11 @@ class User < ActiveRecord::Base
   
   # Top level messages, excluding message threads that have been archived by me
   def messages_in_inbox
-    Message.find_by_sql(["SELECT * FROM messages 
-      WHERE ((sender_id=? AND archived_by_sender=?) 
-      OR (recipient_id=? AND archived_by_recipient=?)) 
-      AND in_reply_to_id IS NULL 
-      ORDER BY created_at DESC", self, false, self, false])
+    Message.find_by_sql(["SELECT * from messages
+        WHERE ((sender_id != ? AND archived_by_recipient = ?)
+        OR (has_unread_replies = ? AND archived_by_recipient = ?))
+        AND in_reply_to_id IS NULL
+        ORDER BY created_at DESC", self, false, true, false])
   end
   
   has_many :sent_messages, :class_name => "Message",
