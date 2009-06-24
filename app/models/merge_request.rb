@@ -256,8 +256,13 @@ class MergeRequest < ActiveRecord::Base
     if ready?
       commit_diff_from_tracking_repo
     else
-      commits_for_selection
+      commits_to_be_merged_when_no_version
     end
+  end
+
+  def commits_to_be_merged_when_no_version
+    idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
+    return idx ? commits_for_selection[idx..-1] : []
   end
   
   def ready?

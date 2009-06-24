@@ -305,7 +305,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     
     should 'return an empty list if the target branch has not been updated' do
       @merge_request.versions.destroy_all
-      assert_equal 4, @merge_request.commits_to_be_merged.size
+      assert_equal 4, @merge_request.commits_for_selection.size
+      assert_equal 3, @merge_request.commits_to_be_merged.size
     end
     
     should 'know if the specified commit exists in the source repository' do
