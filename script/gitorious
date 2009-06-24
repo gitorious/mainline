@@ -54,7 +54,7 @@ begin
   args = client.to_git_shell_argument
   $stderr.puts "git-shell -c #{args.inspect}" if $DEBUG
   ENV['GITORIOUS_WRITABLE_BY_URL'] = client.writable_by_query_url
-  
+  ENV['GITORIOUS_USER'] = user
 
   logger.info("Accepted #{user.inspect} for #{args.inspect}")
   if client.pre_receive_hook_exists?
