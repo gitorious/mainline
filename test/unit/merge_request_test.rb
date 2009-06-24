@@ -304,8 +304,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
     
     should 'return an empty list if the target branch has not been updated' do
-      @merge_request.version = 0
-      assert_equal [], @merge_request.commits_to_be_merged
+      @merge_request.versions.destroy_all
+      assert_equal 4, @merge_request.commits_to_be_merged.size
     end
     
     should 'know if the specified commit exists in the source repository' do
@@ -464,6 +464,14 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.updated_by = users(:mike)
       assert_equal users(:mike), @merge_request.updated_by
     end    
+  end
+
+  should 'have a recently_added? method' do
+    @merge_request.versions.destroy_all
+    @merge_request.created_at = 3.minutes.ago
+    assert !@merge_request.recently_created?
+    @merge_request.created_at = 1.minute.ago
+    assert @merge_request.recently_created?
   end
   
   context "from_filter" do

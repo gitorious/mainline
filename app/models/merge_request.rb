@@ -256,7 +256,7 @@ class MergeRequest < ActiveRecord::Base
     if ready?
       commit_diff_from_tracking_repo
     else
-      []
+      commits_for_selection
     end
   end
   
@@ -442,6 +442,10 @@ class MergeRequest < ActiveRecord::Base
   
   def nullify_messages
     messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
+  end
+  
+  def recently_created?
+    !ready? && created_at > 2.minutes.ago
   end
   
   def push_to_tracking_repository!(force = false)

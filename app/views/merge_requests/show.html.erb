@@ -100,7 +100,7 @@
 </script>
 
 
-<%- if @merge_request.versions.size > 0 -%>
+<%- if @merge_request.versions.size > 1 -%>
   <form>
     <label for="merge_request_version">Select version</label>:
     <select id="merge_request_version" name="version" onchange="if(this.options[this.selectedIndex].value != ''){new Ajax.Request('<%= url_for(polymorphic_path([

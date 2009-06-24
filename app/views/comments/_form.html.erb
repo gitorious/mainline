@@ -46,6 +46,7 @@
     <div id="comment_preview">
       
     </div>
+<!--
     <%- if MergeRequest === parent and parent.resolvable_by?(current_user) -%>
     <p>
       <%= f.label :state, 'Status' %><br />
@@ -61,6 +62,7 @@
         ['Rejected    = We decided not to take action on this issue','rejected']], :include_blank => true %>
     </p>
     <%- end -%>
+-->
     <p>
       <%= button_to_remote("Preview", :url => repo_owner_path(@repository, [@project, @repository, :comments, :preview]), :method => :post, :with => 'Form.serialize(this.form)') %>
       <%= f.submit t("views.comments.add") -%>

@@ -72,8 +72,11 @@ class MergeRequestsController < ApplicationController
   def show
     @merge_request = @repository.merge_requests.find(params[:id], 
                       :include => [:source_repository, :target_repository])
-
-#     response.headers['Refresh'] = "5" unless @merge_request.ready? 
+    
+    if @merge_request.recently_created?
+        (@merge_request.versions.blank?) && (@merge_request.created_at > 1.minute.ago)
+      response.headers['Refresh'] = "5"
+    end
 
     @commits = @merge_request.commits_to_be_merged
     @version = @merge_request.current_version_number

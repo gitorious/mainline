@@ -1,6 +1,6 @@
 <div id="commits_to_be_merged">
 <%- if @version -%>
-<h2>Commits (version <%= @version -%>)</h2>
+<p><strong>Commits in version <%= @version -%></strong>:</p>
 <%- end -%>
 <table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
