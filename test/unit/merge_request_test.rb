@@ -134,7 +134,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     repo = mock("Target repository")
     repo.expects(:push).once.with({}, 
       @merge_request.tracking_repository.full_repository_path,
-      "refs/merge-requests/#{@merge_request.id}:refs/merge-requests/#{@merge_request.id}/#{@merge_request.version+1}")
+      "refs/merge-requests/#{@merge_request.id}:refs/merge-requests/#{@merge_request.id}/#{@merge_request.next_version_number}")
     git = mock
     git.stubs(:git).returns(repo)
     @merge_request.target_repository.stubs(:git).returns(git)
