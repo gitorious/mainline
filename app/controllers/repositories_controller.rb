@@ -173,9 +173,10 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     user = User.find_by_login(params[:username])
     
-    if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s) # git_path could be a merge request
+    if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s)
+      # git_path is a merge request
       begin
-        if merge_request = MergeRequest.find(result[1]) and merge_request.user == user
+        if merge_request = MergeRequest.find(result[1]) and (merge_request.user == user)
           render :text => "true" and return
         end
       rescue ActiveRecord::RecordNotFound # No such merge request
