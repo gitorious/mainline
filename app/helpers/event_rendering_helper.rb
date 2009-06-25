@@ -291,15 +291,12 @@ module EventRenderingHelper
   
   def render_event_push(event)
     project = event.target.project
-    commit_link = link_to_remote_if(event.has_commits?, pluralize(event.events.size, 'commit'), {
-      :url => commits_event_path(event.to_param),
-      :method => :get,
-      :update => "commits_in_event_#{event.to_param}",
-      :before => "$('commits_in_event_#{event.to_param}').toggle();",
-      :condition => "$('commits_in_event_#{event.to_param}')",
-    },{
-      :href => repo_owner_path(event.target, :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data))
-    })    
+    # if ($('commits_in_event_435240')) { $('commits_in_event_435240').toggle();; new Ajax.Updater('commits_in_event_435240', '/events/435240/commits', {asynchronous:true, evalScripts:true, method:'get'}); }; return false;
+    
+    commit_link = link_to_if(event.has_commits?, pluralize(event.events.size, 'commit'),
+      repo_owner_path(event.target, :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data)),
+    :onclick => %{if ($('commits_in_event_#{event.to_param}')) { $('commits_in_event_435240').toggle(); new Ajax.Updater('commits_in_event_#{event.to_param}', '#{commits_event_path(event.to_param)}', {asynchronous:true, evalScripts:true, method:'get'}); return false; }})    
+    
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
       title = repo_title(event.target, project)
       " to " + link_to(h(title+':'+event.data), repo_owner_path(event.target, 
