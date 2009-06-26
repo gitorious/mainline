@@ -234,12 +234,13 @@ class MergeRequestsController < ApplicationController
         store_location(returning_page)
         @redirection_path = request_token.authorize_url
       else
-        flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
+        flash[:success] = I18n.t("merge_requests_controller.create_success",
+                                   :name => @merge_request.target_repository.name)
         @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         @merge_request.confirmed_by_user
-        @redirection_path =  repo_owner_path(@merge_request.target_repository, 
+        @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
           :project_repository_merge_request_path, @repository.project, 
-          @merge_request.target_repository, @merge_request)        
+          @merge_request.target_repository, @merge_request)
       end
 
       respond_to do |format|
