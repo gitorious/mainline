@@ -593,6 +593,22 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.change_owner_to!(users(:johan))
     assert_equal groups(:team_thunderbird), repo.owner
   end
+
+  should "not change kind when it's a project repo and changing owner" do
+    repo = repositories(:johans)
+    repo.change_owner_to!(groups(:team_thunderbird))
+    assert_equal groups(:team_thunderbird), repo.owner
+    assert_equal Repository::KIND_PROJECT_REPO, repo.kind
+  end
+
+  should "change kind when changing owner" do
+    repo = repositories(:johans)
+    repo.update_attribute(:kind, Repository::KIND_USER_REPO)
+    assert repo.user_repo?
+    repo.change_owner_to!(groups(:team_thunderbird))
+    assert_equal groups(:team_thunderbird), repo.owner
+    assert repo.team_repo?
+  end
   
   should "changing ownership adds the new owner to the committerships" do
     repo = repositories(:johans)

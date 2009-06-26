@@ -300,7 +300,17 @@ class Repository < ActiveRecord::Base
           existing.destroy
         end
         self.owner = another_owner
-        committerships.create!(:committer => another_owner) unless committerships.any?{|c|c.committer == another_owner}
+        if self.kind != KIND_PROJECT_REPO
+          case another_owner
+          when Group
+            self.kind = KIND_TEAM_REPO
+          when User
+            self.kind = KIND_USER_REPO
+          end
+        end
+        unless committerships.any?{|c|c.committer == another_owner}
+          committerships.create!(:committer => another_owner)
+        end
         save!
         reload
       end
