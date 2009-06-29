@@ -28,16 +28,21 @@ logger = if ENV["GITORIOUS_BASE_DIR"]
            Logger.new("/tmp/pre_receive_guard.log")
          end
 
-pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, gets)
-if pre_receive_guard.allow_push?
-  logger.info("Allowed #{ENV['GITORIOUS_USER'].inspect} to " +
-    "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-  exit 0
-else
-  pre_receive_guard.gitorious_says "You do not have write access to this repository"
-  logger.info("Denied #{ENV['GITORIOUS_USER'].inspect} to " +
-    "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-  exit 1
+begin
+  pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, gets)
+  if pre_receive_guard.allow_push?
+    logger.info("Allowed #{ENV['GITORIOUS_USER'].inspect} to " +
+      "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+    exit(0)
+  else
+    pre_receive_guard.gitorious_says "You do not have write access to this repository"
+    logger.info("Denied #{ENV['GITORIOUS_USER'].inspect} to " +
+      "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+    exit!(1)
+  end
+rescue Errno::ECONNREFUSED
+  logger.fatal "Connection refused"
+  pre_receive_guard.gitorious_says "Temporary interuption. Please try again shortly"
+  exit!(1)
 end
-
 

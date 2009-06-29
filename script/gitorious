@@ -87,6 +87,10 @@ rescue Gitorious::SSH::BadCommandError => e
   logger.info("Access denied or bad command for #{user.inspect}: #{original_command.inspect}")
   gitorious_says "Access denied or bad command"
   exit!(1)
+rescue Errno::ECONNREFUSED => e
+  logger.fatal("Connection refused querying for paths/permissions")
+  gitorious_says("Temporary error. Please try again shortly")
+  exit!(1)
 rescue Object => e
   if $DEBUG
     $stderr.puts "#{e.class.name} #{e.message}"
