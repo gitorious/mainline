@@ -78,7 +78,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       m.stubs(:id_abbrev).returns(sha[0..7])
       m.stubs(:committer).returns(Grit::Actor.new("bob", "bob@example.com"))
       m.stubs(:author).returns(Grit::Actor.new("bob", "bob@example.com"))
-      m.stubs(:message).returns("bla bla")
+      m.stubs(:short_message).returns("bla bla")
       m.stubs(:committed_date).returns(3.days.ago)
       m.stubs(:to_patch).returns("From: #{sha}\nSubject: [PATCH]")
       m
