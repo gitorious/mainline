@@ -44,6 +44,12 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
     should 'extract the Git target correctly' do
       assert_equal 'refs/merge-requests/123', @guard.git_target
     end
+
+    should "chomp newlines from the git_target" do
+      guard = Gitorious::SSH::PreReceiveGuard.new(@env,
+        "#{'0'*10} #{'fca'*10} refs/heads/master\n")
+      assert_equal "refs/heads/master", guard.git_target
+    end
     
     should 'not allow push when Gitorious says no' do
       @guard.stubs(:get_via_http).returns('false')
