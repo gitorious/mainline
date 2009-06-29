@@ -63,6 +63,7 @@ begin
   $stderr.puts "git-shell -c #{args.inspect}" if $DEBUG
   ENV['GITORIOUS_WRITABLE_BY_URL'] = client.writable_by_query_url
   ENV['GITORIOUS_USER'] = user
+  ENV['GITORIOUS_BASE_DIR'] = BASE_DIR
 
   logger.info("Accepted #{user.inspect} for #{args.inspect}")
   if client.pre_receive_hook_exists?

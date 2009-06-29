@@ -20,12 +20,20 @@ incpath = File.dirname(__FILE__)
 $: << incpath
 
 require "pre_receive_guard"
+require 'logger'
+
+logger = Logger.new(File.join(ENV["GITORIOUS_BASE_DIR"] || "/tmp",
+                                "log/pre_receive_guard.log"))
 
 pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, gets)
 if pre_receive_guard.allow_push?
+  logger.info("Allowed #{ENV['GITORIOUS_USER'].inspect} to " +
+    "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
   exit 0
 else
   pre_receive_guard.gitorious_says "You do not have write access to this repository"
+  logger.info("Denied #{ENV['GITORIOUS_USER'].inspect} to " +
+    "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
   exit 1
 end
 

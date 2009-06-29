@@ -29,10 +29,11 @@ module Gitorious
         @query_url = @env['GITORIOUS_WRITABLE_BY_URL']
         @git_spec   = git_spec
       end
+      attr_reader :git_spec
 
       # extract the target, eg. refs/heads/master
       def git_target
-        @git_spec.split(/\s/).last
+        @git_spec.split(/\s/).last.chomp
       end
       
       def local_connection?
