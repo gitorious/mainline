@@ -454,19 +454,22 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def push_to_tracking_repository!(force = false)
-    options = {}
+    options = {:timeout => false}
     options[:force] = true if force
     branch_spec = "#{ending_commit}:#{merge_branch_name}"
-    source_repository.git.git.push(options, target_repository.full_repository_path, branch_spec)
+    source_repository.git.git.push(options,
+      target_repository.full_repository_path, branch_spec)
     push_new_branch_to_tracking_repo
   end
 
   def push_new_branch_to_tracking_repo
     branch_spec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
     raise "No tracking repository exists for merge request #{id}" unless tracking_repository
-    target_repository.git.git.push({}, tracking_repository.full_repository_path, branch_spec)
+    target_repository.git.git.push({:timeout => false},
+      tracking_repository.full_repository_path, branch_spec)
     create_new_version
-    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user, "new  version #{current_version_number}", "reason")
+    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
+      user, "new version #{current_version_number}", "reason")
   end
 
   def tracking_repository

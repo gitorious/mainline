@@ -132,7 +132,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     tracking_repo.stubs(:full_repository_path).returns("/tmp/foo.git")
     @merge_request.stubs(:tracking_repository).returns(tracking_repo)
     repo = mock("Target repository")
-    repo.expects(:push).once.with({}, 
+    repo.expects(:push).once.with({:timeout => false}, 
       @merge_request.tracking_repository.full_repository_path,
       "refs/merge-requests/#{@merge_request.id}:refs/merge-requests/#{@merge_request.id}/#{@merge_request.next_version_number}")
     git = mock
@@ -539,9 +539,11 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.source_repository.stubs(:git).returns(git)
       @merge_request.expects(:push_new_branch_to_tracking_repo).twice
       
-      git_backend.expects(:push).with({}, @merge_request.target_repository.full_repository_path, branch_spec).once
+      git_backend.expects(:push).with({:timeout => false},
+        @merge_request.target_repository.full_repository_path, branch_spec).once
       @merge_request.push_to_tracking_repository!
-      git_backend.expects(:push).with({:force => true}, @merge_request.target_repository.full_repository_path, branch_spec).once
+      git_backend.expects(:push).with({:force => true,:timeout => false},
+        @merge_request.target_repository.full_repository_path, branch_spec).once
       @merge_request.push_to_tracking_repository!(true)
     end
   end
