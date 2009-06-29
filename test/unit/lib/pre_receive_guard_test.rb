@@ -50,7 +50,7 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert !@guard.allow_push?
     end
 
-    should 'not allow push when Gitorious says no' do
+    should 'allow push when Gitorious says it is ok' do
       @guard.stubs(:get_via_http).returns('true')
       assert @guard.allow_push?
     end
