@@ -52,6 +52,14 @@ module Gitorious
       def get_via_http(url)
         open(url).read
       end
+
+      def gitorious_says(msg)
+        $stderr.puts
+        $stderr.puts "== Gitorious: " + ("=" * 59)
+        $stderr.puts msg
+        $stderr.puts "="*72
+        $stderr.puts
+      end
     end
   end
 end

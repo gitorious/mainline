@@ -25,7 +25,7 @@ pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, gets)
 if pre_receive_guard.allow_push?
   exit 0
 else
-  $stderr.puts " ! You do not have write access to this repository"
+  pre_receive_guard.gitorious_says "You do not have write access to this repository"
   exit 1
 end
 
