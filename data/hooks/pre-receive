@@ -22,8 +22,11 @@ $: << incpath
 require "pre_receive_guard"
 require 'logger'
 
-logger = Logger.new(File.join(ENV["GITORIOUS_BASE_DIR"] || "/tmp",
-                                "log/pre_receive_guard.log"))
+logger = if ENV["GITORIOUS_BASE_DIR"]
+           Logger.new(File.join(ENV["GITORIOUS_BASE_DIR"], "log/pre_receive_guard.log"))
+         else
+           Logger.new("/tmp/pre_receive_guard.log")
+         end
 
 pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, gets)
 if pre_receive_guard.allow_push?
