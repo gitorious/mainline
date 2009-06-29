@@ -4,7 +4,7 @@
 <%- end -%>
 <table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
-  <tr id="commit_<%= i -%>" data-merge-request-commit-id="<%= commit.id -%>">
+  <tr id="commit_<%= i -%>" class="commit_row" data-merge-request-commit-id="<%= commit.id -%>">
     <td class="commit-details meta">
       <ul>
         <li class="sha-abbrev">
@@ -27,7 +27,7 @@
     </td>
     <td class="commit-details message">
       <div class="commit_message inline">
-        <%= link_to h(truncate(force_utf8(commit.message), :length => 140)), 
+        <%= link_to h(truncate(force_utf8(commit.short_message), :length => 140)),
               repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit)  %>
       </div>
     </td>
