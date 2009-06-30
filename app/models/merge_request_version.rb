@@ -18,4 +18,7 @@
 
 class MergeRequestVersion < ActiveRecord::Base
   belongs_to :merge_request
+  def affected_commits
+    @affected_commits ||= merge_request.tracking_repository.git.commits_between(merge_base_sha, merge_request.merge_branch_name(version)).reverse
+  end
 end

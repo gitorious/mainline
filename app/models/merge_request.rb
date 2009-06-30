@@ -291,11 +291,7 @@ class MergeRequest < ActiveRecord::Base
     else
       versions.last
     end
-    
-    merge_base_sha = version.merge_base_sha
-    
-    RAILS_DEFAULT_LOGGER.debug "Merge request history command: git log #{merge_base_sha}..#{merge_branch_name(version.version)}"
-    @commits_to_be_merged ||= tracking_repository.git.commits_between(merge_base_sha,merge_branch_name(version.version)).reverse
+    version.affected_commits
   end
   
   def potential_commits

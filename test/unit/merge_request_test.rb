@@ -110,11 +110,8 @@ class MergeRequestTest < ActiveSupport::TestCase
   should 'calculate commit diff from tracking repo' do
     @merge_request.stubs(:calculate_merge_base).returns('ff0')
     version = @merge_request.create_new_version
-    repo = mock("Tracking git repo")
-    repo.expects(:commits_between).with('ff0', "refs/merge-requests/#{@merge_request.id}/#{version.version}").returns([])
-    tracking_repo = mock("Tracking repository")
-    @merge_request.stubs(:tracking_repository).returns(tracking_repo)
-    tracking_repo.stubs(:git).returns(repo)
+    version.stubs(:affected_commits).returns([])
+    @merge_request.stubs(:versions).returns([version])
     assert_equal [], @merge_request.commit_diff_from_tracking_repo(version.version)
     assert_equal [], @merge_request.commit_diff_from_tracking_repo
   end
