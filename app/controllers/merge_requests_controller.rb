@@ -22,13 +22,13 @@
 #++
 
 class MergeRequestsController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :direct_access]
+  before_filter :login_required, :except => [:index, :show, :direct_access, :commit_status, :version]
   before_filter :find_repository_owner, :except => [:oauth_return, :direct_access]
   before_filter :find_repository, :except => [:oauth_return, :direct_access]
   before_filter :find_merge_request,  
     :except => [:index, :show, :new, :create, :commit_list, :target_branches, :oauth_return, :direct_access]
   before_filter :assert_merge_request_ownership, 
-    :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches, :oauth_return, :direct_access]
+    :except => [:index, :show, :new, :create, :resolve, :commit_list, :target_branches, :oauth_return, :direct_access, :commit_status, :version]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   renders_in_site_specific_context
   

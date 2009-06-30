@@ -364,7 +364,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
   
   context 'commit_merged (GET)' do
     setup do
-      login_as :johan
       @merge_request.stubs(:commit_merged?).with('ffc').returns(false)
       @merge_request.stubs(:commit_merged?).with('ffo').returns(true)
       MergeRequest.stubs(:find).returns(@merge_request)
@@ -594,7 +593,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context 'GET #version' do
     should 'retrieve the commits in a specific version' do
       MergeRequest.stubs(:find).returns(@merge_request)
-      login_as :johan
       @merge_request.expects(:commit_diff_from_tracking_repo).with(10).returns([])
       get :version, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
         :id => @merge_request.to_param, :version => 10
