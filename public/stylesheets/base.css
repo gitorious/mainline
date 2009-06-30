@@ -2401,7 +2401,8 @@ ul#commit_selector li a.current
   font-weight: bold;
 }
 table.select_commits_from_list tr.merged td.meta,
-table.select_commits_from_list tr.unmerged td.meta
+table.select_commits_from_list tr.unmerged td.meta,
+table.select_commits_from_list tr.unknown-status td.meta
 {
     background-position: 7px left;
     background-repeat: no-repeat;
@@ -2409,9 +2410,13 @@ table.select_commits_from_list tr.unmerged td.meta
 }
 table.select_commits_from_list tr.unmerged td.meta
 {
-    background-image: url(/images/silk/bullet_red.png);
+    background-image: url(/images/merge_status/unmerged.png);
 }
 table.select_commits_from_list tr.merged td.meta
 {
-    background-image: url(/images/silk/bullet_green.png);
+    background-image: url(/images/merge_status/merged.png);
+}
+table.select_commits_from_list tr.unknown-status td.meta
+{
+    background-image: url(/images/merge_status/unknown.png);
 }

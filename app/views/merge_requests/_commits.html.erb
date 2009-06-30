@@ -4,7 +4,7 @@
 <%- end -%>
 <table class="select_commits_from_list">
 <% @commits.each_with_index do |commit, i| %>
-  <tr id="commit_<%= i -%>" class="commit_row" data-merge-request-commit-id="<%= commit.id -%>">
+  <tr id="commit_<%= i -%>" class="commit_row unknown-status" data-merge-request-commit-id="<%= commit.id -%>">
     <td class="commit-details meta">
       <ul>
         <li class="sha-abbrev">
@@ -62,3 +62,6 @@
 <% end %>
 </table>
 </div>
+<script type="application/javascript">
+load_commit_status();
+</script>

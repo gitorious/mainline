@@ -164,6 +164,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert !@merge_request.commit_merged?('ffc')
     assert @merge_request.commit_merged?('ff0')
   end
+
+  should 'cache requests to commit_merged?' do
+    Rails.cache.expects(:fetch).with("merge_status_for_commit_ff0_in_repository_#{@merge_request.target_repository.id}", :expires_in => 10.minutes).returns(:true)
+    Rails.cache.expects(:fetch).with("merge_status_for_commit_ff1_in_repository_#{@merge_request.target_repository.id}", :expires_in => 10.minutes).returns(:false)
+    assert @merge_request.commit_merged?('ff0')
+    assert !@merge_request.commit_merged?('ff1')
+  end
   
   should 'have a verifying? status' do
     @merge_request.status = MergeRequest::STATUS_VERIFYING

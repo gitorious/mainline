@@ -387,3 +387,21 @@ function toggle_wiki_preview(target_url)
   }
   [wiki_preview,wiki_edit].each(function(e){e.toggle()});
 }
+
+function load_commit_status()
+{
+  var merge_request_uri = document.location.pathname;
+  $$('[data-merge-request-commit-id]').each(function(commit_row)
+  {
+    id = commit_row.getAttribute('data-merge-request-commit-id');
+    new Ajax.Request(merge_request_uri + "/commit_status?commit_id=" + id, {method:'get', onSuccess: function(transport){
+      commit_row.removeClassName("unknown-status");
+      if (transport.responseText == 'false'){
+        commit_row.addClassName("unmerged");
+      }
+      else{
+        commit_row.addClassName("merged");
+      }
+    }});
+  });
+}
