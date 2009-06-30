@@ -122,7 +122,7 @@ class Project < ActiveRecord::Base
   
   # Returns the projects limited by +limit+ who has the most activity within
   # the +cutoff+ period
-  def self.most_active_recently(limit = 10, cutoff = 14.days.ago)
+  def self.most_active_recently(limit = 10, cutoff = 3.days.ago)
     Rails.cache.fetch("projects:most_active_recently:#{limit}:#{cutoff.to_i}", :expires_in => 30.minutes) do
       find(:all, :joins => :events, :limit => limit,
         :select => 'distinct projects.*, count(events.id) as event_count', 

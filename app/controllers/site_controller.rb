@@ -69,8 +69,7 @@ class SiteController < ApplicationController
       else
         @projects = Project.find(:all, :limit => 10, :order => "id desc")
         @top_repository_clones = Repository.most_active_clones
-        @active_recently = Project.most_active_recently
-        @active_overall = Project.most_active_overall(@active_recently.size)
+        @active_projects = Project.most_active_recently(15)
         @active_users = User.most_active_pushers
         @active_groups = Group.most_active
         @latest_events = Event.latest(25)

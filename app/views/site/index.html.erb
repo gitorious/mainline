@@ -71,23 +71,10 @@
 </div>
 
 <div id="right">
-<% cache([:site_index, :active_projects_two_weeks], :expires_in => 30.minutes) do -%>
-  <% pull_box("Active projects <small>(last two weeks)</small>") do -%>
+<% cache([:site_index, :active_projects_recently], :expires_in => 1.hour) do -%>
+  <% pull_box("Active projects") do -%>
     <ul class="with_icons">
-      <% @active_recently.each do |project| -%>
-        <li class="project">
-          <%= link_to h(project.title), project -%>
-          <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
-        </li>
-      <% end -%>
-    </ul>
-  <% end -%>
-<% end -%>
-
-<% cache([:site_index, :active_projects_overall], :expires_in => 1.hour) do -%>
-  <% pull_box("Active projects <small>(overall)</small>") do -%>
-    <ul class="with_icons">
-      <% @active_overall.each do |project| -%>
+      <% @active_projects.each do |project| -%>
         <li class="project">
           <%= link_to h(project.title), project -%>
           <small class="hint"><%= truncate(h(project.stripped_description), :length => 65) -%></small>
@@ -110,6 +97,19 @@
     </ul>
   <% end -%>
 <% end -%>
+
+<% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
+  <% pull_box("Active users") do -%>
+    <ul class="with_icons inline_icons">
+      <% @active_users.each do |user| -%>
+        <li class="user">
+          <%= avatar(user, { :size => 16 }) -%>
+          <%= link_to h(user.title), user -%>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+<% end -%>
   
 <% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
   <% pull_box("Active teams") do -%>
@@ -118,19 +118,6 @@
         <li class="group">
           <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
           <%= link_to h(group.title), group -%>
-        </li>
-      <% end -%>
-    </ul>
-  <% end -%>
-<% end -%>
- 
-<% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
-  <% pull_box("Active users") do -%>
-    <ul class="with_icons inline_icons">
-      <% @active_users.each do |user| -%>
-        <li class="user">
-          <%= avatar(user, { :size => 16 }) -%>
-          <%= link_to h(user.title), user -%>
         </li>
       <% end -%>
     </ul>
