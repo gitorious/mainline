@@ -337,7 +337,9 @@ class MergeRequest < ActiveRecord::Base
       message = messages.build(
         :sender => user, 
         :recipient => committer,
-        :subject => I18n.t("mailer.request_notification", :login => source_repository.user.login, :title => target_repository.project.title),
+        :subject => I18n.t("mailer.request_notification",
+          :login => user.login,
+          :title => target_repository.project.title),
         :body => proposal,
         :notifiable => self)    
       message.save
