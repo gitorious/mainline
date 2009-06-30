@@ -391,7 +391,12 @@ function toggle_wiki_preview(target_url)
 function load_commit_status()
 {
   var merge_request_uri = document.location.pathname;
-  $$('[data-merge-request-commit-id]').each(function(commit_row)
+  ['merged','unmerged'].each(function(s)
+  {
+    var i1 = new Image();
+    i1.src = "/images/merge_requests/" + s + ".png";        
+  });
+  $$('tr.commit_row').each(function(commit_row)
   {
     id = commit_row.getAttribute('data-merge-request-commit-id');
     new Ajax.Request(merge_request_uri + "/commit_status?commit_id=" + id, {method:'get', onSuccess: function(transport){
