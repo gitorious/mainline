@@ -34,9 +34,16 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
         @merge_request.merge_branch_name(@first_version.version)
       ).returns([])
       tracking_repo = mock("Tracking repository")
+      tracking_repo.stubs(:id).returns(999)
       tracking_repo.stubs(:git).returns(repo)
       @merge_request.stubs(:tracking_repository).returns(tracking_repo)
       @first_version.stubs(:merge_request).returns(@merge_request)
+      result = @first_version.affected_commits
+    end
+
+    should 'cache affected_commits' do
+      @first_version.stubs(:cache_key).returns('cache')
+      Rails.cache.expects(:fetch).with('cache', :expires_in => 60.minutes).returns([])
       result = @first_version.affected_commits
     end
   end
