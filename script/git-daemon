@@ -43,6 +43,7 @@ module Git
       if @options[:daemonize]
         daemonize(@options[:logfile])
       end
+      Dir.chdir(Rails.root) # So Logger don't get confused
       @socket = TCPServer.new(@options[:host], @options[:port])
       @socket.setsockopt(Socket::SOL_SOCKET,Socket::SO_REUSEADDR, !!@options[:reuseaddr])
       @socket.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
