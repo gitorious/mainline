@@ -487,7 +487,7 @@ class MergeRequest < ActiveRecord::Base
   # Verify that +a_commit+ exists in target branch. Git cherry would return a list of commits if this is not the case
   def commit_merged?(a_commit)
     result = Rails.cache.fetch("merge_status_for_commit_#{a_commit}_in_repository_#{target_repository.id}",
-                      :expires_in => 10.minutes) do
+                      :expires_in => 60.minutes) do
       output = target_repository.git.git.cherry({},target_branch, a_commit)
       RAILS_DEFAULT_LOGGER.info "Cache missed OMGWFTBBQ #{a_commit}"
       output.blank? ? :true : :false # Storing false in the cache would make it miss each time

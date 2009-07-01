@@ -163,8 +163,8 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
 
   should 'cache requests to commit_merged?' do
-    Rails.cache.expects(:fetch).with("merge_status_for_commit_ff0_in_repository_#{@merge_request.target_repository.id}", :expires_in => 10.minutes).returns(:true)
-    Rails.cache.expects(:fetch).with("merge_status_for_commit_ff1_in_repository_#{@merge_request.target_repository.id}", :expires_in => 10.minutes).returns(:false)
+    Rails.cache.expects(:fetch).with("merge_status_for_commit_ff0_in_repository_#{@merge_request.target_repository.id}", :expires_in => 60.minutes).returns(:true)
+    Rails.cache.expects(:fetch).with("merge_status_for_commit_ff1_in_repository_#{@merge_request.target_repository.id}", :expires_in => 60.minutes).returns(:false)
     assert @merge_request.commit_merged?('ff0')
     assert !@merge_request.commit_merged?('ff1')
   end
