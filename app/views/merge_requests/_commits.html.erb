@@ -1,4 +1,14 @@
 <div id="commits_to_be_merged">
+  <div id="wait_for_commits" class="please_wait round-10 shadow-2" style="display:none">
+    <div class="being_constructed_content round-10">
+      <p class="spin">
+        <%= image_tag('spinner.gif') -%>
+      </p>
+      <p class="hint">
+        Getting list of commits...
+      </p>
+    </div>
+  </div>
 <%- if @version -%>
 <p><strong>Commits in version <%= @version -%></strong>:</p>
 <%- end -%>

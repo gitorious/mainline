@@ -2420,3 +2420,21 @@ table.select_commits_from_list tr.unknown-status td.meta
 {
     background-image: url(/images/merge_status/unknown.png);
 }
+#commits_to_be_merged
+{
+    position: relative;
+}
+#wait_for_commits
+{
+    position: absolute;
+}
+.please_wait
+{
+    background-color: #fff;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    margin: 20px 20px 20px 0;
+    text-align: center;
+    padding: 20px 20px;
+    width: 50%;
+}
