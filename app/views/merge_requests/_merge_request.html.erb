@@ -22,8 +22,8 @@
 
 <% no_link ||= false -%>
 
-<div class="merge_request_summary <%= merge_request.status_string -%>">
-  <p class="status">[<span><%= merge_request.status_string -%></span>]</p>
+<div class="merge_request_summary">
+  <p class="status">[<span><%= merge_request.status_tag -%></span>]</p>
   <h5>
 	<% source = link_to h(merge_request.source_name), 
           repo_owner_path(merge_request.source_repository, [merge_request.source_repository.project, merge_request.source_repository]) -%>

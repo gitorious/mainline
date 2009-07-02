@@ -62,7 +62,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		end
 		
 		should "filter on status" do
-		  @merge_request.update_attribute(:status, MergeRequest::STATUS_MERGED)
+		  @merge_request.update_attribute(:status_tag, 'merged')
 		  get :index, :project_id => @project.to_param,
 				:repository_id => @target_repository.to_param,
 				:status => "merged"

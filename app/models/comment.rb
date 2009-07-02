@@ -45,11 +45,13 @@ class Comment < ActiveRecord::Base
   NOTIFICATION_TARGETS = [ MergeRequest ]
   
   def deliver_notification_to(another_user)
+    message_body = "#{user.title} commented:\n\n#{body}"
+    message_body << "\n\nThe status of your #{target.class.human_name.downcase} is now #{state_changed_to}" if applies_to_merge_request? and state_change
     message = Message.new({
       :sender => self.user,
       :recipient => another_user,
       :subject => "#{user.title} commented on your #{target.class.human_name.downcase}",
-      :body => "#{user.title} commented:\n\n#{body}",
+      :body => message_body,
       :notifiable => self.target,
     })
     message.save

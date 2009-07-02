@@ -486,25 +486,26 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
     
     should "default to open merge-requests" do
-      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_MERGED)
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'merged')
+      merge_requests(:moes_to_johans_open).update_attribute(:status_tag, 'open')
       assert !@repo.merge_requests.from_filter(nil).include?(merge_requests(:moes_to_johans))
       assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter(nil)
     end
     
     should "fall back to open merge-requests on invalid filter name" do
-      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_MERGED)
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'merged')
       assert !@repo.merge_requests.from_filter("kittens").include?(merge_requests(:moes_to_johans))
       assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter("kittens")
     end
     
     should "find merged merge-requests" do
-      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_MERGED)
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'merged')
       assert !@repo.merge_requests.from_filter("merged").include?(merge_requests(:moes_to_johans_open))
       assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("merged")
     end
     
     should "find rejected merge-requests" do
-      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_REJECTED)
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'rejected')
       assert !@repo.merge_requests.from_filter("rejected").include?(merge_requests(:moes_to_johans_open))
       assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("rejected")
     end
@@ -593,5 +594,25 @@ class MergeRequestTest < ActiveSupport::TestCase
         assert_equal users(:johan), event.user
       end
     end
+  end
+
+  context 'Migration of reason/status to comment/status_tag' do
+    setup {@merge_request = merge_requests(:moes_to_johans_open)}
+      
+    should 'simply set the status tag if no reason exists' do
+      @merge_request.migrate_to_status_tag
+      assert_equal 'open', @merge_request.reload.status_tag
+    end
+
+    should 'add a comment and set the state when reason exists' do
+      @merge_request.reason = "You're right, this is a great idea!"
+      @merge_request.merge
+      @merge_request.save
+      @merge_request.migrate_to_status_tag
+      assert_equal 'merged', @merge_request.reload.status_string
+      assert_not_nil comment = @merge_request.comments.reload.last
+      assert_equal @merge_request.updated_by, comment.user
+    end
+
   end
 end

@@ -79,10 +79,11 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  named_scope :open, :conditions => ['status in (?)', [STATUS_OPEN, STATUS_VERIFYING]]
-  named_scope :closed, :conditions => ["status in (?)", [STATUS_MERGED, STATUS_REJECTED]]
-  named_scope :merged, :conditions => ["status = ?", [STATUS_MERGED]]
-  named_scope :rejected, :conditions => ["status = ?", [STATUS_REJECTED]]
+  named_scope :open, :conditions => ['LCASE(status_tag) in (?)', ['open','verifying']]
+  named_scope :closed, :conditions => ["LCASE(status_tag) in (?)", ['merged','rejected']]
+  named_scope :merged, :conditions => ["LCASE(status_tag) = ?", 'merged']
+  named_scope :rejected, :conditions => ["LCASE(status_tag) = ?", 'rejected']
+
   
   def reopen_with_user(a_user)
     if can_be_reopened_by?(a_user)
@@ -233,7 +234,7 @@ class MergeRequest < ActiveRecord::Base
       :sender => a_user,
       :recipient => user,
       :subject => "Your merge request was updated",
-      :body => "The merge request is now #{status_string}. \n#{reason}",
+      :body => "The merge request is now #{status_tag}.",
       :notifiable => self,
     })
     message.save
@@ -527,6 +528,20 @@ class MergeRequest < ActiveRecord::Base
     highest_version = versions.last
     highest_version_number = highest_version ? highest_version.version : 0
     highest_version_number + 1
+  end
+  
+  # Migrate repositories from the old regime with reasons:
+  # If a reason exists: create a comment from the user who last updated us, provide the state to have it look right
+  # If no reason exists: simply set the status tag directly from whatever status_string is
+  def migrate_to_status_tag
+    if reason.blank?
+      self.status_tag = status_string
+      save
+    else
+      comment = comments.create!(:user => updated_by, :body => reason, :project => target_repository.project)
+      comment.state = status_string
+      comment.save!
+    end
   end
   
 end

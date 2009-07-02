@@ -28,15 +28,6 @@
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 
-<% if !@merge_request.open? -%>
-<div class="merge-request-reason">
-  <h4 class="<%= @merge_request.status_string -%>">
-    <span><%= @merge_request.status_string.titlecase -%></span>:
-  </h4>
-  <%= force_utf8 simple_format(auto_link(h(@merge_request.reason), :urls)) -%>
-</div>
-<% end -%>
-
 
 <% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
 <% form_for @merge_request, 
