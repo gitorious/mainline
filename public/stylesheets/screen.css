@@ -271,46 +271,30 @@ Recent activities
   background-position:top left;
   background-color:#fff;
   height:108px;
-  overflow:hidden;
-  position:relative;
 }
 
 #recent_activities_container{
-  position:absolute;
-  left:0;
-  top:16px;
   height:60px;
-}
-
-.recent_activities_bar{
-  float:left;
-}
-
-.recent_activities_header {
-  float:left;
-  background-image:url(../images/border_pixel_v.gif);
-  background-repeat:repeat-y;
-  background-position:top right;
-}
-
-.recent_activities_header_inner{
-  width:186px;
-  margin:0 20px;
-  height:60px;
-  background-image:url(../images/list_head_activities.png);
-  background-repeat:no-repeat;
-  background-position:left center;
+  width:980px;
+  margin:16px auto;
+  overflow:hidden;
 }
 
 .recent_activity{
   background-image:url(../images/border_pixel_v.gif);
   background-repeat:repeat-y;
   background-position:top right;
-  width:240px;
-  padding:0 20px;
+  width:227px;
+  padding:0 5px;
+  margin-right:10px;
   height:60px;
   float:left;
-  font-size:11px;
+  font-size:10px;
+}
+
+.recent_activity.last{
+  background-image:none;
+  margin-right:0;
 }
 
 .recent_activity_timestamp{
@@ -331,7 +315,7 @@ Recent activities
 
 .recent_activity_meta{
   float:left;
-  width:150px;
+  width:130px;
   margin-top:10px;
 }
 

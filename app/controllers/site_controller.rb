@@ -64,6 +64,7 @@ class SiteController < ApplicationController
         @projects = Project.most_active_recently(10, 7.days.ago)
         @teams = Group.most_active(10, 7.days.ago)
         @users = User.most_active_pushers(10, 7.days.ago)
+        @latest_events = Event.latest(4)
         
         render :layout => "second_generation/application", :inline => ""
       else

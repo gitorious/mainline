@@ -41,9 +41,4 @@ class EventsController < ApplicationController
       expires_in 30.minutes
     end
   end
-  
-  def recent_for_homepage
-    @latest_events = Event.latest(8)
-    render :layout => false
-  end
 end

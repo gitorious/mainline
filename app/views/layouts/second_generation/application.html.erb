@@ -58,7 +58,32 @@
     </div>
   </div>
   
-  <div id="recent_activities"><div id="recent_activities_container"></div></div>
+  <div id="recent_activities"><div id="recent_activities_container">
+    <% @latest_events.each_with_index do |event, index| %>
+      <div class="recent_activity <%= 'last' if index == @latest_events.length - 1 %>">
+        <% action, body, category = action_and_body_for_event(event) %>
+
+        <div class="recent_activity_timestamp">
+          <div><%= recent_event_timestamp(event.created_at) %></div>
+          ago
+        </div>
+
+        <div class="recent_activity_avatar">
+          <%= glossy_homepage_avatar_for_user(event.user) %>
+        </div>
+
+        <div class="recent_activity_meta">
+          <% if event.user.nil? %>
+            <%= event.actor_display %>
+          <% else %>
+            <%= link_to h(event.user.title), user_path(event.user) %>
+          <% end %>
+
+          <%= action %>
+        </div>
+      </div>
+    <% end %>
+  </div></div>
   
   <div id="main">
     <div class="marginizer">

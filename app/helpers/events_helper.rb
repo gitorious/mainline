@@ -18,14 +18,4 @@
 #++
 
 module EventsHelper
-  def recent_event_timestamp(time)
-    distance = Time.now - time
-
-    human_distance = case distance
-    when 0..3599
-      "#{distance.ceil / 60} min."
-    else
-      "#{distance.ceil / 60 / 60} h."
-    end
-  end
 end
