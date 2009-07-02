@@ -57,8 +57,8 @@ module ApplicationHelper
   end
   
   def markdown(text, options = [:smart])
-    rd = RDiscount.new(text.to_s, *options)
-    rd.to_html
+    renderer = MarkupRenderer.new(text, :markdown => options)
+    renderer.to_html
   end
   
   def feed_icon(url, alt_title = "Atom feed", size = :small)

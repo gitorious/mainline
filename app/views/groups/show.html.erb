@@ -21,7 +21,7 @@
 
 <h1><%=h @group.name -%></h1>
 <div>
-  <%= markdown(sanitize(@group.description)) %>
+  <%= sanitize(markdown(@group.description)) %>
 </div>
 
 <div class="with_divider">
@@ -53,7 +53,7 @@
         <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}", 
               group_project_repository_path(@group, repository.project, repository) -%>
         <span class="hint">
-          <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
+          <%= paragraphs_with_more sanitize(markdown(repository.description)) -%>
         </span>
       </li>
       <% end -%>
@@ -82,7 +82,7 @@
         <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}", 
               group_project_repository_path(@group, repository.project, repository) -%>
         <div class="hint">
-          <%= paragraphs_with_more markdown(sanitize(repository.description)) -%>
+          <%= paragraphs_with_more sanitize(markdown(repository.description)) -%>
         </div>
       </li>
     <% end -%>

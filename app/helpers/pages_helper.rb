@@ -22,15 +22,16 @@ module PagesHelper
   
   def wikize(content)
     content = wiki_link(content)
-    rd = RDiscount.new(sanitize(content), :smart, :generate_toc)
+    # rd = RDiscount.new(content, :smart, :generate_toc)
+    rd = MarkupRenderer.new(content, :markdown => [:smart, :generate_toc])
     content = content_tag(:div, rd.to_html, :class => "page-content")
-    toc_content = rd.toc_content
+    toc_content = rd.markdown.toc_content
     if !toc_content.blank?
       toc = content_tag(:div, toc_content, :class => "toc")
     else
       toc = ""
     end
-    content_tag(:div, toc + content, :class => "page wiki-page")
+    content_tag(:div, toc + sanitize(content), :class => "page wiki-page")
   end
   
   BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\-]+)\]\]/
