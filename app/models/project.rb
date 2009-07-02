@@ -39,6 +39,7 @@ class Project < ActiveRecord::Base
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
+  serialize :merge_request_custom_states, Array
   
   attr_protected :owner_id, :user_id, :site_id
   
@@ -320,6 +321,39 @@ class Project < ActiveRecord::Base
     wiki_repository.wiki_permissions = perms
   end
 
+  # Returns an array of merge request states
+  def merge_request_state_list
+    result = merge_request_fixed_states
+    if has_custom_merge_request_states?
+      result << merge_request_custom_states
+    else
+      result << merge_request_default_states
+    end
+    result.flatten
+  end
+  
+  # Returns a String representation of the merge request states
+  def merge_request_states
+    (merge_request_custom_states || merge_request_default_states).join("\n")
+  end
+
+  def merge_request_states=(s)
+    self.merge_request_custom_states = s.split("\n").collect(&:strip)
+  end
+  
+
+  def merge_request_fixed_states
+    ['Merged','Rejected']
+  end
+  
+  def merge_request_default_states
+    ['Open','Closed','Verifying']
+  end
+
+  def has_custom_merge_request_states?
+    !merge_request_custom_states.blank?
+  end
+  
   protected    
     def create_wiki_repository
       self.wiki_repository = Repository.create!({

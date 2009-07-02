@@ -50,8 +50,8 @@ class CommentsController < ApplicationController
   def create
     state = params[:comment].delete(:state)
     @comment = @target.comments.new(params[:comment])
-    @comment.state = state
     @comment.user = current_user
+    @comment.state = state
     @comment.project = @project
 
     respond_to do |format|

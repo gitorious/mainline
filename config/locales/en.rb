@@ -440,7 +440,8 @@
         :add_repository_breadcrumb => "Add Repository",
         :edit_slug_title => 'Edit the slug (for URLs etc.)',
         :edit_slug_disclaimer => 'Please note that by changing the slug <strong>all URLs, including git URLs, will be changed</strong>',
-        :update_slug => 'Update slug'
+        :update_slug => 'Update slug',
+        :merge_request_states_hint => 'Each line should contain one status tag that can be selected for merge requests in this project'
       },
       :merges => {
         :info => {
@@ -649,6 +650,7 @@
           :bugtracker_url => "Bugtracker URL (if any)",
           :wiki_enabled => "Should the wiki be enabled?",
           :tag_list => "Categories (space separated)",
+          :merge_request_states => 'Merge request states',
         },
         :comment => {
           :body => "Body",

@@ -361,4 +361,30 @@ class ProjectTest < ActiveSupport::TestCase
       assert_match(/<clones/, @project.to_xml)
     end
   end
+
+  context 'Merge request status tags' do
+    setup {@project = Factory.create(:user_project)}
+
+    should 'by default have the default states' do
+      assert_equal ['Merged','Rejected'], @project.merge_request_fixed_states
+      assert !@project.has_custom_merge_request_states?
+      assert_equal ['Merged','Rejected','Open','Closed','Verifying'], @project.merge_request_state_list
+    end
+
+    should 'serialize merge_request_state_options' do
+      @project.merge_request_custom_states = %w(Merged Verifying)
+      assert_equal %w(Merged Verifying), @project.merge_request_custom_states
+    end
+
+    should 'return an array of states including the default ones' do
+      @project.merge_request_custom_states = %w(Closed Wontfix)
+      assert_equal %w(Merged Rejected Closed Wontfix), @project.merge_request_state_list
+    end
+
+    should 'be serializible through a text-only version' do
+      assert_equal "Open\nClosed\nVerifying", @project.merge_request_states
+      @project.merge_request_states = "Foo\nBar"
+      assert_equal ['Foo','Bar'], @project.merge_request_custom_states
+    end
+  end
 end

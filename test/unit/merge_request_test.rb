@@ -578,5 +578,20 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.status_tag = 'in_verification'
       assert @merge_request.verifying?
     end
+
+    should 'create an event when changing the state' do
+      @merge_request.status_tag = 'before'
+      @merge_request.expects(:create_status_change_event).with('before','after').once
+      @merge_request.status_tag = 'after'
+    end
+
+    should 'create an event with a given user if such is provided' do
+      @merge_request.status_tag = 'before'
+      @merge_request.with_user(users(:johan)) do
+        @merge_request.status_tag = 'after'
+        event = @merge_request.events.reload.last
+        assert_equal users(:johan), event.user
+      end
+    end
   end
 end

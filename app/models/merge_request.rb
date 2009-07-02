@@ -162,9 +162,15 @@ class MergeRequest < ActiveRecord::Base
       User.find(updated_by_user_id)
     end
   end
+
+  def with_user(a_user)
+    @current_user = a_user
+    yield
+    @current_user = nil
+  end
   
   def status_tag=(s)
-    case s
+    case s.downcase
     when 'merged'
       self.status = STATUS_MERGED
     when 'rejected'
@@ -172,8 +178,15 @@ class MergeRequest < ActiveRecord::Base
     when 'in_verification'
       self.status = STATUS_VERIFYING
     end
+    create_status_change_event(status_tag, s)
     write_attribute(:status_tag, s)
     save
+  end
+  
+  def create_status_change_event(old_state, new_state)
+    if @current_user
+      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, @current_user, "State changed from #{old_state} to #{new_state}.", nil)
+    end
   end
   
   # Returns a hash (for the view) of labels and event names for next states
@@ -516,40 +529,4 @@ class MergeRequest < ActiveRecord::Base
     highest_version_number + 1
   end
   
-  # # One time migration: 
-  # # Since the backend is changed from using a diff between source and target repos, we need an actual branch which holds the MR:
-  # # - Create the tracking repo for each target repository
-  # # - Push the merge request to the tracking repo (eg. one branch in the target repo and one to the tracking repo)
-  # def migrate_with_tracking_repository
-  #   if target_repository && source_repository
-  #     if !target_repository.has_tracking_repository?
-  #       tracking_repo = target_repository.create_tracking_repository
-  #       $stderr.puts "Creating tracking repo at #{tracking_repo.full_repository_path}"
-  #       Repository.clone_git_repository(tracking_repo.real_gitdir, target_repository.real_gitdir,{:skip_hooks => true})        
-  #     end
-  #     $stderr.puts "Pushing to tracking repo for merge request #{id}"
-  #     begin
-  #       if ending_commit_exists?
-  #         push_to_tracking_repository!    
-  #       else
-  #         $stderr.puts "The ending commit (#{ending_commit}) for merge request #{id} does not exist in the source repository. Merge request was not migrated"
-  #       end
-  #     rescue => e
-  #       $stderr.puts e
-  #     end
-  #   else
-  #     $stderr.puts "WARNING: Merge request #{id} lacks target or source repository"
-  #   end
-  #   migrate_decision_to_comment
-  # end
-  # 
-  # # Another one time migration: 
-  # # If we have a reason (that is someone who can resolve us) we will create a comment with this as body and set the state to be the current +status_string+
-  # def migrate_decision_to_comment
-  #   unless reason.blank?
-  #     c = comments.build(:body => reason, :user => updated_by, :project => target_repository.project)
-  #     c.state = status_string
-  #     c.save!
-  #   end
-  # end
 end

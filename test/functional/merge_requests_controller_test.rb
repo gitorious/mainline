@@ -138,7 +138,28 @@ class MergeRequestsControllerTest < ActionController::TestCase
   			:id => @merge_request.id
   		assert_match(/Update merge request/, @response.body) #TODO assert_select proper
     end
-	end
+
+    should 'not display a comment change field unless the current user can change the MR' do
+      login_as :moe
+      assert !@merge_request.resolvable_by?(users(:moe))
+  		get :show, :project_id => @project.to_param, 
+  			:repository_id => repositories(:johans).name,
+  			:id => @merge_request.id
+      assert_response :success
+      assert_select "select#comment_state", false
+    end
+    
+      should 'not display a comment change field unless the current user can change the MR' do
+      login_as :johan
+      assert @merge_request.resolvable_by?(users(:johan))
+  		get :show, :project_id => @project.to_param, 
+  			:repository_id => repositories(:johans).name,
+  			:id => @merge_request.id
+      assert_response :success
+      assert_select "select#comment_state"
+    end
+  
+  end
 
 	context "#new (GET)" do
 	  setup do
