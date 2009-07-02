@@ -41,7 +41,7 @@
   <tr>
     <td colspan="3" class="repository-description">
       <div class="page">
-        <%= auto_link(sanitize(markdown(repository.description)), :urls) -%>
+        <%= render_markdown(repository.description, :auto_link) -%>
       </div>
     </td>
   </tr>

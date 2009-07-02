@@ -60,6 +60,17 @@ module ApplicationHelper
     renderer = MarkupRenderer.new(text, :markdown => options)
     renderer.to_html
   end
+
+  def render_markdown(text, *options)
+    # RDiscount < 1.4 doesn't support the :auto_link, use Rails' instead
+    auto_link = options.delete(:auto_link)
+    markdown_options = [:smart] + options
+    markdownized_text = markdown(text, markdown_options)
+    if auto_link
+      markdownized_text = auto_link(markdownized_text, :urls)
+    end
+    sanitize(markdownized_text)
+  end
   
   def feed_icon(url, alt_title = "Atom feed", size = :small)
     link_to image_tag("silk/feed.png", :class => "feed_icon"), url,

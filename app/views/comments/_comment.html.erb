@@ -22,7 +22,7 @@
 
 <div class="comment">
   <a name="<%= dom_id(comment) -%>"></a>
-  <div class="body"><%= sanitize(markdown(comment.body)) -%></div>
+  <div class="body"><%= render_markdown(comment.body, :auto_link) -%></div>
   <p class="byline">
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>

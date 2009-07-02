@@ -13,6 +13,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 result = content_tag(:h3, "Comment preview")
-result << content_tag(:div, markdown(sanitize(@comment.body)))
+result << content_tag(:div, render_markdown(@comment.body, :auto_link))
 page.replace_html("comment_preview",result)
 page.visual_effect(:highlight, "comment_preview")

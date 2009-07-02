@@ -27,7 +27,7 @@
 <h1><%=h @project.title -%></h1>
 
 <div id="project-description" class="page">
-  <%= auto_link(sanitize(markdown(@project.description)), :urls) -%>
+  <%= render_markdown(@project.description, :auto_link) -%>
 </div>
 
 <% @project.repositories.mainlines.each do |repo| -%>
