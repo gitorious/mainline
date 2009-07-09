@@ -20,7 +20,7 @@
 class RepositoryObserver < ActiveRecord::Observer
   
   def after_create(repository)
-    unless repository.parent.blank?
+    if !repository.parent.blank? && !repository.tracking_repo?
       Mailer.deliver_new_repository_clone(repository)
     end
   end

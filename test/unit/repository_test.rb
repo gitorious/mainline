@@ -707,6 +707,13 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.parent = nil
       @repository.save!
     end
+
+    should "not send an email if it is a tracking repository that's being created" do
+      Mailer.expects(:deliver_new_repository_clone).never
+      @repository.kind = Repository::KIND_TRACKING_REPO
+      @repository.parent = repositories(:johans)
+      @repository.save!
+    end
   end
   
   context 'Signoff of merge requests' do
