@@ -28,7 +28,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     Repository.any_instance.stubs(:git).returns(@grit)
   end
   
-  should_render_in_site_specific_context :except => [:writable_by, :real_path]
+  should_render_in_site_specific_context :except => [:writable_by, :config]
   
   context "Routing, by projects" do
     should "recognizes routing like /projectname/reponame" do
@@ -768,11 +768,11 @@ class RepositoriesControllerTest < ActionController::TestCase
     
   end
   
-  def do_real_path_get(options={})
-    get(:real_path, {:project_id => @project.slug, :id => @repository.name}.merge(options))
+  def do_config_get(options={})
+    get(:config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
   end
 
-  context "#real_path" do
+  context "#config" do
     setup do
       login_as :johan
       @project = projects(:johans)
@@ -781,14 +781,15 @@ class RepositoriesControllerTest < ActionController::TestCase
   
     should " not require login" do
       session[:user_id] = nil
-      do_real_path_get
+      do_config_get
       assert_response :success
     end
   
-    should "get projects/1/repositories/3/real_path is true" do
-      do_real_path_get
+    should "get projects/1/repositories/3/config is true" do
+      do_config_get
       assert_response :success
-      assert_equal @repository.real_gitdir, @response.body
+      exp = "real_path:#{@repository.real_gitdir}\nforce_pushing_denied:false"
+      assert_equal exp, @response.body
     end
   end
 

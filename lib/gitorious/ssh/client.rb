@@ -31,6 +31,7 @@ module Gitorious
         @project_name, @repository_name = strainer.path.split("/", 2)
         @repository_name.gsub!(/\.git$/, "")
         @user_name = username
+        @configuration = {}
       end
       attr_accessor :project_name, :repository_name, :user_name
     
@@ -54,12 +55,17 @@ module Gitorious
       end
       
       def real_path
-        query_for_real_path
-        full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
-        if !@real_path || @real_path == "nil" || !File.exist?(full_real_path)
+        if !configuration["real_path"] || configuration["real_path"] == "nil"
           raise AccessDeniedError
         end
+        full_real_path = File.join(GitoriousConfig["repository_base_path"],
+          configuration["real_path"])
+        raise AccessDeniedError unless File.exist?(full_real_path)
         full_real_path
+      end
+
+      def force_pushing_denied?
+        configuration["force_pushing_denied"] == "true"
       end
     
       def to_git_shell_argument
@@ -80,17 +86,27 @@ module Gitorious
         end
       end
       
-      def query_for_real_path
-        if !@real_path
-          query_url="/#{@project_name}/#{@repository_name}/real_path"
+      def configuration
+        if @configuration.empty?
+          query_url = "/#{@project_name}/#{@repository_name}/config"
           # $stderr.puts "Querying #{query_url}" if $DEBUG
           resp = connection.get(query_url)
           # $stderr.puts resp
-          @real_path = resp.body
+          parse_configuration(resp.body)
         end
+        @configuration
       end
     
       protected
+        def parse_configuration(raw_config)
+          raw_config.split("\n").each do |line|
+            key, val = line.split(":")
+            if key && val
+              @configuration[key] = val
+            end
+          end
+        end
+      
         def connection
           port = GitoriousConfig["gitorious_client_port"]
           host = GitoriousConfig["gitorious_client_host"]

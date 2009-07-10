@@ -173,6 +173,11 @@ class Repository < ActiveRecord::Base
       :joins => :events, :include => :project)
   end
   
+  # TODO: temporary stub until the db column and views are added
+  def deny_force_pushing?
+    false
+  end
+  
   def gitdir
     "#{url_path}.git"
   end
