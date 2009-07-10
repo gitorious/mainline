@@ -159,6 +159,7 @@ class RepositoriesController < ApplicationController
         @repository.replace_value(:name, params[:repository][:name])
         @repository.replace_value(:description, params[:repository][:description])
       end
+      @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
 
       @repository.save!
       flash[:success] = "Repository updated"

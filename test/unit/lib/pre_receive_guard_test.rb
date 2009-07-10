@@ -37,6 +37,13 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert @guard.allow_push?
     end
     
+    should "deny fast forwards if the correct env var is set" do
+      @env["GITORIOUS_DENY_FORCE_PUSHES"] = "true"
+      guard = Gitorious::SSH::PreReceiveGuard.new(@env,
+        "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
+      assert guard.deny_force_pushes?
+    end
+    
     should 'build the correct authentication URL' do
       assert_equal "http://gitorious.example/repositories/writable_by?user=john&git_path=#{CGI.escape('refs/merge-requests/123')}", @guard.authentication_url
     end
@@ -58,6 +65,7 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
 
     should 'allow push when Gitorious says it is ok' do
       @guard.stubs(:get_via_http).returns('true')
+      assert !@guard.deny_force_pushes?
       assert @guard.allow_push?
     end
   end

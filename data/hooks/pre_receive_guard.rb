@@ -49,6 +49,11 @@ module Gitorious
         result = get_via_http(authentication_url)
         return result == 'true'
       end
+
+      def deny_force_pushes?
+        return false if local_connection?
+        @env['GITORIOUS_DENY_FORCE_PUSHES'] == "true"
+      end
       
       def get_via_http(url)
         open(url).read
