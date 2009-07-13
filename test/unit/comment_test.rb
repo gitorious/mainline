@@ -21,7 +21,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class CommentTest < ActiveSupport::TestCase
     
-  should_validate_presence_of :target, :user_id, :body, :project_id
+  should_validate_presence_of :target, :user_id, :project_id
   
   context "message notifications" do
     setup do
@@ -95,6 +95,15 @@ class CommentTest < ActiveSupport::TestCase
       comment.state_change = ['New', 'Closed']
       assert_equal 'New', comment.state_changed_from
       assert_equal 'Closed', comment.state_changed_to
+    end
+
+    should "not require a body if state changes" do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      @comment = @merge_request.comments.new(:project => projects(:johans), :user => users(:moe))
+      assert @comment.body_required?
+      @comment.state = "Foo"
+      assert !@comment.body_required?
+      assert @comment.save, "Should not require a body when state changes"
     end
   end
   

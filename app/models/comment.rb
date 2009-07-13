@@ -36,7 +36,8 @@ class Comment < ActiveRecord::Base
   
   attr_protected :user_id
     
-  validates_presence_of :user_id, :target, :body, :project_id
+  validates_presence_of :user_id, :target, :project_id
+  validates_presence_of :body, :if =>  Proc.new {|mr| mr.body_required?}
   
   named_scope :with_shas, proc{|*shas| 
     {:conditions => { :sha1 => shas.flatten }, :include => :user}
@@ -73,6 +74,14 @@ class Comment < ActiveRecord::Base
   
   def state_changed_from
     state_change.to_a.size > 1 ? state_change.first : nil
+  end
+
+  def body_required?
+    if applies_to_merge_request?
+      return state_change.blank?
+    else
+      return true
+    end
   end
   
   protected
