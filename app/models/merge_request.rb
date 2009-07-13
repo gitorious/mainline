@@ -80,10 +80,13 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  named_scope :open, :conditions => ['LCASE(status_tag) in (?)', ['open','verifying']]
+  named_scope :open, :conditions => ['LCASE(status_tag) in (?) OR status_tag IS NULL', ['open','verifying']]
   named_scope :closed, :conditions => ["LCASE(status_tag) in (?)", ['merged','rejected']]
   named_scope :merged, :conditions => ["LCASE(status_tag) = ?", 'merged']
   named_scope :rejected, :conditions => ["LCASE(status_tag) = ?", 'rejected']
+  named_scope :by_status, lambda {|state|
+    {:conditions => ["LCASE(status_tag) = ?", state ] }
+  }
 
   
   def reopen_with_user(a_user)
@@ -119,6 +122,8 @@ class MergeRequest < ActiveRecord::Base
       merged
     when "rejected"
       rejected
+    when String
+      by_status(filter_name)
     else
       open
     end

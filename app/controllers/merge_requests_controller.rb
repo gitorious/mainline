@@ -38,9 +38,11 @@ class MergeRequestsController < ApplicationController
     # 
     #@open_merge_requests = @repository.merge_requests.open
     @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(:all, {:page => params[:page], :per_page => 10})
+
     @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, {
       :limit => 10, :order => "updated_at desc"
-    })
+      })
+    @status_tags = @repository.merge_request_status_tags
     @comment_count = @repository.comments.count
     respond_to do |wants|
       wants.html

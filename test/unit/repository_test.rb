@@ -733,6 +733,14 @@ class RepositoryTest < ActiveSupport::TestCase
       assert !@other_repository.requires_signoff_on_merge_requests?
     end
   end
+
+  context "Merge request status tags" do
+    setup {@repo = repositories(:johans)}
+
+    should "have a list of used status tags" do
+      assert_equal %w(open), @repo.merge_request_status_tags
+    end
+  end
   
   context "Thottling" do
     setup{ Repository.destroy_all }

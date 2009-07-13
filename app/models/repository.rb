@@ -572,6 +572,11 @@ class Repository < ActiveRecord::Base
   def has_tracking_repository?
     !tracking_repository.nil?
   end
+
+  def merge_request_status_tags
+    result = MergeRequest.find_by_sql(["SELECT status_tag FROM merge_requests WHERE target_repository_id = ? GROUP BY status_tag", self.id]).collect(&:status_tag)
+    result.compact
+  end
   
   protected
     def sharded_hashed_path(h)

@@ -492,10 +492,10 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter(nil)
     end
     
-    should "fall back to open merge-requests on invalid filter name" do
-      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'merged')
-      assert !@repo.merge_requests.from_filter("kittens").include?(merge_requests(:moes_to_johans))
-      assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter("kittens")
+    should "fall back to using named_scope on other filter name" do
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'kittens')
+      assert !@repo.merge_requests.from_filter("kittens").include?(merge_requests(:moes_to_johans_open))
+      assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("kittens")
     end
     
     should "find merged merge-requests" do

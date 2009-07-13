@@ -39,7 +39,7 @@
 <% content_for :sidebar do -%>
   <h4>Filter</h4>
   <ul class="links">
-    <% ["open", "merged", "rejected"].each do |status| -%>
+    <% @status_tags.each do |status| -%>
       <li class="merge_requests"><%= link_to_status(@repository, status) -%></li>
     <% end -%>
   </ul>

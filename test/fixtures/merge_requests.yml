@@ -25,3 +25,13 @@ mikes_to_johans:
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   ending_commit: 286e8afb9576366a2a43b12b94738f07
   status: <%= MergeRequest::STATUS_OPEN %>
+  status_tag: open
+
+johans_to_mikes:
+  user_id: 1
+  source_repository_id: 1
+  target_repository_id: 2
+  proposal: Yeah
+  sha_snapshot: a99238
+  ending_commit: a99238
+  status_tag: orphaned  
