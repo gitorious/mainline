@@ -33,11 +33,15 @@ module Gitorious
 
       # extract the target, eg. refs/heads/master
       def git_target
-        @git_spec.split(/\s/).last.chomp
+        @git_spec.split(/\s/, 3).last.chomp
       end
       
       def local_connection?
         !@env.include? 'SSH_ORIGINAL_COMMAND'
+      end
+
+      def merge_request_update?
+        git_target =~ /^refs\/merge-requests\/\d+$/
       end
 
       def authentication_url
@@ -52,6 +56,7 @@ module Gitorious
 
       def deny_force_pushes?
         return false if local_connection?
+        return false if merge_request_update?
         @env['GITORIOUS_DENY_FORCE_PUSHES'] == "true"
       end
       

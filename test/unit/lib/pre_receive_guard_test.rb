@@ -36,11 +36,22 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert @guard.local_connection?
       assert @guard.allow_push?
     end
+
+    should "never deny force-pushes for merge-requests" do
+      guard = Gitorious::SSH::PreReceiveGuard.new(@env,
+        "#{'aaa'*10} #{'bbb'*10} refs/merge-requests/123\n")
+      assert !guard.deny_force_pushes?
+
+      @env["GITORIOUS_DENY_FORCE_PUSHES"] = "true"
+      guard = Gitorious::SSH::PreReceiveGuard.new(@env,
+        "#{'aaa'*10} #{'bbb'*10} refs/merge-requests/123\n")
+      assert !guard.deny_force_pushes?
+    end
     
     should "deny fast forwards if the correct env var is set" do
       @env["GITORIOUS_DENY_FORCE_PUSHES"] = "true"
       guard = Gitorious::SSH::PreReceiveGuard.new(@env,
-        "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
+        "#{'0'*10} #{'fca'*10} refs/heads/master")
       assert guard.deny_force_pushes?
     end
     
