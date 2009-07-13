@@ -498,12 +498,13 @@ class MergeRequest < ActiveRecord::Base
     versions.blank? ? nil : versions.last.version
   end
   
-  # Verify that +a_commit+ exists in target branch. Git cherry would return a list of commits if this is not the case
+  # Verify that +a_commit+ exists in target branch. Git cherry would
+  # return a list of commits if this is not the case
   def commit_merged?(a_commit)
-    result = Rails.cache.fetch("merge_status_for_commit_#{a_commit}_in_repository_#{target_repository.id}",
-                      :expires_in => 60.minutes) do
+    # FIXME: could fetch them all in one target_branch..this_branch operation
+    key = "merge_status_for_commit_#{a_commit}_in_repository_#{target_repository.id}"
+    result = Rails.cache.fetch(key, :expires_in => 60.minutes) do
       output = target_repository.git.git.cherry({},target_branch, a_commit)
-      RAILS_DEFAULT_LOGGER.info "Cache missed OMGWFTBBQ #{a_commit}"
       output.blank? ? :true : :false # Storing false in the cache would make it miss each time
     end
     result == :true
