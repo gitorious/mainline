@@ -142,6 +142,13 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @merge_request, Event.last.target
       assert_equal "MergeRequest", Event.last.body
     end
+
+    should "create only one event when changing state on a merge request thru comment" do
+      assert_incremented_by(Event, :count, 1) do
+        post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+          :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome", :state => "merged"}
+      end
+    end
     
     should 'transition the target if state is provided' do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,

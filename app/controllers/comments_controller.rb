@@ -97,7 +97,7 @@ class CommentsController < ApplicationController
       if @target == @repository
         @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param, "Repository")
       else
-        @project.create_event(Action::COMMENT, @target, current_user, @comment.to_param, "MergeRequest")
+        @project.create_event(Action::COMMENT, @target, current_user, @comment.to_param, "MergeRequest") if @comment.state_change.blank?
       end
     end
 end
