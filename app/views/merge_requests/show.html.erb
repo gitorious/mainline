@@ -28,30 +28,15 @@
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 
-
-<% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
-<% form_for @merge_request, 
-   :url => resolve_project_repository_merge_request_path(@project || @containing_project, 
-@repository, @merge_request) do |f| -%>
-<p>
-  <%= f.label :status -%><br />
-  <%= f.select :status, @merge_request.possible_next_states_hash -%><br />
-
-
-
-  <%= f.label :reason -%><br />
-  <%= f.text_area :reason %><br />
-
-  <%= f.submit t("views.merges.update_btn") -%></p>
-<% end -%>
-
 <% if @merge_request.open? -%>
+<h2><%= t("views.merges.commits_to_merged") %>:</h2>
+<% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
 <% help_box(:left) do -%>
 <p>
   <%= t("views.merges.help") %> 
   <small>
     <%= link_to_function(t("views.merges.example"), 
-        "$('detailed_merge_request_help').toggle()", :class => "more_info") -%>
+          "$('detailed_merge_request_help').toggle()", :class => "more_info") -%>
   </small>
 </p>
 <pre id="detailed_merge_request_help" style="display:none;">
@@ -69,10 +54,7 @@
 </pre>
 <% end -%>
 <% end -%>
-<% end -%>
 
-<% if @merge_request.open? -%>
-<h2><%= t("views.merges.commits_to_merged") %>:</h2>
 <% else -%>
 <h2><%= t("views.merges.commits") %>:</h2>
 <% end -%>
