@@ -33,7 +33,8 @@ class MergeRequest < ActiveRecord::Base
   before_destroy :nullify_messages
 
   
-  is_indexed :fields => ["proposal"], :include => [{
+  is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
+    :include => [{
       :association_name => "user",
       :field => "login",
       :as => "proposed_by"
