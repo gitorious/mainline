@@ -135,6 +135,17 @@ module ActionView
       ensure
         self.output_buffer = old_buffer
       end
+
+      # Add the output buffer to the response body and start a new one.
+      def flush_output_buffer #:nodoc:
+        if output_buffer && !output_buffer.empty?
+          response.body_parts << output_buffer
+          new = ''
+          new.force_encoding(output_buffer.encoding) if new.respond_to?(:force_encoding)
+          self.output_buffer = new
+          nil
+        end
+      end
     end
   end
 end

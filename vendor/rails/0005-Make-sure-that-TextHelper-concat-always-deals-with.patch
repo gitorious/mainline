@@ -1,7 +1,7 @@
-From 02d5a6e3fe6cffb1ad028a4adb18d0346f66b92d Mon Sep 17 00:00:00 2001
+From 89b049aa3e5dec9f2e3dab53d50604ecaff1df42 Mon Sep 17 00:00:00 2001
 From: =?utf-8?q?Johan=20S=C3=B8rensen?= <johan@johansorensen.com>
 Date: Tue, 28 Apr 2009 13:20:06 +0200
-Subject: [PATCH] Make sure that TextHelper #concat always deals with UTF8 content in Ruby 1.9
+Subject: [PATCH 5/6] Make sure that TextHelper #concat always deals with UTF8 content in Ruby 1.9
 
 ---
  actionpack/lib/action_view/helpers/text_helper.rb |    7 ++++++-

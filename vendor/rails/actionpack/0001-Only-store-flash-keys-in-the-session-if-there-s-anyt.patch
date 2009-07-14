@@ -1,0 +1,79 @@
+From 72fb0298af8aa27b505eb07a0694d5dfde65bc7c Mon Sep 17 00:00:00 2001
+From: =?utf-8?q?Johan=20S=C3=B8rensen?= <johan@johansorensen.com>
+Date: Wed, 27 May 2009 15:15:29 +0200
+Subject: [PATCH 1/2] Only store flash keys in the session if there's anything set
+
+The FlashHash and friends causes a lot of needless session storing, when we
+know for a fact that there's no content in the flash. By not storing the empty
+hash in the session we save a lot of communication with the various session
+backends, while still keeping the same interface to the flash.
+---
+ actionpack/lib/action_controller/flash.rb |   14 +++++++++++---
+ actionpack/test/controller/flash_test.rb  |    7 ++++++-
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/actionpack/lib/action_controller/flash.rb b/actionpack/lib/action_controller/flash.rb
+index 56ee9c6..9391207 100644
+--- a/actionpack/lib/action_controller/flash.rb
++++ b/actionpack/lib/action_controller/flash.rb
+@@ -120,6 +120,11 @@ module ActionController #:nodoc:
+         (@used.keys - keys).each{ |k| @used.delete(k) }
+       end
+ 
++      def store(session, key = "flash")
++        return if self.empty?
++        session[key] = self
++      end
++
+       private
+         # Used internally by the <tt>keep</tt> and <tt>discard</tt> methods
+         #     use()               # marks the entire flash as used
+@@ -139,7 +144,10 @@ module ActionController #:nodoc:
+       protected
+         def perform_action_with_flash
+           perform_action_without_flash
+-          remove_instance_variable(:@_flash) if defined? @_flash
++          if defined? @_flash
++            @_flash.store(session)
++            remove_instance_variable(:@_flash)
++          end
+         end
+ 
+         def reset_session_with_flash
+@@ -151,8 +159,8 @@ module ActionController #:nodoc:
+         # read a notice you put there or <tt>flash["notice"] = "hello"</tt>
+         # to put a new one.
+         def flash #:doc:
+-          unless defined? @_flash
+-            @_flash = session["flash"] ||= FlashHash.new
++          if !defined?(@_flash)
++            @_flash = session["flash"] || FlashHash.new
+             @_flash.sweep
+           end
+ 
+diff --git a/actionpack/test/controller/flash_test.rb b/actionpack/test/controller/flash_test.rb
+index d8a8928..81c724a 100644
+--- a/actionpack/test/controller/flash_test.rb
++++ b/actionpack/test/controller/flash_test.rb
+@@ -121,7 +121,7 @@ class FlashTest < ActionController::TestCase
+     assert_nil                  @response.template.assigns["flash_copy"]["that"], "On second flash"
+     assert_equal "hello again", @response.template.assigns["flash_copy"]["this"], "On second flash"
+   end
+-  
++
+   def test_flash_after_reset_session
+     get :use_flash_after_reset_session
+     assert_equal "hello",    @response.template.assigns["flashy_that"]
+@@ -139,4 +139,9 @@ class FlashTest < ActionController::TestCase
+     get :std_action
+     assert_nil @response.template.assigns["flash_copy"]["foo"]
+   end
++
++  def test_does_not_set_the_session_if_the_flash_is_empty
++    get :std_action
++    assert_nil session["flash"]
++  end
+ end
+-- 
+1.6.1
+
