@@ -46,5 +46,10 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       Rails.cache.expects(:fetch).with('cache', :expires_in => 60.minutes).returns([])
       result = @first_version.affected_commits
     end
+
+    should "have a unique cache key between versions" do
+      second_version = @merge_request.create_new_version
+      assert_not_equal @first_version.cache_key, second_version.cache_key
+    end
   end
 end
