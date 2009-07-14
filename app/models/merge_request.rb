@@ -185,14 +185,18 @@ class MergeRequest < ActiveRecord::Base
     when 'in_verification'
       self.status = STATUS_VERIFYING
     end
-    create_status_change_event(status_tag, s)
+    
+    @previous_state = status_tag
     write_attribute(:status_tag, s)
     save
   end
-  
-  def create_status_change_event(old_state, new_state)
+
+  def create_status_change_event(comment)
     if @current_user
-      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, @current_user, "State changed from #{old_state} to #{new_state}.", nil)
+      message = "State changed "
+      message << "from #{@previous_state} " if @previous_state
+      message << "to #{status_tag}"
+      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, @current_user, message, comment)
     end
   end
   

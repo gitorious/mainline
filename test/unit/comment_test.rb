@@ -19,7 +19,7 @@
 
 require File.dirname(__FILE__) + '/../test_helper'
 
-class CommentTest < ActiveSupport::TestCase
+class CommentTest < ActiveSupport::TestCase 
     
   should_validate_presence_of :target, :user_id, :project_id
   

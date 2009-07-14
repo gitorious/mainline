@@ -580,16 +580,31 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert @merge_request.verifying?
     end
 
-    should 'create an event when changing the state' do
-      @merge_request.status_tag = 'before'
-      @merge_request.expects(:create_status_change_event).with('before','after').once
-      @merge_request.status_tag = 'after'
+    should 'build an event with from and to when changing between states' do
+      @merge_request.with_user(users(:johan)) do
+        @merge_request.status_tag = 'before'
+        @merge_request.status_tag = 'after'
+        @merge_request.create_status_change_event("Foo")
+        event = @merge_request.events.reload.last
+        assert_equal "State changed from before to after", event.data
+      end
+    end
+
+    should 'build an event with only the new state' do
+      @merge_request.write_attribute(:status_tag, nil)
+      @merge_request.with_user(users(:johan)) do
+        @merge_request.status_tag = "merged"
+        @merge_request.create_status_change_event("Setting this to merged")
+        event = @merge_request.events.reload.last
+        assert_equal "State changed to merged", event.data
+      end
     end
 
     should 'create an event with a given user if such is provided' do
       @merge_request.status_tag = 'before'
       @merge_request.with_user(users(:johan)) do
         @merge_request.status_tag = 'after'
+        @merge_request.create_status_change_event "Updated this"
         event = @merge_request.events.reload.last
         assert_equal users(:johan), event.user
       end
