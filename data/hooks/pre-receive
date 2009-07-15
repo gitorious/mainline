@@ -31,13 +31,24 @@ logger = if ENV["GITORIOUS_BASE_DIR"]
 while data = gets
   begin
     pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, data)
+    oldrev, newrev, ref = data.chomp.split(" ")
+
     if pre_receive_guard.allow_push?
+      if pre_receive_guard.null_sha?(newrev) && pre_receive_guard.merge_request_update?
+        # it's a request to delete a merge request ref
+        logger.info("delete-merge-request.ref denied for #{ENV['GITORIOUS_USER'].inspect}" +
+          " to #{pre_receive_guard.git_spec.inspect} via " +
+          "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+          pre_receive_guard.gitorious_says "You can't delete a merge-request ref"
+          exit!(1)
+      end
+
       if pre_receive_guard.deny_force_pushes?
-        oldrev, newrev, ref = data.chomp.split(" ")
-        if newrev == "0000000000000000000000000000000000000000"
+        if pre_receive_guard.null_sha?(newrev)
           # it's a request to delete a ref
           logger.info("delete-ref denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-        "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+            "#{pre_receive_guard.git_spec.inspect} via " +
+            "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
           pre_receive_guard.gitorious_says "This repository does not allow deleting refs"
           exit!(1)
         end
@@ -46,7 +57,8 @@ while data = gets
         if merge_base != oldrev
           # it's a force-push
           logger.info("force-push denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-        "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+            "#{pre_receive_guard.git_spec.inspect} via "+
+            "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
           pre_receive_guard.gitorious_says "This repository does only allow fast-forwards"
           exit!(1)
         end
@@ -54,12 +66,14 @@ while data = gets
 
       # If we get here, everything should be good to go..
       logger.info("Allowed #{ENV['GITORIOUS_USER'].inspect} to " +
-        "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+        "#{pre_receive_guard.git_spec.inspect} via " +
+        "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
       exit(0)
     else
       pre_receive_guard.gitorious_says "You do not have write access to this repository"
       logger.info("Denied #{ENV['GITORIOUS_USER'].inspect} to " +
-        "#{pre_receive_guard.git_spec.inspect} via #{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+        "#{pre_receive_guard.git_spec.inspect} via " +
+        "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
       exit!(1)
     end
   rescue Errno::ECONNREFUSED

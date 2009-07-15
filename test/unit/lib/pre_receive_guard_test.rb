@@ -79,5 +79,10 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert !@guard.deny_force_pushes?
       assert @guard.allow_push?
     end
+
+    should "know if something is a null sha1" do
+      assert !@guard.null_sha?("abcd"*10)
+      assert @guard.null_sha?("0000000000000000000000000000000000000000")
+    end
   end
 end

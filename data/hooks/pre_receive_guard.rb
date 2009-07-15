@@ -71,6 +71,10 @@ module Gitorious
         $stderr.puts "="*72
         $stderr.puts
       end
+
+      def null_sha?(sha)
+        sha == "0000000000000000000000000000000000000000"
+      end
     end
   end
 end
