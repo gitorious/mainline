@@ -24,7 +24,7 @@
 <%- @message.messages_in_thread.each do |message| -%>
   <div class="<%= message.aasm_state -%> <%= message.css_class -%> message_full" id="<%= dom_id(message) -%>">
     <div class="avatar">
-      <%= avatar_from_email message.sender.email, :size => 32 -%>
+      <%= sender_avatar message -%>
     </div>
     <div class="message">
       <% unless message.subject == @message.subject -%>
@@ -43,13 +43,13 @@
           </li>
         <% end %>
 
-        <%- unless message.sender == current_user -%>
+        <%- if (message.sender != current_user) and message.replies_enabled? -%>
           <li>
             <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
           </li>    
         <%- end -%>
       </ul>
-        <% unless message.sender == current_user -%>
+        <% if (message.sender != current_user) and message.replies_enabled? -%>
           <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
             <% form_for(message.build_reply, :url => reply_message_path(message)) do |f| %>
               <p>

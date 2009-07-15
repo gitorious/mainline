@@ -305,4 +305,30 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
+  context "Sender display" do
+    setup do
+      @sender = Factory.create(:user)
+      @recipient = Factory.create(:user)
+    end
+
+    should "be sender#title when no notifiable exists" do
+      message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hey", :body => "Hello earth")
+      assert_equal @sender.title, message.sender_name
+      assert message.replies_enabled?
+    end
+    
+    should "be Gitorious when a notifiable exists" do
+      group = Factory.create(:group, :creator => @sender)
+      membership = Membership.build_invitation(@sender,
+        :group => group,
+        :user => @recipient,
+        :role => Role.admin)
+      assert membership.save
+      assert_not_nil message = membership.messages.first
+      assert_equal @sender, message.sender
+      assert_equal "Gitorious", message.sender_name
+      assert !message.replies_enabled?
+    end
+  end
+  
 end

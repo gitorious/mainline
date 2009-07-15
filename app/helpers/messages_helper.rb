@@ -22,7 +22,7 @@ module MessagesHelper
   
   def sender_and_recipient_for(message)
     if message.recipient == current_user
-      [h(message.sender.title), "me"]
+      [h(message.sender_name), "me"]
     else
       ["me", h(message.recipient.title)]
     end
@@ -41,6 +41,14 @@ module MessagesHelper
       %Q{<strong>#{sender}</strong> added #{link_to(committership.committer.title, [committership.repository.project,committership.repository,:committerships])} as committer in <strong>#{committership.repository.name}</strong>}
     else
       "#{link_to('message', message)} from <strong>#{sender}</strong> to <strong>#{recipient}</strong>"
+    end
+  end
+
+  def sender_avatar(message)
+    if message.replies_enabled?
+      avatar_from_email(message.sender.email, :size => 32)
+    else
+      image_tag("default_face.gif", :size => "32x32")
     end
   end
 end

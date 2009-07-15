@@ -76,11 +76,19 @@ class Message < ActiveRecord::Base
   end
   
   def sender_name
-    sender.title
+    if notifiable
+      "Gitorious"
+    else
+      sender.title
+    end
   end
   
   def breadcrumb_parent
     in_reply_to || Breadcrumb::Messages.new(sender)
+  end
+
+  def replies_enabled?
+    notifiable.nil?
   end
   
   def display_state_for(a_user)
