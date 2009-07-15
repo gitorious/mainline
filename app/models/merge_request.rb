@@ -194,9 +194,10 @@ class MergeRequest < ActiveRecord::Base
   def create_status_change_event(comment)
     if @current_user
       message = "State changed "
-      message << "from #{@previous_state} " if @previous_state
-      message << "to #{status_tag}"
-      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, @current_user, message, comment)
+      message << "from <span class=\"changed\">#{@previous_state}</span> " if @previous_state
+      message << "to <span class=\"changed\">#{status_tag}</span>"
+      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
+        @current_user, message, comment)
     end
   end
   
@@ -491,7 +492,7 @@ class MergeRequest < ActiveRecord::Base
       tracking_repository.full_repository_path, branch_spec)
     create_new_version
     target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
-      user, "new version #{current_version_number}", "reason")
+      user, "new version #{current_version_number}")
   end
 
   def tracking_repository

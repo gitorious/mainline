@@ -287,6 +287,7 @@
         :add_title => "Add a new comment",
         :body => "Comment",
         :add => "Add Comment",
+        :update_or_add => "Update / Add Comment",
         :page_title => "Comments in {{repo}}",
         :diff => "Commit diff",
         :total => "Comments ({{total}})",

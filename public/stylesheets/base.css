@@ -2014,6 +2014,15 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   margin: 0 100px 20px 105px;
 }
 
+.events .event_instance .event_meta .meta_body, .comments .comment .meta_body {
+    font-size: 12px;
+}
+.events .event_instance .event_meta .meta_body span.changed, 
+.comments .comment .meta_body span.changed {
+    background: #E0EFCF;
+    padding: 1px 2px 1px 2px;
+}
+
 .events.inline .event_instance .event_meta {
   margin: 0 0px 20px 95px;
   text-align: left;

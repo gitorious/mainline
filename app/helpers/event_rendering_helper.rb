@@ -245,7 +245,7 @@ module EventRenderingHelper
     action = action_for_event(:event_updated_merge_request) do
       link_to(h(target_repository.url_path) + "/" + h("merge request ##{event.target.to_param}"),
         repo_owner_path(target_repository, :project_repository_merge_request_path, project, target_repository, event.target)) +
-      event.data
+      "<div class=\"meta_body\">&#x2192; " + event.data + "</div>"
     end
     body = truncate(h(event.body), :length => 100) 
     category = "merge_request"

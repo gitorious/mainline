@@ -99,11 +99,23 @@ class CommentTest < ActiveSupport::TestCase
 
     should "not require a body if state changes" do
       @merge_request = merge_requests(:moes_to_johans_open)
-      @comment = @merge_request.comments.new(:project => projects(:johans), :user => users(:moe))
-      assert @comment.body_required?
-      @comment.state = "Foo"
-      assert !@comment.body_required?
-      assert @comment.save, "Should not require a body when state changes"
+      comment = @merge_request.comments.new(:project => projects(:johans),
+        :user => users(:moe))
+      assert comment.body_required?
+      comment.state = "Foo"
+      assert !comment.body_required?
+      assert comment.save, "Should not require a body when state changes"
+    end
+
+    should "not update the state change if the previous state is the same" do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      @merge_request.status_tag = "Foo"
+      comment = @merge_request.comments.new(:project => projects(:johans),
+        :user => users(:moe), :body => "just a comment")
+      comment.state = "Foo"
+      comment.save!
+      assert_nil comment.reload.state_changed_from
+      assert_nil comment.state_changed_to
     end
   end
   

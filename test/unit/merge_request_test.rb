@@ -586,7 +586,9 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.status_tag = 'after'
         @merge_request.create_status_change_event("Foo")
         event = @merge_request.events.reload.last
-        assert_equal "State changed from before to after", event.data
+        exp ="State changed from <span class=\"changed\">before</span> " +
+          "to <span class=\"changed\">after</span>"
+        assert_equal exp, event.data
       end
     end
 
@@ -596,7 +598,7 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.status_tag = "merged"
         @merge_request.create_status_change_event("Setting this to merged")
         event = @merge_request.events.reload.last
-        assert_equal "State changed to merged", event.data
+        assert_equal "State changed to <span class=\"changed\">merged</span>", event.data
       end
     end
 

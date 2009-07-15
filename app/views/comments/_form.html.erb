@@ -49,17 +49,18 @@
     <%- if MergeRequest === parent && (logged_in? && parent.resolvable_by?(current_user)) -%>
     <p>
       <%= f.label :state, 'Status' %><br />
-      <%- if parent.target_repository.project.admin?(current_user) -%>
-        <span class="hint">As an administrator, you may <%= link_to('customize the available statuses', edit_project_path(parent.target_repository.project)) -%> for this project</span><br />
-      <%- else -%>
-        <span class="hint">Administrators for the project can customize the available statuses</span><br />
-      <%- end -%>
-      <%= f.select :state, parent.target_repository.project.merge_request_state_list, :include_blank => true -%>
+      <%= f.select :state, parent.target_repository.project.merge_request_state_list,
+           :selected => parent.status_tag -%>
     </p>
     <%- end -%>
     <p>
       <%= button_to_remote("Preview", :url => repo_owner_path(@repository, [@project, @repository, :comments, :preview]), :method => :post, :with => 'Form.serialize(this.form)') %>
-      <%= f.submit t("views.comments.add") -%>
+      <%- if MergeRequest === parent && (logged_in? &&
+      parent.resolvable_by?(current_user)) -%>
+        <%= f.submit t("views.comments.update_or_add") -%>
+      <% else -%>
+        <%= f.submit t("views.comments.add") -%>
+      <% end -%>
     </p>
   <% end -%>
 <% else -%>

@@ -58,13 +58,14 @@ class Comment < ActiveRecord::Base
     message.save
   end
   
-  def state=(s)
-    return if s.blank?
+  def state=(new_state)
+    return if new_state.blank?
     result = []
     if applies_to_merge_request?
+      return if target.status_tag == new_state
       result << target.status_tag
     end
-    result << s
+    result << new_state
     self.state_change = result
   end
   
