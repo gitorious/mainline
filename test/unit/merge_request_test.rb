@@ -52,7 +52,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     git = mock("Git")
     repo.stubs(:git).returns(git)
     @merge_request.target_repository.stubs(:git).returns(repo)
-    git.expects(:merge_base).with({}, @merge_request.target_branch, "refs/merge-requests/#{@merge_request.id}").returns("ffcaabd\n")
+    git.expects(:merge_base).with({:timeout => false},
+      @merge_request.target_branch, "refs/merge-requests/#{@merge_request.id}").returns("ffcaabd\n")
     assert_equal 'ffcaabd', @merge_request.calculate_merge_base
   end
   
