@@ -436,6 +436,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       end
     end
   end
+
   
   context 'Compatibility with existing records' do
     setup do
@@ -579,6 +580,17 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert @merge_request.rejected?
       @merge_request.status_tag = 'in_verification'
       assert @merge_request.verifying?
+    end
+
+    should "set the status_tag to open when new merge requests are created" do
+      new_request = MergeRequest.new(:user => @merge_request.user,
+        :source_repository => @merge_request.source_repository, :target_repository => @merge_request.target_repository,
+        :proposal => "Please add me",
+        :ending_commit => "a"*10, :source_branch => "master", :target_branch => "master")
+      assert new_request.save!
+      assert new_request.status_tag.blank?
+      new_request.confirmed_by_user
+      assert_equal "open", new_request.status_tag
     end
 
     should 'build an event with from and to when changing between states' do

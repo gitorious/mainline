@@ -353,9 +353,11 @@ class MergeRequest < ActiveRecord::Base
   def publish_notification
     publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
   end
+
   
   def confirmed_by_user
     self.status = STATUS_OPEN
+    self.status_tag = "open"
     save
     publish_notification
     target_repository.committers.uniq.reject{|c|c == user}.each do |committer|
