@@ -159,10 +159,11 @@ module ApplicationHelper
   
   def gravatar_url_for(email, options = {})
     options.reverse_merge!(:default => "images/default_face.gif")
-    "http://www.gravatar.com/avatar.php?gravatar_id=" << 
-    (email.nil? ? "" : Digest::MD5.hexdigest(email)) <<
-    "&amp;default=" <<
-    u("http://#{GitoriousConfig['gitorious_host']}:#{request.port}/#{options.delete(:default)}") <<
+    port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
+    "http://www.gravatar.com/avatar.php?gravatar_id=" +
+    (email.nil? ? "" : Digest::MD5.hexdigest(email)) + "&amp;default=" +
+      u("http://#{GitoriousConfig['gitorious_host']}#{port_string}" +
+      "/#{options.delete(:default)}") +
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
   
