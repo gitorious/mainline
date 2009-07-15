@@ -529,7 +529,8 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def calculate_merge_base
-    target_repository.git.git.merge_base({}, target_branch, merge_branch_name).strip    
+    target_repository.git.git.merge_base({:timeout => false},
+      target_branch, merge_branch_name).strip
   end
   
   def build_new_version
