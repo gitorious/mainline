@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
     :dependent => :destroy
   has_many :committerships, :as => :committer, :dependent => :destroy
   has_many :commit_repositories, :through => :committerships, :source => :repository,
-    :conditions => ["repositories.kind != ?", Repository::KIND_WIKI]
+  :conditions => ["repositories.kind NOT IN (?)", Repository::KINDS_INTERNAL_REPO]
   has_many :ssh_keys, :order => "id desc"
   has_many :comments
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
