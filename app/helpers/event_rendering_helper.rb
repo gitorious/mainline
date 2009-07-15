@@ -187,8 +187,10 @@ module EventRenderingHelper
     if comment.sha1.blank?
       if event.body == "MergeRequest"
         action = action_for_event(:event_commented) do
-          " on " +  link_to(h(repo.url_path) + "/" + h("merge request ##{event.target.to_param}"),
-            repo_owner_path(repo, :project_repository_merge_request_path, project, repo, event.target)+"##{dom_id(comment)}")
+          " on merge request " +  link_to(h(repo.url_path) +
+            " " + h("##{event.target.to_param}"),
+            repo_owner_path(repo, :project_repository_merge_request_path,
+              project, repo, event.target)+"##{dom_id(comment)}")
         end
       else
         action = action_for_event(:event_commented) do
@@ -243,7 +245,7 @@ module EventRenderingHelper
     target_repository = event.target.target_repository
     
     action = action_for_event(:event_updated_merge_request) do
-      link_to(h(target_repository.url_path) + "/" + h("merge request ##{event.target.to_param}"),
+      link_to(h(target_repository.url_path) + " " + h("##{event.target.to_param}"),
         repo_owner_path(target_repository, :project_repository_merge_request_path, project, target_repository, event.target)) +
       "<div class=\"meta_body\">&#x2192; " + event.data + "</div>"
     end
