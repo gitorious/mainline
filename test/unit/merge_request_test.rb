@@ -643,6 +643,26 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_not_nil comment = @merge_request.comments.reload.last
       assert_equal @merge_request.updated_by, comment.user
     end
+  end
 
+  context "Deletion of merge requests in the target git repository" do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans)
+      @source_git_repo = mock
+      @source_git = mock
+      @source_git_repo.stubs(:git).returns(@source_git)
+      @merge_request.source_repository.stubs(:git).returns(@source_git_repo)
+    end
+    
+    should "push a deletion to the target repository" do
+      @source_git.expects(:push).with({}, @merge_request.target_repository.full_repository_path, ":#{@merge_request.merge_branch_name}")
+      @merge_request.delete_target_repository_ref
+    end
+
+    should_eventually "delete the target repository when being closed"
+
+    should_eventually "recreate the ref in the target repository when reopened" 
+
+    should_eventually "delete both from the target and tracking repository when being deleted" 
   end
 end

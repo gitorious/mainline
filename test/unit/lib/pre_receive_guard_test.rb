@@ -84,5 +84,19 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert !@guard.null_sha?("abcd"*10)
       assert @guard.null_sha?("0000000000000000000000000000000000000000")
     end
+
+    should "allow deletion of merge requests on local connections" do
+      @env.delete("SSH_ORIGINAL_COMMAND")
+      guard = Gitorious::SSH::PreReceiveGuard.new(@env,
+        "#{'0'*10} #{'fca'*10} refs/merge-requests/123\n")
+      assert !guard.deny_merge_request_update_with_sha?("0"*40)
+    end
+
+    should "deny deletion of merge requests on remote connections" do
+      guard = Gitorious::SSH::PreReceiveGuard.new(@env,
+        "#{'0'*10} #{'fca'*10} refs/merge-requests/123\n")
+      assert guard.deny_merge_request_update_with_sha?("0"*40)
+    end
+
   end
 end

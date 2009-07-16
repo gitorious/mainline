@@ -34,7 +34,7 @@ while data = gets
     oldrev, newrev, ref = data.chomp.split(" ")
 
     if pre_receive_guard.allow_push?
-      if pre_receive_guard.null_sha?(newrev) && pre_receive_guard.merge_request_update?
+      if pre_receive_guard.deny_merge_request_update_with_sha?(newrev)
         # it's a request to delete a merge request ref
         logger.info("delete-merge-request.ref denied for #{ENV['GITORIOUS_USER'].inspect}" +
           " to #{pre_receive_guard.git_spec.inspect} via " +

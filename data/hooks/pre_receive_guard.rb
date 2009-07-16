@@ -75,6 +75,10 @@ module Gitorious
       def null_sha?(sha)
         sha == "0000000000000000000000000000000000000000"
       end
+
+      def deny_merge_request_update_with_sha?(sha)
+        return null_sha?(sha) && merge_request_update? && !local_connection?
+      end
     end
   end
 end

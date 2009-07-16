@@ -497,6 +497,10 @@ class MergeRequest < ActiveRecord::Base
       user, "new version #{current_version_number}")
   end
 
+  def delete_target_repository_ref
+    source_repository.git.git.push({},target_repository.full_repository_path, ":#{merge_branch_name}")
+  end
+  
   def tracking_repository
     target_repository.create_tracking_repository unless target_repository.has_tracking_repository?
     target_repository.tracking_repository
