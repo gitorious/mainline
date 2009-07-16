@@ -37,7 +37,8 @@ class MergeRequestsController < ApplicationController
     #               :page => params[:page], :include => [:tags, { :repositories => :project } ])
     # 
     #@open_merge_requests = @repository.merge_requests.open
-    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(:all, {:page => params[:page], :per_page => 10})
+    per_page = params[:per_page] || 10
+    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(:all, {:page => params[:page], :per_page => per_page})
 
     @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, {
       :limit => 10, :order => "updated_at desc"
