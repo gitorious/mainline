@@ -105,8 +105,7 @@ class SshKey < ActiveRecord::Base
 
   def fingerprint
     @fingerprint ||= begin
-      type, blob = key.split(" ")
-      raw_blob = blob.to_s.unpack("m*").first
+      raw_blob = encoded_key.to_s.unpack("m*").first
       OpenSSL::Digest::MD5.hexdigest(raw_blob).scan(/../).join(":")
     end
   end
