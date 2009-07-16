@@ -30,7 +30,7 @@
 		<th>Uploaded</th>
 		<th>Name</th>
 		<th>Algorithm</th>
-		<th>Content</th>
+		<th>Fingerprint</th>
 	  <th>Ready?</th>
 		<th></th>
 	</thead>
@@ -40,7 +40,7 @@
 	  <td><%=h ssh_key.comment -%></td>
 	  <td><%=h ssh_key.algorithm -%></td>
 	  <td>
-	    <%= truncate(h(ssh_key.encoded_key), :length => 40) -%>
+	    <code><%= h(ssh_key.fingerprint) -%></code>
 	  </td>
 	  <td class="icon">
 	    <%= image_tag(ssh_key.ready? ? "silk/tick.png" : "silk/cross.png", 

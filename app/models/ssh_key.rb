@@ -102,6 +102,14 @@ class SshKey < ActiveRecord::Base
   def comment
     components.last
   end
+
+  def fingerprint
+    @fingerprint ||= begin
+      type, blob = key.split(" ")
+      raw_blob = blob.to_s.unpack("m*").first
+      OpenSSL::Digest::MD5.hexdigest(raw_blob).scan(/../).join(":")
+    end
+  end
   
   protected
     def lint_key!

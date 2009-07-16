@@ -178,6 +178,16 @@ EOS
       assert_equal expected_content, new_key.encoded_key
     end
   end
+
+  should "have a fingerprint" do
+    ssh_key = new_key(:key => "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6LbBnTQ9qnLxvvl" +
+      "Jy3Qc7CXlTLWq7R335hhBl2+IPN+dzp1/Dg9LYNb3BRhoQUKVbuq2t8Nw7uj1856kNuH9/zjppHi" +
+      "iqMYK60ZP3w/q6S29iEExtVB+vNOZxsL9biVIQFJOPvbTxxqd8185apPLICcfZlb6iougbmHoU3u" +
+      "BKJXa8ViQgLiOmnO/E2jyT60E9WAUGFyJpCopjRiOMR7OJ2mHDtOTyDLLJtL2+nFfLPJIryz2WNq" +
+      "BlwPtWowM3QEeSgrQUziDoGLrBorEmvSfXMPSjOXUOQmTzZeWvR7OoL0YlwxByqka3qrklUX+cLe" +
+      "74YL6aTrfAHTXXJ7fcMDZxQ== foo@bar")
+    assert_equal "9b:72:ec:61:35:08:56:c1:95:8c:fd:dd:32:66:ab:8a", ssh_key.fingerprint
+  end
   
   context "Message sending" do
     should 'send a message on create and update' do
