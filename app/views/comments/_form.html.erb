@@ -50,7 +50,7 @@
     <p>
       <%= f.label :state, 'Status' %><br />
       <%= f.select :state, parent.target_repository.project.merge_request_state_list,
-           :selected => parent.status_tag -%>
+           :selected => parent.status_tag, :include_blank => true -%>
     </p>
     <%- end -%>
     <p>
