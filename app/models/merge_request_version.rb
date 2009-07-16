@@ -26,7 +26,6 @@ class MergeRequestVersion < ActiveRecord::Base
   end
 
   def cache_key
-    "commits_in_merge_request_#{merge_request.tracking_repository.id}" +
-      "_merge_base_#{merge_base_sha}_#{self.version}"
+    "commits_in_merge_request_version_#{id}"
   end
 end
