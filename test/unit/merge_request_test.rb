@@ -658,11 +658,16 @@ class MergeRequestTest < ActiveSupport::TestCase
       @source_git.expects(:push).with({}, @merge_request.target_repository.full_repository_path, ":#{@merge_request.merge_branch_name}")
       @merge_request.delete_target_repository_ref
     end
+  end
 
-    should_eventually "delete the target repository when being closed"
-
-    should_eventually "recreate the ref in the target repository when reopened" 
-
-    should_eventually "delete both from the target and tracking repository when being deleted" 
+  context "Soft deletion of merge requests" do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans_open)
+    end
+    should "send a message when being soft deleted" do
+      p = proc {@merge_request.soft_delete}
+      message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestBackend', /.*/) {p.call}
+      assert_equal({'merge_request_id' => @merge_request.id.to_s, "action" => "delete"}, message)
+    end
   end
 end

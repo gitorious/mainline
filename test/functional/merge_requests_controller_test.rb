@@ -641,12 +641,13 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_equal @source_repository, assigns(:merge_request).source_repository
 		end
 		
-		should "deletes the record" do
+		should "soft-delete the record" do
 			login_as :johan
+      MergeRequest.stubs(:find).returns(@merge_request)
+      @merge_request.expects(:soft_delete)
 			do_delete
 			assert_redirected_to(project_repository_path(@project, @target_repository))
 			assert_match(/merge request was retracted/i, flash[:success])
-			assert_nil MergeRequest.find_by_id(@merge_request.id)
 		end
 		
 		should "only allows the owner to delete" do

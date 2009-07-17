@@ -14,5 +14,5 @@ ActiveMessaging::Gateway.define do |s|
   s.destination :archive_repo, '/queue/GitoriousRepositoryArchiving'
   s.destination :cc_message, '/queue/GitoriousEmailNotifications'
   s.destination :mirror_merge_request, '/queue/GitoriousMergeRequestCreation'
-  
+  s.destination :merge_request_backend_updates, '/queue/GitoriousMergeRequestBackend'
 end
