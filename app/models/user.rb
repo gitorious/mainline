@@ -99,7 +99,7 @@ class User < ActiveRecord::Base
   end
 
   Paperclip::Attachment.interpolations['login'] = lambda{|attachment, style|
-    attachment.instance.login
+    attachment.instance.login.downcase
   }
   
   avatar_local_path = '/system/:attachment/:login/:style/:basename.:extension'
