@@ -30,10 +30,14 @@
   <div id="left">
     <% pull_box(t("views.site.dashboard.projects")) do -%>
       <ul class="with_icons">
-        <% @projects.each do |project| -%>
-          <li class="project"><%= link_to h(project.title), project -%></li>
-        <% end -%>
+      <% @projects.each do |project| -%>
+        <li class="project"><%= link_to h(project.title), project -%></li>
+      <% end -%>
       </ul>
+      <div id="new-project-button" class="round-10 small-button">
+        <%= link_to t("views.projects.create_new"), new_project_path, :class => "shadow-2 round-10" -%>
+      </div>
+      <div class="clear"></div>
     <% end -%>
   </div>
   <div id="right">

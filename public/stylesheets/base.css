@@ -709,6 +709,18 @@ li.merge_requests a.selected { color: #09460F;}
   background: transparent url("/images/silk/report_add.png") no-repeat 220px center;
 }
 
+#new-project-button.small-button {
+  margin: 5px 10px 5px 10px;
+  width: 160px;
+  text-align: left;
+}
+
+#new-project-button.small-button a {
+  font-size: 12px;
+  padding: 5px 5px 4px 10px;
+  background-position: 130px center;
+}
+
 #new-project-button a:hover {
   text-decoration: none;
   background-color: #390;
