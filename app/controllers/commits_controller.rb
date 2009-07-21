@@ -57,7 +57,8 @@ class CommitsController < ApplicationController
       handle_missing_sha and return
     end
     @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
-    if stale_conditional?([@commit.id, @comments.size], @commit.committed_date.utc)
+    last_modified = @comments.size > 0 ? @comments.last.created_at.utc : @commit.committed_date.utc
+    if stale_conditional?([@commit.id, @comments.size], last_modified)
       @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
       @diffs = @commit.parents.empty? ? [] : @commit.diffs
       @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})

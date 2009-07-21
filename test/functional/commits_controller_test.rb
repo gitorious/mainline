@@ -101,6 +101,20 @@ class CommitsControllerTest < ActionController::TestCase
       assert_equal [], assigns(:diffs)
       assert_select "#content p", /This is the initial commit in this repository/
     end
+
+    should "have a different last-modified if there's a comment" do
+      Comment.create!({
+          :user => users(:johan),
+          :body => "foo",
+          :sha1 => @sha,
+          :target => @repository,
+          :project => @repository.project,
+      })
+      get :show, :project_id => @project.slug,
+          :repository_id => @repository.name, :id => @sha
+      assert_response :success
+      assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
+    end
   end
   
   context "Routing" do
