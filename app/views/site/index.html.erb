@@ -135,6 +135,12 @@
       <% end -%>
     <li><%= link_to t("views.site.view_more"), projects_path -%></li>
   </ul>
+    <% if logged_in? -%>
+      <div id="new-project-button" class="round-10 small-button">
+        <%= link_to t("views.projects.create_new"), new_project_path, :class => "shadow-2 round-10" -%>
+      </div>
+      <div class="clear"></div>
+    <% end -%>
   <% end -%>
 <% end -%>
 </div>
