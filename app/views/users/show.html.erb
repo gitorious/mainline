@@ -42,11 +42,22 @@
   </div>
   <div id="right">
     <% pull_box(t("views.site.dashboard.repositories")) do -%>
+    <% if @repositories.blank? -%>
+      <p class="hint">
+        You currently don't have any repository clones. You can clone
+        a repository you wish to contribute to, by going to a
+        repository overview page and click the "Clone on Gitorious"
+        link in the sidebar.
+      </p>
+    <% else -%>
       <ul class="with_icons">
         <% @repositories.each do |repo| -%>
-          <li class="repository"><%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%></li>
+          <li class="repository">
+            <%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%>
+          </li>
         <% end -%>
       </ul>
+    <% end -%>
     <% end -%>
   </div>
   <div class="clear"></div>
