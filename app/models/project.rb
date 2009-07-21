@@ -99,7 +99,7 @@ class Project < ActiveRecord::Base
     'Qt Public License (QPL)',
     'Python License',
     'zlib/libpng License',
-    'Apache Software License',
+    'Apache License',
     'Apple Public Source License',
     'Perl Artistic License',
     'Microsoft Permissive License (Ms-PL)',
