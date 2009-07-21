@@ -43,7 +43,7 @@ end
 $stderr.puts "user: #{user.inspect}" if $DEBUG
 if user.nil? || user.strip.empty?
   logger.info("Need user arg")
-  $srderr.puts "Need user arg"
+  $stderr.puts "Need user arg"
   exit!(1)
 end
 
