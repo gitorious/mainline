@@ -357,7 +357,7 @@ class MergeRequest < ActiveRecord::Base
   
   def confirmed_by_user
     self.status = STATUS_OPEN
-    self.status_tag = "open"
+    self.status_tag = "Open"
     save
     publish_notification
     target_repository.committers.uniq.reject{|c|c == user}.each do |committer|
