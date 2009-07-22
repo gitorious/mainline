@@ -27,47 +27,45 @@
 
 <p class="hint"><%= t("views.merges.hint") %></p>
 
-<% if @open_merge_requests.blank? -%>
-  <p>
-    <em><%= t("views.merges.no_merge") %></em>
-  </p>
-<% else -%>
-  <%#= render :partial => @open_merge_requests -%>
-  <div id="merge-requests-status-chooser" class="round-10">
-    <ul class="horizontal">
-      <li>Filter merge requests:</li>
-    <% @status_tags.each do |status| -%>
-      <li class="merge_request"><%= link_to_status(@repository, status) -%></li>
-    <% end -%>
+
+<div id="merge-requests-status-chooser" class="round-10">
+  <ul class="horizontal">
+    <li>Filter merge requests:</li>
+  <% @status_tags.each do |status| -%>
+    <li><%= link_to_status(@repository, status) -%></li>
+   <% end -%>
   </ul>
+</div>
+<table class="listing">
+  <thead>
+    <th>ID</th>
+    <th>Status</th>
+    <th>Description</th>
+    <th>Creator</th>
+    <th>Age</th>
+  </thead>
+  <tbody>
+  <% if @open_merge_requests.blank? -%>
+    <p>
+      <em><%= t("views.merges.no_merge") %></em>
+    </p>
+  <% end -%>
+  <% @open_merge_requests.each do |merge_request| -%>
+    <% mr_path = repo_owner_path(merge_request.target_repository, 
+         [ merge_request.source_repository.project, 
+           merge_request.target_repository, 
+           merge_request ]) -%>
+    <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
+      <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
+      <td><%=h merge_request.status_tag -%></td>
+      <td>
+        <%= link_to h(truncate(merge_request.proposal, :length=>110)), mr_path -%>
+      </td>
+      <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
+      <td><%=h time_ago_in_words(merge_request.created_at.to_s) -%></td>
+    </tr>
+  <% end -%>
+  </tbody>
+</table>
 
-  </div>
-  <table class="listing">
-    <thead>
-      <th>ID</th>
-      <th>Status</th>
-      <th>Description</th>
-      <th>Creator</th>
-      <th>Age</th>
-    </thead>
-    <tbody>
-    <% @open_merge_requests.each do |merge_request| -%>
-      <% mr_path = repo_owner_path(merge_request.target_repository, 
-           [ merge_request.source_repository.project, 
-             merge_request.target_repository, 
-             merge_request ]) -%>
-      <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
-        <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
-        <td><%=h merge_request.status_tag -%></td>
-        <td>
-          <%= link_to h(truncate(merge_request.proposal, :length=>110)), mr_path -%>
-        </td>
-        <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
-        <td><%=h time_ago_in_words(merge_request.created_at.to_s) -%></td>
-      </tr>
-    <% end -%>
-    </tbody>
-  </table>
-
-  <%= will_paginate @open_merge_requests %>
-<% end -%>
+<%= will_paginate @open_merge_requests %>

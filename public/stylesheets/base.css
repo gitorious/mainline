@@ -2481,11 +2481,20 @@ table.select_commits_from_list tr.unknown-status td.meta
 #merge-requests-status-chooser {
     padding: 5px;
     background: #E9F1F6;
-    width: 500px;
     float: right;
     margin: 0 0 5px 0;
+    color: #888;
+}
+
+#merge-requests-status-chooser ul.horizontal {
+    float:right;
+    margin: 0;
 }
 
 #merge-requests-status-chooser ul.horizontal li {
-    
+  padding-right: 0;
+}
+
+#merge-requests-status-chooser ul.horizontal li > a {
+    padding-left: 10px !important;
 }
