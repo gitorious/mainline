@@ -80,12 +80,12 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  named_scope :open, :conditions => ['LCASE(status_tag) in (?) OR status_tag IS NULL', ['open','verifying']]
-  named_scope :closed, :conditions => ["LCASE(status_tag) in (?)", ['merged','rejected']]
-  named_scope :merged, :conditions => ["LCASE(status_tag) = ?", 'merged']
-  named_scope :rejected, :conditions => ["LCASE(status_tag) = ?", 'rejected']
+  named_scope :open, :conditions => ['(LCASE(status_tag) in (?) OR status_tag IS NULL) AND status != ?', ['open','verifying'], STATUS_PENDING_ACCEPTANCE_OF_TERMS]
+  named_scope :closed, :conditions => ["LCASE(status_tag) in (?) AND status != ?", ['merged','rejected'], STATUS_PENDING_ACCEPTANCE_OF_TERMS]
+  named_scope :merged, :conditions => ["LCASE(status_tag) = ? AND status != ?", 'merged', STATUS_PENDING_ACCEPTANCE_OF_TERMS]
+  named_scope :rejected, :conditions => ["LCASE(status_tag) = ? AND status != ?", 'rejected', STATUS_PENDING_ACCEPTANCE_OF_TERMS]
   named_scope :by_status, lambda {|state|
-    {:conditions => ["LCASE(status_tag) = ?", state ] }
+    {:conditions => ["LCASE(status_tag) = ? AND status != ?", state, STATUS_PENDING_ACCEPTANCE_OF_TERMS ] }
   }
 
   

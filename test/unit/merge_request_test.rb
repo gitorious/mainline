@@ -485,6 +485,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     setup do
       @repo = repositories(:johans)
       merge_requests(:mikes_to_johans).destroy
+      merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_OPEN)
     end
     
     should "default to open merge-requests" do
