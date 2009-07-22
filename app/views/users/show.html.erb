@@ -34,10 +34,13 @@
         <li class="project"><%= link_to h(project.title), project -%></li>
       <% end -%>
       </ul>
+      <% if logged_in? && current_user == @user -%>
       <div id="new-project-button" class="round-10 small-button">
-        <%= link_to t("views.projects.create_new"), new_project_path, :class => "shadow-2 round-10" -%>
+        <%= link_to t("views.projects.create_new"), new_project_path, 
+               :class => "shadow-2 round-10" -%>
       </div>
       <div class="clear"></div>
+      <% end -%>
     <% end -%>
   </div>
   <div id="right">
