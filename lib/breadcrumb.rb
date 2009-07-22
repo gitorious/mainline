@@ -154,7 +154,7 @@ module Breadcrumb
     end
     
     def title
-      "Merge Requests"
+      "Merge requests"
     end
 
     def breadcrumb_css_class
@@ -435,5 +435,5 @@ module Breadcrumb
       "merge_requests"
     end
   end
-  
+
 end

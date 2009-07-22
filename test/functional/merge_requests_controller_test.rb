@@ -69,6 +69,12 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_response :success
 			assert_equal [@merge_request], assigns(:open_merge_requests)
 	  end
+
+    should "have the MergeRequestList breadcrumb as root" do
+      get :index, :project_id => @project.to_param,
+        :repository_id => @target_repository.to_param
+      assert_instance_of Breadcrumb::MergeRequests, assigns(:root)
+    end
 	end
 	
 	def stub_commits(merge_request)

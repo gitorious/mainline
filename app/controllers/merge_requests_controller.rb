@@ -33,12 +33,10 @@ class MergeRequestsController < ApplicationController
   renders_in_site_specific_context
   
   def index
-    # @projects = Project.paginate(:all, :order => "projects.created_at desc", 
-    #               :page => params[:page], :include => [:tags, { :repositories => :project } ])
-    # 
-    #@open_merge_requests = @repository.merge_requests.open
-    per_page = params[:per_page] || 10
-    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(:all, {:page => params[:page], :per_page => per_page})
+    @root = Breadcrumb::MergeRequests.new(@repository)
+    per_page = params[:per_page] || 50
+    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(
+      :all, {:page => params[:page], :per_page => per_page, :order => "created_at desc"})
 
     @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, {
       :limit => 10, :order => "updated_at desc"

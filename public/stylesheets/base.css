@@ -2478,3 +2478,14 @@ table.select_commits_from_list tr.unknown-status td.meta
     padding: 20px 20px;
     width: 50%;
 }
+#merge-requests-status-chooser {
+    padding: 5px;
+    background: #E9F1F6;
+    width: 500px;
+    float: right;
+    margin: 0 0 5px 0;
+}
+
+#merge-requests-status-chooser ul.horizontal li {
+    
+}
