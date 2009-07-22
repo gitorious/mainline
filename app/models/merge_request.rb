@@ -31,7 +31,7 @@ class MergeRequest < ActiveRecord::Base
   has_many :versions, :class_name => 'MergeRequestVersion', :order => 'version'
   
   before_destroy :nullify_messages
-
+  after_destroy  :delete_tracking_branches
   
   is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
     :include => [{
@@ -497,18 +497,25 @@ class MergeRequest < ActiveRecord::Base
       user, "new version #{current_version_number}")
   end
 
-  def delete_target_repository_ref
-    source_repository.git.git.push({},target_repository.full_repository_path, ":#{merge_branch_name}")
-  end
-
-  # Since we'll be deleting the ref in the backend, this will be handled in the message queue
-  def soft_delete
-    msg = {:merge_request_id => to_param, :action => "delete"}
+  # Since we'll be deleting the ref in the backend, this will be
+  # handled in the message queue
+  def delete_tracking_branches
+    msg = {
+      :merge_request_id => to_param,
+      :action => "delete",
+      :target_path => target_repository.full_repository_path,
+      :target_name => target_repository.url_path,
+      :merge_branch_name => merge_branch_name,
+      :source_repository_id => source_repository.id,
+      :target_repository_id => target_repository.id,
+    }
     publish :merge_request_backend_updates, msg.to_json
   end
   
   def tracking_repository
-    target_repository.create_tracking_repository unless target_repository.has_tracking_repository?
+    unless target_repository.has_tracking_repository?
+      target_repository.create_tracking_repository
+    end
     target_repository.tracking_repository
   end
   

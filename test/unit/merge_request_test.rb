@@ -645,29 +645,24 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
-  context "Deletion of merge requests in the target git repository" do
-    setup do
-      @merge_request = merge_requests(:moes_to_johans)
-      @source_git_repo = mock
-      @source_git = mock
-      @source_git_repo.stubs(:git).returns(@source_git)
-      @merge_request.source_repository.stubs(:git).returns(@source_git_repo)
-    end
-    
-    should "push a deletion to the target repository" do
-      @source_git.expects(:push).with({}, @merge_request.target_repository.full_repository_path, ":#{@merge_request.merge_branch_name}")
-      @merge_request.delete_target_repository_ref
-    end
-  end
-
   context "Soft deletion of merge requests" do
     setup do
       @merge_request = merge_requests(:moes_to_johans_open)
     end
-    should "send a message when being soft deleted" do
-      p = proc {@merge_request.soft_delete}
-      message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestBackend', /.*/) {p.call}
-      assert_equal({'merge_request_id' => @merge_request.id.to_s, "action" => "delete"}, message)
+    
+    should "send a message when being destroyed" do
+      deletion_proc = proc{ @merge_request.destroy }
+      msg = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestBackend', /.*/) {
+        deletion_proc.call
+      }
+      assert_nil MergeRequest.find_by_id(@merge_request.id)
+      assert_equal @merge_request.id.to_s, msg["merge_request_id"]
+      assert_equal "delete", msg["action"]
+      assert_equal @merge_request.target_repository.full_repository_path, msg["target_path"]
+      assert_equal @merge_request.target_repository.url_path, msg["target_name"]
+      assert_equal @merge_request.merge_branch_name, msg["merge_branch_name"]
+      assert_equal @merge_request.target_repository.id, msg["target_repository_id"]
+      assert_equal @merge_request.source_repository.id, msg["source_repository_id"]
     end
   end
 end

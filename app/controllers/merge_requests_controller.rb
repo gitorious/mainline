@@ -207,7 +207,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def destroy
-    @merge_request.soft_delete
+    @merge_request.destroy
     flash[:success] = I18n.t "merge_requests_controller.destroy_success"
     redirect_to [@owner, @repository]
   end

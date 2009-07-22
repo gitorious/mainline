@@ -28,18 +28,28 @@ class MergeRequestGitBackendProcessor < ApplicationProcessor
     @body["action"].to_sym
   end
 
-  def merge_request
-    @merge_request ||= MergeRequest.find(@body["merge_request_id"])
+  def source_repository
+    @source_repository ||= Repository.find(@body["source_repository_id"])
+  end
+
+  def target_repository
+    @target_repository ||= Repository.find(@body["target_repository_id"])
+  end
+
+  def delete_target_repository_ref
+    source_repository.git.git.push({:timeout => false},
+      target_repository.full_repository_path,
+      ":#{@body['merge_branch_name']}")
   end
 
   private
   def do_delete
-    logger.info("Deleting tracking branch #{merge_request.merge_branch_name} for merge request in target repository #{merge_request.target_repository.id}")
+    logger.info("Deleting tracking branch #{@body['merge_branch_name']} for merge request " +
+      "in target repository #{@body['target_name']}")
     begin
-      merge_request.delete_target_repository_ref
+      delete_target_repository_ref
     rescue Grit::NoSuchPathError => e
       logger.error "Could not find Git path. Message is #{e.message}"
     end
-    merge_request.destroy
   end
 end

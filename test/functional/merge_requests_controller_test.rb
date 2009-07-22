@@ -643,9 +643,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		
 		should "soft-delete the record" do
 			login_as :johan
-      MergeRequest.stubs(:find).returns(@merge_request)
-      @merge_request.expects(:soft_delete)
-			do_delete
+      assert_difference("@target_repository.merge_requests.open.count", -1) do
+        do_delete
+      end
 			assert_redirected_to(project_repository_path(@project, @target_repository))
 			assert_match(/merge request was retracted/i, flash[:success])
 		end
