@@ -591,7 +591,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert new_request.save!
       assert new_request.status_tag.blank?
       new_request.confirmed_by_user
-      assert_equal "open", new_request.status_tag
+      assert_equal "Open", new_request.status_tag
     end
 
     should 'build an event with from and to when changing between states' do
