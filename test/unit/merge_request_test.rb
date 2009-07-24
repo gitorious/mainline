@@ -78,7 +78,21 @@ class MergeRequestTest < ActiveSupport::TestCase
     message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestCreation', /.*/) {p.call}
     assert_equal({'merge_request_id' => @merge_request.id.to_s}, message)
   end
+
+  should "send a message to all the subscribers when confirmed by the user" do
+    # -1 because the merge_request creator itself is a committer in this case
+    assert_difference("Message.count", @merge_request.target_repository.committers.count-1) do
+      @merge_request.confirmed_by_user
+    end
+  end
   
+  should "not send messages the subscribers when confirmed by the user, if the target_repo has it turned off" do
+    @merge_request.target_repository.update_attribute(:notify_committers_on_new_merge_request, false)
+    assert_no_difference("Message.count") do
+      @merge_request.confirmed_by_user
+    end
+  end
+
   should 'have a ready? method which tells whether it has been created in the background' do
     assert !@merge_request.ready?
     v = @merge_request.build_new_version

@@ -1066,6 +1066,22 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(group_repository_path(group, @repository))
       assert_equal group, @repository.reload.owner
     end
+
+    should "be able to deny force pushing" do
+      @repository.update_attribute(:deny_force_pushing, false)
+      put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
+        :repository => { :deny_force_pushing => true }
+      assert_response :redirect
+      assert @repository.reload.deny_force_pushing?
+    end
+
+    should "be able to turn off notify_committers_on_new_merge_request" do
+      @repository.update_attribute(:notify_committers_on_new_merge_request, true)
+      put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
+        :repository => { :notify_committers_on_new_merge_request => false }
+      assert_response :redirect
+      assert !@repository.reload.notify_committers_on_new_merge_request?
+    end
     
     context "Changing the HEAD" do
       should "update the HEAD if it's changed" do

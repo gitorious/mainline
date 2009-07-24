@@ -360,15 +360,21 @@ class MergeRequest < ActiveRecord::Base
     self.status_tag = "Open"
     save
     publish_notification
-    target_repository.committers.uniq.reject{|c|c == user}.each do |committer|
-      message = messages.build(
+    notify_subscribers_about_creation
+  end
+
+  def notify_subscribers_about_creation
+    return unless target_repository.notify_committers_on_new_merge_request?
+    target_repository.committers.uniq.reject{|c|c == user }.each do |committer|
+      message = messages.build({
         :sender => user, 
         :recipient => committer,
         :subject => I18n.t("mailer.request_notification",
           :login => user.login,
           :title => target_repository.project.title),
         :body => proposal,
-        :notifiable => self)    
+        :notifiable => self
+        })
       message.save
     end
   end

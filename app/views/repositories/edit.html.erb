@@ -41,10 +41,19 @@
   </p>
   <p>
     <%= f.label :deny_force_pushing %>:
-    <%= f.check_box :deny_force_pushing %>
+    <%= f.check_box :deny_force_pushing %><br />
     <span class="hint">
       Denying force pushing means that pushing non-fastforwards 
       (eg <code>git push -f</code>) is not allowed
+    </span>
+  </p>
+  <p>
+    <%= f.label :notify_committers_on_new_merge_request -%>:
+    <%= f.check_box :notify_committers_on_new_merge_request -%><br />
+    <span class="hint">
+      Turning this off will not send a notification message to the
+      committers of the target repository when a new new merge request
+      is created
     </span>
   </p>
   <% unless @repository.owned_by_group? -%>
