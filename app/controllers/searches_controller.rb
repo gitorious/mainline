@@ -30,6 +30,8 @@ class SearchesController < ApplicationController
       @search.run
       @results = @search.results
     end
+  rescue Ultrasphinx::UsageError
+    @results = []
   end
   
 end
