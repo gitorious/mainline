@@ -30,7 +30,7 @@ module ActionView
         end
 
         if string.respond_to?(:force_encoding)
-          output_buffer << string.force_encoding(Encoding::UTF_8)
+          output_buffer << string.force_encoding(output_buffer.encoding)
         else
           output_buffer << string
         end
