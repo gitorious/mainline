@@ -100,11 +100,6 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert @merge_request.ready?
   end
   
-  should "has a merged? status" do
-    @merge_request.status = MergeRequest::STATUS_MERGED
-    assert @merge_request.merged?, '@merge_request.merged? should be true'
-  end
-  
   should 'be able to update from a push event' do
     @merge_request.expects(:push_new_branch_to_tracking_repo).once
     @merge_request.update_from_push!
@@ -156,9 +151,9 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
   
-  should "has a rejected? status" do
-    @merge_request.status = MergeRequest::STATUS_REJECTED
-    assert @merge_request.rejected?, '@merge_request.rejected? should be true'
+  should "has a closed? status" do
+    @merge_request.status = MergeRequest::STATUS_CLOSED
+    assert @merge_request.closed?, '@merge_request.closed? should be true'
   end
   
   should "has a open? status" do
@@ -184,17 +179,10 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert !@merge_request.commit_merged?('ff1')
   end
   
-  should 'have a verifying? status' do
-    @merge_request.status = MergeRequest::STATUS_VERIFYING
-    assert @merge_request.verifying?, '@merge_request.verifying? should be true'
-  end
-  
   should "has a statuses class method" do
     assert_equal MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS, MergeRequest.statuses["Pending"]
     assert_equal MergeRequest::STATUS_OPEN, MergeRequest.statuses["Open"]
-    assert_equal MergeRequest::STATUS_MERGED, MergeRequest.statuses["Merged"]
-    assert_equal MergeRequest::STATUS_REJECTED, MergeRequest.statuses["Rejected"]
-    assert_equal MergeRequest::STATUS_VERIFYING, MergeRequest.statuses['Verifying']
+    assert_equal MergeRequest::STATUS_CLOSED, MergeRequest.statuses["Closed"]
   end
   
   should "has a status_string" do
@@ -217,7 +205,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   
   should "count open merge_requests" do
     mr = @merge_request.clone
-    mr.status = MergeRequest::STATUS_REJECTED
+    mr.status = MergeRequest::STATUS_CLOSED
     mr.save
     assert_equal 2, MergeRequest.count_open
   end
@@ -345,25 +333,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     
     should 'allow transition to other states as long as it is not rejected or merged' do
       @merge_request.open!
-      assert @merge_request.can_transition_to?('merge')
-      assert @merge_request.can_transition_to?('reject')
-      assert @merge_request.can_transition_to?('in_verification')
+      assert @merge_request.can_transition_to?('close')
     end
     
     should 'not allow transition to other states when rejected' do
       @merge_request.open!
-      @merge_request.reject!
-      assert !@merge_request.can_transition_to?('merge')
-      assert !@merge_request.can_transition_to?('reject')
-      assert !@merge_request.can_transition_to?('in_verification')
-    end
-    
-    should 'not allow transitions to other states when merged' do
-      @merge_request.open!
-      @merge_request.reject!
-      assert !@merge_request.can_transition_to?('merge')
-      assert !@merge_request.can_transition_to?('reject')
-      assert !@merge_request.can_transition_to?('in_verification')
+      @merge_request.close!
+      assert !@merge_request.can_transition_to?('open')
     end
     
     should 'optionally take a block when performing a transition' do
@@ -377,7 +353,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'optionally take a block when performing a transition' do
       @merge_request.open!
       @merge_request.expects(:foo=).once
-      status_changed = @merge_request.transition_to('merge') do
+      status_changed = @merge_request.transition_to('close') do
         @merge_request.foo = "Hello world"
       end
       assert status_changed
@@ -386,8 +362,8 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'allow admin users to re-open' do
       @user = users(:johan)
       @merge_request.open
-      @merge_request.reject
-      assert @merge_request.rejected?
+      @merge_request.close
+      assert @merge_request.closed?
       assert @merge_request.can_be_reopened_by?(@user)
       assert @merge_request.reopen_with_user(@user)
       assert @merge_request.open?
@@ -396,23 +372,16 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'not allow non-admin users to re-open' do
       @user = users(:moe)
       @merge_request.open
-      @merge_request.reject
-      assert @merge_request.rejected?
+      @merge_request.close
+      assert @merge_request.closed?
       assert !@merge_request.can_be_reopened_by?(@user)
       assert !@merge_request.reopen_with_user(@user)
       assert !@merge_request.open?
     end
     
-    should 'not allow non-closed merge request to reopen' do
-      @merge_request.open
-      assert !@merge_request.can_reopen?
-      @merge_request.reject
-      assert @merge_request.can_reopen?
-    end
-    
     should 'return false from its transition_to method if the state change is disallowed' do
       @merge_request.stubs(:can_transition_to?).returns(false)
-      status_changed = @merge_request.transition_to(MergeRequest::STATUS_MERGED)
+      status_changed = @merge_request.transition_to(MergeRequest::STATUS_OPEN)
       assert !status_changed
     end
     
@@ -430,7 +399,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_nil message.notifiable
     end
     
-    should 'provide a hash of labels and values for possible next states' do
+    should_eventually 'provide a hash of labels and values for possible next states' do
       @merge_request.status = MergeRequest::STATUS_VERIFYING
       assert_equal({'Merged' => 'merge', 'Rejected' => 'reject'}, @merge_request.possible_next_states_hash)
       @merge_request.status = MergeRequest::STATUS_OPEN
@@ -443,9 +412,10 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal({}, @merge_request.possible_next_states_hash)
     end
     
-    should 'have a pseudo-open status' do
-      [MergeRequest::STATUS_VERIFYING, MergeRequest::STATUS_OPEN].each do |s|
+    should_eventually 'have a pseudo-open status' do
+      [MergeRequest::STATUS_OPEN].each do |s|
         @merge_request.status = s
+        # TODO: get rid of #open_or_in_verification?
         assert @merge_request.open_or_in_verification?
       end
     end
@@ -500,11 +470,12 @@ class MergeRequestTest < ActiveSupport::TestCase
       @repo = repositories(:johans)
       merge_requests(:mikes_to_johans).destroy
       merge_requests(:moes_to_johans).update_attribute(:status, MergeRequest::STATUS_OPEN)
+      MergeRequestStatus.create_defaults_for_project(@repo.project)
     end
     
     should "default to open merge-requests" do
-      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'merged')
-      merge_requests(:moes_to_johans_open).update_attribute(:status_tag, 'open')
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'Closed')
+      merge_requests(:moes_to_johans_open).update_attribute(:status_tag, 'Open')
       assert !@repo.merge_requests.from_filter(nil).include?(merge_requests(:moes_to_johans))
       assert_equal [merge_requests(:moes_to_johans_open)], @repo.merge_requests.from_filter(nil)
     end
@@ -515,16 +486,10 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("kittens")
     end
     
-    should "find merged merge-requests" do
-      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'merged')
-      assert !@repo.merge_requests.from_filter("merged").include?(merge_requests(:moes_to_johans_open))
-      assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("merged")
-    end
-    
-    should "find rejected merge-requests" do
-      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'rejected')
-      assert !@repo.merge_requests.from_filter("rejected").include?(merge_requests(:moes_to_johans_open))
-      assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("rejected")
+    should "find closed merge-requests" do
+      merge_requests(:moes_to_johans).update_attribute(:status_tag, 'Closed')
+      assert !@repo.merge_requests.from_filter("Closed").include?(merge_requests(:moes_to_johans_open))
+      assert_equal [merge_requests(:moes_to_johans)], @repo.merge_requests.from_filter("Closed")
     end
   end
 
@@ -586,26 +551,43 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
   
   context 'Status tags' do
-    setup {@merge_request = merge_requests(:moes_to_johans_open)}
+    setup do
+      @merge_request = merge_requests(:moes_to_johans_open)
+      MergeRequestStatus.create_defaults_for_project(
+        @merge_request.target_repository.project)
+    end
     
     should 'cascade to the actual state machine with given states' do
-      @merge_request.status_tag = 'merged'
-      assert @merge_request.reload.merged?
-      @merge_request.status_tag = 'rejected'
-      assert @merge_request.rejected?
-      @merge_request.status_tag = 'in_verification'
-      assert @merge_request.verifying?
+      @merge_request.status_tag = 'closed'
+      assert @merge_request.reload.closed?
+      @merge_request.status_tag = 'open'
+      assert @merge_request.reload.open?
+    end
+
+    should "set the internal statemachine accordingly" do
+      project = @merge_request.target_repository.project
+      project.merge_request_statuses.create!(:name => "In Progress",
+        :state => MergeRequest::STATUS_OPEN)
+      project.merge_request_statuses.create!(:name => "All Done",
+        :state => MergeRequest::STATUS_CLOSED)
+
+      @merge_request.status_tag = "In Progress"
+      assert @merge_request.reload.open?
+      @merge_request.status_tag = "All Done"
+      assert @merge_request.reload.closed?
     end
 
     should "set the status_tag to open when new merge requests are created" do
       new_request = MergeRequest.new(:user => @merge_request.user,
-        :source_repository => @merge_request.source_repository, :target_repository => @merge_request.target_repository,
+        :source_repository => @merge_request.source_repository,
+        :target_repository => @merge_request.target_repository,
         :proposal => "Please add me",
         :ending_commit => "a"*10, :source_branch => "master", :target_branch => "master")
       assert new_request.save!
       assert new_request.status_tag.blank?
       new_request.confirmed_by_user
-      assert_equal "Open", new_request.status_tag
+      assert_instance_of StatusTag, new_request.status_tag
+      assert_equal "Open", new_request.status_tag.name
     end
 
     should 'build an event with from and to when changing between states' do
@@ -623,10 +605,10 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'build an event with only the new state' do
       @merge_request.write_attribute(:status_tag, nil)
       @merge_request.with_user(users(:johan)) do
-        @merge_request.status_tag = "merged"
-        @merge_request.create_status_change_event("Setting this to merged")
+        @merge_request.status_tag = "Closed"
+        @merge_request.create_status_change_event("Setting this to closed")
         event = @merge_request.events.reload.last
-        assert_equal "State changed to <span class=\"changed\">merged</span>", event.data
+        assert_equal "State changed to <span class=\"changed\">Closed</span>", event.data
       end
     end
 
@@ -646,15 +628,15 @@ class MergeRequestTest < ActiveSupport::TestCase
       
     should 'simply set the status tag if no reason exists' do
       @merge_request.migrate_to_status_tag
-      assert_equal 'open', @merge_request.reload.status_tag
+      assert_equal 'Open', @merge_request.reload.status_tag.to_s
     end
 
     should 'add a comment and set the state when reason exists' do
       @merge_request.reason = "You're right, this is a great idea!"
-      @merge_request.merge
+      @merge_request.close
       @merge_request.save
       @merge_request.migrate_to_status_tag
-      assert_equal 'merged', @merge_request.reload.status_string
+      assert_equal 'closed', @merge_request.reload.status_string
       assert_not_nil comment = @merge_request.comments.reload.last
       assert_equal @merge_request.updated_by, comment.user
     end

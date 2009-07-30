@@ -25,6 +25,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   
 	def setup
 		@project = projects(:johans)
+    MergeRequestStatus.create_defaults_for_project(@project)
     grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
     Repository.any_instance.stubs(:git).returns(grit)
 		@source_repository = repositories(:johans2)
@@ -165,7 +166,19 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response :success
       assert_select "select#comment_state"
     end
-  
+    
+    context "legacy merge requests" do
+      setup { @merge_request.versions.each(&:destroy) }
+      
+      should "create a version for the legacy merge_requests" do
+        get :show, :project_id => @project.to_param, 
+            :repository_id => repositories(:johans).name,
+            :id => @merge_request.id
+        
+        assert_response :success
+        assert_template "merge_requests/legacy"
+      end
+    end
   end
 
 	context "#new (GET)" do
@@ -461,85 +474,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				assert_equal nil, flash[:success]
 				assert_match(/You're not the owner of this merge request/i, flash[:error])
       end
-		end
-		
-	end
-	
-	def do_resolve_put(data={})
-		put :resolve, :project_id => @project.to_param, 
-			:repository_id => @target_repository.to_param, 
-			:id => @merge_request,
-			:merge_request => {
-				:status => 'merge',
-			}.merge(data)
-	end
-	
-	context "#resolve (PUT)" do		
-		should "requires login" do
-			session[:user_id] = nil
-			do_resolve_put
-			assert_redirected_to(new_sessions_path)
-		end
-		
-		should "requires ownership to resoble" do
-			login_as :moe
-			do_resolve_put
-			assert_match(/you're not permitted/i, flash[:error])
-			assert_response :redirect
-		end
-		
-		should "updates the status" do
-			login_as :johan
-			do_resolve_put
-			assert_equal "The merge request was marked as merged", flash[:notice]
-			assert_response :redirect
-		end
-		
-		should 'not update the status if the merge request does not allow transitioning' do
-		  MergeRequest.any_instance.stubs(:can_transition_to?).returns(false)
-		  login_as :johan
-		  do_resolve_put
-		  assert_equal "The merge request could not be marked as merged", flash[:error]
-	  end
-	  
-	  should 'send an email notification to the user when resolving a merge request' do
-	    login_as :johan
-	    @merge_request.status = MergeRequest::STATUS_OPEN
-	    @merge_request.save
-	    assert @merge_request.can_transition_to?(:'in_verification')
-	    assert_incremented_by(@merge_request.user.sent_messages, :size, 1) do
-  	    put :resolve, :project_id => @project.to_param, 
-    			:repository_id => @target_repository.to_param, 
-    			:id => @merge_request,
-    			:merge_request => {
-    				:status => 'in_verification',
-    				:reason => 'Not too good'
-    			}
-    		assert_response :redirect
-    	end
-  		assert @merge_request.reload.verifying?
-    end
-	  
-	  should 'set the reason when resolving with a message' do
-	    login_as :johan
-	    put :resolve, :project_id => @project.to_param, 
-  			:repository_id => @target_repository.to_param, 
-  			:id => @merge_request,
-  			:merge_request => {
-  				:status => 'merge',
-  				:reason => 'Not too good'
-  			}
-			assert_equal "The merge request was marked as merged", flash[:notice]
-	    assert_equal("Not too good", assigns(:merge_request).reason)
-    end
-    
-    should 'set the updated_by to current_user when resolving' do
-	    @merge_request.user = users(:mike)
-	    assert @merge_request.save
-	    login_as :johan
-	    do_resolve_put
-	    assert_equal users(:johan), @merge_request.reload.updated_by
-    end
+		end		
 	end
 	
 	context "#get commit_list" do
@@ -565,42 +500,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				:repository_id => @target_repository.to_param,
 				:merge_request => {}
 			assert_equal @commits, assigns(:commits)
-    end
-  end
-  
-  def do_reopen_put
-      put :reopen, :project_id => @project.to_param, 
-        :repository_id => @repository.to_param,
-        :id => @merge_request    
-  end
-  
-  context 'PUT #reopen' do
-    setup do
-      @merge_request = merge_requests(:moes_to_johans_open)
-      @merge_request.reject
-      @repository = @merge_request.target_repository
-      @project = @repository.project
-    end
-    
-    should 'not be allowed for non-owners' do
-      username = :moe
-      assert !@merge_request.resolvable_by?(users(username))
-      login_as(username)
-      do_reopen_put
-      assert_response :redirect
-      assert @merge_request.reload.rejected?
-    end
-    
-    should 'allow owners to reopen merge requests and add an event' do
-      username = :johan
-      assert @merge_request.resolvable_by?(users(username))
-      login_as(username)
-      assert_incremented_by(@project.events, :size, 1) do
-        do_reopen_put
-        assert_response :redirect
-        assert @merge_request.reload.open?
-        @project.events.reload
-      end
     end
   end
   

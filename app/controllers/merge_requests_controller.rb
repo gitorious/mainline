@@ -85,11 +85,15 @@ class MergeRequestsController < ApplicationController
     respond_to do |wants|
       wants.html do
         if @merge_request.versions.blank?
+          #@merge_request.create_new_version
           render :template => 'merge_requests/legacy' and return
         end
       end
       wants.xml {render :xml => @merge_request.to_xml}
-      wants.patch { render :text => @commits.collect(&:to_patch).join("\n"), :content_type => "text/plain" }
+      wants.patch {
+        render :text => @commits.collect(&:to_patch).join("\n"),
+          :content_type => "text/plain"
+      }
     end
   end
   
@@ -150,39 +154,6 @@ class MergeRequestsController < ApplicationController
         format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
       end
     end
-  end
-  
-  def resolve
-    new_state = params[:merge_request][:status]
-    state_changed = @merge_request.transition_to(new_state) do
-      reason = params[:merge_request][:reason]
-      @merge_request.updated_by = current_user
-      @merge_request.reason = reason unless reason.blank?
-      @merge_request.save!
-      @merge_request.deliver_status_update(current_user)
-      if @merge_request.open_or_in_verification?
-        @owner.create_event(Action::UPDATE_MERGE_REQUEST, @merge_request, current_user, @merge_request.status_string, reason)
-      else
-        @owner.create_event(Action::RESOLVE_MERGE_REQUEST, @merge_request, current_user)
-      end
-    end
-    if state_changed
-      flash[:notice] = I18n.t "merge_requests_controller.resolve_notice", :status => @merge_request.status_string
-    else
-      flash[:error] = I18n.t "merge_requests_controller.resolve_disallowed", :status => "#{new_state}d"
-    end
-    redirect_to [@owner, @repository, @merge_request]      
-  end
-  
-  def reopen
-    if @merge_request.reopen_with_user(current_user)
-      flash[:notice] = I18n.t 'merge_requests_controller.reopened'
-      @owner.create_event(Action::REOPEN_MERGE_REQUEST, @merge_request, current_user, "Merge request was reopened", "")      
-      @merge_request.save
-    else
-      flash[:error] = I18n.t 'merge_requests_controller.reopening_failed'
-    end
-    redirect_to [@owner, @repository, @merge_request]
   end
   
   def edit

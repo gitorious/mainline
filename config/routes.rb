@@ -41,9 +41,7 @@ ActionController::Routing::Routes.draw do |map|
       repo.comments_preview 'comments/preview', :controller => 'comments',
         :action => 'preview'#, :conditions => {:method => :put}
       repo.resources :merge_requests, :member => {
-        :resolve => :put,
         :terms_accepted => :get,
-        :reopen => :put,
         :version => :get,
         :commit_status => :get
       }, :collection => { 

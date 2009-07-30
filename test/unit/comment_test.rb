@@ -56,11 +56,12 @@ class CommentTest < ActiveSupport::TestCase
   context 'State change' do
     should 'be a list of previous and new state' do
       @merge_request = merge_requests(:moes_to_johans_open)
-      @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans), :state_change => ['Before', 'After'])
+      @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans),
+        :state_change => ['Before', 'After'])
       @comment.user = users(:johan)
       assert @comment.save
       assert_equal ['Before', 'After'], @comment.state_change
-      assert_equal 'After', @merge_request.reload.status_tag
+      assert_equal 'After', @merge_request.reload.status_tag.to_s
     end
     
     should 'change the state of its target' do
@@ -70,7 +71,7 @@ class CommentTest < ActiveSupport::TestCase
       @comment.user = users(:johan)
       assert_equal @merge_request, @comment.target
       assert @comment.save!
-      assert_equal 'After', @merge_request.reload.status_tag
+      assert_equal 'After', @merge_request.reload.status_tag.to_s
     end
 
     should 'not change the state of its target unless the user can resolve it' do
@@ -82,7 +83,7 @@ class CommentTest < ActiveSupport::TestCase
       assert_equal ['Before', 'After'], @comment.state_change
       assert_equal 'After', @comment.state_changed_to
       assert @comment.save
-      assert_equal 'Before', @merge_request.reload.status_tag
+      assert_equal 'Before', @merge_request.reload.status_tag.to_s
     end
     
     should 'know of previous and new states' do

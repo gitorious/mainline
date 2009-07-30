@@ -33,6 +33,7 @@ class ProjectTest < ActiveSupport::TestCase
   end
   
   should_belong_to :containing_site
+  should_have_many :merge_request_statuses
 
   should " have a title to be valid" do
     project = create_project(:title => nil)
@@ -368,17 +369,13 @@ class ProjectTest < ActiveSupport::TestCase
     should 'by default have the default states' do
       assert_equal ['Merged','Rejected'], @project.merge_request_fixed_states
       assert !@project.has_custom_merge_request_states?
-      assert_equal ['Merged','Rejected','Open','Closed','Verifying'], @project.merge_request_state_list
+      assert_equal %w(Open Closed),
+        @project.merge_request_state_list
     end
 
     should 'serialize merge_request_state_options' do
       @project.merge_request_custom_states = %w(Merged Verifying)
       assert_equal %w(Merged Verifying), @project.merge_request_custom_states
-    end
-
-    should 'return an array of states including the default ones' do
-      @project.merge_request_custom_states = %w(Closed Wontfix)
-      assert_equal %w(Merged Rejected Closed Wontfix), @project.merge_request_state_list
     end
 
     should 'be serializible through a text-only version' do

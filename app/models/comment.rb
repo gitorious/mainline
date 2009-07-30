@@ -62,8 +62,8 @@ class Comment < ActiveRecord::Base
     return if new_state.blank?
     result = []
     if applies_to_merge_request?
-      return if target.status_tag == new_state
-      result << target.status_tag
+      return if target.status_tag.to_s == new_state
+      result << (target.status_tag.nil? ? nil : target.status_tag.name)
     end
     result << new_state
     self.state_change = result

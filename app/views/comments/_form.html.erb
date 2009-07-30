@@ -46,7 +46,7 @@
     <div id="comment_preview">
       
     </div>
-    <%- if MergeRequest === parent && (logged_in? && parent.resolvable_by?(current_user)) -%>
+    <%- if comment_applies_to_merge_request?(parent) -%>
     <p>
       <%= f.label :state, 'Status' %><br />
       <%= f.select :state, parent.target_repository.project.merge_request_state_list,

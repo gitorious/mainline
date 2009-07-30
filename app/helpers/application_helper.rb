@@ -467,4 +467,8 @@ module ApplicationHelper
       sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
     end
   end
+
+  def comment_applies_to_merge_request?(parent)
+    MergeRequest === parent && (logged_in? && parent.resolvable_by?(current_user))
+  end
 end

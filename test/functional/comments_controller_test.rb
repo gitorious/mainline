@@ -154,7 +154,7 @@ class CommentsControllerTest < ActionController::TestCase
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
       assert_equal [nil, 'Resolved'], assigns(:comment).state_change
-      assert_equal 'Resolved', @merge_request.reload.status_tag
+      assert_equal 'Resolved', @merge_request.reload.status_tag.name
     end
     
     should 'not transition the target if an empty state if provided' do

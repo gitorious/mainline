@@ -39,6 +39,8 @@ class Project < ActiveRecord::Base
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
+  has_many    :merge_request_statuses
+  
   serialize :merge_request_custom_states, Array
   
   attr_protected :owner_id, :user_id, :site_id
@@ -324,13 +326,12 @@ class Project < ActiveRecord::Base
 
   # Returns an array of merge request states
   def merge_request_state_list
-    result = merge_request_fixed_states
-    if has_custom_merge_request_states?
-      result << merge_request_custom_states
-    else
-      result << merge_request_default_states
+    if merge_request_statuses.blank?
+      MergeRequestStatus.create_defaults_for_project(self)
     end
-    result.flatten
+    merge_request_statuses.map do |status|
+      status.name
+    end      
   end
   
   # Returns a String representation of the merge request states

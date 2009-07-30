@@ -46,48 +46,38 @@ class MergeRequest < ActiveRecord::Base
   validates_presence_of :user, :source_repository, :target_repository
   
   validates_presence_of :ending_commit, :on => :create
+  
   STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
   STATUS_OPEN = 1
-  STATUS_MERGED = 2
-  STATUS_REJECTED = 3
-  STATUS_VERIFYING = 4
-  
+  STATUS_CLOSED = 5 # further states must start at 5+n (for backwards compat)
+#   STATUS_MERGED = 2
+#   STATUS_REJECTED = 3
+#   STATUS_VERIFYING = 4
+
   state_machine :status, :initial => :pending do
     state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
     state :open, :value => ::MergeRequest::STATUS_OPEN
-    state :merged, :value => ::MergeRequest::STATUS_MERGED
-    state :rejected, :value => ::MergeRequest::STATUS_REJECTED
-    state :verifying, :value => ::MergeRequest::STATUS_VERIFYING
+    state :closed, :value => ::MergeRequest::STATUS_CLOSED
     
     event :open do
       transition :pending => :open
     end
-    
-    event :in_verification do
-      transition :open => :verifying
+
+    event :close do
+      transition :open => :closed
     end
-    
-    event :reject do
-      transition [:open, :verifying] => :rejected
-    end
-    
-    event :merge do
-      transition [:open, :verifying] => :merged
-    end
-    
+
     event :reopen do
-      transition [:merged, :rejected] => :open
+      transition :closed => :open
     end
   end
   
-  named_scope :open, :conditions => ['(LCASE(status_tag) in (?) OR status_tag IS NULL) AND status != ?', ['open','verifying'], STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :closed, :conditions => ["LCASE(status_tag) in (?) AND status != ?", ['merged','rejected'], STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :merged, :conditions => ["LCASE(status_tag) = ? AND status != ?", 'merged', STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :rejected, :conditions => ["LCASE(status_tag) = ? AND status != ?", 'rejected', STATUS_PENDING_ACCEPTANCE_OF_TERMS]
+  named_scope :open, :conditions => ['status = ?', STATUS_OPEN]
+  named_scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
   named_scope :by_status, lambda {|state|
-    {:conditions => ["LCASE(status_tag) = ? AND status != ?", state, STATUS_PENDING_ACCEPTANCE_OF_TERMS ] }
+    {:conditions => ["LOWER(status_tag) = ? AND status != ?",
+                     state.downcase, STATUS_PENDING_ACCEPTANCE_OF_TERMS ] }
   }
-
   
   def reopen_with_user(a_user)
     if can_be_reopened_by?(a_user)
@@ -116,12 +106,10 @@ class MergeRequest < ActiveRecord::Base
   
   def self.from_filter(filter_name = nil)
     case filter_name
-    when "open"
+    when "open", "Open"
       open
-    when "merged"
-      merged
-    when "rejected"
-      rejected
+    when "closed", "Closed"
+      closed
     when String
       by_status(filter_name)
     else
@@ -146,16 +134,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def possible_next_states
-    result = if status == STATUS_OPEN
-      [STATUS_MERGED, STATUS_REJECTED, STATUS_VERIFYING]
-    elsif status == STATUS_VERIFYING
-      [STATUS_MERGED, STATUS_REJECTED]
-    elsif status == STATUS_PENDING_ACCEPTANCE_OF_TERMS
-      [STATUS_OPEN]
-    else
-      []
-    end
-    return result
+    status == STATUS_OPEN ? [STATUS_CLOSED] : [STATUS_OPEN]
   end
   
   def updated_by=(user)
@@ -176,19 +155,28 @@ class MergeRequest < ActiveRecord::Base
     @current_user = nil
   end
   
-  def status_tag=(s)
-    case s.downcase
-    when 'merged'
-      self.status = STATUS_MERGED
-    when 'rejected'
-      self.status = STATUS_REJECTED
-    when 'in_verification'
-      self.status = STATUS_VERIFYING
+  def status_tag=(tag)
+    unless tag.is_a?(StatusTag)
+      tag = StatusTag.new(tag, target_repository.project)
+    end
+    if tag.open?
+      # TODO: should use the statemachine events instead?
+      self.status = STATUS_OPEN
+    elsif tag.closed?
+      self.status = STATUS_CLOSED
+    else
+      self.status = STATUS_OPEN # FIXME: fallback
     end
     
-    @previous_state = status_tag
-    write_attribute(:status_tag, s)
+    @previous_state = status_tag.name if status_tag
+    write_attribute(:status_tag, tag.name)
     save
+  end
+
+  def status_tag
+    if target_repository && (status_tag_name = super)
+      StatusTag.new(status_tag_name, self.target_repository.project)
+    end
   end
 
   def create_status_change_event(comment)
@@ -573,10 +561,14 @@ class MergeRequest < ActiveRecord::Base
   # If no reason exists: simply set the status tag directly from whatever status_string is
   def migrate_to_status_tag
     if reason.blank?
-      self.status_tag = status_string
+      self.status_tag = status_string.capitalize
       save
     else
-      comment = comments.create!(:user => updated_by, :body => reason, :project => target_repository.project)
+      comment = comments.create!({
+          :user => updated_by,
+          :body => reason,
+          :project => target_repository.project
+        })
       comment.state = status_string
       comment.save!
     end
