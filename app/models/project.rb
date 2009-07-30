@@ -40,6 +40,7 @@ class Project < ActiveRecord::Base
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
   has_many    :merge_request_statuses, :order => "id asc"
+  accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
   
   serialize :merge_request_custom_states, Array
   

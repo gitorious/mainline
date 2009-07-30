@@ -796,6 +796,15 @@ input[type='text'], input[type='password'], textarea, select {
   border: 1px solid #bbb;
 }
 
+input.compact, select.compact {
+    width: 75px;
+    margin-right: 5px;
+}
+input.medium_compact {
+    width: 150px;
+    margin-right: 5px;
+}
+
 input[type='text']:focus, input[type='password']:focus. input.title:focus,
 textarea:focus, select:focus {
   border: 1px solid #666;
@@ -2497,4 +2506,12 @@ table.select_commits_from_list tr.unknown-status td.meta
 
 #merge-requests-status-chooser ul.horizontal li > a {
     padding-left: 10px !important;
+}
+
+.merge_request_status {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+}
+.add_link {
+    text-align:right;
 }

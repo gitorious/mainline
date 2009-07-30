@@ -21,7 +21,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class MergeRequestStatusTest < ActiveSupport::TestCase
   
   should_belong_to :project
-  should_validate_presence_of :project, :state
+  should_validate_presence_of :project, :state, :name
 
   context "State" do
     setup { @status = MergeRequestStatus.new(:project => Project.first, :name => "foo") }

@@ -13,7 +13,8 @@ class StatusTagTest < ActiveSupport::TestCase
     @closed_status = MergeRequestStatus.create!({
         :project => @project,
         :name => "Closed",
-        :state => MergeRequest::STATUS_CLOSED
+        :state => MergeRequest::STATUS_CLOSED,
+        :color => "#ccc"
       })
   end
 

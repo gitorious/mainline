@@ -73,9 +73,3 @@
   <small class="hint"><%= t("views.projects.hint") %></small><br />
   <%= form.text_area :description, :class => "text wide tall" -%>
 </p>
-<p>
-  <%= form.label :merge_request_states, t(:merge_request_states, :scope => 'activerecord.attributes.project') -%><br />
-  <small class="hint"><%= t('views.projects.merge_request_states_hint') -%></small><br />
-  <%= form.text_area :merge_request_states -%><br />
-  <small class="hint">In addition, the following states will always be available: <strong><%= @project.merge_request_fixed_states.join(',') -%></strong></small>
-</p>

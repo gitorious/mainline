@@ -133,7 +133,7 @@ class ProjectsController < ApplicationController
       flash[:success] = "Project details updated"
       redirect_to project_path(@project)
     else
-      render :action => 'new'
+      render :action => 'edit'
     end
   end
   

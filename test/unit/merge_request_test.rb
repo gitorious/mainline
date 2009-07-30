@@ -567,9 +567,9 @@ class MergeRequestTest < ActiveSupport::TestCase
     should "set the internal statemachine accordingly" do
       project = @merge_request.target_repository.project
       project.merge_request_statuses.create!(:name => "In Progress",
-        :state => MergeRequest::STATUS_OPEN)
+        :state => MergeRequest::STATUS_OPEN, :color => "#000")
       project.merge_request_statuses.create!(:name => "All Done",
-        :state => MergeRequest::STATUS_CLOSED)
+        :state => MergeRequest::STATUS_CLOSED, :color => "#ccc")
 
       @merge_request.status_tag = "In Progress"
       assert @merge_request.reload.open?

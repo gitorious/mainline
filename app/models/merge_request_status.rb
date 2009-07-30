@@ -19,7 +19,9 @@
 class MergeRequestStatus < ActiveRecord::Base
   belongs_to :project
 
-  validates_presence_of :project, :state
+  validates_presence_of :project, :state, :name
+  validates_format_of :color, :with => /#[0-9a-f]{3,6}/i,
+    :message => "should be hex encoded (eg '#cccccc', like in CSS)"
 
   def self.create_defaults_for_project(project)
     project.merge_request_statuses.create!({
@@ -32,6 +34,13 @@ class MergeRequestStatus < ActiveRecord::Base
         :state => MergeRequest::STATUS_CLOSED,
         :color => "#AA0000"
       })    
+  end
+
+  def self.default_states
+    {
+      "Open" => MergeRequest::STATUS_OPEN,
+      "Closed" => MergeRequest::STATUS_CLOSED
+    }
   end
 
   def open?

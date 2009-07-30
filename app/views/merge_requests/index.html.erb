@@ -58,7 +58,13 @@
            merge_request ]) -%>
     <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
       <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
+    <% if merge_request.status_tag -%>
+      <td style="color:<%=h merge_request.status_tag.color -%>">
+        <%=h merge_request.status_tag.name -%>
+      </td>
+    <% else -%>
       <td><%=h merge_request.status_tag -%></td>
+    <% end -%>
       <td>
         <%= link_to h(truncate(merge_request.proposal, :length=>110)), mr_path -%>
       </td>
