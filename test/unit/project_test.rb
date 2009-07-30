@@ -384,4 +384,17 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal ['Foo','Bar'], @project.merge_request_custom_states
     end
   end
+
+  should "create default merge_request_statuses on creation" do
+    project = Factory.build(:user_project)
+    assert project.new_record?
+    project.save!
+
+    assert_equal 2, project.reload.merge_request_statuses.count
+    open_status, closed_status = project.merge_request_statuses
+    assert_equal MergeRequest::STATUS_OPEN, open_status.state
+    assert_equal "Open", open_status.name
+    assert_equal MergeRequest::STATUS_CLOSED, closed_status.state
+    assert_equal "Closed", closed_status.name
+  end
 end

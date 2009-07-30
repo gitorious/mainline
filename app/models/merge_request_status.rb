@@ -24,11 +24,13 @@ class MergeRequestStatus < ActiveRecord::Base
   def self.create_defaults_for_project(project)
     project.merge_request_statuses.create!({
         :name => "Open",
-        :state => MergeRequest::STATUS_OPEN
+        :state => MergeRequest::STATUS_OPEN,
+        :color => "#408000"
       })
     project.merge_request_statuses.create!({
         :name => "Closed",
-        :state => MergeRequest::STATUS_CLOSED
+        :state => MergeRequest::STATUS_CLOSED,
+        :color => "#AA0000"
       })    
   end
 

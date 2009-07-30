@@ -39,7 +39,7 @@ class Project < ActiveRecord::Base
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
-  has_many    :merge_request_statuses
+  has_many    :merge_request_statuses, :order => "id asc"
   
   serialize :merge_request_custom_states, Array
   
@@ -79,6 +79,7 @@ class Project < ActiveRecord::Base
 
   before_validation :downcase_slug
   after_create :create_wiki_repository
+  after_create :create_default_merge_request_statuses
   
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
@@ -365,6 +366,10 @@ class Project < ActiveRecord::Base
         :project => self,
         :owner => self.owner,
       })
+    end
+
+    def create_default_merge_request_statuses
+      MergeRequestStatus.create_defaults_for_project(self)
     end
 
     def downcase_slug
