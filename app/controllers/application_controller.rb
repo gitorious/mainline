@@ -211,11 +211,12 @@ class ApplicationController < ActionController::Base
     def branch_and_path(branch_and_path, git)
       branch_and_path = desplat_path(branch_and_path)
       branch_ref = path = nil
-      heads = Array(git.heads).map{|h| h.name }
+      heads = Array(git.heads).map{|h| h.name }.sort{|a,b| b.length <=> a.length }
       heads.each do |head|
         if branch_and_path.starts_with?(head)
           branch_ref = head
           path = ensplat_path(branch_and_path.sub(head, "")) || []
+          break
         end
       end
       unless path # fallback
