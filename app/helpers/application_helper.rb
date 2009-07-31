@@ -478,4 +478,15 @@ module ApplicationHelper
     end
     true
   end
+
+  def show_new_team_link?
+    if logged_in?
+      if GitoriousConfig["only_site_admins_can_create_teams"] && !current_user.site_admin?
+        return false
+      end
+    else
+      return false
+    end
+    true
+  end
 end

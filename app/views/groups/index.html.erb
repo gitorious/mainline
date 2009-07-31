@@ -40,6 +40,8 @@
 
 <% content_for :sidebar do -%>
   <ul class="links">
+    <% if show_new_team_link? -%>
     <li class="team_new"><%= link_to "Create a new team", new_group_path -%></li>
+    <% end -%>
   </ul>
 <% end -%>
