@@ -467,4 +467,15 @@ module ApplicationHelper
       sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
     end
   end
+
+  def show_new_project_link?
+    if logged_in?
+      if GitoriousConfig["only_site_admins_can_create_projects"] && !current_user.site_admin?
+        return false
+      end
+    else
+      return false
+    end
+    true
+  end
 end
