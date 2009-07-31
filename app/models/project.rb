@@ -108,6 +108,7 @@ class Project < ActiveRecord::Base
     'Public Domain',
     'Other Open Source Initiative Approved License',
     'Other/Proprietary License',
+    'Other/Multiple',
     'None',
   ]
   
