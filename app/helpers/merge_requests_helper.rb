@@ -19,6 +19,38 @@
 #++
 
 module MergeRequestsHelper
+  
+  def render_status_tag_list(status_tags, repository)
+    project_statuses = repository.project.merge_request_statuses
+    
+    out = '<ul class="horizontal">'
+    open_tags = project_statuses.select{|s| s.open? }
+    out << "<li>Open:</li>" unless open_tags.blank?
+    open_tags.each do |status|
+      out << "<li>#{link_to_status(repository, status.name)}</li>"
+    end
+    out << '</ul><div class="clear"></div>'
+
+    out << '<ul class="horizontal">'
+    closed_tags = project_statuses.select{|s| s.closed? }
+    out << "<li>Closed:</li>" unless closed_tags.blank?
+    closed_tags.each do |status|
+      out << "<li>#{link_to_status(repository, status.name)}</li>"
+    end
+    out << '</ul><div class="clear"></div>'
+
+    out << '<ul class="horizontal">'
+    orphaned_tags = status_tags.select do |s|
+      !project_statuses.map{|s| s.name.downcase}.include?(s.downcase)
+    end
+    out << "<li>Other:</li>" unless orphaned_tags.blank?
+    orphaned_tags.each do |status|
+      out << "<li class=foo>#{link_to_status(repository, status)}</li>"
+    end
+    out << "</ul>"
+    out
+  end
+  
   def link_to_status(repository, status)
     if params[:status].blank? && status == "open"
       link_to_selected_status(repository, status)
@@ -30,13 +62,14 @@ module MergeRequestsHelper
   end
   
   def link_to_not_selected_status(repository, status)
-    link_to(h(status.titlecase), repo_owner_path(repository, 
-      :project_repository_merge_requests_path, repository.project, repository, {:status => status}))
+    link_to(h(status.to_s), repo_owner_path(repository, 
+        :project_repository_merge_requests_path, repository.project,
+        repository, {:status => status}))
   end
   
   def link_to_selected_status(repository, status)
-    link_to(h(status.titlecase), repo_owner_path(repository, 
-      :project_repository_merge_requests_path, repository.project, repository, {:status => status}),
-      {:class => "selected"})
+    link_to(h(status.to_s), repo_owner_path(repository, 
+        :project_repository_merge_requests_path, repository.project,
+        repository, {:status => status}), {:class => "selected"})
   end
 end

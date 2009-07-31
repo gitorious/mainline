@@ -23,19 +23,15 @@
 <% @page_title = t("views.merges.page_title", :repo => h(@repository.name)) -%>
 <%= breadcrumbs_from(@root) -%>
 
+<div id="merge-requests-status-chooser" class="round-10">
+  <h5 class="hint">Filter by status:</h5>
+  <%= render_status_tag_list(@status_tags, @repository) -%>
+</div>
+
 <h1><%= t("views.merges.page_title", :repo => h(@repository.name)) %></h1>
 
 <p class="hint"><%= t("views.merges.hint") %></p>
 
-
-<div id="merge-requests-status-chooser" class="round-10">
-  <ul class="horizontal">
-    <li>Filter merge requests:</li>
-  <% @status_tags.each do |status| -%>
-    <li><%= link_to_status(@repository, status) -%></li>
-   <% end -%>
-  </ul>
-</div>
 <div class="clear"></div>
 <table class="listing">
   <thead>

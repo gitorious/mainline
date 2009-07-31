@@ -2488,7 +2488,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     width: 50%;
 }
 #merge-requests-status-chooser {
-    padding: 5px;
+    padding: 5px 10px;
     background: #E9F1F6;
     float: right;
     margin: 0 0 5px 0;
@@ -2496,7 +2496,7 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 
 #merge-requests-status-chooser ul.horizontal {
-    float:right;
+    float:left;
     margin: 0;
 }
 
