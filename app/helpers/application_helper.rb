@@ -481,4 +481,19 @@ module ApplicationHelper
       end
     end
   end
+
+  def uses_color_picker!
+    content_for :extra_head do
+      javascript_include_tag("slider", "builder", "yahoo_color", "color_picker",
+        :cache => "colorpicking") +
+      '<script type="text/javascript" charset="utf-8">
+       function loadColorPickers() {
+         $$("#merge_request_statuses input.color_pickable").each(function(el){
+           new Control.ColorPicker(el.id);
+        })
+      };
+      Event.observe(window, "dom:loaded", loadColorPickers.bindAsEventListener(this))
+      </script>'
+    end
+  end
 end

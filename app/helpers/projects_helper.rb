@@ -44,7 +44,9 @@ module ProjectsHelper
       form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
           :child_index => 'NEW_RECORD') do |f|
         html = render(:partial => 'merge_request_status_form', :locals => { :form => f })
-        page << "$('merge_request_statuses').insert({bottom: '#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });"
+        page << ("$('merge_request_statuses').insert({bottom: " +
+          "'#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });" +
+          "loadColorPickers()")
       end
     end
   end

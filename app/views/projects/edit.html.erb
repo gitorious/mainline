@@ -20,7 +20,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-
+<% uses_color_picker! -%>
 <%= breadcrumbs_from(@root) -%>
 
 <h1><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h1>
