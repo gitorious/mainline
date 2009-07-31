@@ -471,4 +471,14 @@ module ApplicationHelper
   def comment_applies_to_merge_request?(parent)
     MergeRequest === parent && (logged_in? && parent.resolvable_by?(current_user))
   end
+
+  def statuses_for_merge_request_for_select(merge_request)
+    merge_request.target_repository.project.merge_request_statuses.map do |status|
+      if status.description.blank?
+        [h(status.name), h(status.name)]
+      else
+        [h("#{status.name} - #{status.description}"), h(status.name)]
+      end
+    end
+  end
 end

@@ -325,16 +325,6 @@ class Project < ActiveRecord::Base
   def wiki_permissions=(perms)
     wiki_repository.wiki_permissions = perms
   end
-
-  # Returns an array of merge request states
-  def merge_request_state_list
-    if merge_request_statuses.blank?
-      MergeRequestStatus.create_defaults_for_project(self)
-    end
-    merge_request_statuses.map do |status|
-      status.name
-    end      
-  end
   
   # Returns a String representation of the merge request states
   def merge_request_states

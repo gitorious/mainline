@@ -47,6 +47,10 @@ class StatusTagTest < ActiveSupport::TestCase
   should "have a default grayish color whe there's no #status" do
     st = StatusTag.new("Foo", @project)
     assert_equal "#cccccc", st.color
+    
+    @open_status.update_attribute(:color, "")
+    st = StatusTag.new("Foo", @project)
+    assert_equal "#cccccc", st.color
   end
 
   should "know if it's open or closed" do

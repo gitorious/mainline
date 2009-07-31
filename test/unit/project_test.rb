@@ -365,14 +365,7 @@ class ProjectTest < ActiveSupport::TestCase
 
   context 'Merge request status tags' do
     setup {@project = Factory.create(:user_project)}
-
-    should 'by default have the default states' do
-      assert_equal ['Merged','Rejected'], @project.merge_request_fixed_states
-      assert !@project.has_custom_merge_request_states?
-      assert_equal %w(Open Closed),
-        @project.merge_request_state_list
-    end
-
+    
     should 'serialize merge_request_state_options' do
       @project.merge_request_custom_states = %w(Merged Verifying)
       assert_equal %w(Merged Verifying), @project.merge_request_custom_states

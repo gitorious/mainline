@@ -49,8 +49,8 @@
     <%- if comment_applies_to_merge_request?(parent) -%>
     <p>
       <%= f.label :state, 'Status' %><br />
-      <%= f.select :state, parent.target_repository.project.merge_request_state_list,
-           :selected => parent.status_tag, :include_blank => true -%>
+      <%= f.select :state, statuses_for_merge_request_for_select(parent),
+           :selected => parent.status_tag.to_s, :include_blank => true -%>
     </p>
     <%- end -%>
     <p>

@@ -19,7 +19,7 @@ class StatusTag
   end
 
   def color
-    if status
+    if status && !status.color.blank?
       status.color
     else
       "#cccccc"

@@ -21,7 +21,7 @@ class MergeRequestStatus < ActiveRecord::Base
 
   validates_presence_of :project, :state, :name
   validates_format_of :color, :with => /#[0-9a-f]{3,6}/i,
-    :message => "should be hex encoded (eg '#cccccc', like in CSS)"
+    :message => "should be hex encoded (eg '#cccccc', like in CSS)", :allow_blank => true
 
   def self.create_defaults_for_project(project)
     project.merge_request_statuses.create!({

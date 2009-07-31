@@ -23,7 +23,16 @@
 <% no_link ||= false -%>
 
 <div class="merge_request_summary">
-  <p class="status">[<span><%=h merge_request.status_tag -%></span>]</p>
+  <p class="status">[
+    <% if merge_request.status_tag -%>
+      <span style="color:<%=h merge_request.status_tag.color-%>">
+        <%=h merge_request.status_tag.name -%>
+      </span>
+    <% else -%>
+      <span><%=h merge_request.status_tag -%></span>
+    <% end -%>
+  ]</p>
+
   <h5>
 	<% source = link_to h(merge_request.source_name), 
           repo_owner_path(merge_request.source_repository, [merge_request.source_repository.project, merge_request.source_repository]) -%>
