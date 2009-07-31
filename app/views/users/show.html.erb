@@ -47,10 +47,14 @@
     <% pull_box(t("views.site.dashboard.repositories")) do -%>
     <% if @repositories.blank? -%>
       <p class="hint">
+      <% if @user == current_user -%>
         You currently don't have any repository clones. You can clone
         a repository you wish to contribute to, by going to a
         repository overview page and click the "Clone on Gitorious"
         link in the sidebar.
+      <% else -%>
+        <%=h @user.title -%> currently doesn't have any repository clones
+      <% end -%>
       </p>
     <% else -%>
       <ul class="with_icons">
