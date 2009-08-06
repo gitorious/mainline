@@ -536,7 +536,7 @@ li.project_personal > a { background-image: url("/images/silk/report_user.png") 
 li.project_research > a { background-image: url("/images/silk/report_magnify.png") !important; }
 li.user > a { background-image: url("/images/silk/user.png") !important; }
 
-#li.group > a { background-image: url("/images/silk/group.png") !important; }
+li.group > a { background-image: url("/images/silk/group.png") !important; }
 
 li.repository > a { background-image: url("/images/silk/database.png") !important; }
 li.repository.mainline > a { background-image: url("/images/silk/database_star.png") !important; }
