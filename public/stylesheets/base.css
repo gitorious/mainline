@@ -553,10 +553,10 @@ li.edit_key > a { background-image: url("/images/silk/key_edit.png") !important;
 li.key > a { background-image: url("/images/silk/key.png") !important; }
 li.zip > a { background-image: url("/images/silk/page_white_zip.png") !important; }
 li.gz > a { background-image: url("/images/silk/page_white_compressed.png") !important; }
-li.merge_requests > a { background-image: url("/images/silk/arrow_in.png") !important; }
+li.merge_requests > a { background-image: url("/images/silk/table_multiple.png") !important; }
 li.clone > a { background-image: url("/images/silk/database_clone.png") !important; }
 li.comment_link > a { background-image: url("/images/silk/comment.png") !important; }
-li.merge_request > a { background-image: url("/images/silk/arrow_merge.png") !important; }
+li.merge_request > a { background-image: url("/images/silk/table.png") !important; }
 li.alias > a { background-image: url("/images/silk/vcard.png") !important; }
 li.new_alias > a { background-image: url("/images/silk/vcard_add.png") !important; }
 li.emails > a { background-image: url("/images/silk/email.png") !important; }
@@ -582,7 +582,8 @@ li.event_instance.project_members, li.project_members > a { background-image: ur
 li.event_instance.wiki_page, li.wiki_page > a { background-image: url("/images/silk/book_open.png") !important; }
 li.event_instance.wiki_page_history, li.wiki_page_history > a { background-image: url("/images/silk/time.png") !important; }
 li.event_instance.edit_wiki_page, li.edit_wiki_page > a { background-image: url("/images/silk/page_white_text_edit.png") !important; }
-li.delete_merge_request > a { background-image: url("/images/silk/chart_line_delete.png") !important; }
+li.event_instance.delete_merge_request, li.delete_merge_request > a { background-image: url("/images/silk/table_delete.png") !important; }
+li.event_instance.request_merge, li.request_merge { background-image: url("/images/silk/table_add.png") !important; }
 
 /* Icons used for events only */
 li.event_instance.create_branch { background-image: url("/images/silk/arrow_branch.png") !important; }
@@ -591,10 +592,9 @@ li.event_instance.create_tag { background-image: url("/images/silk/tag_blue_add.
 li.event_instance.delete_tag { background-image: url("/images/silk/tag_blue_delete.png") !important; }
 li.event_instance.remove_committer { background-image: url("/images/silk/group_delete.png") !important; }
 li.event_instance.comment { background-image: url("/images/silk/comment.png") !important; }
-li.event_instance.request_merge { background-image: url("/images/silk/chart_line_add.png") !important; }
-li.event_instance.resolve_merge_request { background-image: url("/images/silk/arrow_merge.png") !important; }
-li.event_instance.update_merge_request { background-image: url("/images/silk/chart_line_edit.png") !important; }
-li.event_instance.delete_merge_request { background-image: url("/images/silk/chart_line_delete.png") !important; }
+li.event_instance.resolve_merge_request { background-image: url("/images/silk/table_edit.png") !important; }
+li.event_instance.update_merge_request { background-image: url("/images/silk/table_edit.png") !important; }
+li.event_instance.delete_merge_request { background-image: url("/images/silk/table_delete.png") !important; }
 li.event_instance.push { background-image: url("/images/silk/bricks.png") !important; }
 
 /* Icons used for file types in breadcrumb and tree view */
