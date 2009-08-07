@@ -37,7 +37,7 @@
   <thead>
     <th>ID</th>
     <th>Status</th>
-    <th>Description</th>
+    <th>Summary</th>
     <th>Creator</th>
     <th>Age</th>
   </thead>
@@ -62,7 +62,7 @@
       <td><%=h merge_request.status_tag -%></td>
     <% end -%>
       <td>
-        <%= link_to h(truncate(merge_request.proposal, :length=>110)), mr_path -%>
+        <%= link_to h(truncate(merge_request.summary, :length=>110)), mr_path -%>
       </td>
       <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
       <td><%=h time_ago_in_words(merge_request.created_at.to_s) -%></td>
