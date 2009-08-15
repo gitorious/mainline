@@ -160,6 +160,7 @@
         :discussion => "Discussion group",
         :teams => "All Teams",
         :blog => "Blog",
+        :participate => "Participate"
       },
       :site => {
         :pay_off => lambda {|gitorious_repo_path, read_more_path|
@@ -185,7 +186,8 @@
           :projects => "Projects",
           :repositories => "Repositories",
           :team_memberships => "Team memberships",
-          :registration_button => "Register now"
+          :registration_button => "Register now",
+          :participation_button => "Want to participate?"
         },
       },
       :events => {

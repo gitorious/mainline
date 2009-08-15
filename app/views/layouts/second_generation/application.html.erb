@@ -16,7 +16,11 @@
           <li><%= link_to t("views.layout.teams"), groups_path %></li>
           <li><%= link_to t("views.layout.faq"), faq_path %></li>
           <li><%= link_to t("views.layout.about"), about_path %></li>
-          <li><%= link_to t("views.layout.register"), new_user_path %></li>
+          <% if GitoriousConfig['public_mode'] -%>
+            <li><%= link_to t("views.layout.register"), new_user_path %></li>
+          <% else -%>
+            <li><%= link_to t("views.layout.participate"), "mailto:#{GitoriousConfig['server_admin_emails']}" %></li>
+          <% end -%>
           <li>
             <% form_for :search,
               :url => search_path(:only_path => false, :host => GitoriousConfig["gitorious_host"]),
@@ -41,7 +45,11 @@
           <h2 id="big_header_pay_off" class="image_header"><span>The best way to collaborate on open source projects</span></h2>
           
           <div id="big_header_signup_link">
-            <%= button_link :big, t("views.site.dashboard.registration_button"), new_user_path %>
+            <% if GitoriousConfig['public_mode'] -%>
+              <%= button_link :big, t("views.site.dashboard.registration_button"), new_user_path %>
+            <% else -%>
+              <%= button_link :big, t("views.site.dashboard.participation_button"), "mailto:#{GitoriousConfig['server_admin_emails']}" %>
+            <% end -%>
           </div>
           
           <div><%= t("views.site.pay_off").call("/gitorious", about_path) %></div>

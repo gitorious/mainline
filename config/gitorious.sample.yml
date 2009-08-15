@@ -37,6 +37,9 @@ test:
   # Enable or Disable Public Mode (true) or Private Mode (false)
   public_mode: true
 
+  # Send participation mails if system works in private mode
+  server_admin_emails:
+
   # Define your locale
   locale: en
 
