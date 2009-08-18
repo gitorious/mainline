@@ -142,9 +142,10 @@ class Repository < ActiveRecord::Base
   
   def self.clone_git_repository(target_path, source_path, options = {})
     full_path = full_path_from_partial_path(target_path)
-    git_backend.clone(full_path, 
-      full_path_from_partial_path(source_path))
-      
+    Grit::Git.with_timeout(nil) do
+      git_backend.clone(full_path, 
+        full_path_from_partial_path(source_path))
+    end
     self.create_hooks(full_path) unless options[:skip_hooks]
   end
   
