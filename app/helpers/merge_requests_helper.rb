@@ -41,7 +41,7 @@ module MergeRequestsHelper
 
     out << '<ul class="horizontal">'
     orphaned_tags = status_tags.select do |s|
-      !project_statuses.map{|s| s.name.downcase}.include?(s.downcase)
+      !project_statuses.map{|s| s.name.downcase}.include?(s.to_s.downcase)
     end
     out << "<li>Other:</li>" unless orphaned_tags.blank?
     orphaned_tags.each do |status|
