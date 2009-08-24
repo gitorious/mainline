@@ -101,5 +101,17 @@ class BlobsHelperTest < ActionView::TestCase
     repo = mock("grit repo")
     Grit::Blob.create(repo, {:name => name, :data => data})
   end
+
+  context "language highlightinh of a given filename" do
+    should "return the name of a known file type" do
+      assert_equal "list", language_of_file("foo.lisp")
+      assert_equal "css", language_of_file("foo.css")
+      assert_equal "lua", language_of_file("foo.lua")
+    end
+
+    should "return nil if the filename can't be highlighted" do
+      assert_nil language_of_file("foo.bar")
+    end
+  end
   
 end

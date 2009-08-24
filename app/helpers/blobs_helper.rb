@@ -59,7 +59,9 @@ module BlobsHelper
   end
   
   def language_of_file(filename)
-    HIGHLIGHTER_TO_EXT.find{|lang, matcher| filename =~ matcher }
+    if lang_tuple = HIGHLIGHTER_TO_EXT.find{|lang, matcher| filename =~ matcher }
+      return lang_tuple.first
+    end
   end
   
   def render_highlighted(text, filename, code_theme_class = nil)
