@@ -122,7 +122,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def self.status_string(status_code)
-    statuses.invert[status_code.to_i].downcase
+    statuses.invert[status_code.to_i].to_s.downcase
   end
   
   def pending_acceptance_of_terms?
