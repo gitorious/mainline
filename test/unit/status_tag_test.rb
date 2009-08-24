@@ -29,12 +29,12 @@ class StatusTagTest < ActiveSupport::TestCase
     assert_equal @open_status, st.status
   end
 
-  should_eventually "have a description from the MergeRequestStatus" do
+  should "have a description from the MergeRequestStatus" do
     st = StatusTag.new("Open", @project)
     assert_equal @open_status.description, st.description
   end
 
-  should_eventually "return nil as description if there's no #status" do
+  should "return nil as description if there's no #status" do
     st = StatusTag.new("Foo", @project)
     assert_nil st.description
   end
