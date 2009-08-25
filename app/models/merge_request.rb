@@ -330,7 +330,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def title
-    source_repository.name
+    id
   end
   
   def acceptance_of_terms_required?
