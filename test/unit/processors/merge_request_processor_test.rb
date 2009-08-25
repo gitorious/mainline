@@ -38,7 +38,7 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
     Repository.expects(:clone_git_repository).with(
       @tracking_repo.real_gitdir, 
       @merge_request.target_repository.real_gitdir, :skip_hooks => true).once
-    @merge_request.expects(:'push_to_tracking_repository!').once
+    @merge_request.expects(:'push_to_tracking_repository!').with(true).once
     @processor.on_message(message)
   end
   
