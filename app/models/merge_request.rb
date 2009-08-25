@@ -28,7 +28,7 @@ class MergeRequest < ActiveRecord::Base
   has_many   :events, :as => :target, :dependent => :destroy
   has_many :messages, :as => :notifiable
   has_many :comments, :as => :target, :dependent => :destroy
-  has_many :versions, :class_name => 'MergeRequestVersion', :order => 'version'
+  has_many :versions, :class_name => 'MergeRequestVersion', :order => 'version', :dependent => :destroy
   
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
