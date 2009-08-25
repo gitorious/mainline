@@ -23,6 +23,8 @@ class MergeRequestStatus < ActiveRecord::Base
   validates_format_of :color, :with => /#[0-9a-f]{3,6}/i,
     :message => "should be hex encoded (eg '#cccccc', like in CSS)", :allow_blank => true
 
+  before_save :synchronize_merge_request_statuses
+
   def self.create_defaults_for_project(project)
     project.merge_request_statuses.create!({
         :name => "Open",
@@ -49,5 +51,18 @@ class MergeRequestStatus < ActiveRecord::Base
 
   def closed?
     state == MergeRequest::STATUS_CLOSED
+  end
+
+  # Updates the status of all the merge requests for the mainlines in
+  # the project who has the same status_tag as this MergeRequestStatus
+  def synchronize_merge_request_statuses
+    if state_changed?
+      # FIXME: doing it like this is a bit inefficient...
+      merge_requests = self.project.repositories.mainlines.map(&:merge_requests).flatten
+      merge_requests.select{|mr| mr.status_tag.to_s == name }.each do |mr|
+        mr.status = self.state
+        mr.save!
+      end
+    end
   end
 end
