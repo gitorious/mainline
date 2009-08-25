@@ -58,9 +58,6 @@
   
   <ul class="links">
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
-    <li class="comment_link">
-      <%= link_to "Comments", repo_owner_path(@repository, [@project, @repository, :comments]) -%>
-    </li>
   </ul>
 
 <% cache([repo_owner_path(@repository, [@project, @repository]), :tags_and_branches], 
