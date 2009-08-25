@@ -1,16 +1,18 @@
-<div class="merge_request_status">
-  <%= form.label :name -%>:
-  <%= form.text_field :name, :class => "compact" -%>
-
-  <%= form.label :state -%>:
-  <%= form.select :state, MergeRequestStatus.default_states,
+<tr class="merge_request_status">
+  <td>
+    <% if project_form.nil? -%>
+      <small class="hint">Unsaved</small>
+    <% else -%>
+      <%= project_form.radio_button :default_merge_request_status_id, form.object.id, 
+            :checked => form.object.default? -%>
+    <% end -%>
+  </td>
+  <td><%= form.text_field :name, :class => "compact" -%></td>
+  <td>
+    <%= form.select :state, MergeRequestStatus.default_states,
         {}, :class => "compact" -%>
-
-  <%= form.label :description -%>:
-  <%= form.text_field :description, :class => "medium_compact" -%>
-
-  <%= form.label :color -%>:
-  <%= form.text_field :color, :class => "compact color_pickable" -%>
-
-  <%= remove_status_link(form) -%>
-</div>
+  </td>
+  <td><%= form.text_field :description, :class => "medium_compact" -%></td>
+  <td><%= form.text_field :color, :class => "compact color_pickable" -%></td>
+  <td><%= remove_status_link(form) -%></td>
+</tr>

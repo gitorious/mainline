@@ -45,6 +45,17 @@ class MergeRequestStatusTest < ActiveSupport::TestCase
       assert @status.closed?
     end
 
+    should "create default statuses for a project" do
+      MergeRequestStatus.create_defaults_for_project(@project)
+      assert_equal 2, @project.reload.merge_request_statuses.size
+
+      assert @project.merge_request_statuses.first.open?
+      assert @project.merge_request_statuses.first.default?
+      
+      assert @project.merge_request_statuses.last.closed?
+      assert !@project.merge_request_statuses.last.default?
+    end
+
     context "updating affected merge requests" do
       setup do
         @merge_requests = @project.repositories.mainlines.map(&:merge_requests).flatten

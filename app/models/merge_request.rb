@@ -341,11 +341,19 @@ class MergeRequest < ActiveRecord::Base
   def publish_notification
     publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
   end
-
+  
+  def default_status
+    target_repository.project.merge_request_statuses.default
+  end
   
   def confirmed_by_user
-    self.status = STATUS_OPEN
-    self.status_tag = "Open"
+    if default_status
+      self.status = default_status.state
+      self.status_tag = default_status.name
+    else
+      self.status = STATUS_OPEN
+      self.status_tag = "Open"
+    end
     save
     publish_notification
     notify_subscribers_about_creation

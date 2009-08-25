@@ -93,6 +93,31 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
+  context "default status" do
+    setup do
+      @project = @merge_request.target_repository.project
+    end
+    
+    should "find the default state" do
+      assert_nil @merge_request.default_status
+      MergeRequestStatus.create_defaults_for_project(@project)
+      assert_equal @project.merge_request_statuses.first, @merge_request.default_status
+    end
+
+    should "use the default status (if any)" do
+      MergeRequestStatus.create_defaults_for_project(@project)
+      @project.merge_request_statuses.first.update_attribute(:name, "New")
+      @merge_request.confirmed_by_user
+      assert_equal "New", @merge_request.reload.status_tag.to_s
+    end
+
+    should "default to 'Open' if there's no default_status" do
+      @merge_request.confirmed_by_user
+      assert_equal "Open", @merge_request.reload.status_tag.to_s
+      assert_equal MergeRequest::STATUS_OPEN, @merge_request.status
+    end
+  end
+
   should 'have a ready? method which tells whether it has been created in the background' do
     assert !@merge_request.ready?
     v = @merge_request.build_new_version

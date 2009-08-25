@@ -43,7 +43,8 @@ module ProjectsHelper
     link_to_function(image_tag("silk/add.png") + " Add status") do |page|
       form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
           :child_index => 'NEW_RECORD') do |f|
-        html = render(:partial => 'merge_request_status_form', :locals => { :form => f })
+        html = render(:partial => 'merge_request_status_form',
+                 :locals => { :form => f, :project_form => nil })
         page << ("$('merge_request_statuses').insert({bottom: " +
           "'#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()) });" +
           "loadColorPickers()")

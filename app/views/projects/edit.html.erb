@@ -29,15 +29,27 @@
 <% form_for(@project, :method => "put") do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
 
-  <div id="merge_request_statuses">
-    <label>Merge Request Statuses:</label><br />
+  <label>Merge Request Statuses:</label><br />
+  <table class="listing" id="merge_request_statuses">
+    <thead>
+      <tr>
+      <th>Default?</th>
+      <th>Name</th>
+      <th>State</th>
+      <th>Description</th>
+      <th>Color</th>
+      <th></th>
+      <tr>
+    </thead>
     <% f.fields_for(:merge_request_statuses) do |status_form| -%>
       <%= render :partial => "merge_request_status_form", 
-            :locals => {:form => status_form} -%>
+            :locals => {:form => status_form, :project_form => f} -%>
     <% end -%>
-  </div>
+  </table>
   <p class="add_link"><%= add_status_link(f) -%></p>
+
   <hr />
+
   <% unless @project.owned_by_group? -%>
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />

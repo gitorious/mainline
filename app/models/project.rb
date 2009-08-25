@@ -347,6 +347,22 @@ class Project < ActiveRecord::Base
   def has_custom_merge_request_states?
     !merge_request_custom_states.blank?
   end
+
+  def default_merge_request_status_id
+    if status = merge_request_statuses.default
+      status.id
+    end
+  end
+
+  def default_merge_request_status_id=(status_id)
+    merge_request_statuses.each do |status|
+      if status.id == status_id.to_i
+        status.update_attribute(:default, true)
+      else
+        status.update_attribute(:default, false)
+      end
+    end
+  end
   
   protected    
     def create_wiki_repository

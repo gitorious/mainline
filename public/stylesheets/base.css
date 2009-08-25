@@ -797,11 +797,11 @@ input[type='text'], input[type='password'], textarea, select {
 }
 
 input.compact, select.compact {
-    width: 75px;
+    width: 100px;
     margin-right: 5px;
 }
 input.medium_compact {
-    width: 150px;
+    width: 170px;
     margin-right: 5px;
 }
 
