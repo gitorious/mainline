@@ -128,8 +128,9 @@ class ProjectsController < ApplicationController
     end
     
     @project.attributes = params[:project]
+    changed = @project.changed? # Dirty attr tracking is cleared after #save
     if @project.save && @project.wiki_repository.save
-      @project.create_event(Action::UPDATE_PROJECT, @project, current_user)
+      @project.create_event(Action::UPDATE_PROJECT, @project, current_user) if changed
       flash[:success] = "Project details updated"
       redirect_to project_path(@project)
     else
