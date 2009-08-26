@@ -78,6 +78,25 @@ class MergeRequestStatusTest < ActiveSupport::TestCase
         assert_equal MergeRequest::STATUS_OPEN, @merge_requests[1].reload.status
         assert_equal MergeRequest::STATUS_CLOSED, @merge_requests[2].reload.status
       end
+
+      should "only change the status_tag of the merge requests, if the name is changed" do
+        assert_equal MergeRequest::STATUS_OPEN, @merge_requests[1].status
+        assert_equal MergeRequest::STATUS_OPEN, @merge_requests[2].status
+        @merge_requests[2].update_attribute(:status_tag, @status.name)
+
+        assert_equal "open", @merge_requests[1].status_tag.to_s
+        assert_equal "foo", @merge_requests[2].status_tag.to_s
+
+        @status.name = "SomethingElse"
+        @status.save!
+
+        assert_equal MergeRequest::STATUS_OPEN, @merge_requests[1].reload.status
+        assert_equal MergeRequest::STATUS_OPEN, @merge_requests[2].reload.status
+        assert_equal "open", @merge_requests[1].reload.status_tag.to_s
+        assert_equal "SomethingElse", @merge_requests[2].reload.status_tag.to_s
+
+      end
+
     end
   end  
 end

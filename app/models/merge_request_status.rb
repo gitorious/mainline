@@ -61,11 +61,13 @@ class MergeRequestStatus < ActiveRecord::Base
   # Updates the status of all the merge requests for the mainlines in
   # the project who has the same status_tag as this MergeRequestStatus
   def synchronize_merge_request_statuses
-    if state_changed?
+    if state_changed? || name_changed?
       # FIXME: doing it like this is a bit inefficient...
       merge_requests = self.project.repositories.mainlines.map(&:merge_requests).flatten
-      merge_requests.select{|mr| mr.status_tag.to_s == name }.each do |mr|
-        mr.status = self.state
+      old_name = (name_changed? ? name_change.first : name)
+      merge_requests.select{|mr| mr.status_tag.to_s == old_name }.each do |mr|
+        mr.status = self.state if state_changed?
+        mr.status_tag = self.name if name_changed?
         mr.save!
       end
     end
