@@ -50,6 +50,8 @@ class MergeRequestGitBackendProcessor < ApplicationProcessor
       delete_target_repository_ref
     rescue Grit::NoSuchPathError => e
       logger.error "Could not find Git path. Message is #{e.message}"
+    rescue ActiveRecord::RecordNotFound => rfe
+      logger.error "Could not find repository, it may have been deleted. Message is #{rfe.message}"
     end
   end
 end
