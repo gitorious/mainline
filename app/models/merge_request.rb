@@ -106,15 +106,10 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def self.from_filter(filter_name = nil)
-    case filter_name
-    when "open", "Open"
+    if filter_name.blank?
       open
-    when "closed", "Closed"
-      closed
-    when String
-      by_status(filter_name)
     else
-      open
+      by_status(filter_name)
     end
   end
   
