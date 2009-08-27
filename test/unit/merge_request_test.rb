@@ -33,6 +33,7 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
   
   should_validate_presence_of :user, :source_repository, :target_repository
+  should_validate_presence_of :summary
   
   should_have_many :comments
   
@@ -452,7 +453,13 @@ class MergeRequestTest < ActiveSupport::TestCase
       @source_repo = repositories(:johans2)
       @target_repo = repositories(:johans)
       @user = users(:johan)
-      @merge_request = MergeRequest.new(:source_repository => @source_repo, :target_repository => @target_repo, :user => @user, :proposal => 'Please, mister postman')
+      @merge_request = MergeRequest.new({
+          :source_repository => @source_repo,
+          :target_repository => @target_repo,
+          :user => @user,
+          :summary => 'Please, mister postman',
+          :proposal => 'Please, mister postman'
+        })
     end
     
     should 'require ending_commit for new records' do
@@ -606,6 +613,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       new_request = MergeRequest.new(:user => @merge_request.user,
         :source_repository => @merge_request.source_repository,
         :target_repository => @merge_request.target_repository,
+        :summary => "Add a user",
         :proposal => "Please add me",
         :ending_commit => "a"*10, :source_branch => "master", :target_branch => "master")
       assert new_request.save!

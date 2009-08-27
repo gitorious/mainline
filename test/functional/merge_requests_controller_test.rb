@@ -234,7 +234,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		post :create, :project_id => @project.to_param, 
 			:repository_id => @source_repository.to_param, :merge_request => {
 				:target_repository_id => @target_repository.id,
-				:ending_commit => '6823e6622e1da9751c87380ff01a1db1'
+        :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+        :summary => "some changes to be merged"
 			}.merge(data)
 	end
 	
@@ -281,7 +282,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
       post :create, :project_id => @project.to_param, 
               :repository_id => @target_repository.to_param, :merge_request => {
                 :target_repository_id => @source_repository.id,
-                :ending_commit => '6823e6622e1da9751c87380ff01a1db1'
+                :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+                :summary => "some changes"
               }
 		  result = assigns(:merge_request)
 		  assert !result.acceptance_of_terms_required?
@@ -295,7 +297,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	      post :create, :project_id => @project.to_param, 
                 :repository_id => @target_repository.to_param, :merge_request => {
                   :target_repository_id => @source_repository.id,
-                  :ending_commit => '6823e6622e1da9751c87380ff01a1db1'
+                  :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+                  :summary => "some changes"
                 }
       end
     end
@@ -332,7 +335,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	
 	context 'Terms accepted (GET)' do
 	  setup do
-		  @merge_request = @source_repository.proposed_merge_requests.new(:proposal => 'Would like this to be merged', :user => users(:johan), :ending_commit => '6823e6622e1da9751c87380ff01a1db1', :target_repository => @target_repository)
+		  @merge_request = @source_repository.proposed_merge_requests.new({
+          :summary => "plz merge",
+          :proposal => 'Would like this to be merged',
+          :user => users(:johan),
+          :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+          :target_repository => @target_repository,
+          :summary => "foo"
+        })
 		  assert @merge_request.save
 		  @merge_request.stubs(:commits_to_be_merged).returns([])
 		  MergeRequest.stubs(:find).returns(@merge_request)

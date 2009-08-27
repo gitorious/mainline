@@ -43,7 +43,7 @@ class MergeRequest < ActiveRecord::Base
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
                   :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site
     
-  validates_presence_of :user, :source_repository, :target_repository
+  validates_presence_of :user, :source_repository, :target_repository, :summary
   
   validates_presence_of :ending_commit, :on => :create
   

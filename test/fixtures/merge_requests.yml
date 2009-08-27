@@ -2,6 +2,7 @@ moes_to_johans:
   user_id: 1
   source_repository_id: 2 # johans2
   target_repository_id: 1
+  summary: plz merge my clone
   proposal: plz merge my clone
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   ending_commit: 286e8afb9576366a2a43b12b94738f07
@@ -11,6 +12,7 @@ moes_to_johans_open:
   user_id: 1
   source_repository_id: 2 # johans2
   target_repository_id: 1
+  summary: plz merge my clone
   proposal: plz merge my clone
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   ending_commit: 286e8afb9576366a2a43b12b94738f07
@@ -21,6 +23,7 @@ mikes_to_johans:
   user_id: 3
   source_repository_id: 2 # johans2
   target_repository_id: 1
+  summary: A merge in progress
   proposal: A merge in progress
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   ending_commit: 286e8afb9576366a2a43b12b94738f07
@@ -31,6 +34,7 @@ johans_to_mikes:
   user_id: 1
   source_repository_id: 1
   target_repository_id: 2
+  summary: Yeah
   proposal: Yeah
   sha_snapshot: a99238
   ending_commit: a99238
