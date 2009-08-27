@@ -449,7 +449,8 @@
           :target_repos => "The one you wish this repository should be merged with",
           :target_branch => "The target branch you wish your changes to be merged into",
           :source_branch => "The source branch you wish the target repository should merge from",
-          :proposal => "A short summary of your changes",          
+          :summary => "A one-line summary of your changes",
+          :proposal => "A more detailed overview of your changes",          
         },
         :summary_title => "{{source}} has requested a merge with {{target}}",
         :review => "Review merge request &#x2192;",
@@ -458,7 +459,7 @@
         :no_merge => "No merge requests yet",
         :create_title => "Create a merge request",
         :create_btn => "Create merge request",
-        :show_title => "Reviewing merge request {{source}} &#x2192; {{target}}",
+        :show_title => "Reviewing merge request \#{{id}}: {{summary}}",
         :update_btn => "Update merge request",
         :delete_btn => 'Delete merge request',
         :help => "One way to merge in these changes is to pull them into a local " +
@@ -641,7 +642,8 @@
         },
         :merge_request => {
           :target_repository_id => "Target Repository",
-          :proposal => "Proposal",
+          :summary => "Summary",
+          :proposal => "Description",
           :source_branch => "Source Branch",
           :target_branch => "Target Branch",
         },

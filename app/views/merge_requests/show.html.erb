@@ -24,7 +24,7 @@
 
 <%= breadcrumbs_from(@merge_request) -%>
 
-<h1><%= t("views.merges.show_title", :source => h(@merge_request.source_repository.name), :target => h(@merge_request.target_repository.name)) -%></h1>
+<h1><%= t("views.merges.show_title", :id => h(@merge_request.id), :summary => h(@merge_request.summary)) -%></h1>
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 

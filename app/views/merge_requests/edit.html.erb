@@ -24,6 +24,11 @@
 <%= error_messages_for :merge_request -%>
 <% form_for [@project, @repository, @merge_request] do |f| -%>
   <p>
+    <%= f.label :summary, t(:summary, :scope => 'activerecord.attributes.merge_request') -%><br />
+    <small class="hint"><%= t("views.merges.info.summary") %></small><br />
+    <%= f.text_field :summary -%>
+  </p>
+  <p>
     <%= f.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
     <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
     <%= f.text_area :proposal, :class => "text medium" -%>

@@ -21,6 +21,11 @@
 %>
 
 <p>
+  <%= form.label :summary, t(:summary, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.summary") %></small><br />
+  <%= form.text_field :summary -%>
+</p>
+<p>
   <%= form.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
   <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
   <%= form.text_area :proposal, :class => "text medium" -%>
