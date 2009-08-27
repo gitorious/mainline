@@ -52,7 +52,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
   				:repository_id => @target_repository.to_param,
   				:format => format
   			assert_equal @target_repository.merge_requests.open, assigns(:open_merge_requests)
-  			assert_equal @target_repository.merge_requests.closed, assigns(:recently_closed_merge_requests)
   		end
 		end
 		

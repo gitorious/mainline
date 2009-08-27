@@ -38,9 +38,6 @@ class MergeRequestsController < ApplicationController
     @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(
       :all, {:page => params[:page], :per_page => per_page, :order => "created_at desc"})
 
-    @recently_closed_merge_requests = @repository.merge_requests.closed.find(:all, {
-      :limit => 10, :order => "updated_at desc"
-      })
     @status_tags = @repository.merge_request_status_tags
     @comment_count = @repository.comments.count
     respond_to do |wants|
@@ -57,7 +54,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def commit_status
-    @merge_request = @repository.merge_requests.find(params[:id], 
+    @merge_request = @repository.merge_requests.public.find(params[:id],
                                                      :include => :target_repository)
     result = @merge_request.commit_merged?(params[:commit_id]) ? 'true' : 'false'
     render :text => result, :layout => false
@@ -71,7 +68,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def show
-    @merge_request = @repository.merge_requests.find(params[:id], 
+    @merge_request = @repository.merge_requests.public.find(params[:id],
                       :include => [:source_repository, :target_repository])
     
     if @merge_request.recently_created?
@@ -98,7 +95,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def version
-    @merge_request = @repository.merge_requests.find(params[:id], 
+    @merge_request = @repository.merge_requests.public.find(params[:id],
                       :include => [:source_repository, :target_repository])
     @version = params[:version].to_i
     logger.info("Merge request versions for #{@version}")
@@ -225,12 +222,12 @@ class MergeRequestsController < ApplicationController
     end
     
     def find_merge_request
-      @merge_request = @repository.merge_requests.find(params[:id])
+      @merge_request = @repository.merge_requests.public.find(params[:id])
     end
     
     def obtain_oauth_request_token
       request_token = @merge_request.oauth_consumer.get_request_token(
-        'user_login' => current_user.login, 
+        'user_login' => current_user.login,
         'merge_request_id' => @merge_request.id)
       return request_token
     end
