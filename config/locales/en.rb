@@ -462,14 +462,6 @@
         :show_title => "Reviewing merge request \#{{id}}: {{summary}}",
         :update_btn => "Update merge request",
         :delete_btn => 'Delete merge request',
-        :help => "One way to merge in these changes is to pull them into a local " +
-                  "branch for review, verifying the changes and then merge to back " + 
-                  "to master. Your project may or may not use another method for " +
-                  "integrating merge requests.",
-        :help_for_owners => lambda{|edit_link| "To make updates to your merge requests," +
-          "you can either edit it from <a href='#{edit_link}'>this link</a> or push your changes through git. "+
-          "Either way, a new version of your merge request will be created, up until the last commit you push. " +
-          "You may make as many updates as you like; the last one will always be displayed by default."},
         :example => "Show example workflow",
         :commits_to_merged => "Commits that would be merged",
         :commits => "Commits",

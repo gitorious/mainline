@@ -71,43 +71,60 @@
 
 <%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
 
+<% if logged_in? && @merge_request.user == current_user %>
+  <% help_box(:left) do %>
+  <p>
+    <%= link_to_function("How to update your merge request", "$('detailed_merge_request_update_help').toggle()", :class => "more_info") -%>
+  </p>
+  <div id="detailed_merge_request_update_help" style="display:none;">
+  <p>
+    To make updates to your merge requests,
+    you can either edit it from <%= link_to("this link", :action => :edit) %> or push your changes through git
+    Either way, a new version of your merge request will be created, up until the last commit you push.
+    You may make as many updates as you like; the last one will always be displayed by default
+  </p>
+    
 
-<% if @merge_request.open? -%>
-<% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
-<% help_box(:left) do -%>
-<p>
-  <%- if @merge_request.user == current_user -%>
-  <%= t("views.merges.help_for_owners").call(url_for(:action => :edit)) -%>
-  <%- else -%>
-  <%= t("views.merges.help") %> 
-  <%- end -%>
-  <small>
-    <%= link_to_function(t("views.merges.example"), 
-          "$('detailed_merge_request_help').toggle()", :class => "more_info") -%>
-  </small>
-</p>
-<pre id="detailed_merge_request_help" style="display:none;">
-<%- if @merge_request.user == current_user -%>
-git push <%= @merge_request.target_repository.push_url -%> \
+  <pre>
+git push \
+  <%= @merge_request.target_repository.push_url -%> \
   <%= @merge_request.source_branch -%>:<%= @merge_request.merge_branch_name -%>
-<%- else -%>
-  git checkout master
-  git remote add <%= @merge_request.source_repository.user.login -%> <%= @merge_request.source_repository.clone_url %>
-  git fetch <%= @merge_request.source_repository.user.login %>
-  git checkout -b <%= @merge_request.source_repository.user.login -%>-review <%= @merge_request.source_repository.user.login -%>/<%= @merge_request.source_branch || 'master' %>
-  <% if @merge_request.applies_to_specific_commits? -%>
-  git reset --hard <%=h @merge_request.ending_commit -%>
+  </pre>
+  </div>
   <% end %>
-  # review changes, assess they are ok
-  git checkout <%= @merge_request.target_branch || 'master' %>
-  git merge <%= @merge_request.source_repository.user.login -%>/<%= @merge_request.source_branch || 'master' %>
-  git push origin <%= @merge_request.target_branch || 'master' -%>
-<%- end -%>
-</pre>
-<% end -%>
-<% end -%>
+<% end %>
+
+<% help_box(:left) do %>
+<p>
+  <%= link_to_function("How to apply this merge request to your repository", "$('detailed_merge_request_integration_help').toggle()", :class => "more_info") -%>
+</p>
+<div id="detailed_merge_request_integration_help" style="display:none">
+<p>
+One way to merge in these changes is to pull them into a local
+branch for review, verifying the changes and then merge to back 
+to master. 
+</p>
   
-<% end -%>
+<pre>
+# Check out a new branch for integration
+git checkout -b integration
+
+# Fetch the merge request into this branch
+git pull \
+  <%= @merge_request.target_repository.clone_url %> \
+  <%= @merge_request.merge_branch_name %> 
+
+# Show the commits, assess they are okay
+git log --pretty=oneline --abbrev-commit master..integration
+
+# To apply the changes to your master branch:
+git checkout master
+git merge integration
+git push origin master
+</pre>
+</div>
+<% end %>
+
 
 <%- if @merge_request.user == current_user -%>
   <%= button_to t('views.merges.update_btn'), repo_owner_path(@merge_request.target_repository,
