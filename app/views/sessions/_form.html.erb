@@ -4,13 +4,13 @@
       <h3><%= t("views.sessions.regular_login_header") %></h3>
       <p>
         <%= label_tag :email, t("views.sessions.email") %>
-        <%= text_field_tag :email, params[:email] %>
+        <%= text_field_tag :email, params[:email], :tabindex => 1 %>
         <a href="#" id="big_header_login_box_to_openid"><%= t("views.sessions.to_openid") %></a>
       </p>
 
       <p>
         <%= label_tag :password, t("views.sessions.passwd") %>
-        <%= password_field_tag :password %>
+        <%= password_field_tag :password, nil, :tabindex => 2 %>
         <%= link_to t("views.sessions.forgot"), forgot_password_users_path %>
       </p>
     </div>
