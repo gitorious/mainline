@@ -26,6 +26,7 @@ class KeysControllerTest < ActionController::TestCase
   def setup
     @user = users(:johan)
     @request.env["HTTPS"] = "on"
+    SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
   
   without_ssl_context do

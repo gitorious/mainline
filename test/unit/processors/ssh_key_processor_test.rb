@@ -22,6 +22,7 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class SshKeyProcessorTest < ActiveSupport::TestCase
 
   def setup
+    SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
     @processor = SshKeyProcessor.new
     @key = Factory.create(:ssh_key, :ready => false)
   end

@@ -19,6 +19,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require "tempfile"
+
 class SshKey < ActiveRecord::Base
   include ActiveMessaging::MessageSender
   belongs_to :user
@@ -40,6 +42,10 @@ class SshKey < ActiveRecord::Base
   def validate
     if self.to_keyfile_format !~ SSH_KEY_FORMAT
       errors.add(:key, I18n.t("ssh_key.key_format_validation_message"))
+    end
+
+    unless valid_key_using_ssh_keygen?
+      errors.add(:key, "is not recognized is a valid public key")
     end
   end
   
@@ -108,6 +114,13 @@ class SshKey < ActiveRecord::Base
       raw_blob = encoded_key.to_s.unpack("m*").first
       OpenSSL::Digest::MD5.hexdigest(raw_blob).scan(/../).join(":")
     end
+  end
+
+  def valid_key_using_ssh_keygen?
+    temp_key = Tempfile.new("ssh_key_#{id}")
+    system("ssh-keygen -l -f #{temp_key.path}")
+    temp_key.delete
+    return $?.success?
   end
   
   protected

@@ -26,8 +26,18 @@ class SshKeyTest < ActiveSupport::TestCase
       :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com",
     }.merge(opts))
   end
+
+  def setup
+    SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
+  end
   
   should_validate_presence_of :user_id, :key
+
+  should "validate the key using ssh-keygen" do
+    key = new_key
+    key.expects(:valid_key_using_ssh_keygen?).returns(false)
+    assert !key.valid?
+  end
 
   should " have a valid ssh key" do
     key = new_key
