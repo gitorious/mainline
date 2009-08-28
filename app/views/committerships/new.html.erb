@@ -21,21 +21,23 @@
 
 <% content_for :extra_head do -%>
 <script type="text/javascript" charset="utf-8">
-  Event.observe(document, "dom:loaded", function(e) {
-    $("add_group_link").observe("click", function(event) {
-      $('add_user').hide();
-      $('add_group').show();
-      $("add_user_tab").removeClassName("selected");
-      $("add_group_tab").addClassName("selected");
-      Event.stop(event);
+  $(document).ready(function(){
+    $("#add_group_link").click(function(event){
+      $('#add_user').hide();
+      $('#add_group').show();
+      $("#add_user_tab").removeClass("selected");
+      $("#add_group_tab").addClass("selected");
+      event.preventDefault();
     });
-    $("add_user_link").observe("click", function(event) {
-      $('add_group').hide();
-      $('add_user').show();
-      $("add_group_tab").removeClassName("selected");
-      $("add_user_tab").addClassName("selected");
-      Event.stop(event);
+    $("#add_user_link").click(function(event) {
+      $('#add_group').hide();
+      $('#add_user').show();
+      $("#add_group_tab").removeClass("selected");
+      $("#add_user_tab").addClass("selected");
+      event.preventDefault();
     });
+    $("input#user_login_autocomplete").autocomplete("auto_complete_for_user_login");
+    $("input#group_name_autocomplete").autocomplete("auto_complete_for_group_name");
   });
 </script>
 <% end -%>
@@ -57,11 +59,11 @@
 
   <p id="add_user">
     <%= f.label :group_name, t("views.committerships.user_login") -%>: 
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
+    <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
   </p>
   <p id="add_group" style="display:none;">
     <%= f.label :group_name, t("views.committerships.group_name") -%>: 
-    <%= text_field_with_auto_complete :group, :name, {}, :skip_style => true, :select => :name -%>
+    <%= text_field :group, :name, :id => "group_name_autocomplete" -%>
   </p>
   
   <p class="hint">

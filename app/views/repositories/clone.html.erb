@@ -21,23 +21,24 @@
 
 <% content_for :extra_head do -%>
   <script type="text/javascript" charset="utf-8">
-    Event.observe(window, "dom:loaded", function() {
+    $(document).ready(function() {
       var group_selection_changed = function() {
-        var select_element = $("repository_owner_id_group_select");
-        var sel = $A(select_element.options).find(function(el){
-          return el.value == select_element.value;
+        var select_element = $("#repository_owner_id_group_select");
+        var sel = null;
+        jQuery.each(select_element[0].options, function(){
+          if ($(this).val() == select_element.val()) sel = this;
         })
-        $("repository_name").value = sel.text + "-clone";
-        $("repository_owner_type_group").checked = true;
+        $("#repository_name").val(sel.text + "-clone");
+        $("#repository_owner_type_group")[0].checked = true;
       };
-      $("repository_owner_id_group_select").observe("change", function(e) {
+      $("#repository_owner_id_group_select").change(function(e) {
         group_selection_changed();
       });
-      $("repository_owner_type_group").observe("click", function(e) {
+      $("#repository_owner_type_group").click(function(e) {
         group_selection_changed();
       });
-      $("repository_owner_type_user").observe("click", function(e) {
-        $("repository_name").value = "<%= current_user.login -%>s-clone";
+      $("#repository_owner_type_user").click(function(e) {
+        $("#repository_name").val("<%= current_user.login -%>s-clone");
       })
     });
   </script>

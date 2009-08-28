@@ -62,17 +62,19 @@ class CommittershipsController < ApplicationController
   
   def auto_complete_for_group_name
     @groups = Group.find(:all, 
-      :conditions => [ 'LOWER(name) LIKE ?', '%' + params[:group][:name].downcase + '%' ],
+      :conditions => [ 'LOWER(name) LIKE ?', '%' + params[:q].downcase + '%' ],
       :limit => 10)
-    render :layout => false
+    render :text => @groups.map{|g| g.name }.join("\n")
+    #render :layout => false
   end
   
   def auto_complete_for_user_login
     @users = User.find(:all, 
       :conditions => [ 'lower(login) like :name or lower(email) like :name', 
-                      {:name => '%' + params[:user][:login].downcase + '%'} ],
+                      {:name => '%' + params[:q].downcase + '%'} ],
       :limit => 10)
-    render "/memberships/auto_complete_for_user_login", :layout => false
+    render :text => @users.map{|u| u.login }.join("\n")
+    #render "/memberships/auto_complete_for_user_login", :layout => false
   end
   
   protected

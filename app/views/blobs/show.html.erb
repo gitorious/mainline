@@ -31,7 +31,7 @@
       <%= javascript_include_tag("prettify/lang-#{hl}.js", :cache => false) -%>
     <% end -%>
     <script type="text/javascript" charset="utf-8">
-      Event.observe(window, "dom:loaded", function(e){
+      $(document).ready(function(){
         prettyPrint();
       });
     </script>

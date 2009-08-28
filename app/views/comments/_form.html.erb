@@ -54,7 +54,9 @@
     </p>
     <%- end -%>
     <p>
-      <%= button_to_remote("Preview", :url => repo_owner_path(@repository, [@project, @repository, :comments, :preview]), :method => :post, :with => 'Form.serialize(this.form)') %>
+      <input type="button" value="Preview" id="comment_preview_button" />
+      <%#= button_to_remote("Preview", 
+:url => repo_owner_path(@repository, [@project, @repository, :comments, :preview]), :method => :post, :with => '$(this.form).serialize()') %>
       <%- if MergeRequest === parent && (logged_in? &&
       parent.resolvable_by?(current_user)) -%>
         <%= f.submit t("views.comments.update_or_add") -%>

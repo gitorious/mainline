@@ -275,10 +275,10 @@ module ApplicationHelper
     if style == :image
       link_to_function(image_tag("help_grey.png", {
         :alt => t("application_helper.more_info")
-      }), "$('#{dom_id}').toggle()", :class => "more_info")
+      }), "$('##{dom_id}').toggle()", :class => "more_info")
     else
       %Q{<span class="hint">(} +
-      link_to_function("?", "$('#{dom_id}').toggle()", :class => "more_info") +
+      link_to_function("?", "$('##{dom_id}').toggle()", :class => "more_info") +
       ")</span>"
     end
     
@@ -345,7 +345,8 @@ module ApplicationHelper
       first + "</p>"
     else
       %Q{#{first} 
-        <a href="#more" onclick="$('description-rest').toggle(); this.hide()">more&hellip;</a></p>
+        <a href="#more"
+           onclick="$('#description-rest').toggle(); $(this).hide()">more&hellip;</a></p>
         <div id="description-rest" style="display:none;">#{rest}</div>}
     end
   end
@@ -484,21 +485,6 @@ module ApplicationHelper
       else
         [h("#{status.name} - #{status.description}"), h(status.name)]
       end
-    end
-  end
-
-  def uses_color_picker!
-    content_for :extra_head do
-      javascript_include_tag("slider", "builder", "yahoo_color", "color_picker",
-        :cache => "colorpicking") +
-      '<script type="text/javascript" charset="utf-8">
-       function loadColorPickers() {
-         $$("#merge_request_statuses input.color_pickable").each(function(el){
-           new Control.ColorPicker(el.id);
-        })
-      };
-      Event.observe(window, "dom:loaded", loadColorPickers.bindAsEventListener(this))
-      </script>'
     end
   end
 end

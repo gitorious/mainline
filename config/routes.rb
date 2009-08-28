@@ -50,8 +50,8 @@ ActionController::Routing::Routes.draw do |map|
         :target_branches => :post,
       }, :has_many => :comments
       repo.resources :committerships, :collection => {
-        :auto_complete_for_group_name => :post,
-        :auto_complete_for_user_login => :post
+        :auto_complete_for_group_name => :get,
+        :auto_complete_for_user_login => :get
       }
 
       repo.formatted_commits_feed "commits/*branch/feed.:format",
@@ -121,7 +121,7 @@ ActionController::Routing::Routes.draw do |map|
     project_cat.formatted_projects_category "projects/category/:id.:format"
   end
   map.resources :groups, :as => "teams", :member => {:avatar => :delete}  do |grp|
-    grp.resources :memberships, :collection => {:auto_complete_for_user_login => :post}
+    grp.resources :memberships, :collection => {:auto_complete_for_user_login => :get}
     grp.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     grp.resources :projects do |p|
       p.resources(:repositories, repository_options){|r| build_repository_routes(r) }
@@ -138,7 +138,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :messages, 
     :member => {:reply => :post, :read => :put}, 
-    :collection => {:auto_complete_for_recipient_login => :post, :sent => :get, :bulk_update => :put, :all => :get}
+    :collection => {:auto_complete_for_message_recipients => :get, :sent => :get, :bulk_update => :put, :all => :get}
   
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'

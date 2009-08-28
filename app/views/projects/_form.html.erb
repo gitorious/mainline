@@ -30,9 +30,6 @@
     <%= form.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%><br />
     <%= form.text_field :slug -%>
   </p>
-  <script type="text/javascript" charset="utf-8">
-    var slugger = new ProjectSluggorizer("project_title", "project_slug");
-  </script>
   <p>
     <%= form.current_user_or_group :owner, t("views.projects.owner"), 
           :hint => "Select the owner of this project; either yourself or a group you're a member of"-%>

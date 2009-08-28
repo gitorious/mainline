@@ -18,204 +18,202 @@
 #-- 
 */
 
-var ProjectSluggorizer = Class.create({
-  initialize: function(source, target) {
-   this.source = $(source);
-   this.target = $(target); 
-   new Form.Element.Observer(
-     this.source,
-     0.8,  
-     function(el, value){
-       this.target.value = this._lintedName(value);
-     }.bind(this)
-   )
-  },
-  
-  _lintedName: function(val) {
-    var linted = val.gsub(/\W+/, ' ')
-    linted = linted.gsub(/\ +/, '-')
-    linted = linted.toLowerCase();
-    linted = linted.gsub(/\-+$/, '')
-    return linted;
-  }
-});
-
-var Gitorious = {
-  LineHighlighter: Class.create({    
-    initialize: function(table) {
-      this.table = $(table);
-      this.currentHighlights = [];
-      this.highlightClassname = "marked";
-    },
-
-
-    update: function(line){
-      var lineno = line || this._getLineNumberFromUri();
-      if (lineno) {
-        this._clearExistingHighlights();
-        this._highlight(lineno);
-      }
-    },
-
-    _highlight: function(lineId) {
-      this.table.getElementsBySelector(lineId + " td").each(function(cell) {
-        cell.addClassName(this.highlightClassname);
-        this.currentHighlights.push(cell);
-      }.bind(this));
-    },
-
-    _getLineNumberFromUri: function() {
-      var uriHash = window.location.hash;
-      if (/^#line\d+$/.test(uriHash)) {
-        return uriHash;
-      }
-    },
-
-    _clearExistingHighlights: function() {
-      if (this.currentHighlights.length > 0) {
-        this.currentHighlights.each(function(hl) {
-          hl.removeClassName(this.highlightClassname);
-        }.bind(this));
-        this.currentHighlights = [];
-      }
+jQuery.fn.highlightSelectedLines = function() {
+    var currentHighlights = [];
+    if (/^#line\d+$/.test(window.location.hash)) {
+        currentHighlights = [window.location.hash];
     }
-  }),
-  
-  Wordwrapper: {
-    wrap: function(elements) {
-      elements.each(function(e) {
-        //e.addClassName("softwrapped");
-        e.removeClassName("unwrapped");
-      });
-    },
-    
-    unwrap: function(elements) {
-      elements.each(function(e) {
-        //e.removeClassName("softwrapped");
-        e.addClassName("unwrapped");
-      });
-    },
-    
-    toggle: function(elements) {
-      if (/unwrapped/.test(elements.first().className)) {
-        Gitorious.Wordwrapper.wrap(elements);
-      } else {
-        Gitorious.Wordwrapper.unwrap(elements);
-      }
-    }
-  },
-  
-  DownloadChecker: {
-    checkURL: function(url, container) {
-      var element = $(container);
-      element.absolutize();
-      var sourceLink = element.previous();
-      // Position the box
-      if (sourceLink) {
-        element.clonePosition(sourceLink);
-        element.setStyle({
-          top: parseInt(element.style.top) - (element.getHeight()+10) + "px",
-          width: "175px",
-          height: "70px"
+
+    var jthis = this;
+    var highlightCodeLine = function(lineId) {
+        jQuery.each(currentHighlights, function() {
+            $(jthis).find("tr#" + this + " td").removeClass("marked");
         });
-      }
-      
-      element.show();
-      element.innerHTML = '<p class="spin"><img src="/images/spinner.gif" /></p>'
-      // load the status
-      new Ajax.Request(url, {
-        onSuccess: function(transport) {
-          $(container).update(transport.responseText);
-        }
-      });
-      return false;
-    }
-  }
+        $(jthis).find("tr#" + lineId + " td").addClass("marked");
+        currentHighlights = [lineId];
+    };
+
+    this.find("tr td.line-numbers a").click(function() {
+        var element = $(this).get(0);
+        highlightCodeLine(element.name);
+    });
+
+    highlightCodeLine(currentHighlights);
 };
 
-Event.observe(window, "dom:loaded", function(e){
-  var blobTable = $("codeblob")
-  if (blobTable) {
-    var highlighter = new Gitorious.LineHighlighter(blobTable);
-    highlighter.update();
-    
-    blobTable.getElementsBySelector("td.line-numbers a").each(function(link) {
-      var lineno = link.href.split("#").last();
-      link.observe("click", function(event) {
-        highlighter.update("#" + lineno);
-      });
+$(document).ready(function() {
+    // Project Sluggorizin'
+    $("form #project_title").keypress(function(event) {
+        var slug = $("form #project_slug");
+        if (slug.text() != "") return;
+        var lintName = function(val) {
+            var linted = val.replace(/\W+/g, ' ')
+            linted = linted.replace(/\ +/g, '-')
+            linted = linted.toLowerCase();
+            linted = linted.replace(/\-+$/g, '')
+            return linted;
+        }
+        
+        slug.val( lintName(this.value) );
     });
-  }
-  
-  $$("a.link_noop").each(function(element) {
-    element.observe("click", function(e){ 
-      Event.stop(e); 
-      return false;
-    })
-  })
 
-  // Unobtrusively hooking the regular/OpenID login box stuff, so that it works
-  // in a semi-sensible way with javascript disabled.
-  var loginBox = $("big_header_login");
-  if (loginBox) {
-    var openIdLoginBox  = $("big_header_login_box_openid");
-    var regularLoginBox   = $("big_header_login_box_regular");
-    
-    // Only showing the regular login
-    
-    // Toggle between the two
-    var loginBoxToggler = function(e){
-      Effect.toggle(openIdLoginBox, "appear", {duration: 0.3 });
-      Effect.toggle(regularLoginBox, "appear", {duration: 0.3 });
-      Event.stop(e);
-      return false;
-    }
-    
-    $("big_header_login_box_to_openid").observe("click", loginBoxToggler);
-    $("big_header_login_box_to_regular").observe("click", loginBoxToggler);
-  }
-  
-  var headerSearchForm = $("main_menu_search_form")
-  if (headerSearchForm) {
-    // The "Search..." label
-    var labelText = "Search..."
-    var searchInput = $("main_menu_search_form_query");
-    searchInput.value = labelText;
-    searchInput.observe("focus", function(){
-      if (searchInput.value == labelText) {
-        searchInput.value = "";
-        searchInput.removeClassName("unfocused")
-      }
+    // Line highlighting/selection
+    $("#codeblob").highlightSelectedLines();
+
+    // no-op links
+    $("a.link_noop").click(function(event) {
+        event.preventDefault();
     });
     
-    searchInput.observe("blur", function(){
-      if (searchInput.value == "") {
-        searchInput.value = labelText;
-        searchInput.addClassName("unfocused")
-      }
+    // Comment previewing
+    $("input#comment_preview_button").click(function(event){
+        var formElement = $(this).parents("form");
+        var url = formElement.attr("action");
+        url += "/preview"
+        $.post(url, formElement.serialize(), function(data, responseText){
+            if (responseText === "success") {
+              $("#comment_preview").html(data);
+              $("#comment_preview").fadeIn();
+            }
+        });
+        event.preventDefault();
     });
-    
-    // Hide the regular native submit button
-    var nativeSubmitButton = headerSearchForm.getElementsBySelector("input[type=submit]")[0];
-    nativeSubmitButton.hide();
-    
-    // Create our own awesome submit button.
-    var awesomeSubmitButton = $(document.createElement("a"));
-    awesomeSubmitButton.writeAttribute("id", "main_menu_search_form_graphic_submit");
-    awesomeSubmitButton.writeAttribute("href", "#");
-    awesomeSubmitButton.observe("click", function(e){
-      headerSearchForm.submit();
-      Event.stop(e);
-      return false;
+
+    // Project previewing
+    $("input#project_preview_button").click(function(event){
+        var formElement = $(this).parents("form");
+        var url = $(this).attr("gts:url");
+        $.post(url, formElement.serialize(), function(data, response) {
+            if (response === "success")
+              $("#project-preview").html(data).fadeIn();
+        });
+        event.preventDefault();
     });
+
+    // Merge request version viewing
+    $("select#merge_request_version").change(function(event){
+        if (this.options[this.selectedIndex].value != '') {
+          $("#wait_for_commits").fadeIn();
+          var url = $(this).attr("gts:url") +
+            '?version=' + this.options[this.selectedIndex].value;
+          $("#commits_to_be_merged").load(url);
+        }
+    });
+
+    // Message actions
+    $(".message_actions a.mark_as_unread").click(function(event){
+        var link = $(this);
+        $.post(link.attr("href"), "_method=put", function(data, response){
+            if (response === "success") {
+              var parts = link.attr("href").split("/");
+              $("#message_" + parts[parts.length-2]).removeClass("unread");
+              link.parent().slideUp();
+            }              
+        });
+        event.preventDefault();
+    });
+
+    // Merge request status color picking
+    $("#merge_request_statuses input.color_pickable").SevenColorPicker();
     
-    nativeSubmitButton.insert({after: awesomeSubmitButton});
-  }
+    // frontpage for non-loggedin users
+    // Unobtrusively hooking the regular/OpenID login box stuff, so that it works
+    // in a semi-sensible way with javascript disabled.
+    $("#big_header_login_box_openid, #big_header_login_box_regular").click(function(e){
+        $("#big_header_login_box_openid").toggle("fast");
+        $("#big_header_login_box_regular").toggle("fast");
+        e.preventDefault();
+    });
+
+    // replace the search form input["submit"] with something fancier
+    $("#main_menu_search_form").each(function(){
+        var headerSearchForm = this;
+        var labelText = "Search...";
+        var searchInput = $(this).find("input[type=text]");
+        searchInput.val(labelText);
+        searchInput.click(function(event){
+            if (searchInput.val() == labelText) {
+              searchInput.val("");
+              searchInput.removeClass("unfocused");
+            }
+        });
+        searchInput.blur(function(event){
+            if (searchInput.val() == "") {
+              searchInput.val(labelText);
+              searchInput.addClass("unfocused");
+            }
+        });
+        // hide the 'native' submit button and replace it with our 
+        // own awesome submit button
+        var nativeSubmitButton = $(this).find("input[type=submit]");
+        nativeSubmitButton.hide();
+        var awesomeSubmitButton = $(document.createElement("a"));
+        awesomeSubmitButton.attr({
+            'id':'main_menu_search_form_graphic_submit',
+            'href': '#'
+        });
+        awesomeSubmitButton.click(function(event){
+            headerSearchForm.submit();
+            event.preventDefault();
+        });
+        nativeSubmitButton.after(awesomeSubmitButton);
+    });
 });
 
+var Gitorious = {};
+Gitorious.DownloadChecker = {
+      checkURL: function(url, container) {
+        var element = $("#" + container);
+        //element.absolutize();
+        var sourceLink = element.prev();
+        // Position the box
+        if (sourceLink) {
+            element.css({
+                'top': parseInt(element[0].style.top) - (element.height()+10) + "px",
+                'width': '175px',
+                'height': '70px',
+                'position': 'absolute'
+            });
+        }
+
+        element.html('<p class="spin"><img src="/images/spinner.gif" /></p>');
+        element.show();
+        // load the status
+        element.load(url, function(responseText, textStatus, XMLHttpRequest){
+            if (textStatus == "success") {
+                $(this).html(responseText);
+            }
+        });
+        return false;
+    }
+};
+  
+// Gitorious.Wordwrapper = {
+//   wrap: function(elements) {
+//     elements.each(function(e) {
+//       //e.addClassName("softwrapped");
+//       e.removeClassName("unwrapped");
+//     });
+//   },
+  
+//   unwrap: function(elements) {
+//     elements.each(function(e) {
+//       //e.removeClassName("softwrapped");
+//       e.addClassName("unwrapped");
+//     });
+//   },
+  
+//   toggle: function(elements) {
+//     if (/unwrapped/.test(elements.first().className)) {
+//       Gitorious.Wordwrapper.wrap(elements);
+//     } else {
+//       Gitorious.Wordwrapper.unwrap(elements);
+//     }
+//   }
+// }
 
 // A class used for selecting ranges of objects
-function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
+function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
 {
   this.commitListUrl = commitListUrl
   this.targetBranchesUrl = targetBranchesUrl;
@@ -223,41 +221,34 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
   this.endsAt = null;
   this.sourceBranchName = null;
   this.targetBranchName = null;
-  this.registerResponders = function() {
-    Ajax.Responders.register({
-      onCreate: function() {
-      if ($("spinner") && Ajax.activeRequestCount > 0)
-        Effect.Appear("spinner", { duration:0.3 })
-      },
-      onComplete: function() {
-        if ($("spinner") && Ajax.activeRequestCount == 0)
-          Effect.Fade("spinner", { duration:0.3 })
-      }
-    });
-  };
-  this.registerResponders();
   
   this.endSelected = function(el) {
-    this.endsAt = el;
+    this.endsAt = $(el);
     this.update();
   };
   
   this.onSourceBranchChange = function(event) {
-    if (sourceBranch = $F('merge_request_source_branch')) {
+    if (sourceBranch = $('merge_request_source_branch')) {
       this.sourceBranchSelected(sourceBranch);
     }
   };
   
   this.onTargetRepositoryChange = function(event) {
-    new Ajax.Updater('target_branch_selection', this.targetBranchesUrl, {
-      method: 'post', 
-      parameters: Form.serialize($('new_merge_request'))
+    console.log("repo changed!");
+    $("#spinner").fadeIn();
+    $.post(this.targetBranchesUrl, $("#new_merge_request").serialize(),
+           function(data, responseText)
+    {
+      if (responseText === "success") {
+        $("#target_branch_selection").html(data);
+        $("#spinner").fadeOut();
+      }
     });
     this._updateCommitList();
   };
   
   this.onTargetBranchChange = function(event) {
-    if (targetBranch = $F('merge_request_target_branch')) {
+    if (targetBranch = $('#merge_request_target_branch').val()) {
       this.targetBranchSelected(targetBranch);
     }
   };
@@ -278,68 +269,71 @@ function SelectableRange(commitListUrl, targetBranchesUrl, statusElement)
   
   this.update = function() {
     if (this.endsAt) {
-      var commitRows = $$(".commit_row");
-      commitRows.each(function(el){ el.removeClassName('selected') });
-      var firstTr = this.endsAt.up().up();
-      firstTr.addClassName('selected');
-      firstTr.nextSiblings().each(function(tr) {
-        tr.addClassName('selected');        
+      $(".commit_row").each(function(){ $(this).removeClass("selected") });
+      var selectedTr = this.endsAt.parent().parent();
+      selectedTr.addClass('selected');
+      selectedTr.nextAll().each(function() {
+          $(this).addClass('selected');
       });
       // update the status field with the selected range
-      var to = firstTr.getElementsBySelector(".sha-abbrev a")[0].innerHTML;
-      var from = commitRows.last().getElementsBySelector(".sha-abbrev a")[0].innerHTML;
-      $$("." + this.statusElement).each(function(e) {
-        e.update(from + ".." + to);
+      var to = selectedTr.find(".sha-abbrev a").html();
+      var from = $(".commit_row:last .sha-abbrev a").html();
+      $("." + this.statusElement).each(function() {
+          $(this).html(from + ".." + to);
       });
     }
   };
   
   this._updateCommitList = function() {
-    new Ajax.Updater('commit_selection', this.commitListUrl, {
-      method: 'post', 
-      parameters: Form.serialize($('new_merge_request'))
+    $("#commit_table").replaceWith('<p class="hint">Loading commits&hellip; ' +
+                                   '<img src="/images/spinner.gif"/></p>');
+    $.post(this.commitListUrl, $("#new_merge_request").serialize(),
+           function(data, responseText)
+    {
+        if (responseText === "success")
+          $("#commit_selection").html(data);
     });
   }
 }
 
-function toggle_wiki_preview(target_url)
-{
-  var wiki_preview = $('page_preview');
-  var wiki_edit = $('page_content');
-  var wiki_form = wiki_edit.form;
-  var toggler = $('wiki_preview_toggler');
-  if (wiki_preview.visible()) // Will hide preview
-  {
-    toggler.value = "Show preview"
+function toggle_wiki_preview(target_url) {
+  var wiki_preview = $('#page_preview');
+  var wiki_edit = $('#page_content');
+  var wiki_form = wiki_edit[0].form;
+  var toggler = $('#wiki_preview_toggler');
+  if (toggler.val() == "Hide preview") {
+    toggler.val("Show preview");
+  } else {
+    toggler.val("Hide preview");
+    wiki_preview.html("");
+    $.post(target_url, $(wiki_form).serialize(), function(data, textStatus){
+        if (textStatus == "success") {
+          wiki_preview.html(data);
+        }
+    });
   }
-  else
-  {
-    toggler.value = "Hide preview"
-    wiki_preview.innerHTML = "";
-    new Ajax.Request(target_url, {asynchronous:true, evalScripts:true, method:'post', parameters:Form.serialize(wiki_form)});
-  }
-  [wiki_preview,wiki_edit].each(function(e){e.toggle()});
+  jQuery.each([wiki_preview, wiki_edit], function(){ $(this).toggle() });
 }
 
-function load_commit_status()
-{
-  var merge_request_uri = document.location.pathname;
-  ['merged','unmerged'].each(function(s)
-  {
-    var i1 = new Image();
-    i1.src = "/images/merge_requests/" + s + ".png";        
-  });
-  $$('tr.commit_row').each(function(commit_row)
-  {
-    id = commit_row.getAttribute('data-merge-request-commit-id');
-    new Ajax.Request(merge_request_uri + "/commit_status?commit_id=" + id, {method:'get', onSuccess: function(transport){
-      commit_row.removeClassName("unknown-status");
-      if (transport.responseText == 'false'){
-        commit_row.addClassName("unmerged");
-      }
-      else{
-        commit_row.addClassName("merged");
-      }
-    }});
-  });
-}
+// function load_commit_status()
+// {
+//   var merge_request_uri = document.location.pathname;
+//   ['merged','unmerged'].each(function(s)
+//   {
+//     var i1 = new Image();
+//     i1.src = "/images/merge_requests/" + s + ".png";        
+//   });
+//   $$('tr.commit_row').each(function(commit_row)
+//   {
+//     id = commit_row.getAttribute('data-merge-request-commit-id');
+//     new Ajax.Request(merge_request_uri + "/commit_status?commit_id=" + id, {method:'get', onSuccess: function(transport){
+//       commit_row.removeClassName("unknown-status");
+//       if (transport.responseText == 'false'){
+//         commit_row.addClassName("unmerged");
+//       }
+//       else{
+//         commit_row.addClassName("merged");
+//       }
+//     }});
+//   });
+// }

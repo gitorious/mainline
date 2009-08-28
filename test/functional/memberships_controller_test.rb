@@ -172,7 +172,7 @@ class MembershipsControllerTest < ActionController::TestCase
     context "autocomplete username" do
       should "finds user by login" do
         post :auto_complete_for_user_login, :group_id => groups(:team_thunderbird).to_param, 
-          :user => { :login => "mik" }, :format => "js"
+          :q => "mik", :format => "js"
         assert_equal [users(:mike)], assigns(:users)
       end
     end  

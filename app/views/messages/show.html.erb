@@ -39,7 +39,9 @@
       <ul class="message_actions">
         <% if message.unread? and message.recipient == current_user %>
           <li id="<%= dom_id(message, 'mark_as_read') -%>">
-            <%= link_to_remote(t('views.messages.mark_as_read'), :url => read_message_path(message), :method => :put) %>
+              <a class="mark_as_unread" href="<%= read_message_path(message) -%>">
+                <%= t('views.messages.mark_as_read') -%>
+              </a>
           </li>
         <% end %>
 

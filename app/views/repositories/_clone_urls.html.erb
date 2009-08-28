@@ -61,15 +61,14 @@ git push
 </ul>
 
 <script type="text/javascript" charset="utf-8">
-  $('repo-<%= repository.id -%>-git-toggle').observe('click', function(event) {
-    $('repo-<%= repository.id -%>-git-url').show();
-    if ($('repo-<%= repository.id -%>-http-url'))
-      $('repo-<%= repository.id -%>-http-url').hide();
-    Event.stop(event);
+  $('#repo-<%= repository.id -%>-git-toggle').click(function(event) {
+    $('#repo-<%= repository.id -%>-git-url').show();
+    $('#repo-<%= repository.id -%>-http-url').hide();
+    event.preventDefault();
   });
-  $('repo-<%= repository.id -%>-http-toggle').observe('click', function(event) {
-    $('repo-<%= repository.id -%>-http-url').show();
-    $('repo-<%= repository.id -%>-git-url').hide();
-    Event.stop(event);
+  $('#repo-<%= repository.id -%>-http-toggle').click(function(event) {
+    $('#repo-<%= repository.id -%>-http-url').show();
+    $('#repo-<%= repository.id -%>-git-url').hide();
+    event.preventDefault();
   });
 </script>

@@ -23,6 +23,7 @@
 %>
 
 <%= breadcrumbs_from(@merge_request) -%>
+<% @page_title = "Merge request ##{@merge_request.id}: #{h(@merge_request.summary)}" -%>
 
 <h1><%= t("views.merges.show_title", :id => h(@merge_request.id), :summary => h(@merge_request.summary)) -%></h1>
 
@@ -36,14 +37,12 @@
 
 <script type="text/javascript" charset="utf-8">
   function toggleComments(index) {
-  if ($("commit_" + index).hasClassName("with_comments")) {
-  $("commit_" + index).removeClassName("with_comments")
-  } else {
-  $("commit_" + index).addClassName("with_comments")
-  }
-  $$('.comment_for_commit_' + index).each(function(e){ 
-  e.toggle();
-  })
+      if ($("commit_" + index).hasClass("with_comments")) {
+          $("commit_" + index).removeClassName("with_comments")
+      } else {
+          $("commit_" + index).addClass("with_comments")
+      }
+      $('.comment_for_commit_' + index).toggle();
   }
 </script>
 
@@ -51,11 +50,12 @@
 <%- if @merge_request.versions.size > 1 -%>
   <form>
     <label for="merge_request_version">Select version</label>:
-    <select id="merge_request_version" name="version" onchange="if(this.options[this.selectedIndex].value != ''){Element.toggle('wait_for_commits');new Ajax.Request('<%= url_for(polymorphic_path([
+    <select id="merge_request_version" name="version" gts:url="<%= url_for(
+      polymorphic_path([
                                  :version,
                                  @merge_request.target_repository.project,
                                  @merge_request.target_repository,
-                                 @merge_request]))-%>?version=' + this.options[this.selectedIndex].value, {method:'get'})}">
+                                 @merge_request]))-%>">
       <option value="">- Select version -</option>
       <%= options_from_collection_for_select(@merge_request.versions, 'version', 'version', @merge_request.current_version_number) %>
     </select>

@@ -18,6 +18,12 @@
 #++
 %>
 
+<script type="text/javascript" charset="utf-8">
+$(document).ready(function() {
+    $("input#user_login_autocomplete").autocomplete("auto_complete_for_user_login");
+  });
+</script>
+
 <h1>
   <%= t("views.memberships.new_title", 
         :group_memberships => link_to(h(@group.name), [@group, :memberships])) -%>
@@ -27,7 +33,7 @@
 <% form_for [@group, @membership] do |f| -%>
   <p>
     <%= f.label :login, t("views.users.username") -%><br />
-    <%= text_field_with_auto_complete :user, :login, {}, :skip_style => true, :select => :login -%>
+    <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
   </p>
   <p>
     <%= f.label :role, t("views.memberships.role") -%>

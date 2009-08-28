@@ -17,20 +17,28 @@
 #++
 %>
 <script type="text/javascript" charset="utf-8">
-  var selectableRange = new SelectableRange(
+  var commitSelector = new CommitRangeSelector(
     '<%= commit_list_project_repository_merge_requests_path %>',
     '<%= target_branches_project_repository_merge_requests_path %>',
-    "commit_list_status"
-  );
-  Event.observe(window, "load", function(e) {
-    var element = $$("#commit_table tr.commit_row input[checked='checked']")[0]
+    "commit_list_status");
+
+  $(document).ready(function() {
+    var element = $("#commit_table tr.commit_row input[checked='checked']")[0]
     if (element)
-      selectableRange.endSelected(element);
+      commitSelector.endSelected(element);
+
+    $("#commit_table tr.commit_row input[type=radio]").live("click", function() {
+      commitSelector.endSelected(this);
+    });
+
+    $("#merge_request_source_branch").change(function() {
+      commitSelector.onSourceBranchChange();
+    });
+    $("#merge_request_target_branch").change(function() {
+      commitSelector.onTargetBranchChange();
+    });
+    $("#merge_request_target_repository_id").change(function() {
+      commitSelector.onTargetRepositoryChange();
+    });
   });
-  $("merge_request_source_branch").observe("change", 
-      selectableRange.onSourceBranchChange.bindAsEventListener(selectableRange));
-  $("merge_request_target_branch").observe("change", 
-      selectableRange.onTargetBranchChange.bindAsEventListener(selectableRange));
-  $("merge_request_target_repository_id").observe("change", 
-      selectableRange.onTargetRepositoryChange.bindAsEventListener(selectableRange));
 </script>

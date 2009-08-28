@@ -1217,28 +1217,45 @@ div.being_constructed .hint {
 
 /* auto completions */
 
-div.auto_complete {
-  width: 350px;
-  background: #fff;
+.ac_results {
+	padding: 0px;
+	border: 1px solid #888;
+	background-color: #fff;
+	overflow: hidden;
 }
-div.auto_complete ul {
-  border:1px solid #888;
+
+.ac_results ul {
   margin:0;
   padding:0;
   width:100%;
   list-style-type:none;
 }
-div.auto_complete ul li {
-  margin:0;
-  padding:3px;
+
+.ac_results iframe {
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:-1;
+	filter:mask();
+	width:3000px;
+	height:3000px;
 }
-div.auto_complete ul li.selected { 
-  background-color: #ffb; 
+
+.ac_results li {
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: pointer;
+	display: block;
+	width: 100%;
+	overflow: hidden;
 }
-div.auto_complete ul strong.highlight { 
-  color: #800; 
-  margin:0;
-  padding:0;
+.ac_loading {
+	background : url('/images/spinner.gif') right center no-repeat;
+}
+.ac_over {
+  background-color: #ffb;
+  /*color: #800;*/
 }
 
 /* project autocompletion */

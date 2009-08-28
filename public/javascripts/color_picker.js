@@ -1,182 +1,86 @@
-
-/* 
-   colorPicker for script.aculo.us, version 1.0
-   REQUIRES prototype.js, yahoo.color.js and script.aculo.us
-   written by Matthias Platzer AT knallgrau.at
-   for a detailled documentation go to http://www.knallgrau.at/code/colorpicker 
- */
-
-if(!Control) var Control = {};
-Control.colorPickers = [];
-Control.ColorPicker = Class.create();
-Control.ColorPicker.activeColorPicker;
-Control.ColorPicker.CONTROL;
 /**
- * ColorPicker Control allows you to open a little inline popUp HSV color chooser.
- * This control is bound to an input field, that holds a hex value.
- */
-Control.ColorPicker.prototype = {
-  initialize : function(field, options) {
-    var colorPicker = this;
-    Control.colorPickers.push(colorPicker);
-    this.field = $(field);
-    this.fieldName = this.field.name || this.field.id;
-    this.options = Object.extend({
-       IMAGE_BASE : "/images/color_picker/"
-    }, options || {});
-    this.swatch = $(this.options.swatch) || this.field;
-    this.rgb = {};
-    this.hsv = {};
-    this.isOpen = false;
-
-    // create control (popUp) if not already existing
-    // all colorPickers on a page share the same control (popUp)
-    if (!Control.ColorPicker.CONTROL) {
-      Control.ColorPicker.CONTROL = {};
-      if (!$("colorpicker")) {
-        var control = Builder.node('div', {id: 'colorpicker'});
-        control.innerHTML = 
-          '<div id="colorpicker-div">' + (
-            // apply png fix for ie 5.5 and 6.0
-            (/MSIE ((6)|(5\.5))/gi.test(navigator.userAgent) && /windows/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) ?
-              '<img id="colorpicker-bg" src="' + this.options.IMAGE_BASE + 'blank.gif" style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'' + this.options.IMAGE_BASE + 'pickerbg.png\', sizingMethod=\'scale\')" alt="">' :
-              '<img id="colorpicker-bg" src="' + this.options.IMAGE_BASE + 'pickerbg.png" alt="">'
-             ) +
-          '<div id="colorpicker-bg-overlay" style="z-index: 1002;"></div>' +
-          '<div id="colorpicker-selector"><img src="' + this.options.IMAGE_BASE + 'select.gif" width="11" height="11" alt="" /></div></div>' +
-          '<div id="colorpicker-hue-container"><img src="' + this.options.IMAGE_BASE + 'hue.png" id="colorpicker-hue-bg-img"><div id="colorpicker-hue-slider"><div id="colorpicker-hue-thumb"><img src="' + this.options.IMAGE_BASE + 'hline.png"></div></div></div>' + 
-          '<div id="colorpicker-footer"><span id="colorpicker-value">#<input type="text" onclick="this.select()" id="colorpicker-value-input" name="colorpicker-value" value=""></input></span><button id="colorpicker-okbutton">OK</button></div>'
-        document.body.appendChild(control);
-      }
-      Control.ColorPicker.CONTROL = {
-        popUp : $("colorpicker"),
-        pickerArea : $('colorpicker-div'),
-        selector : $('colorpicker-selector'),
-        okButton : $("colorpicker-okbutton"),
-        value : $("colorpicker-value"),
-        input : $("colorpicker-value-input"),
-        picker : new Draggable($('colorpicker-selector'), {
-          snap: function(x, y) {
-            return [
-              Math.min(Math.max(x, 0), Control.ColorPicker.activeColorPicker.control.pickerArea.offsetWidth), 
-              Math.min(Math.max(y, 0), Control.ColorPicker.activeColorPicker.control.pickerArea.offsetHeight)
-            ];
-          },
-          zindex: 1009,
-          change: function(draggable) {
-            var pos = draggable.currentDelta();
-            Control.ColorPicker.activeColorPicker.update(pos[0], pos[1]);
-          }
-        }),
-        hueSlider: new Control.Slider('colorpicker-hue-thumb', 'colorpicker-hue-slider', {
-          axis: 'vertical',
-          onChange: function(v) {
-            Control.ColorPicker.activeColorPicker.updateHue(v);
-          }
-        })
-      };
-      Element.hide($("colorpicker"));
+*Seven Color Picker 1.1.0
+*Author: Seven Yu
+*E-mail: dofyyu#gmail.com
+*License: Same as jQuery
+*Modifications: Slightly different event handling
+**/
+jQuery.fn.SevenColorPicker = function()
+{
+	var _SCP_FLAG          = '_I_AM_SCP';
+	var _SCP_NUMS_PRE_LINE = 8;   // æ¯è¡Œæ˜¾ç¤ºé¢œè‰²ä¸ªæ•°
+	var _SCP_ITEM_SIZE     = 15;  // è‰²å—å¤§å°
+	var _SCP_ITEM_OFFSET   = 2;   // è‰²å—é—´è·
+	var _SCP_OFFSET        = 3;   // é¢æ¿é—´è·
+	var _SCP_BORDER_WIDTH  = 1;   // è¾¹æ¡†å®½åº¦
+    var _SCP_COLORS        = ['ff8080','ffff80','80ff80','00ff80','80ffff','0080ff','ff80c0','ff80ff',
+							  'ff0000','ffff00','80ff00','00ff40','00ffff','0080c0','8080c0','ff00ff',
+							  '804040','ff8040','00ff00','008080','004080','8080ff','800040','ff0080',
+							  '800000','ff8000','008000','008040','0000ff','0000a0','800080','8000ff',
+							  '400000','804000','004000','004040','000080','000040','400040','408080',
+							  '000000','808000','808040','808080','408080','c0c0c0','400040','ffffff'];
+    if(!jQuery.SCP_Selecter)
+    {
+        var html = '<div><ul>';
+        var result = jQuery('<div id="_seven_color_selecter" />');
+        for(var c in _SCP_COLORS)
+            html += '<li><a href="javascript:void(\'#'+_SCP_COLORS[c]+'\');" ref="#'+_SCP_COLORS[c]+'" style="background-color:#'+_SCP_COLORS[c]+';"></a></li>';
+		html += '</ul><form style="margin:0;padding:3px;clear:both;text-align:center;">'+
+                'HEX: <input id="_seven_color_code" maxlength="7" size="10" style="font:10px verdana" /> '+
+                '<input type="submit" value=" OK " style="font:10px verdana" /></form></div>';
+        result.html(html);
+        $(document).mouseup(function(e){
+            if (e.target.id != "_seven_color_code") result.hide();
+        }).find('body').append(result);
+        var setColor = function(col)
+        {
+            if(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.test(col))
+            {
+                col = col.charAt(0) == '#' ? col : '#' + col;
+                jQuery.SCP_Active.css('background-color',col);
+                jQuery.SCP_Target.val(col);
+            }
+        }
+        result.hide().css({'position':'absolute','font':'10px verdana','margin':0,'padding':0})
+        .find('div').css({'background-color':'#f2f2f2','border':_SCP_BORDER_WIDTH+'px solid #999','margin':0,'padding':_SCP_OFFSET})
+        .width(_SCP_NUMS_PRE_LINE*(_SCP_ITEM_SIZE+_SCP_ITEM_OFFSET*2+_SCP_BORDER_WIDTH*2))
+        .find('form').submit(function()
+        {
+            setColor($(this).children('#_seven_color_code').val());
+            jQuery.SCP_Selecter.hide();
+            return false;
+        }).end()
+        .find('ul').css({'margin':0,'padding':0,'list-style':'none'})
+        .find('li').css({'margin':0,'padding':0,'float':'left'})
+        .find('a').css({'margin':_SCP_ITEM_OFFSET,'padding':0,'display':'block','border':_SCP_BORDER_WIDTH+'px solid #ccc'})
+        .width(_SCP_ITEM_SIZE).height(_SCP_ITEM_SIZE)
+        .mouseover(function(){$('#_seven_color_code').val($(this).attr('ref')).focus().select();})
+        .mousedown(function(){setColor($(this).attr('ref'));})
+        .mouseover(function(){$(this).css({'border':_SCP_BORDER_WIDTH+'px solid #333'});})
+        .mouseout(function(){$(this).css({'border':_SCP_BORDER_WIDTH+'px solid #ccc'});});
+        jQuery.SCP_Selecter = result;
+        if(jQuery.browser.msie && jQuery.browser.version == '6.0')
+            result.find('div').before('<iframe frameborder="0" width="'+result.width()+'" height="'+result.height()+'" style="position:absolute;z-index:-1;"></iframe>');
     }
-    this.control = Control.ColorPicker.CONTROL;
-
-    // bind event listener to properties, so we can use them savely with Event[observe|stopObserving]
-    this.toggleOnClickListener = this.toggle.bindAsEventListener(this);
-    this.updateOnChangeListener = this.updateFromFieldValue.bindAsEventListener(this);
-    this.closeOnClickOkListener = this.close.bindAsEventListener(this);
-    this.updateOnClickPickerListener = this.updateSelector.bindAsEventListener(this);
-
-    Event.observe(this.swatch, "click", this.toggleOnClickListener);
-    Event.observe(this.field, "change", this.updateOnChangeListener);
-    Event.observe(this.control.input, "change", this.updateOnChangeListener);
-
-    this.updateSwatch();
-  },
-  toggle : function(event) {
-    this[(this.isOpen) ? "close" : "open"](event);
-    Event.stop(event);    
-  },
-  open : function(event) {
-    Control.colorPickers.each(function(colorPicker) {
-      colorPicker.close();
+    return this.each(function()
+    {
+		var myPicker = $(this).next(':text');
+		if(myPicker.attr('ref') != _SCP_FLAG)
+		{
+			$(this).hide().after(
+                $('<input ref="'+_SCP_FLAG+'" />')
+                .width(_SCP_ITEM_SIZE).height(_SCP_ITEM_SIZE)
+                .click(function()
+                {
+                    var offset = $(this).offset();
+                    var left = offset.left;
+                    var top  = offset.top+$(this).height()+_SCP_BORDER_WIDTH;
+                    jQuery.SCP_Target = $(this).prev();
+                    jQuery.SCP_Active = $(this);
+                    jQuery.SCP_Selecter.show().css({'left':left,'top':top}).find('#_seven_color_code').val(jQuery.SCP_Target.val()).focus().select();
+                }).attr('readonly','true')
+                .css({'border':_SCP_BORDER_WIDTH+'px solid #999','cursor':'pointer','padding':0,'background-color':$(this).val()})
+            );
+		}
     });
-    Control.ColorPicker.activeColorPicker = this;
-    this.isOpen = true;
-    Element.show(this.control.popUp);
-    if (this.options.getPopUpPosition) {
-       var pos = this.options.getPopUpPosition.bind(this)(event);
-    } else {
-      var pos = Position.cumulativeOffset(this.swatch || this.field);
-      pos[0] = (pos[0] + (this.swatch || this.field).offsetWidth + 10);
-    }
-    this.control.popUp.style.left = (pos[0]) + "px";
-    this.control.popUp.style.top = (pos[1]) + "px";
-    this.updateFromFieldValue();
-    Event.observe(this.control.okButton, "click", this.closeOnClickOkListener);
-    Event.observe(this.control.pickerArea, "mousedown", this.updateOnClickPickerListener);
-    if (this.options.onOpen) this.options.onOpen.bind(this)(event);
-  },
-  close : function(event) {
-    if (Control.ColorPicker.activeColorPicker == this) Control.ColorPicker.activeColorPicker = null;
-    this.isOpen = false;
-    Element.hide(this.control.popUp);
-    Event.stopObserving(this.control.okButton, "click", this.closeOnClickOkListener);
-    Event.stopObserving(this.control.pickerArea, "mousedown", this.updateOnClickPickerListener);
-    if (this.options.onClose) this.options.onClose.bind(this)();
-  },
-  updateHue : function(v) {
-    var h = (this.control.pickerArea.offsetHeight - v * 100) / this.control.pickerArea.offsetHeight;
-    if (h == 1) h = 0;
-    var rgb = YAHOO.util.Color.hsv2rgb( h, 1, 1 );
-    if (!YAHOO.util.Color.isValidRGB(rgb)) return;
-    this.control.pickerArea.style.backgroundColor = "rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ")";
-    this.update();
-  },
-  updateFromFieldValue : function(event) {
-    if (!this.isOpen) return;
-    var field = (event && Event.findElement(event, "input")) || this.field;
-    var rgb = YAHOO.util.Color.hex2rgb( field.value.sub('#', '') );
-    if (!YAHOO.util.Color.isValidRGB(rgb)) return;
-    var hsv = YAHOO.util.Color.rgb2hsv( rgb[0], rgb[1], rgb[2] );
-    this.control.selector.style.left = Math.round(hsv[1] * this.control.pickerArea.offsetWidth) + "px";
-    this.control.selector.style.top = Math.round((1 - hsv[2]) * this.control.pickerArea.offsetWidth) + "px";
-    this.control.hueSlider.setValue((1 - hsv[0]));
-  },
-  updateSelector : function(event) {
-    var xPos = Event.pointerX(event);
-    var yPos = Event.pointerY(event);
-    var pos = Position.cumulativeOffset($("colorpicker-bg"));
-    this.control.selector.style.left = (xPos - pos[0] - 6) + "px";
-    this.control.selector.style.top = (yPos - pos[1] - 6) + "px";
-    this.update((xPos - pos[0]), (yPos - pos[1]));
-    this.control.picker.initDrag(event);
-  },
-  updateSwatch : function() {
-    var rgb = YAHOO.util.Color.hex2rgb( this.field.value.sub('#', '') );
-    if (!YAHOO.util.Color.isValidRGB(rgb)) return;
-    this.swatch.style.backgroundColor = "rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ")";
-    var hsv = YAHOO.util.Color.rgb2hsv( rgb[0], rgb[1], rgb[2] );
-    this.swatch.style.color = (hsv[2] > 0.65) ? "#000000" : "#FFFFFF";
-  },
-  update : function(x, y) {
-    if (!x) x = this.control.picker.currentDelta()[0];
-    if (!y) y = this.control.picker.currentDelta()[1];
-
-    var h = (this.control.pickerArea.offsetHeight - this.control.hueSlider.value * 100) / this.control.pickerArea.offsetHeight;
-    if (h == 1) { h = 0; };
-    this.hsv = {
-      hue: 1 - this.control.hueSlider.value,
-      saturation: x / this.control.pickerArea.offsetWidth,
-      brightness: (this.control.pickerArea.offsetHeight - y) / this.control.pickerArea.offsetHeight
-    };
-    var rgb = YAHOO.util.Color.hsv2rgb( this.hsv.hue, this.hsv.saturation, this.hsv.brightness );
-    this.rgb = {
-      red: rgb[0],
-      green: rgb[1],
-      blue: rgb[2]
-    };
-    this.field.value = "#" + YAHOO.util.Color.rgb2hex(rgb[0], rgb[1], rgb[2]);
-    this.control.input.value = this.field.value.sub('#', '');
-    this.updateSwatch();
-    if (this.options.onUpdate) this.options.onUpdate.bind(this)(this.field.value.sub('#', ''));
-  }
 }

@@ -1,4 +1,5 @@
 <%
+# encoding: utf-8
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
@@ -16,21 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h4>Please wait</h4>
-  
-<p>generating tarball&hellip;</p>
 
-<p class="spin"><%= image_tag("spinner.gif") -%></p>
+<h2>Preview</h2>
 
-<script type="text/javascript" charset="utf-8">
-var periodicalDownloadChecker = setTimeout(function(){
-var url = '<%= tree_archive_status_url -%>';
-$("#archive-box-<%= @ref -%>").load(url, function(responseText, textStatus, XMLHttpRequest){
-    clearTimeout(periodicalDownloadChecker);
-    if (textStatus == "success") {
-        $(this).html(responseText);
-        $(this).show();
-    }
-})
-}, 5000);
-</script>
+<%= render_markdown(@project.description, :auto_link) %>

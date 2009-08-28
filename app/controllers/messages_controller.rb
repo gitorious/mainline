@@ -43,7 +43,7 @@ class MessagesController < ApplicationController
     @message = current_user.received_messages.find(params[:id])
     @message.read
     respond_to do |wants|
-      wants.js
+      wants.js { head :ok }
     end
   end
 
@@ -113,11 +113,11 @@ class MessagesController < ApplicationController
   end
   
   def auto_complete_for_message_recipients
-    login = params[:message][:recipients]
     @users = User.find(:all, 
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ],
+      :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
       :limit => 10).reject{|u|u == current_user}
-    render :layout => false
+    render :text => @users.map{|u| u.login }.join("\n")
+    #render :layout => false
   end
   
   protected

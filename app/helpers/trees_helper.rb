@@ -1,3 +1,4 @@
+
 # encoding: utf-8
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
@@ -25,6 +26,12 @@ module TreesHelper
   
   def current_path
     @path.dup
+  end
+
+  def tree_archive_status_url
+    fmt = (params[:archive_format] == "tar.gz" ? "tar" : zip)
+    self.send("project_repository_archive_#{fmt}_path",
+      @repository.project, @repository, @ref, :format => :js)
   end
   
   def build_tree_path(path)

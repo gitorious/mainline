@@ -108,7 +108,7 @@ class MergeRequestsController < ApplicationController
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
     respond_to do |wants|
       wants.html {render :partial => 'commits', :layout => false}
-      wants.js
+      wants.js   { render :partial => "commits", :layout => false }
     end    
   end
   

@@ -17,11 +17,19 @@
 #++
 %>
 
+<script type="text/javascript" charset="utf-8">
+  $(document).ready(function(){
+    $("input#message_recipients.autocomplete")
+      .autocomplete("auto_complete_for_message_recipients");
+  });
+</script>
+
 <% form_for(@message) do |f| %>
   <p>
     <%= label :recipient, t("views.messages.recipient") %> <br/>
-    <%= text_field_with_auto_complete :message, :recipients, {}, 
+    <%#= text_field_with_auto_complete :message, :recipients, {}, 
           :skip_style => true, :select => :login, :tokens => [',',';',' '] -%>
+    <%= f.text_field :recipients, :class => "autocomplete" -%>
   </p>
   
   <p>

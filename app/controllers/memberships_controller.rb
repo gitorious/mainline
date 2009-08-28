@@ -79,11 +79,11 @@ class MembershipsController < ApplicationController
   end
   
   def auto_complete_for_user_login
-    login = params[:user][:login]
     @users = User.find(:all, 
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + login.downcase + '%' ],
+      :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
       :limit => 10)
-    render :layout => false
+    render :text => @users.map{|u| u.login }.join("\n")
+    #render :layout => false
   end
   
   
