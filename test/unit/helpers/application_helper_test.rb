@@ -75,4 +75,18 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_equal 'ruby-file', class_for_filename('foo.rb')
     assert_equal 'cplusplus-file', class_for_filename('main.cpp')
   end
+
+  context "to_utf8" do
+    if RUBY_VERSION > '1.9'
+      should "replace unknown chars with a question mark" do
+        s = "S\xFCd"
+        assert_equal "S?d", force_utf8(s)
+      end
+      
+      should "not replace valid utf chars" do
+        s = "Süd"
+        assert_equal "Süd", force_utf8(s)
+      end
+    end
+  end
 end

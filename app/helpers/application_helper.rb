@@ -369,7 +369,12 @@ module ApplicationHelper
   
   def force_utf8(str)
     if str.respond_to?(:force_encoding)
-      str.force_encoding("utf-8")
+      str.force_encoding("UTF-8")
+      if str.valid_encoding?
+        str
+      else
+        str.encode("binary", :invalid => :replace, :undef => :replace).encode("utf-8")
+      end
     else
       str.mb_chars
     end
