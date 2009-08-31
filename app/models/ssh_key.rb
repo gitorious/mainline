@@ -117,7 +117,9 @@ class SshKey < ActiveRecord::Base
   end
 
   def valid_key_using_ssh_keygen?
-    temp_key = Tempfile.new("ssh_key_#{id}")
+    temp_key = Tempfile.new("ssh_key_#{Time.now.to_i}")
+    temp_key.write(self.key)
+    temp_key.close
     system("ssh-keygen -l -f #{temp_key.path}")
     temp_key.delete
     return $?.success?
