@@ -439,7 +439,7 @@ class MergeRequest < ActiveRecord::Base
   def to_xml(opts = {})
     info_proc = Proc.new do |options|
       builder = options[:builder]
-      builder.status(status_string)
+      builder.status(status_tag.to_s.blank? ? status_string : status_tag.to_s)
       builder.username(user.to_param_with_prefix)
       builder.source_repository do |source|
         source.name(source_repository.name)
@@ -453,7 +453,7 @@ class MergeRequest < ActiveRecord::Base
     
     super({
       :procs => [info_proc],
-      :only => [:proposal, :created_at, :updated_at, :id, :ending_commit],
+      :only => [:summary, :proposal, :created_at, :updated_at, :id, :ending_commit],
       :methods => []
     }.merge(opts))
   end

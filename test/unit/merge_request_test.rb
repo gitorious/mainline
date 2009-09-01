@@ -534,9 +534,15 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
     
     should 'include enough information for our purposes' do
-      assert_match(/<status>#{@merge_request.status_string}<\/status>/, @merge_request.to_xml)
-      assert_match(/<username>~#{@merge_request.user.title}<\/username>/, @merge_request.to_xml)
-      assert_match(/<proposal>#{@merge_request.proposal}<\/proposal>/, @merge_request.to_xml)
+      assert_match(/<status>#{@merge_request.status_tag}<\/status>/,
+        @merge_request.to_xml)
+      assert_match(/<username>~#{@merge_request.user.title}<\/username>/,
+        @merge_request.to_xml)
+      assert_match(/<proposal>#{@merge_request.proposal}<\/proposal>/,
+        @merge_request.to_xml)
+      assert_match(/<summary>#{@merge_request.summary}<\/summary>/,
+        @merge_request.to_xml)
+
     end
   end
   
