@@ -29,6 +29,8 @@
 
 <%= render :partial => @merge_request, :locals => { :no_link => true } -%>
 
+<%= render :partial => "version", :locals => {:version => @merge_request.versions.first} -%>
+
 <% if @merge_request.open? -%>
 <h2><%= t("views.merges.commits_to_merged") %>:</h2>
 <% else -%>

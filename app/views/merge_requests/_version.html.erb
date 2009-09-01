@@ -1,0 +1,23 @@
+<ul class="commit_selector" id="merge_request_commit_selector">
+  <li class="merge_base">
+    <%= link_to version.merge_base_sha[0..6] -%>
+  </li>
+  <%- for c in version.affected_commits.reverse -%>
+  <li class="<%#= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%>">
+    <%= link_to c.id_abbrev -%>
+  </li>
+  <%- end -%>
+  <li class="version_selector">
+    <select>
+      <option value="">-</option>
+      <%= options_from_collection_for_select(
+          @merge_request.versions, 
+          'version', 
+          'version', 
+          version.version) %>
+    </select>
+
+  </li>
+</ul>
+
+<div class="clear"></div>

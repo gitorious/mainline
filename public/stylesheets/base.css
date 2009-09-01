@@ -491,7 +491,7 @@ abbr {
 
 /* breadcrumbs */
 
-#breadcrumbs {
+#breadcrumbs{
   margin: 0;
   line-height: 100%;
   margin-left: 0px;
@@ -514,16 +514,14 @@ abbr {
   display: block;
   background-repeat: no-repeat;
   background-position: center left;
+  color: #555;
 }
 
-#breadcrumbs li:last-child {
+#breadcrumbs li:last-child{
   background-image: none;
 }
 
-#breadcrumbs li a {
-  color: #555;
-}
-#breadcrumbs li a:hover {
+#breadcrumbs li a:hover{
   text-decoration: none;
   color: #390;
 }
@@ -2653,4 +2651,63 @@ table.select_commits_from_list tr.unknown-status td.meta
   font-family: Tahoma, Helvetica, Sans-Serif;
   border: 1px solid #666666;
   color: #ffffff;
+}
+
+
+/*
+Merge request commit selector
+*/
+#merge_request_commit_selector {
+  margin: 0;
+  line-height: 100%;
+  margin-left: 0px;
+  height: 29px;
+  background: #dee7ed;
+  border-bottom: 1px solid #D1D5D8;
+}
+
+#merge_request_commit_selector li {
+  float: left;
+  background-repeat: no-repeat;
+  background-position: right 0px; 
+  padding: 0 15px 0 10px;
+  display: list-item;
+  background-image: url("/images/breadcrumb.png");
+}
+
+#merge_request_commit_selector li a{
+  padding: 9px 0 7px 22px;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: center left;
+  color: #555;
+}
+
+#merge_request_commit_selector li:last-child{
+  background-image: none;
+}
+
+#merge_request_commit_selector li a:hover {
+  text-decoration: none;
+  color: #390;
+}
+
+
+#merge_request_commit_selector li.merged a
+{
+    background-image: url("/images/silk/bullet_green.png");
+}
+
+#merge_request_commit_selector li.unmerged a
+{
+    background-image: url("/images/silk/bullet_red.png");
+}
+
+#merge_request_commit_selector .version_selector
+{
+    float: right;
+}
+#merge_request_commit_selector .merge_base
+{
+    font-weight: bold;
 }

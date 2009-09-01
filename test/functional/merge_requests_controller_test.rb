@@ -33,7 +33,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		@merge_request = merge_requests(:moes_to_johans_open)
 		@merge_request.stubs(:calculate_merge_base).returns("ff")
 		@merge_request.stubs(:commit_merged?).returns(true)
-		@merge_request.create_new_version
+		version = @merge_request.create_new_version
+    @merge_request.stubs(:versions).returns([version])
+    version.stubs(:affected_commits).returns([])
 		@merge_request.stubs(:commits_for_selection).returns([])
 		assert_not_nil @merge_request.versions.last
 	end
@@ -130,7 +132,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
   		@mainline_repository = repositories(:johans)
   		@merge_request = merge_requests(:moes_to_johans)
   		@merge_request.stubs(:calculate_merge_base).returns('ff0')
-  		@merge_request.create_new_version
+  		version = @merge_request.create_new_version
+      version.stubs(:affected_commits).returns([])
+      @merge_request.stubs(:versions).returns([version])
   		@merge_request.stubs(:commit_merged?).returns(true)
   		stub_commits(@merge_request)
   		
