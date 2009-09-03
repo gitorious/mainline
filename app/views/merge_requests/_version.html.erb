@@ -1,12 +1,98 @@
-<ul class="commit_selector" id="merge_request_commit_selector">
+<ul class="commit_selector" id="merge_request_commit_selector" data-merge-request-version-url="<%= commit_diff_url(version) -%>">
   <li class="merge_base">
     <%= link_to version.merge_base_sha[0..6] -%>
   </li>
-  <%- for c in version.affected_commits.reverse -%>
-  <li class="<%#= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%>">
-    <%= link_to c.id_abbrev -%>
-  </li>
-  <%- end -%>
+  <li class="scroll_handle"><span class="scroll_left">&laquo;</span></li>
+  <script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.3.2.min.js">
+  </script>
+  <script type="text/javascript">
+    jQuery(document).ready(function()
+    {
+    jQuery(".scroll_left").click(function(){scroll_element("+=")})
+    jQuery(".scroll_right").click(function(){scroll_element("-=")})
+    setup_commit_listeners();
+    showAndHideScrollers();
+    });
+    
+    var first_sha = null;
+    function setup_commit_listeners()
+    {
+    jQuery(".clickable_commit").mousedown(function()
+    {
+    first_sha = jQuery(this).attr("data-commit-sha");
+    });
+    jQuery(".clickable_commit").mouseup(function()    
+    {
+    url = jQuery("#merge_request_commit_selector").attr("data-merge-request-version-url");
+    last_sha = jQuery(this).attr("data-commit-sha");
+    if (last_sha != first_sha)
+    {
+    sha = first_sha + ".." + last_sha;
+    }
+    else
+    {
+    sha = last_sha;
+    }
+      jQuery.get(url, {commit_shas: sha},function(data)
+      {
+      jQuery("#merge_request_diff").html(data);
+      })
+    });
+    }    
+
+    function scroll_element(direction)
+    {
+    var outer = jQuery("#scrollable_container");
+    if (direction == "+=")
+    {
+    newOffset = outer.scrollLeft() - outer.width();
+    }
+    else
+    {
+    newOffset = outer.width() + outer.scrollLeft();
+    }
+    outer.scrollLeft(newOffset);
+
+
+    showAndHideScrollers();
+    }
+    function showAndHideScrollers()
+    {
+    if (jQuery("#scrollable_container").scrollLeft() > 0)
+    {
+    jQuery(".scroll_left").show();
+    }
+    else
+    {
+    jQuery(".scroll_left").hide();
+    }
+    }
+
+  </script>
+
+  <div id="scrollable_container">
+    <div id="scrollable_inner">
+      <%- for c in version.affected_commits.reverse -%>
+      <li class="<%= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%> single_commit">
+      <%= inline_commit_link(c) -%>
+      <a href="#commit_<%= c.id_abbrev -%>" id="commit_<%= c.id_abbrev -%>" data-commit-url="">
+        <%= c.id_abbrev -%>
+      </a>
+      <%= link_to_remote(c.id_abbrev, :url => polymorphic_path(
+      [
+      @merge_request.target_repository.project,
+      @merge_request.target_repository,
+      @merge_request,
+      version
+      ], :commit_shas  => c.id),
+      :update => "merge_request_diff",
+      :method => "get") -%>
+      </li>
+      <%- end -%>
+    </div>
+  </div>
+  <li class="scroll_handle"><a class="scroll_right">&raquo;</a></li>
+
   <li class="version_selector">
     <select>
       <option value="">-</option>
@@ -21,3 +107,7 @@
 </ul>
 
 <div class="clear"></div>
+
+<div id="merge_request_diff">
+<%= image_tag("spinner.gif") -%>
+</div>

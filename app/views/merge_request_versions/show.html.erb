@@ -1,4 +1,4 @@
-# encoding: utf-8
+<%
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
@@ -15,32 +15,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+%>
 
-class MergeRequestVersion < ActiveRecord::Base
-  belongs_to :merge_request
-  def affected_commits
-    Rails.cache.fetch(cache_key, :expires_in => 60.minutes) do
-      @affected_commits ||= merge_request.tracking_repository.git.commits_between(
-        merge_base_sha, merge_request.merge_branch_name(version)).reverse
-    end
-  end
-
-  def cache_key
-    "commits_in_merge_request_version_#{id}"
-  end
-
-  def commits(sha_or_range=nil)
-    case sha_or_range
-    when Range
-      git.commits_between(sha_or_range.begin,sha_or_range.end)
-    when String
-      [git.commit(sha_or_range)]
-    else
-      [git.commits]
-    end    
-  end
-
-  def git
-    merge_request.tracking_repository.git
-  end
-end
+<% @commits.each do |commit| -%>
+  <% if commit.diffs.blank? -%>
+    <p>No diff</p>
+  <% else -%>
+    <% unless commit.merge? -%>
+      <%= render_diff_stats(commit.stats) -%>
+      <%= render_diffmode_selector -%>
+      <% commit.diffs.each do |file| -%>
+        <a name="<%= h(force_utf8(file.a_path)) -%>"></a>
+        <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, commit.id) -%></h4>
+        <%= render_diff(file.diff, @diffmode) -%>
+      <% end -%>
+    <% end -%>
+  <% end -%>
+<% end -%>

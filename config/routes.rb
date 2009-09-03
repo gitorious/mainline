@@ -48,12 +48,17 @@ ActionController::Routing::Routes.draw do |map|
         :create => :post, 
         :commit_list => :post,
         :target_branches => :post,
-      }, :has_many => :comments
+      }, :has_many => :comments do |merge_request|
+        merge_request.resources :merge_request_versions
+      end
       repo.resources :committerships, :collection => {
         :auto_complete_for_group_name => :get,
         :auto_complete_for_user_login => :get
       }
 
+
+
+      
       repo.formatted_commits_feed "commits/*branch/feed.:format",
           :controller => "commits", :action => "feed", :conditions => {:feed => :get}
       repo.commits        "commits", :controller => "commits", :action => "index"

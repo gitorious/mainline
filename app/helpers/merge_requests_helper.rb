@@ -72,4 +72,19 @@ module MergeRequestsHelper
         :project_repository_merge_requests_path, repository.project,
         repository, {:status => status}), {:class => "selected"})
   end
+
+  # ul data-merge-request-version-url=""
+  def commit_diff_url(mr_version)
+    url_for(polymorphic_path([
+                             @merge_request.target_repository.project,
+                             @merge_request.target_repository,
+                             @merge_request,
+                             mr_version
+            ]))
+  end
+  
+  # a href="#commit_<sha>" id="commit_<sha>" data-commit-sha="sha"
+  def inline_commit_link(commit)
+    content_tag(:a, commit.id_abbrev, {:"data-commit-sha" => commit.id_abbrev, :class => "clickable_commit"})
+  end
 end

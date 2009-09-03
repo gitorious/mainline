@@ -16,31 +16,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class MergeRequestVersion < ActiveRecord::Base
-  belongs_to :merge_request
-  def affected_commits
-    Rails.cache.fetch(cache_key, :expires_in => 60.minutes) do
-      @affected_commits ||= merge_request.tracking_repository.git.commits_between(
-        merge_base_sha, merge_request.merge_branch_name(version)).reverse
-    end
-  end
+class MergeRequestVersionsController < ApplicationController
+  renders_in_site_specific_context
 
-  def cache_key
-    "commits_in_merge_request_version_#{id}"
-  end
 
-  def commits(sha_or_range=nil)
-    case sha_or_range
-    when Range
-      git.commits_between(sha_or_range.begin,sha_or_range.end)
-    when String
-      [git.commit(sha_or_range)]
+  def show
+    @version = MergeRequestVersion.find(params[:id])
+    @commits = @version.commits(extract_range_from_parameter(params[:commit_shas]))
+    @repository = @version.merge_request.target_repository
+
+    respond_to {|wants|
+      wants.js {render :layout => false}
+    }
+  end
+  
+  private
+  def extract_range_from_parameter(p)
+    if match = /([a-z0-9]*)\.\.([a-z0-9]*)/.match(p)
+      Range.new(match[1],match[2])
     else
-      [git.commits]
-    end    
-  end
-
-  def git
-    merge_request.tracking_repository.git
+      p
+    end
   end
 end

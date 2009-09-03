@@ -52,4 +52,29 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       assert_equal "commits_in_merge_request_version_#{second_version.id}", second_version.cache_key
     end
   end
+
+  context 'Diff browsing' do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans)
+      @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
+      @version = @merge_request.create_new_version
+      @git = mock
+      @version.stubs(:git).returns(@git)
+    end
+    
+    should 'handle a range' do
+      @git.expects(:commits_between).with("ffc","ccf")
+      result = @version.commits("ffc".."ccf")
+    end
+
+    should 'handle a single commit' do
+      @git.expects(:commit).with("ffc")
+      result = @version.commits("ffc")      
+    end
+
+    should 'handle all commits' do
+      @git.expects(:commits)
+      result = @version.commits
+    end
+  end
 end
