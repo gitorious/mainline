@@ -38,6 +38,10 @@
       jQuery("#merge_request_diff").html(data);
       })
     });
+        url = jQuery("#merge_request_commit_selector").attr("data-merge-request-version-url");
+        jQuery.get(url,{}, function(d){
+        jQuery("#merge_request_diff").html(d);
+        });
     }    
 
     function scroll_element(direction)
@@ -75,18 +79,9 @@
       <%- for c in version.affected_commits.reverse -%>
       <li class="<%= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%> single_commit">
       <%= inline_commit_link(c) -%>
-      <a href="#commit_<%= c.id_abbrev -%>" id="commit_<%= c.id_abbrev -%>" data-commit-url="">
+      <a href="#commit_<%= c.id -%>" id="commit_<%= c.id -%>" data-commit-url="">
         <%= c.id_abbrev -%>
       </a>
-      <%= link_to_remote(c.id_abbrev, :url => polymorphic_path(
-      [
-      @merge_request.target_repository.project,
-      @merge_request.target_repository,
-      @merge_request,
-      version
-      ], :commit_shas  => c.id),
-      :update => "merge_request_diff",
-      :method => "get") -%>
       </li>
       <%- end -%>
     </div>
@@ -108,6 +103,7 @@
 
 <div class="clear"></div>
 
+
 <div id="merge_request_diff">
-<%= image_tag("spinner.gif") -%>
+  
 </div>

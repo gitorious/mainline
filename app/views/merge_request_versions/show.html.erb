@@ -17,18 +17,8 @@
 #++
 %>
 
-<% @commits.each do |commit| -%>
-  <% if commit.diffs.blank? -%>
-    <p>No diff</p>
-  <% else -%>
-    <% unless commit.merge? -%>
-      <%= render_diff_stats(commit.stats) -%>
-      <%= render_diffmode_selector -%>
-      <% commit.diffs.each do |file| -%>
-        <a name="<%= h(force_utf8(file.a_path)) -%>"></a>
-        <h4><%=link_to h(file.a_path), file_path(@repository, file.a_path, commit.id) -%></h4>
-        <%= render_diff(file.diff, @diffmode) -%>
-      <% end -%>
-    <% end -%>
-  <% end -%>
+<% @commits.each do |file| -%>
+  <a name="<%= h(force_utf8(file.a_path)) -%>"></a>
+  <h4><%= h(file.a_path) -%></h4>
+  <%= render_diff(file.diff, @diffmode) -%>
 <% end -%>

@@ -32,15 +32,30 @@ class MergeRequestVersion < ActiveRecord::Base
   def commits(sha_or_range=nil)
     case sha_or_range
     when Range
-      git.commits_between(sha_or_range.begin,sha_or_range.end)
+      diff_backend.commit_diff(sha_or_range.begin, sha_or_range.end)
     when String
-      [git.commit(sha_or_range)]
+      diff_backend.single_commit_diff(sha_or_range)
     else
-      [git.commits]
+      diff_backend.commit_diff(merge_base_sha, merge_request.ending_commit)
     end    
   end
 
-  def git
-    merge_request.tracking_repository.git
+  def diff_backend
+    @diff_backend ||= DiffBackend.new(merge_request.target_repository.git)
+  end
+
+  class DiffBackend
+    def initialize(repository)
+      @repository = repository
+    end
+
+    def commit_diff(first,last)
+      diff_string = @repository.git.ruby_git.diff(first,last)
+      Grit::Diff.list_from_string(@repository, diff_string)
+    end
+
+    def single_commit_diff(sha)
+      @repository.commit(sha).diffs
+    end
   end
 end

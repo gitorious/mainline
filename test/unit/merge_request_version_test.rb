@@ -58,22 +58,22 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans)
       @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
       @version = @merge_request.create_new_version
-      @git = mock
-      @version.stubs(:git).returns(@git)
+      @diff_backend = mock
+      @version.stubs(:diff_backend).returns(@diff_backend)
     end
     
     should 'handle a range' do
-      @git.expects(:commits_between).with("ffc","ccf")
+      @diff_backend.expects(:commit_diff).with("ffc","ccf")
       result = @version.commits("ffc".."ccf")
     end
 
     should 'handle a single commit' do
-      @git.expects(:commit).with("ffc")
+      @diff_backend.expects(:single_commit_diff).with("ffc")
       result = @version.commits("ffc")      
     end
 
     should 'handle all commits' do
-      @git.expects(:commits)
+      @diff_backend.expects(:commit_diff).with(@version.merge_base_sha, @merge_request.ending_commit)
       result = @version.commits
     end
   end
