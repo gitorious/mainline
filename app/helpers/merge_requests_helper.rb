@@ -82,9 +82,18 @@ module MergeRequestsHelper
                              mr_version
             ]))
   end
+
+
+  def merge_base_link(version)
+    inline_sha_link(version.merge_base_sha[0..6], version.merge_base_sha)
+  end
   
   # a href="#commit_<sha>" id="commit_<sha>" data-commit-sha="sha"
   def inline_commit_link(commit)
-    content_tag(:a, commit.id_abbrev, {:"data-commit-sha" => commit.id, :class => "clickable_commit"})
+    inline_sha_link(commit.id_abbrev, commit.id)
+  end
+
+  def inline_sha_link(label, sha)
+    content_tag(:a, label, {:"data-commit-sha" => sha, :class => "clickable_commit"})
   end
 end

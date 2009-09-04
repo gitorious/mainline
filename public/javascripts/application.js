@@ -200,6 +200,30 @@ $(document).ready(function() {
         });
         nativeSubmitButton.after(awesomeSubmitButton);
     });
+
+    // Merge request selection of branches
+    // Need: single commit, arrows, overflow, code cleanup
+    jQuery("#merge_request_commit_selector").selectable(
+      {
+        filter: ".single_commit a",
+        stop: function(e, ui)
+        {
+          var commit_shas = [];
+          jQuery(".ui-selected", this).each(function()
+          {
+            sha = jQuery(this).attr("data-commit-sha");
+            commit_shas.push(sha);
+          });
+          var mr_diff_url = jQuery("#merge_request_commit_selector").attr("data-merge-request-version-url");
+          jQuery.get(mr_diff_url, 
+             {"commit_shas": commit_shas[0] + ".." + commit_shas[commit_shas.length-1]}, 
+             function(data)
+             {
+               jQuery("#merge_request_diff").html(data);
+             });
+          }
+        });
+    
 });
 
 var Gitorious = {};

@@ -2688,11 +2688,21 @@ Merge request commit selector
   color: #555;
 }
 
-#merge_request_commit_selector li:last-child{
-  background-image: none;
+#merge_request_commit_selector li a span
+{
+    display: none;
 }
 
-#merge_request_commit_selector li a:hover {
+#merge_request_commit_selector li:hover a span
+{
+    display: inline;
+}
+
+#merge_request_commit_selector li:last-child{
+  background-image: none; !important
+}
+
+#merge_request_commit_selector li.single_commit a:hover {
   text-decoration: none;
   color: #390;
 }
@@ -2715,16 +2725,4 @@ Merge request commit selector
 #merge_request_commit_selector .merge_base
 {
     font-weight: bold;
-}
-
-#scrollable_container
-{
-    width: 40%;
-    overflow: hidden;
-    float: left;
-    height: 100%;
-}
-#scrollable_inner
-{
-    width: 2000px;
 }
