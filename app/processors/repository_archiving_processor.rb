@@ -28,7 +28,8 @@ class RepositoryArchivingProcessor < ApplicationProcessor
     Dir.chdir(msg["full_repository_path"]) do
       case msg["format"]
       when "tar.gz"
-        run("git archive --format=tar #{e(msg['commit_sha'])} | gzip > #{e(msg['work_path'])}")
+        run("git archive --format=tar --prefix=#{e(msg['name'] || msg['commit_sha'])}/ " +
+          "#{e(msg['commit_sha'])} | gzip > #{e(msg['work_path'])}")
       end
     end
     

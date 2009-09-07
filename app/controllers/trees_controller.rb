@@ -106,6 +106,7 @@ class TreesController < ApplicationController
         :output_path => File.join(GitoriousConfig["archive_cache_dir"], disk_path),
         :work_path => File.join(GitoriousConfig["archive_work_dir"], disk_path),
         :commit_sha => commit.id,
+        :name => (repo.project.slug + "-" + repo.name),
         :format => "tar.gz",
       }
       publish :archive_repo, payload.to_json
