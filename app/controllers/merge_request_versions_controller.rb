@@ -22,7 +22,7 @@ class MergeRequestVersionsController < ApplicationController
 
   def show
     @version = MergeRequestVersion.find(params[:id])
-    @commits = @version.commits(extract_range_from_parameter(params[:commit_shas]))
+    @diffs = @version.diffs(extract_range_from_parameter(params[:commit_shas]))
     @repository = @version.merge_request.target_repository
 
     respond_to {|wants|

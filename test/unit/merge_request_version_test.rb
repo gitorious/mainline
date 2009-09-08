@@ -64,17 +64,17 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     
     should 'handle a range' do
       @diff_backend.expects(:commit_diff).with("ffc","ccf")
-      result = @version.commits("ffc".."ccf")
+      result = @version.diffs("ffc".."ccf")
     end
 
     should 'handle a single commit' do
       @diff_backend.expects(:single_commit_diff).with("ffc")
-      result = @version.commits("ffc")      
+      result = @version.diffs("ffc")      
     end
 
     should 'handle all commits' do
       @diff_backend.expects(:commit_diff).with(@version.merge_base_sha, @merge_request.ending_commit)
-      result = @version.commits
+      result = @version.diffs
     end
   end
 end

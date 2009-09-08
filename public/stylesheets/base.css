@@ -2657,13 +2657,25 @@ table.select_commits_from_list tr.unknown-status td.meta
 /*
 Merge request commit selector
 */
+
+.merge_request_diff_browser
+{
+  border: 1px solid #dfdfdf;
+    
+}
+
+#merge_request_diff
+{
+    min-height: 4em;
+    padding: 0.4em 1em;
+}
+
 #merge_request_commit_selector {
   margin: 0;
   line-height: 100%;
   margin-left: 0px;
   height: 29px;
   background: #dee7ed url(/images/silver_gradient.png) top left repeat-x;
-  border: 1px solid #dfdfdf;
   border-bottom: 1px solid #D1D5D8;
 }
 
@@ -2680,7 +2692,8 @@ Merge request commit selector
   background-image: url("/images/breadcrumb.png");
 }
 
-#merge_request_commit_selector li a{
+#merge_request_commit_selector li a
+{
   padding: 9px 0 7px 22px;
   display: block;
   background-repeat: no-repeat;
@@ -2725,4 +2738,26 @@ Merge request commit selector
 #merge_request_commit_selector .merge_base
 {
     font-weight: bold;
+}
+#merge_request_commit_selector .ui-selectee
+{
+    cursor: pointer;
+}
+
+
+#merge_request_commit_selector a.ui-selecting,
+#merge_request_commit_selector a:hover,
+#merge_request_commit_selector a.ui-selected
+{
+    color: #390;
+    font-weight: bold;
+}
+
+#merge_request_commit_selector #current_shas
+{
+    background-image: url(/images/silk/brick.png);
+}
+.ui-selectable-helper
+{
+    border: none !important;
 }

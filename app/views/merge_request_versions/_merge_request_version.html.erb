@@ -17,4 +17,8 @@
 #++
 %>
 
-<%= render :partial => "merge_request_version", :locals => {:diffs => @diffs} -%>
+<% diffs.each do |file| -%>
+  <a name="<%= h(force_utf8(file.a_path)) -%>"></a>
+  <h4><%= h(file.a_path) -%></h4>
+  <%= render_diff(file.diff, @diffmode) -%>
+<% end -%>

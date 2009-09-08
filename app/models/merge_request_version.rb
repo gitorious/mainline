@@ -29,7 +29,7 @@ class MergeRequestVersion < ActiveRecord::Base
     "commits_in_merge_request_version_#{id}"
   end
 
-  def commits(sha_or_range=nil)
+  def diffs(sha_or_range=nil)
     case sha_or_range
     when Range
       diff_backend.commit_diff(sha_or_range.begin, sha_or_range.end)
@@ -38,6 +38,18 @@ class MergeRequestVersion < ActiveRecord::Base
     else
       diff_backend.commit_diff(merge_base_sha, merge_request.ending_commit)
     end    
+  end
+
+  def short_merge_base
+    merge_base_sha[0..6]
+  end
+
+  def sha_summary(format = :short)
+    result = format == :short ? short_merge_base : merge_base_sha
+    if !affected_commits.blank?
+      result << ".." +  (format == :short ? affected_commits.last.id_abbrev : affected_commits.last.id)
+    end
+    result
   end
 
   def diff_backend

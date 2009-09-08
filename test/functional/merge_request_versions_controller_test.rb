@@ -32,7 +32,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
     
     context 'Viewing the diff for a single commit' do
       setup do
-        @version.expects(:commits).with("ffcab").returns([])
+        @version.expects(:diffs).with("ffcab").returns([])
         get :show, :id => @version, :commit_shas => "ffcab"
       end      
       should_respond_with :success
@@ -40,7 +40,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
     
     context 'Viewing the diff for a series of commits' do
       setup do
-        @version.expects(:commits).with("ffcab".."bacff").returns([])
+        @version.expects(:diffs).with("ffcab".."bacff").returns([])
         get :show, :id => @version, :commit_shas => "ffcab..bacff"
       end
       should_respond_with :success
@@ -48,7 +48,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
     
     context 'Viewing the entire diff' do
       setup do
-        @version.expects(:commits).returns([])
+        @version.expects(:diffs).returns([])
         get :show,  :id => @version
       end
       should_respond_with :success

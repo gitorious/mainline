@@ -19,7 +19,7 @@
 #++
 
 module MergeRequestsHelper
-  
+  include MergeRequestVersionsHelper
   def render_status_tag_list(status_tags, repository)
     project_statuses = repository.project.merge_request_statuses
     
@@ -94,6 +94,6 @@ module MergeRequestsHelper
   end
 
   def inline_sha_link(label, sha)
-    content_tag(:a, label, {:"data-commit-sha" => sha, :class => "clickable_commit"})
+    content_tag(:a, label, {:"data-commit-sha" => sha, :class => "clickable_commit ui-selected"})
   end
 end
