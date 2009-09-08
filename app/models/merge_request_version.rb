@@ -61,13 +61,21 @@ class MergeRequestVersion < ActiveRecord::Base
       @repository = repository
     end
 
+    def cache_key(first, last=nil)
+      ["merge_request_diff", first, last].compact.join("_")
+    end
+    
     def commit_diff(first,last)
-      diff_string = @repository.git.ruby_git.diff(first,last)
-      Grit::Diff.list_from_string(@repository, diff_string)
+      Rails.cache.fetch(cache_key(first,last), :expires_in => 60.minutes) do
+        diff_string = @repository.git.ruby_git.diff(first,last)
+        Grit::Diff.list_from_string(@repository, diff_string)
+      end
     end
 
     def single_commit_diff(sha)
-      @repository.commit(sha).diffs
+      Rails.cache.fetch(cache_key(sha), :expires_in => 60.minutes) do
+        @repository.commit(sha).diffs
+      end
     end
   end
 end

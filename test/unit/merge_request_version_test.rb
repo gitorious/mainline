@@ -77,4 +77,25 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       result = @version.diffs
     end
   end
+
+  context "The diff backend" do
+    setup {
+      @backend = MergeRequestVersion::DiffBackend.new(nil)
+    }
+
+    should "have a cache key" do
+      assert_equal "merge_request_diff_ff0_cc9", @backend.cache_key("ff0", "cc9")
+      assert_equal "merge_request_diff_ff0", @backend.cache_key("ff0")
+    end
+
+    should "ask the cache for diffs for a range of commits" do
+      Rails.cache.expects(:fetch).with("merge_request_diff_ff9_cc9", :expires_in => 60.minutes).returns("some_string")
+      assert_equal "some_string", @backend.commit_diff("ff9", "cc9")
+    end
+
+    should "ask the cache for diffs for a single commit" do
+      Rails.cache.expects(:fetch).with("merge_request_diff_f00", :expires_in => 60.minutes).returns("foo_bar")
+      assert_equal "foo_bar", @backend.single_commit_diff("f00")
+    end    
+  end
 end
