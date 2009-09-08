@@ -41,7 +41,7 @@
   <%= t("views.merges.help") %> 
   <small>
     <%= link_to_function(t("views.merges.example"), 
-        "$('detailed_merge_request_help').toggle()", :class => "more_info") -%>
+        "$('#detailed_merge_request_help').toggle()", :class => "more_info") -%>
   </small>
 </p>
 <pre id="detailed_merge_request_help" style="display:none;">
@@ -69,13 +69,13 @@
 
 <script type="text/javascript" charset="utf-8">
   function toggleComments(index) {
-  if ($("commit_" + index).hasClassName("with_comments")) {
-  $("commit_" + index).removeClassName("with_comments")
+  if ($("#commit_" + index).hasClass("with_comments")) {
+  $("#commit_" + index).removeClass("with_comments")
   } else {
-  $("commit_" + index).addClassName("with_comments")
+  $("#commit_" + index).addClass("with_comments")
   }
-  $$('.comment_for_commit_' + index).each(function(e){ 
-  e.toggle();
+  $('.comment_for_commit_' + index).each(function(){ 
+      $(this).toggle();
   })
   }
 </script>

@@ -37,10 +37,10 @@
 
 <script type="text/javascript" charset="utf-8">
   function toggleComments(index) {
-      if ($("commit_" + index).hasClass("with_comments")) {
-          $("commit_" + index).removeClassName("with_comments")
+      if ($("#commit_" + index).hasClass("with_comments")) {
+          $("#commit_" + index).removeClass("with_comments")
       } else {
-          $("commit_" + index).addClass("with_comments")
+          $("#commit_" + index).addClass("with_comments")
       }
       $('.comment_for_commit_' + index).toggle();
   }
