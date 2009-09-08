@@ -221,6 +221,7 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
   this.endsAt = null;
   this.sourceBranchName = null;
   this.targetBranchName = null;
+  this.REASONABLY_SANE_RANGE_SIZE = 50;
   
   this.endSelected = function(el) {
     this.endsAt = $(el);
@@ -228,7 +229,7 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
   };
   
   this.onSourceBranchChange = function(event) {
-    if (sourceBranch = $('merge_request_source_branch')) {
+    if (sourceBranch = $('#merge_request_source_branch')) {
       this.sourceBranchSelected(sourceBranch);
     }
   };
@@ -272,9 +273,18 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
       $(".commit_row").each(function(){ $(this).removeClass("selected") });
       var selectedTr = this.endsAt.parent().parent();
       selectedTr.addClass('selected');
+      var selectedTrCount = 1;
       selectedTr.nextAll().each(function() {
           $(this).addClass('selected');
+          selectedTrCount++;
       });
+
+      if (selectedTrCount > this.REASONABLY_SANE_RANGE_SIZE) {
+        $("#large_selection_warning").slideDown();
+      } else {
+        $("#large_selection_warning").slideUp();
+      }
+
       // update the status field with the selected range
       var to = selectedTr.find(".sha-abbrev a").html();
       var from = $(".commit_row:last .sha-abbrev a").html();

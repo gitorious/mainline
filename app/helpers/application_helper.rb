@@ -29,8 +29,10 @@ module ApplicationHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
   
-  def help_box(style = :side, icon = :help, &block)
-    out = %Q{<div class="help-box #{style} #{icon} round-5"><div class="icon #{icon}"></div>}
+  def help_box(style = :side, icon = :help, options = {}, &block)
+    out = %Q{<div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
+                  class="help-box #{style} #{icon} round-5">
+               <div class="icon #{icon}"></div>}
     out << capture(&block)
     out << "</div>"
     concat(out)
