@@ -31,7 +31,9 @@ class SshKeyFile
   
   def add_key(key)
     File.open(@path, "a") do |file|
+      file.flock(File::LOCK_EX)
       file << key
+      file.flock(File::LOCK_UN)
     end
   end
   
@@ -40,7 +42,9 @@ class SshKeyFile
     return true unless data.include?(key)
     new_data = data.gsub(key, "")
     File.open(@path, "w") do |file|
+      file.flock(File::LOCK_EX)
       file.puts new_data
+      file.flock(File::LOCK_EX)
     end
   end
   
