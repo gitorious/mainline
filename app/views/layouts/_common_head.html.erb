@@ -19,8 +19,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><%= @page_title ? @page_title + " - " : "" -%><%= current_site.title -%></title>
 <%= stylesheet_link_tag "base" -%>
-<%= javascript_include_tag "jquery.core", "jquery.autocomplete", 
-      "color_picker", "application", :cache => true -%>
+<%= include_javascripts -%>
 <%  if @atom_auto_discovery_url -%>  
   <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url) -%>
 <% end -%>

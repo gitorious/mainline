@@ -4,7 +4,7 @@
 <head>
   <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
   <%= stylesheet_link_tag "screen" %>
-  <%= javascript_include_tag "jquery.core", "application", :cache => true -%>
+  <%= include_javascripts -%>
 </head>
 
 <body id="<%= controller.controller_name -%>">
