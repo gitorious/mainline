@@ -230,14 +230,13 @@ $(document).ready(function() {
     // Merge request selection of branches
     jQuery("#merge_request_commit_selector").selectable(
       {
-//        filter: ".single_commit",
         stop: function(e, ui)
         {
           var sha_spec = new Gitorious.ShaSpec();
-          jQuery("li.single_commit a.ui-selected", this).each(function()
+          jQuery("li.ui-selected a", this).each(function()
           {
             sha = jQuery(this).attr("data-commit-sha");
-            sha_spec.addSha(sha);
+            sha_spec.add_sha(sha);
           });
           var mr_diff_url = jQuery("#merge_request_commit_selector").attr("data-merge-request-version-url");
           diff_browser = new Gitorious.DiffBrowser(sha_spec.sha_spec());
@@ -247,7 +246,8 @@ $(document).ready(function() {
     jQuery("#current_shas").each(function(){
             sha_spec = jQuery(this).attr("data-merge-request-current-shas");
             diff_browser = new Gitorious.DiffBrowser(sha_spec);
-        });
+        }
+    );
 
 });
 
@@ -294,26 +294,31 @@ Gitorious.Sha = function(sha)
 
 Gitorious.ShaSpec = function()
 {
-    this.allShas = [];
-    this.addSha = function(s)
+    this.all_shas = [];
+    this.add_sha = function(s)
     {
-        this.allShas.push(new Gitorious.Sha(s));
+        this.all_shas.push(new Gitorious.Sha(s));
     }
     this.first_sha = function()
     {
-        return this.allShas[0];
+        return this.all_shas[0];
     }
     this.last_sha = function()
     {
-        return this.allShas[this.allShas.length - 1];
+        return this.all_shas[this.all_shas.length - 1];
+    }
+    this.sha_specs = function(callback)
+    {
+        shas = (this.all_shas.length < 2) ? [this.first_sha()] : [this.first_sha(), this.last_sha()];
+        return shas;
     }
     this.sha_spec = function()
     {
-        return this.first_sha().sha() + ".." + this.last_sha().sha();
+        return  this.sha_specs().map(function(s){return s.sha()}).join("..");
     }
     this.short_sha_spec = function()
     {
-        return this.first_sha().short_sha() + ".." + this.last_sha().short_sha();
+        return this.sha_specs().map(function(s){return s.short_sha()}).join("..");
     }
 
 };
