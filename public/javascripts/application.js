@@ -113,6 +113,12 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
+    // Markdown help toggling
+    $(".markdown-help-toggler").click(function(event){
+        $(".markdown_help").toggle();
+        event.preventDefault();
+    });
+
     // Merge request status color picking
     $("#merge_request_statuses input.color_pickable").SevenColorPicker();
     
