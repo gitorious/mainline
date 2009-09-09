@@ -2761,3 +2761,17 @@ Merge request commit selector
 {
     border: none !important;
 }
+
+.merge_request_diff_browser {
+    margin-bottom: 20px
+}
+
+#merge_request_diff .file-diff {
+    border-bottom: 1px solid #dee7ed;
+    margin-bottom: 5px;
+}
+
+#merge_request_diff .file-diff-controls {
+    float: right;
+    color: #888;
+}

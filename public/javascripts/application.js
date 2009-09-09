@@ -201,6 +201,26 @@ $(document).ready(function() {
         nativeSubmitButton.after(awesomeSubmitButton);
     });
 
+    // toggling of diffs in merge-request diff browser
+    $('#merge_request_diff .file-diff a.header').live("click", function(event) {
+        var hunksContainer = $(this).parent().next();
+        if (hunksContainer.is(":visible")) {
+          hunksContainer.slideUp();
+        } else {
+          hunksContainer.slideDown();
+        }
+        event.preventDefault();
+    });
+    $("#merge_request_diff .file-diff-controls a#expand-all").live("click", function(e){
+        $(this).parent().parent().parent().find('.diff-hunks:hidden').show();
+        e.preventDefault();
+    });
+    $("#merge_request_diff .file-diff-controls a#collapse-all").live("click", function(e){
+        $(this).parent().parent().parent().find('.diff-hunks').hide();
+        e.preventDefault();
+    });
+
+
     // Merge request selection of branches
     jQuery("#merge_request_commit_selector").selectable(
       {

@@ -17,8 +17,20 @@
 #++
 %>
 
+<div class="file-diff-controls">
+  <small><a href="#" id="expand-all">expand</a> / 
+  <a href="#" id="collapse-all">collapse all</a></small>
+</div>
+
 <% diffs.each do |file| -%>
-  <a name="<%= h(force_utf8(file.a_path)) -%>"></a>
-  <h4><%= h(file.a_path) -%></h4>
-  <%= render_diff(file.diff, @diffmode) -%>
+<div class="file-diff">
+  <h4>
+    <a href="#" class="header" name="<%= h(force_utf8(file.a_path)) -%>">
+      <%= h(file.a_path) -%>
+    </a>
+  </h4>
+  <div class="diff-hunks" style="display:none">
+    <%= render_diff(file.diff, @diffmode) -%>
+  </div>
+</div>
 <% end -%>
