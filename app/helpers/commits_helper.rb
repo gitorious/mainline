@@ -46,8 +46,8 @@ module CommitsHelper
     end
   end
   
-  def render_inline_diff(udiff)
-    differ = Diff::Display::Unified.new(udiff)
+  def render_inline_diff(udiff, differ = nil)
+    differ ||= Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
     out << "<tr>"
@@ -96,5 +96,10 @@ module CommitsHelper
     end
     out << "</ul>\n"
     out
+  end
+
+  def render_compact_diff_stats(stats)
+    %Q{(<span class="additions">#{stats[:additions].to_s}</span> / } +
+      %Q{<span class="deletions">#{stats[:deletions].to_s}</span>)}
   end
 end

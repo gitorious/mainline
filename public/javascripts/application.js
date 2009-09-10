@@ -202,8 +202,8 @@ $(document).ready(function() {
     });
 
     // toggling of diffs in merge-request diff browser
-    $('#merge_request_diff .file-diff a.header').live("click", function(event) {
-        var hunksContainer = $(this).parent().next();
+    $('#merge_request_diff .file-diff h4').live("click", function(event) {
+        var hunksContainer = $(this).next();
         if (hunksContainer.is(":visible")) {
           $(this).find("span").removeClass("open").addClass("closed");
           hunksContainer.slideUp();
@@ -215,13 +215,13 @@ $(document).ready(function() {
     });
     $("#merge_request_diff .file-diff-controls a#expand-all").live("click", function(e){
         var container = $(this).parent().parent().parent();
-        container.find('.file-diff a.header span').removeClass("closed").addClass("open");
+        container.find('.file-diff .header span').removeClass("closed").addClass("open");
         container.find('.diff-hunks:hidden').show();
         e.preventDefault();
     });
     $("#merge_request_diff .file-diff-controls a#collapse-all").live("click", function(e){
         var container = $(this).parent().parent().parent();
-        container.find('.file-diff a.header span').removeClass("open").addClass("closed");
+        container.find('.file-diff .header span').removeClass("open").addClass("closed");
         container.find('.diff-hunks').hide();
         e.preventDefault();
     });

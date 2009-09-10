@@ -23,14 +23,16 @@
 </div>
 
 <% diffs.each do |file| -%>
+<% diff_renderer = Diff::Display::Unified.new(file.diff) %>
 <div class="file-diff">
   <h4>
-    <a href="#" class="header" name="<%= h(force_utf8(file.a_path)) -%>">
+    <span class="header">
       <span class="closed"></span><%= h(file.a_path) -%>
-    </a>
+    </span>
+    <div class="diff-stats"><%= render_compact_diff_stats(diff_renderer.stats) -%></div>
   </h4>
   <div class="diff-hunks" style="display:none">
-    <%= render_diff(file.diff, @diffmode) -%>
+    <%= render_inline_diff(file.diff, diff_renderer) -%>
   </div>
 </div>
 <% end -%>

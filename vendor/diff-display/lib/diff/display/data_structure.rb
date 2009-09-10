@@ -3,6 +3,21 @@ module Diff
     class Data < Array
       def initialize
         super
+        @stats = {:additions => 0, :deletions => 0}
+      end
+
+      def stats
+        each do |block|
+          block.each do |line|
+            case line
+            when Diff::Display::AddLine
+              @stats[:additions] += 1
+            when Diff::Display::RemLine
+              @stats[:deletions] += 1
+            end
+          end
+        end
+        @stats
       end
       
       def to_diff
