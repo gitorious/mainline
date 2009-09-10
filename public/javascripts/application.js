@@ -205,18 +205,24 @@ $(document).ready(function() {
     $('#merge_request_diff .file-diff a.header').live("click", function(event) {
         var hunksContainer = $(this).parent().next();
         if (hunksContainer.is(":visible")) {
+          $(this).find("span").removeClass("open").addClass("closed");
           hunksContainer.slideUp();
         } else {
+          $(this).find("span").removeClass("closed").addClass("open");
           hunksContainer.slideDown();
         }
         event.preventDefault();
     });
     $("#merge_request_diff .file-diff-controls a#expand-all").live("click", function(e){
-        $(this).parent().parent().parent().find('.diff-hunks:hidden').show();
+        var container = $(this).parent().parent().parent();
+        container.find('.file-diff a.header span').removeClass("closed").addClass("open");
+        container.find('.diff-hunks:hidden').show();
         e.preventDefault();
     });
     $("#merge_request_diff .file-diff-controls a#collapse-all").live("click", function(e){
-        $(this).parent().parent().parent().find('.diff-hunks').hide();
+        var container = $(this).parent().parent().parent();
+        container.find('.file-diff a.header span').removeClass("open").addClass("closed");
+        container.find('.diff-hunks').hide();
         e.preventDefault();
     });
 

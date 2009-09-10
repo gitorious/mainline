@@ -2770,6 +2770,22 @@ Merge request commit selector
     border-bottom: 1px solid #dee7ed;
     margin-bottom: 5px;
 }
+#merge_request_diff .file-diff:last-child {
+    border-bottom: none;
+}
+#merge_request_diff .file-diff h4 {
+    margin-bottom: 5px;
+}
+
+#merge_request_diff .file-diff a.header span {
+    padding-right: 20px;
+}
+#merge_request_diff .file-diff a.header span.open {
+    background: url('/images/silk/bullet_toggle_minus.png') no-repeat 0 0;
+}
+#merge_request_diff .file-diff a.header span.closed {
+    background: url('/images/silk/bullet_toggle_plus.png') no-repeat 0 0;
+}
 
 #merge_request_diff .file-diff-controls {
     float: right;
