@@ -91,7 +91,7 @@ $(document).ready(function() {
     });
 
     // Merge request version viewing
-    $("select#merge_request_version").change(function(event){
+    $("select#merge_request_version").live("change",(function(event){
         if (this.options[this.selectedIndex].value != '') {
           var url = $(this).attr("gts:url") +
             '?version=' + this.options[this.selectedIndex].value;
@@ -99,7 +99,7 @@ $(document).ready(function() {
             new Gitorious.DiffBrowser(jQuery("#current_shas").attr("data-merge-request-current-shas"));
           });
         }
-    });
+    }));
 
     // Message actions
     $(".message_actions a.mark_as_unread").click(function(event){
