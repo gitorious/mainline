@@ -421,6 +421,12 @@ abbr {
   -webkit-border-top-left-radius: 5px;
   -webkit-border-top-right-radius: 5px;
 }
+.round-top-10 {
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-topright: 10px;
+  -webkit-border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
+}
 .round-bottom-5 {
   -moz-border-radius-bottomleft: 5px;
   -moz-border-radius-bottomright: 5px;
@@ -2660,12 +2666,11 @@ Merge request commit selector
 
 .merge_request_diff_browser{
   margin-bottom: 20px;
-  border: 1px solid #ddd;
 }
 
 #merge_request_diff{
   min-height: 4em;
-  padding: 0.4em 1em;
+  padding: 0;
 }
 
 #merge_request_commit_selector {
@@ -2677,6 +2682,9 @@ Merge request commit selector
   background-repeat: repeat-x;
   height: 33px;
   border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 
 #merge_request_commit_selector li.single_commit {
@@ -2770,31 +2778,29 @@ Merge request commit selector
 }
 
 #merge_request_diff .file-diff {
-    border-bottom: 1px solid #dee7ed;
-    margin-bottom: 2px;
+    border-bottom: 2px solid #cecece;
+    margin-bottom: 10px;
 }
-#merge_request_diff .file-diff:last-child {
-    border-bottom: none;
-}
-#merge_request_diff .file-diff h4 {
-    margin: 0 0 0 0;
+
+#merge_request_diff .file-diff .header {
+    margin: 0;
     background: #eee;
     color: #339900;
     font-size: 13px;
-    padding: 3px 0 0px 5px;
+    padding: 5px 0 0px 8px;
+    width: 50%;
 }
-#merge_request_diff .file-diff h4:hover {
+#merge_request_diff .file-diff .header:hover {
     background: #dedede;
     cursor: pointer;
 }
+#merge_request_diff .file-diff .header.open { background: #dedede; }
 
-#merge_request_diff .file-diff .header span {
-    padding-right: 20px;
-}
-#merge_request_diff .file-diff .header span.open {
+#merge_request_diff .file-diff .header span.icon { padding-right: 20px; }
+#merge_request_diff .file-diff .header.open span.icon {
     background: url('/images/silk/bullet_toggle_minus.png') no-repeat 0 0;
 }
-#merge_request_diff .file-diff .header span.closed {
+#merge_request_diff .file-diff .header.closed span.icon {
     background: url('/images/silk/bullet_toggle_plus.png') no-repeat 0 0;
 }
 
@@ -2808,7 +2814,7 @@ Merge request commit selector
 #merge_request_diff .file-diff .diff-stats .deletions { color: #DC0000; }
 
 #merge_request_diff .file-diff .diff-hunks table {
-    margin-bottom: 2px
+    margin-bottom: 0;
 }
 
 #merge_request_diff .file-diff-controls {
