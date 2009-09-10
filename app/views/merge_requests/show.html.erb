@@ -61,7 +61,9 @@
 </div>
 
 
-<%= render :partial => "version", :locals => {:version => @merge_request.versions.first} -%>
+<div id="diff_browser_for_current_version">
+  <%= render :partial => "version", :locals => {:version => @merge_request.versions.last} -%>
+</div>
 
 <% if @merge_request.open? -%>
 <h2><%= t("views.merges.commits_to_merged") %>:</h2>
@@ -80,15 +82,6 @@
 <%- if @merge_request.versions.size > 1 -%>
   <form>
     <label for="merge_request_version">Select version</label>:
-    <select id="merge_request_version" name="version" gts:url="<%= url_for(
-      polymorphic_path([
-                                 :version,
-                                 @merge_request.target_repository.project,
-                                 @merge_request.target_repository,
-                                 @merge_request]))-%>">
-      <option value="">- Select version -</option>
-      <%= options_from_collection_for_select(@merge_request.versions, 'version', 'version', @merge_request.current_version_number) %>
-    </select>
   </form>
 <%- end -%>
 

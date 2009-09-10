@@ -93,10 +93,11 @@ $(document).ready(function() {
     // Merge request version viewing
     $("select#merge_request_version").change(function(event){
         if (this.options[this.selectedIndex].value != '') {
-          $("#wait_for_commits").fadeIn();
           var url = $(this).attr("gts:url") +
             '?version=' + this.options[this.selectedIndex].value;
-          $("#commits_to_be_merged").load(url);
+          $("#diff_browser_for_current_version").load(url, null, function(){
+            new Gitorious.DiffBrowser(jQuery("#current_shas").attr("data-merge-request-current-shas"));
+          });
         }
     });
 

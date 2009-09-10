@@ -1,36 +1,37 @@
-<div class="merge_request_diff_browser">
-<ul class="commit_selector" 
-    id="merge_request_commit_selector" 
-    data-merge-request-version-url="<%= commit_diff_url(version) -%>">
-
-  <li class="merge_base single_commit">
-    <%= merge_base_link(version) -%>
-  </li>
-  <div style="width:56%;overflow:hidden;height:33px;float:left">
-    <%- for c in version.affected_commits.reverse -%>
-    <li class="<%= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%> single_commit ui-selected">
-      <%= inline_commit_link(c) -%>
+<div class="merge_request_diff_browser" id="merge_request_current_version">
+  <ul class="commit_selector" 
+      id="merge_request_commit_selector" 
+      data-merge-request-version-url="<%= commit_diff_url(version) -%>">
+    
+    <li class="merge_base single_commit">
+      <%= merge_base_link(version) -%>
     </li>
-    <%- end -%>
-  </div>
+    <div style="width:56%;overflow:hidden;height:33px;float:left">
+      <%- for c in version.affected_commits.reverse -%>
+      <li class="<%= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%> single_commit ui-selected">
+        <%= inline_commit_link(c) -%>
+      </li>
+      <%- end -%>
+    </div>
+    
+    <li class="selected_shas">
+      <span href="#" id="current_shas" data-merge-request-current-shas="<%= version.sha_summary(:long) -%>">
+        <%= version.sha_summary -%>
+      </span>
+    </li>
+    <li class="version_selector">
+      <select id="merge_request_version" name="version" gts:url="<%= url_for(
+                                                                 polymorphic_path([
+                                                                 :version,
+                                                                 @merge_request.target_repository.project,
+                                                                 @merge_request.target_repository,
+                                                                 @merge_request]))-%>">
+        <option value="">- Select version -</option>
+        <%= options_from_collection_for_select(@merge_request.versions, 'version', 'version', version.version) %>
+      </select>
 
-  <li class="selected_shas">
-    <span href="#" id="current_shas" data-merge-request-current-shas="<%= version.sha_summary(:long) -%>">
-      <%= version.sha_summary -%>
-    </span>
-  </li>
-  <li class="version_selector">
-    <select>
-      <option value="">-</option>
-      <%= options_from_collection_for_select(
-          @merge_request.versions, 
-          'version', 
-          'version', 
-          version.version) %>
-    </select>
-
-  </li>
-</ul>
+    </li>
+  </ul>
 
 <div class="clear"></div>
 

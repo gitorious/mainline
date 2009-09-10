@@ -105,14 +105,8 @@ class MergeRequestsController < ApplicationController
   def version
     @merge_request = @repository.merge_requests.public.find(params[:id],
                       :include => [:source_repository, :target_repository])
-    @version = params[:version].to_i
-    logger.info("Merge request versions for #{@version}")
-    @commits = @merge_request.commit_diff_from_tracking_repo(@version)
-    @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
-    respond_to do |wants|
-      wants.html {render :partial => 'commits', :layout => false}
-      wants.js   { render :partial => "commits", :layout => false }
-    end    
+    version_number = params[:version].to_i
+    render :partial => 'version', :layout => false, :locals => {:version => @merge_request.version_number(version_number)}
   end
   
   def new

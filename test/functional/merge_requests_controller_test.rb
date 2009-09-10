@@ -532,11 +532,10 @@ class MergeRequestsControllerTest < ActionController::TestCase
   end
   
   context 'GET #version' do
-    should 'retrieve the commits in a specific version' do
+    should 'render the diff browser for the given version' do
       MergeRequest.stubs(:find).returns(@merge_request)
-      @merge_request.expects(:commit_diff_from_tracking_repo).with(10).returns([])
       get :version, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-        :id => @merge_request.to_param, :version => 10
+        :id => @merge_request.to_param, :version => @merge_request.versions.first.version
       assert_response :success
     end
   end
