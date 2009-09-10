@@ -226,28 +226,29 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+    // merge request diffing loading indimacator
+    Gitorious.MergeRequestDiffSpinner = $("#merge_request_diff_loading").html();
+    $("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
 
     // Merge request selection of branches
-    jQuery("#merge_request_commit_selector").selectable(
-      {
+    jQuery("#merge_request_commit_selector").selectable({
         filter: "li.single_commit",
-        stop: function(e, ui)
-        {
+        stop: function(e, ui) {
           var sha_spec = new Gitorious.ShaSpec();
-          jQuery("li.ui-selected a", this).each(function()
-          {
+          jQuery("li.ui-selected a", this).each(function() {
             sha = jQuery(this).attr("data-commit-sha");
             sha_spec.add_sha(sha);
           });
-          var mr_diff_url = jQuery("#merge_request_commit_selector").attr("data-merge-request-version-url");
+          var mr_diff_url = jQuery("#merge_request_commit_selector")
+            .attr("data-merge-request-version-url");
           diff_browser = new Gitorious.DiffBrowser(sha_spec.sha_spec());
           jQuery("#current_shas").html(sha_spec.short_sha_spec());
         }
     });
     jQuery("#current_shas").each(function(){
-            sha_spec = jQuery(this).attr("data-merge-request-current-shas");
-            diff_browser = new Gitorious.DiffBrowser(sha_spec);
-        }
+        sha_spec = jQuery(this).attr("data-merge-request-current-shas");
+        diff_browser = new Gitorious.DiffBrowser(sha_spec);
+      }
     );
 
 });
@@ -326,14 +327,14 @@ Gitorious.ShaSpec = function()
 
 Gitorious.DiffBrowser = function(shas)
 {
-    var mr_diff_url = jQuery("#merge_request_commit_selector").attr("data-merge-request-version-url");
-    jQuery.get(mr_diff_url,
-       {"commit_shas": shas},
-       function(data)
-       {
-           jQuery("#merge_request_diff").html(data);
-       }
-    );
+    jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
+    var mr_diff_url = jQuery("#merge_request_commit_selector")
+      .attr("data-merge-request-version-url");
+    jQuery.get(mr_diff_url, {"commit_shas": shas}, function(data, responseText) {
+        if (responseText === "success") {
+          jQuery("#merge_request_diff").html(data);
+        }
+    });
 }
     
 // Gitorious.Wordwrapper = {

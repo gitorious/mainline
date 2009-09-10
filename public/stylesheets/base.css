@@ -2816,3 +2816,9 @@ Merge request commit selector
     color: #888;
     margin-right: 5px;
 }
+
+.merge_request_diff_loading_indicator {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+}
