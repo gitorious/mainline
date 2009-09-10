@@ -1813,6 +1813,20 @@ table.markdown_help {
   margin-bottom: 0;
 }
 
+.merge_request_overview {
+    margin-bottom: 20px;
+}
+.merge_request_overview .meta {
+    color: #666;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+ .merge_request_overview .meta .byline .avatar {
+  display: inline;
+  padding-right: 5px;
+}
+
 .recently-closed-merge-requests { margin: 0; }
 .merge_request_summary_short {
   margin: 0;

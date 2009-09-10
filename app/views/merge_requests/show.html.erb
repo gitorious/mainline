@@ -27,7 +27,39 @@
 
 <h1><%= t("views.merges.show_title", :id => h(@merge_request.id), :summary => h(@merge_request.summary)) -%></h1>
 
-<%= render :partial => @merge_request, :locals => { :no_link => true } -%>
+<%#= render :partial => @merge_request, :locals => { :no_link => true --
+ --} -%>
+
+<div class="merge_request_overview">
+  <div class="proposal">
+    <%= simple_format(auto_link(h(@merge_request.proposal), :urls)) -%>
+  </div>
+
+  <ul class="meta">
+    <li class="byline">Requested by: 
+      <span class="avatar">
+        <%= link_to(avatar(@merge_request.user, { :size => 16 }),
+              user_path(@merge_request.user)) %>
+      </span>
+      <%= link_to(h(@merge_request.user.title), @merge_request.user) -%>
+    </li>
+    <li>Status: <%= colorized_status(@merge_request.status_tag) -%></li>
+    <li>Source repository:
+      <%= link_to h(@merge_request.source_name),
+        repo_owner_path(@merge_request.source_repository,
+         [@merge_request.source_repository.project, @merge_request.source_repository]) -%>
+    </li>
+    <li>Target repository: 
+      <%= link_to h(@merge_request.target_name),
+	      repo_owner_path(@merge_request.target_repository,
+         [@merge_request.source_repository.project, @merge_request.target_repository]) -%>
+    </li>
+    <li>Created at: <%= @merge_request.created_at.to_s(:long_ordinal) -%></li>
+  </ul>
+
+
+</div>
+
 
 <%= render :partial => "version", :locals => {:version => @merge_request.versions.first} -%>
 

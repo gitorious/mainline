@@ -25,9 +25,7 @@
 <div class="merge_request_summary">
   <p class="status">[
     <% if merge_request.status_tag -%>
-      <span style="color:<%=h merge_request.status_tag.color-%>">
-        <%=h merge_request.status_tag.name -%>
-      </span>
+      <%= colorized_stats(merge_request.status_tag) -%>
     <% else -%>
       <span><%=h merge_request.status_tag -%></span>
     <% end -%>
