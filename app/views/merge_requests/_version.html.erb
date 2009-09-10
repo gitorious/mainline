@@ -6,18 +6,18 @@
   <li class="merge_base single_commit">
     <%= merge_base_link(version) -%>
   </li>
-  <div style="width:56%;overflow:hidden;height:23px;float:left">
+  <div style="width:56%;overflow:hidden;height:33px;float:left">
     <%- for c in version.affected_commits.reverse -%>
-    <li class="<%= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%> single_commit">
+    <li class="<%= @merge_request.commit_merged?(c.id) ? "merged" : "unmerged" -%> single_commit ui-selected">
       <%= inline_commit_link(c) -%>
     </li>
     <%- end -%>
   </div>
 
   <li class="selected_shas">
-    <a href="#" id="current_shas" data-merge-request-current-shas="<%= version.sha_summary(:long) -%>">
+    <span href="#" id="current_shas" data-merge-request-current-shas="<%= version.sha_summary(:long) -%>">
       <%= version.sha_summary -%>
-    </a>
+    </span>
   </li>
   <li class="version_selector">
     <select>

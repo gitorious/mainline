@@ -230,6 +230,7 @@ $(document).ready(function() {
     // Merge request selection of branches
     jQuery("#merge_request_commit_selector").selectable(
       {
+        filter: "li.single_commit",
         stop: function(e, ui)
         {
           var sha_spec = new Gitorious.ShaSpec();

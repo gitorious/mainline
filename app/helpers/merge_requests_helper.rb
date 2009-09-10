@@ -94,6 +94,6 @@ module MergeRequestsHelper
   end
 
   def inline_sha_link(label, sha)
-    content_tag(:a, label, {:"data-commit-sha" => sha, :class => "clickable_commit ui-selected"})
+    content_tag(:a, label, {:"data-commit-sha" => sha, :class => "clickable_commit"})
   end
 end

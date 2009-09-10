@@ -2658,72 +2658,76 @@ table.select_commits_from_list tr.unknown-status td.meta
 Merge request commit selector
 */
 
-.merge_request_diff_browser
-{
-  border: 1px solid #dfdfdf;
-    
+.merge_request_diff_browser{
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
 }
 
-#merge_request_diff
-{
-    min-height: 4em;
-    padding: 0;
+#merge_request_diff{
+  min-height: 4em;
+  padding: 0.4em 1em;
 }
 
 #merge_request_commit_selector {
+  list-style: none;
   margin: 0;
-  line-height: 100%;
-  margin-left: 0px;
-  height: 29px;
-  background: #dee7ed url(/images/silver_gradient.png) top left repeat-x;
-  border-bottom: 1px solid #D1D5D8;
+  padding: 0 0 0 30px;
+  background-image: url(/images/silver_gradient.png);
+  background-position: top left;
+  background-repeat: repeat-x;
+  height: 33px;
+  border-bottom: 1px solid #ddd;
 }
 
-#merge_request_commit_selector li {
+#merge_request_commit_selector li.single_commit {
   float: left;
-  background-repeat: no-repeat;
-  background-position: right 0px; 
-  padding: 0 15px 0 10px;
-  display: list-item;
-}
-
-#merge_request_commit_selector .single_commit
-{
-  background-image: url("/images/breadcrumb.png");
-}
-
-#merge_request_commit_selector li a
-{
-  padding: 9px 0 7px 22px;
   display: block;
+  width: 130px;
+  height: 13px;
+  padding: 10px 0 10px 30px;
+  margin-left: -23px;
+  background-position: top right;
+  cursor: pointer;
   background-repeat: no-repeat;
-  background-position: center left;
-  color: #555;
+  background-image: url(/images/commit_selector.png);
 }
 
-#merge_request_commit_selector li a span
-{
-    display: none;
-}
-
-#merge_request_commit_selector li:hover a span
-{
-    display: inline;
-}
-
-#merge_request_commit_selector li:last-child{
+#merge_request_commit_selector li:last-child,
+#merge_request_commit_selector li:first-child{
   background-image: none; !important
+}
+#merge_request_commit_selector li:first-child.ui-selected,
+#merge_request_commit_selector li:first-child.ui-selecting{
+  background-image: url(/images/silver_gradient_inverse.png);
+  margin-left: -30px;
+  padding-left: 37px;
+  border-right: 2px solid #ddd;
+  background-repeat: repeat-x;
+}
+#merge_request_commit_selector li a{
+  padding: 0 0 0 20px;
+  background-repeat: no-repeat;
+  font-weight: bold;
+  color: #000;
+  margin: 0;
+}
+
+#merge_request_commit_selector li.selected_shas{
+  padding: 10px 20px;
+}
+#merge_request_commit_selector li.ui-selected,
+#merge_request_commit_selector li.ui-selecting{
+  background-image: url(/images/commit_selector_selected.png);
 }
 
 #merge_request_commit_selector li.single_commit a:hover {
   text-decoration: none;
-  color: #390;
+  color: #000;
 }
-
 
 #merge_request_commit_selector li.merged a
 {
-    background-image: url("/images/silk/bullet_green.png");
+  background-image: url("/images/silk/bullet_green.png");
 }
 
 #merge_request_commit_selector li.unmerged a
@@ -2756,14 +2760,13 @@ Merge request commit selector
 #merge_request_commit_selector #current_shas
 {
     background-image: url(/images/silk/brick.png);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    font-weight: bold;
 }
 .ui-selectable-helper
 {
     border: none !important;
-}
-
-.merge_request_diff_browser {
-    margin-bottom: 20px
 }
 
 #merge_request_diff .file-diff {
