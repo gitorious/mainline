@@ -27,7 +27,7 @@
     <% if merge_request.status_tag -%>
       <%= colorized_status(merge_request.status_tag) -%>
     <% else -%>
-      <span><%=h merge_request.status_tag -%></span>
+      <span><%=h merge_request.status_string -%></span>
     <% end -%>
   ]</p>
 

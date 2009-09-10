@@ -98,6 +98,7 @@ module MergeRequestsHelper
   end
 
   def colorized_status(status_tag)
+    return "" unless status_tag
     %Q{<span style="color:#{h(status_tag.color)}">} + h(status_tag.name) + "</span>"
   end
 end
