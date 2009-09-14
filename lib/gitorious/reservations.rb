@@ -47,7 +47,8 @@ module Gitorious
       end
       
       def repository_names
-        @repository_names ||= projects_member_actions + controller_names
+        actions = ["clone", "writable_by", "config", "create_clone", "confirm_delete"]
+        @repository_names ||= projects_member_actions + controller_names + actions
       end
     end
   end
