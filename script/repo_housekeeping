@@ -1,14 +1,18 @@
 #!/usr/bin/env ruby
 
-require "yaml"
+require File.dirname(__FILE__) + '/../config/environment'
 
-conf_file = File.join(File.dirname(__FILE__), "../config/gitorious.yml")
-GitoriousConfig = YAML.load_file(conf_file)
+$DEBUG = false
 
-ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
+repos_to_gc = Repository.all_due_for_gc(ARGV[0])
+if $DEBUG
+  puts "Garbage collecting #{repos_to_gc.length} repositories:"
+  puts "=" * 72
+end
 
-Dir["#{GitoriousConfig["repository_base_path"]}/**/*.git"].each do |repo_path|
-  p repo_path
-  p `cd '#{repo_path}'; git gc`
-  puts
+repos_to_gc.each do |repo|
+  puts "Garbage collecting #{repo.url_path} (#{repo.id})" if $DEBUG
+  unless repo.gc!
+    $stderr.puts "GC FAIL: Repository##{repo.id} (#{repo.url_path}"
+  end
 end

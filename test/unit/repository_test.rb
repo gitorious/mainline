@@ -851,4 +851,21 @@ class RepositoryTest < ActiveSupport::TestCase
       assert @merge_repo.save
     end
   end
+
+  context "garbage collection" do
+    setup do
+      @repository = repositories(:johans)
+    end
+
+    should "have a gc! method that updates last_gc_at" do
+      now = Time.now
+      Time.stubs(:now).returns(now)
+      @repository.stubs(:git).returns(stub())
+      @repository.git.expects(:gc_auto).returns(true)
+      assert_nil @repository.last_gc_at
+      assert @repository.gc!
+      assert_not_nil @repository.last_gc_at
+      assert_equal now, @repository.last_gc_at
+    end
+  end
 end

@@ -176,6 +176,15 @@ class Repository < ActiveRecord::Base
       :joins => :events, :include => :project)
   end
   
+  # Finds all repositories that might be due for a gc, starting with
+  # the ones who've been pushed to recently
+  def self.all_due_for_gc(batch_size = 25, gc_window = 21.days, push_window = 7.days)
+    find(:all,
+      :conditions => ["(last_gc_at IS NULL OR last_gc_at < ?) AND last_pushed_at > ?",
+                      gc_window.ago, push_window.ago],
+      :limit => batch_size)
+  end
+
   def gitdir
     "#{url_path}.git"
   end
@@ -584,6 +593,13 @@ class Repository < ActiveRecord::Base
       WHERE target_repository_id = ?
       GROUP BY status_tag", self.id]).collect{|mr| mr.raw_status_tag }
     result.compact
+  end
+
+  # Runs git-gc on this repository, and updates the last_gc_at attribute
+  def gc!
+    if self.git.gc_auto
+      return update_attribute(:last_gc_at, Time.now.utc)
+    end
   end
   
   protected
