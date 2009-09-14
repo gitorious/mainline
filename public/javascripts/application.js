@@ -21,8 +21,14 @@
 jQuery.fn.highlightSelectedLines = function() {
     var currentHighlights = [];
     if (/^#line\d+$/.test(window.location.hash)) {
-        currentHighlights = [window.location.hash];
+      currentHighlights = [window.location.hash];
     }
+
+    this.find("tr td.line-numbers a").click(function() {
+        var element = $(this).get(0);
+        currentHighlights = [element.name];
+        highlightCodeLine(currentHighlights);
+    });
 
     var jthis = this;
     var highlightCodeLine = function(lineId) {
@@ -33,11 +39,7 @@ jQuery.fn.highlightSelectedLines = function() {
         currentHighlights = [lineId];
     };
 
-    this.find("tr td.line-numbers a").click(function() {
-        var element = $(this).get(0);
-        highlightCodeLine(element.name);
-    });
-
+    if (currentHighlights.length === 0) return;
     highlightCodeLine(currentHighlights);
 };
 
