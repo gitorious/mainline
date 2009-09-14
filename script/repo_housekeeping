@@ -2,17 +2,21 @@
 
 require File.dirname(__FILE__) + '/../config/environment'
 
-$DEBUG = false
+$verbose = (ARGV[0] == "verbose")
 
-repos_to_gc = Repository.all_due_for_gc(ARGV[0])
-if $DEBUG
+repos_to_gc = Repository.all_due_for_gc
+if $verbose
   puts "Garbage collecting #{repos_to_gc.length} repositories:"
   puts "=" * 72
 end
 
-repos_to_gc.each do |repo|
-  puts "Garbage collecting #{repo.url_path} (#{repo.id})" if $DEBUG
+repos_to_gc.each_with_index do |repo, idx|
+  if $verbose
+    start = Time.now
+    print "#{idx+1}/#{repos_to_gc.length} GC'ing #{repo.url_path} (#{repo.id}) ..."
+  end
   unless repo.gc!
     $stderr.puts "GC FAIL: Repository##{repo.id} (#{repo.url_path}"
   end
+  print " Completed in #{Time.now - start}\n" if $verbose
 end
