@@ -49,11 +49,9 @@ $(document).ready(function() {
         var slug = $("form #project_slug");
         if (slug.text() != "") return;
         var lintName = function(val) {
-            var linted = val.replace(/\W+/g, ' ')
-            linted = linted.replace(/\ +/g, '-')
-            linted = linted.toLowerCase();
-            linted = linted.replace(/\-+$/g, '')
-            return linted;
+          var linted = val.replace(/\W+/g, ' ').replace(/\ +/g, '-');
+          linted = linted.toLowerCase().replace(/\-+$/g, '');
+          return linted;
         }
         
         slug.val( lintName(this.value) );
