@@ -43,7 +43,7 @@ jQuery.fn.highlightSelectedLines = function() {
 
 $(document).ready(function() {
     // Project Sluggorizin'
-    $("form #project_title").keypress(function(event) {
+    $("form #project_title").keyup(function(event) {
         var slug = $("form #project_slug");
         if (slug.text() != "") return;
         var lintName = function(val) {
