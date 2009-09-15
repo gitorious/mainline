@@ -546,11 +546,9 @@ class Repository < ActiveRecord::Base
   def replace_value(field, value)
     old_value = read_attribute(field)
     return if value.blank? or old_value == value
-    write_attribute(field, value)
+    self.send("#{field}=", value)
     valid?
-    if errors.on(field)
-      write_attribute(field, old_value)   #revert to old value
-    else
+    if !errors.on(field)
       @updated_fields << field
     end
   end

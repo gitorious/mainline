@@ -161,7 +161,6 @@ class RepositoriesController < ApplicationController
       end
       @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
       @repository.notify_committers_on_new_merge_request = params[:repository][:notify_committers_on_new_merge_request]
-
       @repository.save!
       flash[:success] = "Repository updated"
       redirect_to [@repository.project_or_owner, @repository]
