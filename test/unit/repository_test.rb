@@ -62,10 +62,15 @@ class RepositoryTest < ActiveSupport::TestCase
     assert new_repos(:project => projects(:moes)).valid?
   end
   
-  should "cannot have a reserved name" do
-    repo = new_repos(:name => Gitorious::Reservations.repository_names.first)
+  should "not have a reserved name" do
+    repo = new_repos(:name => Gitorious::Reservations.repository_names.first.dup)
     repo.valid?
     assert_not_nil repo.errors.on(:name)
+    RepositoriesController.action_methods.each do |action|
+      repo.name = action.dup
+      repo.valid?
+      assert_not_nil repo.errors.on(:name), "fail on #{action}"
+    end
   end
   
   context "git urls" do  

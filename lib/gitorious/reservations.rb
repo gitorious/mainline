@@ -39,7 +39,7 @@ module Gitorious
       end
       
       def projects_member_actions 
-        %w[edit update destroy confirm_delete]
+        ProjectsController.action_methods.to_a
       end
     
       def project_names
@@ -47,7 +47,7 @@ module Gitorious
       end
       
       def repository_names
-        actions = ["clone", "writable_by", "config", "create_clone", "confirm_delete"]
+        actions = RepositoriesController.action_methods.to_a
         @repository_names ||= projects_member_actions + controller_names + actions
       end
     end
