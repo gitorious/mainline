@@ -125,7 +125,7 @@ $(document).ready(function() {
     // frontpage for non-loggedin users
     // Unobtrusively hooking the regular/OpenID login box stuff, so that it works
     // in a semi-sensible way with javascript disabled.
-    $("#big_header_login_box_openid, #big_header_login_box_regular").click(function(e){
+    $("#big_header_login_box_to_openid, #big_header_login_box_to_regular").click(function(e){
         $("#big_header_login_box_openid").toggle("fast");
         $("#big_header_login_box_regular").toggle("fast");
         e.preventDefault();
