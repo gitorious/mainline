@@ -101,4 +101,18 @@ module MergeRequestsHelper
     return "" unless status_tag
     %Q{<span style="color:#{h(status_tag.color)}">} + h(status_tag.name) + "</span>"
   end
+
+  def many_commits?(version)
+    return false
+    version.affected_commits.length > 5
+  end
+
+  def commit_css_class(merge_request, commit)
+    merge_request.commit_merged?(commit.id) ? "merged" : "unmerged"
+  end
+
+  def select_version_url(merge_request)
+    url_for(polymorphic_path([:version, merge_request.target_repository.project,
+                              merge_request.target_repository, merge_request]))
+  end
 end

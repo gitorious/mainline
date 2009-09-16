@@ -90,17 +90,6 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
-    // Merge request version viewing
-    $("select#merge_request_version").live("change",(function(event){
-        if (this.options[this.selectedIndex].value != '') {
-          var url = $(this).attr("gts:url") +
-            '?version=' + this.options[this.selectedIndex].value;
-          $("#diff_browser_for_current_version").load(url, null, function(){
-            new Gitorious.DiffBrowser(jQuery("#current_shas").attr("data-merge-request-current-shas"));
-          });
-        }
-    }));
-
     // Message actions
     $(".message_actions a.mark_as_unread").click(function(event){
         var link = $(this);
@@ -231,21 +220,55 @@ $(document).ready(function() {
     Gitorious.MergeRequestDiffSpinner = $("#merge_request_diff_loading").html();
     $("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
 
-    // Merge request selection of branches
-    jQuery("#merge_request_commit_selector").selectable({
+    // Merge request selection of branches, compact mode
+    // wrapped in a function so we can reuse it when we load another version
+    var diffBrowserCompactCommitSelectable = function() {
+      return jQuery("#merge_request_commit_selector.compact").selectable({
         filter: "li.single_commit",
         stop: function(e, ui) {
-          var sha_spec = new Gitorious.ShaSpec();
-          jQuery("li.ui-selected a", this).each(function() {
-            sha = jQuery(this).attr("data-commit-sha");
-            sha_spec.add_sha(sha);
-          });
-          var mr_diff_url = jQuery("#merge_request_commit_selector")
-            .attr("data-merge-request-version-url");
-          diff_browser = new Gitorious.DiffBrowser(sha_spec.sha_spec());
-          jQuery("#current_shas").html(sha_spec.short_sha_spec());
+            var sha_spec = new Gitorious.ShaSpec();
+            jQuery("li.ui-selected a", this).each(function() {
+                sha = jQuery(this).attr("data-commit-sha");
+                sha_spec.add_sha(sha);
+            });
+            var mr_diff_url = jQuery("#merge_request_commit_selector")
+              .attr("data-merge-request-version-url");
+            diff_browser = new Gitorious.DiffBrowser(sha_spec.sha_spec());
+            jQuery("#current_shas").html(sha_spec.short_sha_spec());
         }
+      });
+    }
+    Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
+
+    // Merge request version viewing
+    $("select#merge_request_version").live("change",(function(event){
+        if (this.options[this.selectedIndex].value != '') {
+          var url = $(this).attr("gts:url") + '?version=' +
+            this.options[this.selectedIndex].value;
+          $("#diff_browser_for_current_version").load(url, null, function() {
+            new Gitorious.DiffBrowser(
+              jQuery("#current_shas").attr("data-merge-request-current-shas") );
+            // jump through hoops and beat the selectable into submission,
+            // since it doesn't use live events, we have to re-create it, which sucks...
+            Gitorious.currentMRCompactSelectable.selectable("destroy");
+            Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
+          });
+        }
+    }));
+    
+    // Merge request selection of branches, monster mode
+    $("#large_commit_selector_toggler").click(function(event) {
+        if ($("#large_commit_selector").is(":visible")) {
+          $("#large_commit_selector").slideUp();
+        } else {
+          $("#large_commit_selector").slideDown();
+        }
+        event.preventDefault();
     });
+    $("#large_commit_selector table#commit_table tr input").click(function(event) {
+        $(this).parents("tr").addClass("selected");
+    });
+    
     jQuery("#current_shas").each(function(){
         sha_spec = jQuery(this).attr("data-merge-request-current-shas");
         diff_browser = new Gitorious.DiffBrowser(sha_spec);

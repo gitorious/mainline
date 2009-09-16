@@ -2842,3 +2842,12 @@ Merge request commit selector
     color: #888;
     font-size: 12px;
 }
+
+.merge_request_diff_browser #large_commit_selector {
+    padding: 20px;
+    margin-bottom: 10px;
+    background: #fff url('/images/silver_gradient.png') repeat-x bottom left;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
