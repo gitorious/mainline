@@ -3,7 +3,7 @@
       id="merge_request_commit_selector" 
       data-merge-request-version-url="<%= commit_diff_url(version) -%>">
     
-    <li class="merge_base single_commit">
+    <li class="merge_base single_commit ui-selected">
       <%= merge_base_link(version) -%>
     </li>
 <% if many_commits?(version) %>
