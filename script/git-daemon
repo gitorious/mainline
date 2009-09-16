@@ -118,14 +118,16 @@ module Git
           $children_active -= 1
           return
         end
-        
-        if ip_family == "AF_INET6"
-          repository.cloned_from(ip)
-        else
-          geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
-          localization = geoip.country(ip)
-          geoip.close
-          repository.cloned_from(ip, localization[3], localization[5], 'git')
+
+        unless @options[:disable_geoip]
+          if ip_family == "AF_INET6"
+            repository.cloned_from(ip)
+          else
+            geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
+            localization = geoip.country(ip)
+            geoip.close
+            repository.cloned_from(ip, localization[3], localization[5], 'git')
+          end
         end
       
         Dir.chdir(real_path) do
@@ -265,6 +267,7 @@ options = {
   :pidfile => File.join(RAILS_ROOT, "log", "git-daemon.pid"),
   :daemonize => false,
   :reuseaddr => true,
+  :disable_geoip => false,
 }
 
 OptionParser.new do |opts|
@@ -292,6 +295,10 @@ OptionParser.new do |opts|
   
   opts.on("-r", "--reuseaddr", "Re-use addresses", "Default: #{options[:reuseaddr].inspect}") do |o|
     options[:reuseaddr] = o
+  end
+
+  opts.on("-g", "--disable-geoip", "Disable logging of connections with GeoIP", "Default: #{options[:disable_geoip].inspect}") do |o|
+    options[:disable_geoip] = o
   end
   
   opts.on_tail("-h", "--help", "Show this help message.") do
