@@ -229,12 +229,12 @@ $(document).ready(function() {
             var sha_spec = new Gitorious.ShaSpec();
             jQuery("li.ui-selected a", this).each(function() {
                 sha = jQuery(this).attr("data-commit-sha");
-                sha_spec.add_sha(sha);
+                sha_spec.addSha(sha);
             });
             var mr_diff_url = jQuery("#merge_request_commit_selector")
               .attr("data-merge-request-version-url");
-            diff_browser = new Gitorious.DiffBrowser(sha_spec.sha_spec());
-            jQuery("#current_shas").html(sha_spec.short_sha_spec());
+            var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
+            jQuery("#current_shas").html(sha_spec.shortShaSpec());
         }
       });
     }
@@ -270,7 +270,7 @@ $(document).ready(function() {
     });
     
     jQuery("#current_shas").each(function(){
-        sha_spec = jQuery(this).attr("data-merge-request-current-shas");
+        var sha_spec = jQuery(this).attr("data-merge-request-current-shas");
         diff_browser = new Gitorious.DiffBrowser(sha_spec);
       }
     );
@@ -305,46 +305,47 @@ Gitorious.DownloadChecker = {
     }
 };
 
-Gitorious.Sha = function(sha)
-{
-    this.full_sha = sha;
-    this.short_sha = function()
-    {
-        return this.full_sha.substring(0, 8);
+Gitorious.Sha = function(sha) {
+    this.fullSha = sha;
+
+    this.shortSha = function() {
+        return this.fullSha.substring(0, 8);
     };
-    this.sha = function()
-    {
-        return this.full_sha;
+
+    this.sha = function() {
+        return this.fullSha;
     }
 }
 
-Gitorious.ShaSpec = function()
-{
-    this.all_shas = [];
-    this.add_sha = function(s)
-    {
-        this.all_shas.push(new Gitorious.Sha(s));
+Gitorious.ShaSpec = function() {
+    this.allShas = [];
+
+    this.addSha = function(s) {
+        this.allShas.push(new Gitorious.Sha(s));
     }
-    this.first_sha = function()
-    {
-        return this.all_shas[0];
+
+    this.firstSha = function() {
+        return this.allShas[0];
     }
-    this.last_sha = function()
-    {
-        return this.all_shas[this.all_shas.length - 1];
+
+    this.lastSha = function() {
+        return this.allShas[this.allShas.length - 1];
     }
-    this.sha_specs = function(callback)
-    {
-        shas = (this.all_shas.length < 2) ? [this.first_sha()] : [this.first_sha(), this.last_sha()];
-        return shas;
+
+    this.shaSpecs = function(callback) {
+        if (this.allShas.length < 2) {
+            return [this.firstSha()];
+        } else {
+            return [this.firstSha(), this.lastSha()];
+        }
     }
-    this.sha_spec = function()
-    {
-        return  this.sha_specs().map(function(s){return s.sha()}).join("..");
+
+    this.shaSpec = function() {
+        return  this.shaSpecs().map(function(s){ return s.sha() }).join("..");
     }
-    this.short_sha_spec = function()
-    {
-        return this.sha_specs().map(function(s){return s.short_sha()}).join("..");
+
+    this.shortShaSpec = function() {
+        return this.shaSpecs().map(function(s){ return s.shortSha() }).join("..");
     }
 
 };
