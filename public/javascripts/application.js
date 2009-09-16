@@ -121,6 +121,18 @@ $(document).ready(function() {
 
     // Merge request status color picking
     $("#merge_request_statuses input.color_pickable").SevenColorPicker();
+
+    // Toggle details of commit events
+    $("a.commit_event_toggler").click(function(event){
+        var callbackUrl = $(this).attr("gts:url");
+        var eventId = $(this).attr("gts:id");
+
+        $("#commits_in_event_" + eventId).toggle();
+        if ($("#commits_in_event_" + eventId).is(":visible")) {
+          $("#commits_in_event_" + eventId).load(callbackUrl);
+        }
+        event.preventDefault();
+    });
     
     // frontpage for non-loggedin users
     // Unobtrusively hooking the regular/OpenID login box stuff, so that it works

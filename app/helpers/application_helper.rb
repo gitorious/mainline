@@ -493,6 +493,6 @@ module ApplicationHelper
   # The javascripts to be included in all layouts
   def include_javascripts
     javascript_include_tag "jquery.core", "jquery.autocomplete", 
-      "color_picker", "ui.core","ui.selectable", "application", :cache => true
+      "color_picker", "application", :cache => true
   end
 end

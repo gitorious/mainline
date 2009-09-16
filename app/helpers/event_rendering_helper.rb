@@ -296,14 +296,10 @@ module EventRenderingHelper
     commit_link = link_to_if(event.has_commits?, pluralize(event.events.size, 'commit'),
       repo_owner_path(event.target, :project_repository_commits_in_ref_path,
         project, event.target, ensplat_path(event.data)),
-      :id => "commits_in_event_#{event.to_param}_toggler") +
-      %Q{<script type="text/javascript" charset="utf-8">
-        $("#commits_in_event_#{event.to_param}_toggler").click(function(e){
-          $('#commits_in_event_#{event.to_param}').toggle();
-          $('#commits_in_event_#{event.to_param}').load('#{commits_event_path(event.to_param)}');
-           e.preventDefault();
-        });
-      </script>}
+      :id => "commits_in_event_#{event.to_param}_toggler",
+      :class => "commit_event_toggler",
+      "gts:url" => commits_event_path(event.to_param),
+      "gts:id" => event.to_param)
     
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
       title = repo_title(event.target, project)
