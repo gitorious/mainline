@@ -19,6 +19,7 @@ class MergeRequestProcessor < ApplicationProcessor
   subscribes_to :mirror_merge_request
 
   def on_message(message)
+    verify_connections!
     json = ActiveSupport::JSON.decode(message)
     merge_request_id = json['merge_request_id']
     merge_request = MergeRequest.find(merge_request_id)

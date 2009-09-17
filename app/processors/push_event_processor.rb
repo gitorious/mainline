@@ -24,6 +24,7 @@ class PushEventProcessor < ApplicationProcessor
   attr_accessor :repository
   
   def on_message(message)
+    verify_connections!
     hash = ActiveSupport::JSON.decode(message)
     logger.debug("#{self.class.name} on message #{hash.inspect}")
     logger.info "Push event. Username is #{hash['username']}, commit summary is #{hash['message']}, gitdir is #{hash['gitdir']}"

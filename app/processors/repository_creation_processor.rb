@@ -19,6 +19,7 @@ class RepositoryCreationProcessor < ApplicationProcessor
   subscribes_to :create_repo
 
   def on_message(message)
+    verify_connections!
     message_hash = ActiveSupport::JSON.decode(message)
     target_class  = message_hash['target_class']
     target_id     = message_hash['target_id']

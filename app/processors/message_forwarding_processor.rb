@@ -20,6 +20,7 @@ class MessageForwardingProcessor < ApplicationProcessor
   subscribes_to :cc_message
 
   def on_message(message)
+    verify_connections!
     message_hash = ActiveSupport::JSON.decode(message)
     logger.debug("#{self.class.name} on message #{hash.inspect}")
     recipient_id = message_hash['recipient_id']

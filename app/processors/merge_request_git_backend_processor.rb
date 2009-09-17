@@ -20,6 +20,7 @@ class MergeRequestGitBackendProcessor < ApplicationProcessor
   subscribes_to :merge_request_backend_updates
 
   def on_message(message)
+    verify_connections!
     @body = ActiveSupport::JSON.decode(message)
     send("do_#{action}")
   end
