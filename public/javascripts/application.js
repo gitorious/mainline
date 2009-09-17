@@ -316,7 +316,7 @@ $(document).ready(function() {
     $("#merge_request_current_version ul.compact li.single_commit").hoverBubble();
     
     // Merge request selection of branches, monster mode
-    $("#large_commit_selector_toggler").click(function(event) {
+    $("#large_commit_selector_toggler").live("click", function(event) {
         if ($("#large_commit_selector").is(":visible")) {
           $("#large_commit_selector").slideUp();
         } else {
@@ -324,7 +324,7 @@ $(document).ready(function() {
         }
         event.preventDefault();
     });
-    $("#large_commit_selector table#commit_table tr input").click(function(event) {
+    $("#large_commit_selector table#commit_table tr input").live("click", function(event) {
         $(this).parents("tr").addClass("selected");
     });
     
