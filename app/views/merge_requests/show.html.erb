@@ -27,9 +27,6 @@
 
 <h1><%= t("views.merges.show_title", :id => h(@merge_request.id), :summary => h(@merge_request.summary)) -%></h1>
 
-<%#= render :partial => @merge_request, :locals => { :no_link => true --
- --} -%>
-
 <div class="merge_request_overview">
   <div class="proposal">
     <%= simple_format(auto_link(h(@merge_request.proposal), :urls)) -%>
@@ -60,7 +57,17 @@
 
 </div>
 
-
+<div class="version_selector">
+  <div class="changable-selection-current round-10" id="merge_request_version"
+       gts:url="<%= select_version_url(@merge_request) -%>">
+    Version <%= @merge_request.versions.last.version -%>
+  </div>
+  <ul class="changable-selection-options shadow-2">
+    <% @merge_request.versions.each do |version| -%>
+      <li>Version <%=h version.version %></li>
+    <% end -%>
+  </ul>
+</div>
 <div id="diff_browser_for_current_version">
   <%= render :partial => "version", :locals => {:version => @merge_request.versions.last} -%>
 </div>

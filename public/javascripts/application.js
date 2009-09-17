@@ -43,6 +43,37 @@ jQuery.fn.highlightSelectedLines = function() {
     highlightCodeLine(currentHighlights);
 };
 
+jQuery.fn.changableSelection = function(options) {
+  var currentContainer = $(this);
+  var choices = $(options.container || $(this).next("ul.changable-selection-options"));
+
+  choices.css({
+    display:'none',
+    cursor:'pointer'
+  }).children("li").bind('click', function(e) {
+      currentContainer.text( $(this).text() );
+      choices.hide();
+      if (options.onChange) options.onChange.call(this);
+      return false;
+  });
+
+  currentContainer.bind('click', function(event) {
+      choices.css({
+        top: (event.pageY - $(this).height()) + "px",
+        // TODO: Check for vicinity to screen edge and adjust left/right accordingly
+        left: (event.pageX - $(this).width() - 10) + "px",
+				position: "absolute",
+				opacity: 1.0,
+        zIndex: 1000
+      }).fadeIn('fast');
+      return false;
+  }).css({cursor:'pointer'});
+
+  $(document).click(function(){
+      choices.fadeOut('fast');
+  });
+};
+
 $(document).ready(function() {
     // Project Sluggorizin'
     $("form #project_title").keyup(function(event) {
@@ -240,11 +271,10 @@ $(document).ready(function() {
     }
     Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
 
-    // Merge request version viewing
-    $("select#merge_request_version").live("change",(function(event){
-        if (this.options[this.selectedIndex].value != '') {
-          var url = $(this).attr("gts:url") + '?version=' +
-            this.options[this.selectedIndex].value;
+    $("#merge_request_version").changableSelection({
+      onChange: function() {
+          var version = $(this).text().replace(/[^0-9]+/g, '');
+          var url = $(this).parent().prev().attr("gts:url") + '?version=' + version;
           $("#diff_browser_for_current_version").load(url, null, function() {
             new Gitorious.DiffBrowser(
               jQuery("#current_shas").attr("data-merge-request-current-shas") );
@@ -253,8 +283,8 @@ $(document).ready(function() {
             Gitorious.currentMRCompactSelectable.selectable("destroy");
             Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
           });
-        }
-    }));
+      }
+    });
     
     // Merge request selection of branches, monster mode
     $("#large_commit_selector_toggler").click(function(event) {

@@ -28,15 +28,6 @@
         <%= version.sha_summary -%>
       </span>
     </li>
-    <li class="version_selector">
-      <select id="merge_request_version" name="version"
-              gts:url="<%= select_version_url(@merge_request) -%>">
-        <option value="">- Select version -</option>
-        <%= options_from_collection_for_select(@merge_request.versions,
-              'version', 'version', version.version) %>
-      </select>
-
-    </li>
   </ul>
 
 <% if many_commits?(version) -%>

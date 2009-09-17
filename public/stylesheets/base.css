@@ -2851,3 +2851,34 @@ Merge request commit selector
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
+
+/* changable selection */
+#merge_request_version {
+    float:right;
+    margin: 7px 10px 0 0;
+    background: #444;
+    color: #ccc;
+    font-size: 11px;
+    padding: 0 5px;
+}
+
+#merge_request_version:hover {
+    background: #999;
+    color: #333;
+}
+
+ul.changable-selection-options {
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    border: 1px solid #888;
+}
+
+ul.changable-selection-options li {
+    margin: 0;
+    padding: 2px 5px 2px 5px;
+    border-bottom: 1px solid #888;
+}
+ul.changable-selection-options li:hover {
+    background: #ccc;
+}
