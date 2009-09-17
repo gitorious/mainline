@@ -2680,11 +2680,13 @@ Merge request commit selector
 
 .merge_request_diff_browser{
   margin-bottom: 20px;
+  min-width: 800px;
 }
 
 #merge_request_diff{
   min-height: 4em;
   padding: 0;
+  margin-top: 20px;
 }
 
 #merge_request_commit_selector {
@@ -2699,6 +2701,13 @@ Merge request commit selector
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+}
+
+#merge_request_commit_selector .selectable-container {
+    width: 720px;
+    overflow:hidden;
+    height:33px;
+    float:left
 }
 
 #merge_request_commit_selector li.single_commit {
@@ -2735,7 +2744,8 @@ Merge request commit selector
 }
 
 #merge_request_commit_selector li.selected_shas{
-  padding: 10px 20px;
+  padding: 7px 20px;
+  float: right;
 }
 #merge_request_commit_selector li.ui-selected,
 #merge_request_commit_selector li.ui-selecting{
@@ -2784,7 +2794,7 @@ Merge request commit selector
     background-image: url(/images/silk/brick.png);
     background-repeat: no-repeat;
     padding-left: 20px;
-    font-weight: bold;
+    font-size: 12px;
 }
 .ui-selectable-helper
 {

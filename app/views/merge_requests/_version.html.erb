@@ -7,13 +7,13 @@
       <%= merge_base_link(version) -%>
     </li>
 <% if many_commits?(version) %>
-    <div style="width:56%;overflow:hidden;height:33px;float:left">
+    <div class="selectables-container">
       <li class="single_commit">
         <a href="#" id="large_commit_selector_toggler">Select commits&hellip;</a>
       </li>
     </div>
 <% else %>
-    <div style="width:56%;overflow:hidden;height:33px;float:left">
+    <div class="selectables-container">
       <%- for c in version.affected_commits.reverse -%>
       <li class="<%= commit_css_class(@merge_request, c) -%> single_commit ui-selected">
         <%= inline_commit_link(c) -%>
@@ -23,10 +23,10 @@
 <% end -%>
 
     <li class="selected_shas">
-      <span href="#" id="current_shas" 
+      <code id="current_shas" 
             data-merge-request-current-shas="<%= version.sha_summary(:long) -%>">
         <%= version.sha_summary -%>
-      </span>
+      </code>
     </li>
   </ul>
 
