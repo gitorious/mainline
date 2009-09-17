@@ -113,6 +113,21 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
+    // Message selection toggling
+    $("a#toggle_all_messages_checked").click(function(e) {
+        $(".select_msg").each(function() {
+            this.checked = (this.checked ? '' : 'checked');
+        });
+        e.preventDefault();
+    });
+    $("a#toggle_all_unread_messages_checked").click(function(e) {
+        $(".select_msg").each(function() { this.checked = ''; });
+        $(".unread .select_msg").each(function() {
+            this.checked = (this.checked ? '' : 'checked');
+        });
+        e.preventDefault();
+    });
+
     // Markdown help toggling
     $(".markdown-help-toggler").click(function(event){
         $(".markdown_help").toggle();

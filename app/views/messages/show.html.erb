@@ -47,7 +47,7 @@
 
         <%- if (message.sender != current_user) and message.replies_enabled? -%>
           <li>
-            <%= link_to_function(t("views.messages.reply"), "Element.toggle('#{dom_id(message,"reply_to")}')") %>
+            <%= link_to_function(t("views.messages.reply"), "$('##{dom_id(message,"reply_to")}').toggle()") %>
           </li>    
         <%- end -%>
       </ul>

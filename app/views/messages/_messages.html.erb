@@ -31,10 +31,8 @@
 
   <div class="message_list_actions">
     <p>Select 
-      <%= link_to_function("All messages", 
-        "$$('.select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>,
-      <%= link_to_function("All unread messages", 
-        "$$('.unread .select_msg').each(function(c){c.checked=(c.checked ? '' : 'checked')})") %>
+      <a href="#" id="toggle_all_messages_checked">All Messages</a>, 
+      <a href="#" id="toggle_all_unread_messages_checked">All unread messages</a>
     </p>
     <select name="requested_action">
       <option value="">Read</option>
