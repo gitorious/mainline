@@ -104,7 +104,7 @@ module MergeRequestsHelper
 
   # By some arbitarily random standard, does this +version+ contain many commits?
   def many_commits?(version)
-    return false
+
     version.affected_commits.length > 5
   end
 

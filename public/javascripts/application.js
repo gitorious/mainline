@@ -74,6 +74,33 @@ jQuery.fn.changableSelection = function(options) {
   });
 };
 
+jQuery.fn.hoverBubble = function() {
+  $(this).each(function() {
+      var originalOffset = $(this).offset();
+      var bubbleHeight = $(this).next(".hover-bubble-content").height();
+      var triggerWidth = $(this).width();
+      $(this).next(".hover-bubble-content").css({
+        top: originalOffset.top - bubbleHeight - 25 + 'px',
+        left: originalOffset.left - (triggerWidth/2) + 'px',
+        opacity: 0
+      });
+      $(this).hover(function() {
+          $(this).next(".hover-bubble-content").stop()
+            .animate({
+              top: originalOffset.top - bubbleHeight - 15 + 'px',
+              opacity: 0.95
+            }, "fast").show();
+      }, function(){
+          $(this).next(".hover-bubble-content").stop()
+            .animate({
+              top: originalOffset.top - bubbleHeight - 25 + 'px',
+              opacity: 0
+            }, "fast");
+      });
+
+  });
+};
+
 $(document).ready(function() {
     // Project Sluggorizin'
     $("form #project_title").keyup(function(event) {
@@ -285,6 +312,8 @@ $(document).ready(function() {
           });
       }
     });
+    
+    $("#merge_request_current_version ul.compact li.single_commit").hoverBubble();
     
     // Merge request selection of branches, monster mode
     $("#large_commit_selector_toggler").click(function(event) {

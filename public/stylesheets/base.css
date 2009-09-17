@@ -2892,3 +2892,21 @@ ul.changable-selection-options li {
 ul.changable-selection-options li:hover {
     background: #ccc;
 }
+
+/* hover bubbles */
+.hover-bubble-content {
+    display:none;
+    position:absolute;
+    top: 2px;
+    left: 0;
+    width: 325px;
+    height: 50px;
+    background: transparent url('/images/hover-bubble-bg.png') bottom center;
+    padding-bottom: 10px;
+    color: #efefef;
+}
+.hover-bubble-content p {
+    margin: 10px 10px 0 10px;
+    padding: 0;
+    font-size: 11px;
+}

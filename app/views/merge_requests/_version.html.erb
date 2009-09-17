@@ -18,6 +18,9 @@
       <li class="<%= commit_css_class(@merge_request, c) -%> single_commit ui-selected">
         <%= inline_commit_link(c) -%>
       </li>
+      <div class="hover-bubble-content round-10">
+        <p><%=h c.short_message %></p>
+      </div>
       <%- end -%>
     </div>
 <% end -%>

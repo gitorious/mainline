@@ -62,7 +62,7 @@
        gts:url="<%= select_version_url(@merge_request) -%>">
     Version <%= @merge_request.versions.last.version -%>
   </div>
-  <ul class="changable-selection-options shadow-2">
+  <ul class="changable-selection-options shadow-2 round-5">
     <% @merge_request.versions.each do |version| -%>
       <li>Version <%=h version.version %></li>
     <% end -%>
