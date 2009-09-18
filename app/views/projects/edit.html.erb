@@ -40,13 +40,16 @@
       <th></th>
       <tr>
     </thead>
+    <% help_box(:center, :error, :style => "margin-top:10px;margin-bottom:10px;width:75%;") do -%>
+     <p><strong>Note</strong> that changing the name or state of an
+       existing status will update all affected merge requests</p>
+    <% end -%>
     <% f.fields_for(:merge_request_statuses) do |status_form| -%>
       <%= render :partial => "merge_request_status_form", 
             :locals => {:form => status_form, :project_form => f} -%>
     <% end -%>
   </table>
   <p class="add_link"><%= add_status_link(f) -%></p>
-
   <hr />
 
   <% unless @project.owned_by_group? -%>
