@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 <%
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
@@ -83,7 +84,7 @@
         <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
         <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
       <% end -%>
-      <%- if logged_in? && current_user.site_admin? -%>
+      <%- if logged_in? && current_user.site_admin? && GitoriousConfig["is_gitorious_dot_org"] -%>
       <li>
         <%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
       </li>
