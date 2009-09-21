@@ -134,6 +134,15 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
+    $("a#advanced-search-toggler").click(function(event) {
+        if ($("#search_help").is(":visible")) {
+            $("#search_help").slideUp("fast");
+        } else {
+            $("#search_help").slideDown("fast");
+        }
+        event.preventDefault();
+    });
+
     // Merge request status color picking
     $("#merge_request_statuses input.color_pickable").SevenColorPicker();
 
