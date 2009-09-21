@@ -327,10 +327,8 @@ $(document).ready(function() {
 
     var previousSelectedCommitRowIndex;
     $("#large_commit_selector table#commit_table tr input").live("click", function(event) {
-        //$(this).parents("tr").addClass("selected");
         var selectedTr = $(this).parents("tr");
-        var commitTable = selectedTr.parents("table");
-        var commitRows = commitTable.find("tr.commit_row");
+        var commitRows = selectedTr.parents("table").find("tr.commit_row");
 
         if (commitRows.filter(".selected").length === 0) {
             // mark initial selection
