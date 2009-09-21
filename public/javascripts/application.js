@@ -324,10 +324,64 @@ $(document).ready(function() {
         }
         event.preventDefault();
     });
+
+    var previousSelectedCommitRowIndex;
     $("#large_commit_selector table#commit_table tr input").live("click", function(event) {
-        $(this).parents("tr").addClass("selected");
+        //$(this).parents("tr").addClass("selected");
+        var selectedTr = $(this).parents("tr");
+        var commitTable = selectedTr.parents("table");
+        var commitRows = commitTable.find("tr.commit_row");
+
+        if (commitRows.filter(".selected").length === 0) {
+            // mark initial selection
+            selectedTr.addClass("selected");
+            return;
+        }
+
+        var firstSelRowIndex = commitRows.indexOf(commitRows.filter(".selected:first")[0]);
+        var lastSelRowIndex = commitRows.indexOf(commitRows.filter(".selected:last")[0]);
+        var selectedRowIndex = commitRows.indexOf(selectedTr[0]);
+        var markRange = function(start, end) {
+            commitRows.slice(start, end + 1).addClass("selected");
+        };
+
+        // reset selections first
+        commitRows.filter(".selected").removeClass("selected");
+        if (selectedRowIndex === firstSelRowIndex || selectedRowIndex === lastSelRowIndex) {
+            selectedTr.addClass("selected");
+            return;
+        }
+
+        if (selectedRowIndex > firstSelRowIndex &&
+            selectedRowIndex < lastSelRowIndex) // in-between
+        {
+            if (previousSelectedCommitRowIndex === firstSelRowIndex) {
+                markRange(selectedRowIndex, lastSelRowIndex);
+            } else {
+                markRange(firstSelRowIndex, selectedRowIndex);
+            }
+        } else if (selectedRowIndex > firstSelRowIndex) { // downwards
+            markRange(firstSelRowIndex, selectedRowIndex);
+        } else { // upwards
+            markRange(selectedRowIndex, lastSelRowIndex);
+        }
+
+        previousSelectedCommitRowIndex = selectedRowIndex;
+    });
+
+    $("#show-large-diff-range").live("click", function(event) {
+        var selected = $("#large_commit_selector table#commit_table tr.commit_row.selected");
+        var spec = new Gitorious.ShaSpec();
+        spec.addSha(selected.filter(":first").find("input.merge_to").val());
+        spec.addSha(selected.filter(":last").find("input.merge_to").val());
+
+        var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
+        $("#current_shas").html(spec.shortShaSpec());
+        $("#large_commit_selector").hide();
+        event.preventDefault();
     });
     
+    // FIXME: DOM id's are supposed to be unique ya know
     jQuery("#current_shas").each(function(){
         var sha_spec = jQuery(this).attr("data-merge-request-current-shas");
         diff_browser = new Gitorious.DiffBrowser(sha_spec);
