@@ -2784,7 +2784,7 @@ Merge request commit selector
     font-weight: normal;
     float: left;
     padding: 0 5px 0 10px;
-    margin: 8px 40px 0 -25px;
+    margin: 2px 40px 0 -25px;
     font-size: 11px;
     width: 50px;
 }
@@ -2873,6 +2873,8 @@ Merge request commit selector
     border-bottom: 1px solid #ddd;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
+    display:none;
+    clear:both;
 }
 
 /* changable selection */

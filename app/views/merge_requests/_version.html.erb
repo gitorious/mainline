@@ -29,7 +29,7 @@
   </ul>
 
 <% if many_commits?(version) -%>
-  <div id="large_commit_selector" style="display:none;">
+  <div id="large_commit_selector">
     <%= styled_button(:medium, "Show diffs for commits", :id => "show-large-diff-range") -%>
     <table class="select_commits_from_list" id="commit_table">
     <% version.affected_commits.reverse.each_with_index do |commit, i| %>
