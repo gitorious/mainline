@@ -94,7 +94,11 @@ module MergeRequestsHelper
   end
 
   def inline_sha_link(label, sha)
-    content_tag(:a, label, {:"data-commit-sha" => sha, :class => "clickable_commit"})
+    content_tag(:a, label, {
+        "data-commit-sha" => sha,
+        :class => "clickable_commit",
+        :href => "#"
+      })
   end
 
   def colorized_status(status_tag)

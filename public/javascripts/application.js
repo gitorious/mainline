@@ -325,6 +325,7 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
+    // Handle selection of multiple commits in the large merge-request commit diff browser
     var previousSelectedCommitRowIndex;
     $("#large_commit_selector table#commit_table tr input").live("click", function(event) {
         var selectedTr = $(this).parents("tr");
@@ -367,6 +368,7 @@ $(document).ready(function() {
         previousSelectedCommitRowIndex = selectedRowIndex;
     });
 
+    // Display a range of commits from the large merge-request commit diff browser
     $("#show-large-diff-range").live("click", function(event) {
         var selected = $("#large_commit_selector table#commit_table tr.commit_row.selected");
         var spec = new Gitorious.ShaSpec();
@@ -377,6 +379,16 @@ $(document).ready(function() {
         $("#current_shas").html(spec.shortShaSpec());
         $("#large_commit_selector").hide();
         event.preventDefault();
+    });
+
+    // Show a single commit in the large merge-request commit diff browser
+    $("#large_commit_selector #commit_table a.clickable_commit").live("click", function(e){
+        var spec = new Gitorious.ShaSpec();
+        spec.addSha($(this).attr("data-commit-sha"));
+        var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
+        $("#current_shas").html(spec.shortShaSpec());
+        $("#large_commit_selector").hide();
+        e.preventDefault();
     });
     
     // FIXME: DOM id's are supposed to be unique ya know
