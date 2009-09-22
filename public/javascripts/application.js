@@ -265,12 +265,14 @@ $(document).ready(function() {
         var container = $(this).parent().parent().parent();
         container.find('.file-diff .header').removeClass("closed").addClass("open");
         container.find('.diff-hunks:hidden').show();
+        $.cookie("merge-requests-diff-hunks-state", "expanded");
         e.preventDefault();
     });
     $("#merge_request_diff .file-diff-controls a#collapse-all").live("click", function(e){
         var container = $(this).parent().parent().parent();
         container.find('.file-diff .header').removeClass("open").addClass("closed");
         container.find('.diff-hunks').hide();
+        $.cookie("merge-requests-diff-hunks-state", null);
         e.preventDefault();
     });
 
@@ -476,6 +478,14 @@ Gitorious.ShaSpec = function() {
 
 };
 
+Gitorious.setDiffBrowserHunkStateFromCookie = function() {
+  if ($.cookie("merge-requests-diff-hunks-state") === "expanded") {
+    var container = $("#merge_request_diff");
+    container.find('.file-diff .header').removeClass("closed").addClass("open");
+    container.find('.diff-hunks:hidden').show();
+  };
+}
+
 Gitorious.DiffBrowser = function(shas)
 {
     jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
@@ -484,6 +494,7 @@ Gitorious.DiffBrowser = function(shas)
     jQuery.get(mr_diff_url, {"commit_shas": shas}, function(data, responseText) {
         if (responseText === "success") {
           jQuery("#merge_request_diff").html(data);
+          Gitorious.setDiffBrowserHunkStateFromCookie();
         }
     });
 }
