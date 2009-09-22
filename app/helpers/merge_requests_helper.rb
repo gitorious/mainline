@@ -85,7 +85,7 @@ module MergeRequestsHelper
 
 
   def merge_base_link(version)
-    inline_sha_link(version.merge_base_sha[0..6], version.merge_base_sha)
+    version.merge_base_sha[0..6]
   end
   
   # a href="#commit_<sha>" id="commit_<sha>" data-commit-sha="sha"

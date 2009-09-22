@@ -2,10 +2,12 @@
   <ul class="commit_selector <%= many_commits?(version) ? 'large' : 'compact' -%>" 
       id="merge_request_commit_selector" 
       data-merge-request-version-url="<%= commit_diff_url(version) -%>">
+      <li class="merge_base round-10">
+        <%= merge_base_link(version) -%>
+      </li>
+
+
     
-    <li class="merge_base single_commit ui-selected">
-      <%= merge_base_link(version) -%>
-    </li>
 <% if many_commits?(version) %>
     <div class="selectables-container">
       <li class="single_commit">
@@ -24,13 +26,6 @@
       <%- end -%>
     </div>
 <% end -%>
-
-    <li class="selected_shas">
-      <code id="current_shas" 
-            data-merge-request-current-shas="<%= version.sha_summary(:long) -%>">
-        <%= version.sha_summary -%>
-      </code>
-    </li>
   </ul>
 
 <% if many_commits?(version) -%>
@@ -77,7 +72,7 @@
   </div>
 </div>
 
-<div id="merge_request_commit_summary">
+<div id="current_shas" data-merge-request-current-shas="<%= version.sha_summary(:long) -%>" class="merge_request_commit_summary">
   <%= summarize_version(version) -%>
 </div>
 

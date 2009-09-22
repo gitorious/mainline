@@ -294,7 +294,6 @@ $(document).ready(function() {
             var mr_diff_url = jQuery("#merge_request_commit_selector")
               .attr("data-merge-request-version-url");
             var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
-            jQuery("#current_shas").html(sha_spec.shortShaSpec());
         },
         selecting: function(e, ui) {
           var commits = $("li.ui-selecting a");
@@ -315,7 +314,7 @@ $(document).ready(function() {
           var url = $(this).parent().prev().attr("gts:url") + '?version=' + version;
           $("#diff_browser_for_current_version").load(url, null, function() {
             new Gitorious.DiffBrowser(
-              jQuery("#current_shas").attr("data-merge-request-current-shas") );
+              jQuery("#merge_request_commit_summary").attr("data-merge-request-current-shas") );
             // jump through hoops and beat the selectable into submission,
             // since it doesn't use live events, we have to re-create it, which sucks...
             Gitorious.currentMRCompactSelectable.selectable("destroy");
@@ -390,7 +389,6 @@ $(document).ready(function() {
           spec.addSha(lastSHA);
 
         var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
-        $("#current_shas").html(spec.shortShaSpec());
         $("#large_commit_selector").hide();
         event.preventDefault();
     });
@@ -400,7 +398,6 @@ $(document).ready(function() {
         var spec = new Gitorious.ShaSpec();
         spec.addSha($(this).attr("data-commit-sha"));
         var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
-        $("#current_shas").html(spec.shortShaSpec());
         $("#large_commit_selector").hide();
         e.preventDefault();
     });
@@ -491,14 +488,14 @@ Gitorious.ShaSpec = function() {
   
   this.summarizeHtml = function() {
     if (this.singleCommit()) {
-      $("#merge_request_commit_summary .several_shas").hide();
-      $("#merge_request_commit_summary .single_sha").show();
-      $("#merge_request_commit_summary .single_sha .merge_base").html(this.firstSha().shortSha());
+      $("#current_shas .several_shas").hide();
+      $("#current_shas .single_sha").show();
+      $("#current_shas .single_sha .merge_base").html(this.firstSha().shortSha());
     } else {
-      $("#merge_request_commit_summary .several_shas").show();
-      $("#merge_request_commit_summary .single_sha").hide();
-      $("#merge_request_commit_summary .several_shas .first").html(this.firstSha().shortSha());
-      $("#merge_request_commit_summary .several_shas .last").html(this.lastSha().shortSha());
+      $("#current_shas .several_shas").show();
+      $("#current_shas .single_sha").hide();
+      $("#current_shas .several_shas .first").html(this.firstSha().shortSha());
+      $("#current_shas .several_shas .last").html(this.lastSha().shortSha());
     }
   }
 

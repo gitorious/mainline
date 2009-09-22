@@ -2771,9 +2771,17 @@ Merge request commit selector
 {
     float: right;
 }
-#merge_request_commit_selector .merge_base
+#merge_request_current_version li.merge_base
 {
     font-weight: bold;
+    background-color: #444;
+    color: #ccc;
+    font-weight: normal;
+    float: left;
+    padding: 0 5px 0 10px;
+    margin: 8px 40px 0 -25px;
+    font-size: 11px;
+    width: 50px;
 }
 #merge_request_commit_selector .ui-selectee
 {
@@ -2878,7 +2886,7 @@ Merge request commit selector
 }
 
 /* The summary of a version (commits etc.) */
-#merge_request_commit_summary {
+.merge_request_commit_summary {
   font-weight: bold;
   color: #444;
   padding: 0.4em;
@@ -2886,7 +2894,7 @@ Merge request commit selector
   border: 1px dashed #333;
   background-color: #eee;
 }
-#merge_request_commit_summary .sha {
+.merge_request_commit_summary .sha {
   background-color: #E0EFCF;
 }
 
