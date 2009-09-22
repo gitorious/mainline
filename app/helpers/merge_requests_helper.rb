@@ -108,8 +108,7 @@ module MergeRequestsHelper
 
   # By some arbitarily random standard, does this +version+ contain many commits?
   def many_commits?(version)
-
-    version.affected_commits.length > 5
+    version.affected_commits.length > 7
   end
 
   def commit_css_class(merge_request, commit)

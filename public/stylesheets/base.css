@@ -2696,7 +2696,7 @@ Merge request commit selector
   background-image: url(/images/silver_gradient.png);
   background-position: top left;
   background-repeat: repeat-x;
-  height: 33px;
+  height: 23px;
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
@@ -2706,21 +2706,25 @@ Merge request commit selector
 #merge_request_commit_selector .selectable-container {
     width: 720px;
     overflow:hidden;
-    height:33px;
+    height:23px;
     float:left
 }
 
 #merge_request_commit_selector li.single_commit {
   float: left;
   display: block;
-  width: 130px;
-  height: 13px;
-  padding: 10px 0 10px 30px;
-  margin-left: -23px;
+  width: 107px;
+  height: 23px;
+  padding: 2px 0 0 15px;
+  margin-left: -30px;
   background-position: top right;
   cursor: pointer;
   background-repeat: no-repeat;
   background-image: url(/images/commit_selector.png);
+}
+#merge_request_commit_selector.large li.single_commit.expander {
+    width: 250px;
+    padding-left: 25px;
 }
 
 #merge_request_commit_selector li:last-child,
@@ -2736,15 +2740,16 @@ Merge request commit selector
   background-repeat: repeat-x;
 }
 #merge_request_commit_selector li a{
-  padding: 0 0 0 20px;
+  padding: 0 0 0 15px;
+  background-position: -5px 0;
   background-repeat: no-repeat;
-  font-weight: bold;
+  font-size: 12px;
   color: #000;
   margin: 0;
 }
 
 #merge_request_commit_selector li.selected_shas{
-  padding: 7px 20px;
+  padding: 2px 20px;
   float: right;
 }
 #merge_request_commit_selector li.ui-selected,
@@ -2873,11 +2878,11 @@ Merge request commit selector
 /* changable selection */
 #merge_request_version {
     float:right;
-    margin: 7px 10px 0 0;
+    margin: 3px 10px 0 0;
     background: #444;
     color: #ccc;
     font-size: 11px;
-    padding: 0 5px;
+    padding: 0 8px;
 }
 
 #merge_request_version:hover {

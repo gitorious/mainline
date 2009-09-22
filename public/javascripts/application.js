@@ -81,7 +81,7 @@ jQuery.fn.hoverBubble = function() {
       var triggerWidth = $(this).width();
       $(this).next(".hover-bubble-content").css({
         top: originalOffset.top - bubbleHeight - 25 + 'px',
-        left: originalOffset.left - (triggerWidth/2) + 'px',
+        left: originalOffset.left - (triggerWidth/2) - 50 + 'px',
         opacity: 0
       });
       $(this).hover(function() {
