@@ -283,6 +283,17 @@ $(document).ready(function() {
     // Merge request selection of branches, compact mode
     // wrapped in a function so we can reuse it when we load another version
     var diffBrowserCompactCommitSelectable = function() {
+      var selectingAndUnselecting = function() {
+          var commits = $("li.ui-selecting a");
+          if (!commits[0]) return true;
+          var first_commit_sha = $(commits[0]).attr("data-commit-sha");
+          var last_commit_sha = $(commits[commits.length - 1]).attr("data-commit-sha");
+
+          var shaSpec = new Gitorious.ShaSpec();
+          shaSpec.addSha(first_commit_sha);
+          shaSpec.addSha(last_commit_sha);          
+          shaSpec.summarizeHtml();
+      };
       return jQuery("#merge_request_commit_selector.compact").selectable({
         filter: "li.single_commit",
         stop: function(e, ui) {
@@ -296,13 +307,10 @@ $(document).ready(function() {
             var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
         },
         selecting: function(e, ui) {
-          var commits = $("li.ui-selecting a");
-          var first_commit_sha = $(commits[0]).attr("data-commit-sha");
-          var last_commit_sha = $(commits[commits.length - 1]).attr("data-commit-sha");
-          var shaSpec = new Gitorious.ShaSpec();
-          shaSpec.addSha(first_commit_sha);
-          shaSpec.addSha(last_commit_sha);
-          shaSpec.summarizeHtml();
+          selectingAndUnselecting();
+        },
+        unselecting: function(e,ui) {
+          selectingAndUnselecting();
         }
       });
     }
@@ -314,7 +322,7 @@ $(document).ready(function() {
           var url = $(this).parent().prev().attr("gts:url") + '?version=' + version;
           $("#diff_browser_for_current_version").load(url, null, function() {
             new Gitorious.DiffBrowser(
-              jQuery("#merge_request_commit_summary").attr("data-merge-request-current-shas") );
+              jQuery("#current_shas").attr("data-merge-request-current-shas") );
             // jump through hoops and beat the selectable into submission,
             // since it doesn't use live events, we have to re-create it, which sucks...
             Gitorious.currentMRCompactSelectable.selectable("destroy");
@@ -387,7 +395,7 @@ $(document).ready(function() {
         spec.addSha(firstSHA);
         if (firstSHA != lastSHA)
           spec.addSha(lastSHA);
-
+        spec.summarizeHtml();
         var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
         $("#large_commit_selector").hide();
         event.preventDefault();
@@ -443,7 +451,7 @@ Gitorious.Sha = function(sha) {
     this.fullSha = sha;
 
     this.shortSha = function() {
-        return this.fullSha.substring(0, 8);
+        return this.fullSha.substring(0, 7);
     };
 
     this.sha = function() {
@@ -517,6 +525,11 @@ Gitorious.DiffBrowser = function(shas)
     jQuery.get(mr_diff_url, {"commit_shas": shas}, function(data, responseText) {
         if (responseText === "success") {
           jQuery("#merge_request_diff").html(data);
+          var shaSpec = new Gitorious.ShaSpec();
+          shaSpec.addSha(shas.split("..")[0]);
+          shaSpec.addSha(shas.split("..")[1]);
+          shaSpec.summarizeHtml();
+
           Gitorious.setDiffBrowserHunkStateFromCookie();
         }
     });
