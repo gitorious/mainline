@@ -2877,6 +2877,19 @@ Merge request commit selector
     color: #333;
 }
 
+/* The summary of a version (commits etc.) */
+#merge_request_commit_summary {
+  font-weight: bold;
+  color: #444;
+  padding: 0.4em;
+  margin-top: 1em;
+  border: 1px dashed #333;
+  background-color: #eee;
+}
+#merge_request_commit_summary .sha {
+  background-color: #E0EFCF;
+}
+
 ul.changable-selection-options {
     padding: 0;
     margin: 0;

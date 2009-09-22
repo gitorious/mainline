@@ -295,6 +295,15 @@ $(document).ready(function() {
               .attr("data-merge-request-version-url");
             var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
             jQuery("#current_shas").html(sha_spec.shortShaSpec());
+        },
+        selecting: function(e, ui) {
+          var commits = $("li.ui-selecting a");
+          var first_commit_sha = $(commits[0]).attr("data-commit-sha");
+          var last_commit_sha = $(commits[commits.length - 1]).attr("data-commit-sha");
+          var shaSpec = new Gitorious.ShaSpec();
+          shaSpec.addSha(first_commit_sha);
+          shaSpec.addSha(last_commit_sha);
+          shaSpec.summarizeHtml();
         }
       });
     }
@@ -446,35 +455,52 @@ Gitorious.Sha = function(sha) {
 }
 
 Gitorious.ShaSpec = function() {
-    this.allShas = [];
-
-    this.addSha = function(s) {
-        this.allShas.push(new Gitorious.Sha(s));
+  this.allShas = [];
+  
+  this.addSha = function(s) {
+    this.allShas.push(new Gitorious.Sha(s));
+  }
+  
+  this.firstSha = function() {
+    return this.allShas[0];
+  }
+  
+  this.lastSha = function() {
+    return this.allShas[this.allShas.length - 1];
+  }
+  
+  this.shaSpecs = function(callback) {
+    if (this.allShas.length < 2) {
+      return [this.firstSha()];
+    } else {
+      return [this.firstSha(), this.lastSha()];
     }
+  }
+  
+  this.shaSpec = function() {
+    return  this.shaSpecs().map(function(s){ return s.sha() }).join("..");
+  }
+  
+  this.shortShaSpec = function() {
+    return this.shaSpecs().map(function(s){ return s.shortSha() }).join("..");
+  }
 
-    this.firstSha = function() {
-        return this.allShas[0];
+  this.singleCommit = function() {
+    return this.firstSha().sha() == this.lastSha().sha();
+  }
+  
+  this.summarizeHtml = function() {
+    if (this.singleCommit()) {
+      $("#merge_request_commit_summary .several_shas").hide();
+      $("#merge_request_commit_summary .single_sha").show();
+      $("#merge_request_commit_summary .single_sha .merge_base").html(this.firstSha().shortSha());
+    } else {
+      $("#merge_request_commit_summary .several_shas").show();
+      $("#merge_request_commit_summary .single_sha").hide();
+      $("#merge_request_commit_summary .several_shas .first").html(this.firstSha().shortSha());
+      $("#merge_request_commit_summary .several_shas .last").html(this.lastSha().shortSha());
     }
-
-    this.lastSha = function() {
-        return this.allShas[this.allShas.length - 1];
-    }
-
-    this.shaSpecs = function(callback) {
-        if (this.allShas.length < 2) {
-            return [this.firstSha()];
-        } else {
-            return [this.firstSha(), this.lastSha()];
-        }
-    }
-
-    this.shaSpec = function() {
-        return  this.shaSpecs().map(function(s){ return s.sha() }).join("..");
-    }
-
-    this.shortShaSpec = function() {
-        return this.shaSpecs().map(function(s){ return s.shortSha() }).join("..");
-    }
+  }
 
 };
 

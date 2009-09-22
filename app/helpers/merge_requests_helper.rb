@@ -120,4 +120,31 @@ module MergeRequestsHelper
     url_for(polymorphic_path([:version, merge_request.target_repository.project,
                               merge_request.target_repository, merge_request]))
   end
+
+  def summarize_version(version)
+    if version.affected_commits.blank?
+      [
+       summarize_version_with_single_sha(version.short_merge_base),
+       summarize_version_with_several_shas("","")
+      ].join("\n")
+    else
+      [
+       summarize_version_with_single_sha(""),
+       summarize_version_with_several_shas(version.short_merge_base,version.affected_commits.last.id_abbrev)
+      ].join("\n")
+    end
+  end
+
+  def summarize_version_with_single_sha(sha)
+    options = {:class => "single_sha"}
+    options[:style] = "display: none" if sha.blank?
+    content_tag(:div, "Currently selected: #{content_tag(:code, sha, :class => 'merge_base')}", options)
+  end
+
+  def summarize_version_with_several_shas(first,last)
+    options = {:class => "several_shas"}
+    options[:style] = "display:none" if last.blank?
+    content_tag(:div, "Currently selected: #{content_tag(:code, first, :class => 'first')}..#{content_tag(:code, last, :class => 'last')}", options)
+  end
+
 end
