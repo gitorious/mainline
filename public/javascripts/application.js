@@ -372,8 +372,11 @@ $(document).ready(function() {
     $("#show-large-diff-range").live("click", function(event) {
         var selected = $("#large_commit_selector table#commit_table tr.commit_row.selected");
         var spec = new Gitorious.ShaSpec();
-        spec.addSha(selected.filter(":first").find("input.merge_to").val());
-        spec.addSha(selected.filter(":last").find("input.merge_to").val());
+        var firstSHA = selected.filter(":first").find("input.merge_to").val();
+        var lastSHA = selected.filter(":last").find("input.merge_to").val();
+        spec.addSha(firstSHA);
+        if (firstSHA != lastSHA)
+          spec.addSha(lastSHA);
 
         var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
         $("#current_shas").html(spec.shortShaSpec());
