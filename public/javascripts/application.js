@@ -500,6 +500,7 @@ Gitorious.ShaSpec = function() {
       $("#current_shas .single_sha").show();
       $("#current_shas .single_sha .merge_base").html(this.firstSha().shortSha());
     } else {
+      $("#current_shas").attr("data-merge-request-current-shas", this.shaSpec());
       $("#current_shas .several_shas").show();
       $("#current_shas .single_sha").hide();
       $("#current_shas .several_shas .first").html(this.firstSha().shortSha());
