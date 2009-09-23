@@ -495,4 +495,10 @@ module ApplicationHelper
     javascript_include_tag "jquery.core", "jquery.autocomplete", 
       "color_picker", "application", :cache => true
   end
+
+  # inserts a <wbr> tag somewhere in the middle of +str+
+  def wbr_middle(str)
+    half_size = str.length / 2
+    str.to_s[0..half_size-1] + "<wbr />" + str[half_size..-1]
+  end
 end
