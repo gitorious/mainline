@@ -224,6 +224,15 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert @merge_request.resolvable_by?(users(:mike))
     assert !@merge_request.resolvable_by?(users(:moe))
   end
+
+  should "be resolvable by the MR creator as well" do
+    creator = @merge_request.user = users(:mike)
+    @merge_request.save!
+    @merge_request.target_repository.committerships.each(&:destroy)
+    assert !creator.can_write_to?(@merge_request.target_repository)
+    assert @merge_request.resolvable_by?(creator), "not resolvable by creator"
+    assert !@merge_request.resolvable_by?(users(:moe))
+  end
   
   should "have a working resolvable_by? together with fucktard authentication systems" do
     assert !@merge_request.resolvable_by?(:false)

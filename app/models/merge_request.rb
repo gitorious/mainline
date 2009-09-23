@@ -249,7 +249,7 @@ class MergeRequest < ActiveRecord::Base
   
   def resolvable_by?(candidate)
     return false unless candidate.is_a?(User)
-    candidate.can_write_to?(target_repository)
+    (candidate === user) || candidate.can_write_to?(target_repository)
   end
   
   def commits_for_selection
