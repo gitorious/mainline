@@ -467,6 +467,16 @@ Gitorious.ShaSpec = function() {
   this.addSha = function(s) {
     this.allShas.push(new Gitorious.Sha(s));
   }
+  // Add shas from a string, eg ff0..bba
+  this.parseShas = function(shaString) {
+    pair = shaString.split("..");
+    this.addSha(pair[0]);
+    if (pair.length > 1) {
+      this.addSha(pair[1]);
+    } else {
+      this.addSha(pair[0]);
+    }
+  }
   
   this.firstSha = function() {
     return this.allShas[0];
@@ -529,8 +539,7 @@ Gitorious.DiffBrowser = function(shas)
         if (responseText === "success") {
           jQuery("#merge_request_diff").html(data);
           var shaSpec = new Gitorious.ShaSpec();
-          shaSpec.addSha(shas.split("..")[0]);
-          shaSpec.addSha(shas.split("..")[1]);
+          shaSpec.parseShas(shas);
           shaSpec.summarizeHtml();
 
           Gitorious.setDiffBrowserHunkStateFromCookie();
