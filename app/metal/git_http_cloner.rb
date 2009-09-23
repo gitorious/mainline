@@ -41,6 +41,7 @@ class GitHttpCloner
             "X-Sendfile" => full_path,
             'Content-Type' => 'application/octet-stream'
           }
+          env["rack.session.options"] = {}
           return [200, headers, []]
         rescue ActiveRecord::RecordNotFound   
           # Repo not found
