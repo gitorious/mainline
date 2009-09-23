@@ -284,15 +284,16 @@ $(document).ready(function() {
     // wrapped in a function so we can reuse it when we load another version
     var diffBrowserCompactCommitSelectable = function() {
       var selectingAndUnselecting = function() {
-          var commits = $("li.ui-selecting a");
-          if (!commits[0]) return true;
-          var first_commit_sha = $(commits[0]).attr("data-commit-sha");
-          var last_commit_sha = $(commits[commits.length - 1]).attr("data-commit-sha");
-
-          var shaSpec = new Gitorious.ShaSpec();
-          shaSpec.addSha(first_commit_sha);
-          shaSpec.addSha(last_commit_sha);          
-          shaSpec.summarizeHtml();
+        $("#current_shas .several_shas .label").html("Selecting:");
+        var commits = $("li.ui-selecting a");
+        if (!commits[0]) return true;
+        var first_commit_sha = $(commits[0]).attr("data-commit-sha");
+        var last_commit_sha = $(commits[commits.length - 1]).attr("data-commit-sha");
+        
+        var shaSpec = new Gitorious.ShaSpec();
+        shaSpec.addSha(first_commit_sha);
+        shaSpec.addSha(last_commit_sha);          
+        shaSpec.summarizeHtml();
       };
       return jQuery("#merge_request_commit_selector.compact").selectable({
         filter: "li.single_commit",
@@ -302,6 +303,7 @@ $(document).ready(function() {
                 sha = jQuery(this).attr("data-commit-sha");
                 sha_spec.addSha(sha);
             });
+          $("#current_shas .label").html("Selected:");
             var mr_diff_url = jQuery("#merge_request_commit_selector")
               .attr("data-merge-request-version-url");
             var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
