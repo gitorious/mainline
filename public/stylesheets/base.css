@@ -2896,10 +2896,12 @@ Merge request commit selector
 .merge_request_commit_summary {
   font-weight: bold;
   color: #444;
-  padding: 0.4em;
-  margin-top: 1em;
-  border: 1px dashed #333;
-  background-color: #eee;
+  padding: 1px 5px;
+  border: 1px solid #ddd;
+  border-top: none;
+  margin-top: -1px;
+  background-color: #efefef;
+  font-size: 11px;
 }
 .merge_request_commit_summary .sha {
   background-color: #E0EFCF;

@@ -72,7 +72,9 @@
   </div>
 </div>
 
-<div id="current_shas" data-merge-request-current-shas="<%= version.sha_summary(:long) -%>" class="merge_request_commit_summary">
+<div id="current_shas"
+     data-merge-request-current-shas="<%= version.sha_summary(:long) -%>"
+     class="merge_request_commit_summary round-bottom-5">
   <%= summarize_version(version) -%>
 </div>
 
