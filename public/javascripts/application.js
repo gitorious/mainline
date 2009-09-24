@@ -284,7 +284,6 @@ $(document).ready(function() {
     // wrapped in a function so we can reuse it when we load another version
     var diffBrowserCompactCommitSelectable = function() {
       var selectingAndUnselecting = function() {
-        $("#current_shas .several_shas .label").html("Selecting:");
         var commits = $("li.ui-selecting a");
         if (!commits[0]) return true;
         var first_commit_sha = $(commits[0]).attr("data-commit-sha");
@@ -309,6 +308,7 @@ $(document).ready(function() {
             var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
         },
         selecting: function(e, ui) {
+          $("#current_shas .label").html("Selecting:");
           selectingAndUnselecting();
         },
         unselecting: function(e,ui) {
