@@ -313,7 +313,8 @@ $(document).ready(function() {
         },
         unselecting: function(e,ui) {
           selectingAndUnselecting();
-        }
+        },
+        cancel: ".merge_base"
       });
     }
     Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
