@@ -39,7 +39,7 @@
           <%= link_to h(@committer_user.title), @committer_user -%>
         <% else -%>
           <%=h @commit.committer.name -%>
-          &lt;<%= GitoriousConfig["mangle_email_addresses"] ? mangled_mail(@commit.committer.email) : h(@commit.committer.email) -%>&gt;
+          <%= render_email(@commit.committer.email) -%>
         <% end -%>
         <% if @commit.committer != @commit.author -%>
           <small>(<%= t("views.commits.committer") %>)</small>
@@ -62,7 +62,7 @@
             <%= link_to h(@author_user.title), @author_user -%>
           <% else -%>
             <%=h @commit.author.name -%>
-            &lt;<%= GitoriousConfig["mangle_email_addresses"] ? mangled_mail(@commit.author.email) : h(@commit.author.email) -%>&gt;
+            <%= render_email(@commit.author.email) -%>
           <% end -%>
           <small>(<%= t("views.commits.author") %>)</small>
         </li>

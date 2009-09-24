@@ -37,4 +37,13 @@ module UsersHelper
     user + " @" + domain[0, domain.length/2] + 
       "&hellip;" + domain[-(domain.length/3)..-1] + ".#{ext}"
   end
+
+  def render_email(email)
+    encoded_email = if GitoriousConfig["mangle_email_addresses"]
+                      mangled_mail(email.to_s)
+                    else
+                      h(email.to_s)
+                    end
+    "&lt;" + encoded_email.to_s + "&gt;"
+  end
 end
