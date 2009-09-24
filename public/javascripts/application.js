@@ -302,13 +302,13 @@ $(document).ready(function() {
                 sha = jQuery(this).attr("data-commit-sha");
                 sha_spec.addSha(sha);
             });
-          $("#current_shas .label").html("Selected:");
+          $("#current_shas .label").html("Showing");
             var mr_diff_url = jQuery("#merge_request_commit_selector")
               .attr("data-merge-request-version-url");
             var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
         },
         selecting: function(e, ui) {
-          $("#current_shas .label").html("Selecting:");
+          $("#current_shas .label").html("Selecting");
           selectingAndUnselecting();
         },
         unselecting: function(e,ui) {

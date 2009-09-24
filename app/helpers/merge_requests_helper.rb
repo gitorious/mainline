@@ -137,13 +137,18 @@ module MergeRequestsHelper
   def summarize_version_with_single_sha(sha)
     options = {:class => "single_sha"}
     options[:style] = "display: none" if sha.blank?
-    content_tag(:div, "#{content_tag(:span, 'Selected:', :class => 'label')} #{content_tag(:code, sha, :class => 'merge_base')}", options)
+    content_html = content_tag(:span, 'Showing', :class => 'label') + " " +
+      content_tag(:code, sha, :class => 'merge_base')
+    content_tag(:div, "#{content_html}", options)
   end
 
   def summarize_version_with_several_shas(first,last)
     options = {:class => "several_shas"}
     options[:style] = "display:none" if last.blank?
-    content_tag(:div, "#{content_tag(:span, 'Selected:', :class => 'label')} #{content_tag(:code, first, :class => 'first')}..#{content_tag(:code, last, :class => 'last')}", options)
+    content_html = content_tag(:span, 'Showing', :class => 'label') + " " +
+      content_tag(:code, first, :class => 'first') + ".." +
+      content_tag(:code, last, :class => 'last')
+    content_tag(:div, "#{content_html}", options)
   end
 
 end
