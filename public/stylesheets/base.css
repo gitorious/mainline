@@ -2701,6 +2701,7 @@ Merge request commit selector
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
+  min-width: 850px;
 }
 
 #merge_request_commit_selector .selectable-container {
