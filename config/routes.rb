@@ -83,6 +83,7 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => "site", :action => "index"
   
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
+  map.connect "users/pending_activation", :controller => "users", :action => "pending_activation"
   map.reset_password "users/reset_password/:token", :controller => "users", :action => "reset_password"
   map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/i }, :collection => {
     :forgot_password => :get,

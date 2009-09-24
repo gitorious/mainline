@@ -73,7 +73,6 @@
       :group_created => "Team created",
     },
     :users_controller => {
-      :create_notice => "Thanks for signing up! You will receive an account activation email soon",
       :activate_notice => "Your account has been activated, welcome!",
       :activate_error => "Invalid activation code",
       :reset_password_notice => "A new password has been sent to your email",
@@ -255,7 +254,12 @@
         :create => "create an account",
         :license => 'End User License Agreement',
         :send_user_msg => "Send {{username}} a message",
-        :avatar => 'Profile image'
+        :avatar => 'Profile image',
+        :pending_activation => {
+          :header => "Almost done",
+          :info => "A <strong>confirmation e-mail</strong> will be delivered to e-mail address you specified. In it, you'll find an activation link. Visit that link to complete the registration.",
+          :thanks => "Thank you for using Gitorious!" 
+        }
       },
       :logs => {
         :title => "Commits in {{repo_url}}:{{ref}}",
