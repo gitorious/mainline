@@ -525,6 +525,13 @@ Gitorious.ShaSpec = function() {
 
 };
 
+Gitorious.ShaSpec.parseLocationHash = function(hash) {
+  result = new Gitorious.ShaSpec();
+  without_hash = hash.replace(/#/, "");
+  result.parseShas(hash);
+  return result;
+}
+
 Gitorious.setDiffBrowserHunkStateFromCookie = function() {
   if ($.cookie("merge-requests-diff-hunks-state") === "expanded") {
     var container = $("#merge_request_diff");
