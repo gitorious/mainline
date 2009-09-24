@@ -20,12 +20,22 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MergeRequestVersionsControllerTest < ActionController::TestCase
+
   should_render_in_site_specific_context
+
   context 'Viewing diffs' do
     setup do
       @version = mock
       @merge_request = mock
-      @merge_request.stubs(:target_repository).returns(:foo)
+      @repo = mock
+      @git = mock
+      @repo.stubs(:git).returns(@git)
+      #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)
+      @commit = Grit::Commit.new(mock("repo"), "mycommitid", [], stub_everything("tree"),
+        stub_everything("author"), Time.now, stub_everything("comitter"), Time.now,
+        "my commit message".split(" "))
+
+      @merge_request.stubs(:target_repository).returns(@repo)
       @version.stubs(:merge_request).returns(@merge_request)
       MergeRequestVersion.stubs(:find).returns(@version)
     end
@@ -33,9 +43,11 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
     context 'Viewing the diff for a single commit' do
       setup do
         @version.expects(:diffs).with("ffcab").returns([])
+        @git.expects(:commit).with("ffcab").returns(@commit)
         get :show, :id => @version, :commit_shas => "ffcab"
       end      
       should_respond_with :success
+      should_assign_to(:commit, :class => Grit::Commit){ @commit }
     end
     
     context 'Viewing the diff for a series of commits' do
@@ -44,6 +56,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
         get :show, :id => @version, :commit_shas => "ffcab..bacff"
       end
       should_respond_with :success
+      should_not_assign_to(:commit)
     end
     
     context 'Viewing the entire diff' do

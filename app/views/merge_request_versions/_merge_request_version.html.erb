@@ -17,6 +17,43 @@
 #++
 %>
 
+<% if @commit -%>
+<div class="commit-infobox">
+  <div class="commit-meta">
+    <ul class="people">
+      <li class="avatar">
+        <div>
+          <%= avatar_from_email(@commit.committer.email, { :size => 32 }) %>
+        </div>
+      </li>
+      <li>
+        <%=h @commit.committer.name -%>
+        <%= render_email(@commit.committer.email) -%>
+        <% if @commit.committer != @commit.author -%>
+          <small>(<%= t("views.commits.committer") %>)</small>
+        <% end -%>
+      </li>
+      <li class="meta"><%=h time_ago_in_words @commit.committed_date -%> ago</li>
+      <% if @commit.committer != @commit.author -%>
+        <li class="clear"></li>
+        <li class="avatar">
+          <div>
+	    <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
+          </div>
+        </li>
+        <li>
+            <%=h @commit.author.name -%>
+            <%= render_email(@commit.author.email) -%>
+          <small>(<%= t("views.commits.author") %>)</small>
+        </li>
+        <li class="meta"><%=h time_ago_in_words @commit.authored_date -%> ago</li>
+      <% end -%>
+    </ul>
+  </div>
+  <pre class="commit_message"><%= format_commit_message(h(@commit.message)) -%></pre>
+</div>
+<% end -%>
+
 <div class="file-diff-controls">
   <small><a href="#" id="expand-all">expand all</a> / 
   <a href="#" id="collapse-all">collapse all</a></small>
