@@ -709,3 +709,14 @@ function toggle_wiki_preview(target_url) {
 //     }});
 //   });
 // }
+
+if (!Array.prototype.each) {
+  Array.prototype.each = function(callback) {
+    jQuery.each(this, callback);
+  }
+}
+if (!Array.prototype.map) {    
+  Array.prototype.map = function(callback) {
+    return jQuery.map(this, callback);
+  }
+}
