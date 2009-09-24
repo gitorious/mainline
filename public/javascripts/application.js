@@ -496,11 +496,13 @@ Gitorious.ShaSpec = function() {
   }
   
   this.shaSpec = function() {
-    return jQuery.map(this.shaSpecs(), function(s){return s.sha()}).join("..");
+    var _specs = this.shaSpecs();
+    return jQuery.map(_specs, function(s){return s.sha()}).join("..");
   }
   
   this.shortShaSpec = function() {
-    return this.shaSpecs().map(function(s){ return s.shortSha() }).join("..");
+    var _specs = this.shaSpecs();
+    return jQuery.map(_specs, function(s){ return s.shortSha() }).join("..");
   }
 
   this.singleCommit = function() {
