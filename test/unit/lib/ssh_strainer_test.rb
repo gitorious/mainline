@@ -184,6 +184,20 @@ class SSHStrainerTest < ActiveSupport::TestCase
       assert_equal "~foo/bar.git", cmd.path
     end
   end
+
+  should "allow user names with an uppercase first letter" do
+    assert_nothing_raised do
+      strainer = Gitorious::SSH::Strainer.new("git-upload-pack '~Oldtimer/repo.git'").parse!
+      assert_equal "~Oldtimer/repo.git", strainer.path
+    end
+  end
+
+  should "allow group names with an uppercase first letter" do
+    assert_nothing_raised do
+      strainer = Gitorious::SSH::Strainer.new("git upload-pack '+Oldtimers/repo.git'").parse!
+      assert_equal "+Oldtimers/repo.git", strainer.path
+    end
+  end
   
   should "can parse team-style urls prefixed with a plus" do
     assert_nothing_raised(Gitorious::SSH::BadCommandError) do
