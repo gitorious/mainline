@@ -496,7 +496,7 @@ Gitorious.ShaSpec = function() {
   }
   
   this.shaSpec = function() {
-    return  this.shaSpecs().map(function(s){ return s.sha() }).join("..");
+    return jQuery.map(this.shaSpecs(), function(s){return s.sha()}).join("..");
   }
   
   this.shortShaSpec = function() {
