@@ -700,27 +700,6 @@ class RepositoryTest < ActiveSupport::TestCase
     end    
   end
   
-  context "observers" do
-    should "sends an email to the admin if there's a parent" do
-      Mailer.expects(:deliver_new_repository_clone).with(@repository).returns(true)
-      @repository.parent = repositories(:johans)
-      @repository.save!
-    end
-    
-    should "does not send an email to the admin if there's not a parent parent" do
-      Mailer.expects(:deliver_new_repository_clone).never
-      @repository.parent = nil
-      @repository.save!
-    end
-
-    should "not send an email if it is a tracking repository that's being created" do
-      Mailer.expects(:deliver_new_repository_clone).never
-      @repository.kind = Repository::KIND_TRACKING_REPO
-      @repository.parent = repositories(:johans)
-      @repository.save!
-    end
-  end
-  
   context 'Signoff of merge requests' do
     setup do
       @project = projects(:johans)

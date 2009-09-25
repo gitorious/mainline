@@ -40,22 +40,6 @@ class Mailer < ActionMailer::Base
     @subject    += I18n.t "mailer.activated"
   end
 
-  def new_repository_clone(repository)
-    setup_email(repository.parent.user)
-    @subject += I18n.t "mailer.repository_clone", :login => repository.user.login,
-      :slug => repository.parent.url_path
-    @body[:user] = repository.parent.user
-    @body[:cloner] = repository.user
-    @body[:project] = repository.project
-    @body[:repository] = repository
-    url = if repository.owned_by_group?
-      group_project_repository_url(repository.owner, repository.project, repository)
-    else
-      user_project_repository_url(repository.owner, repository.project, repository)
-    end
-    @body[:url] =  url
-  end
-
   def notification_copy(recipient, sender, subject, body, notifiable, message_id)
     @recipients       =  recipient.email
     @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
