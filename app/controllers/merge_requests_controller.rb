@@ -45,9 +45,12 @@ class MergeRequestsController < ApplicationController
 
     @status_tags = @repository.merge_request_status_tags
     @comment_count = @repository.comments.count
+    @atom_auto_discovery_url = url_for(:overwrite_params => { :format => "atom" })
+
     respond_to do |wants|
       wants.html
-      wants.xml {render :xml => @open_merge_requests.to_xml}
+      wants.xml  { render :xml => @open_merge_requests.to_xml }
+      wants.atom {  }
     end
   end
   
