@@ -215,6 +215,13 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+  $("body#merge_requests", function(){
+    var spec = Gitorious.ShaSpec.parseLocationHash(document.location.hash);
+    if (spec) {
+      spec.summarizeHtml();
+    }
+  })
+
     // replace the search form input["submit"] with something fancier
     $("#main_menu_search_form").each(function(){
         var headerSearchForm = this;
@@ -292,6 +299,7 @@ $(document).ready(function() {
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.addSha(first_commit_sha);
         shaSpec.addSha(last_commit_sha);          
+        document.location.hash = shaSpec.shortShaSpec();
         shaSpec.summarizeHtml();
       };
       return jQuery("#merge_request_commit_selector.compact").selectable({
@@ -509,6 +517,18 @@ Gitorious.ShaSpec = function() {
     return this.firstSha().sha() == this.lastSha().sha();
   }
   
+  this.setVersion = function(v)  {
+    this._version = v;
+  }
+
+  this.getVersion = function() {
+    return this._version;
+  }
+  
+  this.hasVersion = function() {
+    return typeof(this._version) != "undefined";
+  }
+
   this.summarizeHtml = function() {
     if (this.singleCommit()) {
       $("#current_shas .several_shas").hide();
@@ -526,9 +546,14 @@ Gitorious.ShaSpec = function() {
 };
 
 Gitorious.ShaSpec.parseLocationHash = function(hash) {
+  if (hash == "" || typeof(hash) == "undefined") {
+    return null;
+  }
   result = new Gitorious.ShaSpec();
-  without_hash = hash.replace(/#/, "");
-  result.parseShas(hash);
+  _hash = hash.replace(/#/, "");
+  specAndVersion = _hash.split("@");
+  result.parseShas(specAndVersion[0]);
+  result.setVersion(specAndVersion[1]);
   return result;
 }
 
