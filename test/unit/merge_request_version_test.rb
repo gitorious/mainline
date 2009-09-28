@@ -63,7 +63,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     end
     
     should 'handle a range' do
-      @diff_backend.expects(:commit_diff).with("ffc","ccf")
+      @diff_backend.expects(:commit_diff).with("ffc","ccf", true)
       result = @version.diffs("ffc".."ccf")
     end
 

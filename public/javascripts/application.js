@@ -299,7 +299,7 @@ $(document).ready(function() {
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.addSha(first_commit_sha);
         shaSpec.addSha(last_commit_sha);          
-        document.location.hash = shaSpec.shortShaSpec();
+        document.location.hash = shaSpec.shaSpec();
         shaSpec.summarizeHtml();
       };
       return jQuery("#merge_request_commit_selector.compact").selectable({

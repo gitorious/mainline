@@ -32,13 +32,14 @@ class MergeRequestVersion < ActiveRecord::Base
   def diffs(sha_or_range=nil)
     case sha_or_range
     when Range
-      diff_backend.commit_diff(sha_or_range.begin, sha_or_range.end)
+      diff_backend.commit_diff(sha_or_range.begin, sha_or_range.end, true)
     when String
       diff_backend.single_commit_diff(sha_or_range)
     else
       diff_backend.commit_diff(merge_base_sha, merge_request.ending_commit)
     end    
   end
+
 
   def short_merge_base
     merge_base_sha[0..6]
@@ -61,13 +62,22 @@ class MergeRequestVersion < ActiveRecord::Base
       @repository = repository
     end
 
+    def parent_commit(sha)
+      Grit::Commit.find_all(@repository, sha, {:max_count => 1}).first.parents.first
+    end
+    
     def cache_key(first, last=nil)
       ["merge_request_diff", first, last].compact.join("_")
     end
     
-    def commit_diff(first,last)
+    def commit_diff(first, last, diff_with_previous=false)
       Rails.cache.fetch(cache_key(first,last), :expires_in => 60.minutes) do
-        diff_string = @repository.git.ruby_git.diff(first,last)
+        first_commit_sha = if diff_with_previous
+                             parent_commit(first).id
+                           else
+                             first
+                           end
+        diff_string = @repository.git.ruby_git.diff(first_commit_sha ,last)
         Grit::Diff.list_from_string(@repository, diff_string)
       end
     end
