@@ -19,6 +19,7 @@
 #++
 
 class SearchesController < ApplicationController
+  helper :all
   renders_in_global_context
   
   def show
