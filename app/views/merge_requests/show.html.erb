@@ -73,29 +73,6 @@
        :locals => {:version => @merge_request.versions.last} -%>
 </div>
 
-<<<<<<< HEAD
-<% if @merge_request.open? -%>
-<h2><%= t("views.merges.commits_to_merged") %>:</h2>
-<% else -%>
-<h2><%= t("views.merges.commits") %>:</h2>
-<% end -%>
-
-<script type="text/javascript" charset="utf-8">
-  function toggleComments(index) {
-      $("#commit_" + index).toggleClass("with_comments");
-      $('.comment_for_commit_' + index).toggle();
-  }
-</script>
-
-
-<%- if @merge_request.versions.size > 1 -%>
-  <form>
-    <label for="merge_request_version">Select version</label>:
-  </form>
-<%- end -%>
-
-<%= render :partial => 'commits' %>
-
 <h2 id="comments">Comments</h2>
 <div class="comments">
   <%= render :partial => @merge_request.comments -%>
