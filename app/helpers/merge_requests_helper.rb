@@ -111,8 +111,10 @@ module MergeRequestsHelper
     version.affected_commits.length > 7
   end
 
+  # TODO: Add a button to display the status. git cherry takes way too long for us to wait
+  # for it to perform
   def commit_css_class(merge_request, commit)
-    merge_request.commit_merged?(commit.id) ? "merged" : "unmerged"
+    "unmerged"
   end
 
   def select_version_url(merge_request)
