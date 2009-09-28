@@ -567,19 +567,26 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
 
 Gitorious.DiffBrowser = function(shas)
 {
-    jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
-    var mr_diff_url = jQuery("#merge_request_commit_selector")
-      .attr("data-merge-request-version-url");
-    jQuery.get(mr_diff_url, {"commit_shas": shas}, function(data, responseText) {
-        if (responseText === "success") {
-          jQuery("#merge_request_diff").html(data);
-          var shaSpec = new Gitorious.ShaSpec();
-          shaSpec.parseShas(shas);
-          shaSpec.summarizeHtml();
-
-          Gitorious.setDiffBrowserHunkStateFromCookie();
-        }
-    });
+  jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
+  var mr_diff_url = jQuery("#merge_request_commit_selector")
+    .attr("data-merge-request-version-url");
+  jQuery.ajax({
+    "url": mr_diff_url,
+    "data": {"commit_shas": shas},
+    "success": function(data, responseText) {
+      if (responseText === "success") {
+        jQuery("#merge_request_diff").html(data);
+        var shaSpec = new Gitorious.ShaSpec();
+        shaSpec.parseShas(shas);
+        shaSpec.summarizeHtml();        
+        Gitorious.setDiffBrowserHunkStateFromCookie();
+      }
+    },
+    "error": function(xhr, statusText, errorThrown) {
+      jQuery("#merge_request_diff").html("<div class=\"merge_request_diff_loading_indicator\">" + 
+                                         "An error has occured. Please try again later.</div>");
+    }
+  });
 }
     
 // Gitorious.Wordwrapper = {
