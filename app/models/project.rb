@@ -277,6 +277,10 @@ class Project < ActiveRecord::Base
     unless owned_by_group?
       self.owner = another_owner
       self.wiki_repository.owner = another_owner
+      
+      repositories.mainlines.each {|repo|
+        repo.committerships.create!(:committer => another_owner, :creator_id => self.owner_id_was)
+      }
     end
   end
   
