@@ -218,7 +218,7 @@ $(document).ready(function() {
   $("body#merge_requests", function(){
     var spec = Gitorious.ShaSpec.parseLocationHash(document.location.hash);
     if (spec) {
-      spec.summarizeHtml();
+      Gitorious.MergeRequestController.getInstance().loadFromBookmark(spec);
     }
   })
 
@@ -299,24 +299,22 @@ $(document).ready(function() {
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.addSha(first_commit_sha);
         shaSpec.addSha(last_commit_sha);          
-        document.location.hash = shaSpec.shaSpec();
-        shaSpec.summarizeHtml();
+        Gitorious.MergeRequestController.getInstance().isSelectingShas(shaSpec);
       };
       return jQuery("#merge_request_commit_selector.compact").selectable({
         filter: "li.single_commit",
         stop: function(e, ui) {
-            var sha_spec = new Gitorious.ShaSpec();
-            jQuery("li.ui-selected a", this).each(function() {
-                sha = jQuery(this).attr("data-commit-sha");
-                sha_spec.addSha(sha);
-            });
-          $("#current_shas .label").html("Showing");
-            var mr_diff_url = jQuery("#merge_request_commit_selector")
-              .attr("data-merge-request-version-url");
-            var diff_browser = new Gitorious.DiffBrowser(sha_spec.shaSpec());
+          var sha_spec = new Gitorious.ShaSpec();
+          jQuery("li.ui-selected a", this).each(function() {
+            sha = jQuery(this).attr("data-commit-sha");
+            sha_spec.addSha(sha);
+          });
+          Gitorious.MergeRequestController.getInstance().didSelectShas(sha_spec);
+        },
+        start: function(e, ui) {
+          Gitorious.MergeRequestController.getInstance().willSelectShas();
         },
         selecting: function(e, ui) {
-          $("#current_shas .label").html("Selecting");
           selectingAndUnselecting();
         },
         unselecting: function(e,ui) {
@@ -476,9 +474,9 @@ Gitorious.ShaSpec = function() {
   this.addSha = function(s) {
     this.allShas.push(new Gitorious.Sha(s));
   }
-  // Add shas from a string, eg ff0..bba
+  // Add shas from a string, eg ff0-bba
   this.parseShas = function(shaString) {
-    pair = shaString.split("..");
+    pair = shaString.split("-");
     this.addSha(pair[0]);
     if (pair.length > 1) {
       this.addSha(pair[1]);
@@ -505,12 +503,12 @@ Gitorious.ShaSpec = function() {
   
   this.shaSpec = function() {
     var _specs = this.shaSpecs();
-    return jQuery.map(_specs, function(s){return s.sha()}).join("..");
+    return jQuery.map(_specs, function(s){return s.sha()}).join("-");
   }
   
   this.shortShaSpec = function() {
     var _specs = this.shaSpecs();
-    return jQuery.map(_specs, function(s){ return s.shortSha() }).join("..");
+    return jQuery.map(_specs, function(s){ return s.shortSha() }).join("-");
   }
 
   this.singleCommit = function() {
@@ -578,7 +576,7 @@ Gitorious.DiffBrowser = function(shas)
         jQuery("#merge_request_diff").html(data);
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.parseShas(shas);
-        shaSpec.summarizeHtml();        
+        Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
         Gitorious.setDiffBrowserHunkStateFromCookie();
       }
     },
@@ -588,7 +586,57 @@ Gitorious.DiffBrowser = function(shas)
     }
   });
 }
-    
+
+Gitorious.MergeRequestController = function() {
+  this.willSelectShas = function() {
+    $("#current_shas .label").html("Selecting");
+  }
+  
+  this.didReceiveVersion = function(spec) {
+    console.debug("Did receive version. Spec is " + spec.shaSpec());
+    document.location.hash = spec.shaSpec();
+  }
+
+  this.isSelectingShas = function(spec) {
+    document.location.hash = spec.shaSpec();
+    spec.summarizeHtml();
+  }
+
+  // Loads the requested (from path part of uri) shas and version
+  this.loadFromBookmark = function(spec) {
+    jQuery("li.ui-selected").removeClass("ui-selected");
+    var allShas = jQuery("li.single_commit a").map(function(){
+      return $(this).attr("data-commit-sha");
+    })
+    var currentShas = [];
+    for (var i = allShas.indexOf(spec.firstSha().sha());
+         i <= allShas.indexOf(spec.lastSha().sha()); 
+         i++) {
+      currentShas.push(allShas[i]);
+    }
+    jQuery.each(currentShas, function(ind, sha){
+      jQuery("[data-commit-sha='" + sha + "']").parent().addClass("ui-selected");
+    })
+ }
+
+  this.didSelectShas = function(spec) {
+    $("#current_shas .label").html("Showing");
+    var mr_diff_url = jQuery("#merge_request_commit_selector")
+      .attr("data-merge-request-version-url");
+    var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());    
+  }    
+}
+
+Gitorious.MergeRequestController.getInstance = function() {
+  if (Gitorious.MergeRequestController._instance) {
+    return Gitorious.MergeRequestController._instance;
+  } else {
+    var result = new Gitorious.MergeRequestController();
+    Gitorious.MergeRequestController._instance = result;
+    return result;
+  }
+}
+
 // Gitorious.Wordwrapper = {
 //   wrap: function(elements) {
 //     elements.each(function(e) {
@@ -629,7 +677,7 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
     this.update();
   };
   
-  this.onSourceBranchChange = function(event) {
+  this.onSuccessourceBranchChange = function(event) {
     if (sourceBranch = $('#merge_request_source_branch')) {
       this.sourceBranchSelected(sourceBranch);
     }

@@ -48,7 +48,7 @@ class MergeRequestVersion < ActiveRecord::Base
   def sha_summary(format = :short)
     result = format == :short ? short_merge_base : merge_base_sha
     if !affected_commits.blank?
-      result << ".." +  (format == :short ? affected_commits.last.id_abbrev : affected_commits.last.id)
+      result << "-" +  (format == :short ? affected_commits.last.id_abbrev : affected_commits.last.id)
     end
     result
   end
@@ -62,8 +62,14 @@ class MergeRequestVersion < ActiveRecord::Base
       @repository = repository
     end
 
-    def parent_commit(sha)
-      Grit::Commit.find_all(@repository, sha, {:max_count => 1}).first.parents.first
+    # Returns the sha of +sha+'s parent. If none, return +sha+
+    def parent_commit_sha(sha)
+      first_parent = commit = Grit::Commit.find_all(@repository, sha, {:max_count => 1}).first.parents.first
+      if first_parent.nil?
+        sha
+      else
+        first_parent.id
+      end
     end
     
     def cache_key(first, last=nil)
@@ -73,7 +79,7 @@ class MergeRequestVersion < ActiveRecord::Base
     def commit_diff(first, last, diff_with_previous=false)
       Rails.cache.fetch(cache_key(first,last), :expires_in => 60.minutes) do
         first_commit_sha = if diff_with_previous
-                             parent_commit(first).id
+                             parent_commit_sha(first)
                            else
                              first
                            end

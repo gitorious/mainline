@@ -35,11 +35,11 @@ class MergeRequestVersionsController < ApplicationController
   
   private
   def commit_range?(shaish)
-    shaish.include?("..")
+    shaish.include?("-")
   end
 
   def extract_range_from_parameter(p)
-    if match = /^([a-z0-9]*)\.\.([a-z0-9]*)$/.match(p)
+    if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(p)
       Range.new(match[1],match[2])
     else
       p

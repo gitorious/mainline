@@ -53,7 +53,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
     context 'Viewing the diff for a series of commits' do
       setup do
         @version.expects(:diffs).with("ffcab".."bacff").returns([])
-        get :show, :id => @version, :commit_shas => "ffcab..bacff"
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
       end
       should_respond_with :success
       should_not_assign_to(:commit)
