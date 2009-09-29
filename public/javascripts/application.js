@@ -505,7 +505,15 @@ Gitorious.ShaSpec = function() {
     var _specs = this.shaSpecs();
     return jQuery.map(_specs, function(s){return s.sha()}).join("-");
   }
-  
+
+  this.shaSpecWithVersion = function() {
+    result = this.shaSpec();
+    if (this.hasVersion()) {
+      result = result + "@" + this.getVersion();
+    }
+    return result;
+  }
+
   this.shortShaSpec = function() {
     var _specs = this.shaSpecs();
     return jQuery.map(_specs, function(s){ return s.shortSha() }).join("-");
@@ -593,12 +601,17 @@ Gitorious.MergeRequestController = function() {
   }
   
   this.didReceiveVersion = function(spec) {
-    console.debug("Did receive version. Spec is " + spec.shaSpec());
-    document.location.hash = spec.shaSpec();
+    spec.setVersion(this.determineCurrentVersion());
+    document.location.hash = spec.shaSpecWithVersion();
+  }
+
+  this.determineCurrentVersion = function() {
+    return $("#merge_request_version").text().replace(/[^0-9]+/g,'');
   }
 
   this.isSelectingShas = function(spec) {
-    document.location.hash = spec.shaSpec();
+    spec.setVersion(this.determineCurrentVersion());
+    document.location.hash = spec.shaSpecWithVersion();
     spec.summarizeHtml();
   }
 
