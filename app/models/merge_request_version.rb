@@ -46,11 +46,12 @@ class MergeRequestVersion < ActiveRecord::Base
   end
 
   def sha_summary(format = :short)
-    result = format == :short ? short_merge_base : merge_base_sha
-    if !affected_commits.blank?
-      result << "-" +  (format == :short ? affected_commits.last.id_abbrev : affected_commits.last.id)
+    if affected_commits.blank?
+      format == :short ? short_merge_base : merge_base_sha
+    else
+      meth = format == :short ? :id_abbrev : :id
+      [affected_commits.first, affected_commits.last].collect(&meth).join("-")
     end
-    result
   end
 
   def diff_backend
