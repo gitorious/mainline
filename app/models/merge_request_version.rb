@@ -50,7 +50,7 @@ class MergeRequestVersion < ActiveRecord::Base
       format == :short ? short_merge_base : merge_base_sha
     else
       meth = format == :short ? :id_abbrev : :id
-      [affected_commits.first, affected_commits.last].collect(&meth).join("-")
+      [affected_commits.last, affected_commits.first].collect(&meth).join("-")
     end
   end
 

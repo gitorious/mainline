@@ -90,15 +90,15 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       assert_equal "ffca0", @version.sha_summary
     end
 
-    should "specify the first and last affected commits" do
+    should "specify the first and last affected commits, in reverse order" do
       affected_commits = [
         stub(
           :id => "82f4a08e2c0867956fdc797692e3d127ba7b8e8c", :id_abbrev => "82f4"),
         stub(
           :id => "1e4e040fa4c164537a90303ae95eae3bd895a95e", :id_abbrev => "1e4e")]
       @version.stubs(:affected_commits).returns(affected_commits)
-      assert_equal "82f4-1e4e", @version.sha_summary
-      assert_equal "82f4a08e2c0867956fdc797692e3d127ba7b8e8c-1e4e040fa4c164537a90303ae95eae3bd895a95e",
+      assert_equal "1e4e-82f4", @version.sha_summary
+      assert_equal "1e4e040fa4c164537a90303ae95eae3bd895a95e-82f4a08e2c0867956fdc797692e3d127ba7b8e8c",
          @version.sha_summary(:long)
     end
   end
