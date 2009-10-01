@@ -51,8 +51,11 @@
 
   <p>
     <small>
+    <% if GitoriousConfig['public_mode'] -%>
       <%= link_to t("views.sessions.register"), new_user_path -%> 
-      | <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
+      |
+    <% end -%> 
+    <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
     </small>
   </p>
 <% end -%>
