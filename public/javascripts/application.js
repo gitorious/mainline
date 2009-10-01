@@ -298,7 +298,8 @@ $(document).ready(function() {
         
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.addSha(first_commit_sha);
-        shaSpec.addSha(last_commit_sha);          
+        shaSpec.addSha(last_commit_sha); 
+
         Gitorious.MergeRequestController.getInstance().isSelectingShas(shaSpec);
       };
       return jQuery("#merge_request_commit_selector.compact").selectable({
@@ -615,9 +616,7 @@ Gitorious.MergeRequestController = function() {
     spec.summarizeHtml();
   }
 
-  // Loads the requested (from path part of uri) shas and version
-  this.loadFromBookmark = function(spec) {
-    jQuery("li.ui-selected").removeClass("ui-selected");
+  this.findCurrentlySelectedShas = function(spec) {
     var allShas = jQuery("li.single_commit a").map(function(){
       return $(this).attr("data-commit-sha");
     })
@@ -627,6 +626,13 @@ Gitorious.MergeRequestController = function() {
          i++) {
       currentShas.push(allShas[i]);
     }
+    return currentShas;
+  }
+
+  // Loads the requested (from path part of uri) shas and version
+  this.loadFromBookmark = function(spec) {
+    jQuery("li.ui-selected").removeClass("ui-selected");
+    var currentShas = this.findCurrentlySelectedShas(spec);
     jQuery.each(currentShas, function(ind, sha){
       jQuery("[data-commit-sha='" + sha + "']").parent().addClass("ui-selected");
     })
@@ -634,6 +640,16 @@ Gitorious.MergeRequestController = function() {
 
   this.didSelectShas = function(spec) {
     $("#current_shas .label").html("Showing");
+    
+    // In case a range has been selected, also display what's in between as selected
+    var currentShas = this.findCurrentlySelectedShas(spec);
+    jQuery.each(currentShas, function(idx,sha){
+      var l = jQuery("[data-commit-sha='" + sha + "']").parent();
+      if (!l.hasClass("ui-selected")) {
+        l.addClass("ui-selected");
+      }
+    });
+
     var mr_diff_url = jQuery("#merge_request_commit_selector")
       .attr("data-merge-request-version-url");
     var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());    
