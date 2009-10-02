@@ -40,7 +40,7 @@ module ApplicationHelper
   
   def pull_box(title, options = {}, &block)
     css_class = options.delete(:class)
-    out = %Q{<div class="pull-box #{css_class}">}
+    out = %Q{<div class="pull-box round-top-5 #{css_class}">}
     out << %Q{<h3 class="round-top-5 pull-box-header">#{title}</h3>} if title
     out << %Q{<div class="pull-box-content">}
     out << capture(&block)
