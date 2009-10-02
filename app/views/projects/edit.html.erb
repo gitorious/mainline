@@ -58,8 +58,10 @@
       <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]}, 
             :include_blank => true, :selected => nil -%>
       <br /><small class="hint">
-        <strong>Note:</strong> Will give the group commit rights to all repositories
-        in this project. Group will also gain admin access to this project.
+        <strong>Note:</strong> This will give the group members
+        admin rights to this project, along with adding them as
+        committers to the mainline repositories (you can remove them later
+        on a per-repository basis if you want to)
       </small>
     </p>
   <% end -%>
