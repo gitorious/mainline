@@ -58,9 +58,8 @@
       <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]}, 
             :include_blank => true, :selected => nil -%>
       <br /><small class="hint">
-        <strong>Note:</strong> Only change ownership of this project, if you're 
-        absolutely sure you want to give admin access to this project to 
-        <em>everyone</em> in the selected group.
+        <strong>Note:</strong> Will give the group commit rights to all repositories
+        in this project. Group will also gain admin access to this project.
       </small>
     </p>
   <% end -%>
