@@ -467,6 +467,7 @@
         :commits_to_merged => "Commits that would be merged",
         :commits => "Commits",
         :reopen_btn => 'Reopen merge request',
+        :update_btn => 'Update merge request',
       },
       :committers => {
         :title => "Give a user commit rights to {{repo}}",
