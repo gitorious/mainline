@@ -257,8 +257,8 @@
         :avatar => 'Profile image',
         :pending_activation => {
           :header => "Almost done",
-          :info => "A <strong>confirmation e-mail</strong> will be delivered to e-mail address you specified. In it, you'll find an activation link. Visit that link to complete the registration.",
-          :thanks => "Thank you for using Gitorious!" 
+          :info => "A <strong>confirmation e-mail</strong> will be delivered to the e-mail address you specified. This e-mail contains an activation link, visit that link to complete the registration.",
+          :thanks => "We look forward to seeing you use Gitorious!"
         }
       },
       :logs => {
