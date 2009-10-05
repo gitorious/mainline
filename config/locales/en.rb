@@ -438,7 +438,7 @@
         :bugtracker => "Bugtracker at ",
         :repos => "Repositories",
         :repository_clones => "Repository clones",
-        :no_clones_yet => "No clones on Gitorious yet of this project",
+        :no_clones_yet => "No clones on Gitorious yet of this repository",
         :project_members => "Project members",
         :add_repository => "Add repository",
         :edit_oauth_settings => 'Edit contribution settings',
