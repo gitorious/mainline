@@ -22,7 +22,7 @@
 
 class UsersController < ApplicationController
   skip_before_filter :public_and_logged_in, :only => [
-    :activate, :forgot_password, :forgot_password_create, :reset_password 
+    :pending_activation, :activate, :forgot_password, :forgot_password_create, :reset_password
   ]
   before_filter :login_required, :only => [:edit, :update, :password, :update_password, :avatar]
   before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password, :avatar]
@@ -72,10 +72,13 @@ class UsersController < ApplicationController
     if !@user.terms_of_use.blank?
       @user.accept_terms!
     end
-    flash[:success] = I18n.t "users_controller.create_notice"
-    redirect_to root_path
+    redirect_to :action => "pending_activation"
   rescue ActiveRecord::RecordInvalid
     render :action => 'new'
+  end
+  
+  # render pending_activation.html.erb
+  def pending_activation
   end
 
   def activate

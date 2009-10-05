@@ -67,6 +67,11 @@ class UsersControllerTest < ActionController::TestCase
   end
   
   should_render_in_global_context
+  
+  should "show pending activation" do
+    get :pending_activation
+    assert_response :success
+  end
 
   should " activate user" do
     assert_nil User.authenticate('moe', 'test')
@@ -123,10 +128,10 @@ class UsersControllerTest < ActionController::TestCase
     should "allow signups" do
       assert_difference("User.count") do
         create_user
-        assert_response :redirect
+        assert_redirected_to :action => "pending_activation"
       end
     end
-
+    
     should "require login on signup" do
       assert_no_difference("User.count") do
         create_user(:login => nil)

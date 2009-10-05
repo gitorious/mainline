@@ -62,7 +62,6 @@
       :archive_error => "El repositorio especificado o el SHA es inválido"
     },
     :users_controller => {
-      :create_notice => "¡Gracias por registrarse! Muy pronto recibitá un correo electrónico para activar su cuenta",
       :activate_notice => "Su cuenta ha sido activada, ¡bienvenido!",
       :activate_error => "Código de activación inválido",
       :reset_password_notice => "Se le ha enviado a su correo electrónico una nueva contraseña",
