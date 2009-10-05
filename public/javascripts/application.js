@@ -256,8 +256,8 @@ $(document).ready(function() {
         nativeSubmitButton.after(awesomeSubmitButton);
     });
 
-    // toggling of diffs in merge-request diff browser
-    $('#merge_request_diff .file-diff .header').live("click", function(event) {
+    // toggling of diffs in diff browsers
+    $('.file-diff .header').live("click", function(event) {
         var hunksContainer = $(this).next();
         if (hunksContainer.is(":visible")) {
           $(this).removeClass("open").addClass("closed");
@@ -268,18 +268,20 @@ $(document).ready(function() {
         }
         event.preventDefault();
     });
-    $("#merge_request_diff .file-diff-controls a#expand-all").live("click", function(e){
+    $(".file-diff-controls a#expand-all").live("click", function(e){
         var container = $(this).parent().parent().parent();
+        var cookiePrefix = $(this).attr("gts:cookie-prefix") || 'generic';
         container.find('.file-diff .header').removeClass("closed").addClass("open");
         container.find('.diff-hunks:hidden').show();
-        $.cookie("merge-requests-diff-hunks-state", "expanded");
+        $.cookie(cookiePrefix + "-diff-hunks-state", "expanded");
         e.preventDefault();
     });
-    $("#merge_request_diff .file-diff-controls a#collapse-all").live("click", function(e){
+    $(".file-diff-controls a#collapse-all").live("click", function(e){
         var container = $(this).parent().parent().parent();
+        var cookiePrefix = $(this).attr("gts:cookie-prefix") || 'generic';
         container.find('.file-diff .header').removeClass("open").addClass("closed");
         container.find('.diff-hunks').hide();
-        $.cookie("merge-requests-diff-hunks-state", null);
+        $.cookie(cookiePrefix + "-diff-hunks-state", "collapsed");
         e.preventDefault();
     });
 
@@ -566,10 +568,17 @@ Gitorious.ShaSpec.parseLocationHash = function(hash) {
 
 Gitorious.setDiffBrowserHunkStateFromCookie = function() {
   if ($.cookie("merge-requests-diff-hunks-state") === "expanded") {
-    var container = $("#merge_request_diff");
-    container.find('.file-diff .header').removeClass("closed").addClass("open");
-    container.find('.diff-hunks:hidden').show();
-  };
+    $('#merge_request_diff .file-diff .header').removeClass("closed").addClass("open");
+    $('#merge_request_diff .diff-hunks:hidden').show();
+  } else if ($.cookie("commits-diff-hunks-state")) {
+    if ($.cookie("commits-diff-hunks-state") === "expanded") {
+      $('#commit-diff-container .file-diff .header').removeClass("closed").addClass("open");
+      $('#commit-diff-container .diff-hunks:hidden').show();
+    } else {
+      $('#commit-diff-container .file-diff .header').removeClass("open").addClass("closed");
+      $('#commit-diff-container .diff-hunks:hidden').hide();
+    }
+  }
 }
 
 Gitorious.DiffBrowser = function(shas)

@@ -28,22 +28,73 @@ module CommitsHelper
                                      @project, @repository, match), :class => "sha")
     end
   end
+
+  def encode_diff(udiff)
+    if udiff.respond_to?(:force_encoding)
+      # TODO: move into the diff library?
+      udiff = udiff.force_encoding(Encoding::UTF_8)
+    else
+      udiff
+    end
+  end
   
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
     return if udiff.blank?
     
-    if udiff.respond_to?(:force_encoding)
-      # TODO: move into the diff library?
-      udiff = udiff.force_encoding(Encoding::UTF_8)
-    end
+    udiff = encode_diff(udiff)
     
-    case display_mode
-    when "sidebyside"
+    if sidebyside_diff?
       render_sidebyside_diff(udiff)
     else
       render_inline_diff(udiff)
     end
+  end
+
+  def sidebyside_diff?
+    @diffmode == "sidebyside"
+  end
+
+  def render_diffs(diffs)
+    if sidebyside_diff?
+      diffs.map do |file|
+        out = %Q{<a name="#{h(force_utf8(file.a_path))}"></a>}
+        out << "<h4>"
+        out << link_to(h(file.a_path), file_path(@repository, file.a_path, @commit.id))
+        out << "</h4>"
+        out << render_diff(encode_diff(file.diff))
+        out
+      end.join("\n")
+    else
+      '<div class="clear"></div><div id="commit-diff-container">' +
+        render_inline_diffs_controls("commits") +
+        render_inline_diffs_with_stats(diffs, :open) + "</div>"
+    end
+  end
+
+  def render_inline_diffs_with_stats(file_diffs, state = :closed)
+    file_diffs.map do |file|
+      diff_renderer = Diff::Display::Unified.new(file.diff)
+      out = '<div class="file-diff">'
+      out << %Q{<div class="header round-top-10 #{state == :closed ? 'closed' : 'open'}">}
+      out << %Q{<span class="title"><span class="icon"></span>#{h(file.a_path)}</span>}
+      out << %Q{<div class="diff-stats">}
+      out << render_compact_diff_stats(diff_renderer.stats)
+      out << "</div></div>"
+      out << %Q{<div class="diff-hunks" #{state == :closed ? 'style="display:none"' : ''}>}
+      out << render_inline_diff(encode_diff(file.diff), diff_renderer)
+      out << "</div></div>"
+      out
+    end.join("\n")
+  end
+
+  def render_inline_diffs_controls(cookie_prefix)
+    %Q{<div class="file-diff-controls">
+         <small>
+           <a href="#" id="expand-all" gts:cookie-prefix="#{cookie_prefix}">expand all</a> / 
+           <a href="#" id="collapse-all" gts:cookie-prefix="#{cookie_prefix}">collapse all</a>
+         </small>
+       </div>}
   end
   
   def render_inline_diff(udiff, differ = nil)

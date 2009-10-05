@@ -54,22 +54,5 @@
 </div>
 <% end -%>
 
-<div class="file-diff-controls">
-  <small><a href="#" id="expand-all">expand all</a> / 
-  <a href="#" id="collapse-all">collapse all</a></small>
-</div>
-
-<% diffs.each do |file| -%>
-<% diff_renderer = Diff::Display::Unified.new(file.diff) %>
-<div class="file-diff">
-  <div class="header round-top-10 closed">
-    <span class="title">
-      <span class="icon"></span><%= h(file.a_path) -%>
-    </span>
-    <div class="diff-stats"><%= render_compact_diff_stats(diff_renderer.stats) -%></div>
-  </div>
-  <div class="diff-hunks" style="display:none">
-    <%= render_inline_diff(file.diff, diff_renderer) -%>
-  </div>
-</div>
-<% end -%>
+<%= render_inline_diffs_controls("merge-requests") %>
+<%= render_inline_diffs_with_stats(diffs) -%>

@@ -2815,12 +2815,12 @@ Merge request commit selector
     border: none !important;
 }
 
-#merge_request_diff .file-diff {
+.file-diff {
     border-bottom: 2px solid #cecece;
     margin-bottom: 10px;
 }
 
-#merge_request_diff .file-diff .header {
+.file-diff .header {
     margin: 0;
     background: #eee;
     color: #339900;
@@ -2828,34 +2828,34 @@ Merge request commit selector
     padding: 5px 0 0px 8px;
     width: 50%;
 }
-#merge_request_diff .file-diff .header:hover {
+.file-diff .header:hover {
     background: #dedede;
     cursor: pointer;
 }
-#merge_request_diff .file-diff .header.open { background: #dedede; }
+.file-diff .header.open { background: #dedede; }
 
-#merge_request_diff .file-diff .header span.icon { padding-right: 20px; }
-#merge_request_diff .file-diff .header.open span.icon {
+.file-diff .header span.icon { padding-right: 20px; }
+.file-diff .header.open span.icon {
     background: url('/images/silk/bullet_toggle_minus.png') no-repeat 0 0;
 }
-#merge_request_diff .file-diff .header.closed span.icon {
+.file-diff .header.closed span.icon {
     background: url('/images/silk/bullet_toggle_plus.png') no-repeat 0 0;
 }
 
-#merge_request_diff .file-diff .diff-stats {
+.file-diff .diff-stats {
     font-size: 10px;
     color: #666;
     display: inline;
     margin-left: 11px;
 }
-#merge_request_diff .file-diff .diff-stats .additions { color: #00BF00; }
-#merge_request_diff .file-diff .diff-stats .deletions { color: #DC0000; }
+.file-diff .diff-stats .additions { color: #00BF00; }
+.file-diff .diff-stats .deletions { color: #DC0000; }
 
-#merge_request_diff .file-diff .diff-hunks table {
+.file-diff .diff-hunks table {
     margin-bottom: 0;
 }
 
-#merge_request_diff .file-diff-controls {
+.file-diff-controls {
     float: right;
     color: #888;
     margin-right: 5px;
@@ -2941,4 +2941,8 @@ ul.changable-selection-options li:hover {
     margin: 8px 10px 0 10px;
     padding: 0;
     font-size: 11px;
+}
+
+#commit-diff-container {
+    margin-bottom: 20px;
 }
