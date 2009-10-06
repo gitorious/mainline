@@ -73,11 +73,16 @@ module CommitsHelper
       out << render_compact_diff_stats(diff_renderer.stats)
       out << "</div></div>"
       out << %Q{<div class="diff-hunks" #{state == :closed ? 'style="display:none"' : ''}>}
+
       if file.diff[0..256].include?("\000")
         out << "Binary files differ"
       else
-        out << force_utf8(render_inline_diff(file.diff, diff_renderer))
+        comments = if block_given?
+                     yield file
+                   end
+        out << force_utf8(render_inline_diff(file.diff, diff_renderer, comments))
       end
+
       out << "</div></div>"
       out
     end.join("\n")

@@ -55,5 +55,5 @@
 <% end -%>
 
 <%= render_inline_diffs_controls("merge-requests") %>
-<%= render_inline_diffs_with_stats(diffs) -%>
+<%= render_inline_diffs_with_stats(diffs){|file|@version.comments_for_path_and_sha(file.a_path, @sha_range)} -%>
 
