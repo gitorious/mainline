@@ -15,15 +15,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 # Middleware that handles HTTP cloning
-# This piece of code is performed before the Rails stack kicks in. 
+# This piece of code is performed before the Rails stack kicks in.
 # If we return a 404 status code, control is passed on to Rails
 #
 # What it does is:
-# - Check if the hostname begins with +http+ (this will be reserved in the site model)
-# - As longs as we're sure we are in our own context, rip out the repo path and rest from the URI
-# - Return a X-Sendfile header in the response containing the full path to the object requested
-# - This will be picked up by Apache (given mod-x_sendfile is installed) and then delivered to the client
+# - Check if the hostname begins with +http+ (this will be reserved in
+#   the site model)
+# - As longs as we're sure we are in our own context, rip out the repo
+#   path and rest from the URI
+# - Return a X-Sendfile header in the response containing the full
+#   path to the object requested
+# - This will be picked up by Apache (given mod-x_sendfile is
+#   installed) and then delivered to the client
 require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
 
 class GitHttpCloner
