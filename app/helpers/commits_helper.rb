@@ -97,7 +97,7 @@ module CommitsHelper
        </div>}
   end
   
-  def render_inline_diff(udiff, differ = nil, comments = [])
+  def render_inline_diff(udiff, differ = nil, comments=[])
     differ ||= Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
@@ -106,7 +106,11 @@ module CommitsHelper
     out << %Q{<td class="line-numbers"></td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
-    out << differ.render(Gitorious::Diff::InlineTableCallback.with_comments(comments))
+    if comments.blank?
+      out << differ.render(Gitorious::Diff::InlineTableCallback.new)
+    else
+      out << differ.render(Gitorious::Diff::InlineTableCallback.with_comments(comments))
+    end
     out << "</table>"
     out
   end
