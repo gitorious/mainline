@@ -38,7 +38,7 @@ class MergeRequestVersionsController < ApplicationController
   end
 
   def extract_range_from_parameter(p)
-    if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(p)
+    @sha_range = if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(p)
       Range.new(match[1],match[2])
     else
       p

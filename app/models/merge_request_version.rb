@@ -42,8 +42,11 @@ class MergeRequestVersion < ActiveRecord::Base
     end    
   end
 
-  def comments_for_path(path)
-    comments.select{|c|c.path == path}
+  def comments_for_path_and_sha(path, sha)
+    if Range === sha
+      sha = [sha.begin, sha.end].join("-")
+    end
+    comments.select{|c|(c.path == path && c.sha1 == sha)}
   end
 
   def short_merge_base
