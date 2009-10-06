@@ -74,21 +74,28 @@ module EventRenderingHelper
     project = event.project
     repo = event.target
     
-    if repo.wiki?
+    case repo.kind
+    when Repository::KIND_WIKI
       action = action_for_event(:event_status_push_wiki) do
         "to " + link_to(h(project.slug), project_path(project)) + 
         "/" + link_to(h(t("views.layout.pages")), project_pages_url(project))
       end
       body = h(truncate(event.body, :length => 150))
       category = "wiki"
+    when 'commit'
+      action = action_for_event(:event_status_committed) do
+        link_to(event.data[0,8], project_repository_commit_path(project, repo, event.data)) + 
+        " to " + link_to(h(project.slug), project)
+      end
+      body = link_to(h(truncate(event.body, :length => 150)), 
+              project_repository_commit_path(project, repo, event.data))
+      category = "commit"
     else
       action = action_for_event(:event_status_committed) do
-        link_to(h(event.data[0,8]),
-          repo_owner_path(repo, :project_repository_commit_path, project, repo, event.data)) +
-          " to " + link_to(h(project.slug), project)
+        link_to(h(event.data[0,8]), repo_owner_path(repo, :project_repository_commit_path, project, repo, event.data)) +
+        " to " + link_to(h(project.slug), project)
       end
-      body = link_to(h(truncate(event.body, :length => 150)),
-        project_repository_commit_path(project, repo, event.data))
+      body = link_to(h(truncate(event.body, :length => 150)), project_repository_commit_path(project, repo, event.data))
       category = "commit"
     end
     
