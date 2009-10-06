@@ -90,9 +90,13 @@ class Comment < ActiveRecord::Base
     self.number_of_lines = range.end - range.begin
   end
 
+  def lines
+    first_line_number..(first_line_number+number_of_lines)
+  end
+
   def sha_range
     first, last = sha1.split("-")
-    first..last
+    first..(last||first)
   end
   
   protected

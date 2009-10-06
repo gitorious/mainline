@@ -1487,6 +1487,34 @@ table tr .line-numbers {
  border-bottom: 1px solid #cdcdcd;
 }
 
+table tr td.inline_comments {
+  width: 20px;
+}
+
+table tr td.inline_comments .comment {
+  width: 4px;
+  margin-right: 1px;
+  float: left;
+}
+table tr td.inline_comments .first {
+  -moz-border-radius-topleft: 2px;
+}
+
+table tr td.inline_comments .last {
+  -moz-border-radius-bottomleft: 2px;
+}
+
+table tr td.inline_comments .red {
+  background-color: red;
+}
+table tr td.inline_comments .blue {
+  background-color: blue;
+}
+
+table tr td.inline_comments .none {
+  background-color: inherit;
+}
+
 table tr td.code {
  width: 95%;
  padding-left: 10px;

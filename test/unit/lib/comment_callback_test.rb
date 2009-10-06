@@ -28,18 +28,18 @@ class CommentCallbackTest < ActiveSupport::TestCase
     
     should "render nothing if the line is out of range" do
       line = Diff::Display::AddLine.new("Hello", 3)
-      assert_equal %Q{<td class="blue comment none"></td>}, @callback.line(line)
+      assert_match /class=\"[a-z\s]*none/, @callback.line(line)
     end
 
 
     should "render a hint when a line is within range" do
       line = Diff::Display::AddLine.new("Hello", 1)
-      assert_equal %Q{<td class="blue comment first"></td>}, @callback.line(line)
+      assert_match /class=\"[a-z\s]*first/, @callback.line(line)
     end
 
-    should "render a hint and the comment on the last line" do
-      line = Diff::Display::AddLine.new("Hello", 2)      
-      assert_equal %Q{<td class="blue comment last"></td>}, @callback.line(line)
+    should "render a hint on the last line" do
+      line = Diff::Display::AddLine.new("Hello", 2)
+      assert_match /class=\"[a-z\s]*last/, @callback.line(line)
     end
   end
 
@@ -54,7 +54,8 @@ class CommentCallbackTest < ActiveSupport::TestCase
 
     should "render each comment inline when within range" do
       line = Diff::Display::AddLine.new("Yikes!", 1)
-      assert_match /<td.*>.*<\/td>\s?<td.*>.*<\/td>/, @callback.line(line)
+      assert_match /class=\"[a-z\s]*red/, @callback.line(line), "The first comment should be red"
+      assert_match /class=\"[a-z\s]*blue/, @callback.line(line), "The second comment should be blue"
     end
   end
 end

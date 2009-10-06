@@ -125,17 +125,29 @@ class CommentTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans)
       @merge_request.stubs(:calculate_merge_base).returns("ffc00")
       @first_version = @merge_request.create_new_version
+      @comment = @first_version.comments.build(:path => "README", :lines => (1..33),
+        :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
+        :project => @merge_request.target_repository.project)
+      assert @comment.save!
     end
 
     should "have a target" do
-      comment = @first_version.comments.build(:path => "README", :lines => (1..33),
-        :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
-        :project => @merge_request.target_repository.project)
-      assert comment.save!
-      assert_equal 1, comment.first_line_number
-      assert_equal 32, comment.number_of_lines
-      assert_equal(("ffac".."aafc"), comment.sha_range)
-      assert_equal @first_version, comment.target
+      assert_equal @first_version, @comment.target
+    end
+
+    should "have a range of shas" do
+      assert_equal(("ffac".."aafc"), @comment.sha_range)
+      @comment.sha1 = "ffac"
+      assert_equal(("ffac".."ffac"), @comment.sha_range)
+    end
+
+    should "have a range of lines" do
+      assert_equal 1, @comment.first_line_number
+      assert_equal 32, @comment.number_of_lines
+      @comment.lines = 2..2
+      assert_equal 2, @comment.first_line_number
+      assert_equal 0, @comment.number_of_lines
+      assert_equal((2..2), @comment.lines)
     end
     
   end

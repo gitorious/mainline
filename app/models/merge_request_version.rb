@@ -42,6 +42,9 @@ class MergeRequestVersion < ActiveRecord::Base
     end    
   end
 
+  def comments_for_path(path)
+    comments.select{|c|c.path == path}
+  end
 
   def short_merge_base
     merge_base_sha[0..6]

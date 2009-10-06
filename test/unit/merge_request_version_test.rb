@@ -123,4 +123,19 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       assert_equal "foo_bar", @backend.single_commit_diff("f00")
     end    
   end
+
+  context 'Commenting' do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans)
+      @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
+      @first_version = @merge_request.create_new_version
+    end
+    
+    should 'fetch all comments concerning a given path' do
+      comment = @first_version.comments.create(:path => "README", :lines => (1..33),
+        :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
+        :project => @merge_request.target_repository.project)
+      assert_equal([comment], @first_version.comments_for_path(comment.path))
+    end
+  end
 end

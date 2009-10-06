@@ -24,13 +24,20 @@ module Gitorious
         @comments = comments.map{|c|SingleCommentCallback.new(c, next_css_class)}
       end
 
+      # Each comment renders with a given CSS class
       def next_css_class
         @css_classes ||= %w(blue red green brown orange purple)
         @css_classes.shift
       end
 
       def line(line)
-        @comments.map{|c|c.line(line)}.join(" ")
+        wrap_line{@comments.map{|c|c.line(line)}.join(" ")}
+      end
+
+      def wrap_line
+        result = "<td class=\"inline_comments line-numbers\">"
+        result << yield
+        result << "</td>"
       end
       
     end
@@ -41,7 +48,7 @@ module Gitorious
       end
       
       def line(line)
-        %Q{<td class="#{css_classes_for(line)}"></td>}
+        %Q{<div class="#{css_classes_for(line)}">&nbsp;</div>}
       end
       
       def css_classes_for(line)

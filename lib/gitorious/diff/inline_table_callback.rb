@@ -20,9 +20,28 @@
 
 module Gitorious
   module Diff
-    class InlineTableCallback < BaseCallback      
+    class InlineTableCallback < BaseCallback
+      def self.with_comments(c)
+        result = new
+        result.comments = c
+        result
+      end
+
+      def comments=(c)
+        @comment_callback = CommentCallback.new(c)
+      end
+
+      def render_comments(line)
+        if @comment_callback
+          @comment_callback.line(line)
+        else
+          ""
+        end
+      end
+      
       def addline(line)
         %Q{<tr class="changes">} + 
+        render_comments(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code ins"><ins>} +
@@ -32,6 +51,7 @@ module Gitorious
       
       def remline(line)
         %Q{<tr class="changes">} + 
+        render_comments(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code del"><del>} + 
@@ -41,6 +61,7 @@ module Gitorious
       
       def modline(line)
         %Q{<tr class="changes">} + 
+        render_comments(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code unchanged mod">#{render_line(line)}</td></tr>}
@@ -48,6 +69,7 @@ module Gitorious
       
       def unmodline(line)
         %Q{<tr class="changes">} + 
+        render_comments(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code unchanged unmod">#{render_line(line)}</td></tr>}
@@ -62,6 +84,7 @@ module Gitorious
       
       def nonewlineline(line)
         %Q{<tr class="changes">} + 
+        render_comments(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code mod unmod">#{render_line(line)}</td></tr>}
