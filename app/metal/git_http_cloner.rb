@@ -29,8 +29,11 @@ require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Ra
 class GitHttpCloner
   def self.call(env)
     perform_http_cloning = env['HTTP_HOST'] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
-    if perform_http_cloning
-      if match = /(.*\.git)(.*)/.match(env['PATH_INFO'])
+    if perform_http_cloning && !GitoriousConfig['hide_http_clone_urls']
+      if env["PATH_INFO"] =~ /^\/robots.txt$/
+        body = ["User-Agent: *\nDisallow: /\n"]
+        return [200, {"Content-Type" => "text/plain"}, body]
+      elsif match = /(.*\.git)(.*)/.match(env['PATH_INFO'])
         path = match[1]
         rest = match[2]
         begin
