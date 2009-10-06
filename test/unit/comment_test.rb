@@ -119,5 +119,24 @@ class CommentTest < ActiveSupport::TestCase
       assert_nil comment.state_changed_to
     end
   end
-  
+
+  context 'On merge request versions' do
+    setup do
+      @merge_request = merge_requests(:moes_to_johans)
+      @merge_request.stubs(:calculate_merge_base).returns("ffc00")
+      @first_version = @merge_request.create_new_version
+    end
+
+    should "have a target" do
+      comment = @first_version.comments.build(:path => "README", :lines => (1..33),
+        :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
+        :project => @merge_request.target_repository.project)
+      assert comment.save!
+      assert_equal 1, comment.first_line_number
+      assert_equal 32, comment.number_of_lines
+      assert_equal(("ffac".."aafc"), comment.sha_range)
+      assert_equal @first_version, comment.target
+    end
+    
+  end
 end

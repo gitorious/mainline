@@ -84,6 +84,16 @@ class Comment < ActiveRecord::Base
       return true
     end
   end
+
+  def lines=(range)
+    self.first_line_number = range.begin
+    self.number_of_lines = range.end - range.begin
+  end
+
+  def sha_range
+    first, last = sha1.split("-")
+    first..last
+  end
   
   protected
     def notify_target_if_supported

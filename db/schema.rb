@@ -9,7 +9,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090914075300) do
+ActiveRecord::Schema.define(:version => 20091006082442) do
+
+  create_table "accepted_contribution_agreements", :force => true do |t|
+    t.integer  "project_id"
+    t.integer  "user_id"
+    t.string   "oauth_token"
+    t.string   "oauth_secret"
+    t.string   "contribution_agreement_version"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -25,8 +35,8 @@ ActiveRecord::Schema.define(:version => 20090914075300) do
   add_index "cloners", ["repository_id"], :name => "index_cloners_on_repository_id"
 
   create_table "comments", :force => true do |t|
-    t.integer  "user_id",      :null => false
-    t.integer  "target_id",    :null => false
+    t.integer  "user_id",           :null => false
+    t.integer  "target_id",         :null => false
     t.string   "sha1"
     t.text     "body"
     t.datetime "created_at"
@@ -34,6 +44,9 @@ ActiveRecord::Schema.define(:version => 20090914075300) do
     t.integer  "project_id"
     t.string   "target_type"
     t.string   "state_change"
+    t.string   "path"
+    t.integer  "first_line_number"
+    t.integer  "number_of_lines"
   end
 
   add_index "comments", ["project_id"], :name => "index_comments_on_project_id"
