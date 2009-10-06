@@ -115,6 +115,10 @@ class ApplicationController < ActionController::Base
       end
     end
     
+    def require_not_logged_in
+      redirect_to root_path if logged_in?
+    end
+    
     def require_current_eula
       if logged_in?
         unless current_user.terms_accepted?
