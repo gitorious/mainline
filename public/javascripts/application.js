@@ -706,7 +706,7 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
     this.update();
   };
   
-  this.onSuccessourceBranchChange = function(event) {
+  this.onSourceBranchChange = function(event) {
     if (sourceBranch = $('#merge_request_source_branch')) {
       this.sourceBranchSelected(sourceBranch);
     }
