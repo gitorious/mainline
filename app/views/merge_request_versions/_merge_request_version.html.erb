@@ -54,6 +54,34 @@
 </div>
 <% end -%>
 
+<div>
+<% form_for(@version.comments.build, :url => repo_owner_path(@version.merge_request.target_repository, 
+    [
+    @version.merge_request.target_repository.project,
+    @version.merge_request.target_repository, 
+    @version.merge_request, @version, :comments])) do |f| -%>
+<p>
+  <%= f.label :body -%>
+  <%= f.text_area :body -%>
+</p>
+<p>
+  <%= f.label :lines -%>
+  <%= text_field :comment, :lines -%>
+</p>
+<p>
+  <%= f.label :path -%>
+  <%= f.text_field :path -%>
+</p>
+<p>
+  <%= f.label :sha1 -%>
+  <%= f.text_field :sha1 -%>
+</p>
+<p>
+  <%= f.submit -%>
+</p>
+<% end -%>
+</div>
+
 <%= render_inline_diffs_controls("merge-requests") %>
 <%= render_inline_diffs_with_stats(diffs){|file|@version.comments_for_path_and_sha(file.a_path, @sha_range)} -%>
 

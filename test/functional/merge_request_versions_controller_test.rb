@@ -25,18 +25,17 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
 
   context 'Viewing diffs' do
     setup do
-      @version = mock
-      @merge_request = mock
-      @repo = mock
+      @merge_request = merge_requests(:moes_to_johans)
+      @merge_request.stubs(:calculate_merge_base).returns("ffac0")
+      @version = @merge_request.create_new_version
       @git = mock
-      @repo.stubs(:git).returns(@git)
+
       #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)
       @commit = Grit::Commit.new(mock("repo"), "mycommitid", [], stub_everything("tree"),
         stub_everything("author"), Time.now, stub_everything("comitter"), Time.now,
         "my commit message".split(" "))
 
-      @merge_request.stubs(:target_repository).returns(@repo)
-      @version.stubs(:merge_request).returns(@merge_request)
+      Repository.any_instance.stubs(:git).returns(@git)
       MergeRequestVersion.stubs(:find).returns(@version)
     end
     

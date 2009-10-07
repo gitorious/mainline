@@ -79,10 +79,10 @@ class CommentsController < ApplicationController
     end
     
     def find_polymorphic_parent
-      if params[:merge_request_id]
-        @target = @repository.merge_requests.find(params[:merge_request_id])
-      elsif params[:merge_request_version_id]
+      if params[:merge_request_version_id]
         @target = MergeRequestVersion.find(params[:merge_request_version_id])
+      elsif params[:merge_request_id]
+        @target = @repository.merge_requests.find(params[:merge_request_id])
       else
         @target = @repository
       end
