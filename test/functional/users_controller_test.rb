@@ -72,6 +72,12 @@ class UsersControllerTest < ActionController::TestCase
     get :pending_activation
     assert_response :success
   end
+  
+  should "redirect from pending activation if logged in" do
+    login_as :johan
+    get :pending_activation
+    assert_response :redirect
+  end
 
   should " activate user" do
     assert_nil User.authenticate('moe', 'test')
