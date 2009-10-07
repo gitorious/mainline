@@ -63,6 +63,7 @@ module CommitsHelper
     end
   end
 
+  # Supply a block that fetches an array of comments with the file path as parameter
   def render_inline_diffs_with_stats(file_diffs, state = :closed)
     file_diffs.map do |file|
       diff_renderer = Diff::Display::Unified.new(file.diff)
@@ -77,12 +78,12 @@ module CommitsHelper
       if file.diff[0..256].include?("\000")
         out << "Binary files differ"
       else
-        comments = if block_given?
-                     yield file
-                   end
-        out << force_utf8(render_inline_diff(file.diff, diff_renderer, comments))
+        diff_options = {}
+        diff_options[:comments] = if block_given?
+                                    yield(file)
+                end
+        out << force_utf8(render_inline_diff(file.diff, diff_renderer, diff_options))
       end
-
       out << "</div></div>"
       out
     end.join("\n")
@@ -97,7 +98,7 @@ module CommitsHelper
        </div>}
   end
   
-  def render_inline_diff(udiff, differ = nil, comments=[])
+  def render_inline_diff(udiff, differ = nil, options = {})
     differ ||= Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
@@ -106,10 +107,10 @@ module CommitsHelper
     out << %Q{<td class="line-numbers"></td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
-    if comments.blank?
-      out << differ.render(Gitorious::Diff::InlineTableCallback.new)
-    else
+    if comments = options[:comments]
       out << differ.render(Gitorious::Diff::InlineTableCallback.with_comments(comments))
+    else
+      out << differ.render(Gitorious::Diff::InlineTableCallback.new)
     end
     out << "</table>"
     out
