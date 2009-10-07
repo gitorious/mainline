@@ -28,21 +28,12 @@ module CommitsHelper
                                      @project, @repository, match), :class => "sha")
     end
   end
-
-  def encode_diff(udiff)
-    if udiff.respond_to?(:force_encoding)
-      # TODO: move into the diff library?
-      udiff = udiff.force_encoding(Encoding::UTF_8)
-    else
-      udiff
-    end
-  end
   
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
     return if udiff.blank?
     
-    udiff = encode_diff(udiff)
+    udiff = force_utf8(udiff)
     
     if sidebyside_diff?
       render_sidebyside_diff(udiff)
@@ -62,7 +53,7 @@ module CommitsHelper
         out << "<h4>"
         out << link_to(h(file.a_path), file_path(@repository, file.a_path, @commit.id))
         out << "</h4>"
-        out << render_diff(encode_diff(file.diff))
+        out << force_utf8(render_diff(file.diff))
         out
       end.join("\n")
     else
@@ -85,7 +76,7 @@ module CommitsHelper
       if file.diff[0..256].include?("\000")
         out << "Binary files differ"
       else
-        out << render_inline_diff(encode_diff(file.diff), diff_renderer)
+        out << force_utf8(render_inline_diff(file.diff, diff_renderer))
       end
       out << "</div></div>"
       out
