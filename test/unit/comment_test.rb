@@ -149,6 +149,11 @@ class CommentTest < ActiveSupport::TestCase
       assert_equal 0, @comment.number_of_lines
       assert_equal((2..2), @comment.lines)
     end
+
+    should 'take a String or Range for the lines setter' do
+      @comment.lines = "22..99"
+      assert_equal((22..99), @comment.lines)
+    end
     
   end
 end

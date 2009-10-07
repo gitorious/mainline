@@ -61,6 +61,8 @@ class CommentsController < ApplicationController
           flash[:success] = I18n.t "comments_controller.create_success"
           if @comment.sha1.blank?
             redirect_to_repository_or_target
+          elsif MergeRequestVersion === @target
+            render :nothing => true, :status => :created
           else
             redirect_to repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @comment.sha1)
           end
@@ -79,6 +81,8 @@ class CommentsController < ApplicationController
     def find_polymorphic_parent
       if params[:merge_request_id]
         @target = @repository.merge_requests.find(params[:merge_request_id])
+      elsif params[:merge_request_version_id]
+        @target = MergeRequestVersion.find(params[:merge_request_version_id])
       else
         @target = @repository
       end

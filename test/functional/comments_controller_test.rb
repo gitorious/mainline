@@ -124,6 +124,22 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @merge_request, assigns(:target)
       assert_equal @merge_request, assigns(:comment).target
     end
+
+    should "set the merge request version as polymorphic parent" do
+      @merge_request.stubs(:calculate_merge_base).returns("ffac0")
+      @version = @merge_request.create_new_version
+      post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+      :merge_request_version_id => @version.to_param, :comment => {
+        :path => "LICENSE",
+        :lines => "1..14",
+        :sha1 => "ffac01-ffab99",
+        :body => "Needs more cowbell"}
+      assert_response :success
+      assert_equal @version, assigns(:target)
+      assert_equal @version, assigns(:comment).target
+      assert_equal((1..14), assigns(:comment).lines)
+      assert_equal(("ffac01".."ffab99"), assigns(:comment).sha_range)
+    end
     
     should "redirect back to the merge request on POST create if that's the target" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,

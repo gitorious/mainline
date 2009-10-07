@@ -86,6 +86,10 @@ class Comment < ActiveRecord::Base
   end
 
   def lines=(range)
+    if String === range
+      first,last = range.split("..").map(&:to_i)
+      range = (first..last)
+    end
     self.first_line_number = range.begin
     self.number_of_lines = range.end - range.begin
   end
