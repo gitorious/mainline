@@ -52,16 +52,12 @@ class Group < ActiveRecord::Base
     I18n.t("activerecord.models.group")
   end
   
-  def self.all_participating_in_projects(projects, limit = 5)
+  def self.all_participating_in_projects(projects)
     mainline_ids = projects.map do |project|
       project.repositories.mainlines.map{|r| r.id }
     end.flatten
-    Committership.find(:all,
-      :conditions => {
-        :repository_id => mainline_ids,
-        :committer_type => "Group"
-      },
-      :limit => limit).map{|c| c.committer }.uniq
+    Committership.groups.find(:all,
+      :conditions => { :repository_id => mainline_ids }).map{|c| c.committer }.uniq
   end
   
   # Finds the most active groups by activity in repositories they're committers in
