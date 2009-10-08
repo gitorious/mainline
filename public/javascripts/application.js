@@ -886,7 +886,8 @@ Gitorious.CommentForm = function(path){
     var commentContainer = options.inside;
     commentContainer.html(comment_form.html());
     commentContainer.find("#description").text(this.getSummary());
-    commentContainer.find("#comment_sha1").val(hash.split("@")[0].replace("#",""));
+    var shas = hash.split("@")[0].replace("#","");
+    commentContainer.find("#comment_sha1").val(shas);
     commentContainer.find("#comment_path").val(this.path);
     commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
     commentContainer.find("#comment_lines").val(this.linesAsString());
@@ -897,8 +898,10 @@ Gitorious.CommentForm = function(path){
       jQuery.ajax({
         "url": $(this).attr("action"),
         "data": $(this).serialize(),
+        "type": "POST",
         "success": function(data, text) {
           Gitorious.CommentForm.destroyAll();
+          new Gitorious.DiffBrowser(shas);
         },
         "error": function(xhr, statusText, errorThrown) {
           alert("Something went terribly wrong: " + statusText);
