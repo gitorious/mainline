@@ -619,6 +619,7 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
 
 Gitorious.DiffBrowser = function(shas)
 {
+  Gitorious.disableCommenting();
   jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
   var mr_diff_url = jQuery("#merge_request_commit_selector")
     .attr("data-merge-request-version-url");
@@ -632,6 +633,7 @@ Gitorious.DiffBrowser = function(shas)
         shaSpec.parseShas(shas);
         Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
         Gitorious.setDiffBrowserHunkStateFromCookie();
+        Gitorious.enableCommenting();
       }
     },
     "error": function(xhr, statusText, errorThrown) {
@@ -829,6 +831,12 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
   }
 }
 
+// To preserve memory and avoid errors, we remove the selectables
+Gitorious.disableCommenting = function() {
+  jQuery("table.codediff").selectable("destroy");
+}
+
+// Makes line numbers selectable for commenting
 Gitorious.enableCommenting = function() {
   jQuery("table.codediff").selectable({
     filter: "td.line-numbers",
@@ -837,6 +845,9 @@ Gitorious.enableCommenting = function() {
     },
     stop: function(e, ui) {
       var diffTable = e.target;
+      $(diffTable).find("td.ui-selected").each(function(el){
+        $(this).parent().addClass("selected-for-commenting");
+      })
       var allLineNumbers = $(diffTable).find("td.ui-selected").map(function(){
         return $(this).text();
       });
@@ -878,13 +889,36 @@ Gitorious.CommentForm = function(path){
     commentContainer.find("#comment_path").val(this.path);
     commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
     commentContainer.find("#comment_lines").val(this.linesAsString());
-    commentContainer.show("fast");
+    commentContainer.slideDown("fast");
+    commentContainer.find("#comment_body").focus();
+    var zeForm = commentContainer.find("form");
+    zeForm.submit(function(){
+      jQuery.ajax({
+        "url": $(this).attr("action"),
+        "data": $(this).serialize(),
+        "success": function(data, text) {
+          Gitorious.CommentForm.destroyAll();
+        },
+        "error": function(xhr, statusText, errorThrown) {
+          alert("Something went terribly wrong: " + statusText);
+        }
+      });
+      return false;
+    });
+    commentContainer.keypress(function(e){
+      if (e.which == 0) {
+        Gitorious.CommentForm.destroyAll();
+      }
+    })
   }
 }
 
 Gitorious.CommentForm.destroyAll = function() {
   $(".comment_container").html("");
-  $(".comment_container").hide("fast");
+  $(".comment_container").slideUp("fast");
+  $(".selected-for-commenting").removeClass("selected-for-commenting");
+  $(".ui-selected").removeClass("ui-selected");
+  $(".comment_container").unbind("keypress");
 }
 
 function toggle_wiki_preview(target_url) {

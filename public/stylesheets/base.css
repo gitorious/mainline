@@ -1488,6 +1488,13 @@ table tr .line-numbers {
  cursor: pointer;
 }
 
+table tr.selected-for-commenting td,
+table tr.selected-for-commenting td.ins,
+table tr.selected-for-commenting td.del,
+table tr.selected-for-commenting td.mod {
+  background: #ffc none;
+}
+
 table tr .ui-selecting,
 table tr .ui-selected {
   background-color: #ddd;
@@ -2918,13 +2925,28 @@ Merge request commit selector
 
 .file-diff .comment_container {
   position: absolute;
-  left: 60px;
-  top: 18px;
+  left: 80px;
+  top: 28px;
+  z-index: 10;
+  width: 50%;
+}
+
+.file-diff .comment_container h2 {
+  background-color: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 0.4em;
+  width: 50%;
+  -moz-border-radius: 10px 10px 0 0;
+  margin: 0;
+}
+.file-diff .comment_container form {
   background-color: rgba(255,255,255,0.9);
   padding: 1em;
-  border: 1px solid #000;
-  z-index: 10;
-  width: 60%;
+  border: 2px solid rgba(34,34,34,0.7);
+  -moz-border-radius: 0 0 10px 0;
+}
+.file-diff .comment_container form input[type=submit] {
+  font-weight: bold;
 }
 .file-diff-controls {
     float: right;
