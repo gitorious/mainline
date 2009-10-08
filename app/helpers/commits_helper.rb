@@ -74,6 +74,7 @@ module CommitsHelper
       out << render_compact_diff_stats(diff_renderer.stats)
       out << "</div></div>"
       out << %Q{<div class="diff-hunks" #{state == :closed ? 'style="display:none"' : ''}>}
+      out << %Q{<div class="comment_container" style="display:none"></div>}
 
       if file.diff[0..256].include?("\000")
         out << "Binary files differ"

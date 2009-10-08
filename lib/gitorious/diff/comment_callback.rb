@@ -39,7 +39,7 @@ module Gitorious
       end
 
       def wrap_line
-        result = "<td class=\"inline_comments line-numbers\">"
+        result = "<td class=\"inline_comments\">"
         result << yield
         result << "</td>"
       end

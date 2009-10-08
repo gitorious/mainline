@@ -428,7 +428,29 @@ $(document).ready(function() {
         diff_browser = new Gitorious.DiffBrowser(sha_spec);
       }
     );
-
+  /*
+  jQuery("tr.changes td.line-numbers").live("mousedown", function() {
+    var numbers = $(this).text();
+    var file_name = $(this).closest("div").prev(".header").children(".title").text();
+    var other_line_numbers = $(this).closest("table").find("td.line-numbers");
+    var commentForm = new Gitorious.CommentForm(file_name);
+    commentForm.addLineNumber(numbers);
+    other_line_numbers.mouseenter(function(e){
+      commentForm.addLineNumber($(this).text());
+      e.preventDefault();
+    });
+    other_line_numbers.mouseout(function(e){      
+      commentForm.removeLineNumber($(this).text());
+      e.preventDefault()
+    });
+    other_line_numbers.mouseup(function(){
+      other_line_numbers.unbind("mouseenter");
+      other_line_numbers.unbind("mouseout");
+      other_line_numbers.unbind("mouseup");
+      commentForm.display();
+    });
+  });
+  */
 });
 
 var Gitorious = {};
@@ -791,6 +813,64 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
           $("#commit_selection").html(data);
     });
   }
+}
+
+Gitorious.enableCommenting = function() {
+  jQuery("table.codediff").selectable({
+    filter: "td.line-numbers",
+    start: function(e, ui) {
+      Gitorious.CommentForm.destroyAll();
+    },
+    stop: function(e, ui) {
+      var diffTable = e.target;
+      var allLineNumbers = $(diffTable).find("td.ui-selected").map(function(){
+        return $(this).text();
+      });
+      var path = $(diffTable).parent().prev(".header").children(".title").text();
+      var commentForm = new Gitorious.CommentForm(path);
+      commentForm.setLineNumbers(allLineNumbers);
+      var commentContainer = $(diffTable).prev(".comment_container");
+      if (commentForm.hasLines()) {
+        commentForm.display({inside: commentContainer});
+      }
+    }
+  });
+
+}
+
+Gitorious.CommentForm = function(path){
+  this.path = path;
+  this.numbers = [];
+  this.setLineNumbers = function(n) {
+    this.numbers = n;
+  }
+  this.linesAsString = function() {
+    var sortedLines = this.numbers.sort();
+    return sortedLines[0] + ".." + sortedLines[sortedLines.length - 1];
+  }
+  this.hasLines = function() {
+    return this.numbers.length > 0;
+  }
+  this.getSummary = function() {
+    return "Commenting on lines " + this.linesAsString() + " in " + this.path;
+  }
+  this.display = function(options) {
+    var comment_form = jQuery("#inline_comment_form");
+    var hash = document.location.hash;
+    var commentContainer = options.inside;
+    commentContainer.html(comment_form.html());
+    commentContainer.find("#description").text(this.getSummary());
+    commentContainer.find("#comment_sha1").val(hash.split("@")[0].replace("#",""));
+    commentContainer.find("#comment_path").val(this.path);
+    commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
+    commentContainer.find("#comment_lines").val(this.linesAsString());
+    commentContainer.show("fast");
+  }
+}
+
+Gitorious.CommentForm.destroyAll = function() {
+  $(".comment_container").html("");
+  $(".comment_container").hide("fast");
 }
 
 function toggle_wiki_preview(target_url) {

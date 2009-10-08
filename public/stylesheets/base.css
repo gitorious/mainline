@@ -1485,6 +1485,13 @@ table tr .line-numbers {
  width: 35px;
  border-right: 1px solid #ccc;
  border-bottom: 1px solid #cdcdcd;
+ cursor: pointer;
+}
+
+table tr .ui-selecting,
+table tr .ui-selected {
+  background-color: #ddd;
+  font-weight: bold;
 }
 
 table tr td.inline_comments {
@@ -2889,10 +2896,24 @@ Merge request commit selector
 .file-diff .diff-stats .additions { color: #00BF00; }
 .file-diff .diff-stats .deletions { color: #DC0000; }
 
+.file-diff .diff-hunks {
+  position:relative;
+}
+
 .file-diff .diff-hunks table {
     margin-bottom: 0;
 }
 
+.file-diff .comment_container {
+  position: absolute;
+  left: 60px;
+  top: 18px;
+  background-color: rgba(255,255,255,0.9);
+  padding: 1em;
+  border: 1px solid #000;
+  z-index: 10;
+  width: 60%;
+}
 .file-diff-controls {
     float: right;
     color: #888;

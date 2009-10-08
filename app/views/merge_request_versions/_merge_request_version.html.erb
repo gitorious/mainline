@@ -54,29 +54,22 @@
 </div>
 <% end -%>
 
-<div>
+<div id="inline_comment_form" style="display:none">
 <% form_for(@version.comments.build, :url => repo_owner_path(@version.merge_request.target_repository, 
     [
     @version.merge_request.target_repository.project,
     @version.merge_request.target_repository, 
     @version.merge_request, @version, :comments])) do |f| -%>
+<h2>Add your comment</h2>
+<p><em id="description"></em></p>
 <p>
-  <%= f.label :body -%>
   <%= f.text_area :body -%>
+  <%= hidden_field :comment, :lines -%>
+  <%= f.hidden_field :path -%>
+  <%= f.hidden_field :sha1 -%>
 </p>
 <p>
-  <%= f.label :lines -%>
-  <%= text_field :comment, :lines -%>
-</p>
-<p>
-  <%= f.label :path -%>
-  <%= f.text_field :path -%>
-</p>
-<p>
-  <%= f.label :sha1 -%>
-  <%= f.text_field :sha1 -%>
-</p>
-<p>
+  <input type="button" value="Cancel" class="cancel_button" />
   <%= f.submit -%>
 </p>
 <% end -%>
