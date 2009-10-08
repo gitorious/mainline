@@ -21,27 +21,19 @@
 module Gitorious
   module Diff
     class InlineTableCallback < BaseCallback
-      def self.with_comments(c)
+      def self.with_comments(comments)
         result = new
-        result.comments = c
+        result.comments = comments
         result
       end
 
-      def comments=(c)
-        @comment_callback = CommentCallback.new(c)
-      end
-
-      def render_comments(line)
-        if @comment_callback
-          @comment_callback.line(line)
-        else
-          ""
-        end
+      def comments=(comments)
+        @comment_callback = CommentCallback.new(comments)
       end
       
       def addline(line)
-        %Q{<tr class="changes">} + 
-        render_comments(line) +
+        %Q{<tr class="changes line-#{line.new_number}">} + 
+        render_comment_count(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code ins"><ins>} +
@@ -50,8 +42,8 @@ module Gitorious
       end
       
       def remline(line)
-        %Q{<tr class="changes">} + 
-        render_comments(line) +
+        %Q{<tr class="changes line-#{line.new_number}">} + 
+        render_comment_count(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code del"><del>} + 
@@ -60,8 +52,8 @@ module Gitorious
       end
       
       def modline(line)
-        %Q{<tr class="changes">} + 
-        render_comments(line) +
+        %Q{<tr class="changes line">} + 
+        render_comment_count(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code unchanged mod">#{render_line(line)}</td></tr>}
@@ -69,7 +61,7 @@ module Gitorious
       
       def unmodline(line)
         %Q{<tr class="changes">} + 
-        render_comments(line) +
+        render_comment_count(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code unchanged unmod">#{render_line(line)}</td></tr>}
@@ -77,7 +69,7 @@ module Gitorious
       
       def sepline(line)
         %Q{<tr class="changes">} +
-        render_comments(line) +
+        render_comment_count(line) +
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
         %Q{<td class="code cut-line"></td></tr>}
@@ -85,10 +77,31 @@ module Gitorious
       
       def nonewlineline(line)
         %Q{<tr class="changes">} + 
-        render_comments(line) +
+        render_comment_count(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
         %Q{<td class="code mod unmod">#{render_line(line)}</td></tr>}
+      end
+
+      protected
+      def render_comment_count(line)
+        if @comment_callback
+          @comment_callback.count(line)
+        else
+          ""
+        end
+      end
+
+      def render_comments_for(line)
+        return "" unless @comment_callback
+        return "" if @comment_callback.comment_count_starting_on_line(line).zero?
+        %Q{<div class="diff-comments line-#{line.new_number}">} +
+          @comment_callback.render_for(line) +
+          "</div>"
+      end
+
+      def render_line(line)
+        super + render_comments_for(line)
       end
     end
   end

@@ -422,12 +422,12 @@ $(document).ready(function() {
         e.preventDefault();
     });
     
-    // FIXME: DOM id's are supposed to be unique ya know
     jQuery("#current_shas").each(function(){
         var sha_spec = jQuery(this).attr("data-merge-request-current-shas");
         diff_browser = new Gitorious.DiffBrowser(sha_spec);
       }
     );
+
   /*
   jQuery("tr.changes td.line-numbers").live("mousedown", function() {
     var numbers = $(this).text();
@@ -451,6 +451,18 @@ $(document).ready(function() {
     });
   });
   */
+    // Diff commenting
+    $("table tr td.inline_comments a.diff-comment-count").live("click", function(e) {
+        var lineNum = $(this).parents("td").next("td").text();
+        var comments = $(this).parents("tr.changes")
+          .find("td.code .diff-comments.line-" + lineNum);
+        if (comments.is(":visible")) {
+            comments.slideUp();
+        } else {
+            comments.slideDown();
+        }
+        e.preventDefault();
+    });
 });
 
 var Gitorious = {};

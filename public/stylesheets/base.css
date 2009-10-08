@@ -1495,20 +1495,32 @@ table tr .ui-selected {
 }
 
 table tr td.inline_comments {
-  width: 20px;
+    padding: 0;
+    border:none;
+    border-right: 1px solid #cdcdcd;
+}
+table tr td.inline_comments .diff-comment-count {
+    background: orange;
+    padding: 1px 4px;
+    margin: 0 1px;
+    background: #222;
+    border: 1px solid #eee;
+    opacity: 0.7;
+    color: #FA8700;
+}
+table tr td.inline_comments .diff-comment-count:hover {
+    background: #FA8700;
+    color: #000;
+    text-decoration: none;
 }
 
-table tr td.inline_comments .comment {
-  width: 4px;
-  margin-right: 1px;
-  float: left;
-}
-table tr td.inline_comments .first {
-  -moz-border-radius-topleft: 2px;
-}
-
-table tr td.inline_comments .last {
-  -moz-border-radius-bottomleft: 2px;
+table tr td.code .diff-comments {
+    display: none;
+    border-top: 1px solid #cdcdcd;
+    border-bottom: 1px solid #cdcdcd;
+    background: #eee;
+    padding: 10px;
+    margin: 5px 0;
 }
 
 table tr td.inline_comments .red {

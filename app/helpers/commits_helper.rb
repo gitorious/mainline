@@ -103,13 +103,14 @@ module CommitsHelper
     differ ||= Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
     out << "<thead>\n"
-    out << "<tr><td>&nbsp;</td>"
+    out << %Q{<tr><td class="inline_comments line-numbers">&nbsp;</td>}
     out << %Q{<td class="line-numbers"></td>}
     out << %Q{<td class="line-numbers"></td>}
     out << "<td>&nbsp</td></tr>\n"
     out << "</thead>\n"
     if comments = options[:comments]
-      out << differ.render(Gitorious::Diff::InlineTableCallback.with_comments(comments))
+      render_callback = Gitorious::Diff::InlineTableCallback.with_comments(comments)
+      out << differ.render(render_callback)
     else
       out << differ.render(Gitorious::Diff::InlineTableCallback.new)
     end

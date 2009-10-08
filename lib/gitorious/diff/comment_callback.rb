@@ -21,52 +21,60 @@ module Gitorious
     class CommentCallback
 
       def initialize(comments)
-        @comments = comments.map do |c|
-          SingleCommentCallback.new(c, next_css_class)
+        @comments = comments.map do |comment|
+          SingleCommentCallback.new(comment)
         end
       end
 
-      # Each comment renders with a given CSS class
-      def next_css_class
-        @css_classes ||= %w(blue red green brown orange purple)
-        @css_classes.shift
-      end
-
-      def line(line)
+      def count(line)
         wrap_line do
-          @comments.map{|c| c.line(line) }.join(" ")
+          count = comment_count_starting_on_line(line)
+          if count > 0
+            %Q{<a href="" class="diff-comment-count round-10 shadow-2">#{count.to_s}</a>}
+          else
+            ""
+          end
         end
+      end
+
+      def render_for(line)
+        @comments.map{|c| c.render_for(line) }.join("\n")
       end
 
       def wrap_line
-        result = "<td class=\"inline_comments\">"
+        result = %Q{<td class="inline_comments line-numbers">}
         result << yield
         result << "</td>"
       end
       
+      # Total number of comments _starting_ on +line+
+      def comment_count_starting_on_line(line)
+        @comments.sum{|c| c.comment_starts_on_line?(line) ? 1 : 0 }
+      end
+
+      # Total number of comments on +line+
+      def comment_count_for_line(line)
+        @comments.sum{|c| c.commented_on_line?(line) ? 1 : 0 }
+      end
     end
     class SingleCommentCallback
-      def initialize(comment, css_class)
+      def initialize(comment)
         @comment = comment
-        @css_class = css_class
+      end
+
+      def render_for(line)
+        return "" unless comment_starts_on_line?(line)
+        "<p>\"" + @comment.body + "\" //" + @comment.user.login + "</p>"
       end
       
-      def line(line)
-        %Q{<div class="#{css_classes_for(line)}">&nbsp;</div>}
+      # does this +line+ have the beginnings of a comment
+      def comment_starts_on_line?(line)
+        @comment.lines.begin == line.new_number
       end
       
-      def css_classes_for(line)
-        result = ['comment']
-        if !@comment.lines.include?(line.new_number)
-          result << "none"
-        end
-        if @comment.lines.begin == line.new_number
-          result << "first"
-        end
-        if @comment.lines.end == line.new_number
-          result << "last"
-        end
-        result.sort.unshift(@css_class).join(" ")
+      # does this +line+ have a comment somehow
+      def commented_on_line?(line)
+        @comment.lines.include?(line.new_number)
       end
     end
   end

@@ -1,3 +1,4 @@
+
 # encoding: utf-8
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
@@ -20,42 +21,32 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class CommentCallbackTest < ActiveSupport::TestCase
-  context "A single commit" do
-    setup do
-      comment = stub(:lines => (1..2), :body => "Nice work")
-      @callback = Gitorious::Diff::CommentCallback.new(Array(comment))
-    end
-    
-    should "render nothing if the line is out of range" do
-      line = Diff::Display::AddLine.new("Hello", 3)
-      assert_match /class=\"[a-z\s]*none/, @callback.line(line)
-    end
-
-
-    should "render a hint when a line is within range" do
-      line = Diff::Display::AddLine.new("Hello", 1)
-      assert_match /class=\"[a-z\s]*first/, @callback.line(line)
-    end
-
-    should "render a hint on the last line" do
-      line = Diff::Display::AddLine.new("Hello", 2)
-      assert_match /class=\"[a-z\s]*last/, @callback.line(line)
-    end
-  end
 
   context "with several comments" do
     setup do
       comments = [
-                  stub(:lines => (1..2), :body => "Hello"),
-                  stub(:lines => (1..1), :body => "Single line")
+                  stub(:lines => (1..2), :body => "Hello", :user => stub(:login => "bar")),
+                  stub(:lines => (1..1), :body => "Single line", :user => stub(:login=>"foo"))
                  ]
       @callback = Gitorious::Diff::CommentCallback.new(comments)
     end
 
-    should "render each comment inline when within range" do
+    should "have a comment count for comments starting on a given line" do
       line = Diff::Display::AddLine.new("Yikes!", 1)
-      assert_match /class=\"[a-z\s]*red/, @callback.line(line), "The first comment should be red"
-      assert_match /class=\"[a-z\s]*blue/, @callback.line(line), "The second comment should be blue"
+      assert_equal 2, @callback.comment_count_starting_on_line(line)
+    end
+
+    should "have a comment count for a line, regardless of comment starting there or not" do
+      line1 = Diff::Display::AddLine.new("Yikes!", 1)
+      line2 = Diff::Display::AddLine.new("yay", 2)
+      assert_equal 2, @callback.comment_count_for_line(line1)
+      assert_equal 1, @callback.comment_count_for_line(line2)
+    end
+
+    should "render comments for a given line" do
+      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 1))
+      assert_match /Hello/, rendered
+      assert_match /Single line/, rendered
     end
   end
 end
