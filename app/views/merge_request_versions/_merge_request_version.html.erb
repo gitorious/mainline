@@ -62,6 +62,7 @@
     @version.merge_request.target_repository, 
     @version.merge_request, @version, :comments])) do |f| -%>
 <p><em id="description"></em></p>
+<p class="flash_message error" style="display:none"></p>
 <p>
   <%= f.text_area :body -%>
   <%= hidden_field :comment, :lines -%>

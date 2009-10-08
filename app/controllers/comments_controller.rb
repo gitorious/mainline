@@ -54,6 +54,15 @@ class CommentsController < ApplicationController
     @comment.state = state
     @comment.project = @project
 
+    if MergeRequestVersion === @target
+      if @comment.save
+        render :nothing => true, :status => :created
+      else
+        render :text => "Clean up your mess", :status => :not_acceptable
+      end
+      return
+    end
+    
     respond_to do |format|
       if @comment.save
         create_new_commented_posted_event
@@ -61,8 +70,6 @@ class CommentsController < ApplicationController
           flash[:success] = I18n.t "comments_controller.create_success"
           if @comment.sha1.blank?
             redirect_to_repository_or_target
-          elsif MergeRequestVersion === @target
-            render :nothing => true, :status => :created
           else
             redirect_to repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @comment.sha1)
           end

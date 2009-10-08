@@ -904,7 +904,9 @@ Gitorious.CommentForm = function(path){
           new Gitorious.DiffBrowser(shas);
         },
         "error": function(xhr, statusText, errorThrown) {
-          alert("Something went terribly wrong: " + statusText);
+          var errorDisplay = $(zeForm).find(".error");
+          errorDisplay.text("Please make sure your comment is valid");
+          errorDisplay.show("fast");
         }
       });
       return false;
