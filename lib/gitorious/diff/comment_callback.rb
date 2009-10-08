@@ -37,8 +37,8 @@ module Gitorious
         end
       end
 
-      def render_for(line)
-        @comments.map{|c| c.render_for(line) }.join("\n")
+      def render_for(line, template)
+        @comments.map{|c| c.render_for(line, template) }.join("\n")
       end
 
       def wrap_line
@@ -62,7 +62,7 @@ module Gitorious
         @comment = comment
       end
 
-      def render_for(line)
+      def render_for(line, template)
         return "" unless comment_starts_on_line?(line)
         "<p>\"" + @comment.body + "\" //" + @comment.user.login + "</p>"
       end

@@ -21,11 +21,13 @@
 module Gitorious
   module Diff
     class InlineTableCallback < BaseCallback
-      def self.with_comments(comments)
-        result = new
-        result.comments = comments
-        result
+      def self.with_comments(comments, template)
+        table_callback = new
+        table_callback.comments = comments
+        table_callback.template = template
+        table_callback
       end
+      attr_accessor :template
 
       def comments=(comments)
         @comment_callback = CommentCallback.new(comments)
@@ -94,7 +96,7 @@ module Gitorious
         return "" unless @comment_callback
         return "" if @comment_callback.comment_count_starting_on_line(line).zero?
         %Q{<div class="diff-comments line-#{line.new_number}">} +
-          @comment_callback.render_for(line) +
+          @comment_callback.render_for(line, template) +
           "</div>"
       end
 

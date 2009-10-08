@@ -1502,6 +1502,11 @@ table tr .ui-selected {
 }
 
 table tr td.inline_comments {
+    text-align: right;
+    vertical-align: top;
+    background: #eee;
+    color: #777;
+    font-size: 92%;
     padding: 0;
     border:none;
     border-right: 1px solid #cdcdcd;
@@ -1528,20 +1533,6 @@ table tr td.code .diff-comments {
     background: #eee;
     padding: 10px;
     margin: 5px 0;
-}
-
-table tr td.inline_comments .red {
-  background-color: red;
-}
-table tr td.inline_comments .green {
-  background-color: green;
-}
-table tr td.inline_comments .blue {
-  background-color: blue;
-}
-
-table tr td.inline_comments .none {
-  background-color: inherit;
 }
 
 table tr td.code {
