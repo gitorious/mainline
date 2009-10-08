@@ -44,7 +44,7 @@ class CommentCallbackTest < ActiveSupport::TestCase
     end
 
     should "render comments for a given line" do
-      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 1))
+      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 1), stub)
       assert_match /Hello/, rendered
       assert_match /Single line/, rendered
     end
