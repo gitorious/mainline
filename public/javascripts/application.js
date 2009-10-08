@@ -843,6 +843,7 @@ Gitorious.enableCommenting = function() {
     start: function(e, ui) {
       Gitorious.CommentForm.destroyAll();
     },
+    cancel: ".inline_comments",
     stop: function(e, ui) {
       var diffTable = e.target;
       $(diffTable).find("td.ui-selected").each(function(el){
@@ -905,11 +906,13 @@ Gitorious.CommentForm = function(path){
       });
       return false;
     });
+    
     commentContainer.keypress(function(e){
       if (e.which == 0) {
         Gitorious.CommentForm.destroyAll();
       }
     })
+    
   }
 }
 
