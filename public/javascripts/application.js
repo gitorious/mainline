@@ -454,6 +454,8 @@ $(document).ready(function() {
     // Diff commenting
     $("table tr td.inline_comments a.diff-comment-count").live("click", function(e) {
         var lineNum = $(this).parents("td").next("td").text();
+        if (lineNum === "") // look in the next TD
+          lineNum = $(this).parents("td").next("td").next("td").text();
         var comments = $(this).parents("tr.changes")
           .find("td.code .diff-comments.line-" + lineNum);
         if (comments.is(":visible")) {
