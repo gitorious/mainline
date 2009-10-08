@@ -21,7 +21,9 @@ module Gitorious
     class CommentCallback
 
       def initialize(comments)
-        @comments = comments.map{|c|SingleCommentCallback.new(c, next_css_class)}
+        @comments = comments.map do |c|
+          SingleCommentCallback.new(c, next_css_class)
+        end
       end
 
       # Each comment renders with a given CSS class
@@ -31,7 +33,9 @@ module Gitorious
       end
 
       def line(line)
-        wrap_line{@comments.map{|c|c.line(line)}.join(" ")}
+        wrap_line do
+          @comments.map{|c| c.line(line) }.join(" ")
+        end
       end
 
       def wrap_line

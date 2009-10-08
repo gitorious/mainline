@@ -76,7 +76,8 @@ module Gitorious
       end
       
       def sepline(line)
-        %Q{<tr class="changes">} + 
+        %Q{<tr class="changes">} +
+        render_comments(line) +
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
         %Q{<td class="code cut-line"></td></tr>}
