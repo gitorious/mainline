@@ -7,20 +7,20 @@ ArrayTest.prototype.testMap = function() {
 
 BookmarkableMergeRequestTest = TestCase("Bookmark merge requests",  {
   testShasOnly: function() {
-    var shaSpec = Gitorious.ShaSpec.parseLocationHash("aab00199..bba00199");
+    var shaSpec = Gitorious.ShaSpec.parseLocationHash("aab00199-bba00199");
     assertEquals("aab00199", shaSpec.firstSha().sha());
     assertEquals("bba00199", shaSpec.lastSha().sha());
     assertFalse(shaSpec.hasVersion());
   },
   
   testShasAndVersion: function() {
-    var shaSpec = Gitorious.ShaSpec.parseLocationHash("aab00199..bba00199@2");
+    var shaSpec = Gitorious.ShaSpec.parseLocationHash("aab00199-bba00199@2");
     assertTrue(shaSpec.hasVersion());
     assertEquals("2", shaSpec.getVersion());
   },
 
   testWithLeadingHash: function() {
-    var shaSpec = Gitorious.ShaSpec.parseLocationHash("#aab00199..bba00199@2");
+    var shaSpec = Gitorious.ShaSpec.parseLocationHash("#aab00199-bba00199@2");
     assertEquals("aab00199", shaSpec.firstSha().sha());
   },
   
