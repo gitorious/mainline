@@ -1731,6 +1731,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 
 /* inline diff comments */
 
+.diff-comment .body p {
+    margin-bottom: 5px;
+}
+
 .diff-comment {
     font-size: 13px;
     font-family: "Helvetica", Arial, sans-serif;

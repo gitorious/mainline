@@ -43,7 +43,7 @@ module Gitorious
       end
       
       def remline(line)
-        %Q{<tr class="changes line-#{line.new_number}">} + 
+        %Q{<tr class="changes line-#{line.old_number}">} +
         render_comment_count(line) +
         %Q{<td class="line-numbers commentable">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers commentable">#{line.new_number}</td>} + 
