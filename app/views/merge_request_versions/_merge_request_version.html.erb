@@ -56,6 +56,7 @@
 
 <div id="inline_comment_form" style="display:none">
 <h2>Add your comment</h2>
+<% if logged_in? -%>
 <% form_for(@version.comments.build, :url => repo_owner_path(@version.merge_request.target_repository, 
     [
     @version.merge_request.target_repository.project,
@@ -73,6 +74,11 @@
   <input type="button" value="Cancel" class="cancel_button" />
   <%= f.submit -%>
 </p>
+<% end -%>
+<% else -%>
+<div class="please_log_in">
+<p>Please <%= link_to "log in", login_path -%> to comment</p>
+</div>
 <% end -%>
 </div>
 

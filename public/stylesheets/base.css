@@ -2930,7 +2930,8 @@ Merge request commit selector
   -moz-border-radius: 10px 10px 0 0;
   margin: 0;
 }
-.file-diff .comment_container form {
+.file-diff .comment_container form,
+.file-diff .comment_container .please_log_in {
   background-color: rgba(255,255,255,0.9);
   padding: 1em;
   border: 2px solid rgba(34,34,34,0.7);

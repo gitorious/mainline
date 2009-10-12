@@ -106,7 +106,6 @@ class CommentsController < ApplicationController
     end
     
     def create_new_commented_posted_event
-      # def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
       return if applies_to_merge_request_version?
       if @target == @repository
         @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param, "Repository")
