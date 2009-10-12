@@ -1530,9 +1530,16 @@ table tr td.code .diff-comments {
     display: none;
     border-top: 1px solid #cdcdcd;
     border-bottom: 1px solid #cdcdcd;
-    background: #eee;
-    padding: 10px;
-    margin: 5px 0;
+    background: #fff;
+    padding: 0;
+    margin: 5px 0 0 -2px;
+    line-height:100%;
+    font-size: 100%;
+    white-space: normal;
+}
+
+table tr.highlighted td.code {
+    background: #ff9;
 }
 
 table tr td.code {
@@ -1702,22 +1709,64 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   color: #666;
 }
 
-.comment .body ul, .page ol { margin-left: 30px; }
-.comment .body ul li		{ list-style-type: disc; }
-.comment .body ol li		{ list-style-type: decimal; }
-.comment .body h1			{ margin: 15px 0 10px 0; font-size: 140%;}
-.comment .body h2			{ margin: 15px 0 10px 0; font-size: 120%;}
-.comment .body h3			{ margin: 15px 0 10px 0; font-size: 110%;}
-.comment .body h4			{ margin: 15px 0 10px 0; font-size: 105%;}
-.comment .body blockquote {
+.comment .body ul, .page ol, .diff-comment .body ul { margin-left: 30px; }
+.comment .body ul li, .diff-comment .body ul li		{ list-style-type: disc; }
+.comment .body ol li, diff-comment .body ol li		{ list-style-type: decimal; }
+.comment .body h1, .diff-comment .body h1			{ margin: 15px 0 10px 0; font-size: 140%;}
+.comment .body h2, .diff-comment .body h2			{ margin: 15px 0 10px 0; font-size: 120%;}
+.comment .body h3, .diff-comment .body h3			{ margin: 15px 0 10px 0; font-size: 110%;}
+.comment .body h4, .diff-comment .body h4			{ margin: 15px 0 10px 0; font-size: 105%;}
+.comment .body blockquote, .diff-comment .body blockquote {
     margin-left: 30px;
     border-left: 3px solid #ccc;
     color: #666;
     padding: 5px;
 }
-.comment .body blockquote p:first-child { margin-bottom: 0; }
-.comment .body blockquote p:last-child { margin-bottom: 0; }
+.comment .body blockquote p:first-child, .diff-comment .body blockquote p:first-child { 
+    margin-bottom: 0;
+}
+.comment .body blockquote p:last-child, .comment .body blockquote p:last-child { 
+    margin-bottom: 0;
+}
 
+/* inline diff comments */
+
+.diff-comment {
+    font-size: 13px;
+    font-family: "Helvetica", Arial, sans-serif;
+    line-height:100%;
+    white-space:normal;
+    border-bottom: 1px solid #eee;
+    margin: 5px;
+}
+.diff-comment:last-child {
+    border-bottom: none;
+}
+.diff-comment .byline {
+    float:left;
+}
+.diff-comment .byline {
+  margin-bottom: 0;
+  font-size: 11px;
+  color: #666;
+}
+.diff-comment .byline a {
+    color: #666;
+}
+
+.diff-comment .byline .avatar {
+  display: inline;
+  padding-right: 5px;
+}
+.diff-comment .body {
+    float:left;
+    margin-left: 75px;
+}
+.diff-comment .timestamp {
+    float: right;
+    font-size: 11px;
+    color: #666;
+}
 
 /* Markdown help */
 

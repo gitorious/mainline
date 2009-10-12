@@ -24,11 +24,11 @@ class CommentCallbackTest < ActiveSupport::TestCase
 
   context "with several comments" do
     setup do
-      comments = [
+      @comments = [
                   stub(:lines => (1..2), :body => "Hello", :user => stub(:login => "bar")),
                   stub(:lines => (1..1), :body => "Single line", :user => stub(:login=>"foo"))
                  ]
-      @callback = Gitorious::Diff::CommentCallback.new(comments)
+      @callback = Gitorious::Diff::CommentCallback.new(@comments)
     end
 
     should "have a comment count for comments starting on a given line" do
@@ -44,9 +44,12 @@ class CommentCallbackTest < ActiveSupport::TestCase
     end
 
     should "render comments for a given line" do
-      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 1), stub)
-      assert_match /Hello/, rendered
-      assert_match /Single line/, rendered
+      template = stub
+      @comments.each do |comment|
+        template.expects(:render).with(:partial => "comments/inline_diff",
+          :locals => {:comment => comment})
+      end
+      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 1), template)
     end
   end
 end

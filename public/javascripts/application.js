@@ -862,6 +862,27 @@ Gitorious.enableCommenting = function() {
     }
   });
 
+  // Comment highlighting of associated lines
+  $("table tr td.code .diff-comment").each(function() {
+      var lineRange = $(this).attr("gts:lines").split("..");
+      var tableRows = $(this).parents("table").find("tr");
+      var addHighlight = function(start, end) {
+        tableRows.slice(start, end + 1).addClass("highlighted");
+      };
+      var removeHighlight = function(start, end){
+        tableRows.slice(start, end + 1).removeClass("highlighted");
+      };
+      $(this).hover(function() {
+          var start = $(this).parents("tr.line-" + lineRange[0]).get(0);
+          var end = $(this).parents("table").find("tr.line-" + lineRange[1]).get(0);
+          addHighlight(tableRows.indexOf(start), tableRows.indexOf(end));
+      }, function() {
+          var start = $(this).parents("tr.line-" + lineRange[0]).get(0);
+          var end = $(this).parents("table").find("tr.line-" + lineRange[1]).get(0);
+          removeHighlight(tableRows.indexOf(start), tableRows.indexOf(end));
+      });
+  });
+
 }
 
 Gitorious.CommentForm = function(path){

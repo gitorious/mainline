@@ -64,7 +64,8 @@ module Gitorious
 
       def render_for(line, template)
         return "" unless comment_starts_on_line?(line)
-        "<p>\"" + @comment.body + "\" //" + @comment.user.login + "</p>"
+        template.render(:partial => "comments/inline_diff",
+          :locals => {:comment => @comment})
       end
       
       # does this +line+ have the beginnings of a comment
