@@ -101,7 +101,7 @@ module Gitorious
       end
 
       def render_line(line)
-        super + render_comments_for(line)
+        render_comments_for(line) + super
       end
     end
   end

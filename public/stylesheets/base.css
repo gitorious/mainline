@@ -1532,7 +1532,7 @@ table tr td.code .diff-comments {
     border-bottom: 1px solid #cdcdcd;
     background: #fff;
     padding: 0;
-    margin: 5px 0 0 -2px;
+    margin: 0 0 5px -2px;
     line-height:100%;
     font-size: 100%;
     white-space: normal;
@@ -1737,7 +1737,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
     line-height:100%;
     white-space:normal;
     border-bottom: 1px solid #eee;
-    margin: 5px;
+    padding: 5px;
 }
 .diff-comment:last-child {
     border-bottom: none;
@@ -1766,6 +1766,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
     float: right;
     font-size: 11px;
     color: #666;
+}
+
+.diff-comment.highlighted {
+    background: #ffd;
 }
 
 /* Markdown help */

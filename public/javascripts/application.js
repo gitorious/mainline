@@ -866,11 +866,13 @@ Gitorious.enableCommenting = function() {
   $("table tr td.code .diff-comment").each(function() {
       var lines = $(this).attr("gts:lines").split(",");
       $(this).hover(function() {
+          $(this).addClass("highlighted");
           var container = $(this).parents("table");
           $.each(lines, function() {
               container.find("tr.line-" + this).addClass("highlighted");
           });
       }, function() {
+          $(this).removeClass("highlighted");
           var container = $(this).parents("table");
           $.each(lines, function() {
               container.find("tr.line-" + this).removeClass("highlighted");

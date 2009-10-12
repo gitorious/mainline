@@ -57,6 +57,7 @@ module Gitorious
         @comments.sum{|c| c.commented_on_line?(line) ? 1 : 0 }
       end
     end
+
     class SingleCommentCallback
       def initialize(comment)
         @comment = comment
