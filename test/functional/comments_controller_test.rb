@@ -133,7 +133,8 @@ class CommentsControllerTest < ActionController::TestCase
         :path => "LICENSE",
         :lines => "1..14",
         :sha1 => "ffac01-ffab99",
-        :body => "Needs more cowbell"}
+        :body => "Needs more cowbell"}, :format => "js"
+      assert @controller.applies_to_merge_request_version?
       assert_response :success
       assert_equal @version, assigns(:target)
       assert_equal @version, assigns(:comment).target

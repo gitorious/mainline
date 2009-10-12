@@ -53,16 +53,10 @@ class CommentsController < ApplicationController
     @comment.user = current_user
     @comment.state = state
     @comment.project = @project
+    render_or_redirect
+  end
 
-    if MergeRequestVersion === @target
-      if @comment.save
-        render :nothing => true, :status => :created
-      else
-        render :text => "Clean up your mess", :status => :not_acceptable
-      end
-      return
-    end
-    
+  def render_or_redirect
     respond_to do |format|
       if @comment.save
         create_new_commented_posted_event
@@ -74,10 +68,18 @@ class CommentsController < ApplicationController
             redirect_to repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @comment.sha1)
           end
         end
+        format.js do
+          render :nothing => true, :status => :created
+        end
       else
         format.html { render :action => "new" }
+        format.js {render :nothing => true, :status => :not_acceptable}
       end
-    end
+    end      
+  end
+
+  def applies_to_merge_request_version?
+    MergeRequestVersion === @target
   end
   
   protected
@@ -105,6 +107,7 @@ class CommentsController < ApplicationController
     
     def create_new_commented_posted_event
       # def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
+      return if applies_to_merge_request_version?
       if @target == @repository
         @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param, "Repository")
       else

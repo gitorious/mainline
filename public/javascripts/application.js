@@ -981,3 +981,7 @@ if (!Array.prototype.map) {
     return jQuery.map(this, callback);
   }
 }
+// Make JQuery work with Rails' respond_to
+jQuery.ajaxSetup({ 
+  'beforeSend': function(xhr) {xhr.setRequestHeader("Accept", "text/javascript")} 
+})
