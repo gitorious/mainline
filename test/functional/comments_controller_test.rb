@@ -125,21 +125,38 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @merge_request, assigns(:comment).target
     end
 
-    should "set the merge request version as polymorphic parent" do
-      @merge_request.stubs(:calculate_merge_base).returns("ffac0")
-      @version = @merge_request.create_new_version
-      post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-      :merge_request_version_id => @version.to_param, :comment => {
+    context "Merge request versions" do
+      def create_new_version
+        @merge_request.stubs(:calculate_merge_base).returns("ffac0")
+        @version = @merge_request.create_new_version
+      end
+    
+      def create_merge_request_version_comment(version)
+        post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+        :merge_request_version_id => version.to_param, :comment => {
         :path => "LICENSE",
-        :lines => "1..14",
-        :sha1 => "ffac01-ffab99",
-        :body => "Needs more cowbell"}, :format => "js"
-      assert @controller.applies_to_merge_request_version?
-      assert_response :success
-      assert_equal @version, assigns(:target)
-      assert_equal @version, assigns(:comment).target
-      assert_equal((1..14), assigns(:comment).lines)
-      assert_equal(("ffac01".."ffab99"), assigns(:comment).sha_range)
+          :lines => "1..14",
+          :sha1 => "ffac01-ffab99",
+          :body => "Needs more cowbell"}, :format => "js"
+      end
+      
+      should "set the merge request version as polymorphic parent" do
+        @version = create_new_version
+        create_merge_request_version_comment(@version)
+        assert @controller.applies_to_merge_request_version?
+        assert_response :success
+        assert_equal @version, assigns(:target)
+        assert_equal @version, assigns(:comment).target
+        assert_equal((1..14), assigns(:comment).lines)
+        assert_equal(("ffac01".."ffab99"), assigns(:comment).sha_range)
+      end
+
+      should "notify the merge request owner of comments" do
+        @version = create_new_version
+        create_merge_request_version_comment(@version)
+        message = @merge_request.user.received_messages.last
+        assert_equal @merge_request, message.notifiable
+      end
     end
     
     should "redirect back to the merge request on POST create if that's the target" do

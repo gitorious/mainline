@@ -106,11 +106,25 @@ class CommentsController < ApplicationController
     end
     
     def create_new_commented_posted_event
-      return if applies_to_merge_request_version?
+      if applies_to_merge_request_version?
+        notify_merge_request_owner and return
+      end
       if @target == @repository
         @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param, "Repository")
       else
         @project.create_event(Action::COMMENT, @target, current_user, @comment.to_param, "MergeRequest") if @comment.state_change.blank?
       end
+    end
+
+    def notify_merge_request_owner
+      merge_request = @target.merge_request
+      message = merge_request.messages.build({
+          :sender     => current_user,
+          :recipient  => merge_request.user,
+          :subject    => I18n.t("mailer.code_comment", :login => current_user.login),
+          :body       => @comment.body,
+          :notifiable => merge_request
+        })
+      message.save
     end
 end
