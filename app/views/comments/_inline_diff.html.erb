@@ -18,7 +18,7 @@
 %>
 
 
-<div class="diff-comment" gts:lines="<%=h comment.lines.inspect %>">
+<div class="diff-comment" gts:lines="<%=h comment.lines.to_a.join(',') %>">
   <div class="byline">
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
