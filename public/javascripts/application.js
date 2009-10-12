@@ -839,7 +839,7 @@ Gitorious.disableCommenting = function() {
 // Makes line numbers selectable for commenting
 Gitorious.enableCommenting = function() {
   jQuery("table.codediff").selectable({
-    filter: "td.line-numbers",
+    filter: "td.commentable",
     start: function(e, ui) {
       Gitorious.CommentForm.destroyAll();
     },
@@ -884,7 +884,13 @@ Gitorious.CommentForm = function(path){
   this.path = path;
   this.numbers = [];
   this.setLineNumbers = function(n) {
-    this.numbers = n;
+    result = [];
+    n.each(function(i,number){
+      if (number != "") {
+        result.push(number);
+      }
+    });
+    this.numbers = result;
   }
   this.linesAsString = function() {
     var sortedLines = this.numbers.sort();
@@ -997,6 +1003,38 @@ if (!Array.prototype.map) {
     return jQuery.map(this, callback);
   }
 }
+
+// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/Array/filter
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp*/)
+  {
+    var len = this.length >>> 0;
+    if (typeof fun != "function")
+      throw new TypeError();
+    
+    var res = new Array();
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in this)
+      {
+        var val = this[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, this))
+          res.push(val);
+      }
+    }    
+    return res;
+  };
+}
+
+if (!String.prototype.isBlank) {
+  String.prototype.isBlank = function() {
+    return this == "";
+  }
+}
+
+
 // Make JQuery work with Rails' respond_to
 jQuery.ajaxSetup({ 
   'beforeSend': function(xhr) {xhr.setRequestHeader("Accept", "text/javascript")} 

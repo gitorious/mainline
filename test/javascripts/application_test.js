@@ -5,6 +5,22 @@ ArrayTest.prototype.testMap = function() {
   assertEquals("foos", arr.map(function(e){return e + "s"})[0]);
 };
 
+ArrayTest.prototype.testFilter = function() {
+  var arr = ["foo", "bar"];
+  result = arr.filter(function(el, i){
+    return el != "bar"
+  });
+  assertEquals(["foo"], result);
+}
+
+
+jstestdriver.console.debug(Array.prototype.compact);
+
+StringTest = TestCase("String test");
+StringTest.prototype.testIsBlank = function() {
+  assertEquals(true, "".isBlank());
+}
+
 BookmarkableMergeRequestTest = TestCase("Bookmark merge requests",  {
   testShasOnly: function() {
     var shaSpec = Gitorious.ShaSpec.parseLocationHash("aab00199-bba00199");
