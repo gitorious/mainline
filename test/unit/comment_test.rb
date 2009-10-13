@@ -52,6 +52,14 @@ class CommentTest < ActiveSupport::TestCase
       end
     end
   end
+
+  context "In general" do
+    setup {@comment = Comment.new}
+
+    should "not apply to specific line numbers" do
+      assert !@comment.applies_to_line_numbers?
+    end
+  end
   
   context 'State change' do
     should 'be a list of previous and new state' do
@@ -118,6 +126,7 @@ class CommentTest < ActiveSupport::TestCase
       assert_nil comment.reload.state_changed_from
       assert_nil comment.state_changed_to
     end
+
   end
 
   context 'On merge request versions' do
@@ -133,6 +142,10 @@ class CommentTest < ActiveSupport::TestCase
 
     should "have a target" do
       assert_equal @first_version, @comment.target
+    end
+
+    should "know if it has line numbers" do
+      assert @comment.applies_to_line_numbers?
     end
 
     should "have a range of shas" do

@@ -629,6 +629,9 @@ Gitorious.DiffBrowser = function(shas)
     "success": function(data, responseText) {
       if (responseText === "success") {
         jQuery("#merge_request_diff").html(data);
+        var commentMarkup = jQuery("#__temp_comments").html();
+        jQuery("#__temp_comments").html("");
+        jQuery("#merge_request_comments").html(commentMarkup);
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.parseShas(shas);
         Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);

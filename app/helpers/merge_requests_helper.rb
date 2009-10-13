@@ -20,6 +20,7 @@
 
 module MergeRequestsHelper
   include MergeRequestVersionsHelper
+  include CommentsHelper
   def render_status_tag_list(status_tags, repository)
     project_statuses = repository.project.merge_request_statuses
     

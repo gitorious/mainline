@@ -1689,6 +1689,12 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 10px;
 }
 
+.comments .comment.inline {
+/*
+TODO: Add different styling of comments that apply to specific line numbers
+*/
+}
+
 .comments .comment img {
   max-width: 500px; max-height: 500px;
 }

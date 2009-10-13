@@ -21,7 +21,7 @@
 %>
 
 <a name="<%= dom_id(comment) -%>"></a>
-<div class="comment">
+<% comment_block(comment) do -%>
   <%- if comment.state_change -%>
   <p class="meta_body">
     &#x2192; State changed <%- if comment.state_changed_from -%>from 
@@ -37,4 +37,4 @@
     <%= link_to(h(comment.user.title), comment.user) -%> | 
     <span class="permalink"><%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%></span>
   </p>
-</div>
+<% end -%>

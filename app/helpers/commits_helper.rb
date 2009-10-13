@@ -21,6 +21,7 @@
 
 module CommitsHelper
   include RepositoriesHelper
+  include CommentsHelper
   
   def format_commit_message(message)
     message.gsub(/\b[a-z0-9]{40}\b/) do |match|

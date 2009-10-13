@@ -138,6 +138,21 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       assert_equal([@comment], @first_version.comments_for_path_and_sha(@comment.path, "ffac-aafc"))
     end
 
+    should 'fetch all comments with the specified sha' do
+      assert_equal([@comment], @first_version.comments_for_sha("ffac-aafc"))
+    end
+
+    should 'combine version and MR comments into a single array' do
+      @mr_comment = @merge_request.comments.create!(
+        :body => "Beware high gamma levels",
+        :user => users(:moe),
+        :project => @merge_request.target_repository.project
+        )
+      assert_equal([@comment, @mr_comment], @first_version.comments_for_sha("ffac-aafc",
+          :include_merge_request_comments => true))
+    end
+
+
     should 'fetch all comments when given a Range' do
       assert_equal([@comment], @first_version.comments_for_path_and_sha(@comment.path, ("ffac".."aafc")))
     end

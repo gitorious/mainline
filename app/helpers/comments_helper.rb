@@ -20,5 +20,10 @@
 #++
 
 module CommentsHelper
-
+  def comment_block(comment, &block)
+    css_classes = ["comment"]
+    css_classes << "inline" if comment.applies_to_line_numbers?
+    output = content_tag(:div, capture(&block), :class => css_classes.join(" "))
+    concat(output)
+  end
 end

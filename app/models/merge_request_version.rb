@@ -43,10 +43,15 @@ class MergeRequestVersion < ActiveRecord::Base
   end
 
   def comments_for_path_and_sha(path, sha)
-    if Range === sha
-      sha = [sha.begin, sha.end].join("-")
+    comments.select{|c|(c.path == path && c.sha1 == sha_range_string(sha))}
+  end
+
+  def comments_for_sha(sha, options={})
+    result = comments.select{|c|c.sha1 == sha_range_string(sha)}
+    if options[:include_merge_request_comments]
+      result.concat(merge_request.comments)
     end
-    comments.select{|c|(c.path == path && c.sha1 == sha)}
+    result
   end
 
   def short_merge_base
@@ -103,5 +108,14 @@ class MergeRequestVersion < ActiveRecord::Base
         @repository.commit(sha).diffs
       end
     end
+  end
+
+  private
+  # Returns a string representation of a sha range
+  def sha_range_string(string_or_range)
+    if Range === string_or_range
+      string_or_range = [string_or_range.begin, string_or_range.end].join("-")
+    end
+    string_or_range
   end
 end

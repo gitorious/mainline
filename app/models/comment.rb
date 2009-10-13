@@ -102,6 +102,10 @@ class Comment < ActiveRecord::Base
     first, last = sha1.split("-")
     first..(last||first)
   end
+
+  def applies_to_line_numbers?
+    return MergeRequestVersion === target
+  end
   
   protected
     def notify_target_if_supported
