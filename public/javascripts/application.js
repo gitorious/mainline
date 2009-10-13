@@ -865,18 +865,31 @@ Gitorious.enableCommenting = function() {
   // Comment highlighting of associated lines
   $("table tr td.code .diff-comment").each(function() {
       var lines = $(this).attr("gts:lines").split(",");
+      var replyCallback = function() {
+        Gitorious.CommentForm.destroyAll();
+        var lines = $(this).parents("div.diff-comment").attr("gts:lines").split(",")
+        var path = $(this).parents("table").parent().prev(".header"
+                                                          ).children(".title").text();
+        var commentForm = new Gitorious.CommentForm(path);
+        commentForm.setLineNumbers(lines);
+        if (commentForm.hasLines())
+          commentForm.display({inside: $(this).parents("table").prev(".comment_container")});
+        return false;
+      };
       $(this).hover(function() {
           $(this).addClass("highlighted");
           var container = $(this).parents("table");
           $.each(lines, function() {
               container.find("tr.line-" + this).addClass("highlighted");
           });
+          $(this).find(".reply").show().click(replyCallback);
       }, function() {
           $(this).removeClass("highlighted");
           var container = $(this).parents("table");
           $.each(lines, function() {
               container.find("tr.line-" + this).removeClass("highlighted");
           });
+          $(this).find(".reply").hide().unbind("click", replyCallback);
       });
   });
 

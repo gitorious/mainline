@@ -1767,6 +1767,13 @@ ul.diff_stats small.deletions   { color: #DC0000; }
     float:left;
     margin-left: 75px;
 }
+.diff-comment .reply {
+    float: right;
+    margin-right: 20px;
+    font-size: 11px;
+    color: #666;
+    display:none;
+}
 .diff-comment .timestamp {
     float: right;
     font-size: 11px;
