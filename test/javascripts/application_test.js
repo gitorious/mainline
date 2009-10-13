@@ -14,7 +14,6 @@ ArrayTest.prototype.testFilter = function() {
 }
 
 
-jstestdriver.console.debug(Array.prototype.compact);
 
 StringTest = TestCase("String test");
 StringTest.prototype.testIsBlank = function() {
