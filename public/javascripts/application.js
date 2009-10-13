@@ -101,6 +101,18 @@ jQuery.fn.hoverBubble = function() {
   });
 };
 
+// toggle the elements by sliding either up or down
+jQuery.fn.slideToggle = function(speed) {
+  $(this).each(function() {
+      if ($(this).is(":visible")) {
+        $(this).slideUp(speed);
+      } else {
+        $(this).slideDown(speed);
+      }
+  });
+  return $(this);
+};
+
 $(document).ready(function() {
     // Project Sluggorizin'
     $("form #project_title").keyup(function(event) {
@@ -183,11 +195,7 @@ $(document).ready(function() {
     });
 
     $("a#advanced-search-toggler").click(function(event) {
-        if ($("#search_help").is(":visible")) {
-            $("#search_help").slideUp("fast");
-        } else {
-            $("#search_help").slideDown("fast");
-        }
+        $("#search_help").slideToggle();
         event.preventDefault();
     });
 
@@ -347,11 +355,7 @@ $(document).ready(function() {
     
     // Merge request selection of branches, monster mode
     $("#large_commit_selector_toggler").live("click", function(event) {
-        if ($("#large_commit_selector").is(":visible")) {
-          $("#large_commit_selector").slideUp();
-        } else {
-          $("#large_commit_selector").slideDown();
-        }
+        $("#large_commit_selector").slideToggle();
         event.preventDefault();
     });
 
@@ -456,13 +460,8 @@ $(document).ready(function() {
         var lineNum = $(this).parents("td").next("td").text();
         if (lineNum === "") // look in the next TD
           lineNum = $(this).parents("td").next("td").next("td").text();
-        var comments = $(this).parents("tr.changes")
-          .find("td.code .diff-comments.line-" + lineNum);
-        if (comments.is(":visible")) {
-            comments.slideUp();
-        } else {
-            comments.slideDown();
-        }
+        $(this).parents("tr.changes")
+            .find("td.code .diff-comments.line-" + lineNum).slideToggle();
         e.preventDefault();
     });
 
@@ -477,12 +476,7 @@ $(document).ready(function() {
     var hunks = elementInDiff(".diff-hunks");
     hunks.removeClass("closed").addClass("open");
     hunks.slideDown();
-    var comments = elementInDiff(".diff-comments.line-" + last_line);
-    if (comments.is(":visible")) {
-      comments.slideUp();
-    } else {
-      comments.slideDown();
-    }
+    elementInDiff(".diff-comments.line-" + last_line).slideToggle();
     window.scrollTo(0, hunks.position().top);
   })
 });
