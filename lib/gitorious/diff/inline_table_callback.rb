@@ -94,14 +94,14 @@ module Gitorious
 
       def render_comments_for(line)
         return "" unless @comment_callback
-        return "" if @comment_callback.comment_count_starting_on_line(line).zero?
+        return "" if @comment_callback.comment_count_ending_on_line(line).zero?
         %Q{<div class="diff-comments line-#{line.new_number}">} +
           @comment_callback.render_for(line, template) +
           "</div>"
       end
 
       def render_line(line)
-        render_comments_for(line) + super
+        super + render_comments_for(line)
       end
     end
   end

@@ -45,11 +45,9 @@ class CommentCallbackTest < ActiveSupport::TestCase
 
     should "render comments for a given line" do
       template = stub
-      @comments.each do |comment|
-        template.expects(:render).with(:partial => "comments/inline_diff",
-          :locals => {:comment => comment})
-      end
-      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 1), template)
+      template.expects(:render).with(:partial => "comments/inline_diff",
+        :locals => {:comment => @comments.first})
+      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 2), template)
     end
   end
 end

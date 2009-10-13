@@ -28,7 +28,7 @@ module Gitorious
 
       def count(line)
         wrap_line do
-          count = comment_count_starting_on_line(line)
+          count = comment_count_ending_on_line(line)
           if count > 0
             %Q{<a href="" class="diff-comment-count round-10 shadow-2">#{count.to_s}</a>}
           else
@@ -52,6 +52,11 @@ module Gitorious
         @comments.sum{|c| c.comment_starts_on_line?(line) ? 1 : 0 }
       end
 
+      # Total number of comments _starting_ on +line+
+      def comment_count_ending_on_line(line)
+        @comments.sum{|c| c.comment_ends_on_line?(line) ? 1 : 0 }
+      end
+
       # Total number of comments on +line+
       def comment_count_for_line(line)
         @comments.sum{|c| c.commented_on_line?(line) ? 1 : 0 }
@@ -64,7 +69,7 @@ module Gitorious
       end
 
       def render_for(line, template)
-        return "" unless comment_starts_on_line?(line)
+        return "" unless comment_ends_on_line?(line)
         result = template.render(:partial => "comments/inline_diff",
           :locals => {:comment => @comment})
         if result.respond_to?(:force_encoding)
@@ -76,6 +81,10 @@ module Gitorious
       # does this +line+ have the beginnings of a comment
       def comment_starts_on_line?(line)
         @comment.lines.begin == line.new_number
+      end
+
+      def comment_ends_on_line?(line)
+        @comment.lines.end == line.new_number
       end
       
       # does this +line+ have a comment somehow
