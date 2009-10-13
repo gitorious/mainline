@@ -29,7 +29,9 @@
   <div class="timestamp">
     <%= time_ago_in_words(comment.created_at) -%> ago on lines <%= comment.lines.inspect %>
   </div>
+  <% if logged_in? -%>
   <div class="reply">(<a href="#reply">reply</a>)</div>
+  <% end -%>
   <div class="clear"></div>
 </div>
 
