@@ -34,6 +34,7 @@ class CommentCallbackTest < ActiveSupport::TestCase
     should "have a comment count for comments starting on a given line" do
       line = Diff::Display::AddLine.new("Yikes!", 1)
       assert_equal 2, @callback.comment_count_starting_on_line(line)
+      assert_equal 1, @callback.comment_count_ending_on_line(line)
     end
 
     should "have a comment count for a line, regardless of comment starting there or not" do

@@ -26,6 +26,7 @@ module Gitorious
         end
       end
 
+      # Renders the number of comments for +line+
       def count(line)
         wrap_line do
           count = comment_count_ending_on_line(line)
@@ -37,6 +38,8 @@ module Gitorious
         end
       end
 
+      # Render all the comments for +line+, using +template+ to render
+      # partials from
       def render_for(line, template)
         @comments.map{|c| c.render_for(line, template) }.join("\n")
       end
@@ -46,15 +49,15 @@ module Gitorious
         result << yield
         result << "</td>"
       end
-      
+
       # Total number of comments _starting_ on +line+
       def comment_count_starting_on_line(line)
-        @comments.sum{|c| c.comment_starts_on_line?(line) ? 1 : 0 }
+        @comments.sum{|c| c.starts_on_line?(line) ? 1 : 0 }
       end
 
       # Total number of comments _starting_ on +line+
       def comment_count_ending_on_line(line)
-        @comments.sum{|c| c.comment_ends_on_line?(line) ? 1 : 0 }
+        @comments.sum{|c| c.ends_on_line?(line) ? 1 : 0 }
       end
 
       # Total number of comments on +line+
@@ -68,8 +71,11 @@ module Gitorious
         @comment = comment
       end
 
+      # Renders this comment for the given +line+.
+      # +template+ is the ActionView instance used to render a partial
+      # with this comment
       def render_for(line, template)
-        return "" unless comment_ends_on_line?(line)
+        return "" unless ends_on_line?(line)
         result = template.render(:partial => "comments/inline_diff",
           :locals => {:comment => @comment})
         if result.respond_to?(:force_encoding)
@@ -77,17 +83,18 @@ module Gitorious
         end
         result
       end
-      
-      # does this +line+ have the beginnings of a comment
-      def comment_starts_on_line?(line)
+
+      # does this comment begin on the given +line+?
+      def starts_on_line?(line)
         @comment.lines.begin == line.new_number
       end
 
-      def comment_ends_on_line?(line)
+      # Does this comment end on the given +line+?
+      def ends_on_line?(line)
         @comment.lines.end == line.new_number
       end
-      
-      # does this +line+ have a comment somehow
+
+      # Is this comment on the +line+?
       def commented_on_line?(line)
         @comment.lines.include?(line.new_number)
       end
