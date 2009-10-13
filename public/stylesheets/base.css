@@ -1772,6 +1772,7 @@ TODO: Add different styling of comments that apply to specific line numbers
 .diff-comment .body {
     float:left;
     margin-left: 75px;
+    max-width: 550px;
 }
 .diff-comment .reply {
     float: right;
