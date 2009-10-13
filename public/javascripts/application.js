@@ -952,8 +952,8 @@ Gitorious.CommentForm = function(path){
       return false;
     });
     
-    commentContainer.keypress(function(e){
-      if (e.which == 0) {
+    commentContainer.keydown(function(e){
+      if (e.which == 27) { // Escape
         Gitorious.CommentForm.destroyAll();
       }
     })
