@@ -21,9 +21,13 @@
 
 module CommentsHelper
   def comment_block(comment, &block)
-    css_classes = ["comment"]
-    css_classes << "inline" if comment.applies_to_line_numbers?
-    output = content_tag(:div, capture(&block), :class => css_classes.join(" "))
+    block_options = {:class => "comment"}
+    if comment.applies_to_line_numbers?
+      block_options[:class] << " inline"
+      block_options[:"data-diff-path"] = comment.path
+      block_options[:"data-last-line-in-diff"] = comment.lines.end
+    end
+    output = content_tag(:div, capture(&block), block_options)
     concat(output)
   end
 end

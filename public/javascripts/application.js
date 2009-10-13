@@ -465,6 +465,26 @@ $(document).ready(function() {
         }
         e.preventDefault();
     });
+
+  // Clicking on a comment relating to a merge request 
+  // version displays the comment in context
+  $("#merge_request_comments .comment.inline").live("click", function(){
+    var path = $(this).attr("data-diff-path");
+    var last_line = $(this).attr("data-last-line-in-diff");
+    var elementInDiff = function(s) {
+      return $(".file-diff[data-diff-path=" + path + "] " + s);
+    }
+    var hunks = elementInDiff(".diff-hunks");
+    hunks.removeClass("closed").addClass("open");
+    hunks.slideDown();
+    var comments = elementInDiff(".diff-comments.line-" + last_line);
+    if (comments.is(":visible")) {
+      comments.slideUp();
+    } else {
+      comments.slideDown();
+    }
+    window.scrollTo(0, hunks.position().top);
+  })
 });
 
 var Gitorious = {};

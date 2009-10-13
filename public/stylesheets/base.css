@@ -1690,9 +1690,11 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 .comments .comment.inline {
-/*
-TODO: Add different styling of comments that apply to specific line numbers
-*/
+  cursor: pointer;
+}
+
+.comments .comment.inline:hover {
+  background-color: #dee7ed;
 }
 
 .comments .comment img {

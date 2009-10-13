@@ -68,7 +68,7 @@ module CommitsHelper
   def render_inline_diffs_with_stats(file_diffs, state = :closed)
     file_diffs.map do |file|
       diff_renderer = Diff::Display::Unified.new(file.diff)
-      out = '<div class="file-diff">'
+      out =  %Q{<div class="file-diff" data-diff-path="#{file.a_path}"}
       out << %Q{<div class="header round-top-10 #{state == :closed ? 'closed' : 'open'}">}
       out << %Q{<span class="title"><span class="icon"></span>#{h(file.a_path)}</span>}
       out << %Q{<div class="diff-stats">}
