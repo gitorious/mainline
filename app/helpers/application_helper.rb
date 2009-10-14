@@ -485,7 +485,9 @@ module ApplicationHelper
   # The javascripts to be included in all layouts
   def include_javascripts
     javascript_include_tag "jquery.core", "jquery.autocomplete", "jquery.cookie",
-      "color_picker", "ui.core","ui.selectable", "application", :cache => true
+      "color_picker", "ui.core","ui.selectable",
+      "core_extensions", "Jquery.gitorious_extensions", "merge_requests", "diff_browser",
+      "messages", "application", :cache => true
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+
