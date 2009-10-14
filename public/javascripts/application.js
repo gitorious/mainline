@@ -478,7 +478,7 @@ $(document).ready(function() {
     hunks.removeClass("closed").addClass("open");
     hunks.slideDown();
     elementInDiff(".diff-comments.line-" + last_line).slideToggle();
-    $($(this).attr("href")).addClass("highlighted");
+    Gitorious.DiffBrowser.CommentHighlighter.add( $($(this).attr("href")) );
     return true;
   })
 
@@ -671,6 +671,33 @@ Gitorious.DiffBrowser = function(shas)
   });
 }
 
+Gitorious.DiffBrowser.CommentHighlighter = {
+  _lastHighlightedComment: null,
+
+  removePrevious: function() {
+    var self = Gitorious.DiffBrowser.CommentHighlighter
+    if (!self._lastHighlightedComment)
+      return;
+    self.remove(self._lastHighlightedComment);
+  },
+
+  add: function(commentElement) {
+    Gitorious.DiffBrowser.CommentHighlighter.removePrevious();
+    commentElement.addClass("highlighted");
+    $.each(commentElement.attr("gts:lines").split(","), function() {
+        commentElement.parents("table").find("tr.line-" + this).addClass("highlighted");
+    });
+    Gitorious.DiffBrowser.CommentHighlighter._lastHighlightedComment = commentElement;
+  },
+
+  remove: function(commentElement) {
+    commentElement.removeClass("highlighted");
+    $.each(commentElement.attr("gts:lines").split(","), function() {
+        commentElement.parents("table").find("tr.line-" + this).removeClass("highlighted");
+    });
+  }
+};
+
 Gitorious.DiffBrowser.KeyNavigation = {
    _currentIndex: 0,
 
@@ -685,6 +712,7 @@ Gitorious.DiffBrowser.KeyNavigation = {
       var element = $(elements[Gitorious.DiffBrowser.KeyNavigation._currentIndex]);
       element.parents(".diff-comments:hidden").slideDown();
       window.scrollTo(0, element.position().top + window.innerHeight);
+      Gitorious.DiffBrowser.CommentHighlighter.add(element);
     };
 
     if (event.keyCode === 74) { // j
@@ -712,7 +740,7 @@ Gitorious.DiffBrowser.KeyNavigation = {
         $(window).unbind("keypress", Gitorious.DiffBrowser.KeyNavigation._callback);
     });
   }
-}
+};
 
 Gitorious.MergeRequestController = function() {
   this.willSelectShas = function() {
@@ -951,18 +979,10 @@ Gitorious.enableCommenting = function() {
         return false;
       };
       $(this).hover(function() {
-          $(this).addClass("highlighted");
-          var container = $(this).parents("table");
-          $.each(lines, function() {
-              container.find("tr.line-" + this).addClass("highlighted");
-          });
+          Gitorious.DiffBrowser.CommentHighlighter.add($(this));
           $(this).find(".reply").show().click(replyCallback);
       }, function() {
-          $(this).removeClass("highlighted");
-          var container = $(this).parents("table");
-          $.each(lines, function() {
-              container.find("tr.line-" + this).removeClass("highlighted");
-          });
+          Gitorious.DiffBrowser.CommentHighlighter.remove($(this))
           $(this).find(".reply").hide().unbind("click", replyCallback);
       });
   });
