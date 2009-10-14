@@ -653,6 +653,7 @@ Gitorious.DiffBrowser = function(shas)
         Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
         Gitorious.setDiffBrowserHunkStateFromCookie();
         Gitorious.enableCommenting();
+        Gitorious.DiffBrowser.KeyNavigation.enable();
       }
     },
     "error": function(xhr, statusText, errorThrown) {
@@ -660,6 +661,49 @@ Gitorious.DiffBrowser = function(shas)
                                          "An error has occured. Please try again later.</div>");
     }
   });
+}
+
+Gitorious.DiffBrowser.KeyNavigation = {
+   _currentIndex: 0,
+
+   _callback: function(event) {
+    var scrollToCommentAtCurrentIndex = function(commentElement) {
+      var elements = $("table tr td .diff-comments .diff-comment");
+      if (Gitorious.DiffBrowser.KeyNavigation._currentIndex >= elements.length ||
+          Gitorious.DiffBrowser.KeyNavigation._currentIndex <= 0)
+        {
+          Gitorious.DiffBrowser.KeyNavigation._currentIndex = 0;
+        }
+      var element = $(elements[Gitorious.DiffBrowser.KeyNavigation._currentIndex]);
+      element.parents(".diff-comments:hidden").slideDown();
+      window.scrollTo(0, element.position().top + window.innerHeight);
+    };
+
+    if (event.keyCode === 74) { // j
+      scrollToCommentAtCurrentIndex();
+      Gitorious.DiffBrowser.KeyNavigation._currentIndex++;
+    } else if (event.keyCode === 75) { // k
+      Gitorious.DiffBrowser.KeyNavigation._currentIndex--;
+      scrollToCommentAtCurrentIndex();
+    }
+  },
+
+  enable: function() {
+    $(window).keypress(function(e) {
+        $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
+      });
+    // unbind whenever we're in an input field
+    Gitorious.DiffBrowser.KeyNavigation.disable();
+    $(":input").blur(function() {
+        $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
+    });
+  },
+
+  disable: function() {
+    $(":input").focus(function() {
+        $(window).unbind("keypress", Gitorious.DiffBrowser.KeyNavigation._callback);
+    });
+  }
 }
 
 Gitorious.MergeRequestController = function() {
