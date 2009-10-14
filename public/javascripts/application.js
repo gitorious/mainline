@@ -467,9 +467,10 @@ $(document).ready(function() {
 
   // Clicking on a comment relating to a merge request 
   // version displays the comment in context
-  $("#merge_request_comments .comment.inline").live("click", function(){
-    var path = $(this).attr("data-diff-path");
-    var last_line = $(this).attr("data-last-line-in-diff");
+  $("#merge_request_comments .comment.inline .inline_comment_link a").live("click", function(){
+    var comment = $(this).parent().parent();
+    var path = $(comment).attr("data-diff-path");
+    var last_line = $(comment).attr("data-last-line-in-diff");
     var elementInDiff = function(s) {
       return $(".file-diff[data-diff-path=" + path + "] " + s);
     }
@@ -477,7 +478,8 @@ $(document).ready(function() {
     hunks.removeClass("closed").addClass("open");
     hunks.slideDown();
     elementInDiff(".diff-comments.line-" + last_line).slideToggle();
-    window.scrollTo(0, hunks.position().top);
+    $($(this).attr("href")).addClass("highlighted");
+    return true;
   })
 });
 

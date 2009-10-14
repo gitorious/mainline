@@ -30,6 +30,11 @@
   </p>
   <%- end -%>
   <div class="body"><%= render_markdown(comment.body, :auto_link) -%></div>
+  <% if comment.applies_to_line_numbers? -%>
+  <p class="inline_comment_link">
+    This comment applies to <%= link_to "lines #{comment.lines} in #{comment.path}", "##{dom_id(comment,'inline')}" -%>
+  </p>
+  <% end -%>
   <p class="byline">
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
