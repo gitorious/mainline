@@ -725,20 +725,19 @@ Gitorious.DiffBrowser.KeyNavigation = {
   },
 
   enable: function() {
-    $(window).keypress(function(e) {
-        $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
-      });
+    Gitorious.DiffBrowser.KeyNavigation.disable()
+    $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
     // unbind whenever we're in an input field
-    Gitorious.DiffBrowser.KeyNavigation.disable();
+    $(":input").focus(function() {
+        Gitorious.DiffBrowser.KeyNavigation.disable();
+    });
     $(":input").blur(function() {
         $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
     });
   },
 
   disable: function() {
-    $(":input").focus(function() {
-        $(window).unbind("keypress", Gitorious.DiffBrowser.KeyNavigation._callback);
-    });
+      $(window).unbind("keydown", Gitorious.DiffBrowser.KeyNavigation._callback);
   }
 };
 
@@ -859,7 +858,6 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
   };
   
   this.onTargetRepositoryChange = function(event) {
-    console.log("repo changed!");
     $("#spinner").fadeIn();
     $.post(this.targetBranchesUrl, $("#new_merge_request").serialize(),
            function(data, responseText)
@@ -1012,6 +1010,7 @@ Gitorious.CommentForm = function(path){
     return "Commenting on lines " + this.linesAsString() + " in " + this.path;
   }
   this.display = function(options) {
+    Gitorious.DiffBrowser.KeyNavigation.disable();
     var comment_form = jQuery("#inline_comment_form");
     var hash = document.location.hash;
     var commentContainer = options.inside;
@@ -1067,6 +1066,7 @@ Gitorious.CommentForm.destroyAll = function() {
   $(".comment_container").html("").unbind("keypress").slideUp("fast");
   $(".selected-for-commenting").removeClass("selected-for-commenting");
   $(".ui-selected").removeClass("ui-selected");
+  Gitorious.DiffBrowser.KeyNavigation.enable();
 }
 
 function toggle_wiki_preview(target_url) {
