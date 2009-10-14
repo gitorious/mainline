@@ -481,6 +481,14 @@ $(document).ready(function() {
     $($(this).attr("href")).addClass("highlighted");
     return true;
   })
+
+  $("#toggle_inline_comments").live("change", function(){
+    if ($(this).is(":checked")) {
+      $(".comment.inline").show();
+    } else {
+      $(".comment.inline").hide();
+    }
+  });
 });
 
 var Gitorious = {};

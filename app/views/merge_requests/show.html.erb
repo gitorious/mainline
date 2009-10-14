@@ -73,7 +73,14 @@
        :locals => {:version => @merge_request.versions.last} -%>
 </div>
 
-<h2 id="comments">Comments</h2>
+<h2 id="comments">Comments
+
+<form action="#">
+  <label for="toggle_inline_comments">Include comments entered inline</label>
+  <input type="checkbox" id="toggle_inline_comments" checked="checked" />
+</form>
+</h2>
+
 <div class="comments" id="merge_request_comments">
   <%= render :partial => @merge_request.comments -%>
 </div>
