@@ -30,16 +30,20 @@
   </p>
   <%- end -%>
   <div class="body"><%= render_markdown(comment.body, :auto_link) -%></div>
-  <% if comment.applies_to_line_numbers? -%>
-  <p class="inline_comment_link">
-    This comment applies to <%= link_to "lines #{comment.lines} in #{comment.path}", "##{dom_id(comment,'inline')}" -%>
-  </p>
-  <% end -%>
   <p class="byline">
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
     </span>
     <%= link_to(h(comment.user.title), comment.user) -%> | 
-    <span class="permalink"><%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%></span>
+    <span class="permalink">
+      <%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%>
+    </span>
+    <% if comment.applies_to_line_numbers? -%>
+      <span class="inline_comment_link">
+        on
+        <%= link_to "lines #{comment.lines} in #{comment.path}",
+              "##{dom_id(comment,'inline')}" -%>
+      </span>
+    <% end -%>
   </p>
 <% end -%>

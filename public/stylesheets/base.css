@@ -1689,10 +1689,8 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 10px;
 }
 
-.comments .comment.inline .inline_comment_link {
-  margin-left: 1em;
-}
 .comments .comment.inline .inline_comment_link a {
+    color: #333;
 }
 
 .comments .comment img {
