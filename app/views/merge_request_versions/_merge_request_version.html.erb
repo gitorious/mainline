@@ -72,6 +72,9 @@
   <%= f.hidden_field :path -%>
   <%= f.hidden_field :sha1 -%>
 </p>
+<p class="progress" style="display:none">
+  <%= image_tag "spinner.gif" -%>  Saving...
+</p>
 <p>
   <input type="button" value="Cancel" class="cancel_button" />
   <%= f.submit -%>

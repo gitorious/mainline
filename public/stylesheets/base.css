@@ -3019,6 +3019,10 @@ Merge request commit selector
 .file-diff .comment_container form input[type=submit] {
   font-weight: bold;
 }
+.file-diff .comment_container form .progress {
+  color: #333;
+}
+
 .file-diff-controls {
     float: right;
     color: #888;

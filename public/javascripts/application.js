@@ -1006,6 +1006,7 @@ Gitorious.CommentForm = function(path){
     commentContainer.find("#comment_body").focus();
     var zeForm = commentContainer.find("form");
     zeForm.submit(function(){
+      zeForm.find(".progress").show("fast");
       jQuery.ajax({
         "url": $(this).attr("action"),
         "data": $(this).serialize(),
@@ -1016,6 +1017,7 @@ Gitorious.CommentForm = function(path){
         },
         "error": function(xhr, statusText, errorThrown) {
           var errorDisplay = $(zeForm).find(".error");
+          zeForm.find(".progress").hide("fast");
           errorDisplay.text("Please make sure your comment is valid");
           errorDisplay.show("fast");
         }
