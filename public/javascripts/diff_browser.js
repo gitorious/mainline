@@ -164,6 +164,7 @@ Gitorious.DiffBrowser = function(shas)
         Gitorious.setDiffBrowserHunkStateFromCookie();
         Gitorious.enableCommenting();
         Gitorious.DiffBrowser.KeyNavigation.enable();
+        Gitorious.DiffBrowser.insertDiffContextsIntoComments();
       }
     },
     "error": function(xhr, statusText, errorThrown) {
@@ -372,9 +373,34 @@ Gitorious.enableCommenting = function() {
 
 }
 
+Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
+    // Extract the affected diffs and insert them above the comment it
+    // belongs to
+    $("#merge_request_comments .comment.inline").each(function() {
+        var comment = $( $(this).find(".inline_comment_link a").attr("href") );
+        if (comment.length === 0)
+          return;
+        var selectors = $.map(comment.attr("gts:lines").split(","), function(e) {
+            return "table.codediff.inline tr.line-" + e;
+        });
+        // extract the raw diff data from each row
+        var plainDiff = "";
+        $(selectors.join(",")).each(function() {
+            var cell = $(this).find("td.code").clone();
+            cell.children("ins, del, div").empty(); // we only want the actual diff data
+            var op = "> " + (cell.hasClass("ins") ? "+ " : "-");
+            plainDiff += op + cell.text();
+            plainDiff += "\n";
+       });
+       $(this).prepend('<pre class="diff-comment-context"><code>' +
+                       plainDiff + '</code></pre');
+    });
+};
+
 Gitorious.CommentForm = function(path){
   this.path = path;
   this.numbers = [];
+
   this.setLineNumbers = function(n) {
     result = [];
     n.each(function(i,number){
@@ -411,6 +437,7 @@ Gitorious.CommentForm = function(path){
     var zeForm = commentContainer.find("form");
     zeForm.submit(function(){
       zeForm.find(".progress").show("fast");
+      zeForm.find(":input").hide("fast");
       jQuery.ajax({
         "url": $(this).attr("action"),
         "data": $(this).serialize(),
@@ -422,13 +449,14 @@ Gitorious.CommentForm = function(path){
         "error": function(xhr, statusText, errorThrown) {
           var errorDisplay = $(zeForm).find(".error");
           zeForm.find(".progress").hide("fast");
+          zeForm.find(":input").show("fast");
           errorDisplay.text("Please make sure your comment is valid");
           errorDisplay.show("fast");
         }
       });
       return false;
     });
-    
+
     commentContainer.keydown(function(e){
       if (e.which == 27) { // Escape
         Gitorious.CommentForm.destroyAll();
