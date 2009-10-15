@@ -69,7 +69,9 @@ class CommentsController < ApplicationController
           end
         end
         format.js do
-          render :nothing => true, :status => :created
+          @diffs = @target.diffs(@comment.sha_range).
+            select{|d|d.a_path == @comment.path}
+          render :partial => "merge_request_versions/comments", :status => :created
         end
       else
         format.html { render :action => "new" }

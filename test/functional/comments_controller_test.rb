@@ -127,8 +127,12 @@ class CommentsControllerTest < ActionController::TestCase
 
     context "Merge request versions" do
       def create_new_version
+        diff_backend = mock
+        diff_backend.stubs(:commit_diff).returns([])
+        MergeRequestVersion.any_instance.stubs(:diff_backend).returns(diff_backend)
         @merge_request.stubs(:calculate_merge_base).returns("ffac0")
-        @version = @merge_request.create_new_version
+        version = @merge_request.create_new_version
+        return version
       end
     
       def create_merge_request_version_comment(version)

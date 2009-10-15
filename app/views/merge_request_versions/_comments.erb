@@ -1,0 +1,1 @@
+<%= render_inline_diffs_with_stats(@diffs, :open){|file| @target.comments_for_path_and_sha(file.a_path, @comment.sha_range)} -%>

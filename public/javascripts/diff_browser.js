@@ -443,8 +443,10 @@ Gitorious.CommentForm = function(path){
         "data": $(this).serialize(),
         "type": "POST",
         "success": function(data, text) {
-          Gitorious.CommentForm.destroyAll();
-          new Gitorious.DiffBrowser(shas);
+          Gitorious.disableCommenting();
+          var diffContainer = zeForm.parents(".file-diff");
+          diffContainer.replaceWith(data);
+          Gitorious.enableCommenting();
         },
         "error": function(xhr, statusText, errorThrown) {
           var errorDisplay = $(zeForm).find(".error");

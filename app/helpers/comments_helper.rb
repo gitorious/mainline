@@ -20,6 +20,7 @@
 #++
 
 module CommentsHelper
+  include DiffHelper
   def comment_block(comment, &block)
     block_options = {:class => "comment"}
     if comment.applies_to_line_numbers?
