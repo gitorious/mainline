@@ -388,7 +388,7 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
         $(selectors.join(",")).each(function() {
             var cell = $(this).find("td.code").clone();
             cell.children("ins, del, div").empty(); // we only want the actual diff data
-            var op = "> " + (cell.hasClass("ins") ? "+ " : "-");
+            var op = "> " + (cell.hasClass("ins") ? "+ " : "- ");
             plainDiff += op + cell.text();
             plainDiff += "\n";
        });
