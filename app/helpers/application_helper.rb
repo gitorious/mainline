@@ -486,7 +486,7 @@ module ApplicationHelper
   def include_javascripts
     javascript_include_tag "jquery.core", "jquery.autocomplete", "jquery.cookie",
       "color_picker", "ui.core","ui.selectable",
-      "core_extensions", "Jquery.gitorious_extensions", "merge_requests", "diff_browser",
+      "core_extensions", "jquery.gitorious_extensions", "merge_requests", "diff_browser",
       "messages", "application", :cache => true
   end
 
