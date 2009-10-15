@@ -72,7 +72,7 @@ Gitorious.ShaSpec = function() {
   }
 
   this.shaSpecWithVersion = function() {
-    result = this.shaSpec();
+    var result = this.shaSpec();
     if (this.hasVersion()) {
       result = result + "@" + this.getVersion();
     }
@@ -120,8 +120,8 @@ Gitorious.ShaSpec.parseLocationHash = function(hash) {
   if (hash == "" || typeof(hash) == "undefined") {
     return null;
   }
-  result = new Gitorious.ShaSpec();
-  _hash = hash.replace(/#/, "");
+  var result = new Gitorious.ShaSpec();
+  var _hash = hash.replace(/#/, "");
   specAndVersion = _hash.split("@");
   result.parseShas(specAndVersion[0]);
   result.setVersion(specAndVersion[1]);
@@ -402,7 +402,7 @@ Gitorious.CommentForm = function(path){
   this.numbers = [];
 
   this.setLineNumbers = function(n) {
-    result = [];
+    var result = [];
     n.each(function(i,number){
       if (number != "") {
         result.push(number);
