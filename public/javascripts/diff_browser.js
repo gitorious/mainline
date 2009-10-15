@@ -213,7 +213,7 @@ Gitorious.DiffBrowser.KeyNavigation = {
         }
       var element = $(elements[Gitorious.DiffBrowser.KeyNavigation._currentIndex]);
       element.parents(".diff-comments:hidden").slideDown();
-      window.scrollTo(0, element.position().top + window.innerHeight);
+      $.scrollTo(element, { axis:'y', offset:-150 });
       Gitorious.DiffBrowser.CommentHighlighter.add(element);
     };
 
