@@ -142,10 +142,13 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
     }
   }
 }
+NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs", Gitorious,
+                                               Gitorious.setDiffBrowserHunkStateFromCookie,
+                                               this);
 
 Gitorious.DiffBrowser = function(shas)
 {
-  Gitorious.disableCommenting();
+  NotificationCenter.defaultCenter().notifyObservers("DiffBrowserWillReloadDiffs", this);
   jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
   var mr_diff_url = jQuery("#merge_request_commit_selector")
     .attr("data-merge-request-version-url");
@@ -161,10 +164,8 @@ Gitorious.DiffBrowser = function(shas)
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.parseShas(shas);
         Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
-        Gitorious.setDiffBrowserHunkStateFromCookie();
-        Gitorious.enableCommenting();
-        Gitorious.DiffBrowser.KeyNavigation.enable();
-        Gitorious.DiffBrowser.insertDiffContextsIntoComments();
+        NotificationCenter.defaultCenter().notifyObservers("DiffBrowserDidReloadDiffs",
+                                                           this);
       }
     },
     "error": function(xhr, statusText, errorThrown) {
@@ -243,6 +244,10 @@ Gitorious.DiffBrowser.KeyNavigation = {
       $(window).unbind("keydown", Gitorious.DiffBrowser.KeyNavigation._callback);
   }
 };
+NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs",
+                                               Gitorious.DiffBrowser,
+                                               Gitorious.DiffBrowser.KeyNavigation.enable,
+                                               this);
 
 Gitorious.MergeRequestController = function() {
   this.willSelectShas = function() {
@@ -400,6 +405,10 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
                        plainDiff + '</code></pre');
     });
 };
+NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs",
+                                      Gitorious.DiffBrowser,
+                                      Gitorious.DiffBrowser.insertDiffContextsIntoComments,
+                                      this);
 
 Gitorious.CommentForm = function(path){
   this.path = path;
