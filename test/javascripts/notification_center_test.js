@@ -76,11 +76,23 @@ NotificationCenterTest = TestCase("Notification Center", {
         assertEquals([1,2,3], callbacksRan);
     },
 
-    testShouldRemoveAnObserver: function() {
+    testShouldRemoveAllObservers: function() {
         var nc = new NotificationCenterManager("test");
         nc.addObserver("foo", this, function(){}, this);
         assertNotSame("undefined", typeof(nc.observers["foo"]));
-        nc.removeObservers("foo");
+        nc.removeAllObservers("foo");
         assertSame("undefined", typeof(nc.observers["foo"]));
+    },
+
+    testShouldRemoveAnObserver: function() {
+        var nc = new NotificationCenterManager("test");
+        var senderOne = new Object();
+        var senderTwo = new Object();
+        nc.addObserver("foo", this, function(){}, senderOne);
+        nc.addObserver("foo", this, function(){}, senderTwo);
+        assertEquals(2, nc.observers["foo"].length);
+        assertTrue(nc.removeObserver("foo", senderTwo));
+        assertEquals(1, nc.observers["foo"].length);
+        assertEquals(senderOne, nc.observers["foo"][0].sender);
     }
 });

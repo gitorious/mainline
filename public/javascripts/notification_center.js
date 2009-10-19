@@ -59,9 +59,24 @@ var NotificationCenterManager = function(name) {
     };
 
     // remove all observers associated with +identifier+
-    // TODO: remove the observer +identifier+ that +sender+ has initiated
-    this.removeObservers = function(identifier, sender) {
+    this.removeAllObservers = function(identifier) {
         delete this.observers[identifier];
+    };
+
+    // remove the observer that +sender+ has initiated for
+    // +identifier+
+    this.removeObserver = function(identifier, sender) {
+        var observers = this.observers[identifier];
+        if (!observers)
+            return false;
+        wasDeleted = false;
+        observers.each(function(index) {
+            if (this.sender === sender) {
+                observers.splice(index, 1);
+                wasDeleted = true;
+            }
+        });
+        return wasDeleted;
     };
 };
 
