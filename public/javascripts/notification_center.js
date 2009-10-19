@@ -17,7 +17,7 @@
 #-- 
 */
 
-var NotificationCenter = function(name) {
+var NotificationCenterManager = function(name) {
     this.name = name;
     this.observers = {};
 
@@ -65,10 +65,4 @@ var NotificationCenter = function(name) {
     };
 };
 
-var _defaultNotificationCenter = null;
-NotificationCenter.defaultCenter = function() {
-    if (!_defaultNotificationCenter) {
-        _defaultNotificationCenter = new NotificationCenter("default notification center");
-    }
-    return _defaultNotificationCenter;
-};
+var NotificationCenter = new NotificationCenterManager("default notification center");

@@ -142,13 +142,12 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
     }
   }
 }
-NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs", Gitorious,
-                                               Gitorious.setDiffBrowserHunkStateFromCookie,
-                                               this);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
+                               Gitorious.setDiffBrowserHunkStateFromCookie, this);
 
 Gitorious.DiffBrowser = function(shas)
 {
-  NotificationCenter.defaultCenter().notifyObservers("DiffBrowserWillReloadDiffs", this);
+  NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
   jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
   var mr_diff_url = jQuery("#merge_request_commit_selector")
     .attr("data-merge-request-version-url");
@@ -164,7 +163,7 @@ Gitorious.DiffBrowser = function(shas)
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.parseShas(shas);
         Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
-        NotificationCenter.defaultCenter().notifyObservers("DiffBrowserDidReloadDiffs",
+        NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs",
                                                            this);
       }
     },
@@ -244,10 +243,8 @@ Gitorious.DiffBrowser.KeyNavigation = {
       $(window).unbind("keydown", Gitorious.DiffBrowser.KeyNavigation._callback);
   }
 };
-NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs",
-                                               Gitorious.DiffBrowser,
-                                               Gitorious.DiffBrowser.KeyNavigation.enable,
-                                               this);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
+                               Gitorious.DiffBrowser.KeyNavigation.enable, this);
 
 Gitorious.MergeRequestController = function() {
   this.willSelectShas = function() {
@@ -377,10 +374,10 @@ Gitorious.enableCommenting = function() {
   });
 };
 
-NotificationCenter.defaultCenter().addObserver("DiffBrowserWillReloadDiffs", Gitorious,
-                                               Gitorious.disableCommenting, this);
-NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs", Gitorious,
-                                               Gitorious.enableCommenting, this);
+NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
+                               Gitorious.disableCommenting, this);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
+                               Gitorious.enableCommenting, this);
 
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     // Extract the affected diffs and insert them above the comment it
@@ -405,10 +402,8 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
                        plainDiff + '</code></pre');
     });
 };
-NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs",
-                                      Gitorious.DiffBrowser,
-                                      Gitorious.DiffBrowser.insertDiffContextsIntoComments,
-                                      this);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
+                               Gitorious.DiffBrowser.insertDiffContextsIntoComments, this);
 
 Gitorious.CommentForm = function(path){
   this.path = path;
@@ -456,12 +451,10 @@ Gitorious.CommentForm = function(path){
         "data": $(this).serialize(),
         "type": "POST",
         "success": function(data, text) {
-          NotificationCenter.defaultCenter().notifyObservers("DiffBrowserWillReloadDiffs",
-                                                             this);
+          NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
           var diffContainer = zeForm.parents(".file-diff");
           diffContainer.replaceWith(data);
-          NotificationCenter.defaultCenter().notifyObservers("DiffBrowserDidReloadDiffs",
-                                                             this);
+          NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
         },
         "error": function(xhr, statusText, errorThrown) {
           var errorDisplay = $(zeForm).find(".error");
