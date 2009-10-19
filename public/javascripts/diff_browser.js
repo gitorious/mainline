@@ -370,8 +370,12 @@ Gitorious.enableCommenting = function() {
           $(this).find(".reply").hide().unbind("click", replyCallback);
       });
   });
+};
 
-}
+NotificationCenter.defaultCenter().addObserver("DiffBrowserWillReloadDiffs", Gitorious,
+                                               Gitorious.disableCommenting, this);
+NotificationCenter.defaultCenter().addObserver("DiffBrowserDidReloadDiffs", Gitorious,
+                                               Gitorious.enableCommenting, this);
 
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     // Extract the affected diffs and insert them above the comment it
@@ -443,10 +447,12 @@ Gitorious.CommentForm = function(path){
         "data": $(this).serialize(),
         "type": "POST",
         "success": function(data, text) {
-          Gitorious.disableCommenting();
+          NotificationCenter.defaultCenter().notifyObservers("DiffBrowserWillReloadDiffs",
+                                                             this);
           var diffContainer = zeForm.parents(".file-diff");
           diffContainer.replaceWith(data);
-          Gitorious.enableCommenting();
+          NotificationCenter.defaultCenter().notifyObservers("DiffBrowserDidReloadDiffs",
+                                                             this);
         },
         "error": function(xhr, statusText, errorThrown) {
           var errorDisplay = $(zeForm).find(".error");

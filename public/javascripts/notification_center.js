@@ -43,11 +43,13 @@ var NotificationCenter = function(name) {
     // notify observers for the +identifier+ event, that +sender+ has
     // triggered it 
     this.notifyObservers = function(identifier, sender) {
+        console.log("Notifying observers about ", identifier);
         var observers = this.observers[identifier];
         if (!observers)
             return false;
 
         jQuery.each(observers, function() {
+            console.log("Notifying ", this ," about ", identifier);
             var args = this.senderArguments || [];
             args.unshift(this.sender);
             this.callback.apply(this.receiver, args);
