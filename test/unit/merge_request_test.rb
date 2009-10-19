@@ -739,4 +739,25 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal @merge_request.source_repository.id, msg["source_repository_id"]
     end
   end
+
+  context "Commenting" do
+    setup do
+      @merge_request = merge_requests(:johans_to_mikes)
+      @comments = ["Looks good", "On the other hand..."].map {|body|
+        @merge_request.comments.create(
+          :project => @merge_request.target_repository.project,
+          :body => body,
+          :sha1 => "ffac"
+          )
+      }
+    end
+
+    should 'include comments on versions' do
+      assert @merge_request.cascaded_comments.include?(comments(:first_merge_request_version_comment))
+    end
+
+    should 'include comments on the merge request' do
+      assert @merge_request.cascaded_comments.include? @comments.first
+    end
+  end
 end

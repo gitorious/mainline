@@ -26,3 +26,15 @@ moes_repos:
   sha1: 62cdb7020ff920e5aa642c3d4066950dd1f01f4d # bar
   body: a comment in moes repos
   project_id: 2
+
+first_merge_request_version_comment:
+  id: 4
+  user_id: 4
+  target_id: 1
+  target_type: MergeRequestVersion
+  sha1: ffac0-ac0ff
+  body: Needs less of everything
+  path: test/factories/comments.yml #meta
+  first_line_number: 38
+  number_of_lines: 2
+  project_id: 1 
