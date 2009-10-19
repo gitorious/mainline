@@ -163,13 +163,14 @@ Gitorious.DiffBrowser = function(shas)
         var shaSpec = new Gitorious.ShaSpec();
         shaSpec.parseShas(shas);
         Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
-        NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs",
-                                                           this);
+        NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
       }
     },
     "error": function(xhr, statusText, errorThrown) {
-      jQuery("#merge_request_diff").html("<div class=\"merge_request_diff_loading_indicator\">" + 
-                                         "An error has occured. Please try again later.</div>");
+      jQuery("#merge_request_diff").html(
+          '<div class="merge_request_diff_loading_indicator">' +
+          "An error has occured. Please try again later.</div>"
+      );
     }
   });
 }
@@ -245,6 +246,8 @@ Gitorious.DiffBrowser.KeyNavigation = {
 };
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
                                Gitorious.DiffBrowser.KeyNavigation.enable, this);
+NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm", Gitorious.DiffBrowser,
+                               Gitorious.DiffBrowser.KeyNavigation.disable, this);
 
 Gitorious.MergeRequestController = function() {
   this.willSelectShas = function() {
@@ -429,7 +432,7 @@ Gitorious.CommentForm = function(path){
     return "Commenting on lines " + this.linesAsString() + " in " + this.path;
   }
   this.display = function(options) {
-    Gitorious.DiffBrowser.KeyNavigation.disable();
+    NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
     var comment_form = jQuery("#inline_comment_form");
     var hash = document.location.hash;
     var commentContainer = options.inside;
