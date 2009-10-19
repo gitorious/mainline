@@ -2,7 +2,9 @@ namespace :test do
 
   desc "Run all javascript unit tests"
   task :javascripts do
-    command_line = "java -jar #{File.join(Rails.root, "test", "javascripts", "JsTestDriver.jar")} --config #{File.join(Rails.root, "config","jsTestDriver.conf")} --tests all"
+    jar_file = File.join(Rails.root, "test", "javascripts", "JsTestDriver.jar")
+    config = File.join(Rails.root, "config","jsTestDriver.conf")
+    command_line = "java -jar #{jar_file} --config #{config} --tests all --captureConsole"
     puts `#{command_line}`
   end
 
