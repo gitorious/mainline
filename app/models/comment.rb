@@ -106,7 +106,11 @@ class Comment < ActiveRecord::Base
   def applies_to_line_numbers?
     return MergeRequestVersion === target
   end
-  
+
+  def applies_to_merge_request?
+    MergeRequest === target
+  end
+
   protected
     def notify_target_if_supported
       if target && NOTIFICATION_TARGETS.include?(target.class)
@@ -114,11 +118,7 @@ class Comment < ActiveRecord::Base
         deliver_notification_to(target.user)
       end
     end
-    
-    def applies_to_merge_request?
-      MergeRequest === target
-    end
-    
+
     def update_state_in_target
       if applies_to_merge_request? and state_change
         target.with_user(user) do

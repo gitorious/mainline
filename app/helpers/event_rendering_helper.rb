@@ -184,7 +184,7 @@ module EventRenderingHelper
       repo = event.target
     end
     
-    if comment.sha1.blank?
+    if comment.applies_to_merge_request? || comment.applies_to_line_numbers?
       if event.body == "MergeRequest"
         action = action_for_event(:event_commented) do
           " on merge request " +  link_to(h(repo.url_path) +

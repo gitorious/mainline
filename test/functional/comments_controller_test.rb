@@ -161,6 +161,17 @@ class CommentsControllerTest < ActionController::TestCase
         message = @merge_request.user.received_messages.last
         assert_equal @merge_request, message.notifiable
       end
+
+      should "create an event with the MergeRequest class name as the body" do
+        @version = create_new_version
+        assert_difference("Event.count") do
+          create_merge_request_version_comment(@version)
+        end
+        assert_equal @merge_request, Event.last.target, Event.last.inspect
+        assert_equal "MergeRequest", Event.last.body
+        assert_not_nil comment = Comment.find_by_id(Event.last.data)
+        assert_equal 1..14, comment.lines
+      end
     end
     
     should "redirect back to the merge request on POST create if that's the target" do

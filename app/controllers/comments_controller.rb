@@ -109,12 +109,18 @@ class CommentsController < ApplicationController
     
     def create_new_commented_posted_event
       if applies_to_merge_request_version?
-        notify_merge_request_owner and return
+        notify_merge_request_owner
+        @project.create_event(Action::COMMENT, @target.merge_request, current_user,
+                              @comment.to_param, "MergeRequest")
+        return
       end
+
       if @target == @repository
-        @project.create_event(Action::COMMENT, @repository, current_user, @comment.to_param, "Repository")
+        @project.create_event(Action::COMMENT, @repository, current_user,
+                              @comment.to_param, "Repository")
       else
-        @project.create_event(Action::COMMENT, @target, current_user, @comment.to_param, "MergeRequest") if @comment.state_change.blank?
+        @project.create_event(Action::COMMENT, @target, current_user,
+          @comment.to_param, "MergeRequest") if @comment.state_change.blank?
       end
     end
 
