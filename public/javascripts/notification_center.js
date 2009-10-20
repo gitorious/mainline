@@ -29,29 +29,24 @@ var NotificationCenterManager = function(name) {
     // +callback+.
     // The +callback+ will receive the +sender+ as argument, as well
     // as any +senderArguments+.
-    this.addObserver = function(identifier, receiver, callback, sender, senderArguments) {
+    this.addObserver = function(identifier, receiver, callback) {
         if (!(this.observers[identifier] instanceof Array))
             this.observers[identifier] = [];
         this.observers[identifier].push({
             'receiver': receiver,
-            'callback': callback,
-            'sender': sender,
-            'senderArguments': jQuery.makeArray(senderArguments)
+            'callback': callback
         });
     };
 
     // notify observers for the +identifier+ event, that +sender+ has
     // triggered it 
-    this.notifyObservers = function(identifier, sender) {
-        console.log("Notifying observers about ", identifier);
+    this.notifyObservers = function(identifier, sender, runtimeArgs) {
         var observers = this.observers[identifier];
         if (!observers)
             return false;
 
         jQuery.each(observers, function() {
-            console.log("Notifying ", this ," about ", identifier);
-            var args = this.senderArguments || [];
-            args.unshift(this.sender);
+            var args = jQuery.makeArray(runtimeArgs);
             this.callback.apply(this.receiver, args);
         });
 
@@ -65,13 +60,13 @@ var NotificationCenterManager = function(name) {
 
     // remove the observer that +sender+ has initiated for
     // +identifier+
-    this.removeObserver = function(identifier, sender) {
+    this.removeObserver = function(identifier, receiver) {
         var observers = this.observers[identifier];
         if (!observers)
             return false;
         wasDeleted = false;
         observers.each(function(index) {
-            if (this.sender === sender) {
+            if (this.receiver === receiver) {
                 observers.splice(index, 1);
                 wasDeleted = true;
             }

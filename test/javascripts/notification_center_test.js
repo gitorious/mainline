@@ -25,13 +25,13 @@ NotificationCenterTest = TestCase("Notification Center", {
         assertEquals(nc.name, NotificationCenter.name);
     },
 
+
     testShouldAddAnObserver: function() {
         var nc = new NotificationCenterManager("test");
         var observingObject = { callback: function(){ "callback ran" } };
-        var sendingObject = "sender";
         nc.addObserver("someIdentifier", observingObject, 
-                       observingObject.callback, sendingObject);
-        assertEquals(sendingObject, nc.observers["someIdentifier"][0].sender);
+                       observingObject.callback);
+        assertSame(observingObject.callback, nc.observers["someIdentifier"][0].callback);
     },
 
     testShouldNotifyAnObserver: function() {
@@ -52,27 +52,28 @@ NotificationCenterTest = TestCase("Notification Center", {
 
     testShouldSendArgumentsToCallback: function() {
         var nc = new NotificationCenterManager("test");
-        var tally = 0;
+        var resultingData = null;
         var receiver = {
-            incrementByCallback: function(sender, amount) {
-                tally += amount
+            successfulCallback: function(message, data) {
+                resultingData = data;
             }
         };
-        nc.addObserver("incrementor", receiver, receiver.incrementByCallback, this, 3);
-        nc.notifyObservers("incrementor", this);
-        assertEquals(3, tally);
+        var sender = {};
+        nc.addObserver("notifications", receiver, receiver.successfulCallback);
+        nc.notifyObservers("notifications", sender, ["hello", "world"]);
+        assertEquals("world", resultingData);
     },
 
     testShouldNotifyAllObservers: function() {
         var nc = new NotificationCenterManager("test");
         var callbacksRan = [];
         var receiver = {
-            callback: function(sender, id) { callbacksRan.push(id) }
+            callback: function(id) { callbacksRan.push(id) }
         };
-        nc.addObserver("foo", receiver, receiver.callback, this, 1);
-        nc.addObserver("foo", receiver, receiver.callback, this, 2);
-        nc.addObserver("foo", receiver, receiver.callback, this, 3);
-        nc.notifyObservers("foo", this);
+        nc.addObserver("foo", receiver, receiver.callback);
+        nc.notifyObservers("foo", this, 1);
+        nc.notifyObservers("foo", this, 2);
+        nc.notifyObservers("foo", this, 3);
         assertEquals([1,2,3], callbacksRan);
     },
 
@@ -86,13 +87,13 @@ NotificationCenterTest = TestCase("Notification Center", {
 
     testShouldRemoveAnObserver: function() {
         var nc = new NotificationCenterManager("test");
-        var senderOne = new Object();
-        var senderTwo = new Object();
-        nc.addObserver("foo", this, function(){}, senderOne);
-        nc.addObserver("foo", this, function(){}, senderTwo);
+        var firstObserver = new Object();
+        var secondObserver = new Object();
+        nc.addObserver("foo", firstObserver, function(){});
+        nc.addObserver("foo", secondObserver, function(){});
         assertEquals(2, nc.observers["foo"].length);
-        assertTrue(nc.removeObserver("foo", senderTwo));
+        assertTrue(nc.removeObserver("foo", secondObserver));
         assertEquals(1, nc.observers["foo"].length);
-        assertEquals(senderOne, nc.observers["foo"][0].sender);
+        assertEquals(firstObserver, nc.observers["foo"][0].receiver);
     }
 });
