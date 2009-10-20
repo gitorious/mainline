@@ -250,6 +250,72 @@ NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm", Gitorious.Di
                                Gitorious.DiffBrowser.KeyNavigation.disable, this);
 
 Gitorious.MergeRequestController = function() {
+  this._currentShaRange = null; // The sha range currently displayed
+  this._currentVersion = null; // The version currently displayed
+  this._requestedShaRange = null; // The requested sha range
+  this._requestedVersion = null; // The requested version
+
+
+  this._setCurrentShaRange = function(shas) {
+    this._currentShaRange = shas;
+  }
+
+  this._setCurrentVersion = function(version) {
+    this._currentVersion = version;
+  }
+
+  this.shaSelected = function(sha) {
+    this._requestedShaRange = sha;
+  }
+
+  this.versionSelected = function(version) {
+    this._requestedVersion = version;
+  }
+
+  this._setTransport = function(transport) {
+    this._transport = transport;
+  }
+
+  //Callback when new diffs are received from the server
+  this.diffsReceived = function(data, message) {
+      this._diffPayload = data;
+      this._setCurrentVersion(this._requestedVersion);
+      this._setCurrentShaRange(this._requestedShaRange);
+  }
+
+
+  this.getTransport = function() {
+    if (this._transport) {
+      return this._transport;
+    } else {
+      return jQuery;
+    }
+  }
+  
+  this.update = function(o) {
+    if (o.version)
+      this.versionSelected(o.version);
+    if (o.sha)
+      this.shaSelected(o.sha);
+    if (this.needsUpdate()) {
+      var options = {};
+      options["data"] = {"commit_shas": this._requestedShaRange};
+      options["url"] = jQuery("#merge_request_commit_selector").attr("data-merge-merge-request-version-url");
+      options["success"] = this.diffsReceivedSuccessfully;
+      this.getTransport().ajax(options);
+    }
+  }
+
+  this.diffsReceivedSuccessfully = function(data, responseText) {
+    this._currentShaRange = this._requestedShaRange;
+    this._currentVersion = this._requestedVersion;
+    jQuery("#merge_request_diff").html(data);
+  }
+  
+  this.needsUpdate = function() {
+    return (this._currentShaRange != this._requestedShaRange) || (this._currentVersion != this._requestedVersion);
+  }
+
   this.willSelectShas = function() {
     $("#current_shas .label").html("Selecting");
   }

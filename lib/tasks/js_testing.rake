@@ -5,6 +5,7 @@ namespace :test do
     jar_file = File.join(Rails.root, "test", "javascripts", "JsTestDriver.jar")
     config = File.join(Rails.root, "config","jsTestDriver.conf")
     command_line = "java -jar #{jar_file} --config #{config} --tests all --captureConsole"
+    command_line << " --reset" if ENV["RESET"]
     puts `#{command_line}`
   end
 
@@ -13,3 +14,4 @@ namespace :test do
     puts `java -jar #{File.join(Rails.root, "test", "javascripts", "JsTestDriver.jar")} --port 9876`
   end
 end
+
