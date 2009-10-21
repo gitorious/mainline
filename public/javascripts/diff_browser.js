@@ -142,8 +142,6 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
         }
     }
 }
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
-                               Gitorious.setDiffBrowserHunkStateFromCookie, this);
 
 Gitorious.DiffBrowser = function(shas)
 {
@@ -288,6 +286,7 @@ Gitorious.DiffBrowser.KeyNavigationController = function() {
         $(window).unbind("keydown", this._callback);
     };
 };
+
 Gitorious.DiffBrowser.KeyNavigation = new Gitorious.DiffBrowser.KeyNavigationController();
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
                                Gitorious.DiffBrowser.KeyNavigation,
@@ -295,6 +294,8 @@ NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
 NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm",
                                Gitorious.DiffBrowser.KeyNavigation,
                                Gitorious.DiffBrowser.KeyNavigation.disable, this);
+
+
 
 Gitorious.MergeRequestController = function() {
     this._currentShaRange = null; // The sha range currently displayed
@@ -364,7 +365,7 @@ Gitorious.MergeRequestController = function() {
         this._currentShaRange = this._requestedShaRange;
         this._currentVersion = this._requestedVersion;
         jQuery("#merge_request_diff").html(data);
-        //    NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+        NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
     }
     
     this.needsUpdate = function() {
@@ -502,8 +503,6 @@ Gitorious.enableCommenting = function() {
 NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
                                Gitorious.disableCommenting, this);
 
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
-                               Gitorious.enableCommenting, this);
 
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     // Extract the affected diffs and insert them above the comment it
@@ -528,9 +527,15 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
                         plainDiff + '</code></pre');
     });
 };
+/*
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", {},
+                               Gitorious.DiffBrowser.insertDiffContextsIntoComments);
+*/
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
-                               Gitorious.DiffBrowser.insertDiffContextsIntoComments, this);
+                               Gitorious.DiffBrowser.KeyNavigation.enable);
 
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", {},
+                               Gitorious.enableCommenting);
 Gitorious.CommentForm = function(path){
     this.path = path;
     this.numbers = [];
