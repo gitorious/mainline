@@ -51,7 +51,7 @@ class SiteController < ApplicationController
   
     # Render a Site-specific index template
     def render_site_index
-      @projects = current_site.projects.find(:all, :limit => 10, :order => "created_at asc")
+      @projects = current_site.projects.find(:all, :order => "created_at asc")
       @teams = Group.all_participating_in_projects(@projects)
       @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
       @latest_events = Event.latest_in_projects(25, @projects.map{|p| p.id })

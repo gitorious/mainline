@@ -32,7 +32,14 @@
     <% end -%>
     <script type="text/javascript" charset="utf-8">
       $(document).ready(function(){
-        prettyPrint();
+          if (parseInt($("#codeblob tr td.line-numbers:last").text()) < 3500) {
+              prettyPrint();
+          } else {
+              $("#long-file").show().find("a#highlight-anyway").click(function(e){
+                  prettyPrint();
+                  e.preventDefault();
+              });
+          }
       });
     </script>
   <% end -%>
@@ -53,6 +60,15 @@
 
 <% if textual?(@blob) && !too_big_to_render?(@blob.size) -%>
   <% cache([:blob_render, @commit.id, @blob.id]) do -%>
+     <% help_box(:center, :error, :style => "display:none", :id => "long-file") do -%>
+        <p>
+          This file looks large and may slow your browser down if we attempt
+          to syntax highlight it, so we're showing it without any
+          pretty colors. 
+          <a href="#highlight-anyway" id="highlight-anyway">Highlight
+          it anyway</a>.
+        </p>
+     <% end -%>
     <%= render_highlighted(@blob.data, current_path.last || "") -%>
   <% end -%>
 <% elsif textual?(@blob) && too_big_to_render?(@blob.size) -%>
