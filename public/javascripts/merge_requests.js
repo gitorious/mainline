@@ -202,14 +202,36 @@ $(document).ready(function() {
         var comment = $(this).parents("div.comment.inline");
         var path = $(comment).attr("data-diff-path");
         var last_line = $(comment).attr("data-last-line-in-diff");
+        var sha_range = $(comment).attr("data-sha-range");
+        var version = $(comment).attr("data-merge-request-version");
+
+        // Notify the controller of the current version and sha range
+        // Add self as listener when this has been completed
+        // When this has been completed, remove self as listener
         var elementInDiff = function(s) {
           return $(".file-diff[data-diff-path=" + path + "] " + s);
         }
+        
         var hunks = elementInDiff(".diff-hunks");
-        hunks.removeClass("closed").addClass("open");
-        hunks.slideDown();
-        elementInDiff(".diff-comments.line-" + last_line).slideToggle();
-        Gitorious.DiffBrowser.CommentHighlighter.add( $($(this).attr("href")) );
+        var lastLine = elementInDiff(".diff-comments.line-" + last_line);
+        var href =  $($(this).attr("href"));
+
+        var jumpToComment = {
+            notificationReceived: function(message) {
+                hunks.removeClass("closed").addClass("open");
+                hunks.slideDown();
+                lastLine.slideToggle();
+                Gitorious.DiffBrowser.CommentHighlighter.add(href);                
+                this.selfDestruct();
+            },
+            selfDestruct: function() {
+                NotificationCenter.removeObserver("MergeRequestShaListingUpdated", this);
+            }
+        };
+        NotificationCenter.addObserver("MergeRequestShaListingUpdated", 
+                                       jumpToComment, 
+                                       jumpToComment.notificationReceived);
+        Gitorious.MergeRequestController.getInstance().versionChanged(version);
         return true;
     });
 

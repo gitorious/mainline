@@ -27,6 +27,8 @@ module CommentsHelper
       block_options[:class] << " inline"
       block_options[:"data-diff-path"] = comment.path
       block_options[:"data-last-line-in-diff"] = comment.lines.end
+      block_options[:"data-sha-range"] = comment.sha1
+      block_options[:"data-merge-request-version"] = comment.target.version
     end
     output = content_tag(:div, capture(&block), block_options)
     concat(output)

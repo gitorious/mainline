@@ -426,11 +426,14 @@ Gitorious.MergeRequestController = function() {
                                                        false);
                 }
             });
+        } else {
+            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", "Same version");
         }
     }
 
     this.shaListingReceived = function(successful, data, text) {
         if (successful) {
+            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", "Another version");
             this.replaceShaListing(data);
         } else {
             console.error("Got an error when fetching shas");

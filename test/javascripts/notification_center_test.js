@@ -94,5 +94,25 @@ NotificationCenterTest = TestCase("Notification Center", {
         assertTrue(nc.removeObserver("foo", secondObserver));
         assertEquals(1, nc.observers["foo"].length);
         assertEquals(firstObserver, nc.observers["foo"][0].receiver);
+    },
+    testSelfReferring: function() {
+        var callback = {
+            contacted: false,
+            doneRunning: false,
+
+            pinged: function() {
+                this.contacted = true;
+                this.done();
+            },
+            done: function() {
+                this.doneRunning = true;
+                NotificationCenter.removeObserver("foo", this);
+            }
+        };
+        NotificationCenter.addObserver("foo", callback, callback.pinged);
+        assertFalse(callback.doneRunning);
+        NotificationCenter.notifyObservers("foo", {});
+        assertTrue(callback.doneRunning);
+        assertEquals(0, NotificationCenter.observers["foo"].length);
     }
 });
