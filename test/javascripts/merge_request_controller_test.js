@@ -17,6 +17,9 @@
   #-- 
 */
 MergeRequestControllerTest = TestCase("Merge request controller", {
+    tearDown: function() {
+        Gitorious.MergeRequestController.getInstance()._setTransport(jQuery);
+    },
     testSingleton: function() {
         var firstController = Gitorious.MergeRequestController.getInstance();
         var secondController = Gitorious.MergeRequestController.getInstance();
@@ -36,8 +39,23 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
     testDetermineDefaultVersionAndSha: function(){
     },
     
+    testFetchVersionUrl: function() {
+        var c = Gitorious.MergeRequestController.getInstance();
+        c.getBaseDiffUrl = function() {
+            return "/gitorious/mainline/merge_requests/15/merge_request_versions/47";
+        }
+        c.versionSelected(2);
+//        assertEquals("", c.getDiffUrl());
+        // No fetch
+        c.versionSelected(3);
+//        assertEquals("", c.getDiffUrl());
+        // Fetch
+        // Notification when fetched to redisplay shas
+        c._setTransport(jQuery);
+    },
+
     testSelectDifferentVersion: function() {
-        var c = new Gitorious.MergeRequestController();
+        var c = Gitorious.MergeRequestController.getInstance();
         c._setCurrentShaRange("ffac");
         c._setCurrentVersion(2);
 
@@ -54,14 +72,10 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
 
         c._setTransport(m);
 
-        NotificationCenter.addObserver("MergeRequestDiffReceived", c, c.diffsReceived);
-
         c.update({'version': 1, 'sha': 'ffcc-aa90888'});
         var callArgs = m.calledWith;
         assertEquals("ffcc-aa90888", callArgs.data.commit_shas);
         m.ajaxReceived();
         assertFalse(c.needsUpdate());    
-        assertEquals("data", c._diffPayload);
-
     }
 })

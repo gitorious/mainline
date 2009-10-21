@@ -64,7 +64,10 @@
   </div>
   <ul class="changable-selection-options shadow-2 round-5">
     <% @merge_request.versions.each do |version| -%>
-      <li>Version <%=h version.version %></li>
+      <li data-mr-version-number="<%= version.version -%>" 
+          data-mr-version-url="<%= commit_diff_url(version) -%>">
+        Version <%=h version.version %>
+      </li>
     <% end -%>
   </ul>
 </div>
@@ -82,7 +85,7 @@
 </h2>
 
 <div class="comments" id="merge_request_comments">
-  <%= render :partial => @merge_request.comments -%>
+  <%= render :partial => @merge_request.cascaded_comments -%>
 </div>
 
 <%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>

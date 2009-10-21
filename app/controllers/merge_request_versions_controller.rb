@@ -27,7 +27,6 @@ class MergeRequestVersionsController < ApplicationController
       @commit = @repository.git.commit(params[:commit_shas])
     end
 
-    @comments = @version.merge_request.cascaded_comments
 
     respond_to {|wants|
       wants.js {render :layout => false}

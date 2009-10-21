@@ -149,6 +149,13 @@ Gitorious.DiffBrowser = function(shas)
 {
   NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
   jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
+  var c = Gitorious.MergeRequestController.getInstance();
+  var version = c.determineCurrentVersion();
+  c.update({version:version, sha: shas});
+  
+//  c.update({version:version, sha: shas});
+  //Gitorious.MergeRequestController.getInstance().update({'sha':shas});
+/*
   var mr_diff_url = jQuery("#merge_request_commit_selector")
     .attr("data-merge-request-version-url");
   jQuery.ajax({
@@ -173,6 +180,7 @@ Gitorious.DiffBrowser = function(shas)
       );
     }
   });
+  */
 }
 
 Gitorious.DiffBrowser.CommentHighlighter = {
@@ -275,23 +283,29 @@ Gitorious.MergeRequestController = function() {
   this._setTransport = function(transport) {
     this._transport = transport;
   }
+    // The correct diff url given the current version and sha selection
+    this.getDiffUrl = function() {
+        if (this._requestedVersion) {
+            return jQuery("li[data-mr-version-number=" + this._requestedVersion + "]").
+                attr("data-mr-version-url");
+        } else {
+            return jQuery("#merge_request_commit_selector").
+                attr("data-merge-request-version-url");
+        }
+    }
 
   //Callback when new diffs are received from the server
   this.diffsReceived = function(data, message) {
-      this._diffPayload = data;
       this._setCurrentVersion(this._requestedVersion);
       this._setCurrentShaRange(this._requestedShaRange);
   }
 
 
   this.getTransport = function() {
-    if (this._transport) {
-      return this._transport;
-    } else {
-      return jQuery;
-    }
+      return this._transport || jQuery;
   }
   
+  // TODO: Add error handler
   this.update = function(o) {
     if (o.version)
       this.versionSelected(o.version);
@@ -300,8 +314,9 @@ Gitorious.MergeRequestController = function() {
     if (this.needsUpdate()) {
       var options = {};
       options["data"] = {"commit_shas": this._requestedShaRange};
-      options["url"] = jQuery("#merge_request_commit_selector").attr("data-merge-merge-request-version-url");
-      options["success"] = this.diffsReceivedSuccessfully;
+        options["url"] = this.getDiffUrl();
+        var self = this;
+        options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text)};
       this.getTransport().ajax(options);
     }
   }
@@ -310,6 +325,7 @@ Gitorious.MergeRequestController = function() {
     this._currentShaRange = this._requestedShaRange;
     this._currentVersion = this._requestedVersion;
     jQuery("#merge_request_diff").html(data);
+//    NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
   }
   
   this.needsUpdate = function() {
@@ -380,6 +396,7 @@ Gitorious.MergeRequestController.getInstance = function() {
     return Gitorious.MergeRequestController._instance;
   } else {
     var result = new Gitorious.MergeRequestController();
+      NotificationCenter.addObserver("MergeRequestDiffReceived", result, result.diffsReceived);
     Gitorious.MergeRequestController._instance = result;
     return result;
   }
@@ -445,9 +462,10 @@ Gitorious.enableCommenting = function() {
 
 NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
                                Gitorious.disableCommenting, this);
+
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
                                Gitorious.enableCommenting, this);
-
+                               
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     // Extract the affected diffs and insert them above the comment it
     // belongs to
