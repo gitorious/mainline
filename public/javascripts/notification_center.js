@@ -34,17 +34,18 @@ var NotificationCenterManager = function(name) {
         });
     };
 
-    // notify observers for the +identifier+ event, that +sender+ has
-    // triggered it.
-    this.notifyObservers = function(identifier, sender, runtimeArgs) {
+    // notify observers for the +identifier+ event
+    // Any other arguments are given as arguments to the callback for
+    // the observer(s) being called
+    this.notifyObservers = function(identifier) {
         var observers = this.observers[identifier];
         if (!observers)
             return false;
 
-        jQuery.each(observers, function() {
-            var args = jQuery.makeArray(runtimeArgs);
-            this.callback.apply(this.receiver, args);
-        });
+        for (i=0; i < observers.length; i++) {
+            var args = jQuery.makeArray(arguments);
+            observers[i].callback.apply(observers[i].receiver, args.slice(1, args.length));
+        };
 
         return true;
     };
@@ -54,7 +55,7 @@ var NotificationCenterManager = function(name) {
         delete this.observers[identifier];
     };
 
-    // remove the observer that +sender+ has initiated for
+    // remove the observer that +receiver+ has initiated for
     // +identifier+
     this.removeObserver = function(identifier, receiver) {
         var observers = this.observers[identifier];

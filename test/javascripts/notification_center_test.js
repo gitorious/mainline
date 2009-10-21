@@ -58,9 +58,8 @@ NotificationCenterTest = TestCase("Notification Center", {
                 resultingData = data;
             }
         };
-        var sender = {};
         nc.addObserver("notifications", receiver, receiver.successfulCallback);
-        nc.notifyObservers("notifications", sender, ["hello", "world"]);
+        nc.notifyObservers("notifications", "hello", "world");
         assertEquals("world", resultingData);
     },
 
@@ -68,7 +67,7 @@ NotificationCenterTest = TestCase("Notification Center", {
         var nc = new NotificationCenterManager("test");
         var callbacksRan = [];
         var receiver = {
-            callback: function(id) { callbacksRan.push(id) }
+            callback: function(notifier, id) { callbacksRan.push(id) }
         };
         nc.addObserver("foo", receiver, receiver.callback);
         nc.notifyObservers("foo", this, 1);

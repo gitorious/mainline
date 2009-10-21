@@ -41,10 +41,8 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         var shasFetched = false;
         var controllerMock = {
             ajax: function(options){
-                NotificationCenter.notifyObservers(
-                    "MergeRequestShaListingReceived", 
-                    this, 
-                    [true, "data","text"]);
+                NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
+                                                   true, "data","text");
             }
         }
         // Mocking this one, as it depends on the DOM
@@ -68,7 +66,8 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
                 this.calledWith = args;
             };
             this.ajaxReceived = function() {
-                NotificationCenter.notifyObservers("MergeRequestDiffReceived", this, ["data", "message"]);
+                NotificationCenter.notifyObservers("MergeRequestDiffReceived",
+                                                   "data", "message");
             }
         };
         var m = new ControllerMock();

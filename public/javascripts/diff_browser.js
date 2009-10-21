@@ -419,13 +419,11 @@ Gitorious.MergeRequestController = function() {
                 url: url,
                 success: function(data,text){
                     NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
-                                                       {},
-                                                       [true, data,text]);
+                                                       true, data,text);
                 },
                 error: function(xhr,statusText,errorThrown){
                     NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
-                                                       {},
-                                                       [false]);
+                                                       false);
                 }
             });
         }
