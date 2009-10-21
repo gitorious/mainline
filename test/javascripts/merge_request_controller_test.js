@@ -45,10 +45,10 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
             return "/gitorious/mainline/merge_requests/15/merge_request_versions/47";
         }
         c.versionSelected(2);
-//        assertEquals("", c.getDiffUrl());
+        //        assertEquals("", c.getDiffUrl());
         // No fetch
         c.versionSelected(3);
-//        assertEquals("", c.getDiffUrl());
+        //        assertEquals("", c.getDiffUrl());
         // Fetch
         // Notification when fetched to redisplay shas
         c._setTransport(jQuery);
