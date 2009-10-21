@@ -23,10 +23,6 @@ var NotificationCenterManager = function(name) {
 
     // Adds an observer to be triggered by the +identifier+
     // +receiver+ is the object on which +callback+ will be bound to
-    // +sender+ is the object who holds the observer (usually you'd
-    // pass in this)
-    // +senderArguments+ is a list of arguments to passed to the
-    // +callback+.
     // The +callback+ will receive the +sender+ as argument, as well
     // as any +senderArguments+.
     this.addObserver = function(identifier, receiver, callback) {
@@ -39,7 +35,7 @@ var NotificationCenterManager = function(name) {
     };
 
     // notify observers for the +identifier+ event, that +sender+ has
-    // triggered it 
+    // triggered it.
     this.notifyObservers = function(identifier, sender, runtimeArgs) {
         var observers = this.observers[identifier];
         if (!observers)

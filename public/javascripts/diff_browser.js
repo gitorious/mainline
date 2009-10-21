@@ -142,6 +142,9 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
         }
     }
 }
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
+                               Gitorious.setDiffBrowserHunkStateFromCookie);
+
 
 Gitorious.DiffBrowser = function(shas)
 {
@@ -261,10 +264,10 @@ Gitorious.DiffBrowser.KeyNavigationController = function() {
 Gitorious.DiffBrowser.KeyNavigation = new Gitorious.DiffBrowser.KeyNavigationController();
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
                                Gitorious.DiffBrowser.KeyNavigation,
-                               Gitorious.DiffBrowser.KeyNavigation.enable, this);
+                               Gitorious.DiffBrowser.KeyNavigation.enable);
 NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm",
                                Gitorious.DiffBrowser.KeyNavigation,
-                               Gitorious.DiffBrowser.KeyNavigation.disable, this);
+                               Gitorious.DiffBrowser.KeyNavigation.disable);
 
 
 
@@ -414,7 +417,8 @@ Gitorious.MergeRequestController.getInstance = function() {
         return Gitorious.MergeRequestController._instance;
     } else {
         var result = new Gitorious.MergeRequestController();
-        NotificationCenter.addObserver("MergeRequestDiffReceived", result, result.diffsReceived);
+        NotificationCenter.addObserver("MergeRequestDiffReceived", result,
+                                       result.diffsReceived);
         Gitorious.MergeRequestController._instance = result;
         return result;
     }
@@ -477,14 +481,13 @@ Gitorious.enableCommenting = function() {
         });
     });
 };
-
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
+                               Gitorious.enableCommenting);
 NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
-                               Gitorious.disableCommenting, this);
+                               Gitorious.disableCommenting);
 
 
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
-//    console.debug("insertDiffContextsIntoComments");
-//    return true;
     // Extract the affected diffs and insert them above the comment it
     // belongs to
     $("#merge_request_comments .comment.inline").each(function() {
@@ -507,15 +510,10 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
                         plainDiff + '</code></pre');
     });
 };
-/*
-*/
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", {},
-                               Gitorious.DiffBrowser.insertDiffContextsIntoComments);
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
-                               Gitorious.DiffBrowser.KeyNavigation.enable);
 
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", {},
-                               Gitorious.enableCommenting);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
+                               Gitorious.DiffBrowser.insertDiffContextsIntoComments);
+
 Gitorious.CommentForm = function(path){
     this.path = path;
     this.numbers = [];
