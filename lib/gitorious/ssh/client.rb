@@ -36,8 +36,8 @@ module Gitorious
       attr_accessor :project_name, :repository_name, :user_name
     
       def writable_by_user?
-        query_for_permission_and_path
-        @writable == "true"
+        #query_for_permission_and_path
+        @writable ||= Net::HTTP.get(writable_by_query_uri) == "true"
       end
     
       def assure_user_can_write!

@@ -15,7 +15,10 @@ end
 
 RAILS_ENV = ENV['RAILS_ENV'] ||= 'production'
 
+#require "#{BASE_DIR}/config/environment"
+
 GitoriousConfig = YAML::load_file(conf_file)[RAILS_ENV]
+
 
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
@@ -65,7 +68,13 @@ begin
   ENV['GITORIOUS_USER'] = user
   ENV['GITORIOUS_BASE_DIR'] = BASE_DIR
   ENV['GITORIOUS_DENY_FORCE_PUSHES'] = client.force_pushing_denied? ? "true" : "false"
-
+  
+  unless client.writable_by_user?
+    logger.fatal("Rejected #{user.inspect} for #{args.inspect}")
+    gitorious_says "Access denied"
+    exit!(1)
+  end
+  
   logger.info("Accepted #{user.inspect} for #{args.inspect}")
   if client.pre_receive_hook_exists?
     exec("git-shell", "-c", args)
