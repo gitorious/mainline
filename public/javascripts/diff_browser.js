@@ -319,7 +319,6 @@ Gitorious.MergeRequestController = function() {
         return this._transport || jQuery;
     }
     
-    // TODO: Add error handler
     this.update = function(o) {
         if (o.version)
             this.versionSelected(o.version);
@@ -409,7 +408,44 @@ Gitorious.MergeRequestController = function() {
         var mr_diff_url = jQuery("#merge_request_commit_selector")
             .attr("data-merge-request-version-url");
         var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());    
-    }    
+    }
+    // Another version was selected, update sha listing if necessary    
+    this.versionChanged = function(v) {
+        this.versionSelected(v);
+        if (this.needsUpdate()) { 
+            var url = jQuery("#merge_request_version").attr("gts:url") +
+                "?version=" + v;
+            this.getTransport().ajax({
+                url: url,
+                success: function(data,text){
+                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
+                                                       {},
+                                                       [true, data,text]);
+                },
+                error: function(xhr,statusText,errorThrown){
+                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
+                                                       {},
+                                                       [false]);
+                }
+            });
+        }
+    }
+
+    this.shaListingReceived = function(successful, data, text) {
+        if (successful) {
+            this.replaceShaListing(data);
+        } else {
+            console.error("Got an error when fetching shas");
+        }
+    }
+
+    this.replaceShaListing = function(markup) {
+            jQuery("#diff_browser_for_current_version").html(markup);
+            new Gitorious.DiffBrowser(
+                jQuery("#current_shas").attr("data-merge-request-current-shas") );
+            Gitorious.currentMRCompactSelectable.selectable("destroy");
+            Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
+    }
 }
 
 Gitorious.MergeRequestController.getInstance = function() {
@@ -419,6 +455,8 @@ Gitorious.MergeRequestController.getInstance = function() {
         var result = new Gitorious.MergeRequestController();
         NotificationCenter.addObserver("MergeRequestDiffReceived", result,
                                        result.diffsReceived);
+        NotificationCenter.addObserver("MergeRequestShaListingReceived", 
+                                       result, result.shaListingReceived);
         Gitorious.MergeRequestController._instance = result;
         return result;
     }

@@ -37,14 +37,24 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         assertTrue(c.needsUpdate());
     },
     testFetchShasInVersion: function() {
-        /*
-          - Select a version:
-          - Post a notification
-          - Notification is picked up by the controller
-          - Controller checks if the version has been changed from what's current
-          - If changed: send a request
-          - When response returns, replace sha listing
-         */
+        var c = Gitorious.MergeRequestController.getInstance();
+        var shasFetched = false;
+        var controllerMock = {
+            ajax: function(options){
+                NotificationCenter.notifyObservers(
+                    "MergeRequestShaListingReceived", 
+                    this, 
+                    [true, "data","text"]);
+            }
+        }
+        // Mocking this one, as it depends on the DOM
+        c.replaceShaListing = function(html) {
+            this._shaListing = html;
+        }
+        c._setTransport(controllerMock);
+        c.versionChanged(7);
+        assertTrue(c.needsUpdate());
+        assertEquals("data", c._shaListing);
     },
     
     testSelectDifferentVersion: function() {

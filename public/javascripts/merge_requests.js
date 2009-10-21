@@ -100,16 +100,8 @@ $(document).ready(function() {
 
     $("#merge_request_version").changableSelection({
       onChange: function() {
-          var version = $(this).text().replace(/[^0-9]+/g, '');
-          var url = $(this).parent().prev().attr("gts:url") + '?version=' + version;
-          $("#diff_browser_for_current_version").load(url, null, function() {
-            new Gitorious.DiffBrowser(
-              jQuery("#current_shas").attr("data-merge-request-current-shas") );
-            // jump through hoops and beat the selectable into submission,
-            // since it doesn't use live events, we have to re-create it, which sucks...
-            Gitorious.currentMRCompactSelectable.selectable("destroy");
-            Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
-          });
+          var version = $(this).attr("data-mr-version-number");
+          Gitorious.MergeRequestController.getInstance().versionChanged(version);
       }
     });
     
