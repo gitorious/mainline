@@ -190,12 +190,11 @@ class RepositoriesController < ApplicationController
   
   
   def config
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id],
-      @containing_project)
-    config_data = "real_path:#{@repository.real_gitdir}\n"
-    config_data << "force_pushing_denied:"
-    config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
-    render :text => config_data
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    render :text => {
+      "real_path" => @repository.real_gitdir,
+      "force_pushing_denied" => @repository.deny_force_pushing?
+    }.to_yaml
   end
   
   def confirm_delete
@@ -220,7 +219,11 @@ class RepositoriesController < ApplicationController
     redirect_to @owner
   end
   
-  private    
+  private
+    
+    def 
+    
+    
     def require_adminship
       unless @owner.admin?(current_user)
         respond_to do |format|
