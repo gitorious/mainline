@@ -211,29 +211,63 @@ Gitorious.DiffBrowser.CommentHighlighter = {
 };
 
 Gitorious.DiffBrowser.KeyNavigation = {
-    _currentIndex: 0,
+    _lastElement: null,
 
     _callback: function(event) {
-        var scrollToCommentAtCurrentIndex = function(commentElement) {
-            var elements = $("table tr td .diff-comments .diff-comment");
-            if (Gitorious.DiffBrowser.KeyNavigation._currentIndex >= elements.length ||
-                Gitorious.DiffBrowser.KeyNavigation._currentIndex <= 0)
-            {
-                Gitorious.DiffBrowser.KeyNavigation._currentIndex = 0;
-            }
-            var element = $(elements[Gitorious.DiffBrowser.KeyNavigation._currentIndex]);
-            element.parents(".diff-comments:hidden").slideDown();
-            $.scrollTo(element, { axis:'y', offset:-150 });
-            Gitorious.DiffBrowser.CommentHighlighter.add(element);
-        };
-
         if (event.keyCode === 74) { // j
-            scrollToCommentAtCurrentIndex();
-            Gitorious.DiffBrowser.KeyNavigation._currentIndex++;
+            Gitorious.DiffBrowser.KeyNavigation.scrollToNext();
         } else if (event.keyCode === 75) { // k
-            Gitorious.DiffBrowser.KeyNavigation._currentIndex--;
-            scrollToCommentAtCurrentIndex();
+            Gitorious.DiffBrowser.KeyNavigation.scrollToPrevious();
+        } else if (event.keyCode === 88) { // x
+            Gitorious.DiffBrowser.KeyNavigation.expandCommentsAtCurrentIndex();
         }
+    },
+
+    expandCommentsAtCurrentIndex: function() {
+        if (!Gitorious.DiffBrowser.KeyNavigation._lastElement)
+            return;
+
+        var comments = Gitorious.DiffBrowser.KeyNavigation._lastElement
+            .find("table tr td .diff-comments");
+        if (comments.is(":hidden")) {
+            comments.slideDown();
+        } else {
+            comments.slideUp();
+        }
+    },
+
+    scrollToNext: function() {
+        var elements = $("#merge_request_diff .file-diff");
+        if (!Gitorious.DiffBrowser.KeyNavigation._lastElement) {
+            Gitorious.DiffBrowser.KeyNavigation._lastElement = elements[0];
+            Gitorious.DiffBrowser.KeyNavigation.scrollToElement(elements[0])
+            return;
+        }
+
+        var idx =  elements.indexOf(Gitorious.DiffBrowser.KeyNavigation._lastElement);
+        idx++;
+        if (elements[idx])
+            Gitorious.DiffBrowser.KeyNavigation.scrollToElement(elements[idx]);
+    },
+
+    scrollToPrevious: function() {
+        var elements = $("#merge_request_diff .file-diff");
+        if (Gitorious.DiffBrowser.KeyNavigation._lastElement === elements[0]) {
+            return;
+        }
+
+        var idx =  elements.indexOf(Gitorious.DiffBrowser.KeyNavigation._lastElement);
+        idx--;
+        if (idx >= 0 && elements[idx])
+            Gitorious.DiffBrowser.KeyNavigation.scrollToElement(elements[idx]);
+    },
+
+    scrollToElement: function(element) {
+        var element = $(element);
+        element.find(".header").removeClass("closed").addClass("open");
+        element.find(".diff-hunks:hidden").slideDown();
+        $.scrollTo(element, { axis:'y', offset:-10 });
+        Gitorious.DiffBrowser.KeyNavigation._lastElement = element[0];
     },
 
     enable: function() {
