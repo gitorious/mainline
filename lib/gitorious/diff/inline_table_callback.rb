@@ -38,8 +38,8 @@ module Gitorious
         render_comment_count(line) +
         %Q{<td class="line-numbers commentable">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers commentable">#{line.new_number}</td>} + 
-        %Q{<td class="code ins"><ins>} +
-        %Q{</ins>#{render_line(line)}</td></tr>}
+        %Q{<td class="code ins">} +
+        %Q{#{render_line(line)}</td></tr>}
       end
       
       def remline(line)
@@ -47,8 +47,8 @@ module Gitorious
         render_comment_count(line) +
         %Q{<td class="line-numbers commentable">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers commentable">#{line.new_number}</td>} + 
-        %Q{<td class="code del"><del>} +
-        %Q{</del>#{render_line(line)}</td></tr>}
+        %Q{<td class="code del">} +
+        %Q{#{render_line(line)}</td></tr>}
       end
       
       def modline(line)
@@ -101,7 +101,7 @@ module Gitorious
       end
 
       def render_line(line)
-        super + render_comments_for(line)
+        '<span class="diff-content">' + super + '</span>' + render_comments_for(line)
       end
     end
   end

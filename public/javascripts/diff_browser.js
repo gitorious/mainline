@@ -490,25 +490,26 @@ NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     // Extract the affected diffs and insert them above the comment it
     // belongs to
-    $("#merge_request_comments .comment.inline").each(function() {
-        var comment = $( $(this).find(".inline_comment_link a").attr("href") );
-        if (comment.length === 0)
-            return;
-        var selectors = $.map(comment.attr("gts:lines").split(","), function(e) {
+    var idiffRegexp = /(<span class="idiff">|<\/span>)/gmi;
+    var comments = $("#merge_request_comments .comment.inline .inline_comment_link a");
+    for (i=0; i < comments.length; i++) {
+        var commentElement = $( $(comments[i]).attr("href") );
+        if (commentElement.length === 0)
+            continue;
+        var selectors = $.map(commentElement.attr("gts:lines").split(","), function(e) {
             return "table.codediff.inline tr.line-" + e;
         });
         // extract the raw diff data from each row
-        var plainDiff = "";
+        var plainDiff = [];
         $(selectors.join(",")).each(function() {
-            var cell = $(this).find("td.code").clone();
-            cell.children("ins, del, div").empty(); // we only want the actual diff data
-            var op = "> " + (cell.hasClass("ins") ? "+ " : "- ");
-            plainDiff += op + cell.text();
-            plainDiff += "\n";
+            var cell = $(this).find("td.code");
+            var op = "&gt; " + (cell.hasClass("ins") ? "+ " : "- ");
+            plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, ''));
         });
-        $(this).prepend('<pre class="diff-comment-context"><code>' +
-                        plainDiff + '</code></pre');
-    });
+        $(comments[i]).parents(".comment.inline")
+            .prepend('<pre class="diff-comment-context"><code>' +
+                     plainDiff.join("\n") + '</code></pre');
+    };
 };
 
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
