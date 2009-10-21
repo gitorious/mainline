@@ -36,24 +36,17 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         c.shaSelected("ffcc");
         assertTrue(c.needsUpdate());
     },
-    testDetermineDefaultVersionAndSha: function(){
+    testFetchShasInVersion: function() {
+        /*
+          - Select a version:
+          - Post a notification
+          - Notification is picked up by the controller
+          - Controller checks if the version has been changed from what's current
+          - If changed: send a request
+          - When response returns, replace sha listing
+         */
     },
     
-    testFetchVersionUrl: function() {
-        var c = Gitorious.MergeRequestController.getInstance();
-        c.getBaseDiffUrl = function() {
-            return "/gitorious/mainline/merge_requests/15/merge_request_versions/47";
-        }
-        c.versionSelected(2);
-        //        assertEquals("", c.getDiffUrl());
-        // No fetch
-        c.versionSelected(3);
-        //        assertEquals("", c.getDiffUrl());
-        // Fetch
-        // Notification when fetched to redisplay shas
-        c._setTransport(jQuery);
-    },
-
     testSelectDifferentVersion: function() {
         var c = Gitorious.MergeRequestController.getInstance();
         c._setCurrentShaRange("ffac");

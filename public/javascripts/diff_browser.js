@@ -150,35 +150,6 @@ Gitorious.DiffBrowser = function(shas)
     var c = Gitorious.MergeRequestController.getInstance();
     var version = c.determineCurrentVersion();
     c.update({version:version, sha: shas});
-    
-    //  c.update({version:version, sha: shas});
-    //Gitorious.MergeRequestController.getInstance().update({'sha':shas});
-    /*
-      var mr_diff_url = jQuery("#merge_request_commit_selector")
-      .attr("data-merge-request-version-url");
-      jQuery.ajax({
-      "url": mr_diff_url,
-      "data": {"commit_shas": shas},
-      "success": function(data, responseText) {
-      if (responseText === "success") {
-      jQuery("#merge_request_diff").html(data);
-      var commentMarkup = jQuery("#__temp_comments").html();
-      jQuery("#__temp_comments").html("");
-      jQuery("#merge_request_comments").html(commentMarkup);
-      var shaSpec = new Gitorious.ShaSpec();
-      shaSpec.parseShas(shas);
-      Gitorious.MergeRequestController.getInstance().didReceiveVersion(shaSpec);
-      NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
-      }
-      },
-      "error": function(xhr, statusText, errorThrown) {
-      jQuery("#merge_request_diff").html(
-      '<div class="merge_request_diff_loading_indicator">' +
-      "An error has occured. Please try again later.</div>"
-      );
-      }
-      });
-    */
 }
 
 Gitorious.DiffBrowser.CommentHighlighter = {
@@ -357,6 +328,7 @@ Gitorious.MergeRequestController = function() {
             options["url"] = this.getDiffUrl();
             var self = this;
             options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text)};
+            options["error"] = function(xhr, statusText, errorThrown){self.diffsReceivedWithError(xhr, statusText, errorThrown)};
             this.getTransport().ajax(options);
         }
     }
@@ -366,6 +338,12 @@ Gitorious.MergeRequestController = function() {
         this._currentVersion = this._requestedVersion;
         jQuery("#merge_request_diff").html(data);
         NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+    }
+    this.diffsReceivedWithError = function(xhr, statusText, errorThrown) {
+        jQuery("#merge_request_diff").html(
+            '<div class="merge_request_diff_loading_indicator">' +
+                "An error has occured. Please try again later.</div>"
+        );
     }
     
     this.needsUpdate = function() {
