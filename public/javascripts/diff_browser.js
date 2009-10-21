@@ -210,85 +210,90 @@ Gitorious.DiffBrowser.CommentHighlighter = {
     }
 };
 
-Gitorious.DiffBrowser.KeyNavigation = {
-    _lastElement: null,
+Gitorious.DiffBrowser.KeyNavigationController = function() {
+    this._lastElement = null;
 
-    _callback: function(event) {
+    this._callback = function(event) {
         if (event.keyCode === 74) { // j
-            Gitorious.DiffBrowser.KeyNavigation.scrollToNext();
+            event.data.controller.scrollToNext();
         } else if (event.keyCode === 75) { // k
-            Gitorious.DiffBrowser.KeyNavigation.scrollToPrevious();
+            event.data.controller.scrollToPrevious();
         } else if (event.keyCode === 88) { // x
-            Gitorious.DiffBrowser.KeyNavigation.expandCommentsAtCurrentIndex();
+            event.data.controller.expandCommentsAtCurrentIndex();
         }
-    },
+    };
 
-    expandCommentsAtCurrentIndex: function() {
-        if (!Gitorious.DiffBrowser.KeyNavigation._lastElement)
+    this.expandCommentsAtCurrentIndex = function() {
+        if (!this._lastElement)
             return;
 
-        var comments = Gitorious.DiffBrowser.KeyNavigation._lastElement
-            .find("table tr td .diff-comments");
+        var comments = $(this._lastElement).find("table tr td .diff-comments");
         if (comments.is(":hidden")) {
-            comments.slideDown();
+            comments.show();
         } else {
-            comments.slideUp();
+            comments.hide();
         }
-    },
+    };
 
-    scrollToNext: function() {
+    this.scrollToNext = function() {
         var elements = $("#merge_request_diff .file-diff");
-        if (!Gitorious.DiffBrowser.KeyNavigation._lastElement) {
-            Gitorious.DiffBrowser.KeyNavigation._lastElement = elements[0];
-            Gitorious.DiffBrowser.KeyNavigation.scrollToElement(elements[0])
+        if (!this._lastElement) {
+            this._lastElement = elements[0];
+            this.scrollToElement(elements[0])
             return;
         }
 
-        var idx =  elements.indexOf(Gitorious.DiffBrowser.KeyNavigation._lastElement);
+        var idx =  elements.indexOf(this._lastElement);
         idx++;
-        if (elements[idx])
-            Gitorious.DiffBrowser.KeyNavigation.scrollToElement(elements[idx]);
-    },
+        if (elements[idx]) {
+            this.scrollToElement(elements[idx]);
+        } else {
+            this.scrollToElement(elements[elements.length - 1]);
+        }
+    };
 
-    scrollToPrevious: function() {
+    this.scrollToPrevious = function() {
         var elements = $("#merge_request_diff .file-diff");
-        if (Gitorious.DiffBrowser.KeyNavigation._lastElement === elements[0]) {
+        if (this._lastElement === elements[0]) {
             return;
         }
 
-        var idx =  elements.indexOf(Gitorious.DiffBrowser.KeyNavigation._lastElement);
+        var idx =  elements.indexOf(this._lastElement);
         idx--;
         if (idx >= 0 && elements[idx])
-            Gitorious.DiffBrowser.KeyNavigation.scrollToElement(elements[idx]);
-    },
+            this.scrollToElement(elements[idx]);
+    };
 
-    scrollToElement: function(element) {
+    this.scrollToElement = function(element) {
         var element = $(element);
         element.find(".header").removeClass("closed").addClass("open");
         element.find(".diff-hunks:hidden").slideDown();
         $.scrollTo(element, { axis:'y', offset:-10 });
-        Gitorious.DiffBrowser.KeyNavigation._lastElement = element[0];
-    },
+        this._lastElement = element[0];
+    };
 
-    enable: function() {
-        Gitorious.DiffBrowser.KeyNavigation.disable()
-        $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
+    this.enable = function() {
+        this.disable()
+        $(window).bind("keydown", {controller:this}, this._callback);
         // unbind whenever we're in an input field
         $(":input").focus(function() {
-            Gitorious.DiffBrowser.KeyNavigation.disable();
+            this.disable();
         });
         $(":input").blur(function() {
-            $(window).keydown(Gitorious.DiffBrowser.KeyNavigation._callback);
+            $(window).bind("keydown", {controller:this}, this._callback);
         });
-    },
+    };
 
-    disable: function() {
-        $(window).unbind("keydown", Gitorious.DiffBrowser.KeyNavigation._callback);
-    }
+    this.disable = function() {
+        $(window).unbind("keydown", this._callback);
+    };
 };
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
+Gitorious.DiffBrowser.KeyNavigation = new Gitorious.DiffBrowser.KeyNavigationController();
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
+                               Gitorious.DiffBrowser.KeyNavigation,
                                Gitorious.DiffBrowser.KeyNavigation.enable, this);
-NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm", Gitorious.DiffBrowser,
+NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm",
+                               Gitorious.DiffBrowser.KeyNavigation,
                                Gitorious.DiffBrowser.KeyNavigation.disable, this);
 
 Gitorious.MergeRequestController = function() {
