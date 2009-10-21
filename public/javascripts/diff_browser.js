@@ -505,6 +505,8 @@ NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
 
 
 Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
+//    console.debug("insertDiffContextsIntoComments");
+//    return true;
     // Extract the affected diffs and insert them above the comment it
     // belongs to
     $("#merge_request_comments .comment.inline").each(function() {
@@ -528,9 +530,9 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     });
 };
 /*
+*/
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", {},
                                Gitorious.DiffBrowser.insertDiffContextsIntoComments);
-*/
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
                                Gitorious.DiffBrowser.KeyNavigation.enable);
 
