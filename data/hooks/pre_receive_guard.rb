@@ -61,7 +61,9 @@ module Gitorious
       end
       
       def get_via_http(url)
-        open(url).read
+        resp = open(url)
+        resp.error! unless resp.is_a?(Net::HTTPOK)
+        resp.read
       end
 
       def gitorious_says(msg)

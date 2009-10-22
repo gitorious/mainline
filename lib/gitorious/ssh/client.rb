@@ -38,13 +38,33 @@ module Gitorious
         @repository_name.gsub!(/\.git$/, "")
       end
       
+      # allow read operations if private projects are disabled globally or user has permission
+      def readable_by_user?
+        @readable ||= !GitoriousConfig["private_projects"] || get_config(readable_by_query_path)
+      end
+      
       def writable_by_user?
         @writable ||= get_config(writable_by_query_path)
       end
-    
+      
+      def assure_user_can_read!
+        readable_by_user? || raise(AccessDeniedError)
+      end
+      
       def assure_user_can_write!
         writable_by_user? || raise(AccessDeniedError)
       end
+      
+      # The full URL
+      def readable_by_query_url
+        readable_by_query_uri.to_s
+      end
+
+      # The path only
+      def readable_by_query_path
+        readable_by_query_uri.request_uri
+      end
+      
       
       # The full URL
       def writable_by_query_url
@@ -55,6 +75,8 @@ module Gitorious
       def writable_by_query_path
         writable_by_query_uri.request_uri
       end
+      
+      
       
       def real_path
         raise AccessDeniedError unless configuration["real_path"]
@@ -100,20 +122,30 @@ module Gitorious
         
         # loads a config in YAML and returns it
         def get_config(path)
-          resp = connection.get(path)
+          resp = connection.get(path, "X-Auth-Key"=>GitoriousConfig['cookie_secret'])
           resp.error! unless resp.is_a?(Net::HTTPOK)
           YAML.load(resp.body)
         end
         
         def connection
-          port = GitoriousConfig["gitorious_client_port"]
-          host = GitoriousConfig["gitorious_client_host"]
+          port   = GitoriousConfig["gitorious_client_port"]
+          host   = GitoriousConfig["gitorious_client_host"]
+          secret = GitoriousConfig["cookie_secret"]
           @connection ||= Net::HTTP.start(host, port)
         end
         
         # Returns an actual URI object
+        def readable_by_query_uri
+          permission_by_query_uri :readable
+        end
+        
+        # Returns an actual URI object
         def writable_by_query_uri
-          path  = "/#{@project_name}/#{@repository_name}/writable_by"
+          permission_by_query_uri :writable
+        end
+        
+        def permission_by_query_uri(attribute)
+          path  = "/#{@project_name}/#{@repository_name}/#{attribute}_by"
           query = "username=#{@user_name}"
           host  = GitoriousConfig['gitorious_client_host']
           _port = GitoriousConfig['gitorious_client_port']

@@ -180,6 +180,10 @@ class Project < ActiveRecord::Base
     owner == User ? owner == candidate : owner.committer?(candidate)
   end
   
+  def public?
+    !private?
+  end
+  
   def owned_by_group?
     owner === Group
   end
@@ -365,6 +369,12 @@ class Project < ActiveRecord::Base
       else
         status.update_attribute(:default, false)
       end
+    end
+  end
+  
+  def private=(value)
+    if GitoriousConfig["private_projects"]
+      write_attribute :private, value
     end
   end
   

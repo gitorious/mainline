@@ -36,6 +36,9 @@ test:
 
   # Enable or Disable Public Mode (true) or Private Mode (false)
   public_mode: true
+  
+  # Enable or Disable private projects
+  private_projects: false
 
   # Define your locale
   locale: en
