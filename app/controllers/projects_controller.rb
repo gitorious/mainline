@@ -163,9 +163,6 @@ class ProjectsController < ApplicationController
   end
   
   protected
-    def find_project
-      @project = Project.find_by_slug!(params[:id], :include => [:repositories])
-    end
     
     def assure_adminship
       if !@project.admin?(current_user)

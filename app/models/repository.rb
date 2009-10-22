@@ -202,7 +202,11 @@ class Repository < ActiveRecord::Base
   end
   
   def clone_url
-    "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
+    if private?
+      push_url
+    else
+      "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
+    end
   end
   
   def http_clone_url
@@ -210,7 +214,7 @@ class Repository < ActiveRecord::Base
   end
   
   def http_cloning?
-    !GitoriousConfig["hide_http_clone_urls"]
+    !private? && !GitoriousConfig["hide_http_clone_urls"]
   end
   
   def push_url
@@ -466,10 +470,18 @@ class Repository < ActiveRecord::Base
     kind == KIND_TRACKING_REPO
   end
   
+  def private?
+    project.private?
+  end
+  
   # returns an array of users who have commit bits to this repository either 
   # directly through the owner, or "indirectly" through the associated groups
   def committers
     committerships.map{|c| c.members }.flatten.compact.uniq
+  end
+  
+  def readable_by(a_user)
+    project.member?(a_user)
   end
   
   # Is this repo writable by +a_user+, eg. does he have push permissions here

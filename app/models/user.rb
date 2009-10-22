@@ -275,7 +275,11 @@ class User < ActiveRecord::Base
     self.save!
     generated_key
   end
-
+  
+  def can_read_from?(repository)
+    repository.readable_by(self) 
+  end
+  
   def can_write_to?(repository)
     repository.writable_by?(self)
   end

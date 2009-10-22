@@ -53,6 +53,7 @@
       :reopening_failed => 'Merge request could not be reopened'
     },
     :projects_controller => {
+      :access_error => "You're not allowed to access this project",
       :update_error => "You're not the owner of this project",
       :destroy_error => "You're not the owner of this project, or the project has clones",
       :create_only_for_site_admins => "Only site administrators are allowed to create new projects",
@@ -653,6 +654,7 @@
           :home_url => "Home URL (if any)",
           :mailinglist_url => "Mailinglist URL (if any)",
           :bugtracker_url => "Bugtracker URL (if any)",
+          :private => "Should this project be private?",
           :wiki_enabled => "Should the wiki be enabled?",
           :tag_list => "Categories (space separated)",
           :merge_request_states => 'Merge request states',
