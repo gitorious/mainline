@@ -217,20 +217,29 @@ $(document).ready(function() {
         var href =  $($(this).attr("href"));
 
         var jumpToComment = {
-            notificationReceived: function(message) {
+            shaListingCurrent: function() {
+                var c = Gitorious.MergeRequestController.getInstance();
+                if (c.isDisplayingShaRange(sha_range)) {
+                    this.displayComments();
+                } else {
+                    c.replaceDiffContents(sha_range, this.displayComments);
+                }
+            },
+            displayComments: function(message) {
+                console.debug("Will now highlight the comment for " + href + " in " + hunks);
                 hunks.removeClass("closed").addClass("open");
                 hunks.slideDown();
                 lastLine.slideToggle();
                 Gitorious.DiffBrowser.CommentHighlighter.add(href);                
-                this.selfDestruct();
+                this.finish();
             },
-            selfDestruct: function() {
+            finish: function() {
                 NotificationCenter.removeObserver("MergeRequestShaListingUpdated", this);
             }
         };
         NotificationCenter.addObserver("MergeRequestShaListingUpdated", 
                                        jumpToComment, 
-                                       jumpToComment.notificationReceived);
+                                       jumpToComment.shaListingCurrent);
         Gitorious.MergeRequestController.getInstance().versionChanged(version);
         return true;
     });

@@ -322,24 +322,35 @@ Gitorious.MergeRequestController = function() {
     this.update = function(o) {
         if (o.version)
             this.versionSelected(o.version);
+
         if (o.sha)
             this.shaSelected(o.sha);
+
         if (this.needsUpdate()) {
-            var options = {};
-            options["data"] = {"commit_shas": this._requestedShaRange};
-            options["url"] = this.getDiffUrl();
-            var self = this;
-            options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text)};
-            options["error"] = function(xhr, statusText, errorThrown){self.diffsReceivedWithError(xhr, statusText, errorThrown)};
-            this.getTransport().ajax(options);
+            this.replaceDiffContents(this._requestedShaRange);
         }
     }
 
-    this.diffsReceivedSuccessfully = function(data, responseText) {
+    // Loads diffs for the given sha range
+    // +callback+ is a callback that will be called when changed successfully
+    this.replaceDiffContents = function(shaRange, callback) {
+        var options = {};
+        options["data"] = {"commit_shas": shaRange};
+        options["url"] = this.getDiffUrl();
+        var self = this;
+        options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text, callback)};
+        options["error"] = function(xhr, statusText, errorThrown){self.diffsReceivedWithError(xhr, statusText, errorThrown)};
+        this.getTransport().ajax(options);
+    }
+
+    this.diffsReceivedSuccessfully = function(data, responseText, callback) {
         this._currentShaRange = this._requestedShaRange;
         this._currentVersion = this._requestedVersion;
         jQuery("#merge_request_diff").html(data);
         NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+        if (callback) {
+            callback();
+        }
     }
     this.diffsReceivedWithError = function(xhr, statusText, errorThrown) {
         jQuery("#merge_request_diff").html(
@@ -419,7 +430,7 @@ Gitorious.MergeRequestController = function() {
                 url: url,
                 success: function(data,text){
                     NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
-                                                       true, data,text);
+                                                       true, data,text, v);
                 },
                 error: function(xhr,statusText,errorThrown){
                     NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
@@ -427,25 +438,35 @@ Gitorious.MergeRequestController = function() {
                 }
             });
         } else {
-            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", "Same version");
+            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
+                                               "Same version");
         }
     }
 
-    this.shaListingReceived = function(successful, data, text) {
+    this.shaListingReceived = function(successful, data, text, version) {
         if (successful) {
-            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", "Another version");
+            jQuery("#merge_request_version").html("Version " + version);
+            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
+                                               "Another version");
             this.replaceShaListing(data);
         } else {
             console.error("Got an error when fetching shas");
         }
     }
+    
+    this.getCurrentShaRange = function() {
+        return jQuery("#current_shas").attr("data-merge-request-current-shas");
+    }
+
+    this.isDisplayingShaRange = function(r) {
+        return this.getCurrentShaRange() == r;
+    }
 
     this.replaceShaListing = function(markup) {
-            jQuery("#diff_browser_for_current_version").html(markup);
-            new Gitorious.DiffBrowser(
-                jQuery("#current_shas").attr("data-merge-request-current-shas") );
-            Gitorious.currentMRCompactSelectable.selectable("destroy");
-            Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
+        jQuery("#diff_browser_for_current_version").html(markup);
+        new Gitorious.DiffBrowser(this.getCurrentShaRange());
+        Gitorious.currentMRCompactSelectable.selectable("destroy");
+        Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
     }
 }
 

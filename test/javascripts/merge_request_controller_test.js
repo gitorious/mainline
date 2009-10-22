@@ -81,3 +81,4 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         assertFalse(c.needsUpdate());    
     }
 })
+
