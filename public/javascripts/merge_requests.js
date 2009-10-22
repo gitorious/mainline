@@ -212,9 +212,8 @@ $(document).ready(function() {
           return $(".file-diff[data-diff-path=" + path + "] " + s);
         }
         
-        var hunks = elementInDiff(".diff-hunks");
-        var lastLine = elementInDiff(".diff-comments.line-" + last_line);
-        var href =  $($(this).attr("href"));
+
+        var href =  $(this).attr("href");
 
         var jumpToComment = {
             shaListingCurrent: function() {
@@ -222,15 +221,16 @@ $(document).ready(function() {
                 if (c.isDisplayingShaRange(sha_range)) {
                     this.displayComments();
                 } else {
-                    c.replaceDiffContents(sha_range, this.displayComments);
+                    c.replaceDiffContents(sha_range, this.displayComments, this);
                 }
             },
-            displayComments: function(message) {
-                console.debug("Will now highlight the comment for " + href + " in " + hunks);
+            displayComments: function(message) {                
+                var lastLine = elementInDiff(".diff-comments.line-" + last_line);
+                var hunks = elementInDiff(".diff-hunks");
                 hunks.removeClass("closed").addClass("open");
                 hunks.slideDown();
                 lastLine.slideToggle();
-                Gitorious.DiffBrowser.CommentHighlighter.add(href);                
+                Gitorious.DiffBrowser.CommentHighlighter.add($(href));                
                 this.finish();
             },
             finish: function() {

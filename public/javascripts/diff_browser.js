@@ -332,24 +332,29 @@ Gitorious.MergeRequestController = function() {
     }
 
     // Loads diffs for the given sha range
-    // +callback+ is a callback that will be called when changed successfully
-    this.replaceDiffContents = function(shaRange, callback) {
+    // +callback+ is a an function that will be called on +caller+ when changed successfully
+    this.replaceDiffContents = function(shaRange, callback, caller) {
+        this.shaSelected(shaRange);
         var options = {};
         options["data"] = {"commit_shas": shaRange};
         options["url"] = this.getDiffUrl();
         var self = this;
-        options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text, callback)};
+        options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text, callback, caller)};
         options["error"] = function(xhr, statusText, errorThrown){self.diffsReceivedWithError(xhr, statusText, errorThrown)};
         this.getTransport().ajax(options);
     }
 
-    this.diffsReceivedSuccessfully = function(data, responseText, callback) {
+    this.diffsReceivedSuccessfully = function(data, responseText, callback, caller) {
         this._currentShaRange = this._requestedShaRange;
         this._currentVersion = this._requestedVersion;
         jQuery("#merge_request_diff").html(data);
+        var spec = new Gitorious.ShaSpec();
+        spec.parseShas(this._currentShaRange);
+        spec.summarizeHtml();
+
         NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
         if (callback) {
-            callback();
+            callback.apply(caller);
         }
     }
     this.diffsReceivedWithError = function(xhr, statusText, errorThrown) {
