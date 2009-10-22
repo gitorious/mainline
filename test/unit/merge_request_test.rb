@@ -23,7 +23,10 @@ class MergeRequestTest < ActiveSupport::TestCase
 
   def setup
     @merge_request = merge_requests(:moes_to_johans)
-    commits = %w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07).collect do |sha|
+    commits = ["9dbb89110fc45362fc4dc3f60d960381",
+               "6823e6622e1da9751c87380ff01a1db1",
+               "526fa6c0b3182116d8ca2dc80dedeafb",
+               "286e8afb9576366a2a43b12b94738f07"].collect do |sha|
       m = mock
       m.stubs(:id).returns(sha)
       m
@@ -560,25 +563,51 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans)
     end
     
-    should 'send a push command from the source repository to the merge request repository' do
+    should 'send a push command from the source repository to the tracking repository' do
       merge_request_repo = @merge_request.target_repository.create_tracking_repository
       merge_request_repo_path = merge_request_repo.full_repository_path
       branch_spec_base = "#{@merge_request.ending_commit}:refs/merge-requests"
       branch_spec = [branch_spec_base, @merge_request.id].join('/')
       tracking_branch_spec = [branch_spec_base, @merge_request.id, 1].join('/')
-      
+
       git = mock("Git")
       git_backend = mock("Source repository git")
       git.stubs(:git).returns(git_backend)
       @merge_request.source_repository.stubs(:git).returns(git)
       @merge_request.expects(:push_new_branch_to_tracking_repo).twice
-      
+
       git_backend.expects(:push).with({:timeout => false},
         @merge_request.target_repository.full_repository_path, branch_spec).once
       @merge_request.push_to_tracking_repository!
       git_backend.expects(:push).with({:force => true,:timeout => false},
         @merge_request.target_repository.full_repository_path, branch_spec).once
       @merge_request.push_to_tracking_repository!(true)
+    end
+
+    context "Update events" do
+      setup do
+        git = mock("Git")
+        @git_backend = mock("tracking repository git")
+        git.stubs(:git).returns(@git_backend)
+        @merge_request.target_repository.stubs(:git).returns(git)
+        @git_backend.stubs(:merge_base).returns("abc")
+      end
+
+      should "not create a 'new version' event if it's the first version" do
+        @git_backend.expects(:push)
+        assert_no_difference("Event.count") do
+          @merge_request.push_new_branch_to_tracking_repo
+        end
+      end
+
+      should "create a 'new version' event unless it's the first version" do
+        @git_backend.expects(:push)
+        @merge_request.create_new_version
+        assert_difference("Event.count") do
+          @merge_request.push_new_branch_to_tracking_repo
+        end
+        assert_equal Action::UPDATE_MERGE_REQUEST, Event.last.action
+      end
     end
   end
   

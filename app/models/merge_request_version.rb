@@ -18,6 +18,7 @@
 
 class MergeRequestVersion < ActiveRecord::Base
   belongs_to :merge_request
+
   def affected_commits
     Rails.cache.fetch(cache_key, :expires_in => 60.minutes) do
       @affected_commits ||= merge_request.tracking_repository.git.commits_between(
@@ -65,7 +66,8 @@ class MergeRequestVersion < ActiveRecord::Base
 
     # Returns the sha of +sha+'s parent. If none, return +sha+
     def parent_commit_sha(sha)
-      first_parent = commit = Grit::Commit.find_all(@repository, sha, {:max_count => 1}).first.parents.first
+      first_parent = commit = Grit::Commit.find_all(@repository, sha,
+        {:max_count => 1}).first.parents.first
       if first_parent.nil?
         sha
       else

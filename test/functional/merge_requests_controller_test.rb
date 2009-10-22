@@ -297,7 +297,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	  
 	  should "create an event when the request doesn't require signof" do
 	    login_as :johan
-	    assert_difference("@project.events.count") do
+	    assert_difference("@project.events.count", 1) do
 	      post :create, :project_id => @project.to_param, 
                 :repository_id => @target_repository.to_param, :merge_request => {
                   :target_repository_id => @source_repository.id,

@@ -22,14 +22,16 @@
 
 class MergeRequest < ActiveRecord::Base
   include ActiveMessaging::MessageSender
+
   belongs_to :user
   belongs_to :source_repository, :class_name => 'Repository'
   belongs_to :target_repository, :class_name => 'Repository'
   has_many   :events, :as => :target, :dependent => :destroy
   has_many :messages, :as => :notifiable
   has_many :comments, :as => :target, :dependent => :destroy
-  has_many :versions, :class_name => 'MergeRequestVersion', :order => 'version', :dependent => :destroy
-  
+  has_many :versions, :class_name => 'MergeRequestVersion',
+    :order => 'version', :dependent => :destroy
+
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
   
@@ -185,9 +187,10 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  # Returns a hash (for the view) of labels and event names for next states
-  # TODO: Obviously, putting the states and transitions inside a map is not all that DRY,
-  # but the state machine does not have a one-to-one relationship between states and events
+  # Returns a hash (for the view) of labels and event names for next
+  # states TODO: Obviously, putting the states and transitions inside
+  # a map is not all that DRY, but the state machine does not have a
+  # one-to-one relationship between states and events
   def possible_next_states_hash
     map = {
         STATUS_OPEN => ['Open', 'open'],
@@ -254,7 +257,8 @@ class MergeRequest < ActiveRecord::Base
   
   def commits_for_selection
     return [] if !target_repository
-    @commits_for_selection ||= target_repository.git.commit_deltas_from(source_repository.git, target_branch, source_branch)
+    @commits_for_selection ||= target_repository.git.commit_deltas_from(
+      source_repository.git, target_branch, source_branch)
   end
   
   def applies_to_specific_commits?
@@ -294,7 +298,6 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def commit_diff_from_tracking_repo(which_version=nil)
-    RAILS_DEFAULT_LOGGER.debug "Merge request looking for version #{which_version} in #{versions.collect(&:version)}"
     version = if which_version
       version_number(which_version)
     else
@@ -305,7 +308,8 @@ class MergeRequest < ActiveRecord::Base
   
   def potential_commits
     if applies_to_specific_commits?
-      idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
+      ending = commits_for_selection.find{|c| c.id == ending_commit }
+      idx = commits_for_selection.index(ending)
       return idx ? commits_for_selection[idx..-1] : []
     else
       return commits_for_selection
@@ -333,7 +337,8 @@ class MergeRequest < ActiveRecord::Base
     target_repository.requires_signoff_on_merge_requests?
   end
 
-  # Publishes a notification, causing a new tracking branch (and version) to be created in the background
+  # Publishes a notification, causing a new tracking branch (and
+  # version) to be created in the background
   def publish_notification
     publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
   end
@@ -379,7 +384,8 @@ class MergeRequest < ActiveRecord::Base
   def terms_accepted
     validate_through_oauth do
       confirmed_by_user
-      callback_response = access_token.post(target_repository.project.oauth_path_prefix, oauth_signoff_parameters)
+      callback_response = access_token.post(target_repository.project.oauth_path_prefix,
+        oauth_signoff_parameters)
       
       if Net::HTTPAccepted === callback_response
         self.contribution_notice = callback_response.body
@@ -390,8 +396,10 @@ class MergeRequest < ActiveRecord::Base
     end
   end
   
-  # If the contribution agreement site wants to remind the user of the current contribution license, 
-  # they respond with a Net::HTTPAccepted header along with a response body containing the notice
+  # If the contribution agreement site wants to remind the user of the
+  # current contribution license, they respond with a
+  # Net::HTTPAccepted header along with a response body containing the
+  # notice
   def contribution_notice=(notice)
     @contribution_notice = notice
   end
@@ -491,8 +499,10 @@ class MergeRequest < ActiveRecord::Base
     target_repository.git.git.push({:timeout => false},
       tracking_repository.full_repository_path, branch_spec)
     create_new_version
-    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
-      user, "new version #{current_version_number}")
+    if current_version_number && current_version_number > 1
+      target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
+        user, "new version #{current_version_number}")
+    end
   end
 
   # Since we'll be deleting the ref in the backend, this will be

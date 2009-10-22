@@ -19,7 +19,6 @@
 class MergeRequestVersionsController < ApplicationController
   renders_in_site_specific_context
 
-
   def show
     @version = MergeRequestVersion.find(params[:id])
     @diffs = @version.diffs(extract_range_from_parameter(params[:commit_shas]))
@@ -32,7 +31,7 @@ class MergeRequestVersionsController < ApplicationController
       wants.js {render :layout => false}
     }
   end
-  
+
   private
   def commit_range?(shaish)
     shaish.include?("-")
