@@ -2992,7 +2992,7 @@ Merge request commit selector
 }
 
 .file-diff .comment_container {
-  position: absolute;
+  position: fixed;
   left: 80px;
   top: 28px;
   z-index: 10;

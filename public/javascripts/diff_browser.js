@@ -647,10 +647,10 @@ Gitorious.CommentForm = function(path){
 
     // Positions the commentContainer, optionally near the trigger
     this._positionAndShowContainer = function(container, trigger) {
-        var data = { left: $(document).width() - container.width() - 75 + "px" };
-        if (trigger)
-            data.top = trigger.position().top + "px";
-        container.css(data);
+        var cssData = {
+            left: $(document).width() - container.width() - 75 + "px"
+        };
+        container.css(cssData);
         container.slideDown();
     }
 }
