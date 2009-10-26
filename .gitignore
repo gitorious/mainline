@@ -1,6 +1,7 @@
 */.DS_Store
 .DS_Store
 coverage/*
+public/robots.txt
 public/cache/*
 public/images/graphs/*
 config/database.yml
