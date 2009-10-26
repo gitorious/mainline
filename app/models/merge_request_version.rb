@@ -88,11 +88,11 @@ class MergeRequestVersion < ActiveRecord::Base
     end
     
     def cache_key(first, last=nil)
-      ["merge_request_diff", first, last].compact.join("_")
+      ["merge_request_diff_v1", first, last].compact.join("_")
     end
     
     def commit_diff(first, last, diff_with_previous=false)
-      Rails.cache.fetch(cache_key(first,last), :expires_in => 60.minutes) do
+      Rails.cache.fetch(cache_key(first,last)) do
         first_commit_sha = if diff_with_previous
                              parent_commit_sha(first)
                            else
@@ -104,7 +104,7 @@ class MergeRequestVersion < ActiveRecord::Base
     end
 
     def single_commit_diff(sha)
-      Rails.cache.fetch(cache_key(sha), :expires_in => 60.minutes) do
+      Rails.cache.fetch(cache_key(sha)) do
         @repository.commit(sha).diffs
       end
     end
