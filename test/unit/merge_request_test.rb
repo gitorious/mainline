@@ -743,17 +743,19 @@ class MergeRequestTest < ActiveSupport::TestCase
   context "Commenting" do
     setup do
       @merge_request = merge_requests(:johans_to_mikes)
-      @comments = ["Looks good", "On the other hand..."].map {|body|
-        @merge_request.comments.create(
-          :project => @merge_request.target_repository.project,
-          :body => body,
-          :sha1 => "ffac"
-          )
-      }
+      @comments = ["Looks good", "On the other hand..."].map do |body|
+        @merge_request.comments.create!({
+            :project => @merge_request.target_repository.project,
+            :body => body,
+            :sha1 => "ffac",
+            :user => User.first
+          })
+      end
     end
 
     should 'include comments on versions' do
-      assert @merge_request.cascaded_comments.include?(comments(:first_merge_request_version_comment))
+      version_comment = comments(:first_merge_request_version_comment)
+      assert @merge_request.cascaded_comments.include?(version_comment)
     end
 
     should 'include comments on the merge request' do
