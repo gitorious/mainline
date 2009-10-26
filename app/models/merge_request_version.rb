@@ -21,14 +21,10 @@ class MergeRequestVersion < ActiveRecord::Base
   has_many :comments, :as => :target, :include => :user
 
   def affected_commits
-    Rails.cache.fetch(cache_key, :expires_in => 60.minutes) do
+    Rails.cache.fetch(cache_key + '/affected_commits') do
       @affected_commits ||= merge_request.tracking_repository.git.commits_between(
         merge_base_sha, merge_request.merge_branch_name(version)).reverse
     end
-  end
-
-  def cache_key
-    "commits_in_merge_request_version_#{id}"
   end
 
   def diffs(sha_or_range=nil)
