@@ -89,21 +89,25 @@ module ApplicationHelper
     end.to_sentence
   end
   
-  def build_notice_for(object)
+  def build_notice_for(object, options = {})
     out =  %Q{<div class="being_constructed round-10">}
     out <<  %Q{<div class="being_constructed_content round-10">}
     out << %Q{  <p>#{I18n.t( "application_helper.notice_for").call(object.class.name.humanize.downcase)}</p>}
-    out << %Q{  <p class="spin">#{image_tag("spinner.gif")}</p>}
+    if options.delete(:include_refresh_link)
+      out << %Q{<p class="spin hint"><a href="#{url_for()}">Click to refresh</a></p>}
+    else
+      out << %Q{<p class="spin">#{image_tag("spinner.gif")}</p>}
+    end
     out << %Q{  <p class="hint">If this message persist beyond what's reasonable, feel free to #{link_to("contact us", contact_path)}</p>}
     out << %Q{</div></div>}
     out
   end
   
-  def render_if_ready(object)
+  def render_if_ready(object, options = {})
     if object.respond_to?(:ready?) && object.ready?
       yield
     else
-      concat(build_notice_for(object))
+      concat(build_notice_for(object, options))
     end
   end  
   

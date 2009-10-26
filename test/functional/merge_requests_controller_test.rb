@@ -172,7 +172,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
     
     context "legacy merge requests" do
-      setup { @merge_request.versions.each(&:destroy) }
+      setup { @merge_request.update_attribute(:legacy, true) }
       
       should "create a version for the legacy merge_requests" do
         get :show, :project_id => @project.to_param, 

@@ -279,7 +279,7 @@ class MergeRequest < ActiveRecord::Base
   end
   
   def ready?
-    !versions.blank?
+    legacy? ? true : !versions.blank?
   end
   
   # Returns the name for the merge request branch. version can be:

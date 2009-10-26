@@ -122,11 +122,19 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
-  should 'have a ready? method which tells whether it has been created in the background' do
-    assert !@merge_request.ready?
-    v = @merge_request.build_new_version
-    assert v.save
-    assert @merge_request.ready?
+  context "Merge request readyness" do
+    should 'have a ready? method which tells whether it has been created in the background' do
+      assert !@merge_request.ready?
+      v = @merge_request.build_new_version
+      assert v.save
+      assert @merge_request.ready?
+    end
+
+    should "always be ready if it's a legacy merge request" do
+      @merge_request.versions.destroy_all
+      @merge_request.update_attribute(:legacy, true)
+      assert @merge_request.ready?
+    end
   end
   
   should 'be able to update from a push event' do

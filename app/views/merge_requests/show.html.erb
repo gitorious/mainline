@@ -55,6 +55,8 @@
   </ul>
 </div>
 
+<% render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
+
 <h2><%= t("views.merges.commits_to_merged") %>:</h2>
 
 <div class="version_selector">
@@ -144,6 +146,7 @@ git push origin master
 </div>
 <% end %>
 
+<% end -%><% # render_if_ready %>
 
 <%- if @merge_request.user == current_user -%>
   <%= button_to t('views.merges.edit_btn'), repo_owner_path(@merge_request.target_repository,
