@@ -453,7 +453,6 @@ Gitorious.MergeRequestController = function() {
             jQuery("#merge_request_version").html("Version " + version);
             NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
                                                "Another version");
-            this.replaceShaListing(data);
         } else {
             console.error("Got an error when fetching shas");
         }
