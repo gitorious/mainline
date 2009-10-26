@@ -22,26 +22,28 @@
 #++
 
 class MergeRequestsController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :direct_access, :commit_status, :version]
+  before_filter :login_required, :except => [:index, :show, :direct_access,
+                                             :commit_status, :version]
   before_filter :find_repository_owner, :except => [:oauth_return, :direct_access]
   before_filter :find_repository, :except => [:oauth_return, :direct_access]
-  before_filter :find_merge_request,  :except => [:index, :show, :new, :create,
-                                                  :commit_list, :target_branches,
-                                                  :oauth_return, :direct_access,
-                                                  :terms_accepted]
-  before_filter :assert_merge_request_ownership, :except => [:index, :show, :new, :create,
-                                                             :resolve, :commit_list,
-                                                             :target_branches, :oauth_return,
-                                                             :direct_access, :commit_status,
-                                                             :version, :terms_accepted]
+  before_filter :find_merge_request,
+    :except => [:index, :show, :new, :create, :commit_list, :target_branches,
+                :oauth_return, :direct_access, :terms_accepted]
+  before_filter :assert_merge_request_ownership,
+    :except => [:index, :show, :new, :create, :resolve, :commit_list,
+                :target_branches, :oauth_return, :direct_access, :commit_status,
+                :version, :terms_accepted]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   renders_in_site_specific_context
   
   def index
     @root = Breadcrumb::MergeRequests.new(@repository)
-    per_page = params[:per_page] || 50
-    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).paginate(
-      :all, {:page => params[:page], :per_page => per_page, :order => "created_at desc"})
+    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]) \
+      .paginate(:all, {
+        :page => params[:page],
+        :per_page => params[:per_page] || 50,
+        :order => "created_at desc"
+      })
 
     @status_tags = @repository.merge_request_status_tags
     @comment_count = @repository.comments.count
@@ -78,22 +80,19 @@ class MergeRequestsController < ApplicationController
   def show
     @merge_request = @repository.merge_requests.public.find(params[:id],
                       :include => [:source_repository, :target_repository])
-    
-    if @merge_request.recently_created?
-        (@merge_request.versions.blank?) && (@merge_request.created_at > 1.minute.ago)
-      response.headers['Refresh'] = "5"
-    end
+
+    response.headers['Refresh'] = "5" unless @merge_request.ready?
 
     @commits = @merge_request.commits_to_be_merged
     @version = @merge_request.current_version_number
-    @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map{|c| c.id })
+    @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
     respond_to do |wants|
-      wants.html do
+      wants.html {
         if @merge_request.versions.blank?
           #@merge_request.create_new_version
           render :template => 'merge_requests/legacy' and return
         end
-      end
+      }
       wants.xml {render :xml => @merge_request.to_xml}
       wants.patch {
         render :text => @commits.collect(&:to_patch).join("\n"),
@@ -105,21 +104,24 @@ class MergeRequestsController < ApplicationController
   def version
     @merge_request = @repository.merge_requests.public.find(params[:id],
                       :include => [:source_repository, :target_repository])
-    version_number = params[:version].to_i
-    render :partial => 'version', :layout => false, :locals => {:version => @merge_request.version_number(version_number)}
+    render :partial => 'version', :layout => false, :locals => {
+      :version => @merge_request.version_number(params[:version].to_i)
+    }
   end
   
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
-    @repositories = @owner.repositories.find(:all, :conditions => ["id != ? AND kind != ?", @repository.id, Repository::KIND_TRACKING_REPO])
+    @repositories = @owner.repositories.find(:all,
+      :conditions => ["id != ? AND kind != ?", @repository.id, Repository::KIND_TRACKING_REPO])
     if first = @repositories.find{|r| r.mainline? } || @repositories.first
       @merge_request.target_repository_id = first.id
     end
     get_branches_and_commits_for_selection
   end
   
-  # This is a static URL the user returns to after accepting the terms for a merge request
+  # This is a static URL the user returns to after accepting the terms
+  # for a merge request
   def oauth_return
     redirect_back_or_default '/'
   end
@@ -131,11 +133,13 @@ class MergeRequestsController < ApplicationController
       if @merge_request.has_contribution_notice?
         flash[:notice] = @merge_request.contribution_notice
       end
-      flash[:success] = I18n.t "merge_requests_controller.create_success", :name => @merge_request.target_repository.name
+      flash[:success] = I18n.t("merge_requests_controller.create_success",
+        :name => @merge_request.target_repository.name)
     else
-      flash[:error] = I18n.t "merge_requests_controller.need_contribution_agreement"
+      flash[:error] = I18n.t("merge_requests_controller.need_contribution_agreement")
     end
-    redirect_to project_repository_merge_request_path(@repository.project, @repository, @merge_request)
+    redirect_to project_repository_merge_request_path(@repository.project,
+      @repository, @merge_request)
   end
   
   def create
@@ -146,7 +150,8 @@ class MergeRequestsController < ApplicationController
     else
       respond_to do |format|
         format.html {
-          @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+          @repositories = @owner.repositories.find(:all,
+            :conditions => ["id != ?", @repository.id])
           get_branches_and_commits_for_selection
           render :action => "new"
         }
@@ -168,7 +173,8 @@ class MergeRequestsController < ApplicationController
       flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@owner, @repository, @merge_request]
     else
-      @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+      @repositories = @owner.repositories.find(:all,
+        :conditions => ["id != ?", @repository.id])
       get_branches_and_commits_for_selection
       render :action => "edit"
     end
@@ -189,7 +195,8 @@ class MergeRequestsController < ApplicationController
   
   protected    
     def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id], @containing_project)
+      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+        @containing_project)
       @project = @repository.project
     end
     
@@ -239,7 +246,10 @@ class MergeRequestsController < ApplicationController
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
           format.html { redirect_to([@owner, @repository, @merge_request]) }
-          format.xml  { render :text => I18n.t( "merge_requests_controller.assert_resolvable_error"), :status => :forbidden }
+          format.xml  {
+            render :text => I18n.t("merge_requests_controller.assert_resolvable_error"),
+              :status => :forbidden
+          }
         end
         return
       end
@@ -250,7 +260,10 @@ class MergeRequestsController < ApplicationController
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
           format.html { redirect_to([@owner, @repository]) }
-          format.xml  { render :text => I18n.t("merge_requests_controller.assert_ownership_error"), :status => :forbidden }
+          format.xml  {
+            render :text => I18n.t("merge_requests_controller.assert_ownership_error"),
+              :status => :forbidden
+          }
         end
         return
       end
