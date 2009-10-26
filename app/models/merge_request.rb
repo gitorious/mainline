@@ -529,7 +529,7 @@ class MergeRequest < ActiveRecord::Base
   
   # Returns the version with version number +n+
   def version_number(n)
-    versions.inject({}){|result,v|result[v.version]=v;result}[n]
+    versions.to_a.find{|v| v.version == n }
   end
 
   def current_version_number
