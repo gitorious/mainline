@@ -454,7 +454,7 @@ Gitorious.MergeRequestController = function() {
             NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
                                                "Another version");
         } else {
-            console.error("Got an error when fetching shas");
+//            console.error("Got an error when fetching shas");
         }
     }
     

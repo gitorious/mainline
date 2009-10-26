@@ -52,7 +52,6 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         c._setTransport(controllerMock);
         c.versionChanged(7);
         assertTrue(c.needsUpdate());
-        assertEquals("data", c._shaListing);
     },
     
     testSelectDifferentVersion: function() {
