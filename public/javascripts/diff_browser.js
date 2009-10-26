@@ -606,11 +606,10 @@ Gitorious.CommentForm = function(path){
     this.display = function(options) {
         NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
         var comment_form = jQuery("#inline_comment_form");
-        var hash = document.location.hash;
         var commentContainer = options.inside;
         commentContainer.html(comment_form.html());
         commentContainer.find("#description").text(this.getSummary());
-        var shas = hash.split("@")[0].replace("#","");
+        var shas = $("#current_shas").attr("data-merge-request-current-shas");
         commentContainer.find("#comment_sha1").val(shas);
         commentContainer.find("#comment_path").val(this.path);
         commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
