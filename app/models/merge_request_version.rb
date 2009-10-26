@@ -18,7 +18,7 @@
 
 class MergeRequestVersion < ActiveRecord::Base
   belongs_to :merge_request
-  has_many :comments, :as => :target
+  has_many :comments, :as => :target, :include => :user
 
   def affected_commits
     Rails.cache.fetch(cache_key, :expires_in => 60.minutes) do

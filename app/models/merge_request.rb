@@ -590,7 +590,9 @@ class MergeRequest < ActiveRecord::Base
 
   # Comments made on self and all versions
   def cascaded_comments
-    (comments + Array(versions).collect(&:comments)).flatten
+    (comments +
+      Array(versions).collect{|v| v.comments.find(:all, :include => [:target, :user]) }
+      ).flatten
   end
   
 end
