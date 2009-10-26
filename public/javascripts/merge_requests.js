@@ -232,6 +232,7 @@ $(document).ready(function() {
                 lastLine.slideToggle();
                 Gitorious.DiffBrowser.CommentHighlighter.add($(href));                
                 this.finish();
+                $.scrollTo(href);
             },
             finish: function() {
                 NotificationCenter.removeObserver("MergeRequestShaListingUpdated", this);
