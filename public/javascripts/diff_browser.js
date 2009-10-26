@@ -128,6 +128,13 @@ Gitorious.ShaSpec.parseLocationHash = function(hash) {
     return result;
 }
 
+// Return an instance from a String
+Gitorious.ShaSpec.parseShas = function(shaString) {
+    result = new Gitorious.ShaSpec();
+    result.parseShas(shaString);
+    return result;
+}
+
 Gitorious.setDiffBrowserHunkStateFromCookie = function() {
     if ($.cookie("merge-requests-diff-hunks-state") === "expanded") {
         $('#merge_request_diff .file-diff .header').removeClass("closed").addClass("open");
@@ -335,6 +342,7 @@ Gitorious.MergeRequestController = function() {
     // +callback+ is a an function that will be called on +caller+ when changed successfully
     this.replaceDiffContents = function(shaRange, callback, caller) {
         this.shaSelected(shaRange);
+
         var options = {};
         options["data"] = {"commit_shas": shaRange};
         options["url"] = this.getDiffUrl();
@@ -400,15 +408,21 @@ Gitorious.MergeRequestController = function() {
         return currentShas;
     }
 
-    // Loads the requested (from path part of uri) shas and version
-    this.loadFromBookmark = function(spec) {
+    // De-selects any selected sha links, replace with
+    // commits included in +spec+ (ShaSpec object or String)
+    this.simulateShaSelection = function(shaSpec) {
         jQuery("li.ui-selected").removeClass("ui-selected");
-        var currentShas = this.findCurrentlySelectedShas(spec);
+        var currentShas = this.findCurrentlySelectedShas(shaSpec);
         jQuery.each(currentShas, function(ind, sha){
             jQuery("[data-commit-sha='" + sha + "']").parent().addClass("ui-selected");
-        })
-            }
-
+        })        
+    }
+    
+    // Loads the requested (from path part of uri) shas and version
+    this.loadFromBookmark = function(spec) {
+        this.simulateShaSelection(spec);
+    }
+    
     this.didSelectShas = function(spec) {
         $("#current_shas .label").html("Showing");
         

@@ -78,6 +78,10 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         assertEquals("ffcc-aa90888", callArgs.data.commit_shas);
         m.ajaxReceived();
         assertFalse(c.needsUpdate());    
+    },
+    testParseShaAndReturnInstance: function() {
+        var spec = Gitorious.ShaSpec.parseShas("abc-bcd");
+        assertEquals("abc-bcd", spec.shaSpec());
     }
 })
 

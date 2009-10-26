@@ -225,6 +225,8 @@ $(document).ready(function() {
                 if (c.isDisplayingShaRange(sha_range)) {
                     this.displayComments();
                 } else {
+                    var spec = Gitorious.ShaSpec.parseShas(sha_range);
+                    c.simulateShaSelection(spec);
                     c.replaceDiffContents(sha_range, this.displayComments, this);
                 }
             },
