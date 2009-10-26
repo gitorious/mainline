@@ -9,17 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091006082442) do
-
-  create_table "accepted_contribution_agreements", :force => true do |t|
-    t.integer  "project_id"
-    t.integer  "user_id"
-    t.string   "oauth_token"
-    t.string   "oauth_secret"
-    t.string   "contribution_agreement_version"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+ActiveRecord::Schema.define(:version => 20091026142733) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -167,7 +157,8 @@ ActiveRecord::Schema.define(:version => 20091006082442) do
     t.string   "contribution_agreement_version"
     t.integer  "updated_by_user_id"
     t.string   "status_tag"
-    t.string   "summary",                                       :null => false
+    t.string   "summary",                                           :null => false
+    t.boolean  "legacy",                         :default => false
   end
 
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
