@@ -44,6 +44,9 @@
         <%= link_to "lines #{comment.lines} in #{comment.path}",
               "##{dom_id(comment,'inline')}" -%>
       </span>
+      <span style="margin-left: 2em; display: none" id="loading_comment_<%= comment.to_param -%>">
+        <%= image_tag("spinner.gif") -%>
+      </span>
     <% end -%>
   </p>
 <% end -%>

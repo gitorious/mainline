@@ -215,6 +215,11 @@ $(document).ready(function() {
 
         var href =  $(this).attr("href");
 
+        var commentSpinner = $("#loading_comment_" + href.split("_")[2]);
+        console.debug(commentSpinner);
+        commentSpinner.show();
+
+
         var jumpToComment = {
             shaListingCurrent: function() {
                 var c = Gitorious.MergeRequestController.getInstance();
@@ -235,6 +240,7 @@ $(document).ready(function() {
                 $.scrollTo(href);
             },
             finish: function() {
+                commentSpinner.hide();
                 NotificationCenter.removeObserver("MergeRequestShaListingUpdated", this);
             }
         };
