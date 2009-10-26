@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #-- 
 */
-
+var diffBrowserCompactCommitSelectable;
 $(document).ready(function() {
     $("body#merge_requests", function(){
         var spec = Gitorious.ShaSpec.parseLocationHash(document.location.hash);
@@ -61,7 +61,7 @@ $(document).ready(function() {
 
     // Merge request selection of branches, compact mode
     // wrapped in a function so we can reuse it when we load another version
-    var diffBrowserCompactCommitSelectable = function() {
+    diffBrowserCompactCommitSelectable = function() {
       var selectingAndUnselecting = function() {
         var commits = $("li.ui-selecting a");
         if (!commits[0]) return true;
