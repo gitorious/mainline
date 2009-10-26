@@ -584,6 +584,10 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
             var op = "&gt; " + (cell.hasClass("ins") ? "+ " : "- ");
             plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, ''));
         });
+        if ($(comments[i]).parents(".comment.inline").find(".diff-comment-context").length > 0) {
+            // We have already added this context, move on
+            continue;
+        }
         $(comments[i]).parents(".comment.inline")
             .prepend('<pre class="diff-comment-context"><code>' +
                      plainDiff.join("\n") + '</code></pre');
