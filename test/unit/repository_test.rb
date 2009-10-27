@@ -258,7 +258,7 @@ class RepositoryTest < ActiveSupport::TestCase
   
   should "suggests a decent name for a cloned repository bsed on username" do
     repos = Repository.new_by_cloning(@repository, username="johan")
-    assert_equal "johans-clone", repos.name
+    assert_equal "johans-foo", repos.name
     repos = Repository.new_by_cloning(@repository, username=nil)
     assert_equal nil, repos.name
   end

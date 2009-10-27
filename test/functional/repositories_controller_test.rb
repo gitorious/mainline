@@ -545,7 +545,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal @repository, assigns(:repository_to_clone)
       assert_instance_of Repository, assigns(:repository)
-      assert_equal "johans-clone", assigns(:repository).name
+      assert_equal "johans-johansprojectrepos", assigns(:repository).name
     end
   
     should "redirects to new_account_key_path if no keys on user" do
