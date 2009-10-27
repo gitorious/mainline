@@ -28,10 +28,12 @@
 
 <% cache(tree_path(@commit.id, @path)) do -%>
 <table class="listing tree">
-  <% @tree.contents.sort_by{|c| c.name.downcase}.each do |node| -%>
+  <% @tree.contents.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
   <tr class="<%= cycle("odd", "even") -%>">
     <% if node.is_a? Grit::Tree -%>
-      <td class="node folder"><%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%></td>
+    <td class="node folder">
+      <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
+    </td>
     <% elsif node.is_a? Grit::Submodule -%>
     <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
     <% else -%>

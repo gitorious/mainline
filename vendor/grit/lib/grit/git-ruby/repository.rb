@@ -1,3 +1,4 @@
+# encoding: utf-8
 #
 # converted from the gitrb project
 #
@@ -203,7 +204,9 @@ module Grit
           last = path[path.size - 1, 1]
           if (last == '/') && (paths.size == 1)
             append = append ? File.join(append, paths.first) : paths.first
-            dir_name = tree.split("\n").select { |p| p.split("\t")[1] == paths.first }.first
+            dir_name = tree.split("\n").select do |p|
+              u(p.split("\t")[1]) == u(paths.first)
+            end.first
             raise NoSuchPath if !dir_name
             next_sha = dir_name.split(' ')[2]
             tree = get_raw_tree(next_sha)
@@ -220,7 +223,9 @@ module Grit
             end
           else
             next_path = paths.shift
-            dir_name = tree.split("\n").select { |p| p.split("\t")[1] == next_path }.first
+            dir_name = tree.split("\n").select do |p|
+              u(p.split("\t")[1]) == u(next_path)
+            end.first
             raise NoSuchPath if !dir_name
             next_sha = dir_name.split(' ')[2]
             next_path = append ? File.join(append, next_path) : next_path
@@ -661,7 +666,21 @@ module Grit
         end
 
       private 
-      
+        
+        # UTF8izes a string if we're running on ruby 1.9
+        def u(str)
+          if str.respond_to?(:force_encoding)
+            str.force_encoding("UTF-8")
+            if str.valid_encoding?
+              str
+            else
+              str.encode("binary", :invalid => :replace, :undef => :replace).encode("utf-8")
+            end
+          else
+            str
+          end
+        end
+
         def initloose
           @loaded = []
           @loose = []
