@@ -220,9 +220,9 @@ $(document).ready(function() {
 
 
         var jumpToComment = {
-            shaListingCurrent: function() {
+            shaListingCurrent: function(newOrOld) {
                 var c = Gitorious.MergeRequestController.getInstance();
-                if (c.isDisplayingShaRange(sha_range)) {
+                if (newOrOld != "new") {
                     this.displayComments();
                 } else {
                     var spec = Gitorious.ShaSpec.parseShas(sha_range);
