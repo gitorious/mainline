@@ -126,24 +126,6 @@ class CommentsControllerTest < ActionController::TestCase
     end
 
     context "Merge request versions" do
-      def create_new_version
-        diff_backend = mock
-        diff_backend.stubs(:commit_diff).returns([])
-        MergeRequestVersion.any_instance.stubs(:diff_backend).returns(diff_backend)
-        @merge_request.stubs(:calculate_merge_base).returns("ffac0")
-        version = @merge_request.create_new_version
-        return version
-      end
-    
-      def create_merge_request_version_comment(version)
-        post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_version_id => version.to_param, :comment => {
-        :path => "LICENSE",
-          :lines => "1..14",
-          :sha1 => "ffac01-ffab99",
-          :body => "Needs more cowbell"}, :format => "js"
-      end
-      
       should "set the merge request version as polymorphic parent" do
         @version = create_new_version
         create_merge_request_version_comment(@version)
@@ -219,5 +201,24 @@ class CommentsControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_nil @merge_request.reload.status_tag
     end
+  end
+
+  protected
+  def create_new_version
+    diff_backend = mock
+    diff_backend.stubs(:commit_diff).returns([])
+    MergeRequestVersion.any_instance.stubs(:diff_backend).returns(diff_backend)
+    @merge_request.stubs(:calculate_merge_base).returns("ffac0")
+    version = @merge_request.create_new_version
+    return version
+  end
+
+  def create_merge_request_version_comment(version)
+    post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
+      :merge_request_version_id => version.to_param, :comment => {
+        :path => "LICENSE",
+        :lines => "1..14",
+        :sha1 => "ffac01-ffab99",
+        :body => "Needs more cowbell"}, :format => "js"
   end
 end
