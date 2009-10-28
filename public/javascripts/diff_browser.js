@@ -341,10 +341,12 @@ Gitorious.MergeRequestController = function() {
     // Loads diffs for the given sha range
     // +callback+ is a an function that will be called on +caller+ when changed successfully
     this.replaceDiffContents = function(shaRange, callback, caller) {
-        this.shaSelected(shaRange);
-
         var options = {};
-        options["data"] = {"commit_shas": shaRange};
+        if (shaRange)  {
+            this.shaSelected(shaRange);
+            options["data"] = {"commit_shas": shaRange};
+        } 
+
         options["url"] = this.getDiffUrl();
         var self = this;
         options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text, callback, caller)};
@@ -462,12 +464,31 @@ Gitorious.MergeRequestController = function() {
         }
     }
 
-    this.shaListingReceived = function(successful, data, text, version) {
+    // User has selected another version to be displayed
+    this.loadVersion = function(v) {
+        var self = this;
+        var url = jQuery("#merge_request_version").attr("gts:url") +
+            "?version=" + v;
+        this.getTransport().ajax({
+            url: url,
+            success: function(data,text){
+                self.shaListingReceived(true, data, text, v, function(){this.replaceDiffContents()}, self);
+            },
+            error: function(xhr,statusText,errorThrown){
+                console.error("Got an error selecting a different version");
+            }});
+    }
+
+
+    this.shaListingReceived = function(successful, data, text, version, callback, caller) {
         if (successful) {
             jQuery("#merge_request_version").html("Version " + version);
-            jQuery("#diff_browser_for_current_version").replaceWith(data);
+            jQuery("#diff_browser_for_current_version").html(data);
             NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
                                                "new");
+            if (callback && caller) {
+                callback.apply(caller);
+            }
         } else {
 //            console.error("Got an error when fetching shas");
         }

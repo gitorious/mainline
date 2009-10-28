@@ -101,7 +101,8 @@ $(document).ready(function() {
     $("#merge_request_version").changableSelection({
       onChange: function() {
           var version = $(this).attr("data-mr-version-number");
-          Gitorious.MergeRequestController.getInstance().versionChanged(version);
+          Gitorious.MergeRequestController.getInstance().loadVersion(version);
+//          Gitorious.MergeRequestController.getInstance().versionChanged(version);
       }
     });
     
