@@ -97,7 +97,7 @@ class EventTest < ActiveSupport::TestCase
         :body   => 'Adding README')
       assert commit.save
       @event.action = Action::COMMENT
-      assert_false @event.has_commits?
+      assert !@event.has_commits?
     end
   end
 end
