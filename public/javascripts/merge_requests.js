@@ -222,13 +222,9 @@ $(document).ready(function() {
         var jumpToComment = {
             shaListingCurrent: function(newOrOld) {
                 var c = Gitorious.MergeRequestController.getInstance();
-                if (newOrOld != "new") {
-                    this.displayComments();
-                } else {
-                    var spec = Gitorious.ShaSpec.parseShas(sha_range);
-                    c.simulateShaSelection(spec);
-                    c.replaceDiffContents(sha_range, this.displayComments, this);
-                }
+                var spec = Gitorious.ShaSpec.parseShas(sha_range);
+                c.simulateShaSelection(spec);
+                c.replaceDiffContents(sha_range, this.displayComments, this);
             },
             displayComments: function(message) {                
                 var lastLine = elementInDiff(".diff-comments.line-" + last_line);
