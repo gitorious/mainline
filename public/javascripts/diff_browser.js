@@ -465,6 +465,7 @@ Gitorious.MergeRequestController = function() {
     this.shaListingReceived = function(successful, data, text, version) {
         if (successful) {
             jQuery("#merge_request_version").html("Version " + version);
+            jQuery("#diff_browser_for_current_version").replaceWith(data);
             NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
                                                "new");
         } else {
