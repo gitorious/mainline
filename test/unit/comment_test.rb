@@ -129,6 +129,30 @@ class CommentTest < ActiveSupport::TestCase
 
   end
 
+  context "Editing" do
+    setup {
+      @user = users(:moe)
+      @repo = repositories(:moes)
+      @comment = @repo.comments.build(:user => @user, :body => "Nice try", :project => @repo.project)
+      assert @comment.save
+    }
+
+    should "be editable for 10 minutes after being created" do
+      assert @comment.editable_by?(@user)
+    end
+
+    should "not be editable when older than 10 minutes" do
+      @comment.created_at = 9.minutes.ago
+      assert @comment.editable_by?(@user)
+      @comment.created_at = 11.minutes.ago
+      assert !@comment.editable_by?(@user)
+    end
+
+    should "never be editable by other users than the creator" do
+      assert !@comment.editable_by?(users(:mike))
+    end
+  end
+
   context 'On merge request versions' do
     setup do
       @merge_request = merge_requests(:moes_to_johans)

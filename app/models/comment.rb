@@ -111,6 +111,10 @@ class Comment < ActiveRecord::Base
     MergeRequest === target
   end
 
+  def editable_by?(a_user)
+    return (a_user == user) && (created_at > 10.minutes.ago)
+  end
+
   protected
     def notify_target_if_supported
       if target && NOTIFICATION_TARGETS.include?(target.class)
