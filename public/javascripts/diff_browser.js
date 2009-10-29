@@ -548,7 +548,8 @@ Gitorious.enableCommenting = function() {
                 $(this).parent().addClass("selected-for-commenting");
             })
                 var allLineNumbers = $(diffTable).find("td.ui-selected").map(function(){
-                    return $(this).text();
+                    var lineNo = $(this).parent().attr("class").replace(/[\sa-z\-]*/g,"");
+                    return lineNo;
                 });
             var path = $(diffTable).parent().prev(".header").children(".title").text();
             var commentForm = new Gitorious.CommentForm(path);
@@ -605,8 +606,7 @@ Gitorious.CommentForm = function(path){
         this.numbers = result;
     }
     this.linesAsString = function() {
-        var sortedLines = this.numbers.sort();
-        return sortedLines[0] + ".." + sortedLines[sortedLines.length - 1];
+        return this.numbers.min() + ".." + this.numbers.max();
     }
     this.hasLines = function() {
         return this.numbers.length > 0;

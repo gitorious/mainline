@@ -13,6 +13,13 @@ ArrayTest.prototype.testFilter = function() {
   assertEquals(["foo"], result);
 }
 
+ArrayTest.prototype.testMinAndMax = function() {
+    var arr = [1,2,3];
+    assertEquals(1, arr.min());
+    assertEquals(3, arr.max());
+    assertEquals(100, [1,"100","99",99].max());
+}
+
 
 
 StringTest = TestCase("String test");

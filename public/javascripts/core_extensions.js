@@ -58,3 +58,16 @@ if (!String.prototype.isBlank) {
     return this == "";
   }
 }
+
+// http://ejohn.org/blog/fast-javascript-maxmin/
+if (!Array.prototype.max) {
+    Array.prototype.max = function() {
+        return Math.max.apply(Math, this);
+    }
+}
+
+if (!Array.prototype.min) {
+    Array.prototype.min = function() {
+        return Math.min.apply(Math, this);
+    }
+}
