@@ -73,17 +73,6 @@ class PagesControllerTest < ActionController::TestCase
   
   context "show" do
     should "redirects to edit if the page is new, and user is logged in" do
-      login_as :johan
-      page_stub = mock("page stub")
-      page_stub.expects(:new?).returns(true)
-      Repository.any_instance.expects(:git).returns(mock("git"))
-      Page.expects(:find).returns(page_stub)
-      
-      get :show, :project_id => @project.to_param, :id => "Home"
-      assert_redirected_to(edit_project_page_path(@project, "Home"))
-    end
-    
-    should "redirects to edit if the page is new, and user is logged in" do
       login_as nil
       page_stub = mock("page stub")
       page_stub.expects(:new?).returns(true)
@@ -95,7 +84,7 @@ class PagesControllerTest < ActionController::TestCase
       assert_response :success
       assert_select ".help-box p", /page "Home" doesn't exist yet/
     end
-    
+
     should "redirects to the project if wiki is disabled for this projcet" do
       @project.update_attribute(:wiki_enabled, false)
       get :show, :project_id => @project.to_param, :id => "Foo"

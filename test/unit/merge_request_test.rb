@@ -391,14 +391,6 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'optionally take a block when performing a transition' do
       @merge_request.open!
       @merge_request.expects(:foo=).once
-      @merge_request.transition_to('pending') do
-        @merge_request.foo = "Hello world"
-      end
-    end
-
-    should 'optionally take a block when performing a transition' do
-      @merge_request.open!
-      @merge_request.expects(:foo=).once
       status_changed = @merge_request.transition_to('close') do
         @merge_request.foo = "Hello world"
       end
@@ -618,22 +610,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       end
     end
   end
-  
-  context 'As XML' do
-    setup {@merge_request = merge_requests(:moes_to_johans_open)}
-    
-    should 'not include confidential information' do
-      assert !@merge_request.to_xml.include?('<contribution-agreement-version')
-      assert !@merge_request.to_xml.include?('<oauth-secret')
-    end
-    
-    should 'include enough information for our purposes' do
-      assert_match(/<status>#{@merge_request.status_string}<\/status>/, @merge_request.to_xml)
-      assert_match(/<username>~#{@merge_request.user.title}<\/username>/, @merge_request.to_xml)
-      assert_match(/<proposal>#{@merge_request.proposal}<\/proposal>/, @merge_request.to_xml)
-    end
-  end
-  
+
   context 'Status tags' do
     setup do
       @merge_request = merge_requests(:moes_to_johans_open)

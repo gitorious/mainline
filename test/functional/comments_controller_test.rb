@@ -117,7 +117,7 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @repository, assigns(:comment).target
     end
     
-    should "find set the repository as the polymorphic parent by default" do
+    should "find set the polymorphic parent by default, for merge requests" do
       get :new, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param
       assert_response :success
