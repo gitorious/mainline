@@ -1689,13 +1689,6 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   margin-bottom: 10px;
 }
 
-.comments .comment:hover .edit_link {
-  display: inline;
-}
-.comments .comment .edit_link {
-  display: none;
-}
-
 .comments .comment .comment_form {
   padding: 0.4em 0.4em 0.4em 2em;
   margin: 0.4em 0.4em 0.4em 2em;
