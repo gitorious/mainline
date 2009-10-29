@@ -39,15 +39,13 @@ Gitorious.ShaSpec = function() {
     this.addSha = function(s) {
         this.allShas.push(new Gitorious.Sha(s));
     }
+
     // Add shas from a string, eg ff0-bba
     this.parseShas = function(shaString) {
         pair = shaString.split("-");
         this.addSha(pair[0]);
-        if (pair.length > 1) {
+        if (pair.length > 1)
             this.addSha(pair[1]);
-        } else {
-            this.addSha(pair[0]);
-        }
     }
     
     this.firstSha = function() {
@@ -101,12 +99,12 @@ Gitorious.ShaSpec = function() {
     }
 
     this.summarizeHtml = function() {
+        $("#current_shas").attr("data-merge-request-current-shas", this.shaSpec());
         if (this.singleCommit()) {
             $("#current_shas .several_shas").hide();
             $("#current_shas .single_sha").show();
             $("#current_shas .single_sha .merge_base").html(this.firstSha().shortSha());
         } else {
-            $("#current_shas").attr("data-merge-request-current-shas", this.shaSpec());
             $("#current_shas .several_shas").show();
             $("#current_shas .single_sha").hide();
             $("#current_shas .several_shas .first").html(this.firstSha().shortSha());
@@ -338,8 +336,8 @@ Gitorious.MergeRequestController = function() {
         }
     }
 
-    // Loads diffs for the given sha range
-    // +callback+ is a an function that will be called on +caller+ when changed successfully
+    // Loads diffs for the given sha range. +callback+ is a an function
+    // that will be called on +caller+ when changed successfully
     this.replaceDiffContents = function(shaRange, callback, caller) {
         var options = {};
         if (shaRange)  {
@@ -349,8 +347,12 @@ Gitorious.MergeRequestController = function() {
 
         options["url"] = this.getDiffUrl();
         var self = this;
-        options["success"] = function(data, text){self.diffsReceivedSuccessfully(data,text, callback, caller)};
-        options["error"] = function(xhr, statusText, errorThrown){self.diffsReceivedWithError(xhr, statusText, errorThrown)};
+        options["success"] = function(data, text) {
+            self.diffsReceivedSuccessfully(data,text, callback, caller)
+        };
+        options["error"] = function(xhr, statusText, errorThrown) {
+            self.diffsReceivedWithError(xhr, statusText, errorThrown)
+        };
         this.getTransport().ajax(options);
     }
 
@@ -375,7 +377,8 @@ Gitorious.MergeRequestController = function() {
     }
     
     this.needsUpdate = function() {
-        return (this._currentShaRange != this._requestedShaRange) || (this._currentVersion != this._requestedVersion);
+        return (this._currentShaRange != this._requestedShaRange)
+            || (this._currentVersion != this._requestedVersion);
     }
 
     this.willSelectShas = function() {
@@ -471,10 +474,12 @@ Gitorious.MergeRequestController = function() {
             "?version=" + v;
         this.getTransport().ajax({
             url: url,
-            success: function(data,text){
-                self.shaListingReceived(true, data, text, v, function(){this.replaceDiffContents()}, self);
+            success: function(data,text) {
+                self.shaListingReceived(true, data, text, v, function() {
+                    this.replaceDiffContents()
+                }, self);
             },
-            error: function(xhr,statusText,errorThrown){
+            error: function(xhr,statusText,errorThrown) {
                 console.error("Got an error selecting a different version");
             }});
     }

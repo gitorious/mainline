@@ -83,5 +83,32 @@ MergeRequestControllerTest = TestCase("Merge request controller", {
         var spec = Gitorious.ShaSpec.parseShas("abc-bcd");
         assertEquals("abc-bcd", spec.shaSpec());
     }
-})
+});
 
+ShaSpecTest = TestCase("Sha specs", {
+    testAddSha: function() {
+        var spec = new Gitorious.ShaSpec();
+        assertEquals(0, spec.allShas.length);
+        spec.addSha("foo");
+        assertEquals(1, spec.allShas.length);
+        spec.addSha("bar");
+        assertEquals(2, spec.allShas.length);
+    },
+
+    testParseShasPair: function() {
+        var spec = new Gitorious.ShaSpec();
+        spec.parseShas("foo-bar");
+        assertEquals(2, spec.allShas.length);
+        assertEquals("foo", spec.firstSha().fullSha);
+        assertEquals("bar", spec.lastSha().fullSha);
+        assertEquals("foo-bar", spec.shaSpec());
+    },
+
+    testParseShasSingle: function() {
+        var spec = new Gitorious.ShaSpec();
+        spec.parseShas("foo");
+        assertEquals(1, spec.allShas.length);
+        assertEquals("foo", spec.firstSha().fullSha);
+        assertEquals("foo", spec.shaSpec());
+    }
+});
