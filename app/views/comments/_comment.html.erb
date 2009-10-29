@@ -29,7 +29,12 @@
     <span class="changed"><%=h comment.state_changed_to %></span>
   </p>
   <%- end -%>
-  <div class="body"><%= render_markdown(comment.body, :auto_link) -%></div>
+  <div class="body">
+    <% unless comment.context.blank? -%>
+      <pre class="diff-comment-context"><code><%=h comment.context %></code></pre>
+    <% end %>
+    <%= render_markdown(comment.body, :auto_link) -%>
+  </div>
   <p class="byline">
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>

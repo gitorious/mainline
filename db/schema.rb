@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091026142733) do
+ActiveRecord::Schema.define(:version => 20091029114444) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20091026142733) do
     t.string   "path"
     t.integer  "first_line_number"
     t.integer  "number_of_lines"
+    t.text     "context"
   end
 
   add_index "comments", ["project_id"], :name => "index_comments_on_project_id"

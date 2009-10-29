@@ -592,39 +592,6 @@ NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
 NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
                                Gitorious.disableCommenting);
 
-
-Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
-    // Extract the affected diffs and insert them above the comment it
-    // belongs to
-    var idiffRegexp = /(<span class="idiff">|<\/span>)/gmi;
-    var comments = $("#merge_request_comments .comment.inline .inline_comment_link a");
-    for (var i=0; i < comments.length; i++) {
-        var commentElement = $( $(comments[i]).attr("href") );
-        if (commentElement.length === 0)
-            continue;
-        var selectors = $.map(commentElement.attr("gts:lines").split(","), function(e) {
-            return "table.codediff.inline tr.line-" + e;
-        });
-        // extract the raw diff data from each row
-        var plainDiff = [];
-        $(selectors.join(",")).each(function() {
-            var cell = $(this).find("td.code");
-            var op = "&gt; " + (cell.hasClass("ins") ? "+ " : "- ");
-            plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, ''));
-        });
-        if ($(comments[i]).parents(".comment.inline").find(".diff-comment-context").length > 0) {
-            // We have already added this context, move on
-            continue;
-        }
-        $(comments[i]).parents(".comment.inline")
-            .prepend('<pre class="diff-comment-context"><code>' +
-                     plainDiff.join("\n") + '</code></pre');
-    };
-};
-
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious.DiffBrowser,
-                               Gitorious.DiffBrowser.insertDiffContextsIntoComments);
-
 Gitorious.CommentForm = function(path){
     this.path = path;
     this.numbers = [];
@@ -657,6 +624,7 @@ Gitorious.CommentForm = function(path){
         var shas = $("#current_shas").attr("data-merge-request-current-shas");
         commentContainer.find("#comment_sha1").val(shas);
         commentContainer.find("#comment_path").val(this.path);
+        commentContainer.find("#comment_context").val(this._getRawDiffContext());
         commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
         commentContainer.find("#comment_lines").val(this.linesAsString());
         this._positionAndShowContainer(commentContainer, options.trigger);
@@ -701,12 +669,30 @@ Gitorious.CommentForm = function(path){
         };
         container.css(cssData);
         container.slideDown();
-    }
-}
+    };
+
+    this._getRawDiffContext = function() {
+        // Extract the affected diffs (as raw quoted diffs) and return them
+        var idiffRegexp = /(<span class="idiff">|<\/span>)/gmi;
+        var comments = $("#merge_request_comments .comment.inline .inline_comment_link a");
+        var plainDiff = [];
+        var selectors = $.map(this.numbers, function(e) {
+            return "table.codediff.inline tr.line-" + e;
+        });
+        // extract the raw diff data from each row
+        $(selectors.join(",")).each(function() {
+            var cell = $(this).find("td.code");
+            var op = "> " + (cell.hasClass("ins") ? "+ " : "- ");
+            plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, '')
+                           .replace('&gt;', '>').replace('&lt;', '<'));
+        });
+        return (plainDiff.length > 0 ? plainDiff.join("\n") : "");
+    };
+};
 
 Gitorious.CommentForm.destroyAll = function() {
     $(".comment_container").html("").unbind("keypress").slideUp("fast");
     $(".selected-for-commenting").removeClass("selected-for-commenting");
     $(".ui-selected").removeClass("ui-selected");
     Gitorious.DiffBrowser.KeyNavigation.enable();
-}
+};
