@@ -597,7 +597,7 @@ Gitorious.DiffBrowser.insertDiffContextsIntoComments = function() {
     // belongs to
     var idiffRegexp = /(<span class="idiff">|<\/span>)/gmi;
     var comments = $("#merge_request_comments .comment.inline .inline_comment_link a");
-    for (i=0; i < comments.length; i++) {
+    for (var i=0; i < comments.length; i++) {
         var commentElement = $( $(comments[i]).attr("href") );
         if (commentElement.length === 0)
             continue;
