@@ -48,8 +48,11 @@ ActionController::Routing::Routes.draw do |map|
         :create => :post, 
         :commit_list => :post,
         :target_branches => :post,
-      }, :has_many => :comments do |merge_request|
-        merge_request.resources :merge_request_versions, :has_many => :comments
+      } do |merge_request|
+        merge_request.resources :comments, :collection => {:preview => :post}
+        merge_request.resources :merge_request_versions do |v|
+          v.resources :comments, :collection => {:preview => :post}
+        end
       end
       repo.resources :committerships, :collection => {
         :auto_complete_for_group_name => :get,

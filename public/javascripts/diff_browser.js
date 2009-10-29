@@ -253,8 +253,9 @@ Gitorious.DiffBrowser.KeyNavigationController = function() {
         this.disable()
         $(window).bind("keydown", {controller:this}, this._callback);
         // unbind whenever we're in an input field
+        var self = this;
         $(":input").focus(function() {
-            this.disable();
+            self.disable();
         });
         $(":input").blur(function() {
             $(window).bind("keydown", {controller:this}, this._callback);
