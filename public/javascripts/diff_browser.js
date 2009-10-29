@@ -366,9 +366,8 @@ Gitorious.MergeRequestController = function() {
         spec.summarizeHtml();
 
         NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
-        if (callback) {
+        if (callback)
             callback.apply(caller);
-        }
     }
     this.diffsReceivedWithError = function(xhr, statusText, errorThrown) {
         jQuery("#merge_request_diff").html(

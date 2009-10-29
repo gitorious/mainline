@@ -17,4 +17,6 @@
 #++
 %>
 
-<%= render_inline_diffs_with_stats(@diffs, :open){|file| @target.comments_for_path_and_sha(file.a_path, @comment.sha_range)} -%>
+<%= render_inline_diffs_with_stats(@diffs, :open) do |file|
+      @target.comments_for_path_and_sha(file.a_path, @sha_range || @comment.sha_range)
+    end -%>

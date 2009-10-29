@@ -76,17 +76,19 @@ class CommentsController < ApplicationController
           if @comment.sha1.blank?
             redirect_to_repository_or_target
           else
-            redirect_to repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @comment.sha1)
+            redirect_to repo_owner_path(@repository,
+              :project_repository_commit_path, @project, @repository, @comment.sha1)
           end
         end
         format.js do
-          @diffs = @target.diffs(@comment.sha_range).
-            select{|d|d.a_path == @comment.path}
+          @diffs = @target.diffs(range_or_string(@comment.sha1)).select{|d|
+            d.a_path == @comment.path
+          }
           render :partial => "merge_request_versions/comments", :status => :created
         end
       else
         format.html { render :action => "new" }
-        format.js {render :nothing => true, :status => :not_acceptable}
+        format.js   { render :nothing => true, :status => :not_acceptable }
       end
     end      
   end
@@ -96,8 +98,17 @@ class CommentsController < ApplicationController
   end
   
   protected
+    def range_or_string(str)
+      if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(str)
+        @sha_range = Range.new(match[1],match[2])
+      else
+        @sha_range = str
+      end
+    end
+
     def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id], @containing_project)
+      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+        @containing_project)
     end
     
     def find_polymorphic_parent
