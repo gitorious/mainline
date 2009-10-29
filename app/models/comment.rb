@@ -43,7 +43,7 @@ class Comment < ActiveRecord::Base
     {:conditions => { :sha1 => shas.flatten }, :include => :user}
   }
   
-  NOTIFICATION_TARGETS = [ MergeRequest ]
+  NOTIFICATION_TARGETS = [ MergeRequest, MergeRequestVersion ]
   
   def deliver_notification_to(another_user)
     message_body = "#{user.title} commented:\n\n#{body}"
@@ -118,8 +118,13 @@ class Comment < ActiveRecord::Base
   protected
     def notify_target_if_supported
       if target && NOTIFICATION_TARGETS.include?(target.class)
-        return if target.user == user
-        deliver_notification_to(target.user)
+        if self.target === MergeRequestVersion
+          target_user = target.merge_request.user
+        else
+          target_user = target.user
+        end
+        return if target_user == user
+        deliver_notification_to(target_user)
       end
     end
 

@@ -31,24 +31,38 @@ class CommentTest < ActiveSupport::TestCase
     end
     
     should "be able to notify the creator of the target about a new comment" do
-      @comment = @merge_request.comments.new({
+      comment = @merge_request.comments.new({
         :body => "need more cowbell",
         :project => projects(:johans)
       })
-      @comment.user = users(:johan)
+      comment.user = users(:johan)
       assert_difference("@merge_request.user.received_messages.count") do
-        @comment.save!
+        comment.save!
       end
     end
     
     should "not notify the target.user if it's the one who commented" do
-      @comment = @merge_request.comments.new({
+      comment = @merge_request.comments.new({
         :body => "need more cowbell",
         :project => projects(:johans)
       })
-      @comment.user = @merge_request.user
+      comment.user = @merge_request.user
       assert_no_difference("@merge_request.user.received_messages.count") do
-        @comment.save!
+        comment.save!
+      end
+    end
+
+    should "notify creators about MergeRequestVersion comments as well" do
+      @merge_request.build_new_version
+      @merge_request.save!
+      assert @merge_request.versions.count >= 1
+      comment = @merge_request.versions.last.comments.new({
+          :body => "off by one",
+          :project => projects(:johans)
+        })
+      comment.user = users(:johan)
+      assert_difference("@merge_request.user.received_messages.count") do
+        comment.save!
       end
     end
   end
@@ -133,7 +147,11 @@ class CommentTest < ActiveSupport::TestCase
     setup {
       @user = users(:moe)
       @repo = repositories(:moes)
-      @comment = @repo.comments.build(:user => @user, :body => "Nice try", :project => @repo.project)
+      @comment = @repo.comments.build({
+          :user => @user,
+          :body => "Nice try",
+          :project => @repo.project
+        })
       assert @comment.save
     }
 
