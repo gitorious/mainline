@@ -203,6 +203,44 @@ class CommentsControllerTest < ActionController::TestCase
     end
   end
 
+  context 'Changing a comment' do
+    setup {
+      @user = users(:moe)
+      @repo = repositories(:moes)
+      @comment = Comment.create(:project => @repo.project, :user => @user,
+        :target => @repo, :body => "Looks like progress")
+      @get_edit = proc { get(:edit, :project_id => @repo.project.to_param,
+          :repository_id => @repo.to_param, :id => @comment.to_param) }
+    }
+    
+    context "GET to #edit" do
+      should 'let the owner edit his own comment' do
+        login_as @user.login
+        @get_edit.call
+        assert_response :success
+        assert_equal @comment, assigns(:comment)
+      end
+      
+      should 'not let other users edit the comment' do
+        login_as :mike
+        @get_edit.call
+        assert_response :unauthorized
+      end
+    end
+
+    context 'PUT to #update' do
+      should 'update the comment' do
+        login_as @user.login
+        new_body = "I take that back. This sucks"
+        put(:update, :project_id => @repo.project.to_param,
+          :repository_id => @repo.to_param, :id => @comment.to_param,
+          :comment => {:body => new_body})
+        assert_response :success
+        assert_equal new_body, @comment.reload.body
+      end
+    end
+  end
+
   protected
   def create_new_version
     diff_backend = mock

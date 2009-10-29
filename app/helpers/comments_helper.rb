@@ -22,7 +22,7 @@
 module CommentsHelper
   include DiffHelper
   def comment_block(comment, &block)
-    block_options = {:class => "comment"}
+    block_options = {:class => "comment", :"gts:comment-id" => comment.to_param}
     if comment.applies_to_line_numbers?
       block_options[:class] << " inline"
       block_options[:"data-diff-path"] = comment.path

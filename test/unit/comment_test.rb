@@ -156,6 +156,8 @@ class CommentTest < ActiveSupport::TestCase
     }
 
     should "be editable for 10 minutes after being created" do
+      assert @comment.creator?(@user)
+      assert @comment.recently_created?
       assert @comment.editable_by?(@user)
     end
 

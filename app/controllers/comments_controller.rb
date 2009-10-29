@@ -24,6 +24,7 @@ class CommentsController < ApplicationController
   before_filter :login_required, :only => [:new, :create, :edit, :update, :destroy]
   before_filter :find_project_and_repository
   before_filter :find_polymorphic_parent
+  before_filter :comment_should_be_editable, :only => [:edit, :update]
   renders_in_site_specific_context
   
   def index
@@ -56,6 +57,16 @@ class CommentsController < ApplicationController
     render_or_redirect
   end
 
+  def edit
+    render :partial => "edit_body"
+  end
+
+  def update
+    @comment.body = params[:comment][:body]
+    @comment.save
+    render :partial => @comment
+  end
+  
   def render_or_redirect
     respond_to do |format|
       if @comment.save
@@ -134,5 +145,12 @@ class CommentsController < ApplicationController
           :notifiable => merge_request
         })
       message.save
+    end
+
+    def comment_should_be_editable
+      @comment = Comment.find(params[:id])
+      if !@comment.editable_by?(current_user)
+        render :status => :unauthorized, :text => "Sorry mate"
+      end
     end
 end

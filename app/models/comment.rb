@@ -112,7 +112,15 @@ class Comment < ActiveRecord::Base
   end
 
   def editable_by?(a_user)
-    return (a_user == user) && (created_at > 10.minutes.ago)
+    creator?(a_user) && recently_created?
+  end
+
+  def creator?(a_user)
+    a_user == user
+  end
+
+  def recently_created?
+    created_at > 10.minutes.ago
   end
 
   protected

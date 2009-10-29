@@ -48,5 +48,10 @@
         <%= image_tag("spinner.gif") -%>
       </span>
     <% end -%>
+    <%- if comment.editable_by?(current_user) -%>
+    <span class="edit_link">
+      <%= link_to "Edit comment", "##{dom_id(comment)}", :"gts:url" => url_for([:edit, @project, @repository, comment]) -%>
+    </span>
+    <%- end -%>
   </p>
 <% end -%>

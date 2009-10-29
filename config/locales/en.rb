@@ -290,6 +290,7 @@
         :commit => "on commit {{sha1}}",
         :permalink => '<abbr title="permalink for this comment">#</abbr>',
         :add_title => "Add a new comment",
+        :edit_title => "Change your comment",
         :body => "Comment",
         :add => "Add Comment",
         :update_or_add => "Update / Add Comment",
