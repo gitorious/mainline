@@ -78,7 +78,8 @@ class Repository < ActiveRecord::Base
   
   named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO }
   named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }
-  named_scope :clones,    :conditions => ["kind != ? and parent_id is not null", KIND_PROJECT_REPO]
+  named_scope :clones,    :conditions => ["kind in (?) and parent_id is not null",
+                                          [KIND_TEAM_REPO, KIND_USER_REPO]]
   named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
   
   is_indexed :fields => ["name", "description"],
