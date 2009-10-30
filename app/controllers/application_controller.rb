@@ -194,8 +194,14 @@ class ApplicationController < ActionController::Base
     end
     
     # turns ["foo", "bar"] route globbing parameters into "foo/bar"
+    # Note that while the path components will be uri unescaped, any
+    # '+' will be preserved
     def desplat_path(*paths)
-      paths.flatten.compact.map{|p| CGI.unescape(p) }.join("/")
+      # we temporarily swap the + out with a magic byte, so
+      # filenames/branches with +'s won't get unescaped to a space
+      paths.flatten.compact.map do |p|
+        CGI.unescape(p.gsub("+", "\001")).gsub("\001", '+')
+      end.join("/")
     end
     helper_method :desplat_path
     

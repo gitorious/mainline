@@ -35,9 +35,11 @@
       <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
     </td>
     <% elsif node.is_a? Grit::Submodule -%>
-    <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
+      <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
     <% else -%>
-      <td class="node file <%= class_for_filename(node.name)  -%>"><%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%></td>
+      <td class="node file <%= class_for_filename(node.name)  -%>">
+      <%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%>
+      </td>
     <% end -%>
     <% if node.is_a? Grit::Submodule -%>
       <td class="meta"></td>
