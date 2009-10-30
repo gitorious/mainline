@@ -57,7 +57,7 @@
         <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}", 
               group_project_repository_path(@group, repository.project, repository) -%>
         <span class="hint">
-          <%= paragraphs_with_more render_markdown(repository.description) -%>
+          <%= paragraphs_with_more render_markdown(repository.description), repository.id -%>
         </span>
       </li>
       <% end -%>
@@ -86,7 +86,7 @@
         <%= link_to "#{h(repository.project.title)}/#{h(repository.name)}", 
               group_project_repository_path(@group, repository.project, repository) -%>
         <div class="hint">
-          <%= paragraphs_with_more render_markdown(repository.description) -%>
+          <%= paragraphs_with_more render_markdown(repository.description), repository.id -%>
         </div>
       </li>
     <% end -%>

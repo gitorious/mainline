@@ -40,7 +40,7 @@
   <tr>
     <td colspan="3" class="repository-description">
       <div class="page">
-        <%= paragraphs_with_more render_markdown(repository.description, :auto_link) -%>
+        <%= paragraphs_with_more render_markdown(repository.description, :auto_link), repository.id -%>
       </div>
     </td>
   </tr>

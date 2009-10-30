@@ -340,7 +340,7 @@ module ApplicationHelper
     end
   end
   
-  def paragraphs_with_more(text)
+  def paragraphs_with_more(text, identifier)
     return if text.blank?
     first, rest = text.split("</p>", 2)
     if rest.blank?
@@ -348,8 +348,8 @@ module ApplicationHelper
     else
       %Q{#{first} 
         <a href="#more"
-           onclick="$('#description-rest').toggle(); $(this).hide()">more&hellip;</a></p>
-        <div id="description-rest" style="display:none;">#{rest}</div>}
+           onclick="$('#description-rest-#{identifier}').toggle(); $(this).hide()">more&hellip;</a></p>
+        <div id="description-rest-#{identifier}" style="display:none;">#{rest}</div>}
     end
   end
   
