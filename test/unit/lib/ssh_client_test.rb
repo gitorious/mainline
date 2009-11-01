@@ -22,7 +22,7 @@ require File.dirname(__FILE__) + '/../../test_helper'
 class SSHClientTest < ActiveSupport::TestCase
 
   def setup
-    @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
+    @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'")
     @real_path = "abc/123/defg.git"
     @full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
     @ok_stub = stub("ok response mock",
@@ -42,8 +42,8 @@ class SSHClientTest < ActiveSupport::TestCase
     
   context "namespacing" do
     setup do
-      @team_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'").parse!
-      @user_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'").parse!
+      @team_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '+foo/bar/baz.git'")
+      @user_strainer = Gitorious::SSH::Strainer.new("git-upload-pack '~foo/bar/baz.git'")
     end
     
     should "parse the project name from a team namespaced repo" do

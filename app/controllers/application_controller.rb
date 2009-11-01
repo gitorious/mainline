@@ -131,6 +131,19 @@ class ApplicationController < ActionController::Base
       return true
     end
     
+    # checks the auth-key received by script/gitorious or hooks
+    # and returns a bad_request if invalid 
+    def require_auth_key
+      unless auth_key == GitoriousConfig["cookie_secret"]
+        head :bad_request
+      end
+    end
+    
+    # script/gitorious, hooks and git-daemon authenticate by this token
+    def auth_key
+      request.headers["X-Auth-Key"]
+    end
+    
     def find_repository_owner
       if params[:user_id]
         @owner = User.find_by_login!(params[:user_id])
@@ -139,8 +152,8 @@ class ApplicationController < ActionController::Base
         @owner = Group.find_by_name!(params[:group_id])
         @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
       elsif params[:project_id]
-        @owner = Project.find_by_slug!(params[:project_id])
-        @project = @owner
+        find_project
+        @owner = @project
       else
         raise ActiveRecord::RecordNotFound
       end
@@ -152,11 +165,25 @@ class ApplicationController < ActionController::Base
     end
     
     def find_project
-      @project = Project.find_by_slug!(params[:project_id])
+      @project = Project.find_by_slug!(params[:project_id] || params[:id])
+      if @project.private?
+        if auth_key
+          # check auth key
+          require_auth_key
+        elsif !logged_in? || !@project.accessable_by?(current_user)
+          # no permission to access the project
+          flash[:error] = I18n.t "projects_controller.access_error"
+          redirect_to '/'
+        end
+      end
     end
     
     def find_project_and_repository
-      @project = Project.find_by_slug!(params[:project_id])
+      find_project
+      
+      # break if rendered or redirected
+      return if performed?
+      
       # We want to look in all repositories that's somehow within this project
       # realm, not just @project.repositories
       @repository = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)

@@ -180,6 +180,15 @@ class Project < ActiveRecord::Base
     owner == User ? owner == candidate : owner.committer?(candidate)
   end
   
+  # checks if the project is accessable by the given user
+  def accessable_by?(user)
+    public? || user.is_admin? || member?(user) || !!repositories.to_a.find{|r|r.readable_by?(user)}
+  end
+  
+  def public?
+    !private?
+  end
+  
   def owned_by_group?
     owner === Group
   end
@@ -365,6 +374,12 @@ class Project < ActiveRecord::Base
       else
         status.update_attribute(:default, false)
       end
+    end
+  end
+  
+  def private=(value)
+    if GitoriousConfig["private_projects"]
+      write_attribute :private, value
     end
   end
   

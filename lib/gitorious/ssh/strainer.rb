@@ -37,16 +37,12 @@ module Gitorious
       COMMANDS_READONLY = [ 'git-upload-pack', 'git upload-pack' ]
       COMMANDS_WRITE    = [ 'git-receive-pack', 'git receive-pack' ]
       ALLOW_RE = /^'\/?([a-z0-9\+~][a-z0-9@._\-]*(\/[a-z0-9][a-z0-9@\._\-]*)*\.git)'$/i.freeze
-    
-      def initialize(command)
-        @command = command
-        @verb = nil
-        @argument = nil
-        @path = nil
-      end
+      
       attr_reader :path, :verb, :command
       
-      def parse!
+      def initialize(command)
+        @command = command
+        
         if @command.include?("\n")
           raise BadCommandError
         end
@@ -57,8 +53,8 @@ module Gitorious
           raise BadCommandError
         end
       
-        if !(COMMANDS_WRITE.include?(@verb)) && !(COMMANDS_READONLY.include?(@verb))
-          raise BadCommandError
+        if !read_command? && !write_command?
+          raise BadCommandError, "neither read nor write command"
         end
         
         if ALLOW_RE =~ @argument
@@ -67,8 +63,14 @@ module Gitorious
         else
           raise BadCommandError
         end
+      end
       
-        self
+      def read_command?
+        COMMANDS_READONLY.include?(@verb)
+      end
+      
+      def write_command?
+        COMMANDS_WRITE.include?(@verb)
       end
       
       protected

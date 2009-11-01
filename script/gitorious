@@ -56,16 +56,25 @@ def gitorious_says(msg)
 end
 
 begin
-  strainer = Gitorious::SSH::Strainer.new(original_command).parse!
-  client = Gitorious::SSH::Client.new(strainer, user)
+  strainer = Gitorious::SSH::Strainer.new(original_command)
+  client   = Gitorious::SSH::Client.new(strainer, user)
 
   args = client.to_git_shell_argument
   $stderr.puts "git-shell -c #{args.inspect}" if $DEBUG
-  ENV['GITORIOUS_WRITABLE_BY_URL'] = client.writable_by_query_url
-  ENV['GITORIOUS_USER'] = user
-  ENV['GITORIOUS_BASE_DIR'] = BASE_DIR
+  
+  ENV['GITORIOUS_AUTH_KEY']          = GitoriousConfig['cookie_secret']
+  ENV['GITORIOUS_WRITABLE_BY_URL']   = client.writable_by_query_url
+  ENV['GITORIOUS_USER']              = user
+  ENV['GITORIOUS_BASE_DIR']          = BASE_DIR
   ENV['GITORIOUS_DENY_FORCE_PUSHES'] = client.force_pushing_denied? ? "true" : "false"
-
+  
+  # protect private projects if enabled
+  if strainer.read_command? && !client.readable_by_user?
+    logger.fatal("Rejected #{user.inspect} for #{args.inspect}")
+    gitorious_says "Access denied"
+    exit!(1)
+  end
+  
   logger.info("Accepted #{user.inspect} for #{args.inspect}")
   if client.pre_receive_hook_exists?
     exec("git-shell", "-c", args)

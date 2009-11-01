@@ -102,6 +102,14 @@ module Git
           return
         end
         
+        unless repository.project.public?
+          log(Process.pid, "Repository is private: #{path}")
+          write_error_message(session, "Not allowed to access repository: #{base_path}")
+          $children_active -= 1
+          session.close
+          return
+        end
+        
         real_path = File.expand_path(repository.full_repository_path)
         log(Process.pid, "#{ip} wants #{path.inspect} => #{real_path.inspect}")
         
