@@ -36,7 +36,12 @@ test:
 
   # Enable or Disable Public Mode (true) or Private Mode (false)
   public_mode: true
-
+  
+  # Enable or disable private projects. (Project owners can restrict
+  # read/write access to their repositories to project owners and committers
+  # if private projects are globally allowed.)
+  private_projects: false
+ 
   # Define your locale
   locale: en
 

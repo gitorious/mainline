@@ -55,6 +55,12 @@
   <%= form.label :bugtracker_url, t(:bugtracker_url, :scope => 'activerecord.attributes.project') -%><br />
   <%= form.text_field :bugtracker_url -%>
 </p>
+<% if GitoriousConfig['private_projects'] -%>
+  <p>
+    <%= form.label :private, t(:private, :scope => 'activerecord.attributes.project') -%><br />
+    <%= form.check_box :private -%>
+  </p>
+<% end -%>
 <p>
   <%= form.label :wiki_enabled, t(:wiki_enabled, :scope => 'activerecord.attributes.project') -%><br />
   <%= form.check_box :wiki_enabled -%>

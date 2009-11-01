@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090914075300) do
+ActiveRecord::Schema.define(:version => 20091022150923) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -221,6 +221,7 @@ ActiveRecord::Schema.define(:version => 20090914075300) do
     t.string   "oauth_signoff_site"
     t.string   "oauth_path_prefix"
     t.text     "merge_request_custom_states"
+    t.boolean  "private",                     :default => false
   end
 
   add_index "projects", ["owner_type", "owner_id"], :name => "index_projects_on_owner_type_and_owner_id"

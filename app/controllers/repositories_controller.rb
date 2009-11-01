@@ -21,12 +21,13 @@
 #++
 
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :writable_by, :config]
+  before_filter :login_required, :except => [:index, :show, :readable_by, :writable_by, :config]
   before_filter :find_repository_owner
   before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update, :committers]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
-  skip_before_filter :public_and_logged_in, :only => [:writable_by, :config]
+  before_filter :find_repository, :only => [:show,:edit,:update,:confirm_delete,:delete,:destroy,:readable_by, :writable_by, :config]
+  skip_before_filter :public_and_logged_in, :only => [:readable_by, :writable_by, :config]
   renders_in_site_specific_context :except => [:writable_by, :config]
   
   def index
@@ -136,14 +137,12 @@ class RepositoriesController < ApplicationController
   end
   
   def edit
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
     @heads = @repository.git.heads
   end
   
   def update
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
     @heads = @repository.git.heads
@@ -169,37 +168,46 @@ class RepositoriesController < ApplicationController
     render :action => "edit"
   end
   
+  # Used internally to check read permissions by gitorious and git-daemon
+  def readable_by
+    result = nil
+    
+    if @repository.project.public?
+      result = true
+    else
+      user   = User.find_by_login(params[:username])
+      result = user && @repository.readable_by?(user)
+    end
+    
+    render :text => result ? 'true' : 'false'
+  end
+  
   # Used internally to check write permissions by gitorious
   def writable_by
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    user = User.find_by_login(params[:username])
-    
-    if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s)
+    user   = User.find_by_login(params[:username])
+    result = nil 
+
+    if user.nil?
+      result = false
+    elsif result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s)
       # git_path is a merge request
-      begin
-        if merge_request = MergeRequest.find(result[1]) and (merge_request.user == user)
-          render :text => "true" and return
-        end
-      rescue ActiveRecord::RecordNotFound # No such merge request
-      end
-    elsif user && user.can_write_to?(@repository)
-      render :text => "true" and return
-    end
-    render :text => 'false' and return
+      merge_request = MergeRequest.find_by_id(result[1])
+      result = merge_request && merge_request.user == user
+    else
+      result = user.can_write_to?(@repository)
+    end 
+    render :text => result ? 'true' : 'false'
   end
   
   
   def config
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id],
-      @containing_project)
-    config_data = "real_path:#{@repository.real_gitdir}\n"
-    config_data << "force_pushing_denied:"
-    config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
-    render :text => config_data
+    render :text => {
+      "real_path" => @repository.real_gitdir,
+      "force_pushing_denied" => @repository.deny_force_pushing?
+    }.to_yaml
   end
   
   def confirm_delete
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     unless @repository.can_be_deleted_by?(current_user)
       flash[:error] = I18n.t "repositories_controller.adminship_error"
       redirect_to(@owner) and return
@@ -207,7 +215,6 @@ class RepositoriesController < ApplicationController
   end
   
   def destroy
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     if @repository.can_be_deleted_by?(current_user)
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
@@ -221,6 +228,10 @@ class RepositoriesController < ApplicationController
   end
   
   private    
+    def find_repository
+      @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    end
+    
     def require_adminship
       unless @owner.admin?(current_user)
         respond_to do |format|

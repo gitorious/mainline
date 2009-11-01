@@ -26,24 +26,46 @@ module Gitorious
     class AccessDeniedError < StandardError; end
   
     class Client
+      
+      attr_accessor :project_name, :repository_name, :user_name
+      
       def initialize(strainer, username)
-        @strainer = strainer
+        @strainer      = strainer
+        @user_name     = username
+        @configuration = nil
+        
         @project_name, @repository_name = strainer.path.split("/", 2)
         @repository_name.gsub!(/\.git$/, "")
-        @user_name = username
-        @configuration = {}
       end
-      attr_accessor :project_name, :repository_name, :user_name
-    
+      
+      # allow read operations if private projects are disabled globally or user has permission
+      def readable_by_user?
+        @readable ||= !GitoriousConfig["private_projects"] || get_config(readable_by_query_path)
+      end
+      
       def writable_by_user?
-        query_for_permission_and_path
-        @writable == "true"
+        @writable ||= get_config(writable_by_query_path)
       end
-    
+      
+      def assure_user_can_read!
+        readable_by_user? || raise(AccessDeniedError)
+      end
+      
       def assure_user_can_write!
         writable_by_user? || raise(AccessDeniedError)
       end
-    
+      
+      # The full URL
+      def readable_by_query_url
+        readable_by_query_uri.to_s
+      end
+
+      # The path only
+      def readable_by_query_path
+        readable_by_query_uri.request_uri
+      end
+      
+      
       # The full URL
       def writable_by_query_url
         writable_by_query_uri.to_s
@@ -55,9 +77,8 @@ module Gitorious
       end
       
       def real_path
-        if !configuration["real_path"] || configuration["real_path"] == "nil"
-          raise AccessDeniedError
-        end
+        raise AccessDeniedError unless configuration["real_path"]
+        
         full_real_path = File.join(GitoriousConfig["repository_base_path"],
           configuration["real_path"])
         raise AccessDeniedError unless File.exist?(full_real_path)
@@ -65,7 +86,7 @@ module Gitorious
       end
 
       def force_pushing_denied?
-        configuration["force_pushing_denied"] == "true"
+        configuration["force_pushing_denied"]
       end
     
       def to_git_shell_argument
@@ -87,40 +108,48 @@ module Gitorious
       end
       
       def configuration
-        if @configuration.empty?
-          query_url = "/#{@project_name}/#{@repository_name}/config"
-          # $stderr.puts "Querying #{query_url}" if $DEBUG
-          resp = connection.get(query_url)
-          # $stderr.puts resp
-          parse_configuration(resp.body)
+        unless @configuration
+          path = "/#{@project_name}/#{@repository_name}/config"
+          # $stderr.puts "Querying #{path}" if $DEBUG
+          @configuration = get_config(path)
         end
         @configuration
       end
     
       protected
-        def parse_configuration(raw_config)
-          raw_config.split("\n").each do |line|
-            key, val = line.split(":")
-            if key && val
-              @configuration[key] = val
-            end
-          end
+        
+        # loads a config in YAML and returns it
+        def get_config(path)
+          # TODO: mock up
+          resp = connection.get(path, "X-Auth-Key"=>GitoriousConfig['cookie_secret'])
+          resp.error! unless resp.is_a?(Net::HTTPOK)
+          YAML.load(resp.body)
         end
-      
+        
         def connection
-          port = GitoriousConfig["gitorious_client_port"]
-          host = GitoriousConfig["gitorious_client_host"]
+          port   = GitoriousConfig["gitorious_client_port"]
+          host   = GitoriousConfig["gitorious_client_host"]
           @connection ||= Net::HTTP.start(host, port)
         end
         
         # Returns an actual URI object
+        def readable_by_query_uri
+          permission_by_query_uri :readable
+        end
+        
+        # Returns an actual URI object
         def writable_by_query_uri
-          path = "/#{@project_name}/#{@repository_name}/writable_by"
-          query = "username=#{@user_name}"
-          host = GitoriousConfig['gitorious_client_host']
-          _port = GitoriousConfig['gitorious_client_port']
-          port = RUBY_VERSION > '1.9' ? _port : _port.to_s  # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well
-          URI::HTTP.build(:host => host, :port => port, :path => path, :query => query)
+          permission_by_query_uri :writable
+        end
+        
+        def permission_by_query_uri(mode)
+          port = GitoriousConfig['gitorious_client_port']
+          URI::HTTP.build(
+            :host  => GitoriousConfig['gitorious_client_host'],
+            :port  => RUBY_VERSION > '1.9' ? port : port.to_s,  # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well,
+            :path  => "/#{@project_name}/#{@repository_name}/#{mode}_by",
+            :query => "username=#{@user_name}"
+          )
         end
         
     end

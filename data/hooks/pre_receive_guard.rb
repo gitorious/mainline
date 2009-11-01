@@ -17,8 +17,13 @@
 #++
 
 
-require "open-uri"
+require 'uri'
+require 'net/http'
 require 'cgi'
+require 'yaml'
+
+RAILS_ENV = ENV['RAILS_ENV'] ||= 'production'
+GitoriousConfig = YAML::load_file(File.dirname(__FILE__)+"/../../config/gitorious.yml")[RAILS_ENV]
 
 module Gitorious
   module SSH  
@@ -61,7 +66,11 @@ module Gitorious
       end
       
       def get_via_http(url)
-        open(url).read
+        uri = URI.parse(url)
+        connection = Net::HTTP.start(uri.host, uri.port)
+        resp = connection.get(uri.request_uri, "X-Auth-Key"=>GitoriousConfig['cookie_secret'])
+        resp.error! unless resp.is_a?(Net::HTTPOK)
+        resp.body
       end
 
       def gitorious_says(msg)

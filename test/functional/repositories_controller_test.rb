@@ -788,8 +788,8 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "get projects/1/repositories/3/config is true" do
       do_config_get
       assert_response :success
-      exp = "real_path:#{@repository.real_gitdir}\nforce_pushing_denied:false"
-      assert_equal exp, @response.body
+      exp = {"real_path"=>@repository.real_gitdir, "force_pushing_denied"=>false}
+      assert_equal exp, YAML::load(@response.body)
     end
   end
 
