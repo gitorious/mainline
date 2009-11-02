@@ -269,6 +269,7 @@ module ActionController
           env["QUERY_STRING"] ||= ""
 
           data = data.is_a?(IO) ? data : StringIO.new(data || '')
+          data.set_encoding(Encoding::ASCII_8BIT) if data.respond_to?(:set_encoding)
 
           env.update(
             "REQUEST_METHOD"  => method.to_s.upcase,
