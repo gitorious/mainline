@@ -44,9 +44,7 @@
       <%= simple_format(sanitize(body)) %>
     </div>
     <% if event.has_commits? %>
-    <div id="commits_in_event_<%= event.to_param %>" style="display:none">
-      <%= image_tag("spinner.gif") %>
-    </div>
+      <%= render_commit_details_for_push_event(event) -%>
     <% end %>
     
   </div>

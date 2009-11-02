@@ -292,6 +292,23 @@ module EventRenderingHelper
   end
   
   def render_event_push(event)
+    event.single_commit? ? render_single_commit_push(event) : render_several_commit_push(event)
+  end
+
+  def render_single_commit_push(event)
+    project = event.target.project
+    commit = event.events.first
+    repo = event.target
+    commit_link = link_to(commit.data[0,8],
+      project_repository_commit_path(project, repo, commit.data)
+      )
+    repo_link = link_to("#{repo_title(repo, project)}:#{event.data}",
+      [project, repo])
+    action = "pushed #{commit_link} to #{repo_link}"
+    [action,"","push"]
+  end
+
+  def render_several_commit_push(event)
     project = event.target.project
     commit_link = link_to_if(event.has_commits?, pluralize(event.events.size, 'commit'),
       repo_owner_path(event.target, :project_repository_commits_in_ref_path,
@@ -311,6 +328,24 @@ module EventRenderingHelper
     [action, body, category]
   end
   
+  # Push events need to include information about their commits
+  # - either a container for their commits (for Ajax loading)
+  # - or the single commit included
+  def render_commit_details_for_push_event(event)
+    if event.single_commit?
+      commit = event.events.first
+      icon = avatar_from_email(commit.email, :size => 16)
+      meta =  content_tag(:span,
+        "#{commit.actor_display} at #{commit.created_at.to_s(:short_time)}")
+      message = content_tag(:div, [icon, meta].join("\n"))
+      body = content_tag(:div, h(commit.body), :class => "commit_message")
+      content_tag(:li, [message, body].join("\n"), :class => "event_instance")
+    else
+      img = image_tag("spinner.gif")
+      content_tag(:div, img, :id => "commits_in_event_#{event.to_param}", :style => "display: none")
+    end
+  end
+
   def render_event_add_project_repository(event)
     action = action_for_event(:event_status_add_project_repository) do
       link_to(h(event.target.name), project_repository_path(event.project, event.target)) + 

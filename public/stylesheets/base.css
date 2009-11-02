@@ -1080,6 +1080,22 @@ td.meta-info {
   margin: 2px 0 0 0;
 }
 
+/*
+Single (inline) commit under a push
+*/
+.event_instance.push .event_instance {
+  margin: 10px 0 0 2px;
+}
+
+.event_instance.push .event_instance img {
+  float: left;
+  margin-right: 10px;
+}
+
+.event_instance.push .event_instance .commit_message {
+  margin-left: 26px;
+}
+
 .commit_list .commit_item .commit_message {
   margin-left: 40px;
 }
