@@ -63,6 +63,11 @@ class Event < ActiveRecord::Base
     return false if self.action != Action::PUSH
     !events.blank? && !events.commits.blank?
   end
+
+  def single_commit?
+    return false unless has_commits?
+    return events.size == 1
+  end
   
   def kind
     'commit'
@@ -100,7 +105,7 @@ class Event < ActiveRecord::Base
   def email
     git_actor.email
   end
-
+#
   def actor_display
     git_actor.name
   end

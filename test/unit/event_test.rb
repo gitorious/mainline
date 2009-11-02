@@ -89,6 +89,25 @@ class EventTest < ActiveSupport::TestCase
       assert @event.events.commits.include?(commit)
       assert_equal('commit', commit.kind)
     end
+
+    should "know if it has one or several commits" do
+      commit = @event.build_commit(
+        :email  => 'Linus Torvalds <linus@kernel.org>',
+        :data   => 'ffc0fa98',
+        :body   => 'Adding README')
+      assert commit.save
+      assert_equal(@event, commit.target)
+      assert @event.has_commits?
+      assert @event.single_commit?
+      second_commit = @event.build_commit(
+        :email => "Linus Torvalds <linus@kernel.org>",
+        :data => "ffc1fa98",
+        :body => "Removing README")
+      assert second_commit.save
+      @event.reload
+      assert @event.has_commits?
+      assert !@event.single_commit?
+    end
     
     should "return false for has_commits? unless it's a push event" do
       commit = @event.build_commit(
