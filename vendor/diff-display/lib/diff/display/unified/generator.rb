@@ -119,10 +119,10 @@ module Diff::Display
         case type
           when :add
             @offset[1] += 1
-            current_block << Line.send(type, line, @offset[1], inline)
+            current_block << Line.send(type, line, @offset[1], inline, @offset.dup)
           when :rem
             @offset[0] += 1
-            current_block << Line.send(type, line, @offset[0], inline)
+            current_block << Line.send(type, line, @offset[0], inline, @offset.dup)
           # when :rmod
           #   @offset[0] += 1
           #   @offset[1] += 1 # TODO: is that really correct?
@@ -167,7 +167,7 @@ module Diff::Display
       
       def add_separator
         push SepBlock.new 
-        current_block << SepLine.new 
+        current_block << SepLine.new
       end
 
       def car(line)

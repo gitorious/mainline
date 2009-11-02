@@ -189,11 +189,8 @@ $(document).ready(function() {
 
     // Diff commenting
     $("table tr td.inline_comments a.diff-comment-count").live("click", function(e) {
-        var lineNum = $(this).parents("td").next("td").text();
-        if (lineNum === "") // look in the next TD
-          lineNum = $(this).parents("td").next("td").next("td").text();
-        $(this).parents("tr.changes")
-            .find("td.code .diff-comments.line-" + lineNum).slideToggle();
+        var lineOffsets = $(this).parents("tr").attr("data-line-num-tuple");
+        $("#diff-inline-comments-for-" + lineOffsets).slideToggle();
         e.preventDefault();
     });
 
@@ -212,14 +209,9 @@ $(document).ready(function() {
         var elementInDiff = function(s) {
           return $(".file-diff[data-diff-path=" + path + "] " + s);
         }
-        
-
         var href =  $(this).attr("href");
-
         var commentSpinner = $("#loading_comment_" + href.split("_")[2]);
         commentSpinner.show();
-
-
         var jumpToComment = {
             shaListingCurrent: function(newOrOld) {
                 var c = Gitorious.MergeRequestController.getInstance();
@@ -228,7 +220,7 @@ $(document).ready(function() {
                 c.replaceDiffContents(sha_range, this.displayComments, this);
             },
             displayComments: function(message) {                
-                var lastLine = elementInDiff(".diff-comments.line-" + last_line);
+                var lastLine = elementInDiff("#diff-inline-comments-for-" + last_line);
                 var hunks = elementInDiff(".diff-hunks");
                 hunks.removeClass("closed").addClass("open");
                 hunks.slideDown();

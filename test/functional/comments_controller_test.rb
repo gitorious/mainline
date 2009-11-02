@@ -133,7 +133,7 @@ class CommentsControllerTest < ActionController::TestCase
         assert_response :success
         assert_equal @version, assigns(:target)
         assert_equal @version, assigns(:comment).target
-        assert_equal((1..14), assigns(:comment).lines)
+        assert_equal("1-1:13-13+14", assigns(:comment).lines)
         assert_equal(("ffac01".."ffab99"), assigns(:comment).sha_range)
       end
 
@@ -152,7 +152,7 @@ class CommentsControllerTest < ActionController::TestCase
         assert_equal @merge_request, Event.last.target, Event.last.inspect
         assert_equal "MergeRequest", Event.last.body
         assert_not_nil comment = Comment.find_by_id(Event.last.data)
-        assert_equal 1..14, comment.lines
+        assert_equal "1-1:13-13+14", comment.lines
       end
     end
     
@@ -162,7 +162,8 @@ class CommentsControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_equal @merge_request, assigns(:target)
       assert_equal @merge_request, assigns(:comment).target
-      assert_redirected_to project_repository_merge_request_path(@project, @repository, @merge_request)
+      assert_redirected_to project_repository_merge_request_path(@project,
+        @repository, @merge_request)
     end
     
     should "create an event the parent class name as the body" do
@@ -255,7 +256,7 @@ class CommentsControllerTest < ActionController::TestCase
     post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
       :merge_request_version_id => version.to_param, :comment => {
         :path => "LICENSE",
-        :lines => "1..14",
+        :lines => "1-1:13-13+14",
         :sha1 => "ffac01-ffab99",
         :body => "Needs more cowbell"}, :format => "js"
   end

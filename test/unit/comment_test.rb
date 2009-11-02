@@ -178,7 +178,7 @@ class CommentTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans)
       @merge_request.stubs(:calculate_merge_base).returns("ffc00")
       @first_version = @merge_request.create_new_version
-      @comment = @first_version.comments.build(:path => "README", :lines => (1..33),
+      @comment = @first_version.comments.build(:path => "README", :lines => "1-1:31-31+32",
         :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
         :project => @merge_request.target_repository.project)
       assert @comment.save!
@@ -199,18 +199,15 @@ class CommentTest < ActiveSupport::TestCase
     end
 
     should "have a range of lines" do
-      assert_equal 1, @comment.first_line_number
+      assert_equal "1-1:31-31+32", @comment.lines
+      assert_equal "1-1", @comment.first_line_number
+      assert_equal "31-31", @comment.last_line_number
       assert_equal 32, @comment.number_of_lines
-      @comment.lines = 2..2
-      assert_equal 2, @comment.first_line_number
+      @comment.lines = "2-3:2-3+0"
+      assert_equal "2-3", @comment.first_line_number
+      assert_equal "2-3", @comment.last_line_number
       assert_equal 0, @comment.number_of_lines
-      assert_equal((2..2), @comment.lines)
-    end
-
-    should 'take a String or Range for the lines setter' do
-      @comment.lines = "22..99"
-      assert_equal((22..99), @comment.lines)
-    end
-    
+      assert_equal "2-3:2-3+0", @comment.lines
+    end    
   end
 end

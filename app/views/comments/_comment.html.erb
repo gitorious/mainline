@@ -45,9 +45,7 @@
     </span>
     <% if comment.applies_to_line_numbers? -%>
       <span class="inline_comment_link">
-        on
-        <%= link_to "lines #{comment.lines} in #{comment.path}",
-              "##{dom_id(comment,'inline')}" -%>
+        on <%= link_to h(comment.path), "##{dom_id(comment,'inline')}" -%>
       </span>
       <span style="margin-left: 2em; display: none" id="loading_comment_<%= comment.to_param -%>">
         <%= image_tag("spinner.gif") -%>

@@ -129,13 +129,14 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans)
       @merge_request.stubs(:calculate_merge_base).returns("ffcca0")
       @first_version = @merge_request.create_new_version
-      @comment = @first_version.comments.create(:path => "README", :lines => (1..33),
+      @comment = @first_version.comments.create(:path => "README", :lines => "1-1:1-32+33",
         :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
         :project => @merge_request.target_repository.project)
     end
     
     should 'fetch all comments with the specified path and sha' do
-      assert_equal([@comment], @first_version.comments_for_path_and_sha(@comment.path, "ffac-aafc"))
+    assert_equal([@comment],
+      @first_version.comments_for_path_and_sha(@comment.path, "ffac-aafc"))
     end
 
     should 'fetch all comments with the specified sha' do

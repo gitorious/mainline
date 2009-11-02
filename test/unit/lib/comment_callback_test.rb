@@ -25,30 +25,46 @@ class CommentCallbackTest < ActiveSupport::TestCase
   context "with several comments" do
     setup do
       @comments = [
-                  stub(:lines => (1..2), :body => "Hello", :user => stub(:login => "bar")),
-                  stub(:lines => (1..1), :body => "Single line", :user => stub(:login=>"foo"))
-                 ]
+                   Comment.new({
+                       :lines => "1-1:1-3+2",
+                       :body => "Hello",
+                       :user => User.first
+                     }),
+                   Comment.new({
+                       :lines => "1-1:1-1+0",
+                       :body => "Single line",
+                       :user => User.first
+                     })
+                  ]
       @callback = Gitorious::Diff::CommentCallback.new(@comments)
     end
 
     should "have a comment count for comments starting on a given line" do
-      line = Diff::Display::AddLine.new("Yikes!", 1)
+      line = Diff::Display::AddLine.new("Yikes!", 1, false, [1,1])
       assert_equal 2, @callback.comment_count_starting_on_line(line)
+    end
+
+    should "have a comment count for comments ending on a given line" do
+      line = Diff::Display::AddLine.new("Yikes!", 1, false, [1,3])
       assert_equal 1, @callback.comment_count_ending_on_line(line)
     end
 
-    should "have a comment count for a line, regardless of comment starting there or not" do
-      line1 = Diff::Display::AddLine.new("Yikes!", 1)
-      line2 = Diff::Display::AddLine.new("yay", 2)
-      assert_equal 2, @callback.comment_count_for_line(line1)
-      assert_equal 1, @callback.comment_count_for_line(line2)
+    should "not raise if the Line doesn't implement the offsets" do
+      line = Diff::Display::UnModLine.new("foo", 1, 1)
+      assert_nothing_raised do
+        @callback.comment_count_starting_on_line(line)
+      end
+      assert_nothing_raised do
+        @callback.comment_count_ending_on_line(line)
+      end
     end
 
     should "render comments for a given line" do
       template = stub
       template.expects(:render).with(:partial => "comments/inline_diff",
         :locals => {:comment => @comments.first})
-      rendered = @callback.render_for(Diff::Display::AddLine.new("Yikes!", 2), template)
+      line = Diff::Display::AddLine.new("Yikes!", 2, false, [1,3])
+      rendered = @callback.render_for(line, template)
     end
   end
 end

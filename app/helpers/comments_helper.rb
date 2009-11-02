@@ -26,7 +26,7 @@ module CommentsHelper
     if comment.applies_to_line_numbers?
       block_options[:class] << " inline"
       block_options[:"data-diff-path"] = comment.path
-      block_options[:"data-last-line-in-diff"] = comment.lines.end
+      block_options[:"data-last-line-in-diff"] = comment.last_line_number
       block_options[:"data-sha-range"] = comment.sha1
       block_options[:"data-merge-request-version"] = comment.target.version
     end

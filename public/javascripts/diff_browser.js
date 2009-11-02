@@ -173,17 +173,24 @@ Gitorious.DiffBrowser.CommentHighlighter = {
     add: function(commentElement) {
         Gitorious.DiffBrowser.CommentHighlighter.removePrevious();
         commentElement.addClass("highlighted");
-        $.each(commentElement.attr("gts:lines").split(","), function() {
-            commentElement.parents("table").find("tr.line-" + this).addClass("highlighted");
-        });
+        Gitorious.DiffBrowser.CommentHighlighter.toggle(commentElement,
+                                                        'highlighted', 'add');
         Gitorious.DiffBrowser.CommentHighlighter._lastHighlightedComment = commentElement;
     },
 
     remove: function(commentElement) {
         commentElement.removeClass("highlighted");
-        $.each(commentElement.attr("gts:lines").split(","), function() {
-            commentElement.parents("table").find("tr.line-" + this).removeClass("highlighted");
-        });
+        Gitorious.DiffBrowser.CommentHighlighter.toggle(commentElement,
+                                                        'highlighted', 'remove');
+    },
+
+    toggle: function(commentElement, cssClass, action) {
+        var lineData = commentElement.attr("gts:lines").split(/[^\d\-]/);
+        var rows = commentElement.parents("table").find("tr.changes");
+        var startRow = rows.filter("[data-line-num-tuple=" + lineData[0] + "]");
+        var sliceStart = rows.indexOf(startRow[0]);
+        var sliceEnd = sliceStart + parseInt(lineData[2]) + 1;
+        rows.slice(sliceStart, sliceEnd)[action + "Class"]("highlighted");
     }
 };
 
@@ -369,6 +376,7 @@ Gitorious.MergeRequestController = function() {
         if (callback)
             callback.apply(caller);
     }
+
     this.diffsReceivedWithError = function(xhr, statusText, errorThrown) {
         jQuery("#merge_request_diff").html(
             '<div class="merge_request_diff_loading_indicator">' +
@@ -544,16 +552,16 @@ Gitorious.enableCommenting = function() {
         cancel: ".inline_comments",
         stop: function(e, ui) {
             var diffTable = e.target;
-            $(diffTable).find("td.ui-selected").each(function(el){
+            $(diffTable).find("td.ui-selected").each(function(el) {
                 $(this).parent().addClass("selected-for-commenting");
-            })
-                var allLineNumbers = $(diffTable).find("td.ui-selected").map(function(){
-                    var lineNo = $(this).parent().attr("class").replace(/[\sa-z\-]*/g,"");
-                    return lineNo;
-                });
+            });
+            var allLineNumbers = [];
+            $(diffTable).find("td.ui-selected").each(function(){
+                allLineNumbers.push( $(this).parents("tr").attr("data-line-num-tuple") );
+            });
             var path = $(diffTable).parent().prev(".header").children(".title").text();
             var commentForm = new Gitorious.CommentForm(path);
-            commentForm.setLineNumbers(allLineNumbers);
+            commentForm.setLineNumbers(allLineNumbers.unique());
             var commentContainer = $(diffTable).prev(".comment_container");
             if (commentForm.hasLines()) {
                 commentForm.display({inside: commentContainer});
@@ -598,22 +606,35 @@ Gitorious.CommentForm = function(path){
 
     this.setLineNumbers = function(n) {
         var result = [];
-        n.each(function(i,number){
-            if (number != "") {
+        n.each(function(i,number) {
+            if (number != "")
                 result.push(number);
-            }
         });
         this.numbers = result;
     }
-    this.linesAsString = function() {
-        return this.numbers.min() + ".." + this.numbers.max();
-    }
+
+    // returns the lines as our internal representation
+    // The fomat is
+    // $first_line-number-tuple:$last-line-number-tuple+$extra-lines
+    // where $first-line-number-tuple is the first element in the
+    // data-line-num-tuple from the <tr> off the selected row and
+    // $last-line-number-tuple being the last. $extra-lines is the
+    // number of rows the selection span (without the initial row)
+    this.linesAsInternalFormat = function() {
+        var first = this.numbers[0];
+        var last = this.numbers[this.numbers.length-1];
+        var span = this.numbers.length - 1;
+        return first + ':' + last + '+' + span;
+    };
+
     this.hasLines = function() {
         return this.numbers.length > 0;
-    }
+    };
+
     this.getSummary = function() {
-        return "Commenting on lines " + this.linesAsString() + " in " + this.path;
-    }
+        return "Commenting on " + this.path;
+    };
+
     this.display = function(options) {
         NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
         var comment_form = jQuery("#inline_comment_form");
@@ -625,7 +646,7 @@ Gitorious.CommentForm = function(path){
         commentContainer.find("#comment_path").val(this.path);
         commentContainer.find("#comment_context").val(this._getRawDiffContext());
         commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
-        commentContainer.find("#comment_lines").val(this.linesAsString());
+        commentContainer.find("#comment_lines").val(this.linesAsInternalFormat());
         this._positionAndShowContainer(commentContainer, options.trigger);
         commentContainer.find("#comment_body").focus();
         var zeForm = commentContainer.find("form");
@@ -657,9 +678,9 @@ Gitorious.CommentForm = function(path){
             if (e.which == 27) { // Escape
                 Gitorious.CommentForm.destroyAll();
             }
-        })
+        });
         
-    },
+    };
 
     // Positions the commentContainer, optionally near the trigger
     this._positionAndShowContainer = function(container, trigger) {
@@ -676,7 +697,7 @@ Gitorious.CommentForm = function(path){
         var comments = $("#merge_request_comments .comment.inline .inline_comment_link a");
         var plainDiff = [];
         var selectors = $.map(this.numbers, function(e) {
-            return "table.codediff.inline tr.line-" + e;
+            return "table.codediff.inline tr[data-line-num-tuple=" + e + "]";
         });
         // extract the raw diff data from each row
         $(selectors.join(",")).each(function() {

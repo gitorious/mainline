@@ -59,11 +59,6 @@ module Gitorious
       def comment_count_ending_on_line(line)
         @comments.sum{|c| c.ends_on_line?(line) ? 1 : 0 }
       end
-
-      # Total number of comments on +line+
-      def comment_count_for_line(line)
-        @comments.sum{|c| c.commented_on_line?(line) ? 1 : 0 }
-      end
     end
 
     class SingleCommentCallback
@@ -86,17 +81,14 @@ module Gitorious
 
       # does this comment begin on the given +line+?
       def starts_on_line?(line)
-        @comment.lines.begin == line.new_number
+        return false unless line.respond_to?(:offsets)
+        @comment.first_line_number == line.offsets.join('-')
       end
 
       # Does this comment end on the given +line+?
       def ends_on_line?(line)
-        @comment.lines.end == line.new_number
-      end
-
-      # Is this comment on the +line+?
-      def commented_on_line?(line)
-        @comment.lines.include?(line.new_number)
+        return false unless line.respond_to?(:offsets)
+        @comment.last_line_number == line.offsets.join('-')
       end
     end
   end
