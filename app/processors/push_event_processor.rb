@@ -63,6 +63,7 @@ class PushEventProcessor < ApplicationProcessor
       commits.each do |c|
         commit_event = event.build_commit({
           :user => c.user,
+          :created_at => c.commit_time,
           :email => c.email,
           :body => c.message,
           :data => c.identifier

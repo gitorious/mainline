@@ -304,7 +304,9 @@ module EventRenderingHelper
       )
     repo_link = link_to("#{repo_title(repo, project)}:#{event.data}",
       [project, repo])
-    action = "pushed #{commit_link} to #{repo_link}"
+    action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
+      "to #{repo_link}"
+    end
     [action,"","push"]
   end
 
@@ -336,7 +338,7 @@ module EventRenderingHelper
       commit = event.events.first
       icon = avatar_from_email(commit.email, :size => 16)
       meta =  content_tag(:span,
-        "#{commit.actor_display} at #{commit.created_at.to_s(:short_time)}")
+        "#{commit.actor_display} #{commit.created_at.to_s(:long)}")
       message = content_tag(:div, [icon, meta].join("\n"))
       body = content_tag(:div, h(commit.body), :class => "commit_message")
       content_tag(:li, [message, body].join("\n"), :class => "event_instance")
