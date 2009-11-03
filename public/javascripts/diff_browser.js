@@ -569,6 +569,7 @@ Gitorious.enableCommenting = function() {
     // Comment highlighting of associated lines
     $("table tr td.code .diff-comment").each(function() {
         var lines = $(this).attr("gts:lines").split(",");
+        var commentBody = $(this).find(".body").text();
         var replyCallback = function() {
             Gitorious.CommentForm.destroyAll();
             var lines = $(this).parents("div.diff-comment").attr("gts:lines").split(",")
@@ -576,6 +577,7 @@ Gitorious.enableCommenting = function() {
                                                              ).children(".title").text();
             var commentForm = new Gitorious.CommentForm(path);
             commentForm.setLineNumbers(lines);
+            commentForm.setInitialCommentBody(commentBody);
             if (commentForm.hasLines())
                 commentForm.display({
                     inside: $(this).parents("table").prev(".comment_container"),
@@ -600,6 +602,7 @@ NotificationCenter.addObserver("DiffBrowserWillReloadDiffs",
 Gitorious.CommentForm = function(path){
     this.path = path;
     this.numbers = [];
+    this.initialCommentBody = null;
 
     this.setLineNumbers = function(n) {
         var result = [];
@@ -608,7 +611,15 @@ Gitorious.CommentForm = function(path){
                 result.push(number);
         });
         this.numbers = result;
-    }
+    };
+
+    this.setInitialCommentBody = function(body) {
+        var text = $.trim(body);
+        this.initialCommentBody = $.map(text.split("\n"), function(str) {
+            return "> " + str;
+        }).join("\n") + "\n\n";
+        return this.initialCommentBody;
+    };
 
     // returns the lines as our internal representation
     // The fomat is
@@ -645,6 +656,8 @@ Gitorious.CommentForm = function(path){
         commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
         commentContainer.find("#comment_lines").val(this.linesAsInternalFormat());
         this._positionAndShowContainer(commentContainer, options.trigger);
+        if (this.initialCommentBody && commentContainer.find("#comment_body").val() == "")
+            commentContainer.find("#comment_body").val(this.initialCommentBody);
         commentContainer.find("#comment_body").focus();
         var zeForm = commentContainer.find("form");
         zeForm.submit(function(){

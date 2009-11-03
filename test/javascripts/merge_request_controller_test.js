@@ -112,3 +112,11 @@ ShaSpecTest = TestCase("Sha specs", {
         assertEquals("foo", spec.shaSpec());
     }
 });
+
+CommentFormTest = TestCase("CommentForm", {
+    testPrefixInitialCommentBody: function() {
+        var commentForm = new Gitorious.CommentForm("foo/bar.rb");
+        commentForm.setInitialCommentBody("  foo\nbar\nbaz");
+        assertEquals("> foo\n> bar\n> baz\n\n", commentForm.initialCommentBody);
+    }
+});
