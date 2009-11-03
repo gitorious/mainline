@@ -2048,6 +2048,7 @@ table.commits_in_event tr .commit_message {
 
 table.select_commits_from_list {
   margin-right: 10px;
+  width: 90%;
 }
 
 table.select_commits_from_list th {
