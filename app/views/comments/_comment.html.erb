@@ -31,7 +31,9 @@
   <%- end -%>
   <div class="body">
     <% unless comment.context.blank? -%>
-      <pre class="diff-comment-context"><code><%=h comment.context %></code></pre>
+      <blockquote>
+        <pre class="diff-comment-context"><code><%=h comment.context %></code></pre>
+      </blockquote>
     <% end %>
     <%= render_markdown(comment.body, :auto_link) -%>
   </div>

@@ -699,7 +699,7 @@ Gitorious.CommentForm = function(path){
         // extract the raw diff data from each row
         $(selectors.join(",")).each(function() {
             var cell = $(this).find("td.code");
-            var op = "> " + (cell.hasClass("ins") ? "+ " : "- ");
+            var op = (cell.hasClass("ins") ? "+ " : "- ");
             plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, '')
                            .replace('&gt;', '>').replace('&lt;', '<'));
         });
