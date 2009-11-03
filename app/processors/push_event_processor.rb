@@ -30,8 +30,7 @@ class PushEventProcessor < ApplicationProcessor
     logger.info "Push event. Username is #{hash['username']}, commit summary is #{hash['message']}, gitdir is #{hash['gitdir']}"
     if @repository = Repository.find_by_hashed_path(hash['gitdir'])
       @user = User.find_by_login(hash['username'])
-      @repository.update_attribute(:last_pushed_at, Time.now.utc)
-      self.commit_summary = hash['message']
+      process_push_from_commit_summary(hash['message'])
       log_events
     else
       logger.error("#{self.class.name} received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
@@ -74,10 +73,13 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   # Sets the commit summary, as served from git
-  def commit_summary=(spec)
+  def process_push_from_commit_summary(spec)
     @oldrev, @newrev, @revname = spec.split(' ')
     r, name, @identifier = @revname.split("/", 3)
     @target = {'tags' => :tag, 'heads' => :head, 'merge-requests' => :review}[name]
+    if @target != :review && @repository
+      @repository.update_attribute(:last_pushed_at, Time.now.utc)
+    end
     process_push
   end
   
@@ -145,7 +147,9 @@ class PushEventProcessor < ApplicationProcessor
         e.user = user
         e.message = message
         @events << e        
-      when :review        
+      when :review
+        # noop
+        return
       end
     when :update
       case @target
@@ -181,6 +185,8 @@ class PushEventProcessor < ApplicationProcessor
         e.message = message
         @events << e
       when :review
+        # noop
+        return
       end
     end
   end

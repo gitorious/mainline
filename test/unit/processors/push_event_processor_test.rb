@@ -42,10 +42,25 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     assert_not_nil repo.reload.last_pushed_at
     assert repo.last_pushed_at > 5.minutes.ago
   end
+
+  should "not update the last_pushed_at when updating a merge request" do
+    stub_git_show
+    stub_git_log_and_user
+    repo = repositories(:johans)
+    repo.update_attribute(:last_pushed_at, nil)
+    @processor.expects(:log_events).returns(true)
+    json = {
+      :gitdir => repo.hashed_path,
+      :username => "johan",
+      :message => '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/merge-requests/42',
+    }.to_json
+    @processor.on_message(json)
+    assert_nil repo.reload.last_pushed_at, "last_pushed_at was updated"
+  end
   
   should "returns the correct type and identifier for a new tag" do
     stub_git_show
-    @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/tags/r1.1"
+    @processor.process_push_from_commit_summary "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/tags/r1.1"
     assert_equal :create, @processor.action
     assert @processor.tag?
     
@@ -59,7 +74,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should 'identify non-standard (review) branches, and exclude these from logging' do
     stub_git_show 
-    @processor.commit_summary = "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/merge-requests/123"
+    @processor.process_push_from_commit_summary "0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/merge-requests/123"
     assert_equal :create, @processor.action
     assert @processor.review?
     assert_equal 0, @processor.events.size
@@ -69,7 +84,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should "returns the correct type and identifier for a new branch" do
     stub_git_log_and_user
-    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
+    @processor.process_push_from_commit_summary '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo_branch'
     @processor.repository = Repository.first
     assert_equal :create, @processor.action
     assert @processor.head?
@@ -83,13 +98,13 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should "return the correct namespaced identifier for a new branch" do
      stub_git_log_and_user
-     @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo/bar_branch'
+     @processor.process_push_from_commit_summary '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/foo/bar_branch'
      assert_equal 'foo/bar_branch', @processor.events.first.identifier
    end
   
   should 'only fetch commits for new branches when the new branch is master' do
     stub_git_log_and_user
-    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
+    @processor.process_push_from_commit_summary '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
     @processor.repository = Repository.first
     assert_equal :create, @processor.action
     assert @processor.head?
@@ -103,7 +118,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should "returns the correct type and a set of events for a commit" do
     stub_git_log_and_user
-    @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
+    @processor.process_push_from_commit_summary "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
     @processor.repository = Repository.first
     assert_equal :update, @processor.action
     assert @processor.head?
@@ -122,7 +137,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   should "set the correct user for the commit subevent, if a user exists with that email" do
     emails(:johans1).update_attribute(:address, "john@nowhere.com")
     stub_git_log_and_user
-    @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
+    @processor.process_push_from_commit_summary "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 33f746e21ef5122511a5a69f381bfdf017f4d66c refs/heads/foo_branch"
     @processor.repository = Repository.first
     first_event = @processor.events.first
     assert_equal users(:johan).email, first_event.email
@@ -134,7 +149,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   should "creates commit events even if the committer is unknown" do
     stub_git_log_and_user
     @processor.repository = Repository.first
-    @processor.commit_summary = '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
+    @processor.process_push_from_commit_summary '0000000000000000000000000000000000000000 a9934c1d3a56edfa8f45e5f157869874c8dc2c34 refs/heads/master'
     assert_equal :create, @processor.action
     assert_equal 4, @processor.events.size
     assert_equal users(:johan), @processor.events.first.user
@@ -145,7 +160,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should "returns the correct type and identifier for the deletion of a tag" do
     stub_git_show
-    @processor.commit_summary = "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/tags/r1.1"
+    @processor.process_push_from_commit_summary "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/tags/r1.1"
     assert_equal :delete, @processor.action
     assert @processor.tag?
     assert_equal 1, @processor.events.size
@@ -161,7 +176,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     stub_git_show
     frozen_now = Time.now
     Time.expects(:now).returns(frozen_now)
-    @processor.commit_summary = 'a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/heads/foo_branch'
+    @processor.process_push_from_commit_summary 'a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/heads/foo_branch'
     assert_equal :delete, @processor.action
     assert @processor.head?
     assert_equal 1, @processor.events.size
@@ -177,7 +192,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     @processor.stubs(:git).returns(grit.git)
     @processor.stubs(:user).returns(users(:johan))
     
-    @processor.commit_summary = "2d3acf90f35989df8f262dc50beadc4ee3ae1560 ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a refs/heads/master"
+    @processor.process_push_from_commit_summary "2d3acf90f35989df8f262dc50beadc4ee3ae1560 ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a refs/heads/master"
     @processor.repository = Repository.first
     assert_equal :update, @processor.action
     assert @processor.head?
@@ -226,7 +241,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   #   end
   #   
   #   it 'should get decent output from git log' do
-  #     @processor.commit_summary = "b808ca5eb8ab40a9fdc3489f9f83f6cf6e726a61 abf17983b01f716f34ee10b3f74f14fe7f3bf4ed refs/heads/master"
+  #     @processor.process_push_from_commit_summary "b808ca5eb8ab40a9fdc3489f9f83f6cf6e726a61 abf17983b01f716f34ee10b3f74f14fe7f3bf4ed refs/heads/master"
   #     assert_equal 1, @processor.events.size
   #     assert_equal 'marius.mathiesen@gmail.com', @processor.events.first.email
   #     assert_equal 'Adding some stuff', @processor.events.first.message
