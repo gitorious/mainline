@@ -87,3 +87,54 @@ if (!Array.prototype.unique) {
         return r;
     }
 }
+
+jQuery.extend(Function.prototype, {
+    // http://laurens.vd.oever.nl/weblog/items2005/closures/
+    bind: function (obj) {
+        var fun, funId, objId, closure;
+
+        // Init object storage.
+        if (!window.__objs) {
+            window.__objs = [];
+            window.__funs = [];
+        }
+
+        // For symmetry and clarity.
+        fun = this;
+
+        // Make sure the object has an id and is stored in the object store.
+        objId = obj.__objId;
+
+        if (!objId) {
+            __objs[objId = obj.__objId = __objs.length] = obj;
+        }
+
+        // Make sure the function has an id and is stored in the function store.
+        funId = fun.__funId;
+
+        if (!funId) {
+            __funs[funId = fun.__funId = __funs.length] = fun;
+        }
+
+        // Init closure storage.
+        if (!obj.__closures) {
+            obj.__closures = [];
+        }
+
+        // See if we previously created a closure for this object/function pair.
+        closure = obj.__closures[funId];
+
+        if (closure) {
+                return closure;
+        }
+
+        // Clear references to keep them out of the closure scope.
+        obj = null;
+        fun = null;
+
+        // Create the closure, store in cache and return result.
+        return __objs[objId].__closures[funId] = function () {
+            return __funs[funId].apply(__objs[objId], arguments);
+        };
+    }
+});

@@ -234,9 +234,8 @@ $(document).ready(function() {
                 NotificationCenter.removeObserver("MergeRequestShaListingUpdated", this);
             }
         };
-        NotificationCenter.addObserver("MergeRequestShaListingUpdated", 
-                                       jumpToComment, 
-                                       jumpToComment.shaListingCurrent);
+        NotificationCenter.addObserver("MergeRequestShaListingUpdated",
+                                       jumpToComment.shaListingCurrent.bind(jumpToComment));
         Gitorious.MergeRequestController.getInstance().versionChanged(version);
         return true;
     });

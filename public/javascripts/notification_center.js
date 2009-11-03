@@ -21,16 +21,19 @@ var NotificationCenterManager = function(name) {
     this.name = name;
     this.observers = {};
 
-    // Adds an observer to be triggered by the +identifier+
-    // +receiver+ is the object on which +callback+ will be bound to
-    // The +callback+ will receive the +sender+ as argument, as well
-    // as any +senderArguments+.
-    this.addObserver = function(identifier, receiver, callback) {
+    // Adds an observer to be triggered by the +identifier+ +callback+
+    // is a callback to be run whenever the observers is
+    // notified. Optionally a +sender+ argument can be supplied, which
+    // is useful for removing the observer created here at a later time
+    //
+    // (It's your responsibility to bind the callback Function to
+    // whatever scope you need it to be in)
+    this.addObserver = function(identifier, callback, sender) {
         if (!(this.observers[identifier] instanceof Array))
             this.observers[identifier] = [];
         this.observers[identifier].push({
-            'receiver': receiver,
-            'callback': callback
+            'callback': callback,
+            'sender': sender
         });
     };
 
@@ -44,7 +47,7 @@ var NotificationCenterManager = function(name) {
 
         for (i=0; i < observers.length; i++) {
             var args = jQuery.makeArray(arguments);
-            observers[i].callback.apply(observers[i].receiver, args.slice(1, args.length));
+            observers[i].callback.apply(observers[i].callback, args.slice(1, args.length));
         };
 
         return true;
@@ -55,19 +58,22 @@ var NotificationCenterManager = function(name) {
         delete this.observers[identifier];
     };
 
-    // remove the observer that +receiver+ has initiated for
+    // remove the observer that +originalSender+ has initiated for
     // +identifier+
-    this.removeObserver = function(identifier, receiver) {
+    this.removeObserver = function(identifier, originalSender) {
         var observers = this.observers[identifier];
         if (!observers)
             return false;
         wasDeleted = false;
-        observers.each(function(index) {
-            if (this.receiver === receiver) {
-                observers.splice(index, 1);
+        for (var i=0; i < observers.length; i++) {
+            if (observers[i].sender === originalSender) {
+                // Clear out the cached closure (if neeeded)
+                if (window.__objs && observers[i].__objId)
+                    window.__objs[observers[i].__objId] = null;
+                observers.splice(i, 1);
                 wasDeleted = true;
             }
-        });
+        }
         return wasDeleted;
     };
 };

@@ -147,8 +147,8 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function() {
         }
     }
 }
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
-                               Gitorious.setDiffBrowserHunkStateFromCookie);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
+                               Gitorious.setDiffBrowserHunkStateFromCookie.bind(Gitorious));
 
 
 Gitorious.DiffBrowser = function(shas)
@@ -276,11 +276,9 @@ Gitorious.DiffBrowser.KeyNavigationController = function() {
 
 Gitorious.DiffBrowser.KeyNavigation = new Gitorious.DiffBrowser.KeyNavigationController();
 NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
-                               Gitorious.DiffBrowser.KeyNavigation,
-                               Gitorious.DiffBrowser.KeyNavigation.enable);
+    Gitorious.DiffBrowser.KeyNavigation.enable.bind(Gitorious.DiffBrowser.KeyNavigation));
 NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm",
-                               Gitorious.DiffBrowser.KeyNavigation,
-                               Gitorious.DiffBrowser.KeyNavigation.disable);
+    Gitorious.DiffBrowser.KeyNavigation.disable.bind(Gitorious.DiffBrowser.KeyNavigation));
 
 
 
@@ -528,10 +526,10 @@ Gitorious.MergeRequestController.getInstance = function() {
         return Gitorious.MergeRequestController._instance;
     } else {
         var result = new Gitorious.MergeRequestController();
-        NotificationCenter.addObserver("MergeRequestDiffReceived", result,
-                                       result.diffsReceived);
+        NotificationCenter.addObserver("MergeRequestDiffReceived",
+                                       result.diffsReceived.bind(result));
         NotificationCenter.addObserver("MergeRequestShaListingReceived", 
-                                       result, result.shaListingReceived);
+                                       result.shaListingReceived.bind(result));
         Gitorious.MergeRequestController._instance = result;
         return result;
     }
@@ -595,10 +593,10 @@ Gitorious.enableCommenting = function() {
         });
     });
 };
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs", Gitorious,
-                               Gitorious.enableCommenting);
-NotificationCenter.addObserver("DiffBrowserWillReloadDiffs", Gitorious,
-                               Gitorious.disableCommenting);
+NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
+                               Gitorious.enableCommenting.bind(Gitorious));
+NotificationCenter.addObserver("DiffBrowserWillReloadDiffs",
+                               Gitorious.disableCommenting.bind(Gitorious));
 
 Gitorious.CommentForm = function(path){
     this.path = path;
