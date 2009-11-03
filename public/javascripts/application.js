@@ -133,6 +133,40 @@ $(document).ready(function() {
         });
         nativeSubmitButton.after(awesomeSubmitButton);
     });
+
+    // Commment editing
+    $(".comment .edit_link a").live("click", function(){
+        var commentContainer = $(this).parents(".comment");
+        var formUrl = $(this).attr("gts:url");
+        var spinner = $(this).parent().next(".link-spinner").show();
+        var commentId = commentContainer.attr("gts:comment-id");
+        var commentLink = commentContainer.siblings("[name=comment_" + commentId + "]");
+        jQuery.ajax({url:formUrl, success:function(data) {
+            spinner.hide();
+            commentContainer.append(data);
+            commentContainer.find("form").submit(function(){
+                var url = $(this).attr("action");
+                var data = $(this).serialize();
+                jQuery.post(url, data, function(payload) {
+                    commentLink.remove();
+                    commentContainer.replaceWith(payload);
+                });
+                return false;
+            })
+        }, error: function(){
+            spinner.hide();
+            commentContainer.append(
+                "<p>We're sorry, but you're not allowed to edit the comment. " +
+                "Only the creator of a comment may edit it, and then only for " +
+                "a short period of time after it's been created</p>"
+            );
+        }});
+    });
+
+    $(".comment .comment_form .cancel").live("click", function(){
+        var theForm = $(this).parents(".comment_form");
+        theForm.remove();
+    });
 });
 
 if (!Gitorious)

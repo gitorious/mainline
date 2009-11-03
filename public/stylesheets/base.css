@@ -3143,3 +3143,7 @@ ul.changable-selection-options li:hover {
 #commit-diff-container {
     margin-bottom: 20px;
 }
+.link-spinner {
+    margin-left: 20px;
+    display: none;
+}
