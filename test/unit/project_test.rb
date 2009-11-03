@@ -396,4 +396,5 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal MergeRequest::STATUS_CLOSED, closed_status.state
     assert_equal "Closed", closed_status.name
   end
+
 end

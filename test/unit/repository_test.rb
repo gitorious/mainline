@@ -852,4 +852,43 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal now, @repository.last_gc_at
     end
   end
+
+    context "Fresh repositories" do
+    setup do
+      @me = Factory.create(:user, :login => "johnnie")
+      @project = Factory.create(:project, :user => @me,
+        :owner => @me)
+      @repo = Factory.create(:repository, :project => @project,
+        :owner => @project, :user => @me)
+      @users = %w(bill steve jack nellie).map { | login |
+        Factory.create(:user, :login => login)
+      }
+      @user_repos = @users.map do |u|
+        new_repo = Repository.new_by_cloning(@repo)
+        new_repo.name = "#{u.login}s-clone"
+        new_repo.user = u
+        new_repo.owner = u
+        new_repo.kind = Repository::KIND_USER_REPO
+        new_repo.last_pushed_at = 1.hour.ago
+        assert new_repo.save
+        new_repo
+      end
+    end
+
+    should "include repositories recently pushed to" do
+      assert @project.repositories.by_users.fresh(2).include?(@user_repos.first)
+    end
+    
+    should "not include repositories last pushed to in the middle ages" do
+      older_repo = @user_repos.pop
+      older_repo.last_pushed_at = 500.years.ago
+      older_repo.save
+      assert !@project.repositories.by_users.fresh(2).include?(older_repo)
+    end
+
+  end
+
+
 end
+
+

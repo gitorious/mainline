@@ -76,7 +76,11 @@ class Repository < ActiveRecord::Base
     :conditions => proc{|record| {:user_id => record.user.id} },
     :timeframe => 5.minutes
   
-  named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO }
+  named_scope :by_users,  :conditions => { :kind => KIND_USER_REPO } do
+    def fresh(limit = 10)
+      find(:all, :order => "last_pushed_at DESC", :limit => limit)
+    end
+  end
   named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }
   named_scope :clones,    :conditions => ["kind in (?) and parent_id is not null",
                                           [KIND_TEAM_REPO, KIND_USER_REPO]]
