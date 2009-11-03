@@ -27,7 +27,7 @@
           <strong>committed</strong>
           <%= link_to(c.data[0,8], repo_owner_path(c.target.target.target, 
                 :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
-          at <%= c.created_at.to_s(:short_time) %>
+          <%= c.created_at.to_s(:long) %>
         </p>
         <div class="commit_message">
           <%= link_to(simple_format(h(c.body)),
