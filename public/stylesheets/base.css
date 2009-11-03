@@ -2212,6 +2212,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   background-repeat: no-repeat;
   background-position: 2px 4px;
   padding-bottom: 1px;
+  clear: both;
 }
 
 .events.inline .event_instance {
