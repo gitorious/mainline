@@ -494,7 +494,7 @@ Gitorious.MergeRequestController = function() {
     this.shaListingReceived = function(successful, data, text, version, callback, caller) {
         if (successful) {
             jQuery("#merge_request_version").html("Version " + version);
-            jQuery("#diff_browser_for_current_version").html(data);
+            this.replaceShaListing(data);
             NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
                                                "new");
             if (callback && caller) {
@@ -515,7 +515,6 @@ Gitorious.MergeRequestController = function() {
 
     this.replaceShaListing = function(markup) {
         jQuery("#diff_browser_for_current_version").html(markup);
-        new Gitorious.DiffBrowser(this.getCurrentShaRange());
         Gitorious.currentMRCompactSelectable.selectable("destroy");
         Gitorious.currentMRCompactSelectable = diffBrowserCompactCommitSelectable();
     }
