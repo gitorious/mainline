@@ -217,17 +217,9 @@ module ApplicationHelper
   end
   
   def commit_graph_tag(repository, ref = "master")
-    filename = Gitorious::Graphs::CommitsBuilder.filename(repository, ref)
-    if File.exist?(File.join(Gitorious::Graphs::Builder.graph_dir, filename))
-      image_tag("graphs/#{filename}")
-    end
   end
   
   def commit_graph_by_author_tag(repository, ref = "master")    
-    filename = Gitorious::Graphs::CommitsByAuthorBuilder.filename(repository, ref)
-    if File.exist?(File.join(Gitorious::Graphs::Builder.graph_dir, filename))
-      image_tag("graphs/#{filename}")
-    end
   end
   
   def action_and_body_for_event(event)

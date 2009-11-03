@@ -61,16 +61,6 @@ class ApplicationHelperTest < ActionView::TestCase
   end
   
     
-  should "generate a blank commit graph url if the graph isn't there" do
-    File.expects(:exist?).returns(false)
-    assert_nil commit_graph_tag(repositories(:johans))
-  end
-  
-  should "generate a blank url for commit graph by author if the graph isn't there" do
-    File.expects(:exist?).returns(false)
-    assert_nil commit_graph_by_author_tag(repositories(:johans))
-  end
-  
   should "render correct css classes for filenames" do
     assert_equal 'ruby-file', class_for_filename('foo.rb')
     assert_equal 'cplusplus-file', class_for_filename('main.cpp')
