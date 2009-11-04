@@ -118,5 +118,17 @@ CommentFormTest = TestCase("CommentForm", {
         var commentForm = new Gitorious.CommentForm("foo/bar.rb");
         commentForm.setInitialCommentBody("  foo\nbar\nbaz");
         assertEquals("> foo\n> bar\n> baz\n\n", commentForm.initialCommentBody);
+    },
+
+    testPrefixInitialCommentBodyWithWindozeLineEndings: function() {
+        var commentForm = new Gitorious.CommentForm("foo/bar.rb");
+        commentForm.setInitialCommentBody("  foo\r\nbar\r\nbaz");
+        assertEquals("> foo\n> bar\n> baz\n\n", commentForm.initialCommentBody);
+    },
+
+    testLinesAsInternalFormat: function() {
+        var cf = new Gitorious.CommentForm("foo/bar.rb");
+        cf.numbers = ["1-1", "2-2", "3-3"];
+        assertEquals("1-1:3-3+2", cf.linesAsInternalFormat());
     }
 });

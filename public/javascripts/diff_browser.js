@@ -616,7 +616,7 @@ Gitorious.CommentForm = function(path){
 
     this.setInitialCommentBody = function(body) {
         var text = $.trim(body);
-        this.initialCommentBody = $.map(text.split("\n"), function(str) {
+        this.initialCommentBody = $.map(text.split(/\r?\n/), function(str) {
             return "> " + str;
         }).join("\n") + "\n\n";
         return this.initialCommentBody;
