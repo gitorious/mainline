@@ -81,11 +81,17 @@ class Repository < ActiveRecord::Base
       find(:all, :order => "last_pushed_at DESC", :limit => limit)
     end
   end
-  named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO }
+  named_scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO } do
+    def fresh(limit=10)
+      find(:all, :order => "last_pushed_at DESC", :limit => limit)
+    end
+  end
   named_scope :clones,    :conditions => ["kind in (?) and parent_id is not null",
                                           [KIND_TEAM_REPO, KIND_USER_REPO]]
   named_scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
-  
+
+  named_scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
+                                                       KIND_PROJECT_REPO]]
   is_indexed :fields => ["name", "description"],
     :include => [{
       :association_name => "project",

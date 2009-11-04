@@ -321,6 +321,11 @@ class Project < ActiveRecord::Base
     }
   end
   
+  def search_repositories(term)
+    repositories.regular.find_all {|r|
+      r.user.login =~ term || r.name =~ term || (r.owned_by_group? ? r.owner.name =~ term : false)
+    }
+  end
   
   def wiki_permissions
     wiki_repository.wiki_permissions
