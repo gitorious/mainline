@@ -3035,15 +3035,16 @@ Merge request commit selector
     margin-bottom: 0;
 }
 
-.file-diff .comment_container {
-  position: fixed;
-  left: 80px;
-  top: 28px;
-  z-index: 10;
-  width: 50%;
+#inline_comment_form {
+    position: fixed;
+    right: 10px;
+    top: 30px;
+    z-index: 1001;
+    width: 50%;
+    display:none;
 }
 
-.file-diff .comment_container h2 {
+#inline_comment_form h2 {
   background-color: rgba(0,0,0,0.8);
   color: #fff;
   padding: 0.4em;
@@ -3051,17 +3052,17 @@ Merge request commit selector
   -moz-border-radius: 10px 10px 0 0;
   margin: 0;
 }
-.file-diff .comment_container form,
-.file-diff .comment_container .please_log_in {
+#inline_comment_form form,
+#inline_comment_form .please_log_in {
   background-color: rgba(255,255,255,0.9);
   padding: 1em;
   border: 2px solid rgba(34,34,34,0.7);
   -moz-border-radius: 0 0 10px 0;
 }
-.file-diff .comment_container form input[type=submit] {
+#inline_comment_form form input[type=submit] {
   font-weight: bold;
 }
-.file-diff .comment_container form .progress {
+#inline_comment_form form .progress {
   color: #333;
 }
 

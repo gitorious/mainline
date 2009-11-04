@@ -559,10 +559,8 @@ Gitorious.enableCommenting = function() {
             var path = $(diffTable).parent().prev(".header").children(".title").text();
             var commentForm = new Gitorious.CommentForm(path);
             commentForm.setLineNumbers(allLineNumbers.unique());
-            var commentContainer = $(diffTable).prev(".comment_container");
-            if (commentForm.hasLines()) {
-                commentForm.display({inside: commentContainer});
-            }
+            if (commentForm.hasLines())
+                commentForm.display($(this).parents(".file-diff"));
         }
     });
 
@@ -579,10 +577,7 @@ Gitorious.enableCommenting = function() {
             commentForm.setLineNumbers(lines);
             commentForm.setInitialCommentBody(commentBody);
             if (commentForm.hasLines())
-                commentForm.display({
-                    inside: $(this).parents("table").prev(".comment_container"),
-                    trigger: $(this)
-                });
+                commentForm.display($(this).parents(".file-diff"));
             return false;
         };
         $(this).hover(function() {
@@ -603,6 +598,7 @@ Gitorious.CommentForm = function(path){
     this.path = path;
     this.numbers = [];
     this.initialCommentBody = null;
+    this.container = jQuery("#inline_comment_form");
 
     this.setLineNumbers = function(n) {
         var result = [];
@@ -643,23 +639,31 @@ Gitorious.CommentForm = function(path){
         return "Commenting on " + this.path;
     };
 
-    this.display = function(options) {
+    this.reset = function() {
+        this.container.find(".progress").hide();
+        this.container.find(":input").show();
+        this.container.find("#comment_body").val("");
+    };
+
+    this.display = function(diffContainer) {
+        this.reset();
+
         NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
-        var comment_form = jQuery("#inline_comment_form");
-        var commentContainer = options.inside;
-        commentContainer.html(comment_form.html());
-        commentContainer.find("#description").text(this.getSummary());
+
+        this.container.find("#description").text(this.getSummary());
         var shas = $("#current_shas").attr("data-merge-request-current-shas");
-        commentContainer.find("#comment_sha1").val(shas);
-        commentContainer.find("#comment_path").val(this.path);
-        commentContainer.find("#comment_context").val(this._getRawDiffContext());
-        commentContainer.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
-        commentContainer.find("#comment_lines").val(this.linesAsInternalFormat());
-        this._positionAndShowContainer(commentContainer, options.trigger);
-        if (this.initialCommentBody && commentContainer.find("#comment_body").val() == "")
-            commentContainer.find("#comment_body").val(this.initialCommentBody);
-        commentContainer.find("#comment_body").focus();
-        var zeForm = commentContainer.find("form");
+        this.container.find("#comment_sha1").val(shas);
+        this.container.find("#comment_path").val(this.path);
+        this.container.find("#comment_context").val(this._getRawDiffContext());
+        this.container.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
+        this.container.find("#comment_lines").val(this.linesAsInternalFormat());
+        this.container.fadeIn();
+
+        if (this.initialCommentBody && this.container.find("#comment_body").val() == "")
+            this.container.find("#comment_body").val(this.initialCommentBody);
+        this.container.find("#comment_body").focus();
+
+        var zeForm = this.container.find("form");
         zeForm.submit(function(){
             zeForm.find(".progress").show("fast");
             zeForm.find(":input").hide("fast");
@@ -669,9 +673,9 @@ Gitorious.CommentForm = function(path){
                 "type": "POST",
                 "success": function(data, text) {
                     NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
-                    var diffContainer = zeForm.parents(".file-diff");
                     diffContainer.replaceWith(data);
                     NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+                    Gitorious.CommentForm.destroyAll();
                 },
                 "error": function(xhr, statusText, errorThrown) {
                     var errorDisplay = $(zeForm).find(".error");
@@ -684,21 +688,12 @@ Gitorious.CommentForm = function(path){
             return false;
         });
 
-        commentContainer.keydown(function(e){
+        this.container.keydown(function(e) {
             if (e.which == 27) { // Escape
                 Gitorious.CommentForm.destroyAll();
             }
         });
         
-    };
-
-    // Positions the commentContainer, optionally near the trigger
-    this._positionAndShowContainer = function(container, trigger) {
-        var cssData = {
-            left: $(document).width() - container.width() - 75 + "px"
-        };
-        container.css(cssData);
-        container.slideDown();
     };
 
     this._getRawDiffContext = function() {
@@ -721,7 +716,7 @@ Gitorious.CommentForm = function(path){
 };
 
 Gitorious.CommentForm.destroyAll = function() {
-    $(".comment_container").html("").unbind("keypress").slideUp("fast");
+    $("#inline_comment_form").unbind("keypress").fadeOut("fast");
     $(".selected-for-commenting").removeClass("selected-for-commenting");
     $(".ui-selected").removeClass("ui-selected");
     Gitorious.DiffBrowser.KeyNavigation.enable();

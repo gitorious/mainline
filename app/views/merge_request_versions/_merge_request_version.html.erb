@@ -53,7 +53,7 @@
 </div>
 <% end -%>
 
-<div id="inline_comment_form" style="display:none">
+<div id="inline_comment_form">
 <h2>Add your comment</h2>
 <% if logged_in? -%>
 <% form_for(@version.comments.build, :url => repo_owner_path(@version.merge_request.target_repository, 
