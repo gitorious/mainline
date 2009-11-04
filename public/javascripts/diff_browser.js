@@ -196,14 +196,15 @@ Gitorious.DiffBrowser.CommentHighlighter = {
 
 Gitorious.DiffBrowser.KeyNavigationController = function() {
     this._lastElement = null;
+    this._enabled = false;
 
     this._callback = function(event) {
         if (event.keyCode === 74) { // j
-            event.data.controller.scrollToNext();
+            this.scrollToNext();
         } else if (event.keyCode === 75) { // k
-            event.data.controller.scrollToPrevious();
+            this.scrollToPrevious();
         } else if (event.keyCode === 88) { // x
-            event.data.controller.expandCommentsAtCurrentIndex();
+            this.expandCommentsAtCurrentIndex();
         }
     };
 
@@ -257,20 +258,24 @@ Gitorious.DiffBrowser.KeyNavigationController = function() {
     };
 
     this.enable = function() {
+        if (this._enabled)
+            return; // already enabled...
         this.disable()
-        $(window).bind("keydown", {controller:this}, this._callback);
+        $(window).bind("keydown", this._callback.bind(this));
         // unbind whenever we're in an input field
+        $(":input").focus(this.disable.bind(this));
         var self = this;
-        $(":input").focus(function() {
-            self.disable();
-        });
         $(":input").blur(function() {
-            $(window).bind("keydown", {controller:this}, this._callback);
+            $(window).bind("keydown", self._callback.bind(self));
         });
+        this._enabled = true;
     };
 
     this.disable = function() {
-        $(window).unbind("keydown", this._callback);
+        if (!this._enabled)
+            return;
+        $(window).unbind("keydown", this._callback.bind(this));
+        this._enabled = false;
     };
 };
 
@@ -693,7 +698,6 @@ Gitorious.CommentForm = function(path){
                 Gitorious.CommentForm.destroyAll();
             }
         });
-        
     };
 
     this._getRawDiffContext = function() {
@@ -716,7 +720,9 @@ Gitorious.CommentForm = function(path){
 };
 
 Gitorious.CommentForm.destroyAll = function() {
-    $("#inline_comment_form").unbind("keypress").fadeOut("fast");
+    $("#inline_comment_form").fadeOut("fast").unbind("keydown");
+    $("#inline_comment_form").find(".cancel_button").unbind("click");
+    $("#inline_comment_form form").unbind("submit");
     $(".selected-for-commenting").removeClass("selected-for-commenting");
     $(".ui-selected").removeClass("ui-selected");
     Gitorious.DiffBrowser.KeyNavigation.enable();
