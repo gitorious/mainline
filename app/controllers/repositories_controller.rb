@@ -30,10 +30,15 @@ class RepositoriesController < ApplicationController
   renders_in_site_specific_context :except => [:writable_by, :config]
   
   def index
-    @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
+    if term = params[:filter]
+      @repositories = @project.search_repositories(Regexp.new(term))
+    else
+      @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
+    end
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @repositories.to_xml}
+      wants.json {render :json => @repositories.to_json(:only => [:name, :description])}
     end
   end
     

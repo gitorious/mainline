@@ -381,6 +381,18 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
+  context "Searching" do
+    setup do
+      @project = projects(:johans)
+    end
+
+    should "render repositories matching a search term" do
+      get :index, :project_id => @project.to_param, :filter => "clone", :format => "json"
+      assert_response :success
+      assert_equal([repositories(:johans2)], assigns(:repositories))
+    end
+  end
+
   context "showing a user namespaced repo" do
     setup do
       @user = users(:johan)
