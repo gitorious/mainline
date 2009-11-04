@@ -163,24 +163,21 @@ Gitorious.DiffBrowser.CommentHighlighter = {
     _lastHighlightedComment: null,
 
     removePrevious: function() {
-        var self = Gitorious.DiffBrowser.CommentHighlighter
-        if (!self._lastHighlightedComment)
+        if (!this._lastHighlightedComment)
             return;
-        self.remove(self._lastHighlightedComment);
+        this.remove(this._lastHighlightedComment);
     },
 
     add: function(commentElement) {
-        Gitorious.DiffBrowser.CommentHighlighter.removePrevious();
+        this.removePrevious();
         commentElement.addClass("highlighted");
-        Gitorious.DiffBrowser.CommentHighlighter.toggle(commentElement,
-                                                        'highlighted', 'add');
-        Gitorious.DiffBrowser.CommentHighlighter._lastHighlightedComment = commentElement;
+        this.toggle(commentElement, 'highlighted', 'add');
+        this._lastHighlightedComment = commentElement;
     },
 
     remove: function(commentElement) {
         commentElement.removeClass("highlighted");
-        Gitorious.DiffBrowser.CommentHighlighter.toggle(commentElement,
-                                                        'highlighted', 'remove');
+        this.toggle(commentElement, 'highlighted', 'remove');
     },
 
     toggle: function(commentElement, cssClass, action) {
