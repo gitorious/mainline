@@ -1096,6 +1096,14 @@ Single (inline) commit under a push
   margin-left: 26px;
 }
 
+.event_instance.push .event_instance .actor {
+}
+
+.event_instance.push .event_instance .timestamp,
+.event_instance.push .commits_in_event .timestamp {
+    font-size: 11px;
+}
+
 .commit_list .commit_item .commit_message {
   margin-left: 40px;
 }
