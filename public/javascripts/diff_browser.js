@@ -154,7 +154,6 @@ NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
 Gitorious.DiffBrowser = function(shas)
 {
     NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
-    jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
     var c = Gitorious.MergeRequestController.getInstance();
     var version = c.determineCurrentVersion();
     c.update({version:version, sha: shas});
@@ -343,6 +342,7 @@ Gitorious.MergeRequestController = function() {
             this.shaSelected(o.sha);
 
         if (this.needsUpdate()) {
+            jQuery("#merge_request_diff").html(Gitorious.MergeRequestDiffSpinner);
             this.replaceDiffContents(this._requestedShaRange);
         }
     }
