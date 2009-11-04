@@ -43,7 +43,7 @@ $(document).ready(function() {
         var cookiePrefix = $(this).attr("gts:cookie-prefix") || 'generic';
         container.find('.file-diff .header').removeClass("closed").addClass("open");
         container.find('.diff-hunks:hidden').show();
-        $.cookie(cookiePrefix + "-diff-hunks-state", "expanded");
+        $.cookie(cookiePrefix + "-diff-hunks-state", "expanded", { expires:365 });
         e.preventDefault();
     });
     $(".file-diff-controls a#collapse-all").live("click", function(e){
@@ -51,7 +51,7 @@ $(document).ready(function() {
         var cookiePrefix = $(this).attr("gts:cookie-prefix") || 'generic';
         container.find('.file-diff .header').removeClass("open").addClass("closed");
         container.find('.diff-hunks').hide();
-        $.cookie(cookiePrefix + "-diff-hunks-state", "collapsed");
+        $.cookie(cookiePrefix + "-diff-hunks-state", "collapsed", { expires:365 });
         e.preventDefault();
     });
 
