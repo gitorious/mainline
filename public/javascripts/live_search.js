@@ -28,7 +28,8 @@ jQuery.fn.liveSearch = function(backend, options) {
         resourceUri: "/foo/bar",
         delay: 250,
         itemCass: "result",
-        renderer: {render: function (obj) {return jQuery("<li class=\"item\">" + obj.name + "</li>")}}
+        renderer: {render: function (obj) {
+            return jQuery("<li class=\"item\">" + obj.name + "</li>")}}
     }, options);
 
     var element = this, // Keep this, ie. where this is started, as element
