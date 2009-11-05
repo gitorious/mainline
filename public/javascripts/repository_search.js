@@ -90,8 +90,8 @@ jQuery.fn.liveSearch = function(backend, options) {
                 throw new TypeError("Expected a repository object");
 
             container.html("").show();
-            jQuery.each(result, function (i, repo) {
-                markup = options.renderer.render(repo);
+            jQuery.each(result, function (i, obj) {
+                markup = options.renderer.render(obj);
                 markup.appendTo(container);
             });
         }

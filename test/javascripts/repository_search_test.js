@@ -92,5 +92,22 @@ TestCase("Live search for repositories", {
         })
     },
     "test should use the renderer": function () {
+        /*:DOC += <div id="s"></div> */
+        var renderer = {
+            render: function(person) {
+                row = jQuery('<li class="foo"></li>');
+                (jQuery('<h2 title="' + person.nick + '">' + person.firstName + '</h2>')).appendTo(row);
+                (jQuery("<addr>" + person.address + "</addr>")).appendTo(row);
+                return row;
+            }
+        };
+        var api = jQuery("#s").liveSearch({}, {renderer: renderer});
+        var ourData = [{
+                    firstName: "Winnie",
+                    address: "Hundred yard forest",
+                    nick: "pooh"
+        }];
+        api.populate(ourData);
+        assertEquals("Winnie", jQuery("li.foo h2").html());
     }
 });
