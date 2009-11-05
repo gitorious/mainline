@@ -633,6 +633,10 @@ Gitorious.CommentForm = function(path){
         return first + ':' + last + '+' + span;
     };
 
+    this.lastLineNumber = function() {
+        return this.numbers[this.numbers.length - 1];
+    };
+
     this.hasLines = function() {
         return this.numbers.length > 0;
     };
@@ -647,11 +651,7 @@ Gitorious.CommentForm = function(path){
         this.container.find("#comment_body").val("");
     };
 
-    this.display = function(diffContainer) {
-        this.reset();
-
-        NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
-
+    this.updateData = function() {
         this.container.find("#description").text(this.getSummary());
         var shas = $("#current_shas").attr("data-merge-request-current-shas");
         this.container.find("#comment_sha1").val(shas);
@@ -659,6 +659,12 @@ Gitorious.CommentForm = function(path){
         this.container.find("#comment_context").val(this._getRawDiffContext());
         this.container.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
         this.container.find("#comment_lines").val(this.linesAsInternalFormat());
+    };
+
+    this.display = function(diffContainer) {
+        this.reset();
+        NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
+        this.updateData();
         this.container.fadeIn();
 
         if (this.initialCommentBody && this.container.find("#comment_body").val() == "")
@@ -666,6 +672,7 @@ Gitorious.CommentForm = function(path){
         this.container.find("#comment_body").focus();
 
         var zeForm = this.container.find("form");
+        var lastLine = this.lastLineNumber();
         zeForm.submit(function(){
             zeForm.find(".progress").show("fast");
             zeForm.find(":input").hide("fast");
@@ -677,6 +684,7 @@ Gitorious.CommentForm = function(path){
                     NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
                     diffContainer.replaceWith(data);
                     NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+                    $("#diff-inline-comments-for-" + lastLine).slideDown();
                     Gitorious.CommentForm.destroyAll();
                 },
                 "error": function(xhr, statusText, errorThrown) {

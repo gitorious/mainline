@@ -130,5 +130,16 @@ CommentFormTest = TestCase("CommentForm", {
         var cf = new Gitorious.CommentForm("foo/bar.rb");
         cf.numbers = ["1-1", "2-2", "3-3"];
         assertEquals("1-1:3-3+2", cf.linesAsInternalFormat());
+    },
+
+    "test should get a summary": function() {
+        var cf = new Gitorious.CommentForm("file.txt");
+        assertEquals("Commenting on file.txt", cf.getSummary());
+    },
+
+    "test should get the last line number tuple": function() {
+        var cf = new Gitorious.CommentForm("file.txt");
+        cf.setLineNumbers(["1-1", "2-1", "3-1"]);
+        assertEquals("3-1", cf.lastLineNumber());
     }
 });
