@@ -28,7 +28,7 @@
         jQuery.each(select_element[0].options, function(){
           if ($(this).val() == select_element.val()) sel = this;
         })
-        $("#repository_name").val(sel.text + "-<%= @repository_to_clone.name -%>-clone");
+        $("#repository_name").val(sel.text + "-<%= @repository_to_clone.name -%>");
         $("#repository_owner_type_group")[0].checked = true;
       };
       $("#repository_owner_id_group_select").change(function(e) {
@@ -38,7 +38,7 @@
         group_selection_changed();
       });
       $("#repository_owner_type_user").click(function(e) {
-        $("#repository_name").val("<%= current_user.login -%>s-<%= @repository_to_clone.name -%>-clone");
+        $("#repository_name").val("<%= current_user.login -%>s-<%= @repository_to_clone.name -%>");
       })
     });
   </script>
