@@ -18,6 +18,16 @@
 %>
 <h4><%= link_to t("views.projects.repository_clones"), project_repositories_path(@project) -%></h4>
 
+
+<div id="repo_search" 
+     gts:searchUri="<%= url_for(project_repositories_path(@project, :format => 'json')) -%>">
+  <h5>Search for repositories</h5>
+  <form>
+  <input name="filter" type="text" class="search" />
+  </form>
+  <ul class="repository_list"></ul>
+</div>
+
 <% unless @project.repositories.by_groups.blank? -%>
   <h5><%= t("views.repos.by_teams") -%></h5>
   <ul class="repository_list">
@@ -43,13 +53,3 @@
   </ul>    
 <% end -%>
 
-<!-- WTF -->
-
-<div id="repo_search" 
-     gts:searchUri="<%= url_for(project_repositories_path(@project, :format => 'json')) -%>">
-  <h5>Search for repositories</h5>
-  <form>
-  <input name="filter" type="text" />
-  </form>
-  <ul class="repository_list"></ul>
-</div>

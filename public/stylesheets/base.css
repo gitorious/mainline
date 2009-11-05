@@ -3166,3 +3166,14 @@ ul.changable-selection-options li:hover {
     margin-left: 20px;
     display: none;
 }
+
+/*
+Style the headers when searching
+*/
+.searching input.search {
+  background: #fff url(/images/spinner.gif) 90% 0% no-repeat;
+}
+
+#repo_search input.search {
+  width: 200px;
+}

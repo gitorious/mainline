@@ -492,7 +492,7 @@ module ApplicationHelper
       "color_picker", "ui.core","ui.selectable", "jquery.scrollto",
       "core_extensions", "jquery.gitorious_extensions",
       "notification_center", "merge_requests", "diff_browser", "messages",
-      "application", "repository_search", :cache => true
+      "application", "live_search", "repository_search", :cache => true
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+
