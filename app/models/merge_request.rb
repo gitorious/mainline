@@ -590,9 +590,11 @@ class MergeRequest < ActiveRecord::Base
 
   # Comments made on self and all versions
   def cascaded_comments
-    (comments.find(:all, :include => [:target, :user]) +
-      Array(versions).collect{|v| v.comments.find(:all, :include => [:target, :user]) }
-      ).flatten
+    Comment.find(:all,
+      :conditions => ["(target_type = 'MergeRequest' AND target_id = ?) OR " +
+                      "(target_type = 'MergeRequestVersion' AND target_id in (?))",
+                      self.id, self.version_ids],
+      :order => "comments.created_at",
+      :include => [:target,:user])
   end
-  
 end

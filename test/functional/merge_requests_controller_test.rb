@@ -34,9 +34,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		@merge_request.stubs(:calculate_merge_base).returns("ff")
 		@merge_request.stubs(:commit_merged?).returns(true)
 		version = @merge_request.create_new_version
-    @merge_request.stubs(:versions).returns([version])
+    MergeRequestVersion.any_instance.stubs(:affected_commits).returns([])
+    @merge_request.versions << version
     version.stubs(:merge_request).returns(@merge_request)
-    version.stubs(:affected_commits).returns([])
 		@merge_request.stubs(:commits_for_selection).returns([])
 		assert_not_nil @merge_request.versions.last
 	end
@@ -81,7 +81,10 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	end
 	
 	def stub_commits(merge_request)
-    commits = %w(9dbb89110fc45362fc4dc3f60d960381 6823e6622e1da9751c87380ff01a1db1 526fa6c0b3182116d8ca2dc80dedeafb 286e8afb9576366a2a43b12b94738f07).collect do |sha|
+    commits = ["9dbb89110fc45362fc4dc3f60d960381",
+               "6823e6622e1da9751c87380ff01a1db1",
+               "526fa6c0b3182116d8ca2dc80dedeafb",
+               "286e8afb9576366a2a43b12b94738f07"].collect do |sha|
       m = mock
       m.stubs(:id).returns(sha)
       m.stubs(:id_abbrev).returns(sha[0..7])
@@ -126,17 +129,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		
 		should "allow committers to change status" do
 		  login_as :johan
-  		@project = projects(:johans)
-  		@project.owner = groups(:team_thunderbird)
-  		@project.owner.add_member(users(:johan), Role.member)
-  		@repository = repositories(:johans2)
-  		@mainline_repository = repositories(:johans)
-  		@merge_request = merge_requests(:moes_to_johans)
-  		@merge_request.stubs(:calculate_merge_base).returns('ff0')
-  		version = @merge_request.create_new_version
-      version.stubs(:affected_commits).returns([])
-      @merge_request.stubs(:versions).returns([version])
-  		@merge_request.stubs(:commit_merged?).returns(true)
   		stub_commits(@merge_request)
   		
   		MergeRequest.expects(:find).returns(@merge_request)
