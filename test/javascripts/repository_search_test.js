@@ -58,7 +58,7 @@ TestCase("Live search for repositories", {
                 result = phrase;
             }
         };
-        var api = jQuery("#search").liveSearch(backend, {resourceUri: "/repositories"});
+        var api = jQuery("#repo_search").liveSearch(backend);
         api.performSearch("Foo");
         assertEquals("Foo", result);
     },
@@ -73,6 +73,7 @@ TestCase("Live search for repositories", {
         };        
         var api = jQuery("#repo_search").liveSearch(backend, {itemClass: "item"});
         api.performSearch("Foo");
+        // The default renderer renders with li class="item"
         assertEquals(1, jQuery("#repo_search .item").length);
     },
 
