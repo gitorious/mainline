@@ -182,7 +182,7 @@ Gitorious.DiffBrowser.CommentHighlighter = {
 
     toggle: function(commentElement, cssClass, action) {
         var lineData = commentElement.attr("gts:lines").split(/[^\d\-]/);
-        var rows = commentElement.parents("table").find("tr.changes");
+        var rows = commentElement.parents("table").find("tr.changes:not(.hunk-sep,.unmod)");
         var startRow = rows.filter("[data-line-num-tuple=" + lineData[0] + "]");
         var sliceStart = rows.indexOf(startRow[0]);
         var sliceEnd = sliceStart + parseInt(lineData[2]) + 1;
@@ -548,7 +548,7 @@ Gitorious.enableCommenting = function() {
         start: function(e, ui) {
             Gitorious.CommentForm.destroyAll();
         },
-        cancel: ".inline_comments, td.code",
+        cancel: ".inline_comments, td.code, td.line-num-cut",
         stop: function(e, ui) {
             var diffTable = e.target;
             $(diffTable).find("td.ui-selected").each(function(el) {
