@@ -38,18 +38,19 @@ TestCase("Live search for repositories", {
 
     "test should do nothing if the selector doesn't exist": function() {
         /*:DOC += <div id="repo_search"></div>*/
-        jQuery("#search").liveSearch();
+        jQuery("#no_such_domid").liveSearch();
         assertEquals(0, jQuery(".live-search-results").length);
     },
 
     "test should hide the result container": function() {
-        /*:DOC += <div id="repo_search"></div>*/
-        jQuery("#search").liveSearch();
-        assertEquals(jQuery("#repo_search .live-search-results:hidden").length);
+        /*:DOC += <div id="repo_search"><li class="live-search-results"></div></div>*/
+        assertEquals(0, jQuery("#repo_search .live-search-results:hidden").length);
+        jQuery("#repo_search").liveSearch();
+        assertEquals(1, jQuery("#repo_search .live-search-results:hidden").length);
     },
 
 
-    "test should call the backend's get when searching": function() {
+    "test should call the backend's get func when searching": function() {
         /*:DOC += <div id="repo_search"></div>*/
         var result;
         var backend = {
@@ -66,29 +67,20 @@ TestCase("Live search for repositories", {
         /*:DOC += <div id="repo_search"></div>*/
         var backend = {
             get: function(uri, phrase, callback) {
-                result = [{"description":"The mainline","name":"gitorious", 
-                           "uri": "/gitorious/mainline", "owner":"hackers"}];
+                result = [{"name":"gitorious"}];
                 callback(result);
             }
         };        
-        var api = jQuery("#repo_search").liveSearch(backend, {resourceUri: "/repositories", 
-                                                              itemClass: "item"});
+        var api = jQuery("#repo_search").liveSearch(backend, {itemClass: "item"});
         api.performSearch("Foo");
         assertEquals(1, jQuery("#repo_search .item").length);
     },
 
     "test should handle non-JSON or invalid responses": function (){
         /*:DOC += <div id="repo_search"></div>*/
-        var backend = {
-            get: function(uri, phrase, callback) {
-                callback("This isn't JSON, is it?");
-            }
-        };
-        var api = jQuery("#repo_search").liveSearch(backend, {
-            resourceUri: "/repositories"
-        });
+        var api = jQuery("#repo_search").liveSearch({});
         assertThrows(TypeError, function (){
-            api.performSearch("testing");
+            api.populate("testing");
         })
     },
     "test should use the renderer": function () {
