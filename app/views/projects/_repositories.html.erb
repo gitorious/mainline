@@ -34,7 +34,7 @@
       <%= render :partial => "repositories/repository_sidebar", 
             :locals => {:repository => repo} -%>
     <% end -%>
-  <ul>
+  </ul>
 <% end -%>
 
 <% if @project.repositories.by_groups.blank? && @project.repositories.by_users.blank? -%>
@@ -42,3 +42,14 @@
     <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
   </ul>    
 <% end -%>
+
+<!-- WTF -->
+
+<div id="repo_search" 
+     gts:searchUri="<%= url_for(project_repositories_path(@project, :format => 'json')) -%>">
+  <h5>Search for repositories</h5>
+  <form>
+  <input name="filter" type="text" />
+  </form>
+  <ul class="repository_list"></ul>
+</div>

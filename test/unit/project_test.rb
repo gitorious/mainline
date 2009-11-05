@@ -404,7 +404,7 @@ class ProjectTest < ActiveSupport::TestCase
       @project = Factory.create(:project, :user => @owner,
         :owner => @owner)
       @repo = Factory.create(:repository, :project => @project, :owner => @project,
-        :user => @owner, :name => "thework")
+        :user => @owner, :name => "thework", :description => "halloween")
       @group = Factory.create(:group, :creator => @owner, 
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = Factory.create(:repository, :project => @project,
@@ -414,6 +414,10 @@ class ProjectTest < ActiveSupport::TestCase
 
     should "find repositories matching the repo name" do
       assert @project.search_repositories(/work/).include?(@repo)
+    end
+
+    should "find repositories with a matching description" do
+      assert @project.search_repositories(/ween/).include?(@repo)
     end
 
     should "find repositories matching the owning user's name" do

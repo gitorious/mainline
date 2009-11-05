@@ -38,7 +38,7 @@ class RepositoriesController < ApplicationController
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @repositories.to_xml}
-      wants.json {render :json => @repositories.to_json(:only => [:name, :description])}
+      wants.json {render :json => to_json(@repositories)}
     end
   end
     
@@ -240,6 +240,20 @@ class RepositoriesController < ApplicationController
         end
         return
       end
+    end
+
+    def to_json(repositories)
+      repositories.map { |repo|
+        {
+          :name => repo.name,
+          :description => repo.description,
+          :uri => url_for(project_repository_path(@project, repo)),
+          :img => repo.owner.avatar.url(:thumb),
+          :owner => repo.owner.title,
+          :owner_type => repo.owner_type.downcase,
+          :owner_uri => url_for(repo.owner)
+        }
+      }.to_json
     end
     
     def only_projects_can_add_new_repositories
