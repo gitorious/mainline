@@ -63,7 +63,7 @@ module Gitorious
       end
       
       def unmodline(line)
-        %Q{<tr class="changes">} +
+        %Q{<tr class="changes unmod">} +
         render_comment_count(line) +
         %Q{<td class="line-numbers">#{line.old_number}</td>} + 
         %Q{<td class="line-numbers">#{line.new_number}</td>} + 
@@ -71,7 +71,7 @@ module Gitorious
       end
       
       def sepline(line)
-        %Q{<tr class="changes">} +
+        %Q{<tr class="changes hunk-sep">} +
         render_comment_count(line) +
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
         %Q{<td class="line-numbers line-num-cut">&hellip;</td>} + 
