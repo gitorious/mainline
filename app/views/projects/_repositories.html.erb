@@ -21,7 +21,7 @@
 <% unless @project.repositories.by_groups.blank? -%>
   <h5><%= t("views.repos.by_teams") -%></h5>
   <ul class="repository_list">
-    <% @project.repositories.by_groups.fresh(10) do |repo| -%>
+    <% @project.repositories.by_groups do |repo| -%>
         <%= render :partial => "repositories/repository_sidebar", 
               :locals => {:repository => repo} -%>
     <% end -%>
@@ -30,7 +30,7 @@
 <% unless @project.repositories.by_users.blank? -%>
   <h5><%= t("views.repos.by_users") -%></h5>
   <ul class="repository_list">
-    <% @project.repositories.by_users.fresh(10).each do |repo|-%>
+    <% @project.repositories.by_users.each do |repo|-%>
       <%= render :partial => "repositories/repository_sidebar", 
             :locals => {:repository => repo} -%>
     <% end -%>
