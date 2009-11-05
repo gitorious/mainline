@@ -198,9 +198,18 @@ module EventRenderingHelper
         end
       end
     else
-      action = action_for_event(:event_commented) do
-        " on " +  link_to(h(repo.url_path + '/' + comment.sha1[0,7]), 
-          repo_owner_path(repo, :project_repository_commit_path, project, repo, comment.sha1)+"##{dom_id(comment)}")
+      if comment.sha1.blank? # old-world repo comments
+        action = action_for_event(:event_commented) do
+          " on " +  link_to(h(repo.url_path),
+            repo_owner_path(repo, :project_repository_comments_path, project, repo) +
+            "##{dom_id(comment)}")
+        end
+      else
+        action = action_for_event(:event_commented) do
+          " on " +  link_to(h(repo.url_path + '/' + comment.sha1[0,7]),
+            repo_owner_path(repo, :project_repository_commit_path, project, repo,
+              comment.sha1)+"##{dom_id(comment)}")
+        end
       end
     end
     body = truncate(h(comment.body), :length => 150)
