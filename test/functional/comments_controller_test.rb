@@ -137,11 +137,27 @@ class CommentsControllerTest < ActionController::TestCase
         assert_equal(("ffac01".."ffab99"), assigns(:comment).sha_range)
       end
 
+      should "not notify the merge request owner, if he's the one commenting" do
+        assert_no_difference("@merge_request.user.received_messages.count") do
+          @version = create_new_version
+          create_merge_request_version_comment(@version)
+        end
+      end
+
       should "notify the merge request owner of comments" do
+        login_as :mike
         @version = create_new_version
         create_merge_request_version_comment(@version)
-        message = @merge_request.user.received_messages.last
-        assert_equal @merge_request, message.notifiable
+        assert message = @merge_request.user.received_messages.last
+        assert_equal @merge_request.versions.last, message.notifiable
+      end
+
+      should "only notify the merge request owner once" do
+        login_as :mike
+        assert_difference("@merge_request.user.received_messages.count", 1) do
+          @version = create_new_version
+          create_merge_request_version_comment(@version)
+        end
       end
 
       should "create an event with the MergeRequest class name as the body" do
