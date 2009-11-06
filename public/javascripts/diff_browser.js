@@ -717,8 +717,7 @@ Gitorious.CommentForm = function(path){
         $(selectors.join(",")).each(function() {
             var cell = $(this).find("td.code");
             var op = (cell.hasClass("ins") ? "+ " : "- ");
-            plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, '')
-                           .replace('&gt;', '>').replace('&lt;', '<'));
+            plainDiff.push(op + cell.find(".diff-content").html().replace(idiffRegexp, ''));
         });
         return (plainDiff.length > 0 ? plainDiff.join("\n") : "");
     };
