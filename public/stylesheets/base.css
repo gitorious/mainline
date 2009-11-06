@@ -1084,7 +1084,8 @@ td.meta-info {
 Single (inline) commit under a push
 */
 .event_instance.push .event_instance {
-  margin: 10px 0 0 2px;
+  margin: 0 0 0 2px;
+  width: 90%;
 }
 
 .event_instance.push .event_instance img {
