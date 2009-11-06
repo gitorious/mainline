@@ -548,7 +548,7 @@ Gitorious.enableCommenting = function() {
         start: function(e, ui) {
             Gitorious.CommentForm.destroyAll();
         },
-        cancel: ".inline_comments, td.code",
+        cancel: ".inline_comments, td.code, td.line-num-cut",
         stop: function(e, ui) {
             var diffTable = e.target;
             var allLineNumbers = [];
