@@ -360,7 +360,7 @@ module EventRenderingHelper
           :project_repository_commit_path, commit.project,
           commit.target.target.target, commit.data))
       body = content_tag(:div, commit_msg, :class => "commit_message")
-      content_tag(:li, [message, body].join("\n"), :class => "event_instance")
+      content_tag(:div, [message, body].join("\n"), :class => "event_instance")
     else
       img = image_tag("spinner.gif")
       content_tag(:div, img, :id => "commits_in_event_#{event.to_param}", :style => "display: none")
