@@ -3170,10 +3170,37 @@ ul.changable-selection-options li:hover {
 /*
 Style the headers when searching
 */
-.searching input.search {
-  background: #fff url(/images/spinner.gif) 90% 0% no-repeat;
+.searching form {
+  background-image: url(/images/spinner.gif);
+  background-position: 80% 50%;
+  background-repeat: no-repeat;
+}
+
+#repo_search form {
+  position: relative;
+  height: 30px;
 }
 
 #repo_search input.search {
+  border: 1px solid #333;
+  -moz-border-radius: 10px;
+  background: #fff url(/images/silk/zoom.png) 4px 50% no-repeat;
+  -webkit-border-radius: 10px;
+  padding-left: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 200px;
+  z-index: 9;
+}
+
+/* The resetter */
+#repo_search .reset {
+  font-size: 70%;
+  color: #390;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 90px;
+  z-index: 10;
 }

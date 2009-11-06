@@ -21,30 +21,34 @@
 
 <div id="repo_search" 
      gts:searchUri="<%= url_for(project_repositories_path(@project, :format => 'json')) -%>">
-  <h5>Search for repositories</h5>
   <form>
-  <input name="filter" type="text" class="search" />
+  <input name="filter" type="text" class="search" autocomplete="off" />
+  <span class="reset"><%= image_tag("/images/silk/cancel.png")-%></span>
   </form>
   <ul class="repository_list"></ul>
 </div>
 
 <% unless @project.repositories.by_groups.blank? -%>
-  <h5><%= t("views.repos.by_teams") -%></h5>
-  <ul class="repository_list">
-    <% @project.repositories.by_groups.each do |repo| -%>
-        <%= render :partial => "repositories/repository_sidebar", 
-              :locals => {:repository => repo} -%>
-    <% end -%>
-  </ul>
+  <div class="team_clones">
+    <h5><%= t("views.repos.by_teams") -%></h5>
+    <ul class="repository_list team_clones">
+      <% @project.repositories.by_groups.each do |repo| -%>
+      <%= render :partial => "repositories/repository_sidebar", 
+      :locals => {:repository => repo} -%>
+      <% end -%>
+    </ul>
+  </div>
 <% end -%>
 <% unless @project.repositories.by_users.blank? -%>
-  <h5><%= t("views.repos.by_users") -%></h5>
-  <ul class="repository_list">
-    <% @project.repositories.by_users.each do |repo|-%>
+  <div class="personal_clones">
+    <h5><%= t("views.repos.by_users") -%></h5>
+    <ul class="repository_list">
+      <% @project.repositories.by_users.each do |repo|-%>
       <%= render :partial => "repositories/repository_sidebar", 
-            :locals => {:repository => repo} -%>
-    <% end -%>
-  </ul>
+      :locals => {:repository => repo} -%>
+      <% end -%>
+    </ul>
+  </div>
 <% end -%>
 
 <% if @project.repositories.by_groups.blank? && @project.repositories.by_users.blank? -%>

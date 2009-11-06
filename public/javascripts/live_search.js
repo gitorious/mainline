@@ -37,7 +37,8 @@ jQuery.fn.liveSearch = function(backend, options) {
     timer,  // Timing to avoid parallell searches
     previous,  // The last search term
     input = element.find("input[type=text]"),  
-    uri = options.resourceUri + "?" + input.attr("name") + "=";  
+    uri = options.resourceUri + "?" + input.attr("name") + "=",
+    resetter;  
     
     // Create the container element if it doesn't exist
     if (container.length === 0) {
@@ -45,6 +46,10 @@ jQuery.fn.liveSearch = function(backend, options) {
         container.appendTo(element);
     }
     container.hide();
+
+    resetter = element.find(".reset");
+    
+    resetter.hide();
 
     // Stop the timer
     function stopTimer() {
@@ -80,14 +85,28 @@ jQuery.fn.liveSearch = function(backend, options) {
         // When we receive a result, populate this into the dom
         populate: function(result, phrase) {
             if (typeof result != "object")
-                throw new TypeError("Expected a repository object");
+                throw new TypeError("Expected an object");
             
+            if (options.onDisplay)
+                options.onDisplay();
+
+            resetter.show();
             element.removeClass(options.waitingClass);
             container.html("").show();
             jQuery.each(result, function (i, obj) {
                 markup = options.renderer.render(obj);
                 markup.appendTo(container);
             });
+        },
+
+        // Remove the search results, call into onReset 
+        reset: function() {
+            if (options.onReset)
+                options.onReset();
+
+            input.val("");
+            resetter.hide();
+            container.hide();
         }
     };
 
@@ -97,8 +116,12 @@ jQuery.fn.liveSearch = function(backend, options) {
             return publicApi.queueSearch(input.val());
         }
         
+        var resetFunc = function(e) {
+            return publicApi.reset();
+        }
         input.keyup(handler);    
         input.focus(handler);
+        resetter.click(resetFunc);
         element.submit(handler);
     })();
 

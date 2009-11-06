@@ -50,6 +50,14 @@ $(document).ready(function () {
         itemClass: "clone",
         resultContainer: ".repository_list",
         waitingClass: "searching",
-        renderer: renderer});
+        renderer: renderer,
+        onDisplay: function() {
+            jQuery(".team_clones").hide();
+            jQuery(".personal_clones").hide();
+        },
+        onReset: function (){
+            jQuery(".team_clones").show();
+            jQuery(".personal_clones").show();
+        }});
 }
 )

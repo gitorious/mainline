@@ -102,5 +102,28 @@ TestCase("Live search for repositories", {
         }];
         api.populate(ourData);
         assertEquals("Winnie", jQuery("li.foo h2").html());
+    },
+
+    "test should call the optional onDisplay when displaying results": function() {
+        /*:DOC += <div id="s"></div> */
+        var othersHidden = false;
+        var hideOthers = function () {
+            othersHidden = true;
+        }
+        var api = jQuery("#s").liveSearch({}, {onDisplay: hideOthers});
+        api.populate({});
+        assertTrue(othersHidden);
+    },
+    
+    "test should call the optional onReset when resetting": function() {
+        /*:DOC += <div id="s"></div> */
+        var othersDisplayed = false;
+        var displayOthers = function () {
+            othersDisplayed = true;
+        }
+        var api = jQuery("#s").liveSearch({}, {onReset: displayOthers});
+        api.reset();
+        assertTrue(othersDisplayed);
+        
     }
 });
