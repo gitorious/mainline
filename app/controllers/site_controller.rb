@@ -63,7 +63,7 @@ class SiteController < ApplicationController
       if GitoriousConfig["is_gitorious_dot_org"] && !logged_in?
         @projects = Project.most_active_recently(10, 7.days.ago)
         @teams = Group.most_active(10, 7.days.ago)
-        @users = User.most_active_pushers(10, 7.days.ago)
+        @users = User.most_active(10, 7.days.ago)
         @latest_events = Event.latest(4)
         
         render :layout => "second_generation/application", :inline => ""
@@ -71,7 +71,7 @@ class SiteController < ApplicationController
         @projects = Project.find(:all, :limit => 10, :order => "id desc")
         @top_repository_clones = Repository.most_active_clones
         @active_projects = Project.most_active_recently(15)
-        @active_users = User.most_active_pushers
+        @active_users = User.most_active
         @active_groups = Group.most_active
         @latest_events = Event.latest(25)
       end
