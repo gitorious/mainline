@@ -544,18 +544,18 @@ Gitorious.disableCommenting = function() {
 // Makes line numbers selectable for commenting
 Gitorious.enableCommenting = function() {
     jQuery("table.codediff").selectable({
-        filter: "td.commentable",
+        filter: "td.commentable, td.line-num-cut",
         start: function(e, ui) {
             Gitorious.CommentForm.destroyAll();
         },
-        cancel: ".inline_comments, td.code, td.line-num-cut",
+        cancel: ".inline_comments, td.code",
         stop: function(e, ui) {
             var diffTable = e.target;
-            $(diffTable).find("td.ui-selected").each(function(el) {
-                $(this).parent().addClass("selected-for-commenting");
-            });
             var allLineNumbers = [];
-            $(diffTable).find("td.ui-selected").each(function(){
+            $(diffTable).find("td.ui-selected").each(function() {
+                if ($(this).hasClass("line-num-cut"))
+                    return false; // break on hunk seperators
+                $(this).parent().addClass("selected-for-commenting");
                 allLineNumbers.push( $(this).parents("tr").attr("data-line-num-tuple") );
             });
             var path = $(diffTable).parent().prev(".header").children(".title").text();
