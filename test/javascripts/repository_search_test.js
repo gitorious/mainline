@@ -125,5 +125,17 @@ TestCase("Live search for repositories", {
         api.reset();
         assertTrue(othersDisplayed);
         
+    },
+    "test should hide the reset element if one exists": function() {
+        /*:DOC += <div id="s"><div class="reset" style="display:block"></div></div>*/
+        var api = jQuery("#s").liveSearch();
+        assertEquals(1, jQuery("#s .reset:hidden").length);
+    },
+    "test should display the reset element when populating": function() {
+        /*:DOC += <div id="_s"><div class="reset" style="display:block"></div></div>*/
+        var api = jQuery("#_s").liveSearch();
+        assertEquals(0, jQuery("#_s .reset:visible").length);
+        api.populate([{name: "John Doe"}]);
+        assertEquals(1, jQuery("#_s .reset:visible").length);
     }
 });

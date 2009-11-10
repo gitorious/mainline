@@ -3170,14 +3170,19 @@ ul.changable-selection-options li:hover {
 /*
 Style the headers when searching
 */
+
+#repo_search {
+  width: 220px;
+}
 .searching form {
   background-image: url(/images/spinner.gif);
-  background-position: 80% 50%;
+  background-position: 98% 50%;
   background-repeat: no-repeat;
 }
 
 #repo_search form {
   position: relative;
+  width: 220px;
   height: 30px;
 }
 
@@ -3190,7 +3195,7 @@ Style the headers when searching
   position: absolute;
   left: 0;
   top: 0;
-  width: 200px;
+  width: 160px;
   z-index: 9;
 }
 
@@ -3201,6 +3206,6 @@ Style the headers when searching
   cursor: pointer;
   position: absolute;
   top: 10px;
-  right: 90px;
+  right: 40px;
   z-index: 10;
 }
