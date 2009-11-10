@@ -30,7 +30,8 @@ class CommentsController < ApplicationController
   def index
     @comments = @repository.comments.find(:all, :include => :user)
     @merge_request_count = @repository.merge_requests.count_open
-    @atom_auto_discovery_url = project_repository_comments_path(@project, @repository, :format => :atom)
+    @atom_auto_discovery_url = project_repository_comments_path(@project, @repository,
+      :format => :atom)
     respond_to do |format|
       format.html { }
       format.atom { }
@@ -67,6 +68,7 @@ class CommentsController < ApplicationController
     render :partial => @comment
   end
   
+  protected
   def render_or_redirect
     respond_to do |format|
       if @comment.save
@@ -96,59 +98,58 @@ class CommentsController < ApplicationController
   def applies_to_merge_request_version?
     MergeRequestVersion === @target
   end
-  
-  protected
-    def range_or_string(str)
-      if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(str)
-        @sha_range = Range.new(match[1],match[2])
-      else
-        @sha_range = str
-      end
+
+  def range_or_string(str)
+    if match = /^([a-z0-9]*)-([a-z0-9]*)$/.match(str)
+      @sha_range = Range.new(match[1],match[2])
+    else
+      @sha_range = str
+    end
+  end
+
+  def find_repository
+    @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+      @containing_project)
+  end
+
+  def find_polymorphic_parent
+    if params[:merge_request_version_id]
+      @target = MergeRequestVersion.find(params[:merge_request_version_id])
+    elsif params[:merge_request_id]
+      @target = @repository.merge_requests.find(params[:merge_request_id])
+    else
+      @target = @repository
+    end
+  end
+
+  def redirect_to_repository_or_target
+    if @target == @repository
+      redirect_to repo_owner_path(@repository, [@project, @target, :comments])
+    else
+      redirect_to repo_owner_path(@repository, [@project, @repository, @target])
+    end
+  end
+
+  def create_new_commented_posted_event
+    if applies_to_merge_request_version?
+      @project.create_event(Action::COMMENT, @target.merge_request, current_user,
+        @comment.to_param, "MergeRequest")
+      return
     end
 
-    def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
-        @containing_project)
+    if @target == @repository
+      @project.create_event(Action::COMMENT, @repository, current_user,
+        @comment.to_param, "Repository")
+    else
+      @project.create_event(Action::COMMENT, @target, current_user,
+        @comment.to_param, "MergeRequest") if @comment.state_change.blank?
     end
-    
-    def find_polymorphic_parent
-      if params[:merge_request_version_id]
-        @target = MergeRequestVersion.find(params[:merge_request_version_id])
-      elsif params[:merge_request_id]
-        @target = @repository.merge_requests.find(params[:merge_request_id])
-      else
-        @target = @repository
-      end
-    end
-    
-    def redirect_to_repository_or_target
-      if @target == @repository
-        redirect_to repo_owner_path(@repository, [@project, @target, :comments])
-      else
-        redirect_to repo_owner_path(@repository, [@project, @repository, @target])
-      end
-    end
-    
-    def create_new_commented_posted_event
-      if applies_to_merge_request_version?
-        @project.create_event(Action::COMMENT, @target.merge_request, current_user,
-                              @comment.to_param, "MergeRequest")
-        return
-      end
+  end
 
-      if @target == @repository
-        @project.create_event(Action::COMMENT, @repository, current_user,
-                              @comment.to_param, "Repository")
-      else
-        @project.create_event(Action::COMMENT, @target, current_user,
-          @comment.to_param, "MergeRequest") if @comment.state_change.blank?
-      end
+  def comment_should_be_editable
+    @comment = Comment.find(params[:id])
+    if !@comment.editable_by?(current_user)
+      render :status => :unauthorized, :text => "Sorry mate"
     end
-
-    def comment_should_be_editable
-      @comment = Comment.find(params[:id])
-      if !@comment.editable_by?(current_user)
-        render :status => :unauthorized, :text => "Sorry mate"
-      end
-    end
+  end
 end
