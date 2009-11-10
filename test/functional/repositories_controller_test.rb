@@ -148,6 +148,24 @@ class RepositoriesControllerTest < ActionController::TestCase
         :format => "xml",
       })
     end
+
+    should "recognize routing for clones search" do
+      assert_recognizes({
+          :controller => "repositories",
+          :action => "search_clones",
+          :format => "json",
+          :project_id => @project.to_param,
+          :id => @repo.to_param
+        }, "/projects/#{@project.to_param}/repositories/#{@repo.to_param}/search_clones.json")
+
+      assert_generates("/#{@project.to_param}/#{@repo.to_param}/search_clones.json", {
+          :controller => "repositories",
+          :action => "search_clones",
+          :project_id => @project.to_param,
+          :id => @repo.to_param,
+          :format => "json"
+        })
+    end
   end
   
   context "Routing, by users" do
@@ -1121,6 +1139,20 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_select("#sidebar ul.links li a[href=?]", 
         new_project_repository_merge_request_path(project, repository),
         :content => "Request merge")
+    end
+  end
+
+  context "search clones" do
+    setup do
+      @repo = repositories(:johans)
+      @clone_repo = repositories(:johans2)
+    end
+
+    should "return a list of clones matching the query" do
+      get :search_clones, :project_id => @repo.project.to_param, :id => @repo.to_param,
+        :filter => "projectrepos", :format => "json"
+      assert_response :success
+      assert assigns(:repositories).include?(@clone_repo)
     end
   end
 end

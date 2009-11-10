@@ -84,6 +84,7 @@ ActionController::Routing::Routes.draw do |map|
       :config => :get, 
       :confirm_delete => :get,
       :committers => :get,
+      :search_clones => :get
     }
   }
   

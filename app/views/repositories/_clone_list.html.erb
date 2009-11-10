@@ -19,23 +19,37 @@
 
 <h4><%= t("views.projects.repository_clones") -%></h4>
 
+<div id="repo_search" 
+     gts:searchUri="<%= search_clones_project_repository_path(@repository.project, @repository) -%>">
+  <form>
+  <input name="filter" type="text" class="search" autocomplete="off" />
+  <span class="reset"><%= image_tag("/images/silk/cancel.png")-%></span>
+  </form>
+  <ul class="repository_list"></ul>
+</div>
+
+
 <% unless @repository.clones.by_groups.blank? -%>
-  <h5><%= t("views.repos.by_teams") -%></h5>
-  <ul class="repository_list">
-    <% @repository.clones.by_groups.fresh.each do |repo| -%>
-        <%= render :partial => "repositories/repository_sidebar", 
-              :locals => {:repository => repo} -%>
-    <% end -%>
-  </ul>
-<% end -%>
-<% unless @repository.clones.by_users.blank? -%>
-  <h5><%= t("views.repos.by_users") -%></h5>
-  <ul class="repository_list">
-    <% @repository.clones.by_users.fresh.each do |repo|-%>
+  <div class="team_clones">
+    <h5><%= t("views.repos.by_teams") -%></h5>
+    <ul class="repository_list">
+      <% @repository.clones.by_groups.fresh.each do |repo| -%>
       <%= render :partial => "repositories/repository_sidebar", 
-            :locals => {:repository => repo} -%>
-    <% end -%>
-  <ul>
+      :locals => {:repository => repo} -%>
+      <% end -%>
+    </ul>
+  </div>
+  <% end -%>
+<% unless @repository.clones.by_users.blank? -%>
+  <div class="personal_clones">
+    <h5><%= t("views.repos.by_users") -%></h5>
+    <ul class="repository_list">
+      <% @repository.clones.by_users.fresh.each do |repo|-%>
+      <%= render :partial => "repositories/repository_sidebar", 
+      :locals => {:repository => repo} -%>
+      <% end -%>
+      <ul>
+  </div>
 <% end -%>
 
 <% if @repository.clones.by_groups.blank? && @repository.clones.by_users.blank? -%>

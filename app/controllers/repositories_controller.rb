@@ -21,7 +21,7 @@
 #++
 
 class RepositoriesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :writable_by, :config]
+  before_filter :login_required, :except => [:index, :show, :writable_by, :config, :search_clones]
   before_filter :find_repository_owner
   before_filter :require_adminship, :only => [:edit, :update, :new, :create, :edit, :update, :committers]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
@@ -145,6 +145,12 @@ class RepositoriesController < ApplicationController
     @root = Breadcrumb::EditRepository.new(@repository)
     @groups = current_user.groups
     @heads = @repository.git.heads
+  end
+
+  def search_clones
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repositories = @repository.search_clones(Regexp.new(params[:filter]))
+    render :json => to_json(@repositories)
   end
   
   def update
