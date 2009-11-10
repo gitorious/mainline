@@ -21,6 +21,7 @@
 module MergeRequestsHelper
   include MergeRequestVersionsHelper
   include CommentsHelper
+
   def render_status_tag_list(status_tags, repository)
     project_statuses = repository.project.merge_request_statuses
     
@@ -41,8 +42,8 @@ module MergeRequestsHelper
     out << '</ul><div class="clear"></div>'
 
     out << '<ul class="horizontal">'
-    orphaned_tags = status_tags.select do |s|
-      !project_statuses.map{|s| s.name.downcase}.include?(s.to_s.downcase)
+    orphaned_tags = status_tags.select do |status|
+      !project_statuses.map{|s| s.name.downcase }.include?(status.to_s.downcase)
     end
     out << "<li>Other:</li>" unless orphaned_tags.blank?
     orphaned_tags.each do |status|
@@ -51,7 +52,7 @@ module MergeRequestsHelper
     out << "</ul>"
     out
   end
-  
+
   def link_to_status(repository, status)
     if params[:status].blank? && status == "open"
       link_to_selected_status(repository, status)
