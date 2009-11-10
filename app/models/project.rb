@@ -324,10 +324,7 @@ class Project < ActiveRecord::Base
   
   def search_repositories(term)
     repositories.regular.find_all {|r|
-      r.user.login =~ term ||
-      r.name =~ term ||
-      (r.owned_by_group? ? r.owner.name =~ term : false) ||
-      r.description =~ term
+      r.matches_regexp?(term)
     }
   end
   

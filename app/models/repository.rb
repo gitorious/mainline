@@ -612,6 +612,17 @@ class Repository < ActiveRecord::Base
       end
     end
   end
+
+  def matches_regexp?(term)
+    return user.login =~ term ||
+      name =~ term ||
+      (owned_by_group? ? owner.name =~ term : false) ||
+      description =~ term
+  end
+
+  def search_clones(term)
+    clones.find_all { |r| r.matches_regexp?(term)}
+  end
   
   protected
     def sharded_hashed_path(h)

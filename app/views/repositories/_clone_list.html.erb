@@ -22,7 +22,7 @@
 <% unless @repository.clones.by_groups.blank? -%>
   <h5><%= t("views.repos.by_teams") -%></h5>
   <ul class="repository_list">
-    <% @repository.clones.by_groups.each do |repo| -%>
+    <% @repository.clones.by_groups.fresh.each do |repo| -%>
         <%= render :partial => "repositories/repository_sidebar", 
               :locals => {:repository => repo} -%>
     <% end -%>
@@ -31,7 +31,7 @@
 <% unless @repository.clones.by_users.blank? -%>
   <h5><%= t("views.repos.by_users") -%></h5>
   <ul class="repository_list">
-    <% @repository.clones.by_users.each do |repo|-%>
+    <% @repository.clones.by_users.fresh.each do |repo|-%>
       <%= render :partial => "repositories/repository_sidebar", 
             :locals => {:repository => repo} -%>
     <% end -%>

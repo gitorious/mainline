@@ -888,6 +888,18 @@ class RepositoryTest < ActiveSupport::TestCase
 
   end
 
+  context "Searching clones" do
+    setup do
+      @repo = repositories(:johans)
+      @clone = repositories(:johans2)
+    end
+
+    should "find clones matching an owning group's name" do
+      assert @repo.clones.include?(@clone)
+      assert @repo.search_clones(/sproject/).include?(@clone)
+    end
+  end
+
 
 end
 
