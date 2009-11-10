@@ -86,7 +86,10 @@ class CommentsController < ApplicationController
           @diffs = @target.diffs(range_or_string(@comment.sha1)).select{|d|
             d.a_path == @comment.path
           }
-          render :partial => "merge_request_versions/comments", :status => :created
+          render :json => {
+            "file-diff" => render_to_string(:partial => "merge_request_versions/comments"),
+            "comment" => render_to_string(:partial => @comment)
+          }, :status => :created
         end
       else
         format.html { render :action => "new" }

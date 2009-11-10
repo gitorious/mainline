@@ -680,9 +680,11 @@ Gitorious.CommentForm = function(path){
                 "url": $(this).attr("action"),
                 "data": $(this).serialize(),
                 "type": "POST",
+                "dataType": "json",
                 "success": function(data, text) {
                     NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
-                    diffContainer.replaceWith(data);
+                    diffContainer.replaceWith(data["file-diff"]);
+                    $("#merge_request_comments.comments").append(data["comment"]);
                     NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
                     $("#diff-inline-comments-for-" + lastLine).slideDown();
                     Gitorious.CommentForm.destroyAll();

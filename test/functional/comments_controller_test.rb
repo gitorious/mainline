@@ -129,7 +129,7 @@ class CommentsControllerTest < ActionController::TestCase
       should "set the merge request version as polymorphic parent" do
         @version = create_new_version
         create_merge_request_version_comment(@version)
-        assert @controller.applies_to_merge_request_version?
+        assert @controller.send(:applies_to_merge_request_version?)
         assert_response :success
         assert_equal @version, assigns(:target)
         assert_equal @version, assigns(:comment).target
@@ -170,8 +170,18 @@ class CommentsControllerTest < ActionController::TestCase
         assert_not_nil comment = Comment.find_by_id(Event.last.data)
         assert_equal "1-1:13-13+14", comment.lines
       end
+
+      should "render some json if it's a merge request comment" do
+        @version = create_new_version
+        create_merge_request_version_comment(@version)
+        assert_response :success
+        assert_equal "application/json", @response.content_type
+        json = ActiveSupport::JSON.decode(@response.body)
+        assert_not_nil json["file-diff"]
+        assert_not_nil json["comment"]
+      end
     end
-    
+
     should "redirect back to the merge request on POST create if that's the target" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome"}
@@ -181,7 +191,7 @@ class CommentsControllerTest < ActionController::TestCase
       assert_redirected_to project_repository_merge_request_path(@project,
         @repository, @merge_request)
     end
-    
+
     should "create an event the parent class name as the body" do
       assert_difference("Event.count") do
         post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
