@@ -1510,7 +1510,10 @@ table tr .line-numbers {
  width: 35px;
  border-right: 1px solid #ccc;
  border-bottom: 1px solid #cdcdcd;
- cursor: pointer;
+}
+
+table tr .commentable {
+    cursor: pointer;
 }
 
 table tr.selected-for-commenting td,

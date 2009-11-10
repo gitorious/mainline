@@ -543,6 +543,14 @@ Gitorious.disableCommenting = function() {
 
 // Makes line numbers selectable for commenting
 Gitorious.enableCommenting = function() {
+    this.MAX_COMMENTABLES = 3500;
+
+    // Don't add if we're dealing with a large diff
+    if ($("table.codediff td.commentable").length > this.MAX_COMMENTABLES) {
+        $("table.codediff td.commentable").removeClass("commentable");
+        return false;
+    }
+
     jQuery("table.codediff").selectable({
         filter: "td.commentable, td.line-num-cut",
         start: function(e, ui) {
