@@ -61,7 +61,7 @@ class SiteController < ApplicationController
     # Render the global index template
     def render_global_index
       if GitoriousConfig["is_gitorious_dot_org"] && !logged_in?
-        @projects = Project.most_active_recently(10, 7.days.ago)
+        @projects = Project.most_active_recently(10, 7)
         @teams = Group.most_active(10, 7.days.ago)
         @users = User.most_active(10, 7.days.ago)
         @latest_events = Event.latest(4)
