@@ -210,4 +210,21 @@ class CommentTest < ActiveSupport::TestCase
       assert_equal "2-3:2-3+0", @comment.lines
     end    
   end
+
+  context "On commits, with context" do
+    setup do
+      @target = repositories(:johans)
+    end
+
+    should "be commentable with path and line numbers" do
+      comment = @target.comments.new(:body => "This is awesome", :user => users(:moe),
+        :project => @target.project)
+      comment.path = "README"
+      comment.lines = "1-1:31-32+32"
+      assert comment.save
+      assert_equal "1-1", comment.first_line_number
+      assert_equal "31-32", comment.last_line_number
+      assert_equal 32, comment.number_of_lines
+    end
+  end
 end

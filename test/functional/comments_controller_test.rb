@@ -125,6 +125,28 @@ class CommentsControllerTest < ActionController::TestCase
       assert_equal @merge_request, assigns(:comment).target
     end
 
+    context "Inline commenting on commits" do
+      setup do
+        @repo = repositories(:johans)
+        login_as :moe
+      end
+
+      should "render a json response when created" do
+        post :create, :project_id => @repo.project.to_param, :repository_id => @repo.to_param,
+        :comment => {
+          :sha1 => "ffca00",
+          :path => "test/functional/comments_controller_test.rb",
+          :lines => "135-135:135-138+3",
+          :target_id => @repo.id,
+          :target_type => @repo.class.name,
+          :body => "Now this is a useful feature"
+        }, :format => "js"
+        assert_response :success
+        result = JSON.parse(@response.body)
+        assert_not_nil result["comment"]
+      end
+    end
+    
     context "Merge request versions" do
       should "set the merge request version as polymorphic parent" do
         @version = create_new_version

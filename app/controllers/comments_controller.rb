@@ -70,34 +70,52 @@ class CommentsController < ApplicationController
   
   protected
   def render_or_redirect
-    respond_to do |format|
-      if @comment.save
-        create_new_commented_posted_event
-        format.html do
-          flash[:success] = I18n.t "comments_controller.create_success"
-          if @comment.sha1.blank?
-            redirect_to_repository_or_target
-          else
-            redirect_to repo_owner_path(@repository,
-              :project_repository_commit_path, @project, @repository, @comment.sha1)
-          end
+    if @comment.save
+      comment_was_created
+    else
+      comment_was_invalid
+    end
+  end
+
+
+  def comment_was_created
+    create_new_commented_posted_event
+    respond_to do |wants|
+      wants.html do
+        flash[:success] = I18n.t "comments_controller.create_success"
+        if @comment.sha1.blank?
+          redirect_to_repository_or_target
+        else
+          redirect_to repo_owner_path(@repository,
+            :project_repository_commit_path, @project, @repository, @comment.sha1)
         end
-        format.js do
+      end
+      wants.js do
+        case @target
+        when Repository
+          render :json => {
+            "comment" => render_to_string(:partial => @comment)
+          }, :status => :created
+        else
           @diffs = @target.diffs(range_or_string(@comment.sha1)).select{|d|
             d.a_path == @comment.path
-          }
+          } 
           render :json => {
             "file-diff" => render_to_string(:partial => "merge_request_versions/comments"),
             "comment" => render_to_string(:partial => @comment)
-          }, :status => :created
+          }, :status => :created            
         end
-      else
-        format.html { render :action => "new" }
-        format.js   { render :nothing => true, :status => :not_acceptable }
       end
-    end      
+    end
   end
 
+  def comment_was_invalid
+    respond_to { |wants|
+      wants.html { render :action => "new" }
+      wants.js   { render :nothing => true, :status => :not_acceptable }
+    }
+  end
+  
   def applies_to_merge_request_version?
     MergeRequestVersion === @target
   end
