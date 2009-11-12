@@ -16,7 +16,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-        
+<% if @diffmode == "sidebyside" -%>
+<%= render_diffs(@diffs) -%>
+<% else -%>
 <%= render_inline_diffs_with_stats(@diffs, :open) do |file|
     @comments.select{ |c| c.path == file.a_path}
 end -%>
+<% end -%>

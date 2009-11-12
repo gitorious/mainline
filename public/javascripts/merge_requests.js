@@ -194,6 +194,23 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+
+    // Clicking on a comment relating to an inline commit comment
+    $(".commentable.comments .inline_comment_link a").live("click", function (){
+        var comment = $(this).parents("div.comment.inline");
+        var path = $(comment).attr("data-diff-path");
+        var last_line_number = $(comment).attr("data-last-line-in-diff");
+        var href = $(this).attr("href");
+        var hunks = $(".file-diff[data-diff-path=" + path + "] .diff-hunks");
+        hunks.removeClass("closed").addClass("open");
+        hunks.slideDown();
+        var lastLine = $("#diff-inline-comments-for-" + last_line_number);
+        lastLine.slideToggle();
+        Gitorious.DiffBrowser.CommentHighlighter.add($(href));
+        $.scrollTo(href);
+        return true;
+    });
+    
     // Clicking on a comment relating to a merge request 
     // version displays the comment in context
     $("#merge_request_comments .comment.inline .inline_comment_link a").live("click", function() {

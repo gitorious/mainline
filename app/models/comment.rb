@@ -119,7 +119,7 @@ class Comment < ActiveRecord::Base
   end
 
   def applies_to_line_numbers?
-    return MergeRequestVersion === target
+    return !first_line_number.blank?
   end
 
   def applies_to_merge_request?

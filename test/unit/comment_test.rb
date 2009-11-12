@@ -222,9 +222,7 @@ class CommentTest < ActiveSupport::TestCase
       comment.path = "README"
       comment.lines = "1-1:31-32+32"
       assert comment.save
-      assert_equal "1-1", comment.first_line_number
-      assert_equal "31-32", comment.last_line_number
-      assert_equal 32, comment.number_of_lines
+      assert comment.applies_to_line_numbers?
     end
   end
 end
