@@ -95,9 +95,11 @@
       <%= link_to t("views.projects.repository_clones"),
             project_repositories_path(@project) -%>
     </h4>
-    <%= render :partial => "repositories/clone_list_search", :locals => {
-          :path => project_repositories_path(@project, :format => 'json')
-    } -%>
+    <% if show_clone_list_search?(@group_clones, @user_clones) -%>
+      <%= render :partial => "repositories/clone_list_search", :locals => {
+            :path => project_repositories_path(@project, :format => 'json')
+      } -%>
+    <% end -%>
     <%= render :partial => "repositories" -%>
   <% end -%>
   

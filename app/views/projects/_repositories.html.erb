@@ -44,7 +44,8 @@
   <ul>
     <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
   </ul>
-<% else -%>
+<% elsif @project.repositories.clones.by_groups.count > 5 ||
+     @project.repositories.clones.by_users.count > 5 -%>
     <small style="float:right;"><%= link_to("Show all", clones_project_path(@project),
           :id => "show_all_clones") -%></small>
 <% end -%>

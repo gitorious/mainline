@@ -19,14 +19,15 @@
 
 <h4><%= t("views.projects.repository_clones") -%></h4>
 
-<%= render :partial => "clone_list_search", :locals => {
-  :path => search_clones_project_repository_path(@repository.project, @repository)
-} %>
-
+<% if show_clone_list_search?(@repository.clones.by_groups, @repository.clones.by_users) -%>
+  <%= render(:partial => "clone_list_search", :locals => {
+        :path => search_clones_project_repository_path(@repository.project, @repository)
+  }) -%>
+<% end -%>
 
 <% unless @repository.clones.by_groups.blank? -%>
   <div class="team_clones">
-    <h5><%= t("views.repos.by_teams") -%></h5>
+    <h5><%= t("views.repos.by_teams") -%> (<%= @repository.clones.by_groups.count -%>)</h5>
     <ul class="repository_list">
       <% @repository.clones.by_groups.fresh.each do |repo| -%>
       <%= render :partial => "repositories/repository_sidebar", 
@@ -37,7 +38,7 @@
   <% end -%>
 <% unless @repository.clones.by_users.blank? -%>
   <div class="personal_clones">
-    <h5><%= t("views.repos.by_users") -%></h5>
+    <h5><%= t("views.repos.by_users") -%> (<%= @repository.clones.by_users.count -%>)</h5>
     <ul class="repository_list">
       <% @repository.clones.by_users.fresh.each do |repo|-%>
       <%= render :partial => "repositories/repository_sidebar", 
