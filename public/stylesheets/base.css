@@ -3172,22 +3172,23 @@ Style the headers when searching
 */
 
 #repo_search {
-  width: 220px;
+  width: 260px;
 }
 .searching form {
   background-image: url(/images/spinner.gif);
-  background-position: 98% 50%;
+  background-position: 95% 7px;
   background-repeat: no-repeat;
 }
 
 #repo_search form {
   position: relative;
-  width: 220px;
+  width: 260px;
   height: 30px;
+  margin:0;
 }
 
 #repo_search input.search {
-  border: 1px solid #333;
+  border: 1px solid #bbb;
   -moz-border-radius: 10px;
   background: #fff url(/images/silk/zoom.png) 4px 50% no-repeat;
   -webkit-border-radius: 10px;
@@ -3195,8 +3196,9 @@ Style the headers when searching
   position: absolute;
   left: 0;
   top: 0;
-  width: 160px;
+  width: 200px;
   z-index: 9;
+  margin:0;
 }
 
 /* The resetter */
@@ -3205,7 +3207,7 @@ Style the headers when searching
   color: #390;
   cursor: pointer;
   position: absolute;
-  top: 10px;
+  top: 3px;
   right: 40px;
   z-index: 10;
 }

@@ -19,14 +19,9 @@
 
 <h4><%= t("views.projects.repository_clones") -%></h4>
 
-<div id="repo_search" 
-     gts:searchUri="<%= search_clones_project_repository_path(@repository.project, @repository) -%>">
-  <form>
-  <input name="filter" type="text" class="search" autocomplete="off" />
-  <span class="reset"><%= image_tag("/images/silk/cancel.png")-%></span>
-  </form>
-  <ul class="repository_list"></ul>
-</div>
+<%= render :partial => "clone_list_search", :locals => {
+  :path => search_clones_project_repository_path(@repository.project, @repository)
+} %>
 
 
 <% unless @repository.clones.by_groups.blank? -%>

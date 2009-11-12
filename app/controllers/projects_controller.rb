@@ -22,13 +22,15 @@
 #++
 
 class ProjectsController < ApplicationController  
-  before_filter :login_required, :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
+  before_filter :login_required,
+    :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
-  before_filter :find_project, :only => [:show, :edit, :update, :confirm_delete, :edit_slug]
+  before_filter :find_project,
+    :only => [:show, :clones, :edit, :update, :confirm_delete, :edit_slug]
   before_filter :assure_adminship, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
-  renders_in_global_context :except => [:show, :edit, :update, :confirm_delete]
+  renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
   
   def index
     @projects = Project.paginate(:all, :order => "projects.created_at desc", 
@@ -65,14 +67,24 @@ class ProjectsController < ApplicationController
     @owner = @project
     @root = @project
     @events = @project.events.top.paginate(:all, :page => params[:page],
-                :order => "created_at desc", :include => [:user, :project])
+      :order => "created_at desc", :include => [:user, :project])
+    # TODO most/recently active instead:
+    @group_clones = @project.repositories.by_groups.find(:all, :limit => 5)
+    @user_clones = @project.repositories.by_users.find(:all, :limit => 5)
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
-    if stale_conditional?([@project, @events.first], (@events.first || @project).created_at)
-      respond_to do |format|
-        format.html
-        format.xml  { render :xml => @project }
-        format.atom { }
-      end
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @project }
+      format.atom { }
+    end
+  end
+
+  def clones
+    @owner = @project
+    @group_clones = @project.repositories.by_groups
+    @user_clones = @project.repositories.by_users
+    respond_to do |format|
+      format.js { render :partial => "repositories" }
     end
   end
   

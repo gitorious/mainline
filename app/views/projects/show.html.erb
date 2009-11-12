@@ -90,10 +90,15 @@
       <%- end -%>
     </ul>
   
-  <% cache([@project, :clone_list], :expires_in => 2.minutes) do -%>
-    <% benchmark("Repositories (sidebar)") do  -%>
-      <%= render :partial => "repositories" -%>
-    <% end -%>
+  <% benchmark("Repositories (sidebar)") do  -%>
+    <h4>
+      <%= link_to t("views.projects.repository_clones"),
+            project_repositories_path(@project) -%>
+    </h4>
+    <%= render :partial => "repositories/clone_list_search", :locals => {
+          :path => project_repositories_path(@project, :format => 'json')
+    } -%>
+    <%= render :partial => "repositories" -%>
   <% end -%>
   
 <% end -%>

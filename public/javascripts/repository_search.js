@@ -54,10 +54,17 @@ $(document).ready(function () {
         onDisplay: function() {
             jQuery(".team_clones").hide();
             jQuery(".personal_clones").hide();
+            jQuery("#show_all_clones").hide();
         },
         onReset: function (){
             jQuery(".team_clones").show();
             jQuery(".personal_clones").show();
-        }});
-}
-)
+        }
+    });
+
+    jQuery("#show_all_clones").live("click", function(e) {
+        jQuery("#clone-list-container").load( $(this).attr("href") + ".js" );
+        $(this).hide();
+        return false;
+    });
+});
