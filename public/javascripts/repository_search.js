@@ -13,28 +13,34 @@ $(document).ready(function () {
             callback(data);
         });
     }}
+
     /*
       Renderer for rendering repositories as search results
      */
     var renderer = {
+        escape: function(str) {
+            return str.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/&/g,'&amp;');
+        },
+
         // Should return something that can be appended to a jQuery object
         render: function(repo) {
             row = jQuery('<li class="clone"></li>');
 
-            repo_title = repo.description || repo.name
+            repo_title = this.escape(repo.description || repo.name);
 
             title = jQuery('<div class="name"><a href="' + repo.uri + 
-                           '" title="' + repo_title + '">' + repo.name + "</a></div>");
+                           '" title="' + repo_title + '">' +
+                           this.escape(repo.name) + "</a></div>");
             title.appendTo(row);
-            
+
             ownerType = repo.owner_type;
-            description = jQuery('<div class="' + ownerType + '"></div>');
+            description = jQuery('<div class="' + this.escape(ownerType) + '"></div>');
 
             ownerUri = repo.owner_uri;
-            ownerTag = jQuery('<a href="' + ownerUri + '">' + repo.owner + '</a>');
+            ownerTag = jQuery('<a href="' + ownerUri + '">' +
+                              this.escape(repo.owner) + '</a>');
             ownerTag.appendTo(description);
 
-            
             if (image = repo.img) {
                 imageTag = jQuery('<img src="' + image + '" width="16" height="16" />');
                 imageTag.prependTo(description);
@@ -43,7 +49,7 @@ $(document).ready(function () {
             description.appendTo(row);
             return row;
         }
-    }
+    };
 
     jQuery("#repo_search").liveSearch(backend, {
         resourceUri: searchUri, 
@@ -56,7 +62,7 @@ $(document).ready(function () {
             jQuery(".personal_clones").hide();
             jQuery("#show_all_clones").hide();
         },
-        onReset: function (){
+        onReset: function() {
             jQuery(".team_clones").show();
             jQuery(".personal_clones").show();
         }
