@@ -247,6 +247,9 @@ $(document).ready(function() {
           $(".comment.inline").hide();
         }
     });
+    if ($("#inline_comment_form.commit").length > 0) {
+        Gitorious.enableCommenting();
+    }
 });
 
 

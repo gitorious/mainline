@@ -35,7 +35,9 @@
     <% unless @commit.merge? -%>
       <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
       <%= render_diffmode_selector -%>
-      <%= render_diffs(@diffs) %>
+      <%= render_inline_diffs_with_stats(@diffs, :open) do |file|
+          @comments.select{ |c| c.path == file.a_path}
+          end -%>
     <% end -%>
   <% end -%>
 <% end -%>
@@ -44,4 +46,12 @@
 <div class="comments">
   <%= render :partial => @comments -%>
 </div>
+
 <%= render :partial => "comments/form", :locals => {:sha1 => @commit.id} -%>
+
+
+<%= render :partial => "comments/inline_comment_form", :locals => {
+:commentable_type => "commit",
+:comment => :comment,
+:url => new_polymorphic_comment_path(nil, Comment.new),
+:sha1 => @commit.id} -%>

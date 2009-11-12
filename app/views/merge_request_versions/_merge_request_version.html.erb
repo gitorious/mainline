@@ -53,37 +53,16 @@
 </div>
 <% end -%>
 
-<div id="inline_comment_form">
-<h2>Add your comment</h2>
-<% if logged_in? -%>
-<% form_for(@version.comments.build, :url => repo_owner_path(@version.merge_request.target_repository, 
+<%= render :partial => "comments/inline_comment_form", :locals => {
+:commentable_type => "merge_request_version",
+:comment => @version.comments.build,
+:url => repo_owner_path(@version.merge_request.target_repository, 
     [
     @version.merge_request.target_repository.project,
     @version.merge_request.target_repository, 
-    @version.merge_request, @version, :comments])) do |f| -%>
-<p><em id="description"></em></p>
-<p class="flash_message error" style="display:none"></p>
-<p>
-  <%= f.text_area :body -%>
-  <%= hidden_field :comment, :lines -%>
-  <%= f.hidden_field :path -%>
-  <%= f.hidden_field :sha1 -%>
-  <%= f.hidden_field :context -%>
-</p>
-<p class="progress" style="display:none">
-  <%= image_tag "spinner.gif" -%>  Saving...
-</p>
-<p>
-  <input type="button" value="Cancel" class="cancel_button" />
-  <%= f.submit -%>
-</p>
-<% end -%>
-<% else -%>
-<div class="please_log_in">
-<p>Please <%= link_to "log in", login_path -%> to comment</p>
-</div>
-<% end -%>
-</div>
+    @version.merge_request, @version, :comments]),
+:sha1 => nil
+} -%>
 
 <%= render_inline_diffs_controls("merge-requests") %>
 <%= render_inline_diffs_with_stats(diffs){|file|@version.comments_for_path_and_sha(file.a_path, @sha_range)} -%>
