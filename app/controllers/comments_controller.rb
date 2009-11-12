@@ -93,18 +93,22 @@ class CommentsController < ApplicationController
       wants.js do
         case @target
         when Repository
-          render :json => {
-            "comment" => render_to_string(:partial => @comment)
-          }, :status => :created
+          commit = @target.git.commit(@comment.sha1)
+          @comments = @target.comments.find_all_by_sha1(@comment.sha1, :include => :user)
+          @diffs = commit.parents.empty? ? [] : commit.diffs.select { |diff|
+            diff.a_path == @comment.path
+          }
+          @file_diff = render_to_string(:partial => "commits/diffs")
         else
           @diffs = @target.diffs(range_or_string(@comment.sha1)).select{|d|
             d.a_path == @comment.path
-          } 
-          render :json => {
-            "file-diff" => render_to_string(:partial => "merge_request_versions/comments"),
-            "comment" => render_to_string(:partial => @comment)
-          }, :status => :created            
+          }
+          @file_diff = render_to_string(:partial => "merge_request_versions/comments")
         end
+        render :json => {
+          "file-diff" => @file_diff,
+          "comment" => render_to_string(:partial => @comment)
+        }, :status => :created
       end
     end
   end

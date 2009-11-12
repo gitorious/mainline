@@ -128,6 +128,9 @@ class CommentsControllerTest < ActionController::TestCase
     context "Inline commenting on commits" do
       setup do
         @repo = repositories(:johans)
+        commit = mock(:parents => [])
+        git = mock(:commit => commit)
+        Repository.any_instance.stubs(:git).returns(git)
         login_as :moe
       end
 

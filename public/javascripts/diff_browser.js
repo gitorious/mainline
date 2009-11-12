@@ -692,7 +692,7 @@ Gitorious.CommentForm = function(path){
                 "success": function(data, text) {
                     NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
                     diffContainer.replaceWith(data["file-diff"]);
-                    $("#merge_request_comments.comments").append(data["comment"]);
+                    $(".commentable.comments").append(data["comment"]);
                     NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
                     $("#diff-inline-comments-for-" + lastLine).slideDown();
                     Gitorious.CommentForm.destroyAll();

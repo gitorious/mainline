@@ -35,15 +35,13 @@
     <% unless @commit.merge? -%>
       <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
       <%= render_diffmode_selector -%>
-      <%= render_inline_diffs_with_stats(@diffs, :open) do |file|
-          @comments.select{ |c| c.path == file.a_path}
-          end -%>
+      <%= render :partial => "diffs" -%>
     <% end -%>
   <% end -%>
 <% end -%>
 
 <h2 id="comments">Comments</h2>
-<div class="comments">
+<div class="commentable comments">
   <%= render :partial => @comments -%>
 </div>
 
