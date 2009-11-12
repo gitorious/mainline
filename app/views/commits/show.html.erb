@@ -41,7 +41,7 @@
 <% end -%>
 
 <h2 id="comments">Comments</h2>
-<div class="commentable comments">
+<div class="commentable comments <%= @diffmode -%>">
   <%= render :partial => @comments -%>
 </div>
 

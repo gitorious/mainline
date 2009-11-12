@@ -1732,6 +1732,11 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   font-weight: bold;
 }
 
+/* When displaying commits side-by-side, do not display the links to the context*/
+.comments.sidebyside .comment.inline .inline_comment_link {
+  display: none;
+}
+
 .comments .comment.inline .inline_comment_link a {
     color: #333;
 }
