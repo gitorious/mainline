@@ -44,7 +44,8 @@
     <%= f.check_box :deny_force_pushing %><br />
     <span class="hint">
       Denying force pushing means that pushing non-fastforwards 
-      (eg <code>git push -f</code>) is not allowed
+      (eg <code>git push -f</code>) is not allowed, it will also
+      prevent tag creation (you can toggle this whenever you like)
     </span>
   </p>
   <p>
