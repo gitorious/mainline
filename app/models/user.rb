@@ -182,11 +182,13 @@ class User < ActiveRecord::Base
     user
   end
   
-  def self.most_active(limit = 10, cutoff = 7.days.ago)
-    Rails.cache.fetch("users:most_active_pushers:#{limit}", :expires_in => 1.hour) do
+  def self.most_active(limit = 10, cutoff = 3)
+    Rails.cache.fetch("users:most_active_pushers:#{limit}:#{cutoff}",
+        :expires_in => 1.hour) do
       find(:all, :select => "users.*, events.action, count(events.id) as event_count",
         :joins => :events, :group => "users.id", :order => "event_count desc",
-        :conditions => ["events.action = ? and events.created_at > ?", Action::COMMIT, cutoff],
+        :conditions => ["events.action = ? and events.created_at > ?",
+                        Action::COMMIT, cutoff.days.ago],
         :limit => limit)
     end
   end

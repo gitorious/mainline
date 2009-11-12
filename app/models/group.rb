@@ -61,8 +61,8 @@ class Group < ActiveRecord::Base
   end
   
   # Finds the most active groups by activity in repositories they're committers in
-  def self.most_active(limit = 10, cutoff = 7.days.ago)
-    Rails.cache.fetch("groups:most_active:#{limit}", :expires_in => 1.hour) do
+  def self.most_active(limit = 10, cutoff = 5)
+    Rails.cache.fetch("groups:most_active:#{limit}:#{cutoff}", :expires_in => 1.hour) do
       # FIXME: there's a certain element of approximation in here
       find(:all, :joins => [{:committerships => {:repository => :events}}],
         :select => %Q{groups.*, committerships.repository_id, 
@@ -70,7 +70,8 @@ class Group < ActiveRecord::Base
           count(events.id) as event_count},
         :group => "groups.id",
         :conditions => ["committerships.repository_id = events.target_id and 
-                        events.target_type = ? AND events.created_at > ?", "Repository", cutoff],
+                        events.target_type = ? AND events.created_at > ?",
+                        "Repository", cutoff.days.ago],
         :order => "event_count desc",
         :limit => limit)
     end

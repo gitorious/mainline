@@ -62,8 +62,8 @@ class SiteController < ApplicationController
     def render_global_index
       if GitoriousConfig["is_gitorious_dot_org"] && !logged_in?
         @projects = Project.most_active_recently(10, 7)
-        @teams = Group.most_active(10, 7.days.ago)
-        @users = User.most_active(10, 7.days.ago)
+        @teams = Group.most_active
+        @users = User.most_active
         @latest_events = Event.latest(4)
         
         render :layout => "second_generation/application", :inline => ""
