@@ -147,6 +147,16 @@ class Project < ActiveRecord::Base
     end
   end
 
+  def recently_updated_group_repository_clones(limit = 5)
+    self.repositories.by_groups.find(:all, :limit => limit,
+      :order => "last_pushed_at desc")
+  end
+
+  def recently_updated_user_repository_clones(limit = 5)
+    self.repositories.by_users.find(:all, :limit => limit,
+      :order => "last_pushed_at desc")
+  end
+
   def to_param
     slug
   end

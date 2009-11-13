@@ -68,9 +68,8 @@ class ProjectsController < ApplicationController
     @root = @project
     @events = @project.events.top.paginate(:all, :page => params[:page],
       :order => "created_at desc", :include => [:user, :project])
-    # TODO most/recently active instead:
-    @group_clones = @project.repositories.by_groups.find(:all, :limit => 5)
-    @user_clones = @project.repositories.by_users.find(:all, :limit => 5)
+    @group_clones = @project.recently_updated_group_repository_clones
+    @user_clones = @project.recently_updated_user_repository_clones
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     respond_to do |format|
       format.html
