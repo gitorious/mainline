@@ -66,7 +66,8 @@ module BlobsHelper
   
   def render_highlighted(text, filename, code_theme_class = nil)
     out = []
-    out << %Q{<table id="codeblob" class="highlighted">}
+    lang_class = "lang" + File.extname(filename).sub('.', '-')
+    out << %Q{<table id="codeblob" class="highlighted #{lang_class}">}
     text.to_s.split("\n").each_with_index do |line, count|
       lineno = count + 1
       out << %Q{<tr id="line#{lineno}">}
