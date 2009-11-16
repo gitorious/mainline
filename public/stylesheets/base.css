@@ -2240,6 +2240,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 .events.inline .event_instance .event_date {
   width: 60px;
   padding-right: 10px;
+  margin-bottom: 0;
 }
 .events .event_instance img {
   float: left;
