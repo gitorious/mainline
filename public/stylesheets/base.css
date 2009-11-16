@@ -2271,6 +2271,16 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   text-align: left;
 }
 
+.events .event_instance.relative .event_meta {
+    margin: 0 0px 20px 30px;
+}
+.events .event_instance.relative .relative_date {
+    font-size: 11px;
+    color: #555;
+    margin-right: 10px;
+    float: right;
+}
+
 .events.inline .event_instance .event_meta * > p {
   text-align: left;
 }
