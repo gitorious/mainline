@@ -67,10 +67,10 @@ class MessagesController < ApplicationController
   
   def show
     @message = Message.find(params[:id])
-    unless @message.sender == current_user or @message.recipient == current_user
+    if !@message.readable_by?(current_user)
       raise ActiveRecord::RecordNotFound and return
     end
-    @message.read if @message.recipient == current_user
+    @message.mark_as_read_by_user(current_user)
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @message}

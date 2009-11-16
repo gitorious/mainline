@@ -189,7 +189,27 @@ class MessageTest < ActiveSupport::TestCase
       @message.save
     end
   end
-  
+
+  should "be readable by the sender" do
+    message = Message.new(:subject => "Hello", :body => "World")
+    message.sender = users(:johan)
+    message.recipient = users(:mike)
+
+    assert message.readable_by?(users(:johan))
+    assert message.readable_by?(users(:mike))
+    assert !message.readable_by?(users(:moe))
+  end
+
+  should "be marked as read by the recipient" do
+    message = Message.first
+    message.sender = users(:johan)
+    message.recipient = users(:mike)
+
+    assert_equal "unread", message.aasm_state_for_user(users(:mike))
+    message.mark_as_read_by_user(users(:mike))
+    assert_equal "read", message.reload.aasm_state_for_user(users(:mike))
+  end
+
   context 'Rendering XML' do
     setup {@message = Factory.create(:message)}
     should 'include required attributes' do
