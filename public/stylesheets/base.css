@@ -2238,7 +2238,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   color: #898989;
 }
 .events.inline .event_instance .event_date {
-  width: 60px;
+  width: 77px;
   padding-right: 10px;
   margin-bottom: 0;
 }
@@ -2262,7 +2262,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 }
 
 .events.inline .event_instance .event_meta {
-  margin: 0 0px 20px 95px;
+  margin: 0 0px 20px 112px;
   text-align: left;
 }
 
