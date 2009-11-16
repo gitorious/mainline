@@ -38,7 +38,8 @@ jQuery.fn.liveSearch = function(backend, options) {
     previous,  // The last search term
     input = element.find("input[type=text]"),  
     uri = options.resourceUri + "?" + input.attr("name") + "=",
-    resetter;  
+    resetter,
+    noResults = element.find(".no-results-found");  
     
     // Create the container element if it doesn't exist
     if (container.length === 0) {
@@ -46,6 +47,7 @@ jQuery.fn.liveSearch = function(backend, options) {
         container.appendTo(element);
     }
     container.hide();
+    noResults.hide();
 
     resetter = element.find(".reset");
     
@@ -63,7 +65,11 @@ jQuery.fn.liveSearch = function(backend, options) {
         
         // Receive a search, queue it for some time, then perform the search
         queueSearch: function(phrase) {
-            if (phrase === "" || new RegExp("^" + previous + "$", "i").test(phrase)) {
+            if (phrase === "") {
+                this.reset();
+                return;
+            }
+            if (new RegExp("^" + previous + "$", "i").test(phrase)) {
                 return;
             }
             stopTimer();
@@ -86,17 +92,22 @@ jQuery.fn.liveSearch = function(backend, options) {
         populate: function(result, phrase) {
             if (typeof result != "object")
                 throw new TypeError("Expected an object");
-            
+
             if (options.onDisplay)
                 options.onDisplay();
 
             resetter.show();
             element.removeClass(options.waitingClass);
             container.html("").show();
-            jQuery.each(result, function (i, obj) {
-                markup = options.renderer.render(obj);
-                markup.appendTo(container);
-            });
+            if (result.length < 1) {
+                noResults.show();
+            } else {
+                noResults.hide();
+                jQuery.each(result, function (i, obj) {
+                    markup = options.renderer.render(obj);
+                    markup.appendTo(container);
+                });
+            }
         },
 
         // Remove the search results, call into onReset 

@@ -137,5 +137,33 @@ TestCase("Live search for repositories", {
         assertEquals(0, jQuery("#_s .reset:visible").length);
         api.populate([{name: "John Doe"}]);
         assertEquals(1, jQuery("#_s .reset:visible").length);
+    },
+    "test should reset itself when an empty query is entered": function (){
+        /*:DOC += <div id="s"></div> */
+        var api = jQuery("#s").liveSearch();
+        var reset = false;
+        api.reset = function() {
+            reset = true;
+        };
+        api.queueSearch("");
+        assertTrue(reset);
+    },
+    "test should insert a text when no matches found": function (){
+        /*:DOC += <div id="s"><div class="no-results-found"></div></div> */
+        assertEquals(1, jQuery("#s .no-results-found:visible").length);
+        var api = jQuery("#s").liveSearch();
+        assertEquals(0, jQuery("#s .no-results-found:visible").length);
+        api.populate([]);
+        assertEquals(1, jQuery("#s .no-results-found:visible").length);
+    },
+    "test should hide the no-results container when matches found": function (){
+        /*:DOC += <div id="s"><div class="no-results-found"></div></div> */
+        assertEquals(1, jQuery("#s .no-results-found:visible").length);
+        var api = jQuery("#s").liveSearch();
+        assertEquals(0, jQuery("#s .no-results-found:visible").length);
+        api.populate([]);
+        assertEquals(1, jQuery("#s .no-results-found:visible").length);
+        api.populate([{name:"John"}]);
+        assertEquals(0, jQuery("#s .no-results-found:visible").length);
     }
 });
