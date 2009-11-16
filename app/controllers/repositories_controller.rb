@@ -254,7 +254,9 @@ class RepositoriesController < ApplicationController
           :name => repo.name,
           :description => repo.description,
           :uri => url_for(project_repository_path(@project, repo)),
-          :img => repo.owner.avatar.url(:thumb),
+          :img => repo.owner.avatar? ?
+            repo.owner.avatar.url(:thumb) :
+            "/images/default_face.gif",
           :owner => repo.owner.title,
           :owner_type => repo.owner_type.downcase,
           :owner_uri => url_for(repo.owner)
