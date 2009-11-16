@@ -70,7 +70,7 @@ class MessagesController < ApplicationController
     if !@message.readable_by?(current_user)
       raise ActiveRecord::RecordNotFound and return
     end
-    @message.mark_as_read_by_user(current_user)
+    @message.mark_thread_as_read_by_user(current_user)
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @message}

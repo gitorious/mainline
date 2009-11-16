@@ -103,6 +103,26 @@ class MessagesControllerTest < ActionController::TestCase
     should_respond_with :success
     should_assign_to :message
   end
+
+  context "On GET to show (marking as read)" do
+    setup do
+      login_as :moe
+      @message = messages(:johans_message_to_moe)
+      @message.build_reply({
+          :body => "indeed", :sender => users(:moe), :recipient => users(:moe)
+        }).save!
+      @message.build_reply({
+          :body => "quite", :sender => users(:johan), :recipient => users(:moe)
+        }).save!
+      assert @message.messages_in_thread.size >= 2, "msg thread only have one msg"
+    end
+
+    should "mark all messages as read when viewing a thread" do
+      get :show, :id => @message.to_param
+      assert_response :success
+      assert_equal [true]*3, @message.reload.messages_in_thread.map(&:read?)
+    end
+  end
   
   context 'On GET to show in XML' do
     setup do 

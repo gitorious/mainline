@@ -160,6 +160,12 @@ class Message < ActiveRecord::Base
   def mark_as_read_by_user(candidate)
      self.read if self.recipient == candidate
   end
+
+  def mark_thread_as_read_by_user(a_user)
+    self.messages_in_thread.each do |msg|
+      msg.mark_as_read_by_user(a_user)
+    end
+  end
   
   def archived_by(a_user)
     if a_user == sender
