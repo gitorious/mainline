@@ -85,6 +85,10 @@ class Committership < ActiveRecord::Base
     permitted?(:admin)
   end
 
+  def permission_list
+    PERMISSION_TABLE.keys.select{|perm| permitted?(perm) }
+  end
+
   def breadcrumb_parent
     Breadcrumb::Committerships.new(repository)
   end

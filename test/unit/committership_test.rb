@@ -218,5 +218,10 @@ class CommittershipTest < ActiveSupport::TestCase
       assert cs.committer?
       assert cs.reviewer?
     end
+
+    should "get a list of current permissions" do
+      @cs.build_permissions(:review, :commit)
+      assert_equal [:review, :commit], @cs.permission_list
+    end
   end
 end
