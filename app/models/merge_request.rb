@@ -35,6 +35,8 @@ class MergeRequest < ActiveRecord::Base
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
 
+  before_validation_on_create :set_sequence_number
+  
   is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
     :include => [{
       :association_name => "user",
@@ -43,12 +45,14 @@ class MergeRequest < ActiveRecord::Base
     }], :conditions => "status != 0"
 
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
-                  :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site
+                  :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
 
-  validates_presence_of :user, :source_repository, :target_repository, :summary
-
+  validates_presence_of :user, :source_repository, :target_repository, :summary, :sequence_number
+  
   validates_presence_of :ending_commit, :on => :create
 
+  validates_uniqueness_of :sequence_number, :scope => :target_repository_id
+  
   STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
   STATUS_OPEN = 1
   STATUS_CLOSED = 5 # further states must start at 5+n (for backwards compat)
@@ -596,5 +600,12 @@ class MergeRequest < ActiveRecord::Base
                       self.id, self.version_ids],
       :order => "comments.created_at",
       :include => [:target,:user])
+  end
+
+  protected
+  def set_sequence_number
+    if target_repository
+      self.sequence_number = target_repository.next_merge_request_sequence_number
+    end
   end
 end

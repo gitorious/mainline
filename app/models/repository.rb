@@ -622,6 +622,19 @@ class Repository < ActiveRecord::Base
     result.compact
   end
 
+  def merge_request_sequence_numbers
+    merge_requests.collect(&:sequence_number).compact.sort
+  end
+
+  def next_merge_request_sequence_number
+    highest = if merge_request_sequence_numbers.blank?
+      0
+    else
+      merge_request_sequence_numbers.max
+    end
+    highest + 1
+  end
+
   # Runs git-gc on this repository, and updates the last_gc_at attribute
   def gc!
     Grit::Git.with_timeout(nil) do
