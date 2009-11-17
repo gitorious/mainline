@@ -3,25 +3,30 @@ johan_johans:
   committer_type: User
   repository_id: 1
   creator_id: 1
-  
+  permissions: <%= Committership::CAN_REVIEW|Committership::CAN_COMMIT|Committership::CAN_ADMIN %>
+
 thunderbird_johans:
   committer: team_thunderbird (Group)
   repository_id: 2
   creator_id: 1
+  permissions: <%= Committership::CAN_REVIEW|Committership::CAN_COMMIT %>
 
 thunderbird_moes:
   committer: team_thunderbird (Group)
   repository_id: 3
   creator_id: 1
+  permissions: <%= Committership::CAN_REVIEW|Committership::CAN_COMMIT %>
 
 johan_johans_moe_clone:
   committer_id: 2
   committer_type: User
   repository_id: 4
   creator_id: 1
+  permissions: <%= Committership::CAN_COMMIT %>
 
 johan_johans_moe_clone:
   committer_id: 1
   committer_type: User
   repository_id: 5
   creator_id: 1
+  permissions: <%= Committership::CAN_COMMIT %>

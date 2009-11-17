@@ -359,16 +359,16 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.owner = users(:johan)
       @repository.save!
       @repository.reload
-      assert @repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be true'
-      assert !@repository.writable_by?(users(:mike)), '@repository.writable_by?(users(:mike)) should be false'
+      assert @repository.writable_by?(users(:johan))
+      assert !@repository.writable_by?(users(:mike))
 
       @repository.change_owner_to!(groups(:team_thunderbird))
       @repository.save!
-      assert !@repository.writable_by?(users(:johan)), '@repository.writable_by?(users(:johan)) should be false'
+      assert !@repository.writable_by?(users(:johan))
 
       @repository.owner.add_member(users(:moe), Role.member)
       @repository.committerships.reload
-      assert @repository.writable_by?(users(:moe)), '@repository.writable_by?(users(:moe)) should be true'
+      assert @repository.writable_by?(users(:moe))
     end
 
     context "a wiki repository" do
@@ -560,10 +560,16 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.reload
     assert !repo.committers.include?(users(:moe))
 
-    repo.committerships.create(:committer => users(:johan))
+    repo.committerships.create!({
+        :committer => users(:johan),
+        :permissions => Committership::CAN_COMMIT
+      })
     assert_equal [users(:johan).login], repo.committers.map(&:login)
 
-    repo.committerships.create(:committer => groups(:team_thunderbird))
+    repo.committerships.create!({
+        :committer => groups(:team_thunderbird),
+        :permissions => Committership::CAN_COMMIT
+      })
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
     assert_equal exp_users.map(&:login), repo.committers.map(&:login)
 
@@ -633,6 +639,10 @@ class RepositoryTest < ActiveSupport::TestCase
     old_committer = repo.owner
     repo.change_owner_to!(groups(:team_thunderbird))
     assert !repo.committers.include?(old_committer)
+    assert repo.committers.include?(groups(:team_thunderbird).members.first)
+    [:reviewer?, :committer?, :admin?].each do |m|
+      assert repo.committerships.last.send(m), "cannot #{m}"
+    end
   end
 
   should "downcases the name before validation" do
@@ -667,6 +677,14 @@ class RepositoryTest < ActiveSupport::TestCase
     should "only include unique users in #committers" do
       groups(:team_thunderbird).add_member(users(:moe), Role.member)
       assert_equal 1, @repo.committers.select{|u| u == users(:moe)}.size
+    end
+
+    should "not include committerships without a commit permission bit" do
+      assert_equal 1, @repo.committerships.count
+      cs = @repo.committerships.first
+      cs.build_permissions(:review)
+      cs.save!
+      assert_equal [], @repo.committers.map(&:login)
     end
   end
 
