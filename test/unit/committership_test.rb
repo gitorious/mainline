@@ -159,6 +159,57 @@ class CommittershipTest < ActiveSupport::TestCase
       @cs.build_permissions(:review, :commit)
       assert_equal Committership::CAN_REVIEW | Committership::CAN_COMMIT, @cs.permissions
     end
-  end
 
+    should "know if someone can review" do
+      @cs.build_permissions(:review)
+      assert @cs.reviewer?
+      assert !@cs.committer?
+      assert !@cs.admin?
+    end
+
+    should "know if someone can commit" do
+      @cs.build_permissions(:commit)
+      assert !@cs.reviewer?
+      assert @cs.committer?
+      assert !@cs.admin?
+    end
+
+    should "know if someone can admin" do
+      @cs.build_permissions(:admin)
+      assert !@cs.reviewer?
+      assert !@cs.committer?
+      assert @cs.admin?
+    end
+
+    should "know when someone is a committer and reviewer" do
+      @cs.build_permissions(:commit, :review)
+      assert @cs.committer?
+      assert @cs.reviewer?
+      assert !@cs.admin?
+    end
+
+    should "raise if permitted? gets a bad value" do
+      assert_raises(RuntimeError) { @cs.permitted?("lulz") }
+      assert_raises(RuntimeError) { @cs.permitted?(42)     }
+      assert_raises(RuntimeError) { @cs.permitted?(:bob)   }
+    end
+
+    should "find all reviewers" do
+      @cs.build_permissions(:review)
+      @cs.save!
+      assert Committership.reviewers.all.include?(@cs)
+    end
+
+    should "find all committers" do
+      @cs.build_permissions(:commit)
+      @cs.save!
+      assert Committership.committers.all.include?(@cs)
+    end
+
+    should "find all admins" do
+      @cs.build_permissions(:admin)
+      @cs.save!
+      assert Committership.admins.all.include?(@cs)
+    end
+  end
 end
