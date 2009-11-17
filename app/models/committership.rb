@@ -51,6 +51,13 @@ class Committership < ActiveRecord::Base
   named_scope :committers, :conditions => ["(permissions & ?)", CAN_COMMIT]
   named_scope :admins, :conditions => ["(permissions & ?)", CAN_ADMIN]
 
+  def self.create_for_owner!(an_owner)
+    create!({
+        :committer => an_owner,
+        :permissions => (CAN_REVIEW | CAN_COMMIT | CAN_ADMIN)
+      })
+  end
+
   def permission_mask_for(*perms)
     perms.inject(0) do |memo, perm_symbol|
       memo | PERMISSION_TABLE[perm_symbol]

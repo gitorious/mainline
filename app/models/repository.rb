@@ -633,7 +633,7 @@ class Repository < ActiveRecord::Base
     end
 
     def create_initial_committership
-      self.committerships.create!(:committer => self.owner)
+      self.committerships.create_for_owner!(self.owner)
     end
 
     def self.full_path_from_partial_path(path)

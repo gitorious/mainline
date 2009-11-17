@@ -592,7 +592,11 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_difference("Committership.count") do
       user_repo.save!
       assert_equal 1, user_repo.committerships.count
-      assert_equal users(:johan), user_repo.committerships.first.committer
+      cs = user_repo.committerships.first
+      assert_equal users(:johan), cs.committer
+      [:reviewer?, :committer?, :admin?].each do |m|
+        assert cs.send(m), "should have #{m} permissions"
+      end
     end
   end
 
