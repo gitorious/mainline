@@ -36,10 +36,11 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
 
   should_validate_presence_of :user, :source_repository, :target_repository
-  should_validate_presence_of :summary
-
+  should_validate_presence_of :summary, :sequence_number
+  
   should_have_many :comments
-
+  should_not_allow_mass_assignment_of :sequence_number
+  
   should "email all committers in the target_repository after the terms are accepted" do
     assert_incremented_by(Message, :count, 1) do
       mr = @merge_request.clone
@@ -479,6 +480,7 @@ class MergeRequestTest < ActiveSupport::TestCase
           :summary => 'Please, mister postman',
           :proposal => 'Please, mister postman'
         })
+      @merge_request.sequence_number = @target_repo.next_merge_request_sequence_number
     end
 
     should 'require ending_commit for new records' do
@@ -489,7 +491,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'not consider a missing ending_commit a show stopper on update' do
       @merge_request.save(false)
       @merge_request.proposal = 'Yikes'
-      assert @merge_request.save
+      assert @merge_request.save!
     end
   end
 
@@ -754,4 +756,24 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert @merge_request.cascaded_comments.include? @comments.first
     end
   end
+
+  context "Sequence numbers" do
+    setup {
+      @repository = repositories(:johans)
+    }
+    should "set the sequence number on create" do
+      @merge_request = @repository.merge_requests.build(
+        :user => users(:moe),
+        :source_repository => repositories(:moes),
+        :summary => "Please merge",
+        :proposal => "New window decorations",
+        :sha_snapshot => "ffac",
+        :ending_commit => "ac00"
+        )
+      next_sequence = @repository.next_merge_request_sequence_number
+      assert @merge_request.save
+      assert_equal(next_sequence, @merge_request.sequence_number)
+    end
+  end
+  
 end
