@@ -20,6 +20,17 @@
 #++
 
 class Committership < ActiveRecord::Base
+
+  CAN_REVIEW = 1 << 2
+  CAN_COMMIT = 1 << 4
+  CAN_ADMIN  = 1 << 6
+
+  PERMISSION_TABLE = {
+    :review => CAN_REVIEW,
+    :commit => CAN_COMMIT,
+    :admin => CAN_ADMIN
+  }
+
   belongs_to :committer, :polymorphic => true
   belongs_to :repository
   belongs_to :creator, :class_name => 'User'
@@ -36,16 +47,9 @@ class Committership < ActiveRecord::Base
 
   named_scope :groups, :conditions => { :committer_type => "Group" }
   named_scope :users,  :conditions => { :committer_type => "User" }
-
-  CAN_REVIEW = 1 << 2
-  CAN_COMMIT = 1 << 3
-  CAN_ADMIN  = 1 << 4
-
-  PERMISSION_TABLE = {
-    :review => CAN_REVIEW,
-    :commit => CAN_COMMIT,
-    :admin => CAN_ADMIN
-  }
+  named_scope :reviewers, :conditions => ["(permissions & ?)", CAN_REVIEW]
+  named_scope :committers, :conditions => ["(permissions & ?)", CAN_COMMIT]
+  named_scope :admins, :conditions => ["(permissions & ?)", CAN_ADMIN]
 
   def permission_mask_for(*perms)
     perms.inject(0) do |memo, perm_symbol|
@@ -55,6 +59,23 @@ class Committership < ActiveRecord::Base
 
   def build_permissions(*perms)
     self.permissions = permission_mask_for(*perms)
+  end
+
+  def permitted?(wants_to)
+    raise "unknown permission: #{wants_to.inspect}" if !PERMISSION_TABLE[wants_to]
+    (self.permissions & PERMISSION_TABLE[wants_to]) != 0
+  end
+
+  def reviewer?
+    permitted?(:review)
+  end
+
+  def committer?
+    permitted?(:commit)
+  end
+
+  def admin?
+    permitted?(:admin)
   end
 
   def breadcrumb_parent
