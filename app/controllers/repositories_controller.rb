@@ -75,6 +75,7 @@ class RepositoriesController < ApplicationController
     @repository.kind = Repository::KIND_PROJECT_REPO
     @repository.owner = @project.owner
     @repository.user = current_user
+    @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
     
     if @repository.save
       flash[:success] = I18n.t("repositories_controller.create_success")
@@ -172,6 +173,7 @@ class RepositoriesController < ApplicationController
       end
       @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
       @repository.notify_committers_on_new_merge_request = params[:repository][:notify_committers_on_new_merge_request]
+      @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
       @repository.save!
       flash[:success] = "Repository updated"
       redirect_to [@repository.project_or_owner, @repository]

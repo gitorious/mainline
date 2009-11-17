@@ -411,6 +411,8 @@
         :show_group => "Show team members",
         :by_teams => "Team clones",
         :by_users => "Personal clones",
+        :merge_requests_enabled => "Merge requests allow Gitorious users to request you to merge contributions 
+      they make to your code. "
       },
       :projects => {
         :title => "Projects",

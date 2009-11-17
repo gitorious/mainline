@@ -105,7 +105,8 @@ class Repository < ActiveRecord::Base
   
   def self.new_by_cloning(other, username=nil)
     suggested_name = username ? "#{username}s-#{other.name}" : nil
-    new(:parent => other, :project => other.project, :name => suggested_name)
+    new(:parent => other, :project => other.project, :name => suggested_name,
+      :merge_requests_enabled => other.merge_requests_enabled)
   end
   
   def self.find_by_name_in_project!(name, containing_project = nil)

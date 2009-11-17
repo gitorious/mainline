@@ -57,6 +57,13 @@
       is created
     </span>
   </p>
+  <p>
+    <%= f.label :merge_requests_enabled, "Enable merge requests?" -%>
+    <%= f.check_box :merge_requests_enabled -%> <br />
+    <span class="hint">
+      <%= t("views.repos.merge_requests_enabled") -%>
+    </span>
+  </p>
   <% unless @repository.owned_by_group? -%>
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />

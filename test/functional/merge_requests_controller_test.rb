@@ -218,6 +218,20 @@ class MergeRequestsControllerTest < ActionController::TestCase
 				:repository_id => @source_repository.to_param
 			assert_equal [repositories(:johans)], assigns(:repositories)
 		end
+
+    should "not suggest merging with a non-MR repo" do
+      clone = Repository.new_by_cloning(@source_repository)
+      clone.name = "a-clone"
+      clone.user = users(:johan)
+      clone.owner = users(:johan)
+      clone.kind = Repository::KIND_USER_REPO
+      clone.merge_requests_enabled = false
+      assert clone.save
+      login_as :johan
+      get :new, :project_id => @project.to_param,
+        :repository_id => @source_repository.to_param
+      assert !assigns(:repositories).include?(clone)
+    end
 		
 		should "set a default mainline target repo id" do
 		  login_as :johan

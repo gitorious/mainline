@@ -110,7 +110,7 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
     @repositories = @owner.repositories.find(:all,
-      :conditions => ["id != ? AND kind != ?", @repository.id, Repository::KIND_TRACKING_REPO])
+      :conditions => ["id != ? AND kind != ? AND merge_requests_enabled = ?", @repository.id, Repository::KIND_TRACKING_REPO, true])
     if first = @repositories.find{|r| r.mainline? } || @repositories.first
       @merge_request.target_repository_id = first.id
     end

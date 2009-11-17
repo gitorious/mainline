@@ -255,6 +255,15 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal @repository.project, repos.project
     assert repos.new_record?, 'new_record? should be true'
   end
+
+  should "inherit merge request inclusion from its parent" do
+    @repository.update_attribute(:merge_requests_enabled, true)
+    clone = Repository.new_by_cloning(@repository)
+    assert clone.merge_requests_enabled?
+    @repository.update_attribute(:merge_requests_enabled, false)
+    clone = Repository.new_by_cloning(@repository)
+    assert !clone.merge_requests_enabled?
+  end
   
   should "suggests a decent name for a cloned repository bsed on username" do
     repos = Repository.new_by_cloning(@repository, username="johan")
@@ -833,6 +842,16 @@ class RepositoryTest < ActiveSupport::TestCase
       @merge_repo = @main_repo.build_tracking_repository
       @merge_repo.expects(:publish).never
       assert @merge_repo.save
+    end
+  end
+
+  context "Merge requests enabling" do
+    setup do
+      @repository = Repository.new
+    end
+
+    should "by default allow merge requests" do
+      assert @repository.merge_requests_enabled?
     end
   end
 

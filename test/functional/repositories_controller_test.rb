@@ -974,6 +974,20 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to(project_repository_path(@project, assigns(:repository)))
     end
+
+    should "respect the creator's choice of merge requests or not" do
+      post :create, :project_id => @project.to_param, :repository => {
+        :name => "mine"
+      }
+      assert_not_nil repo = assigns(:repository)
+      assert !repo.merge_requests_enabled?
+      post :create, :project_id => @project.to_param, :repository => {
+        :name => "mine",
+        :merge_requests_enabled => "1"
+      }
+      assert_not_nil repo = assigns(:repository)
+      assert repo.merge_requests_enabled?      
+    end
   end
 
   context "edit / update" do
@@ -1103,6 +1117,18 @@ class RepositoriesControllerTest < ActionController::TestCase
         :repository => { :deny_force_pushing => true }
       assert_response :redirect
       assert @repository.reload.deny_force_pushing?
+    end
+
+    should "be able to disable merge requests" do
+      @repository.update_attribute(:merge_requests_enabled, true)
+      put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
+        :repository => {}
+      assert_response :redirect
+      assert !@repository.reload.merge_requests_enabled?
+      put :update, :project_id => @repository.project.to_param, :id => @repository.to_param,
+        :repository => {:merge_requests_enabled => 1}
+      assert_response :redirect
+      assert @repository.reload.merge_requests_enabled?
     end
 
     should "be able to turn off notify_committers_on_new_merge_request" do

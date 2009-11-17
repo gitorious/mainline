@@ -40,6 +40,13 @@
     <span class="hint">(<%= markdown_hint -%>)</span>:<br />
     <%= f.text_area :description, :class => "text shorter" -%>
   </p>
+  <p>
+    <%= f.label :enable_merge_requests -%>
+    <%= f.check_box :merge_requests_enabled -%> <br />
+    <span class="hint">
+      <%= t("views.repos.merge_requests_enabled") -%>
+    </span>
+  </p>
   
   <%= f.submit "Create repository" -%>
 <% end -%>
