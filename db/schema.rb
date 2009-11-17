@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(:version => 20091116143337) do
     t.datetime "updated_at"
     t.string   "committer_type",                :null => false
     t.integer  "creator_id"
+    t.integer  "permissions"
   end
 
   add_index "committerships", ["committer_id", "committer_type"], :name => "index_committerships_on_committer_id_and_committer_type"
@@ -108,6 +109,17 @@ ActiveRecord::Schema.define(:version => 20091116143337) do
 
   add_index "groups", ["name"], :name => "index_groups_on_name_and_public"
   add_index "groups", ["user_id"], :name => "index_groups_on_user_id"
+
+  create_table "hooks", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "repository_id"
+    t.string   "url"
+    t.string   "last_response"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "group_id"
