@@ -757,11 +757,11 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
+
+
   context "Sequence numbers" do
     setup {
       @repository = repositories(:johans)
-    }
-    should "set the sequence number on create" do
       @merge_request = @repository.merge_requests.build(
         :user => users(:moe),
         :source_repository => repositories(:moes),
@@ -770,9 +770,22 @@ class MergeRequestTest < ActiveSupport::TestCase
         :sha_snapshot => "ffac",
         :ending_commit => "ac00"
         )
+    }
+    should "set the sequence number on create" do
       next_sequence = @repository.next_merge_request_sequence_number
       assert @merge_request.save
       assert_equal(next_sequence, @merge_request.sequence_number)
+    end
+
+    should "require a unique sequence number for each target repo" do
+      assert @merge_request.save
+      mr2 = @merge_request.clone
+      assert mr2.save
+      mr2.sequence_number = @merge_request.sequence_number
+      assert_equal mr2.sequence_number, @merge_request.sequence_number
+      assert !mr2.save
+      assert_equal mr2.sequence_number, @merge_request.sequence_number
+      assert_not_nil mr2.errors.on(:sequence_number)
     end
   end
   
