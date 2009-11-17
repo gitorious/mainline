@@ -23,28 +23,49 @@ class Committership < ActiveRecord::Base
   belongs_to :committer, :polymorphic => true
   belongs_to :repository
   belongs_to :creator, :class_name => 'User'
-  
+
   validates_presence_of :committer_id, :committer_type, :repository_id
-  
-  validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id], :message => 'is already a committer to this repository'
+
+  validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id],
+    :message => 'is already a committer to this repository'
   after_create :notify_repository_owners
   after_create :add_new_committer_event
   after_destroy :add_removed_committer_event
   has_many :messages, :as => :notifiable
   before_destroy :nullify_messages
-  
+
   named_scope :groups, :conditions => { :committer_type => "Group" }
-  named_scope :users,  :conditions => { :committer_type => "User" }  
-  
+  named_scope :users,  :conditions => { :committer_type => "User" }
+
+  CAN_REVIEW = 1 << 2
+  CAN_COMMIT = 1 << 3
+  CAN_ADMIN  = 1 << 4
+
+  PERMISSION_TABLE = {
+    :review => CAN_REVIEW,
+    :commit => CAN_COMMIT,
+    :admin => CAN_ADMIN
+  }
+
+  def permission_mask_for(*perms)
+    perms.inject(0) do |memo, perm_symbol|
+      memo | PERMISSION_TABLE[perm_symbol]
+    end
+  end
+
+  def build_permissions(*perms)
+    self.permissions = permission_mask_for(*perms)
+  end
+
   def breadcrumb_parent
     Breadcrumb::Committerships.new(repository)
   end
-  
+
   def title
     new_record? ? "New committer" : "Committer"
   end
-  
-  # returns all the users in this committership, eg if it's a group it'll 
+
+  # returns all the users in this committership, eg if it's a group it'll
   # return an array of the group members, otherwise a single-member array of
   # the user
   def members
@@ -55,7 +76,7 @@ class Committership < ActiveRecord::Base
       [committer]
     end
   end
-  
+
   protected
     def notify_repository_owners
       return unless creator
@@ -76,17 +97,17 @@ class Committership < ActiveRecord::Base
         message.save
       end
     end
-    
+
     def add_new_committer_event
-      repository.project.create_event(Action::ADD_COMMITTER, repository, 
+      repository.project.create_event(Action::ADD_COMMITTER, repository,
                                       creator, committer.title)
     end
-    
+
     def add_removed_committer_event
-      repository.project.create_event(Action::REMOVE_COMMITTER, repository, 
+      repository.project.create_event(Action::REMOVE_COMMITTER, repository,
                                       creator, committer.title)
     end
-    
+
     def nullify_messages
       messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
     end
