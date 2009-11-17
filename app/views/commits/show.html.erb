@@ -28,7 +28,7 @@
 <h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
 
 <%= render :partial => "commit_infobox" -%>
-<% cache({:mode => @diffmode}) do -%>
+<% cache({:mode => @diffmode, :comment_count => @comment_count}) do -%>
   <% if @diffs.blank? -%>
     <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
   <% else -%>
