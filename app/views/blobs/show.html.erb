@@ -64,7 +64,7 @@
         <p>
           This file looks large and may slow your browser down if we attempt
           to syntax highlight it, so we're showing it without any
-          pretty colors. 
+          pretty colors.
           <a href="#highlight-anyway" id="highlight-anyway">Highlight
           it anyway</a>.
         </p>
@@ -76,7 +76,7 @@
 	<%= t("views.blobs.too_big").call(self, raw_blob_path(@commit.id, current_path)) %>
   </p>
 <% elsif image?(@blob) -%>
-  <% cache(blob_path(@commit.id, @path)) do -%>
+  <% cache(blob_path(@commit.id, @blob.id)) do -%>
     <%= image_tag raw_blob_path(@commit.id, current_path) -%>
   <% end -%>
 <% else -%>
