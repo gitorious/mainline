@@ -332,7 +332,7 @@ class Repository < ActiveRecord::Base
           end
         end
         unless committerships.any?{|c|c.committer == another_owner}
-          committerships.create!(:committer => another_owner)
+          committerships.create_for_owner!(self.owner)
         end
         save!
         reload
@@ -480,7 +480,7 @@ class Repository < ActiveRecord::Base
   # returns an array of users who have commit bits to this repository either
   # directly through the owner, or "indirectly" through the associated groups
   def committers
-    committerships.map{|c| c.members }.flatten.compact.uniq
+    committerships.committers.map{|c| c.members }.flatten.compact.uniq
   end
 
   # Is this repo writable by +a_user+, eg. does he have push permissions here
