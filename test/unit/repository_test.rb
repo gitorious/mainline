@@ -686,6 +686,15 @@ class RepositoryTest < ActiveSupport::TestCase
       cs.save!
       assert_equal [], @repo.committers.map(&:login)
     end
+
+    should "return a list of reviewers" do
+      assert !@repo.reviewers.map(&:login).include?(users(:moe).login)
+      @repo.committerships.create!({
+          :committer => users(:moe),
+          :permissions => Committership::CAN_REVIEW
+        })
+      assert @repo.reviewers.map(&:login).include?(users(:moe).login)
+    end
   end
 
   context 'owners as User or Group' do

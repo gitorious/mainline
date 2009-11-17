@@ -483,6 +483,11 @@ class Repository < ActiveRecord::Base
     committerships.committers.map{|c| c.members }.flatten.compact.uniq
   end
 
+  # Returns a list of Users who can review things (as per their Committership)
+  def reviewers
+    committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
+  end
+
   # Is this repo writable by +a_user+, eg. does he have push permissions here
   # NOTE: this may be context-sensitive depending on the kind of repo
   def writable_by?(a_user)
