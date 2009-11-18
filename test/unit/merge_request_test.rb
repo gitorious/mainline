@@ -774,6 +774,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     should "set the sequence number on create" do
       next_sequence = @repository.next_merge_request_sequence_number
       assert @merge_request.save
+      assert_equal next_sequence + 1, @repository.next_merge_request_sequence_number
       assert_equal(next_sequence, @merge_request.sequence_number)
     end
 

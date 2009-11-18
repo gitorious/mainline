@@ -622,19 +622,28 @@ class Repository < ActiveRecord::Base
     result.compact
   end
 
-  def merge_request_sequence_numbers
-    merge_requests.collect(&:sequence_number).compact.sort
+  # Fallback when the real sequence number is taken
+  def calculate_highest_merge_request_sequence_number
+    merge_requests.maximum(:sequence_number)
   end
 
+  # The basis for the sequence number, reflects the number of merge requests
+  def merge_request_count
+    merge_requests.count
+  end
+
+  # Ideally we want to reflect how many merge requests are entered.
+  # However, if this sequence is taken (an old record), we'll go one up
+  # from the highest number instead
   def next_merge_request_sequence_number
-    highest = if merge_request_sequence_numbers.blank?
-      0
+    candidate = merge_request_count + 1
+    if merge_requests.find_by_sequence_number(candidate)
+      calculate_highest_merge_request_sequence_number + 1
     else
-      merge_request_sequence_numbers.max
+      candidate
     end
-    highest + 1
   end
-
+  
   # Runs git-gc on this repository, and updates the last_gc_at attribute
   def gc!
     Grit::Git.with_timeout(nil) do
