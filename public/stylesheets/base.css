@@ -868,6 +868,19 @@ input#openid_url {
     list-style-type: disc;
 }
 
+form table.inline-labels td {
+    padding-right: 10px;
+}
+form table.inline-labels th {
+    padding-right: 20px;
+}
+form table.inline-labels td label {
+    font-weight: normal;
+}
+
+
+/* Tables */
+
 table.listing {
   width: 100%;
 }

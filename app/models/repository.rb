@@ -488,6 +488,12 @@ class Repository < ActiveRecord::Base
     committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
   end
 
+  # The list of users who can admin this repo, either directly as
+  # committerships or indirectly as members of a group
+  def administrators
+    committerships.admins.map{|c| c.members }.flatten.compact.uniq
+  end
+
   # Is this repo writable by +a_user+, eg. does he have push permissions here
   # NOTE: this may be context-sensitive depending on the kind of repo
   def writable_by?(a_user)

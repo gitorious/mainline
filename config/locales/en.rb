@@ -170,8 +170,8 @@
         :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
-        :creating_account => lambda { |this, path| 
-          this.link_to("Creating a user account", path) + 
+        :creating_account => lambda { |this, path|
+          this.link_to("Creating a user account", path) +
           " allows you to create your own project or participate in the development of any project." },
         :newest_projects => "Latest projects",
         :view_more => "View more &raquo;",
@@ -223,7 +223,7 @@
         :send_new_passwd => 'Send me a new password',
         :openid_build_title => 'Complete your registration',
         :openid_build_description => 'You need enter the following details:',
-        :create_title => lambda { |this, path| "Create new user or " + 
+        :create_title => lambda { |this, path| "Create new user or " +
           this.link_to( "login directly with your OpenID", path ) },
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
         :wants_email_notifications => 'Send email notifications?',
@@ -379,8 +379,8 @@
         :show_title => "&quot;{{repo}}&quot; repository in {{title}}",
         :committers_title => "Add committers to {{repo}} in {{title}}",
         :committers_manage_group_members => "Manage team members for {{group}}",
-        :committers_howto => "There are two ways to add committers to a repository, either by adding 
-                              members to the team owning the repository, or to add another team as 
+        :committers_howto => "There are two ways to add committers to a repository, either by adding
+                              members to the team owning the repository, or to add another team as
                               committers.",
         :transfer_owner => "Transfer owner",
         :current_owner_project => "The repository is currrently owned by the {{project_name}} project (which you own).",
@@ -388,7 +388,7 @@
         :transfer_owner_howto => "If you wish, you can transfer ownership
                                   of this repository to a team you're an administrator of. That way you can add
                                   multiple users as committers, without requiring them to start a team.",
-        :add_committer_group => "Or you can add an existing team as committers to the repository, 
+        :add_committer_group => "Or you can add an existing team as committers to the repository,
                                 thus giving all the members commit access.",
         :activities => "Activities",
         :clone_of => "Clone of",
@@ -404,14 +404,14 @@
         :current_committers => "Committers",
         :remove => "Remove",
         :clone_breadcrumb => "Clone Repository",
-        :create_title => lambda { |this, clone, project| 
+        :create_title => lambda { |this, clone, project|
           "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
         },
         :edit_group => "Edit/show team members",
         :show_group => "Show team members",
         :by_teams => "Team clones",
         :by_users => "Personal clones",
-        :merge_requests_enabled => "Merge requests allow Gitorious users to request you to merge contributions 
+        :merge_requests_enabled => "Merge requests allow Gitorious users to request you to merge contributions
       they make to your code. "
       },
       :projects => {
@@ -458,7 +458,7 @@
           :target_branch => "The target branch you wish your changes to be merged into",
           :source_branch => "The source branch you wish the target repository should merge from",
           :summary => "A one-line summary of your changes",
-          :proposal => "A more detailed overview of your changes",          
+          :proposal => "A more detailed overview of your changes",
         },
         :summary_title => "{{source}} has requested a merge with {{target}}",
         :review => "Review merge request &#x2192;",
@@ -548,9 +548,9 @@
         :add_team => "Add a team",
         :new_title => "Add a user or team as committers to {{repo_name}}",
         :btn_add_as_committer => "Add as committers",
-        :return_to => "return to", 
-        :or_return_to => "or return to", 
-        :add_tema_note => "<strong>Note</strong> that adding a team will give
+        :return_to => "return to",
+        :or_return_to => "or return to",
+        :add_team_note => "<strong>Note</strong> that adding a team will give
                           everyone in that team commit rights to your repository",
       },
       :aliases => {
@@ -684,6 +684,7 @@
           :committer => "committer",
           :committer_type => "Committer type",
           :repository => "Repository",
+          :permissions => "Permissions",
           :creator => "Added by",
         }
       },

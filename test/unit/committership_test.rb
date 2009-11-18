@@ -160,6 +160,11 @@ class CommittershipTest < ActiveSupport::TestCase
       assert_equal Committership::CAN_REVIEW | Committership::CAN_COMMIT, @cs.permissions
     end
 
+    should "build permissions from either strings or symbols" do
+      @cs.build_permissions("review", "commit")
+      assert_equal Committership::CAN_REVIEW | Committership::CAN_COMMIT, @cs.permissions
+    end
+
     should "know if someone can review" do
       @cs.build_permissions(:review)
       assert @cs.reviewer?
