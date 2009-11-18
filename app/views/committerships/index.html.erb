@@ -20,7 +20,7 @@
 <%= breadcrumbs_from(@root) -%>
 
 <h1>
-  <%= t("views.committerships.title", 
+  <%= t("views.committerships.title",
         :repo_name => link_to(h(@repository.name), [@owner, @repository]))  -%>
 </h1>
 
@@ -29,6 +29,7 @@
 		<th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
+    <th><%= t(:permissions, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
 		<th></th>
 	</thead>
@@ -37,6 +38,7 @@
 	  <td><%= committership.created_at.to_s(:short) -%></td>
 	  <td><%= committership.committer.class.human_name -%></td>
 	  <td><%= link_to h(committership.committer.title), committership.committer -%></td>
+    <td><%=h committership.permission_list.join(', ') -%></td>
 	  <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
 	  <td><%= button_to(t("views.common.remove"), [@owner, @repository, committership], :method => :delete) -%></td>
 	</tr>
@@ -48,7 +50,7 @@
 <% content_for :sidebar do -%>
   <ul class="links actions">
     <li>
-      <%= link_to t("views.committerships.add_new"), 
+      <%= link_to t("views.committerships.add_new"),
             [:new, @owner, @repository, :committership] -%>
     </li>
   </ul>

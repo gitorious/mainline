@@ -17,20 +17,23 @@
 #++
 
 class CommittershipsController < ApplicationController
-  before_filter :find_repository_owner, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  before_filter :find_repository, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  before_filter :require_adminship, :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :find_repository_owner,
+    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :find_repository,
+    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :require_adminship,
+    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
   renders_in_site_specific_context
-  
+
   def index
     @committerships = @repository.committerships.paginate(:all, :page => params[:page])
     @root = Breadcrumb::Committerships.new(@repository)
   end
-  
+
   def new
     @committership = @repository.committerships.new
   end
-  
+
   def create
     @committership = @repository.committerships.new
     if params[:group][:name].blank? && !params[:user][:login].blank?
@@ -39,7 +42,8 @@ class CommittershipsController < ApplicationController
       @committership.committer = Group.find_by_name(params[:group][:name])
     end
     @committership.creator = current_user
-    
+    @committership.build_permissions(params[:permissions])
+
     if @committership.save
       if @committership.committer.is_a?(User)
         flash[:success] = "User added as committer"
@@ -51,7 +55,7 @@ class CommittershipsController < ApplicationController
       render :action => "new"
     end
   end
-  
+
   def destroy
     @committership = @repository.committerships.find(params[:id])
     if @committership.destroy
@@ -59,42 +63,43 @@ class CommittershipsController < ApplicationController
     end
     redirect_to([@owner, @repository, :committerships])
   end
-  
+
   def auto_complete_for_group_name
-    @groups = Group.find(:all, 
+    @groups = Group.find(:all,
       :conditions => [ 'LOWER(name) LIKE ?', '%' + params[:q].downcase + '%' ],
       :limit => 10)
     render :text => @groups.map{|g| g.name }.join("\n")
     #render :layout => false
   end
-  
+
   def auto_complete_for_user_login
-    @users = User.find(:all, 
-      :conditions => [ 'lower(login) like :name or lower(email) like :name', 
+    @users = User.find(:all,
+      :conditions => [ 'lower(login) like :name or lower(email) like :name',
                       {:name => '%' + params[:q].downcase + '%'} ],
       :limit => 10)
     render :text => @users.map{|u| u.login }.join("\n")
     #render "/memberships/auto_complete_for_user_login", :layout => false
   end
-  
+
   protected
     def require_adminship
       unless @owner.admin?(current_user)
         respond_to do |format|
-          format.html { 
+          format.html {
             flash[:error] = I18n.t "repositories_controller.adminship_error"
-            redirect_to([@owner, @repository]) 
+            redirect_to([@owner, @repository])
           }
-          format.xml  { 
-            render :text => I18n.t( "repositories_controller.adminship_error"), 
-                    :status => :forbidden 
+          format.xml  {
+            render :text => I18n.t( "repositories_controller.adminship_error"),
+                    :status => :forbidden
           }
         end
         return
       end
     end
-    
+
     def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id], @containing_project)
+      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+        @containing_project)
     end
 end

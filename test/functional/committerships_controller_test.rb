@@ -114,13 +114,14 @@ class CommittershipsControllerTest < ActionController::TestCase
     should "add a Group as having committership" do
       assert_difference("@repository.committerships.count") do
         post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
-              :group => {:name => @group.name}, :user => {}
+              :group => {:name => @group.name}, :user => {}, :permissions => ["review"]
       end
       assert_response :redirect
       assert !assigns(:committership).new_record?, 'new_record? should be false'
       assert_equal @group, assigns(:committership).committer
       assert_equal @user, assigns(:committership).creator
       assert_equal "Team added as committers", flash[:success]
+      assert_equal [:review], assigns(:committership).permission_list
     end
     
     should "add a User as having committership" do
@@ -129,13 +130,16 @@ class CommittershipsControllerTest < ActionController::TestCase
       @repository.committerships.reload
       assert_difference("@repository.committerships.count") do
         post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
-              :user => {:login => @user.login}, :group => {}
+              :user => {:login => @user.login}, :group => {}, :permissions => ["review","commit"]
       end
       assert_response :redirect
       assert !assigns(:committership).new_record?, 'new_record? should be false'
       assert_equal @user, assigns(:committership).committer
       assert_equal @user, assigns(:committership).creator
       assert_equal "User added as committer", flash[:success]
+      assert assigns(:committership).reviewer?
+      assert assigns(:committership).committer?
+      assert !assigns(:committership).admin?
     end
   end
   

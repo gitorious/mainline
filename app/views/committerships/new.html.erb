@@ -58,22 +58,40 @@
   </ul>
 
   <p id="add_user">
-    <%= f.label :group_name, t("views.committerships.user_login") -%>: 
+    <%= f.label :group_name, t("views.committerships.user_login") -%>:
     <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
   </p>
   <p id="add_group" style="display:none;">
-    <%= f.label :group_name, t("views.committerships.group_name") -%>: 
+    <%= f.label :group_name, t("views.committerships.group_name") -%>:
     <%= text_field :group, :name, :id => "group_name_autocomplete" -%>
+    <br /><span class="hint">
+      <%= t("views.committerships.add_team_note") -%>
+    </span>
   </p>
-  
-  <p class="hint">
-    <%= t("views.committerships.add_tema_note") -%>
-  </p>
+
+  <table class="inline-labels">
+    <tr>
+      <th><%= f.label :permissions -%>:</th>
+      <td>
+        <%= f.label "Review" %>
+        <%= check_box_tag "permissions[]", "review", false -%>
+      </td>
+      <td>
+        <%= f.label "Commit" %>
+        <%= check_box_tag "permissions[]", "commit", false -%>
+      </td>
+      <td>
+        <%= f.label "Administrate" %>
+        <%= check_box_tag "permissions[]", "admin", false -%>
+      </td>
+    </tr>
+  </table>
+
   <p>
-    <%= f.submit t("views.committerships.btn_add_as_committer") -%> 
+    <%= f.submit t("views.committerships.btn_add_as_committer") -%>
     <%= t("views.committerships.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :committerships] -%>
   </p>
-  
+
 <% end -%>
 
 <% content_for :sidebar do -%>
