@@ -1009,20 +1009,43 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository = repositories(:johans)
     end
 
-    should "return a sorted list of sequence numbers" do
-      assert_equal(@repository.merge_requests.collect(&:sequence_number).sort,
-        @repository.merge_request_sequence_numbers)
+    should "calculate the highest existing sequence number" do
+      assert_equal(@repository.merge_requests.max_by(&:sequence_number).sequence_number,
+        @repository.calculate_highest_merge_request_sequence_number)
     end
 
-    should "use 1 as sequence for first merge request" do
-      @repository.expects(:merge_request_sequence_numbers).returns([])
-      assert_equal 1, @repository.next_merge_request_sequence_number
+    should "calculate the number of merge requests" do
+      assert_equal(3, @repository.merge_request_count)
     end
 
-    should "use highest sequence + 1 for new merge requests" do
+    should "be the number of merge requests for a given repo" do
+      assert_equal 3, @repository.merge_requests.size
       assert_equal 4, @repository.next_merge_request_sequence_number
     end
 
+    # 3 merge requests, update one to have seq 4
+    should "handle taken sequence numbers gracefully" do
+      last_merge_request = @repository.merge_requests.last
+      last_merge_request.update_attribute(:sequence_number, 4)
+      @repository.expects(:calculate_highest_merge_request_sequence_number).returns(99)
+      assert_equal(100,
+        @repository.next_merge_request_sequence_number)
+    end
+    
+    # should "return a sorted list of sequence numbers" do
+    #   assert_equal(@repository.merge_requests.collect(&:sequence_number).sort,
+    #     @repository.merge_request_sequence_numbers)
+    # end
+
+    # should "use 1 as sequence for first merge request" do
+    #   @repository.expects(:merge_request_sequence_numbers).returns([])
+    #   assert_equal 1, @repository.next_merge_request_sequence_number
+    # end
+
+    # should "use highest sequence + 1 for new merge requests" do
+    #   assert_equal 4, @repository.next_merge_request_sequence_number
+    # end
+ 
   end
 
 end
