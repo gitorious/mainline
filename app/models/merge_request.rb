@@ -34,21 +34,21 @@ class MergeRequest < ActiveRecord::Base
 
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
-  
+
   is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
     :include => [{
       :association_name => "user",
       :field => "login",
       :as => "proposed_by"
     }], :conditions => "status != 0"
-  
+
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
                   :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site
-    
+
   validates_presence_of :user, :source_repository, :target_repository, :summary
-  
+
   validates_presence_of :ending_commit, :on => :create
-  
+
   STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
   STATUS_OPEN = 1
   STATUS_CLOSED = 5 # further states must start at 5+n (for backwards compat)
@@ -60,7 +60,7 @@ class MergeRequest < ActiveRecord::Base
     state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
     state :open, :value => ::MergeRequest::STATUS_OPEN
     state :closed, :value => ::MergeRequest::STATUS_CLOSED
-    
+
     event :open do
       transition :pending => :open
     end
@@ -73,7 +73,7 @@ class MergeRequest < ActiveRecord::Base
       transition :closed => :open
     end
   end
-  
+
   named_scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
   named_scope :open, :conditions => ['status = ?', STATUS_OPEN]
   named_scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
@@ -81,32 +81,32 @@ class MergeRequest < ActiveRecord::Base
     {:conditions => ["LOWER(status_tag) = ? AND status != ?",
                      state.downcase, STATUS_PENDING_ACCEPTANCE_OF_TERMS ] }
   }
-  
+
   def reopen_with_user(a_user)
     if can_be_reopened_by?(a_user)
       return reopen
     end
   end
-  
+
   def can_be_reopened_by?(a_user)
     return can_reopen? && resolvable_by?(a_user)
   end
-  
+
   def self.human_name
     I18n.t("activerecord.models.merge_request")
   end
-  
+
   def self.count_open
     count(:all, :conditions => {:status => STATUS_OPEN})
   end
-  
+
   def self.statuses
     @statuses ||= state_machines[:status].states.inject({}){ |result, state |
       result[state.name.to_s.capitalize] = state.value
       result
     }
   end
-  
+
   def self.from_filter(filter_name = nil)
     if filter_name.blank?
       open
@@ -114,15 +114,15 @@ class MergeRequest < ActiveRecord::Base
       by_status(filter_name)
     end
   end
-  
+
   def status_string
     self.class.status_string(status)
   end
-  
+
   def self.status_string(status_code)
     statuses.invert[status_code.to_i].to_s.downcase
   end
-  
+
   def pending_acceptance_of_terms?
     pending?
   end
@@ -134,11 +134,11 @@ class MergeRequest < ActiveRecord::Base
   def possible_next_states
     status == STATUS_OPEN ? [STATUS_CLOSED] : [STATUS_OPEN]
   end
-  
+
   def updated_by=(user)
     self.updated_by_user_id = user.id
   end
-  
+
   def updated_by
     if updated_by_user_id.blank?
       user
@@ -152,7 +152,7 @@ class MergeRequest < ActiveRecord::Base
     yield
     @current_user = nil
   end
-  
+
   def status_tag=(tag)
     unless tag.is_a?(StatusTag)
       tag = StatusTag.new(tag, target_repository.project)
@@ -165,7 +165,7 @@ class MergeRequest < ActiveRecord::Base
     else
       self.status = STATUS_OPEN # FIXME: fallback
     end
-    
+
     @previous_state = status_tag.name if status_tag
     write_attribute(:status_tag, tag.name)
     save
@@ -186,7 +186,7 @@ class MergeRequest < ActiveRecord::Base
         @current_user, message, comment)
     end
   end
-  
+
   # Returns a hash (for the view) of labels and event names for next
   # states TODO: Obviously, putting the states and transitions inside
   # a map is not all that DRY, but the state machine does not have a
@@ -209,24 +209,24 @@ class MergeRequest < ActiveRecord::Base
   def can_transition_to?(new_state)
     send("can_#{new_state}?")
   end
-  
-  
+
+
   def transition_to(status)
     if can_transition_to?(status)
       send(status)
-      yield 
+      yield
       return true
     end
   end
-  
+
   def source_branch
     super || "master"
   end
-  
+
   def target_branch
     super || "master"
   end
-  
+
   def deliver_status_update(a_user)
     message = Message.new({
       :sender => a_user,
@@ -237,34 +237,34 @@ class MergeRequest < ActiveRecord::Base
     })
     message.save
   end
-  
+
   def source_name
     if source_repository
       "#{source_repository.name}:#{source_branch}"
     end
   end
-  
+
   def target_name
     if target_repository
       "#{target_repository.name}:#{target_branch}"
     end
   end
-  
+
   def resolvable_by?(candidate)
     return false unless candidate.is_a?(User)
     (candidate === user) || target_repository.reviewers.include?(candidate)
   end
-  
+
   def commits_for_selection
     return [] if !target_repository
     @commits_for_selection ||= target_repository.git.commit_deltas_from(
       source_repository.git, target_branch, source_branch)
   end
-  
+
   def applies_to_specific_commits?
     !ending_commit.blank?
   end
-  
+
   def commits_to_be_merged
     if ready?
       commit_diff_from_tracking_repo
@@ -277,11 +277,11 @@ class MergeRequest < ActiveRecord::Base
     idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
     return idx ? commits_for_selection[idx..-1] : []
   end
-  
+
   def ready?
     legacy? ? true : !versions.blank?
   end
-  
+
   # Returns the name for the merge request branch. version can be:
   # - the number of a version,
   # - :current for the latest version
@@ -296,7 +296,7 @@ class MergeRequest < ActiveRecord::Base
     end
     result.join("/")
   end
-  
+
   def commit_diff_from_tracking_repo(which_version=nil)
     version = if which_version
       version_number(which_version)
@@ -305,7 +305,7 @@ class MergeRequest < ActiveRecord::Base
     end
     version.affected_commits
   end
-  
+
   def potential_commits
     if applies_to_specific_commits?
       ending = commits_for_selection.find{|c| c.id == ending_commit }
@@ -315,24 +315,24 @@ class MergeRequest < ActiveRecord::Base
       return commits_for_selection
     end
   end
-  
+
   def target_branches_for_selection
     return [] unless target_repository
     target_repository.git.branches || []
   end
-  
+
   def breadcrumb_parent
     Breadcrumb::MergeRequests.new(target_repository)
   end
-  
+
   def breadcrumb_css_class
     "merge_request"
   end
-  
+
   def title
     id
   end
-  
+
   def acceptance_of_terms_required?
     target_repository.requires_signoff_on_merge_requests?
   end
@@ -342,11 +342,11 @@ class MergeRequest < ActiveRecord::Base
   def publish_notification
     publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
   end
-  
+
   def default_status
     target_repository.project.merge_request_statuses.default
   end
-  
+
   def confirmed_by_user
     if default_status
       self.status = default_status.state
@@ -362,9 +362,9 @@ class MergeRequest < ActiveRecord::Base
 
   def notify_subscribers_about_creation
     return unless target_repository.notify_committers_on_new_merge_request?
-    target_repository.committers.uniq.reject{|c|c == user }.each do |committer|
+    target_repository.reviewers.uniq.reject{|c| c == user }.each do |committer|
       message = messages.build({
-        :sender => user, 
+        :sender => user,
         :recipient => committer,
         :subject => I18n.t("mailer.request_notification",
           :login => user.login,
@@ -375,27 +375,27 @@ class MergeRequest < ActiveRecord::Base
       message.save
     end
   end
-  
+
   def oauth_request_token=(token)
     self.oauth_token = token.token
     self.oauth_secret = token.secret
   end
-  
+
   def terms_accepted
     validate_through_oauth do
       confirmed_by_user
       callback_response = access_token.post(target_repository.project.oauth_path_prefix,
         oauth_signoff_parameters)
-      
+
       if Net::HTTPAccepted === callback_response
         self.contribution_notice = callback_response.body
       end
-      
+
       contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
       update_attributes(:contribution_agreement_version => contribution_agreement_version)
     end
   end
-  
+
   # If the contribution agreement site wants to remind the user of the
   # current contribution license, they respond with a
   # Net::HTTPAccepted header along with a response body containing the
@@ -403,47 +403,47 @@ class MergeRequest < ActiveRecord::Base
   def contribution_notice=(notice)
     @contribution_notice = notice
   end
-  
+
   def has_contribution_notice?
     !contribution_notice.blank?
   end
-  
+
   def contribution_notice
     @contribution_notice
   end
-  
+
   # Returns the parameters that are passed on to the contribution agreement site
   def oauth_signoff_parameters
     {
-      'commit_id' => ending_commit, 
-      'user_email' => user.email, 
+      'commit_id' => ending_commit,
+      'user_email' => user.email,
       'user_login'  => user.login,
-      'user_name' => URI.escape(user.title), 
-      'commit_shas' => commits_to_be_merged.collect(&:id).join(","), 
-      'proposal' => URI.escape(proposal), 
+      'user_name' => URI.escape(user.title),
+      'commit_shas' => commits_to_be_merged.collect(&:id).join(","),
+      'proposal' => URI.escape(proposal),
       'project_name' => source_repository.project.slug,
-      'repository_name' => source_repository.name, 
+      'repository_name' => source_repository.name,
       'merge_request_id' => id
     }
   end
-  
+
   def validate_through_oauth
     yield if valid_oauth_credentials?
   end
-  
-  
+
+
   def access_token
     @access_token ||= oauth_consumer.build_access_token(oauth_token, oauth_secret)
   end
-  
+
   def oauth_consumer
     target_repository.project.oauth_consumer
   end
-  
+
   def ending_commit_exists?
     !source_repository.git.commit(ending_commit).nil?
   end
-  
+
   def to_xml(opts = {})
     info_proc = Proc.new do |options|
       builder = options[:builder]
@@ -458,32 +458,32 @@ class MergeRequest < ActiveRecord::Base
         source.branch(target_branch)
       end
     end
-    
+
     super({
       :procs => [info_proc],
       :only => [:summary, :proposal, :created_at, :updated_at, :id, :ending_commit],
       :methods => []
     }.merge(opts))
   end
-  
+
   def update_from_push!
     push_new_branch_to_tracking_repo
     save
   end
-  
+
   def valid_oauth_credentials?
     response = access_token.get("/")
     return Net::HTTPSuccess === response
   end
-  
+
   def nullify_messages
     messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
   end
-  
+
   def recently_created?
     !ready? && created_at > 2.minutes.ago
   end
-  
+
   def push_to_tracking_repository!(force = false)
     options = {:timeout => false}
     options[:force] = true if force
@@ -519,14 +519,14 @@ class MergeRequest < ActiveRecord::Base
     }
     publish :merge_request_backend_updates, msg.to_json
   end
-  
+
   def tracking_repository
     unless target_repository.has_tracking_repository?
       target_repository.create_tracking_repository
     end
     target_repository.tracking_repository
   end
-  
+
   # Returns the version with version number +n+
   def version_number(n)
     versions.to_a.find{|v| v.version == n }
@@ -535,7 +535,7 @@ class MergeRequest < ActiveRecord::Base
   def current_version_number
     versions.blank? ? nil : versions.last.version
   end
-  
+
   # Verify that +a_commit+ exists in target branch. Git cherry would
   # return a list of commits if this is not the case
   def commit_merged?(a_commit)
@@ -547,29 +547,29 @@ class MergeRequest < ActiveRecord::Base
     end
     result == :true
   end
-  
+
   def create_new_version
     result = build_new_version
     result.merge_base_sha = calculate_merge_base
     result.save
     return result
   end
-  
+
   def calculate_merge_base
     target_repository.git.git.merge_base({:timeout => false},
       target_branch, merge_branch_name).strip
   end
-  
+
   def build_new_version
     versions.build(:version => next_version_number)
   end
-  
+
   def next_version_number
     highest_version = versions.last
     highest_version_number = highest_version ? highest_version.version : 0
     highest_version_number + 1
   end
-  
+
   # Migrate repositories from the old regime with reasons:
   # If a reason exists: create a comment from the user who last updated us, provide the state to have it look right
   # If no reason exists: simply set the status tag directly from whatever status_string is
