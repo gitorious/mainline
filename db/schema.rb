@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091117101216) do
+ActiveRecord::Schema.define(:version => 20091119090036) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(:version => 20091117101216) do
     t.integer  "sequence_number"
   end
 
+  add_index "merge_requests", ["sequence_number"], :name => "index_merge_requests_on_sequence_number"
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
   add_index "merge_requests", ["status"], :name => "index_merge_requests_on_status"
   add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
