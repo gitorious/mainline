@@ -396,7 +396,7 @@
         :btn_request => "Request merge",
         :btn_add_committer => "Add committer",
         :btn_add_committers => "Add committers",
-        :btn_manage_committers => "Manage committers",
+        :btn_manage_collaborators => "Manage collaborators",
         :btn_delete_repo => "Delete repository",
         :btn_edit_repo => "Edit repository",
         :edit_breadcrumb => "Edit Repository",
@@ -538,16 +538,16 @@
         :description => 'Team description',
         :avatar => 'Team image/logo:'
       },
-      :committerships => {
-        :add_new => "Add committers",
-        :title => "Users &amp; teams with commit rights to {{repo_name}}",
+      :collaborators => {
+        :add_new => "Add collaborators",
+        :title => "Users &amp; teams collaborating on {{repo_name}}",
         :committer_name => "Committer",
         :group_name => "Team name",
         :user_login => "Username",
         :add_user => "Add a user",
         :add_team => "Add a team",
-        :new_title => "Add a user or team as committers to {{repo_name}}",
-        :btn_add_as_committer => "Add as committers",
+        :new_title => "Add a user or team as collaborators on {{repo_name}}",
+        :btn_add_as_collaborator => "Add as collaborator",
         :return_to => "return to",
         :or_return_to => "or return to",
         :add_team_note => "<strong>Note</strong> that adding a team will give

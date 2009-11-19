@@ -20,7 +20,7 @@
 <%= breadcrumbs_from(@root) -%>
 
 <h1>
-  <%= t("views.committerships.title",
+  <%= t("views.collaborators.title",
         :repo_name => link_to(h(@repository.name), [@owner, @repository]))  -%>
 </h1>
 
@@ -50,8 +50,64 @@
 <% content_for :sidebar do -%>
   <ul class="links actions">
     <li>
-      <%= link_to t("views.committerships.add_new"),
+      <%= link_to t("views.collaborators.add_new"),
             [:new, @owner, @repository, :committership] -%>
     </li>
   </ul>
+
+  <h4>People with access:</h4>
+  <h5>Reviewers</h5>
+  <ul class="committers">
+  <% @repository.reviewers.each do |user| -%>
+    <li>
+      <div class="user">
+        <%= avatar_from_email(user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(user.title), user -%>
+        <% if @repository.user == user -%>
+          <small class="hint">(<%= t("views.repos.creator") %>)</small>
+        <% end -%>
+      </div>
+    </li>
+  <% end -%>
+  <% if @repository.reviewers.blank? -%>
+    <li><em>No users with review permissions</em></li>
+  <% end %>
+  </ul>
+
+  <h5>Committers</h5>
+  <ul class="committers">
+  <% @repository.committers.each do |user| -%>
+    <li>
+      <div class="user">
+        <%= avatar_from_email(user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(user.title), user -%>
+        <% if @repository.user == user -%>
+          <small class="hint">(<%= t("views.repos.creator") %>)</small>
+        <% end -%>
+      </div>
+    </li>
+  <% end -%>
+  <% if @repository.committers.blank? -%>
+    <li><em>No users with commit permissions</em></li>
+  <% end %>
+  </ul>
+
+  <h5>Administrators</h5>
+  <ul class="committers">
+  <% @repository.administrators.each do |user| -%>
+    <li>
+      <div class="user">
+        <%= avatar_from_email(user.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(user.title), user -%>
+        <% if @repository.user == user -%>
+          <small class="hint">(<%= t("views.repos.creator") %>)</small>
+        <% end -%>
+      </div>
+    </li>
+  <% end -%>
+  <% if @repository.administrators.blank? -%>
+    <li><em>No users with administrate permissions</em></li>
+  <% end %>
+  </ul>
+
 <% end -%>

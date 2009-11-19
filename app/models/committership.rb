@@ -95,7 +95,7 @@ class Committership < ActiveRecord::Base
   end
 
   def title
-    new_record? ? "New committer" : "Committer"
+    new_record? ? "New collaborator" : "Collaborator"
   end
 
   # returns all the users in this committership, eg if it's a group it'll

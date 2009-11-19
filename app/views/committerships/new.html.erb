@@ -43,29 +43,29 @@
 <% end -%>
 
 <h1>
-  <%= t("views.committerships.new_title", :repo_name => @repository.name)  -%>
+  <%= t("views.collaborators.new_title", :repo_name => @repository.name)  -%>
 </h1>
 
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
   <ul class="tab_menu inline_tabs">
     <li class="selected"  id="add_user_tab">
-      <a href="#add_user" id="add_user_link"><%= t("views.committerships.add_user") -%></a>
+      <a href="#add_user" id="add_user_link"><%= t("views.collaborators.add_user") -%></a>
     </li>
     <li id="add_group_tab">
-      <a href="#add_group" id="add_group_link"><%= t("views.committerships.add_team") -%></a>
+      <a href="#add_group" id="add_group_link"><%= t("views.collaborators.add_team") -%></a>
     </a>
   </ul>
 
   <p id="add_user">
-    <%= f.label :group_name, t("views.committerships.user_login") -%>:
+    <%= f.label :group_name, t("views.collaborators.user_login") -%>:
     <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
   </p>
   <p id="add_group" style="display:none;">
-    <%= f.label :group_name, t("views.committerships.group_name") -%>:
+    <%= f.label :group_name, t("views.collaborators.group_name") -%>:
     <%= text_field :group, :name, :id => "group_name_autocomplete" -%>
     <br /><span class="hint">
-      <%= t("views.committerships.add_team_note") -%>
+      <%= t("views.collaborators.add_team_note") -%>
     </span>
   </p>
 
@@ -88,12 +88,8 @@
   </table>
 
   <p>
-    <%= f.submit t("views.committerships.btn_add_as_committer") -%>
-    <%= t("views.committerships.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :committerships] -%>
+    <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
+    <%= t("views.collaborators.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :committerships] -%>
   </p>
 
-<% end -%>
-
-<% content_for :sidebar do -%>
-  <%= render :partial => "repositories/committers_sidebar" -%>
 <% end -%>
