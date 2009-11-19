@@ -15,7 +15,7 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#-- 
+#--
 */
 
 $(document).ready(function() {
@@ -28,7 +28,7 @@ $(document).ready(function() {
           linted = linted.toLowerCase().replace(/\-+$/g, '');
           return linted;
         }
-        
+
         slug.val( lintName(this.value) );
     });
 
@@ -39,7 +39,7 @@ $(document).ready(function() {
     $("a.link_noop").click(function(event) {
         event.preventDefault();
     });
-    
+
     // Comment previewing
     $("input#comment_preview_button").click(function(event){
         var formElement = $(this).parents("form");
@@ -90,7 +90,7 @@ $(document).ready(function() {
         }
         event.preventDefault();
     });
-    
+
     // frontpage for non-loggedin users
     // Unobtrusively hooking the regular/OpenID login box stuff, so that it works
     // in a semi-sensible way with javascript disabled.
@@ -118,7 +118,7 @@ $(document).ready(function() {
               searchInput.addClass("unfocused");
             }
         });
-        // hide the 'native' submit button and replace it with our 
+        // hide the 'native' submit button and replace it with our
         // own awesome submit button
         var nativeSubmitButton = $(this).find("input[type=submit]");
         nativeSubmitButton.hide();
@@ -167,6 +167,22 @@ $(document).ready(function() {
         var theForm = $(this).parents(".comment_form");
         theForm.remove();
     });
+
+    // Relative times based on clients browser time
+    jQuery.extend(jQuery.timeago.settings.strings, {
+        seconds: "a minute",
+        minute: "a minute",
+        minutes: "%d minutes",
+        hour: "an hour",
+        hours: "%d hours",
+        day: "a day",
+        days: "%d days",
+        month: "a month",
+        months: "%d months",
+        year: "a year",
+        years: "%d years"
+    });
+    jQuery('abbr.timeago').timeago();
 });
 
 if (!Gitorious)
@@ -205,14 +221,14 @@ Gitorious.DownloadChecker = {
 //       e.removeClassName("unwrapped");
 //     });
 //   },
-  
+
 //   unwrap: function(elements) {
 //     elements.each(function(e) {
 //       //e.removeClassName("softwrapped");
 //       e.addClassName("unwrapped");
 //     });
 //   },
-  
+
 //   toggle: function(elements) {
 //     if (/unwrapped/.test(elements.first().className)) {
 //       Gitorious.Wordwrapper.wrap(elements);
@@ -232,18 +248,18 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
   this.sourceBranchName = null;
   this.targetBranchName = null;
   this.REASONABLY_SANE_RANGE_SIZE = 50;
-  
+
   this.endSelected = function(el) {
     this.endsAt = $(el);
     this.update();
   };
-  
+
   this.onSourceBranchChange = function(event) {
     if (sourceBranch = $('#merge_request_source_branch')) {
       this.sourceBranchSelected(sourceBranch);
     }
   };
-  
+
   this.onTargetRepositoryChange = function(event) {
     $("#spinner").fadeIn();
     $.post(this.targetBranchesUrl, $("#new_merge_request").serialize(),
@@ -256,27 +272,27 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
     });
     this._updateCommitList();
   };
-  
+
   this.onTargetBranchChange = function(event) {
     if (targetBranch = $('#merge_request_target_branch').val()) {
       this.targetBranchSelected(targetBranch);
     }
   };
-  
+
   this.targetBranchSelected = function(branchName) {
     if (branchName != this.targetBranchName) {
       this.targetBranchName = branchName;
       this._updateCommitList();
     }
   };
-  
+
   this.sourceBranchSelected = function(branchName) {
     if (branchName != this.sourceBranchName) {
       this.sourceBranchName = branchName;
       this._updateCommitList();
     }
   };
-  
+
   this.update = function() {
     if (this.endsAt) {
       $(".commit_row").each(function(){ $(this).removeClass("selected") });
@@ -302,7 +318,7 @@ function CommitRangeSelector(commitListUrl, targetBranchesUrl, statusElement)
       });
     }
   };
-  
+
   this._updateCommitList = function() {
     $("#commit_table").replaceWith('<p class="hint">Loading commits&hellip; ' +
                                    '<img src="/images/spinner.gif"/></p>');
@@ -340,7 +356,7 @@ function toggle_wiki_preview(target_url) {
 //   ['merged','unmerged'].each(function(s)
 //   {
 //     var i1 = new Image();
-//     i1.src = "/images/merge_requests/" + s + ".png";        
+//     i1.src = "/images/merge_requests/" + s + ".png";
 //   });
 //   $$('tr.commit_row').each(function(commit_row)
 //   {

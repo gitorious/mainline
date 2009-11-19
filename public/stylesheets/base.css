@@ -7,17 +7,17 @@ version: 2.3.1
 */
 body { color:#000;background:#FFF; }
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,
- input,textarea,p,blockquote,th,td { margin:0;padding:0; } 
+ input,textarea,p,blockquote,th,td { margin:0;padding:0; }
 table { border-collapse:collapse;border-spacing:0; }
 fieldset,img { border:0; }
 address,caption,cite,code,dfn,em,strong,th,var {font-style:normal;font-weight:normal; }
-li { list-style:none;} 
+li { list-style:none;}
 caption,th { text-align:left; }
-h1,h2,h3,h4,h5,h6 { font-size:100%;font-weight:normal; } 
+h1,h2,h3,h4,h5,h6 { font-size:100%;font-weight:normal; }
 q:before,q:after{ content:''; }
 abbr,acronym { border:0;font-variant:normal; }
 sup,sub { line-height:-1px;vertical-align:text-top; }
-sub{ vertical-align:text-bottom; } 
+sub{ vertical-align:text-bottom; }
 input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inherit; }
 
 /**/
@@ -64,7 +64,7 @@ h4 {
 }
 
 #sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6 {
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 #sidebar h1 a, #sidebar h2 a, #sidebar h3 a, #sidebar h4 a, #sidebar h5 a, #sidebar h6 a {
   color: #555;
@@ -143,6 +143,9 @@ ul li h1, ul li h2, ul li h3, ul li h4 {
 
 abbr {
   border-bottom: 1px dotted #333;
+}
+abbr.timeago {
+    border-bottom: none;
 }
 /* boxes */
 
@@ -273,20 +276,20 @@ abbr {
 }
 
 #sidebar ul.links.meta li {
- border-bottom: none; 
+ border-bottom: none;
 }
 
 #sidebar ul.links li a {
   background-repeat: no-repeat;
-  background-position: 5px 7px; 
+  background-position: 5px 7px;
   background-image: url("../images/silk/bullet_go.png");
   display: block;
-  padding: 5px 5px 5px 28px; 
+  padding: 5px 5px 5px 28px;
 }
 
 #sidebar ul.links.meta li a {
   font-size: 10px;
-  padding: 2px 5px 2px 28px; 
+  padding: 2px 5px 2px 28px;
   background-position: 5px 2px;
 }
 
@@ -306,7 +309,7 @@ abbr {
 }
 
 #sidebar ul.links.meta li a:hover {
-  color: #390; 
+  color: #390;
   text-decoration: underline;
 }
 
@@ -359,14 +362,14 @@ abbr {
 .flash_message.notice {
   color: #03588e;
   background-color: #d9e8fa;
-  border-color: #03588e; 
+  border-color: #03588e;
   background-image: url("../images/silk/information.png");
 }
 
 .flash_message.success {
   color: #588e03;
   background-color: #e9fad9;
-  border-color: #588e03; 
+  border-color: #588e03;
   background-image: url("../images/silk/accept.png");
 }
 
@@ -394,15 +397,15 @@ abbr {
   margin-right: 5px;
   color: #666;
 }
-#menu li a { 
+#menu li a {
   font-size: 16px;
   color: #92B92D;
 }
 #menu li.subtle a { color: #666; margin-left: 10px;}
 #menu li.subtle a:hover { color: #92B92D; }
 
-#menu li.secondary a { 
- font-size: 11px; 
+#menu li.secondary a {
+ font-size: 11px;
 }
 
 #menu li.secondary.messages {
@@ -470,7 +473,7 @@ abbr {
   margin-right: 20px;
 }
 
-#submenu li a { 
+#submenu li a {
   float:none;
   font-size: 12px;
   background: #555;
@@ -516,7 +519,7 @@ abbr {
 #breadcrumbs li {
   float: left;
   background-repeat: no-repeat;
-  background-position: right 0px; 
+  background-position: right 0px;
   padding: 0 15px 0 10px;
   display: list-item;
   background-image: url("../images/breadcrumb.png");
@@ -744,19 +747,19 @@ textarea {
   width: 90%;
 }
 
-fieldset { 
-  padding: 3px; 
-  margin: 0 0 10px 0; 
+fieldset {
+  padding: 3px;
+  margin: 0 0 10px 0;
   width: 100%;
 }
 
-legend { 
-  font-weight: bold; 
-  font-size:12px; 
+legend {
+  font-weight: bold;
+  font-size:12px;
 }
 
-label { 
-  font-weight: bold; 
+label {
+  font-weight: bold;
 }
 
 .required {
@@ -771,7 +774,7 @@ form {
 
 form.button-to, form.button-to div { display: inline; }
 form.button-to div { margin: 0 5px 0 5px; }
-form.button-to div input { 
+form.button-to div input {
   background: #dedede;
   border: 1px solid #bbb;
   color: #390;
@@ -779,7 +782,7 @@ form.button-to div input {
   border-top-style: outset;
   border-left-style: outset;
 }
-form.button-to div input:hover { 
+form.button-to div input:hover {
   background: #390;
   color: #fff;
 }
@@ -789,7 +792,7 @@ input[type='text'], input[type='password'] {
   width: 350px;
 }
 
-textarea { 
+textarea {
   width: 350px;
   height: 150px;
   padding: 3px;
@@ -837,7 +840,7 @@ input#openid_url {
 }
 
 .errorExplanation {
-  background: #fbe3e4; 
+  background: #fbe3e4;
   border: 1px solid #c30000;
   width: 400px;
   margin: 0 0 10px 0;
@@ -852,7 +855,7 @@ input#openid_url {
   background: #c30000;
   margin-bottom: 0.2em;
 }
-.errorExplanation p { 
+.errorExplanation p {
   padding: 2px 2px 2px 5px;
   margin-bottom: 0;
   margin-top: 0;
@@ -915,7 +918,7 @@ ul.repository_list li.clone {
   background: url("../images/silk/database.png") 0 0 no-repeat;
 }
 
-ul.repository_list .user img, ul.repository_list .group img, 
+ul.repository_list .user img, ul.repository_list .group img,
 ul.committers .user img, ul.committers .group img {
   float: left;
   margin-top: 1px;
@@ -1007,7 +1010,7 @@ table.repository_meta .infobox ul {
 
 .commit-infobox ul li.avatar div {
   float: left;
-  display: inline; 
+  display: inline;
   padding-right: 10px;
   margin-top: 3px;
 }
@@ -1074,7 +1077,7 @@ td.meta-info {
 .commit_message, .commit_message p {
   margin-top: 10px;
   margin-left: 10px;
-  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
+  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 .event_instance .commit_message, .event_instance .commit_message p {
   margin: 2px 0 0 0;
@@ -1111,7 +1114,7 @@ Single (inline) commit under a push
 
 small.commit_message {
   margin: 0;
-  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 
 .commit_message.inline, .commit_message.inline p {
@@ -1309,20 +1312,20 @@ div.being_constructed .hint {
 #user_login_auto_complete  li.committer {
   height: 32px;
 }
- 
+
 #user_login_auto_complete li.committer div.image {
   float: left;
   width: 32px;
   height: 32px;
-  margin-right: 8px;  
+  margin-right: 8px;
 }
- 
+
 #user_login_auto_complete li.committer div.name {
   font-weight: bold
   font-size: 12px;
   line-height: 1.2em;
 }
- 
+
 #user_login_auto_complete li.committer div.email {
   font-size: 10px;
   color:#888;
@@ -1392,7 +1395,7 @@ ul.tab_menu {
 }
 
 ul.tab_menu li {
-  display:inline; 
+  display:inline;
   margin-right: 1em;
   border-top: 1px solid #888;
   border-left: 1px solid #888;
@@ -1474,7 +1477,7 @@ small.hint { font-size: 83%;}
 }
 
 /* diff mode selector */
-ul.mode_selector { 
+ul.mode_selector {
   float: right;
 }
 ul.mode_selector li {
@@ -1484,7 +1487,7 @@ ul.mode_selector li {
 ul.mode_selector li.list_header { font-weight: bold; }
 ul.mode_selector li.selected    { border-bottom: 1px solid #666; }
 
-/* Diff rendering */ 
+/* Diff rendering */
 tr.toggle_diff { border-top: 1px solid #999; }
 tr.toggle_diff td {
   background: #ddd;
@@ -1492,7 +1495,7 @@ tr.toggle_diff td {
   margin-bottom: 5px;
 }
 tr.toggle_diff td small { float:right;}
-tr.raw_diff td { 
+tr.raw_diff td {
   padding-top: 5px;
 }
 
@@ -1505,7 +1508,7 @@ table tr .line-numbers {
  vertical-align: top;
  background: #eee;
  color: #777;
- font-size: 92%;  
+ font-size: 92%;
  padding: 0 3px 0 2px;
  width: 35px;
  border-right: 1px solid #ccc;
@@ -1624,18 +1627,18 @@ table.codediff {
   border-collapse: collapse;
   font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
-table.codediff .line-num-cut { 
-  background: #ccc; 
-  border-top: 1px dashed #ccc; 
-  border-bottom: 1px dashed #ccc; 
+table.codediff .line-num-cut {
+  background: #ccc;
+  border-top: 1px dashed #ccc;
+  border-bottom: 1px dashed #ccc;
 }
 
 table.codediff thead .line-numbers, table.codediff thead { background: #ddd; }
 table.codediff td.code { padding-left: 2px; }
-table.codediff .cut-line { 
-  background: #eee; 
-  border-top: 1px dashed #aaa; 
-  border-bottom: 1px dashed #aaa; 
+table.codediff .cut-line {
+  background: #eee;
+  border-top: 1px dashed #aaa;
+  border-bottom: 1px dashed #aaa;
 }
 table.codediff td.hidden del { display:none; }
 table.codediff td.del { background: #ffdddd; }
@@ -1645,7 +1648,7 @@ table.codediff td.ins span.idiff { background: #BAFBAD; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del { background: inherit; }
-/*table.sidebyside tbody.mod td ins span.idiff, 
+/*table.sidebyside tbody.mod td ins span.idiff,
   table.sidebyside tbody.mod td del span.idiff { background: #fd4; }*/
 table.codediff td.del del { text-decoration: none; }
 table.codediff td.ins ins { text-decoration: none; }
@@ -1697,7 +1700,7 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   padding-right: 10px;
 }
 #site_overview table td.right, #site_overview table th.right {
- padding-left: 10px; 
+ padding-left: 10px;
 }
 
 #site_overview p.create_account_hint {
@@ -1778,10 +1781,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 .diff-comment .body pre.diff-comment-context {
     margin: 0;
 }
-.comment .body blockquote p:first-child, .diff-comment .body blockquote p:first-child { 
+.comment .body blockquote p:first-child, .diff-comment .body blockquote p:first-child {
     margin-bottom: 0;
 }
-.comment .body blockquote p:last-child, .comment .body blockquote p:last-child { 
+.comment .body blockquote p:last-child, .comment .body blockquote p:last-child {
     margin-bottom: 0;
 }
 h2#comments form {
@@ -1922,13 +1925,13 @@ table.markdown_help {
 
 #left {
   float:left;
-  width: 48%; 
+  width: 48%;
 }
 
 #right {
   float:right;
   width: 48%;
-  clear:right; 
+  clear:right;
 }
 
 #site #left {
@@ -2086,7 +2089,7 @@ table.select_commits_from_list th.commit_list_status {
   padding-left: 10px;
   padding-right: 10px;
   text-align: right;
-  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;  
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
 }
 table.select_commits_from_list tr.commit_row td, tr.selected td {
   padding: 5px 0 5px 0;
@@ -2104,7 +2107,7 @@ table.select_commits_from_list tr.commit_row td.selection {
   width: 40px;
 }
 table.select_commits_from_list tr.selected td.selection {
-  background-image: url("../images/silk/brick_add.png");  
+  background-image: url("../images/silk/brick_add.png");
   background-color: #ffc;
 }
 
@@ -2126,7 +2129,7 @@ table.select_commits_from_list tr.commit_row .commit-details.meta {
 }
 table.select_commits_from_list tr.commit_row .commit-details.message {
   vertical-align: top;
-}                                                
+}
 table.select_commits_from_list tr.commit_row .commit-details .commit_message {
   margin: 0;
 }
@@ -2228,10 +2231,14 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
   background-image: none !important;
   clear: both;
   margin: 0;
+  margin-bottom: 20px;
+}
+.event_instance.push .event_instance {
+    margin-bottom: 0;
 }
 
-.events .event_instances strong, .events .event_instance strong { 
-  color: #555; 
+.events .event_instances strong, .events .event_instance strong {
+  color: #555;
 }
 
 .events .event_instance .event_date {
@@ -2253,14 +2260,17 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 }
 
 .events .event_instance .event_meta p { padding: 0; margin: 0;}
+.events .event_instance .event_meta .event_action {
+    font-size: 12px;
+}
 .events .event_instance .event_meta {
-  margin: 0 100px 20px 105px;
+  margin: 0 0 20px 105px;
 }
 
 .events .event_instance .event_meta .meta_body, .comments .comment .meta_body {
     font-size: 12px;
 }
-.events .event_instance .event_meta .meta_body span.changed, 
+.events .event_instance .event_meta .meta_body span.changed,
 .comments .comment .meta_body span.changed {
     background: #E0EFCF;
     padding: 1px 2px 1px 2px;
@@ -2272,12 +2282,11 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 }
 
 .events .event_instance.relative .event_meta {
-    margin: 0 0px 20px 30px;
+    margin: 0 0px 0 30px;
 }
 .events .event_instance.relative .relative_date {
     font-size: 11px;
     color: #555;
-    margin-right: 10px;
     float: right;
 }
 
@@ -2359,8 +2368,8 @@ table.repository_meta tr:last-child td {
   border-bottom: 1px solid #ddd;
 }
 
-table.repository_meta .name td { 
-  border-bottom: 2px solid #ddd; 
+table.repository_meta .name td {
+  border-bottom: 2px solid #ddd;
   color: #888;
   font-size: 12px;
 }
@@ -2418,9 +2427,9 @@ table.repository_meta .branches ul li.head { font-weight: bold; }
 .wiki-page .toc ul li {
   list-style: none;
 }
-.page-meta { 
-  font-size:11px; 
-  color: #666; 
+.page-meta {
+  font-size:11px;
+  color: #666;
   border-top: 1px solid #ccc;
   margin-top: 10px;
   padding-top: 10px;
@@ -2442,7 +2451,7 @@ table.repository_meta .branches ul li.head { font-weight: bold; }
   margin-bottom: 10px;
 }
 .page-header h1 {
-  font-size: 175%; 
+  font-size: 175%;
   margin:0;
   padding:0;
 }
@@ -2761,32 +2770,32 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 
 #colorpicker-hue-container {
-    position: absolute; 
+    position: absolute;
     top: 4px;
-    left: 120px; 
+    left: 120px;
     width: 18px;
-    height: 110px; 
+    height: 110px;
 }
 
 #colorpicker-hue-bg-img {
-    width: 100%; 
-    height: 100%; 
+    width: 100%;
+    height: 100%;
 }
 
 #colorpicker-hue-slider {
-    position: absolute; 
-    top: 0;
-    left: 0; 
-    width: 100%;
-    height: 100%; 
-}
-
-#colorpicker-hue-thumb { 
-    position: absolute; 
+    position: absolute;
     top: 0;
     left: 0;
-    width: 18px; 
-    height: 18px; 
+    width: 100%;
+    height: 100%;
+}
+
+#colorpicker-hue-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
     z-index: 1009;
     cursor: default;
 }
@@ -2805,17 +2814,17 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 
 #colorpicker-div {
-  position: absolute; 
+  position: absolute;
   top: 8px;
-  left: 8px; 
+  left: 8px;
   width: 100px;
-  height: 100px; 
+  height: 100px;
   border: 1px solid #666;
 }
 
 #colorpicker-bg,
-#colorpicker-bg-overlay { 
-  position: absolute; 
+#colorpicker-bg-overlay {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -2823,12 +2832,12 @@ table.select_commits_from_list tr.unknown-status td.meta
   z-index: 1001;
   overflow: hidden;
 }
-#colorpicker-selector { 
-  position: absolute; 
+#colorpicker-selector {
+  position: absolute;
   top: 0px;
   left: 0px;
-  width: 11px; 
-  height: 11px; 
+  width: 11px;
+  height: 11px;
   z-index: 1009;
   margin-top: -6px;
   margin-left: -6px;
@@ -2840,9 +2849,9 @@ table.select_commits_from_list tr.unknown-status td.meta
   top: 0;
 }
 #colorpicker-footer {
-  position: absolute; 
+  position: absolute;
   top: 114px;
-  left: 10px; 
+  left: 10px;
   width: 127px;
 }
 

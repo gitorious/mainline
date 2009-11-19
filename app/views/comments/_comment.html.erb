@@ -24,7 +24,7 @@
 <% comment_block(comment) do -%>
   <%- if comment.state_change -%>
   <p class="meta_body">
-    &#x2192; State changed <%- if comment.state_changed_from -%>from 
+    &#x2192; State changed <%- if comment.state_changed_from -%>from
     <span class="changed"><%=h comment.state_changed_from %></span><%- end -%> to
     <span class="changed"><%=h comment.state_changed_to %></span>
   </p>
@@ -41,9 +41,9 @@
     <span class="avatar">
       <%= link_to(avatar(comment.user, { :size => 16 }), user_path(comment.user)) %>
     </span>
-    <%= link_to(h(comment.user.title), comment.user) -%> | 
+    <%= link_to(h(comment.user.title), comment.user) -%> |
     <span class="permalink">
-      <%= link_to time_ago_in_words(comment.created_at) + " ago", "##{dom_id(comment)}" -%>
+      <%= link_to time_ago(comment.created_at), "##{dom_id(comment)}" -%>
     </span>
     <% if comment.applies_to_line_numbers? -%>
       <span class="inline_comment_link">
