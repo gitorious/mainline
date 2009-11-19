@@ -54,7 +54,7 @@
           </li>
         </ul>
         <small class="permalink">
-          <%= link_to "about " + time_ago(comment.created_at),
+          <%= link_to time_ago(comment.created_at),
                   repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
                       @repository.project, @merge_request.source_repository, comment.sha1) + "##{dom_id(comment)}" -%>
         </small>
