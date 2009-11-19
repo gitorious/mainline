@@ -27,30 +27,30 @@ class Comment < ActiveRecord::Base
   after_create :notify_target_if_supported
   after_create :update_state_in_target
   serialize :state_change, Array
-  
+
   is_indexed :fields => ["body"], :include => [{
       :association_name => "user",
       :field => "login",
       :as => "commented_by"
     }]
-  
+
   attr_protected :user_id
-    
+
   validates_presence_of :user_id, :target, :project_id
   validates_presence_of :body, :if =>  Proc.new {|mr| mr.body_required?}
-  
-  named_scope :with_shas, proc{|*shas| 
+
+  named_scope :with_shas, proc{|*shas|
     {:conditions => { :sha1 => shas.flatten }, :include => :user}
   }
-  
+
   NOTIFICATION_TARGETS = [ MergeRequest, MergeRequestVersion ]
-  
+
   def deliver_notification_to(another_user)
     message_body = "#{user.title} commented:\n\n#{body}"
-    if applies_to_merge_request?
+    if [MergeRequest, MergeRequestVersion].include?(target.class)
       if state_change
-        message_body << "\n\nThe status of your #{target.class.human_name.downcase} "
-        message_body << "is now #{state_changed_to}"
+        message_body << "\n\nThe status of your merge request"
+        message_body << " is now #{state_changed_to}"
       end
       subject_class_name = "merge request"
     else
@@ -65,7 +65,7 @@ class Comment < ActiveRecord::Base
     })
     message.save
   end
-  
+
   def state=(new_state)
     return if new_state.blank?
     result = []
@@ -76,11 +76,11 @@ class Comment < ActiveRecord::Base
     result << new_state
     self.state_change = result
   end
-  
+
   def state_changed_to
     state_change.to_a.last
   end
-  
+
   def state_changed_from
     state_change.to_a.size > 1 ? state_change.first : nil
   end
@@ -161,5 +161,5 @@ class Comment < ActiveRecord::Base
         end
       end
     end
-  
+
 end
