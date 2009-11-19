@@ -4,7 +4,17 @@ class AddPermissionsToCommitterships < ActiveRecord::Migration
       add_column :committerships, :permissions, :integer
       ActiveRecord::Base.reset_column_information
       base_perms = Committership::CAN_REVIEW | Committership::CAN_COMMIT
-      Committership.update_all("permissions = #{base_perms}")
+      say_with_time("Updating existing permissions") do
+        Committership.all.each do |c|
+          if c.repository &&
+              (c.committer == c.repository.owner || c.committer == c.repository.user)
+            c.permissions = base_perms | Committership::CAN_ADMIN
+          else
+            c.permissions = base_perms
+          end
+          c.save!
+        end
+      end
     end
   end
 
