@@ -15,12 +15,13 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#-- 
+#--
 */
 
 // Make JQuery work with Rails' respond_to
 jQuery.ajaxSetup({
-  'beforeSend': function(xhr) { xhr.setRequestHeader("Accept", "text/javascript") }
+    'beforeSend': function(xhr) { xhr.setRequestHeader("Accept", "text/javascript"); },
+    'complete': function() { jQuery('abbr.timeago').timeago(); }
 });
 
 jQuery.fn.highlightSelectedLines = function() {
