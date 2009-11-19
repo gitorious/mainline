@@ -491,7 +491,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     should 'not consider a missing ending_commit a show stopper on update' do
       @merge_request.save(false)
       @merge_request.proposal = 'Yikes'
-      assert @merge_request.save!
+      assert @merge_request.save
     end
   end
 
