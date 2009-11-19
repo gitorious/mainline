@@ -67,7 +67,7 @@
       </td>
       <td><%=h merge_request.target_branch -%></td>
       <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
-      <td><%=h time_ago(merge_request.created_at) -%></td>
+      <td><%= time_ago(merge_request.created_at) -%></td>
     </tr>
   <% end -%>
   </tbody>

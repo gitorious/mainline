@@ -32,7 +32,7 @@
           <small>(<%= t("views.commits.committer") %>)</small>
         <% end -%>
       </li>
-      <li class="meta"><%=h time_ago(@commit.committed_date) -%></li>
+      <li class="meta"><%= time_ago(@commit.committed_date) -%></li>
       <% if @commit.committer != @commit.author -%>
         <li class="clear"></li>
         <li class="avatar">
@@ -45,7 +45,7 @@
             <%= render_email(@commit.author.email) -%>
           <small>(<%= t("views.commits.author") %>)</small>
         </li>
-        <li class="meta"><%=h time_ago(@commit.authored_date) -%></li>
+        <li class="meta"><%= time_ago(@commit.authored_date) -%></li>
       <% end -%>
     </ul>
   </div>
