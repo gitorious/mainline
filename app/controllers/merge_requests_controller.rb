@@ -64,7 +64,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def commit_status
-    @merge_request = @repository.merge_requests.public.find(params[:id],
+    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                                                      :include => :target_repository)
     result = @merge_request.commit_merged?(params[:commit_id]) ? 'true' : 'false'
     render :text => result, :layout => false
@@ -78,7 +78,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def show
-    @merge_request = @repository.merge_requests.public.find(params[:id],
+    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                       :include => [:source_repository, :target_repository])
 
     @commits = @merge_request.commits_to_be_merged
@@ -99,7 +99,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def version
-    @merge_request = @repository.merge_requests.public.find(params[:id],
+    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                       :include => [:source_repository, :target_repository])
     render :partial => 'version', :layout => false, :locals => {
       :version => @merge_request.version_number(params[:version].to_i)
@@ -124,7 +124,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def terms_accepted
-    @merge_request = @repository.merge_requests.find(params[:id])
+    @merge_request = @repository.merge_requests.find_by_sequence_number!(params[:id])
     if @merge_request.terms_accepted
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
       if @merge_request.has_contribution_notice?
@@ -184,6 +184,7 @@ class MergeRequestsController < ApplicationController
   end
   
   def direct_access
+    # One of the very rare occasions we find by id
     merge_request = MergeRequest.find(params[:id])
     project = merge_request.target_repository.project
     repository = merge_request.target_repository
@@ -228,7 +229,7 @@ class MergeRequestsController < ApplicationController
     end
     
     def find_merge_request
-      @merge_request = @repository.merge_requests.public.find(params[:id])
+      @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id])
     end
     
     def obtain_oauth_request_token

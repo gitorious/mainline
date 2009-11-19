@@ -7,7 +7,7 @@ moes_to_johans:
   sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
   ending_commit: 286e8afb9576366a2a43b12b94738f07
   status: <%= MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS %>
-  sequence_number: 1
+  sequence_number: 11
   
 moes_to_johans_open:
   user_id: 1
@@ -19,7 +19,7 @@ moes_to_johans_open:
   ending_commit: 286e8afb9576366a2a43b12b94738f07
   status: <%= MergeRequest::STATUS_OPEN %>
   status_tag: open
-  sequence_number: 2
+  sequence_number: 12
 
 mikes_to_johans:
   user_id: 3
@@ -31,7 +31,7 @@ mikes_to_johans:
   ending_commit: 286e8afb9576366a2a43b12b94738f07
   status: <%= MergeRequest::STATUS_OPEN %>
   status_tag: open
-  sequence_number: 3
+  sequence_number: 13
 
 johans_to_mikes:
   user_id: 1
@@ -42,4 +42,4 @@ johans_to_mikes:
   sha_snapshot: a99238
   ending_commit: a99238
   status_tag: orphaned 
-  sequence_number: 1 
+  sequence_number: 14 

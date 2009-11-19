@@ -100,6 +100,10 @@ class MergeRequest < ActiveRecord::Base
     I18n.t("activerecord.models.merge_request")
   end
 
+  def to_param
+    sequence_number.to_s
+  end
+  
   def self.count_open
     count(:all, :conditions => {:status => STATUS_OPEN})
   end
@@ -291,7 +295,7 @@ class MergeRequest < ActiveRecord::Base
   # - :current for the latest version
   # - nil for no version
   def merge_branch_name(version=false)
-    result = ["refs","merge-requests",id]
+    result = ["refs","merge-requests",to_param]
     case version
     when :current
       result << versions.last.version
@@ -344,7 +348,7 @@ class MergeRequest < ActiveRecord::Base
   # Publishes a notification, causing a new tracking branch (and
   # version) to be created in the background
   def publish_notification
-    publish :mirror_merge_request, {:merge_request_id => to_param}.to_json
+    publish :mirror_merge_request, {:merge_request_id => id.to_s}.to_json
   end
 
   def default_status
@@ -513,7 +517,7 @@ class MergeRequest < ActiveRecord::Base
   # handled in the message queue
   def delete_tracking_branches
     msg = {
-      :merge_request_id => to_param,
+      :merge_request_id => id.to_s,
       :action => "delete",
       :target_path => target_repository.full_repository_path,
       :target_name => target_repository.url_path,
