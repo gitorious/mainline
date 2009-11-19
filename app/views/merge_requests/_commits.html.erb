@@ -18,7 +18,7 @@
     <td class="commit-details meta">
       <ul>
         <li class="sha-abbrev">
-          <%= link_to commit.id_abbrev, 
+          <%= link_to commit.id_abbrev,
                 repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit) %>
         </li>
         <li class="committer">
@@ -26,7 +26,7 @@
         </li>
       </ul>
       <small>
-        <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago 
+        <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago
         <% if (comment_count = @commit_comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
           (<%= link_to pluralize(comment_count, "comment", "comments"),
                 repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
@@ -54,15 +54,15 @@
           </li>
         </ul>
         <small class="permalink">
-          <%= link_to "about " + time_ago_in_words(comment.created_at) + " ago", 
-                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, 
+          <%= link_to "about " + time_ago(comment.created_at),
+                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
                       @repository.project, @merge_request.source_repository, comment.sha1) + "##{dom_id(comment)}" -%>
         </small>
       </td>
       <td class="commit-details body">
         <div class="inline">
-          <%= link_to truncate(sanitize(force_utf8(comment.body)), :length => 70), 
-                repo_owner_path(@merge_request.source_repository, 
+          <%= link_to truncate(sanitize(force_utf8(comment.body)), :length => 70),
+                repo_owner_path(@merge_request.source_repository,
                   :project_repository_commit_path, @project,
                   @merge_request.source_repository, commit) + "##{dom_id(comment)}" %>
         </div>

@@ -45,7 +45,7 @@
           <small>(<%= t("views.commits.committer") %>)</small>
         <% end -%>
       </li>
-      <li class="meta"><%=h time_ago_in_words @commit.committed_date -%> ago</li>
+      <li class="meta"><%=h time_ago(@commit.committed_date) -%></li>
       <% if @commit.committer != @commit.author -%>
         <li class="clear"></li>
         <li class="avatar">
@@ -58,7 +58,7 @@
           </div>
         </li>
         <li>
-          <% if @author_user -%> 
+          <% if @author_user -%>
             <%= link_to h(@author_user.title), @author_user -%>
           <% else -%>
             <%=h @commit.author.name -%>
@@ -66,26 +66,26 @@
           <% end -%>
           <small>(<%= t("views.commits.author") %>)</small>
         </li>
-        <li class="meta"><%=h time_ago_in_words @commit.authored_date -%> ago</li>
+        <li class="meta"><%=h time_ago(@commit.authored_date) -%></li>
       <% end -%>
     </ul>
     <ul class="meta">
-      <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id[0,7]), 
+      <li><strong><%= t("views.commits.tree_sha1") %>:</strong> <%= link_to h(@commit.tree.id[0,7]),
         repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, @commit.id) -%></li>
       <% @commit.parents.each do |parent| -%>
         <li><strong><%= t("views.commits.parent_sha1") %>:</strong> <%= link_to h(parent.id[0,7]),
-         repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, parent) -%> 
+         repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, parent) -%>
          <small>(<%=h parent.short_message -%>)</small>
         </li>
       <% end -%>
       <% unless @commit.merge? -%>
       <li>
-        <%= link_to "raw diff", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :diff) -%> 
+        <%= link_to "raw diff", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :diff) -%>
         | <%= link_to "raw patch", repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, @commit.id, :format => :patch) -%>
       </li>
       <% end -%>
     </ul>
   </div>
   <pre class="commit_message"><%= format_commit_message(h(@commit.message)) -%></pre>
-  
+
 </div>

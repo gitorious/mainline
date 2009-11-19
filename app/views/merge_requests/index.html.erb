@@ -49,9 +49,9 @@
     </p>
   <% end -%>
   <% @open_merge_requests.each do |merge_request| -%>
-    <% mr_path = repo_owner_path(merge_request.target_repository, 
-         [ merge_request.source_repository.project, 
-           merge_request.target_repository, 
+    <% mr_path = repo_owner_path(merge_request.target_repository,
+         [ merge_request.source_repository.project,
+           merge_request.target_repository,
            merge_request ]) -%>
     <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
       <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
@@ -67,7 +67,7 @@
       </td>
       <td><%=h merge_request.target_branch -%></td>
       <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
-      <td><%=h time_ago_in_words(merge_request.created_at.to_s) -%></td>
+      <td><%=h time_ago(merge_request.created_at) -%></td>
     </tr>
   <% end -%>
   </tbody>
