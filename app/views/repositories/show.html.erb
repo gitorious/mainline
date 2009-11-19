@@ -27,11 +27,11 @@
 <% render_if_ready(@repository) do -%>
 
   <%= render :partial => "repositories/statistics", :locals => {:repository => @repository} -%>
-  
+
   <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
 <%= render "getting_started" -%>
   <% end -%>
-  
+
   <h2><%= t("views.repos.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
   <%= render :partial => "events/events", :locals => { :events => @events } -%>
 <% end -%>
@@ -39,11 +39,11 @@
 <% content_for :sidebar do -%>
   <ul>
     <li>
-      <strong><%= t("views.repos.project") %>:</strong> 
+      <strong><%= t("views.repos.project") %>:</strong>
       <%= link_to h(@repository.project.slug), @repository.project -%>
-    </li>    
+    </li>
     <li>
-      <strong><%= t("views.repos.owner") %>:</strong> 
+      <strong><%= t("views.repos.owner") %>:</strong>
       <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
       <% if @repository.owned_by_group? -%>
       <small class="hint">
@@ -53,17 +53,17 @@
     </li>
     <% if @repository.parent -%>
     <li>
-      <strong><%= t("views.repos.clone_of") %>:</strong> 
+      <strong><%= t("views.repos.clone_of") %>:</strong>
       <%= link_to h(@repository.parent.gitdir),
             repo_owner_path(@repository.parent, [@repository.parent.project, @repository.parent]) -%>
     </li>
     <% end -%>
     <li>
-      <strong><%= t("views.repos.created") %>:</strong> 
+      <strong><%= t("views.repos.created") %>:</strong>
       <%= @repository.created_at.to_s(:short) -%>
     </li>
   </ul>
-  
+
   <ul class="links">
     <% if @repository.ready? -%>
       <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
@@ -74,16 +74,16 @@
       </li>
     <% end -%>
   </ul>
-  
+
   <ul class="links">
     <% if @repository.owner.admin?(current_user) -%>
-      <li class="add_committer"><%= link_to t("views.repos.btn_manage_committers"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
+      <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
     <% end -%>
     <% if @repository.owner.admin?(current_user) -%>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>
-  
+
   <%= render :partial => "committers_sidebar" -%>
 
   <% unless @commits.blank? -%>

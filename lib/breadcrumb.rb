@@ -11,7 +11,7 @@ module Breadcrumb
       @object.name
     end
   end
-  
+
   class Folder
     attr_reader :paths
     def initialize(options)
@@ -30,12 +30,12 @@ module Breadcrumb
     def title
       @paths.last || '/'
     end
-    
+
     def breadcrumb_css_class
       @paths.last.blank? ? "tree" : "folder"
     end
-  end  
-  
+  end
+
   class Blob
     attr_reader :path
     def initialize(options)
@@ -43,15 +43,15 @@ module Breadcrumb
       @path = options[:paths]
       @parent = Folder.new(:paths => options[:paths][0..-2], :head => options[:head], :repository => options[:repository])
     end
-    
+
     def title
       @name
     end
-    
+
     def breadcrumb_parent
       @parent
     end
-    
+
     def breadcrumb_css_class
       'file'
     end
@@ -63,26 +63,26 @@ module Breadcrumb
       @repository = options[:repository]
       @sha = options[:id]
     end
-    
+
     def breadcrumb_parent
       @repository
     end
-    
+
     def title
       @sha
     end
   end
-  
+
   class Wiki
     attr_reader :project
     def initialize(project)
       @project = project
     end
-    
+
     def breadcrumb_parent
       @project
     end
-    
+
     def title
       "Wiki"
     end
@@ -91,18 +91,18 @@ module Breadcrumb
       'wiki'
     end
   end
-  
+
   class Page
     attr_reader :project, :page
     def initialize(page, project)
       @page = page
       @project = project
     end
-    
+
     def breadcrumb_parent
       Wiki.new(@project)
     end
-    
+
     def title
       @page.title
     end
@@ -110,49 +110,49 @@ module Breadcrumb
       'file'
     end
   end
-  
+
   class Memberships
     def initialize(group)
       @group = group
     end
     attr_reader :group
-    
+
     def breadcrumb_parent
       @group
     end
-    
+
     def title
       "Members"
     end
-    
+
     def breadcrumb_css_class
       "memberships"
     end
   end
-  
+
   class Committerships
     def initialize(repository)
       @repository = repository
     end
-    
+
     def breadcrumb_parent
       @repository
     end
-    
+
     def title
-      "Committers"
+      "Collaborators"
     end
   end
-  
+
   class MergeRequests
     def initialize(repository)
       @repository = repository
     end
-    
+
     def breadcrumb_parent
       @repository
     end
-    
+
     def title
       "Merge requests"
     end
@@ -239,7 +239,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      nil 
+      nil
     end
 
     def title
@@ -363,35 +363,35 @@ module Breadcrumb
     def initialize(user)
       @user = user
     end
-    
+
     def title
       I18n.t("views.messages.collection_title")
     end
-    
+
     def breadcrumb_parent
       @user
     end
-    
+
     def breadcrumb_css_class
       "emails"
     end
   end
-  
+
   class Mailbox
     def initialize(user)
       @user = user
     end
-    
+
     def breadcrumb_parent
       Messages.new(@user)
     end
   end
-  
+
   class ReceivedMessages < Mailbox
     def title
       I18n.t("views.messages.received_messages")
     end
-    
+
     def breadcrumb_css_class
       "received_emails"
     end
@@ -401,32 +401,32 @@ module Breadcrumb
     def title
       I18n.t("views.messages.all_messages")
     end
-    
+
     def breadcrumb_css_class
       "all_emails"
     end
   end
 
-  
+
   class SentMessages < Mailbox
     def title
       I18n.t("views.messages.sent_messages")
     end
-    
+
     def breadcrumb_css_class
       "sent_emails"
     end
   end
-  
+
   class EditOAuthSettings
     def initialize(project)
       @project = project
     end
-    
+
     def breadcrumb_parent
       @project
     end
-    
+
     def title
       "Contribution settings"
     end

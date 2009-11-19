@@ -583,7 +583,7 @@ li.all_emails > a { background-image: url("../images/silk/folder.png") !importan
 li.event_instance.create_repository, li.create_repository > a { background-image: url("../images/silk/database_add.png") !important; }
 li.event_instance.add_project_repository, li.add_project_repository > a { background-image: url("../images/silk/database_add.png") !important; }
 li.event_instance.clone_repository, li.clone_repository > a { background-image: url("../images/silk/database_clone.png") !important; }
-li.event_instance.add_committer, li.add_committer > a { background-image: url("../images/silk/group_add.png") !important; }
+li.event_instance.add_collaborator, li.add_collaborator > a { background-image: url("../images/silk/group_add.png") !important; }
 li.event_instance.update_repository, li.update_repository > a { background-image: url("../images/silk/database_edit.png") !important; }
 li.event_instance.delete_repository, li.delete_repository > a { background-image: url("../images/silk/database_delete.png") !important; }
 li.event_instance.commit, li.commit > a { background-image: url("../images/silk/brick.png") !important; }
@@ -2337,7 +2337,7 @@ li.event_instance.create_branch { background-image: url("../images/silk/arrow_br
 li.event_instance.delete_branch { background-image: url("../images/silk/delete.png"); }
 li.event_instance.create_tag { background-image: url("../images/silk/tag_blue_add.png"); }
 li.event_instance.delete_tag { background-image: url("../images/silk/tag_blue_delete.png"); }
-li.event_instance.add_committer { background-image: url("../images/silk/group_add.png"); }
+li.event_instance.add_collaborator { background-image: url("../images/silk/group_add.png"); }
 li.event_instance.remove_committer { background-image: url("../images/silk/group_delete.png"); }
 li.event_instance.comment { background-image: url("../images/silk/comment.png"); }
 li.event_instance.request_merge { background-image: url("../images/silk/chart_line_add.png"); }
