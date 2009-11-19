@@ -25,7 +25,7 @@
 <%= breadcrumbs_from(@merge_request) -%>
 <% @page_title = "Merge request ##{@merge_request.id}: #{h(@merge_request.summary)}" -%>
 
-<h1><%= t("views.merges.show_title", :id => h(@merge_request.id), :summary => h(@merge_request.summary)) -%></h1>
+<h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%></h1>
 
 <div class="merge_request_overview">
   <div class="proposal">

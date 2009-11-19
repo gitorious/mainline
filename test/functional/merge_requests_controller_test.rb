@@ -102,14 +102,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	context "#show (GET)" do		
 		should " not require login" do
 			session[:user_id] = nil
-			MergeRequest.expects(:find).returns(@merge_request)
+			MergeRequest.expects(:find_by_sequence_number!).returns(@merge_request)
 			stub_commits(@merge_request)
 			[@merge_request.source_repository, @merge_request.target_repository].each do |r|
 				r.stubs(:git).returns(stub_everything("Git"))
 			end
 			get :show, :project_id => @project.to_param, 
 				:repository_id => @target_repository.to_param,
-				:id => @merge_request.id
+				:id => @merge_request.to_param
 			assert_response :success
 			assert_select "h3", :content => "Add a new comment:"
 		end
@@ -120,7 +120,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
         stub_commits(@merge_request)
   			get :show, :project_id => @project.to_param, 
   				:repository_id => @target_repository.to_param,
-  				:id => @merge_request.id, :format => format
+  				:id => @merge_request.to_param, :format => format
   			assert_response :success
   			assert_equal 2, assigns(:commits).size
 			end
@@ -148,7 +148,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert !@merge_request.resolvable_by?(users(:moe))
   		get :show, :project_id => @project.to_param, 
   			:repository_id => repositories(:johans).name,
-  			:id => @merge_request.id
+  			:id => @merge_request.to_param
       assert_response :success
       assert_select "select#comment_state", false
     end
@@ -158,7 +158,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert @merge_request.resolvable_by?(users(:johan))
   		get :show, :project_id => @project.to_param, 
   			:repository_id => repositories(:johans).name,
-  			:id => @merge_request.id
+  			:id => @merge_request.to_param
       assert_response :success
       assert_select "select#comment_state"
     end
@@ -169,7 +169,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       should "create a version for the legacy merge_requests" do
         get :show, :project_id => @project.to_param, 
             :repository_id => repositories(:johans).name,
-            :id => @merge_request.id
+            :id => @merge_request.to_param
         
         assert_response :success
         assert_template "merge_requests/legacy"
@@ -377,34 +377,35 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert !@merge_request.open?
     end
   end
+
+  def do_edit_get
+    get :edit, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
+      :id => @merge_request.to_param
+  end
 	
 	context "#edit (GET)" do		
 		should "requires login" do
 			session[:user_id] = nil
-			get :edit, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-				:id => @merge_request
+      do_edit_get
 			assert_redirected_to(new_sessions_path)
 		end
 		
 		should "requires ownership to edit" do
 			login_as :moe
-			get :edit, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-				:id => @merge_request
+      do_edit_get
 			assert_match(/you're not the owner/i, flash[:error])
 			assert_response :redirect
 		end
 		
 		should "is successfull" do
 			login_as :johan
-			get :edit, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-				:id => @merge_request
+      do_edit_get
 			assert_response :success
 		end
 		
 		should "gets a list of possible target clones" do
 			login_as :johan
-			get :edit, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-				:id => @merge_request
+      do_edit_get
 			assert_equal [@source_repository], assigns(:repositories)
 		end
 	end
@@ -412,7 +413,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	def do_put(data={})
 		put :update, :project_id => @project.to_param, 
 			:repository_id => @target_repository.to_param, 
-			:id => @merge_request,
+			:id => @merge_request.to_param,
 			:merge_request => {
 				:target_repository_id => @target_repository.id,
 			}.merge(data)
@@ -549,7 +550,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	def do_delete
 		delete :destroy, :project_id => @project.to_param, 
 			:repository_id => @target_repository.to_param, 
-			:id => @merge_request
+			:id => @merge_request.to_param
 	end
 	
 	context "#destroy (DELETE)" do		
@@ -591,12 +592,12 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
     
     should 'redirect to the correct URL when supplying only an id' do
-      get :direct_access, :id => @merge_request.to_param
+      get :direct_access, :id => @merge_request.id
       assert_redirected_to({
         :action => 'show', 
         :project_id => @merge_request.target_repository.project,
         :repository_id => @merge_request.target_repository,
-        :id => @merge_request})
+        :id => @merge_request.to_param})
     end
   end
   

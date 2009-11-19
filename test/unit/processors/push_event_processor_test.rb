@@ -157,6 +157,17 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       assert_equal 'john@nowhere.com', e.email
     end
   end
+
+  should "pick the correct merge request to push to" do
+    @merge_request = merge_requests(:moes_to_johans)
+    MergeRequest.expects(:find_by_sequence_number!).with(@merge_request.to_param).returns(@merge_request)
+    @processor.repository = @merge_request.target_repository
+    @processor.expects(:action).returns(:update)
+    @processor.expects(:target).returns(:review)
+    @processor.stubs(:identifier).returns(@merge_request.to_param)
+    @merge_request.expects(:update_from_push!)
+    @processor.process_push
+  end
   
   should "returns the correct type and identifier for the deletion of a tag" do
     stub_git_show

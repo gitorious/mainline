@@ -20,7 +20,7 @@ class PushEventProcessor < ApplicationProcessor
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR = "\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR) 
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
   subscribes_to :push_event
-  attr_reader :oldrev, :newrev, :action, :user
+  attr_reader :oldrev, :newrev, :action, :user, :identifier, :target
   attr_accessor :repository
   
   def on_message(message)
@@ -121,11 +121,12 @@ class PushEventProcessor < ApplicationProcessor
     end
   end
 
+  
   def process_push
     @events = []
     case action
     when :create
-      case @target
+      case target
       when :head
         e = EventForLogging.new
         e.event_type = Action::CREATE_BRANCH
@@ -133,7 +134,7 @@ class PushEventProcessor < ApplicationProcessor
         e.identifier = @identifier
         e.user = user
         result = [e]
-        if @identifier == 'master'
+        if identifier == 'master'
           result = result + events_from_git_log(@newrev) 
         end
         result.each{|ev|@events << ev}
@@ -152,18 +153,18 @@ class PushEventProcessor < ApplicationProcessor
         return
       end
     when :update
-      case @target
+      case target
       when :head
         e = EventForLogging.new
         e.event_type = Action::PUSH
-        e.message = "#{@identifier} changed from #{@oldrev[0,7]} to #{@newrev[0,7]}"
-        e.identifier = @identifier
+        e.message = "#{identifier} changed from #{@oldrev[0,7]} to #{@newrev[0,7]}"
+        e.identifier = identifier
         e.email = user.email
         e.commits = events_from_git_log("#{@oldrev}..#{@newrev}")
         @events << e
       when :tag
       when :review
-        merge_request = MergeRequest.find(@identifier)
+        merge_request = MergeRequest.find_by_sequence_number!(identifier)
         merge_request.update_from_push!
       end
     when :delete

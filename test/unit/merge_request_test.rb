@@ -58,7 +58,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     repo.stubs(:git).returns(git)
     @merge_request.target_repository.stubs(:git).returns(repo)
     git.expects(:merge_base).with({:timeout => false},
-      @merge_request.target_branch, "refs/merge-requests/#{@merge_request.id}").returns("ffcaabd\n")
+      @merge_request.target_branch, "refs/merge-requests/#{@merge_request.to_param}").returns("ffcaabd\n")
     assert_equal 'ffcaabd', @merge_request.calculate_merge_base
   end
 
@@ -171,9 +171,9 @@ class MergeRequestTest < ActiveSupport::TestCase
   should 'build the name of its merge request branch' do
     @merge_request.stubs(:calculate_merge_base).returns('ff0')
     version = @merge_request.create_new_version
-    assert_equal "refs/merge-requests/#{@merge_request.id}", @merge_request.merge_branch_name
-    assert_equal "refs/merge-requests/#{@merge_request.id}/1", @merge_request.merge_branch_name(1)
-    assert_equal "refs/merge-requests/#{@merge_request.id}/#{version.version}", @merge_request.merge_branch_name(:current)
+    assert_equal "refs/merge-requests/#{@merge_request.to_param}", @merge_request.merge_branch_name
+    assert_equal "refs/merge-requests/#{@merge_request.to_param}/1", @merge_request.merge_branch_name(1)
+    assert_equal "refs/merge-requests/#{@merge_request.to_param}/#{version.version}", @merge_request.merge_branch_name(:current)
   end
 
   should 'push new branch to tracking repo' do
@@ -183,7 +183,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     repo = mock("Target repository")
     repo.expects(:push).once.with({:timeout => false},
       @merge_request.tracking_repository.full_repository_path,
-      "refs/merge-requests/#{@merge_request.id}:refs/merge-requests/#{@merge_request.id}/#{@merge_request.next_version_number}")
+      "refs/merge-requests/#{@merge_request.to_param}:refs/merge-requests/#{@merge_request.to_param}/#{@merge_request.next_version_number}")
     git = mock
     git.stubs(:git).returns(repo)
     @merge_request.target_repository.stubs(:git).returns(git)
@@ -576,8 +576,8 @@ class MergeRequestTest < ActiveSupport::TestCase
       merge_request_repo = @merge_request.target_repository.create_tracking_repository
       merge_request_repo_path = merge_request_repo.full_repository_path
       branch_spec_base = "#{@merge_request.ending_commit}:refs/merge-requests"
-      branch_spec = [branch_spec_base, @merge_request.id].join('/')
-      tracking_branch_spec = [branch_spec_base, @merge_request.id, 1].join('/')
+      branch_spec = [branch_spec_base, @merge_request.to_param].join('/')
+      tracking_branch_spec = [branch_spec_base, @merge_request.to_param, 1].join('/')
 
       git = mock("Git")
       git_backend = mock("Source repository git")
@@ -787,6 +787,11 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert !mr2.save
       assert_equal mr2.sequence_number, @merge_request.sequence_number
       assert_not_nil mr2.errors.on(:sequence_number)
+    end
+
+    should "use sequence_number in to_param" do
+      @merge_request.update_attribute(:sequence_number, @repository.next_merge_request_sequence_number)
+      assert_equal @merge_request.sequence_number.to_s, @merge_request.to_param
     end
   end
   

@@ -768,7 +768,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :username => @merge_request.user.to_param,
         :project_id => @merge_request.target_repository.project.to_param,
         :id => @merge_request.target_repository.to_param,
-        :git_path => "refs/merge-requests/#{@merge_request.id}"})
+        :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
       assert_response :success
       assert_equal 'true', @response.body
     end
@@ -779,7 +779,7 @@ class RepositoriesControllerTest < ActionController::TestCase
         :username => 'johan',
         :project_id => @merge_request.target_repository.project.to_param,
         :id => @merge_request.target_repository.to_param,
-        :git_path => "refs/merge-requests/#{@merge_request.id}"})
+        :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
       assert_response :success
       assert_equal 'false', @response.body
     end

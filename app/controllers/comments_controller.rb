@@ -141,7 +141,7 @@ class CommentsController < ApplicationController
     if params[:merge_request_version_id]
       @target = MergeRequestVersion.find(params[:merge_request_version_id])
     elsif params[:merge_request_id]
-      @target = @repository.merge_requests.find(params[:merge_request_id])
+      @target = @repository.merge_requests.find_by_sequence_number!(params[:merge_request_id])
     else
       @target = @repository
     end
