@@ -24,6 +24,8 @@ $(document).ready(function() {
   });
 </script>
 
+<%= breadcrumbs_from(@root) -%>
+
 <h1>
   <%= t("views.memberships.new_title", 
         :group_memberships => link_to(h(@group.name), [@group, :memberships])) -%>

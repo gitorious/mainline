@@ -130,6 +130,42 @@ module Breadcrumb
     end
   end
 
+  class NewMembership
+    def initialize(group)
+      @group = group
+    end
+
+    def breadcrumb_parent
+      @group
+    end
+
+    def title
+      I18n.t("views.memberships.new_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "add_membership"
+    end
+  end
+
+  class GroupEdit
+    def initialize(group)
+      @group = group
+    end
+
+    def breadcrumb_parent
+      @group
+    end
+
+    def title
+      I18n.t("views.groups.edit_breadcrumb")
+    end
+
+    def breadcrumb_css_class
+      "edit_group"
+    end
+  end
+
   class Committerships
     def initialize(repository)
       @repository = repository
