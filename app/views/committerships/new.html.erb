@@ -89,7 +89,8 @@
 
   <p>
     <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
-    <%= t("views.collaborators.or_return_to") -%> <%= link_to h(@repository.name), [@owner, @repository, :committerships] -%>
+    <%= t("views.collaborators.or_return_to") -%>
+    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
   </p>
 
 <% end -%>
