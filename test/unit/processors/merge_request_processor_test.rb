@@ -26,7 +26,8 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
     @merge_request = merge_requests(:moes_to_johans_open)
     @target_repo = @merge_request.target_repository
     @merge_request.stubs(:target_repository).returns(@target_repo)
-    MergeRequest.stubs(:find).returns(@merge_request)
+    MergeRequest.expects(:find_by_sequence_number!).with(@merge_request.to_param)
+      .returns(@merge_request)
     @tracking_repo = mock("Tracking repository")
     @tracking_repo.stubs(:real_gitdir).returns("ff0/bbc/234")
     @target_repo.stubs(:create_tracking_repository).returns(@tracking_repo)
