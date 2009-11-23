@@ -26,7 +26,7 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
     @merge_request = merge_requests(:moes_to_johans_open)
     @target_repo = @merge_request.target_repository
     @merge_request.stubs(:target_repository).returns(@target_repo)
-    MergeRequest.expects(:find_by_sequence_number!).with(@merge_request.to_param)
+    MergeRequest.expects(:find).with(@merge_request.id)
       .returns(@merge_request)
     @tracking_repo = mock("Tracking repository")
     @tracking_repo.stubs(:real_gitdir).returns("ff0/bbc/234")
@@ -34,7 +34,7 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
   end
   
   should 'send a repository creation message when the target repo does not have a merge request repo' do
-    message = {'merge_request_id' => @merge_request.to_param}.to_json
+    message = {'merge_request_id' => @merge_request.id}.to_json
     @target_repo.expects(:'has_tracking_repository?').once.returns(false)
     Repository.expects(:clone_git_repository).with(
       @tracking_repo.real_gitdir, 
@@ -44,7 +44,7 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
   end
   
   should 'create a new branch from the merge request' do
-    message = {'merge_request_id' => @merge_request.to_param}.to_json
+    message = {'merge_request_id' => @merge_request.id}.to_json
     @target_repo.expects(:'has_tracking_repository?').once.returns(true)
     @processor.expects(:create_tracking_repository).never
     @merge_request.expects(:'push_to_tracking_repository!').once

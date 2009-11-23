@@ -21,8 +21,9 @@ class MergeRequestProcessor < ApplicationProcessor
   def on_message(message)
     verify_connections!
     json = ActiveSupport::JSON.decode(message)
-    merge_request_id = json['merge_request_id'].to_s
-    merge_request = MergeRequest.find_by_sequence_number!(merge_request_id)
+    merge_request_id = json['merge_request_id']
+    # Find by id, as we're outside repository scope here 
+    merge_request = MergeRequest.find(merge_request_id)
     if !merge_request.target_repository.has_tracking_repository?
       create_tracking_repository(merge_request)
     end
