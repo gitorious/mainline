@@ -191,7 +191,7 @@ class RepositoriesController < ApplicationController
     if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s)
       # git_path is a merge request
       begin
-        if merge_request = MergeRequest.find_by_sequence_number!(result[1]) and (merge_request.user == user)
+        if merge_request = @repository.merge_requests.find_by_sequence_number!(result[1]) and (merge_request.user == user)
           render :text => "true" and return
         end
       rescue ActiveRecord::RecordNotFound # No such merge request

@@ -164,7 +164,7 @@ class PushEventProcessor < ApplicationProcessor
         @events << e
       when :tag
       when :review
-        merge_request = MergeRequest.find_by_sequence_number!(identifier)
+        merge_request = @repository.merge_requests.find_by_sequence_number!(identifier)
         merge_request.update_from_push!
       end
     when :delete

@@ -38,9 +38,7 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
       @source_git_repo.stubs(:git).returns(@source_git)
       @merge_request.source_repository.stubs(:git).returns(@source_git_repo)
       @msg = {
-        :merge_request_id => @merge_request.to_param,
         :action => "delete",
-        :target_path => @merge_request.target_repository.full_repository_path,
         :target_name => @merge_request.target_repository.url_path,
         :merge_branch_name => @merge_request.merge_branch_name,
         :source_repository_id => @merge_request.source_repository.id,
@@ -71,16 +69,5 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
       assert_equal :delete, @processor.action
     end
     
-    should "understand the close command" do
-      msg = {:merge_request_id => @merge_request.to_param, :action => "close"}
-      @processor.expects(:do_close)
-      @processor.on_message(msg.to_json)
-    end
-    
-    should "understand the reopen command" do
-      msg = {:merge_request_id => @merge_request.to_param, :action => "reopen"}
-      @processor.expects(:do_reopen)
-      @processor.on_message(msg.to_json)
-    end
   end
 end
