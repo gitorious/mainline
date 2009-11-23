@@ -3249,3 +3249,21 @@ Style the headers when searching
   right: 40px;
   z-index: 10;
 }
+
+.permission-explanations {
+    margin-top: 40px;
+    width: 400px;
+}
+#sidebar .permission-explanations { width: 100%; }
+
+.permission-explanations h4,
+#sidebar .permission-explanations h4 {
+    margin-bottom: 10px;
+}
+
+dl.explanation { margin-bottom: 10px; }
+dl.explanation dt { font-weight: bold; }
+dl.explanation dd {
+    padding-left: 20px;
+    background: transparent url('../images/silk/bullet_green.png') no-repeat 2px 0;
+}

@@ -1,0 +1,38 @@
+<%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<div class="permission-explanations">
+  <h4>What does the different permissions mean?</h4>
+
+  <dl class="explanation">
+    <dt>Reviewers:</dt>
+    <dd>Can update merge request statuses</dd>
+    <dd>Will receive notifications on new merge requests</dd>
+
+    <dt>Committers:</dt>
+    <dd>Can push commits to the repository</dd>
+
+    <dt>Administrators:</dt>
+    <dd>Can edit the repository name, description and settings</dd>
+    <dd>Can manage collaborators</dd>
+    <dd>Can delete the repository</dd>
+  </dl>
+  <p class="hint">Note that the permissions doesn't cascade down, meaning
+    that for instance a committer isn't automatically a reviewer</p>
+</div>
