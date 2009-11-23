@@ -551,7 +551,7 @@
         :return_to => "return to",
         :or_return_to => "or return to",
         :add_team_note => "<strong>Note</strong> that adding a team will give
-                          everyone in that team commit rights to your repository",
+                          everyone in that team the permissions you select",
       },
       :aliases => {
         :aliases_title => "Aliases",
