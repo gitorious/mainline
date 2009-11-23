@@ -551,6 +551,7 @@ li.project_research > a { background-image: url("../images/silk/report_magnify.p
 li.user > a { background-image: url("../images/silk/user.png") !important; }
 
 li.group > a { background-image: url("../images/silk/group.png") !important; }
+li.edit_group > a { background-image: url("../images/silk/group_edit.png") !important; }
 
 li.repository > a { background-image: url("../images/silk/database.png") !important; }
 li.repository.mainline > a { background-image: url("../images/silk/database_star.png") !important; }
@@ -627,6 +628,7 @@ table.tree tr td.submodule a { background-image: url("../images/silk/folder_go.p
 li.wiki a {background-image: url('../images/silk/book_open.png');}
 li.memberships a, li.committerships a {background-image: url('../images/silk/group_gear.png');}
 li.membership a, li.committership a {background-image: url('../images/silk/group_edit.png');}
+li.add_membership a, li.add_commitership a { background-image: url("../images/silk/group_add.png");}
 
 li.merge_requests a.selected { color: #09460F;}
 

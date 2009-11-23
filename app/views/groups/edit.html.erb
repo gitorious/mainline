@@ -17,6 +17,8 @@
 #++
 %>
 
+<%= breadcrumbs_from(Breadcrumb::GroupEdit.new(@group)) -%>
+
 <h1><%= t("views.groups.update_team") -%></h1>
 
 <%= error_messages_for :group -%>

@@ -32,6 +32,7 @@ class MembershipsController < ApplicationController
   
   def new
     @membership = @group.memberships.new
+    @root = Breadcrumb::NewMembership.new(@group)
   end
   
   def create
@@ -39,6 +40,7 @@ class MembershipsController < ApplicationController
       :group  => @group, 
       :user   => User.find_by_login!(params[:user][:login]),
       :role   => Role.find(params[:membership][:role_id]))
+    @root = Breadcrumb::NewMembership.new(@group)
     if @membership.save
       flash[:success] = I18n.t("memberships_controller.membership_created")
       redirect_to group_memberships_path(@group)
