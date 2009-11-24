@@ -470,13 +470,6 @@ class RepositoryTest < ActiveSupport::TestCase
       assert !@repository.can_be_deleted_by?(users(:moe))
     end
 
-    should "not be deletable if it's the last mainline" do
-      @repository.project.repositories.mainlines.last(2).each(&:destroy)
-      assert_equal 1, @repository.project.repositories.mainlines.count
-      assert !@repository.can_be_deleted_by?(users(:johan))
-      assert !@repository.can_be_deleted_by?(users(:moe))
-    end
-
     should "always be deletable if admin and non-project repo" do
       @repository.kind = Repository::KIND_TEAM_REPO
       assert @repository.can_be_deleted_by?(users(:johan))
