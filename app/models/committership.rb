@@ -21,8 +21,8 @@
 
 class Committership < ActiveRecord::Base
 
-  CAN_REVIEW = 1 << 2
-  CAN_COMMIT = 1 << 4
+  CAN_REVIEW = 1 << 4
+  CAN_COMMIT = 1 << 5
   CAN_ADMIN  = 1 << 6
 
   PERMISSION_TABLE = {
