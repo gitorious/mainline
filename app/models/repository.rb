@@ -306,11 +306,10 @@ class Repository < ActiveRecord::Base
   end
 
   def can_be_deleted_by?(candidate)
-    if mainline?
-      return false if project.repositories.mainlines.count == 1
-      owner.admin?(candidate)
+    if mainline? && project.repositories.mainlines.count == 1
+      return false
     else
-      candidate == user
+      admin?(candidate)
     end
   end
 
@@ -492,6 +491,18 @@ class Repository < ActiveRecord::Base
   # committerships or indirectly as members of a group
   def administrators
     committerships.admins.map{|c| c.members }.flatten.compact.uniq
+  end
+
+  def committer?(a_user)
+    a_user.is_a?(User) ? self.committers.include?(a_user) : false
+  end
+
+  def reviewer?(a_user)
+    a_user.is_a?(User) ? self.reviewers.include?(a_user) : false
+  end
+
+  def admin?(a_user)
+    a_user.is_a?(User) ? self.administrators.include?(a_user) : false
   end
 
   # Is this repo writable by +a_user+, eg. does he have push permissions here

@@ -451,15 +451,46 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal commit_mock, @repository.last_commit("foo")
   end
 
-  should "knows who can delete it" do
-    @repository.kind = Repository::KIND_PROJECT_REPO
-    assert !@repository.can_be_deleted_by?(users(:johan))
-    @repository.project.repositories << new_repos(:name => "another")
-    assert @repository.can_be_deleted_by?(users(:johan))
+  context "deletion" do
+    setup do
+      @repository.kind = Repository::KIND_PROJECT_REPO
+      @repository.project.repositories << new_repos(:name => "another")
+      @repository.save!
+      @repository.committerships.create!({
+        :committer => users(:moe),
+        :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
+      })
+    end
 
-    @repository.kind = Repository::KIND_TEAM_REPO
-    assert !@repository.can_be_deleted_by?(users(:moe))
-    assert @repository.can_be_deleted_by?(users(:johan))
+    should "be deletable by admins" do
+      assert @repository.admin?(users(:johan))
+      assert !@repository.admin?(users(:moe))
+
+      assert @repository.can_be_deleted_by?(users(:johan))
+      assert !@repository.can_be_deleted_by?(users(:moe))
+    end
+
+    should "not be deletable if it's the last mainline" do
+      @repository.project.repositories.last.destroy
+      assert @repository.can_be_deleted_by?(users(:johan))
+      assert !@repository.can_be_deleted_by?(users(:moe))
+    end
+
+    should "always be deletable if admin and non-project repo" do
+      @repository.kind = Repository::KIND_TEAM_REPO
+      assert @repository.can_be_deleted_by?(users(:johan))
+      assert !@repository.can_be_deleted_by?(users(:moe))
+    end
+
+    should "also be deletable by users with admin privs" do
+      @repository.kind = Repository::KIND_TEAM_REPO
+      cs = @repository.committerships.create!({
+          :committer => users(:mike),
+          :permissions => (Committership::CAN_ADMIN)
+        })
+      assert @repository.can_be_deleted_by?(users(:johan))
+      assert @repository.can_be_deleted_by?(users(:mike))
+    end
   end
 
   should "have a git method that accesses the repository" do
@@ -694,6 +725,35 @@ class RepositoryTest < ActiveSupport::TestCase
           :permissions => Committership::CAN_REVIEW
         })
       assert @repo.reviewers.map(&:login).include?(users(:moe).login)
+    end
+
+    context "permission helpers" do
+      setup do
+        @cs = @repo.committerships.first
+        @cs.permissions = 0
+        @cs.save!
+      end
+
+      should "know if a user is a committer" do
+        assert !@repo.committer?(@cs.committer)
+        @cs.build_permissions(:commit); @cs.save
+        assert !@repo.committer?(:false)
+        assert !@repo.committer?(@cs.committer)
+      end
+
+      should "know if a user is a reviewer" do
+        assert !@repo.reviewer?(@cs.committer)
+        @cs.build_permissions(:review); @cs.save
+        assert !@repo.reviewer?(:false)
+        assert !@repo.reviewer?(@cs.committer)
+      end
+
+      should "know if a user is a admin" do
+        assert !@repo.admin?(@cs.committer)
+        @cs.build_permissions(:commit, :admin); @cs.save
+        assert !@repo.admin?(:false)
+        assert !@repo.admin?(@cs.committer)
+      end
     end
   end
 
