@@ -830,27 +830,34 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "#destroy" do
     setup do
       @project = projects(:johans)
+      @repo = @project.repositories.first
+      assert @repo.admin?(users(:johan))
+      login_as :johan
     end
 
-    should " require login" do
+    should "require login" do
       session[:user_id] = nil
-      do_delete(@project.repositories.mainlines.first)
+      do_delete(@repo)
       assert_redirected_to(new_sessions_path)
     end
 
-    should "can only be deleted by the owner" do
-      login_as :johan
-      @project.repositories.last.update_attribute(:user_id, users(:moe).id)
-      do_delete(@project.repositories.last)
-      assert_redirected_to(project_path(@project))
-      assert_equal "You're not the owner of this repository", flash[:error]
+    should "can only be deleted by the admins" do
+      login_as :mike
+      assert !@repo.admin?(users(:mike));
+      do_delete(@repo)
+      assert_redirected_to([@project, @repo])
+      assert_match(/only repository admins are allowed/i, flash[:error])
     end
 
     should "the owner can delete his own repos" do
-      login_as :johan
       repo = repositories(:johans2)
       repo.user = users(:johan)
       repo.save!
+      repo.committerships.create!({
+          :committer => users(:johan),
+          :permissions => (Committership::CAN_ADMIN | Committership::CAN_COMMIT)
+        })
+      assert repo.reload.admin?(users(:johan))
       delete :destroy, :project_id => repo.project.to_param,
         :group_id => repo.owner.to_param, :id => repo.to_param
       assert_equal nil, flash[:error]
@@ -859,20 +866,21 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "destroying a project creates an event in the project" do
-      login_as :johan
-      repo = repositories(:johans2)
-      repo.user = users(:johan)
-      repo.save!
-      assert_difference("repo.project.events.count") do
-        delete :destroy, :project_id => repo.project.to_param,
-          :group_id => repo.owner.to_param, :id => repo.to_param
+      Repository.any_instance.expects(:can_be_deleted_by?).returns(true)
+      assert_difference("@project.events.count") do
+        do_delete(@repo)
         assert_response :redirect
+        assert_nil flash[:error]
       end
     end
 
     should "work for user/group clones" do
       repo = repositories(:johans2)
       repo.user = users(:mike)
+      repo.committerships.create!({
+          :committer => users(:mike),
+          :permissions => (Committership::CAN_ADMIN | Committership::CAN_COMMIT)
+        })
       repo.save!
       login_as :mike
       get :confirm_delete, :group_id => repo.owner.to_param,
@@ -995,7 +1003,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       @project = projects(:johans)
       @repository = @project.repositories.mainlines.first
       login_as :johan
-      groups(:team_thunderbird).add_member(users(:johan), Role.admin)
     end
 
     should "requires login" do
@@ -1011,24 +1018,33 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :moe
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
       assert_match(/only repository admins are allowed/, flash[:error])
-      assert_redirected_to(project_path(@project))
+      assert_response :redirect
     end
 
     should "requires adminship on the user if owner is a user" do
       login_as :moe
       @repository.owner = users(:moe)
       @repository.kind = Repository::KIND_USER_REPO
+      @repository.committerships.create!({
+          :committer => users(:moe),
+          :permissions => Committership::CAN_ADMIN
+        })
       @repository.save!
       get :edit, :project_id => @repository.project.to_param,
         :user_id => users(:moe).to_param, :id => @repository.to_param
       assert_response :success
     end
 
-    should "requires adminship on the group, if the owner is a group" do
+    should "requires adminship on the repo" do
       login_as :mike
-      @repository.owner = groups(:team_thunderbird)
+      @repository.committerships.create!({
+          :committer => groups(:team_thunderbird),
+          :permissions => Committership::CAN_ADMIN
+        })
       @repository.kind = Repository::KIND_TEAM_REPO
+      @repository.owner = groups(:team_thunderbird)
       @repository.save!
+      assert @repository.admin?(users(:mike))
       get :edit, :project_id => @repository.project.to_param,
         :group_id => groups(:team_thunderbird).to_param, :id => @repository.to_param
       assert_response :success
@@ -1074,12 +1090,14 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "gets a list of the users' groups on edit" do
+      groups(:team_thunderbird).add_member(users(:johan), Role.admin)
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
       assert_response :success
       assert_equal users(:johan).groups, assigns(:groups)
     end
 
     should "gets a list of the users' groups on update" do
+      groups(:team_thunderbird).add_member(users(:johan), Role.admin)
       put :update, :project_id => @project.to_param, :id => @repository.to_param,
             :repository => {:description => "foo"}
       assert_equal users(:johan).groups, assigns(:groups)
@@ -1087,15 +1105,16 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "changes the owner" do
       group = groups(:team_thunderbird)
-      put :update, :project_id => @project.to_param, :id => @repository.to_param, :repository => {
-        :owner_id => group.id,
-      }
+      group.add_member(users(:johan), Role.admin)
+      put :update, :project_id => @project.to_param, :id => @repository.to_param,
+      :repository => { :owner_id => group.id}
       assert_redirected_to(project_repository_path(@repository.project, @repository))
       assert_equal group, @repository.reload.owner
     end
 
     should "changes the owner, only if the original owner was a user" do
       group = groups(:team_thunderbird)
+      group.add_member(users(:johan), Role.admin)
       @repository.owner = group
       @repository.kind = Repository::KIND_TEAM_REPO
       @repository.save!

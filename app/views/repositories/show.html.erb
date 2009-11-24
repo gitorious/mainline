@@ -76,10 +76,10 @@
   </ul>
 
   <ul class="links">
-    <% if @repository.owner.admin?(current_user) -%>
+    <% if @repository.admin?(current_user) -%>
       <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
     <% end -%>
-    <% if @repository.owner.admin?(current_user) -%>
+    <% if @repository.admin?(current_user) -%>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>

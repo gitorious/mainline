@@ -83,7 +83,7 @@ class CommittershipsController < ApplicationController
 
   protected
     def require_adminship
-      unless @owner.admin?(current_user)
+      unless @repository.admin?(current_user)
         respond_to do |format|
           format.html {
             flash[:error] = I18n.t "repositories_controller.adminship_error"

@@ -20,7 +20,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommittershipsControllerTest < ActionController::TestCase
-  
+
   should_render_in_site_specific_context
 
   def setup
@@ -30,7 +30,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     @repository = repositories(:johans)
     login_as :johan
   end
-  
+
   context "GET index" do
     should "requires login" do
       login_as nil
@@ -38,23 +38,24 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))
     end
-    
+
     should "requires adminship" do
       @repository.owner = @group
-      @repository.save
-      @group.add_member(@user, Role.member)
+      @repository.save!
+      assert !@repository.admin?(users(:mike))
+      login_as :mike
       get :index, :group_id => @group.to_param, :repository_id => @repository.to_param
-      assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(group_repository_path(@group, @repository))
+      assert_match(/only repository admins are allowed/, flash[:error])
     end
-    
+
     should "finds the owner (a Project) and the repository" do
       get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
       assert_response :success
       assert_equal @project, assigns(:owner)
       assigns(:repository) == @repository
     end
-    
+
     should "finds the owner (a Group) and the repository" do
       @repository.owner = @group
       @repository.save!
@@ -64,7 +65,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_equal @group, assigns(:owner)
       assigns(:repository) == @repository
     end
-    
+
     should "finds the owner (a User) and the repository" do
       @repository.owner = @user
       @repository.save!
@@ -73,16 +74,20 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_equal @user, assigns(:owner)
       assigns(:repository) == @repository
     end
-    
+
     should "lists the committerships" do
       repo = repositories(:moes)
       repo.owner = @group
+      cs = repo.committerships.first
+      cs.build_permissions(:review,:commit,:admin); cs.save!
       repo.save!
       @group.add_member(@user, Role.admin)
+      assert repo.admin?(@user)
+
       get :index, :group_id => @group.to_param, :repository_id => repo.to_param
       assert_response :success
       exp = repo.committerships.find(:all, :conditions => {
-        :committer_type => "Group", 
+        :committer_type => "Group",
         :committer_id => @group.id
       })
       assert_equal exp, assigns(:committerships)
@@ -97,24 +102,31 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_equal @repository, assigns(:committership).repository
       assert assigns(:committership).new_record?
     end
-    
+
     should "scope to the correct repository" do
+      repo = repositories(:johans2)
+      repo.committerships.create!({
+          :committer => users(:mike),
+          :permissions => Committership::CAN_ADMIN
+        })
       login_as :mike
-      get :new, :group_id => repositories(:johans2).owner.to_param, 
-        :project_id => repositories(:johans2).project.to_param, 
-        :repository_id => repositories(:johans2).to_param
+      get :new, :group_id => repo.owner.to_param,
+        :project_id => repo.project.to_param,
+      :repository_id => repositories(:johans2).to_param
       assert_response :success
       assert_not_equal nil, assigns(:committership)
-      assert_equal repositories(:johans2), assigns(:committership).repository
+      assert_equal repo, assigns(:committership).repository
       assert assigns(:committership).new_record?
     end
   end
-  
+
   context "POST create" do
     should "add a Group as having committership" do
       assert_difference("@repository.committerships.count") do
-        post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
-              :group => {:name => @group.name}, :user => {}, :permissions => ["review"]
+        post :create, {
+          :project_id => @project.to_param, :repository_id => @repository.to_param,
+          :group => {:name => @group.name}, :user => {}, :permissions => ["review"]
+        }
       end
       assert_response :redirect
       assert !assigns(:committership).new_record?, 'new_record? should be false'
@@ -123,18 +135,20 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_equal "Team added as committers", flash[:success]
       assert_equal [:review], assigns(:committership).permission_list
     end
-    
+
     should "add a User as having committership" do
-      assert_not_nil old_committership = @repository.committerships.detect{|c|c.committer == @user}
-      old_committership.destroy
-      @repository.committerships.reload
       assert_difference("@repository.committerships.count") do
-        post :create, :project_id => @project.to_param, :repository_id => @repository.to_param,
-              :user => {:login => @user.login}, :group => {}, :permissions => ["review","commit"]
+        post :create, {
+          :project_id => @project.to_param,
+          :repository_id => @repository.to_param,
+          :user => {:login => users(:moe).login}, :group => {},
+          :permissions => ["review","commit"]
+        }
+        assert_nil flash[:error]
+        assert_response :redirect
       end
-      assert_response :redirect
       assert !assigns(:committership).new_record?, 'new_record? should be false'
-      assert_equal @user, assigns(:committership).committer
+      assert_equal users(:moe), assigns(:committership).committer
       assert_equal @user, assigns(:committership).creator
       assert_equal "User added as committer", flash[:success]
       assert assigns(:committership).reviewer?
@@ -142,23 +156,23 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert !assigns(:committership).admin?
     end
   end
-  
+
   context "autocompletion" do
     setup do
       @user = users(:johan)
     end
-    
+
     should "find a group by name" do
       post :auto_complete_for_group_name, :q => "thunder", :format => "js"
       assert_equal [groups(:team_thunderbird)], assigns(:groups)
     end
 
-    should "finds user by login" do    
+    should "finds user by login" do
       post :auto_complete_for_user_login, :q => "joha", :format => "js"
       assert_equal [@user], assigns(:users)
       #assert_template "memberships/auto_complete_for_user_login.js.erb"
     end
-    
+
     should "find a user by email" do
       @user.email = "dr_awesome@example.com"
       @user.save!
@@ -166,7 +180,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_equal [@user], assigns(:users)
       #assert_template "memberships/auto_complete_for_user_login.js.erb"
     end
-    
+
     should "not display emails if user has opted not to have it displayed" do
       @user.update_attribute(:public_email, false)
       post :auto_complete_for_user_login, :q => @user.email[0..4], :format => "js"
@@ -175,7 +189,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_no_match(/email/, @response.body)
     end
   end
-  
+
   context "DELETE destroy" do
     should "requires login" do
       login_as nil
