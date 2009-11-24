@@ -1031,20 +1031,6 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal(100,
         @repository.next_merge_request_sequence_number)
     end
-    
-    # should "return a sorted list of sequence numbers" do
-    #   assert_equal(@repository.merge_requests.collect(&:sequence_number).sort,
-    #     @repository.merge_request_sequence_numbers)
-    # end
-
-    # should "use 1 as sequence for first merge request" do
-    #   @repository.expects(:merge_request_sequence_numbers).returns([])
-    #   assert_equal 1, @repository.next_merge_request_sequence_number
-    # end
-
-    # should "use highest sequence + 1 for new merge requests" do
-    #   assert_equal 4, @repository.next_merge_request_sequence_number
-    # end
  
   end
 
