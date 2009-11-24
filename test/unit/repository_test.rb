@@ -471,8 +471,9 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "not be deletable if it's the last mainline" do
-      @repository.project.repositories.last.destroy
-      assert @repository.can_be_deleted_by?(users(:johan))
+      @repository.project.repositories.mainlines.last(2).each(&:destroy)
+      assert_equal 1, @repository.project.repositories.mainlines.count
+      assert !@repository.can_be_deleted_by?(users(:johan))
       assert !@repository.can_be_deleted_by?(users(:moe))
     end
 
