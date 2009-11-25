@@ -1094,6 +1094,7 @@ td.meta-info {
 }
 .event_instance .commit_message, .event_instance .commit_message p {
   margin: 2px 0 0 0;
+  line-height: 130%;
 }
 
 /*
