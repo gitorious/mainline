@@ -38,7 +38,8 @@ class User < ActiveRecord::Base
   has_many :comments
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
   has_many :email_aliases, :class_name => "Email", :dependent => :destroy
-
+  has_many :favorites, :dependent => :destroy
+  
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
 
