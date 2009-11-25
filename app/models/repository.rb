@@ -174,17 +174,17 @@ class Repository < ActiveRecord::Base
       :select => 'distinct repositories.*, count(events.id) as event_count',
       :order => "event_count desc", :group => "repositories.id",
       :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
-                      clone_ids, 30.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
+                      clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
       #:conditions => { :id => clone_ids },
       :joins => :events, :include => :project)
   end
 
   def self.most_active_clones(limit = 10)
     find(:all, :limit => limit,
-      :select => 'distinct repositories.*, count(events.id) as event_count',
+      :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
       :order => "event_count desc", :group => "repositories.id",
       :conditions => ["events.created_at > ? and kind in (?)",
-                      30.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
+                      7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
       :joins => :events, :include => :project)
   end
 
