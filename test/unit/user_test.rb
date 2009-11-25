@@ -37,6 +37,7 @@ class UserTest < ActiveSupport::TestCase
   should_have_many :memberships, :dependent => :destroy
   should_have_many :email_aliases, :dependent => :destroy
   should_have_many :commit_repositories
+  should_have_many :favorites, :dependent => :destroy
   should_validate_presence_of :login, :password, :password_confirmation, :email
   should_validate_acceptance_of :terms_of_use
   
