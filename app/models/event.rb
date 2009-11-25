@@ -20,14 +20,14 @@
 #++
 
 class Event < ActiveRecord::Base
-  
+
   MAX_COMMIT_EVENTS = 25
-  
+
   belongs_to :user
   belongs_to :project
   belongs_to :target, :polymorphic => true
   validates_presence_of :user_id, :unless => :user_email_set?
-  
+
   has_many :events, :as => :target do
     def commits
       all(:limit => Event::MAX_COMMIT_EVENTS+1).select{|e|e.action == Action::COMMIT}
@@ -35,21 +35,29 @@ class Event < ActiveRecord::Base
   end
 
   named_scope :top, {:conditions => ['target_type != ?', 'Event']}
-  
+
   def self.latest(count)
     Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do
-      find(:all, :order => "events.created_at desc", :limit => count,
-            :include => [:user, :project],
-            :conditions => ["events.action != ?", Action::COMMIT])
+      find(:all, {
+          :from => "#{quoted_table_name} use index (index_events_on_created_at)",
+          :order => "events.created_at desc",
+          :limit => count,
+          :include => [:user, :project, :events],
+          :conditions => ["events.action != ?", Action::COMMIT]
+        })
     end
   end
-  
+
   def self.latest_in_projects(count, project_ids)
-    Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}", :expires_in => 10.minutes) do
-      find(:all, :order => "events.created_at desc", :limit => count, 
-            :include => [:user, :project], 
-            :conditions => ['events.action != ? and project_id in (?)', 
-                            Action::COMMIT, project_ids])
+    Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}",
+        :expires_in => 10.minutes) do
+      find(:all, {
+          :from => "#{quoted_table_name} use index (index_events_on_created_at)",
+          :order => "events.created_at desc", :limit => count,
+          :include => [:user, :project, :events],
+          :conditions => ['events.action != ? and project_id in (?)',
+                          Action::COMMIT, project_ids]
+        })
     end
   end
 
@@ -58,7 +66,7 @@ class Event < ActiveRecord::Base
     e.target = self
     return e
   end
-  
+
   def has_commits?
     return false if self.action != Action::PUSH
     !events.blank? && !events.commits.blank?
@@ -68,7 +76,7 @@ class Event < ActiveRecord::Base
     return false unless has_commits?
     return events.size == 1
   end
-  
+
   def kind
     'commit'
   end
@@ -99,9 +107,9 @@ class Event < ActiveRecord::Base
       else
         return a
       end
-    end    
+    end
   end
-  
+
   def email
     git_actor.email
   end
