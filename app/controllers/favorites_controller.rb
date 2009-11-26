@@ -21,9 +21,25 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Favorite < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :watchable, :polymorphic => true
-  validates_presence_of :user_id, :watchable_id, :watchable_type
-  validates_uniqueness_of :user_id, :scope => [:watchable_id, :watchable_type]
+class FavoritesController < ApplicationController
+  before_filter :login_required
+  before_filter :find_watchable, :only => [:create]
+
+  def create
+    @favorite = current_user.favorites.create(:watchable => @watchable)
+    respond_to do |wants|
+      wants.html {redirect_to repo_owner_path(@watchable, [@watchable.project, @watchable])}
+      wants.js {render :status => :created, :nothing => true}
+    end
+  end
+
+  private
+  def find_watchable
+    begin
+      watchable_class = params[:watchable_type].constantize
+    rescue NameError
+      raise ActiveRecord::RecordNotFound
+    end
+    @watchable = watchable_class.find(params[:watchable_id])
+  end
 end
