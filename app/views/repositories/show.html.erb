@@ -74,6 +74,16 @@
               new_project_repository_merge_request_path(@repository.project, @repository) %>
       </li>
     <% end -%>
+    <% if logged_in? -%>
+      <li class="watch">
+        <% if favorite = current_user.favorites.detect{|f| f.watchable == @repository} -%>
+          <%= link_to("Stop watching this repository", favorite_path(favorite), :method => "delete") -%>
+        <% else -%>
+          <%= link_to("Start watching this repository", 
+                favorites_path(:watchable_id => @repository.id, :watchable_type => @repository.class.name), :method => :post) -%>
+        <% end -%>  
+      </li>
+    <% end -%>
   </ul>
 
   <ul class="links">

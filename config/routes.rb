@@ -170,6 +170,8 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
     
   end
+
+  map.resources :favorites
   
   map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'
   
