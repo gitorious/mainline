@@ -136,7 +136,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      @group
+      Memberships.new(@group)
     end
 
     def title
