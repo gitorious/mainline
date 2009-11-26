@@ -41,7 +41,7 @@
 </p>
 <p>
   <%= form.label :license, t(:license, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.select :license, Project::LICENSES -%>
+  <%= form.select :license, Project::LICENSES, {:selected => GitoriousConfig['default_license']} -%>
 </p>
 <p>
   <%= form.label :home_url, t(:home_url, :scope => 'activerecord.attributes.project') -%><br />

@@ -55,3 +55,6 @@ test:
 
   # Is this gitorious.org? Read: should we have a very flashy homepage?
   is_gitorious_dot_org: true
+
+  # Pick a default license
+  #default_license: GNU Affero General Public License (AGPLv3)
