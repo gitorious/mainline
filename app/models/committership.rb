@@ -65,7 +65,7 @@ class Committership < ActiveRecord::Base
   end
 
   def build_permissions(*perms)
-    perms = perms.flatten.map{|p| p.to_sym }
+    perms = perms.flatten.compact.map{|p| p.to_sym }
     self.permissions = permission_mask_for(*perms)
   end
 
