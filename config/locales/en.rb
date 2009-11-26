@@ -519,6 +519,7 @@
         :role => "Role",
         :header_title => "Members in {{group_name}}",
         :new_title => "Add new member to {{group_memberships}}",
+        :new_breadcrumb => "Add new member",
       },
       :groups => {
         :create_team => "Create a new team",
@@ -536,7 +537,8 @@
         :edit_memberships => "Edit memberships",
         :edit_team  => 'Edit team',
         :description => 'Team description',
-        :avatar => 'Team image/logo:'
+        :avatar => 'Team image/logo:',
+        :edit_breadcrumb => "Edit Details",
       },
       :collaborators => {
         :add_new => "Add collaborators",
