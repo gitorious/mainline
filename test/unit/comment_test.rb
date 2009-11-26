@@ -28,6 +28,7 @@ class CommentTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans_open)
       @merge_request.user = users(:moe)
       @merge_request.save!
+      Message.destroy_all
     end
 
     should "be able to notify the creator of the target about a new comment" do
