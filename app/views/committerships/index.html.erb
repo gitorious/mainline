@@ -40,7 +40,12 @@
 	  <td><%= link_to h(committership.committer.title), committership.committer -%></td>
     <td><%=h committership.permission_list.join(', ') -%></td>
 	  <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
-	  <td><%= button_to(t("views.common.remove"), [@owner, @repository, committership], :method => :delete) -%></td>
+	  <td>
+      <%= button_to(t("views.common.edit"),
+            [:edit, @owner, @repository, committership], :method => :get) -%>
+      <%= button_to(t("views.common.remove"),
+            [@owner, @repository, committership], :method => :delete) -%>
+    </td>
 	</tr>
 	<% end -%>
 </table>

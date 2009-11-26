@@ -56,6 +56,27 @@ class CommittershipsController < ApplicationController
     end
   end
 
+  def edit
+    @committership = @repository.committerships.find(params[:id])
+  end
+
+  def update
+    @committership = @repository.committerships.find(params[:id])
+    if !params[:permissions].blank?
+      @committership.build_permissions(params[:permissions])
+    else
+      flash[:error] = "No permissions selected"
+      render("edit") and return
+    end
+
+    if @committership.save
+      flash[:success] = "Permissions updated"
+      redirect_to([@owner, @repository, :committerships])
+    else
+      render "edit"
+    end
+  end
+
   def destroy
     @committership = @repository.committerships.find(params[:id])
     if @committership.destroy

@@ -157,6 +157,37 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
   end
 
+  context "GET edit" do
+    setup do
+      @committership = @repository.committerships.create!({
+          :committer => users(:mike),
+          :permissions => Committership::CAN_REVIEW
+        })
+      get :edit, :project_id => @project.to_param, :repository_id => @repository.to_param,
+        :id => @committership.to_param
+    end
+    should_respond_with :success
+    should_assign_to(:committership, :equals =>  @committership)
+    should_render_template "edit"
+  end
+
+  context "PUT update" do
+    setup do
+      @committership = @repository.committerships.create!({
+          :committer => users(:mike),
+          :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
+        })
+      get :update, :project_id => @project.to_param, :repository_id => @repository.to_param,
+        :id => @committership.to_param, :permissions => ["review"]
+    end
+    should_respond_with :redirect
+    should_assign_to(:committership, :equals => @committership)
+
+    should "update the permission" do
+      assert_equal [:review], @committership.reload.permission_list
+    end
+  end
+
   context "autocompletion" do
     setup do
       @user = users(:johan)
