@@ -165,6 +165,11 @@ class CommittershipTest < ActiveSupport::TestCase
       assert_equal Committership::CAN_REVIEW | Committership::CAN_COMMIT, @cs.permissions
     end
 
+    should "not blow up if it receives no permissions" do
+      assert_nothing_raised(NoMethodError) { @cs.build_permissions([nil]) }
+      assert_nothing_raised(NoMethodError) { @cs.build_permissions(nil) }
+    end
+
     should "know if someone can review" do
       @cs.build_permissions(:review)
       assert @cs.reviewer?
