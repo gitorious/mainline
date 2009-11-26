@@ -32,7 +32,7 @@ class FavoritesControllerTest < ActionController::TestCase
   context "Creating a new favorite" do
     setup {
       login_as :johan
-      @repository = repositories(:johans)
+      @repository = repositories(:johans2)
     }
 
     should "require login" do
@@ -64,7 +64,7 @@ class FavoritesControllerTest < ActionController::TestCase
 
     should "redirect to the watchable itself" do
       do_create_post(@repository.class.name, @repository.id)
-      assert_redirected_to([@repository.project, @repository])
+      assert_redirected_to([@repository.owner, @repository.project, @repository])
     end
 
     context "JS requests" do
@@ -76,6 +76,12 @@ class FavoritesControllerTest < ActionController::TestCase
       should "render :not_found" do
         do_create_post("Rrepository", @repository.id)
         assert_response :not_found
+      end
+
+      should "supply deletion URL in Location:" do
+        do_create_post(@repository.class.name, @repository.id, {:format => "js"})
+        assert_not_nil(favorite = assigns(:favorite))
+        assert_equal("/favorites/#{favorite.id}", @response.headers["Location"])
       end
     end
   end
@@ -100,6 +106,13 @@ class FavoritesControllerTest < ActionController::TestCase
     should "render :deleted for JS" do
       delete :destroy, :id => @favorite, :format => "js"
       assert_response :ok
+    end
+
+    should "supply re-creation URL in Location:" do
+      delete :destroy, :id => @favorite, :format => "js"
+      assert_equal(
+        favorites_path(:watchable_id => @repository.id, :watchable_type => "Repository"),
+        @response.headers["Location"])
     end
 
     should "delete the favorite" do
