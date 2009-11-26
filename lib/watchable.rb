@@ -22,7 +22,7 @@
 module Watchable
   
   def self.included(base)
-    base.has_many :favorites, :as => :watchable
+    base.has_many :favorites, :as => :watchable, :dependent => :destroy
     base.has_many :watchers, :through => :favorites, :source => :user
   end
   

@@ -79,4 +79,35 @@ class FavoritesControllerTest < ActionController::TestCase
       end
     end
   end
+
+  context "Deleting a favorite" do
+    setup {
+      login_as :johan
+      @repository = repositories(:johans2)
+      @favorite = users(:johan).favorites.create(:watchable => @repository)
+    }
+
+    should "assign to favorite" do
+      delete :destroy, :id => @favorite
+      assert_equal @favorite, assigns(:favorite)
+    end
+
+    should "redirect for HTML" do
+      delete :destroy, :id => @favorite
+      assert_redirected_to([@repository.owner, @repository.project, @repository])
+    end
+
+    should "render :deleted for JS" do
+      delete :destroy, :id => @favorite, :format => "js"
+      assert_response :ok
+    end
+
+    should "delete the favorite" do
+      delete :destroy, :id => @favorite
+      assert_raises ActiveRecord::RecordNotFound do
+        Favorite.find(@favorite.id)
+      end
+    end
+
+  end
 end
