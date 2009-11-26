@@ -26,6 +26,7 @@
 class Repository < ActiveRecord::Base
   include ActiveMessaging::MessageSender
   include RecordThrottling
+  include Watchable
 
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1

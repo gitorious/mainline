@@ -367,6 +367,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def watched_objects
+    favorites.collect(&:watchable)
+  end
+
   protected
     # before filter
     def encrypt_password
