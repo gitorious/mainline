@@ -26,26 +26,28 @@ class FavoritesController < ApplicationController
   before_filter :find_watchable, :only => [:create]
 
   def create
-    @favorite = current_user.favorites.create(:watchable => @watchable)
+    @favorite = current_user.favorites.create!(:watchable => @watchable)
     respond_to do |wants|
       wants.html {
         flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
         redirect_to repo_owner_path(@watchable, [@watchable.project, @watchable])
       }
-      wants.js {render :status => :created, :nothing => true}
+      wants.js {render :status => :created, :nothing => true,
+        :location => polymorphic_path(@favorite)}
     end
   end
 
   def destroy
     @favorite = current_user.favorites.find(params[:id])
     @favorite.destroy
+    watchable = @favorite.watchable
     respond_to do |wants|
       wants.html {
-        watchable = @favorite.watchable
         flash[:notice] = "You no longer watch this #{watchable.class.name.downcase}"
         redirect_to repo_owner_path(watchable, [watchable.project, watchable])
       }
-      wants.js {head :ok}
+      wants.js {head :ok, :location => url_for(:action => "create", :watchable_id => watchable.id,
+          :watchable_type => watchable.class.name, :only_path => true)}
     end
   end
   
