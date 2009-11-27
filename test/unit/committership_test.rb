@@ -231,7 +231,7 @@ class CommittershipTest < ActiveSupport::TestCase
 
     should "get a list of current permissions" do
       @cs.build_permissions(:review, :commit)
-      assert_equal [:review, :commit], @cs.permission_list
+      assert_equal [:commit, :review], @cs.permission_list.sort_by(&:to_s)
     end
   end
 end
