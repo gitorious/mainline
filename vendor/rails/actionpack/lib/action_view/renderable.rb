@@ -36,8 +36,7 @@ module ActionView
           if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
             view.capture(*names, &proc)
           elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
-            res = view.instance_variable_get(ivar)
-            res.respond_to?(:force_encoding) ? res.force_encoding(Encoding::UTF_8) : res
+            view.instance_variable_get(ivar)
           end
         end
       end
@@ -68,9 +67,9 @@ module ActionView
 
         source = <<-end_src
           def #{render_symbol}(local_assigns)
-            old_output_buffer = output_buffer;#{locals_code};#{compiled_source.respond_to?(:force_encoding) ? compiled_source.force_encoding(Encoding::UTF_8) : compiled_source}
+            old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
           ensure
-            self.output_buffer = old_output_buffer.respond_to?(:force_encoding) ? old_output_buffer.force_encoding(Encoding::UTF_8) : old_output_buffer
+            self.output_buffer = old_output_buffer
           end
         end_src
 

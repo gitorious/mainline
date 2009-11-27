@@ -12,10 +12,10 @@ class TestJSONDecoding < ActiveSupport::TestCase
     %({"a": "a's, b's and c's", "b": "5,000"})   => {"a" => "a's, b's and c's", "b" => "5,000"},
     # multibyte
     %({"matzue": "松江", "asakusa": "浅草"}) => {"matzue" => "松江", "asakusa" => "浅草"},
-    %({"a": "2007-01-01"})                       => {'a' => Date.new(2007, 1, 1)}, 
-    %({"a": "2007-01-01 01:12:34 Z"})            => {'a' => Time.utc(2007, 1, 1, 1, 12, 34)}, 
+    %({"a": "2007-01-01"})                       => {'a' => Date.new(2007, 1, 1)},
+    %({"a": "2007-01-01 01:12:34 Z"})            => {'a' => Time.utc(2007, 1, 1, 1, 12, 34)},
     # no time zone
-    %({"a": "2007-01-01 01:12:34"})              => {'a' => "2007-01-01 01:12:34"}, 
+    %({"a": "2007-01-01 01:12:34"})              => {'a' => "2007-01-01 01:12:34"},
     # needs to be *exact*
     %({"a": " 2007-01-01 01:12:34 Z "})          => {'a' => " 2007-01-01 01:12:34 Z "},
     %({"a": "2007-01-01 : it's your birthday"})  => {'a' => "2007-01-01 : it's your birthday"},
@@ -27,6 +27,7 @@ class TestJSONDecoding < ActiveSupport::TestCase
     %({"a": null})  => {"a" => nil},
     %({"a": true})  => {"a" => true},
     %({"a": false}) => {"a" => false},
+    %q({"bad":"\\\\","trailing":""}) => {"bad" => "\\", "trailing" => ""},
     %q({"a": "http:\/\/test.host\/posts\/1"}) => {"a" => "http://test.host/posts/1"},
     %q({"a": "\u003cunicode\u0020escape\u003e"}) => {"a" => "<unicode escape>"},
     %q({"a": "\\\\u0020skip double backslashes"}) => {"a" => "\\u0020skip double backslashes"},
@@ -38,13 +39,7 @@ class TestJSONDecoding < ActiveSupport::TestCase
   ActiveSupport::JSON.backend
 
   backends = %w(Yaml)
-  begin
-    gem 'json', '>= 1.1'
-    require 'json'
-    backends << "JSONGem"
-  rescue Gem::LoadError
-    # Skip JSON gem tests
-  end
+  backends << "JSONGem" if defined?(::JSON)
 
   backends.each do |backend|
     TESTS.each do |json, expected|
@@ -72,6 +67,7 @@ class TestJSONDecoding < ActiveSupport::TestCase
   end
 
   def test_failed_json_decoding
-    assert_raise(ActiveSupport::JSON::ParseError) { ActiveSupport::JSON.decode(%({: 1})) }
+    assert_raise(ActiveSupport::JSON.parse_error) { ActiveSupport::JSON.decode(%({: 1})) }
   end
 end
+
