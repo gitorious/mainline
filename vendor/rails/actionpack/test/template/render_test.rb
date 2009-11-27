@@ -251,16 +251,8 @@ module RenderTestCases
   if '1.9'.respond_to?(:force_encoding)
     def test_render_utf8_template
       result = @view.render(:file => "test/utf8.html.erb", :layouts => "layouts/yield")
-      assert_equal "Русский текст\nUTF-8\nUTF-8\nUTF-8\n", result
+      assert_equal "Русский текст\n日本語のテキスト", result
       assert_equal Encoding::UTF_8, result.encoding
-    end
-    
-    def test_render_utf8_template_with_named_yield_and_a_partial
-      assert_nothing_raised do
-        result = @view.render(:file => "test/content_for_utf8.html.erb", :layout => "layouts/yield")
-        assert_equal "<title>Русский текст\nInside from partial ( 日本語のテキスト)</title>\nyay?\n", result
-        assert_equal Encoding::UTF_8, result.encoding
-      end
     end
   end
 end

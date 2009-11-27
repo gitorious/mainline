@@ -422,14 +422,10 @@ Run `rake gems:install` to install the missing gems.
     # should override this behaviour and set the relevant +default_charset+
     # on ActionController::Base.
     #
-    # For Ruby 1.9, UTF-8 is the default internal and external encoding.
+    # For Ruby 1.9, this does nothing. Specify the default encoding in the Ruby
+    # shebang line if you don't want UTF-8.
     def initialize_encoding
-      if RUBY_VERSION < '1.9'
-        $KCODE='u'
-      else
-        Encoding.default_internal = Encoding::UTF_8
-        Encoding.default_external = Encoding::UTF_8
-      end
+      $KCODE='u' if RUBY_VERSION < '1.9'
     end
 
     # This initialization routine does nothing unless <tt>:active_record</tt>
@@ -446,7 +442,7 @@ Run `rake gems:install` to install the missing gems.
     def initialize_database_middleware
       if configuration.frameworks.include?(:active_record)
         if configuration.frameworks.include?(:action_controller) &&
-            ActionController::Base.session_store == ActiveRecord::SessionStore
+            ActionController::Base.session_store.name == 'ActiveRecord::SessionStore'
           configuration.middleware.insert_before :"ActiveRecord::SessionStore", ActiveRecord::ConnectionAdapters::ConnectionManagement
           configuration.middleware.insert_before :"ActiveRecord::SessionStore", ActiveRecord::QueryCache
         else
