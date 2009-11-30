@@ -42,14 +42,14 @@ class Mailer < ActionMailer::Base
 
   def notification_copy(recipient, sender, subject, body, notifiable, message_id)
     @recipients       =  recipient.email
-    @from             = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
-    @subject          = sanitize(subject)
+    @from             = "Gitorious Messenger <no-reply@#{GitoriousConfig['gitorious_host']}>"
+    @subject          = "New message: " + sanitize(subject)
     @body[:url]       = url_for({
-                                  :controller => 'messages',
-                                  :action => 'show',
-                                  :id => message_id,
-                                  :host => GitoriousConfig['gitorious_host']
-                                })
+        :controller => 'messages',
+        :action => 'show',
+        :id => message_id,
+        :host => GitoriousConfig['gitorious_host']
+      })
     @body[:body]      = sanitize(body)
     if '1.9'.respond_to?(:force_encoding)
       @body[:recipient] = recipient.title.to_s.force_encoding("utf-8")
@@ -59,7 +59,7 @@ class Mailer < ActionMailer::Base
       @body[:sender]    = sender.title.to_s
     end
     if notifiable
-      @body[:notifiable_url] = build_notifiable_url(notifiable) 
+      @body[:notifiable_url] = build_notifiable_url(notifiable)
     end
   end
 
@@ -68,7 +68,7 @@ class Mailer < ActionMailer::Base
     @subject += I18n.t "mailer.new_password"
     @body[:url] = reset_password_url(password_key)
   end
-  
+
   def new_email_alias(email)
     @from       = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
     @subject    = "[Gitorious] Please confirm this email alias"
@@ -77,7 +77,7 @@ class Mailer < ActionMailer::Base
     @body[:email] = email
     @body[:url] = confirm_user_alias_url(email.user, email.confirmation_code)
   end
-  
+
   def message_processor_error(processor, err, message_body)
       subject     "[Gitorious Processor] fail in #{processor.class.name}"
       from        "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
@@ -93,15 +93,15 @@ class Mailer < ActionMailer::Base
       @sent_on     = Time.now
       @body[:user] = user
     end
-    
+
     def build_notifiable_url(a_notifiable)
       result = case a_notifiable
       when MergeRequest
-        project_repository_merge_request_url(a_notifiable.target_repository.project, a_notifiable.target_repository, a_notifiable)        
+        project_repository_merge_request_url(a_notifiable.target_repository.project, a_notifiable.target_repository, a_notifiable)
       when Membership
         group_path(a_notifiable.group)
       end
-      
+
       return result
     end
 end
