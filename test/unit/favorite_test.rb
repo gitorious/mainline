@@ -1,11 +1,6 @@
 # encoding: utf-8
 #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
-#   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -44,7 +39,7 @@ class FavoriteTest < ActiveSupport::TestCase
       @user, @project, @repo = create_favorited_repo
     end
 
-    should "work" do
+    should "be linked with user's favorites" do
       favorite = @user.favorites.build(:watchable => @repo)
       assert_equal @repo, favorite.watchable
       assert_equal @user, favorite.user

@@ -41,9 +41,8 @@ class UsersController < ApplicationController
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    @events = @user.events.top.paginate(:all,
-      :page => params[:page],
-      :order => "events.created_at desc",
+    @events = @user.favorite_events.paginate(
+      :page => params[:page], :order => "events.created_at desc",
       :include => [:user, :project])
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
