@@ -371,6 +371,13 @@ class User < ActiveRecord::Base
     favorites.collect(&:watchable)
   end
 
+  def favorite_events
+    Event.find(:all,
+      :joins =>
+          "inner join favorites ON favorites.watchable_id = events.target_id AND favorites.watchable_type = events.target_type",
+      :conditions => ["favorites.user_id=?", id])
+  end
+
   protected
     # before filter
     def encrypt_password
