@@ -58,30 +58,30 @@ class MailerTest < ActiveSupport::TestCase
   should "sends forgotten_password" do
     user = users(:johan)
     mail = Mailer.create_forgotten_password(user, "secret")
-    
+
     assert_equal [user.email], mail.to
     assert_equal "[Gitorious] Your new password", mail.subject
     assert_match(/requested a new password for your/i, mail.body)
     assert_match(/reset your password: .+\/users\/reset_password\/secret/i, mail.body)
-    
+
     Mailer.deliver(mail)
     assert_equal [mail], Mailer.deliveries
   end
-  
+
   should "sends new_email_alias" do
     email = emails(:johans1)
     email.update_attribute(:confirmation_code, Digest::SHA1.hexdigest("borkborkbork"))
     mail = Mailer.create_new_email_alias(email)
-    
+
     assert_equal [email.address], mail.to
     assert_equal "[Gitorious] Please confirm this email alias", mail.subject
     assert_match(/in order to activate your email alias/i, mail.body)
     assert_match(/#{email.confirmation_code}/, mail.body)
-    
+
     Mailer.deliver(mail)
     assert_equal [mail], Mailer.deliveries
   end
-  
+
   should 'send a notification of new messages with a link to the message' do
     message_id = 99
     recipient = users(:moe)
@@ -89,11 +89,12 @@ class MailerTest < ActiveSupport::TestCase
     merge_request = merge_requests(:moes_to_johans)
     mail = Mailer.create_notification_copy(recipient, sender, "This is a message", "This is some text", merge_request, message_id)
     assert_equal([recipient.email], mail.to)
+    assert_equal "New message: This is a message", mail.subject
     assert_match /#{sender.fullname} has sent you a message on Gitorious: /, mail.body
     assert_match /http:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, mail.body
     assert_match "http://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", mail.body
   end
-  
+
   should 'sanitize the contents of notifications' do
     recipient = users(:moe)
     sender = users(:mike)

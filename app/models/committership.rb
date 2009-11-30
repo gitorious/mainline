@@ -34,15 +34,15 @@ class Committership < ActiveRecord::Base
   belongs_to :committer, :polymorphic => true
   belongs_to :repository
   belongs_to :creator, :class_name => 'User'
+  has_many :messages, :as => :notifiable
 
   validates_presence_of :committer_id, :committer_type, :repository_id
-
   validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id],
     :message => 'is already a committer to this repository'
+
   after_create :notify_repository_owners
   after_create :add_new_committer_event
   after_destroy :add_removed_committer_event
-  has_many :messages, :as => :notifiable
   before_destroy :nullify_messages
 
   named_scope :groups, :conditions => { :committer_type => "Group" }
