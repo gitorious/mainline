@@ -184,39 +184,7 @@ $(document).ready(function() {
     });
     jQuery('abbr.timeago').timeago();
 
-    jQuery.each(jQuery("a[data-request-method]"), function (){
-        var action = $(this).attr("href");
-        var httpMethod = $(this).attr("data-request-method");
-        $(this).attr("onclick", "");
-        var newElement = jQuery("<a>");
-        newElement.html($(this).html());
-        newElement.insertAfter($(this));
-        $(this).hide();
-        newElement.bind("click", function (){
-            newElement.removeClass("waiting").addClass("waiting");
-            jQuery.ajax({
-                url: action,
-                type: "post",
-                data: {"_method": httpMethod},
-                success: function (data, status) {
-                    if (httpMethod == "post") {
-                        newElement.html(newElement.html().replace("Start","Stop"));
-                        httpMethod = "delete"
-                    }
-                    else {
-                        newElement.html(newElement.html().replace("Stop","Start"));
-                        httpMethod = "post"
-                    }
-
-                },
-                complete: function(xhr, textStatus) {
-                    newElement.removeClass("waiting");
-                    action = xhr.getResponseHeader("Location");
-                }
-            });
-            return false;
-        });
-    })
+    jQuery("a[data-request-method]").replaceRailsGeneratedForm();
 });
 
 if (!Gitorious)
