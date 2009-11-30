@@ -68,9 +68,10 @@
     <% if @repository.ready? -%>
       <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
     <% end -%>
-    <% if @repository.writable_by?(current_user) -%>
+    <% if logged_in? && @repository.can_request_merge?(current_user) -%>
       <li class="merge_request">
-        <%= link_to t('views.repos.btn_request'), new_project_repository_merge_request_path(@repository.project, @repository) %>
+        <%= link_to t('views.repos.btn_request'),
+              new_project_repository_merge_request_path(@repository.project, @repository) %>
       </li>
     <% end -%>
   </ul>

@@ -603,6 +603,18 @@ class RepositoryTest < ActiveSupport::TestCase
     assert repo.committers.include?(users(:moe))
   end
 
+
+  should "know you can request merges from it"  do
+    repo = repositories(:johans2)
+    assert !repo.mainline?
+    assert repo.committer?(users(:mike))
+    assert repo.can_request_merge?(users(:mike))
+
+    repo.kind = Repository::KIND_PROJECT_REPO
+    assert repo.mainline?
+    assert !repo.can_request_merge?(users(:mike)), "mainlines shouldn't request merges"
+  end
+
   should "sets a hash on create" do
     assert @repository.new_record?, '@repository.new_record? should be true'
     @repository.save!
@@ -1031,7 +1043,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal(100,
         @repository.next_merge_request_sequence_number)
     end
- 
+
   end
 
 end
