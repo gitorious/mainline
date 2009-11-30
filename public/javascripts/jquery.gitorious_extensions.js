@@ -118,3 +118,41 @@ jQuery.fn.slideToggle = function(speed) {
   });
   return $(this);
 };
+
+
+// Replace Rails' obtrusive hijacking of a elements with a custom action
+jQuery.fn.replaceRailsGeneratedForm = function (options){
+    options = jQuery.extend({
+        linkName: "start_watching",
+        backend: jQuery.ajax
+    });
+    var action = $(this).attr("href");
+    var httpMethod = $(this).attr("data-request-method");
+    var newElement = jQuery("<a>");
+    newElement.attr("href", "#" + options.linkName);
+    newElement.attr("id", options.linkName);
+    newElement.html($(this).html());
+    newElement.insertAfter($(this));
+    $(this).hide();
+    newElement.bind("click", function (){
+        options.backend({
+            url: action,
+            type: "post",
+            data: {"_method": httpMethod},
+            success: function (data, status) {
+                if (httpMethod == "post") {
+                    newElement.html(newElement.html().replace("Start", "Stop"));
+                    httpMethod = "delete";
+                } else {
+                    newElement.html(newElement.html().replace("Stop", "Start"));
+                    httpMethod = "post";
+                }
+            },
+            complete: function (xhr, textStatus) {
+                action = xhr.getResponseHeader("Location");
+            }
+        });
+        return false;
+    });
+    return newElement;
+}
