@@ -37,10 +37,10 @@ class MergeRequestTest < ActiveSupport::TestCase
 
   should_validate_presence_of :user, :source_repository, :target_repository
   should_validate_presence_of :summary, :sequence_number
-  
+
   should_have_many :comments
   should_not_allow_mass_assignment_of :sequence_number
-  
+
   should "email all committers in the target_repository after the terms are accepted" do
     assert_incremented_by(Message, :count, 1) do
       mr = @merge_request.clone
@@ -236,10 +236,9 @@ class MergeRequestTest < ActiveSupport::TestCase
 
   should "knows who can resolve itself" do
     assert @merge_request.resolvable_by?(users(:johan))
-    @merge_request.target_repository.committerships.create!({
-        :committer => groups(:team_thunderbird),
-        :permissions => Committership::CAN_REVIEW
-      })
+    @merge_request.target_repository.committerships.create_with_permissions!({
+        :committer => groups(:team_thunderbird)
+      }, Committership::CAN_REVIEW)
     assert @merge_request.resolvable_by?(users(:mike))
     assert !@merge_request.resolvable_by?(users(:moe))
   end
@@ -794,5 +793,5 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal @merge_request.sequence_number.to_s, @merge_request.to_param
     end
   end
-  
+
 end

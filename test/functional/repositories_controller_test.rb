@@ -853,10 +853,9 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo = repositories(:johans2)
       repo.user = users(:johan)
       repo.save!
-      repo.committerships.create!({
-          :committer => users(:johan),
-          :permissions => (Committership::CAN_ADMIN | Committership::CAN_COMMIT)
-        })
+      repo.committerships.create_with_permissions!({
+          :committer => users(:johan)
+        }, (Committership::CAN_ADMIN | Committership::CAN_COMMIT))
       assert repo.reload.admin?(users(:johan))
       delete :destroy, :project_id => repo.project.to_param,
         :group_id => repo.owner.to_param, :id => repo.to_param
@@ -877,10 +876,9 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "work for user/group clones" do
       repo = repositories(:johans2)
       repo.user = users(:mike)
-      repo.committerships.create!({
-          :committer => users(:mike),
-          :permissions => (Committership::CAN_ADMIN | Committership::CAN_COMMIT)
-        })
+      repo.committerships.create_with_permissions!({
+          :committer => users(:mike)
+        }, (Committership::CAN_ADMIN | Committership::CAN_COMMIT))
       repo.save!
       login_as :mike
       get :confirm_delete, :group_id => repo.owner.to_param,
@@ -1025,10 +1023,9 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :moe
       @repository.owner = users(:moe)
       @repository.kind = Repository::KIND_USER_REPO
-      @repository.committerships.create!({
-          :committer => users(:moe),
-          :permissions => Committership::CAN_ADMIN
-        })
+      @repository.committerships.create_with_permissions!({
+          :committer => users(:moe)
+        }, Committership::CAN_ADMIN)
       @repository.save!
       get :edit, :project_id => @repository.project.to_param,
         :user_id => users(:moe).to_param, :id => @repository.to_param
@@ -1037,10 +1034,9 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "requires adminship on the repo" do
       login_as :mike
-      @repository.committerships.create!({
-          :committer => groups(:team_thunderbird),
-          :permissions => Committership::CAN_ADMIN
-        })
+      @repository.committerships.create_with_permissions!({
+          :committer => groups(:team_thunderbird)
+        }, Committership::CAN_ADMIN)
       @repository.kind = Repository::KIND_TEAM_REPO
       @repository.owner = groups(:team_thunderbird)
       @repository.save!

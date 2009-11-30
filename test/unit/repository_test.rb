@@ -478,10 +478,9 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "also be deletable by users with admin privs" do
       @repository.kind = Repository::KIND_TEAM_REPO
-      cs = @repository.committerships.create!({
-          :committer => users(:mike),
-          :permissions => (Committership::CAN_ADMIN)
-        })
+      cs = @repository.committerships.create_with_permissions!({
+          :committer => users(:mike)
+        }, Committership::CAN_ADMIN)
       assert @repository.can_be_deleted_by?(users(:johan))
       assert @repository.can_be_deleted_by?(users(:mike))
     end
@@ -585,16 +584,14 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.reload
     assert !repo.committers.include?(users(:moe))
 
-    repo.committerships.create!({
-        :committer => users(:johan),
-        :permissions => Committership::CAN_COMMIT
-      })
+    repo.committerships.create_with_permissions!({
+        :committer => users(:johan)
+      }, Committership::CAN_COMMIT)
     assert_equal [users(:johan).login], repo.committers.map(&:login)
 
-    repo.committerships.create!({
-        :committer => groups(:team_thunderbird),
-        :permissions => Committership::CAN_COMMIT
-      })
+    repo.committerships.create_with_permissions!({
+        :committer => groups(:team_thunderbird)
+      }, Committership::CAN_COMMIT)
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
     assert_equal exp_users.map(&:login), repo.committers.map(&:login)
 
@@ -726,10 +723,9 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "return a list of reviewers" do
       assert !@repo.reviewers.map(&:login).include?(users(:moe).login)
-      @repo.committerships.create!({
-          :committer => users(:moe),
-          :permissions => Committership::CAN_REVIEW
-        })
+      @repo.committerships.create_with_permissions!({
+          :committer => users(:moe)
+        }, Committership::CAN_REVIEW)
       assert @repo.reviewers.map(&:login).include?(users(:moe).login)
     end
 
