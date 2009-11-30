@@ -121,11 +121,16 @@ jQuery.fn.slideToggle = function(speed) {
 
 
 // Replace Rails' obtrusive hijacking of a elements with a custom action
+// - linkName: the id given to the new link (the old one will be hidden
+// - backend: The AJAX backend, used when testing
+// - replaceWords: A pair of words that will be swapped in the html contents of
+//   the link. See rails_form_replacer_test.js for sample usage
 jQuery.fn.replaceRailsGeneratedForm = function (options){
     options = jQuery.extend({
         linkName: "start_watching",
-        backend: jQuery.ajax
-    });
+        backend: jQuery.ajax,
+        replaceWords: ["Start","Stop"]
+    }, options);
     var action = $(this).attr("href");
     var httpMethod = $(this).attr("data-request-method");
     var newElement = jQuery("<a>");
@@ -134,25 +139,33 @@ jQuery.fn.replaceRailsGeneratedForm = function (options){
     newElement.html($(this).html());
     newElement.insertAfter($(this));
     $(this).hide();
-    newElement.bind("click", function (){
-        options.backend({
-            url: action,
-            type: "post",
-            data: {"_method": httpMethod},
-            success: function (data, status) {
-                if (httpMethod == "post") {
-                    newElement.html(newElement.html().replace("Start", "Stop"));
-                    httpMethod = "delete";
-                } else {
-                    newElement.html(newElement.html().replace("Stop", "Start"));
-                    httpMethod = "post";
-                }
-            },
-            complete: function (xhr, textStatus) {
-                action = xhr.getResponseHeader("Location");
+    var api = {
+        click: function (){
+            options.backend({
+                url: action,
+                type: "post",
+                data: {"_method": httpMethod},
+                success: api.success,
+                complete: api.complete
+            });
+            return false;
+        },
+        success: function (){
+            if (httpMethod == "post") {
+                newElement.html(newElement.html().replace(options.replaceWords[0], options.replaceWords[1]));
+                httpMethod = "delete";
+            } else {
+                newElement.html(newElement.html().replace(options.replaceWords[1], options.replaceWords[0]));
+                httpMethod = "post"
             }
-        });
-        return false;
-    });
-    return newElement;
+        },
+        complete: function (xhr, textStatus){
+            action = xhr.getResponseHeader("Location");
+        },
+        element: function () {return newElement},
+        action: function (){return action},
+        httpMethod: function() {return httpMethod}
+    };
+    newElement.bind("click", api.click);
+    return api;
 }
