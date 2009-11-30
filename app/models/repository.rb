@@ -309,6 +309,11 @@ class Repository < ActiveRecord::Base
     admin?(candidate)
   end
 
+  # Can +a_user+ request a merge from this repository
+  def can_request_merge?(a_user)
+    !mainline? && writable_by?(a_user)
+  end
+
   # changes the owner to +another_owner+, removes the old owner as committer
   # and adds +another_owner+ as committer
   def change_owner_to!(another_owner)
@@ -643,7 +648,7 @@ class Repository < ActiveRecord::Base
       candidate
     end
   end
-  
+
   # Runs git-gc on this repository, and updates the last_gc_at attribute
   def gc!
     Grit::Git.with_timeout(nil) do

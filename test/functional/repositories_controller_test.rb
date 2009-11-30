@@ -1173,7 +1173,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "GET projects/1/repositories/3 and have merge request link" do
       login_as :mike
       project = projects(:johans)
-      repository = project.repositories.mainlines.first
+      repository = project.repositories.clones.first
       repository.committerships.create!({
           :committer => users(:mike),
           :permissions => Committership::CAN_REVIEW | Committership::CAN_COMMIT
