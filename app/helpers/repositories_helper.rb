@@ -124,7 +124,6 @@ module RepositoriesHelper
   end
 
   def show_clone_list_search?(group_clones, user_clones)
-    !group_clones.blank? && !user_clones.blank? &&
-      (group_clones.size >= 5 || user_clones.size >= 5)
+    user_clones.size >= 5 || group_clones.size >= 5
   end
 end
