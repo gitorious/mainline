@@ -556,10 +556,10 @@
                           everyone in that team the permissions you select",
       },
       :aliases => {
-        :aliases_title => "Aliases",
-        :new_alias => "New alias",
-        :new_alias_breadcrumb => "New Alias",
-        :manage_aliases => "Manage aliases"
+        :aliases_title => "Email Aliases",
+        :new_alias => "New email alias",
+        :new_alias_breadcrumb => "New Email Alias",
+        :manage_aliases => "Manage email aliases"
       },
       :messages => {
         :collection_title => "Messages",
