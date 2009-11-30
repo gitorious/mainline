@@ -36,7 +36,7 @@ class MergeRequest < ActiveRecord::Base
   after_destroy  :delete_tracking_branches
 
   before_validation_on_create :set_sequence_number
-  
+
   is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
     :include => [{
       :association_name => "user",
@@ -45,14 +45,13 @@ class MergeRequest < ActiveRecord::Base
     }], :conditions => "status != 0"
 
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
-                  :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
+    :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
 
-  validates_presence_of :user, :source_repository, :target_repository, :summary, :sequence_number
-  
+  validates_presence_of :user, :source_repository, :target_repository, :summary,
+    :sequence_number
   validates_presence_of :ending_commit, :on => :create
-
   validates_uniqueness_of :sequence_number, :scope => :target_repository_id
-  
+
   STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
   STATUS_OPEN = 1
   STATUS_CLOSED = 5 # further states must start at 5+n (for backwards compat)
@@ -103,7 +102,7 @@ class MergeRequest < ActiveRecord::Base
   def to_param
     sequence_number.to_s
   end
-  
+
   def self.count_open
     count(:all, :conditions => {:status => STATUS_OPEN})
   end
@@ -188,7 +187,9 @@ class MergeRequest < ActiveRecord::Base
   def create_status_change_event(comment)
     if @current_user
       message = "State changed "
-      message << "from <span class=\"changed\">#{@previous_state}</span> " if @previous_state
+      if @previous_state
+        message << "from <span class=\"changed\">#{@previous_state}</span> "
+      end
       message << "to <span class=\"changed\">#{status_tag}</span>"
       target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
         @current_user, message, comment)
@@ -503,7 +504,9 @@ class MergeRequest < ActiveRecord::Base
 
   def push_new_branch_to_tracking_repo
     branch_spec = [merge_branch_name, merge_branch_name(next_version_number)].join(":")
-    raise "No tracking repository exists for merge request #{id}" unless tracking_repository
+    unless tracking_repository
+      raise "No tracking repository exists for merge request #{id}"
+    end
     target_repository.git.git.push({:timeout => false},
       tracking_repository.full_repository_path, branch_spec)
     create_new_version
@@ -551,7 +554,8 @@ class MergeRequest < ActiveRecord::Base
     key = "merge_status_for_commit_#{a_commit}_in_repository_#{target_repository.id}"
     result = Rails.cache.fetch(key, :expires_in => 60.minutes) do
       output = target_repository.git.git.cherry({},target_branch, a_commit)
-      output.blank? ? :true : :false # Storing false in the cache would make it miss each time
+      # Storing false in the cache would make it miss each time:
+      output.blank? ? :true : :false
     end
     result == :true
   end
@@ -578,9 +582,10 @@ class MergeRequest < ActiveRecord::Base
     highest_version_number + 1
   end
 
-  # Migrate repositories from the old regime with reasons:
-  # If a reason exists: create a comment from the user who last updated us, provide the state to have it look right
-  # If no reason exists: simply set the status tag directly from whatever status_string is
+  # Migrate repositories from the old regime with reasons: If a reason
+  # exists: create a comment from the user who last updated us,
+  # provide the state to have it look right If no reason exists:
+  # simply set the status tag directly from whatever status_string is
   def migrate_to_status_tag
     if reason.blank?
       self.status_tag = status_string.capitalize
