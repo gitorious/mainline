@@ -105,10 +105,9 @@ class CommittershipsControllerTest < ActionController::TestCase
 
     should "scope to the correct repository" do
       repo = repositories(:johans2)
-      repo.committerships.create!({
-          :committer => users(:mike),
-          :permissions => Committership::CAN_ADMIN
-        })
+      repo.committerships.create_with_permissions!({
+          :committer => users(:mike)
+        }, Committership::CAN_ADMIN)
       login_as :mike
       get :new, :group_id => repo.owner.to_param,
         :project_id => repo.project.to_param,

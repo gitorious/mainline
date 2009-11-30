@@ -40,6 +40,8 @@ class Committership < ActiveRecord::Base
   validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id],
     :message => 'is already a committer to this repository'
 
+  attr_protected :permissions
+
   after_create :notify_repository_owners
   after_create :add_new_committer_event
   after_destroy :add_removed_committer_event
@@ -52,10 +54,17 @@ class Committership < ActiveRecord::Base
   named_scope :admins, :conditions => ["(permissions & ?)", CAN_ADMIN]
 
   def self.create_for_owner!(an_owner)
-    create!({
-        :committer => an_owner,
-        :permissions => (CAN_REVIEW | CAN_COMMIT | CAN_ADMIN)
-      })
+    cs = new({:committer => an_owner})
+    cs.permissions = (CAN_REVIEW | CAN_COMMIT | CAN_ADMIN)
+    cs.save!
+    cs
+  end
+
+  def self.create_with_permissions!(attrs, perms)
+    cs = new(attrs)
+    cs.permissions = perms
+    cs.save!
+    cs
   end
 
   def permission_mask_for(*perms)
