@@ -31,7 +31,7 @@
     <%= form.text_field :slug -%>
   </p>
   <p>
-    <%= form.current_user_or_group :owner, t("views.projects.owner"), 
+    <%= form.current_user_or_group :owner, t("views.projects.owner"),
           :hint => "Select the owner of this project; either yourself or a group you're a member of"-%>
   </p>
 <% end -%>
@@ -41,7 +41,9 @@
 </p>
 <p>
   <%= form.label :license, t(:license, :scope => 'activerecord.attributes.project') -%><br />
-  <%= form.select :license, Project::LICENSES, {:selected => GitoriousConfig['default_license']} -%>
+  <%= form.select :license, Project::LICENSES, {
+    :selected => (@project.license || GitoriousConfig['default_license'])
+  } -%>
 </p>
 <p>
   <%= form.label :home_url, t(:home_url, :scope => 'activerecord.attributes.project') -%><br />
