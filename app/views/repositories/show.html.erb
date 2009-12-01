@@ -76,14 +76,7 @@
     <% end -%>
     <% if logged_in? -%>
       <li class="favorite">
-        <% if favorite = current_user.favorites.detect{|f| f.watchable == @repository} -%>
-          <%= link_to("Stop watching this repository", favorite_path(favorite), 
-                :method => "delete", :"data-request-method" => "delete", :class => "enabled") -%>
-        <% else -%>
-          <%= link_to("Start watching this repository", 
-                favorites_path(:watchable_id => @repository.id, :watchable_type => @repository.class.name), 
-                :method => :post, :"data-request-method" => "post", :class => "disabled") -%>
-        <% end -%>  
+        <%= favorite_link_to(@repository) -%>
       </li>
     <% end -%>
   </ul>
