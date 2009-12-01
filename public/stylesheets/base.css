@@ -3292,6 +3292,7 @@ dl.explanation dd {
 }
 .user-profile .profile-data .details {
     float:left;
+    margin-left:0;
 }
 
 .user-profile ul.links {
@@ -3320,16 +3321,16 @@ dl.explanation dd {
     color: #fff;
     text-decoration: none;
 }
+body#users .events .event_instance .event_category {
+    display:none;
+}
 body#users .pull-box h3.pull-box-header {
     background: #eee url("../images/silver_light_gradient.png") repeat-x 0 0;
     color: #444;
     text-shadow:-1px 1px 2px #fff;
     font-size: 15px;
 }
-body#users .events .event_instance .event_category {
-    display:none;
-}
-body#users .pull-box .pull-box-content {
+body#.pull-box .pull-box-content {
     background: #fff url("../images/silver_fade.png?bob") repeat-x 0 0;
 }
 body#users .events .date {
