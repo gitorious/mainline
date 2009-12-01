@@ -42,6 +42,7 @@ class Action
   ADD_PROJECT_REPOSITORY = 19
   UPDATE_REPOSITORY = 20
   REOPEN_MERGE_REQUEST = 21
+  ADD_FAVORITE = 22
   
   def self.name(action_id)
     case action_id
@@ -89,6 +90,8 @@ class Action
         "add project repository"
       when UPDATE_REPOSITORY
         "update repository"
+      when ADD_FAVORITE
+        "add favorite"    
       else
         "unknown event"
     end

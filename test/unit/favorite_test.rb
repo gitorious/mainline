@@ -59,4 +59,19 @@ class FavoriteTest < ActiveSupport::TestCase
       assert @repo.watched_by?(@user)
     end
   end
+
+  context "Generating events after creation" do
+    setup {
+      @user, @project, @repo = create_favorited_repo
+    }
+
+    should "create an event when a favorite is created" do
+      favorite = @user.favorites.build(:watchable => @repo)
+      assert !favorite.event_exists?
+      assert favorite.save
+      assert_not_nil(favorite_event = @user.events_as_target.last)
+      assert favorite.event_exists?
+    end
+  end
+  
 end

@@ -97,6 +97,7 @@
       :event_status_created => "created project",
       :event_status_deleted => "deleted project",
       :event_status_updated => "updated project",
+      :event_added_favorite => "started watching",
       :event_status_cloned => "cloned",
       :event_updated_repository => 'updated repository',
       :event_status_deleted => "deleted",

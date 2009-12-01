@@ -21,4 +21,19 @@ class Favorite < ActiveRecord::Base
   belongs_to :watchable, :polymorphic => true
   validates_presence_of :user_id, :watchable_id, :watchable_type
   validates_uniqueness_of :user_id, :scope => [:watchable_id, :watchable_type]
+  after_create :create_event
+
+  def event_exists?
+    !Event.count(:conditions => event_options).zero?
+  end
+
+  def event_options
+    {:action => Action::ADD_FAVORITE, :data => watchable.id,
+      :body => watchable.class.name, :project_id => watchable.project.id,
+      :target_type => "User", :target_id => user.id}
+  end
+  
+  def create_event
+    user.events.create(event_options)
+  end
 end
