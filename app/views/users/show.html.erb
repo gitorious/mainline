@@ -28,26 +28,93 @@
 
 <div class="with_divider">
   <div id="left">
+    <div class="user-profile">
+      <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
+      <div class="profile-data">
+        <h1>~<%=h @user.login -%></h1>
+
+        <ul class="details">
+          <% unless @user.fullname.blank? %>
+            <li><%= h(@user.fullname) -%></li>
+          <% end %>
+          <% if @user.public_email? -%>
+          <li class="email">
+            <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
+          </li>
+          <% end -%>
+          <% if @user.url %>
+          <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+          <% end -%>
+          <li>
+            <%= t("views.users.member_for") %>
+            <%= t("views.users.about", :about => time_ago_in_words(@user.created_at)) %>
+          </li>
+        </ul>
+      </div>
+
+      <ul class="links">
+        <% if !is_current_user?(@user) -%>
+        <li class="new_email">
+          <%= link_to t("views.users.send_user_msg", :username => h(@user.login)),
+          new_message_path(:to => @user.login) -%>
+        </li>
+        <% end -%>
+        <% if is_current_user?(@user)  -%>
+        <li class="key">
+          <%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%>
+        </li>
+        <li class="alias">
+          <%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%>
+        </li>
+        <li class="edit_account">
+          <%= link_to t("views.users.edit_action"), edit_user_url -%>
+        </li>
+        <li class="edit_account_password">
+          <%= link_to t("views.users.chg_passwd_action"), password_user_path -%>
+        </li>
+        <% end -%>
+      </ul>
+      <div class="clear"></div>
+    </div>
+
+    <% unless @events.empty? -%>
+      <h2><%= t("views.site.dashboard.activities") -%>
+        <%= feed_icon @atom_auto_discovery_url %></h2>
+      <%= render :partial => "events/events", :locals => { :events => @events } -%>
+    <% end -%>
+  </div>
+
+  <div id="right">
+    <% pull_box("Open merge requests for you") do %>
+      <ul>
+        <% @user.review_repositories_withopen_merge_request_count.each do |repo| %>
+          <li>
+            <%= link_to(repo.url_path + ": " + repo.open_merge_request_count,
+                 repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end if is_current_user?(@user) %>
+
     <% pull_box(t("views.site.dashboard.projects")) do -%>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project"><%= link_to h(project.title), project -%></li>
       <% end -%>
       </ul>
-      <% if logged_in? && current_user == @user -%>
+      <% if is_current_user?(@user) -%>
       <div id="new-project-button" class="round-10 small-button">
-        <%= link_to t("views.projects.create_new"), new_project_path, 
+        <%= link_to t("views.projects.create_new"), new_project_path,
                :class => "shadow-2 round-10" -%>
       </div>
       <div class="clear"></div>
       <% end -%>
     <% end -%>
-  </div>
-  <div id="right">
+
     <% pull_box(t("views.site.dashboard.repositories")) do -%>
     <% if @repositories.blank? -%>
       <p class="hint">
-      <% if @user == current_user -%>
+      <% if is_current_user?(@user) -%>
         You currently don't have any repository clones. You can clone
         a repository you wish to contribute to, by going to a
         repository overview page and click the "Clone on Gitorious"
@@ -69,53 +136,3 @@
   </div>
   <div class="clear"></div>
 </div>
-
-<% unless @events.empty? -%>
-  <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
-  <%= render :partial => "events/events", :locals => { :events => @events } -%>  
-<% end -%>
-
-<% content_for :sidebar do -%>
-  <div style="float: right;"><%= link_to(avatar(@user, { :size => 64 }), :action => "show") %></div>
-  <h1>
-    <%=h @user.login -%> 
-    <small><%= @user.fullname.blank? ? "" : "(#{h(@user.fullname)})" -%></small>
-  </h1>
-
-  <ul>
-    <% if @user.public_email? -%>
-    <li class="email">
-      <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
-    </li>
-    <% end -%>
-    <% if @user.url %>
-      <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
-    <% end -%>
-    <li><%= t("views.users.member_for") %> <%= t("views.users.about", :about => time_ago_in_words(@user.created_at)) %></li>
-    <li><strong><%= @commits_last_week -%></strong> <%= t("views.users.this_week", :count => @commits_last_week) %>.</li>
-  </ul>
-  
-  <ul class="links">
-    <% if logged_in? && (current_user != @user) -%>
-      <li class="new_email">
-        <%= link_to t("views.users.send_user_msg", :username => h(@user.login)), 
-              new_message_path(:to => @user.login) -%>
-      </li>
-    <% end -%>
-    <% if current_user && (current_user == @user)  -%>
-      <li class="key"><%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%></li>
-      <li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%></li>
-      <li class="edit_account"><%= link_to t("views.users.edit_action"), edit_user_url -%>
-      <li class="edit_account_password"><%= link_to t("views.users.chg_passwd_action"), password_user_path -%></li>
-    <% end -%>
-  </ul>
-  
-  <% unless @user.groups.empty? -%>
-    <h4><%= t("views.site.dashboard.team_memberships") -%></h4>
-    <ul class="icon_list">
-      <% @user.groups.each do |group| -%>
-        <li class="group"><%= link_to h(group.title), group, :style => "background-image: url('#{group.avatar.url(:icon)}')" -%></li>
-      <% end -%>
-    </ul>
-  <% end -%>
-<% end -%>

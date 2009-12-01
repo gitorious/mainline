@@ -21,7 +21,7 @@
 
 module UsersHelper
   def encoded_mail_to(email)
-    mail_to(email, nil, :replace_at => "AT@NOSPAM@", 
+    mail_to(email, nil, :replace_at => "AT@NOSPAM@",
       :replace_dot => "DOT", :encode => "javascript")
   end
 
@@ -29,12 +29,12 @@ module UsersHelper
     email = email.gsub(/@/,"AT@NOSPAM@")
     email.gsub(/\./,"DOT")
   end
-  
+
   def mangled_mail(email)
     user, domain = h(email).split("@", 2)
     return user if domain.blank?
     domain, ext = domain.split(".", 2)
-    user + " @" + domain[0, domain.length/2] + 
+    user + " @" + domain[0, domain.length/2] +
       "&hellip;" + domain[-(domain.length/3)..-1] + ".#{ext}"
   end
 
@@ -45,5 +45,9 @@ module UsersHelper
                       h(email.to_s)
                     end
     "&lt;" + encoded_email.to_s + "&gt;"
+  end
+
+  def is_current_user?(a_user)
+    logged_in? && current_user == a_user
   end
 end

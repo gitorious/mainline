@@ -31,34 +31,32 @@ class UsersController < ApplicationController
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
   renders_in_global_context
-  ssl_required :new, :create, :edit, :update, :password, :forgot_password_create, 
+  ssl_required :new, :create, :edit, :update, :password, :forgot_password_create,
                 :forgot_password, :update_password, :reset_password, :avatar
- 
+
   # render new.rhtml
   def new
   end
-  
+
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    @events = @user.events.top.paginate(:all, 
+    @events = @user.events.top.paginate(:all,
       :page => params[:page],
-      :order => "events.created_at desc", 
+      :order => "events.created_at desc",
       :include => [:user, :project])
-    
-    @commits_last_week = @user.events.count(:all, 
-      :conditions => ["created_at > ? AND action = ?", 7.days.ago, Action::COMMIT])
+
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
-    
+
     respond_to do |format|
       format.html { }
       format.atom { redirect_to feed_user_path(@user, :format => :atom) }
     end
   end
-  
+
   def feed
     @user = User.find_by_login!(params[:id])
-    @events = @user.events.find(:all, :order => "events.created_at desc", 
+    @events = @user.events.find(:all, :order => "events.created_at desc",
       :include => [:user, :project], :limit => 30)
     respond_to do |format|
       format.html { redirect_to user_path(@user) }
@@ -69,7 +67,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
-    @user.save!    
+    @user.save!
     if !@user.terms_of_use.blank?
       @user.accept_terms!
     end
@@ -77,7 +75,7 @@ class UsersController < ApplicationController
   rescue ActiveRecord::RecordInvalid
     render :action => 'new'
   end
-  
+
   # render pending_activation.html.erb
   def pending_activation
   end
@@ -94,10 +92,10 @@ class UsersController < ApplicationController
     end
     redirect_back_or_default('/')
   end
-  
+
   def forgot_password
   end
-    
+
   def forgot_password_create
     if params[:user] && user = User.find_by_email(params[:user][:email])
       if user.activated?
@@ -114,7 +112,7 @@ class UsersController < ApplicationController
       redirect_to forgot_password_users_path
     end
   end
-  
+
   def reset_password
     @user = User.find_by_password_key(params[:token])
     unless @user
@@ -122,7 +120,7 @@ class UsersController < ApplicationController
       redirect_to forgot_password_users_path
       return
     end
-    
+
     if request.put?
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
@@ -168,11 +166,11 @@ class UsersController < ApplicationController
       render :action => "password"
     end
   end
-  
+
   def openid_build
     @user = User.new(:identity_url => session[:openid_url], :email => session[:openid_email], :login => session[:openid_nickname], :fullname => session[:openid_fullname])
   end
-  
+
   def openid_create
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
@@ -191,7 +189,7 @@ class UsersController < ApplicationController
       render :action => 'openid_build'
     end
   end
-  
+
   # DELETE avatar
   def avatar
     @user.avatar.destroy
@@ -199,18 +197,18 @@ class UsersController < ApplicationController
     flash[:success] = "You profile image was deleted"
     redirect_to user_path
   end
-  
+
   protected
     def find_user
       @user = User.find_by_login!(params[:id])
     end
-    
+
     def require_identity_url_in_session
       if session[:openid_url].blank?
         redirect_to :action => "new" and return
       end
     end
-    
+
     def require_public_user
       unless @user.public?
         flash[:notice] = "This user profile is not public"
