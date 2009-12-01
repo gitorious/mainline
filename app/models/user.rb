@@ -371,7 +371,7 @@ class User < ActiveRecord::Base
     favorites.collect(&:watchable)
   end
 
-  def favorite_events
+  def events_in_watchlist
     Event.find(:all,
       :joins =>
           "inner join favorites ON favorites.watchable_id = events.target_id AND favorites.watchable_type = events.target_type",

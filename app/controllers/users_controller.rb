@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    @events = @user.favorite_events.paginate(
+    @events = @user.events_in_watchlist.paginate(
       :page => params[:page], :order => "events.created_at desc",
       :include => [:user, :project])
 

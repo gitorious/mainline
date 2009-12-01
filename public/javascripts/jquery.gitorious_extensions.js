@@ -129,13 +129,16 @@ jQuery.fn.replaceRailsGeneratedForm = function (options){
     options = jQuery.extend({
         linkName: "start_watching",
         backend: jQuery.ajax,
-        replaceWords: ["Start","Stop"]
+        replaceWords: ["Start","Stop"],
+        toggleClasses: ["enabled","disabled"],
+        waitingClass: "waiting"
     }, options);
     var action = $(this).attr("href");
     var httpMethod = $(this).attr("data-request-method");
     var newElement = jQuery("<a>");
     newElement.attr("href", "#" + options.linkName);
     newElement.attr("id", options.linkName);
+    newElement.attr("class", $(this).attr("class"));
     newElement.html($(this).html());
     newElement.insertAfter($(this));
     $(this).hide();
@@ -148,9 +151,11 @@ jQuery.fn.replaceRailsGeneratedForm = function (options){
                 success: api.success,
                 complete: api.complete
             });
+            newElement.addClass(options.waitingClass);
             return false;
         },
         success: function (){
+            newElement.removeClass(options.waitingClass);
             if (httpMethod == "post") {
                 newElement.html(newElement.html().replace(options.replaceWords[0], options.replaceWords[1]));
                 httpMethod = "delete";
@@ -158,6 +163,9 @@ jQuery.fn.replaceRailsGeneratedForm = function (options){
                 newElement.html(newElement.html().replace(options.replaceWords[1], options.replaceWords[0]));
                 httpMethod = "post"
             }
+            jQuery.each(options.toggleClasses, function (i, name) {
+                newElement.toggleClass(name);
+            })
         },
         complete: function (xhr, textStatus){
             action = xhr.getResponseHeader("Location");
