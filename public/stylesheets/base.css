@@ -3270,3 +3270,55 @@ dl.explanation dd {
     padding-left: 20px;
     background: transparent url('../images/silk/bullet_green.png') no-repeat 2px 0;
 }
+
+.user-profile {
+    margin-bottom: 20px;
+}
+
+.user-profile .avatar {
+    float:left;
+}
+.user-profile .profile-data {
+    float:left;
+    margin-left: 20px;
+    color: #555;
+}
+.user-profile .profile-data .details {
+    float:left;
+}
+
+.user-profile ul.links {
+    padding:0;
+    float:right;
+}
+.user-profile ul.links li {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+}
+.user-profile ul.links li a {
+    background-repeat: no-repeat;
+    background-position: 5px 7px;
+    background-image: url("../images/silk/bullet_go.png");
+    display: block;
+    padding: 5px 5px 5px 28px;
+}
+
+.user-profile ul.links li:hover {
+    background: #390;
+    margin-left: -1px;
+    padding-left: 1px;
+}
+
+.user-profile ul.links li a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+body#users .pull-box h3.pull-box-header {
+    background: #eee url("../images/silver_light_gradient.png") repeat-x 0 0;
+    color: #444;
+    text-shadow:-1px 1px 2px #fff;
+    font-size: 15px;
+}
+body#users .events .event_instance .event_category {
+    display:none;
+}
