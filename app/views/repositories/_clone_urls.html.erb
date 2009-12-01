@@ -19,8 +19,7 @@
 
 <ul>
   <li>
-    <strong><%= t("views.repos.clone_this_repo") -%></strong>
-    <%- if repository.http_cloning? -%>
+    <strong><%= t("views.repos.clone_this_repo") -%></strong><%- if repository.http_cloning? -%>
     <small class="alt-clone-links">
       (<a href ="#more-urls" class="hint" id="repo-<%= repository.id -%>-git-toggle">Git</a> / 
       <a href ="#more-urls" class="hint" id="repo-<%= repository.id -%>-http-toggle">HTTP</a>)
