@@ -2646,7 +2646,7 @@ div.archive-download-box p {
 }
 
 .pull-box .pull-box-content {
-  margin: 0 10px 0 10px;
+  padding: 10px 10px 0 10px;
 }
 
 .pull-box h3.pull-box-header {
@@ -2654,7 +2654,7 @@ div.archive-download-box p {
   color: #fff;
   text-align: center;
   padding: 6px 0 5px 0;
-  margin: 0 0 10px 0;
+  margin: 0;
   text-shadow: #999 -1px 1px 2px;
 }
 .pull-box h3.pull-box-header a {
@@ -3283,6 +3283,13 @@ dl.explanation dd {
     margin-left: 20px;
     color: #555;
 }
+.user-profile .profile-data h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+.user-profile .profile-data h1 a {
+    margin-left: 2px;
+}
 .user-profile .profile-data .details {
     float:left;
 }
@@ -3321,4 +3328,11 @@ body#users .pull-box h3.pull-box-header {
 }
 body#users .events .event_instance .event_category {
     display:none;
+}
+body#users .pull-box .pull-box-content {
+    background: #fff url("../images/silver_fade.png?bob") repeat-x 0 0;
+}
+body#users .events .date {
+    background:transparent url("../images/silver_fade.png") repeat-x 0 0;
+    color:#444444;
 }

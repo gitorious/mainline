@@ -195,7 +195,7 @@ class User < ActiveRecord::Base
 
   # A Hash of repository => count of mergerequests active in the
   # repositories that the user is a reviewer in
-  def review_repositories_withopen_merge_request_count
+  def review_repositories_with_open_merge_request_count
     mr_repository_ids = self.committerships.reviewers.find(:all,
       :select => "repository_id").map{|c| c.repository_id }
     Repository.find(:all, {

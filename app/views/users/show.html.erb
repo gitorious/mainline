@@ -31,7 +31,7 @@
     <div class="user-profile">
       <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
       <div class="profile-data">
-        <h1>~<%=h @user.login -%></h1>
+        <h1>~<%= link_to h(@user.login), @user -%></h1>
 
         <ul class="details">
           <% unless @user.fullname.blank? %>
@@ -87,14 +87,14 @@
   <div id="right">
     <% pull_box("Open merge requests for you") do %>
       <ul>
-        <% @user.review_repositories_withopen_merge_request_count.each do |repo| %>
+        <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
             <%= link_to(repo.url_path + ": " + repo.open_merge_request_count,
                  repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
           </li>
         <% end %>
       </ul>
-    <% end if is_current_user?(@user) %>
+    <% end if show_merge_request_count_for_user?(@user) %>
 
     <% pull_box(t("views.site.dashboard.projects")) do -%>
       <ul class="with_icons">
