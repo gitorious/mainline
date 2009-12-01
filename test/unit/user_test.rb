@@ -434,15 +434,15 @@ class UserTest < ActiveSupport::TestCase
         :data => "Integration",        
         )
       comment_event = @first_repo.project.create_event(Action::COMMENT, @first_repo, @user, 99, "Repository")
-      assert @user.favorite_events.include?(branch_event)
-      assert @user.favorite_events.include?(comment_event)
+      assert @user.events_in_watchlist.include?(branch_event)
+      assert @user.events_in_watchlist.include?(comment_event)
     end
 
     should "not include events for non-favorite objects" do
       comment_event = @second_repo.project.create_event(Action::COMMENT, @second_repo, @user, 99, "Repository")
-      assert !@user.favorite_events.include?(comment_event)
+      assert !@user.events_in_watchlist.include?(comment_event)
       @user.favorites.create!(:watchable => @second_repo)
-      assert @user.favorite_events.include?(comment_event)
+      assert @user.events_in_watchlist.include?(comment_event)
     end
   end
   
