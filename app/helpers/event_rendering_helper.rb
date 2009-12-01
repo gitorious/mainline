@@ -377,6 +377,18 @@ module EventRenderingHelper
     [action, body, category]
   end
 
+  def render_event_add_favorite(event)
+    favorite_class = event.body.constantize
+    repo = favorite_class.find(event.data)
+    action = action_for_event(:event_added_favorite) do
+      link_to(repo_title(repo, repo.project), repo_owner_path(repo, [repo.project, repo]))
+
+      
+    end
+    body = event.body
+    category = "favorite"
+    [action, "", category]
+  end
   protected
     def action_for_event(i18n_key, opts = {}, &block)
       header = "<strong>" + I18n.t("application_helper.#{i18n_key}", opts) + "</strong> "
