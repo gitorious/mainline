@@ -2670,6 +2670,7 @@ div.archive-download-box p {
   color: #fff;
 }
 
+.pull-box.expose { background-image: none; }
 .pull-box.expose p, .pull-box.expose li { font-size: 16px; }
 .pull-box.expose li                     { margin-bottom: 10px; }
 
