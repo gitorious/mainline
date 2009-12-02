@@ -20,12 +20,16 @@
 
 Hello <%= @recipient %>
 
-<%= @sender.to_s %> has sent you a message on Gitorious: 
+<%= @sender.to_s %> has sent you a message on Gitorious:
+----------------------------------------------------
 
 <%= @body.to_s %>
 
 <% if @notifiable_url -%>
 <%= @notifiable_url %>
 <% end -%>
+----------------------------------------------------
+View and reply to this message at <%= @url %>
 
-View this message on <%= @url %>
+PLEASE DO NOT reply to this email directly as it will go
+nowhere. Instead, use the above link to reply.
