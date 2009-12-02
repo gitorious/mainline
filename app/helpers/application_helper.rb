@@ -29,6 +29,12 @@ module ApplicationHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
 
+  GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
+
+  def random_greeting
+    GREETINGS[rand(GREETINGS.length)]
+  end
+
   def help_box(style = :side, icon = :help, options = {}, &block)
     out = %Q{<div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
                   class="help-box #{style} #{icon} round-5">
