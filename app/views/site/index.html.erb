@@ -23,42 +23,26 @@
 
 <% @page_title = t("views.site.page_title") -%>
 
+<% if logged_in? %>
+  <p id="site_greeting">
+    <%= random_greeting %> <%=link_to h(current_user.login), current_user %>!
+  </p>
+<% else -%>
 <div id="site_intro">
   <p><%= t("views.site.description") %></p>
 </div>
-
-<div id="site_overview">
-  <% unless logged_in? -%>
-  <% if false -%>
-  <table>
-    <tr>
-      <th class="left"><h2><%= t("views.site.for_projects") %></h2></th>
-      <th class="right"><h2><%= t("views.site.for_contributors") %></h2></th>
-    </tr>
-    <tr>
-      <td class="left"><%= image_tag("overview_projects.png") -%></td>
-      <td class="right"><%= image_tag("overview_contributors.png") -%></td>
-    </tr>
-  </table>
-  <% end -%>
-	  <% if GitoriousConfig['public_mode'] || logged_in? -%>
-	  <p class="hint create_account_hint">
-		<%= t("views.site.creating_account").call(self, new_user_path) %>
-	  </p>
-	  <% end -%>
-  <% end -%>
-</div>
+<% end -%>
 
 <% if GitoriousConfig['public_mode'] || logged_in? -%>
 <div id="left">
   <% pull_box(nil, :class => "expose") do -%>
     <p>
-      Gitorious provides <a href="/gitorious">open source</a> infrastructure 
+      Gitorious provides <a href="/gitorious">open source</a> infrastructure
       for open source projects which use Git.
       <small><a href="/about">Read more&hellip;</a></small>
     </p>
-  <% end -%>
-  
+  <% end unless logged_in? -%>
+
 <% cache([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
   <% pull_box("Recent activities") do -%>
     <ul class="events inline">
@@ -83,7 +67,7 @@
     </ul>
   <% end -%>
 <% end -%>
-  
+
 <% cache([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
   <% pull_box("Most active repository clones") do -%>
     <ul class="with_icons">
@@ -110,7 +94,7 @@
     </ul>
   <% end -%>
 <% end -%>
-  
+
 <% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
   <% pull_box("Active teams") do -%>
     <ul class="with_icons inline_icons">
