@@ -3342,3 +3342,6 @@ body#users #new-project-button {
     float: right;
     margin: 0 0 5px 5px;;
 }
+
+body#users #left  { width: 53%; }
+body#users #right { width: 43%; }
