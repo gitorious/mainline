@@ -52,25 +52,29 @@
         </ul>
       </div>
 
-      <ul class="links">
+      <ul class="buttons">
         <% if !is_current_user?(@user) -%>
         <li class="new_email">
-          <%= link_to t("views.users.send_user_msg", :username => h(@user.login)),
-          new_message_path(:to => @user.login) -%>
+          <%= white_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
+                new_message_path(:to => @user.login), :class => "new_email") -%>
         </li>
         <% end -%>
         <% if is_current_user?(@user)  -%>
-        <li class="key">
-          <%= link_to t("views.keys.manage_ssh_keys"), user_keys_path(current_user) -%>
+        <li>
+          <%= white_button_link_to(t("views.keys.manage_ssh_keys"),
+            user_keys_path(current_user), :class => "key") -%>
         </li>
-        <li class="alias">
-          <%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%>
+        <li>
+          <%= white_button_link_to(t("views.aliases.manage_aliases"),
+                user_aliases_path(current_user), :class => "alias") -%>
         </li>
-        <li class="edit_account">
-          <%= link_to t("views.users.edit_action"), edit_user_url -%>
+        <li>
+          <%= white_button_link_to(t("views.users.edit_action"), edit_user_url,
+                :class => "edit_account") -%>
         </li>
-        <li class="edit_account_password">
-          <%= link_to t("views.users.chg_passwd_action"), password_user_path -%>
+        <li>
+          <%= white_button_link_to(t("views.users.chg_passwd_action"), password_user_path,
+                :class => "edit_account_password") -%>
         </li>
         <% end -%>
       </ul>
@@ -97,18 +101,15 @@
     <% end if show_merge_request_count_for_user?(@user) %>
 
     <% pull_box(t("views.site.dashboard.projects")) do -%>
+      <% if is_current_user?(@user) -%>
+        <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
+              :id => "new-project-button"}) %>
+      <% end -%>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project"><%= link_to h(project.title), project -%></li>
       <% end -%>
       </ul>
-      <% if is_current_user?(@user) -%>
-      <div id="new-project-button" class="round-10 small-button">
-        <%= link_to t("views.projects.create_new"), new_project_path,
-               :class => "shadow-2 round-10" -%>
-      </div>
-      <div class="clear"></div>
-      <% end -%>
     <% end -%>
 
     <% pull_box(t("views.site.dashboard.repositories")) do -%>

@@ -561,21 +561,31 @@ li.tag > a { background-image: url("../images/silk/tag_blue.png") !important; }
 li.tree > a { background-image: url("../images/silk/chart_organisation.png") !important; }
 li.home > a { background-image: url("../images/silk/house.png") !important; }
 li.account > a { background-image: url("../images/silk/user.png") !important; }
-li.edit_account > a { background-image: url("../images/silk/user_edit.png") !important; }
-li.edit_account_password > a { background-image: url("../images/silk/lock_edit.png") !important; }
+li.edit_account > a, .white-button.edit_account a {
+    background-image: url("../images/silk/user_edit.png") !important;
+}
+li.edit_account_password > a, .white-button.edit_account_password a {
+    background-image: url("../images/silk/lock_edit.png") !important;
+}
 li.new_key > a { background-image: url("../images/silk/key_add.png") !important; }
 li.edit_key > a { background-image: url("../images/silk/key_edit.png") !important; }
-li.key > a { background-image: url("../images/silk/key.png") !important; }
+li.key > a, .white-button.key a {
+    background-image: url("../images/silk/key.png") !important;
+}
 li.zip > a { background-image: url("../images/silk/page_white_zip.png") !important; }
 li.gz > a { background-image: url("../images/silk/page_white_compressed.png") !important; }
 li.merge_requests > a { background-image: url("../images/silk/arrow_in.png") !important; }
 li.clone > a { background-image: url("../images/silk/database_clone.png") !important; }
 li.comment_link > a { background-image: url("../images/silk/comment.png") !important; }
 li.merge_request > a { background-image: url("../images/silk/arrow_merge.png") !important; }
-li.alias > a { background-image: url("../images/silk/vcard.png") !important; }
+li.alias > a, .white-button.alias a {
+    background-image: url("../images/silk/vcard.png") !important;
+}
 li.new_alias > a { background-image: url("../images/silk/vcard_add.png") !important; }
 li.emails > a { background-image: url("../images/silk/email.png") !important; }
-li.new_email > a { background-image: url("../images/silk/email_add.png") !important; }
+li.new_email > a, .white-button.new_email a {
+    background-image: url("../images/silk/email_add.png") !important;
+}
 li.sent_emails > a { background-image: url("../images/silk/email_go.png") !important; }
 li.received_emails > a { background-image: url("../images/silk/email_open.png") !important; }
 li.all_emails > a { background-image: url("../images/silk/folder.png") !important; }
@@ -710,14 +720,16 @@ li.merge_requests a.selected { color: #09460F;}
   margin-bottom: 0;
 }
 
-#new-project-button {
+/* White buttons */
+
+#new-project-button, .white-button {
   margin: 10px 20px 10px 20px;
   text-align:center;
   width: 250px;
   float: right;
   background: #fff url('../images/dialog_bg_bottom.png') repeat-x bottom left;
 }
-#new-project-button a {
+#new-project-button a, .white-button a {
   font-size: 18px;
   display: block;
   padding: 10px 10px 8px 10px;
@@ -725,22 +737,35 @@ li.merge_requests a.selected { color: #09460F;}
   background: transparent url("../images/silk/report_add.png") no-repeat 220px center;
 }
 
-#new-project-button.small-button {
+#new-project-button.small-button, .white-button.small-button {
   margin: 5px 10px 5px 10px;
   width: 160px;
   text-align: left;
 }
 
-#new-project-button.small-button a {
+#new-project-button.small-button a, .white-button.small-button a {
   font-size: 12px;
   padding: 5px 5px 4px 10px;
   background-position: 130px center;
 }
-
-#new-project-button a:hover {
+#new-project-button:hover, .white-button:hover {
+    background-image: url('../images/dialog_bg_top.png');
+    background-position: top left;
+}
+#new-project-button a:hover, .white-button a:hover {
   text-decoration: none;
-  background-color: #390;
-  color: #fff;
+}
+
+ul.buttons .white-button.small-button {
+    margin: 0 0 5px 10px;
+}
+ul.buttons .white-button.small-button a {
+    padding:2px 5px 2px 10px;
+}
+ul.buttons .white-button.small-button a.shadow-2 {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
 }
 
 /* Forms */
@@ -3305,32 +3330,11 @@ dl.explanation dd {
     margin-left:0;
 }
 
-.user-profile ul.links {
+.user-profile ul.buttons {
     padding:0;
     float:right;
 }
-.user-profile ul.links li {
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-}
-.user-profile ul.links li a {
-    background-repeat: no-repeat;
-    background-position: 5px 7px;
-    background-image: url("../images/silk/bullet_go.png");
-    display: block;
-    padding: 5px 5px 5px 28px;
-}
 
-.user-profile ul.links li:hover {
-    background: #390;
-    margin-left: -1px;
-    padding-left: 1px;
-}
-
-.user-profile ul.links li a:hover {
-    color: #fff;
-    text-decoration: none;
-}
 body#users .events .event_instance .event_category {
     display:none;
 }
@@ -3338,4 +3342,8 @@ body#users .events .event_instance .event_category {
 body#users .events .date {
     background:transparent url("../images/silver_fade.png") repeat-x 0 0;
     color:#444444;
+}
+body#users #new-project-button {
+    float: right;
+    margin: 0 0 5px 5px;;
 }
