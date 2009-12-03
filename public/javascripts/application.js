@@ -199,12 +199,21 @@ $(document).ready(function() {
 
         if ($(this).parent().hasClass("off")) { // User clicked something else
             var tabBar = $(this).parents(".tab-bar");
+            var url = $(this).attr("href")
+            var cacheKey = "cached_" + url;
             tabBar.addClass("waiting");
-            jQuery.ajax({
-                url: $(this).attr("href"),
-                type: "get", 
-                success: function (d,t) {onComplete(d, tabBar)}
-            });
+            if (cachedData = tabBar.data(cacheKey)) {
+                onComplete(cachedData, tabBar)
+            } else {
+                jQuery.ajax({
+                    url: url,
+                    type: "get", 
+                    success: function (d,t) {
+                        tabBar.data(cacheKey, d);
+                        onComplete(d, tabBar)
+                    }
+                });                
+            }
         } 
         return false;
     });
