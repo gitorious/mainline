@@ -512,4 +512,14 @@ module ApplicationHelper
     options[:class] ||= "timeago"
     content_tag(:abbr, time.to_s, options.merge(:title => time.getutc.iso8601))
   end
+
+  def white_button_link_to(label, url, options = {})
+    size = options.delete(:size) || "small"
+    css_classes = ["white-button", "round-10", "#{size}-button"]
+    if extra_class = options.delete(:class)
+      css_classes << extra_class
+    end
+    content_tag(:div, link_to(label, url, :class => "shadow-2 round-10"),
+        :id => options.delete(:id), :class => css_classes.flatten.join(" "))
+  end
 end

@@ -254,7 +254,7 @@
         :username => "Username",
         :create => "create an account",
         :license => 'End User License Agreement',
-        :send_user_msg => "Send {{username}} a message",
+        :send_user_msg => "Send message",
         :avatar => 'Profile image',
         :pending_activation => {
           :header => "Almost done",
