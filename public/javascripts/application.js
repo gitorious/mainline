@@ -184,7 +184,30 @@ $(document).ready(function() {
     });
     jQuery('abbr.timeago').timeago();
 
+    // Rails generates some quite obtrusive markup when
+    // :method => whatever is used in link_to etc.
     jQuery("a[data-request-method]").replaceRailsGeneratedForm();
+
+    // Toggle between my activitites/watched activities on ~username
+    jQuery(".toggle_event_selection_for_user a").live("click", function (){
+        var onComplete = function (payload, parentElement){
+            jQuery("#user_events").html(payload);
+            jQuery(".toggle_event_selection_for_user.mine").toggleClass("on").toggleClass("off");
+            jQuery(".toggle_event_selection_for_user.watched").toggleClass("off").toggleClass("on");
+            parentElement.removeClass("waiting");
+        }
+
+        if ($(this).parent().hasClass("off")) { // User clicked something else
+            var tabBar = $(this).parents(".tab-bar");
+            tabBar.addClass("waiting");
+            jQuery.ajax({
+                url: $(this).attr("href"),
+                type: "get", 
+                success: function (d,t) {onComplete(d, tabBar)}
+            });
+        } 
+        return false;
+    });
 });
 
 if (!Gitorious)
