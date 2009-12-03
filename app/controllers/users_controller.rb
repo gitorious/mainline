@@ -39,26 +39,43 @@ class UsersController < ApplicationController
   end
 
   def activities
-    render :partial => "events/events", :locals => {:events => @user.events_in_watchlist.paginate(
-        :page => params[:page],
-        :order => "events.created_at desc",
-        :include => [:user, :project]
-        )}
+    respond_to do |wants|
+      wants.js do
+        render :partial => "events/events", :locals => {:events => @user.events_in_watchlist.paginate(
+            :page => params[:page],
+            :order => "events.created_at desc",
+            :include => [:user, :project]
+            )}
+      end
+      wants.html {redirect_to :action => :show, :page => params[:page]}
+    end
   end
 
   def watched_activities
-    render :partial => "events/events", :locals => {:events => @user.events_as_target.paginate(
-        :page => params[:page],
-        :include =>  [:user, :project]
-        )}
+    respond_to do |wants|
+      wants.js do
+        render :partial => "events/events", :locals => {:events => @user.events_as_target.paginate(
+            :page => params[:page],
+            :include =>  [:user, :project]
+            )}
+      end
+      wants.html {redirect_to :action => :show, :page => params[:page], :events => "watched"}
+    end
   end
-
+  
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    @events = @user.events_in_watchlist.paginate(
-      :page => params[:page], :order => "events.created_at desc",
-      :include => [:user, :project])
+    if @user == current_user and params[:events] == "watched"
+      @events = @user.events_as_target.paginate(
+        :page => params[:page],
+        :include => [:user, :project]
+        )
+    else
+      @events = @user.events_in_watchlist.paginate(
+        :page => params[:page], :order => "events.created_at desc",
+        :include => [:user, :project])
+    end
 
     @favorites = @user.watched_objects
 
