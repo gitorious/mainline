@@ -3349,3 +3349,46 @@ body#users #new-project-button {
 
 body#users #left  { width: 53%; }
 body#users #right { width: 43%; }
+
+.tab-bar {
+  list-style: none;
+  margin: 0 0 1em 0;
+  padding: 0;
+}
+
+.tab-bar.waiting {
+  background: #fff url(../images/spinner.gif) top right no-repeat;
+}
+.tab-bar:after {
+  clear: left;
+  content: "";
+  display: block;
+}
+
+.tab-bar li {
+  float: left;
+  border: 1px inset #000;
+  -moz-border-radius: 5px 5px 0 0;
+  -webkit-border-radius: 5px 5px 0 0;
+  border-bottom: none;
+  margin: 0 0.4em 0 0;
+  padding: 0.2em 0.4em;
+}
+.tab-bar .on {
+  background-color: #eee;
+  font-weight: bold;
+}
+
+.tab-bar .off {
+}
+
+.tab-bar .on a:hover {
+  text-decoration: none;
+}
+
+.tab-bar a {
+  color: #000;
+}
+.tab-bar a.off:hover {
+  color: #390;
+}

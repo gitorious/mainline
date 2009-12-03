@@ -22,7 +22,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-
 <% @page_title = h(@user.login) -%>
 <%= breadcrumbs_from(@user) -%>
 
@@ -82,13 +81,38 @@
     </div>
 
     <% unless @events.empty? -%>
-      <h2><%= t("views.site.dashboard.activities") -%>
-        <%= feed_icon @atom_auto_discovery_url %></h2>
-      <%= render :partial => "events/events", :locals => { :events => @events } -%>
+      <h2><%= t("views.site.dashboard.activities") -%> 
+
+
+      <%= feed_icon @atom_auto_discovery_url %>
+      </h2>
+      <% if is_current_user?(@user) %>
+        <ul class="tab-bar">
+          <li class="toggle_event_selection_for_user mine on">
+            <%= link_to("Your activities", activities_user_path(@user)) -%></li>
+          <li class="toggle_event_selection_for_user watched off">
+            <%= link_to("Watched activitites", watched_activities_user_path(@user)) -%>
+          </li>
+        </ul>
+      <% end %>
+      <div id="user_events">
+        <%= render :partial => "events/events", :locals => { :events => @events } -%>
+      </div>
     <% end -%>
   </div>
 
   <div id="right">
+    <% favorites_heading = is_current_user?(@user) ? "You are watching" : "#{@user.title} is watching" %>
+    <% pull_box(favorites_heading) do %>
+      <ul class="with_icons">
+        <% @favorites.each do |favorite| %>
+          <li class="favorite <%= favorite.class.name.downcase -%>">
+            <%= link_to(repo_title(favorite, favorite.project), repo_owner_path(favorite, [favorite.project, favorite])) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    
     <% pull_box("Open merge requests for you") do %>
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>

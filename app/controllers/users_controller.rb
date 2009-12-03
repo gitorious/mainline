@@ -25,9 +25,9 @@ class UsersController < ApplicationController
     :pending_activation, :activate, :forgot_password, :forgot_password_create, :reset_password
   ]
   before_filter :require_not_logged_in, :only => [:pending_activation]
-  before_filter :login_required, :only => [:edit, :update, :password, :update_password, :avatar]
-  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password, :avatar]
-  before_filter :require_current_user, :only => [:edit, :update, :password, :update_password, :avatar]
+  before_filter :login_required, :only => [:edit, :update, :password, :update_password, :avatar, :watched_activities]
+  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password, :avatar, :activities, :watched_activities]
+  before_filter :require_current_user, :only => [:edit, :update, :password, :update_password, :avatar, :watched_activities]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
   renders_in_global_context
@@ -38,12 +38,29 @@ class UsersController < ApplicationController
   def new
   end
 
+  def activities
+    render :partial => "events/events", :locals => {:events => @user.events_in_watchlist.paginate(
+        :page => params[:page],
+        :order => "events.created_at desc",
+        :include => [:user, :project]
+        )}
+  end
+
+  def watched_activities
+    render :partial => "events/events", :locals => {:events => @user.events_as_target.paginate(
+        :page => params[:page],
+        :include =>  [:user, :project]
+        )}
+  end
+
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
     @events = @user.events_in_watchlist.paginate(
       :page => params[:page], :order => "events.created_at desc",
       :include => [:user, :project])
+
+    @favorites = @user.watched_objects
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
 

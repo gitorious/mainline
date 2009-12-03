@@ -103,7 +103,9 @@ ActionController::Routing::Routes.draw do |map|
     :feed => :get, 
     :password => :get, 
     :update_password => :put,
-    :avatar => :delete
+      :avatar => :delete,
+      :activities => :get,
+      :watched_activities => :get
   }) do |user|
     user.with_options({:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}}) do |user_req|
       user_req.resources :keys
