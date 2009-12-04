@@ -19,26 +19,34 @@ module MessagesHelper
   def sender_and_recipient_display(message)
     sender_and_recipient_for(message).collect(&:capitalize).join(",")
   end
-  
+
   def sender_and_recipient_for(message)
     if message.recipient == current_user
-      [h(message.sender_name), "me"]
+      [link_to(h(message.sender_name), message.sender), "me"]
     else
-      ["me", h(message.recipient.title)]
+      ["me", link_to(h(message.recipient.title), message.recipient)]
     end
   end
-  
+
   def message_title(message)
     sender, recipient = sender_and_recipient_for(message)
-    
+
     case message.notifiable
     when MergeRequest
-      "From <strong>#{sender}</strong> to <strong>#{recipient}</strong>, about a #{link_to('merge request', [message.notifiable.target_repository.project, message.notifiable.target_repository, message.notifiable])}"
-    when Membership 
-      %Q{<strong>#{sender}</strong> added <strong>#{recipient}</strong> to the team #{link_to("#{message.notifiable.group.name}", message.notifiable.group)}}
+      msg_link = link_to('merge request', [message.notifiable.target_repository.project,
+                                           message.notifiable.target_repository,
+                                           message.notifiable])
+      "From <strong>#{sender}</strong> to <strong>#{recipient}</strong>, about a #{msg_link}"
+    when Membership
+      %Q{<strong>#{sender}</strong> added <strong>#{recipient}</strong> to the } +
+        %Q{team #{link_to("#{message.notifiable.group.name}", message.notifiable.group)}}
     when Committership
       committership = message.notifiable
-      %Q{<strong>#{sender}</strong> added #{link_to(committership.committer.title, [committership.repository.project,committership.repository,:committerships])} as committer in <strong>#{committership.repository.name}</strong>}
+      user_link = link_to(committership.committer.title, [committership.repository.project,
+                                                          committership.repository,
+                                                          :committerships])
+      %Q{<strong>#{sender}</strong> added #{user_link} as committer in } +
+        %Q{<strong>#{committership.repository.name}</strong>}
     else
       "#{link_to('message', message)} from <strong>#{sender}</strong> to <strong>#{recipient}</strong>"
     end
