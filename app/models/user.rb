@@ -25,6 +25,7 @@ require 'digest/sha1'
 
 class User < ActiveRecord::Base
   include UrlLinting
+  include LdapAuthentication
 
   has_many :projects
   has_many :memberships, :dependent => :destroy
@@ -246,7 +247,7 @@ class User < ActiveRecord::Base
   end
 
   def authenticated?(password)
-    crypted_password == encrypt(password)
+    crypted_password == encrypt(password) || ldap_authenticated?(password)
   end
 
   def breadcrumb_parent
