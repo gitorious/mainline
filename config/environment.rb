@@ -42,6 +42,8 @@ Rails::Initializer.run do |config|
   config.gem 'stomp',        :version => "1.1"
   config.gem "mime-types", :lib => 'mime/types'
   config.gem "diff-lcs", :lib => 'diff/lcs'
+  config.gem "ruby-net-ldap", :lib => "net/ldap"
+
   if RUBY_VERSION < '1.9'
     config.gem 'json'
   end
