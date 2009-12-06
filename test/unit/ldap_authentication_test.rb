@@ -12,7 +12,7 @@ class LdapAuthenticationTest < ActiveSupport::TestCase
       @ldap.stubs(:port=).once
       @ldap.stubs(:auth).once
       GitoriousConfig['ldap_host'] = "my.enterprise.ldap.box"
-      GitoriousConfig['ldap_dn_template'] = 'cn=#{username},dc=example,dc=com'
+      GitoriousConfig['ldap_dn_template'] = "cn=%s,dc=example,dc=com"
     end
 
     should 'login user when authorized by LDAP server' do

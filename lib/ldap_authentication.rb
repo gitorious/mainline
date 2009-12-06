@@ -18,9 +18,7 @@ module LdapAuthentication
 
     dn_template = GitoriousConfig['ldap_dn_template']
     return if dn_template.blank?
-
-    username = self.login
-    dn = eval('"' + dn_template + '"')
+    dn = dn_template % self.login
 
     # attempt to authenticate against the LDAP server
     ldap.auth(dn, password)

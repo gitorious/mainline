@@ -62,5 +62,5 @@ test:
   # LDAP authentication will take place if host, port and dn_template are set
   #ldap_host: my.enterprise.ldap.box
   #ldap_port: 389
-  #ldap_dn_template: "cn=#{username},dc=example,dc=com"
+  #ldap_dn_template: "cn=%s,dc=example,dc=com" # %s will be substituted with username
   #ldap_encryption: simple_tls
