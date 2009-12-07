@@ -25,7 +25,9 @@
 <%= breadcrumbs_from(@merge_request) -%>
 <% @page_title = "Merge request ##{@merge_request.to_param}: #{h(@merge_request.summary)}" -%>
 
-<h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%></h1>
+<h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%>
+<%= favorite_button(@merge_request) %>
+</h1>
 
 <div class="merge_request_overview">
   <div class="proposal">
@@ -52,11 +54,6 @@
          [@merge_request.source_repository.project, @merge_request.target_repository]) -%>
     </li>
     <li>Created at: <%= @merge_request.created_at.to_s(:long_ordinal) -%></li>
-    <% if logged_in? %>
-      <li>
-        <%= favorite_button(@merge_request) -%>
-      </li>
-    <% end %>
   </ul>
 </div>
 
