@@ -188,35 +188,6 @@ $(document).ready(function() {
     // :method => whatever is used in link_to etc.
     jQuery("a[data-request-method]").replaceRailsGeneratedForm();
 
-    // Toggle between my activitites/watched activities on ~username
-    jQuery(".toggle_event_selection_for_user a").live("click", function (){
-        var onComplete = function (payload, parentElement){
-            jQuery("#user_events").html(payload);
-            jQuery(".toggle_event_selection_for_user.mine").toggleClass("on").toggleClass("off");
-            jQuery(".toggle_event_selection_for_user.watched").toggleClass("off").toggleClass("on");
-            parentElement.removeClass("waiting");
-        }
-
-        if ($(this).parent().hasClass("off")) { // User clicked something else
-            var tabBar = $(this).parents(".tab-bar");
-            var url = $(this).attr("href")
-            var cacheKey = "cached_" + url;
-            tabBar.addClass("waiting");
-            if (cachedData = tabBar.data(cacheKey)) {
-                onComplete(cachedData, tabBar)
-            } else {
-                jQuery.ajax({
-                    url: url,
-                    type: "get", 
-                    success: function (d,t) {
-                        tabBar.data(cacheKey, d);
-                        onComplete(d, tabBar)
-                    }
-                });                
-            }
-        } 
-        return false;
-    });
 });
 
 if (!Gitorious)

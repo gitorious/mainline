@@ -88,11 +88,13 @@
       </h2>
       <% if is_current_user?(@user) %>
         <ul class="tab-bar">
-          <li class="toggle_event_selection_for_user mine on">
-            <%= link_to("Your activities", activities_user_path(@user)) -%></li>
-          <li class="toggle_event_selection_for_user watched off">
-            <%= link_to("Watched activitites", watched_activities_user_path(@user)) -%>
-          </li>
+          <% [["Your activities", params[:events].blank?, {}], 
+              ["Watched activities", params[:events] == "watched", {:events => "watched"}]]
+               .each do |label, on_display, event_params| -%>
+            <li class="<%= on_display ? 'on' : 'off' -%>">
+              <%= link_to(label, user_path(@user, event_params)) -%>
+            </li>            
+          <% end -%>
         </ul>
       <% end %>
       <div id="user_events">
