@@ -32,5 +32,5 @@
   </li>
 <% end -%>
 </ul>
-<%= will_paginate events -%>
+<%= will_paginate events, :params => @event_pagination_params -%>
 <% end -%>
