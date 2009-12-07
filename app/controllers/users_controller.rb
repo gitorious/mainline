@@ -41,25 +41,25 @@ class UsersController < ApplicationController
   def activities
     respond_to do |wants|
       wants.js do
+        @event_pagination_params = {:action => "show"}
         render :partial => "events/events", :locals => {:events => @user.events_in_watchlist.paginate(
             :page => params[:page],
             :order => "events.created_at desc",
             :include => [:user, :project]
             )}
       end
-      wants.html {redirect_to :action => :show, :page => params[:page]}
     end
   end
 
   def watched_activities
     respond_to do |wants|
       wants.js do
+        @event_pagination_params = {:action => "show", :events => "watched"}
         render :partial => "events/events", :locals => {:events => @user.events_as_target.paginate(
             :page => params[:page],
             :include =>  [:user, :project]
             )}
       end
-      wants.html {redirect_to :action => :show, :page => params[:page], :events => "watched"}
     end
   end
   
