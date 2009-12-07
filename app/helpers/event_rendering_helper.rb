@@ -381,8 +381,7 @@ module EventRenderingHelper
     favorite_class = event.body.constantize
     repo = favorite_class.find(event.data)
     action = action_for_event(:event_added_favorite) do
-      link_to(repo_title(repo, repo.project), repo_owner_path(repo, [repo.project, repo]))
-
+      link_to_watchable(repo)
       
     end
     body = event.body

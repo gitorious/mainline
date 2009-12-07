@@ -107,9 +107,8 @@
     <% pull_box(favorites_heading_for(@user)) do %>
       <ul class="with_icons">
         <% @favorites.each do |favorite| %>
-          <li class="favorite <%= favorite.class.name.downcase -%>">
-            <%= link_to(repo_title(favorite, favorite.project),
-                 repo_owner_path(favorite, [favorite.project, favorite])) %>
+          <li class="favorite <%= favorite.class.name.underscore -%>">
+            <%= link_to_watchable(favorite) -%>
           </li>
         <% end %>
         <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
