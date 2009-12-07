@@ -507,6 +507,15 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success
     end
   end
+
+  context "Watchlist" do
+    setup {@user = users(:johan)}
+
+    should "render activities watched by the user" do
+      get :watchlist, :id => @user.to_param, :format => "atom"
+      assert_response :success      
+    end
+  end
   
   context 'Creation from OpenID' do
     setup do

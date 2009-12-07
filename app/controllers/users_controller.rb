@@ -72,6 +72,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def watchlist
+    @user = User.find_by_login!(params[:id])
+    @events = @user.events_in_watchlist.paginate(
+      :page => 1,
+      :per_page => 10,
+      :include =>[:user, :project]
+      )
+    respond_to do |wants|
+      wants.atom {render :template => "users/feed"}
+    end
+  end
+  
   def create
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
