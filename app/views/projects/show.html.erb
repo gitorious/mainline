@@ -24,7 +24,10 @@
 <% @page_title = @project.title -%>
 <%= breadcrumbs_from(@root) -%>
 
-<h1><%=h @project.title -%></h1>
+<h1>
+<%=h @project.title -%>
+<%= favorite_button(@project) %>
+</h1>
 
 <div id="project-description" class="page">
   <%= render_markdown(@project.description, :auto_link) -%>
