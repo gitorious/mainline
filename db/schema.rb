@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091124115354) do
+ActiveRecord::Schema.define(:version => 20091125143413) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -94,6 +94,15 @@ ActiveRecord::Schema.define(:version => 20091124115354) do
   add_index "events", ["project_id"], :name => "index_events_on_project_id"
   add_index "events", ["target_type", "target_id"], :name => "index_events_on_target_type_and_target_id"
   add_index "events", ["user_id"], :name => "index_events_on_user_id"
+
+  create_table "favorites", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "watchable_type"
+    t.integer  "watchable_id"
+    t.string   "action"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "groups", :force => true do |t|
     t.string   "name"
