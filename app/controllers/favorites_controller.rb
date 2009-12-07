@@ -27,8 +27,10 @@ class FavoritesController < ApplicationController
         flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
         redirect_to repo_owner_path(@watchable, [@watchable.project, @watchable])
       }
-      wants.js {render :status => :created, :nothing => true,
-        :location => polymorphic_path(@favorite)}
+      wants.js {
+        render :status => :created, :nothing => true,
+          :location => polymorphic_path(@favorite)
+      }
     end
   end
 
@@ -41,8 +43,10 @@ class FavoritesController < ApplicationController
         flash[:notice] = "You no longer watch this #{watchable.class.name.downcase}"
         redirect_to repo_owner_path(watchable, [watchable.project, watchable])
       }
-      wants.js {head :ok, :location => url_for(:action => "create", :watchable_id => watchable.id,
-          :watchable_type => watchable.class.name, :only_path => true)}
+      wants.js {
+        head :ok, :location => url_for(:action => "create", :watchable_id => watchable.id,
+          :watchable_type => watchable.class.name, :only_path => true)
+      }
     end
   end
 

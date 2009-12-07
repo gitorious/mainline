@@ -33,6 +33,9 @@
           <%= link_to "Clone of #{h(repository.parent.name)}", [repository.parent.project, repository.parent] -%>
         </li>
         <% end -%>
+        <li class="favorite">
+          <%= favorite_link_to(repository) -%>
+        </li>
       </ul>
     </td>
   </tr>
