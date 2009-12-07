@@ -89,8 +89,8 @@
       <% if is_current_user?(@user) %>
         <ul class="tab-bar">
           <% [["Your activities", params[:events].blank?, {}], 
-              ["Watched activities", params[:events] == "watched", {:events => "watched"}]]
-               .each do |label, on_display, event_params| -%>
+              ["Watched activities", params[:events] == "watched", {:events => "watched"}]
+             ].each do |label, on_display, event_params| -%>
             <li class="<%= on_display ? 'on' : 'off' -%>">
               <%= link_to(label, user_path(@user, event_params)) -%>
             </li>            

@@ -55,7 +55,7 @@ module FavoritesHelper
            watchable.target_repository,
           watchable]))
     else
-      link_to(favorite.inspect, "/")
+      link_to(h(watchable.title), watchable)
     end
   end
 

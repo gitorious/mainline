@@ -34,10 +34,13 @@ class Favorite < ActiveRecord::Base
   end
 
   def project
-    if MergeRequest === watchable
+    case watchable
+    when MergeRequest
       watchable.target_repository.project
-    else
+    when Repository
       watchable.project
+    when Project
+      watchable
     end
   end
   
