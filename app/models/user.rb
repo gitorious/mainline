@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
   has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :email_aliases, :class_name => "Email", :dependent => :destroy
   has_many :favorites, :dependent => :destroy
-  
+
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
 
@@ -374,9 +374,10 @@ class User < ActiveRecord::Base
 
   def events_in_watchlist
     Event.find(:all,
-      :joins =>
-          "inner join favorites ON favorites.watchable_id = events.target_id AND favorites.watchable_type = events.target_type",
-      :conditions => ["favorites.user_id=?", id])
+      :joins => "inner join favorites ON favorites.watchable_id = events.target_id " +
+                "AND favorites.watchable_type = events.target_type",
+      :conditions => ["favorites.user_id=?", id],
+      :order => "events.created_at desc")
   end
 
   protected
