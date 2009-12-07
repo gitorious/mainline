@@ -73,4 +73,16 @@ module UsersHelper
     end
     msg
   end
+
+  def showing_newsfeed?
+    is_current_user?(@user) && params[:events] != "outgoing"
+  end
+
+  def newsfeed_or_user_events_link
+    if showing_newsfeed?
+      link_to "Show my activites", user_path(@user, {:events => "outgoing"})
+    else
+      link_to "Show my newsfeed", user_path(@user)
+    end
+  end
 end
