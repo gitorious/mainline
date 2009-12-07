@@ -492,6 +492,22 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
+  context "Viewing ones own favorites" do
+    setup {
+      login_as(:johan)
+      @user = users(:johan)
+      @merge_request = merge_requests(:moes_to_johans)
+      @user.favorites.create(:watchable => @merge_request)
+      @project = projects(:johans)
+      @user.favorites.create(:watchable => @project)      
+    }
+
+    should "render all" do
+      get :show, :id => @user.login
+      assert_response :success
+    end
+  end
+  
   context 'Creation from OpenID' do
     setup do
       @valid_session_options = {:openid_url => 'http://moe.example/', :openid_nickname => 'schmoe'}

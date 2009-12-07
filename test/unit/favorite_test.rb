@@ -73,5 +73,30 @@ class FavoriteTest < ActiveSupport::TestCase
       assert favorite.event_exists?
     end
   end
+
+  context "Watching merge requests" do
+    setup {
+      @user = users(:mike)
+    }
+
+    should "return the target repository's project as project" do
+      merge_request = merge_requests(:moes_to_johans)
+      favorite = @user.favorites.create(:watchable => merge_request)
+      assert_equal(merge_request.target_repository.project,
+        favorite.project)
+    end
+  end
+  
+  context "Watching projects" do
+    setup {
+      @user = users(:moe)
+    }
+
+    should "return the project as project" do
+      @project = projects(:johans)
+      favorite = @user.favorites.create(:watchable => @project)
+      assert_equal @project, favorite.project
+    end
+  end
   
 end

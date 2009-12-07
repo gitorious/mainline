@@ -27,6 +27,7 @@ class Project < ActiveRecord::Base
   acts_as_taggable
   include RecordThrottling
   include UrlLinting
+  include Watchable
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
