@@ -24,7 +24,7 @@
 <h1><%= t("views.repos.title") %></h1>
 
 <% @owner.repositories.each do |repo| -%>
-  <%= render :partial => "repositories/statistics", :locals => {:repository => repo} -%>
+  <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
 <% end -%>
 
 <% content_for :sidebar do -%>

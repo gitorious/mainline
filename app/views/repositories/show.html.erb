@@ -26,7 +26,8 @@
 
 <% render_if_ready(@repository) do -%>
 
-  <%= render :partial => "repositories/statistics", :locals => {:repository => @repository} -%>
+<%= render :partial => "repositories/overview",
+      :locals => {:repository => @repository, :verbose => true} -%>
 
   <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
 <%= render "getting_started" -%>

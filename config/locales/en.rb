@@ -358,7 +358,7 @@
         :help_clone => "You can clone this repository with the following command",
         :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you're behind a firewall",
         :http_url => "Public HTTP clone url",
-        :push_url => "Push url",
+        :push_url => "Your push url",
         :help_push => "You can run <code>git push {{repo}} master</code><br /> Or you can setup a remote like this:",
         :owner => "Owner",
         :creator => "creator",

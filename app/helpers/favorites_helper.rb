@@ -17,25 +17,29 @@
 #++
 
 module FavoritesHelper
-  def favorite_link_to(watchable)
+  def favorite_button(watchable)
     if logged_in? && favorite = current_user.favorites.detect{|f| f.watchable == watchable}
-      destroy_favorite_link_to(favorite, watchable)
+      link = destroy_favorite_link_to(favorite, watchable)
     else
-      create_favorite_link_to(watchable)
+      link = create_favorite_link_to(watchable)
     end
+
+    content_tag(:div, link, :class => "white-button round-10 small-button favorite")
   end
 
   def create_favorite_link_to(watchable)
     class_name = watchable.class.name
     link_to("Start watching",
       favorites_path(:watchable_id => watchable.id,:watchable_type => class_name),
-      :method => :post, :"data-request-method" => "post", :class => "watch-link disabled"
+      :method => :post, :"data-request-method" => "post",
+      :class => "watch-link disabled round-10"
       )
   end
 
   def destroy_favorite_link_to(favorite, watchable)
     link_to("Stop watching",
       favorite_path(favorite),
-      :method => :delete, :"data-request-method" => "delete", :class => "watch-link enabled")
+      :method => :delete, :"data-request-method" => "delete",
+      :class => "watch-link enabled round-10")
   end
 end
