@@ -18,7 +18,7 @@
 
 module FavoritesHelper
   def favorite_link_to(watchable)
-    if favorite = current_user.favorites.detect{|f| f.watchable == watchable}
+    if logged_in? && favorite = current_user.favorites.detect{|f| f.watchable == watchable}
       destroy_favorite_link_to(favorite, watchable)
     else
       create_favorite_link_to(watchable)
@@ -27,15 +27,15 @@ module FavoritesHelper
 
   def create_favorite_link_to(watchable)
     class_name = watchable.class.name
-    link_to("Start watching this #{class_name.downcase}",
+    link_to("Start watching",
       favorites_path(:watchable_id => watchable.id,:watchable_type => class_name),
-      :method => :post, :"data-request-method" => "post", :class => "disabled"
+      :method => :post, :"data-request-method" => "post", :class => "watch-link disabled"
       )
   end
 
   def destroy_favorite_link_to(favorite, watchable)
-    link_to("Stop watching this #{watchable.class.name.downcase}",
+    link_to("Stop watching",
       favorite_path(favorite),
-      :method => :delete, :"data-request-method" => "delete", :class => "enabled")
+      :method => :delete, :"data-request-method" => "delete", :class => "watch-link enabled")
   end
 end
