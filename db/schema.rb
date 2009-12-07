@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file,
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091125143413) do
+ActiveRecord::Schema.define(:version => 20091207133046) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -104,6 +104,8 @@ ActiveRecord::Schema.define(:version => 20091125143413) do
     t.datetime "updated_at"
   end
 
+  add_index "favorites", ["watchable_type", "watchable_id", "user_id"], :name => "index_favorites_on_watchable_type_and_watchable_id_and_user_id"
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.integer  "user_id"
@@ -118,6 +120,17 @@ ActiveRecord::Schema.define(:version => 20091125143413) do
 
   add_index "groups", ["name"], :name => "index_groups_on_name_and_public"
   add_index "groups", ["user_id"], :name => "index_groups_on_user_id"
+
+  create_table "hooks", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "repository_id"
+    t.string   "url"
+    t.string   "last_response"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "group_id"
