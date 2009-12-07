@@ -2404,7 +2404,7 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
 .repository_meta {
 /*  border: 1px solid #ddd;*/
   padding: 10px;
-  background: transparent url("../images/silver_fade.png") repeat-x 0 0;
+  background: transparent url("../images/silver_fade.png") repeat-x 0 -15px;
   border: 1px solid #eee;
   margin: 0 10px 40px 0;
 }
