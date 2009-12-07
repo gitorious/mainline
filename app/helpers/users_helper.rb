@@ -55,4 +55,21 @@ module UsersHelper
     is_current_user?(a_user) &&
          !a_user.review_repositories_with_open_merge_request_count.blank?
   end
+
+  def personified(user, current_user_msg, other_user_msg)
+    is_current_user?(user) ? h(current_user_msg) : h(other_user_msg)
+  end
+
+  def favorites_heading_for(user)
+    personified(user, "You are watching", "#{user.title} is watching")
+  end
+
+  def no_watchings_notice_for(user)
+    msg = personified(user, "You aren't", "#{user.title} isn't") +
+      " watching anything yet."
+    if is_current_user?(user)
+      msg << "Click the watch icon to get events feeded into this page"
+    end
+    msg
+  end
 end
