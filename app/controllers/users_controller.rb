@@ -67,12 +67,12 @@ class UsersController < ApplicationController
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
     if @user == current_user and params[:events] == "watched"
-      @events = @user.events_as_target.paginate(
+      @events = @user.events_in_watchlist.paginate(
         :page => params[:page],
         :include => [:user, :project]
         )
     else
-      @events = @user.events_in_watchlist.paginate(
+      @events = @user.events.paginate(
         :page => params[:page], :order => "events.created_at desc",
         :include => [:user, :project])
     end
