@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   def show
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    if @user == current_user and params[:events] == "watched"
+    if current_user == @user && params[:events] != "outgoing"
       @events = @user.events_in_watchlist.paginate(
         :page => params[:page],
         :include => [:user, :project]
