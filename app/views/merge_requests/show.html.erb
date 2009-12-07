@@ -54,7 +54,7 @@
     <li>Created at: <%= @merge_request.created_at.to_s(:long_ordinal) -%></li>
     <% if logged_in? %>
       <li>
-        <%= favorite_link_to(@merge_request) -%>
+        <%= favorite_button(@merge_request) -%>
       </li>
     <% end %>
   </ul>
