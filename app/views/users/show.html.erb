@@ -25,6 +25,10 @@
 <% @page_title = h(@user.login) -%>
 <%= breadcrumbs_from(@user) -%>
 
+<%- content_for(:extra_head) do -%>
+  <%= auto_discovery_link_tag(:atom, watchlist_user_path(@user), :title => "#{h(@user.title)}'s watchlist") -%>
+<% end -%>
+
 <div class="with_divider">
   <div id="left">
     <div class="user-profile">
