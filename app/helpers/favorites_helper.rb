@@ -26,7 +26,7 @@ module FavoritesHelper
 
     content_tag(:div, link, :class => "white-button round-10 small-button favorite")
   end
-
+  
   def create_favorite_link_to(watchable)
     class_name = watchable.class.name
     link_to("Start watching",
@@ -42,4 +42,22 @@ module FavoritesHelper
       :method => :delete, :"data-request-method" => "delete",
       :class => "watch-link enabled round-10")
   end
+
+  # Builds a link to the target of a favorite event
+  def link_to_watchable(watchable)
+    case watchable
+    when Repository
+      link_to(repo_title(watchable, watchable.project), repo_owner_path(watchable, [watchable.project, watchable]))
+    when MergeRequest
+      link_to(h(truncate(watchable.summary, :length => 32)),
+        repo_owner_path(watchable.target_repository,
+          [watchable.source_repository.project,
+           watchable.target_repository,
+          watchable]))
+    else
+      link_to(favorite.inspect, "/")
+    end
+  end
+
+
 end

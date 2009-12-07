@@ -86,6 +86,25 @@ class FavoritesControllerTest < ActionController::TestCase
     end
   end
 
+  context "Watching a merge request" do
+    setup {
+      login_as :johan
+      @merge_request = merge_requests(:moes_to_johans)
+    }
+
+    should "create it" do
+      do_create_post(@merge_request.class.name, @merge_request.id,
+        {:format => "js"})
+      assert_response :created
+    end
+
+    should "destroy it" do
+      favorite = users(:johan).favorites.create(:watchable => @merge_request)
+      delete :destroy, :id => favorite, :format => "js"
+      assert_response :ok
+    end
+  end
+
   context "Deleting a favorite" do
     setup {
       login_as :johan

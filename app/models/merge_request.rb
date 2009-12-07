@@ -22,6 +22,7 @@
 
 class MergeRequest < ActiveRecord::Base
   include ActiveMessaging::MessageSender
+  include Watchable
 
   belongs_to :user
   belongs_to :source_repository, :class_name => 'Repository'
