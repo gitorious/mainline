@@ -535,30 +535,4 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  context "Events viewing" do
-    setup {
-      @userid = users(:johan).to_param
-    }
-    should "not require login" do
-      get :activities, :id => @userid, :format => "js"
-      assert_response :success
-    end
-
-    should "render the watched activities for the user only" do
-      get :watched_activities, :id => @userid, :format => "js"
-      assert_response 406
-    end
-
-    should "allow access to ones own watched activities" do
-      login_as(@userid)
-      get :watched_activities, :id => @userid, :format => "js"
-      assert_response :success
-    end
-
-    should "render my activities for anyone" do
-      get :activities, :id => @userid, :format => "js"
-      assert_response :success
-    end
-  end
-
 end
