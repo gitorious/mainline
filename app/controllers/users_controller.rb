@@ -42,10 +42,7 @@ class UsersController < ApplicationController
     @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
     if current_user == @user && params[:events] != "outgoing"
-      @events = @user.events_in_watchlist.paginate(
-        :page => params[:page],
-        :include => [:user, :project]
-        )
+      @events = @user.paginated_events_in_watchlist(:page => params[:page])
     else
       @events = @user.events.paginate(
         :page => params[:page], :order => "events.created_at desc",
@@ -83,7 +80,7 @@ class UsersController < ApplicationController
       wants.atom {render :template => "users/feed"}
     end
   end
-  
+
   def create
     @user = User.new(params[:user])
     @user.login = params[:user][:login]

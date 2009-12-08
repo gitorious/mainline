@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
     t.string   "user_email"
   end
 
+  add_index "events", ["action", "created_at"], :name => "index_events_on_action_and_created_at"
   add_index "events", ["action"], :name => "index_events_on_action"
   add_index "events", ["created_at", "project_id"], :name => "index_events_on_created_at_and_project_id"
   add_index "events", ["created_at"], :name => "index_events_on_created_at"
@@ -120,17 +121,6 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
 
   add_index "groups", ["name"], :name => "index_groups_on_name_and_public"
   add_index "groups", ["user_id"], :name => "index_groups_on_user_id"
-
-  create_table "hooks", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "repository_id"
-    t.string   "url"
-    t.string   "last_response"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "group_id"
