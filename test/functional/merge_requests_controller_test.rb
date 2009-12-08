@@ -325,7 +325,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 	context "Merge request landing page" do
 	  should "GET the mergerequest landing page" do
 		  login_as :johan
-		  session[:return_to] = "/foo/bar"
+		  session[:return_to] = "#{GitoriousConfig['gitorious_url_root']}/foo/bar"
 		  get :oauth_return
 		  assert_response :redirect
 		  assert_redirected_to "#{GitoriousConfig['gitorious_url_root']}/foo/bar"
