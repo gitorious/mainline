@@ -72,6 +72,17 @@ class FavoriteTest < ActiveSupport::TestCase
       assert_not_nil(favorite_event = @user.events_as_target.last)
       assert favorite.event_exists?
     end
+
+    should "only create an event the first time" do
+      favorite = @user.favorites.create(:watchable => @repo)
+      assert favorite.event_exists?
+      favorite.destroy
+      new_favorite = @user.favorites.build(:watchable => @repo)
+      assert new_favorite.event_exists?
+      assert_incremented_by @user.events_as_target, :count, 0 do
+        assert new_favorite.save
+      end
+    end
   end
 
   context "Watching merge requests" do
