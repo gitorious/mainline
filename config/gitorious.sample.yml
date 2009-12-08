@@ -28,6 +28,9 @@ test:
   # User which is running git daemon
   gitorious_user: git
 
+  # URL root context of the application, eg "/gitorious"
+  gitorious_url_root: /
+
   # Email spam on server errors to:
   exception_notification_emails:  
 

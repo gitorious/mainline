@@ -175,6 +175,7 @@ module ApplicationHelper
     "http://www.gravatar.com/avatar.php?gravatar_id=" +
     (email.nil? ? "" : Digest::MD5.hexdigest(email)) + "&amp;default=" +
       u("http://#{GitoriousConfig['gitorious_host']}#{port_string}" +
+      "/#{GitoriousConfig["gitorious_url_root"]}" +
       "/#{options.delete(:default)}") +
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end

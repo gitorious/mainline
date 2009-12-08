@@ -19,9 +19,9 @@
 
 Hola <%= @user.login %>, 
 
-Su cuenta fue activada. Puede agregar su llave pública de SSH aquí http://<%= GitoriousConfig['gitorious_host'] -%>/account así como modificar sus datos.
+Su cuenta fue activada. Puede agregar su llave pública de SSH aquí http://<%= GitoriousConfig['gitorious_host'] -%><%= GitoriousConfig['gitorious_url_root'] -%>/account así como modificar sus datos.
 
 Atentamente,
 
-http://<%= GitoriousConfig['gitorious_host'] %>
+http://<%= GitoriousConfig['gitorious_host'] -%><%= GitoriousConfig['gitorious_url_root'] -%>
 

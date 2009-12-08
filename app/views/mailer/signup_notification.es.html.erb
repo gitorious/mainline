@@ -19,7 +19,7 @@
 
 Hola,
 
-Su cuenta <%= GitoriousConfig['gitorious_host'] -%> fue creada, su usuario es: <%= @user.login %>
+Su cuenta <%= GitoriousConfig['gitorious_host'] -%><%= GitoriousConfig['gitorious_url_root'] -%> fue creada, su usuario es: <%= @user.login %>
 
 Por favor, visite la siguiente URL para activar su cuenta:
 
@@ -28,4 +28,4 @@ Por favor, visite la siguiente URL para activar su cuenta:
 
 Atentamente,
 
-http://<%= GitoriousConfig['gitorious_host'] %>
+http://<%= GitoriousConfig['gitorious_host'] -%><%= GitoriousConfig['gitorious_url_root'] -%>

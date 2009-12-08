@@ -90,7 +90,7 @@ class UsersController < ApplicationController
     else
       flash[:error] = I18n.t "users_controller.activate_error"
     end
-    redirect_back_or_default('/')
+    redirect_back_or_default("#{GitoriousConfig['gitorious_url_root']}")
   end
 
   def forgot_password

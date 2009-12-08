@@ -96,6 +96,9 @@ Rails::Initializer.run do |config|
       :user_observer
   ]
 
+  config.action_controller.relative_url_root = YAML.load_file(File.join(RAILS_ROOT,
+    "config/gitorious.yml"))[RAILS_ENV]["gitorious_url_root"]
+
   config.after_initialize do
     OAuth::Consumer.class_eval {
       remove_const(:CA_FILE) if const_defined?(:CA_FILE)
