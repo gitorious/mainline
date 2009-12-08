@@ -3368,3 +3368,16 @@ body#users h2.activities small {
     font-size: 12px;
     color: #666;
 }
+
+.embedded_message_list {
+}
+.embedded_message_list a {
+  background-color: #fff;
+}
+.embedded_message_list a.unread {
+  font-weight: bold;
+}
+.embedded_message_list .meta {
+  font-size: 11px;
+  color: #555;
+}

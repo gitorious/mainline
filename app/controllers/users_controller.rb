@@ -49,6 +49,8 @@ class UsersController < ApplicationController
         :include => [:user, :project])
     end
 
+    @messages = @user.messages_in_inbox if @user == current_user
+    
     @favorites = @user.watched_objects
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
