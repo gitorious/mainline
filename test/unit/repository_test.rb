@@ -866,6 +866,15 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
+    should "allow blank updates if we say it's ok" do
+      @repository.update_attribute(:description, "asdf")
+      @repository.log_changes_with_user(users(:johan)) do
+        @repository.replace_value(:description, "", true)
+      end
+      @repository.save!
+      assert @repository.reload.description.blank?, "desc: #{@repository.description.inspect}"
+    end
+
     should 'not generate events when invalid values are provided' do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
