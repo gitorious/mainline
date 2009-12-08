@@ -175,6 +175,10 @@ class Message < ActiveRecord::Base
       self.archived_by_recipient = true
     end
   end
+
+  def touch!
+    self.updated_at = Time.now
+  end
   
   protected
     def send_email_notification_if_required
@@ -210,6 +214,7 @@ class Message < ActiveRecord::Base
         else
           root_message.archived_by_recipient = false
         end
+        root_message.touch!
         root_message.save
       end
     end
