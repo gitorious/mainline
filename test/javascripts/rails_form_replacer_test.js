@@ -23,13 +23,13 @@ TestCase("Replace Rails generated forms", {
     },
     "test original link should be replaced": function () {
         var elementToReplace = jQuery("[data-request-method]");
-        var api = jQuery("#me").replaceRailsGeneratedForm();
-        var el = jQuery("a[href='#start_watching']");
-        assertEquals("start_watching", el.attr("id"));
+        var api = replaceRailsGeneratedForm(jQuery("#me"));
+        var el = jQuery("a[href='#me_']");
+        assertEquals("me_", el.attr("id"));
         assertEquals(0, jQuery("[data-request-method]:visible").length);
     },
     "test success callback should toggle method": function() {
-        var api = jQuery("#me").replaceRailsGeneratedForm();
+        var api = replaceRailsGeneratedForm($("#me"));
         assertEquals("delete", api.httpMethod());
         api.success();
         assertEquals("post", api.httpMethod());
@@ -37,38 +37,38 @@ TestCase("Replace Rails generated forms", {
         assertEquals("delete", api.httpMethod());
     },
     "test success callback should change inner HTML": function (){
-        var api = jQuery("#me").replaceRailsGeneratedForm();
-        var el = jQuery("#start_watching");
+        var api = replaceRailsGeneratedForm($("#me"));
+        var el = api.element();
         api.success();
         assertEquals("Start the game", el.html());
         api.success();
         assertEquals("Stop the game", el.html());
     },
     "test complete callback should change location": function () {
-        var api = jQuery("#me").replaceRailsGeneratedForm();
+        var api = replaceRailsGeneratedForm(jQuery("#me"));
         api.complete({getResponseHeader: function() {return "/people"}});
         assertEquals("/people", api.action());
     },
     "test should accept custom replacement texts": function () {
         /*:DOC += <p id="c"><a data-request-method="post" id="f" href="/favorites/123">Let the party end</a></p>*/
-        var api = jQuery("#f").replaceRailsGeneratedForm({replaceWords: ["begin","end"]});
+        var api = replaceRailsGeneratedForm(jQuery("#f"), {replaceWords: ["begin","end"]});
         api.success();
-        assertEquals("Let the party end", jQuery("#start_watching").html());
+        assertEquals("Let the party end", api.element().html());
         api.success();
-        assertEquals("Let the party begin", jQuery("#start_watching").html());
+        assertEquals("Let the party begin", api.element().html());
     },
     "test should accept custom id on inserted elements": function () {
-        var api = jQuery("#me").replaceRailsGeneratedForm({linkName: "newLink"});
+        var api = replaceRailsGeneratedForm(jQuery("#me"), {linkName: "newLink"});
         var el = api.element();
         assertEquals("newLink", el.attr("id"));
     },
     "test should reuse CSS classes added to original element": function (){
-        var api = jQuery("#me").replaceRailsGeneratedForm();
+        var api = replaceRailsGeneratedForm(jQuery("#me"));
         var el = api.element();
         assertTrue(el.hasClass("enabled"));
     },
     "test should toggle CSS classes provided": function (){
-        var api = jQuery("#me").replaceRailsGeneratedForm({toggleClasses: ["enabled","disabled"]});
+        var api = replaceRailsGeneratedForm(jQuery("#me"), {toggleClasses: ["enabled","disabled"]});
         var el = api.element();
         api.success();
         assertFalse(el.hasClass("enabled"));
@@ -78,7 +78,7 @@ TestCase("Replace Rails generated forms", {
         assertTrue(el.hasClass("enabled"));
     },
     "test should toggle an optional class when loading": function (){
-        var api = jQuery("#me").replaceRailsGeneratedForm({backend: function (){}, waitingClass: "wait"});
+        var api = replaceRailsGeneratedForm(jQuery("#me"), {backend: function (){}, waitingClass: "wait"});
         api.click();
         var el = api.element();
         assertTrue(el.hasClass("wait"));
