@@ -578,9 +578,11 @@ class Repository < ActiveRecord::Base
   end
 
   # Replaces a value within a log_changes_with_user block
-  def replace_value(field, value)
+  def replace_value(field, value, allow_blank = false)
     old_value = read_attribute(field)
-    return if value.blank? or old_value == value
+    if !allow_blank && value.blank? || old_value == value
+      return
+    end
     self.send("#{field}=", value)
     valid?
     if !errors.on(field)

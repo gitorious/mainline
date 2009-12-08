@@ -170,7 +170,7 @@ class RepositoriesController < ApplicationController
 
       @repository.log_changes_with_user(current_user) do
         @repository.replace_value(:name, params[:repository][:name])
-        @repository.replace_value(:description, params[:repository][:description])
+        @repository.replace_value(:description, params[:repository][:description], true)
       end
       @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
       @repository.notify_committers_on_new_merge_request = params[:repository][:notify_committers_on_new_merge_request]

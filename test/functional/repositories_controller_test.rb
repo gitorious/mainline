@@ -1063,6 +1063,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal "blablabla", @repository.reload.description
     end
 
+    should "be able to remove the repository description" do
+      @repository.update_attribute(:description, "blabla bla")
+      put :update, :project_id => @project.to_param, :id => @repository.to_param,
+        :repository => {:description => ""}
+      assert @repository.reload.description.blank?,
+        "descr: #{@repository.description.inspect}"
+    end
+
     should 'update the repository name and create an event if a new name is provided' do
       description = @repository.description
       assert_incremented_by(@repository.events, :size, 1) do
