@@ -103,6 +103,23 @@ class MessageTest < ActiveSupport::TestCase
       assert reply_to_reply.save
       assert !@message.reload.has_unread_replies?
     end
+
+    should "touch the root message's updated_at" do
+      # hardwire the actual object here
+      @reply.stubs(:root_message).returns(@message)
+      @message.expects(:touch!)
+      @reply.save
+    end
+  end
+
+  context "Touching" do
+    should "set updated_at to now" do
+      message = Message.new
+      original_update_time = 1.hour.ago
+      message.updated_at = original_update_time
+      message.touch!
+      assert message.updated_at > original_update_time
+    end
   end
   
   context 'Calculating the number of messages in a thread' do
