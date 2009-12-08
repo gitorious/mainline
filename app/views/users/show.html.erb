@@ -26,7 +26,7 @@
 <%= breadcrumbs_from(@user) -%>
 
 <%- content_for(:extra_head) do -%>
-  <%= auto_discovery_link_tag(:atom, watchlist_user_path(@user), :title => "#{h(@user.title)}'s watchlist") -%>
+  <%= auto_discovery_link_tag(:atom, watchlist_user_path(@user), :title => "#{h(@user.title)}'s newsfeed") -%>
 <% end -%>
 
 <div class="with_divider">
