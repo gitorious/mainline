@@ -32,7 +32,8 @@ module FavoritesHelper
     link_to("Start watching",
       favorites_path(:watchable_id => watchable.id,:watchable_type => class_name),
       :method => :post, :"data-request-method" => "post",
-      :class => "watch-link disabled round-10"
+      :class => "watch-link disabled round-10",
+      :id => "watch_#{class_name.downcase}_#{watchable.id}"
       )
   end
 
