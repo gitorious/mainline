@@ -45,6 +45,6 @@ class Favorite < ActiveRecord::Base
   end
   
   def create_event
-    user.events.create(event_options)
+    user.events.create(event_options) unless event_exists?
   end
 end
