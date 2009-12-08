@@ -36,9 +36,8 @@ class User < ActiveRecord::Base
   :conditions => ["repositories.kind NOT IN (?)", Repository::KINDS_INTERNAL_REPO]
   has_many :ssh_keys, :order => "id desc", :dependent => :destroy
   has_many :comments
-  has_many :events, :order => "events.created_at asc", :dependent => :destroy
-  has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :email_aliases, :class_name => "Email", :dependent => :destroy
+  has_many :events, :order => "events.created_at asc", :dependent => :destroy
   has_many :favorites, :dependent => :destroy
 
   # Virtual attribute for the unencrypted password
@@ -372,12 +371,15 @@ class User < ActiveRecord::Base
     favorites.collect(&:watchable)
   end
 
-  def events_in_watchlist
-    Event.find(:all,
-      :joins => "inner join favorites ON favorites.watchable_id = events.target_id " +
-                "AND favorites.watchable_type = events.target_type",
-      :conditions => ["favorites.user_id=?", id],
-      :order => "events.created_at desc")
+  def paginated_events_in_watchlist(options = {})
+    Event.paginate(:all, {
+        :conditions => {
+          :target_id => favorites.map(&:watchable_id),
+          :target_type => favorites.map(&:watchable_type)
+        },
+        :order => "events.created_at desc",
+        :include => [:user, :project]
+      }.merge(options))
   end
 
   protected
