@@ -101,7 +101,9 @@
       </p>
     <% else -%>
       <div id="user_events">
-        <%= render :partial => "events/events", :locals => { :events => @events } -%>
+        <%= render :partial => "events/events", :locals => {
+          :events => @events, :pagination_style => :compact
+        } -%>
       </div>
     <% end -%>
   </div>

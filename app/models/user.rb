@@ -38,6 +38,7 @@ class User < ActiveRecord::Base
   has_many :comments
   has_many :email_aliases, :class_name => "Email", :dependent => :destroy
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
+  has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :favorites, :dependent => :destroy
 
   # Virtual attribute for the unencrypted password
@@ -373,12 +374,12 @@ class User < ActiveRecord::Base
 
   def paginated_events_in_watchlist(options = {})
     Event.paginate(:all, {
-        :conditions => {
-          :target_id => favorites.map(&:watchable_id),
-          :target_type => favorites.map(&:watchable_type)
-        },
+        :joins => "inner join favorites ON events.target_id = favorites.watchable_id " +
+                  "AND events.target_type = favorites.watchable_type",
+        :conditions => ["favorites.id IN (?)", favorite_ids],
         :order => "events.created_at desc",
-        :include => [:user, :project]
+        # Always one more, since the count is stupidly heavy:
+        :total_entries => (options[:per_page] || 30 ) + 1
       }.merge(options))
   end
 
