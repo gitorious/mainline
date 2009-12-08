@@ -516,6 +516,22 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success      
     end
   end
+
+  context "Message privacy" do
+    setup {@username = :johan}
+
+    should "not expose messages unless current user" do
+      login_as :moe
+      get :show, :id => @username.to_s
+      assert_nil assigns(:messages)
+    end
+
+    should "expose messages if current user" do
+      login_as @username
+      get :show, :id => @username.to_s
+      assert_not_nil assigns(:messages)
+    end
+  end
   
   context 'Creation from OpenID' do
     setup do

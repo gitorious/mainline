@@ -120,6 +120,24 @@
       </ul>
     <% end %>
 
+    <% if @messages %>
+      <% pull_box("Your conversations") do %>
+        <ul class="embedded_message_list">
+        <% @messages.each do |message| %>
+          <li>
+            <%= link_to(h(message.title), message, 
+                  :title => truncate(h(message.body), :length => 25),
+                  :class => message.aasm_state_for_user(@user)) %>
+            <span class="meta">
+              with <%= other_party(message, @user).title %>
+              <%= distance_of_time_in_words_to_now(message.updated_at) %> ago
+            </span>
+          </li>
+        <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+
     <% pull_box("Open merge requests for you") do %>
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
