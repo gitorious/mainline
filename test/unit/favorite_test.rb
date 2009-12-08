@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
 class FavoriteTest < ActiveSupport::TestCase
   def create_favorited_repo
@@ -25,7 +25,7 @@ class FavoriteTest < ActiveSupport::TestCase
     repo = Factory.create(:repository, :user => user, :project => project, :owner => user)
     [user, project, repo]
   end
-  
+
   context "In general" do
     should_require_attributes(:watchable_type, :watchable_id,
       :user_id)
@@ -97,7 +97,7 @@ class FavoriteTest < ActiveSupport::TestCase
         favorite.project)
     end
   end
-  
+
   context "Watching projects" do
     setup {
       @user = users(:moe)
@@ -109,5 +109,5 @@ class FavoriteTest < ActiveSupport::TestCase
       assert_equal @project, favorite.project
     end
   end
-  
+
 end
