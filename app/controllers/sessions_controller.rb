@@ -48,7 +48,7 @@ class SessionsController < ApplicationController
     clear_varnish_auth_cookie
     reset_session
     flash[:notice] = "You have been logged out."
-    redirect_back_or_default("#{GitoriousConfig['gitorious_url_root']}")
+    redirect_back_or_default("#{GitoriousConfig['gitorious_url_root']}/")
   end
 
   protected
@@ -109,7 +109,7 @@ class SessionsController < ApplicationController
         :domain => ".#{GitoriousConfig['gitorious_host']}",
       }
     end
-    check_state_and_redirect("#{GitoriousConfig['gitorious_url_root']}")
+    check_state_and_redirect("#{GitoriousConfig['gitorious_url_root']}/")
   end
   
   def check_state_and_redirect(redirection_url)

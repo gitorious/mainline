@@ -328,7 +328,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		  session[:return_to] = "/foo/bar"
 		  get :oauth_return
 		  assert_response :redirect
-		  assert_redirected_to "/foo/bar"
+		  assert_redirected_to "#{GitoriousConfig['gitorious_url_root']}/foo/bar"
 	  end
 	  
 	  should "route the merge_request_landing_page" do
@@ -339,7 +339,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
     
     should "have a named route" do
-      assert_equal "/merge_request_landing_page", merge_request_landing_page_path
+      assert_equal "#{GitoriousConfig['gitorious_url_root']}/merge_request_landing_page", merge_request_landing_page_path
     end
   end
 	

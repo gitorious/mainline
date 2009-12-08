@@ -92,7 +92,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal "New message: This is a message", mail.subject
     assert_match /#{sender.fullname} has sent you a message on Gitorious:/, mail.body
     assert_match /http:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, mail.body
-    assert_match "http://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", mail.body
+    assert_match "http://#{GitoriousConfig['gitorious_host']}#{GitoriousConfig['gitorious_url_root']}/messages/#{message_id}", mail.body
   end
 
   should 'sanitize the contents of notifications' do

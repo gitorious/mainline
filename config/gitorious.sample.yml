@@ -29,7 +29,7 @@ test:
   gitorious_user: git
 
   # URL root context of the application, eg "/gitorious"
-  gitorious_url_root: /
+  gitorious_url_root:
 
   # Email spam on server errors to:
   exception_notification_emails:  

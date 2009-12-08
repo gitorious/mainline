@@ -82,14 +82,14 @@ class UsersControllerTest < ActionController::TestCase
   should " activate user" do
     assert_nil User.authenticate('moe', 'test')
     get :activate, :activation_code => users(:moe).activation_code
-    assert_redirected_to('/')
+    assert_redirected_to("#{GitoriousConfig['gitorious_url_root']}/")
     assert_not_nil flash[:notice]
     assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
   end
 
   should "flashes a message when the activation code is invalid" do
     get :activate, :activation_code => "fubar"
-    assert_redirected_to('/')
+    assert_redirected_to("#{GitoriousConfig['gitorious_url_root']}/")
     assert_nil flash[:notice]
     assert_equal "Invalid activation code", flash[:error]
     assert_nil User.authenticate('moe@example.com', 'test')
@@ -354,14 +354,14 @@ class UsersControllerTest < ActionController::TestCase
     should "activate user" do
       assert_nil User.authenticate('moe', 'test')
       get :activate, :activation_code => users(:moe).activation_code
-      assert_redirected_to('/')
+      assert_redirected_to("#{GitoriousConfig['gitorious_url_root']}/")
       assert !flash[:notice].nil?
       assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
     end
 
     should "flashes a message when the activation code is invalid" do
       get :activate, :activation_code => "fubar"
-      assert_redirected_to('/')
+      assert_redirected_to("#{GitoriousConfig['gitorious_url_root']}/")
       assert_nil flash[:notice]
       assert_equal "Invalid activation code", flash[:error]
       assert_nil User.authenticate('moe@example.com', 'test')
