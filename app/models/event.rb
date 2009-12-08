@@ -38,13 +38,13 @@ class Event < ActiveRecord::Base
 
   def self.latest(count)
     Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do
-      find(:all, {
-          :from => "#{quoted_table_name} use index (index_events_on_created_at)",
-          :order => "events.created_at desc",
-          :limit => count,
-          :include => [:user, :project, :events],
-          :conditions => ["events.action != ?", Action::COMMIT]
-        })
+      latest_event_ids = Event.find_by_sql(
+        ["select id,action,created_at from events " +
+         "use index (index_events_on_created_at) where (action != ?) " +
+         "order by created_at desc limit ?", Action::COMMIT, count
+        ]).map(&:id)
+      Event.find(latest_event_ids, :order => "created_at desc",
+        :include => [:user, :project, :events])
     end
   end
 
