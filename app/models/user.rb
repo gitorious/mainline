@@ -380,7 +380,7 @@ class User < ActiveRecord::Base
         :conditions => ["favorites.id IN (?)", favorite_ids],
         :order => "events.created_at desc",
         # Always one more, since the count is stupidly heavy:
-        :total_entries => (options[:per_page] || 30 ) + 1
+        :total_entries => (options[:per_page] || self.class.per_page) + 1
       }.merge(options))
   end
 
