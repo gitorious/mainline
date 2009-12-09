@@ -26,13 +26,15 @@ class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
   belongs_to :target, :polymorphic => true
-  validates_presence_of :user_id, :unless => :user_email_set?
-
   has_many :events, :as => :target do
     def commits
       all(:limit => Event::MAX_COMMIT_EVENTS+1).select{|e|e.action == Action::COMMIT}
     end
   end
+
+  after_create :create_feed_items
+
+  validates_presence_of :user_id, :unless => :user_email_set?
 
   named_scope :top, {:conditions => ['target_type != ?', 'Event']}
 
@@ -121,5 +123,24 @@ class Event < ActiveRecord::Base
   protected
   def user_email_set?
     !user_email.blank?
+  end
+
+  def create_feed_items
+    # Find all the watchers of the project
+    watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
+    # Find anyone who's just watching the target, if it's watchable
+    if self.target.respond_to?(:watchers)
+      watcher_ids += self.target.watchers.find(:all, :select => "users.id").map(&:id)
+    end
+    watcher_ids.uniq!
+    return if watcher_ids.blank?
+
+    # Build a FeedItem for all the users interested in this events
+    sql_values = watcher_ids.map do |an_id|
+      "(#{an_id}, #{self.id}, '#{self.created_at.to_s(:db)}', '#{self.created_at.to_s(:db)}')"
+    end
+    sql = %Q{INSERT INTO feed_items (watcher_id, event_id, created_at, updated_at)
+             VALUES #{sql_values.join(',')}}
+    ActiveRecord::Base.connection.execute(sql)
   end
 end

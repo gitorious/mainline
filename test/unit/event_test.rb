@@ -27,7 +27,7 @@ class EventTest < ActiveSupport::TestCase
     @repository = repositories(:johans)
     @project = @repository.project
   end
-  
+
   def new_event(opts={})
     c = Event.new({
       :target => repositories(:johans),
@@ -37,7 +37,7 @@ class EventTest < ActiveSupport::TestCase
     c.project = opts[:project] || @project
     c
   end
-  
+
   should " belong to a user or have an author email" do
     event = Event.new(:target => repositories(:johans), :body => 'blabla', :project => @project, :action => Action::COMMIT)
     assert event.user.nil?
@@ -47,15 +47,15 @@ class EventTest < ActiveSupport::TestCase
     assert event.valid?
     assert_equal 'foo@bar.com', event.git_actor.email
   end
-  
+
   should "belong to a user who commits with an aliased email" do
-    event = Event.new(:target => repositories(:johans), :body => 'blabla', 
+    event = Event.new(:target => repositories(:johans), :body => 'blabla',
               :project => @project, :action => Action::COMMIT)
     assert_nil event.user
     event.email = emails(:johans1).address
     assert_equal users(:johan), event.user
   end
-  
+
   should "handles setting the actor from a string" do
     event = Event.new
     event.email = "marius@stones.com"
@@ -64,20 +64,20 @@ class EventTest < ActiveSupport::TestCase
     event.email = 'Marius Mathiesen <marius@stones.com>'
     assert_equal 'Marius Mathiesen', event.actor_display
   end
-  
+
   should "provides an actor_display for User objects too" do
     event = Event.new
     user = User.new(:fullname => 'Johan Sørensen', :email => 'johan@johansorensen.com')
     event.user = user
     assert_equal 'Johan Sørensen', event.actor_display
   end
-  
+
   context 'A push event' do
     setup do
       @event = new_event(:action => Action::PUSH)
       assert @event.save
     end
-    
+
     should 'have a method for attaching commit events' do
       commit = @event.build_commit(
         :email  => 'Linus Torvalds <linus@kernel.org>',
@@ -108,7 +108,7 @@ class EventTest < ActiveSupport::TestCase
       assert @event.has_commits?
       assert !@event.single_commit?
     end
-    
+
     should "return false for has_commits? unless it's a push event" do
       commit = @event.build_commit(
         :email  => 'Linus Torvalds <linus@kernel.org>',
@@ -117,6 +117,20 @@ class EventTest < ActiveSupport::TestCase
       assert commit.save
       @event.action = Action::COMMENT
       assert !@event.has_commits?
+    end
+  end
+
+  context "Feeditem creation" do
+    should "create feed items for all the watchers of the project and target" do
+      @user.favorites.create!(:watchable => @project)
+      users(:mike).favorites.create!(:watchable => @repository)
+      event = new_event(:action => Action::PUSH)
+
+      assert_difference("FeedItem.count", 2) do
+        event.save!
+      end
+      assert_equal event, @user.feed_items.last.event
+      assert_equal event, users(:mike).feed_items.last.event
     end
   end
 end

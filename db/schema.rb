@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091207133046) do
+ActiveRecord::Schema.define(:version => 20091209140335) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -106,6 +106,15 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
   end
 
   add_index "favorites", ["watchable_type", "watchable_id", "user_id"], :name => "index_favorites_on_watchable_type_and_watchable_id_and_user_id"
+
+  create_table "feed_items", :force => true do |t|
+    t.integer  "event_id"
+    t.integer  "watcher_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "feed_items", ["watcher_id", "created_at"], :name => "index_feed_items_on_watcher_id_and_created_at"
 
   create_table "groups", :force => true do |t|
     t.string   "name"
