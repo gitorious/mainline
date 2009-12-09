@@ -3372,7 +3372,7 @@ body#users h2.activities small {
 .embedded_message_list {
 }
 .embedded_message_list a {
-  background-color: #fff;
+  background-color: inherit;
 }
 .embedded_message_list a.unread {
   font-weight: bold;

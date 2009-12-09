@@ -120,12 +120,13 @@ class User < ActiveRecord::Base
   end
 
   # Top level messages, excluding message threads that have been archived by me
-  def messages_in_inbox
+  def messages_in_inbox(limit=100)
     Message.find_by_sql(["SELECT * from messages
         WHERE ((sender_id != :user AND archived_by_recipient = :no AND recipient_id = :user)
         OR (has_unread_replies = :yes AND archived_by_recipient = :no AND sender_id = :user))
         AND in_reply_to_id IS NULL
-        ORDER BY updated_at DESC", {:user => self.id, :yes => true, :no => false}])
+        ORDER BY updated_at DESC LIMIT :limit",
+                         {:user => self.id, :yes => true, :no => false, :limit => limit}])
   end
 
   has_many :sent_messages, :class_name => "Message",
