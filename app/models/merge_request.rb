@@ -372,10 +372,10 @@ class MergeRequest < ActiveRecord::Base
 
   def notify_subscribers_about_creation
     return unless target_repository.notify_committers_on_new_merge_request?
-    target_repository.reviewers.uniq.reject{|c| c == user }.each do |committer|
+    reviewers.each do |reviewer|
       message = messages.build({
         :sender => user,
-        :recipient => committer,
+        :recipient => reviewer,
         :subject => I18n.t("mailer.request_notification",
           :login => user.login,
           :title => target_repository.project.title),
@@ -383,7 +383,16 @@ class MergeRequest < ActiveRecord::Base
         :notifiable => self
         })
       message.save
+      add_to_reviewers_favorites(reviewer)
     end
+  end
+
+  def reviewers
+    target_repository.reviewers.uniq.reject{|r| r == user}
+  end
+
+  def add_to_reviewers_favorites(reviewer)
+    reviewer.favorites.create(:watchable => self, :skip_events => true)
   end
 
   def oauth_request_token=(token)

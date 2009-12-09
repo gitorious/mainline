@@ -45,7 +45,19 @@ class Favorite < ActiveRecord::Base
     end
   end
 
+  def skip_events=(skip)
+    @skip_events = skip
+  end
+
+  def skip_events?
+    @skip_events
+  end
+
+  def event_should_be_created?
+    !event_exists? && !skip_events?
+  end
+  
   def create_event
-    user.events.create(event_options) unless event_exists?
+    user.events.create(event_options) if event_should_be_created?
   end
 end
