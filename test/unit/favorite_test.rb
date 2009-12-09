@@ -83,6 +83,14 @@ class FavoriteTest < ActiveSupport::TestCase
         assert new_favorite.save
       end
     end
+
+    should "support a skip_events setter" do
+      favorite = @user.favorites.build(:skip_events => true, :watchable => @repo)
+      assert favorite.skip_events?
+      assert !favorite.event_should_be_created?
+      assert favorite.save
+      assert !favorite.event_exists?
+    end
   end
 
   context "Watching merge requests" do

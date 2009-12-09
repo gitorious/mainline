@@ -794,4 +794,37 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
+  context "Reviewers" do
+    setup do
+      @source_repository = repositories(:johans)
+      @user = @source_repository.user
+      @target_repository = repositories(:moes)
+      @merge_request = @target_repository.merge_requests.build(
+        :source_repository => @source_repository,
+        :summary => "Please merge",
+        :sha_snapshot => "ffac",
+        :ending_commit => "caff",
+        :user => @user
+        )
+    end
+
+    should "be accessible from the merge request" do
+      assert_equal(@merge_request.target_repository.reviewers.uniq.reject{|r|r == @merge_request.user},
+        @merge_request.reviewers)
+    end
+    
+    should "add a favorite for each reviewer" do
+      @merge_request.expects(:add_to_reviewers_favorites).times(@merge_request.reviewers.size)
+      @merge_request.notify_subscribers_about_creation
+    end
+
+    should "add self to reviewer's favorites" do
+      reviewer = users(:johan)
+      assert_incremented_by(reviewer.favorites, :size, 1) do
+        @merge_request.add_to_reviewers_favorites(reviewer)
+      end
+    end
+    
+  end
+
 end
