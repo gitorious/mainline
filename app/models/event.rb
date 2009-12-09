@@ -127,21 +127,12 @@ class Event < ActiveRecord::Base
 
   def create_feed_items
     return if self.action == Action::COMMIT
-    watcher_ids = find_watcher_ids
-    return if watcher_ids.blank?
-
-    # Build a FeedItem for all the users interested in this events
-    sql_values = watcher_ids.map do |an_id|
-      "(#{an_id}, #{self.id}, '#{self.created_at.to_s(:db)}', '#{self.created_at.to_s(:db)}')"
-    end
-    sql = %Q{INSERT INTO feed_items (watcher_id, event_id, created_at, updated_at)
-             VALUES #{sql_values.join(',')}}
-    ActiveRecord::Base.connection.execute(sql)
+    FeedItem.bulk_create_from_watcher_list_and_event!(watcher_ids, self)
   end
 
   protected
-  def find_watcher_ids
-        # Find all the watchers of the project
+  def watcher_ids
+    # Find all the watchers of the project
     watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
     # Find anyone who's just watching the target, if it's watchable
     if self.target.respond_to?(:watchers)
