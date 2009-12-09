@@ -378,7 +378,8 @@ class User < ActiveRecord::Base
     watched_event_ids = feed_items.paginate({
         :order => "created_at desc"
       }.merge(pagination_options)).map(&:event_id)
-    Event.paginate(watched_event_ids, pagination_options)
+    Event.paginate(watched_event_ids,
+      {:order => "created_at desc"}.merge(pagination_options))
   end
 
   protected
