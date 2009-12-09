@@ -121,7 +121,7 @@
     <% end %>
 
     <% if @messages %>
-      <% pull_box("Your conversations") do %>
+      <% pull_box("Your latest messages") do %>
         <ul class="embedded_message_list">
         <% @messages.each do |message| %>
           <li>
@@ -134,6 +134,9 @@
             </span>
           </li>
         <% end %>
+        <li>
+          <%= link_to("View all messages &raquo;", messages_path) -%>
+        </li>
         </ul>
       <% end %>
     <% end %>

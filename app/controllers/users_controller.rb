@@ -49,7 +49,7 @@ class UsersController < ApplicationController
         :include => [:user, :project])
     end
 
-    @messages = @user.messages_in_inbox if @user == current_user
+    @messages = @user.messages_in_inbox(3) if @user == current_user
     
     @favorites = @user.watched_objects
 
