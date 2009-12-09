@@ -38,6 +38,8 @@ class UserTest < ActiveSupport::TestCase
   should_have_many :email_aliases, :dependent => :destroy
   should_have_many :commit_repositories
   should_have_many :favorites, :dependent => :destroy
+  should_have_many :feed_items
+
   should_validate_presence_of :login, :password, :password_confirmation, :email
   should_validate_acceptance_of :terms_of_use
 
@@ -443,7 +445,12 @@ class UserTest < ActiveSupport::TestCase
       comment_event = @second_repo.project.create_event(Action::COMMENT, @second_repo,
         @user, 99, "Repository")
       assert !@user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
+    end
+
+    should "include events for favorited objects" do
       @user.favorites.create!(:watchable => @second_repo)
+      comment_event = @second_repo.project.create_event(Action::COMMENT, @second_repo,
+        @user, 99, "Repository")
       assert @user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
     end
   end

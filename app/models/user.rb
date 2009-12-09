@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
   has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :favorites, :dependent => :destroy
+  has_many :feed_items, :foreign_key => "watcher_id"
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
@@ -373,15 +374,11 @@ class User < ActiveRecord::Base
     favorites.collect(&:watchable)
   end
 
-  def paginated_events_in_watchlist(options = {})
-    Event.paginate(:all, {
-        :joins => "inner join favorites ON events.target_id = favorites.watchable_id " +
-                  "AND events.target_type = favorites.watchable_type",
-        :conditions => ["favorites.id IN (?)", favorite_ids],
-        :order => "events.created_at desc",
-        # Always one more, since the count is stupidly heavy:
-        :total_entries => (options[:per_page] || self.class.per_page) + 1
-      }.merge(options))
+  def paginated_events_in_watchlist(pagination_options = {})
+    watched_event_ids = feed_items.paginate({
+        :order => "created_at desc"
+      }.merge(pagination_options)).map(&:event_id)
+    Event.paginate(watched_event_ids, pagination_options)
   end
 
   protected
