@@ -21,9 +21,9 @@
 
 module TreesHelper
   include RepositoriesHelper
-  
-  MAX_TREE_ENTRIES_FOR_LAST_COMMIT_LOG = 40
-  
+
+  MAX_TREE_ENTRIES_FOR_LAST_COMMIT_LOG = 15
+
   def current_path
     @path.dup
   end
@@ -33,11 +33,11 @@ module TreesHelper
     self.send("project_repository_archive_#{fmt}_path",
       @repository.project, @repository, @ref, :format => :js)
   end
-  
+
   def build_tree_path(path)
     current_path << path
   end
-  
+
   def breadcrumb_path(root_name = "root", commit_id = @ref)
     out = %Q{<ul class="path_breadcrumbs">\n}
     visited_path = []
@@ -53,7 +53,7 @@ module TreesHelper
     out << "</ul>"
     out
   end
-    
+
   def render_tag_box_if_match(sha, tags_per_sha)
     tags = tags_per_sha[sha]
     return if tags.blank?
@@ -65,11 +65,11 @@ module TreesHelper
     end
     out
   end
-  
+
   def commit_for_tree_path(repository, path)
     repository.commit_for_tree_path(@ref, @commit.id, path)
   end
-  
+
   def too_many_entries_for_log?(tree)
     tree.contents.length >= MAX_TREE_ENTRIES_FOR_LAST_COMMIT_LOG
   end
