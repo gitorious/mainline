@@ -1825,6 +1825,10 @@ ul.diff_stats small.deletions   { color: #DC0000; }
   color: #666;
 }
 
+.comments .comment .body {
+    max-width: 75%;
+}
+
 .comment .body ul, .page ol, .diff-comment .body ul { margin-left: 30px; }
 .comment .body ul li, .diff-comment .body ul li		{ list-style-type: disc; }
 .comment .body ol li, diff-comment .body ol li		{ list-style-type: decimal; }
