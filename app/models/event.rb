@@ -115,7 +115,7 @@ class Event < ActiveRecord::Base
   def email
     git_actor.email
   end
-#
+
   def actor_display
     git_actor.name
   end
@@ -126,13 +126,8 @@ class Event < ActiveRecord::Base
   end
 
   def create_feed_items
-    # Find all the watchers of the project
-    watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
-    # Find anyone who's just watching the target, if it's watchable
-    if self.target.respond_to?(:watchers)
-      watcher_ids += self.target.watchers.find(:all, :select => "users.id").map(&:id)
-    end
-    watcher_ids.uniq!
+    return if self.action == Action::COMMIT
+    watcher_ids = find_watcher_ids
     return if watcher_ids.blank?
 
     # Build a FeedItem for all the users interested in this events
@@ -142,5 +137,16 @@ class Event < ActiveRecord::Base
     sql = %Q{INSERT INTO feed_items (watcher_id, event_id, created_at, updated_at)
              VALUES #{sql_values.join(',')}}
     ActiveRecord::Base.connection.execute(sql)
+  end
+
+  protected
+  def find_watcher_ids
+        # Find all the watchers of the project
+    watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
+    # Find anyone who's just watching the target, if it's watchable
+    if self.target.respond_to?(:watchers)
+      watcher_ids += self.target.watchers.find(:all, :select => "users.id").map(&:id)
+    end
+    watcher_ids.uniq
   end
 end

@@ -132,5 +132,14 @@ class EventTest < ActiveSupport::TestCase
       assert_equal event, @user.feed_items.last.event
       assert_equal event, users(:mike).feed_items.last.event
     end
+
+    should "not create a feed item for commit events" do
+      @user.favorites.create!(:watchable => @project)
+      event = new_event(:action => Action::COMMIT)
+
+      assert_no_difference("@user.feed_items.count") do
+        event.save!
+      end
+    end
   end
 end

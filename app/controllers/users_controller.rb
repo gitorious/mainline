@@ -50,7 +50,7 @@ class UsersController < ApplicationController
     end
 
     @messages = @user.messages_in_inbox(3) if @user == current_user
-    
+
     @favorites = @user.watched_objects
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
@@ -73,11 +73,7 @@ class UsersController < ApplicationController
 
   def watchlist
     @user = User.find_by_login!(params[:id])
-    @events = @user.paginated_events_in_watchlist({
-        :page => 1,
-        :per_page => 10,
-        :include =>[:user, :project]
-      })
+    @events = @user.paginated_events_in_watchlist({:page => 1})
     respond_to do |wants|
       wants.atom {render :template => "users/feed"}
     end
