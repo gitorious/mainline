@@ -68,28 +68,21 @@ class FavoriteTest < ActiveSupport::TestCase
     should "create an event when a favorite is created" do
       favorite = @user.favorites.build(:watchable => @repo)
       assert !favorite.event_exists?
-      assert favorite.save
+      favorite.create_event
       assert_not_nil(favorite_event = @user.events_as_target.last)
       assert favorite.event_exists?
     end
 
     should "only create an event the first time" do
       favorite = @user.favorites.create(:watchable => @repo)
+      favorite.create_event
       assert favorite.event_exists?
       favorite.destroy
       new_favorite = @user.favorites.build(:watchable => @repo)
       assert new_favorite.event_exists?
       assert_incremented_by @user.events_as_target, :count, 0 do
-        assert new_favorite.save
+        new_favorite.create_event
       end
-    end
-
-    should "support a skip_events setter" do
-      favorite = @user.favorites.build(:skip_events => true, :watchable => @repo)
-      assert favorite.skip_events?
-      assert !favorite.event_should_be_created?
-      assert favorite.save
-      assert !favorite.event_exists?
     end
   end
 

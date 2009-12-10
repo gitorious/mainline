@@ -35,6 +35,7 @@ class MergeRequest < ActiveRecord::Base
 
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
+  after_create :add_to_creators_favorites
 
   before_validation_on_create :set_sequence_number
 
@@ -384,7 +385,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def add_to_reviewers_favorites(reviewer)
-    reviewer.favorites.create(:watchable => self, :skip_events => true)
+    reviewer.favorites.create(:watchable => self)
   end
 
   def add_creation_event(owner, user)
@@ -632,5 +633,9 @@ class MergeRequest < ActiveRecord::Base
     if target_repository
       self.sequence_number = target_repository.next_merge_request_sequence_number
     end
+  end
+
+  def add_to_creators_favorites
+    user.favorites.create(:watchable => self)
   end
 end
