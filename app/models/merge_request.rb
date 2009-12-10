@@ -373,10 +373,10 @@ class MergeRequest < ActiveRecord::Base
 
   def notify_subscribers_about_creation
     reviewers.each { |reviewer|
-      add_to_reviewers_favorites(reviewer)      
+      add_to_reviewers_favorites(reviewer)
     }
     if event = creation_event
-      FeedItem.bulk_create_from_watcher_list_and_event!(reviewers.map(&:id), event)      
+      FeedItem.bulk_create_from_watcher_list_and_event!(reviewers.map(&:id), event)
     end
   end
 
@@ -636,6 +636,6 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def add_to_creators_favorites
-    user.favorites.create(:watchable => self)
+    watched_by!(user)
   end
 end

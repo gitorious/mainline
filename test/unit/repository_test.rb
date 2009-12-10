@@ -1048,7 +1048,16 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal(100,
         @repository.next_merge_request_sequence_number)
     end
+  end
 
+  should "add the owner as a watcher when creating a clone" do
+    user = users(:mike)
+    repo = Repository.new_by_cloning(repositories(:johans), "mike")
+    repo.user = repo.owner = user
+    assert_difference("user.favorites.reload.count") do
+      repo.save!
+    end
+    assert repo.reload.watched_by?(user)
   end
 
 end

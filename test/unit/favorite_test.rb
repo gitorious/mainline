@@ -37,13 +37,14 @@ class FavoriteTest < ActiveSupport::TestCase
   context "Watching a repository" do
     setup do
       @user, @project, @repo = create_favorited_repo
+      @user.favorites.destroy_all
     end
 
     should "be linked with user's favorites" do
       favorite = @user.favorites.build(:watchable => @repo)
       assert_equal @repo, favorite.watchable
       assert_equal @user, favorite.user
-      assert favorite.save
+      favorite.save!
       assert @user.favorites.include?(favorite)
     end
 
