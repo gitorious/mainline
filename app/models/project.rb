@@ -82,6 +82,7 @@ class Project < ActiveRecord::Base
   before_validation :downcase_slug
   after_create :create_wiki_repository
   after_create :create_default_merge_request_statuses
+  after_create :add_as_favorite
 
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
@@ -408,5 +409,9 @@ class Project < ActiveRecord::Base
 
     def downcase_slug
       slug.downcase! if slug
+    end
+
+    def add_as_favorite
+      watched_by!(self.user)
     end
 end
