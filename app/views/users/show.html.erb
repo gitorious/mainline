@@ -121,12 +121,11 @@
                   :title => truncate(h(message.body), :length => 25),
                   :class => message.aasm_state_for_user(@user)) %>
             <span class="meta">
-              with <%= other_party(message, @user).title %>
               <%= distance_of_time_in_words_to_now(message.updated_at) %> ago
             </span>
           </li>
         <% end %>
-        <li>
+        <li class="hint">
           <%= link_to("View all messages &raquo;", messages_path) -%>
         </li>
         </ul>
@@ -137,8 +136,9 @@
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
-            <%= link_to(repo.url_path + ": " + repo.open_merge_request_count,
-                 repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
+            <%= link_to(repo.url_path + " <strong>" +
+                  repo.open_merge_request_count + "</strong>",
+                  repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
           </li>
         <% end %>
       </ul>
