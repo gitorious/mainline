@@ -234,4 +234,14 @@ class CommittershipTest < ActiveSupport::TestCase
       assert_equal [:commit, :review], @cs.permission_list.sort_by(&:to_s)
     end
   end
+
+  should "explode on destroy if there's no repository" do
+    # The repository will be gone if we're deleting the
+    # user/repository and it cascades down to the committership
+    cs = new_committership
+    cs.save!
+    assert_nothing_raised(NoMethodError) do
+      cs.repository.user.destroy
+    end
+  end
 end
