@@ -112,17 +112,6 @@
   </div>
 
   <div id="right">
-    <% pull_box(favorites_heading_for(@user)) do %>
-      <ul class="with_icons">
-        <% @favorites.each do |favorite| %>
-          <li class="favorite <%= favorite.class.name.underscore -%>">
-            <%= link_to_watchable(favorite) -%>
-          </li>
-        <% end %>
-        <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
-      </ul>
-    <% end %>
-
     <% if @messages %>
       <% pull_box("Your latest messages") do %>
         <ul class="embedded_message_list">
@@ -154,6 +143,17 @@
         <% end %>
       </ul>
     <% end if show_merge_request_count_for_user?(@user) %>
+
+    <% pull_box(favorites_heading_for(@user)) do %>
+      <ul class="with_icons">
+        <% @favorites.each do |favorite| %>
+          <li class="favorite <%= favorite.class.name.underscore -%>">
+            <%= link_to_watchable(favorite) -%>
+          </li>
+        <% end %>
+        <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
+      </ul>
+    <% end %>
 
     <% pull_box(t("views.site.dashboard.projects")) do -%>
       <% if is_current_user?(@user) -%>
