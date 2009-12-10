@@ -1050,14 +1050,24 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  should "add the owner as a watcher when creating a clone" do
-    user = users(:mike)
-    repo = Repository.new_by_cloning(repositories(:johans), "mike")
-    repo.user = repo.owner = user
-    assert_difference("user.favorites.reload.count") do
-      repo.save!
+  context "default favoriting" do
+    should "add the owner as a watcher when creating a clone" do
+      user = users(:mike)
+      repo = Repository.new_by_cloning(repositories(:johans), "mike")
+      repo.user = repo.owner = user
+      assert_difference("user.favorites.reload.count") do
+        repo.save!
+      end
+      assert repo.reload.watched_by?(user)
     end
-    assert repo.reload.watched_by?(user)
+
+    should "not add as watcher if it's an internal repository" do
+      repo = new_repos(:user => users(:moe))
+      repo.kind = Repository::KIND_TRACKING_REPO
+      assert_no_difference("users(:moe).favorites.count") do
+        repo.save!
+      end
+    end
   end
 
 end
