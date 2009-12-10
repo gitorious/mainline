@@ -21,15 +21,19 @@
 #++
 
 class UsersController < ApplicationController
-  skip_before_filter :public_and_logged_in, :only => [
-    :pending_activation, :activate, :forgot_password, :forgot_password_create, :reset_password
-  ]
+  skip_before_filter :public_and_logged_in,
+    :only => [:pending_activation, :activate, :forgot_password,
+              :forgot_password_create, :reset_password]
   before_filter :require_not_logged_in, :only => [:pending_activation]
-  before_filter :login_required, :only => [:edit, :update, :password, :update_password, :avatar]
-  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password, :avatar]
-  before_filter :require_current_user, :only => [:edit, :update, :password, :update_password, :avatar]
+  before_filter :login_required,
+    :only => [:edit, :update, :password, :update_password, :avatar]
+  before_filter :find_user,
+    :only => [:show, :edit, :update, :password, :update_password, :avatar]
+  before_filter :require_current_user,
+    :only => [:edit, :update, :password, :update_password, :avatar, ]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
+
   renders_in_global_context
   ssl_required :new, :create, :edit, :update, :password, :forgot_password_create,
                 :forgot_password, :update_password, :reset_password, :avatar
@@ -76,7 +80,7 @@ class UsersController < ApplicationController
     @user = User.find_by_login!(params[:id])
     @events = @user.paginated_events_in_watchlist({:page => 1})
     respond_to do |wants|
-      wants.atom {render :template => "users/feed"}
+      wants.atom { render :template => "users/feed" }
     end
   end
 
