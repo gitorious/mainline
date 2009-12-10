@@ -21,7 +21,8 @@
 <title><%= @page_title ? @page_title + " - " : "" -%><%= current_site.title -%></title>
 <%= stylesheet_link_tag "base" -%>
 <%= include_javascripts -%>
-<%  if @atom_auto_discovery_url -%>  
-  <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url) -%>
+<%  if @atom_auto_discovery_url -%>
+  <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url,
+        :title => @atom_auto_discovery_title) -%>
 <% end -%>
 <%= yield :extra_head -%>
