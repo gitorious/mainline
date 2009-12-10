@@ -20,13 +20,17 @@
 # - has_many :favorites
 # - receives instance methods
 module Watchable
-  
+
   def self.included(base)
     base.has_many :favorites, :as => :watchable, :dependent => :destroy
     base.has_many :watchers, :through => :favorites, :source => :user
   end
-  
+
   def watched_by?(user)
     watchers.include?(user)
+  end
+
+  def watched_by!(a_user)
+    a_user.favorites.create!(:watchable => self)
   end
 end
