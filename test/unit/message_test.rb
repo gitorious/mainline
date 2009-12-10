@@ -112,13 +112,22 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context "Touching" do
-    should "set updated_at to now" do
-      message = Message.new
+  context "Last updated on" do
+    setup do
+      @message = Message.new(:sender => users(:johan), :recipient => users(:moe),
+        :subject => "Hey", :body => "thanks")
+      @message.save
+    end
+
+    should "be set to current time on creation" do
+      assert_not_nil @message.last_activity_at
+    end
+    
+    should "set last_activity_on to now on touch!" do
       original_update_time = 1.hour.ago
-      message.updated_at = original_update_time
-      message.touch!
-      assert message.updated_at > original_update_time
+      @message.last_activity_at = original_update_time
+      @message.touch!
+      assert @message.last_activity_at > original_update_time
     end
   end
   

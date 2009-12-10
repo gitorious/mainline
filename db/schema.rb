@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091210095437) do
+ActiveRecord::Schema.define(:version => 20091210132746) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -206,6 +206,7 @@ ActiveRecord::Schema.define(:version => 20091210095437) do
     t.boolean  "has_unread_replies",    :default => false
     t.boolean  "archived_by_sender",    :default => false
     t.boolean  "archived_by_recipient", :default => false
+    t.datetime "last_activity_at"
   end
 
   add_index "messages", ["aasm_state"], :name => "index_messages_on_aasm_state"

@@ -177,7 +177,7 @@ class Message < ActiveRecord::Base
   end
 
   def touch!
-    self.updated_at = Time.now
+    touch(:last_activity_at)
   end
   
   protected
@@ -207,6 +207,7 @@ class Message < ActiveRecord::Base
     end
     
     def flag_root_message_if_required
+      self.last_activity_at = current_time_from_proper_timezone
       if root_message
         if root_message.sender == recipient
           root_message.has_unread_replies = true
