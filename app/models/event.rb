@@ -131,6 +131,9 @@ class Event < ActiveRecord::Base
   end
 
   protected
+  # Get a list of user ids who are watching the project and target of
+  # this event, excluding the event creator (since he's probably not
+  # interested in his own doings).
   def watcher_ids
     # Find all the watchers of the project
     watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
@@ -138,6 +141,6 @@ class Event < ActiveRecord::Base
     if self.target.respond_to?(:watchers)
       watcher_ids += self.target.watchers.find(:all, :select => "users.id").map(&:id)
     end
-    watcher_ids.uniq
+    watcher_ids.uniq.select{|an_id| an_id != self.user_id }
   end
 end

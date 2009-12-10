@@ -431,27 +431,37 @@ class UserTest < ActiveSupport::TestCase
       branch_event = @first_repo.project.events.create!({
           :action => Action::CREATE_BRANCH,
           :target => @first_repo,
-          :user => @user,
+          :user => users(:mike),
           :body => "New branch",
           :data => "Integration",
         })
       comment_event = @first_repo.project.create_event(Action::COMMENT, @first_repo,
-        @user, 99, "Repository")
+        users(:mike), 99, "Repository")
       assert @user.paginated_events_in_watchlist(:page => 1).include?(branch_event)
       assert @user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
     end
 
     should "not include events for non-favorite objects" do
+      assert !@second_repo.watched_by?(@user)
       comment_event = @second_repo.project.create_event(Action::COMMENT, @second_repo,
-        @user, 99, "Repository")
+        users(:mike), 99, "Repository")
       assert !@user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
     end
 
     should "include events for favorited objects" do
       @user.favorites.create!(:watchable => @second_repo)
+      @second_repo.reload
+      comment_event = @second_repo.project.create_event(Action::COMMENT, @second_repo,
+        users(:mike), 99, "Repository")
+      assert @user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
+    end
+
+    should "not include events for favorited objects if user is the event creator" do
+      @user.favorites.create!(:watchable => @second_repo)
+      @second_repo.reload
       comment_event = @second_repo.project.create_event(Action::COMMENT, @second_repo,
         @user, 99, "Repository")
-      assert @user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
+      assert !@user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
     end
   end
 
