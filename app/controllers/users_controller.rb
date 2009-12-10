@@ -54,6 +54,7 @@ class UsersController < ApplicationController
     @favorites = @user.watched_objects
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
+    @atom_auto_discovery_title = "Public activity feed"
 
     respond_to do |format|
       format.html { }

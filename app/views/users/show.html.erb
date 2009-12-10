@@ -26,7 +26,10 @@
 <%= breadcrumbs_from(@user) -%>
 
 <%- content_for(:extra_head) do -%>
-  <%= auto_discovery_link_tag(:atom, watchlist_user_path(@user), :title => "#{h(@user.title)}'s newsfeed") -%>
+  <% if is_current_user?(@user) -%>
+    <%= auto_discovery_link_tag(:atom, watchlist_user_path(@user, :format => :atom),
+          :title => "Your Newsfeed") -%>
+  <% end -%>
 <% end -%>
 
 <div class="with_divider">
@@ -125,7 +128,7 @@
         <ul class="embedded_message_list">
         <% @messages.each do |message| %>
           <li>
-            <%= link_to(h(message.title), message, 
+            <%= link_to(h(message.title), message,
                   :title => truncate(h(message.body), :length => 25),
                   :class => message.aasm_state_for_user(@user)) %>
             <span class="meta">
