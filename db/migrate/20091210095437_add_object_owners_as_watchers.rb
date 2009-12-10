@@ -14,22 +14,22 @@ class AddObjectOwnersAsWatchers < ActiveRecord::Migration
           project_watchers = []
           if project.owned_by_group?
             project.owner.members.each do |member|
-              member.favorites.create!(:watchable => project)
+              member.favorites.create(:watchable => project)
               project_watchers << member
             end
           else
-            project.owner.favorites.create!(:watchable => project)
+            project.owner.favorites.create(:watchable => project)
             project_watchers << project.owner
           end
 
           project.repositories.clones.each do |repo|
             repo.committerships.map(&:members).flatten.compact.uniq.each do |user|
               next if project_watchers.include?(user)
-              user.favorites.create!(:watchable => repo)
+              user.favorites.create(:watchable => repo)
             end
 
             repo.merge_requests.each do |mr|
-              mr.user.favorites.create!(:watchable => mr)
+              mr.user.favorites.create(:watchable => mr)
             end
           end
         end # say_with_time

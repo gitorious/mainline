@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091209140335) do
+ActiveRecord::Schema.define(:version => 20091210095437) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
