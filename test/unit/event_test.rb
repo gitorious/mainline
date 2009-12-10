@@ -122,21 +122,30 @@ class EventTest < ActiveSupport::TestCase
 
   context "Feeditem creation" do
     should "create feed items for all the watchers of the project and target" do
-      @user.favorites.create!(:watchable => @project)
+      users(:moe).favorites.create!(:watchable => @project)
       users(:mike).favorites.create!(:watchable => @repository)
       event = new_event(:action => Action::PUSH)
 
       assert_difference("FeedItem.count", 2) do
         event.save!
       end
-      assert_equal event, @user.feed_items.last.event
+      assert_equal event, users(:moe).feed_items.last.event
       assert_equal event, users(:mike).feed_items.last.event
     end
 
     should "not create a feed item for commit events" do
-      @user.favorites.create!(:watchable => @project)
+      users(:mike).favorites.create!(:watchable => @project)
       event = new_event(:action => Action::COMMIT)
 
+      assert_no_difference("users(:mike).feed_items.count") do
+        event.save!
+      end
+    end
+
+    should "not notify users about their own events" do
+      @user.favorites.create!(:watchable => @project)
+      event = new_event(:action => Action::PUSH)
+      assert_equal @user, event.user
       assert_no_difference("@user.feed_items.count") do
         event.save!
       end
