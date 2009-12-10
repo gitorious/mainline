@@ -21,7 +21,7 @@ class FavoritesController < ApplicationController
   before_filter :find_watchable, :only => [:create]
 
   def create
-    @favorite = current_user.favorites.create!(:watchable => @watchable)
+    @favorite = @watchable.watched_by!(current_user)
     respond_to do |wants|
       wants.html {
         flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
