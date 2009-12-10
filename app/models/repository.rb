@@ -67,7 +67,8 @@ class Repository < ActiveRecord::Base
   before_create :set_repository_hash
   after_create :create_initial_committership
   after_create :create_add_event_if_project_repo
-  after_create  :post_repo_creation_message
+  after_create :post_repo_creation_message
+  after_create :add_owner_as_watchers
   after_destroy :post_repo_deletion_message
 
   throttle_records :create, :limit => 5,
@@ -708,6 +709,10 @@ class Repository < ActiveRecord::Base
       when WIKI_WRITABLE_PROJECT_MEMBERS
         return self.project.member?(a_user)
       end
+    end
+
+    def add_owner_as_watchers
+      watched_by!(user)
     end
 
   private
