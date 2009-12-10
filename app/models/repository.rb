@@ -712,6 +712,7 @@ class Repository < ActiveRecord::Base
     end
 
     def add_owner_as_watchers
+      return if KINDS_INTERNAL_REPO.include?(self.kind)
       watched_by!(user)
     end
 
