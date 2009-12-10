@@ -88,7 +88,6 @@ ActiveRecord::Schema.define(:version => 20091209140335) do
     t.string   "user_email"
   end
 
-  add_index "events", ["action", "created_at"], :name => "index_events_on_action_and_created_at"
   add_index "events", ["action"], :name => "index_events_on_action"
   add_index "events", ["created_at", "project_id"], :name => "index_events_on_created_at_and_project_id"
   add_index "events", ["created_at"], :name => "index_events_on_created_at"
@@ -373,5 +372,12 @@ ActiveRecord::Schema.define(:version => 20091209140335) do
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["password_key"], :name => "index_users_on_password_key"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
+
+  create_table "watchlist", :id => false, :force => true do |t|
+    t.string  "fullname"
+    t.string  "data"
+    t.text    "body"
+    t.integer "project_id", :null => false
+  end
 
 end

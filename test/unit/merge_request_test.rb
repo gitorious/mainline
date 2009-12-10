@@ -41,17 +41,6 @@ class MergeRequestTest < ActiveSupport::TestCase
   should_have_many :comments
   should_not_allow_mass_assignment_of :sequence_number
 
-  should "email all committers in the target_repository after the terms are accepted" do
-    assert_incremented_by(Message, :count, 1) do
-      mr = @merge_request.clone
-      mr.target_repository = repositories(:johans2) # doesn't deliver messages to the actor
-      mr.stubs(:valid_oauth_credentials?).returns(true)
-      mr.stubs(:oauth_signoff_parameters).returns({})
-      mr.save
-      mr.terms_accepted
-    end
-  end
-
   should 'calculate the merge base between target branch and self' do
     repo = mock("Git repo")
     git = mock("Git")
@@ -84,13 +73,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_equal({'merge_request_id' => @merge_request.id.to_s}, message)
   end
 
-  should "send a message to all the subscribers when confirmed by the user" do
+  should "not send messages even if notifications are on" do
     assert_equal 1, @merge_request.target_repository.committerships.count
     cs =  @merge_request.target_repository.committerships.first
     cs.build_permissions(:review); cs.save!
     @merge_request.user = users(:mike)
     @merge_request.save
-    assert_difference("Message.count", @merge_request.target_repository.reviewers.size) do
+    assert_no_difference("Message.count", @merge_request.target_repository.reviewers.size) do
       @merge_request.confirmed_by_user
     end
   end
@@ -822,6 +811,23 @@ class MergeRequestTest < ActiveSupport::TestCase
       reviewer = users(:johan)
       assert_incremented_by(reviewer.favorites, :size, 1) do
         @merge_request.add_to_reviewers_favorites(reviewer)
+      end
+    end
+
+    should "be able to find its event" do
+      creation_event = @merge_request.add_creation_event(
+        @target_repository.project,@user)
+      assert_equal creation_event, @merge_request.creation_event
+    end
+
+    should "return nil when no creation event exists" do
+      assert_nil @merge_request.creation_event
+    end
+
+    should "create a feed item for each watcher" do
+      @merge_request.add_creation_event(@target_repository.project, @user)
+      assert_incremented_by(FeedItem, :count, @merge_request.reviewers.size) do
+        @merge_request.notify_subscribers_about_creation
       end
     end
     

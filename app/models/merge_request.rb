@@ -371,19 +371,11 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def notify_subscribers_about_creation
-    return unless target_repository.notify_committers_on_new_merge_request?
-    reviewers.each do |reviewer|
-      message = messages.build({
-        :sender => user,
-        :recipient => reviewer,
-        :subject => I18n.t("mailer.request_notification",
-          :login => user.login,
-          :title => target_repository.project.title),
-        :body => proposal,
-        :notifiable => self
-        })
-      message.save
-      add_to_reviewers_favorites(reviewer)
+    reviewers.each { |reviewer|
+      add_to_reviewers_favorites(reviewer)      
+    }
+    if event = creation_event
+      FeedItem.bulk_create_from_watcher_list_and_event!(reviewers.map(&:id), event)      
     end
   end
 
@@ -393,6 +385,20 @@ class MergeRequest < ActiveRecord::Base
 
   def add_to_reviewers_favorites(reviewer)
     reviewer.favorites.create(:watchable => self, :skip_events => true)
+  end
+
+  def add_creation_event(owner, user)
+    owner.create_event(
+      Action::REQUEST_MERGE, self, user
+      )
+  end
+
+  def creation_event
+    Event.find(:first, :conditions => {
+        :action => Action::REQUEST_MERGE,
+        :target_id => self.id,
+        :target_type => self.class.name
+      })
   end
 
   def oauth_request_token=(token)
