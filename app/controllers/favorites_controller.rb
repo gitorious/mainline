@@ -22,6 +22,7 @@ class FavoritesController < ApplicationController
 
   def create
     @favorite = @watchable.watched_by!(current_user)
+    @favorite.create_event
     respond_to do |wants|
       wants.html {
         flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
@@ -60,3 +61,4 @@ class FavoritesController < ApplicationController
     @watchable = watchable_class.find(params[:watchable_id])
   end
 end
+	

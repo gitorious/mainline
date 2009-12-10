@@ -22,7 +22,6 @@ class Favorite < ActiveRecord::Base
 
   validates_presence_of :user_id, :watchable_id, :watchable_type
   validates_uniqueness_of :user_id, :scope => [:watchable_id, :watchable_type]
-  after_create :create_event
 
   def event_exists?
     !Event.count(:conditions => event_options).zero?
@@ -45,16 +44,8 @@ class Favorite < ActiveRecord::Base
     end
   end
 
-  def skip_events=(skip)
-    @skip_events = skip
-  end
-
-  def skip_events?
-    @skip_events
-  end
-
   def event_should_be_created?
-    !event_exists? && !skip_events?
+    !event_exists?
   end
   
   def create_event

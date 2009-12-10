@@ -830,6 +830,12 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.notify_subscribers_about_creation
       end
     end
+
+    should "be added to creators favorites" do
+      assert_incremented_by(@user.favorites, :size, 1) {
+        @merge_request.save
+      }
+    end
     
   end
 
