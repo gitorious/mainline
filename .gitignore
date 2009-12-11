@@ -15,10 +15,12 @@ doc/api
 tmp/repos/*
 tmp/graph_generator.status
 tmp/poller*.pid
+tmp/stomp/*
 vendor/plugins/activemessaging/doc/*
 qtorious.todo
 tmp/poller.log
 tmp/poller.output
+tmp/poller/*
 public/javascripts/all.js
 #vendor/plugins/*_site
 public/images/sites/*
