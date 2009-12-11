@@ -37,7 +37,7 @@ Rails::Initializer.run do |config|
   config.gem "echoe",        :lib => false
   config.gem 'ruby-yadis', :lib => 'yadis'
 #  config.gem "RedCloth",     :lib => "redcloth"
-  config.gem "ruby-openid",  :lib => "openid"
+  config.gem "ruby-openid",  :version => ">= 2.1.7", :lib => "openid"
   config.gem "rdiscount",    :version => "1.3.1.1"
   config.gem 'stomp',        :version => "1.1"
   config.gem "mime-types", :lib => 'mime/types'
