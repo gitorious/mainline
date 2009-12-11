@@ -26,3 +26,4 @@ public/stylesheets/sites/*
 public/javascripts/sites/*
 public/system/avatars
 public/system/group_avatars
+tmp/performance
