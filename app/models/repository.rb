@@ -150,8 +150,9 @@ class Repository < ActiveRecord::Base
 
   def self.create_git_repository(path)
     full_path = full_path_from_partial_path(path)
-    git_backend.create(full_path)
-
+    Grit::Git.with_timeout(nil) do
+	git_backend.create(full_path)
+    end
     self.create_hooks(full_path)
   end
 
