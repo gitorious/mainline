@@ -22,37 +22,45 @@
 #++
 
 class MergeRequestsController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :direct_access,
-                                             :commit_status, :version]
-  before_filter :find_repository_owner, :except => [:oauth_return, :direct_access]
-  before_filter :find_repository, :except => [:oauth_return, :direct_access]
+  before_filter :login_required, 
+                :except => [:index, :show, :direct_access, :commit_status, :version]
+                
+  before_filter :find_repository_owner, 
+                :except => [:oauth_return, :direct_access]
+                
+  before_filter :find_repository, 
+                :except => [:oauth_return, :direct_access]
+                
   before_filter :find_merge_request,
-    :except => [:index, :show, :new, :create, :commit_list, :target_branches,
-                :oauth_return, :direct_access, :terms_accepted]
+                :except => [:index, :show, :new, :create, :commit_list, :target_branches,
+                            :oauth_return, :direct_access, :terms_accepted]
+                            
   before_filter :assert_merge_request_ownership,
-    :except => [:index, :show, :new, :create, :resolve, :commit_list,
-                :target_branches, :oauth_return, :direct_access, :commit_status,
-                :version, :terms_accepted]
-  before_filter :assert_merge_request_resolvable, :only => [:resolve]
+                :except => [:index, :show, :new, :create, :resolve, :commit_list,
+                            :target_branches, :oauth_return, :direct_access, :commit_status,
+                            :version, :terms_accepted]
+                            
+  before_filter :assert_merge_request_resolvable, 
+                :only => [:resolve]
+                
   renders_in_site_specific_context
   
   def index
     @root = Breadcrumb::MergeRequests.new(@repository)
-    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]) \
-      .paginate(:all, {
-        :page => params[:page],
-        :per_page => params[:per_page] || 50,
-        :order => "created_at desc"
-      })
+    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]).
+      paginate(:all,
+               :page => params[:page],
+               :per_page => params[:per_page] || 50,
+               :order => "created_at desc")
 
     @status_tags = @repository.merge_request_status_tags
     @comment_count = @repository.comments.count
-    @atom_auto_discovery_url = url_for(:overwrite_params => { :format => "atom" })
+    @atom_auto_discovery_url = url_for :overwrite_params => { :format => "atom" }
 
     respond_to do |wants|
       wants.html
-      wants.xml  { render :xml => @open_merge_requests.to_xml }
-      wants.atom {  }
+      wants.xml { render :xml => @open_merge_requests.to_xml }
+      wants.atom
     end
   end
   
@@ -85,16 +93,16 @@ class MergeRequestsController < ApplicationController
     @version = @merge_request.current_version_number
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
     respond_to do |wants|
-      wants.html {
-        if @merge_request.legacy?
+      wants.html do
+        if @merge_request_request.legacy?
           render :template => 'merge_requests/legacy' and return
         end # else render show.html as usual
-      }
-      wants.xml {render :xml => @merge_request.to_xml}
-      wants.patch {
+      end
+      wants.xml { render :xml => @merge_request.to_xml }
+      wants.patch do
         render :text => @commits.collect(&:to_patch).join("\n"),
           :content_type => "text/plain"
-      }
+      end
     end
   end
   
@@ -127,9 +135,7 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.find_by_sequence_number!(params[:id])
     if @merge_request.terms_accepted
       @merge_request.add_creation_event(@owner, current_user)
-      if @merge_request.has_contribution_notice?
-        flash[:notice] = @merge_request.contribution_notice
-      end
+      flash[:notice] = @merge_request.try :contribution_notice
       flash[:success] = I18n.t("merge_requests_controller.create_success",
         :name => @merge_request.target_repository.name)
     else
@@ -146,12 +152,12 @@ class MergeRequestsController < ApplicationController
       merge_request_created
     else
       respond_to do |format|
-        format.html {
+        format.html do
           @repositories = @owner.repositories.find(:all,
             :conditions => ["id != ?", @repository.id])
           get_branches_and_commits_for_selection
           render :action => "new"
-        }
+        end
         format.xml { render :xml => @merge_request.errors, :status => :unprocessable_entity }
       end
     end
@@ -244,10 +250,10 @@ class MergeRequestsController < ApplicationController
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
           format.html { redirect_to([@owner, @repository, @merge_request]) }
-          format.xml  {
+          format.xml do
             render :text => I18n.t("merge_requests_controller.assert_resolvable_error"),
               :status => :forbidden
-          }
+          end
         end
         return
       end
@@ -258,10 +264,10 @@ class MergeRequestsController < ApplicationController
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
           format.html { redirect_to([@owner, @repository]) }
-          format.xml  {
+          format.xml  do
             render :text => I18n.t("merge_requests_controller.assert_ownership_error"),
               :status => :forbidden
-          }
+          end
         end
         return
       end
