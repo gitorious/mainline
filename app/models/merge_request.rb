@@ -166,10 +166,8 @@ class MergeRequest < ActiveRecord::Base
     unless tag.is_a?(StatusTag)
       tag = StatusTag.new(tag, target_repository.project)
     end
-    if tag.open?
-      # TODO: should use the statemachine events instead?
-      self.status = STATUS_OPEN
-    elsif tag.closed?
+    # TODO: should use the statemachine events instead?
+    if tag.closed?
       self.status = STATUS_CLOSED
     else
       self.status = STATUS_OPEN # FIXME: fallback
