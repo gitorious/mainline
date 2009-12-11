@@ -17,6 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+
+<% @page_title = "#{t "views.layout.admin"} - #{t "views.layout.user_mgt" }" -%>
+<h1><%= link_to t("views.layout.user_mgt"), '' %></h1>
+
 <table class="listing tree">
 	<tr>
 		<td><%= t(:login, :scope => "activerecord.attributes.user").humanize %></td>
