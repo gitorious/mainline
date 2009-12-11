@@ -741,7 +741,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should 'include comments on the merge request' do
-      assert @merge_request.cascaded_comments.include? @comments.first
+      assert @merge_request.cascaded_comments.include?(@comments.first)
     end
   end
 
