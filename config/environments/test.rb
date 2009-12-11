@@ -10,6 +10,7 @@ config.cache_classes = true
 config.whiny_nils = true
 
 config.gem 'mocha'
+config.gem 'parallel'
 
 
 # Show full error reports and disable caching
