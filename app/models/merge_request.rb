@@ -246,15 +246,11 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def source_name
-    if source_repository
-      "#{source_repository.name}:#{source_branch}"
-    end
+    "#{source_repository.name}:#{source_branch}" if source_repository
   end
 
   def target_name
-    if target_repository
-      "#{target_repository.name}:#{target_branch}"
-    end
+    "#{target_repository.name}:#{target_branch}" if target_repository
   end
 
   def resolvable_by?(candidate)
