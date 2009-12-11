@@ -134,7 +134,8 @@
         },
       },
       :log => {
-        :title => "Log"
+        :title => "Log",
+        :lines => "líneas"
       },
       :events => {
         :page_title => "Eventos",

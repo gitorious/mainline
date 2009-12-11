@@ -190,7 +190,8 @@
         },
       },
       :log => {
-        :title => "Log content"
+        :title => "Log content",
+        :lines => "last lines"
       },
       :events => {
         :page_title => "Events",

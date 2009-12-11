@@ -143,7 +143,8 @@
         },
       },
       :log => {
-        :title => "Conteúdo do Log"
+        :title => "Conteúdo do Log",
+        :lines => "últimas linhas"
       },
       :events => {
         :page_title => "Eventos",
