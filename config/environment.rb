@@ -32,16 +32,17 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "chronic"
   config.gem "geoip"
-  config.gem "daemons",      :lib => false
-  config.gem "hoe",          :lib => false
-  config.gem "echoe",        :lib => false
-  config.gem 'ruby-yadis', :lib => 'yadis'
+  config.gem "daemons",       :lib => false
+  config.gem "hoe",           :lib => false
+  config.gem "echoe",         :lib => false
+  config.gem 'ruby-yadis',    :lib => 'yadis'
 #  config.gem "RedCloth",     :lib => "redcloth"
-  config.gem "ruby-openid",  :version => ">= 2.1.7", :lib => "openid"
-  config.gem "rdiscount",    :version => "1.3.1.1"
-  config.gem 'stomp',        :version => "1.1"
-  config.gem "mime-types", :lib => 'mime/types'
-  config.gem "diff-lcs", :lib => 'diff/lcs'
+  config.gem "ruby-openid",   :version => ">= 2.1.7", :lib => "openid"
+  config.gem "rdiscount",     :version => "1.3.1.1"
+  config.gem 'stomp',         :version => "1.1"
+  config.gem "mime-types",    :lib => 'mime/types'
+  config.gem "diff-lcs",      :lib => 'diff/lcs'
+  config.gem "file-tail",     :lib => 'file/tail'
   if RUBY_VERSION < '1.9'
     config.gem 'json'
   end

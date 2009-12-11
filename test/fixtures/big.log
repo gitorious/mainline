@@ -1,0 +1,200 @@
+  [4;35;1mSQL (125.7ms)[0m   [0mCREATE INDEX `index_memberships_on_group_id_and_user_id` ON `memberships` (`group_id`, `user_id`)[0m
+  [4;36;1mSQL (0.8ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (116.1ms)[0m   [0mCREATE TABLE `merge_request_statuses` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `project_id` int(11), `name` varchar(255), `color` varchar(255), `state` int(11), `description` varchar(255), `created_at` datetime, `updated_at` datetime, `default` tinyint(1) DEFAULT 0) ENGINE=InnoDB[0m
+  [4;36;1mSQL (125.6ms)[0m   [0;1mCREATE INDEX `index_merge_request_statuses_on_project_id_and_name` ON `merge_request_statuses` (`project_id`, `name`)[0m
+  [4;35;1mSQL (133.1ms)[0m   [0mCREATE INDEX `index_merge_request_statuses_on_project_id` ON `merge_request_statuses` (`project_id`)[0m
+  [4;36;1mSQL (0.7ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (127.4ms)[0m   [0mCREATE TABLE `merge_request_versions` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `merge_request_id` int(11), `version` int(11), `merge_base_sha` varchar(255), `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [4;36;1mSQL (0.8ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (131.2ms)[0m   [0mCREATE TABLE `merge_requests` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `user_id` int(11), `source_repository_id` int(11), `target_repository_id` int(11), `proposal` text, `sha_snapshot` varchar(255), `status` int(11) DEFAULT 0, `created_at` datetime, `updated_at` datetime, `source_branch` varchar(255), `target_branch` varchar(255), `ending_commit` varchar(255), `reason` text, `oauth_token` varchar(255), `oauth_secret` varchar(255), `contribution_agreement_version` varchar(255), `updated_by_user_id` int(11), `status_tag` varchar(255), `summary` varchar(255) NOT NULL, `legacy` tinyint(1) DEFAULT 0, `sequence_number` int(11)) ENGINE=InnoDB[0m
+  [4;36;1mSQL (128.1ms)[0m   [0;1mCREATE UNIQUE INDEX `index_merge_requests_on_sequence_number_and_target_repository_id` ON `merge_requests` (`sequence_number`, `target_repository_id`)[0m
+  [4;35;1mSQL (166.3ms)[0m   [0mCREATE INDEX `index_merge_requests_on_source_repository_id` ON `merge_requests` (`source_repository_id`)[0m
+  [4;36;1mSQL (152.1ms)[0m   [0;1mCREATE INDEX `index_merge_requests_on_status` ON `merge_requests` (`status`)[0m
+  [4;35;1mSQL (110.9ms)[0m   [0mCREATE INDEX `index_merge_requests_on_target_repository_id` ON `merge_requests` (`target_repository_id`)[0m
+  [4;36;1mSQL (110.7ms)[0m   [0;1mCREATE INDEX `index_merge_requests_on_user_id` ON `merge_requests` (`user_id`)[0m
+  [4;35;1mSQL (0.8ms)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (105.2ms)[0m   [0;1mCREATE TABLE `messages` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `sender_id` int(11), `recipient_id` int(11), `subject` varchar(255), `body` text, `notifiable_type` varchar(255), `notifiable_id` int(11), `aasm_state` varchar(255), `in_reply_to_id` int(11), `created_at` datetime, `updated_at` datetime, `root_message_id` int(11), `has_unread_replies` tinyint(1) DEFAULT 0, `archived_by_sender` tinyint(1) DEFAULT 0, `archived_by_recipient` tinyint(1) DEFAULT 0) ENGINE=InnoDB[0m
+  [4;35;1mSQL (139.2ms)[0m   [0mCREATE INDEX `index_messages_on_aasm_state` ON `messages` (`aasm_state`)[0m
+  [4;36;1mSQL (118.9ms)[0m   [0;1mCREATE INDEX `index_messages_on_in_reply_to_id` ON `messages` (`in_reply_to_id`)[0m
+  [4;35;1mSQL (110.9ms)[0m   [0mCREATE INDEX `index_messages_on_notifiable_type_and_notifiable_id` ON `messages` (`notifiable_type`, `notifiable_id`)[0m
+  [4;36;1mSQL (110.8ms)[0m   [0;1mCREATE INDEX `index_messages_on_recipient_id` ON `messages` (`recipient_id`)[0m
+  [4;35;1mSQL (121.8ms)[0m   [0mCREATE INDEX `index_messages_on_sender_id` ON `messages` (`sender_id`)[0m
+  [4;36;1mSQL (0.8ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (116.6ms)[0m   [0mCREATE TABLE `open_id_authentication_associations` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `issued` int(11), `lifetime` int(11), `handle` varchar(255), `assoc_type` varchar(255), `server_url` blob, `secret` blob) ENGINE=InnoDB[0m
+  [4;36;1mSQL (1.0ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (120.1ms)[0m   [0mCREATE TABLE `open_id_authentication_nonces` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `timestamp` int(11) NOT NULL, `server_url` varchar(255), `salt` varchar(255) NOT NULL) ENGINE=InnoDB[0m
+  [4;36;1mSQL (0.9ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (119.8ms)[0m   [0mCREATE TABLE `projects` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `title` varchar(255), `description` text, `user_id` int(11), `created_at` datetime, `updated_at` datetime, `slug` varchar(255), `license` varchar(255), `home_url` varchar(255), `mailinglist_url` varchar(255), `bugtracker_url` varchar(255), `owner_id` int(11), `owner_type` varchar(255), `wiki_enabled` tinyint(1) DEFAULT 1, `site_id` int(11), `merge_requests_need_signoff` tinyint(1) DEFAULT 0, `oauth_signoff_key` varchar(255), `oauth_signoff_secret` varchar(255), `oauth_signoff_site` varchar(255), `oauth_path_prefix` varchar(255), `merge_request_custom_states` text) ENGINE=InnoDB[0m
+  [4;36;1mSQL (124.7ms)[0m   [0;1mCREATE INDEX `index_projects_on_owner_type_and_owner_id` ON `projects` (`owner_type`, `owner_id`)[0m
+  [4;35;1mSQL (122.6ms)[0m   [0mCREATE INDEX `index_projects_on_site_id` ON `projects` (`site_id`)[0m
+  [4;36;1mSQL (121.5ms)[0m   [0;1mCREATE UNIQUE INDEX `index_projects_on_slug` ON `projects` (`slug`)[0m
+  [4;35;1mSQL (110.9ms)[0m   [0mCREATE INDEX `index_projects_on_name` ON `projects` (`title`)[0m
+  [4;36;1mSQL (110.7ms)[0m   [0;1mCREATE INDEX `index_projects_on_user_id` ON `projects` (`user_id`)[0m
+  [4;35;1mSQL (0.9ms)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (104.9ms)[0m   [0;1mCREATE TABLE `repositories` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `name` varchar(255), `project_id` int(11), `user_id` int(11), `created_at` datetime, `updated_at` datetime, `parent_id` int(11), `ready` tinyint(1) DEFAULT 0, `kind` int(11) DEFAULT 0, `owner_type` varchar(255), `owner_id` int(11), `hashed_path` varchar(255), `description` text, `last_pushed_at` datetime, `wiki_permissions` int(11) DEFAULT 0, `deny_force_pushing` tinyint(1) DEFAULT 0, `notify_committers_on_new_merge_request` tinyint(1) DEFAULT 1, `last_gc_at` datetime, `merge_requests_enabled` tinyint(1) DEFAULT 1) ENGINE=InnoDB[0m
+  [4;35;1mSQL (114.5ms)[0m   [0mCREATE UNIQUE INDEX `index_repositories_on_hashed_path` ON `repositories` (`hashed_path`)[0m
+  [4;36;1mSQL (110.1ms)[0m   [0;1mCREATE INDEX `index_repositories_on_kind` ON `repositories` (`kind`)[0m
+  [4;35;1mSQL (111.0ms)[0m   [0mCREATE INDEX `index_repositories_on_name` ON `repositories` (`name`)[0m
+  [4;36;1mSQL (110.6ms)[0m   [0;1mCREATE INDEX `index_repositories_on_owner_type_and_owner_id` ON `repositories` (`owner_type`, `owner_id`)[0m
+  [4;35;1mSQL (122.0ms)[0m   [0mCREATE INDEX `index_repositories_on_parent_id` ON `repositories` (`parent_id`)[0m
+  [4;36;1mSQL (122.0ms)[0m   [0;1mCREATE INDEX `index_repositories_on_project_id_and_kind` ON `repositories` (`project_id`, `kind`)[0m
+  [4;35;1mSQL (121.8ms)[0m   [0mCREATE INDEX `index_repositories_on_project_id` ON `repositories` (`project_id`)[0m
+  [4;36;1mSQL (121.8ms)[0m   [0;1mCREATE INDEX `index_repositories_on_ready` ON `repositories` (`ready`)[0m
+  [4;35;1mSQL (122.0ms)[0m   [0mCREATE INDEX `index_repositories_on_user_id` ON `repositories` (`user_id`)[0m
+  [4;36;1mSQL (0.9ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (145.2ms)[0m   [0mCREATE TABLE `roles` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `name` varchar(255), `kind` int(11), `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [4;36;1mSQL (1.2ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (90.6ms)[0m   [0mCREATE TABLE `sessions` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `session_id` varchar(255) NOT NULL, `data` text, `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [4;36;1mSQL (114.7ms)[0m   [0;1mCREATE INDEX `index_sessions_on_session_id` ON `sessions` (`session_id`)[0m
+  [4;35;1mSQL (110.2ms)[0m   [0mCREATE INDEX `index_sessions_on_updated_at` ON `sessions` (`updated_at`)[0m
+  [4;36;1mSQL (1.1ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (105.7ms)[0m   [0mCREATE TABLE `sites` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `title` varchar(255), `subdomain` varchar(255), `created_at` datetime, `updated_at` datetime) ENGINE=InnoDB[0m
+  [4;36;1mSQL (152.0ms)[0m   [0;1mCREATE INDEX `index_sites_on_subdomain` ON `sites` (`subdomain`)[0m
+  [4;35;1mSQL (1.0ms)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (122.9ms)[0m   [0;1mCREATE TABLE `ssh_keys` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `user_id` int(11), `key` text, `created_at` datetime, `updated_at` datetime, `ready` tinyint(1) DEFAULT 0) ENGINE=InnoDB[0m
+  [4;35;1mSQL (115.8ms)[0m   [0mCREATE INDEX `index_ssh_keys_on_user_id` ON `ssh_keys` (`user_id`)[0m
+  [4;36;1mSQL (1.2ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (115.5ms)[0m   [0mCREATE TABLE `taggings` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `tag_id` int(11), `taggable_id` int(11), `taggable_type` varchar(255), `created_at` datetime) ENGINE=InnoDB[0m
+  [4;36;1mSQL (136.8ms)[0m   [0;1mCREATE INDEX `index_taggings_on_tag_id` ON `taggings` (`tag_id`)[0m
+  [4;35;1mSQL (121.2ms)[0m   [0mCREATE INDEX `index_taggings_on_taggable_id_and_taggable_type` ON `taggings` (`taggable_id`, `taggable_type`)[0m
+  [4;36;1mSQL (1.2ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (117.2ms)[0m   [0mCREATE TABLE `tags` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `name` varchar(255)) ENGINE=InnoDB[0m
+  [4;36;1mSQL (137.5ms)[0m   [0;1mCREATE UNIQUE INDEX `index_tags_on_name` ON `tags` (`name`)[0m
+  [4;35;1mSQL (2.2ms)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (149.8ms)[0m   [0;1mCREATE TABLE `users` (`id` int(11) DEFAULT NULL auto_increment PRIMARY KEY, `login` varchar(255), `email` varchar(255), `crypted_password` varchar(40), `salt` varchar(40), `created_at` datetime, `updated_at` datetime, `remember_token` varchar(255), `remember_token_expires_at` datetime, `activation_code` varchar(40), `activated_at` datetime, `ssh_key_id` int(11), `fullname` varchar(255), `url` text, `identity_url` text, `is_admin` tinyint(1) DEFAULT 0, `suspended_at` datetime, `aasm_state` varchar(255), `public_email` tinyint(1) DEFAULT 1, `wants_email_notifications` tinyint(1) DEFAULT 1, `password_key` varchar(255), `avatar_file_name` varchar(255), `avatar_content_type` varchar(255), `avatar_file_size` int(11), `avatar_updated_at` datetime) ENGINE=InnoDB[0m
+  [4;35;1mSQL (145.6ms)[0m   [0mCREATE INDEX `index_users_on_email` ON `users` (`email`)[0m
+  [4;36;1mSQL (121.3ms)[0m   [0;1mCREATE INDEX `index_users_on_login` ON `users` (`login`)[0m
+  [4;35;1mSQL (121.7ms)[0m   [0mCREATE INDEX `index_users_on_password_key` ON `users` (`password_key`)[0m
+  [4;36;1mSQL (121.8ms)[0m   [0;1mCREATE INDEX `index_users_on_ssh_key_id` ON `users` (`ssh_key_id`)[0m
+  [4;35;1mSQL (1.2ms)[0m   [0mSHOW TABLES[0m
+  [4;36;1mSQL (131.1ms)[0m   [0;1mCREATE TABLE `schema_migrations` (`version` varchar(255) NOT NULL) ENGINE=InnoDB[0m
+  [4;35;1mSQL (132.4ms)[0m   [0mCREATE UNIQUE INDEX `unique_schema_migrations` ON `schema_migrations` (`version`)[0m
+  [4;36;1mSQL (1.4ms)[0m   [0;1mSHOW TABLES[0m
+  [4;35;1mSQL (0.3ms)[0m   [0mSELECT version FROM `schema_migrations`[0m
+  [4;36;1mSQL (1.7ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091210095437')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('1')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('2')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('3')[0m
+  [4;36;1mSQL (0.7ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('4')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('5')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('6')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('7')[0m
+  [4;36;1mSQL (22.1ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('8')[0m
+  [4;35;1mSQL (10.9ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('9')[0m
+  [4;36;1mSQL (2.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('10')[0m
+  [4;35;1mSQL (5.9ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('11')[0m
+  [4;36;1mSQL (7.8ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('12')[0m
+  [4;35;1mSQL (15.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('13')[0m
+  [4;36;1mSQL (19.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('14')[0m
+  [4;35;1mSQL (8.7ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('15')[0m
+  [4;36;1mSQL (5.7ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('16')[0m
+  [4;35;1mSQL (2.7ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('17')[0m
+  [4;36;1mSQL (11.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('18')[0m
+  [4;35;1mSQL (8.2ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('19')[0m
+  [4;36;1mSQL (1.3ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20')[0m
+  [4;35;1mSQL (10.8ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('21')[0m
+  [4;36;1mSQL (9.9ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('22')[0m
+  [4;35;1mSQL (2.8ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('23')[0m
+  [4;36;1mSQL (5.1ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('24')[0m
+  [4;35;1mSQL (10.8ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('25')[0m
+  [4;36;1mSQL (0.7ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('26')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('27')[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('28')[0m
+  [4;35;1mSQL (8.8ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090109005102')[0m
+  [4;36;1mSQL (4.0ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090112123845')[0m
+  [4;35;1mSQL (0.9ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090115112423')[0m
+  [4;36;1mSQL (0.9ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090126121750')[0m
+  [4;35;1mSQL (17.6ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090126140246')[0m
+  [4;36;1mSQL (0.7ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090126141704')[0m
+  [4;35;1mSQL (2.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090127102507')[0m
+  [4;36;1mSQL (5.0ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090129144706')[0m
+  [4;35;1mSQL (0.6ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090203090855')[0m
+  [4;36;1mSQL (2.1ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090203101718')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090204131336')[0m
+  [4;36;1mSQL (0.8ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090204150126')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090205140618')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090209095321')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090209100248')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090210134131')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090212155914')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090218111119')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090218113100')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090219100307')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090219120008')[0m
+  [4;36;1mSQL (0.5ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090219131022')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090219140050')[0m
+  [4;36;1mSQL (22.8ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090225124504')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090226134536')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090226141804')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090303084023')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090303114736')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090304120852')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090305125531')[0m
+  [4;35;1mSQL (0.6ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090310141045')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090311152733')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090316143009')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090319111629')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090324124032')[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090326094902')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090326151432')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090330091652')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090331143046')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090401115721')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090420083319')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090423122949')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090428125038')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090429083317')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090430122009')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090504071242')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090504121513')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090511090754')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090512093916')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090514102747')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090520132754')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090603113810')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090604111146')[0m
+  [4;36;1mSQL (0.6ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090610072747')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090611124949')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090611125528')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090617131148')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090624091346')[0m
+  [4;35;1mSQL (0.5ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090624134847')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090701111251')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090710094759')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090724082150')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090729080025')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090729080026')[0m
+  [4;35;1mSQL (0.7ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090730103419')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090806191259')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090825091107')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20090827081458')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20090914075300')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091006082442')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20091026142733')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091029114444')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20091102114936')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091102125159')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20091116140126')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091116143337')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20091117101216')[0m
+  [4;36;1mSQL (0.7ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091119090036')[0m
+  [4;35;1mSQL (0.4ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20091125143413')[0m
+  [4;36;1mSQL (0.4ms)[0m   [0;1mINSERT INTO `schema_migrations` (version) VALUES ('20091207133046')[0m
+  [4;35;1mSQL (0.6ms)[0m   [0mINSERT INTO `schema_migrations` (version) VALUES ('20091209140335')[0m
+ActiveMessaging: adapter reliable_msg not loaded: no such file to load -- reliable-msg
+ActiveMessaging: adapter wmq not loaded: no such file to load -- wmq/wmq
+ActiveMessaging: Loading /Users/fabiokung/Development/gitorious-day/fhisamotos-gitorious/app/processors/application.rb
+** [localized_dates] localized_dates plugin loaded.
+** [localized_dates] loading file /Users/fabiokung/Development/gitorious-day/fhisamotos-gitorious/config/locales/en.rb
+** [localized_dates] loading file /Users/fabiokung/Development/gitorious-day/fhisamotos-gitorious/config/locales/es.rb
+** [localized_dates] loading file /Users/fabiokung/Development/gitorious-day/fhisamotos-gitorious/config/locales/pt-BR.rb
+** [localized_dates] loading file /Users/fabiokung/Development/gitorious-day/fhisamotos-gitorious/config/locales/en.yml
+** [localized_dates] locales loaded from config/locales.
+  [4;36;1mSQL (0.2ms)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.1ms)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+** ultrasphinx: spelling support not available (raspell configuration raised "uninitialized constant Ultrasphinx::Spell::Aspell")
+  [4;36;1mMergeRequest Columns (2.0ms)[0m   [0;1mSHOW FIELDS FROM `merge_requests`[0m
+  [4;35;1mUser Columns (2.4ms)[0m   [0mSHOW FIELDS FROM `users`[0m
+  [4;36;1mComment Columns (2.0ms)[0m   [0;1mSHOW FIELDS FROM `comments`[0m
+  [4;35;1mProject Columns (1.8ms)[0m   [0mSHOW FIELDS FROM `projects`[0m
+  [4;36;1mRepository Columns (2.6ms)[0m   [0;1mSHOW FIELDS FROM `repositories`[0m
