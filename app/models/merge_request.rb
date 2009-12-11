@@ -110,7 +110,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def self.statuses
-    @statuses ||= state_machines[:status].states.inject({}){ |result, state |
+    @statuses ||= state_machines[:status].states.inject({}){ |result, state|
       result[state.name.to_s.capitalize] = state.value
       result
     }
@@ -258,30 +258,27 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def commits_for_selection
-    return [] if !target_repository
+    return [] unless target_repository
     @commits_for_selection ||= target_repository.git.commit_deltas_from(
       source_repository.git, target_branch, source_branch)
   end
 
   def applies_to_specific_commits?
-    !ending_commit.blank?
+    not ending_commit.blank?
   end
 
   def commits_to_be_merged
-    if ready?
-      commit_diff_from_tracking_repo
-    else
-      commits_to_be_merged_when_no_version
-    end
+    return commit_diff_from_tracking_repo if ready?
+    commits_to_be_merged_when_no_version
   end
 
   def commits_to_be_merged_when_no_version
     idx = commits_for_selection.index(commits_for_selection.find{|c| c.id == ending_commit})
-    return idx ? commits_for_selection[idx..-1] : []
+    idx ? commits_for_selection[idx..-1] : []
   end
 
   def ready?
-    legacy? ? true : !versions.blank?
+    legacy? || !versions.blank?
   end
 
   # Returns the name for the merge request branch. version can be:
@@ -350,13 +347,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def confirmed_by_user
-    if default_status
-      self.status = default_status.state
-      self.status_tag = default_status.name
-    else
-      self.status = STATUS_OPEN
-      self.status_tag = "Open"
-    end
+    self.status_tag = default_status.try(:name) || "Open"
     save
     publish_notification
     notify_subscribers_about_creation
