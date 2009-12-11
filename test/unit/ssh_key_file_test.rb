@@ -56,10 +56,28 @@ class SshKeyFileTest < ActiveSupport::TestCase
 
   should "add a key to unexistent authorized_keys file and initialize file permission's
 correctly" do
-    path = File.dirname(__FILE__) + '/../../tmp/keyfile'
+    path = File.join(fixture_path, 'tmp_keyfile')
     keyfile = SshKeyFile.new(path)
     keyfile.add_key(@keydata)
     #33152 is the binary representation of only user read write permission
+    assert_equal 33152, File::Stat.new(path).mode
+    FileUtils.rm(path)
+  end
+
+  should "add a key to existent authorized_keys file and reset file permission's correctly" do
+    path = File.join(fixture_path, 'tmp_keyfile')
+    keyfile = SshKeyFile.new(path)
+    keyfile.add_key(@keydata)
+    assert_equal 33152, File::Stat.new(path).mode
+    FileUtils.rm(path)
+  end
+
+  should "add a key to existent authorized_keys file and reset file permission's correctly" do
+    path = File.join(fixture_path, 'tmp_existing_keyfile')
+    f = File.new(path, 'w+')
+    f.close
+    keyfile = SshKeyFile.new(path)
+    keyfile.add_key(@keydata)
     assert_equal 33152, File::Stat.new(path).mode
     FileUtils.rm(path)
   end
@@ -69,6 +87,11 @@ correctly" do
     @keyfile.delete_key(@keydata)
     assert !@keyfile.contents.include?(@keydata)
     assert_equal File.read(File.join(fixture_path, "authorized_keys")), @keyfile.contents
+  end
+
+  should "delete a key from existent authorized_keys and reset file permission's correctly" do
+    @keyfile.delete_key(ssh_keys(:moes).to_key)
+    assert_equal 33152, File::Stat.new(fixture_key_path).mode
   end
 
   should "doesn't rewrite the file unless the key to delete is in there" do

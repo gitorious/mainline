@@ -30,11 +30,12 @@ class SshKeyFile
   end
 
   def add_key(key)
-    File.open(@path, "a", 0600) do |file|
+    File.open(@path, "a") do |file|
       file.flock(File::LOCK_EX)
       file << key
       file.flock(File::LOCK_UN)
     end
+    fix_permission(@path)
   end
 
   def delete_key(key)
@@ -46,10 +47,16 @@ class SshKeyFile
       file.puts new_data
       file.flock(File::LOCK_EX)
     end
+    fix_permission(@path)
   end
 
   protected
     def default_authorized_keys_path
       File.join(File.expand_path("~"), ".ssh", "authorized_keys")
+    end
+
+    def fix_permission(path)
+      #33152 is the binary representation of only user read write permission (0600)
+      FileUtils.chmod(0600, path) if File::Stat.new(path).mode != 33152
     end
 end

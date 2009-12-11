@@ -10,3 +10,7 @@ Z2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4
 c2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRi
 Zm9mcWU= moe@elsewhere.net
 ### END KEY 312 ###
+### START KEY 2 ###
+command="gitorious moe",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFz SshKey:2-User:2
+### END KEY 2 ###
+
