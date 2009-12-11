@@ -247,9 +247,9 @@ class MessagesControllerTest < ActionController::TestCase
     setup do
       @sender = Factory.create(:user)
       @recipient = Factory.create(:user)
-      @messages = 10.times.collect{ |i|
+      @messages = (1..10).collect do |i|
         Message.create(:sender => @sender, :recipient => @recipient, :subject => "Message #{i}", :body => "Hello world")
-      }
+      end
     end
     
     should 'mark the selected messages as read when supplying no action' do

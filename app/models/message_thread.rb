@@ -27,6 +27,10 @@ class MessageThread
     RAILS_DEFAULT_LOGGER.debug("MessageThread for #{@recipients.join(',')}")
   end
   
+  def first
+    messages.first
+  end
+  
   def each
     messages.each{|m| yield m}
   end

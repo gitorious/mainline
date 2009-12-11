@@ -1027,8 +1027,11 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "calculate the highest existing sequence number" do
-      assert_equal(@repository.merge_requests.max_by(&:sequence_number).sequence_number,
-        @repository.calculate_highest_merge_request_sequence_number)
+      newer_merge_request = @repository.merge_requests.max do |a, b|
+        a.sequence_number <=> b.sequence_number
+      end
+      assert_equal newer_merge_request.sequence_number,
+                   @repository.calculate_highest_merge_request_sequence_number
     end
 
     should "calculate the number of merge requests" do
