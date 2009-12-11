@@ -187,9 +187,7 @@ class MergeRequest < ActiveRecord::Base
   def create_status_change_event(comment)
     if @current_user
       message = "State changed "
-      if @previous_state
-        message << "from <span class=\"changed\">#{@previous_state}</span> "
-      end
+      message << "from <span class=\"changed\">#{@previous_state}</span> " if @previous_state
       message << "to <span class=\"changed\">#{status_tag}</span>"
       target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
         @current_user, message, comment)
@@ -207,12 +205,12 @@ class MergeRequest < ActiveRecord::Base
         STATUS_REJECTED => ['Rejected', 'reject'],
         STATUS_MERGED => ['Merged', 'merge']
         }
-    result = {}
-    possible_next_states.each do |s|
-      label, value = map[s]
+    result = possible_next_states.inject({}) do |result, item|
+      label, value = map[item]
       result[label] = value
     end
-    return result
+    
+    result
   end
 
   def can_transition_to?(new_state)
