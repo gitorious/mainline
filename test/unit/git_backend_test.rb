@@ -32,6 +32,10 @@ class GitBackendTest < ActiveSupport::TestCase
     FileUtils.mkdir_p(@repository.full_repository_path, :mode => 0755)
   end
   
+  should "configure Git timeout to be at least 30 seconds" do
+    assert_equal 30, Grit::Git.git_timeout
+  end
+  
   should "creates a bare git repository" do
     path = @repository.full_repository_path 
     FileUtils.expects(:mkdir_p).with(path, :mode => 0750).returns(true)
