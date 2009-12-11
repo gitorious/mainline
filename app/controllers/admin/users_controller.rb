@@ -51,27 +51,12 @@ class Admin::UsersController < ApplicationController
     end
   end
   
-  
   def suspend
-    @user = User.find_by_login!(params[:id])
-    @user.suspended_at = Time.now
-    if @user.save
-      flash[:notice] = I18n.t "admin.users_controller.suspend_notice", :user_name => @user.login
-    else
-      flash[:error] = I18n.t "admin.users_controller.suspend_error", :user_name => @user.login
-    end
-    redirect_to admin_users_url()
+    toggle_suspended(Time.now)
   end
   
   def unsuspend
-    @user = User.find_by_login!(params[:id])
-    @user.suspended_at = nil
-    if @user.save
-      flash[:notice] = I18n.t "admin.users_controller.unsuspend_notice", :user_name => @user.login
-    else
-      flash[:error] = I18n.t "admin.users_controller.unsuspend_error", :user_name => @user.login
-    end
-    redirect_to admin_users_url()
+    toggle_suspended(nil)
   end
 
   def reset_password
@@ -88,6 +73,17 @@ class Admin::UsersController < ApplicationController
   end
   
   private
+  
+  def toggle_suspended(suspend_time)
+    @user = User.find_by_login!(params[:id])
+    @user.suspended_at = suspend_time
+    if @user.save
+      flash[:notice] = I18n.t "admin.users_controller.#{suspend_time == nil ? "un" : ""}suspend_notice", :user_name => @user.login
+    else
+      flash[:error] = I18n.t "admin.users_controller.#{suspend_time == nil ? "un" : ""}suspend_error", :user_name => @user.login
+    end
+    redirect_to admin_users_url()
+  end
   
   def require_site_admin
     unless current_user.site_admin?
