@@ -8,6 +8,7 @@ config/gitorious.yml
 config/ultrasphinx/*.conf
 config/broker.yml
 db/*.sqlite3
+db/schema.rb
 .autotest
 db/sphinx/*
 doc/api
