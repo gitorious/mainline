@@ -163,18 +163,17 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def status_tag=(tag)
-    unless tag.is_a?(StatusTag)
-      tag = StatusTag.new(tag, target_repository.project)
-    end
-    # TODO: should use the statemachine events instead?
-    if tag.closed?
-      self.status = STATUS_CLOSED
+    the_tag = build_status_tag_for tag
+    
+    if the_tag.closed?
+      close
     else
-      self.status = STATUS_OPEN # FIXME: fallback
+      reopen if can_reopen?
+      open if can_open?
     end
 
     @previous_state = status_tag.name if status_tag
-    write_attribute(:status_tag, tag.name)
+    write_attribute(:status_tag, the_tag.name)
     save
   end
 
@@ -255,7 +254,7 @@ class MergeRequest < ActiveRecord::Base
 
   def resolvable_by?(candidate)
     return false unless candidate.is_a?(User)
-    (candidate === user) || target_repository.reviewers.include?(candidate)
+    (candidate == user) || target_repository.reviewers.include?(candidate)
   end
 
   def commits_for_selection
@@ -629,5 +628,11 @@ class MergeRequest < ActiveRecord::Base
 
   def add_to_creators_favorites
     watched_by!(user)
+  end
+  
+  private
+  def build_status_tag_for(tag_name)
+    return tag_name if tag_name.is_a? StatusTag
+    StatusTag.new(tag_name, target_repository.project)
   end
 end
