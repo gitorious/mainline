@@ -189,6 +189,9 @@
           :registration_button => "Register now"
         },
       },
+      :log => {
+        :title => "Log content"
+      },
       :events => {
         :page_title => "Events",
         :activities => "Gitorious activities",

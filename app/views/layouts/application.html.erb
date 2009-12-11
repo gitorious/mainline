@@ -44,6 +44,9 @@
         <li><%= link_to t("views.layout.projects"), projects_path -%></li>
         <li><%= link_to t("views.layout.teams"), groups_path -%></li>
       <% end -%>
+      <% if !GitoriousConfig['public_mode'] && logged_in? -%>
+        <li><%= link_to t("views.log.title"), :controller => 'log' -%></li>      
+      <% end %>
       <% if not logged_in? -%>
         <li><%= link_to t("views.layout.about"), about_path -%></li>
       <% end -%>

@@ -142,6 +142,9 @@
           :clones => "Clones de repositórios",
         },
       },
+      :log => {
+        :title => "Conteúdo do Log"
+      },
       :events => {
         :page_title => "Eventos",
         :activities => "Atividades no Gitorious",
