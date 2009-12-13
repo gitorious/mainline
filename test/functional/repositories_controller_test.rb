@@ -519,6 +519,18 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
       assert_not_nil @response.headers['Refresh']
     end
+    
+    should "assign README.markdown content to a variable if file exists" do
+      readme_file = Object.new
+      readme_file.stubs(:name).returns("README.markdown")
+      readme_file.stubs(:data).returns("data")
+      tree = Object.new
+      tree.stubs(:contents).returns([readme_file])
+      @grit.stubs(:tree).returns(tree)
+      
+      do_show_get @repo
+      assert_equal "data", assigns(:readme_content)
+    end
   end
 
   context "#show as XML" do

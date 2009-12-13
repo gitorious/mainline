@@ -51,6 +51,9 @@ class RepositoriesController < ApplicationController
     @events = @repository.events.top.paginate(:all, :page => params[:page],
       :order => "created_at desc")
 
+    readme_files = @repository.git.tree.contents.select {|file| file.name == "README.markdown"}
+    @readme_content = readme_files.first.data unless readme_files.empty?
+
     @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
                                   @repository.project, @repository, :format => :atom)
     response.headers['Refresh'] = "5" unless @repository.ready

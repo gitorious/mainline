@@ -29,6 +29,8 @@
 <%= render :partial => "repositories/overview",
       :locals => {:repository => @repository, :verbose => true} -%>
 
+<%= render :partial => "readme_content" unless @readme_content.blank? %>
+
   <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
 <%= render "getting_started" -%>
   <% end -%>
