@@ -35,7 +35,7 @@
   </div>
 
   <ul class="meta">
-    <li class="byline">Requested by: 
+    <li class="byline">Requested by:
       <span class="avatar">
         <%= link_to(avatar(@merge_request.user, { :size => 16 }),
               user_path(@merge_request.user)) %>
@@ -48,7 +48,7 @@
         repo_owner_path(@merge_request.source_repository,
          [@merge_request.source_repository.project, @merge_request.source_repository]) -%>
     </li>
-    <li>Target repository: 
+    <li>Target repository:
       <%= link_to h(@merge_request.target_name),
 	      repo_owner_path(@merge_request.target_repository,
          [@merge_request.source_repository.project, @merge_request.target_repository]) -%>
@@ -68,7 +68,7 @@
   </div>
   <ul class="changable-selection-options shadow-2 round-5">
     <% @merge_request.versions.each do |version| -%>
-      <li data-mr-version-number="<%= version.version -%>" 
+      <li data-mr-version-number="<%= version.version -%>"
           data-mr-version-url="<%= commit_diff_url(version) -%>">
         Version <%=h version.version %>
       </li>
@@ -106,7 +106,7 @@
     Either way, a new version of your merge request will be created, up until the last commit you push.
     You may make as many updates as you like; the last one will always be displayed by default
   </p>
-    
+
 
   <pre>
 git push \
@@ -124,10 +124,10 @@ git push \
 <div id="detailed_merge_request_integration_help" style="display:none">
 <p>
 One way to merge in these changes is to pull them into a local
-branch for review, verifying the changes and then merge to back 
-to master. 
+branch for review, verifying the changes and then merge to back
+to master.
 </p>
-  
+
 <pre>
 # Check out a new branch for integration
 git checkout -b integration
@@ -135,7 +135,7 @@ git checkout -b integration
 # Fetch the merge request into this branch
 git pull \
   <%= @merge_request.target_repository.clone_url %> \
-  <%= @merge_request.merge_branch_name %> 
+  <%= @merge_request.merge_branch_name %>
 
 # Show the commits, assess they are okay
 git log --pretty=oneline --abbrev-commit master..integration
@@ -156,4 +156,4 @@ git push origin master
   <%= button_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
       [@merge_request.source_repository.project,
       @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %>
-<%- end -%>  
+<%- end -%>

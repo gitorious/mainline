@@ -1062,7 +1062,7 @@ table.repository_meta .infobox ul {
   max-width: 500px;
 }
 
-.commit-infobox ul li.avatar div {
+.commit-infobox ul li.avatar img {
   float: left;
   display: inline;
   padding-right: 10px;
@@ -3143,7 +3143,7 @@ Merge request commit selector
 }
 
 #inline_comment_form h2 {
-  background-color: rgba(0,0,0,0.8);
+  background-color: #000;
   color: #fff;
   padding: 0.4em;
   width: 50%;
@@ -3152,9 +3152,9 @@ Merge request commit selector
 }
 #inline_comment_form form,
 #inline_comment_form .please_log_in {
-  background-color: rgba(255,255,255,0.9);
+  background-color: #fff;
   padding: 1em;
-  border: 2px solid rgba(34,34,34,0.7);
+  border: 2px solid #343434;
   -moz-border-radius: 0 0 10px 0;
 }
 #inline_comment_form form input[type=submit] {
