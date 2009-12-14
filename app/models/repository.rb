@@ -670,7 +670,23 @@ class Repository < ActiveRecord::Base
   end
 
   def search_clones(term)
-    clones.find_all { |r| r.matches_regexp?(term)}
+    sql = "SELECT repositories.* FROM repositories  
+      INNER JOIN users on repositories.user_id=users.id 
+      INNER JOIN groups on repositories.owner_id=groups.id
+      WHERE repositories.parent_id=:id
+      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR groups.name LIKE :q) 
+      AND repositories.owner_type='Group'
+      AND kind in (:kinds)
+      UNION ALL 
+      SELECT repositories.* from repositories 
+      INNER JOIN users on repositories.user_id=users.id 
+      INNER JOIN users owners on repositories.owner_id=owners.id 
+      WHERE repositories.parent_id=:id
+      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR owners.login LIKE :q) 
+      AND repositories.owner_type='User'
+      AND kind in (:kinds)"
+    clones.find_by_sql([sql, {:q => "%#{term}%", :id => id, :kinds =>
+                          [KIND_TEAM_REPO, KIND_USER_REPO, KIND_PROJECT_REPO]}])
   end
 
   protected

@@ -68,6 +68,21 @@ class ActiveSupport::TestCase
     error_msg = (value_before == value_after) ? "unchanged" : "incremented by #{(value_after - value_before)}"
     assert_equal(value, (value_after - value_before), "#{obj}##{meth} should be incremented by #{value} but was #{error_msg}")
   end
+
+  def assert_includes(collection, object, message=nil)
+    assert(collection.include?(object),
+      (message || inclusion_failure(collection, object, true)))
+  end
+
+  def assert_not_includes(collection, object, message=nil)
+    assert(!collection.include?(object),
+      (message || inclusion_failure(collection, object, false)))
+  end
+
+  def inclusion_failure(collection, object, should_be_included)
+    not_message = should_be_included ? "" : " not"
+    "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"
+  end
   
   def self.should_render_in_global_context(options = {})
     should "Render in global context for actions" do

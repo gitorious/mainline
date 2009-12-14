@@ -1017,8 +1017,56 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "find clones matching an owning group's name" do
       assert @repo.clones.include?(@clone)
-      assert @repo.search_clones(/sproject/).include?(@clone)
+      assert @repo.search_clones("sproject").include?(@clone)
     end
+
+    context "by user name" do
+      setup do
+        @repo = repositories(:moes)
+        @clone = repositories(:johans_moe_clone)
+        users(:johan).update_attribute(:login, "rohan")
+        @clone.update_attribute(:name, "rohans-clone-of-moes")
+      end
+      
+      should "match users with a matching name" do
+        assert_includes(@repo.search_clones("rohan"), @clone)
+      end
+
+      should "not match user with diverging name" do
+        assert_not_includes(@repo.search_clones("johan"), @clone)
+      end
+    end
+
+    context "by group name" do
+      setup do
+        @repo = repositories(:johans)
+        @clone = repositories(:johans2)
+      end
+      
+      should "match groups with a matching name" do
+        assert_includes(@repo.search_clones("thunderbird"), @clone)
+      end
+
+      should "not match groups with diverging name" do
+        assert_not_includes(@repo.search_clones("A-team"), @clone)
+      end
+    end
+
+    context "by repo name and description" do
+      setup do
+        @repo = repositories(:johans)
+        @clone = repositories(:johans2)
+      end
+      
+      should "match repos with a matching name" do
+        assert_includes(@repo.search_clones("projectrepos"), @clone)
+      end
+
+      should "not match repos with a different parent" do
+        assert_not_includes(@repo.search_clones("projectrepos"), repositories(:moes))
+      end
+    end
+
   end
 
   context "Sequences" do

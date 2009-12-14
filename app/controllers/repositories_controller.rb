@@ -152,7 +152,7 @@ class RepositoriesController < ApplicationController
 
   def search_clones
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    @repositories = @repository.search_clones(Regexp.new(params[:filter]))
+    @repositories = @repository.search_clones(params[:filter])
     render :json => to_json(@repositories)
   end
 
