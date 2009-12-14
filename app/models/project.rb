@@ -341,9 +341,7 @@ class Project < ActiveRecord::Base
   end
 
   def search_repositories(term)
-    repositories.regular.find_all {|r|
-      r.matches_regexp?(term)
-    }
+    Repository.title_search(term, "project_id", id)
   end
 
   def wiki_permissions

@@ -403,7 +403,7 @@ class ProjectTest < ActiveSupport::TestCase
       @owner = Factory.create(:user, :login => "thejoker")
       @project = Factory.create(:project, :user => @owner,
         :owner => @owner)
-      @repo = Factory.create(:repository, :project => @project, :owner => @project,
+      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
         :user => @owner, :name => "thework", :description => "halloween")
       @group = Factory.create(:group, :creator => @owner,
         :name => "foo-hackers", :user_id => @owner.to_param)
@@ -413,23 +413,23 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     should "find repositories matching the repo name" do
-      assert @project.search_repositories(/work/).include?(@repo)
+      assert @project.search_repositories("work").include?(@repo)
     end
 
     should "find repositories with a matching description" do
-      assert @project.search_repositories(/ween/).include?(@repo)
+      assert @project.search_repositories("ween").include?(@repo)
     end
 
     should "find repositories matching the owning user's name" do
-      assert @project.search_repositories(/joker/).include?(@repo)
+      assert @project.search_repositories("joker").include?(@repo)
     end
 
     should "find repositories matching the owning group's name" do
-      assert @project.search_repositories(/hackers/).include?(@group_repo)
+      assert @project.search_repositories("hackers").include?(@group_repo)
     end
 
     should "only include regular repositories" do
-      assert !@project.search_repositories(/track/).include?(@tracking_repo)
+      assert !@project.search_repositories("track").include?(@tracking_repo)
     end
   end
 

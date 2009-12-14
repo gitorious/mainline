@@ -670,10 +670,27 @@ class Repository < ActiveRecord::Base
   end
 
   def search_clones(term)
+    self.class.title_search(term, "parent_id", id)
+  end
+
+  # Searches for term in
+  # - title
+  # - description
+  # - owner name/login
+  #
+  # Scoped to column +key+ having +value+
+  #
+  # Example:
+  #   title_search("foo", "parent_id", 1) #  will find clones of Repo with id 1
+  #                                          matching 'foo'
+  #
+  #   title_search("foo", "project_id", 1) # will find repositories in Project#1
+  #                                          matching 'foo'
+  def self.title_search(term, key, value)
     sql = "SELECT repositories.* FROM repositories  
       INNER JOIN users on repositories.user_id=users.id 
       INNER JOIN groups on repositories.owner_id=groups.id
-      WHERE repositories.parent_id=:id
+      WHERE repositories.#{key}=#{value}
       AND (repositories.name LIKE :q OR repositories.description LIKE :q OR groups.name LIKE :q) 
       AND repositories.owner_type='Group'
       AND kind in (:kinds)
@@ -681,12 +698,14 @@ class Repository < ActiveRecord::Base
       SELECT repositories.* from repositories 
       INNER JOIN users on repositories.user_id=users.id 
       INNER JOIN users owners on repositories.owner_id=owners.id 
-      WHERE repositories.parent_id=:id
+      WHERE repositories.#{key}=#{value}
       AND (repositories.name LIKE :q OR repositories.description LIKE :q OR owners.login LIKE :q) 
       AND repositories.owner_type='User'
       AND kind in (:kinds)"
-    clones.find_by_sql([sql, {:q => "%#{term}%", :id => id, :kinds =>
-                          [KIND_TEAM_REPO, KIND_USER_REPO, KIND_PROJECT_REPO]}])
+    self.find_by_sql([sql, {:q => "%#{term}%",
+                        :id => value,
+                        :kinds =>
+                        [KIND_TEAM_REPO, KIND_USER_REPO, KIND_PROJECT_REPO]}])
   end
 
   protected

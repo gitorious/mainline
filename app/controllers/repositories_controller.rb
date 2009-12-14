@@ -34,7 +34,7 @@ class RepositoriesController < ApplicationController
 
   def index
     if term = params[:filter]
-      @repositories = @project.search_repositories(Regexp.new(term))
+      @repositories = @project.search_repositories(term)
     else
       @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
     end
