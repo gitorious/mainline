@@ -43,8 +43,9 @@ class UsersController < ApplicationController
   end
 
   def show
-    @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
-    @repositories = @user.commit_repositories
+    @projects = @user.projects.find(:all,
+      :include => [:tags, { :repositories => :project }])
+    @repositories = @user.commit_repositories if current_user != @user
     if current_user == @user && params[:events] != "outgoing"
       @events = @user.paginated_events_in_watchlist(:page => params[:page])
     else
@@ -52,9 +53,7 @@ class UsersController < ApplicationController
         :page => params[:page], :order => "events.created_at desc",
         :include => [:user, :project])
     end
-
     @messages = @user.messages_in_inbox(3) if @user == current_user
-
     @favorites = @user.watched_objects
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)

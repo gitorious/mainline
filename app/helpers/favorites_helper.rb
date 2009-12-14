@@ -26,7 +26,7 @@ module FavoritesHelper
 
     content_tag(:div, link, :class => "white-button round-10 small-button favorite")
   end
-  
+
   def create_favorite_link_to(watchable)
     class_name = watchable.class.name
     link_to("Start watching",
@@ -48,7 +48,8 @@ module FavoritesHelper
   def link_to_watchable(watchable)
     case watchable
     when Repository
-      link_to(repo_title(watchable, watchable.project), repo_owner_path(watchable, [watchable.project, watchable]))
+      link_to(repo_title(watchable, watchable.project),
+        repo_owner_path(watchable, [watchable.project, watchable]))
     when MergeRequest
       link_to(h(truncate(watchable.summary, :length => 32)),
         repo_owner_path(watchable.target_repository,
@@ -60,5 +61,8 @@ module FavoritesHelper
     end
   end
 
-
+  # is this +watchable+ included in the users @favorites?
+  def favorited?(watchable)
+    @favorites.include?(watchable)
+  end
 end

@@ -371,7 +371,10 @@ class User < ActiveRecord::Base
   end
 
   def watched_objects
-    favorites.find(:all, :include => :watchable).collect(&:watchable)
+    favorites.find(:all, {
+      :include => :watchable,
+      :order => "id desc"
+    }).collect(&:watchable)
   end
 
   def paginated_events_in_watchlist(pagination_options = {})

@@ -144,6 +144,35 @@
       </ul>
     <% end if show_merge_request_count_for_user?(@user) %>
 
+    <% pull_box(personified(@user, "Your projects", "Projects")) do -%>
+      <% if is_current_user?(@user) -%>
+        <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
+              :id => "new-project-button"}) %>
+      <% end -%>
+      <ul class="with_icons">
+      <% @projects.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <% if favorited?(project) %>
+            <%= image_tag("silk/star.png", :title => "favorited") %>
+          <% end %>
+        </li>
+      <% end -%>
+      </ul>
+    <% end -%>
+
+    <% pull_box(t("views.site.dashboard.repositories")) do -%>
+      <ul class="with_icons">
+        <% @repositories.each do |repo| -%>
+          <li class="repository">
+            <%= link_to h(repo.url_path),
+                  repo_owner_path(repo, [repo.project, repo]) -%>
+          </li>
+        <% end -%>
+      </ul>
+    <% end unless is_current_user?(@user) -%>
+
+
     <% pull_box(favorites_heading_for(@user)) do %>
       <ul class="with_icons">
         <% @favorites.each do |favorite| %>
@@ -154,41 +183,6 @@
         <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
       </ul>
     <% end %>
-
-    <% pull_box(t("views.site.dashboard.projects")) do -%>
-      <% if is_current_user?(@user) -%>
-        <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
-              :id => "new-project-button"}) %>
-      <% end -%>
-      <ul class="with_icons">
-      <% @projects.each do |project| -%>
-        <li class="project"><%= link_to h(project.title), project -%></li>
-      <% end -%>
-      </ul>
-    <% end -%>
-
-    <% pull_box(t("views.site.dashboard.repositories")) do -%>
-    <% if @repositories.blank? -%>
-      <p class="hint">
-      <% if is_current_user?(@user) -%>
-        You currently don't have any repository clones. You can clone
-        a repository you wish to contribute to, by going to a
-        repository overview page and click the "Clone on Gitorious"
-        link in the sidebar.
-      <% else -%>
-        <%=h @user.title -%> currently doesn't have any repository clones
-      <% end -%>
-      </p>
-    <% else -%>
-      <ul class="with_icons">
-        <% @repositories.each do |repo| -%>
-          <li class="repository">
-            <%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%>
-          </li>
-        <% end -%>
-      </ul>
-    <% end -%>
-    <% end -%>
 
     <% pull_box("Team memberships") do -%>
       <ul>
