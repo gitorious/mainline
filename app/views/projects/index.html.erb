@@ -24,32 +24,6 @@
 
 <h1>Projects</h1>
 
-<div class="with_divider">
-  <div id="left">
-    <% pull_box("Most active (last two weeks)") do -%>
-      <ul class="with_icons">
-        <% @active_recently.each do |project| -%>
-          <li class="project"><%= link_to h(project.title), project -%></li>
-        <% end -%>
-      </ul>
-    <% end -%>
-  </div>
-  <div id="right">
-    <% pull_box("Most active (overall)") do -%>
-      <ul class="with_icons">
-        <% @active_overall.each do |project| -%>
-          <li class="project"><%= link_to h(project.title), project -%></li>
-        <% end -%>
-      </ul>
-    <% end -%>
-  </div>
-  <% if show_new_project_link? -%>
-    <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
-          :size => :big, :id => "new-project-button"}) %>
-  <% end -%>
-  <div class="clear"></div>
-</div>
-
 <ul class="project_list">
 <% @projects.each do |project| -%>
   <li class="project_list_item">
@@ -67,4 +41,12 @@
       <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "category:#{h(tag.name)}") -%> </li>
     <% end %>
   </ul>
+
+  <% pull_box("Most active (last two weeks)") do -%>
+    <ul class="with_icons">
+      <% @active_recently.each do |project| -%>
+        <li class="project"><%= link_to h(project.title), project -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
 <% end -%>

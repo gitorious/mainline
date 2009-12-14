@@ -2693,6 +2693,16 @@ div.archive-download-box p {
   margin-bottom: 20px;
   background: #fff url("../images/silver_fade.png") repeat-x 0 0;
 }
+#sidebar .pull-box {
+    background: transparent url("../images/silver_fade.png") repeat-x 0 0;
+}
+#sidebar .pull-box h3 {
+    margin-bottom: 0;
+}
+#sidebar .pull-box .pull-box-content {
+    border: 1px solid #ddd;
+    border-top: none;
+}
 
 .pull-box .pull-box-content {
   padding: 10px 10px 0 10px;

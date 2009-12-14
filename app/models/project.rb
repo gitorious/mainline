@@ -140,15 +140,6 @@ class Project < ActiveRecord::Base
     end
   end
 
-  # Finds the most active projects on an overall basis
-  def self.most_active_overall(limit = 10)
-    Rails.cache.fetch("projects:most_active_overall:#{limit}", :expires_in => 30.minutes) do
-      find(:all, :joins => :events, :limit => limit,
-        :select => 'distinct projects.*, count(events.id) as event_count',
-        :order => "event_count desc", :group => "projects.id")
-    end
-  end
-
   def recently_updated_group_repository_clones(limit = 5)
     self.repositories.by_groups.find(:all, :limit => limit,
       :order => "last_pushed_at desc")
