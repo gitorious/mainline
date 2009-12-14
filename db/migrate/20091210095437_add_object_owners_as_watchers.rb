@@ -8,29 +8,15 @@ class AddObjectOwnersAsWatchers < ActiveRecord::Migration
     end
 
     transaction do
-      count = Project.count
-      Project.all.each_with_index do |project, idx|
-        say_with_time("Creating favorites for #{project.slug} #{idx+1}/#{count}") do
-          project_watchers = []
-          if project.owned_by_group?
-            project.owner.members.each do |member|
-              member.favorites.create(:watchable => project)
-              project_watchers << member
-            end
-          else
-            project.owner.favorites.create(:watchable => project)
-            project_watchers << project.owner
+      count = Repository.regular.count
+      Repository.regular.each_with_index do |repo, idx|
+        say_with_time("Creating favorites for #{repo.url_path} #{idx+1}/#{count}") do
+          repo.committerships.map(&:members).flatten.compact.uniq.each do |user|
+            user.favorites.create(:watchable => repo)
           end
 
-          project.repositories.clones.each do |repo|
-            repo.committerships.map(&:members).flatten.compact.uniq.each do |user|
-              next if project_watchers.include?(user)
-              user.favorites.create(:watchable => repo)
-            end
-
-            repo.merge_requests.each do |mr|
-              mr.user.favorites.create(:watchable => mr)
-            end
+          repo.merge_requests.each do |mr|
+            mr.user.favorites.create(:watchable => mr)
           end
         end # say_with_time
       end
