@@ -1376,7 +1376,7 @@ div.being_constructed .hint {
 }
 
 #user_login_auto_complete li.committer div.name {
-  font-weight: bold
+  font-weight: bold;
   font-size: 12px;
   line-height: 1.2em;
 }
@@ -1604,7 +1604,7 @@ table tr td.inline_comments {
     border-right: 1px solid #cdcdcd;
 }
 table tr td.inline_comments .diff-comment-count {
-    background: orange;
+    background-color: orange;
     padding: 1px 4px;
     margin: 0 1px;
     background: #222;
@@ -2762,7 +2762,7 @@ table.select_commits_from_list tr.merged td.meta,
 table.select_commits_from_list tr.unmerged td.meta,
 table.select_commits_from_list tr.unknown-status td.meta
 {
-    background-position: 7px left;
+    background-position: 7px 0;
     background-repeat: no-repeat;
     padding-left: 16px;
 }
