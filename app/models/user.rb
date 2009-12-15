@@ -378,11 +378,13 @@ class User < ActiveRecord::Base
   end
 
   def paginated_events_in_watchlist(pagination_options = {})
-    watched_event_ids = feed_items.paginate({
-        :order => "created_at desc"
-      }.merge(pagination_options)).map(&:event_id)
-    Event.paginate(watched_event_ids,
-      {:order => "created_at desc"}.merge(pagination_options))
+    watched = feed_items.paginate({
+        :order => "created_at desc",
+        :total_entries => FeedItem.per_page+(FeedItem.per_page+1)
+      }.merge(pagination_options))
+    items = WillPaginate::Collection.new(watched.current_page, watched.per_page,
+                                         watched.total_entries)
+    items.replace(Event.find(watched.map(&:event_id), {:order => "created_at desc"}))
   end
 
   protected
