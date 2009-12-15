@@ -80,6 +80,7 @@ class CommentsController < ApplicationController
 
   def comment_was_created
     create_new_commented_posted_event
+    add_to_favorites if params[:add_to_favorites]
     respond_to do |wants|
       wants.html do
         flash[:success] = I18n.t "comments_controller.create_success"
@@ -113,6 +114,10 @@ class CommentsController < ApplicationController
     end
   end
 
+  def add_to_favorites
+    current_user.favorites.create!(:watchable => @target)
+  end
+  
   def comment_was_invalid
     respond_to { |wants|
       wants.html { render :action => "new" }

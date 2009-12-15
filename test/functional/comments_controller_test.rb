@@ -150,6 +150,37 @@ class CommentsControllerTest < ActionController::TestCase
       end
     end
     
+    context "Watching a merge request" do
+      setup do
+        @repo = @merge_request.target_repository
+        @project = @repo.project
+      end
+      
+      should "be watched when user wants it" do
+        login_as :moe
+#        @controller.expects(:add_to_favorites)
+        assert_incremented_by(users(:moe).favorites, :size, 1) do
+          post(:create, :project_id => @project.to_param,
+            :repository_id => @repo.to_param,
+            :comment => {
+              :body => "This feature is highly anticipated!"
+            },
+            :add_to_favorites => "1")
+          users(:moe).favorites.reload
+        end
+      end
+
+      should "only be watched if so wanted" do
+        login_as :moe
+        @controller.expects(:add_to_favorites).never
+        post(:create, :project_id => @project.to_param,
+          :repository_id => @repo.to_param,
+          :comment => {
+            :body => "This feature is highly anticipated!"
+          })
+      end
+    end
+    
     context "Merge request versions" do
       should "set the merge request version as polymorphic parent" do
         @version = create_new_version

@@ -52,6 +52,18 @@
       <%= f.select :state, statuses_for_merge_request_for_select(parent),
            :selected => parent.status_tag.to_s, :include_blank => true -%>
     </p>
+    
+    <p>
+      <%- if !parent.watched_by?(current_user) -%>
+        <%= label_tag(:add_to_favorites, "Add to favorites") %>:
+        <%= check_box_tag(:add_to_favorites, "on") %> <br />
+        <span class="hint">
+          If you later on want to stop watching this <%= parent.class.human_name -%>, 
+          simply click the button on the merge request labelled 
+          &quot;Stop watching&quot; at the top of the page
+        </span>
+      <%- end -%>
+    </p>
     <%- end -%>
     <p>
       <input type="button" value="Preview" id="comment_preview_button" />
