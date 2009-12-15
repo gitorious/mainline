@@ -52,4 +52,5 @@
 :commentable_type => "commit",
 :comment => :comment,
 :url => new_polymorphic_comment_path(nil, Comment.new),
-:sha1 => @commit.id} -%>
+:sha1 => @commit.id,
+:include_favorite_checkbox => false} -%>

@@ -30,6 +30,12 @@
   <%= f.hidden_field :sha1, :value => sha1 -%>
   <%= f.hidden_field :context -%>
 </p>
+<p>
+  <%- if include_favorite_checkbox -%>
+        <%= label_tag(:add_to_favorites, "Start watching") %>:
+        <%= check_box_tag(:add_to_favorites, "on") %> <br />
+  <%- end -%>
+</p>
 <p class="progress" style="display:none">
   <%= image_tag "spinner.gif" -%>  Saving...
 </p>

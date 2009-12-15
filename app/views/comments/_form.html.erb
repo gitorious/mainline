@@ -55,7 +55,7 @@
     
     <p>
       <%- if !parent.watched_by?(current_user) -%>
-        <%= label_tag(:add_to_favorites, "Add to favorites") %>:
+        <%= label_tag(:add_to_favorites, "Start watching") %>:
         <%= check_box_tag(:add_to_favorites, "on") %> <br />
         <span class="hint">
           If you later on want to stop watching this <%= parent.class.human_name -%>, 

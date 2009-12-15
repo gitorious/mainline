@@ -57,7 +57,8 @@
     @version.merge_request.target_repository.project,
     @version.merge_request.target_repository,
     @version.merge_request, @version, :comments]),
-:sha1 => nil
+:sha1 => nil,
+:include_favorite_checkbox => !@version.merge_request.watched_by?(current_user)
 } -%>
 
 <%= render_inline_diffs_controls("merge-requests") %>
