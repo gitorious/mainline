@@ -172,16 +172,33 @@
       </ul>
     <% end unless is_current_user?(@user) -%>
 
-
     <% pull_box(favorites_heading_for(@user)) do %>
+    <div id="watchable-list">
+      <div class="filters">
+        <ul>
+          <% if is_current_user?(@user) -%>
+            <li><a class="foreign" href="#not-mine">Not yours</a></li>
+            <li><a class="mine" href="#mine">Yours</a></li>
+          <% end -%>
+          <li>
+            <a href="#merge-requests" class="merge-requests">Merge requests</a>
+          </li>
+          <li>
+            <a href="#repos" class="repositories">Repositories</a>
+          </li>
+          <li><a href="#all" class="all">All</a></li>
+        </ul>
+        <div class="clear"></div>
+      </div>
       <ul class="with_icons">
-        <% @favorites.each do |favorite| %>
-          <li class="favorite <%= favorite.class.name.underscore -%>">
-            <%= link_to_watchable(favorite) -%>
+        <% @favorites.each do |watchable| %>
+          <li class="<%= css_classes_for(watchable) -%>">
+            <%= link_to_watchable(watchable) -%>
           </li>
         <% end %>
         <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
       </ul>
+    </div>
     <% end %>
 
     <% pull_box("Team memberships") do -%>

@@ -3398,3 +3398,32 @@ body#users h2.activities small {
 .embedded_message_list li.hint {
     text-align: right;
 }
+
+#watchable-list .filters {
+    clear:both;
+    margin-top: -10px;
+}
+#watchable-list .filters ul {
+    padding: 0;
+    margin: 0;
+}
+#watchable-list .filters ul li {
+    padding: 0;
+    margin: 0;
+    display: inline;
+    font-size: 11px;
+    color: #bbb;
+}
+#watchable-list .filters ul li a {
+    padding: 5px 8px 4px 8px;
+    display: block;
+    float: right;
+    color: #666;
+}
+#watchable-list .filters ul li a.current {
+    color: #333;
+}
+#watchable-list .filters ul li a:hover {
+    text-decoration: none;
+    color: #390;
+}

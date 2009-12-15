@@ -51,7 +51,7 @@ module FavoritesHelper
       link_to(repo_title(watchable, watchable.project),
         repo_owner_path(watchable, [watchable.project, watchable]))
     when MergeRequest
-      link_to(h(truncate(watchable.summary, :length => 32)),
+      link_to(h(truncate(watchable.summary, :length => 65)),
         repo_owner_path(watchable.target_repository,
           [watchable.source_repository.project,
            watchable.target_repository,
@@ -64,5 +64,16 @@ module FavoritesHelper
   # is this +watchable+ included in the users @favorites?
   def favorited?(watchable)
     @favorites.include?(watchable)
+  end
+
+  def css_classes_for(watchable)
+    css_classes = ["favorite"]
+    css_classes << watchable.class.name.underscore
+    if current_user == watchable.user
+      css_classes << "mine"
+    else
+      css_classes << "foreign"
+    end
+    css_classes.join(" ")
   end
 end
