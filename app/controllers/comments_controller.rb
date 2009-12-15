@@ -115,7 +115,11 @@ class CommentsController < ApplicationController
   end
 
   def add_to_favorites
-    current_user.favorites.create!(:watchable => @target)
+    favorite_target.watched_by!(current_user)
+  end
+
+  def favorite_target
+    @target.is_a?(MergeRequest) ? @target : @target.merge_request
   end
   
   def comment_was_invalid

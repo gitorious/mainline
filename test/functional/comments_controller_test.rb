@@ -154,32 +154,35 @@ class CommentsControllerTest < ActionController::TestCase
       setup do
         @repo = @merge_request.target_repository
         @project = @repo.project
+        @user = users(:moe)
       end
       
       should "be watched when user wants it" do
-        login_as :moe
-#        @controller.expects(:add_to_favorites)
-        assert_incremented_by(users(:moe).favorites, :size, 1) do
+        login_as @user
+        assert_incremented_by(@user.favorites, :size, 1) do
           post(:create, :project_id => @project.to_param,
             :repository_id => @repo.to_param,
+            :merge_request_id => @merge_request.to_param,
             :comment => {
               :body => "This feature is highly anticipated!"
             },
             :add_to_favorites => "1")
-          users(:moe).favorites.reload
+          @user.favorites.reload
         end
       end
 
       should "only be watched if so wanted" do
-        login_as :moe
+        login_as @user
         @controller.expects(:add_to_favorites).never
         post(:create, :project_id => @project.to_param,
           :repository_id => @repo.to_param,
+          :merge_request_id => @merge_request.to_param,
           :comment => {
             :body => "This feature is highly anticipated!"
           })
       end
     end
+
     
     context "Merge request versions" do
       should "set the merge request version as polymorphic parent" do
@@ -235,6 +238,13 @@ class CommentsControllerTest < ActionController::TestCase
         json = ActiveSupport::JSON.decode(@response.body)
         assert_not_nil json["file-diff"]
         assert_not_nil json["comment"]
+      end
+
+      should "be added to current_user's favorites if she wants" do
+        @version = create_new_version
+        create_merge_request_version_comment(@version, :add_to_favorites => "1")
+        user = users(:johan)
+        assert_equal(@merge_request, user.favorites.reload.last.watchable)
       end
     end
 
@@ -334,12 +344,17 @@ class CommentsControllerTest < ActionController::TestCase
     return version
   end
 
-  def create_merge_request_version_comment(version)
-    post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-      :merge_request_version_id => version.to_param, :comment => {
+  def create_merge_request_version_comment(version, extra_options={})
+    request_options = {
+      :project_id => @project.slug,
+      :repository_id => @repository.to_param,
+      :merge_request_version_id => version.to_param,
+      :comment => {
         :path => "LICENSE",
         :lines => "1-1:13-13+14",
         :sha1 => "ffac01-ffab99",
-        :body => "Needs more cowbell"}, :format => "js"
+        :body => "Needs more cowbell"},
+      :format => "js"}.merge(extra_options)
+    post :create, request_options
   end
 end
