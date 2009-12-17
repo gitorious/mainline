@@ -65,38 +65,13 @@
                 new_message_path(:to => @user.login), :class => "new_email") -%>
         </li>
         <% end -%>
-        <% if is_current_user?(@user)  -%>
-        <li>
-          <%= white_button_link_to(t("views.keys.manage_ssh_keys"),
-            user_keys_path(current_user), :class => "key") -%>
-        </li>
-        <li>
-          <%= white_button_link_to(t("views.aliases.manage_aliases"),
-                user_aliases_path(current_user), :class => "alias") -%>
-        </li>
-        <li>
-          <%= white_button_link_to(t("views.users.edit_action"), edit_user_url,
-                :class => "edit_account") -%>
-        </li>
-        <li>
-          <%= white_button_link_to(t("views.users.chg_passwd_action"), password_user_path,
-                :class => "edit_account_password") -%>
-        </li>
-        <% end -%>
       </ul>
       <div class="clear"></div>
     </div>
 
     <h2 class="activities">
-      <% if showing_newsfeed? %>
-        Your Newsfeed
-      <% else %>
-        <%= t("views.site.dashboard.activities") -%>
-      <% end %>
+      <%= t("views.site.dashboard.activities") -%>
       <%= feed_icon @atom_auto_discovery_url -%>
-      <% if is_current_user?(@user) -%>
-        <small>(<%= newsfeed_or_user_events_link -%>)</small>
-      <% end -%>
     </h2>
     <% if @events.empty? -%>
       <p class="hint">
@@ -112,43 +87,8 @@
   </div>
 
   <div id="right">
-    <% if @messages %>
-      <% pull_box("Your latest messages") do %>
-        <ul class="embedded_message_list">
-        <% @messages.each do |message| %>
-          <li>
-            <%= link_to(h(message.title), message,
-                  :title => truncate(h(message.body), :length => 25),
-                  :class => message.aasm_state_for_user(@user)) %>
-            <span class="meta">
-              <%= distance_of_time_in_words_to_now(message.updated_at) %> ago
-            </span>
-          </li>
-        <% end %>
-        <li class="hint">
-          <%= link_to("View all messages &raquo;", messages_path) -%>
-        </li>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% pull_box("Open merge requests for you") do %>
-      <ul>
-        <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
-          <li>
-            <%= link_to(repo.url_path + " <strong>" +
-                  repo.open_merge_request_count + "</strong>",
-                  repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
-          </li>
-        <% end %>
-      </ul>
-    <% end if show_merge_request_count_for_user?(@user) %>
 
     <% pull_box(personified(@user, "Your projects", "Projects")) do -%>
-      <% if is_current_user?(@user) -%>
-        <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
-              :id => "new-project-button"}) %>
-      <% end -%>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project">
@@ -170,7 +110,7 @@
           </li>
         <% end -%>
       </ul>
-    <% end unless is_current_user?(@user) -%>
+    <% end -%>
 
     <% pull_box(favorites_heading_for(@user)) do %>
     <div id="watchable-list">
