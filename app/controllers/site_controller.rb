@@ -33,6 +33,11 @@ class SiteController < ApplicationController
       render_global_index
     end
   end
+
+  def public_timeline
+    render_public_timeline
+  end
+
   
   def dashboard
     redirect_to current_user
@@ -88,10 +93,6 @@ class SiteController < ApplicationController
       @latest_events = Event.latest(4)
       
       render :layout => "second_generation/application", :inline => ""
-    end
-
-    def public_timeline
-      render_public_timeline
     end
     
     # Render the global index template

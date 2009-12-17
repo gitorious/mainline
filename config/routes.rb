@@ -173,6 +173,8 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.resources :favorites
+
+  map.activity "/activity", :controller => "site", :action => "public_timeline"
   
   map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'
   

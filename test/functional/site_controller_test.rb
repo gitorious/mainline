@@ -35,6 +35,21 @@ class SiteControllerTest < ActionController::TestCase
       GitoriousConfig[key] = old_value
     end
   end
+
+  context "#activity" do
+    should "route /activity to public_timeline" do
+      assert_recognizes({
+          :controller => "site",
+          :action => "public_timeline"
+        }, "/activity")
+    end
+    
+    should "render the global activity timeline" do
+      get :public_timeline
+      assert_response :success
+      assert_template "site/index"
+    end
+  end
   
   context "#index" do
     
