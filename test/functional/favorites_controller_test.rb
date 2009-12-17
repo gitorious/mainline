@@ -21,14 +21,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'test_helper'
+require File.dirname(__FILE__) +  '/../test_helper'
 
 class FavoritesControllerTest < ActionController::TestCase
   def do_create_post(type, id, extra_options={})
     post :create, extra_options.merge(:watchable_type => type,
       :watchable_id => id)
   end
-  
+
   context "Creating a new favorite" do
     setup {
       login_as :johan
@@ -140,6 +140,67 @@ class FavoritesControllerTest < ActionController::TestCase
         Favorite.find(@favorite.id)
       end
     end
+  end
 
+  context "listing a users own favorites" do
+    setup do
+      @user = users(:mike)
+      repositories(:johans).watched_by!(@user)
+      login_as :mike
+    end
+
+    should "require login" do
+      login_as nil
+      get :index
+      assert_redirected_to new_sessions_path
+    end
+
+    should "only list the users favorites" do
+      assert @user.favorites.count > 0, "user has no favs"
+      other_fav = Favorite.create!({:user => users(:johan),
+          :watchable => Repository.last})
+      get :index
+      assert !assigns(:favorites).include?(other_fav)
+      assert_equal @user.favorites, assigns(:favorites)
+      assert_response :success
+    end
+
+    should_eventually "have a button to toggle the mail flag" do
+      flunk
+    end
+
+    should_eventually "have a button to delete the favorite" do
+      flunk
+    end
+  end
+
+  context "editing a favorite" do
+    setup do
+      @user = users(:mike)
+      login_as @user
+      @favorite = Repository.last.watched_by!(@user)
+    end
+
+    should "scope the find to the user" do
+      fav = Favorite.create!({:user => users(:johan),
+          :watchable => Repository.last})
+      put :update, :id => fav.id
+      assert_response :not_found
+    end
+
+    should_eventually "be able to add the mail flag" do
+      assert !@favorite.notify_by_email?
+      get :update, :id => @favorite.id, :favorite => {:notify_by_email => true}
+      assert_response :redirect
+      assert_redirected to favorites_path
+      assert @favorite.reload.notify_by_email?
+    end
+
+    should "only be able to change the mail flag" do
+      assert !@favorite.notify_by_email?
+      get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
+      assert_response :redirect
+      assert_equal @user, @favorite.reload.user
+    end
   end
 end

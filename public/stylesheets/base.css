@@ -729,6 +729,11 @@ li.merge_requests a.selected { color: #09460F;}
   float: right;
   background: #fff url('../images/dialog_bg_bottom.png') repeat-x bottom left;
 }
+ul.with_icons .white-button {
+    float: none;
+    display: inline-block;
+}
+
 #new-project-button a, .white-button a {
   font-size: 18px;
   display: block;
@@ -763,7 +768,7 @@ ul.buttons .white-button.small-button a {
     padding:2px 5px 2px 10px;
 }
 
-/* white favorite button */
+/* favorite buttons */
 .white-button.favorite {
     width: inherit;
     margin: 0 0 2px 0;
@@ -772,11 +777,17 @@ ul.buttons .white-button.small-button a {
     padding: 2px 5px 1px 25px;
     background-position: 5px center;
 }
-.white-button.favorite a.enabled {
+.white-button.favorite a.watch-link.enabled {
     background-image: url("../images/silk/star.png");
 }
-.white-button.favorite a.disabled {
+.white-button.favorite a.watch-link.disabled {
     background-image: url("../images/silk/star_deselected.png");
+}
+.white-button.favorite a.toggle.enabled {
+    background-image: url("../images/silk/email_delete.png");
+}
+.white-button.favorite a.toggle.disabled {
+    background-image: url("../images/silk/email_add.png");
 }
 .white-button.favorite a.waiting {
     background-image: url("../images/spinner.gif");
@@ -3426,4 +3437,17 @@ body#users h2.activities small {
 #watchable-list .filters ul li a:hover {
     text-decoration: none;
     color: #390;
+}
+
+#favorite-listing { width: 500px; }
+
+#favorite-listing th {
+    text-align: center;
+}
+#favorite-listing td.notification { width: 120px; }
+#favorite-listing td.notification { width: 150px; }
+#favorite-listing td.notification .white-button{
+    width: 50px;
+    margin: 0 auto 0 auto;
+    float:none;
 }

@@ -37,11 +37,26 @@ module FavoritesHelper
       )
   end
 
-  def destroy_favorite_link_to(favorite, watchable)
-    link_to("Stop watching",
-      favorite_path(favorite),
+  def destroy_favorite_link_to(favorite, watchable, options = {})
+    label = options[:label] || "Stop watching"
+    link_to(label, favorite_path(favorite),
       :method => :delete, :"data-request-method" => "delete",
       :class => "watch-link enabled round-10")
+  end
+
+  def link_to_notification_toggle(favorite)
+    link_classes = %w[toggle round-10]
+    link_classes << (favorite.notify_by_email? ? "enabled" : "disabled")
+    link = link_to(favorite.notify_by_email? ? "on" : "off", favorite,
+      :class => link_classes.join(" "))
+    content_tag(:div, link,
+            :class => "white-button round-10 small-button update favorite")
+  end
+
+  def link_to_unwatch_favorite(favorite)
+    link = link_to("Unwatch", favorite, :class => "watch-link enabled round-10")
+    content_tag(:div, link,
+      :class => "white-button round-10 small-button favorite")
   end
 
   # Builds a link to the target of a favorite event
@@ -66,9 +81,13 @@ module FavoritesHelper
     @favorites.include?(watchable)
   end
 
+  def css_class_for_watchable(watchable)
+    watchable.class.name.underscore
+  end
+
   def css_classes_for(watchable)
     css_classes = ["favorite"]
-    css_classes << watchable.class.name.underscore
+    css_classes << css_class_for_watchable(watchable)
     if current_user == watchable.user
       css_classes << "mine"
     else

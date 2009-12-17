@@ -191,9 +191,9 @@
         <div class="clear"></div>
       </div>
       <ul class="with_icons">
-        <% @favorites.each do |watchable| %>
-          <li class="<%= css_classes_for(watchable) -%>">
-            <%= link_to_watchable(watchable) -%>
+        <% @favorites.each do |favorite| %>
+          <li class="<%= css_classes_for(favorite.watchable) -%>">
+            <%= link_to_watchable(favorite.watchable) -%>
           </li>
         <% end %>
         <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>

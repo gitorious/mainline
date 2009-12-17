@@ -227,6 +227,40 @@ $(document).ready(function() {
         });
     });
 
+    // Favorite toggling and deletion on the /favorites page
+    $("#favorite-listing tr:odd").addClass("odd");
+    $("#favorite-listing td.notification .favorite.update a").click(function() {
+        $this = $(this);
+        payload = "_method=put&favorite[notify_by_email]=1";
+        $.post($this.attr("href"), payload, function(data, respTxt){
+            if ("success" === respTxt) {
+                if ("off" === $this.text()) {
+                    $this.text("on").removeClass("disabled").addClass("enabled");
+                } else {
+                    $this.text("off").removeClass("enabled").addClass("disabled")
+                }
+            }
+        });
+
+        return false;
+    });
+
+    $("#favorite-listing td.unwatch .favorite a.watch-link").click(function() {
+        $this = $(this);
+        payload = "_method=delete";
+        $.post($this.attr("href"), payload, function(data, respTxt){
+            if ("success" === respTxt) {
+                $this.parents("tr").fadeOut("normal", function(){
+                    $(this).remove();
+                    $("#favorite-listing tr").removeClass("odd");
+                    $("#favorite-listing tr:odd").addClass("odd");
+                });
+            }
+        });
+
+        return false;
+    });
+
 });
 
 if (!Gitorious)

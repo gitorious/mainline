@@ -1,0 +1,54 @@
+<%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<% @page_title = "Your favorites" -%>
+<%= breadcrumbs_from(current_user) -%>
+
+<h1>Your favorites</h1>
+
+<% help_box do %>
+<p>
+Here you can manage the watch settings for the objects you're
+watching. Use the checkbox to toggle email settings. Turning email
+notifications on will send you an email each time something from the
+favorite is put in
+<%= link_to "your newsfeed", current_user -%>
+</p>
+<% end %>
+
+<table class="listing" id="favorite-listing">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Email notifications</th>
+      <th>Unwatch</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @favorites.each do |favorite| -%>
+      <tr>
+        <td><%= link_to_watchable(favorite.watchable) -%></td>
+        <td class="notification"><%= link_to_notification_toggle(favorite) -%></td>
+        <td class="unwatch">
+          <%= link_to_unwatch_favorite(favorite) -%>
+        </td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>

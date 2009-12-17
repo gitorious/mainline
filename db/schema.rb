@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091210132746) do
+ActiveRecord::Schema.define(:version => 20091217110558) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20091210132746) do
     t.string   "action"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "notify_by_email", :default => false
   end
 
   add_index "favorites", ["watchable_type", "watchable_id", "user_id"], :name => "index_favorites_on_watchable_type_and_watchable_id_and_user_id"
@@ -373,12 +374,5 @@ ActiveRecord::Schema.define(:version => 20091210132746) do
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["password_key"], :name => "index_users_on_password_key"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
-
-  create_table "watchlist", :id => false, :force => true do |t|
-    t.string  "fullname"
-    t.string  "data"
-    t.text    "body"
-    t.integer "project_id", :null => false
-  end
 
 end
