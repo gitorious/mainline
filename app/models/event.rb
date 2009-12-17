@@ -28,7 +28,10 @@ class Event < ActiveRecord::Base
   belongs_to :target, :polymorphic => true
   has_many :events, :as => :target do
     def commits
-      all(:limit => Event::MAX_COMMIT_EVENTS+1).select{|e|e.action == Action::COMMIT}
+      find(:all, {
+          :limit => Event::MAX_COMMIT_EVENTS + 1,
+          :conditions => {:action => Action::COMMIT}
+        })
     end
   end
 
@@ -64,7 +67,10 @@ class Event < ActiveRecord::Base
   end
 
   def build_commit(options={})
-    e = self.class.new(options.merge({:action => Action::COMMIT, :project_id => project_id}))
+    e = self.class.new(options.merge({
+          :action => Action::COMMIT,
+          :project_id => project_id
+        }))
     e.target = self
     return e
   end
@@ -95,9 +101,9 @@ class Event < ActiveRecord::Base
     @git_actor ||= find_git_actor
   end
 
-  # Initialize a Grit::Actor object:
-  # If only the email is provided, we will give back anything before @ as name and email as email
-  # If both name and email is provided, we will give an Actor with both
+  # Initialize a Grit::Actor object: If only the email is provided, we
+  # will give back anything before '@' as name and email as email. If
+  # both name and email is provided, we will give an Actor with both.
   # If a User object, an Actor with name and email
   def find_git_actor
     if user
