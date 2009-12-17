@@ -24,11 +24,47 @@ class SiteControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :except => [:about, :faq, :contact]
   should_render_in_global_context :only => [:about, :faq, :contact]
 
+  def alter_gitorious_config(key, value)
+    old_value = GitoriousConfig[key]
+    GitoriousConfig[key] = value
+    yield
+    if old_value.nil?
+
+      GitoriousConfig.delete(key)
+    else
+      GitoriousConfig[key] = old_value
+    end
+  end
+  
   context "#index" do
-    should "GETs sucessfully with funky layout" do
-      get :index
-      assert_response :success
-      assert_template "layouts/second_generation/application"
+    
+    context "Logged in users" do
+      setup {login_as users(:johan)}
+
+      should "render the dashboard for logged in users" do
+        login_as users(:johan)
+        get :index
+        assert_response :success
+        assert_template "site/dashboard"
+      end
+    end
+
+    context "Anonymous users" do
+      should "render the public timeline" do
+        alter_gitorious_config("is_gitorious_dot_org", false) do
+          get :index
+          assert_response :success
+          assert_template "site/index"
+        end
+      end
+      
+      should "use the funky layout" do
+        alter_gitorious_config("is_gitorious_dot_org", true) do
+          get :index
+          assert_response :success
+          assert_template "layouts/second_generation/application"
+        end
+      end
     end
     
     should "not use https if not configured to use https" do

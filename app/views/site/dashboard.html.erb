@@ -1,0 +1,205 @@
+ <%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<div class="with_divider">
+  <div id="left">
+    <div class="user-profile">
+      <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
+      <div class="profile-data">
+        <h1>~<%= link_to h(@user.login), @user -%></h1>
+
+        <ul class="details">
+          <% unless @user.fullname.blank? %>
+            <li><%= h(@user.fullname) -%></li>
+          <% end %>
+          <% if @user.public_email? -%>
+          <li class="email">
+            <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
+          </li>
+          <% end -%>
+          <% if @user.url %>
+          <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+          <% end -%>
+          <li>
+            <%= t("views.users.member_for") %>
+            <%= time_ago_in_words(@user.created_at) %>
+          </li>
+        </ul>
+      </div>
+
+      <ul class="buttons">
+        <% if !is_current_user?(@user) -%>
+        <li class="new_email">
+          <%= white_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
+                new_message_path(:to => @user.login), :class => "new_email") -%>
+        </li>
+        <% end -%>
+        <% if is_current_user?(@user)  -%>
+        <li>
+          <%= white_button_link_to(t("views.keys.manage_ssh_keys"),
+            user_keys_path(current_user), :class => "key") -%>
+        </li>
+        <li>
+          <%= white_button_link_to(t("views.aliases.manage_aliases"),
+                user_aliases_path(current_user), :class => "alias") -%>
+        </li>
+        <li>
+          <%= white_button_link_to(t("views.users.edit_action"), edit_user_url(@user),
+                :class => "edit_account") -%>
+        </li>
+        <li>
+          <%= white_button_link_to(t("views.users.chg_passwd_action"), password_user_path(@user),
+                :class => "edit_account_password") -%>
+        </li>
+        <% end -%>
+      </ul>
+      <div class="clear"></div>
+    </div>
+
+    <h2 class="activities">
+      <% if showing_newsfeed? %>
+        Your Newsfeed
+      <% else %>
+        <%= t("views.site.dashboard.activities") -%>
+      <% end %>
+      <%= feed_icon @atom_auto_discovery_url -%>
+      <% if is_current_user?(@user) -%>
+        <small>(<%= newsfeed_or_user_events_link -%>)</small>
+      <% end -%>
+    </h2>
+    <% if @events.empty? -%>
+      <p class="hint">
+        <%= personified(@user, "You", @user.title) -%> have no news
+      </p>
+    <% else -%>
+      <div id="user_events">
+        <%= render :partial => "events/events", :locals => {
+          :events => @events, :pagination_style => :compact
+        } -%>
+      </div>
+    <% end -%>
+  </div>
+
+  <div id="right">
+    <% if @messages %>
+      <% pull_box("Your latest messages") do %>
+        <ul class="embedded_message_list">
+        <% @messages.each do |message| %>
+          <li>
+            <%= link_to(h(message.title), message,
+                  :title => truncate(h(message.body), :length => 25),
+                  :class => message.aasm_state_for_user(@user)) %>
+            <span class="meta">
+              <%= distance_of_time_in_words_to_now(message.updated_at) %> ago
+            </span>
+          </li>
+        <% end %>
+        <li class="hint">
+          <%= link_to("View all messages &raquo;", messages_path) -%>
+        </li>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <% pull_box("Open merge requests for you") do %>
+      <ul>
+        <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
+          <li>
+            <%= link_to(repo.url_path + " <strong>" +
+                  repo.open_merge_request_count + "</strong>",
+                  repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
+          </li>
+        <% end %>
+      </ul>
+    <% end if show_merge_request_count_for_user?(@user) %>
+
+    <% pull_box(personified(@user, "Your projects", "Projects")) do -%>
+      <% if is_current_user?(@user) -%>
+        <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
+              :id => "new-project-button"}) %>
+      <% end -%>
+      <ul class="with_icons">
+      <% @projects.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <% if favorited?(project) %>
+            <%= image_tag("silk/star.png", :title => "favorited") %>
+          <% end %>
+        </li>
+      <% end -%>
+      </ul>
+    <% end -%>
+
+    <% pull_box(t("views.site.dashboard.repositories")) do -%>
+      <ul class="with_icons">
+        <% @repositories.each do |repo| -%>
+          <li class="repository">
+            <%= link_to h(repo.url_path),
+                  repo_owner_path(repo, [repo.project, repo]) -%>
+          </li>
+        <% end -%>
+      </ul>
+    <% end unless is_current_user?(@user) -%>
+
+    <% pull_box(favorites_heading_for(@user)) do %>
+    <div id="watchable-list">
+      <div class="filters">
+        <ul>
+          <% if is_current_user?(@user) -%>
+            <li><a class="foreign" href="#not-mine">Not yours</a></li>
+            <li><a class="mine" href="#mine">Yours</a></li>
+          <% end -%>
+          <li>
+            <a href="#merge-requests" class="merge-requests">Merge requests</a>
+          </li>
+          <li>
+            <a href="#repos" class="repositories">Repositories</a>
+          </li>
+          <li><a href="#all" class="all">All</a></li>
+        </ul>
+        <div class="clear"></div>
+      </div>
+      <ul class="with_icons">
+        <% @favorites.each do |watchable| %>
+          <li class="<%= css_classes_for(watchable) -%>">
+            <%= link_to_watchable(watchable) -%>
+          </li>
+        <% end %>
+        <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
+      </ul>
+    </div>
+    <% end %>
+
+    <% pull_box("Team memberships") do -%>
+      <ul>
+      <% @user.groups.each do |group| -%>
+        <li style="clear:left">
+          <span style="float:left; padding: 2px 10px 2px 2px">
+            <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %>
+          </span>
+          <%= link_to h(group.name), group_path(group) -%>
+        </li>
+      <% end -%>
+      </ul>
+    <% end unless @user.groups.blank? -%>
+
+  </div>
+  <div class="clear"></div>
+</div>
+

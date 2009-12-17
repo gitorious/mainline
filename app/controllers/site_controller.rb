@@ -58,22 +58,50 @@ class SiteController < ApplicationController
       render "site/#{current_site.subdomain}/index"
     end
 
+    def render_public_timeline
+      @projects = Project.find(:all, :limit => 10, :order => "id desc")
+      @top_repository_clones = Repository.most_active_clones
+      @active_projects = Project.most_active_recently(15)
+      @active_users = User.most_active
+      @active_groups = Group.most_active
+      @latest_events = Event.latest(25)
+      render :template => "site/index"
+    end
+
+    def render_dashboard
+      @page_title = "Gitorious: your dashboard"
+      @user = current_user
+      @projects = @user.projects.find(:all,
+        :include => [:tags, { :repositories => :project }])
+      @repositories = current_user.commit_repositories if current_user != @user
+      @events = @user.paginated_events_in_watchlist(:page => params[:page])
+      @messages = @user.messages_in_inbox(3) if @user == current_user
+      @favorites = @user.watched_objects
+
+      render :template => "site/dashboard"
+    end
+
+    def render_gitorious_dot_org_in_public
+      @projects = Project.most_active_recently(10, 7)
+      @teams = Group.most_active
+      @users = User.most_active
+      @latest_events = Event.latest(4)
+      
+      render :layout => "second_generation/application", :inline => ""
+    end
+
+    def public_timeline
+      render_public_timeline
+    end
+    
     # Render the global index template
     def render_global_index
-      if GitoriousConfig["is_gitorious_dot_org"] && !logged_in?
-        @projects = Project.most_active_recently(10, 7)
-        @teams = Group.most_active
-        @users = User.most_active
-        @latest_events = Event.latest(4)
-        
-        render :layout => "second_generation/application", :inline => ""
+      if logged_in?
+        render_dashboard
+      elsif GitoriousConfig["is_gitorious_dot_org"]
+        render_gitorious_dot_org_in_public
       else
-        @projects = Project.find(:all, :limit => 10, :order => "id desc")
-        @top_repository_clones = Repository.most_active_clones
-        @active_projects = Project.most_active_recently(15)
-        @active_users = User.most_active
-        @active_groups = Group.most_active
-        @latest_events = Event.latest(25)
+        render_public_timeline
       end
     end
   
