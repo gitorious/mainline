@@ -10,6 +10,12 @@ class LogReaderTest < ActiveSupport::TestCase
       @reader = LogReader.new
     end
 
+    teardown do
+      silence_warnings do
+        Object.const_set("RAILS_ENV", "test")
+      end
+    end
+
     should " use log file from current RAILS_ENV" do
       File.open("#{RAILS_ROOT}/log/dummy.log", "w") do |log|
         log.puts "First line"
