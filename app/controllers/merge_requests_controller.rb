@@ -94,7 +94,7 @@ class MergeRequestsController < ApplicationController
     @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
     respond_to do |wants|
       wants.html do
-        if @merge_request_request.legacy?
+        if @merge_request.legacy?
           render :template => 'merge_requests/legacy' and return
         end # else render show.html as usual
       end
