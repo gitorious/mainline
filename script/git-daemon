@@ -90,14 +90,13 @@ module Git
           save_ip_localization(ip_family, ip, repository) unless @options[:disable_geoip]
 
           Dir.chdir(real_path) do
-            cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
             @active_child += 1
-            log(@pid, "git-upload-pack on #{real_path}; active_child = #{@active_child}")
-            child_pid = fork do
+            fork do
+              log(Process.pid, "git-upload-pack on #{real_path}; active_child = #{@active_child}")
               $stdout.reopen(socket)
               $stdin.reopen(socket)
               $stderr.reopen("/dev/null")
-              exec(cmd)
+              exec("git-upload-pack --strict --timeout=#{TIMEOUT} .")
             end
           end rescue Errno::EAGAIN
           socket.close
