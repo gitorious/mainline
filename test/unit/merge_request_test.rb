@@ -783,6 +783,42 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
   end
 
+  context "Sequence numbers" do
+    setup {
+      @repository = repositories(:johans)
+      @merge_request = @repository.merge_requests.build(
+        :user => users(:moe),
+        :source_repository => repositories(:moes),
+        :summary => "Please merge",
+        :proposal => "New window decorations",
+        :sha_snapshot => "ffac",
+        :ending_commit => "ac00"
+        )
+    }
+    should "set the sequence number on create" do
+      next_sequence = @repository.next_merge_request_sequence_number
+      assert @merge_request.save
+      assert_equal next_sequence + 1, @repository.next_merge_request_sequence_number
+      assert_equal(next_sequence, @merge_request.sequence_number)
+    end
+
+    should "require a unique sequence number for each target repo" do
+      assert @merge_request.save
+      mr2 = @merge_request.clone
+      assert mr2.save
+      mr2.sequence_number = @merge_request.sequence_number
+      assert_equal mr2.sequence_number, @merge_request.sequence_number
+      assert !mr2.save
+      assert_equal mr2.sequence_number, @merge_request.sequence_number
+      assert_not_nil mr2.errors.on(:sequence_number)
+    end
+
+    should "use sequence_number in to_param" do
+      @merge_request.update_attribute(:sequence_number, @repository.next_merge_request_sequence_number)
+      assert_equal @merge_request.sequence_number.to_s, @merge_request.to_param
+    end
+  end
+
   context "Reviewers" do
     setup do
       @source_repository = repositories(:johans)
@@ -801,7 +837,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal(@merge_request.target_repository.reviewers.uniq.reject{|r|r == @merge_request.user},
         @merge_request.reviewers)
     end
-    
+
     should "add a favorite for each reviewer" do
       @merge_request.expects(:add_to_reviewers_favorites).times(@merge_request.reviewers.size)
       @merge_request.notify_subscribers_about_creation
@@ -836,7 +872,7 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.save
       }
     end
-    
+
   end
 
 end

@@ -21,9 +21,7 @@
   <div class="commit-meta">
     <ul class="people">
       <li class="avatar">
-        <div>
-          <%= avatar_from_email(@commit.committer.email, { :size => 32 }) %>
-        </div>
+        <%= avatar_from_email(@commit.committer.email, { :size => 32 }) %>
       </li>
       <li>
         <%=h @commit.committer.name -%>
@@ -36,9 +34,7 @@
       <% if @commit.committer != @commit.author -%>
         <li class="clear"></li>
         <li class="avatar">
-          <div>
-	    <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
-          </div>
+	        <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
         </li>
         <li>
             <%=h @commit.author.name -%>

@@ -20,9 +20,9 @@ module DiffHelper
   # Takes a unified diff as input and renders it as html
   def render_diff(udiff, display_mode = "inline")
     return if udiff.blank?
-    
+
     udiff = force_utf8(udiff)
-    
+
     if sidebyside_diff?
       render_sidebyside_diff(udiff)
     else
@@ -55,7 +55,7 @@ module DiffHelper
   def render_inline_diffs_with_stats(file_diffs, state = :closed)
     file_diffs.map do |file|
       diff_renderer = Diff::Display::Unified.new(file.diff)
-      out =  %Q{<div class="file-diff" data-diff-path="#{file.a_path}"}
+      out =  %Q{<div class="file-diff" data-diff-path="#{file.a_path}">}
       out << %Q{<div class="header round-top-10 #{state == :closed ? 'closed' : 'open'}">}
       out << %Q{<span class="title"><span class="icon"></span>#{h(file.a_path)}</span>}
       out << %Q{<div class="diff-stats">}
@@ -80,12 +80,12 @@ module DiffHelper
   def render_inline_diffs_controls(cookie_prefix)
     %Q{<div class="file-diff-controls">
          <small>
-           <a href="#" id="expand-all" gts:cookie-prefix="#{cookie_prefix}">expand all</a> / 
+           <a href="#" id="expand-all" gts:cookie-prefix="#{cookie_prefix}">expand all</a> /
            <a href="#" id="collapse-all" gts:cookie-prefix="#{cookie_prefix}">collapse all</a>
          </small>
        </div>}
   end
-  
+
   def render_inline_diff(udiff, differ = nil, options = {})
     differ ||= Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff inline">\n}
@@ -104,7 +104,7 @@ module DiffHelper
     out << "</table>"
     out
   end
-  
+
   def render_sidebyside_diff(udiff)
     differ = Diff::Display::Unified.new(udiff)
     out = %Q{<table class="codediff sidebyside">\n}
@@ -116,7 +116,7 @@ module DiffHelper
     out << "</table>"
     out
   end
-  
+
   def render_diffmode_selector
     out = %Q{<ul class="mode_selector">}
     out << %Q{<li class="list_header">Diff rendering mode:</li>}
@@ -126,11 +126,11 @@ module DiffHelper
     else
       out << %Q{<li class="selected">inline</li>}
       out << %Q{<li><a href="?diffmode=sidebyside">side by side</a></li>}
-    end      
+    end
     out << "</ul>"
     out
   end
-  
+
   def render_diff_stats(stats)
     out = %Q{<ul class="diff_stats">\n}
     stats.files.each do |filename, adds, deletes, total|

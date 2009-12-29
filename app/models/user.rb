@@ -117,7 +117,7 @@ class User < ActiveRecord::Base
       WHERE (has_unread_replies=? AND sender_id=?)
       OR recipient_id=?
       AND in_reply_to_id IS NULL
-      ORDER BY created_at DESC", true,self, self])
+      ORDER BY last_activity_at DESC", true,self, self])
   end
 
   # Top level messages, excluding message threads that have been archived by me
@@ -126,7 +126,8 @@ class User < ActiveRecord::Base
         WHERE ((sender_id != :user AND archived_by_recipient = :no AND recipient_id = :user)
         OR (has_unread_replies = :yes AND archived_by_recipient = :no AND sender_id = :user))
         AND in_reply_to_id IS NULL
-        ORDER BY updated_at DESC LIMIT :limit",
+        ORDER BY last_activity_at DESC LIMIT :limit",
+
                          {:user => self.id, :yes => true, :no => false, :limit => limit}])
   end
 

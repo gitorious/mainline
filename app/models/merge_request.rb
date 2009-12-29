@@ -164,7 +164,7 @@ class MergeRequest < ActiveRecord::Base
 
   def status_tag=(tag)
     the_tag = build_status_tag_for tag
-    
+
     if the_tag.closed?
       close
     else
@@ -186,7 +186,9 @@ class MergeRequest < ActiveRecord::Base
   def create_status_change_event(comment)
     if @current_user
       message = "State changed "
-      message << "from <span class=\"changed\">#{@previous_state}</span> " if @previous_state
+      if @previous_state
+        message << "from <span class=\"changed\">#{@previous_state}</span> "
+      end
       message << "to <span class=\"changed\">#{status_tag}</span>"
       target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self,
         @current_user, message, comment)
@@ -208,7 +210,7 @@ class MergeRequest < ActiveRecord::Base
       label, value = map[item]
       result[label] = value
     end
-    
+
     result
   end
 
@@ -254,7 +256,7 @@ class MergeRequest < ActiveRecord::Base
 
   def resolvable_by?(candidate)
     return false unless candidate.is_a?(User)
-    (candidate == user) || target_repository.reviewers.include?(candidate)
+    (candidate === user) || target_repository.reviewers.include?(candidate)
   end
 
   def commits_for_selection
@@ -620,10 +622,11 @@ class MergeRequest < ActiveRecord::Base
   def add_to_creators_favorites
     watched_by!(user)
   end
-  
+
   private
   def build_status_tag_for(tag_name)
     return tag_name if tag_name.is_a? StatusTag
     StatusTag.new(tag_name, target_repository.project)
   end
+
 end
