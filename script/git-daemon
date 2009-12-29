@@ -100,6 +100,7 @@ module Git
               exec(cmd)
             end
           end rescue Errno::EAGAIN
+          socket.close
 
         rescue => e
           write_error_message(socket, e.message)
@@ -119,7 +120,6 @@ module Git
         socket.close
         return
       end
-      socket.close
     end
 
     def handle_stop(signal)
@@ -145,6 +145,8 @@ module Git
         break
       end
     end
+
+    private
 
     def repository_finder!(path)
       ActiveRecord::Base.verify_active_connections!
@@ -199,31 +201,14 @@ module Git
     end
 
     def receive_data(socket)
-      if RUBY_VERSION < '1.9'
-        read_data(socket)
-      else
-        read_data_nonblock(socket)
-      end
-    end
-
-    def read_data(socket)
-      size_string = socket.recv(4)
-      return "" if !size_string
-      size = size_string.to_i(16)
-      return "" unless size > 4
-      socket.recv(size - 4)
-    rescue Errno::ECONNRESET
-      return ""
-    end
-
-    def read_data_nonblock(socket)
       begin
-        size_string = socket.recv_nonblock(4)
+        size_string = recv(socket, 4)
         return "" if !size_string
         size = size_string.to_i(16)
         return "" unless size > 4
-        socket.recv_nonblock(size - 4)
-
+        recv(socket, size - 4)
+      rescue Errno::ECONNRESET
+        return ""
       rescue Errno::EAGAIN,
         Errno::EWOULDBLOCK,
         Errno::ECONNABORTED,
@@ -236,6 +221,10 @@ module Git
           return ""
         end
       end
+    end
+
+    def recv(socket, pos)
+      RUBY_VERSION < '1.9' ? socket.recv(pos) : socket.recv_nonblock(pos)
     end
 
     def save_ip_localization(ip_family, ip, repository)
