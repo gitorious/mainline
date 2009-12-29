@@ -42,11 +42,11 @@ module Git
       daemonize(@options[:logfile]) if @options[:daemonize]
       ActiveRecord::Base.verify_active_connections! if @options[:daemonize]
 
-      @socket = TCPServer.new(@options[:host], @options[:port])
-      @socket.setsockopt(Socket::SOL_SOCKET,
+      @tcp_server = TCPServer.new(@options[:host], @options[:port])
+      @tcp_server.setsockopt(Socket::SOL_SOCKET,
                          Socket::SO_REUSEADDR,
                          !!@options[:reuseaddr])
-      @socket.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
+      @tcp_server.fcntl(Fcntl::F_SETFD, Fcntl::FD_CLOEXEC)
 
       @pid = Process.pid
       write_pid_file
@@ -57,22 +57,22 @@ module Git
 
     def accept_connection
       Dir.chdir(GitoriousConfig["repository_base_path"])
-      while session = accept_socket
+      while socket = accept_socket
         connections = $children_active - $children_reaped
         if connections > MAX_CHILDREN
           log(@pid, "too many active children #{connections}/#{MAX_CHILDREN}")
-          session.close
+          socket.close
           next
         end
 
-        run_service(session)
+        run_service(socket)
       end
     end
 
-    def run_service(session)
+    def run_service(socket)
       $children_active += 1
-      ip_family, port, name, ip = session.peeraddr
-      line = receive_data(session)
+      ip_family, port, name, ip = socket.peeraddr
+      line = receive_data(socket)
 
       if line =~ SERVICE_READ_REGEXP
         service, base_path, host = $1, $2, $3
@@ -91,14 +91,13 @@ module Git
           raise "Invalid path: #{real_path}" unless GitBackend.do_repo_path_exists?(real_path)
           raise "git-daemon is forbbiden to export #{real_path}" unless GitBackend.is_git_daemon_export_ok?(real_path)
 
-          save_ip_localization(ip_family, ip, repository) if @options[:disable_geoip]
+          save_ip_localization(ip_family, ip, repository) unless @options[:disable_geoip]
 
-          # TODO: put this block in GitBackend
           Dir.chdir(real_path) do
             cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
             child_pid = fork do
-              $stdout.reopen(session)
-              $stdin.reopen(session)
+              $stdout.reopen(socket)
+              $stdin.reopen(socket)
               $stderr.reopen("/dev/null")
               exec(cmd)
 
@@ -108,9 +107,9 @@ module Git
           end rescue Errno::EAGAIN
 
         rescue => e
-          write_error_message(session, e.message)
+          write_error_message(socket, e.message)
           log(@pid, "Error on: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
-          session.close
+          socket.close
           $children_active -= 1
           return
         end
@@ -119,21 +118,21 @@ module Git
         service, base_path, host = $1, $2, $3
         log(@pid, "Not accepting #{service.inspect} for #{base_path.inspect}")
 
-        write_error_message(session,
+        write_error_message(socket,
                             "The git:// url is read-only. Please see " +
                             "http://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')} " +
                             "for the push url, if you're a committer.")
         $children_active -= 1
-        session.close
+        socket.close
         return
       else
         $children_active -= 1
       end
-      session.close
+      socket.close
     end
 
     def handle_stop(signal)
-      @socket.close
+      @tcp_server.close
       log(@pid, "Received #{signal}, exiting..")
       exit 0
     end
@@ -180,31 +179,31 @@ module Git
       $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
     end
 
-    def write_error_message(session, msg)
+    def write_error_message(socket, msg)
       message = ["\n----------------------------------------------"]
       message << msg
       message << "----------------------------------------------\n"
-      write_into_sideband(session, message.join("\n"), 2)
+      write_into_sideband(socket, message.join("\n"), 2)
     end
 
-    def write_into_sideband(session, message, channel)
+    def write_into_sideband(socket, message, channel)
       msg = "%s%s" % [channel.chr, message]
-      session.write("%04x%s" % [msg.length+4, msg])
+      socket.write("%04x%s" % [msg.length+4, msg])
     end
 
     def accept_socket
       if RUBY_VERSION < '1.9'
-        @socket.accept
+        @tcp_server.accept
       else
         begin
-          @socket.accept_nonblock
+          @tcp_server.accept_nonblock
         rescue Errno::EAGAIN,
           Errno::EWOULDBLOCK,
           Errno::ECONNABORTED,
           Errno::EPROTO,
           Errno::EINTR => e
 
-          if IO.select([@socket])
+          if IO.select([@tcp_server])
             retry
           else
             raise e
@@ -213,31 +212,31 @@ module Git
       end
     end
 
-    def receive_data(session)
+    def receive_data(socket)
       if RUBY_VERSION < '1.9'
-        read_data(session)
+        read_data(socket)
       else
-        read_data_nonblock(session)
+        read_data_nonblock(socket)
       end
     end
 
-    def read_data(session)
-      size_string = session.recv(4)
+    def read_data(socket)
+      size_string = socket.recv(4)
       return "" if !size_string
       size = size_string.to_i(16)
       return "" unless size > 4
-      session.recv(size - 4)
+      socket.recv(size - 4)
     rescue Errno::ECONNRESET
       return ""
     end
 
-    def read_data_nonblock(session)
+    def read_data_nonblock(socket)
       begin
-        size_string = session.recv_nonblock(4)
+        size_string = socket.recv_nonblock(4)
         return "" if !size_string
         size = size_string.to_i(16)
         return "" unless size > 4
-        session.recv_nonblock(size - 4)
+        socket.recv_nonblock(size - 4)
 
       rescue Errno::EAGAIN,
         Errno::EWOULDBLOCK,
@@ -245,7 +244,7 @@ module Git
         Errno::EPROTO,
         Errno::EINTR
 
-        if IO.select([@socket])
+        if IO.select([@tcp_server])
           retry
         else
           return ""
