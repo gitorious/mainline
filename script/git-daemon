@@ -16,9 +16,6 @@ ActiveRecord::Base.allow_concurrency = true
 
 BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
 
-$children_reaped = 0
-$children_active = 0
-
 module Git
   class Daemon
     MAX_CHILDREN = 30
@@ -34,6 +31,7 @@ module Git
 
     def initialize(options)
       @options = options
+      @active_child = 0
     end
 
     def start
@@ -58,9 +56,8 @@ module Git
     def accept_connection
       Dir.chdir(GitoriousConfig["repository_base_path"])
       while socket = accept_socket
-        connections = $children_active - $children_reaped
-        if connections > MAX_CHILDREN
-          log(@pid, "too many active children #{connections}/#{MAX_CHILDREN}")
+        if  @active_child > MAX_CHILDREN
+          log(@pid, "too many active children #{@active_child}/#{MAX_CHILDREN}")
           socket.close
           next
         end
@@ -70,7 +67,6 @@ module Git
     end
 
     def run_service(socket)
-      $children_active += 1
       ip_family, port, name, ip = socket.peeraddr
       line = receive_data(socket)
 
@@ -95,14 +91,13 @@ module Git
 
           Dir.chdir(real_path) do
             cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
+            @active_child += 1
+            log(@pid, "git-upload-pack on #{real_path}; active_child = #{@active_child}")
             child_pid = fork do
               $stdout.reopen(socket)
               $stdin.reopen(socket)
               $stderr.reopen("/dev/null")
               exec(cmd)
-
-              $children_active -= 1
-              exit
             end
           end rescue Errno::EAGAIN
 
@@ -110,7 +105,6 @@ module Git
           write_error_message(socket, e.message)
           log(@pid, "Error on: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
           socket.close
-          $children_active -= 1
           return
         end
 
@@ -122,11 +116,8 @@ module Git
                             "The git:// url is read-only. Please see " +
                             "http://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')} " +
                             "for the push url, if you're a committer.")
-        $children_active -= 1
         socket.close
         return
-      else
-        $children_active -= 1
       end
       socket.close
     end
@@ -147,13 +138,8 @@ module Git
         end
 
         if pid && $?
-          $children_reaped += 1
-          log(pid, "Disconnected. (status=#{$?.exitstatus})") if pid > 0
-          if $children_reaped == $children_active
-            $children_reaped = 0
-            $children_active = 0
-          end
-
+          @active_child -= 1
+          log(pid, "Disconnected. (status=#{$?.exitstatus}); active_child = #{@active_child}") if pid > 0
           next
         end
         break
