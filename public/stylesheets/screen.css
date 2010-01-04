@@ -138,7 +138,8 @@ Big header
 }
 
 #big_header_content{
-  margin-top:130px;
+  /* margin-top:130px; */
+  top: 130px;
   
   /* Give this predesence over the #logo_image */
   position:relative;
