@@ -374,11 +374,4 @@ ActiveRecord::Schema.define(:version => 20091210132746) do
   add_index "users", ["password_key"], :name => "index_users_on_password_key"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
 
-  create_table "watchlist", :id => false, :force => true do |t|
-    t.string  "fullname"
-    t.string  "data"
-    t.text    "body"
-    t.integer "project_id", :null => false
-  end
-
 end
