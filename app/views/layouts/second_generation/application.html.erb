@@ -118,8 +118,8 @@
         <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org/" %></li>
         
         <% if GitoriousConfig["terms_of_use"] -%>
-          <li class="secondary"><%= link_to "Terms of Service", "http://en.gitorious.org/tos" %></li>
-          <li class="secondary"><%= link_to "Privacy Policy", "http://en.gitorious.org/privacy_policy" %></li>
+          <li class="secondary"><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] -%></li>
+          <li class="secondary"><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] -%></li>
         <% end %>
       </ul>
       <ul class="meta">

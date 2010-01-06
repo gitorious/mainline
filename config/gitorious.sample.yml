@@ -58,3 +58,9 @@ test:
 
   # Pick a default license
   #default_license: GNU Affero General Public License (AGPLv3)
+
+  # URL pointing to the Terms of Service document
+  terms_of_service_url: "http://en.gitorious.org/tos"
+
+  # URL pointing to the Privacy Policy document
+  privacy_policy_url: "http://en.gitorious.org/privacy"
