@@ -165,12 +165,16 @@ class FavoritesControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should_eventually "have a button to toggle the mail flag" do
-      flunk
+    should "have a button to toggle the mail flag" do
+      get :index
+      assert_response :success
+      assert_select "td.notification .favorite a.toggle"
     end
 
-    should_eventually "have a button to delete the favorite" do
-      flunk
+    should "have a button to delete the favorite" do
+      get :index
+      assert_response :success
+      assert_select "td.unwatch .favorite a.watch-link"
     end
   end
 
@@ -188,11 +192,11 @@ class FavoritesControllerTest < ActionController::TestCase
       assert_response :not_found
     end
 
-    should_eventually "be able to add the mail flag" do
+    should "be able to add the mail flag" do
       assert !@favorite.notify_by_email?
       get :update, :id => @favorite.id, :favorite => {:notify_by_email => true}
       assert_response :redirect
-      assert_redirected to favorites_path
+      assert_redirected_to favorites_path
       assert @favorite.reload.notify_by_email?
     end
 
