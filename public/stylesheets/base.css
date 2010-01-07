@@ -784,10 +784,10 @@ ul.buttons .white-button.small-button a {
     background-image: url("../images/silk/star_deselected.png");
 }
 .white-button.favorite a.toggle.enabled {
-    background-image: url("../images/silk/email_delete.png");
+    background-image: url("../images/silk/email.png");
 }
 .white-button.favorite a.toggle.disabled {
-    background-image: url("../images/silk/email_add.png");
+    background-image: url("../images/email_dimmed.png");
 }
 .white-button.favorite a.waiting {
     background-image: url("../images/spinner.gif");
