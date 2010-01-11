@@ -169,25 +169,30 @@ class Repository < ActiveRecord::Base
   end
 
   def self.most_active_clones_in_projects(projects, limit = 5)
-    clone_ids = projects.map do |project|
-      project.repositories.clones.map{|r| r.id }
-    end.flatten
-    find(:all, :limit => limit,
-      :select => 'distinct repositories.*, count(events.id) as event_count',
-      :order => "event_count desc", :group => "repositories.id",
-      :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
-                      clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-      #:conditions => { :id => clone_ids },
-      :joins => :events, :include => :project)
+    key = "repository:most_active_clones_in_projects:#{projects.map(&:id).join('-')}:#{limit}"
+    Rails.cache.fetch(key, :expires_in => 2.hours) do
+      clone_ids = projects.map do |project|
+        project.repositories.clones.map{|r| r.id }
+      end.flatten
+      find(:all, :limit => limit,
+        :select => 'distinct repositories.*, count(events.id) as event_count',
+        :order => "event_count desc", :group => "repositories.id",
+        :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
+                        clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
+        #:conditions => { :id => clone_ids },
+        :joins => :events, :include => :project)
+    end
   end
 
   def self.most_active_clones(limit = 10)
-    find(:all, :limit => limit,
-      :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
-      :order => "event_count desc", :group => "repositories.id",
-      :conditions => ["events.created_at > ? and kind in (?)",
-                      7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-      :joins => :events, :include => :project)
+    Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
+      find(:all, :limit => limit,
+        :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
+        :order => "event_count desc", :group => "repositories.id",
+        :conditions => ["events.created_at > ? and kind in (?)",
+                        7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
+        :joins => :events, :include => :project)
+    end
   end
 
   # Finds all repositories that might be due for a gc, starting with
@@ -687,19 +692,19 @@ class Repository < ActiveRecord::Base
   #   title_search("foo", "project_id", 1) # will find repositories in Project#1
   #                                          matching 'foo'
   def self.title_search(term, key, value)
-    sql = "SELECT repositories.* FROM repositories  
-      INNER JOIN users on repositories.user_id=users.id 
+    sql = "SELECT repositories.* FROM repositories
+      INNER JOIN users on repositories.user_id=users.id
       INNER JOIN groups on repositories.owner_id=groups.id
       WHERE repositories.#{key}=#{value}
-      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR groups.name LIKE :q) 
+      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR groups.name LIKE :q)
       AND repositories.owner_type='Group'
       AND kind in (:kinds)
-      UNION ALL 
-      SELECT repositories.* from repositories 
-      INNER JOIN users on repositories.user_id=users.id 
-      INNER JOIN users owners on repositories.owner_id=owners.id 
+      UNION ALL
+      SELECT repositories.* from repositories
+      INNER JOIN users on repositories.user_id=users.id
+      INNER JOIN users owners on repositories.owner_id=owners.id
       WHERE repositories.#{key}=#{value}
-      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR owners.login LIKE :q) 
+      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR owners.login LIKE :q)
       AND repositories.owner_type='User'
       AND kind in (:kinds)"
     self.find_by_sql([sql, {:q => "%#{term}%",
