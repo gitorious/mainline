@@ -472,4 +472,22 @@ module Breadcrumb
     end
   end
 
+  class Favorites
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      @user
+    end
+
+    def title
+      "Favorites"
+    end
+
+    def breadcrumb_css_class
+      "favorite"
+    end
+  end
+
 end

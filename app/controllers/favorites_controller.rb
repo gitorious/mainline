@@ -22,6 +22,7 @@ class FavoritesController < ApplicationController
 
   def index
     @favorites = current_user.favorites.all(:include => :watchable)
+    @root = Breadcrumb::Favorites.new(current_user)
   end
 
   def update

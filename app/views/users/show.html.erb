@@ -196,7 +196,13 @@
             <%= link_to_watchable(favorite.watchable) -%>
           </li>
         <% end %>
-        <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
+        <% if @favorites.blank? -%>
+          <p class="hint"><%= no_watchings_notice_for(@user) -%></p>
+        <% else -%>
+          <p class="action small">
+            <%= link_to "Manage favorite email subscriptions", favorites_path -%>
+          </p>
+        <% end -%>
       </ul>
     </div>
     <% end %>
