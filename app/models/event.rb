@@ -36,6 +36,7 @@ class Event < ActiveRecord::Base
   end
 
   after_create :create_feed_items
+  after_create :notify_subscribers
 
   validates_presence_of :user_id, :unless => :user_email_set?
 
@@ -126,7 +127,19 @@ class Event < ActiveRecord::Base
     git_actor.name
   end
 
+  def favorites_for_email_notification
+    conditions = ["notify_by_email = ? and user_id != ?", true, self.user_id]
+    favorites = self.project.favorites.find(:all, :conditions => conditions)
+    # Find anyone who's just favorited the target, if it's watchable
+    if self.target.respond_to?(:watchers)
+      favorites += self.target.favorites.find(:all, :conditions => conditions)
+    end
+
+    favorites.uniq
+  end
+
   protected
+
   def user_email_set?
     !user_email.blank?
   end
@@ -136,7 +149,12 @@ class Event < ActiveRecord::Base
     FeedItem.bulk_create_from_watcher_list_and_event!(watcher_ids, self)
   end
 
-  protected
+  def notify_subscribers
+    favorites_for_email_notification.each do |favorite|
+      favorite.notify_about_event(self)
+    end
+  end
+
   # Get a list of user ids who are watching the project and target of
   # this event, excluding the event creator (since he's probably not
   # interested in his own doings).

@@ -105,4 +105,17 @@ class MailerTest < ActiveSupport::TestCase
     assert_no_match /document\.cookie/, mail.subject
     assert_match /Hello/, mail.subject
   end
+
+  should "send a favorite notification" do
+    user = users(:mike)
+    body = "some event notification data here "*10
+    mail = Mailer.create_favorite_notification(user, body)
+
+    assert_equal [user.email], mail.to
+    assert_equal "[Gitorious] Activity: #{body[0..34]}...", mail.subject
+    assert_match(/Hello #{user.login}/, mail.body)
+    assert mail.body.include?(body), "notification body not in: #{mail.body}"
+    assert_match(/you're receiving this email because/i, mail.body)
+    assert_match(/#{GitoriousConfig['gitorious_host']}\/favorites/, mail.body)
+  end
 end

@@ -47,8 +47,13 @@ class Favorite < ActiveRecord::Base
   def event_should_be_created?
     !event_exists?
   end
-  
+
   def create_event
     user.events.create(event_options) if event_should_be_created?
+  end
+
+  def notify_about_event(an_event)
+    notification_content = EventRendering::Text.render(an_event)
+    Mailer.deliver_favorite_notification(self.user, notification_content)
   end
 end

@@ -151,4 +151,25 @@ class EventTest < ActiveSupport::TestCase
       end
     end
   end
+
+  context "favorite notification" do
+    setup do
+      @event = new_event(:action => Action::PUSH)
+      @favorite = users(:mike).favorites.new(:watchable => @repository)
+      @favorite.notify_by_email = true
+      @favorite.save!
+    end
+
+    should "find the favorites for the watchable with email notification turned on" do
+      assert_equal [@favorite], @event.favorites_for_email_notification
+      @favorite.update_attributes(:notify_by_email => false)
+      assert_equal [], @event.favorites_for_email_notification
+    end
+
+    should "tell the Favorite instances with email notification to notify" do
+      @event.expects(:favorites_for_email_notification).returns([@favorite])
+      @favorite.expects(:notify_about_event).with(@event)
+      @event.save!
+    end
+  end
 end
