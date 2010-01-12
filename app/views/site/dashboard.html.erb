@@ -17,29 +17,17 @@
 #++
 %>
 
+<% @page_title = "Your dashboard" -%>
+
 <div class="with_divider">
   <div id="left">
     <div class="user-profile">
       <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
       <div class="profile-data">
-        <h1>~<%= link_to h(@user.login), @user -%></h1>
+        <h1><%= random_greeting %>, <%= link_to h(@user.login), @user -%>!</h1>
 
         <ul class="details">
-          <% unless @user.fullname.blank? %>
-            <li><%= h(@user.fullname) -%></li>
-          <% end %>
-          <% if @user.public_email? -%>
-          <li class="email">
-            <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
-          </li>
-          <% end -%>
-          <% if @user.url %>
-          <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
-          <% end -%>
-          <li>
-            <%= t("views.users.member_for") %>
-            <%= time_ago_in_words(@user.created_at) %>
-          </li>
+          <li>View <%= link_to "your public profile", current_user -%></li>
         </ul>
       </div>
 
