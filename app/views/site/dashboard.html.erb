@@ -25,7 +25,7 @@
     <div class="user-profile">
       <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
       <div class="profile-data">
-        <h1><%= random_greeting %>, <%= link_to h(@user.login), @user -%>!</h1>
+        <h1><%= random_greeting %> <%=h @user.login -%>!</h1>
 
         <ul class="details">
           <li>View <%= link_to "your public profile", current_user -%></li>

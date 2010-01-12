@@ -21,13 +21,9 @@
 #++
 %>
 
-<% @page_title = t("views.site.page_title") -%>
+<% @page_title = "All Activities" -%>
 
-<% if logged_in? %>
-  <p id="site_greeting">
-    <%= random_greeting %> <%=link_to h(current_user.login), current_user %>!
-  </p>
-<% else -%>
+<% if !logged_in? %>
 <div id="site_intro">
   <p><%= t("views.site.description") %></p>
 </div>

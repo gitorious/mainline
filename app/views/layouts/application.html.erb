@@ -42,7 +42,7 @@
     <ul id="menu">
       <% if logged_in? -%>
         <li>
-          <%= link_to("Global Activities", activity_path) %>
+          <%= link_to("Activities", activity_path) %>
         </li>
       <% end -%>
       <% if GitoriousConfig['public_mode'] || logged_in? -%>

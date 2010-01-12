@@ -146,7 +146,7 @@
         :home => "Home",
         :dashboard => "Dashboard",
         :admin => "Administration",
-        :projects => "All Projects",
+        :projects => "Projects",
         :search => "Search",
         :faq => "FAQ",
         :about => "About Gitorious",
@@ -159,7 +159,7 @@
         :pages => "Wiki",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
-        :teams => "All Teams",
+        :teams => "Teams",
         :blog => "Blog",
       },
       :site => {

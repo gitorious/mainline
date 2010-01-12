@@ -59,6 +59,9 @@
       </div>
 
       <ul class="buttons">
+        <% if is_current_user?(@user) -%>
+          <li class="hint">This is you! (<%= link_to "your dashboard", root_path -%>)</li>
+        <% end -%>
         <% if !is_current_user?(@user) -%>
         <li class="new_email">
           <%= white_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
