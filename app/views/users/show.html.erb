@@ -199,8 +199,8 @@
         <% if @favorites.blank? -%>
           <p class="hint"><%= no_watchings_notice_for(@user) -%></p>
         <% else -%>
-          <p class="action small">
-            <%= link_to "Manage favorite email subscriptions", favorites_path -%>
+          <p class="action hint">
+            <%= link_to "Manage email subscriptions &raquo;", favorites_path -%>
           </p>
         <% end -%>
       </ul>
