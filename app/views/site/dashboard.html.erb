@@ -103,8 +103,6 @@
     <% end if show_merge_request_count_for_user?(@user) %>
 
     <% pull_box("Your projects") do -%>
-      <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
-              :id => "new-project-button"}) %>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project">
@@ -115,6 +113,9 @@
         </li>
       <% end -%>
       </ul>
+      <p class="action hint">
+        <%= link_to(t("views.projects.create_new") + " &raquo;", new_project_path) -%>
+      </p>
     <% end -%>
 
     <% pull_box(favorites_heading_for(@user)) do %>
@@ -139,7 +140,13 @@
             <%= link_to_watchable(watchable) -%>
           </li>
         <% end %>
-        <p class="hint"><%= no_watchings_notice_for(@user) if @favorites.blank? %></p>
+        <% if @favorites.blank? -%>
+          <p class="hint"><%= no_watchings_notice_for(@user) -%></p>
+        <% else -%>
+          <p class="action hint">
+            <%= link_to "Manage email subscriptions &raquo;", favorites_path -%>
+          </p>
+        <% end -%>
       </ul>
     </div>
     <% end %>

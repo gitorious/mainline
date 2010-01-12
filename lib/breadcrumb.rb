@@ -478,7 +478,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      @user
+      Dashboard.new(@user)
     end
 
     def title

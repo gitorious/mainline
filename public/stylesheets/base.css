@@ -3440,7 +3440,7 @@ body#users h2.activities small {
     text-decoration: none;
     color: #390;
 }
-#watchable-list .action {
+#watchable-list .action, .pull-box-content .action {
     text-align: right;
 }
 
