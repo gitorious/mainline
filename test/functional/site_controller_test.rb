@@ -41,18 +41,18 @@ class SiteControllerTest < ActionController::TestCase
       assert_recognizes({
           :controller => "site",
           :action => "public_timeline"
-        }, "/activity")
+        }, "/activities")
     end
-    
+
     should "render the global activity timeline" do
       get :public_timeline
       assert_response :success
       assert_template "site/index"
     end
   end
-  
+
   context "#index" do
-    
+
     context "Logged in users" do
       setup {login_as users(:johan)}
 
@@ -72,7 +72,7 @@ class SiteControllerTest < ActionController::TestCase
           assert_template "site/index"
         end
       end
-      
+
       should "use the funky layout" do
         alter_gitorious_config("is_gitorious_dot_org", true) do
           get :index
@@ -81,14 +81,14 @@ class SiteControllerTest < ActionController::TestCase
         end
       end
     end
-    
+
     should "not use https if not configured to use https" do
       SslRequirement.expects(:disable_ssl_check?).returns(true).at_least_once
       get :index
       assert_response :success
       assert_select 'form#big_header_login_box_form[action=/sessions]'
     end
-    
+
     should "use https to login if configured" do
       SslRequirement.expects(:disable_ssl_check?).returns(false).at_least_once
       SslRequirement.expects(:ssl_host).returns("foo.gitorious.org").at_least_once
@@ -96,13 +96,13 @@ class SiteControllerTest < ActionController::TestCase
       assert_response :success
       assert_select 'form#big_header_login_box_form[action=https://foo.gitorious.org/sessions]'
     end
-    
+
     should "gets a list of the most recent projects" do
       get :index
       assert assigns(:projects).is_a?(Array)
     end
   end
-  
+
   context "#index, with a non-default site" do
     setup do
       paths = ActionController::Base.view_paths
@@ -110,39 +110,39 @@ class SiteControllerTest < ActionController::TestCase
       ActionController::Base.view_paths = paths
       @site = sites(:qt)
     end
-    
+
     should "render the Site specific template" do
       @request.host = "#{@site.subdomain}.gitorious.test"
       get :index
       assert_response :success
       assert_template "#{@site.subdomain}/index"
     end
-    
+
     should "scope the projects to the current site" do
       @request.host = "#{@site.subdomain}.gitorious.test"
       get :index
       assert_equal @site.projects, assigns(:projects)
     end
   end
-  
+
   context "#dashboard" do
     setup do
       login_as :johan
     end
-    
+
     should "requires login" do
       login_as nil
       get :dashboard
       assert_redirected_to(new_sessions_path)
     end
-    
+
     should "redirects to the user page" do
       get :dashboard
       assert_response :redirect
       assert_redirected_to user_path(users(:johan))
     end
   end
-  
+
   context "in Private Mode" do
     setup do
       GitoriousConfig['public_mode'] = false
