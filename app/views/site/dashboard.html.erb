@@ -55,10 +55,12 @@
 
     <h2 class="activities">
       Your Newsfeed
+      <%= feed_icon @atom_auto_discovery_url -%>
     </h2>
     <% if @events.empty? -%>
       <p class="hint">
-        You have no news
+        You have no news, click on the watch icon
+        (<%= image_tag("silk/star.png") -%>) to see new activities here
       </p>
     <% else -%>
       <div id="user_events">

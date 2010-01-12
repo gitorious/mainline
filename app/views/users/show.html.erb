@@ -25,13 +25,6 @@
 <% @page_title = h(@user.login) -%>
 <%= breadcrumbs_from(@user) -%>
 
-<%- content_for(:extra_head) do -%>
-  <% if is_current_user?(@user) -%>
-    <%= auto_discovery_link_tag(:atom, watchlist_user_path(@user, :format => :atom),
-          :title => "Your Newsfeed") -%>
-  <% end -%>
-<% end -%>
-
 <div class="with_divider">
   <div id="left">
     <div class="user-profile">
