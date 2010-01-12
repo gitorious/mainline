@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-module BreadcrumbsHelper  
+module BreadcrumbsHelper
   def render_breadcrumb_starting_from(root)
     result = []
     html = ''
@@ -35,14 +35,14 @@ module BreadcrumbsHelper
     end
     html
   end
-  
+
   # Renders breadcrumbs starting from +root+
   def breadcrumbs_from(root)
     content_for(:breadcrumbs) do
       render_breadcrumb_starting_from(root)
     end
   end
-  
+
   def breadcrumb_link_to(an_object)
     url = case an_object
     when Repository
@@ -54,7 +54,7 @@ module BreadcrumbsHelper
     when User
       user_path(an_object)
     when Breadcrumb::Branch
-      repo_owner_path(@repository, :project_repository_commits_in_ref_path, 
+      repo_owner_path(@repository, :project_repository_commits_in_ref_path,
                         @project, @repository, ensplat_path(an_object.title))
     when Breadcrumb::Folder
       tree_path(@ref, an_object.paths)
@@ -72,7 +72,7 @@ module BreadcrumbsHelper
       edit_group_membership_path(@group, @membership)
     when Breadcrumb::MergeRequests
       [@owner, @repository, :merge_requests]
-    when MergeRequest 
+    when MergeRequest
       [@owner, @repository, @merge_request]
     when Breadcrumb::Committerships
       [@owner, @repository, :committerships]
@@ -82,7 +82,7 @@ module BreadcrumbsHelper
       messages_path
     when Breadcrumb::ReceivedMessages
       messages_path
-    when Breadcrumb::SentMessages 
+    when Breadcrumb::SentMessages
       sent_messages_path
     when Breadcrumb::Aliases
       user_aliases_path
@@ -90,6 +90,8 @@ module BreadcrumbsHelper
       user_keys_path
     when Message
       an_object.new_record? ? new_message_path : message_path(an_object)
+    when Breadcrumb::Dashboard
+      root_path
     else
       "" # Current path
     end

@@ -590,6 +590,7 @@ li.sent_emails > a { background-image: url("../images/silk/email_go.png") !impor
 li.received_emails > a { background-image: url("../images/silk/email_open.png") !important; }
 li.all_emails > a { background-image: url("../images/silk/folder.png") !important; }
 li.favorite > a { background-image: url("../images/silk/star.png"); }
+li.dashboard > a { background-image: url("../images/silk/shield.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
 li.event_instance.create_repository, li.create_repository > a { background-image: url("../images/silk/database_add.png") !important; }

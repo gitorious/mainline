@@ -62,6 +62,12 @@ class SiteControllerTest < ActionController::TestCase
         assert_response :success
         assert_template "site/dashboard"
       end
+
+      should "render the dashboard breadcrumb" do
+        login_as :johan
+        get :index
+        assert_instance_of Breadcrumb::Dashboard, assigns(:root)
+      end
     end
 
     context "Anonymous users" do

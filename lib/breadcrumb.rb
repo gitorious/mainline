@@ -293,7 +293,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      @user
+      Dashboard.new(@user)
     end
 
     def title
@@ -311,7 +311,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      @user
+      Dashboard.new(@user)
     end
 
     def title
@@ -329,7 +329,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      @user
+      Dashboard.new(@user)
     end
 
     def title
@@ -365,7 +365,7 @@ module Breadcrumb
     end
 
     def breadcrumb_parent
-      @user
+      Dashboard.new(@user)
     end
 
     def title
@@ -490,4 +490,21 @@ module Breadcrumb
     end
   end
 
+  class Dashboard
+    def initialize(user)
+      @user = user
+    end
+
+    def breadcrumb_parent
+      @user
+    end
+
+    def title
+      "Dashboard"
+    end
+
+    def breadcrumb_css_class
+      "dashboard"
+    end
+  end
 end

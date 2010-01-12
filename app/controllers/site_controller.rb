@@ -25,7 +25,7 @@ class SiteController < ApplicationController
   before_filter :login_required, :only => [:dashboard]
   renders_in_site_specific_context :except => [:about, :faq, :contact]
   renders_in_global_context :only => [:about, :faq, :contact]
-  
+
   def index
     if !current_site.subdomain.blank?
       render_site_index and return
@@ -38,22 +38,22 @@ class SiteController < ApplicationController
     render_public_timeline
   end
 
-  
+
   def dashboard
     redirect_to current_user
   end
-  
+
   def about
   end
-  
-  def faq    
+
+  def faq
   end
-  
-  def contact    
+
+  def contact
   end
-  
+
   protected
-  
+
     # Render a Site-specific index template
     def render_site_index
       @projects = current_site.projects.find(:all, :order => "created_at asc")
@@ -82,6 +82,7 @@ class SiteController < ApplicationController
       @events = @user.paginated_events_in_watchlist(:page => params[:page])
       @messages = @user.messages_in_inbox(3) if @user == current_user
       @favorites = @user.watched_objects
+      @root = Breadcrumb::Dashboard.new(current_user)
 
       render :template => "site/dashboard"
     end
@@ -91,10 +92,10 @@ class SiteController < ApplicationController
       @teams = Group.most_active
       @users = User.most_active
       @latest_events = Event.latest(4)
-      
+
       render :layout => "second_generation/application", :inline => ""
     end
-    
+
     # Render the global index template
     def render_global_index
       if logged_in?
@@ -105,5 +106,5 @@ class SiteController < ApplicationController
         render_public_timeline
       end
     end
-  
+
 end
