@@ -34,6 +34,7 @@ class Event < ActiveRecord::Base
         })
     end
   end
+  has_many :feed_items, :dependent => :destroy
 
   after_create :create_feed_items
   after_create :notify_subscribers

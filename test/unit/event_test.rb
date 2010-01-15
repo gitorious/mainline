@@ -21,6 +21,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class EventTest < ActiveSupport::TestCase
 
+  should_have_many :feed_items, :dependent => :destroy
+
   def setup
     @event = new_event
     @user = users(:johan)
