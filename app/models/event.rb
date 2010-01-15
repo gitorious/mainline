@@ -138,6 +138,19 @@ class Event < ActiveRecord::Base
     favorites.uniq
   end
 
+  def disable_notifications
+    @notifications_disabled = true
+    yield
+    @notifications_disabled = false
+  end
+
+  def notify_subscribers
+    return if @notifications_disabled
+    favorites_for_email_notification.each do |favorite|
+      favorite.notify_about_event(self)
+    end
+  end
+
   protected
 
   def user_email_set?
@@ -147,12 +160,6 @@ class Event < ActiveRecord::Base
   def create_feed_items
     return if self.action == Action::COMMIT
     FeedItem.bulk_create_from_watcher_list_and_event!(watcher_ids, self)
-  end
-
-  def notify_subscribers
-    favorites_for_email_notification.each do |favorite|
-      favorite.notify_about_event(self)
-    end
   end
 
   # Get a list of user ids who are watching the project and target of

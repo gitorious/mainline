@@ -171,5 +171,10 @@ class EventTest < ActiveSupport::TestCase
       @favorite.expects(:notify_about_event).with(@event)
       @event.save!
     end
+
+    should "not notify favorites if instructed not to" do
+      @event.expects(:notify_about_event).never
+      @event.disable_notifications { @event.notify_subscribers }
+    end
   end
 end

@@ -57,7 +57,7 @@ class PushEventProcessor < ApplicationProcessor
     if event.user.blank?
       event.email = an_event.email
     end
-    event.save!
+    event.disable_notifications { event.save! }
     if commits = an_event.commits
       commits.each do |c|
         commit_event = event.build_commit({
@@ -70,6 +70,7 @@ class PushEventProcessor < ApplicationProcessor
         commit_event.save!
       end
     end
+    event.notify_subscribers
   end
   
   # Sets the commit summary, as served from git
