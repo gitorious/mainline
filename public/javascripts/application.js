@@ -231,7 +231,11 @@ $(document).ready(function() {
     $("#favorite-listing tr:odd").addClass("odd");
     $("#favorite-listing td.notification .favorite.update a").click(function() {
         $this = $(this);
-        payload = "_method=put&favorite[notify_by_email]=1";
+        if ("off" == $this.text()) {
+            payload = "_method=put&favorite[notify_by_email]=1";
+        } else {
+            payload = "_method=put&favorite[notify_by_email]=0";
+        }
         $.post($this.attr("href"), payload, function(data, respTxt){
             if ("success" === respTxt) {
                 if ("off" === $this.text()) {
