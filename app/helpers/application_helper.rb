@@ -522,4 +522,8 @@ module ApplicationHelper
     content_tag(:div, link_to(label, url, :class => "round-10"),
         :id => options.delete(:id), :class => css_classes.flatten.join(" "))
   end
+
+  def dashboard_path
+    root_url(:host => GitoriousConfig["gitorious_host"])
+  end
 end

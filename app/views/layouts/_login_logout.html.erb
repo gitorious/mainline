@@ -21,7 +21,7 @@
     <li><%= link_to t("views.layout.admin"), admin_users_path -%></li>
   <% end -%>
 
-  <li class="secondary"><%= link_to "Your dashboard", root_path -%></li>
+  <li class="secondary"><%= link_to "Your dashboard", dashboard_path -%></li>
   <li class="secondary">
     <%= link_to h(current_user.to_param_with_prefix), user_path(current_user) -%>
   </li>
