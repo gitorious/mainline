@@ -73,16 +73,24 @@ class FavoriteTest < ActiveSupport::TestCase
       assert_not_nil(favorite_event = @user.events_as_target.last)
       assert favorite.event_exists?
     end
+  end
 
-    should "only create an event the first time" do
-      favorite = @user.favorites.create(:watchable => @repo)
-      favorite.create_event
-      assert favorite.event_exists?
-      favorite.destroy
-      new_favorite = @user.favorites.build(:watchable => @repo)
-      assert new_favorite.event_exists?
-      assert_incremented_by @user.events_as_target, :count, 0 do
-        new_favorite.create_event
+  context "Deleting events before deletion" do
+    setup {
+      @user, @project, @repo = create_favorited_repo      
+      @favorite = @user.favorites.create :watchable => @repo
+    }
+
+    should "call to delete events before #destroy" do
+      @favorite.expects(:destroy_event)
+      @favorite.destroy
+    end
+
+    should "delete any events in #destroy_events" do
+      event = @favorite.create_event
+      @favorite.destroy
+      assert_raises(ActiveRecord::RecordNotFound) do
+        event.reload
       end
     end
   end
