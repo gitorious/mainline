@@ -148,4 +148,22 @@ class FavoriteTest < ActiveSupport::TestCase
       @favorite.notify_about_event(@event)
     end
   end
+
+  context "Email notifications" do
+    setup do
+      @user = users(:moe)
+      @repository = repositories(:johans)
+    end
+
+    should "not be on for opt-out users" do
+      favorite = @repository.watched_by!(@user)
+      assert !favorite.notify_by_email?
+    end
+
+    should "be on for opt-in users" do
+      @user.default_favorite_notifications = true
+      favorite = @repository.watched_by!(@user)
+      assert favorite.notify_by_email?
+    end
+  end
 end

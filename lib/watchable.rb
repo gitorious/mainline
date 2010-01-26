@@ -31,6 +31,6 @@ module Watchable
   end
 
   def watched_by!(a_user)
-    a_user.favorites.create!(:watchable => self)
+    a_user.favorites.create!(:watchable => self, :notify_by_email => a_user.default_favorite_notifications)
   end
 end

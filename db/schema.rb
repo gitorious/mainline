@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file,
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091217110558) do
+ActiveRecord::Schema.define(:version => 20100126094829) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -346,33 +346,41 @@ ActiveRecord::Schema.define(:version => 20091217110558) do
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
-    t.string   "crypted_password",          :limit => 40
-    t.string   "salt",                      :limit => 40
+    t.string   "crypted_password",               :limit => 40
+    t.string   "salt",                           :limit => 40
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
-    t.datetime "remember_token_expires_at"
-    t.string   "activation_code",           :limit => 40
+    t.string   "activation_code",                :limit => 40
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
     t.string   "fullname"
     t.text     "url"
     t.text     "identity_url"
-    t.boolean  "is_admin",                                :default => false
+    t.boolean  "is_admin",                                     :default => false
     t.datetime "suspended_at"
     t.string   "aasm_state"
-    t.boolean  "public_email",                            :default => true
-    t.boolean  "wants_email_notifications",               :default => true
+    t.boolean  "public_email",                                 :default => true
+    t.boolean  "wants_email_notifications",                    :default => true
     t.string   "password_key"
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.datetime "remember_token_expires_at"
+    t.boolean  "default_favorite_notifications",               :default => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["password_key"], :name => "index_users_on_password_key"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
+
+  create_table "watchlist", :id => false, :force => true do |t|
+    t.string  "fullname"
+    t.string  "data"
+    t.text    "body"
+    t.integer "project_id", :null => false
+  end
 
 end
