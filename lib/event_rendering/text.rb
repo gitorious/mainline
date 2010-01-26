@@ -134,6 +134,14 @@ module EventRendering
         })
     end
 
+    def render_merge_request(action)
+      summary = (action == :requested) ? "requested a merge of" : "#{action} merge request for"
+      add_from_template("{user} #{summary} {source} with {target}",
+        :user => @event.user.login,
+        :source => @event.target.source_repository.name,
+        :target => @event.target.target_repository.name)
+    end
+
     def render_tag(action)
       line = template_to_str("{user} {action} tag {name} in {repo}", {
           :user => @event.user.login,

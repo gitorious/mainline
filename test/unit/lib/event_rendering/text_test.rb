@@ -131,7 +131,25 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     end
   end
 
-    context "creating and deleting tags" do
+  context "Merge request updates" do
+    setup do
+      @event.target = merge_requests(:moes_to_johans)
+    end
+
+    should "render creation of merge request" do
+      @event.action = Action::REQUEST_MERGE
+      result = render(@event)
+      assert_match /^johan requested a merge of johansprojectrepos-clone with johansprojectrepos/, result
+    end
+
+    should "render deletion of merge requests" do
+      @event.action = Action::DELETE_MERGE_REQUEST
+      result = render(@event)
+      assert_match /^johan deleted merge request for johansprojectrepos-clone with johansprojectrepos/, result
+    end
+  end
+  
+  context "creating and deleting tags" do
     setup do
       @event.data = "v1.0"
     end
