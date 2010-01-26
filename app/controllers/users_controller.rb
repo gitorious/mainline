@@ -46,7 +46,7 @@ class UsersController < ApplicationController
     @projects = @user.projects.find(:all,
       :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    @events = @user.events.paginate(
+    @events = @user.events.excluding_commits.paginate(
       :page => params[:page], :order => "events.created_at desc",
       :include => [:user, :project])
     @messages = @user.messages_in_inbox(3) if @user == current_user
