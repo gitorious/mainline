@@ -229,6 +229,9 @@
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
         :wants_email_notifications => 'Send email notifications?',
         :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
+        :default_favorite_notifications => "By default notify me of updates in what I'm watching",
+        :describe_default_favorite_notifications => "By selecting this you will by default be notified by email when " +
+        "activities occur in what you're watching on Gitorious",
         :member_for => "Member for",
         :this_week => {
           :one => "commit so far this week",
