@@ -524,6 +524,6 @@ module ApplicationHelper
   end
 
   def dashboard_path
-    root_url(:host => GitoriousConfig["gitorious_host"])
+    root_url(:host => GitoriousConfig["gitorious_host"], :protocol => "http")
   end
 end
