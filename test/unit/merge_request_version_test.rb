@@ -178,8 +178,9 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     should "build a message for deleting the tracking branch" do
       result = {
         :source_repository_path => @merge_request.source_repository.full_repository_path,
-        :target_repository_path => @merge_request.target_repository.full_repository_path,
-        :target_branch_name => @merge_request.merge_branch_name(@version.version)
+        :tracking_repository_path => @merge_request.tracking_repository.full_repository_path,
+        :target_branch_name => @merge_request.merge_branch_name(@version.version),
+        :source_repository_id => @merge_request.source_repository.id
       }
       assert_equal result, @version.branch_deletion_message
     end

@@ -114,8 +114,9 @@ class MergeRequestVersion < ActiveRecord::Base
   def branch_deletion_message
     {
       :source_repository_path => merge_request.source_repository.full_repository_path,
-      :target_repository_path => merge_request.target_repository.full_repository_path,
-      :target_branch_name => merge_request.merge_branch_name(version)
+      :tracking_repository_path => merge_request.tracking_repository.full_repository_path,
+      :target_branch_name => merge_request.merge_branch_name(version),
+      :source_repository_id => merge_request.source_repository.id
     }
   end
 
