@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100126094829) do
+ActiveRecord::Schema.define(:version => 20100203132425) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -279,6 +279,8 @@ ActiveRecord::Schema.define(:version => 20100126094829) do
     t.boolean  "notify_committers_on_new_merge_request", :default => true
     t.datetime "last_gc_at"
     t.boolean  "merge_requests_enabled",                 :default => true
+    t.integer  "disk_usage"
+    t.integer  "push_count_since_gc"
   end
 
   add_index "repositories", ["hashed_path"], :name => "index_repositories_on_hashed_path", :unique => true

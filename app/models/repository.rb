@@ -662,9 +662,24 @@ class Repository < ActiveRecord::Base
   def gc!
     Grit::Git.with_timeout(nil) do
       if self.git.gc_auto
-        return update_attribute(:last_gc_at, Time.now.utc)
+        self.last_gc_at = Time.now
+        self.push_count_since_gc = 0
+        return save
       end
     end
+  end
+
+  def register_push
+    self.last_pushed_at = Time.now.utc
+    self.push_count_since_gc = push_count_since_gc.to_i + 1
+  end
+  
+  def update_disk_usage
+    self.disk_usage = calculate_disk_usage
+  end
+
+  def calculate_disk_usage
+    @calculated_disk_usage ||= `du -sb #{full_repository_path} 2>/dev/null`.chomp.to_i
   end
 
   def matches_regexp?(term)

@@ -960,17 +960,23 @@ class RepositoryTest < ActiveSupport::TestCase
   context "garbage collection" do
     setup do
       @repository = repositories(:johans)
+      @now = Time.now
+      Time.stubs(:now).returns(@now)
+      @repository.stubs(:git).returns(stub())
+      @repository.git.expects(:gc_auto).returns(true)
     end
 
     should "have a gc! method that updates last_gc_at" do
-      now = Time.now
-      Time.stubs(:now).returns(now)
-      @repository.stubs(:git).returns(stub())
-      @repository.git.expects(:gc_auto).returns(true)
       assert_nil @repository.last_gc_at
       assert @repository.gc!
       assert_not_nil @repository.last_gc_at
-      assert_equal now, @repository.last_gc_at
+      assert_equal @now, @repository.last_gc_at
+    end
+
+    should "set push_count_since_gc to 0 when doing gc" do
+      @repository.push_count_since_gc = 10
+      @repository.gc!
+      assert_equal 0, @repository.push_count_since_gc
     end
   end
 
@@ -1115,6 +1121,37 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_no_difference("users(:moe).favorites.count") do
         repo.save!
       end
+    end
+  end
+
+  context "Calculation of disk usage" do
+    setup do
+      @repository = repositories(:johans)
+      @bytes = 90129
+    end
+
+    should "save the bytes used" do
+      @repository.expects(:calculate_disk_usage).returns(@bytes)
+      @repository.update_disk_usage
+      assert_equal @bytes, @repository.disk_usage
+    end
+  end
+
+  context "Pushing" do
+    setup do
+      @repository = repositories(:johans)
+    end
+
+    should "update last_pushed_at" do
+      @repository.last_pushed_at = 1.hour.ago.utc
+      @repository.register_push
+      assert @repository.last_pushed_at > 1.hour.ago.utc
+    end
+
+    should "increment the number of pushes" do
+      @repository.push_count_since_gc = 2
+      @repository.register_push
+      assert_equal 3, @repository.push_count_since_gc
     end
   end
 

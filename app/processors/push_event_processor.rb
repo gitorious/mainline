@@ -79,7 +79,9 @@ class PushEventProcessor < ApplicationProcessor
     r, name, @identifier = @revname.split("/", 3)
     @target = {'tags' => :tag, 'heads' => :head, 'merge-requests' => :review}[name]
     if @target != :review && @repository
-      @repository.update_attribute(:last_pushed_at, Time.now.utc)
+      @repository.update_disk_usage
+      @repository.register_push
+      @repository.save
     end
     process_push
   end
