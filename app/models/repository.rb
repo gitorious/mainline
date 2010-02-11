@@ -197,10 +197,10 @@ class Repository < ActiveRecord::Base
 
   # Finds all repositories that might be due for a gc, starting with
   # the ones who've been pushed to recently
-  def self.all_due_for_gc(batch_size = 25, gc_window = 21.days, push_window = 7.days)
+  def self.all_due_for_gc(batch_size = 25)
     find(:all,
-      :conditions => ["(last_gc_at IS NULL OR last_gc_at < ?) AND last_pushed_at > ?",
-                      gc_window.ago, push_window.ago],
+      :order => "push_count_since_gc desc",
+      :conditions => "push_count_since_gc > 0",
       :limit => batch_size)
   end
 
