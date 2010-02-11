@@ -341,7 +341,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def title
-    id
+    to_param
   end
 
   def acceptance_of_terms_required?
