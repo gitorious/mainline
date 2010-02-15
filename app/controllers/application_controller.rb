@@ -24,6 +24,8 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   
+  filter_parameter_logging :password, :password_confirmation
+  
   before_filter :public_and_logged_in
   before_filter :require_current_eula
   
