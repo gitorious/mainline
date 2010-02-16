@@ -53,6 +53,7 @@ class Repository < ActiveRecord::Base
                 :class_name => 'MergeRequest', :order => "id desc", :dependent => :destroy
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
+  has_many :hooks, :dependent => :destroy
 
   NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
   validates_presence_of :user_id, :name, :owner_id, :project_id

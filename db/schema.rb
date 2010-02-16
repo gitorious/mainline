@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100203132425) do
+ActiveRecord::Schema.define(:version => 20100216133829) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -130,6 +130,17 @@ ActiveRecord::Schema.define(:version => 20100203132425) do
 
   add_index "groups", ["name"], :name => "index_groups_on_name_and_public"
   add_index "groups", ["user_id"], :name => "index_groups_on_user_id"
+
+  create_table "hooks", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "repository_id"
+    t.string   "url"
+    t.string   "last_response"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
 
   create_table "memberships", :force => true do |t|
     t.integer  "group_id"

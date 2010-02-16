@@ -39,6 +39,8 @@ class RepositoryTest < ActiveSupport::TestCase
   should_validate_uniqueness_of :hashed_path
   should_validate_uniqueness_of :name, :scoped_to => :project_id, :case_sensitive => false
 
+  should_have_many :hooks, :dependent => :destroy
+
   should " only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
     assert !@repository.valid?, 'valid? should be false'
