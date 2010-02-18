@@ -213,10 +213,16 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal groups(:team_thunderbird), p.owner
   end
 
-  should "add group as committer to mainline repositories when changing ownership" do
+  should "add group as admin to mainline repositories when changing ownership" do
     p = projects(:johans)
     assert_difference("Committership.count") { p.change_owner_to(groups(:team_thunderbird)) }
-    assert p.repositories.mainlines.first.committerships.any? {|c| c.committer == groups(:team_thunderbird) }
+    committership = p.repositories.mainlines.first.committerships.detect { |c|
+      c.committer == groups(:team_thunderbird)
+    }
+    assert_not_nil committership
+    assert_equal(
+      Committership::CAN_REVIEW | Committership::CAN_COMMIT | Committership::CAN_ADMIN,
+      committership.permissions)
   end
 
   should "delegate wiki permissions to the wiki repository" do
