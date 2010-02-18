@@ -178,5 +178,16 @@ class EventTest < ActiveSupport::TestCase
       @event.expects(:notify_about_event).never
       @event.disable_notifications { @event.notify_subscribers }
     end
+
+    should "not notify favorites for commit events" do
+      assert !@event.notifications_disabled?
+      @event.action = Action::COMMIT
+      assert @event.notifications_disabled?
+    end
+
+    should "check if notifications are disabled before sending notifications" do
+      @event.expects(:notifications_disabled?)
+      @event.notify_subscribers
+    end
   end
 end

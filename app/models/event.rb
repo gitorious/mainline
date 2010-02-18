@@ -88,6 +88,10 @@ class Event < ActiveRecord::Base
     return events.size == 1
   end
 
+  def commit_event?
+    action == Action::COMMIT
+  end
+  
   def kind
     'commit'
   end
@@ -146,8 +150,12 @@ class Event < ActiveRecord::Base
     @notifications_disabled = false
   end
 
+  def notifications_disabled?
+    @notifications_disabled || commit_event?
+  end
+
   def notify_subscribers
-    return if @notifications_disabled
+    return if notifications_disabled?
     favorites_for_email_notification.each do |favorite|
       favorite.notify_about_event(self)
     end
