@@ -244,6 +244,26 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     git.stubs(:show).returns(output)
     @processor.stubs(:git).returns(git)    
   end
+
+  context "Generating commit summaries for web hooks" do
+    setup {
+      @processor = PushEventProcessor.new
+      commit_summary = "000 fff refs/heads/master"
+      @processor.parse_git_spec(commit_summary)      
+    }
+
+    should "calculate the correct refs" do
+      assert_equal "000", @processor.oldrev
+      assert_equal "fff", @processor.newrev
+      assert_equal "refs/heads/master", @processor.revname
+    end
+
+    should "pass along the events where they are created" do
+      flunk
+      @processor.expects(:repository).returns(repositories(:johans))
+      @processor.expects(:user).returns(users(:moe))
+    end
+  end
   
   # describe 'with stubbing towards a live repo' do
   #   before(:each) do

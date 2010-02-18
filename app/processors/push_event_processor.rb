@@ -20,7 +20,7 @@ class PushEventProcessor < ApplicationProcessor
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR = "\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR) 
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
   subscribes_to :push_event
-  attr_reader :oldrev, :newrev, :action, :user, :identifier, :target
+  attr_reader :oldrev, :newrev, :action, :user, :identifier, :target, :revname
   attr_accessor :repository
   
   def on_message(message)
@@ -72,12 +72,17 @@ class PushEventProcessor < ApplicationProcessor
     end
     event.notify_subscribers
   end
-  
-  # Sets the commit summary, as served from git
-  def process_push_from_commit_summary(spec)
+
+  # old_sha new_sha refs/heads/branch_name
+  def parse_git_spec(spec)
     @oldrev, @newrev, @revname = spec.split(' ')
     r, name, @identifier = @revname.split("/", 3)
     @target = {'tags' => :tag, 'heads' => :head, 'merge-requests' => :review}[name]
+  end
+  
+  # Sets the commit summary, as served from git
+  def process_push_from_commit_summary(spec)
+    parse_git_spec(spec)
     if @target != :review && @repository
       @repository.update_disk_usage
       @repository.register_push
