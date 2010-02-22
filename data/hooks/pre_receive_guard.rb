@@ -66,7 +66,7 @@ module Gitorious
 
       def gitorious_says(msg)
         $stderr.puts
-        $stderr.puts "== Gitorious: " + ("=" * 59)
+        $stderr.puts "== Gitorious: " + ("=" * 58)
         $stderr.puts msg
         $stderr.puts "="*72
         $stderr.puts
