@@ -42,6 +42,8 @@ class WebHookProcessor < ApplicationProcessor
         update_hook_response(hook, "Connection refused")
       rescue Timeout::Error
         update_hook_response(hook, "Connection timed out")
+      rescue SocketError
+        update_hook_response(hook, "Socket error")
       end
     end
   end

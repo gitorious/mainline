@@ -110,6 +110,12 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       assert_equal "Connection refused", last_hook_response(@repository)
     end
 
+    should "handle socket errors" do
+      @processor.expects(:post_payload).raises(SocketError)
+      @processor.notify_web_hooks(@payload)
+      assert_equal "Socket error", last_hook_response(@repository)
+    end
+
     should "log an error for an unknown repository" do
       assert_nothing_raised {
         @processor.expects(:log_error)
