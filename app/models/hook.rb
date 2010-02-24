@@ -23,6 +23,18 @@ class Hook < ActiveRecord::Base
   validates_presence_of :repository, :user, :url
   validate :valid_url_format
 
+  def successful_connection(message)
+    self.successful_request_count += 1
+    self.last_response = message
+    save
+  end
+
+  def failed_connection(message)
+    self.failed_request_count += 1
+    self.last_response = message
+    save
+  end
+  
   def valid_url_format
     begin
       uri = URI.parse(url)

@@ -35,7 +35,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   end
 
   def add_hook_url(repository, url)
-    repository.hooks.create(:user => users(:johan), :url => url)
+    repository.hooks.create!(:user => users(:johan), :url => url)
   end
 
   context "Extracting the message" do
@@ -70,8 +70,8 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   context "Notifying web hooks" do
     
     should "post the payload once for each hook" do
-	    add_hook_url(@repository, "http://foo")
-	    add_hook_url(@repository, "http://bar")
+	    add_hook_url(@repository, "http://foo.com/")
+	    add_hook_url(@repository, "http://bar.com/")
 	    @processor.expects(:post_payload).twice.returns(successful_response)
 	    @processor.notify_web_hooks(@payload)
 	  end
@@ -86,7 +86,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
     should "update the hook with the response string" do
       @url = "http://example.com/hook"
-      add_hook_url(@repository, URI.parse(@url))
+      add_hook_url(@repository, @url)
       @processor.expects(:post_payload).returns(successful_response)
       @processor.notify_web_hooks(@payload)
       assert_equal "200 OK", last_hook_response(@repository)
@@ -95,7 +95,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
   context "Error handling" do
     setup {
-      add_hook_url(@repository, URI.parse("http://access-denied.com/"))
+      add_hook_url(@repository, "http://access-denied.com/")
     }
     
     should "handle timeouts" do

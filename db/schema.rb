@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100216133829) do
+ActiveRecord::Schema.define(:version => 20100224153358) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -138,6 +138,8 @@ ActiveRecord::Schema.define(:version => 20100216133829) do
     t.string   "last_response"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "failed_request_count",     :default => 0
+    t.integer  "successful_request_count", :default => 0
   end
 
   add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"

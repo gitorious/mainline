@@ -36,14 +36,14 @@ class WebHookProcessor < ApplicationProcessor
       begin
         Timeout.timeout(10) do
           result = post_payload(hook, payload)
-          update_hook_response(hook, "#{result.code} #{result.message}")
+          hook.successful_connection("#{result.code} #{result.message}")
         end
       rescue Errno::ECONNREFUSED
-        update_hook_response(hook, "Connection refused")
+        hook.failed_connection("Connection refused")
       rescue Timeout::Error
-        update_hook_response(hook, "Connection timed out")
+        hook.failed_connection("Connection timed out")
       rescue SocketError
-        update_hook_response(hook, "Socket error")
+        hook.failed_connection("Socket error")
       end
     end
   end
@@ -52,8 +52,4 @@ class WebHookProcessor < ApplicationProcessor
     Net::HTTP.post_form(URI.parse(hook.url), {"payload" => payload.to_json})
   end
 
-  def update_hook_response(hook, response)
-    hook.update_attributes({
-      :last_response => response})
-  end
 end
