@@ -259,7 +259,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       @commit_event.commit_time = 1.day.ago
       @commit_event.event_type = Action::COMMIT
       @commit_event.message = "A single commit"
-      @commit_event.commit_object = {}
+      @commit_event.commit_details = {}
       
       @push_event.commits = [@commit_event]
       

@@ -56,25 +56,7 @@ class PushEventProcessor < ApplicationProcessor
   end
 
   def generate_hook_payload(event)
-    payload = {}
-    url = "http://#{GitoriousConfig['gitorious_host']}/#{repository.url_path}"
-    payload[:commits] = event.commits.map{|c| c.commit_object}.flatten
-    payload[:before] = oldrev
-    payload[:after] = newrev
-    payload[:ref] = revname
-    payload[:pushed_by] = user.login
-    payload[:pushed_at] = repository.last_pushed_at.xmlschema if repository.last_pushed_at
-    payload[:project] = {
-      :name => repository.project.slug,
-      :description => repository.project.description}
-    payload[:repository] = {
-      :name => repository.name,
-      :url => url,
-      :description => repository.description,
-      :clones => repository.clones.count,
-      :owner => {:name => repository.owner.title}
-    }
-    payload
+    event.generate_hook_payload(oldrev, newrev, revname, user, repository)
   end
   
   def log_events
@@ -162,7 +144,7 @@ class PushEventProcessor < ApplicationProcessor
   end
   
   class EventForLogging
-    attr_accessor :event_type, :identifier, :email, :message, :commit_time, :user, :commit_object
+    attr_accessor :event_type, :identifier, :email, :message, :commit_time, :user, :commit_details
     def to_s
       "<PushEventProcessor:EventForLogging type: #{event_type} by #{email} at #{commit_time} with #{identifier}>"
     end
@@ -173,6 +155,28 @@ class PushEventProcessor < ApplicationProcessor
 
     def commits
       @commits || []
+    end
+
+    def generate_hook_payload(before, after, ref, user, repository)
+      payload = {}
+      url = "http://#{GitoriousConfig['gitorious_host']}/#{repository.url_path}"
+      payload[:commits] = commits.map{|c| c.commit_details}.flatten
+      payload[:before] = before
+      payload[:after] = after
+      payload[:ref] = ref
+      payload[:pushed_by] = user.login
+      payload[:pushed_at] = repository.last_pushed_at.xmlschema if repository.last_pushed_at
+      payload[:project] = {
+        :name => repository.project.slug,
+        :description => repository.project.description}
+      payload[:repository] = {
+        :name => repository.name,
+        :url => url,
+        :description => repository.description,
+        :clones => repository.clones.count,
+        :owner => {:name => repository.owner.title}
+      }
+      payload
     end
   end
 
@@ -280,7 +284,7 @@ class PushEventProcessor < ApplicationProcessor
       e.commit_time   = Time.at(timestamp.to_i).utc
       e.event_type    = Action::COMMIT
       e.message       = message
-      e.commit_object = {
+      e.commit_details = {
         :sha => sha,
         :email => email,
         :committed_at => e.commit_time.xmlschema,
