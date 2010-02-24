@@ -22,7 +22,17 @@ class HookTest < ActiveSupport::TestCase
   should_belong_to :repository
   should_validate_presence_of :user, :repository, :url
 
-  should_eventually "validate the URL format" do
-    flunk
+  context "URL validation" do
+    should "require a valid URL" do
+      hook = Hook.new(:url => "http:/gitorious.org/web-hooks")
+      assert !hook.valid?
+      assert_not_nil hook.errors.on(:url)
+    end
+
+    should "require http URLs" do
+      hook = Hook.new(:url => "https://gitorious.org/web-hooks")
+      assert !hook.valid?
+      assert_not_nil hook.errors.on(:url)
+    end
   end
 end
