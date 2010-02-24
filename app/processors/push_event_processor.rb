@@ -39,6 +39,7 @@ class PushEventProcessor < ApplicationProcessor
   end
 
   def trigger_hooks(events)
+    return if repository.hooks.blank?
     events.each do |event|
       trigger_hook(event)
     end
@@ -52,7 +53,7 @@ class PushEventProcessor < ApplicationProcessor
       :repository_id => repository.id,
       :payload => payload
     }
-    publish :post_receive_web_hook, data.to_json
+    publish :web_hook_notifications, data.to_json
   end
 
   def generate_hook_payload(event)

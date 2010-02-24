@@ -265,7 +265,8 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       
       commit_summary = "000 fff refs/heads/master"
       @processor.parse_git_spec(commit_summary)
-      @processor.repository = repositories(:johans)
+      @repository = repositories(:johans)
+      @processor.repository = @repository
     }
 
     should "calculate the correct refs" do
@@ -274,8 +275,14 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       assert_equal "refs/heads/master", @processor.revname
     end
 
+    should "not trigger any hooks if repository has none" do
+      @processor.expects(:trigger_hook).never
+      @processor.trigger_hooks(Array(@push_event))
+    end
+
     should "trigger hook for each event" do
-      @processor.expects(:trigger_hooks).once
+      @repository.hooks.create(:user => @processor.user, :url => "http://postbin.org/")
+      @processor.expects(:trigger_hook).once
       @processor.trigger_hooks(Array(@push_event))
     end
 

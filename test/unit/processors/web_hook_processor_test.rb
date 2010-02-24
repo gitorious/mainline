@@ -109,6 +109,22 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       @processor.notify_web_hooks(@payload)
       assert_equal "Connection refused", last_hook_response(@repository)
     end
+
+    should "log an error for an unknown repository" do
+      assert_nothing_raised {
+        @processor.expects(:log_error)
+        @processor.stubs(:notify_web_hooks)
+        @processor.on_message({:user => @user.login, :repository_id => "invalid repository name"}.to_json)
+      }
+    end
+
+    should "log an error for an unknown user" do
+      assert_nothing_raised {
+        @processor.expects(:log_error)
+        @processor.stubs(:notify_web_hooks)
+        @processor.on_message({:user => "invalid login", :repository_id => @repository.id}.to_json)
+      }
+    end
   end
   
 end

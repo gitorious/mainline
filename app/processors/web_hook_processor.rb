@@ -17,14 +17,18 @@
 #++
 
 class WebHookProcessor < ApplicationProcessor
-  subscribes_to :post_receive_web_hook
+  subscribes_to :web_hook_notifications
   attr_accessor :repository, :user
 
   def on_message(message)
     json = JSON.parse(message)
-    self.user = User.find_by_login(json["user"])
-    self.repository = Repository.find(json["repository_id"])
-    notify_web_hooks(json["payload"])#.with_indifferent_access)
+    begin
+      self.user = User.find_by_login!(json["user"])
+      self.repository = Repository.find(json["repository_id"])
+      notify_web_hooks(json["payload"])#.with_indifferent_access)
+    rescue ActiveRecord::RecordNotFound => e
+      log_error(e.message)
+    end
   end
   
   def notify_web_hooks(payload)
