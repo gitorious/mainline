@@ -31,6 +31,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     repo = repositories(:johans)
     repo.update_attribute(:last_pushed_at, nil)
     @processor.expects(:log_events).returns(true)
+    @processor.expects(:trigger_hooks)
     json = {
       :gitdir => repo.hashed_path,
       :username => "johan",
@@ -248,8 +249,23 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   context "Generating commit summaries for web hooks" do
     setup {
       @processor = PushEventProcessor.new
+      @processor.user = users(:moe)
+      
+      @push_event = PushEventProcessor::EventForLogging.new
+      @commit_event = PushEventProcessor::EventForLogging.new
+
+      @commit_event.email = "marius@gitorious.org"
+      @commit_event.identifier = "ffac"
+      @commit_event.commit_time = 1.day.ago
+      @commit_event.event_type = Action::COMMIT
+      @commit_event.message = "A single commit"
+      @commit_event.commit_object = {}
+      
+      @push_event.commits = [@commit_event]
+      
       commit_summary = "000 fff refs/heads/master"
-      @processor.parse_git_spec(commit_summary)      
+      @processor.parse_git_spec(commit_summary)
+      @processor.repository = repositories(:johans)
     }
 
     should "calculate the correct refs" do
@@ -258,12 +274,26 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       assert_equal "refs/heads/master", @processor.revname
     end
 
-    should "pass along the events where they are created" do
-      flunk
-      @processor.expects(:repository).returns(repositories(:johans))
-      @processor.expects(:user).returns(users(:moe))
+    should "trigger hook for each event" do
+      @processor.expects(:trigger_hooks).once
+      @processor.trigger_hooks(Array(@push_event))
+    end
+
+    should "trigger payload generation" do
+      @processor.expects(:generate_hook_payload)
+      @processor.trigger_hook(@push_event)
+    end
+
+    should "generate the correct payload" do
+      result = @processor.generate_hook_payload(@push_event)
+      assert_not_nil result[:ref]
+      assert_not_nil result[:after]
+      assert_not_nil result[:before]
+      assert_not_nil result[:commits]
+      assert_not_nil result[:repository][:url]
     end
   end
+
   
   # describe 'with stubbing towards a live repo' do
   #   before(:each) do
