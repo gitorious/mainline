@@ -36,7 +36,11 @@ class WebHookProcessor < ApplicationProcessor
       begin
         Timeout.timeout(10) do
           result = post_payload(hook, payload)
-          hook.successful_connection("#{result.code} #{result.message}")
+          if successful_response?(result)
+            hook.successful_connection("#{result.code} #{result.message}")
+          else
+            hook.failed_connection("#{result.code} #{result.message}")
+          end
         end
       rescue Errno::ECONNREFUSED
         hook.failed_connection("Connection refused")
@@ -45,6 +49,15 @@ class WebHookProcessor < ApplicationProcessor
       rescue SocketError
         hook.failed_connection("Socket error")
       end
+    end
+  end
+
+  def successful_response?(response)
+    case response
+    when Net::HTTPSuccess, Net::HTTPMovedPermanently, Net::HTTPTemporaryRedirect, Net::HTTPFound
+      return true
+    else
+      return false
     end
   end
 

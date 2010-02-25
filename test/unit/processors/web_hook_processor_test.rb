@@ -132,5 +132,22 @@ class WebHookProcessorTest < ActiveSupport::TestCase
       }
     end
   end
+
+  context "HTTP responses" do
+    should "consider any response in the 20x range successful" do
+      response = Net::HTTPSuccess.new("HTTP/1.1","200","OK")
+      assert @processor.successful_response?(response)
+    end
+
+    should "consider some redirects successful" do
+      response = Net::HTTPFound.new("HTTP/1.1","302","Found")
+      assert @processor.successful_response?(response)
+    end
+
+    should "consider all responses in the 40x range unsuccessful" do
+      response = Net::HTTPNotFound.new("HTTP/1.1","404","Not found")
+      assert !@processor.successful_response?(response)
+    end
+  end
   
 end
