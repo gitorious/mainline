@@ -121,8 +121,6 @@ class SSHClientTest < ActiveSupport::TestCase
     should 'raise if the pre-receive hook is not executable' do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       client.stubs(:real_path).returns("/tmp/foo.git")
-      File.expects(:"exist?").with("/tmp/foo.git/hooks/pre-receive").returns(true)
-      File.expects(:"symlink?").with("/tmp/foo.git/hooks/pre-receive").returns(false)
       File.expects(:"executable?").with("/tmp/foo.git/hooks/pre-receive").returns(false)
       assert !client.pre_receive_hook_exists?
     end
