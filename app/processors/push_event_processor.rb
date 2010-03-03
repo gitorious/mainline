@@ -161,6 +161,9 @@ class PushEventProcessor < ApplicationProcessor
     def generate_hook_payload(before, after, ref, user, repository)
       payload = {}
       url = "http://#{GitoriousConfig['gitorious_host']}/#{repository.url_path}"
+      commits.each do |c|
+        c.commit_details[:url] = url + "/commit/" + c.identifier
+      end
       payload[:commits] = commits.map{|c| c.commit_details}.flatten
       payload[:before] = before
       payload[:after] = after
@@ -285,11 +288,16 @@ class PushEventProcessor < ApplicationProcessor
       e.commit_time   = Time.at(timestamp.to_i).utc
       e.event_type    = Action::COMMIT
       e.message       = message
+      grit_actor = Grit::Actor.from_string(email)
       e.commit_details = {
-        :sha => sha,
-        :email => email,
+        :id => sha,
+        :author => {
+          :name => grit_actor.name,
+          :email => grit_actor.email
+        },
         :committed_at => e.commit_time.xmlschema,
-        :message => message
+        :message => message,
+        :timestamp => e.commit_time.xmlschema
       }
       result << e
     end

@@ -259,7 +259,15 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       @commit_event.commit_time = 1.day.ago
       @commit_event.event_type = Action::COMMIT
       @commit_event.message = "A single commit"
-      @commit_event.commit_details = {}
+      @commit_event.commit_details = {
+        :sha => "ffcc",
+        :author => {
+          :name => "John Doe",
+          :email => "john@gitorious.org"
+        },
+        :committed_time => 1.day.ago.xmlschema,
+        :message => "One commit"
+      }
       
       @push_event.commits = [@commit_event]
       
@@ -298,6 +306,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
       assert_not_nil result[:before]
       assert_not_nil result[:commits]
       assert_not_nil result[:repository][:url]
+      assert_equal "John Doe", result[:commits].first[:author][:name]
     end
   end
 
