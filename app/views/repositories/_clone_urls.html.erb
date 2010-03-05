@@ -19,6 +19,9 @@
 
 <ul>
   <li>
+<% content_for :extra_head do %>
+<link rel="vcs-git" href="<%= h(repository.clone_url) -%>" title="<%= t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>" />
+<% end %>
     <span id="repo-<%= repository.id -%>-git-url">
       <code>
         git clone <a href="<%= h(repository.clone_url) -%>" class="link_noop"><%= h(repository.clone_url) -%></a>
@@ -26,6 +29,9 @@
     </span>
 
     <% if repository.http_cloning? -%>
+<% content_for :extra_head do %>
+<link rel="vcs-git" href="<%= h(repository.http_clone_url) -%>" title="<%= t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>" />
+<% end %>
       <span id="repo-<%= repository.id -%>-http-url" style="display:none">
         <code>git clone <a href="<%= h(repository.http_clone_url) -%>" class="link_noop">
           <%= h(repository.http_clone_url) -%></a>
@@ -41,6 +47,9 @@
 
   <% if logged_in? && current_user.can_write_to?(repository) -%>
   <li>
+<% content_for :extra_head do %>
+<link rel="vcs-git" href="<%= h(repository.push_url) -%>" title="<%= t("views.repos.show_page_title", :repo => @repository.name, :title => @owner.title) -%>" />
+<% end %>
     <strong><%= t("views.repos.push_url") -%>:</strong>
     <code><%= h(repository.push_url) -%></code>
     <small><%= link_to_help_toggle("detailed_push_info_#{dom_id(repository)}", :text) -%></small>
