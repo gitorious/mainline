@@ -16,7 +16,7 @@ module Grit
           name = ref.sub("#{prefix}/", '')
           commit = commit_from_sha(repo, git_ruby_repo, id)
 
-          if !already[name]
+          if commit && !already[name]
             refs << self.new(name, commit)
             already[name] = true
           end
@@ -38,7 +38,7 @@ module Grit
                 commit = commit_from_sha(repo, git_ruby_repo, m[1])
               end
 
-              if !already[name]
+              if commit && !already[name]
                 refs << self.new(name, commit)
                 already[name] = true
               end
@@ -57,6 +57,8 @@ module Grit
         Commit.create(repo, :id => id)
       elsif object.type == :tag
         Commit.create(repo, :id => object.object)
+      elsif object.type == :blob
+        nil
       else
         raise "Unknown object type."
       end
