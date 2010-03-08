@@ -25,7 +25,7 @@ $: << incpath
 require 'messaging'
 
 @publisher = Publisher.new
-gitdir = File.expand_path(File.join(incpath, ".."))
+gitdir = Dir.getwd
 
 # Equivalent to the hash in the model
 hashed_dir = gitdir.split('/')[-3,3].join('/').split('.').first
