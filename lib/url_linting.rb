@@ -8,6 +8,6 @@ module UrlLinting
       url = "http://#{url}" if URI.parse(url).class == URI::Generic
     rescue
     end
-    url
+    url.strip
   end
 end

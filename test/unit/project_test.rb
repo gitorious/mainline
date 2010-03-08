@@ -169,6 +169,11 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
+  should "remove leading and trailing whitespace from the URL" do
+    p = projects(:johans)
+    assert_equal("http://foo.com/", p.clean_url(" http://foo.com/ "))
+  end
+
   should " not prepend http:// to empty urls" do
     project = projects(:johans)
     [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
