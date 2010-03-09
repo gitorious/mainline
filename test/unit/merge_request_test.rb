@@ -839,4 +839,15 @@ class MergeRequestTest < ActiveSupport::TestCase
     
   end
 
+  context "Watchable" do
+    setup do
+      @merge_request = merge_requests(:johans_to_mikes)
+    end
+
+    should "have the target repository's project as project" do
+      assert_equal(@merge_request.target_repository.project,
+        @merge_request.project)
+    end
+  end
+  
 end

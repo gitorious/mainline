@@ -628,6 +628,11 @@ class MergeRequest < ActiveRecord::Base
       :include => [:target,:user])
   end
 
+  # Watchables need a project in order for redirection to work
+  def project
+    target_repository.project
+  end
+  
   protected
   def set_sequence_number
     if target_repository
