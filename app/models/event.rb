@@ -161,16 +161,20 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def self.events_for_archive(created_before, limit)
-    find(:all,
-      :conditions => ["created_at < ? AND target_type != ?", created_before, "event"],
-      :limit => limit)
+  def self.events_for_archive_in_batches(created_before)
+    find_in_batches(:conditions => ["created_at < ? AND target_type != ?", created_before, "event"]) do |batch|
+      yield batch
+    end
   end
-
-  def self.archive_events_older_than(created_before, limit=2000)
-    events_for_archive(created_before, limit).each do |event|
-      event.create_archived_event
-      event.destroy
+  
+  def self.archive_events_older_than(created_before)
+    events_for_archive_in_batches(created_before) do |batch|
+      Event.transaction do
+        batch.each do |event|
+          event.create_archived_event
+          event.destroy
+        end
+      end
     end
   end
 

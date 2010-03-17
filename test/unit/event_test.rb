@@ -204,16 +204,13 @@ class EventTest < ActiveSupport::TestCase
     end
 
     should "have a class method for accessing events to be archived" do
-      assert_equal([@push_event], Event.events_for_archive(1.month.ago, 20))
+      result = []
+      Event.events_for_archive_in_batches(1.month.ago) do |batch|
+        batch.each { |event| result << event}
+      end
+      assert_equal([@push_event], result)
     end
 
-    should "by default fetch 2000 events when archiving" do
-      cutoff = 30.days.ago
-      Event.expects(:events_for_archive).with(cutoff, 2000).returns([])
-      Event.archive_events_older_than(cutoff)
-    end
-
-    # Commits created when creating a branch are not linked to a push event
     should "include commits with Repository as target when archiving" do
       repository = repositories(:johans)
       initial_commit_event = new_event(
@@ -222,14 +219,24 @@ class EventTest < ActiveSupport::TestCase
         :data => "ffc",
         :target => repository)
       initial_commit_event.save!
-      assert Event.events_for_archive(1.month.ago, 10).include?(initial_commit_event)
+      result = []
+      Event.events_for_archive_in_batches(1.month.ago) do |batch|
+        batch.each {|event| result << event}
+      end
+      assert result.include?(initial_commit_event)
     end
     
     should "have a class method for archiving events older than n days" do
       cutoff = 30.days.ago
-      Event.expects(:events_for_archive).with(cutoff, 2000).returns([@push_event])
+      Event.expects(:events_for_archive_in_batches).yields([@push_event])
       @push_event.expects(:create_archived_event)
       @push_event.expects(:destroy)
+      Event.archive_events_older_than(cutoff)
+    end
+
+    should "run in a transaction" do
+      cutoff = 10.days.ago
+      Event.expects(:transaction)
       Event.archive_events_older_than(cutoff)
     end
 
