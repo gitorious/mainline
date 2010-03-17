@@ -161,6 +161,33 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def self.events_for_archive(created_before, limit)
+    find(:all,
+      :conditions => ["created_at < ? AND target_type != ?", created_before, "event"],
+      :limit => limit)
+  end
+
+  def self.archive_events_older_than(created_before, limit=2000)
+    events_for_archive(created_before, limit).each do |event|
+      event.create_archived_event
+      event.destroy
+    end
+  end
+
+  def create_archived_event
+    result = ArchivedEvent.new
+    result.attributes = attributes
+    result.save
+    events.each do |event|
+      commit = ArchivedEvent.new
+      commit.attributes = event.attributes
+      commit.target_id = result.to_param
+      commit.save
+      event.destroy
+    end
+    result
+  end
+
   protected
 
   def user_email_set?

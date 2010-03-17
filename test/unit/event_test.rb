@@ -190,4 +190,74 @@ class EventTest < ActiveSupport::TestCase
       @event.notify_subscribers
     end
   end
+
+  context "Archiving" do
+    setup do
+      @push_event = new_event(:action => Action::PUSH, :created_at => 32.days.ago)
+      @commit_event = @push_event.build_commit(
+        :email => "Linus Torvalds <linus@kernel.org",
+        :data => "ffc099",
+        :body => "Removing README",
+        :created_at => 33.days.ago)
+      @push_event.save
+      @commit_event.save
+    end
+
+    should "have a class method for accessing events to be archived" do
+      assert_equal([@push_event], Event.events_for_archive(1.month.ago, 20))
+    end
+
+    should "by default fetch 2000 events when archiving" do
+      cutoff = 30.days.ago
+      Event.expects(:events_for_archive).with(cutoff, 2000).returns([])
+      Event.archive_events_older_than(cutoff)
+    end
+
+    # Commits created when creating a branch are not linked to a push event
+    should "include commits with Repository as target when archiving" do
+      repository = repositories(:johans)
+      initial_commit_event = new_event(
+        :action => Action::PUSH,
+        :created_at => 32.days.ago,
+        :data => "ffc",
+        :target => repository)
+      initial_commit_event.save!
+      assert Event.events_for_archive(1.month.ago, 10).include?(initial_commit_event)
+    end
+    
+    should "have a class method for archiving events older than n days" do
+      cutoff = 30.days.ago
+      Event.expects(:events_for_archive).with(cutoff, 2000).returns([@push_event])
+      @push_event.expects(:create_archived_event)
+      @push_event.expects(:destroy)
+      Event.archive_events_older_than(cutoff)
+    end
+
+    should "create an archived event with our attributes, except id" do
+      result = @push_event.create_archived_event
+      result.attributes.reject{|k,v|k.to_sym == :id}.each do |name, value|
+        assert_equal(value, @push_event.attributes[name], "#{name} should be #{value}")
+      end
+    end
+
+    should "a push event should archive its commit events" do
+      ArchivedEvent.delete_all
+      result = @push_event.create_archived_event
+      assert_equal 1, result.commits.size
+    end
+
+    should "destroy commit events when archived" do
+      result = @push_event.create_archived_event
+      assert_equal(0, @push_event.events.reload.size)
+    end
+
+    should "delete feed items when archiving events" do
+      user = users(:mike)
+      feed_item = FeedItem.create!(:event => @push_event, :watcher => user)
+      @push_event.destroy
+      assert_raises ActiveRecord::RecordNotFound do
+        feed_item.reload
+      end
+    end
+  end
 end

@@ -9,7 +9,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100224153358) do
+ActiveRecord::Schema.define(:version => 20100316124803) do
+
+  create_table "archived_events", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "project_id"
+    t.integer  "action"
+    t.string   "data"
+    t.text     "body"
+    t.integer  "target_id"
+    t.string   "target_type"
+    t.string   "user_email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
