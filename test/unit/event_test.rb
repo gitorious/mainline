@@ -225,6 +225,14 @@ class EventTest < ActiveSupport::TestCase
       end
       assert result.include?(initial_commit_event)
     end
+
+    should "not include newer events" do
+      result = []
+      Event.events_for_archive_in_batches(34.days.ago) do |batch|
+        batch.each {|event| result << event}
+      end
+      assert !result.include?(@push_event)
+    end
     
     should "have a class method for archiving events older than n days" do
       cutoff = 30.days.ago
