@@ -225,7 +225,7 @@ class ApplicationController < ActionController::Base
       branch_ref = path = nil
       heads = Array(git.heads).map{|h| h.name }.sort{|a,b| b.length <=> a.length }
       heads.each do |head|
-        if branch_and_path.starts_with?(head)
+        if "#{branch_and_path}/".starts_with?("#{head}/")
           branch_ref = head
           path = ensplat_path(branch_and_path.sub(head, "")) || []
           break
