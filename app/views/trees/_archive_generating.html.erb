@@ -25,7 +25,7 @@
 <script type="text/javascript" charset="utf-8">
 var periodicalDownloadChecker = setTimeout(function(){
 var url = '<%= tree_archive_status_url -%>';
-$("#archive-box-<%= @ref -%>").load(url, function(responseText, textStatus, XMLHttpRequest){
+$("#archive-box-<%= @ref.gsub("/", "_") -%>").load(url, function(responseText, textStatus, XMLHttpRequest){
     clearTimeout(periodicalDownloadChecker);
     if (textStatus == "success") {
         $(this).html(responseText);
