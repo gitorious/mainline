@@ -331,10 +331,10 @@ module ApplicationHelper
     }.each do |extension, url_key|
       archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
       link_html = link_to("Download #{head} as #{extension}", archive_path,
-                                  :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head}');return false",
+                                  :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head.gsub("/", "_")}');return false",
                                   :class => "download-link")
       link_callback_box = content_tag(:div, "", :class => "archive-download-box round-5 shadow-2",
-        :id => "archive-box-#{head}", :style => "display:none;")
+        :id => "archive-box-#{head.gsub("/", "_")}", :style => "display:none;")
       links << content_tag(:li, link_html+link_callback_box, :class => extension.split('.').last)
     end
 

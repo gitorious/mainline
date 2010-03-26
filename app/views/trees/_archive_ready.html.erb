@@ -23,7 +23,7 @@
     window.location = "<%= project_repository_archive_zip_path(@repository.project, @repository, ensplat_path(@ref)) -%>";
   <% end -%>
   
-  $('archive-box-<%= @ref -%>').hide();
+  $('archive-box-<%= @ref.gsub("/", "_") -%>').hide();
 </script>
 
 <h4>Download ready</h4>
