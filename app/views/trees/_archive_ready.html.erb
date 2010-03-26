@@ -18,9 +18,9 @@
 %>
 <script type="text/javascript" charset="utf-8">
   <% if params[:archive_format] == "tar.gz" -%>
-    window.location = "<%= project_repository_archive_tar_path(@repository.project, @repository, @ref) -%>";
+    window.location = "<%= project_repository_archive_tar_path(@repository.project, @repository, ensplat_path(@ref)) -%>";
   <% else -%>
-    window.location = "<%= project_repository_archive_zip_path(@repository.project, @repository, @ref) -%>";
+    window.location = "<%= project_repository_archive_zip_path(@repository.project, @repository, ensplat_path(@ref)) -%>";
   <% end -%>
   
   $('archive-box-<%= @ref -%>').hide();

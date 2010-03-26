@@ -23,7 +23,7 @@
 <ul class="horizontal meta" style="float:right">
   <li class="tree">
     <%= link_to "Source tree", repo_owner_path(@repository, :project_repository_tree_path,
-          @project, @repository, desplat_path(params[:branch])) -%>
+          @project, @repository, params[:branch]) -%>
   </li>
 </ul>
 <h1>

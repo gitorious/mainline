@@ -312,14 +312,14 @@ module ApplicationHelper
   end
 
   def render_download_links(project, repository, head, options={})
+    head = desplat_path(head) if head.is_a?(Array)
+
     links = []
     exceptions = Array(options[:except])
     unless exceptions.include?(:source_tree)
       links << content_tag(:li, link_to("Source tree",
                   tree_path(head)), :class => "tree")
     end
-
-    head = desplat_path(head) if head.is_a?(Array)
 
     if head =~ /^[a-z0-9]{40}$/ # it looks like a SHA1
       head = head[0..7]
@@ -329,7 +329,7 @@ module ApplicationHelper
       'tar.gz' => 'tar',
       # 'zip' => 'zip',
     }.each do |extension, url_key|
-      archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, head)
+      archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
       link_html = link_to("Download #{head} as #{extension}", archive_path,
                                   :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head}');return false",
                                   :class => "download-link")
