@@ -63,7 +63,7 @@ ActionController::Routing::Routes.draw do |map|
                                   :controller => "commits", :action => "feed", :conditions => { :feed => :get })
       repo.commits         "commits", :controller => "commits", :action => "index"
       repo.commits_in_ref  "commits/*branch", :controller => "commits", :action => "index"
-      repo.commit          "commit/:id.:format", :controller => "commits", :action => "show"
+      repo.commit          "commit/:id", :controller => "commits", :action => "show", :id => /.*/
       repo.commit_comments "commit/:id/comments", :controller => "commit_comments", :action => "index"
       repo.commit_diffs    "commit/:id/diffs", :controller => "commit_diffs", :action => "index"
       repo.trees           "trees/", :controller => "trees", :action => "index"

@@ -145,6 +145,23 @@ class CommitsControllerTest < ActionController::TestCase
       })
     end
 
+    should "route tags with dots in the id" do
+      assert_recognizes({
+        :controller => "commits",
+        :action => "show",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => "v0.7.0",
+      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/v0.7.0", :method => :get})
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/v0.7.0", {
+        :controller => "commits",
+        :action => "show",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => "v0.7.0",
+      })
+    end
+
     should "route diff format" do
       assert_recognizes({
         :controller => "commits", 
@@ -153,14 +170,21 @@ class CommitsControllerTest < ActionController::TestCase
         :repository_id => @repository.to_param,
         :id => @sha,
         :format => "diff",
-      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.diff", :method => :get})
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.diff", {
+      }, {
+        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}",
+        :method => :get
+      }, {
+        :format => "diff",
+      })
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
         :controller => "commits", 
         :action => "show", 
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => @sha,
         :format => "diff"
+      }, {}, {
+        :format => "diff",
       })
     end
     
@@ -172,14 +196,21 @@ class CommitsControllerTest < ActionController::TestCase
         :repository_id => @repository.to_param,
         :id => @sha,
         :format => "patch",
-      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.patch", :method => :get})
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}.patch", {
+      }, {
+        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}",
+        :method => :get
+      }, {
+        :format => "patch",
+      })
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}", {
         :controller => "commits", 
         :action => "show", 
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => @sha,
         :format => "patch"
+      }, {}, {
+        :format => "patch",
       })
     end
   end

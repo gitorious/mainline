@@ -23,7 +23,7 @@ atom_feed do |feed|
   @commits.each do |commit|
     item_url = "http://#{GitoriousConfig['gitorious_host']}"
     item_url << repo_owner_path(@repository, :project_repository_commit_path, 
-                                @project, @repository, commit.id, :html)
+                                @project, @repository, commit.id, :format => :html)
     feed.entry(commit, {
       :url => item_url, 
       :updated => commit.committed_date.utc, 
