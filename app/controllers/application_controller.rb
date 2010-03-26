@@ -231,6 +231,16 @@ class ApplicationController < ActionController::Base
           break
         end
       end
+      unless path
+        tags = Array(git.tags).map{|t| t.name }.sort{|a,b| b.length <=> a.length }
+        tags.each do |tag|
+          if "#{branch_and_path}/".starts_with?("#{tag}/")
+            branch_ref = tag
+            path = ensplat_path(branch_and_path.sub(tag, "")) || []
+            break
+          end
+        end
+      end
       unless path # fallback
         path = ensplat_path(branch_and_path)[1..-1]
         branch_ref = ensplat_path(branch_and_path)[0]
