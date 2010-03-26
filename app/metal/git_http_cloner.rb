@@ -32,6 +32,9 @@
 require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
 
 class GitHttpCloner
+  TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
+  NOT_FOUND_RESPONSE = [404, {"Content-Type" => "text/html"},[]]
+
   def self.call(env)
     perform_http_cloning = env['HTTP_HOST'] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
     if perform_http_cloning && !GitoriousConfig['hide_http_clone_urls']
@@ -43,6 +46,7 @@ class GitHttpCloner
         rest = match[2]
         begin
           repo = Repository.find_by_path(path)
+          return NOT_FOUND_RESPONSE unless repo
           repo.cloned_from(remote_ip(env), nil, nil, 'http') if rest == '/HEAD'          
           full_path = File.join(repo.full_repository_path, rest)
           headers = {
@@ -53,14 +57,13 @@ class GitHttpCloner
           return [200, headers, []]
         rescue ActiveRecord::RecordNotFound   
           # Repo not found
+          return NOT_FOUND_RESPONSE
         end
       end
     end
-    return [404, {"Content-Type" => "text/html"},[]]
+    return NOT_FOUND_RESPONSE
   end
 
-  TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
-  
   protected 
     # Borrowed from ActionController::Request. Extract proxy addresses and stuff (except our own)
     # Does not do ip spoofing checks
