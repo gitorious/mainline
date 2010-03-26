@@ -57,6 +57,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.latest_in_projects(count, project_ids)
+    return [] if project_ids.blank?
     Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}",
         :expires_in => 10.minutes) do
       find(:all, {
