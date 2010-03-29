@@ -107,6 +107,7 @@ class CommitsControllerTest < ActionController::TestCase
       @repository = @project.repositories.first
       @repository.update_attribute(:ready, true)
       @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
+      @weird_id = '!"#$%&\'()+,-.0123456789;<=>@ABCDEFGHIJKLMNOPQRSTUVWXYZ]_`abcdefghijklmnopqrstuvwxyz{|}'
     end
     
     should "route commits format" do
@@ -159,6 +160,23 @@ class CommitsControllerTest < ActionController::TestCase
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => "v0.7.0",
+      })
+    end
+
+    should "route branches with weird characters in the id" do
+      assert_recognizes({
+        :controller => "commits",
+        :action => "show",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @weird_id,
+      }, {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@weird_id}", :method => :get})
+      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{URI.escape(@weird_id, ActionController::Routing::Segment::UNSAFE_PCHAR)}", {
+        :controller => "commits",
+        :action => "show",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :id => @weird_id,
       })
     end
 
