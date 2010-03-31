@@ -32,7 +32,7 @@
     <% end -%>
     <script type="text/javascript" charset="utf-8">
       $(document).ready(function(){
-          if (parseInt($("#codeblob tr td.line-numbers:last").text()) < 3500) {
+          if ($("#codeblob tr td.line-numbers:last").text().length < 3500) {
               prettyPrint();
           } else {
               $("#long-file").show().find("a#highlight-anyway").click(function(e){
