@@ -35,6 +35,10 @@
 <%= will_paginate @projects -%>
 
 <% content_for :sidebar do -%>
+  <ul class="links actions">
+    <li class="new_project"><%= link_to t("views.projects.create_new"), new_project_path -%></li>
+  </ul>
+
   <h4><%= t("views.projects.popular") %>:</h4>
   <ul class="tag_list">
     <% @tags.each do |tag| %>
