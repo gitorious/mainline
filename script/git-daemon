@@ -90,6 +90,10 @@ module Git
         begin
           ActiveRecord::Base.verify_active_connections!
           repository = ::Repository.find_by_path(path)
+          log(Process.pid, "try to access repo: #{path} #{repository.private?}:\n")
+          if repository.private? # forbid git:// for those private repositories
+              repository = nil
+          end
         rescue => e
           log(Process.pid, "AR error: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
         end

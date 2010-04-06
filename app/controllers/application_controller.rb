@@ -162,6 +162,12 @@ class ApplicationController < ActionController::Base
       @repository = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)
     end
     
+    def check_private_repository
+      unless !@repository.private? ||(logged_in? && current_user.can_write_to?(@repository))
+        flash[:error] = I18n.t "application.require_current_user"
+        redirect_to root_path and return
+      end
+    end
     def check_repository_for_commits
       unless @repository.has_commits?
         flash[:notice] = I18n.t "application.no_commits_notice"

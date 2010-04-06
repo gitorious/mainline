@@ -19,12 +19,13 @@
 
 <ul>
   <li>
+    <% if ! repository.private? -%>
     <span id="repo-<%= repository.id -%>-git-url">
       <code>
         git clone <a href="<%= h(repository.clone_url) -%>" class="link_noop"><%= h(repository.clone_url) -%></a>
       </code>
     </span>
-
+    <% end -%>
     <% if repository.http_cloning? -%>
       <span id="repo-<%= repository.id -%>-http-url" style="display:none">
         <code>git clone <a href="<%= h(repository.http_clone_url) -%>" class="link_noop">

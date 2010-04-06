@@ -41,6 +41,13 @@
     <%= f.text_area :description, :class => "text shorter" -%>
   </p>
   <p>
+    <%= f.label :private %>:
+    <%= f.check_box :private %><br />
+    <span class="hint">
+       If a repository is private, only project members can access it. git:// access is also deactivated
+    </span>
+  </p>
+  <p>
     <%= f.label :enable_merge_requests -%>
     <%= f.check_box :merge_requests_enabled -%> <br />
     <span class="hint">

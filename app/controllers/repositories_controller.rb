@@ -21,6 +21,7 @@
 #++
 
 class RepositoriesController < ApplicationController
+
   before_filter :login_required,
     :except => [:index, :show, :writable_by, :config, :search_clones]
   before_filter :find_repository_owner
@@ -47,6 +48,7 @@ class RepositoriesController < ApplicationController
 
   def show
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    if !@repository.private? ||(logged_in? && current_user.can_write_to?(@repository))
     @root = @repository
     @events = @repository.events.top.paginate(:all, :page => params[:page],
       :order => "created_at desc")
@@ -59,6 +61,9 @@ class RepositoriesController < ApplicationController
       format.html
       format.xml  { render :xml => @repository }
       format.atom {  }
+    end
+    else
+      redirect_to root_path
     end
   end
 
@@ -79,6 +84,7 @@ class RepositoriesController < ApplicationController
     @repository.owner = @project.owner
     @repository.user = current_user
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
+    @repository.private = params[:repository][:private]
 
     if @repository.save
       flash[:success] = I18n.t("repositories_controller.create_success")
@@ -173,6 +179,7 @@ class RepositoriesController < ApplicationController
         @repository.replace_value(:description, params[:repository][:description], true)
       end
       @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
+      @repository.private = params[:repository][:private]
       @repository.notify_committers_on_new_merge_request = params[:repository][:notify_committers_on_new_merge_request]
       @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
       @repository.save!
@@ -209,6 +216,8 @@ class RepositoriesController < ApplicationController
     config_data = "real_path:#{@repository.real_gitdir}\n"
     config_data << "force_pushing_denied:"
     config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
+    config_data << "\nprivate:"
+    config_data << (@repository.private? ? 'true' : 'false')
     render :text => config_data
   end
 
