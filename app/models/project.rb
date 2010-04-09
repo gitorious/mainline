@@ -194,7 +194,7 @@ class Project < ActiveRecord::Base
   end
 
   def tag_list=(tag_list)
-    tag_list.gsub!(",", "")
+    tag_list.gsub!(/,\s*/, " ")
     super
   end
 
