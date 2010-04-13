@@ -2519,6 +2519,7 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
 padding-bottom: 8px;
 }
 .page-meta p { margin:0; padding:0;}
+.page-meta p.clone_urls { margin-left:10%;}
 .page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
 ul.page-actions { margin: 0;}
 .page-meta .page-actions li {

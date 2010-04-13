@@ -40,5 +40,20 @@
     <% end -%>
     <%= commit.date.to_s(:short) -%>
   </p>
+  
+  <p class="clone_urls">
+    <span id="repo-<%= @repository.id -%>-git-url">
+      <strong><%= t("views.repos.wiki_clone_url") -%>:</strong>
+      <code>
+        git clone <a href="<%= h(@repository.clone_url) -%>" class="link_noop"><%= h(@repository.clone_url) -%></a>
+      </code>
+    </span>
+
+    <br />
+    <% if logged_in? && current_user.can_write_to?(@repository) -%>
+      <strong><%= t("views.repos.wiki_push_url") -%>:</strong>
+      <code><%= h(@repository.push_url) -%></code>
+    <% end -%>
+  </p>
 </div>
 <% end -%>

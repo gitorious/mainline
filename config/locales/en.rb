@@ -363,6 +363,8 @@
         :http_url => "Public HTTP clone url",
         :push_url => "Your push url",
         :help_push => "You can run <code>git push {{repo}} master</code><br /> Or you can setup a remote like this:",
+        :wiki_clone_url => "Download this wiki with",
+        :wiki_push_url => "Update this wiki by pushing to",
         :owner => "Owner",
         :creator => "creator",
         :project => "Project",
@@ -516,7 +518,8 @@
         :last_n_edits => "Last {{n}} edits on {{title}}",
         :index => "Pages index",
         :format_using_markdown => %Q(Format pages using {{markdown}}),
-        :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name."
+        :wikiwords_syntax => "[[Wikilink]] will be linked to a page of that name.",
+        :page_title => "Wiki of {{project}}"
       },
       :memberships => {
         :add_new_member => "Add new member",
