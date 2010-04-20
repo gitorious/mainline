@@ -21,10 +21,10 @@
 %>
 
 <% @page_title = "About" -%>
-<div class="section">
-  <a name="about"></a><h1>About Gitorious</h1>
+<div class"content-container">
+	<h2 class="content-header">About Gitorious</h2>
 
-  <p><%= t("views.site.description") %></p>
+  <p class="ingress"><%= t("views.site.description") %></p>
   
   <p>
     Gitorious provides open source infrastructure for hosting open source projects
@@ -41,7 +41,7 @@
     and notify the other project members about your changes.
   </p>
   
-  <h2>Features</h2>
+  <h3>Features</h3>
   
   <ul class="bullet_list">
     <li>Project hosting</li>
@@ -56,7 +56,7 @@
     <li>Commercial support and customizations available</li>
   </ul>
   
-  <h2>History</h2>
+  <h3>History</h3>
   <p>
     Gitorious was started by Johan Sørensen in the end of 2007 as a way to easily
     host Git repositories for himself. The idea turned out to be so useful that 
@@ -72,7 +72,7 @@
     under the <a href="http://www.gnu.org/licenses/agpl.txt">GNU Affero General Public License</a>.
   </p>
   
-  <h2>License</h2>
+  <h3>License</h3>
   <p>
     The Gitorious <a href="/gitorious">codebase</a> is licensed under the 
     <a href="http://www.gnu.org/licenses/agpl.txt">GNU Affero General Public License</a> 
@@ -97,7 +97,7 @@
 </div>
 
 <% content_for :sidebar do -%>
-  <ul class="links">
+  <ul class="links navigation">
     <%= render "meta_links" -%>
   </ul>
 <% end -%>

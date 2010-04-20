@@ -24,9 +24,9 @@
 <% @page_title = t("views.site.page_title") -%>
 
 <% if logged_in? %>
-  <p id="site_greeting">
+  <h2 class="content-header">
     <%= random_greeting %> <%=link_to h(current_user.login), current_user %>!
-  </p>
+  </h2>
 <% else -%>
 <div id="site_intro">
   <p><%= t("views.site.description") %></p>
@@ -44,7 +44,7 @@
   <% end unless logged_in? -%>
 
 <% cache([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
-  <% pull_box("Recent activities") do -%>
+  <% pull_box("Recent activities", :class => "pull-box-510") do -%>
     <ul class="events inline">
     <% @latest_events.each do |event| -%>
       <%= render :partial => event, :locals => { :relative_time => true } -%>
@@ -56,7 +56,7 @@
 
 <div id="right">
 <% cache([:site_index, :active_projects_recently], :expires_in => 1.hour) do -%>
-  <% pull_box("Active projects") do -%>
+  <% pull_box("Active projects", :class => "pull-box-510") do -%>
     <ul class="with_icons">
       <% @active_projects.each do |project| -%>
         <li class="project">
@@ -69,7 +69,7 @@
 <% end -%>
 
 <% cache([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
-  <% pull_box("Most active repository clones") do -%>
+  <% pull_box("Most active repository clones", :class => "pull-box-510") do -%>
     <ul class="with_icons">
       <% @top_repository_clones.each do |repo| -%>
         <li class="repository">
@@ -83,7 +83,7 @@
 <% end -%>
 
 <% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
-  <% pull_box("Active users") do -%>
+  <% pull_box("Active users", :class => "pull-box-510") do -%>
     <ul class="with_icons inline_icons">
       <% @active_users.each do |user| -%>
         <li class="user">
@@ -96,7 +96,7 @@
 <% end -%>
 
 <% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
-  <% pull_box("Active teams") do -%>
+  <% pull_box("Active teams", :class => "pull-box-510") do -%>
     <ul class="with_icons inline_icons">
       <% @active_groups.each do |group| -%>
         <li class="group">
@@ -109,7 +109,7 @@
 <% end -%>
 
 <% cache([:site_index, :newest_projects], :expires_in => 5.minutes) do -%>
-  <% pull_box(t("views.site.newest_projects")) do -%>
+  <% pull_box(t("views.site.newest_projects"), :class => "pull-box-510") do -%>
     <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project">
@@ -120,8 +120,10 @@
     <li><%= link_to t("views.site.view_more"), projects_path -%></li>
   </ul>
     <% if logged_in? -%>
-      <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
+	<div class="pull-box-links">	
+      <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
             :id => "new-project-button"}) %>
+	</div>
       <div class="clear"></div>
     <% end -%>
   <% end -%>

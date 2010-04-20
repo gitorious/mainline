@@ -1,0 +1,190 @@
+
+
+
+.form {
+	width: 732px;
+	float: left;
+	background: #EEE;
+
+	padding: 0px 6px 0px 12px;
+		-webkit-border-radius: 6px;
+}
+
+.form li {
+		width: 732px;
+		float: left;
+
+		min-height: 42px;
+}
+
+form li div {
+		width: 480px;
+		float: right;
+		line-height: 42px;
+}
+
+.form li label {
+		width: 230px;
+		margin-right: 20px;
+		float: left;
+		line-height: 42px;
+}
+
+form textarea {
+  width: 90%;
+}
+
+form fieldset {
+  padding: 3px;
+  margin: 0 0 10px 0;
+  width: 100%;
+}
+
+form legend {
+  font-weight: bold;
+  font-size:12px;
+}
+
+form label {
+  font-weight: bold;
+	margin: 0;
+}
+
+form .required {
+  color: #aaa;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+form {
+  margin-bottom: 1.5em;
+}
+
+form.button-to, form.button-to div { display: inline; }
+form.button-to div { margin: 0 5px 0 5px; text-align: right;}
+form.button-to div input {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-weight: bold;
+	color: #ba3e3e;
+	font-size: 11px;
+	text-shadow: 0px 1px #FFF;
+	padding: 2px 6px 2px 6px;
+	display: block;
+	float: right;
+	line-height: 22px;
+	height: 26px;
+	margin-right: 5px;
+	margin-bottom: 1px;
+	background: #e8e8e8 no-repeat 7px 5px;
+	-webkit-box-shadow: 0px 1px 0px #FFF inset;
+	-moz-box-shadow: inset 0px 1px 0px #FFF;
+	border: 1px solid #b5b5b5;
+	cursor: pointer;
+}
+form.button-to div input:hover {
+  color: #df3333;
+	text-shadow: 0px 1px #eaeaea;
+  text-decoration: none;
+	-webkit-box-shadow: 0px 1px 0px #eaeaea inset;
+	-moz-box-shadow: inset 0px 1px 0px #eaeaea;
+	background-color:#cdcdcd;
+}
+
+input[type='text'], input[type='password'] {
+  padding: 6px;
+  width: 350px;
+	-webkit-border-radius: 6px;
+	background: #F8F8F8;
+	border: 1px solid #ccc;
+}
+
+textarea {
+  padding: 6px;
+  width: 350px;
+	-webkit-border-radius: 6px;
+	background: #F8F8F8;
+	border: 1px solid #ccc;
+
+	-webkit-box-shadow: 1px 1px 3px #ccc inset;
+}
+textarea.text { height: 60px; }
+textarea.wide { width: 470px; }
+textarea.tall { height: 300px; }
+textarea.taller {height: 500px;}
+textarea.medium { width: 450px; height: 250px; }
+textarea.fill { width: 95%; }
+select        { width: 200px; }
+
+input[type='text'], input[type='password'], textarea, select {
+  margin: 0px 0 0px 0;
+}
+
+input.compact, select.compact {
+    width: 100px;
+    margin-right: 5px;
+}
+input.medium_compact {
+    width: 170px;
+    margin-right: 5px;
+}
+
+input[type='text']:focus, input[type='password']:focus. input.title:focus,
+textarea:focus, select:focus {
+  border: 1px solid #666;
+}
+
+/* embeds the openid image in the text field */
+input#openid_url {
+   background: url(../images/login-bg.gif) no-repeat;
+   background-color: #fff;
+   background-position: 0 50%;
+   color: #000;
+   padding-left: 18px;
+}
+
+.fieldWithErrors { margin: 0; display: inline-block;}
+.fieldWithErrors input, .fieldWithErrors textarea,
+.fieldWithErrors select {
+  border: 1px solid #c30000;
+}
+
+.errorExplanation {
+  background: #fbe3e4;
+  border: 1px solid #c30000;
+  width: 400px;
+  margin: 0 0 10px 0;
+}
+
+.errorExplanation h2 {
+  font-size: 120%;
+  line-height: 120%;
+  font-weight: normal;
+  padding: 5px;
+  color: #fff;
+  background: #c30000;
+  margin-bottom: 0.2em;
+}
+.errorExplanation p {
+  padding: 2px 2px 2px 5px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.errorExplanation ul {
+  padding: 5px 10px 10px 25px;
+  margin-bottom: 0;
+}
+.errorExplanation ul li{
+    list-style-type: disc;
+}
+
+form table.inline-labels td {
+    padding-right: 10px;
+}
+form table.inline-labels th {
+    padding-right: 20px;
+}
+form table.inline-labels td label {
+    font-weight: normal;
+}
+

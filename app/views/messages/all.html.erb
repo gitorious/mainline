@@ -19,7 +19,7 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<h1><%= t "views.messages.all_messages" %></h1>
+<h2 class="content-header"><%= t "views.messages.all_messages" %></h2>
 
 <%= render :partial => "messages", :locals => {:messages => @messages} %>
 

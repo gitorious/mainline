@@ -61,7 +61,7 @@
 <% end -%>
 
 <% content_for :sidebar do -%>  
-  <ul>
+  <ul class="sidebar-meta">
     <li><strong>Repository:</strong>
       <%= link_to(h(@repository.name), repo_owner_path(@repository, :project_repository_path, @repository.project, @repository)) -%>
     </li>
@@ -87,7 +87,7 @@
     </li>
   </ul>
 
-  <ul class="links">
+  <ul class="links navigation">
     <li class="commit">
       <%= link_to "Commit log", repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, ensplat_path(@ref)) -%>
     </li>    
@@ -97,14 +97,15 @@
   
 <% cache([tree_path(@commit.id), :tags_and_branches], 
         {:expires_in => 10.minutes}) do -%>
-  <h5><%= t("views.logs.branches") %>:</h5>
-  <ul class="links">
-    <%= render_branch_list_items(@git.branches) -%>
+
+  <ul class="links navigation">
+    <h5><%= t("views.logs.branches") %>:</h5>
+	<%= render_branch_list_items(@git.branches) -%>
   </ul>
 
   <% unless @git.tags.blank? -%>
-    <h5><%= t("views.logs.tags") %>:</h5>
-    <ul class="links">
+    <ul class="links navigation">
+	<h5><%= t("views.logs.tags") %>:</h5>
     <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
       <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
     <% end -%>

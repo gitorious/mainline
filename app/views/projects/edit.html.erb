@@ -77,7 +77,7 @@
 
 
 <% content_for :sidebar do -%>
-  <ul class="links">
+  <ul class="links navigation">
     <% if @project.owned_by_group? -%>
       <li><%= link_to t("views.projects.project_members"), group_memberships_path(@project.owner) -%></li>
     <% end -%>

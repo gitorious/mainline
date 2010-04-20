@@ -22,10 +22,10 @@
 
 <% @page_title = t("views.projects.title") -%>
 
-<h1>Projects</h1>
+<h2 class="content-header">Projects</h2>
 
-<div class="with_divider">
-  <div id="left">
+
+  <!-- ><div id="left">
     <% pull_box("Most active (last two weeks)") do -%>
       <ul class="with_icons">
         <% @active_recently.each do |project| -%>
@@ -33,22 +33,12 @@
         <% end -%>
       </ul>
     <% end -%>
-  </div>
-  <div id="right">
-    <% pull_box("Most active (overall)") do -%>
-      <ul class="with_icons">
-        <% @active_overall.each do |project| -%>
-          <li class="project"><%= link_to h(project.title), project -%></li>
-        <% end -%>
-      </ul>
-    <% end -%>
-  </div>
-  <% if show_new_project_link? -%>
+  </div> -->
+  <!-- <% if show_new_project_link? -%>
     <%= white_button_link_to(t("views.projects.create_new"), new_project_path, {
           :size => :big, :id => "new-project-button"}) %>
-  <% end -%>
-  <div class="clear"></div>
-</div>
+  <% end -%> -->
+ 
 
 <ul class="project_list">
 <% @projects.each do |project| -%>
@@ -61,10 +51,22 @@
 <%= will_paginate @projects -%>
 
 <% content_for :sidebar do -%>
-  <h4><%= t("views.projects.popular") %>:</h4>
+  <h2><%= t("views.projects.popular") %></h2>
   <ul class="tag_list">
     <% @tags.each do |tag| %>
       <li class="tag_size_3"><%= link_to h(tag.name), search_path(:q => "category:#{h(tag.name)}") -%> </li>
     <% end %>
   </ul>
+<ul class="links navigation">
+	<li class="new_project">
+      <%= link_to t("views.projects.create_new"), new_project_path() -%>
+    </li>
+</ul>
+  <% pull_box("Most active (overall)", :class => "pull-box-sidebar") do -%> 
+    <ul class="with_icons">
+      <% @active_overall.each do |project| -%>
+        <li class="project"><%= link_to h(project.title), project -%></li>
+      <% end -%>
+    </ul>
+  <% end -%>
 <% end -%>

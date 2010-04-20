@@ -1,0 +1,220 @@
+/* #############################################
+   ################# SIDEBAR ################### */
+
+#container #sidebar {
+	border-top: 1px solid #e7e7e7;
+ 	width: 270px;
+	min-height: 100%;
+ 	float: right;
+  padding: 23px 20px; 
+	color: #555;
+}
+
+#container #sidebar:after {
+  clear: left;
+  display: block;
+  visibility: hidden;
+  height: 0;
+  content: "";
+}
+
+#container #sidebar .divider {
+	height: 1px;
+	width: 100%;
+	float: left;
+	clear: both;
+	background: #CCC;
+	margin: 10px 0px 10px;
+}
+	
+/* #############		 NAVIGATION			 ########### */
+
+
+.navigation {
+	float: left;
+	border-bottom: 1px solid #c2c2c2;
+	border-top: 1px solid #c2c2c2;
+	width: 270px;
+	margin-left: -20px;
+	background: url(../side-nav-bg.png) repeat-x #CCC;
+	padding: 18px 20px 18px 20px;
+		margin-bottom: 15px;
+	
+}
+
+.navigation.multiple {
+	margin-top: -22px;
+	padding-top: 12px;
+	border-top: 1px solid #b4b4b4;
+}
+
+/* ################# BUTTONS / LINKS ########### */
+
+
+#sidebar ul.links.meta li {
+ border-bottom: none;
+}
+/*
+#sidebar ul.links li a {
+	background: #CCC;
+  background-repeat: no-repeat;
+  background-position: 5px 5px;
+  background-image: url("../images/silk/bullet_go.png");
+  display: block;
+	font-weight: bold;
+	color: #3a3a3a;
+	text-shadow: 0px 1px #eaeaea;
+  padding: 6px 5px 4px 28px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+#sidebar ul.links li a:hover {
+  color: #2c2c2c;
+	background: #F8F8F8;
+	background-position: 5px 5px;
+  background-image: url("../images/silk/bullet_go.png");
+	background-repeat: no-repeat;
+	text-shadow: 0px 1px #eee;
+  text-decoration: none;
+}
+*/
+
+#sidebar ul.links li: {
+		margin-bottom: 0;
+}
+
+#sidebar ul.links li {
+	width: 270px;
+	float: left;
+	height: 34px;
+	-webkit-box-shadow: 0px 1px 0px #EEE inset;
+	border-left: 1px solid #b5b5b5;
+	border-right: 1px solid #b5b5b5;
+	border-top: 1px solid #b5b5b5;
+  background: #dedede no-repeat 6px 5px;
+}
+
+#sidebar ul.links li.first {
+		-webkit-border-top-right-radius: 6px;
+		-webkit-border-top-left-radius: 6px;
+}
+
+#sidebar ul.links li.first a:hover {
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
+}
+
+#sidebar ul.links li.last {
+		-webkit-border-bottom-right-radius: 6px;
+		-webkit-border-bottom-left-radius: 6px;
+		border-bottom: 1px solid #b5b5b5;
+}
+
+#sidebar ul.links li.last a:hover {
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	border-bottom: 1px solid #b5b5b5;
+}
+
+
+
+#sidebar ul.links li a {
+		font-weight: bold;
+		color: #555555;
+		font-size: 12px;
+		text-shadow: 0px 1px #FFF;
+		width: 225px;
+		float: left;
+		display: block;
+		line-height: 20px;
+		height: 22px;
+		background-repeat: no-repeat;
+		background-position: 10px 9px;
+		padding: 8px 10px 4px 35px;
+		background-image: url("../images/silk/bullet_go.png");
+
+}
+#sidebar ul.links li a:hover {
+	  color: #535353;
+		text-shadow: 0px 1px #EEE;
+		-webkit-box-shadow: 0px 1px 0px #e9e9e9 inset;
+	  text-decoration: none;
+		background: #cecece no-repeat 10px 9px;
+		background-image: url("../images/silk/bullet_go.png");
+
+}
+
+#sidebar ul.links li a:active {
+		background-color: #c5c5c5;
+		line-height: 23px;
+		background-position: 10px 10px;
+}
+
+#sidebar ul.links.meta li a {
+  font-size: 10px;
+  padding: 2px 5px 2px 28px;
+  background-position: 5px 2px;
+}
+
+#sidebar ul.links.meta li:hover {
+  background: inherit;
+}
+
+
+
+#sidebar ul.links.meta li a:hover {
+  color: #390;
+  text-decoration: underline;
+}
+
+
+/* ##########		 PROJECT SPECIFIC		 ########### */
+
+
+#sidebar > * {
+		float: left;
+}
+
+#sidebar h1 {
+		float: none;
+}
+
+#project-description {
+  margin: 0;
+  padding: 0;
+	margin-bottom: 15px;
+}
+#project-description p, #project-description ol, #project-description ul {
+		font-size: 11px;
+		color: #5a6269;
+		text-shadow: 0px 1px 0px #eee;
+}
+#project-description p:first-child {
+		margin-bottom: 3px;
+}
+#project-description span.read-more, #project-description span.re-collapse {
+		float: right;
+		font-size: 10px;
+		font-weight: bold;
+		text-transform: uppercase;
+		text-shadow: 0px 1px #FFF;
+}
+#project-meta, .sidebar-meta {
+		float: left;
+		width: 270px;
+		padding: 15px 0px 15px;
+}
+
+#project-meta li, .sidebar-meta li {
+		margin-bottom: 3px;
+		text-align: right;
+		padding-bottom: 3px;
+		font-size: 12px;
+		border-bottom: 1px solid #d9d9d9;
+}
+
+#project-meta li strong, .sidebar-meta li strong {
+		float: left;
+}
+

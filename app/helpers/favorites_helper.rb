@@ -24,7 +24,7 @@ module FavoritesHelper
       link = create_favorite_link_to(watchable)
     end
 
-    content_tag(:div, link, :class => "white-button round-10 small-button favorite")
+    content_tag(:div, link, :class => "repository-link favorite button")
   end
   
   def create_favorite_link_to(watchable)

@@ -21,8 +21,10 @@
 #++
 %>
 
+<% container_css_class ||= "" %>
+
 <% benchmark("Event rendering") do -%>
-<ul class="events">
+<ul class="events <%= container_css_class -%>">
 <% events.group_by{|e| e.created_at.to_s(:human) }.each do |day, events_group| -%>
   <li>
     <p class="date"><%= day -%></p>
@@ -32,5 +34,5 @@
   </li>
 <% end -%>
 </ul>
-<%= will_paginate events -%>
+<%= render_pagination_links events -%>
 <% end -%>

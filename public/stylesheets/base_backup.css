@@ -1,0 +1,3370 @@
+/* reset */
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.1
+*/
+body { color:#000;background:#FFF; }
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,
+ input,textarea,p,blockquote,th,td { margin:0;padding:0; }
+table { border-collapse:collapse;border-spacing:0; }
+fieldset,img { border:0; }
+address,caption,cite,code,dfn,em,strong,th,var {font-style:normal;font-weight:normal; }
+li { list-style:none;}
+caption,th { text-align:left; }
+h1,h2,h3,h4,h5,h6 { font-size:100%;font-weight:normal; }
+q:before,q:after{ content:''; }
+abbr,acronym { border:0;font-variant:normal; }
+sup,sub { line-height:-1px;vertical-align:text-top; }
+sub{ vertical-align:text-bottom; }
+input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inherit; }
+
+/**/
+
+body {
+	font-size: 13px;
+	line-height: 1.461em;
+  background: #dee7ed;
+  color: #000;
+/*  font-family: Georgia, Times, "Times new Roman", serif;*/
+  font-family: "Helvetica", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #09460f;
+  font-weight:  normal;
+}
+
+h1 {
+	margin: 0;
+	font-size: 1.615em;
+	line-height: 0.904em;
+	margin-bottom: 0.904em;
+}
+h2 {
+	margin: 0;
+	font-size: 1.461em;
+	line-height: 1em;
+	margin-bottom: 1em;
+}
+h3 {
+	margin: 0;
+	font-size: 1.307em;
+	line-height: 1.117em;
+	margin-bottom: 1.117em;
+}
+
+h4 {
+	margin: 0;
+	font-size: 1.153em;
+	line-height: 1.266em;
+	margin-bottom: 1.266em;
+}
+
+#sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6 {
+  margin-bottom: 10px;
+}
+#sidebar h1 a, #sidebar h2 a, #sidebar h3 a, #sidebar h4 a, #sidebar h5 a, #sidebar h6 a {
+  color: #555;
+}
+
+p, ul, blockquote, pre, td, th, label {
+	margin: 0;
+	font-size: 1em;
+	line-height: 1.461em;
+	margin-bottom: 1.461em;
+}
+p, ul, blockquote, td, th, label {
+/*  font-family: "Bitstream Vera Serif", Georgia, Times, "Times new Roman", serif;*/
+}
+
+p.small {
+	margin: 0;
+	font-size: 0.846em;
+	line-height: 1.727em;
+	margin-bottom: 1.727em;
+}
+table {
+	border-collapse: collapse;
+	margin-bottom: 1.461em;
+}
+code, pre, tt {
+  /*font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;*/
+  font-size: 95%;
+  line-height: 105%;
+}
+pre {
+  white-space: pre-wrap;       /* CSS-3                  */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+  white-space: -pre-wrap;      /* Opera 4-6              */
+  white-space: -o-pre-wrap;    /* Opera 7                */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+a {
+/*  color: #e7371a;*/
+  color: #390;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+a.link_noop {
+  color: inherit;
+}
+strong, b {
+  font-weight: bold;
+}
+em, i {
+  font-style: italic;
+}
+ul {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
+ol li {
+  list-style-type: decimal;
+  margin-left: 35px;
+}
+pre {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+pre.no-indent {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+ul li h1, ul li h2, ul li h3, ul li h4 {
+  margin-bottom: 0.5em;
+}
+
+abbr {
+  border-bottom: 1px dotted #333;
+}
+abbr.timeago {
+    border-bottom: none;
+}
+/* boxes */
+
+.clear {
+  clear: both;
+  height: 0;
+}
+
+.clear_left {
+  clear: left;
+  height: 0;
+}
+
+#header {
+  height: 112px;
+  background: #111 url("../images/header_bg.png") repeat-x 0 0;
+  overflow: hidden;
+}
+
+#header #logo {
+  padding: 10px 0 0 20px;
+  line-height: 25px;
+  margin:0;
+  float: left;
+  border:0;
+}
+
+#header #searchbox {
+  float: right;
+  margin-top: 15px;
+  padding: 0px;
+  margin-right: 24px;
+  list-style: none;
+  padding-top: 2px;
+  clear: right;
+}
+
+#header #searchbox .search-field, #header #searchbox .search-submit {
+  background: #1F1F1F;
+  border: 1px solid #666;
+  color: #fff;
+}
+#header #searchbox .search-submit {
+  color: #aaa;
+}
+#header #searchbox input {
+  margin: 0;
+  padding: 3px;
+}
+
+#header #searchbox .search-field {
+  width: 250px;
+}
+
+#header #searchbox .search-hint {
+  display: none;
+}
+
+
+#header #logo a { color: #666; }
+
+#header #project_title {
+  font-size: 39px;
+  line-height: 19px;
+  margin: 0 0 0px 0;
+  padding: 0;
+}
+#header #project_title  a {
+  color: #ccc;
+  letter-spacing: 0.05em;
+}
+
+#container {
+  min-height: 300px;
+/*  margin-right: 40px;
+  background: #fff url("../images/maincontent-border-right.gif") top right repeat-y;*/
+  background: #fff;
+}
+#container.in-context-mode {
+  border-top: 1px solid #a7afb5;
+}
+
+#container #content {
+  padding: 20px;
+  min-height: 500px;
+}
+
+#container #content.with_sidebar {
+  float: left;
+  position: relative;
+  width: 69%;
+  margin: 20px 0 20px 20px;
+  padding:0;
+}
+
+#container #sidebar {
+  border-left: 1px solid #d1d5d8;
+  position: relative;
+  margin: 0 2px 0 72%;
+  padding: 20px;
+  background: #eef2f5;
+  color: #555;
+}
+
+#container #sidebar:after {
+  clear: left;
+  display: block;
+  visibility: hidden;
+  height: 0;
+  content: "";
+}
+
+#sidebar ul.links {
+  margin-left: -5px;
+  padding:0;
+}
+
+#sidebar ul.links li:first-child {
+  border-top: 1px dotted #888;
+}
+
+#sidebar ul.links.meta li:first-child {
+  border-top: none;
+}
+
+#sidebar ul.links li {
+  border-bottom: 1px dotted #888;
+}
+
+#sidebar ul.links.meta li {
+ border-bottom: none;
+}
+
+#sidebar ul.links li a {
+  background-repeat: no-repeat;
+  background-position: 5px 7px;
+  background-image: url("../images/silk/bullet_go.png");
+  display: block;
+  padding: 5px 5px 5px 28px;
+}
+
+#sidebar ul.links.meta li a {
+  font-size: 10px;
+  padding: 2px 5px 2px 28px;
+  background-position: 5px 2px;
+}
+
+#sidebar ul.links li:hover {
+  background: #390;
+  margin-left: -1px;
+  padding-left: 1px;
+}
+
+#sidebar ul.links.meta li:hover {
+  background: inherit;
+}
+
+#sidebar ul.links li a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+#sidebar ul.links.meta li a:hover {
+  color: #390;
+  text-decoration: underline;
+}
+
+#container #footer {
+  padding: 20px;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  clear: both;
+  background: #222 url("../images/header_bg.png") repeat-x;
+}
+
+#container #footer a {
+  color: #92B92D;
+}
+
+#container #footer ul {
+  margin: 0;
+}
+#container #footer ul li {
+  display: inline;
+}
+
+#container #footer ul.footer-links li {
+  font-size: 13px;
+}
+
+#container #footer ul.legal { margin-top: 5px; }
+#container #footer ul.legal a {
+  color: #666;
+  font-size: 10px;
+}
+#container #footer ul.legal a:hover { color: #92B92D; }
+
+#container #footer .powered-by {
+  float: right;
+  margin: 10px;
+}
+
+.flash_message {
+  clear: both;
+  padding: 5px 5px 5px 25px;
+  margin-bottom: 20px;
+  border-top:1px solid #ccc;
+  border-bottom:1px solid #ccc;
+  background-repeat: no-repeat;
+  background-position: 5px 7px;
+}
+.flash_message p { margin: 0; }
+.flash_message.notice {
+  color: #03588e;
+  background-color: #d9e8fa;
+  border-color: #03588e;
+  background-image: url("../images/silk/information.png");
+}
+
+.flash_message.success {
+  color: #588e03;
+  background-color: #e9fad9;
+  border-color: #588e03;
+  background-image: url("../images/silk/accept.png");
+}
+
+.flash_message.error {
+  color: #c30000;
+  background-color: #f2dcdc;
+  border-color: #c30000;
+  background-image: url("../images/silk/exclamation.png");
+}
+
+/* menu */
+
+#menu {
+  float: right;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+#menu li {
+  display: inline;
+  margin-right: 20px;
+}
+#menu li.secondary {
+  margin-right: 5px;
+  color: #666;
+}
+#menu li a {
+  font-size: 16px;
+  color: #92B92D;
+}
+#menu li.subtle a { color: #666; margin-left: 10px;}
+#menu li.subtle a:hover { color: #92B92D; }
+
+#menu li.secondary a {
+ font-size: 11px;
+}
+
+#menu li.secondary.messages {
+  background: transparent url('../images/silk/email.png') no-repeat 0px 1px;
+}
+#menu li.secondary.messages a > span {
+  color: #666;
+}
+#menu li.secondary.messages a {
+  width: 100%;
+  padding-left: 20px;
+}
+
+#menu li a:hover {
+  text-decoration: none;
+  border-bottom: 2px solid #92B92D;
+}
+
+/* Round corners */
+.round-top-5 {
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+}
+.round-top-10 {
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-topright: 10px;
+  -webkit-border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
+}
+.round-bottom-5 {
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+}
+.round-5 {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+.round-10 {
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+
+.shadow-2 {
+  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+  -moz-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+}
+
+
+/* submenu */
+#submenu {
+/*  font-size: 90%;*/
+  list-style: none;
+  margin: 0;
+  padding-top: 11px;
+  line-height:100%;
+}
+
+#submenu li {
+  display: inline;
+  margin-right: 20px;
+}
+
+#submenu li a {
+  float:none;
+  font-size: 12px;
+  background: #555;
+  color: #fff;
+  padding: 10px 15px 8px 15px;
+}
+#submenu li.selected a {
+  background: #dee7ed;
+  color: #000;
+}
+
+#submenu.white li.selected a {
+  background: #fff;
+}
+
+#submenu li a:hover {
+  text-decoration: none;
+  background: #92B92D;
+  color: #fff;
+}
+
+#submenu li.selected a:hover {
+  background: #dee7ed;
+  color: #000;
+}
+
+#submenu.white li.selected a:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* breadcrumbs */
+
+#breadcrumbs{
+  margin: 0;
+  line-height: 100%;
+  margin-left: 0px;
+  height: 29px;
+  background: #dee7ed;
+  border-bottom: 1px solid #D1D5D8;
+}
+
+#breadcrumbs li {
+  float: left;
+  background-repeat: no-repeat;
+  background-position: right 0px;
+  padding: 0 15px 0 10px;
+  display: list-item;
+  background-image: url("../images/breadcrumb.png");
+}
+
+#breadcrumbs li a {
+  padding: 9px 0 7px 22px;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: center left;
+  color: #555;
+}
+
+#breadcrumbs li:last-child{
+  background-image: none;
+}
+
+#breadcrumbs li a:hover{
+  text-decoration: none;
+  color: #390;
+}
+
+/* Icons used for actions and breadcrums */
+li.new_project > a { background-image: url("../images/silk/report_add.png") !important; }
+li.edit_project > a { background-image: url("../images/silk/report_edit.png") !important; }
+li.project > a { background-image: url("../images/silk/report.png") !important; }
+li.project_personal > a { background-image: url("../images/silk/report_user.png") !important; }
+li.project_research > a { background-image: url("../images/silk/report_magnify.png") !important; }
+li.user > a { background-image: url("../images/silk/user.png") !important; }
+
+li.group > a { background-image: url("../images/silk/group.png") !important; }
+li.edit_group > a { background-image: url("../images/silk/group_edit.png") !important; }
+
+li.repository > a { background-image: url("../images/silk/database.png") !important; }
+li.repository.mainline > a { background-image: url("../images/silk/database_star.png") !important; }
+li.branch > a { background-image: url("../images/silk/arrow_branch.png") !important; }
+li.branch.head > a { background-image: url("../images/arrow_branch_head.png") !important; }
+li.tag > a { background-image: url("../images/silk/tag_blue.png") !important; }
+li.tree > a { background-image: url("../images/silk/chart_organisation.png") !important; }
+li.home > a { background-image: url("../images/silk/house.png") !important; }
+li.account > a { background-image: url("../images/silk/user.png") !important; }
+li.edit_account > a, .white-button.edit_account a {
+    background-image: url("../images/silk/user_edit.png") !important;
+}
+li.edit_account_password > a, .white-button.edit_account_password a {
+    background-image: url("../images/silk/lock_edit.png") !important;
+}
+li.new_key > a { background-image: url("../images/silk/key_add.png") !important; }
+li.edit_key > a { background-image: url("../images/silk/key_edit.png") !important; }
+li.key > a, .white-button.key a {
+    background-image: url("../images/silk/key.png") !important;
+}
+li.zip > a { background-image: url("../images/silk/page_white_zip.png") !important; }
+li.gz > a { background-image: url("../images/silk/page_white_compressed.png") !important; }
+li.merge_requests > a { background-image: url("../images/silk/arrow_in.png") !important; }
+li.clone > a { background-image: url("../images/silk/database_clone.png") !important; }
+li.comment_link > a { background-image: url("../images/silk/comment.png") !important; }
+li.merge_request > a { background-image: url("../images/silk/arrow_merge.png") !important; }
+li.alias > a, .white-button.alias a {
+    background-image: url("../images/silk/vcard.png") !important;
+}
+li.new_alias > a { background-image: url("../images/silk/vcard_add.png") !important; }
+li.emails > a { background-image: url("../images/silk/email.png") !important; }
+li.new_email > a, .white-button.new_email a {
+    background-image: url("../images/silk/email_add.png") !important;
+}
+li.sent_emails > a { background-image: url("../images/silk/email_go.png") !important; }
+li.received_emails > a { background-image: url("../images/silk/email_open.png") !important; }
+li.all_emails > a { background-image: url("../images/silk/folder.png") !important; }
+
+/* Icons used both for events and actions/breadcrums */
+li.event_instance.create_repository, li.create_repository > a { background-image: url("../images/silk/database_add.png") !important; }
+li.event_instance.add_project_repository, li.add_project_repository > a { background-image: url("../images/silk/database_add.png") !important; }
+li.event_instance.clone_repository, li.clone_repository > a { background-image: url("../images/silk/database_clone.png") !important; }
+li.event_instance.add_collaborator, li.add_collaborator > a { background-image: url("../images/silk/group_add.png") !important; }
+li.event_instance.update_repository, li.update_repository > a { background-image: url("../images/silk/database_edit.png") !important; }
+li.event_instance.delete_repository, li.delete_repository > a { background-image: url("../images/silk/database_delete.png") !important; }
+li.event_instance.commit, li.commit > a { background-image: url("../images/silk/brick.png") !important; }
+li.event_instance.merge_commit, li.merge_commit > a { background-image: url("../images/silk/arrow_merge.png") !important; }
+li.event_instance.create_project, li.create_project > a { background-image: url("../images/silk/report_add.png") !important; }
+li.event_instance.delete_project, li.delete_project > a { background-image: url("../images/silk/report_delete.png") !important; }
+li.event_instance.update_project, li.update_project > a { background-image: url("../images/silk/report_edit.png") !important; }
+li.event_instance.new_repository, li.new_repository > a { background-image: url("../images/silk/database_add.png") !important; }
+li.event_instance.project_members, li.project_members > a { background-image: url("../images/silk/group.png") !important; }
+li.event_instance.wiki_page, li.wiki_page > a { background-image: url("../images/silk/book_open.png") !important; }
+li.event_instance.wiki_page_history, li.wiki_page_history > a { background-image: url("../images/silk/time.png") !important; }
+li.event_instance.edit_wiki_page, li.edit_wiki_page > a { background-image: url("../images/silk/page_white_text_edit.png") !important; }
+li.delete_merge_request > a { background-image: url("../images/silk/chart_line_delete.png") !important; }
+
+/* Icons used for events only */
+li.event_instance.create_branch { background-image: url("../images/silk/arrow_branch.png") !important; }
+li.event_instance.delete_branch { background-image: url("../images/silk/delete.png") !important; }
+li.event_instance.create_tag { background-image: url("../images/silk/tag_blue_add.png") !important; }
+li.event_instance.delete_tag { background-image: url("../images/silk/tag_blue_delete.png") !important; }
+li.event_instance.remove_committer { background-image: url("../images/silk/group_delete.png") !important; }
+li.event_instance.comment { background-image: url("../images/silk/comment.png") !important; }
+li.event_instance.request_merge { background-image: url("../images/silk/chart_line_add.png") !important; }
+li.event_instance.resolve_merge_request { background-image: url("../images/silk/arrow_merge.png") !important; }
+li.event_instance.update_merge_request { background-image: url("../images/silk/chart_line_edit.png") !important; }
+li.event_instance.delete_merge_request { background-image: url("../images/silk/chart_line_delete.png") !important; }
+li.event_instance.push { background-image: url("../images/silk/bricks.png") !important; }
+
+/* Icons used for file types in breadcrumb and tree view */
+table.tree tr td.file a, li.file > a { background-image: url("../images/silk/page_white_text.png"); }
+table.tree tr td.folder a,li.folder > a { background-image: url("../images/silk/folder.png") !important; }
+table.tree tr td.cplusplus-file a, li.cplusplus-file > a { background-image: url("../images/silk/page_white_cplusplus.png"); }
+table.tree tr td.c-file a, li.c-file > a { background-image: url("../images/silk/page_white_c.png"); }
+table.tree tr td.header-file a, li.header-file > a { background-image: url("../images/silk/page_white_h.png"); }
+table.tree tr td.java-file a, li.java-file > a { background-image: url("../images/silk/page_white_cup.png"); }
+table.tree tr td.exec-file a, li.exec-file > a { background-image: url("../images/silk/page_white_gear.png"); }
+table.tree tr td.ruby-file a, li.ruby-file > a { background-image: url("../images/silk/page_white_ruby.png"); }
+table.tree tr td.compressed-file a, li.compressed-file > a { background-image: url("../images/silk/page_white_compressed.png"); }
+table.tree tr td.image-file a, li.image-file > a { background-image: url("../images/silk/page_white_picture.png"); }
+table.tree tr td.submodule a { background-image: url("../images/silk/folder_go.png"); }
+
+li.wiki a {background-image: url('../images/silk/book_open.png');}
+li.memberships a, li.committerships a {background-image: url('../images/silk/group_gear.png');}
+li.membership a, li.committership a {background-image: url('../images/silk/group_edit.png');}
+li.add_membership a, li.add_commitership a { background-image: url("../images/silk/group_add.png");}
+
+li.merge_requests a.selected { color: #09460F;}
+
+.with_icons li {
+  padding-bottom: 3px;
+}
+.with_icons li a {
+  padding-left: 25px;
+  padding-bottom: 2px;
+  background-repeat: no-repeat;
+  background-position: 2px 0px;
+}
+
+.with_icons.inline_icons li a {
+  background-image: none !important;
+  margin: 0 0 0 5px;
+  padding: 0;
+}
+
+.with_icons li span a {
+  background-image: none;
+  padding: 0;
+}
+
+.with_divider {
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 4px solid #ccc;
+}
+
+.help-box {
+  border: 1px solid #ccc;
+  background: #E9F1F6;
+  padding: 10px;
+  color: #333;
+}
+
+.help-box.side {
+  float: right;
+  margin-right: 20px;
+  width: 350px;
+}
+
+.help-box.left {
+  width: 500px;
+  margin-bottom: 20px;
+}
+
+.help-box.middle {
+  margin: 10px auto 30px auto;
+  width: 450px;
+}
+
+.help-box.full {
+  margin: 0 auto 30px auto;
+  width: 90%;
+}
+
+.help-box.error {
+  border: 1px solid #CBCB9E;
+  background: #ffc;
+}
+
+.help-box .icon {
+  width: 16px;
+  height: 16px;
+  float: right;
+  margin: 0 0 2px 2px;
+}
+
+.help-box .icon.help {
+  background: transparent url('../images/silk/help.png') no-repeat 0 0;
+}
+.help-box .icon.error {
+  background: transparent url('../images/silk/error.png') no-repeat 0 0;
+}
+
+.help-box :last-child {
+  margin-bottom: 0;
+}
+
+/* White buttons */
+
+#new-project-button, .white-button {
+  margin: 10px 20px 10px 20px;
+  text-align:center;
+  width: 250px;
+  float: right;
+  background: #fff url('../images/dialog_bg_bottom.png') repeat-x bottom left;
+}
+#new-project-button a, .white-button a {
+  font-size: 18px;
+  display: block;
+  padding: 10px 10px 8px 10px;
+  border: 1px solid #ccc;
+  background: transparent url("../images/silk/report_add.png") no-repeat 220px center;
+}
+
+#new-project-button.small-button, .white-button.small-button {
+  margin: 5px 10px 5px 10px;
+  width: 160px;
+  text-align: left;
+}
+
+#new-project-button.small-button a, .white-button.small-button a {
+  font-size: 12px;
+  padding: 5px 5px 4px 10px;
+  background-position: 130px center;
+}
+#new-project-button:hover, .white-button:hover {
+    background-image: url('../images/dialog_bg_top.png');
+    background-position: top left;
+}
+#new-project-button a:hover, .white-button a:hover {
+  text-decoration: none;
+}
+
+ul.buttons .white-button.small-button {
+    margin: 0 0 5px 10px;
+}
+ul.buttons .white-button.small-button a {
+    padding:2px 5px 2px 10px;
+}
+
+/* white favorite button */
+.white-button.favorite {
+    width: inherit;
+    margin: 0 0 2px 0;
+}
+.white-button.favorite a {
+    padding: 2px 5px 1px 25px;
+    background-position: 5px center;
+}
+.white-button.favorite a.enabled {
+    background-image: url("../images/silk/star.png");
+}
+.white-button.favorite a.disabled {
+    background-image: url("../images/silk/star_deselected.png");
+}
+.white-button.favorite a.waiting {
+    background-image: url("../images/spinner.gif");
+}
+
+/* Forms */
+
+textarea {
+  width: 90%;
+}
+
+fieldset {
+  padding: 3px;
+  margin: 0 0 10px 0;
+  width: 100%;
+}
+
+legend {
+  font-weight: bold;
+  font-size:12px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.required {
+  color: #aaa;
+  font-size: 10px;
+  font-weight: normal;
+}
+
+form {
+  margin-bottom: 1.5em;
+}
+
+form.button-to, form.button-to div { display: inline; }
+form.button-to div { margin: 0 5px 0 5px; }
+form.button-to div input {
+  background: #dedede;
+  border: 1px solid #bbb;
+  color: #390;
+  padding: 2px 3px 2px 3px;
+  border-top-style: outset;
+  border-left-style: outset;
+}
+form.button-to div input:hover {
+  background: #390;
+  color: #fff;
+}
+
+input[type='text'], input[type='password'] {
+  padding: 3px;
+  width: 350px;
+}
+
+textarea {
+  width: 350px;
+  height: 150px;
+  padding: 3px;
+}
+textarea.text { height: 60px; }
+textarea.wide { width: 500px; }
+textarea.tall { height: 300px; }
+textarea.taller {height: 500px;}
+textarea.medium { width: 450px; height: 250px; }
+textarea.fill { width: 95%; }
+select        { width: 200px; }
+
+input[type='text'], input[type='password'], textarea, select {
+  margin: 5px 0 10px 0;
+  border: 1px solid #bbb;
+}
+
+input.compact, select.compact {
+    width: 100px;
+    margin-right: 5px;
+}
+input.medium_compact {
+    width: 170px;
+    margin-right: 5px;
+}
+
+input[type='text']:focus, input[type='password']:focus. input.title:focus,
+textarea:focus, select:focus {
+  border: 1px solid #666;
+}
+
+/* embeds the openid image in the text field */
+input#openid_url {
+   background: url(../images/login-bg.gif) no-repeat;
+   background-color: #fff;
+   background-position: 0 50%;
+   color: #000;
+   padding-left: 18px;
+}
+
+.fieldWithErrors { margin: 0; display: inline-block;}
+.fieldWithErrors input, .fieldWithErrors textarea,
+.fieldWithErrors select {
+  border: 1px solid #c30000;
+}
+
+.errorExplanation {
+  background: #fbe3e4;
+  border: 1px solid #c30000;
+  width: 400px;
+  margin: 0 0 10px 0;
+}
+
+.errorExplanation h2 {
+  font-size: 120%;
+  line-height: 120%;
+  font-weight: normal;
+  padding: 5px;
+  color: #fff;
+  background: #c30000;
+  margin-bottom: 0.2em;
+}
+.errorExplanation p {
+  padding: 2px 2px 2px 5px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.errorExplanation ul {
+  padding: 5px 10px 10px 25px;
+  margin-bottom: 0;
+}
+.errorExplanation ul li{
+    list-style-type: disc;
+}
+
+form table.inline-labels td {
+    padding-right: 10px;
+}
+form table.inline-labels th {
+    padding-right: 20px;
+}
+form table.inline-labels td label {
+    font-weight: normal;
+}
+
+
+/* Tables */
+
+table.listing {
+  width: 100%;
+}
+
+table.listing tr td {
+  padding: 3px;
+}
+
+table.listing tr.odd {
+  background: #efefef;
+}
+table.listing thead th {
+  font-weight: bold;
+  padding: 3px;
+  border-bottom: 2px solid #888;
+}
+table.listing td.icon {
+  text-align: center;
+}
+
+ul.committers_list li {
+  margin-bottom: 2px;
+}
+
+ul .user {
+  padding-left: 2px;
+}
+
+/* Repository list */
+
+#sidebar ul.repository_list ul {
+  margin-left: 10px;
+}
+
+.repository_meta ul.repository_list {
+  margin: 0;
+}
+
+ul.repository_list li {
+  padding-left: 18px;
+  margin-bottom: 10px;
+}
+ul.repository_list li.mainline {
+  background: url("../images/silk/database_star.png") 0 0 no-repeat;
+}
+
+ul.repository_list li.clone {
+  background: url("../images/silk/database.png") 0 0 no-repeat;
+}
+
+ul.repository_list .user img, ul.repository_list .group img,
+ul.committers .user img, ul.committers .group img {
+  float: left;
+  margin-top: 1px;
+}
+
+ul.repository_list .user a, ul.repository_list .group a,
+ul.committers .user a, ul.committers .group a {
+  color: #555;
+  margin: 0 0 0 5px;
+  padding:0;
+  font-size: 11.8px;
+}
+
+ul.icon_list li {
+   margin-bottom: 3px;
+}
+
+ul.icon_list li a {
+   padding-left: 25px;
+   background-repeat: no-repeat;
+   background-position: 2px 0px;
+}
+
+/* info boxes */
+
+ul.infobox {
+  background: #efefef;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+ul.infobox li {
+  margin-bottom: 0;
+}
+
+ul.infobox li.meta {
+  font-size: 11px;
+}
+
+table.repository_meta .infobox {
+  padding: 5px;
+}
+table.repository_meta .infobox ul {
+  padding: 0;
+  margin: 0;
+}
+
+.infobox .alt-clone-links {
+  color: #666;
+}
+
+/* commit info boxes*/
+
+.commit-infobox {
+  clear: both;
+  margin-top: 20px;
+}
+
+.commit-infobox .commit_message {
+  margin: 0;
+}
+.commit-infobox pre.commit_message {
+  margin: 0 0 20px 20px;
+}
+.commit-infobox .commit_message p {
+  margin-top: 0;
+}
+
+.commit-infobox .commit-meta {
+  margin: 10px 1px 0px 5px;
+  min-width: 350px;
+}
+
+.commit-infobox .commit-meta .people {
+  margin:0;
+}
+.commit-infobox .commit-meta .people small {
+  color: #666;
+}
+
+.commit-infobox .commit-meta .people .meta {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  color: #666;
+  font-size: 12px;
+  max-width: 500px;
+}
+
+.commit-infobox ul li.avatar div {
+  float: left;
+  display: inline;
+  padding-right: 10px;
+  margin-top: 3px;
+}
+
+.commit-infobox ul.meta {
+  font-size: 12px;
+  color: #666;
+}
+
+.commit-infobox ul.meta li strong {
+  font-weight: normal;
+}
+
+.merge_commit_message {
+  font-size: 13px;
+  margin: 10px;
+  margin-bottom: 50px;
+}
+
+
+ul.horizontal {
+  display: inline;
+  margin-left: 5px !important;
+}
+
+ul.horizontal li {
+  padding-right: 10px;
+  margin-left: 0px;
+  display: inline;
+}
+
+ul.horizontal li > a {
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  padding-left: 22px !important;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+ul.horizontal.meta li > a {
+  font-size: 11px;
+}
+
+div.meta-info {
+  text-align: right;
+}
+
+.meta-info ul.horizontal li > a {
+  font-size: 10px;
+  background-image: none !important;
+  padding: 0 !important;
+}
+
+td.meta-info {
+  padding: 0 !important;
+  text-align: right;
+}
+
+.commit_list .commit_item {
+  clear:left;
+  margin-bottom: 15px;
+}
+
+.commit_message, .commit_message p {
+  margin-top: 10px;
+  margin-left: 10px;
+  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+}
+.event_instance .commit_message, .event_instance .commit_message p {
+  margin: 2px 0 0 0;
+  line-height: 130%;
+}
+
+/*
+Single (inline) commit under a push
+*/
+.event_instance.push .event_instance {
+  margin: 0 0 0 2px;
+  width: 90%;
+}
+
+.event_instance.push .event_instance img {
+  float: left;
+  margin-right: 10px;
+}
+
+.event_instance.push .event_instance .commit_message {
+  margin-left: 26px;
+}
+
+.event_instance.push .event_instance .actor {
+}
+
+.event_instance.push .event_instance .timestamp,
+.event_instance.push .commits_in_event .timestamp {
+    font-size: 11px;
+}
+
+.commit_list .commit_item .commit_message {
+  margin-left: 40px;
+}
+
+small.commit_message {
+  margin: 0;
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+}
+
+.commit_message.inline, .commit_message.inline p {
+  display: inline;
+}
+
+.commit_message a {
+  color: #000;
+}
+.commit_message a.sha {
+  text-decoration: underline;
+}
+
+.gravatar {
+  background-color: white;
+  border: 1px solid #CCCCCC;
+  float: left;
+  margin-right: 10px;
+  padding: 2px;
+}
+
+.gravatar_tiny {
+  background: transparent;
+  border: none;
+  margin-right: 5px;
+}
+
+.commit_list .commit_item .gravatar {
+  margin-top: 5px;
+}
+
+ul.project_list li {
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  border-bottom: 1px solid #dedede;
+}
+
+ul.bullet_list li {
+  list-style: disc;
+  margin-left: 2.5em;
+}
+
+.pagination {
+  padding: 3px;
+  margin: 3px;
+  text-align: center;
+}
+.pagination a {
+  padding: 3px 5px 2px 5px;
+  margin: 2px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+}
+.pagination a:hover, .pagination a:active {
+  background: #390;
+  color: #fff;
+}
+.pagination span.current {
+  padding: 3px 5px 2px 5px;
+  margin: 2px;
+  border: 1px solid #999;
+  font-weight: bold;
+  color: #000;
+}
+.pagination span.disabled {
+  padding: 1px 5px 2px 5px;
+  margin: 2px;
+  border: 1px solid #eee;
+  color: #ddd;
+}
+
+.section {
+  margin-bottom: 3em;
+}
+
+ul.path_breadcrumbs { margin: 0 0 5px 0; }
+ul.path_breadcrumbs li {
+  display: inline;
+  margin:0;
+  font-size: 11px;
+}
+
+/* tags */
+
+ul.tag_list li {
+  display:inline;
+}
+
+.tag_size_1 { font-size: 1.0em; }
+.tag_size_2 { font-size: 1.2em; }
+.tag_size_3 { font-size: 1.4em; }
+.tag_size_4 { font-size: 1.6em; }
+
+.large_tags .tag_size_1 { font-size: 1.0em; }
+.large_tags .tag_size_2 { font-size: 1.3em; }
+.large_tags .tag_size_3 { font-size: 1.6em; }
+.large_tags .tag_size_4 { font-size: 1.9em; }
+
+/* "un-ready" objects */
+
+.constructing {
+  color: #999;
+  background: transparent;
+}
+
+div.being_constructed p {
+  padding: 0;
+  padding-top: 2px;
+  margin: 0;
+  color: #333;
+	font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+	font-size: 90%;
+}
+
+div.being_constructed {
+  text-align:center;
+  font-size: 16px;
+  padding: 0;
+  margin: 20px auto 150px auto;
+  width: 500px;
+  background: transparent url("../images/dialog_bg_bottom.png") repeat-x left bottom;
+}
+
+div.being_constructed div.being_constructed_content {
+  padding: 20px;
+  border: 2px solid #4e4e4e;
+  background: transparent url("../images/dialog_bg_top.png") repeat-x left top;
+}
+
+div.being_constructed .spin {
+  text-align: center;
+  margin: 20px auto 20px auto;
+}
+
+div.being_constructed .hint {
+  font-size: 11px;
+  color: #666;
+}
+
+/* auto completions */
+
+.ac_results {
+	padding: 0px;
+	border: 1px solid #888;
+	background-color: #fff;
+	overflow: hidden;
+}
+
+.ac_results ul {
+  margin:0;
+  padding:0;
+  width:100%;
+  list-style-type:none;
+}
+
+.ac_results iframe {
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:-1;
+	filter:mask();
+	width:3000px;
+	height:3000px;
+}
+
+.ac_results li {
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: pointer;
+	display: block;
+	width: 100%;
+	overflow: hidden;
+}
+.ac_loading {
+	background : url('../images/spinner.gif') right center no-repeat;
+}
+.ac_over {
+  background-color: #ffb;
+  /*color: #800;*/
+}
+
+/* project autocompletion */
+
+#project_slug_auto_complete .slug {
+  font-weight: bold;
+}
+
+#project_slug_auto_complete .title {
+  font-style: italic;
+  font-size: 10px;
+}
+
+/* user login autocompletion */
+#user_login_auto_complete  li.committer {
+  height: 32px;
+}
+
+#user_login_auto_complete li.committer div.image {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+}
+
+#user_login_auto_complete li.committer div.name {
+  font-weight: bold
+  font-size: 12px;
+  line-height: 1.2em;
+}
+
+#user_login_auto_complete li.committer div.email {
+  font-size: 10px;
+  color:#888;
+  margin-top: -5px;
+}
+
+
+
+span.tag {
+  border: 1px solid #999;
+  background: #dedede;
+  padding: 0 4px 2px 4px;
+}
+
+.link_to_more {
+  border-top: 1px solid #aaa;
+  padding: 2px;
+  text-align: center;
+}
+
+a.more_info img {
+  display: inline;
+  margin-right: 3px;
+}
+
+table.tree tr td {
+	padding: 5px;
+}
+
+
+table.tree tr td.meta {
+  font-size: 85%;
+}
+
+table.tree tr td.meta, table.tree tr td.commit_message a {
+	color: #444;
+}
+
+table.tree tr td.node a {
+  padding-left:25px;
+  background-position: 4px 50%;
+  background-repeat: no-repeat;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#site_greeting {
+    text-align: right;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+#site_intro {
+  width: 65%;
+  margin: 2em auto 2em auto;
+  font-size: 1.5em;
+}
+
+#site_intro .hint {
+  font-size: 55%;
+}
+#site_project_list .tag_list{
+  text-align: center;
+}
+
+ul.tab_menu {
+  border-bottom: 1px solid #888;
+  list-style: none;
+  padding: 3px;
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+ul.tab_menu li {
+  display:inline;
+  margin-right: 1em;
+  border-top: 1px solid #888;
+  border-left: 1px solid #888;
+  border-right: 1px solid #888;
+  padding: 5px;
+}
+
+ul.tab_menu.inline_tabs {
+  border-bottom: 1px solid #888;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+ul.tab_menu.inline_tabs li:hover {
+  background: #eee;
+}
+
+ul.tab_menu li.selected {
+  border-bottom: 2px solid #fff;
+}
+
+ul.tab_menu li.selected, ul.tab_menu li.selected a {
+  color: #666;
+}
+
+#sidebar li.comment {
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+  padding-top: 15px;
+}
+
+#sidebar li.comment:first-child {
+  padding-top: 0px;
+  border-top: none;
+}
+
+#sidebar li.comment:last-child {
+    border-bottom: none;
+}
+
+#sidebar li.comment .body {
+  padding: 5px 8px 0px 8px;
+}
+
+#sidebar li.comment .byline {
+  font-size: 10px;
+  margin-top: -15px;
+  float: right;
+}
+
+.hint {
+  color: #666;
+  font-size: 90%;
+}
+small.hint { font-size: 83%;}
+
+.caps {
+  font-variant: small-caps;
+}
+
+#sidebar .hint {
+  color: #868F97;
+}
+
+.info_hint {
+  font-size: 95%;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px dotted #888;
+  border-bottom: 1px dotted #888;
+}
+
+.info_hint pre {
+  margin-bottom: 5px;
+}
+
+/* diff mode selector */
+ul.mode_selector {
+  float: right;
+}
+ul.mode_selector li {
+  display:inline;
+  margin-left: 1em;
+}
+ul.mode_selector li.list_header { font-weight: bold; }
+ul.mode_selector li.selected    { border-bottom: 1px solid #666; }
+
+/* Diff rendering */
+tr.toggle_diff { border-top: 1px solid #999; }
+tr.toggle_diff td {
+  background: #ddd;
+  padding: 0 5px 2px 5px;
+  margin-bottom: 5px;
+}
+tr.toggle_diff td small { float:right;}
+tr.raw_diff td {
+  padding-top: 5px;
+}
+
+table#codeblob {
+  width: 100%;
+}
+
+table tr .line-numbers {
+ text-align: right;
+ vertical-align: top;
+ background: #eee;
+ color: #777;
+ font-size: 92%;
+ padding: 0 3px 0 2px;
+ width: 35px;
+ border-right: 1px solid #ccc;
+ border-bottom: 1px solid #cdcdcd;
+}
+
+table tr .commentable {
+    cursor: pointer;
+}
+
+table tr.selected-for-commenting td,
+table tr.selected-for-commenting td.ins,
+table tr.selected-for-commenting td.del,
+table tr.selected-for-commenting td.mod {
+  background: #ffc none;
+}
+
+table tr .ui-selecting,
+table tr .ui-selected {
+  background-color: #ddd;
+  font-weight: bold;
+}
+
+table tr td.inline_comments {
+    text-align: right;
+    vertical-align: top;
+    background: #eee;
+    color: #777;
+    font-size: 92%;
+    padding: 0;
+    border:none;
+    border-right: 1px solid #cdcdcd;
+}
+table tr td.inline_comments .diff-comment-count {
+    background: orange;
+    padding: 1px 4px;
+    margin: 0 1px;
+    background: #222;
+    border: 1px solid #eee;
+    opacity: 0.7;
+    color: #FA8700;
+}
+table tr td.inline_comments .diff-comment-count:hover {
+    background: #FA8700;
+    color: #000;
+    text-decoration: none;
+}
+
+table tr td.code .diff-comments {
+    display: none;
+    border-top: 1px solid #cdcdcd;
+    border-bottom: 1px solid #cdcdcd;
+    background: #888;
+    padding: 0;
+    margin: 5px 0 0 -2px;
+    line-height:100%;
+    font-size: 100%;
+    white-space: normal;
+}
+
+table tr.highlighted td.code {
+    background: #ff9;
+}
+
+table tr td.code {
+ width: 95%;
+ padding-left: 10px;
+ /*white-space: pre;*/
+ white-space: pre-wrap;       /* CSS-3                  */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+ white-space: -pre-wrap;      /* Opera 4-6              */
+ white-space: -o-pre-wrap;    /* Opera 7                */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ background: #fff;
+ font: 95%/110% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+ border-right: 1px solid #ccc;
+}
+table#codeblob tr td.code {
+  border-right: none;
+}
+
+table tr td.code pre {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+table tr td.unwrapped {
+ white-space: pre;
+}
+
+table tr td.softwrapped {
+  white-space: pre-wrap;       /* CSS-3                  */
+  white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
+  white-space: -pre-wrap;      /* Opera 4-6              */
+  white-space: -o-pre-wrap;    /* Opera 7                */
+  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+table tr td.marked {
+  background: #ffc !important;
+}
+
+table.sidebyside {
+  empty-cells: show;
+  table-layout: fixed;
+}
+table.sidebyside tr td.code {
+  padding: 2px;
+}
+
+table.codediff {
+  border: 1px solid #ccc;
+  width: 100%;
+  border-collapse: collapse;
+  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+}
+table.codediff .line-num-cut {
+  background: #ccc;
+  border-top: 1px dashed #ccc;
+  border-bottom: 1px dashed #ccc;
+}
+
+table.codediff thead .line-numbers, table.codediff thead { background: #ddd; }
+table.codediff td.code { padding-left: 2px; }
+table.codediff .cut-line {
+  background: #eee;
+  border-top: 1px dashed #aaa;
+  border-bottom: 1px dashed #aaa;
+}
+table.codediff td.hidden del { display:none; }
+table.codediff td.del { background: #ffdddd; }
+table.codediff td.del span.idiff { background: #F2ACAD; }
+table.codediff td.ins { background: #ddffdd; }
+table.codediff td.ins span.idiff { background: #BAFBAD; }
+table.sidebyside tbody.mod td { background: #fe9; }
+table.sidebyside tbody.mod td { background: #fe9; }
+table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del { background: inherit; }
+/*table.sidebyside tbody.mod td ins span.idiff,
+  table.sidebyside tbody.mod td del span.idiff { background: #fd4; }*/
+table.codediff td.del del { text-decoration: none; }
+table.codediff td.ins ins { text-decoration: none; }
+table.sidebyside td.del del { background: #ffaaaa; }
+table.sidebyside td.ins ins { background: #aaffaa; }
+table.codediff col.lines {
+  width: 3em;
+}
+
+ul.diff_stats {
+  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  color: #888;
+}
+
+ul.diff_stats small {
+  font-size: 10px;
+  font-weight: bold;
+}
+ul.diff_stats small.insertions  { color: #00BF00; }
+ul.diff_stats small.deletions   { color: #DC0000; }
+
+#newest_projects, #site_project_list {
+  margin-bottom: 3em;
+}
+
+#newest_projects ul li {
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+
+#site_overview {
+  margin-bottom: 4em;
+  margin-left: auto;
+  margin-right: auto;
+  width: 888px;
+  text-align:center;
+}
+
+#site_columns ul, #site_columns p {
+  text-align: left;
+}
+
+#site_overview table td, #site_overview table th {
+  text-align:center;
+}
+
+#site_overview table td.left, #site_overview table th.left {
+  border-right: 1px dotted #ccc;
+  padding-right: 10px;
+}
+#site_overview table td.right, #site_overview table th.right {
+ padding-left: 10px;
+}
+
+#site_overview p.create_account_hint {
+  margin-top: 10px;
+}
+
+/* Comments */
+
+.comments {
+  margin-bottom: 20px;
+}
+
+.comments .comment {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.comments .comment .comment_form {
+  padding: 0.4em 0.4em 0.4em 2em;
+  margin: 0.4em 0.4em 0.4em 2em;
+  width: 60%;
+  border: 1px solid #000;
+  background-color: #eee;
+}
+.comments .comment .comment_form h3 {
+  margin: 0;
+}
+
+.comments .comment .comment_form .default_action {
+  font-weight: bold;
+}
+
+/* When displaying commits side-by-side, do not display the links to the context*/
+.comments.sidebyside .comment.inline .inline_comment_link {
+  display: none;
+}
+
+.comments .comment.inline .inline_comment_link a {
+    color: #333;
+}
+
+.comments .comment img {
+  max-width: 500px; max-height: 500px;
+}
+
+.comments .comment .byline {
+  margin-bottom: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.comments .comment .byline .avatar {
+  float: left;
+  display: inline;
+  padding-right: 5px;
+}
+
+.comments .comment .byline .permalink a {
+  color: #666;
+}
+
+.comment .body ul, .page ol, .diff-comment .body ul { margin-left: 30px; }
+.comment .body ul li, .diff-comment .body ul li		{ list-style-type: disc; }
+.comment .body ol li, diff-comment .body ol li		{ list-style-type: decimal; }
+.comment .body h1, .diff-comment .body h1			{ margin: 15px 0 10px 0; font-size: 140%;}
+.comment .body h2, .diff-comment .body h2			{ margin: 15px 0 10px 0; font-size: 120%;}
+.comment .body h3, .diff-comment .body h3			{ margin: 15px 0 10px 0; font-size: 110%;}
+.comment .body h4, .diff-comment .body h4			{ margin: 15px 0 10px 0; font-size: 105%;}
+.comment .body blockquote, .diff-comment .body blockquote {
+    margin-left: 7px;
+    border-left: 3px solid #ccc;
+    color: #666;
+    padding: 10px;
+}
+.comment .body pre.diff-comment-context,
+.diff-comment .body pre.diff-comment-context {
+    margin: 0;
+}
+.comment .body blockquote p:first-child, .diff-comment .body blockquote p:first-child {
+    margin-bottom: 0;
+}
+.comment .body blockquote p:last-child, .comment .body blockquote p:last-child {
+    margin-bottom: 0;
+}
+h2#comments form {
+  float: right;
+}
+h2#comments form label {
+  font-size: 11px;
+  font-weight: normal;
+  color: #000;
+}
+/* inline diff comments */
+
+.diff-comment .body p {
+    margin-bottom: 5px;
+}
+
+.diff-comment {
+    font-size: 13px;
+    font-family: "Helvetica", Arial, sans-serif;
+    line-height:100%;
+    white-space:normal;
+    border-bottom: 1px solid #eee;
+    padding: 5px 10px;
+    background: #fff;
+}
+.diff-comment:last-child {
+    border-bottom: none;
+}
+.diff-comment .byline {
+    float:left;
+}
+.diff-comment .byline {
+  margin-bottom: 0;
+  font-size: 11px;
+  color: #666;
+}
+.diff-comment .byline a {
+    color: #666;
+}
+
+.diff-comment .byline .avatar {
+  display: inline;
+  padding-right: 5px;
+}
+.diff-comment .body {
+    float:left;
+    margin-left: 75px;
+    max-width: 550px;
+}
+.diff-comment .reply {
+    float: right;
+    margin-right: 20px;
+    font-size: 11px;
+    color: #666;
+    display:none;
+}
+.diff-comment .timestamp {
+    float: right;
+    font-size: 11px;
+    color: #666;
+}
+
+.diff-comment.highlighted {
+    background: #ffd;
+}
+
+/* Markdown help */
+
+.markdown_help_link {
+  float: left;
+  padding: 0;
+  margin: -25px 0 0 355px;
+}
+table.markdown_help {
+  margin-top: -20px;
+  margin-bottom: 20px;
+  font-size: 11px;
+  width: 300px;
+}
+.markdown_help td {
+  padding: 2px 10px 2px 10px;
+  border-bottom: 1px solid #ccc;
+}
+.markdown_help td ul li {
+  list-style: disc;
+}
+.markdown_help td ul, table.markdown_help td ol {
+  margin: 0;
+  padding: 0;
+}
+.markdown_help td li {
+  padding: 0;
+  margin: 0;
+  margin-left: 15px;
+}
+.markdown_help td pre {
+  margin: 0;
+}
+
+#site #recent_comments {
+  width: 48%;
+  float: left;
+  padding-right: 10px;
+  border-right: 1px dotted #dedede;
+}
+#site #recent_comments p { margin-bottom: 0; }
+#site #recent_comments .comment { width: 100%;}
+#site #recent_comments .comment .body {
+  font-size: 12px;
+}
+
+#site #clone_list {
+  width: 49%;
+  float: right;
+}
+
+#site #clone_list ul li.repos {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+#system_message {
+  background: #ffc;
+  border-bottom: 1px solid #333;
+  margin: 0;
+}
+#system_message p {
+  text-align: center;
+  margin-bottom:0;
+  padding: 5px;
+}
+
+.project_list_item p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#left {
+  float:left;
+  width: 48%;
+}
+
+#right {
+  float:right;
+  width: 48%;
+  clear:right;
+}
+
+#site #left {
+  width: 53%;
+}
+
+#site #right {
+  width: 43%;
+}
+
+.important_message {
+  font-weight: bold;
+  color: #9A0000;
+}
+
+/* Page */
+.page					{ margin-bottom: 0px; padding-bottom: 0px; /*border-bottom: 2px solid #666;*/}
+.page ul, .page ol { margin-left: 30px; }
+.page ul li		{ list-style-type: disc; }
+.page ol li		{ list-style-type: decimal; }
+.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
+.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
+.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
+.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
+.page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
+
+.repository-description .page {
+  margin: 0;
+  padding: 0;
+}
+
+.repository-description .page > p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Merge Requests */
+
+.merge_request_summary h4 {
+	color: #111;
+	margin-bottom: 5px;
+}
+
+.merge_request_summary .proposal {
+	margin: 5px 0 5px 10px;
+	font-style: oblique;
+}
+
+.merge_request_summary {
+	width: 75%;
+	padding: 10px;
+	border: 1px solid #ffe8cd;
+	background-color: #FEFAE6;
+	margin-bottom: 20px;
+}
+
+.merge-request-reason {
+	width: 75%;
+	margin: 10px 0 20px 0;
+	padding: 10px;
+	border: 1px solid #D4D17E;
+	background-color: #FEFCAB;
+}
+
+.merge-request-reason p:last-child {
+  margin-bottom: 0;
+}
+
+.merge_request_overview {
+    margin-bottom: 20px;
+}
+.merge_request_overview .meta {
+    color: #666;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+ .merge_request_overview .meta .byline .avatar {
+  display: inline;
+  padding-right: 5px;
+}
+
+.recently-closed-merge-requests { margin: 0; }
+.merge_request_summary_short {
+  margin: 0;
+	padding: 5px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	margin-bottom: 5px;
+	font-size: 11px;
+}
+
+.merge_request_summary_short a { color: #666;}
+
+.merge_request_summary .byline, .merge_request_summary pre {
+	margin-bottom: 0;
+}
+
+.merge_request_summary .byline strong {
+  float: right;
+  margin-top: -20px;
+}
+.merge_request_summary_short img {
+  display: inline;
+}
+
+.merge_request_summary .status, .merge_request_summary_short .status {
+	float:right;
+	color: #888;
+	font-size: 11px;
+	margin: 0;
+}
+.merge_request_summary.rejected, .merge_request_summary.merged {
+	background: #eee;
+	border: 1px solid #ddd;
+}
+.merge_request_summary.open .status span,
+.merge_request_summary_short.open .status span,
+.merge-request-reason	.open span	{ color: #FF7F00; }
+.merge_request_summary.merged .status span,
+.merge_request_summary_short.merged .status span,
+.merge-request-reason	.merged span 		{ color: #48BA1C; }
+.merge_request_summary.rejected .status span,
+.merge_request_summary_short.rejected .status span,
+.merge-request-reason	.rejected span	{ color: #F00; }
+
+table.commits_in_event {
+  margin-top: 1em
+}
+
+table.commits_in_event .avatar {
+  padding-right: 1em
+}
+
+table.commits_in_event tr .commit_message {
+  margin-bottom: 10px;
+}
+
+table.select_commits_from_list {
+  margin-right: 10px;
+  width: 90%;
+}
+
+table.select_commits_from_list th {
+  background: #999;
+  color: #fff;
+  font-size: 11px;
+  padding: 5px 10px 3px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+table.select_commits_from_list th.commit_list_status {
+  font-weight: normal;
+  text-transform: lowercase;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: right;
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+}
+table.select_commits_from_list tr.commit_row td, tr.selected td {
+  padding: 5px 0 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+table.select_commits_from_list tr.selected td {
+  background-color: #ffc;
+}
+table.select_commits_from_list td.merge_to_container {
+  width: 40px;
+  text-align: center;
+}
+table.select_commits_from_list tr.commit_row td.selection {
+  background: url("../images/silk/brick.png") no-repeat center center;
+  width: 40px;
+}
+table.select_commits_from_list tr.selected td.selection {
+  background-image: url("../images/silk/brick_add.png");
+  background-color: #ffc;
+}
+
+table.select_commits_from_list tr.commit_row td.commit-details ul {
+  margin: 0;
+  padding: 0;
+}
+
+table.select_commits_from_list tr.commit_row .commit-details ul li {
+  margin-right: 5px;
+  display: inline;
+}
+table.select_commits_from_list tr.commit_row .commit-details ul li img {
+  display: inline;
+}
+table.select_commits_from_list tr.commit_row .commit-details.meta {
+  width: 180px;
+  vertical-align: top;
+}
+table.select_commits_from_list tr.commit_row .commit-details.message {
+  vertical-align: top;
+}
+table.select_commits_from_list tr.commit_row .commit-details .commit_message {
+  margin: 0;
+}
+table.select_commits_from_list tr.commit_comments .commit-details.body {
+ vertical-align: top;
+}
+
+table.select_commits_from_list tr.commit_row.with_comments td.meta,
+table.select_commits_from_list tr.commit_comments td.meta {
+  border-left: 4px solid #888;
+  padding-left: 5px;
+}
+table.select_commits_from_list tr.commit_comments .commit-details .author a {
+  font-weight:bold;
+}
+table.select_commits_from_list tr.commit_comments .commit-details .author a,
+table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
+  color: #000;
+}
+
+#commit_selection_error {
+  border: 1px solid red;
+  padding: 1em;
+}
+
+
+#repositories #branches {
+  float: right;
+  margin: 0 10px 10px 10px;
+}
+
+.search_time {
+  float: right;
+}
+
+.search_results strong.highlight {
+  background: #ff0;
+  font-weight: normal;
+}
+.search_results strong {
+  font-weight: normal;
+}
+
+.search_results p, .search_results h3 {
+  margin-bottom: 5px;
+}
+
+.search_results .item {
+  margin-top: 20px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.search_bar input {
+  padding: 3px;
+  margin:0;
+}
+.search_bar p { margin-bottom: 2px; }
+.search_bar { margin-bottom: 20px; }
+
+#users .infobox {
+  margin-bottom: 20px;
+}
+
+.commits_by_author_graph {
+  float: right;
+  margin: 40px 0 10px 10px;
+}
+
+.commit_graph {
+  text-align:center;
+}
+
+/* Events */
+
+.events .date {
+  background: #999;
+  padding: 5px 10px 3px 10px;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.events.inline {
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+.events .event_instances, .events .event_instance {
+  margin: 0px 0px 0px 5px;
+  background-repeat: no-repeat;
+  background-position: 2px 4px;
+  padding-bottom: 1px;
+  clear: both;
+}
+
+.events.inline .event_instance {
+  background-image: none !important;
+  clear: both;
+  margin: 0;
+  margin-bottom: 20px;
+}
+.event_instance.push .event_instance {
+    margin-bottom: 0;
+}
+
+.events .event_instances strong, .events .event_instance strong {
+  color: #555;
+}
+
+.events .event_instance .event_date {
+  float: left;
+  width: 80px;
+  text-align: center;
+  padding-top: 4px;
+  font-size: 11px;
+  color: #898989;
+}
+.events.inline .event_instance .event_date {
+  width: 77px;
+  padding-right: 10px;
+  margin-bottom: 0;
+}
+.events .event_instance img {
+  float: left;
+  margin-top: 3px;
+}
+
+.events .event_instance .event_meta p { padding: 0; margin: 0;}
+.events .event_instance .event_meta .event_action {
+    font-size: 12px;
+}
+.events .event_instance .event_meta {
+  margin: 0 0 20px 105px;
+}
+
+.events .event_instance .event_meta .meta_body, .comments .comment .meta_body {
+    font-size: 12px;
+}
+.events .event_instance .event_meta .meta_body span.changed,
+.comments .comment .meta_body span.changed {
+    background: #E0EFCF;
+    padding: 1px 2px 1px 2px;
+}
+
+.events.inline .event_instance .event_meta {
+  margin: 0 0px 20px 112px;
+  text-align: left;
+}
+
+.events .event_instance.relative .event_meta {
+    margin: 0 0px 0 30px;
+}
+.events .event_instance.relative .relative_date {
+    font-size: 11px;
+    color: #555;
+    float: right;
+}
+
+.events.inline .event_instance .event_meta * > p {
+  text-align: left;
+}
+
+.events .event_instance .event_category {
+  float: right;
+  min-width: 100px;
+  text-align: center;
+  padding: 2px 5px 0 5px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #fff;
+  background: #b6babc;
+}
+
+.events.inline .event_instance .event_category {
+  width: 0;
+  display: none;
+  margin: 0;
+  padding: 0;
+}
+
+li.event_instance.create_project { background-image: url("../images/silk/report_add.png"); }
+li.event_instance.delete_project { background-image: url("../images/silk/report_delete.png"); }
+li.event_instance.update_project { background-image: url("../images/silk/report_edit.png"); }
+li.event_instance.create_repository { background-image: url("../images/silk/database_add.png"); }
+li.event_instance.clone_repository { background-image: url("../images/silk/database_clone.png"); }
+li.event_instance.delete_repository { background-image: url("../images/silk/database_delete.png"); }
+li.event_instance.update_repository { background-image: url("../images/silk/database_edit.png"); }
+li.event_instance.commit { background-image: url("../images/silk/brick.png"); }
+li.event_instance.create_branch { background-image: url("../images/silk/arrow_branch.png"); }
+li.event_instance.delete_branch { background-image: url("../images/silk/delete.png"); }
+li.event_instance.create_tag { background-image: url("../images/silk/tag_blue_add.png"); }
+li.event_instance.delete_tag { background-image: url("../images/silk/tag_blue_delete.png"); }
+li.event_instance.add_collaborator { background-image: url("../images/silk/group_add.png"); }
+li.event_instance.remove_committer { background-image: url("../images/silk/group_delete.png"); }
+li.event_instance.comment { background-image: url("../images/silk/comment.png"); }
+li.event_instance.request_merge { background-image: url("../images/silk/chart_line_add.png"); }
+li.event_instance.resolve_merge_request { background-image: url("../images/silk/arrow_merge.png"); }
+li.event_instance.update_merge_request { background-image: url("../images/silk/chart_line_edit.png"); }
+li.event_instance.delete_merge_request { background-image: url("../images/silk/chart_line_delete.png"); }
+
+/* sidebar repository list */
+
+
+.event_instance .event_category.comment { background: #a49d98; }
+.event_instance .event_category.project  { background: #98a49f; }
+.event_instance .event_category.merge_request { background: #a2a498; }
+
+/* repository meta (overview page) */
+.repository_meta {
+/*  border: 1px solid #ddd;*/
+  padding: 10px;
+  background: transparent url("../images/silver_fade.png") repeat-x 0 -15px;
+  border: 1px solid #eee;
+  margin: 0 10px 40px 0;
+}
+
+.repository_meta .header {
+  color: #888;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.repository_meta .header h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  display: inline;
+}
+
+.repository_meta .header h2.mainline {
+    font-weight: bold;
+}
+.repository_meta .header td h2 img{
+  vertical-align: middle;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.repository_meta .repository-description.page {
+    margin: 0;
+    padding: 0;
+}
+
+.repository_meta .meta-links {
+    margin: 0 0 10px 0;
+    display: block;
+}
+
+.repository_meta .meta {
+  color: #888;
+  width: 33%;
+  text-align: center;
+}
+
+.repository_meta .infobox ul {
+    margin-bottom: 0;
+}
+
+.repository_meta .branches ul li strong {
+    color: #555;
+}
+
+.repository_meta .branches { padding: 0 0 0 5px;}
+.repository_meta .branches ul {
+  margin: 0;
+  padding: 0;
+}
+
+.repository_meta .branches ul li {
+  display: inline;
+  margin-right: 5px;
+}
+.repository_meta .branches ul li.head { font-weight: bold; }
+
+
+.feed_icon { margin: 0px 4px -1px 4px; }
+
+/* Wiki Pages */
+.wiki-page {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.wiki-page .page-content { max-width: 750px;}
+
+.wiki-page .toc {
+  float: right;
+  margin: 0 0 10px 10px;
+  padding: 10px 10px 10px 0;
+  background: #E9F1F6;
+  border: 1px solid #ccc;
+}
+.wiki-page .toc ul { margin-left: 10px;}
+.wiki-page .toc ul li {
+  list-style: none;
+}
+.page-meta {
+  font-size:11px;
+  color: #666;
+  border-top: 1px solid #ccc;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.page-meta p { margin:0; padding:0;}
+.page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
+.page-meta .page-actions li {
+  padding:0;
+  margin:0;
+}
+
+.page-history .diff {
+  margin-top: 10px;
+}
+
+.page-header {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.page-header h1 {
+  font-size: 175%;
+  margin:0;
+  padding:0;
+}
+.page-header .page-crumbs {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+}
+.page-header .page-crumbs li {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  margin-right: 5px;
+  list-style-type: none;
+}
+.page-header .page-crumbs li a { margin-right: 5px;}
+.page-header .page-crumbs li.current { color: #666;}
+
+.page					{ margin-bottom: 20px; padding-bottom: 10px; /*border-bottom: 2px solid #666;*/}
+.page ul, .page ol { margin-left: 30px; }
+.page ul li		{ list-style-type: disc; }
+.page ol li		{ list-style-type: decimal; }
+.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
+.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
+.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
+.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
+.page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
+
+#project-description {
+  margin: 0;
+  padding: 0;
+}
+
+div.archive-download-box {
+  background: #eee;
+  border: 2px solid #666;
+  margin: 10px;
+  padding: 10px;
+  z-index: 100000;
+}
+
+div.archive-download-box .spin {
+  text-align: center;
+  margin: 10px auto 10px auto;
+}
+div.archive-download-box h4 {
+  text-align: center;
+}
+
+div.archive-download-box ul.links {
+  margin-left: 0 !important;
+}
+
+div.archive-download-box p {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+
+/*Styling of EULA*/
+
+.eula
+{
+  padding: 1em 2em;
+  max-height: 20em;
+  overflow-y: auto;
+}
+
+.message_list {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.message_list tr
+{
+  border-bottom: 1px solid #ddd;
+}
+.message_list th
+{
+  background-color: #eee;
+  font-weight: bold;
+}
+.message_list td,
+.message_list th
+{
+  padding: 0.2em 0.4em;
+}
+.message_list .preview
+{
+  font-size: 80%;
+  color: #333;
+  font-weight: normal;
+}
+.message_list .unread
+{
+  font-weight: bold;
+}
+.message_list td.timestamp {
+  font-size: 11px;
+  color: #555;
+  text-align: center;
+}
+.message_list_actions {
+  padding: 2px 5px 0 5px;
+  font-size: 12px;
+  background: #eee;
+}
+.message_list_actions p {
+  margin: 0;
+  padding: 0;
+  display: inline;
+  margin-right: 10px;
+}
+.message_list_actions input, .message_list_actions select {
+  display: inline;
+}
+.message_list td.who
+{
+  padding-left: 22px;
+  background-position: 2px center;
+  background-repeat: no-repeat;
+}
+.message_list tr.merge_request td.who,
+.message_list tr.membership td.who,
+.message_list tr.committership td.who
+{
+  background-image: url(../images/silk/server.png);
+}
+.message_list tr.message td.who
+{
+  background-image: url(../images/silk/comments.png);
+}
+.message_full
+{
+  border: 1px solid #ddd;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  padding: 0.4em;
+  margin-bottom: 1em;
+  -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+}
+.message_full .avatar
+{
+  float: left;
+  width: 50px;
+}
+.message_full .message
+{
+  margin: 0 0 0 50px;
+}
+.message_full .message .body
+{
+  padding-left: 1em;
+}
+.message .meta {
+  color: #555;
+  font-size: 12px;
+}
+.message h2.subject {
+  margin: 0 0 5px 0;
+  padding: 0;
+  font-size: 14px;
+}
+.unread
+{
+  background-color: #D9E8FA;
+}
+
+
+/* pull boxes */
+
+.pull-box {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 20px;
+  background: #fff url("../images/silver_fade.png") repeat-x 0 0;
+}
+
+.pull-box .pull-box-content {
+  padding: 10px 10px 0 10px;
+}
+
+.pull-box h3.pull-box-header {
+  background: #eee url("../images/silver_light_gradient.png") repeat-x 0 0;
+  text-align: center;
+  padding: 6px 0 5px 0;
+  margin: 0;
+  color: #333;
+  text-shadow:-1px 1px 2px #fff;
+  font-size: 15px;
+}
+
+.pull-box h3.pull-box-header a {
+  color: #fff;
+}
+
+.pull-box.expose { background-image: none; }
+.pull-box.expose p, .pull-box.expose li { font-size: 16px; }
+.pull-box.expose li                     { margin-bottom: 10px; }
+
+/* Dialog boxes */
+
+.dialog-box {
+  padding: 0;
+  margin: 20px auto 150px auto;
+  width: 500px;
+  background: transparent url("../images/dialog_bg_bottom.png") repeat-x left bottom;
+}
+
+.dialog-box .dialog-box-content {
+  padding: 20px;
+  border: 2px solid #4e4e4e;
+  background: transparent url("../images/dialog_bg_top.png") repeat-x left top;
+}
+
+.dialog-box .dialog-box-header {
+  background: #4e4e4e url("../images/dialog_header_bg.png") repeat-x;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0 5px 0;
+  margin: 0;
+}
+
+
+#project-preview
+{
+  max-height: 200px;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+ul#commit_selector
+{
+}
+ul#commit_selector li
+{
+}
+ul#commit_selector li a.current
+{
+  font-weight: bold;
+}
+table.select_commits_from_list tr.merged td.meta,
+table.select_commits_from_list tr.unmerged td.meta,
+table.select_commits_from_list tr.unknown-status td.meta
+{
+    background-position: 7px left;
+    background-repeat: no-repeat;
+    padding-left: 16px;
+}
+table.select_commits_from_list tr.unmerged td.meta
+{
+    background-image: url(../images/merge_status/unmerged.png);
+}
+table.select_commits_from_list tr.merged td.meta
+{
+    background-image: url(../images/merge_status/merged.png);
+}
+table.select_commits_from_list tr.unknown-status td.meta
+{
+    background-image: url(../images/merge_status/unknown.png);
+}
+#commits_to_be_merged
+{
+    position: relative;
+}
+#wait_for_commits
+{
+    position: absolute;
+}
+.please_wait
+{
+    background-color: #fff;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    margin: 20px 20px 20px 0;
+    text-align: center;
+    padding: 20px 20px;
+    width: 50%;
+}
+#merge-requests-status-chooser {
+    padding: 5px 10px;
+    background: #E9F1F6;
+    float: right;
+    margin: 0 0 5px 0;
+    color: #888;
+}
+
+#merge-requests-status-chooser ul.horizontal {
+    float:left;
+    margin: 0;
+}
+
+#merge-requests-status-chooser ul.horizontal li {
+  padding-right: 0;
+}
+
+#merge-requests-status-chooser ul.horizontal li > a {
+    padding-left: 10px !important;
+}
+
+.merge_request_status {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 5px;
+}
+.add_link {
+    text-align:right;
+}
+
+/* Styles for ColorPicker popUp */
+
+#colorpicker {
+  position: absolute;
+  width: 145px;
+  height: 135px;
+  overflow: hidden;
+  background: #F9F9F9;
+  border: 2px #C0C0C0 outset;
+  z-index: 1000;
+}
+
+#colorpicker-hue-container {
+    position: absolute;
+    top: 4px;
+    left: 120px;
+    width: 18px;
+    height: 110px;
+}
+
+#colorpicker-hue-bg-img {
+    width: 100%;
+    height: 100%;
+}
+
+#colorpicker-hue-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#colorpicker-hue-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    z-index: 1009;
+    cursor: default;
+}
+
+#colorpicker-bar {
+  text-align: right;
+  padding-right: 10px;
+}
+
+#colorpicker-close {
+  cursor: pointer;
+  color: blue;
+  font-size: 10px;
+  font-family: Tahoma, Helvetica, Sans-Serif;
+  font-weight: bold;
+}
+
+#colorpicker-div {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #666;
+}
+
+#colorpicker-bg,
+#colorpicker-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1001;
+  overflow: hidden;
+}
+#colorpicker-selector {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 11px;
+  height: 11px;
+  z-index: 1009;
+  margin-top: -6px;
+  margin-left: -6px;
+  cursor: default;
+}
+#colorpicker-selector img {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+#colorpicker-footer {
+  position: absolute;
+  top: 114px;
+  left: 10px;
+  width: 127px;
+}
+
+#colorpicker-value {
+  float: left;
+}
+
+#colorpicker-value,
+#colorpicker-value-input {
+  font-size: 9px !important;
+  font-family: Helvetica, Verdana, Sans-Serif;
+  height: 10px;
+}
+
+#colorpicker-value-input {
+  width: 40px;
+}
+#colorpicker-okbutton {
+  float: right;
+  padding: 0 10px;
+  background: #3366FF;
+  font-size: 10px;
+  font-family: Tahoma, Helvetica, Sans-Serif;
+  border: 1px solid #666666;
+  color: #ffffff;
+}
+
+
+/*
+Merge request commit selector
+*/
+
+.merge_request_diff_browser{
+  margin-bottom: 20px;
+  min-width: 800px;
+}
+
+#merge_request_diff{
+  min-height: 4em;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#merge_request_commit_selector {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 30px;
+  background-image: url(../images/silver_gradient.png);
+  background-position: top left;
+  background-repeat: repeat-x;
+  height: 23px;
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  min-width: 850px;
+}
+
+#merge_request_commit_selector .selectable-container {
+    width: 720px;
+    overflow:hidden;
+    height:23px;
+    float:left
+}
+
+#merge_request_commit_selector li.single_commit {
+  float: left;
+  display: block;
+  width: 107px;
+  height: 23px;
+  padding: 2px 0 0 15px;
+  margin-left: -30px;
+  background-position: top right;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-image: url(../images/commit_selector.png);
+}
+#merge_request_commit_selector.large li.single_commit.expander {
+    width: 250px;
+    padding-left: 25px;
+}
+
+#merge_request_commit_selector li:last-child,
+#merge_request_commit_selector li:first-child{
+  background-image: none; !important
+}
+#merge_request_commit_selector li:first-child.ui-selected,
+#merge_request_commit_selector li:first-child.ui-selecting{
+  background-image: url(../images/silver_gradient_inverse.png);
+  margin-left: -30px;
+  padding-left: 37px;
+  border-right: 2px solid #ddd;
+  background-repeat: repeat-x;
+}
+#merge_request_commit_selector li a{
+  padding: 0 0 0 15px;
+  background-position: -5px 0;
+  background-repeat: no-repeat;
+  font-size: 12px;
+  color: #000;
+  margin: 0;
+}
+
+#merge_request_commit_selector li.selected_shas{
+  padding: 2px 20px;
+  float: right;
+}
+#merge_request_commit_selector li.ui-selected,
+#merge_request_commit_selector li.ui-selecting{
+  background-image: url(../images/commit_selector_selected.png);
+}
+
+#merge_request_commit_selector li.single_commit a:hover {
+  text-decoration: none;
+  color: #000;
+}
+
+#merge_request_commit_selector li.merged a
+{
+  background-image: url("../images/silk/bullet_green.png");
+}
+
+#merge_request_commit_selector li.unmerged a
+{
+    background-image: url("../images/silk/bullet_red.png");
+}
+
+#merge_request_commit_selector .version_selector
+{
+    float: right;
+}
+#merge_request_current_version li.merge_base
+{
+    font-weight: bold;
+    background-color: #444;
+    color: #ccc;
+    font-weight: normal;
+    float: left;
+    padding: 0 5px 0 10px;
+    margin: 2px 40px 0 -25px;
+    font-size: 11px;
+    width: 50px;
+}
+#merge_request_commit_selector .ui-selectee
+{
+    cursor: pointer;
+}
+
+
+#merge_request_commit_selector a.ui-selecting,
+#merge_request_commit_selector a:hover,
+#merge_request_commit_selector a.ui-selected
+{
+    color: #390;
+    font-weight: bold;
+}
+
+#merge_request_commit_selector #current_shas
+{
+    background-image: url(../images/silk/brick.png);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    font-size: 12px;
+}
+.ui-selectable-helper
+{
+    border: none !important;
+}
+
+.file-diff {
+    border-bottom: 2px solid #cecece;
+    margin-bottom: 10px;
+}
+
+.file-diff .header {
+    margin: 0;
+    background: #eee;
+    color: #339900;
+    font-size: 13px;
+    padding: 5px 0 0px 8px;
+    width: 50%;
+}
+.file-diff .header:hover {
+    background: #dedede;
+    cursor: pointer;
+}
+.file-diff .header.open { background: #dedede; }
+
+.file-diff .header span.icon { padding-right: 20px; }
+.file-diff .header.open span.icon {
+    background: url('../images/silk/bullet_toggle_minus.png') no-repeat 0 0;
+}
+.file-diff .header.closed span.icon {
+    background: url('../images/silk/bullet_toggle_plus.png') no-repeat 0 0;
+}
+
+.file-diff .diff-stats {
+    font-size: 10px;
+    color: #666;
+    display: inline;
+    margin-left: 11px;
+}
+.file-diff .diff-stats .additions { color: #00BF00; }
+.file-diff .diff-stats .deletions { color: #DC0000; }
+
+.file-diff .diff-hunks {
+  position:relative;
+}
+
+.file-diff .diff-hunks table {
+    margin-bottom: 0;
+}
+
+#inline_comment_form {
+    position: fixed;
+    right: 10px;
+    top: 30px;
+    z-index: 1001;
+    width: 50%;
+    display:none;
+}
+
+#inline_comment_form h2 {
+  background-color: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 0.4em;
+  width: 50%;
+  -moz-border-radius: 10px 10px 0 0;
+  margin: 0;
+}
+#inline_comment_form form,
+#inline_comment_form .please_log_in {
+  background-color: rgba(255,255,255,0.9);
+  padding: 1em;
+  border: 2px solid rgba(34,34,34,0.7);
+  -moz-border-radius: 0 0 10px 0;
+}
+#inline_comment_form form input[type=submit] {
+  font-weight: bold;
+}
+#inline_comment_form form .progress {
+  color: #333;
+}
+
+.file-diff-controls {
+    float: right;
+    color: #888;
+    margin-right: 5px;
+}
+
+.merge_request_diff_loading_indicator {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+}
+
+.merge_request_diff_browser #large_commit_selector {
+    padding: 20px;
+    margin-bottom: 10px;
+    background: #fff url('../images/silver_gradient.png') repeat-x bottom left;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    display:none;
+    clear:both;
+}
+
+/* changable selection */
+#merge_request_version {
+    float:right;
+    margin: 3px 10px 0 0;
+    background: #444;
+    color: #ccc;
+    font-size: 11px;
+    padding: 0 8px;
+}
+
+#merge_request_version:hover {
+    background: #999;
+    color: #333;
+}
+
+/* The summary of a version (commits etc.) */
+.merge_request_commit_summary {
+  font-weight: bold;
+  color: #444;
+  padding: 1px 5px;
+  border: 1px solid #ddd;
+  border-top: none;
+  margin-top: -1px;
+  background-color: #efefef;
+  font-size: 11px;
+}
+.merge_request_commit_summary .sha {
+  background-color: #E0EFCF;
+}
+
+ul.changable-selection-options {
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    border: 1px solid #888;
+}
+
+ul.changable-selection-options li {
+    margin: 0;
+    padding: 2px 5px 2px 5px;
+    border-bottom: 1px solid #888;
+}
+ul.changable-selection-options li:hover {
+    background: #ccc;
+}
+
+/* hover bubbles */
+.hover-bubble-content {
+    display:none;
+    position:absolute;
+    top: 2px;
+    left: 0;
+    width: 325px;
+    height: 50px;
+    background: transparent url('../images/hover-bubble-bg.png') bottom center;
+    padding: 0 0 10px 0;
+    margin: 0;
+    color: #efefef;
+}
+.hover-bubble-content p {
+    margin: 8px 10px 0 10px;
+    padding: 0;
+    font-size: 11px;
+}
+
+#commit-diff-container {
+    margin-bottom: 20px;
+}
+.link-spinner {
+    margin-left: 20px;
+    display: none;
+}
+
+/*
+Style the headers when searching
+*/
+
+#repo_search {
+  width: 260px;
+}
+.searching form {
+  background-image: url(/images/spinner.gif);
+  background-position: 95% 7px;
+  background-repeat: no-repeat;
+}
+
+#repo_search form {
+  position: relative;
+  width: 260px;
+  height: 30px;
+  margin:0;
+}
+
+#repo_search input.search {
+  border: 1px solid #bbb;
+  -moz-border-radius: 10px;
+  background: #fff url(/images/silk/zoom.png) 4px 50% no-repeat;
+  -webkit-border-radius: 10px;
+  padding-left: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 200px;
+  z-index: 9;
+  margin:0;
+}
+
+/* The resetter */
+#repo_search .reset {
+  font-size: 70%;
+  color: #390;
+  cursor: pointer;
+  position: absolute;
+  top: 3px;
+  right: 40px;
+  z-index: 10;
+}
+
+.permission-explanations {
+    margin-top: 40px;
+    width: 400px;
+}
+#sidebar .permission-explanations { width: 100%; }
+
+.permission-explanations h4,
+#sidebar .permission-explanations h4 {
+    margin-bottom: 10px;
+}
+
+dl.explanation { margin-bottom: 10px; }
+dl.explanation dt { font-weight: bold; }
+dl.explanation dd {
+    padding-left: 20px;
+    background: transparent url('../images/silk/bullet_green.png') no-repeat 2px 0;
+}
+
+.user-profile {
+    margin-bottom: 20px;
+}
+
+.user-profile .avatar {
+    float:left;
+}
+.user-profile .profile-data {
+    float:left;
+    margin-left: 20px;
+    color: #555;
+}
+.user-profile .profile-data h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+.user-profile .profile-data h1 a {
+    margin-left: 2px;
+}
+.user-profile .profile-data .details {
+    float:left;
+    margin-left:0;
+}
+
+.user-profile ul.buttons {
+    padding:0;
+    float:right;
+}
+
+body#users .events .event_instance .event_category {
+    display:none;
+}
+
+body#users .events .date {
+    background:transparent url("../images/silver_fade.png") repeat-x 0 0;
+    color:#444444;
+}
+body#users #new-project-button {
+    float: right;
+    margin: 0 0 5px 5px;;
+}
+
+body#users #left  { width: 53%; }
+body#users #right { width: 43%; }
+
+body#users h2.activities small {
+    font-size: 12px;
+    color: #666;
+}

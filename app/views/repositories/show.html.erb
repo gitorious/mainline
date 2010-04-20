@@ -25,20 +25,21 @@
 <%= breadcrumbs_from(@root) -%>
 
 <% render_if_ready(@repository) do -%>
-
+<div class="content-container" id="repositories">
 <%= render :partial => "repositories/overview",
       :locals => {:repository => @repository, :verbose => true} -%>
-
+</div>
+<div class="content-container">
   <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
 <%= render "getting_started" -%>
   <% end -%>
-
+</div>
   <h2><%= t("views.repos.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
-  <%= render :partial => "events/events", :locals => { :events => @events } -%>
+  <%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-750" } -%>
 <% end -%>
 
 <% content_for :sidebar do -%>
-  <ul>
+  <ul class="sidebar-meta">
     <li>
       <strong><%= t("views.repos.project") %>:</strong>
       <%= link_to h(@repository.project.slug), @repository.project -%>
@@ -65,7 +66,7 @@
     </li>
   </ul>
 
-  <ul class="links">
+  <ul class="links navigation">
     <% if @repository.ready? -%>
       <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
     <% end -%>
@@ -77,7 +78,7 @@
     <% end -%>
   </ul>
 
-  <ul class="links">
+  <ul class="links navigation">
     <% if @repository.admin?(current_user) -%>
       <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
     <% end -%>
@@ -89,7 +90,7 @@
   <%= render :partial => "committers_sidebar" -%>
 
   <% unless @commits.blank? -%>
-    <h4><%= t("views.logs.branches") %>:</h4>
+    <h3><%= t("views.logs.branches") %>:</h3>
     <ul>
       <% @repository.git.branches.each do |branch| -%>
         <li><%= link_to h(branch.name), project_repository_log_path(@owner, @repository, ensplat_path(branch.name)) -%></li>

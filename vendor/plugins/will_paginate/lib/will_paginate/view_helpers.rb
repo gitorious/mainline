@@ -22,8 +22,8 @@ module WillPaginate
     # default options that can be overridden on the global level
     @@pagination_options = {
       :class        => 'pagination',
-      :prev_label   => '&laquo; Previous',
-      :next_label   => 'Next &raquo;',
+      :prev_label   => 'Prev',
+      :next_label   => 'Next',
       :inner_window => 4, # links around the current page
       :outer_window => 1, # links around beginning and end
       :separator    => ' ', # single space is friendly to spiders and non-graphic browsers

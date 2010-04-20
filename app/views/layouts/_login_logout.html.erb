@@ -21,7 +21,7 @@
     <li><%= link_to t("views.layout.admin"), admin_users_path -%></li>
   <% end -%>
   <li class="secondary"><%= link_to h(current_user.to_param_with_prefix), user_path(current_user) -%></li>
-  <li class="secondary messages">
+  <li class="secondary messages <% if current_user.received_messages.unread_count > 0 -%>unread<% end %>">
     <% if current_user.received_messages.unread_count > 0 -%>
       <%= link_to current_user.received_messages.unread_count, messages_path -%>
     <% else -%>

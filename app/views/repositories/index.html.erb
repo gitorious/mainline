@@ -21,7 +21,7 @@
 %>
 
 <% @page_title = t("views.repos.page_title", :repo => @owner.title) -%>
-<h1><%= t("views.repos.title") %></h1>
+<h2 class="content-header"><%= t("views.repos.title") %></h2>
 
 <% @owner.repositories.each do |repo| -%>
   <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
