@@ -146,6 +146,14 @@ class BlobsControllerTest < ActionController::TestCase
         assert_equal 5, assigns(:commits).size
         assert_match(/max-age=\d+, private/, @response.headers['Cache-Control'])
       end
+
+      should "get the history as json" do
+        get :history, :project_id => @project.to_param, :repository_id => @repository.to_param,
+          :branch_and_path => ["master","README.txt"], :format => "json"
+        assert_response :success
+        json_body = JSON.parse(@response.body)
+        assert_equal 5, json_body.size
+      end
     end
   end
 end

@@ -69,7 +69,14 @@
     </span>
     <br />
   </p>
-  
+
+  <p>
+    <%= f.check_box :default_favorite_notifications %>
+    <%= f.label :default_favorite_notifications, t("views.users.default_favorite_notifications") %>
+    <span class="hint">
+      <%= t("views.users.describe_default_favorite_notifications") %>
+    </span>
+  </p>
   <%= f.submit t("views.common.save") -%>
 <% end -%>
 

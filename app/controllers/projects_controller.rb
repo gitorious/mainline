@@ -40,7 +40,6 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html {
         @active_recently = Project.most_active_recently
-        @active_overall = Project.most_active_overall(@active_recently.size)
         @tags = Project.top_tags
       }
       format.xml  { render :xml => @projects }

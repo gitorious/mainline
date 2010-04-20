@@ -31,7 +31,7 @@ class ProjectTest < ActiveSupport::TestCase
       :owner => users(:johan)
     }.merge(options))
   end
-  
+
   should_belong_to :containing_site
   should_have_many :merge_request_statuses
 
@@ -66,17 +66,17 @@ class ProjectTest < ActiveSupport::TestCase
     project.valid?
     assert_equal "foo", project.slug
   end
-  
+
   should "cannot have a reserved name as slug" do
     project = create_project(:slug => Gitorious::Reservations.project_names.first)
     project.valid?
     assert_not_nil project.errors.on(:slug)
-    
+
     project = create_project(:slug => "dashboard")
     project.valid?
     assert_not_nil project.errors.on(:slug)
   end
-  
+
   should "creates the wiki repository on create" do
     project = create_project(:slug => "my-new-project")
     project.save!
@@ -105,7 +105,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert !project.admin?(users(:johan))
     project.owner.add_member(users(:johan), Role.admin)
     assert project.admin?(users(:johan))
-    
+
     assert !project.admin?(users(:moe))
     project.owner.add_member(users(:moe), Role.member)
     assert !project.admin?(users(:moe))
@@ -114,7 +114,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert !project.admin?(false)
     assert !project.admin?(nil)
   end
-  
+
   should "knows if a user is a member on a project" do
     project = projects(:johans)
     assert project.member?(users(:johan))
@@ -122,7 +122,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert !project.member?(users(:johan))
     project.owner.add_member(users(:johan), Role.member)
     assert project.member?(users(:johan))
-    
+
     assert !project.member?(users(:moe))
     project.owner.add_member(users(:moe), Role.member)
     assert !project.admin?(users(:moe))
@@ -144,7 +144,7 @@ class ProjectTest < ActiveSupport::TestCase
     project = create_project(:description => "<h1>Project A</h1>\n<b>Project A</b> is a....")
     assert_equal "Project A\nProject A is a....", project.stripped_description
   end
-  
+
   should " have a breadcrumb_parent method which returns nil" do
     project = create_project
     assert project.breadcrumb_parent.nil?
@@ -168,7 +168,7 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal 'http://blah.com', project.send(attr)
     end
   end
-  
+
   should " not prepend http:// to empty urls" do
     project = projects(:johans)
     [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
@@ -187,24 +187,24 @@ class ProjectTest < ActiveSupport::TestCase
     project.save!
     assert_equal repo, project.reload.wiki_repository
   end
-  
+
   should " have a wiki repository" do
     project = projects(:johans)
     assert_equal repositories(:johans_wiki), project.wiki_repository
     assert !project.repositories.include?(repositories(:johans_wiki))
   end
-  
+
   should "has to_param_with_prefix" do
     assert_equal projects(:johans).to_param, projects(:johans).to_param_with_prefix
   end
-  
+
   should " change the owner of the wiki repo as well" do
     project = projects(:johans)
     project.change_owner_to(groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird), project.owner
     assert_equal groups(:team_thunderbird), project.wiki_repository.owner
   end
-  
+
   should " allow changing ownership from a user to a group, but not the other way around" do
     p = projects(:johans)
     p.change_owner_to(groups(:team_thunderbird))
@@ -212,41 +212,47 @@ class ProjectTest < ActiveSupport::TestCase
     p.change_owner_to(users(:johan))
     assert_equal groups(:team_thunderbird), p.owner
   end
-  
-  should "add group as committer to mainline repositories when changing ownership" do
+
+  should "add group as admin to mainline repositories when changing ownership" do
     p = projects(:johans)
     assert_difference("Committership.count") { p.change_owner_to(groups(:team_thunderbird)) }
-    assert p.repositories.mainlines.first.committerships.any? {|c| c.committer == groups(:team_thunderbird) }
+    committership = p.repositories.mainlines.first.committerships.detect { |c|
+      c.committer == groups(:team_thunderbird)
+    }
+    assert_not_nil committership
+    assert_equal(
+      Committership::CAN_REVIEW | Committership::CAN_COMMIT | Committership::CAN_ADMIN,
+      committership.permissions)
   end
-  
+
   should "delegate wiki permissions to the wiki repository" do
     project = projects(:johans)
     assert_equal project.wiki_repository.wiki_permissions, project.wiki_permissions
     project.wiki_permissions = 2
     assert_equal 2, project.wiki_permissions
   end
-  
+
   should "extract first paragraph from description" do
     project = projects(:johans)
-    
+
     project.description = "Hello.\nWorld."
     assert_equal "Hello.", project.descriptions_first_paragraph
-    
+
     project.description = "No newline."
     assert_equal "No newline.", project.descriptions_first_paragraph
   end
-  
+
   context "Project events" do
     setup do
       @project = projects(:johans)
       @user = users(:johan)
       @repository = repositories(:johans)
     end
-    
+
     should " create an event from the action name" do
       assert_not_equal nil, @project.create_event(Action::CREATE_PROJECT, @repository, @user, "", "")
     end
-    
+
     should 'allow optional creation of events' do
       assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
       event = @project.create_event(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage', Time.now)
@@ -254,11 +260,11 @@ class ProjectTest < ActiveSupport::TestCase
       event.update_attributes(:created_at => 2.hours.ago)
       assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
     end
-  
+
     should " create an event even without a valid id" do
       assert_not_equal nil, @project.create_event(52342, @repository, @user)
     end
-    
+
     should "creates valid attributes on the event" do
       e = @project.create_event(Action::COMMIT, @repository, @user, "somedata", "a body")
       assert e.valid?
@@ -272,25 +278,25 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal "a body", e.body
     end
   end
-  
+
   context "Containing Site" do
     should "have a site" do
       assert_equal sites(:qt), projects(:thunderbird).site
     end
-    
+
     should "have a default site if site_id is nil" do
       assert_equal Site.default.title, projects(:johans).site.title
     end
   end
-  
+
   context "Thottling" do
     setup{ Project.destroy_all }
-    
+
     should "throttle on create" do
       assert_nothing_raised do
         5.times{|i| create_project(:slug => "wifebeater#{i}").save! }
       end
-      
+
       assert_no_difference("Project.count") do
         assert_raises(RecordThrottling::LimitReachedError) do
           create_project(:slug => "wtf-are-you-doing-bro").save!
@@ -298,29 +304,29 @@ class ProjectTest < ActiveSupport::TestCase
       end
     end
   end
-  
+
   context 'Oauth' do
     setup do
       @project = projects(:johans)
       @project.oauth_signoff_site = 'http://oauth.example'
     end
-    
+
     should 'return oauth_consumer_options with default paths' do
       assert_equal({:site => @project.oauth_signoff_site}, @project.oauth_consumer_options)
     end
-    
+
     should 'append correct paths when a prefix is supplied' do
       @project.oauth_path_prefix = "/path/to/oauth"
       consumer_options = @project.oauth_consumer_options
       assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
     end
-    
+
     should 'append a correct path even with strange options' do
       @project.oauth_path_prefix = "path/to/oauth/"
       consumer_options = @project.oauth_consumer_options
       assert_equal('/path/to/oauth/request_token', consumer_options[:request_token_path])
     end
-    
+
     should 'be able to set the oauth options from a hash' do
       new_settings = {
         :path_prefix    => '/foo',
@@ -341,7 +347,7 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal 'secret', @project.oauth_signoff_secret
       assert_equal new_settings, @project.oauth_settings
     end
-    
+
     should 'deactivate signoff on merge requests when passing an empty :site option in oauth_settings' do
       @project.oauth_settings = {:site => ''}
       assert !@project.merge_requests_need_signoff?
@@ -349,21 +355,21 @@ class ProjectTest < ActiveSupport::TestCase
       assert !@project.merge_requests_need_signoff?
     end
   end
-  
+
   context "#to_xml" do
     setup do
       @project = projects(:johans)
     end
-    
+
     should "not include oauth keys" do
       assert_no_match(/<oauth/, @project.to_xml)
       assert_no_match(/<merge-requests-need-signoff/, @project.to_xml)
     end
-    
+
     should "include a list of the mainline repositories" do
       assert_match(/<mainlines/, @project.to_xml)
     end
-    
+
     should "include a list of the repository clones" do
       assert_match(/<clones/, @project.to_xml)
     end
@@ -371,7 +377,7 @@ class ProjectTest < ActiveSupport::TestCase
 
   context 'Merge request status tags' do
     setup {@project = Factory.create(:user_project)}
-    
+
     should 'serialize merge_request_state_options' do
       @project.merge_request_custom_states = %w(Merged Verifying)
       assert_equal %w(Merged Verifying), @project.merge_request_custom_states
@@ -403,9 +409,9 @@ class ProjectTest < ActiveSupport::TestCase
       @owner = Factory.create(:user, :login => "thejoker")
       @project = Factory.create(:project, :user => @owner,
         :owner => @owner)
-      @repo = Factory.create(:repository, :project => @project, :owner => @project,
+      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
         :user => @owner, :name => "thework", :description => "halloween")
-      @group = Factory.create(:group, :creator => @owner, 
+      @group = Factory.create(:group, :creator => @owner,
         :name => "foo-hackers", :user_id => @owner.to_param)
       @group_repo = Factory.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
@@ -413,23 +419,29 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     should "find repositories matching the repo name" do
-      assert @project.search_repositories(/work/).include?(@repo)
+      assert @project.search_repositories("work").include?(@repo)
     end
 
     should "find repositories with a matching description" do
-      assert @project.search_repositories(/ween/).include?(@repo)
+      assert @project.search_repositories("ween").include?(@repo)
     end
 
     should "find repositories matching the owning user's name" do
-      assert @project.search_repositories(/joker/).include?(@repo)
+      assert @project.search_repositories("joker").include?(@repo)
     end
 
     should "find repositories matching the owning group's name" do
-      assert @project.search_repositories(/hackers/).include?(@group_repo)
+      assert @project.search_repositories("hackers").include?(@group_repo)
     end
 
     should "only include regular repositories" do
-      assert !@project.search_repositories(/track/).include?(@tracking_repo)
+      assert !@project.search_repositories("track").include?(@tracking_repo)
     end
+  end
+
+  should "be added to the creators favorites" do
+    p = create_project
+    p.save!
+    assert p.watched_by?(p.user)
   end
 end

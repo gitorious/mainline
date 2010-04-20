@@ -39,6 +39,8 @@ class RepositoryTest < ActiveSupport::TestCase
   should_validate_uniqueness_of :hashed_path
   should_validate_uniqueness_of :name, :scoped_to => :project_id, :case_sensitive => false
 
+  should_have_many :hooks, :dependent => :destroy
+
   should " only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
     assert !@repository.valid?, 'valid? should be false'
@@ -866,6 +868,15 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
+    should "allow blank updates if we say it's ok" do
+      @repository.update_attribute(:description, "asdf")
+      @repository.log_changes_with_user(users(:johan)) do
+        @repository.replace_value(:description, "", true)
+      end
+      @repository.save!
+      assert @repository.reload.description.blank?, "desc: #{@repository.description.inspect}"
+    end
+
     should 'not generate events when invalid values are provided' do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
@@ -951,17 +962,23 @@ class RepositoryTest < ActiveSupport::TestCase
   context "garbage collection" do
     setup do
       @repository = repositories(:johans)
+      @now = Time.now
+      Time.stubs(:now).returns(@now)
+      @repository.stubs(:git).returns(stub())
+      @repository.git.expects(:gc_auto).returns(true)
     end
 
     should "have a gc! method that updates last_gc_at" do
-      now = Time.now
-      Time.stubs(:now).returns(now)
-      @repository.stubs(:git).returns(stub())
-      @repository.git.expects(:gc_auto).returns(true)
       assert_nil @repository.last_gc_at
       assert @repository.gc!
       assert_not_nil @repository.last_gc_at
-      assert_equal now, @repository.last_gc_at
+      assert_equal @now, @repository.last_gc_at
+    end
+
+    should "set push_count_since_gc to 0 when doing gc" do
+      @repository.push_count_since_gc = 10
+      @repository.gc!
+      assert_equal 0, @repository.push_count_since_gc
     end
   end
 
@@ -1008,8 +1025,56 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "find clones matching an owning group's name" do
       assert @repo.clones.include?(@clone)
-      assert @repo.search_clones(/sproject/).include?(@clone)
+      assert @repo.search_clones("sproject").include?(@clone)
     end
+
+    context "by user name" do
+      setup do
+        @repo = repositories(:moes)
+        @clone = repositories(:johans_moe_clone)
+        users(:johan).update_attribute(:login, "rohan")
+        @clone.update_attribute(:name, "rohans-clone-of-moes")
+      end
+      
+      should "match users with a matching name" do
+        assert_includes(@repo.search_clones("rohan"), @clone)
+      end
+
+      should "not match user with diverging name" do
+        assert_not_includes(@repo.search_clones("johan"), @clone)
+      end
+    end
+
+    context "by group name" do
+      setup do
+        @repo = repositories(:johans)
+        @clone = repositories(:johans2)
+      end
+      
+      should "match groups with a matching name" do
+        assert_includes(@repo.search_clones("thunderbird"), @clone)
+      end
+
+      should "not match groups with diverging name" do
+        assert_not_includes(@repo.search_clones("A-team"), @clone)
+      end
+    end
+
+    context "by repo name and description" do
+      setup do
+        @repo = repositories(:johans)
+        @clone = repositories(:johans2)
+      end
+      
+      should "match repos with a matching name" do
+        assert_includes(@repo.search_clones("projectrepos"), @clone)
+      end
+
+      should "not match repos with a different parent" do
+        assert_not_includes(@repo.search_clones("projectrepos"), repositories(:moes))
+      end
+    end
+
   end
 
   context "Sequences" do
@@ -1039,7 +1104,57 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal(100,
         @repository.next_merge_request_sequence_number)
     end
+  end
 
+  context "default favoriting" do
+    should "add the owner as a watcher when creating a clone" do
+      user = users(:mike)
+      repo = Repository.new_by_cloning(repositories(:johans), "mike")
+      repo.user = repo.owner = user
+      assert_difference("user.favorites.reload.count") do
+        repo.save!
+      end
+      assert repo.reload.watched_by?(user)
+    end
+
+    should "not add as watcher if it's an internal repository" do
+      repo = new_repos(:user => users(:moe))
+      repo.kind = Repository::KIND_TRACKING_REPO
+      assert_no_difference("users(:moe).favorites.count") do
+        repo.save!
+      end
+    end
+  end
+
+  context "Calculation of disk usage" do
+    setup do
+      @repository = repositories(:johans)
+      @bytes = 90129
+    end
+
+    should "save the bytes used" do
+      @repository.expects(:calculate_disk_usage).returns(@bytes)
+      @repository.update_disk_usage
+      assert_equal @bytes, @repository.disk_usage
+    end
+  end
+
+  context "Pushing" do
+    setup do
+      @repository = repositories(:johans)
+    end
+
+    should "update last_pushed_at" do
+      @repository.last_pushed_at = 1.hour.ago.utc
+      @repository.register_push
+      assert @repository.last_pushed_at > 1.hour.ago.utc
+    end
+
+    should "increment the number of pushes" do
+      @repository.push_count_since_gc = 2
+      @repository.register_push
+      assert_equal 3, @repository.push_count_since_gc
+    end
   end
 
 end

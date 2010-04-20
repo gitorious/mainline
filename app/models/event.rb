@@ -26,25 +26,33 @@ class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :project
   belongs_to :target, :polymorphic => true
-  validates_presence_of :user_id, :unless => :user_email_set?
-
   has_many :events, :as => :target do
     def commits
-      all(:limit => Event::MAX_COMMIT_EVENTS+1).select{|e|e.action == Action::COMMIT}
+      find(:all, {
+          :limit => Event::MAX_COMMIT_EVENTS + 1,
+          :conditions => {:action => Action::COMMIT}
+        })
     end
   end
+  has_many :feed_items, :dependent => :destroy
+
+  after_create :create_feed_items
+  after_create :notify_subscribers
+
+  validates_presence_of :user_id, :unless => :user_email_set?
 
   named_scope :top, {:conditions => ['target_type != ?', 'Event']}
+  named_scope :excluding_commits, {:conditions => ["action != ?", Action::COMMIT]}
 
   def self.latest(count)
     Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do
-      find(:all, {
-          :from => "#{quoted_table_name} use index (index_events_on_created_at)",
-          :order => "events.created_at desc",
-          :limit => count,
-          :include => [:user, :project, :events],
-          :conditions => ["events.action != ?", Action::COMMIT]
-        })
+      latest_event_ids = Event.find_by_sql(
+        ["select id,action,created_at from events " +
+         "use index (index_events_on_created_at) where (action != ?) " +
+         "order by created_at desc limit ?", Action::COMMIT, count
+        ]).map(&:id)
+      Event.find(latest_event_ids, :order => "created_at desc",
+        :include => [:user, :project, :events])
     end
   end
 
@@ -62,7 +70,10 @@ class Event < ActiveRecord::Base
   end
 
   def build_commit(options={})
-    e = self.class.new(options.merge({:action => Action::COMMIT, :project_id => project_id}))
+    e = self.class.new(options.merge({
+          :action => Action::COMMIT,
+          :project_id => project_id
+        }))
     e.target = self
     return e
   end
@@ -77,6 +88,10 @@ class Event < ActiveRecord::Base
     return events.size == 1
   end
 
+  def commit_event?
+    action == Action::COMMIT
+  end
+  
   def kind
     'commit'
   end
@@ -93,9 +108,9 @@ class Event < ActiveRecord::Base
     @git_actor ||= find_git_actor
   end
 
-  # Initialize a Grit::Actor object:
-  # If only the email is provided, we will give back anything before @ as name and email as email
-  # If both name and email is provided, we will give an Actor with both
+  # Initialize a Grit::Actor object: If only the email is provided, we
+  # will give back anything before '@' as name and email as email. If
+  # both name and email is provided, we will give an Actor with both.
   # If a User object, an Actor with name and email
   def find_git_actor
     if user
@@ -113,13 +128,60 @@ class Event < ActiveRecord::Base
   def email
     git_actor.email
   end
-#
+
   def actor_display
     git_actor.name
   end
 
+  def favorites_for_email_notification
+    conditions = ["notify_by_email = ? and user_id != ?", true, self.user_id]
+    favorites = self.project.favorites.find(:all, :conditions => conditions)
+    # Find anyone who's just favorited the target, if it's watchable
+    if self.target.respond_to?(:watchers)
+      favorites += self.target.favorites.find(:all, :conditions => conditions)
+    end
+
+    favorites.uniq
+  end
+
+  def disable_notifications
+    @notifications_disabled = true
+    yield
+    @notifications_disabled = false
+  end
+
+  def notifications_disabled?
+    @notifications_disabled || commit_event?
+  end
+
+  def notify_subscribers
+    return if notifications_disabled?
+    favorites_for_email_notification.each do |favorite|
+      favorite.notify_about_event(self)
+    end
+  end
+
   protected
+
   def user_email_set?
     !user_email.blank?
+  end
+
+  def create_feed_items
+    return if self.action == Action::COMMIT
+    FeedItem.bulk_create_from_watcher_list_and_event!(watcher_ids, self)
+  end
+
+  # Get a list of user ids who are watching the project and target of
+  # this event, excluding the event creator (since he's probably not
+  # interested in his own doings).
+  def watcher_ids
+    # Find all the watchers of the project
+    watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
+    # Find anyone who's just watching the target, if it's watchable
+    if self.target.respond_to?(:watchers)
+      watcher_ids += self.target.watchers.find(:all, :select => "users.id").map(&:id)
+    end
+    watcher_ids.uniq.select{|an_id| an_id != self.user_id }
   end
 end

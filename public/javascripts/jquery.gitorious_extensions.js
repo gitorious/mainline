@@ -125,23 +125,31 @@ jQuery.fn.slideToggle = function(speed) {
 // - backend: The AJAX backend, used when testing
 // - replaceWords: A pair of words that will be swapped in the html contents of
 //   the link. See rails_form_replacer_test.js for sample usage
-jQuery.fn.replaceRailsGeneratedForm = function (options){
-    options = jQuery.extend({
-        linkName: "start_watching",
+
+jQuery.fn.replaceRailsGeneratedForm = function (options) {
+    return this.each(function (){
+        replaceRailsGeneratedForm(this, options);
+    })
+}
+
+function replaceRailsGeneratedForm(el, defaultOptions) {
+    var $this = $(el);
+    var options = jQuery.extend({
+        linkName: $this.attr("id") + "_",
         backend: jQuery.ajax,
         replaceWords: ["Start","Stop"],
         toggleClasses: ["enabled","disabled"],
         waitingClass: "waiting"
-    }, options);
-    var action = $(this).attr("href");
-    var httpMethod = $(this).attr("data-request-method");
+    }, defaultOptions);
+    var action = $this.attr("href");
+    var httpMethod = $this.attr("data-request-method");
     var newElement = jQuery("<a>");
     newElement.attr("href", "#" + options.linkName);
     newElement.attr("id", options.linkName);
-    newElement.attr("class", $(this).attr("class"));
-    newElement.html($(this).html());
-    newElement.insertAfter($(this));
-    $(this).hide();
+    newElement.attr("class", $this.attr("class"));
+    newElement.html($this.html());
+    newElement.insertAfter($this);
+    $this.hide();
     var api = {
         click: function (){
             options.backend({

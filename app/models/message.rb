@@ -175,6 +175,10 @@ class Message < ActiveRecord::Base
       self.archived_by_recipient = true
     end
   end
+
+  def touch!
+    touch(:last_activity_at)
+  end
   
   protected
     def send_email_notification_if_required
@@ -203,6 +207,7 @@ class Message < ActiveRecord::Base
     end
     
     def flag_root_message_if_required
+      self.last_activity_at = current_time_from_proper_timezone
       if root_message
         if root_message.sender == recipient
           root_message.has_unread_replies = true
@@ -210,6 +215,7 @@ class Message < ActiveRecord::Base
         else
           root_message.archived_by_recipient = false
         end
+        root_message.touch!
         root_message.save
       end
     end

@@ -21,7 +21,7 @@
 # == ROUTING NOTE =========================================================
 #
 # Note that all routes are getting pre and post processed by the filter class
-# in RAILS_ROOT/lib/route_filters/repository_owner_namespacing.rb and that 
+# in RAILS_ROOT/lib/route_filters/repository_owner_namespacing.rb and that
 # you should be EXTRA CAREFUL when adding a route that doesn't map directly
 # by name to an existing controller or action. In such case the same string
 # should be added to Gitorious::Reservations::unaccounted_root_names
@@ -30,13 +30,13 @@
 
 ActionController::Routing::Routes.draw do |map|
   VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_\/]+/
-  
+
   # Builds up the common repository sub-routes that's shared between projects
   # and user+team namespaced repositories
   def build_repository_routes(repository, options = {})
     repository.with_options(options) do |repo|
       repo.resources :comments
-      repo.commit_comment "comments/commit/:sha", :controller => "comments", 
+      repo.commit_comment "comments/commit/:sha", :controller => "comments",
         :action => "commit", :conditions => { :method => :get }
       repo.comments_preview 'comments/preview', :controller => 'comments',
         :action => 'preview'#, :conditions => {:method => :put}
@@ -44,8 +44,8 @@ ActionController::Routing::Routes.draw do |map|
         :terms_accepted => :get,
         :version => :get,
         :commit_status => :get
-      }, :collection => { 
-        :create => :post, 
+      }, :collection => {
+        :create => :post,
         :commit_list => :post,
         :target_branches => :post,
       } do |merge_request|
@@ -61,7 +61,7 @@ ActionController::Routing::Routes.draw do |map|
 
 
 
-      
+
       repo.formatted_commits_feed "commits/*branch/feed.:format",
           :controller => "commits", :action => "feed", :conditions => {:feed => :get}
       repo.commits        "commits", :controller => "commits", :action => "index"
@@ -81,16 +81,16 @@ ActionController::Routing::Routes.draw do |map|
     :member => {
       :clone => :get, :create_clone => :post,
       :writable_by => :get,
-      :config => :get, 
+      :config => :get,
       :confirm_delete => :get,
       :committers => :get,
       :search_clones => :get
     }
   }
-  
-    
+
+
   map.root :controller => "site", :action => "index"
-  
+
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.connect "users/pending_activation", :controller => "users", :action => "pending_activation"
   map.reset_password "users/reset_password/:token", :controller => "users", :action => "reset_password"
@@ -99,13 +99,12 @@ ActionController::Routing::Routes.draw do |map|
     :forgot_password_create => :post,
     :openid_build => :get,
     :openid_create => :post
-  }, :member => { 
-    :feed => :get, 
-    :password => :get, 
+  }, :member => {
+    :feed => :get,
+    :password => :get,
     :update_password => :put,
-      :avatar => :delete,
-      :activities => :get,
-      :watched_activities => :get
+    :avatar => :delete,
+    :watchlist => :get
   }) do |user|
     user.with_options({:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}}) do |user_req|
       user_req.resources :keys
@@ -121,9 +120,9 @@ ActionController::Routing::Routes.draw do |map|
       end
     end
   end
-  
+
   map.resources  :events, :member => {:commits => :get}
-  
+
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
 
 
@@ -150,39 +149,41 @@ ActionController::Routing::Routes.draw do |map|
   end
 
 
-  
+
   map.resource :search
-  
-  map.resources :messages, 
-    :member => {:reply => :post, :read => :put}, 
+
+  map.resources :messages,
+    :member => {:reply => :post, :read => :put},
     :collection => {:auto_complete_for_message_recipients => :get, :sent => :get, :bulk_update => :put, :all => :get}
-  
+
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'
   end
-  
-  map.dashboard "dashboard", :controller => "site", :action => "dashboard"  
+
+  map.dashboard "dashboard", :controller => "site", :action => "dashboard"
   map.about "about", :controller => "site", :action => "about"
   map.faq "about/faq", :controller => "site", :action => "faq"
   map.contact "contact", :controller => "site", :action => "contact"
-  
+
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
-    
+
   end
 
   map.resources :favorites
-  
+
+  map.activity "/activities", :controller => "site", :action => "public_timeline"
+
   map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'
-  
+
   map.merge_request_direct_access '/merge_requests/:id', :controller => 'merge_requests', :action => 'direct_access'
-  
+
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id.:format'
   map.connect ':controller/:action/:id'
-    
+
   # See the routing_filter plugin and lib/route_filters/*
   map.filter "repository_owner_namespacing", :file => "route_filters/repository_owner_namespacing"
 end

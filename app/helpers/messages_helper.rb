@@ -28,6 +28,10 @@ module MessagesHelper
     end
   end
 
+  def other_party(message,user)
+    message.recipient == user ? message.sender : message.recipient
+  end
+
   def message_title(message)
     sender, recipient = sender_and_recipient_for(message)
 

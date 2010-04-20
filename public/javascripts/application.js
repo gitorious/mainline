@@ -188,6 +188,83 @@ $(document).ready(function() {
     // :method => whatever is used in link_to etc.
     jQuery("a[data-request-method]").replaceRailsGeneratedForm();
 
+    // watchable/favorite list filtering
+    $("#watchable-list").each(function() {
+        $this = $(this);
+        $this.find(".filters a.all").addClass("current")
+        $this.find(".filters a").css({'outline':'none'});
+
+        var makeCurrent = function(newCurrent) {
+            $this.find(".filters a").removeClass("current");
+            $(newCurrent).addClass("current");
+        };
+        var swapAndMakeCurrent = function(klass, current) {
+            $this.find(".favorite." + klass).show();
+            $this.find(".favorite:not(." + klass + ")").hide();
+            makeCurrent(current);
+        }
+
+        $this.find(".filters a.all").click(function() {
+            $this.find(".favorite").show();
+            makeCurrent(this);
+            return false;
+        });
+        $this.find(".filters a.repositories").click(function() {
+            swapAndMakeCurrent("repository", this);
+            return false;
+        });
+        $this.find(".filters a.merge-requests").click(function() {
+            swapAndMakeCurrent("merge_request");
+            return false;
+        });
+        $this.find(".filters a.mine").click(function() {
+            swapAndMakeCurrent("mine");
+            return false;
+        });
+        $this.find(".filters a.foreign").click(function() {
+            swapAndMakeCurrent("foreign");
+            return false;
+        });
+    });
+
+    // Favorite toggling and deletion on the /favorites page
+    $("#favorite-listing tr:odd").addClass("odd");
+    $("#favorite-listing td.notification .favorite.update a").click(function() {
+        $this = $(this);
+        if ("off" == $this.text()) {
+            payload = "_method=put&favorite[notify_by_email]=1";
+        } else {
+            payload = "_method=put&favorite[notify_by_email]=0";
+        }
+        $.post($this.attr("href"), payload, function(data, respTxt){
+            if ("success" === respTxt) {
+                if ("off" === $this.text()) {
+                    $this.text("on").removeClass("disabled").addClass("enabled");
+                } else {
+                    $this.text("off").removeClass("enabled").addClass("disabled")
+                }
+            }
+        });
+
+        return false;
+    });
+
+    $("#favorite-listing td.unwatch .favorite a.watch-link").click(function() {
+        $this = $(this);
+        payload = "_method=delete";
+        $.post($this.attr("href"), payload, function(data, respTxt){
+            if ("success" === respTxt) {
+                $this.parents("tr").fadeOut("normal", function(){
+                    $(this).remove();
+                    $("#favorite-listing tr").removeClass("odd");
+                    $("#favorite-listing tr:odd").addClass("odd");
+                });
+            }
+        });
+
+        return false;
+    });
+
 });
 
 if (!Gitorious)

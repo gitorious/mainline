@@ -21,15 +21,19 @@
 #++
 
 class UsersController < ApplicationController
-  skip_before_filter :public_and_logged_in, :only => [
-    :pending_activation, :activate, :forgot_password, :forgot_password_create, :reset_password
-  ]
+  skip_before_filter :public_and_logged_in,
+    :only => [:pending_activation, :activate, :forgot_password,
+              :forgot_password_create, :reset_password]
   before_filter :require_not_logged_in, :only => [:pending_activation]
-  before_filter :login_required, :only => [:edit, :update, :password, :update_password, :avatar]
-  before_filter :find_user, :only => [:show, :edit, :update, :password, :update_password, :avatar]
-  before_filter :require_current_user, :only => [:edit, :update, :password, :update_password, :avatar]
+  before_filter :login_required,
+    :only => [:edit, :update, :password, :update_password, :avatar]
+  before_filter :find_user,
+    :only => [:show, :edit, :update, :password, :update_password, :avatar]
+  before_filter :require_current_user,
+    :only => [:edit, :update, :password, :update_password, :avatar, ]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
+
   renders_in_global_context
   ssl_required :new, :create, :edit, :update, :password, :forgot_password_create,
                 :forgot_password, :update_password, :reset_password, :avatar
@@ -39,22 +43,17 @@ class UsersController < ApplicationController
   end
 
   def show
-    @projects = @user.projects.find(:all, :include => [:tags, { :repositories => :project }])
+    @projects = @user.projects.find(:all,
+      :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    if current_user == @user && params[:events] != "outgoing"
-      @events = @user.events_in_watchlist.paginate(
-        :page => params[:page],
-        :include => [:user, :project]
-        )
-    else
-      @events = @user.events.paginate(
-        :page => params[:page], :order => "events.created_at desc",
-        :include => [:user, :project])
-    end
-
-    @favorites = @user.watched_objects
+    @events = @user.events.excluding_commits.paginate(
+      :page => params[:page], :order => "events.created_at desc",
+      :include => [:user, :project])
+    @messages = @user.messages_in_inbox(3) if @user == current_user
+    @favorites = @user.favorites.all(:include => :watchable)
 
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
+    @atom_auto_discovery_title = "Public activity feed"
 
     respond_to do |format|
       format.html { }
@@ -69,6 +68,14 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to user_path(@user) }
       format.atom { }
+    end
+  end
+
+  def watchlist
+    @user = User.find_by_login!(params[:id])
+    @events = @user.paginated_events_in_watchlist({:page => 1})
+    respond_to do |wants|
+      wants.atom { render :template => "users/feed" }
     end
   end
 

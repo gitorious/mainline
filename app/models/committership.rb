@@ -146,6 +146,7 @@ class Committership < ActiveRecord::Base
     end
 
     def add_removed_committer_event
+      return unless repository
       repository.project.create_event(Action::REMOVE_COMMITTER, repository,
                                       creator, committer.title)
     end

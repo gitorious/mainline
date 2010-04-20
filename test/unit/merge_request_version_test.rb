@@ -163,4 +163,32 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       assert_equal([], @first_version.comments_for_path_and_sha("foo/bar.rb", "ffac-aafc"))
     end
   end
+
+  context "Deletion of branches" do
+    setup {
+      @version = merge_request_versions(:first_version_of_johans_to_mikes)
+      @merge_request = @version.merge_request
+    }
+
+    should "send a deletion notification when destroyed" do
+      @version.expects(:schedule_branch_deletion)
+      @version.destroy
+    end
+
+    should "build a message for deleting the tracking branch" do
+      result = {
+        :source_repository_path => @merge_request.source_repository.full_repository_path,
+        :tracking_repository_path => @merge_request.tracking_repository.full_repository_path,
+        :target_branch_name => @merge_request.merge_branch_name(@version.version),
+        :source_repository_id => @merge_request.source_repository.id
+      }
+      assert_equal result, @version.branch_deletion_message
+    end
+
+    should "send the deletion message to the message queue" do
+      connection = ActiveMessaging::Gateway.connection
+      connection.expects(:send)
+      @version.schedule_branch_deletion
+    end
+  end
 end

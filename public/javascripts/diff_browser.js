@@ -15,7 +15,7 @@
   #
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  #-- 
+  #--
 */
 
 if (!Gitorious)
@@ -35,7 +35,7 @@ Gitorious.Sha = function(sha) {
 
 Gitorious.ShaSpec = function() {
     this.allShas = [];
-    
+
     this.addSha = function(s) {
         this.allShas.push(new Gitorious.Sha(s));
     }
@@ -47,15 +47,15 @@ Gitorious.ShaSpec = function() {
         if (pair.length > 1)
             this.addSha(pair[1]);
     }
-    
+
     this.firstSha = function() {
         return this.allShas[0];
     }
-    
+
     this.lastSha = function() {
         return this.allShas[this.allShas.length - 1];
     }
-    
+
     this.shaSpecs = function(callback) {
         if (this.allShas.length < 2) {
             return [this.firstSha()];
@@ -63,7 +63,7 @@ Gitorious.ShaSpec = function() {
             return [this.firstSha(), this.lastSha()];
         }
     }
-    
+
     this.shaSpec = function() {
         var _specs = this.shaSpecs();
         return jQuery.map(_specs, function(s){return s.sha()}).join("-");
@@ -85,7 +85,7 @@ Gitorious.ShaSpec = function() {
     this.singleCommit = function() {
         return this.firstSha().sha() == this.lastSha().sha();
     }
-    
+
     this.setVersion = function(v)  {
         this._version = v;
     }
@@ -93,7 +93,7 @@ Gitorious.ShaSpec = function() {
     this.getVersion = function() {
         return this._version;
     }
-    
+
     this.hasVersion = function() {
         return typeof(this._version) != "undefined";
     }
@@ -330,7 +330,7 @@ Gitorious.MergeRequestController = function() {
     this.getTransport = function() {
         return this._transport || jQuery;
     }
-    
+
     this.update = function(o) {
         if (o.version)
             this.versionSelected(o.version);
@@ -351,7 +351,7 @@ Gitorious.MergeRequestController = function() {
         if (shaRange)  {
             this.shaSelected(shaRange);
             options["data"] = {"commit_shas": shaRange};
-        } 
+        }
 
         options["url"] = this.getDiffUrl();
         var self = this;
@@ -383,7 +383,7 @@ Gitorious.MergeRequestController = function() {
                 "An error has occured. Please try again later.</div>"
         );
     }
-    
+
     this.needsUpdate = function() {
         return (this._currentShaRange != this._requestedShaRange)
             || (this._currentVersion != this._requestedVersion);
@@ -392,7 +392,7 @@ Gitorious.MergeRequestController = function() {
     this.willSelectShas = function() {
         $("#current_shas .label").html("Selecting");
     }
-    
+
     this.didReceiveVersion = function(spec) {
         spec.setVersion(this.determineCurrentVersion());
         document.location.hash = spec.shaSpecWithVersion();
@@ -414,7 +414,7 @@ Gitorious.MergeRequestController = function() {
         })
         var currentShas = [];
         for (var i = allShas.indexOf(spec.firstSha().sha());
-             i <= allShas.indexOf(spec.lastSha().sha()); 
+             i <= allShas.indexOf(spec.lastSha().sha());
              i++) {
             currentShas.push(allShas[i]);
         }
@@ -428,17 +428,17 @@ Gitorious.MergeRequestController = function() {
         var currentShas = this.findCurrentlySelectedShas(shaSpec);
         jQuery.each(currentShas, function(ind, sha){
             jQuery("[data-commit-sha='" + sha + "']").parent().addClass("ui-selected");
-        })        
+        })
     }
-    
+
     // Loads the requested (from path part of uri) shas and version
     this.loadFromBookmark = function(spec) {
         this.simulateShaSelection(spec);
     }
-    
+
     this.didSelectShas = function(spec) {
         $("#current_shas .label").html("Showing");
-        
+
         // In case a range has been selected, also display what's in between as selected
         var currentShas = this.findCurrentlySelectedShas(spec);
         jQuery.each(currentShas, function(idx,sha){
@@ -450,27 +450,27 @@ Gitorious.MergeRequestController = function() {
 
         var mr_diff_url = jQuery("#merge_request_commit_selector")
             .attr("data-merge-request-version-url");
-        var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());    
+        var diff_browser = new Gitorious.DiffBrowser(spec.shaSpec());
     }
-    // Another version was selected, update sha listing if necessary    
+    // Another version was selected, update sha listing if necessary
     this.versionChanged = function(v) {
         this.versionSelected(v);
-        if (this.needsUpdate()) { 
+        if (this.needsUpdate()) {
             var url = jQuery("#merge_request_version").attr("gts:url") +
                 "?version=" + v;
             this.getTransport().ajax({
                 url: url,
                 success: function(data,text){
-                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
+                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
                                                        true, data,text, v);
                 },
                 error: function(xhr,statusText,errorThrown){
-                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived", 
+                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
                                                        false);
                 }
             });
         } else {
-            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
+            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated",
                                                "Same version");
         }
     }
@@ -497,7 +497,7 @@ Gitorious.MergeRequestController = function() {
         if (successful) {
             jQuery("#merge_request_version").html("Version " + version);
             this.replaceShaListing(data);
-            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated", 
+            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated",
                                                "new");
             if (callback && caller) {
                 callback.apply(caller);
@@ -506,7 +506,7 @@ Gitorious.MergeRequestController = function() {
 //            console.error("Got an error when fetching shas");
         }
     }
-    
+
     this.getCurrentShaRange = function() {
         return jQuery("#current_shas").attr("data-merge-request-current-shas");
     }
@@ -529,7 +529,7 @@ Gitorious.MergeRequestController.getInstance = function() {
         var result = new Gitorious.MergeRequestController();
         NotificationCenter.addObserver("MergeRequestDiffReceived",
                                        result.diffsReceived.bind(result));
-        NotificationCenter.addObserver("MergeRequestShaListingReceived", 
+        NotificationCenter.addObserver("MergeRequestShaListingReceived",
                                        result.shaListingReceived.bind(result));
         Gitorious.MergeRequestController._instance = result;
         return result;
@@ -543,7 +543,7 @@ Gitorious.disableCommenting = function() {
 
 // Makes line numbers selectable for commenting
 Gitorious.enableCommenting = function() {
-    this.MAX_COMMENTABLES = 3500;
+    this.MAX_COMMENTABLES = 1500;
 
     // Don't add if we're dealing with a large diff
     if ($("table.codediff td.commentable").length > this.MAX_COMMENTABLES) {

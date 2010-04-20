@@ -126,7 +126,7 @@ class MergeRequestsController < ApplicationController
   def terms_accepted
     @merge_request = @repository.merge_requests.find_by_sequence_number!(params[:id])
     if @merge_request.terms_accepted
-      @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
+      @merge_request.add_creation_event(@owner, current_user)
       if @merge_request.has_contribution_notice?
         flash[:notice] = @merge_request.contribution_notice
       end

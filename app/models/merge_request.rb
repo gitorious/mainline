@@ -35,6 +35,7 @@ class MergeRequest < ActiveRecord::Base
 
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
+  after_create :add_to_creators_favorites
 
   before_validation_on_create :set_sequence_number
 
@@ -340,7 +341,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def title
-    id
+    to_param
   end
 
   def acceptance_of_terms_required?
@@ -371,19 +372,34 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def notify_subscribers_about_creation
-    return unless target_repository.notify_committers_on_new_merge_request?
-    target_repository.reviewers.uniq.reject{|c| c == user }.each do |committer|
-      message = messages.build({
-        :sender => user,
-        :recipient => committer,
-        :subject => I18n.t("mailer.request_notification",
-          :login => user.login,
-          :title => target_repository.project.title),
-        :body => proposal,
-        :notifiable => self
-        })
-      message.save
+    reviewers.each { |reviewer|
+      add_to_reviewers_favorites(reviewer)
+    }
+    if event = creation_event
+      FeedItem.bulk_create_from_watcher_list_and_event!(reviewers.map(&:id), event)
     end
+  end
+
+  def reviewers
+    target_repository.reviewers.uniq.reject{|r| r == user}
+  end
+
+  def add_to_reviewers_favorites(reviewer)
+    reviewer.favorites.create(:watchable => self)
+  end
+
+  def add_creation_event(owner, user)
+    owner.create_event(
+      Action::REQUEST_MERGE, self, user
+      )
+  end
+
+  def creation_event
+    Event.find(:first, :conditions => {
+        :action => Action::REQUEST_MERGE,
+        :target_id => self.id,
+        :target_type => self.class.name
+      })
   end
 
   def oauth_request_token=(token)
@@ -617,5 +633,9 @@ class MergeRequest < ActiveRecord::Base
     if target_repository
       self.sequence_number = target_repository.next_merge_request_sequence_number
     end
+  end
+
+  def add_to_creators_favorites
+    watched_by!(user)
   end
 end

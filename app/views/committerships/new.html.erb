@@ -36,8 +36,8 @@
       $("#add_user_tab").addClass("selected");
       event.preventDefault();
     });
-    $("input#user_login_autocomplete").autocomplete("auto_complete_for_user_login");
-    $("input#group_name_autocomplete").autocomplete("auto_complete_for_group_name");
+    $("input#user_login_autocomplete").autocomplete("<%= url_for(:action => :auto_complete_for_user_login) -%>");
+    $("input#group_name_autocomplete").autocomplete("<%= url_for(:action => :auto_complete_for_group_name) -%>");
   });
 </script>
 <% end -%>

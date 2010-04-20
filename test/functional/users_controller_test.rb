@@ -333,7 +333,7 @@ class UsersControllerTest < ActionController::TestCase
 
       should 'notify non-activated users that they need to activate their accounts before resetting the password' do
         user = users(:johan)
-        user.expects(:'activated?').returns(false)
+        user.expects(:activated?).returns(false)
         User.expects(:find_by_email).returns(user)
         post :forgot_password_create, :user => {:email => user.email}
         assert_redirected_to forgot_password_users_path
@@ -499,7 +499,7 @@ class UsersControllerTest < ActionController::TestCase
       @merge_request = merge_requests(:moes_to_johans)
       @user.favorites.create(:watchable => @merge_request)
       @project = projects(:johans)
-      @user.favorites.create(:watchable => @project)      
+      @user.favorites.create(:watchable => @project)
     }
 
     should "render all" do
@@ -507,7 +507,32 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success
     end
   end
-  
+
+  context "Watchlist" do
+    setup { @user = users(:johan) }
+
+    should "render activities watched by the user" do
+      get :watchlist, :id => @user.to_param, :format => "atom"
+      assert_response :success
+    end
+  end
+
+  context "Message privacy" do
+    setup {@username = :johan}
+
+    should "not expose messages unless current user" do
+      login_as :moe
+      get :show, :id => @username.to_s
+      assert_nil assigns(:messages)
+    end
+
+    should "expose messages if current user" do
+      login_as @username
+      get :show, :id => @username.to_s
+      assert_not_nil assigns(:messages)
+    end
+  end
+
   context 'Creation from OpenID' do
     setup do
       @valid_session_options = {:openid_url => 'http://moe.example/', :openid_nickname => 'schmoe'}

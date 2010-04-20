@@ -32,22 +32,22 @@ class Project < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
   has_many    :comments, :dependent => :destroy
-  
-  has_many    :repositories, :order => "repositories.created_at asc", 
+
+  has_many    :repositories, :order => "repositories.created_at asc",
       :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :destroy
-  has_one     :wiki_repository, :class_name => "Repository", 
+  has_one     :wiki_repository, :class_name => "Repository",
     :conditions => ["kind = ?", Repository::KIND_WIKI], :dependent => :destroy
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
   has_many    :merge_request_statuses, :order => "id asc"
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
-  
+
   serialize :merge_request_custom_states, Array
-  
+
   attr_protected :owner_id, :user_id, :site_id
-  
-  is_indexed :fields => ["title", "description", "slug"], 
+
+  is_indexed :fields => ["title", "description", "slug"],
     :concatenate => [
       { :class_name => 'Tag',
         :field => 'name',
@@ -82,7 +82,8 @@ class Project < ActiveRecord::Base
   before_validation :downcase_slug
   after_create :create_wiki_repository
   after_create :create_default_merge_request_statuses
-  
+  after_create :add_as_favorite
+
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
       record.user.projects.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
@@ -116,7 +117,7 @@ class Project < ActiveRecord::Base
     'Other/Multiple',
     'None',
   ]
-  
+
   def self.human_name
     I18n.t("activerecord.models.project")
   end
@@ -126,25 +127,16 @@ class Project < ActiveRecord::Base
   def self.top_tags(limit = 10)
     tag_counts(:limit => limit, :order => "count desc")
   end
-  
+
   # Returns the projects limited by +limit+ who has the most activity within
   # the +cutoff+ period
   def self.most_active_recently(limit = 10, number_of_days = 3)
     Rails.cache.fetch("projects:most_active_recently:#{limit}:#{number_of_days}",
         :expires_in => 30.minutes) do
       find(:all, :joins => :events, :limit => limit,
-        :select => 'distinct projects.*, count(events.id) as event_count', 
+        :select => 'distinct projects.*, count(events.id) as event_count',
         :order => "event_count desc", :group => "projects.id",
         :conditions => ["events.created_at > ?", number_of_days.days.ago])
-    end
-  end
-  
-  # Finds the most active projects on an overall basis
-  def self.most_active_overall(limit = 10)
-    Rails.cache.fetch("projects:most_active_overall:#{limit}", :expires_in => 30.minutes) do
-      find(:all, :joins => :events, :limit => limit,
-        :select => 'distinct projects.*, count(events.id) as event_count', 
-        :order => "event_count desc", :group => "projects.id")
     end
   end
 
@@ -161,11 +153,11 @@ class Project < ActiveRecord::Base
   def to_param
     slug
   end
-  
+
   def to_param_with_prefix
     to_param
   end
-  
+
   def site
     containing_site || Site.default
   end
@@ -178,7 +170,7 @@ class Project < ActiveRecord::Base
       owner.admin?(candidate)
     end
   end
-  
+
   def member?(candidate)
     case owner
     when User
@@ -187,11 +179,11 @@ class Project < ActiveRecord::Base
       owner.member?(candidate)
     end
   end
-  
+
   def committer?(candidate)
     owner == User ? owner == candidate : owner.committer?(candidate)
   end
-  
+
   def owned_by_group?
     owner === Group
   end
@@ -222,7 +214,7 @@ class Project < ActiveRecord::Base
     # sanitizer = HTML::WhiteListSanitizer.new
     # sanitizer.sanitize(description, :tags => %w(str), :attributes => %w(class))
   end
-  
+
   def descriptions_first_paragraph
     description[/^([^\n]+)/, 1]
   end
@@ -231,7 +223,7 @@ class Project < ActiveRecord::Base
     info = Proc.new { |options|
       builder = options[:builder]
       builder.owner(owner.to_param, :kind => (owned_by_group? ? "Team" : "User"))
-      
+
       builder.repositories(:type => "array") do |repos|
         builder.mainlines :type => "array" do
           repositories.mainlines.each { |repo|
@@ -261,41 +253,49 @@ class Project < ActiveRecord::Base
                 :created_at, :bugtracker_url, :mailinglist_url, :bugtracker_url],
     }.merge(opts))
   end
-  
+
   def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
-    events.create(:action => action_id, :target => target, :user => user,
-                  :body => body, :data => data, :created_at => date)
+    event = events.create({
+        :action => action_id,
+        :target => target,
+        :user => user,
+        :body => body,
+        :data => data,
+        :created_at => date
+      })
   end
-  
+
   def new_event_required?(action_id, target, user, data)
     events_count = events.count(:all, :conditions => [
       "action = :action_id AND target_id = :target_id AND target_type = :target_type AND user_id = :user_id and data = :data AND created_at > :date_threshold",
       {
-        :action_id => action_id, 
-        :target_id => target.id, 
-        :target_type => target.class.name, 
-        :user_id => user.id, 
-        :data => data, 
+        :action_id => action_id,
+        :target_id => target.id,
+        :target_type => target.class.name,
+        :user_id => user.id,
+        :data => data,
         :date_threshold => 1.hour.ago
       }])
     return events_count < 1
   end
-  
+
   def breadcrumb_parent
     nil
   end
-  
+
   def change_owner_to(another_owner)
     unless owned_by_group?
       self.owner = another_owner
       self.wiki_repository.owner = another_owner
-      
+
       repositories.mainlines.each {|repo|
-        repo.committerships.create!(:committer => another_owner, :creator_id => self.owner_id_was)
+        c = repo.committerships.create!(:committer => another_owner,:creator_id => self.owner_id_was)
+        c.build_permissions(:review, :commit, :admin)
+        c.save!
       }
     end
   end
-  
+
   # TODO: Add tests
   def oauth_consumer
     case Rails.env
@@ -305,7 +305,7 @@ class Project < ActiveRecord::Base
       @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, oauth_consumer_options)
     end
   end
-  
+
   def oauth_consumer_options
     result = {:site => oauth_signoff_site}
     unless oauth_path_prefix.blank?
@@ -315,7 +315,7 @@ class Project < ActiveRecord::Base
     end
     result
   end
-  
+
   def oauth_settings=(options)
     self.merge_requests_need_signoff = !options[:site].blank?
     self.oauth_path_prefix    = options[:path_prefix]
@@ -323,7 +323,7 @@ class Project < ActiveRecord::Base
     self.oauth_signoff_secret = options[:signoff_secret]
     self.oauth_signoff_site   = options[:site]
   end
-  
+
   def oauth_settings
     {
       :path_prefix    => oauth_path_prefix,
@@ -332,21 +332,19 @@ class Project < ActiveRecord::Base
       :signoff_secret => oauth_signoff_secret
     }
   end
-  
+
   def search_repositories(term)
-    repositories.regular.find_all {|r|
-      r.matches_regexp?(term)
-    }
+    Repository.title_search(term, "project_id", id)
   end
-  
+
   def wiki_permissions
     wiki_repository.wiki_permissions
   end
-  
+
   def wiki_permissions=(perms)
     wiki_repository.wiki_permissions = perms
   end
-  
+
   # Returns a String representation of the merge request states
   def merge_request_states
     (merge_request_custom_states || merge_request_default_states).join("\n")
@@ -355,12 +353,12 @@ class Project < ActiveRecord::Base
   def merge_request_states=(s)
     self.merge_request_custom_states = s.split("\n").collect(&:strip)
   end
-  
+
 
   def merge_request_fixed_states
     ['Merged','Rejected']
   end
-  
+
   def merge_request_default_states
     ['Open','Closed','Verifying']
   end
@@ -384,11 +382,11 @@ class Project < ActiveRecord::Base
       end
     end
   end
-  
-  protected    
+
+  protected
     def create_wiki_repository
       self.wiki_repository = Repository.create!({
-        :user => self.user, 
+        :user => self.user,
         :name => self.slug + Repository::WIKI_NAME_SUFFIX,
         :kind => Repository::KIND_WIKI,
         :project => self,
@@ -402,5 +400,9 @@ class Project < ActiveRecord::Base
 
     def downcase_slug
       slug.downcase! if slug
+    end
+
+    def add_as_favorite
+      watched_by!(self.user)
     end
 end

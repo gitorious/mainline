@@ -20,8 +20,8 @@ class PushEventProcessor < ApplicationProcessor
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR = "\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR) 
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
   subscribes_to :push_event
-  attr_reader :oldrev, :newrev, :action, :user, :identifier, :target
-  attr_accessor :repository
+  attr_reader :oldrev, :newrev, :action, :identifier, :target, :revname
+  attr_accessor :repository,  :user
   
   def on_message(message)
     verify_connections!
@@ -32,11 +32,34 @@ class PushEventProcessor < ApplicationProcessor
       @user = User.find_by_login(hash['username'])
       process_push_from_commit_summary(hash['message'])
       log_events
+      trigger_hooks(@events)
     else
       logger.error("#{self.class.name} received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
     end
   end
 
+  def trigger_hooks(events)
+    return if repository.hooks.blank?
+    events.each do |event|
+      trigger_hook(event)
+    end
+  end
+
+
+  def trigger_hook(event)
+    payload = generate_hook_payload(event)
+    data = {
+      :user => user.login,
+      :repository_id => repository.id,
+      :payload => payload
+    }
+    publish :web_hook_notifications, data.to_json
+  end
+
+  def generate_hook_payload(event)
+    event.generate_hook_payload(oldrev, newrev, revname, user, repository)
+  end
+  
   def log_events
     logger.info("#{self.class.name} logging #{events.size} events")
     @events.each do |e|
@@ -57,7 +80,7 @@ class PushEventProcessor < ApplicationProcessor
     if event.user.blank?
       event.email = an_event.email
     end
-    event.save!
+    event.disable_notifications { event.save! }
     if commits = an_event.commits
       commits.each do |c|
         commit_event = event.build_commit({
@@ -70,15 +93,23 @@ class PushEventProcessor < ApplicationProcessor
         commit_event.save!
       end
     end
+    event.notify_subscribers
+  end
+
+  # old_sha new_sha refs/heads/branch_name
+  def parse_git_spec(spec)
+    @oldrev, @newrev, @revname = spec.split(' ')
+    r, name, @identifier = @revname.split("/", 3)
+    @target = {'tags' => :tag, 'heads' => :head, 'merge-requests' => :review}[name]
   end
   
   # Sets the commit summary, as served from git
   def process_push_from_commit_summary(spec)
-    @oldrev, @newrev, @revname = spec.split(' ')
-    r, name, @identifier = @revname.split("/", 3)
-    @target = {'tags' => :tag, 'heads' => :head, 'merge-requests' => :review}[name]
+    parse_git_spec(spec)
     if @target != :review && @repository
-      @repository.update_attribute(:last_pushed_at, Time.now.utc)
+      @repository.update_disk_usage
+      @repository.register_push
+      @repository.save
     end
     process_push
   end
@@ -108,16 +139,45 @@ class PushEventProcessor < ApplicationProcessor
   def events
     @events
   end
+
+  def events=(events)
+    @events = events
+  end
   
   class EventForLogging
-    attr_accessor :event_type, :identifier, :email, :message, :commit_time, :user
-    attr_reader :commits
+    attr_accessor :event_type, :identifier, :email, :message, :commit_time, :user, :commit_details
     def to_s
       "<PushEventProcessor:EventForLogging type: #{event_type} by #{email} at #{commit_time} with #{identifier}>"
     end
     
     def commits=(commits)
       @commits = commits
+    end
+
+    def commits
+      @commits || []
+    end
+
+    def generate_hook_payload(before, after, ref, user, repository)
+      payload = {}
+      url = "http://#{GitoriousConfig['gitorious_host']}/#{repository.url_path}"
+      payload[:commits] = commits.map{|c| c.commit_details}.flatten
+      payload[:before] = before
+      payload[:after] = after
+      payload[:ref] = ref
+      payload[:pushed_by] = user.login
+      payload[:pushed_at] = repository.last_pushed_at.xmlschema if repository.last_pushed_at
+      payload[:project] = {
+        :name => repository.project.slug,
+        :description => repository.project.description}
+      payload[:repository] = {
+        :name => repository.name,
+        :url => url,
+        :description => repository.description,
+        :clones => repository.clones.count,
+        :owner => {:name => repository.owner.title}
+      }
+      payload
     end
   end
 
@@ -225,6 +285,12 @@ class PushEventProcessor < ApplicationProcessor
       e.commit_time   = Time.at(timestamp.to_i).utc
       e.event_type    = Action::COMMIT
       e.message       = message
+      e.commit_details = {
+        :sha => sha,
+        :email => email,
+        :committed_at => e.commit_time.xmlschema,
+        :message => message
+      }
       result << e
     end
     

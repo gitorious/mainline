@@ -522,7 +522,7 @@ module ApplicationHelper
     content_tag(:div, link_to(label, url, :class => "round-10"),
         :id => options.delete(:id), :class => css_classes.flatten.join(" "))
   end
-  
+
   def link_button_link_to(label, url, options = {})
     size = options.delete(:size) || "small"
     css_classes = ["button", "#{size}-button"]
@@ -540,5 +540,9 @@ module ApplicationHelper
       :container => "True"
     }
     will_paginate(collection, options.merge(default_options))
+  end
+
+  def dashboard_path
+    root_url(:host => GitoriousConfig["gitorious_host"], :protocol => "http")
   end
 end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091207133046) do
+ActiveRecord::Schema.define(:version => 20100224153358) do
 
   create_table "cloners", :force => true do |t|
     t.string   "ip"
@@ -102,9 +102,19 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
     t.string   "action"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "notify_by_email", :default => false
   end
 
   add_index "favorites", ["watchable_type", "watchable_id", "user_id"], :name => "index_favorites_on_watchable_type_and_watchable_id_and_user_id"
+
+  create_table "feed_items", :force => true do |t|
+    t.integer  "event_id"
+    t.integer  "watcher_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "feed_items", ["watcher_id", "created_at"], :name => "index_feed_items_on_watcher_id_and_created_at"
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -128,6 +138,8 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
     t.string   "last_response"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "failed_request_count",     :default => 0
+    t.integer  "successful_request_count", :default => 0
   end
 
   add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
@@ -208,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
     t.boolean  "has_unread_replies",    :default => false
     t.boolean  "archived_by_sender",    :default => false
     t.boolean  "archived_by_recipient", :default => false
+    t.datetime "last_activity_at"
   end
 
   add_index "messages", ["aasm_state"], :name => "index_messages_on_aasm_state"
@@ -279,6 +292,8 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
     t.boolean  "notify_committers_on_new_merge_request", :default => true
     t.datetime "last_gc_at"
     t.boolean  "merge_requests_enabled",                 :default => true
+    t.integer  "disk_usage"
+    t.integer  "push_count_since_gc"
   end
 
   add_index "repositories", ["hashed_path"], :name => "index_repositories_on_hashed_path", :unique => true
@@ -346,33 +361,41 @@ ActiveRecord::Schema.define(:version => 20091207133046) do
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
-    t.string   "crypted_password",          :limit => 40
-    t.string   "salt",                      :limit => 40
+    t.string   "crypted_password",               :limit => 40
+    t.string   "salt",                           :limit => 40
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
-    t.datetime "remember_token_expires_at"
-    t.string   "activation_code",           :limit => 40
+    t.string   "activation_code",                :limit => 40
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
     t.string   "fullname"
     t.text     "url"
     t.text     "identity_url"
-    t.boolean  "is_admin",                                :default => false
+    t.boolean  "is_admin",                                     :default => false
     t.datetime "suspended_at"
     t.string   "aasm_state"
-    t.boolean  "public_email",                            :default => true
-    t.boolean  "wants_email_notifications",               :default => true
+    t.boolean  "public_email",                                 :default => true
+    t.boolean  "wants_email_notifications",                    :default => true
     t.string   "password_key"
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.datetime "remember_token_expires_at"
+    t.boolean  "default_favorite_notifications",               :default => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["password_key"], :name => "index_users_on_password_key"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
+
+  create_table "watchlist", :id => false, :force => true do |t|
+    t.string  "fullname"
+    t.string  "data"
+    t.text    "body"
+    t.integer "project_id", :null => false
+  end
 
 end

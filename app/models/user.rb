@@ -36,10 +36,11 @@ class User < ActiveRecord::Base
   :conditions => ["repositories.kind NOT IN (?)", Repository::KINDS_INTERNAL_REPO]
   has_many :ssh_keys, :order => "id desc", :dependent => :destroy
   has_many :comments
+  has_many :email_aliases, :class_name => "Email", :dependent => :destroy
   has_many :events, :order => "events.created_at asc", :dependent => :destroy
   has_many :events_as_target, :class_name => "Event", :as => :target
-  has_many :email_aliases, :class_name => "Email", :dependent => :destroy
   has_many :favorites, :dependent => :destroy
+  has_many :feed_items, :foreign_key => "watcher_id"
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
@@ -116,16 +117,17 @@ class User < ActiveRecord::Base
       WHERE (has_unread_replies=? AND sender_id=?)
       OR recipient_id=?
       AND in_reply_to_id IS NULL
-      ORDER BY created_at DESC", true,self, self])
+      ORDER BY last_activity_at DESC", true,self, self])
   end
 
   # Top level messages, excluding message threads that have been archived by me
-  def messages_in_inbox
+  def messages_in_inbox(limit=100)
     Message.find_by_sql(["SELECT * from messages
         WHERE ((sender_id != :user AND archived_by_recipient = :no AND recipient_id = :user)
         OR (has_unread_replies = :yes AND archived_by_recipient = :no AND sender_id = :user))
         AND in_reply_to_id IS NULL
-        ORDER BY created_at DESC", {:user => self.id, :yes => true, :no => false}])
+        ORDER BY last_activity_at DESC LIMIT :limit",
+                         {:user => self.id, :yes => true, :no => false, :limit => limit}])
   end
 
   has_many :sent_messages, :class_name => "Message",
@@ -369,15 +371,21 @@ class User < ActiveRecord::Base
   end
 
   def watched_objects
-    favorites.collect(&:watchable)
+    favorites.find(:all, {
+      :include => :watchable,
+      :order => "id desc"
+    }).collect(&:watchable)
   end
 
-  def events_in_watchlist
-    Event.find(:all,
-      :joins => "inner join favorites ON favorites.watchable_id = events.target_id " +
-                "AND favorites.watchable_type = events.target_type",
-      :conditions => ["favorites.user_id=?", id],
-      :order => "events.created_at desc")
+  def paginated_events_in_watchlist(pagination_options = {})
+    watched = feed_items.paginate({
+        :order => "created_at desc",
+        :total_entries => FeedItem.per_page+(FeedItem.per_page+1)
+      }.merge(pagination_options))
+
+    total = (watched.length < watched.per_page ? watched.length : watched.total_entries)
+    items = WillPaginate::Collection.new(watched.current_page, watched.per_page, total)
+    items.replace(Event.find(watched.map(&:event_id), {:order => "created_at desc"}))
   end
 
   protected

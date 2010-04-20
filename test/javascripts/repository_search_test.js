@@ -14,7 +14,7 @@
   #
   #   You should have received a copy of the GNU Affero General Public License
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  #-- 
+  #--
 */
 
 TestCase("Live search for repositories", {
@@ -27,7 +27,7 @@ TestCase("Live search for repositories", {
     "test should not create the container if it exists": function() {
         /*:DOC += <div id="repo_search"><ol class="live-search-results"></ol></div> */
         jQuery("#repo_search").liveSearch();
-        assertEquals(1, jQuery("#repo_search").find(".live-search-results").length);        
+        assertEquals(1, jQuery("#repo_search").find(".live-search-results").length);
     },
 
     "test should allow a custom result container": function() {
@@ -43,7 +43,7 @@ TestCase("Live search for repositories", {
     },
 
     "test should hide the result container": function() {
-        /*:DOC += <div id="repo_search"><li class="live-search-results"></div></div>*/
+        /*:DOC += <div id="repo_search"><li class="live-search-results"></li></div> */
         assertEquals(0, jQuery("#repo_search .live-search-results:hidden").length);
         jQuery("#repo_search").liveSearch();
         assertEquals(1, jQuery("#repo_search .live-search-results:hidden").length);
@@ -70,7 +70,7 @@ TestCase("Live search for repositories", {
                 result = [{"name":"gitorious"}];
                 callback(result);
             }
-        };        
+        };
         var api = jQuery("#repo_search").liveSearch(backend, {itemClass: "item"});
         api.performSearch("Foo");
         // The default renderer renders with li class="item"
@@ -114,7 +114,7 @@ TestCase("Live search for repositories", {
         api.populate({});
         assertTrue(othersHidden);
     },
-    
+
     "test should call the optional onReset when resetting": function() {
         /*:DOC += <div id="s"></div> */
         var othersDisplayed = false;
@@ -124,7 +124,7 @@ TestCase("Live search for repositories", {
         var api = jQuery("#s").liveSearch({}, {onReset: displayOthers});
         api.reset();
         assertTrue(othersDisplayed);
-        
+
     },
     "test should hide the reset element if one exists": function() {
         /*:DOC += <div id="s"><div class="reset" style="display:block"></div></div>*/

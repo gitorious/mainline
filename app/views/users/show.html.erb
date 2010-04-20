@@ -52,6 +52,9 @@
       </div>
 
       <ul class="buttons">
+        <% if is_current_user?(@user) -%>
+          <li class="hint">This is you! (<%= link_to "your dashboard", root_path -%>)</li>
+        <% end -%>
         <% if !is_current_user?(@user) -%>
         <li class="new_email">
           <%= white_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
@@ -81,15 +84,15 @@
     </div>
 	<div class="content-container w-510">
     <h2 class="activities">
-      	<% if showing_newsfeed? %>
-        	Your Newsfeed
-      	<% else %>
-        	<%= t("views.site.dashboard.activities") -%>
-      		<% end %>
-      		<%= feed_icon @atom_auto_discovery_url -%>
-      		<% if is_current_user?(@user) -%>
-        		<small>(<%= newsfeed_or_user_events_link -%>)</small>
-      		<% end -%>
+	<% if showing_newsfeed? %>
+		Your Newsfeed
+	<% else %>
+		<%= t("views.site.dashboard.activities") -%>
+	<% end %>
+		<%= feed_icon @atom_auto_discovery_url -%>
+	<% if is_current_user?(@user) -%>
+    	<small>(<%= newsfeed_or_user_events_link -%>)</small>
+	<% end -%>
     </h2>
     
 <% if @events.empty? -%>
@@ -108,7 +111,7 @@
       <ul class="with_icons">
         <% @favorites.each do |favorite| %>
           <li class="favorite <%= favorite.class.name.underscore -%>">
-            <%= link_to_watchable(favorite) -%>
+            <%= link_to_watchable(favorite.watchable) -%>
           </li>
         <% end %>
        <% if @favorites.blank? %><p class="hint"><%= no_watchings_notice_for(@user) %></p> <% end %>
@@ -129,7 +132,12 @@
     <% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-510") do -%>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
-        <li class="project"><%= link_to h(project.title), project -%></li>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+          <% if favorited?(project) %>
+            <%= image_tag("silk/star.png", :title => "favorited") %>
+          <% end %>
+        </li>
       <% end -%>
 
       </ul>
@@ -158,12 +166,44 @@
       <ul class="with_icons">
         <% @repositories.each do |repo| -%>
           <li class="repository">
-            <%= link_to h("#{repo.project.slug}/#{repo.name}"), repo_owner_path(repo, [repo.project, repo]) -%>
+            <%= link_to h(repo.url_path),
+                  repo_owner_path(repo, [repo.project, repo]) -%>
           </li>
         <% end -%>
       </ul>
     <% end -%>
-    <% end -%>
+<% end %>
+
+    <% pull_box(favorites_heading_for(@user)) do %>
+    <div id="watchable-list">
+      <div class="filters">
+        <ul>
+          <% if is_current_user?(@user) -%>
+            <li><a class="foreign" href="#not-mine">Not yours</a></li>
+            <li><a class="mine" href="#mine">Yours</a></li>
+          <% end -%>
+          <li>
+            <a href="#merge-requests" class="merge-requests">Merge requests</a>
+          </li>
+          <li>
+            <a href="#repos" class="repositories">Repositories</a>
+          </li>
+          <li><a href="#all" class="all">All</a></li>
+        </ul>
+        <div class="clear"></div>
+      </div>
+      <ul class="with_icons">
+        <% @favorites.each do |favorite| %>
+          <li class="<%= css_classes_for(favorite.watchable) -%>">
+            <%= link_to_watchable(favorite.watchable) -%>
+          </li>
+        <% end %>
+        <% if @favorites.blank? -%>
+          <p class="hint"><%= no_watchings_notice_for(@user) -%></p>
+        <% end -%>
+      </ul>
+    </div>
+    <% end %>
 
     <% pull_box("Team memberships", :class => "teams pull-box-510") do -%>
       <ul>

@@ -22,6 +22,7 @@
 %>
 
 <% container_css_class ||= "" %>
+<% pagination_style ||= :full %>
 
 <% benchmark("Event rendering") do -%>
 <ul class="events <%= container_css_class -%>">
@@ -34,5 +35,5 @@
   </li>
 <% end -%>
 </ul>
-<%= render_pagination_links events -%>
+<%= render_pagination_links events, :page_links => (pagination_style == :full) -%>
 <% end -%>

@@ -34,7 +34,7 @@ class RepositoriesController < ApplicationController
 
   def index
     if term = params[:filter]
-      @repositories = @project.search_repositories(Regexp.new(term))
+      @repositories = @project.search_repositories(term)
     else
       @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
     end
@@ -152,7 +152,7 @@ class RepositoriesController < ApplicationController
 
   def search_clones
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    @repositories = @repository.search_clones(Regexp.new(params[:filter]))
+    @repositories = @repository.search_clones(params[:filter])
     render :json => to_json(@repositories)
   end
 
@@ -170,7 +170,7 @@ class RepositoriesController < ApplicationController
 
       @repository.log_changes_with_user(current_user) do
         @repository.replace_value(:name, params[:repository][:name])
-        @repository.replace_value(:description, params[:repository][:description])
+        @repository.replace_value(:description, params[:repository][:description], true)
       end
       @repository.deny_force_pushing = params[:repository][:deny_force_pushing]
       @repository.notify_committers_on_new_merge_request = params[:repository][:notify_committers_on_new_merge_request]

@@ -20,8 +20,24 @@ class FavoritesController < ApplicationController
   before_filter :login_required
   before_filter :find_watchable, :only => [:create]
 
+  def index
+    @favorites = current_user.favorites.all(:include => :watchable)
+    @root = Breadcrumb::Favorites.new(current_user)
+  end
+
+  def update
+    @favorite = current_user.favorites.find(params[:id])
+    @favorite.notify_by_email = params[:favorite][:notify_by_email]
+    @favorite.save
+    respond_to do |wants|
+      wants.html { redirect_to favorites_path }
+      wants.js { head :ok }
+    end
+  end
+
   def create
-    @favorite = current_user.favorites.create!(:watchable => @watchable)
+    @favorite = @watchable.watched_by!(current_user)
+    @favorite.create_event
     respond_to do |wants|
       wants.html {
         flash[:notice] = "You are now watching this #{@watchable.class.name.downcase}"
@@ -60,3 +76,4 @@ class FavoritesController < ApplicationController
     @watchable = watchable_class.find(params[:watchable_id])
   end
 end
+

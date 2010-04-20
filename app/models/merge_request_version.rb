@@ -17,8 +17,11 @@
 #++
 
 class MergeRequestVersion < ActiveRecord::Base
+  include ActiveMessaging::MessageSender
+  
   belongs_to :merge_request
   has_many :comments, :as => :target, :include => :user
+  before_destroy :schedule_branch_deletion
 
   def affected_commits
     Rails.cache.fetch(cache_key + '/affected_commits') do
@@ -106,6 +109,22 @@ class MergeRequestVersion < ActiveRecord::Base
     end
   end
 
+  # The unserialized message that is sent to the message queue
+  # for deleting the tracking branch
+  def branch_deletion_message
+    {
+      :source_repository_path => merge_request.source_repository.full_repository_path,
+      :tracking_repository_path => merge_request.tracking_repository.full_repository_path,
+      :target_branch_name => merge_request.merge_branch_name(version),
+      :source_repository_id => merge_request.source_repository.id
+    }
+  end
+
+  def schedule_branch_deletion
+    message = branch_deletion_message.to_json
+    publish :merge_request_version_deletion, message
+  end
+  
   private
   # Returns a string representation of a sha range
   def sha_range_string(string_or_range)

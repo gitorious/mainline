@@ -53,6 +53,7 @@ class Repository < ActiveRecord::Base
                 :class_name => 'MergeRequest', :order => "id desc", :dependent => :destroy
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
+  has_many :hooks, :dependent => :destroy
 
   NAME_FORMAT = /[a-z0-9_\-]+/i.freeze
   validates_presence_of :user_id, :name, :owner_id, :project_id
@@ -67,7 +68,8 @@ class Repository < ActiveRecord::Base
   before_create :set_repository_hash
   after_create :create_initial_committership
   after_create :create_add_event_if_project_repo
-  after_create  :post_repo_creation_message
+  after_create :post_repo_creation_message
+  after_create :add_owner_as_watchers
   after_destroy :post_repo_deletion_message
 
   throttle_records :create, :limit => 5,
@@ -168,33 +170,38 @@ class Repository < ActiveRecord::Base
   end
 
   def self.most_active_clones_in_projects(projects, limit = 5)
-    clone_ids = projects.map do |project|
-      project.repositories.clones.map{|r| r.id }
-    end.flatten
-    find(:all, :limit => limit,
-      :select => 'distinct repositories.*, count(events.id) as event_count',
-      :order => "event_count desc", :group => "repositories.id",
-      :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
-                      clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-      #:conditions => { :id => clone_ids },
-      :joins => :events, :include => :project)
+    key = "repository:most_active_clones_in_projects:#{projects.map(&:id).join('-')}:#{limit}"
+    Rails.cache.fetch(key, :expires_in => 2.hours) do
+      clone_ids = projects.map do |project|
+        project.repositories.clones.map{|r| r.id }
+      end.flatten
+      find(:all, :limit => limit,
+        :select => 'distinct repositories.*, count(events.id) as event_count',
+        :order => "event_count desc", :group => "repositories.id",
+        :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
+                        clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
+        #:conditions => { :id => clone_ids },
+        :joins => :events, :include => :project)
+    end
   end
 
   def self.most_active_clones(limit = 10)
-    find(:all, :limit => limit,
-      :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
-      :order => "event_count desc", :group => "repositories.id",
-      :conditions => ["events.created_at > ? and kind in (?)",
-                      7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-      :joins => :events, :include => :project)
+    Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
+      find(:all, :limit => limit,
+        :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
+        :order => "event_count desc", :group => "repositories.id",
+        :conditions => ["events.created_at > ? and kind in (?)",
+                        7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
+        :joins => :events, :include => :project)
+    end
   end
 
   # Finds all repositories that might be due for a gc, starting with
   # the ones who've been pushed to recently
-  def self.all_due_for_gc(batch_size = 25, gc_window = 21.days, push_window = 7.days)
+  def self.all_due_for_gc(batch_size = 25)
     find(:all,
-      :conditions => ["(last_gc_at IS NULL OR last_gc_at < ?) AND last_pushed_at > ?",
-                      gc_window.ago, push_window.ago],
+      :order => "push_count_since_gc desc",
+      :conditions => "push_count_since_gc > 0",
       :limit => batch_size)
   end
 
@@ -578,9 +585,11 @@ class Repository < ActiveRecord::Base
   end
 
   # Replaces a value within a log_changes_with_user block
-  def replace_value(field, value)
+  def replace_value(field, value, allow_blank = false)
     old_value = read_attribute(field)
-    return if value.blank? or old_value == value
+    if !allow_blank && value.blank? || old_value == value
+      return
+    end
     self.send("#{field}=", value)
     valid?
     if !errors.on(field)
@@ -654,9 +663,24 @@ class Repository < ActiveRecord::Base
   def gc!
     Grit::Git.with_timeout(nil) do
       if self.git.gc_auto
-        return update_attribute(:last_gc_at, Time.now.utc)
+        self.last_gc_at = Time.now
+        self.push_count_since_gc = 0
+        return save
       end
     end
+  end
+
+  def register_push
+    self.last_pushed_at = Time.now.utc
+    self.push_count_since_gc = push_count_since_gc.to_i + 1
+  end
+  
+  def update_disk_usage
+    self.disk_usage = calculate_disk_usage
+  end
+
+  def calculate_disk_usage
+    @calculated_disk_usage ||= `du -sb #{full_repository_path} 2>/dev/null`.chomp.to_i
   end
 
   def matches_regexp?(term)
@@ -667,7 +691,42 @@ class Repository < ActiveRecord::Base
   end
 
   def search_clones(term)
-    clones.find_all { |r| r.matches_regexp?(term)}
+    self.class.title_search(term, "parent_id", id)
+  end
+
+  # Searches for term in
+  # - title
+  # - description
+  # - owner name/login
+  #
+  # Scoped to column +key+ having +value+
+  #
+  # Example:
+  #   title_search("foo", "parent_id", 1) #  will find clones of Repo with id 1
+  #                                          matching 'foo'
+  #
+  #   title_search("foo", "project_id", 1) # will find repositories in Project#1
+  #                                          matching 'foo'
+  def self.title_search(term, key, value)
+    sql = "SELECT repositories.* FROM repositories
+      INNER JOIN users on repositories.user_id=users.id
+      INNER JOIN groups on repositories.owner_id=groups.id
+      WHERE repositories.#{key}=#{value}
+      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR groups.name LIKE :q)
+      AND repositories.owner_type='Group'
+      AND kind in (:kinds)
+      UNION ALL
+      SELECT repositories.* from repositories
+      INNER JOIN users on repositories.user_id=users.id
+      INNER JOIN users owners on repositories.owner_id=owners.id
+      WHERE repositories.#{key}=#{value}
+      AND (repositories.name LIKE :q OR repositories.description LIKE :q OR owners.login LIKE :q)
+      AND repositories.owner_type='User'
+      AND kind in (:kinds)"
+    self.find_by_sql([sql, {:q => "%#{term}%",
+                        :id => value,
+                        :kinds =>
+                        [KIND_TEAM_REPO, KIND_USER_REPO, KIND_PROJECT_REPO]}])
   end
 
   protected
@@ -706,6 +765,11 @@ class Repository < ActiveRecord::Base
       when WIKI_WRITABLE_PROJECT_MEMBERS
         return self.project.member?(a_user)
       end
+    end
+
+    def add_owner_as_watchers
+      return if KINDS_INTERNAL_REPO.include?(self.kind)
+      watched_by!(user)
     end
 
   private
