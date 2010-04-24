@@ -28,7 +28,7 @@ atom_feed do |feed|
       entry.title("#{h(event.user.login)} #{strip_tags(action)}")
       entry.content(<<-EOS, :type => 'html')
 <p>#{link_to event.user.login, user_path(event.user)} #{action}</p>
-<p>#{body}<p>
+<p>#{body}</p>
 EOS
       entry.author do |author|
         author.name(event.user.login)
