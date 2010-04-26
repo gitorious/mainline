@@ -20,7 +20,8 @@
 
 <script type="text/javascript" charset="utf-8">
 $(document).ready(function() {
-    $("input#user_login_autocomplete").autocomplete("auto_complete_for_user_login");
+    options = {matchSubset: false}
+    $("input#user_login_autocomplete").autocomplete("auto_complete_for_user_login", options);
   });
 </script>
 
