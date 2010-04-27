@@ -33,20 +33,19 @@ module UsersHelper
   end
 
   def mangled_mail(email)
-    user, domain = h(email).split("@", 2)
-    return user if domain.blank?
-    domain, ext = domain.split(".", 2)
-    user + " @" + domain[0, domain.length/2] +
-      "&hellip;" + domain[-(domain.length/3)..-1] + ".#{ext}"
+    if GitoriousConfig["mangle_email_addresses"]
+      user, domain = h(email).split("@", 2)
+      return user if domain.blank?
+      domain, ext = domain.split(".", 2)
+      user + " @" + domain[0, domain.length/2] +
+        "&hellip;" + domain[-(domain.length/3)..-1] + ".#{ext}"
+    else
+      h(email)
+    end
   end
 
   def render_email(email)
-    encoded_email = if GitoriousConfig["mangle_email_addresses"]
-                      mangled_mail(email.to_s)
-                    else
-                      h(email.to_s)
-                    end
-    "&lt;" + encoded_email.to_s + "&gt;"
+    "&lt;" + mangled_mail(email.to_s) + "&gt;"
   end
 
   def is_current_user?(a_user)
