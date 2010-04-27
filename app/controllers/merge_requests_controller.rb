@@ -81,9 +81,15 @@ class MergeRequestsController < ApplicationController
     @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                       :include => [:source_repository, :target_repository])
 
-    @commits = @merge_request.commits_to_be_merged
     @version = @merge_request.current_version_number
-    @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
+    begin
+      @commits = @merge_request.commits_to_be_merged
+      @commit_comments = @merge_request.source_repository.comments.with_shas(@commits.map(&:id))
+    rescue Grit::Git::GitTimeout
+      @commits = []
+      @commit_comments = []
+      flash[:error] = "A Git timeout occured. Only metadata is being displayed"
+    end
     respond_to do |wants|
       wants.html {
         if @merge_request.legacy?
