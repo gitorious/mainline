@@ -175,7 +175,7 @@ su - git -c "crontab -u git /home/git/crontab"
 /etc/init.d/git-daemon start
 /etc/init.d/git-ultrasphinx start
 
-cp /var/www/gitorious/doc/templates/gitorious-logrotate /etc/logrotate.d/gitorious
+cp /var/www/gitorious/doc/templates/ubuntu/gitorious-logrotate /etc/logrotate.d/gitorious
 chmod 644 /etc/logrotate.d/gitorious
 
 /etc/init.d/apache2 reload
