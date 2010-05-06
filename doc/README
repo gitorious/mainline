@@ -47,7 +47,7 @@ That's how you clone a remote repository from what's called your "Push URL":
 
 It is very similar as operating over an SSH URL:
 
-  git clone ssh://git@gitorious.org/~/gitorious/mainline.git
+  git clone ssh://git@gitorious.org/~gitorious/mainline.git
 
 And that's exactly what happens. Let's break it down:
 
