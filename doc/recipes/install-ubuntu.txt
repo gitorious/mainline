@@ -239,7 +239,7 @@ export PATH=$RUBY_HOME/bin:$PATH
 
 9.2 Create /etc/logrotate.d/gitorious, add this content:
 
-- copy content from doc/templates/gitorious-logrotate
+- copy content from doc/templates/ubuntu/gitorious-logrotate
 
 9.3 Set permission for /etc/logrotate.d/gitorious
 
