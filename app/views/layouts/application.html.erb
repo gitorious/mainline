@@ -20,36 +20,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<!doctype html lang="en"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
 <head>
   <%= render :partial => "layouts/common_head" %>
-  <script type="text/javascript">
-	$(document).ready(function() {
-		$('.with_sidebar').parent().css('background', 'url("http://gitorious.local:3000/img/container-bg310.png") repeat-y');
-		$('ul.navigation').find('li:first').addClass("first"); 
-		$('ul.navigation').find('li:last').addClass("last"); 
-		$("ul.navigation ~ ul.navigation").addClass("multiple");
-		$('table').find('tr:first').find('th:first').addClass("first");
-		$('table').find('tr:first').find('th:last').addClass("last");
-			
-	  $('div.expandable').expander({
-	    slicePoint:       200,  // default is 100
-	    expandText:         'read more', // default is 'read more...'
-	    collapseTimer:    0, // re-collapses after 5 seconds; default is 0, so no re-collapsing
-	    userCollapseText: '',  // default is '[collapse expanded text]'
-		expandEffect:     'fadeIn',
-		userCollapse:     true,
-		expandSpeed:      '800'       // speed in milliseconds of the animation effect for expanding the text
-	  });
-	});
-	</script>	
-	<!--[if IE 8]>
-	<link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css">
-	<![endif]-->
-	<!--[if IE 7]>
-	<link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css">
-	<![endif]-->
-	
 </head>
 
 <body id="<%= controller.controller_name -%>">
