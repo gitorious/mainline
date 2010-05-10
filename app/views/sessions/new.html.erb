@@ -21,41 +21,71 @@
 #++
 %>
 
-<% dialog_box(t("views.sessions.login")) do  -%>
+<div id="content">
+
   <%= login_method %>
   <% form_tag sessions_path  do -%>
-    <div id="regular_login_fields">
-      <p>
-        <label for="login"><%= t("views.sessions.label").call(self) %></label><br/>
-        <%= text_field_tag 'email', params[:email] %>
-      </p>
+	<div class="form-wrapper" id="login">
+		<div id="log-in">
+		<h1>Log in to Gitorious</h1>
+			<div class="horisontal-shadow"></div>
+				<div id="regular_login_fields">
+					<ul>
+						<li>
+							 <label for="email"><%= t("views.sessions.label").call(self) %></label>
+							<%= text_field_tag 'email', params[:email] %>
+						</li>
+						<li>
+							<label for="password"><%= t("views.sessions.passwd") %></label>
+							<%= password_field_tag 'password', '' %>
+						</li>
+						<li>
+							<div class="tos">
+								<%= check_box_tag 'remember_me' %>
+								<label for="remember_me"><%= t("views.sessions.remember") %>:</label>
+							</div>
+							<div class="submit">
+								<%= submit_tag t("views.sessions.submit") %>
+							</div>
+						</li>
+					</ul>		
+				</div>
+				<div id="openid_login_fields" class="login_hidden">	
+					<ul>
+						<li>
+							<label for="openid"><%= t("views.sessions.openid").call(self) %></label>
+							<%= text_field_tag 'openid_url', params[:openid_url] -%>
+						</li>
+						<li>
+							<div class="tos">
+								<%= check_box_tag 'remember_me' %>
+								<label for="remember_me"><%= t("views.sessions.remember") %></label>
+							</div>
+							<div class="submit">
+								<%= submit_tag t("views.sessions.submit") %>
+							</div>
+						</li>
+					</ul>
+				</div>					
+	
+			
+				
+		</div><!-- end #log-in -->
+		</div><!-- end form-wrapper>
+	<% end -%> <!-- end form -->
+		
+		<p class="alt_links">
+	    <small>
+	    <% if GitoriousConfig['public_mode'] -%>
+	      <%= link_to t("views.sessions.register"), new_user_path -%> 
+	      &mdash;
+	    <% end -%> 
+	    <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
+	    </small>
+	  </p>
+	</div>
+	
 
-      <p>
-        <label for="password"><%= t("views.sessions.passwd") %></label><br/>
-        <%= password_field_tag 'password', '' %>
-      </p>
-    </div>
-    <div id="openid_login_fields" style="display:none;">
-      <p>
-        <label for="openid"><%= t("views.sessions.openid").call(self) %></label><br/>
-        <%= text_field_tag 'openid_url', params[:openid_url] -%>
-      </p>
-    </div>
-    <p>
-      <label for="remember_me"><%= t("views.sessions.remember") %>:</label>
-      <%= check_box_tag 'remember_me' %>
-    </p>
 
-    <p><%= submit_tag t("views.sessions.submit") %></p>
-  <% end -%>
+</div>
 
-  <p>
-    <small>
-    <% if GitoriousConfig['public_mode'] -%>
-      <%= link_to t("views.sessions.register"), new_user_path -%> 
-      |
-    <% end -%> 
-    <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
-    </small>
-  </p>
-<% end -%>

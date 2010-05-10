@@ -27,25 +27,25 @@ module MergeRequestsHelper
     
     out = '<ul class="horizontal">'
     open_tags = project_statuses.select{|s| s.open? }
-    out << "<li>Open:</li>" unless open_tags.blank?
+    out << "<li><strong>Open:</strong></li>" unless open_tags.blank?
     open_tags.each do |status|
       out << "<li>#{link_to_status(repository, status.name)}</li>"
     end
-    out << '</ul><div class="clear"></div>'
+    out << '</ul'
 
     out << '<ul class="horizontal">'
     closed_tags = project_statuses.select{|s| s.closed? }
-    out << "<li>Closed:</li>" unless closed_tags.blank?
+    out << "<li><strong>Closed:</strong></li>" unless closed_tags.blank?
     closed_tags.each do |status|
       out << "<li>#{link_to_status(repository, status.name)}</li>"
     end
-    out << '</ul><div class="clear"></div>'
+    out << '</ul>'
 
     out << '<ul class="horizontal">'
     orphaned_tags = status_tags.select do |status|
       !project_statuses.map{|s| s.name.downcase }.include?(status.to_s.downcase)
     end
-    out << "<li>Other:</li>" unless orphaned_tags.blank?
+    out << "<li><strong>Other:</strong></li>" unless orphaned_tags.blank?
     orphaned_tags.each do |status|
       out << "<li class=foo>#{link_to_status(repository, status)}</li>"
     end

@@ -23,16 +23,21 @@
 <% @page_title = t("views.merges.page_title", :repo => h(@repository.name)) -%>
 <%= breadcrumbs_from(@root) -%>
 
-<div id="merge-requests-status-chooser" class="round-10">
-  <h5 class="hint">Filter by status:</h5>
-  <%= render_status_tag_list(@status_tags, @repository) -%>
-</div>
-
 <h1><%= t("views.merges.page_title", :repo => h(@repository.name)) %></h1>
 
 <p class="hint"><%= t("views.merges.hint") %></p>
 
 <div class="clear"></div>
+<div id="merge-requests-status-chooser">
+  <strong>Filter by status:</strong>
+  <%= render_status_tag_list(@status_tags, @repository) -%>
+</div>  <% if @open_merge_requests.blank? -%>
+<div class="box w-750 round">
+    <p>
+      <em><%= t("views.merges.no_merge") %></em>
+    </p>
+</div>
+  <% end -%>
 <table class="listing">
   <thead>
     <th>ID</th>
@@ -43,11 +48,7 @@
     <th>Age</th>
   </thead>
   <tbody>
-  <% if @open_merge_requests.blank? -%>
-    <p>
-      <em><%= t("views.merges.no_merge") %></em>
-    </p>
-  <% end -%>
+
   <% @open_merge_requests.each do |merge_request| -%>
     <% mr_path = repo_owner_path(merge_request.target_repository,
          [ merge_request.source_repository.project,

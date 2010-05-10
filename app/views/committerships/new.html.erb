@@ -42,9 +42,9 @@
 </script>
 <% end -%>
 
-<h1>
+<h2 class="content-header smaller">
   <%= t("views.collaborators.new_title", :repo_name => @repository.name)  -%>
-</h1>
+</h2>
 
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
@@ -57,35 +57,26 @@
     </a>
   </ul>
 
-  <p id="add_user">
-    <%= f.label :group_name, t("views.collaborators.user_login") -%>:
+  <p class="tab-content" id="add_user">
+    <%= f.label :group_name, t("views.collaborators.user_login") -%>   <br />
     <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
   </p>
-  <p id="add_group" style="display:none;">
-    <%= f.label :group_name, t("views.collaborators.group_name") -%>:
+  <p class="tab-content" id="add_group" style="display:none;">
+    <%= f.label :group_name, t("views.collaborators.group_name") -%>   <br />
     <%= text_field :group, :name, :id => "group_name_autocomplete" -%>
     <br /><span class="hint">
       <%= t("views.collaborators.add_team_note") -%>
     </span>
   </p>
 
-  <table class="inline-labels">
-    <tr>
-      <th><%= f.label :permissions -%>:</th>
-      <td>
-        <%= f.label "Review" %>
-        <%= check_box_tag "permissions[]", "review", false -%>
-      </td>
-      <td>
-        <%= f.label "Commit" %>
-        <%= check_box_tag "permissions[]", "commit", false -%>
-      </td>
-      <td>
-        <%= f.label "Administrate" %>
-        <%= check_box_tag "permissions[]", "admin", false -%>
-      </td>
-    </tr>
-  </table>
+  <p><%= f.label :permissions -%>: <br />
+	
+       <%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %>  <br />
+  
+       <%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %> <br />
+     
+       <%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administrate" %> <br />
+</p>
 
   <p>
     <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>

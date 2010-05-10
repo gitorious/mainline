@@ -320,7 +320,7 @@
         :login => "Login",
         :label => lambda { |this| "Email or #{this.switch_login('switch to OpenID','to_openid')}" },
         :passwd => "Password",
-        :openid => lambda { |this| "OpenID or #{this.switch_login('switch to email login', 'to_email')}"},
+        :openid => lambda { |this| "OpenID or #{this.switch_op_login('switch to email login', 'to_email')}"},
         :remember => "Remember me",
         :submit => 'Log in',
         :register => "Register",

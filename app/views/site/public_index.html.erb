@@ -1,0 +1,147 @@
+
+	
+	<div id="top-wrapper">
+		<div id="header">
+	
+		<div id="screenshots-rotator">
+			<div id="screenshotsnavigation"></div>
+			<div id="screenshots-container">
+				<img src="img/external/screens/screen1.png">
+				<img src="img/external/screens/screen2.png">
+				<img src="img/external/screens/screen1.png">
+				<img src="img/external/screens/screen1.png">
+			</div>
+			
+		</div> <!-- end of screenshots rotator -->
+		
+		<div id="introduction">
+			<h2>The best way to collaborate on distributed open source projects</h2>
+			<p class="description">Gitorious provides free open source infrastructure for open source projects that use Git.</p>
+			<p class="directions">Take a look at <a href="#">our features</a> or the <a href="#">projects</a> we host.</p>
+		</div> <!-- end of introduction -->
+			
+		<div id="call-to-actions">
+			<ul>
+				<li id="sign-up"><%= link_to t("views.layout.register"), new_user_path %></li>
+				<li id="or"></li>
+				<li id="log-in"><%= link_to "Login", login_path %></li>
+			</ul>
+		</div> <!-- end of call to action -->
+		
+	</div> <!-- end of header -->
+	</div> <!-- end of top wrapper -->
+	<div id="features-wrapper">
+		<div id="features">
+		<h3>Features &mdash; what we bring to the table</h3>
+			<ul>
+				<li id="project-hosting">
+					<img src="img/external/icons/server_database.png">
+					<h4>Project hosting</h4>
+					<p>Host your open source projects and their repositories for free on Gitorious to enable community contributions.</p>	
+				</li>
+				<li id="activity-monitoring">
+					<img src="img/external/icons/feed.png">
+					<h4>Activity monitoring</h4>
+					<p>Keep track of project activity for both your personal projects and team projects.</p>	
+				</li>
+				<li id="public-merge-requests">
+					<img src="img/external/icons/arrow_in.png">
+					<h4>Public merge requests</h4>
+					<p>Allow other developers to submit contributions to your project and merge them easily.</p>	
+				</li>
+			</ul>
+			<p><a class="all-features">Want to know more? See all features</a></p>
+			<ul class="expanded-feature-list">
+				<li id="project-wikis">
+					<img src="img/external/icons/project-wikis.png">
+					<h4>Project Wikis</h4>
+					<p>Document your project using Gitorious’<br /> built-in wiki.</p>
+				</li>
+				<li id="team-contributions">
+					<img src="img/external/icons/team-contributions.png">
+					<h4>Team contributions</h4>
+					<p>Create development teams to encourage<br /> and organize cooperative development.</p>
+				</li>
+				
+				<li id="project-centric">
+					<img src="img/external/icons/database.png">
+					<h4>Project centric</h4>
+					<p>Maintain all code repositories related to a single project under a single project area on Gitorius.</p>
+				</li>
+
+			</ul>
+			</div>
+	</div> <!-- end of features -->
+	<div id="content-container">
+	<div id="content">
+		<div class="column" id="user-testimonials">
+			<h3>Hear what our users have to say</h3>
+				<div class="testimonial" id="client1">
+					<blockquote>«I’ve been using Gitorious since kindergarden, and I haven’t looked back since. 
+					Gitorious is like my mother and my girlfriend. We eat dinner together, we sleep together and she even washes my clothes.»</blockquote>
+					<cite><em>Diana Ross</em>, Part of the openSuse Project</cite>
+				</div>
+				
+				<div class="testimonial" id="client2">
+					<blockquote>«I’ve been using Gitorious since kindergarden, and I haven’t looked back since. 
+					Gitorious is like my mother and my girlfriend. We eat dinner together, we sleep together and she even washes my clothes.»</blockquote>
+					<cite><em>Diana Ross</em>, Part of the openSuse Project</cite>
+				</div>
+				
+				<div class="testimonial" id="client2">
+					<blockquote>«I’ve been using Gitorious since kindergarden, and I haven’t looked back since. 
+					Gitorious is like my mother and my girlfriend. We eat dinner together, we sleep together and she even washes my clothes.»</blockquote>
+					<cite><em>Diana Ross</em>, Part of the openSuse Project</cite>
+				</div>					
+
+		</div> <!--- end of user testimonials -->
+		
+		<div class="column" id="featured-projects">
+			<h3>Featured projects</h3>
+			<ul>
+				<li id="qt">
+					<img src="img/external/projects/qt.png">
+					<p><strong>Qt</strong> is a cross-platform application and UI framework by Nokia. Gitorious provides hosting for 8 different projects and several teams.</p>
+				</li>
+				<li id="opensuse">
+					<img src="img/external/projects/opensuse.png">
+					<p><strong>openSuse</strong> is a free and Linux-based operating system for your PC, Laptop or Server.  Gitorious provides hosting for 8 different projects and several teams.</p>
+				</li>
+				<li id="xbmc">
+					<img src="img/external/projects/xbmc.png">
+					<p><strong>XBMC</strong> is a complete media center solution for Windows, OSX, Linux, and XBOX.</p>
+				</li>
+				<li id="regjeringen">
+					<img src="img/external/projects/regjeringen.png">
+					<p><strong>Regjeringen</strong> is a complete media center solution for Windows, OSX, Linux, and XBOX.</p>
+				</li>
+				<li id="statusnet">
+					<img src="img/external/projects/statusnet.png">
+					<p><strong>StatusNet</strong> is a complete media center solution for Windows, OSX, Linux, and XBOX.</p>
+				</li>
+			</ul>
+		</div> <!-- end of featured projects -->
+		
+		<div class="column" id="from-the-blog">
+			<h3>From the Gitorious Blog</h3>
+			<ul>
+				<li class="blog-entry">
+					<h4>Emergency reboot</h4><p> &mdash;  We’ve had a serious crash of the webserver and we’re waiting for it to come back online 
+					(it’s currently checking filesystem-integrity). We’re investigating the reason for this, and will update as details emerge.</p>
+					<p class="date">March 29, 2010 – 3:49 pm</p>
+				</li>
+				<li class="blog-entry">
+					<h4>Short downtime March 4th from 15:00 CET (done)</h4><p> &mdash; We need to allocate some more disk capacity on the servers today, which requires a reboot of the gitorious.org server. This means the servers will be unavailable from 15:00 CET, they should be online about 20 minutes after that.</p>
+					<p class="date">March 29, 2010 – 3:49 pm</p>
+				</li>
+				<li class="blog-entry">
+					<h4>Activity watching</h4><p> &mdash; Up until a few days the only way to stay updated on new activities across many projects was to either subscribe to a bunch of atom feeds or visit each projects overview page regularly. But that’s no fun.</p>
+					<p class="date">March 29, 2010 – 3:49 pm</p>
+				</li>
+			</ul>
+			<p><a class="go-to-blog" href="http://blog.gitorious.org">Go to the Gitorious Blog</a></p>
+		</div> <!-- end of from the blog -->
+	</div> <!-- end of the content section -->
+	</div>
+	
+

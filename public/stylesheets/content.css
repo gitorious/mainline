@@ -28,6 +28,9 @@
 #left.w-365 { width: 365px;float: left; }
 #right.w-365 { width: 365px; float: right; }
 
+.box { float: left; padding: 10px; margin: 15px 0px;}
+.light-gray { background: #eee; }
+.rounded { -webkit-border-radius: 6px; }
 
 /* PROJECT PAGE */
 
@@ -80,10 +83,11 @@
 .repository_meta .infobox ul li form strong {
 	border-right: 1px solid #cccccc;		
 	text-shadow: 0px 1px #eee;
-	padding: 7px 16px 1px 20px;
+	padding: 6px 16px 1px 20px;
 	float: left;
-	height: 20px;
-	background: url(../images/silk/link.png) no-repeat 0px 6px;
+	height: 21px;
+	font-size: 11px;
+	background: url(../images/silk/link.png) no-repeat 0px 7px;
 }
 
 .repository_meta .infobox ul li form p {
@@ -93,13 +97,15 @@
 		height: 28px;
 }
 .repository_meta .infobox ul li form p input[type=radio] {
-		margin-right: 5px;
+	position: relative;
+	left: -4px;
+	top: 1px;
 }
 .repository_meta .infobox ul li form p.clone_radio {
 		border-right: 1px solid #cccccc;
 		background: url(../img/clone-url-bg.png) repeat-x;
-		padding: 7px 10px 1px;
-		height: 20px;
+		padding: 6px 10px 1px;
+		height: 21px;
 }
 .repository_meta .infobox ul li form p.clone_radio:hover {
 		background: #F8F8F8;
@@ -107,16 +113,24 @@
 .repository_meta .infobox input[type=text] {
 		-webkit-border-top-left-radius: 0px;
 		-webkit-border-bottom-left-radius: 0px;
-		padding: 4px 10px;
-		height: 20px;
-		width: 376px;
+		-webkit-border-top-right-radius: 6px;
+		-webkit-border-bottom-right-radius: 6px;
+		padding: 14px 10px 0px;
+		height: 28px;
+		width: 413px;
+		line-height: 22px;
 		border: 0;
-
 }
-.repository_meta .infobox label {
+.repository_meta .infobox p.clone-copy {
+		background: #FFF;
+}
+.repository_meta .infobox ul li form p label {
 		cursor: pointer;
-		float: right;
+		float: left;
+		font-size: 11px;
+		line-height: 18px;
 		height: 20px;
+		padding-left: 5px;
 }
 .repository_meta .repository-links {
 		width: 734px;
@@ -252,8 +266,7 @@ ul.events li {
 .events .event_instance .event_meta .meta_body, .comments .comment .meta_body {
     font-size: 12px;
 }
-.events .event_instance .event_meta .meta_body span.changed,
-.comments .comment .meta_body span.changed {
+span.changed{
     background: #E0EFCF;
     padding: 1px 2px 1px 2px;
 }
@@ -285,12 +298,13 @@ ul.events li {
 	height: 16px;
   color: #fff;
 	text-indent: -9999px;
-	background:  #FFF url(../img/events2.png) no-repeat; 
+	background:  #FFF url(../img/events2b.png) no-repeat; 
 
 }
 .events .event_instance .event_category.push { background-position: 0px 0px; }
 .events .event_instance .event_category.project { background-position: 0px -16px; }
 .events .event_instance .event_category.favorite { background-position: 0px -32px; }
+.events .event_instance .event_category.repository { background-position: 0px -96px; }
 
 .events.inline .event_instance .event_category {
   width: 0;

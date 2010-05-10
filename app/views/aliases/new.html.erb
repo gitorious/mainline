@@ -19,19 +19,26 @@
 <% @page_title = t("views.aliases.new_alias") -%>
 <%= breadcrumbs_from(@root) -%>
 
-<h1><%= t("views.aliases.new_alias") -%></h1>
+<h2 class="content-header"><%= t("views.aliases.new_alias") -%></h2>
 
 <%= error_messages_for :email -%>
 <% form_for(@email, :url => user_aliases_path(@user)) do |f| -%>
-  <p>
-    <%= f.label :address -%>:
-    <%= f.text_field :address -%>
-  </p>
-  
-  <p class="hint">
-    You will be sent an email asking you to confirm this email after it has 
-    been created.
-  </p>
-  
-  <p><%= f.submit("Add alias") -%> or <%= link_to "go back", user_aliases_path(@user) -%></p>
+<fieldset>
+	<li>
+		<%= f.label :address -%>
+    	<div><%= f.text_field :address -%></div>
+  	</li>
+</fieldset>
+<fieldset class="submit"> 
+		<%= f.submit("Add alias") -%>
+</fieldset>
+<% end -%>
+
+<% content_for :sidebar do -%>
+	<h2>Information</h2>
+	<p>You will be sent an email asking you to confirm this email after it has been created. </p>
+  <ul class="links navigation">
+	<li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%></li>
+
+  </ul>
 <% end -%>

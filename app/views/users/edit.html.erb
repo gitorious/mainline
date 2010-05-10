@@ -21,63 +21,57 @@
 
 <%= breadcrumbs_from(Breadcrumb::UserEdit.new(@user)) -%>
 
-<h1><%= t("views.users.edit_title") %></h1>
+<h2 class="content-header"><%= t("views.users.edit_title") %></h2>
 
 <%= error_messages_for :user -%>
 <% form_for @user, :url => user_path, :html => {:multipart => true} do |f| -%>
-  <p>
-    <%= f.label :fullname, t("views.users.realname") -%><br />
-    <%= f.text_field :fullname -%>
-  </p>
-  <p>
-    <%= f.label :email, t(:email, :scope => 'views.users') -%><br />
-    <%= f.text_field :email -%>
-  </p>
-  <p>
-    <%= f.check_box :public_email -%>
+<fieldset>
+  <li>
+    <%= f.label :fullname, t("views.users.realname") -%>
+    <div><%= f.text_field :fullname -%></div>
+  </li>
+  <li>
+    <%= f.label :email, t(:email, :scope => 'views.users') -%>
+    <div><%= f.text_field :email -%></div>
+  </li>
+  <li>
     <%= f.label :public_email, t(:public_email, :scope => 'activerecord.attributes.user') -%>
-    <span class="hint">
-      (The email will be encoded to prevent scraping)
-    </span><br />
-  </p>
-  <p>
-    <%= f.label :url, t("views.users.url") -%><br />
-    <%= f.text_field :url -%>
-  </p>
-  <p>
-    <%= f.label :url, t("views.users.openid") -%><br />
-    <%= f.text_field :identity_url -%>
-  </p>
+   <div><%= f.check_box :public_email -%><span class="hint"> (The email will be encoded to prevent scraping)</span></div>
+  </li>
+
+  <li>
+    <%= f.label :url, t("views.users.url") -%>
+    <div><%= f.text_field :url -%></div>
+  </li>
+
+  <li>
+    <%= f.label :url, t("views.users.openid") -%>
+    <div><%= f.text_field :identity_url -%></div>
+  </li>
   
-  <p>
+  <li>
     <%= f.label :avatar, t('views.users.avatar') %>
-    <span class="hint">If you do not add an image, Gitorious will try to use your gravatar </span><br />
-    <%= avatar(@user, :version => :thumb, :size => '24') %>
-
+  	<div><%= avatar(@user, :version => :thumb, :size => '24') %>
     <%- if @user.avatar? -%>
-      <%= button_to_function("Delete current profile image", "if (confirm('Are you sure you want to delete your profile image?')) $('delete_avatar').submit()") %> <br/>
+      <%= button_to_function("Delete current profile image", "if (confirm('Are you sure you want to delete your profile image?')) $('delete_avatar').submit()") %> 
     <%- end -%>
-    <br />
+	<span class="hint"> If you do not add an image, Gitorious will try to use your gravatar </span>
+	</div>
+  </li>
 
-    <%= f.file_field :avatar %>
-  </p>
-  <p>
-    <%= f.check_box :wants_email_notifications %>
-    <%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
-    <span class="hint">
-      <%= t("views.users.describe_email_notifications") -%>
-    </span>
-    <br />
-  </p>
-
-  <p>
-    <%= f.check_box :default_favorite_notifications %>
-    <%= f.label :default_favorite_notifications, t("views.users.default_favorite_notifications") %>
-    <span class="hint">
-      <%= t("views.users.describe_default_favorite_notifications") %>
-    </span>
-  </p>
+	<li>
+		<label>Upload avatar</label>
+		<div><%= f.file_field :avatar %></div>
+	</li>
+	
+	<li>
+    	<%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
+    	<div><%= f.check_box :wants_email_notifications %><span class="hint"> <%= t("views.users.describe_email_notifications") -%></span></div>
+	</li>
+  </fieldset>
+<fieldset class="submit">
   <%= f.submit t("views.common.save") -%>
+</fieldset>
 <% end -%>
 
 <%- form_for(@user, :url => avatar_user_path, :html => {:id => "delete_avatar", :method => :delete}) do |f| -%>

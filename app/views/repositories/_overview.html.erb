@@ -21,7 +21,7 @@
 
 <div class="repository_meta">
 	<div class="repository-info">
-    		<h3 <%= repository.mainline? ? "mainline" : "clone" -%>><img src="../images/silk/database.png">
+    		<h3 <%= repository.mainline? ? "mainline" : "clone" -%>>
       		<% if verbose -%>
       			<%= link_to h(repository.project.to_param), repository.project -%>
       			<%= image_tag("silk/arrow_right.png") -%>

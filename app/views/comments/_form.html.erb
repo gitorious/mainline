@@ -23,7 +23,7 @@
 <% comment ||= nil -%>
 <% sha1 ||= nil -%>
 <% parent ||= nil -%>
-
+<div id="comment-form">
 <h3><%= t("views.comments.add_title") %>:</h3>
 
 <% if logged_in? -%>
@@ -66,7 +66,7 @@
     </p>
     <%- end -%>
     <p>
-      <input type="button" value="Preview" id="comment_preview_button" />
+      <input type="button" class="preview" value="Preview" id="comment_preview_button" />
       <%- if MergeRequest === parent && (logged_in? &&
       parent.resolvable_by?(current_user)) -%>
         <%= f.submit t("views.comments.update_or_add") -%>
@@ -81,3 +81,4 @@
     <%= link_to t("views.users.create"), new_user_path -%> to post a comment</em>
   </p>
 <% end -%>
+</div>

@@ -22,12 +22,13 @@
 %>
 <%= breadcrumbs_from(@root) -%>
 
-<h1><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h1>
+<h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h2>
 
 <%= error_messages_for :project -%>
 <% form_for(@project, :method => "put") do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
-
+	
+	<div class="merge_request_statuses content-container w-730">
   <label>Merge Request Statuses:</label><br />
   <table class="listing" id="merge_request_statuses">
     <thead>
@@ -49,10 +50,12 @@
             :locals => {:form => status_form, :project_form => f} -%>
     <% end -%>
   </table>
-  <p class="add_link"><%= add_status_link(f) -%></p>
-  <hr />
+<div class="add-link-container">
+	<div class="button right add_link"><%= add_status_link(f) -%></div>
+</div>
 
-  <% unless @project.owned_by_group? -%>
+ <div class="box rounded light-gray w-730">
+	<% unless @project.owned_by_group? -%>
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
       <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]}, 
@@ -65,14 +68,14 @@
       </small>
     </p>
   <% end -%>
-
-  <div id="project-preview">
-  </div>
-
+	</div><!-- end box -->
+	</div>
+	<fieldset  class="submit">
   <input type="button" value="Preview" id="project_preview_button" 
          gts:url="<%= preview_project_path(@project) -%>" />
 
   <%= f.submit t("views.common.update") -%>
+</fieldset>
 <% end -%>
 
 

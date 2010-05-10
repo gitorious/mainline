@@ -1,0 +1,63 @@
+#content ul.events .event_instances li > * {
+		overflow: hidden;
+}
+#content ul.events .event_instances li {
+	clear: none;
+	width: 730px;
+}
+#content ul.events .event_instances li .event_meta {
+		width: 530px;
+}
+#content .repository_meta .repository-links {
+
+}
+#content .repository_meta .repository-links ul {
+	float: left;
+	height: 40px;
+	margin-top: -28px;
+	width: 500px;
+}
+#content .repository_meta .repository-links ul li {
+	float: left;
+	display: inline;
+	
+}
+#content .repository_meta .repository-info .infobox ul li .clone_urls {
+
+}
+#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio {
+	float: left;
+	overflow: hidden;
+	padding: 4px 10px 4px 8px;
+}
+#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio input {
+		width: 20px;
+}
+
+#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio label {
+	float: left;
+	font-size: 11px;
+	line-height: 12px;
+}
+#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy,#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy input {
+		float: left;
+		width: 370px;
+}
+.tag_list {
+		width: 270px;
+}
+.tag_list li {
+		float: left;
+}
+#content .form-wrapper  ul li input[type='text'], #content .form-wrapper  ul li input[type='password'] {
+	height: 24px;
+	padding: 10px 10px 10px 10px;
+
+}
+#content .form-wrapper  ul li label {
+	font-weight: bold;
+
+}
+#content .form-wrapper input[type='submit'] {
+	font-size: 0;
+	color: #CCC;

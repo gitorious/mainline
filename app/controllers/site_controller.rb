@@ -94,7 +94,7 @@ class SiteController < ApplicationController
       @users = User.most_active
       @latest_events = Event.latest(4)
 
-      render :layout => "second_generation/application", :inline => ""
+      render :template => "site/public_index", :layout => "second_generation/application"
     end
 
     # Render the global index template

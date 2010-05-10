@@ -22,31 +22,33 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<h1>Add new repository to <%= link_to @owner.title, @owner -%></h1>
+<h2 class="content-header">Add new repository to <%= link_to @owner.title, @owner -%></h2>
 
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
-  <p class="hint">
-    The repository will be in the <%= link_to h(@project.title), @project -%> project, 
-    and owned by <%= link_to @repository.owner.title, @owner -%> 
-    (a <%= @repository.owner.class.human_name.downcase -%>)
-  </p>
-  <p>
-    <%= f.label :name -%>:<br />
-    <%= f.text_field :name -%>
-  </p>
-  <p>
+<fieldset>
+  <li>
+    <%= f.label :name -%>
+    <div><%= f.text_field :name -%></div>
+  </li>
+  <li>
     <%= f.label :description -%> 
-    <span class="hint">(<%= markdown_hint -%>)</span>:<br />
-    <%= f.text_area :description, :class => "text shorter" -%>
-  </p>
-  <p>
+    
+    <div><%= f.text_area :description, :class => "text wide" -%><br /> <span class="hint">(<%= markdown_hint -%>)</span></div>
+  </li>
+  <li>
     <%= f.label :enable_merge_requests -%>
-    <%= f.check_box :merge_requests_enabled -%> <br />
-    <span class="hint">
-      <%= t("views.repos.merge_requests_enabled") -%>
-    </span>
-  </p>
-  
+    <div><%= f.check_box :merge_requests_enabled -%><span class="hint" style="float: left;"> <%= t("views.repos.merge_requests_enabled") -%></span></div>
+  </li>
+</fieldset>
+<fieldset class="submit">	  
   <%= f.submit "Create repository" -%>
+</fieldset>
+<% end -%>
+<% content_for :sidebar do -%>
+	<h2>Information</h2>
+	<p>The repository will be in the <strong><%= link_to h(@project.title), @project -%></strong> project, 
+    and owned by <strong><%= link_to @repository.owner.title, @owner -%></strong>
+    (a <%= @repository.owner.class.human_name.downcase -%>).
+  </p>
 <% end -%>

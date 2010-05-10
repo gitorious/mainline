@@ -17,29 +17,53 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-  <p>
-    <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :login -%>
-  </p>
+<div class="form-wrapper" id="signup">
+	<div id="sign-up">
+	<h1>Create a new user</h1>
+	<p class="alt-login">Or log in directly with your <%= link_to "OpenID", login_path %></p>
+	<p><%= t("views.users.create_description") %></p>
+		<div class="horisontal-shadow"></div>
+			<ul>
+				<li>
+					<%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%>
+    				<%= f.text_field :login -%>
+				</li>
 
-  <p>
-    <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.text_field :email -%>
-  </p>
+				<li>
+				    <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%>
+				    <%= f.text_field :email -%>
+				</li>
 
-  <p>
-    <%= f.label :password, t(:password, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.password_field :password -%>
-  </p>
+				<li>
+				    <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%>
+				    <%= f.password_field :password_confirmation %>
+				</li>
 
-  <p>
-    <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%><br/>
-    <%= f.password_field :password_confirmation %>
-  </p>
-  
-  <%= render :partial => "licenses/tos_link" -%>
+				<li>
+					<%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%>
+    				<%= f.text_field :login -%>
+				</li>
+				<li>
+					<div class="tos">
+						<%= f.check_box :terms_of_use  -%>
+						<label for="terms_of_use">I accept the <%= render :partial => "licenses/tos_link" -%></label>
+					</div>
+					<div class="submit"> 
+						<%= f.submit t("views.common.signup") %>
+					</div>
+				
+				</li>
+			</ul>
 
-  <p>
-    <%= f.check_box :terms_of_use  -%>
-    <label for="terms_of_use">I accept the Terms of Use</label>
-  </p>
+	</div>
+	
+</div>
+	<p class="alt_links">
+  <small>
+  <% if GitoriousConfig['public_mode'] -%>
+    <%= link_to "Log in", login_path %>
+    &mdash;
+  <% end -%> 
+  <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
+  </small>
+</p>

@@ -118,7 +118,6 @@
 }
 
 
-
 #sidebar ul.links li a {
 		font-weight: bold;
 		color: #555555;
@@ -168,6 +167,22 @@
   text-decoration: underline;
 }
 
+#sidebar ul.options li strong {
+		float: left;
+}
+#sidebar ul.options {
+	float: left;
+	width: 270px;
+	padding: 15px 0px 15px;
+}
+#sidebar ul.options li {
+	margin-bottom: 3px;
+	text-align: right;
+	padding-bottom: 3px;
+	font-size: 12px;
+	border-bottom: 1px solid #d9d9d9;
+}
+
 
 /* ##########		 PROJECT SPECIFIC		 ########### */
 
@@ -175,7 +190,8 @@
 #sidebar > * {
 		float: left;
 }
-
+#sidebar ul.committers {
+	width: 270px;}
 #sidebar h1 {
 		float: none;
 }
@@ -217,4 +233,6 @@
 #project-meta li strong, .sidebar-meta li strong {
 		float: left;
 }
-
+#clone-list-container {
+		width: 270px;
+}

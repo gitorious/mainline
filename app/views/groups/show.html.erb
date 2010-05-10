@@ -98,10 +98,8 @@
 <% content_for :sidebar do -%>
 
 <h1><%=h @group.name -%></h1>
-<div>
   <%= render_markdown(@group.description) %>
-</div>
-  <ul>
+  <ul id="project-meta">
     <li>
       <%= image_tag @group.avatar.url(:thumb) %>      
     </li>

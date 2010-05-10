@@ -40,7 +40,7 @@ module ProjectsHelper
   end
 
   def add_status_link(form_builder)
-    link_to_function(image_tag("silk/add.png") + " Add status") do |page|
+    link_to_function("Add status") do |page|
       form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
           :child_index => 'NEW_RECORD') do |f|
         html = render(:partial => 'merge_request_status_form',

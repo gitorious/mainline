@@ -311,7 +311,7 @@ module ApplicationHelper
     links = []
     exceptions = Array(options[:except])
     unless exceptions.include?(:source_tree)
-      links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}",
+      links << content_tag(:li, link_to("Source tree",
                   tree_path(head)), :class => "tree")
     end
 

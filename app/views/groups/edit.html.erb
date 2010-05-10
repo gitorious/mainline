@@ -19,30 +19,31 @@
 
 <%= breadcrumbs_from(Breadcrumb::GroupEdit.new(@group)) -%>
 
-<h1><%= t("views.groups.update_team") -%></h1>
+<h2 class="content-header"><%= t("views.groups.update_team") -%></h2>
 
 <%= error_messages_for :group -%>
 <% form_for @group, :html => {:multipart => true} do |f| -%>
-  <p>
-    <%= f.label :description, t('views.groups.description') -%>:<br/>
-    <span class="hint">
-      <%= t("views.common.format_using_markdown", :markdown => 'markdown') -%>
-    </span><br />
-    <%= f.text_area :description %>
-  </p>
+<fieldset>
+  <li>
+    <%= f.label :description, t('views.groups.description') -%>
+     <div><%= t("views.common.format_using_markdown", :markdown => 'markdown') -%><%= f.text_area :description %> </div>
+  </li>
   
-  <p>
-    <%= f.label :avatar, t('views.groups.avatar') -%> <br />
-    <%= image_tag @group.avatar.url(:thumb) %> <br />
+  <li>
+    <%= f.label :avatar, t('views.groups.avatar') -%>
+    <div><%= image_tag @group.avatar.url(:thumb) %>
     <%- if @group.avatar? -%>
       <%= button_to_function("Delete current team image", 
-        "if (confirm('Are you sure you want to delete the team image?')) $('delete_avatar').submit()") %> <br/>
-    <%- end -%>
-    <br />
-    <%= f.file_field :avatar %>
-  </p>
-  
-  <p><%= f.submit t("views.groups.update_team_submit") -%></p>
+        "if (confirm('Are you sure you want to delete the team image?')) $('delete_avatar').submit()") %>
+    <%- end -%><br />
+    <%= f.file_field :avatar %> </div>
+  </li>
+
+
+</fieldset> 
+<fieldset class="submit">
+	<%= f.submit t("views.groups.update_team_submit") -%>
+</fieldset>
 <% end -%>
 
 <% content_for :sidebar do -%>

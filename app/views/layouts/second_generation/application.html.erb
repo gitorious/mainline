@@ -1,131 +1,103 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
-<head>
-  <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
-  <%= stylesheet_link_tag "screen" %>
-  <%= include_javascripts -%>
+<!doctype html lang="en"> 
+<head> 
+  	<title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
+	
+	<link rel="stylesheet" href="/stylesheets/external.css" type="text/css">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
+	<script type="text/javascript" src="javascripts/jquery.cycle.all.min.js"></script> 
+	<script type="text/javascript">
+	$(function()
+	{
+	        var self = this;
+	        this.status = 'collapsed';
+
+	        $('a.all-features').click(function()
+	        {
+	                if(!$('#features-wrapper').is(':animated'))
+	                {
+	                        $('#features-wrapper')
+	                                .animate(
+	                                {
+	                                        'height': (self.status == 'collapsed') ? '260px' : '148px'
+	                                },
+	                                {
+	                                        duraton: 'normal',
+	                                        complete: function()
+	                                        {
+	                                                self.status = (self.status == 'collapsed') ? 'expanded' : 'collapsed';
+	                                        }
+	                                });
+
+	                        $('.expanded-feature-list')
+	                                .css('border-top', (self.status == 'collapsed') ? '1px solid #DDD' : '1px solid #ededed');
+	                }
+	        });
+	});
+$('#screenshots-container') 
+.cycle({ 
+    fx:     'scrollLeft', 
+    speed:  '700', 
+    timeout: 5500, 
+    pager:  '#screenshotsnavigation' 
+});
+</script>
+<!--[if IE 7]>
+<link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css">
+<![endif]-->
+<!--[if gt IE 7]>
+<link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css">
+<![endif]-->
 </head>
-
 <body id="<%= controller.controller_name -%>">
-  <div id="big_header">
-    <div class="marginizer">
-      <div id="main_menu">
-        <ul class="simple left">
-          <li><%= link_to t("views.layout.projects"), projects_path %></li>
-          <li><%= link_to t("views.layout.teams"), groups_path %></li>
-          <li><%= link_to t("views.layout.faq"), faq_path %></li>
-          <li><%= link_to t("views.layout.about"), about_path %></li>
-          <li><%= link_to t("views.layout.register"), new_user_path %></li>
-          <li>
-            <% form_for :search,
-              :url => search_path(:only_path => false, :host => GitoriousConfig["gitorious_host"]),
-              :html => {:method => "get", :id => "main_menu_search_form"} do |f|
-            %>
-              
-              <%= text_field_tag :q, params[:q],
-                :id => "main_menu_search_form_query", :class => "unfocused" %>
-              <%= submit_tag "Search" %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-      
-      <div class="clear"></div>
-    
-      <h1 id="logo_image" class="image_header"><span>Gitorious</span></h1>
-      <%= link_to "", root_path, :id => "logo_hit_area" %>
-    
-      <div id="big_header_content">
-        <div id="big_header_meta">
-          <h2 id="big_header_pay_off" class="image_header"><span>The best way to collaborate on open source projects</span></h2>
-          
-          <div id="big_header_signup_link">
-            <%= button_link :big, t("views.site.dashboard.registration_button"), new_user_path %>
-          </div>
-          
-          <div><%= t("views.site.pay_off").call("/gitorious", about_path) %></div>
-        </div>
-    
-        <div id="big_header_login">
-          <h2 id="big_header_login_box_header" class="image_header"><span><%= t("views.site.login_box_header") %></span></h2>
-          
-          <div id="big_header_login_box">
-            <%= render :partial => "sessions/form" %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div id="recent_activities"><div id="recent_activities_container">
-    <% @latest_events.each_with_index do |event, index| %>
-      <div class="recent_activity <%= 'last' if index == @latest_events.length - 1 %>">
-        <% action, body, category = action_and_body_for_event(event) %>
+	<div id="wrapper">
+				<%= flashes %>
+ 		<div id="top-wrapper">
+		<div id="top">
+			<div id="logo">
+				<h1><%= link_to("Gitorious", root_path) %></h1>
+			</div>
+			<ul id="menu">
+				<li class="home"><%= link_to("Home", root_path) %></li>
+	          	<li class="explore"><a href="#">Explore</a></li>
+	          	<li class="about"><%= link_to t("views.layout.about"), about_path %></li>
+				<li class="contact"><%= link_to "Contact", contact_path %> </li>
+	          	<li class="register"><%= link_to t("views.layout.register"), new_user_path %></li>
+				<li class="login"><%= link_to "Login", login_path %></li>
 
-        <div class="recent_activity_timestamp">
-          <div><%= recent_event_timestamp(event.created_at) %></div>
-          ago
-        </div>
+			</ul>
+		</div> <!-- end of #top -->
+		</div>
 
-        <div class="recent_activity_avatar">
-          <%= glossy_homepage_avatar_for_user(event.user) %>
-        </div>
+		<div class="content-container">
+		<%= yield %>
+		</div>
 
-        <div class="recent_activity_meta">
-          <% if event.user.nil? %>
-            <%= event.actor_display %>
-          <% else %>
-            <%= link_to h(event.user.title), user_path(event.user) %>
-          <% end %>
-
-          <%= word_break_recent_event_actions(action) %>
-        </div>
-      </div>
-    <% end %>
-  </div></div>
-  
-  <div id="main">
-    <div class="marginizer">
-      <div class="homepage_listing" id="homepage_listed_left_column">
-        <h2 class="image_header">
-          <span>Most Active Projects</span>
-          <%= link_to "See all &raquo;", projects_path, :class => "see_all" %>
-        </h2>
-        <%= list(@projects, :class => "simple") {|p| project_summary_box(p) } %>
-      </div>
-      
-      <div class="homepage_listing" id="homepage_listed_middle_column">
-        <h2 class="image_header">
-          <span>Most Active Teams</span>
-          <%= link_to "See all &raquo;", groups_path, :class => "see_all" %>
-        </h2>
-        <%= list(@teams, :class => "simple") {|t| team_summary_box(t) } %>
-      </div>
-      
-      <div class="homepage_listing" id="homepage_listed_right_column">
-        <h2 class="image_header"><span>Most Active Users</span></h2>
-        <%= list(@users, :class => "simple") {|u| user_summary_box(u) } %>
-      </div>
-    </div>
-  </div>
-  
-  <div id="footer">
-    <div class="marginizer">
-      <ul class="simple left">
-        <li><%= link_to "Contact", contact_path %> </li>
-        <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" %></li>
-        <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org/" %></li>
-        
-        <% if GitoriousConfig["terms_of_use"] -%>
-          <li class="secondary"><%= link_to "Terms of Service", "http://en.gitorious.org/tos" %></li>
-          <li class="secondary"><%= link_to "Privacy Policy", "http://en.gitorious.org/privacy_policy" %></li>
-        <% end %>
-      </ul>
-      <ul class="meta">
-                <li class="meta"><%= link_to image_tag("logo_shortcut_mini.png"), "http://shortcut.no/" %></li>
-      </ul>
-    </div>
-  </div>
+			
+	</div>
+	<div id="footer">
+	      
+		<div id="footer-container">
+			<%= render :partial => "layouts/common_footer"  -%>
+			<div id="footer-links">
+				<h3>Gitorious</h3>
+				<ul>
+					<li><%= link_to t("views.layout.home"), root_path -%></li>
+		        	<li><%= link_to t("views.layout.about"), about_path -%></li>
+		        	<li><%= link_to t("views.layout.faq"), faq_path -%></li>
+		        	<li><%= link_to "Contact", contact_path -%></li>
+				</ul>
+				<ul>
+					<li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
+		        	<li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
+				</ul>
+				<% if GitoriousConfig["terms_of_use"] -%>
+				<ul>
+					<li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
+	          		<li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
+				</ul>
+				<% end %>
+			</div>
+		</div>
+	</div> <!-- end of the footer -->
 </body>
 </html>

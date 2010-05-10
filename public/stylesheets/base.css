@@ -38,7 +38,7 @@ body {
   background: #2d2d2d;
   color: #4e4e4e;
 /*  font-family: Georgia, Times, "Times new Roman", serif;*/
-  font-family: "Helvetica", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0px 0px 20px 0px;
 }
@@ -72,6 +72,7 @@ h4 {
 	line-height: 1.266em;
 	margin-bottom: 1.266em;
 }
+#content h2.content-header.smaller { font-size: 30px; }
 h1.content-header, h2.content-header, h3.content-header {	font-family: Raleway; }
 #content h2.content-header {
 		font-size: 36px;
@@ -110,12 +111,12 @@ p.ingress {
 p.small {
 	margin: 0;
 	font-size: 10px;
-	line-height: 1.727em;
-	margin-bottom: 1.727em;
+	line-height: 14px;
+	margin-bottom: 15px;
 }
 table {
 	border-collapse: collapse;
-	margin-bottom: 1.461em;
+	margin-bottom: 15px;
 }
 code, pre, tt {
   /*font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;*/
@@ -192,12 +193,12 @@ abbr.timeago {
 #wrapper {
 	width: 1100px;
 
-	margin: 35px auto;
+	margin: 55px auto;
 }
 
 #user-nav {
 		float: right;
-		margin: 0px 15px 7px 0px;
+		margin: -25px 15px 7px 0px;
 }
 
 #user-nav li {
@@ -211,7 +212,7 @@ abbr.timeago {
 	font-family: 'Lucida Grande', Helvetica, Arial;
 	font-size: 11px;
 	font-weight: 350;
-	color: #999999;
+	color: #9c9c9c;
 	text-shadow: 0px -1px 0px #000;
 }
 
@@ -221,15 +222,20 @@ abbr.timeago {
 }
 
 #user-nav li.secondary.messages {
-  background: url('../img/icons/messages.png') no-repeat 3px 4px;
+    background: url('../img/icons/messages_new.png') no-repeat 0px 0px;
 	height: 16px;
 }
 #user-nav li.secondary.messages.unread {
-
-  background: url('../img/icons/messages_new.png') no-repeat 0px 1px;
+  background: url('../img/icons/messages_new.png') no-repeat 0px -15px;
+}
+#user-nav li.secondary.messages.unread a {
+		color: #FFF;
+}
+#user-nav li.secondary.messages.unread a:hover {
+		color: #9c9c9c;
 }
 #user-nav li.secondary.messages.unread:hover {
-	background-position: 0px -15px;
+	background-position: 0px 1px;
 }
 
 #user-nav li.secondary.messages a > span {
@@ -293,7 +299,7 @@ abbr.timeago {
 	text-align: center;
 
 	height: 40px;
-	background: url(../img/menu/menu-backlight.png) no-repeat center;
+	/* background: url(../img/menu/menu-backlight.png) no-repeat center; */
 	
 	
 }
@@ -389,7 +395,7 @@ abbr.timeago {
 
 #footer ul {
   float: left;
-	width: 110px;
+	width: 130px;
 	margin: -3px 20px 0px 0px;
 	border-top: 1px solid #252525;
 	padding-top: 8px;
@@ -431,6 +437,7 @@ abbr.timeago {
 }
 
 .flash_message {
+	background: 0;
   clear: both;
   padding: 7px 8px 5px 8px;
   margin-bottom: 20px;
@@ -461,12 +468,16 @@ abbr.timeago {
 }
 
 .flash_message.error {
-  color: #c30000;
-  background-color: #f2dcdc;
-  border-color: #c30000;
-  background-image: url("../images/silk/exclamation.png");
+	-webkit-box-shadow: 0px 1px 0px #f2dcdc inset;
+	-moz-box-shadow: inset 0px 1px 0px #f2dcdc;
+  color: #e83939;
+  background-color: #eba8a8;
+  border: 1px solid #e69292;
 }
-
+.flash_message.error p {
+  color: #b24040;
+text-shadow: 0px 1px #fadada;
+}
 /* Buttons 
 .button a {
 		cursor: pointer;
@@ -673,7 +684,7 @@ ul.buttons .white-button.small-button a {
   clear: right;
 	float: right;
 	width: 185px;
-	margin
+	margin: 0;
 }
 
 #top-bar #searchbox .search-field, #top-bar #searchbox .search-submit {
@@ -700,6 +711,8 @@ ul.buttons .white-button.small-button a {
 	padding-left: 20px;
   width: 150px;
 	font-size: 11px;
+	margin: 0px 4px 0px 2px;
+	float: right;
 }
 
 #top-bar #searchbox .search-hint {
@@ -946,24 +959,32 @@ table {
 }
 
 table.listing {
-  width: 100%;
+ 	width: 100%;
 }
+table.listing tr {
 
-table.listing tr.odd {
-  background: #efefef;
+}
+table.listing tr.even td {
+	background: #E8E7E7;
+}
+table.listing tr.odd td{
+  background: #F8F8F8;
 }
 table tr td {
 	padding: 6px 8px;
 }
 table tr th {
-	background: #CCC;
-	padding: 8px 8px;
+
 	font-weight: bold;
-	color #535353;
+	color: #535353;
 	text-shadow: 0px 1px #eee;
+	background: url("../img/pullbox-bg.png") repeat-x 0 0;
+	border-bottom: 1px solid #bdbdbd;
+
+  padding: 7px 10px 5px 10px;
 }
 table tr th.first {
-	-webkit-border-top-left-radius: 6px;
+	-webkit-border-top-left-radius: 12px;
 	-moz-border-radius-topleft: 6px;
 	border-top-left-radius: 6px;
 }
@@ -971,6 +992,7 @@ table tr th.last {
 	-webkit-border-top-right-radius: 6px;
 	-moz-border-radius-topright: 6px;
 	border-top-right-radius: 6px;
+
 }
 table.listing thead th {
 }
@@ -1110,11 +1132,6 @@ table.repository_meta .infobox ul {
   margin-bottom: 50px;
 }
 
-
-ul.horizontal {
-  display: inline;
-  margin-left: 5px !important;
-}
 
 ul.horizontal li {
   padding-right: 10px;
@@ -1257,7 +1274,7 @@ ul.bullet_list li {
 		border-left: 1px solid #b5b5b5;
 		border-top: 1px solid #b5b5b5;
 		border-bottom :1px solid #b5b5b5;
-		padding: 7px 10px 5px;
+		padding: 6px 10px 6px;
 		line-height: 26px;
 		height: 23px;
 		font-weight: bold;
@@ -2014,7 +2031,7 @@ h2#comments form label {
 .markdown_help_link {
   float: left;
   padding: 0;
-  margin: -25px 0 0 355px;
+	width: 450px;
 }
 table.markdown_help {
   margin-top: -20px;
@@ -2215,6 +2232,10 @@ table.markdown_help {
 .merge_request_summary.rejected .status span,
 .merge_request_summary_short.rejected .status span,
 .merge-request-reason	.rejected span	{ color: #F00; }
+
+.merge_request_statuses {
+		float: left;
+}
 
 table.commits_in_event {
   margin-top: 1em
@@ -2585,7 +2606,8 @@ div.archive-download-box p {
   color: #333;
   font-weight: normal;
 }
-.message_list .unread { font-weight: bold; }
+.message_list .unread { font-weight: bold; background-color: #f7ece3; }
+
 .message_list td.timestamp {
   font-size: 11px;
   color: #555;
@@ -2594,16 +2616,25 @@ div.archive-download-box p {
 .message_list_actions {
   padding: 8px;
   font-size: 12px;
-  background: #CCC;
+	float: left;
+	width: 734px;
+  background: #EEE;
+	-webkit-border-bottom-left-radius: 6px;
+	-webkit-border-bottom-right-radius: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	-moz-border-radius-bottomright: 6px;
 }
 .message_list_actions p {
   margin: 0;
   padding: 0;
-  display: inline;
-  margin-right: 10px;
+  margin: 4px 14px 0px 0px;
+	float: left;
 }
 .message_list_actions input, .message_list_actions select {
-  display: inline;
+	float: left;
+}
+.message_list_actions select {
+  margin: 4px 14px 0px 0px;
 }
 .message_list td.who
 {
@@ -2653,7 +2684,7 @@ div.archive-download-box p {
   padding: 0;
   font-size: 14px;
 }
-.unread { background-color: #EEE; }
+
 
 
 /* pull boxes */
@@ -2702,6 +2733,28 @@ div.archive-download-box p {
 }
 .pull-box-content > * {
 		float: left;
+}
+
+.pull-box-content .filters {
+	float: right;
+	width: 100%;
+	background: #CCC;
+	padding: 5px 10px 6px;
+	margin: -11px -10px 10px -10px;
+}
+.pull-box-content .filters ul{
+		float: right;
+}
+.pull-box-content .filters ul li {
+		float: left;
+		font-size: 11px;	
+		margin-left: 12px;
+}
+.pull-box-content .filters ul li a, .pull-box-content .filters ul li strong {
+		color: #555;
+}
+.pull-box-content .filters ul li a:hover {
+		color: #222;
 }
 
 .pull-box-content ul {
@@ -2842,14 +2895,16 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 #merge-requests-status-chooser {
     padding: 5px 10px;
-    background: #E9F1F6;
-    float: right;
-    margin: 0 0 5px 0;
+    background: #EEE;
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+    float: left;
+    margin: 10px 0px;;
     color: #888;
 }
-
 #merge-requests-status-chooser ul.horizontal {
     float:left;
+		width: 100%;
     margin: 0;
 }
 
@@ -2864,9 +2919,19 @@ table.select_commits_from_list tr.unknown-status td.meta
 .merge_request_status {
     border-bottom: 1px solid #ddd;
     margin-bottom: 5px;
+		background: #EEE;
 }
-.add_link {
-    text-align:right;
+
+.add-link-container {
+		width: 100%;
+		float: left;
+		text-align: right;
+		margin-top: -15px;
+		padding: 6px;
+		background: #DDD;
+		-webkit-border-bottom-left-radius: 6px;
+		-webkit-border-bottom-right-radius: 6px;
+		
 }
 
 /* Styles for ColorPicker popUp */
@@ -3350,8 +3415,6 @@ Style the headers when searching
 }
 
 .permission-explanations {
-    margin-top: 40px;
-    width: 400px;
 }
 #sidebar .permission-explanations { width: 100%; }
 

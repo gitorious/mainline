@@ -1,43 +1,67 @@
 
 
-
-.form {
-	width: 732px;
-	float: left;
-	background: #EEE;
-
-	padding: 0px 6px 0px 12px;
-		-webkit-border-radius: 6px;
+form#new_project {
+		float: left;
+		width: 750px;
 }
 
-.form li {
-		width: 732px;
+.form {
+	width: 750px;
+	float: left;
+	-webkit-border-radius: 6px;
+}
+form fieldset {
+	background: #EEE;
+	margin-bottom: 10px;
+		padding: 5px 0px 5px;
+	float: left;
+	width: 750px;
+}
+form fieldset.messages li {
+	border-bottom: 1px solid #e1e1e1;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+form fieldset.submit {
+	padding: 10px;
+	width: 730px;
+}
+form fieldset.submit input[type='submit'] {
+		float: right; 
+}
+form li {
+		width: 750px;
 		float: left;
-
-		min-height: 42px;
+		padding: 6px 0px;
+	
+}
+form p.hint {
+	font-size: 11px;
 }
 
 form li div {
 		width: 480px;
 		float: right;
-		line-height: 42px;
+		min-height: 25px;
+		padding-top: 4px;
 }
 
-.form li label {
-		width: 230px;
-		margin-right: 20px;
+form li label {
+		width: 250px;
+		margin-right: 10px;
 		float: left;
-		line-height: 42px;
+		line-height: 18px;
+		padding-top: 6px;
+		font-weight: bold;
+		margin: 0;
+		text-align: right;
+		font-size: 13px;
 }
-
+#content form p, #content form span, #content form li div p, #content form li div span {
+		line-height: 18px;
+}
 form textarea {
   width: 90%;
-}
-
-form fieldset {
-  padding: 3px;
-  margin: 0 0 10px 0;
-  width: 100%;
 }
 
 form legend {
@@ -45,10 +69,6 @@ form legend {
   font-size:12px;
 }
 
-form label {
-  font-weight: bold;
-	margin: 0;
-}
 
 form .required {
   color: #aaa;
@@ -62,9 +82,7 @@ form {
 
 form.button-to, form.button-to div { display: inline; }
 form.button-to div { margin: 0 5px 0 5px; text-align: right;}
-form.button-to div input {
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
+form.button-to div input[type='submit'] {
 	font-weight: bold;
 	color: #ba3e3e;
 	font-size: 11px;
@@ -76,7 +94,7 @@ form.button-to div input {
 	height: 26px;
 	margin-right: 5px;
 	margin-bottom: 1px;
-	background: #e8e8e8 no-repeat 7px 5px;
+	background: #e8e8e8;
 	-webkit-box-shadow: 0px 1px 0px #FFF inset;
 	-moz-box-shadow: inset 0px 1px 0px #FFF;
 	border: 1px solid #b5b5b5;
@@ -90,26 +108,26 @@ form.button-to div input:hover {
 	-moz-box-shadow: inset 0px 1px 0px #eaeaea;
 	background-color:#cdcdcd;
 }
-
-input[type='text'], input[type='password'] {
+form input[type='checkbox'] {
+		height: 30px;
+}
+form input[type='text'], input[type='password'] {
   padding: 6px;
-  width: 350px;
-	-webkit-border-radius: 6px;
+  width: 450px;
 	background: #F8F8F8;
 	border: 1px solid #ccc;
 }
-
-textarea {
+form fieldset.submit li {
+		width: 730px;
+}
+form textarea {
   padding: 6px;
   width: 350px;
-	-webkit-border-radius: 6px;
 	background: #F8F8F8;
 	border: 1px solid #ccc;
-
-	-webkit-box-shadow: 1px 1px 3px #ccc inset;
 }
 textarea.text { height: 60px; }
-textarea.wide { width: 470px; }
+textarea.wide { width: 450px; }
 textarea.tall { height: 300px; }
 textarea.taller {height: 500px;}
 textarea.medium { width: 450px; height: 250px; }
@@ -119,7 +137,8 @@ select        { width: 200px; }
 input[type='text'], input[type='password'], textarea, select {
   margin: 0px 0 0px 0;
 }
-
+form input.compact { width: 120px; }
+form input.medium_compact { width: 280px; }
 input.compact, select.compact {
     width: 100px;
     margin-right: 5px;
@@ -142,39 +161,39 @@ input#openid_url {
    color: #000;
    padding-left: 18px;
 }
-
+form div.fieldWithErrors { float: none; width: auto;}
 .fieldWithErrors { margin: 0; display: inline-block;}
-.fieldWithErrors input, .fieldWithErrors textarea,
-.fieldWithErrors select {
-  border: 1px solid #c30000;
+form div.fieldWithErrors input, form div.fieldWithErrors textarea, form div.fieldWithErrors select {
+  border: 1px solid #eab1b1;
 }
-
-.errorExplanation {
-  background: #fbe3e4;
-  border: 1px solid #c30000;
-  width: 400px;
+form div.fieldWithErrors label {
+		color: #b24040;
+}
+#content div.errorExplanation {
+  background: #fbdddd;
+	-webkit-border-radius: 6px;
+  width: 100%;
   margin: 0 0 10px 0;
+	float: left;
+	padding: 10px 0px;
 }
 
-.errorExplanation h2 {
-  font-size: 120%;
-  line-height: 120%;
-  font-weight: normal;
-  padding: 5px;
-  color: #fff;
-  background: #c30000;
-  margin-bottom: 0.2em;
+#content  div.errorExplanation h2 {
+	font-size: 15px;
+  font-weight: bold;
+  color: #b24040;
+  padding: 0px 10px 0px 10px;
+	margin-bottom: 5px;
 }
-.errorExplanation p {
-  padding: 2px 2px 2px 5px;
-  margin-bottom: 0;
+#content  div.errorExplanation p {
+	padding: 0px 10px;
+  margin-bottom: 10px;
   margin-top: 0;
 }
-.errorExplanation ul {
-  padding: 5px 10px 10px 25px;
-  margin-bottom: 0;
+#content  div.errorExplanation ul {
+  margin: 0px 0px 0px 25px;
 }
-.errorExplanation ul li{
+#content .errorExplanation ul li{
     list-style-type: disc;
 }
 
@@ -188,3 +207,46 @@ form table.inline-labels td label {
     font-weight: normal;
 }
 
+form#new_committership {
+	}
+form#new_committership ul {
+	float: left;
+	width: 750px;
+	padding: 0;
+	border: 0;
+	margin-bottom: 0px;}
+form#new_committership li {
+		width: auto;
+		font-weight: bold;
+		background: #CCC;
+		padding: 8px 12px;
+		margin: 0;
+		margin-right: 10px;
+		float: left;
+		border: 0;
+}
+form#new_committership li.selected {
+		background: #eee;
+		margin: 0;
+				margin-right: 10px;
+}
+form#new_committership p.tab-content {
+		background: #eee;
+		padding: 10px;
+		width: 730px;
+		float: left;
+}
+#comment-form {
+		width: 450px;
+		float: left;
+
+}
+.help-box.right.help {
+		float: right;
+		width: 300px;
+		margin-bottom: 15px;
+}
+form.button-to {
+		float: right;
+		width: 100%;
+}

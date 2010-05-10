@@ -25,24 +25,26 @@
 </script>
 
 <% form_for(@message) do |f| %>
-  <p>
-    <%= label :recipient, t("views.messages.recipient") %> <br/>
+<fieldset class="messages">
+  <li>
+    <%= label :recipient, t("views.messages.recipient") %> 
     <%#= text_field_with_auto_complete :message, :recipients, {}, 
           :skip_style => true, :select => :login, :tokens => [',',';',' '] -%>
-    <%= f.text_field :recipients, :class => "autocomplete" -%>
-  </p>
+    <div><%= f.text_field :recipients, :class => "autocomplete" -%></div>
+  </li>
   
-  <p>
-    <%= f.label :subject, t("views.messages.subject") %><br/>
-    <%= f.text_field :subject %>
-  </p>
+  <li>
+    <%= f.label :subject, t("views.messages.subject") %>
+    <div><%= f.text_field :subject %></div>
+  </li>
   
-  <p>
-    <%= f.label :body, t("views.messages.body") %><br/>
-    <%= f.text_area :body, :class => "tall" %>
-  </p>
-  
-  <p>
+  <li>
+    <%= f.label :body, t("views.messages.body") %>
+    <div><%= f.text_area :body, :class => "tall" %></div>
+  </li>
+</fieldset>
+<fieldset class="submit">  
+  <li>
     <%= f.submit t("views.messages.submit") %>
-  </p>
+  </li>
 <% end %>

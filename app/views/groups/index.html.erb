@@ -20,18 +20,13 @@
 <h1><%= t("views.groups.teams") -%></h1>
 <ul>
   <% @groups.each do |group| -%>
-    <li style="clear:left">
-      <span style="float:left; padding: 2px 10px 2px 2px">
-        <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "24") %>
-      </span>
-      <h4>
-        <%= link_to h(group.name), group_path(group) -%>
-        <small>
+    <li>
+        <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16", :style => "float: left; margin-right: 4px; ") %>
+      <p>
+		<strong><%= link_to h(group.name), group_path(group) -%></strong>
           (<%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") -%>,
           <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") -%>)
-        </small>
-      </h4>
-      <span style="clear:left"></span>
+      </p>
     </li>
   <% end -%>
 </ul>

@@ -22,19 +22,19 @@
 	   	<div class="clone_urls">
 			<form class="clone_urls_form">
 					<p><strong>Copy urls</strong></p>
-					<p class="clone_radio"><input type="radio" id="git-<%= repository.id %>" name="url-<%= repository.id %>" value="<%= h(repository.clone_url) -%>"><label for="git-<%= repository.id %>">GIT</label></p>
+					<p class="clone_radio"><label for="git-<%= repository.id %>"><input type="radio" id="git-<%= repository.id %>" name="url-<%= repository.id %>" value="<%= h(repository.clone_url) -%>">GIT</label></p>
 					<% if repository.http_cloning? %>
-						<p class="clone_radio"><input type="radio" id="http-<%= repository.id %>" name="url-<%= repository.id %>" value="<%= h(repository.http_clone_url) -%>"><label for="http-<%= repository.id %>">HTTP</label></p>
+						<p class="clone_radio"><label for="http-<%= repository.id %>"><input type="radio" id="http-<%= repository.id %>" name="url-<%= repository.id %>" value="<%= h(repository.http_clone_url) -%>">HTTP</label></p>
 					<% end %>
-					<p class="clone_radio"><input id="push-<%= repository.id %>" type="radio" name="url-<%= repository.id %>" value="<%= h(repository.push_url) -%>"><label for="push-<%= repository.id %>">Your push</label></p>
-					<p><input type="text" id="clone-url-<%= repository.id %>" value=""></p>
+					<p class="clone_radio"><label for="push-<%= repository.id %>"><input id="push-<%= repository.id %>" type="radio" name="url-<%= repository.id %>" value="<%= h(repository.push_url) -%>">Your push</label></p>
+					<p class="clone-copy"><input type="text" id="clone-url-<%= repository.id %>" value=""></p>
 			</form>
 		</div>
 					
 	  </li>
 
   <% if logged_in? && current_user.can_write_to?(repository) -%>
-  <!-- ><li>
+  <!--<li>
     <strong><%= t("views.repos.push_url") -%>:</strong>
     <code><%= h(repository.push_url) -%></code>
     <small><%= link_to_help_toggle("detailed_push_info_#{dom_id(repository)}", :text) -%></small>
@@ -49,7 +49,7 @@ git push
 </pre>
       </div>
     </li>
-  <% end -%>-->
+  <% end -%> -->
 </ul>
 
 <script type="text/javascript" charset="utf-8">
