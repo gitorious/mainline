@@ -46,8 +46,8 @@ module ApplicationHelper
 
   def pull_box(title, options = {}, &block)
     css_class = options.delete(:class)
-    out = %Q{<div class="pull-box round-top-5 #{css_class}">}
-    out << %Q{<h3 class="round-top-5 pull-box-header">#{title}</h3>} if title
+    out = %Q{<div class="pull-box-container #{css_class}">}
+    out << %Q{<div class="pull-box-header"><h3>#{title}</h3></div>} if title
     out << %Q{<div class="pull-box-content">}
     out << capture(&block)
     out << "</div></div>"
@@ -311,7 +311,7 @@ module ApplicationHelper
     links = []
     exceptions = Array(options[:except])
     unless exceptions.include?(:source_tree)
-      links << content_tag(:li, link_to("View source tree for #{desplat_path(head)}",
+      links << content_tag(:li, link_to("Source tree",
                   tree_path(head)), :class => "tree")
     end
 
@@ -498,7 +498,7 @@ module ApplicationHelper
       "color_picker", "ui.core","ui.selectable", "jquery.scrollto", "jquery.timeago",
       "core_extensions", "jquery.gitorious_extensions",
       "notification_center", "merge_requests", "diff_browser", "messages",
-      "application", "live_search", "repository_search", :cache => true
+      "application", "live_search", "jquery.expander", "repository_search", :cache => true
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+
@@ -515,12 +515,31 @@ module ApplicationHelper
 
   def white_button_link_to(label, url, options = {})
     size = options.delete(:size) || "small"
-    css_classes = ["white-button", "round-10", "#{size}-button"]
+    css_classes = ["white-button", "#{size}-button"]
     if extra_class = options.delete(:class)
       css_classes << extra_class
     end
     content_tag(:div, link_to(label, url, :class => "round-10"),
         :id => options.delete(:id), :class => css_classes.flatten.join(" "))
+  end
+
+  def link_button_link_to(label, url, options = {})
+    size = options.delete(:size) || "small"
+    css_classes = ["button", "#{size}-button"]
+    if extra_class = options.delete(:class)
+      css_classes << extra_class
+    end
+    content_tag(:div, link_to(label, url, :class => ""),
+        :id => options.delete(:id), :class => css_classes.flatten.join(" "))
+  end
+  
+  def render_pagination_links(collection, options = {})
+    default_options = {
+      :prev_label => "Previous",
+      :next_label => "Next",
+      :container => "True"
+    }
+    will_paginate(collection, options.merge(default_options))
   end
 
   def dashboard_path

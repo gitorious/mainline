@@ -22,7 +22,7 @@
 <h1><%= t("views.aliases.aliases_title") -%></h1>
 
 <p>
-  Aliases are used to associate your commits with your Gitorious user account.
+  Aliases are used to associate your commits with your Gitorious user  account.
   Useful if you commit under more than one email. Any communication sent to you from
   Gitorious will still go to your primary email only (<strong><%= h(@user.email) -%></strong>)
 </p>
@@ -50,7 +50,7 @@
 </table>
 
 <% content_for :sidebar do -%>
-  <ul class="links">
+  <ul class="links navigation">
     <li class="new_alias"><%= link_to t("views.aliases.new_alias"), new_user_alias_path(@user) -%>
   </ul>
 <% end -%>

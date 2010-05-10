@@ -29,6 +29,7 @@ class SessionsController < ApplicationController
   skip_before_filter :public_and_logged_in
   renders_in_site_specific_context
   ssl_required :new, :create, :destroy
+  layout "second_generation/application"
   
   # render new.rhtml
   def new

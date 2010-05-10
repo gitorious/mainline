@@ -19,10 +19,10 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<h1>
+<h2 class="content-header">
   <%= t("views.collaborators.title",
         :repo_name => link_to(h(@repository.name), [@owner, @repository]))  -%>
-</h1>
+</h2>
 
 <table class="listing">
 	<thead>
@@ -55,7 +55,7 @@
 <%= render "permission_explanation" %>
 
 <% content_for :sidebar do -%>
-  <ul class="links actions">
+  <ul class="links actions navigation">
     <li>
       <%= link_to t("views.collaborators.add_new"),
             [:new, @owner, @repository, :committership] -%>
@@ -63,8 +63,9 @@
   </ul>
 
   <h4>Permission overview:</h4>
-  <h5>Reviewers</h5>
+
   <ul class="committers">
+	  <h5>Reviewers</h5>
   <% @repository.reviewers.each do |user| -%>
     <li>
       <div class="user">
@@ -81,8 +82,9 @@
   <% end %>
   </ul>
 
-  <h5>Committers</h5>
+
   <ul class="committers">
+	  <h5>Committers</h5>
   <% @repository.committers.each do |user| -%>
     <li>
       <div class="user">
@@ -99,8 +101,9 @@
   <% end %>
   </ul>
 
-  <h5>Administrators</h5>
+
   <ul class="committers">
+	  <h5>Administrators</h5>
   <% @repository.administrators.each do |user| -%>
     <li>
       <div class="user">

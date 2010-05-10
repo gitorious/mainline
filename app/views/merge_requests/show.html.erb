@@ -95,7 +95,7 @@
 <%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
 
 <% if logged_in? && @merge_request.user == current_user %>
-  <% help_box(:left) do %>
+  <% help_box(:right) do %>
   <p>
     <%= link_to_function("How to update your merge request", "$('#detailed_merge_request_update_help').toggle()", :class => "more_info") -%>
   </p>
@@ -117,7 +117,7 @@ git push \
   <% end %>
 <% end %>
 
-<% help_box(:left) do %>
+<% help_box(:right) do %>
 <p>
   <%= link_to_function("How to apply this merge request to your repository", "$('#detailed_merge_request_integration_help').toggle()", :class => "more_info") -%>
 </p>

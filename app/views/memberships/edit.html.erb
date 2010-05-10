@@ -21,10 +21,13 @@
 
 <%= error_messages_for :group, :membership -%>
 <% form_for [@group, @membership] do |f| -%>
-  <p>
+<fieldset>
+  <li>
     <%= f.label :role, t("views.memberships.role") -%>
-    <%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%>
-  </p>
-
+    <div><%= f.select :role_id, Role.all.map{|r| [r.name, r.id]} -%></div>
+  </li>
+</fieldset>
+<fieldset class="submit">
   <%= f.submit -%>
+</fieldset>
 <% end -%>

@@ -21,10 +21,11 @@
 #++
 %>
 
+<% container_css_class ||= "" %>
 <% pagination_style ||= :full %>
 
 <% benchmark("Event rendering") do -%>
-<ul class="events">
+<ul class="events <%= container_css_class -%>">
 <% events.group_by{|e| e.created_at.to_s(:human) }.each do |day, events_group| -%>
   <li>
     <p class="date"><%= day -%></p>
@@ -34,5 +35,5 @@
   </li>
 <% end -%>
 </ul>
-<%= will_paginate events, :page_links => (pagination_style == :full) -%>
+<%= render_pagination_links events, :page_links => (pagination_style == :full) -%>
 <% end -%>

@@ -22,41 +22,34 @@
 #++
 %>
 
-<h1>FAQ</h1>
+<h2 class="content-header">FAQ</h2>
 
-<h3>I get "fatal: no matching remote head" when trying to clone a repository</h3>
-<p>
-  Most likely the repository you're trying to clone is empty, and the error 
+<div class="faq-entry">
+	<h3>I get "fatal: no matching remote head" when trying to clone a repository</h3>
+	<p>Most likely the repository you're trying to clone is empty, and the error 
   message is git's friendly way of telling you that. See below (or by clicking 
-  "more info" next to the repository's "push url") for info on how to push to it.
-</p>
+  "more info" next to the repository's "push url") for info on how to push to it.</p>
+</div> 
 
-<hr />
+<div class="faq-entry">
+	<h3>What is the SSH key fingerprint of the server I'm pushing to?</h3>
+	<p> The SSH key fingerprint of the gitorious.org server is:<br />
+  <code>7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d</code></p>
+</div>
 
-<h3>What is the SSH key fingerprint of the server I'm pushing to?</h3>
-<p>
-  The SSH key fingerprint of the gitorious.org server is:<br />
-  <code>7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d</code>
-</p>
 
-<hr />
-
-<h3>How do I point my local Git repository at Gitorious?</h3>
-<p>
-  Easiest way is to put something like the following in your <code>.git/config</code> 
-  file of the repository you wish to push:
-<pre>
-[remote "origin"]
+<div class="faq-entry">
+	<h3>How do I point my local Git repository at Gitorious?</h3>
+	<p>Easiest way is to put something like the following in your <code>.git/config</code> 
+  		file of the repository you wish to push:
+	<pre>[remote "origin"]
        url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
        fetch = +refs/heads/*:refs/remotes/origin/*
 [branch "master"]
        remote = origin
-       merge = refs/heads/master
-</pre>
-  and then <code>git push origin master</code> to push the code to Gitorious.
-</p>
-<p>
-  You can also just run "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", or
+       merge = refs/heads/master</pre>
+  and then <code>git push origin master</code> to push the code to Gitorious.</p>
+	<p>You can also just run "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", or
   you can setup a remote by doing the following (add --fetch to the add call to 
   get the config from above):
   <pre>
@@ -65,51 +58,43 @@
   git push origin master 
   # after that you can just do:
   git push
-  </pre>
-</p>
+  </pre></p>
+</div>
 
-<hr />
+<div class="faq-entry">
+	<h3>What version of Git is Gitorious running?</h3>
+	<p><code>git version 1.6.1</code></p>
+</div>
 
-<h3>What version of Git is Gitorious running?</h3>
-<p>
-  <code>git version 1.6.1</code>
-</p>
-
-<hr />
-
-<h3>How did my avatar/mugshot end up on this site? I'm not even registered!</h3>
-<p>
-  We use <a href="http://gravatar.com">Gravatar.com</a> for user avatars. If you
+<div class="faq-entry">
+	<h3>How did my avatar/mugshot end up on this site? I'm not even registered!</h3>
+	<p> We use <a href="http://gravatar.com">Gravatar.com</a> for user avatars. If you
   haven't registered on Gitorious, someone else may have pushed commits with you
   name and/or email in them which we in turn hash and send to to Gravatar.com to
   find an avatar image. If you want it changed you should either register and 
-  upload an avatar of your own, or go to Gravatar.com and change it.
-</p>
+  upload an avatar of your own, or go to Gravatar.com and change it.</p>
+</div>
 
-<hr />
+<div class="faq-entry">
+	<h3>Why do I need to upload my public SSH key?</h3>
+	<p>When you push to a Git repository, your public key is how we authenticate 
+  you and check if have the permissions required to do a commit to a given repository</p>
+</div>
 
-<h3>Why do I need to upload my public SSH key?</h3>
-<p>
-  When you push to a Git repository, your public key is how we authenticate 
-  you and check if have the permissions required to do a commit to a given repository
-</p>
-<hr />
-
-<h3>I have Windows. How do I generate the required SSH key?</h3>
-<p>
-  The recommended way to use Git on Windows is the 
+<div class="faq-entry">
+	<h3>I have Windows. How do I generate the required SSH key?</h3>
+	<p>The recommended way to use Git on Windows is the 
   <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%> version. It comes bundled
   with minimal Cygwin support. When you finish installing it, you will have a "Git Bash"
   icon in your desktop. Double click to open it and now you can use known Linux-like
   commands, such as <code>"ssh-keygen -t rsa"</code>. Just press 'Return' in every question
   it asks and you will finally have your pair of keys under ".ssh". For example, type
   <code>"cat ~/.ssh/id_rsa.pub"</code>. Thats's the public key that you are required to
-  copy and paste into your account on Gitorious.
-</p>
-
+  copy and paste into your account on Gitorious.</p>
+</div>
 
 <% content_for :sidebar do -%>
-  <ul class="links">
+  <ul class="links navigation">
     <li><%= link_to "About", about_path(:anchor => "about") -%></li>
     <li><%= link_to "Contact", about_path(:anchor => "contact") -%></li>
     <li><%= link_to "FAQ", faq_path -%></li>

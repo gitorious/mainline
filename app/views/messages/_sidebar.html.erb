@@ -17,15 +17,12 @@
 #++
 %>
 
-<ul class="links">
+<ul class="links navigation">
   <li class="new_email">
     <%= link_to_unless_current t("views.messages.new"), new_message_path do
         link_to(t("views.messages.new"), new_message_path, :class => "current")
     end -%>
   </li>
-</ul>
-
-<ul class="links">
   <li class="received_emails">
     <%= link_to_unless_current t("views.messages.received_messages"), messages_path do 
         link_to(t("views.messages.received_messages"), messages_path, :class => "current")

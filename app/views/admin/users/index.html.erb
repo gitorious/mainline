@@ -17,16 +17,34 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
+<% content_for(:sidebar) do %>
+<% if controller.is_a? Admin::UsersController -%>
+<ul class="links navigation">
+	<li class="new_user">
+    <%= link_to t("views.users.create_btn"), new_admin_user_path %>
+  </li>
+</ul>
+<ul class="links navigation">
+  <li class="selected">
+    <%= link_to t("views.layout.user_mgt"), 
+      '', :class => "round-top-5" -%>
+  </li>
+</ul>
+<% end -%>
+<% end %>
+<% if controller.is_a? Admin::UsersController -%>
+<h2 class="content-header" id="project_title"><%= link_to t("views.layout.admin"), '' %></h2>
+<% end -%>
 <table class="listing tree">
 	<tr>
-		<td><%= t(:login, :scope => "activerecord.attributes.user").humanize %></td>
-		<td><%= t(:email, :scope => "activerecord.attributes.user").humanize %></td>
-		<td><%= t(:created_at, :scope => "activerecord.attributes.user").humanize %></td>
-		<td><%= t("views.users.activated") %></td>
-		<td><%= t("views.users.suspended") %></td>
-		<td><%= t("views.users.admin") %></td>
-		<td></td>
-		<td></td>
+		<th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
+		<th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
+		<th><%= t(:created_at, :scope => "activerecord.attributes.user").humanize %></th>
+		<th><%= t("views.users.activated") %></th>
+		<th><%= t("views.users.suspended") %></th>
+		<th><%= t("views.users.admin") %></th>
+		<th></th>
+		<th></th>
 	</tr>
 	<% @users.each do |user| -%>
 	<tr class="<%= cycle("odd", "even") -%>">
@@ -48,4 +66,4 @@
 
 <%= will_paginate @users -%>
 
-<p><%= link_to t("views.users.create_btn"), new_admin_user_path %></p>
+

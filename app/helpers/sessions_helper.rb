@@ -34,8 +34,27 @@ module SessionsHelper
 
   def switch_login(title, action)
     link_to_function(title, <<-EOS)
-      $("#regular_login_fields").toggle();
-      $("#openid_login_fields").toggle();
+    
+      $("#regular_login_fields").click(
+      function() {
+        $("#regular_login_fields").addClass("login_hidden");
+        $("#openid_login_fields").removeClass("login_hidden");
+      });
+      
 EOS
   end
+
+
+    def switch_op_login(title, action)
+      link_to_function(title, <<-EOS)
+
+        $("#openid_login_fields").click(
+        function() {
+          $(this).addClass("login_hidden");
+          $("#regular_login_fields").removeClass("login_hidden");
+        });
+
+  EOS
+    end
+    
 end

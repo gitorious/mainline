@@ -17,29 +17,33 @@
 #++
 %>
 
-<h1><%= t("views.groups.create_team") -%></h1>
+<h2 class="content-header"><%= t("views.groups.create_team") -%></h2>
 
 <%= error_messages_for :group -%>
 <% form_for @group, :html => {:multipart => true} do |f| -%>
-  <p>
-    <%= f.label :name, t("views.groups.team_name") -%>:<br />
-    <%= f.text_field :name -%>
-  </p>
+<fieldset>
+  <li>
+    <%= f.label :name, t("views.groups.team_name") -%>
+    <div><%= f.text_field :name -%></div>
+  </li>
   
-  <p>
-    <%= f.label :description, t('views.groups.description') -%>:<br />
-    <%= f.text_area :description %>
-  </p>
-  <p class="hint">
-    <%= t("views.groups.new_team_after_create_hint") -%>
-  </p>
+  <li>
+    <%= f.label :description, t('views.groups.description') -%>
+    <div><%= f.text_area :description, :class => "text wide tall" -%></div>
+  </li>
 
-  <p>
-    <%= f.label :avatar, t('views.groups.avatar') -%> <br />
-    <%= f.file_field :avatar %>
-  </p>
+  <li>
+    <%= f.label :avatar, t('views.groups.avatar') -%>
+    <div><%= f.file_field :avatar %></div>
+  </li>
 
   <% # TODO: be able to add a bunch of members right away -%>
-  
-  <p><%= f.submit t("views.groups.create_team_submit") -%></p>
+</fieldset>
+<fieldset class="submit"> 
+  <%= f.submit t("views.groups.create_team_submit") -%>
+</fieldset>
+<% end -%>
+<% content_for :sidebar do -%>
+<h2>Information</h2>
+  <p><%= t("views.groups.new_team_after_create_hint") -%></p>
 <% end -%>

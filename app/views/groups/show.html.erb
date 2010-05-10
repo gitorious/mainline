@@ -19,14 +19,10 @@
 
 <%= breadcrumbs_from(@group) -%>
 
-<h1><%=h @group.name -%></h1>
-<div>
-  <%= render_markdown(@group.description) %>
-</div>
 
 <div class="with_divider">
-  <div id="left">
-  <% pull_box("Members") do -%>
+  <div id="left" class="w-365">
+  <% pull_box("Members", :class => "pull-box-365") do -%>
     <% if @memberships.empty? -%>
       <ul><li><em>None</em></li></ul>
     <% end -%>
@@ -47,7 +43,7 @@
     </ul>
   <% end -%>
   
-  <% pull_box("Team repositories") do -%></h4>
+  <% pull_box("Team repositories", :class => "pull-box-365") do -%></h4>
     <ul class="with_icons">
       <% if @group.repositories.mainlines.empty? -%>
         <li><em>None</em></li>
@@ -64,8 +60,8 @@
     </ul>
   <% end -%>
   </div>
-  <div id="right">
-  <% pull_box("Projects") do -%>
+  <div id="right" class="w-365">
+  <% pull_box("Projects", :class => "pull-box-365") do -%>
     <ul class="with_icons">
       <% if @group.projects.empty? -%>
         <li><em>None</em></li>
@@ -76,7 +72,7 @@
     </ul>
   <% end -%>
   
-  <% pull_box("Repository clones") do -%>
+  <% pull_box("Repository clones", :class => "pull-box-365") do -%>
     <ul class="with_icons">
     <% if @group.repositories.clones.empty? -%>
       <li><em>None</em></li>
@@ -100,7 +96,10 @@
 <%= render :partial => "events/events", :locals => { :events => @events } -%>
 
 <% content_for :sidebar do -%>
-  <ul>
+
+<h1><%=h @group.name -%></h1>
+  <%= render_markdown(@group.description) %>
+  <ul id="project-meta">
     <li>
       <%= image_tag @group.avatar.url(:thumb) %>      
     </li>
@@ -115,7 +114,7 @@
       <%= @group.created_at.to_s(:short) -%>
     </li>
   </ul>
-  <ul class="links">
+  <ul class="links navigation">
     <% if @group.admin?(current_user) -%>
       <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
       <li><%= link_to t("views.memberships.add_new_member"), new_group_membership_path(@group) -%></li>

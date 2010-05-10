@@ -71,7 +71,7 @@
 <% end -%>
 
 <% content_for :sidebar do -%>
-  <ul class="links">
+  <ul class="links navigation">
     <% if @repository.can_be_deleted_by?(current_user) -%>
       <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
     <% end -%>

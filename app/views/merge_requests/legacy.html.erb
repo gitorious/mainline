@@ -97,7 +97,7 @@
 
 <%- content_for(:sidebar) do -%>
 <%- if @merge_request.user == current_user -%>
-<ul class="links">
+<ul class="links navigation">
   <li class="delete_merge_request">
     <%= link_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
         [@merge_request.source_repository.project,

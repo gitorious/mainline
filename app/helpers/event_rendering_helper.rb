@@ -390,7 +390,7 @@ module EventRenderingHelper
   end
   protected
     def action_for_event(i18n_key, opts = {}, &block)
-      header = "<strong>" + I18n.t("application_helper.#{i18n_key}", opts) + "</strong> "
+      header = "" + I18n.t("application_helper.#{i18n_key}", opts) + " "
       header + capture(&block)
     end
 

@@ -19,29 +19,35 @@
 %>
 <%= breadcrumbs_from(@root) -%>
 
-<h1>Edit contribution settings</h1>
-<p>
-  This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
-  Leave the site field empty to deactivate the requirement of merge requests to be signed off.
-</p>
+<h2 class="content-header">Edit contribution settings</h2>
 
 <%- form_for(@project, :url => admin_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
-  <%- @project.oauth_settings.each do |k, v| -%>
-    <p>
-      <label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label><br />
-      <input id="project_oauth_settings_<%= k %>" name="oauth_settings[<%= k %>]" value="<%= v %>" size="50" />
-    </p>
+	<fieldset>  <%- @project.oauth_settings.each do |k, v| -%>
+
+    	<li>
+      		<label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label>
+      		<div><input id="project_oauth_settings_<%= k %>" type="text" name="oauth_settings[<%= k %>]" value="<%= v %>"/></div>
+    	</li>
+
   <%- end -%>
-  
-  <p>
+  	</fieldset>
+  	<fieldset class="submit">
     <%= f.submit %>
-  </p>
+  	</fieldset>
 <%- end -%>
 
 <% content_for :sidebar do -%>
-  <h4>Current options</h4>
-  <h5>Signoff required:</h5>
-  <p><strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %></strong></p>
+	<h2>Information</h2>
+	<p>
+	  This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
+	  Leave the site field empty to deactivate the requirement of merge requests to be signed off.
+	</p>
+ 	<ul class="options">
+		<h4>Current options</h4>
+  		<li>
+			<strong>Signoff required:</strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %>
+		</li>
+	</ul>
   <%- @project.oauth_consumer_options.each do |k, v| -%>
     <%- unless v.blank? -%>
       <h5><%= k.to_s.humanize %></h5>

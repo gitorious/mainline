@@ -19,60 +19,65 @@
 
 <% verbose ||= false %>
 
-<div class="repository_meta round-5">
-  <div class="header">
-    <h2 <%= repository.mainline? ? "mainline" : "clone" -%>>
-      <% if verbose -%>
-      <%= link_to h(repository.project.to_param), repository.project -%>
-      <%= image_tag("silk/arrow_right.png") -%>
-      <% end -%>
-      <%= link_to h(repository.name),
+<div class="repository_meta">
+	<div class="repository-info">
+    		<h3 <%= repository.mainline? ? "mainline" : "clone" -%>>
+      		<% if verbose -%>
+      			<%= link_to h(repository.project.to_param), repository.project -%>
+      			<%= image_tag("silk/arrow_right.png") -%>
+      			<% end -%>
+      			<%= link_to h(repository.name),
             repo_owner_path(repository, [repository.project, repository]) -%>
-    </h2>
-    <%= favorite_button(repository) -%>
-  </div>
+    		</h3>
+    
 
   <% unless repository.description.blank? -%>
     <div class="repository-description page">
+	
       <%= paragraphs_with_more(render_markdown(repository.description, :auto_link),
             repository.id) -%>
-    </div>
+     </div>
   <% end -%>
-
-  <ul class="horizontal meta-links">
-    <li class="commit">
-      <%= link_to "Commit log",
-          repo_owner_path(repository, [repository.project, repository, :commits]) -%>
-    </li>
-    <li class="tree">
-      <%= link_to "Source tree",
-            repo_owner_path(repository, [repository.project, repository, :trees]) -%>
-    </li>
-    <%- if repository.merge_requests_enabled? -%>
-    <li class="merge_requests">
-      <%= link_to "Merge requests <small>(#{repository.merge_requests.open.count})</small>",
-            repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
-    </li>
-    <%- end -%>
-    <% if repository.parent -%>
-    <li class="clone">
-      <%= link_to "Clone of #{h(repository.parent.name)}",
-       repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%>
-    </li>
-    <% end -%>
-  </ul>
-
   <div class="infobox">
     <%= render :partial => "repositories/clone_urls",
          :locals => {:repository => repository} -%>
-  </div>
 
-  <% if verbose && repository.has_commits? && !repository.git.heads.blank? -%>
-    <div class="branches">
-      <ul class="branch_list">
-        <li><strong>Branches:</strong></li>
-        <%= render_chunked_branch_list_items(repository) -%>
-      </ul>
-    </div>
-  <% end -%>
+ </div>
+ <% if verbose && repository.has_commits? && !repository.git.heads.blank? -%>
+   <div class="branches">
+     <ul class="branch_list">
+       <li><strong>Branches:</strong></li>
+       <%= render_chunked_branch_list_items(repository) -%>
+     </ul>
+   </div>
+ <% end -%>
+	</div> <!-- End of repository-description -->
+	<div class="repository-links">
+		<%= favorite_button(repository) -%>
+		
+	  	<ul>
+	    	<li class="repository-link commit">
+	      	<%= link_to "Commit log",
+	          repo_owner_path(repository, [repository.project, repository, :commits]) -%>
+	    	</li>
+	    	<li class="repository-link tree">
+	      	<%= link_to "Source tree",
+	            repo_owner_path(repository, [repository.project, repository, :trees]) -%>
+	    	</li>
+	    <%- if repository.merge_requests_enabled? -%>
+	    	<li class="repository-link merge_requests">
+	      	<%= link_to "Merge requests <small>(#{repository.merge_requests.open.count})</small>",
+	            repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
+	    	</li>
+	    <%- end -%>
+	    <% if repository.parent -%>
+	    	<li class="repository-link clone">
+	      	<%= link_to "Clone of #{h(repository.parent.name)}",
+	       		repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%>
+	    	</li>
+	    <% end -%>
+	  </ul>	
+		
+	</div>
+
 </div>

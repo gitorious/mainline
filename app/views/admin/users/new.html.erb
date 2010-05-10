@@ -16,15 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h1>Create new user</h1>
-
+<h2 class="content-header">Create a new user </h2>
 <%= error_messages_for :user %>
 <% form_for :user, :url => admin_users_path do |f| -%>
-  <%= render :partial => 'users/form', :locals => { :f => f } %>
-
-  <p>
-    <%= f.check_box :is_admin, {}, "1", "0" %> <%= f.label :is_admin, t("views.users.is_admin") -%>
-  </p>
-
-  <p><%= f.submit t("views.common.create") %> <%= link_to t("views.common.back"), admin_users_path %></p>
+  <%= render :partial => 'admin/users/form', :locals => { :f => f } %>
 <% end -%>

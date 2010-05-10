@@ -1,41 +1,128 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en"> 
+<head> 
+  
+<meta http-equiv="X-UA-Compatible" content="chrome=1"> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<title>Page Not Found (404)</title> 
+<link href="/stylesheets/base.css?1271923013" media="screen" rel="stylesheet" type="text/css" /><script src="/javascripts/jquery.core.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/jquery.autocomplete.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/jquery.cookie.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/color_picker.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/ui.core.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/ui.selectable.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/jquery.scrollto.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/jquery.timeago.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/core_extensions.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/jquery.gitorious_extensions.js?1271749899" type="text/javascript"></script> 
+<script src="/javascripts/notification_center.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/merge_requests.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/diff_browser.js?1271749899" type="text/javascript"></script> 
+<script src="/javascripts/messages.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/application.js?1271749899" type="text/javascript"></script> 
+<script src="/javascripts/live_search.js?1269519474" type="text/javascript"></script> 
+<script src="/javascripts/jquery.expander.js?1270573192" type="text/javascript"></script> 
+<script src="/javascripts/repository_search.js?1269519474" type="text/javascript"></script>  <link href="/~johan/watchlist.atom" rel="alternate" title="ATOM" type="application/atom+xml" /> 
+	<script type="text/javascript"> 
+	$(document).ready(function() {
+		$('.with_sidebar').parent().css('background', 'url(http://gitorious.local:3000/img/container-bg310.png) repeat-y');
+		// simple example, using all default options
+			$('ul.navigation').find('li:first').addClass("first"); 
+			$('ul.navigation').find('li:last').addClass("last"); 
+			$("ul.navigation ~ ul.navigation").addClass("multiple");
+			$('table').find('tr:first').find('th:first').addClass("first");
+			$('table').find('tr:first').find('th:last').addClass("last");
+			
+	  $('div.expandable').expander({
+	    slicePoint:       200,  // default is 100
+	    expandText:         'read more', // default is 'read more...'
+	    collapseTimer:    0, // re-collapses after 5 seconds; default is 0, so no re-collapsing
+	    userCollapseText: '',  // default is '[collapse expanded text]'
+		expandEffect:     'fadeIn',
+		userCollapse:     true,
+		expandSpeed:      '800',       // speed in milliseconds of the animation effect for expanding the text
+	  });
+});
+	</script> 
+</head> 
+ 
+<body id="site"> 
+<div id="wrapper"> 
+    <ul id="user-nav"> 
+	<li><a href="/">Dashboard</a></li> 
+	
+      <li><a href="/admin/users">Administration</a></li> 
+    <li class="secondary"><a href="/~johan">~johan</a></li> 
+  <li class="secondary messages unread"> 
+          <a href="/messages">1</a>      </li> 
+  <li class="secondary subtle"><a href="/logout">Logout</a></li> 
+  </ul> 
+  <div id="header"> 
+    <h1 id="logo"> 
+      <a href="/"><img alt="Logo" src="/img/logo.png?1269608046" /></a>    </h1> 
+ 
+    <ul id="menu"> 
+              <li> 
+          <a href="/activities">Activities</a> 
+        </li> 
+                    <li class="activity"><a href="#">Activity</a></li> 
+        <li class="projects"><a href="/projects">Projects</a></li> 
+        <li class="teams"><a href="/teams">Teams</a></li> 
+                </ul> 
+ 
+  </div> 
+  	<div id="top-bar"> 
+  <ul id="breadcrumbs"> 
+        <li class="project"><a href="/statusnet">StatusNet</a></li><li class="repository"><a href="/statusnet/mainline">mainline</a></li><li class="branch"><a href="/statusnet/mainline/commits/master">master</a></li><li class="tree"><a href="/statusnet/mainline/trees/master">/</a></li><li class="folder"><a href="/statusnet/mainline/trees/master/js">js</a></li><li class="folder"><a href="/statusnet/mainline/trees/master/js/farbtastic">farbtastic</a></li>  
+  </ul> 
+      <div id="searchbox"> 
+      
+ 
+ 
+<div class="search_bar"> 
+<form action="http://gitorious.local/search" method="get"><p> 
+  <input class="text search-field round-5" id="q" name="q" type="text" /> 
+  <input type="submit" value="Search" class="search-submit round-5" /> 
+</p>  
+<p class="hint search-hint" style="display: none;"> 
+  eg. 'wrapper', 'category:python' or '"document database"'
+  </p> 
+</form></div> 
+    </div> 
+  </div> 
+  
+  <div id="container" class=""> 
+    <div id="content" class=""> 
+  <h2 class="content-header">Sorry, page not found</h2>
+	<p>The page you were looking for doesn't exist. You may have mistyped, or the page could be moved.</p>
+    </div> 
+  </div> 
+  <div class="clear"></div> 
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  <title>Page not found (404)</title>
-  <link href="/stylesheets/base.css?1199397346" media="screen" rel="stylesheet" type="text/css" />
-	<style type="text/css">; }
-		div.dialog {
-			width: 25em;
-			padding: 0 4em;
-			margin: 4em auto 0 auto;
-			border: 1px solid #ccc;
-			border-right-color: #999;
-			border-bottom-color: #999;
-		}
-	</style>
-</head>
-<body>
-  <div id="header">
-    <h1 id="logo">
-      <a href="/"><img alt="Logo-white" src="/images/logo-white.png" /></a>        
-    </h1>
-    <ul id="menu">
-      <li><a href="/">Home</a></li>
-    </ul>
-  </div>
-  <div id="container">
-    <div id="main">
-      <div id="content">
-        <div class="dialog">
-          <h1>The page you were looking for doesn't exist.</h1>
-          <p>You may have mistyped the address or the page may have moved.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
+	<div id="footer"> 
+      
+<div class="powered-by"> 
+	<a href="http://www.shortcut.no"><img alt="Shortcut" src="/images/../img/shortcut.png?1270294043" title="A product from Shortcut" /></a>  	<a href="http://gitorious.org"><img alt="Poweredby" src="/images/../img/poweredby.png?1270294026" title="Powered by Gitorious" /></a></div> 
+	<div id="footer-links"> 
+		<h3>Gitorious</h3> 
+		<ul> 
+			<li><a href="/">Home</a></li> 
+	        <li><a href="/about">About Gitorious</a></li> 
+	        <li><a href="/about/faq">FAQ</a></li> 
+	        <li><a href="/contact">Contact</a></li> 
+		</ul> 
+		<ul> 
+			<li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li> 
+	        <li><a href="http://blog.gitorious.org">Blog</a></li> 
+		</ul> 
+		
+	</div> 
+ 
+      <div class="clear"></div> 
+    </div> 
+</div> 
+</body> 
 </html>

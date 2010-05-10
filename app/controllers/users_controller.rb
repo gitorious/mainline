@@ -37,7 +37,7 @@ class UsersController < ApplicationController
   renders_in_global_context
   ssl_required :new, :create, :edit, :update, :password, :forgot_password_create,
                 :forgot_password, :update_password, :reset_password, :avatar
-
+  layout :decide_layout
   # render new.rhtml
   def new
   end
@@ -228,6 +228,14 @@ class UsersController < ApplicationController
       unless @user.public?
         flash[:notice] = "This user profile is not public"
         redirect_back_or_default root_path
+      end
+    end
+    
+    def decide_layout
+      if [:new, :create, :forgot_password, :pending_activation, :reset_password ].include?(action_name.to_sym)
+        "second_generation/application"
+      else
+        "application"
       end
     end
 end

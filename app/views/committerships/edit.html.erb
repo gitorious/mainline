@@ -19,35 +19,30 @@
 
 <%= breadcrumbs_from(@committership) -%>
 
-<h1>Edit collaborator permissions</h1>
+<h2 class="content-header">Edit collaborator permissions</h2>
 
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
 
-  <table class="inline-labels">
-    <tr>
-      <th><%= f.label :permissions -%>:</th>
-      <td>
-        <%= f.label "Review" %>
-        <%= check_box_tag "permissions[]", "review", @committership.reviewer? -%>
-      </td>
-      <td>
-        <%= f.label "Commit" %>
-        <%= check_box_tag "permissions[]", "commit", @committership.committer? -%>
-      </td>
-      <td>
-        <%= f.label "Administrate" %>
-        <%= check_box_tag "permissions[]", "admin", @committership.admin? -%>
-      </td>
-    </tr>
-  </table>
-
-  <p>
-    <%= f.submit "Update permissions" -%>
-    <%= t("views.collaborators.or_return_to") -%>
-    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
-  </p>
-
+	<ul class="form">
+		<fieldset>
+			<li><%= f.label "Review" %>
+				<div><%= check_box_tag "permissions[]", "review", @committership.reviewer? -%></div>
+			</li>
+			<li><%= f.label "Commit" %>
+				<div><%= check_box_tag "permissions[]", "commit", @committership.committer? -%></div>
+			</li>
+			<li><%= f.label "Administrate" %>
+				<div><%= check_box_tag "permissions[]", "admin", @committership.admin? -%></div>
+			</li>
+		</fieldset>
+	</ul>
+	<fieldset class="submit">
+			<%= f.submit "Update permissions" -%>
+		    <%= t("views.collaborators.or_return_to") -%>
+		    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
+	</fieldset>
+	
 <% end -%>
 
 <% content_for :sidebar do %>

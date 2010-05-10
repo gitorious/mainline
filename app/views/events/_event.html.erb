@@ -24,11 +24,12 @@
 
 <% action, body, category = action_and_body_for_event(event) %>
 <li class="event_instance <%= relative_time ? 'relative' : '' %> <%= Action::css_class(event.action) -%>" id="<%= dom_id(event) -%>">
+	  <p class="event_category <%= category -%>"><%= category.humanize -%></p>
   <% unless relative_time -%>
     <p class="event_date"><%= event.created_at.to_s(:short_time) -%></p>
   <% end -%>
   <%= avatar_from_email(event.email, :size => 16)  %>
-  <p class="event_category <%= category -%>"><%= category.humanize -%></p>
+
   <div class="event_meta">
     <p class="event_action">
     <% if relative_time -%>
@@ -40,12 +41,12 @@
       <% if event.user.nil? %>
         <%= event.actor_display %>
       <% else %>
-        <%= link_to h(event.user.title), user_path(event.user) %>
+        <strong><%= link_to h(event.user.title), user_path(event.user) %></strong>
       <% end %>
       <%= action %>
     <% end %>
     </p>
-    <div class="<%= event.action == Action::COMMIT ? "commit_message" : "" -%>">
+    <div class="<%= event.action == Action::COMMIT ? "commit_message" : "" -%> commit_message">
       <%= simple_format(sanitize(body)) %>
     </div>
     <% if event.has_commits? %>

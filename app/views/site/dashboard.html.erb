@@ -18,114 +18,110 @@
 %>
 
 <% @page_title = "Your dashboard" -%>
-<%= breadcrumbs_from(@root) -%>
+<%= breadcrumbs_from(@user) -%>
 
 <div class="with_divider">
   <div id="left">
     <div class="user-profile">
       <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
       <div class="profile-data">
-        <h1><%= random_greeting %> <%=h @user.login -%>!</h1>
+        <h1>~<%= link_to h(@user.login), @user -%></h1>
 
         <ul class="details">
-          <li>View <%= link_to "your public profile", current_user -%></li>
+          <% unless @user.fullname.blank? %>
+            <li><%= h(@user.fullname) -%></li>
+          <% end %>
+          <% if @user.public_email? -%>
+          <li class="email">
+            <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
+          </li>
+          <% end -%>
+          <% if @user.url %>
+          <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+          <% end -%>
+          <li>
+            <%= t("views.users.member_for") %>
+            <%= time_ago_in_words(@user.created_at) %>
+          </li>
         </ul>
       </div>
 
       <ul class="buttons">
+        <% if is_current_user?(@user) -%>
+          <li class="hint">This is you! (<%= link_to "your dashboard", root_path -%>)</li>
+        <% end -%>
+        <% if !is_current_user?(@user) -%>
+        <li class="new_email">
+          <%= white_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
+                new_message_path(:to => @user.login), :class => "new_email") -%>
+        </li>
+        <% end -%>
+        <% if is_current_user?(@user)  -%>
         <li>
-          <%= white_button_link_to(t("views.keys.manage_ssh_keys"),
+          <%= link_button_link_to(t("views.keys.manage_ssh_keys"),
             user_keys_path(current_user), :class => "key") -%>
         </li>
         <li>
-          <%= white_button_link_to(t("views.aliases.manage_aliases"),
+          <%= link_button_link_to(t("views.aliases.manage_aliases"),
                 user_aliases_path(current_user), :class => "alias") -%>
         </li>
         <li>
-          <%= white_button_link_to(t("views.users.edit_action"), edit_user_url(@user),
+          <%= link_button_link_to(t("views.users.edit_action"), edit_user_url(current_user),
                 :class => "edit_account") -%>
         </li>
         <li>
-          <%= white_button_link_to(t("views.users.chg_passwd_action"), password_user_path(@user),
+          <%= link_button_link_to(t("views.users.chg_passwd_action"), password_user_path(current_user),
                 :class => "edit_account_password") -%>
         </li>
+        <% end -%>
       </ul>
       <div class="clear"></div>
     </div>
-
+	<div class="content-container w-510">
     <h2 class="activities">
-      Your Newsfeed
-      <%= feed_icon @atom_auto_discovery_url -%>
+	<% if showing_newsfeed? %>
+		Your Newsfeed
+	<% else %>
+		<%= t("views.site.dashboard.activities") -%>
+	<% end %>
+		<%= feed_icon @atom_auto_discovery_url -%>
+	<% if is_current_user?(@user) -%>
+    	<small>(<%= newsfeed_or_user_events_link -%>)</small>
+	<% end -%>
     </h2>
-    <% if @events.empty? -%>
+    
+<% if @events.empty? -%>
       <p class="hint">
-        You have no news, click on the watch icon
-        (<%= image_tag("silk/star.png") -%>) to see new activities here
+        <%= personified(@user, "You", @user.title) -%> have no news
       </p>
     <% else -%>
-      <div id="user_events">
-        <%= render :partial => "events/events", :locals => {
-          :events => @events, :pagination_style => :compact
-        } -%>
+      <div id="user_events w-510">
+        <%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-510" } -%>
       </div>
     <% end -%>
   </div>
-
+	</div>
   <div id="right">
-    <% if @messages %>
-      <% pull_box("Your latest messages") do %>
-        <ul class="embedded_message_list">
-        <% @messages.each do |message| %>
-          <li>
-            <%= link_to(h(message.title), message,
-                  :title => truncate(h(message.body), :length => 25),
-                  :class => message.aasm_state_for_user(@user)) %>
-            <span class="meta">
-              <%= distance_of_time_in_words_to_now(message.updated_at) %> ago
-            </span>
-          </li>
-        <% end %>
-        <li class="hint">
-          <%= link_to("View all messages &raquo;", messages_path) -%>
-        </li>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% pull_box("Open merge requests for you") do %>
+    <% pull_box("Open merge requests for you", :class => "merge-requests pull-box-510") do %>
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
-            <%= link_to(repo.url_path + " <strong>" +
-                  repo.open_merge_request_count + "</strong>",
-                  repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
+            <%= link_to(repo.url_path + ": " + repo.open_merge_request_count,
+                 repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
           </li>
         <% end %>
       </ul>
     <% end if show_merge_request_count_for_user?(@user) %>
 
-    <% pull_box("Your projects") do -%>
-      <ul class="with_icons">
-      <% @projects.each do |project| -%>
-        <li class="project">
-          <%= link_to h(project.title), project -%>
-          <% if favorited?(project) %>
-            <%= image_tag("silk/star.png", :title => "favorited") %>
-          <% end %>
-        </li>
-      <% end -%>
-      </ul>
-      <p class="action hint">
-        <%= link_to(t("views.projects.create_new") + " &raquo;", new_project_path) -%>
-      </p>
-    <% end -%>
 
-    <% pull_box(favorites_heading_for(@user)) do %>
-    <div id="watchable-list">
+    <% pull_box("#{@user.login} is watching", :class => "favorite pull-box-510") do %>
       <div class="filters">
         <ul>
-          <li><a class="foreign" href="#not-mine">Not yours</a></li>
-          <li><a class="mine" href="#mine">Yours</a></li>
+			<li><strong>Sort by:</strong></li>
+          <% if is_current_user?(@user) -%>
+            <li><a class="foreign" href="#not-mine">Not yours</a></li>
+            <li><a class="mine" href="#mine">Yours</a></li>
+          <% end -%>
           <li>
             <a href="#merge-requests" class="merge-requests">Merge requests</a>
           </li>
@@ -134,26 +130,62 @@
           </li>
           <li><a href="#all" class="all">All</a></li>
         </ul>
-        <div class="clear"></div>
       </div>
       <ul class="with_icons">
-        <% @favorites.each do |watchable| %>
-          <li class="<%= css_classes_for(watchable) -%>">
-            <%= link_to_watchable(watchable) -%>
+        <% @favorites.each do |favorite| %>
+          <li class="<%= css_classes_for(favorite) -%>">
+            <%= link_to_watchable(favorite) -%>
           </li>
         <% end %>
         <% if @favorites.blank? -%>
           <p class="hint"><%= no_watchings_notice_for(@user) -%></p>
-        <% else -%>
-          <p class="action hint">
-            <%= link_to "Manage email subscriptions &raquo;", favorites_path -%>
-          </p>
         <% end -%>
       </ul>
-    </div>
     <% end %>
 
-    <% pull_box("Team memberships") do -%>
+    <% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-510") do -%>
+      <ul class="with_icons">
+      <% @projects.each do |project| -%>
+        <li class="project">
+          <%= link_to h(project.title), project -%>
+        </li>
+      <% end -%>
+
+      </ul>
+      <% if is_current_user?(@user) -%>
+	<div class="pull-box-links">	
+      <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
+            :id => "new-project-button"}) %>
+	</div>
+      <% end -%>
+    <% end -%>
+
+    <% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-510") do -%>
+    <% if @repositories.blank? -%>
+      <% if is_current_user?(@user) -%>
+		
+      
+        You currently don't have any repository clones. You can clone
+        a repository you wish to contribute to, by going to a
+        repository overview page and click the "Clone on Gitorious"
+        link in the sidebar.</p>
+		
+      <% else -%>
+       <p class="hint"> <%=h @user.title -%> currently doesn't have any repository clones</p>
+      <% end -%>
+    <% else -%>
+      <ul class="with_icons">
+        <% @repositories.each do |repo| -%>
+          <li class="repository">
+            <%= link_to h(repo.url_path),
+                  repo_owner_path(repo, [repo.project, repo]) -%>
+          </li>
+        <% end -%>
+      </ul>
+    <% end -%>
+<% end %>
+
+  	<% pull_box("Team memberships", :class => "teams pull-box-510") do -%>
       <ul>
       <% @user.groups.each do |group| -%>
         <li style="clear:left">
@@ -169,4 +201,3 @@
   </div>
   <div class="clear"></div>
 </div>
-
