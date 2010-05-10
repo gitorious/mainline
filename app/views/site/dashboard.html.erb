@@ -47,15 +47,6 @@
       </div>
 
       <ul class="buttons">
-        <% if is_current_user?(@user) -%>
-          <li class="hint">This is you! (<%= link_to "your dashboard", root_path -%>)</li>
-        <% end -%>
-        <% if !is_current_user?(@user) -%>
-        <li class="new_email">
-          <%= white_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
-                new_message_path(:to => @user.login), :class => "new_email") -%>
-        </li>
-        <% end -%>
         <% if is_current_user?(@user)  -%>
         <li>
           <%= link_button_link_to(t("views.keys.manage_ssh_keys"),
@@ -114,7 +105,7 @@
     <% end if show_merge_request_count_for_user?(@user) %>
 
 
-    <% pull_box("#{@user.login} is watching", :class => "your-favorites favorite pull-box-510") do %>
+    <% pull_box("You're watching", :class => "your-favorites favorite pull-box-510") do %>
       <div class="filters">
         <ul>
 			<li><strong>Sort by:</strong></li>
@@ -143,7 +134,7 @@
       </ul>
     <% end %>
 
-    <% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-510") do -%>
+    <% pull_box("Your projects", :class => "your-projects pull-box-510") do -%>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project">
@@ -160,7 +151,7 @@
       <% end -%>
     <% end -%>
 
-    <% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-510") do -%>
+    <% pull_box("Your repositories", :class => "your-repositories pull-box-510") do -%>
     <% if @repositories.blank? -%>
       <% if is_current_user?(@user) -%>
 		
@@ -185,7 +176,7 @@
     <% end -%>
 <% end %>
 
-  	<% pull_box("Team memberships", :class => "teams pull-box-510") do -%>
+  	<% pull_box("Your team memberships", :class => "teams pull-box-510") do -%>
       <ul>
       <% @user.groups.each do |group| -%>
         <li style="clear:left">

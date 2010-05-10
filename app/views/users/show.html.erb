@@ -22,8 +22,20 @@
 					</li>
 				</ul>
 			</div>
-			<div class="clear"></div>
-		</div>
+			
+		  <ul class="buttons">
+        <% if is_current_user?(@user) -%>
+          <li class="hint">This is you! (<%= link_to "your dashboard", root_path -%>)</li>
+        <% end -%>
+        <% if !is_current_user?(@user) -%>
+        <li class="new_email">
+          <%= link_button_link_to(t("views.users.send_user_msg", :username=>h(@user.login)),
+                new_message_path(:to => @user.login), :class => "new_email") -%>
+        </li>
+        <% end -%>
+      <div class="clear"></div>
+    </div>
+
 		<div class="content-container w-510">
 			<h2 class="activities">
 				<% if showing_newsfeed? %> Your Newsfeed <% else %> <%= t("views.site.dashboard.activities") -%> <% end %> <%= feed_icon @atom_auto_discovery_url -%> <% if is_current_user?(@user) -%> <small>(<%= newsfeed_or_user_events_link -%>)</small> <% end -%>
