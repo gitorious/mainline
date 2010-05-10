@@ -2757,6 +2757,10 @@ div.archive-download-box p {
 		color: #222;
 }
 
+.pull-box-content .filters ul li a.current {
+  font-weight: bold;
+}
+
 .pull-box-content ul {
 		margin-bottom: -2px; 
 }

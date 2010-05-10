@@ -189,7 +189,7 @@ $(document).ready(function() {
     jQuery("a[data-request-method]").replaceRailsGeneratedForm();
 
     // watchable/favorite list filtering
-    $("#watchable-list").each(function() {
+    $(".your-favorites").each(function() {
         $this = $(this);
         $this.find(".filters a.all").addClass("current")
         $this.find(".filters a").css({'outline':'none'});
