@@ -175,6 +175,22 @@ class MergeRequestsControllerTest < ActionController::TestCase
         assert_template "merge_requests/legacy"
       end
     end
+
+    context "Git timeouts" do
+      setup do        
+        MergeRequest.any_instance.stubs(:commits_to_be_merged).raises(Grit::Git::GitTimeout)
+        MergeRequestVersion.any_instance.stubs(:affected_commits).raises(Grit::Git::GitTimeout)
+      end
+
+      should "catch timeouts and render metadata only" do
+        get :show, :project_id => @project.to_param, 
+            :repository_id => repositories(:johans).name,
+            :id => @merge_request.to_param
+        
+        assert_response :success
+        assert assigns(:git_timeout_occured)
+      end
+    end
   end
 
 	context "#new (GET)" do
