@@ -265,6 +265,24 @@ $(document).ready(function() {
         return false;
     });
 
+    // Misc
+		$('.with_sidebar').parent().css('background', 'url("/img/container-bg310.png") repeat-y');
+		$('ul.navigation').find('li:first').addClass("first"); 
+		$('ul.navigation').find('li:last').addClass("last"); 
+		$("ul.navigation ~ ul.navigation").addClass("multiple");
+		$('table').find('tr:first').find('th:first').addClass("first");
+		$('table').find('tr:first').find('th:last').addClass("last");
+
+	  $('div.expandable').expander({
+	    slicePoint:       200,  // default is 100
+	    expandText:         'read more', // default is 'read more...'
+	    collapseTimer:    0, // re-collapses after 5 seconds; default is 0, so no re-collapsing
+	    userCollapseText: '',  // default is '[collapse expanded text]'
+		expandEffect:     'fadeIn',
+		userCollapse:     true,
+		expandSpeed:      '800'       // speed in milliseconds of the animation effect for expanding the text
+	  });
+
 });
 
 if (!Gitorious)

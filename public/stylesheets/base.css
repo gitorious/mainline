@@ -712,7 +712,7 @@ ul.buttons .white-button.small-button a {
 	padding-left: 20px;
   width: 150px;
 	font-size: 11px;
-	margin: 0px 4px 0px 2px;
+	margin: -1px 4px 0px 2px;
 	float: right;
 }
 
