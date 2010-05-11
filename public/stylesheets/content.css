@@ -112,20 +112,24 @@
 		background: #F8F8F8;
 }
 .repository_meta .infobox input[type=text] {
-		-webkit-border-top-right-radius: 6px;
-		-webkit-border-top-left-radius: 6px;
 		height: 28px;
-		width: 411px;
+		width: 392px;
 		line-height: 22px;
 		border: 0;
+		-webkit-border-top-right-radius: 6px;
+		-webkit-border-top-left-radius: 6px;
+		-moz-border-radius-topright: 6px;
+		-moz-border-radius-bottomright: 6px;
 }
 .repository_meta .infobox p.clone-copy {
-	-webkit-border-top-right-radius: 6px;
-	-webkit-border-top-left-radius: 6px;
 		background: #FFF;
-		width: 411px;
+		width: 392px;
 		float: left;
 		overflow: hidden;
+	  -webkit-border-top-right-radius: 6px;
+	  -webkit-border-top-left-radius: 6px;
+		-moz-border-radius-topright: 6px;
+		-moz-border-radius-bottomright: 6px;
 }
 .repository_meta .infobox ul li form p label {
 		cursor: pointer;
@@ -142,7 +146,7 @@
 		float: left;
 		-webkit-border-bottom-left-radius: 6px;
 		-webkit-border-bottom-right-radius: 6px;
-		-moz-border-radius-bottomøeft: 6px;
+		-moz-border-radius-bottomleft: 6px;
 		-moz-border-radius-bottomright: 6px;
 		background: url(../img/repos-link-bg.png) repeat-x;
 }
