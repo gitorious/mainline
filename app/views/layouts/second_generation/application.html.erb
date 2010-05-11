@@ -11,7 +11,7 @@
 	        var self = this;
 	        this.status = 'collapsed';
 
-	        $('a.all-features').click(function()
+	        $('a.view-features').click(function()
 	        {
 	                if(!$('#features-wrapper').is(':animated'))
 	                {
@@ -32,7 +32,24 @@
 	                                .css('border-top', (self.status == 'collapsed') ? '1px solid #DDD' : '1px solid #ededed');
 	                }
 	        });
-	});
+		});
+	$(document).ready(function() {
+		  	$("p.openid-switch a").click(
+		      function() {
+		        $("#regular_login_fields").addClass("login_hidden");
+		        $("#openid_login_fields").removeClass("login_hidden");
+				$("p.openid-switch").toggle();
+				$("p.regular-switch").toggle();
+		      });
+		 	$("p.regular-switch a").click(
+		        function() {
+					$("p.regular-switch").toggle();
+					$("p.openid-switch").toggle();
+		          $("#openid_login_fields").addClass("login_hidden");
+		          $("#regular_login_fields").removeClass("login_hidden");
+		        });
+		});
+
 $('#screenshots-container') 
 .cycle({ 
     fx:     'scrollLeft', 

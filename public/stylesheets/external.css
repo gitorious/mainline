@@ -478,7 +478,7 @@ body#users #wrapper, body#sessions #wrapper {
 	background: url(../img/external/form-gradient.png) repeat-x #c26d1a;
 }
 #content .form-wrapper#signup { height: 670px; }
-#content .form-wrapper#login, #content .form-wrapper#resetpw { height: 440px; }
+#content .form-wrapper#login, #content form, #content .form-wrapper#resetpw { height: 440px; }
 #content .form-wrapper#forgotpw { height: 370px; }
 #content .form-wrapper#pendingact { height: 370px; }
 #content #sign-up, #content #log-in, #content #forgot-pw, #content #pending-act, #content #reset-pw {

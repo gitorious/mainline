@@ -60,7 +60,7 @@ form input[type='submit'] {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	font-weight: bold;
-	color: #bc5f04;
+	color: #924800;
 	font-size: 13px;
 	text-shadow: 0px 1px #ffc59b;
 	padding: 6px 10px 7px;
@@ -90,11 +90,33 @@ form input.preview[type='button'] {
 	height: 33px;
 	margin-right: 5px;
 	margin-bottom: 1px;
-	-webkit-box-shadow: 0px 1px 0px #ffc59b inset;
-	-moz-box-shadow: inset 0px 1px 0px #ffc59b;
+	-webkit-box-shadow: 0px 1px 0px #F8F8F8 inset;
+	-moz-box-shadow: inset 0px 1px 0px #F8F8F8;
+	background-color: #E1E1E1;
+	border: 1px solid #CCC;
+	cursor: pointer;
+}
+form input.cancel[type='button'] {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-weight: bold;
+	color: #d7492f;
+	font-size: 13px;
+	text-shadow: 0px 1px #F8F8F8;
+	padding: 6px 10px 7px;
+	display: block;
+	float: left;
+	line-height: 20px;
+	height: 33px;
+	margin-right: 5px;
+	margin-bottom: 1px;
+	-webkit-box-shadow: 0px 1px 0px #F8F8F8 inset;
+	-moz-box-shadow: inset 0px 1px 0px #F8F8F8;
 	background-color: #E1E1E1;
 	border: 1px solid #CCC;
 	cursor: pointer;
 }
 form input[type='submit']:hover {
 	background: #f49c46; }
+form input[type='button']:hover {
+		background: #d1d1d1; }

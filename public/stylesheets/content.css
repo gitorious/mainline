@@ -73,6 +73,7 @@
 		background: #d9d9d9;
 		width: 710px;
 		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
 		border: 1px solid #c5c5c5;
 		font-size: 11px;
 		float: left;
@@ -111,18 +112,20 @@
 		background: #F8F8F8;
 }
 .repository_meta .infobox input[type=text] {
-		-webkit-border-top-left-radius: 0px;
-		-webkit-border-bottom-left-radius: 0px;
 		-webkit-border-top-right-radius: 6px;
-		-webkit-border-bottom-right-radius: 6px;
-		padding: 14px 10px 0px;
+		-webkit-border-top-left-radius: 6px;
 		height: 28px;
-		width: 413px;
+		width: 411px;
 		line-height: 22px;
 		border: 0;
 }
 .repository_meta .infobox p.clone-copy {
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
 		background: #FFF;
+		width: 411px;
+		float: left;
+		overflow: hidden;
 }
 .repository_meta .infobox ul li form p label {
 		cursor: pointer;
@@ -298,7 +301,7 @@ span.changed{
 	height: 16px;
   color: #fff;
 	text-indent: -9999px;
-	background:  #FFF url(../img/events2b.png) no-repeat; 
+	background:  #FFF url(../img/events.png) no-repeat; 
 
 }
 .events .event_instance .event_category.push { background-position: 0px 0px; }

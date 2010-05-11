@@ -89,6 +89,7 @@
 	float: left;
 	height: 34px;
 	-webkit-box-shadow: 0px 1px 0px #EEE inset;
+	-moz-box-shadow: inset 0px 1px 0px #EEE;
 	border-left: 1px solid #b5b5b5;
 	border-right: 1px solid #b5b5b5;
 	border-top: 1px solid #b5b5b5;
@@ -98,22 +99,30 @@
 #sidebar ul.links li.first {
 		-webkit-border-top-right-radius: 6px;
 		-webkit-border-top-left-radius: 6px;
+		-moz-border-radius-topright: 6px;
+		-moz-border-radius-topleft: 6px;
 }
 
 #sidebar ul.links li.first a:hover {
 	-webkit-border-top-right-radius: 6px;
 	-webkit-border-top-left-radius: 6px;
+	-moz-border-radius-topright: 6px;
+	-moz-border-radius-topleft: 6px;
 }
 
 #sidebar ul.links li.last {
 		-webkit-border-bottom-right-radius: 6px;
 		-webkit-border-bottom-left-radius: 6px;
+		-moz-border-radius-bottomright: 6px;
+		-moz-border-radius-bottomleft: 6px;
 		border-bottom: 1px solid #b5b5b5;
 }
 
 #sidebar ul.links li.last a:hover {
 	-webkit-border-bottom-right-radius: 6px;
 	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
 	border-bottom: 1px solid #b5b5b5;
 }
 
@@ -194,6 +203,10 @@
 	width: 270px;}
 #sidebar h1 {
 		float: none;
+}
+#sidebar h2, #sidebar h3, #sidebar h4 {
+	display: block;
+	float: none;
 }
 
 #project-description {
