@@ -81,7 +81,7 @@ module UsersHelper
 
   def newsfeed_or_user_events_link
     if showing_newsfeed?
-      link_to "Show my activites", user_path(@user, {:events => "outgoing"})
+      link_to "Show my activities", user_path(@user, {:events => "outgoing"})
     else
       link_to "Show my newsfeed", user_path(@user)
     end
