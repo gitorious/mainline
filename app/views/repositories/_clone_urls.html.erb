@@ -47,16 +47,16 @@
 		$('#git-<%= repository.id %>').click(function () {
 			var text = $('#git-<%= repository.id %>').val();
 			$('#clone-url-<%= repository.id %>').val(text);
-		})
+		});
 		
 		$('#http-<%= repository.id %>').click(function () {
 			var text = $('#http-<%= repository.id %>').val();
 			$('#clone-url-<%= repository.id %>').val(text);
-		})
+		});
 		$('#push-<%= repository.id %>').click(function () {
 			var text = $('#push-<%= repository.id %>').val();
 			$('#clone-url-<%= repository.id %>').val(text);
-		})
+		});
 
 		$('#clone-url-<%= repository.id %>').click(function () {
 			this.select();
