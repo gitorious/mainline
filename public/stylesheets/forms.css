@@ -110,6 +110,8 @@ form.button-to div input:hover {
 }
 form input[type='checkbox'] {
 		height: 30px;
+		float: left;
+		margin: -5px 4px 0px 0px;
 }
 form input[type='text'], input[type='password'] {
   padding: 6px;
