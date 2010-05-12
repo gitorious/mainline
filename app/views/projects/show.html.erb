@@ -48,10 +48,12 @@
 	</li>
 	<% end -%>
 
-	<li class="project_members">
-		<%= link_to t("views.projects.project_members"), 
-			group_memberships_path(@project.owner) -%>
- 	</li>
+  <% if @project.owned_by_group? -%>
+    <li class="project_members">
+      <%= link_to t("views.projects.project_members"),
+            group_memberships_path(@project.owner) -%>
+    </li>
+  <% end -%>
 
 	<% if @project.admin?(current_user) -%>
 	<li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>

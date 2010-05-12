@@ -41,7 +41,7 @@
       <% if event.user.nil? %>
         <%= event.actor_display %>
       <% else %>
-        <strong><%= link_to h(event.user.title), user_path(event.user) %></strong>
+        <strong><%= link_to h(event.user.title), user_path(event.user), :class => "event-author" %></strong>
       <% end %>
       <%= action %>
     <% end %>
