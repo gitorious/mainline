@@ -33,7 +33,10 @@
 				    <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%>
 				    <%= f.text_field :email -%>
 				</li>
-
+				<li>
+				    <%= f.label :password, t(:password, :scope => "activerecord.attributes.user") -%>
+				    <%= f.password_field :password %>
+				</li>
 				<li>
 				    <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%>
 				    <%= f.password_field :password_confirmation %>
