@@ -24,10 +24,20 @@
 
 <%= breadcrumbs_from(@merge_request) -%>
 <% @page_title = "Merge request ##{@merge_request.to_param}: #{h(@merge_request.summary)}" -%>
+<div class="options">
+	<ul>
+	<%- if @merge_request.user == current_user -%>
+	  	<li><%= button_to t('views.merges.edit_btn'), repo_owner_path(@merge_request.target_repository,
+	      [:edit, @merge_request.source_repository.project, @merge_request.target_repository, @merge_request]), :method => :get %></li>
+	  	<li><%= button_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
+	      [@merge_request.source_repository.project,
+	      @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %></li>
+	<%- end -%>
+			<li><%= favorite_button(@merge_request) %></li>
+</div>
 
-<h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%>
-<%= favorite_button(@merge_request) %>
-</h1>
+<h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%></h1>
+
 
 <div class="merge_request_overview">
   <div class="proposal">
@@ -149,11 +159,3 @@ git push origin master
 <% end %>
 
 <% end -%><% # render_if_ready %>
-
-<%- if @merge_request.user == current_user -%>
-  <%= button_to t('views.merges.edit_btn'), repo_owner_path(@merge_request.target_repository,
-      [:edit, @merge_request.source_repository.project, @merge_request.target_repository, @merge_request]), :method => :get %>
-  <%= button_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
-      [@merge_request.source_repository.project,
-      @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %>
-<%- end -%>

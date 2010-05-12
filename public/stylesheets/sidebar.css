@@ -204,10 +204,6 @@
 #sidebar h1 {
 		float: none;
 }
-#sidebar h2, #sidebar h3, #sidebar h4 {
-	display: block;
-	float: none;
-}
 
 #project-description {
   margin: 0;
