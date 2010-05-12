@@ -633,7 +633,7 @@ body#users #wrapper, body#sessions #wrapper {
 		float: left;
 		text-indent: -9999px;
 }
-.formErrors {
+.errorExplanation {
 		width: 180px;
 		float: right;
 		font-size: 11px;
@@ -641,7 +641,7 @@ body#users #wrapper, body#sessions #wrapper {
 		margin-top: 105px;
 		color: #333;
 }
-.formErrors li {
+.errorExplanation li {
 		list-style-type: circle;
 		margin-left: 15px;
 }
