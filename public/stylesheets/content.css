@@ -320,6 +320,10 @@ span.changed{
   padding: 0;
 }
 
+.events a.event-author {
+  color: #666;
+}
+
 /* USER PROFILE */
 
 .user-profile .buttons li {
