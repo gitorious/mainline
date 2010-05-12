@@ -496,7 +496,8 @@ module ApplicationHelper
   def include_javascripts
     javascript_include_tag "jquery.core", "jquery.autocomplete", "jquery.cookie",
       "color_picker", "ui.core","ui.selectable", "jquery.scrollto", "jquery.timeago",
-      "core_extensions", "jquery.expander", "jquery.gitorious_extensions",
+      "core_extensions", "jquery.expander", "jquery.cycle.all.min",
+      "jquery.gitorious_extensions",
       "notification_center", "merge_requests", "diff_browser", "messages",
       "application", "live_search", "repository_search", :cache => true
   end

@@ -38,11 +38,6 @@
 				    <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%>
 				    <%= f.password_field :password_confirmation %>
 				</li>
-
-				<li>
-					<%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%>
-    				<%= f.text_field :login -%>
-				</li>
 				<li>
 					<div class="tos">
 						<%= f.check_box :terms_of_use  -%>

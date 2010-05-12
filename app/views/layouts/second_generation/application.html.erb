@@ -3,8 +3,7 @@
   	<title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
 	
 	<link rel="stylesheet" href="/stylesheets/external.css" type="text/css">
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script> 
-	<script type="text/javascript" src="javascripts/jquery.cycle.all.min.js"></script> 
+	<%= include_javascripts -%>
 	<script type="text/javascript">
 	$(function()
 	{
