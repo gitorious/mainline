@@ -111,6 +111,7 @@ class Project < ActiveRecord::Base
     'Microsoft Permissive License (Ms-PL)',
     'ISC License',
     'Lisp Lesser License',
+    'Boost Software License',
     'Public Domain',
     'Other Open Source Initiative Approved License',
     'Other/Proprietary License',
