@@ -961,6 +961,7 @@ table {
 
 table.listing {
  	width: 100%;
+	float: left;
 }
 table.listing tr {
 

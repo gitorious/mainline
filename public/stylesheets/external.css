@@ -87,6 +87,7 @@ body#users #wrapper, body#sessions #wrapper {
 #top #menu li a:active {
 		margin-top: 1px;
 }
+#top #menu li.contact { border-right: 1px solid #666; padding-bottom: 3px; padding-right: 10px; }
 #top #menu li.home a { background-position: 0px -22px; width: 40px; } #top #menu li.home.active a { background-position: 0px -11px; } #top #menu li.home a:hover { background-position: 0px 2px; }
 #top #menu li.blog a { background-position: -70px -22px; width: 35px; } #top #menu li.blog.active a { background-position: -70px -11px; } #top #menu li.blog a:hover { background-position: -70px 2px; }
 #top #menu li.about a { background-position: -100px -22px; width: 48px; } #top #menu li.about.active a { background-position: -100px -11px; } #top #menu li.about a:hover { background-position: -100px 2px; }
