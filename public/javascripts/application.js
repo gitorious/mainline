@@ -283,6 +283,12 @@ $(document).ready(function() {
 		expandSpeed:      '800'       // speed in milliseconds of the animation effect for expanding the text
 	  });
 
+	  // clone help texts
+	  $("a.clone-help-toggler").click(function(e) {
+	    $("#" + this.id + "-box").toggle();
+	    e.preventDefault();
+	  });
+
 });
 
 if (!Gitorious)

@@ -35,8 +35,34 @@
 					  <label for="push-<%= repository.id %>"><input id="push-<%= repository.id %>" type="radio" name="url-<%= repository.id %>" value="<%= h(repository.push_url) -%>" <%= git_or_ssh_url_checked(repository, :ssh) -%>>SSH</label>
 					</p>
 					<% end -%>
-					<p class="clone-copy"><input type="text" id="clone-url-<%= repository.id %>" value=""></p>
+					<p class="clone-copy">
+					  <input type="text" id="clone-url-<%= repository.id %>" value="" />
+					  <a href="#help" id="clone-help-<%= repository.id -%>" class="clone-help-toggler">?</a>
+					</p>
 			</form>
+			<div id="clone-help-<%= repository.id -%>-box" class="clone-help-text" style="display:none;">
+        <% if logged_in? && current_user.can_write_to?(repository) -%>
+        <p>
+          Adding this repository as a pushable origin:
+<pre>
+git remote add origin <%= repository.push_url %>
+# to push the master branch to the origin remote we added above:
+git push origin master
+# after that you can just do:
+git push
+</pre></p>
+        <% end -%>
+        <p>Cloning this repository:
+<pre>
+git clone <%= repository.clone_url -%> <%=h repository.name %>
+cd <%=h repository.name -%>
+</pre></p>
+        <p>Add this repository as a remote to an existing local repository:
+<pre>
+git remote add <%=h repository.name -%>  <%= repository.clone_url %>
+git fetch <%=h repository.name %>
+git checkout -b <%=h repository.name -%>/master_or_other_branch my-local-tracking-branch
+</pre></p>
 		</div>	
 	  </li>
 </ul>
