@@ -86,7 +86,7 @@
         <%= personified(@user, "You", @user.title) -%> have no news
       </p>
     <% else -%>
-      <div id="user_events w-510">
+      <div id="user_events" class="w-510">
         <%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-510" } -%>
       </div>
     <% end -%>
