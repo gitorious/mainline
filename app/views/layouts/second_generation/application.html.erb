@@ -1,4 +1,5 @@
-<!doctype html lang="en"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
 <head> 
   	<title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
 	
@@ -74,7 +75,7 @@ $('#screenshots-container')
 			</div>
 			<ul id="menu">
 				<li class="home"><%= link_to("Home", root_path) %></li>
-	          	<li class="explore"><a href="#">Explore</a></li>
+	          	<li class="explore"><%= link_to "Activities", activity_path -%></li>
 	          	<li class="about"><%= link_to t("views.layout.about"), about_path %></li>
 				<li class="contact"><%= link_to "Contact", contact_path %> </li>
 	          	<li class="register"><%= link_to t("views.layout.register"), new_user_path %></li>
