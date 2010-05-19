@@ -123,19 +123,12 @@
 		<div class="column" id="from-the-blog">
 			<h3>From the Gitorious Blog</h3>
 			<ul>
+			  <% @feed_items.each do |entry| -%>
 				<li class="blog-entry">
-					<h4><a href="http://blog.gitorious.org/2010/03/29/emergency-reboot-2/">Emergency reboot</a></h4><p> &mdash;  We’ve had a serious crash of the webserver and we’re waiting for it to come back online 
-					(it’s currently checking filesystem-integrity). We’re investigating the reason for this, and will update as details emerge.</p>
-					<p class="date">March 29, 2010 – 3:49 pm</p>
+					<h4><a href="<%=h entry[:link] -%>"><%= strip_tags(entry[:title]) -%></a></h4><p> &mdash;  <%= strip_tags(entry[:description]) -%></p>
+					<p class="date"><%= entry[:date].to_s(:short) -%></p>
 				</li>
-				<li class="blog-entry">
-					<h4><a href="http://blog.gitorious.org/2010/03/04/short-downtime-march-4th-from-1500-cet/">Short downtime March 4th from 15:00 CET (done)</a></h4><p> &mdash; We need to allocate some more disk capacity on the servers today, which requires a reboot of the gitorious.org server. This means the servers will be unavailable from 15:00 CET, they should be online about 20 minutes after that.</p>
-					<p class="date">March 29, 2010 – 3:49 pm</p>
-				</li>
-				<li class="blog-entry">
-					<h4><a href="http://blog.gitorious.org/2010/01/22/activity-watching/">Activity watching</a></h4><p> &mdash; Up until a few days the only way to stay updated on new activities across many projects was to either subscribe to a bunch of atom feeds or visit each projects overview page regularly. But that’s no fun.</p>
-					<p class="date">March 29, 2010 – 3:49 pm</p>
-				</li>
+				<% end -%>
 			</ul>
 			<p><a class="go-to-blog" href="http://blog.gitorious.org">Go to the Gitorious Blog</a></p>
 		</div> <!-- end of from the blog -->

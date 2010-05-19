@@ -89,6 +89,9 @@ class SiteController < ApplicationController
     end
 
     def render_gitorious_dot_org_in_public
+      @feed_items = Rails.cache.fetch("blog_feed:feed_items", :expires_in => 1.hour) do
+        BlogFeed.new("http://blog.gitorious.org/feed/").fetch
+      end
       render :template => "site/public_index", :layout => "second_generation/application"
     end
 
