@@ -86,8 +86,10 @@
   </ul>
 </div>
 <div id="diff_browser_for_current_version">
+  <% if !@git_timeout_occured %>
   <%= render :partial => "version",
        :locals => {:version => @merge_request.versions.last} -%>
+  <% end %>
 </div>
 
 <h2 id="comments">Comments

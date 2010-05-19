@@ -88,6 +88,7 @@ class MergeRequestsController < ApplicationController
     rescue Grit::Git::GitTimeout
       @commits = []
       @commit_comments = []
+      @git_timeout_occured = true
       flash[:error] = "A Git timeout occured. Only metadata is being displayed"
     end
     respond_to do |wants|
