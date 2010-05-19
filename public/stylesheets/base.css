@@ -1172,7 +1172,7 @@ td.meta-info {
 .commit_message, .commit_message p {
   margin-top: 10px;
   margin-left: 10px;
-  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, monospace;
 }
 .event_instance .commit_message, .event_instance .commit_message p {
   margin: 5px 0 10px 10px;
@@ -1210,7 +1210,7 @@ Single (inline) commit under a push
 
 small.commit_message {
   margin: 0;
-  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, monospace;
 }
 
 .commit_message.inline, .commit_message.inline p {
@@ -1756,7 +1756,7 @@ table tr td.code {
  white-space: -o-pre-wrap;    /* Opera 7                */
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
  background: #fff;
- font: 95%/110% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+ font: 95%/110% "Bitstream Vera Sans Mono", Monaco, monospace;
  border-right: 1px solid #ccc;
 }
 table#codeblob tr td.code {
@@ -1798,7 +1798,7 @@ table.codediff {
   border: 1px solid #ccc;
   width: 100%;
   border-collapse: collapse;
-  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, monospace;
 }
 table.codediff .line-num-cut {
   background: #ccc;
@@ -1832,7 +1832,7 @@ table.codediff col.lines {
 }
 
 ul.diff_stats {
-  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  font: 95%/105% "Bitstream Vera Sans Mono", Monaco, monospace;
   color: #888;
 }
 
@@ -2266,7 +2266,7 @@ table.select_commits_from_list th.commit_list_status {
   padding-left: 10px;
   padding-right: 10px;
   text-align: right;
-  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;
+  font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, monospace;
 }
 table.select_commits_from_list tr.commit_row td, tr.selected td {
   padding: 5px 0 5px 0;
