@@ -1800,6 +1800,9 @@ table.codediff {
   border-collapse: collapse;
   font: 95%/105% "Bitstream Vera Sans Mono", Monaco, monospace;
 }
+table.codediff tr td {
+  padding: 0;
+}
 table.codediff .line-num-cut {
   background: #ccc;
   border-top: 1px dashed #ccc;
