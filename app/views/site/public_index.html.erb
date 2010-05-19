@@ -125,7 +125,7 @@
 			<ul>
 			  <% @feed_items.each do |entry| -%>
 				<li class="blog-entry">
-					<h4><a href="<%=h entry[:link] -%>"><%= strip_tags(entry[:title]) -%></a></h4><p> &mdash;  <%= strip_tags(entry[:description]) -%></p>
+					<h4><a href="<%=h entry[:link] -%>"><%= strip_tags(entry[:title]) -%></a></h4><p> &mdash;  <%= truncate(strip_tags(entry[:description]), :length => 255) -%></p>
 					<p class="date"><%= entry[:date].to_s(:short) -%></p>
 				</li>
 				<% end -%>
