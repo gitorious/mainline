@@ -379,6 +379,7 @@ ActiveRecord::Schema.define(:version => 20100316124803) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
+    t.datetime "remember_token_expires_at"
     t.string   "activation_code",                :limit => 40
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
@@ -395,7 +396,6 @@ ActiveRecord::Schema.define(:version => 20100316124803) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
-    t.datetime "remember_token_expires_at"
     t.boolean  "default_favorite_notifications",               :default => false
   end
 
@@ -403,12 +403,5 @@ ActiveRecord::Schema.define(:version => 20100316124803) do
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["password_key"], :name => "index_users_on_password_key"
   add_index "users", ["ssh_key_id"], :name => "index_users_on_ssh_key_id"
-
-  create_table "watchlist", :id => false, :force => true do |t|
-    t.string  "fullname"
-    t.string  "data"
-    t.text    "body"
-    t.integer "project_id", :null => false
-  end
 
 end

@@ -89,11 +89,6 @@ class SiteController < ApplicationController
     end
 
     def render_gitorious_dot_org_in_public
-      @projects = Project.most_active_recently(10, 7)
-      @teams = Group.most_active
-      @users = User.most_active
-      @latest_events = Event.latest(4)
-
       render :template => "site/public_index", :layout => "second_generation/application"
     end
 
