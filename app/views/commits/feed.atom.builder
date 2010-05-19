@@ -17,7 +17,7 @@
 #++
 
 atom_feed do |feed|
-  feed.title("Gitorius: #{h(@repository.gitdir)}:#{h(desplat_path(params[:branch]))}")
+  feed.title("Gitorious: #{h(@repository.gitdir)}:#{h(desplat_path(params[:branch]))}")
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 	
   @commits.each do |commit|
