@@ -2694,7 +2694,7 @@ div.archive-download-box p {
 .pull-box-container.pull-box-510 {  width: 510px; } 
 .pull-box-container.pull-box-510 .pull-box-content, .pull-box-container.pull-box-510 .pull-box-header, .pull-box-container.pull-box-510 .pull-box-links { width: 490px; }
 .pull-box-container.pull-box-510 .pull-box-content ul.events, .pull-box-container.pull-box-510 .pull-box-content ul.events li {	width: 490px;	float: left; }
-.pull-box-container.pull-box-510 .pull-box-content ul.events li div { float: left; width: 460px; margin: 0; margin: 0px 0px 0px 5px; }
+.pull-box-container.pull-box-510 .pull-box-content ul.events li div { float: left; width: 440px; margin: 0; margin: 0px 0px 0px 5px; }
 .pull-box-container.pull-box-510 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
 
 .pull-box-container.pull-box-365 {  width: 365px; } 
