@@ -19,8 +19,9 @@
 
 <script type="text/javascript" charset="utf-8">
   $(document).ready(function(){
+    options = {matchSubset: false}
     $("input#message_recipients.autocomplete")
-      .autocomplete("auto_complete_for_message_recipients");
+      .autocomplete("auto_complete_for_message_recipients", options);
   });
 </script>
 
