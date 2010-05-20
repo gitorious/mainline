@@ -28,6 +28,9 @@ test:
   # User which is running git daemon
   gitorious_user: git
 
+  # Email address to the support for the Gitorious server
+  gitorious_support_email: support@gitorious.org
+
   # Email spam on server errors to:
   exception_notification_emails:  
 
