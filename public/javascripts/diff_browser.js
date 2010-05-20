@@ -665,7 +665,7 @@ Gitorious.CommentForm = function(path){
         this.container.find("#comment_sha1").val(shas);
         this.container.find("#comment_path").val(this.path);
         this.container.find("#comment_context").val(this._getRawDiffContext());
-        this.container.find(".cancel_button").click(Gitorious.CommentForm.destroyAll);
+        this.container.find(".cancel").click(Gitorious.CommentForm.destroyAll);
         this.container.find("#comment_lines").val(this.linesAsInternalFormat());
     };
 

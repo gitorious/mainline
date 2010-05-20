@@ -2,11 +2,11 @@
 
 form#new_project {
 		float: left;
-		width: 750px;
+		width: 610px;
 }
 
 .form {
-	width: 750px;
+	width: 610px;
 	float: left;
 	-webkit-border-radius: 6px;
 }
@@ -15,7 +15,7 @@ form fieldset {
 	margin-bottom: 10px;
 		padding: 5px 0px 5px;
 	float: left;
-	width: 750px;
+	width: 610px;
 }
 form fieldset.messages li {
 	border-bottom: 1px solid #e1e1e1;
@@ -24,13 +24,13 @@ form fieldset.messages li {
 }
 form fieldset.submit {
 	padding: 10px;
-	width: 730px;
+	width: 590px;
 }
 form fieldset.submit input[type='submit'] {
 		float: right; 
 }
 form li {
-		width: 750px;
+		width: 610px;
 		float: left;
 		padding: 6px 0px;
 	
@@ -40,17 +40,18 @@ form p.hint {
 }
 
 form li div {
-		width: 480px;
+		width: 390px;
 		float: right;
 		min-height: 25px;
 		padding-top: 4px;
 }
 
 form li label {
-		width: 250px;
+		width: 190px;
 		margin-right: 10px;
 		float: left;
-		line-height: 18px;
+		padding-left: 10px;
+		line-height: 17px;
 		padding-top: 6px;
 		font-weight: bold;
 		margin: 0;
@@ -115,21 +116,21 @@ form input[type='checkbox'] {
 }
 form input[type='text'], input[type='password'] {
   padding: 6px;
-  width: 450px;
+  width: 320px;
 	background: #F8F8F8;
 	border: 1px solid #ccc;
 }
 form fieldset.submit li {
-		width: 730px;
+		width: 590px;
 }
 form textarea {
   padding: 6px;
-  width: 350px;
+  width: 360px;
 	background: #F8F8F8;
 	border: 1px solid #ccc;
 }
 textarea.text { height: 60px; }
-textarea.wide { width: 450px; }
+textarea.wide { width: 360px; }
 textarea.tall { height: 300px; }
 textarea.taller {height: 500px;}
 textarea.medium { width: 450px; height: 250px; }

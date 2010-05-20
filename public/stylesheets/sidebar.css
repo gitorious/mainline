@@ -3,7 +3,7 @@
 
 #container #sidebar {
 	border-top: 1px solid #e7e7e7;
- 	width: 270px;
+ 	width: 240px;
 	min-height: 100%;
  	float: right;
   padding: 23px 20px; 
@@ -34,7 +34,7 @@
 	float: left;
 	border-bottom: 1px solid #c2c2c2;
 	border-top: 1px solid #c2c2c2;
-	width: 270px;
+	width: 240px;
 	margin-left: -20px;
 	background: url(../side-nav-bg.png) repeat-x #CCC;
 	padding: 18px 20px 18px 20px;
@@ -85,7 +85,7 @@
 }
 
 #sidebar ul.links li {
-	width: 270px;
+	width: 240px;
 	float: left;
 	height: 34px;
 	-webkit-box-shadow: 0px 1px 0px #EEE inset;
@@ -132,7 +132,7 @@
 		color: #555555;
 		font-size: 12px;
 		text-shadow: 0px 1px #FFF;
-		width: 225px;
+		width: 195px;
 		float: left;
 		display: block;
 		line-height: 20px;
@@ -181,7 +181,7 @@
 }
 #sidebar ul.options {
 	float: left;
-	width: 270px;
+	width: 240px;
 	padding: 15px 0px 15px;
 }
 #sidebar ul.options li {
@@ -200,7 +200,7 @@
 		float: left;
 }
 #sidebar ul.committers {
-	width: 270px;}
+	width: 240px;}
 #sidebar h1 {
 		float: none;
 }
@@ -227,7 +227,7 @@
 }
 #project-meta, .sidebar-meta {
 		float: left;
-		width: 270px;
+		width: 240px;
 		padding: 15px 0px 15px;
 }
 
@@ -243,5 +243,5 @@
 		float: left;
 }
 #clone-list-container {
-		width: 270px;
+		width: 240px;
 }

@@ -22,6 +22,7 @@
 
 <% @page_title = t("views.blobs.page_title", :path => current_path.join("/"), :repo => @repository.name, :title => @project.title) -%>
 <%= breadcrumbs_from(@root) -%>
+<%= render "menu" -%>
 
 <% content_for :extra_head do -%>
   <% if highlightable?(@blob) -%>
@@ -85,4 +86,3 @@
   </p>
 <% end -%>
 
-<%= render "menu" -%>

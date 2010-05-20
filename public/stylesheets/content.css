@@ -1,6 +1,6 @@
 #container #content {
 
-  width: 1060px;
+  width: 920px;
 	float: left;
 	padding: 20px;
 }
@@ -9,7 +9,7 @@
 
 #container #content.with_sidebar {
   float: left;
-	width: 750px;
+	width: 640px;
   padding: 23px 20px; 
 }
 
@@ -25,8 +25,10 @@
 .w-510 { width: 510px; }
 .w-365 { width: 365px; }
 
-#left.w-365 { width: 365px;float: left; }
-#right.w-365 { width: 365px; float: right; }
+#left.w-365 { width: 310px;float: left; }
+#right.w-365 { width: 310px; float: right; }
+
+#right.w-390 { width: 390px; } /* Alternative width for 960. Goes well with a w-510 left */
 
 .box { float: left; padding: 10px; margin: 15px 0px;}
 .light-gray { background: #eee; }
@@ -37,7 +39,7 @@
 
 .repository_meta {
 	-webkit-border-radius: 6px;
-	width: 750px;
+	width: 640px;
 	float: left;
 	-moz-border-radius: 6px;
 	margin: 0px 10px 20px 0;
@@ -53,7 +55,7 @@
 }
 
 .repository-info {
-		width: 720px;
+		width: 610px;
 		float: left;
 		padding: 15px;
 		font-size: 12px;
@@ -71,7 +73,7 @@
 
 .repository_meta .infobox {
 		background: #d9d9d9;
-		width: 710px;
+		width: 602px;
 		-webkit-border-radius: 6px;
 		-moz-border-radius: 6px;
 		border: 1px solid #c5c5c5;
@@ -84,7 +86,7 @@
 .repository_meta .infobox ul li form strong {
 	border-right: 1px solid #cccccc;		
 	text-shadow: 0px 1px #eee;
-	padding: 6px 16px 1px 20px;
+	padding: 6px 9px 1px 19px;
 	float: left;
 	height: 21px;
 	font-size: 11px;
@@ -105,14 +107,14 @@
 .repository_meta .infobox ul li form p.clone_radio {
 		border-right: 1px solid #cccccc;
 		background: url(../img/clone-url-bg.png) repeat-x;
-		padding: 6px 10px 1px;
+		padding: 6px 9px 1px 7px;
 		height: 21px;
 }
 .repository_meta .infobox ul li form p.clone_radio:hover {
 
 }
 .repository_meta .infobox input[type=text] {
-		width: 365px;
+		width: 275px;
 		line-height: 20px;
 		border: 0;
 		background: #FFF;
@@ -134,7 +136,7 @@
   padding: 10px 10px 0 10px;
 }
 .repository_meta .infobox p.clone-copy {
-		width: 392px;
+		width: 305px;
 		float: left;
 		overflow: hidden;
 }
@@ -147,7 +149,7 @@
 		padding-left: 5px;
 }
 .repository_meta .repository-links {
-		width: 734px;
+		width: 624px;
 		padding: 8px;
 		height: 29px;
 		float: left;
@@ -200,7 +202,7 @@ ul.events li {
 	margin-bottom: 9px;
   font-size: 12px;	
 }
-.events.w-750 .date { width: 730px; }
+.events.w-750 .date { width: 620px; }
 .events.w-510 .date { width: 490px; }
 
 .events.inline {
@@ -274,7 +276,7 @@ ul.events li {
 }
 
 .events.w-510 .event_instance .event_meta {	width: 440px; }
-.events.w-750 .event_instance .event_meta { width: 550px; }
+.events.w-750 .event_instance .event_meta { width: 450px; }
 
 
 .events .event_instance .event_meta .meta_body, .comments .comment .meta_body {
@@ -348,7 +350,7 @@ span.changed{
 		width: 170px;
 }
 
-#user_events.w-510 ul.events .event_meta { width: 340px; }
+#user_events.w-510 ul.events .event_meta { width: 420px; }
 #user_events.w-510 .pagination { width: 510px; }
 
 /* MERGE REQUESTS */

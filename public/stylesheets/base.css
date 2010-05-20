@@ -10,6 +10,7 @@ version: 2.3.1
 
 html {
 		height: 100%;
+		-webkit-font-smoothing: antialiased;
 }
 body { background: #cfcfcf; }
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,
@@ -187,7 +188,7 @@ abbr.timeago {
 }
 
 #wrapper {
-	width: 1100px;
+	width: 960px;
 
 	margin: 55px auto;
 }
@@ -250,7 +251,7 @@ abbr.timeago {
 	/*-webkit-box-shadow: 0px -1px 0px #464646;
 	-moz-box-shadow: 0px -1px 0px #464646;*/
   height: 120px;
-	width: 1100px;
+	width: 960px;
 
   background-image: url(../img/header-bg.png)!important;
 	background-repeat: no-repeat!important;
@@ -355,7 +356,7 @@ abbr.timeago {
 /*  margin-right: 40px; */
 	float: left;
 	background: #FFF;
-	width: 1100px;
+	width: 960px;
 }
 
 #container.in-context-mode {
@@ -364,7 +365,7 @@ abbr.timeago {
 
 #footer {
 	float: left;
-	width: 1060px;
+	width: 920px;
   padding: 20px;
   font-size: 11px;
   color: #666;
@@ -657,7 +658,7 @@ ul.buttons .white-button.small-button a {
 /* breadcrumbs */
 
 #top-bar {
-		width: 1095px;
+		width: 955px;
 		float: left;
 		margin: 0;
 	  padding-left: 5px;
@@ -958,6 +959,7 @@ table {
 table.listing {
  	width: 100%;
 	float: left;
+	font-size: 11px;
 }
 table.listing tr {
 
@@ -969,7 +971,7 @@ table.listing tr.odd td{
   background: #F8F8F8;
 }
 table tr td {
-	padding: 6px 8px;
+	padding: 6px 6px;
 }
 table tr th {
 
@@ -979,7 +981,7 @@ table tr th {
 	background: url("../img/pullbox-bg.png") repeat-x 0 0;
 	border-bottom: 1px solid #bdbdbd;
 
-  padding: 7px 10px 5px 10px;
+  padding: 7px 7px 5px 7px;
 }
 table tr th.first {
 	-webkit-border-top-left-radius: 12px;
@@ -1257,7 +1259,7 @@ ul.bullet_list li {
   padding: 3px;
   margin: 3px;
   text-align: center;
-	width: 750px;
+	width: 600px;
 	height: 30px;
 	border-top: 1px solid #eee;
 	padding-top: 30px;
@@ -2101,12 +2103,12 @@ table.markdown_help {
 
 #left {
   float:left;
-  width: 510px;
+  width: 450px;
 }
 
 #right {
   float:right;
-  width: 510px;
+  width: 450px;
   clear:right;
 }
 
@@ -2506,15 +2508,16 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
 .page-meta {
   font-size:11px;
   color: #666;
-  border-top: 1px solid #ccc;
-  margin-top: 10px;
-  padding-top: 10px;
+	float: right;
+  border-bottom: 1px solid #ccc;
+padding-bottom: 8px;
 }
 .page-meta p { margin:0; padding:0;}
 .page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
+ul.page-actions { margin: 0;}
 .page-meta .page-actions li {
-  padding:0;
-  margin:0;
+	float: left;
+	margin: 0px 10px;
 }
 
 .page-history .diff {
@@ -2618,7 +2621,7 @@ div.archive-download-box p {
   padding: 8px;
   font-size: 12px;
 	float: left;
-	width: 734px;
+	width: 624px;
   background: #EEE;
 	-webkit-border-bottom-left-radius: 6px;
 	-webkit-border-bottom-right-radius: 6px;
@@ -2691,17 +2694,24 @@ div.archive-download-box p {
 /* pull boxes */
 
 /* 510 */ 
-.pull-box-container.pull-box-510 {  width: 510px; } 
-.pull-box-container.pull-box-510 .pull-box-content, .pull-box-container.pull-box-510 .pull-box-header, .pull-box-container.pull-box-510 .pull-box-links { width: 490px; }
-.pull-box-container.pull-box-510 .pull-box-content ul.events, .pull-box-container.pull-box-510 .pull-box-content ul.events li {	width: 490px;	float: left; }
-.pull-box-container.pull-box-510 .pull-box-content ul.events li div { float: left; width: 440px; margin: 0; margin: 0px 0px 0px 5px; }
+.pull-box-container.pull-box-510 {  width: 450px; } 
+.pull-box-container.pull-box-510 .pull-box-content, .pull-box-container.pull-box-510 .pull-box-header, .pull-box-container.pull-box-510 .pull-box-links { width: 430px; }
+.pull-box-container.pull-box-510 .pull-box-content ul.events, .pull-box-container.pull-box-510 .pull-box-content ul.events li {	width: 430px;	float: left; }
+.pull-box-container.pull-box-510 .pull-box-content ul.events li div { float: left; width: 390px; margin: 0; margin: 0px 0px 0px 5px; }
 .pull-box-container.pull-box-510 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
 
-.pull-box-container.pull-box-365 {  width: 365px; } 
-.pull-box-container.pull-box-365 .pull-box-content, .pull-box-container.pull-box-365 .pull-box-header, .pull-box-container.pull-box-365 .pull-box-links { width: 345px; }
-.pull-box-container.pull-box-365 .pull-box-content ul.events, .pull-box-container.pull-box-365 .pull-box-content ul.events li {	width: 345px;	float: left; }
-.pull-box-container.pull-box-365 .pull-box-content ul.events li div { float: left; width: 315px; margin: 0; margin: 0px 0px 0px 5px; }
+
+.pull-box-container.pull-box-365 {  width: 310px; } 
+.pull-box-container.pull-box-365 .pull-box-content, .pull-box-container.pull-box-365 .pull-box-header, .pull-box-container.pull-box-365 .pull-box-links { width: 290px; }
+.pull-box-container.pull-box-365 .pull-box-content ul.events, .pull-box-container.pull-box-365 .pull-box-content ul.events li {	width: 290px;	float: left; }
+.pull-box-container.pull-box-365 .pull-box-content ul.events li div { float: left; width: 260px; margin: 0; margin: 0px 0px 0px 5px; }
 .pull-box-container.pull-box-365 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
+
+.pull-box-container.pull-box-390 {  width: 390px; } 
+.pull-box-container.pull-box-390 .pull-box-content, .pull-box-container.pull-box-390 .pull-box-header, .pull-box-container.pull-box-390 .pull-box-links { width: 370px; }
+.pull-box-container.pull-box-390 .pull-box-content ul.events, .pull-box-container.pull-box-90 .pull-box-content ul.events li {	width: 370px;	float: left; }
+.pull-box-container.pull-box-390 .pull-box-content ul.events li div { float: left; width: 340px; margin: 0; margin: 0px 0px 0px 5px; }
+.pull-box-container.pull-box-390 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
 
 .pull-box-container.pull-box-sidebar {  width: 270px; } 
 .pull-box-container.pull-box-sidebar .pull-box-content, .pull-box-container.pull-box-sidebar .pull-box-header, .pull-box-container.pull-box-sidebar .pull-box-links { width: 250px; }
@@ -3267,7 +3277,7 @@ Merge request commit selector
 #inline_comment_form form,
 #inline_comment_form .please_log_in {
   background-color: rgba(255,255,255,0.9);
-  padding: 1em;
+  padding: 1em 1em 50px 1em;
   border: 2px solid rgba(34,34,34,0.7);
   -moz-border-radius: 0 0 10px 0;
 }

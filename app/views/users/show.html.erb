@@ -18,7 +18,7 @@
 						<a rel="me" href="%3C%=h%20@user.url%20-%%3E"><%=h @user.url -%></a>
 					</li><% end -%>
 					<li>
-						<%= t("views.users.member_for") %><%= time_ago_in_words(@user.created_at) %>
+						<%= t("views.users.member_for") %> <%= time_ago_in_words(@user.created_at) %>
 					</li>
 				</ul>
 			</div>
@@ -48,8 +48,8 @@
 			</div><% end -%>
 		</div>
 	</div>
-	<div id="right">
-		<% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-510") do -%>
+	<div id="right" class="w-390">
+		<% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do -%>
 		<ul class="with_icons">
 			<% @projects.each do |project| -%>
 			<li class="project">
@@ -59,7 +59,7 @@
 		<div class="pull-box-links">
 			<%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
 						:id => "new-project-button"}) %>
-		</div><% end -%><% end -%><% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-510") do -%><% if @repositories.blank? -%><% if is_current_user?(@user) -%>You currently don't have any repository clones. You can clone a repository you wish to contribute to, by going to a repository overview page and click the "Clone on Gitorious" link in the sidebar.<% else -%>
+		</div><% end -%><% end -%><% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do -%><% if @repositories.blank? -%><% if is_current_user?(@user) -%>You currently don't have any repository clones. You can clone a repository you wish to contribute to, by going to a repository overview page and click the "Clone on Gitorious" link in the sidebar.<% else -%>
 		<p class="hint">
 			<%=h @user.title -%> currently doesn't have any repository clones
 		</p><% end -%><% else -%>
@@ -69,7 +69,7 @@
 				<%= link_to h(repo.url_path),
 								  repo_owner_path(repo, [repo.project, repo]) -%>
 			</li><% end -%>
-		</ul><% end -%><% end %><% pull_box("#{@user.login} is watching", :class => "your-favorites favorite pull-box-510") do %>
+		</ul><% end -%><% end %><% pull_box("#{@user.login} is watching", :class => "your-favorites favorite pull-box-390") do %>
 		<div class="filters">
 			<ul>
 				<li>
@@ -102,7 +102,7 @@
 					<%= no_watchings_notice_for(@user) -%>
 				</p><% end -%>
 			</li>
-		</ul><% end %><% pull_box("Team memberships", :class => "teams pull-box-510") do -%>
+		</ul><% end %><% pull_box("Team memberships", :class => "teams pull-box-390") do -%>
 		<ul>
 			<% @user.groups.each do |group| -%>
 			<li style="clear:left">

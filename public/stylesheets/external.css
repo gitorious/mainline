@@ -1,5 +1,5 @@
 @import url(reset.css);
-
+html { -webkit-font-smoothing: antialiased; }
 body {
 	background: #848585; 
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -29,6 +29,7 @@ body#users #wrapper, body#sessions #wrapper {
 #site #content-container {
 	width: 100%;
 	float: left;
+	margin-top: -7px;
 		background: url(../img/external/content-bg.png) repeat-y center;
 }
 #site #content-container #content {
@@ -133,8 +134,7 @@ body#users #wrapper, body#sessions #wrapper {
 	border-bottom: 1px solid #3d3d3d;
 	padding-bottom: 2px;
 }
-#header #introduction p a:hover {
-	color: #FFF;}
+#header #introduction p a:hover {	color: #FFF; }
 #header #introduction p.description {
 	margin-top: 18px;
 	font-size: 18px;
@@ -326,7 +326,7 @@ body#users #wrapper, body#sessions #wrapper {
 #content {
 	width: 1100px;
 	float: left;
-	padding-top: 45px;
+	padding-top: 30px;
 	margin-top: -7px;
 	padding-bottom: 20px;
 }
@@ -387,13 +387,14 @@ body#users #wrapper, body#sessions #wrapper {
 	font-size: 9px;
 	font-weight: bold;
 	letter-spacing: 1px;
+	line-height: 14px;	
 	text-transform: uppercase;
 	font-style: normal;
 	width: 400px;
 	color: #7f7f7f;
 	float: left;
-	padding: 10px 0px 5px 11px;
-	background: url(../img/external/cite-arrow.png) no-repeat 0px 10px;	
+	padding: 9px 0px 5px 11px;
+	background: url(../img/external/cite-arrow.png) no-repeat 0px 12px;	
 }
 #content #user-testimonials cite em {
 	font-style: normal;
@@ -545,9 +546,10 @@ body#users #wrapper, body#sessions #wrapper {
 #content form .form-wrapper p.alt-login {
 	font-size: 13px;
 	margin-top: 5px;
-
 	margin-bottom: 10px;
-	}
+}
+#openid_login_fields { 
+	height: 308px; }
 .login_hidden {
 		display: none;
 }
@@ -658,6 +660,7 @@ body#users #wrapper, body#sessions #wrapper {
 }
 div.flash_message {
 	width: 100%;
+	display: none;
 	float: left;
 	text-align: center;
 	color: #FFF;
