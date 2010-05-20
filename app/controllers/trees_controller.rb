@@ -63,10 +63,14 @@ class TreesController < ApplicationController
     
     user_path = "#{@repository.project_or_owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
     disk_path = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@commit.id}.#{ext}"
+    content_type = case ext
+      when 'zip' then 'application/zip'
+      else 'application/x-gzip'
+    end
     if File.exist?(File.join(GitoriousConfig["archive_cache_dir"], disk_path))
       respond_to do |format|
         format.html {
-          set_xsendfile_headers(disk_path, user_path)
+          set_xsendfile_headers(disk_path, user_path, content_type)
           head(:ok) and return
         }
         format.js {
@@ -76,7 +80,7 @@ class TreesController < ApplicationController
     else
       # enqueue the creation of the tarball, and send an accepted response
       if !File.exist?(File.join(GitoriousConfig["archive_work_dir"], disk_path))
-        publish_archive_message(@repository, disk_path, @commit)
+        publish_archive_message(@repository, disk_path, @commit, ext)
       end
       
       respond_to do |format|
@@ -93,21 +97,21 @@ class TreesController < ApplicationController
   end
   
   protected
-    def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
+    def set_xsendfile_headers(real_path, user_path, content_type)
       response.headers["X-Sendfile"] = File.join(GitoriousConfig["archive_cache_dir"], real_path)
       response.headers["Content-Type"] = content_type
       user_path = user_path.gsub("/", "_").gsub('"', '\"')
       response.headers["Content-Disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
     end
     
-    def publish_archive_message(repo, disk_path, commit)
+    def publish_archive_message(repo, disk_path, commit, format)
       payload = {
         :full_repository_path => repo.full_repository_path,
         :output_path => File.join(GitoriousConfig["archive_cache_dir"], disk_path),
         :work_path => File.join(GitoriousConfig["archive_work_dir"], disk_path),
         :commit_sha => commit.id,
         :name => (repo.project.slug + "-" + repo.name),
-        :format => "tar.gz",
+        :format => format,
       }
       publish :archive_repo, payload.to_json
     end

@@ -30,11 +30,18 @@ class RepositoryArchivingProcessor < ApplicationProcessor
       when "tar.gz"
         run("git archive --format=tar --prefix=#{e(msg['name'] || msg['commit_sha'])}/ " +
           "#{e(msg['commit_sha'])} | gzip > #{e(msg['work_path'])}")
+      when "zip"
+        run("git archive --format=zip --prefix=#{e(msg['name'] || msg['commit_sha'])}/ " +
+          "--output=#{e(msg['work_path'])} #{e(msg['commit_sha'])}")
+      else
+        raise "Unknown format: #{msg['format'].inspect}"
       end
     end
     
     if run_successful?
       FileUtils.mv(msg["work_path"], msg["output_path"])
+    else
+      raise "Unable to archive repo! #{msg.inspect}"
     end
   end
   
@@ -43,6 +50,7 @@ class RepositoryArchivingProcessor < ApplicationProcessor
   end
   
   def run(cmd)
+    logger.info cmd
     `#{cmd}`
   end
   

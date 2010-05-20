@@ -29,7 +29,7 @@ module TreesHelper
   end
 
   def tree_archive_status_url
-    fmt = (params[:archive_format] == "tar.gz" ? "tar" : zip)
+    fmt = (params[:archive_format] == "tar.gz" ? "tar" : "zip")
     self.send("project_repository_archive_#{fmt}_path",
       @repository.project, @repository, @ref, :format => :js)
   end

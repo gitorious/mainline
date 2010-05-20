@@ -330,7 +330,7 @@ module ApplicationHelper
 
     {
       'tar.gz' => 'tar',
-      # 'zip' => 'zip',
+      'zip' => 'zip',
     }.each do |extension, url_key|
       archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
       link_html = link_to("Download #{head} as #{extension}", archive_path,
