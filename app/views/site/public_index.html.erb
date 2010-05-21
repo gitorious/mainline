@@ -120,13 +120,20 @@
 			</ul>
 		</div> <!-- end of featured projects -->
 		
+		<% if GitoriousConfig["is_gitorious_dot_org"] -%>
 		<div class="column" id="from-the-blog">
 			<h3>From the Gitorious Blog</h3>
 			<ul>
-
+        <% @feed_items.each do |entry| -%>
+          <li class="blog-entry">
+            <h4><a href="<%=h entry[:link] -%>"><%= strip_tags(entry[:title]) -%></a></h4><p> &mdash;  <%= truncate(strip_tags(entry[:description]), :length => 255) -%></p>
+            <p class="date"><%= entry[:date].to_s(:short) -%></p>
+          </li>
+        <% end -%>
 			</ul>
 			<p><a class="go-to-blog" href="http://blog.gitorious.org">Go to the Gitorious Blog</a></p>
 		</div> <!-- end of from the blog -->
+		<% end -%>
 	</div> <!-- end of the content section -->
 	</div>
 
