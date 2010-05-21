@@ -30,7 +30,9 @@ class ApplicationController < ActionController::Base
   include SslRequirement # Need to be included after the above
 
   after_filter :mark_flash_status
-  
+
+  filter_parameter_logging :password, :password_confirmation
+
   layout :pick_layout_based_on_site
   
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found

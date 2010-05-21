@@ -2257,6 +2257,10 @@ table.select_commits_from_list {
   width: 90%;
 }
 
+table.select_commits_from_list td li {
+  float: none;
+}
+
 table.select_commits_from_list th {
   background: #999;
   color: #fff;
