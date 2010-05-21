@@ -70,7 +70,7 @@ h4 {
 	margin-bottom: 1.266em;
 }
 #content h2.content-header.smaller { font-size: 30px; }
-h1.content-header, h2.content-header, h3.content-header {	font-family: Raleway; }
+h1.content-header, h2.content-header, h3.content-header {	font-family: Raleway, 'Helvetica Neue', Helvetica, Arial; }
 #content h2.content-header {
 		font-size: 36px;
 		font-weight: bold;
@@ -2727,6 +2727,7 @@ div.archive-download-box p {
 		float: left;
 		margin-bottom: 20px;
 		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
 		border: 1px solid #d2d2d2;
 }
 .pull-box-content {
