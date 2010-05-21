@@ -1,5 +1,6 @@
 require "rss/2.0"
 require "open-uri"
+require "time"
 
 class BlogFeed
   def initialize(url, limit = 3)
@@ -17,7 +18,9 @@ class BlogFeed
         feed_item = {
           :title => item.title,
           :description => item.description,
-          :date => item.date,
+          # FIXME: There's some issues with ActiveSupport and RSS both overriding
+          # Time#to_s so we waste some cycles pasing twice, until there's a fix
+          :date => Time.parse(item.date.to_s),
           :link => item.link
         }
         items << feed_item
