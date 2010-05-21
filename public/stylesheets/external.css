@@ -488,7 +488,7 @@ body#users #wrapper, body#sessions #wrapper {
 #content .form-wrapper#pendingact { height: 370px; }
 #content #sign-up, #content #log-in, #content #forgot-pw, #content #pending-act, #content #reset-pw {
 	background: url(../img/external/form-light.png) no-repeat top center; 
-	width: 560px;
+	width: 520px;
 	padding: 50px 80px;
 	float: left;
 }
@@ -556,7 +556,7 @@ body#users #wrapper, body#sessions #wrapper {
 		display: none;
 }
 #content .form-wrapper .horisontal-shadow {
-	width: 600px; 
+	width: 520px; 
 	float: left;
 	margin-top: 30px;
 	height: 39px;
@@ -565,13 +565,13 @@ body#users #wrapper, body#sessions #wrapper {
 	}
 
 #content .form-wrapper ul li {
-	width: 540px;
+	width: 520px;
 	float: left;
 	margin-bottom: 20px;
 }
 
 #content .form-wrapper  ul li label {
-	width:540px; 
+	width:520px; 
 	float: left;
 	font-weight: 500;
 	font-size: 15px;
@@ -585,7 +585,7 @@ body#users #wrapper, body#sessions #wrapper {
 	background: #FFF;
 	font-weight: 200;
 	letter-spacing: normal;
-	width: 520px;
+	width: 500px;
 	-webkit-box-shadow: 0px 0px 2px #FFF, 2px 2px 3px #ccc inset;
 	border: 0;
 	border: 1px solid #b3814f;
