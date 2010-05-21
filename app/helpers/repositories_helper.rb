@@ -126,4 +126,10 @@ module RepositoriesHelper
   def show_clone_list_search?(group_clones, user_clones)
     user_clones.size >= 5 || group_clones.size >= 5
   end
+
+  def css_class_for_extended_clone_url_field(repository)
+    if (logged_in? && !current_user.can_write_to?(repository)) || !logged_in?
+      return "extended"
+    end
+  end
 end
