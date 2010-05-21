@@ -2466,7 +2466,7 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
 
 .repository_meta .branches { 
 	float: left;
-	width: 730px;
+	width: 610px;
 	margin-top: 8px; }
 .repository_meta .branches ul {
   margin: 0;
