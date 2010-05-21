@@ -365,7 +365,7 @@ span.changed{
 		width: 170px;
 }
 
-#user_events.w-510 ul.events .event_meta { width: 420px; }
+#user_events.w-510 ul.events .event_meta { width: 330px; }
 #user_events.w-510 .pagination { width: 510px; }
 
 /* MERGE REQUESTS */
