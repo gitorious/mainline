@@ -2713,10 +2713,10 @@ div.archive-download-box p {
 .pull-box-container.pull-box-390 .pull-box-content ul.events li div { float: left; width: 340px; margin: 0; margin: 0px 0px 0px 5px; }
 .pull-box-container.pull-box-390 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
 
-.pull-box-container.pull-box-sidebar {  width: 270px; } 
-.pull-box-container.pull-box-sidebar .pull-box-content, .pull-box-container.pull-box-sidebar .pull-box-header, .pull-box-container.pull-box-sidebar .pull-box-links { width: 250px; }
-.pull-box-container.pull-box-sidebar .pull-box-content ul.events, .pull-box-container.pull-box-sidebar .pull-box-content ul.events li {	width: 250px;	float: left; }
-.pull-box-container.pull-box-sidebar .pull-box-content ul.events li div { float: left; width: 220px; margin: 0; margin: 0px 0px 0px 5px; }
+.pull-box-container.pull-box-sidebar {  width: 240px; } 
+.pull-box-container.pull-box-sidebar .pull-box-content, .pull-box-container.pull-box-sidebar .pull-box-header, .pull-box-container.pull-box-sidebar .pull-box-links { width: 220px; }
+.pull-box-container.pull-box-sidebar .pull-box-content ul.events, .pull-box-container.pull-box-sidebar .pull-box-content ul.events li {	width: 220px;	float: left; }
+.pull-box-container.pull-box-sidebar .pull-box-content ul.events li div { float: left; width: 190px; margin: 0; margin: 0px 0px 0px 5px; }
 .pull-box-container.pull-box-sidebar .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
 
 .pull-box-container {

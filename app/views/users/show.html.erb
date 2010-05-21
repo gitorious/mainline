@@ -1,6 +1,6 @@
 <div class="with_divider">
 	<div id="left">
-		<div class="user-profile">
+		<div class="user-profile not-dash">
 			<%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
 			<div class="profile-data">
 				<h1>
@@ -25,7 +25,7 @@
 			
 		  <ul class="buttons">
         <% if is_current_user?(@user) -%>
-          <li class="hint">This is you! (<%= link_to "your dashboard", root_path -%>)</li>
+          <li class="hint"><strong>This is your public profile! </strong><br />(<%= link_to "Go to your dashboard", root_path -%>)</li>
         <% end -%>
         <% if !is_current_user?(@user) -%>
         <li class="new_email">

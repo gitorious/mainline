@@ -181,8 +181,8 @@
 }
 #sidebar ul.options {
 	float: left;
-	width: 240px;
-	padding: 15px 0px 15px;
+	width: 220px;
+	padding: 15px 10px 15px;
 }
 #sidebar ul.options li {
 	margin-bottom: 3px;

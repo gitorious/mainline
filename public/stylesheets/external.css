@@ -1,5 +1,7 @@
 @import url(reset.css);
+* { margin: 0; }
 html { -webkit-font-smoothing: antialiased; }
+html, body { height: 100%;}
 body {
 	background: #848585; 
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -9,7 +11,7 @@ body {
 
 a { color: #d57f2b; text-decoration: none; cursor: pointer;}
 a:hover { color: #aa5a0d; text-decoration: none; }
-
+.clear { clear: both; }
 #wrapper {
 	width: 100%;
 	float: left;
@@ -693,13 +695,15 @@ body #wrapper #content p.alt_links a:hover {
  
 #footer {
 	width: 100%;
-
+margin-top: 3px solid red;
 	float: left;
+	clear: both;
 	background: url(../img/external/footer-bg.png) repeat-x;
 	height: 184px;}
 	
 #footer #footer-container {
  	width: 1100px;
+margin-top: 3px solid red;
 	margin: 40px auto;
 }
 #footer a {

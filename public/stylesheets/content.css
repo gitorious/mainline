@@ -25,6 +25,7 @@
 .w-510 { width: 510px; }
 .w-365 { width: 365px; }
 
+#left.w-510 { width: 510px;}
 #left.w-365 { width: 310px;float: left; }
 #right.w-365 { width: 310px; float: right; }
 
@@ -337,7 +338,21 @@ span.changed{
 }
 
 /* USER PROFILE */
-
+.user-profile {
+	float: left;
+	width: 490px;
+	background: #F8F8F8;
+	border: 1px solid #eee;
+	padding: 10px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+}
+.user-profile.not-dash {
+	background: 0;
+	padding: 0;
+	border: 0;
+	border-bottom: 1px solid #EEE;
+}
 .user-profile .buttons li {
 		margin-bottom: 3px;
 		float: left;	

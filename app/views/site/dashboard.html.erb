@@ -21,7 +21,7 @@
 <%= breadcrumbs_from(@user) -%>
 
 <div class="with_divider">
-  <div id="left">
+  <div id="left" class="w-510">
     <div class="user-profile">
       <%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
       <div class="profile-data">
@@ -92,8 +92,8 @@
     <% end -%>
   </div>
 	</div>
-  <div id="right">
-    <% pull_box("Open merge requests for you", :class => "merge-requests pull-box-510") do %>
+  <div id="right" class="w-390">
+    <% pull_box("Open merge requests for you", :class => "merge-requests pull-box-390") do %>
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
@@ -105,7 +105,7 @@
     <% end if show_merge_request_count_for_user?(@user) %>
 
 
-    <% pull_box("You're watching", :class => "your-favorites favorite pull-box-510") do %>
+    <% pull_box("You're watching", :class => "your-favorites favorite pull-box-390") do %>
       <div class="filters">
         <ul>
 			<li><strong>Sort by:</strong></li>
@@ -134,7 +134,7 @@
       </ul>
     <% end %>
 
-    <% pull_box("Your projects", :class => "your-projects pull-box-510") do -%>
+    <% pull_box("Your projects", :class => "your-projects pull-box-390") do -%>
       <ul class="with_icons">
       <% @projects.each do |project| -%>
         <li class="project">
@@ -151,7 +151,7 @@
       <% end -%>
     <% end -%>
 
-    <% pull_box("Your repositories", :class => "your-repositories pull-box-510") do -%>
+    <% pull_box("Your repositories", :class => "your-repositories pull-box-390") do -%>
     <% if @repositories.blank? -%>
       <% if is_current_user?(@user) -%>
 		
@@ -176,7 +176,7 @@
     <% end -%>
 <% end %>
 
-  	<% pull_box("Your team memberships", :class => "teams pull-box-510") do -%>
+  	<% pull_box("Your team memberships", :class => "teams pull-box-390") do -%>
       <ul>
       <% @user.groups.each do |group| -%>
         <li style="clear:left">

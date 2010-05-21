@@ -6,7 +6,7 @@
 	width: 730px;
 }
 #content ul.events .event_instances li .event_meta {
-		width: 530px;
+		width: 430px;
 }
 #content .repository_meta .repository-links {
 
@@ -41,10 +41,10 @@
 }
 #content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy,#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy input {
 		float: left;
-		width: 370px;
+		width: 270px;
 }
 .tag_list {
-		width: 270px;
+		width: 240px;
 }
 .tag_list li {
 		float: left;
@@ -58,6 +58,9 @@
 	font-weight: bold;
 
 }
+#wrapper { height: 100%; margin-bottom: -100px;}
 #content .form-wrapper input[type='submit'] {
 	font-size: 0;
-	color: #CCC;
+	color: #CCC;}
+	body #content p.alt_links { margin-top: 20px; }
+.form-wrapper#signup { height: 800px; }
