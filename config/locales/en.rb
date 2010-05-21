@@ -640,7 +640,7 @@
           :current_password => "Current Password",
           :password => "Password",
           :password_confirmation => "Password Confirmation",
-          :created_at => "Created At",
+          :created_at => "Created",
           :updated_at => "Updated At",
           :activation_code => "Activation Code",
           :activated_at => "Activated At",
