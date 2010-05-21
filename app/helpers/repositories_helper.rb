@@ -95,7 +95,7 @@ module RepositoriesHelper
   end
 
   # Renders a set of list items, cut off at around +max_line_length+
-  def render_chunked_branch_list_items(repository, max_line_length = 110)
+  def render_chunked_branch_list_items(repository, max_line_length = 80)
     heads = sorted_git_heads(repository.git.heads)
 
     cumulative_line_length = 0
