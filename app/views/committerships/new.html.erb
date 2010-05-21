@@ -70,14 +70,11 @@
     </span>
   </p>
 
-  <p><%= f.label :permissions -%>: <br />
-	
-       <%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %>  <br />
-  
-       <%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %> <br />
-     
-       <%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administrate" %> <br />
-</p>
+  <p><%= f.label :permissions -%>:
+		<p><%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %></p>
+  		<p><%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %></p>
+     	<p><%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administrate" %></p>
+
 
   <p>
     <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>

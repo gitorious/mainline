@@ -214,7 +214,7 @@ form#new_committership {
 	}
 form#new_committership ul {
 	float: left;
-	width: 750px;
+	width: 620px;
 	padding: 0;
 	border: 0;
 	margin-bottom: 0px;}
@@ -236,7 +236,7 @@ form#new_committership li.selected {
 form#new_committership p.tab-content {
 		background: #eee;
 		padding: 10px;
-		width: 730px;
+		width: 620px;
 		float: left;
 }
 #comment-form {
@@ -252,4 +252,7 @@ form#new_committership p.tab-content {
 form.button-to {
 		float: right;
 		width: 100%;
+}
+.committer-buttons form {
+	width: auto; }
 }

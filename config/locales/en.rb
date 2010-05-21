@@ -688,7 +688,7 @@
         :committerships => {
           :created_at => "Created at",
           :committer => "committer",
-          :committer_type => "Committer type",
+          :committer_type => "Type",
           :repository => "Repository",
           :permissions => "Permissions",
           :creator => "Added by",
