@@ -49,8 +49,9 @@
   </div>
 
   <%= f.text_area :content, :class => "text fill taller" -%><br />
-  <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler") %>
   <%= f.submit -%> 
+  <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_project_page_path(@project,@page)}')", :id => "wiki_preview_toggler", :class => "preview") %>
+
   
   <%= t("views.pages.or_back_to_page", 
         :page_link => link_to(@page.title, project_page_path(@project, @page.title))) -%>

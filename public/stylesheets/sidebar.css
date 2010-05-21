@@ -214,6 +214,7 @@
 		font-size: 11px;
 		color: #5a6269;
 		text-shadow: 0px 1px 0px #eee;
+		line-height: 16px;
 }
 #project-description p:first-child {
 		margin-bottom: 3px;

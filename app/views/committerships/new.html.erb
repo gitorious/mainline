@@ -43,9 +43,9 @@
 </script>
 <% end -%>
 
-<h2 class="content-header smaller">
+<h1>
   <%= t("views.collaborators.new_title", :repo_name => @repository.name)  -%>
-</h2>
+</h1>
 
 <%= error_messages_for :committership -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>

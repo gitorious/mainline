@@ -250,7 +250,7 @@ abbr.timeago {
 	-moz-border-radius-topright: 12px;
 	/*-webkit-box-shadow: 0px -1px 0px #464646;
 	-moz-box-shadow: 0px -1px 0px #464646;*/
-  height: 120px;
+  height: 100px;
 	width: 960px;
 
   background-image: url(../img/header-bg.png)!important;
@@ -269,7 +269,7 @@ abbr.timeago {
 #header #logo {
   padding: 10px 0 0 20px;
   line-height: 25px;
-  margin: 30px 0px 0px 25px;
+  margin: 19px 0px 0px 25px;
   float: left;
   border:0;
 }
@@ -290,9 +290,9 @@ abbr.timeago {
 
 #menu {
 	float: right;
-	padding-top: 81px;
+	padding-top: 61px;
 	padding-left: 70px;
-	padding-right: 25px;
+	padding-right: 20px;
 	text-align: center;
 
 	height: 40px;
@@ -303,7 +303,7 @@ abbr.timeago {
 
 #menu li {
   display: inline;
-  margin-left: 25px;
+  margin-left: 19px;
 }
 #menu li.secondary {
   margin-right: 5px;
