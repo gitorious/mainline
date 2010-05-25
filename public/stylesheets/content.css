@@ -159,7 +159,6 @@
 	height: 21px;
 }
 .repository_meta .infobox input[type=text] {
-	width: 275px;
 	line-height: 20px;
 	border: 0;
 	background: #FFF;
@@ -182,17 +181,36 @@
 	padding: 10px 10px 0 10px;
 }
 .repository_meta .infobox p.clone-copy {
-	width: 305px;
 	float: left;
 	overflow: hidden;
 }
 
-.repository_meta .infobox p.clone-copy.extended {
-	width: 360px;
+.repository_meta .infobox p.clone-copy.git.http.ssh {
+	width: 300px;
+}
+.repository_meta .infobox p.clone-copy.git.http.ssh input[type="text"] {
+	width: 275px;
 }
 
-.repository_meta .infobox p.clone-copy.extended input[type="text"] {
+.repository_meta .infobox p.clone-copy.git.http {
+	width: 355px;
+}
+.repository_meta .infobox p.clone-copy.git.http input[type="text"] {
 	width: 330px;
+}
+
+.repository_meta .infobox p.clone-copy.git.ssh {
+	width: 360px;
+}
+.repository_meta .infobox p.clone-copy.git.ssh input[type="text"] {
+	width: 335px;
+}
+
+.repository_meta .infobox p.clone-copy.git {
+	width: 415px;
+}
+.repository_meta .infobox p.clone-copy.git input[type="text"] {
+	width: 390px;
 }
 
 .repository_meta .infobox ul li form p label {
