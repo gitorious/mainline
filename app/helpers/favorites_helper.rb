@@ -29,7 +29,7 @@ module FavoritesHelper
 
   def create_favorite_link_to(watchable)
     class_name = watchable.class.name
-    link_to("Start watching",
+    link_to("Watch",
       favorites_path(:watchable_id => watchable.id,:watchable_type => class_name),
       :method => :post, :"data-request-method" => "post",
       :class => "watch-link disabled round-10",
@@ -38,7 +38,7 @@ module FavoritesHelper
   end
 
   def destroy_favorite_link_to(favorite, watchable, options = {})
-    label = options[:label] || "Stop watching"
+    label = options[:label] || "Un-watch"
     link_to(label, favorite_path(favorite),
       :method => :delete, :"data-request-method" => "delete",
       :class => "watch-link enabled round-10")

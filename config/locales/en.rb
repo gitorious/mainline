@@ -377,7 +377,7 @@
         :branches => { :one => "branch", :other => "branches" },
         :authors => { :one => "author", :other => "authors" },
         :name => %Q{Name <small>(eg "{{name}}-sandbox", "performance-fixes" etc)</small>},
-        :btn_clone => "Clone this repository on Gitorious",
+        :btn_clone => "Clone repository",
         :back => "Back to repository",
         :show_page_title => "{{repo}} in {{title}}",
         :show_title => "&quot;{{repo}}&quot; repository in {{title}}",
