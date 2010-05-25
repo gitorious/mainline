@@ -77,11 +77,11 @@
 	       		repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%>
 	    	</li>
 	    <% end -%>
-		<% if @repository.ready? -%>
+		<% if repository.ready? -%>
 			<li class="repository-link clone_repository">
-				<%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%>
+				<%= link_to t("views.repos.btn_clone"), repo_owner_path(repository, [:clone, repository.project, repository]) -%>
 			</li>
-		<% end -%>
+		 <% end -%>
 	  </ul>	
 		
 	</div>
