@@ -11,8 +11,6 @@
 #content ul.events .event_instances li .event_meta {
 	width: 430px;
 }
-#content .repository_meta .repository-links {
-}
 #content .repository_meta .repository-links ul {
 	float: left;
 	height: 40px;
@@ -22,10 +20,6 @@
 #content .repository_meta .repository-links ul li {
 	float: left;
 	display: inline;
-	
-}
-#content .repository_meta .repository-info .infobox ul li .clone_urls {
-
 }
 #content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio {
 	float: left;

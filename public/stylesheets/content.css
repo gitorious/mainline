@@ -158,8 +158,6 @@
 	padding: 6px 9px 1px 7px;
 	height: 21px;
 }
-.repository_meta .infobox ul li form p.clone_radio:hover {
-}
 .repository_meta .infobox input[type=text] {
 	width: 275px;
 	line-height: 20px;
