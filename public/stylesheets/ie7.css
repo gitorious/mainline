@@ -58,7 +58,6 @@
 	font-weight: bold;
 
 }
-#wrapper { height: 100%; margin-bottom: -100px;}
 #content .form-wrapper input[type='submit'] {
 	font-size: 0;
 	color: #CCC;}
