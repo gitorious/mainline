@@ -35,7 +35,7 @@
 					  <label for="push-<%= repository.id %>"><input id="push-<%= repository.id %>" type="radio" name="url-<%= repository.id %>" value="<%= h(repository.push_url) -%>" <%= git_or_ssh_url_checked(repository, :ssh) -%>>SSH</label>
 					</p>
 					<% end -%>
-					<p class="clone-copy">
+					<p class="clone-copy <%= css_class_for_extended_clone_url_field(repository) -%>">
 					  <input type="text" readonly="readonly" id="clone-url-<%= repository.id %>" value="" />
 					  <a href="#help" id="clone-help-<%= repository.id -%>" class="clone-help-toggler">?</a>
 					</p>

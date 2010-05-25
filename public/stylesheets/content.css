@@ -127,6 +127,7 @@
 		padding:7px 4px 1px 6px;
 		height: 20px;
 }
+
 .repository_meta .infobox a.clone-help-toggler {
   margin-left: 5px;
   color: #080;
@@ -141,6 +142,15 @@
 		float: left;
 		overflow: hidden;
 }
+
+.repository_meta .infobox p.clone-copy.extended {
+  width: 360px;
+}
+
+.repository_meta .infobox p.clone-copy.extended input[type="text"] {
+ width: 330px;
+}
+
 .repository_meta .infobox ul li form p label {
 		cursor: pointer;
 		float: left;
