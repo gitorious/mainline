@@ -21,23 +21,14 @@
 	float: left;
 	display: inline;
 }
+#content .repository_meta .repository-info {
+	padding-bottom: 7px;
+}
 #content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio {
-	float: left;
-	overflow: hidden;
-	padding: 4px 10px 4px 8px;
+	padding: 2px 6px 5px 3px;
 }
-#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio input {
-	width: 20px;
-}
-
-#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio label {
-	float: left;
-	font-size: 11px;
-	line-height: 12px;
-}
-#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy,#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy input {
-	float: left;
-	width: 270px;
+#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy input {
+	vertical-align: middle;
 }
 .tag_list {
 	width: 240px;
