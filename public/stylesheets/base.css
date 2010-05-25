@@ -190,12 +190,12 @@ abbr.timeago {
 #wrapper {
 	width: 960px;
 
-	margin: 55px auto;
+	margin: 45px auto;
 }
 
 #user-nav {
 		float: right;
-		margin: -25px 15px 7px 0px;
+		margin: -22px 15px 4px 0px;
 }
 
 #user-nav li {
@@ -250,7 +250,7 @@ abbr.timeago {
 	-moz-border-radius-topright: 12px;
 	/*-webkit-box-shadow: 0px -1px 0px #464646;
 	-moz-box-shadow: 0px -1px 0px #464646;*/
-  height: 120px;
+  height: 110px;
 	width: 960px;
 
   background-image: url(../img/header-bg.png)!important;
@@ -269,7 +269,7 @@ abbr.timeago {
 #header #logo {
   padding: 10px 0 0 20px;
   line-height: 25px;
-  margin: 30px 0px 0px 25px;
+  margin: 25px 0px 0px 25px;
   float: left;
   border:0;
 }
@@ -290,7 +290,7 @@ abbr.timeago {
 
 #menu {
 	float: right;
-	padding-top: 81px;
+	padding-top: 73px;
 	padding-left: 70px;
 	padding-right: 25px;
 	text-align: center;
@@ -1677,6 +1677,7 @@ tr.raw_diff td {
 table#codeblob {
   width: 100%;
 }
+table#codeblob tr td { padding: 2px;}
 
 table tr .line-numbers {
  text-align: right;
