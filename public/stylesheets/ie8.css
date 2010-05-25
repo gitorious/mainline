@@ -4,12 +4,10 @@ body #content .repository_meta .infobox input[type=text]  {
 	padding: 7px 8px 1px;
 }
 
-#content .form-wrapper  ul li input[type='text'], #content .form-wrapper  ul li input[type='password'] {
+#content .form-wrapper ul li input[type='text'], #content .form-wrapper ul li input[type='password'] {
 	height: 24px;
 	padding: 10px 10px 10px 10px;
-
 }
-#content .form-wrapper  ul li label {
+#content .form-wrapper ul li label {
 	font-weight: bold;
-
 }

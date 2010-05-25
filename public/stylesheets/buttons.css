@@ -1,12 +1,12 @@
-#sidebar ul.links.navigation li.new_project a{
-	  background: url("../images/silk/report_add.png") no-repeat 10px 9px;		
+#sidebar ul.links.navigation li.new_project a {
+	background: url("../images/silk/report_add.png") no-repeat 10px 9px;
 } 
 
 .pull-box-links #new-project-button a {
-	  background-image: url("../images/silk/report_add.png");	
+	background-image: url("../images/silk/report_add.png");
 }
 .button.add_link a {
-  	background-image: url("../images/silk/add.png");
+	background-image: url("../images/silk/add.png");
 }
 
 .repository-link a, .pull-box-links a, .button a {
@@ -27,14 +27,15 @@
 	-webkit-box-shadow: 0px 1px 0px #FFF inset;
 	-moz-box-shadow: inset 0px 1px 0px #FFF;
 	border: 1px solid #b5b5b5;
-
 }
-.button.right a { float: right; }
+.button.right a {
+	float: right;
+}
 
 .repository-link a:hover, .pull-box-links a:hover, .button a:hover {
-  color: #535353;
+	color: #535353;
 	text-shadow: 0px 1px #eaeaea;
-  text-decoration: none;
+	text-decoration: none;
 	-webkit-box-shadow: 0px 1px 0px #eaeaea inset;
 	-moz-box-shadow: inset 0px 1px 0px #eaeaea;
 	background-color:#cdcdcd;
@@ -43,18 +44,28 @@
 	background-color:#c3c3c3;
 }
 
-.repository-link.favorite, .repository-link.favorite a { float: right; margin-right: 0; }
-.repository-link.favorite a.enabled {	background: #e8e8e8 url("../images/silk/star.png") no-repeat 6px 4px; }
-.repository-link.favorite a.disabled {	background: #e8e8e8 url("../images/silk/star_deselected.png") no-repeat 6px 4px; }
-.repository-link.favorite a.waiting { background: #e8e8e8 url("../images/spinner.gif") no-repeat 6px 4px;}
-.repository-link.favorite a:hover { background-color: #cdcdcd; }
+.repository-link.favorite, .repository-link.favorite a {
+	float: right;
+	margin-right: 0;
+}
+.repository-link.favorite a.enabled {
+	background: #e8e8e8 url("../images/silk/star.png") no-repeat 6px 4px;
+}
+.repository-link.favorite a.disabled {
+	background: #e8e8e8 url("../images/silk/star_deselected.png") no-repeat 6px 4px;
+}
+.repository-link.favorite a.waiting {
+	background: #e8e8e8 url("../images/spinner.gif") no-repeat 6px 4px;
+}
+.repository-link.favorite a:hover {
+	background-color: #cdcdcd;
+}
 
 form .message_list_actions input[type='submit'] {
 	font-size: 11px;
 	padding: 1px 6px 1px;
 	display: inline;;
 	height: 24px;
-
 }
 form input[type='submit'] {
 	-webkit-border-radius: 5px;
@@ -117,6 +128,8 @@ form input.cancel[type='button'] {
 	cursor: pointer;
 }
 form input[type='submit']:hover {
-	background: #f49c46; }
+	background: #f49c46;
+}
 form input[type='button']:hover {
-		background: #d1d1d1; }
+	background: #d1d1d1;
+}

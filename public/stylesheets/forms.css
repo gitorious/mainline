@@ -1,8 +1,6 @@
-
-
 form#new_project {
-		float: left;
-		width: 610px;
+	float: left;
+	width: 610px;
 }
 
 .form {
@@ -13,7 +11,7 @@ form#new_project {
 form fieldset {
 	background: #EEE;
 	margin-bottom: 10px;
-		padding: 5px 0px 5px;
+	padding: 5px 0px 5px;
 	float: left;
 	width: 610px;
 }
@@ -27,12 +25,12 @@ form fieldset.submit {
 	width: 590px;
 }
 form fieldset.submit input[type='submit'] {
-		float: right; 
+	float: right;
 }
 form li {
-		width: 610px;
-		float: left;
-		padding: 6px 0px;
+	width: 610px;
+	float: left;
+	padding: 6px 0px;
 	
 }
 form p.hint {
@@ -40,49 +38,53 @@ form p.hint {
 }
 
 form li div {
-		width: 390px;
-		float: right;
-		min-height: 25px;
-		padding-top: 4px;
+	width: 390px;
+	float: right;
+	min-height: 25px;
+	padding-top: 4px;
 }
 
 form li label {
-		width: 190px;
-		margin-right: 10px;
-		float: left;
-		padding-left: 10px;
-		line-height: 17px;
-		padding-top: 6px;
-		font-weight: bold;
-		margin: 0;
-		text-align: right;
-		font-size: 13px;
+	width: 190px;
+	margin-right: 10px;
+	float: left;
+	padding-left: 10px;
+	line-height: 17px;
+	padding-top: 6px;
+	font-weight: bold;
+	margin: 0;
+	text-align: right;
+	font-size: 13px;
 }
 #content form p, #content form span, #content form li div p, #content form li div span {
-		line-height: 18px;
+	line-height: 18px;
 }
 form textarea {
-  width: 90%;
+	width: 90%;
 }
 
 form legend {
-  font-weight: bold;
-  font-size:12px;
+	font-weight: bold;
+	font-size:12px;
 }
 
-
 form .required {
-  color: #aaa;
-  font-size: 10px;
-  font-weight: normal;
+	color: #aaa;
+	font-size: 10px;
+	font-weight: normal;
 }
 
 form {
-  margin-bottom: 1.5em;
+	margin-bottom: 1.5em;
 }
 
-form.button-to, form.button-to div { display: inline; }
-form.button-to div { margin: 0 5px 0 5px; text-align: right;}
+form.button-to, form.button-to div {
+	display: inline;
+}
+form.button-to div {
+	margin: 0 5px 0 5px;
+	text-align: right;
+}
 form.button-to div input[type='submit'] {
 	font-weight: bold;
 	color: #ba3e3e;
@@ -102,156 +104,181 @@ form.button-to div input[type='submit'] {
 	cursor: pointer;
 }
 form.button-to div input:hover {
-  color: #df3333;
+	color: #df3333;
 	text-shadow: 0px 1px #eaeaea;
-  text-decoration: none;
+	text-decoration: none;
 	-webkit-box-shadow: 0px 1px 0px #eaeaea inset;
 	-moz-box-shadow: inset 0px 1px 0px #eaeaea;
 	background-color:#cdcdcd;
 }
 form input[type='checkbox'] {
-		height: 30px;
-		float: left;
-		margin: -5px 4px 0px 0px;
+	height: 30px;
+	float: left;
+	margin: -5px 4px 0px 0px;
 }
 form input[type='text'], input[type='password'] {
-  padding: 6px;
-  width: 320px;
+	padding: 6px;
+	width: 320px;
 	background: #F8F8F8;
 	border: 1px solid #ccc;
 }
 form fieldset.submit li {
-		width: 590px;
+	width: 590px;
 }
 form textarea {
-  padding: 6px;
-  width: 360px;
+	padding: 6px;
+	width: 360px;
 	background: #F8F8F8;
 	border: 1px solid #ccc;
 }
-textarea.text { height: 60px; }
-textarea.wide { width: 360px; }
-textarea.tall { height: 300px; }
-textarea.taller {height: 500px;}
-textarea.medium { width: 450px; height: 250px; }
-textarea.fill { width: 95%; }
-select        { width: 200px; }
+textarea.text {
+	height: 60px;
+}
+textarea.wide {
+	width: 360px;
+}
+textarea.tall {
+	height: 300px;
+}
+textarea.taller {
+	height: 500px;
+}
+textarea.medium {
+	width: 450px;
+	height: 250px;
+}
+textarea.fill {
+	width: 95%;
+}
+select {
+	width: 200px;
+}
 
 input[type='text'], input[type='password'], textarea, select {
-  margin: 0px 0 0px 0;
+	margin: 0px 0 0px 0;
 }
-form input.compact { width: 120px; }
-form input.medium_compact { width: 280px; }
+form input.compact {
+	width: 120px;
+}
+form input.medium_compact {
+	width: 280px;
+}
 input.compact, select.compact {
-    width: 100px;
-    margin-right: 5px;
+	width: 100px;
+	margin-right: 5px;
 }
 input.medium_compact {
-    width: 170px;
-    margin-right: 5px;
+	width: 170px;
+	margin-right: 5px;
 }
 
 input[type='text']:focus, input[type='password']:focus. input.title:focus,
 textarea:focus, select:focus {
-  border: 1px solid #666;
+	border: 1px solid #666;
 }
 
 /* embeds the openid image in the text field */
 input#openid_url {
-   background: url(../images/login-bg.gif) no-repeat;
-   background-color: #fff;
-   background-position: 0 50%;
-   color: #000;
-   padding-left: 18px;
+	background: url(../images/login-bg.gif) no-repeat;
+	background-color: #fff;
+	background-position: 0 50%;
+	color: #000;
+	padding-left: 18px;
 }
-form div.fieldWithErrors { float: none; width: auto;}
-.fieldWithErrors { margin: 0; display: inline-block;}
+form div.fieldWithErrors {
+	float: none;
+	width: auto;
+}
+.fieldWithErrors {
+	margin: 0;
+	display: inline-block;
+}
 form div.fieldWithErrors input, form div.fieldWithErrors textarea, form div.fieldWithErrors select {
-  border: 1px solid #eab1b1;
+	border: 1px solid #eab1b1;
 }
 form div.fieldWithErrors label {
-		color: #b24040;
+	color: #b24040;
 }
 #content div.errorExplanation {
-  background: #fbdddd;
+	background: #fbdddd;
 	-webkit-border-radius: 6px;
-  width: 100%;
-  margin: 0 0 10px 0;
+	width: 100%;
+	margin: 0 0 10px 0;
 	float: left;
 	padding: 10px 0px;
 }
 
-#content  div.errorExplanation h2 {
+#content div.errorExplanation h2 {
 	font-size: 15px;
-  font-weight: bold;
-  color: #b24040;
-  padding: 0px 10px 0px 10px;
+	font-weight: bold;
+	color: #b24040;
+	padding: 0px 10px 0px 10px;
 	margin-bottom: 5px;
 }
-#content  div.errorExplanation p {
+#content div.errorExplanation p {
 	padding: 0px 10px;
-  margin-bottom: 10px;
-  margin-top: 0;
+	margin-bottom: 10px;
+	margin-top: 0;
 }
-#content  div.errorExplanation ul {
-  margin: 0px 0px 0px 25px;
+#content div.errorExplanation ul {
+	margin: 0px 0px 0px 25px;
 }
-#content .errorExplanation ul li{
-    list-style-type: disc;
+#content .errorExplanation ul li {
+	list-style-type: disc;
 }
 
 form table.inline-labels td {
-    padding-right: 10px;
+	padding-right: 10px;
 }
 form table.inline-labels th {
-    padding-right: 20px;
+	padding-right: 20px;
 }
 form table.inline-labels td label {
-    font-weight: normal;
+	font-weight: normal;
 }
 
 form#new_committership {
-	}
+}
 form#new_committership ul {
 	float: left;
 	width: 620px;
 	padding: 0;
 	border: 0;
-	margin-bottom: 0px;}
+	margin-bottom: 0px;
+}
 form#new_committership li {
-		width: auto;
-		font-weight: bold;
-		background: #CCC;
-		padding: 8px 12px;
-		margin: 0;
-		margin-right: 10px;
-		float: left;
-		border: 0;
+	width: auto;
+	font-weight: bold;
+	background: #CCC;
+	padding: 8px 12px;
+	margin: 0;
+	margin-right: 10px;
+	float: left;
+	border: 0;
 }
 form#new_committership li.selected {
-		background: #eee;
-		margin: 0;
-				margin-right: 10px;
+	background: #eee;
+	margin: 0;
+	margin-right: 10px;
 }
 form#new_committership p.tab-content {
-		background: #eee;
-		padding: 10px;
-		width: 620px;
-		float: left;
+	background: #eee;
+	padding: 10px;
+	width: 620px;
+	float: left;
 }
 #comment-form {
-		width: 450px;
-		float: left;
-
+	width: 450px;
+	float: left;
 }
 .help-box.right.help {
-		float: right;
-		width: 300px;
-		margin-bottom: 15px;
+	float: right;
+	width: 300px;
+	margin-bottom: 15px;
 }
 form.button-to {
-		float: right;
-		width: 100%;
+	float: right;
+	width: 100%;
 }
 .committer-buttons form {
 	width: auto; }
