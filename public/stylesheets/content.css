@@ -427,6 +427,10 @@ span.changed{
 	float: left;
 	margin-bottom: 10px;
 	}
+.search_results {
+	width: 640px;
+	float: left;
+}
 .search_bar_results form p input.search-field {
 	float: left;
 	padding: 9px;
