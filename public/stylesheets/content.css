@@ -420,3 +420,19 @@ span.changed{
 		margin-right: 0;
 		margin: 0;
 }
+
+/* SEARCH PAGE */
+.search_bar_results { 
+	width: 600px;
+	float: left;
+	margin-bottom: 10px;
+	}
+.search_bar_results form p input.search-field {
+	float: left;
+	padding: 9px;
+	margin-right: 5px;
+}
+#search_help {
+	width: 300px;
+	float: right;
+}

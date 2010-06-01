@@ -63,7 +63,7 @@
     </ul>
     <% if GitoriousConfig['public_mode'] || logged_in? -%>
       <div id="searchbox">
-        <%= render :partial => "/searches/search_box", :locals => {:hide_tips => true} -%>
+        <%= render :partial => "/searches/search_box_global", :locals => {:hide_tips => true} -%>
       </div>
     <% end -%>
   </div>

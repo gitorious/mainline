@@ -31,6 +31,7 @@ body#users #wrapper, body#sessions #wrapper {
 #site #content-container {
 	width: 100%;
 	float: left;
+	padding-bottom: 20px;
 	margin-top: -7px;
 		background: url(../img/external/content-bg.png) repeat-y center;
 }
@@ -173,7 +174,7 @@ body#users #wrapper, body#sessions #wrapper {
 	top: 321px;
 	float: left;
 	z-index: 999;
-	left: 225px;
+	left: 190px;
 }
 #header #screenshotsnavigation a{
 	width: 8px;
@@ -467,7 +468,7 @@ body#users #wrapper, body#sessions #wrapper {
 
 #content #from-the-blog p a.go-to-blog {
 	text-indent: -99999px;
-	width: 203px;
+	width: 170px;
 	height: 10px;
 	line-height: 10px;
 	float: left;

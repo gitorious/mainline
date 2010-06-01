@@ -225,3 +225,8 @@
 #clone-list-container {
 		width: 240px;
 }
+
+/* SEARCH TIPS */
+ul.search-tips li code {
+	padding: 0px 3px 0px 0px;
+}

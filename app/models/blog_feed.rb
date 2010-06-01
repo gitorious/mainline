@@ -3,7 +3,7 @@ require "open-uri"
 require "time"
 
 class BlogFeed
-  def initialize(url, limit = 3)
+  def initialize(url, limit = 2)
     @url = url
     @limit = limit
   end

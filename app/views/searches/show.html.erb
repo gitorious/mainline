@@ -34,40 +34,6 @@
 
 <%= render :partial => "search_box", :locals => {:hide_tips => false} -%>
 
-<div id="search_help" style="display:none">
-<% help_box(:left) do -%>
-  <p>
-    Any combination of the following keys can be used to narrow down
-    the search results, simply type <code>key:text</code> into the search field
-    to search for <em>text</em> within the scope of the <em>key</em> described below:
-  </p>
-  <h5>Projects</h5>
-  <ul>
-    <li><code>title</code>: Project title</li>
-    <li><code>description</code>: Project description</li>
-    <li><code>slug</code>: Project slug</li>
-    <li><code>category</code>: Project label</li>
-    <li><code>user</code>: Project creator username</li>
-  </ul>
-  <h5>Repositories</h5>
-  <ul>
-    <li><code>name</code>: Repository name</li>
-    <li><code>description</code>: Repository description</li>
-  </ul>
-  <h5>Comments</h5>
-  <ul>
-    <li><code>body</code>: Comment body</li>
-    <li><code>commented_by</code>: Comment creator username</li>
-  </ul>
-  <h5>Merge Requests</h5>
-  <ul>
-    <li><code>proposal</code>: Merge request proposal body</li>
-    <li><code>proposed_by</code>: Merge request creator username</li>
-    <li><code>status</code>: Merge request status</li>
-  </ul>
-<% end -%>
-</div>
-
 <div class="search_results">
 <% if @search -%>
   <% if @results.empty? -%>
@@ -82,3 +48,40 @@
   <% end -%>
 <% end -%>
 </div>
+
+<% content_for :sidebar do -%>
+<h2>Tips for searching</h2>
+  <p>
+    Any combination of the following keys can be used to narrow down
+    the search results, simply type <code>key:text</code> into the search field
+    to search for <em>text</em> within the scope of the <em>key</em> described below:
+  </p>
+
+  <ul class="search-tips">
+  <h4>Projects</h4>
+    <li><code>title:</code> Project title</li>
+    <li><code>description:</code> Project description</li>
+    <li><code>slug:</code> Project slug</li>
+    <li><code>category:</code> Project label</li>
+    <li><code>user:</code> Project creator username</li>
+  </ul>
+
+  <ul class="search-tips">
+  <h4>Repositories</h4>
+    <li><code>name:</code> Repository name</li>
+    <li><code>description:</code> Repository description</li>
+  </ul>
+
+  <ul class="search-tips">
+  <h4>Comments</h4>
+    <li><code>body:</code> Comment body</li>
+    <li><code>commented_by:</code> Comment creator username</li>
+  </ul>
+
+  <ul class="search-tips">
+	<h4>Merge Requests</h4>
+    <li><code>proposal:</code> Merge request proposal body</li>
+    <li><code>proposed_by:</code> Merge request creator username</li>
+    <li><code>status: </code> Merge request status</li>
+  </ul>
+<% end %>

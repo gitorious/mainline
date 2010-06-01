@@ -1,3 +1,7 @@
+#searchbox .search-field#q {
+	width: 140px;
+
+}
 #content ul.events .event_instances li > * {
 		overflow: hidden;
 }
