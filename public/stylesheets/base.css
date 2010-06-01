@@ -2350,6 +2350,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
 
 .search_time {
   float: right;
+	margin: 0;
 }
 
 .search_results strong.highlight {
@@ -2914,6 +2915,9 @@ table.select_commits_from_list tr.unknown-status td.meta
     padding: 20px 20px;
     width: 50%;
 }
+.merge_request_statuses table {
+		width: 640px;
+}
 #merge-requests-status-chooser {
     padding: 5px 10px;
     background: #EEE;
@@ -2944,7 +2948,7 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 
 .add-link-container {
-		width: 100%;
+		width: 628px;
 		float: left;
 		text-align: right;
 		margin-top: -15px;

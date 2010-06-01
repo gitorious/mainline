@@ -256,3 +256,7 @@ form.button-to {
 .committer-buttons form {
 	width: auto; }
 }
+
+#merge_request_statuses {
+	width: 640px; }
+}

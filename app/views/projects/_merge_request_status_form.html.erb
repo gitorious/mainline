@@ -12,7 +12,7 @@
     <%= form.select :state, MergeRequestStatus.default_states,
         {}, :class => "compact" -%>
   </td>
-  <td><%= form.text_field :description, :class => "medium_compact" -%></td>
+  <td><%= form.text_field :description, :class => "compact" -%></td>
   <td><%= form.text_field :color, :class => "compact color_pickable" -%></td>
   <td><%= remove_status_link(form) -%></td>
 </tr>
