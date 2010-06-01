@@ -38,6 +38,30 @@
 /* PROJECT PAGE */
 
 
+#project-description {
+  margin: 0;
+  padding: 0;
+	margin-bottom: 15px;
+}
+#project-description h1 { 
+	font-size: 24px;
+	}
+#project-description p, #project-description ol, #project-description ul {
+		font-size: 13px;
+		color: #5a6269;
+		line-height: 18px;
+}
+#project-description p:first-child {
+		margin-bottom: 3px;
+}
+#project-description span.read-more, #project-description span.re-collapse {
+		float: right;
+		font-size: 10px;
+		font-weight: bold;
+		text-transform: uppercase;
+		text-shadow: 0px 1px #FFF;
+}
+
 .repository_meta {
 	-webkit-border-radius: 6px;
 	width: 640px;

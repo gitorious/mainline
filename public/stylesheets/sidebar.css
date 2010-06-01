@@ -205,27 +205,6 @@
 		float: none;
 }
 
-#project-description {
-  margin: 0;
-  padding: 0;
-	margin-bottom: 15px;
-}
-#project-description p, #project-description ol, #project-description ul {
-		font-size: 11px;
-		color: #5a6269;
-		text-shadow: 0px 1px 0px #eee;
-		line-height: 16px;
-}
-#project-description p:first-child {
-		margin-bottom: 3px;
-}
-#project-description span.read-more, #project-description span.re-collapse {
-		float: right;
-		font-size: 10px;
-		font-weight: bold;
-		text-transform: uppercase;
-		text-shadow: 0px 1px #FFF;
-}
 #project-meta, .sidebar-meta {
 		float: left;
 		width: 240px;

@@ -23,22 +23,22 @@
 
 <% @page_title = @project.title -%>
 <%= breadcrumbs_from(@root) -%>
+<div class="content-container w-750" id="project-description">
+	<h1><%=h @project.title -%></h1>
+	  <%= paragraphs_with_more(render_markdown(@project.description, :auto_link), @project.id) -%>
+</div>
 <div class="content-container w-750" id="repositories">
 <% @project.repositories.mainlines.each do |repo| -%>
   <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
 <% end -%>
 </div>
 <div class="content-container w-750" id="activities">
-	<h2 class="content-header"><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
+	<h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
 	<%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
 </div>
 
 <% content_for :sidebar do -%>
-<h1><%=h @project.title -%></h1>
 
-<div id="project-description" class="page expandable">
-  <%= render_markdown(@project.description, :auto_link) -%>
-</div>
 
     
 <ul class="links navigation">

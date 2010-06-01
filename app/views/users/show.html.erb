@@ -15,7 +15,7 @@
 						<%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
 					</li><% end -%><% if @user.url %>
 					<li>
-						<a rel="me" href="%3C%=h%20@user.url%20-%%3E"><%=h @user.url -%></a>
+						<a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a>
 					</li><% end -%>
 					<li>
 						<%= t("views.users.member_for") %> <%= time_ago_in_words(@user.created_at) %>

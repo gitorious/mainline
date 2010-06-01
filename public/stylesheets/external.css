@@ -18,7 +18,7 @@ a:hover { color: #aa5a0d; text-decoration: none; }
 	background: url(../img/external/top-bg.png) repeat-x #FFF; 
 }
 #top-wrapper {
-	width: 1100px;
+	width: 960px;
 	margin: 0 auto;
 }
 body#users #wrapper, body#sessions #wrapper {
@@ -35,19 +35,19 @@ body#users #wrapper, body#sessions #wrapper {
 		background: url(../img/external/content-bg.png) repeat-y center;
 }
 #site #content-container #content {
-	width: 1100px;
+	width: 960px;
 	margin: 0 auto;
 	float: none;
 }
 #sessions .content-container, #users .content-container {
 	margin: 0 auto;
-	width: 1100px; }
+	width: 960px; }
 
 #top {
 	height: 45px;
 	padding: 20px 0px 5px;
 	border-bottom: 1px solid #2f2f2e;
-	width: 1100px;
+	width: 960px;
 	margin: 0 auto;
 }
 
@@ -103,13 +103,13 @@ body#users #wrapper, body#sessions #wrapper {
 #top #menu li.register { margin-left: 20px; }
 
 #header {
-	width: 1100px;
+	width: 960px;
 	float: left;
 
 	position: relative; }
 
 #header #introduction {
-	width: 500px;
+	width: 450px;
 	float: left;
 	height: 222px;
 	padding-top: 45px;
@@ -117,7 +117,7 @@ body#users #wrapper, body#sessions #wrapper {
 }
 
 #header #introduction h2 {
-	width: 497px;
+	width: 447px;
 	height: 74px;
 	text-indent: -9999px;
 	float: left;
@@ -126,7 +126,7 @@ body#users #wrapper, body#sessions #wrapper {
 
 #header #introduction p {
 	line-height: 24px;
-	width: 500px;
+	width: 450px;
 	float: left;
 	color: #989898;
 }
@@ -155,7 +155,7 @@ body#users #wrapper, body#sessions #wrapper {
 
 #header #screenshots-rotator {
 	padding-top: 32px;
-	width: 509px;
+	width: 440px;
 	height: 310px;
 	position: relative;
 	float: right;
@@ -163,7 +163,7 @@ body#users #wrapper, body#sessions #wrapper {
 
 #header #screenshots-container {
 	float: right;
-	width: 509px;
+	width: 440px;
 	height: 310px;
 	overflow: hidden;
 
@@ -252,7 +252,7 @@ body#users #wrapper, body#sessions #wrapper {
 
 #features {
 	margin: 0 auto;
-	width: 1100px;
+	width: 960px;
 }
 
 #features h3 {
@@ -266,14 +266,16 @@ body#users #wrapper, body#sessions #wrapper {
 }
 
 #features ul {
-	width: 940px;
+	width: 960px;
 	float: left;
-	padding-top: 20px; 
+	padding-top: 25px; 
 }
 
 #features ul li {
 	float: left;
-	width: 300px; 
+	width: 315px; 
+	margin-right: 5px;
+	height: 100px;
 }
 	
 #features ul li h4 {
@@ -284,21 +286,23 @@ body#users #wrapper, body#sessions #wrapper {
 }
 
 #features ul li p {
-	width: 252px;
+	width: 260px;
 	font-size: 12px;
 	line-height: 17px;
 	margin-top: 6px;
 	float: left; 
 }
-
+#features-wrapper { height: 245px;}
 #features p a.all-features {
 	width: 151px;
+
 	height: 66px;
 	float: right;
 	margin-top: 20px;
 	display: block;
 	text-indent: -9999px;
-	background: url(../img/external/call-to-action.png) no-repeat -0px -141px; }
+	background: url(../img/external/call-to-action.png) no-repeat -0px -141px;
+		display: none; }
 #features p a.all-features:hover { background-position: -187px -141px; }
 #features p a.all-features:active { background-position: -374px -141px; }
 	
@@ -326,7 +330,7 @@ body#users #wrapper, body#sessions #wrapper {
 }
 
 #content {
-	width: 1100px;
+	width: 960px;
 	float: left;
 	padding-top: 30px;
 	margin-top: -7px;
@@ -339,12 +343,13 @@ body#users #wrapper, body#sessions #wrapper {
 #content .column {
 	float: left;
 	width: 300px;
-	padding-left: 30px;
-	margin-right: 30px;
+	padding-left: 25px;
+	margin-right: 25px;
 }
 
-#content #user-testimonials { width: 400px; border-left: 0;}
-#content #featured-projects, #content #from-the-blog { width: 260px;}
+#content #user-testimonials { width: 345px; border-left: 0;}
+#content #featured-projects { width: 280px;}
+#content #from-the-blog { width: 185px;}
 
 #content .column h3 { 
 	float: left; 
@@ -354,17 +359,17 @@ body#users #wrapper, body#sessions #wrapper {
 	padding-bottom: 10px;
 }
 #content #user-testimonials h3 {
-	width: 400px;
+	width: 345px;
 	height: 14px;
 	background: url(../img/external/headers/our-users-say.png) no-repeat; 
 }
 #content #featured-projects h3 {
-	width: 260px;
+	width: 280px;
 	height: 14px;
 	background: url(../img/external/headers/featured-projects.png) no-repeat; 
 }
 #content #from-the-blog h3 {
-	width: 260px;
+	width: 185px;
 	height: 14px;
 	background: url(../img/external/headers/gitorious-blog.png) no-repeat; 
 }
@@ -373,12 +378,12 @@ body#users #wrapper, body#sessions #wrapper {
 	float: left;
 	margin-bottom: 5px;
 	padding-bottom: 40px;	
-	width: 400px;
+	width: 345px;
 	background: url(../img/external/block-bg.png) bottom no-repeat;
 	}
 
 #content #user-testimonials blockquote {
-	width: 400px;
+	width: 345px;
 	font-family: Georgia, Times, serif;
 	font-size: 14px;
 	font-style: italic;
@@ -392,7 +397,7 @@ body#users #wrapper, body#sessions #wrapper {
 	line-height: 14px;	
 	text-transform: uppercase;
 	font-style: normal;
-	width: 400px;
+	width: 345px;
 	color: #7f7f7f;
 	float: left;
 	padding: 9px 0px 5px 11px;
@@ -404,14 +409,14 @@ body#users #wrapper, body#sessions #wrapper {
 
 
 #content #featured-projects li {
-	margin-bottom: 20px;
-	padding-bottom: 30px;	
-	width: 260px;
+	margin-bottom: 3px;
+	padding-bottom:38px;	
+	width: 280px;
 	float: left;
-	background: url(../img/external/small-block-bg.png) bottom no-repeat;}
+	background: url(../img/external/block-bg.png) bottom no-repeat;}
 	
 #content #featured-projects li p {
-	width: 190px;
+	width: 210px;
 	font-size: 12px;
 	line-height: 18px;
 	color: #6f6f6f;
@@ -425,31 +430,32 @@ body#users #wrapper, body#sessions #wrapper {
 #content #featured-projects li img {
 	float: left;
 	margin: 5px 10px 0px 0px;}
+
 	
 #content #from-the-blog li {
-	margin-bottom: 20px;
-	padding-bottom: 30px;	
-	width: 260px;
+	margin-bottom: 7px;
+	padding-bottom: 40px;	
+	width: 185px;
 	float: left;
-	background: url(../img/external/small-block-bg.png) bottom no-repeat;}
+	background: url(../img/external/block-bg.png) bottom no-repeat;}
 	
 #content #from-the-blog li p {
 	display: inline;
 	font-size: 12px;
-	line-height: 18px;
+	line-height: 17px;
 	color: #6f6f6f;
 }
 
 #content #from-the-blog li h4 {
 	font-weight: bold; 
 	display: inline;	
-	font-size: 13px;
-	line-height: 18px;
+	font-size: 12px;
+	line-height: 17px;
 	color: #d57f2b; 
 }
 #content #from-the-blog li p.date {
 	padding-left: 15px;
-	width: 260px;
+	width: 170px;
 	float: left;
 	font-size: 9px;
 	font-weight: bold;
@@ -471,7 +477,7 @@ body#users #wrapper, body#sessions #wrapper {
 	background-position: 0 -11px;
 }
 #content form {
-	width: 1100px;
+	width: 960px;
 	margin: 0 auto;
 }
 #content .form-wrapper {
@@ -674,7 +680,7 @@ div.flash_message {
 }
 
 body #content p.alt_links {
-		width: 1100px;
+		width: 960px;
 		float: left;
 		text-align: center;
 		color: #666;
@@ -702,7 +708,7 @@ margin-top: 3px solid red;
 	height: 184px;}
 	
 #footer #footer-container {
- 	width: 1100px;
+ 	width: 960px;
 margin-top: 3px solid red;
 	margin: 40px auto;
 }
