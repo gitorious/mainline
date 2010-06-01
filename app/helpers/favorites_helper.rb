@@ -38,7 +38,7 @@ module FavoritesHelper
   end
 
   def destroy_favorite_link_to(favorite, watchable, options = {})
-    label = options[:label] || "Un-watch"
+    label = options[:label] || "Unwatch"
     link_to(label, favorite_path(favorite),
       :method => :delete, :"data-request-method" => "delete",
       :class => "watch-link enabled round-10")

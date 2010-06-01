@@ -137,7 +137,7 @@ function replaceRailsGeneratedForm(el, defaultOptions) {
     var options = jQuery.extend({
         linkName: $this.attr("id") + "_",
         backend: jQuery.ajax,
-        replaceWords: ["Start","Stop"],
+        replaceWords: ["Watch","Unwatch"],
         toggleClasses: ["enabled","disabled"],
         waitingClass: "waiting"
     }, defaultOptions);
