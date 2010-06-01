@@ -23,8 +23,8 @@ class Group < ActiveRecord::Base
   belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
   has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
-  has_many :repositories, :as => :owner, :conditions => ["kind NOT IN (?)",
-                                                         Repository::KINDS_INTERNAL_REPO],
+  has_many :repositories, :as => :owner, :conditions => ["kind != ?",
+                                                         Repository::KIND_TRACKING_REPO],
     :dependent => :destroy
   has_many :projects, :as => :owner
 
