@@ -2462,34 +2462,34 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
     margin-bottom: 0;
 }
 
-.repository_meta .branches ul li strong {
+.repository_meta .branches ul li strong, .repository_meta .clone-of ul li strong {
     color: #555;
 }
 
-.repository_meta .branches { 
+.repository_meta .branches, .repository_meta .clone-of { 
 	float: left;
 	width: 610px;
-	margin-top: 8px; }
-.repository_meta .branches ul {
+	margin-top: 8px; 
+}
+.repository_meta .branches ul, .repository_meta .clone-of ul {
   margin: 0;
   padding: 0;
+	margin-bottom: 3px;
 }
 
-.repository_meta .branches ul li {
+.repository_meta .branches ul li, .repository_meta .clone-of ul li {
   display: inline;
   margin-right: 5px;
 }
 
-.repository_meta .branches ul li.head { 
+.repository_meta .branches ul li.head, .repository_meta .clone-of ul li.head { 
 		font-weight: bold;
 		background-color: #EEE;
 		padding: 4px;
-
 		border-radius: 3px;
 		-webkit-border-radius: 6px;
-		-moz-border-radius: 3px;
+		-moz-border-radius: 6px;
  }
-
 
 .feed_icon { margin: 0px 4px -1px 4px; }
 

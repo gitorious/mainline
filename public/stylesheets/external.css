@@ -647,7 +647,7 @@ body#users #wrapper, body#sessions #wrapper {
 		text-indent: -9999px;
 }
 .errorExplanation {
-		width: 180px;
+		width: 120px;
 		float: right;
 		font-size: 11px;
 		line-height: 16px;

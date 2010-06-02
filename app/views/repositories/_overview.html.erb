@@ -50,6 +50,14 @@
        <%= render_chunked_branch_list_items(repository) -%>
      </ul>
    </div>
+	<div class="clone-of">
+		<ul class="clone-of_list">
+			<li><strong>Clone of:</strong></li>
+			<li class="head"><%= link_to "#{h(repository.parent.name)}",
+	       		repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%></li>
+		</ul>
+	</div>
+			
  <% end -%>
 	</div> <!-- End of repository-description -->
 
@@ -71,12 +79,7 @@
 	            repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
 	    	</li>
 	    <%- end -%>
-	    <% if repository.parent -%>
-	    	<li class="repository-link clone">
-	      	<%= link_to "Clone of #{h(repository.parent.name)}",
-	       		repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%>
-	    	</li>
-	    <% end -%>
+
 		<% if repository.ready? -%>
 			<li class="repository-link clone_repository">
 				<%= link_to t("views.repos.btn_clone"), repo_owner_path(repository, [:clone, repository.project, repository]) -%>
