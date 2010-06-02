@@ -21,7 +21,7 @@
 #++
 
 class SiteController < ApplicationController
-  skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq]
+  skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq, :contact]
   before_filter :login_required, :only => [:dashboard]
   renders_in_site_specific_context :except => [:about, :faq, :contact]
   renders_in_global_context :only => [:about, :faq, :contact]
