@@ -538,7 +538,7 @@ module ApplicationHelper
     default_options = {
       :prev_label => "Previous",
       :next_label => "Next",
-      :container => "True"
+      :container => true
     }
     will_paginate(collection, options.merge(default_options))
   end
