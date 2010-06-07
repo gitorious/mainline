@@ -74,7 +74,6 @@ class SiteController < ApplicationController
     end
 
     def render_dashboard
-      @page_title = "Gitorious: your dashboard"
       @user = current_user
       @projects = @user.projects.find(:all,
         :include => [:tags, { :repositories => :project }])
