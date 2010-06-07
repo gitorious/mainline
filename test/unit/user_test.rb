@@ -437,6 +437,7 @@ class UserTest < ActiveSupport::TestCase
         })
       comment_event = @first_repo.project.create_event(Action::COMMENT, @first_repo,
         users(:mike), 99, "Repository")
+      Rails.cache.clear
       assert @user.paginated_events_in_watchlist(:page => 1).include?(branch_event)
       assert @user.paginated_events_in_watchlist(:page => 1).include?(comment_event)
     end
