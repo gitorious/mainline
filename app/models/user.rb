@@ -22,6 +22,7 @@
 #++
 
 require 'digest/sha1'
+require_dependency "event"
 
 class User < ActiveRecord::Base
   include UrlLinting
@@ -378,14 +379,17 @@ class User < ActiveRecord::Base
   end
 
   def paginated_events_in_watchlist(pagination_options = {})
-    watched = feed_items.paginate({
-        :order => "created_at desc",
-        :total_entries => FeedItem.per_page+(FeedItem.per_page+1)
-      }.merge(pagination_options))
+    key = "paginated_events_in_watchlist:#{self.id}:#{pagination_options[:page] || 1}"
+    Rails.cache.fetch(key, :expires_in => 20.minutes) do
+      watched = feed_items.paginate({
+          :order => "created_at desc",
+          :total_entries => FeedItem.per_page+(FeedItem.per_page+1)
+        }.merge(pagination_options))
 
-    total = (watched.length < watched.per_page ? watched.length : watched.total_entries)
-    items = WillPaginate::Collection.new(watched.current_page, watched.per_page, total)
-    items.replace(Event.find(watched.map(&:event_id), {:order => "created_at desc"}))
+      total = (watched.length < watched.per_page ? watched.length : watched.total_entries)
+      items = WillPaginate::Collection.new(watched.current_page, watched.per_page, total)
+      items.replace(Event.find(watched.map(&:event_id), {:order => "created_at desc"}))
+    end
   end
 
   protected
