@@ -65,8 +65,12 @@ class ProjectsController < ApplicationController
   def show
     @owner = @project
     @root = @project
-    @events = @project.events.top.paginate(:all, :page => params[:page],
-      :order => "created_at desc", :include => [:user, :project])
+    @events = Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+      events_finder_options = {}
+      events_finder_options.merge!(@project.events.top.proxy_options)
+      events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
+      @project.events.paginate(events_finder_options)
+    end
     @group_clones = @project.recently_updated_group_repository_clones
     @user_clones = @project.recently_updated_user_repository_clones
     @atom_auto_discovery_url = project_path(@project, :format => :atom)

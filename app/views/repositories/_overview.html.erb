@@ -50,6 +50,7 @@
        <%= render_chunked_branch_list_items(repository) -%>
      </ul>
    </div>
+ <% if repository.parent -%>
 	<div class="clone-of">
 		<ul class="clone-of_list">
 			<li><strong>Clone of:</strong></li>
@@ -57,7 +58,8 @@
 	       		repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%></li>
 		</ul>
 	</div>
-			
+ <% end -%>
+
  <% end -%>
 	</div> <!-- End of repository-description -->
 

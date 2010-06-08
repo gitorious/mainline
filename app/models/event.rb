@@ -41,7 +41,11 @@ class Event < ActiveRecord::Base
 
   validates_presence_of :user_id, :unless => :user_email_set?
 
-  named_scope :top, {:conditions => ['target_type != ?', 'Event']}
+  named_scope :top, {
+    :conditions => ['target_type != ?', 'Event'],
+    :order => "created_at desc",
+    :include => [:user, :project]
+  }
   named_scope :excluding_commits, {:conditions => ["action != ?", Action::COMMIT]}
 
   def self.latest(count)
