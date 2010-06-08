@@ -1,5 +1,7 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2010 Juho Nieminen <juho.m.a.nieminen@jyu.fi>
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
@@ -104,6 +106,17 @@ class Repository < ActiveRecord::Base
 
   def self.human_name
     I18n.t("activerecord.models.repository")
+  end
+
+  # Returns the repositories limited by +limit+ who has the most activity
+  # in the last +number_of_days+ days.
+  def self.most_active_recently(limit = 10, number_of_days = 3)
+    Rails.cache.fetch("repositories:most_active_recently", :expires_in => 30.minutes) do
+      find(:all, :joins => :events, :limit => limit,
+        :select => 'distinct repositories.*, count(events.id) as event_count',
+        :order => "event_count desc", :group => "repositories.id",
+        :conditions => ["events.created_at > ?", number_of_days.days.ago])
+    end
   end
 
   def self.new_by_cloning(other, username=nil)

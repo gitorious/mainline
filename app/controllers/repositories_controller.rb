@@ -1,5 +1,7 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2010 Juho Nieminen <juho.m.a.nieminen@jyu.fi>
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -23,7 +25,7 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required,
     :except => [:index, :show, :writable_by, :config, :search_clones]
-  before_filter :find_repository_owner
+  before_filter :find_repository_owner, :except => [:browser]
   before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
     :only => [:edit, :update, :confirm_delete, :destroy]
@@ -31,6 +33,15 @@ class RepositoriesController < ApplicationController
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   skip_before_filter :public_and_logged_in, :only => [:writable_by, :config]
   renders_in_site_specific_context :except => [:writable_by, :config]
+
+  def browser
+    @repositories = Repository.paginate(:all,
+        :order => "repositories.updated_at desc", :page => params[:page])
+    @active_recently = Repository.most_active_recently
+    @user = current_user
+    @user_repositories = @user.commit_repositories.find(:all,
+        :order => "repositories.updated_at desc")[0..9] if logged_in?
+  end
 
   def index
     if term = params[:filter]
