@@ -1,0 +1,72 @@
+<%
+#--
+#   Copyright (C) 2010 Juho Nieminen <juho.m.a.nieminen@jyu.fi>
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<div class="repository_browser" <% if repository.committers.include? @user then -%> style="background-color:#EEEEF6;" <% end -%> >
+ <div class="header">
+    <h3 <%= repository.mainline? ? "mainline" : "clone" -%> >
+
+      <%= link_to h(repository.project.title), repository.project -%>
+      <%= image_tag("silk/arrow_right.png") -%>
+      
+      <%= link_to h(repository.name),
+            repo_owner_path(repository, [repository.project, repository]) -%>
+    </h3>
+  <% if logged_in? -%> 
+    <%= favorite_button(repository) -%>
+  <% end -%>
+ </div>
+
+  <p>
+    <strong>Owner:</strong> <%= link_to h(repository.owner.to_param_with_prefix), repository.owner -%>
+  </p>
+  
+
+  <% unless repository.description.blank? -%>
+   <p><%= truncate h(repository.description), :length => 250 -%></p>
+  <% end -%>
+
+  <ul class="horizontal meta-links repo_browser">
+    <li class="commit" style="border-style:none">
+      <%= link_to "Commit log",
+          repo_owner_path(repository, [repository.project, repository, :commits]) -%>
+    </li>
+    <li class="tree" style="border-style:none">
+      <%= link_to "Source tree",
+            repo_owner_path(repository, [repository.project, repository, :trees]) -%>
+    </li>
+    <%- if repository.merge_requests_enabled? -%>
+    <li class="merge_requests" style="border-style:none">
+      <%= link_to "Merge requests <small>(#{repository.merge_requests.open.count})</small>",
+            repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
+    </li>
+    <%- end -%>
+    <% if repository.parent -%>
+    <li class="clone" style="border-style:none">
+      <%= link_to "Clone of #{h(repository.parent.name)}",
+       repo_owner_path(repository.parent, [repository.parent.project, repository.parent]) -%>
+    </li>
+    <% end -%>
+    <li style="border-style:none">
+      <small>Last updated: <%= repository.updated_at.to_s(:short) -%></small>
+    </li>
+  </ul>
+
+</div>
+

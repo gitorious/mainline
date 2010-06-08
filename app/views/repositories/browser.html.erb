@@ -1,0 +1,58 @@
+<%
+# encoding: utf-8
+#--
+#   Copyright (C) 2010 Juho Nieminen <juho.m.a.nieminen@jyu.fi>
+#   Copyright (C) 2010 Tero Hänninen <tero.j.hanninen@jyu.fi>
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<% @page_title = "Repositories" -%>
+
+<h1>Repositories</h1>
+
+<ul class="project_list">
+  <% @repositories.each do |repo| -%>
+      <li class="project_list_item">
+        <%= render :partial => "repositories/list", :locals => {:repository => repo} -%>
+      </li>
+  <% end -%>
+</ul>
+
+<%= will_paginate @repositories -%>
+
+<% content_for :sidebar do -%>
+  <% pull_box("Most active (last two weeks)") do -%>
+    <ul class="with_icons">
+      <% @active_recently.each do |repo| -%>
+        <li class="repository">
+          <%= link_to h(repo.title), repo_owner_path(repo, [repo.project, repo]) -%>
+        </li>
+      <% end -%>
+    </ul>
+  <% end -%>
+  <% if logged_in? -%>
+    <% pull_box("Your active repositories") do -%>
+      <ul class="with_icons">
+        <% @user_repositories.each do |repo| -%>
+          <li class="repository">
+            <%= link_to h(repo.title), repo_owner_path(repo, [repo.project, repo]) -%>
+          </li>
+        <% end -%>
+      </ul>
+    <% end -%>
+  <% end -%>
+<% end -%>
