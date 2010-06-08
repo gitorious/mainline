@@ -1,5 +1,7 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2010 Juho Nieminen <juho.m.a.nieminen@jyu.fi>
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008, 2009 Johan Sørensen <johan@johansorensen.com>
 #
@@ -161,6 +163,7 @@ ActionController::Routing::Routes.draw do |map|
     session.logout   '/logout', :action => 'destroy'
   end
 
+  map.repositories "repositories", :controller => "repositories", :action => "browser"
   map.dashboard "dashboard", :controller => "site", :action => "dashboard"
   map.about "about", :controller => "site", :action => "about"
   map.faq "about/faq", :controller => "site", :action => "faq"

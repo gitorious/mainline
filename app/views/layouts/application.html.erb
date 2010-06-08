@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -41,7 +42,7 @@
     <h1 id="logo">
       <%= link_to image_tag("/img/logo.png"), root_path -%>
     </h1>
-
+    <div><%= link_to t("views.layout.repositories"), repositories_path -%></div>
     <ul id="menu">
       <% if logged_in? -%>
         <li>
