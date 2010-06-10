@@ -35,7 +35,7 @@ class RepositoriesController < ApplicationController
   renders_in_site_specific_context :except => [:writable_by, :config]
 
   def browser
-    @repositories = Repository.paginate(:all,
+    @repositories = Repository.regular.paginate(:all,
         :order => "repositories.updated_at desc", :page => params[:page])
     @active_recently = Repository.most_active_recently
     @user = current_user
