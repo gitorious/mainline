@@ -35,7 +35,7 @@
 <%= will_paginate @repositories -%>
 
 <% content_for :sidebar do -%>
-  <% pull_box("Most active (last two weeks)") do -%>
+  <% pull_box("Most active (last two weeks)", :class => "pull-box-sidebar") do -%>
     <ul class="with_icons">
       <% @active_recently.each do |repo| -%>
         <li class="repository">
@@ -45,7 +45,7 @@
     </ul>
   <% end -%>
   <% if logged_in? -%>
-    <% pull_box("Your active repositories") do -%>
+    <% pull_box("Your active repositories", :class => "pull-box-sidebar") do -%>
       <ul class="with_icons">
         <% @user_repositories.each do |repo| -%>
           <li class="repository">
