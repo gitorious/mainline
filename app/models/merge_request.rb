@@ -479,6 +479,15 @@ class MergeRequest < ActiveRecord::Base
         source.name(source_repository.name)
         source.branch(source_branch)
       end
+      builder.versions do
+        versions.each do |v|
+          builder.version do 
+            builder.updated_at v.updated_at
+            builder.version(v.version)
+            builder.merge_base_sha(v.merge_base_sha)
+          end
+        end
+      end
       builder.target_repository do |source|
         source.name(target_repository.name)
         source.branch(target_branch)
