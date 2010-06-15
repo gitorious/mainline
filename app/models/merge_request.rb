@@ -492,11 +492,12 @@ class MergeRequest < ActiveRecord::Base
         source.name(target_repository.name)
         source.branch(target_branch)
       end
+      builder.id(sequence_number)
     end
 
     super({
       :procs => [info_proc],
-      :only => [:summary, :proposal, :created_at, :updated_at, :id, :ending_commit],
+      :only => [:summary, :proposal, :created_at, :updated_at, :ending_commit],
       :methods => []
     }.merge(opts))
   end

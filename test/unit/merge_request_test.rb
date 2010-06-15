@@ -551,7 +551,11 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.to_xml)
       assert_match(/<summary>#{@merge_request.summary}<\/summary>/,
         @merge_request.to_xml)
+    end
 
+    should "use the sequence number instead of id" do
+      assert_match(/<id>#{@merge_request.sequence_number}<\/id>/,
+        @merge_request.to_xml)
     end
   end
 
