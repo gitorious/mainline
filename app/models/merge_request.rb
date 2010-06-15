@@ -482,7 +482,7 @@ class MergeRequest < ActiveRecord::Base
       builder.versions do
         versions.each do |v|
           builder.version do 
-            builder.updated_at v.updated_at
+            builder.updated_at(v.updated_at.xmlschema)
             builder.version(v.version)
             builder.merge_base_sha(v.merge_base_sha)
           end
