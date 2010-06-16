@@ -1,0 +1,49 @@
+<%
+#--
+#   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<% content_for(:sidebar) do %>
+<ul class="links navigation">
+</ul>
+<% end %>
+
+<h2 class="content-header" id="project_title"><%= link_to t("views.layout.admin"), '' %></h2>
+<p>
+  Use this page to re-send repository creation messages in the rare cases when a message has been dropped
+or a Git timeout has occured. Another message will be posted to the message queue, which should cause
+the repository to be created on disk.
+</p>
+<table class="listing tree">
+	<tr>
+		<th>Name</th>
+    <th>Ready?</th>
+    <th>Last update</th>
+    <th>Action</th>
+	</tr>
+	<% @unready_repositories.each do |repo| -%>
+	<tr class="<%= cycle("odd", "even") -%>">
+    <td><%= repo.name -%></td>
+    <td><%= repo.ready? -%></td>
+    <td><%= repo.updated_at -%></th>
+    <td><%= link_to("Re-post creation message", recreate_admin_repository_path(repo.id), :method => :put) -%></td>
+	</tr>
+	<% end -%>	
+</table>
+
+<%= will_paginate @unready_repositories -%>
+
+

@@ -169,7 +169,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
-
+    admin.resources :repositories, :member => {:recreate => :put}
   end
 
   map.resources :favorites
