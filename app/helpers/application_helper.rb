@@ -238,8 +238,11 @@ module ApplicationHelper
       return ["", "", ""]
     end
     # These are defined in event_rendering_helper.rb:
-    action, body, category = self.send("render_event_#{Action::css_class(event.action)}", event)
-
+    begin
+      action, body, category = self.send("render_event_#{Action::css_class(event.action)}", event)
+    rescue ActiveRecord::RecordNotFound
+      return ["","",""]
+    end
     body = sanitize(body, :tags => %w[a em i strong b])
     [action, body, category]
   end
