@@ -1,6 +1,6 @@
 <div class="with_divider">
 	<div id="left">
-		<div class="user-profile">
+		<div class="user-profile not-dash">
 			<%= link_to(avatar(@user, { :size => 64 }), @user, {:class => "avatar"}) %>
 			<div class="profile-data">
 				<h1>
@@ -37,15 +37,15 @@
     </div>
 
 		<div class="content-container w-510">
-			<ul class="activities-tabs">
-				<li class="newsfeed">Newsfeed <span><a href="#">RSS</a></span>
-				<li class="my-activities"><a href="#">My activities</a> <span><a href="#">RSS</a></span>
-			</ul>
-			<div id="newsfeed-container">
-				<div id="user_events" class="w-510">
-					<%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-510" } -%>
-				</div>
-			</div>
+			<h2 class="activities">
+				<% if showing_newsfeed? %> Your Newsfeed <% else %> <%= t("views.site.dashboard.activities") -%> <% end %> <%= feed_icon @atom_auto_discovery_url -%> <% if is_current_user?(@user) -%> <small>(<%= newsfeed_or_user_events_link -%>)</small> <% end -%>
+			</h2><% if @events.empty? -%>
+			<p class="hint">
+				<%= personified(@user, "You", @user.title) -%> have no news
+			</p><% else -%>
+			<div id="user_events" class="w-510">
+				<%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-510" } -%>
+			</div><% end -%>
 		</div>
 	</div>
 	<div id="right" class="w-390">
