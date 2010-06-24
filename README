@@ -272,9 +272,9 @@ contribute your own!
 Sphinx
 ------
 
-The sphinx deamon needs to be running in order for full text search to work.
+The sphinx daemon needs to be running in order for full text search to work.
 
-Git-deamon
+Git-daemon
 ----------
 
 For cloning over the Git protocol, Gitorious includes a custom git daemon
