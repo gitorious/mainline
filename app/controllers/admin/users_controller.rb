@@ -36,15 +36,17 @@ class Admin::UsersController < ApplicationController
   end
   
   def create
-    @user = User.new(params[:user])
+    @user = User.new(params[:user].merge :terms_of_use => '1')
     @user.login = params[:user][:login]
     @user.is_admin = params[:user][:is_admin] == "1"
     respond_to do |wants|
-      if @user.save
+      begin
+        @user.save!
+        @user.accept_terms!
         flash[:notice] = I18n.t "admin.users_controller.create_notice"
         wants.html { redirect_to(admin_users_path) }
         wants.xml { render :xml => @user, :status => :created, :location => @user }
-      else
+      rescue
         wants.html { render :action => "new" }
         wants.xml { render :xml => @user.errors, :status => :unprocessable_entity }
       end
