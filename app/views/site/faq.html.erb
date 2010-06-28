@@ -95,8 +95,6 @@
 
 <% content_for :sidebar do -%>
   <ul class="links navigation">
-    <li><%= link_to "About", about_path(:anchor => "about") -%></li>
-    <li><%= link_to "Contact", about_path(:anchor => "contact") -%></li>
-    <li><%= link_to "FAQ", faq_path -%></li>
+    <%= render "meta_links" -%>
   </ul>
 <% end -%>
