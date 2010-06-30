@@ -27,10 +27,10 @@
 <% end -%>
 <%= yield :extra_head -%>
 <!--[if IE 8]>
-<link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css">
+<%=stylesheet_link_tag("ie8")%>
 <![endif]-->
 <!--[if IE 7]>
-<link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css">
+<%=stylesheet_link_tag("ie7")%>
 <![endif]-->
 
 <%= GitoriousConfig["extra_html_head_data"] -%>
