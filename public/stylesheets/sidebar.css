@@ -1,6 +1,9 @@
 /* #############################################
    ################# SIDEBAR ################### */
 
+#container.sidebar-enabled {
+	background: url("../img/container-bg310.png") repeat-y;
+}
 #container #sidebar {
 	border-top: 1px solid #e7e7e7;
  	width: 240px;
