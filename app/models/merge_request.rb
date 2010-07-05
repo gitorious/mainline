@@ -385,7 +385,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def add_to_reviewers_favorites(reviewer)
-    reviewer.favorites.create(:watchable => self)
+    reviewer.favorites.create(:watchable => self, :notify_by_email => reviewer.default_favorite_notifications)
   end
 
   def add_creation_event(owner, user)
