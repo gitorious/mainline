@@ -441,6 +441,7 @@
         :license => "License",
         :owner => "Owner",
         :created => "Created",
+        :updated => "Updated",
         :website => "Website at ",
         :mailing => "Mailinglist at ",
         :bugtracker => "Bugtracker at ",

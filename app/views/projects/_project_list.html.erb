@@ -1,0 +1,35 @@
+<%
+#--
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<table class="listing sorted_list">
+  <tr>
+    <th <%= sort_th_class("title") %>><%= sort_link(t("activerecord.attributes.project.title"), "title") %></th>
+    <th <%= sort_th_class("created_at") %>><%= sort_link(t("views.projects.created"), "created_at") %></th>
+    <th <%= sort_th_class("updated_at") %>><%= sort_link(t("views.projects.updated"), "updated_at") %></th>
+    <th <%= sort_th_class("license") %>><%= sort_link(t("activerecord.attributes.project.license"), "license") %></th>
+  </tr>
+  <% @projects.each do |project| -%>
+    <tr>
+      <td><%= render :partial => project, :object => project -%></td>
+      <td><%= project.created_at.to_s(:short) -%></td>
+      <td><%= project.updated_at.to_s(:short) -%></td>
+      <td><%= project.license -%></td>
+    </tr>
+  <% end -%>
+</table>

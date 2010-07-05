@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -33,7 +34,19 @@ class ProjectsController < ApplicationController
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
   def index
-    @projects = Project.paginate(:all, :order => "projects.created_at desc",
+    sort = case params['sort']
+             when "title"              then "title"
+             when "created_at"         then "created_at"
+             when "updated_at"         then "updated_at"
+             when "license"            then "license"
+             when "title_reverse"      then "title DESC"
+             when "created_at_reverse" then "created_at DESC"
+             when "updated_at_reverse" then "updated_at DESC"
+             when "license_reverse"    then "license DESC"
+             else "created_at DESC"
+           end
+
+    @projects = Project.paginate(:all, :order => sort,
                   :page => params[:page], :include => [:tags, { :repositories => :project } ])
 
     @atom_auto_discovery_url = projects_path(:format => :atom)

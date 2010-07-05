@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2010 Marko Peltola <marko@markopeltola.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -544,6 +545,19 @@ module ApplicationHelper
       :container => "True"
     }
     will_paginate(collection, options.merge(default_options))
+  end
+
+  def sort_th_class(param)
+    result = 'class="sortup"' if params[:sort] == param
+    result = 'class="sortdown"' if params[:sort] == param + "_reverse"
+    return result
+  end
+
+  def sort_link(text, param)
+    key = param
+    key += "_reverse" if params[:sort] == param
+    parameters = params.merge({:sort => key, :page => params[:page], :action => controller.action_name })
+    link_to(text, url_for(parameters))
   end
 
   def dashboard_path

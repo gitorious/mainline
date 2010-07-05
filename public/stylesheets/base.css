@@ -1000,6 +1000,24 @@ table.listing td.icon {
   text-align: center;
 }
 
+table.sorted_list th.first {
+  width: 60%;
+}
+
+table.sorted_list tr {
+  border-bottom: 1px solid #dedede;
+}
+
+th.sortup > a {
+  padding-right: 18px;
+  background: url("../images/silk/bullet_arrow_down.png") no-repeat right center;
+}
+
+th.sortdown > a {
+  padding-right: 18px;
+  background: url("../images/silk/bullet_arrow_up.png") no-repeat right center;
+}
+
 ul.committers_list li {
   margin-bottom: 2px;
 }
@@ -1242,12 +1260,6 @@ small.commit_message {
 
 .commit_list .commit_item .gravatar {
   margin-top: 5px;
-}
-
-ul.project_list li {
-  padding-bottom: 1em;
-  margin-bottom: 1em;
-  border-bottom: 1px solid #dedede;
 }
 
 ul.bullet_list li {
@@ -2095,11 +2107,6 @@ table.markdown_help {
   text-align: center;
   margin-bottom:0;
   padding: 5px;
-}
-
-.project_list_item p {
-  margin-top: 0;
-  margin-bottom: 0;
 }
 
 #left {
