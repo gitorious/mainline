@@ -41,6 +41,9 @@
 					</p>
 			</form>
 			<div id="clone-help-<%= repository.id -%>-box" class="clone-help-text" style="display:none;">
+        <% if logged_in? && current_user.site_admin? -%>
+          <p>Repository path: <code><%= h(repository.full_repository_path) -%></a></code></p>
+        <% end -%>
         <% if logged_in? && current_user.can_write_to?(repository) -%>
         <p>
           Adding this repository as a pushable origin:
