@@ -30,6 +30,7 @@ class SessionsController < ApplicationController
   renders_in_site_specific_context
   ssl_required :new, :create, :destroy
   layout "second_generation/application"
+  before_filter :validate_request_host, :only => :create
   
   # render new.rhtml
   def new
@@ -53,6 +54,12 @@ class SessionsController < ApplicationController
   end
 
   protected
+
+  def validate_request_host
+    if !GitoriousConfig.valid_request_host?(request.host)
+      Rails.logger.warn("WARNING: Invalid request host '#{request.host}'. Session cookies will not work")
+    end
+  end
 
   # if user doesn't exist, it gets created and activated,
   # else if the user already exists with same identity_url, it just logs in
