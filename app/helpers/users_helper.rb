@@ -45,7 +45,7 @@ module UsersHelper
   end
 
   def render_email(email)
-    "&lt;" + mangled_mail(email.to_s) + "&gt;"
+    "&lt;" + mangled_mail(email).to_s + "&gt;"
   end
 
   def is_current_user?(a_user)
