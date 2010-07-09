@@ -1,19 +1,15 @@
 #searchbox .search-field#q {
 	width: 140px;
-
 }
 #content ul.events .event_instances li > * {
-		overflow: hidden;
+	overflow: hidden;
 }
 #content ul.events .event_instances li {
 	clear: none;
 	width: 730px;
 }
 #content ul.events .event_instances li .event_meta {
-		width: 430px;
-}
-#content .repository_meta .repository-links {
-
+	width: 430px;
 }
 #content .repository_meta .repository-links ul {
 	float: left;
@@ -24,46 +20,36 @@
 #content .repository_meta .repository-links ul li {
 	float: left;
 	display: inline;
-	
 }
-#content .repository_meta .repository-info .infobox ul li .clone_urls {
-
+#content .repository_meta .repository-info {
+	padding-bottom: 7px;
 }
 #content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio {
-	float: left;
-	overflow: hidden;
-	padding: 4px 10px 4px 8px;
+	padding: 2px 6px 5px 3px;
 }
-#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio input {
-		width: 20px;
-}
-
-#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone_radio label {
-	float: left;
-	font-size: 11px;
-	line-height: 12px;
-}
-#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy,#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy input {
-		float: left;
-		width: 270px;
+#content .repository_meta .repository-info .infobox ul li .clone_urls form p.clone-copy input {
+	vertical-align: middle;
 }
 .tag_list {
-		width: 240px;
+	width: 240px;
 }
 .tag_list li {
-		float: left;
+	float: left;
 }
-#content .form-wrapper  ul li input[type='text'], #content .form-wrapper  ul li input[type='password'] {
+#content .form-wrapper ul li input[type='text'], #content .form-wrapper ul li input[type='password'] {
 	height: 24px;
 	padding: 10px 10px 10px 10px;
-
 }
-#content .form-wrapper  ul li label {
+#content .form-wrapper ul li label {
 	font-weight: bold;
-
 }
 #content .form-wrapper input[type='submit'] {
 	font-size: 0;
-	color: #CCC;}
-	body #content p.alt_links { margin-top: 20px; }
-.form-wrapper#signup { height: 800px; }
+	color: #CCC;
+}
+body #content p.alt_links {
+	margin-top: 20px;
+}
+.form-wrapper#signup {
+	height: 800px;
+}

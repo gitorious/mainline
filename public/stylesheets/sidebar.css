@@ -9,16 +9,16 @@
  	width: 240px;
 	min-height: 100%;
  	float: right;
-  padding: 23px 20px; 
+	padding: 23px 20px;
 	color: #555;
 }
 
 #container #sidebar:after {
-  clear: left;
-  display: block;
-  visibility: hidden;
-  height: 0;
-  content: "";
+	clear: left;
+	display: block;
+	visibility: hidden;
+	height: 0;
+	content: "";
 }
 
 #container #sidebar .divider {
@@ -30,8 +30,7 @@
 	margin: 10px 0px 10px;
 }
 	
-/* #############		 NAVIGATION			 ########### */
-
+/* ############# NAVIGATION ########### */
 
 .navigation {
 	float: left;
@@ -41,8 +40,7 @@
 	margin-left: -20px;
 	background: url(../side-nav-bg.png) repeat-x #CCC;
 	padding: 18px 20px 18px 20px;
-		margin-bottom: 15px;
-	
+	margin-bottom: 15px;
 }
 
 .navigation.multiple {
@@ -53,38 +51,37 @@
 
 /* ################# BUTTONS / LINKS ########### */
 
-
 #sidebar ul.links.meta li {
- border-bottom: none;
+	border-bottom: none;
 }
 /*
 #sidebar ul.links li a {
 	background: #CCC;
-  background-repeat: no-repeat;
-  background-position: 5px 5px;
-  background-image: url("../images/silk/bullet_go.png");
-  display: block;
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+	background-image: url("../images/silk/bullet_go.png");
+	display: block;
 	font-weight: bold;
 	color: #3a3a3a;
 	text-shadow: 0px 1px #eaeaea;
-  padding: 6px 5px 4px 28px;
+	padding: 6px 5px 4px 28px;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }
 
 #sidebar ul.links li a:hover {
-  color: #2c2c2c;
+	color: #2c2c2c;
 	background: #F8F8F8;
 	background-position: 5px 5px;
-  background-image: url("../images/silk/bullet_go.png");
+	background-image: url("../images/silk/bullet_go.png");
 	background-repeat: no-repeat;
 	text-shadow: 0px 1px #eee;
-  text-decoration: none;
+	text-decoration: none;
 }
 */
 
 #sidebar ul.links li: {
-		margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 #sidebar ul.links li {
@@ -96,14 +93,14 @@
 	border-left: 1px solid #b5b5b5;
 	border-right: 1px solid #b5b5b5;
 	border-top: 1px solid #b5b5b5;
-  background: #dedede no-repeat 6px 5px;
+	background: #dedede no-repeat 6px 5px;
 }
 
 #sidebar ul.links li.first {
-		-webkit-border-top-right-radius: 6px;
-		-webkit-border-top-left-radius: 6px;
-		-moz-border-radius-topright: 6px;
-		-moz-border-radius-topleft: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-webkit-border-top-left-radius: 6px;
+	-moz-border-radius-topright: 6px;
+	-moz-border-radius-topleft: 6px;
 }
 
 #sidebar ul.links li.first a:hover {
@@ -114,11 +111,11 @@
 }
 
 #sidebar ul.links li.last {
-		-webkit-border-bottom-right-radius: 6px;
-		-webkit-border-bottom-left-radius: 6px;
-		-moz-border-radius-bottomright: 6px;
-		-moz-border-radius-bottomleft: 6px;
-		border-bottom: 1px solid #b5b5b5;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom: 1px solid #b5b5b5;
 }
 
 #sidebar ul.links li.last a:hover {
@@ -131,56 +128,52 @@
 
 
 #sidebar ul.links li a {
-		font-weight: bold;
-		color: #555555;
-		font-size: 12px;
-		text-shadow: 0px 1px #FFF;
-		width: 195px;
-		float: left;
-		display: block;
-		line-height: 20px;
-		height: 22px;
-		background-repeat: no-repeat;
-		background-position: 10px 9px;
-		padding: 8px 10px 4px 35px;
-		background-image: url("../images/silk/bullet_go.png");
-
+	font-weight: bold;
+	color: #555555;
+	font-size: 12px;
+	text-shadow: 0px 1px #FFF;
+	width: 195px;
+	float: left;
+	display: block;
+	line-height: 20px;
+	height: 22px;
+	background-repeat: no-repeat;
+	background-position: 10px 9px;
+	padding: 8px 10px 4px 35px;
+	background-image: url("../images/silk/bullet_go.png");
 }
 #sidebar ul.links li a:hover {
-	  color: #535353;
-		text-shadow: 0px 1px #EEE;
-		-webkit-box-shadow: 0px 1px 0px #e9e9e9 inset;
-	  text-decoration: none;
-		background: #cecece no-repeat 10px 9px;
-		background-image: url("../images/silk/bullet_go.png");
-
+	color: #535353;
+	text-shadow: 0px 1px #EEE;
+	-webkit-box-shadow: 0px 1px 0px #e9e9e9 inset;
+	text-decoration: none;
+	background: #cecece no-repeat 10px 9px;
+	background-image: url("../images/silk/bullet_go.png");
 }
 
 #sidebar ul.links li a:active {
-		background-color: #c5c5c5;
-		line-height: 23px;
-		background-position: 10px 10px;
+	background-color: #c5c5c5;
+	line-height: 23px;
+	background-position: 10px 10px;
 }
 
 #sidebar ul.links.meta li a {
-  font-size: 10px;
-  padding: 2px 5px 2px 28px;
-  background-position: 5px 2px;
+	font-size: 10px;
+	padding: 2px 5px 2px 28px;
+	background-position: 5px 2px;
 }
 
 #sidebar ul.links.meta li:hover {
-  background: inherit;
+	background: inherit;
 }
 
-
-
 #sidebar ul.links.meta li a:hover {
-  color: #390;
-  text-decoration: underline;
+	color: #390;
+	text-decoration: underline;
 }
 
 #sidebar ul.options li strong {
-		float: left;
+	float: left;
 }
 #sidebar ul.options {
 	float: left;
@@ -195,38 +188,37 @@
 	border-bottom: 1px solid #d9d9d9;
 }
 
-
-/* ##########		 PROJECT SPECIFIC		 ########### */
-
+/* ########## PROJECT SPECIFIC ########### */
 
 #sidebar > * {
-		float: left;
+	float: left;
 }
 #sidebar ul.committers, #sidebar ul.repository_list {
-	width: 240px;}
+	width: 240px;
+}
 #sidebar h1 {
-		float: none;
+	float: none;
 }
 
 #project-meta, .sidebar-meta {
-		float: left;
-		width: 240px;
-		padding: 15px 0px 15px;
+	float: left;
+	width: 240px;
+	padding: 15px 0px 15px;
 }
 
 #project-meta li, .sidebar-meta li {
-		margin-bottom: 3px;
-		text-align: right;
-		padding-bottom: 3px;
-		font-size: 12px;
-		border-bottom: 1px solid #d9d9d9;
+	margin-bottom: 3px;
+	text-align: right;
+	padding-bottom: 3px;
+	font-size: 12px;
+	border-bottom: 1px solid #d9d9d9;
 }
 
 #project-meta li strong, .sidebar-meta li strong {
-		float: left;
+	float: left;
 }
 #clone-list-container {
-		width: 240px;
+	width: 240px;
 }
 
 /* SEARCH TIPS */

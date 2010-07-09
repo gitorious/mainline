@@ -127,9 +127,9 @@ module RepositoriesHelper
     user_clones.size >= 5 || group_clones.size >= 5
   end
 
-  def css_class_for_extended_clone_url_field(repository)
-    if (logged_in? && !current_user.can_write_to?(repository)) || !logged_in?
-      return "extended"
-    end
+  def css_class_for_clone_url_field(repository)
+    http = repository.http_cloning? ? " http" : ""
+    ssh = logged_in? && current_user.can_write_to?(repository) ? " ssh" : ""
+    return "git#{http}#{ssh}"
   end
 end
