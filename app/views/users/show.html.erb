@@ -33,6 +33,7 @@
                 new_message_path(:to => @user.login), :class => "new_email") -%>
         </li>
         <% end -%>
+      </ul>
       <div class="clear"></div>
     </div>
 
@@ -52,9 +53,13 @@
 		<% pull_box(t("views.site.dashboard.projects"), :class => "your-projects pull-box-390") do -%>
 		<ul class="with_icons">
 			<% @projects.each do |project| -%>
-			<li class="project">
-				<%= link_to h(project.title), project -%><% if favorited?(project) %><%= image_tag("silk/star.png", :title => "favorited") %><% end %>
-			</li><% end -%>
+			  <li class="project">
+				  <%= link_to h(project.title), project -%>
+          <% if favorited?(project) %>
+            <%= image_tag("silk/star.png", :title => "favorited") %>
+          <% end %>
+			  </li>
+      <% end -%>
 		</ul><% if is_current_user?(@user) -%>
 		<div class="pull-box-links">
 			<%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
@@ -94,14 +99,17 @@
 		</div>
 		<ul class="with_icons">
 			<% @favorites.each do |favorite| %>
-			<li class="<%= css_classes_for(favorite.watchable) -%>">
-				<%= link_to_watchable(favorite.watchable) -%>
-			</li><% end %><% if @favorites.blank? -%>
-			<li style="list-style: none">
-				<p class="hint">
-					<%= no_watchings_notice_for(@user) -%>
-				</p><% end -%>
+			  <li class="<%= css_classes_for(favorite.watchable) -%>">
+				  <%= link_to_watchable(favorite.watchable) -%>
+			  </li>
+      <% end %>
+      <% if @favorites.blank? -%>
+			  <li style="list-style: none">
+				  <p class="hint">
+					  <%= no_watchings_notice_for(@user) -%>
+				  </p>
 			</li>
+      <% end -%>
 		</ul><% end %><% pull_box("Team memberships", :class => "teams pull-box-390") do -%>
 		<ul>
 			<% @user.groups.each do |group| -%>
