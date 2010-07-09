@@ -7,6 +7,7 @@
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2009 Bill Marquette <bill.marquette@gmail.com>
+#   Copyright (C) 2010 Christian Johansen <christian@cjohansen.no>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -497,12 +498,11 @@ module ApplicationHelper
 
   # The javascripts to be included in all layouts
   def include_javascripts
-    javascript_include_tag "jquery.core", "jquery.autocomplete", "jquery.cookie",
-      "color_picker", "ui.core","ui.selectable", "jquery.scrollto", "jquery.timeago",
-      "core_extensions", "jquery.expander", "jquery.cycle.all.min",
-      "jquery.gitorious_extensions",
-      "notification_center", "merge_requests", "diff_browser", "messages",
-      "application", "live_search", "repository_search", :cache => true
+    javascript_include_tag "lib/jquery", "lib/jquery/autocomplete", "lib/jquery/cookie",
+      "lib/jquery/color_picker", "lib/jquery/ui","lib/jquery/ui/selectable", "lib/jquery/scrollto",
+      "lib/jquery/timeago", "core_extensions", "lib/jquery/expander", "lib/jquery/cycle.all.min",
+      "gitorious/jquery", "notification_center", "gitorious/merge_requests", "gitorious/diff_browser",
+      "gitorious/messages", "application", "gitorious/live_search", "gitorious/repository_search", :cache => true
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+

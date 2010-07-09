@@ -1,6 +1,7 @@
 /*
   #--
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2010 Christian Johansen <christian@cjohansen.no>
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -16,130 +17,172 @@
   #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   #-- 
 */
-MergeRequestControllerTest = TestCase("Merge request controller", {
-    tearDown: function() {
+/*jslint newcap: false, onevar: false, nomen: false*/
+/*global jQuery, Gitorious, NotificationCenter, TestCase,
+         assertSame, assertFalse, assertTrue, assertEquals*/
+
+TestCase("MergeRequestControllerTest", {
+    tearDown: function () {
         Gitorious.MergeRequestController.getInstance()._setTransport(jQuery);
     },
-    testSingleton: function() {
+
+    "test should be singleton": function () {
         var firstController = Gitorious.MergeRequestController.getInstance();
         var secondController = Gitorious.MergeRequestController.getInstance();
+
         assertSame(firstController, secondController);
     },
-    testNoReloadUnlessChanged: function() {
+
+    "test should not require reload if sha does not change": function () {
         var c = new Gitorious.MergeRequestController();
         c._setCurrentShaRange("ffac");
         c.shaSelected("ffac");
+
         assertFalse(c.needsUpdate());
+    },
+
+    "test should not require reload if version does not change": function () {
+        var c = new Gitorious.MergeRequestController();
         c._setCurrentVersion(2);
         c.versionSelected(2);
+
         assertFalse(c.needsUpdate());
+    },
+
+    "test should require update if sha changes": function () {
+        var c = new Gitorious.MergeRequestController();
+        c._setCurrentShaRange("ffac");
         c.shaSelected("ffcc");
+
         assertTrue(c.needsUpdate());
     },
-    testFetchShasInVersion: function() {
+
+    "test fetch shas in version": function () {
         var c = Gitorious.MergeRequestController.getInstance();
         var shasFetched = false;
+
         var controllerMock = {
-            ajax: function(options){
+            ajax: function (options) {
                 NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
-                                                   true, "data","text");
+                                                   true, "data", "text");
             }
-        }
+        };
+
         // Mocking this one, as it depends on the DOM
-        c.replaceShaListing = function(html) {
+        c.replaceShaListing = function (html) {
             this._shaListing = html;
-        }
+        };
+
         c._setTransport(controllerMock);
         c.versionChanged(7);
+
         assertTrue(c.needsUpdate());
     },
     
-    testSelectDifferentVersion: function() {
+    "test select different version": function () {
         var c = Gitorious.MergeRequestController.getInstance();
         c._setCurrentShaRange("ffac");
         c._setCurrentVersion(2);
 
-        var ControllerMock = function() {
+        var ControllerMock = function () {
             this.called = false;
-            this.ajax = function(args){
+            this.ajax = function (args) {
                 this.calledWith = args;
             };
-            this.ajaxReceived = function() {
+
+            this.ajaxReceived = function () {
                 NotificationCenter.notifyObservers("MergeRequestDiffReceived",
                                                    "data", "message");
-            }
+            };
         };
-        var m = new ControllerMock();
 
+        var m = new ControllerMock();
         c._setTransport(m);
 
         c.update({'version': 1, 'sha': 'ffcc-aa90888'});
         var callArgs = m.calledWith;
+
         assertEquals("ffcc-aa90888", callArgs.data.commit_shas);
         m.ajaxReceived();
         assertFalse(c.needsUpdate());    
     },
-    testParseShaAndReturnInstance: function() {
+
+    "test parse sha and return instance": function () {
         var spec = Gitorious.ShaSpec.parseShas("abc-bcd");
+
         assertEquals("abc-bcd", spec.shaSpec());
     }
 });
 
-ShaSpecTest = TestCase("Sha specs", {
-    testAddSha: function() {
+TestCase("ShaSpecTest", {
+    "test should add sha": function () {
         var spec = new Gitorious.ShaSpec();
-        assertEquals(0, spec.allShas.length);
+        var count = spec.allShas.length;
+
         spec.addSha("foo");
-        assertEquals(1, spec.allShas.length);
         spec.addSha("bar");
-        assertEquals(2, spec.allShas.length);
+
+        assertEquals(2, spec.allShas.length - count);
     },
 
-    testParseShasPair: function() {
+    "test parse shas pair": function () {
         var spec = new Gitorious.ShaSpec();
+
         spec.parseShas("foo-bar");
+
         assertEquals(2, spec.allShas.length);
         assertEquals("foo", spec.firstSha().fullSha);
         assertEquals("bar", spec.lastSha().fullSha);
         assertEquals("foo-bar", spec.shaSpec());
     },
 
-    testParseShasSingle: function() {
+    "test parse shas single": function () {
         var spec = new Gitorious.ShaSpec();
+
         spec.parseShas("foo");
+
         assertEquals(1, spec.allShas.length);
         assertEquals("foo", spec.firstSha().fullSha);
         assertEquals("foo", spec.shaSpec());
     }
 });
 
-CommentFormTest = TestCase("CommentForm", {
-    testPrefixInitialCommentBody: function() {
+TestCase("CommentFormTest", {
+    "test prefix initial comment body": function () {
         var commentForm = new Gitorious.CommentForm("foo/bar.rb");
+
         commentForm.setInitialCommentBody("  foo\nbar\nbaz");
+
         assertEquals("> foo\n> bar\n> baz\n\n", commentForm.initialCommentBody);
     },
 
-    testPrefixInitialCommentBodyWithWindozeLineEndings: function() {
+    "test prefix initial comment body with windoze line endings": function () {
         var commentForm = new Gitorious.CommentForm("foo/bar.rb");
+
         commentForm.setInitialCommentBody("  foo\r\nbar\r\nbaz");
+
         assertEquals("> foo\n> bar\n> baz\n\n", commentForm.initialCommentBody);
     },
 
-    testLinesAsInternalFormat: function() {
+    "test lines as internal format": function () {
         var cf = new Gitorious.CommentForm("foo/bar.rb");
+
         cf.numbers = ["1-1", "2-2", "3-3"];
+
         assertEquals("1-1:3-3+2", cf.linesAsInternalFormat());
     },
 
-    "test should get a summary": function() {
+    "test should get a summary": function () {
         var cf = new Gitorious.CommentForm("file.txt");
+
         assertEquals("Commenting on file.txt", cf.getSummary());
     },
 
-    "test should get the last line number tuple": function() {
+    "test should get the last line number tuple": function () {
         var cf = new Gitorious.CommentForm("file.txt");
+
         cf.setLineNumbers(["1-1", "2-1", "3-1"]);
+
         assertEquals("3-1", cf.lastLineNumber());
     }
 });
