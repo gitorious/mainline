@@ -53,14 +53,16 @@ while data = gets
           exit!(1)
         end
 
-        merge_base = `git merge-base #{oldrev} #{newrev}`.chomp
-        if merge_base != oldrev
-          # it's a force-push
-          logger.info("force-push denied for #{ENV['GITORIOUS_USER'].inspect} to " +
-            "#{pre_receive_guard.git_spec.inspect} via "+
-            "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
-          pre_receive_guard.gitorious_says "This repository does only allow fast-forwards"
-          exit!(1)
+        if !pre_receive_guard.null_sha?(oldrev)
+          merge_base = `git merge-base #{oldrev} #{newrev}`.chomp
+          if merge_base != oldrev
+            # it's a force-push
+            logger.info("force-push denied for #{ENV['GITORIOUS_USER'].inspect} to " +
+              "#{pre_receive_guard.git_spec.inspect} via "+
+              "#{ENV['GITORIOUS_WRITABLE_BY_URL'].inspect}")
+            pre_receive_guard.gitorious_says "This repository does only allow fast-forwards"
+            exit!(1)
+          end
         end
       end
 
