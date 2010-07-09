@@ -27,9 +27,9 @@
 <% content_for :extra_head do -%>
   <% if highlightable?(@blob) -%>
     <%= stylesheet_link_tag("prettify/prettify.css") -%>
-    <%= javascript_include_tag("prettify/prettify.js") -%>
+    <%= javascript_include_tag("lib/prettify.js") -%>
     <% if hl = language_of_file(current_path.last) -%>
-      <%= javascript_include_tag("prettify/lang-#{hl}.js", :cache => false) -%>
+      <%= javascript_include_tag("lib/prettify/lang-#{hl}.js", :cache => false) -%>
     <% end -%>
     <script type="text/javascript" charset="utf-8">
       $(document).ready(function(){
