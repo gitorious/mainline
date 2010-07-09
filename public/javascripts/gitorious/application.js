@@ -1,5 +1,7 @@
 /*
 #--
+#   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
 #   Copyright (C) 2010 Christian Johansen <christian@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,23 +18,20 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #--
 */
+/*jslint onevar: false, eqeqeq: false, plusplus: false*/
+/*global gitorious*/
 
-var gitorious = {
-    /**
-     * Object.create shim. Implemented in the gitorious namespace rather than
-     * globally on Object because the shim cannot be made ES5 compliant in ES3
-     * environments (not possible to create object with null prototype, no
-     * property descriptor).
-     */
-    create: (function () {
-        function F (){}
+(function () {
+    var observable = gitorious.create(gitorious.observable);
 
-        return function (proto) {
-            F.prototype = proto;
-            return new F();
-        };
-    }())
-};
+    gitorious.app = {
+        observe: observable.observe.bind(observable),
+        notify: observable.notify.bind(observable),
+        removeObserver: observable.removeObserver.bind(observable),
+        emptyObservers: observable.emptyObservers.bind(observable),
 
-// Legacy, to be removed
-var Gitorious = gitorious;
+        init: function () {
+            // Will eventually handle all bootstrapping
+        }
+    };
+}());

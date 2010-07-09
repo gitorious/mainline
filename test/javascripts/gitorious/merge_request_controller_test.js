@@ -18,7 +18,7 @@
   #-- 
 */
 /*jslint newcap: false, onevar: false, nomen: false*/
-/*global jQuery, Gitorious, NotificationCenter, TestCase,
+/*global jQuery, gitorious, Gitorious, TestCase,
          assertSame, assertFalse, assertTrue, assertEquals*/
 
 TestCase("MergeRequestControllerTest", {
@@ -63,8 +63,8 @@ TestCase("MergeRequestControllerTest", {
 
         var controllerMock = {
             ajax: function (options) {
-                NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
-                                                   true, "data", "text");
+                gitorious.app.notify("MergeRequestShaListingReceived",
+                                     true, "data", "text");
             }
         };
 
@@ -91,8 +91,7 @@ TestCase("MergeRequestControllerTest", {
             };
 
             this.ajaxReceived = function () {
-                NotificationCenter.notifyObservers("MergeRequestDiffReceived",
-                                                   "data", "message");
+                gitorious.app.notify("MergeRequestDiffReceived", "data", "message");
             };
         };
 

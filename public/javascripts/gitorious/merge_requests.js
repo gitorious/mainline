@@ -19,7 +19,7 @@
 #-- 
 */
 /*jslint eqeqeq: false, plusplus: false, onevar: false*/
-/*global Gitorious, NotificationCenter, $, document*/
+/*global gitorious, Gitorious, $, document*/
 
 var diffBrowserCompactCommitSelectable;
 
@@ -278,12 +278,12 @@ $(document).ready(function () {
 
             finish: function () {
                 commentSpinner.hide();
-                NotificationCenter.removeObserver("MergeRequestShaListingUpdated", this);
+                gitorious.app.removeObserver("MergeRequestShaListingUpdated", this);
             }
         };
 
-        NotificationCenter.addObserver("MergeRequestShaListingUpdated",
-                                       jumpToComment.shaListingCurrent.bind(jumpToComment));
+        gitorious.app.observe("MergeRequestShaListingUpdated",
+                          jumpToComment.shaListingCurrent.bind(jumpToComment));
         Gitorious.MergeRequestController.getInstance().versionChanged(version);
 
         return true;
