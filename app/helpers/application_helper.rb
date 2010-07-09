@@ -7,7 +7,7 @@
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2009 Bill Marquette <bill.marquette@gmail.com>
-#   Copyright (C) 2010 Christian Johansen <christian@cjohansen.no>
+#   Copyright (C) 2010 Christian Johansen <christian@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
