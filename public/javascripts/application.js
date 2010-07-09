@@ -266,7 +266,7 @@ $(document).ready(function() {
     });
 
     // Misc
-		$('.with_sidebar').parent().css('background', 'url("/img/container-bg310.png") repeat-y');
+		$('.with_sidebar').parent().addClass('sidebar-enabled');
 		$('ul.navigation').find('li:first').addClass("first"); 
 		$('ul.navigation').find('li:last').addClass("last"); 
 		$("ul.navigation ~ ul.navigation").addClass("multiple");
