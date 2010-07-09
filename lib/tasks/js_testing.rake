@@ -11,7 +11,7 @@ namespace :test do
 
   desc "Start the javascript test driver server"
   task :start_server do
-    puts `java -jar #{File.join(Rails.root, "test", "javascripts", "JsTestDriver.jar")} --port 9876`
+    puts `java -jar #{File.join(Rails.root, "test", "javascripts", "JsTestDriver.jar")} --port 4224`
   end
 end
 
