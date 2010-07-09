@@ -34,6 +34,7 @@
 	      @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %></li>
 	<%- end -%>
 			<li><%= favorite_button(@merge_request) %></li>
+  </ul>
 </div>
 
 <h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%></h1>
