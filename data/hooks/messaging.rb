@@ -23,6 +23,8 @@ require 'yaml'
 
 print "=> Syncing Gitorious... "
 
+RAILS_ENV = ENV['RAILS_ENV'] || "production"
+
 class Publisher
   def connect
     stomp_server, stomp_port = stomp_server_and_port
@@ -31,7 +33,7 @@ class Publisher
   end
   
   def stomp_server_and_port
-    gitorious_yaml = YAML::load_file(File.join(File.dirname(__FILE__), "..", "..", "config", "gitorious.yml"))[ENV['RAILS_ENV']]
+    gitorious_yaml = YAML::load_file(File.join(File.dirname(__FILE__), "..", "..", "config", "gitorious.yml"))[RAILS_ENV]
     server = gitorious_yaml['stomp_server_address'] || 'localhost'
     host = (gitorious_yaml['stomp_server_port'] || '61613').to_i
     return [server, host]
