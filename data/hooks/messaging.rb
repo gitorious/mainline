@@ -1,4 +1,5 @@
 #--
+#   Copyright (C) 2010 Tero Hänninen <tero.j.hanninen@jyu.fi>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2009 Marius Mårnes Mathiesen <marius.mathiesen@gmail.com>
 #
@@ -22,7 +23,7 @@ require 'yaml'
 
 print "=> Syncing Gitorious... "
 
-RAILS_ENV = 'production'
+RAILS_ENV = ENV['RAILS_ENV'] || "production"
 
 class Publisher
   def connect
