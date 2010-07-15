@@ -41,6 +41,7 @@ class Admin::UsersController < ApplicationController
     @user.is_admin = params[:user][:is_admin] == "1"
     respond_to do |wants|
       if @user.save
+        @user.activate
         flash[:notice] = I18n.t "admin.users_controller.create_notice"
         wants.html { redirect_to(admin_users_path) }
         wants.xml { render :xml => @user, :status => :created, :location => @user }
