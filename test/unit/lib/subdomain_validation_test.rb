@@ -65,4 +65,31 @@ class SubdomainValidationTest < ActiveSupport::TestCase
       assert !@config.valid_request_host?("gitorious")
     end
   end
+
+  context "Reserved host names" do
+    setup do
+      @config = {}
+      @config.extend(SubdomainValidation)
+    end
+
+    should "not consider the HTTP_CLONING_SUBDOMAIN a valid host name" do
+      @config["gitorious_host"] = "#{Site::HTTP_CLONING_SUBDOMAIN}"
+      assert @config.using_reserved_hostname?
+    end
+
+    should "not consider a subdomain starting with HTTP_CLONING_SUBDOMAIN a valid host name" do
+      @config["gitorious_host"] = "#{Site::HTTP_CLONING_SUBDOMAIN}.example"
+      assert @config.using_reserved_hostname?
+    end
+
+    should "allow HTTP_CLONING_SUBDOMAIN as part of name" do
+      @config["gitorious_host"] = "#{Site::HTTP_CLONING_SUBDOMAIN}orious"
+      assert !@config.using_reserved_hostname?
+    end
+
+    should "consider other domains valid" do
+      @config["gitorious_host"] = "gitorious.org"
+      assert !@config.using_reserved_hostname?
+    end
+  end
 end

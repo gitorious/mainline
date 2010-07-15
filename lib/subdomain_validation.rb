@@ -25,6 +25,10 @@ module SubdomainValidation
     return gitorious_host =~ /[a-z0-9_]?\.[a-z0-9_]?/
   end
 
+  def using_reserved_hostname?
+    gitorious_host.split(".").first == Site::HTTP_CLONING_SUBDOMAIN
+  end
+
   def valid_request_host?(host)
     return false if !valid_subdomain?
     subdomain_re = Regexp.new(".*\.?" + gitorious_host)
