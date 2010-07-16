@@ -491,6 +491,18 @@ span.changed {
 	margin: 0;
 }
 
+.options li form.button-to {
+    float: left;
+    width: auto;
+}
+
+.options li form.button-to div,
+.options li form.button-to div input,
+.options li .repository-link,
+.options li .repository-link.favorite a {
+    float: left;
+}
+
 /* SEARCH PAGE */
 .search_bar_results {
 	width: 600px;
