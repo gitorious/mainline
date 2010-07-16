@@ -31,7 +31,7 @@ module MergeRequestsHelper
     open_tags.each do |status|
       out << "<li>#{link_to_status(repository, status.name)}</li>"
     end
-    out << '</ul'
+    out << '</ul>'
 
     out << '<ul class="horizontal">'
     closed_tags = project_statuses.select{|s| s.closed? }

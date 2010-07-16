@@ -2928,8 +2928,6 @@ table.select_commits_from_list tr.unknown-status td.meta
     color: #888;
 }
 #merge-requests-status-chooser ul.horizontal {
-    float:left;
-		width: 100%;
     margin: 0;
 }
 
