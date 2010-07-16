@@ -3179,10 +3179,6 @@ Merge request commit selector
     background-image: url("../images/silk/bullet_red.png");
 }
 
-#merge_request_commit_selector .version_selector
-{
-    float: right;
-}
 #merge_request_current_version li.merge_base
 {
     font-weight: bold;
