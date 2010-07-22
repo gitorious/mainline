@@ -43,8 +43,8 @@ class UserTest < ActiveSupport::TestCase
   should_validate_presence_of :login, :password, :password_confirmation, :email
   should_validate_acceptance_of :terms_of_use
 
-  should_not_allow_values_for :login, 'john.doe', 'john_doe'
-  should_allow_values_for :login, 'JohnDoe', 'john-doe', 'john999'
+  should_not_allow_values_for :login, 'john_doe'
+  should_allow_values_for :login, 'JohnDoe', 'john-doe', 'john999', 'john.doe'
 
   should 'downcase the login before validation' do
     u = User.new
