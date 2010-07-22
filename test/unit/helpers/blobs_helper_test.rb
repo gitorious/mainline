@@ -107,6 +107,7 @@ class BlobsHelperTest < ActionView::TestCase
       assert_equal "list", language_of_file("foo.lisp")
       assert_equal "css", language_of_file("foo.css")
       assert_equal "lua", language_of_file("foo.lua")
+      assert_equal "scala", language_of_file("foo.scala")
     end
 
     should "return nil if the filename can't be highlighted" do

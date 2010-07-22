@@ -23,15 +23,19 @@ module BlobsHelper
   include TreesHelper
   
   HIGHLIGHTER_TO_EXT = {
-    "list"  => /\.(lisp|cl|l|mud|el|clj)$/,
-    "hs"    => /\.hs$/,
+    "apollo"=> /\.(apollo|agc|aea)$/,
     "css"   => /\.css$/,
+    "hs"    => /\.hs$/,
+    "list"  => /\.(lisp|cl|l|mud|el|clj)$/,
     "lua"   => /\.lua$/,
     "ml"    => /\.(ml|mli)$/,
     "proto" => /\.proto$/,
+    "scala" => /\.scala$/,
     "sql"   => /\.(sql|ddl|dml)$/,
     "vb"    => /\.vb$/,
+    "vhdl"  => /\.(vhdl|vhd)$/,
     "wiki"  => /\.(mediawiki|wikipedia|wiki)$/,
+    "yaml"  => /\.(yaml|yml)$/,
   }
   
   ASCII_MIME_TYPES_EXCEPTIONS = [ /^text/ ]
