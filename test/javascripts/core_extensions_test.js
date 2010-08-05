@@ -47,11 +47,53 @@ TestCase("ArrayExtensionsTest", {
         assertEquals(1, arr.min());
         assertEquals(3, arr.max());
         assertEquals(100, [1, "100", "99", 99].max());
+    },
+
+    "test unique": function () {
+        var obj = {};
+        var obj2 = {};
+        var fn = function () {};
+        var fn2 = function () {};
+        var arr = [1, 2, 3, 1, 2, 3, "4", obj, fn, fn2, obj2, 21];
+
+        assertEquals([1, 2, 3, "4", obj, fn, fn2, obj2, 21], arr.unique());
     }
 });
 
 TestCase("StringExtensionsTest", {
     "test is blank": function () {
         assertEquals(true, "".isBlank());
+    }
+});
+
+TestCase("FunctionExtensionsTest", {
+    "test should bind function to object": function () {
+        var thisObj;
+
+        var obj = {
+            fn: function () {
+                thisObj = this;
+            }
+        };
+
+        var bound = obj.fn.bind(obj);
+        bound();
+
+        assertSame(obj, thisObj);
+    },
+
+    "test should bind when called with call": function () {
+        var thisObj;
+
+        var obj = {
+            fn: function () {
+                thisObj = this;
+            }
+        };
+
+        var bound = obj.fn.bind(obj);
+        bound.call({});
+
+        assertSame(obj, thisObj);
     }
 });
