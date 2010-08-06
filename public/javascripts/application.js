@@ -203,9 +203,10 @@ $(document).ready(function () {
 
     $("abbr.timeago").timeago();
 
-    // Rails generates some quite obtrusive markup when
-    // :method => whatever is used in link_to etc.
-    $("a[data-request-method]").replaceRailsGeneratedForm();
+    // Watch/unwatch projects and repositories
+    $("a[data-request-method]").toggleResource({
+        texts: { enabled: "Unwatch", disabled: "Watch" }
+    });
 
     // watchable/favorite list filtering
     $(".your-favorites").each(function () {

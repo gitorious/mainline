@@ -502,7 +502,7 @@ module ApplicationHelper
               "/ui", "/ui/selectable", "/scrollto", "/expander",
               "/timeago"].collect { |f| "lib/jquery#{f}" }
 
-    gitorious = ["", "/observable", "/application", "/jquery",
+    gitorious = ["", "/observable", "/application", "/resource_toggler", "/jquery",
                  "/merge_requests", "/diff_browser", "/messages", "/live_search",
                  "/repository_search"].collect { |f| "gitorious#{f}" }
 
