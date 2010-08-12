@@ -24,6 +24,6 @@ TestCase("GitoriousTest", {
         var obj = {};
         var newObj = gitorious.create(obj);
 
-        assert(obj.isPrototypeOf(newObj);
+        assert(obj.isPrototypeOf(newObj));
     }
 });
