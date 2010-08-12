@@ -18,7 +18,7 @@
 #--
 */
 /*jslint onevar: false, eqeqeq: false, plusplus: false, newcap: false*/
-/*global Gitorious, TestCase, assertEquals */
+/*global Gitorious, TestCase, assertEquals, assertSame*/
 
 TestCase("ArrayExtensionsTest", {
     "test map": function () {

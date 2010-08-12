@@ -17,7 +17,8 @@
 #-- 
 */
 /*jslint newcap: false, onevar: false*/
-/*global gitorious, sinon, jQuery, TestCase, assertTrue, assertFalse, assertEquals */
+/*global gitorious, sinon, jQuery, TestCase, assertTrue,
+         assert, assertFalse, assertEquals, assertNotEquals*/
 
 (function () {
     var g = gitorious;
@@ -58,24 +59,9 @@
         },
 
         "test should remove waiting class when disabling": function () {
-            this.toggler.element.removeClass = sinon.spy();
-            this.toggler.toggleState();
-
-            assert(this.toggler.element.removeClass.calledWith("waiting"));
-        },
-
-        "test should remove waiting class when disabling": function () {
             this.toggler.toggleState();
 
             assertEquals("disabled", this.toggler.element.attr("className"));
-        },
-
-        "test should remove waiting class when enabling": function () {
-            this.toggler.element.removeClass = sinon.spy();
-            this.toggler.enabled = false;
-            this.toggler.toggleState();
-
-            assert(this.toggler.element.removeClass.calledWith("waiting"));
         },
 
         "test should remove waiting class when enabling": function () {
@@ -93,7 +79,6 @@
 
         "test toggle disable enabled toggler": function () {
             this.toggler.toggleResource();
-            this.server.longestTimeout++;
             this.server.respond();
 
             assertEquals("disabled", this.toggler.element.attr("className"));

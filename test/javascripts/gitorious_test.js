@@ -17,7 +17,7 @@
 #--
 */
 /*jslint onevar: false, eqeqeq: false, plusplus: false, newcap: false*/
-/*global gitorious, TestCase, assertEquals */
+/*global gitorious, TestCase, assert*/
 
 TestCase("GitoriousTest", {
     "test should create object inheriting from other object": function () {

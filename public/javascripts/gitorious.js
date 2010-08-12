@@ -25,7 +25,7 @@ var gitorious = {
      * property descriptor).
      */
     create: (function () {
-        function F (){}
+        function F() {}
 
         return function (proto) {
             F.prototype = proto;
