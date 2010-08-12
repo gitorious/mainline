@@ -20,7 +20,7 @@
 */
 /*jslint nomen: false, eqeqeq: false, plusplus: false, onevar: false,
          regexp: false*/
-/*global Gitorious, NotificationCenter, diffBrowserCompactCommitSelectable, $, document, window, console*/
+/*global gitorious, Gitorious, diffBrowserCompactCommitSelectable, $, document, window, console*/
 
 if (!this.Gitorious) {
     this.Gitorious = {};
@@ -166,12 +166,11 @@ Gitorious.setDiffBrowserHunkStateFromCookie = function () {
     }
 };
 
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
-                               Gitorious.setDiffBrowserHunkStateFromCookie.bind(Gitorious));
-
+gitorious.app.observe("DiffBrowserDidReloadDiffs",
+                  Gitorious.setDiffBrowserHunkStateFromCookie);
 
 Gitorious.DiffBrowser = function (shas) {
-    NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
+    gitorious.app.notify("DiffBrowserWillReloadDiffs", this);
     var c = Gitorious.MergeRequestController.getInstance();
     var version = c.determineCurrentVersion();
     c.update({ version: version, sha: shas });
@@ -309,9 +308,9 @@ Gitorious.DiffBrowser.KeyNavigationController = function () {
 };
 
 Gitorious.DiffBrowser.KeyNavigation = new Gitorious.DiffBrowser.KeyNavigationController();
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
+gitorious.app.observe("DiffBrowserDidReloadDiffs",
                                Gitorious.DiffBrowser.KeyNavigation.enable.bind(Gitorious.DiffBrowser.KeyNavigation));
-NotificationCenter.addObserver("DiffBrowserWillPresentCommentForm",
+gitorious.app.observe("DiffBrowserWillPresentCommentForm",
                                Gitorious.DiffBrowser.KeyNavigation.disable.bind(Gitorious.DiffBrowser.KeyNavigation));
 
 Gitorious.MergeRequestController = function () {
@@ -408,7 +407,7 @@ Gitorious.MergeRequestController = function () {
         spec.parseShas(this._currentShaRange);
         spec.summarizeHtml();
 
-        NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+        gitorious.app.notify("DiffBrowserDidReloadDiffs", this);
 
         if (callback) {
             callback.apply(caller);
@@ -510,18 +509,16 @@ Gitorious.MergeRequestController = function () {
                 url: url,
 
                 success: function (data, text) {
-                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
-                                                       true, data, text, v);
+                    gitorious.app.notify("MergeRequestShaListingReceived",
+                                     true, data, text, v);
                 },
 
                 error: function (xhr, statusText, errorThrown) {
-                    NotificationCenter.notifyObservers("MergeRequestShaListingReceived",
-                                                       false);
+                    gitorious.app.notify("MergeRequestShaListingReceived", false);
                 }
             });
         } else {
-            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated",
-                                               "Same version");
+            gitorious.app.notify("MergeRequestShaListingUpdated", "Same version");
         }
     };
 
@@ -552,8 +549,7 @@ Gitorious.MergeRequestController = function () {
         if (successful) {
             $("#merge_request_version").html("Version " + version);
             this.replaceShaListing(data);
-            NotificationCenter.notifyObservers("MergeRequestShaListingUpdated",
-                                               "new");
+            gitorious.app.notify("MergeRequestShaListingUpdated", "new");
             if (callback && caller) {
                 callback.apply(caller);
             }
@@ -582,9 +578,9 @@ Gitorious.MergeRequestController.getInstance = function () {
         return Gitorious.MergeRequestController._instance;
     } else {
         var result = new Gitorious.MergeRequestController();
-        NotificationCenter.addObserver("MergeRequestDiffReceived",
+        gitorious.app.observe("MergeRequestDiffReceived",
                                        result.diffsReceived.bind(result));
-        NotificationCenter.addObserver("MergeRequestShaListingReceived",
+        gitorious.app.observe("MergeRequestShaListingReceived",
                                        result.shaListingReceived.bind(result));
         Gitorious.MergeRequestController._instance = result;
         return result;
@@ -669,9 +665,9 @@ Gitorious.enableCommenting = function () {
     });
 };
 
-NotificationCenter.addObserver("DiffBrowserDidReloadDiffs",
+gitorious.app.observe("DiffBrowserDidReloadDiffs",
                                Gitorious.enableCommenting.bind(Gitorious));
-NotificationCenter.addObserver("DiffBrowserWillReloadDiffs",
+gitorious.app.observe("DiffBrowserWillReloadDiffs",
                                Gitorious.disableCommenting.bind(Gitorious));
 
 Gitorious.CommentForm = function (path) {
@@ -746,7 +742,7 @@ Gitorious.CommentForm = function (path) {
 
     this.display = function (diffContainer) {
         this.reset();
-        NotificationCenter.notifyObservers("DiffBrowserWillPresentCommentForm", this);
+        gitorious.app.notify("DiffBrowserWillPresentCommentForm", this);
         this.updateData();
         this.container.fadeIn();
 
@@ -769,10 +765,10 @@ Gitorious.CommentForm = function (path) {
                 type: "POST",
                 dataType: "json",
                 success: function (data, text) {
-                    NotificationCenter.notifyObservers("DiffBrowserWillReloadDiffs", this);
+                    gitorious.app.notify("DiffBrowserWillReloadDiffs", this);
                     diffContainer.replaceWith(data["file-diff"]);
                     $(".commentable.comments").append(data.comment);
-                    NotificationCenter.notifyObservers("DiffBrowserDidReloadDiffs", this);
+                    gitorious.app.notify("DiffBrowserDidReloadDiffs", this);
                     $("#diff-inline-comments-for-" + lastLine).slideDown();
                     Gitorious.CommentForm.destroyAll();
                 },

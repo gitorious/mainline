@@ -16,23 +16,14 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 #--
 */
+/*jslint onevar: false, eqeqeq: false, plusplus: false, newcap: false*/
+/*global gitorious, TestCase, assertEquals */
 
-var gitorious = {
-    /**
-     * Object.create shim. Implemented in the gitorious namespace rather than
-     * globally on Object because the shim cannot be made ES5 compliant in ES3
-     * environments (not possible to create object with null prototype, no
-     * property descriptor).
-     */
-    create: (function () {
-        function F (){}
+TestCase("GitoriousTest", {
+    "test should create object inheriting from other object": function () {
+        var obj = {};
+        var newObj = gitorious.create(obj);
 
-        return function (proto) {
-            F.prototype = proto;
-            return new F();
-        };
-    }())
-};
-
-// Legacy, to be removed
-var Gitorious = gitorious;
+        assert(obj.isPrototypeOf(newObj));
+    }
+});
