@@ -30,15 +30,7 @@
             this.toggler.url = this.deleteUrl;
             this.toggler.element = jQuery("<a href='#'>Watch</a>");
 
-            this.server = sinon.server.create();
-            // Makes the server simulate passing time when calling respond()
-            // The reason is that jQuery 1.3.x does not use onreadystatechange,
-            // instead it polls for a finishing request. handleAndPassTimes makes
-            // Sinon fake setTimeout and make sure the poll succeeds when the
-            // fake server respond()s.
-            // The following line can and should be removed when updating to
-            // jQuery 1.4.x
-            this.server.handleAndPassTime();
+            this.server = sinon.fakeServerWithClock.create();
             this.server.fakeHTTPMethods = true;
             this.server.respondWith("POST", "", [200, { "Location": this.deleteUrl }]);
             this.server.respondWith("DELETE", "", [200, { "Location": this.postUrl }]);
@@ -101,6 +93,7 @@
 
         "test toggle disable enabled toggler": function () {
             this.toggler.toggleResource();
+            this.server.longestTimeout++;
             this.server.respond();
 
             assertEquals("disabled", this.toggler.element.attr("className"));
@@ -165,8 +158,7 @@
             this.enabledEl = jQuery("#watch-enabled");
             this.disabledEl = jQuery("#watch-disabled");
 
-            this.server = sinon.server.create();
-            this.server.handleAndPassTime();
+            this.server = sinon.fakeServerWithClock.create();
             this.server.fakeHTTPMethods = true;
             this.server.respondWith("POST", "", [200, { "Location": "/created" }]);
             this.server.respondWith("DELETE", "", [200, { "Location": "/deleted" }]);
@@ -224,7 +216,7 @@
             var toggler = g.toggleResource(this.disabledEl, {
                 texts: { disabled: "Watch", enabled: "Unwatch" }
             });
-            
+
             this.disabledEl.click();
             this.server.respond();
             this.disabledEl.click();
