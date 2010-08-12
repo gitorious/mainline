@@ -124,9 +124,11 @@
         "test should change URL from Location header when enabling": function () {
             this.toggler.toggleResource();
             this.server.respond();
+            var url = this.toggler.url;
             this.toggler.toggleResource();
             this.server.respond();
 
+            assertNotEquals(url, this.toggler.url);
             assertEquals(this.deleteUrl, this.toggler.url);
         },
 
