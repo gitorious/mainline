@@ -19,123 +19,130 @@
 */
 /*jslint newcap: false, onevar: false*/
 /*global jQuery, TestCase, assertTrue, assertFalse, assertEquals,
-         assertException */
+         assertException, sinon*/
 
-TestCase("Live search for repositories", {
+TestCase("LiveSearchTest", {
     "test should create the container if it doesn't exist": function () {
         /*:DOC += <div id="repo_search"><input type="text" /></div>*/
         jQuery("#repo_search").liveSearch();
+
         assertEquals(1, jQuery("#repo_search").find(".live-search-results").length);
     },
 
     "test should not create the container if it exists": function () {
         /*:DOC += <div id="repo_search"><ol class="live-search-results"></ol></div> */
         jQuery("#repo_search").liveSearch();
+
         assertEquals(1, jQuery("#repo_search").find(".live-search-results").length);
     },
 
     "test should allow a custom result container": function () {
         /*:DOC += <div id="repo_search"><ol class="results"></ol></div> */
-        jQuery("#repo_search").liveSearch({resultContainer: ".results"});
+        jQuery("#repo_search").liveSearch({ resultContainer: ".results" });
+
         assertEquals(1, jQuery("#repo_search").find(".results").length);
     },
 
     "test should do nothing if the selector doesn't exist": function () {
-        /*:DOC += <div id="repo_search"></div>*/
         jQuery("#no_such_domid").liveSearch();
+
         assertEquals(0, jQuery(".live-search-results").length);
     },
 
     "test should hide the result container": function () {
         /*:DOC += <div id="repo_search"><li class="live-search-results"></li></div> */
-        assertEquals(0, jQuery("#repo_search .live-search-results:hidden").length);
+        var hidden = jQuery("#repo_search .live-search-results:hidden").length;
         jQuery("#repo_search").liveSearch();
-        assertEquals(1, jQuery("#repo_search .live-search-results:hidden").length);
+
+        assertEquals(1, jQuery("#repo_search .live-search-results:hidden").length - hidden);
+    }
+});
+
+TestCase("LiveSearchBackendTest", {
+    setUp: function () {
+        /*:DOC += <div id="repo_search"></div>*/
+        this.element = jQuery("#repo_search");
     },
 
-
     "test should call the backend's get func when searching": function () {
-        /*:DOC += <div id="repo_search"></div>*/
-        var result;
-        var backend = {
-            get: function (uri, phrase, callback) {
-                result = phrase;
-            }
-        };
-        var api = jQuery("#repo_search").liveSearch(backend);
+        var backend = { get: sinon.spy() };
+        var api = this.element.liveSearch(backend);
+
         api.performSearch("Foo");
-        assertEquals("Foo", result);
+
+        assertEquals("Foo", backend.get.getCall(0).args[1]);
     },
 
     "test should append search results to result container": function () {
-        /*:DOC += <div id="repo_search"></div>*/
         var backend = {
             get: function (uri, phrase, callback) {
                 var result = [{"name": "gitorious"}];
                 callback(result);
             }
         };
-        var api = jQuery("#repo_search").liveSearch(backend, {itemClass: "item"});
+ 
+        var api = this.element.liveSearch(backend, { itemClass: "item" });
         api.performSearch("Foo");
+
         // The default renderer renders with li class="item"
         assertEquals(1, jQuery("#repo_search .item").length);
     },
 
     "test should handle non-JSON or invalid responses": function () {
-        /*:DOC += <div id="repo_search"></div>*/
-        var api = jQuery("#repo_search").liveSearch({});
+        var api = this.element.liveSearch({});
 
-        assertException(TypeError, function () {
+        assertException(function () {
             api.populate("testing");
-        });
+        }, "TypeError");
     },
 
     "test should use the renderer": function () {
-        /*:DOC += <div id="s"></div> */
-        var renderer = {
-            render: function (person) {
-                var row = jQuery('<li class="foo"></li>');
-                (jQuery('<h2 title="' + person.nick + '">' + person.firstName + '</h2>')).appendTo(row);
-                (jQuery("<addr>" + person.address + "</addr>")).appendTo(row);
-                return row;
+        var api = this.element.liveSearch({}, {
+            renderer: {
+                render: function (person) {
+                    var row = jQuery('<li class="foo"></li>');
+                    (jQuery('<h2 title="' + person.nick + '">' + person.firstName + '</h2>')).appendTo(row);
+                    (jQuery("<addr>" + person.address + "</addr>")).appendTo(row);
+                    return row;
+                }
             }
-        };
-        var api = jQuery("#s").liveSearch({}, {renderer: renderer});
-        var ourData = [{
+        });
+
+        var data = [{
             firstName: "Winnie",
             address: "Hundred yard forest",
             nick: "pooh"
         }];
-        api.populate(ourData);
+
+        api.populate(data);
+
         assertEquals("Winnie", jQuery("li.foo h2").html());
     },
 
     "test should call the optional onDisplay when displaying results": function () {
-        /*:DOC += <div id="s"></div> */
-        var othersHidden = false;
-        var hideOthers = function () {
-            othersHidden = true;
-        };
-        var api = jQuery("#s").liveSearch({}, {onDisplay: hideOthers});
+        var spy = sinon.spy();
+        var api = this.element.liveSearch({}, { onDisplay: spy });
+
         api.populate({});
-        assertTrue(othersHidden);
+
+        assertTrue(spy.called);
     },
 
     "test should call the optional onReset when resetting": function () {
-        /*:DOC += <div id="s"></div> */
-        var othersDisplayed = false;
-        var displayOthers = function () {
-            othersDisplayed = true;
-        };
-        var api = jQuery("#s").liveSearch({}, {onReset: displayOthers});
+        var spy = sinon.spy();
+        var api = this.element.liveSearch({}, { onReset: spy });
+
         api.reset();
-        assertTrue(othersDisplayed);
 
-    },
+        assertTrue(spy.called);
+    }
+});
 
+TestCase("LiveSearchResetElementTest", {
     "test should hide the reset element if one exists": function () {
         /*:DOC += <div id="s"><div class="reset" style="display:block"></div></div>*/
         var api = jQuery("#s").liveSearch();
+
         assertEquals(1, jQuery("#s .reset:hidden").length);
     },
 
@@ -143,6 +150,7 @@ TestCase("Live search for repositories", {
         /*:DOC += <div id="_s"><div class="reset" style="display:block"></div></div>*/
         var api = jQuery("#_s").liveSearch();
         assertEquals(0, jQuery("#_s .reset:visible").length);
+
         api.populate([{name: "John Doe"}]);
         assertEquals(1, jQuery("#_s .reset:visible").length);
     },
@@ -150,19 +158,19 @@ TestCase("Live search for repositories", {
     "test should reset itself when an empty query is entered": function () {
         /*:DOC += <div id="s"></div> */
         var api = jQuery("#s").liveSearch();
-        var reset = false;
-        api.reset = function () {
-            reset = true;
-        };
+        api.reset = sinon.spy();
         api.queueSearch("");
-        assertTrue(reset);
+
+        assertTrue(api.reset.called);
     },
 
-    "test should insert a text when no matches found": function () {
+    "test should insert text when no matches found": function () {
         /*:DOC += <div id="s"><div class="no-results-found"></div></div> */
         assertEquals(1, jQuery("#s .no-results-found:visible").length);
+
         var api = jQuery("#s").liveSearch();
         assertEquals(0, jQuery("#s .no-results-found:visible").length);
+
         api.populate([]);
         assertEquals(1, jQuery("#s .no-results-found:visible").length);
     },
@@ -170,10 +178,13 @@ TestCase("Live search for repositories", {
     "test should hide the no-results container when matches found": function () {
         /*:DOC += <div id="s"><div class="no-results-found"></div></div> */
         assertEquals(1, jQuery("#s .no-results-found:visible").length);
+
         var api = jQuery("#s").liveSearch();
         assertEquals(0, jQuery("#s .no-results-found:visible").length);
+
         api.populate([]);
         assertEquals(1, jQuery("#s .no-results-found:visible").length);
+
         api.populate([{name: "John"}]);
         assertEquals(0, jQuery("#s .no-results-found:visible").length);
     }
