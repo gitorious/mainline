@@ -236,17 +236,17 @@ $(document).ready(function () {
         });
 
         $this.find(".filters a.merge-requests").click(function () {
-            swapAndMakeCurrent("merge_request");
+            swapAndMakeCurrent("merge_request", this);
             return false;
         });
 
         $this.find(".filters a.mine").click(function () {
-            swapAndMakeCurrent("mine");
+            swapAndMakeCurrent("mine", this);
             return false;
         });
 
         $this.find(".filters a.foreign").click(function () {
-            swapAndMakeCurrent("foreign");
+            swapAndMakeCurrent("foreign", this);
             return false;
         });
     });
