@@ -19,85 +19,91 @@
 #-- 
 */
 /*jslint eqeqeq: false, plusplus: false, onevar: false*/
-/*global Gitorious, $, document*/
+/*global jQuery, gitorious, document*/
 
-/*
-  Live searching on repositories
-*/
-if (!this.Gitorious) {
-    this.Gitorious = {};
-}
+(function (g, jQuery) {
+    g.repositorySearch = {
+        renderer: {
+            escape: function (str) {
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            },
 
-$(document).ready(function () {
-    var searchContainer = $("#repo_search");
-    var searchUri = searchContainer.attr("gts:searchUri");
+            // Should return something that can be appended to a jQuery object
+            render: function (repo) {
+                var row = jQuery('<li class="clone"></li>');
+                var repoTitle = this.escape(repo.description || repo.name);
 
-    var backend = {
-        get: function (uri, phrase, callback) {
-            $.getJSON(uri + phrase, function (data) {
-                callback(data);
+                var title = jQuery('<div class="name"><a href="' + repo.uri + 
+                                   '" title="' + repoTitle + '">' +
+                                   this.escape(repo.name) + "</a></div>");
+
+                title.appendTo(row);
+
+                var ownerType = repo.owner_type;
+                var description = jQuery('<div class="' + this.escape(ownerType) + '"></div>');
+
+                var ownerUri = repo.owner_uri;
+                var ownerTag = jQuery('<a href="' + ownerUri + '">' +
+                                      this.escape(repo.owner) + '</a>');
+                ownerTag.appendTo(description);
+                var image = repo.img;
+
+                if (image) {
+                    var imageTag = jQuery('<img src="' + image + '" width="16" height="16" />');
+                    imageTag.prependTo(description);
+                }
+
+                description.appendTo(row);
+
+                return row;
+            }
+        },
+
+        backend: {
+            get: function (uri, phrase, callback) {
+                jQuery.getJSON(uri + phrase, function (data) {
+                    callback(data);
+                });
+            }
+        },
+
+        // Should not hardcode selectors
+        create: function (element) {
+            element = jQuery(element);
+
+            return element.liveSearch(this.backend, {
+                resourceUri: element.attr("gts:searchUri"),
+                itemClass: "clone",
+                resultContainer: ".repository_list",
+                waitingClass: "searching",
+                renderer: this.renderer,
+
+                onDisplay: function () {
+                    jQuery(".team_clones").hide();
+                    jQuery(".personal_clones").hide();
+                    jQuery("#show_all_clones").hide();
+                },
+
+                onReset: function () {
+                    jQuery(".team_clones").show();
+                    jQuery(".personal_clones").show();
+                }
             });
         }
     };
 
     /*
-      Renderer for rendering repositories as search results
+      Live searching on repositories
     */
-    var renderer = {
-        escape: function (str) {
-            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/&/g, "&amp;");
-        },
+    jQuery(document).ready(function () {
+        g.repositorySearch.create("#repo_search");
 
-        // Should return something that can be appended to a $ object
-        render: function (repo) {
-            var row = $('<li class="clone"></li>');
-            var repo_title = this.escape(repo.description || repo.name);
+        jQuery("#show_all_clones").live("click", function (e) {
+            $this = jQuery(this);
+            jQuery("#clone-list-container").load($this.attr("href") + ".js");
+            $this.hide();
 
-            var title = $('<div class="name"><a href="' + repo.uri + 
-                          '" title="' + repo_title + '">' +
-                           this.escape(repo.name) + "</a></div>");
-
-            title.appendTo(row);
-
-            var ownerType = repo.owner_type;
-            var description = $('<div class="' + this.escape(ownerType) + '"></div>');
-
-            var ownerUri = repo.owner_uri;
-            var ownerTag = $('<a href="' + ownerUri + '">' +
-                              this.escape(repo.owner) + '</a>');
-            ownerTag.appendTo(description);
-            var image = repo.img;
-
-            if (image) {
-                var imageTag = $('<img src="' + image + '" width="16" height="16" />');
-                imageTag.prependTo(description);
-            }
-
-            description.appendTo(row);
-            return row;
-        }
-    };
-
-    $("#repo_search").liveSearch(backend, {
-        resourceUri: searchUri, 
-        itemClass: "clone",
-        resultContainer: ".repository_list",
-        waitingClass: "searching",
-        renderer: renderer,
-        onDisplay: function () {
-            $(".team_clones").hide();
-            $(".personal_clones").hide();
-            $("#show_all_clones").hide();
-        },
-        onReset: function () {
-            $(".team_clones").show();
-            $(".personal_clones").show();
-        }
+            return false;
+        });
     });
-
-    $("#show_all_clones").live("click", function (e) {
-        $("#clone-list-container").load($(this).attr("href") + ".js");
-        $(this).hide();
-        return false;
-    });
-});
+}(gitorious, jQuery));

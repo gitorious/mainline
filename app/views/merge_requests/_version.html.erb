@@ -2,30 +2,38 @@
   <ul class="commit_selector <%= many_commits?(version) ? 'large' : 'compact' -%>" 
       id="merge_request_commit_selector" 
       data-merge-request-version-url="<%= commit_diff_url(version) -%>">
-      <li class="merge_base round-10">
-        <%= merge_base_link(version) -%>
-      </li>
+    <li class="merge_base round-10">
+      <%= merge_base_link(version) -%>
+    </li>
 
-
-    
-<% if many_commits?(version) %>
-    <div class="selectables-container">
+    <% if many_commits?(version) %>
       <li class="single_commit expander">
         <a href="#" id="large_commit_selector_toggler">Select commits&hellip;</a>
       </li>
-    </div>
-<% else %>
-    <div class="selectables-container">
+    <% else %>
       <%- for c in version.affected_commits.reverse -%>
-      <li class="<%= commit_css_class(@merge_request, c) -%> single_commit ui-selected">
-        <%= inline_commit_link(c) -%>
-      </li>
-      <div class="hover-bubble-content round-10">
-        <p><%=h c.short_message %></p>
-      </div>
+        <li class="<%= commit_css_class(@merge_request, c) -%> single_commit ui-selected">
+          <%= inline_commit_link(c) -%>
+        </li>
+        <div class="hover-bubble-content round-10">
+          <p><%=h c.short_message %></p>
+        </div>
       <%- end -%>
-    </div>
-<% end -%>
+    <% end -%>
+    <li>
+      <div class="changable-selection-current round-10" id="merge_request_version"
+           gts:url="<%= select_version_url(@merge_request) -%>">
+        Version <%= @merge_request.versions.last.version -%>
+      </div>
+      <ul class="changable-selection-options shadow-2 round-5">
+        <% @merge_request.versions.each do |version| -%>
+          <li data-mr-version-number="<%= version.version -%>"
+              data-mr-version-url="<%= commit_diff_url(version) -%>">
+            Version <%=h version.version %>
+          </li>
+        <% end -%>
+      </ul>
+    </li>
   </ul>
 
 <% if many_commits?(version) -%>

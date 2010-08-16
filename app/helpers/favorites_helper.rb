@@ -28,20 +28,17 @@ module FavoritesHelper
   end
 
   def create_favorite_link_to(watchable)
-    class_name = watchable.class.name
     link_to("Watch",
-      favorites_path(:watchable_id => watchable.id,:watchable_type => class_name),
-      :method => :post, :"data-request-method" => "post",
-      :class => "watch-link disabled round-10",
-      :id => "watch_#{class_name.downcase}_#{watchable.id}"
-      )
+            favorites_path(:watchable_id => watchable.id,
+                           :watchable_type => watchable.class.name),
+            :"data-request-method" => "post",
+            :class => "watch-link disabled round-10")
   end
 
   def destroy_favorite_link_to(favorite, watchable, options = {})
-    label = options[:label] || "Unwatch"
-    link_to(label, favorite_path(favorite),
-      :method => :delete, :"data-request-method" => "delete",
-      :class => "watch-link enabled round-10")
+    link_to(options[:label] || "Unwatch", favorite_path(favorite),
+            :"data-request-method" => "delete",
+            :class => "watch-link enabled round-10")
   end
 
   def link_to_notification_toggle(favorite)

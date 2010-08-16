@@ -18,14 +18,14 @@
 #-- 
 */
 /*jslint eqeqeq: false, plusplus: false, onevar: false*/
-/*global $, window*/
+/*global jQuery, window*/
 
 /*
   Creating a jquery extension
 */
-$.fn.liveSearch = function (backend, opt) {
+jQuery.fn.liveSearch = function (backend, opt) {
     // Set some options
-    var options = $.extend({
+    var options = jQuery.extend({
         resultContainer: ".live-search-results",
         backend: this.backend,
         waitingClass: "waiting",
@@ -34,7 +34,7 @@ $.fn.liveSearch = function (backend, opt) {
         itemCass: "result",
         renderer: {
             render: function (obj) {
-                return $("<li class=\"item\">" + obj.name + "</li>");
+                return jQuery("<li class=\"item\">" + obj.name + "</li>");
             }
         }
     }, opt);
@@ -50,7 +50,7 @@ $.fn.liveSearch = function (backend, opt) {
     
     // Create the container element if it doesn't exist
     if (container.length === 0) {
-        container = $('<ul class="live-search-results"></ul>');
+        container = jQuery('<ul class="live-search-results"></ul>');
         container.appendTo(element);
     }
 
@@ -77,7 +77,7 @@ $.fn.liveSearch = function (backend, opt) {
                 return;
             }
 
-            if (new RegExp("^" + previous + "$", "i").test(phrase)) {
+            if (new RegExp("^" + previous + "jQuery", "i").test(phrase)) {
                 return;
             }
 
@@ -116,7 +116,7 @@ $.fn.liveSearch = function (backend, opt) {
                 noResults.show();
             } else {
                 noResults.hide();
-                $.each(result, function (i, obj) {
+                jQuery.each(result, function (i, obj) {
                     var markup = options.renderer.render(obj);
                     markup.appendTo(container);
                 });

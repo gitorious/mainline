@@ -498,11 +498,16 @@ module ApplicationHelper
 
   # The javascripts to be included in all layouts
   def include_javascripts
-    javascript_include_tag "lib/jquery", "lib/jquery/autocomplete", "lib/jquery/cookie",
-      "lib/jquery/color_picker", "lib/jquery/ui","lib/jquery/ui/selectable", "lib/jquery/scrollto",
-      "lib/jquery/timeago", "core_extensions", "lib/jquery/expander", "lib/jquery/cycle.all.min",
-      "gitorious/jquery", "notification_center", "gitorious/merge_requests", "gitorious/diff_browser",
-      "gitorious/messages", "application", "gitorious/live_search", "gitorious/repository_search", :cache => true
+    jquery = ["", "/autocomplete", "/cookie", "/color_picker", "cycle.all.min",
+              "/ui", "/ui/selectable", "/scrollto", "/expander",
+              "/timeago"].collect { |f| "lib/jquery#{f}" }
+
+    gitorious = ["", "/observable", "/application", "/resource_toggler", "/jquery",
+                 "/merge_requests", "/diff_browser", "/messages", "/live_search",
+                 "/repository_search"].collect { |f| "gitorious#{f}" }
+
+    scripts = jquery + ["core_extensions"] + gitorious + ["application"]
+    javascript_include_tag(scripts, :cache => true)
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+
