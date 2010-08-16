@@ -407,8 +407,13 @@ module Grit
             header << "\n" + 'index ' + sha1[0,7] + '..' + sha2[0,7]
             header << ' 100644' if diff_arr[3] # hard coding this because i don't think we use it
           end
-          header << "\n--- " + 'a/' + diff_arr[0].gsub('./', '')
-          header << "\n+++ " + 'b/' + diff_arr[0].gsub('./', '')
+
+          a_path = "a/#{diff_arr[0].gsub('./', '')}"
+          b_path = "b/#{diff_arr[0].gsub('./', '')}"
+          
+          header << "\n--- " + (diff_arr[2] ? a_path : '/dev/null')
+          header << "\n+++ " + (diff_arr[3] ? b_path : '/dev/null')
+
           header += "\n"
           
           oldhunk = hunk = nil
