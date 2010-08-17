@@ -31,7 +31,7 @@ class SshKey < ActiveRecord::Base
   
   before_validation { |k| k.key.to_s.strip! }
   before_validation :lint_key!
-  after_create  :publish_creation_message
+
   # we only allow people to create/destroy keys after_update  :create_update_task 
   after_destroy :publish_deletion_message
   
@@ -76,6 +76,7 @@ class SshKey < ActiveRecord::Base
   end
   
   def publish_creation_message
+    raise ActiveRecord::RecordInvalid.new(self) if new_record?
     options = ({:target_class => self.class.name, 
       :command => "add_to_authorized_keys", 
       :arguments => [self.to_key], 

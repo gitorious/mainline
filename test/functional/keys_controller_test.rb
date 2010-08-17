@@ -200,6 +200,12 @@ end
       post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
       assert_response :redirect
     end
+
+    should "publish a creation message to the message queue" do
+      SshKey.any_instance.expects(:publish_creation_message)
+      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
+      assert_response :redirect
+    end
   end
 
   context "create.xml" do

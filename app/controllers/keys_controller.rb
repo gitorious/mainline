@@ -47,6 +47,7 @@ class KeysController < ApplicationController
     
     respond_to do |format|
       if @ssh_key.save
+        @ssh_key.publish_creation_message
         flash[:notice] = I18n.t "keys_controller.create_notice"
         format.html { redirect_to user_keys_path(current_user) }
         format.xml  { render :xml => @ssh_key, :status => :created, :location => user_key_path(current_user, @ssh_key) }

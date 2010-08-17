@@ -200,15 +200,23 @@ EOS
   end
   
   context "Message sending" do
-    should 'send a message on create and update' do
+    should 'send a message when created' do
       ssh_key = new_key
       p = proc{
         ssh_key.save!
+        ssh_key.publish_creation_message
       }
       message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
       assert_equal 'add_to_authorized_keys', message['command']
       assert_equal [ssh_key.to_key], message['arguments']
       assert_equal ssh_key.id, message['target_id']
+    end
+
+    should "not allow publishing messages for new records" do
+      ssh_key = new_key
+      assert_raises ActiveRecord::RecordInvalid do
+        ssh_key.publish_creation_message
+      end
     end
   
     should 'sends a message on destroy' do
