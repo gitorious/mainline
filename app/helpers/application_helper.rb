@@ -498,7 +498,7 @@ module ApplicationHelper
 
   # The javascripts to be included in all layouts
   def include_javascripts
-    jquery = ["", "/autocomplete", "/cookie", "/color_picker", "cycle.all.min",
+    jquery = ["", "/autocomplete", "/cookie", "/color_picker", "/cycle.all.min",
               "/ui", "/ui/selectable", "/scrollto", "/expander",
               "/timeago"].collect { |f| "lib/jquery#{f}" }
 
