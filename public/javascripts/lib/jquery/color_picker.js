@@ -62,6 +62,7 @@ jQuery.fn.SevenColorPicker = function()
         if(jQuery.browser.msie && jQuery.browser.version == '6.0')
             result.find('div').before('<iframe frameborder="0" width="'+result.width()+'" height="'+result.height()+'" style="position:absolute;z-index:-1;"></iframe>');
     }
+
     return this.each(function()
     {
 		var myPicker = $(this).next(':text');
@@ -83,4 +84,4 @@ jQuery.fn.SevenColorPicker = function()
             );
 		}
     });
-}
+};
