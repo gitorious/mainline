@@ -203,6 +203,11 @@ class User < ActiveRecord::Base
   def review_repositories_with_open_merge_request_count
     mr_repository_ids = self.committerships.reviewers.find(:all,
       :select => "repository_id").map{|c| c.repository_id }
+    self.memberships.each { |m|
+      ids = m.group.committerships.reviewers.find(:all,
+        :select => "repository_id").map{|c| c.repository_id }
+      mr_repository_ids |= ids
+    }
     Repository.find(:all, {
         :select => "repositories.*, count(merge_requests.id) as open_merge_request_count",
         :conditions => ["repositories.id in (?) and merge_requests.status = ?",
