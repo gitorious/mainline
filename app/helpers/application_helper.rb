@@ -507,6 +507,7 @@ module ApplicationHelper
                  "/repository_search"].collect { |f| "gitorious#{f}" }
 
     scripts = jquery + ["core_extensions"] + gitorious + ["application"]
+
     javascript_include_tag(scripts, :cache => true)
   end
 
