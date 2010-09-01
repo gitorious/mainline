@@ -34,7 +34,8 @@ module Gitorious
   
     class Strainer
     
-      COMMANDS_READONLY = [ 'git-upload-pack', 'git upload-pack' ]
+      COMMANDS_READONLY = [ 'git-upload-pack', 'git upload-pack',
+                            'git-upload-archive', 'git upload-archive' ]
       COMMANDS_WRITE    = [ 'git-receive-pack', 'git receive-pack' ]
       ALLOW_RE = /^'\/?([a-z0-9\+~][a-z0-9@._\-]*(\/[a-z0-9][a-z0-9@\._\-]*)*\.git)'$/i.freeze
     
