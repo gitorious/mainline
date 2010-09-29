@@ -97,6 +97,15 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal "http://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
     end
 
+    should "use the real http cloning URL" do
+      old_value = Site::HTTP_CLONING_SUBDOMAIN
+      silence_warnings do
+        Site::HTTP_CLONING_SUBDOMAIN = "whatever"
+      end
+      assert_equal "http://whatever.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      silence_warnings {Site::HTTP_CLONING_SUBDOMAIN = old_value}
+    end
+
     should "has a clone url with the project name, if it's a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO

@@ -226,7 +226,7 @@ class Repository < ActiveRecord::Base
   end
 
   def http_clone_url
-    "http://git.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
+    "http://#{Site::HTTP_CLONING_SUBDOMAIN}.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
 
   def http_cloning?
