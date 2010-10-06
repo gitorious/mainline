@@ -49,9 +49,9 @@ class Committership < ActiveRecord::Base
 
   named_scope :groups, :conditions => { :committer_type => "Group" }
   named_scope :users,  :conditions => { :committer_type => "User" }
-  named_scope :reviewers, :conditions => ["(permissions & ?)", CAN_REVIEW]
-  named_scope :committers, :conditions => ["(permissions & ?)", CAN_COMMIT]
-  named_scope :admins, :conditions => ["(permissions & ?)", CAN_ADMIN]
+  named_scope :reviewers, :conditions => ["(permissions & ?) != 0", CAN_REVIEW]
+  named_scope :committers, :conditions => ["(permissions & ?) != 0", CAN_COMMIT]
+  named_scope :admins, :conditions => ["(permissions & ?) != 0", CAN_ADMIN]
 
   def self.create_for_owner!(an_owner)
     cs = new({:committer => an_owner})
