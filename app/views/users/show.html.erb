@@ -74,7 +74,7 @@
 				<%= link_to h(repo.url_path),
 								  repo_owner_path(repo, [repo.project, repo]) -%>
 			</li><% end -%>
-		</ul><% end -%><% end %><% pull_box("#{@user.login} is watching", :class => "your-favorites favorite pull-box-390") do %>
+		</ul><% end -%><% end %><% pull_box("#{@user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
 		<div class="filters">
 			<ul>
 				<li>

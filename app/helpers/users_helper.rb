@@ -62,11 +62,11 @@ module UsersHelper
   end
 
   def favorites_heading_for(user)
-    personified(user, "You are watching", "#{user.login} is watching")
+    personified(user, "You are watching", "#{user.title} is watching")
   end
 
   def no_watchings_notice_for(user)
-    msg = personified(user, "You aren't", "#{user.login} isn't") +
+    msg = personified(user, "You aren't", "#{user.title} isn't") +
       " watching anything yet."
     if is_current_user?(user)
       msg << "Click the watch icon to get events feeded into this page"
