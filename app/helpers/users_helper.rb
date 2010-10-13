@@ -69,7 +69,7 @@ module UsersHelper
     msg = personified(user, "You aren't", "#{user.title} isn't") +
       " watching anything yet."
     if is_current_user?(user)
-      msg << "Click the watch icon to get events feeded into this page"
+      msg << "Click the watch icon to get events fed into this page"
     end
     msg
   end
@@ -82,7 +82,7 @@ module UsersHelper
     if showing_newsfeed?
       link_to "Show my activities", user_path(@user, {:events => "outgoing"})
     else
-      link_to "Show my newsfeed", user_path(@user)
+      link_to "Show my news feed", user_path(@user)
     end
   end
 end

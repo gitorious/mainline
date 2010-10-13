@@ -23,7 +23,7 @@ class CommittershipTest < ActiveSupport::TestCase
 
   should_validate_presence_of :repository_id, :committer_type, :committer_id
 
-  should " have a creator" do
+  should "have a creator" do
     committership = new_committership
     assert_equal users(:johan), committership.creator
   end
@@ -36,7 +36,7 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_equal groups(:team_thunderbird), c.committer
   end
 
-  should "have a members attribute that's the user if the committer is a user" do
+  should "have a member attribute that's the user if the committer is a user" do
     c = new_committership(:committer => users(:johan))
     assert_equal [users(:johan)], c.members
   end
@@ -63,7 +63,7 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_nil message.notifiable_id
   end
 
-  should "have a members attribute that's the group members if the committer is a Group" do
+  should "have a member attribute that's the group members if the committer is a Group" do
     c = new_committership(:committer => groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird).members, c.members
   end

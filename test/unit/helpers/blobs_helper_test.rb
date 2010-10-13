@@ -87,7 +87,7 @@ class BlobsHelperTest < ActionView::TestCase
       assert highlightable?(blob_with_name("foo.css"))
     end
     
-    should "not be highlightable if there's not file name extension" do
+    should "not be highlightable if there's no file name extension" do
       assert !highlightable?(blob_with_name("README"))
     end
     

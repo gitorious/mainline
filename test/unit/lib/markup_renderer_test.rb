@@ -84,7 +84,7 @@ class MarkupRendererTest < ActiveSupport::TestCase
       assert_instance_of RDiscount, rd.markdown
     end
 
-    should "raise if to_html haven't been called yet" do
+    should "raise if to_html hasn't been called yet" do
       rd = MarkupRenderer.new("foo")
       assert_raises(MarkupRenderer::NotProcessedYetError) do
         rd.markdown

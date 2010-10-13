@@ -24,7 +24,7 @@ class SearchesControllerTest < ActionController::TestCase
   should_render_in_global_context
 
   context "#show" do
-    should "searches for the given query" do
+    should "search for the given query" do
       searcher = mock("ultrasphinx search")
       Ultrasphinx::Search.expects(:new).with({
         :query => "foo", :page => 1, :per_page => 30
@@ -40,7 +40,7 @@ class SearchesControllerTest < ActionController::TestCase
       assert_equal [projects(:johans)], assigns(:results)
     end
     
-    should "doesnt search if there's no :q param" do
+    should "not search if there's no :q param" do
       Ultrasphinx::Search.expects(:new).never
       get :show, :q => ""
       assert_nil assigns(:search)

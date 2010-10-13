@@ -349,7 +349,7 @@ class UserTest < ActiveSupport::TestCase
   context 'Avatars' do
     setup {@user = users(:johan)}
 
-    should "generate a avatar path based on the user's login" do
+    should "generate an avatar path based on the user's login" do
       @user.avatar_file_name = 'foo.png'
       assert_equal "/system/avatars/#{@user.login}/original/foo.png", @user.avatar.url
     end
@@ -359,7 +359,7 @@ class UserTest < ActiveSupport::TestCase
         assert_equal :nil, User.find_avatar_for_email(@user.email, :thumb)
       end
 
-      should "return that user's avatar when the user has an avatar" do
+      should "return the user's avatar when the user has an avatar" do
         @user.update_attribute(:avatar_file_name, 'foo.png')
         Rails.cache.clear
         assert_equal @user.avatar.url(:thumb), User.find_avatar_for_email(@user.email, :thumb)

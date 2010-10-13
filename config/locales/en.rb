@@ -198,10 +198,10 @@
         :show_title => 'End User License Agreement',
         :terms_accepted => 'You have accepted the Terms of Use',
         :terms_not_accepted => 'You need to accept the Terms of Use',
-        :terms_already_accepted => 'You have already accepted the latest terms of use'
+        :terms_already_accepted => 'You have already accepted the latest Terms of Use'
       },
       :keys => {
-        :edit_title => "Edit a SSH key",
+        :edit_title => "Edit an SSH key",
         :ssh_keys => "Your SSH Keys",
         :ssh_keys_breadcrumb => "SSH Keys",
         :manage_ssh_keys => "Manage SSH keys",
