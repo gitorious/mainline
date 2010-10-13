@@ -34,7 +34,7 @@ class UsersHelperTest < ActionView::TestCase
     assert mangled_mail("johan@example.com").include?("&hellip;")
   end
   
-  should "not mangle emails that don't look like emails" do
+  should "not mangle emails that do not look like emails" do
     assert_equal "johan", mangled_mail("johan")
     assert_equal "johan", mangled_mail("johan@")
   end

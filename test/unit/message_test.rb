@@ -160,7 +160,7 @@ class MessageTest < ActiveSupport::TestCase
     should 'know whether there are any unread messages in the thread' do
       @message.read!
       assert !@message.unread_messages?
-      reply = @message.build_reply(:body => "This isn't read yet")
+      reply = @message.build_reply(:body => "This is not read yet")
       reply.save
       @message.replies.reload
       assert @message.unread_messages?

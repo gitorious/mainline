@@ -135,7 +135,7 @@ class GroupsControllerTest < ActionController::TestCase
         assert_response :redirect
       end
       assert_redirected_to group_path(@group)
-      assert_match(/team can't be deleted/, flash[:error])
+      assert_match(/team cannot be deleted/, flash[:error])
     end
     
     should "be deletable if there's more than one member and user is site_admin" do

@@ -97,7 +97,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
 
     should "render the url of the clone" do
       exp = " http://#{GitoriousConfig['gitorious_host']}/#{@clone_repo.url_path}"
-      assert @output.include?(exp), "didn't include the url in: #{@output}"
+      assert @output.include?(exp), "did not include the url in: #{@output}"
     end
   end
 

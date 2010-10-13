@@ -22,7 +22,7 @@
          assertException, sinon*/
 
 TestCase("LiveSearchTest", {
-    "test should create the container if it doesn't exist": function () {
+    "test should create the container if it does not exist": function () {
         /*:DOC += <div id="repo_search"><input type="text" /></div>*/
         jQuery("#repo_search").liveSearch();
 
@@ -43,7 +43,7 @@ TestCase("LiveSearchTest", {
         assertEquals(1, jQuery("#repo_search").find(".results").length);
     },
 
-    "test should do nothing if the selector doesn't exist": function () {
+    "test should do nothing if the selector does not exist": function () {
         jQuery("#no_such_domid").liveSearch();
 
         assertEquals(0, jQuery(".live-search-results").length);

@@ -546,7 +546,7 @@ class ProjectsControllerTest < ActionController::TestCase
         :only_path => false, :host => "#{sites(:qt).subdomain}.gitorious.test")
     end
 
-    should "redirect to the main domain if the current_site doesn't have a subdomain" do
+    should "redirect to the main domain if the current_site does not have a subdomain" do
       @request.host = "qt.gitorious.test"
       get :show, :id => projects(:johans).to_param
       assert_response :redirect

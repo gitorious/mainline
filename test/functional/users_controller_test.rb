@@ -111,13 +111,13 @@ class UsersControllerTest < ActionController::TestCase
       }, {:path => "/~#{@user.to_param}", :method => :get})
     end
 
-    should "doesn't recognize controller collection actions as repositories" do
+    should "does not recognize controller collection actions as repositories" do
       assert_recognizes({
         :controller => "users", :action => "forgot_password"
       }, {:path => "/users/forgot_password", :method => :get})
     end
 
-    should "doesn't recognize controller member actions as repositories" do
+    should "does not recognize controller member actions as repositories" do
       assert_recognizes({
         :controller => "users", :action => "activate", :activation_code => "123"
       }, {:path => "/users/activate/123", :method => :get})
@@ -293,7 +293,7 @@ class UsersControllerTest < ActionController::TestCase
         assert_nil flash[:error]
       end
 
-      should "re-render if password confirmation doesn't match" do
+      should "re-render if password confirmation does not match" do
         put :reset_password, :token => "s3kr1t", :user => {
           :password => "qwertyasdf",
           :password_confirmation => "asdf"
@@ -454,7 +454,7 @@ class UsersControllerTest < ActionController::TestCase
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_nil flash[:notice]
-      assert_match(/doesn't seem to match/, flash[:error])
+      assert_match(/does not seem to match/, flash[:error])
       assert_template("users/password")
       assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
       assert_nil User.authenticate(users(:johan).email, "fubar")

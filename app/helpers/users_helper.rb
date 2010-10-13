@@ -66,7 +66,7 @@ module UsersHelper
   end
 
   def no_watchings_notice_for(user)
-    msg = personified(user, "You aren't", "#{user.title} isn't") +
+    msg = personified(user, "You are not", "#{user.title} is not") +
       " watching anything yet."
     if is_current_user?(user)
       msg << "Click the watch icon to get events fed into this page"

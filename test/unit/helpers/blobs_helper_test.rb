@@ -64,7 +64,7 @@ class BlobsHelperTest < ActionView::TestCase
       assert textual?(blob_with_name("foo.m", "[lulz isForTehLaffs:YES]"))
     end
     
-    should "know that binary aren't textual" do
+    should "know that binary are not textual" do
       assert !textual?(blob_with_name("foo.png", File.read(File.join(RAILS_ROOT, "public/images/rails.png"))))
       assert !textual?(blob_with_name("foo.gif", "GIF89a\v\x00\r\x00\xD5!\x00\xBD"))
       assert !textual?(blob_with_name("foo.exe", "rabuf\06si\000ezodniw"))
@@ -109,7 +109,7 @@ class BlobsHelperTest < ActionView::TestCase
       assert_equal "lua", language_of_file("foo.lua")
     end
 
-    should "return nil if the filename can't be highlighted" do
+    should "return nil if the filename cannot be highlighted" do
       assert_nil language_of_file("foo.bar")
     end
   end

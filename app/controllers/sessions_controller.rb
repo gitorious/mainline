@@ -61,7 +61,7 @@ class SessionsController < ApplicationController
     end
   end
 
-  # if user doesn't exist, it gets created and activated,
+  # if user does not exist, it gets created and activated,
   # else if the user already exists with same identity_url, it just logs in
   def open_id_authentication(openid_url)
     authenticate_with_open_id(openid_url, :required => [:nickname, :email], :optional => [:fullname]) do |result, identity_url, registration|
@@ -94,7 +94,7 @@ class SessionsController < ApplicationController
     if logged_in?
       successful_login
     else
-      failed_login("Email and/or password didn't match, please try again.")
+      failed_login("Email and/or password did not match, please try again.")
     end
   end
 

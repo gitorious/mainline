@@ -130,7 +130,7 @@ class AliasesControllerTest < ActionController::TestCase
       assert @email.pending?
     end
     
-    should "should not confirm the email if the confirmation_code doesn't match" do
+    should "should not confirm the email if the confirmation_code does not match" do
       login_as :johan
       get :confirm, :user_id => users(:johan).to_param, :id => "wrongcode"
       assert_response :redirect
@@ -139,7 +139,7 @@ class AliasesControllerTest < ActionController::TestCase
       assert @email.reload.pending?
     end
     
-    should "should not confirm the email if the user isn't right" do
+    should "should not confirm the email if the user is not right" do
       login_as :moe
       get :confirm, :user_id => users(:johan).to_param, :id => @email.confirmation_code
       assert_response :redirect

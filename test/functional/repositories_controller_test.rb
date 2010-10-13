@@ -513,7 +513,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 404
     end
 
-    should "issues a Refresh header if repo isn't ready yet" do
+    should "issues a Refresh header if repo is not ready yet" do
       @repo.stubs(:ready).returns(false)
       do_show_get @repo
       assert_response :success
@@ -573,14 +573,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(new_user_key_path(users(:johan)))
     end
 
-    should "redirects with a flash if repos can't be cloned" do
+    should "redirects with a flash if repos cannot be cloned" do
       login_as :johan
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(false)
       @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
       do_clone_get
       assert_redirected_to(project_repository_path(@project, @repository))
-      assert_match(/can't clone an empty/i, flash[:error])
+      assert_match(/cannot clone an empty/i, flash[:error])
     end
   end
 
@@ -638,14 +638,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(new_user_key_path(users(:johan)))
     end
 
-    should "redirects with a flash if repos can't be cloned" do
+    should "redirects with a flash if repos cannot be cloned" do
       login_as :johan
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(false)
       @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
       do_create_clone_post(:name => "foobar")
       assert_redirected_to(project_repository_path(@project, @repository))
-      assert_match(/can't clone an empty/i, flash[:error])
+      assert_match(/cannot clone an empty/i, flash[:error])
     end
   end
 
@@ -672,13 +672,13 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 201
     end
 
-    should "renders text if repos can't be cloned" do
+    should "renders text if repos cannot be cloned" do
       Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
       @repository.stubs(:has_commits?).returns(false)
       @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
       do_create_clone_post(:name => "foobar")
       assert_response 422
-      assert_match(/can't clone an empty/i, @response.body)
+      assert_match(/cannot clone an empty/i, @response.body)
     end
   end
 

@@ -516,7 +516,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal head_stub, @repository.head_candidate
   end
 
-  should "have a head_candidate, unless it doesn't have commits" do
+  should "have a head_candidate, unless it does not have commits" do
     @repository.expects(:has_commits?).returns(false)
     assert_equal nil, @repository.head_candidate
   end
@@ -620,7 +620,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
     repo.kind = Repository::KIND_PROJECT_REPO
     assert repo.mainline?
-    assert !repo.can_request_merge?(users(:mike)), "mainlines shouldn't request merges"
+    assert !repo.can_request_merge?(users(:mike)), "mainlines should not request merges"
   end
 
   should "sets a hash on create" do

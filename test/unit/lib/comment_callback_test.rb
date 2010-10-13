@@ -49,7 +49,7 @@ class CommentCallbackTest < ActiveSupport::TestCase
       assert_equal 1, @callback.comment_count_ending_on_line(line)
     end
 
-    should "not raise if the Line doesn't implement the offsets" do
+    should "not raise if the Line does not implement the offsets" do
       line = Diff::Display::UnModLine.new("foo", 1, 1)
       assert_nothing_raised do
         @callback.comment_count_starting_on_line(line)

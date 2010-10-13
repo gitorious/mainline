@@ -177,7 +177,7 @@ class UsersController < ApplicationController
         render :action => "password"
       end
     else
-      flash[:error] = "Your current password doesn't seem to match the one your supplied"
+      flash[:error] = "Your current password does not seem to match the one your supplied"
       render :action => "password"
     end
   end

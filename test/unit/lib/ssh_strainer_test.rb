@@ -35,7 +35,7 @@ class SSHStrainerTest < ActiveSupport::TestCase
     end
   end
   
-  should "raises if command doesn't have an argument" do
+  should "raises if command does not have an argument" do
     assert_raises(Gitorious::SSH::BadCommandError) do
       Gitorious::SSH::Strainer.new("git-upload-pack").parse!
     end

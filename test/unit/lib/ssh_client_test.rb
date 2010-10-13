@@ -125,7 +125,7 @@ class SSHClientTest < ActiveSupport::TestCase
       assert !client.pre_receive_hook_exists?
     end
     
-    should "raises if the real path doesn't exist" do
+    should "raises if the real path does not exist" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection_stub")
       connection_stub.expects(:get) \
@@ -138,7 +138,7 @@ class SSHClientTest < ActiveSupport::TestCase
       end
     end
     
-    should "raises if the real path isn't returned" do
+    should "raises if the real path is not returned" do
       client = Gitorious::SSH::Client.new(@strainer, "johan")
       connection_stub = stub_everything("connection_stub")
       connection_stub.expects(:get) \

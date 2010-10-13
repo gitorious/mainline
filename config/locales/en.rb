@@ -3,8 +3,8 @@
   :'en' => {
     :application => {
       :require_ssh_keys_error => "You need to upload your public key first",
-      :require_current_user => "Bad {{title}}, bad! You shouldn't be snooping around in other people's stuff!",
-      :no_commits_notice => "The repository doesn't have any commits yet",
+      :require_current_user => "Bad {{title}}, bad! You should not be snooping around in other people's stuff!",
+      :no_commits_notice => "The repository does not have any commits yet",
     },
     :admin => {
       :users_controller => {
@@ -59,8 +59,8 @@
       :create_only_for_site_admins => "Only site administrators are allowed to create new projects",
     },
     :repositories_controller => {
-      :new_clone_error => "Sorry, can't clone an empty repository",
-      :create_clone_error => "Sorry, can't clone an empty repository",
+      :new_clone_error => "Sorry, cannot clone an empty repository",
+      :create_clone_error => "Sorry, cannot clone an empty repository",
       :create_success => "New repository created",
       :destroy_notice => "The repository was deleted",
       :destroy_error => "You're not the owner of this repository",

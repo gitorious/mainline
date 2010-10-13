@@ -61,7 +61,7 @@ class SshKeyFileTest < ActiveSupport::TestCase
     assert_equal File.read(File.join(fixture_path, "authorized_keys")), @keyfile.contents
   end
   
-  should "doesn't rewrite the file unless the key to delete is in there" do
+  should "does not rewrite the file unless the key to delete is in there" do
     File.expects(:open).never
     @keyfile.delete_key(@keydata)
   end

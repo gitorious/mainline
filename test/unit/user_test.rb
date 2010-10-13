@@ -355,7 +355,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     context 'finding an avatar from an email' do
-      should "return :nil when a user doesn't have an avatar" do
+      should "return :nil when a user does not have an avatar" do
         assert_equal :nil, User.find_avatar_for_email(@user.email, :thumb)
       end
 

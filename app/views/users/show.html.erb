@@ -64,9 +64,9 @@
 		<div class="pull-box-links">
 			<%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
 						:id => "new-project-button"}) %>
-				</div><% end -%><% end -%><% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do -%><% if @repositories.blank? -%><% if is_current_user?(@user) -%>You currently don't have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else -%>
+				</div><% end -%><% end -%><% pull_box(t("views.site.dashboard.repositories"), :class => "your-repositories pull-box-390") do -%><% if @repositories.blank? -%><% if is_current_user?(@user) -%>You currently do not have any repository clones. You can clone a repository you wish to contribute to by going to a repository overview page and clicking the "Clone repository" button in the repository information box.<% else -%>
 		<p class="hint">
-			<%=h @user.title -%> currently doesn't have any repository clones.
+			<%=h @user.title -%> currently does not have any repository clones.
 		</p><% end -%><% else -%>
 		<ul class="with_icons">
 			<% @repositories.each do |repo| -%>

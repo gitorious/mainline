@@ -156,13 +156,13 @@
       <% if is_current_user?(@user) -%>
 		
       
-        You currently don't have any repository clones. You can clone
+        You currently do not have any repository clones. You can clone
         a repository you wish to contribute to by going to a
         repository overview page and clicking the "Clone repository" button
         in the repository information box.</p>
 		
       <% else -%>
-       <p class="hint"> <%=h @user.title -%> currently doesn't have any repository clones.</p>
+       <p class="hint"> <%=h @user.title -%> currently does not have any repository clones.</p>
       <% end -%>
     <% else -%>
       <ul class="with_icons">

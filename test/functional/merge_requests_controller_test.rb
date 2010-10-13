@@ -317,7 +317,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_match(/sent a merge request to "#{@source_repository.name}"/i, flash[:success])
 	  end
 	  
-	  should "create an event when the request doesn't require signof" do
+	  should "create an event when the request does not require signof" do
 	    login_as :johan
 	    assert_difference("@project.events.count", 1) do
 	      post :create, :project_id => @project.to_param, 

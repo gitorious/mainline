@@ -23,10 +23,10 @@
 
 <h1>
   <%= link_to h(@page.title), project_page_path(@project, @page.title) -%>
-  doesn't exist
+  does not exist
 </h1>
 
 <% help_box(:middle, :error) do -%>
-  <p>The page "<%=h params[:id] -%>" doesn't exist yet. If you would like to create
+  <p>The page "<%=h params[:id] -%>" does not exist yet. If you would like to create
   it you must <%= link_to "log in", new_sessions_path -%> first.</p>
 <% end -%>

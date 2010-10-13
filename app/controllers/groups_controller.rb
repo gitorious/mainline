@@ -78,7 +78,7 @@ class GroupsController < ApplicationController
       flash[:success] = "The team was deleted"
       redirect_to groups_path
     else
-      flash[:error] = "The team can't be deleted, since there's other members in it"
+      flash[:error] = "The team cannot be deleted, since there are other members in it"
       redirect_to group_path(@group)
     end
   end

@@ -34,7 +34,7 @@ class PushEventProcessor < ApplicationProcessor
       log_events
       trigger_hooks(@events)
     else
-      logger.error("#{self.class.name} received message, but couldn't find repo with hashed_path #{hash['gitdir']}")
+      logger.error("#{self.class.name} received message, but could not find repo with hashed_path #{hash['gitdir']}")
     end
   end
 

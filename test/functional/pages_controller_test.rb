@@ -82,7 +82,7 @@ class PagesControllerTest < ActionController::TestCase
       
       get :show, :project_id => @project.to_param, :id => "Home"
       assert_response :success
-      assert_select ".help-box p", /page "Home" doesn't exist yet/
+      assert_select ".help-box p", /page "Home" does not exist yet/
     end
 
     should "redirects to the project if wiki is disabled for this projcet" do

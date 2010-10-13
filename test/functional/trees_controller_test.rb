@@ -176,7 +176,7 @@ class TreesControllerTest < ActionController::TestCase
       assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
     end
     
-    should "enqueues a job when the tarball isn't cached" do
+    should "enqueues a job when the tarball is not cached" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
       work_path = File.join(GitoriousConfig["archive_work_dir"], 
@@ -201,7 +201,7 @@ class TreesControllerTest < ActionController::TestCase
       assert_equal "tar.gz", msg_hash["format"]
     end
     
-    should "enqueues a job when the tarball isn't cached, unless work has already begun" do
+    should "enqueues a job when the tarball is not cached, unless work has already begun" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       work_path = File.join(GitoriousConfig["archive_work_dir"], 
