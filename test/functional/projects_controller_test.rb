@@ -252,7 +252,7 @@ class ProjectsControllerTest < ActionController::TestCase
     should "GET projects/N/edit is only for project owner" do
       login_as :moe
       get :edit, :id => projects(:johans).to_param
-      assert_match(/you're not the owner of this project/i, flash[:error])
+      assert_match(/you are not the owner of this project/i, flash[:error])
       assert_redirected_to(project_path(projects(:johans)))
     end
 
@@ -323,14 +323,14 @@ class ProjectsControllerTest < ActionController::TestCase
       login_as :moe
       delete :destroy, :id => projects(:johans).slug
       assert_redirected_to(projects_path)
-      assert_match(/You're not the owner of this project, or the project has clones/i, flash[:error])
+      assert_match(/You are not the owner of this project, or the project has clones/i, flash[:error])
     end
 
     should "DELETE projects/xx is only allowed if there's a single repository (mainline)" do
       login_as :johan
       delete :destroy, :id => projects(:johans).slug
       assert_redirected_to(projects_path)
-      assert_match(/You're not the owner of this project, or the project has clones/i, flash[:error])
+      assert_match(/You are not the owner of this project, or the project has clones/i, flash[:error])
       assert_not_nil Project.find_by_id(1)
     end
 
@@ -538,7 +538,7 @@ class ProjectsControllerTest < ActionController::TestCase
         :only_path => false, :host => "#{sites(:qt).subdomain}.gitorious.test")
     end
 
-    should "redirect to the proper subdomain if the current site has one and we're using www" do
+    should "redirect to the proper subdomain if the current site has one and we are using www" do
       @request.host = "www.gitorious.test"
       get :show, :id => projects(:thunderbird).to_param
       assert_response :redirect

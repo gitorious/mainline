@@ -695,7 +695,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should 'add a comment and set the state when reason exists' do
-      @merge_request.reason = "You're right, this is a great idea!"
+      @merge_request.reason = "You are right, this is a great idea!"
       @merge_request.close
       @merge_request.save
       @merge_request.migrate_to_status_tag

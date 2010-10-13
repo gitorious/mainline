@@ -409,7 +409,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		should "requires ownership to edit" do
 			login_as :moe
       do_edit_get
-			assert_match(/you're not the owner/i, flash[:error])
+			assert_match(/you are not the owner/i, flash[:error])
 			assert_response :redirect
 		end
 		
@@ -470,7 +470,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 		should "requires ownership to update" do
 			login_as :moe
 			do_put
-			assert_match(/you're not the owner/i, flash[:error])
+			assert_match(/you are not the owner/i, flash[:error])
 			assert_response :redirect
 		end
 		
@@ -509,7 +509,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_no_difference("MergeRequest.count") do
 				assert_redirected_to(project_repository_path(@project, @target_repository))
 				assert_equal nil, flash[:success]
-				assert_match(/You're not the owner of this merge request/i, flash[:error])
+				assert_match(/You are not the owner of this merge request/i, flash[:error])
       end
 		end		
 	end
@@ -597,7 +597,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 			assert_no_difference("MergeRequest.count") do
 				assert_redirected_to(project_repository_path(@project, @target_repository))
 				assert_equal nil, flash[:success]
-				assert_match(/You're not the owner of this merge request/i, flash[:error])
+				assert_match(/You are not the owner of this merge request/i, flash[:error])
       end
 		end
 	end

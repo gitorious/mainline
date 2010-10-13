@@ -115,7 +115,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal "[Gitorious] Activity: #{body[0..34]}...", mail.subject
     assert_match(/Hello #{user.login}/, mail.body)
     assert mail.body.include?(body), "notification body not in: #{mail.body}"
-    assert_match(/you're receiving this email because/i, mail.body)
+    assert_match(/you are receiving this email because/i, mail.body)
     assert_match(/#{GitoriousConfig['gitorious_host']}\/favorites/, mail.body)
   end
 end

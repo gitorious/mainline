@@ -35,7 +35,7 @@
       :create_error_already_commiter => "Could not add user or user is already a committer",
       :destroy_success => "User removed from repository",
       :destroy_error => "Could not remove user from repository",
-      :find_repository_error => "You're not the owner of this repository",
+      :find_repository_error => "You are not the owner of this repository",
     },
     :keys_controller => {
       :create_notice => "Key added",
@@ -47,15 +47,15 @@
       :resolve_disallowed => "The merge request could not be marked as {{status}}",
       :update_success => "Merge request was updated",
       :destroy_success => "Merge request was retracted",
-      :assert_resolvable_error => "You're not permitted to resolve this merge request",
-      :assert_ownership_error => "You're not the owner of this merge request",
+      :assert_resolvable_error => "You are not permitted to resolve this merge request",
+      :assert_ownership_error => "You are not the owner of this merge request",
       :need_contribution_agreement => "You need to accept the contribution agreement",
       :reopened => 'Merge request was reopened',
       :reopening_failed => 'Merge request could not be reopened'
     },
     :projects_controller => {
-      :update_error => "You're not the owner of this project",
-      :destroy_error => "You're not the owner of this project, or the project has clones",
+      :update_error => "You are not the owner of this project",
+      :destroy_error => "You are not the owner of this project, or the project has clones",
       :create_only_for_site_admins => "Only site administrators are allowed to create new projects",
     },
     :repositories_controller => {
@@ -63,7 +63,7 @@
       :create_clone_error => "Sorry, cannot clone an empty repository",
       :create_success => "New repository created",
       :destroy_notice => "The repository was deleted",
-      :destroy_error => "You're not the owner of this repository",
+      :destroy_error => "You are not the owner of this repository",
       :adminship_error => "Sorry, only repository admins are allowed to do that",
       :only_projects_create_new_error => "You can only add new repositories directly to a project",
     },
@@ -231,7 +231,7 @@
         :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
         :default_favorite_notifications => "By default notify me of updates in what I'm watching",
         :describe_default_favorite_notifications => "By selecting this you will by default be notified by email when " +
-        "activities occur in what you're watching on Gitorious",
+        "activities occur in what you are watching on Gitorious",
         :member_for => "Member for",
         :this_week => {
           :one => "commit so far this week",
@@ -359,7 +359,7 @@
         :clone_this_repo => "Clone this repository",
         :more_info => "More info…",
         :help_clone => "You can clone this repository with the following command",
-        :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you're behind a firewall",
+        :help_clone_http => "note that cloning over HTTP is slightly slower, but useful if you are behind a firewall",
         :http_url => "Public HTTP clone url",
         :push_url => "Your push url",
         :help_push => "You can run <code>git push {{repo}} master</code><br /> Or you can setup a remote like this:",
@@ -390,7 +390,7 @@
         :current_owner_project => "The repository is currrently owned by the {{project_name}} project (which you own).",
         :current_owner_user => "The repository is currrently owned by you.",
         :transfer_owner_howto => "If you wish, you can transfer ownership
-                                  of this repository to a team you're an administrator of. That way you can add
+                                  of this repository to a team you are an administrator of. That way you can add
                                   multiple users as committers, without requiring them to start a team.",
         :add_committer_group => "Or you can add an existing team as committers to the repository,
                                 thus giving all the members commit access.",
