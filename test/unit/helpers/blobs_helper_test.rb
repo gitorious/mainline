@@ -79,7 +79,7 @@ class BlobsHelperTest < ActionView::TestCase
   end
   
   context "highlightable?" do
-    should "be highlightable if it's codeish" do
+    should "be highlightable if it is codeish" do
       assert highlightable?(blob_with_name("foo.rb"))
       assert highlightable?(blob_with_name("foo.c"))
       assert highlightable?(blob_with_name("foo.h"))
@@ -87,11 +87,11 @@ class BlobsHelperTest < ActionView::TestCase
       assert highlightable?(blob_with_name("foo.css"))
     end
     
-    should "not be highlightable if there's no file name extension" do
+    should "not be highlightable if there is no file name extension" do
       assert !highlightable?(blob_with_name("README"))
     end
     
-    should "not be highlightable if it's a plaintext file" do
+    should "not be highlightable if it is a plaintext file" do
       assert !highlightable?(blob_with_name("info.txt"))
       assert !highlightable?(blob_with_name("info.textile"))
     end

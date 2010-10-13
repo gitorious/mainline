@@ -63,7 +63,7 @@ class MessageTest < ActiveSupport::TestCase
   context 'Replying to a message' do
     setup do
       @message    = Factory.create(:message)
-      @reply = @message.build_reply(:body => "Thanks. That's much appreciated")
+      @reply = @message.build_reply(:body => "Thanks. That is much appreciated")
     end
 
     should 'set the sender and recipient correctly' do
@@ -72,7 +72,7 @@ class MessageTest < ActiveSupport::TestCase
     end
     
     should 'be able to override the subject of a message' do
-      @reply = @message.build_reply(:body => "Thanks. That's much appreciated", :subject => "WTF")
+      @reply = @message.build_reply(:body => "Thanks. That is much appreciated", :subject => "WTF")
       assert_equal("WTF", @reply.subject)
     end
 
@@ -141,7 +141,7 @@ class MessageTest < ActiveSupport::TestCase
       reply = @message.build_reply(:body => "Thanks so much")
       assert reply.save
       10.times do 
-        new_reply = reply.build_reply(:body => "That's nothing")
+        new_reply = reply.build_reply(:body => "That is nothing")
         new_reply.save
         reply = new_reply
       end

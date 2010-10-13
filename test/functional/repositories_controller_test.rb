@@ -1163,7 +1163,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     context "Changing the HEAD" do
-      should "update the HEAD if it's changed" do
+      should "update the HEAD if it is changed" do
         the_head = @grit.get_head("test/master")
         @grit.expects(:update_head).with(the_head).returns(true)
         put :update, :project_id => @project.to_param, :id => @repository.to_param,

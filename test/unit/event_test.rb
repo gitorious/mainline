@@ -111,7 +111,7 @@ class EventTest < ActiveSupport::TestCase
       assert !@event.single_commit?
     end
 
-    should "return false for has_commits? unless it's a push event" do
+    should "return false for has_commits? unless it is a push event" do
       commit = @event.build_commit(
         :email  => 'Linus Torvalds <linus@kernel.org>',
         :data   => 'ffc0fa98',

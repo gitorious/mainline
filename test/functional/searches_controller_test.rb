@@ -40,7 +40,7 @@ class SearchesControllerTest < ActionController::TestCase
       assert_equal [projects(:johans)], assigns(:results)
     end
     
-    should "not search if there's no :q param" do
+    should "not search if there is no :q param" do
       Ultrasphinx::Search.expects(:new).never
       get :show, :q => ""
       assert_nil assigns(:search)

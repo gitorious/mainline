@@ -259,7 +259,7 @@ class UserTest < ActiveSupport::TestCase
       assert_equal users(:johan), User.find_by_email_with_aliases("johan@shortcut.no")
     end
 
-    should "return nil when there's no user with that email or alias" do
+    should "return nil when there is no user with that email or alias" do
       assert_nil User.find_by_email_with_aliases("wtf@fubar.no")
     end
 

@@ -113,7 +113,7 @@ class GroupsControllerTest < ActionController::TestCase
       assert @group.admin?(@user)
     end
     
-    should "be deletable if there's only one member" do
+    should "be deletable if there is only one member" do
       assert_equal 1, @group.members.count
       login_as :mike
       @group.projects.destroy_all
@@ -126,7 +126,7 @@ class GroupsControllerTest < ActionController::TestCase
       assert_match(/team was deleted/, flash[:success])
     end
     
-    should "not be deletable if there's more than one member" do
+    should "not be deletable if there is more than one member" do
       @group.add_member(users(:johan), Role.member)
       assert_equal 2, @group.members.count
       login_as :mike
@@ -138,7 +138,7 @@ class GroupsControllerTest < ActionController::TestCase
       assert_match(/team cannot be deleted/, flash[:error])
     end
     
-    should "be deletable if there's more than one member and user is site_admin" do
+    should "be deletable if there is more than one member and user is site_admin" do
       assert users(:johan).site_admin?
       @group.add_member(users(:johan), Role.member)
       assert_equal 2, @group.members.count

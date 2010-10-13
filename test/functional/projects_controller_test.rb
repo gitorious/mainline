@@ -326,7 +326,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_match(/You are not the owner of this project, or the project has clones/i, flash[:error])
     end
 
-    should "DELETE projects/xx is only allowed if there's a single repository (mainline)" do
+    should "DELETE projects/xx is only allowed if there is a single repository (mainline)" do
       login_as :johan
       delete :destroy, :id => projects(:johans).slug
       assert_redirected_to(projects_path)
@@ -521,7 +521,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "with a site specific layout" do
-    should "render with the application layout if there's no containing site" do
+    should "render with the application layout if there is no containing site" do
       get :show, :id => projects(:johans).to_param
       assert_response :success
       assert_equal "layouts/application", @response.layout

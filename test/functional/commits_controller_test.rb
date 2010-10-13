@@ -102,7 +102,7 @@ class CommitsControllerTest < ActionController::TestCase
       assert_select "#content p", /This is the initial commit in this repository/
     end
 
-    should "have a different last-modified if there's a comment" do
+    should "have a different last-modified if there is a comment" do
       Comment.create!({
           :user => users(:johan),
           :body => "foo",
@@ -275,7 +275,7 @@ class CommitsControllerTest < ActionController::TestCase
         assert @response.body.include?(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})
       end
       
-      should "not explode when there's no commits" do
+      should "not explode when there is no commits" do
         @repository.git.expects(:commits).returns([])
         get :feed, {:project_id => @project.slug,
           :repository_id => @repository.name, :id => "master", :format => "atom"}

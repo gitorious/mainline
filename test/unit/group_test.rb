@@ -70,7 +70,7 @@ class GroupTest < ActiveSupport::TestCase
     end
   end
   
-  should "has a collection of project ids, of all projects it's somehow associated with" do
+  should "has a collection of project ids, of all projects it is somehow associated with" do
     group = groups(:team_thunderbird)
     assert group.all_related_project_ids.include?(projects(:thunderbird).id)
     assert group.all_related_project_ids.include?(repositories(:johans2).project_id)

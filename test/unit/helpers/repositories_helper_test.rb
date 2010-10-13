@@ -106,7 +106,7 @@ class RepositoriesHelperTest < ActionView::TestCase
       assert_equal %w[c a b], sorted_git_heads(heads).map(&:name)
     end
     
-    should "not include a nil item when there's no head" do
+    should "not include a nil item when there is no head" do
       heads = [
         stub("git head", :name => "c", :head? => false),
         stub("git head", :name => "a", :head? => false),

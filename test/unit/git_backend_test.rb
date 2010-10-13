@@ -76,7 +76,7 @@ class GitBackendTest < ActiveSupport::TestCase
     assert !GitBackend.repository_has_commits?(path), 'GitBackend.repository_has_commits?(path) should be false'
   end
   
-  should "knows if a repos has commits, if there's more than 0 heads" do
+  should "knows if a repos has commits, if there is more than 0 heads" do
     path = @repository.full_repository_path 
     dir_mock = mock("Dir mock")
     Dir.expects(:[]).with(File.join(path, "refs/heads/*")).returns(dir_mock)

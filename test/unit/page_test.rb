@@ -45,7 +45,7 @@ class PageTest < ActiveSupport::TestCase
     assert_equal "Hello world!\n", page.content
   end
   
-  should "raises an error when there's no user set" do
+  should "raises an error when there is no user set" do
     p = Page.find("HowTo", @repo)
     assert_raises(Page::UserNotSetError) { p.save }
   end

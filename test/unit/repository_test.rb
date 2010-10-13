@@ -106,13 +106,13 @@ class RepositoryTest < ActiveSupport::TestCase
       silence_warnings {Site::HTTP_CLONING_SUBDOMAIN = old_value}
     end
 
-    should "has a clone url with the project name, if it's a mainline" do
+    should "has a clone url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "git://#{@host}/#{@repository.project.slug}/foo.git", @repository.clone_url
     end
 
-    should "have a clone url with the team/user, if it's not a mainline" do
+    should "have a clone url with the team/user, if it is not a mainline" do
       @repository.kind = Repository::KIND_TEAM_REPO
       url = "git://#{@host}/#{@repository.owner.to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.clone_url
@@ -123,13 +123,13 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal url, @repository.clone_url
     end
 
-    should "has a push url with the project name, if it's a mainline" do
+    should "has a push url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
     end
 
-    should "have a push url with the team/user, if it's not a mainline" do
+    should "have a push url with the team/user, if it is not a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
       url = "#{@host_with_user}:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
@@ -141,13 +141,13 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal url, @repository.push_url
     end
 
-    should "has a http clone url with the project name, if it's a mainline" do
+    should "has a http clone url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
       assert_equal "http://git.#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
     end
 
-    should "have a http clone url with the team/user, if it's not a mainline" do
+    should "have a http clone url with the team/user, if it is not a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
       url = "http://git.#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
@@ -283,7 +283,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal nil, repos.name
   end
 
-  should "has it's name as its to_param value" do
+  should "has it is name as its to_param value" do
     @repository.save
     assert_equal @repository.name, @repository.to_param
   end
@@ -547,11 +547,11 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal users(:johan, :moe).map(&:login).sort, users.values.map(&:login).sort
   end
 
-  should "know if it's a normal project repository" do
+  should "know if it is a normal project repository" do
     assert @repository.project_repo?, '@repository.project_repo? should be true'
   end
 
-  should "know if it's a wiki repo" do
+  should "know if it is a wiki repo" do
     @repository.kind = Repository::KIND_WIKI
     assert @repository.wiki?, '@repository.wiki? should be true'
   end
@@ -579,12 +579,12 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal @repository.title, @repository.name
   end
 
-  should "return the project title as owner_title if it's a mainline" do
+  should "return the project title as owner_title if it is a mainline" do
     @repository.kind = Repository::KIND_PROJECT_REPO
     assert_equal @repository.project.title, @repository.owner_title
   end
 
-  should "return the owner title as owner_title if it's not a mainline" do
+  should "return the owner title as owner_title if it is not a mainline" do
     @repository.kind = Repository::KIND_TEAM_REPO
     assert_equal @repository.owner.title, @repository.owner_title
   end
@@ -663,7 +663,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal groups(:team_thunderbird), repo.owner
   end
 
-  should "not change kind when it's a project repo and changing owner" do
+  should "not change kind when it is a project repo and changing owner" do
     repo = repositories(:johans)
     repo.change_owner_to!(groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird), repo.owner
@@ -791,7 +791,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  should "create an event on create if it's a project repo" do
+  should "create an event on create if it is a project repo" do
     repo = new_repos
     repo.kind = Repository::KIND_PROJECT_REPO
     assert_difference("repo.project.events.count") do
@@ -877,7 +877,7 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
-    should "allow blank updates if we say it's ok" do
+    should "allow blank updates if we say it is ok" do
       @repository.update_attribute(:description, "asdf")
       @repository.log_changes_with_user(users(:johan)) do
         @repository.replace_value(:description, "", true)
@@ -1126,7 +1126,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert repo.reload.watched_by?(user)
     end
 
-    should "not add as watcher if it's an internal repository" do
+    should "not add as watcher if it is an internal repository" do
       repo = new_repos(:user => users(:moe))
       repo.kind = Repository::KIND_TRACKING_REPO
       assert_no_difference("users(:moe).favorites.count") do

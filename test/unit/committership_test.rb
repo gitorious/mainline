@@ -36,7 +36,7 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_equal groups(:team_thunderbird), c.committer
   end
 
-  should "have a member attribute that's the user if the committer is a user" do
+  should "have a member attribute that is the user if the committer is a user" do
     c = new_committership(:committer => users(:johan))
     assert_equal [users(:johan)], c.members
   end
@@ -63,7 +63,7 @@ class CommittershipTest < ActiveSupport::TestCase
     assert_nil message.notifiable_id
   end
 
-  should "have a member attribute that's the group members if the committer is a Group" do
+  should "have a member attribute that is the group members if the committer is a Group" do
     c = new_committership(:committer => groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird).members, c.members
   end
@@ -235,7 +235,7 @@ class CommittershipTest < ActiveSupport::TestCase
     end
   end
 
-  should "explode on destroy if there's no repository" do
+  should "explode on destroy if there is no repository" do
     # The repository will be gone if we're deleting the
     # user/repository and it cascades down to the committership
     cs = new_committership

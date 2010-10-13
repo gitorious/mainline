@@ -109,7 +109,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal "New", @merge_request.reload.status_tag.to_s
     end
 
-    should "default to 'Open' if there's no default_status" do
+    should "default to 'Open' if there is no default_status" do
       @merge_request.confirmed_by_user
       assert_equal "Open", @merge_request.reload.status_tag.to_s
       assert_equal MergeRequest::STATUS_OPEN, @merge_request.status
@@ -124,7 +124,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert @merge_request.ready?
     end
 
-    should "always be ready if it's a legacy merge request" do
+    should "always be ready if it is a legacy merge request" do
       @merge_request.versions.destroy_all
       @merge_request.update_attribute(:legacy, true)
       assert @merge_request.ready?
@@ -323,7 +323,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.ending_commit = '6823e6622e1da9751c87380ff01a1db1'
     end
 
-    should "not blow up if there's no target repository" do
+    should "not blow up if there is no target repository" do
       mr = MergeRequest.new
       assert_nothing_raised do
         assert_equal [], mr.commits_for_selection
@@ -594,14 +594,14 @@ class MergeRequestTest < ActiveSupport::TestCase
         @git_backend.stubs(:merge_base).returns("abc")
       end
 
-      should "not create a 'new version' event if it's the first version" do
+      should "not create a 'new version' event if it is the first version" do
         @git_backend.expects(:push)
         assert_no_difference("Event.count") do
           @merge_request.push_new_branch_to_tracking_repo
         end
       end
 
-      should "create a 'new version' event unless it's the first version" do
+      should "create a 'new version' event unless it is the first version" do
         @git_backend.expects(:push)
         @merge_request.create_new_version
         assert_difference("Event.count") do

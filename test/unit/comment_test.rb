@@ -44,7 +44,7 @@ class CommentTest < ActiveSupport::TestCase
       assert_equal "johan commented on your merge request", msg.subject
     end
 
-    should "not notify the target.user if it's the one who commented" do
+    should "not notify the target.user if it is the one who commented" do
       comment = @merge_request.comments.new({
         :body => "need more cowbell",
         :project => projects(:johans)

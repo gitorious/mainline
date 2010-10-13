@@ -196,7 +196,7 @@ class CommentsControllerTest < ActionController::TestCase
         assert_equal(("ffac01".."ffab99"), assigns(:comment).sha_range)
       end
 
-      should "not notify the merge request owner, if he's the one commenting" do
+      should "not notify the merge request owner, if he is the one commenting" do
         assert_no_difference("@merge_request.user.received_messages.count") do
           @version = create_new_version
           create_merge_request_version_comment(@version)
@@ -230,7 +230,7 @@ class CommentsControllerTest < ActionController::TestCase
         assert_equal "1-1:13-13+14", comment.lines
       end
 
-      should "render some json if it's a merge request comment" do
+      should "render some json if it is a merge request comment" do
         @version = create_new_version
         create_merge_request_version_comment(@version)
         assert_response :success
@@ -248,7 +248,7 @@ class CommentsControllerTest < ActionController::TestCase
       end
     end
 
-    should "redirect back to the merge request on POST create if that's the target" do
+    should "redirect back to the merge request on POST create if that is the target" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome"}
       assert_response :redirect

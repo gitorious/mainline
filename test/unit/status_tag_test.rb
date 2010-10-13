@@ -52,7 +52,7 @@ class StatusTagTest < ActiveSupport::TestCase
     assert_equal @open_status.description, st.description
   end
 
-  should "return nil as description if there's no #status" do
+  should "return nil as description if there is no #status" do
     st = StatusTag.new("Foo", @project)
     assert_nil st.description
   end
@@ -62,7 +62,7 @@ class StatusTagTest < ActiveSupport::TestCase
     assert_equal @open_status.color, st.color
   end
 
-  should "have a default grayish color whe there's no #status" do
+  should "have a default grayish color whe there is no #status" do
     st = StatusTag.new("Foo", @project)
     assert_equal "#cccccc", st.color
     
@@ -71,7 +71,7 @@ class StatusTagTest < ActiveSupport::TestCase
     assert_equal "#cccccc", st.color
   end
 
-  should "know if it's open or closed" do
+  should "know if it is open or closed" do
     st = StatusTag.new("Open", @project)
     assert st.open?
     assert !st.closed?
