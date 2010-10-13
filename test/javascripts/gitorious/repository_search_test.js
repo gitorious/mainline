@@ -64,7 +64,7 @@
         "test should build markup for repo with description": function () {
             var result = rs.renderer.render({
                 name: "Gitorious",
-                description: "Hi, I'm Gitorious",
+                description: "Hi, I am Gitorious",
                 uri: "/gitorious/mainline",
                 owner_type: "owner",
                 owner_uri: "/users/cjohansen",
@@ -72,7 +72,7 @@
                 img: "/images/cj.png"
             });
 
-            assertEquals("Hi, I'm Gitorious", result.find("div.name a").attr("title"));
+            assertEquals("Hi, I am Gitorious", result.find("div.name a").attr("title"));
             assertEquals("Gitorious", result.find("div.name a").text());
             assertEquals("/images/cj.png", result.find("div.owner img").attr("src"));
             assertEquals("/users/cjohansen", result.find("div.owner a").attr("href"));
