@@ -62,9 +62,9 @@ cd <%=h repository.name -%>
 </pre></p>
         <p>Add this repository as a remote to an existing local repository:
 <pre>
-git remote add <%=h repository.name -%>  <%= repository.clone_url %>
+git remote add <%=h repository.name -%> <%= repository.clone_url %>
 git fetch <%=h repository.name %>
-git checkout -b <%=h repository.name -%>/master_or_other_branch my-local-tracking-branch
+git checkout -b my-local-tracking-branch <%=h repository.name -%>/master_or_other_branch
 </pre></p>
 		</div>	
 	  </li>
