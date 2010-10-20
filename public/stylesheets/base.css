@@ -1759,7 +1759,7 @@ table tr td.code {
  white-space: -o-pre-wrap;    /* Opera 7                */
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
  background: #fff;
- font: 95%/110% "Bitstream Vera Sans Mono", Monaco, monospace;
+ font: 95%/110% monospace, "Bitstream Vera Sans Mono", Monaco;
  border-right: 1px solid #ccc;
 }
 table#codeblob tr td.code {
