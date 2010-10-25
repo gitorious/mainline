@@ -226,7 +226,9 @@ module EventRenderingHelper
       link_to(repo_title(source_repository, project),
         repo_owner_path(source_repository, [project, source_repository])) +
       " with " + link_to(h(target_repository.name),
-        repo_owner_path(target_repository, [project, target_repository]))
+        repo_owner_path(target_repository, [project, target_repository])) +
+      " in merge request " + link_to(h(target_repository.url_path) + " " + h("##{event.target.to_param}"),
+        repo_owner_path(target_repository, :project_repository_merge_request_path, project, target_repository, event.target))
     end
     body = link_to truncate(h(event.target.proposal), :length => 100), [project, target_repository, event.target]
     category = "merge_request"
@@ -239,9 +241,9 @@ module EventRenderingHelper
     target_repository = event.target.target_repository
 
     action = action_for_event(:event_resolved_merge_request) do
-      "as " + "<em>#{event.target.status_string}</em> from " +
-      link_to(repo_title(source_repository, project),
-        repo_owner_path(source_repository, [project, source_repository]))
+      link_to(h(target_repository.url_path) + " " + h("##{event.target.to_param}"),
+        repo_owner_path(target_repository, :project_repository_merge_request_path, project, target_repository, event.target)) +
+      " as " + "<em>#{event.data.to_s}</em>"
     end
     body = link_to truncate(h(event.target.proposal), :length => 100), [project, target_repository, event.target]
     category = "merge_request"
