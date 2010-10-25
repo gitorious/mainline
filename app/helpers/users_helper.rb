@@ -69,7 +69,7 @@ module UsersHelper
     msg = personified(user, "You are not", "#{user.title} is not") +
       " watching anything yet."
     if is_current_user?(user)
-      msg << "Click the watch icon to get events fed into this page"
+      msg << " Click the watch icon to get events fed into this page."
     end
     msg
   end
