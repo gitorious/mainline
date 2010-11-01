@@ -232,7 +232,7 @@ export PATH=$RUBY_HOME/bin:$PATH
 
 9.1 Start Services
 
-- if you're still as ser 'git', type 'exit' to go back to Root
+- if you're still as user 'git', type 'exit' to go back to Root
 
 /etc/init.d/git-daemon start
 /etc/init.d/git-ultrasphinx start
