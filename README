@@ -17,7 +17,7 @@ Further documentation
 =====================
 Also see the files in the doc/ folder, they contain further detailed information
 about setting up the application for specific linux distributions such as 
-CenOS and Ubuntu/Debian
+CentOS and Ubuntu/Debian
 
 
 Installation to a production environment -- a partial walkthrough.
