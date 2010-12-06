@@ -183,6 +183,22 @@ class CommentsControllerTest < ActionController::TestCase
       end
     end
 
+    context "Listing merge request comments" do
+      setup do
+        @merge_request.comments.destroy_all
+        @comment = @merge_request.comments.create!(:body => "Awesome",
+          :project => @project, :user => @merge_request.user)
+      end
+
+      should "list the MR comments in #index" do
+        get(:index, :project_id => @project.slug, :repository_id => @repository.to_param,
+          :merge_request_id => @merge_request.to_param
+          )
+        assert_response :success
+        assert_equal(@merge_request, assigns(:target))
+        #assert_equal([@comment], assigns(:comments))
+      end
+    end
     
     context "Merge request versions" do
       should "set the merge request version as polymorphic parent" do
