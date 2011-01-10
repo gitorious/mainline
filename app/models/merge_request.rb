@@ -485,6 +485,16 @@ class MergeRequest < ActiveRecord::Base
             builder.updated_at(v.updated_at.xmlschema)
             builder.version(v.version)
             builder.merge_base_sha(v.merge_base_sha)
+            v.comments.each do |comment|
+              builder.comment(:id => comment.id) do
+                builder.created_at comment.created_at
+                builder.updated_at comment.updated_at
+                builder.body comment.body
+                builder.author do
+                  builder.username comment.user.title
+                end
+              end
+            end
           end
         end
       end
