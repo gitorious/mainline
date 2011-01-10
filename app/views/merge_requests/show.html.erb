@@ -71,7 +71,20 @@
 <% render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
 
 <h2><%= t("views.merges.commits_to_merged") %>:</h2>
-
+<div class="version_selector">
+  <div class="changable-selection-current round-10" id="merge_request_version"
+       gts:url="<%= select_version_url(@merge_request) -%>">
+    Version <%= @merge_request.versions.last.version -%>
+  </div>
+  <ul class="changable-selection-options shadow-2 round-5">
+    <% @merge_request.versions.each do |version| -%>
+      <li data-mr-version-number="<%= version.version -%>"
+          data-mr-version-url="<%= commit_diff_url(version) -%>">
+        Version <%=h version.version %>
+      </li>
+    <% end -%>
+  </ul>
+</div>
 <div id="diff_browser_for_current_version">
   <% if !@git_timeout_occured %>
   <%= render :partial => "version",
