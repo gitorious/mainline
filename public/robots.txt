@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /*/archive-tarball/
+Disallow: /*.git
+Disallow: /*.atom
+Disallow: /*.diff
+Disallow: /*.patch
+Disallow: /*.js
+Disallow: /*.tar.gz
+Disallow: /*/blobs/history/
+Disallow: /*/raw/
+Disallow: /*/trees/
+Disallow: /activities
+Disallow: /projects
+Crawl-delay: 120
