@@ -144,8 +144,12 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
-    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL and suspended_at IS NULL', email] # need to get the salt
-    u && u.authenticated?(password) ? u : nil
+    GitoriousConfig['authentication'].each do |config|
+        authentication = Gitorious::Authentication.const_get(config['method']).new config
+        u = authentication.authenticate email, password
+        return u if u && u.activated_at && ! u.suspended_at
+    end
+    nil
   end
 
   # Encrypts some data with the salt.

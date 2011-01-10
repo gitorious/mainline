@@ -61,3 +61,25 @@ test:
 
   # Pick a default license
   #default_license: GNU Affero General Public License (AGPLv3)
+
+  # Configure authentication (Default, LDAP, etc).
+  # Multiple authentication methods can be specified in list form.
+  # Each method will be attempted in the order listed.
+  # Example LDAP authentication definition (against Active Directory in this example)
+  #
+  #  - method: Ldap
+  #    host: ldap.gitorious.org
+  #    port: 3268
+  #    autoregistration: true
+  #    users_base_dn: DC=gitorious,DC=org
+  #    bind_method: simple
+  #    bind_username: binduser
+  #    bind_password: supersecret
+  #    base_dn: DC=gitorious,DC=org
+  #    users_filter: "objectClass=user"
+  #    username_attribute: samAccountName
+  #    full_name_attribute: displayName
+  #    email_attribute: mail
+  authentication:
+    - method: Default
+
