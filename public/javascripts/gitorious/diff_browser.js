@@ -343,7 +343,7 @@ Gitorious.MergeRequestController = function () {
     this.getDiffUrl = function () {
         if (this._requestedVersion) {
             return $("li[data-mr-version-number=" + this._requestedVersion + "]").
-                attr("data-mr-version-url");
+                attr("data-mr-version-url") + "?commit_shas=" + this.getCurrentShaRange();
         } else {
             return $("#merge_request_commit_selector").
                 attr("data-merge-request-version-url");
@@ -525,6 +525,7 @@ Gitorious.MergeRequestController = function () {
     // User has selected another version to be displayed
     this.loadVersion = function (v) {
         var self = this;
+        this._requestedVersion = v;
         var url = $("#merge_request_version").attr("gts:url") +
                   "?version=" + v;
 
