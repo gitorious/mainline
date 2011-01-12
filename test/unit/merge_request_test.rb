@@ -557,6 +557,15 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_match(/<id>#{@merge_request.sequence_number}<\/id>/,
         @merge_request.to_xml)
     end
+
+    should "include comments" do
+      comments = [mock(:user => users(:johan), :created_at => Time.now, :updated_at => Time.now, :body => "fff", :id => 901)]
+      version = mock(:comments => comments, :merge_base_sha => "", :updated_at => Time.now, :version => "1")
+      @merge_request.expects(:versions).returns([version])
+
+      xml_payload = @merge_request.to_xml
+      assert_match(/<comment .*author="#{users(:johan).title}".*>/, xml_payload)
+    end
   end
 
   context 'Pushing changes to the merge request repository' do
