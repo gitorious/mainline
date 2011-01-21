@@ -21,6 +21,7 @@ require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
 
+  
   def new_repos(opts={})
     Repository.new({
       :name => "foo",
@@ -1014,7 +1015,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "include repositories recently pushed to" do
-      assert @project.repositories.by_users.fresh(2).include?(@user_repos.first)
+      assert @project.repositories.reload.by_users.fresh(2).include?(@user_repos.first)
     end
 
     should "not include repositories last pushed to in the middle ages" do
