@@ -26,6 +26,8 @@ class Group < ActiveRecord::Base
   has_many :repositories, :as => :owner, :conditions => ["kind NOT IN (?)",
                                                          Repository::KINDS_INTERNAL_REPO],
     :dependent => :destroy
+  has_many :cloneable_repositories, :as => :owner, :class_name => "Repository",
+     :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
   has_many :projects, :as => :owner
 
   attr_protected :public, :role_id, :user_id
