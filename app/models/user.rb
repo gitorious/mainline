@@ -32,6 +32,8 @@ class User < ActiveRecord::Base
   has_many :groups, :through => :memberships
   has_many :repositories, :as => :owner, :conditions => ["kind != ?", Repository::KIND_WIKI],
     :dependent => :destroy
+  has_many :cloneable_repositories, :class_name => "Repository",
+     :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
   has_many :committerships, :as => :committer, :dependent => :destroy
   has_many :commit_repositories, :through => :committerships, :source => :repository,
   :conditions => ["repositories.kind NOT IN (?)", Repository::KINDS_INTERNAL_REPO]
