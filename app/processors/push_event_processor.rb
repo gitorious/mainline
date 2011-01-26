@@ -105,6 +105,7 @@ class PushEventProcessor < ApplicationProcessor
   
   # Sets the commit summary, as served from git
   def process_push_from_commit_summary(spec)
+    return unless perform_event_logging?
     parse_git_spec(spec)
     if @target != :review && @repository
       @repository.update_disk_usage
@@ -333,6 +334,14 @@ class PushEventProcessor < ApplicationProcessor
       end
     else
       data
+    end
+  end
+
+  def perform_event_logging?
+    if @repository && @repository.wiki?
+      return false
+    else
+      return true
     end
   end
 end
