@@ -36,7 +36,7 @@ class RepositoriesController < ApplicationController
     if term = params[:filter]
       @repositories = @project.search_repositories(term)
     else
-      @repositories = @owner.repositories.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
+      @repositories = @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
     end
     respond_to do |wants|
       wants.html
