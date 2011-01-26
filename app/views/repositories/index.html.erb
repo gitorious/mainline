@@ -23,9 +23,11 @@
 <% @page_title = t("views.repos.page_title", :repo => @owner.title) -%>
 <h2 class="content-header"><%= t("views.repos.title") %></h2>
 
-<% @owner.repositories.each do |repo| -%>
+<% @repositories.each do |repo| -%>
   <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
 <% end -%>
+
+<%= will_paginate @repositories -%>
 
 <% content_for :sidebar do -%>
   <%= render :partial => "projects/repositories" if @project -%>

@@ -310,6 +310,25 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     end
   end
 
+  context "Pushing to a wiki repository" do
+    setup do
+      @processor = PushEventProcessor.new
+    end
+
+    should "log events for non-wiki repositories" do
+      @processor.repository = repositories(:johans)
+      assert @processor.perform_event_logging?
+    end
+
+    should "not log events for wiki repositories" do
+      @processor.repository = repositories(:johans_wiki)
+      assert !@processor.perform_event_logging?
+      @processor.expects(:parse_git_spec).never # We should return before this is called
+      @processor.process_push_from_commit_summary("a b refs/heads/master")
+    end
+  end
+      
+
   
   # describe 'with stubbing towards a live repo' do
   #   before(:each) do

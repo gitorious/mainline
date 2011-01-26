@@ -444,6 +444,36 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
+  context "Cloneable repositories" do
+    setup do
+      @owner = Factory.create(:user, :login => "thejoker")
+      @project = Factory.create(:project, :user => @owner,
+        :owner => @owner)
+      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
+        :user => @owner, :name => "thework", :description => "halloween")
+      @group = Factory.create(:group, :creator => @owner,
+        :name => "foo-hackers", :user_id => @owner.to_param)
+      @group_repo = Factory.create(:repository, :project => @project,
+        :owner => @group, :name => "group-repo", :user => @owner)
+      @tracking_repo = @repo.create_tracking_repository
+    end
+
+    should "include regular repositories" do
+      assert @project.cloneable_repositories.include?(@group_repo)
+      assert @project.cloneable_repositories.include?(@repo)
+    end
+
+    should "not include tracking repositories" do
+      assert !@project.cloneable_repositories.include?(@tracking_repo)
+    end
+
+    should "include wiki repositories" do
+      wiki = @project.wiki_repository
+      assert_not_nil wiki
+      assert @project.cloneable_repositories.include?(wiki)
+    end
+  end
+
   should "be added to the creators favorites" do
     p = create_project
     p.save!

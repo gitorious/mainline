@@ -796,6 +796,13 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
 
+    should "allow pushing to wiki repositories" do
+      project = projects(:johans)
+      wiki = project.wiki_repository
+      user = users(:johan)
+      do_writable_by_get(:id => wiki.to_param)
+      assert_response :success
+    end
   end
 
   def do_config_get(options={})
@@ -820,6 +827,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
       exp = "real_path:#{@repository.real_gitdir}\nforce_pushing_denied:false"
       assert_equal exp, @response.body
+    end
+
+    should "expose the wiki repository" do
+      wiki = @project.wiki_repository
+      assert_not_nil wiki
+      do_config_get(:id => wiki.to_param)
+      expected = "real_path:#{wiki.real_gitdir}\nforce_pushing_denied:false"
+      assert_equal expected, @response.body
     end
   end
 

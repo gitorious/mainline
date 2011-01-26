@@ -36,7 +36,7 @@ class RepositoriesController < ApplicationController
     if term = params[:filter]
       @repositories = @project.search_repositories(term)
     else
-      @repositories = @owner.repositories.find(:all, :include => [:user, :events, :project])
+      @repositories = @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
     end
     respond_to do |wants|
       wants.html
@@ -185,7 +185,7 @@ class RepositoriesController < ApplicationController
 
   # Used internally to check write permissions by gitorious
   def writable_by
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id], @containing_project)
     user = User.find_by_login(params[:username])
 
     if user && result = /^refs\/merge-requests\/(\d+)$/.match(params[:git_path].to_s)
@@ -204,7 +204,7 @@ class RepositoriesController < ApplicationController
 
 
   def config
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id],
+    @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id],
       @containing_project)
     config_data = "real_path:#{@repository.real_gitdir}\n"
     config_data << "force_pushing_denied:"
