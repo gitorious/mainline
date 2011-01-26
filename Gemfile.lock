@@ -30,6 +30,7 @@ GEM
     ruby-yadis (0.3.4)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
+    shoulda (2.9.2)
     state_machine (0.9.4)
     stomp (1.1)
 
@@ -57,5 +58,6 @@ DEPENDENCIES
   ruby-hmac
   ruby-openid
   ruby-yadis
+  shoulda (~> 2.9.1)
   state_machine
   stomp (= 1.1)
