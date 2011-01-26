@@ -37,6 +37,8 @@ class Project < ActiveRecord::Base
       :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository",
     :conditions => ["kind = ?", Repository::KIND_WIKI], :dependent => :destroy
+  has_many :cloneable_repositories, :class_name => "Repository",
+     :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
   has_many    :events, :order => "created_at asc", :dependent => :destroy
   has_many    :groups
   belongs_to  :containing_site, :class_name => "Site", :foreign_key => "site_id"
