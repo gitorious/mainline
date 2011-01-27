@@ -58,7 +58,7 @@ module Gitorious
       end
 
       def fetch_from_git(repository, from, to)
-        output = repository.git.git.log({:pretty => "short", :"name-status" => true}, from, to)
+        output = repository.git.git.log({:pretty => "short", :"name-status" => true}, [from, to].join(".."))
         parse(output)
       end
 
@@ -84,7 +84,7 @@ module Gitorious
 
       private
       def extract_filename_from_file_list(flag, git_output)
-        git_output.scan(/^#{flag}\s*([A-Za-z\.]*)$/).flatten
+        git_output.scan(/^#{flag}\s*([A-Z][a-z\.A-Z]+)$/).flatten
       end
     end
   end

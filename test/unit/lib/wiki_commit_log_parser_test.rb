@@ -96,21 +96,29 @@ COMMIT
 
   context "Extracting the page name" do
     setup do
-      @parser = Gitorious::Wiki::Commit.new
+      @commit = Gitorious::Wiki::Commit.new
     end
     
     should "discard file suffix for added files" do
-      @parser.added_file_names = ["Readme.markdown", "License.txt"]
-      assert_equal %w(Readme License), @parser.added_page_names
+      @commit.added_file_names = ["Readme.markdown", "License.txt"]
+      assert_equal %w(Readme License), @commit.added_page_names
     end
 
     should "discard file suffix for modified files" do
-      @parser.modified_file_names = ["Readme.markdown", "License.txt"]
-      assert_equal %w(Readme License), @parser.modified_page_names
+      @commit.modified_file_names = ["Readme.markdown", "License.txt"]
+      assert_equal %w(Readme License), @commit.modified_page_names
     end
 
     should "behave when no added files exist" do
-      assert_equal [], @parser.modified_page_names
+      assert_equal [], @commit.modified_page_names
+    end
+
+    should "not mark modified non-wiki files as wiki pages" do
+      parser = Gitorious::Wiki::CommitParser.new
+      result = parser.extract_modified_files_from_git_output("M    nevermind.markdown")
+      assert_equal [], result
+      result = parser.extract_modified_files_from_git_output("M    Nevermind.markdown")
+      assert_equal ["Nevermind.markdown"], result
     end
   end
 end
