@@ -53,5 +53,13 @@ module PagesHelper
   
   def page_node_name(node)
     h(node.name.split(".", 2).first)
-  end  
+  end
+
+  def writable_wiki_url(project)
+    "git@#{GitoriousConfig['gitorious_host']}:#{project.slug}/#{project.wiki_repository.name}.git"
+  end
+
+  def regular_wiki_url(project)
+    "git://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{project.wiki_repository.name}.git"
+  end
 end
