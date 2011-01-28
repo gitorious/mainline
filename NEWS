@@ -1,0 +1,17 @@
+= NEWS
+
+This document lists new features in the Gitorious source code. If you
+are looking for detailed information about invidiual commits, use the
+Git log.
+
+=== Pull/push Gitorious repositories
+
+Gitorious now lets users clone the wiki repository for a project. This
+way they can update the wiki locally (all the files in the repository
+is in Markdown format) and push their changes back to gitorious.org.
+
+In the same way events are logged in the project when someone edits a
+wiki page through the web interface, changes will be logged when you
+push them to Gitorious. Gitorious do not currently impose any
+restrictions on using branches and tags, so use Git however you see
+fit to work with your repository.

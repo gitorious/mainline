@@ -42,3 +42,14 @@
   </p>
 </div>
 <% end -%>
+
+<% if logged_in? -%>
+<div class="wiki_cloning_instructions">
+  <h3>Clone this wiki:</h3>
+  <% if @project.wiki_repository.wiki_writable_by?(current_user) -%>
+    <p><pre>git clone <%= writable_wiki_url(@project) -%></pre></p>
+  <% else -%>
+    <p><pre>git clone <%= regular_wiki_url(@project) -%></pre></p>
+  <% end -%>
+</div>
+<% end -%>

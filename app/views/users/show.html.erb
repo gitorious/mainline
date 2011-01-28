@@ -98,7 +98,7 @@
 			</ul>
 		</div>
 		<ul class="with_icons">
-			<% @favorites.each do |favorite| %>
+			<% @favorites.reject { |favorite| favorite.watchable.nil? }.each do |favorite| %>
 			  <li class="<%= css_classes_for(favorite.watchable) -%>">
 				  <%= link_to_watchable(favorite.watchable) -%>
 			  </li>

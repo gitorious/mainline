@@ -323,8 +323,8 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     should "not log events for wiki repositories" do
       @processor.repository = repositories(:johans_wiki)
       assert !@processor.perform_event_logging?
-      @processor.expects(:parse_git_spec).never # We should return before this is called
-      @processor.process_push_from_commit_summary("a b refs/heads/master")
+      @processor.expects(:log_wiki_updates)
+      @processor.extract_and_log_events("f2b92f402b3eb040596bb2a84d839042287fdd8f e829d57ff0d18cd6906caea7894f27bdfb976f5d refs/heads/master")
     end
   end
       

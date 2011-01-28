@@ -30,12 +30,23 @@ class PushEventProcessor < ApplicationProcessor
     logger.info "Push event. Username is #{hash['username']}, commit summary is #{hash['message']}, gitdir is #{hash['gitdir']}"
     if @repository = Repository.find_by_hashed_path(hash['gitdir'])
       @user = User.find_by_login(hash['username'])
-      process_push_from_commit_summary(hash['message'])
-      log_events
-      trigger_hooks(@events)
+      message = hash["message"]
+      extract_and_log_events(message)
     else
       logger.error("#{self.class.name} received message, but could not find repo with hashed_path #{hash['gitdir']}")
     end
+  end
+
+  # For regular repositories: extract events from the spec, log events
+  # For wiki repositories: parse the commit log and create Wiki events
+  def extract_and_log_events(spec)
+      if perform_event_logging?
+        process_push_from_commit_summary(spec)
+        log_events
+        trigger_hooks(@events)
+      else
+        log_wiki_updates(spec)
+      end
   end
 
   def trigger_hooks(events)
@@ -105,7 +116,6 @@ class PushEventProcessor < ApplicationProcessor
   
   # Sets the commit summary, as served from git
   def process_push_from_commit_summary(spec)
-    return unless perform_event_logging?
     parse_git_spec(spec)
     if @target != :review && @repository
       @repository.update_disk_usage
@@ -114,6 +124,7 @@ class PushEventProcessor < ApplicationProcessor
     end
     process_push
   end
+  
   
   def head?
     @target == :head
@@ -143,6 +154,21 @@ class PushEventProcessor < ApplicationProcessor
 
   def events=(events)
     @events = events
+  end
+
+  def log_wiki_updates(spec)
+    project = @repository.project
+    parser = Gitorious::Wiki::CommitParser.new
+    first_sha, last_sha, head_name = spec.split(/\s+/)
+    commits = parser.fetch_from_git(@repository, first_sha, last_sha)
+    commits.each do |c|
+      c.modified_page_names.each do |p|
+        project.create_event(Action::UPDATE_WIKI_PAGE, project, @user, p)
+      end
+      c.added_page_names.each do |p|
+        project.create_event(Action::UPDATE_WIKI_PAGE, project, @user, p)
+      end
+    end
   end
   
   class EventForLogging
