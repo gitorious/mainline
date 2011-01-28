@@ -191,6 +191,21 @@ class MergeRequestsControllerTest < ActionController::TestCase
         assert assigns(:git_timeout_occured)
       end
     end
+
+    should "display 'how to merge' help with correct branch" do
+      MergeRequest.expects(:find).returns(@merge_request)
+      stub_commits(@merge_request)
+      @merge_request.sequence_number = 399
+      @merge_request.target_branch = "superfly-feature"
+
+      get(:show,
+          :project_id => @project.to_param, 
+          :repository_id => @target_repository.to_param,
+          :id => @merge_request.to_param)
+
+      assert @response.body.include?("git merge merge-requests/399")
+      assert @response.body.include?("git push origin superfly-feature")
+    end
   end
 
   context "#new (GET)" do

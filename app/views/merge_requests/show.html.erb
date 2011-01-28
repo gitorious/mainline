@@ -142,7 +142,7 @@ to master.
 
 <pre>
 # Check out a new branch for integration
-git checkout -b integration
+git checkout -b merge-requests/<%= @merge_request.sequence_number %>
 
 # Fetch the merge request into this branch
 git pull \
@@ -150,12 +150,12 @@ git pull \
   <%= @merge_request.merge_branch_name %>
 
 # Show the commits, assess they are okay
-git log --pretty=oneline --abbrev-commit master..integration
+git log --pretty=oneline --abbrev-commit <%= @merge_request.target_branch %>..merge-requests/<%= @merge_request.sequence_number %>
 
-# To apply the changes to your master branch:
-git checkout master
-git merge integration
-git push origin master
+# To apply the changes to your branch:
+git checkout <%= @merge_request.target_branch %>
+git merge merge-requests/<%= @merge_request.sequence_number %>
+git push origin <%= @merge_request.target_branch %>
 </pre>
 </div>
 <% end %>
