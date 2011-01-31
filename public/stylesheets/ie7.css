@@ -59,3 +59,12 @@ body #content p.alt_links {
     margin-left: 390px;
     position: absolute;
 }
+
+#footer {
+    margin-top: 280px;
+    zoom: 1;
+}
+
+#wrapper #footer {
+    margin-top: 0;
+}
