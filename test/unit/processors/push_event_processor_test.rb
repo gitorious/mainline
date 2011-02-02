@@ -172,14 +172,21 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   
   should "returns the correct type and identifier for the deletion of a tag" do
     stub_git_show
+    user = users(:johan)
+    user.update_attribute(:email, "john@nowhere.com")
+
+    @processor.user = user
     @processor.process_push_from_commit_summary "a9934c1d3a56edfa8f45e5f157869874c8dc2c34 0000000000000000000000000000000000000000 refs/tags/r1.1"
+
     assert_equal :delete, @processor.action
     assert @processor.tag?
     assert_equal 1, @processor.events.size
     assert_equal Action::DELETE_TAG, @processor.events.first.event_type
     assert_equal 'r1.1', @processor.events.first.identifier
-    assert_equal 'john@nowhere.com', @processor.events.first.email
     assert_equal 'Deleted tag r1.1', @processor.events.first.message
+    assert_equal 1, @processor.events.size
+    assert_equal users(:johan).email, @processor.events.first.user.email
+    
     @processor.expects(:log_event).once
     @processor.log_events
   end

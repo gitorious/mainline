@@ -273,6 +273,7 @@ class PushEventProcessor < ApplicationProcessor
         rev, message = [@oldrev, "Deleted tag #{@identifier}"]
         logger.debug("Processor: action is #{action}, identifier is #{@identifier}, rev is #{rev}")
         fetch_commit_details(e, rev)
+        e.user = user
         e.message = message
         @events << e
       when :review
