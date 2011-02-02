@@ -453,4 +453,24 @@ class PushEventProcessorTest < ActiveSupport::TestCase
     end
   end
 
+  context "Merge requests" do
+    setup do
+        @processor = PushEventProcessor.new
+    end
+
+    context "Update" do
+      setup do
+        @git_payload = ["a"*32, "f"*32, "refs/merge-requests/42"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "not create push event" do
+        assert !@processor.generate_push_event?
+      end
+      
+      should "create meta event" do
+        assert @processor.generate_meta_event?
+      end
+    end
+  end
 end

@@ -376,6 +376,6 @@ class PushEventProcessor < ApplicationProcessor
   end
 
   def generate_meta_event?
-    [:create, :delete].include?(action)
+    [:create, :delete].include?(action) || (review? && action == :update)
   end
 end
