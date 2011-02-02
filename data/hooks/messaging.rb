@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #--
 #   Copyright (C) 2010 Tero Hänninen <tero.j.hanninen@jyu.fi>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
@@ -41,6 +42,10 @@ class Publisher
 
   def post_message(message)
     connect unless @connected
-    @connection.send '/queue/GitoriousPushEvent', message, {'persistent' => true}
+    if @connection.respond_to?(:publish)
+      @connection.publish '/queue/GitoriousPushEvent', message, {'persistent' => true}
+    else
+      @connection.send '/queue/GitoriousPushEvent', message, {'persistent' => true}
+    end
   end
 end
