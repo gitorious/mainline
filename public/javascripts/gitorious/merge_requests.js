@@ -217,7 +217,8 @@ jQuery(document).ready(function () {
     // Diff commenting
     jQuery("table tr td.inline_comments a.diff-comment-count").live("click", function (e) {
         var lineOffsets = jQuery(this).parents("tr").attr("data-line-num-tuple");
-        jQuery("#diff-inline-comments-for-" + lineOffsets).slideToggle();
+        var diffPathName = jQuery(this).parents("div.file-diff").attr("data-diff-path");
+        jQuery("div.file-diff[data-diff-path=\""+diffPathName+"\"] #diff-inline-comments-for-" + lineOffsets).slideToggle();
         e.preventDefault();
     });
 
