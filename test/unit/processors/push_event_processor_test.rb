@@ -350,4 +350,107 @@ class PushEventProcessorTest < ActiveSupport::TestCase
   #     assert_equal 'Adding some stuff', @processor.events.first.message
   #   end
   # end
+
+  context "Tags" do
+    setup do
+        @processor = PushEventProcessor.new
+    end
+
+    context "Creation" do
+      setup do
+        @git_payload = ["0"*32, "f"*32, "refs/tags/feature"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "not create push event" do
+        assert !@processor.generate_push_event?
+      end
+      
+      should "create meta event" do
+        assert @processor.generate_meta_event?
+      end
+    end
+
+    context "Update" do
+      setup do
+        @git_payload = ["a"*32, "f"*32, "refs/tags/feature"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "not create push event" do
+        assert !@processor.generate_push_event?
+      end
+      
+      should "not create meta event" do
+        assert !@processor.generate_meta_event?
+      end
+    end
+
+    context "Deletion" do
+      setup do
+        @git_payload = ["f"*32, "0"*32, "refs/tags/feature"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "not create push event" do
+        assert !@processor.generate_push_event?
+      end
+      
+      should "create meta event" do
+        assert @processor.generate_meta_event?
+      end
+    end
+  end
+
+  context "Branches" do
+    setup do
+        @processor = PushEventProcessor.new
+    end
+
+    context "Creation" do
+      setup do
+        @git_payload = ["0"*32, "f"*32, "refs/heads/master"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "not create push event" do
+        assert !@processor.generate_push_event?
+      end
+      
+      should "create meta event" do
+        assert @processor.generate_meta_event?
+      end
+    end
+
+    context "Update" do
+      setup do
+        @git_payload = ["a"*32, "f"*32, "refs/heads/feature"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "create push event" do
+        assert @processor.generate_push_event?
+      end
+      
+      should "not create meta event" do
+        assert !@processor.generate_meta_event?
+      end
+    end
+
+    context "Deletion" do
+      setup do
+        @git_payload = ["f"*32, "0"*32, "refs/heads/feature"].join(" ")
+        @processor.parse_git_spec(@git_payload)
+      end
+
+      should "not create push event" do
+        assert !@processor.generate_push_event?
+      end
+      
+      should "create meta event" do
+        assert @processor.generate_meta_event?
+      end
+    end
+  end
+
 end

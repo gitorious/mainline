@@ -223,8 +223,8 @@ class PushEventProcessor < ApplicationProcessor
         e.identifier = @identifier
         e.user = user
         result = [e]
-        if identifier == 'master'
-          result = result + events_from_git_log(@newrev) 
+        if @identifier == "master"
+          result = result + events_from_git_log(@newrev)
         end
         result.each{|ev|@events << ev}
       when :tag
@@ -369,5 +369,13 @@ class PushEventProcessor < ApplicationProcessor
     else
       return true
     end
+  end
+
+  def generate_push_event?
+    action == :update && head?
+  end
+
+  def generate_meta_event?
+    [:create, :delete].include?(action)
   end
 end
