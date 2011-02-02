@@ -118,7 +118,6 @@ class PushEventProcessor < ApplicationProcessor
   def process_push_from_commit_summary(spec)
     parse_git_spec(spec)
     if @target != :review && @repository
-      @repository.update_disk_usage
       @repository.register_push
       @repository.save
     end

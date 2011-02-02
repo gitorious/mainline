@@ -1156,14 +1156,21 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "update last_pushed_at" do
       @repository.last_pushed_at = 1.hour.ago.utc
+      @repository.stubs(:update_disk_usage)
       @repository.register_push
       assert @repository.last_pushed_at > 1.hour.ago.utc
     end
 
     should "increment the number of pushes" do
       @repository.push_count_since_gc = 2
+      @repository.stubs(:update_disk_usage)
       @repository.register_push
       assert_equal 3, @repository.push_count_since_gc
+    end
+
+    should "call update_disk_usage when registering a push" do
+      @repository.expects(:update_disk_usage)
+      @repository.register_push
     end
   end
 

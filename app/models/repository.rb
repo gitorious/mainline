@@ -673,6 +673,7 @@ class Repository < ActiveRecord::Base
   def register_push
     self.last_pushed_at = Time.now.utc
     self.push_count_since_gc = push_count_since_gc.to_i + 1
+    update_disk_usage
   end
   
   def update_disk_usage
