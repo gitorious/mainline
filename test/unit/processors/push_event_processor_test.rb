@@ -404,7 +404,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
 
   context "Branches" do
     setup do
-        @processor = PushEventProcessor.new
+      @processor = PushEventProcessor.new
     end
 
     context "Creation" do
@@ -455,7 +455,7 @@ class PushEventProcessorTest < ActiveSupport::TestCase
 
   context "Merge requests" do
     setup do
-        @processor = PushEventProcessor.new
+      @processor = PushEventProcessor.new
     end
 
     context "Update" do
