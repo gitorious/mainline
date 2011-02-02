@@ -510,9 +510,26 @@ class UsersControllerTest < ActionController::TestCase
 
   context "Watchlist" do
     setup { @user = users(:johan) }
+    teardown { Rails.cache.clear }
 
     should "render activities watched by the user" do
       get :watchlist, :id => @user.to_param, :format => "atom"
+      assert_response :success
+    end
+
+    should "not fail rendering feed when an event's user is nil" do
+      repository = repositories(:johans)
+      repository.project.events.create!({
+        :action => Action::DELETE_TAG,
+        :target => repository,
+        :user => nil,
+        :user_email => "marius@gitorious.com",
+        :body => "Bla bla",
+        :data => "A string of some kind"
+      })
+
+      get :watchlist, :id => @user.to_param, :format => "atom"
+
       assert_response :success
     end
   end
