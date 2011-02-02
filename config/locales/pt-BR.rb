@@ -501,7 +501,7 @@
         :or => "ou",
         :remove => "remover",
         :format_using_markdown => %Q(Usar {{markdown}} para formatação),
-        :markdown_format_with_help => %Q(Formatar páginas utilizando <a href="#markdown-help" class="markdown-help-toggler">Markdown</a>"),
+        :markdown_format_with_help => %Q(Formatar páginas utilizando <a href="#markdown-help" class="markdown-help-toggler">Markdown</a>.),
       },
       :pages => {
         :page => "página",
