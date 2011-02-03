@@ -32,7 +32,8 @@ class PushEventLogger
   end
 
   def build_meta_event
-    Event.new(:action => meta_event_type, :project => @repository.project, :user => @user)
+    Event.new(:action => meta_event_type, :project => @repository.project,
+              :user => @user, :target => @repository, :data => @spec.ref_name)
   end
 
   private

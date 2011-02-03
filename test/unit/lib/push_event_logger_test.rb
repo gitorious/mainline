@@ -112,11 +112,11 @@ class PushEventLoggerTest < ActiveSupport::TestCase
     end
 
     context "for merge requests" do
-      should "create meta event when updating" do
+      should "not create meta event when updating" do
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert logger.create_meta_event?
+        assert !logger.create_meta_event?
       end
     end
 
@@ -181,8 +181,8 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       @project = Project.new
       @repository = Repository.new(:project => @project)
       @user = User.new
-      @delete_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
-      @logger = PushEventLogger.new(@repository, @delete_spec, @user)
+      @create_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
+      @logger = PushEventLogger.new(@repository, @create_spec, @user)
     end
 
     should "be new records" do
@@ -201,6 +201,18 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       event = @logger.build_meta_event
 
       assert_equal @user, event.user
+    end
+
+    should "target repository" do
+      event = @logger.build_meta_event
+
+      assert_equal @repository, event.target
+    end
+
+    should "identify name of the head that changed" do
+      event = @logger.build_meta_event
+
+      assert_equal @create_spec.ref_name, event.data
     end
   end
 end
