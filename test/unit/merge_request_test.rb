@@ -137,6 +137,13 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.reload
   end
 
+  should "create an event when updated" do
+    @merge_request.stubs(:push_new_branch_to_tracking_repo)
+    assert_incremented_by(@merge_request.target_repository.project.events, :size, 1) do
+      @merge_request.update_from_push!
+    end
+  end
+
   should "return its target repository's tracking repository" do
     tracking_repo = @merge_request.target_repository.create_tracking_repository
     assert_equal tracking_repo, @merge_request.tracking_repository

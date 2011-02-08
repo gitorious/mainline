@@ -116,7 +116,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert !logger.create_meta_event?
+        assert !logger.create_meta_event?, "Merge request meta events should be created in the model"
       end
     end
 
@@ -164,16 +164,6 @@ class PushEventLoggerTest < ActiveSupport::TestCase
         assert_equal Action::DELETE_BRANCH, event.action
       end
     end
-
-    context "for merge requests" do
-      should "be Action::UPDATE_MERGE_REQUEST when updating" do
-        spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/1")
-        logger = PushEventLogger.new(Repository.new, spec, User.new)
-
-        event = logger.build_meta_event
-        assert_equal Action::UPDATE_MERGE_REQUEST, event.action
-      end
-    end
   end
 
   context "meta events" do
@@ -213,6 +203,12 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       event = @logger.build_meta_event
 
       assert_equal @create_spec.ref_name, event.data
+    end
+
+    should_eventually "provide a usable body" do
+      event = @logger.build_meta_event
+
+      assert_equal("New branch", event.body)
     end
   end
 end

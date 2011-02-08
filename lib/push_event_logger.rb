@@ -24,7 +24,7 @@ class PushEventLogger
   end
 
   def create_meta_event?
-    !@spec.action_update? || @spec.merge_request?
+    !@spec.action_update?
   end
 
   def create_push_event?
@@ -39,8 +39,7 @@ class PushEventLogger
   private
   def meta_event_type
     return head_meta_event_type if @spec.head?
-    return tag_meta_event_type if @spec.tag?
-    merge_request_meta_event_type
+    tag_meta_event_type
   end
 
   def head_meta_event_type
@@ -49,9 +48,5 @@ class PushEventLogger
 
   def tag_meta_event_type
     @spec.action_create? ? Action::CREATE_TAG : Action::DELETE_TAG
-  end
-
-  def merge_request_meta_event_type
-    Action::UPDATE_MERGE_REQUEST
-  end
+  end  
 end
