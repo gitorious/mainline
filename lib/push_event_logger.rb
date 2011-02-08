@@ -33,7 +33,8 @@ class PushEventLogger
 
   def build_meta_event
     Event.new(:action => meta_event_type, :project => @repository.project,
-              :user => @user, :target => @repository, :data => @spec.ref_name)
+      :user => @user, :target => @repository, :data => @spec.ref_name,
+      :body => meta_event_body)
   end
 
   private
@@ -48,5 +49,18 @@ class PushEventLogger
 
   def tag_meta_event_type
     @spec.action_create? ? Action::CREATE_TAG : Action::DELETE_TAG
-  end  
+  end
+
+  def meta_event_body
+    return head_meta_body if @spec.head?
+    tag_meta_body
+  end
+
+  def head_meta_body
+    "New branch"
+  end
+
+  def tag_meta_body
+    @spec.action_create? ? "Created tag #{@spec.ref_name}" : "Deleted tag #{@spec.ref_name}"
+  end
 end

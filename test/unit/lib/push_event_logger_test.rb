@@ -204,11 +204,34 @@ class PushEventLoggerTest < ActiveSupport::TestCase
 
       assert_equal @create_spec.ref_name, event.data
     end
+  end
 
-    should_eventually "provide a usable body" do
-      event = @logger.build_meta_event
+  context "Meta event message" do
+    should "describe new branches" do
+      new_branch_spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
+      logger = PushEventLogger.new(Repository.new, new_branch_spec, User.new)
+      event = logger.build_meta_event
 
       assert_equal("New branch", event.body)
     end
+
+    should "describe new tags" do
+      new_tag_spec = PushSpecParser.new(NULL_SHA, SHA, "refs/tags/release")
+      logger = PushEventLogger.new(Repository.new, new_tag_spec, User.new)
+      event = logger.build_meta_event
+
+
+      assert_equal "Created tag release", event.body
+    end
+
+    should "describe deleted tags" do
+      deleted_tag_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/release")
+      logger = PushEventLogger.new(Repository.new, deleted_tag_spec, User.new)
+      event = logger.build_meta_event
+
+
+      assert_equal "Deleted tag release", event.body      
+    end
+
   end
 end
