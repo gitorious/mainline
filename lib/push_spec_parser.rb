@@ -81,6 +81,10 @@ class PushSpecParser
     def null_sha?
       @sha == "0" * 32
     end
+
+    def sha
+      @sha
+    end
   end
 
   # Internal representation of a Git ref, e.g. res/tags/topic-branch

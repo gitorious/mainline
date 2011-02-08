@@ -17,6 +17,7 @@
 #++
 
 class PushEventLogger
+  PUSH_EVENT_DATA_SEPARATOR = "$"
   def initialize(repository, spec, user)
     @repository = repository
     @spec = spec
@@ -37,6 +38,27 @@ class PushEventLogger
       :body => meta_event_body)
   end
 
+  def build_push_event
+    Event.new(:user => @user, :project => @repository.project, :target => @repository,
+      :action => Action::PUSH_SUMMARY)
+  end
+
+  def create_push_event
+    event = build_push_event
+    event.data = push_event_data
+    event.save
+    event
+  end
+  
+  def push_event_data
+    [@spec.from_sha.sha, @spec.to_sha.sha, @spec.ref_name, calculate_commit_count.to_s].join(PUSH_EVENT_DATA_SEPARATOR)
+  end
+
+  def calculate_commit_count
+    lines = @repository.git.git.log({:pretty => "oneline"}, [@spec.from_sha.sha, @spec.to_sha.sha].join(".."))
+    lines.split("\n").size
+  end
+
   private
   def meta_event_type
     return head_meta_event_type if @spec.head?
@@ -52,12 +74,8 @@ class PushEventLogger
   end
 
   def meta_event_body
-    return head_meta_body if @spec.head?
+    return "New branch" if @spec.head?
     tag_meta_body
-  end
-
-  def head_meta_body
-    "New branch"
   end
 
   def tag_meta_body
