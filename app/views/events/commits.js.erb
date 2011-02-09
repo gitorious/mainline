@@ -1,15 +1,15 @@
 <table class="commits_in_event">
 <% @commits.each_with_index do |c, index| %>
-  <% if index+1 > Event::MAX_COMMIT_EVENTS -%>
+  <% if index+1 > 2 -%>
     <tr>
       <td valign="top" class="avatar">
         
       </td>
       <td valign="top">
-          <%= link_to("And #{@event.events.count - @commits.count} more commits&hellip;",
+          <%= link_to("And #{@commit_count - @commits.count} more commits&hellip;",
               repo_owner_path(c.target.target.target,
                     :project_repository_commits_in_ref_path, c.project,
-                    c.target.target.target, ensplat_path(@event.data))) -%>
+                    c.target.target.target, ensplat_path(@branch_name))) -%>
       </td>
     </tr>
   <% else -%>
