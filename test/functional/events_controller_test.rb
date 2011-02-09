@@ -59,4 +59,24 @@ class EventsControllerTest < ActionController::TestCase
       assert_equal "max-age=1800, private", @response.headers['Cache-Control']
     end
   end
+
+  context "commits read from git, AKA new style push" do
+    setup do
+      first_sha = "a"*32
+      last_sha = "f"*32
+      event_data = [first_sha, last_sha, "master","10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+      @push_event = @project.create_event(Action::PUSH_SUMMARY, @repository, User.first,
+        event_data, "", 10.days.ago)
+      grit = mock
+      commits = []
+      grit.expects(:commits_between).with(first_sha, last_sha).returns(commits)
+      Repository.any_instance.stubs(:git).returns(grit)
+    end
+
+    should "fetch the commits from git" do
+      get :commits, :id => @push_event.to_param, :format => 'js'
+      assert_response :success
+    end
+  end
+
 end

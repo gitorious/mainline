@@ -405,7 +405,7 @@ module EventRenderingHelper
     project = event.project
 
     body = "#{branch_name} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"
-    push_summary("http://vg.no/", commit_count, event.target, branch_name, event.to_param, body)
+    push_summary(commits_event_path(event.to_param), commit_count, event.target, branch_name, event.to_param, body)
   end
   
   protected

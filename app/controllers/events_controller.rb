@@ -33,10 +33,32 @@ class EventsController < ApplicationController
   
   def commits
     @event = Event.find(params[:id])
+    @repository = @event.target
+    @project = @repository.project
+    if @event.action == Action::PUSH
+      render_old_style_push
+    else
+      render_new_style_push
+    end
+  end
+
+  # TODO: Remove when old push events are removed
+  def render_old_style_push
     @commit_count = @event.events.count
     @branch_name = @event.data
     if stale?(:etag => @event, :last_modified => @event.created_at)
       @commits = @event.events.commits
+      respond_to do |wants|
+        wants.js
+      end
+      expires_in 30.minutes
+    end
+  end
+
+  def render_new_style_push
+    first_sha, last_sha, @branch_name, @commit_count = @event.data.split(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+    if stale?(:etag => @event, :last_modified => @event.created_at)
+      @commits = @event.target.git.commits_between(first_sha, last_sha).map{|c|Gitorious::Commit.new(c)}
       respond_to do |wants|
         wants.js
       end
