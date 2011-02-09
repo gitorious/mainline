@@ -62,7 +62,9 @@ class EventsController < ApplicationController
     first_sha = event_data[:start_sha]
     last_sha = event_data[:end_sha]
     if stale?(:etag => @event, :last_modified => @event.created_at)
-      @commits = @event.target.git.commits_between(first_sha, last_sha).map{|c|Gitorious::Commit.new(c)}
+      @commits = Rails.cache.fetch("commits_in_push_event_#{@event.to_param}") do
+        @event.target.git.commits_between(first_sha, last_sha).map{|c|Gitorious::Commit.new(c)}
+      end
       respond_to do |wants|
         wants.js
       end

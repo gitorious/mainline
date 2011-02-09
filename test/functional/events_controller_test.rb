@@ -34,7 +34,7 @@ class EventsControllerTest < ActionController::TestCase
     end
   end
   
-  context '#children' do
+  context 'commits' do
     setup do
       @push_event = @project.create_event(Action::PUSH, @repository, User.first,
                                           "", "A push event", 10.days.ago)
@@ -62,18 +62,24 @@ class EventsControllerTest < ActionController::TestCase
 
   context "commits read from git, AKA new style push" do
     setup do
-      first_sha = "a"*32
-      last_sha = "f"*32
-      event_data = [first_sha, last_sha, "master","10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+      @first_sha = "a"*32
+      @last_sha = "f"*32
+      event_data = [@first_sha, @last_sha, "master","10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @push_event = @project.create_event(Action::PUSH_SUMMARY, @repository, User.first,
         event_data, "", 10.days.ago)
-      grit = mock
-      commits = []
-      grit.expects(:commits_between).with(first_sha, last_sha).returns(commits)
-      Repository.any_instance.stubs(:git).returns(grit)
     end
 
     should "fetch the commits from git" do
+      @grit = mock
+      commits = []
+      @grit.expects(:commits_between).with(@first_sha, @last_sha).returns(commits)
+      Repository.any_instance.stubs(:git).returns(@grit)
+      get :commits, :id => @push_event.to_param, :format => 'js'
+      assert_response :success
+    end
+
+    should "be cached" do
+      Rails.cache.expects(:fetch).with("commits_in_push_event_#{@push_event.to_param}").returns([])
       get :commits, :id => @push_event.to_param, :format => 'js'
       assert_response :success
     end
