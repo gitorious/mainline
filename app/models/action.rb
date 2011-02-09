@@ -93,7 +93,9 @@ class Action
       when UPDATE_REPOSITORY
         "update repository"
       when ADD_FAVORITE
-        "add favorite"    
+         "add favorite"
+      when PUSH_SUMMARY
+         "push summary"
       else
         "unknown event"
     end

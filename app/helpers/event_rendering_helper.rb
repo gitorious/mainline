@@ -320,21 +320,32 @@ module EventRenderingHelper
   end
 
   def render_several_commit_push(event)
-    project = event.target.project
-    commit_link = link_to_if(event.has_commits?, pluralize(event.events.size, 'commit'),
-      repo_owner_path(event.target, :project_repository_commits_in_ref_path,
-        project, event.target, ensplat_path(event.data)),
-      :id => "commits_in_event_#{event.to_param}_toggler",
+    commit_detail_url = commits_event_path(event.to_param)
+    commit_count = event.events.size
+    repository = event.target
+    branch_name = event.data
+    event_id = event.to_param
+    message = event.body
+    push_summary(commit_detail_url, commit_count, repository, branch_name, event_id, message)
+  end
+
+  # Render a push summary, used for both old-style and new-style push event rendering
+  def push_summary(commit_detail_url, commit_count, repository, branch_name, event_id, message)
+    project = repository.project
+    commit_link = link_to(pluralize(commit_count, 'commit'),
+      repo_owner_path(repository, :project_repository_commits_in_ref_path,
+        repository.project, repository, ensplat_path(branch_name)),
+      :id => "commits_in_event_#{event_id}_toggler",
       :class => "commit_event_toggler",
-      "gts:url" => commits_event_path(event.to_param),
-      "gts:id" => event.to_param)
+      "gts:url" => commit_detail_url,
+      "gts:id" => event_id)
 
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
-      title = repo_title(event.target, project)
-      " to " + link_to(h(title+':'+event.data), repo_owner_path(event.target,
-        :project_repository_commits_in_ref_path, project, event.target, ensplat_path(event.data)))
+      title = repo_title(repository, project)
+      " to " + link_to(h(title+':'+branch_name), repo_owner_path(repository,
+        :project_repository_commits_in_ref_path, project, repository, ensplat_path(branch_name)))
     end
-    body = h(event.body)
+    body = h(message)
     category = 'push'
     [action, body, category]
   end
@@ -388,6 +399,15 @@ module EventRenderingHelper
     category = "favorite"
     [action, "", category]
   end
+
+  def render_event_push_summary(event)
+    first_sha, last_sha, branch_name, commit_count = event.data.split(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+    project = event.project
+
+    body = "#{branch_name} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"
+    push_summary("http://vg.no/", commit_count, event.target, branch_name, event.to_param, body)
+  end
+  
   protected
     def action_for_event(i18n_key, opts = {}, &block)
       header = "" + I18n.t("application_helper.#{i18n_key}", opts) + " "
