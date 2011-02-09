@@ -86,11 +86,10 @@ class PushEventLogger
   end
 
   def meta_event_body
-    return "New branch" if @spec.head?
-    tag_meta_body
+    meta_body(@spec.head? ? "branch" : "tag")
   end
 
-  def tag_meta_body
-    @spec.action_create? ? "Created tag #{@spec.ref_name}" : "Deleted tag #{@spec.ref_name}"
+  def meta_body(type)
+    @spec.action_create? ? "Created #{type} #{@spec.ref_name}" : "Deleted #{type} #{@spec.ref_name}"
   end
 end

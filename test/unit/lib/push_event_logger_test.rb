@@ -212,7 +212,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       logger = PushEventLogger.new(Repository.new, new_branch_spec, User.new)
       event = logger.build_meta_event
 
-      assert_equal("New branch", event.body)
+      assert_equal("Created branch master", event.body)
     end
 
     should "describe new tags" do
@@ -231,6 +231,14 @@ class PushEventLoggerTest < ActiveSupport::TestCase
 
 
       assert_equal "Deleted tag release", event.body      
+    end
+
+    should "describe deleted branches" do
+      deleted_branch_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/topic")
+      logger = PushEventLogger.new(Repository.new, deleted_branch_spec, User.new)
+      event = logger.build_meta_event
+
+      assert_equal "Deleted branch topic", event.body
     end
   end
 
