@@ -27,37 +27,37 @@
 <%= breadcrumbs_from(@root) -%>
 
 <% cache(tree_path(@commit.id, @path)) do -%>
-<table class="listing tree">
-  <% @tree.contents.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
-  <tr class="<%= cycle("odd", "even") -%>">
-    <% if node.is_a? Grit::Tree -%>
-    <td class="node folder">
-      <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
-    </td>
-    <% elsif node.is_a? Grit::Submodule -%>
-      <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
-    <% else -%>
-      <td class="node file <%= class_for_filename(node.name)  -%>">
-      <%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%>
-      </td>
+  <table class="listing tree">
+    <% @tree.contents.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
+      <tr class="<%= cycle("odd", "even") -%>">
+        <% if node.is_a? Grit::Tree -%>
+          <td class="node folder">
+            <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
+          </td>
+        <% elsif node.is_a? Grit::Submodule -%>
+          <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
+        <% else -%>
+          <td class="node file <%= class_for_filename(node.name)  -%>">
+            <%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%>
+          </td>
+        <% end -%>
+        <% if node.is_a? Grit::Submodule -%>
+          <td class="meta"></td>
+          <td class="meta commit_message">submodule: <%= h(node.url(@ref)) -%></td>
+        <% else -%>
+          <% if !too_many_entries_for_log?(@tree) && last_commit = commit_for_tree_path(@repository, node.name) -%>
+            <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
+            <td class="meta commit_message">
+              <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>
+            </td>
+          <% else -%>
+            <td class="meta"></td>
+            <td class="meta commit_message"></td>
+          <% end -%>
+        <% end -%>
+      </tr>
     <% end -%>
-    <% if node.is_a? Grit::Submodule -%>
-      <td class="meta"></td>
-      <td class="meta commit_message">submodule: <%= h(node.url(@ref)) -%></td>
-    <% else -%>
-      <% if !too_many_entries_for_log?(@tree) && last_commit = commit_for_tree_path(@repository, node.name) -%>
-        <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
-        <td class="meta commit_message">
-          <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>
-        </td>
-      <% else -%>
-        <td class="meta"></td>
-        <td class="meta commit_message"></td>
-      <% end -%>
-    <% end -%>
-  </tr>
-  <% end -%>
-</table>
+  </table>
 <% end -%>
 
 <% content_for :sidebar do -%>  
@@ -92,25 +92,26 @@
       <%= link_to "Commit log", repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, ensplat_path(@ref)) -%>
     </li>    
     <%= render_download_links(@repository.project, @repository, @ref,
-          :except => :source_tree, :only_list_items => true) -%>
+                              :except => :source_tree, :only_list_items => true) -%>
   </ul>
   
-<% cache([tree_path(@commit.id), :tags_and_branches], 
-        {:expires_in => 10.minutes}) do -%>
+  <% cache([tree_path(@commit.id), :tags_and_branches], 
+           {:expires_in => 10.minutes}) do -%>
 
-  <ul class="links navigation">
-    <h5><%= t("views.logs.branches") %>:</h5>
-	<%= render_branch_list_items(@git.branches) -%>
-  </ul>
-
-  <% unless @git.tags.blank? -%>
     <ul class="links navigation">
-	<h5><%= t("views.logs.tags") %>:</h5>
-    <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-      <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
-    <% end -%>
+      <h5><%= t("views.logs.branches") %>:</h5>
+      <% sorted_git_heads(@git.branches).each do |branch| -%>
+        <li><%= link_to h(branch.name), project_repository_tree_path(@project, @repository, branch.name) -%></li>
+      <% end -%>
     </ul>
-  <% end -%>
-<% end # cache() -%>
-<% end -%>
 
+    <% unless @git.tags.blank? -%>
+      <ul class="links navigation">
+	<h5><%= t("views.logs.tags") %>:</h5>
+        <% @git.tags.sort{ |a, b| a.name <=> b.name }.each do |tag| -%>
+          <li><%= link_to h(tag.name), project_repository_tree_path(@project, @repository, tag.name) -%></li>
+        <% end -%>
+      </ul>
+    <% end -%>
+  <% end # cache() -%>
+<% end -%>
