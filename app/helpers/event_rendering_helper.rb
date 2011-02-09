@@ -401,7 +401,11 @@ module EventRenderingHelper
   end
 
   def render_event_push_summary(event)
-    first_sha, last_sha, branch_name, commit_count = event.data.split(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+    event_data = PushEventLogger.parse_event_data(event.data)
+    first_sha = event_data[:start_sha]
+    last_sha = event_data[:end_sha]
+    branch_name = event_data[:branch]
+    commit_count = event_data[:commit_count]
     project = event.project
 
     body = "#{branch_name} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"

@@ -56,7 +56,11 @@ class EventsController < ApplicationController
   end
 
   def render_new_style_push
-    first_sha, last_sha, @branch_name, @commit_count = @event.data.split(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+    event_data = PushEventLogger.parse_event_data(@event.data)
+    @branch_name = event_data[:branch]
+    @commit_count = event_data[:commit_count].to_i
+    first_sha = event_data[:start_sha]
+    last_sha = event_data[:end_sha]
     if stale?(:etag => @event, :last_modified => @event.created_at)
       @commits = @event.target.git.commits_between(first_sha, last_sha).map{|c|Gitorious::Commit.new(c)}
       respond_to do |wants|

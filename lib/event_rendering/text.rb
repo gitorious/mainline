@@ -100,6 +100,8 @@ module EventRendering
         render_update_repository
       when Action::ADD_FAVORITE
         render_added_favorite
+      when Action::PUSH_SUMMARY
+        render_push_summary
       else
         raise EventRendering::UnknownActionError, "unknown action: #{@event.action.inspect}"
       end
@@ -199,6 +201,24 @@ module EventRendering
           :ref_change => @event.body,
           :commits => commits.join("\n\n")
         })
+    end
+
+
+    def render_push_summary
+      event_data = PushEventLogger.parse_event_data(@event.data)
+      url = "http://#{GitoriousConfig['gitorious_host']}/#{@event.project.slug}/#{@event.target.name}/commits"
+      branch_name = event_data[:branch]
+      start_sha = event_data[:start_sha_short]
+      end_sha = event_data[:end_sha_short]
+      add_from_template("{user} pushed {commit_count} commits to {branch}\n{changes}\n\nView the commit log at {url}",
+        {
+          :user => @event.user.login,
+          :count => event_data[:commit_count],
+          :branch => branch_name,
+          :changes => "#{branch_name} changed from #{start_sha} to #{end_sha}",
+          :url => url,
+          :commit_count => event_data[:commit_count]
+        })      
     end
 
     def render_project(action)

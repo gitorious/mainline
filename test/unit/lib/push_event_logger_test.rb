@@ -282,4 +282,35 @@ GIT_LOG
       assert_equal([SHA, OTHER_SHA, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR), event.data)
     end
   end
+
+  context "Parsing the event body" do
+    setup do
+      body = [SHA, OTHER_SHA, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+      @result = PushEventLogger.parse_event_data(body)
+    end
+    
+    should "contain the start sha" do
+      assert_equal SHA, @result[:start_sha]
+    end
+
+    should "contain the end sha" do
+      assert_equal OTHER_SHA, @result[:end_sha]
+    end
+
+    should "contain the branch name" do
+      assert_equal "master", @result[:branch]
+    end
+
+    should "contain the commit count" do
+      assert_equal "10", @result[:commit_count]
+    end
+
+    should "contain a shortened start sha" do
+      assert_equal SHA[0,7], @result[:start_sha_short]
+    end
+
+    should "contain a shortened end sha" do
+      assert_equal OTHER_SHA[0,7], @result[:end_sha_short]
+    end
+  end
 end
