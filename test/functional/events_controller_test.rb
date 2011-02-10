@@ -62,8 +62,8 @@ class EventsControllerTest < ActionController::TestCase
 
   context "commits read from git, AKA new style push" do
     setup do
-      @first_sha = "a"*32
-      @last_sha = "f"*32
+      @first_sha = "a"*40
+      @last_sha = "f"*40
       event_data = [@first_sha, @last_sha, "master","10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @push_event = @project.create_event(Action::PUSH_SUMMARY, @repository, User.first,
         event_data, "", 10.days.ago)

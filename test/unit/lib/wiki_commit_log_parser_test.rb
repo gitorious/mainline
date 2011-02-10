@@ -89,7 +89,7 @@ M       SomethingElse.markdown
 M       NeverMind.markdown
 COMMIT
       @grit.expects(:log).returns(output)
-      result = @parser.fetch_from_git(@repo, "0"*32, "f"*32).first
+      result = @parser.fetch_from_git(@repo, "0"*40, "f"*40).first
       assert_equal 2, result.modified_file_names.size
     end
   end

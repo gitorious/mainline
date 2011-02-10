@@ -18,9 +18,9 @@
 
 require "test_helper"
 class PushSpecParserTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 32
-  FIRST_SHA = "a" * 32
-  END_SHA = "f" * 32
+  NULL_SHA = "0" * 40
+  FIRST_SHA = "a" * 40
+  END_SHA = "f" * 40
 
   context "Actions" do
     should "parse a tag creation" do

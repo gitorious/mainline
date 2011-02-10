@@ -25,7 +25,7 @@ class CommitTest < ActiveSupport::TestCase
       @author = Grit::Actor.new("Jane Author", "jane@g.org")
       @committed_at = 2.days.ago
       @body = "Awesome sauce"
-      grit_commit = Grit::Commit.new(nil, "a"*32, [], nil,
+      grit_commit = Grit::Commit.new(nil, "a"*40, [], nil,
         @author, 1.day.ago,
         @committer, @committed_at,
         [@body])
@@ -41,7 +41,7 @@ class CommitTest < ActiveSupport::TestCase
     end
 
     should "wrap its sha as data" do
-      assert_equal "a"*32, @commit.data
+      assert_equal "a"*40, @commit.data
     end
 
     should "have created_at" do
@@ -57,7 +57,7 @@ class CommitTest < ActiveSupport::TestCase
     setup do
       @committer = Grit::Actor.new("John Committer", "noone@invalid.org")
       @author = Grit::Actor.new("Jane Author", "jane@g.org")
-      grit_commit = Grit::Commit.new(nil, "a"*32, [], nil,
+      grit_commit = Grit::Commit.new(nil, "a"*40, [], nil,
         @author, 1.day.ago,
         @committer, 2.days.ago,
         ["Awesome sauce"])

@@ -44,6 +44,10 @@ class PushSpecParser
     @ref = Ref.new(ref)
   end
 
+  def to_s
+    "<Spec from: #{@from_sha.sha} to: #{@to_sha.sha} for: #{ref_name}>"
+  end
+
   def tag?
     ref.tag?
   end
@@ -79,7 +83,7 @@ class PushSpecParser
     end
 
     def null_sha?
-      @sha == "0" * 32
+      @sha =~ /^0+$/
     end
 
     def sha

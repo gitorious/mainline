@@ -38,6 +38,12 @@ class PushEventLogger
       :body => meta_event_body)
   end
 
+  def create_meta_event
+    event = build_meta_event
+    event.save!
+    event
+  end
+
   def build_push_event
     Event.new(:user => @user, :project => @repository.project, :target => @repository,
       :action => Action::PUSH_SUMMARY)

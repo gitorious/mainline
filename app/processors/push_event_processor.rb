@@ -19,7 +19,7 @@
 class PushEventProcessor < ApplicationProcessor
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR = "\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR) 
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
-  subscribes_to :push_event
+#  subscribes_to :push
   attr_reader :oldrev, :newrev, :action, :identifier, :target, :revname
   attr_accessor :repository,  :user
   

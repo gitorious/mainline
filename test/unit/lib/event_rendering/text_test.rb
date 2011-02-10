@@ -391,8 +391,8 @@ class TextEventRenderingTest < ActiveSupport::TestCase
       @event.action = Action::PUSH_SUMMARY
       @repository = @event.target
       @project = @repository.project
-      @first_sha = "a"*32
-      @last_sha = "f"*32
+      @first_sha = "a"*40
+      @last_sha = "f"*40
       data = [@first_sha, @last_sha, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @event.data = data
       @event.target = repositories(:johans)

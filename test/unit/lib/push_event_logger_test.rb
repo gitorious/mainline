@@ -18,9 +18,9 @@
 require "test_helper"
 
 class PushEventLoggerTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 32
-  SHA = "a" * 32
-  OTHER_SHA = "f" * 32
+  NULL_SHA = "0" * 40
+  SHA = "a" * 40
+  OTHER_SHA = "f" * 40
   
   context "deciding what events to create" do
     context "for tags" do
@@ -168,9 +168,9 @@ class PushEventLoggerTest < ActiveSupport::TestCase
 
   context "meta events" do
     setup do
-      @project = Project.new
-      @repository = Repository.new(:project => @project)
-      @user = User.new
+      @repository = repositories(:johans)
+      @project = @repository.project
+      @user = @repository.user
       @create_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
       @logger = PushEventLogger.new(@repository, @create_spec, @user)
     end
@@ -203,6 +203,12 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       event = @logger.build_meta_event
 
       assert_equal @create_spec.ref_name, event.data
+    end
+
+    should "build and save meta event" do
+      event = @logger.create_meta_event
+
+      assert !event.new_record?
     end
   end
 

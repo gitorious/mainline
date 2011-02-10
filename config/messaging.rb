@@ -9,7 +9,7 @@ ActiveMessaging::Gateway.define do |s|
   
   s.destination :create_repo, '/queue/GitoriousRepositoryCreation'
   s.destination :destroy_repo, '/queue/GitoriousRepositoryDeletion'
-  s.destination :push_event, '/queue/GitoriousPushEvent'
+  s.destination :push, '/queue/GitoriousPush'
   s.destination :ssh_key_generation, '/queue/GitoriousSshKeys'
   s.destination :archive_repo, '/queue/GitoriousRepositoryArchiving'
   s.destination :cc_message, '/queue/GitoriousEmailNotifications'
