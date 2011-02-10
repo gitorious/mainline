@@ -18,6 +18,8 @@
 
 require "test_helper"
 class WikiCommitLogParserTest < ActiveSupport::TestCase
+  NULL_SHA = "0" * 40
+  SHA = "a" * 40
   context "Parsing modified files from commit log" do
     setup do
       @parser = Gitorious::Wiki::CommitParser.new      
@@ -89,7 +91,8 @@ M       SomethingElse.markdown
 M       NeverMind.markdown
 COMMIT
       @grit.expects(:log).returns(output)
-      result = @parser.fetch_from_git(@repo, "0"*40, "f"*40).first
+      spec = PushSpecParser.new(NULL_SHA, SHA, "refs/heads/master")
+      result = @parser.fetch_from_git(@repo, spec).first
       assert_equal 2, result.modified_file_names.size
     end
   end

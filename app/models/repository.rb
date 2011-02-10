@@ -221,6 +221,10 @@ class Repository < ActiveRecord::Base
     "#{self.full_hashed_path}.git"
   end
 
+  def browse_url
+    "http://#{GitoriousConfig['gitorious_host']}/#{url_path}"
+  end
+
   def clone_url
     "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end

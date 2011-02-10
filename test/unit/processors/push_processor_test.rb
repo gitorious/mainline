@@ -146,5 +146,42 @@ class PushProcessorTest < ActiveSupport::TestCase
       @processor.expects(:process_merge_request).never
       @processor.on_message(@json)
     end
+
+    should "log wiki events" do
+      Gitorious::Wiki::UpdateEventLogger.any_instance.expects(:create_wiki_events).returns(true)
+      @processor.parse_message(@json)
+      @processor.process_wiki_update
+    end
+  end
+
+  context "Triggering the web hooks" do
+    setup do
+      @repository = repositories(:johans)
+      @user = @repository.user
+      @json = {
+        :gitdir => @repository.hashed_path,
+        :username => @user.login,
+        :message => "#{SHA} #{OTHER_SHA} refs/heads/master"
+      }.to_json
+      @processor.parse_message(@json)
+      PushEventLogger.any_instance.stubs(:calculate_commit_count).returns(2)
+    end
+
+    should "not trigger web hooks unless repository has some" do
+      @processor.expects(:trigger_hooks).never
+      @processor.process_push
+    end
+
+    should "trigger web hooks if repository has hooks" do
+      @repository.hooks.create!(:user => users(:moe), :url => "http://g.org/hooks")
+      @processor.expects(:trigger_hooks)
+      @processor.process_push
+    end
+
+    should "create a generator and generate for repos with hooks" do
+      @repository.hooks.create!(:user => users(:moe), :url => "http://g.org/hooks")
+      Gitorious::WebHookGenerator.any_instance.expects(:generate!).once
+      @processor.trigger_hooks
+    end
   end
 end

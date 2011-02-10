@@ -57,7 +57,9 @@ module Gitorious
         result
       end
 
-      def fetch_from_git(repository, from, to)
+      def fetch_from_git(repository, spec)
+        from = spec.from_sha.sha
+        to = spec.to_sha.sha
         output = repository.git.git.log({:pretty => "short", :"name-status" => true}, [from, to].join(".."))
         parse(output)
       end

@@ -44,9 +44,17 @@ class PushProcessor < ApplicationProcessor
     logger.create_meta_event if logger.create_meta_event?
     repository.register_push
     repository.save
+    trigger_hooks unless repository.hooks.blank?
+  end
+
+  def trigger_hooks
+    generator = Gitorious::WebHookGenerator.new(repository, spec, user)
+    generator.generate!
   end
 
   def process_wiki_update
+    logger = Gitorious::Wiki::UpdateEventLogger.new(repository, spec, user)
+    logger.create_wiki_events
   end
 
   def parse_message(payload)
