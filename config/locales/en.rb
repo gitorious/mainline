@@ -230,8 +230,9 @@
         :wants_email_notifications => 'Send email notifications?',
         :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
         :default_favorite_notifications => "By default notify me of updates in what I am watching",
-        :describe_default_favorite_notifications => "By selecting this you will by default be notified by email when " +
-        "activities occur in what you are watching on Gitorious",
+        :describe_default_favorite_notifications => lambda { |this, url| "By selecting this you will by default be notified by email when " +
+          "activities occur in what you are watching on Gitorious.<br/>" +
+          "Visit " + this.link_to("your favorites page", url) + " to set preferences for each object you're watching on Gitorious"},
         :member_for => "Member for",
         :this_week => {
           :one => "commit so far this week",
