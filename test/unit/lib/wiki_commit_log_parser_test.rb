@@ -18,8 +18,6 @@
 
 require "test_helper"
 class WikiCommitLogParserTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 40
-  SHA = "a" * 40
   context "Parsing modified files from commit log" do
     setup do
       @parser = Gitorious::Wiki::CommitParser.new      

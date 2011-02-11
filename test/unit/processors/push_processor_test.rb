@@ -20,9 +20,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class PushProcessorTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 32
-  SHA = "a" * 32
-  OTHER_SHA = "f" * 32
 
   def setup
     @processor = PushProcessor.new
