@@ -777,6 +777,9 @@ li.edit_account > a, .white-button.edit_account a, .edit_account a {
 li.edit_account_password > a, .white-button.edit_account_password a, .edit_account_password a {
     background-image: url("../images/silk/lock_edit.png") !important;
 }
+.show_favorites > a {
+  background-image: url("../images/silk/star.png") !important;
+}
 li.new_key > a { background-image: url("../images/silk/key_add.png") !important; }
 li.edit_key > a { background-image: url("../images/silk/key_edit.png") !important; }
 li.key > a, .white-button.key a, .key a {

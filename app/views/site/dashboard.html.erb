@@ -64,6 +64,10 @@
           <%= link_button_link_to(t("views.users.chg_passwd_action"), password_user_path(current_user),
                 :class => "edit_account_password") -%>
         </li>
+        <li>
+          <%= link_button_link_to(t("views.users.favorites_action"), favorites_path, 
+                :class => "show_favorites") -%>
+        </li>
         <% end -%>
       </ul>
       <div class="clear"></div>

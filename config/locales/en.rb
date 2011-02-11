@@ -264,7 +264,8 @@
           :header => "Almost done",
           :info => "A <strong>confirmation e-mail</strong> will be delivered to the e-mail address you specified. This e-mail contains an activation link, visit that link to complete the registration.",
           :thanks => "We look forward to seeing you use Gitorious!"
-        }
+        },
+        :favorites_action => "Your favorites"
       },
       :logs => {
         :title => "Commits in {{repo_url}}:{{ref}}",
