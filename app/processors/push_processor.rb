@@ -23,7 +23,7 @@ class PushProcessor < ApplicationProcessor
 
   def on_message(payload)
     parse_message(payload)
-    log_message("Got payload: #{spec} from user #{user.title}")
+    log_message("Got payload: #{spec} from user #{user.login}")
 
     if spec.merge_request?
       log_message("Processing merge request")
