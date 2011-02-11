@@ -405,6 +405,12 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success
     end
 
+    should "render the field for favorite notifications" do
+      get :edit, :id => users(:johan).to_param
+
+      assert_select "input#user_default_favorite_notifications"
+    end
+
     should "PUT /users/create with valid data is successful" do
       put :update, :id => users(:johan).to_param, :user => {
         :password => "fubar",

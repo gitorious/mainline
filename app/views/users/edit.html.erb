@@ -68,6 +68,10 @@
     	<%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
     	<div><%= f.check_box :wants_email_notifications %><span class="hint"> <%= t("views.users.describe_email_notifications") -%></span></div>
 	</li>
+  <li>
+    <%= f.label :default_favorite_notifications -%>
+    <div><%= f.check_box :default_favorite_notifications -%><span class="hint"> <%= t("views.users.describe_default_favorite_notifications").call(self, favorites_path) -%></span></div>
+  </li>
   </fieldset>
 <fieldset class="submit">
   <%= f.submit t("views.common.save") -%>

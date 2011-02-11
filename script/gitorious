@@ -36,7 +36,8 @@ logger.info("Connection from #{ENV['SSH_CLIENT'].inspect} (#{user || nil}): #{or
 $stderr.puts "original_command: #{original_command.inspect}" if $DEBUG
 if original_command.nil? || original_command.strip.empty?
   logger.info("Need SSH_ORIGINAL_COMMAND")
-  $stderr.puts "Need SSH_ORIGINAL_COMMAND"
+  $stderr.puts "Welcome, #{user}. Use git to push/pull your repositories"
+#  $stderr.puts "Need SSH_ORIGINAL_COMMAND"
   exit!(1)
 end
 
