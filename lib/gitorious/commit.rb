@@ -40,5 +40,9 @@ module Gitorious
     def body
       @grit_commit.message
     end
+
+    def actor_display
+      @grit_commit.committer.name
+    end
   end
 end

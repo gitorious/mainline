@@ -51,6 +51,10 @@ class CommitTest < ActiveSupport::TestCase
     should "wrap its message as body" do
       assert_equal @body, @commit.body
     end
+
+    should "have an actor display" do
+      assert_equal "John Committer", @commit.actor_display
+    end
   end
 
   context "Commits from non-gitorious users" do
