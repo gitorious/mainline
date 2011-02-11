@@ -64,6 +64,13 @@ class SubdomainValidationTest < ActiveSupport::TestCase
       @config["gitorious_host"] = "gitorious"
       assert !@config.valid_request_host?("gitorious")
     end
+
+    should "consider sub domain hosts valid" do
+      @config = {"gitorious_host" => "git.gitorious.org"}
+      @config.extend(SubdomainValidation)
+
+      assert @config.valid_request_host?("git.gitorious.org")
+    end
   end
 
   context "Reserved host names" do

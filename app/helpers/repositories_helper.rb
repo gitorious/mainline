@@ -71,9 +71,9 @@ module RepositoriesHelper
 
   def render_branch_list_items(branches)
     sorted_git_heads(branches).map do |branch|
-      content_tag(:li,
-        link_to(h(branch.name), log_path(branch.name), :title => branch_link_title_text(branch)),
-        :class => "branch #{highlight_if_head(branch)}")
+      content_tag(:li, link_to(h(branch.name), log_path(branch.name),
+                               :title => branch_link_title_text(branch)),
+                  :class => "branch #{highlight_if_head(branch)}")
     end.join("\n  ")
   end
 
