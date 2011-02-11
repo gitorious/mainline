@@ -23,13 +23,16 @@ class PushProcessor < ApplicationProcessor
 
   def on_message(payload)
     parse_message(payload)
-    logger.info("Got payload: #{spec}")
+    log_message("Got payload: #{spec} from user #{user.title}")
 
     if spec.merge_request?
+      log_message("Processing merge request")
       process_merge_request
     elsif repository.wiki?
+      log_message("Processing wiki update")
       process_wiki_update
     else
+      log_message("Processing regular push")
       process_push
     end
   end
@@ -68,6 +71,10 @@ class PushProcessor < ApplicationProcessor
   
   def merge_request
     @repository.merge_requests.find_by_sequence_number!(@spec.ref_name.to_i)
+  end
+
+  def log_message(message)
+    logger.info("#{Time.now.to_s(:short)} #{message} to repository #{repository.gitdir}")
   end
 
 end
