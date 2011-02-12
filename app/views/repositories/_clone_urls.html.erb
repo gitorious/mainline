@@ -48,7 +48,8 @@
         <p>
           Adding this repository as a pushable origin:
 <pre>
-git remote add origin <%= repository.push_url %>
+# Add the push url to your already existing origin:
+git remote set-url --push origin <%= repository.push_url %>
 # to push the master branch to the origin remote we added above:
 git push origin master
 # after that you can just do:
