@@ -58,7 +58,7 @@
   <ul class="links actions navigation">
     <li>
       <%= link_to t("views.collaborators.add_new"),
-            [:new, @owner, @repository, :committership] -%>
+            [:new, @owner, @containing_project, @repository, :committership] -%>
     </li>
   </ul>
 
