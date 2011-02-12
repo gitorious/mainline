@@ -59,7 +59,7 @@ by #gitorious on irc.freenode.net if you have questions.
 * Two spaces, no tabs, for indention
 * Don't use and and or for boolean tests, instead always use && and ||
 * MyClass.my_method(my_arg) -- not my_method( my_arg ) or my_method my_arg
-* Unless presedence is an issue; do .. end for multi-line blocks, braces for single line blocks
+* Unless precedence is an issue; do .. end for multi-line blocks, braces for single line blocks
 * Follow the conventions you see used in the source already
 
 (copied mostly verbatim from dev.rubyonrails.org)

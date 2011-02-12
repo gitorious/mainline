@@ -17,7 +17,7 @@ Further documentation
 =====================
 Also see the files in the doc/ folder, they contain further detailed information
 about setting up the application for specific linux distributions such as 
-CenOS and Ubuntu/Debian
+CentOS and Ubuntu/Debian
 
 
 Installation to a production environment -- a partial walkthrough.
@@ -265,7 +265,7 @@ In a production environment, you'll want to automate as much as possible. We
 use Capistrano for deploying to gitorious.org, and use custom Capistrano
 recipes for starting and stopping the various tasks in Gitorious.
 
-The doc/recipies directory contains instructions for setting up init scripts
+The doc/recipes directory contains instructions for setting up init scripts
 for these tasks for various platforms. Please consult these, and feel free to
 contribute your own!
 
@@ -298,7 +298,7 @@ Support for pushing via SSH
 
 In order for people to be able to push to your repositories, you need an SSH
 daemon running. You'll also need a system user account that's used for git
-connections through SSH. Consult the recipies in doc/recipies for instructions
+connections through SSH. Consult the recipes in doc/recipes for instructions
 on how to set this up. Until you've done this, the web frontend will work, but
 users won't be able to push their changes.
 
