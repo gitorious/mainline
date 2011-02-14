@@ -1,0 +1,60 @@
+These instructions are for setting up a local development environment in
+Debian. When you're ready to deploy to a live site you'll want to set up
+dedicated user accounts, cron jobs, and init scripts, and replace some
+of the components with higher-performance equivalents.
+
+Though tested on Debian, these instructions will probably work on
+Debian-derived distributions like Ubuntu as well.
+
+1. Install Required Packages
+
+sudo apt-get update
+sudo apt-get install -y build-essential mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev libonig-dev libonig2 sphinxsearch ruby1.8-dev irb1.8 ri1.8 rdoc1.8 libxml-ruby libopenssl-ruby libxml2-dev libxslt1-dev libmagickcore-dev libmagickwand-dev
+
+2. Install Required Ruby Gems
+
+gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis \
+  ruby-openid rmagick stompserver geoip ultrasphinx rspec rspec-rails \
+  RedCloth echoe daemons geoip mysql ruby-hmac --no-rdoc --no-ri \
+  --user-install
+
+3. Download Gitorious
+
+git clone git://gitorious.org/gitorious/mainline.git gitorious
+
+4. Configure
+
+cp config/database.sample.yml config/database.yml
+cp config/gitorious.sample.yml config/gitorious.yml
+cp config/broker.yml.example config/broker.yml
+
+Edit config/database.yml:
+
+- Probably need to change password to the one that was asked to you during
+  the apt packages installation in step 1.
+
+Edit config/gitorious.yml:
+
+- The examples are all in the test configuration; you'll want to copy
+  them to the development configuration.
+- Configure at least cookie_secret, repository_base_path, and
+  gitorious_host.
+- configure 'gitorious_host' to your registered domain, if you have one
+- configure 'gitorious_user' if you created the 'git' user above
+
+5. Final Website Setup
+
+rake db:create
+rake db:migrate
+rake ultrasphinx:bootstrap
+
+6. Start
+
+stompserver &
+script/poller start
+script/server
+
+7. Try it!
+
+Visit http://#{gitorious_host}:3000, where gitorious_host is whatever
+you configured in gitorious.yml.

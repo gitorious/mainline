@@ -4,7 +4,15 @@ This document lists new features in the Gitorious source code. If you
 are looking for detailed information about invidiual commits, use the
 Git log.
 
-=== Pull/push Gitorious repositories
+=== Links to tags and branches changes - 2011-02-09
+
+The links to branches and commits from the trees are now changed to
+point to the respective trees, not commit logs as it has been in the
+past. Related - when creating new tags the news bulletin now links to
+the tree for that tag, rather than to its commit log which makes no
+sense, and also causes Gitorious to crash.
+
+=== Pull/push Gitorious repositories - 2011-01-27
 
 Gitorious now lets users clone the wiki repository for a project. This
 way they can update the wiki locally (all the files in the repository
