@@ -5,12 +5,18 @@
 # Make sure the secret is at least 30 characters and all random, 
 # no regular words or you'll be exposed to dictionary attacks.
 gitorious_yaml = YAML::load_file(File.join(Rails.root, "config/gitorious.yml"))[RAILS_ENV]
+
+# We can't use a TLD in domain (e.g. we can't set localhost here)!
+domain = ".#{gitorious_yaml["gitorious_host"]}"
+unless domain.rindex(".") > 1 then domain = "" end
+
 ActionController::Base.session = {
   :key    => '_gitorious_sess',
   :secret => gitorious_yaml['cookie_secret'],
-  :domain => ".#{gitorious_yaml["gitorious_host"]}",
+  :domain => domain,
   :expire_after => 3.weeks,
 }
+#  :domain => ".#{gitorious_yaml["gitorious_host"]}",
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information
