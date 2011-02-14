@@ -22,6 +22,7 @@ class PushProcessor < ApplicationProcessor
   attr_reader :user, :repository, :spec
 
   def on_message(payload)
+    verify_connections!
     parse_message(payload)
     log_message("Got payload: #{spec} from user #{user.login}")
 

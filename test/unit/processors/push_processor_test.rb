@@ -54,6 +54,24 @@ class PushProcessorTest < ActiveSupport::TestCase
     end
   end
 
+  context "ActiveRecord connections" do
+    setup do
+      @repository = repositories(:johans)
+      @user = @repository.user
+      @processor.stubs(:process_push)
+      @json = {
+        :gitdir => @repository.hashed_path,
+        :username => @user.login,
+        :message => "#{NULL_SHA} #{SHA} refs/heads/master"
+      }.to_json
+    end
+    
+    should "be re-established" do
+      @processor.expects(:verify_connections!)
+      @processor.on_message(@json)
+    end
+  end
+
   context "Merge request update" do
     setup do
       @repository = repositories(:johans)
