@@ -1,0 +1,90 @@
+#!/bin/bash
+#
+# init file for stompserver
+#
+RETVAL=0
+GITORIOUS_HOME=/var/www/gitorious
+STOMP="/usr/bin/ruby /usr/bin/stompserver -w $GITORIOUS_HOME/tmp/stomp -q file -s queue &> /dev/null &"
+LOCK_FILE=/var/lock/stomp
+PID_FILE=$GITORIOUS_HOME/tmp/stomp/log/stompserver.pid
+ 
+do_check_pid() {
+  if [ -f $PID_FILE ]; then
+    PID=`cat $PID_FILE`
+    RUNNING=`ps --pid $PID | wc -l`
+  else
+    PID=0
+    RUNNING=0
+  fi
+}
+ 
+runlevel=$(set -- $(runlevel); eval "echo $$#" )
+ 
+start()
+{
+  do_check_pid
+  if [ $RUNNING != 2 ] ; then
+    echo -n $"Starting $PROG:"
+    /bin/su - git -c "$STOMP"
+    sleep 4
+    if [ -f $PID_FILE ] ; then
+      echo "Success"
+      RETVAL=0
+    else
+      echo "Failure"
+      RETVAL=1
+    fi
+RETVAL=$?
+  else
+    echo -n $"$PROG already running"
+    failure
+  fi
+  [ "$RETVAL" = 0 ] && touch $LOCK_FILE
+  echo
+}
+ 
+stop()
+{
+  do_check_pid
+  echo -n $"Stopping $PROG: "
+  if [ $RUNNING != 2 ] ; then
+    failure $"Stopping $PROG"
+  else
+    killproc -p $PID_FILE
+  fi
+  RETVAL=$?
+  # if we are in halt or reboot runlevel kill all running sessions
+  # so the TCP connections are closed cleanly
+  if [ "x$runlevel" = x0 -o "x$runlevel" = x6 ] ; then
+   killproc -p $PID 2>/dev/null
+  fi
+  [ "$RETVAL" = 0 ] && rm -f $LOCK_FILE
+  echo
+}
+ 
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+restart)
+stop
+start
+;;
+  condrestart)
+    if [ -f $LOCK_FILE ] ; then
+      if [ "$RETVAL" = 0 ] ; then
+        stop
+        # avoid race
+        sleep 5
+        start
+      fi
+    fi
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart|condrestart}"
+    RETVAL=1
+esac
+exit $RETVAL

@@ -9,7 +9,7 @@ export GITORIOUS_REPO=git://gitorious.org/gitorious/akitaonrails-gitorious.git
 # DO NOT CHANGE THIS PART
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -q -y build-essential apache2 mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev apache2-dev sendmail
+apt-get install -q -y build-essential apache2 mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev apache2-dev sendmail memcached
 
 # Checks for 64-bit flag
 while [ "$#" -gt "0" ]
@@ -44,9 +44,9 @@ cd sphinx-0.9.8
 ./configure && make && make install
 cd ..
 
-test -f ImageMagick-6.4.6-9.tar.gz || wget ftp://ftp.imagemagick.net/pub/ImageMagick/ImageMagick-6.4.6-9.tar.gz
-test -d ImageMagick-6.4.6-9 || tar xvfz ImageMagick-6.4.6-9.tar.gz 
-cd ImageMagick-6.4.6-9
+test -f ImageMagick-6.5.6-10.tar.gz || wget ftp://ftp.imagemagick.net/pub/ImageMagick/ImageMagick-6.5.6-10.tar.gz
+test -d ImageMagick-6.5.6-10 || tar xvfz ImageMagick-6.5.6-10.tar.gz
+cd ImageMagick-6.5.6-10
 ./configure && make && make install
 cd ..
 
@@ -60,21 +60,20 @@ if [ "$SIXTY_FOUR_FLAG" = "1" ]; then
     # http://www.rubyenterpriseedition.com/faq.html#thirty_three_percent_mem_reduction
 
     cd ~/tmp
-    test -f ruby-enterprise-1.8.6-20081215.tar.gz || wget http://rubyforge.org/frs/download.php/48623/ruby-enterprise-1.8.6-20081215.tar.gz
-    tar xzvf ruby-enterprise-1.8.6-20081215.tar.gz
+    test -f ruby-enterprise-1.8.7-2010.01.tar.gz || wget http://rubyforge.org/frs/download.php/68719/ruby-enterprise-1.8.7-2010.01.tar.gz
+    tar xzvf ruby-enterprise-1.8.7-2010.01.tar.gz
     echo "" > unattended-install-script
     echo "/opt/ruby-enterprise" >> unattended-install-script
-    cd ruby-enterprise-1.8.6-20081215 && cat ../unattended-install-script | ./installer
+    cd ruby-enterprise-1.8.7-2010.01 && cat ../unattended-install-script | ./installer
     cd ..
     rm unattended-install-script
 else
-    test -f ruby-enterprise_1.8.6-20081215-i386.deb || wget http://rubyforge.org/frs/download.php/48625/ruby-enterprise_1.8.6-20081215-i386.deb
-    dpkg -i ruby-enterprise_1.8.6-20081215-i386.deb
+    test -f ruby-enterprise_1.8.7-2010.01_i386.deb || wget http://rubyforge.org/frs/download.php/68718/ruby-enterprise_1.8.7-2010.01_i386.deb
+    dpkg -i ruby-enterprise_1.8.7-2010.01_i386.deb
 fi
 
 if [ -f /etc/profile.git ]; then cp /etc/profile.git /etc/profile; fi
 cp /etc/profile /etc/profile.git
-echo "export PATH=/opt/ruby-enterprise/bin:\$PATH" >> /etc/profile
 echo "export LD_LIBRARY_PATH=\"/usr/local/lib\"" >> /etc/profile
 echo "export LDFLAGS=\"-L/usr/local/lib -Wl,-rpath,/usr/local/lib\"" >> /etc/profile
 
@@ -89,10 +88,10 @@ mv ld.so.conf /etc/ld.so.conf
 ldconfig
 
 test -f /usr/bin/ruby.old || mv /usr/bin/ruby /usr/bin/ruby.old
-test -f /usr/bin/ruby || ln -s /opt/ruby-enterprise/bin/ruby /usr/bin/ruby
+test -f /usr/bin/ruby || ln -s /usr/local/bin/ruby /usr/bin/ruby
 
-gem install passenger --no-rdoc --no-ri --version=2.0.6
-yes '' | /opt/ruby-enterprise/bin/passenger-install-apache2-module
+gem install passenger --no-rdoc --no-ri --version 2.2.9
+yes '' | /usr/local/bin/passenger-install-apache2-module
 
 if [ -f /etc/apache2/mods-available/passenger.load ]; then rm /etc/apache2/mods-available/passenger.load; fi
 if [ -f /etc/apache2/mods-available/passenger.conf ]; then rm /etc/apache2/mods-available/passenger.conf; fi
@@ -102,9 +101,9 @@ touch /etc/apache2/mods-available/passenger.load
 touch /etc/apache2/mods-available/passenger.conf
 touch /etc/apache2/sites-available/gitorious
  
-echo "LoadModule passenger_module /opt/ruby-enterprise/lib/ruby/gems/1.8/gems/passenger-2.0.6/ext/apache2/mod_passenger.so" >> /etc/apache2/mods-available/passenger.load
-echo "PassengerRoot /opt/ruby-enterprise/lib/ruby/gems/1.8/gems/passenger-2.0.6" >> /etc/apache2/mods-available/passenger.load
-echo "PassengerRuby /opt/ruby-enterprise/bin/ruby" >> /etc/apache2/mods-available/passenger.conf
+echo "LoadModule passenger_module /usr/local/lib/ruby/gems/1.8/gems/passenger-2.2.9/ext/apache2/mod_passenger.so" >> /etc/apache2/mods-available/passenger.load
+echo "PassengerRoot /usr/local/lib/ruby/gems/1.8/gems/passenger-2.2.9" >> /etc/apache2/mods-available/passenger.load
+echo "PassengerRuby /usr/local/bin/ruby" >> /etc/apache2/mods-available/passenger.conf
  
 a2enmod passenger
 
@@ -116,7 +115,7 @@ echo "</VirtualHost>" >> /etc/apache2/sites-available/gitorious
 rm /etc/apache2/sites-enabled/000*
 ln -s /etc/apache2/sites-available/gitorious /etc/apache2/sites-enabled/000-gitorious
 
-gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis ruby-openid rmagick geoip ultrasphinx rspec rspec-rails RedCloth echoe daemons geoip --no-rdoc --no-ri
+gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis ruby-openid rmagick geoip ultrasphinx rspec rspec-rails RedCloth echoe daemons mysql ruby-hmac stomp stompserver eventmachine diff-lcs fastthread file-tail hoe json json_pure plist rdiscount --no-rdoc --no-ri
 
 cd /var/www
 test -d gitorious || git clone $GITORIOUS_REPO gitorious
@@ -124,11 +123,17 @@ test -f /usr/local/bin/gitorious || ln -s /var/www/gitorious/script/gitorious /u
 
 cp /var/www/gitorious/doc/templates/ubuntu/git-daemon /etc/init.d
 cp /var/www/gitorious/doc/templates/ubuntu/git-ultrasphinx /etc/init.d
+cp /var/www/gitorious/doc/templates/ubuntu/git-poller /etc/init.d
+cp /var/www/gitorious/doc/templates/ubuntu/stomp /etc/init.d
 
 chmod +x /etc/init.d/git-ultrasphinx
 chmod +x /etc/init.d/git-daemon
+chmod +x /etc/init.d/git-poller
+chmod +x /etc/init.d/stomp
+update-rc.d -f stomp start 99 2 3 4 5 .
 update-rc.d -f git-daemon start 99 2 3 4 5 .
 update-rc.d -f git-ultrasphinx start 99 2 3 4 5 .
+update-rc.d -f git-poller start 99 2 3 4 5 .
 
 yes '' | adduser git --disabled-password
 chown -R git:git /var/www/gitorious
@@ -138,6 +143,7 @@ su - git -c "chmod 700 ~/.ssh"
 su - git -c "touch ~/.ssh/authorized_keys"
 cp /var/www/gitorious/config/database.sample.yml /var/www/gitorious/config/database.yml
 cp /var/www/gitorious/config/gitorious.sample.yml /var/www/gitorious/config/gitorious.yml
+cp /var/www/gitorious/config/broker.yml.example /var/www/gitorious/config/broker.yml
 
 export SECRET=`apg -m 64 | tr -d '\n'`
 cat /var/www/gitorious/config/gitorious.yml | sed \
@@ -154,26 +160,28 @@ mv ~/tmp/foo /var/www/gitorious/config/database.yml
 
 chown git:git /var/www/gitorious/config/database.yml
 chown git:git /var/www/gitorious/config/gitorious.yml
+chown git:git /var/www/gitorious/config/broker.yml
+
 
 su - git -c "if [ -f ~/.bash_profile ]; rm ~/.bash_profile; fi"
 su - git -c "touch ~/.bash_profile"
-su - git -c "echo 'export RUBY_HOME=/opt/ruby-enterprise' >> ~/.bash_profile"
-su - git -c "echo 'export GEM_HOME=\$RUBY_HOME/lib/ruby/gems/1.8/gems' >> ~/.bash_profile"
-su - git -c "echo 'export PATH=\$RUBY_HOME/bin:\$PATH' >> ~/.bash_profile"
+su - git -c "echo 'export GEM_HOME=/usr/local/lib/ruby/gems/1.8/gems' >> ~/.bash_profile"
 
 su - git -c "cd /var/www/gitorious && rake db:create RAILS_ENV=production"
 su - git -c "cd /var/www/gitorious && rake db:migrate RAILS_ENV=production"
 su - git -c "cd /var/www/gitorious && rake ultrasphinx:bootstrap RAILS_ENV=production"
 
 rm ~/tmp/crontab && touch ~/tmp/crontab
-echo "*/2 * * * * /opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/task_performer" >> ~/tmp/crontab
-echo "* */1 * * * cd /var/www/gitorious && /opt/ruby-enterprise/bin/rake ultrasphinx:index RAILS_ENV=production" >> ~/tmp/crontab
+echo "*/2 * * * * /usr/bin/ruby /var/www/gitorious/script/task_performer" >> ~/tmp/crontab
+echo "* */1 * * * cd /var/www/gitorious && /usr/local/bin/rake ultrasphinx:index RAILS_ENV=production" >> ~/tmp/crontab
 mv ~/tmp/crontab /home/git
 chown git:git /home/git/crontab
 su - git -c "crontab -u git /home/git/crontab"
 
 /etc/init.d/git-daemon start
 /etc/init.d/git-ultrasphinx start
+/etc/init.d/stomp start
+/etc/init.d/git-poller start
 
 cp /var/www/gitorious/doc/templates/ubuntu/gitorious-logrotate /etc/logrotate.d/gitorious
 chmod 644 /etc/logrotate.d/gitorious
