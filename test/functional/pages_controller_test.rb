@@ -123,4 +123,11 @@ class PagesControllerTest < ActionController::TestCase
       assert_redirected_to project_pages_path(@project)
     end
   end
+
+  context "Git cloning instructions" do
+    should "render cloning instructions" do
+      get :git_access, :project_id => @project.to_param
+      assert_response :success
+    end
+  end
 end

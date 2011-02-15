@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2011 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,13 +17,24 @@
 #++
 %>
 
+
 <%= breadcrumbs_from(@root) -%>
-<h3>Pages in this wiki:</h3>
-<ul>
-<% @tree_nodes.each do |node| -%>
-  <li><%= link_to page_node_name(node), project_page_path(@project, page_node_name(node)) -%></li>
+
+<h1>Git access to the wiki</h1>
+<p>
+  The project wiki is a Git repository containing Markdown formatted
+  pages. You can clone the repository, and if you have access to it,
+  you may even make local changes and push them to Gitorious.
+</p>
+
+<p><strong>The Git URL to this wiki is:</strong></p>
+<% if logged_in? &&  @project.wiki_repository.wiki_writable_by?(current_user) -%>
+  <p><pre>git clone <%= writable_wiki_url(@project) -%></pre></p>
+<% else -%>
+  <p><pre>git clone <%= regular_wiki_url(@project) -%></pre></p>
 <% end -%>
-</ul>
+
+
 
 <% content_for :sidebar do -%>
   <%= render :partial => "actions" -%>

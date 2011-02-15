@@ -144,7 +144,7 @@ ActionController::Routing::Routes.draw do |map|
     :edit_slug => :any,
     :clones => :get
   } do |projects|
-    projects.resources :pages, :member => { :history => :get,:preview => :put }
+    projects.resources :pages, :member => { :history => :get,:preview => :put}, :collection => { :git_access => :get }
     projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end
 

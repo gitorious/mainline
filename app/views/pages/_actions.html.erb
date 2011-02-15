@@ -16,12 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<ul class="page-actions">
-  <% if logged_in? -%>
-    <li><%= edit_link(@page) -%></li>
-    <li>
-      <%= link_to(t("views.pages.history"), history_project_page_path(@project, @page.title)) -%>
-    </li>
-    <li><%= link_to(t("views.pages.index"), project_pages_path(@project)) -%>
-  <% end -%>
+<ul class="links navigation">
+  <li class="wiki_page">
+    <%= link_to(t("views.pages.index"), project_pages_path(@project)) -%>
+  </li>
+  <li class="wiki_via_git">
+    <%= link_to(t("views.pages.git"), git_access_project_pages_path(@project)) -%>
+  </li>
 </ul>

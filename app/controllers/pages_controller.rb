@@ -17,7 +17,7 @@
 #++
 
 class PagesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show]
+  before_filter :login_required, :except => [:index, :show, :git_access]
   before_filter :find_project
   before_filter :check_if_wiki_enabled
   before_filter :assert_readyness
@@ -94,6 +94,10 @@ class PagesController < ApplicationController
     
     @commits = @page.history(30)
     @user_and_email_map = @project.wiki_repository.users_by_commits(@commits)
+  end
+
+  def git_access
+    @root = Breadcrumb::Wiki.new(@project)
   end
   
   protected
