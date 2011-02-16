@@ -69,17 +69,12 @@ class EventsControllerTest < ActionController::TestCase
         event_data, "", 10.days.ago)
     end
 
-    should "fetch the commits from git" do
+    should "load commits from Gitorious::Commit" do
       @grit = mock
-      commits = []
-      @grit.expects(:commits_between).with(@first_sha, @last_sha).returns(commits)
       Repository.any_instance.stubs(:git).returns(@grit)
-      get :commits, :id => @push_event.to_param, :format => 'js'
-      assert_response :success
-    end
 
-    should "be cached" do
-      Rails.cache.expects(:fetch).with("commits_in_push_event_#{@push_event.to_param}").returns([])
+      Gitorious::Commit.expects(:load_commits_between).with(@grit, @first_sha, @last_sha, @push_event.id).returns([])
+
       get :commits, :id => @push_event.to_param, :format => 'js'
       assert_response :success
     end
