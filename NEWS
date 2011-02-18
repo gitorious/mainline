@@ -2,7 +2,35 @@
 
 This document lists new features in the Gitorious source code. If you
 are looking for detailed information about invidiual commits, use the
-Git log.
+Git log. Oldest news at the bottom, newest at the top.
+
+=== Re-write of event handling, scheduled for master 2011-02-11
+
+Gitorious used to create event records in the database for each commit
+event. This created an enormous amount of unnecessary data in the
+database, which slowed down database performance, especially when
+index updates happen, on each insert/delete.
+
+We no longer store the commits as events, rather use git to fetch
+these on demand (using caching, of course). There's a new event type
+with action Action::PUSH_SUMMARY, which contains the metadata required
+to fetch the correct events from git. In this process, the processing
+of push events was rewritten.
+
+Each push event will now create a "push event" and/or a "meta event",
+illustrated by the following table:
+
+
+Should we generate a push event?
+|      | CREATE | UPDATE | DELETE |
+| tag  | no     | no     | no     |
+| head | no     | yes    | no     |
+    
+Should we generate a "meta" event?
+|      | CREATE | UPDATE | DELETE |
+| tag  | yes    | no     | yes    |
+| head | yes    | no     | yes    |
+
 
 === Pull/push Gitorious repositories
 
