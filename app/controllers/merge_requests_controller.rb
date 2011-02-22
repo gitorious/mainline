@@ -118,7 +118,7 @@ class MergeRequestsController < ApplicationController
     @merge_request.user = current_user
     @repositories = @owner.repositories.find(:all,
       :conditions => ["id != ? AND kind != ? AND merge_requests_enabled = ?", @repository.id, Repository::KIND_TRACKING_REPO, true])
-    if first = @repositories.find{|r| r.mainline? } || @repositories.first
+    if first = @repository.parent || @repositories.first
       @merge_request.target_repository_id = first.id
     end
     get_branches_and_commits_for_selection

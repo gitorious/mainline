@@ -264,10 +264,10 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert !assigns(:repositories).include?(clone)
     end
     
-    should "set a default mainline target repo id" do
+    should "suggest the parent of the source repo as target" do
       login_as :johan
       get :new, :project_id => @project.to_param, :repository_id => @source_repository.to_param
-      assert_equal repositories(:johans).id, assigns(:merge_request).target_repository_id
+      assert_equal @source_repository.parent.id, assigns(:merge_request).target_repository_id
     end
   end
   
