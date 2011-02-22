@@ -47,7 +47,7 @@ module Gitorious
 
     def self.load_commits_between(grit_repo, first_sha, last_sha, event_id)
       Rails.cache.fetch("commits_for_push_event_#{event_id}") do
-        grit_repo.commits_between(first_sha, last_sha).map {|c| new(c)}
+        grit_repo.commits_between(first_sha, last_sha).map {|c| new(c)}.reverse
       end
     end
   end

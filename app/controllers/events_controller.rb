@@ -62,7 +62,7 @@ class EventsController < ApplicationController
     first_sha = event_data[:start_sha]
     last_sha = event_data[:end_sha]
     if stale?(:etag => @event, :last_modified => @event.created_at)
-      @commits = Gitorious::Commit.load_commits_between(@event.target.git, first_sha, last_sha, @event.id)
+      @commits = Gitorious::Commit.load_commits_between(@event.target.git, first_sha, last_sha, @event.id)[0,Event::MAX_COMMIT_EVENTS + 1]
       respond_to do |wants|
         wants.js
       end
