@@ -479,4 +479,25 @@ class ProjectTest < ActiveSupport::TestCase
     p.save!
     assert p.watched_by?(p.user)
   end
+
+  context "Suspended projects" do
+    setup do
+      @project = projects(:johans)
+    end
+
+    should "by default not be suspended" do
+      assert !@project.suspended?
+    end
+
+    should "be suspendable" do
+      @project.suspend!
+      assert @project.suspended? 
+    end
+
+    should "by default scope to non-suspended projects" do
+      @project.suspend!
+      @project.save!
+      assert !Project.all.include?(@project)
+    end
+  end
 end

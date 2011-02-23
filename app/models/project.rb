@@ -45,6 +45,8 @@ class Project < ActiveRecord::Base
   has_many    :merge_request_statuses, :order => "id asc"
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
+  default_scope :conditions => {:suspended_at => nil}
+
   serialize :merge_request_custom_states, Array
 
   attr_protected :owner_id, :user_id, :site_id
@@ -384,6 +386,14 @@ class Project < ActiveRecord::Base
         status.update_attribute(:default, false)
       end
     end
+  end
+
+  def suspended?
+    !suspended_at.nil?
+  end
+
+  def suspend!
+    self.suspended_at = Time.now
   end
 
   protected
