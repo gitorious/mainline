@@ -838,17 +838,23 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
 li.event_instance.push { background-image: url("../images/silk/bricks.png") !important; }/*
 
 /* Icons used for file types in breadcrumb and tree view */
-table.tree tr td.file a, li.file > a { background-image: url("../images/silk/page_white_text.png"); }
-table.tree tr td.folder a,li.folder > a { background-image: url("../images/silk/folder.png") !important; }
-table.tree tr td.cplusplus-file a, li.cplusplus-file > a { background-image: url("../images/silk/page_white_cplusplus.png"); }
-table.tree tr td.c-file a, li.c-file > a { background-image: url("../images/silk/page_white_c.png"); }
-table.tree tr td.header-file a, li.header-file > a { background-image: url("../images/silk/page_white_h.png"); }
-table.tree tr td.java-file a, li.java-file > a { background-image: url("../images/silk/page_white_cup.png"); }
-table.tree tr td.exec-file a, li.exec-file > a { background-image: url("../images/silk/page_white_gear.png"); }
-table.tree tr td.ruby-file a, li.ruby-file > a { background-image: url("../images/silk/page_white_ruby.png"); }
-table.tree tr td.compressed-file a, li.compressed-file > a { background-image: url("../images/silk/page_white_compressed.png"); }
-table.tree tr td.image-file a, li.image-file > a { background-image: url("../images/silk/page_white_picture.png"); }
-table.tree tr td.submodule a { background-image: url("../images/silk/folder_go.png"); }
+table.tree tr .file a, li.file > a { background-image: url("../images/silk/page_white_text.png"); }
+table.tree tr .folder a,li.folder > a { background-image: url("../images/silk/folder.png") !important; }
+table.tree tr .cplusplus-file a, li.cplusplus-file > a { background-image: url("../images/silk/page_white_cplusplus.png"); }
+table.tree tr .c-file a, li.c-file > a { background-image: url("../images/silk/page_white_c.png"); }
+table.tree tr .header-file a, li.header-file > a { background-image: url("../images/silk/page_white_h.png"); }
+table.tree tr .java-file a, li.java-file > a { background-image: url("../images/silk/page_white_cup.png"); }
+table.tree tr .exec-file a, li.exec-file > a { background-image: url("../images/silk/page_white_gear.png"); }
+table.tree tr .ruby-file a, li.ruby-file > a { background-image: url("../images/silk/page_white_ruby.png"); }
+table.tree tr .compressed-file a, li.compressed-file > a { background-image: url("../images/silk/page_white_compressed.png"); }
+table.tree tr .image-file a, li.image-file > a { background-image: url("../images/silk/page_white_picture.png"); }
+table.tree tr .submodule a { background-image: url("../images/silk/folder_go.png"); }
+
+/* Used by jquery.ajaxtabletree.js */
+span.expander { cursor: pointer; float: left; margin-left: -8px }
+span.expander:before { content: '+' }
+tr.collapsable.opened span.expander:before { content: '-' }
+tr.hidden { display: none }
 
 li.wiki a {background-image: url('../images/silk/book_open.png');}
 li.memberships a, li.committerships a {background-image: url('../images/silk/group_gear.png');}
@@ -965,7 +971,7 @@ table.listing {
 	float: left;
 	font-size: 11px;
 }
-table.listing tr {
+/*table.listing tr {
 
 }
 table.listing tr.even td {
@@ -973,7 +979,11 @@ table.listing tr.even td {
 }
 table.listing tr.odd td{
   background: #F8F8F8;
-}
+}*/
+
+table.listing tr:nth-child(even) {background-color: #E8E7E7;}
+table.listing tr:nth-child(odd) {background-color: #F8F8F8;}
+
 table tr td {
 	padding: 6px 6px;
 }
@@ -1533,15 +1543,15 @@ a.more_info img {
   margin-right: 3px;
 }
 
-table.tree tr td.meta {
+table.tree tr .meta {
   font-size: 85%;
 }
 
-table.tree tr td.meta, table.tree tr td.commit_message a {
+table.tree tr .meta, table.tree tr .commit_message a {
 	color: #444;
 }
 
-table.tree tr td.node a {
+table.tree tr .node a {
   padding-left:25px;
   background-position: 4px 50%;
   background-repeat: no-repeat;

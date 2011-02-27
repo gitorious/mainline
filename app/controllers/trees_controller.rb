@@ -21,6 +21,10 @@
 
 class TreesController < ApplicationController
   include ActiveMessaging::MessageSender
+  include ActionView::Helpers::NumberHelper
+  include RepositoriesHelper
+  include TreesHelper
+  helper :all
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   renders_in_site_specific_context
@@ -31,20 +35,11 @@ class TreesController < ApplicationController
   end
   
   def show
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    unless @commit = @git.commit(@ref)
-      handle_missing_tree_sha and return
+    tree_objects(false)
     end
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
-                          @commit.committed_date.utc)
-      head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-      @root = Breadcrumb::Folder.new({:paths => @path, :head => head, 
-                                      :repository => @repository})
-      path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
-      @tree = @git.tree(@commit.tree.id, path)
-      expires_in 30.seconds
-    end
+
+  def list_files
+    tree_objects(true)
   end
   
   def archive
@@ -117,4 +112,51 @@ class TreesController < ApplicationController
       redirect_to project_repository_tree_path(@project, @repository, 
                       branch_with_tree("HEAD", @path || []))
     end
+
+    def helpers
+      self.class.helpers
+    end
+
+    def h(*args)
+      helpers.sanitize(*args)
+    end
+
+    def tree_objects(ajax_call)
+      @git = @repository.git
+      @ref, @path = branch_and_path(params[:branch_and_path], @git)
+      unless @commit = @git.commit(@ref)
+        handle_missing_tree_sha and return
+      end
+      if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+                            @commit.committed_date.utc)
+        head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+        @root = Breadcrumb::Folder.new({:paths => @path, :head => head,
+                                        :repository => @repository})
+        path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
+        @tree = @git.tree(@commit.tree.id, path)
+        expires_in 30.seconds
+
+        @tree_objects = @tree.contents.sort_by{|c| helpers.force_utf8(c.name).downcase}.collect{|node|
+          name = h(node.basename)
+          tree = node.is_a?(Grit::Tree)
+          submodule = node.is_a?(Grit::Submodule)
+          css_classes = ['node', tree ? 'folder' : (submodule ? 'submodule' :
+            "file #{helpers.class_for_filename(node.name)}")].join ' '
+          content = tree ? helpers.link_to("#{name}/", tree_path(@ref, node.name)) :
+            (submodule ? name : # file:
+             helpers.link_to(name, blob_path(@ref, node.name).gsub("%2F", "/")))
+          last_commit = !submodule && !too_many_entries_for_log?(@tree) &&
+            commit_for_tree_path(@repository, node.name)
+          commit_message = submodule ? 'submodule: ' + h(node.url(@ref)) :
+             (last_commit ? helpers.link_to(helpers.truncate(h(last_commit.message),
+              :length => 75, :omission => "&hellip;"), commit_path(last_commit.id)) : '')
+          [tree, node.name, %Q{<span class="#{css_classes}">#{content}</span>},
+           %Q{<span class="meta">#{last_commit.committed_date.to_s(:short) if last_commit}</span>},
+           %Q{<span class="meta commit_message">#{commit_message}</span>},
+           (number_to_human_size(node.size) rescue nil)].compact
+        }
+        render :json => @tree_objects if ajax_call
+      end
+    end
 end
+

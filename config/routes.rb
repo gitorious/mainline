@@ -67,8 +67,9 @@ ActionController::Routing::Routes.draw do |map|
       repo.commit_diffs    "commit/:id/diffs", :controller => "commit_diffs", :action => "index", :id => /[^\/]+/
       repo.commit          "commit/:id", :controller => "commits", :action => "show", :id => /.*/
       repo.trees           "trees/", :controller => "trees", :action => "index"
+      repo.files          "trees/files/*branch_and_path", :controller => "trees", :action => "list_files"
       repo.tree            "trees/*branch_and_path", :controller => "trees", :action => "show"
-      repo.formatted_tree  "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
+#      repo.formatted_tree  "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
       repo.archive_tar     "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
       #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
       repo.raw_blob        "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
@@ -184,3 +185,4 @@ ActionController::Routing::Routes.draw do |map|
   # See the routing_filter plugin and lib/route_filters/*
   map.filter "repository_owner_namespacing", :file => "route_filters/repository_owner_namespacing"
 end
+

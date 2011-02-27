@@ -26,38 +26,18 @@
 
 <%= breadcrumbs_from(@root) -%>
 
+<% content_for :extra_head do %>
+<%= javascript_include_tag 'jquery.ajaxtabletree' %>
+<% end %>
+
 <% cache(tree_path(@commit.id, @path) + @ref) do -%>
-  <table class="listing tree">
-    <% @tree.contents.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
-      <tr class="<%= cycle("odd", "even") -%>">
-        <% if node.is_a? Grit::Tree -%>
-          <td class="node folder">
-            <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
-          </td>
-        <% elsif node.is_a? Grit::Submodule -%>
-          <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
-        <% else -%>
-          <td class="node file <%= class_for_filename(node.name)  -%>">
-            <%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%>
-          </td>
-        <% end -%>
-        <% if node.is_a? Grit::Submodule -%>
-          <td class="meta"></td>
-          <td class="meta commit_message">submodule: <%= h(node.url(@ref)) -%></td>
-        <% else -%>
-          <% if !too_many_entries_for_log?(@tree) && last_commit = commit_for_tree_path(@repository, node.name) -%>
-            <td class="meta"><%= last_commit.committed_date.to_s(:short) -%></td>
-            <td class="meta commit_message">
-              <%= link_to truncate(h(last_commit.message), :length => 75, :omission => "&hellip;"), commit_path(last_commit.id) -%>
-            </td>
-          <% else -%>
-            <td class="meta"></td>
-            <td class="meta commit_message"></td>
-          <% end -%>
-        <% end -%>
-      </tr>
-    <% end -%>
-  </table>
+<table class="listing tree" data-list-files-url="<%= project_repository_files_path(params[:project_id], params[:repository_id], @ref) %>/">
+<% @tree_objects.each do |node| -%>
+  <tr<%= %Q{ class="collapsable" data-node-id="#{node[1]}"} if node[0] %>>
+    <td><%= node[2..-1].join('</td><td>') %></td>
+  </tr>
+  <% end -%>
+</table>
 <% end -%>
 
 <% content_for :sidebar do -%>  
