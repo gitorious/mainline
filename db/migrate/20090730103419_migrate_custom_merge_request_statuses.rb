@@ -1,3 +1,6 @@
+class Project < ActiveRecord::Base
+  default_scope :conditions => {}
+end
 class MigrateCustomMergeRequestStatuses < ActiveRecord::Migration
   def self.up
     transaction do
