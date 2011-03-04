@@ -1,0 +1,91 @@
+#!/usr/bin/env ruby
+#--
+#   Copyright (C) 2011 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+# This script maps an incoming path to a full path on the file system
+# This script does not load the Rails environment, only a minimal subset
+# required to load the Gitorious and database environment
+# 
+# Call with a single parameter, the URL to translate
+#
+# We will exit with a non-zero exit code if an error occurs or we cannot resolve
+# Error messages are sent to $stderr, $stdout will receive the path if one is found
+#
+# Call with an explicit RAILS_ENV environment variable for other than the default
+# production environment
+
+require "rubygems"
+require "yaml"
+require "mysql"
+require File.expand_path(File.join(File.dirname(__FILE__), "../lib/gitorious/standalone_resolver"))
+
+
+
+path = ARGV[0]
+
+if path.nil?
+  $stderr.puts "Usage: #{$0} PATH"
+  exit(1)
+end
+
+gitorious_yml_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "config", "gitorious.yml"))
+if !File.file?(gitorious_yml_path)
+  $stderr.puts "Cannot find gitorious.yml in #{gitorious_yml_path}"
+  exit(1)
+end
+
+RAILS_ENV = ENV["RAILS_ENV"] || "production"
+GitoriousConfig = YAML::load_file(gitorious_yml_path)[RAILS_ENV]
+
+database_yml_path = File.expand_path(File.join(File.dirname(__FILE__), "..", "config", "database.yml"))
+if !File.file?(database_yml_path)
+  $stderr.puts "Cannot find database.yml in #{database_yml_path}"
+  exit(1)
+end
+DatabaseConfig = YAML::load_file(database_yml_path)[RAILS_ENV]
+if DatabaseConfig.nil?
+  $stderr.puts "No database configuration found for #{RAILS_ENV} in #{database_yml_path}"
+  exit(1)
+end
+
+class SimpleSQL
+  attr_reader :connection
+  def initialize(configuration)
+    @connection = Mysql.new(configuration["host"], configuration["username"], configuration["password"], configuration["database"])
+  end
+end
+
+router = Gitorious::StandaloneResolver.new(path)
+slug, repository_name = router.resolve
+
+sql = SimpleSQL.new(DatabaseConfig)
+
+begin
+  result = sql.connection.query("SELECT hashed_path FROM repositories r INNER JOIN projects p ON r.project_id=p.id WHERE p.slug='#{slug}' AND r.name='#{repository_name}'")
+ensure
+  sql.connection.close
+end
+
+if result.num_rows < 1
+  $stderr.puts "No results found"
+  exit(1)
+else
+  row = result.fetch_hash
+  hashed_path = row["hashed_path"]
+  repository_path = File.join(GitoriousConfig["repository_base_path"], hashed_path)
+  $stdout.puts repository_path
+end
