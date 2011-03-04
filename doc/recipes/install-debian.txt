@@ -11,16 +11,14 @@ Debian-derived distributions like Ubuntu as well.
 sudo apt-get update
 sudo apt-get install -y build-essential mysql-server mysql-client git git-svn apg geoip-bin libgeoip1 libgeoip-dev sqlite3 libsqlite3-dev imagemagick libpcre3 libpcre3-dev zlib1g zlib1g-dev libyaml-dev libmysqlclient15-dev libonig-dev libonig2 sphinxsearch ruby1.8-dev irb1.8 ri1.8 rdoc1.8 libxml-ruby libopenssl-ruby libxml2-dev libxslt1-dev libmagickcore-dev libmagickwand-dev
 
-2. Install Required Ruby Gems
-
-gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis \
-  ruby-openid rmagick stompserver geoip ultrasphinx rspec rspec-rails \
-  RedCloth echoe daemons geoip mysql ruby-hmac --no-rdoc --no-ri \
-  --user-install
-
-3. Download Gitorious
+2. Download Gitorious
 
 git clone git://gitorious.org/gitorious/mainline.git gitorious
+
+3. Install Bundler and other ruby gems
+
+gem install bundler
+cd gitorious && bundle install
 
 4. Configure
 
@@ -51,8 +49,8 @@ rake ultrasphinx:bootstrap
 6. Start
 
 stompserver &
-script/poller start
-script/server
+bundle exec script/poller start
+bundle exec script/server
 
 7. Try it!
 

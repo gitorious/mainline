@@ -115,11 +115,12 @@ echo "</VirtualHost>" >> /etc/apache2/sites-available/gitorious
 rm /etc/apache2/sites-enabled/000*
 ln -s /etc/apache2/sites-available/gitorious /etc/apache2/sites-enabled/000-gitorious
 
-gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis ruby-openid rmagick geoip ultrasphinx rspec rspec-rails RedCloth echoe daemons mysql ruby-hmac stomp stompserver eventmachine diff-lcs fastthread file-tail hoe json json_pure plist rdiscount --no-rdoc --no-ri
-
 cd /var/www
 test -d gitorious || git clone $GITORIOUS_REPO gitorious
 test -f /usr/local/bin/gitorious || ln -s /var/www/gitorious/script/gitorious /usr/local/bin/gitorious
+
+gem install bundler
+cd /var/www/gitorious && bundle install
 
 cp /var/www/gitorious/doc/templates/ubuntu/git-daemon /etc/init.d
 cp /var/www/gitorious/doc/templates/ubuntu/git-ultrasphinx /etc/init.d

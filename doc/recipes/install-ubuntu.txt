@@ -115,8 +115,8 @@ passenger-install-apache2-module
 
 4.1 Install require Ruby Gems
 
-  gem install mime-types oniguruma textpow chronic BlueCloth ruby-yadis ruby-openid rmagick \
-  geoip ultrasphinx rspec rspec-rails RedCloth echoe daemons geoip --no-rdoc --no-ri
+  gem install bundler
+  cd gitorious && bundle install
 
 5.1 Download Gitorious
 

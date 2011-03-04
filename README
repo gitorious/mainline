@@ -122,38 +122,19 @@ config/broker.yml.example (cp config/broker.yml.example config/broker.yml)
 Install the gems required by Gitorious
 ======================================
 
-Next, you need to install a couple of gems:
+Gems are handled by Bundler. Install Bundler, then use it to install all of
+Gitorious' requirements. Note that Gitorious does not work out of the box with
+RubyGems 1.5, so make sure you're on an earlier version (e.g. 1.4.x).
 
-  * chronic
-  * daemons
-  * diff-lcs
-  * echoe
-  * fastthread
-  * geoip
-  * highline
-  * hoe
-  * mime-types
-  * oauth
-  * rack >= 1.0.0
-  * rake
-  * rdiscount >= 1.3.1.1
-  * RedCloth
-  * rmagick
-  * ruby-hmac
-  * ruby-openid
-  * ruby-yadis
-  * stomp >= 1.1
-
-Most of these can be installed using 
-    $ [sudo] rake gems:install
-
+  [sudo] gem install bundler
+  bundle install
 
 Create your database
 ====================
 
 It is now time for creating the Gitorious database. 
 
-  rake db:create:all
+  bundle exec rake db:create:all
   
 will create an empty database for you.
 
@@ -163,7 +144,7 @@ Migrate your database
 
 Now that you have a database, it's time to add the database schema
 
-  rake db:migrate
+  bundle exec rake db:migrate
   
 will take care of this for you
 
@@ -175,15 +156,7 @@ Running all the tests will ensure your Gitorious installation is correctly set
 up. It takes less than a minute to run all the tests, and gives confidence
 that the code is working as intended.
 
-There is at the time being one gem that's required to run the tests, so start
-out with
-
-  [sudo] rake gems:install RAILS_ENV=test
-  
-to make sure the test specific gems are installed. Then run the entire test
-suite:
-
-  rake test
+  bundle exec rake test
   
 Once all the tests pass, you're almost ready.
 
@@ -214,7 +187,7 @@ is a script in scripts/poller that will run all registered "processors" (found
 in app/processors) that consume messages. In order to have eg. creation of
 repositories done automatically run
 
-  script/poller start
+  bundle exec script/poller start
   
 and the script will be started and daemonized.
 
@@ -227,9 +200,9 @@ information about how to set this up.
 Get Sphinx going
 ================
 
-    $ env RAILS_ENV=production rake ultrasphinx:configure
-    $ env RAILS_ENV=production rake ultrasphinx:index
-    $ env RAILS_ENV=production rake ultrasphinx:daemon:start
+  bundle exec rake ultrasphinx:configure RAILS_ENV=production
+  bundle exec rake ultrasphinx:index RAILS_ENV=production
+  bundle exec rake ultrasphinx:daemon:start RAILS_ENV=production
     
 This sequence of commands will configure, index the database and start the
 sphinx daemon
@@ -242,16 +215,14 @@ Tweak environment
     config.action_mailer.delivery_method = :test
   for immediate gratification.
 
-
-
 Start the server
 ================
 
 Now that you have all the components running, it's time to try Gitorious on
 your local machine:
 
-  ruby script/server    (for Mongrel/Webrick)
-  thin start            (for Thin)
+  bundle exec script/server (for Mongrel/Webrick)
+  thin start                (for Thin)
 
 Remember the values you put for gitorious_host and gitorious_port in
 config/gitorious.yml? Go to http://<gitorious_host>:<gitorious_port> to see
