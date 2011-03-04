@@ -385,6 +385,34 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     end
   end
 
+
+  context "Push events, new style" do
+    setup do
+      @event.action = Action::PUSH_SUMMARY
+      @repository = @event.target
+      @project = @repository.project
+      @first_sha = "a"*40
+      @last_sha = "f"*40
+      data = [@first_sha, @last_sha, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
+      @event.data = data
+      @event.target = repositories(:johans)
+    end
+
+    should "include the ref change" do
+      res = render(@event)
+      assert res.include?("master changed from #{@first_sha[0,7]} to #{@last_sha[0,7]}")
+    end
+
+    should "include the number of commits pushed" do
+      assert_match("johan pushed 10 commits to master", render(@event))
+    end
+
+    should "a URL to the repository" do
+      assert_match("/#{@project.slug}/#{@repository.name}/commits", render(@event))
+    end
+  end
+
+
   protected
   def render(event)
     ::EventRendering::Text.render(event)

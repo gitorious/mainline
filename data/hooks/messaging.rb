@@ -43,9 +43,9 @@ class Publisher
   def post_message(message)
     connect unless @connected
     if @connection.respond_to?(:publish)
-      @connection.publish '/queue/GitoriousPushEvent', message, {'persistent' => true}
+      @connection.publish '/queue/GitoriousPush', message, {'persistent' => true}
     else
-      @connection.send '/queue/GitoriousPushEvent', message, {'persistent' => true}
+      @connection.send '/queue/GitoriousPush', message, {'persistent' => true}
     end
   end
 end

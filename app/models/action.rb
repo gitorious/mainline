@@ -38,11 +38,13 @@ class Action
   UPDATE_MERGE_REQUEST = 15
   DELETE_MERGE_REQUEST = 16
   UPDATE_WIKI_PAGE = 17
-  PUSH = 18
+  # TODO: The PUSH action is deprecated, and will be removed
+  PUSH = 18     
   ADD_PROJECT_REPOSITORY = 19
   UPDATE_REPOSITORY = 20
   REOPEN_MERGE_REQUEST = 21
   ADD_FAVORITE = 22
+  PUSH_SUMMARY = 23
   
   def self.name(action_id)
     case action_id
@@ -91,7 +93,9 @@ class Action
       when UPDATE_REPOSITORY
         "update repository"
       when ADD_FAVORITE
-        "add favorite"    
+         "add favorite"
+      when PUSH_SUMMARY
+         "push summary"
       else
         "unknown event"
     end

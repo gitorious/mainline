@@ -19,7 +19,7 @@
 class PushEventProcessor < ApplicationProcessor
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR = "\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR) 
   PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED = "\\\t" unless defined?(PUSH_EVENT_GIT_OUTPUT_SEPARATOR_ESCAPED)
-  subscribes_to :push_event
+#  subscribes_to :push
   attr_reader :oldrev, :newrev, :action, :identifier, :target, :revname
   attr_accessor :repository,  :user
   
@@ -223,8 +223,8 @@ class PushEventProcessor < ApplicationProcessor
         e.identifier = @identifier
         e.user = user
         result = [e]
-        if identifier == 'master'
-          result = result + events_from_git_log(@newrev) 
+        if @identifier == "master"
+          result = result + events_from_git_log(@newrev)
         end
         result.each{|ev|@events << ev}
       when :tag
@@ -369,5 +369,13 @@ class PushEventProcessor < ApplicationProcessor
     else
       return true
     end
+  end
+
+  def generate_push_event?
+    action == :update && head?
+  end
+
+  def generate_meta_event?
+    [:create, :delete].include?(action) || (review? && action == :update)
   end
 end

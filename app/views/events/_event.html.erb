@@ -52,6 +52,12 @@
     <% if event.has_commits? %>
       <%= render_commit_details_for_push_event(event) -%>
     <% end %>
+    <%# Inlining an additional div to contain the commits. TODO: This is in need of some love -%>
+    <% if event.action == Action::PUSH_SUMMARY -%>
+      <div id="commits_in_event_<%= event.to_param -%>" style="display:none">
+        <%= image_tag("spinner.gif") -%>
+      </div>
+    <% end -%>
 
   </div>
 </li>

@@ -6,10 +6,10 @@
         
       </td>
       <td valign="top">
-          <%= link_to("And #{@event.events.count - @commits.count} more commits&hellip;",
-              repo_owner_path(c.target.target.target,
-                    :project_repository_commits_in_ref_path, c.project,
-                    c.target.target.target, ensplat_path(@event.data))) -%>
+          <%= link_to("And #{@commit_count - @commits.count} more commits&hellip;",
+              repo_owner_path(@repository,
+                    :project_repository_commits_in_ref_path, @project,
+                    @repository, ensplat_path(@branch_name))) -%>
       </td>
     </tr>
   <% else -%>
@@ -25,14 +25,14 @@
             <%= link_to h(c.user.title), user_path(c.user) %>
           <% end %>
           <strong>committed</strong>
-          <%= link_to(c.data[0,8], repo_owner_path(c.target.target.target, 
-                :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
+          <%= link_to(c.data[0,8], repo_owner_path(@repository, 
+                :project_repository_commit_path, @project, @repository, c.data)) %>
           <span class="timestamp">on <%= c.created_at.to_s(:long) %></span>
         </p>
         <div class="commit_message">
           <%= link_to(simple_format(h(c.body)),
-                repo_owner_path(c.target.target.target,
-                  :project_repository_commit_path, c.project, c.target.target.target, c.data)) %>
+                repo_owner_path(@repository,
+                  :project_repository_commit_path, @project, @repository, c.data)) %>
         </div>
       </td>
     </tr>
