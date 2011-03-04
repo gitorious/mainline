@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -30,21 +30,21 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem "chronic"
-  config.gem "geoip"
-  config.gem "daemons",      :lib => false
-  config.gem "hoe",          :lib => false
-  config.gem "echoe",        :lib => false
-  config.gem 'ruby-yadis', :lib => 'yadis'
-#  config.gem "RedCloth",     :lib => "redcloth"
-  config.gem "ruby-openid",  :lib => "openid"
-  config.gem "rdiscount",    :version => "1.3.1.1"
-  config.gem 'stomp',        :version => "1.1"
-  config.gem "mime-types", :lib => 'mime/types'
-  config.gem "diff-lcs", :lib => 'diff/lcs'
-  if RUBY_VERSION < '1.9'
-    config.gem 'json'
-  end
+  # config.gem "chronic"
+  # config.gem "geoip"
+  # config.gem "daemons",      :lib => false
+  # config.gem "hoe",          :lib => false
+  # config.gem "echoe",        :lib => false
+  # config.gem 'ruby-yadis', :lib => 'yadis'
+  # #config.gem "RedCloth",     :lib => "redcloth"
+  # config.gem "ruby-openid",  :lib => "openid"
+  # config.gem "rdiscount",    :version => "1.3.1.1"
+  # config.gem 'stomp',        :version => "1.1"
+  # config.gem "mime-types", :lib => 'mime/types'
+  # config.gem "diff-lcs", :lib => 'diff/lcs'
+  # if RUBY_VERSION < '1.9'
+  #   config.gem 'json'
+  # end
   
   # vendorized directly in vendor/ -- need to research if can be removed from there
   #config.gem "ultraviolet",  :version => '0.10.2', :lib => "uv"
