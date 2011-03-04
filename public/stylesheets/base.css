@@ -1678,7 +1678,7 @@ tr.raw_diff td {
 table#codeblob {
   width: 100%;
 }
-table#codeblob tr td { padding: 2px;}
+table#codeblob tr td { padding: 0 2px;}
 
 table tr .line-numbers {
  text-align: right;
