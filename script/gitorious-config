@@ -86,6 +86,6 @@ if result.num_rows < 1
 else
   row = result.fetch_hash
   hashed_path = row["hashed_path"]
-  repository_path = File.join(GitoriousConfig["repository_base_path"], hashed_path)
+  repository_path = File.join(GitoriousConfig["repository_base_path"], "#{hashed_path}.git")
   $stdout.puts repository_path
 end
