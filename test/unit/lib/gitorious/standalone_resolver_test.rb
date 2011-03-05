@@ -16,17 +16,17 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.expand_path(File.join(File.dirname(__FILE__), "../../lib/gitorious/standalone_resolver"))
+require File.expand_path(File.join(File.dirname(__FILE__), "../../../../lib/gitorious/standalone_resolver"))
 require "test/unit"
 require "rubygems"
 require "shoulda"
-class FooTest < Test::Unit::TestCase
+class StandaloneResolverTest < Test::Unit::TestCase
   def setup
     @project_repo_path = "/project/repository.git"
     @group_repo_path = "/+team/project/repository.git"
     @user_repo_path = "/~user/project/repository.git"
   end
-  
+
   context "Resolving paths" do
     should "resolve regular repositories" do
       resolver = Gitorious::StandaloneResolver.new(@group_repo_path)
