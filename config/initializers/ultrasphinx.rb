@@ -29,3 +29,5 @@ Ultrasphinx::Search.excerpting_options = HashWithIndifferentAccess.new({
   # excerpting to fire
   :content_methods => [['title'], ['description', 'stripped_description', 'body']]
 })
+
+Ultrasphinx::Search.client_options['ignore_missing_records']
