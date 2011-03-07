@@ -83,7 +83,7 @@ class PushSpecParser
     end
 
     def null_sha?
-      @sha =~ /^0+$/
+      (@sha =~ /^0+$/) == 0
     end
 
     def sha

@@ -91,6 +91,16 @@ class PushProcessorTest < ActiveSupport::TestCase
       @processor.process_merge_request
     end
 
+    should "not process if action is delete" do
+      @payload[:message] = "#{SHA} #{NULL_SHA} refs/merge-requests/19"
+      @processor.stubs(:merge_request).returns(@merge_request)
+      @processor.parse_message(@payload.to_json)
+
+      assert_nothing_raised do
+        @processor.process_merge_request
+      end
+    end
+
     should_eventually "locate the correct merge request" do
       # @repository.merge_requests.expect(:find_by_sequence_number!).with(@merge_request.sequence_number)
     end

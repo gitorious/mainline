@@ -35,6 +35,7 @@ class PushProcessor < ApplicationProcessor
   end
 
   def process_merge_request
+    return if spec.action_delete?
     merge_request.update_from_push!
   end
 
