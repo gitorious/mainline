@@ -39,6 +39,7 @@ class PushProcessor < ApplicationProcessor
   end
 
   def process_push
+    ensure_user
     logger = PushEventLogger.new(repository, spec, user)
     logger.create_push_event if logger.create_push_event?
     logger.create_meta_event if logger.create_meta_event?
@@ -53,13 +54,14 @@ class PushProcessor < ApplicationProcessor
   end
 
   def process_wiki_update
+    ensure_user
     logger = Gitorious::Wiki::UpdateEventLogger.new(repository, spec, user)
     logger.create_wiki_events
   end
 
   def parse_message(payload)
     values = JSON.parse(payload)
-    @user = User.find_by_login!(values["username"])
+    @user = User.find_by_login(values["username"])
     @repository = Repository.find_by_hashed_path(values["gitdir"])
     @spec = PushSpecParser.new(*values["message"].split(" "))
   end
@@ -70,4 +72,7 @@ class PushProcessor < ApplicationProcessor
     @repository.merge_requests.find_by_sequence_number!(@spec.ref_name.to_i)
   end
 
+  def ensure_user
+    raise "Username was nil" if user.nil?
+  end
 end
