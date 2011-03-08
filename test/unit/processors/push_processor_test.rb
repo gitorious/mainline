@@ -102,17 +102,15 @@ class PushProcessorTest < ActiveSupport::TestCase
       @payload[:username] = nil
       @processor.stubs(:merge_request).returns(@merge_request)
       @merge_request.expects(:update_from_push!)
-      @processor.parse_message(@payload.to_json)
-      @processor.process_merge_request
+      @processor.on_message(@payload.to_json)
     end
 
     should "not process if action is delete" do
       @payload[:message] = "#{SHA} #{NULL_SHA} refs/merge-requests/19"
       @processor.stubs(:merge_request).returns(@merge_request)
-      @processor.parse_message(@payload.to_json)
 
       assert_nothing_raised do
-        @processor.process_merge_request
+        @processor.on_message(@payload.to_json)
       end
     end
 
