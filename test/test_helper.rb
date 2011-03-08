@@ -43,6 +43,10 @@ class ActiveSupport::TestCase
   # -- they do not yet inherit this setting
   fixtures :all
 
+  NULL_SHA = "0" * 40 unless defined?(NULL_SHA)
+  SHA = "a" * 40 unless defined?(SHA)
+  OTHER_SHA = "f" * 40 unless defined?(OTHER_SHA)
+
   # Add more helper methods to be used by all tests here...
   
   def find_message_with_queue_and_regexp(queue_name, regexp)

@@ -20,9 +20,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class PushProcessorTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 32
-  SHA = "a" * 32
-  OTHER_SHA = "f" * 32
 
   def setup
     @processor = PushProcessor.new
@@ -54,6 +51,24 @@ class PushProcessorTest < ActiveSupport::TestCase
       assert_equal NULL_SHA, @processor.spec.from_sha.sha
       assert_equal SHA, @processor.spec.to_sha.sha
       assert_equal "master", @processor.spec.ref_name
+    end
+  end
+
+  context "ActiveRecord connections" do
+    setup do
+      @repository = repositories(:johans)
+      @user = @repository.user
+      @processor.stubs(:process_push)
+      @json = {
+        :gitdir => @repository.hashed_path,
+        :username => @user.login,
+        :message => "#{NULL_SHA} #{SHA} refs/heads/master"
+      }.to_json
+    end
+    
+    should "be re-established" do
+      @processor.expects(:verify_connections!)
+      @processor.on_message(@json)
     end
   end
 

@@ -23,15 +23,20 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     @repository = repositories(:johans)
     @processor.repository = @repository
     @user = users(:mike)
-    push_event = PushEventProcessor::EventForLogging.new
-    commit = PushEventProcessor::EventForLogging.new
-    commit.email = "marius@gitorious.org"
-    commit.identifier = "ffc009"
-    commit.event_type = Action::COMMIT
-    commit.message = "Fixing a bug"
-    commit.commit_details = {}
-    push_event.commits = [commit]
-    @payload = push_event.generate_hook_payload("000", "fff", "refs/heads/master", @user, @repository).with_indifferent_access
+ 
+    @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
+    grit = mock    
+    committer = Grit::Actor.new("John Committer", "noone@invalid.org")
+    author = Grit::Actor.new("Jane Author", "jane@g.org")
+    grit_commit = Grit::Commit.new(nil, SHA, [], nil,
+      author, 1.day.ago,
+      committer, 2.days.ago,
+      ["Awesome sauce"])
+    grit.stubs(:commits_between).with(SHA, OTHER_SHA).returns([grit_commit])
+    @repository.stubs(:git).returns(grit)
+
+    @generator = Gitorious::WebHookGenerator.new(@repository, @spec, @user)
+    @payload = @generator.payload.with_indifferent_access
   end
 
   def add_hook_url(repository, url)

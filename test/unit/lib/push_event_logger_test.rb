@@ -18,9 +18,6 @@
 require "test_helper"
 
 class PushEventLoggerTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 40
-  SHA = "a" * 40
-  OTHER_SHA = "f" * 40
   
   context "deciding what events to create" do
     context "for tags" do

@@ -18,13 +18,10 @@
 
 require "test_helper"
 class PushSpecParserTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 40
-  FIRST_SHA = "a" * 40
-  END_SHA = "f" * 40
 
   context "Actions" do
     should "parse a tag creation" do
-      spec = PushSpecParser.new(NULL_SHA, END_SHA, "refs/tags/topic")
+      spec = PushSpecParser.new(NULL_SHA, OTHER_SHA, "refs/tags/topic")
 
       assert spec.action_create?
       assert !spec.action_update?
@@ -32,7 +29,7 @@ class PushSpecParserTest < ActiveSupport::TestCase
     end
 
     should "parse a tag update" do
-      spec = PushSpecParser.new(FIRST_SHA, END_SHA, "refs/tags/topic")
+      spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/tags/topic")
 
       assert spec.action_update?
       assert !spec.action_create?
@@ -40,7 +37,7 @@ class PushSpecParserTest < ActiveSupport::TestCase
     end
 
     should "parse a tag deletion" do
-      spec = PushSpecParser.new(FIRST_SHA, NULL_SHA, "refs/tags/topic")
+      spec = PushSpecParser.new(SHA, NULL_SHA, "refs/tags/topic")
 
       assert spec.action_delete?
       assert !spec.action_create?

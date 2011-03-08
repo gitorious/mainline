@@ -27,12 +27,10 @@ module Gitorious
     end
 
     def generate!
-      @repository.hooks.each do |hook|
-        publish_notification({
-            :user => @user.login,
-            :repository_id => @repository.id,
-            :payload => payload}.to_json)
-      end
+      publish_notification({
+          :user => @user.login,
+          :repository_id => @repository.id,
+          :payload => payload}.to_json)
     end
 
     def publish_notification(data)

@@ -51,6 +51,10 @@ class CommitTest < ActiveSupport::TestCase
     should "wrap its message as body" do
       assert_equal @body, @commit.body
     end
+
+    should "have an actor display" do
+      assert_equal "John Committer", @commit.actor_display
+    end
   end
 
   context "Commits from non-gitorious users" do
@@ -70,6 +74,23 @@ class CommitTest < ActiveSupport::TestCase
 
     should "find its user if email matches" do
       assert_nil @commit.user
+    end
+  end
+
+  context "Fetching commits for an event" do
+    setup do
+      @git = mock
+      @event_id = 2
+    end
+
+    should "call commits_between" do
+      @git.expects(:commits_between).with(SHA, OTHER_SHA).returns([])
+      result = Gitorious::Commit.load_commits_between(@git, SHA, OTHER_SHA, @event_id)
+    end
+
+    should "be cached" do
+      Rails.cache.expects(:fetch).with("commits_for_push_event_#{@event_id}").returns([])
+      result = Gitorious::Commit.load_commits_between(@git, SHA, OTHER_SHA, @event_id)      
     end
   end
 end

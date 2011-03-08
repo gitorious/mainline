@@ -18,9 +18,6 @@
 require "test_helper"
 
 class WikiUpdateEventLoggerTest < ActiveSupport::TestCase
-  NULL_SHA = "0" * 40
-  SHA = "a" * 40
-  OTHER_SHA = "f" * 40
 
   context "updating wiki" do
     setup do

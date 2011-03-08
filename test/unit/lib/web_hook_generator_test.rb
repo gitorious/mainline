@@ -20,8 +20,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class WebHookGeneratorTest < ActiveSupport::TestCase
-  SHA = "a" * 40
-  OTHER_SHA = "f" * 40
 
   def setup
     @repository = repositories(:johans)
@@ -117,7 +115,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
   end
 
   context "Publishing messages" do
-    should "publish a message for each hook associated with a repo" do
+    should "publish a message once only" do
       @generator.stubs(:payload).returns({})
       moe = users(:moe)
       hook = @repository.hooks.create!(
@@ -131,7 +129,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
         :user => @user.login,
         :repository_id => @repository.id,
         :payload => {}}.to_json
-      @generator.expects(:publish_notification).with(message_payload).twice
+      @generator.expects(:publish_notification).with(message_payload).once
       @generator.generate!
     end
 
