@@ -51,9 +51,10 @@ rubyonrails.org](http://rubyonrails.org/download). Please ensure you're able
 to create a Rails project that uses your database of choice; this guide
 assumes your machine is ready to run Rails.
 
-Gitorious itself runs on either Ruby 1.8 or 1.9. Gitorious.org itself uses
-Ruby 1.9 and we recommend you do the same.
-
+While Gitorious may run fine on Ruby 1.9, you are likely to run into encoding
+issues, and possibly other problems. Gitorious.org has reverted its Ruby 1.9
+setup to Ruby Enterprise Edition, which is the Ruby version we recommend. If
+you don't want to run REE, we recommend stock 1.8.7.
 
 Dependencies
 ============
