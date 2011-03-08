@@ -38,7 +38,7 @@ by #gitorious on irc.freenode.net if you have questions.
 
 === Tasks and other scripts
 
-* rake db:migrate creates the initial database tables
+* rake db:setup creates the initial database tables
 * script/task_performer runs any tasks in the queue (creating repositories etc)
 * script/graph_generator generates graph.
 * rake ultrasphinx:configure configures sphinx

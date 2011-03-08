@@ -145,7 +145,7 @@ Migrate your database
 
 Now that you have a database, it's time to add the database schema
 
-  bundle exec rake db:migrate
+  bundle exec rake db:setup
   
 will take care of this for you
 

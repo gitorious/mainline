@@ -169,7 +169,7 @@ su - git -c "touch ~/.bash_profile"
 su - git -c "echo 'export GEM_HOME=/usr/local/lib/ruby/gems/1.8/gems' >> ~/.bash_profile"
 
 su - git -c "cd /var/www/gitorious && rake db:create RAILS_ENV=production"
-su - git -c "cd /var/www/gitorious && rake db:migrate RAILS_ENV=production"
+su - git -c "cd /var/www/gitorious && rake db:setup RAILS_ENV=production"
 su - git -c "cd /var/www/gitorious && rake ultrasphinx:bootstrap RAILS_ENV=production"
 
 rm ~/tmp/crontab && touch ~/tmp/crontab

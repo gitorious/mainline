@@ -43,7 +43,7 @@ Edit config/gitorious.yml:
 5. Final Website Setup
 
 rake db:create
-rake db:migrate
+rake db:setup
 rake ultrasphinx:bootstrap
 
 6. Start

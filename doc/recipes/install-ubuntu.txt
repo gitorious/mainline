@@ -211,7 +211,7 @@ cp config/gitorious.sample.yml config/gitorious.yml
 
 cd /var/www/gitorious
 rake db:create RAILS_ENV=production
-rake db:migrate RAILS_ENV=production
+rake db:setup RAILS_ENV=production
 rake ultrasphinx:bootstrap RAILS_ENV=production
 
 7.5 Setup CronJobs
