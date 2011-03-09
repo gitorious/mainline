@@ -25,6 +25,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   
   def setup
     @project = projects(:johans)
+    @project.update_attribute(:merge_requests_need_signoff, false)
     MergeRequestStatus.create_defaults_for_project(@project)
     grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
     Repository.any_instance.stubs(:git).returns(grit)
@@ -309,6 +310,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       mock_token.stubs(:token).returns("key")
       mock_token.stubs(:secret).returns("secret")
       mock_token.stubs(:authorize_url).returns("http://oauth.example/authorize?key=123")
+      @project.update_attribute(:merge_requests_need_signoff, true)
       @controller.expects(:obtain_oauth_request_token).returns(mock_token)
       assert_difference("MergeRequest.count") do
         do_post
@@ -392,11 +394,11 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should 'set the status to open when done authenticating thru OAuth' do
       @merge_request.stubs(:valid_oauth_credentials?).returns(true)
+      @merge_request.expects(:terms_accepted)
       get :terms_accepted, {:project_id => @project.to_param,
         :repository_id => @target_repository.to_param,
         :id => @merge_request.to_param}
       assert_response :redirect
-      assert @merge_request.open?
     end
     
     should 'not set the status to open if OAuth authentication has not been performed' do

@@ -303,12 +303,7 @@ class Project < ActiveRecord::Base
 
   # TODO: Add tests
   def oauth_consumer
-    case Rails.env
-    when "test"
-      @oauth_consumer ||= OAuth::TestConsumer.new
-    else
-      @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, oauth_consumer_options)
-    end
+    @oauth_consumer ||= OAuth::Consumer.new(oauth_signoff_key, oauth_signoff_secret, oauth_consumer_options)
   end
 
   def oauth_consumer_options

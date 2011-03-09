@@ -262,19 +262,35 @@ class MergeRequestTest < ActiveSupport::TestCase
   should 'have a transition from pending to open' do
     mr = @merge_request.clone
     assert mr.pending_acceptance_of_terms?
-    @merge_request.oauth_consumer.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
-    mr.stubs(:oauth_signoff_parameters).returns({})
+    
+    mr.expects(:valid_oauth_credentials?).returns(true)
+    mr.expects(:fetch_contribution_notice)
+    
     mr.terms_accepted
     assert mr.open?
-    assert_equal 'valid_version_sha', mr.contribution_agreement_version
-    assert_equal 'Thank you for your contribution', mr.contribution_notice
+  end
+
+  should "load contribution data from OAuth" do
+    agreement_version = 'valid_version_sha'
+    body = 'Thank you for your contribution'
+    @merge_request.expects(:access_token).returns(access_token_for_testing(agreement_version, body))
+    @merge_request.fetch_contribution_notice
+    assert_equal agreement_version, @merge_request.contribution_agreement_version
+    assert_equal body, @merge_request.contribution_notice
+  end
+
+  # Returns a stub access token which will always return a HTTPAccepted with the headers required
+  def access_token_for_testing(version_code, body)
+    response = Net::HTTPAccepted.new(nil,nil,nil)
+    response["X-Contribution-Agreement-Version"] = version_code
+    response.stubs(:body).returns(body)
+    mock(:post => response)
   end
 
   should 'not be set to open if OAuth validation fails' do
     mr = @merge_request.clone
-    mr.oauth_token = "key"
-    mr.oauth_secret = "invalid_secret"
-    mr.oauth_consumer.valid_oauth_credentials=({:key => 'key', :secret => 'secret'})
+    mr.expects(:valid_oauth_credentials?).returns(false)
+    mr.terms_accepted
     assert !mr.open?
   end
 

@@ -19,6 +19,7 @@ gem "rack", "~> 1.0.1"
 gem "riddle" # For the ultrasphinx plugin
 gem "builder"
 gem "mysql"
+gem "oauth"
 
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18

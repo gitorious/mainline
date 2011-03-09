@@ -410,16 +410,20 @@ class MergeRequest < ActiveRecord::Base
   def terms_accepted
     validate_through_oauth do
       confirmed_by_user
-      callback_response = access_token.post(target_repository.project.oauth_path_prefix,
-        oauth_signoff_parameters)
-
-      if Net::HTTPAccepted === callback_response
-        self.contribution_notice = callback_response.body
-      end
-
-      contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
-      update_attributes(:contribution_agreement_version => contribution_agreement_version)
+      fetch_contribution_notice
     end
+  end
+
+  def fetch_contribution_notice
+    callback_response = access_token.post(target_repository.project.oauth_path_prefix,
+      oauth_signoff_parameters)
+    
+    if Net::HTTPAccepted === callback_response
+      self.contribution_notice = callback_response.body
+    end
+    
+    contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
+    update_attributes(:contribution_agreement_version => contribution_agreement_version)
   end
 
   # If the contribution agreement site wants to remind the user of the
@@ -457,9 +461,12 @@ class MergeRequest < ActiveRecord::Base
     yield if valid_oauth_credentials?
   end
 
+  def request_token
+    @request_token ||= OAuth::RequestToken.from_hash(oauth_consumer, {:oauth_token => oauth_token, :oauth_token_secret => oauth_secret})    
+  end
 
   def access_token
-    @access_token ||= oauth_consumer.build_access_token(oauth_token, oauth_secret)
+    @access_token ||= request_token.get_access_token
   end
 
   def oauth_consumer
