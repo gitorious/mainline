@@ -22,7 +22,7 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<h2 class="content-header">Add new repository to <%= link_to @owner.title, @owner -%></h2>
+<h2 class="content-header">Add new repository to <%= link_to h(@owner.title), @owner -%></h2>
 
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
@@ -33,8 +33,10 @@
   </li>
   <li>
     <%= f.label :description -%> 
-    
-    <div><%= f.text_area :description, :class => "text wide" -%><br /> <span class="hint">(<%= markdown_hint -%>)</span></div>
+    <div>
+      <%= f.text_area :description, :class => "text wide" -%><br />
+      <span class="hint">(<%= markdown_hint -%>)</span>
+    </div>
   </li>
   <li>
     <%= f.label :enable_merge_requests -%>
