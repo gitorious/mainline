@@ -2136,7 +2136,8 @@ table.markdown_help {
 .page ul li		{ list-style-type: disc; }
 .page ol li		{ list-style-type: decimal; }
 .page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
-.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
+.page h2,
+#content .page h2			{ margin: 15px 0 10px 0; font-size: 135%;}
 .page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
 .page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}

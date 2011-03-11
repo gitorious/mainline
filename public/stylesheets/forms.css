@@ -33,6 +33,11 @@ form li {
 	padding: 6px 0px;
 	
 }
+
+/* Prevent floating list items when previewing a wiki page */
+#page_preview li {
+  float: none;
+}
 form p.hint {
 	font-size: 11px;
 }
