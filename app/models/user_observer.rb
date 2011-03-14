@@ -20,6 +20,7 @@
 
 class UserObserver < ActiveRecord::Observer
   def after_create(user)
+    return if user.activated?
     Mailer.deliver_signup_notification(user) if user.identity_url.blank?
   end
 

@@ -74,6 +74,14 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  should "not send activation mail when user is already activated" do
+    Mailer.expects(:deliver_signup_notification).never
+
+    u = create_user(:activated_at => Time.now)
+
+    u.save!
+  end
+
   should "reset password" do
     users(:johan).update_attributes(:password => "newpass", :password_confirmation => "newpass")
     assert_equal users(:johan), User.authenticate("johan@johansorensen.com", "newpass")
@@ -344,7 +352,6 @@ class UserTest < ActiveSupport::TestCase
       end
     end
   end
-
 
   context 'Avatars' do
     setup {@user = users(:johan)}

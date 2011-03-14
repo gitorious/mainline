@@ -411,6 +411,7 @@ class User < ActiveRecord::Base
     end
 
     def make_activation_code
+      return if !self.activated_at.blank?
       self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
     end
 
