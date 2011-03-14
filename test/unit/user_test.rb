@@ -153,7 +153,7 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  should "generate some randomly password" do
+  should "generate some random password" do
     assert_match(/\w+/, User.generate_random_password)
     assert_equal 24, User.generate_random_password.length
     assert_equal 32, User.generate_random_password(16).length
