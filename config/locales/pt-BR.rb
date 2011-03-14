@@ -511,7 +511,8 @@
         :last_n_edits => "Últimas {{n}} edições em {{title}}",
         :index => "Índice de páginas",
         :format_using_markdown => %Q(Formatar páginas usando {{markdown}}),
-        :wikiwords_syntax => "[[Wikilink]] criará um link para uma página com este nome."
+        :wikiwords_syntax => "[[Wikilink]] criará um link para uma página com este nome.",
+        :git => "Acesso Git"
       },
       :memberships => {
         :add_new_member => "Adicionar novo membro",
@@ -743,9 +744,6 @@
         },
         :roles => {
           :name => "Papel de usuário"
-        },
-        :memberships => {
-          :created_at => "Criado em"
         },
         :memberships => {
           :created_at => "Criado em"
