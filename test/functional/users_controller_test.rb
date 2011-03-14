@@ -79,7 +79,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  should " activate user" do
+  should "activate user" do
     assert_nil User.authenticate('moe', 'test')
     get :activate, :activation_code => users(:moe).activation_code
     assert_redirected_to('/')
