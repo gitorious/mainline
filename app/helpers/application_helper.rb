@@ -29,6 +29,7 @@ module ApplicationHelper
   include UsersHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
+  include RoutingHelper
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 

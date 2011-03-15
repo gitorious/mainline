@@ -18,6 +18,8 @@
 require 'test_helper'
 
 class EventRenderingHelperTest < ActionView::TestCase
+  include ApplicationHelper
+
   context "create tag events" do
     should "link to the tag tree" do
       repository = repositories(:johans)

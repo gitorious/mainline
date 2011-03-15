@@ -23,6 +23,7 @@
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
+  include RoutingHelper
   protect_from_forgery
 
   before_filter :public_and_logged_in
@@ -74,33 +75,6 @@ class ApplicationController < ActionController::Base
     def self.renders_in_global_context(options = {})
       before_filter :require_global_site_context, options
     end
-
-    # return the url with the +repo+.owner prefixed if it's a mainline repo,
-    # otherwise return the +path_spec+
-    # if +path_spec+ is an array (and no +args+ given) it'll use that as the
-    # polymorphic-url-style (eg [@project, @repo, @foo])
-    def repo_owner_path(repo, path_spec, *args)
-      if repo.team_repo?
-        if path_spec.is_a?(Symbol)
-          return send("group_#{path_spec}", *args.unshift(repo.owner))
-        else
-          return *unshifted_polymorphic_path(repo, path_spec)
-        end
-      elsif repo.user_repo?
-        if path_spec.is_a?(Symbol)
-          return send("user_#{path_spec}", *args.unshift(repo.owner))
-        else
-          return *unshifted_polymorphic_path(repo, path_spec)
-        end
-      else
-        if path_spec.is_a?(Symbol)
-          return send(path_spec, *args)
-        else
-          return *path_spec
-        end
-      end
-    end
-    helper_method :repo_owner_path
 
     def require_user_has_ssh_keys
       unless current_user.ssh_keys.count > 0
@@ -195,24 +169,6 @@ class ApplicationController < ActionController::Base
         headers['X-Has-Flash'] = "true"
       end
     end
-
-    # turns ["foo", "bar"] route globbing parameters into "foo/bar"
-    # Note that while the path components will be uri unescaped, any
-    # '+' will be preserved
-    def desplat_path(*paths)
-      # we temporarily swap the + out with a magic byte, so
-      # filenames/branches with +'s won't get unescaped to a space
-      paths.flatten.compact.map do |p|
-        CGI.unescape(p.gsub("+", "\001")).gsub("\001", '+')
-      end.join("/")
-    end
-    helper_method :desplat_path
-
-    # turns "foo/bar" into ["foo", "bar"] for route globbing
-    def ensplat_path(path)
-      path.split("/").select{|p| !p.blank? }
-    end
-    helper_method :ensplat_path
 
     # Returns an array like [branch_ref, *tree_path]
     def branch_with_tree(branch_ref, tree_path)
@@ -333,4 +289,6 @@ class ApplicationController < ActionController::Base
         path_spec.unshift(repo.owner)
       end
     end
-end
+
+    helper_method :unshifted_polymorphic_path
+  end
