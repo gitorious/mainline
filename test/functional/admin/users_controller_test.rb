@@ -20,11 +20,17 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class Admin::UsersControllerTest < ActionController::TestCase
-  
   def setup
     login_as :johan
   end
   
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:post, :reset_password)
+  should_enforce_ssl_for(:put, :suspend)
+  should_enforce_ssl_for(:put, :unsuspend)
+
   should "GET /admin/users" do
     get :index
     assert_response :success

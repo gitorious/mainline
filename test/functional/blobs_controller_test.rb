@@ -19,8 +19,11 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class BlobsControllerTest < ActionController::TestCase
-  
   should_render_in_site_specific_context
+
+  should_enforce_ssl_for(:get, :history)
+  should_enforce_ssl_for(:get, :raw)
+  should_enforce_ssl_for(:get, :show)
 
   context "Blob rendering" do
     setup do

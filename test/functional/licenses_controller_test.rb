@@ -19,6 +19,10 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class LicensesControllerTest < ActionController::TestCase
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:put, :update)
+
   context 'Accepting (current) end user license agreement' do
     setup do
       @user = users(:old_timer)

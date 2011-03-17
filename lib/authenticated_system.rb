@@ -27,6 +27,7 @@ module AuthenticatedSystem
         :domain => ".#{GitoriousConfig['gitorious_host']}",
         :expires => 3.weeks.from_now,
         :httponly => true,
+        :secure => true
       }
     end
     
@@ -132,7 +133,11 @@ module AuthenticatedSystem
       user = cookies[:auth_token] && User.find_by_remember_token(cookies[:auth_token])
       if user && user.remember_token?
         user.remember_me
-        cookies[:auth_token] = { :value => user.remember_token, :expires => user.remember_token_expires_at }
+        cookies[:auth_token] = {
+          :value => user.remember_token,
+          :expires => user.remember_token_expires_at,
+          :secure => true
+        }
         self.current_user = user
       end
     end

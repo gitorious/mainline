@@ -20,14 +20,19 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommentsControllerTest < ActionController::TestCase
-  
   should_render_in_site_specific_context
+
+  should_enforce_ssl_for(:get, :create)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:post, :preview)
 
   def setup
     @project = projects(:johans)
     @repository = repositories(:johans)
   end
-  
+
   context "#index" do
     should "scopes to project.repositories" do
       get :index, :project_id => @project.to_param, 

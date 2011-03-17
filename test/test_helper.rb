@@ -87,7 +87,73 @@ class ActiveSupport::TestCase
     not_message = should_be_included ? "" : " not"
     "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"
   end
-  
+
+  def self.enforce_ssl
+    context "when enforcing ssl" do
+      setup do
+        @use_ssl = GitoriousConfig["use_ssl"]
+        GitoriousConfig["use_ssl"] = true
+      end
+
+      teardown do
+        GitoriousConfig["use_ssl"] = @use_ssl
+      end
+
+      context "" do
+        yield
+      end
+    end
+  end
+
+  def self.disable_ssl
+    context "when not enforcing ssl" do
+      setup do
+        @use_ssl = GitoriousConfig["use_ssl"]
+        GitoriousConfig["use_ssl"] = false
+      end
+
+      teardown do
+        GitoriousConfig["use_ssl"] = @use_ssl
+      end
+
+      context "" do
+        yield
+      end
+    end
+  end
+
+  def self.should_enforce_ssl_for(method, action, params = {}, &block)
+    enforce_ssl do
+      without_ssl_context do
+        context "#{method.to_s.upcase} :#{action}" do
+          setup do
+            block.call unless block.nil?
+            self.send(method, action, params)
+          end
+
+          should_redirect_to_ssl
+        end
+      end
+    end
+
+    disable_ssl do
+      without_ssl_context do
+        context "#{method.to_s.upcase} :#{action}" do
+          should "not redirect to HTTPS" do
+            begin
+              self.send(method, action, params)
+            rescue NoMethodError
+              # Doesn't matter, this just means we hit the controller missing
+              # some parameters
+            end
+
+            assert_not_equal "https://" + @request.host + @request.request_uri, @response.location
+          end
+        end
+      end
+    end
+  end
+
   def self.should_render_in_global_context(options = {})
     should "Render in global context for actions" do
       filter = @controller.class.filter_chain.find(:require_global_site_context)

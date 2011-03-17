@@ -25,4 +25,7 @@ config.cache_store = :mem_cache_store, ['localhost:11211'], {
   :namespace => 'ks1' 
 }
 
-SslRequirement.disable_ssl_check = true
+# It is no longer required to set
+# SslRequirement.disable_ssl_check directly to disable SSL for
+# Gitorious. Instead, add use_ssl: false to your gitorious.yml to disable SSL
+# completely.

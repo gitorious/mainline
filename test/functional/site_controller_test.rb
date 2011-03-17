@@ -24,12 +24,17 @@ class SiteControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :except => [:about, :faq, :contact]
   should_render_in_global_context :only => [:about, :faq, :contact]
 
+  should_enforce_ssl_for(:get, :dashboard)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :public_timeline)
+
   def alter_gitorious_config(key, value)
     old_value = GitoriousConfig[key]
     GitoriousConfig[key] = value
-    yield
-    if old_value.nil?
 
+    yield
+
+    if old_value.nil?
       GitoriousConfig.delete(key)
     else
       GitoriousConfig[key] = old_value

@@ -16,11 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommittershipsControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context
 
   def setup
@@ -30,6 +28,15 @@ class CommittershipsControllerTest < ActionController::TestCase
     @repository = repositories(:johans)
     login_as :johan
   end
+
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :update)
+  should_enforce_ssl_for(:post, :auto_complete_for_group_name)
+  should_enforce_ssl_for(:post, :auto_complete_for_user_login)
+  should_enforce_ssl_for(:post, :create)
 
   context "GET index" do
     should "requires login" do

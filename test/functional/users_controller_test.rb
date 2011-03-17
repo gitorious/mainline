@@ -17,54 +17,27 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UsersControllerTest < ActionController::TestCase
-
-  def turn_ssl_on
-    @request.env["HTTPS"] = "on"
-  end
-
-  without_ssl_context do
-    context "GET :new" do
-      setup { get :new }
-      should_redirect_to_ssl
-    end
-    context "POST :create" do
-      setup { post :create }
-      should_redirect_to_ssl
-    end
-    context "GET :edit" do
-      setup { get :edit }
-      should_redirect_to_ssl
-    end
-    context "PUT :update" do
-      setup { put :update }
-      should_redirect_to_ssl
-    end
-    context "GET :password" do
-      setup { get :password }
-      should_redirect_to_ssl
-    end
-    context "POST :forgot_password_create" do
-      setup { post :forgot_password_create }
-      should_redirect_to_ssl
-    end
-    context "PUT :update_password" do
-      setup { put :update_password }
-      should_redirect_to_ssl
-    end
-    context "GET :forgot_password" do
-      setup { get :forgot_password }
-      should_redirect_to_ssl
-    end
-
-    context "GET :reset_password" do
-      setup { get :reset_password }
-      should_redirect_to_ssl
-    end
-  end
+  should_enforce_ssl_for(:delete, :avatar)
+  should_enforce_ssl_for(:get, :activate)
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :feed)
+  should_enforce_ssl_for(:get, :forgot_password)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :openid_build)
+  should_enforce_ssl_for(:get, :password)
+  should_enforce_ssl_for(:get, :pending_activation)
+  should_enforce_ssl_for(:get, :reset_password, :token => "a1bda21bd3b332bda")
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:get, :watchlist)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:post, :forgot_password_create)
+  should_enforce_ssl_for(:post, :openid_create)
+  should_enforce_ssl_for(:put, :reset_password)
+  should_enforce_ssl_for(:put, :update)
+  should_enforce_ssl_for(:put, :update_password)
 
   should_render_in_global_context
 
@@ -130,63 +103,61 @@ class UsersControllerTest < ActionController::TestCase
       :terms_of_use => '1' }.merge(options)
   end
 
-  with_ssl_context do
-    should "allow signups" do
-      assert_difference("User.count") do
-        create_user
-        assert_redirected_to :action => "pending_activation"
-      end
-    end
-
-    should "require login on signup" do
-      assert_no_difference("User.count") do
-        create_user(:login => nil)
-        assert_not_nil assigns(:user).errors.on(:login)
-        assert_template("users/new")
-      end
-    end
-
-    should "require password on signup" do
-      assert_no_difference("User.count") do
-        create_user(:password => nil)
-        assert !assigns(:user).errors.on(:password).empty?
-        assert_template(("users/new"))
-      end
-    end
-
-    should "require password confirmation on signup" do
-      assert_no_difference("User.count") do
-        create_user(:password_confirmation => nil)
-        assert !assigns(:user).errors.on(:password_confirmation).empty?, 'empty? should be false'
-        assert_template(("users/new"))
-      end
-    end
-
-    should "require email on signup" do
-      assert_no_difference("User.count") do
-        create_user(:email => nil)
-        assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
-        assert_template(("users/new"))
-      end
-    end
-
-    should 'require acceptance of end user license agreement' do
-      assert_no_difference("User.count") do
-        create_user(:terms_of_use => nil)
-      end
-    end
-
-    should "be successful with valid data" do
-      assert_difference("User.count") do
-        create_user
-      end
-    end
-
-    should "requires the user to activate himself after posting valid data" do
+  should "allow signups" do
+    assert_difference("User.count") do
       create_user
-      assert_equal nil, User.authenticate('quire@example.com', 'quire')
-      assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
+      assert_redirected_to :action => "pending_activation"
     end
+  end
+
+  should "require login on signup" do
+    assert_no_difference("User.count") do
+      create_user(:login => nil)
+      assert_not_nil assigns(:user).errors.on(:login)
+      assert_template("users/new")
+    end
+  end
+
+  should "require password on signup" do
+    assert_no_difference("User.count") do
+      create_user(:password => nil)
+      assert !assigns(:user).errors.on(:password).empty?
+      assert_template(("users/new"))
+    end
+  end
+
+  should "require password confirmation on signup" do
+    assert_no_difference("User.count") do
+      create_user(:password_confirmation => nil)
+      assert !assigns(:user).errors.on(:password_confirmation).empty?, 'empty? should be false'
+      assert_template(("users/new"))
+    end
+  end
+
+  should "require email on signup" do
+    assert_no_difference("User.count") do
+      create_user(:email => nil)
+      assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
+      assert_template(("users/new"))
+    end
+  end
+
+  should 'require acceptance of end user license agreement' do
+    assert_no_difference("User.count") do
+      create_user(:terms_of_use => nil)
+    end
+  end
+
+  should "be successful with valid data" do
+    assert_difference("User.count") do
+      create_user
+    end
+  end
+
+  should "requires the user to activate himself after posting valid data" do
+    create_user
+    assert_equal nil, User.authenticate('quire@example.com', 'quire')
+    assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
   end
 
   should "shows the user" do
@@ -263,82 +234,79 @@ class UsersControllerTest < ActionController::TestCase
     assert_equal user.events.find(:all, :limit => 30, :order => "created_at desc"), assigns(:events)
   end
 
-  with_ssl_context do
-    context "#forgot_password" do
-      should "GETs the page fine for everyone" do
-        get :forgot_password
-        assert_response :success
-        assert_template(("forgot_password"))
-      end
+  context "#forgot_password" do
+    should "GETs the page fine for everyone" do
+      get :forgot_password
+      assert_response :success
+      assert_template(("forgot_password"))
+    end
+  end
+
+  context "#reset" do
+    setup do
+      @user = users(:johan)
+      @user.update_attribute(:password_key, "s3kr1t")
     end
 
-    context "#reset" do
-      setup do
-        @user = users(:johan)
-        @user.update_attribute(:password_key, "s3kr1t")
-        turn_ssl_on
-      end
-
-      should "redirect if the token is invalid" do
-        get :reset_password, :token => "invalid"
-        assert_response :redirect
-        assert_redirected_to forgot_password_users_path
-        assert_not_nil flash[:error]
-      end
-
-      should "render the form if the token is valid" do
-        get :reset_password, :token => "s3kr1t"
-        assert_response :success
-        assert_equal @user, assigns(:user)
-        assert_nil flash[:error]
-      end
-
-      should "re-render if password confirmation does not match" do
-        put :reset_password, :token => "s3kr1t", :user => {
-          :password => "qwertyasdf",
-          :password_confirmation => "asdf"
-        }
-        assert_response :success
-        assert !assigns(:user).valid?
-        assert_nil User.authenticate(@user.email, "qwertyasdf")
-      end
-
-      should "update the password" do
-        put :reset_password, :token => "s3kr1t", :user => {
-          :password => "qwertyasdf",
-          :password_confirmation => "qwertyasdf"
-        }
-        assert_response :redirect
-        assert_redirected_to new_sessions_path
-        assert User.authenticate(@user.email, "qwertyasdf")
-        assert_match(/Password updated/i, flash[:success])
-      end
+    should "redirect if the token is invalid" do
+      get :reset_password, :token => "invalid"
+      assert_response :redirect
+      assert_redirected_to forgot_password_users_path
+      assert_not_nil flash[:error]
     end
 
-    context "#forgot_password_create" do
-      should "redirects to forgot_password if nothing was found" do
-        post :forgot_password_create, :user => {:email => "xxx"}
-        assert_redirected_to(forgot_password_users_path)
-        assert_match(/invalid email/i, flash[:error])
-      end
+    should "render the form if the token is valid" do
+      get :reset_password, :token => "s3kr1t"
+      assert_response :success
+      assert_equal @user, assigns(:user)
+      assert_nil flash[:error]
+    end
 
-      should "sends a new password if email was found" do
-        u = users(:johan)
-        User.expects(:generate_reset_password_key).returns("secret")
-        Mailer.expects(:deliver_forgotten_password).with(u, "secret")
-        post :forgot_password_create, :user => {:email => u.email}
-        assert_redirected_to(root_path)
-        assert_match(/A password confirmation link has been sent/, flash[:success])
-      end
+    should "re-render if password confirmation does not match" do
+      put :reset_password, :token => "s3kr1t", :user => {
+        :password => "qwertyasdf",
+        :password_confirmation => "asdf"
+      }
+      assert_response :success
+      assert !assigns(:user).valid?
+      assert_nil User.authenticate(@user.email, "qwertyasdf")
+    end
 
-      should 'notify non-activated users that they need to activate their accounts before resetting the password' do
-        user = users(:johan)
-        user.expects(:activated?).returns(false)
-        User.expects(:find_by_email).returns(user)
-        post :forgot_password_create, :user => {:email => user.email}
-        assert_redirected_to forgot_password_users_path
-        assert_match(/activated yet/, flash[:error])
-      end
+    should "update the password" do
+      put :reset_password, :token => "s3kr1t", :user => {
+        :password => "qwertyasdf",
+        :password_confirmation => "qwertyasdf"
+      }
+      assert_response :redirect
+      assert_redirected_to new_sessions_path
+      assert User.authenticate(@user.email, "qwertyasdf")
+      assert_match(/Password updated/i, flash[:success])
+    end
+  end
+
+  context "#forgot_password_create" do
+    should "redirects to forgot_password if nothing was found" do
+      post :forgot_password_create, :user => {:email => "xxx"}
+      assert_redirected_to(forgot_password_users_path)
+      assert_match(/invalid email/i, flash[:error])
+    end
+
+    should "sends a new password if email was found" do
+      u = users(:johan)
+      User.expects(:generate_reset_password_key).returns("secret")
+      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
+      post :forgot_password_create, :user => {:email => u.email}
+      assert_redirected_to(root_path)
+      assert_match(/A password confirmation link has been sent/, flash[:success])
+    end
+
+    should 'notify non-activated users that they need to activate their accounts before resetting the password' do
+      user = users(:johan)
+      user.expects(:activated?).returns(false)
+      User.expects(:find_by_email).returns(user)
+      post :forgot_password_create, :user => {:email => user.email}
+      assert_redirected_to forgot_password_users_path
+      assert_match(/activated yet/, flash[:error])
     end
   end
 
@@ -354,6 +322,7 @@ class UsersControllerTest < ActionController::TestCase
     should "activate user" do
       assert_nil User.authenticate('moe', 'test')
       get :activate, :activation_code => users(:moe).activation_code
+
       assert_redirected_to('/')
       assert !flash[:notice].nil?
       assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
@@ -374,14 +343,12 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "GET /users/new" do
-      turn_ssl_on
       get :new
       assert_redirected_to(root_path)
       assert_match(/Action requires login/, flash[:error])
     end
 
     should "GET /users/forgot_password" do
-      turn_ssl_on
       get :forgot_password
       assert_response :success
     end
@@ -390,7 +357,6 @@ class UsersControllerTest < ActionController::TestCase
   context "account-related tests" do
     setup do
       login_as :johan
-      turn_ssl_on
     end
 
     should "require current_user" do
@@ -598,5 +564,4 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :redirect
     end
   end
-
 end

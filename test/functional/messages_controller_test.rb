@@ -19,47 +19,18 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 class MessagesControllerTest < ActionController::TestCase
-  def setup
-    @request.env["HTTPS"] = "on"
-  end
-
-  without_ssl_context do
-    context "SSL" do
-      setup do
-        login_as :moe
-      end
-
-      context "GET :index" do
-        setup { get :index }
-        should_redirect_to_ssl
-      end
-      context "GET :sent" do
-        setup { get :sent }
-        should_redirect_to_ssl
-      end
-      context "GET :read" do
-        setup { get :read }
-        should_redirect_to_ssl
-      end
-      context "GET :show" do
-        setup { get :show }
-        should_redirect_to_ssl
-      end
-      context "POST :create" do
-        setup { post :create }
-        should_redirect_to_ssl
-      end
-      context "POST :reply" do
-        setup { get :reply }
-        should_redirect_to_ssl
-      end
-      context "POST auto_complete_for_message_recipients" do
-        setup { post :auto_complete_for_message_recipients }
-        should_redirect_to_ssl
-      end
-    end
-  end
-
+  should_enforce_ssl_for(:get, :all)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :read)
+  should_enforce_ssl_for(:get, :reply)
+  should_enforce_ssl_for(:get, :sent)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:post, :auto_complete_for_message_recipients)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:post, :reply)
+  should_enforce_ssl_for(:put, :bulk_update)
+  should_enforce_ssl_for(:put, :read)
   should_render_in_global_context
 
   context "On GET to index" do

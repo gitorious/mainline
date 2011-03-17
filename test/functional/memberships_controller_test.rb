@@ -23,6 +23,14 @@ class MembershipsControllerTest < ActionController::TestCase
   
   should_render_in_global_context
 
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:post, :auto_complete_for_user_login)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:put, :update)
+
   context "Routing" do
     setup do
       @group = groups(:team_thunderbird)

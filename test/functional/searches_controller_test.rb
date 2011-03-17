@@ -22,6 +22,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class SearchesControllerTest < ActionController::TestCase
   
   should_render_in_global_context
+  should_enforce_ssl_for(:get, :show)
 
   context "#show" do
     should "search for the given query" do

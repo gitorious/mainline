@@ -1,6 +1,9 @@
 require 'test_helper'
 
 class Admin::RepositoriesControllerTest < ActionController::TestCase
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:put, :recreate)
+
   context "Un-ready repositories" do
     should "deny access for regular users" do
       get :index

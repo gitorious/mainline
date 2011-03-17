@@ -42,6 +42,21 @@ class MergeRequestsControllerTest < ActionController::TestCase
     assert_not_nil @merge_request.versions.last
   end
   
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :commit_status)
+  should_enforce_ssl_for(:get, :direct_access)
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :oauth_return)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:get, :terms_accepted)
+  should_enforce_ssl_for(:get, :version)
+  should_enforce_ssl_for(:post, :commit_list)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:post, :target_branches)
+  should_enforce_ssl_for(:put, :update)
+
   context "#index (GET)" do		
     should " not require login" do
       session[:user_id] = nil

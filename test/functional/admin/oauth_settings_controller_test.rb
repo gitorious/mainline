@@ -18,8 +18,11 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class Admin::OauthSettingsControllerTest < ActionController::TestCase
-  context 'On get to edit' do
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:put, :update)
 
+  context 'On get to edit' do
     should 'grant site admins access' do
       login_as(:johan)
       get :edit, :project_id => projects(:johans).slug

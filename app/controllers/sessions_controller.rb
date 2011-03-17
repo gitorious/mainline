@@ -28,7 +28,6 @@ require "yadis"
 class SessionsController < ApplicationController
   skip_before_filter :public_and_logged_in
   renders_in_site_specific_context
-  ssl_required :new, :create, :destroy
   layout "second_generation/application"
   before_filter :validate_request_host, :only => :create
   
@@ -54,6 +53,10 @@ class SessionsController < ApplicationController
   end
 
   protected
+
+  def ssl_required?
+    GitoriousConfig["use_ssl"]
+  end
 
   def validate_request_host
     if !GitoriousConfig.valid_request_host?(request.host)
@@ -115,6 +118,7 @@ class SessionsController < ApplicationController
         :value => self.current_user.remember_token , 
         :expires => self.current_user.remember_token_expires_at,
         :domain => ".#{GitoriousConfig['gitorious_host']}",
+        :secure => true
       }
     end
     check_state_and_redirect('/')

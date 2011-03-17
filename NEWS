@@ -4,6 +4,17 @@ This document lists new features in the Gitorious source code. If you
 are looking for detailed information about invidiual commits, use the
 Git log. Oldest news at the bottom, newest at the top.
 
+=== Improved SSL
+
+The gitorious.yml configuration file now has a configuration setting
+that allows the control SSL usage. You either enable it (default) or
+disable it. When SSL is enabled, Gitorious will force SSL for any page
+as long as a user is logged in. Additionally, any page that takes user
+input (whether the user is logged in or not) will require the use of
+SSL through a redirect. If SSL is disabled, it will not be used
+anywhere. It is strongly encouraged to use SSL. If you don't have an
+SSL certificate, create a self-signed one.
+
 === Re-write of event handling, scheduled for master 2011-02-11
 
 Gitorious used to create event records in the database for each commit

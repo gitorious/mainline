@@ -35,8 +35,6 @@ class UsersController < ApplicationController
   before_filter :require_public_user, :only => :show
 
   renders_in_global_context
-  ssl_required :new, :create, :edit, :update, :password, :forgot_password_create,
-                :forgot_password, :update_password, :reset_password, :avatar
   layout :decide_layout
   # render new.rhtml
   def new
@@ -214,6 +212,10 @@ class UsersController < ApplicationController
   end
 
   protected
+    def ssl_required?
+      GitoriousConfig["use_ssl"]
+    end
+
     def find_user
       @user = User.find_by_login!(params[:id])
     end
@@ -230,7 +232,7 @@ class UsersController < ApplicationController
         redirect_back_or_default root_path
       end
     end
-    
+
     def decide_layout
       if [:new, :create, :forgot_password, :pending_activation, :reset_password ].include?(action_name.to_sym)
         "second_generation/application"

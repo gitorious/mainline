@@ -26,6 +26,15 @@ class GroupsControllerTest < ActionController::TestCase
     @group = groups(:team_thunderbird)
   end
   
+  should_enforce_ssl_for(:delete, :avatar)
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:put, :update)
+
   context "Routing" do
     should "recognizes routes starting with plus as teams/show/<name>" do
       assert_generates("/+#{@group.to_param}", { :controller => "groups", 

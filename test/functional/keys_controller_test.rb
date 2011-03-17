@@ -25,47 +25,14 @@ class KeysControllerTest < ActionController::TestCase
   
   def setup
     @user = users(:johan)
-    @request.env["HTTPS"] = "on"
     SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
   
-  without_ssl_context do
-    context "GET :index" do
-      setup do
-        login_as :johan
-        get :index
-      end
-      should_redirect_to_ssl
-    end    
-    context "GET :new" do
-      setup do
-        login_as :johan
-        get :new
-      end
-      should_redirect_to_ssl
-    end    
-    context "POST :create" do
-      setup do
-        login_as :johan
-        post :create
-      end
-      should_redirect_to_ssl
-    end
-    context "GET :show" do
-      setup do
-        login_as :johan
-        get :show
-      end
-      should_redirect_to_ssl
-    end
-    context "DELETE :destroy" do
-      setup do 
-        login_as :johan
-        delete :destroy
-      end
-      should_redirect_to_ssl
-    end
-  end
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:post, :create)
 
   context "index" do
     setup do

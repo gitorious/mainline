@@ -21,6 +21,10 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class CommitsControllerTest < ActionController::TestCase
 
+  should_enforce_ssl_for(:get, :feed)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :show)
+
   context "showing a single commit" do
     setup do
       @project = projects(:johans)

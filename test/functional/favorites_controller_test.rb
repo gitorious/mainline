@@ -24,6 +24,12 @@
 require File.dirname(__FILE__) +  '/../test_helper'
 
 class FavoritesControllerTest < ActionController::TestCase
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :update)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:put, :update)
+
   def do_create_post(type, id, extra_options={})
     post :create, extra_options.merge(:watchable_type => type,
       :watchable_id => id)

@@ -20,6 +20,9 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class EventsControllerTest < ActionController::TestCase
 
+  should_enforce_ssl_for(:get, :commits)
+  should_enforce_ssl_for(:get, :index)
+
   def setup
     @project = projects(:johans)
     @repository = repositories(:johans)

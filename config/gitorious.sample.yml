@@ -56,6 +56,10 @@ test:
   # Should we hide HTTP clone urls?
   hide_http_clone_urls: false
 
+  # Use SSL? Requires web server configuration. Recommended for security. Forces the use of
+  # HTTPS on login page and all pages while user is logged in
+  use_ssl: true
+
   # Is this gitorious.org? Read: should we have a very flashy homepage?
   is_gitorious_dot_org: true
 

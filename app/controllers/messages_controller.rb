@@ -119,10 +119,4 @@ class MessagesController < ApplicationController
     render :text => @users.map{|u| u.login }.join("\n")
     #render :layout => false
   end
-  
-  protected
-    def ssl_required?
-      # Always required.
-      true
-    end
 end

@@ -4,6 +4,9 @@ GitoriousConfig = c = YAML::load_file(File.join(Rails.root,"config/gitorious.yml
 GitoriousConfig['public_mode'] = true if GitoriousConfig['public_mode'].nil?
 GitoriousConfig["locale"] = "en" if GitoriousConfig["locale"].nil?
 
+# require the use of SSL by default
+GitoriousConfig["use_ssl"] = true if GitoriousConfig["use_ssl"].nil?
+
 # set global locale
 I18n.default_locale = GitoriousConfig["locale"]
 I18n.locale         = GitoriousConfig["locale"]

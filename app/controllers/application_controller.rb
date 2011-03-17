@@ -282,6 +282,10 @@ class ApplicationController < ActionController::Base
     end
 
   private
+    def ssl_required?
+      GitoriousConfig["use_ssl"] && !current_user.nil?
+    end
+
     def unshifted_polymorphic_path(repo, path_spec)
       if path_spec[0].is_a?(Symbol)
         path_spec.insert(1, repo.owner)
@@ -292,3 +296,4 @@ class ApplicationController < ActionController::Base
 
     helper_method :unshifted_polymorphic_path
   end
+end

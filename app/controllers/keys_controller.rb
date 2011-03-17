@@ -24,7 +24,6 @@ class KeysController < ApplicationController
   before_filter :find_user
   before_filter :require_current_user 
   renders_in_global_context
-  ssl_required :index, :new, :create, :show, :destroy
 
   def index
     @ssh_keys = current_user.ssh_keys

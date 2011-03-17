@@ -24,6 +24,19 @@ class ProjectsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
+  should_enforce_ssl_for(:delete, :destroy)
+  should_enforce_ssl_for(:get, :clones)
+  should_enforce_ssl_for(:get, :confirm_delete)
+  should_enforce_ssl_for(:get, :edit)
+  should_enforce_ssl_for(:get, :edit_slug)
+  should_enforce_ssl_for(:get, :index)
+  should_enforce_ssl_for(:get, :new)
+  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:put, :edit_slug)
+  should_enforce_ssl_for(:put, :preview)
+  should_enforce_ssl_for(:put, :update)
+
   def setup
     @project = projects(:johans)
   end
