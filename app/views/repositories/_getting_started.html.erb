@@ -25,8 +25,8 @@
   If you have not done so already, download and install <a href="http://git.or.cz">Git</a>
 </p>
 <pre class="no-indent">
-git config --global user.name "<%= current_user.fullname || "Your full name" -%>"
-git config --global user.email "<%= current_user.email -%>"
+git config --global user.name "<%=h current_user.fullname || "Your full name" -%>"
+git config --global user.email "<%=h current_user.email -%>"
 </pre>
 
 <h4>Pushing your local repository to Gitorious</h4>
