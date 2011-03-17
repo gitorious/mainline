@@ -59,24 +59,24 @@ ActionController::Routing::Routes.draw do |map|
         :auto_complete_for_user_login => :get
       }
 
-
-
-
-      repo.formatted_commits_feed "commits/*branch/feed.:format",
-          :controller => "commits", :action => "feed", :conditions => {:feed => :get}
-      repo.commits        "commits", :controller => "commits", :action => "index"
-      repo.commits_in_ref "commits/*branch", :controller => "commits", :action => "index"
-      repo.commit         "commit/:id.:format", :controller => "commits", :action => "show"
-      repo.trees          "trees/", :controller => "trees", :action => "index"
-      repo.tree           "trees/*branch_and_path", :controller => "trees", :action => "show"
-      repo.formatted_tree "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
-      repo.archive_tar    "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
+      repo.formatted_commits_feed("commits/*branch/feed.:format",
+                                  :controller => "commits", :action => "feed", :conditions => { :feed => :get })
+      repo.commits         "commits", :controller => "commits", :action => "index"
+      repo.commits_in_ref  "commits/*branch", :controller => "commits", :action => "index"
+      repo.commit          "commit/:id.:format", :controller => "commits", :action => "show"
+      repo.commit_comments "commit/:id/comments", :controller => "commits", :action => "comments"
+      repo.commit_comments "commit/:id/diffs", :controller => "commits", :action => "diffs"
+      repo.trees           "trees/", :controller => "trees", :action => "index"
+      repo.tree            "trees/*branch_and_path", :controller => "trees", :action => "show"
+      repo.formatted_tree  "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
+      repo.archive_tar     "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
       #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
-      repo.raw_blob       "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
-      repo.blob_history   "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
-      repo.blob           "blobs/*branch_and_path", :controller => "blobs", :action => "show"
+      repo.raw_blob        "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
+      repo.blob_history    "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
+      repo.blob            "blobs/*branch_and_path", :controller => "blobs", :action => "show"
     end
   end
+
   repository_options = {
     :member => {
       :clone => :get, :create_clone => :post,
@@ -87,7 +87,6 @@ ActionController::Routing::Routes.draw do |map|
       :search_clones => :get
     }
   }
-
 
   map.root :controller => "site", :action => "index"
 
@@ -125,7 +124,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
 
-
   map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"
@@ -138,6 +136,7 @@ ActionController::Routing::Routes.draw do |map|
       p.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     end
   end
+
   map.resources :projects, :member => {
     :confirm_delete => :get,
     :preview => :put,
@@ -147,8 +146,6 @@ ActionController::Routing::Routes.draw do |map|
     projects.resources :pages, :member => { :history => :get,:preview => :put}, :collection => { :git_access => :get }
     projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end
-
-
 
   map.resource :search
 
