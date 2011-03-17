@@ -25,8 +25,6 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   protect_from_forgery
 
-  filter_parameter_logging :password, :password_confirmation
-
   before_filter :public_and_logged_in
   before_filter :require_current_eula
 
@@ -37,7 +35,7 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password, :password_confirmation
 
   layout :pick_layout_based_on_site
-  
+
   rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::UnknownController, :with => :render_not_found
   rescue_from ActionController::UnknownAction, :with => :render_not_found
@@ -191,7 +189,7 @@ class ApplicationController < ActionController::Base
     def public_and_logged_in
       login_required unless GitoriousConfig['public_mode']
     end
-    
+
     def mark_flash_status
       unless flash.empty?
         headers['X-Has-Flash'] = "true"
