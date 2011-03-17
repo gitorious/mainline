@@ -26,7 +26,7 @@ class CommentsController < ApplicationController
   before_filter :find_polymorphic_parent
   before_filter :comment_should_be_editable, :only => [:edit, :update]
   renders_in_site_specific_context
-  
+
   def index
     @comments = @target.comments.find(:all, :include => :user)
     @merge_request_count = @repository.merge_requests.count_open
@@ -76,7 +76,6 @@ class CommentsController < ApplicationController
       comment_was_invalid
     end
   end
-
 
   def comment_was_created
     create_new_commented_posted_event
