@@ -292,11 +292,18 @@ class ApplicationController < ActionController::Base
       end
       redirect_to host_without_subdomain
     end
-    
-    def no_session
-      request.session_options[:expire_after] = nil
+
+    def self.skip_session(options = {})
+      skip_before_filter :public_and_logged_in, options
+      skip_before_filter :require_current_eula, options
+      skip_after_filter :mark_flash_status, options
+      before_filter :skip_session_expiry, options
     end
 
+    def skip_session_expiry
+      request.session_options[:expire_after] = nil
+    end
+    
     def cache_forever
       headers["Cache-Control"] = "public, max-age=315360000"
     end

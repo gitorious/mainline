@@ -23,11 +23,8 @@
 class CommitDiffsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  before_filter :no_session
+  skip_session
   after_filter :cache_forever
-  skip_before_filter :public_and_logged_in
-  skip_before_filter :require_current_eula
-  skip_after_filter :mark_flash_status
   renders_in_site_specific_context
 
   def index
