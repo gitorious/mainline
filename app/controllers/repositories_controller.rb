@@ -210,6 +210,8 @@ class RepositoriesController < ApplicationController
     config_data = "real_path:#{@repository.real_gitdir}\n"
     config_data << "force_pushing_denied:"
     config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
+    headers["Cache-Control"] = "public, max-age=600"
+
     render :text => config_data
   end
 

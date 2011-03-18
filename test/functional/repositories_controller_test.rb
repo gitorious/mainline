@@ -816,7 +816,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository = @project.repositories.mainlines.first
     end
 
-    should " not require login" do
+    should "not require login" do
       session[:user_id] = nil
       do_config_get
       assert_response :success
@@ -841,6 +841,12 @@ class RepositoriesControllerTest < ActionController::TestCase
       do_config_get
 
       assert_equal [], @response.headers["Set-Cookie"]
+    end
+
+    should "send cache friendly headers" do
+      do_config_get
+
+      assert_equal "public, max-age=600", @response.headers["Cache-Control"]
     end
   end
 
