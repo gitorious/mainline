@@ -58,6 +58,12 @@ class CommitsController < ApplicationController
     @diffs = []
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
+    @diffs_url = project_repository_commit_diffs_url(:project_id => params[:project_id],
+                                                     :repository_id => params[:repository_id],
+                                                     :id => params[:id])
+    @comments_url = project_repository_commit_comments_url(:project_id => params[:project_id],
+                                                           :repository_id => params[:repository_id],
+                                                           :id => params[:id])
 
     unless @commit = @git.commit(params[:id])
       handle_missing_sha and return

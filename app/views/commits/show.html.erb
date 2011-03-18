@@ -27,7 +27,7 @@
                    :title => @project.title) -%>
 <%= breadcrumbs_from(@root) -%>
 
-<div id="commit-diffs" data-gts-source="<%= h(url_for(:controller => :commit_diffs, :action => :index)) %>?fragment=1">
+<div id="commit-diffs" data-gts-source="<%= h(@diffs_url) %>?fragment=1">
   <h1>Commit <%=h params[:id] %></h1>
   <p>
     <strong>NB!</strong> This page relies heavily on JavaScript, enable it for
@@ -39,7 +39,7 @@
   </ul>
 </div>
 
-<div data-gts-source="<%= h(url_for(:controller => :commit_comments, :action => :index)) %>">
+<div data-gts-source="<%= h(@comments_url) %>">
   <h2 id="comments">Comments</h2>
 </div>
 
