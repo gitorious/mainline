@@ -22,6 +22,7 @@
 
 class CommitCommentsController < ApplicationController
   before_filter :find_project_and_repository
+  before_filter :no_session
   skip_before_filter :public_and_logged_in
   skip_before_filter :require_current_eula
   skip_after_filter :mark_flash_status

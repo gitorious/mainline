@@ -18,7 +18,8 @@ end
 ActionController::Base.session = {
   :key    => '_gitorious_sess',
   :secret => gitorious_yaml['cookie_secret'],
-  :domain => domain
+  :domain => domain,
+  :expire_after => 3.weeks
 }
 
 # Use the database for sessions instead of the cookie-based default,

@@ -23,6 +23,8 @@
 class CommitDiffsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
+  before_filter :no_session
+  after_filter :cache_forever
   skip_before_filter :public_and_logged_in
   skip_before_filter :require_current_eula
   skip_after_filter :mark_flash_status
@@ -41,7 +43,6 @@ class CommitDiffsController < ApplicationController
     @diffs = @commit.parents.empty? ? [] : @commit.diffs
     @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
     @author_user = User.find_by_email_with_aliases(@commit.author.email)
-    headers["Cache-Control"] = "public, max-age=315360000"
 
     render :layout => !request.xhr?
   end
