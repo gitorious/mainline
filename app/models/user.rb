@@ -93,10 +93,8 @@ class User < ActiveRecord::Base
     end
 
     def unread_count
-      count(:all, :conditions => {
-        :aasm_state => "unread",
-        :archived_by_recipient => false,
-      })
+      count(:all, :conditions => ["aasm_state = ? and archived_by_recipient = ? and sender_id != recipient_id",
+                                  "unread", false])
     end
   end
 

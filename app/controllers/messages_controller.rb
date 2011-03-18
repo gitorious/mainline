@@ -27,7 +27,7 @@ class MessagesController < ApplicationController
       wants.xml {render :xml => @messages}
     end
   end
-  
+
   def all
     @messages = current_user.top_level_messages.paginate(:page => params[:page])
     @root = Breadcrumb::AllMessages.new(current_user)
