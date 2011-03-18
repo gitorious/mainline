@@ -30,5 +30,4 @@ module CommitsHelper
                                      @project, @repository, match), :class => "sha")
     end
   end
-  
 end
