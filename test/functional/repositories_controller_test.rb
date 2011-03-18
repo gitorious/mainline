@@ -836,6 +836,12 @@ class RepositoriesControllerTest < ActionController::TestCase
       expected = "real_path:#{wiki.real_gitdir}\nforce_pushing_denied:false"
       assert_equal expected, @response.body
     end
+
+    should "not use a session cookie" do
+      do_config_get
+
+      assert_equal [], @response.headers["Set-Cookie"]
+    end
   end
 
   def do_delete(repos)
