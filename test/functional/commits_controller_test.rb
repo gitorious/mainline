@@ -99,33 +99,6 @@ class CommitsControllerTest < ActionController::TestCase
       assert_response :success
       assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
     end
-
-    context "comments" do
-      should "display comments" do
-        get(:comments, {
-              :project_id => @project.slug, 
-              :repository_id => @repository.name,
-              :id => @sha
-            })
-
-        assert_equal 0, assigns(:comment_count)
-      end
-
-      should "not show diffs for the initial commit" do
-        commit = @grit.commit(@sha)
-        commit.stubs(:parents).returns([])
-        @grit.expects(:commit).returns(commit)
-
-        get(:diffs, {
-              :project_id => @project.to_param, 
-              :repository_id => @repository.to_param,
-              :id => @sha
-            })
-
-        assert_equal [], assigns(:diffs)
-        assert_select "#content p", /This is the initial commit in this repository/
-      end
-    end
   end
 
   context "Routing" do

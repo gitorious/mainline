@@ -17,15 +17,6 @@
 #++
 %>
 
-<h1><%= t("views.commits.title", :commit => h(@commit.id)) %></h1>
-
-<%= render :partial => "commit_infobox" -%>
-<% if @diffs.blank? -%>
-  <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
-<% else -%>
-  <% unless @commit.merge? -%>
-    <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
-    <%= render_diffmode_selector :url => url_for(:action => :diffs) -%>
-    <%= render :partial => "diffs" -%>
-  <% end -%>
-<% end -%>
+<div class="commentable comments">
+  <%= render :partial => @comments -%>
+</div>
