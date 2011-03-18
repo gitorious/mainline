@@ -25,7 +25,7 @@
 <% else -%>
   <% unless @commit.merge? -%>
     <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
-    <%= render_diffmode_selector :url => url_for(:action => :diffs) -%>
+    <%= render_diffmode_selector :url => url_for(:controller => :commit_diffs, :action => :index) -%>
     <%= render :partial => "commits/diffs" -%>
   <% end -%>
 <% end -%>

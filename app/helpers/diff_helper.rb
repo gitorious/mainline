@@ -121,12 +121,13 @@ module DiffHelper
     url = params[:url] || ""
     out = %Q{<ul class="mode_selector">}
     out << %Q{<li class="list_header">Diff rendering mode:</li>}
+
     if @diffmode == "sidebyside"
-      out << %Q{<li><a href="#{url}?diffmode=inline" data-gts-target="parent">inline</a></li>}
+      out << %Q{<li><a href="#{url}?diffmode=inline&amp;fragment=1" data-gts-target="parent">inline</a></li>}
       out << %Q{<li class="selected">side by side</li>}
     else
       out << %Q{<li class="selected">inline</li>}
-      out << %Q{<li><a href="#{url}?diffmode=sidebyside" data-gts-target="parent">side by side</a></li>}
+      out << %Q{<li><a href="#{url}?diffmode=sidebyside&amp;fragment=1" data-gts-target="parent">side by side</a></li>}
     end
     out << "</ul>"
     out
