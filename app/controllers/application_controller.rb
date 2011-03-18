@@ -292,6 +292,14 @@ class ApplicationController < ActionController::Base
       end
       redirect_to host_without_subdomain
     end
+    
+    def no_session
+      request.session_options[:expire_after] = nil
+    end
+
+    def cache_forever
+      headers["Cache-Control"] = "public, max-age=315360000"
+    end
 
     # A wrapper around ActionPack's #stale?, that always returns true
     # if there's data in the flash hash

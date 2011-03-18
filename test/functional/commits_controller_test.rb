@@ -40,7 +40,7 @@ class CommitsControllerTest < ActionController::TestCase
       assert_equal @repository, assigns(:repository)
     end
     
-    should "gets the commit data" do
+    should "get the commit data" do
       get :show, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => @sha}
       assert_response :success
@@ -49,19 +49,13 @@ class CommitsControllerTest < ActionController::TestCase
       assert_not_nil assigns(:diffs)
     end
   
-    should "gets the comments for the commit" do
-      get :show, {:project_id => @project.slug, 
-          :repository_id => @repository.name, :id => @sha}
-      assert_equal 0, assigns(:comment_count)
-    end
-  
-    should "defaults to 'inline' diffmode" do
+    should "default to 'inline' diffmode" do
       get :show, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => @sha}
       assert_equal "inline", assigns(:diffmode)
     end
   
-    should "sets sidebyside diffmode" do
+    should "set sidebyside diffmode" do
       get :show, {:project_id => @project.slug, 
           :repository_id => @repository.name, :id => @sha, :diffmode => "sidebyside" }
       assert_equal "sidebyside", assigns(:diffmode)
@@ -91,16 +85,6 @@ class CommitsControllerTest < ActionController::TestCase
       assert_match(/no such sha/i, flash[:error])
       assert_redirected_to project_repository_commits_path(@project, @repository)
     end
-    
-    should "not show diffs for the initial commit" do
-      commit = @grit.commit(@sha)
-      commit.stubs(:parents).returns([])
-      @grit.expects(:commit).returns(commit)
-      get :show, {:project_id => @project.to_param, 
-          :repository_id => @repository.to_param, :id => @sha}
-      assert_equal [], assigns(:diffs)
-      assert_select "#content p", /This is the initial commit in this repository/
-    end
 
     should "have a different last-modified if there is a comment" do
       Comment.create!({
@@ -116,7 +100,7 @@ class CommitsControllerTest < ActionController::TestCase
       assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
     end
   end
-  
+
   context "Routing" do
     setup do
       @project = projects(:johans)

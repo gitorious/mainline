@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -22,8 +23,11 @@
 class CommitsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
+  skip_before_filter :public_and_logged_in, :only => [:diffs]
+  skip_before_filter :require_current_eula, :only => [:diffs]
+  skip_after_filter :mark_flash_status, :only => [:diffs]
   renders_in_site_specific_context
-  
+
   def index
     if params[:branch].blank?
       redirect_to_ref(@repository.head_candidate.name) and return
@@ -51,27 +55,56 @@ class CommitsController < ApplicationController
   end
 
   def show
+    @diffs = []
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
+
     unless @commit = @git.commit(params[:id])
       handle_missing_sha and return
     end
-    @comments = @repository.comments.find_all_by_sha1(@commit.id, :include => :user)
-    last_modified = @comments.size > 0 ? @comments.last.created_at.utc : @commit.committed_date.utc
-    if stale_conditional?([@commit.id, @comments.size], last_modified)
-      @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
-      @diffs = @commit.parents.empty? ? [] : @commit.diffs
-      @comment_count = @repository.comments.count(:all, :conditions => {:sha1 => @commit.id.to_s})
-      @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
-      @author_user = User.find_by_email_with_aliases(@commit.author.email)
-      respond_to do |format|
-        format.html
-        format.diff  { render :text => @diffs.map{|d| d.diff}.join("\n"), :content_type => "text/plain" }
-        format.patch { render :text => @commit.to_patch, :content_type => "text/plain" }
+
+    respond_to do |format|
+      format.html
+
+      format.diff do
+        render(:text => commit_diffs.map { |d| d.diff }.join("\n"),
+               :content_type => "text/plain")
+      end
+
+      format.patch do
+        render :text => @commit.to_patch, :content_type => "text/plain"
       end
     end
   end
-  
+
+  def comments
+    @comments = @repository.comments.find_all_by_sha1(params[:id], :include => :user)
+    last_modified = @comments.size > 0 ? @comments.last.created_at.utc : Time.at(0)
+
+    if stale_conditional?([params[:id], @comments.size], last_modified)
+      @comment_count = @comments.length
+      render :layout => !request.xhr?
+    end
+  end
+
+  def diffs
+    @comments = []
+    @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
+    @git = @repository.git
+
+    unless @commit = @git.commit(params[:id])
+      handle_missing_sha and return
+    end
+
+    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
+    @diffs = commit_diffs
+    @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
+    @author_user = User.find_by_email_with_aliases(@commit.author.email)
+    headers["Cache-Control"] = "public, max-age=315360000"
+
+    render :layout => !request.xhr?
+  end
+
   def feed
     @git = @repository.git
     @ref = desplat_path(params[:branch])
@@ -96,5 +129,9 @@ class CommitsController < ApplicationController
     def redirect_to_ref(ref)
       redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path, 
                       @project, @repository, ref)
+    end
+
+    def commit_diffs
+      @commit.parents.empty? ? [] : @commit.diffs
     end
 end

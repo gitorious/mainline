@@ -22,35 +22,32 @@
 #++
 %>
 
-<% @page_title = t("views.commits.page_title", :repo => @repository.name, :title => @project.title) -%>
+<% @page_title = t("views.commits.page_title",
+                   :repo => @repository.name,
+                   :title => @project.title) -%>
 <%= breadcrumbs_from(@root) -%>
 
-<h1><%= t("views.commits.title", :commit => h( @commit.id)) %></h1>
+<div id="commit-diffs" data-gts-source="<%= h(url_for(:controller => :commit_diffs, :action => :index)) %>?fragment=1">
+  <h1>Commit <%=h params[:id] %></h1>
+  <p>
+    <strong>NB!</strong> This page relies heavily on JavaScript, enable it for
+    a better view.
+  </p>
+  <ul>
+    <li><%= link_to "Diffs", :controller => :commit_diffs, :action => :index %></li>
+    <li><%= link_to "Comments", :controller => :commit_comments, :aciton => :index %></li>
+  </ul>
+</div>
 
-<%= render :partial => "commit_infobox" -%>
-<% cache({:mode => @diffmode, :comment_count => @comment_count}) do -%>
-  <% if @diffs.blank? -%>
-    <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
-  <% else -%>
-    <% unless @commit.merge? -%>
-      <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
-      <%= render_diffmode_selector -%>
-      <%= render :partial => "diffs" -%>
-    <% end -%>
-  <% end -%>
-<% end -%>
-
-<h2 id="comments">Comments</h2>
-<div class="commentable comments <%= @diffmode -%>">
-  <%= render :partial => @comments -%>
+<div data-gts-source="<%= h(url_for(:controller => :commit_comments, :action => :index)) %>">
+  <h2 id="comments">Comments</h2>
 </div>
 
 <%= render :partial => "comments/form", :locals => {:sha1 => @commit.id} -%>
-
-
-<%= render :partial => "comments/inline_comment_form", :locals => {
-:commentable_type => "commit",
-:comment => :comment,
-:url => new_polymorphic_comment_path(nil, Comment.new),
-:sha1 => @commit.id,
-:include_favorite_checkbox => false} -%>
+<%= render(:partial => "comments/inline_comment_form", :locals => {
+             :commentable_type => "commit",
+             :comment => :comment,
+             :url => new_polymorphic_comment_path(nil, Comment.new),
+             :sha1 => @commit.id,
+             :include_favorite_checkbox => false
+           }) -%>
