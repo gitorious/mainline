@@ -40,8 +40,8 @@ class CommitsController < ApplicationController
       if commit = @git.commit(@ref)
         head = Grit::Head.new(commit.id_abbrev, commit)
       else
-        flash[:error] = "\"#{CGI.escapeHTML(@ref)}\" was not a valid ref, trying #{CGI.escapeHTML(@git.heads.first.name)} instead"
-        redirect_to_ref(@git.heads.first.name) and return
+        flash[:error] = "\"#{CGI.escapeHTML(@ref)}\" was not a valid ref, trying #{CGI.escapeHTML(@git.head.name)} instead"
+        redirect_to_ref(@git.head.name) and return
       end
     end
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
