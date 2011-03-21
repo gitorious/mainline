@@ -283,7 +283,7 @@ class ApplicationController < ActionController::Base
 
   private
     def ssl_required?
-      GitoriousConfig["use_ssl"] && !current_user.nil?
+      GitoriousConfig["use_ssl"] && !current_user.nil? && current_user != :false
     end
 
     def unshifted_polymorphic_path(repo, path_spec)
