@@ -265,6 +265,7 @@
           :info => "Um <strong>e-mail de confirmação</strong> será enviado para o endereço que você especificou. Este e-mail contém um link de ativação. Visite este link para finalizar o registro.",
           :thanks => "Estamos anciosos em vê-lo utilizando o Gitorious!"
         },
+        :favorites_action => "Seus favoritos"
       },
       :logs => {
         :title => "Commits em {{repo_url}}:{{ref}}",
@@ -559,7 +560,7 @@
         :aliases_title => "Pseudônimos de e-mail",
         :new_alias => "Novo pseudônimo de e-mail",
         :new_alias_breadcrumb => "Novo Pseudônimo de E-mail",
-	:manage_aliases => 'Gerenciar pseudônimos de e-mails'
+	:manage_aliases => 'Gerenciar e-mails'
       },
       :messages => {
         :collection_title => "Mensagens",
