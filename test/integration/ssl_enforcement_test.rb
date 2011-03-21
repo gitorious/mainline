@@ -36,5 +36,14 @@ class SslEnforcementTest < ActionController::IntegrationTest
 
       assert_response :success
     end
+
+    should "not force https on repository configuration URL" do
+      repo = repositories(:johans)
+      project = repo.project
+
+      get "http://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{repo.name}/config"
+
+      assert_response :success
+    end
   end
 end
