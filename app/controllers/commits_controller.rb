@@ -32,18 +32,13 @@ class CommitsController < ApplicationController
     if params[:branch].blank?
       redirect_to_ref(@repository.head_candidate.name) and return
     end
+
     @git = @repository.git
     @ref, @path = branch_and_path(params[:branch], @git)
-    if h = @git.get_head(@ref)
-      head = h
-    else
-      if commit = @git.commit(@ref)
-        head = Grit::Head.new(commit.id_abbrev, commit)
-      else
-        flash[:error] = "\"#{CGI.escapeHTML(@ref)}\" was not a valid ref, trying #{CGI.escapeHTML(@git.head.name)} instead"
-        redirect_to_ref(@git.head.name) and return
-      end
-    end
+
+    head = get_head(@ref)
+    return handle_unknown_ref if head.nil?
+
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
       @root = Breadcrumb::Branch.new(head, @repository)
       @commits = @repository.cached_paginated_commits(@ref, params[:page])
@@ -139,5 +134,25 @@ class CommitsController < ApplicationController
 
     def commit_diffs
       @commit.parents.empty? ? [] : @commit.diffs
+    end
+
+    def get_head(ref)
+      if h = @git.get_head(ref)
+        return h
+      end
+
+      begin
+        if commit = @git.commit(@ref)
+          return Grit::Head.new(commit.id_abbrev, commit)
+        end
+      rescue Errno::EISDIR => err
+      end
+
+      nil
+    end
+
+    def handle_unknown_ref
+      flash[:error] = "\"#{CGI.escapeHTML(@ref)}\" was not a valid ref, trying #{CGI.escapeHTML(@git.head.name)} instead"
+      redirect_to_ref(@git.head.name)
     end
 end

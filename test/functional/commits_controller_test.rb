@@ -316,6 +316,23 @@ class CommitsControllerTest < ActionController::TestCase
         assert_match(/trying master instead/, flash[:error])
       end
 
+      should "suggest looking at master when hitting non-existent commit" do
+        @git.expects(:get_head).with("2").returns(nil)
+        @git.expects(:commit).with("2").raises(Errno::EISDIR, "Is a directory")
+
+        get(:index, {
+              :project_id => @project.slug,
+              :repository_id => @repository.name,
+              :page => nil,
+              :branch => ["2"]
+            })
+
+        assert_response :redirect
+        assert_redirected_to project_repository_commits_in_ref_path(@project,
+                              @repository, "master")
+        assert_match(/trying master instead/, flash[:error])
+      end
+
       should "have a proper id in the atom feed" do
         #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)
         commit = Grit::Commit.new(mock("repo"), "mycommitid", [], stub_everything("tree"),
