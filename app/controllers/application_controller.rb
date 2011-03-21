@@ -295,5 +295,4 @@ class ApplicationController < ActionController::Base
     end
 
     helper_method :unshifted_polymorphic_path
-  end
 end
