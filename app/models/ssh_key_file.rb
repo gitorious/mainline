@@ -36,7 +36,7 @@ class SshKeyFile
       file.flock(File::LOCK_UN)
     end
   end
-  
+
   def delete_key(key)
     data = File.read(@path)
     return true unless data.include?(key)
