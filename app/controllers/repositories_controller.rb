@@ -29,8 +29,7 @@ class RepositoriesController < ApplicationController
     :only => [:edit, :update, :confirm_delete, :destroy]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
-  skip_session :only => [:config]
-  skip_before_filter :public_and_logged_in, :only => [:writable_by, :config]
+  skip_session :only => [:config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :config]
 
   def index
@@ -203,7 +202,6 @@ class RepositoriesController < ApplicationController
     render :text => 'false' and return
   end
 
-
   def config
     @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id],
       @containing_project)
@@ -212,7 +210,7 @@ class RepositoriesController < ApplicationController
     config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
     headers["Cache-Control"] = "public, max-age=600"
 
-    render :text => config_data
+    render :text => config_data, :content_type => "text/x-yaml"
   end
 
   def confirm_delete
