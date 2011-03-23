@@ -93,6 +93,7 @@ class ActiveSupport::TestCase
       setup do
         @use_ssl = GitoriousConfig["use_ssl"]
         GitoriousConfig["use_ssl"] = true
+        login_as(:johan)
       end
 
       teardown do
