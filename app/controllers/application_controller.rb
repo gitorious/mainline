@@ -284,7 +284,8 @@ class ApplicationController < ActionController::Base
   private
     def ssl_required?
       return false if !GitoriousConfig["use_ssl"]
-      request.ssl? || (!current_user.nil? && current_user != :false)
+      return true if request.ssl?
+      !request.session_options[:expire_after].nil? && logged_in?
     end
 
     def unshifted_polymorphic_path(repo, path_spec)
