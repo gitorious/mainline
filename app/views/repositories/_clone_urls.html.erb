@@ -25,9 +25,11 @@
     <div class="clone_urls">
       <form class="clone_urls_form">
 	<p><strong>Clone &amp; push urls</strong></p>
-	<p class="clone_radio">
-	  <label for="git-<%= repository.id %>"><input type="radio" id="git-<%= repository.id %>" name="url-<%= repository.id %>" value="<%= h(repository.clone_url) -%>" <%= git_or_ssh_url_checked(repository, :git) -%>>GIT</label>
-	</p>
+	<% if repository.git_cloning? %>
+	  <p class="clone_radio">
+	    <label for="git-<%= repository.id %>"><input type="radio" id="git-<%= repository.id %>" name="url-<%= repository.id %>" value="<%= h(repository.clone_url) -%>" <%= git_or_ssh_url_checked(repository, :git) -%>>GIT</label>
+	  </p>
+	<% end %>
 	<% if repository.http_cloning? %>
           <% content_for :extra_head do %>
             <link rel="vcs-git" href="<%= h(repository.http_clone_url) -%>" title="<%= t("views.repos.show_page_title", :repo => repository.name, :title => h(@owner.title)) -%>" />

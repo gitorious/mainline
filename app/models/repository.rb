@@ -226,6 +226,14 @@ class Repository < ActiveRecord::Base
   end
 
   def clone_url
+    git_cloning? ? git_clone_url : ssh_clone_url
+  end
+
+  def ssh_clone_url
+    "git@#{GitoriousConfig['gitorious_host']}:#{gitdir}"
+  end
+
+  def git_clone_url
     "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
 
@@ -235,6 +243,10 @@ class Repository < ActiveRecord::Base
 
   def http_cloning?
     !GitoriousConfig["hide_http_clone_urls"]
+  end
+
+  def git_cloning?
+    !GitoriousConfig["hide_git_clone_urls"]
   end
 
   def push_url

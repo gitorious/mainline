@@ -559,7 +559,7 @@ module ApplicationHelper
 
   def git_or_ssh_url_checked(repository, currently)
     if logged_in?
-      if currently == :git && !repository.writable_by?(current_user)
+      if currently == :git && !repository.writable_by?(current_user) && repository.git_cloning?
         return 'checked="checked"'
       elsif currently == :ssh && repository.writable_by?(current_user)
         return 'checked="checked"'

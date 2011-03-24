@@ -128,8 +128,9 @@ module RepositoriesHelper
   end
 
   def css_class_for_clone_url_field(repository)
+    git = repository.git_cloning? ? " git" : ""
     http = repository.http_cloning? ? " http" : ""
     ssh = logged_in? && current_user.can_write_to?(repository) ? " ssh" : ""
-    return "git#{http}#{ssh}"
+    return "#{git}#{http}#{ssh}"
   end
 end
