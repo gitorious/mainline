@@ -172,11 +172,13 @@ module ApplicationHelper
   end
 
   def gravatar_url_for(email, options = {})
+    prefix = request.ssl? ? "https://secure" : "http://www"
+    scheme = request.ssl? ? "https" : "http"
     options.reverse_merge!(:default => "images/default_face.gif")
     port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
-    "http://www.gravatar.com/avatar.php?gravatar_id=" +
+    "#{prefix}.gravatar.com/avatar.php?gravatar_id=" +
     (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
-      u("http://#{GitoriousConfig['gitorious_host']}#{port_string}" +
+      u("#{scheme}://#{GitoriousConfig['gitorious_host']}#{port_string}" +
       "/#{options.delete(:default)}") +
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end

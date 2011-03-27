@@ -19,8 +19,21 @@
 
 require File.dirname(__FILE__) + '/../../test_helper'
 
+class TestEnv
+  attr_accessor :request
+  include ApplicationHelper
+
+  def u(str)
+    str
+  end
+end
+
 class ApplicationHelperTest < ActionView::TestCase
-  
+  def setup
+    @env = TestEnv.new
+    @env.request = stub("request")
+  end
+
   should "renders a message if an object is not ready?" do
     repos = repositories(:johans)
     assert build_notice_for(repos).include?("This repository is being created")
@@ -49,18 +62,33 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_equal "foo.com", base_url("http://foo.com/")
     assert_equal "foo.com", base_url("http://foo.com/bar/baz")
   end
-  
-  should_eventually "generates a valid gravatar url" do
-    # FIXME: Need to be able to deal with the request object from helper tests
+
+  should "generate a valid gravatar url" do
+    @env.request.stubs(:ssl?).returns(false)
+    @env.request.stubs(:port).returns(80)
+
     email = "someone@myemail.com";
-    url = gravatar_url_for(email)
-    
+    url = @env.gravatar_url_for(email)
+
     assert_equal "www.gravatar.com", base_url(url)
     assert url.include?(Digest::MD5.hexdigest(email)), 'url.include?(Digest::MD5.hexdigest(email)) should be true'
     assert url.include?("avatar.php?"), 'url.include?("avatar.php?") should be true'
+    assert url.include?("default=http://")
   end
-  
-    
+
+  should "generate a valid gravatar url when using https" do
+    @env.request.stubs(:ssl?).returns(true)
+    @env.request.stubs(:port).returns(443)
+
+    email = "someone@myemail.com";
+    url = @env.gravatar_url_for(email)
+
+    assert_match /^https:\/\//, url
+    assert_equal "secure.gravatar.com", base_url(url)
+    assert url.include?(Digest::MD5.hexdigest(email))
+    assert url.include?("default=https://")
+  end
+
   should "render correct css classes for filenames" do
     assert_equal 'ruby-file', class_for_filename('foo.rb')
     assert_equal 'cplusplus-file', class_for_filename('main.cpp')
