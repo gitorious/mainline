@@ -66,7 +66,7 @@ class Mailer < ActionMailer::Base
   def forgotten_password(user, password_key)
     setup_email(user)
     @subject += I18n.t "mailer.new_password"
-    @body[:url] = reset_password_url(password_key)
+    @body[:url] = reset_password_url(password_key, :protocol => GitoriousConfig["scheme"])
   end
 
   def new_email_alias(email)
