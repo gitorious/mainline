@@ -6,6 +6,7 @@ GitoriousConfig["locale"] = "en" if GitoriousConfig["locale"].nil?
 
 # require the use of SSL by default
 GitoriousConfig["use_ssl"] = true if GitoriousConfig["use_ssl"].nil?
+GitoriousConfig["scheme"] = GitoriousConfig["use_ssl"] ? "https" : "http"
 
 # set global locale
 I18n.default_locale = GitoriousConfig["locale"]
