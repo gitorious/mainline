@@ -137,9 +137,9 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.reload
   end
 
-  should "create an event when updated" do
+  should "not create an event when updated since this is done inside push_new_branch_to_tracking_repo" do
     @merge_request.stubs(:push_new_branch_to_tracking_repo)
-    assert_incremented_by(@merge_request.target_repository.project.events, :size, 1) do
+    assert_incremented_by(@merge_request.target_repository.project.events, :size, 0) do
       @merge_request.update_from_push!
     end
   end

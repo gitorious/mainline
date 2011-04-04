@@ -518,7 +518,6 @@ class MergeRequest < ActiveRecord::Base
 
   def update_from_push!
     push_new_branch_to_tracking_repo
-    target_repository.project.create_event(Action::UPDATE_MERGE_REQUEST, self, user)
     save
   end
 
