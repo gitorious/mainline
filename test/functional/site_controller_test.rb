@@ -68,6 +68,12 @@ class SiteControllerTest < ActionController::TestCase
         assert_template "site/dashboard"
       end
 
+      should "include the user's commit_repositories" do
+        login_as users(:johan)
+        get :index
+        assert_not_nil assigns(:repositories)
+      end
+
       should "render the dashboard breadcrumb" do
         login_as :johan
         get :index
@@ -82,6 +88,11 @@ class SiteControllerTest < ActionController::TestCase
           assert_response :success
           assert_template "site/index"
         end
+      end
+
+      should "not include any commit_repositories" do
+        get :index
+        assert_nil assigns(:repositories)
       end
 
       should "use the funky layout" do
