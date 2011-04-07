@@ -83,7 +83,7 @@ module EventRendering
       when Action::UPDATE_MERGE_REQUEST
         render_merge_request(:updated)
       when Action::DELETE_MERGE_REQUEST
-        render_merge_request(:deleted)
+        render_merge_request_deletion
       when Action::PUSH
         render_push
       when Action::CREATE_PROJECT
@@ -138,7 +138,17 @@ module EventRendering
 
     def render_merge_request(action)
       summary = (action == :requested) ? "requested a merge of" : "#{action} merge request for"
-      add_from_template("{user} #{summary} {source} with {target}",
+      merge_request = @event.target
+      add_from_template("{user} #{summary} {source} with {target}.\nThe merge request is at {url}",
+        :user => @event.user.login,
+        :source => @event.target.source_repository.name,
+        :url => url(merge_request.target_repository.url_path, "merge_requests", @event.target.to_param),
+        :target => @event.target.target_repository.name)
+    end
+
+    def render_merge_request_deletion
+      summary = "deleted merge request for"
+      add_from_template("{user} #{summary} {source} with {target}.",
         :user => @event.user.login,
         :source => @event.target.source_repository.name,
         :target => @event.target.target_repository.name)
