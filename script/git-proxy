@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+#
+# Alternative to script/git-daemon which uses the native git-daemon
+# instead. Run this script on port 9418 and it will handle all git://
+# access. As the name implies, this script simply acts as a proxy, translating
+# the git urls presented in the web view to the hashed paths on the file system
+# (which the native git-daemon then handles).
+#
+# Using script/git-proxy with git-daemon as an alternative to script/git-daemon
+# has the advantage of being more stable, but requires two daemons instead of
+# one, which complicates matters slightly.
+#
+# Running it
+#
+# First of all, make sure the native git-daemon is running. This example uses
+# port 9400, but you can use any port of your liking:
+#
+#     $ git daemon --listen=0.0.0.0 --port=9400 --syslog --export-all \
+#             --pid-file=/path/to/gitorious/tmp/pids/git-daemon-9400.pid \
+#             --base-path=/path/to/gitorious/repositories --verbose --reuseaddr \
+#             /path/to/gitorious/repositories
+#
+# NOTE: If you change the port for git-daemon, make sure to update
+# config/git-proxymachine.rb to reflect the change (:remote, l40).
+#
+# Then run the git-proxy script:
+#
+#     $ bundle exec /path/to/gitorious/script/git-proxy
+#
+# Test by issuing:
+#
+#     $ git ls-remote git://gitorious.local/some/repo.git
+#
+
+Bundler.require(:default, :git_proxy) if defined?(Bundler)
+
+require "optparse"
+require "proxymachine"
+require "daemons"
+
+ROOT_DIR = File.expand_path( File.join(File.dirname(__FILE__), "../") )
+
+begin
+  options = {
+    :host => "0.0.0.0",
+    :port => 9418,
+    :detach => false,
+    :logfile => File.join(ROOT_DIR, "log", "git-proxy.log")
+  }
+
+  opts = OptionParser.new do |opts|
+    opts.banner = <<-EOF
+  Usage:
+    git-proxy [-h <host>] [-p <port>]
+
+  Options:
+EOF
+
+    opts.on("-cCONFIG", "--config CONFIG", "Configuration file") do |x|
+      options[:config] = x
+    end
+
+    opts.on("-hHOST", "--host HOST", "Hostname to bind. Default 0.0.0.0") do |x|
+      options[:host] = x
+    end
+
+    opts.on("-pPORT", "--port PORT", "Port to listen on. Default 9418") do |x|
+      options[:port] = x
+    end
+
+    opts.on("-d", "--detach", "Run in background",
+      "Default: #{options[:detach].inspect}") do |o|
+      options[:detach] = o
+    end
+
+    opts.on("-l", "--log=[file]", "File to log to",
+      "Default: #{options[:logfile]}") do |o|
+      options[:logfile] = o
+    end
+
+    opts.on("-P", "--pid=[file]", "PID file to use (if daemonized)",
+      "Default: #{options[:pidfile]}") do |o|
+      options[:pidfile] = o
+    end
+  end
+
+  opts.parse!
+
+  Daemonize.daemonize if options[:detach]
+  if options[:pidfile]
+    File.open(options[:pidfile], "w") do |f|
+      f.write(Process.pid)
+    end
+  end
+  if options[:logfile]
+    ::LOGGER = Logger.new(options[:logfile])
+  end
+  load(File.join(ROOT_DIR, "config/git-proxymachine.rb"))
+  ProxyMachine.run("git-proxy", options[:host], options[:port])
+rescue Exception => e
+  if e.instance_of?(SystemExit)
+    raise
+  else
+    LOGGER.info 'Uncaught exception'
+    LOGGER.info e.class.name + ": " + e.message
+    LOGGER.info e.backtrace.join("\n")
+  end
+end
