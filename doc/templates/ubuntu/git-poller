@@ -9,10 +9,9 @@
 
 # Author: Antonio Marques <acmarques@gmail.com>
  
-export RAILS_ENV=production 
 GITORIOUS_HOME=/var/www/gitorious
 RETVAL=0
-GIT_POLLER="/usr/bin/ruby $GITORIOUS_HOME/script/poller"
+GIT_POLLER="RAILS_ENV=production /usr/bin/ruby $GITORIOUS_HOME/script/poller"
 LOCK_FILE=/var/lock/git-poller
 PID_FILE=$GITORIOUS_HOME/tmp/pids/poller0.pid
  
