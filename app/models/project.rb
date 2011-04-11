@@ -45,7 +45,7 @@ class Project < ActiveRecord::Base
   has_many    :merge_request_statuses, :order => "id asc"
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
-  default_scope :conditions => {:suspended_at => nil}
+  default_scope :conditions => ["suspended_at is null"]
 
   serialize :merge_request_custom_states, Array
 
