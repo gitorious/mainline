@@ -13,7 +13,7 @@
  
 RETVAL=0
 PROG="git-daemon"
-GIT_DAEMON="/opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/git-daemon -d"
+GIT_DAEMON="/usr/bin/ruby /var/www/gitorious/script/git-daemon -d"
 LOCK_FILE=/var/lock/git-daemon
 PID_FILE=/var/www/gitorious/log/git-daemon.pid
  
