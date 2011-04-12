@@ -106,9 +106,19 @@ module EventRendering
         raise EventRendering::UnknownActionError, "unknown action: #{@event.action.inspect}"
       end
 
-      add("\n" + url(@event.project.slug)) if @event.project
+      add("\n" + url(@event.project.slug)) if @event.project and !skip_project_link?
 
       @output.join("\n")
+    end
+
+    # We don't want to include project link unless this makes sense
+    # skip_project_link! to avoid this
+    def skip_project_link?
+      @skip_project_link
+    end
+
+    def skip_project_link!
+      @skip_project_link = true
     end
 
     def render_clone_repo
@@ -139,6 +149,7 @@ module EventRendering
     def render_merge_request(action)
       summary = (action == :requested) ? "requested a merge of" : "#{action} merge request for"
       merge_request = @event.target
+      skip_project_link!
       add_from_template("{user} #{summary} {source} with {target}.\nThe merge request is at {url}",
         :user => @event.user.login,
         :source => @event.target.source_repository.name,

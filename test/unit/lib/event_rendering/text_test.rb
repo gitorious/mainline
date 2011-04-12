@@ -142,9 +142,10 @@ class TextEventRenderingTest < ActiveSupport::TestCase
       assert_match /^johan requested a merge of johansprojectrepos-clone with johansprojectrepos/, result
     end
 
-    should "include a link to the merge reuqest on update" do
+    should "include a link to the merge request on update" do
       @event.action = Action::UPDATE_MERGE_REQUEST
       result = render(@event)
+      assert_no_match /johans-project$/, result
       assert_match /johans-project\/johansprojectrepos\/merge_requests\/#{@event.target.to_param}/, result
     end
 
