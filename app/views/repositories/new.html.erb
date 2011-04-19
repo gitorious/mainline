@@ -50,7 +50,7 @@
 <% content_for :sidebar do -%>
 	<h2>Information</h2>
 	<p>The repository will be in the <strong><%= link_to h(@project.title), @project -%></strong> project, 
-    and owned by <strong><%= link_to @repository.owner.title, @owner -%></strong>
+    and owned by <strong><%= link_to h(@repository.owner.title), @repository.owner -%></strong>
     (a <%= @repository.owner.class.human_name.downcase -%>).
   </p>
 <% end -%>
