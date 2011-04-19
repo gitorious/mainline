@@ -63,7 +63,7 @@ module FavoritesHelper
       link_to(repo_title(watchable, watchable.project),
         repo_owner_path(watchable, [watchable.project, watchable]))
     when MergeRequest
-      link_to(h(truncate(watchable.summary, :length => 65)),
+      link_to(h(truncate("##{watchable.to_param}: #{watchable.summary}", :length => 65)),
         repo_owner_path(watchable.target_repository,
           [watchable.source_repository.project,
            watchable.target_repository,
