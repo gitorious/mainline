@@ -26,7 +26,7 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<% cache(tree_path(@commit.id, @path)) do -%>
+<% cache(tree_path(@commit.id, @path) + @ref) do -%>
   <table class="listing tree">
     <% @tree.contents.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
       <tr class="<%= cycle("odd", "even") -%>">
