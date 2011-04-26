@@ -24,7 +24,7 @@
 
 <div class="search_bar_results">
 <% form_for :search, :url => search_path(:only_path => false,
-    :host => GitoriousConfig["gitorious_host"], :protocol => "http"),
+    :host => GitoriousConfig["gitorious_host"]),
     :html => { :method => "get" } do |f| -%>
 <p>
   <%= text_field_tag :q, params[:q], :class => "text search-field round-5" -%> 
