@@ -96,7 +96,7 @@ class PushSpecParser
     attr_reader :name
 
     def initialize(ref)
-      r, @type, @name = ref.split("/")
+      r, @type, @name = ref.split("/", 3)
     end
 
     def tag?

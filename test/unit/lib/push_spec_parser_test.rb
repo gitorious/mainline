@@ -75,5 +75,10 @@ class PushSpecParserTest < ActiveSupport::TestCase
 
       assert_equal "topic", spec.ref_name
     end
+
+    should "recognize a branch with a slash in it" do
+      spec = PushSpecParser.new(nil, nil, "refs/heads/release/0.5.0")
+      assert_equal "release/0.5.0", spec.ref_name
+    end
   end
 end
