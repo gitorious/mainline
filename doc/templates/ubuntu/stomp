@@ -18,6 +18,9 @@ PROG="stompserver"
 STOMP="$RUBY_HOME/bin/ruby $GEMS_HOME/bin/stompserver -w $GITORIOUS_HOME/tmp/stomp -q file -s queue &> /dev/null &"
 LOCK_FILE=/var/lock/stomp
 PID_FILE=$GITORIOUS_HOME/tmp/stomp/log/stompserver.pid
+
+# Source lsb functions for killproc
+. /lib/lsb/init-functions
  
 do_check_pid() {
   if [ -f $PID_FILE ]; then
@@ -35,20 +38,19 @@ start()
 {
   do_check_pid
   if [ $RUNNING != 2 ] ; then
-    echo -n $"Starting $PROG:"
+    echo -n "Starting $PROG: "
     /bin/su - git -c "$STOMP"
     sleep 4
     if [ -f $PID_FILE ] ; then
       echo "Success"
       RETVAL=0
     else
-      echo "Failure"
+      echo "FAILURE"
       RETVAL=1
     fi
-RETVAL=$?
   else
-    echo -n $"$PROG already running"
-    failure
+    echo "$PROG already running"
+    RETVAL=1
   fi
   [ "$RETVAL" = 0 ] && touch $LOCK_FILE
   echo
@@ -57,19 +59,25 @@ RETVAL=$?
 stop()
 {
   do_check_pid
-  echo -n $"Stopping $PROG: "
+  echo -n "Stopping $PROG: "
   if [ $RUNNING != 2 ] ; then
-    failure $"Stopping $PROG"
+    echo "$PROG was not properly running"
+    RETVAL=1
   else
     killproc -p $PID_FILE
+    RETVAL=$?
   fi
-  RETVAL=$?
   # if we are in halt or reboot runlevel kill all running sessions
   # so the TCP connections are closed cleanly
   if [ "x$runlevel" = x0 -o "x$runlevel" = x6 ] ; then
-   killproc -p $PID 2>/dev/null
+    killproc -p $PID 2>/dev/null
   fi
-  [ "$RETVAL" = 0 ] && rm -f $LOCK_FILE
+  if [ "$RETVAL" = 0 ] ; then
+    rm -f $LOCK_FILE
+    echo "Success"
+  else
+    echo "FAILURE"
+  fi
   echo
 }
  
@@ -95,7 +103,7 @@ start
     fi
     ;;
   *)
-    echo $"Usage: $0 {start|stop|restart|condrestart}"
+    echo "Usage: $0 {start|stop|restart|condrestart}"
     RETVAL=1
 esac
 exit $RETVAL
