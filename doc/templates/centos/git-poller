@@ -39,7 +39,7 @@ start()
   do_check_pid
   if [ $RUNNING != 2 ] ; then
     echo -n $"Starting $PROG:"
-    /bin/su - git -c "$GIT_POLLER start"
+    /bin/su - git -c "RAILS_ENV=$RAILS_ENV $GIT_POLLER start"
     sleep 4
     if [ -f $PID_FILE ] ; then
       echo "Success"
@@ -65,7 +65,7 @@ stop()
     failure $"Stopping $PROG"
   else
     #killproc -p $PID_FILE
-    /bin/su - git -c "$GIT_POLLER stop"
+    /bin/su - git -c "RAILS_ENV=$RAILS_ENV $GIT_POLLER stop"
    sleep 4
   fi
   RETVAL=$?
