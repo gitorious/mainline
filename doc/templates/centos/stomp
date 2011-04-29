@@ -6,13 +6,17 @@
 # description: stompserver daemon
 #
 # processname: stompserver
+# pidfile: /var/www/gitorious/tmp/stomp/log/stompserver.pid
 
 # source function library
 . /etc/rc.d/init.d/functions
 
+RUBY_HOME="/opt/ruby-enterprise"
+GEMS_HOME="/usr"
+GITORIOUS_HOME="/var/www/gitorious"
 RETVAL=0
-GITORIOUS_HOME=/var/www/gitorious
-STOMP="/usr/bin/ruby /usr/bin/stompserver -w $GITORIOUS_HOME/tmp/stomp -q file -s queue &> /dev/null &"
+PROG="stompserver"
+STOMP="$RUBY_HOME/bin/ruby $GEMS_HOME/bin/stompserver -w $GITORIOUS_HOME/tmp/stomp -q file -s queue &> /dev/null &"
 LOCK_FILE=/var/lock/stomp
 PID_FILE=$GITORIOUS_HOME/tmp/stomp/log/stompserver.pid
 
