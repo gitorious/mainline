@@ -8,13 +8,14 @@
 # processname: searchd
 # pidfile: /var/www/gitorious/db/sphinx/log/searchd.pid
  
+GITORIOUS_HOME="/var/www/gitorious"
 RETVAL=0
-START_CMD="cd /var/www/gitorious/ && rake ultrasphinx:daemon:start RAILS_ENV=production"
-STOP_CMD="cd /var/www/gitorious/ && rake ultrasphinx:daemon:stop RAILS_ENV=production"
-RESTART_CMD="cd /var/www/gitorious/ && rake ultrasphinx:daemon:restart RAILS_ENV=production"
-STATUS_CMD="cd /var/www/gitorious/ && rake ultrasphinx:daemon:status RAILS_ENV=production"
+START_CMD="cd $GITORIOUS_HOME && rake ultrasphinx:daemon:start RAILS_ENV=production"
+STOP_CMD="cd $GITORIOUS_HOME && rake ultrasphinx:daemon:stop RAILS_ENV=production"
+RESTART_CMD="cd $GITORIOUS_HOME && rake ultrasphinx:daemon:restart RAILS_ENV=production"
+STATUS_CMD="cd $GITORIOUS_HOME && rake ultrasphinx:daemon:status RAILS_ENV=production"
 LOCK_FILE=/var/lock/git-ultrasphinx
-PID_FILE=/var/www/gitorious/db/sphinx/log/searchd.pid
+PID_FILE=$GITORIOUS_HOME/db/sphinx/log/searchd.pid
  
 case "$1" in
   start)
