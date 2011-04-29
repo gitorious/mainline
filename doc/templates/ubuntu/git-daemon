@@ -10,12 +10,14 @@
 ### END INIT INFO
 
 # Author: Fabio Akita <fabioakita@gmail.com>
- 
+
+RUBY_HOME="/opt/ruby-enterprise"
+GITORIOUS_HOME="/var/www/gitorious"
 RETVAL=0
 PROG="git-daemon"
-GIT_DAEMON="/opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/git-daemon -d"
+GIT_DAEMON="$RUBY_HOME/bin/ruby $GITORIOUS_HOME/script/git-daemon -d"
 LOCK_FILE=/var/lock/git-daemon
-PID_FILE=/var/www/gitorious/log/git-daemon.pid
+PID_FILE=$GITORIOUS_HOME/log/git-daemon.pid
  
 do_check_pid() {
   if [ -f $PID_FILE ]; then
@@ -94,7 +96,7 @@ case "$1" in
     fi
     ;;
   *)
-    echo $"Usage: $0 {start|stop|restart|condrestart}"
+    echo "Usage: $0 {start|stop|restart|condrestart}"
     RETVAL=1
 esac
 exit $RETVAL

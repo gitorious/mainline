@@ -11,10 +11,13 @@
 # source function library
 . /etc/rc.d/init.d/functions
  
+RUBY_HOME="/opt/ruby-enterprise"
+GITORIOUS_HOME="/var/www/gitorious"
 RETVAL=0
-GIT_DAEMON="/opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/git-daemon -d"
+PROG="git-daemon"
+GIT_DAEMON="$RUBY_HOME/bin/ruby $GITORIOUS_HOME/script/git-daemon -d"
 LOCK_FILE=/var/lock/git-daemon
-PID_FILE=/var/www/gitorious/log/git-daemon.pid
+PID_FILE=$GITORIOUS_HOME/log/git-daemon.pid
  
 do_check_pid() {
   if [ -f $PID_FILE ]; then
@@ -32,8 +35,8 @@ start()
 {
   do_check_pid
   if [ $RUNNING != 2 ] ; then
-echo -n $"Starting $PROG: "
-                /bin/su - git -c "$GIT_DAEMON"
+    echo -n $"Starting $PROG: "
+    /bin/su - git -c "$GIT_DAEMON"
     sleep 1
     if [ -f $PID_FILE ] ; then
       success
