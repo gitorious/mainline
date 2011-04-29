@@ -6,18 +6,21 @@
 # description: GIT-Poller server daemon
 #
 # processname: poller
+# pidfile: /var/www/gitorious/tmp/pids/poller0.pid
 
 # Author: Antonio Marques <acmarques@gmail.com>
 
 # source function library
 . /etc/rc.d/init.d/functions
 
-export RAILS_ENV=production
-GITORIOUS_HOME=/var/www/gitorious
+RUBY_HOME="/opt/ruby-enterprise"
+GITORIOUS_HOME="/var/www/gitorious"
 RETVAL=0
-GIT_POLLER="/usr/bin/ruby $GITORIOUS_HOME/script/poller"
+PROG="poller"
+GIT_POLLER="$RUBY_HOME/bin/ruby $GITORIOUS_HOME/script/poller"
 LOCK_FILE=/var/lock/git-poller
 PID_FILE=$GITORIOUS_HOME/tmp/pids/poller0.pid
+export RAILS_ENV=production
 
 do_check_pid() {
   if [ -f $PID_FILE ]; then
