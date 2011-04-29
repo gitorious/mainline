@@ -1,21 +1,24 @@
 #!/bin/bash
 #
-# Init file for Gitorious GIT-Daemon daemon
+# init file for Gitorious GIT-Poller daemon
 #
 # chkconfig: 2345 55 25
-# description: GIT-Daemon server daemon
+# description: GIT-Poller server daemon
 #
-# processname: git-daemon
-# pidfile: /var/www/gitorious/log/git-daemon.pid
- 
+# processname: poller
+
+# Author: Antonio Marques <acmarques@gmail.com>
+
 # source function library
 . /etc/rc.d/init.d/functions
- 
+
+export RAILS_ENV=production
+GITORIOUS_HOME=/var/www/gitorious
 RETVAL=0
-GIT_DAEMON="/opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/git-daemon -d"
-LOCK_FILE=/var/lock/git-daemon
-PID_FILE=/var/www/gitorious/log/git-daemon.pid
- 
+GIT_POLLER="/usr/bin/ruby $GITORIOUS_HOME/script/poller"
+LOCK_FILE=/var/lock/git-poller
+PID_FILE=$GITORIOUS_HOME/tmp/pids/poller0.pid
+
 do_check_pid() {
   if [ -f $PID_FILE ]; then
     PID=`cat $PID_FILE`
@@ -25,20 +28,22 @@ do_check_pid() {
     RUNNING=0
   fi
 }
- 
-runlevel=$(set -- $(runlevel); eval "echo \$$#" )
- 
+
+runlevel=$(set -- $(runlevel); eval "echo $$#" )
+
 start()
 {
   do_check_pid
   if [ $RUNNING != 2 ] ; then
-echo -n $"Starting $PROG: "
-                /bin/su - git -c "$GIT_DAEMON"
-    sleep 1
+    echo -n $"Starting $PROG:"
+    /bin/su - git -c "$GIT_POLLER start"
+    sleep 4
     if [ -f $PID_FILE ] ; then
-      success
+      echo "Success"
+      RETVAL=0
     else
-      failure
+      echo "FAILURE"
+      RETVAL=1
     fi
 RETVAL=$?
   else
@@ -48,7 +53,7 @@ RETVAL=$?
   [ "$RETVAL" = 0 ] && touch $LOCK_FILE
   echo
 }
- 
+
 stop()
 {
   do_check_pid
@@ -56,7 +61,9 @@ stop()
   if [ $RUNNING != 2 ] ; then
     failure $"Stopping $PROG"
   else
-    killproc -p $PID_FILE
+    #killproc -p $PID_FILE
+    /bin/su - git -c "$GIT_POLLER stop"
+   sleep 4
   fi
   RETVAL=$?
   # if we are in halt or reboot runlevel kill all running sessions
@@ -67,7 +74,7 @@ stop()
   [ "$RETVAL" = 0 ] && rm -f $LOCK_FILE
   echo
 }
- 
+
 case "$1" in
   start)
     start
@@ -75,10 +82,10 @@ case "$1" in
   stop)
     stop
     ;;
-    restart)
-        stop
-        start
-        ;;
+restart)
+stop
+start
+;;
   condrestart)
     if [ -f $LOCK_FILE ] ; then
       if [ "$RETVAL" = 0 ] ; then
@@ -94,3 +101,4 @@ case "$1" in
     RETVAL=1
 esac
 exit $RETVAL
+

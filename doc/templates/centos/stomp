@@ -1,21 +1,21 @@
 #!/bin/bash
 #
-# Init file for Gitorious GIT-Daemon daemon
+# init file for stompserver
 #
 # chkconfig: 2345 55 25
-# description: GIT-Daemon server daemon
+# description: stompserver daemon
 #
-# processname: git-daemon
-# pidfile: /var/www/gitorious/log/git-daemon.pid
- 
+# processname: stompserver
+
 # source function library
 . /etc/rc.d/init.d/functions
- 
+
 RETVAL=0
-GIT_DAEMON="/opt/ruby-enterprise/bin/ruby /var/www/gitorious/script/git-daemon -d"
-LOCK_FILE=/var/lock/git-daemon
-PID_FILE=/var/www/gitorious/log/git-daemon.pid
- 
+GITORIOUS_HOME=/var/www/gitorious
+STOMP="/usr/bin/ruby /usr/bin/stompserver -w $GITORIOUS_HOME/tmp/stomp -q file -s queue &> /dev/null &"
+LOCK_FILE=/var/lock/stomp
+PID_FILE=$GITORIOUS_HOME/tmp/stomp/log/stompserver.pid
+
 do_check_pid() {
   if [ -f $PID_FILE ]; then
     PID=`cat $PID_FILE`
@@ -25,20 +25,22 @@ do_check_pid() {
     RUNNING=0
   fi
 }
- 
-runlevel=$(set -- $(runlevel); eval "echo \$$#" )
- 
+
+runlevel=$(set -- $(runlevel); eval "echo $$#" )
+
 start()
 {
   do_check_pid
   if [ $RUNNING != 2 ] ; then
-echo -n $"Starting $PROG: "
-                /bin/su - git -c "$GIT_DAEMON"
-    sleep 1
+    echo -n $"Starting $PROG:"
+    /bin/su - git -c "$STOMP"
+    sleep 4
     if [ -f $PID_FILE ] ; then
-      success
+      echo "Success"
+      RETVAL=0
     else
-      failure
+      echo "Failure"
+      RETVAL=1
     fi
 RETVAL=$?
   else
@@ -48,7 +50,7 @@ RETVAL=$?
   [ "$RETVAL" = 0 ] && touch $LOCK_FILE
   echo
 }
- 
+
 stop()
 {
   do_check_pid
@@ -67,7 +69,7 @@ stop()
   [ "$RETVAL" = 0 ] && rm -f $LOCK_FILE
   echo
 }
- 
+
 case "$1" in
   start)
     start
@@ -75,10 +77,10 @@ case "$1" in
   stop)
     stop
     ;;
-    restart)
-        stop
-        start
-        ;;
+restart)
+stop
+start
+;;
   condrestart)
     if [ -f $LOCK_FILE ] ; then
       if [ "$RETVAL" = 0 ] ; then
