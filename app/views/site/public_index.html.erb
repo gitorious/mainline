@@ -72,7 +72,7 @@
 	<div id="content-container">
 	<div id="content">
     <div class="column" id="user-testimonials">
-        <h3>Hear what our users have to say</h3>
+        <h3>Hear what our users say</h3>
             <div class="testimonial" id="nokia">
                 <blockquote>«Gitorious allows us to work closer with contributors and strengthens the link to the community»</blockquote>
                 <cite><em>Tor Arne Vestbø</em>, Nokia</cite>
@@ -92,6 +92,19 @@
     </div> <!--- end of user testimonials -->
 		
 		<div class="column" id="featured-projects">
+
+      <h3 class="find">Find a project</h3>
+      <div class="search">
+        <% form_for :search, :url => search_path(:only_path => false,
+             :host => GitoriousConfig["gitorious_host"]),
+           :html => { :method => "get" } do |f| -%>
+        <p>
+          <%= text_field_tag :q, "", :class => "text search-field round-5" -%>
+          <%= submit_tag "Search" -%>
+        </p>
+        <% end -%>
+      </div>
+
 			<h3>Featured projects</h3>
 			<ul>
 				<li id="qt">
@@ -119,7 +132,7 @@
 		
 		<% if GitoriousConfig["is_gitorious_dot_org"] -%>
 		<div class="column" id="from-the-blog">
-			<h3>From the Gitorious Blog</h3>
+			<h3>From our blog</h3>
 			<ul>
         <% @feed_items.each do |entry| -%>
           <li class="blog-entry">

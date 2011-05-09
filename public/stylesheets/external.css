@@ -354,25 +354,33 @@ body#users #wrapper, body#sessions #wrapper {
 
 #content .column h3 { 
 	float: left; 
-	text-indent: -9999px; 
 	border-bottom: 1px solid #eee; 
 	margin-bottom: 25px; 
 	padding-bottom: 10px;
+
+  font-family: 'Nobile', arial, serif;
+  background: none;
+  text-indent: 0;  
+  letter-spacing: 1px;
+  color: #444;
+  text-transform: uppercase;
+
 }
-#content #user-testimonials h3 {
-	width: 345px;
-	height: 14px;
-	background: url(../img/external/headers/our-users-say.png) no-repeat; 
+
+#content .column .search label {
+  color: #6f6f6f;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 1em;
 }
-#content #featured-projects h3 {
-	width: 280px;
-	height: 14px;
-	background: url(../img/external/headers/featured-projects.png) no-repeat; 
+#content .column .search form {
+  height: auto;
+  width: auto;
 }
-#content #from-the-blog h3 {
-	width: 185px;
-	height: 14px;
-	background: url(../img/external/headers/gitorious-blog.png) no-repeat; 
+
+#content .column .search form p {
+  margin-bottom: 2em;
+  clear: left;
 }
 
 #content #user-testimonials .testimonial {
