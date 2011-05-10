@@ -565,5 +565,17 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal user, @controller.send(:current_user)
       assert_response :redirect
     end
+
+    should "redirect to the dashboard on successful creation" do
+      post :openid_create, { :user => {
+          :fullname => 'Moe Schmoe',
+          :email => 'moe@schmoe.example',
+          :login => 'schmoe',
+          :terms_of_use => '1'
+        }
+      }, @valid_session_options
+
+      assert_redirected_to "/"
+    end
   end
 end
