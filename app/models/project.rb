@@ -66,22 +66,15 @@ class Project < ActiveRecord::Base
     }]
 
 
-  URL_FORMAT_RE = /^(http|https|nntp):\/\//.freeze
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")
   validates_exclusion_of :slug, :in => Gitorious::Reservations.project_names
-  validates_format_of :home_url, :with => URL_FORMAT_RE,
-    :if => proc{|record| !record.home_url.blank? },
-    :message => I18n.t( "project.ssl_required")
-  validates_format_of :mailinglist_url, :with => URL_FORMAT_RE,
-    :if => proc{|record| !record.mailinglist_url.blank? },
-    :message => I18n.t( "project.ssl_required")
-  validates_format_of :bugtracker_url, :with => URL_FORMAT_RE,
-    :if => proc{|record| !record.bugtracker_url.blank? },
-    :message => I18n.t( "project.ssl_required")
+  validates_url_format_of :home_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
+  validates_url_format_of :mailinglist_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
+  validates_url_format_of :bugtracker_url, :allow_nil => true, :message => I18n.t("project.ssl_required")
 
   before_validation :downcase_slug
   after_create :create_wiki_repository

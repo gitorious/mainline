@@ -1,6 +1,9 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    activerecord (2.3.8)
+      activesupport (= 2.3.8)
+    activesupport (2.3.8)
     builder (3.0.0)
     chronic (0.3.0)
     daemons (1.1.0)
@@ -36,6 +39,8 @@ GEM
     shoulda (2.9.2)
     state_machine (0.9.4)
     stomp (1.1)
+    validates_url_format_of (0.1.1)
+      activerecord (~> 2.3.4)
 
 PLATFORMS
   ruby
@@ -66,3 +71,4 @@ DEPENDENCIES
   shoulda (~> 2.9.1)
   state_machine
   stomp (= 1.1)
+  validates_url_format_of

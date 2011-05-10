@@ -20,6 +20,7 @@ gem "riddle" # For the ultrasphinx plugin
 gem "builder"
 gem "mysql"
 gem "oauth"
+gem "validates_url_format_of"
 
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18

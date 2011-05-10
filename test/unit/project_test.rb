@@ -20,8 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
-
-
   def create_project(options={})
     Project.new({
       :title => "foo project",
@@ -35,19 +33,19 @@ class ProjectTest < ActiveSupport::TestCase
   should_belong_to :containing_site
   should_have_many :merge_request_statuses
 
-  should " have a title to be valid" do
+  should "have a title to be valid" do
     project = create_project(:title => nil)
     assert !project.valid?, 'valid? should be false'
     project.title = "foo"
     assert project.valid?
   end
 
-  should " have a slug to be valid" do
+  should "have a slug to be valid" do
     project = create_project(:slug => nil)
     assert !project.valid?, 'valid? should be false'
   end
 
-  should " have a unique slug to be valid" do
+  should "have a unique slug to be valid" do
     p1 = create_project
     p1.save!
     p2 = create_project(:slug => "FOO")
@@ -55,13 +53,13 @@ class ProjectTest < ActiveSupport::TestCase
     assert_not_nil p2.errors.on(:slug)
   end
 
-  should " have an alphanumeric slug" do
+  should "have an alphanumeric slug" do
     project = create_project(:slug => "asd asd")
     project.valid?
     assert !project.valid?, 'valid? should be false'
   end
 
-  should " downcase the slug before validation" do
+  should "downcase the slug before validation" do
     project = create_project(:slug => "FOO")
     project.valid?
     assert_equal "foo", project.slug
@@ -140,12 +138,12 @@ class ProjectTest < ActiveSupport::TestCase
     assert project.reload.can_be_deleted_by?(users(:johan)) # the clones are clone
   end
 
-  should " strip html tags" do
+  should "strip html tags" do
     project = create_project(:description => "<h1>Project A</h1>\n<b>Project A</b> is a....")
     assert_equal "Project A\nProject A is a....", project.stripped_description
   end
 
-  should " have a breadcrumb_parent method which returns nil" do
+  should "have a breadcrumb_parent method which returns nil" do
     project = create_project
     assert project.breadcrumb_parent.nil?
   end
@@ -174,7 +172,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal("http://foo.com/", p.clean_url(" http://foo.com/ "))
   end
 
-  should " not prepend http:// to empty urls" do
+  should "not prepend http:// to empty urls" do
     project = projects(:johans)
     [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
       project.send("#{attr}=", '')
@@ -184,7 +182,33 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  should " find or create an associated wiki repo" do
+  should "not allow invalid urls" do
+    project = projects(:johans)
+
+    project.home_url = "invalid@stuff"
+    project.mailinglist_url = "invalid@mailinglist"
+    project.bugtracker_url = "invalid@bugtracker"
+
+    assert !project.valid?
+    assert project.errors.on(:home_url)
+    assert project.errors.on(:mailinglist_url)
+    assert project.errors.on(:bugtracker_url)
+  end
+
+  should "allow valid urls" do
+    project = projects(:johans)
+
+    project.home_url = "http://home.com"
+    project.mailinglist_url = "http://mailinglist.com"
+    project.bugtracker_url = "http://bugtracker.com"
+
+    assert project.valid?
+    assert project.errors.on(:home_url).nil?
+    assert project.errors.on(:mailinglist_url).nil?
+    assert project.errors.on(:bugtracker_url).nil?
+  end
+
+  should "find or create an associated wiki repo" do
     project = projects(:johans)
     repo = repositories(:johans)
     repo.kind = Repository::KIND_WIKI
@@ -193,7 +217,7 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal repo, project.reload.wiki_repository
   end
 
-  should " have a wiki repository" do
+  should "have a wiki repository" do
     project = projects(:johans)
     assert_equal repositories(:johans_wiki), project.wiki_repository
     assert !project.repositories.include?(repositories(:johans_wiki))
@@ -203,14 +227,14 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal projects(:johans).to_param, projects(:johans).to_param_with_prefix
   end
 
-  should " change the owner of the wiki repo as well" do
+  should "change the owner of the wiki repo as well" do
     project = projects(:johans)
     project.change_owner_to(groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird), project.owner
     assert_equal groups(:team_thunderbird), project.wiki_repository.owner
   end
 
-  should " allow changing ownership from a user to a group, but not the other way around" do
+  should "allow changing ownership from a user to a group, but not the other way around" do
     p = projects(:johans)
     p.change_owner_to(groups(:team_thunderbird))
     assert_equal groups(:team_thunderbird), p.owner
@@ -254,7 +278,7 @@ class ProjectTest < ActiveSupport::TestCase
       @repository = repositories(:johans)
     end
 
-    should " create an event from the action name" do
+    should "create an event from the action name" do
       assert_not_equal nil, @project.create_event(Action::CREATE_PROJECT, @repository, @user, "", "")
     end
 
@@ -266,7 +290,7 @@ class ProjectTest < ActiveSupport::TestCase
       assert @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @repository, @user, 'HomePage')
     end
 
-    should " create an event even without a valid id" do
+    should "create an event even without a valid id" do
       assert_not_equal nil, @project.create_event(52342, @repository, @user)
     end
 
