@@ -82,7 +82,7 @@ class BlobsControllerTest < ActionController::TestCase
     end
   
     context "#raw" do
-      should "gets the blob data from the sha and renders it as text/plain" do
+      should "get the blob data from a commit sha and a file name and render it as text/plain" do
         blob_mock = mock("blob")
         blob_mock.stubs(:contents).returns([blob_mock]) #meh
         blob_mock.expects(:data).returns("blabla")
@@ -93,6 +93,9 @@ class BlobsControllerTest < ActionController::TestCase
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)
         commit_stub.stubs(:committed_date).returns(2.days.ago)
+        git_mock = mock("git")
+        git_mock.expects(:cat_file).returns("commit")
+        @git.stubs(:git).returns(git_mock)
         @git.expects(:commit).returns(commit_stub)
         @git.expects(:tree).returns(blob_mock)
       
@@ -107,8 +110,33 @@ class BlobsControllerTest < ActionController::TestCase
         assert_equal "max-age=1800, private", @response.headers['Cache-Control']
         assert_equal %[attachment;filename="README.doc"], @response.headers["Content-Disposition"]
       end
-    
+
+      should "get the blob data from a blob sha and render it as text/plain" do
+        blob_mock = mock("blob")
+        blob_mock.stubs(:contents).returns([blob_mock]) #meh
+        blob_mock.expects(:data).returns("blabla")
+        blob_mock.expects(:size).returns(200.kilobytes)
+        blob_mock.expects(:mime_type).returns("text/plain")
+        git_mock = mock("git")
+        git_mock.expects(:cat_file).returns("blob")
+        @git.stubs(:git).returns(git_mock)
+        @git.expects(:blob).returns(blob_mock)
+
+        get :raw, {:project_id => @project.slug,
+            :repository_id => @repository.name, :branch_and_path => ["a"*40]}
+
+        assert_response :success
+        assert_equal @git, assigns(:git)
+        assert_equal blob_mock, assigns(:blob)
+        assert_equal "blabla", @response.body
+        assert_equal "text/plain", @response.content_type
+        assert_equal "max-age=1800, private", @response.headers['Cache-Control']
+      end
+
       should "redirects to HEAD if provided sha was not found (backwards compat)" do
+        git_mock = mock("git")
+        git_mock.expects(:cat_file).returns("commit")
+        @git.stubs(:git).returns(git_mock)
         @git.expects(:commit).with("a"*40).returns(nil)
         get :raw, {:project_id => @project.slug, 
             :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo.rb"]}
@@ -124,6 +152,9 @@ class BlobsControllerTest < ActionController::TestCase
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)
         commit_stub.stubs(:committed_date).returns(2.days.ago)
+        git_mock = mock("git")
+        git_mock.expects(:cat_file).returns("commit")
+        @git.stubs(:git).returns(git_mock)
         @git.expects(:commit).returns(commit_stub)
         @git.expects(:tree).returns(blob_mock)
       
