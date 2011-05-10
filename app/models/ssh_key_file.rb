@@ -28,9 +28,9 @@ class SshKeyFile
   def contents
     File.read(@path)
   end
-  
+
   def add_key(key)
-    File.open(@path, "a") do |file|
+    File.open(@path, "a", 0600) do |file|
       file.flock(File::LOCK_EX)
       file << key
       file.flock(File::LOCK_UN)

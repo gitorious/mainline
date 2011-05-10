@@ -66,4 +66,16 @@ class SshKeyFileTest < ActiveSupport::TestCase
     @keyfile.delete_key(@keydata)
   end
 
+  context "non-existent authorized_keys file" do
+    setup { @path = File.dirname(__FILE__) + "/../../tmp/keyfile" }
+    teardown { FileUtils.rm(@path) }
+
+    should "add a key to unexistent authorized_keys file and initialize file permission's	correctly" do
+      keyfile = SshKeyFile.new(@path)
+      keyfile.add_key(@keydata)
+
+      binary_rw_permissions = 33152
+      assert_equal 33152, File::Stat.new(@path).mode
+    end
+  end
 end
