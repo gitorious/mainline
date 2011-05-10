@@ -211,9 +211,13 @@ Gitorious.DiffBrowser.CommentHighlighter = {
 
 Gitorious.DiffBrowser.KeyNavigationController = function () {
     this._lastElement = null;
+    this._initialized = false;
     this._enabled = false;
 
     this._callback = function (event) {
+        if (!this._enabled)
+            return;
+
         if (event.keyCode === 74) { // j
             this.scrollToNext();
         } else if (event.keyCode === 75) { // k
@@ -279,30 +283,23 @@ Gitorious.DiffBrowser.KeyNavigationController = function () {
         this._lastElement = element[0];
     };
 
-    this.enable = function () {
-        if (this._enabled) {
+    this.initialize = function () {
+        if (this._initialized)
             return;
-        }
 
-        this.disable();
-        $(window).bind("keydown", this._callback.bind(this));
-        // unbind whenever we're in an input field
         $(":input").focus(this.disable.bind(this));
-        var self = this;
+        $(":input").blur(this.enable.bind(this));
 
-        $(":input").blur(function () {
-            $(window).bind("keydown", self._callback.bind(self));
-        });
+        $(window).bind("keydown", this._callback.bind(this));
 
+        this._initialized = true;
+    }
+
+    this.enable = function () {
         this._enabled = true;
     };
 
     this.disable = function () {
-        if (!this._enabled) {
-            return;
-        }
-
-        $(window).unbind("keydown", this._callback.bind(this));
         this._enabled = false;
     };
 };
