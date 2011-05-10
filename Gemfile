@@ -8,7 +8,7 @@ gem "hoe", :require => false
 gem "echoe", :require => false
 gem "ruby-yadis", :require => "yadis"
 gem "ruby-openid", :require => "openid"
-gem "rdiscount", "1.3.1.1"
+gem "rdiscount", "1.3.1.1", :platforms => :ruby
 gem "stomp", "1.1"
 gem "mime-types", :require => "mime/types"
 gem "diff-lcs", :require => "diff/lcs"
@@ -18,7 +18,7 @@ gem "state_machine"
 gem "rack", "~> 1.0.1"
 gem "riddle" # For the ultrasphinx plugin
 gem "builder"
-gem "mysql"
+gem "mysql", :platforms => :ruby
 gem "oauth"
 gem "validates_url_format_of"
 
