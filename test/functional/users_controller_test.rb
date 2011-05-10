@@ -432,7 +432,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_nil User.authenticate(users(:johan).email, "fubar")
     end
 
-    should " be able to update password, even if user is openid enabled" do
+    should "be able to update password, even if user is openid enabled" do
       user = users(:johan)
       user.update_attribute(:identity_url, "http://johan.someprovider.com/")
       put :update_password, :id => user.to_param, :user => {
@@ -454,7 +454,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
     end
 
-    should 'be able to delete his avatar' do
+    should "be able to delete his avatar" do
       user = users(:johan)
       user.update_attribute(:avatar_file_name, "foo.png")
       assert user.avatar?
@@ -522,16 +522,17 @@ class UsersControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Creation from OpenID' do
+  context "Creation from OpenID" do
     setup do
       @valid_session_options = {:openid_url => 'http://moe.example/', :openid_nickname => 'schmoe'}
     end
-    should 'deny access unless OpenID information is present in the session' do
+
+    should "deny access unless OpenID information is present in the session" do
       get :openid_build
       assert_response :redirect
     end
 
-    should 'build a user from the OpenID information and render the form' do
+    should "build a user from the OpenID information and render the form" do
       get :openid_build, {}, @valid_session_options
       user = assigns(:user)
       assert_not_nil user
@@ -539,14 +540,14 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should 'render the form unless all required fields have been filled' do
+    should "render the form unless all required fields have been filled" do
       post :openid_create, {:user => {}}, @valid_session_options
       user = assigns(:user)
       assert_response :success
       assert_template 'users/openid_build'
     end
 
-    should 'create a user with the provided credentials and openid url on success' do
+    should "create a user with the provided credentials and openid url on success" do
       assert_incremented_by(ActionMailer::Base.deliveries, :size, 1) do
         post :openid_create, {:user => {
           :fullname => 'Moe Schmoe',
@@ -556,6 +557,7 @@ class UsersControllerTest < ActionController::TestCase
           }
         }, @valid_session_options
       end
+
       user = assigns(:user)
       assert user.activated?
       assert user.terms_accepted?
