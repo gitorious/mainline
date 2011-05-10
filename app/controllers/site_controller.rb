@@ -79,10 +79,10 @@ class SiteController < ApplicationController
         :include => [:tags, { :repositories => :project }])
       @repositories = current_user.commit_repositories 
       @events = @user.paginated_events_in_watchlist(:page => params[:page])
-      @messages = @user.messages_in_inbox(3) if @user == current_user
+      @messages = @user.messages_in_inbox(3)
       @favorites = @user.watched_objects
-      @root = Breadcrumb::Dashboard.new(current_user)
-      @atom_auto_discovery_url = watchlist_user_path(current_user, :format => :atom)
+      @root = Breadcrumb::Dashboard.new(@user)
+      @atom_auto_discovery_url = watchlist_user_path(@user, :format => :atom)
 
       render :template => "site/dashboard"
     end
