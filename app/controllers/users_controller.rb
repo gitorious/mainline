@@ -197,7 +197,8 @@ class UsersController < ApplicationController
         session.delete(k)
       end
       self.current_user = @user
-      redirect_back_or_default '/'
+      flash[:success] = "Your user profile was successfully created"
+      redirect_to root_path
     else
       render :action => 'openid_build'
     end
