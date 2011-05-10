@@ -22,6 +22,7 @@ class MergeRequestVersion < ActiveRecord::Base
   belongs_to :merge_request
   has_many :comments, :as => :target, :include => :user
   before_destroy :schedule_branch_deletion
+  after_create :add_creation_comment
 
   def affected_commits
     Rails.cache.fetch(cache_key + '/affected_commits') do
@@ -132,5 +133,12 @@ class MergeRequestVersion < ActiveRecord::Base
       string_or_range = [string_or_range.begin, string_or_range.end].join("-")
     end
     string_or_range
+  end
+
+  def add_creation_comment
+    comment = comments.build(:user => merge_request.user,
+      :body => "Pushed new version #{version}",
+      :project => merge_request.project)
+    comment.save!
   end
 end

@@ -191,4 +191,18 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       @version.schedule_branch_deletion
     end
   end
+
+  context "On creation" do
+    setup do
+      merge_request = merge_requests(:moes_to_johans)
+      version = merge_request.versions.build :version => 22, :merge_base_sha => OTHER_SHA
+      version.save
+      @comment = version.comments.first
+    end
+    
+    should "create a comment when created" do
+      assert_not_nil @comment
+      assert @comment.body =~ /Pushed new version [\d]+/
+    end
+  end
 end
