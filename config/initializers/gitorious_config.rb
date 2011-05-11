@@ -12,6 +12,10 @@ GitoriousConfig["scheme"] = GitoriousConfig["use_ssl"] ? "https" : "http"
 I18n.default_locale = GitoriousConfig["locale"]
 I18n.locale         = GitoriousConfig["locale"]
 
+# set default tos/privacy policy urls
+GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].blank?
+GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].blank?
+
 require "subdomain_validation"
 GitoriousConfig.extend(SubdomainValidation)
 

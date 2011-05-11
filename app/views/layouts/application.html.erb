@@ -97,8 +97,8 @@
 		</ul>
 		<% if GitoriousConfig["terms_of_use"] -%>
 		<ul>
-			<li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
-          	<li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
+		  <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
+          	  <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
 		</ul>
 		<% end %>
 	</div>
