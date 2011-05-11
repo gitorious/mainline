@@ -230,8 +230,9 @@
         :wants_email_notifications => 'Enviar notificações por e-mail?',
         :describe_email_notifications => "Nós lhe enviaremos uma notificação por e-mail quando você receber uma mensagem no Gitorious",
         :default_favorite_notifications => "Por padrão, notificar-me de atualizações sobre o que eu estiver observando",
-        :describe_default_favorite_notifications => "Selecionando esta opção, por padrão você será notificado por e-mail quando " +
-	        "ocorrerem atividades no que você estiver observando no Gitorious",
+        :describe_default_favorite_notifications => lambda { |this, url| "Selecionando esta opção, por padrão você será notificado por e-mail sempre que" +
+          "ocorrerem atividades no que você estiver observando no Gitorious.<br/>" +
+          "Visite " + this.link_to("sua página de favoritos", url) + " para ajustar as preferências para cada objeto que você estiver observando no Gitorious"},
         :member_for => "Membro por",
         :this_week => {
           :one => "commit até agora esta semana",
