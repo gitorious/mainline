@@ -228,6 +228,10 @@ class UserTest < ActiveSupport::TestCase
     assert_equal Set.new([groups(:a_team), groups(:team_thunderbird)]), Set.new(users(:johan).groups)
   end
 
+  should "have many open merge requests through memberships" do
+    assert_equal 1, users(:mike).review_repositories_with_open_merge_request_count.count
+  end
+
   should "have a to_param_with_prefix" do
     assert_equal "~#{users(:johan).to_param}", users(:johan).to_param_with_prefix
   end

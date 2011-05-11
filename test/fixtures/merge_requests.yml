@@ -42,4 +42,15 @@ johans_to_mikes:
   sha_snapshot: a99238
   ending_commit: a99238
   status_tag: orphaned 
-  sequence_number: 14 
+  sequence_number: 14
+
+johans_to_moes:
+  user_id: 1
+  source_repository_id: 2 # johans2
+  target_repository_id: 3 # moes
+  summary: plz merge my clone
+  proposal: plz merge my clone
+  sha_snapshot: a94a8fe5ccb19ba61c4c0873d391e987982fbbd3
+  ending_commit: 286e8afb9576366a2a43b12b94738f07
+  status: <%= MergeRequest::STATUS_OPEN %>
+  sequence_number: 15
