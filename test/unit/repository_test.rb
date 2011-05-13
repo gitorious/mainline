@@ -992,7 +992,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-    context "Fresh repositories" do
+  context "Fresh repositories" do
     setup do
       @me = Factory.create(:user, :login => "johnnie")
       @project = Factory.create(:project, :user => @me,
