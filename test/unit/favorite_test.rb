@@ -27,8 +27,7 @@ class FavoriteTest < ActiveSupport::TestCase
   end
 
   context "In general" do
-    should_require_attributes(:watchable_type, :watchable_id,
-      :user_id)
+    should_validate_presence_of :watchable_type, :watchable_id, :user_id
     should_belong_to :user
     should_belong_to :watchable
     should_validate_uniqueness_of :user_id, :scoped_to => [:watchable_id, :watchable_type]

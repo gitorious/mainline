@@ -20,7 +20,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 class MessageTest < ActiveSupport::TestCase
   should_belong_to :sender
   should_belong_to :recipient
-  should_require_attributes :subject, :body
+  should_validate_presence_of :subject, :body
   should_belong_to :notifiable
   should_have_many :replies
   
