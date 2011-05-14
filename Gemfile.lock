@@ -44,6 +44,7 @@ GEM
     stomp (1.1)
     validates_url_format_of (0.1.1)
       activerecord (~> 2.3.4)
+    will_paginate (2.3.15)
 
 PLATFORMS
   ruby
@@ -78,3 +79,4 @@ DEPENDENCIES
   state_machine
   stomp (= 1.1)
   validates_url_format_of
+  will_paginate
