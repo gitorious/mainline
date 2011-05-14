@@ -53,7 +53,7 @@ class Project < ActiveRecord::Base
 
   is_indexed :fields => ["title", "description", "slug"],
     :concatenate => [
-      { :class_name => 'Tag',
+      { :class_name => 'ActsAsTaggableOn::Tag',
         :field => 'name',
         :as => 'category',
         :association_sql => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +

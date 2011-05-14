@@ -21,6 +21,7 @@ gem "builder"
 gem "mysql", :platforms => :ruby
 gem "oauth"
 gem "validates_url_format_of"
+gem "acts-as-taggable-on"
 
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18

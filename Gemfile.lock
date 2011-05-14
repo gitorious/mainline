@@ -4,6 +4,7 @@ GEM
     activerecord (2.3.8)
       activesupport (= 2.3.8)
     activesupport (2.3.8)
+    acts-as-taggable-on (2.0.6)
     builder (3.0.0)
     chronic (0.3.0)
     daemons (1.1.0)
@@ -46,6 +47,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts-as-taggable-on
   builder
   chronic
   daemons
