@@ -23,6 +23,10 @@ gem "oauth"
 gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 
+# TODO: replace the lines below while upgrading to Rails 3
+# gem "exception_notification", :require => 'exception_notifier'
+gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'
+
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18
 gem "json", :platforms => :ruby_18

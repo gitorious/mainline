@@ -42,7 +42,4 @@ ActionMailer::Base.default_url_options[:host] =
 config.after_initialize do
   ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT, 
     "config/gitorious.yml"))[RAILS_ENV]["exception_notification_emails"]
-  ExceptionNotifier.class_eval do
-    ExceptionNotifier.template_root = "#{RAILS_ROOT}/vendor/plugins/exception_notification/lib/../views"
-  end
 end
