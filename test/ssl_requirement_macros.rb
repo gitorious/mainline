@@ -1,3 +1,4 @@
+# Copied from ssl_requirement gem
 Test::Unit::TestCase.class_eval do
   def self.without_ssl_context
     context "without ssl" do
