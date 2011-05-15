@@ -102,9 +102,7 @@ class User < ActiveRecord::Base
     Message.find(:all, :conditions => ["sender_id = ? OR recipient_id = ?", self, self])
   end
 
-  Paperclip::Attachment.interpolations['login'] = lambda{|attachment, style|
-    attachment.instance.login.downcase
-  }
+  Paperclip.interpolates('login'){|attachment, style| attachment.instance.login.downcase}
 
   avatar_local_path = '/system/:attachment/:login/:style/:basename.:extension'
   has_attached_file :avatar,
