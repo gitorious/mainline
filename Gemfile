@@ -23,6 +23,8 @@ gem "oauth"
 gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 gem "will_paginate"
+gem "resque"
+gem "SystemTimer"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

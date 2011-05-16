@@ -8,3 +8,9 @@ require 'rake/testtask'
 require 'rake/rdoctask'
 
 require 'tasks/rails'
+
+begin
+  require 'resque/tasks'
+rescue LoadError => err
+  # Ignore in case not using Resque
+end
