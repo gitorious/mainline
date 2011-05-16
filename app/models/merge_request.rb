@@ -39,7 +39,7 @@ class MergeRequest < ActiveRecord::Base
 
   before_validation_on_create :set_sequence_number
 
-  is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
+  make_searchable :fields => ["proposal", {:field => "status_tag", :as => "status"}],
     :include => [{
       :association_name => "user",
       :field => "login",

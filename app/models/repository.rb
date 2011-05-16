@@ -96,7 +96,7 @@ class Repository < ActiveRecord::Base
 
   named_scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
-  is_indexed :fields => ["name", "description"],
+  make_searchable :fields => ["name", "description"],
     :include => [{
       :association_name => "project",
       :field => "slug",

@@ -51,7 +51,7 @@ class Project < ActiveRecord::Base
 
   attr_protected :owner_id, :user_id, :site_id
 
-  is_indexed :fields => ["title", "description", "slug"],
+  make_searchable :fields => ["title", "description", "slug"],
     :concatenate => [
       { :class_name => 'Tag',
         :field => 'name',

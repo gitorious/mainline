@@ -28,7 +28,7 @@ class Comment < ActiveRecord::Base
   after_create :update_state_in_target
   serialize :state_change, Array
 
-  is_indexed :fields => ["body"], :include => [{
+  make_searchable :fields => ["body"], :include => [{
       :association_name => "user",
       :field => "login",
       :as => "commented_by"
