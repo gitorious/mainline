@@ -24,6 +24,9 @@ class UsersController < ApplicationController
   skip_before_filter :public_and_logged_in,
     :only => [:pending_activation, :activate, :forgot_password,
               :forgot_password_create, :reset_password]
+  if !GitoriousConfig["public_mode"] and !GitoriousConfig["private_openid_url"].nil?
+    skip_before_filter :public_and_logged_in, :only => [:openid_build, :openid_create]
+  end
   before_filter :require_not_logged_in, :only => [:pending_activation]
   before_filter :login_required,
     :only => [:edit, :update, :password, :update_password, :avatar]
@@ -181,6 +184,9 @@ class UsersController < ApplicationController
   end
 
   def openid_build
+    if !GitoriousConfig["public_mode"] and !session[:openid_url].match /^#{GitoriousConfig["private_openid_url"]}/
+      login_required
+    end
     @user = User.new(:identity_url => session[:openid_url], :email => session[:openid_email], :login => session[:openid_nickname], :fullname => session[:openid_fullname])
   end
 

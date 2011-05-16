@@ -540,6 +540,34 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :success
     end
 
+    context 'with Private OpenID URL' do
+      setup do
+        GitoriousConfig['private_openid_url'] = 'http://moe.example/'
+      end
+
+      teardown do
+        GitoriousConfig['private_openid_url'] = nil
+      end
+
+      should "build a user without matching private_openid_url" do
+        invalid_session_options = @valid_session_options.merge(:openid_url => 'http://moe.badexample/')
+        get :openid_build, {}, invalid_session_options
+        user = assigns(:user)
+        assert_not_nil user
+        assert_equal 'http://moe.badexample/', user.identity_url
+        assert_response :success
+      end
+
+      should "build a user with matching private_openid_url" do
+        get :openid_build, {}, @valid_session_options
+        user = assigns(:user)
+        assert_not_nil user
+        assert_equal 'http://moe.example/', user.identity_url
+        assert_response :success
+      end
+
+    end
+
     should "render the form unless all required fields have been filled" do
       post :openid_create, {:user => {}}, @valid_session_options
       user = assigns(:user)
@@ -576,6 +604,57 @@ class UsersControllerTest < ActionController::TestCase
       }, @valid_session_options
 
       assert_redirected_to "/"
+    end
+
+    context 'in Private Mode' do
+      setup do
+        GitoriousConfig['public_mode'] = false
+      end
+
+      teardown do
+        GitoriousConfig['public_mode'] = true
+      end
+
+      should 'not build a user from the OpenID information' do
+        get :openid_build, {}, @valid_session_options
+        assert_redirected_to(root_path)
+        assert_match(/Action requires login/, flash[:error])
+      end
+
+      context 'with Private OpenID URL' do
+        setup do
+          GitoriousConfig['private_openid_url'] = 'http://moe.example/'
+        end
+
+        teardown do
+          GitoriousConfig['private_openid_url'] = nil
+        end
+
+        should 'not build a user without matching private_openid_url' do
+          invalid_session_options = @valid_session_options.merge(:openid_url => 'http://moe.badexample/')
+          get :openid_build, {}, invalid_session_options
+          assert_redirected_to(root_path)
+          assert_match(/Action requires login/, flash[:error])
+        end
+
+        should 'create a user create a user with a matching private_openid_url' do
+          assert_incremented_by(ActionMailer::Base.deliveries, :size, 1) do
+            post :openid_create, {:user => {
+              :fullname => 'Moe Schmoe',
+              :email => 'moe@schmoe.example',
+              :login => 'schmoe',
+              :terms_of_use => '1'
+              }
+            }, @valid_session_options
+          end
+          user = assigns(:user)
+          assert user.activated?
+          assert user.terms_accepted?
+          assert_nil session[:openid_url]
+          assert_equal user, @controller.send(:current_user)
+          assert_response :redirect
+        end
+      end
     end
   end
 end

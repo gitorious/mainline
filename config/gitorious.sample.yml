@@ -40,6 +40,10 @@ test:
   # Enable or Disable Public Mode (true) or Private Mode (false)
   public_mode: true
 
+  # Enable OpenID auth in Private Mode from only the following URL
+  # (must include protocol and FQDN, if unset OpenID will remain disabled)
+  #private_openid_url: "https://openid.domain.tld/subdir/"
+
   # Define your locale
   locale: en
 
