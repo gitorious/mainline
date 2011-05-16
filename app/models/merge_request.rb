@@ -21,7 +21,7 @@
 #++
 
 class MergeRequest < ActiveRecord::Base
-  include ActiveMessaging::MessageSender
+  include Gitorious::Messaging::Publisher
   include Watchable
 
   belongs_to :user
@@ -351,7 +351,7 @@ class MergeRequest < ActiveRecord::Base
   # Publishes a notification, causing a new tracking branch (and
   # version) to be created in the background
   def publish_notification
-    publish :mirror_merge_request, {:merge_request_id => id.to_s}.to_json
+    publish("/queue/GitoriousMergeRequestCreation", { :merge_request_id => id.to_s })
   end
 
   def default_status
@@ -560,7 +560,7 @@ class MergeRequest < ActiveRecord::Base
   # Since we'll be deleting the ref in the backend, this will be
   # handled in the message queue
   def delete_tracking_branches
-    msg = {
+    payload = {
       :merge_request_id => id.to_s,
       :action => "delete",
       :target_path => target_repository.full_repository_path,
@@ -569,7 +569,8 @@ class MergeRequest < ActiveRecord::Base
       :source_repository_id => source_repository.id,
       :target_repository_id => target_repository.id,
     }
-    publish :merge_request_backend_updates, msg.to_json
+
+    publish("/queue/GitoriousMergeRequestBackend", payload)
   end
 
   def tracking_repository

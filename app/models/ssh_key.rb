@@ -22,7 +22,7 @@
 require "tempfile"
 
 class SshKey < ActiveRecord::Base
-  include ActiveMessaging::MessageSender
+  include Gitorious::Messaging::Publisher
   belongs_to :user
   
   SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ SshKey:(\d+)?-User:(\d+)?$/ims.freeze
@@ -82,7 +82,8 @@ class SshKey < ActiveRecord::Base
       :arguments => [self.to_key], 
       :target_id => self.id,
       :identifier => "ssh_key_#{id}"})
-    publish :ssh_key_generation, options.to_json
+
+    publish("/queue/GitoriousSshKeys", options)
   end
   
   def publish_deletion_message
@@ -91,7 +92,8 @@ class SshKey < ActiveRecord::Base
       :command => "delete_from_authorized_keys", 
       :arguments => [self.to_key],
       :identifier => "ssh_key_#{id}"})
-    publish :ssh_key_generation, options.to_json
+
+    publish("/queue/GitoriousSshKeys", options)
   end
   
   def components

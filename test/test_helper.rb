@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 require 'ssl_requirement_macros'
+require 'messaging_test_helper'
 
 require "shoulda"
 require "mocha"
@@ -49,14 +50,6 @@ class ActiveSupport::TestCase
   OTHER_SHA = "f" * 40 unless defined?(OTHER_SHA)
 
   # Add more helper methods to be used by all tests here...
-  
-  def find_message_with_queue_and_regexp(queue_name, regexp)
-    ActiveMessaging::Gateway.connection.clear_messages
-    yield
-    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
-    assert_not_nil msg, "Message #{regexp.source} in #{queue_name} was not found"
-    return ActiveSupport::JSON.decode(msg.body)
-  end
   
   def repo_path
     File.join(File.dirname(__FILE__), "..", ".git")

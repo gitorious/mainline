@@ -28,7 +28,8 @@ module Gitorious
       # method (see +publish+ below).
       #
       def queue(name)
-        @queue ||= inject(name)
+        @queues ||= {}
+        @queues[name] ||= inject(name)
       end
 
       # Publishes a message to the named queue, which isresolved through +queue+.

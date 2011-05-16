@@ -15,8 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class WebHookGeneratorTest < ActiveSupport::TestCase
@@ -125,18 +123,14 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
         :user => moe,
         :url  => "http://sandbox.org/ciabot.rb")
 
-      message_payload = {
-        :user => @user.login,
-        :repository_id => @repository.id,
-        :payload => {}}.to_json
-      @generator.expects(:publish_notification).with(message_payload).once
       @generator.generate!
-    end
 
-    should "publish to the message queue" do
-      message = {}.to_json
-      @generator.expects(:publish).with(:web_hook_notifications, message)
-      @generator.publish_notification(message)
+      assert_messages_published "/queue/GitoriousPostReceiveWebHook", 1
+      assert_published("/queue/GitoriousPostReceiveWebHook", {
+                         "user" => @user.login,
+                         "repository_id" => @repository.id,
+                         "payload" => {}
+                       })
     end
 
     should "be a message sender" do

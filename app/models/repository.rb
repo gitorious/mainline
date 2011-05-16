@@ -23,9 +23,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/reservations"
+require "gitorious/messaging"
 
 class Repository < ActiveRecord::Base
-  include ActiveMessaging::MessageSender
+  include Gitorious::Messaging::Publisher
   include RecordThrottling
   include Watchable
 
@@ -355,15 +356,25 @@ class Repository < ActiveRecord::Base
 
   def post_repo_creation_message
     return if tracking_repo?
-    options = {:target_class => self.class.name, :target_id => self.id}
-    options[:command] = parent ? 'clone_git_repository' : 'create_git_repository'
-    options[:arguments] = parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
-    publish :create_repo, options.to_json
+
+    payload = {
+      :target_class => self.class.name,
+      :target_id => self.id,
+      :command => parent ? 'clone_git_repository' : 'create_git_repository',
+      :arguments => parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
+    }
+
+    publish("/queue/GitoriousRepositoryCreation", payload)
   end
 
   def post_repo_deletion_message
-    options = {:target_class => self.class.name, :command => 'delete_git_repository', :arguments => [real_gitdir]}
-    publish :destroy_repo, options.to_json
+    payload = {
+      :target_class => self.class.name,
+      :command => 'delete_git_repository',
+      :arguments => [real_gitdir]
+    }
+
+    publish("/queue/GitoriousRepositoryDeletion", payload)
   end
 
   def total_commit_count

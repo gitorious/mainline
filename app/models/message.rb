@@ -17,6 +17,7 @@
 #++
 class Message < ActiveRecord::Base
   include RecordThrottling
+  include Gitorious::Messaging::Publisher
   
   belongs_to :notifiable, :polymorphic => true
   belongs_to :sender, :class_name => "User", :foreign_key => :sender_id
@@ -44,8 +45,6 @@ class Message < ActiveRecord::Base
       transition :unread => :read
     end
   end
-  
-  include ActiveMessaging::MessageSender
   
   def build_reply(options={})
     reply_options = {:sender => recipient, :recipient => sender, :subject => "Re: #{subject}"}.with_indifferent_access
@@ -203,7 +202,8 @@ class Message < ActiveRecord::Base
             :notifiable_id => notifiable.id,
         })
       end
-      publish :cc_message, options.to_json
+
+      publish("/queue/GitoriousEmailNotifications", options)
     end
     
     def flag_root_message_if_required

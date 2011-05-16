@@ -17,7 +17,7 @@
 #++
 
 class MergeRequestVersion < ActiveRecord::Base
-  include ActiveMessaging::MessageSender
+  include Gitorious::Messaging::Publisher
   
   belongs_to :merge_request
   has_many :comments, :as => :target, :include => :user
@@ -122,8 +122,8 @@ class MergeRequestVersion < ActiveRecord::Base
   end
 
   def schedule_branch_deletion
-    message = branch_deletion_message.to_json
-    publish :merge_request_version_deletion, message
+    message = branch_deletion_message
+    publish("/queue/GitoriousMergeRequestVersionDeletion", message)
   end
   
   private

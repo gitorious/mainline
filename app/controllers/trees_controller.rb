@@ -20,7 +20,7 @@
 #++
 
 class TreesController < ApplicationController
-  include ActiveMessaging::MessageSender
+  include Gitorious::Messaging::Publisher
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   renders_in_site_specific_context
@@ -99,19 +99,18 @@ class TreesController < ApplicationController
       user_path = user_path.gsub("/", "_").gsub('"', '\"')
       response.headers["Content-Disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
     end
-    
+
     def publish_archive_message(repo, disk_path, commit)
-      payload = {
+      publish("/queue/GitoriousRepositoryArchiving", {
         :full_repository_path => repo.full_repository_path,
         :output_path => File.join(GitoriousConfig["archive_cache_dir"], disk_path),
         :work_path => File.join(GitoriousConfig["archive_work_dir"], disk_path),
         :commit_sha => commit.id,
         :name => (repo.project.slug + "-" + repo.name),
         :format => "tar.gz",
-      }
-      publish :archive_repo, payload.to_json
+      })
     end
-    
+
     def handle_missing_tree_sha
       flash[:error] = "No such tree SHA1 was found"
       redirect_to project_repository_tree_path(@project, @repository, 

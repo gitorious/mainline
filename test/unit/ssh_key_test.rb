@@ -31,6 +31,10 @@ class SshKeyTest < ActiveSupport::TestCase
     SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
   
+  def teardown
+    clear_message_queue
+  end
+
   should_validate_presence_of :user_id, :key
 
   should "validate the key using ssh-keygen" do
@@ -202,14 +206,14 @@ EOS
   context "Message sending" do
     should 'send a message when created' do
       ssh_key = new_key
-      p = proc{
-        ssh_key.save!
-        ssh_key.publish_creation_message
-      }
-      message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
-      assert_equal 'add_to_authorized_keys', message['command']
-      assert_equal [ssh_key.to_key], message['arguments']
-      assert_equal ssh_key.id, message['target_id']
+      ssh_key.save!
+      ssh_key.publish_creation_message
+
+      assert_published("/queue/GitoriousSshKeys", {
+                         "command" => "add_to_authorized_keys",
+                         "arguments" => [ssh_key.to_key],
+                         "target_id" => ssh_key.id
+                       })
     end
 
     should "not allow publishing messages for new records" do
@@ -223,21 +227,13 @@ EOS
       ssh_key = new_key
       ssh_key.save!
       keydata = ssh_key.to_key.dup
-      p = proc{
-        ssh_key.destroy
-      }
-      message = message_created_in_queue('/queue/GitoriousSshKeys', /ssh_key_#{ssh_key.id}/) {p.call}
-      assert_equal 'delete_from_authorized_keys', message['command']
-      assert_equal [keydata], message['arguments']
+      ssh_key.destroy
+
+      assert_published("/queue/GitoriousSshKeys", {
+                         "identifier" => "ssh_key_#{ssh_key.id}",
+                         "command" => "delete_from_authorized_keys",
+                         "arguments" => [keydata]
+                       })
     end
   end
-  
-  def message_created_in_queue(queue_name, regexp)
-    ActiveMessaging::Gateway.connection.clear_messages
-    yield
-    msg = ActiveMessaging::Gateway.connection.find_message(queue_name, regexp)
-    assert !msg.nil?
-    return ActiveSupport::JSON.decode(msg.body)    
-  end
-  
 end

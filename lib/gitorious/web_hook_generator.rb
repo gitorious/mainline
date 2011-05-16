@@ -18,7 +18,7 @@
 
 module Gitorious
   class WebHookGenerator
-    include ActiveMessaging::MessageSender
+    include Gitorious::Messaging::Publisher
     
     def initialize(repository, spec, user)
       @repository = repository
@@ -30,11 +30,11 @@ module Gitorious
       publish_notification({
           :user => @user.login,
           :repository_id => @repository.id,
-          :payload => payload}.to_json)
+          :payload => payload})
     end
 
     def publish_notification(data)
-      publish :web_hook_notifications, data
+      publish("/queue/GitoriousPostReceiveWebHook", data)
     end
     
     def payload

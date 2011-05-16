@@ -26,27 +26,32 @@ module Gitorious::Messaging::TestAdapter
     @@messages = {}
   end
 
+  def self.messages
+    @@messages
+  end
+
   def self.messages_on(queue)
     @@messages[queue] || []
   end
 
   def self.publish(queue, message)
-    (@@messages[queue] ||= []) << JSON.parse(message)
+    @@messages[queue] ||= []
+    @@messages[queue] << JSON.parse(message)
   end
 
   module Publisher
     def inject(queue)
-      Queue.new { |msg| Gitorious::Messaging::TestAdapter.publish(queue, msg) }
+      Queue.new(queue)
     end
   end
 
   class Queue
-    def initialize(&block)
-      @publisher = block
+    def initialize(queue)
+      @queue = queue
     end
 
     def publish(payload)
-      @publisher.call(payload)
+      Gitorious::Messaging::TestAdapter.publish(@queue, payload)
     end
   end
 end

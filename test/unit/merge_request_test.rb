@@ -15,12 +15,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MergeRequestTest < ActiveSupport::TestCase
-
   def setup
     @merge_request = merge_requests(:moes_to_johans)
     commits = ["9dbb89110fc45362fc4dc3f60d960381",
@@ -33,6 +30,10 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
     @merge_request.stubs(:commits_for_selection).returns(commits)
     assert @merge_request.pending_acceptance_of_terms?
+  end
+
+  def teardown
+    clear_message_queue
   end
 
   should_validate_presence_of :user, :source_repository, :target_repository
@@ -67,10 +68,12 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert_equal 2, version.version
   end
 
-  should 'send a MQ message when being confirmed by the user' do
-    p = proc {@merge_request.confirmed_by_user}
-    message = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestCreation', /.*/) {p.call}
-    assert_equal({'merge_request_id' => @merge_request.id.to_s}, message)
+  should 'publish a message to the queue when being confirmed by the user' do
+    @merge_request.confirmed_by_user
+
+    assert_published("/queue/GitoriousMergeRequestCreation", {
+                       "merge_request_id" => @merge_request.id.to_s
+                     })
   end
 
   should "not send messages even if notifications are on" do
@@ -742,19 +745,25 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request = merge_requests(:moes_to_johans_open)
     end
 
-    should "send a message when being destroyed" do
-      deletion_proc = proc{ @merge_request.destroy }
-      msg = find_message_with_queue_and_regexp('/queue/GitoriousMergeRequestBackend', /.*/) {
-        deletion_proc.call
-      }
+    should "make the merge request unfindable" do
+      @merge_request.destroy
+
       assert_nil MergeRequest.find_by_id(@merge_request.id)
-      assert_equal @merge_request.id.to_s, msg["merge_request_id"]
-      assert_equal "delete", msg["action"]
-      assert_equal @merge_request.target_repository.full_repository_path, msg["target_path"]
-      assert_equal @merge_request.target_repository.url_path, msg["target_name"]
-      assert_equal @merge_request.merge_branch_name, msg["merge_branch_name"]
-      assert_equal @merge_request.target_repository.id, msg["target_repository_id"]
-      assert_equal @merge_request.source_repository.id, msg["source_repository_id"]
+    end
+
+    should "send a message when being destroyed" do
+      @merge_request.destroy
+      mr = @merge_request
+
+      assert_published("/queue/GitoriousMergeRequestBackend", {
+                         "merge_request_id" => mr.id.to_s,
+                         "action" => "delete",
+                         "target_path" => mr.target_repository.full_repository_path,
+                         "target_name" => mr.target_repository.url_path,
+                         "merge_branch_name" => mr.merge_branch_name,
+                         "target_repository_id" => mr.target_repository.id,
+                         "source_repository_id" => mr.source_repository.id,
+                       })
     end
   end
 

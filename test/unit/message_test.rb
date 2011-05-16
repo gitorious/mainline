@@ -169,8 +169,7 @@ class MessageTest < ActiveSupport::TestCase
       assert !@message.unread_messages?
     end
   end
-  
-  
+
   context 'Email notifications' do
     setup do 
       @privacy_lover = Factory.create(:user, :wants_email_notifications => false)
@@ -178,6 +177,7 @@ class MessageTest < ActiveSupport::TestCase
       # @moe = users(:moe)
       # @mike = users(:mike)
       @message = Message.new(:subject => "Hello", :body => "World")
+      clear_message_queue
     end
     
     should 'fire a notification event on message creation' do
@@ -197,15 +197,15 @@ class MessageTest < ActiveSupport::TestCase
     end
     
     should 'actually send the message to the queue' do
-      p = proc{
-        @message.sender = @privacy_lover
-        @message.recipient = @email_lover
-        @message.save
-      }
-      message = find_message_with_queue_and_regexp('/queue/GitoriousEmailNotifications', /email_delivery/) {p.call}
-      assert_equal(@privacy_lover.id, message['sender_id'])
-      assert_equal(@email_lover.id, message['recipient_id'])
-      assert_equal(@message.subject, message['subject'])
+      @message.sender = @privacy_lover
+      @message.recipient = @email_lover
+      @message.save
+
+      assert_published("/queue/GitoriousEmailNotifications", {
+                         "sender_id" => @privacy_lover.id,
+                         "recipient_id" => @email_lover.id,
+                         "subject" => @message.subject
+                       })
     end
     
     should 'not send a notification when the sender and recipient is the same person' do

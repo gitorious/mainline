@@ -20,8 +20,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
-
-  
   def new_repos(opts={})
     Repository.new({
       :name => "foo",
@@ -34,6 +32,10 @@ class RepositoryTest < ActiveSupport::TestCase
   def setup
     @repository = new_repos
     FileUtils.mkdir_p(@repository.full_repository_path, :mode => 0755)
+  end
+
+  def teardown
+    clear_message_queue
   end
 
   should_validate_presence_of :user_id, :name, :owner_id
@@ -406,37 +408,36 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  should "publishes a message on create and update" do
-    p = proc{
-      @repository.save!
-    }
-    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /create_git_repository/) {p.call}
-    assert_equal 'create_git_repository', message['command']
-    assert_equal 1, message['arguments'].size
-    assert_match(/#{@repository.real_gitdir}$/, message['arguments'].first)
-    assert_equal @repository.id, message['target_id'].to_i
-  end
-
-  should "publishes a message on clone" do
-    p = proc{
-      @repository.parent = repositories(:johans)
-      @repository.save!
-    }
-    message = find_message_with_queue_and_regexp('/queue/GitoriousRepositoryCreation', /clone_git_repository/) {p.call}
-    assert_equal "clone_git_repository", message['command']
-    assert_equal 2, message['arguments'].size
-    assert_match(/#{@repository.real_gitdir}$/, message['arguments'].first)
-    assert_equal @repository.id, message['target_id']
-  end
-
-  should "creates a notification on destroy" do
+  should "publishe a message on create and update" do
     @repository.save!
-    message = find_message_with_queue_and_regexp(
-      '/queue/GitoriousRepositoryDeletion',
-      /delete_git_repository/) { @repository.destroy }
-    assert_equal 'delete_git_repository', message['command']
-    assert_equal 1, message['arguments'].size
-    assert_match(/#{@repository.real_gitdir}$/, message['arguments'].first)
+
+    assert_published("/queue/GitoriousRepositoryCreation", {
+                       "command" => "create_git_repository",
+                       "target_id" => @repository.id,
+                       "arguments" => [@repository.real_gitdir]
+                     })
+  end
+
+  should "publishe a message on clone" do
+    @repository.parent = repositories(:johans)
+    @repository.save!
+
+    assert_published("/queue/GitoriousRepositoryCreation", {
+                       "command" => "clone_git_repository",
+                       "target_id" => @repository.id,
+                       "arguments" => [@repository.real_gitdir,
+                                       @repository.parent.real_gitdir]
+                     })
+  end
+
+  should "create a notification on destroy" do
+    @repository.save!
+    @repository.destroy
+
+    assert_published("/queue/GitoriousRepositoryDeletion", {
+                       "command" => "delete_git_repository",
+                       "arguments" => [@repository.real_gitdir]
+                     })
   end
 
   should "has one recent commit" do

@@ -30,4 +30,12 @@ class ActiveSupport::TestCase
 
     raise "#{message.inspect} was not published on queue #{queue} #{messages.inspect}"
   end
+
+  def assert_messages_published(queue, num)
+    assert_equal num, Gitorious::Messaging::TestAdapter.messages_on(queue).length
+  end
+
+  def clear_message_queue
+    Gitorious::Messaging::TestAdapter.clear
+  end
 end

@@ -18,34 +18,22 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require 'rubygems'
-require 'stomp'
-require 'json'
 require 'yaml'
+require 'gitorious/messaging'
 
 print "=> Syncing Gitorious... "
-
 RAILS_ENV = ENV['RAILS_ENV'] || "production"
 
+if !defined?(GitoriousConfig)
+  conf = YAML::load_file(File.join(File.dirname(__FILE__), "..", "..", "config", "gitorious.yml"))
+  GitoriousConfig = conf[RAILS_ENV]  
+  Gitorious::Messaging.configure(config)
+end
+
 class Publisher
-  def connect
-    stomp_server, stomp_port = stomp_server_and_port
-    @connection = Stomp::Connection.open(nil, nil, stomp_server, stomp_port, true)
-    @connected = true
-  end
-  
-  def stomp_server_and_port
-    gitorious_yaml = YAML::load_file(File.join(File.dirname(__FILE__), "..", "..", "config", "gitorious.yml"))[RAILS_ENV]
-    server = gitorious_yaml['stomp_server_address'] || 'localhost'
-    host = (gitorious_yaml['stomp_server_port'] || '61613').to_i
-    return [server, host]
-  end
+  include Gitorious::Messaging::Publisher
 
   def post_message(message)
-    connect unless @connected
-    if @connection.respond_to?(:publish)
-      @connection.publish '/queue/GitoriousPush', message, {'persistent' => true}
-    else
-      @connection.send '/queue/GitoriousPush', message, {'persistent' => true}
-    end
+    publish("/queue/GitoriousPush", message)
   end
 end

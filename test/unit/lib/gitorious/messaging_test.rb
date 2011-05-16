@@ -51,6 +51,13 @@ class GitoriousMessagingTest < ActiveSupport::TestCase
 
         assert_equal "injected: my_queue #1", publisher.queue("my_queue").to_s
       end
+
+      should "not reuse previously injected queue when name is different" do
+        publisher = DummyPublisher.new
+        queue = publisher.queue("my_queue")
+
+        assert_equal "injected: my_other #2", publisher.queue("my_other").to_s
+      end
     end
 
     context "publish" do

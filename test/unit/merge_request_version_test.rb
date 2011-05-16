@@ -15,8 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MergeRequestVersionTest < ActiveSupport::TestCase
@@ -186,9 +184,9 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     end
 
     should "send the deletion message to the message queue" do
-      connection = ActiveMessaging::Gateway.connection
-      connection.expects(:send)
       @version.schedule_branch_deletion
+
+      assert_messages_published "/queue/GitoriousMergeRequestVersionDeletion", 1
     end
   end
 
