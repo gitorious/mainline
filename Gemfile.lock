@@ -4,6 +4,7 @@ GEM
     activerecord (2.3.8)
       activesupport (= 2.3.8)
     activesupport (2.3.8)
+    acts-as-taggable-on (2.0.6)
     builder (3.0.0)
     chronic (0.3.0)
     daemons (1.1.0)
@@ -12,6 +13,7 @@ GEM
       gemcutter
       rubyforge
     eventmachine (0.12.10)
+    exception_notification (1.0.20090728)
     factory_girl (1.3.3)
     gemcutter (0.6.1)
     geoip (0.8.9)
@@ -30,6 +32,7 @@ GEM
     rack (1.0.1)
     rake (0.8.7)
     rdiscount (1.3.1.1)
+    revo-ssl_requirement (1.1.0)
     riddle (1.2.2)
     ruby-hmac (0.4.0)
     ruby-openid (2.1.8)
@@ -41,16 +44,19 @@ GEM
     stomp (1.1)
     validates_url_format_of (0.1.1)
       activerecord (~> 2.3.4)
+    will_paginate (2.3.15)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  acts-as-taggable-on
   builder
   chronic
   daemons
   diff-lcs
   echoe
+  exception_notification (~> 1.0.20090728)
   factory_girl (~> 1.3.0)
   geoip
   hoe
@@ -64,6 +70,7 @@ DEPENDENCIES
   rack (~> 1.0.1)
   rake
   rdiscount (= 1.3.1.1)
+  revo-ssl_requirement
   riddle
   ruby-hmac
   ruby-openid
@@ -72,3 +79,4 @@ DEPENDENCIES
   state_machine
   stomp (= 1.1)
   validates_url_format_of
+  will_paginate

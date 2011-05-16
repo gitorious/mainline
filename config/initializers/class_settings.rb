@@ -1,1 +1,1 @@
-TagList.delimiter = " "
+ActsAsTaggableOn::TagList.delimiter = " "

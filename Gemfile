@@ -21,6 +21,14 @@ gem "builder"
 gem "mysql", :platforms => :ruby
 gem "oauth"
 gem "validates_url_format_of"
+gem "acts-as-taggable-on"
+gem "will_paginate"
+
+# TODO: replace the lines below while upgrading to Rails 3
+# gem "exception_notification", :require => 'exception_notifier'
+gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'
+# gem "bartt-ssl_requirement" # TODO: use this with Rails 3
+gem "revo-ssl_requirement"
 
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18

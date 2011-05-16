@@ -40,7 +40,7 @@ class Group < ActiveRecord::Base
 
   before_validation :downcase_name
 
-  Paperclip::Attachment.interpolations['group_name'] = lambda{|attachment,style| attachment.instance.name}
+  Paperclip.interpolates('group_name'){|attachment,style| attachment.instance.name}
 
   avatar_local_path = '/system/group_avatars/:group_name/:style/:basename.:extension'
   has_attached_file :avatar,

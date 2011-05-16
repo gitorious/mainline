@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110223130355) do
+ActiveRecord::Schema.define(:version => 20110514122626) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -361,6 +361,9 @@ ActiveRecord::Schema.define(:version => 20110223130355) do
     t.integer  "taggable_id"
     t.string   "taggable_type"
     t.datetime "created_at"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context"
   end
 
   add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
