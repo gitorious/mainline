@@ -22,14 +22,14 @@
 # when the vendored ActiveMessaging plugin is removed.
 require File.join(Rails.root, "config/initializers/messaging")
 
-class SshKeyProcessor < ApplicationProcessor
+class SshKeyProcessor
   include Gitorious::Messaging::Consumer
-  consumes "/queue/SshKey"
+  consumes "/queue/GitoriousSshKeys"
 
   def on_message(message)
     command = message["command"]
     target_id = message["target_id"]
-    args = *message["arguments"]
+    args = message["arguments"]
 
     unless %w(add_to_authorized_keys delete_from_authorized_keys).include?(command)
       raise "Unknown command"

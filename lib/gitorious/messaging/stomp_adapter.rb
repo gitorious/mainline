@@ -48,8 +48,10 @@ module Gitorious::Messaging::StompAdapter
         consumer = Class.new(ApplicationProcessor)
         consumer.processor = self
         def consumer.name; "ActiveMessaging#{processor.name.split('::').last}"; end
+        def consumer.to_s; processor.name; end
 
         sym_name = Gitorious::Messaging::StompAdapter.queue_from_symbolic_name(queue)
+        raise "Unable to locate symbolic name for queue #{queue}. Check config/messaging.rb" if sym_name.blank?
         consumer.subscribes_to(sym_name, options)
       end
     end
@@ -59,14 +61,23 @@ module Gitorious::Messaging::StompAdapter
     mapping = ActiveMessaging::Gateway.named_destinations.each do |sym, q|
       return sym if q.value == queue
     end
+
+    nil
   end
 
   class ApplicationProcessor < ActiveMessaging::Processor
-    cattr_accessor :processor
     attr_reader :processor
 
     def initialize
       @processor = self.class.processor.new
+    end
+
+    def self.processor=(processor)
+      @processor = processor
+    end
+
+    def self.processor
+      @processor
     end
 
     def on_message(message)
@@ -119,5 +130,9 @@ module Gitorious::Messaging::StompAdapter
         connection.send(@queue, payload, "persistent" => true)
       end
     end
+  end
+
+  def ActiveMessaging.logger
+    Gitorious::Messaging.logger
   end
 end
