@@ -36,7 +36,8 @@ class SshKeyProcessorTest < ActiveSupport::TestCase
       :arguments => ['fofofo'],
       :target_id => @key.id}
     json = options.to_json
-    @processor.on_message(json)
+    @processor.consume(json)
+
     assert @key.reload.ready?
   end
   
@@ -48,6 +49,6 @@ class SshKeyProcessorTest < ActiveSupport::TestCase
       :arguments => ['fofofo']
     }
     json = options.to_json
-    @processor.on_message(json)
+    @processor.consume(json)
   end
 end

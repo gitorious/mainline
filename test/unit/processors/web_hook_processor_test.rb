@@ -45,9 +45,8 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
   context "Extracting the message" do
     setup do
-      assert_not_nil @repository
       @processor.expects(:notify_web_hooks).with(@payload)
-      @processor.on_message({
+      @processor.consume({
           :user => @user.login,
           :repository_id => @repository.id,
           :payload => @payload}.to_json)
@@ -73,13 +72,12 @@ class WebHookProcessorTest < ActiveSupport::TestCase
   end
   
   context "Notifying web hooks" do
-    
     should "post the payload once for each hook" do
-	    add_hook_url(@repository, "http://foo.com/")
-	    add_hook_url(@repository, "http://bar.com/")
-	    @processor.expects(:post_payload).twice.returns(successful_response)
-	    @processor.notify_web_hooks(@payload)
-	  end
+      add_hook_url(@repository, "http://foo.com/")
+      add_hook_url(@repository, "http://bar.com/")
+      @processor.expects(:post_payload).twice.returns(successful_response)
+      @processor.notify_web_hooks(@payload)
+    end
 
     should "do a HTTP POST to the hook url" do
       @url = "http://foo.bar/"
@@ -102,7 +100,7 @@ class WebHookProcessorTest < ActiveSupport::TestCase
     setup {
       add_hook_url(@repository, "http://access-denied.com/")
     }
-    
+
     should "handle timeouts" do
       @processor.expects(:post_payload).raises(Timeout::Error, "Connection timed out")
       @processor.notify_web_hooks(@payload)
@@ -123,17 +121,17 @@ class WebHookProcessorTest < ActiveSupport::TestCase
 
     should "log an error for an unknown repository" do
       assert_nothing_raised {
-        @processor.expects(:log_error)
+        @processor.logger.expects(:error)
         @processor.stubs(:notify_web_hooks)
-        @processor.on_message({:user => @user.login, :repository_id => "invalid repository name"}.to_json)
+        @processor.consume({:user => @user.login, :repository_id => "invalid repository name"}.to_json)
       }
     end
 
     should "log an error for an unknown user" do
       assert_nothing_raised {
-        @processor.expects(:log_error)
+        @processor.logger.expects(:error)
         @processor.stubs(:notify_web_hooks)
-        @processor.on_message({:user => "invalid login", :repository_id => @repository.id}.to_json)
+        @processor.consume({:user => "invalid login", :repository_id => @repository.id}.to_json)
       }
     end
   end

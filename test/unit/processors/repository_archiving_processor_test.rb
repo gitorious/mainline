@@ -20,7 +20,6 @@ require File.dirname(__FILE__) + '/../../test_helper'
 require "fileutils"
 
 class RepositoryArchivingProcessorTest < ActiveSupport::TestCase
-
   def setup
     @processor = RepositoryArchivingProcessor.new
     repo = repositories(:johans)
@@ -32,23 +31,24 @@ class RepositoryArchivingProcessorTest < ActiveSupport::TestCase
       :name => "ze_project-reponame",
       :format => "tar.gz",
     }
+
+    File.stubs(:exist?).with(@msg[:output_path]).returns(false)
   end
-  
+
   should "aborts early if the cached file already exists" do
-    File.expects(:exist?).with(@msg[:output_path]).returns(true)
+    File.stubs(:exist?).with(@msg[:output_path]).returns(true)
     Dir.expects(:chdir).never
-    @processor.on_message(@msg.to_json)
+    @processor.consume(@msg.to_json)
   end
-  
+
   should "generates an archived tarball in the work dir and moves it to the cache path" do
-    File.expects(:exist?).with(@msg[:output_path]).returns(false)
     Dir.expects(:chdir).yields(Dir.new("/tmp"))
     @processor.expects(:run).with("git archive --format=tar " +
       "--prefix=ze_project-reponame/ abc123 | gzip > #{@msg[:work_path]}").returns(nil)
-    
+
     @processor.expects(:run_successful?).returns(true)
     FileUtils.expects(:mv).with(@msg[:work_path], @msg[:output_path])
-    
-    @processor.on_message(@msg.to_json)
+
+    @processor.consume(@msg.to_json)
   end
 end

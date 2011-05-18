@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,15 +16,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class MergeRequestProcessor < ApplicationProcessor
-  subscribes_to :mirror_merge_request
+
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
+
+class MergeRequestProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousMergeRequestCreation"
 
   def on_message(message)
-    verify_connections!
-    json = ActiveSupport::JSON.decode(message)
-    merge_request_id = json['merge_request_id']
     # Find by id, as we're outside repository scope here 
-    merge_request = MergeRequest.find(merge_request_id)
+    merge_request = MergeRequest.find(message['merge_request_id'])
     if !merge_request.target_repository.has_tracking_repository?
       create_tracking_repository(merge_request)
     end

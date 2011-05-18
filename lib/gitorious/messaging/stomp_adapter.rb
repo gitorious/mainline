@@ -37,6 +37,59 @@ module Gitorious::Messaging::StompAdapter
   end
 
   module Consumer
+    def self.included(klass)
+      if klass != Gitorious::Messaging::Consumer
+        klass.send(:extend, Macros)
+      end
+    end
+
+    module Macros
+      def consumes(queue, options = {})
+        consumer = Class.new(ApplicationProcessor)
+        consumer.processor = self
+        def consumer.name; "ActiveMessaging#{processor.name.split('::').last}"; end
+
+        sym_name = Gitorious::Messaging::StompAdapter.queue_from_symbolic_name(queue)
+        consumer.subscribes_to(sym_name, options)
+      end
+    end
+  end
+
+  def self.queue_from_symbolic_name(queue)
+    mapping = ActiveMessaging::Gateway.named_destinations.each do |sym, q|
+      return sym if q.value == queue
+    end
+  end
+
+  class ApplicationProcessor < ActiveMessaging::Processor
+    cattr_accessor :processor
+    attr_reader :processor
+
+    def initialize
+      @processor = self.class.processor.new
+    end
+
+    def on_message(message)
+      processor.consume(message)
+    rescue Exception => err
+      on_error(err)
+    end
+
+    def on_error(err)
+      notify_on_error(err)
+      logger.error "#{processor.class.name}::on_error: #{err.class.name} raised: " + err.message
+
+      if (err.kind_of?(StandardError))
+        raise ActiveMessaging::AbortMessageException
+      else
+        raise err
+      end
+    end
+
+    protected
+    def notify_on_error(err)
+      Mailer.deliver_message_processor_error(processor, err)
+    end
   end
 
   class StompConnection

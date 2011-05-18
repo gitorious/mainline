@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,24 +18,28 @@
 #++
 require "fileutils"
 
-class RepositoryArchivingProcessor < ApplicationProcessor
-  subscribes_to :archive_repo
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
+
+class RepositoryArchivingProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousRepositoryArchiving"
 
   def on_message(message)
-    msg = ActiveSupport::JSON.decode(message)
+    return if File.exist?(message["output_path"])
     
-    return if File.exist?(msg["output_path"])
-    
-    Dir.chdir(msg["full_repository_path"]) do
-      case msg["format"]
+    Dir.chdir(message["full_repository_path"]) do
+      case message["format"]
       when "tar.gz"
-        run("git archive --format=tar --prefix=#{e(msg['name'] || msg['commit_sha'])}/ " +
-          "#{e(msg['commit_sha'])} | gzip > #{e(msg['work_path'])}")
+        run("git archive --format=tar --prefix=#{e(message['name'] || message['commit_sha'])}/ " +
+          "#{e(message['commit_sha'])} | gzip > #{e(message['work_path'])}")
       end
     end
     
     if run_successful?
-      FileUtils.mv(msg["work_path"], msg["output_path"])
+      FileUtils.mv(message["work_path"], message["output_path"])
     end
   end
   

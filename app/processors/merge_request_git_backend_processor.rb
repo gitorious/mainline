@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,38 +16,42 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class MergeRequestGitBackendProcessor < ApplicationProcessor
 
-  subscribes_to :merge_request_backend_updates
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
+
+class MergeRequestGitBackendProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousMergeRequestBackend"
 
   def on_message(message)
-    verify_connections!
-    @body = ActiveSupport::JSON.decode(message)
+    @message = message
     send("do_#{action}")
   end
 
   def action
-    @body["action"].to_sym
+    @message["action"]
   end
 
   def source_repository
-    @source_repository ||= Repository.find(@body["source_repository_id"])
+    @source_repository ||= Repository.find(@message["source_repository_id"])
   end
 
   def target_repository
-    @target_repository ||= Repository.find(@body["target_repository_id"])
+    @target_repository ||= Repository.find(@message["target_repository_id"])
   end
 
   def delete_target_repository_ref
     source_repository.git.git.push({:timeout => false},
-      target_repository.full_repository_path,
-      ":#{@body['merge_branch_name']}")
+      target_repository.full_repository_path, ":#{@message['merge_branch_name']}")
   end
 
   private
   def do_delete
-    logger.info("Deleting tracking branch #{@body['merge_branch_name']} for merge request " +
-      "in target repository #{@body['target_name']}")
+    logger.info("Deleting tracking branch #{@message['merge_branch_name']} for merge request " +
+      "in target repository #{@message['target_name']}")
     begin
       delete_target_repository_ref
     rescue Grit::NoSuchPathError => e

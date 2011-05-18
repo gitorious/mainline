@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,21 +17,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class WebHookProcessor < ApplicationProcessor
-  subscribes_to :web_hook_notifications
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
+
+class WebHookProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousPostReceiveWebHook"
   attr_accessor :repository, :user
 
   def on_message(message)
-    json = JSON.parse(message)
     begin
-      self.user = User.find_by_login!(json["user"])
-      self.repository = Repository.find(json["repository_id"])
-      notify_web_hooks(json["payload"])#.with_indifferent_access)
+      self.user = User.find_by_login!(message["user"])
+      self.repository = Repository.find(message["repository_id"])
+      notify_web_hooks(message["payload"])
     rescue ActiveRecord::RecordNotFound => e
-      log_error(e.message)
+      logger.error(e.message)
     end
   end
-  
+
   def notify_web_hooks(payload)
     repository.hooks.each do |hook|
       begin
@@ -64,5 +70,4 @@ class WebHookProcessor < ApplicationProcessor
   def post_payload(hook, payload)
     Net::HTTP.post_form(URI.parse(hook.url), {"payload" => payload.to_json})
   end
-
 end

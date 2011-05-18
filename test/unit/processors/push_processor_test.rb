@@ -20,12 +20,12 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class PushProcessorTest < ActiveSupport::TestCase
-
   def setup
     @processor = PushProcessor.new
   end
 
-  should_subscribe_to :push
+  #should_subscribe_to :push
+  should_consume "/queue/GitoriousPush"
 
   context "Parsing" do
     setup do
@@ -36,7 +36,7 @@ class PushProcessorTest < ActiveSupport::TestCase
         :username => @user.login,
         :message => "#{NULL_SHA} #{SHA} refs/heads/master"
       }.to_json
-      @processor.on_message(json)
+      @processor.consume(json)
     end
 
     should "recognize the user who pushed" do
@@ -68,7 +68,7 @@ class PushProcessorTest < ActiveSupport::TestCase
     
     should "be re-established" do
       @processor.expects(:verify_connections!)
-      @processor.on_message(@json)
+      @processor.consume(@json)
     end
   end
 
@@ -78,9 +78,9 @@ class PushProcessorTest < ActiveSupport::TestCase
       @user = @repository.user
       @merge_request = merge_requests(:moes_to_johans)
       @payload = {
-        :gitdir => @repository.hashed_path,
-        :username => @user.login,
-        :message => "#{SHA} #{OTHER_SHA} refs/merge-requests/#{@merge_request.sequence_number}"
+        "gitdir" => @repository.hashed_path,
+        "username" => @user.login,
+        "message" => "#{SHA} #{OTHER_SHA} refs/merge-requests/#{@merge_request.sequence_number}"
       }
     end
 
@@ -88,13 +88,13 @@ class PushProcessorTest < ActiveSupport::TestCase
       @processor.expects(:process_merge_request)
       @processor.expects(:process_push).never
       @processor.expects(:process_wiki_update).never
-      @processor.on_message(@payload.to_json)
+      @processor.consume(@payload.to_json)
     end
 
     should "update merge request" do
       @processor.stubs(:merge_request).returns(@merge_request)
       @merge_request.expects(:update_from_push!)
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
       @processor.process_merge_request
     end
 
@@ -102,15 +102,15 @@ class PushProcessorTest < ActiveSupport::TestCase
       @payload[:username] = nil
       @processor.stubs(:merge_request).returns(@merge_request)
       @merge_request.expects(:update_from_push!)
-      @processor.on_message(@payload.to_json)
+      @processor.consume(@payload.to_json)
     end
 
     should "not process if action is delete" do
-      @payload[:message] = "#{SHA} #{NULL_SHA} refs/merge-requests/19"
+      @payload["message"] = "#{SHA} #{NULL_SHA} refs/merge-requests/19"
       @processor.stubs(:merge_request).returns(@merge_request)
 
       assert_nothing_raised do
-        @processor.on_message(@payload.to_json)
+        @processor.consume(@payload.to_json)
       end
     end
 
@@ -124,9 +124,9 @@ class PushProcessorTest < ActiveSupport::TestCase
       @repository = repositories(:johans)
       @user = @repository.user
       @payload = {
-        :gitdir => @repository.hashed_path,
-        :username => @user.login,
-        :message => "#{SHA} #{OTHER_SHA} refs/heads/master"
+        "gitdir" => @repository.hashed_path,
+        "username" => @user.login,
+        "message" => "#{SHA} #{OTHER_SHA} refs/heads/master"
       }
       PushEventLogger.any_instance.stubs(:calculate_commit_count).returns(2)
     end
@@ -135,35 +135,35 @@ class PushProcessorTest < ActiveSupport::TestCase
       @processor.expects(:process_push)
       @processor.expects(:process_merge_request).never
       @processor.expects(:process_wiki_update).never
-      @processor.on_message(@payload.to_json)
+      @processor.consume(@payload.to_json)
     end
 
     should "log push event" do
       PushEventLogger.any_instance.stubs(:create_push_event?).returns(true)
       PushEventLogger.any_instance.expects(:create_push_event)
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
       @processor.process_push
     end
 
     should "log meta event" do
       PushEventLogger.any_instance.stubs(:create_meta_event?).returns(true)
       PushEventLogger.any_instance.expects(:create_meta_event)
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
       @processor.process_push
     end
 
     should "register push on repository" do
       @processor.stubs(:repository).returns(@repository)
       @repository.expects(:register_push)
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
       @processor.process_push
     end
 
     should "fail if username is nil" do
-      @payload[:username] = nil
+      @payload["username"] = nil
       @processor.stubs(:repository).returns(@repository)
       @repository.expects(:register_push).never
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
 
       assert_raise RuntimeError do
         @processor.process_push
@@ -176,9 +176,9 @@ class PushProcessorTest < ActiveSupport::TestCase
       @repository = repositories(:johans_wiki)
       @user = @repository.user
       @payload = {
-        :gitdir => @repository.hashed_path,
-        :username => @user.login,
-        :message => "#{SHA} #{OTHER_SHA} refs/heads/master"
+        "gitdir" => @repository.hashed_path,
+        "username" => @user.login,
+        "message" => "#{SHA} #{OTHER_SHA} refs/heads/master"
       }
     end
 
@@ -186,19 +186,19 @@ class PushProcessorTest < ActiveSupport::TestCase
       @processor.expects(:process_wiki_update)
       @processor.expects(:process_push).never
       @processor.expects(:process_merge_request).never
-      @processor.on_message(@payload.to_json)
+      @processor.consume(@payload.to_json)
     end
 
     should "log wiki events" do
       Gitorious::Wiki::UpdateEventLogger.any_instance.expects(:create_wiki_events).returns(true)
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
       @processor.process_wiki_update
     end
 
     should "fail if username is nil" do
-      @payload[:username] = nil
+      @payload["username"] = nil
       Gitorious::Wiki::UpdateEventLogger.any_instance.expects(:create_wiki_events).returns(true).never
-      @processor.parse_message(@payload.to_json)
+      @processor.load_message(@payload)
 
       assert_raise RuntimeError do
         @processor.process_wiki_update
@@ -210,12 +210,14 @@ class PushProcessorTest < ActiveSupport::TestCase
     setup do
       @repository = repositories(:johans)
       @user = @repository.user
-      @json = {
-        :gitdir => @repository.hashed_path,
-        :username => @user.login,
-        :message => "#{SHA} #{OTHER_SHA} refs/heads/master"
-      }.to_json
-      @processor.parse_message(@json)
+
+      message = {
+        "gitdir" => @repository.hashed_path,
+        "username" => @user.login,
+        "message" => "#{SHA} #{OTHER_SHA} refs/heads/master"
+      }
+
+      @processor.load_message(message)
       PushEventLogger.any_instance.stubs(:calculate_commit_count).returns(2)
     end
 

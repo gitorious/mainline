@@ -16,14 +16,18 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class PushProcessor < ApplicationProcessor
-  subscribes_to :push
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
 
+class PushProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousPush"
   attr_reader :user, :repository, :spec
 
-  def on_message(payload)
-    verify_connections!
-    parse_message(payload)
+  def on_message(message)
+    load_message(message)
     log_message("Got payload: #{spec} from user #{user && user.login}")
 
     if spec.merge_request?
@@ -64,11 +68,10 @@ class PushProcessor < ApplicationProcessor
     logger.create_wiki_events
   end
 
-  def parse_message(payload)
-    values = JSON.parse(payload)
-    @user = User.find_by_login(values["username"])
-    @repository = Repository.find_by_hashed_path(values["gitdir"])
-    @spec = PushSpecParser.new(*values["message"].split(" "))
+  def load_message(message)
+    @user = User.find_by_login(message["username"])
+    @repository = Repository.find_by_hashed_path(message["gitdir"])
+    @spec = PushSpecParser.new(*message["message"].split(" "))
   end
 
   private

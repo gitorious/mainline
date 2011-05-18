@@ -72,4 +72,61 @@ class GitoriousMessagingTest < ActiveSupport::TestCase
       end
     end
   end
+
+  class DummyConsumer
+    include Gitorious::Messaging::Consumer
+    def on_message(message); end
+  end
+
+  context "consumer" do
+    should "pass JSON parsed message to on_message" do
+      consumer = DummyConsumer.new
+      consumer.expects(:on_message).with({ "id" => 42 })
+
+      consumer.consume('{"id": 42}')
+    end
+
+    should "pass untampered hash message to on_message" do
+      consumer = DummyConsumer.new
+      consumer.expects(:on_message).with({ :id => 42 })
+
+      consumer.consume({ :id => 42 })
+    end
+
+    should "call on_error if JSON parsing the message fails" do
+      consumer = DummyConsumer.new
+      consumer.expects(:on_error).with do |err|
+        err.class == JSON::ParserError
+      end
+
+      consumer.consume("{id}")
+    end
+
+    should "call on_error if on_message raises" do
+      consumer = DummyConsumer.new
+      consumer.stubs(:on_message).raises(
+        Gitorious::Messaging::AbortMessageException.new("Oops"))
+
+      consumer.expects(:on_error).with do |err|
+        err.class == Gitorious::Messaging::AbortMessageException &&
+          err.message == "Oops"
+      end
+
+      consumer.consume({ :id => 42 })
+    end
+
+    should "verify that the ActiveRecord connection is alive" do
+      ActiveRecord::Base.expects(:verify_active_connections!)
+
+      consumer = DummyConsumer.new
+      consumer.verify_connections!
+    end
+
+    should "verify that the ActiveRecord connection is alive on message" do
+      ActiveRecord::Base.expects(:verify_active_connections!)
+
+      consumer = DummyConsumer.new
+      consumer.consume('{"id": 42}')
+    end
+  end
 end

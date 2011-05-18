@@ -24,7 +24,7 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
   def setup
     @processor = RepositoryCreationProcessor.new    
     @repository = repositories(:johans)
-    
+
     @clone = mock
     @clone.stubs(:id).returns(99)
     @clone.stubs(:ready).returns(true)
@@ -32,7 +32,7 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
     @clone.expects(:save!).once
     Repository.stubs(:find_by_id).returns(@clone)
   end
-  
+
   should "supplies two repos when cloning an existing repository" do
     Repository.expects(:clone_git_repository).with('foo', 'bar')
     options = {
@@ -41,10 +41,10 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
       :command => 'clone_git_repository', 
       :arguments => ['foo', 'bar']}
     message = options.to_json
-    @processor.on_message(message)
+    @processor.consume(message)
   end
-  
- should "supplies one repo when creating a new repo" do
+
+  should "supplies one repo when creating a new repo" do
     Repository.expects(:create_git_repository).with('foo')
     options = {
       :target_class => 'Repository', 
@@ -52,7 +52,6 @@ class RepositoryCreationProcessorTest < ActiveSupport::TestCase
       :command => 'create_git_repository', 
       :arguments => ['foo']}
     message = options.to_json
-    @processor.on_message(message)
+    @processor.consume(message)
   end
-  
 end

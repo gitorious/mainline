@@ -20,13 +20,12 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
-  
   def setup
     @processor = MergeRequestGitBackendProcessor.new
     @merge_request = merge_requests(:moes_to_johans)
     @repository = @merge_request.target_repository
   end
-  
+
   def teardown
     @processor = nil
   end
@@ -51,12 +50,12 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
       @source_git.expects(:push).with({:timeout => false},
         @merge_request.target_repository.full_repository_path,
         ":#{@merge_request.merge_branch_name}")
-      @processor.on_message(@msg.to_json)
+      @processor.consume(@msg.to_json)
     end
 
     should "handle non-existing target gits" do
       assert_nothing_raised do
-        @processor.on_message(@msg.to_json)
+        @processor.consume(@msg.to_json)
       end
     end
   end
@@ -65,9 +64,9 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
     should "understand the delete command" do
       msg = {:merge_request_id => @merge_request.to_param, :action => "delete"}
       @processor.expects(:do_delete).once
-      @processor.on_message(msg.to_json)
-      assert_equal :delete, @processor.action
+      @processor.consume(msg.to_json)
+
+      assert_equal "delete", @processor.action
     end
-    
   end
 end

@@ -20,7 +20,6 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class MergeRequestProcessorTest < ActiveSupport::TestCase
-
   def setup
     @processor = MergeRequestProcessor.new
     @merge_request = merge_requests(:moes_to_johans_open)
@@ -39,14 +38,14 @@ class MergeRequestProcessorTest < ActiveSupport::TestCase
       @tracking_repo.real_gitdir,
       @merge_request.target_repository.real_gitdir, :skip_hooks => true).once
     @merge_request.expects(:'push_to_tracking_repository!').with(true).once
-    @processor.on_message(message)
+    @processor.consume(message)
   end
 
   should 'create a new branch from the merge request' do
     message = {'merge_request_id' => @merge_request.id}.to_json
-    @target_repo.expects(:'has_tracking_repository?').once.returns(true)
+    @target_repo.expects(:has_tracking_repository?).once.returns(true)
     @processor.expects(:create_tracking_repository).never
-    @merge_request.expects(:'push_to_tracking_repository!').once
-    @processor.on_message(message)
+    @merge_request.expects(:push_to_tracking_repository!).once
+    @processor.consume(message)
   end
 end

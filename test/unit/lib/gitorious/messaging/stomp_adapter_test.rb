@@ -19,11 +19,6 @@ require File.dirname(__FILE__) + '/../../../../messaging_test_helper'
 require "gitorious/messaging"
 require "gitorious/messaging/stomp_adapter"
 
-class StompPublisher
-  include Gitorious::Messaging::Publisher
-  include Gitorious::Messaging::StompAdapter::Publisher
-end
-
 class MessagingStompAdapterTest < ActiveSupport::TestCase
   def setup
     @publisher = StompPublisher.new
@@ -33,6 +28,11 @@ class MessagingStompAdapterTest < ActiveSupport::TestCase
     connection = mock
     connection.stubs(:publish)
     connection
+  end
+
+  class StompPublisher
+    include Gitorious::Messaging::Publisher
+    include Gitorious::Messaging::StompAdapter::Publisher
   end
 
   context "publishing messages" do
@@ -82,6 +82,91 @@ class MessagingStompAdapterTest < ActiveSupport::TestCase
       Stomp::Connection.expects(:open).returns(connection)
 
       @publisher.publish("/queue/GitoriousRepositoryCreation", { "id" => 42 })
+    end
+  end
+
+  class StompConsumer
+    include Gitorious::Messaging::Consumer
+    include Gitorious::Messaging::StompAdapter::Consumer
+    attr_reader :messages
+
+    def on_message(message)
+      (@messages ||= []) << message
+    end
+  end
+
+  context "subscribing to queues" do
+    should "pass dynamically created processor class to ActiveMessaging" do
+      ActiveMessaging::Gateway.expects(:subscribe_to).with do |dest, klass, headers|
+        dest == :push && klass.name == "ActiveMessagingStompConsumer" &&
+          klass.superclass == Gitorious::Messaging::StompAdapter::ApplicationProcessor &&
+          headers == {}
+      end
+
+      StompConsumer.consumes("/queue/GitoriousPush")
+    end
+  end
+
+  context "consuming messages" do
+    setup do
+      processor_klass = nil
+
+      ActiveMessaging::Gateway.stubs(:subscribe_to).with do |dest, klass, headers|
+        processor_klass = klass 
+      end
+
+      StompConsumer.consumes("/queue/GitoriousPush")
+      @processor = processor_klass.new
+    end
+
+    should "include processor methods in dynamically created class" do
+      @processor.on_message('{"id": 42}')
+
+      assert_equal [{ "id" => 42 }], @processor.processor.messages
+    end
+
+    should "have a logger attribute" do
+      assert_not_nil @processor.processor.logger
+      assert_equal Gitorious::Messaging.logger, @processor.processor.logger
+    end
+
+    should "send email when message consumption fails" do
+      Mailer.expects(:deliver_message_processor_error).with do |processor, err|
+        StompConsumer === processor && err.message == "Oh noes"
+      end
+
+      @processor.processor.stubs(:on_message).raises(StandardError.new("Oh noes"))
+
+      begin
+        @processor.on_message({})
+      rescue ActiveMessaging::AbortMessageException
+        # It's OK
+      end
+    end
+
+    should "raise ActiveMessaging::AbortMessageException for StandardError" do
+      @processor.processor.stubs(:on_message).raises(ArgumentError.new)
+
+      assert_raise ActiveMessaging::AbortMessageException do
+        @processor.on_message({})
+      end
+    end
+
+    should "re-raise non-StandardError errors" do
+      @processor.processor.stubs(:on_message).raises(NotImplementedError.new)
+
+      assert_raise NotImplementedError do
+        @processor.on_message({})
+      end
+    end
+
+    should "handle errors in processor instance if on_error is defined" do
+      err = StandardError.new("Oh damnit")
+
+      @processor.processor.expects(:on_error).with(err)
+      @processor.processor.stubs(:on_message).raises(err)
+
+      @processor.on_message("{}")
     end
   end
 end

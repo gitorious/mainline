@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,27 +16,28 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class MergeRequestVersionProcessor < ApplicationProcessor
 
-  subscribes_to :merge_request_version_deletion
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
+
+class MergeRequestVersionProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousMergeRequestVersionDeletion"
 
   def on_message(message)
-    parse(message)
+    @message = message
     delete_branch
   end
 
   def delete_branch
     begin
       source_repository.git.git.push({:timeout => false},
-        tracking_repository_path,
-        ":#{target_branch_name}")
+        tracking_repository_path, ":#{target_branch_name}")
     rescue 
-      log_error("Unable to remove branch #{target_branch_name} in #{tracking_repository_path}")
+      logger.error("Unable to remove branch #{target_branch_name} in #{tracking_repository_path}")
     end
-  end
-
-  def parse(message)
-    @message = JSON.parse(message)
   end
 
   def tracking_repository_path
@@ -53,9 +55,4 @@ class MergeRequestVersionProcessor < ApplicationProcessor
   def source_repository
     Repository.find(@message["source_repository_id"])
   end
-
-  def log_error(message)
-    logger.error(message)
-  end
-      
 end

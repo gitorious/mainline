@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,14 +16,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class RepositoryDeletionProcessor < ApplicationProcessor
 
-  subscribes_to :destroy_repo
+# This is required because ActiveMessaging actually forcefully loads
+# all processors before initializers are run. Hopefully this can go away
+# when the vendored ActiveMessaging plugin is removed.
+require File.join(Rails.root, "config/initializers/messaging")
+
+class RepositoryDeletionProcessor
+  include Gitorious::Messaging::Consumer
+  consumes "/queue/GitoriousRepositoryDeletion"
 
   def on_message(message)
-    message_hash = ActiveSupport::JSON.decode(message)
-    target_class  = message_hash['target_class']
-    arguments     = message_hash['arguments']
+    target_class  = message['target_class']
+    arguments     = message['arguments']
     logger.info("Processor deleting Git repository #{arguments.inspect}")
     Repository.delete_git_repository(*arguments)
   end

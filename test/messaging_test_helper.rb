@@ -38,4 +38,13 @@ class ActiveSupport::TestCase
   def clear_message_queue
     Gitorious::Messaging::TestAdapter.clear
   end
+
+  def self.should_consume(queue_name)
+    should "Consume messages from #{queue_name}" do
+      klass = self.class.name.sub(/Test$/, "").constantize
+      consumer = Gitorious::Messaging::TestAdapter.consumers_for(queue_name).find { |c| c == klass }
+
+      assert_not_nil consumer, "#{klass.name} does not consume messages from #{queue_name}"
+    end
+  end
 end

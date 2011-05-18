@@ -41,6 +41,9 @@ module Gitorious::Messaging::ResqueAdapter
     end
   end
 
+  module Consumer
+  end
+
   class ResqueQueue
     attr_reader :processor
 
