@@ -24,7 +24,13 @@ module Gitorious
     # Specify which search engine to use. This will make available methods for configuring searchable
     # fields: make_indexed in ActiveRecord::Base subclasses
     def self.use(adapter)
-      ActiveRecord::Base.extend(adapter)
+      @search_adapter = adapter
+    end
+
+    # When including Gitorious::Search into a class, we provide +make_searchable+ to the class,
+    # which relies on this being implemented in the module providing search
+    def self.included(klass)
+      klass.extend(@search_adapter)
     end
     
     module UltrasphinxAdapter

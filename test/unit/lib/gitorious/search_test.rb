@@ -24,6 +24,7 @@ class SearchTest < ActiveSupport::TestCase
 
     # A sample indexed model
     class Searchable < ActiveRecord::Base
+      include Gitorious::Search
       make_searchable(:fields => {})
     end
 
@@ -31,4 +32,16 @@ class SearchTest < ActiveSupport::TestCase
       assert_not_nil Ultrasphinx::MODEL_CONFIGURATION["SearchTest::Searchable"]
     end    
   end
+
+
+  # use: setter "driver"
+  # AR::B.include => mikser inn metodene
+
+  #  :include => [{:association_name => "user", :field => "login", :as => "commented_by"}]
+  # generates: commented_by: johan will return comments by johan
+
+  # in Solr:
+  # text :commented_by do
+  #   user.login
+  # end
 end

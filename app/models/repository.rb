@@ -28,6 +28,7 @@ class Repository < ActiveRecord::Base
   include ActiveMessaging::MessageSender
   include RecordThrottling
   include Watchable
+  include Gitorious::Search
 
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1

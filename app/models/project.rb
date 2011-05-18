@@ -28,6 +28,7 @@ class Project < ActiveRecord::Base
   include RecordThrottling
   include UrlLinting
   include Watchable
+  include Gitorious::Search
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
