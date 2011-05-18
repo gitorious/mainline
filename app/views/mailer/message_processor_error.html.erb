@@ -1,7 +1,6 @@
 An exception occured in <%= PP.pp(@processor, '') -%>!
 
-<%= @message %>
-
+<%= "#{@message}\n\n" if @message -%>
 <%= @error.class.name -%>: <%= @error.message %>
 
 <%= @error.backtrace.join("\n\t") %>

@@ -78,7 +78,7 @@ class Mailer < ActionMailer::Base
     @body[:url] = confirm_user_alias_url(email.user, email.confirmation_code)
   end
 
-  def message_processor_error(processor, err, message_body)
+  def message_processor_error(processor, err, message_body = nil)
       subject     "[Gitorious Processor] fail in #{processor.class.name}"
       from        "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
       recipients  GitoriousConfig['exception_notification_emails']
