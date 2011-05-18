@@ -52,20 +52,15 @@ class Project < ActiveRecord::Base
 
   attr_protected :owner_id, :user_id, :site_id
 
-  make_searchable :fields => ["title", "description", "slug"],
-    :concatenate => [
-      { :class_name => 'Tag',
-        :field => 'name',
-        :as => 'category',
-        :association_sql => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +
-                            "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id"
-      }],
-    :include => [{
-      :association_name => "user",
-      :field => "login",
-      :as => "user"
-    }]
-
+  is_indexed do |s|
+    s.index :title
+    s.index :description
+    s.index :slug
+    s.index "user#login", :as => "user"
+    s.collect(:name, :from => "Tag", :as => "category",
+      :using => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +
+      "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id")    
+  end
 
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id

@@ -25,13 +25,105 @@ class SearchTest < ActiveSupport::TestCase
     # A sample indexed model
     class Searchable < ActiveRecord::Base
       include Gitorious::Search
-      make_searchable(:fields => {})
+      is_indexed(:fields => {})
     end
 
     should "call into Ultrasphinx" do
       assert_not_nil Ultrasphinx::MODEL_CONFIGURATION["SearchTest::Searchable"]
     end    
   end
+
+  context "Specifying associations" do
+    should "index a single attribute" do
+      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+        h.index :body
+      end
+      assert_equal 1, helper.arguments.size
+      arg = helper.arguments.first
+      assert_equal :fields, arg.method_name
+      assert_equal :body, arg.arguments
+    end
+
+    should "index by association" do
+      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+        h.index "user#login", :as => :commented_by
+      end
+
+      arg = helper.arguments.first
+      assert_equal :include, arg.method_name
+      assert_equal({:association_name => "user", :field => "login", :as => "commented_by"}, arg.arguments)
+    end
+
+    should "group options" do
+      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+        h.index :body
+        h.index :name
+        h.index "user#login", :as => :commented_by
+      end
+
+      assert_equal [:body, :name], helper.options[:fields]
+      assert_equal [{:association_name => "user", :field => "login", :as => "commented_by"}], helper.options[:include]
+    end
+
+    should "support conditions" do
+      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+        h.conditions "name IS NOT NULL"
+      end
+      assert_equal "name IS NOT NULL", helper.options[:conditions]
+    end
+
+    should "support fields with a custom name" do
+      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+        h.index :status_tag, :as => "status"
+        h.index :name
+      end
+      assert_equal([{:field => "status_tag", :as => "status"}, :name], helper.options[:fields])
+    end
+
+    should "support concatenation" do
+      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+        h.collect(
+          :name, :from => "Tag", :as => "category",
+          :using => "LEFT OUTER JOIN taggings on taggings.id=project.id")
+      end
+      a = helper.options[:concatenate].first
+      assert_equal "name", a[:field]
+      assert_equal "Tag", a[:class_name]
+      assert_equal "category", a[:as]
+    end
+
+  end
+
+  context "Calling Ultrasphinx" do
+    
+    class SampleSearchable < ActiveRecord::Base
+      include Gitorious::Search
+    end
+    
+    should "handle a single field" do
+      SampleSearchable.expects(:is_indexed_ultrasphinx).with(:fields => [:body])
+      SampleSearchable.is_indexed {|s| s.index(:body)}
+    end
+
+    should "handle associations" do
+      SampleSearchable.expects(:is_indexed_ultrasphinx).with(:include => [{:association_name => "user", :field => "login", :as => "commented_by"}])
+      SampleSearchable.is_indexed {|s| s.index("user#login", :as => :commented_by)}
+    end
+
+    should "handle both fields and associations" do
+      SampleSearchable.expects(:is_indexed_ultrasphinx).with(
+        :fields => [:body],
+        :include => [
+                     {:association_name => "user",
+                       :field => "login",
+                       :as => "commented_by"}])
+      SampleSearchable.is_indexed do |s|
+        s.index :body
+        s.index "user#login", :as => :commented_by
+      end
+    end
+  end
+
 
 
   # use: setter "driver"

@@ -97,13 +97,13 @@ class Repository < ActiveRecord::Base
 
   named_scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
-  make_searchable :fields => ["name", "description"],
-    :include => [{
-      :association_name => "project",
-      :field => "slug",
-      :as => "project"
-    }], :conditions => "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
-
+  is_indexed do |s|
+    s.index :name
+    s.index :description
+    s.index "project#slug", :as => :project
+    s.conditions "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
+  end
+  
   def self.human_name
     I18n.t("activerecord.models.repository")
   end

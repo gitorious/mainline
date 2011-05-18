@@ -30,16 +30,121 @@ module Gitorious
     # When including Gitorious::Search into a class, we provide +make_searchable+ to the class,
     # which relies on this being implemented in the module providing search
     def self.included(klass)
+      
+      # Keep a reference to the unobtrusive is_indexed method from Ultrasphinx
+      # The Ultrasphinx rake tasks greps files for calls to is_indexed
+      # so we want to keep this
+      klass.instance_eval do
+        alias :is_indexed_ultrasphinx :is_indexed
+      end
+      
       klass.extend(@search_adapter)
     end
     
     module UltrasphinxAdapter
 
-      # Backed by Ultrasphinx' is_indexed method
-      def make_searchable(options = {})
-        is_indexed(options)
+      # This is where we get to work. Example:
+      # is_indexed do |search|
+      #   search.index :name
+      #   search.index "user#login", :as => :username
+      #   search.conditions => "status != 'rejected'"
+      #   search.index :status_tag, :as => "status"
+      #   search.collect :name, :from => "Tag", :as => "category", :using => "LEFT OUTER JOIN other TABLE ON..."
+      # end
+      
+      def is_indexed(options={})
+        helper = UltrasphinxSearchHelper.new do |h|
+          yield h if block_given?
+        end
+        options = helper.options
+        is_indexed_ultrasphinx(options)
       end
     end
-    
+
+    class UltrasphinxSearchHelper
+      def initialize
+        yield self
+      end
+
+      def options
+        fields = arguments.select{|arg| !arg.association?}.map(&:arguments)
+        associations = arguments.select(&:association?).map(&:arguments)
+        result = {}
+        result[:fields] = fields unless fields.blank?
+        result[:include] = associations unless associations.blank?
+        result[:conditions] = @conditions if @conditions
+        result[:concatenate] = concatenations.map(&:arguments) unless concatenations.blank?
+        result
+      end
+
+      def index(name, options={})
+        arguments << Argument.new(name,options)
+      end
+
+      def collect(field, options)
+        concatenations << Concatenation.new(field, options)
+      end
+
+      def concatenations
+        @concatenations ||= []
+      end
+
+      def arguments
+        @arguments ||= []
+      end
+
+      def conditions(conditions)
+        @conditions = conditions
+      end
+
+      class Concatenation
+        def initialize(field, options)
+          @field = field
+          @options = options
+        end
+
+        def arguments
+          {
+            :class_name => @options[:from],
+            :field => @field.to_s,
+            :as => @options[:as],
+            :association_sql => @options[:using]
+          }
+        end
+      end
+      
+      class Argument
+        def initialize(name,options)
+          @name = name
+          @options = options
+        end
+
+        def method_name
+          association? ? :include : :fields
+        end
+
+        def association?
+          String === @name
+        end
+
+        def arguments
+          association? ? association_arguments : field_arguments
+        end
+
+        def association_arguments
+          name, method = @name.split("#")
+          result = {:association_name => name, :field => method, :as => @options[:as].to_s}
+          result
+        end
+
+        def field_arguments
+          if @options[:as]
+            {:field => @name.to_s, :as => @options[:as].to_s}
+          else
+            @name
+          end
+        end
+      end
+    end
   end
 end
