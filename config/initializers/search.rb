@@ -1,2 +1,2 @@
 require "gitorious/search"
-Gitorious::Search.use(Gitorious::Search::UltrasphinxAdapter)
+Gitorious::Search.use(Gitorious::Search::Ultrasphinx::Adapter)

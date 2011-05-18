@@ -17,29 +17,27 @@
 #++
 
 module Gitorious
-
-  # A thin layer on top of search engine backends
   module Search
+    module Ultrasphinx
+      module Adapter
 
-    # Specify which search engine to use. This will make available methods for configuring searchable
-    # fields: make_indexed in ActiveRecord::Base subclasses
-    def self.use(adapter)
-      @search_adapter = adapter
-    end
-
-    # When including Gitorious::Search into a class, we provide +make_searchable+ to the class,
-    # which relies on this being implemented in the module providing search
-    def self.included(klass)
-      
-      # Keep a reference to the unobtrusive is_indexed method from Ultrasphinx
-      # The Ultrasphinx rake tasks greps files for calls to is_indexed
-      # so we want to keep this
-      klass.instance_eval do
-        alias :is_indexed_ultrasphinx :is_indexed
+        # This is where we get to work. Example:
+        # is_indexed do |search|
+        #   search.index :name
+        #   search.index "user#login", :as => :username
+        #   search.conditions => "status != 'rejected'"
+        #   search.index :status_tag, :as => "status"
+        #   search.collect :name, :from => "Tag", :as => "category", :using => "LEFT OUTER JOIN other TABLE ON..."
+        # end
+        
+        def is_indexed(options={})
+          helper = SearchHelper.new do |h|
+            yield h if block_given?
+          end
+          options = helper.options
+          is_indexed_ultrasphinx(options)
+        end
       end
-      
-      klass.extend(@search_adapter)
     end
-    
   end
 end

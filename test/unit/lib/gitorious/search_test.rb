@@ -20,7 +20,7 @@ require "test_helper"
 class SearchTest < ActiveSupport::TestCase
   
   context "Using Ultrasphinx" do
-    Gitorious::Search.use Gitorious::Search::UltrasphinxAdapter
+    Gitorious::Search.use Gitorious::Search::Ultrasphinx::Adapter
 
     # A sample indexed model
     class Searchable < ActiveRecord::Base
@@ -35,7 +35,7 @@ class SearchTest < ActiveSupport::TestCase
 
   context "Specifying associations" do
     should "index a single attribute" do
-      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+      helper = Gitorious::Search::Ultrasphinx::SearchHelper.new do |h|
         h.index :body
       end
       assert_equal 1, helper.arguments.size
@@ -45,7 +45,7 @@ class SearchTest < ActiveSupport::TestCase
     end
 
     should "index by association" do
-      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+      helper = Gitorious::Search::Ultrasphinx::SearchHelper.new do |h|
         h.index "user#login", :as => :commented_by
       end
 
@@ -55,7 +55,7 @@ class SearchTest < ActiveSupport::TestCase
     end
 
     should "group options" do
-      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+      helper = Gitorious::Search::Ultrasphinx::SearchHelper.new do |h|
         h.index :body
         h.index :name
         h.index "user#login", :as => :commented_by
@@ -66,14 +66,14 @@ class SearchTest < ActiveSupport::TestCase
     end
 
     should "support conditions" do
-      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+      helper = Gitorious::Search::Ultrasphinx::SearchHelper.new do |h|
         h.conditions "name IS NOT NULL"
       end
       assert_equal "name IS NOT NULL", helper.options[:conditions]
     end
 
     should "support fields with a custom name" do
-      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+      helper = Gitorious::Search::Ultrasphinx::SearchHelper.new do |h|
         h.index :status_tag, :as => "status"
         h.index :name
       end
@@ -81,7 +81,7 @@ class SearchTest < ActiveSupport::TestCase
     end
 
     should "support concatenation" do
-      helper = Gitorious::Search::UltrasphinxSearchHelper.new do |h|
+      helper = Gitorious::Search::Ultrasphinx::SearchHelper.new do |h|
         h.collect(
           :name, :from => "Tag", :as => "category",
           :using => "LEFT OUTER JOIN taggings on taggings.id=project.id")
