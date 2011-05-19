@@ -20,7 +20,7 @@
 <div class="form-wrapper" id="signup">
 	<div id="sign-up">
 	<h1>Create a new user</h1>
-	<p class="alt-login">Or log in directly with your <%= link_to "OpenID", login_path %></p>
+	<p class="alt-login">Or log in directly with your <%= link_to "OpenID", new_user_session_path %></p>
 	<p><%= t("views.users.create_description") %></p>
 		<div class="horisontal-shadow"></div>
 			<ul>
@@ -59,7 +59,7 @@
 	<p class="alt_links">
   <small>
   <% if GitoriousConfig['public_mode'] -%>
-    <%= link_to "Log in", login_path %>
+    <%= link_to "Log in", new_user_session_path %>
     &mdash;
   <% end -%> 
   <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>

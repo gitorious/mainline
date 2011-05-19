@@ -93,6 +93,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
   map.connect "users/pending_activation", :controller => "users", :action => "pending_activation"
   map.reset_password "users/reset_password/:token", :controller => "users", :action => "reset_password"
+  map.devise_for :users, :path_prefix => 'sessions'
   map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/i }, :collection => {
     :forgot_password => :get,
     :forgot_password_create => :post,
@@ -122,9 +123,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources  :events, :member => {:commits => :get}
 
-  map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
+#  map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
 
-  map.resource  :sessions
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"
     project_cat.formatted_projects_category "projects/category/:id.:format"
@@ -153,6 +153,7 @@ ActionController::Routing::Routes.draw do |map|
     :member => {:reply => :post, :read => :put},
     :collection => {:auto_complete_for_message_recipients => :get, :sent => :get, :bulk_update => :put, :all => :get}
 
+  # Backwards compatible mappings for /login and /logout
   map.with_options :controller => 'sessions' do |session|
     session.login    '/login',  :action => 'new'
     session.logout   '/logout', :action => 'destroy'

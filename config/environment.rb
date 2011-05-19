@@ -114,5 +114,21 @@ Rails::Initializer.run do |config|
 
     OAuth::Consumer::CA_FILE = nil
   end
-  
+
+  config.to_prepare do
+    # Replace this for Rails 3 (and move to config/application.rb)
+    # Devise::SessionsController.tap do |c|
+    SessionsController.tap do |c|
+      c.layout 'second_generation/application'
+      c.skip_before_filter :public_and_logged_in
+      # the skip filter below is necessary for making some tests pass, but
+      # I'm not sure if the tests are correct. TODO: verify if we really need
+      # this skip filter. Also notice that this is Devise's internal and can
+      # change in future versions. It doesn't make much sense to access new or
+      # create while logged in. By default, once the user is already logged in,
+      # Trying to access them will redirect to '/' before the action is called.
+      c.skip_before_filter :require_no_authentication, :only => [:new, :create]
+    end
+  end
+
 end

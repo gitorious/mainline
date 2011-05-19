@@ -244,7 +244,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       session[:user_id] = nil
       get :new, :project_id => @project.to_param,
       :repository_id => @source_repository.to_param
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
 
     should "is successful" do
@@ -315,7 +315,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "require login" do
       session[:user_id] = nil
       do_post
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
 
     should "scope to the source_repository" do
@@ -446,7 +446,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "requires login" do
       session[:user_id] = nil
       do_edit_get
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
 
     should "requires ownership to edit" do
@@ -507,7 +507,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "requires login" do
       session[:user_id] = nil
       do_put
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
 
     should "requires ownership to update" do
@@ -616,7 +616,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "requires login" do
       session[:user_id] = nil
       do_delete
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
 
     should "scopes to the source_repository" do

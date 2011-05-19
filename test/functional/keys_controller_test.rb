@@ -40,10 +40,10 @@ class KeysControllerTest < ActionController::TestCase
     end
   
     should "requires login" do
-      session[:user_id] = nil
+      login_as nil
       get :index, :user_id => @user.to_param
       assert_response :redirect
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
     
     should "require current_user" do
@@ -100,9 +100,9 @@ class KeysControllerTest < ActionController::TestCase
     end
   
     should " require login" do
-      session[:user_id] = nil
+      login_as nil
       get :new
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to (new_user_session_path)
     end
     
     should "require current_user" do
@@ -146,9 +146,9 @@ end
     end
   
     should " require login" do
-      session[:user_id] = nil
+      login_as nil
       post :create, :ssh_key => {:key => valid_key}
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to(new_user_session_path)
     end
     
     should "require current_user" do

@@ -3,37 +3,42 @@ module AuthenticatedSystem
     # Returns true or false if the user is logged in.
     # Preloads @current_user with the user model if they're logged in.
     def logged_in?
-      current_user != :false
+      user_signed_in?
     end
     
     # Accesses the current user from the session.  Set it to :false if login fails
     # so that future calls do not hit the database.
-    def current_user
-      @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
+#     def current_user
+#       @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
+#     end
+#     
+#     # Store the given user in the session.
+#     def current_user=(new_user)
+#       session[:user_id] = (new_user.nil? || new_user.is_a?(Symbol)) ? nil : new_user.id
+#       if new_user && !new_user.is_a?(Symbol)
+#         set_varnish_auth_cookie
+#       end
+#       @current_user = new_user
+#     end
+
+    def login_as(new_user)
+      sign_in(:user, new_user.is_a?(User) ? new_user : nil)
+#      set_varnish_auth_cookie if current_user
     end
     
-    # Store the given user in the session.
-    def current_user=(new_user)
-      session[:user_id] = (new_user.nil? || new_user.is_a?(Symbol)) ? nil : new_user.id
-      if new_user && !new_user.is_a?(Symbol)
-        set_varnish_auth_cookie
-      end
-      @current_user = new_user
-    end
-    
-    def set_varnish_auth_cookie
-      cookies["_logged_in"] = {
-        :value => "true",
-        :domain => ".#{GitoriousConfig['gitorious_host']}",
-        :expires => 3.weeks.from_now,
-        :httponly => true,
-        :secure => true
-      }
-    end
-    
-    def clear_varnish_auth_cookie
-      cookies.delete "_logged_in", :domain => ".#{GitoriousConfig['gitorious_host']}"
-    end
+#    def set_varnish_auth_cookie
+#      cookies["_logged_in"] = {
+#        :value => "true",
+#        :domain => ".#{GitoriousConfig['gitorious_host']}",
+#        :expires => 3.weeks.from_now,
+#        :httponly => true,
+#        :secure => true
+#      }
+#    end
+#    
+#    def clear_varnish_auth_cookie
+#      cookies.delete "_logged_in", :domain => ".#{GitoriousConfig['gitorious_host']}"
+#    end
     
     # Check if the user is authorized
     #
@@ -83,7 +88,7 @@ module AuthenticatedSystem
           store_location
           flash[:error] = "Action requires login"
           if GitoriousConfig['public_mode']
-            redirect_to :controller => '/sessions', :action => 'new'
+            redirect_to new_user_session_path
           else
             redirect_to root_path
           end
@@ -117,30 +122,30 @@ module AuthenticatedSystem
       base.send :helper_method, :current_user, :logged_in?
     end
 
-    # Called from #current_user.  First attempt to login by the user id stored in the session.
-    def login_from_session
-      self.current_user = User.find_by_id(session[:user_id]) if session[:user_id]
-    end
-
-    # Called from #current_user.  Now, attempt to login by basic authentication information.
-    def login_from_basic_auth
-      username, passwd = get_auth_data
-      self.current_user = User.authenticate(username, passwd) if username && passwd
-    end
-
-    # Called from #current_user.  Finaly, attempt to login by an expiring token in the cookie.
-    def login_from_cookie      
-      user = cookies[:auth_token] && User.find_by_remember_token(cookies[:auth_token])
-      if user && user.remember_token?
-        user.remember_me
-        cookies[:auth_token] = {
-          :value => user.remember_token,
-          :expires => user.remember_token_expires_at,
-          :secure => true
-        }
-        self.current_user = user
-      end
-    end
+#    # Called from #current_user.  First attempt to login by the user id stored in the session.
+#    def login_from_session
+#      self.current_user = User.find_by_id(session[:user_id]) if session[:user_id]
+#    end
+#
+#    # Called from #current_user.  Now, attempt to login by basic authentication information.
+#    def login_from_basic_auth
+#      username, passwd = get_auth_data
+#      self.current_user = User.authenticate(username, passwd) if username && passwd
+#    end
+#
+#    # Called from #current_user.  Finaly, attempt to login by an expiring token in the cookie.
+#    def login_from_cookie      
+#      user = cookies[:auth_token] && User.find_by_remember_token(cookies[:auth_token])
+#      if user && user.remember_token?
+#        user.remember_me
+#        cookies[:auth_token] = {
+#          :value => user.remember_token,
+#          :expires => user.remember_token_expires_at,
+#          :secure => true
+#        }
+#        self.current_user = user
+#      end
+#    end
 
   private
     @@http_auth_headers = %w(X-HTTP_AUTHORIZATION HTTP_AUTHORIZATION Authorization)

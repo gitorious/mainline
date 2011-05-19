@@ -22,12 +22,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 class SessionsControllerTest < ActionController::TestCase
   include OpenIdAuthentication
 
-  def auth_token(token)
-    CGI::Cookie.new('name' => 'auth_token', 'value' => token)
-  end
-
   def cookie_for(user)
-    auth_token users(user).remember_token
+    User.serialize_into_cookie(users(user))
   end
 
   should_enforce_ssl_for(:delete, :destroy)
@@ -38,8 +34,8 @@ class SessionsControllerTest < ActionController::TestCase
 
   should "login and redirect" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => "johan@johansorensen.com", :password => "test"
-    assert_not_nil session[:user_id]
+    post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
+    assert warden.authenticated?
     assert_response :redirect
   end
 
@@ -57,7 +53,7 @@ class SessionsControllerTest < ActionController::TestCase
       }
     )
     post :create, :openid_url => identity_url
-    assert_nil session[:user_id]
+    assert !warden.authenticated?
     assert_equal identity_url, session[:openid_url]
     assert_equal 'patcito', session[:openid_nickname]
     assert_equal 'patcito@gmail.com', session[:openid_email]
@@ -68,62 +64,56 @@ class SessionsControllerTest < ActionController::TestCase
 
   should " fail login and not redirect" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => 'johan@johansorensen.com', :password => 'bad password'
-    assert_nil session[:user_id]
+    post :create, :user => {:email => 'johan@johansorensen.com', :password => 'bad password'}
+    assert !warden.authenticated?
     assert_response :success
   end
 
   should " logout" do
     login_as :johan
     get :destroy
-    assert session[:user_id].nil?, 'nil? should be true'
+    assert !warden.authenticated?
     assert_response :redirect
   end
 
   should " remember me" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => 'johan@johansorensen.com', :password => 'test', :remember_me => "1"
-    assert_not_nil @response.cookies["auth_token"]
+    post :create, :user => {:email => 'johan@johansorensen.com', :password => 'test', :remember_me => "1"}
+    assert_not_nil @response.cookies["remember_user_token"]
   end
 
   should " should not remember me" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => 'johan@johansorensen.com', :password => 'test', :remember_me => "0"
-    assert_nil @response.cookies["auth_token"]
+    post :create, :user => {:email => 'johan@johansorensen.com', :password => 'test', :remember_me => "0"}
+    assert_nil @response.cookies["remember_user_token"]
   end
 
   should " delete token on logout" do
     login_as :johan
     get :destroy
-    assert_nil @response.cookies["auth_token"]
+    assert_nil @response.cookies["remember_user_token"]
   end
 
   should " login with cookie" do
-    users(:johan).remember_me
-    @request.cookies["auth_token"] = cookie_for(:johan)
+    users(:johan).remember_me!
+    @request.cookies["remember_user_token"] = cookie_for(:johan)
     get :new
-    assert @controller.send(:logged_in?)
+    assert warden.authenticated?
   end
 
   should " fail when trying to login with with expired cookie" do
     users(:johan).remember_me
     users(:johan).update_attribute :remember_token_expires_at, 5.minutes.ago.utc
-    @request.cookies["auth_token"] = cookie_for(:johan)
+    @request.cookies["remember_user_token"] = cookie_for(:johan)
     get :new
-    assert !@controller.send(:logged_in?)
+    assert !warden.authenticated?
   end
 
   should " fail cookie login" do
-    users(:johan).remember_me
-    @request.cookies["auth_token"] = auth_token('invalid_auth_token')
+    users(:johan).remember_me!
+    @request.cookies["remember_user_token"] = cookie_for(:johan) + 'invalid_remember_user_token'
     get :new
-    assert !@controller.send(:logged_in?)
-  end
-
-  should " set current user to the session user_id" do
-    session[:user_id] = users(:johan).id
-    get :new
-    assert_equal users(:johan), @controller.send(:current_user)
+    assert !warden.authenticated?
   end
 
   should " show flash when invalid credentials are passed" do
@@ -135,7 +125,7 @@ class SessionsControllerTest < ActionController::TestCase
 
   context "Setting a magic header when there is a flash message" do
     should "set the header if there is a flash" do
-      post :create, :email => "johan@johansorensen.com", :password => "test"
+      post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
       assert_not_nil flash[:notice]
       assert_equal "true", @response.headers["X-Has-Flash"]
     end
@@ -143,34 +133,27 @@ class SessionsControllerTest < ActionController::TestCase
 
   context 'Bypassing caching for authenticated users' do
     should 'be set when logging in' do
-      post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_equal "true", cookies['_logged_in']
+      post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
+      assert warden.authenticated?
     end
 
     should 'be removed when logging out' do
-      post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies['_logged_in']
-      delete :destroy
-      assert_nil cookies['_logged_in']
+      post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
+      assert warden.authenticated?
+      get :destroy
+      assert !warden.authenticated?
     end
 
-    should "remove the cookie when logging out" do
-      @request.cookies["_logged_in"] = "true"
-      delete :destroy
-      assert_nil @response.cookies["_logged_in"]
-    end
-
-    should "set the logged-in cookie when logging in with an auth token" do
-      users(:johan).remember_me
-      @request.cookies["auth_token"] = cookie_for(:johan)
+    should "be accepted when logging in with an auth token" do
+      users(:johan).remember_me!
+      @request.cookies["remember_user_token"] = cookie_for(:johan)
       get :new
-      assert @controller.send(:logged_in?)
-      assert_equal "true", @response.cookies["_logged_in"]
+      assert warden.authenticated?
     end
 
-    should "set the _logged_in cookie only on  succesful logins" do
-      post :create, :email => "johan@johansorensen.com", :password => "lulz"
-      assert_nil cookies['_logged_in']
+    should "be logged in only on  successful logins" do
+      post :create, :user => {:email => "johan@johansorensen.com", :password => "lulz"}
+      assert !warden.authenticated?
     end
   end
 end

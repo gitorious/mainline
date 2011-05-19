@@ -1,8 +1,11 @@
 module AuthenticatedTestHelper
   # Sets the current user in the session from the user fixtures.
   def login_as(user)
-    @request.session[:user_id] = user ? user_instance(user).id : nil
-    @request.session_options[:expire_after] = 1.hour
+    if user
+      sign_in :user, user_instance(user)
+    else
+      sign_out :user
+    end
   end
 
   def authorize_as(user)

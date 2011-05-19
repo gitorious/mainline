@@ -24,7 +24,7 @@
 <div id="content">
 
   <%= login_method %>
-  <% form_tag sessions_path  do -%>
+  <% form_for resource_name, resource, :url => session_path(resource_name) do |f| -%>
     <div class="form-wrapper" id="login">
       <div id="log-in">
         <h1>Log in to Gitorious</h1>
@@ -34,25 +34,26 @@
         <div id="regular_login_fields">
           <ul>
             <li>
-              <label for="email"><%= t("views.sessions.label").call(self) %></label>
-              <%= text_field_tag 'email', params[:email] %>
+              <%= f.label :email, t('views.sessions.label').call(self) %>
+              <%= f.text_field :email %>
             </li>
             <li>
-              <label for="password"><%= t("views.sessions.passwd") %></label>
-              <%= password_field_tag 'password', '' %>
+              <%= f.label :password, t('views.sessions.passwd') %>
+              <%= f.password_field :password %>
             </li>
             <li>
               <div class="tos">
-                <%= check_box_tag 'remember_me' %>
-                <label for="remember_me"><%= t("views.sessions.remember") %></label>
+                <%= f.check_box :remember_me %>
+                <%= f.label :remember_me, t('views.sessions.remember') %>
               </div>
               <div class="submit">
-                <%= submit_tag t("views.sessions.submit") %>
+                <%= f.submit t('views.sessions.submit') %>
               </div>
             </li>
-          </ul>		
+          </ul>
         </div>
-        <div id="openid_login_fields" class="login_hidden">	
+        <!--
+        <div id="openid_login_fields" class="login_hidden">
           <ul>
             <li>
               <label for="openid"><%= t("views.sessions.openid").call(self) %></label>
@@ -68,7 +69,8 @@
               </div>
             </li>
           </ul>
-        </div>					
+        </div>
+        -->
 
 
 

@@ -47,7 +47,7 @@ class CommentsControllerTest < ActionController::TestCase
       session[:user_id] = nil
       get :new, :project_id => @project.slug, 
         :repository_id => @repository.name
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to (new_user_session_path)
     end
     
     should "is successfull" do
@@ -64,7 +64,7 @@ class CommentsControllerTest < ActionController::TestCase
       session[:user_id] = nil
       get :create, :project_id => @project.slug, 
         :repository_id => @repository.name, :comment => {}
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to (new_user_session_path)
     end
     
     should "scopes to the repository" do

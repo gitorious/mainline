@@ -81,7 +81,7 @@ class GroupsControllerTest < ActionController::TestCase
   context "update" do
     should "require user to be admin of group" do
       put :update, :id => @group.to_param, :group => {:description => "Unskilled and unprofessional"}
-      assert_redirected_to :controller => "sessions", :action => "new"
+      assert_redirected_to new_user_session_path
     end
 
     should "only update the description, not the name" do
@@ -103,7 +103,7 @@ class GroupsControllerTest < ActionController::TestCase
   context "creating a group" do
     should "require login" do
       get :new
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to (new_user_session_path)
     end
 
     should "GET new successfully" do

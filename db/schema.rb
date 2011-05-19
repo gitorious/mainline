@@ -378,29 +378,32 @@ ActiveRecord::Schema.define(:version => 20110530131306) do
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
-    t.string   "crypted_password",               :limit => 40
-    t.string   "salt",                           :limit => 40
+    t.string   "encrypted_password",             :limit => 128, :default => "",    :null => false
+    t.string   "password_salt",                                 :default => "",    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
     t.datetime "remember_token_expires_at"
-    t.string   "activation_code",                :limit => 40
-    t.datetime "activated_at"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
     t.integer  "ssh_key_id"
     t.string   "fullname"
     t.text     "url"
     t.text     "identity_url"
-    t.boolean  "is_admin",                                     :default => false
+    t.boolean  "is_admin",                                      :default => false
     t.datetime "suspended_at"
     t.string   "aasm_state"
-    t.boolean  "public_email",                                 :default => true
-    t.boolean  "wants_email_notifications",                    :default => true
+    t.boolean  "public_email",                                  :default => true
+    t.boolean  "wants_email_notifications",                     :default => true
     t.string   "password_key"
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
-    t.boolean  "default_favorite_notifications",               :default => false
+    t.boolean  "default_favorite_notifications",                :default => false
+    t.datetime "confirmation_sent_at"
+    t.string   "reset_password_token"
+    t.datetime "remember_created_at"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

@@ -42,9 +42,9 @@ class FavoritesControllerTest < ActionController::TestCase
     }
 
     should "require login" do
-      session[:user_id] = nil
+      login_as nil
       post :create
-      assert_redirected_to new_sessions_path
+      assert_redirected_to new_user_session_path
     end
 
     should "assign to watchable" do
@@ -158,7 +158,7 @@ class FavoritesControllerTest < ActionController::TestCase
     should "require login" do
       login_as nil
       get :index
-      assert_redirected_to new_sessions_path
+      assert_redirected_to new_user_session_path
     end
 
     should "only list the users favorites" do
