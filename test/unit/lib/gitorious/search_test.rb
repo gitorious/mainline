@@ -124,16 +124,28 @@ class SearchTest < ActiveSupport::TestCase
     end
   end
 
+  context "Solr search helper" do
 
+    class SunspotSearchable
+      extend Gitorious::Search::Sunspot::Adapter
+    end
 
-  # use: setter "driver"
-  # AR::B.include => mikser inn metodene
+    should "index associated fields" do
+      SunspotSearchable.expects(:searchable).yields(SunspotSearchable)
+      SunspotSearchable.expects(:text).with(:commented_by).yields(SunspotSearchable)
+      
+      SunspotSearchable.is_indexed do |s|
+        s.index "user#login", :as => :commented_by
+      end
+    end
 
-  #  :include => [{:association_name => "user", :field => "login", :as => "commented_by"}]
-  # generates: commented_by: johan will return comments by johan
-
-  # in Solr:
-  # text :commented_by do
-  #   user.login
-  # end
+    should "index a single field" do
+      SunspotSearchable.expects(:searchable).yields(SunspotSearchable)
+      SunspotSearchable.expects(:text).with(:title)
+      
+      SunspotSearchable.is_indexed do |s|
+        s.index :title
+      end
+    end
+  end
 end
