@@ -179,7 +179,22 @@ class TreesControllerTest < ActionController::TestCase
       exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.tar.gz"
       assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
     end
-    
+
+    should "returns the correct for an existing cached zip file" do
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+                        "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.zip")
+      File.expects(:exist?).with(cached_path).returns(true)
+
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name,
+        :branch => %w[master], :archive_format => "zip"
+
+      assert_response :success
+      assert_equal cached_path, @response.headers["X-Sendfile"]
+      assert_equal "application/zip", @response.headers["Content-Type"]
+      exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.zip"
+      assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
+    end
+
     should "enqueues a job when the tarball is not cached" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
@@ -204,7 +219,32 @@ class TreesControllerTest < ActionController::TestCase
       assert_equal @test_master_sha, msg_hash["commit_sha"]
       assert_equal "tar.gz", msg_hash["format"]
     end
-    
+
+    should "enqueues a job when the zip file is not cached" do
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.zip")
+      work_path = File.join(GitoriousConfig["archive_work_dir"],
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.zip")
+      File.expects(:exist?).with(cached_path).returns(false)
+      File.expects(:exist?).with(work_path).returns(false)
+
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name,
+        :branch => %w[test master], :archive_format => "zip"
+
+      assert_response 202 # Accepted
+      assert_match(/is currently being generated, try again later/, @response.body)
+      assert_equal "text/plain; charset=utf-8", @response.headers["Content-Type"]
+
+      msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving",
+                                                              /#{@test_master_sha}/)
+      assert_not_nil msg
+      msg_hash = ActiveSupport::JSON.decode(msg.body)
+      assert_equal @repository.full_repository_path, msg_hash["full_repository_path"]
+      assert_equal cached_path, msg_hash["output_path"]
+      assert_equal @test_master_sha, msg_hash["commit_sha"]
+      assert_equal "zip", msg_hash["format"]
+    end
+
     should "enqueues a job when the tarball is not cached, unless work has already begun" do
       cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
@@ -217,7 +257,24 @@ class TreesControllerTest < ActionController::TestCase
         :branch => %w[master], :archive_format => "tar.gz"
 
       assert_response 202 # Accepted
-      msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving", 
+      msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving",
+                                                              /#{@master_sha}/)
+      assert_nil msg
+    end
+
+    should "enqueues a job when the zip file is not cached, unless work has already begun" do
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.zip")
+      work_path = File.join(GitoriousConfig["archive_work_dir"],
+                      "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.zip")
+      File.expects(:exist?).with(cached_path).returns(false)
+      File.expects(:exist?).with(work_path).returns(true)
+
+      get :archive, :project_id => @project.slug, :repository_id => @repository.name,
+        :branch => %w[master], :archive_format => "zip"
+
+      assert_response 202 # Accepted
+      msg = ActiveMessaging::Gateway.connection.find_message("/queue/GitoriousRepositoryArchiving",
                                                               /#{@master_sha}/)
       assert_nil msg
     end
