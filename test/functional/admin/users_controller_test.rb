@@ -97,7 +97,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
       assert_redirected_to(admin_users_path)
       assert_equal "A new password has been sent to your email", flash[:notice]
 
-      assert_not_nil User.authenticate(u.email, "secret")
+      assert_not_nil User.authenticate(:email => u.email, :password => "secret")
     end
   end
 

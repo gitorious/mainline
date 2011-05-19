@@ -1,8 +1,15 @@
 GIT
   remote: https://github.com/roman/rots.git
   revision: babb5559aae8914556da528147b6649b9c48f48c
+  remote: git://github.com/plataformatec/devise.git
+  revision: efc42d7662f3eebbc199965cfd546d0360738a18
   specs:
     rots (0.2.1)
+
+  branch: v1.0
+  specs:
+    devise (1.0.11)
+      warden (~> 0.10.3)
 
 GEM
   remote: http://rubygems.org/
@@ -99,6 +106,7 @@ GEM
     validates_url_format_of (0.1.1)
       activerecord (~> 2.3.4)
     vegas (0.1.8)
+    warden (0.10.7)
       rack (>= 1.0.0)
     will_paginate (2.3.15)
     xpath (0.1.4)
@@ -118,6 +126,7 @@ DEPENDENCIES
   capybara
   chronic
   daemons
+  devise!
   diff-lcs
   echoe
   exception_notification (~> 1.0.20090728)

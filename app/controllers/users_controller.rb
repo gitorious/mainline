@@ -105,8 +105,8 @@ class UsersController < ApplicationController
   end
 
   def activate
-    if user = User.find_by_activation_code(params[:activation_code])
-      self.current_user = user
+    if user = User.find_by_confirmation_token(params[:activation_code])
+      login_as user
       if logged_in? && !current_user.activated?
         current_user.activate
         flash[:notice] = I18n.t "users_controller.activate_notice"
@@ -150,7 +150,7 @@ class UsersController < ApplicationController
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
         flash[:success] = "Password updated"
-        redirect_to(new_sessions_path)
+        redirect_to(new_user_session_path)
       end
     end
   end
@@ -176,7 +176,7 @@ class UsersController < ApplicationController
 
   def update_password
     @user = current_user
-    if User.authenticate(current_user.email, params[:user][:current_password]) || @user.is_openid_only?
+    if User.authenticate(:email => current_user.email, :password => params[:user][:current_password]) || @user.is_openid_only?
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
@@ -207,7 +207,7 @@ class UsersController < ApplicationController
       [:openid_url, :openid_email, :openid_nickname, :openid_fullname].each do |k|
         session.delete(k)
       end
-      self.current_user = @user
+      login_as @user
       flash[:success] = "Your user profile was successfully created"
       redirect_to root_path
     else

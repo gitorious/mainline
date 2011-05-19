@@ -59,7 +59,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "#index (GET)" do
     should " not require login" do
-      session[:user_id] = nil
       get :index, :project_id => @project.to_param,
       :repository_id => @target_repository.to_param
       assert_response :success
@@ -128,7 +127,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "#show (GET)" do
     should " not require login" do
-      session[:user_id] = nil
       MergeRequest.expects(:find_by_sequence_number!).returns(@merge_request)
       stub_commits(@merge_request)
       [@merge_request.source_repository, @merge_request.target_repository].each do |r|
@@ -241,10 +239,9 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "requires login" do
-      session[:user_id] = nil
       get :new, :project_id => @project.to_param,
       :repository_id => @source_repository.to_param
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "is successful" do
@@ -313,9 +310,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      session[:user_id] = nil
       do_post
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "scope to the source_repository" do
@@ -444,9 +440,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "#edit (GET)" do
     should "requires login" do
-      session[:user_id] = nil
       do_edit_get
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "requires ownership to edit" do
@@ -505,9 +500,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "#update (PUT)" do
     should "requires login" do
-      session[:user_id] = nil
       do_put
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "requires ownership to update" do
@@ -614,9 +608,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "#destroy (DELETE)" do
     should "requires login" do
-      session[:user_id] = nil
       do_delete
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "scopes to the source_repository" do

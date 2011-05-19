@@ -29,9 +29,9 @@ class MailerTest < ActiveSupport::TestCase
 
   should "sends signup_notification" do
     user = users(:johan)
-    user.activation_code = "8f24789ae988411ccf33ab0c30fe9106fab32e9b"
+    user.confirmation_token = "8f24789ae988411ccf33ab0c30fe9106fab32e9b"
     user.password = "fubar"
-    url = "#{URL_BASE}/users/activate/#{user.activation_code}"
+    url = "#{URL_BASE}/users/activate/#{user.confirmation_token}"
     mail = Mailer.create_signup_notification(user)
 
     assert_equal [user.email], mail.to

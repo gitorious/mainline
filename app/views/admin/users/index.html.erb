@@ -45,7 +45,7 @@
 		<td><%= link_to h(user.login), user %></td>
 		<td><%= link_to user.email, "mailto:#{user.email}" %></td>
 		<td><%= user.created_at.to_s(:short) %></td>
-		<td><%= user.activated? ? user.activated_at.to_s(:short) : t("views.common.no") %></td>
+		<td><%= user.activated? ? user.confirmed_at.to_s(:short) : t("views.common.no") %></td>
 		<td><%= user.suspended? ? user.suspended_at.to_s(:short) : t("views.common.no") %></td>
 		<td><%= user.site_admin? ? t("views.common.yes") : t("views.common.no") %></td>
 		<% if user.suspended? -%>

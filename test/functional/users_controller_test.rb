@@ -63,11 +63,11 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   should "activate user" do
-    assert_nil User.authenticate('moe', 'test')
-    get :activate, :activation_code => users(:moe).activation_code
+    assert_nil User.authenticate(:email => 'moe', :password => 'test')
+    get :activate, :activation_code => users(:moe).confirmation_token
     assert_redirected_to('/')
     assert_not_nil flash[:notice]
-    assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
+    assert_equal users(:moe), User.authenticate(:email => 'moe@example.com', :password => 'test')
   end
 
   should "flashes a message when the activation code is invalid" do
@@ -75,7 +75,7 @@ class UsersControllerTest < ActionController::TestCase
     assert_redirected_to('/')
     assert_nil flash[:notice]
     assert_equal "Invalid activation code", flash[:error]
-    assert_nil User.authenticate('moe@example.com', 'test')
+    assert_nil User.authenticate(:email => 'moe@example.com', :password => 'test')
   end
 
   context "Routing" do
@@ -166,7 +166,7 @@ class UsersControllerTest < ActionController::TestCase
 
   should "requires the user to activate himself after posting valid data" do
     create_user
-    assert_equal nil, User.authenticate('quire@example.com', 'quire')
+    assert_equal nil, User.authenticate(:email => 'quire@example.com', :password => 'quire')
     assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
   end
 
@@ -227,7 +227,7 @@ class UsersControllerTest < ActionController::TestCase
 
     should "not display inactive users" do
       user = users(:johan)
-      user.update_attribute(:activation_code, "123")
+      user.update_attribute(:confirmed_at, nil)
       assert !user.activated?
 
       get :show, :id => user.to_param
@@ -284,7 +284,7 @@ class UsersControllerTest < ActionController::TestCase
       }
       assert_response :success
       assert !assigns(:user).valid?
-      assert_nil User.authenticate(@user.email, "qwertyasdf")
+      assert_nil User.authenticate(:email => @user.email, :password => "qwertyasdf")
     end
 
     should "update the password" do
@@ -293,8 +293,8 @@ class UsersControllerTest < ActionController::TestCase
         :password_confirmation => "qwertyasdf"
       }
       assert_response :redirect
-      assert_redirected_to new_sessions_path
-      assert User.authenticate(@user.email, "qwertyasdf")
+      assert_redirected_to_login
+      assert User.authenticate(:email => @user.email, :password => "qwertyasdf")
       assert_match(/Password updated/i, flash[:success])
     end
   end
@@ -335,12 +335,12 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "activate user" do
-      assert_nil User.authenticate('moe', 'test')
-      get :activate, :activation_code => users(:moe).activation_code
+      assert_nil User.authenticate(:email => 'moe', :password => 'test')
+      get :activate, :activation_code => users(:moe).confirmation_token
 
       assert_redirected_to('/')
       assert !flash[:notice].nil?
-      assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
+      assert_equal users(:moe), User.authenticate(:email => 'moe@example.com', :password => 'test')
     end
 
     should "flashes a message when the activation code is invalid" do
@@ -348,7 +348,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_redirected_to('/')
       assert_nil flash[:notice]
       assert_equal "Invalid activation code", flash[:error]
-      assert_nil User.authenticate('moe@example.com', 'test')
+      assert_nil User.authenticate(:email => 'moe@example.com', :password => 'test')
     end
 
     should "GET /users/johan" do
@@ -432,7 +432,7 @@ class UsersControllerTest < ActionController::TestCase
         :password_confirmation => "fubar" }
       assert_redirected_to(user_path(user))
       assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal user, User.authenticate(user.email, "fubar")
+      assert_equal user, User.authenticate(:email => user.email, :password => "fubar")
     end
 
     should "PUT /users/johan/update_password does not update password if old one is wrong" do
@@ -443,8 +443,8 @@ class UsersControllerTest < ActionController::TestCase
       assert_nil flash[:notice]
       assert_match(/does not seem to match/, flash[:error])
       assert_template("users/password")
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
-      assert_nil User.authenticate(users(:johan).email, "fubar")
+      assert_equal users(:johan), User.authenticate(:email => users(:johan).email, :password => "test")
+      assert_nil User.authenticate(:email => users(:johan).email, :password => "fubar")
     end
 
     should "PUT /users/johan/update should not update password" do
@@ -453,8 +453,8 @@ class UsersControllerTest < ActionController::TestCase
         :password => "fubar",
         :password_confirmation => "fubar" }
 
-      assert_nil User.authenticate(user.email, "fubar")
-      assert_equal user, User.authenticate(user.email, "test")
+      assert_nil User.authenticate(:email => user.email, :password => "fubar")
+      assert_equal user, User.authenticate(:email => user.email, :password => "test")
     end
 
     should "be able to update password, even if user is openid enabled" do
@@ -465,18 +465,18 @@ class UsersControllerTest < ActionController::TestCase
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+      assert_equal users(:johan), User.authenticate(:email => users(:johan).email, :password => "fubar")
     end
 
     should "be able to update password, even if user created his account with openid" do
       user = users(:johan)
-      user.update_attribute(:crypted_password, nil)
+      user.update_attribute(:encrypted_password, nil)
       put :update_password, :id => user.to_param, :user => {
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_redirected_to user_path(user)
       assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+      assert_equal users(:johan), User.authenticate(:email => users(:johan).email, :password => "fubar")
     end
 
     should "be able to delete his avatar" do

@@ -26,6 +26,7 @@ require_dependency "event"
 
 class User < ActiveRecord::Base
   include UrlLinting
+  devise :database_authenticatable, :rememberable, :encryptable, :http_authenticatable
 
   has_many :projects
   has_many :memberships, :dependent => :destroy
@@ -68,7 +69,7 @@ class User < ActiveRecord::Base
   validates_format_of     :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
 
   before_save :encrypt_password
-  before_create :make_activation_code
+  before_create :make_confirmation_token
   before_validation :lint_identity_url, :downcase_login
   after_save :expire_avatar_email_caches_if_avatar_was_changed
   after_destroy :expire_avatar_email_caches
@@ -140,10 +141,9 @@ class User < ActiveRecord::Base
     I18n.t("activerecord.models.user")
   end
 
-  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-  def self.authenticate(email, password)
-    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL and suspended_at IS NULL', email] # need to get the salt
-    u && u.authenticated?(password) ? u : nil
+  # Overwrite Devise's default to check if user was confirmed and was not suspended
+  def self.find_for_authentication(conditions)
+    find :first, :conditions => ['email = ? and confirmed_at IS NOT NULL and suspended_at IS NULL', conditions[:email]]
   end
 
   # Encrypts some data with the salt.
@@ -224,13 +224,12 @@ class User < ActiveRecord::Base
   # Activates the user in the database.
   def activate
     @activated = true
-    self.attributes = {:activated_at => Time.now.utc, :activation_code => nil}
+    self.attributes = {:confirmed_at => Time.now.utc, :confirmation_token => nil}
     save(false)
   end
 
   def activated?
-    # the existence of an activation code means they have not activated yet
-    activation_code.nil?
+    confirmed_at.present?
   end
 
   # Returns true if the user has just been activated.
@@ -245,40 +244,11 @@ class User < ActiveRecord::Base
 
   # Encrypts the password with the user salt
   def encrypt(password)
-    self.class.encrypt(password, salt)
-  end
-
-  def authenticated?(password)
-    crypted_password == encrypt(password)
+    self.class.encrypt(password, password_salt)
   end
 
   def breadcrumb_parent
     nil
-  end
-
-  def remember_token?
-    remember_token_expires_at && Time.now.utc < remember_token_expires_at
-  end
-
-  # These create and unset the fields required for remembering users between browser closes
-  def remember_me
-    remember_me_for 2.weeks
-  end
-
-  def remember_me_for(time)
-    remember_me_until time.from_now.utc
-  end
-
-  def remember_me_until(time)
-    self.remember_token_expires_at = time
-    self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
-    save(false)
-  end
-
-  def forget_me
-    self.remember_token_expires_at = nil
-    self.remember_token            = nil
-    save(false)
   end
 
   def reset_password!
@@ -313,7 +283,7 @@ class User < ActiveRecord::Base
   end
 
   def is_openid_only?
-    self.crypted_password.nil?
+    self.encrypted_password.blank?
   end
 
   def suspended?
@@ -394,21 +364,21 @@ class User < ActiveRecord::Base
     # before filter
     def encrypt_password
       return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-      self.crypted_password = encrypt(password)
+      self.password_salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+      self.encrypted_password = encrypt(password)
     end
 
     def password_required?
-      not_openid? && (crypted_password.blank? || !password.blank?)
+      not_openid? && (encrypted_password.blank? || !password.blank?)
     end
 
     def not_openid?
       identity_url.blank?
     end
 
-    def make_activation_code
-      return if !self.activated_at.blank?
-      self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
+    def make_confirmation_token
+      return if activated?
+      self.confirmation_token = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
     end
 
     def lint_identity_url

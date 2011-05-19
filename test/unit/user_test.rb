@@ -77,7 +77,7 @@ class UserTest < ActiveSupport::TestCase
   should "not send activation mail when user is already activated" do
     Mailer.expects(:deliver_signup_notification).never
 
-    u = create_user(:activated_at => Time.now)
+    u = create_user(:skip_confirmation => true)
 
     u.save!
   end
@@ -88,55 +88,38 @@ class UserTest < ActiveSupport::TestCase
     user.password_confirmation = "newpass"
     user.save
 
-    assert_equal users(:johan), User.authenticate("johan@johansorensen.com", "newpass")
+    assert_equal users(:johan), User.authenticate(:email => "johan@johansorensen.com", :password => "newpass")
   end
 
   should "not rehash the password" do
     users(:johan).update_attributes(:email => 'johan2@js.com')
-    assert_equal users(:johan), User.authenticate("johan2@js.com", "test")
+    assert_equal users(:johan), User.authenticate(:email => "johan2@js.com", :password => "test")
   end
 
   should "authenticate user" do
-    assert_equal users(:johan), User.authenticate("johan@johansorensen.com", "test")
+    assert_equal users(:johan), User.authenticate(:email => "johan@johansorensen.com", :password => "test")
   end
 
   should "set remember token" do
-    users(:johan).remember_me
+    users(:johan).remember_me!
     assert_not_nil users(:johan).remember_token
-    assert_not_nil users(:johan).remember_token_expires_at
+    assert_not_nil users(:johan).remember_expires_at
   end
 
   should "unset remember token" do
-    users(:johan).remember_me
+    users(:johan).remember_me!
     assert_not_nil users(:johan).remember_token
-    users(:johan).forget_me
+    users(:johan).forget_me!
     assert_nil users(:johan).remember_token
-  end
-
-  should "remember user for one week" do
-    before = 1.week.from_now.utc
-    users(:johan).remember_me_for 1.week
-    after = 1.week.from_now.utc
-    assert_not_nil users(:johan).remember_token
-    assert_not_nil users(:johan).remember_token_expires_at
-    assert users(:johan).remember_token_expires_at.between?(before, after)
-  end
-
-  should "remember me until one week later" do
-    time = 1.week.from_now.utc
-    users(:johan).remember_me_until time
-    assert_not_nil users(:johan).remember_token
-    assert_not_nil users(:johan).remember_token_expires_at
-    assert_equal time, users(:johan).remember_token_expires_at
   end
 
   should "remember me default two weeks" do
     before = 2.weeks.from_now.utc
-    users(:johan).remember_me
+    users(:johan).remember_me!
     after = 2.weeks.from_now.utc
     assert_not_nil users(:johan).remember_token
-    assert_not_nil users(:johan).remember_token_expires_at
-    assert users(:johan).remember_token_expires_at.between?(before, after)
+    assert_not_nil users(:johan).remember_expires_at
+    assert users(:johan).remember_expires_at.between?(before, after)
   end
 
   should "know if a user has write access to a repository" do
@@ -175,7 +158,7 @@ class UserTest < ActiveSupport::TestCase
   should "reset a password to something" do
     u = users(:johan)
     password = u.reset_password!
-    assert_equal u, User.authenticate(u.email, password)
+    assert_equal u, User.authenticate(:email => u.email, :password => password)
   end
 
   should "set the password key with forgot_password!" do
@@ -489,6 +472,7 @@ class UserTest < ActiveSupport::TestCase
 
   protected
     def create_user(options = {})
+      skip_confirmation = options.delete :skip_confirmation
       u = User.new({
         :email => 'quire@example.com',
         :terms_of_use => "1",
@@ -496,6 +480,8 @@ class UserTest < ActiveSupport::TestCase
       u.login = options[:login] || "quire"
       u.password = options[:password] || 'quire'
       u.password_confirmation = options[:password_confirmation] || 'quire'
+#      u.skip_confirmation! if skip_confirmation
+      u.confirmed_at = Time.new if skip_confirmation
       u.save
       u
     end

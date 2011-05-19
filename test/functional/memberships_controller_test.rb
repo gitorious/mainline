@@ -95,7 +95,7 @@ class MembershipsControllerTest < ActionController::TestCase
       should "requires group adminship on new" do
         login_as :moe
         get :new, :group_id => @group.to_param
-        assert_redirected_to(new_sessions_path)
+        assert_redirected_to_login
       end
 
       should "gets the membership successfully" do
@@ -109,7 +109,7 @@ class MembershipsControllerTest < ActionController::TestCase
           post :create, :group_id => @group.to_param, :membership => {:role_id => Role.admin.id},
             :user => {:login => users(:mike).login }
         end
-        assert_redirected_to(new_sessions_path)
+        assert_redirected_to_login
       end
 
       should "creates a new membership sucessfully" do
@@ -139,7 +139,7 @@ class MembershipsControllerTest < ActionController::TestCase
       should "requires adminship on edit" do
         login_as :moe
         get :edit, :group_id => @group.to_param, :id =>  @group.memberships.first.to_param
-        assert_redirected_to(new_sessions_path)
+        assert_redirected_to_login
       end
 
       should "GETs edit" do
@@ -153,7 +153,7 @@ class MembershipsControllerTest < ActionController::TestCase
         login_as :moe
         put :update, :group_id => @group.to_param, :id =>  @group.memberships.first.id,
           :membership => {}
-        assert_redirected_to(new_sessions_path)
+        assert_redirected_to_login
       end
 
       should "PUTs update updates the role of the user" do
@@ -171,7 +171,7 @@ class MembershipsControllerTest < ActionController::TestCase
         assert_no_difference('@group.memberships.count') do
           delete :destroy, :group_id => @group.to_param, :id => @group.memberships.first.to_param
         end
-        assert_redirected_to(new_sessions_path)
+        assert_redirected_to_login
       end
 
       should "deletes the membership" do

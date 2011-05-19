@@ -35,71 +35,69 @@ class CommentsControllerTest < ActionController::TestCase
 
   context "#index" do
     should "scopes to project.repositories" do
-      get :index, :project_id => @project.to_param, 
+      get :index, :project_id => @project.to_param,
         :repository_id => @repository.to_param
       assert_response :success
       assert !assigns(:comments).include?(comments(:moes_repos))
     end
   end
-  
-  context "#new" do    
+
+  context "#new" do
     should "requires login" do
-      session[:user_id] = nil
       get :new, :project_id => @project.slug, 
         :repository_id => @repository.name
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to_login
     end
-    
+
     should "is successfull" do
       login_as :johan
-      get :new, :project_id => @project.slug, 
+      get :new, :project_id => @project.slug,
         :repository_id => @repository.name
       assert_response :success
       assert_equal @repository, assigns(:comment).target
     end
   end
-  
-  context "#create" do    
+
+  context "#create" do
     should "requires login" do
-      session[:user_id] = nil
-      get :create, :project_id => @project.slug, 
+      get :create, :project_id => @project.slug,
         :repository_id => @repository.name, :comment => {}
-      assert_redirected_to (new_sessions_path)
+      assert_redirected_to (new_user_session_path)
     end
-    
+
     should "scopes to the repository" do
       login_as :johan
-      get :create, :project_id => @project.slug, 
+      get :create, :project_id => @project.slug,
         :repository_id => @repository.name, :comment => { :body => "blabla" }
       assert_equal @repository, assigns(:comment).target
     end
-    
+
     should "assigns the comment to the current_user" do
       login_as :johan
-      get :create, :project_id => @project.slug, 
+      get :create, :project_id => @project.slug,
         :repository_id => @repository.name, :comment => { :body => "blabla" }
       assert_equal users(:johan), assigns(:comment).user
     end
-    
+
     should "creates the record on successful data" do
       login_as :johan
       assert_difference("Comment.count") do
-        get :create, :project_id => @project.slug, 
+        get :create, :project_id => @project.slug,
           :repository_id => @repository.name, :comment => { :body => "moo" }
         assert_redirected_to (project_repository_comments_path(@project, @repository))
         assert_match(/your comment was added/i, flash[:success])
       end
     end
-    
+
     should "it re-renders on invalid data" do
       login_as :johan
-      get :create, :project_id => @project.slug, 
+      get :create, :project_id => @project.slug,
         :repository_id => @repository.name, :comment => {:body => nil}
       assert_response :success
       assert_template("comments/new")
-    end    
+    end
   end
-  
+
   context 'preview' do
     should 'render a preview of the comment' do
       login_as :johan
@@ -108,20 +106,20 @@ class CommentsControllerTest < ActionController::TestCase
       assert_template("comments/preview")
     end
   end
-  
+
   context "polymorphic creation" do
     setup do
       login_as :johan
       assert @merge_request = @repository.merge_requests.first
     end
-    
+
     should "find set the repository as the polymorphic parent by default" do
       get :new, :project_id => @project.slug, :repository_id => @repository.to_param
       assert_response :success
       assert_equal @repository, assigns(:target)
       assert_equal @repository, assigns(:comment).target
     end
-    
+
     should "find set the polymorphic parent by default, for merge requests" do
       get :new, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param
@@ -154,14 +152,14 @@ class CommentsControllerTest < ActionController::TestCase
         assert_not_nil result["comment"]
       end
     end
-    
+
     context "Watching a merge request" do
       setup do
         @repo = @merge_request.target_repository
         @project = @repo.project
         @user = users(:moe)
       end
-      
+
       should "be watched when user wants it" do
         login_as @user
         assert_incremented_by(@user.favorites, :size, 1) do
@@ -204,7 +202,7 @@ class CommentsControllerTest < ActionController::TestCase
         #assert_equal([@comment], assigns(:comments))
       end
     end
-    
+
     context "Merge request versions" do
       should "set the merge request version as polymorphic parent" do
         @version = create_new_version
@@ -294,20 +292,20 @@ class CommentsControllerTest < ActionController::TestCase
           :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome", :state => "merged"}
       end
     end
-    
+
     should 'transition the target if state is provided' do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
       assert_equal [nil, 'Resolved'], assigns(:comment).state_change
       assert_equal 'Resolved', @merge_request.reload.status_tag.name
     end
-    
+
     should 'not transition the target if an empty state if provided' do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => ''}
       assert_nil @merge_request.reload.status_tag
     end
-    
+
     should 'not allow other users than the merge request owner to change the state' do
       login_as :mike
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
@@ -326,7 +324,7 @@ class CommentsControllerTest < ActionController::TestCase
       @get_edit = proc { get(:edit, :project_id => @repo.project.to_param,
           :repository_id => @repo.to_param, :id => @comment.to_param) }
     }
-    
+
     context "GET to #edit" do
       should 'let the owner edit his own comment' do
         login_as @user.login
@@ -334,7 +332,7 @@ class CommentsControllerTest < ActionController::TestCase
         assert_response :success
         assert_equal @comment, assigns(:comment)
       end
-      
+
       should 'not let other users edit the comment' do
         login_as :mike
         @get_edit.call

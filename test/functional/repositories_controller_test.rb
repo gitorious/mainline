@@ -575,9 +575,9 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " require login" do
-      session[:user_id] = nil
+      logout
       do_clone_get
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "GET projects/1/repositories/3/clone is successful" do
@@ -623,9 +623,9 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " require login" do
-      session[:user_id] = nil
+      logout
       do_create_clone_post
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "post projects/1/repositories/3/create_clone is successful" do
@@ -721,7 +721,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " not require login" do
-      session[:user_id] = nil
+      logout
       do_writable_by_get :username => "johan"
       assert_response :success
     end
@@ -843,7 +843,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "not require login" do
-      session[:user_id] = nil
+      logout
       do_config_get
       assert_response :success
     end
@@ -889,9 +889,9 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      session[:user_id] = nil
+      logout
       do_delete(@repo)
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "can only be deleted by the admins" do
@@ -951,9 +951,9 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " require login" do
-      login_as nil
+      logout
       get :new, :project_id => @project.to_param
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "require adminship" do
@@ -1057,12 +1057,12 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "requires login" do
-      login_as nil
+      logout
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
 
       put :update, :project_id => @project.to_param, :id => @repository.to_param
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to_login
     end
 
     should "requires adminship on the project if owner is a project" do

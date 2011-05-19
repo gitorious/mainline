@@ -31,7 +31,7 @@ class Mailer < ActionMailer::Base
     @body[:url]  = url_for(
       :controller => 'users',
       :action => 'activate',
-      :activation_code => user.activation_code
+      :activation_code => user.confirmation_token
     )
   end
 
