@@ -141,7 +141,7 @@ class SessionsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Bypassing cachíng for authenticated users' do
+  context 'Bypassing caching for authenticated users' do
     should 'be set when logging in' do
       post :create, :email => "johan@johansorensen.com", :password => "test"
       assert_equal "true", cookies['_logged_in']
