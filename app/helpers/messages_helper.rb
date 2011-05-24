@@ -22,7 +22,8 @@ module MessagesHelper
 
   def sender_and_recipient_for(message)
     if message.recipient == current_user
-      [link_to(h(message.sender_name), message.sender), "me"]
+      sender_name = message.sender.nil? ? "[removed]" : message.sender_name
+      [link_to(h(sender_name), message.sender), "me"]
     else
       ["me", link_to(h(message.recipient.title), message.recipient)]
     end

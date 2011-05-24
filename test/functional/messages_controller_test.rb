@@ -255,6 +255,19 @@ class MessagesControllerTest < ActionController::TestCase
     end
   end
 
+  context "Sender disappears" do
+    setup do
+      @message = messages(:johans_message_to_moe)
+    end
+
+    should "render without error" do
+      users(:johan).destroy
+      login_as :moe
+      get :index
+      assert_response :success
+    end
+  end
+
   context "Unauthenticated GET to index" do
     setup {get :index}
 
