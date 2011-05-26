@@ -22,22 +22,22 @@ require "resque"
 module Gitorious::Messaging::ResqueAdapter
   module Publisher
     QUEUES = {
-      "/queue/GitoriousRepositoryCreation" => RepositoryCreationProcessor,
-      "/queue/GitoriousRepositoryDeletion" => RepositoryDeletionProcessor,
-      "/queue/GitoriousPush" => PushProcessor,
-      "/queue/GitoriousSshKeys" => SshKeyProcessor,
-      "/queue/GitoriousRepositoryArchiving" => RepositoryArchivingProcessor,
-      "/queue/GitoriousEmailNotifications" => MessageForwardingProcessor,
-      "/queue/GitoriousMergeRequestCreation" => MergeRequestProcessor,
-      "/queue/GitoriousMergeRequestBackend" => MergeRequestGitBackendProcessor,
-      "/queue/GitoriousMergeRequestVersionDeletion" => MergeRequestVersionProcessor,
-      "/queue/GitoriousPostReceiveWebHook" => WebHookProcessor
+      "/queue/GitoriousRepositoryCreation" => "RepositoryCreation",
+      "/queue/GitoriousRepositoryDeletion" => "RepositoryDeletion",
+      "/queue/GitoriousPush" => "Push",
+      "/queue/GitoriousSshKeys" => "SshKey",
+      "/queue/GitoriousRepositoryArchiving" => "RepositoryArchiving",
+      "/queue/GitoriousEmailNotifications" => "MessageForwarding",
+      "/queue/GitoriousMergeRequestCreation" => "MergeRequest",
+      "/queue/GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
+      "/queue/GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
+      "/queue/GitoriousPostReceiveWebHook" => "WebHook"
     }
 
     # Locate the correct class to pick queue from
     #
     def inject(queue)
-      ResqueQueue.new(QUEUES[queue.to_s])
+      ResqueQueue.new(Object.const_get("#{QUEUES[queue.to_s]}Processor"))
     end
   end
 
