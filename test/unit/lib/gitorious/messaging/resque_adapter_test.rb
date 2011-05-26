@@ -17,7 +17,6 @@
 #++
 require File.dirname(__FILE__) + '/../../../../messaging_test_helper'
 require "gitorious/messaging"
-#require "gitorious/messaging/resque_adapter"
 
 class ResquePublisher
   include Gitorious::Messaging::Publisher
@@ -37,6 +36,35 @@ class MessagingResqueAdapterTest < ActiveSupport::TestCase
         "/queue/GitoriousMergeRequestBackend" => MergeRequestGitBackendProcessor,
         "/queue/GitoriousMergeRequestVersionDeletion" => MergeRequestVersionProcessor,
         "/queue/GitoriousPostReceiveWebHook" => WebHookProcessor }
+    end
+  end
+
+  class ResqueConsumer
+    include Gitorious::Messaging::Consumer
+    include Gitorious::Messaging::ResqueAdapter::Consumer
+    attr_reader :messages
+
+    def on_message(message)
+      (@messages ||= []) << message
+    end
+  end
+
+  context "subscribing to queues" do
+    should "set class instance variable for queue" do
+      ResqueConsumer.consumes("/queue/GitoriousPush")
+
+      assert_equal "GitoriousPush", ResqueConsumer.instance_eval { @queue }
+    end
+  end
+
+  context "consuming messages" do
+    setup do
+      ResqueConsumer.consumes("/queue/GitoriousPush")
+    end
+
+    should "call consume with hash when perform is called" do
+      ResqueConsumer.any_instance.expects(:consume).with({ "id" => 42 })
+      ResqueConsumer.perform({ "id" => 42 })
     end
   end
 end
