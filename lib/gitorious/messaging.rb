@@ -110,6 +110,14 @@ module Gitorious
       end
     end
 
+    def self.load_processors
+      %w[merge_request_git_backend merge_request merge_request_version
+         message_forwarding push repository_archiving repository_creation
+         repository_deletion ssh_key web_hook].each do |p|
+        require "app/processors/#{p}_processor"
+      end
+    end
+
     class AbortMessageException < Exception; end
 
     def self.logger
@@ -134,6 +142,8 @@ module Gitorious
       # Consumer
       klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Consumer")
       Gitorious::Messaging::Consumer.use(klass, klass.const_get("Macros"))
+
+      Gitorious::Messaging.load_processors
     end
   end
 end
