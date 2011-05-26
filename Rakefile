@@ -10,6 +10,7 @@ require 'rake/rdoctask'
 require 'tasks/rails'
 
 begin
+  # TODO: Load GitoriousConfig here
   require 'resque/tasks'
 rescue LoadError => err
   # Ignore in case not using Resque
