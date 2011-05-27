@@ -18,7 +18,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 print "=> Syncing Gitorious... "
-$stdout.flush
 
 incpath = File.dirname(__FILE__)
 $: << incpath
