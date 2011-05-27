@@ -23,7 +23,6 @@ incpath = File.dirname(__FILE__)
 $: << incpath
 
 require 'messaging'
-require 'json'
 
 @publisher = Publisher.new
 gitdir = File.expand_path(File.join(incpath, ".."))

@@ -34,7 +34,7 @@ gem "revo-ssl_requirement"
 
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18
-gem "json", :platforms => :ruby_18
+gem "json", "~> 1.4.6", :platforms => :ruby_18
 
 group :test do
   gem "mocha", :require => false
@@ -45,4 +45,10 @@ end
 group :git_proxy do
   gem "proxymachine"
   gem "rake"
+end
+
+group :messaging do
+  gem "json", "~> 1.4.6", :platforms => :ruby_18
+  gem "resque"
+  gem "SystemTimer"
 end

@@ -17,27 +17,34 @@
 #++
 require "resque"
 
+def load_consumer(name)
+  class_name = name.split("_").collect(&:capitalize).join("")
+  Object.const_get("#{class_name}Processor")
+rescue NameError => err
+  require "processors/#{name}_processor"
+end
+
 # Resque backed implementation of the Gitorious messaging API. For use with
 # lib/gitorious/messaging
 module Gitorious::Messaging::ResqueAdapter
   module Publisher
     QUEUES = {
-      "/queue/GitoriousRepositoryCreation" => "RepositoryCreation",
-      "/queue/GitoriousRepositoryDeletion" => "RepositoryDeletion",
-      "/queue/GitoriousPush" => "Push",
-      "/queue/GitoriousSshKeys" => "SshKey",
-      "/queue/GitoriousRepositoryArchiving" => "RepositoryArchiving",
-      "/queue/GitoriousEmailNotifications" => "MessageForwarding",
-      "/queue/GitoriousMergeRequestCreation" => "MergeRequest",
-      "/queue/GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
-      "/queue/GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
-      "/queue/GitoriousPostReceiveWebHook" => "WebHook"
+      "/queue/GitoriousRepositoryCreation" => "repository_creation",
+      "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
+      "/queue/GitoriousPush" => "push",
+      "/queue/_gitoriousSshKeys" => "ssh_key",
+      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
+      "/queue/GitoriousEmailNotifications" => "message_forwarding",
+      "/queue/GitoriousMergeRequestCreation" => "merge_request",
+      "/queue/GitoriousMergeRequestBackend" => "merge_request_git_backend",
+      "/queue/GitoriousMergeRequestVersionDeletion" => "merge_request_version",
+      "/queue/GitoriousPostReceiveWebHook" => "web_hook"
     }
 
     # Locate the correct class to pick queue from
     #
     def inject(queue)
-      ResqueQueue.new(Object.const_get("#{QUEUES[queue.to_s]}Processor"))
+      ResqueQueue.new(load_consumer(QUEUES[queue.to_s]))
     end
   end
 

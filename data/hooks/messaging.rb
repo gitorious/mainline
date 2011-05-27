@@ -18,10 +18,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 RAILS_ENV = ENV['RAILS_ENV'] || "production"
-RAILS_ROOT = File.join(File.dirname(__FILE__), "..", "..")
+RAILS_ROOT = File.join(File.readlink(File.readlink(File.dirname(File.expand_path(__FILE__)))), "..", "..")
 
 $: << File.join(RAILS_ROOT, "lib")
 require 'rubygems'
+require 'bundler'
+ENV['BUNDLE_GEMFILE'] = File.join(RAILS_ROOT, "Gemfile")
+Bundler.require :messaging, RAILS_ENV
 require 'yaml'
 require 'gitorious/messaging'
 
