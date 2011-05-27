@@ -114,7 +114,7 @@ module Gitorious
       %w[merge_request_git_backend merge_request merge_request_version
          message_forwarding push repository_archiving repository_creation
          repository_deletion ssh_key web_hook].each do |p|
-        require "app/processors/#{p}_processor"
+        require "processors/#{p}_processor"
       end
     end
 
