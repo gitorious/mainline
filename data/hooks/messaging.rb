@@ -17,17 +17,20 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+print "=> Syncing Gitorious... "
+RAILS_ENV = ENV['RAILS_ENV'] || "production"
+RAILS_ROOT = File.join(File.dirname(__FILE__), "..", "..")
+
+$: << File.join(RAILS_ROOT, "lib")
 require 'rubygems'
 require 'yaml'
 require 'gitorious/messaging'
 
-print "=> Syncing Gitorious... "
-RAILS_ENV = ENV['RAILS_ENV'] || "production"
-
 if !defined?(GitoriousConfig)
-  conf = YAML::load_file(File.join(File.dirname(__FILE__), "..", "..", "config", "gitorious.yml"))
-  GitoriousConfig = conf[RAILS_ENV]  
-  Gitorious::Messaging.configure(config)
+  conf = YAML::load_file(File.join(RAILS_ROOT, "config", "gitorious.yml"))
+  GitoriousConfig = conf[RAILS_ENV]
+  Gitorious::Messaging.load_adapter(GitoriousConfig["messaging_adapter"])
+  Gitorious::Messaging.configure_publisher(GitoriousConfig["messaging_adapter"])
 end
 
 class Publisher
