@@ -28,3 +28,5 @@ if GitoriousConfig.using_reserved_hostname?
   Rails.logger.warn "The specified gitorious_host is reserved in Gitorious\n" + 
   "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
 end
+
+ActionMailer::Base.default_url_options[:protocol] = GitoriousConfig["scheme"]
