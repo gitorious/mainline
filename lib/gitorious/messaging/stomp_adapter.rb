@@ -65,41 +65,43 @@ module Gitorious::Messaging::StompAdapter
     nil
   end
 
-  class ApplicationProcessor < ActiveMessaging::Processor
-    attr_reader :processor
+  if defined?(ActiveMessaging)
+    class ApplicationProcessor < ActiveMessaging::Processor
+      attr_reader :processor
 
-    def initialize
-      @processor = self.class.processor.new
-    end
-
-    def self.processor=(processor)
-      @processor = processor
-    end
-
-    def self.processor
-      @processor
-    end
-
-    def on_message(message)
-      processor.consume(message)
-    rescue Exception => err
-      on_error(err)
-    end
-
-    def on_error(err)
-      notify_on_error(err)
-      logger.error "#{processor.class.name}::on_error: #{err.class.name} raised: " + err.message
-
-      if (err.kind_of?(StandardError))
-        raise ActiveMessaging::AbortMessageException
-      else
-        raise err
+      def initialize
+        @processor = self.class.processor.new
       end
-    end
 
-    protected
-    def notify_on_error(err)
-      Mailer.deliver_message_processor_error(processor, err)
+      def self.processor=(processor)
+        @processor = processor
+      end
+
+      def self.processor
+        @processor
+      end
+
+      def on_message(message)
+        processor.consume(message)
+      rescue Exception => err
+        on_error(err)
+      end
+
+      def on_error(err)
+        notify_on_error(err)
+        logger.error "#{processor.class.name}::on_error: #{err.class.name} raised: " + err.message
+
+        if (err.kind_of?(StandardError))
+          raise ActiveMessaging::AbortMessageException
+        else
+          raise err
+        end
+      end
+
+      protected
+      def notify_on_error(err)
+        Mailer.deliver_message_processor_error(processor, err)
+      end
     end
   end
 
