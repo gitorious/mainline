@@ -18,6 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 print "=> Syncing Gitorious... "
+$stdout.flush
 
 incpath = File.dirname(__FILE__)
 $: << incpath
@@ -33,8 +34,7 @@ hashed_dir = gitdir.split('/')[-3,3].join('/').split('.').first
 hashed_dir = hashed_dir.sub(/^repositories\//, "")
 
 while line = gets
-  message = JSON.unparse({:gitdir => hashed_dir, :message => line.chomp, :username => ENV['GITORIOUS_USER']})
-  @publisher.post_message(message)
+  @publisher.post_message({:gitdir => hashed_dir, :message => line.chomp, :username => ENV['GITORIOUS_USER']})
 end
 
 puts "[OK]"
