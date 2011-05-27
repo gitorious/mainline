@@ -57,7 +57,7 @@ class Project < ActiveRecord::Base
     s.index :description
     s.index :slug
     s.index "user#login", :as => "user"
-    s.collect(:name, :from => "Tag", :as => "category",
+    s.collect(:name, :from => "ActsAsTaggableOn::Tag", :as => "category",
       :using => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +
       "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id")    
   end
