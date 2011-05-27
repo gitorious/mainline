@@ -23,6 +23,7 @@
 class MergeRequest < ActiveRecord::Base
   include ActiveMessaging::MessageSender
   include Watchable
+  include Gitorious::Search
 
   belongs_to :user
   belongs_to :source_repository, :class_name => 'Repository'
@@ -38,14 +39,15 @@ class MergeRequest < ActiveRecord::Base
   after_create :add_to_creators_favorites
 
   before_validation_on_create :set_sequence_number
+  
+  is_indexed do |s|
+    s.index :proposal
+    s.index :status_tag, :as => "status"
+    s.index "user#login", :as => "proposed_by"
+    s.conditions "status != 0"
+  end
 
-  is_indexed :fields => ["proposal", {:field => "status_tag", :as => "status"}],
-    :include => [{
-      :association_name => "user",
-      :field => "login",
-      :as => "proposed_by"
-    }], :conditions => "status != 0"
-
+  
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
 
