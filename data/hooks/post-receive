@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 #--
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2009 Marius Mårnes Mathiesen <marius.mathiesen@gmail.com>
@@ -16,13 +17,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+print "=> Syncing Gitorious... "
 
 incpath = File.dirname(__FILE__)
 $: << incpath
 
 require 'messaging'
 require 'json'
-
 
 @publisher = Publisher.new
 gitdir = File.expand_path(File.join(incpath, ".."))
@@ -31,11 +32,9 @@ hashed_dir = gitdir.split('/')[-3,3].join('/').split('.').first
 # compat with the old-style paths
 hashed_dir = hashed_dir.sub(/^repositories\//, "")
 
-
 while line = gets
   message = JSON.unparse({:gitdir => hashed_dir, :message => line.chomp, :username => ENV['GITORIOUS_USER']})
   @publisher.post_message(message)
 end
 
 puts "[OK]"
-
