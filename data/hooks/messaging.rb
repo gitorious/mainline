@@ -20,9 +20,10 @@
 RAILS_ENV = ENV['RAILS_ENV'] || "production"
 RAILS_ROOT = File.join(File.dirname(__FILE__), "..", "..")
 
+$: << File.join(RAILS_ROOT, "lib")
 require 'rubygems'
 require 'yaml'
-require File.join(RAILS_ROOT, "lib", "gitorious", "messaging")
+require 'gitorious/messaging'
 
 if !defined?(GitoriousConfig)
   conf = YAML::load_file(File.join(RAILS_ROOT, "config", "gitorious.yml"))
