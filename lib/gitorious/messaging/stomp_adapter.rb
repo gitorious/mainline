@@ -132,7 +132,9 @@ module Gitorious::Messaging::StompAdapter
     end
   end
 
-  def ActiveMessaging.logger
-    Gitorious::Messaging.logger
+  if defined?(ActiveMessaging)
+    def ActiveMessaging.logger
+      Gitorious::Messaging.logger
+    end
   end
 end

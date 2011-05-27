@@ -106,7 +106,7 @@ module Gitorious
 
       # verify active database connections, reconnect if needed
       def verify_connections!
-        ActiveRecord::Base.verify_active_connections!
+        ActiveRecord::Base.verify_active_connections! if defined?(ActiveRecord)
       end
     end
 
@@ -119,9 +119,11 @@ module Gitorious
     end
 
     class AbortMessageException < Exception; end
+    class NoopLogger; def debug; end; end
 
     def self.logger
       return @@logger if defined? @@logger
+      return @@logger = NoopLogger.new if !defined?(ActiveSupport)
 
       filename = "message_processing#{RAILS_ENV == 'test' ? '_test' : ''}"
       io = RAILS_ENV == "development" ? STDOUT : File.join(RAILS_ROOT, "log", "#{filename}.log")
@@ -131,18 +133,25 @@ module Gitorious
       @@logger
     end
 
-    def self.configure(config)
-      adapter = config["messaging_adapter"] || "stomp"
+    def self.load_adapter(adapter)
       require "gitorious/messaging/#{adapter}_adapter"
+    end
 
-      # Publisher
+    def self.configure_publisher(adapter)
       klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Publisher")
       Gitorious::Messaging::Publisher.send(:include, klass)
+    end
 
-      # Consumer
+    def self.configure_consumer(adapter)
       klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Consumer")
       Gitorious::Messaging::Consumer.use(klass, klass.const_get("Macros"))
+    end
 
+    def self.configure(config)
+      adapter = config["messaging_adapter"]
+      Gitorious::Messaging.load_adapter(adapter)
+      Gitorious::Messaging.configure_publisher(adapter)
+      Gitorious::Messaging.configure_consumer(adapter)
       Gitorious::Messaging.load_processors
     end
   end
