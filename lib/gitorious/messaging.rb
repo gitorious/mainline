@@ -32,7 +32,7 @@ module Gitorious
         @queues[name] ||= inject(name)
       end
 
-      # Publishes a message to the named queue, which isresolved through +queue+.
+      # Publishes a message to the named queue, which is resolved through +queue+.
       # The payload is JSON encoded before passed to the queue's +publish+ method,
       # and should therefore contain only data that can be safely represented as
       # JSON.
@@ -49,23 +49,17 @@ module Gitorious
       # not strictly map a single class to handle a single queue needs to work
       # around this assumption in its implementation.
       #
-      # Implementing modules should call +#consume(message)+ to consume incoming
-      # messages. 
-      #
-      # def self.consumes(queue, options = {})
-      #
-      # end
+      # Implementing modules should call +#consume(message, options = {})+ to
+      # consume incoming messages. 
 
       def self.included(klass)
-        if defined? @@macros
-          klass.extend(@@macros)
+        if defined? @@adapter
+          klass.extend(@@adapter)
         end
       end
 
-      def self.use(implementation, macros)
+      def self.use(implementation)
         @@adapter = implementation
-        @@macros = macros
-        include implementation
       end
 
       def self.configured?
@@ -144,7 +138,7 @@ module Gitorious
 
     def self.configure_consumer(adapter)
       klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Consumer")
-      Gitorious::Messaging::Consumer.use(klass, klass.const_get("Macros"))
+      Gitorious::Messaging::Consumer.use(klass)
     end
 
     def self.configure(config)

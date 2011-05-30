@@ -15,7 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "resque"
 
 # Synchronous implementation (i.e. no separate poller/worker required). of the
 # Gitorious messaging API. For use with lib/gitorious/messaging.
@@ -47,16 +46,12 @@ module Gitorious::Messaging::SyncAdapter
 
   module Consumer
     def self.included(klass)
-      if klass != Gitorious::Messaging::Consumer
-        klass.send(:extend, Macros)
-      end
+      klass.send(:extend, self) if klass != Gitorious::Messaging::Consumer
     end
 
-    module Macros
-      def consumes(queue, options = {})
-        # Noop, there are no subscribers as messages are
-        # consumed synchronously on publish
-      end
+    def consumes(queue, options = {})
+      # Noop, there are no subscribers as messages are
+      # consumed synchronously on publish
     end
   end
 

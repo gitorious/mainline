@@ -52,13 +52,11 @@ module Gitorious::Messaging::TestAdapter
   end
 
   module Consumer
-    module Macros
-      def consumes(queue)
-        Gitorious::Messaging::TestAdapter.consumers_for(queue) << self
-      end
+    def consumes(queue)
+      Gitorious::Messaging::TestAdapter.consumers_for(queue) << self
     end
   end
-
+  
   class Queue
     def initialize(queue)
       @queue = queue

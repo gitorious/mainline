@@ -38,22 +38,18 @@ module Gitorious::Messaging::StompAdapter
 
   module Consumer
     def self.included(klass)
-      if klass != Gitorious::Messaging::Consumer
-        klass.send(:extend, Macros)
-      end
+      klass.send(:extend, self) if klass != Gitorious::Messaging::Consumer
     end
 
-    module Macros
-      def consumes(queue, options = {})
-        consumer = Class.new(ApplicationProcessor)
-        consumer.processor = self
-        def consumer.name; "ActiveMessaging#{processor.name.split('::').last}"; end
-        def consumer.to_s; processor.name; end
+    def consumes(queue, options = {})
+      consumer = Class.new(ApplicationProcessor)
+      consumer.processor = self
+      def consumer.name; "ActiveMessaging#{processor.name.split('::').last}"; end
+      def consumer.to_s; processor.name; end
 
-        sym_name = Gitorious::Messaging::StompAdapter.queue_from_symbolic_name(queue)
-        raise "Unable to locate symbolic name for queue #{queue}. Check config/messaging.rb" if sym_name.blank?
-        consumer.subscribes_to(sym_name, options)
-      end
+      sym_name = Gitorious::Messaging::StompAdapter.queue_from_symbolic_name(queue)
+      raise "Unable to locate symbolic name for queue #{queue}. Check config/messaging.rb" if sym_name.blank?
+      consumer.subscribes_to(sym_name, options)
     end
   end
 

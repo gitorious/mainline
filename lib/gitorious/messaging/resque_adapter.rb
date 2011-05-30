@@ -43,19 +43,15 @@ module Gitorious::Messaging::ResqueAdapter
 
   module Consumer
     def self.included(klass)
-      if klass != Gitorious::Messaging::Consumer
-        klass.send(:extend, Macros)
-      end
+      klass.send(:extend, self) if klass != Gitorious::Messaging::Consumer
     end
 
-    module Macros
-      def consumes(queue, options = {})
-        @queue = queue.sub(/\/queue\//, "")
-      end
+    def consumes(queue, options = {})
+      @queue = queue.sub(/\/queue\//, "")
+    end
 
-      def perform(message)
-        self.new.consume(message)
-      end
+    def perform(message)
+      self.new.consume(message)
     end
   end
 
