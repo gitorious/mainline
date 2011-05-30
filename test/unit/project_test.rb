@@ -524,4 +524,15 @@ class ProjectTest < ActiveSupport::TestCase
       assert !Project.all.include?(@project)
     end
   end
+
+  context "Tagging" do
+    setup do
+      @project = Factory.create(:user_project)
+    end
+
+    should "have a tag_list= setter" do
+      @project.tag_list = "fun pretty scary"
+      assert_equal(%w(fun pretty scary), @project.tag_list)
+    end    
+  end
 end
