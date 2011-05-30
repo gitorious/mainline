@@ -186,11 +186,6 @@ class Project < ActiveRecord::Base
     admin?(candidate) && repositories.clones.count == 0
   end
 
-  def tag_list=(tag_list)
-    tag_list.gsub!(/,\s*/, " ")
-    super
-  end
-
   def home_url=(url)
     self[:home_url] = clean_url(url)
   end
