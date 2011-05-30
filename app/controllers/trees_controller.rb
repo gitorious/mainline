@@ -23,7 +23,7 @@ class TreesController < ApplicationController
   include ActiveMessaging::MessageSender
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  renders_in_site_specific_context
+  renders_in_site_specific_context :except => [:archive]
   
   def index
     redirect_to repo_owner_path(@repository, :project_repository_tree_path, 

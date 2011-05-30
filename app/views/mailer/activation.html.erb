@@ -19,9 +19,9 @@
 
 Hello <%=h @user.login %>, 
 
-your account has been activated.  You can add your public SSH key here http://<%= GitoriousConfig['gitorious_host'] -%>/~<%=h @user.login -%> as well as change your details.
+your account has been activated.  You can add your public SSH key here <%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>/~<%=h @user.login -%> as well as change your details.
 
 Thank you
 
-http://<%= GitoriousConfig['gitorious_host'] %>
+<%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>
 
