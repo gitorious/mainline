@@ -22,25 +22,37 @@
 # as "Gitorious light" - fewer movable parts, but also less performant.
 #
 module Gitorious::Messaging::SyncAdapter
+  def self.load_env
+    dirname = File.dirname(__FILE__)
+    require File.expand_path(File.join(dirname, "../../../config/environment"))
+  end
+
+  def self.load_processor(identifier)
+    self.load_env if !defined?(Rails)
+    queue = Publisher::QUEUES[identifier.to_s]
+    require "processors/#{queue}_processor"
+    Object.const_get("#{queue.split("_").collect(&:capitalize)}Processor")
+  end
+
   module Publisher
     QUEUES = {
-      "/queue/GitoriousRepositoryCreation" => "RepositoryCreation",
-      "/queue/GitoriousRepositoryDeletion" => "RepositoryDeletion",
-      "/queue/GitoriousPush" => "Push",
-      "/queue/GitoriousSshKeys" => "SshKey",
-      "/queue/GitoriousRepositoryArchiving" => "RepositoryArchiving",
-      "/queue/GitoriousEmailNotifications" => "MessageForwarding",
-      "/queue/GitoriousMergeRequestCreation" => "MergeRequest",
-      "/queue/GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
-      "/queue/GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
-      "/queue/GitoriousPostReceiveWebHook" => "WebHook"
+      "/queue/GitoriousRepositoryCreation" => "repository_creation",
+      "/queue/GitoriousRepositoryDeletion" => "repository_deletion",
+      "/queue/GitoriousPush" => "push",
+      "/queue/GitoriousSshKeys" => "ssh_key",
+      "/queue/GitoriousRepositoryArchiving" => "repository_archiving",
+      "/queue/GitoriousEmailNotifications" => "message_forwarding",
+      "/queue/GitoriousMergeRequestCreation" => "merge_request",
+      "/queue/GitoriousMergeRequestBackend" => "merge_request_git_backend",
+      "/queue/GitoriousMergeRequestVersionDeletion" => "merge_request_version",
+      "/queue/GitoriousPostReceiveWebHook" => "web_hook"
     }
 
     # Locate the correct class to pick queue from
     #
     def inject(queue)
       @queues ||= {}
-      @queues[queue] = SyncQueue.new(Object.const_get("#{QUEUES[queue.to_s]}Processor"))
+      @queues[queue] = SyncQueue.new(Gitorious::Messaging::SyncAdapter.load_processor(queue))
     end
   end
 
