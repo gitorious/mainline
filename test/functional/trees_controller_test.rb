@@ -160,7 +160,6 @@ class TreesControllerTest < ActionController::TestCase
   
   context "Archive downloads" do
     setup do
-      ActiveMessaging::Gateway.connection.clear_messages
       @master_sha = "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
       @test_master_sha = "2d3acf90f35989df8f262dc50beadc4ee3ae1560"
     end
