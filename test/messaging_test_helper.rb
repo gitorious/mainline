@@ -34,7 +34,7 @@ class ActiveSupport::TestCase
   end
 
   def assert_messages_published(queue, num)
-    assert_equal num, Gitorious::Messaging::TestAdapter.messages_on(queue).length
+    assert_equal num, Gitorious::Messaging::TestAdapter.messages_on(queue).length, Gitorious::Messaging::TestAdapter.messages_on(queue).inspect
   end
 
   def clear_message_queue
