@@ -12,7 +12,7 @@ require 'rubygems' if RUBY_VERSION < '1.9'
 require 'daemons'
 
 APP_ROOT = File.expand_path(File.dirname(__FILE__) + '/..')
-script_file = File.join(File.expand_path(APP_ROOT),'vendor','plugins','activemessaging','poller.rb')
+script_file = File.join(File.expand_path(APP_ROOT), 'lib/gitorious/messaging/stomp_poller.rb')
 tmp_dir = File.join(File.expand_path(APP_ROOT), 'tmp/pids')
 
 options = {
@@ -27,4 +27,4 @@ options = {
   :log_output => true
 }
 
-Daemons.run(script_file,options)
+Daemons.run(script_file, options)

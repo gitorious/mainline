@@ -18,13 +18,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 RAILS_ENV = ENV['RAILS_ENV'] || "production"
-RAILS_ROOT = File.join(File.readlink(File.readlink(File.dirname(File.expand_path(__FILE__)))), "..", "..")
+RAILS_ROOT = File.expand_path(File.join(File.readlink(File.readlink(File.dirname(File.expand_path(__FILE__)))), "..", ".."))
 
 $: << File.join(RAILS_ROOT, "lib")
 require 'rubygems'
 require 'bundler'
 ENV['BUNDLE_GEMFILE'] = File.join(RAILS_ROOT, "Gemfile")
 Bundler.require :messaging, RAILS_ENV
+
 require 'yaml'
 require 'gitorious/messaging'
 
@@ -32,6 +33,7 @@ if !defined?(GitoriousConfig)
   conf = YAML::load_file(File.join(RAILS_ROOT, "config", "gitorious.yml"))
   GitoriousConfig = conf[RAILS_ENV]
   adapter = GitoriousConfig["messaging_adapter"] || "stomp"
+  Bundler.require adapter.to_sym
   Gitorious::Messaging.load_adapter(adapter)
   Gitorious::Messaging.configure_publisher(adapter)
 end

@@ -2,6 +2,8 @@ GEM
   remote: http://rubygems.org/
   specs:
     SystemTimer (1.2.3)
+    activemessaging (0.7.1)
+      activesupport (>= 1.0.0)
     activerecord (2.3.8)
       activesupport (= 2.3.8)
     activesupport (2.3.8)
@@ -64,6 +66,7 @@ PLATFORMS
 
 DEPENDENCIES
   SystemTimer
+  activemessaging
   acts-as-taggable-on
   builder
   chronic

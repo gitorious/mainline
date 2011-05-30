@@ -9,7 +9,6 @@ gem "echoe", :require => false
 gem "ruby-yadis", :require => "yadis"
 gem "ruby-openid", :require => "openid"
 gem "rdiscount", "1.3.1.1", :platforms => :ruby
-gem "stomp", "1.1"
 gem "mime-types", :require => "mime/types"
 gem "diff-lcs", :require => "diff/lcs"
 gem "oauth"
@@ -32,7 +31,6 @@ gem "revo-ssl_requirement"
 
 # Ruby 1.8 gems
 gem "ruby-hmac", :platforms => :ruby_18
-gem "json", "~> 1.4.6", :platforms => :ruby_18
 
 group :test do
   gem "mocha", :require => false
@@ -45,7 +43,19 @@ group :git_proxy do
   gem "rake"
 end
 
+group :messaging do
+  gem "json", "~> 1.4.6", :platforms => :ruby_18
+end
+
 group :resque do
   gem "resque"
   gem "SystemTimer"
+end
+
+group :stomp do
+  gem "stomp", "1.1"
+end
+
+group :active_messaging do
+  gem "activemessaging"
 end

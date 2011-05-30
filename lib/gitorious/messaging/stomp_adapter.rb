@@ -26,6 +26,12 @@
 #
 require "stomp"
 
+begin
+  require "activemessaging"
+rescue LoadError => err
+  # Ok if we just want the publisher
+end
+
 module Gitorious::Messaging::StompAdapter
   module Publisher
     # Locate the correct class to pick queue from
