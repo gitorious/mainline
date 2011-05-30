@@ -23,8 +23,6 @@ gem "oauth"
 gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 gem "will_paginate"
-gem "resque"
-gem "SystemTimer"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
@@ -47,8 +45,7 @@ group :git_proxy do
   gem "rake"
 end
 
-group :messaging do
-  gem "json", "~> 1.4.6", :platforms => :ruby_18
+group :resque do
   gem "resque"
   gem "SystemTimer"
 end
