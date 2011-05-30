@@ -5,13 +5,15 @@ class ActiveSupport::TestCase
     context "#{messaging_hub.name}" do
       yield.each do |jms_queue, processor|
         should "enqueue #{jms_queue} message with #{processor.name}" do
-          Resque.expects(:enqueue).with do |klass, payload|
-            klass == processor && JSON.parse(payload) == {
-              "target_class" => "DummyHub",
-              "target_id" => 42
-            }
+          Resque.expects(:push).with do |queue, envelope|
+            queue == jms_queue && envelope[:class] == processor.name &&
+              envelope[:args].length == 1 && JSON.parse(envelope[:args].first) == {
+                "target_class" => "DummyHub",
+                "target_id" => 42
+              }
           end
 
+          processor.stubs(:queue).returns(jms_queue)
           hub = messaging_hub.new
           hub.publish(jms_queue, { :target_class => "DummyHub", :target_id => 42 })
         end
