@@ -106,14 +106,6 @@ especially if you're upgrading an existing Gitorious installation.
   and put that on the 'cookie_secret' line (replacing the 'ssssht').
 
 
-config/broker.yml
------------------
-
-This file contains information about the Message Queing system used in your
-Gitorious installation. There's a section about this further down in this
-document, but as a starting point you can use the supplied sample file in
-config/broker.yml.example (cp config/broker.yml.example config/broker.yml)
-
 Install the gems required by Gitorious
 ======================================
 
@@ -158,39 +150,96 @@ Once all the tests pass, you're almost ready.
 Messaging server
 ================
 
-Gitorious uses the ActiveMessaging plugin, which supports a range of different
-messaging platforms, for sending demanding tasks for asynchronous processing.
-In order to these events to be processed, you need to run a messaging server
-when running Gitorious.
+Many Gitorious operations are performed asynchronously to ensure good
+performance. Examples of such tasks includes updating the database when pushing
+to Gitorious, creating bare git repositories when creating repositories in the
+web UI and more. To process these asynchronous actions, Gitorious uses a
+messaging system where it sends messages to a queue, and a worker (i.e. another
+process, usually some kind of daemon) fetches messages back for processing.
 
-A pretty reliable solution is to use Apache's ActiveMQ messaging queue system,
-located at http://activemq.apache.org/ . Download a version for you operating
-system, unpack, and follow the instructions to get running. On Unix-like
-systems, this is as easy as unpacking the tarball, going into it and running
+Gitorious provides several messaging implementations ("adapters"). The
+alternatives along with how to install and run them are presented below. You
+only need one of these alternatives.
+
+Sync adapter
+------------
+
+Processes messages synchronously, which means that no extra process is
+required. This is a very simple solution, but will yield poor performance. It's
+intended use is for development, but may also fit small setups where performance
+is not an issue (e.g. if resources are scarce). To use it, simply set
+messaging_adapter in gitorious.yml to "sync":
+
+  messaging_adapter: sync
+
+Stomp adapter
+-------------
+
+The default (backwards compatible) adapter. This loads the implementation that's
+been in Gitorious for a while. If you are upgrading an earlier install, using
+this adapter will "just work". To use it, set messaging_adapter to "stomp" in
+gitorious.yml:
+
+  messaging_adapter: stomp
+
+The Stomp adapter uses stomp to talk to your Stomp aware message queue of
+choice. A pretty reliable solution is to use Apache's ActiveMQ messaging queue
+system, located at http://activemq.apache.org/. Download a version for your
+operating system, unpack, and follow the instructions to get running. On
+Unix-like systems, this is as easy as unpacking the tarball, going into it and
+running
 
   bin/activemq
-  
-This will start the ActiveMQ server in a default setup, probably pretty well
-suited for development purposes. The ActiveMessaging plugin needs to know how
-to contact your MQ server, so it needs a config/broker.yml file. The Gitorious
+
+This will start the ActiveMQ server with the default setup, probably pretty well
+suited for development purposes. The ActiveMessaging plugin needs to know how to
+contact your MQ server, so it needs a config/broker.yml file. The Gitorious
 distribution provides an example (again, the defaults should work in a
-development environment). Just copy the config/broker.yml.example to
+development environment). Just copy the config/broker.yml.example file to
 config/broker.yml and start your server.
 
-The messages are sent to the server, in order to "consume" the messages, there
-is a script in scripts/poller that will run all registered "processors" (found
-in app/processors) that consume messages. In order to have eg. creation of
-repositories done automatically run
+The scripts/poller script uses processors found in app/processors to consume
+messages from a Stomp queue. The script can either be run in a blocking mode
+(useful in development) by issuing:
 
-  bundle exec script/poller start
-  
-and the script will be started and daemonized.
+  bundle exec script/poller run
 
-You're free to use other messaging protocols than the default Stomp protocol,
-which is required in config/environment.rb. The ActiveMessaging website
-(http://code.google.com/p/activemessaging/wiki/ActiveMessaging) has more
-information about how to set this up.
+To start the poller as a daemon (as you would in a production environment),
+issue:
 
+  bundler exec script/poller start
+
+Not that Gitorious uses ActiveMessaging to publish messages to the queue. Even
+though ActiveMessaging supports several brokers, your only option for Gitorious
+is Stomp. The reason is that we use Stomp directly to consume messages, and in
+the future we are likely to remove ActiveMessaging alltogether in favor of a
+direct Stomp implementation.
+
+Resque adapter
+--------------
+
+Resque uses Redis as a backend for messaging. It comes with a nice
+administration interface that allows for resending of messages, introspection
+and general statistics about your queue. To use it, set messaging_adapter to
+"resque" in gitorious.yml:
+
+  messaging_adapter: resque
+
+To use Resque, you need to install and run Redis. This is described in detail on
+the official Resque page: https://github.com/defunkt/resque
+
+To process messages from the queue with Resque, you need to run rake:
+
+  RAILS_ENV=production QUEUE=* rake environment resque:work
+
+You can also run a worker for a single, or a handful of queues too. This allows
+you to assign different priority to different queues. The list of queues in use
+can be found in lib/gitorious/messaging/resque_adapter.rb.
+
+Note that Gitorious generally uses JMS style queue names, e.g.
+/queue/GitoriousPostReceiveWebHook. Because the Resque web frontend does not
+handle queue names with slashes in them, we strip queue names such that the
+aforementioned queue will be named GitoriousPostReceiveWebHook under Resque.
 
 Get Sphinx going
 ================
