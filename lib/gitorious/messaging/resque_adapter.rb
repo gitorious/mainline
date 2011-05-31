@@ -22,22 +22,23 @@ require "resque"
 module Gitorious::Messaging::ResqueAdapter
   module Publisher
     QUEUES = {
-      "/queue/GitoriousRepositoryCreation" => "RepositoryCreation",
-      "/queue/GitoriousRepositoryDeletion" => "RepositoryDeletion",
-      "/queue/GitoriousPush" => "Push",
-      "/queue/GitoriousSshKeys" => "SshKey",
-      "/queue/GitoriousRepositoryArchiving" => "RepositoryArchiving",
-      "/queue/GitoriousEmailNotifications" => "MessageForwarding",
-      "/queue/GitoriousMergeRequestCreation" => "MergeRequest",
-      "/queue/GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
-      "/queue/GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
-      "/queue/GitoriousPostReceiveWebHook" => "WebHook"
+      # Maps queue => processor class (see app/processors)
+      "GitoriousRepositoryCreation" => "RepositoryCreation",
+      "GitoriousRepositoryDeletion" => "RepositoryDeletion",
+      "GitoriousPush" => "Push",
+      "GitoriousSshKeys" => "SshKey",
+      "GitoriousRepositoryArchiving" => "RepositoryArchiving",
+      "GitoriousEmailNotifications" => "MessageForwarding",
+      "GitoriousMergeRequestCreation" => "MergeRequest",
+      "GitoriousMergeRequestBackend" => "MergeRequestGitBackend",
+      "GitoriousMergeRequestVersionDeletion" => "MergeRequestVersion",
+      "GitoriousPostReceiveWebHook" => "WebHook"
     }
 
     # Locate the correct class to pick queue from
     #
     def inject(queue)
-      ResqueQueue.new(queue, "#{QUEUES[queue.to_s]}Processor")
+      ResqueQueue.new(queue, "#{QUEUES[queue.to_s.sub(/\/queue\//, "")]}Processor")
     end
   end
 
