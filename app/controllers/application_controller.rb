@@ -282,10 +282,16 @@ class ApplicationController < ActionController::Base
     end
 
   private
+    def using_session?
+      !request.session_options[:expire_after].nil?
+    end
+
+    def ssl_allowed?
+      request.ssl?
+    end
+
     def ssl_required?
-      return false if !GitoriousConfig["use_ssl"]
-      return true if request.ssl?
-      !request.session_options[:expire_after].nil? && logged_in?
+      GitoriousConfig["use_ssl"] && using_session? && logged_in?
     end
 
     def unshifted_polymorphic_path(repo, path_spec)
