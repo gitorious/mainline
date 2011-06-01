@@ -53,17 +53,17 @@ module Gitorious
       # consume incoming messages. 
 
       def self.included(klass)
-        if defined? @@adapter
-          klass.extend(@@adapter)
+        if defined? @adapter
+          klass.extend(@adapter)
         end
       end
 
       def self.use(implementation)
-        @@adapter = implementation
+        @adapter = implementation
       end
 
       def self.configured?
-        defined? @@adapter
+        defined? @adapter
       end
 
       # Consumes a message from the queue. The method expects the message to be
