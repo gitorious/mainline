@@ -132,12 +132,12 @@ module Gitorious
     end
 
     def self.configure_publisher(adapter)
-      klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Publisher")
+      klass = Gitorious::Messaging.const_get("#{adapter.camelize}Adapter").const_get("Publisher")
       Gitorious::Messaging::Publisher.send(:include, klass)
     end
 
     def self.configure_consumer(adapter)
-      klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Consumer")
+      klass = Gitorious::Messaging.const_get("#{adapter.camelize}Adapter").const_get("Consumer")
       Gitorious::Messaging::Consumer.use(klass)
     end
 
