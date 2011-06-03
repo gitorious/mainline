@@ -185,18 +185,20 @@ gitorious.yml:
 The Stomp adapter uses stomp to talk to your Stomp aware message queue of
 choice. A pretty reliable solution is to use Apache's ActiveMQ messaging queue
 system, located at http://activemq.apache.org/. Download a version for your
-operating system, unpack, and follow the instructions to get running. On
-Unix-like systems, this is as easy as unpacking the tarball, going into it and
-running
+operating system, unpack, and follow the instructions to get running. Instructions
+for installing on Ubuntu can be found in this Gitorious installation guide:
+http://cjohansen.no/en/ruby/setting_up_gitorious_on_your_own_server
 
-  bin/activemq
+An init script for ActiveMQ can be found here:
+http://launchpadlibrarian.net/15645459/activemq
+With it, starting ActiveMQ is as simple as:
 
-This will start the ActiveMQ server with the default setup, probably pretty well
-suited for development purposes. The ActiveMessaging plugin needs to know how to
-contact your MQ server, so it needs a config/broker.yml file. The Gitorious
-distribution provides an example (again, the defaults should work in a
-development environment). Just copy the config/broker.yml.example file to
-config/broker.yml and start your server.
+sudo /etc/init.d/activemq start
+
+The ActiveMessaging plugin needs to know how to contact your MQ server, so it
+needs a config/broker.yml file. The Gitorious distribution provides an example
+(the defaults should work in a development environment). Just copy the
+config/broker.yml.example file to config/broker.yml and start your server.
 
 The scripts/poller script uses processors found in app/processors to consume
 messages from a Stomp queue. The script can either be run in a blocking mode
