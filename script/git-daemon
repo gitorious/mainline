@@ -150,7 +150,7 @@ module Git
         service, base_path, host = $1, $2, $3
         log(Process.pid, "Not accepting #{service.inspect} for #{base_path.inspect}")
         write_error_message(session, "The git:// url is read-only. Please see " +
-          "http://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')} " +
+          "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')} " +
           "for the push url, if you're a committer.")
         $children_active -= 1
         session.close

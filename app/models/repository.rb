@@ -224,7 +224,7 @@ class Repository < ActiveRecord::Base
   end
 
   def browse_url
-    "http://#{GitoriousConfig['gitorious_host']}/#{url_path}"
+    "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{url_path}"
   end
 
   def clone_url
@@ -232,7 +232,7 @@ class Repository < ActiveRecord::Base
   end
 
   def http_clone_url
-    "http://#{Site::HTTP_CLONING_SUBDOMAIN}.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
+    "#{GitoriousConfig['scheme']}://#{Site::HTTP_CLONING_SUBDOMAIN}.#{GitoriousConfig['gitorious_host']}/#{gitdir}"
   end
 
   def http_cloning?
