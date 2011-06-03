@@ -53,17 +53,17 @@ module Gitorious
       # consume incoming messages. 
 
       def self.included(klass)
-        if defined? @@adapter
-          klass.extend(@@adapter)
+        if defined? @adapter
+          klass.extend(@adapter)
         end
       end
 
       def self.use(implementation)
-        @@adapter = implementation
+        @adapter = implementation
       end
 
       def self.configured?
-        defined? @@adapter
+        defined? @adapter
       end
 
       # Consumes a message from the queue. The method expects the message to be
@@ -132,12 +132,12 @@ module Gitorious
     end
 
     def self.configure_publisher(adapter)
-      klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Publisher")
+      klass = Gitorious::Messaging.const_get("#{adapter.camelize}Adapter").const_get("Publisher")
       Gitorious::Messaging::Publisher.send(:include, klass)
     end
 
     def self.configure_consumer(adapter)
-      klass = Gitorious::Messaging.const_get("#{adapter.capitalize}Adapter").const_get("Consumer")
+      klass = Gitorious::Messaging.const_get("#{adapter.camelize}Adapter").const_get("Consumer")
       Gitorious::Messaging::Consumer.use(klass)
     end
 

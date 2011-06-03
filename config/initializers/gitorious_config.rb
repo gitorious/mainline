@@ -20,7 +20,8 @@ unless defined? GitoriousConfig
   require "subdomain_validation"
   GitoriousConfig.extend(SubdomainValidation)
 
-  GitoriousConfig["messaging_adapter"] ||= "stomp"
+  default_messaging_adapter = RAILS_ENV == "test" ? "test" : "stomp"
+  GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
   if !GitoriousConfig.valid_subdomain?
     Rails.logger.warn "Invalid subdomain name #{GitoriousConfig['gitorious_host']}. Session cookies will not work!\n" + 
