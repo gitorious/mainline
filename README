@@ -201,13 +201,13 @@ needs a config/broker.yml file. The Gitorious distribution provides an example
 config/broker.yml.example file to config/broker.yml and start your server.
 
 The scripts/poller script uses processors found in app/processors to consume
-messages from a Stomp queue. The script can either be run in a blocking mode
-(useful in development) by issuing:
+messages from a Stomp queue. The script can be run in a blocking mode (useful in
+development) by issuing:
 
   bundle exec script/poller run
 
-To start the poller as a daemon (as you would in a production environment),
-issue:
+To start the poller as a non-blocking daemon (as you would in a production
+environment), issue:
 
   bundler exec script/poller start
 
