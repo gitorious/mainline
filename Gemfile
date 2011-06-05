@@ -19,7 +19,6 @@ gem "rack", "~> 1.0.1"
 gem "riddle" # For the ultrasphinx plugin
 gem "builder"
 gem "mysql", :platforms => :ruby
-gem "oauth"
 gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 gem "will_paginate"
