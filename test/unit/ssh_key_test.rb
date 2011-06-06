@@ -72,7 +72,7 @@ class SshKeyTest < ActiveSupport::TestCase
     key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+#{GitoriousConfig['gitorious_host']} key"
     assert key.valid?
     
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE http://#{GitoriousConfig['gitorious_host']} key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']} key"
     assert key.valid?
   end
   

@@ -24,7 +24,7 @@ atom_feed do |feed|
 
   @events.each do |event|
     action, body, category = action_and_body_for_event(event)
-    item_url = "http://#{GitoriousConfig['gitorious_host']}" + project_path(@project)
+    item_url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}" + project_path(@project)
     feed.entry(event, :url => item_url) do |entry|
       if event.user
         entry.title("#{h(event.user.login)} #{strip_tags(action)}")

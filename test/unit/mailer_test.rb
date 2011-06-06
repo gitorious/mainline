@@ -91,6 +91,7 @@ class MailerTest < ActiveSupport::TestCase
     assert_equal([recipient.email], mail.to)
     assert_equal "New message: This is a message", mail.subject
     assert_match /#{sender.fullname} has sent you a message on Gitorious:/, mail.body
+
     assert_match /#{GitoriousConfig['scheme']}:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, mail.body
     assert_match "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", mail.body
   end
