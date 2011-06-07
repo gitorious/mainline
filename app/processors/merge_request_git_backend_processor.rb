@@ -28,7 +28,7 @@ class MergeRequestGitBackendProcessor
 
   def on_message(message)
     @message = message
-    send("do_#{action}")
+    send(:"do_#{action}")
   end
 
   def action
