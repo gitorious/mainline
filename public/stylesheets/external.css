@@ -241,93 +241,121 @@ body#users #wrapper, body#sessions #wrapper {
 #header #call-to-actions ul li#log-in a:hover { background-position: -187px -48px; }
 #header #call-to-actions ul li#log-in a:active { background-position: -374px -48px; }
 
-#features-wrapper { 
+.features-wrapper { 
 	float: left;
 	width: 100%;
-	height: 148px;
 	padding-bottom: 15px;
 	overflow: hidden;
 	padding-top: 25px;
 	background: url(../img/external/feature-bg.png) repeat-x left bottom #ececec;
 }
 
+.fp-highlight {
+    margin: 0 auto;
+    width: 960px;
+}
+
+.fp-highlight h3 {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dcdcdc;
+}
+
 #features {
-	margin: 0 auto;
-	width: 960px;
+    background: url(../img/external/features-header.png) no-repeat;
+    height: 21px;
+    text-indent: -9999px;
 }
 
-#features h3 {
-	padding-bottom: 10px;
-	border-bottom: 1px solid #dcdcdc;
-	background: url(../img/external/features-header.png) no-repeat;
-	width: 100%; 
-	height: 21px;
-	float: left;
-	text-indent: -9999px;
+.fp-highlight ul {
+    float: left;
+    overflow: visible;
+    padding-top: 25px;
+    width: 960px;
 }
 
-#features ul {
-	width: 960px;
-	float: left;
-	padding-top: 25px; 
+.fp-highlight li {
+    background: 0 10px no-repeat;
+    float: left;
+    width: 269px; 
+    margin-right: 5px;
+    height: 90px;
+    padding-left: 46px;
 }
 
-#features ul li {
-	float: left;
-	width: 315px; 
-	margin-right: 5px;
-	height: 100px;
-}
-	
-#features ul li h4 {
-	width: 300px;
-	float: left;
-	display: block;
-	text-indent: -9999px;
-}
-
-#features ul li p {
+.fp-highlight ul li p {
 	width: 260px;
 	font-size: 12px;
 	line-height: 17px;
 	margin-top: 6px;
 	float: left; 
 }
-#features-wrapper { height: 245px;}
-#features p a.all-features {
-	width: 151px;
 
+.fp-highlight p a.all-features {
+	width: 151px;
 	height: 66px;
 	float: right;
 	margin-top: 20px;
 	display: block;
 	text-indent: -9999px;
 	background: url(../img/external/call-to-action.png) no-repeat -0px -141px;
-		display: none; }
-#features p a.all-features:hover { background-position: -187px -141px; }
-#features p a.all-features:active { background-position: -374px -141px; }
-	
-#features ul li img {
-	float: left;
-	margin: 10px 14px 10px 0px;
-	
+	display: none;
 }
 
-#features ul li#project-hosting h4 { background: url(../img/external/headers/project-hosting.png) no-repeat; width: 138px; height: 17px; }
-#features ul li#activity-monitoring h4 { background: url(../img/external/headers/activity-monitoring.png) no-repeat; width: 176px; height: 17px; }
-#features ul li#public-merge-requests h4 { background: url(../img/external/headers/public-merge-requests.png) no-repeat; width: 203px; height: 17px; }
-#features ul li#project-centric h4 { background: url(../img/external/headers/organize-your-repos.png) no-repeat; width: 243px; height: 17px; }
-#features ul li#team-contributions h4 { background: url(../img/external/headers/team-contributions.png) no-repeat; width: 203px; height: 17px; }
-#features ul li#project-wikis h4 { background: url(../img/external/headers/project-wikis.png) no-repeat; width: 203px; height: 17px; }
+.fp-highlight p a.all-features:hover { background-position: -187px -141px; }
+.fp-highlight p a.all-features:active { background-position: -374px -141px; }
 
+.fp-highlight ul h4 {
+    font-family: 'Nobile', arial, serif;
+    letter-spacing: 1px;
+    color: #444;
+}
 
-#features ul.expanded-feature-list {
+.fp-highlight h4 a,
+.fp-highlight h4 a:hover,
+.fp-highlight h4 a:active {
+    color: #444;
+}
+
+.commercial {
+    border-top: 1px solid #dcdcdc;
+    clear: left;
+    padding-top: 30px;
+}
+
+.commercial h3 {
+    border: none;
+    color: #000;
+    margin: 0 0 1em;
+    padding: 0 0 0;
+}
+
+.commercial h4 {
+    font-size: 0.9em;
+    letter-spacing: 0;
+}
+
+.commercial ul {
+    padding-top: 0;
+}
+
+.commercial li {
+    height: auto;
+    padding-bottom: 20px;
+}
+
+#project-hosting { background-image: url(../img/external/icons/server_database.png); }
+#activity-monitoring { background-image: url(../img/external/icons/feed.png); }
+#public-merge-requests { background-image: url(../img/external/icons/arrow_in.png); }
+#project-centric { background-image: url(../img/external/icons/database.png); }
+#team-contributions { background-image: url(../img/external/icons/team-contributions.png); }
+#project-wikis { background-image: url(../img/external/icons/project-wikis.png); }
+
+.fp-highlight ul.expanded-feature-list {
 	padding-top:  22px;
 	margin-top: 15px;
 	float: left;
 	width: 900px;
 	height: 130px;
-	
 }
 
 #content {
