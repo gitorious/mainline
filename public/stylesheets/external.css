@@ -787,12 +787,14 @@ body #wrapper #content p.alt_links a { color: #2d2d2d; }
 body #wrapper #content p.alt_links a:hover { color: #111; }
 
 #footer {
-    width: 100%;
-    margin-top: 3px solid red;
-    float: left;
+    background: url(../img/external/footer-bg.png) repeat-x #000;
     clear: both;
-    background: url(../img/external/footer-bg.png) repeat-x;
+    float: left;
     height: 184px;
+    margin-top: 3px solid red;
+    overflow: visible;
+    padding: 0 0 20px;
+    width: 100%;
 }
 
 #footer #footer-container {
@@ -817,6 +819,11 @@ body #wrapper #content p.alt_links a:hover { color: #111; }
     margin: 10px 20px 0px 0px;
     border-top: 1px solid #333;
     padding-top: 8px;
+}
+
+#footer-links {
+    overflow: hidden;
+    padding: 0 0 10px;
 }
 
 #footer ul.footer-links li { font-size: 13px; }
@@ -847,10 +854,25 @@ body #wrapper #content p.alt_links a:hover { color: #111; }
 #footer .powered-by {
     float: right;
     width: 100px;
-    margin: 00px 00px 10px 10px;
+    margin: 0 0 10px 10px;
     text-align: center;
 }
 
 #footer .powered-by img {
     margin-top: 7px;
+}
+
+#footer #gitorious-com {
+    border-top: 1px solid #333;
+    clear: both;
+    font-size: .8em;
+    padding: 10px 0 0;
+    text-align: right;
+}
+
+#footer #gitorious-com a:link,
+#footer #gitorious-com a:visited,
+#footer #gitorious-com a {
+    color: #6e6e6e;
+    font-weight: bold;
 }
