@@ -44,7 +44,7 @@ class FavoritesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       post :create
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
     end
 
     should "assign to watchable" do
@@ -158,7 +158,7 @@ class FavoritesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       get :index
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
     end
 
     should "only list the users favorites" do

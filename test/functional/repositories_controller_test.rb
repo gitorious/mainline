@@ -577,7 +577,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should " require login" do
       logout
       do_clone_get
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "GET projects/1/repositories/3/clone is successful" do
@@ -625,7 +625,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should " require login" do
       logout
       do_create_clone_post
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "post projects/1/repositories/3/create_clone is successful" do
@@ -891,7 +891,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       do_delete(@repo)
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "can only be deleted by the admins" do
@@ -953,7 +953,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should " require login" do
       logout
       get :new, :project_id => @project.to_param
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "require adminship" do
@@ -1059,10 +1059,10 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "requires login" do
       logout
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
 
       put :update, :project_id => @project.to_param, :id => @repository.to_param
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "requires adminship on the project if owner is a project" do

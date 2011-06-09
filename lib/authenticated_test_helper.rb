@@ -16,4 +16,8 @@ module AuthenticatedTestHelper
   def user_instance(sym_or_obj)
     sym_or_obj.is_a?(User) ? sym_or_obj : users(sym_or_obj)
   end
+
+  def assert_redirected_to_login
+    assert_redirected_to(new_user_session_path)
+  end
 end

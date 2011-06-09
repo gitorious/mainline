@@ -161,7 +161,7 @@ class ProjectsControllerTest < ActionController::TestCase
     should "require login for GET projects/new" do
       get :new
       assert_response :redirect
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "create project for POST projects/create with valid data" do
@@ -258,12 +258,12 @@ class ProjectsControllerTest < ActionController::TestCase
 
     should "require login for projects/create" do
       post :create
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "require login for PUT projects/update" do
       put :update
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "only allow project owner to GET projects/N/edit" do
@@ -330,7 +330,7 @@ class ProjectsControllerTest < ActionController::TestCase
     should "require login to DELETE projects/destroy" do
       delete :destroy
       assert_response :redirect
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "only allow project owner to DELETE projects/xx" do
@@ -365,7 +365,7 @@ class ProjectsControllerTest < ActionController::TestCase
     should "require login for GET projects/xx/edit" do
       get :edit, :id => projects(:johans).slug
       assert_response :redirect
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "successfully GET projects/xx/edit" do
@@ -377,7 +377,7 @@ class ProjectsControllerTest < ActionController::TestCase
     should "require login for GET projects/xx/confirm_delete" do
       get :confirm_delete
       assert_response :redirect
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "fetch the project when GET projects/xx/confirm_delete" do

@@ -37,7 +37,7 @@ class AliasesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       get :index, :user_id => @user.to_param
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
     end
 
     should "require current_user" do
@@ -57,7 +57,7 @@ class AliasesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       get :new, :user_id => @user.to_param
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
     end
 
     should "require current_user" do
@@ -78,7 +78,7 @@ class AliasesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       post :create, :user_id => @user.to_param, :email => {:address => "bob@example.com"}
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
     end
 
     should "require current_user" do
@@ -109,7 +109,7 @@ class AliasesControllerTest < ActionController::TestCase
     should "require login" do
       logout
       delete :destroy, :user_id => @user.to_param, :id => @email.to_param
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
     end
 
     should "require current_user" do

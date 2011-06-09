@@ -293,7 +293,7 @@ class UsersControllerTest < ActionController::TestCase
         :password_confirmation => "qwertyasdf"
       }
       assert_response :redirect
-      assert_redirected_to new_user_session_path
+      assert_redirected_to_login
       assert User.authenticate(:email => @user.email, :password => "qwertyasdf")
       assert_match(/Password updated/i, flash[:success])
     end

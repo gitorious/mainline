@@ -135,7 +135,7 @@ class SiteControllerTest < ActionController::TestCase
     should "requires login" do
       logout
       get :dashboard
-      assert_redirected_to(new_user_session_path)
+      assert_redirected_to_login
     end
 
     should "redirects to the user page" do
