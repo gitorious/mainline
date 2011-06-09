@@ -139,7 +139,6 @@ class SessionsControllerTest < ActionController::TestCase
 
     should 'be removed when logging out' do
       post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
-      assert authenticated?
       get :destroy
       assert !authenticated?
     end
