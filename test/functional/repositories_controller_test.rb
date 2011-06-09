@@ -575,7 +575,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " require login" do
-      login_as nil
+      logout
       do_clone_get
       assert_redirected_to(new_user_session_path)
     end
@@ -623,7 +623,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " require login" do
-      login_as nil
+      logout
       do_create_clone_post
       assert_redirected_to(new_user_session_path)
     end
@@ -721,7 +721,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " not require login" do
-      login_as nil
+      logout
       do_writable_by_get :username => "johan"
       assert_response :success
     end
@@ -843,7 +843,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "not require login" do
-      login_as nil
+      logout
       do_config_get
       assert_response :success
     end
@@ -889,7 +889,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      login_as nil
+      logout
       do_delete(@repo)
       assert_redirected_to(new_user_session_path)
     end
@@ -951,7 +951,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should " require login" do
-      login_as nil
+      logout
       get :new, :project_id => @project.to_param
       assert_redirected_to(new_user_session_path)
     end
@@ -1057,7 +1057,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "requires login" do
-      login_as nil
+      logout
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
       assert_redirected_to(new_user_session_path)
 

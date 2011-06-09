@@ -1,11 +1,11 @@
 module AuthenticatedTestHelper
   # Sets the current user in the session from the user fixtures.
   def login_as(user)
-    if user
-      sign_in :user, user_instance(user)
-    else
-      sign_out :user
-    end
+    sign_in :user, user_instance(user)
+  end
+
+  def logout
+    sign_out :user
   end
 
   def authorize_as(user)

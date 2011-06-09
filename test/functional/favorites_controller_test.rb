@@ -42,7 +42,7 @@ class FavoritesControllerTest < ActionController::TestCase
     }
 
     should "require login" do
-      login_as nil
+      logout
       post :create
       assert_redirected_to new_user_session_path
     end
@@ -156,7 +156,7 @@ class FavoritesControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      login_as nil
+      logout
       get :index
       assert_redirected_to new_user_session_path
     end

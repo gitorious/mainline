@@ -35,7 +35,7 @@ class AliasesControllerTest < ActionController::TestCase
 
   context "Listing all emails" do
     should "require login" do
-      login_as nil
+      logout
       get :index, :user_id => @user.to_param
       assert_redirected_to new_user_session_path
     end
@@ -55,7 +55,7 @@ class AliasesControllerTest < ActionController::TestCase
 
   context "GETting the new email page" do
     should "require login" do
-      login_as nil
+      logout
       get :new, :user_id => @user.to_param
       assert_redirected_to new_user_session_path
     end
@@ -76,7 +76,7 @@ class AliasesControllerTest < ActionController::TestCase
 
   context "POSTing to create a new email page" do
     should "require login" do
-      login_as nil
+      logout
       post :create, :user_id => @user.to_param, :email => {:address => "bob@example.com"}
       assert_redirected_to new_user_session_path
     end
@@ -107,7 +107,7 @@ class AliasesControllerTest < ActionController::TestCase
 
   context "DELETE an email" do
     should "require login" do
-      login_as nil
+      logout
       delete :destroy, :user_id => @user.to_param, :id => @email.to_param
       assert_redirected_to new_user_session_path
     end

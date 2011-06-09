@@ -40,7 +40,7 @@ class KeysControllerTest < ActionController::TestCase
     end
   
     should "requires login" do
-      login_as nil
+      logout
       get :index, :user_id => @user.to_param
       assert_response :redirect
       assert_redirected_to(new_user_session_path)
@@ -100,7 +100,7 @@ class KeysControllerTest < ActionController::TestCase
     end
   
     should " require login" do
-      login_as nil
+      logout
       get :new
       assert_redirected_to (new_user_session_path)
     end
@@ -144,13 +144,13 @@ end
     setup do
       login_as :johan
     end
-  
+
     should " require login" do
-      login_as nil
+      logout
       post :create, :ssh_key => {:key => valid_key}
       assert_redirected_to(new_user_session_path)
     end
-    
+
     should "require current_user" do
       login_as :moe
       post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
@@ -187,19 +187,19 @@ end
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 401
     end
-    
+
     should "require current_user" do
       login_as :moe
       post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param, :format => "xml"
       assert_response :redirect
       assert_redirected_to user_path(users(:moe))
     end
-  
+
     should "scopes to the current_user" do
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_equal users(:johan).id, assigns(:ssh_key).user_id
     end
-  
+
     should "POST account/keys/create is successful" do
       post :create, :ssh_key => {:key => valid_key}, :format => "xml", :user_id => @user.to_param
       assert_response 201
