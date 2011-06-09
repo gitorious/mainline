@@ -35,7 +35,7 @@ class SessionsControllerTest < ActionController::TestCase
   should "login and redirect" do
     @controller.stubs(:using_open_id?).returns(false)
     post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
-    assert warden.authenticated?
+    assert authenticated?
     assert_response :redirect
   end
 
@@ -53,7 +53,7 @@ class SessionsControllerTest < ActionController::TestCase
       }
     )
     post :create, :openid_url => identity_url
-    assert !warden.authenticated?
+    assert !authenticated?
     assert_equal identity_url, session[:openid_url]
     assert_equal 'patcito', session[:openid_nickname]
     assert_equal 'patcito@gmail.com', session[:openid_email]
@@ -65,14 +65,14 @@ class SessionsControllerTest < ActionController::TestCase
   should " fail login and not redirect" do
     @controller.stubs(:using_open_id?).returns(false)
     post :create, :user => {:email => 'johan@johansorensen.com', :password => 'bad password'}
-    assert !warden.authenticated?
+    assert !authenticated?
     assert_response :success
   end
 
   should " logout" do
     login_as :johan
     get :destroy
-    assert !warden.authenticated?
+    assert !authenticated?
     assert_response :redirect
   end
 
@@ -98,7 +98,7 @@ class SessionsControllerTest < ActionController::TestCase
     users(:johan).remember_me!
     @request.cookies["remember_user_token"] = cookie_for(:johan)
     get :new
-    assert warden.authenticated?
+    assert authenticated?
   end
 
   should " fail when trying to login with with expired cookie" do
@@ -106,14 +106,14 @@ class SessionsControllerTest < ActionController::TestCase
     users(:johan).update_attribute :remember_token_expires_at, 5.minutes.ago.utc
     @request.cookies["remember_user_token"] = cookie_for(:johan)
     get :new
-    assert !warden.authenticated?
+    assert !authenticated?
   end
 
   should " fail cookie login" do
     users(:johan).remember_me!
     @request.cookies["remember_user_token"] = cookie_for(:johan) + 'invalid_remember_user_token'
     get :new
-    assert !warden.authenticated?
+    assert !authenticated?
   end
 
   should " show flash when invalid credentials are passed" do
@@ -134,26 +134,26 @@ class SessionsControllerTest < ActionController::TestCase
   context 'Bypassing caching for authenticated users' do
     should 'be set when logging in' do
       post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
-      assert warden.authenticated?
+      assert authenticated?
     end
 
     should 'be removed when logging out' do
       post :create, :user => {:email => "johan@johansorensen.com", :password => "test"}
-      assert warden.authenticated?
+      assert authenticated?
       get :destroy
-      assert !warden.authenticated?
+      assert !authenticated?
     end
 
     should "be accepted when logging in with an auth token" do
       users(:johan).remember_me!
       @request.cookies["remember_user_token"] = cookie_for(:johan)
       get :new
-      assert warden.authenticated?
+      assert authenticated?
     end
 
     should "be logged in only on  successful logins" do
       post :create, :user => {:email => "johan@johansorensen.com", :password => "lulz"}
-      assert !warden.authenticated?
+      assert !authenticated?
     end
   end
 end

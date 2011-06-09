@@ -12,6 +12,10 @@ module AuthenticatedTestHelper
     @request.env["HTTP_AUTHORIZATION"] = user ? "Basic #{Base64.encode64("#{users(user).email}:test")}" : nil
   end
 
+  def authenticated?
+    warden.authenticated?
+  end
+
   # Sometimes user is a User
   def user_instance(sym_or_obj)
     sym_or_obj.is_a?(User) ? sym_or_obj : users(sym_or_obj)
