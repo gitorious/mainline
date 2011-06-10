@@ -556,7 +556,7 @@ module ApplicationHelper
   end
 
   def dashboard_path
-    root_url(:host => GitoriousConfig["gitorious_host"], :protocol => "http")
+    root_url(:host => GitoriousConfig["gitorious_host"], :protocol => GitoriousConfig["scheme"])
   end
 
   def git_or_ssh_url_checked(repository, currently)

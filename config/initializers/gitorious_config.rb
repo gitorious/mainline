@@ -33,3 +33,5 @@ unless defined? GitoriousConfig
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
 end
+
+ActionMailer::Base.default_url_options[:protocol] = GitoriousConfig["scheme"]

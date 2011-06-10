@@ -1,121 +1,105 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
+          "http://www.w3.org/TR/html4/strict.dtd">
 <head> 
-  	<title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
-	
-	<link rel="stylesheet" href="/stylesheets/external.css" type="text/css">
-	<%= include_javascripts -%>
-	<script type="text/javascript">
-	$(function()
-	{
-	        var self = this;
-	        this.status = 'collapsed';
+  <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
+  
+  <link rel="stylesheet" href="/stylesheets/external.css" type="text/css">
+  <%= include_javascripts -%>
+  <script type="text/javascript">
+$(function() {
+    var self = this;
+    this.status = 'collapsed';
 
-	        $('a.view-features').click(function()
-	        {
-	                if(!$('#features-wrapper').is(':animated'))
-	                {
-	                        $('#features-wrapper')
-	                                .animate(
-	                                {
-	                                        'height': (self.status == 'collapsed') ? '260px' : '148px'
-	                                },
-	                                {
-	                                        duraton: 'normal',
-	                                        complete: function()
-	                                        {
-	                                                self.status = (self.status == 'collapsed') ? 'expanded' : 'collapsed';
-	                                        }
-	                                });
+    $('a.view-features').click(function() {
+        if(!$('#features-wrapper').is(':animated')) {
+            $('#features-wrapper').animate({
+                'height': (self.status == 'collapsed') ? '260px' : '148px'
+            }, {
+                duraton: 'normal',
+                complete: function() {
+                    self.status = (self.status == 'collapsed') ? 'expanded' : 'collapsed';
+                }
+            });
 
-	                        $('.expanded-feature-list')
-	                                .css('border-top', (self.status == 'collapsed') ? '1px solid #DDD' : '1px solid #ededed');
-	                }
-	        });
-		});
-	$(document).ready(function() {
-		  	$("p.openid-switch a").click(
-		      function() {
-		        $("#regular_login_fields").addClass("login_hidden");
-		        $("#openid_login_fields").removeClass("login_hidden");
-				$("p.openid-switch").toggle();
-				$("p.regular-switch").toggle();
-		      });
-		 	$("p.regular-switch a").click(
-		        function() {
-					$("p.regular-switch").toggle();
-					$("p.openid-switch").toggle();
-		          $("#openid_login_fields").addClass("login_hidden");
-		          $("#regular_login_fields").removeClass("login_hidden");
-		        });
-		});
-
-$('#screenshots-container') 
-.cycle({ 
-    fx:     'scrollLeft', 
-    speed:  '700', 
-    timeout: 5500, 
-    pager:  '#screenshotsnavigation' 
+            $('.expanded-feature-list').css('border-top', (self.status == 'collapsed') ? '1px solid #DDD' : '1px solid #ededed');
+        }
+    });
 });
-</script>
-<!--[if IE 7]>
-<link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css">
-<![endif]-->
-<!--[if gt IE 7]>
-<link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css">
-<![endif]-->
+
+$(document).ready(function() {
+    $("p.openid-switch a").click(function() {
+        $("#regular_login_fields").addClass("login_hidden");
+        $("#openid_login_fields").removeClass("login_hidden");
+        $("p.openid-switch").toggle();
+        $("p.regular-switch").toggle();
+    });
+
+    $("p.regular-switch a").click(function() {
+        $("p.regular-switch").toggle();
+        $("p.openid-switch").toggle();
+        $("#openid_login_fields").addClass("login_hidden");
+        $("#regular_login_fields").removeClass("login_hidden");
+    });
+});
+
+$('#screenshots-container').cycle({ 
+    fx: 'scrollLeft', 
+    speed: '700', 
+    timeout: 5500, 
+    pager: '#screenshotsnavigation' 
+});
+  </script>
+  <!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
+  <!--[if gt IE 7]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
 </head>
 <body id="<%= controller.controller_name -%>">
-	<div id="wrapper">
-				<%= flashes %>
- 		<div id="top-wrapper">
-		<div id="top">
-			<div id="logo">
-				<h1><%= link_to("Gitorious", root_path) %></h1>
-			</div>
-			<ul id="menu">
-				<li class="home"><%= link_to("Home", root_path) %></li>
-	          	<li class="about"><%= link_to t("views.layout.about"), about_path %></li>
-				<li class="contact"><%= link_to "Contact", contact_path %> </li>
-	          	<li class="register"><%= link_to t("views.layout.register"), new_user_path %></li>
-				<li class="login"><%= link_to "Login", login_path %></li>
-
-			</ul>
-		</div> <!-- end of #top -->
-		<div class="clear"></div>
-		</div>
-
-		<div class="content-container">
-		<%= yield %>
-		<div class="clear"></div>
-		</div> <!-- end of content-container -->
-
+  <div id="wrapper">
+    <%= flashes %>
+    <div id="top-wrapper">
+      <div id="top">
+	<div id="logo">
+	  <h1><%= link_to("Gitorious", root_path) %></h1>
 	</div>
-	<div id="footer">
-	      
-		<div id="footer-container">
-			<%= render :partial => "layouts/common_footer"  -%>
-			<div id="footer-links">
-				<h3>Gitorious</h3>
-				<ul>
-					<li><%= link_to t("views.layout.home"), root_path -%></li>
-		        	<li><%= link_to t("views.layout.about"), about_path -%></li>
-		        	<li><%= link_to t("views.layout.faq"), faq_path -%></li>
-		        	<li><%= link_to "Contact", contact_path -%></li>
-				</ul>
-				<ul>
-					<li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
-		        	<li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
-				</ul>
-				<% if GitoriousConfig["terms_of_use"] -%>
-				<ul>
-		                  <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
-          	                  <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
-				</ul>
-				<% end %>
-			</div>
-		</div>
-		<div class="clear"></div>
-	</div> <!-- end of the footer -->
+	<ul id="menu">
+	  <li class="home"><%= link_to("Home", root_path) %></li>
+	  <li class="about"><%= link_to t("views.layout.about"), about_path %></li>
+	  <li class="contact"><%= link_to "Contact", contact_path %> </li>
+	  <li class="register"><%= link_to t("views.layout.register"), new_user_path %></li>
+	  <li class="login"><%= link_to "Login", login_path %></li>
+	</ul>
+      </div> <!-- end of #top -->
+      <div class="clear"></div>
+    </div>
+    <div class="content-container">
+      <%= yield %>
+      <div class="clear"></div>
+    </div> <!-- end of content-container -->
+  </div>
+  <div id="footer">
+    <div id="footer-container">
+      <%= render :partial => "layouts/common_footer"  -%>
+      <div id="footer-links">
+	<h3>Gitorious</h3>
+	<ul>
+	  <li><%= link_to t("views.layout.home"), root_path -%></li>
+	  <li><%= link_to t("views.layout.about"), about_path -%></li>
+	  <li><%= link_to t("views.layout.faq"), faq_path -%></li>
+	  <li><%= link_to "Contact", contact_path -%></li>
+	</ul>
+	<ul>
+	  <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
+	  <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
+	</ul>
+	<% if GitoriousConfig["terms_of_use"] -%>
+	  <ul>
+	    <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
+            <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
+	  </ul>
+	<% end %>
+      </div>
+      <%= render :partial => "layouts/gitorious_com" %>
+    </div>
+    <div class="clear"></div>
+  </div>
 </body>
 </html>

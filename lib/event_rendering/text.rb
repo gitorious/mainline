@@ -227,7 +227,7 @@ module EventRendering
 
     def render_push_summary
       event_data = PushEventLogger.parse_event_data(@event.data)
-      url = "http://#{GitoriousConfig['gitorious_host']}/#{@event.project.slug}/#{@event.target.name}/commits"
+      url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{@event.project.slug}/#{@event.target.name}/commits"
       branch_name = event_data[:branch]
       start_sha = event_data[:start_sha_short]
       end_sha = event_data[:end_sha_short]

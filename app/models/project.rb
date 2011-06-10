@@ -28,6 +28,7 @@ class Project < ActiveRecord::Base
   include RecordThrottling
   include UrlLinting
   include Watchable
+  include Gitorious::Search
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
@@ -51,20 +52,15 @@ class Project < ActiveRecord::Base
 
   attr_protected :owner_id, :user_id, :site_id
 
-  is_indexed :fields => ["title", "description", "slug"],
-    :concatenate => [
-      { :class_name => 'ActsAsTaggableOn::Tag',
-        :field => 'name',
-        :as => 'category',
-        :association_sql => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +
-                            "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id"
-      }],
-    :include => [{
-      :association_name => "user",
-      :field => "login",
-      :as => "user"
-    }]
-
+  is_indexed do |s|
+    s.index :title
+    s.index :description
+    s.index :slug
+    s.index "user#login", :as => "user"
+    s.collect(:name, :from => "ActsAsTaggableOn::Tag", :as => "category",
+      :using => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +
+      "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id")    
+  end
 
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id
@@ -188,11 +184,6 @@ class Project < ActiveRecord::Base
 
   def can_be_deleted_by?(candidate)
     admin?(candidate) && repositories.clones.count == 0
-  end
-
-  def tag_list=(tag_list)
-    tag_list.gsub!(/,\s*/, " ")
-    super
   end
 
   def home_url=(url)

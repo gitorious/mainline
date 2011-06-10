@@ -21,7 +21,7 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 class TreesControllerTest < ActionController::TestCase
   
-  should_render_in_site_specific_context
+  should_render_in_site_specific_context :except => [:archive]
 
   should_enforce_ssl_for(:get, :archive)
   should_enforce_ssl_for(:get, :index)

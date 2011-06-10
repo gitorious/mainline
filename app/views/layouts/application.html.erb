@@ -26,85 +26,79 @@
 <head>
   <%= render :partial => "layouts/common_head" %>
 </head>
-
 <body id="<%= controller.controller_name -%>">
-<div id="wrapper">
-  <% unless GitoriousConfig["system_message"].blank? -%>
-  <div id="system_message">
-    <p><strong><%= t("views.layout.system_notice") %>:</strong> <%= GitoriousConfig["system_message"] -%></p>
-  </div>
-  <% end -%>
-  <ul id="user-nav">
-	<li><%= link_to("Dashboard", root_path) %></li>
-	<%= render "layouts/login_logout" -%>
-  </ul>
-  <div id="header">
-    <h1 id="logo">
-      <%= link_to image_tag("/img/logo.png"), root_path -%>
-    </h1>
-
-    <ul id="menu">
-      <% if logged_in? -%>
-        <li>
-          <%= link_to("Activities", activity_path) %>
-        </li>
-      <% end -%>
-      <% if GitoriousConfig['public_mode'] || logged_in? -%>
-        <li class="activity"><%= link_to "Activities", activity_path -%></li>
-        <li class="projects"><%= link_to t("views.layout.projects"), projects_path -%></li>
-        <li class="teams"><%= link_to t("views.layout.teams"), groups_path -%></li>
-      <% end -%>
-    </ul>
-
-  </div>
-  
-	<div id="top-bar">
-    <ul id="breadcrumbs">
-      <%= yield :breadcrumbs -%>
-    </ul>
-    <% if GitoriousConfig['public_mode'] || logged_in? -%>
-      <div id="searchbox">
-        <%= render :partial => "/searches/search_box_global", :locals => {:hide_tips => true} -%>
+  <div id="wrapper">
+    <% unless GitoriousConfig["system_message"].blank? -%>
+      <div id="system_message">
+        <p><strong><%= t("views.layout.system_notice") %>:</strong> <%= GitoriousConfig["system_message"] -%></p>
       </div>
     <% end -%>
-  </div>
-
-  <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
-    <div id="content" class="<%= sidebar_content? ? "with_sidebar" : "" -%>">
-      <%= flashes %>
-      <%= yield -%>
+    <ul id="user-nav">
+      <li><%= link_to("Dashboard", root_path) %></li>
+      <%= render "layouts/login_logout" -%>
+    </ul>
+    <div id="header">
+      <h1 id="logo">
+        <%= link_to image_tag("/img/logo.png"), root_path -%>
+      </h1>
+      <ul id="menu">
+        <% if logged_in? -%>
+          <li>
+            <%= link_to("Activities", activity_path) %>
+          </li>
+        <% end -%>
+        <% if GitoriousConfig['public_mode'] || logged_in? -%>
+          <li class="activity"><%= link_to "Activities", activity_path -%></li>
+          <li class="projects"><%= link_to t("views.layout.projects"), projects_path -%></li>
+          <li class="teams"><%= link_to t("views.layout.teams"), groups_path -%></li>
+        <% end -%>
+      </ul>
     </div>
-    <% if sidebar_content? -%>
-    <div id="sidebar">
-
-      <%= yield :sidebar -%>
+    <div id="top-bar">
+      <ul id="breadcrumbs">
+        <%= yield :breadcrumbs -%>
+      </ul>
+      <% if GitoriousConfig['public_mode'] || logged_in? -%>
+        <div id="searchbox">
+          <%= render :partial => "/searches/search_box_global", :locals => {:hide_tips => true} -%>
+        </div>
+      <% end -%>
     </div>
-    <% end -%>
-  </div>
-	<div id="footer">
+    <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
+      <div id="content" class="<%= sidebar_content? ? "with_sidebar" : "" -%>">
+        <%= flashes %>
+        <%= yield -%>
+      </div>
+      <% if sidebar_content? -%>
+        <div id="sidebar">
+          <%= yield :sidebar -%>
+        </div>
+      <% end -%>
+    </div>
+    <div id="footer">
       <%= render :partial => "layouts/common_footer"  -%>
-	<div id="footer-links">
-		<h3>Gitorious</h3>
-		<ul>
-			<li><%= link_to t("views.layout.home"), root_path -%></li>
-	        <li><%= link_to t("views.layout.about"), about_path -%></li>
-	        <li><%= link_to t("views.layout.faq"), faq_path -%></li>
-	        <li><%= link_to "Contact", contact_path -%></li>
-		</ul>
-		<ul>
-			<li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
-	        <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
-		</ul>
-		<% if GitoriousConfig["terms_of_use"] -%>
-		<ul>
-		  <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
-          	  <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
-		</ul>
-		<% end %>
-	</div>
-
+      <div id="footer-links">
+	<h3>Gitorious</h3>
+	<ul>
+	  <li><%= link_to t("views.layout.home"), root_path -%></li>
+	  <li><%= link_to t("views.layout.about"), about_path -%></li>
+	  <li><%= link_to t("views.layout.faq"), faq_path -%></li>
+	  <li><%= link_to "Contact", contact_path -%></li>
+	</ul>
+	<ul>
+	  <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
+	  <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
+	</ul>
+	<% if GitoriousConfig["terms_of_use"] -%>
+	  <ul>
+	    <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
+            <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
+	  </ul>
+	<% end %>
+      </div>
+      <%= render :partial => "layouts/gitorious_com" %>
       <div class="clear"></div>
     </div>
-</div>
+  </div>
 </body>
 </html>

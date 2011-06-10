@@ -20,6 +20,8 @@
 #++
 
 class Comment < ActiveRecord::Base
+  include Gitorious::Search
+  
   belongs_to :user
   belongs_to :target, :polymorphic => true
   belongs_to :project
@@ -28,11 +30,10 @@ class Comment < ActiveRecord::Base
   after_create :update_state_in_target
   serialize :state_change, Array
 
-  is_indexed :fields => ["body"], :include => [{
-      :association_name => "user",
-      :field => "login",
-      :as => "commented_by"
-    }]
+  is_indexed do |s|
+    s.index :body
+    s.index "user#login", :as => :commented_by
+  end
 
   attr_protected :user_id
 

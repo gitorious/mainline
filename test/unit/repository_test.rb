@@ -995,6 +995,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
   context "Fresh repositories" do
     setup do
+      Repository.destroy_all
       @me = Factory.create(:user, :login => "johnnie")
       @project = Factory.create(:project, :user => @me,
         :owner => @me)

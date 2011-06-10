@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110514122626) do
+ActiveRecord::Schema.define(:version => 20110530131306) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"

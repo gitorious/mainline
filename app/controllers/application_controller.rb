@@ -282,10 +282,22 @@ class ApplicationController < ActionController::Base
     end
 
   private
+    # "Safely" check whether or not we're using the session. Unfortunately
+    # simply touching the session object will prompt Rails to issue a session
+    # cookie in the response, which in some cases breaks caching.
+    #
+    # Use this method as a guard in actions where cacheability is important,
+    # and you most probably don't need to access the session.
+    def using_session?
+      !request.session_options[:expire_after].nil?
+    end
+
+    def ssl_allowed?
+      request.ssl?
+    end
+
     def ssl_required?
-      return false if !GitoriousConfig["use_ssl"]
-      return true if request.ssl?
-      !request.session_options[:expire_after].nil? && logged_in?
+      GitoriousConfig["use_ssl"] && using_session? && logged_in?
     end
 
     def unshifted_polymorphic_path(repo, path_spec)

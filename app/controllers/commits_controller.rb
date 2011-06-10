@@ -64,6 +64,8 @@ class CommitsController < ApplicationController
       handle_missing_sha and return
     end
 
+    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
+
     respond_to do |format|
       format.html
 
