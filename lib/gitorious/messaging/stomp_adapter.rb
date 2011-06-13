@@ -36,9 +36,16 @@ module Gitorious::Messaging::StompAdapter
   module Publisher
     # Locate the correct class to pick queue from
     #
-    def inject(queue)
+    def queue(queue)
+      @queues ||= {}
+      return @queues[queue] if @queues[queue]
+
       @connection ||= StompConnection.new
-      StompQueue.new(queue, @connection)
+      @queues[queue] = StompQueue.new(queue, @connection)
+    end
+
+    def do_publish(queue, message)
+      queue(queue).publish(message)
     end
   end
 

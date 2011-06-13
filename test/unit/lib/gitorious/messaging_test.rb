@@ -20,55 +20,61 @@ require "gitorious/messaging"
 
 class DummyPublisher
   include Gitorious::Messaging::Publisher
+  attr_accessor :messages
 
-  class Queue
-    attr_reader :messages, :name
-    def initialize(name); @name = name; end
-    def publish(payload); (@messages ||= []) << JSON.parse(payload); end
-    def to_s; name; end
+  def do_publish(queue, payload)
+    (@messages ||= []) << [queue, payload]
   end
 
-  def inject(queue)
-    @counter ||= 1
-    res = Queue.new("injected: #{queue} ##{@counter}")
-    @counter += 1
-    res
-  end
+  # class Queue
+  #   attr_reader :messages, :name
+  #   def initialize(name); @name = name; end
+  #   def publish(payload); (@messages ||= []) << JSON.parse(payload); end
+  #   def to_s; name; end
+  # end
+
+  # def inject(queue)
+  #   @counter ||= 1
+  #   res = Queue.new("injected: #{queue} ##{@counter}")
+  #   @counter += 1
+  #   res
+  # end
 end
 
 class GitoriousMessagingTest < ActiveSupport::TestCase
   context "publisher" do
-    context "queue" do
-      should "locate queue from inject" do
-        publisher = DummyPublisher.new
+    # context "queue" do
+    #   should "locate queue from inject" do
+    #     publisher = DummyPublisher.new
 
-        assert_equal "injected: my_queue #1", publisher.queue("my_queue").to_s
-      end
+    #     assert_equal "injected: my_queue #1", publisher.queue("my_queue").to_s
+    #   end
 
-      should "reuse previously injected queue" do
-        publisher = DummyPublisher.new
-        queue = publisher.queue("my_queue")
+    #   should "reuse previously injected queue" do
+    #     publisher = DummyPublisher.new
+    #     queue = publisher.queue("my_queue")
 
-        assert_equal "injected: my_queue #1", publisher.queue("my_queue").to_s
-      end
+    #     assert_equal "injected: my_queue #1", publisher.queue("my_queue").to_s
+    #   end
 
-      should "not reuse previously injected queue when name is different" do
-        publisher = DummyPublisher.new
-        queue = publisher.queue("my_queue")
+    #   should "not reuse previously injected queue when name is different" do
+    #     publisher = DummyPublisher.new
+    #     queue = publisher.queue("my_queue")
 
-        assert_equal "injected: my_other #2", publisher.queue("my_other").to_s
-      end
-    end
+    #     assert_equal "injected: my_other #2", publisher.queue("my_other").to_s
+    #   end
+    # end
 
     context "publish" do
-      should "call publish on queue" do
+      should "call do_publish with queue and json" do
         publisher = DummyPublisher.new
 
         publisher.publish("queue_name", :id => 42, :action => "do_it")
 
-        assert_equal([{ "id" => 42,
-                        "action" => "do_it" }],
-                     publisher.queue("queue_name").messages)
+        assert_equal 1, publisher.messages.length
+        assert_equal "queue_name", publisher.messages.first[0]
+        assert_match /"id":42/, publisher.messages.first[1]
+        assert_match /"action":"do_it"/, publisher.messages.first[1]
       end
     end
   end

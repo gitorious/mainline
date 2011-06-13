@@ -40,8 +40,8 @@ module Gitorious::Messaging::TestAdapter
   end
 
   module Publisher
-    def inject(queue)
-      Queue.new(queue)
+    def do_publish(queue, message)
+      Gitorious::Messaging::TestAdapter.publish(queue, message)
     end
   end
 
@@ -54,16 +54,6 @@ module Gitorious::Messaging::TestAdapter
   module Consumer
     def consumes(queue)
       Gitorious::Messaging::TestAdapter.consumers_for(queue) << self
-    end
-  end
-  
-  class Queue
-    def initialize(queue)
-      @queue = queue
-    end
-
-    def publish(payload)
-      Gitorious::Messaging::TestAdapter.publish(@queue, payload)
     end
   end
 end

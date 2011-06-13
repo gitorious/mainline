@@ -22,23 +22,13 @@ module Gitorious
   module Messaging
 
     module Publisher
-      # Find the queue by name. This method wraps +inject+ and caches the result
-      # the first time it is called. The +inject+ method must be provided by an
-      # implementation, and should return an object that supports the +publish+
-      # method (see +publish+ below).
-      #
-      def queue(name)
-        @queues ||= {}
-        @queues[name] ||= inject(name)
-      end
-
-      # Publishes a message to the named queue, which is resolved through +queue+.
-      # The payload is JSON encoded before passed to the queue's +publish+ method,
+      # Publishes a message. The payload is JSON encoded before passed along,
       # and should therefore contain only data that can be safely represented as
-      # JSON.
+      # JSON. This method calls +do_publish(queue, json)+. To implement a
+      # publisher, please provide such a method.
       #
       def publish(queue, payload)
-        queue(queue).publish(JSON.unparse(payload))
+        do_publish(queue, JSON.unparse(payload))
       end
     end
 

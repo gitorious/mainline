@@ -37,8 +37,14 @@ module Gitorious::Messaging::ResqueAdapter
 
     # Locate the correct class to pick queue from
     #
-    def inject(queue)
-      ResqueQueue.new(queue, "#{QUEUES[queue.to_s.sub(/\/queue\//, "")]}Processor")
+    def queue(queue)
+      @queues ||= {}
+      queue_class_name = "#{QUEUES[queue.to_s.sub(/\/queue\//, "")]}Processor"
+      @queues[queue] ||= ResqueQueue.new(queue, queue_class_name)
+    end
+
+    def do_publish(queue, message)
+      queue(queue).publish(message)
     end
   end
 

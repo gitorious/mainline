@@ -50,9 +50,13 @@ module Gitorious::Messaging::SyncAdapter
 
     # Locate the correct class to pick queue from
     #
-    def inject(queue)
+    def queue(queue)
       @queues ||= {}
       @queues[queue] = SyncQueue.new(Gitorious::Messaging::SyncAdapter.load_processor(queue))
+    end
+
+    def do_publish(queue, message)
+      queue(queue).publish(message)
     end
   end
 
