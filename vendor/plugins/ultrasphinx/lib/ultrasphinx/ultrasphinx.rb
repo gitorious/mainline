@@ -83,6 +83,7 @@ module Ultrasphinx
       ]
     }      
   }
+  SQL_FUNCTIONS['jdbcmysql'] = SQL_FUNCTIONS['mysql']
   
   DEFAULTS = {
     'mysql' => %(
@@ -94,7 +95,8 @@ sql_query_pre = SET NAMES utf8
 type = pgsql
 sql_query_pre = ) + SQL_FUNCTIONS['postgresql']['stored_procedures'].values.join(' ') + %(
   )
-}
+  }
+  DEFAULTS['jdbcmysql'] = DEFAULTS['mysql']
     
   ADAPTER = ActiveRecord::Base.connection.instance_variable_get("@config")[:adapter] rescue 'mysql'
   
