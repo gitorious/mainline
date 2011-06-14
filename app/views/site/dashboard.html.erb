@@ -101,7 +101,7 @@
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
-            <%= link_to(repo.url_path + ": " + repo.open_merge_request_count,
+            <%= link_to(repo.url_path + ": " + repo.open_merge_request_count.to_s,
                  repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
           </li>
         <% end %>
