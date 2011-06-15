@@ -8,7 +8,7 @@ gem "hoe", :require => false
 gem "echoe", :require => false
 gem "ruby-yadis", :require => "yadis"
 gem "ruby-openid", :require => "openid"
-gem "rdiscount", "1.3.1.1", :platforms => :ruby
+gem "rdiscount"
 gem "stomp", "1.1"
 gem "mime-types", :require => "mime/types"
 gem "diff-lcs", :require => "diff/lcs"
@@ -44,4 +44,8 @@ end
 group :git_proxy do
   gem "proxymachine"
   gem "rake"
+end
+
+platform :jruby do
+  gem "activerecord-jdbcmysql-adapter"
 end

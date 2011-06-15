@@ -18,4 +18,18 @@
 require 'test_helper'
 
 class PagesHelperTest < ActionView::TestCase
+  include PagesHelper
+
+  context "White-listing of specific tags" do
+    should "allow a table" do
+      html = "<table><tr><td>Yo!</td></tr></table>"
+      assert_equal(html, sanitize_wiki_content(html))
+    end
+
+    should "remove non-allowed tags from content" do
+      good_html = "<table><tr><td>Hey!</td></tr></table>"
+      bad_html = good_html + "<script>alert('Yikes!')</script>"
+      assert_equal good_html, sanitize_wiki_content(bad_html)
+    end
+  end
 end
