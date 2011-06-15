@@ -32,4 +32,18 @@ class PagesHelperTest < ActionView::TestCase
       assert_equal good_html, sanitize_wiki_content(bad_html)
     end
   end
+
+  context "attributes" do
+    should "render ids on headings to enable the toc" do
+      html = "<h2 id=\"hey\">Hey</h2>"
+
+      assert_equal html, sanitize_wiki_content(html)
+    end
+
+    should "render href on links" do
+      html = "<a href=\"/home\">Hey</h2>"
+
+      assert_equal html, sanitize_wiki_content(html)
+    end
+  end
 end
