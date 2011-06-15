@@ -38,6 +38,7 @@ group :test do
   gem "mocha", :require => false
   gem "factory_girl", "~> 1.3.0"
   gem "shoulda", "~> 2.9.1"
+  gem "tuxml"
 end
 
 group :git_proxy do
