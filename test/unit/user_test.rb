@@ -83,7 +83,11 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should "reset password" do
-    users(:johan).update_attributes(:password => "newpass", :password_confirmation => "newpass")
+    user = users(:johan)
+    user.password = "newpass"
+    user.password_confirmation = "newpass"
+    user.save
+
     assert_equal users(:johan), User.authenticate("johan@johansorensen.com", "newpass")
   end
 
@@ -487,11 +491,11 @@ class UserTest < ActiveSupport::TestCase
     def create_user(options = {})
       u = User.new({
         :email => 'quire@example.com',
-        :password => 'quire',
-        :password_confirmation => 'quire',
         :terms_of_use => "1",
       }.merge(options))
       u.login = options[:login] || "quire"
+      u.password = options[:password] || 'quire'
+      u.password_confirmation = options[:password_confirmation] || 'quire'
       u.save
       u
     end

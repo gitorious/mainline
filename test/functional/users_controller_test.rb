@@ -39,6 +39,16 @@ class UsersControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :update)
   should_enforce_ssl_for(:put, :update_password)
 
+  context "http methods" do
+    setup { login_as :johan }
+
+    should_verify_method :post, :create
+    should_verify_method :post, :forgot_password_create
+    should_verify_method :put, :update, :id => "johan"
+    should_verify_method :put, :update_password, :id => "johan"
+    should_verify_method :delete, :avatar, :id => "johan"
+  end
+
   should_render_in_global_context
 
   should "show pending activation" do
@@ -430,6 +440,16 @@ class UsersControllerTest < ActionController::TestCase
       assert_template("users/password")
       assert_equal users(:johan), User.authenticate(users(:johan).email, "test")
       assert_nil User.authenticate(users(:johan).email, "fubar")
+    end
+
+    should "PUT /users/johan/update should not update password" do
+      user = users(:johan)
+      put :update, :id => user.to_param, :user => {
+        :password => "fubar",
+        :password_confirmation => "fubar" }
+
+      assert_nil User.authenticate(user.email, "fubar")
+      assert_equal user, User.authenticate(user.email, "test")
     end
 
     should "be able to update password, even if user is openid enabled" do
