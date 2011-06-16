@@ -3,6 +3,10 @@ GEM
   specs:
     activerecord (2.3.8)
       activesupport (= 2.3.8)
+    activerecord-jdbc-adapter (1.1.1)
+    activerecord-jdbcmysql-adapter (1.1.1)
+      activerecord-jdbc-adapter (= 1.1.1)
+      jdbc-mysql (~> 5.1.0)
     activesupport (2.3.8)
     acts-as-taggable-on (2.0.6)
     builder (3.0.0)
@@ -20,6 +24,7 @@ GEM
     geoip (0.8.9)
     hoe (2.8.0)
       rake (>= 0.8.7)
+    jdbc-mysql (5.1.13)
     json (1.5.0)
     json_pure (1.5.0)
     mime-types (1.16)
