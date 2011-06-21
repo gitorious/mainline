@@ -20,7 +20,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title><%= @page_title ? h(@page_title) + " - " : "" -%><%= current_site.title -%></title>
 <%= stylesheet_link_tag "content", "sidebar", "forms", "buttons", "base", :cache => true %>
-<%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Nobile" -%>
+<%= stylesheet_link_tag "//fonts.googleapis.com/css?family=Nobile&v1" -%>
 <%= include_javascripts -%>
 <%  if @atom_auto_discovery_url -%>
   <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url,
