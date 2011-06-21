@@ -20,4 +20,5 @@
   <%= link_to image_tag("../img/poweredby.png", :title => "Powered by Gitorious"), "http://gitorious.org" -%>
 </div>
 <%= GitoriousConfig["extra_html_head_data"] -%>
-<script type="text/javascript" src="/javascripts/onload.js"></script>
+<%= javascript_include_tag("onload", :cache => true) %>
+

@@ -2,8 +2,8 @@
           "http://www.w3.org/TR/html4/strict.dtd">
 <head> 
   <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
-  
-  <link rel="stylesheet" href="/stylesheets/external.css" type="text/css">
+
+  <%= stylesheet_link_tag "external", :cache => true %>
   <%= include_javascripts -%>
   <script type="text/javascript">
 $(function() {
@@ -49,8 +49,8 @@ $('#screenshots-container').cycle({
     pager: '#screenshotsnavigation' 
 });
   </script>
-  <!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
-  <!--[if gt IE 7]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
+  <!--[if IE 7]><%= stylesheet_link_tag "ie7", :cache => true %><![endif]-->
+  <!--[if gt IE 7]><%= stylesheet_link_tag "ie8", :cache => true %><![endif]-->
 </head>
 <body id="<%= controller.controller_name -%>">
   <div id="wrapper">
