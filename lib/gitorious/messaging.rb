@@ -17,6 +17,14 @@
 #++
 require 'json'
 
+if !"".respond_to?(:camelize)
+  class String
+    def camelize
+      split("_").collect { |s| s.capitalize }.join
+    end
+  end
+end
+
 # See lib/gitorious/messaging/ for possible implementations
 module Gitorious
   module Messaging
