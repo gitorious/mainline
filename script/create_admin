@@ -13,7 +13,9 @@ email = gets.strip
 puts "Type in Administrator's password: "
 password = gets.strip
 
-user = User.new :password => password, :password_confirmation => password, :email => email, :terms_of_use => '1'
+user = User.new(:email => email, :terms_of_use => '1')
+user.password = password
+user.password_confirmation = password
 user.login = 'admin'
 user.is_admin = true
 if user.save
