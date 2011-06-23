@@ -24,7 +24,7 @@ gem "will_paginate"
 gem "hodel_3000_compliant_logger"
 gem "capillary", "~> 0.1.3"
 #gem "devise", "1.0.10"
-gem "devise", :git => 'git://github.com/rosenfeld/devise.git', :branch => 'v1.0'
+gem "devise", :git => 'git://github.com/plataformatec/devise.git', :branch => 'v1.0'
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

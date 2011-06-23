@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/rosenfeld/devise.git
-  revision: d39f94e3301ee6625e9a93ec1944e41ffeb50124
+  remote: git://github.com/plataformatec/devise.git
+  revision: efc42d7662f3eebbc199965cfd546d0360738a18
   branch: v1.0
   specs:
     devise (1.0.11)
