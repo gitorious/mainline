@@ -6,15 +6,6 @@ GIT
     devise (1.0.11)
       warden (~> 0.10.3)
 
-GIT
-  remote: git://github.com/rosenfeld/devise_openid_authenticatable.git
-  revision: 367e663dd8fcc8ac7f7e1c1f3034955279ec2efb
-  branch: rack-1.0.1
-  specs:
-    devise_openid_authenticatable (1.0.0)
-      devise (>= 1.0.6)
-      rack-openid (>= 1.1.2)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -107,7 +98,6 @@ DEPENDENCIES
   chronic
   daemons
   devise!
-  devise_openid_authenticatable!
   diff-lcs
   echoe
   exception_notification (~> 1.0.20090728)
@@ -123,6 +113,7 @@ DEPENDENCIES
   paperclip (~> 2.2.8)
   proxymachine
   rack (~> 1.0.1)
+  rack-openid
   rake
   rdiscount (= 1.3.1.1)
   resque

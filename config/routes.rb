@@ -123,7 +123,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources  :events, :member => {:commits => :get}
 
-#  map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
+  map.open_id_complete 'complete-open-id-registration', :controller => 'users', :action => 'open_id_complete'
 
   map.with_options(:controller => "projects", :action => "category") do |project_cat|
     project_cat.projects_category "projects/category/:id"

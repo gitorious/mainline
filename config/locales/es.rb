@@ -156,6 +156,10 @@
         :is_admin => "¿Es administrator?",
         :forgot_title => "¿Olvidó su contraseña?",
         :send_new_passwd => 'Enviarme una nueva contraseña',
+        :openid_build_title => 'Complete your registration', # translation missing
+        :openid_build_description => 'You need to enter the following details:', # translation missing
+        :openid_failed => 'OpenID authentication has failed.', # translation missing
+        :openid_canceled => 'OpenID authentication was canceled.', # translation missing
         :create_title => lambda { |this, path| "Cree un nuevo usuario o " + 
           this.link_to( "entre directamente con su OpenID", path ) },
         :create_description => "Crear una cuenta de usuario le permite crear su propio proyecto o participar en el desarrollo de otro proyecto.",

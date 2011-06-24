@@ -30,6 +30,7 @@
         <h1>Log in to Gitorious</h1>
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
+        <div class="flash_message" style="display: block; font-size: 1em"><%= flash[:error] %></div>
         <div class="horisontal-shadow"></div>
         <div id="regular_login_fields">
           <ul>
@@ -57,8 +58,6 @@
             <li>
               <%= f.label :identity_url, t("views.sessions.openid").call(self) %>
               <%= f.text_field :identity_url %>
-              <!--<label for="openid"><%= t("views.sessions.openid").call(self) %></label>-->
-              <!--<%= text_field_tag 'identity_url', params[:identity_url] -%>-->
             </li>
             <li>
               <div class="tos">

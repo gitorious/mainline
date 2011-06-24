@@ -20,7 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class SessionsControllerTest < ActionController::TestCase
-  include OpenIdAuthentication
 
   def cookie_for(user)
     User.serialize_into_cookie(users(user))

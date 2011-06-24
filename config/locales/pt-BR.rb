@@ -221,9 +221,11 @@
         :create_btn => "Criar Novo Usuário",
         :is_admin => "É Administrador?",
         :forgot_title => "Esqueceu sua senha?",
-        :send_new_passwd => 'Me envie uma nova senha',
-        :openid_build_title => 'Terminar seu registro',
+        :send_new_passwd => 'Envie-me uma nova senha',
+        :openid_build_title => 'Conclua seu registro',
         :openid_build_description => 'Você precisa entrar com os seguintes detalhes:',
+        :openid_failed => 'A autenticação por OpenID falhou.',
+        :openid_canceled => 'A autenticação por OpenID foi cancelada.',
         :create_title => lambda { |this, path| "Crie um novo usuário ou " + 
           this.link_to( "faça login diretamente com seu OpenID", path ) },
         :create_description => "Criar uma nova conta de usuário lhe permite criar seus próprios projetos ou participar no desenvolvimento de qualquer um.",

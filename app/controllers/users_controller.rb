@@ -192,7 +192,7 @@ class UsersController < ApplicationController
   end
 
   def openid_build
-    @user = User.new(:identity_url => session[:openid_url], :email => session[:openid_email], :login => session[:openid_nickname], :fullname => session[:openid_fullname])
+    @user = User.new(:identity_url => session[:openid_url])
   end
 
   def openid_create
@@ -212,6 +212,23 @@ class UsersController < ApplicationController
       redirect_to root_path
     else
       render :action => 'openid_build'
+    end
+  end
+
+  def open_id_complete
+    provider_response = request.env[Rack::OpenID::RESPONSE]
+    unless (status = provider_response.status) == :success
+      reason = status == :cancel ? :canceled : :failed
+      flash[:error] = I18n.t "views.users.openid_#{reason}"
+      redirect_to login_path
+      return
+    end
+    if user = User.find_by_identity_url(provider_response.identity_url)
+      login_as user
+      redirect_to root_path
+    else
+      session[:openid_url] = provider_response.identity_url
+      redirect_to :action => 'openid_build'
     end
   end
 

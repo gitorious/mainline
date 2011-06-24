@@ -19,7 +19,7 @@ module Gitorious
   class Reservations
     class << self
       def unaccounted_root_names
-        [ "teams", "dashboard", "about", "login", "logout", "commit",
+        [ "teams", "dashboard", "about", "complete-open-id-registration", "login", "logout", "commit",
           "commits", "tree", "archive-tarball", "archive-zip", "contact",
           "register", "signup", "blog", "merge_request_landing_page", "activities",
           "api"]
