@@ -26,7 +26,7 @@ require_dependency "event"
 
 class User < ActiveRecord::Base
   include UrlLinting
-  devise :database_authenticatable, :rememberable, :encryptable, :http_authenticatable
+  devise :openid_authenticatable, :database_authenticatable, :rememberable, :encryptable, :http_authenticatable
 
   has_many :projects
   has_many :memberships, :dependent => :destroy
@@ -70,7 +70,8 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
   before_create :make_confirmation_token
-  before_validation :lint_identity_url, :downcase_login
+  #before_validation :lint_identity_url, :downcase_login
+  before_validation :downcase_login
   after_save :expire_avatar_email_caches_if_avatar_was_changed
   after_destroy :expire_avatar_email_caches
 
@@ -211,15 +212,15 @@ class User < ActiveRecord::Base
       })
   end
 
-  def validate
-    if !not_openid?
-      begin
-        OpenIdAuthentication.normalize_identifier(self.identity_url)
-      rescue OpenIdAuthentication::InvalidOpenId => e
-        errors.add(:identity_url, I18n.t( "user.invalid_url" ))
-      end
-    end
-  end
+#  def validate
+#    if !not_openid?
+#      begin
+#        OpenIdAuthentication.normalize_identifier(self.identity_url)
+#      rescue OpenIdAuthentication::InvalidOpenId => e
+#        errors.add(:identity_url, I18n.t( "user.invalid_url" ))
+#      end
+#    end
+#  end
 
   # Activates the user in the database.
   def activate
@@ -314,17 +315,23 @@ class User < ActiveRecord::Base
     fullname.blank? ? login : fullname
   end
 
-  def in_openid_import_phase!
-    @in_openid_import_phase = true
+  # This is required by openid_authenticatable plugin
+  def self.build_from_identity_url(identity_url)
+    puts "\n\nidentidade: #{identity_url}\n\n"
+    self.new(:identity_url => identity_url)
   end
 
-  def in_openid_import_phase?
-    return @in_openid_import_phase
-  end
-
-  def url=(an_url)
-    self[:url] = clean_url(an_url)
-  end
+#  def in_openid_import_phase!
+#    @in_openid_import_phase = true
+#  end
+#
+#  def in_openid_import_phase?
+#    return @in_openid_import_phase
+#  end
+#
+#  def url=(an_url)
+#    self[:url] = clean_url(an_url)
+#  end
 
   def expire_avatar_email_caches_if_avatar_was_changed
     return unless avatar_updated_at_changed?
@@ -381,12 +388,12 @@ class User < ActiveRecord::Base
       self.confirmation_token = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
     end
 
-    def lint_identity_url
-      return if not_openid?
-      self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
-    rescue OpenIdAuthentication::InvalidOpenId
-      # validate will catch it instead
-    end
+#    def lint_identity_url
+#      return if not_openid?
+#      self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
+#    rescue OpenIdAuthentication::InvalidOpenId
+#      # validate will catch it instead
+#    end
 
     def downcase_login
       login.downcase! if login

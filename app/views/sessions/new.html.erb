@@ -52,25 +52,25 @@
             </li>
           </ul>
         </div>
-        <!--
         <div id="openid_login_fields" class="login_hidden">
           <ul>
             <li>
-              <label for="openid"><%= t("views.sessions.openid").call(self) %></label>
-              <%= text_field_tag 'openid_url', params[:openid_url] -%>
+              <%= f.label :identity_url, t("views.sessions.openid").call(self) %>
+              <%= f.text_field :identity_url %>
+              <!--<label for="openid"><%= t("views.sessions.openid").call(self) %></label>-->
+              <!--<%= text_field_tag 'identity_url', params[:identity_url] -%>-->
             </li>
             <li>
               <div class="tos">
-                <%= check_box_tag 'remember_me' %>
-                <label for="remember_me"><%= t("views.sessions.remember") %></label>
+                <%= f.check_box :remember_me %>
+                <%= f.label :remember_me, t('views.sessions.remember') %>
               </div>
               <div class="submit">
-                <%= submit_tag t("views.sessions.submit") %>
+                <%= f.submit t('views.sessions.submit') %>
               </div>
             </li>
           </ul>
         </div>
-        -->
 
 
 
