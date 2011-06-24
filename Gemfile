@@ -7,7 +7,6 @@ gem "daemons", :require => false
 gem "hoe", :require => false
 gem "echoe", :require => false
 gem "ruby-yadis", :require => "yadis"
-gem "ruby-openid", :require => "openid"
 gem "rdiscount", "1.3.1.1", :platforms => :ruby
 gem "mime-types", :require => "mime/types"
 gem "diff-lcs", :require => "diff/lcs"
@@ -23,8 +22,9 @@ gem "acts-as-taggable-on"
 gem "will_paginate"
 gem "hodel_3000_compliant_logger"
 gem "capillary", "~> 0.1.3"
-#gem "devise", "1.0.10"
 gem "devise", :git => 'git://github.com/plataformatec/devise.git', :branch => 'v1.0'
+gem "rack-openid"
+
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

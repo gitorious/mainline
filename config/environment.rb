@@ -131,4 +131,7 @@ Rails::Initializer.run do |config|
     end
   end
 
+  config.middleware.use "Rack::OpenID"
+  # For Rails 3, this would be:
+  # config.middleware.insert_before(Warden::Manager, Rack::OpenID)
 end
