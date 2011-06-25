@@ -69,8 +69,7 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
   before_create :make_confirmation_token
-  #before_validation :lint_identity_url, :downcase_login
-  before_validation :downcase_login
+  before_validation :lint_identity_url, :downcase_login
   after_save :expire_avatar_email_caches_if_avatar_was_changed
   after_destroy :expire_avatar_email_caches
 
@@ -373,12 +372,12 @@ class User < ActiveRecord::Base
       self.confirmation_token = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
     end
 
-#    def lint_identity_url
-#      return if not_openid?
-#      self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
-#    rescue OpenIdAuthentication::InvalidOpenId
-#      # validate will catch it instead
-#    end
+    def lint_identity_url
+      return if not_openid?
+      self.identity_url = OpenID::URINorm.urinorm(identity_url)
+    rescue URI::InvalidURIError
+      # validate will catch it instead
+    end
 
     def downcase_login
       login.downcase! if login
