@@ -314,20 +314,6 @@ class User < ActiveRecord::Base
     fullname.blank? ? login : fullname
   end
 
-  # This is required by openid_authenticatable plugin
-  def self.build_from_identity_url(identity_url)
-    puts "\n\nidentidade: #{identity_url}\n\n"
-    self.new(:identity_url => identity_url)
-  end
-
-#  def in_openid_import_phase!
-#    @in_openid_import_phase = true
-#  end
-#
-#  def in_openid_import_phase?
-#    return @in_openid_import_phase
-#  end
-#
 #  def url=(an_url)
 #    self[:url] = clean_url(an_url)
 #  end
