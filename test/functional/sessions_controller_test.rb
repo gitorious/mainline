@@ -38,6 +38,7 @@ class SessionsControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
+  # TODO: This test is no longer valid and a new one should be written as an integration test
   should "login with openid and redirect to new user page" do
     identity_url = "http://patcito.myopenid.com"
     @controller.stubs(:using_open_id?).returns(true)
