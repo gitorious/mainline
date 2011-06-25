@@ -314,9 +314,9 @@ class User < ActiveRecord::Base
     fullname.blank? ? login : fullname
   end
 
-#  def url=(an_url)
-#    self[:url] = clean_url(an_url)
-#  end
+  def url=(an_url)
+    self[:url] = clean_url(an_url)
+  end
 
   def expire_avatar_email_caches_if_avatar_was_changed
     return unless avatar_updated_at_changed?
