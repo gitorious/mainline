@@ -66,10 +66,12 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false
   validates_format_of     :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
+  validate :identity_url_should_be_valid, :if => :openid?
 
   before_save :encrypt_password
   before_create :make_confirmation_token
-  before_validation :lint_identity_url, :downcase_login
+  before_validation :lint_identity_url, :if => :openid?
+  before_validation :downcase_login
   after_save :expire_avatar_email_caches_if_avatar_was_changed
   after_destroy :expire_avatar_email_caches
 
@@ -209,16 +211,6 @@ class User < ActiveRecord::Base
         :limit => 5
       })
   end
-
-#  def validate
-#    if !not_openid?
-#      begin
-#        OpenIdAuthentication.normalize_identifier(self.identity_url)
-#      rescue OpenIdAuthentication::InvalidOpenId => e
-#        errors.add(:identity_url, I18n.t( "user.invalid_url" ))
-#      end
-#    end
-#  end
 
   # Activates the user in the database.
   def activate
@@ -360,11 +352,17 @@ class User < ActiveRecord::Base
     end
 
     def password_required?
-      not_openid? && (encrypted_password.blank? || !password.blank?)
+      !openid? && (encrypted_password.blank? || !password.blank?)
     end
 
-    def not_openid?
-      identity_url.blank?
+    def openid?
+      identity_url.present?
+    end
+
+    def identity_url_should_be_valid
+      OpenID::URINorm.urinorm(identity_url)
+    rescue URI::InvalidURIError
+      errors.add(:identity_url, I18n.t( "user.invalid_url" ))
     end
 
     def make_confirmation_token
@@ -373,7 +371,6 @@ class User < ActiveRecord::Base
     end
 
     def lint_identity_url
-      return if not_openid?
       self.identity_url = OpenID::URINorm.urinorm(identity_url)
     rescue URI::InvalidURIError
       # validate will catch it instead
