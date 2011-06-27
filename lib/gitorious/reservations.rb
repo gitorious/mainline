@@ -29,12 +29,14 @@ module Gitorious
       end
 
       def controller_names_plural
-        return @controller_names_plural unless @controller_names_plural.blank?
+        # don't cache while Rails didn't finish initialization
+        return @controller_names_plural if @controller_names_plural.present? && Rails.initialized?
         @controller_names_plural = ActionController::Routing.possible_controllers.map{|s| s.split("/").first }
       end
 
       def controller_names
-        return @controller_names unless @controller_names.blank?
+        # don't cache while Rails didn't finish initialization
+        return @controller_names if @controller_names.present? && Rails.initialized?
         @controller_names = controller_names_plural + controller_names_plural.map{|s| s.singularize }
       end
 

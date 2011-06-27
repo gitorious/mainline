@@ -3,6 +3,10 @@ GEM
   specs:
     activerecord (2.3.8)
       activesupport (= 2.3.8)
+    activerecord-jdbc-adapter (1.1.1)
+    activerecord-jdbcmysql-adapter (1.1.1)
+      activerecord-jdbc-adapter (= 1.1.1)
+      jdbc-mysql (~> 5.1.0)
     activesupport (2.3.8)
     acts-as-taggable-on (2.0.6)
     builder (3.0.0)
@@ -18,8 +22,10 @@ GEM
     factory_girl (1.3.3)
     gemcutter (0.6.1)
     geoip (0.8.9)
+    hodel_3000_compliant_logger (0.1.0)
     hoe (2.8.0)
       rake (>= 0.8.7)
+    jdbc-mysql (5.1.13)
     json (1.5.0)
     json_pure (1.5.0)
     mime-types (1.16)
@@ -63,6 +69,7 @@ DEPENDENCIES
   exception_notification (~> 1.0.20090728)
   factory_girl (~> 1.3.0)
   geoip
+  hodel_3000_compliant_logger
   hoe
   json
   mime-types

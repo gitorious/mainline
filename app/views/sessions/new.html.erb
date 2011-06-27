@@ -1,5 +1,5 @@
 <%
-#--
+  #--
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
@@ -25,68 +25,68 @@
 
   <%= login_method %>
   <% form_tag sessions_path  do -%>
-	<div class="form-wrapper" id="login">
-		<div id="log-in">
-		<h1>Log in to Gitorious</h1>
-			<p class="openid-switch">Or log in with <a href="#" class"foo1">OpenID</a>.</p>
-			<p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
-			<div class="horisontal-shadow"></div>
-				<div id="regular_login_fields">
-					<ul>
-						<li>
-							 <label for="email"><%= t("views.sessions.label").call(self) %></label>
-							<%= text_field_tag 'email', params[:email] %>
-						</li>
-						<li>
-							<label for="password"><%= t("views.sessions.passwd") %></label>
-							<%= password_field_tag 'password', '' %>
-						</li>
-						<li>
-							<div class="tos">
-								<%= check_box_tag 'remember_me' %>
-								<label for="remember_me"><%= t("views.sessions.remember") %></label>
-							</div>
-							<div class="submit">
-								<%= submit_tag t("views.sessions.submit") %>
-							</div>
-						</li>
-					</ul>		
-				</div>
-				<div id="openid_login_fields" class="login_hidden">	
-					<ul>
-						<li>
-							<label for="openid"><%= t("views.sessions.openid").call(self) %></label>
-							<%= text_field_tag 'openid_url', params[:openid_url] -%>
-						</li>
-						<li>
-							<div class="tos">
-								<%= check_box_tag 'remember_me' %>
-								<label for="remember_me"><%= t("views.sessions.remember") %></label>
-							</div>
-							<div class="submit">
-								<%= submit_tag t("views.sessions.submit") %>
-							</div>
-						</li>
-					</ul>
-				</div>					
-	
-			
-				
-		</div><!-- end #log-in -->
-		</div><!-- end form-wrapper -->
-	<% end -%> <!-- end form -->
-		
-		<p class="alt_links">
-	    <small>
-	    <% if GitoriousConfig['public_mode'] -%>
-	      <%= link_to t("views.sessions.register"), new_user_path -%> 
-	      &mdash;
-	    <% end -%> 
-	    <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
-	    </small>
-	  </p>
-	</div>
-	
+    <div class="form-wrapper" id="login">
+      <div id="log-in">
+        <h1>Log in to Gitorious</h1>
+        <p class="openid-switch">Or log in with <a href="#" class"foo1">OpenID</a>.</p>
+        <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
+        <div class="horisontal-shadow"></div>
+        <div id="regular_login_fields">
+          <ul>
+            <li>
+              <label for="email"><%= t("views.sessions.label").call(self) %></label>
+              <%= text_field_tag 'email', params[:email] %>
+            </li>
+            <li>
+              <label for="password"><%= t("views.sessions.passwd") %></label>
+              <%= password_field_tag 'password', '' %>
+            </li>
+            <li>
+              <div class="tos">
+                <%= check_box_tag 'remember_me' %>
+                <label for="remember_me"><%= t("views.sessions.remember") %></label>
+              </div>
+              <div class="submit">
+                <%= submit_tag t("views.sessions.submit") %>
+              </div>
+            </li>
+          </ul>		
+        </div>
+        <div id="openid_login_fields" class="login_hidden">	
+          <ul>
+            <li>
+              <label for="openid"><%= t("views.sessions.openid").call(self) %></label>
+              <%= text_field_tag 'openid_url', params[:openid_url] -%>
+            </li>
+            <li>
+              <div class="tos">
+                <%= check_box_tag 'remember_me' %>
+                <label for="remember_me"><%= t("views.sessions.remember") %></label>
+              </div>
+              <div class="submit">
+                <%= submit_tag t("views.sessions.submit") %>
+              </div>
+            </li>
+          </ul>
+        </div>					
+
+
+
+      </div><!-- end #log-in -->
+    </div><!-- end form-wrapper -->
+  <% end -%> <!-- end form -->
+
+  <p class="alt_links">
+    <small>
+      <% if GitoriousConfig['public_mode'] -%>
+        <%= link_to t("views.sessions.register"), new_user_path -%> 
+        &mdash;
+      <% end -%> 
+      <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
+    </small>
+  </p>
+</div>
+
 
 
 </div>
