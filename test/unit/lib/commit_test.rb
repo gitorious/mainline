@@ -55,6 +55,10 @@ class CommitTest < ActiveSupport::TestCase
     should "have an actor display" do
       assert_equal "John Committer", @commit.actor_display
     end
+
+    should "have its id mirror the sha" do
+      assert_equal "a"*40, @commit.id
+    end
   end
 
   context "Commits from non-gitorious users" do

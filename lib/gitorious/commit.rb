@@ -33,6 +33,10 @@ module Gitorious
       @grit_commit.id
     end
 
+    def id
+      @grit_commit.id
+    end
+
     def created_at
       @grit_commit.committed_date
     end
