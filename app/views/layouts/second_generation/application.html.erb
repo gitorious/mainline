@@ -3,7 +3,7 @@
 <head> 
   <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
 
-  <%= stylesheet_link_tag "external", :cache => true %>
+  <%= stylesheet_link_tag "external", :cache => false %>
   <%= include_javascripts -%>
   <script type="text/javascript">
 $(function() {
