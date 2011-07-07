@@ -29,7 +29,12 @@
 	background: #CCC;
 	margin: 10px 0px 10px;
 }
-	
+
+#sidebar ul.links.meta li {
+    border-bottom: none;
+    width: 175px;
+}
+
 /* ############# NAVIGATION ########### */
 
 .navigation {
