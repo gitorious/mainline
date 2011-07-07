@@ -6,7 +6,7 @@
   version: 2.3.1
   */
 
-@font-face { font-family: Raleway; src: url('../fonts/raleway_thin.otf'); } 
+@font-face { font-family: Raleway; src: url('../fonts/raleway_thin.otf'); }
 
 html {
     height: 100%;
@@ -29,7 +29,6 @@ sub{ vertical-align:text-bottom; }
 input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inherit; }
 
 /**/
-
 body {
     font-size: 12px;
     line-height: 1.461em;
@@ -40,6 +39,7 @@ body {
     margin: 0;
     padding: 0px 0px 20px 0px;
 }
+
 h1, h2, h3, h4, h5, h6 {
     color: #555;
     font-weight:  normal;
@@ -51,12 +51,14 @@ h1 {
     line-height: 0.904em;
     margin-bottom: 0.904em;
 }
+
 h2 {
     margin: 0;
     font-size: 20px;
     line-height: 20px;
     margin-bottom: 12px;
 }
+
 h3 {
     margin: 0;
     font-size: 18px;
@@ -70,27 +72,62 @@ h4 {
     line-height: 1.266em;
     margin-bottom: 1.266em;
 }
+
 #content h2.content-header.smaller { font-size: 30px; }
-h1.content-header, h2.content-header, h3.content-header {	font-family: Raleway, 'Helvetica Neue', Helvetica, Arial; }
+
+h1.content-header,
+h2.content-header,
+h3.content-header {
+    font-family: Raleway, 'Helvetica Neue', Helvetica, Arial;
+}
+
 #content h2.content-header {
     font-size: 36px;
     font-weight: bold;
     margin-top: 8px;
     line-height: 46px;
 }
-#content h2 {	font-size: 24px; }
 
-#sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6 {
+#content h2 { font-size: 24px; }
+
+#sidebar h1,
+#sidebar h2,
+#sidebar h3,
+#sidebar h4,
+#sidebar h5,
+#sidebar h6 {
     margin-bottom: 10px;
     color: #3a3a3a;
     font-weight: bold;
     text-shadow: 0px 1px #FFF;
 }
-#sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6 {	color: #555; }
-#sidebar h2 { font-size: 16px; margin-bottom: 12px; }
-#sidebar h3 { font-size: 14px; margin-bottom: 12px; } 
+
+#sidebar h2,
+#sidebar h3,
+#sidebar h4,
+#sidebar h5,
+#sidebar h6 {
+    color: #555;
 }
-#sidebar h1 a, #sidebar h2 a, #sidebar h3 a, #sidebar h4 a, #sidebar h5 a, #sidebar h6 a { color: #555; }
+
+#sidebar h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+#sidebar h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+#sidebar h1 a,
+#sidebar h2 a,
+#sidebar h3 a,
+#sidebar h4 a,
+#sidebar h5 a,
+#sidebar h6 a {
+    color: #555;
+}
 
 p, ul, blockquote, pre, td, th, label {
     margin: 0;
@@ -99,28 +136,29 @@ p, ul, blockquote, pre, td, th, label {
     line-height: 18px;
     margin-bottom: 15px;;
 }
-p, ul, blockquote, td, th, label {
-/*  font-family: "Bitstream Vera Serif", Georgia, Times, "Times new Roman", serif;*/
-}
+
 p.ingress {
     font-size: 16px;
     line-height: 20px;
 }
+
 p.small {
     margin: 0;
     font-size: 10px;
     line-height: 14px;
     margin-bottom: 15px;
 }
+
 table {
     border-collapse: collapse;
     margin-bottom: 15px;
 }
+
 code, pre, tt {
-    /*font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;*/
     font-size: 95%;
     line-height: 105%;
 }
+
 pre {
     white-space: pre-wrap;       /* CSS-3                  */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
@@ -128,54 +166,61 @@ pre {
     white-space: -o-pre-wrap;    /* Opera 7                */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
-a {
-    /*  color: #e7371a;*/
-    /* color: #329e7a; This is sea green */
-    /* color: #4d8611; This is green */
-    /* color: #19597a; Blue */
-    color: #ed6b2b; 
-    text-decoration: none;
 
+a {
+    color: #ed6b2b;
+    text-decoration: none;
 }
+
 a:hover {
     color: #953100;
     text-decoration: none;
 }
+
 a.link_noop {
     color: inherit;
 }
-strong, b {
+
+strong,
+b {
     font-weight: bold;
 }
-em, i {
+
+em,
+i {
     font-style: italic;
-}
-ul {
 }
 
 ol li {
     list-style-type: decimal;
     margin-left: 35px;
 }
+
 pre {
     margin-left: 2em;
     margin-right: 2em;
 }
+
 pre.no-indent {
     margin-left: 0;
     padding-left: 0;
 }
 
-ul li h1, ul li h2, ul li h3, ul li h4 {
+ul li h1,
+ul li h2,
+ul li h3,
+ul li h4 {
     margin-bottom: 0.5em;
 }
 
 abbr {
     border-bottom: 1px dotted #333;
 }
+
 abbr.timeago {
     border-bottom: none;
 }
+
 /* boxes */
 
 .clear {
@@ -190,7 +235,6 @@ abbr.timeago {
 
 #wrapper {
     width: 960px;
-
     margin: 45px auto;
 }
 
@@ -223,22 +267,13 @@ abbr.timeago {
     background: url('../img/icons/messages_new.png') no-repeat 0px 0px;
     height: 16px;
 }
-#user-nav li.secondary.messages.unread {
-    background: url('../img/icons/messages_new.png') no-repeat 0px -15px;
-}
-#user-nav li.secondary.messages.unread a {
-    color: #FFF;
-}
-#user-nav li.secondary.messages.unread a:hover {
-    color: #9c9c9c;
-}
-#user-nav li.secondary.messages.unread:hover {
-    background-position: 0px 1px;
-}
 
-#user-nav li.secondary.messages a > span {
-    color: #666;
-}
+#user-nav li.secondary.messages.unread { background: url('../img/icons/messages_new.png') no-repeat 0px -15px; }
+#user-nav li.secondary.messages.unread a { color: #fff; }
+#user-nav li.secondary.messages.unread a:hover { color: #9c9c9c; }
+#user-nav li.secondary.messages.unread:hover { background-position: 0px 1px; }
+#user-nav li.secondary.messages a > span { color: #666; }
+
 #user-nav li.secondary.messages a {
     width: 100%;
     padding-left: 20px;
@@ -249,8 +284,6 @@ abbr.timeago {
     -webkit-border-top-right-radius: 12px;
     -moz-border-radius-topleft: 12px;
     -moz-border-radius-topright: 12px;
-    /*-webkit-box-shadow: 0px -1px 0px #464646;
-      -moz-box-shadow: 0px -1px 0px #464646;*/
     height: 110px;
     width: 960px;
 
@@ -274,6 +307,7 @@ abbr.timeago {
     float: left;
     border:0;
 }
+
 #header #logo a { color: #666; }
 
 #header #project_title {
@@ -282,6 +316,7 @@ abbr.timeago {
     margin: 0 0 0px 0;
     padding: 0;
 }
+
 #header #project_title  a {
     color: #ccc;
     letter-spacing: 0.05em;
@@ -295,39 +330,35 @@ abbr.timeago {
     padding-left: 70px;
     padding-right: 25px;
     text-align: center;
-
     height: 40px;
-/* background: url(../img/menu/menu-backlight.png) no-repeat center; */
-    
-    
 }
 
 #menu li {
     display: inline;
     margin-left: 25px;
 }
+
 #menu li.secondary {
     margin-right: 5px;
     color: #666;
 }
+
 #menu li a {
     font-size: 16px;
     color: #cfcfcf;
     outline: none;
 }
+
 #menu li.subtle a { color: #666; margin-left: 10px;}
 #menu li.subtle a:hover { color: #92B92D; }
+#menu li a:hover { text-decoration: none; }
+#menu li a:active { margin-top: 1px; }
 
-#menu li a:hover {
-    text-decoration: none;
-}
-#menu li a:active {
-    margin-top: 1px;
-}
 #menu li {
     float: left;
     height: 20px;
 }
+
 #menu li a {
     text-indent: -9999px;
     height: 20px;
@@ -338,23 +369,18 @@ abbr.timeago {
 #menu li.activity a {	background-position: 	0px -0px; }
 #menu li.activity, #menu li.activity a { width: 84px; display: block; }
 #menu li.activity a:hover { background-position: -339px 0px;}
-
 #menu li.projects a {	background-position: 	0px -24px; }
 #menu li.projects, #menu li.projects a { width: 75px; display: block; }
 #menu li.projects a:hover { background-position: -339px -24px;}
-
 #menu li.teams a {	background-position: 	0px -48px; }
 #menu li.teams, #menu li.teams a { width: 57px; display: block; }
 #menu li.teams a:hover { background-position: -339px -48px;}
-
 #menu li.about a {	background-position: 	0px -72px; }
 #menu li.about, #menu li.about a { width: 144px; display: block; }
 #menu li.about a:hover { background-position: -339px -72px;}
 
-
 #container {
     min-height: 300px;
-    /*  margin-right: 40px; */
     float: left;
     background: #FFF;
     width: 960px;
@@ -401,29 +427,28 @@ abbr.timeago {
     padding: 8px 0 20px 0;
 
 }
-#footer ul li {
 
-}
+#footer ul.footer-links li { font-size: 13px; }
 
-#footer ul.footer-links li {
-    font-size: 13px;
-}
 #footer ul li a {
     font-size: 11px;
     font-weight: bold;
     color: #989898;
     text-shadow: 0px -1px #0a0a0a;
 }
+
 #footer ul li a:hover {
     color: #eeeeee;
     text-decoration: none;
 }
 
 #footer ul.legal { margin-top: 5px; }
+
 #footer ul.legal a {
     color: #666;
     font-size: 10px;
 }
+
 #footer ul.legal a:hover { color: #92B92D; }
 
 #footer .powered-by {
@@ -432,9 +457,8 @@ abbr.timeago {
     margin: 40px 00px 10px 10px;
     text-align: center;
 }
-#footer .powered-by img {
-    margin-top: 7px;
-}
+
+#footer .powered-by img { margin-top: 7px; }
 
 #footer #gitorious-com {
     border-top: 1px solid #333;
@@ -460,7 +484,9 @@ abbr.timeago {
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
 }
+
 .flash_message p { margin: 0; }
+
 .flash_message.notice {
     color: #4889ab;
     -webkit-box-shadow: 0px 1px 0px #dfeff7 inset;
@@ -478,6 +504,7 @@ abbr.timeago {
     background-color: #ace0a8;
     border: 1px solid #96c17f;
 }
+
 .flash_message.success p {
     color: #3f713a;
 }
@@ -489,107 +516,14 @@ abbr.timeago {
     background-color: #eba8a8;
     border: 1px solid #e69292;
 }
+
 .flash_message.error p {
     color: #b24040;
     text-shadow: 0px 1px #fadada;
 }
-/* Buttons 
-   .button a {
-   cursor: pointer;
-   text-decoration: none;
-   height: 8px;
-   padding: 8px;
-   float: left;
-   line-height: 7px;
-   }
 
-.button {
--webkit-border-radius: 4px;
--moz-border-radius: 4px;
-cursor: pointer;
-font-family: 'Lucida Grande', Helvetica, Arial;
-font-size: 11px;
-font-weight: bold;
-text-transform: uppercase;
-float: left;
-height: 23px;
-border: 1px solid yellow;
-}
-.button.neutral a {
-color: #505050;
-text-shadow: 0px 1px #d8d8d8;
-}
-.button.neutral {
-border: 1px solid #b1b1b1;
--webkit-box-shadow: 0px 1px 0px #d6d6d6 inset;
--moz-box-shadow: inset 0px 1px 0px #d6d6d6;
-background: -moz-linear-gradient(top, #c7c7c7, #ababab)!important;
-background: -webkit-gradient(
-linear,
-left bottom,
-left top,
-color-stop(1, #c7c7c7),
-color-stop(0, #ababab)
-);
-}
-
-.button.neutral:hover {
-color: #404040;
-border: 1px solid #b1b1b1;
-text-shadow: 0px 1px #d8d8d8;
--webkit-box-shadow: 0px 1px 0px #d0d0d0 inset;
--moz-box-shadow: inset 0px 1px 0px #d0d0d0;
-background-color: -moz-linear-gradient(#bdbdbd, #9e9e9e);;
-background: -webkit-gradient(
-linear,
-left bottom,
-left top,
-color-stop(1, #bdbdbd),
-color-stop(0, #9e9e9e)
-);
-
-}
-.button.green {
-background: -webkit-gradient(
-linear,
-left bottom,
-left top,
-color-stop(0, rgb(48,142,111)),
-color-stop(1, rgb(93,182,151))
-),
--moz-linear-gradient(
-center bottom,
-rgb(48,142,111) 0%,
-rgb(93,182,151) 100%
-);
-}
-*/
-ul.buttons .white-button.small-button {
-    margin: 0 0 5px 10px;
-}
-ul.buttons .white-button.small-button a {
-    padding:2px 5px 2px 10px;
-}
-
-/* favorite button 
-   .button.favorite {
-   float: right;
-   
-   }
-   .button.favorite a {
-   float: left;
-   padding-left: 26px;
-   }
-   .button.favorite a.enabled {
-   background: url("../images/silk/star.png") no-repeat 5px 3px;
-   }
-   .button.favorite a.disabled {
-   background: url("../images/silk/star_deselected.png") no-repeat 5px 3px;
-   }
-   .button.favorite a.waiting {
-   background: url("../images/spinner.gif") no-repeat 5px 3px;
-   }
-
+ul.buttons .white-button.small-button { margin: 0 0 5px 10px; }
+ul.buttons .white-button.small-button a { padding:2px 5px 2px 10px; }
 
 /* Round corners */
 .round-top-5 {
@@ -598,26 +532,25 @@ ul.buttons .white-button.small-button a {
     -webkit-border-top-left-radius: 5px;
     -webkit-border-top-right-radius: 5px;
 }
+
 .round-top-10 {
     -moz-border-radius-topleft: 10px;
     -moz-border-radius-topright: 10px;
     -webkit-border-top-left-radius: 10px;
     -webkit-border-top-right-radius: 10px;
 }
+
 .round-bottom-5 {
     -moz-border-radius-bottomleft: 5px;
     -moz-border-radius-bottomright: 5px;
     -webkit-border-bottom-left-radius: 5px;
     -webkit-border-bottom-right-radius: 5px;
 }
+
 .round-5 {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
 }
-/*.round-10 {
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
-  }*/
 
 .shadow-2 {
     -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
@@ -625,10 +558,8 @@ ul.buttons .white-button.small-button a {
     box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
 }
 
-
 /* submenu */
 #submenu {
-    /*  font-size: 90%;*/
     list-style: none;
     margin: 0;
     padding-top: 11px;
@@ -647,6 +578,7 @@ ul.buttons .white-button.small-button a {
     color: #fff;
     padding: 10px 15px 8px 15px;
 }
+
 #submenu li.selected a {
     background: #dee7ed;
     color: #000;
@@ -688,7 +620,7 @@ ul.buttons .white-button.small-button a {
 	color-stop(0.05, rgb(173,173,173)),
 	color-stop(0.27, rgb(198,198,198))
     );
-    
+
     border-bottom: 1px solid #adadad;
 }
 
@@ -702,7 +634,8 @@ ul.buttons .white-button.small-button a {
     margin: 0;
 }
 
-#top-bar #searchbox .search-field, #top-bar #searchbox .search-submit {
+#top-bar #searchbox .search-field,
+#top-bar #searchbox .search-submit {
     background: #ffffff;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -710,14 +643,14 @@ ul.buttons .white-button.small-button a {
     -moz-box-shadow: 0px -1px 0px #9e9e9e, 0px 1px 0px #cdcdcd;
     color: #757575;
 }
+
 #top-bar #searchbox .search-submit {
     color: #aaa;
     display: none;
-
 }
+
 #top-bar #searchbox input {
     margin: 0;
-    
     padding: 4px;
 }
 
@@ -734,10 +667,8 @@ ul.buttons .white-button.small-button a {
     display: none;
 }
 
-
 #breadcrumbs{
     float: left;
-
 }
 
 #breadcrumbs li {
@@ -762,8 +693,6 @@ ul.buttons .white-button.small-button a {
     color: #555555;
 }
 
-
-
 #breadcrumbs li a:hover{
     text-decoration: none;
     color: #953100;;
@@ -776,10 +705,8 @@ li.project > a { background-image: url("../images/silk/report.png") !important; 
 li.project_personal > a { background-image: url("../images/silk/report_user.png") !important; }
 li.project_research > a { background-image: url("../images/silk/report_magnify.png") !important; }
 li.user > a { background-image: url("../images/silk/user.png") !important; }
-
 li.group > a { background-image: url("../images/silk/group.png") !important; }
 li.edit_group > a { background-image: url("../images/silk/group_edit.png") !important; }
-
 li.repository > a { background-image: url("../images/silk/database.png") !important; }
 li.repository.mainline > a { background-image: url("../images/silk/database_star.png") !important; }
 li.branch > a { background-image: url("../images/silk/arrow_branch.png") !important; }
@@ -788,73 +715,84 @@ li.tag > a { background-image: url("../images/silk/tag_blue.png") !important; }
 li.tree > a { background-image: url("../images/silk/chart_organisation.png") !important; }
 li.home > a { background-image: url("../images/silk/house.png") !important; }
 li.account > a { background-image: url("../images/silk/user.png") !important; }
-li.edit_account > a, .white-button.edit_account a, .edit_account a {
+
+li.edit_account > a,
+.white-button.edit_account a,
+.edit_account a {
     background-image: url("../images/silk/user_edit.png") !important;
 }
-li.edit_account_password > a, .white-button.edit_account_password a, .edit_account_password a {
+
+li.edit_account_password > a,
+.white-button.edit_account_password a,
+.edit_account_password a {
     background-image: url("../images/silk/lock_edit.png") !important;
 }
+
 .show_favorites > a {
     background-image: url("../images/silk/star.png") !important;
 }
+
 li.new_key > a { background-image: url("../images/silk/key_add.png") !important; }
 li.edit_key > a { background-image: url("../images/silk/key_edit.png") !important; }
-li.key > a, .white-button.key a, .key a {
+
+li.key > a,
+.white-button.key a,
+.key a {
     background-image: url("../images/silk/key.png") !important;
 }
+
 li.zip > a { background-image: url("../images/silk/page_white_zip.png") !important; }
 li.gz > a { background-image: url("../images/silk/page_white_compressed.png") !important; }
 li.merge_requests > a { background-image: url("../images/silk/arrow_in.png") !important; }
 li.clone > a { background-image: url("../images/silk/database_clone.png") !important; }
 li.comment_link > a { background-image: url("../images/silk/comment.png") !important; }
 li.merge_request > a { background-image: url("../images/silk/arrow_merge.png") !important; }
-li.alias > a, .white-button.alias a, .alias a {
+
+li.alias > a,
+.white-button.alias a,
+.alias a {
     background-image: url("../images/silk/vcard.png") !important;
 }
-li.new_alias > a, .new_alias a { background-image: url("../images/silk/vcard_add.png") !important; }
-li.emails > a, .emails a { background-image: url("../images/silk/email.png") !important; }
-li.new_email > a, .white-button.new_email a, .new_email a {
+
+li.new_alias > a,
+.new_alias a {
+    background-image: url("../images/silk/vcard_add.png") !important;
+}
+
+li.emails > a,
+.emails a {
+    background-image: url("../images/silk/email.png") !important;
+}
+
+li.new_email > a,
+.white-button.new_email a,
+.new_email a {
     background-image: url("../images/silk/email_add.png") !important;
 }
+
 li.sent_emails > a { background-image: url("../images/silk/email_go.png") !important; }
 li.received_emails > a { background-image: url("../images/silk/email_open.png") !important; }
 li.all_emails > a { background-image: url("../images/silk/folder.png") !important; }
 
 /* Icons used both for events and actions/breadcrums */
-/*li.event_instance.create_repository, */li.create_repository > a { background-image: url("../images/silk/database_add.png") !important; }
-/*li.event_instance.add_project_repository, */li.add_project_repository > a { background-image: url("../images/silk/database_add.png") !important; }
-/*li.event_instance.clone_repository, */li.clone_repository > a { background-image: url("../images/silk/database_clone.png") !important; }
-/*li.event_instance.add_collaborator, */li.add_collaborator > a { background-image: url("../images/silk/group_add.png") !important; }
-/*li.event_instance.update_repository, */li.update_repository > a { background-image: url("../images/silk/database_edit.png") !important; }
-/*li.event_instance.delete_repository, */li.delete_repository > a { background-image: url("../images/silk/database_delete.png") !important; }
-/*li.event_instance.commit, */li.commit > a { background-image: url("../images/silk/brick.png") !important; }
-/*li.event_instance.merge_commit, */li.merge_commit > a { background-image: url("../images/silk/arrow_merge.png") !important; }
-/*li.event_instance.create_project, */li.create_project > a { background-image: url("../images/silk/report_add.png") !important; }
-/*li.event_instance.delete_project, */li.delete_project > a { background-image: url("../images/silk/report_delete.png") !important; }
-/*li.event_instance.update_project, */li.update_project > a { background-image: url("../images/silk/report_edit.png") !important; }
-/*li.event_instance.new_repository, */li.new_repository > a { background-image: url("../images/silk/database_add.png") !important; }
-/*li.event_instance.project_members, */li.project_members > a { background-image: url("../images/silk/group.png") !important; }
-/*li.event_instance.wiki_page, */li.wiki_page > a { background-image: url("../images/silk/book_open.png") !important; }
-/*li.event_instance.wiki_page_history, */li.wiki_page_history > a { background-image: url("../images/silk/time.png") !important; }
-/*li.event_instance.edit_wiki_page, */li.edit_wiki_page > a { background-image: url("../images/silk/page_white_text_edit.png") !important; }
+li.create_repository > a { background-image: url("../images/silk/database_add.png") !important; }
+li.add_project_repository > a { background-image: url("../images/silk/database_add.png") !important; }
+li.clone_repository > a { background-image: url("../images/silk/database_clone.png") !important; }
+li.add_collaborator > a { background-image: url("../images/silk/group_add.png") !important; }
+li.update_repository > a { background-image: url("../images/silk/database_edit.png") !important; }
+li.delete_repository > a { background-image: url("../images/silk/database_delete.png") !important; }
+li.commit > a { background-image: url("../images/silk/brick.png") !important; }
+li.merge_commit > a { background-image: url("../images/silk/arrow_merge.png") !important; }
+li.create_project > a { background-image: url("../images/silk/report_add.png") !important; }
+li.delete_project > a { background-image: url("../images/silk/report_delete.png") !important; }
+li.update_project > a { background-image: url("../images/silk/report_edit.png") !important; }
+li.new_repository > a { background-image: url("../images/silk/database_add.png") !important; }
+li.project_members > a { background-image: url("../images/silk/group.png") !important; }
+li.wiki_page > a { background-image: url("../images/silk/book_open.png") !important; }
+li.wiki_page_history > a { background-image: url("../images/silk/time.png") !important; }
+li.edit_wiki_page > a { background-image: url("../images/silk/page_white_text_edit.png") !important; }
 li.wiki_via_git > a { background-image: url("../images/silk/database_clone.png") !important; }
 li.new_user > a { background-image: url("../images/silk/user_add.png")!important }
-/*li.delete_merge_request > a { background-image: url("../images/silk/chart_line_delete.png") !important; }
-
-/* Icons used for events only */
-/*li.event_instance.create_branch { background-image: url("../images/silk/arrow_branch.png") !important; }
-  li.event_instance.delete_branch { background-image: url("../images/silk/delete.png") !important; }
-  li.event_instance.create_tag { background-image: url("../images/silk/tag_blue_add.png") !important; }
-  li.event_instance.delete_tag { background-image: url("../images/silk/tag_blue_delete.png") !important; }
-  li.event_instance.remove_committer { background-image: url("../images/silk/group_delete.png") !important; }
-  li.event_instance.comment { background-image: url("../images/silk/comment.png") !important; }
-  li.event_instance.request_merge { background-image: url("../images/silk/chart_line_add.png") !important; }
-  li.event_instance.resolve_merge_request { background-image: url("../images/silk/arrow_merge.png") !important; }
-  li.event_instance.update_merge_request { background-image: url("../images/silk/chart_line_edit.png") !important; }
-  li.event_instance.delete_merge_request { background-image: url("../images/silk/chart_line_delete.png") !important; }
-  li.event_instance.push { background-image: url("../images/silk/bricks.png") !important; }/*
-
-/* Icons used for file types in breadcrumb and tree view */
 table.tree tr td.file a, li.file > a { background-image: url("../images/silk/page_white_text.png"); }
 table.tree tr td.folder a,li.folder > a { background-image: url("../images/silk/folder.png") !important; }
 table.tree tr td.cplusplus-file a, li.cplusplus-file > a { background-image: url("../images/silk/page_white_cplusplus.png"); }
@@ -866,17 +804,13 @@ table.tree tr td.ruby-file a, li.ruby-file > a { background-image: url("../image
 table.tree tr td.compressed-file a, li.compressed-file > a { background-image: url("../images/silk/page_white_compressed.png"); }
 table.tree tr td.image-file a, li.image-file > a { background-image: url("../images/silk/page_white_picture.png"); }
 table.tree tr td.submodule a { background-image: url("../images/silk/folder_go.png"); }
+li.wiki a { background-image: url('../images/silk/book_open.png'); }
+li.memberships a, li.committerships a { background-image: url('../images/silk/group_gear.png'); }
+li.membership a, li.committership a { background-image: url('../images/silk/group_edit.png'); }
+li.add_membership a, li.add_commitership a { background-image: url("../images/silk/group_add.png"); }
+li.merge_requests a.selected { color: #09460f; }
+.with_icons li { padding-bottom: 3px; }
 
-li.wiki a {background-image: url('../images/silk/book_open.png');}
-li.memberships a, li.committerships a {background-image: url('../images/silk/group_gear.png');}
-li.membership a, li.committership a {background-image: url('../images/silk/group_edit.png');}
-li.add_membership a, li.add_commitership a { background-image: url("../images/silk/group_add.png");}
-
-li.merge_requests a.selected { color: #09460F;}
-
-.with_icons li {
-    padding-bottom: 3px;
-}
 .with_icons li a {
     padding: 3px 0px 3px 23px;
     background-repeat: no-repeat;
@@ -893,7 +827,6 @@ li.merge_requests a.selected { color: #09460F;}
     background-image: none;
     padding: 0;
 }
-
 
 .help-box {
     color: #555;
@@ -921,53 +854,10 @@ li.merge_requests a.selected { color: #09460F;}
     margin: 0 0 2px 2px;
 }
 
-.help-box .icon.help {
-    background: transparent url('../images/silk/help.png') no-repeat 0 0;
-}
-.help-box .icon.error {
-    background: transparent url('../images/silk/error.png') no-repeat 0 0;
-}
+.help-box .icon.help { background: transparent url('../images/silk/help.png') no-repeat 0 0; }
+.help-box .icon.error { background: transparent url('../images/silk/error.png') no-repeat 0 0; }
+.help-box :last-child { margin-bottom: 0; }
 
-.help-box :last-child {
-    margin-bottom: 0;
-}
-
-/* White buttons */
-/*
-  #new-project-button, .white-button {
-  margin: 10px 20px 10px 20px;
-  text-align:center;
-  width: 250px;
-  float: right;
-  background: #fff url('../images/dialog_bg_bottom.png') repeat-x bottom left;
-  }
-  #new-project-button a, .white-button a {
-  font-size: 18px;
-  display: block;
-  padding: 10px 10px 8px 10px;
-  border: 1px solid #ccc;
-  background: transparent url("../images/silk/report_add.png") no-repeat 220px center;
-  }
-
-#new-project-button.small-button, .white-button.small-button {
-margin: 5px 10px 5px 10px;
-width: 160px;
-text-align: left;
-}
-
-#new-project-button.small-button a, .white-button.small-button a {
-font-size: 12px;
-padding: 5px 5px 4px 10px;
-background-position: 130px center;
-}
-#new-project-button:hover, .white-button:hover {
-background-image: url('../images/dialog_bg_top.png');
-background-position: top left;
-}
-#new-project-button a:hover, .white-button a:hover {
-text-decoration: none;
-}
-*/
 /* Forms */
 
 /* Tables */
@@ -982,83 +872,62 @@ table.listing {
     float: left;
     font-size: 11px;
 }
-table.listing tr {
 
-}
-table.listing tr.even td {
-    background: #E8E7E7;
-}
-table.listing tr.odd td{
-    background: #F8F8F8;
-}
-table tr td {
-    padding: 6px 6px;
-}
+table.listing tr.even td { background: #E8E7E7; }
+table.listing tr.odd td { background: #F8F8F8; }
+table tr td { padding: 6px 6px; }
+
 table tr th {
-
     font-weight: bold;
     color: #535353;
     text-shadow: 0px 1px #eee;
     background: url("../img/pullbox-bg.png") repeat-x 0 0;
     border-bottom: 1px solid #bdbdbd;
-
     padding: 7px 7px 5px 7px;
 }
+
 table tr th.first {
     -webkit-border-top-left-radius: 12px;
     -moz-border-radius-topleft: 6px;
     border-top-left-radius: 6px;
 }
+
 table tr th.last {
     -webkit-border-top-right-radius: 6px;
     -moz-border-radius-topright: 6px;
     border-top-right-radius: 6px;
 
 }
-table.listing thead th {
-}
-table.listing td.icon {
-    text-align: center;
-}
 
-ul.committers_list li {
-    margin-bottom: 2px;
-}
-
-ul .user {
-    padding-left: 2px;
-}
+table.listing td.icon { text-align: center; }
+ul.committers_list li { margin-bottom: 2px; }
+ul .user { padding-left: 2px; }
 
 /* Repository list */
 
-#sidebar ul.repository_list ul {
-    margin-left: 10px;
-}
-
-.repository_meta ul.repository_list {
-    margin: 0;
-}
+#sidebar ul.repository_list ul { margin-left: 10px; }
+.repository_meta ul.repository_list { margin: 0; }
 
 ul.repository_list li {
     padding-left: 18px;
     margin-bottom: 10px;
 }
-ul.repository_list li.mainline {
-    background: url("../images/silk/database_star.png") 0 0 no-repeat;
-}
 
-ul.repository_list li.clone {
-    background: url("../images/silk/database.png") 0 0 no-repeat;
-}
+ul.repository_list li.mainline { background: url("../images/silk/database_star.png") 0 0 no-repeat; }
+ul.repository_list li.clone { background: url("../images/silk/database.png") 0 0 no-repeat; }
 
-ul.repository_list .user img, ul.repository_list .group img,
-ul.committers .user img, ul.committers .group img {
+ul.repository_list .user img,
+ul.repository_list .group img,
+ul.committers .user img,
+ul.committers .group img {
     float: left;
     margin-top: 1px;
 }
 
-ul.repository_list .user a, ul.repository_list .group a,
-ul.committers .user a, ul.committers .group a {
+ul.repository_list .user a,
+ul.repository_list .group a,
+ul.committers .user a,
+ul.committers .group a {
     color: #555;
     margin: 0 0 0 5px;
     padding:0;
@@ -1073,54 +942,33 @@ ul.infobox {
     border: 1px solid #ddd;
 }
 
-ul.infobox li {
-    margin-bottom: 0;
-}
+ul.infobox li { margin-bottom: 0; }
+ul.infobox li.meta { font-size: 11px; }
+table.repository_meta .infobox { padding: 5px; }
+.infobox .alt-clone-links { color: #666; }
 
-ul.infobox li.meta {
-    font-size: 11px;
-}
-
-table.repository_meta .infobox {
-    padding: 5px;
-}
 table.repository_meta .infobox ul {
     padding: 0;
     margin: 0;
 }
 
-.infobox .alt-clone-links {
-    color: #666;
-}
-
 /* commit info boxes*/
-
 .commit-infobox {
     clear: both;
     margin-top: 20px;
 }
 
-.commit-infobox .commit_message {
-    margin: 0;
-}
-.commit-infobox pre.commit_message {
-    margin: 0 0 20px 20px;
-}
-.commit-infobox .commit_message p {
-    margin-top: 0;
-}
+.commit-infobox .commit_message { margin: 0; }
+.commit-infobox pre.commit_message { margin: 0 0 20px 20px; }
+.commit-infobox .commit_message p { margin-top: 0; }
 
 .commit-infobox .commit-meta {
     margin: 10px 1px 0px 5px;
     min-width: 350px;
 }
 
-.commit-infobox .commit-meta .people {
-    margin:0;
-}
-.commit-infobox .commit-meta .people small {
-    color: #666;
-}
+.commit-infobox .commit-meta .people { margin:0; }
+.commit-infobox .commit-meta .people small { color: #666; }
 
 .commit-infobox .commit-meta .people .meta {
     border-bottom: 1px solid #ddd;
@@ -1143,16 +991,13 @@ table.repository_meta .infobox ul {
     color: #666;
 }
 
-.commit-infobox ul.meta li strong {
-    font-weight: normal;
-}
+.commit-infobox ul.meta li strong { font-weight: normal; }
 
 .merge_commit_message {
     font-size: 13px;
     margin: 10px;
     margin-bottom: 50px;
 }
-
 
 ul.horizontal li {
     padding-right: 10px;
@@ -1168,13 +1013,8 @@ ul.horizontal li > a {
     padding-top: 2px;
 }
 
-ul.horizontal.meta li > a {
-    font-size: 11px;
-}
-
-div.meta-info {
-    text-align: right;
-}
+ul.horizontal.meta li > a { font-size: 11px; }
+div.meta-info { text-align: right; }
 
 .meta-info ul.horizontal li > a {
     font-size: 10px;
@@ -1197,6 +1037,7 @@ td.meta-info {
     margin-left: 10px;
     font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, monospace;
 }
+
 .event_instance .commit_message, .event_instance .commit_message p {
     margin: 5px 0 10px 10px;
     line-height: 130%;
@@ -1215,37 +1056,23 @@ td.meta-info {
     margin-right: 10px;
 }
 
-.event_instance.push .event_instance .commit_message {
-    margin-left: 26px;
-}
-
-.event_instance.push .event_instance .actor {
-}
+.event_instance.push .event_instance .commit_message { margin-left: 26px; }
 
 .event_instance.push .event_instance .timestamp,
 .event_instance.push .commits_in_event .timestamp {
     font-size: 11px;
 }
 
-.commit_list .commit_item .commit_message {
-    margin-left: 40px;
-}
+.commit_list .commit_item .commit_message { margin-left: 40px; }
 
 small.commit_message {
     margin: 0;
     font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, monospace;
 }
 
-.commit_message.inline, .commit_message.inline p {
-    display: inline;
-}
-
-.commit_message a {
-    color: #000;
-}
-.commit_message a.sha {
-    text-decoration: underline;
-}
+.commit_message.inline, .commit_message.inline p { display: inline; }
+.commit_message a { color: #000; }
+.commit_message a.sha { text-decoration: underline; }
 
 .gravatar {
     background-color: white;
@@ -1261,9 +1088,7 @@ small.commit_message {
     margin-right: 5px;
 }
 
-.commit_list .commit_item .gravatar {
-    margin-top: 5px;
-}
+.commit_list .commit_item .gravatar { margin-top: 5px; }
 
 ul.project_list li {
     padding-bottom: 1em;
@@ -1287,6 +1112,7 @@ ul.bullet_list li {
     margin-bottom: 10px;
     float: left;
 }
+
 .pagination > * {
     margin-left: -3px;
     background: #e8e8e8 no-repeat 7px 5px;
@@ -1306,7 +1132,6 @@ ul.bullet_list li {
 }
 
 .pagination a:hover {
-    
     color: #444444;
     text-shadow: 0px 1px #eaeaea;
     text-decoration: none;
@@ -1314,13 +1139,12 @@ ul.bullet_list li {
     -moz-box-shadow: inset 0px 1px 0px #eaeaea;
     background-color:#cdcdcd;
 }
-.pagination a:active {
-    background-color:#c3c3c3;
-}
+
+.pagination a:active { background-color:#c3c3c3; }
+
 .pagination span.current {
     color: #434343;
     text-shadow: 0px 1px #ffc59b;
-    
     -webkit-box-shadow: 0px 1px 0px #ffc59b inset;
     -moz-box-shadow: inset 0px 1px 0px #ffc59b;
     background-color: #ffb063!important;
@@ -1332,17 +1156,10 @@ ul.bullet_list li {
 	color-stop(0.78, #ffb063)
     );
 }
-.pagination span.disabled {
-    color: #bebebe;
-}
 
-.pagination .prev_page.disabled {
-    background: #e8e8e8 url(../img/arrow-left-disabled.png)  no-repeat 6px 8px;
-}
-
-.pagination .next_page.disabled {
-    background: #e8e8e8 url(../img/arrow-right-disabled.png) no-repeat 38px 8px;
-}
+.pagination span.disabled { color: #bebebe; }
+.pagination .prev_page.disabled { background: #e8e8e8 url(../img/arrow-left-disabled.png)  no-repeat 6px 8px; }
+.pagination .next_page.disabled { background: #e8e8e8 url(../img/arrow-right-disabled.png) no-repeat 38px 8px; }
 
 .pagination .prev_page {
     -webkit-border-top-left-radius: 5px;
@@ -1364,11 +1181,9 @@ ul.bullet_list li {
     padding-right: 18px;
 }
 
-.section {
-    margin-bottom: 3em;
-}
-
+.section { margin-bottom: 3em; }
 ul.path_breadcrumbs { margin: 0 0 5px 0; }
+
 ul.path_breadcrumbs li {
     display: inline;
     margin:0;
@@ -1377,9 +1192,7 @@ ul.path_breadcrumbs li {
 
 /* tags */
 
-ul.tag_list li {
-    float: left;
-}
+ul.tag_list li { float: left; }
 
 .tag_size_3 {
     line-height: 21px;
@@ -1399,14 +1212,10 @@ ul.tag_list li {
     font-weight: bold;
 }
 
-.tag_size_3 a:hover {
-    background: #CCC;
-}
-
+.tag_size_3 a:hover { background: #CCC; }
 .tag_size_1 { font-size: 1.0em; }
 .tag_size_2 { font-size: 1.4em; }
 .tag_size_4 { font-size: 1.6em; }
-
 .large_tags .tag_size_1 { font-size: 1.0em; }
 .large_tags .tag_size_2 { font-size: 1.3em; }
 .large_tags .tag_size_3 { font-size: 1.6em; }
@@ -1488,19 +1297,12 @@ div.being_constructed .hint {
     width: 100%;
     overflow: hidden;
 }
-.ac_loading {
-    background : url('../images/spinner.gif') right center no-repeat;
-}
-.ac_over {
-    background-color: #ffb;
-/*color: #800;*/
-}
+.ac_loading { background : url('../images/spinner.gif') right center no-repeat; }
+.ac_over { background-color: #ffb; }
 
 /* project autocompletion */
 
-#project_slug_auto_complete .slug {
-    font-weight: bold;
-}
+#project_slug_auto_complete .slug { font-weight: bold; }
 
 #project_slug_auto_complete .title {
     font-style: italic;
@@ -1508,9 +1310,7 @@ div.being_constructed .hint {
 }
 
 /* user login autocompletion */
-#user_login_auto_complete  li.committer {
-    height: 32px;
-}
+#user_login_auto_complete  li.committer { height: 32px; }
 
 #user_login_auto_complete li.committer div.image {
     float: left;
@@ -1530,8 +1330,6 @@ div.being_constructed .hint {
     color:#888;
     margin-top: -5px;
 }
-
-
 
 span.tag {
     border: 1px solid #999;
@@ -1579,12 +1377,8 @@ table.tree tr td.node a {
     font-size: 1.5em;
 }
 
-#site_intro .hint {
-    font-size: 55%;
-}
-#site_project_list .tag_list{
-    text-align: center;
-}
+#site_intro .hint { font-size: 55%; }
+#site_project_list .tag_list { text-align: center; }
 
 ul.tab_menu {
     border-bottom: 1px solid #888;
@@ -1609,17 +1403,10 @@ ul.tab_menu.inline_tabs {
     width: 50%;
 }
 
-ul.tab_menu.inline_tabs li:hover {
-    background: #eee;
-}
-
-ul.tab_menu li.selected {
-    border-bottom: 2px solid #fff;
-}
-
-ul.tab_menu li.selected, ul.tab_menu li.selected a {
-    color: #666;
-}
+ul.tab_menu.inline_tabs li:hover { background: #eee; }
+ul.tab_menu li.selected { border-bottom: 2px solid #fff; }
+ul.tab_menu li.selected,
+ul.tab_menu li.selected a { color: #666; }
 
 #sidebar li.comment {
     border-top: 1px solid #fff;
@@ -1633,13 +1420,8 @@ ul.tab_menu li.selected, ul.tab_menu li.selected a {
     border-top: none;
 }
 
-#sidebar li.comment:last-child {
-    border-bottom: none;
-}
-
-#sidebar li.comment .body {
-    padding: 5px 8px 0px 8px;
-}
+#sidebar li.comment:last-child { border-bottom: none; }
+#sidebar li.comment .body { padding: 5px 8px 0px 8px; }
 
 #sidebar li.comment .byline {
     font-size: 10px;
@@ -1648,14 +1430,8 @@ ul.tab_menu li.selected, ul.tab_menu li.selected a {
 }
 
 small.hint { font-size: 11px;}
-
-.caps {
-    font-variant: small-caps;
-}
-
-#sidebar .hint {
-    color: #868F97;
-}
+.caps { font-variant: small-caps; }
+#sidebar .hint { color: #868F97; }
 
 .info_hint {
     font-size: 95%;
@@ -1668,36 +1444,30 @@ small.hint { font-size: 11px;}
     border-bottom: 1px dotted #888;
 }
 
-.info_hint pre {
-    margin-bottom: 5px;
-}
+.info_hint pre { margin-bottom: 5px; }
 
 /* diff mode selector */
-ul.mode_selector {
-    float: right;
-}
 ul.mode_selector li {
-    display:inline;
+    display: inline;
     margin-left: 1em;
 }
+
+ul.mode_selector { float: right; }
 ul.mode_selector li.list_header { font-weight: bold; }
 ul.mode_selector li.selected    { border-bottom: 1px solid #666; }
 
 /* Diff rendering */
 tr.toggle_diff { border-top: 1px solid #999; }
+
 tr.toggle_diff td {
     background: #ddd;
     padding: 0 5px 2px 5px;
     margin-bottom: 5px;
 }
-tr.toggle_diff td small { float:right;}
-tr.raw_diff td {
-    padding-top: 5px;
-}
 
-table#codeblob {
-    width: 100%;
-}
+tr.toggle_diff td small { float:right;}
+tr.raw_diff td { padding-top: 5px; }
+table#codeblob { width: 100%; }
 table#codeblob tr td { padding: 0 2px;}
 
 table tr .line-numbers {
@@ -1712,9 +1482,7 @@ table tr .line-numbers {
     border-bottom: 1px solid #cdcdcd;
 }
 
-table tr .commentable {
-    cursor: pointer;
-}
+table tr .commentable { cursor: pointer; }
 
 table tr.selected-for-commenting td,
 table tr.selected-for-commenting td.ins,
@@ -1739,6 +1507,7 @@ table tr td.inline_comments {
     border:none;
     border-right: 1px solid #cdcdcd;
 }
+
 table tr td.inline_comments .diff-comment-count {
     background: orange;
     padding: 1px 4px;
@@ -1748,6 +1517,7 @@ table tr td.inline_comments .diff-comment-count {
     opacity: 0.7;
     color: #FA8700;
 }
+
 table tr td.inline_comments .diff-comment-count:hover {
     background: #FA8700;
     color: #000;
@@ -1773,7 +1543,6 @@ table tr.highlighted td.code {
 table tr td.code {
     width: 95%;
     padding-left: 10px;
-    /*white-space: pre;*/
     white-space: pre-wrap;       /* CSS-3                  */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999    */
     white-space: -pre-wrap;      /* Opera 4-6              */
@@ -1783,9 +1552,8 @@ table tr td.code {
     font: 95%/110% monospace, "Bitstream Vera Sans Mono", Monaco;
     border-right: 1px solid #ccc;
 }
-table#codeblob tr td.code {
-    border-right: none;
-}
+
+table#codeblob tr td.code { border-right: none; }
 
 table tr td.code pre {
     margin: 0;
@@ -1794,9 +1562,7 @@ table tr td.code pre {
     line-height: inherit;
 }
 
-table tr td.unwrapped {
-    white-space: pre;
-}
+table tr td.unwrapped { white-space: pre; }
 
 table tr td.softwrapped {
     white-space: pre-wrap;       /* CSS-3                  */
@@ -1806,17 +1572,14 @@ table tr td.softwrapped {
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
-table tr td.marked {
-    background: #ffc !important;
-}
+table tr td.marked { background: #ffc !important; }
 
 table.sidebyside {
     empty-cells: show;
     table-layout: fixed;
 }
-table.sidebyside tr td.code {
-    padding: 2px;
-}
+
+table.sidebyside tr td.code { padding: 2px; }
 
 table.codediff {
     border: 1px solid #ccc;
@@ -1824,22 +1587,25 @@ table.codediff {
     border-collapse: collapse;
     font: 95%/105% "Bitstream Vera Sans Mono", Monaco, monospace;
 }
-table.codediff tr td {
-    padding: 0;
-}
+
+table.codediff tr td { padding: 0; }
+
 table.codediff .line-num-cut {
     background: #ccc;
     border-top: 1px dashed #ccc;
     border-bottom: 1px dashed #ccc;
 }
 
-table.codediff thead .line-numbers, table.codediff thead { background: #ddd; }
+table.codediff thead .line-numbers,
+table.codediff thead { background: #ddd; }
 table.codediff td.code { padding-left: 2px; }
+
 table.codediff .cut-line {
     background: #eee;
     border-top: 1px dashed #aaa;
     border-bottom: 1px dashed #aaa;
 }
+
 table.codediff td.hidden del { display:none; }
 table.codediff td.del { background: #ffdddd; }
 table.codediff td.del span.idiff { background: #F2ACAD; }
@@ -1847,16 +1613,13 @@ table.codediff td.ins { background: #ddffdd; }
 table.codediff td.ins span.idiff { background: #BAFBAD; }
 table.sidebyside tbody.mod td { background: #fe9; }
 table.sidebyside tbody.mod td { background: #fe9; }
-table.sidebyside tbody.mod td ins, table.sidebyside tbody.mod td del { background: inherit; }
-/*table.sidebyside tbody.mod td ins span.idiff,
-  table.sidebyside tbody.mod td del span.idiff { background: #fd4; }*/
+table.sidebyside tbody.mod td ins,
+table.sidebyside tbody.mod td del { background: inherit; }
 table.codediff td.del del { text-decoration: none; }
 table.codediff td.ins ins { text-decoration: none; }
 table.sidebyside td.del del { background: #ffaaaa; }
 table.sidebyside td.ins ins { background: #aaffaa; }
-table.codediff col.lines {
-    width: 3em;
-}
+table.codediff col.lines { width: 3em; }
 
 ul.diff_stats {
     font: 95%/105% "Bitstream Vera Sans Mono", Monaco, monospace;
@@ -1867,12 +1630,10 @@ ul.diff_stats small {
     font-size: 10px;
     font-weight: bold;
 }
+
 ul.diff_stats small.insertions  { color: #00BF00; }
 ul.diff_stats small.deletions   { color: #DC0000; }
-
-#newest_projects, #site_project_list {
-    margin-bottom: 3em;
-}
+#newest_projects, #site_project_list { margin-bottom: 3em; }
 
 #newest_projects ul li {
     margin-left: 5px;
@@ -1887,31 +1648,23 @@ ul.diff_stats small.deletions   { color: #DC0000; }
     text-align:center;
 }
 
-#site_columns ul, #site_columns p {
-    text-align: left;
-}
-
-#site_overview table td, #site_overview table th {
-    text-align:center;
-}
+#site_columns ul,
+#site_columns p { text-align: left; }
+#site_overview table td,
+#site_overview table th { text-align:center; }
 
 #site_overview table td.left, #site_overview table th.left {
     border-right: 1px dotted #ccc;
     padding-right: 10px;
 }
-#site_overview table td.right, #site_overview table th.right {
-    padding-left: 10px;
-}
 
-#site_overview p.create_account_hint {
-    margin-top: 10px;
-}
+#site_overview table td.right,
+#site_overview table th.right { padding-left: 10px; }
+#site_overview p.create_account_hint { margin-top: 10px; }
 
 /* Comments */
 
-.comments {
-    margin-bottom: 20px;
-}
+.comments { margin-bottom: 20px; }
 
 .comments .comment {
     padding: 10px;
@@ -1927,25 +1680,16 @@ ul.diff_stats small.deletions   { color: #DC0000; }
     border: 1px solid #000;
     background-color: #eee;
 }
-.comments .comment .comment_form h3 {
-    margin: 0;
-}
-
-.comments .comment .comment_form .default_action {
-    font-weight: bold;
-}
+.comments .comment .comment_form h3 { margin: 0; }
+.comments .comment .comment_form .default_action { font-weight: bold; }
 
 /* When displaying commits side-by-side, do not display the links to the context*/
-.comments.sidebyside .comment.inline .inline_comment_link {
-    display: none;
-}
-
-.comments .comment.inline .inline_comment_link a {
-    color: #333;
-}
+.comments.sidebyside .comment.inline .inline_comment_link { display: none; }
+.comments .comment.inline .inline_comment_link a { color: #333; }
 
 .comments .comment img {
-    max-width: 500px; max-height: 500px;
+    max-width: 500px;
+    max-height: 500px;
 }
 
 .comments .comment .byline {
@@ -1960,46 +1704,82 @@ ul.diff_stats small.deletions   { color: #DC0000; }
     padding-right: 5px;
 }
 
-.comments .comment .byline .permalink a {
-    color: #666;
+.comments .comment .byline .permalink a { color: #666; }
+
+.comment .body ul,
+.page ol,
+.diff-comment .body ul {
+    margin-left: 30px;
 }
 
-.comment .body ul, .page ol, .diff-comment .body ul { margin-left: 30px; }
-.comment .body ul li, .diff-comment .body ul li		{ list-style-type: disc; }
-.comment .body ol li, diff-comment .body ol li		{ list-style-type: decimal; }
-.comment .body h1, .diff-comment .body h1			{ margin: 15px 0 10px 0; font-size: 140%;}
-.comment .body h2, .diff-comment .body h2			{ margin: 15px 0 10px 0; font-size: 120%;}
-.comment .body h3, .diff-comment .body h3			{ margin: 15px 0 10px 0; font-size: 110%;}
-.comment .body h4, .diff-comment .body h4			{ margin: 15px 0 10px 0; font-size: 105%;}
-.comment .body blockquote, .diff-comment .body blockquote {
+.comment .body ul li,
+.diff-comment .body ul li {
+    list-style-type: disc;
+}
+
+.comment .body ol li,
+diff-comment .body ol li {
+    list-style-type: decimal;
+}
+
+.comment .body h1,
+.diff-comment .body h1 {
+    margin: 15px 0 10px 0;
+    font-size: 140%;
+}
+
+.comment .body h2,
+.diff-comment .body h2 {
+    margin: 15px 0 10px 0;
+    font-size: 120%;
+}
+
+.comment .body h3,
+.diff-comment .body h3 {
+    margin: 15px 0 10px 0;
+    font-size: 110%;
+}
+
+.comment .body h4,
+.diff-comment .body h4 {
+    margin: 15px 0 10px 0;
+    font-size: 105%;
+}
+
+.comment .body blockquote,
+.diff-comment .body blockquote {
     margin-left: 7px;
     border-left: 3px solid #ccc;
     color: #666;
     padding: 10px;
 }
+
 .comment .body pre.diff-comment-context,
 .diff-comment .body pre.diff-comment-context {
     margin: 0;
 }
-.comment .body blockquote p:first-child, .diff-comment .body blockquote p:first-child {
+
+.comment .body blockquote p:first-child,
+.diff-comment .body blockquote p:first-child {
     margin-bottom: 0;
 }
-.comment .body blockquote p:last-child, .comment .body blockquote p:last-child {
+
+.comment .body blockquote p:last-child,
+.comment .body blockquote p:last-child {
     margin-bottom: 0;
 }
-h2#comments form {
-    float: right;
-}
+
+h2#comments form { float: right; }
+
 h2#comments form label {
     font-size: 11px;
     font-weight: normal;
     color: #000;
 }
+
 /* inline diff comments */
 
-.diff-comment .body p {
-    margin-bottom: 5px;
-}
+.diff-comment .body p { margin-bottom: 5px; }
 
 .diff-comment {
     font-size: 13px;
@@ -2010,30 +1790,29 @@ h2#comments form label {
     padding: 5px 10px;
     background: #fff;
 }
-.diff-comment:last-child {
-    border-bottom: none;
-}
-.diff-comment .byline {
-    float:left;
-}
+
+.diff-comment:last-child { border-bottom: none; }
+.diff-comment .byline { float:left; }
+
 .diff-comment .byline {
     margin-bottom: 0;
     font-size: 11px;
     color: #666;
 }
-.diff-comment .byline a {
-    color: #666;
-}
+
+.diff-comment .byline a { color: #666; }
 
 .diff-comment .byline .avatar {
     display: inline;
     padding-right: 5px;
 }
+
 .diff-comment .body {
     float:left;
     margin-left: 75px;
     max-width: 550px;
 }
+
 .diff-comment .reply {
     float: right;
     margin-right: 20px;
@@ -2041,15 +1820,14 @@ h2#comments form label {
     color: #666;
     display:none;
 }
+
 .diff-comment .timestamp {
     float: right;
     font-size: 11px;
     color: #666;
 }
 
-.diff-comment.highlighted {
-    background: #ffd;
-}
+.diff-comment.highlighted { background: #ffd; }
 
 /* Markdown help */
 
@@ -2058,31 +1836,33 @@ h2#comments form label {
     padding: 0;
     width: 450px;
 }
+
 table.markdown_help {
     margin-top: -20px;
     margin-bottom: 20px;
     font-size: 11px;
     width: 300px;
 }
+
 .markdown_help td {
     padding: 2px 10px 2px 10px;
     border-bottom: 1px solid #ccc;
 }
-.markdown_help td ul li {
-    list-style: disc;
-}
+
+.markdown_help td ul li { list-style: disc; }
+
 .markdown_help td ul, table.markdown_help td ol {
     margin: 0;
     padding: 0;
 }
+
 .markdown_help td li {
     padding: 0;
     margin: 0;
     margin-left: 15px;
 }
-.markdown_help td pre {
-    margin: 0;
-}
+
+.markdown_help td pre { margin: 0; }
 
 #site #recent_comments {
     width: 48%;
@@ -2090,6 +1870,7 @@ table.markdown_help {
     padding-right: 10px;
     border-right: 1px dotted #dedede;
 }
+
 #site #recent_comments p { margin-bottom: 0; }
 #site #recent_comments .comment { width: 100%;}
 #site #recent_comments .comment .body {
@@ -2112,6 +1893,7 @@ table.markdown_help {
     border-bottom: 1px solid #333;
     margin: 0;
 }
+
 #system_message p {
     text-align: center;
     margin-bottom:0;
@@ -2134,40 +1916,56 @@ table.markdown_help {
     clear:right;
 }
 
-#site #left {
-
-}
-
-#site #right {
-
-}
-
 .important_message {
     font-weight: bold;
     color: #9A0000;
 }
 
 /* Page */
-.page					{ margin-bottom: 0px; padding-bottom: 0px; /*border-bottom: 2px solid #666;*/}
-.page ul, .page ol { margin-left: 30px; }
-.page ul li		{ list-style-type: disc; }
-.page ol li		{ list-style-type: decimal; }
-.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
+.page {
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+
+.page ul,
+.page ol { margin-left: 30px; }
+.page ul li { list-style-type: disc; }
+.page ol li { list-style-type: decimal; }
+
+.page h1 {
+    margin: 15px 0 10px 0;
+    font-size: 150%;
+}
+
 .page h2,
-#content .page h2			{ margin: 15px 0 10px 0; font-size: 135%;}
-.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
-.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
-.page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
+#content .page h2 {
+    margin: 15px 0 10px 0;
+    font-size: 135%;
+}
+
+.page h3 {
+    margin: 15px 0 10px 0;
+    font-size: 120%;
+}
+
+.page h4 {
+    margin: 15px 0 10px 0;
+    font-size: 110%;
+}
+
+.page blockquote {
+    margin-left: 30px;
+    background: #eee;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
 
 .repository-description .page {
     margin: 0;
     padding: 0;
 }
 
-.repository-description .page > p:last-child {
-    margin-bottom: 0;
-}
-
+.repository-description .page > p:last-child { margin-bottom: 0; }
 
 /* Merge Requests */
 
@@ -2197,13 +1995,9 @@ table.markdown_help {
     background-color: #FEFCAB;
 }
 
-.merge-request-reason p:last-child {
-    margin-bottom: 0;
-}
+.merge-request-reason p:last-child { margin-bottom: 0; }
+.merge_request_overview { margin-bottom: 20px; }
 
-.merge_request_overview {
-    margin-bottom: 20px;
-}
 .merge_request_overview .meta {
     color: #666;
     font-size: 12px;
@@ -2216,6 +2010,7 @@ table.markdown_help {
 }
 
 .recently-closed-merge-requests { margin: 0; }
+
 .merge_request_summary_short {
     margin: 0;
     padding: 5px;
@@ -2226,18 +2021,14 @@ table.markdown_help {
 }
 
 .merge_request_summary_short a { color: #666;}
-
-.merge_request_summary .byline, .merge_request_summary pre {
-    margin-bottom: 0;
-}
+.merge_request_summary .byline, .merge_request_summary pre { margin-bottom: 0; }
 
 .merge_request_summary .byline strong {
     float: right;
     margin-top: -20px;
 }
-.merge_request_summary_short img {
-    display: inline;
-}
+
+.merge_request_summary_short img { display: inline; }
 
 .merge_request_summary .status, .merge_request_summary_short .status {
     float:right;
@@ -2245,44 +2036,41 @@ table.markdown_help {
     font-size: 11px;
     margin: 0;
 }
+
 .merge_request_summary.rejected, .merge_request_summary.merged {
     background: #eee;
     border: 1px solid #ddd;
 }
+
 .merge_request_summary.open .status span,
 .merge_request_summary_short.open .status span,
-.merge-request-reason	.open span	{ color: #FF7F00; }
+.merge-request-reason .open span {
+    color: #FF7F00;
+}
+
 .merge_request_summary.merged .status span,
 .merge_request_summary_short.merged .status span,
-.merge-request-reason	.merged span 		{ color: #48BA1C; }
+.merge-request-reason .merged span {
+    color: #48BA1C;
+}
+
 .merge_request_summary.rejected .status span,
 .merge_request_summary_short.rejected .status span,
-.merge-request-reason	.rejected span	{ color: #F00; }
-
-.merge_request_statuses {
-    float: left;
+.merge-request-reason .rejected span {
+    color: #F00;
 }
 
-table.commits_in_event {
-    margin-top: 1em
-}
-
-table.commits_in_event .avatar {
-    padding-right: 1em
-}
-
-table.commits_in_event tr .commit_message {
-    margin-bottom: 10px;
-}
+.merge_request_statuses { float: left; }
+table.commits_in_event { margin-top: 1em }
+table.commits_in_event .avatar { padding-right: 1em }
+table.commits_in_event tr .commit_message { margin-bottom: 10px; }
 
 table.select_commits_from_list {
     margin-right: 10px;
     width: 90%;
 }
 
-table.select_commits_from_list td li {
-    float: none;
-}
+table.select_commits_from_list td li { float: none; }
 
 table.select_commits_from_list th {
     background: #999;
@@ -2292,6 +2080,7 @@ table.select_commits_from_list th {
     text-transform: uppercase;
     font-weight: bold;
 }
+
 table.select_commits_from_list th.commit_list_status {
     font-weight: normal;
     text-transform: lowercase;
@@ -2300,21 +2089,24 @@ table.select_commits_from_list th.commit_list_status {
     text-align: right;
     font: 85%/95%  "Bitstream Vera Sans Mono", Monaco, monospace;
 }
+
 table.select_commits_from_list tr.commit_row td, tr.selected td {
     padding: 5px 0 5px 0;
     border-bottom: 1px solid #ddd;
 }
-table.select_commits_from_list tr.selected td {
-    background-color: #ffc;
-}
+
+table.select_commits_from_list tr.selected td { background-color: #ffc; }
+
 table.select_commits_from_list td.merge_to_container {
     width: 40px;
     text-align: center;
 }
+
 table.select_commits_from_list tr.commit_row td.selection {
     background: url("../images/silk/brick.png") no-repeat center center;
     width: 40px;
 }
+
 table.select_commits_from_list tr.selected td.selection {
     background-image: url("../images/silk/brick_add.png");
     background-color: #ffc;
@@ -2329,31 +2121,26 @@ table.select_commits_from_list tr.commit_row .commit-details ul li {
     margin-right: 5px;
     display: inline;
 }
-table.select_commits_from_list tr.commit_row .commit-details ul li img {
-    display: inline;
-}
+
+table.select_commits_from_list tr.commit_row .commit-details ul li img { display: inline; }
+
 table.select_commits_from_list tr.commit_row .commit-details.meta {
     width: 180px;
     vertical-align: top;
 }
-table.select_commits_from_list tr.commit_row .commit-details.message {
-    vertical-align: top;
-}
-table.select_commits_from_list tr.commit_row .commit-details .commit_message {
-    margin: 0;
-}
-table.select_commits_from_list tr.commit_comments .commit-details.body {
-    vertical-align: top;
-}
+
+table.select_commits_from_list tr.commit_row .commit-details.message { vertical-align: top; }
+table.select_commits_from_list tr.commit_row .commit-details .commit_message { margin: 0; }
+table.select_commits_from_list tr.commit_comments .commit-details.body { vertical-align: top; }
 
 table.select_commits_from_list tr.commit_row.with_comments td.meta,
 table.select_commits_from_list tr.commit_comments td.meta {
     border-left: 4px solid #888;
     padding-left: 5px;
 }
-table.select_commits_from_list tr.commit_comments .commit-details .author a {
-    font-weight:bold;
-}
+
+table.select_commits_from_list tr.commit_comments .commit-details .author a { font-weight:bold; }
+
 table.select_commits_from_list tr.commit_comments .commit-details .author a,
 table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     color: #000;
@@ -2363,7 +2150,6 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     border: 1px solid red;
     padding: 1em;
 }
-
 
 #repositories #branches {
     float: right;
@@ -2379,11 +2165,11 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     background: #ff0;
     font-weight: normal;
 }
-.search_results strong {
-    font-weight: normal;
-}
 
-.search_results p, .search_results h3 {
+.search_results strong { font-weight: normal; }
+
+.search_results p,
+.search_results h3 {
     margin-bottom: 5px;
 }
 
@@ -2398,12 +2184,10 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     padding: 3px;
     margin:0;
 }
+
 .search_bar p { margin-bottom: 2px; }
 .search_bar { margin-bottom: 20px; }
-
-#users .infobox {
-    margin-bottom: 20px;
-}
+#users .infobox { margin-bottom: 20px; }
 
 .commits_by_author_graph {
     float: right;
@@ -2414,39 +2198,14 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     text-align:center;
 }
 
-/*
-  li.event_instance.create_project { background-image: url("../images/silk/report_add.png"); }
-  li.event_instance.delete_project { background-image: url("../images/silk/report_delete.png"); }
-  li.event_instance.update_project { background-image: url("../images/silk/report_edit.png"); }
-  li.event_instance.create_repository { background-image: url("../images/silk/database_add.png"); }
-  li.event_instance.clone_repository { background-image: url("../images/silk/database_clone.png"); }
-  li.event_instance.delete_repository { background-image: url("../images/silk/database_delete.png"); }
-  li.event_instance.update_repository { background-image: url("../images/silk/database_edit.png"); }
-  li.event_instance.commit { background-image: url("../images/silk/brick.png"); }
-  li.event_instance.create_branch { background-image: url("../images/silk/arrow_branch.png"); }
-  li.event_instance.delete_branch { background-image: url("../images/silk/delete.png"); }
-  li.event_instance.create_tag { background-image: url("../images/silk/tag_blue_add.png"); }
-  li.event_instance.delete_tag { background-image: url("../images/silk/tag_blue_delete.png"); }
-  li.event_instance.add_collaborator { background-image: url("../images/silk/group_add.png"); }
-  li.event_instance.remove_committer { background-image: url("../images/silk/group_delete.png"); }
-  li.event_instance.comment { background-image: url("../images/silk/comment.png"); }
-  li.event_instance.request_merge { background-image: url("../images/silk/chart_line_add.png"); }
-  li.event_instance.resolve_merge_request { background-image: url("../images/silk/arrow_merge.png"); }
-  li.event_instance.update_merge_request { background-image: url("../images/silk/chart_line_edit.png"); }
-  li.event_instance.delete_merge_request { background-image: url("../images/silk/chart_line_delete.png"); } */
-
-/* sidebar repository list */
-
-
-
 /* repository meta (overview page) */
-
 
 .repository_meta .header {
     color: #888;
     font-size: 12px;
     margin-bottom: 10px;
 }
+
 .repository_meta .header h2 {
     margin: 0;
     padding: 0;
@@ -2458,6 +2217,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     font-weight: bold;
     text-shadow: 0px 1px #FFF;
 }
+
 .repository_meta .header td h2 img{
     vertical-align: middle;
     margin-left: 3px;
@@ -2480,19 +2240,19 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     text-align: center;
 }
 
-.repository_meta .infobox ul {
-    margin-bottom: 0;
-}
+.repository_meta .infobox ul { margin-bottom: 0; }
 
-.repository_meta .branches ul li strong, .repository_meta .clone-of ul li strong {
+.repository_meta .branches ul li strong,
+.repository_meta .clone-of ul li strong {
     color: #555;
 }
 
-.repository_meta .branches, .repository_meta .clone-of { 
+.repository_meta .branches, .repository_meta .clone-of {
     float: left;
     width: 610px;
-    margin-top: 8px; 
+    margin-top: 8px;
 }
+
 .repository_meta .branches ul, .repository_meta .clone-of ul {
     margin: 0;
     padding: 0;
@@ -2504,7 +2264,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     margin-right: 5px;
 }
 
-.repository_meta .branches ul li.head, .repository_meta .clone-of ul li.head { 
+.repository_meta .branches ul li.head, .repository_meta .clone-of ul li.head {
     font-weight: bold;
     background-color: #EEE;
     padding: 4px;
@@ -2520,6 +2280,7 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     margin-left: 20px;
     margin-right: 20px;
 }
+
 .wiki-page .page-content { max-width: 750px;}
 
 .wiki-page .toc {
@@ -2529,10 +2290,10 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     background: #E9F1F6;
     border: 1px solid #ccc;
 }
+
 .wiki-page .toc ul { margin-left: 10px;}
-.wiki-page .toc ul li {
-    list-style: none;
-}
+.wiki-page .toc ul li { list-style: none; }
+
 .page-meta {
     font-size:11px;
     color: #666;
@@ -2540,32 +2301,45 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     border-bottom: 1px solid #ccc;
     padding-bottom: 8px;
 }
-.page-meta p { margin:0; padding:0;}
-.page-meta .page-actions, .page-header .page-actions { font-size:11px; float:right; color:#666;}
-ul.page-actions { margin: 0;}
+
+.page-meta p {
+    margin: 0;
+    padding: 0;
+}
+
+.page-meta .page-actions,
+.page-header .page-actions {
+    font-size: 11px;
+    float: right;
+    color: #666;
+}
+
+ul.page-actions { margin: 0; }
+
 .page-meta .page-actions li {
     float: left;
     margin: 0px 10px;
 }
 
-.page-history .diff {
-    margin-top: 10px;
-}
+.page-history .diff { margin-top: 10px; }
 
 .page-header {
     border-bottom: 1px solid #ccc;
     padding-bottom: 10px;
     margin-bottom: 10px;
 }
+
 .page-header h1 {
     font-size: 175%;
     margin:0;
     padding:0;
 }
+
 .page-header .page-crumbs {
     margin: 0 0 10px 0;
     font-size: 11px;
 }
+
 .page-header .page-crumbs li {
     display: inline;
     padding: 0;
@@ -2573,18 +2347,45 @@ ul.page-actions { margin: 0;}
     margin-right: 5px;
     list-style-type: none;
 }
+
 .page-header .page-crumbs li a { margin-right: 5px;}
 .page-header .page-crumbs li.current { color: #666;}
 
-.page					{ margin-bottom: 20px; padding-bottom: 10px; /*border-bottom: 2px solid #666;*/}
+.page {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
 .page ul, .page ol { margin-left: 30px; }
-.page ul li		{ list-style-type: disc; }
-.page ol li		{ list-style-type: decimal; }
-.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
-.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
-.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
-.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
-.page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
+.page ul li { list-style-type: disc; }
+.page ol li { list-style-type: decimal; }
+
+.page h1 {
+    margin: 15px 0 10px 0;
+    font-size: 150%;
+}
+
+.page h2 {
+    margin: 15px 0 10px 0;
+    font-size: 130%;
+}
+
+.page h3 {
+    margin: 15px 0 10px 0;
+    font-size: 120%;
+}
+
+.page h4 {
+    margin: 15px 0 10px 0;
+    font-size: 110%;
+}
+
+.page blockquote {
+    margin-left: 30px;
+    background: #eee;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
 
 div.archive-download-box {
     background: #eee;
@@ -2598,13 +2399,9 @@ div.archive-download-box .spin {
     text-align: center;
     margin: 10px auto 10px auto;
 }
-div.archive-download-box h4 {
-    text-align: center;
-}
 
-div.archive-download-box ul.links {
-    margin-left: 0 !important;
-}
+div.archive-download-box h4 { text-align: center; }
+div.archive-download-box ul.links { margin-left: 0 !important; }
 
 div.archive-download-box p {
     margin: 0;
@@ -2612,11 +2409,9 @@ div.archive-download-box p {
     text-align: center;
 }
 
-
 /*Styling of EULA*/
 
-.eula
-{
+.eula {
     padding: 1em 2em;
     max-height: 20em;
     overflow-y: auto;
@@ -2627,8 +2422,7 @@ div.archive-download-box p {
     margin-bottom: 0;
 }
 
-.message_list th
-{
+.message_list th {
     background-color: #CCC;
     font-weight: bold;
 }
@@ -2638,6 +2432,7 @@ div.archive-download-box p {
     color: #333;
     font-weight: normal;
 }
+
 .message_list .unread { font-weight: bold; background-color: #f7ece3; }
 
 .message_list td.timestamp {
@@ -2645,6 +2440,7 @@ div.archive-download-box p {
     color: #555;
     text-align: left;
 }
+
 .message_list_actions {
     padding: 8px;
     font-size: 12px;
@@ -2656,36 +2452,35 @@ div.archive-download-box p {
     -moz-border-radius-bottomleft: 6px;
     -moz-border-radius-bottomright: 6px;
 }
+
 .message_list_actions p {
     margin: 0;
     padding: 0;
     margin: 4px 14px 0px 0px;
     float: left;
 }
-.message_list_actions input, .message_list_actions select {
-    float: left;
-}
-.message_list_actions select {
-    margin: 4px 14px 0px 0px;
-}
-.message_list td.who
-{
+
+.message_list_actions input,
+.message_list_actions select { float: left; }
+.message_list_actions select { margin: 4px 14px 0px 0px; }
+
+.message_list td.who {
     padding-left: 22px;
     background-position: 2px center;
     background-repeat: no-repeat;
 }
+
 .message_list tr.merge_request td.who,
 .message_list tr.membership td.who,
-.message_list tr.committership td.who
-{
+.message_list tr.committership td.who {
     background-image: url(../images/silk/server.png);
 }
-.message_list tr.message td.who
-{
+
+.message_list tr.message td.who {
     background-image: url(../images/silk/comments.png);
 }
-.message_full
-{
+
+.message_full {
     border: 1px solid #ddd;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
@@ -2694,58 +2489,131 @@ div.archive-download-box p {
     -webkit-box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 3px 3px 3px 5px rgba(0,0,0,0.5);
 }
-.message_full .avatar
-{
+
+.message_full .avatar {
     float: left;
     width: 50px;
 }
-.message_full .message
-{
-    margin: 0 0 0 50px;
-}
-.message_full .message .body
-{
-    padding-left: 1em;
-}
+
+.message_full .message { margin: 0 0 0 50px; }
+.message_full .message .body { padding-left: 1em; }
+
 .message .meta {
     color: #555;
     font-size: 12px;
 }
+
 .message h2.subject {
     margin: 0 0 5px 0;
     padding: 0;
     font-size: 14px;
 }
 
-
-
 /* pull boxes */
 
-/* 510 */ 
-.pull-box-container.pull-box-510 {  width: 450px; } 
-.pull-box-container.pull-box-510 .pull-box-content, .pull-box-container.pull-box-510 .pull-box-header, .pull-box-container.pull-box-510 .pull-box-links { width: 430px; }
-.pull-box-container.pull-box-510 .pull-box-content ul.events, .pull-box-container.pull-box-510 .pull-box-content ul.events li {	width: 430px;	float: left; }
-.pull-box-container.pull-box-510 .pull-box-content ul.events li div { float: left; width: 390px; margin: 0; margin: 0px 0px 0px 5px; }
-.pull-box-container.pull-box-510 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
+/* 510 */
+.pull-box-container.pull-box-510 { width: 450px; }
 
+.pull-box-container.pull-box-510 .pull-box-content,
+.pull-box-container.pull-box-510 .pull-box-header,
+.pull-box-container.pull-box-510 .pull-box-links {
+    width: 430px;
+}
 
-.pull-box-container.pull-box-365 {  width: 310px; } 
-.pull-box-container.pull-box-365 .pull-box-content, .pull-box-container.pull-box-365 .pull-box-header, .pull-box-container.pull-box-365 .pull-box-links { width: 290px; }
-.pull-box-container.pull-box-365 .pull-box-content ul.events, .pull-box-container.pull-box-365 .pull-box-content ul.events li {	width: 290px;	float: left; }
-.pull-box-container.pull-box-365 .pull-box-content ul.events li div { float: left; width: 260px; margin: 0; margin: 0px 0px 0px 5px; }
-.pull-box-container.pull-box-365 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
+.pull-box-container.pull-box-510 .pull-box-content ul.events,
+.pull-box-container.pull-box-510 .pull-box-content ul.events li {
+    width: 430px;
+    float: left;
+}
 
-.pull-box-container.pull-box-390 {  width: 390px; } 
-.pull-box-container.pull-box-390 .pull-box-content, .pull-box-container.pull-box-390 .pull-box-header, .pull-box-container.pull-box-390 .pull-box-links { width: 370px; }
-.pull-box-container.pull-box-390 .pull-box-content ul.events, .pull-box-container.pull-box-90 .pull-box-content ul.events li {	width: 370px;	float: left; }
-.pull-box-container.pull-box-390 .pull-box-content ul.events li div { float: left; width: 340px; margin: 0; margin: 0px 0px 0px 5px; }
-.pull-box-container.pull-box-390 .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
+.pull-box-container.pull-box-510 .pull-box-content ul.events li div {
+    float: left;
+    width: 390px;
+    margin: 0;
+    margin: 0px 0px 0px 5px;
+}
 
-.pull-box-container.pull-box-sidebar {  width: 240px; } 
-.pull-box-container.pull-box-sidebar .pull-box-content, .pull-box-container.pull-box-sidebar .pull-box-header, .pull-box-container.pull-box-sidebar .pull-box-links { width: 220px; }
-.pull-box-container.pull-box-sidebar .pull-box-content ul.events, .pull-box-container.pull-box-sidebar .pull-box-content ul.events li {	width: 220px;	float: left; }
-.pull-box-container.pull-box-sidebar .pull-box-content ul.events li div { float: left; width: 190px; margin: 0; margin: 0px 0px 0px 5px; }
-.pull-box-container.pull-box-sidebar .pull-box-content ul.events li div .commit_message p {	margin: 0; line-height: 15px; }
+.pull-box-container.pull-box-510 .pull-box-content ul.events li div .commit_message p {
+    margin: 0;
+    line-height: 15px;
+}
+
+.pull-box-container.pull-box-365 { width: 310px; }
+
+.pull-box-container.pull-box-365 .pull-box-content,
+.pull-box-container.pull-box-365 .pull-box-header,
+.pull-box-container.pull-box-365 .pull-box-links {
+    width: 290px;
+}
+
+.pull-box-container.pull-box-365 .pull-box-content ul.events,
+.pull-box-container.pull-box-365 .pull-box-content ul.events li {
+    width: 290px;
+    float: left;
+}
+
+.pull-box-container.pull-box-365 .pull-box-content ul.events li div {
+    float: left;
+    width: 260px;
+    margin: 0px 0px 0px 5px;
+}
+
+.pull-box-container.pull-box-365 .pull-box-content ul.events li div .commit_message p {
+    margin: 0;
+    line-height: 15px;
+}
+
+.pull-box-container.pull-box-390 { width: 390px; }
+
+.pull-box-container.pull-box-390 .pull-box-content,
+.pull-box-container.pull-box-390 .pull-box-header,
+.pull-box-container.pull-box-390 .pull-box-links {
+    width: 370px;
+}
+
+.pull-box-container.pull-box-390 .pull-box-content ul.events,
+.pull-box-container.pull-box-90 .pull-box-content ul.events li {
+    width: 370px;
+    float: left;
+}
+
+.pull-box-container.pull-box-390 .pull-box-content ul.events li div {
+    float: left;
+    width: 340px;
+    margin: 0px 0px 0px 5px;
+}
+
+.pull-box-container.pull-box-390 .pull-box-content ul.events li div .commit_message p {
+    margin: 0;
+    line-height: 15px;
+}
+
+.pull-box-container.pull-box-sidebar {
+    width: 240px;
+}
+
+.pull-box-container.pull-box-sidebar .pull-box-content,
+.pull-box-container.pull-box-sidebar .pull-box-header,
+.pull-box-container.pull-box-sidebar .pull-box-links {
+    width: 220px;
+}
+
+.pull-box-container.pull-box-sidebar .pull-box-content ul.events,
+.pull-box-container.pull-box-sidebar .pull-box-content ul.events li {
+    width: 220px;
+    float: left;
+}
+
+.pull-box-container.pull-box-sidebar .pull-box-content ul.events li div {
+    float: left;
+    width: 190px;
+    margin: 0px 0px 0px 5px;
+}
+
+.pull-box-container.pull-box-sidebar .pull-box-content ul.events li div .commit_message p {
+    margin: 0;
+    line-height: 15px;
+}
 
 .pull-box-container {
     float: left;
@@ -2754,10 +2622,12 @@ div.archive-download-box p {
     -moz-border-radius: 6px;
     border: 1px solid #d2d2d2;
 }
+
 .pull-box-content {
     background-image: none;
     background-color: #e7e6e7;
 }
+
 .pull-box-content {
     padding: 10px 10px 10px 10px;
     background: #e8e7e7;
@@ -2768,12 +2638,9 @@ div.archive-download-box p {
     -moz-border-radius-bottomleft: 6px;
     -moz-border-radius-bottomright: 6px;
 }
-#sidebar .pull-box-content {
-    background: #F8F8F8;
-}
-.pull-box-content > * {
-    float: left;
-}
+
+#sidebar .pull-box-content { background: #F8F8F8; }
+.pull-box-content > * { float: left; }
 
 .pull-box-content .filters {
     float: right;
@@ -2782,28 +2649,23 @@ div.archive-download-box p {
     padding: 5px 10px 6px;
     margin: -11px -10px 10px -10px;
 }
-.pull-box-content .filters ul{
-    float: right;
-}
+
+.pull-box-content .filters ul { float: right; }
+
 .pull-box-content .filters ul li {
     float: left;
     font-size: 11px;	
     margin-left: 12px;
 }
-.pull-box-content .filters ul li a, .pull-box-content .filters ul li strong {
+
+.pull-box-content .filters ul li a,
+.pull-box-content .filters ul li strong {
     color: #555;
 }
-.pull-box-content .filters ul li a:hover {
-    color: #222;
-}
 
-.pull-box-content .filters ul li a.current {
-    font-weight: bold;
-}
-
-.pull-box-content ul {
-    margin-bottom: -2px; 
-}
+.pull-box-content .filters ul li a:hover { color: #222; }
+.pull-box-content .filters ul li a.current { font-weight: bold; }
+.pull-box-content ul { margin-bottom: -2px; }
 
 .pull-box-header {
     background: #c3c3c3 url("../img/pullbox-bg.png") repeat-x 0 0;
@@ -2833,29 +2695,24 @@ div.archive-download-box p {
     margin: 10px 0px -12px -10px;
     float: left;
     border-top: 1px solid #eee;
-
     -moz-border-radius-bottomleft: 6px;
     -moz-border-radius-bottomright: 6px;
     background: url(../img/repos-link-bg.png) repeat-x;
 }
 
-.pull-box-container .pull-box-header h3, #sidebar .pull-box-container .pull-box-header h3 {
+.pull-box-container .pull-box-header h3,
+#sidebar .pull-box-container .pull-box-header h3 {
     color: #333;
     text-shadow: 0px 1px 0px #EEE;
     font-size: 12px;
     font-weight: bold;
 }
 
-.pull-box h3.pull-box-header a {
-    color: #fff;
-}
-
+.pull-box h3.pull-box-header a { color: #fff; }
 .pull-box.expose { background-image: none; }
-.pull-box.expose p, .pull-box.expose li { font-size: 16px; }
-.pull-box.expose li                     { margin-bottom: 10px; }
-
-
-
+.pull-box.expose p,
+.pull-box.expose li { font-size: 16px; }
+.pull-box.expose li { margin-bottom: 10px; }
 
 /* Dialog boxes */
 
@@ -2880,55 +2737,30 @@ div.archive-download-box p {
     margin: 0;
 }
 
-
-#project-preview
-{
+#project-preview {
     max-height: 200px;
     padding: 10px;
     max-height: 200px;
     overflow-y: scroll;
 }
 
-ul#commit_selector
-{
-}
-ul#commit_selector li
-{
-}
-ul#commit_selector li a.current
-{
-    font-weight: bold;
-}
+ul#commit_selector li a.current { font-weight: bold; }
+
 table.select_commits_from_list tr.merged td.meta,
 table.select_commits_from_list tr.unmerged td.meta,
-table.select_commits_from_list tr.unknown-status td.meta
-{
+table.select_commits_from_list tr.unknown-status td.meta {
     background-position: 7px left;
     background-repeat: no-repeat;
     padding-left: 16px;
 }
-table.select_commits_from_list tr.unmerged td.meta
-{
-    background-image: url(../images/merge_status/unmerged.png);
-}
-table.select_commits_from_list tr.merged td.meta
-{
-    background-image: url(../images/merge_status/merged.png);
-}
-table.select_commits_from_list tr.unknown-status td.meta
-{
-    background-image: url(../images/merge_status/unknown.png);
-}
-#commits_to_be_merged
-{
-    position: relative;
-}
-#wait_for_commits
-{
-    position: absolute;
-}
-.please_wait
-{
+
+table.select_commits_from_list tr.unmerged td.meta { background-image: url(../images/merge_status/unmerged.png); }
+table.select_commits_from_list tr.merged td.meta { background-image: url(../images/merge_status/merged.png); }
+table.select_commits_from_list tr.unknown-status td.meta { background-image: url(../images/merge_status/unknown.png); }
+#commits_to_be_merged { position: relative; }
+#wait_for_commits { position: absolute; }
+
+.please_wait {
     background-color: #fff;
     font-size: 16px;
     border: 2px solid #ccc;
@@ -2937,9 +2769,9 @@ table.select_commits_from_list tr.unknown-status td.meta
     padding: 20px 20px;
     width: 50%;
 }
-.merge_request_statuses table {
-    width: 640px;
-}
+
+.merge_request_statuses table { width: 640px; }
+
 #merge-requests-status-chooser {
     padding: 5px 10px;
     background: #EEE;
@@ -2949,17 +2781,10 @@ table.select_commits_from_list tr.unknown-status td.meta
     margin: 10px 0px;;
     color: #888;
 }
-#merge-requests-status-chooser ul.horizontal {
-    margin: 0;
-}
 
-#merge-requests-status-chooser ul.horizontal li {
-    padding-right: 0;
-}
-
-#merge-requests-status-chooser ul.horizontal li > a {
-    padding-left: 10px !important;
-}
+#merge-requests-status-chooser ul.horizontal { margin: 0; }
+#merge-requests-status-chooser ul.horizontal li { padding-right: 0; }
+#merge-requests-status-chooser ul.horizontal li > a { padding-left: 10px !important; }
 
 .merge_request_status {
     border-bottom: 1px solid #ddd;
@@ -2976,7 +2801,6 @@ table.select_commits_from_list tr.unknown-status td.meta
     background: #DDD;
     -webkit-border-bottom-left-radius: 6px;
     -webkit-border-bottom-right-radius: 6px;
-    
 }
 
 /* Styles for ColorPicker popUp */
@@ -3054,6 +2878,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     z-index: 1001;
     overflow: hidden;
 }
+
 #colorpicker-selector {
     position: absolute;
     top: 0px;
@@ -3065,11 +2890,13 @@ table.select_commits_from_list tr.unknown-status td.meta
     margin-left: -6px;
     cursor: default;
 }
+
 #colorpicker-selector img {
     position: absolute;
     left: 0;
     top: 0;
 }
+
 #colorpicker-footer {
     position: absolute;
     top: 114px;
@@ -3077,9 +2904,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     width: 127px;
 }
 
-#colorpicker-value {
-    float: left;
-}
+#colorpicker-value { float: left; }
 
 #colorpicker-value,
 #colorpicker-value-input {
@@ -3088,9 +2913,8 @@ table.select_commits_from_list tr.unknown-status td.meta
     height: 10px;
 }
 
-#colorpicker-value-input {
-    width: 40px;
-}
+#colorpicker-value-input { width: 40px; }
+
 #colorpicker-okbutton {
     float: right;
     padding: 0 10px;
@@ -3101,10 +2925,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     color: #ffffff;
 }
 
-
-/*
-  Merge request commit selector
-  */
+/* Merge request commit selector */
 
 .merge_request_diff_browser{
     margin-bottom: 20px;
@@ -3134,9 +2955,9 @@ table.select_commits_from_list tr.unknown-status td.meta
 
 #merge_request_commit_selector .selectable-container {
     width: 720px;
-    overflow:hidden;
-    height:23px;
-    float:left
+    overflow: hidden;
+    height: 23px;
+    float: left
 }
 
 #merge_request_commit_selector li.single_commit {
@@ -3151,6 +2972,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     background-repeat: no-repeat;
     background-image: url(../images/commit_selector.png);
 }
+
 #merge_request_commit_selector.large li.single_commit.expander {
     width: 250px;
     padding-left: 25px;
@@ -3160,6 +2982,7 @@ table.select_commits_from_list tr.unknown-status td.meta
 #merge_request_commit_selector li:first-child{
     background-image: none; !important
 }
+
 #merge_request_commit_selector li:first-child.ui-selected,
 #merge_request_commit_selector li:first-child.ui-selecting{
     background-image: url(../images/silver_gradient_inverse.png);
@@ -3168,6 +2991,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     border-right: 2px solid #ddd;
     background-repeat: repeat-x;
 }
+
 #merge_request_commit_selector li a{
     padding: 0 0 0 15px;
     background-position: -5px 0;
@@ -3181,6 +3005,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     padding: 2px 20px;
     float: right;
 }
+
 #merge_request_commit_selector li.ui-selected,
 #merge_request_commit_selector li.ui-selecting{
     background-image: url(../images/commit_selector_selected.png);
@@ -3191,18 +3016,15 @@ table.select_commits_from_list tr.unknown-status td.meta
     color: #000;
 }
 
-#merge_request_commit_selector li.merged a
-{
+#merge_request_commit_selector li.merged a {
     background-image: url("../images/silk/bullet_green.png");
 }
 
-#merge_request_commit_selector li.unmerged a
-{
+#merge_request_commit_selector li.unmerged a {
     background-image: url("../images/silk/bullet_red.png");
 }
 
-#merge_request_current_version li.merge_base
-{
+#merge_request_current_version li.merge_base {
     font-weight: bold;
     background-color: #444;
     color: #ccc;
@@ -3213,31 +3035,24 @@ table.select_commits_from_list tr.unknown-status td.meta
     font-size: 11px;
     width: 50px;
 }
-#merge_request_commit_selector .ui-selectee
-{
-    cursor: pointer;
-}
 
+#merge_request_commit_selector .ui-selectee { cursor: pointer; }
 
 #merge_request_commit_selector a.ui-selecting,
 #merge_request_commit_selector a:hover,
-#merge_request_commit_selector a.ui-selected
-{
+#merge_request_commit_selector a.ui-selected {
     color: #390;
     font-weight: bold;
 }
 
-#merge_request_commit_selector #current_shas
-{
+#merge_request_commit_selector #current_shas {
     background-image: url(../images/silk/brick.png);
     background-repeat: no-repeat;
     padding-left: 20px;
     font-size: 12px;
 }
-.ui-selectable-helper
-{
-    border: none !important;
-}
+
+.ui-selectable-helper { border: none !important; }
 
 .file-diff {
     border-bottom: 2px solid #cecece;
@@ -3252,19 +3067,16 @@ table.select_commits_from_list tr.unknown-status td.meta
     padding: 5px 0 0px 8px;
     width: 50%;
 }
+
 .file-diff .header:hover {
     background: #dedede;
     cursor: pointer;
 }
-.file-diff .header.open { background: #dedede; }
 
+.file-diff .header.open { background: #dedede; }
 .file-diff .header span.icon { padding-right: 20px; }
-.file-diff .header.open span.icon {
-    background: url('../images/silk/bullet_toggle_minus.png') no-repeat 0 0;
-}
-.file-diff .header.closed span.icon {
-    background: url('../images/silk/bullet_toggle_plus.png') no-repeat 0 0;
-}
+.file-diff .header.open span.icon { background: url('../images/silk/bullet_toggle_minus.png') no-repeat 0 0; }
+.file-diff .header.closed span.icon { background: url('../images/silk/bullet_toggle_plus.png') no-repeat 0 0; }
 
 .file-diff .diff-stats {
     font-size: 10px;
@@ -3272,16 +3084,11 @@ table.select_commits_from_list tr.unknown-status td.meta
     display: inline;
     margin-left: 11px;
 }
+
 .file-diff .diff-stats .additions { color: #00BF00; }
 .file-diff .diff-stats .deletions { color: #DC0000; }
-
-.file-diff .diff-hunks {
-    position:relative;
-}
-
-.file-diff .diff-hunks table {
-    margin-bottom: 0;
-}
+.file-diff .diff-hunks { position:relative; }
+.file-diff .diff-hunks table { margin-bottom: 0; }
 
 #inline_comment_form {
     position: fixed;
@@ -3300,6 +3107,7 @@ table.select_commits_from_list tr.unknown-status td.meta
     -moz-border-radius: 10px 10px 0 0;
     margin: 0;
 }
+
 #inline_comment_form form,
 #inline_comment_form .please_log_in {
     background-color: rgba(255,255,255,0.9);
@@ -3307,12 +3115,9 @@ table.select_commits_from_list tr.unknown-status td.meta
     border: 2px solid rgba(34,34,34,0.7);
     -moz-border-radius: 0 0 10px 0;
 }
-#inline_comment_form form input[type=submit] {
-    font-weight: bold;
-}
-#inline_comment_form form .progress {
-    color: #333;
-}
+
+#inline_comment_form form input[type=submit] { font-weight: bold; }
+#inline_comment_form form .progress { color: #333; }
 
 .file-diff-controls {
     float: right;
@@ -3338,6 +3143,7 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 
 /* changable selection */
+
 #merge_request_version {
     float:right;
     margin: 3px 10px 0 0;
@@ -3353,6 +3159,7 @@ table.select_commits_from_list tr.unknown-status td.meta
 }
 
 /* The summary of a version (commits etc.) */
+
 .merge_request_commit_summary {
     font-weight: bold;
     color: #444;
@@ -3363,9 +3170,8 @@ table.select_commits_from_list tr.unknown-status td.meta
     background-color: #efefef;
     font-size: 11px;
 }
-.merge_request_commit_summary .sha {
-    background-color: #E0EFCF;
-}
+
+.merge_request_commit_summary .sha { background-color: #E0EFCF; }
 
 ul.changable-selection-options {
     padding: 0;
@@ -3379,9 +3185,8 @@ ul.changable-selection-options li {
     padding: 2px 5px 2px 5px;
     border-bottom: 1px solid #888;
 }
-ul.changable-selection-options li:hover {
-    background: #ccc;
-}
+
+ul.changable-selection-options li:hover { background: #ccc; }
 
 /* hover bubbles */
 .hover-bubble-content {
@@ -3396,27 +3201,24 @@ ul.changable-selection-options li:hover {
     margin: 0;
     color: #efefef;
 }
+
 .hover-bubble-content p {
     margin: 8px 10px 0 10px;
     padding: 0;
     font-size: 11px;
 }
 
-#commit-diff-container {
-    margin-bottom: 20px;
-}
+#commit-diff-container { margin-bottom: 20px; }
+
 .link-spinner {
     margin-left: 20px;
     display: none;
 }
 
-/*
-  Style the headers when searching
-  */
+/* Style the headers when searching */
 
-#repo_search {
-    width: 260px;
-}
+#repo_search { width: 260px; }
+
 .searching form {
     background-image: url(/images/spinner.gif);
     background-position: 95% 7px;
@@ -3455,8 +3257,6 @@ ul.changable-selection-options li:hover {
     z-index: 10;
 }
 
-.permission-explanations {
-}
 #sidebar .permission-explanations { width: 100%; }
 
 .permission-explanations h4,
@@ -3466,30 +3266,30 @@ ul.changable-selection-options li:hover {
 
 dl.explanation { margin-bottom: 10px; }
 dl.explanation dt { font-weight: bold; }
+
 dl.explanation dd {
     padding-left: 20px;
     background: transparent url('../images/silk/bullet_green.png') no-repeat 2px 0;
 }
 
-.user-profile {
-    margin-bottom: 20px;
-}
+.user-profile { margin-bottom: 20px; }
+.user-profile .avatar { float:left; }
 
-.user-profile .avatar {
-    float:left;
-}
 .user-profile .profile-data {
     float:left;
     margin-left: 20px;
     color: #555;
 }
+
 .user-profile .profile-data h1 {
     font-size: 22px;
     margin-bottom: 10px;
 }
+
 .user-profile .profile-data h1 a {
     margin-left: 2px;
 }
+
 .user-profile .profile-data .details {
     float:left;
     margin-left:0;
@@ -3500,20 +3300,12 @@ dl.explanation dd {
     float:right;
 }
 
-body#users .events .event_instance .event_category {
-
-}
-
 body#users .events .date {
     background:transparent url("../images/silver_fade.png") repeat-x 0 0;
     color:#444444;
 }
-body#users #new-project-button {
-    float: left;
-}
 
-body#users #left  {}
-body#users #right { }
+body#users #new-project-button { float: left; }
 
 body#users h2.activities small {
     font-size: 12px;
