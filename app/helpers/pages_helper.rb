@@ -31,7 +31,13 @@ module PagesHelper
     else
       toc = ""
     end
-    content_tag(:div, toc + sanitize(content), :class => "page wiki-page")
+    content_tag(:div, toc + sanitize_wiki_content(content), :class => "page wiki-page")
+  end
+
+  def sanitize_wiki_content(html)
+    sanitize(html, :tags =>%w(table tr td th dl dd dt strong em b i p code pre tt samp kbd var sub 
+      sup dfn cite big small address hr br div span h1 h2 h3 h4 h5 h6 ul ol li dt dd abbr 
+      acronym a img blockquote del ins), :class => "page wiki-page", :attributes => %w[id href])
   end
   
   BRACKETED_WIKI_WORD = /\[\[([A-Za-z0-9_\-]+)\]\]/

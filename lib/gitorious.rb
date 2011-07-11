@@ -1,6 +1,6 @@
-<%
+# encoding: utf-8
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2011 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,9 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
-<div class="powered-by">
-  <%= link_to image_tag("../img/poweredby.png", :title => "Powered by Gitorious"), "http://gitorious.org" -%>
-</div>
-<%= GitoriousConfig["extra_html_head_data"] -%>
-<%= javascript_include_tag("onload", :cache => false) %>
+module Gitorious
+  VERSION = "2.0.0"
+end

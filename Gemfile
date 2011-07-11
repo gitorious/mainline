@@ -18,10 +18,10 @@ gem "rack", "~> 1.0.1"
 gem "riddle" # For the ultrasphinx plugin
 gem "builder"
 gem "mysql", :platforms => :ruby
-gem "oauth"
 gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 gem "will_paginate"
+gem "hodel_3000_compliant_logger"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
@@ -36,6 +36,7 @@ group :test do
   gem "mocha", :require => false
   gem "factory_girl", "~> 1.3.0"
   gem "shoulda", "~> 2.9.1"
+  gem "tuxml"
 end
 
 group :git_proxy do
@@ -58,4 +59,8 @@ end
 
 group :active_messaging do
   gem "activemessaging"
+end
+
+platform :jruby do
+  gem "activerecord-jdbcmysql-adapter"
 end

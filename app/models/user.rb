@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
 
-  attr_protected :login, :is_admin
+  attr_protected :login, :is_admin, :password, :current_password
 
   # For new users we are a little more strict than for existing ones.
   USERNAME_FORMAT = /[a-z0-9\-_\.]+/i.freeze
@@ -64,8 +64,8 @@ class User < ActiveRecord::Base
   validates_length_of       :login,    :within => 3..40
   validates_length_of       :email,    :within => 3..100
   validates_uniqueness_of   :login, :email, :case_sensitive => false
-
   validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false
+  validates_format_of     :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
 
   before_save :encrypt_password
   before_create :make_activation_code

@@ -82,6 +82,20 @@ class ActiveSupport::TestCase
     "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"
   end
 
+  def self.should_subscribe_to(queue_name)
+    should "Subscribe to message queue #{queue_name}" do
+      klass = self.class.name.sub(/Test$/, "").constantize
+
+      subscription = ActiveMessaging::Gateway.subscriptions.values.find do |s|
+        s.destination.name == queue_name && s.processor_class == klass
+      end
+
+      assert_not_nil subscription, "#{klass.name} does not subscribe to #{queue_name}"
+    end
+  end
+end
+
+class ActionController::TestCase
   def self.enforce_ssl
     context "when enforcing ssl" do
       setup do
@@ -177,5 +191,21 @@ class ActiveSupport::TestCase
         assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter.options[:only].sort
       end
     end
+  end
+
+  def self.should_verify_method(method, action, params = {})
+    should "only allow #{method} for #{action}" do
+      actions = ActionController::Routing::HTTP_METHODS - [method]
+
+      actions.each do |method|
+        send(method, action, params)
+
+        assert_response 400, "Should disallow #{method} for #{action}"
+      end
+    end
+  end
+
+  def options(action, parameters = nil, session = nil, flash = nil)
+    process(action, parameters, session, flash, "OPTIONS")
   end
 end

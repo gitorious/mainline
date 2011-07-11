@@ -34,6 +34,10 @@ class UsersController < ApplicationController
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
 
+  verify :method => :put, :only => [:update_password, :update]
+  verify :method => :delete, :only => :avatar
+  verify :method => :post, :only => [:create, :forgot_password_create]
+
   renders_in_global_context
   layout :decide_layout
   # render new.rhtml
@@ -80,6 +84,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
+    @user.password = params[:user][:password]
+    @user.password_confirmation = params[:user][:password_confirmation]
     @user.save!
     if !@user.terms_of_use.blank?
       @user.accept_terms!

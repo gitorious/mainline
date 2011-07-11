@@ -39,6 +39,9 @@ class Admin::UsersController < ApplicationController
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
     @user.is_admin = params[:user][:is_admin] == "1"
+    @user.password = params[:user][:password]
+    @user.password_confirmation = params[:user][:password_confirmation]
+
     respond_to do |wants|
       if @user.save
         @user.activate

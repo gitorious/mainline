@@ -93,9 +93,9 @@ module RoutingFilter
     private
       def reserved?(path, controller = nil)
         path_with_ending_slash = path.chomp("/") + "/" # Make sure we always only got one slash
-        (CONTROLLER_NAMES + reserved_actions_for_controller(controller)).select{|s| 
+        (CONTROLLER_NAMES + reserved_actions_for_controller(controller)).any? {|s| 
           path_with_ending_slash =~ /^\/#{s}(\..+)?\//
-        }.length != 0
+        }
       end
       
       def reserved_action_name?(name, controller)
