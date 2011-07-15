@@ -1,0 +1,55 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2011 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+require "capillary/log_parser"
+require "capillary/commit"
+require "gitorious/git_shell"
+
+module Api
+  class GraphsController < ApplicationController
+    skip_session
+
+    rescue_from Gitorious::GitShell::GitTimeout, :with => :render_timeout
+    
+    LOG_FORMAT = '%H§%P§%ai§%ae§%d§%s§'
+
+    def show
+      project = Project.find_by_slug(params[:project_id])
+      repository = project.repositories.find_by_name(params[:repository_id])
+      data = git_shell.graph_log(repository.full_repository_path, "--all", "-50")
+      parser = Capillary::LogParser.new
+
+      data.split("\n").each do |line|
+        parser << line
+      end
+      
+      respond_to do |wants|
+        wants.json { render :json => parser.to_json }
+      end
+    end
+
+    
+    def git_shell
+      Gitorious::GitShell.new
+    end
+
+    def render_timeout
+      render :json => []
+    end
+  end
+end
