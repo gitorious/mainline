@@ -535,4 +535,10 @@ class ProjectTest < ActiveSupport::TestCase
       assert_equal(%w(fun pretty scary), @project.tag_list)
     end    
   end
+
+  should "not allow api as slug" do
+    p = Project.new(:slug => "api")
+    assert !p.valid?
+    assert_not_nil p.errors.on(:slug)
+  end
 end

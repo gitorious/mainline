@@ -21,7 +21,8 @@ module Gitorious
       def unaccounted_root_names
         [ "teams", "dashboard", "about", "login", "logout", "commit",
           "commits", "tree", "archive-tarball", "archive-zip", "contact",
-          "register", "signup", "blog", "merge_request_landing_page", "activities" ]
+          "register", "signup", "blog", "merge_request_landing_page", "activities",
+          "api"]
       end
 
       def reserved_root_names
