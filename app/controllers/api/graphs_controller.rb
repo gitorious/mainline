@@ -31,7 +31,10 @@ module Api
     def show
       project = Project.find_by_slug(params[:project_id])
       repository = project.repositories.find_by_name(params[:repository_id])
-      data = git_shell.graph_log(repository.full_repository_path, "--all", "-50")
+      data = Rails.cache.fetch("commit-graph-in-#{project.slug}/#{repository.name}", :expires_in => 1.hour) do
+        git_shell.graph_log(repository.full_repository_path, "--all", "-50")
+      end
+
       parser = Capillary::LogParser.new
 
       data.split("\n").each do |line|

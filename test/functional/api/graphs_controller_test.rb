@@ -23,6 +23,8 @@ class Api::GraphsControllerTest < ActionController::TestCase
     setup do
       @repository = repositories(:johans)
       @project = @repository.project
+      @cache_key = "commit-graph-in-#{@project.slug}/#{@repository.name}"
+      Rails.cache.delete(@cache_key)
     end
 
     should "render JSON" do
@@ -33,6 +35,13 @@ class Api::GraphsControllerTest < ActionController::TestCase
 
       get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
       assert_response :success
+    end
+
+    should "be cached" do
+      Rails.cache.expects(:fetch).with(@cache_key, :expires_in => 1.hour).returns("")
+      
+      get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
+      assert_response :success      
     end
 
     should "render an empty JSON array on timeout" do
