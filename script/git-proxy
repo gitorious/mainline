@@ -47,8 +47,9 @@
 #
 #     $ git ls-remote git://gitorious.local/some/repo.git
 #
-Bundler.require(:default, :git_proxy) if defined?(Bundler)
+#Bundler.require(:default, :git_proxy) if defined?(Bundler)
 
+require File.dirname(__FILE__) + "/../config/environment"
 require "optparse"
 require "proxymachine"
 require "daemons"
