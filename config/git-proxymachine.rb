@@ -1,7 +1,7 @@
 # Run with `env RAILS_ENV="development" proxymachine -c config/git-proxymachine.rb`
 
 ENV["RAILS_ENV"] ||= "production"
-require File.dirname(__FILE__)+'/../config/environment'
+require File.dirname(__FILE__) + "/../config/environment" unless defined?(Rails)
 
 class GitRouter
   # Lookup the real repository path based on +path+
