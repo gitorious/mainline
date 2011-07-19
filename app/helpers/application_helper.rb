@@ -278,10 +278,6 @@ module ApplicationHelper
     render :partial => '/site/markdown_help'
   end
 
-  def file_path(repository, filename, head = "master")
-    project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
-  end
-
   def link_to_help_toggle(dom_id, style = :image)
     if style == :image
       link_to_function(image_tag("help_grey.png", {
@@ -369,14 +365,6 @@ module ApplicationHelper
 
   def current_site
     @controller.current_site
-  end
-
-  def new_polymorphic_comment_path(parent, comment)
-    if parent
-      repo_owner_path(@repository, [@project, @repository, parent, comment])
-    else
-      repo_owner_path(@repository, [@project, @repository, comment])
-    end
   end
 
   def force_utf8(str)
@@ -475,14 +463,6 @@ module ApplicationHelper
 
   def default_avatar
     image_tag("icon_default.png", :width => 30, :height => 30)
-  end
-
-  def secure_login_url
-    if SslRequirement.disable_ssl_check?
-      sessions_path
-    else
-      sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
-    end
   end
 
   def comment_applies_to_merge_request?(parent)
