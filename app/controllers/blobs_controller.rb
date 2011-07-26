@@ -22,15 +22,12 @@
 class BlobsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  renders_in_site_specific_context
+  before_filter :find_commit, :only => [:show, :history, :blame]
+  skip_session :only => :blame
+
+  renders_in_site_specific_context :except => :blame
 
   def show
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    @commit = @git.commit(@ref)
-    unless @commit
-      redirect_to_head and return
-    end
     if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
                           @commit.committed_date.utc)
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
@@ -44,6 +41,16 @@ class BlobsController < ApplicationController
                   :repository => @repository, :name => @blob.basename)
       expires_in 10.minutes
     end
+  end
+
+  def blame
+    @blame = @git.blame(@path.join("/"), @ref)
+    if @ref.size == 40
+      cache_forever
+    else
+      cache_for(1.hour)
+    end
+    render :nothing => true
   end
 
   def raw
@@ -79,12 +86,6 @@ class BlobsController < ApplicationController
   end
   
   def history
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    @commit = @git.commit(@ref)
-    unless @commit
-      redirect_to_head and return
-    end
     @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
@@ -116,5 +117,14 @@ class BlobsController < ApplicationController
     def redirect_to_head
       redirect_to project_repository_blob_path(@project, @repository, 
                     branch_with_tree("HEAD", @path))
+    end
+
+    def find_commit
+      @git = @repository.git
+      @ref, @path = branch_and_path(params[:branch_and_path], @git)
+      @commit = @git.commit(@ref)
+      unless @commit
+        redirect_to_head and return
+      end
     end
 end

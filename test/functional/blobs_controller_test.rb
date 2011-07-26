@@ -78,9 +78,37 @@ class BlobsControllerTest < ActionController::TestCase
             :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo.rb"]}
       
         assert_redirected_to (project_repository_blob_path(@project, @repository, ["HEAD", "foo.rb"]))
-      end   
+      end
+
+      context "Annotations" do
+        setup do
+          @git.stubs(:commit).with(SHA).returns(Object.new)
+          @git.stubs(:blame).with("lib/foo.c", SHA).returns([])
+        end
+        
+        should "not send session cookies" do
+          get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
+            :branch_and_path => [SHA, "lib","foo.c"]}
+          assert_equal [], @response.headers["Set-Cookie"]
+        end
+
+        should "expire soonish with shortened ref" do
+          @git.stubs(:commit).with("master").returns(Object.new)
+          get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
+            :branch_and_path => ["master", "lib","foo.c"]}
+          assert_response :success
+          assert_match "max-age=3600", @response.headers["Cache-Control"]
+        end
+        
+        should "expire soonish with shortened ref" do
+          get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
+            :branch_and_path => [SHA, "lib","foo.c"]}
+          assert_response :success
+          assert_match "max-age=315360000", @response.headers["Cache-Control"]
+        end
+      end
     end
-  
+    
     context "#raw" do
       should "get the blob data from a commit sha and a file name and render it as text/plain" do
         blob_mock = mock("blob")
@@ -164,7 +192,6 @@ class BlobsControllerTest < ActionController::TestCase
         assert_redirected_to (project_repository_path(@project, @repository))
       end
     end
-    
     
     context "#history" do
       setup do

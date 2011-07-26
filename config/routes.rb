@@ -73,6 +73,7 @@ ActionController::Routing::Routes.draw do |map|
       #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
       repo.raw_blob        "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
       repo.blob_history    "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
+      repo.blame           "blobs/blame/*branch_and_path", :controller => "blobs", :action => "blame"
       repo.blob            "blobs/*branch_and_path", :controller => "blobs", :action => "show"
     end
   end

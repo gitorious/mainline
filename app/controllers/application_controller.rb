@@ -271,7 +271,11 @@ class ApplicationController < ActionController::Base
     end
     
     def cache_forever
-      headers["Cache-Control"] = "public, max-age=315360000"
+      cache_for(315360000.seconds)
+    end
+
+    def cache_for(seconds)
+      headers["Cache-Control"] = "public, max-age=#{seconds.to_s}"
     end
 
     # A wrapper around ActionPack's #stale?, that always returns true
