@@ -44,13 +44,14 @@ class BlobsController < ApplicationController
   end
 
   def blame
-    @blame = @git.blame(@path.join("/"), @ref)
+    @file_path = @path.join("/")
+    @blame = @git.blame(@file_path, @ref)
     if @ref.size == 40
       cache_forever
     else
       cache_for(1.hour)
     end
-    render :nothing => true
+    render :layout => false
   end
 
   def raw

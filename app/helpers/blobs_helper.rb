@@ -69,13 +69,24 @@ module BlobsHelper
   end
   
   def render_highlighted(text, filename, code_theme_class = nil)
+    render_highlighted_list(text.to_s.split("\n"), filename, {:code_theme_class => code_theme_class})
+  end
+
+  def render_blame(blame, filename)
+    render_highlighted_list(blame.lines.map(&:line), filename, :commits => blame.lines.map(&:commit))
+  end
+
+  def render_highlighted_list(lines, filename, options={})
     out = []
+    code_theme_class = options[:code_theme_class]
+    commits = options[:commits]
     lang_class = "lang" + File.extname(filename).sub('.', '-')
     out << %Q{<table id="codeblob" class="highlighted #{lang_class}">}
-    text.to_s.split("\n").each_with_index do |line, count|
+    lines.each_with_index do |line, count|
       lineno = count + 1
       out << %Q{<tr id="line#{lineno}">}
-      out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>} 
+      out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>}
+      out << blame_info_for_commit(commits[count]) if commits
       code_classes = "code"
       code_classes << " #{code_theme_class}" if code_theme_class
       ext = File.extname(filename).sub(/^\./, '')
@@ -85,6 +96,16 @@ module BlobsHelper
     out << "</table>"
     out.join("\n")
   end
+
+  def blame_info_for_commit(commit)
+    gravatar = gravatar(commit.author.email, :size => "16")
+    commit_link = link_to(commit.id_abbrev,
+      repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id),
+      :title => commit.short_message)
+    time = commit.committed_date.strftime("%Y-%m-%d")
+    %Q{<td>#{gravatar}#{commit_link}#{time}</td>}
+  end
+
   
   def too_big_to_render?(size)
     size > 350.kilobytes

@@ -83,7 +83,9 @@ class BlobsControllerTest < ActionController::TestCase
       context "Annotations" do
         setup do
           @git.stubs(:commit).with(SHA).returns(Object.new)
-          @git.stubs(:blame).with("lib/foo.c", SHA).returns([])
+          @blame = mock
+          @blame.stubs(:lines).returns([])
+          @git.stubs(:blame).with("lib/foo.c", SHA).returns(@blame)
         end
         
         should "not send session cookies" do
@@ -94,13 +96,14 @@ class BlobsControllerTest < ActionController::TestCase
 
         should "expire soonish with shortened ref" do
           @git.stubs(:commit).with("master").returns(Object.new)
+          @git.stubs(:blame).with("lib/foo.c", "master").returns(@blame)
           get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
             :branch_and_path => ["master", "lib","foo.c"]}
           assert_response :success
           assert_match "max-age=3600", @response.headers["Cache-Control"]
         end
         
-        should "expire soonish with shortened ref" do
+        should "never expire with full ref" do
           get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
             :branch_and_path => [SHA, "lib","foo.c"]}
           assert_response :success
