@@ -98,12 +98,13 @@ module BlobsHelper
   end
 
   def blame_info_for_commit(commit)
-    gravatar = gravatar(commit.author.email, :size => "16")
+    #    gravatar = gravatar(commit.author.email, :size => "16")
+    author = commit.author.name
     commit_link = link_to(commit.id_abbrev,
       repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id),
       :title => commit.short_message)
     time = commit.committed_date.strftime("%Y-%m-%d")
-    %Q{<td>#{gravatar}#{commit_link}#{time}</td>}
+    %Q{<td class="blame_info">#{commit_link} by #{author} at #{time}</td>}
   end
 
   

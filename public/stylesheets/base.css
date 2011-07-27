@@ -1470,6 +1470,15 @@ tr.raw_diff td { padding-top: 5px; }
 table#codeblob { width: 100%; }
 table#codeblob tr td { padding: 0 2px;}
 
+table#codeblob tr td.blame_info {
+  white-space: nowrap;
+  font-size: 95%;
+}
+
+td.blame_info img {
+  margin-right: 4px;
+}
+
 table tr .line-numbers {
     text-align: right;
     vertical-align: top;

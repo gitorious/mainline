@@ -181,6 +181,25 @@ $(document).ready(function () {
         });
     });
 
+    // Switch from regular blob view to annotate/blame view
+    $("a.blame").click(function (e) {
+        var blameUrl = $(this).attr("href");
+        var codeBlob = $("#codeblob");
+
+        $.ajax({
+            url: blameUrl,
+            success: function (data) {
+                codeBlob.after(data);
+                codeBlob.remove();
+                prettyPrint();
+            },
+            error: function () {
+                // Whoops
+            }
+        });
+        e.preventDefault();
+    });
+
     $(".comment .comment_form .cancel").live("click", function () {
         var theForm = $(this).parents(".comment_form");
         theForm.remove();

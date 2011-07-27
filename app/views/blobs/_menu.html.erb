@@ -20,6 +20,9 @@
 <div class="page-meta">
   <ul class="page-actions">
     <li><%= link_to_unless_current t("views.blobs.show"), blob_path(@ref, current_path) -%></li>
+    <% if params[:action] == "show" %>
+      <li><%= link_to(t("views.blobs.blame"), blob_blame_path(@commit.id, current_path), :class => "blame") -%></li>
+    <% end %>
     <li><%= link_to_unless_current t("views.blobs.history"), blob_history_path(@ref, current_path) -%></li>
     <li><%= link_to t("views.blobs.raw"), raw_blob_path(@ref, current_path) -%></li>
   </ul>

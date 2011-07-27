@@ -284,6 +284,7 @@
         :raw => "Raw blob data",
         :show => "Blob contents",
         :history => "Blob history",
+        :blame => "Blame",
         :heading => "History for {{ref}}:{{path}}",
         :too_big => lambda { |this, path| "This file is too big to be rendered within reasonable time, " +
           this.link_to("try viewing the raw data", path) },
