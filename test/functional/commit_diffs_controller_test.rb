@@ -64,6 +64,18 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
   end
 
+  context "Comparing arbitrary commits" do
+    should "pick the correct commits" do
+      Grit::Commit.expects(:diff).with(@repository.git, OTHER_SHA, @sha).returns([])
+      get(:compare,
+        :project_id => @project.slug,
+        :repository_id => @repository.name,
+        :from_id => OTHER_SHA,
+        :id => @sha)
+      assert_response :success
+    end
+  end
+
   context "Routing" do
     should "route commit diffs index" do
       assert_recognizes({
@@ -81,6 +93,16 @@ class CommitDiffsControllerTest < ActionController::TestCase
         :repository_id => @repository.to_param,
         :id => @sha,
       })
+    end
+
+    should "route comparison between two commits" do
+      assert_recognizes({:controller => "commit_diffs",
+          :action => "compare",
+          :project_id => @project.to_param,
+          :repository_id => @repository.to_param,
+          :from_id => SHA,
+          :id => OTHER_SHA},
+        {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{SHA}/diffs/#{OTHER_SHA}"})
     end
   end
 end

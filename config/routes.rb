@@ -65,6 +65,7 @@ ActionController::Routing::Routes.draw do |map|
       repo.commits_in_ref  "commits/*branch", :controller => "commits", :action => "index"
       repo.commit_comments "commit/:id/comments", :controller => "commit_comments", :action => "index", :id => /[^\/]+/
       repo.commit_diffs    "commit/:id/diffs", :controller => "commit_diffs", :action => "index", :id => /[^\/]+/
+      repo.commit_compare  "commit/:from_id/diffs/:id", :controller => "commit_diffs", :action => "compare"
       repo.commit          "commit/:id", :controller => "commits", :action => "show", :id => /.*/
       repo.trees           "trees/", :controller => "trees", :action => "index"
       repo.tree            "trees/*branch_and_path", :controller => "trees", :action => "show"

@@ -1,0 +1,31 @@
+<%
+#--
+#   Copyright (C) 2011 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<%= breadcrumbs_from(@root) -%>
+<h1><%= t("views.commits.compare_title", :last_commit => @commit.id[0..7], :first_commit => @first_commit_id[0..7]) %></h1>
+
+
+<% if @diffs.blank? -%>
+  <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
+<% else -%>
+  <% unless @commit.merge? -%>
+    <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
+    <%= render_diffmode_selector :url => url_for(:controller => :commit_diffs, :action => :compare) -%>
+    <%= render :partial => "commits/diffs" -%>
+  <% end -%>
+<% end -%>

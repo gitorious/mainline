@@ -23,24 +23,34 @@
 class CommitDiffsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
+  before_filter :find_commit
   skip_session
   after_filter :cache_forever
   renders_in_site_specific_context
 
   def index
+    @diffs = @commit.parents.empty? ? [] : @commit.diffs
+
+    render :layout => !request.xhr?
+  end
+
+  def compare
+    @first_commit_id = params[:from_id]
+    @diffs = Grit::Commit.diff(@repository.git, @first_commit_id, params[:id])
+  end
+
+  private
+  def find_commit
     @comments = []
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
-
+    
     unless @commit = @git.commit(params[:id])
       render_not_found and return
     end
-
+    
     @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
-    @diffs = @commit.parents.empty? ? [] : @commit.diffs
     @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
     @author_user = User.find_by_email_with_aliases(@commit.author.email)
-
-    render :layout => !request.xhr?
   end
 end

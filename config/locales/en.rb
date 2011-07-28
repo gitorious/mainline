@@ -316,6 +316,7 @@
         :parent_sha1 => "Parent SHA1",
         :page_title => "Commit in {{repo}} in {{title}}",
         :title => "Commit {{commit}}",
+        :compare_title => "Diffs from {{first_commit}} to {{last_commit}}",
         :message => lambda { |this, path| "This is the initial commit in this repository, " +
           this.link_to( "browse the initial tree state", path ) + "." },
       },
