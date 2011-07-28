@@ -335,7 +335,7 @@ module EventRenderingHelper
   end
 
   # Render a push summary, used for both old-style and new-style push event rendering
-  def push_summary(commit_detail_url, commit_count, repository, branch_name, event_id, message)
+  def push_summary(commit_detail_url, commit_count, repository, branch_name, event_id, message, diff_url = nil)
     project = repository.project
     commit_link = link_to(pluralize(commit_count, 'commit'),
       repo_owner_path(repository, :project_repository_commits_in_ref_path,
@@ -348,9 +348,11 @@ module EventRenderingHelper
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
       title = repo_title(repository, project)
       " to " + link_to(h(title+':'+branch_name), repo_owner_path(repository,
-        :project_repository_commits_in_ref_path, project, repository, ensplat_path(branch_name)))
+          :project_repository_commits_in_ref_path, project, repository, ensplat_path(branch_name)))
+      title << %Q{. #{link_to("View diff",diff_url)}} if diff_url
     end
     body = h(message)
+
     category = 'push'
     [action, body, category]
   end
@@ -412,9 +414,10 @@ module EventRenderingHelper
     branch_name = event_data[:branch]
     commit_count = event_data[:commit_count]
     project = event.project
+    diff_url = project_repository_commit_compare_path(event.target.project, event.target, :from_id => first_sha, :id => last_sha)
 
     body = "#{branch_name} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"
-    push_summary(commits_event_path(event.to_param), commit_count, event.target, branch_name, event.to_param, body)
+    push_summary(commits_event_path(event.to_param), commit_count, event.target, branch_name, event.to_param, body, diff_url)
   end
   
   protected

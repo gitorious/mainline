@@ -120,7 +120,7 @@
       :event_status_pushed => 'pushed some commits',
       :event_status_committed => 'committed',
       :event_pushed_n => "pushed {{commit_link}}",
-      :more_info => "More info…",
+      :more_info => "More info…"
     },
     :project => {
       :format_slug_validation => "must match something in the range of [a-z0-9_\-]+",
