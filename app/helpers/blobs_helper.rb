@@ -85,8 +85,8 @@ module BlobsHelper
     lines.each_with_index do |line, count|
       lineno = count + 1
       out << %Q{<tr id="line#{lineno}">}
-      out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>}
       out << blame_info_for_commit(commits[count]) if commits
+      out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>}
       code_classes = "code"
       code_classes << " #{code_theme_class}" if code_theme_class
       ext = File.extname(filename).sub(/^\./, '')
@@ -99,11 +99,11 @@ module BlobsHelper
 
   def blame_info_for_commit(commit)
     author = commit.author.name
-    commit_link = link_to(commit.id_abbrev,
+    time = commit.committed_date.strftime("%Y-%m-%d")
+    commit_link = link_to("<strong>#{commit.id_abbrev}</strong> by #{author} at #{time}",
       repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id),
       :title => commit.short_message)
-    time = commit.committed_date.strftime("%Y-%m-%d")
-    %Q{<td class="blame_info">#{commit_link} by #{author} at #{time}</td>}
+    %Q{<td class="blame_info">#{commit_link}</td>}
   end
 
   

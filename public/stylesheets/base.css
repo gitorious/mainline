@@ -1473,6 +1473,19 @@ table#codeblob tr td { padding: 0 2px;}
 table#codeblob tr td.blame_info {
   white-space: nowrap;
   font-size: 95%;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #cdcdcd;
+  padding: 0 6px;
+}
+
+.blame_info a {
+  color: #696969;
+}
+
+.blame_info a strong {
+  color: #ed6b2b;
+  font-weight: normal;
 }
 
 td.blame_info img {
@@ -1485,7 +1498,7 @@ table tr .line-numbers {
     background: #eee;
     color: #777;
     font-size: 92%;
-    padding: 0 3px 0 2px;
+    padding: 0 5px 0 4px;
     width: 35px;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #cdcdcd;
