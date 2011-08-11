@@ -503,7 +503,7 @@ module ApplicationHelper
   def include_javascripts
     jquery = ["", "/autocomplete", "/cookie", "/color_picker", "/cycle.all.min",
               "/ui", "/ui/selectable", "/scrollto", "/expander",
-              "/timeago"].collect { |f| "lib/jquery#{f}" }
+              "/timeago","/pjax"].collect { |f| "lib/jquery#{f}" }
 
     gitorious = ["", "/observable", "/application", "/resource_toggler", "/jquery",
                  "/merge_requests", "/diff_browser", "/messages", "/live_search",
