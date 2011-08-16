@@ -38,20 +38,26 @@ class BlobsController < ApplicationController
       end
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
-                  :repository => @repository, :name => @blob.basename)
-      expires_in 10.minutes
+        :repository => @repository, :name => @blob.basename)
+      expire_based_on_ref_length(@ref.size)
+      render :layout => !pjax_request?
     end
   end
 
   def blame
     @file_path = @path.join("/")
     @blame = @git.blame(@file_path, @ref)
+
+    head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+    @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
+      :repository => @repository, :name => @path.last)
+
     if @ref.size == 40
       cache_forever
     else
       cache_for(1.hour)
     end
-    render :layout => false
+    render :layout => !pjax_request?
   end
 
   def raw
@@ -101,9 +107,9 @@ class BlobsController < ApplicationController
       :name => @blob.basename
     })
     @commits = @git.log(@ref, desplat_path(@path))
-    expires_in 30.minutes
+    expire_based_on_ref_length(@ref.size)
     respond_to do |wants|
-      wants.html
+      wants.html { render :layout => !pjax_request?}
       wants.json {render :json =>
         @commits.map{|c|{
             :author => c.author.name,
@@ -126,6 +132,14 @@ class BlobsController < ApplicationController
       @commit = @git.commit(@ref)
       unless @commit
         redirect_to_head and return
+      end
+    end
+
+    def expire_based_on_ref_length(length)
+      if length == 40
+        cache_forever
+      else
+        cache_for(1.hour)
       end
     end
 end

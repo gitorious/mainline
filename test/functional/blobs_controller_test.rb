@@ -68,7 +68,6 @@ class BlobsControllerTest < ActionController::TestCase
         assert_response :success
         assert_equal @git, assigns(:git)
         assert_equal blob_mock, assigns(:blob)
-        assert_equal "max-age=600, private", @response.headers['Cache-Control']
       end 
     
       should "redirects to HEAD if provided sha was not found (backwards compat)" do
@@ -82,7 +81,7 @@ class BlobsControllerTest < ActionController::TestCase
 
       context "Annotations" do
         setup do
-          @git.stubs(:commit).with(SHA).returns(Object.new)
+          @git.stubs(:commit).with(SHA).returns(stub(:id => SHA, :id_abbrev => "aaa"))
           @blame = mock
           @blame.stubs(:lines).returns([])
           @git.stubs(:blame).with("lib/foo.c", SHA).returns(@blame)
@@ -95,7 +94,7 @@ class BlobsControllerTest < ActionController::TestCase
         end
 
         should "expire soonish with shortened ref" do
-          @git.stubs(:commit).with("master").returns(Object.new)
+          @git.stubs(:commit).with("master").returns(stub(:id => SHA, :id_abbrev => "aaa"))
           @git.stubs(:blame).with("lib/foo.c", "master").returns(@blame)
           get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
             :branch_and_path => ["master", "lib","foo.c"]}
@@ -210,7 +209,6 @@ class BlobsControllerTest < ActionController::TestCase
         assert_equal "master", assigns(:ref)
         assert_equal ["README.txt"], assigns(:path)
         assert_equal 5, assigns(:commits).size
-        assert_match(/max-age=\d+, private/, @response.headers['Cache-Control'])
       end
 
       should "get the history as json" do

@@ -2320,7 +2320,6 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     font-size:11px;
     color: #666;
     float: right;
-    border-bottom: 1px solid #ccc;
     padding-bottom: 8px;
 }
 
@@ -2340,7 +2339,23 @@ ul.page-actions { margin: 0; }
 
 .page-meta .page-actions li {
     float: left;
-    margin: 0px 10px;
+    -moz-border-radius: 10px 0 0 10px;
+    -webkit-border-radius: 4px 4px 0 0;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background-color: #e7e7e7;
+    margin: 0px 2px;
+    padding: 0 6px;
+}
+
+.page-meta .page-actions li {
+  color: #535353;
+  font-weight: bold;
+}
+
+.page-meta .page-actions li  a {
+  color: #535353;
+  font-weight: normal;
 }
 
 .page-history .diff { margin-top: 10px; }

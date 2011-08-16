@@ -275,7 +275,7 @@ class ApplicationController < ActionController::Base
     end
 
     def cache_for(seconds)
-      headers["Cache-Control"] = "public, max-age=#{seconds.to_s}"
+      expires_in(seconds, :public => true)
     end
 
     # A wrapper around ActionPack's #stale?, that always returns true
@@ -310,6 +310,10 @@ class ApplicationController < ActionController::Base
       else
         path_spec.unshift(repo.owner)
       end
+    end
+
+    def pjax_request?
+      request.headers.key?('X-PJAX')
     end
 
     helper_method :unshifted_polymorphic_path

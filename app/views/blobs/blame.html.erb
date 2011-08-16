@@ -16,5 +16,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-
+<%= breadcrumbs_from(@root) -%>
+<%= render "menu" %>
 <%= render_blame(@blame, @file_path) -%>
