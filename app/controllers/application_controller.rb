@@ -313,7 +313,7 @@ class ApplicationController < ActionController::Base
     end
 
     def pjax_request?
-      request.headers.key?('X-PJAX')
+      request.headers['X-PJAX']
     end
 
     helper_method :unshifted_polymorphic_path

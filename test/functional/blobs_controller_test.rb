@@ -23,7 +23,6 @@ class BlobsControllerTest < ActionController::TestCase
 
   should_enforce_ssl_for(:get, :history)
   should_enforce_ssl_for(:get, :raw)
-  should_enforce_ssl_for(:get, :show)
 
   context "Blob rendering" do
     setup do

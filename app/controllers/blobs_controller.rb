@@ -23,13 +23,14 @@ class BlobsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   before_filter :find_commit, :only => [:show, :history, :blame]
-  skip_session :only => :blame
 
-  renders_in_site_specific_context :except => :blame
+  skip_session :only => [:blame, :show]
+  renders_in_site_specific_context :except => [:blame, :history]
 
   def show
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
-                          @commit.committed_date.utc)
+    if stale?({
+          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
+          :last_modified => @commit.committed_date.utc})
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
       unless @blob.respond_to?(:data) # it's a tree
@@ -52,11 +53,8 @@ class BlobsController < ApplicationController
     @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
       :repository => @repository, :name => @path.last)
 
-    if @ref.size == 40
-      cache_forever
-    else
-      cache_for(1.hour)
-    end
+    expire_based_on_ref_length(@ref.size)
+
     render :layout => !pjax_request?
   end
 
