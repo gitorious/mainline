@@ -16,5 +16,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<div id="commit-diffs" data-gts-source="<%= url_for(:controller => :commit_diffs, :action => :compare, :fragment => "1") %>"> 
-</div> 
+<%= breadcrumbs_from(@root) -%>
+<h1><%= t("views.commits.compare_title", :last_commit => @commit.id[0..7], :first_commit => @first_commit_id[0..7]) %></h1>
+
+
+<% if @diffs.blank? -%>
+  <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
+<% else -%>
+  <% unless @commit.merge? -%>
+    <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
+    <%= render_diffmode_selector :url => url_for(:controller => :commit_diffs, :action => :compare) -%>
+    <%= render :partial => "commits/diffs" -%>
+  <% end -%>
+<% end -%>

@@ -23,7 +23,8 @@
 class CommitDiffsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  before_filter :find_commit
+  before_filter :find_commit, :only => :index
+
   skip_session
   after_filter :cache_forever
   renders_in_site_specific_context
@@ -35,8 +36,12 @@ class CommitDiffsController < ApplicationController
   end
 
   def compare
-    @first_commit_id = params[:from_id]
-    @diffs = Grit::Commit.diff(@repository.git, @first_commit_id, params[:id])
+    if params[:fragment]
+      find_commit
+      @first_commit_id = params[:from_id]
+      @diffs = Grit::Commit.diff(@repository.git, @first_commit_id, params[:id])
+      render :partial => "compare_diffs", :layout => false and return
+    end
   end
 
   private

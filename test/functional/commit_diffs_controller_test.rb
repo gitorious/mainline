@@ -71,7 +71,8 @@ class CommitDiffsControllerTest < ActionController::TestCase
         :project_id => @project.slug,
         :repository_id => @repository.name,
         :from_id => OTHER_SHA,
-        :id => @sha)
+        :id => @sha,
+        :fragment => "true")
       assert_response :success
     end
   end
