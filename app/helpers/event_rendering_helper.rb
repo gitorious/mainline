@@ -348,8 +348,8 @@ module EventRenderingHelper
     action = action_for_event(:event_pushed_n, :commit_link => commit_link) do
       title = repo_title(repository, project)
       " to " + link_to(h(title+':'+branch_name), repo_owner_path(repository,
-          :project_repository_commits_in_ref_path, project, repository, ensplat_path(branch_name)))
-      title << %Q{. #{link_to("View diff",diff_url)}} if diff_url
+          :project_repository_commits_in_ref_path, project, repository, ensplat_path(branch_name))) +
+	(diff_url ? ". #{link_to("View diff", diff_url)}" : "")
     end
     body = h(message)
 
