@@ -63,6 +63,8 @@ ActionController::Routing::Routes.draw do |map|
                                   :controller => "commits", :action => "feed", :conditions => { :feed => :get })
       repo.commits         "commits", :controller => "commits", :action => "index"
       repo.commits_in_ref  "commits/*branch", :controller => "commits", :action => "index"
+      repo.graph           "graph", :controller => "graphs", :action => "index"
+      repo.graph_in_ref    "graph/*branch", :controller => "graphs", :action => "index"
       repo.commit_comments "commit/:id/comments", :controller => "commit_comments", :action => "index", :id => /[^\/]+/
       repo.commit_diffs    "commit/:id/diffs", :controller => "commit_diffs", :action => "index", :id => /[^\/]+/
       repo.commit_compare  "commit/:from_id/diffs/:id", :controller => "commit_diffs", :action => "compare"
@@ -168,7 +170,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :api do |api|
     api.connect ':project_id/:repository_id/log/graph', :controller => 'graphs', :action => 'show'
   end
-  
+
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"

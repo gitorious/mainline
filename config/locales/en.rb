@@ -277,6 +277,9 @@
         :tags => "Tags",
         :committed => "committed",
       },
+      :graphs => {
+        :title => "Graph for {{repo_url}}:{{ref}}"
+      },
       :blobs => {
         :page_title => "{{path}} - {{repo}} in {{title}}",
         :wrap => "Softwrap mode",

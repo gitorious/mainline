@@ -15,30 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "timeout"
-module Gitorious
 
-  # Grit is too helpful with escaping the output for our somewhat special needs
-  # This class lets us shell out to Git directly
-  class GitShell
-    def execute(command)
-      Timeout.timeout(10) do
-        `#{command}`
-      end
-    rescue Timeout::Error
-      raise GitTimeout, "Execution expired"
+module GraphsHelper
+  include CommitsHelper
+
+  def capillary_js_paths
+    paths = %w[branch graph formatters/scale formatters/svg-data formatters/raphael].collect do |p|
+      "lib/capillary/lib/capillary/#{p}"
     end
 
-    def graph_log(git_dir, *options)
-      log_format = '%H§%P§%ai§%ae§%d§%s§'
-      pretty_format = %Q{format:"#{log_format}"}
-
-      command = "/usr/bin/env git --git-dir=#{git_dir} log --pretty=#{pretty_format} "
-      command << options.join(" ")
-      execute(command)
-    end
-
-    class GitTimeout < ::Timeout::Error
-    end
+    ["lib/raphael/raphael-min.js",
+     "lib/buster-core/lib/buster-core", "lib/buster-core/lib/buster-event-emitter",
+     "lib/capillary/lib/capillary"] + paths
   end
 end

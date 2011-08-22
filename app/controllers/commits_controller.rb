@@ -21,6 +21,7 @@
 #++
 
 class CommitsController < ApplicationController
+  REF_TYPE = :project_repository_commits_in_ref_path
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   skip_before_filter :public_and_logged_in, :only => [:diffs]
@@ -30,14 +31,14 @@ class CommitsController < ApplicationController
 
   def index
     if params[:branch].blank?
-      redirect_to_ref(@repository.head_candidate.name) and return
+      redirect_to_ref(@repository.head_candidate.name, REF_TYPE) and return
     end
 
     @git = @repository.git
     @ref, @path = branch_and_path(params[:branch], @git)
 
     head = get_head(@ref)
-    return handle_unknown_ref if head.nil?
+    return handle_unknown_ref(@ref, @git, REF_TYPE) if head.nil?
 
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
       @root = Breadcrumb::Branch.new(head, @repository)
@@ -121,40 +122,17 @@ class CommitsController < ApplicationController
       end
     end
   end
-  
+
   protected
     def handle_missing_sha
       flash[:error] = "No such SHA1 was found"
-      redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project, 
+      redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project,
                       @repository)
-    end
-    
-    def redirect_to_ref(ref)
-      redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path, 
-                      @project, @repository, ref)
     end
 
     def commit_diffs
       @commit.parents.empty? ? [] : @commit.diffs
     end
 
-    def get_head(ref)
-      if h = @git.get_head(ref)
-        return h
-      end
 
-      begin
-        if commit = @git.commit(@ref)
-          return Grit::Head.new(commit.id_abbrev, commit)
-        end
-      rescue Errno::EISDIR => err
-      end
-
-      nil
-    end
-
-    def handle_unknown_ref
-      flash[:error] = "\"#{CGI.escapeHTML(@ref)}\" was not a valid ref, trying #{CGI.escapeHTML(@git.head.name)} instead"
-      redirect_to_ref(@git.head.name)
-    end
 end

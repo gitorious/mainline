@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2011 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,21 +17,26 @@
 #++
 %>
 
-<% @page_title = t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
+<% @page_title = t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 <%= breadcrumbs_from(@root) -%>
 
 <ul class="horizontal meta" style="float:right">
-  <li class="tree">
-    <%= link_to "Log graph", project_repository_graph_in_ref_path(@project,
+  <li>
+    <%= link_to "Commit log", project_repository_commits_in_ref_path(@project,
     @repository, params[:branch]) %>
   </li>
 </ul>
 <h1>
-  <%= t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
+  <%= t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
 
-<% cache([repo_owner_path(@repository, [@project, @repository]), :commits, @ref, @commits.current_page], {:expires_in => 10.minutes}) do -%>
-  <%= render :partial => "log" -%>
+<% cache([repo_owner_path(@repository, [@project, @repository]), :graphs, @ref], {:expires_in => 10.minutes}) do -%>
+  <div id="capillary-log"
+       data-capillary-url="<%= url_for(:controller => "api/graphs", :action => "show") %>">
+    <h2>This page requires JavaScript</h2>
+  </div>
+
+  <%= javascript_include_tag capillary_js_paths + ["gitorious/log-graph"], :cache => "capillary" %>
 <% end -%>
 
 <% content_for :sidebar do -%>
@@ -44,33 +49,10 @@
       <strong><%= t("views.repos.owner") %>:</strong>
       <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
     </li>
-    <% unless @commits.blank? -%>
-    <li>
-      <strong><%= t("views.logs.head_tree") %>:</strong>
-      <%= link_to h(@commits.first.tree.id[0,7]), tree_path(branch_with_tree(@commits.first.id, [])) -%>
-    </li>
-    <% end -%>
   </ul>
 
   <ul class="links navigation">
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 
-<% cache([repo_owner_path(@repository, [@project, @repository]), :tags_and_branches],
-        {:expires_in => 10.minutes}) do -%>
-
-  <ul class="icon_list links navigation">
-	 <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
-    <%= render_branch_list_items(@git.branches) -%>
-  </ul>
-
-  <% unless @git.tags.blank? -%>
-  <ul class="icon_list links navigation">
-	<h5 id="tags"><%= t("views.logs.tags") %>:</h5>
-  <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-    <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
-  <% end -%>
-  </ul>
-  <% end -%>
-<% end -%>
 <% end -%>

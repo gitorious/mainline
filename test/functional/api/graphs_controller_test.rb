@@ -29,8 +29,8 @@ class Api::GraphsControllerTest < ActionController::TestCase
 
     should "render JSON" do
       shell = mock
-      shell.expects(:graph_log).with(@repository.full_repository_path, "--all", "-50").returns("")
-      
+      shell.expects(:graph_log).with(@repository.full_repository_path, "-50").returns("")
+
       @controller.expects(:git_shell).returns(shell)
 
       get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
@@ -39,9 +39,9 @@ class Api::GraphsControllerTest < ActionController::TestCase
 
     should "be cached" do
       Rails.cache.expects(:fetch).with(@cache_key, :expires_in => 1.hour).returns("")
-      
+
       get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
-      assert_response :success      
+      assert_response :success
     end
 
     should "render an empty JSON array on timeout" do
@@ -51,7 +51,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
       @controller.expects(:git_shell).returns(shell)
 
       get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
-      assert_response :success      
+      assert_response :success
     end
   end
 end

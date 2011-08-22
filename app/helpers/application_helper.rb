@@ -230,12 +230,6 @@ module ApplicationHelper
     end.join("\n")
   end
 
-  def commit_graph_tag(repository, ref = "master")
-  end
-
-  def commit_graph_by_author_tag(repository, ref = "master")
-  end
-
   def action_and_body_for_event(event)
     target = event.target
     if target.nil?
@@ -545,7 +539,7 @@ module ApplicationHelper
     content_tag(:div, link_to(label, url, :class => ""),
         :id => options.delete(:id), :class => css_classes.flatten.join(" "))
   end
-  
+
   def render_pagination_links(collection, options = {})
     default_options = {
       :previous_label => "Previous",

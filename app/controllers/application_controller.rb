@@ -269,7 +269,7 @@ class ApplicationController < ActionController::Base
     def skip_session_expiry
       request.session_options[:expire_after] = nil
     end
-    
+
     def cache_forever
       cache_for(315360000.seconds)
     end
@@ -314,6 +314,30 @@ class ApplicationController < ActionController::Base
 
     def pjax_request?
       request.headers['X-PJAX']
+    end
+
+    def redirect_to_ref(ref, repo_view)
+      redirect_to repo_owner_path(@repository, repo_view, @project, @repository, ref)
+    end
+
+    def get_head(ref)
+      if h = @git.get_head(ref)
+        return h
+      end
+
+      begin
+        if commit = @git.commit(@ref)
+          return Grit::Head.new(commit.id_abbrev, commit)
+        end
+      rescue Errno::EISDIR => err
+      end
+
+      nil
+    end
+
+    def handle_unknown_ref(ref, git, repo_view)
+      flash[:error] = "\"#{CGI.escapeHTML(ref)}\" was not a valid ref, trying #{CGI.escapeHTML(git.head.name)} instead"
+      redirect_to_ref(git.head.name, repo_view)
     end
 
     helper_method :unshifted_polymorphic_path
