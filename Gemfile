@@ -22,7 +22,7 @@ gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 gem "will_paginate"
 gem "hodel_3000_compliant_logger"
-gem "capillary", "~> 0.2.0"
+gem "capillary", "~> 0.2.1"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

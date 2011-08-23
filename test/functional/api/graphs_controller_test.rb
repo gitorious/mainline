@@ -53,5 +53,21 @@ class Api::GraphsControllerTest < ActionController::TestCase
       get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
       assert_response :success
     end
+
+    should "render graph for specific sha-ish" do
+      shell = mock
+      shell.expects(:graph_log).with(@repository.full_repository_path, "-50", "refactor").returns("")
+
+      @controller.expects(:git_shell).returns(shell)
+
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repository.name,
+        :branch => "refactor",
+        :format => "json"
+      }
+
+      assert_response :success
+    end
   end
 end
