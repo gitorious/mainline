@@ -82,10 +82,11 @@ module BlobsHelper
     commits = options[:commits]
     lang_class = "lang" + File.extname(filename).sub('.', '-')
     out << %Q{<table id="codeblob" class="highlighted #{lang_class}">}
+    renderer = BlameRenderer.new(self, @project, @repository)
     lines.each_with_index do |line, count|
       lineno = count + 1
       out << %Q{<tr id="line#{lineno}">}
-      out << blame_info_for_commit(commits[count]) if commits
+      out << renderer.blame_info_for_commit(commits[count]) if commits
       out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>}
       code_classes = "code"
       code_classes << " #{code_theme_class}" if code_theme_class
@@ -96,18 +97,28 @@ module BlobsHelper
     out << "</table>"
     out.join("\n")
   end
-
-  def blame_info_for_commit(commit)
-    author = commit.author.name
-    time = commit.committed_date.strftime("%Y-%m-%d")
-    commit_link = link_to("<strong>#{commit.id_abbrev}</strong> by #{author} at #{time}",
-      repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id),
-      :title => commit.short_message)
-    %Q{<td class="blame_info">#{commit_link}</td>}
-  end
-
   
   def too_big_to_render?(size)
     size > 350.kilobytes
+  end
+
+  class BlameRenderer
+    attr_reader :helper
+    def initialize(helper, project, repository)
+      @helper = helper
+      @project = project
+      @repository = repository
+    end
+    
+    def blame_info_for_commit(commit)
+      return %Q{<td class="blame_info unchanged"></td>} if commit.id == @previous_sha
+      author = commit.author.name
+      time = commit.committed_date.strftime("%Y-%m-%d")
+      commit_link = helper.link_to("<strong>#{commit.id_abbrev}</strong> by #{author} at #{time}",
+        helper.repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id),
+        :title => commit.short_message)
+      @previous_sha = commit.id
+      %Q{<td class="blame_info">#{commit_link}</td>}
+    end    
   end
 end

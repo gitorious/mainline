@@ -77,6 +77,10 @@
     background: #dedede no-repeat 6px 5px;
 }
 
+#sidebar ul.links li.double_row {
+  height: 60px;
+}
+
 #sidebar ul.links li.first {
     -webkit-border-top-right-radius: 6px;
     -webkit-border-top-left-radius: 6px;
@@ -112,7 +116,7 @@
     color: #555555;
     font-size: 12px;
     text-shadow: 0px 1px #FFF;
-    width: 195px;
+    width: 195px; 
     float: left;
     display: block;
     line-height: 20px;
@@ -121,6 +125,19 @@
     background-position: 10px 9px;
     padding: 8px 10px 4px 35px;
     background-image: url("../images/silk/bullet_go.png");
+}
+
+#sidebar ul.links li a.compare_diffs,
+#sidebar ul.links li a.compare_diffs:hover {
+  font-weight: normal;
+  display: inline;
+  background-image: none;
+  padding: 2px 2px 2px 35px;
+}
+
+#sidebar ul.disable_hover.links li a:hover {
+  text-decoration: underline;
+  background-color: inherit;
 }
 
 #sidebar ul.links li a:hover {
