@@ -1478,7 +1478,9 @@ table#codeblob tr td.blame_info {
   border-bottom: 1px solid #cdcdcd;
   padding: 0 6px;
 }
-
+table#codeblob tr td.blame_info.unchanged {
+  border-bottom: none;
+}
 .blame_info a {
   color: #696969;
 }
