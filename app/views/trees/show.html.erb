@@ -98,19 +98,15 @@
   <% cache([tree_path(@commit.id), :tags_and_branches], 
            {:expires_in => 10.minutes}) do -%>
 
-    <ul class="links navigation">
+    <ul class="links navigation disable_hover">
       <h5><%= t("views.logs.branches") %>:</h5>
-      <% sorted_git_heads(@git.branches).each do |branch| -%>
-        <li><%= link_to h(branch.name), project_repository_tree_path(@project, @repository, branch.name) -%></li>
-      <% end -%>
+      <%= tree_and_diff_link(@commit.id, @ref, sorted_git_heads(@git.branches), @project, @repository) %>
     </ul>
 
     <% unless @git.tags.blank? -%>
       <ul class="links navigation">
-	<h5><%= t("views.logs.tags") %>:</h5>
-        <% @git.tags.sort{ |a, b| a.name <=> b.name }.each do |tag| -%>
-          <li><%= link_to h(tag.name), project_repository_tree_path(@project, @repository, tag.name) -%></li>
-        <% end -%>
+	      <h5><%= t("views.logs.tags") %>:</h5>
+        <%= tree_and_diff_link(@commit.id, @ref, @git.tags.sort{ |a, b| a.name <=> b.name }, @project, @repository) %>
       </ul>
     <% end -%>
   <% end # cache() -%>
