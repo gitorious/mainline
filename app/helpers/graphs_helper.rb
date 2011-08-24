@@ -20,9 +20,8 @@ module GraphsHelper
   include CommitsHelper
 
   def capillary_js_paths
-    paths = %w[branch graph formatters/scale formatters/svg-data formatters/raphael].collect do |p|
-      "lib/capillary/lib/capillary/#{p}"
-    end
+    formatters = %w[scale svg-data raphael message-markup].collect { |p| "formatters/#{p}" }
+    paths = (%w[branch graph] + formatters).collect { |p| "lib/capillary/lib/capillary/#{p}" }
 
     ["lib/raphael/raphael-min.js",
      "lib/buster-core/lib/buster-core", "lib/buster-core/lib/buster-event-emitter",

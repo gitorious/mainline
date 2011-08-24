@@ -13,6 +13,7 @@
     el.innerHTML = "Loading data...";
 
     function graphData(view, data) {
+        view.style.position = "relative";
         var scale = 25;
         var i, j, k, l, commits = 0, used = {};
 
@@ -28,15 +29,28 @@
         var F = capillary.formatters;
         var graph = capillary.graph.create();
         var canvas = new Raphael(view, 600 /*data.length * scale*/, commits * scale);
-        var colors = ["#f00", "#0f0", "#00f", "#ff0", "#0ff", "#f0f"];
 
-        F.raphael.bindGraph(F.svgData.bindGraph(F.scale.bindGraph(graph, {
+        var colors = ["#18fd00", "#ffee33", "#29d0d0", "#dc0f0f", "#ff9233", "#1d38ab", "#e9debb",
+                      "#a0a0a0", "#ffcdf3", "#10a600", "#8126c0", "#ffffff", "#575757"];
+
+        var dotRadius = 6;
+
+        var scaled = F.scale.bindGraph(graph, {
             scale: scale,
             offset: { x: 30, y: 10 }
-        })), {
-            dotRadius: 6,
+        });
+
+        F.raphael.bindGraph(F.svgData.bindGraph(scaled), {
+            dotRadius: dotRadius,
             canvas: canvas,
             colors: colors
+        });
+
+        F.messageMarkup.bindGraph(scaled, {
+            offset: [0, -(dotRadius + 2)],
+            root: view,
+            idUrl: "/gitorious/mainline/graph/{{id}}",
+            messageUrl: "/gitorious/mainline/commit/{{id}}"
         });
 
         graph.graphBranches(capillary.branch.fromArray(data));

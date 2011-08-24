@@ -32,7 +32,7 @@
 
 <% cache([repo_owner_path(@repository, [@project, @repository]), :graphs, @ref], {:expires_in => 10.minutes}) do -%>
   <div id="capillary-log"
-       data-capillary-url="<%= url_for(:controller => "api/graphs", :action => "show") %>">
+       data-capillary-url="<%= url_for(:controller => "api/graphs", :action => "show", :branch => params[:branch]) %>">
     <h2>This page requires JavaScript</h2>
   </div>
 

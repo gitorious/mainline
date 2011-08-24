@@ -525,3 +525,23 @@ span.changed {
 
 .wiki_cloning_instructions {
 }
+
+/* Branch graph */
+#capillary-log {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#capillary-log li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#capillary-log li .msg {
+    color: #696969;
+}
+
+#capillary-log li a:hover {
+    text-decoration: underline;
+}

@@ -279,9 +279,9 @@ class ApplicationController < ActionController::Base
     end
 
     # A wrapper around ActionPack's #stale?, that always returns true
-    # if there's data in the flash hash
+    # if there's data in the flash hash or if we're in development mode
     def stale_conditional?(etag, last_modified)
-      return true unless flash.empty?
+      return true if !flash.empty? || Rails.env == "development"
       stale?(:etag => [etag, current_user], :last_modified => last_modified)
     end
 
