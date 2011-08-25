@@ -84,7 +84,7 @@
         <% end -%>
       </li>
 	  <% end -%>
-      <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.to_s(:short) -%></li>
+      <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.strftime("%d %b %Y") -%></li>
       <% unless @project.home_url.blank? -%>
       <li><strong><%= t("views.projects.website") %></strong> 
         <%= link_to base_url(@project.home_url), h(@project.home_url) -%></li>
