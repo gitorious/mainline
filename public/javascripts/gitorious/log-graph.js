@@ -6,13 +6,17 @@
         beforeSend: function(jqXHR, settings) {},
         success: function (data) {
             el.innerHTML = "";
-            graphData(el, data);
+
+            graphData(el, data, {
+                idUrl: el.getAttribute("data-id-url"),
+                messageUrl: el.getAttribute("data-message-url")
+            });
         }
     });
 
     el.innerHTML = "Loading data...";
 
-    function graphData(view, data) {
+    function graphData(view, data, options) {
         view.style.position = "relative";
         var scale = 25;
         var i, j, k, l, commits = 0, used = {};
@@ -49,8 +53,8 @@
         F.messageMarkup.bindGraph(scaled, {
             offset: [0, -(dotRadius + 2)],
             root: view,
-            idUrl: "/gitorious/mainline/graph/{{id}}",
-            messageUrl: "/gitorious/mainline/commit/{{id}}"
+            idUrl: options.idUrl,
+            messageUrl: options.messageUrl
         });
 
         graph.graphBranches(capillary.branch.fromArray(data));
