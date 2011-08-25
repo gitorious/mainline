@@ -24,7 +24,8 @@ class BlobsController < ApplicationController
   before_filter :check_repository_for_commits
   before_filter :find_commit, :only => [:show, :history, :blame]
 
-  skip_session :only => [:blame, :show]
+  skip_session :only => [:blame, :show, :raw]
+
   renders_in_site_specific_context :except => [:blame, :history]
 
   def show
