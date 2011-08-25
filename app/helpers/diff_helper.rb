@@ -57,7 +57,8 @@ module DiffHelper
       diff_renderer = Diff::Display::Unified.new(file.diff)
       out =  %Q{<div class="file-diff" data-diff-path="#{file.a_path}">}
       out << %Q{<div class="header round-top-10 #{state == :closed ? 'closed' : 'open'}">}
-      out << %Q{<span class="title"><span class="icon"></span>#{h(file.a_path)}</span>}
+      commit_link = link_to_if(@commit, "#{h(file.a_path)}", blob_path(@commit.id, file.a_path).sub("%2F","/"))
+      out << %Q{<span class="title"><span class="icon"></span>#{commit_link}</span>}
       out << %Q{<div class="diff-stats">}
       out << render_compact_diff_stats(diff_renderer.stats)
       out << "</div></div>"

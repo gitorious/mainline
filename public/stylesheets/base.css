@@ -3116,6 +3116,10 @@ table.select_commits_from_list tr.unknown-status td.meta { background-image: url
 .file-diff .header span.icon { padding-right: 20px; }
 .file-diff .header.open span.icon { background: url('../images/silk/bullet_toggle_minus.png') no-repeat 0 0; }
 .file-diff .header.closed span.icon { background: url('../images/silk/bullet_toggle_plus.png') no-repeat 0 0; }
+.file-diff .header a,
+.file-diff .header a:hover {
+  color: #390;
+}
 
 .file-diff .diff-stats {
     font-size: 10px;

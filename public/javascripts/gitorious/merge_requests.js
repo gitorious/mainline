@@ -48,7 +48,6 @@ jQuery(document).ready(function () {
             hunksContainer.slideDown();
         }
 
-        event.preventDefault();
     });
 
     jQuery(".file-diff-controls a#expand-all").live("click", function (e) {
