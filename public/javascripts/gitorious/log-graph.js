@@ -2,19 +2,43 @@
     var el = document.getElementById("capillary-log");
     if (!el) return;
 
+    var $el = jQuery(el);
+    $el.addClass("loading");
+    el.innerHTML = "";
+
+    var text = document.createElement("span");
+    text.innerHTML = "Loading data...";
+
+    var spinner = new Spinner({
+        lines: 8,
+        length: 2,
+        width: 2,
+        radius: 3,
+        color: "#000",
+        speed: 1,
+        trail: 100,
+        shadow: false
+    }).spin();
+
+    spinner.el.style.top = "10px";
+    el.appendChild(spinner.el);
+    el.appendChild(text);
+
     jQuery.ajax(el.getAttribute("data-capillary-url"), {
         beforeSend: function(jqXHR, settings) {},
         success: function (data) {
+            $el.removeClass("loading");
             el.innerHTML = "";
 
             graphData(el, data, {
                 idUrl: el.getAttribute("data-id-url"),
                 messageUrl: el.getAttribute("data-message-url")
             });
+        },
+        error: function () {
+            el.innerHTML = "Failed fetching graph data. Please try again or report the problem if it persists";
         }
     });
-
-    el.innerHTML = "Loading data...";
 
     function graphData(view, data, options) {
         view.style.position = "relative";
@@ -32,10 +56,10 @@
 
         var F = capillary.formatters;
         var graph = capillary.graph.create();
-        var canvas = new Raphael(view, 600 /*data.length * scale*/, commits * scale);
+        var canvas = new Raphael(view, data.length * scale, commits * scale);
 
-        var colors = ["#18fd00", "#ffee33", "#29d0d0", "#dc0f0f", "#ff9233", "#1d38ab", "#e9debb",
-                      "#a0a0a0", "#ffcdf3", "#10a600", "#8126c0", "#ffffff", "#575757"];
+        var colors = ["#3d4250", "#5ea861", "#d36c6d", "#5b82d2", "#ccc62e", "#d28e23", "#917549",
+                      "#9198aa", "#5bbad2", "#65ccab", "#92de2f", "#8a2c2c", "#855bd2", "#c157c8"];
 
         var dotRadius = 6;
 

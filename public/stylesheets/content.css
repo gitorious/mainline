@@ -532,6 +532,16 @@ span.changed {
     white-space: nowrap;
 }
 
+#capillary-log.loading {
+    height: 50px;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+#capillary-log.loading span {
+    padding: 0 0 0 12px;
+}
+
 #capillary-log li {
     overflow: hidden;
     text-overflow: ellipsis;

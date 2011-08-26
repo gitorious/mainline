@@ -7,3 +7,6 @@
 [submodule "public/javascripts/lib/buster-core"]
 	path = public/javascripts/lib/buster-core
 	url = git://gitorious.org/buster/buster-core.git
+[submodule "public/javascripts/lib/spin.js"]
+	path = public/javascripts/lib/spin.js
+	url = https://github.com/fgnass/spin.js.git
