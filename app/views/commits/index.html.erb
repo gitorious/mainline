@@ -21,7 +21,7 @@
 <%= breadcrumbs_from(@root) -%>
 
 <ul class="horizontal meta" style="float:right">
-  <li class="tree">
+  <li>
     <%= link_to "Log graph", project_repository_graph_in_ref_path(@project,
     @repository, params[:branch]) %>
   </li>
