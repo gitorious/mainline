@@ -2341,7 +2341,7 @@ ul.page-actions { margin: 0; }
 
 .page-meta .page-actions li {
     float: left;
-    -moz-border-radius: 10px 0 0 10px;
+    -moz-border-radius: 4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
     border: 1px solid #ccc;
     border-bottom: none;
