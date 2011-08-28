@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 RAILS_ENV = ENV['RAILS_ENV'] || "production"
-RAILS_ROOT = File.expand_path(File.join(File.readlink(File.readlink(File.dirname(File.expand_path(__FILE__)))), "..", ".."))
+RAILS_ROOT = File.expand_path(File.join(File.dirname(File.expand_path(__FILE__)), "..", ".."))
 
 $: << File.join(RAILS_ROOT, "lib")
 require 'rubygems'
