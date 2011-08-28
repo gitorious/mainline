@@ -1475,11 +1475,12 @@ table#codeblob tr td.blame_info {
   font-size: 95%;
   background-color: #f8f8f8;
   border-right: 1px solid #ccc;
-  border-bottom: 1px solid #cdcdcd;
+  border-top: 1px solid #cdcdcd;
   padding: 0 6px;
 }
+table#codeblob tr td.blame_info.first,
 table#codeblob tr td.blame_info.unchanged {
-  border-bottom: none;
+  border-top: none;
 }
 .blame_info a {
   color: #696969;

@@ -117,8 +117,9 @@ module BlobsHelper
       commit_link = helper.link_to("<strong>#{commit.id_abbrev}</strong> by #{author} at #{time}",
         helper.repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id),
         :title => commit.short_message)
+      first = ' first' if not @previous_sha
       @previous_sha = commit.id
-      %Q{<td class="blame_info">#{commit_link}</td>}
+      %Q{<td class="blame_info#{first}">#{commit_link}</td>}
     end    
   end
 end
