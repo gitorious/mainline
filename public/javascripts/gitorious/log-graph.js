@@ -58,10 +58,10 @@
         var graph = capillary.graph.create();
         var canvas = new Raphael(view, (data.length + 1) * scale, commits * scale);
 
-        var colors = ["#3d4250", "#5ea861", "#d36c6d", "#5b82d2", "#ccc62e", "#d28e23", "#917549",
-                      "#9198aa", "#5bbad2", "#65ccab", "#92de2f", "#8a2c2c", "#855bd2", "#c157c8"];
-
         var dotRadius = 6;
+        var colors = ["#3d4250", "#5ea861", "#d36c6d", "#5b82d2", "#ccc62e", "#d28e23",
+                      "#917549", "#9198aa", "#5bbad2", "#65ccab", "#92de2f", "#8a2c2c",
+                      "#855bd2", "#c157c8"];
 
         var scaled = F.scale.bindGraph(graph, {
             scale: scale,
@@ -71,7 +71,8 @@
         F.raphael.bindGraph(F.svgData.bindGraph(scaled), {
             dotRadius: dotRadius,
             canvas: canvas,
-            colors: colors
+            dotColors: colors
+            /*,lineColors: colors*/
         });
 
         F.messageMarkup.bindGraph(scaled, {
