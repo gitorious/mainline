@@ -56,7 +56,7 @@
 
         var F = capillary.formatters;
         var graph = capillary.graph.create();
-        var canvas = new Raphael(view, data.length * scale, commits * scale);
+        var canvas = new Raphael(view, (data.length + 1) * scale, commits * scale);
 
         var colors = ["#3d4250", "#5ea861", "#d36c6d", "#5b82d2", "#ccc62e", "#d28e23", "#917549",
                       "#9198aa", "#5bbad2", "#65ccab", "#92de2f", "#8a2c2c", "#855bd2", "#c157c8"];
