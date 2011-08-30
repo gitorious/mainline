@@ -51,10 +51,37 @@
       <strong><%= t("views.repos.owner") %>:</strong>
       <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
     </li>
+    <% unless @commits.blank? -%>
+    <li>
+      <strong><%= t("views.logs.head_tree") %>:</strong>
+      <%= link_to h(@commits.first.tree.id[0,7]),
+          project_repository_graph_in_ref_path(:branch => @commits.first.id) -%>
+    </li>
+    <% end -%>
   </ul>
 
   <ul class="links navigation">
+    <li><a href="#">Graph all branches</a></li>
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 
+  <% cache([project_repository_graph_path, :tags_and_branches],
+           { :expires_in => 10.minutes }) do -%>
+    <ul class="icon_list links navigation">
+      <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
+      <% sorted_git_heads(@git.branches).each do |branch| -%>
+        <li><%= link_to h(branch.name),
+      project_repository_graph_in_ref_path(:branch => branch.name) -%></li>
+      <% end -%>
+    </ul>
+
+    <% unless @git.tags.blank? -%>
+      <ul class="icon_list links navigation">
+	<h5 id="tags"><%= t("views.logs.tags") %>:</h5>
+        <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
+          <li><%= link_to h(tag.name), project_repository_graph_in_ref_path(tag.commit.id) -%></li>
+        <% end -%>
+      </ul>
+    <% end -%>
+  <% end -%>
 <% end -%>
