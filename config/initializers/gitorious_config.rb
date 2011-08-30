@@ -1,5 +1,5 @@
 unless defined? GitoriousConfig
-  GitoriousConfig = c = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))[RAILS_ENV]
+  GitoriousConfig = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))[RAILS_ENV]
 
   # make the default be publicly open
   GitoriousConfig['public_mode'] = true if GitoriousConfig['public_mode'].nil?
