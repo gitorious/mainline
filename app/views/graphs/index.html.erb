@@ -30,11 +30,11 @@
   <%= t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
 
-<% cache([repo_owner_path(@repository, [@project, @repository]), :graphs, @ref], {:expires_in => 10.minutes}) do -%>
+<% cache([repo_owner_path(@repository, [@project, @repository]), :graphs, @ref, params[:type]], {:expires_in => 10.minutes}) do -%>
   <div id="capillary-log"
        data-id-url="<%= "/#{@project.slug}/#{@repository.name}/graph/{{id}}" %>"
        data-message-url="<%= "/#{@project.slug}/#{@repository.name}/commit/{{id}}" %>"
-       data-capillary-url="<%= url_for(:controller => "api/graphs", :action => "show", :branch => params[:branch]) %>">
+       data-capillary-url="<%= url_for(:controller => "api/graphs", :action => "show", :branch => params[:branch], :type => params[:type]) %>">
     <h2>This page requires JavaScript</h2>
   </div>
 
@@ -61,7 +61,13 @@
   </ul>
 
   <ul class="links navigation">
-    <li><a href="#">Graph all branches</a></li>
+    <% if params[:type] != "all" %>
+      <li><%= link_to t("views.graphs.type_all"),
+              project_repository_graph_in_ref_path(:branch => params[:branch], :type => "all") -%></li>
+    <% else %>
+      <li><%= link_to t("views.graphs.type_normal"),
+              project_repository_graph_in_ref_path(:branch => params[:branch], :type => "") -%></li>
+    <% end %>
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 

@@ -278,7 +278,9 @@
         :committed => "committed",
       },
       :graphs => {
-        :title => "Graph for {{repo_url}}:{{ref}}"
+        :title => "Graph for {{repo_url}}:{{ref}}",
+        :type_all => "Graph all",
+        :type_normal => "Graph"
       },
       :blobs => {
         :page_title => "{{path}} - {{repo}} in {{title}}",
