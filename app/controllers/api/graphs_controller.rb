@@ -31,25 +31,24 @@ module Api
     def show
       project = Project.find_by_slug(params[:project_id])
       repository = project.repositories.find_by_name(params[:repository_id])
-      data = Rails.cache.fetch("commit-graph-in-#{project.slug}/#{repository.name}/#{params[:branch]}", :expires_in => 1.hour) do
+      type = params[:type] == "all" ? "--all" : ""
+
+      ref = "#{project.slug}/#{repository.name}/#{params[:branch]}"
+      data = Rails.cache.fetch("commit-graph-#{ref}#{type}", :expires_in => 1.hour) do
         if params[:branch]
-          git_shell.graph_log(repository.full_repository_path, "-50", params[:branch])
+          git_shell.graph_log(repository.full_repository_path, "-50", type, params[:branch])
         else
-          git_shell.graph_log(repository.full_repository_path, "-50")
+          git_shell.graph_log(repository.full_repository_path, "-50", type)
         end
       end
 
       parser = Capillary::LogParser.new
-
-      data.split("\n").each do |line|
-        parser << line
-      end
+      data.split("\n").each { |line| parser << line }
 
       respond_to do |wants|
         wants.json { render :json => parser.to_json }
       end
     end
-
 
     def git_shell
       Gitorious::GitShell.new

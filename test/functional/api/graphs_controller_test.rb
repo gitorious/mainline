@@ -19,52 +19,111 @@
 require File.dirname(__FILE__) + '/../../test_helper'
 
 class Api::GraphsControllerTest < ActionController::TestCase
+  def expect_cache(key)
+    Rails.cache.expects(:fetch).with(key, :expires_in => 1.hour).returns("")
+  end
+
+  def mock_shell
+    shell = mock
+    @controller.expects(:git_shell).returns(shell)
+    shell.expects(:graph_log)
+  end
+
   context "Graphing the log" do
     setup do
-      @repository = repositories(:johans)
-      @project = @repository.project
-      @cache_key = "commit-graph-in-#{@project.slug}/#{@repository.name}"
+      @repo = repositories(:johans)
+      @project = @repo.project
+      @cache_key = "commit-graph-#{@project.slug}/#{@repo.name}/"
+      @cache_key_all = "commit-graph-#{@project.slug}/#{@repo.name}/--all"
       Rails.cache.delete(@cache_key)
+      Rails.cache.delete(@cache_key_all)
     end
 
     should "render JSON" do
-      shell = mock
-      shell.expects(:graph_log).with(@repository.full_repository_path, "-50").returns("")
+      mock_shell.with(@repo.full_repository_path, "-50", "").returns("")
 
-      @controller.expects(:git_shell).returns(shell)
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :format => "json"
+      }
 
-      get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
       assert_response :success
     end
 
-    should "be cached" do
-      Rails.cache.expects(:fetch).with(@cache_key, :expires_in => 1.hour).returns("")
+    should "cache regular log lookup" do
+      expect_cache(@cache_key)
 
-      get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :format => "json"
+      }
+
+      assert_response :success
+    end
+
+    should "cache log --all" do
+      expect_cache(@cache_key_all)
+
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :format => "json",
+        :type => "all"
+      }
+
       assert_response :success
     end
 
     should "render an empty JSON array on timeout" do
-      shell = mock
-      shell.expects(:graph_log).raises(Gitorious::GitShell::GitTimeout.new)
+      mock_shell.raises(Gitorious::GitShell::GitTimeout.new)
 
-      @controller.expects(:git_shell).returns(shell)
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :format => "json"
+      }
 
-      get :show, {:project_id => @project.slug, :repository_id => @repository.name, :format => "json"}
       assert_response :success
     end
 
     should "render graph for specific sha-ish" do
-      shell = mock
-      shell.expects(:graph_log).with(@repository.full_repository_path, "-50", "refactor").returns("")
-
-      @controller.expects(:git_shell).returns(shell)
+      mock_shell.with(@repo.full_repository_path, "-50", "", "refactor").returns("")
 
       get :show, {
         :project_id => @project.slug,
-        :repository_id => @repository.name,
+        :repository_id => @repo.name,
         :branch => "refactor",
         :format => "json"
+      }
+
+      assert_response :success
+    end
+
+    should "render graph --all for specific sha-ish" do
+      mock_shell.with(@repo.full_repository_path, "-50", "--all", "refactor").returns("")
+
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :branch => "refactor",
+        :format => "json",
+        :type => "all"
+      }
+
+      assert_response :success
+    end
+
+    should "treat type != all as blank" do
+      mock_shell.with(@repo.full_repository_path, "-50", "", "branch2").returns("")
+
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :branch => "branch2",
+        :format => "json",
+        :type => "sumptn"
       }
 
       assert_response :success
