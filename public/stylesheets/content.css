@@ -548,6 +548,19 @@ span.changed {
     white-space: nowrap;
 }
 
+#capillary-log .ref-name {
+    background: #ddd;
+    color: #4e4e4e;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 0 5px 0 0;
+    padding: 0 5px;
+}
+
+#capillary-log a.ref-name:hover {
+    text-decoration: underline;
+}
+
 #capillary-log li .msg {
     color: #696969;
 }

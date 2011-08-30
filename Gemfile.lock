@@ -13,7 +13,7 @@ GEM
     activesupport (2.3.8)
     acts-as-taggable-on (2.0.6)
     builder (3.0.0)
-    capillary (0.2.3)
+    capillary (0.2.4)
       json (~> 1.5.1)
     chronic (0.3.0)
     daemons (1.1.0)
@@ -82,7 +82,7 @@ DEPENDENCIES
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on
   builder
-  capillary (~> 0.2.3)
+  capillary (~> 0.2.4)
   chronic
   daemons
   diff-lcs
