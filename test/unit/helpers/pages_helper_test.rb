@@ -45,5 +45,11 @@ class PagesHelperTest < ActionView::TestCase
 
       assert_equal html, sanitize_wiki_content(html)
     end
+
+    should "render images" do
+      html = "<img src=\"foo.png\">"
+
+      assert_equal html, sanitize_wiki_content(html)
+    end
   end
 end
