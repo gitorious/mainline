@@ -35,11 +35,7 @@ module Api
 
       ref = "#{project.slug}/#{repository.name}/#{params[:branch]}"
       data = Rails.cache.fetch("commit-graph-#{ref}#{type}", :expires_in => 1.hour) do
-        if params[:branch]
-          git_shell.graph_log(repository.full_repository_path, "-50", type, desplat_path(params[:branch]))
-        else
-          git_shell.graph_log(repository.full_repository_path, "-50", type)
-        end
+        graph_log(repository, type, params[:branch])
       end
 
       parser = Capillary::LogParser.new
@@ -48,6 +44,13 @@ module Api
       respond_to do |wants|
         wants.json { render :json => parser.to_json }
       end
+    end
+
+    private
+    def graph_log(repo, type, branch = nil)
+      args = [repo.full_repository_path, "--decorate=full", "-50", type]
+      args << desplat_path(branch) if branch
+      git_shell.send(:graph_log, *args)
     end
 
     def git_shell

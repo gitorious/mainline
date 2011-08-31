@@ -40,7 +40,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "render JSON" do
-      mock_shell.with(@repo.full_repository_path, "-50", "").returns("")
+      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-50", "").returns("")
 
       get :show, {
         :project_id => @project.slug,
@@ -89,7 +89,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "render graph for specific sha-ish" do
-      mock_shell.with(@repo.full_repository_path, "-50", "", "refactor").returns("")
+      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-50", "", "refactor").returns("")
 
       get :show, {
         :project_id => @project.slug,
@@ -102,7 +102,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "render graph --all for specific sha-ish" do
-      mock_shell.with(@repo.full_repository_path, "-50", "--all", "refactor").returns("")
+      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-50", "--all", "refactor").returns("")
 
       get :show, {
         :project_id => @project.slug,
@@ -116,7 +116,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "treat type != all as blank" do
-      mock_shell.with(@repo.full_repository_path, "-50", "", "branch2").returns("")
+      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-50", "", "branch2").returns("")
 
       get :show, {
         :project_id => @project.slug,
@@ -130,7 +130,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
     end
 
     should "handle branch with slash in it" do
-      mock_shell.with(@repo.full_repository_path, "-50", "", "some/such").returns("")
+      mock_shell.with(@repo.full_repository_path, "--decorate=full", "-50", "", "some/such").returns("")
 
       get :show, {
         :project_id => @project.slug,

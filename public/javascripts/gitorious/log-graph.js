@@ -73,6 +73,7 @@
             canvas: canvas,
             dotColors: colors
             /*,lineColors: colors*/
+            /*,renderRefTypes: ["heads", "tags"]*/
         });
 
         F.messageMarkup.bindGraph(scaled, {

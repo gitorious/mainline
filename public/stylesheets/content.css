@@ -527,7 +527,7 @@ span.changed {
 }
 
 /* Branch graph */
-#capillary-log {
+.capillary {
     overflow: hidden;
     white-space: nowrap;
 }
@@ -542,13 +542,13 @@ span.changed {
     padding: 0 0 0 12px;
 }
 
-#capillary-log li {
+.capillary li {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-#capillary-log .ref-name {
+.capillary .ref-name {
     background: #ddd;
     color: #4e4e4e;
     border-radius: 4px;
@@ -557,14 +557,18 @@ span.changed {
     padding: 0 5px;
 }
 
-#capillary-log a.ref-name:hover {
+.capillary .ref-type-tag {
+    background: #eeb;
+}
+
+.capillary a.ref-name:hover {
     text-decoration: underline;
 }
 
-#capillary-log li .msg {
+.capillary li .msg {
     color: #696969;
 }
 
-#capillary-log li a:hover {
+.capillary li a:hover {
     text-decoration: underline;
 }
