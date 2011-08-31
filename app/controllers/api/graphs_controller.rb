@@ -36,7 +36,7 @@ module Api
       ref = "#{project.slug}/#{repository.name}/#{params[:branch]}"
       data = Rails.cache.fetch("commit-graph-#{ref}#{type}", :expires_in => 1.hour) do
         if params[:branch]
-          git_shell.graph_log(repository.full_repository_path, "-50", type, params[:branch])
+          git_shell.graph_log(repository.full_repository_path, "-50", type, desplat_path(params[:branch]))
         else
           git_shell.graph_log(repository.full_repository_path, "-50", type)
         end

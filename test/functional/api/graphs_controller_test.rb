@@ -128,5 +128,18 @@ class Api::GraphsControllerTest < ActionController::TestCase
 
       assert_response :success
     end
+
+    should "handle branch with slash in it" do
+      mock_shell.with(@repo.full_repository_path, "-50", "", "some/such").returns("")
+
+      get :show, {
+        :project_id => @project.slug,
+        :repository_id => @repo.name,
+        :branch => "some%2Fsuch",
+        :format => "json"
+      }
+
+      assert_response :success
+    end
   end
 end
