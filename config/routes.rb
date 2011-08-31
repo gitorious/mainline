@@ -168,7 +168,8 @@ ActionController::Routing::Routes.draw do |map|
   map.contact "contact", :controller => "site", :action => "contact"
 
   map.namespace :api do |api|
-    api.connect ':project_id/:repository_id/log/graph/:branch', :controller => 'graphs', :action => 'show', :branch => 'master'
+    api.connect ':project_id/:repository_id/log/graph', :controller => 'graphs', :action => 'show', :branch => 'master'
+    api.connect ':project_id/:repository_id/log/graph/*branch', :controller => 'graphs', :action => 'show'
   end
 
   map.namespace :admin do |admin|
