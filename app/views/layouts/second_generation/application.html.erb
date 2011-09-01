@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
           "http://www.w3.org/TR/html4/strict.dtd">
-<head> 
+<head>
   <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
 
   <%= stylesheet_link_tag "external", :cache => false %>
@@ -42,11 +42,11 @@ $(document).ready(function() {
     });
 });
 
-$('#screenshots-container').cycle({ 
-    fx: 'scrollLeft', 
-    speed: '700', 
-    timeout: 5500, 
-    pager: '#screenshotsnavigation' 
+$('#screenshots-container').cycle({
+    fx: 'scrollLeft',
+    speed: '700',
+    timeout: 5500,
+    pager: '#screenshotsnavigation'
 });
   </script>
   <!--[if IE 7]><%= stylesheet_link_tag "ie7", :cache => true %><![endif]-->
