@@ -42,11 +42,6 @@
         <%= link_to image_tag("/img/logo.png"), root_path -%>
       </h1>
       <ul id="menu">
-        <% if logged_in? -%>
-          <li>
-            <%= link_to("Activities", activity_path) %>
-          </li>
-        <% end -%>
         <% if GitoriousConfig['public_mode'] || logged_in? -%>
           <li class="activity"><%= link_to "Activities", activity_path -%></li>
           <li class="projects"><%= link_to t("views.layout.projects"), projects_path -%></li>
