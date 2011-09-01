@@ -73,7 +73,6 @@
             canvas: canvas,
             dotColors: colors
             /*,lineColors: colors*/
-            /*,renderRefTypes: ["heads", "tags"]*/
         });
 
         F.messageMarkup.bindGraph(scaled, {
@@ -81,6 +80,7 @@
             root: view,
             idUrl: options.idUrl,
             messageUrl: options.messageUrl
+            /*,renderRefTypes: ["tags", "heads"]*/
         });
 
         graph.graphBranches(capillary.branch.fromArray(data));
