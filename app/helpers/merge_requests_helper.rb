@@ -75,17 +75,6 @@ module MergeRequestsHelper
         repository, {:status => status}), {:class => "selected"})
   end
 
-  # ul data-merge-request-version-url=""
-  def commit_diff_url(mr_version)
-    url_for(polymorphic_path([
-                             @merge_request.target_repository.project,
-                             @merge_request.target_repository,
-                             @merge_request,
-                             mr_version
-            ]))
-  end
-
-
   def merge_base_link(version)
     version.merge_base_sha[0..6]
   end
@@ -117,11 +106,6 @@ module MergeRequestsHelper
   # for it to perform
   def commit_css_class(merge_request, commit)
     "unmerged"
-  end
-
-  def select_version_url(merge_request)
-    url_for(polymorphic_path([:version, merge_request.target_repository.project,
-                              merge_request.target_repository, merge_request]))
   end
 
   def summarize_version(version)

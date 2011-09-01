@@ -44,6 +44,14 @@ module RoutingHelper
     path.split("/").select{|p| !p.blank? }
   end
 
+  def secure_login_url
+    if SslRequirement.disable_ssl_check?
+      sessions_path
+    else
+      sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
+    end
+  end
+
   # return the url with the +repo+.owner prefixed if it's a mainline repo,
   # otherwise return the +path_spec+
   # if +path_spec+ is an array (and no +args+ given) it'll use that as the 
@@ -68,5 +76,74 @@ module RoutingHelper
         return *path_spec
       end
     end
+  end
+
+  def log_path(objectish = "master", options = {})
+    objectish = ensplat_path(objectish)
+    if options.blank? # just to avoid the ? being tacked onto the url
+      repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, objectish)
+    else
+      repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, objectish, options)
+    end
+  end
+
+  def commit_path(objectish = "master")
+    repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, objectish)
+  end
+
+  def tree_path(treeish = "master", path = [])
+    if path.respond_to?(:to_str)
+      path = path.split("/")
+    end
+    repo_owner_path(@repository, :project_repository_tree_path, @project, @repository, branch_with_tree(treeish, path))
+  end
+
+  def repository_path(action, sha1=nil)
+    repo_owner_path(@repository, :project_repository_path, @project, @repository)+"/"+action+"/"+sha1.to_s
+  end
+
+  def blob_path(shaish, path)
+    repo_owner_path(@repository, :project_repository_blob_path, @project, @repository, branch_with_tree(shaish, path))
+  end
+
+  def raw_blob_path(shaish, path)
+    repo_owner_path(@repository, :project_repository_raw_blob_path, @project, @repository, branch_with_tree(shaish, path))
+  end
+
+  def blob_history_path(shaish, path)
+    repo_owner_path(@repository, :project_repository_blob_history_path, @project, @repository, branch_with_tree(shaish, path))
+  end
+
+  def file_path(repository, filename, head = "master")
+    project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
+  end
+
+  def tree_archive_status_url
+    fmt = (params[:archive_format] == "tar.gz" ? "tar" : zip)
+    self.send("project_repository_archive_#{fmt}_path",
+      @repository.project, @repository, @ref, :format => :js)
+  end
+
+  def new_polymorphic_comment_path(parent, comment)
+    if parent
+      repo_owner_path(@repository, [@project, @repository, parent, comment])
+    else
+      repo_owner_path(@repository, [@project, @repository, comment])
+    end
+  end
+
+  def select_version_url(merge_request)
+    url_for(polymorphic_path([:version, merge_request.target_repository.project,
+                              merge_request.target_repository, merge_request]))
+  end
+
+  # ul data-merge-request-version-url=""
+  def commit_diff_url(mr_version)
+    url_for(polymorphic_path([
+                             @merge_request.target_repository.project,
+                             @merge_request.target_repository,
+                             @merge_request,
+                             mr_version
+            ]))
   end
 end
