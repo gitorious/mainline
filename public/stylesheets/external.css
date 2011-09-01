@@ -66,7 +66,7 @@ body#sessions #wrapper {
     width: 136px;
     height: 45px;
     background: url(../img/external/logo.png) no-repeat;
-    float: left;	
+    float: left;
 }
 
 #top #logo h1 a {
@@ -433,7 +433,7 @@ body#sessions #wrapper {
 #content #user-testimonials .testimonial {
     float: left;
     margin-bottom: 5px;
-    padding-bottom: 40px;	
+    padding-bottom: 40px;
     width: 345px;
     background: url(../img/external/block-bg.png) bottom no-repeat;
 }
@@ -451,14 +451,14 @@ body#sessions #wrapper {
     font-size: 9px;
     font-weight: bold;
     letter-spacing: 1px;
-    line-height: 14px;	
+    line-height: 14px;
     text-transform: uppercase;
     font-style: normal;
     width: 345px;
     color: #7f7f7f;
     float: left;
     padding: 9px 0px 5px 11px;
-    background: url(../img/external/cite-arrow.png) no-repeat 0px 12px;	
+    background: url(../img/external/cite-arrow.png) no-repeat 0px 12px;
 }
 
 #content #user-testimonials cite em {
@@ -468,7 +468,7 @@ body#sessions #wrapper {
 
 #content #featured-projects li {
     margin-bottom: 3px;
-    padding-bottom:38px;	
+    padding-bottom:38px;
     width: 280px;
     float: left;
     background: url(../img/external/block-bg.png) bottom no-repeat;
@@ -494,7 +494,7 @@ body#sessions #wrapper {
 
 #content #from-the-blog li {
     margin-bottom: 7px;
-    padding-bottom: 40px;	
+    padding-bottom: 40px;
     width: 185px;
     float: left;
     background: url(../img/external/block-bg.png) bottom no-repeat;
@@ -509,7 +509,7 @@ body#sessions #wrapper {
 
 #content #from-the-blog li h4 {
     font-weight: bold;
-    display: inline;	
+    display: inline;
     font-size: 12px;
     line-height: 17px;
     color: #d57f2b;
@@ -586,7 +586,7 @@ body#sessions #wrapper {
     background: url(../img/external/headers/log-in.png) no-repeat;
     width: 394px;
     height: 40px;
-}	
+}
 
 #content #forgot-pw h1 {
     background: url(../img/external/headers/forgotten-password.png) no-repeat;
@@ -800,7 +800,7 @@ body #wrapper #content p.alt_links a:hover { color: #111; }
 #footer #footer-container {
     width: 960px;
     margin-top: 3px solid red;
-    margin: 40px auto;
+    margin: 40px auto 0;
 }
 
 #footer a { color: #92b92d; }
