@@ -16,7 +16,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<%= breadcrumbs_from(@root) -%>
-<%= render "menu" %>
-<%= render_blame(@blame, @file_path) -%>
-<%= render "unholy_highlight_mess" %>
+<script type="text/javascript" charset="utf-8">
+  (function () {
+      if ($("#codeblob tr td.line-numbers:last").text().length < 3500) {
+          prettyPrint();
+      } else {
+          $("#long-file").show().find("a#highlight-anyway").click(function(e){
+              prettyPrint();
+              e.preventDefault();
+          });
+      }
+  }());
+</script>
