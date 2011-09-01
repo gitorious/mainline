@@ -287,8 +287,8 @@ abbr.timeago {
     height: 110px;
     width: 960px;
 
-    background-image: url(../img/header-bg.png)!important;
-    background-repeat: no-repeat!important;
+    background-image: url(../img/header-bg.png);
+    background-repeat: no-repeat;
     background: -webkit-gradient(
 	linear,
 	left bottom,
@@ -344,7 +344,7 @@ abbr.timeago {
 }
 
 #menu li a {
-    font-size: 16px;
+    font-size: 17px;
     color: #cfcfcf;
     outline: none;
 }
@@ -360,24 +360,9 @@ abbr.timeago {
 }
 
 #menu li a {
-    text-indent: -9999px;
     height: 20px;
     float: left;
-    background: url(../img/menu/menu.png) no-repeat;
 }
-
-#menu li.activity a {	background-position: 	0px -0px; }
-#menu li.activity, #menu li.activity a { width: 84px; display: block; }
-#menu li.activity a:hover { background-position: -339px 0px;}
-#menu li.projects a {	background-position: 	0px -24px; }
-#menu li.projects, #menu li.projects a { width: 75px; display: block; }
-#menu li.projects a:hover { background-position: -339px -24px;}
-#menu li.teams a {	background-position: 	0px -48px; }
-#menu li.teams, #menu li.teams a { width: 57px; display: block; }
-#menu li.teams a:hover { background-position: -339px -48px;}
-#menu li.about a {	background-position: 	0px -72px; }
-#menu li.about, #menu li.about a { width: 144px; display: block; }
-#menu li.about a:hover { background-position: -339px -72px;}
 
 #container {
     min-height: 300px;
@@ -1207,7 +1192,7 @@ ul.tag_list li { float: left; }
     line-height: 21px;
     border: 1px solid #CCC;
     color: #666;
-    text-shadow: 0px 1px #FFF;		
+    text-shadow: 0px 1px #FFF;
     font-size: 11px;
     font-weight: bold;
 }
@@ -2654,7 +2639,7 @@ div.archive-download-box p {
 
 .pull-box-content .filters ul li {
     float: left;
-    font-size: 11px;	
+    font-size: 11px;
     margin-left: 12px;
 }
 
