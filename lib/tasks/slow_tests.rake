@@ -12,7 +12,7 @@ namespace :test do
     end
 
     def stop
-      Process.kill "KILL", IO.read(ROTS_PID_FILE).to_i
+      Process.kill "INT", IO.read(ROTS_PID_FILE).to_i
       File.delete ROTS_PID_FILE, ROTS_STDOUT_FILE, ROTS_STDERR_FILE
     end
 
