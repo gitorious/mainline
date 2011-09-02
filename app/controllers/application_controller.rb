@@ -269,7 +269,7 @@ class ApplicationController < ActionController::Base
     def skip_session_expiry
       request.session_options[:expire_after] = nil
     end
-    
+
     def cache_forever
       headers["Cache-Control"] = "public, max-age=315360000"
     end
