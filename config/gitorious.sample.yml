@@ -71,14 +71,14 @@ test:
   terms_of_service_url: http://en.gitorious.org/tos
   privacy_policy_url: http://en.gitorious.org/privacy_policy
 
-  # Messaging queue configuration
-  # Gitorious ships with two message queue implementations; Stomp via the
-  # ActiveMessaging gem and Resque. A TorqueBox implementation is on its way.
-  # Possible values: stomp, resque, test, sync. Default value is stomp. The
-  # test implementation is intended for unit testing only, not for production or
-  # development use (messages are only stored in a list, never processed).
-  # The sync adapter is intended for development use, but may also suit low
-  # traffic setups where performance is not critical.
+  # Messaging queue configuration Gitorious ships with two message queue
+  # implementations; Stomp via the ActiveMessaging gem and Resque. A TorqueBox
+  # implementation is on its way.  Possible values: stomp, resque, test,
+  # sync. Default value is stomp. The test implementation is intended for unit
+  # testing only, not for production or development use (messages are only
+  # stored in a list, never processed).  The sync adapter is intended for
+  # development use, but may also suit low traffic setups where performance is
+  # not critical.
   messaging_adapter: stomp
 
   ##############################################################################
