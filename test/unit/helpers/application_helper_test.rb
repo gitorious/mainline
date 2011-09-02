@@ -38,13 +38,13 @@ class ApplicationHelperTest < ActionView::TestCase
     repos = repositories(:johans)
     assert build_notice_for(repos).include?("This repository is being created")
   end
-  
+
   should "renders block content if object is ready" do
     obj = mock("any given object")
     obj.stubs(:ready?).returns(true)
     assert_equal "moo", render_if_ready(obj){ "moo" }
   end
-  
+
   should "not render block content if object is ready" do
     obj = mock("any given object")
     obj.stubs(:ready?).returns(false)
@@ -54,7 +54,7 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_not_equal "moo", output_buffer
     assert_match(/is being created/, output_buffer)
   end
-  
+
   should "gives us the domain of a full url" do
     assert_equal "foo.com", base_url("http://foo.com")
     assert_equal "www.foo.com", base_url("http://www.foo.com")
@@ -100,7 +100,7 @@ class ApplicationHelperTest < ActionView::TestCase
         s = "S\xFCd"
         assert_equal "S?d", force_utf8(s)
       end
-      
+
       should "not replace valid utf chars" do
         s = "Süd"
         assert_equal "Süd", force_utf8(s)
