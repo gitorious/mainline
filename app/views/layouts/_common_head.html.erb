@@ -25,14 +25,9 @@
 <%= include_javascripts -%>
 <%  if @atom_auto_discovery_url -%>
   <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url,
-        :title => @atom_auto_discovery_title) -%>
+                              :title => @atom_auto_discovery_title) -%>
 <% end -%>
 <%= yield :extra_head -%>
-<!--[if IE 8]>
-<link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css">
-<![endif]-->
-<!--[if IE 7]>
-<link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css">
-<![endif]-->
-
+<!--[if IE 8]><link rel="stylesheet" href="/stylesheets/ie8.css" type="text/css"><![endif]-->
+<!--[if IE 7]><link rel="stylesheet" href="/stylesheets/ie7.css" type="text/css"><![endif]-->
 <%= GitoriousConfig["extra_html_head_data"] -%>
