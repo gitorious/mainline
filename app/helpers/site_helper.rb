@@ -40,4 +40,20 @@ module SiteHelper
       %{<a#{tag_attributes}>#{word_broken}}
     }
   end
+
+  def screenshots_rotator(dir)
+    root = File.join(Rails.root, "public")
+    files = Dir.glob(File.join(root, dir, "*.png"))
+    return "" if files.length == 0
+    urls = files.collect { |f| f.sub(root, "") }
+
+    <<-HTML
+    <div id="screenshots-rotator">
+      <div id="screenshotsnavigation"></div>
+      <div id="screenshots-container">
+        #{urls.collect { |u| "<img src=\"#{u}\">" }}
+      </div>
+    </div>
+    HTML
+  end
 end
