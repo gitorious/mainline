@@ -521,6 +521,18 @@ module ApplicationHelper
     end
   end
 
+  def logo_link
+    visual = if !GitoriousConfig.key?("logo_url")
+               image_tag("/img/logo.png")
+             elsif GitoriousConfig["logo_url"].blank?
+               "Gitorious"
+             else
+               image_tag(GitoriousConfig["logo_url"])
+             end
+
+    link_to visual, root_path
+  end
+
   # inserts a <wbr> tag somewhere in the middle of +str+
   def wbr_middle(str)
     half_size = str.length / 2

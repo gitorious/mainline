@@ -116,3 +116,10 @@ test:
   # Use your own favicon
   #favicon_url: http://www.mysite.com/favicon.ico
 
+  # Logo image. If this setting is not provided, the default Gitorious logo will
+  # be used. If you provide the setting, but no value, no logo image will be
+  # rendered, only the text "Gitorious" (may be useful if you want to provide a
+  # logo via CSS). If you provide a URL, it will be assumed to be an image and
+  # included as an img tag.
+  #logo_url:
+

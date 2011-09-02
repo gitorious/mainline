@@ -39,7 +39,7 @@
     </ul>
     <div id="header">
       <h1 id="logo">
-        <%= link_to image_tag("/img/logo.png"), root_path -%>
+        <%= logo_link %>
       </h1>
       <ul id="menu">
         <% if GitoriousConfig['public_mode'] || logged_in? -%>

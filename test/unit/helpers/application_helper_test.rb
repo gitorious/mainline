@@ -134,4 +134,32 @@ class ApplicationHelperTest < ActionView::TestCase
     end
   end
 
+  context "logo link tag" do
+    setup do
+      @gitconf = GitoriousConfig["logo_url"]
+    end
+
+    teardown do
+      GitoriousConfig["logo_url"] = @gitconf
+    end
+
+    should "return linked text when empty url is configured" do
+      GitoriousConfig["logo_url"] = ""
+      assert_match ">Gitorious<", logo_link
+      assert_no_match /img/, logo_link
+    end
+
+    should "return linked default logo no url is configured" do
+      GitoriousConfig.delete("logo_url")
+      assert_match /img[^>]*src=/, logo_link
+      assert_match "/img/logo.png", logo_link
+    end
+
+    should "return linked configured url" do
+      GitoriousConfig["logo_url"] = "http://myserver.com/logo.png"
+      assert_match /img[^>]*src=/, logo_link
+      assert_match "http://myserver.com/logo.png", logo_link
+      assert_no_match /\/img\/logo\.png/, logo_link
+    end
+  end
 end
