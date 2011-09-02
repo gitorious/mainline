@@ -77,12 +77,13 @@ module TreesHelper
 
   # Render a link to another tree, along with a link to comparing the
   # current tree with that tree - unless they're the same
-  def tree_and_diff_link(current_sha, current_name, refs, project, repository)
+  def tree_and_diff_link(current_commit, current_name, refs, project, repository)
+    current_name = current_commit.id_abbrev if current_commit.id == current_name
     list_items = refs.map do |ref|
-      display_diff_link = ref.commit.id != current_sha
+      display_diff_link = ref.commit.id != current_commit.id
       tree_link = link_to(h(ref.name), project_repository_tree_path(project, repository, ensplat_path(ref.name)))
       diff_link = link_to("Diff: #{h(current_name)}..#{h(ref.name)}", project_repository_commit_compare_path(project, repository,
-          :from_id => current_sha, :id => ref.commit.id), :class => "compare_diffs")
+          :from_id => current_commit.id, :id => ref.commit.id), :class => "compare_diffs")
 
       html = tree_link
       html << diff_link if display_diff_link

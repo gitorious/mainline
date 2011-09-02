@@ -100,13 +100,13 @@
 
     <ul class="links navigation disable_hover">
       <h5><%= t("views.logs.branches") %>:</h5>
-      <%= tree_and_diff_link(@commit.id, @ref, sorted_git_heads(@git.branches), @project, @repository) %>
+      <%= tree_and_diff_link(@commit, @ref, sorted_git_heads(@git.branches), @project, @repository) %>
     </ul>
 
     <% unless @git.tags.blank? -%>
       <ul class="links navigation">
 	      <h5><%= t("views.logs.tags") %>:</h5>
-        <%= tree_and_diff_link(@commit.id, @ref, @git.tags.sort{ |a, b| a.name <=> b.name }, @project, @repository) %>
+        <%= tree_and_diff_link(@commit, @ref, @git.tags.sort{ |a, b| a.name <=> b.name }, @project, @repository) %>
       </ul>
     <% end -%>
   <% end # cache() -%>
