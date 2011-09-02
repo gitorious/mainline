@@ -32,6 +32,12 @@ unless defined? GitoriousConfig
     Rails.logger.warn "The specified gitorious_host is reserved in Gitorious\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
+
+  # Add additional paths for views
+  if GitoriousConfig.key?("additional_view_paths")
+    additional_view_paths = ActionView::PathSet.new([File.expand_path(GitoriousConfig["additional_view_paths"])])
+    ActionController::Base.view_paths.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))
+  end
 end
 
 ActionMailer::Base.default_url_options[:protocol] = GitoriousConfig["scheme"]

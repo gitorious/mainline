@@ -123,3 +123,15 @@ test:
   # included as an img tag.
   #logo_url:
 
+  # Add more view paths if you want to override some or all of Gitorious'
+  # views. Make sure you know what you're doing before attepting this - there is
+  # no API guarantee from the current controllers. If you override views, study
+  # the git log (the Changelog may not mention these changes) before upgrading.
+  #additional_view_paths: vendor/plugin/mysite/views
+  #
+  # This allows you to e.g. provide your own frontpage template by saving the
+  # file:
+  # vendor/plugin/mysite/views/site/public_index.html.erb
+  #
+  # (Note that this particular template requires is_gitorious_dot_org:
+  # true). Refer to app/views/site/public_index.html.erb for how to customize.
