@@ -525,7 +525,7 @@ module ApplicationHelper
     content_tag(:div, link_to(label, url, :class => ""),
         :id => options.delete(:id), :class => css_classes.flatten.join(" "))
   end
-  
+
   def render_pagination_links(collection, options = {})
     default_options = {
       :previous_label => "Previous",

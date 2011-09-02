@@ -1,7 +1,7 @@
 development:
-  
-production: 
-  
+
+production:
+
 test:
   # The session secret key (`apg -m 64` is always useful for this kinda stuff)
   cookie_secret: ssssht
@@ -11,11 +11,11 @@ test:
   repository_base_path: "/tmp/git-repos"
 
   # Stuff that's in the html <head>. custom stats javascript code etc
-  extra_html_head_data: 
-  
+  extra_html_head_data:
+
   # System message that will appear on all pages if present
-  system_message: 
-  
+  system_message:
+
   # Port the ./script/gitorious script should use:
   gitorious_client_port: 3000
 
@@ -32,7 +32,7 @@ test:
   gitorious_support_email: support@gitorious.org
 
   # Email spam on server errors to:
-  exception_notification_emails:  
+  exception_notification_emails:
 
   # Mangle visible e-mail addresses (spam protection)
   mangle_email_addresses: true
@@ -46,13 +46,13 @@ test:
   # Where should we store generated tarballs?
   # (should be readable by webserver, since we tell it to send the file using X-Sendfile)
   archive_cache_dir: "/path/to/tarballs-cache"
-  # Which directory should we work in when we generate tarballs, before moving 
+  # Which directory should we work in when we generate tarballs, before moving
   # them to the above dir?
   archive_work_dir: "/path/to/tarballs-work"
 
   # is it only site admins who can create new projects?
   only_site_admins_can_create_projects: false
-  
+
   # Should we hide HTTP clone urls?
   hide_http_clone_urls: false
 

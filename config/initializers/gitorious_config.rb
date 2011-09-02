@@ -24,12 +24,12 @@ unless defined? GitoriousConfig
   GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
   if !GitoriousConfig.valid_subdomain?
-    Rails.logger.warn "Invalid subdomain name #{GitoriousConfig['gitorious_host']}. Session cookies will not work!\n" + 
+    Rails.logger.warn "Invalid subdomain name #{GitoriousConfig['gitorious_host']}. Session cookies will not work!\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
 
   if GitoriousConfig.using_reserved_hostname?
-    Rails.logger.warn "The specified gitorious_host is reserved in Gitorious\n" + 
+    Rails.logger.warn "The specified gitorious_host is reserved in Gitorious\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
 end

@@ -35,7 +35,7 @@ module SiteHelper
     text.gsub(/<a([^>]+)>([^<]+)/) {
       tag_attributes = $~[1]
       to_break = $~[2]
-      
+
       word_broken = to_break.gsub(/\/|\:/) { $~[0] + "<wbr>" }
       %{<a#{tag_attributes}>#{word_broken}}
     }
