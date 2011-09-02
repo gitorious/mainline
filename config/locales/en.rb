@@ -149,7 +149,7 @@
         :projects => "Projects",
         :search => "Search",
         :faq => "FAQ",
-        :about => "About Gitorious",
+        :about => "About",
         :my_account => "My Account",
         :logout => "Logout",
         :login => "Login",
