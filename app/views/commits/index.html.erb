@@ -68,7 +68,7 @@
   <ul class="icon_list links navigation">
 	<h5 id="tags"><%= t("views.logs.tags") %>:</h5>
   <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-    <li><%= link_to h(tag.name), commit_path(tag.commit.id) -%></li>
+    <li><%= link_to h(tag.name), commit_path(tag.commit.id), :title => h(tag.name) -%></li>
   <% end -%>
   </ul>
   <% end -%>

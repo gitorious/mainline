@@ -88,7 +88,7 @@ module RepositoriesHelper
   end
 
   def branch_link_title_text(branch)
-    "branch " + h(branch.name) + (branch.head? ? " (HEAD)" : "")
+    h(branch.name) + (branch.head? ? " (HEAD)" : "")
   end
 
   # Sorts the +heads+ alphanumerically with the HEAD first

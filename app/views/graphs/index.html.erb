@@ -76,7 +76,7 @@
     <ul class="icon_list links navigation">
       <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
       <% sorted_git_heads(@git.branches).each do |branch| -%>
-        <li><%= link_to h(branch.name), project_repository_graph_in_ref_path(:branch => ensplat_path(branch.name)) -%></li>
+        <li><%= link_to h(branch.name), project_repository_graph_in_ref_path(:branch => ensplat_path(branch.name)), :title => h(branch.name) -%></li>
       <% end -%>
     </ul>
 
@@ -84,7 +84,7 @@
       <ul class="icon_list links navigation">
 	<h5 id="tags"><%= t("views.logs.tags") %>:</h5>
         <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-          <li><%= link_to h(tag.name), project_repository_graph_in_ref_path(:branch => ensplat_path(tag.commit.id)) -%></li>
+          <li><%= link_to h(tag.name), project_repository_graph_in_ref_path(:branch => ensplat_path(tag.commit.id)), :title => h(tag.name) -%></li>
         <% end -%>
       </ul>
     <% end -%>
