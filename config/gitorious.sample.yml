@@ -80,3 +80,35 @@ test:
   # The sync adapter is intended for development use, but may also suit low
   # traffic setups where performance is not critical.
   messaging_adapter: stomp
+
+  ##############################################################################
+  # The following settings are useful if you're interested in theming your
+  # Gitorious install. Please note however, that we don't give any API
+  # guarantees for view code, controllers or CSS. In fact, we plan to ditch most
+  # of the existing CSS and JavaScript and replace it with a more modular system
+  # (and significantly improved) markup sometime soon-ish, so use
+  # "themes"/overrides at your own risk. In particular, we will not include
+  # relevant theme information in the Changelog, so you will need to refer to
+  # the git log if updating gives you trouble.
+  ##############################################################################
+
+  # Additional stylesheets for most pages. "Most pages" is everything except for
+  # the frontpage/public index, login page and the register page.
+  #
+  # One way to theme Gitorious would be to put a submodule in public/ that
+  # contains stylesheets and images. Then include the following setting
+  # (assuming that your submodule is at public/mytheme, and includes a directory
+  # stylesheets/theme.css):
+  #common_stylesheets: /mytheme/stylesheets/theme
+  #
+  # If you have several files:
+  #common_stylesheets:
+  #  - /mytheme/stylesheets/theme
+  #  - /mytheme/stylesheets/theme2
+  #
+  # Note that the extra stylesheets will be added to the bundle used in
+  # production
+
+  # Additional stylesheets for the frontpage and login pages. Works like the
+  # common_stylesheets setting
+  #external_stylesheets: /mytheme/stylesheets/themed-public-index

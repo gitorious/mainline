@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -32,6 +33,11 @@ module ApplicationHelper
   include RoutingHelper
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
+
+  STYLESHEETS = {
+    :common => ["content", "sidebar", "forms", "buttons", "base"],
+    :external => ["external"]
+  }
 
   def random_greeting
     GREETINGS[rand(GREETINGS.length)]
@@ -477,6 +483,21 @@ module ApplicationHelper
         [h("#{status.name} - #{status.description}"), h(status.name)]
       end
     end
+  end
+
+  def include_stylesheets(group)
+    stylesheets = STYLESHEETS[group]
+    cache_name = "gts-#{group}"
+    additional = GitoriousConfig["#{group}_stylesheets"]
+
+    unless additional.nil?
+      additional = [additional] unless Array === additional
+      stylesheets.concat(additional)
+      cache_name << "-#{additional.join('-').gsub(/[^a-z0-9_\-]/, '-')}"
+      cache_name = cache_name.gsub(/-+/, '-')
+    end
+
+    stylesheet_link_tag stylesheets, :cache => cache_name
   end
 
   # The javascripts to be included in all layouts
