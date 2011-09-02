@@ -107,4 +107,31 @@ class ApplicationHelperTest < ActionView::TestCase
       end
     end
   end
+
+  context "favicon link tag" do
+    setup do
+      @gitconf = GitoriousConfig["favicon_url"]
+    end
+
+    teardown do
+      GitoriousConfig["favicon_url"] = @gitconf
+    end
+
+    should "not return markup when no url is configured" do
+      GitoriousConfig["favicon_url"] = ""
+      assert favicon_link_tag.blank?
+    end
+
+    should "return link tag for configured favicon url" do
+      GitoriousConfig["favicon_url"] = "http://myserver.com/favicon.ico"
+      assert_match "myserver.com/favicon", favicon_link_tag
+      assert_match "shortcut", favicon_link_tag
+    end
+
+    should "return nothing when no favicon_url setting exists" do
+      GitoriousConfig.delete(["favicon_url"])
+      assert favicon_link_tag.blank?
+    end
+  end
+
 end

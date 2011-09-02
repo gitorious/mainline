@@ -515,6 +515,12 @@ module ApplicationHelper
     javascript_include_tag(scripts, :cache => true)
   end
 
+  def favicon_link_tag
+    unless (url = GitoriousConfig["favicon_url"]).blank?
+      "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
+    end
+  end
+
   # inserts a <wbr> tag somewhere in the middle of +str+
   def wbr_middle(str)
     half_size = str.length / 2

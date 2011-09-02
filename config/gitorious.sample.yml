@@ -112,3 +112,7 @@ test:
   # Additional stylesheets for the frontpage and login pages. Works like the
   # common_stylesheets setting
   #external_stylesheets: /mytheme/stylesheets/themed-public-index
+
+  # Use your own favicon
+  #favicon_url: http://www.mysite.com/favicon.ico
+

@@ -2,6 +2,7 @@
           "http://www.w3.org/TR/html4/strict.dtd">
 <head>
   <title><%= @page_title + " - " if @page_title -%><%= current_site.title -%></title>
+  <%= favicon_link_tag %>
   <%= include_stylesheets :external %>
   <%= include_javascripts -%>
   <script type="text/javascript">

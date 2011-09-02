@@ -21,7 +21,7 @@
 <title><%= @page_title ? h(@page_title) + " - " : "" -%><%= current_site.title -%></title>
 <%= include_stylesheets :common %>
 <link href="//fonts.googleapis.com/css?family=Nobile&v1" type="text/css" rel="stylesheet">
-
+<%= favicon_link_tag %>
 <%= include_javascripts -%>
 <%  if @atom_auto_discovery_url -%>
   <%= auto_discovery_link_tag(:atom, @atom_auto_discovery_url,
