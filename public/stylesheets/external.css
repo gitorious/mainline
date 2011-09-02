@@ -103,14 +103,30 @@ body#sessions #wrapper {
     margin-top: 1px;
 }
 
-#top #menu li.home a { background-position: 0px -22px; width: 40px; } #top #menu li.home.active a { background-position: 0px -11px; } #top #menu li.home a:hover { background-position: 0px 2px; }
-#top #menu li.blog a { background-position: -70px -22px; width: 35px; } #top #menu li.blog.active a { background-position: -70px -11px; } #top #menu li.blog a:hover { background-position: -70px 2px; }
-#top #menu li.about a { background-position: -100px -22px; width: 48px; } #top #menu li.about.active a { background-position: -100px -11px; } #top #menu li.about a:hover { background-position: -100px 2px; }
-#top #menu li.faq a { background-position: -290px -22px; width: 29px; } #top #menu li.faq.active a { background-position: -290px -11px; } #top #menu li.faq a:hover { background-position: -290px 2px; }
-#top #menu li.contact a { background-position: -275px -22px; width: 64px; } #top #menu li.contact.active a { background-position: -275px -11px; } #top #menu li.contact a:hover { background-position: -275px 2px; }
-#top #menu li.explore a { background-position: -161px -22px; width: 61px; } #top #menu li.explore.active a { background-position: -161px -9px; } #top #menu li.explore a:hover { background-position: -161px 2px; }
-#top #menu li.register a { background-position: -350px -22px; width: 66px; } #top #menu li.register.active a { background-position: -350px -11px; } #top #menu li.register a:hover { background-position: -350px 2px; }
-#top #menu li.login a { background-position: -428px -22px; width: 48px; } #top #menu li.login.active a { background-position: -428px -11px; } #top #menu li.login a:hover { background-position: -428px 2px; }
+#top #menu li.home a { background-position: 0px -22px; width: 40px; }
+#top #menu li.home.active a { background-position: 0px -11px; }
+#top #menu li.home a:hover { background-position: 0px 2px; }
+#top #menu li.blog a { background-position: -70px -22px; width: 35px; }
+#top #menu li.blog.active a { background-position: -70px -11px; }
+#top #menu li.blog a:hover { background-position: -70px 2px; }
+#top #menu li.about a { background-position: -100px -22px; width: 48px; }
+#top #menu li.about.active a { background-position: -100px -11px; }
+#top #menu li.about a:hover { background-position: -100px 2px; }
+#top #menu li.faq a { background-position: -290px -22px; width: 29px; }
+#top #menu li.faq.active a { background-position: -290px -11px; }
+#top #menu li.faq a:hover { background-position: -290px 2px; }
+#top #menu li.contact a { background-position: -275px -22px; width: 64px; }
+#top #menu li.contact.active a { background-position: -275px -11px; }
+#top #menu li.contact a:hover { background-position: -275px 2px; }
+#top #menu li.explore a { background-position: -161px -22px; width: 61px; }
+#top #menu li.explore.active a { background-position: -161px -9px; }
+#top #menu li.explore a:hover { background-position: -161px 2px; }
+#top #menu li.register a { background-position: -350px -22px; width: 66px; }
+#top #menu li.register.active a { background-position: -350px -11px; }
+#top #menu li.register a:hover { background-position: -350px 2px; }
+#top #menu li.login a { background-position: -428px -22px; width: 48px; }
+#top #menu li.login.active a { background-position: -428px -11px; }
+#top #menu li.login a:hover { background-position: -428px 2px; }
 #top #menu li.contact { border-right: 1px solid #333; padding: 1px 0px 4px; padding-right: 20px;}
 #top #menu li.register { margin-left: 20px; }
 
