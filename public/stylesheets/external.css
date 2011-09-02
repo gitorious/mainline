@@ -862,7 +862,7 @@ body #wrapper #content p.alt_links a:hover { color: #111; }
     margin-top: 7px;
 }
 
-#footer #gitorious-com {
+#footer .footer-blurb {
     border-top: 1px solid #333;
     clear: both;
     font-size: .8em;
@@ -870,9 +870,9 @@ body #wrapper #content p.alt_links a:hover { color: #111; }
     text-align: right;
 }
 
-#footer #gitorious-com a:link,
-#footer #gitorious-com a:visited,
-#footer #gitorious-com a {
+#footer .footer-blurb a:link,
+#footer .footer-blurb a:visited,
+#footer .footer-blurb a {
     color: #6e6e6e;
     font-weight: bold;
 }

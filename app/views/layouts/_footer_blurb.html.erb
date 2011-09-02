@@ -1,0 +1,9 @@
+<p class="footer-blurb">
+  <% if GitoriousConfig.key?("footer_blurb") %>
+    <%= GitoriousConfig["footer_blurb"] %>
+  <% else %>
+    <a href="http://gitorious.com">Professional Gitorious services</a> - Git
+    hosting at your company, custom features, support and more.
+    <a href="http://gitorious.com">gitorious.com</a>.
+  <% end %>
+</p>

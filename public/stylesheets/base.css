@@ -445,7 +445,7 @@ abbr.timeago {
 
 #footer .powered-by img { margin-top: 7px; }
 
-#footer #gitorious-com {
+#footer .footer-blurb {
     border-top: 1px solid #333;
     clear: both;
     margin: 0;
@@ -453,9 +453,9 @@ abbr.timeago {
     text-align: right;
 }
 
-#footer #gitorious-com a:link,
-#footer #gitorious-com a:visited,
-#footer #gitorious-com a {
+#footer .footer-blurb a:link,
+#footer .footer-blurb a:visited,
+#footer .footer-blurb a {
     color: #6e6e6e;
     font-weight: bold;
 }
