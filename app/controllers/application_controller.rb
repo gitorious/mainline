@@ -308,5 +308,43 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    # "Transactional wrapper" for pagination. Wrap calls to Model.paginate in a
+    # call to this method to have "page out of bounds" errors handled seemlessly.
+    #
+    # paginate expects its block argument to return a collection of objects to
+    # be paginated. If the returned collection is nil, or has 0 entries, it is
+    # considered a pagination error _if_ the :page parameter was provided.
+    #
+    # Pagination errors are handled by setting flash[:error] and redirecting
+    # back to the original page, as specified by the +redirect_options+ argument.
+    #
+    # The flash[:error] entry is set by looking up the i18n string for
+    # <controller>_controller.<action>_pagination_oob (oob = "out of bounds").
+    #
+    # The method returns whatever is returned by its block argument. Typical
+    # usage:
+    #
+    #     def index
+    #       @groups = paginate(:action => "index") do
+    #         Group.paginate(:all, :page => params[:page])
+    #       end
+    #     end
+    #
+    def paginate(redirect_options = {}, &block)
+      begin
+        items = yield || []
+      rescue WillPaginate::InvalidPage
+        items = []
+      end
+
+      if params.key?(:page) && items.count == 0
+        key = "#{params[:controller]}_controller.#{params[:action]}_pagination_oob"
+        flash[:error] = I18n.t(key, :page => params[:page])
+        redirect_to(redirect_options)
+      end
+
+      items
+    end
+
     helper_method :unshifted_polymorphic_path
 end

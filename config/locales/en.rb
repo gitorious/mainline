@@ -72,6 +72,8 @@
     },
     :groups_controller => {
       :group_created => "Team created",
+      :index_pagination_oob => "Sorry, there were no teams for page {{page}}.",
+      :show_pagination_oob => "Sorry, there were no events for page {{page}}."
     },
     :users_controller => {
       :activate_notice => "Your account has been activated, welcome!",

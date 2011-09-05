@@ -22,21 +22,19 @@ class GroupsController < ApplicationController
   renders_in_global_context
   
   def index
-    @groups = Group.paginate(:all, :page => params[:page])
+    @groups = paginate(:action => "index") do
+      Group.paginate(:all, :page => params[:page])
+    end
   end
   
   def show
-    @group = Group.find_by_name!(params[:id], 
+    @group = Group.find_by_name!(params[:id],
               :include => [:members, :projects, :repositories, :committerships])
-    @events = Event.top.paginate(:all, 
-      :page => params[:page],
-      :conditions => ["events.user_id in (:user_ids) and events.project_id in (:project_ids)", {
-        :user_ids => @group.members.map{|u| u.id },
-        :project_ids => @group.all_related_project_ids,
-      }], 
-      :order => "events.created_at desc", 
-      :include => [:user, :project])
     @memberships = @group.memberships.find(:all, :include => [:user, :role])
+
+    @events = paginate(:action => "show", :id => params[:id]) do
+      @group.events(params[:page])
+    end
   end
   
   def new
