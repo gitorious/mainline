@@ -17,7 +17,7 @@
 #++
 
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class ProjectsControllerTest < ActionController::TestCase
 
@@ -42,7 +42,7 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "Routing" do
-    should "recognizes routing like /projectname" do
+    should "recognize routing like /projectname" do
       assert_recognizes({
         :controller => "projects", :action => "show", :id => @project.to_param
       }, {:path => "/#{@project.to_param}", :method => :get})
@@ -55,7 +55,7 @@ class ProjectsControllerTest < ActionController::TestCase
       })
     end
 
-    should "recognizes routing like /projectname/repositories" do
+    should "recognize routing like /projectname/repositories" do
       assert_recognizes({
         :controller => "repositories",
         :action => "index",
@@ -74,7 +74,7 @@ class ProjectsControllerTest < ActionController::TestCase
       })
     end
 
-    should "recognizes routing like /projectname/repositories/action" do
+    should "recognize routing like /projectname/repositories/action" do
       assert_recognizes({
         :controller => "repositories",
         :action => "new",
@@ -92,7 +92,7 @@ class ProjectsControllerTest < ActionController::TestCase
       })
     end
 
-    should "recognizes project actions" do
+    should "recognize project actions" do
       {
         "edit" => [:get, "/edit"],
         "update" => [:put, ""],
@@ -112,7 +112,7 @@ class ProjectsControllerTest < ActionController::TestCase
       end
     end
 
-    should "recognizes custom routing with format" do
+    should "recognize custom routing with format" do
       assert_recognizes({
         :controller => "projects",
         :action => "show",
@@ -133,34 +133,34 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "ProjectsController" do
-    should "GET projects/ should be succesful" do
+    should "GET projects/ succesfully" do
       get :index
       assert_response :success
       assert !assigns(:projects).empty?
       assert_template(("index"))
     end
 
-    should "GET projects/new should be succesful" do
+    should "GET projects/new succesfully" do
       login_as :johan
       get :new
       assert_response :success
       assert_template(("new"))
     end
 
-    should "GET projects/new should redirect to new_user_key_path if no keys on user" do
+    should "redirect GET projects/new to new_user_key_path if no keys on user" do
       users(:johan).ssh_keys.destroy_all
       login_as :johan
       get :new
       assert_redirected_to(new_user_key_path(users(:johan)))
     end
 
-    should "GET projects/new should require login" do
+    should "require login for GET projects/new" do
       get :new
       assert_response :redirect
       assert_redirected_to(new_sessions_path)
     end
 
-    should "POST projects/create with valid data should create project" do
+    should "create project for POST projects/create with valid data" do
       login_as :johan
       assert_difference("Project.count") do
         post :create, :project => {
@@ -177,7 +177,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal users(:johan), assigns(:project).owner
     end
 
-    should "POST projects/create with invalid data should re-render the template" do
+    should "re-render the template for POST projects/create with invalid data" do
       login_as :johan
       assert_no_difference("Project.count") do
         post :create, :project => {}
@@ -187,7 +187,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert !assigns(:project).valid?
     end
 
-    should "Create an event when POSTing successfully to create" do
+    should "Create an event when successfully POSTing to create" do
       login_as :johan
       assert_difference("Event.count") do
         post :create, :project => {
@@ -202,7 +202,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal Action::CREATE_PROJECT, event.action
     end
 
-    should "render a error page if the create was throttled" do
+    should "render an error page if the create was throttled" do
       login_as :johan
       Project.any_instance.expects(:save).raises(RecordThrottling::LimitReachedError)
       assert_no_difference("Project.count") do
@@ -218,7 +218,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_select "p", /denied your request due to excessive usage/i
     end
 
-    should "POST projects/create with valid data should create project, owned by a group" do
+    should "create project, owned by a group when POST projects/create with valid data" do
       login_as :johan
       group = groups(:team_thunderbird)
       group.add_member(users(:johan), Role.admin)
@@ -238,38 +238,38 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal group, assigns(:project).owner
     end
 
-    should "POST projects/create should redirect to new_user_key_path if no keys on user" do
+    should "redirect to new_user_key_path when POST projects/create if no keys on user" do
       users(:johan).ssh_keys.destroy_all
       login_as :johan
       post :create
       assert_redirected_to(new_user_key_path(users(:johan)))
     end
 
-    should 'POST projects/create should redirect to acceptance of EULA if this has not been done' do
+    should "redirect to acceptance of EULA when POST projects/create if this has not been done" do
       users(:johan).update_attribute(:aasm_state, "pending")
       login_as :johan
       post :create
       assert_redirected_to(user_license_path(users(:johan)))
     end
 
-    should "projects/create should require login" do
+    should "require login for projects/create" do
       post :create
       assert_redirected_to(new_sessions_path)
     end
 
-    should "PUT projects/update should require login" do
+    should "require login for PUT projects/update" do
       put :update
       assert_redirected_to(new_sessions_path)
     end
 
-    should "GET projects/N/edit is only for project owner" do
+    should "only allow project owner to GET projects/N/edit" do
       login_as :moe
       get :edit, :id => projects(:johans).to_param
       assert_match(/you are not the owner of this project/i, flash[:error])
       assert_redirected_to(project_path(projects(:johans)))
     end
 
-    should "PUT projects/update can only be done by project owner" do
+    should "allow project owner to PUT projects/update" do
       project = projects(:johans)
       project.owner = groups(:team_thunderbird)
       project.save!
@@ -278,7 +278,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should "PUT projects/update can only be done by project group admins" do
+    should "only allow project group admins to PUT projects/update" do
       project = projects(:johans)
       project.owner = groups(:team_thunderbird)
       project.save!
@@ -290,25 +290,23 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to(project_path(project))
     end
 
-    should 'Non-admins for projects should be denied access to edit slug' do
+    should "deny non-project admins access to edit slug" do
       login_as :moe
       get :edit_slug, :id => projects(:johans).to_param
       assert_response :redirect
     end
 
-    should 'allow project admins to change the slug' do
+    should "allow project admins to change the slug" do
       login_as :johan
       @project = projects(:johans)
       get :edit_slug, :id => @project.to_param
       assert_response :success
       put :edit_slug, :id => @project.to_param, :project => {:slug => "another_one"}
       assert_redirected_to :action => :show, :id => @project.reload.slug
-      assert_equal 'another_one', projects(:johans).reload.slug
+      assert_equal "another_one", projects(:johans).reload.slug
     end
 
-
-
-    should "PUT projects/update with valid data should update record" do
+    should "update record when PUT projects/update with valid data" do
       login_as :johan
       project = projects(:johans)
       put :update, :id => project.slug, :project => {:title => "new name", :slug => "foo", :description => "bar"}
@@ -318,28 +316,27 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal "new name", project.reload.title
     end
 
-    should 'PUT preview should render a preview of the project information' do
+    should "render a preview of the project information when PUT preview" do
       login_as :johan
       project = projects(:johans)
-      put :preview, :id => project.to_param, :project => {:title => 'something new', :description => 'This is a long description'}, :format => 'js'
+      put :preview, :id => project.to_param, :project => {:title => "something new", :description => "This is a long description"}, :format => "js"
       assert_response :success
     end
 
-    should "DELETE projects/destroy should require login" do
+    should "require login to DELETE projects/destroy" do
       delete :destroy
       assert_response :redirect
-      #assert_redirected_to("http://test.host" + new_sessions_path)
-      assert_redirected_to(new_sessions_path)
+      assert_redirected_to new_sessions_path
     end
 
-    should "DELETE projects/xx is only allowed by project owner" do
+    should "only allow project owner to DELETE projects/xx" do
       login_as :moe
       delete :destroy, :id => projects(:johans).slug
       assert_redirected_to(projects_path)
       assert_match(/You are not the owner of this project, or the project has clones/i, flash[:error])
     end
 
-    should "DELETE projects/xx is only allowed if there is a single repository (mainline)" do
+    should "only allow DELETE projects/xx if there is a single repository (mainline)" do
       login_as :johan
       delete :destroy, :id => projects(:johans).slug
       assert_redirected_to(projects_path)
@@ -347,7 +344,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_not_nil Project.find_by_id(1)
     end
 
-    should "DELETE projects/destroy should destroy the project" do
+    should "destroy the project when DELETE projects/destroy" do
       login_as :johan
       repositories(:johans2).destroy
       delete :destroy, :id => projects(:johans).slug
@@ -355,45 +352,45 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_nil Project.find_by_id(1)
     end
 
-    should "GET projects/show should be success" do
+    should "succesfully GET projects/show" do
       get :show, :id => projects(:johans).slug
       assert_equal projects(:johans), assigns(:project)
       assert_response :success
     end
 
-    should "GET projects/xx/edit should require login" do
+    should "require login for GET projects/xx/edit" do
       get :edit, :id => projects(:johans).slug
       assert_response :redirect
       assert_redirected_to(new_sessions_path)
     end
 
-    should "GET projects/xx/edit should be a-ok" do
+    should "successfully GET projects/xx/edit" do
       login_as(:johan)
       get :edit, :id => projects(:johans).slug
       assert_response :success
     end
 
-    should "GET projects/xx/confirm_delete should require login" do
+    should "require login for GET projects/xx/confirm_delete" do
       get :confirm_delete
       assert_response :redirect
       assert_redirected_to(new_sessions_path)
     end
 
-    should "GET projects/xx/confirm_delete fetches the project" do
+    should "fetch the project when GET projects/xx/confirm_delete" do
       login_as(:johan)
       get :edit, :id => projects(:johans).slug
       assert_response :success
       assert_equal projects(:johans), assigns(:project)
     end
 
-    should "GET show fetches the group and user clones" do
+    should "fetch group and user clones when GET show" do
       get :show, :id => projects(:johans).slug
       assert_response :success
       assert_not_nil assigns(:group_clones)
       assert_not_nil assigns(:user_clones)
     end
 
-    should "render a all the clone repositories" do
+    should "render all the clone repositories" do
       get :clones, :id => projects(:johans).slug, :format => "js"
       assert_response :success
       assert_not_nil assigns(:group_clones)
@@ -401,20 +398,21 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_template "_repositories"
     end
 
-#     should "GET show with an etag based on the event" do
-#       50.times do |i|
-#         projects(:johans).events.create!({
-#           :action => Action::CREATE_BRANCH,:target => repositories(:johans),
-#           :data => "branch-#{i}", :body => "branch-#{i}", :user => users(:moe)
-#         })
-#       end
-#       get :show, :id => projects(:johans).slug
-#       page_one_etag = @response.etag
-#       assert_not_nil page_one_etag
+    should "respond with etag based on the event when GET show" do
+      50.times do |i|
+        projects(:johans).events.create!({
+          :action => Action::CREATE_BRANCH,:target => repositories(:johans),
+          :data => "branch-#{i}", :body => "branch-#{i}", :user => users(:moe)
+        })
+      end
 
-#       get :show, :id => projects(:johans).slug, :page => 2
-#       assert_not_equal page_one_etag, @response.etag
-#     end
+      get :show, :id => projects(:johans).slug
+      page_one_etag = @response.etag
+      assert_not_nil page_one_etag
+
+      get :show, :id => projects(:johans).slug, :page => 2
+      assert_not_equal page_one_etag, @response.etag
+    end
   end
 
   context "Changing owner" do
@@ -426,7 +424,7 @@ class ProjectsControllerTest < ActionController::TestCase
       login_as :mike
     end
 
-    should "gets a list of the users' groups on edit" do
+    should "get a list of the users' groups on edit" do
       group = groups(:a_team)
       assert !group.member?(users(:mike))
       group.add_member(users(:mike), Role.member)
@@ -436,7 +434,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal users(:mike).groups.select{|g| g.admin?(users(:mike)) }, assigns(:groups)
     end
 
-    should "only get a list of groups user is admin in, on update" do
+    should "only get a list of groups user is admin in on update" do
       group = groups(:a_team)
       assert !group.member?(users(:mike))
       group.add_member(users(:mike), Role.member)
@@ -446,7 +444,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal users(:mike).groups.select{|g| g.admin?(users(:mike)) }, assigns(:groups)
     end
 
-    should "changes the owner" do
+    should "change the owner" do
       put :update, :id => @project.to_param, :project => {
         :owner_id => @group.id
       }
@@ -455,7 +453,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_equal @group, @project.wiki_repository.owner
     end
 
-    should "changes the owner, only if the original owner was a user" do
+    should "change the owner only if original owner was a user" do
       @project.owner = @group
       @project.save!
       new_group = Group.create!(:name => "temp")
@@ -471,11 +469,11 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig['public_mode'] = false
+      GitoriousConfig["public_mode"] = false
     end
 
     teardown do
-      GitoriousConfig['public_mode'] = true
+      GitoriousConfig["public_mode"] = true
     end
 
     should "GET /projects" do
@@ -504,7 +502,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to projects_path
     end
 
-    should "be succesful on #new if the user is a site_admin" do
+    should "succesfully GET #new if the user is a site_admin" do
       login_as :johan
       get :new
       assert_nil flash[:error]
@@ -519,7 +517,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_redirected_to projects_path
     end
 
-    should "be succesful on POST #create if the user is a site_admin" do
+    should "succesfully POST #create if the user is a site_admin" do
       login_as :johan
       post :create, :project => {
         :title => "project x",
