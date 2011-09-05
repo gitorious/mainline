@@ -57,6 +57,8 @@
       :update_error => "You are not the owner of this project",
       :destroy_error => "You are not the owner of this project, or the project has clones",
       :create_only_for_site_admins => "Only site administrators are allowed to create new projects",
+      :show_pagination_oob => "Sorry, there were no events for page {{page}}.",
+      :index_pagination_oob => "Sorry, there were no projects for page {{page}}."
     },
     :repositories_controller => {
       :new_clone_error => "Sorry, cannot clone an empty repository",

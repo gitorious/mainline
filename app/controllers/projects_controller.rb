@@ -33,8 +33,12 @@ class ProjectsController < ApplicationController
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
   def index
-    @projects = Project.paginate(:all, :order => "projects.created_at desc",
-                  :page => params[:page], :include => [:tags, { :repositories => :project } ])
+    @projects = paginate(:action => "index") do
+      Project.paginate(:all, :order => "projects.created_at desc",
+                       :page => params[:page], :include => [:tags, { :repositories => :project } ])
+    end
+
+    return if @projects.count == 0 && params.key?(:page)
 
     @atom_auto_discovery_url = projects_path(:format => :atom)
     respond_to do |format|
@@ -63,14 +67,18 @@ class ProjectsController < ApplicationController
   end
 
   def show
+    @events = paginate(:action => "show", :id => @project.to_param) do
+      Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+        events_finder_options = {}
+        events_finder_options.merge!(@project.events.top.proxy_options)
+        events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
+        @project.events.paginate(events_finder_options)
+      end
+    end
+
+    return if @events.count == 0 && params.key?(:page)
     @owner = @project
     @root = @project
-    @events = Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
-      events_finder_options = {}
-      events_finder_options.merge!(@project.events.top.proxy_options)
-      events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
-      @project.events.paginate(events_finder_options)
-    end
     @group_clones = @project.recently_updated_group_repository_clones
     @user_clones = @project.recently_updated_user_repository_clones
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
