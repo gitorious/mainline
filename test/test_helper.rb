@@ -13,7 +13,7 @@ end
 
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
-  
+
   # Transactional fixtures accelerate your tests by wrapping each test method
   # in a transaction that's rolled back on completion.  This ensures that the
   # test database remains unchanged so your fixtures don't have to be reloaded
@@ -27,7 +27,7 @@ class ActiveSupport::TestCase
   # don't care one way or the other, switching from MyISAM to InnoDB tables
   # is recommended.
   #
-  # The only drawback to using transactional fixtures is when you actually 
+  # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
   self.use_transactional_fixtures = true
@@ -50,15 +50,15 @@ class ActiveSupport::TestCase
   OTHER_SHA = "f" * 40 unless defined?(OTHER_SHA)
 
   # Add more helper methods to be used by all tests here...
-  
+
   def repo_path
     File.join(File.dirname(__FILE__), "..", ".git")
   end
-  
+
   def grit_test_repo(name)
     File.join(RAILS_ROOT, "vendor/grit/test", name )
   end
-  
+
   def assert_incremented_by(obj, meth, value)
     value_before = obj.send(meth)
     yield
@@ -91,6 +91,49 @@ class ActiveSupport::TestCase
       end
 
       assert_not_nil subscription, "#{klass.name} does not subscribe to #{queue_name}"
+    end
+  end
+
+  def self.should_scope_pagination_to(action, klass, pluralized = nil, opt = {})
+    if Hash === pluralized
+      opt = pluralized
+      pluralized = nil
+    end
+
+    pluralized ||= klass.to_s.downcase.pluralize
+
+    should "redirect to action if page doesn't exist" do
+      params = @params || {}
+      get action, params.merge({ :page => 10 })
+
+      assert_response :redirect
+      assert_redirected_to params.dup.merge({ :action => action })
+    end
+
+    should "add flash message explaining that page doesn't exist" do
+      params = @params || {}
+      get action, params.merge({ :page => 10 })
+
+      assert_not_nil flash[:error]
+      assert_match /no #{pluralized}/, flash[:error]
+      assert_match /10/, flash[:error]
+    end
+
+    should "not redirect in a loop when there are no #{pluralized}" do
+      params = @params || {}
+      klass.delete_all if !opt.key?(:delete_all) || opt[:delete_all]
+
+      get action, params
+
+      assert_response :success
+    end
+
+    should "redirect to action if page is < 0" do
+      params = @params || {}
+      get action, params.merge({ :page => -1 })
+
+      assert_response :redirect
+      assert_redirected_to params.dup.merge({ :action => action })
     end
   end
 end
@@ -177,7 +220,7 @@ class ActionController::TestCase
       end
     end
   end
-  
+
   def self.should_render_in_site_specific_context(options = {})
     should "Render in site specific context for actions" do
       filter = @controller.class.filter_chain.find(:redirect_to_current_site_subdomain)

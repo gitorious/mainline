@@ -20,7 +20,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class SearchesControllerTest < ActionController::TestCase
-  
+
   should_render_in_global_context
   should_enforce_ssl_for(:get, :show)
 
@@ -35,18 +35,32 @@ class SearchesControllerTest < ActionController::TestCase
       searcher.expects(:total_pages).returns(1)
       searcher.expects(:total_entries).returns(1)
       searcher.expects(:time).returns(42)
-      
+
       get :show, :q => "foo"
       assert_equal searcher, assigns(:search)
       assert_equal [projects(:johans)], assigns(:results)
     end
-    
+
     should "not search if there is no :q param" do
       Ultrasphinx::Search.expects(:new).never
       get :show, :q => ""
       assert_nil assigns(:search)
       assert_nil assigns(:results)
     end
-  end
 
+    context "paginating search results" do
+      setup do
+        searcher = mock()
+        searcher.stubs(:run)
+        searcher.stubs(:results).returns([])
+        searcher.stubs(:total_pages).returns(1)
+        searcher.stubs(:total_entries).returns(1)
+        searcher.stubs(:time).returns(42)
+        Ultrasphinx::Search.stubs(:new).returns(searcher)
+        @params = { :q => "foo" }
+      end
+
+      should_scope_pagination_to(:show, nil, "search results", :delete_all => false)
+    end
+  end
 end

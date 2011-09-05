@@ -18,9 +18,14 @@
 class MessagesController < ApplicationController
   before_filter :login_required
   renders_in_global_context
-  
+
   def index
-    @messages = current_user.messages_in_inbox.paginate(:page => params[:page])
+    @messages = paginate(page_free_redirect_options) do
+      current_user.messages_in_inbox.paginate(:page => params[:page])
+    end
+
+    return if @messages.count == 0 && params.key?(:page)
+
     @root = Breadcrumb::ReceivedMessages.new(current_user)
     respond_to do |wants|
       wants.html
@@ -29,16 +34,21 @@ class MessagesController < ApplicationController
   end
 
   def all
-    @messages = current_user.top_level_messages.paginate(:page => params[:page])
+    @messages = paginate(page_free_redirect_options) do
+      current_user.top_level_messages.paginate(:page => params[:page])
+    end
+
     @root = Breadcrumb::AllMessages.new(current_user)
   end
-  
+
   def sent
-    @messages = current_user.sent_messages.paginate(:all,
-      :page => params[:page])
+    @messages = paginate(page_free_redirect_options) do
+      current_user.sent_messages.paginate(:all, :page => params[:page])
+    end
+
     @root = Breadcrumb::SentMessages.new(current_user)
   end
-  
+
   def read
     @message = current_user.received_messages.find(params[:id])
     @message.read
@@ -64,7 +74,7 @@ class MessagesController < ApplicationController
     redirect_to :action => :index
   end
 
-  
+
   def show
     @message = Message.find(params[:id])
     if !@message.readable_by?(current_user)
@@ -77,11 +87,11 @@ class MessagesController < ApplicationController
       wants.js {render :partial => "message", :layout => false}
     end
   end
-  
+
 
   def create
     thread_options = params[:message].merge({
-      :recipients => params[:message][:recipients], 
+      :recipients => params[:message][:recipients],
       :sender => current_user
     })
     @messages = MessageThread.new(thread_options)
@@ -93,11 +103,11 @@ class MessagesController < ApplicationController
       render :action => :new
     end
   end
-  
+
   def new
     @message = current_user.sent_messages.new(:recipients => params[:to])
   end
-  
+
   # POST /messages/<id>/reply
   def reply
     original_message = current_user.received_messages.find(params[:id])
@@ -111,9 +121,9 @@ class MessagesController < ApplicationController
       redirect_to :action => :index
     end
   end
-  
+
   def auto_complete_for_message_recipients
-    @users = User.find(:all, 
+    @users = User.find(:all,
       :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
       :limit => 10).reject{|u|u == current_user}
     render :text => @users.map{|u| u.login }.join("\n")

@@ -48,9 +48,14 @@ class UsersController < ApplicationController
     @projects = @user.projects.find(:all,
       :include => [:tags, { :repositories => :project }])
     @repositories = @user.commit_repositories
-    @events = @user.events.excluding_commits.paginate(
-      :page => params[:page], :order => "events.created_at desc",
-      :include => [:user, :project])
+
+    @events = paginate(page_free_redirect_options) do
+      @user.events.excluding_commits.paginate(:page => params[:page],
+                                              :order => "events.created_at desc",
+                                              :include => [:user, :project])
+    end
+
+    return if @events.count == 0 && params.key?(:page)
     @messages = @user.messages_in_inbox(3) if @user == current_user
     @favorites = @user.favorites.all(:include => :watchable)
 

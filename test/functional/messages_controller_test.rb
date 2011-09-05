@@ -55,6 +55,10 @@ class MessagesControllerTest < ActionController::TestCase
 
       assert_match /<a href=\"\/messages\">\s*<span>0<\/span>\s*<\/a>/, @response.body
     end
+
+    context "paginating messages" do
+      should_scope_pagination_to(:index, Message)
+    end
   end
 
   context "On GET to index with XML" do
@@ -75,6 +79,10 @@ class MessagesControllerTest < ActionController::TestCase
     should_respond_with :success
     should_assign_to :messages
     should_render_template :sent
+
+    context "paginating sent messages" do
+      should_scope_pagination_to(:sent, Message, "sent messages")
+    end
   end
 
   context "On GET to show" do
@@ -203,14 +211,20 @@ class MessagesControllerTest < ActionController::TestCase
   end
 
   context "On GET to all" do
-    setup {
+    setup do
       login_as :johan
       get :all
-    }
+    end
+
     should_assign_to :messages
     should_respond_with :success
     should_render_template :all
+
+    context "paginating all" do
+      should_scope_pagination_to(:all, Message)
+    end
   end
+
   context "On POST to auto_complete_for_message_recipients" do
     setup do
       login_as :johan

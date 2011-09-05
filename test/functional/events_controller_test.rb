@@ -27,7 +27,7 @@ class EventsControllerTest < ActionController::TestCase
     @project = projects(:johans)
     @repository = repositories(:johans)
   end
-  
+
   context "#index" do
     should "shows news" do
       @project.create_event(Action::CREATE_PROJECT, @project, users(:johan), "", "")
@@ -35,8 +35,12 @@ class EventsControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal 1, assigns(:events).size
     end
+
+    context "paginating events" do
+      should_scope_pagination_to(:index, Event)
+    end
   end
-  
+
   context 'commits' do
     setup do
       @push_event = @project.create_event(Action::PUSH, @repository, User.first,
@@ -50,12 +54,12 @@ class EventsControllerTest < ActionController::TestCase
         c.save
       end
     end
-    
+
     should 'show commits under a push event' do
       get :commits, :id => @push_event.to_param, :format => 'js'
       assert_response :success
     end
-    
+
     should "cache the commit events" do
       get :commits, :id => @push_event.to_param, :format => 'js'
       assert_response :success

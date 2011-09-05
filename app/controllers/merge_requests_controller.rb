@@ -35,15 +35,19 @@ class MergeRequestsController < ApplicationController
                 :version, :terms_accepted]
   before_filter :assert_merge_request_resolvable, :only => [:resolve]
   renders_in_site_specific_context
-  
+
   def index
     @root = Breadcrumb::MergeRequests.new(@repository)
-    @open_merge_requests = @repository.merge_requests.from_filter(params[:status]) \
-      .paginate(:all, {
-        :page => params[:page],
-        :per_page => params[:per_page] || 50,
-        :order => "created_at desc"
-      })
+    @open_merge_requests = paginate(page_free_redirect_options) do
+      @repository.merge_requests.from_filter(params[:status]) \
+        .paginate(:all, {
+                    :page => params[:page],
+                    :per_page => params[:per_page] || 50,
+                    :order => "created_at desc"
+                  })
+    end
+
+    return if @open_merge_requests.count == 0 && params.key?(:page)
 
     @status_tags = @repository.merge_request_status_tags
     @comment_count = @repository.comments.count
@@ -55,7 +59,7 @@ class MergeRequestsController < ApplicationController
       wants.atom {  }
     end
   end
-  
+
   def commit_list
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
@@ -69,14 +73,14 @@ class MergeRequestsController < ApplicationController
     result = @merge_request.commit_merged?(params[:commit_id]) ? 'true' : 'false'
     render :text => result, :layout => false
   end
-  
+
   def target_branches
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
     @target_branches = @merge_request.target_branches_for_selection
     render :partial => "target_branches", :layout => false
   end
-  
+
   def show
     @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                       :include => [:source_repository, :target_repository])
@@ -104,7 +108,7 @@ class MergeRequestsController < ApplicationController
       }
     end
   end
-  
+
   def version
     @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                       :include => [:source_repository, :target_repository])
@@ -112,7 +116,7 @@ class MergeRequestsController < ApplicationController
       :version => @merge_request.version_number(params[:version].to_i)
     }
   end
-  
+
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
@@ -123,13 +127,13 @@ class MergeRequestsController < ApplicationController
     end
     get_branches_and_commits_for_selection
   end
-  
+
   # This is a static URL the user returns to after accepting the terms
   # for a merge request
   def oauth_return
     redirect_back_or_default '/'
   end
-  
+
   def terms_accepted
     @merge_request = @repository.merge_requests.find_by_sequence_number!(params[:id])
     if @merge_request.terms_accepted
@@ -145,7 +149,7 @@ class MergeRequestsController < ApplicationController
     redirect_to project_repository_merge_request_path(@repository.project,
       @repository, @merge_request)
   end
-  
+
   def create
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
@@ -163,12 +167,12 @@ class MergeRequestsController < ApplicationController
       end
     end
   end
-  
+
   def edit
     @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
     get_branches_and_commits_for_selection
   end
-  
+
   def update
     @merge_request.attributes = params[:merge_request]
     if @merge_request.save
@@ -182,13 +186,13 @@ class MergeRequestsController < ApplicationController
       render :action => "edit"
     end
   end
-  
+
   def destroy
     @merge_request.destroy
     flash[:success] = I18n.t "merge_requests_controller.destroy_success"
     redirect_to [@owner, @repository]
   end
-  
+
   def direct_access
     # One of the very rare occasions we find by id
     merge_request = MergeRequest.find(params[:id])
@@ -196,22 +200,22 @@ class MergeRequestsController < ApplicationController
     repository = merge_request.target_repository
     redirect_to [project, repository, merge_request]
   end
-  
-  protected    
+
+  protected
     def find_repository
       @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
         @containing_project)
       @project = @repository.project
     end
-    
+
     def merge_request_created
       if @merge_request.acceptance_of_terms_required?
         request_token = obtain_oauth_request_token
         @merge_request.oauth_request_token = request_token
         @merge_request.save
         returning_page = terms_accepted_project_repository_merge_request_path(
-            @repository.project, 
-            @merge_request.target_repository, 
+            @repository.project,
+            @merge_request.target_repository,
             @merge_request)
         store_location(returning_page)
         @redirection_path = request_token.authorize_url
@@ -221,7 +225,7 @@ class MergeRequestsController < ApplicationController
         @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
         @merge_request.confirmed_by_user
         @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
-          :project_repository_merge_request_path, @repository.project, 
+          :project_repository_merge_request_path, @repository.project,
           @merge_request.target_repository, @merge_request)
       end
 
@@ -230,21 +234,21 @@ class MergeRequestsController < ApplicationController
           redirect_to @redirection_path
           return
         }
-        format.xml { render :xml => @merge_request, :status => :created }      
+        format.xml { render :xml => @merge_request, :status => :created }
       end
     end
-    
+
     def find_merge_request
       @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id])
     end
-    
+
     def obtain_oauth_request_token
       request_token = @merge_request.oauth_consumer.get_request_token(
         'user_login' => current_user.login,
         'merge_request_id' => @merge_request.id)
       return request_token
     end
-    
+
     def assert_merge_request_resolvable
       unless @merge_request.resolvable_by?(current_user)
         respond_to do |format|
@@ -258,7 +262,7 @@ class MergeRequestsController < ApplicationController
         return
       end
     end
-    
+
     def assert_merge_request_ownership
       if @merge_request.user != current_user
         respond_to do |format|
@@ -272,11 +276,11 @@ class MergeRequestsController < ApplicationController
         return
       end
     end
-    
+
     def get_branches_and_commits_for_selection
       @source_branches = @repository.git.branches
       @target_branches = @merge_request.target_branches_for_selection
       @commits = @merge_request.commits_for_selection
     end
-  
+
 end

@@ -23,7 +23,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
   def setup
     login_as :johan
   end
-  
+
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :new)
   should_enforce_ssl_for(:post, :create)
@@ -36,7 +36,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
     assert_response :success
     assert_match(/Create New User/, @response.body)
   end
-  
+
   should "GET /admin/users/new" do
     get :new
     assert_response :success
@@ -81,14 +81,14 @@ class Admin::UsersControllerTest < ActionController::TestCase
     assert_redirected_to(root_path)
     assert_equal "For Administrators Only", flash[:error]
   end
-  
+
   context "#reset_password" do
     should "redirects to forgot_password if nothing was found" do
       post :reset_password, :id => 'invalid_user'
       assert_redirected_to(admin_users_path)
       assert_match(/invalid email/i, flash[:error])
     end
-    
+
     should "sends a new password if email was found" do
       u = users(:johan)
       User.expects(:generate_random_password).returns("secret")
@@ -96,14 +96,17 @@ class Admin::UsersControllerTest < ActionController::TestCase
       post :reset_password, :id => u.to_param
       assert_redirected_to(admin_users_path)
       assert_equal "A new password has been sent to your email", flash[:notice]
-      
+
       assert_not_nil User.authenticate(u.email, "secret")
     end
   end
-  
-  
+
+  context "users pagination" do
+    should_scope_pagination_to(:index, User, :delete_all => false)
+  end
+
   def valid_admin_user
-    { 
+    {
       :login => 'johndoe',
       :email => 'foo@foo.com',
       :password => 'johndoe',

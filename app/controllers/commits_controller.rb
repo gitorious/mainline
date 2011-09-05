@@ -41,7 +41,13 @@ class CommitsController < ApplicationController
 
     if stale_conditional?(head.commit.id, head.commit.committed_date.utc)
       @root = Breadcrumb::Branch.new(head, @repository)
-      @commits = @repository.cached_paginated_commits(@ref, params[:page])
+
+      @commits = paginate(page_free_redirect_options) do
+        @repository.cached_paginated_commits(@ref, params[:page])
+      end
+
+      return if @commits.count == 0 && params.key?(:page)
+
       @atom_auto_discovery_url = project_repository_formatted_commits_feed_path(@project, @repository, params[:branch], :atom)
       respond_to do |format|
         format.html
@@ -121,16 +127,16 @@ class CommitsController < ApplicationController
       end
     end
   end
-  
+
   protected
     def handle_missing_sha
       flash[:error] = "No such SHA1 was found"
-      redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project, 
+      redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project,
                       @repository)
     end
-    
+
     def redirect_to_ref(ref)
-      redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path, 
+      redirect_to repo_owner_path(@repository, :project_repository_commits_in_ref_path,
                       @project, @repository, ref)
     end
 

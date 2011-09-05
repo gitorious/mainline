@@ -19,22 +19,26 @@
 class Admin::UsersController < ApplicationController
   before_filter :login_required
   before_filter :require_site_admin
-  
+
   def index
-    @users = User.paginate(:all, :order => 'suspended_at, login', 
-                            :page => params[:page])
+    @users = paginate(:action => "index") do
+      User.paginate(:all, :order => 'suspended_at, login', :page => params[:page])
+    end
+
+    return if @users.length == 0 && params.key?(:page)
+
     respond_to do |wants|
       wants.html
     end
   end
-  
+
   def new
     @user = User.new
     respond_to do |wants|
       wants.html
     end
   end
-  
+
   def create
     @user = User.new(params[:user])
     @user.login = params[:user][:login]
@@ -54,8 +58,8 @@ class Admin::UsersController < ApplicationController
       end
     end
   end
-  
-  
+
+
   def suspend
     @user = User.find_by_login!(params[:id])
     @user.suspended_at = Time.now
@@ -66,7 +70,7 @@ class Admin::UsersController < ApplicationController
     end
     redirect_to admin_users_url()
   end
-  
+
   def unsuspend
     @user = User.find_by_login!(params[:id])
     @user.suspended_at = nil
@@ -90,9 +94,9 @@ class Admin::UsersController < ApplicationController
     end
     redirect_to admin_users_url()
   end
-  
+
   private
-  
+
   def require_site_admin
     unless current_user.site_admin?
       flash[:error] = I18n.t "admin.users_controller.check_admin"

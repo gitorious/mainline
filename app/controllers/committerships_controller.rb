@@ -26,7 +26,10 @@ class CommittershipsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    @committerships = @repository.committerships.paginate(:all, :page => params[:page])
+    @committerships = paginate(page_free_redirect_options) do
+      @repository.committerships.paginate(:all, :page => params[:page])
+    end
+
     @root = Breadcrumb::Committerships.new(@repository)
   end
 

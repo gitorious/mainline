@@ -234,6 +234,11 @@ class UsersControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_match(/is not public/, flash[:notice])
     end
+
+    context "paginating user events" do
+      setup { @params = { :id => users(:johan).login } }
+      should_scope_pagination_to(:show, Event)
+    end
   end
 
   should "has an atom feed" do

@@ -20,7 +20,9 @@ class Admin::RepositoriesController < ApplicationController
   before_filter :require_site_admin
 
   def index
-    @unready_repositories = Repository.regular.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
+    @unready_repositories = paginate(:action => "index") do
+      Repository.regular.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
+    end
   end
 
   def recreate
@@ -37,5 +39,4 @@ class Admin::RepositoriesController < ApplicationController
       redirect_to root_path
     end
   end
-
 end

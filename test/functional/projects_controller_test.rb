@@ -140,36 +140,8 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_template(("index"))
     end
 
-    context "index with page parameter" do
-      should "redirect to index if page doesn't exist" do
-        get :index, :page => 2
-
-        assert_response :redirect
-        assert_redirected_to :action => "index"
-      end
-
-      should "add flash message explaining that page doesn't exist" do
-        get :index, :page => 2
-
-        assert_not_nil flash[:error]
-        assert_match /no project/, flash[:error]
-        assert_match /2/, flash[:error]
-      end
-
-      should "not redirect in a loop when there are no projects" do
-        Project.delete_all
-
-        get :index
-
-        assert_response :success
-      end
-
-      should "redirect to index if page is < 0" do
-        get :index, :page => -1
-
-        assert_response :redirect
-        assert_redirected_to :action => "index"
-      end
+    context "projects pagination" do
+      should_scope_pagination_to(:index, Project)
     end
 
     should "GET projects/new succesfully" do
@@ -446,40 +418,9 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_not_equal page_one_etag, @response.etag
     end
 
-    context "GET show with page parameter" do
-      setup do
-        @project = projects(:johans)
-      end
-
-      should "redirect to show if page doesn't exist" do
-        get :show, :id => @project.to_param, :page => 2
-
-        assert_response :redirect
-        assert_redirected_to :action => "show", :id => @project.to_param
-      end
-
-      should "add flash message explaining that page doesn't exist" do
-        get :show, :id => @project.to_param, :page => 2
-
-        assert_not_nil flash[:error]
-        assert_match /no events/, flash[:error]
-        assert_match /2/, flash[:error]
-      end
-
-      should "not redirect in a loop when there are no events" do
-        Event.delete_all
-
-        get :show, :id => @project.to_param
-
-        assert_response :success
-      end
-
-      should "redirect to index if page is < 0" do
-        get :show, :id => @project.to_param, :page => -1
-
-        assert_response :redirect
-        assert_redirected_to :action => "show", :id => @project.to_param
-      end
+    context "project event pagination" do
+      setup { @params = { :id => projects(:johans).to_param } }
+      should_scope_pagination_to(:show, Event)
     end
   end
 

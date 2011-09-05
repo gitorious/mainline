@@ -21,16 +21,20 @@
 
 class EventsController < ApplicationController
   def index
-    @events = Event.paginate(:all, :order => "events.created_at desc", 
-                  :page => params[:page], :include => [:user])
+    @events = paginate(page_free_redirect_options) do
+      Event.paginate(:all, :order => "events.created_at desc",
+                     :page => params[:page], :include => [:user])
+    end
+
+    return if @events.count == 0 && params.key?(:page)
     @atom_auto_discovery_url = events_path(:format => :atom)
-    
+
     respond_to do |if_format_is|
       if_format_is.html {}
       if_format_is.atom {}
     end
   end
-  
+
   def commits
     @event = Event.find(params[:id])
     @repository = @event.target

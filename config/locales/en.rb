@@ -51,7 +51,8 @@
       :assert_ownership_error => "You are not the owner of this merge request",
       :need_contribution_agreement => "You need to accept the contribution agreement",
       :reopened => 'Merge request was reopened',
-      :reopening_failed => 'Merge request could not be reopened'
+      :reopening_failed => 'Merge request could not be reopened',
+      :index_pagination_oob => "Sorry, there were no merge requests for page {{page}}"
     },
     :projects_controller => {
       :update_error => "You are not the owner of this project",
@@ -59,6 +60,29 @@
       :create_only_for_site_admins => "Only site administrators are allowed to create new projects",
       :show_pagination_oob => "Sorry, there were no events for page {{page}}.",
       :index_pagination_oob => "Sorry, there were no projects for page {{page}}."
+    },
+    :commits_controller => {
+      :index_pagination_oob => "Sorry, there were no commits for page {{page}}."
+    },
+    :messages_controller => {
+      :index_pagination_oob => "Sorry, there were no messages for page {{page}}.",
+      :all_pagination_oob => "Sorry, there were no messages for page {{page}}.",
+      :sent_pagination_oob => "Sorry, there were no sent messages for page {{page}}."
+    },
+    :events_controller => {
+      :index_pagination_oob => "Sorry, there were no events for page {{page}}."
+    },
+    :committerships_controller => {
+      :index_pagination_oob => "Sorry, there were no committerships for page {{page}}."
+    },
+    :admin_repositories_controller => {
+      :index_pagination_oob => "Sorry, there were no repositories for page {{page}}."
+    },
+    :admin_users_controller => {
+      :index_pagination_oob => "Sorry, there were no users for page {{page}}."
+    },
+    :searches_controller => {
+      :show_pagination_oob => "Sorry, there were no search results for page {{page}}."
     },
     :repositories_controller => {
       :new_clone_error => "Sorry, cannot clone an empty repository",
@@ -68,6 +92,8 @@
       :destroy_error => "You are not the owner of this repository",
       :adminship_error => "Sorry, only repository admins are allowed to do that",
       :only_projects_create_new_error => "You can only add new repositories directly to a project",
+      :index_pagination_oob => "Sorry, there were no repositories for page {{page}}.",
+      :show_pagination_oob => "Sorry, there were no events for page {{page}}."
     },
     :trees_controller => {
       :archive_error => "The given repository or sha is invalid"
@@ -83,6 +109,7 @@
       :reset_password_notice => "A new password has been sent to your email",
       :reset_password_error => "Invalid email",
       :reset_password_inactive_account  => 'Your account has not been activated yet. Please check your mailbox (including your spam folder) for an activation message from Gitorious',
+      :show_pagination_oob => "Sorry, there were no events for page {{page}}."
     },
     :pages_controller => {
       :invalid_page_error => "invalid page, badly formatted title or body",
@@ -94,6 +121,7 @@
       :membership_updated => "Membership was updated",
       :failed_to_destroy => "Failed to destroy membership",
       :membership_destroyed => "Membership deleted",
+      :index_pagination_oob => "Sorry, there were no memberships for page {{page}}."
     },
     :application_helper => {
       :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},

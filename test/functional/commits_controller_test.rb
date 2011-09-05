@@ -369,4 +369,28 @@ class CommitsControllerTest < ActionController::TestCase
       end
     end
   end
+
+  context "paginating commits" do
+    setup do
+      @project = projects(:johans)
+      @repository = @project.repositories.first
+      @repository.update_attribute(:ready, true)
+      Project.stubs(:find_by_slug!).with(@project.slug).returns(@project)
+      Repository.stubs(:find_by_name_and_project_id!) \
+        .with(@repository.name, @project.id).returns(@repository)
+      Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
+      @git = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+      Repository.any_instance.stubs(:git).returns(@git)
+
+      @params = {
+        :project_id => @project.slug,
+        :repository_id => @repository.name,
+        :branch => ["master"]
+      }
+    end
+
+    context "commits pagination" do
+      should_scope_pagination_to(:index, nil, "commits", :delete_all => false)
+    end
+  end
 end

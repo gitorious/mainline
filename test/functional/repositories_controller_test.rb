@@ -17,7 +17,7 @@
 #++
 
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class RepositoriesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :destroy)
@@ -30,7 +30,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :show)
   should_enforce_ssl_for(:post, :create)
   should_enforce_ssl_for(:put, :update)
-  
+
   def setup
     @project = projects(:johans)
     @repo = repositories(:johans)
@@ -403,11 +403,16 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal @project.repositories, assigns(:repositories)
     end
 
-    should 'render xml if requested' do
-      get :index, :project_id => @project.slug, :format => 'xml'
+    should "render xml if requested" do
+      get :index, :project_id => @project.slug, :format => "xml"
       assert_response :success
     end
-  end
+
+    context "paginating repositories" do
+      setup { @params = { :project_id => @project.slug } }
+      should_scope_pagination_to(:index, Repository)
+    end
+ end
 
   context "Searching" do
     setup do
@@ -483,6 +488,17 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal repositories(:johans).project, assigns(:owner)
       assert_equal repositories(:johans), assigns(:repository)
     end
+
+    context "paginating repository events" do
+      setup do
+        @params = {
+          :project_id => repositories(:johans).project.to_param,
+          :id => repositories(:johans).to_param
+        }
+      end
+
+      should_scope_pagination_to(:show, Event)
+    end
   end
 
   context "showing a team namespaced repo" do
@@ -527,7 +543,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repo.stubs(:ready).returns(false)
       do_show_get @repo
       assert_response :success
-      assert_not_nil @response.headers['Refresh']
+      assert_not_nil @response.headers["Refresh"]
     end
   end
 
@@ -764,14 +780,14 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should 'not identify a non-merge request git path as a merge request' do
+    should "not identify a non-merge request git path as a merge request" do
       do_writable_by_get({
         :git_path => "refs/heads/master"})
       assert_response :success
-      assert_equal 'true', @response.body
+      assert_equal "true", @response.body
     end
 
-    should 'identify that a merge request is being pushed to' do
+    should "identify that a merge request is being pushed to" do
       @merge_request = merge_requests(:mikes_to_johans)
       assert !@merge_request.user.can_write_to?(@merge_request.target_repository)
       do_writable_by_get({
@@ -780,29 +796,29 @@ class RepositoriesControllerTest < ActionController::TestCase
         :id => @merge_request.target_repository.to_param,
         :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
       assert_response :success
-      assert_equal 'true', @response.body
+      assert_equal "true", @response.body
     end
 
-    should 'not allow other users than the owner of a merge request push to a merge request' do
+    should "not allow other users than the owner of a merge request push to a merge request" do
       @merge_request = merge_requests(:mikes_to_johans)
       do_writable_by_get({
-        :username => 'johan',
+        :username => "johan",
         :project_id => @merge_request.target_repository.project.to_param,
         :id => @merge_request.target_repository.to_param,
         :git_path => "refs/merge-requests/#{@merge_request.to_param}"})
       assert_response :success
-      assert_equal 'false', @response.body
+      assert_equal "false", @response.body
     end
 
-    should 'not allow pushes to non-existing merge requests' do
+    should "not allow pushes to non-existing merge requests" do
       @merge_request = merge_requests(:mikes_to_johans)
       do_writable_by_get({
-        :username => 'johan',
+        :username => "johan",
         :project_id => @merge_request.target_repository.project.to_param,
         :id => @merge_request.target_repository.to_param,
         :git_path => "refs/merge-requests/42"})
       assert_response :success
-      assert_equal 'false', @response.body
+      assert_equal "false", @response.body
     end
 
 
@@ -1108,21 +1124,21 @@ class RepositoriesControllerTest < ActionController::TestCase
         "descr: #{@repository.description.inspect}"
     end
 
-    should 'update the repository name and create an event if a new name is provided' do
+    should "update the repository name and create an event if a new name is provided" do
       description = @repository.description
       assert_incremented_by(@repository.events, :size, 1) do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
-          :repository => {:name => 'new_name'}
+          :repository => {:name => "new_name"}
         @repository.events.reload
         @repository.reload
         assert_redirected_to project_repository_path(@project, @repository)
       end
-      assert_equal 'new_name', @repository.name
+      assert_equal "new_name", @repository.name
       assert_equal description, @repository.description
     end
 
 
-    should 'not create an event on update if the description is not changed' do
+    should "not create an event on update if the description is not changed" do
       assert_no_difference("@repository.events.size") do
         put :update, :project_id => @project.to_param, :id => @repository.to_param,
           :repository => {:description => @repository.description}

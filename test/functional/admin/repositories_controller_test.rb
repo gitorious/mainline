@@ -25,4 +25,9 @@ class Admin::RepositoriesControllerTest < ActionController::TestCase
       assert_response :redirect
     end
   end
+
+  context "pagination" do
+    setup { login_as :johan }
+    should_scope_pagination_to(:index, Repository)
+  end
 end

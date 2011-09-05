@@ -50,36 +50,8 @@ class GroupsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    context "with page parameter" do
-      should "redirect to index if page doesn't exist" do
-        get :index, :page => 2
-
-        assert_response :redirect
-        assert_redirected_to "/teams"
-      end
-
-      should "add flash message explaining that page doesn't exist" do
-        get :index, :page => 2
-
-        assert_not_nil flash[:error]
-        assert_match /no teams/, flash[:error]
-        assert_match /2/, flash[:error]
-      end
-
-      should "not redirect in a loop when there are no teams" do
-        Group.delete_all
-
-        get :index
-
-        assert_response :success
-      end
-
-      should "redirect to index if page is < 0" do
-        get :index, :page => -1
-
-        assert_response :redirect
-        assert_redirected_to "/teams"
-      end
+    context "teams pagination" do
+      should_scope_pagination_to(:index, Group, "teams")
     end
   end
 
@@ -90,36 +62,9 @@ class GroupsControllerTest < ActionController::TestCase
       assert_equal @group, assigns(:group)
     end
 
-    context "with page parameter" do
-      should "redirect to show if page doesn't exist" do
-        get :show, :id => @group.to_param, :page => 2
-
-        assert_response :redirect
-        assert_redirected_to :action => "show", :id => @group.to_param
-      end
-
-      should "add flash message explaining that page doesn't exist" do
-        get :show, :id => @group.to_param, :page => 2
-
-        assert_not_nil flash[:error]
-        assert_match /no events/, flash[:error]
-        assert_match /2/, flash[:error]
-      end
-
-      should "not redirect in a loop when there are no events" do
-        Event.delete_all
-
-        get :show, :id => @group.to_param
-
-        assert_response :success
-      end
-
-      should "redirect to index if page is < 0" do
-        get :show, :id => @group.to_param, :page => -1
-
-        assert_response :redirect
-        assert_redirected_to :action => "show", :id => @group.to_param
-      end
+    context "pagination" do
+      setup { @params = { :id => @group.to_param } }
+      should_scope_pagination_to(:show, Event)
     end
   end
 

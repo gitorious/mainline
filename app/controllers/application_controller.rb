@@ -338,12 +338,19 @@ class ApplicationController < ActionController::Base
       end
 
       if params.key?(:page) && items.count == 0
-        key = "#{params[:controller]}_controller.#{params[:action]}_pagination_oob"
+        controller = params[:controller].gsub("/", "_")
+        key = "#{controller}_controller.#{params[:action]}_pagination_oob"
         flash[:error] = I18n.t(key, :page => params[:page])
         redirect_to(redirect_options)
       end
 
       items
+    end
+
+    def page_free_redirect_options
+      redirect_options = params.dup
+      redirect_options.delete(:page)
+      redirect_options
     end
 
     helper_method :unshifted_polymorphic_path

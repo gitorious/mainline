@@ -36,8 +36,13 @@ class RepositoriesController < ApplicationController
     if term = params[:filter]
       @repositories = @project.search_repositories(term)
     else
-      @repositories = @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
+      @repositories = paginate(page_free_redirect_options) do
+        @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
+      end
     end
+
+    return if @repositories.count == 0 && params.key?(:page)
+
     respond_to do |wants|
       wants.html
       wants.xml {render :xml => @repositories.to_xml}
@@ -48,9 +53,11 @@ class RepositoriesController < ApplicationController
   def show
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
     @root = @repository
-    @events = @repository.events.top.paginate(:all, :page => params[:page],
-      :order => "created_at desc")
+    @events = paginate(page_free_redirect_options) do
+      @repository.events.top.paginate(:all, :page => params[:page], :order => "created_at desc")
+    end
 
+    return if @events.count == 0 && params.key?(:page)
     @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
                                   @repository.project, @repository, :format => :atom)
     response.headers['Refresh'] = "5" unless @repository.ready

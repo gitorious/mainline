@@ -99,6 +99,15 @@ class CommittershipsControllerTest < ActionController::TestCase
       })
       assert_equal exp, assigns(:committerships)
     end
+
+    context "commitership pagination" do
+      setup do
+        login_as :johan
+        @params = { :user_id => @user.to_param, :repository_id => @repository.to_param }
+      end
+
+      should_scope_pagination_to(:index, Committership, :delete_all => false)
+    end
   end
 
   context "GET new" do
