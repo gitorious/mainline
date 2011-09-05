@@ -20,13 +20,13 @@ class GroupsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
   before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update, :avatar]
   renders_in_global_context
-  
+
   def index
     @groups = paginate(:action => "index") do
       Group.paginate(:all, :page => params[:page])
     end
   end
-  
+
   def show
     @group = Group.find_by_name!(params[:id],
               :include => [:members, :projects, :repositories, :committerships])
@@ -36,14 +36,14 @@ class GroupsController < ApplicationController
       @group.events(params[:page])
     end
   end
-  
+
   def new
     @group = Group.new
   end
-  
+
   def edit
   end
-  
+
   def update
     @group.description = params[:group][:description]
     @group.avatar = params[:group][:avatar]
@@ -52,7 +52,7 @@ class GroupsController < ApplicationController
     rescue ActiveRecord::RecordInvalid
       render :action => 'edit'
   end
-  
+
   def create
     @group = Group.new(params[:group])
     @group.transaction do
@@ -68,7 +68,7 @@ class GroupsController < ApplicationController
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
     render :action => "new"
   end
-  
+
   def destroy
     @group = Group.find_by_name!(params[:id])
     if current_user.site_admin? || (@group.admin?(current_user) && @group.deletable?)
@@ -80,7 +80,7 @@ class GroupsController < ApplicationController
       redirect_to group_path(@group)
     end
   end
-  
+
   # DELETE avatar
   def avatar
     @group.avatar.destroy
@@ -88,9 +88,9 @@ class GroupsController < ApplicationController
     flash[:success] = "The team image was deleted"
     redirect_to group_path(@group)
   end
-  
+
   def auto_complete_for_project_slug
-    @projects = Project.find(:all, 
+    @projects = Project.find(:all,
       :conditions => ['LOWER(slug) LIKE ?', "%#{params[:project][:slug].downcase}%"],
       :limit => 10)
     render :layout => false
