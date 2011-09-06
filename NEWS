@@ -4,6 +4,13 @@ This document lists new features in the Gitorious source code. If you
 are looking for detailed information about invidiual commits, use the
 Git log. Oldest news at the bottom, newest at the top.
 
+=== New messaging API
+
+No longer depend on ActiveMessaging for asynchronous processing. We
+now support several kinds of messaging backends, and a simple API for
+adding new ones. Refer to lib/gitorious/messaging for more information
+on the new API.
+
 === Improved SSL
 
 The gitorious.yml configuration file now has a configuration setting
@@ -36,7 +43,7 @@ Should we generate a push event?
 |      | CREATE | UPDATE | DELETE |
 | tag  | no     | no     | no     |
 | head | no     | yes    | no     |
-    
+
 Should we generate a "meta" event?
 |      | CREATE | UPDATE | DELETE |
 | tag  | yes    | no     | yes    |
