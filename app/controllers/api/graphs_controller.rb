@@ -48,7 +48,7 @@ module Api
 
     private
     def graph_log(repo, type, branch = nil)
-      args = [repo.full_repository_path, "--decorate=full", "-50", type]
+      args = [repo.full_repository_path, "--decorate=full", "-100", type]
       args << desplat_path(branch) if branch
       git_shell.send(:graph_log, *args)
     end
