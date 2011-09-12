@@ -151,7 +151,7 @@ class ApplicationController < ActionController::Base
     end
 
     def render_git_timeout
-      render :partial => "/shared/git_timeout", :layout => "application" and return
+      render :partial => "/shared/git_timeout", :layout => (request.xhr? ? false : "application") and return
     end
 
     def render_throttled_record
