@@ -340,7 +340,7 @@ class ApplicationController < ActionController::Base
       if params.key?(:page) && items.count == 0
         controller = params[:controller].gsub("/", "_")
         key = "#{controller}_controller.#{params[:action]}_pagination_oob"
-        flash[:error] = I18n.t(key, :page => params[:page])
+        flash[:error] = I18n.t(key, :page => ERB::Util.html_escape(params[:page]))
         redirect_to(redirect_options)
       end
 
