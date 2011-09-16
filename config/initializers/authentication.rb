@@ -15,5 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+auth_configuration_path = File.join(Rails.root, "config", "authentication.yml")
 
-Gitorious::Authentication.methods << Gitorious::Authentication::DatabaseAuthentication.new
+if File.exist?(auth_configuration_path)
+  if config = YAML::load_file(auth_configuration_path)[RAILS_ENV]
+    Gitorious::Authentication::Configuration.configure(config)
+  else
+    Gitorious::Authentication::Configuration.use_default_configuration    
+  end
+else
+  Gitorious::Authentication::Configuration.use_default_configuration
+end

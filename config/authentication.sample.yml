@@ -1,0 +1,3 @@
+# Configure authentication by saving this file as
+# authentication.yml
+# One section for each RAILS_ENV, examples coming up

@@ -17,14 +17,23 @@
 #++
 module Gitorious
   module Authentication
-    # Returns the first matching User instance from all authentication methods
-    def self.authenticate(username, password)
-      Configuration.authentication_methods.each do |authenticator|
-        if result = authenticator.authenticate(username, password)
-          return result
-        end
+    module Configuration
+      
+      def self.configure(user_configuration)
+        use_default_configuration unless user_configuration["disable_default"]
       end
-      return nil
+
+      def self.use_default_configuration
+        add_authentication_method Gitorious::Authentication::DatabaseAuthentication.new
+      end
+
+      def self.add_authentication_method(method)
+        authentication_methods << method unless authentication_methods.any? {|m| m.class == method.class}
+      end
+
+      def self.authentication_methods
+        @authentication_methods ||= []
+      end      
     end
   end
 end
