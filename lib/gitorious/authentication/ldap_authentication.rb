@@ -43,16 +43,30 @@ module Gitorious
         build_distinguished_name_template(options["distinguished_name_template"])
       end
 
+      
+      # Ask the LDAP server if the credentials are correct
+      def valid_credentials?(username, password)
+        @connection  = @connection_type.new({:encryption => encryption, :host => server, :port => port})
+        connection.auth(build_username(username), password)
+        return connection.bind
+      end
+
       # The actual authentication callback
       def authenticate(username, password)
         return false unless valid_credentials?(username, password)
-        if existing_user = User.find_by_login(username)
+        if existing_user = User.find_by_login(transform_username(username))
           return existing_user
         else
           return auto_register(username)
         end
       end
-
+      
+      # Transform a username usable towards LDAP into something that passes Gitorious'
+      # username validations
+      def transform_username(username)
+        username.sub(".","")
+      end
+      
       def auto_register(username)
         filter = Net::LDAP::Filter.eq("cn", username)
         result = connection.search(:base => base_dn, :filter => filter,
@@ -60,7 +74,7 @@ module Gitorious
         if result.size > 0
           data = result.first
           user = User.new
-          user.login = username
+          user.login = transform_username(username)
           attribute_mapping.each do |ldap_name, our_name|
             user.write_attribute(our_name, data[ldap_name].first)
           end
@@ -68,16 +82,18 @@ module Gitorious
           user.password = "left_blank"
           user.password_confirmation = "left_blank"
           user.terms_of_use = '1'
+          user.aasm_state = "terms_accepted"
           user.activated_at = Time.now.utc
+          user.save
           user
         end
       end
 
-      # Ask the LDAP server if the credentials are correct
-      def valid_credentials?(username, password)
-        @connection = @connection_type.new({:encryption => encryption, :host => server, :port => port})
-        connection.auth(build_username(username), password)
-        return connection.bind
+      private
+
+      # The default mapping of LDAP -> User attributes
+      def default_attribute_mapping
+        {"displayname" => "fullname", "mail" => "email"}
       end
 
       def build_username(login)
@@ -88,10 +104,6 @@ module Gitorious
         @distinguished_name_template = template || "CN={},#{base_dn}"
       end
 
-      # The default mapping of LDAP -> User attributes
-      def default_attribute_mapping
-        {"displayname" => "fullname", "mail" => "email"}
-      end
     end
   end
 end

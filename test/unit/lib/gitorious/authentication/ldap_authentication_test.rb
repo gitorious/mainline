@@ -61,9 +61,17 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
   class StaticLDAPConnection
     def initialize(opts)
     end
+
+    def self.username=(name)
+      @username = name
+    end
+
+    def self.username
+      @username || "moe"
+    end
     
     def auth(username, password)
-      @allowed = username == "CN=moe,DC=gitorious,DC=org" && password == "secret"
+      @allowed = username == "CN=#{self.class.username},DC=gitorious,DC=org" && password == "secret"
     end
 
     def bind
@@ -103,14 +111,14 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
           "server" => "localhost",
           "base_dn" => "DC=gitorious,DC=org",
           "connection_type" => StaticLDAPConnection})
-      users(:moe).destroy
+      StaticLDAPConnection.username = "moe.szyslak"
     end
     
     should "create a new user with attributes mapped from LDAP" do
-      user = @ldap.authenticate("moe", "secret")
+      user = @ldap.authenticate("moe.szyslak", "secret")
       assert_equal "moe@gitorious.org", user.email
       assert_equal "Moe Szyslak", user.fullname
-      assert_equal "moe", user.login
+      assert_equal "moeszyslak", user.login
 
       assert user.valid?
     end
