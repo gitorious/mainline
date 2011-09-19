@@ -19,7 +19,9 @@ require "net/ldap"
 module Gitorious
   module Authentication
     class LDAPAuthentication
-      attr_reader :server, :port, :encryption, :attribute_mapping, :base_dn, :connection
+      attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
+        :connection_type, :distinguished_name_template)
+      
       
       def initialize(options)
         validate_requirements(options)
@@ -37,11 +39,31 @@ module Gitorious
         @attribute_mapping = options["attribute_mapping"] || default_attribute_mapping
         @encryption = (options["encryption"] || "simple_tls").to_sym
         @base_dn = options["base_dn"]
-        @connection = options["connection"] || Net::LDAP.new
+        @connection_type = options["connection_type"] || Net::LDAP
+        build_distinguished_name_template(options["distinguished_name_template"])
       end
 
       # The actual authentication callback
       def authenticate(username, password)
+        return false unless valid_credentials?(username, password)
+        if existing_user = User.find_by_login(username)
+          return existing_user
+        end
+      end
+
+      # Ask the LDAP server if the credentials are correct
+      def valid_credentials?(username, password)
+        connection = @connection_type.new({:encryption => encryption})
+        connection.auth(build_username(username), password)
+        return connection.bind
+      end
+
+      def build_username(login)
+        distinguished_name_template.sub("{}", login)
+      end
+
+      def build_distinguished_name_template(template)
+        @distinguished_name_template = template || "CN={},#{base_dn}"
       end
 
       # The default mapping of LDAP -> User attributes

@@ -46,6 +46,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       options = {"methods" => [{
                                  "adapter" => "Gitorious::Authentication::LDAPAuthentication",
                                  "server" => "directory.example",
+                                 "base_dn" => "DC=gitorious,DC=org",
                                  "port" => "998",
                                  "encryption" => "simple_tls",
                                  "attribute_mapping" => {"displayname"=> "fullname"}

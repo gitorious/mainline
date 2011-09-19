@@ -50,10 +50,46 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     end
 
     should "use a Net::LDAP instance by default" do
-      assert Net::LDAP === @ldap.connection
+      assert_equal Net::LDAP, @ldap.connection_type
+    end
+
+    should "provide a default DN template" do
+      assert_equal "CN={},DC=gitorious,DC=org", @ldap.distinguished_name_template
     end
   end
 
+  class StaticLDAPConnection
+    def initialize(opts)
+    end
+    
+    def auth(username, password)
+      @allowed = username == "CN=moe,DC=gitorious,DC=org" && password == "secret"
+    end
+
+    def bind
+      @allowed
+    end
+  end
+  
   context "Authentication" do
+    setup do
+      @ldap = Gitorious::Authentication::LDAPAuthentication.new({
+          "server" => "localhost",
+          "base_dn" => "DC=gitorious,DC=org",
+          "connection_type" => StaticLDAPConnection
+        })
+    end
+
+    should "not accept invalid credentials" do
+      assert !@ldap.valid_credentials?("moe","LetMe1n")
+    end
+    
+    should "accept valid credentials" do
+      assert @ldap.valid_credentials?("moe","secret")
+    end
+
+    should "return the actual user" do
+      assert_equal(users(:moe), @ldap.authenticate("moe","secret"))
+    end
   end
 end
