@@ -20,7 +20,7 @@ module Gitorious
   module Authentication
     class LDAPAuthentication
       attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
-        :connection_type, :distinguished_name_template)
+        :connection_type, :distinguished_name_template, :connection)
       
       
       def initialize(options)
@@ -48,12 +48,34 @@ module Gitorious
         return false unless valid_credentials?(username, password)
         if existing_user = User.find_by_login(username)
           return existing_user
+        else
+          return auto_register(username)
+        end
+      end
+
+      def auto_register(username)
+        filter = Net::LDAP::Filter.eq("cn", username)
+        result = connection.search(:base => base_dn, :filter => filter,
+          :attributes => attribute_mapping.keys, :return_result => true)
+        if result.size > 0
+          data = result.first
+          user = User.new
+          user.login = username
+          attribute_mapping.each do |ldap_name, our_name|
+            user.write_attribute(our_name, data[ldap_name].first)
+          end
+
+          user.password = "left_blank"
+          user.password_confirmation = "left_blank"
+          user.terms_of_use = '1'
+          user.activated_at = Time.now.utc
+          user
         end
       end
 
       # Ask the LDAP server if the credentials are correct
       def valid_credentials?(username, password)
-        connection = @connection_type.new({:encryption => encryption})
+        @connection = @connection_type.new({:encryption => encryption, :host => server, :port => port})
         connection.auth(build_username(username), password)
         return connection.bind
       end

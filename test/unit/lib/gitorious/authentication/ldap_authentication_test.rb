@@ -69,6 +69,10 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     def bind
       @allowed
     end
+
+    def search(options)
+      ["displayname" => ["Moe Szyslak"], "mail" => ["moe@gitorious.org"]]
+    end
   end
   
   context "Authentication" do
@@ -92,4 +96,23 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       assert_equal(users(:moe), @ldap.authenticate("moe","secret"))
     end
   end
+
+  context "Auto-registration" do
+    setup do
+      @ldap = Gitorious::Authentication::LDAPAuthentication.new({
+          "server" => "localhost",
+          "base_dn" => "DC=gitorious,DC=org",
+          "connection_type" => StaticLDAPConnection})
+      users(:moe).destroy
+    end
+    
+    should "create a new user with attributes mapped from LDAP" do
+      user = @ldap.authenticate("moe", "secret")
+      assert_equal "moe@gitorious.org", user.email
+      assert_equal "Moe Szyslak", user.fullname
+      assert_equal "moe", user.login
+
+      assert user.valid?
+    end
+  end  
 end

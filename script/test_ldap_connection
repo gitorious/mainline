@@ -1,0 +1,18 @@
+# Test a username/password combination towards the LDAP server specified in config/authentication.yml
+
+if ARGV.size < 2
+  abort "Usage: #{$0} username password"
+end
+
+require "config/environment"
+
+username = ARGV[0]
+password = ARGV[1]
+ldap = Gitorious::Authentication::Configuration.authentication_methods.last
+
+if ldap.valid_credentials?(username, password)
+  puts "All good, your credentials are correct"
+else
+  puts "Not there yet."
+  puts "For debugging purposes, this is the DN we tried: #{ldap.build_username(username)}"
+end
