@@ -21,6 +21,7 @@ module Gitorious
       
       def self.configure(user_configuration)
         use_default_configuration unless user_configuration["disable_default"]
+        Array(user_configuration["methods"]).each { |m| add_custom_method(m)}
       end
 
       def self.use_default_configuration
@@ -28,7 +29,16 @@ module Gitorious
       end
 
       def self.add_authentication_method(method)
-        authentication_methods << method unless authentication_methods.any? {|m| m.class == method.class}
+        authentication_methods << method unless method_added?(method.class)
+      end
+
+      def self.method_added?(method_class)
+         authentication_methods.any? {|m| m.class == method_class}
+      end
+
+      def self.add_custom_method(configuration)
+        method_class = configuration["adapter"].constantize
+        add_authentication_method(method_class.new(configuration))
       end
 
       def self.authentication_methods

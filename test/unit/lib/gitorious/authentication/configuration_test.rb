@@ -56,4 +56,23 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       assert_equal 1, Gitorious::Authentication::Configuration.authentication_methods.size
     end
   end
+
+  context "LDAP authentication" do
+    setup do
+      Gitorious::Authentication::Configuration.authentication_methods.clear
+      options = {"methods" => [{
+                                 "adapter" => "Gitorious::Authentication::LDAPAuthentication",
+                                 "server" => "directory.example",
+                                 "port" => "998",
+                                 "encryption" => "simple_tls",
+                                 "attribute_mapping" => {"displayname"=> "fullname"}
+                               }]}
+      Gitorious::Authentication::Configuration.configure(options)
+      @ldap = Gitorious::Authentication::Configuration.authentication_methods.last
+    end
+    
+    should "configure LDAP authentication" do
+      assert_equal "directory.example", @ldap.server
+    end
+  end
 end
