@@ -80,6 +80,7 @@ GEM
     revo-ssl_requirement (1.1.0)
     riddle (1.2.2)
     ruby-hmac (0.4.0)
+    ruby-net-ldap (0.0.4)
     ruby-openid (2.1.8)
     ruby-yadis (0.3.4)
     rubyforge (2.0.4)
@@ -141,6 +142,7 @@ DEPENDENCIES
   riddle
   rots!
   ruby-hmac
+  ruby-net-ldap (~> 0.0.4)
   ruby-openid
   ruby-yadis
   shoulda (~> 2.9.1)

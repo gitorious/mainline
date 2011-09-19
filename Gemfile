@@ -23,6 +23,7 @@ gem "acts-as-taggable-on"
 gem "will_paginate"
 gem "hodel_3000_compliant_logger"
 gem "capillary", "~> 0.1.3"
+gem "ruby-net-ldap", "~> 0.0.4"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

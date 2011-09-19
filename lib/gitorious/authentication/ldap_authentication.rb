@@ -15,12 +15,38 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "net/ldap"
 module Gitorious
   module Authentication
     class LDAPAuthentication
-      attr_reader :server
+      attr_reader :server, :port, :encryption, :attribute_mapping, :base_dn, :connection
+      
       def initialize(options)
+        validate_requirements(options)
+        setup_attributes(options)
+      end
+
+      def validate_requirements(options)
+        raise ConfigurationError, "Server name required" unless options.key?("server")
+        raise ConfigurationError, "Base DN required" unless options.key?("base_dn")
+      end
+        
+      def setup_attributes(options)
         @server = options["server"]
+        @port = (options["port"] || 389).to_i
+        @attribute_mapping = options["attribute_mapping"] || default_attribute_mapping
+        @encryption = (options["encryption"] || "simple_tls").to_sym
+        @base_dn = options["base_dn"]
+        @connection = options["connection"] || Net::LDAP.new
+      end
+
+      # The actual authentication callback
+      def authenticate(username, password)
+      end
+
+      # The default mapping of LDAP -> User attributes
+      def default_attribute_mapping
+        {"displayname" => "fullname", "mail" => "email"}
       end
     end
   end

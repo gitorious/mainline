@@ -45,5 +45,8 @@ module Gitorious
         @authentication_methods ||= []
       end      
     end
+
+    class ConfigurationError < StandardError
+    end
   end
 end
