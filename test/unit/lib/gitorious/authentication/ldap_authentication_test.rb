@@ -18,11 +18,29 @@
 
 require "test_helper"
 class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
+
+  # Mock that should receive callbacks
+  class CallbackMock
+    def self.reset
+      @post_authenticate_called = nil
+    end
+    
+    def self.post_authenticate(options)
+      @post_authenticate_called = :true
+    end
+
+    def self.called?
+      @post_authenticate_called == :true
+    end
+  end
+
+  
   context "Configuration" do
     setup do
       @ldap = Gitorious::Authentication::LDAPAuthentication.new({
           "server" => "localhost",
-          "base_dn" => "DC=gitorious,DC=org"})
+          "base_dn" => "DC=gitorious,DC=org"
+        })
     end
 
     should "require a server name" do
@@ -102,6 +120,29 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
 
     should "return the actual user" do
       assert_equal(users(:moe), @ldap.authenticate("moe","secret"))
+    end
+  end
+
+  context "Callbacks" do
+    setup do
+      @ldap = Gitorious::Authentication::LDAPAuthentication.new({
+          "server" => "localhost",
+          "base_dn" => "DC=gitorious,DC=org",
+          "connection_type" => StaticLDAPConnection,
+          "callback_class" => "Gitorious::Authentication::ConfigurationTest::CallbackMock"
+        })
+      CallbackMock.reset
+      StaticLDAPConnection.username = "moe"
+    end
+
+    should "not call post_authenticate when login fails" do
+      assert !@ldap.authenticate("moe", "ohno")
+      assert !CallbackMock.called?
+    end
+
+    should "call post_authenticate after successful login" do
+      assert_equal users(:moe), @ldap.authenticate("moe","secret")
+      assert CallbackMock.called?
     end
   end
 

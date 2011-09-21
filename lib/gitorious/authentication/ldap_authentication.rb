@@ -40,9 +40,17 @@ module Gitorious
         @encryption = (options["encryption"] || "simple_tls").to_sym
         @base_dn = options["base_dn"]
         @connection_type = options["connection_type"] || Net::LDAP
+        @callback_class = options["callback_class"].constantize if options.key?("callback_class")
         build_distinguished_name_template(options["distinguished_name_template"])
       end
 
+      def post_authenticate(options)
+        if @callback_class
+          return @callback_class.post_authenticate(options)
+        else
+          return true
+        end
+      end
       
       # Ask the LDAP server if the credentials are correct
       def valid_credentials?(username, password)
@@ -55,10 +63,13 @@ module Gitorious
       def authenticate(username, password)
         return false unless valid_credentials?(username, password)
         if existing_user = User.find_by_login(transform_username(username))
-          return existing_user
+          user = existing_user
         else
-          return auto_register(username)
+          user = auto_register(username)
         end
+
+        return unless post_authenticate({:connection => connection, :username => username})
+        user
       end
       
       # Transform a username usable towards LDAP into something that passes Gitorious'

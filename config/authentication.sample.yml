@@ -14,4 +14,6 @@
 #         givenName: fullname
 #         publicEmail: email
 #       encryption: simple_tls                                  # See Net-LDAP for other options
+#       callback_class: SampleCallback                          # A class/object that will be called after successful authentication through LDAP. See LdapAuthenticationTest
+#                                                               # Will be "constantized", post_authenticate will be called with an options hash
 # production:
