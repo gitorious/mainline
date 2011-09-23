@@ -159,7 +159,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       user = @ldap.authenticate("moe.szyslak", "secret")
       assert_equal "moe@gitorious.org", user.email
       assert_equal "Moe Szyslak", user.fullname
-      assert_equal "moeszyslak", user.login
+      assert_equal "moe-szyslak", user.login
 
       assert user.valid?
     end
