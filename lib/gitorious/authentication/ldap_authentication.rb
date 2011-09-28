@@ -54,6 +54,8 @@ module Gitorious
       
       # Ask the LDAP server if the credentials are correct
       def valid_credentials?(username, password)
+        return false if password.blank?
+
         @connection  = @connection_type.new({:encryption => encryption, :host => server, :port => port})
         connection.auth(build_username(username), password)
         return connection.bind
