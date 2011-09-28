@@ -103,12 +103,21 @@
     border-bottom: 1px solid #b5b5b5;
 }
 
-#sidebar ul.links li.last a:hover {
+#sidebar ul.links li.last a:hover,
+#sidebar ul.links li.double_row.last a.compare_diffs:hover {
     -webkit-border-bottom-right-radius: 6px;
     -webkit-border-bottom-left-radius: 6px;
     -moz-border-radius-bottomright: 6px;
     -moz-border-radius-bottomleft: 6px;
     border-bottom: 1px solid #b5b5b5;
+}
+
+#sidebar ul.links li.double_row.last a:hover {
+    -webkit-border-bottom-right-radius: 0;
+    -webkit-border-bottom-left-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -moz-border-radius-bottomleft: 0;
+    border-bottom: 0;
 }
 
 #sidebar ul.links li a {
