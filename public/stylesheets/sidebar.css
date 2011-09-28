@@ -69,7 +69,7 @@
     width: 240px;
     float: left;
     height: 34px;
-    -webkit-box-shadow: 0px 1px 0px #EEE inset;
+    -webkit-box-shadow: inset 0px 1px 0px #EEE;
     -moz-box-shadow: inset 0px 1px 0px #EEE;
     border-left: 1px solid #b5b5b5;
     border-right: 1px solid #b5b5b5;
@@ -152,12 +152,20 @@
 #sidebar ul.disable_hover.links li a:hover {
   text-decoration: underline;
   background-color: inherit;
+  -webkit-box-shadow: inset 0px 1px 0px #EEE;
+  -moz-box-shadow: inset 0px 1px 0px #EEE;
+}
+
+#sidebar ul.disable_hover.links li a.compare_diffs:hover {
+  text-decoration: underline;
+  background-color: inherit;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
 }
 
 #sidebar ul.links li a:hover {
     color: #535353;
     text-shadow: 0px 1px #EEE;
-    -webkit-box-shadow: 0px 1px 0px #e9e9e9 inset;
     text-decoration: none;
     background: #cecece no-repeat 10px 9px;
     background-image: url("../images/silk/bullet_go.png");
