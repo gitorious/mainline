@@ -104,7 +104,7 @@
     </ul>
 
     <% unless @git.tags.blank? -%>
-      <ul class="links navigation">
+      <ul class="links navigation disable_hover">
 	      <h5><%= t("views.logs.tags") %>:</h5>
         <%= tree_and_diff_link(@commit, @ref, @git.tags.sort{ |a, b| a.name <=> b.name }, @project, @repository) %>
       </ul>
