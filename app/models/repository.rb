@@ -684,7 +684,7 @@ class Repository < ActiveRecord::Base
   # Runs git-gc on this repository, and updates the last_gc_at attribute
   def gc!
     Grit::Git.with_timeout(nil) do
-      if self.git.gc_auto
+      if self.git.git.gc
         self.last_gc_at = Time.now
         self.push_count_since_gc = 0
         return save
