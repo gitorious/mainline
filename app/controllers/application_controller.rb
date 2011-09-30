@@ -180,20 +180,20 @@ class ApplicationController < ActionController::Base
     def branch_and_path(branch_and_path, git)
       branch_and_path = desplat_path(branch_and_path)
       branch_ref = path = nil
-      heads = Array(git.heads).map{|h| h.name }.sort{|a,b| b.length <=> a.length }
-      heads.each do |head|
-        if "#{branch_and_path}/".starts_with?("#{head}/")
-          branch_ref = head
-          path = ensplat_path(branch_and_path.sub(head, "")) || []
+      tags = Array(git.tags).map{|t| t.name }.sort{|a,b| b.length <=> a.length }
+      tags.each do |tag|
+        if "#{branch_and_path}/".starts_with?("#{tag}/")
+          branch_ref = tag
+          path = ensplat_path(branch_and_path.sub(tag, "")) || []
           break
         end
       end
       unless path
-        tags = Array(git.tags).map{|t| t.name }.sort{|a,b| b.length <=> a.length }
-        tags.each do |tag|
-          if "#{branch_and_path}/".starts_with?("#{tag}/")
-            branch_ref = tag
-            path = ensplat_path(branch_and_path.sub(tag, "")) || []
+        heads = Array(git.heads).map{|h| h.name }.sort{|a,b| b.length <=> a.length }
+        heads.each do |head|
+          if "#{branch_and_path}/".starts_with?("#{head}/")
+            branch_ref = head
+            path = ensplat_path(branch_and_path.sub(head, "")) || []
             break
           end
         end
