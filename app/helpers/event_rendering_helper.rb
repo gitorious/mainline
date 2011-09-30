@@ -143,7 +143,7 @@ module EventRenderingHelper
     end
 
     body = link_to(h(event.data) + ": " + h(event.body),
-                   project_repository_tree_path(project, event.target, h(ensplat_path(event.data))))
+                   project_repository_tree_path(project, event.target, ensplat_path(h(event.data))))
 
     category = "commit"
     [action, body, category]
