@@ -1,0 +1,38 @@
+ <%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<li>
+  <%= link_button_link_to(t("views.keys.manage_ssh_keys"),
+        user_keys_path(current_user), :class => "key") -%>
+</li>
+<li>
+  <%= link_button_link_to(t("views.aliases.manage_aliases"),
+        user_aliases_path(current_user), :class => "alias") -%>
+</li>
+<li>
+  <%= link_button_link_to(t("views.users.edit_action"), edit_user_url(current_user),
+        :class => "edit_account") -%>
+</li>
+<li>
+  <%= link_button_link_to(t("views.users.chg_passwd_action"), password_user_path(current_user),
+        :class => "edit_account_password") -%>
+</li>
+<li>
+  <%= link_button_link_to(t("views.users.favorites_action"), favorites_path, 
+        :class => "show_favorites") -%>
+</li>

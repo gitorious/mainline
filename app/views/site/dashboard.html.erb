@@ -48,26 +48,7 @@
 
       <ul class="buttons">
         <% if is_current_user?(@user)  -%>
-        <li>
-          <%= link_button_link_to(t("views.keys.manage_ssh_keys"),
-            user_keys_path(current_user), :class => "key") -%>
-        </li>
-        <li>
-          <%= link_button_link_to(t("views.aliases.manage_aliases"),
-                user_aliases_path(current_user), :class => "alias") -%>
-        </li>
-        <li>
-          <%= link_button_link_to(t("views.users.edit_action"), edit_user_url(current_user),
-                :class => "edit_account") -%>
-        </li>
-        <li>
-          <%= link_button_link_to(t("views.users.chg_passwd_action"), password_user_path(current_user),
-                :class => "edit_account_password") -%>
-        </li>
-        <li>
-          <%= link_button_link_to(t("views.users.favorites_action"), favorites_path, 
-                :class => "show_favorites") -%>
-        </li>
+          <%= render :partial => "owner_actions" %>
         <% end -%>
       </ul>
       <div class="clear"></div>
