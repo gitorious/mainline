@@ -266,6 +266,11 @@ class Repository < ActiveRecord::Base
     "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{gitdir}"
   end
 
+  def display_ssh_url?(user)
+    return true if GitoriousConfig["always_display_ssh_url"]
+    writable_by?(user)
+  end
+
   def full_repository_path
     self.class.full_path_from_partial_path(real_gitdir)
   end

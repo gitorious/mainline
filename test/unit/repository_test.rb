@@ -167,6 +167,13 @@ class RepositoryTest < ActiveSupport::TestCase
         "#{@repository.full_hashed_path}.git"))
       assert_equal expected_dir, @repository.full_repository_path
     end
+
+    should "always display SSH URLs when so instructed" do
+      old_value = GitoriousConfig["always_display_ssh_url"]
+      GitoriousConfig["always_display_ssh_url"] = true
+      assert @repository.display_ssh_url?(users(:moe))
+      GitoriousConfig["always_display_ssh_url"] = old_value
+    end
   end
 
   should "inits the git repository" do

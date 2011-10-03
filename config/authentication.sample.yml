@@ -1,0 +1,19 @@
+# Configure authentication by saving this file as
+# authentication.yml
+# One section for each RAILS_ENV, like database.yml
+# 
+# development:
+#   disable_default: true                                       # disable database authentication altogether
+#   methods:                                                    # additional methods, an array of hashes
+#     - adapter: Gitorious::Authentication::LDAPAuthentication  # Configure LDAP - add another class name to roll your own.
+#       server: ldap.example                                    # IP/hostname to LDAP server
+#       port: 1999                                              # Override the default port (389)
+#       base_dn: DC=gitorious,DC=org                            # The base DN to search
+#       distinguished_name_template: "{}@gitorious.org"         # How to build a user's DN. Default: CN={},$BASE_DN
+#       attribute_mapping:                                      # Map LDAP fields to database fields. Default: displayname => fullname, mail => email
+#         givenName: fullname
+#         publicEmail: email
+#       encryption: simple_tls                                  # See Net-LDAP for other options
+#       callback_class: SampleCallback                          # A class/object that will be called after successful authentication through LDAP. See LdapAuthenticationTest
+#                                                               # Will be "constantized", post_authenticate will be called with an options hash
+# production:

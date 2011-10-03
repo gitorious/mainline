@@ -16,5 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module Gitorious
-  VERSION = "2.0.2"
+  module Authentication
+    class DatabaseAuthentication
+      def authenticate(username,password)
+        User.authenticate(username, password)
+      end
+    end
+  end
 end

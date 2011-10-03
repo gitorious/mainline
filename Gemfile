@@ -23,6 +23,7 @@ gem "acts-as-taggable-on"
 gem "will_paginate"
 gem "hodel_3000_compliant_logger"
 gem "capillary", "~> 0.1.3"
+gem "ruby-net-ldap", "~> 0.0.4"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
@@ -38,6 +39,10 @@ group :test do
   gem "factory_girl", "~> 1.3.0"
   gem "shoulda", "~> 2.9.1"
   gem "tuxml"
+  gem "rots", :git => 'https://github.com/roman/rots.git'
+  gem "capybara"
+
+  gem "launchy" # used only for Capybara's save_and_open_page for launching the browser
 end
 
 group :git_proxy do

@@ -6,6 +6,7 @@ public/images/graphs/*
 config/database.yml
 config/gitorious.yml
 config/ultrasphinx/*.conf
+config/authentication.yml
 config/broker.yml
 db/*.sqlite3
 .autotest

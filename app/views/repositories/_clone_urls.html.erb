@@ -24,7 +24,7 @@
         <p><strong>Clone &amp; push urls</strong></p>
         <%= repo_clone_link(repository, @owner, :git) %>
         <%= repo_clone_link(repository, @owner, :http) %>
-        <%= repo_clone_link(repository, @owner, :ssh) if logged_in? && repository.writable_by?(current_user) %>
+        <%= repo_clone_link(repository, @owner, :ssh) if logged_in? && repository.display_ssh_url?(current_user) %>
 
         <p class="clone-copy <%= css_class_for_clone_url_field(repository) -%>">
           <input type="text" readonly="readonly" id="clone-url-<%= repository.id %>" value="" />

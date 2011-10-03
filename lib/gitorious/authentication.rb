@@ -16,5 +16,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module Gitorious
-  VERSION = "2.0.2"
+  module Authentication
+    # Returns the first matching User instance from all authentication methods
+    def self.authenticate(username, password)
+      Configuration.authentication_methods.each do |authenticator|
+        if result = authenticator.authenticate(username, password)
+          return result
+        end
+      end
+      return nil
+    end
+  end
 end

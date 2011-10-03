@@ -59,6 +59,10 @@ test:
   # Should we hide Git protocol clone urls?
   hide_git_clone_urls: false
 
+  # Always display SSH URLs, regardless of push access?
+  # This can be useful when HTTP and Git isn't available
+  always_display_ssh_url: false
+
   # Use SSL? Requires web server configuration. Recommended for security. Forces the use of
   # HTTPS on login page and all pages while user is logged in
   use_ssl: true

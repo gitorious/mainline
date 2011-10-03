@@ -55,7 +55,7 @@
         <div id="openid_login_fields" class="login_hidden">	
           <ul>
             <li>
-              <label for="openid"><%= t("views.sessions.openid").call(self) %></label>
+              <%= label_tag :openid_url, t("views.sessions.openid").call(self) %>
               <%= text_field_tag 'openid_url', params[:openid_url] -%>
             </li>
             <li>
