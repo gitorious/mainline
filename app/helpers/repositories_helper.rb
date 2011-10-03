@@ -97,4 +97,25 @@ module RepositoriesHelper
     ssh = logged_in? && current_user.can_write_to?(repository) ? " ssh" : ""
     return "git#{http}#{ssh}"
   end
+
+  def repo_clone_link(repository, owner, type)
+    return "" if !repository.send("#{type}_cloning?")
+    url = h(repository.send("#{type}_clone_url"))
+    title = t("views.repos.show_page_title",
+              :repo => repository.name, :title => h(owner.title))
+
+    content_for(:extra_head) do
+      "<link rel=\"vcs-#{type}\" href=\"#{url}\" title=\"#{title}\" />"
+    end
+
+    id = "#{type}-#{repository.id}"
+
+    <<-HTML
+      <p class="clone_radio">
+        <label for="#{id}">
+          <input type="radio" id="#{id}" name="url-#{repository.id}" value="#{url}" #{git_or_ssh_url_checked(repository, type)}>#{type.to_s.upcase}
+        </label>
+      </p>
+    HTML
+  end
 end

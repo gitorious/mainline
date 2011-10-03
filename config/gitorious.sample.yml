@@ -56,6 +56,9 @@ test:
   # Should we hide HTTP clone urls?
   hide_http_clone_urls: false
 
+  # Should we hide Git protocol clone urls?
+  hide_git_clone_urls: false
+
   # Use SSL? Requires web server configuration. Recommended for security. Forces the use of
   # HTTPS on login page and all pages while user is logged in
   use_ssl: true

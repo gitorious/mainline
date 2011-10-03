@@ -104,7 +104,7 @@ class Repository < ActiveRecord::Base
     s.index "project#slug", :as => :project
     s.conditions "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
   end
-  
+
   def self.human_name
     I18n.t("activerecord.models.repository")
   end
@@ -228,8 +228,22 @@ class Repository < ActiveRecord::Base
     "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{url_path}"
   end
 
+  def default_clone_url
+    return git_clone_url if git_cloning?
+    return http_clone_url if http_cloning?
+    ssh_clone_url
+  end
+
   def clone_url
     "git://#{GitoriousConfig['gitorious_host']}/#{gitdir}"
+  end
+
+  def ssh_clone_url
+    push_url
+  end
+
+  def git_clone_url
+    clone_url
   end
 
   def http_clone_url
@@ -238,6 +252,14 @@ class Repository < ActiveRecord::Base
 
   def http_cloning?
     !GitoriousConfig["hide_http_clone_urls"]
+  end
+
+  def git_cloning?
+    !GitoriousConfig["hide_git_clone_urls"]
+  end
+
+  def ssh_cloning?
+    true
   end
 
   def push_url
@@ -692,7 +714,7 @@ class Repository < ActiveRecord::Base
     self.push_count_since_gc = push_count_since_gc.to_i + 1
     update_disk_usage
   end
-  
+
   def update_disk_usage
     self.disk_usage = calculate_disk_usage
   end

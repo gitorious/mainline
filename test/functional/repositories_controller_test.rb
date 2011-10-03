@@ -1260,4 +1260,25 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert assigns(:repositories).include?(@clone_repo)
     end
   end
+
+  context "when hiding git:// URLs" do
+    setup do
+      @hide_setting = GitoriousConfig["hide_git_clone_urls"]
+      GitoriousConfig["hide_git_clone_urls"] = true
+    end
+
+    teardown do
+      GitoriousConfig["hide_git_clone_urls"] = @hide_setting
+    end
+
+    should "not display git:// link" do
+      project = projects(:johans)
+      repository = project.repositories.mainlines.first
+      repository.update_attribute(:ready, true)
+
+      get :show, :project_id => project.to_param, :id => repository.to_param
+
+      assert_no_match(/git:\/\//, @response.body)
+    end
+  end
 end
