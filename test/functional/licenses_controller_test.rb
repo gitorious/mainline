@@ -23,6 +23,10 @@ class LicensesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :show)
   should_enforce_ssl_for(:put, :update)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   context 'Accepting (current) end user license agreement' do
     setup do
       @user = users(:old_timer)

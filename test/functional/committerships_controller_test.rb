@@ -22,6 +22,7 @@ class CommittershipsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
 
   def setup
+    setup_ssl_from_config
     @project = projects(:johans)
     @group = groups(:team_thunderbird)
     @user = users(:johan)

@@ -23,6 +23,7 @@ class GroupsControllerTest < ActionController::TestCase
   should_render_in_global_context
 
   def setup
+    setup_ssl_from_config
     @group = groups(:team_thunderbird)
   end
 

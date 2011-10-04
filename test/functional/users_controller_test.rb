@@ -39,6 +39,10 @@ class UsersControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :update)
   should_enforce_ssl_for(:put, :update_password)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   context "http methods" do
     setup { login_as :johan }
 

@@ -29,6 +29,7 @@ class PagesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :preview)
 
   def setup
+    setup_ssl_from_config
     @project = projects(:johans)
     @repo = @project.wiki_repository
   end

@@ -22,6 +22,10 @@ class Admin::OauthSettingsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :show)
   should_enforce_ssl_for(:put, :update)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   context 'On get to edit' do
     should 'grant site admins access' do
       login_as(:johan)

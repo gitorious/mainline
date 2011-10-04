@@ -22,6 +22,7 @@ class AliasesControllerTest < ActionController::TestCase
   should_render_in_global_context
 
   def setup
+    setup_ssl_from_config
     @user = users(:johan)
     @email = emails(:johans1)
     login_as :johan

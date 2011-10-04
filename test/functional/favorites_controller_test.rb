@@ -30,6 +30,10 @@ class FavoritesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:post, :create)
   should_enforce_ssl_for(:put, :update)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   def do_create_post(type, id, extra_options={})
     post :create, extra_options.merge(:watchable_type => type,
       :watchable_id => id)

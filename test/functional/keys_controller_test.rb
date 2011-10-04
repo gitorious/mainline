@@ -24,6 +24,7 @@ class KeysControllerTest < ActionController::TestCase
   should_render_in_global_context
   
   def setup
+    setup_ssl_from_config
     @user = users(:johan)
     SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
