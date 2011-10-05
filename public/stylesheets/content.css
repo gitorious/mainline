@@ -185,24 +185,24 @@
 	overflow: hidden;
 }
 
-.repository_meta .infobox p.clone-copy.git.http.ssh {
-	width: 300px;
+.repository_meta .infobox p.clone-copy.git_http_ssh {
+	width: 295px;
 }
-.repository_meta .infobox p.clone-copy.git.http.ssh input[type="text"] {
-	width: 275px;
+.repository_meta .infobox p.clone-copy.git_http_ssh input[type="text"] {
+	width: 270px;
 }
 
-.repository_meta .infobox p.clone-copy.git.http {
+.repository_meta .infobox p.clone-copy.git_http {
 	width: 355px;
 }
-.repository_meta .infobox p.clone-copy.git.http input[type="text"] {
+.repository_meta .infobox p.clone-copy.git_http input[type="text"] {
 	width: 330px;
 }
 
-.repository_meta .infobox p.clone-copy.git.ssh {
+.repository_meta .infobox p.clone-copy.git_ssh {
 	width: 360px;
 }
-.repository_meta .infobox p.clone-copy.git.ssh input[type="text"] {
+.repository_meta .infobox p.clone-copy.git_ssh input[type="text"] {
 	width: 335px;
 }
 
@@ -211,6 +211,34 @@
 }
 .repository_meta .infobox p.clone-copy.git input[type="text"] {
 	width: 390px;
+}
+
+.repository_meta .infobox p.clone-copy.http_ssh {
+        width: 350px;
+}
+.repository_meta .infobox p.clone-copy.http_ssh input[type="text"] {
+        width: 325px;
+}
+
+.repository_meta .infobox p.clone-copy.http {
+        width: 410px;
+}
+.repository_meta .infobox p.clone-copy.http input[type="text"] {
+        width: 385px;
+}
+
+.repository_meta .infobox p.clone-copy.ssh {
+        width: 415px;
+}
+.repository_meta .infobox p.clone-copy.ssh input[type="text"] {
+        width: 390px;
+}
+
+.repository_meta .infobox p.clone-copy {
+        width: 470px;
+}
+.repository_meta .infobox p.clone-copy input[type="text"] {
+        width: 445px;
 }
 
 .repository_meta .infobox ul li form p label {

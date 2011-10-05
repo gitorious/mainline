@@ -94,10 +94,10 @@ module RepositoriesHelper
 
   def class_name_for_clone_url_field(repository)
     active_types = []
-    active_types << "http" if repository.http_cloning?
     active_types << "git" if repository.git_cloning?
+    active_types << "http" if repository.http_cloning?
     active_types << "ssh" if display_ssh_url?(repository)
-    active_types.join(" ")
+    active_types.join("_")
   end
 
   def display_ssh_url?(repository)
