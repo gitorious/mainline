@@ -60,11 +60,23 @@ class ProjectLicense
     @licenses ||= load_licenses(GitoriousConfig["licenses"] || DEFAULT)
   end
 
+  def self.default
+    GitoriousConfig['default_license']
+  end
+
   private
   def self.load_licenses(licenses)
     return [] if licenses.nil?
-    return licenses.map { |l| new(l) } if Array === licenses
-    return licenses.keys.sort.map { |k| new(k, licenses[k]) } if Hash === licenses
+    return licenses.map { |l| load_license(l) } if Array === licenses
     [new(licenses)]
+  end
+
+  def self.load_license(license)
+    if Hash === license
+      key = license.keys.first
+      return new(key, license[key])
+    end
+
+    new(license)
   end
 end

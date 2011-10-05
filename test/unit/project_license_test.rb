@@ -77,20 +77,18 @@ class ProjectLicenseTest < ActiveSupport::TestCase
     end
   end
 
-  context "with a hash of licenses configured" do
+  context "with an array of hashes of licenses configured" do
     setup do
-      GitoriousConfig["licenses"] = {
-        "MIT" => "No strings attached, no guarantees",
-        "BSD" => "Keep the copyright"
-      }
+      GitoriousConfig["licenses"] = [{ "MIT" => "No strings attached, no guarantees" },
+                                     { "BSD" => "Keep the copyright" }]
     end
 
     should "return configured licenses" do
       licenses = ProjectLicense.all
 
       assert_equal 2, licenses.length
-      assert_equal "BSD", licenses[0].name
-      assert_equal "Keep the copyright", licenses[0].description
+      assert_equal "BSD", licenses[1].name
+      assert_equal "Keep the copyright", licenses[1].description
     end
 
     should "memoize licenses" do
@@ -98,19 +96,7 @@ class ProjectLicenseTest < ActiveSupport::TestCase
       GitoriousConfig["licenses"] = %w[MPL GPL2 LGPL]
 
       assert_equal 2, licenses.length
-      assert_equal "BSD", licenses[0].name
-    end
-
-    should "order licenses by license name" do
-      GitoriousConfig["licenses"] = {
-        "A" => "First license",
-        "C" => "Third license",
-        "B" => "Second license"
-      }
-
-      licenses = ProjectLicense.all
-
-      assert_equal %w[A B C], licenses.collect(&:name)
+      assert_equal "BSD", licenses[1].name
     end
   end
 

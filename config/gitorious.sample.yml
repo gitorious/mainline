@@ -78,14 +78,24 @@ test:
   #   - LGPL
   #   - MIT
   #
-  # Alternately, you can configure licenses as a hash of name -> description
-  # pairs. The descriptions will be shown in the project creation UI.
+  # Alternately, you can configure licenses as an array of hashes, where each
+  # hash consists of name -> description pairs. The descriptions will be shown
+  # in the project creation UI (/projects/new).
   #
   # licenses:
-  #   MIT: No guarantees, no strings attached
-  #   BSD: Keep the copyright
+  #   - MIT: No guarantees, no strings attached
+  #   - BSD: Keep the copyright
   #
-  # For your reference, these are the default licenses:
+  # For multi-line descriptions, use the YAML escape pipe:
+  #
+  # licenses:
+  #   - MIT: |
+  #     <ul>
+  #       <li>Liberal license</li>
+  #     </ul>
+  #   - BSD: Keep the copyright
+  #
+  # Default licenses are:
   #
   # licenses:
   #   - Academic Free License v3.0",
