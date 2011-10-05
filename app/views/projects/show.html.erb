@@ -24,91 +24,84 @@
 <% @page_title = @project.title -%>
 <%= breadcrumbs_from(@root) -%>
 <div class="content-container w-750" id="project-description">
-	<h1><%=h @project.title -%></h1>
-	  <%= paragraphs_with_more(render_markdown(@project.description, :auto_link), @project.id) -%>
+  <h1><%=h @project.title -%></h1>
+  <%= paragraphs_with_more(render_markdown(@project.description, :auto_link), @project.id) -%>
 </div>
 <div class="content-container w-750" id="repositories">
-<% @project.repositories.mainlines.each do |repo| -%>
-  <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
-<% end -%>
+  <% @project.repositories.mainlines.each do |repo| -%>
+    <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
+  <% end -%>
 </div>
 <div class="content-container w-750" id="activities">
-	<h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
-	<%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
+  <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
+  <%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
 </div>
 
 <% content_for :sidebar do -%>
-
-
-    
-<ul class="links navigation">
-	<% if @project.wiki_enabled? -%>
-	<li class="wiki_page"> <!-- Create / Open Wiki -->
-		<%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
-	</li>
-	<% end -%>
-
-  <% if @project.owned_by_group? -%>
-    <li class="project_members">
-      <%= link_to t("views.projects.project_members"),
+  <ul class="links navigation">
+    <% if @project.wiki_enabled? -%>
+      <li class="wiki_page"> <!-- Create / Open Wiki -->
+	<%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
+      </li>
+    <% end -%>
+    <% if @project.owned_by_group? -%>
+      <li class="project_members">
+        <%= link_to t("views.projects.project_members"),
             group_memberships_path(@project.owner) -%>
-    </li>
-  <% end -%>
-
-	<% if @project.admin?(current_user) -%>
-	<li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
-	<li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
-	<% end -%>
-	<%- if logged_in? && current_user.site_admin? && GitoriousConfig["is_gitorious_dot_org"] -%>
-	<li>
-		<%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
-	</li>
-	<%- end -%>
-</ul>
-
-    <ul id="project-meta">
-		<h3>Project information</h3>
-	<% unless @project.tags.blank? -%>
-      <li><strong><%= t("views.projects.labels") %>:</strong> 
-        <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
-	<% end %>
-	<% unless @project.license.blank? -%>
-      <li><strong><%= t("views.projects.license") %>:</strong> <%= h(@project.license) -%></li>
-	<% end %>
-	  <% unless @project.owner.blank? -%>
+      </li>
+    <% end -%>
+    <% if @project.admin?(current_user) -%>
+      <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
+      <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
+    <% end -%>
+    <%- if logged_in? && current_user.site_admin? && GitoriousConfig["is_gitorious_dot_org"] -%>
       <li>
-        <strong><%= t("views.projects.owner") %>:</strong> 
+	<%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
+      </li>
+    <%- end -%>
+  </ul>
+  <ul id="project-meta">
+    <h3>Project information</h3>
+    <% unless @project.tags.blank? -%>
+      <li><strong><%= t("views.projects.labels") %>:</strong>
+        <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
+    <% end %>
+    <% unless @project.license.blank? -%>
+      <li><strong><%= license_label("views.projects") %>:</strong> <%= h(@project.license) -%></li>
+    <% end %>
+    <% unless @project.owner.blank? -%>
+      <li>
+        <strong><%= t("views.projects.owner") %>:</strong>
         <%= link_to h(@project.owner.to_param_with_prefix), @project.owner -%>
         <% if @project.owner.is_a?(Group) && @project.owner.member?(current_user) -%>
           <br /><small>(Created by <%= link_to @project.user.login, @project.user -%>)</small>
         <% end -%>
       </li>
-	  <% end -%>
-      <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.strftime("%d %b %Y") -%></li>
-      <% unless @project.home_url.blank? -%>
-      <li><strong><%= t("views.projects.website") %></strong> 
+    <% end -%>
+    <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.strftime("%d %b %Y") -%></li>
+    <% unless @project.home_url.blank? -%>
+      <li><strong><%= t("views.projects.website") %></strong>
         <%= link_to base_url(@project.home_url), h(@project.home_url) -%></li>
-      <% end -%>
-      <% unless @project.mailinglist_url.blank? -%>
-      <li><strong><%= t("views.projects.mailing") %></strong> 
+    <% end -%>
+    <% unless @project.mailinglist_url.blank? -%>
+      <li><strong><%= t("views.projects.mailing") %></strong>
         <%= link_to base_url(@project.mailinglist_url), h(@project.mailinglist_url) -%></li>
-      <% end -%>
-      <% unless @project.bugtracker_url.blank? -%>
-      <li><strong><%= t("views.projects.bugtracker") %></strong> 
+    <% end -%>
+    <% unless @project.bugtracker_url.blank? -%>
+      <li><strong><%= t("views.projects.bugtracker") %></strong>
         <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
-      <% end -%>
-    </ul>
+    <% end -%>
+  </ul>
   <% benchmark("Repositories (sidebar)") do  -%>
     <h3>
       <%= link_to t("views.projects.repository_clones"),
-            project_repositories_path(@project) -%>
+          project_repositories_path(@project) -%>
     </h3>
     <% if show_clone_list_search?(@group_clones, @user_clones) -%>
       <%= render :partial => "repositories/clone_list_search", :locals => {
             :path => project_repositories_path(@project, :format => 'json')
-      } -%>
+          } -%>
     <% end -%>
     <%= render :partial => "repositories" -%>
   <% end -%>
-  
 <% end -%>
