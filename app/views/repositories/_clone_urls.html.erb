@@ -24,7 +24,7 @@
         <p><strong>Clone &amp; push urls</strong></p>
         <%= repo_clone_link(repository, @owner, :git) %>
         <%= repo_clone_link(repository, @owner, :http) %>
-        <%= repo_clone_link(repository, @owner, :ssh) if logged_in? && repository.display_ssh_url?(current_user) %>
+        <%= repo_clone_link(repository, @owner, :ssh) if display_ssh_url?(repository) %>
 
         <p class="clone-copy <%= css_class_for_clone_url_field(repository) -%>">
           <input type="text" readonly="readonly" id="clone-url-<%= repository.id %>" value="" />
@@ -69,6 +69,7 @@ git checkout -b my-local-tracking-branch <%=h repository.name -%>/master_or_othe
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
         var standard = $("#git-<%= repository.id -%>:checked, #http-<%= repository.id -%>:checked, #ssh-<%= repository.id -%>:checked").val();
+
         $('#clone-url-<%= repository.id -%>').val(standard);
 
         $('#git-<%= repository.id %>').click(function () {

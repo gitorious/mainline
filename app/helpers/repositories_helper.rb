@@ -93,9 +93,15 @@ module RepositoriesHelper
   end
 
   def css_class_for_clone_url_field(repository)
-    http = repository.http_cloning? ? " http" : ""
-    ssh = logged_in? && current_user.can_write_to?(repository) ? " ssh" : ""
-    return "git#{http}#{ssh}"
+    active_types = []
+    active_types << "http" if repository.http_cloning?
+    active_types << "git" if repository.git_cloning?
+    active_types << "ssh" if display_ssh_url?(repository)
+    active_types.join(" ")
+  end
+
+  def display_ssh_url?(repository)
+    repository.display_ssh_url?(logged_in? ? current_user : nil)
   end
 
   def repo_clone_link(repository, owner, type)
