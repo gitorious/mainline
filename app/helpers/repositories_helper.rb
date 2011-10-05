@@ -124,4 +124,11 @@ module RepositoriesHelper
       </p>
     HTML
   end
+
+  def git_or_ssh_url_checked(repo, type)
+    checked = 'checked="checked"'
+    return type == :ssh ? checked : "" if display_ssh_url?(repo)
+    return type == :git ? checked : "" if repo.git_cloning?
+    type == :http && repo.http_cloning? ? checked : ""
+  end
 end

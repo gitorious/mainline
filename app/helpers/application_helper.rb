@@ -577,18 +577,4 @@ module ApplicationHelper
   def dashboard_path
     root_url(:host => GitoriousConfig["gitorious_host"], :protocol => GitoriousConfig["scheme"])
   end
-
-  def git_or_ssh_url_checked(repository, type)
-    checked = 'checked="checked"'
-
-    if logged_in?
-      return checked if type == :git && !repository.writable_by?(current_user)
-      return checked if type == :ssh && repository.writable_by?(current_user)
-    else
-      return checked if type == :git && repository.git_cloning?
-      return checked if type == :http && !repository.git_cloning?
-    end
-
-    ""
-  end
 end
