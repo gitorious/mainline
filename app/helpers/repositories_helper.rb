@@ -92,7 +92,7 @@ module RepositoriesHelper
     user_clones.size >= 5 || group_clones.size >= 5
   end
 
-  def css_class_for_clone_url_field(repository)
+  def class_name_for_clone_url_field(repository)
     active_types = []
     active_types << "http" if repository.http_cloning?
     active_types << "git" if repository.git_cloning?

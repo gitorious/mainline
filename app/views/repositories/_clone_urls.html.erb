@@ -26,7 +26,7 @@
         <%= repo_clone_link(repository, @owner, :http) %>
         <%= repo_clone_link(repository, @owner, :ssh) if display_ssh_url?(repository) %>
 
-        <p class="clone-copy <%= css_class_for_clone_url_field(repository) -%>">
+        <p class="clone-copy <%= class_name_for_clone_url_field(repository) -%>">
           <input type="text" readonly="readonly" id="clone-url-<%= repository.id %>" value="" />
           <a href="#help" id="clone-help-<%= repository.id -%>" class="clone-help-toggler">?</a>
         </p>
