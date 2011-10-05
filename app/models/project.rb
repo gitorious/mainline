@@ -84,34 +84,6 @@ class Project < ActiveRecord::Base
     :conditions => proc{|record| {:user_id => record.user.id} },
     :timeframe => 5.minutes
 
-  LICENSES = [
-    'Academic Free License v3.0',
-    'MIT License',
-    'BSD License',
-    'Ruby License',
-    'GNU General Public License version 2(GPLv2)',
-    'GNU General Public License version 3 (GPLv3)',
-    'GNU Lesser General Public License (LGPL)',
-    'GNU Affero General Public License (AGPLv3)',
-    'Mozilla Public License 1.0 (MPL)',
-    'Mozilla Public License 1.1 (MPL 1.1)',
-    'Qt Public License (QPL)',
-    'Python License',
-    'zlib/libpng License',
-    'Apache License',
-    'Apple Public Source License',
-    'Perl Artistic License',
-    'Microsoft Permissive License (Ms-PL)',
-    'ISC License',
-    'Lisp Lesser License',
-    'Boost Software License',
-    'Public Domain',
-    'Other Open Source Initiative Approved License',
-    'Other/Proprietary License',
-    'Other/Multiple',
-    'None',
-  ]
-
   def self.human_name
     I18n.t("activerecord.models.project")
   end
