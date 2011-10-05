@@ -20,7 +20,7 @@
 
 module ProjectsHelper
   include RepositoriesHelper
-  
+
   def show_new_project_link?
     if logged_in?
       if GitoriousConfig["only_site_admins_can_create_projects"] && !current_user.site_admin?
@@ -31,7 +31,7 @@ module ProjectsHelper
     end
     true
   end
-  
+
   def wiki_permission_choices
     [
       ["Writable by everyone", Repository::WIKI_WRITABLE_EVERYONE],
@@ -63,5 +63,5 @@ module ProjectsHelper
         link_to_function(remove_img, "$(this).parents('.merge_request_status').hide();
           $(this).prev().val('1')")
     end
-  end 
+  end
 end
