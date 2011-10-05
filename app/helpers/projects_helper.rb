@@ -71,4 +71,8 @@ module ProjectsHelper
       "#{html}\n<option value=\"#{license.name}\"#{attr}>#{license.name}</option>"
     end
   end
+
+  def license_label(scope = nil)
+    GitoriousConfig["license_label"] || t("license", :scope => scope)
+  end
 end

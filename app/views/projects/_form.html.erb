@@ -41,7 +41,7 @@
       <div><%= form.text_field :tag_list -%></div>
     </li>
     <li>
-      <%= form.label :license, t(:license, :scope => 'activerecord.attributes.project') -%>
+      <%= form.label :license, license_label("activerecord.attributes.project") -%>
       <div>
         <%= form.select(:license, project_license_choices,
                         { :selected => (@project.license || ProjectLicense.default) }) -%>
