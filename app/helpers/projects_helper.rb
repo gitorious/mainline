@@ -64,4 +64,11 @@ module ProjectsHelper
           $(this).prev().val('1')")
     end
   end
+
+  def project_license_choices
+    ProjectLicense.all.inject("") do |html, license|
+      attr = license.description.nil? ? "" : " data-description=\"#{license.description}\""
+      "#{html}\n<option value=\"#{license.name}\"#{attr}>#{license.name}</option>"
+    end
+  end
 end

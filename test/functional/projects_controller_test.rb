@@ -518,6 +518,17 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
+    should "render licenses with description" do
+      login_as :johan
+      ProjectLicense.stubs(:all).returns([ProjectLicense.new("MIT", "The liberal one"),
+                                          ProjectLicense.new("BSD", "Keep the copyright")])
+
+      get :new
+
+      assert_match /<option [^>]*data-description="The liberal one"[^>]*>MIT/, @response.body
+      assert_match /description="Keep the copyright"[^>]*>BSD/, @response.body
+    end
+
     should "redirect if the user is not a site admin on POST #create" do
       login_as :moe
       post :create, :project => {}
