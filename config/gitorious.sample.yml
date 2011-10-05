@@ -70,6 +70,51 @@ test:
   # Is this gitorious.org? Read: should we have a very flashy homepage?
   is_gitorious_dot_org: true
 
+  # Available project licenses. This can be configured as an array of licenses:
+  #
+  # licenses:
+  #   - BSD
+  #   - GPL
+  #   - LGPL
+  #   - MIT
+  #
+  # Alternately, you can configure licenses as a hash of name -> description
+  # pairs. The descriptions will be shown in the project creation UI.
+  #
+  # licenses:
+  #   MIT: No guarantees, no strings attached
+  #   BSD: Keep the copyright
+  #
+  # For your reference, these are the default licenses:
+  #
+  # licenses:
+  #   - Academic Free License v3.0",
+  #   - MIT License
+  #   - BSD License
+  #   - Ruby License
+  #   - GNU General Public License version 2(GPLv2)
+  #   - GNU General Public License version 3 (GPLv3)
+  #   - GNU Lesser General Public License (LGPL)
+  #   - GNU Affero General Public License (AGPLv3)
+  #   - Mozilla Public License 1.0 (MPL)
+  #   - Mozilla Public License 1.1 (MPL 1.1)
+  #   - Qt Public License (QPL)
+  #   - Python License
+  #   - zlib/libpng License
+  #   - Apache License
+  #   - Apple Public Source License
+  #   - Perl Artistic License
+  #   - Microsoft Permissive License (Ms-PL)
+  #   - ISC License
+  #   - Lisp Lesser License
+  #   - Boost Software License
+  #   - Public Domain
+  #   - Other Open Source Initiative Approved License
+  #   - Other/Proprietary License
+  #   - Other/Multiple
+  #   - None
+  #
+
   # Pick a default license
   #default_license: GNU Affero General Public License (AGPLv3)
 

@@ -51,12 +51,20 @@ class ProjectLicense
              "Other Open Source Initiative Approved License",
              "Other/Proprietary License",
              "Other/Multiple",
-             "None"].collect { |l| ProjectLicense.new(l) }
+             "None"]
 
   def to_s; name; end
   def inspect; name; end
 
   def self.all
-    DEFAULT
+    @licenses ||= load_licenses(GitoriousConfig["licenses"] || DEFAULT)
+  end
+
+  private
+  def self.load_licenses(licenses)
+    return [] if licenses.nil?
+    return licenses.map { |l| new(l) } if Array === licenses
+    return licenses.keys.sort.map { |k| new(k, licenses[k]) } if Hash === licenses
+    [new(licenses)]
   end
 end
