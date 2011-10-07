@@ -27,7 +27,7 @@
   <% form_tag sessions_path  do -%>
     <div class="form-wrapper" id="login">
       <div id="log-in">
-        <h1>Log in to Gitorious</h1>
+        <h1>Log in to <%= GitoriousConfig["site_name"] %></h1>
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
         <div class="horisontal-shadow"></div>
@@ -50,9 +50,9 @@
                 <%= submit_tag t("views.sessions.submit") %>
               </div>
             </li>
-          </ul>		
+          </ul>
         </div>
-        <div id="openid_login_fields" class="login_hidden">	
+        <div id="openid_login_fields" class="login_hidden">
           <ul>
             <li>
               <%= label_tag :openid_url, t("views.sessions.openid").call(self) %>
@@ -68,7 +68,7 @@
               </div>
             </li>
           </ul>
-        </div>					
+        </div>
 
 
 
@@ -79,9 +79,9 @@
   <p class="alt_links">
     <small>
       <% if GitoriousConfig['public_mode'] -%>
-        <%= link_to t("views.sessions.register"), new_user_path -%> 
+        <%= link_to t("views.sessions.register"), new_user_path -%>
         &mdash;
-      <% end -%> 
+      <% end -%>
       <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
     </small>
   </p>

@@ -3,6 +3,9 @@ development:
 production:
 
 test:
+  # Site name. Default is "Gitorious"
+  #site_name: Gitorious
+
   # The session secret key (`apg -m 64` is always useful for this kinda stuff)
   cookie_secret: ssssht
 

@@ -33,6 +33,8 @@ unless defined? GitoriousConfig
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
 
+  GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
+
   # Add additional paths for views
   if GitoriousConfig.key?("additional_view_paths")
     path = File.expand_path(GitoriousConfig["additional_view_paths"])
