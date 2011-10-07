@@ -104,7 +104,7 @@
       <ul class="footer-links">
         <li><%= link_to t("views.layout.home"), root_path -%> | </li>
         <li><%= link_to t("views.layout.about"), about_path -%> | </li>
-        <li><%= link_to t("views.layout.faq"), faq_path -%> | </li>
+        <li><%= link_to t("views.layout.faq"), about_page_path(:action => :faq) -%> | </li>
         <li><%= link_to "Contact", contact_path -%> | </li>
         <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%> | </li>
         <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
