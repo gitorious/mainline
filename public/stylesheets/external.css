@@ -822,11 +822,9 @@ body #wrapper #content p.alt_links a:hover { color: #111; }
 #footer a { color: #92b92d; }
 
 #footer h3 {
-    color: #eee;
+    color: #fff;
     font-size: 15px;
     font-weight: bold;
-    text-indent: -9999px;
-    background: url(../img/external/sprite.png) no-repeat -1px -110px;
 }
 
 #footer ul {
