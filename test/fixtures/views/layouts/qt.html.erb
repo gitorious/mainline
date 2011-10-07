@@ -38,7 +38,7 @@
     <h1 id="logo">
       <%= link_to image_tag("/images/logo-cube-text.png"), root_path -%>
     </h1>
-    
+
     <ul id="menu">
       <% if GitoriousConfig['public_mode'] || logged_in? -%>
         <li><%= link_to t("views.layout.projects"), projects_path -%></li>
@@ -49,7 +49,7 @@
       <% end -%>
       <%= render "layouts/login_logout" -%>
     </ul>
-    
+
     <% if GitoriousConfig['public_mode'] -%>
       <div id="searchbox">
         <%= render :partial => "/searches/search_box" -%>
@@ -60,25 +60,25 @@
     <h2 id="project_title"><%= link_to h(@project.title), @project -%></h2>
     <ul id="submenu" class="<%= @content_for_submenu.blank? ? "white" : "" -%>">
       <li class="<%= submenu_selected_class_if_current?(:overview) -%>">
-        <%= link_to t("views.layout.project_overview"), 
+        <%= link_to t("views.layout.project_overview"),
           project_path(@project), :class => "round-top-5" -%>
       </li>
       <li class="<%= submenu_selected_class_if_current?(:repositories) -%>">
-        <%= link_to t("views.layout.repositories"), 
+        <%= link_to t("views.layout.repositories"),
           project_repositories_path(@project), :class => "round-top-5" -%>
       </li>
       <li class="<%= submenu_selected_class_if_current?(:pages) -%>">
-        <%= link_to t("views.layout.pages"), 
+        <%= link_to t("views.layout.pages"),
           project_page_path(@project, "Home"), :class => "round-top-5" -%>
       </li>
     </ul>
     <% end -%>
-    
+
 	<% if controller.is_a? Admin::UsersController -%>
 	<h2 id="project_title"><%= link_to t("views.layout.admin"), '' %></h2>
     <ul id="submenu" class="white">
       <li class="selected">
-        <%= link_to t("views.layout.user_mgt"), 
+        <%= link_to t("views.layout.user_mgt"),
           '', :class => "round-top-5" -%>
 	  </li>
     </ul>
