@@ -215,3 +215,16 @@
 ul.search-tips li code {
     padding: 0px 3px 0px 0px;
 }
+
+#sidebar .licenses dt {
+    font-weight: bold;
+}
+
+#sidebar .licenses dd li {
+    color: #868F97;
+    margin: 0 0 .5em;
+}
+
+#sidebar .licenses dd {
+    color: #868F97;
+}

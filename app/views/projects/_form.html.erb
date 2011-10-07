@@ -40,7 +40,7 @@
       <%= form.label :tag_list, t(:tag_list, :scope => 'activerecord.attributes.project') -%>
       <div><%= form.text_field :tag_list -%></div>
     </li>
-    <li>
+    <li class="licenses">
       <%= form.label :license, license_label("activerecord.attributes.project") -%>
       <div>
         <%= form.select(:license, project_license_choices,

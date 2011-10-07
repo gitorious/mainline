@@ -33,4 +33,22 @@
 <% content_for :sidebar do -%>
   <h2>Information</h2>
   <p class="hint"><%= t("views.projects.new_hint") %></p>
+  <%= "<div id=\"license-descriptions\"></div>" if GitoriousConfig["show_license_descriptions_in_sidebar"] %>
 <% end -%>
+<script type="text/javascript" src="/javascripts/gitorious/license-descriptions.js"></script>
+<script type="text/javascript">
+$(function () {
+    var G = gitorious;
+    var options = $(".licenses option[data-description]");
+    var licenses = G.parseLicenseDetails(options);
+    G.renderLicenseDescriptionOnChange(options);
+    options.parent().change();
+
+    var target = document.getElementById("license-descriptions");
+
+    if (target) {
+        var heading = "<h2>" + jQuery("label[for=project_license]").html() + "s</h2>";
+        target.innerHTML += heading + G.renderLicenseDescriptions(licenses);
+    }
+});
+</script>

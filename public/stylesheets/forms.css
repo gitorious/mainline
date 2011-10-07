@@ -31,7 +31,18 @@ form li {
 	width: 610px;
 	float: left;
 	padding: 6px 0px;
-	
+}
+
+form li .desc li,
+form .license-description li {
+    float: none;
+    margin: 0 0 .5em;
+    padding: 0;
+    width: auto;
+}
+
+form li select + ul.desc {
+    margin-top: 1em;
 }
 
 /* Prevent floating list items when previewing a wiki page */
