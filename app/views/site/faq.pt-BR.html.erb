@@ -44,12 +44,12 @@
 </p>
 <p>
   Você também pode executar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", ou
-  você pode configurar um repositório remoto fazendo o seguinte (adicione --fetch para 
+  você pode configurar um repositório remoto fazendo o seguinte (adicione --fetch para
   adicionar a chamada para pegar a configuração de cima):
   <pre>
   git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
   # para gravar o branch master para o repositório remoto origin que adicionamos acima:
-  git push origin master 
+  git push origin master
   # depois disso você pode fazer apenas:
   git push
   </pre>
@@ -99,6 +99,6 @@
   <ul class="links navigation">
     <li><%= link_to "Sobre", about_path(:anchor => "about") -%></li>
     <li><%= link_to "Contato", about_path(:anchor => "contact") -%></li>
-    <li><%= link_to "Q&A", faq_path -%></li>
+    <li><%= link_to "Q&A", about_page_path(:action => :faq) -%></li>
   </ul>
 <% end -%>
