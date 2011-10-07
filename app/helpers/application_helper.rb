@@ -577,6 +577,18 @@ module ApplicationHelper
   def dashboard_path
     root_url(:host => GitoriousConfig["gitorious_host"], :protocol => GitoriousConfig["scheme"])
   end
+
+  def site_domain
+    host = GitoriousConfig["gitorious_client_host"]
+    port = GitoriousConfig["gitorious_client_port"]
+    port = port != 80 ? ":#{port}" : ""
+    "#{host}#{port}"
+  end
+
+  def fq_root_link
+    "http#{GitoriousConfig['use_ssl'] ? 's' : ''}://#{site_domain}/"
+  end
+
   def url?(setting)
     !GitoriousConfig["#{setting}_url"].blank?
   end
