@@ -577,4 +577,13 @@ module ApplicationHelper
   def dashboard_path
     root_url(:host => GitoriousConfig["gitorious_host"], :protocol => GitoriousConfig["scheme"])
   end
+  def url?(setting)
+    !GitoriousConfig["#{setting}_url"].blank?
+  end
+
+  def footer_link(setting)
+    url = GitoriousConfig["#{setting}_url"]
+    text = t("views.layout.#{setting}")
+    "<li>#{link_to text, url}</li>"
+  end
 end

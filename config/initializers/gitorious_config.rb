@@ -34,6 +34,8 @@ unless defined? GitoriousConfig
   end
 
   GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
+  GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
+  GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
 
   # Add additional paths for views
   if GitoriousConfig.key?("additional_view_paths")

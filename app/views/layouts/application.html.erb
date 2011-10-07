@@ -71,26 +71,8 @@
       <% end -%>
     </div>
     <div id="footer">
-      <%= render :partial => "layouts/common_footer"  -%>
-      <div id="footer-links">
-	<h3>Gitorious</h3>
-	<ul>
-	  <li><%= link_to t("views.layout.home"), root_path -%></li>
-	  <li><%= link_to t("views.layout.about"), about_path -%></li>
-	  <li><%= link_to t("views.layout.faq"), faq_path -%></li>
-	  <li><%= link_to "Contact", contact_path -%></li>
-	</ul>
-	<ul>
-	  <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%></li>
-	  <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
-	</ul>
-	<% if GitoriousConfig["terms_of_use"] -%>
-	  <ul>
-	    <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
-            <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
-	  </ul>
-	<% end %>
-      </div>
+      <%= render :partial => "layouts/common_footer" -%>
+      <%= render :partial => "layouts/footer_links" -%>
       <%= render :partial => "layouts/footer_blurb" %>
       <div class="clear"></div>
     </div>

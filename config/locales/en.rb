@@ -191,6 +191,8 @@
         :pages => "Open wiki",
         :user_mgt => "User Management",
         :discussion => "Discussion group",
+        :terms_of_service => "Terms of Service",
+        :privacy_policy => "Privacy Policy",
         :teams => "Teams",
         :blog => "Blog",
       },
