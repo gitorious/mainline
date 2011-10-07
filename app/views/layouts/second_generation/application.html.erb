@@ -64,7 +64,9 @@ $('#screenshots-container').cycle({
 	  <li class="home"><%= link_to("Home", root_path) %></li>
 	  <li class="about"><%= link_to t("views.layout.about"), about_path %></li>
 	  <li class="contact"><%= link_to "Contact", contact_path %> </li>
-	  <li class="register"><%= link_to t("views.layout.register"), new_user_path %></li>
+	  <% if GitoriousConfig["public_mode"] %>
+            <li class="register"><%= link_to t("views.layout.register"), new_user_path %></li>
+          <% end %>
 	  <li class="login"><%= link_to "Login", login_path %></li>
 	</ul>
       </div> <!-- end of #top -->
