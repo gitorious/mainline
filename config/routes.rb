@@ -160,13 +160,13 @@ ActionController::Routing::Routes.draw do |map|
 
   map.dashboard "dashboard", :controller => "site", :action => "dashboard"
   map.about "about", :controller => "site", :action => "about"
-  map.faq "about/faq", :controller => "site", :action => "faq"
+  map.about_page "about/:action", :controller => "site"
   map.contact "contact", :controller => "site", :action => "contact"
 
   map.namespace :api do |api|
     api.connect ':project_id/:repository_id/log/graph', :controller => 'graphs', :action => 'show'
   end
-  
+
   map.namespace :admin do |admin|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
