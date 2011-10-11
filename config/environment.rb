@@ -34,7 +34,7 @@ Rails::Initializer.run do |config|
   # you must remove the Active Record framework.
   # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
 
-  # Specify gems that this application depends on. 
+  # Specify gems that this application depends on.
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
   # config.gem "bj"
@@ -56,12 +56,12 @@ Rails::Initializer.run do |config|
   # if RUBY_VERSION < '1.9'
   #   config.gem 'json'
   # end
-  
+
   # vendorized directly in vendor/ -- need to research if can be removed from there
   #config.gem "ultraviolet",  :version => '0.10.2', :lib => "uv"
   #config.gem "grit",         :version => '0.7.0'
 
-  # Only load the plugins named here, in the order given. By default, all plugins 
+  # Only load the plugins named here, in the order given. By default, all plugins
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
@@ -85,7 +85,7 @@ Rails::Initializer.run do |config|
 
   # Your secret key for verifying cookie session data integrity.
   # If you change this key, all old sessions will become invalid!
-  # Make sure the secret is at least 30 characters and all random, 
+  # Make sure the secret is at least 30 characters and all random,
   # no regular words or you'll be exposed to dictionary attacks.
 
   # Use the database for sessions instead of the cookie-based default,
@@ -113,6 +113,7 @@ Rails::Initializer.run do |config|
     }
 
     OAuth::Consumer::CA_FILE = nil
+    Gitorious::Plugin::post_load
   end
-  
+
 end
