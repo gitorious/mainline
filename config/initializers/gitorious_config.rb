@@ -37,6 +37,8 @@ unless defined? GitoriousConfig
   GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
   GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
 
+  GitoriousConfig["ssh_fingerprint"] = GitoriousConfig["ssh_fingerprint"] || "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
+
   # Add additional paths for views
   if GitoriousConfig.key?("additional_view_paths")
     path = File.expand_path(GitoriousConfig["additional_view_paths"])
@@ -49,5 +51,6 @@ unless defined? GitoriousConfig
     end
   end
 end
+
 
 ActionMailer::Base.default_url_options[:protocol] = GitoriousConfig["scheme"]
