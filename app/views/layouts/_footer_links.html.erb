@@ -40,4 +40,11 @@
       <%= footer_link("privacy_policy") %>
     </ul>
   <% end %>
+  <% if additional_links = GitoriousConfig["additional_footer_links"] %>
+    <ul>
+      <% additional_links.each do |label, url| %>
+        <li><%= link_to(label, url) %></li>
+      <% end %>
+    </ul>
+  <% end %>
 </div>
