@@ -200,3 +200,6 @@ test:
   #
   # (Note that this particular template requires is_gitorious_dot_org:
   # true). Refer to app/views/site/public_index.html.erb for how to customize.
+
+  # The SSH fingerprint of your server
+  ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
