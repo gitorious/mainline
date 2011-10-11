@@ -1,0 +1,55 @@
+<%
+#--
+#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<ul id="project-meta">
+  <h3>Project information</h3>
+  <% unless @project.tags.blank? -%>
+    <li><strong><%= t("views.projects.labels") %>:</strong>
+      <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
+  <% end %>
+  <% unless @project.license.blank? -%>
+    <li><strong><%= license_label("views.projects") %>:</strong> <%= h(@project.license) -%></li>
+  <% end %>
+  <% unless @project.owner.blank? -%>
+    <li>
+      <strong><%= t("views.projects.owner") %>:</strong>
+      <%= link_to h(@project.owner.to_param_with_prefix), @project.owner -%>
+      <% if @project.owner.is_a?(Group) && @project.owner.member?(current_user) -%>
+        <br /><small>(Created by <%= link_to @project.user.login, @project.user -%>)</small>
+      <% end -%>
+    </li>
+  <% end -%>
+  <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.strftime("%d %b %Y") -%></li>
+  <% unless @project.home_url.blank? -%>
+    <li><strong><%= t("views.projects.website") %></strong>
+      <%= link_to base_url(@project.home_url), h(@project.home_url) -%></li>
+  <% end -%>
+  <% unless @project.mailinglist_url.blank? -%>
+    <li><strong><%= t("views.projects.mailing") %></strong>
+      <%= link_to base_url(@project.mailinglist_url), h(@project.mailinglist_url) -%></li>
+  <% end -%>
+  <% unless @project.bugtracker_url.blank? -%>
+    <li><strong><%= t("views.projects.bugtracker") %></strong>
+      <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
+  <% end -%>
+</ul>

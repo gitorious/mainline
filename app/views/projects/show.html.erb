@@ -60,38 +60,7 @@
       </li>
     <%- end -%>
   </ul>
-  <ul id="project-meta">
-    <h3>Project information</h3>
-    <% unless @project.tags.blank? -%>
-      <li><strong><%= t("views.projects.labels") %>:</strong>
-        <%= @project.tag_list.blank? ? "none" : linked_tag_list_as_sentence(@project.tags) -%></li>
-    <% end %>
-    <% unless @project.license.blank? -%>
-      <li><strong><%= license_label("views.projects") %>:</strong> <%= h(@project.license) -%></li>
-    <% end %>
-    <% unless @project.owner.blank? -%>
-      <li>
-        <strong><%= t("views.projects.owner") %>:</strong>
-        <%= link_to h(@project.owner.to_param_with_prefix), @project.owner -%>
-        <% if @project.owner.is_a?(Group) && @project.owner.member?(current_user) -%>
-          <br /><small>(Created by <%= link_to @project.user.login, @project.user -%>)</small>
-        <% end -%>
-      </li>
-    <% end -%>
-    <li><strong><%= t("views.projects.created") %>:</strong> <%= @project.created_at.strftime("%d %b %Y") -%></li>
-    <% unless @project.home_url.blank? -%>
-      <li><strong><%= t("views.projects.website") %></strong>
-        <%= link_to base_url(@project.home_url), h(@project.home_url) -%></li>
-    <% end -%>
-    <% unless @project.mailinglist_url.blank? -%>
-      <li><strong><%= t("views.projects.mailing") %></strong>
-        <%= link_to base_url(@project.mailinglist_url), h(@project.mailinglist_url) -%></li>
-    <% end -%>
-    <% unless @project.bugtracker_url.blank? -%>
-      <li><strong><%= t("views.projects.bugtracker") %></strong>
-        <%= link_to base_url(@project.bugtracker_url), h(@project.bugtracker_url) -%></li>
-    <% end -%>
-  </ul>
+  <%= render :partial => "meta" %>
   <% benchmark("Repositories (sidebar)") do  -%>
     <h3>
       <%= link_to t("views.projects.repository_clones"),
