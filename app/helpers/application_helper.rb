@@ -581,7 +581,7 @@ module ApplicationHelper
   def site_domain
     host = GitoriousConfig["gitorious_host"]
     port = GitoriousConfig["gitorious_port"]
-    port = port != 80 ? ":#{port}" : ""
+    port = port.to_i != 80 ? ":#{port}" : ""
     "#{host}#{port}"
   end
 
