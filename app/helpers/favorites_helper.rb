@@ -18,6 +18,7 @@
 
 module FavoritesHelper
   def favorite_button(watchable)
+    return "" unless logged_in?
     if logged_in? && favorite = current_user.favorites.detect{|f| f.watchable == watchable}
       link = destroy_favorite_link_to(favorite, watchable)
     else
