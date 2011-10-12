@@ -113,7 +113,6 @@ class Mailer < ActionMailer::Base
   end
 
   def sender_address
-    address = GitoriousConfig["sender_email_address"] || "no-reply@#{GitoriousConfig['gitorious_host']}"
-    "Gitorious <#{address}>"
+    GitoriousConfig["sender_email_address"] || "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
   end  
 end

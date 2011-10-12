@@ -211,4 +211,4 @@ test:
       - http://gitorious.com/
 
   # Configure which address to use as From when sending email
-  sender_email_address: no-reply@yourdomain.example
+  sender_email_address: "Gitorious <no-reply@yourdomain.example>"
