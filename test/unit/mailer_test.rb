@@ -119,4 +119,28 @@ class MailerTest < ActiveSupport::TestCase
     assert_match(/you are receiving this email because/i, mail.body)
     assert_match(/#{GitoriousConfig['gitorious_host']}\/favorites/, mail.body)
   end
+
+  context "Sender address" do
+    setup do
+      @old_address = GitoriousConfig["sender_email_address"]
+      @user = users(:moe)
+    end
+
+    teardown do
+      GitoriousConfig["sender_email_address"] = @old_address
+    end
+    
+    should "be a sensible default unless configured" do
+      message = Mailer.create_signup_notification(@user)
+      sender_address = "no-reply@#{GitoriousConfig['gitorious_host']}"
+      assert_equal sender_address, message.from.first
+    end
+
+    should "use configured sender address" do
+      sender_address = "no-reply@gitorious.example"
+      GitoriousConfig["sender_email_address"] = sender_address
+      message = Mailer.create_signup_notification(@user)
+      assert_equal sender_address, message.from.first
+    end
+  end
 end

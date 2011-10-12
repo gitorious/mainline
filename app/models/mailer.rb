@@ -42,7 +42,7 @@ class Mailer < ActionMailer::Base
 
   def notification_copy(recipient, sender, subject, body, notifiable, message_id)
     @recipients       =  recipient.email
-    @from             = "Gitorious Messenger <no-reply@#{GitoriousConfig['gitorious_host']}>"
+    @from             = sender_address
     @subject          = "New message: " + sanitize(subject)
     @body[:url]       = url_for({
         :controller => 'messages',
@@ -70,7 +70,7 @@ class Mailer < ActionMailer::Base
   end
 
   def new_email_alias(email)
-    @from       = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
+    @from       = sender_address
     @subject    = "[Gitorious] Please confirm this email alias"
     @sent_on    = Time.now
     @recipients = email.address
@@ -80,7 +80,7 @@ class Mailer < ActionMailer::Base
 
   def message_processor_error(processor, err, message_body = nil)
       subject     "[Gitorious Processor] fail in #{processor.class.name}"
-      from        "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
+      from        sender_address
       recipients  GitoriousConfig['exception_notification_emails']
       body        :error => err, :message => message_body, :processor => processor
   end
@@ -93,22 +93,27 @@ class Mailer < ActionMailer::Base
   end
 
   protected
-    def setup_email(user)
-      @recipients  = "#{user.email}"
-      @from        = "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
-      @subject     = "[Gitorious] "
-      @sent_on     = Time.now
-      @body[:user] = user
-    end
+  def setup_email(user)
+    @recipients  = "#{user.email}"
+    @from        = sender_address
+    @subject     = "[Gitorious] "
+    @sent_on     = Time.now
+    @body[:user] = user
+  end
+  
+  def build_notifiable_url(a_notifiable)
+    result = case a_notifiable
+             when MergeRequest
+               project_repository_merge_request_url(a_notifiable.target_repository.project, a_notifiable.target_repository, a_notifiable)
+             when Membership
+               group_path(a_notifiable.group)
+             end
 
-    def build_notifiable_url(a_notifiable)
-      result = case a_notifiable
-      when MergeRequest
-        project_repository_merge_request_url(a_notifiable.target_repository.project, a_notifiable.target_repository, a_notifiable)
-      when Membership
-        group_path(a_notifiable.group)
-      end
+    return result
+  end
 
-      return result
-    end
+  def sender_address
+    address = GitoriousConfig["sender_email_address"] || "no-reply@#{GitoriousConfig['gitorious_host']}"
+    "Gitorious <#{address}>"
+  end  
 end
