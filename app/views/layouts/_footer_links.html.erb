@@ -35,10 +35,7 @@
     </ul>
   <% end %>
   <% if GitoriousConfig["terms_of_use"] -%>
-    <ul>
-      <%= footer_link("terms_of_service") %>
-      <%= footer_link("privacy_policy") %>
-    </ul>
+    <%= render :partial => "/site/tos_links" %>
   <% end %>
   <% if additional_links = GitoriousConfig["additional_footer_links"] %>
     <ul>
