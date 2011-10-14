@@ -33,7 +33,7 @@
 
 <div class="faq-entry">
 	<h3>What is the SSH key fingerprint of the server I am pushing to?</h3>
-	<p> The SSH key fingerprint of the gitorious.org server is:<br />
+	<p> The SSH key fingerprint of the <%= GitoriousConfig['gitorious_host'] %> server is:<br />
   <code><%= GitoriousConfig["ssh_fingerprint"] %></code></p>
 </div>
 
@@ -53,7 +53,7 @@
   you can setup a remote by doing the following (add --fetch to the add call to 
   get the config from above):
   <pre>
-  git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+  git remote add origin <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
   # to push the master branch to the origin remote we added above:
   git push origin master 
   # after that you can just do:
@@ -63,7 +63,7 @@
 
 <div class="faq-entry">
 	<h3>What version of Git is Gitorious running?</h3>
-	<p><code>git version 1.6.1</code></p>
+	<p><code><%= git_version %></code></p>
 </div>
 
 <div class="faq-entry">
