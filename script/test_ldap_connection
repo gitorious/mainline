@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # Test a username/password combination towards the LDAP server specified in config/authentication.yml
 
 if ARGV.size < 2
@@ -8,7 +9,11 @@ require "config/environment"
 
 username = ARGV[0]
 password = ARGV[1]
-ldap = Gitorious::Authentication::Configuration.authentication_methods.last
+ldap = Gitorious::Authentication::Configuration.authentication_methods.detect do |m|
+  Gitorious::Authentication::LDAPAuthentication === m
+end
+
+abort "You need to configure LDAP autentication in config/authentication.yml" unless ldap
 
 if ldap.valid_credentials?(username, password)
   puts "All good, your credentials are correct"
