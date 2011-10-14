@@ -53,7 +53,7 @@
   you can setup a remote by doing the following (add --fetch to the add call to 
   get the config from above):
   <pre>
-  git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+  git remote add origin <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
   # to push the master branch to the origin remote we added above:
   git push origin master 
   # after that you can just do:
