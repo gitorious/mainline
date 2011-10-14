@@ -1455,13 +1455,38 @@ tr.raw_diff td { padding-top: 5px; }
 table#codeblob { width: 100%; }
 table#codeblob tr td { padding: 0 2px;}
 
+table#codeblob tr td.blame_info {
+  white-space: nowrap;
+  font-size: 95%;
+  background-color: #f8f8f8;
+  border-right: 1px solid #ccc;
+  border-top: 1px solid #cdcdcd;
+  padding: 0 6px;
+}
+table#codeblob tr td.blame_info.first,
+table#codeblob tr td.blame_info.unchanged {
+  border-top: none;
+}
+.blame_info a {
+  color: #696969;
+}
+
+.blame_info a strong {
+  color: #ed6b2b;
+  font-weight: normal;
+}
+
+td.blame_info img {
+  margin-right: 4px;
+}
+
 table tr .line-numbers {
     text-align: right;
     vertical-align: top;
     background: #eee;
     color: #777;
     font-size: 92%;
-    padding: 0 3px 0 2px;
+    padding: 0 5px 0 4px;
     width: 35px;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #cdcdcd;
@@ -2283,7 +2308,6 @@ table.select_commits_from_list tr.commit_comments .commit-details .permalink a {
     font-size:11px;
     color: #666;
     float: right;
-    border-bottom: 1px solid #ccc;
     padding-bottom: 8px;
 }
 
@@ -2303,7 +2327,23 @@ ul.page-actions { margin: 0; }
 
 .page-meta .page-actions li {
     float: left;
-    margin: 0px 10px;
+    -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background-color: #e7e7e7;
+    margin: 0px 2px;
+    padding: 0 6px;
+}
+
+.page-meta .page-actions li {
+  color: #535353;
+  font-weight: bold;
+}
+
+.page-meta .page-actions li  a {
+  color: #535353;
+  font-weight: normal;
 }
 
 .page-history .diff { margin-top: 10px; }
@@ -3062,6 +3102,10 @@ table.select_commits_from_list tr.unknown-status td.meta { background-image: url
 .file-diff .header span.icon { padding-right: 20px; }
 .file-diff .header.open span.icon { background: url('../images/silk/bullet_toggle_minus.png') no-repeat 0 0; }
 .file-diff .header.closed span.icon { background: url('../images/silk/bullet_toggle_plus.png') no-repeat 0 0; }
+.file-diff .header a,
+.file-diff .header a:hover {
+  color: #390;
+}
 
 .file-diff .diff-stats {
     font-size: 10px;

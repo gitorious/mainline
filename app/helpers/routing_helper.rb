@@ -8,7 +8,7 @@
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2009 Bill Marquette <bill.marquette@gmail.com>
 #   Copyright (C) 2010 Christian Johansen <christian@shortcut.no>
-
+#
 #   Copyright (C) 2011 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ module RoutingHelper
 
   # return the url with the +repo+.owner prefixed if it's a mainline repo,
   # otherwise return the +path_spec+
-  # if +path_spec+ is an array (and no +args+ given) it'll use that as the 
+  # if +path_spec+ is an array (and no +args+ given) it'll use that as the
   # polymorphic-url-style (eg [@project, @repo, @foo])
   def repo_owner_path(repo, path_spec, *args)
     if repo.team_repo?

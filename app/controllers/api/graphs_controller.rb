@@ -25,28 +25,34 @@ module Api
     skip_session
 
     rescue_from Gitorious::GitShell::GitTimeout, :with => :render_timeout
-    
+
     LOG_FORMAT = '%H§%P§%ai§%ae§%d§%s§'
 
     def show
       project = Project.find_by_slug(params[:project_id])
       repository = project.repositories.find_by_name(params[:repository_id])
-      data = Rails.cache.fetch("commit-graph-in-#{project.slug}/#{repository.name}", :expires_in => 1.hour) do
-        git_shell.graph_log(repository.full_repository_path, "--all", "-50")
+      type = params[:type] == "all" ? "--all" : ""
+
+      ref = "#{project.slug}/#{repository.name}/#{params[:branch]}"
+      data = Rails.cache.fetch("commit-graph-#{ref}#{type}", :expires_in => 1.hour) do
+        graph_log(repository, type, params[:branch])
       end
 
       parser = Capillary::LogParser.new
+      data.split("\n").each { |line| parser << line }
 
-      data.split("\n").each do |line|
-        parser << line
-      end
-      
       respond_to do |wants|
         wants.json { render :json => parser.to_json }
       end
     end
 
-    
+    private
+    def graph_log(repo, type, branch = nil)
+      args = [repo.full_repository_path, "--decorate=full", "-100", type]
+      args << desplat_path(branch) if branch
+      git_shell.send(:graph_log, *args)
+    end
+
     def git_shell
       Gitorious::GitShell.new
     end

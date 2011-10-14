@@ -22,6 +22,10 @@
 module RepositoriesHelper
   include FavoritesHelper
 
+  def blob_blame_path(shaish, path)
+    repo_owner_path(@repository, :project_repository_blame_path, @project, @repository, branch_with_tree(shaish, path))
+  end
+
   def namespaced_branch?(branchname)
     branchname.include?("/")
   end
@@ -49,7 +53,7 @@ module RepositoriesHelper
   end
 
   def branch_link_title_text(branch)
-    "branch " + h(branch.name) + (branch.head? ? " (HEAD)" : "")
+    h(branch.name) + (branch.head? ? " (HEAD)" : "")
   end
 
   # Sorts the +heads+ alphanumerically with the HEAD first

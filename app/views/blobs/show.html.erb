@@ -31,18 +31,6 @@
     <% if hl = language_of_file(current_path.last) -%>
       <%= javascript_include_tag("lib/prettify/lang-#{hl}.js", :cache => false) -%>
     <% end -%>
-    <script type="text/javascript" charset="utf-8">
-      $(document).ready(function(){
-          if ($("#codeblob tr td.line-numbers:last").text().length < 3500) {
-              prettyPrint();
-          } else {
-              $("#long-file").show().find("a#highlight-anyway").click(function(e){
-                  prettyPrint();
-                  e.preventDefault();
-              });
-          }
-      });
-    </script>
   <% end -%>
 <% end -%>
 
@@ -85,4 +73,4 @@
 	<%= t("views.blobs.message").call(self, raw_blob_path(@commit.id, current_path)) %>
   </p>
 <% end -%>
-
+<%= render "unholy_highlight_mess" %>

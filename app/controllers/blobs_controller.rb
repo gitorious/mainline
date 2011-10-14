@@ -22,17 +22,16 @@
 class BlobsController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
-  renders_in_site_specific_context
+  before_filter :find_commit, :only => [:show, :history, :blame]
+
+  skip_session :only => [:blame, :show, :raw]
+
+  renders_in_site_specific_context :except => [:blame, :history]
 
   def show
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    @commit = @git.commit(@ref)
-    unless @commit
-      redirect_to_head and return
-    end
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
-                          @commit.committed_date.utc)
+    if stale?({
+          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
+          :last_modified => @commit.committed_date.utc})
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
       unless @blob.respond_to?(:data) # it's a tree
@@ -41,9 +40,23 @@ class BlobsController < ApplicationController
       end
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
-                  :repository => @repository, :name => @blob.basename)
-      expires_in 10.minutes
+        :repository => @repository, :name => @blob.basename)
+      expire_based_on_ref_length(@ref.size)
+      render :layout => !pjax_request?
     end
+  end
+
+  def blame
+    @file_path = @path.join("/")
+    @blame = @git.blame(@file_path, @ref)
+
+    head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+    @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
+      :repository => @repository, :name => @path.last)
+
+    expire_based_on_ref_length(@ref.size)
+
+    render :layout => !pjax_request?
   end
 
   def raw
@@ -79,12 +92,6 @@ class BlobsController < ApplicationController
   end
   
   def history
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    @commit = @git.commit(@ref)
-    unless @commit
-      redirect_to_head and return
-    end
     @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
@@ -99,9 +106,9 @@ class BlobsController < ApplicationController
       :name => @blob.basename
     })
     @commits = @git.log(@ref, desplat_path(@path))
-    expires_in 30.minutes
+    expire_based_on_ref_length(@ref.size)
     respond_to do |wants|
-      wants.html
+      wants.html { render :layout => !pjax_request?}
       wants.json {render :json =>
         @commits.map{|c|{
             :author => c.author.name,
@@ -116,5 +123,22 @@ class BlobsController < ApplicationController
     def redirect_to_head
       redirect_to project_repository_blob_path(@project, @repository, 
                     branch_with_tree("HEAD", @path))
+    end
+
+    def find_commit
+      @git = @repository.git
+      @ref, @path = branch_and_path(params[:branch_and_path], @git)
+      @commit = @git.commit(@ref)
+      unless @commit
+        redirect_to_head and return
+      end
+    end
+
+    def expire_based_on_ref_length(length)
+      if length == 40
+        cache_forever
+      else
+        cache_for(1.hour)
+      end
     end
 end

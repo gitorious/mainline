@@ -19,8 +19,9 @@
 
 <div class="page-meta">
   <ul class="page-actions">
-    <li><%= link_to_unless_current t("views.blobs.show"), blob_path(@ref, current_path) -%></li>
-    <li><%= link_to_unless_current t("views.blobs.history"), blob_history_path(@ref, current_path) -%></li>
-    <li><%= link_to t("views.blobs.raw"), raw_blob_path(@ref, current_path) -%></li>
+    <li><%= link_to_unless_current t("views.blobs.show"), blob_path(@ref, current_path), :class => "js-pjax", :"data-pjax" => "#codeblob" -%></li>
+    <li><%= link_to_unless_current(t("views.blobs.blame"), blob_blame_path(@commit.id, current_path), :class => "blame js-pjax", :"data-pjax" => "#codeblob") -%></li>
+    <li><%= link_to_unless_current t("views.blobs.history"), blob_history_path(@ref, current_path), :class => "js-pjax", :"data-pjax" => "#codeblob" -%></li>
+    <li><%= link_to_unless_current t("views.blobs.raw"), raw_blob_path(@ref, current_path) -%></li>
   </ul>
 </div>

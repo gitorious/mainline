@@ -236,12 +236,6 @@ module ApplicationHelper
     end.join("\n")
   end
 
-  def commit_graph_tag(repository, ref = "master")
-  end
-
-  def commit_graph_by_author_tag(repository, ref = "master")
-  end
-
   def action_and_body_for_event(event)
     target = event.target
     if target.nil?
@@ -336,8 +330,9 @@ module ApplicationHelper
     }.each do |extension, url_key|
       archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
       link_html = link_to("Download #{head} as #{extension}", archive_path,
-                                  :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head.gsub("/", "_")}');return false",
-                                  :class => "download-link")
+        :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head.gsub("/", "_")}');return false",
+        :title => "Download #{head} as #{extension}",
+        :class => "download-link")
       link_callback_box = content_tag(:div, "", :class => "archive-download-box round-5 shadow-2",
         :id => "archive-box-#{head.gsub("/", "_")}", :style => "display:none;")
       links << content_tag(:li, link_html+link_callback_box, :class => extension.split('.').last)
@@ -504,13 +499,13 @@ module ApplicationHelper
   def include_javascripts
     jquery = ["", "/autocomplete", "/cookie", "/color_picker", "/cycle.all.min",
               "/ui", "/ui/selectable", "/scrollto", "/expander",
-              "/timeago"].collect { |f| "lib/jquery#{f}" }
+              "/timeago","/pjax"].collect { |f| "lib/jquery#{f}" }
 
     gitorious = ["", "/observable", "/application", "/resource_toggler", "/jquery",
                  "/merge_requests", "/diff_browser", "/messages", "/live_search",
                  "/repository_search"].collect { |f| "gitorious#{f}" }
 
-    scripts = jquery + ["core_extensions"] + gitorious + ["application"]
+    scripts = jquery + ["core_extensions"] + gitorious + ["lib/spin.js/spin.js", "application"]
 
     javascript_include_tag(scripts, :cache => true)
   end

@@ -1,4 +1,4 @@
-# encoding: utf-8
+<%
 #--
 #   Copyright (C) 2011 Gitorious AS
 #
@@ -15,30 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "timeout"
-module Gitorious
+%>
+<%= breadcrumbs_from(@root) -%>
+<h1><%= t("views.commits.compare_title", :last_commit => @commit.id[0..7], :first_commit => @first_commit_id[0..7]) %></h1>
 
-  # Grit is too helpful with escaping the output for our somewhat special needs
-  # This class lets us shell out to Git directly
-  class GitShell
-    def execute(command)
-      Timeout.timeout(10) do
-        `#{command}`
-      end
-    rescue Timeout::Error
-      raise GitTimeout, "Execution expired"
-    end
-
-    def graph_log(git_dir, *options)
-      log_format = '%H§%P§%ai§%ae§%d§%s§'
-      pretty_format = %Q{format:"#{log_format}"}
-
-      command = "/usr/bin/env git --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
-      command << options.join(" ")
-      execute(command)
-    end
-
-    class GitTimeout < ::Timeout::Error
-    end
-  end
-end
+<% if @diffs.blank? -%>
+  <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
+<% else -%>
+  <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>
+  <%= render_diffmode_selector :url => url_for(:controller => :commit_diffs, :action => :compare) -%>
+  <%= render :partial => "commits/diffs" -%>
+<% end -%>

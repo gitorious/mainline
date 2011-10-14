@@ -63,8 +63,11 @@ ActionController::Routing::Routes.draw do |map|
                                   :controller => "commits", :action => "feed", :conditions => { :feed => :get })
       repo.commits         "commits", :controller => "commits", :action => "index"
       repo.commits_in_ref  "commits/*branch", :controller => "commits", :action => "index"
+      repo.graph           "graph", :controller => "graphs", :action => "index"
+      repo.graph_in_ref    "graph/*branch", :controller => "graphs", :action => "index"
       repo.commit_comments "commit/:id/comments", :controller => "commit_comments", :action => "index", :id => /[^\/]+/
       repo.commit_diffs    "commit/:id/diffs", :controller => "commit_diffs", :action => "index", :id => /[^\/]+/
+      repo.commit_compare  "commit/:from_id/diffs/:id", :controller => "commit_diffs", :action => "compare"
       repo.commit          "commit/:id", :controller => "commits", :action => "show", :id => /.*/
       repo.trees           "trees/", :controller => "trees", :action => "index"
       repo.tree            "trees/*branch_and_path", :controller => "trees", :action => "show"
@@ -73,6 +76,7 @@ ActionController::Routing::Routes.draw do |map|
       #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
       repo.raw_blob        "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
       repo.blob_history    "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
+      repo.blame           "blobs/blame/*branch_and_path", :controller => "blobs", :action => "blame"
       repo.blob            "blobs/*branch_and_path", :controller => "blobs", :action => "show"
     end
   end
@@ -164,7 +168,8 @@ ActionController::Routing::Routes.draw do |map|
   map.contact "contact", :controller => "site", :action => "contact"
 
   map.namespace :api do |api|
-    api.connect ':project_id/:repository_id/log/graph', :controller => 'graphs', :action => 'show'
+    api.connect ':project_id/:repository_id/log/graph', :controller => 'graphs', :action => 'show', :branch => 'master'
+    api.connect ':project_id/:repository_id/log/graph/*branch', :controller => 'graphs', :action => 'show'
   end
 
   map.namespace :admin do |admin|
