@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 # encoding: utf-8
 #--
@@ -66,5 +67,25 @@ module TreesHelper
 
   def too_many_entries_for_log?(tree)
     tree.contents.length >= MAX_TREE_ENTRIES_FOR_LAST_COMMIT_LOG
+  end
+
+  # Render a link to another tree, along with a link to comparing the
+  # current tree with that tree - unless they're the same
+  def tree_and_diff_link(current_commit, current_name, refs, project, repository)
+    current_name = current_commit.id_abbrev if current_commit.id == current_name
+    list_items = refs.map do |ref|
+      display_diff_link = ref.commit.id != current_commit.id
+      tree_link = link_to(h(ref.name), project_repository_tree_path(project, repository, ensplat_path(ref.name)), :title => ref.name)
+      diff_link = link_to("Diff: #{h(current_name)}..#{h(ref.name)}",
+        project_repository_commit_compare_path(project, repository,
+          :from_id => current_commit.id, :id => ref.commit.id),
+        :title => "Show differences from #{h(current_name)} to #{h(ref.name)}",
+        :class => "compare_diffs")
+
+      html = tree_link
+      html << diff_link if display_diff_link
+      content_tag(:li, html, :class => display_diff_link ? "double_row" : "")
+    end
+    list_items.join
   end
 end

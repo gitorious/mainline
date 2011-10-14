@@ -22,8 +22,6 @@ class BlobsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
 
   should_enforce_ssl_for(:get, :history)
-  should_enforce_ssl_for(:get, :raw)
-  should_enforce_ssl_for(:get, :show)
 
   context "Blob rendering" do
     setup do
@@ -68,7 +66,6 @@ class BlobsControllerTest < ActionController::TestCase
         assert_response :success
         assert_equal @git, assigns(:git)
         assert_equal blob_mock, assigns(:blob)
-        assert_equal "max-age=600, private", @response.headers['Cache-Control']
       end 
     
       should "redirects to HEAD if provided sha was not found (backwards compat)" do
@@ -78,9 +75,40 @@ class BlobsControllerTest < ActionController::TestCase
             :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo.rb"]}
       
         assert_redirected_to (project_repository_blob_path(@project, @repository, ["HEAD", "foo.rb"]))
-      end   
+      end
+
+      context "Annotations" do
+        setup do
+          @git.stubs(:commit).with(SHA).returns(stub(:id => SHA, :id_abbrev => "aaa"))
+          @blame = mock
+          @blame.stubs(:lines).returns([])
+          @git.stubs(:blame).with("lib/foo.c", SHA).returns(@blame)
+        end
+        
+        should "not send session cookies" do
+          get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
+            :branch_and_path => [SHA, "lib","foo.c"]}
+          assert_equal [], @response.headers["Set-Cookie"]
+        end
+
+        should "expire soonish with shortened ref" do
+          @git.stubs(:commit).with("master").returns(stub(:id => SHA, :id_abbrev => "aaa"))
+          @git.stubs(:blame).with("lib/foo.c", "master").returns(@blame)
+          get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
+            :branch_and_path => ["master", "lib","foo.c"]}
+          assert_response :success
+          assert_match "max-age=3600", @response.headers["Cache-Control"]
+        end
+        
+        should "never expire with full ref" do
+          get :blame, {:project_id => @project.slug, :repository_id => @repository.name,
+            :branch_and_path => [SHA, "lib","foo.c"]}
+          assert_response :success
+          assert_match "max-age=315360000", @response.headers["Cache-Control"]
+        end
+      end
     end
-  
+    
     context "#raw" do
       should "get the blob data from a commit sha and a file name and render it as text/plain" do
         blob_mock = mock("blob")
@@ -165,7 +193,6 @@ class BlobsControllerTest < ActionController::TestCase
       end
     end
     
-    
     context "#history" do
       setup do
         @repository.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
@@ -180,7 +207,6 @@ class BlobsControllerTest < ActionController::TestCase
         assert_equal "master", assigns(:ref)
         assert_equal ["README.txt"], assigns(:path)
         assert_equal 5, assigns(:commits).size
-        assert_match(/max-age=\d+, private/, @response.headers['Cache-Control'])
       end
 
       should "get the history as json" do

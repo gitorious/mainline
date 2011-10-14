@@ -152,7 +152,7 @@
       :event_status_pushed => 'pushed some commits',
       :event_status_committed => 'committed',
       :event_pushed_n => "pushed {{commit_link}}",
-      :more_info => "More info…",
+      :more_info => "More info…"
     },
     :project => {
       :format_slug_validation => "must match something in the range of [a-z0-9_\-]+",
@@ -311,6 +311,11 @@
         :tags => "Tags",
         :committed => "committed",
       },
+      :graphs => {
+        :title => "Graph for {{repo_url}}:{{ref}}",
+        :type_all => "Graph all",
+        :type_normal => "Graph"
+      },
       :blobs => {
         :page_title => "{{path}} - {{repo}} in {{title}}",
         :wrap => "Softwrap mode",
@@ -318,6 +323,7 @@
         :raw => "Raw blob data",
         :show => "Blob contents",
         :history => "Blob history",
+        :blame => "Blame",
         :heading => "History for {{ref}}:{{path}}",
         :too_big => lambda { |this, path| "This file is too big to be rendered within reasonable time, " +
           this.link_to("try viewing the raw data", path) },
@@ -349,6 +355,7 @@
         :parent_sha1 => "Parent SHA1",
         :page_title => "Commit in {{repo}} in {{title}}",
         :title => "Commit {{commit}}",
+        :compare_title => "Diffs from {{first_commit}} to {{last_commit}}",
         :message => lambda { |this, path| "This is the initial commit in this repository, " +
           this.link_to( "browse the initial tree state", path ) + "." },
       },

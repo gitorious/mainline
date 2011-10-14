@@ -1,3 +1,4 @@
+
 /*
 #--
 #   Copyright (C) 2007-2009 Johan Sørensen <johan@johansorensen.com>
@@ -180,6 +181,13 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('.js-pjax').pjax('#content', { 
+        timeout: null, 
+        error: function(xhr, err){
+        // handle errors
+        }
+    })
 
     $(".comment .comment_form .cancel").live("click", function () {
         var theForm = $(this).parents(".comment_form");

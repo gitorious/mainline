@@ -69,12 +69,16 @@
     width: 240px;
     float: left;
     height: 34px;
-    -webkit-box-shadow: 0px 1px 0px #EEE inset;
+    -webkit-box-shadow: inset 0px 1px 0px #EEE;
     -moz-box-shadow: inset 0px 1px 0px #EEE;
     border-left: 1px solid #b5b5b5;
     border-right: 1px solid #b5b5b5;
     border-top: 1px solid #b5b5b5;
     background: #dedede no-repeat 6px 5px;
+}
+
+#sidebar ul.links li.double_row {
+  height: 60px;
 }
 
 #sidebar ul.links li.first {
@@ -99,7 +103,8 @@
     border-bottom: 1px solid #b5b5b5;
 }
 
-#sidebar ul.links li.last a:hover {
+#sidebar ul.links li.last a:hover,
+#sidebar ul.links li.double_row.last a.compare_diffs:hover {
     -webkit-border-bottom-right-radius: 6px;
     -webkit-border-bottom-left-radius: 6px;
     -moz-border-radius-bottomright: 6px;
@@ -107,12 +112,20 @@
     border-bottom: 1px solid #b5b5b5;
 }
 
+#sidebar ul.links li.double_row.last a:hover {
+    -webkit-border-bottom-right-radius: 0;
+    -webkit-border-bottom-left-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -moz-border-radius-bottomleft: 0;
+    border-bottom: 0;
+}
+
 #sidebar ul.links li a {
     font-weight: bold;
     color: #555555;
     font-size: 12px;
     text-shadow: 0px 1px #FFF;
-    width: 195px;
+    width: 195px; 
     float: left;
     display: block;
     line-height: 20px;
@@ -121,12 +134,38 @@
     background-position: 10px 9px;
     padding: 8px 10px 4px 35px;
     background-image: url("../images/silk/bullet_go.png");
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis; /* required for Opera */
+    -ms-text-overflow: ellipsis; /* required for IE8, allegedly */
+}
+
+#sidebar ul.links li a.compare_diffs,
+#sidebar ul.links li a.compare_diffs:hover {
+  font-weight: normal;
+  display: inline;
+  background-image: none;
+  padding: 2px 10px 2px 35px;
+}
+
+#sidebar ul.disable_hover.links li a:hover {
+  text-decoration: underline;
+  background-color: inherit;
+  -webkit-box-shadow: inset 0px 1px 0px #EEE;
+  -moz-box-shadow: inset 0px 1px 0px #EEE;
+}
+
+#sidebar ul.disable_hover.links li a.compare_diffs:hover {
+  text-decoration: underline;
+  background-color: inherit;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
 }
 
 #sidebar ul.links li a:hover {
     color: #535353;
     text-shadow: 0px 1px #EEE;
-    -webkit-box-shadow: 0px 1px 0px #e9e9e9 inset;
     text-decoration: none;
     background: #cecece no-repeat 10px 9px;
     background-image: url("../images/silk/bullet_go.png");

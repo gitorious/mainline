@@ -56,4 +56,8 @@ module SiteHelper
     </div>
     HTML
   end
+
+  def git_version
+    @git_version ||= GitoriousConfig["git_version"]
+  end
 end
