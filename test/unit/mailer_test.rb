@@ -131,6 +131,7 @@ class MailerTest < ActiveSupport::TestCase
     end
     
     should "be a sensible default unless configured" do
+      GitoriousConfig["sender_email_address"] = nil
       message = Mailer.create_signup_notification(@user)
       sender_address = "no-reply@#{GitoriousConfig['gitorious_host']}"
       assert_equal sender_address, message.from.first
@@ -138,7 +139,7 @@ class MailerTest < ActiveSupport::TestCase
 
     should "use configured sender address" do
       sender_address = "no-reply@gitorious.example"
-      GitoriousConfig["sender_email_address"] = sender_address
+      GitoriousConfig["sender_email_address"] = "Gitorious <#{sender_address}>"
       message = Mailer.create_signup_notification(@user)
       assert_equal sender_address, message.from.first
     end
