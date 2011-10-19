@@ -144,7 +144,19 @@ test:
   # development use (messages are only stored in a list, never processed).  The
   # sync adapter is intended for development use, but may also suit low traffic
   # setups where performance is not critical.
+
+  # Be sure your settings below match their analogues in broker.yml
+
+  ############################
+  # Stomp Adapter Properties #
+  ############################
   messaging_adapter: stomp
+
+  ## properties below are all defaults for this adapter
+  # stomp_server_address: localhost
+  # stomp_server_port: 61613
+  # stomp_server_login: ~
+  # stomp_server_passcode: ~
 
   ##############################################################################
   # The following settings are useful if you're interested in theming your
