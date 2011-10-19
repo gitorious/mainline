@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+RAILS_ENV = ENV['RAILS_ENV'] ||= 'production'
+
+filename = ARGV[0]
+if filename.nil?
+  warn "You need to supply a target file!"
+  exit!
+end
+
+require File.dirname(__FILE__) + "/../config/environment"
+
+key_file = SshKeyFile.new(filename)
+SshKey.find(:all, :conditions => {:ready => true}).each do |ssh_key|
+  if ssh_key.user
+    key_file.add_key(ssh_key.to_key)
+  end
+end
+
