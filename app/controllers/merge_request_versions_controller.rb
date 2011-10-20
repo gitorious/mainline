@@ -23,6 +23,7 @@ class MergeRequestVersionsController < ApplicationController
     @version = MergeRequestVersion.find(params[:id])
     @diffs = @version.diffs(extract_range_from_parameter(params[:commit_shas]))
     @repository = @version.merge_request.target_repository
+    @project = @repository.project
 
     if params[:commit_shas] && !commit_range?(params[:commit_shas])
       @commit = @repository.git.commit(params[:commit_shas])

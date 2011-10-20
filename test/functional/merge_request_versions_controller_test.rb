@@ -66,6 +66,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
         get :show,  :id => @version
       end
       should_respond_with :success
+      should_assign_to :project
     end
   end
 end

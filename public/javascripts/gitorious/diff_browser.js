@@ -385,6 +385,8 @@ Gitorious.MergeRequestController = function () {
         options.url = this.getDiffUrl();
         var self = this;
 
+        options.dataType = "html";
+
         options.success = function (data, text) {
             self.diffsReceivedSuccessfully(data, text, callback, caller);
         };
