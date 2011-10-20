@@ -36,7 +36,7 @@
             });
         },
         error: function () {
-            el.innerHTML = "Failed fetching graph data. Please try again or report the problem if it persists";
+            el.innerHTML = "<p>Failed fetching graph data. The server may be under high load, or have other temporary problems. Please <a href=\"\">try again in few minutes</a> or <a href=\"mailto:support@gitorious.org\">report the problem</a> if this message does not go away.</p>";
         }
     });
 

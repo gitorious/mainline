@@ -76,7 +76,7 @@ class Api::GraphsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should "render an empty JSON array on timeout" do
+    should "render JSON formatted message object on timeout" do
       mock_shell.raises(Gitorious::GitShell::GitTimeout.new)
 
       get :show, {
@@ -85,7 +85,8 @@ class Api::GraphsControllerTest < ActionController::TestCase
         :format => "json"
       }
 
-      assert_response :success
+      assert_response 503
+      assert_equal JSON.parse(@response.body), { "message" => "Git timeout" }
     end
 
     should "render graph for specific sha-ish" do
