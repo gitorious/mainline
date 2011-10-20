@@ -529,6 +529,16 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_match /description="Keep the copyright"[^>]*>BSD/, @response.body
     end
 
+    should "pre-select default license" do
+      login_as :johan
+      ProjectLicense.stubs(:default).returns("BSD")
+      ProjectLicense.stubs(:all).returns(%w[MIT BSD GPL].collect { |l| ProjectLicense.new(l) })
+
+      get :new
+
+      assert_match /selected="selected"[^>]*>BSD/, @response.body
+    end
+
     should "redirect if the user is not a site admin on POST #create" do
       login_as :moe
       post :create, :project => {}

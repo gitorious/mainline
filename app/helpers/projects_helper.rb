@@ -65,9 +65,15 @@ module ProjectsHelper
     end
   end
 
-  def project_license_choices
+  def default_license(project)
+    project.license || ProjectLicense.default
+  end
+
+  def project_license_choices(options = {})
+    selected = options[:selected] || ""
     ProjectLicense.all.inject("") do |html, license|
       attr = license.description.nil? ? "" : " data-description=\"#{license.description}\""
+      attr += license.name == selected ? " selected=\"selected\"" : ""
       "#{html}\n<option value=\"#{license.name}\"#{attr}>#{license.name}</option>"
     end
   end
