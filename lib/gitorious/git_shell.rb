@@ -22,7 +22,7 @@ module Gitorious
   # This class lets us shell out to Git directly
   class GitShell
     def execute(command)
-      Timeout.timeout(10) do
+      Timeout.timeout(20) do
         `#{command}`
       end
     rescue Timeout::Error

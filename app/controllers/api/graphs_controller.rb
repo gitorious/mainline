@@ -58,7 +58,7 @@ module Api
     end
 
     def render_timeout
-      render :json => []
+      render :status => 503, :json => { "message" => "Git timeout" }
     end
   end
 end

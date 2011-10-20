@@ -560,6 +560,10 @@ span.changed {
     white-space: nowrap;
 }
 
+.capillary p {
+    white-space: normal;
+}
+
 #capillary-log.loading {
     height: 50px;
     padding-top: 10px;
