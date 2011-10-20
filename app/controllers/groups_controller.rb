@@ -18,6 +18,7 @@
 
 class GroupsController < ApplicationController
   before_filter :login_required, :except => [:index, :show]
+  before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   before_filter :find_group_and_ensure_group_adminship, :only => [:edit, :update, :avatar]
   renders_in_global_context
 
@@ -101,6 +102,15 @@ class GroupsController < ApplicationController
       @group = Group.find_by_name!(params[:id])
       unless @group.admin?(current_user)
         access_denied and return
+      end
+    end
+    def check_if_only_site_admins_can_create
+      if GitoriousConfig["only_site_admins_can_create_teams"]
+        unless current_user.site_admin?
+          flash[:error] = I18n.t("groups_controller.create_only_for_site_admins")
+          redirect_to groups_path
+          return false
+        end
       end
     end
 end
