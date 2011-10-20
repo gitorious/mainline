@@ -530,6 +530,17 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_match /description="Keep the copyright"[^>]*>BSD/, @response.body
     end
 
+    should "render license descriptions without newlines" do
+      login_as :johan
+      ProjectLicense.stubs(:all).returns([ProjectLicense.new("MIT", "The liberal\none"),
+                                          ProjectLicense.new("BSD", "Keep the\ncopyright")])
+
+      get :new
+
+      assert_match /description="[^\n]*"[^>]*>BSD/, @response.body
+      assert_match /The liberal one/, @response.body
+    end
+
     should "pre-select default license" do
       login_as :johan
       ProjectLicense.stubs(:default).returns("BSD")
