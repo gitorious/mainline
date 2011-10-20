@@ -28,7 +28,7 @@ TestCase("BookmarkableMergeRequestTest", {
         assertEquals("bba00199", shaSpec.lastSha().sha());
         assertFalse(shaSpec.hasVersion());
     },
-    
+
     "test should recognize version": function () {
         var shaSpec = Gitorious.ShaSpec.parseLocationHash("aab00199-bba00199@2");
 
@@ -41,7 +41,7 @@ TestCase("BookmarkableMergeRequestTest", {
 
         assertEquals("aab00199", shaSpec.firstSha().sha());
     },
-    
+
     "test should return null for empty location hash": function () {
         var shaSpec = Gitorious.ShaSpec.parseLocationHash("");
 
@@ -49,7 +49,7 @@ TestCase("BookmarkableMergeRequestTest", {
     }
 
     /*
-      TODO: 
+      TODO:
       - query the current version from the location hash on load
       - set the current version on selection
       - extract the functionality for selecting commits, versions etc to a single, testable place
