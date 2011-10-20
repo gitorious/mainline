@@ -52,5 +52,6 @@ unless defined? GitoriousConfig
   end
 end
 
+GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"
 GitoriousConfig["git_version"] = `git --version`.chomp
 ActionMailer::Base.default_url_options[:protocol] = GitoriousConfig["scheme"]

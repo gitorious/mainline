@@ -33,7 +33,7 @@ module Gitorious
       log_format = '%H§%P§%ai§%ae§%d§%s§'
       pretty_format = %Q{format:"#{log_format}"}
 
-      command = "#{Grit::Git.git_binary} --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
+      command = "#{GitoriousConfig['git_binary']} --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
       command << options.join(" ")
       execute(command)
     end
