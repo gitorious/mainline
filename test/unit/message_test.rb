@@ -140,13 +140,13 @@ class MessageTest < ActiveSupport::TestCase
       assert_equal(1, @message.number_of_messages_in_thread)
       reply = @message.build_reply(:body => "Thanks so much")
       assert reply.save
-      10.times do 
+      5.times do 
         new_reply = reply.build_reply(:body => "That is nothing")
         new_reply.save
         reply = new_reply
       end
       @message.replies.reload
-      assert_equal(12, @message.number_of_messages_in_thread)      
+      assert_equal(7, @message.number_of_messages_in_thread)      
     end
     
     should 'know which messages are in the same thread' do
@@ -269,7 +269,7 @@ class MessageTest < ActiveSupport::TestCase
     
     should "throttle on create" do
       assert_nothing_raised do
-        10.times{|i|
+        5.times{|i|
           @message = Message.new({:subject => "Hello#{i}", :body => "World"})
           @message.sender = @sender
           @message.recipient = @recipient

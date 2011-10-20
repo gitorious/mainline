@@ -165,14 +165,26 @@ class MessagesControllerTest < ActionController::TestCase
   context "On POST to create with several recipients" do
     setup {login_as :moe}
 
-    should "allow separating recipients with various separating tokens" do
-      [","," ","."].each do |token|
+    context "separating user names with tokens" do
+      should "support a comma" do
         assert_incremented_by Message, :count, 2 do
-          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(token)}
+          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(",")}
         end
       end
-    end
 
+      should "support a whitespace character" do
+        assert_incremented_by Message, :count, 2 do
+          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(" ")}
+        end
+      end
+
+      should "support a period" do
+        assert_incremented_by Message, :count, 2 do
+          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(".")}
+        end
+      end
+
+    end    
   end
 
 
@@ -249,7 +261,7 @@ class MessagesControllerTest < ActionController::TestCase
     setup do
       @sender = Factory.create(:user)
       @recipient = Factory.create(:user)
-      @messages = 10.times.collect{ |i|
+      @messages = 4.times.collect{ |i|
         Message.create(:sender => @sender, :recipient => @recipient, :subject => "Message #{i}", :body => "Hello world")
       }
     end
