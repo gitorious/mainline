@@ -96,18 +96,51 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
       @allowed
     end
 
+    # Some of these may be arrays, some singletons, depending on
+    # LDAP fields in the database.
     def search(options)
-      ["displayname" => ["Moe Szyslak"], "mail" => ["moe@gitorious.org"]]
+      [{
+        "dn" => ["CN=moe,DC=gitorious,DC=org"],
+        "cn" => "moe",
+        "displayname" => "Moe Szyslak",
+        "mail" => ["moe@gitorious.org"]
+      }]
     end
   end
 
-  context "Authentication" do
+  context "BasicAuthentication" do
     setup do
       @ldap = Gitorious::Authentication::LDAPAuthentication.new({
           "server" => "localhost",
           "base_dn" => "DC=gitorious,DC=org",
           "connection_type" => StaticLDAPConnection
         })
+      StaticLDAPConnection.username = "moe"
+    end
+
+    should "not accept invalid credentials" do
+      assert !@ldap.valid_credentials?("moe","LetMe1n")
+    end
+
+    should "accept valid credentials" do
+      assert @ldap.valid_credentials?("moe","secret")
+    end
+
+    should "return the actual user" do
+      assert_equal(users(:moe), @ldap.authenticate("moe","secret"))
+    end
+  end
+
+  context "SearchAuthentication" do
+    setup do
+      @ldap = Gitorious::Authentication::LDAPAuthentication.new({
+          "server" => "localhost",
+          "base_dn" => "DC=gitorious,DC=org",
+          "bind_username" => "CN=moe,DC=gitorious,DC=org",
+          "bind_password" => "secret",
+          "connection_type" => StaticLDAPConnection
+        })
+      StaticLDAPConnection.username = "moe"
     end
 
     should "not accept invalid credentials" do

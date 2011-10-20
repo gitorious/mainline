@@ -19,5 +19,6 @@ if ldap.valid_credentials?(username, password)
   puts "All good, your credentials are correct"
 else
   puts "Not there yet."
-  puts "For debugging purposes, this is the DN we tried: #{ldap.build_username(username)}"
+  puts "For debugging purposes, this is the username we tried: #{ldap.build_username(username)}"
+  puts "For debugging purposes, this is the result DN we tried: #{ldap.get_dn_of_user(username)}"
 end

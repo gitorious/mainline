@@ -42,6 +42,16 @@ development:
       # Defaults to "simple_tls" if not set.
       #encryption: simple_tls
 
+      # Use if you need to search (ie distinguished_name_template is insufficient).
+      # Also possible for AD: "user@domain.com".
+      #bind_username: user\domain
+      # Password to authenticate bind_username with.
+      #bind_password: password
+
+      # Which ldap field to use for username. This is probably what you want for AD.
+      # Also possible: "email", "fullname", "cn".
+      #username_attribute: sAMAccountName
+
       # A class/object that will be called after successful authentication
       # through LDAP. Will be "constantized", post_authenticate will be called
       # with an options hash. See LdapAuthenticationTest.
