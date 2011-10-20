@@ -303,7 +303,7 @@ module EventRendering
 
     protected
     def base_url
-      "http://" + GitoriousConfig["gitorious_host"]
+      "#{GitoriousConfig['scheme']}://" + GitoriousConfig["gitorious_host"]
     end
 
     def url(*parts)

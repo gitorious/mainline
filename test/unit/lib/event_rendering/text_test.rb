@@ -43,7 +43,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
 
     should "always include a project link" do
       res = render(@event)
-      assert_match /\nhttp:\/\/gitorious\.test\/johans-project$/, res
+      assert_match /\n#{GitoriousConfig['scheme']}:\/\/#{GitoriousConfig['gitorious_host']}\/johans-project$/, res
     end
 
     should "raise error for unknown actions" do

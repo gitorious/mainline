@@ -36,6 +36,10 @@ class SessionsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:post, :create)
   should_enforce_ssl_for(:post, :new)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   should "login and redirect" do
     @controller.stubs(:using_open_id?).returns(false)
     post :create, :email => "johan@johansorensen.com", :password => "test"

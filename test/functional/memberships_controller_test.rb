@@ -31,6 +31,10 @@ class MembershipsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:post, :create)
   should_enforce_ssl_for(:put, :update)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   context "Routing" do
     setup do
       @group = groups(:team_thunderbird)

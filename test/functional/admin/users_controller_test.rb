@@ -21,6 +21,7 @@ require File.dirname(__FILE__) + '/../../test_helper'
 
 class Admin::UsersControllerTest < ActionController::TestCase
   def setup
+    setup_ssl_from_config
     login_as :johan
   end
 

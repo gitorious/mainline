@@ -139,6 +139,13 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
+  def setup_ssl_from_config
+    return unless GitoriousConfig["use_ssl"]
+
+    @request.env['HTTPS'] = 'on'
+    @request.env['SERVER_PORT'] = 443
+  end
+
   def self.enforce_ssl
     context "when enforcing ssl" do
       setup do

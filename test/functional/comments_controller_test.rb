@@ -29,6 +29,7 @@ class CommentsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:post, :preview)
 
   def setup
+    setup_ssl_from_config
     @project = projects(:johans)
     @repository = repositories(:johans)
   end

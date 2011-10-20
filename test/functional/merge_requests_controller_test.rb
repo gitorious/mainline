@@ -24,6 +24,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
 
   def setup
+    setup_ssl_from_config
     @project = projects(:johans)
     @project.update_attribute(:merge_requests_need_signoff, false)
     MergeRequestStatus.create_defaults_for_project(@project)

@@ -33,6 +33,10 @@ class MessagesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :read)
   should_render_in_global_context
 
+  def setup
+    setup_ssl_from_config
+  end
+
   context "On GET to index" do
     setup do
       login_as :moe

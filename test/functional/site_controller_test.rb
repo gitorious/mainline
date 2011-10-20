@@ -28,6 +28,10 @@ class SiteControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :public_timeline)
 
+  def setup
+    setup_ssl_from_config
+  end
+
   def alter_gitorious_config(key, value)
     old_value = GitoriousConfig[key]
     GitoriousConfig[key] = value

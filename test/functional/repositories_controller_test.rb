@@ -32,6 +32,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :update)
 
   def setup
+    setup_ssl_from_config
     @project = projects(:johans)
     @repo = repositories(:johans)
     @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
