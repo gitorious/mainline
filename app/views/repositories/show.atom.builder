@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-atom_feed do |feed|
+namespaced_atom_feed do |feed|
   feed.title("Gitorious: #{@repository.url_path} activity")
   feed.updated((@events.blank? ? Time.now : @events.first.created_at))
 

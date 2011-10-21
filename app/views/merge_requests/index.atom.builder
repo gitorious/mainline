@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-atom_feed do |feed|
+namespaced_atom_feed do |feed|
   feed.title("Gitorious: #{@repository.url_path} merge requests")
   feed.updated((@open_merge_requests.blank? ? Time.now : @open_merge_requests.first.created_at))
 

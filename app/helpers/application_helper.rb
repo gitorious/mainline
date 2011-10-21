@@ -593,4 +593,9 @@ module ApplicationHelper
     text = t("views.layout.#{setting}")
     "<li>#{link_to text, url}</li>"
   end
+
+  def namespaced_atom_feed(options={}, &block)
+    options["xmlns:gts"] = "http://gitorious.org/schema"
+    atom_feed(options, &block)
+  end
 end

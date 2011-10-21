@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-atom_feed do |feed|
+namespaced_atom_feed do |feed|
   feed.title("#{h(@project.title)} Wiki changes")
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 	
