@@ -4,6 +4,16 @@ unless defined? GitoriousConfig
   # make the default be publicly open
   GitoriousConfig['public_mode'] = true if GitoriousConfig['public_mode'].nil?
   GitoriousConfig["locale"] = "en" if GitoriousConfig["locale"].nil?
+  GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
+  GitoriousConfig["gitorious_support_email"] = "support@gitorious.local" if GitoriousConfig["gitorious_support_email"].nil?
+
+  if !GitoriousConfig.key?("additional_footer_links")
+    GitoriousConfig["additional_footer_links"] = [["Professional Gitorious Services", "http://gitorious.com/"]]
+  end
+
+  GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil?
+  GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil?
+  GitoriousConfig["mangle_email_addresses"] = true if !GitoriousConfig.key?("mangle_email_addresses")
 
   # require the use of SSL by default
   GitoriousConfig["use_ssl"] = true if GitoriousConfig["use_ssl"].nil?
@@ -11,7 +21,7 @@ unless defined? GitoriousConfig
 
   # set global locale
   I18n.default_locale = GitoriousConfig["locale"]
-  I18n.locale         = GitoriousConfig["locale"]
+  I18n.locale = GitoriousConfig["locale"]
 
   # set default tos/privacy policy urls
   GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].blank?

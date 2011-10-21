@@ -1,77 +1,140 @@
-development:
-
 production:
+  # The following is annotated default settings for your Gitorious install. In
+  # order for Gitorious to function properly, you _must_ tend to some of these
+  # settings. The settings are presented in four groups below; the top group is
+  # settings you have to provide, the second group is settings we recommend you
+  # review (and change where appropriate). The third group contains settings for
+  # tweaking the behavior of Gitorious (system message, public/private mode and
+  # so on), while the fourth group contains entirely optional settings that you
+  # can freely skip even reading when initially setting up (mostly related to
+  # theming and customizing the UI).
+  #
+  # Note: This configuration file will be split into smaller logically grouped
+  # files in future versions of Gitorious.
+  #
+  # If you want to be able to run Gitorious in development mode (useful when
+  # developing new features, or debugging), be sure to copy all the settings
+  # to the development group too. Look for the development: label to the bottom
+  # of this file.
+  #
+  # ------------------
+  # MANDATORY SETTINGS
+  # ------------------
+  #
+  # Port the ./script/gitorious script should use. This should be the port
+  # Gitorious runs under in the given environment. For normal setups, this will
+  # be port 80 (in the production environment).
+  gitorious_client_port: 80
 
-test:
-  # Site name. Default is "Gitorious"
-  #site_name: Gitorious
-
-  # The session secret key (`apg -m 64` is always useful for this kinda stuff)
-  cookie_secret: ssssht
-
-  # The path where git repositories are stored. The actual (bare) repositories resides
-  # in repository_base_path/#{project.slug}/#{repository.name}.git/:
-  repository_base_path: "/tmp/git-repos"
-
-  # Stuff that's in the html <head>. custom stats javascript code etc
-  extra_html_head_data:
-
-  # System message that will appear on all pages if present
-  system_message:
-
-  # Port the ./script/gitorious script should use:
-  gitorious_client_port: 3000
-
-  # Host the ./script/gitorious script should use:
+  # Host the ./script/gitorious script should use. This should be a locally
+  # reachable hostname. Note that if you use Apache to serve Gitorious, you
+  # have to provide 'localhost' as a ServerAlias in order for the app to be
+  # reachable over localhost:80. You may also specify the public hostname
+  # here, e.g. gitorious.mycompany.com.
   gitorious_client_host: localhost
 
-  # Host which is serving the gitorious app, eg "gitorious.org"
+  # Host name users use to reach Gitorious, e.g. "gitorious.org".
   gitorious_host: gitorious.test
 
-  # User which is running git daemon
-  gitorious_user: git
+  # The path where git repositories are stored. The actual (bare) repositories
+  # reside in #{repository_base_path}/#{project.slug}/#{repository.name}.git/:
+  repository_base_path: "/var/git/repositories"
 
-  # Email address to the support for the Gitorious server
-  gitorious_support_email: support@gitorious.org
+  # Gitorious allows users to download archived tarballs of repositories. In
+  # order to do this, it needs a separate directory to do the rough work,
+  # and a directory to keep cached tarballs (such that we don't waste time
+  # re-generating tarballs on every request).
+  #
+  # Tarball cache directory. Gitorious uses X-Sendfile to deliver files to
+  # users, so this needs to be readable by the web server.
+  archive_cache_dir: "/var/git/tarballs"
 
-  # Email spam on server errors to:
-  exception_notification_emails:
+  #
+  # Temporary tarball work directory
+  archive_work_dir: "/var/git/tarballs-work"
 
-  # Mangle visible e-mail addresses (spam protection)
-  mangle_email_addresses: true
+  # Session key. It is recommended to use a long random string for this. A
+  # suitable key can be generated with `apg -m 64`. Make sure you paste the
+  # key as one long string, no newlines or escaped characters.
+  cookie_secret: ssssht
 
-  # Enable or Disable Public Mode (true) or Private Mode (false)
-  public_mode: true
+  # --------------------
+  # RECOMMENDED SETTINGS
+  # --------------------
+  #
+  # In most cases you will want to keep the following settings as is, but we
+  # recommend you familiarize yourself with them. If you stray from the common
+  # path during setup, you will likely have to change some settings here.
 
-  # Define your locale
-  locale: en
-
-  # Where should we store generated tarballs?
-  # (should be readable by webserver, since we tell it to send the file using X-Sendfile)
-  archive_cache_dir: "/path/to/tarballs-cache"
-  # Which directory should we work in when we generate tarballs, before moving
-  # them to the above dir?
-  archive_work_dir: "/path/to/tarballs-work"
-
-  # is it only site admins who can create new projects?
-  only_site_admins_can_create_projects: false
-
-  # Should we hide HTTP clone urls?
-  hide_http_clone_urls: false
-
-  # Should we hide Git protocol clone urls?
-  hide_git_clone_urls: false
-
-  # Always display SSH URLs, regardless of push access?
-  # This can be useful when HTTP and Git isn't available
-  always_display_ssh_url: false
-
-  # Use SSL? Requires web server configuration. Recommended for security. Forces the use of
-  # HTTPS on login page and all pages while user is logged in
+  # Use SSL? Requires web server configuration. Strongly recommended. Forces
+  # the use of HTTPS on login page and all pages while user is logged in.
   use_ssl: true
 
+  # The user that runs the poller (and, optionally, the git daemon), and who
+  # owns the repositories on disk.
+  gitorious_user: git
+
+  # If Gitorious trips on an unrecoverable error, it will send you an email
+  # with details if you provide your addresses here.
+  exception_notification_emails:
+
+  # Messaging queue configuration
+  # Gitorious ships with two message queue implementations; Stomp via the
+  # ActiveMessaging gem and Resque. A TorqueBox implementation is on its way.
+  # Possible values: stomp, resque, test, sync. Default value is stomp. The test
+  # implementation is intended for unit testing only, not for production or
+  # development use (messages are only stored in a list, never processed). The
+  # sync adapter is intended for development use, but may also suit low traffic
+  # setups where performance is not critical.
+  messaging_adapter: stomp
+
+  # --------
+  # "TWEAKS"
+  # --------
+
+  # When Gitorious is running in public mode (true), everyone with access to the
+  # server can view and clone repositories. Private mode (false) will not allow
+  # anonymous access to content or user registration. Only pre-approved and
+  # logged in users can surf the Gitorious installation.
+  #
+  # NB! If you intend to run in public mode, you should probably also disable
+  # HTTP and git:// cloning. These protocols are anonymous, and will allow
+  # unregistered users to pull repositories, given that they somehow obtained
+  # the correct URLs.
+  #public_mode: true
+
+  # Only site admins can create projects.
+  #only_site_admins_can_create_projects: false
+
+  # System message that will appear on all pages if present
+  #system_message:
+
+  # Define your locale. See config/locales/ for supported locales.
+  #locale: en
+
+  # Hides http:// clone URLs from repository boxes when set to true.
+  #hide_http_clone_urls: false
+
+  # Hides git:// clone URLs from repository boxes when set to true.
+  # Set to true if you don't intend to run a git-daemon.
+  #hide_git_clone_urls: false
+
+  # Always display SSH URLs, regardless of push access? This setting should be
+  # true if you have disabled both HTTP and git:// cloning (typically when
+  # Gitorious is running in private mode). Setting this to true will always
+  # display the ssh URLs for a repository, even if the current user does not
+  # have access to push to it. ssh always allows cloning for users that have
+  # uploaded their public key.
+  #always_display_ssh_url: false
+
   # Is this gitorious.org? Read: should we have a very flashy homepage?
-  is_gitorious_dot_org: true
+  #is_gitorious_dot_org: true
+
+  # Configure which address to use as From when sending email
+  #sender_email_address: "Gitorious <no-reply@yourdomain.example>"
+
+  # Mangle visible e-mail addresses (spam protection)
+  #mangle_email_addresses: true
 
   # Available project licenses. This can be configured as an array of licenses:
   #
@@ -105,7 +168,7 @@ test:
   #   - MIT License
   #   - BSD License
   #   - Ruby License
-  #   - GNU General Public License version 2(GPLv2)
+  #   - GNU General Public License version 2 (GPLv2)
   #   - GNU General Public License version 3 (GPLv3)
   #   - GNU Lesser General Public License (LGPL)
   #   - GNU Affero General Public License (AGPLv3)
@@ -131,22 +194,37 @@ test:
   # Pick a default license
   #default_license: GNU Affero General Public License (AGPLv3)
 
-  # Terms of service and privacy policy
-  terms_of_use: false
-  terms_of_service_url: http://en.gitorious.org/tos
-  privacy_policy_url: http://en.gitorious.org/privacy_policy
+  # ----------------
+  # THEMING SETTINGS
+  # ----------------
 
-  # Messaging queue configuration
-  # Gitorious ships with two message queue implementations; Stomp via the
-  # ActiveMessaging gem and Resque. A TorqueBox implementation is on its way.
-  # Possible values: stomp, resque, test, sync. Default value is stomp. The test
-  # implementation is intended for unit testing only, not for production or
-  # development use (messages are only stored in a list, never processed).  The
-  # sync adapter is intended for development use, but may also suit low traffic
-  # setups where performance is not critical.
-  messaging_adapter: stomp
+  # Stuff that's in the html <head>. custom stats javascript code etc
+  #extra_html_head_data:
 
-  ##############################################################################
+  # Email address to the support for the Gitorious server
+  #gitorious_support_email: support@gitorious.local
+
+  # The SSH fingerprint of your server
+  #ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
+
+  # An array of two-element arrays to be rendered along the normal links in the
+  # footer on the site The first element is the link text, the next is the URL
+  #additional_footer_links:
+  #  - - Professional Gitorious Services
+  #    - http://gitorious.com/
+
+  # Set to true if you want to render terms of service and privacy policy links
+  # in the footer.
+  #terms_of_use: false
+
+  # Actual URLs to terms of service and privacy policy pages. Note that the
+  # defaults point to gitorious.org's policies. If you want to provide your own,
+  # add app/views/site/tos.html.erb and then provide /about/tos as the URL. For
+  # information on how to format the template, take a look at
+  # app/views/site/about.html.erb
+  #terms_of_service_url: http://en.gitorious.org/tos
+  #privacy_policy_url: http://en.gitorious.org/privacy_policy
+
   # The following settings are useful if you're interested in theming your
   # Gitorious install. Please note however, that we don't give any API
   # guarantees for view code, controllers or CSS. In fact, we plan to ditch most
@@ -155,7 +233,9 @@ test:
   # "themes"/overrides at your own risk. In particular, we will not include
   # relevant theme information in the Changelog, so you will need to refer to
   # the git log if updating gives you trouble.
-  ##############################################################################
+
+  # Site name. Default is "Gitorious"
+  #site_name: Gitorious
 
   # Additional stylesheets for most pages. "Most pages" is everything except for
   # the frontpage/public index, login page and the register page.
@@ -201,14 +281,17 @@ test:
   # (Note that this particular template requires is_gitorious_dot_org:
   # true). Refer to app/views/site/public_index.html.erb for how to customize.
 
-  # The SSH fingerprint of your server
-  ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
+development:
 
-  # An array of two-element arrays to be rendered along the normal links  in the footer on the site
-  # The first element is the link text, the next is the URL
-  additional_footer_links:
-    - - Professional Gitorious Services
-      - http://gitorious.com/
-
-  # Configure which address to use as From when sending email
-  #sender_email_address: "Gitorious <no-reply@yourdomain.example>"
+test:
+  # Unless you are developing Gitorious and really know what you are doing,
+  # leave the following settings as is.
+  repository_base_path: "/tmp/git/repositories"
+  archive_cache_dir: "/tmp/git/tarball-cache"
+  archive_work_dir: "/tmp/git/tarball-work"
+  gitorious_host: gitorious.test
+  gitorious_client_host: gitorious.test
+  gitorious_client_port: 3000
+  cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
+  use_ssl: true
+  messaging_adapter: test
