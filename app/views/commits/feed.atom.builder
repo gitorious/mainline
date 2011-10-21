@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-atom_feed do |feed|
+namespaced_atom_feed do |feed|
   feed.title("Gitorious: #{h(@repository.gitdir)}:#{h(desplat_path(params[:branch]))}")
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 	

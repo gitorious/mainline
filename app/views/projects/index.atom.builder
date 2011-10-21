@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-atom_feed do |feed|
+namespaced_atom_feed do |feed|
   feed.title("Gitorious: projects")
   feed.updated((@projects.blank? ? Time.now : @projects.first.created_at))
 
