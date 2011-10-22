@@ -183,4 +183,97 @@ class GroupsControllerTest < ActionController::TestCase
       assert !@group.reload.avatar?
     end
   end
+
+  context "when only admins are allowed to create new teams" do
+    setup do
+      GitoriousConfig["only_site_admins_can_ceate_teams"] = true
+      users(:johan).update_attribute(:is_admin, true)
+      users(:moe).update_attribute(:is_admin, false)
+    end
+
+    teardown do
+      GitoriousConfig["only_site_admins_can_create_teams"] = false
+    end
+
+    should "redirect if the user is not a site admin on GET #new" do
+      login_as :moe
+      get :new
+      assert_response :redirect
+      assert_match(/only site administrators/i, flash[:error])
+      assert_redirected_to group_path
+    end
+
+    should "succesfully GET #new if the user is a site_admin" do
+      login_as :johan
+      get :new
+      assert_nil flash[:error]
+      assert_response :success
+    end
+
+    should "redirect if the user is not a site admin on POST #create" do
+      login_as :moe
+      post :create, :group => {}
+      assert_response :redirect
+      assert_match(/only site administrators/i, flash[:error])
+      assert_redirected_to group_path
+    end
+
+    should "succesfully POST #create if the user is a site_admin" do
+      login_as :johan
+      post :create, :group => {
+        :name => "foo-group",
+        :description => "foo groups description"
+      }
+
+      assert_nil flash[:error]
+      assert_response :redirect
+      assert_redirected_to group_path(@group)
+    end
+  end
+  context "when only admins are allowed to create new teams" do
+    setup do
+      GitoriousConfig["only_site_admins_can_create_teams"] = true
+      users(:johan).update_attribute(:is_admin, true)
+      users(:moe).update_attribute(:is_admin, false)
+    end
+
+    teardown do
+      GitoriousConfig["only_site_admins_can_create_teams"] = false
+    end
+
+    should "redirect if the user is not a site admin on GET #new" do
+      login_as :moe
+      get :new
+      assert_response :redirect
+      assert_match(/only site administrators/i, flash[:error])
+      assert_redirected_to group_path
+    end
+
+    should "succesfully GET #new if the user is a site_admin" do
+      login_as :johan
+      get :new
+      assert_nil flash[:error]
+      assert_response :success
+    end
+
+    should "redirect if the user is not a site admin on POST #create" do
+      login_as :moe
+      post :create, :group => {}
+      assert_response :redirect
+      assert_match(/only site administrators/i, flash[:error])
+      assert_redirected_to group_path
+    end
+
+    should "succesfully POST #create if the user is a site_admin" do
+      login_as :johan
+      post :create, :group => {
+        :name => "foo-group",
+        :description => "foo groups description"
+       }
+
+      assert_nil flash[:error]
+      assert_response :redirect
+      assert_redirected_to group_path(@group)
+    end
+  end
 end
