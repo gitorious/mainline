@@ -37,7 +37,7 @@ module Gitorious
         @server = options["server"]
         @port = (options["port"] || 389).to_i
         @attribute_mapping = options["attribute_mapping"] || default_attribute_mapping
-        @encryption = (options["encryption"] || "simple_tls").to_sym
+        @encryption = options["encryption"].to_sym if options.key?("encryption")
         @base_dn = options["base_dn"]
         @connection_type = options["connection_type"] || Net::LDAP
         @callback_class = options["callback_class"].constantize if options.key?("callback_class")
