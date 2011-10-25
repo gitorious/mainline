@@ -588,10 +588,10 @@ module ApplicationHelper
     !GitoriousConfig["#{setting}_url"].blank?
   end
 
-  def footer_link(setting)
+  def footer_link(setting, html_options={})
     url = GitoriousConfig["#{setting}_url"]
     text = t("views.layout.#{setting}")
-    "<li>#{link_to text, url}</li>"
+    "<li>#{link_to text, url, html_options}</li>"
   end
 
   def namespaced_atom_feed(options={}, &block)
