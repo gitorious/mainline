@@ -55,4 +55,12 @@ EOS
       });
     EOS
   end
+
+  def login_field_label
+    if custom_label = GitoriousConfig["custom_username_label"]
+      custom_label
+    else
+      t("views.sessions.label").call(self)
+    end
+  end
 end

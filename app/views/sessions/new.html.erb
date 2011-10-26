@@ -34,7 +34,7 @@
         <div id="regular_login_fields">
           <ul>
             <li>
-              <label for="email"><%= t("views.sessions.label").call(self) %></label>
+              <label for="email"><%= login_field_label %></label>
               <%= text_field_tag 'email', params[:email] %>
             </li>
             <li>
