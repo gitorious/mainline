@@ -96,7 +96,7 @@ class Mailer < ActionMailer::Base
   def setup_email(user)
     @recipients  = "#{user.email}"
     @from        = sender_address
-    @subject     = "[Gitorious] "
+    @subject     = "[#{GitoriousConfig['site_name']}] "
     @sent_on     = Time.now
     @body[:user] = user
   end
