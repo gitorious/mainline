@@ -64,6 +64,9 @@ case "$refname","$newrev_type" in
 	refs/heads/*,commit)
 		# branch
 		;;
+	refs/merge-requests/*,commit)
+		# merge-requests
+		;;
 	refs/remotes/*,commit)
 		# tracking branch
 		;;
