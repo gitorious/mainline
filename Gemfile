@@ -12,7 +12,7 @@ gem "rdiscount", "1.3.1.1", :platforms => :ruby
 gem "mime-types", :require => "mime/types"
 gem "diff-lcs", :require => "diff/lcs"
 gem "oauth"
-gem "paperclip", "~> 2.2.8"
+gem "paperclip", "= 2.4.5"
 gem "state_machine"
 gem "rack", "~> 1.0.1"
 gem "riddle" # For the ultrasphinx plugin

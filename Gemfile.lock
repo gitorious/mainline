@@ -32,6 +32,7 @@ GEM
     childprocess (0.2.1)
       ffi (~> 1.0.6)
     chronic (0.3.0)
+    cocaine (0.2.0)
     daemons (1.1.0)
     diff-lcs (1.1.2)
     echoe (4.3.1)
@@ -61,7 +62,11 @@ GEM
     nokogiri (1.5.0)
     nokogiri (1.5.0-java)
     oauth (0.4.4)
-    paperclip (2.2.9.2)
+    paperclip (2.4.5)
+      activerecord (>= 2.3.0)
+      activesupport (>= 2.3.2)
+      cocaine (>= 0.0.2)
+      mime-types
     proxymachine (1.2.4)
       eventmachine (>= 0.12.10)
     rack (1.0.1)
@@ -132,7 +137,7 @@ DEPENDENCIES
   mocha
   mysql
   oauth
-  paperclip (~> 2.2.8)
+  paperclip (= 2.4.5)
   proxymachine
   rack (~> 1.0.1)
   rake
