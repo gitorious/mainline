@@ -1,0 +1,13 @@
+Source: gitorious
+Section: web
+Priority: extra
+Maintainer: Fabio Santos <supergrilo@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://gitorious.org
+
+Package: gitorious
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Gitorious git manager
+ Manage git repositories
