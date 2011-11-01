@@ -23,6 +23,8 @@
 # gitorious.yml:
 #     stomp_server_address (defaults to localhost)
 #     stomp_server_port    (defaults to 61613)
+#     stomp_server_login
+#     stomp_server_passcode
 #
 require "stomp"
 
@@ -118,7 +120,9 @@ module Gitorious::Messaging::StompAdapter
     def connect
       host = GitoriousConfig["stomp_server_address"] || "localhost"
       port = GitoriousConfig["stomp_server_port"] || 61613
-      Stomp::Connection.open(nil, nil, host, port, true)
+      login = GitoriousConfig["stomp_server_login"]
+      passcode = GitoriousConfig["stomp_server_passcode"]
+      Stomp::Connection.open(login, passcode, host, port, true)
     end
 
     def connection
