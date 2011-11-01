@@ -88,6 +88,13 @@ production:
   # setups where performance is not critical.
   messaging_adapter: stomp
 
+  # The following properties are all defaults for the stomp adapter
+  # Be sure to match thir analogues in broker.yml
+  # stomp_server_address: localhost
+  # stomp_server_port: 61613
+  # stomp_server_login: ~
+  # stomp_server_passcode: ~
+
   # --------
   # "TWEAKS"
   # --------
