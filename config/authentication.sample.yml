@@ -13,7 +13,8 @@
 #       attribute_mapping:                                      # Map LDAP fields to database fields. Default: displayname => fullname, mail => email
 #         givenName: fullname
 #         publicEmail: email
-#       encryption: simple_tls                                  # See Net-LDAP for other options
+#       encryption: simple_tls                                  # See Net-LDAP for other options, or use "none" for no encryption.
+                                                                # Defaults to "simple_tls" if not set.
 #       callback_class: SampleCallback                          # A class/object that will be called after successful authentication through LDAP. See LdapAuthenticationTest
 #                                                               # Will be "constantized", post_authenticate will be called with an options hash
 # production:
