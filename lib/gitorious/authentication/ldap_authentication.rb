@@ -21,8 +21,8 @@ module Gitorious
     class LDAPAuthentication
       attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
         :connection_type, :distinguished_name_template, :connection)
-      
-      
+
+
       def initialize(options)
         validate_requirements(options)
         setup_attributes(options)
@@ -32,7 +32,7 @@ module Gitorious
         raise ConfigurationError, "Server name required" unless options.key?("server")
         raise ConfigurationError, "Base DN required" unless options.key?("base_dn")
       end
-        
+
       def setup_attributes(options)
         @server = options["server"]
         @port = (options["port"] || 389).to_i
@@ -52,7 +52,7 @@ module Gitorious
           return true
         end
       end
-      
+
       # Ask the LDAP server if the credentials are correct
       def valid_credentials?(username, password)
         return false if password.blank?
@@ -74,13 +74,13 @@ module Gitorious
         return unless post_authenticate({:connection => connection, :username => username})
         user
       end
-      
+
       # Transform a username usable towards LDAP into something that passes Gitorious'
       # username validations
       def transform_username(username)
-        username.sub(".","-")
+        username.gsub(".", "-")
       end
-      
+
       def auto_register(username)
         filter = Net::LDAP::Filter.eq("cn", username)
         result = connection.search(:base => base_dn, :filter => filter,

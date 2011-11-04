@@ -24,7 +24,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     def self.reset
       @post_authenticate_called = nil
     end
-    
+
     def self.post_authenticate(options)
       @post_authenticate_called = :true
     end
@@ -34,7 +34,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     end
   end
 
-  
+
   context "Configuration" do
     setup do
       @ldap = Gitorious::Authentication::LDAPAuthentication.new({
@@ -52,9 +52,9 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     should "require a base DN" do
       assert_raises Gitorious::Authentication::ConfigurationError do
         ldap = Gitorious::Authentication::LDAPAuthentication.new({"server" => "localhost"})
-      end      
+      end
     end
-    
+
     should "use a default LDAP port" do
       assert_equal 389, @ldap.port
     end
@@ -87,7 +87,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     def self.username
       @username || "moe"
     end
-    
+
     def auth(username, password)
       @allowed = username == "CN=#{self.class.username},DC=gitorious,DC=org" && password == "secret"
     end
@@ -100,7 +100,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       ["displayname" => ["Moe Szyslak"], "mail" => ["moe@gitorious.org"]]
     end
   end
-  
+
   context "Authentication" do
     setup do
       @ldap = Gitorious::Authentication::LDAPAuthentication.new({
@@ -113,7 +113,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     should "not accept invalid credentials" do
       assert !@ldap.valid_credentials?("moe","LetMe1n")
     end
-    
+
     should "accept valid credentials" do
       assert @ldap.valid_credentials?("moe","secret")
     end
@@ -154,7 +154,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
           "connection_type" => StaticLDAPConnection})
       StaticLDAPConnection.username = "moe.szyslak"
     end
-    
+
     should "create a new user with attributes mapped from LDAP" do
       user = @ldap.authenticate("moe.szyslak", "secret")
       assert_equal "moe@gitorious.org", user.email
@@ -163,5 +163,12 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
 
       assert user.valid?
     end
-  end  
+
+    should "transform user's login to not contain dots" do
+      StaticLDAPConnection.username = "mr.moe.szyslak"
+      user = @ldap.authenticate("mr.moe.szyslak", "secret")
+
+      assert_equal "mr-moe-szyslak", user.login
+    end
+  end
 end
