@@ -104,7 +104,7 @@ production:
   # anonymous access to content or user registration. Only pre-approved and
   # logged in users can surf the Gitorious installation.
   #
-  # NB! If you intend to run in public mode, you should probably also disable
+  # NB! If you intend to run in private mode, you should probably also disable
   # HTTP and git:// cloning. These protocols are anonymous, and will allow
   # unregistered users to pull repositories, given that they somehow obtained
   # the correct URLs.
