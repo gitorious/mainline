@@ -59,8 +59,12 @@ class Favorite < ActiveRecord::Base
     end
   end
 
-  def notify_about_event(an_event)
+ def notify_about_event(an_event)
     notification_content = EventRendering::Text.render(an_event)
-    Mailer.deliver_favorite_notification(self.user, notification_content)
-  end
+
+    if an_event.action == Action::PUSH_SUMMARY
+      commit_diff_content = EventRendering::Text.render_diff_content(an_event)
+    end
+    Mailer.deliver_favorite_notification(self.user, notification_content, commit_diff_content)
+  end 
 end

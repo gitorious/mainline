@@ -31,6 +31,15 @@ module EventRendering
       new(event).render
     end
 
+    def self.render_diff_content(event)
+        event_data = PushEventLogger.parse_event_data(event.data)
+        branch_name = event_data[:branch]
+        start_sha = event_data[:start_sha]
+        end_sha = event_data[:end_sha]
+        repo = Repository.find_by_name_in_project!(event.target.name, event.project)
+        diff_content = repo.git.git.show({}, [start_sha, end_sha].join(".."))
+    end
+
     def initialize(event)
       @event = event
       @output = []
