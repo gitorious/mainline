@@ -403,9 +403,11 @@ class TextEventRenderingTest < ActiveSupport::TestCase
       data = [@first_sha, @last_sha, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @event.data = data
       @event.target = repositories(:johans)
+      mock_git_git_show_call
     end
 
     should "include the ref change" do
+      @repository.stub!("git").and_return
       res = render(@event)
       assert res.include?("master changed from #{@first_sha[0,7]} to #{@last_sha[0,7]}")
     end
@@ -417,11 +419,32 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     should "a URL to the repository" do
       assert_match("/#{@project.slug}/#{@repository.name}/commits", render(@event))
     end
-  end
 
+    should "include the diff url" do
+      res = render(@event)
+      assert res.include?("#{@repository.name}/commit/#{@first_sha}/diffs/#{@last_sha}")
+    end
+
+   should "include the diff body" do
+      res = render(@event)
+      assert res.include?("Diff: \n\ndiff body")
+    end
+  end
 
   protected
   def render(event)
     ::EventRendering::Text.render(event)
+  end
+
+  def base_url
+    "#{GitoriousConfig['scheme']}://" + GitoriousConfig["gitorious_host"]
+  end
+
+  def mock_git_git_show_call
+    @git = mock
+    @git.expects(:show).with({}, [@first_sha, @last_sha].join("..")).returns("diff body")
+    @ggit = mock
+    @ggit.expects(:git).returns(@git)
+    @repository.expects(:git).returns(@ggit)
   end
 end

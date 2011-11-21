@@ -315,10 +315,16 @@ module EventRendering
       event_data = PushEventLogger.parse_event_data(@event.data)
       start_sha = event_data[:start_sha]
       end_sha = event_data[:end_sha]
-      repository = @event.target
-      diff_body = repository.git.git.show({}, [start_sha, end_sha].join(".."))
-      diff_url = base_url + @event.target.url_path + "/commit/" + start_sha + "/diffs/" + end_sha
-      add("\nView the diff online: "+ diff_url +"\n\nDiff: \n\n" + diff_body)
+      add("\nView the diff online: "+ diff_url(start_sha, end_sha) +"\n\nDiff: \n\n" + diff_body(start_sha, end_sha))
     end
+
+    def diff_body(start_sha, end_sha)
+      @event.target.git.git.show({}, [start_sha, end_sha].join(".."))
+    end
+
+    def diff_url(start_sha, end_sha)
+      base_url + "/" + @event.target.url_path + "/commit/" + start_sha + "/diffs/" + end_sha
+    end
+
   end
 end
