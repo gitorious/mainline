@@ -31,15 +31,6 @@ module EventRendering
       new(event).render
     end
 
-    def self.render_diff_content(event)
-        event_data = PushEventLogger.parse_event_data(event.data)
-        branch_name = event_data[:branch]
-        start_sha = event_data[:start_sha]
-        end_sha = event_data[:end_sha]
-        repo = Repository.find_by_name_in_project!(event.target.name, event.project)
-        diff_content = repo.git.git.show({}, [start_sha, end_sha].join(".."))
-    end
-
     def initialize(event)
       @event = event
       @output = []
@@ -248,7 +239,8 @@ module EventRendering
           :changes => "#{branch_name} changed from #{start_sha} to #{end_sha}",
           :url => url,
           :commit_count => event_data[:commit_count]
-        })      
+        })
+      add_diff_content
     end
 
     def render_project(action)
@@ -317,6 +309,16 @@ module EventRendering
 
     def url(*parts)
       File.join(base_url, *parts)
+    end
+
+    def add_diff_content
+      event_data = PushEventLogger.parse_event_data(@event.data)
+      start_sha = event_data[:start_sha]
+      end_sha = event_data[:end_sha]
+      repository = @event.target
+      diff_body = repository.git.git.show({}, [start_sha, end_sha].join(".."))
+      diff_url = base_url + @event.target.url_path + "/commit/" + start_sha + "/diffs/" + end_sha
+      add("\nView the diff online: "+ diff_url +"\n\nDiff: \n\n" + diff_body)
     end
   end
 end
