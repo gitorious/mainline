@@ -85,12 +85,11 @@ class Mailer < ActionMailer::Base
       body        :error => err, :message => message_body, :processor => processor
   end
 
-  def favorite_notification(user, notification_body, commit_diff_body = nil)
+  def favorite_notification(user, notification_body)
     setup_email(user)
     @subject += "Activity: #{notification_body[0,35]}..."
     @body[:user] = user
     @body[:notification_body] = notification_body
-    @body[:commit_diff_body] = commit_diff_body
   end
 
   protected

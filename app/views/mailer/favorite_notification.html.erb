@@ -23,14 +23,7 @@ One of your favorites has a new activity:
 ------------------------------------------------------------------------
 <%= @notification_body %>
 ------------------------------------------------------------------------
-<% if @commit_diff_body -%>
 
-   Diff:
-
-<%= @commit_diff_body %>
-
-------------------------------------------------------------------------
-<% end -%>
 You are receiving this email because you have chosen to be notified by
 email whenever this favorite has new activity. You can manage your
 favorite subscriptions at <%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>/favorites
