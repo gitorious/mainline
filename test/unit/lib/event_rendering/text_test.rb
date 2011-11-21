@@ -407,7 +407,6 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     end
 
     should "include the ref change" do
-      @repository.stub!("git").and_return
       res = render(@event)
       assert res.include?("master changed from #{@first_sha[0,7]} to #{@last_sha[0,7]}")
     end
@@ -443,8 +442,8 @@ class TextEventRenderingTest < ActiveSupport::TestCase
   def mock_git_git_show_call
     @git = mock
     @git.expects(:show).with({}, [@first_sha, @last_sha].join("..")).returns("diff body")
-    @ggit = mock
-    @ggit.expects(:git).returns(@git)
-    @repository.expects(:git).returns(@ggit)
+    @git_git = mock
+    @git_git.expects(:git).returns(@git)
+    @repository.expects(:git).returns(@git_git)
   end
 end
