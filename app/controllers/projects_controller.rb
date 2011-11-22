@@ -34,7 +34,7 @@ class ProjectsController < ApplicationController
 
   def index
     @projects = paginate(:action => "index") do
-      order = GitoriousConfig["project_order"] || "created_at" 
+      project_order = GitoriousConfig["project_order"] || "created_at" 
       Project.paginate(:all, :order => "project.#{project_order} desc",
                        :page => params[:page], :include => [:tags, { :repositories => :project } ])
     end
