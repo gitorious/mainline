@@ -143,6 +143,9 @@ production:
   # Mangle visible e-mail addresses (spam protection)
   #mangle_email_addresses: true
 
+  # How to order the projects on project screen
+  #project_order = "created_at"
+
   # Available project licenses. This can be configured as an array of licenses:
   #
   # licenses:
