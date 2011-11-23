@@ -54,6 +54,10 @@ GEM
     json_pure (1.5.0)
     launchy (2.0.5)
       addressable (~> 2.2.6)
+    launchy (2.0.5-java)
+      addressable (~> 2.2.6)
+      ffi (~> 1.0.9)
+      spoon (~> 0.0.1)
     mime-types (1.16)
     mocha (0.9.10)
       rake
@@ -94,6 +98,7 @@ GEM
     shoulda (2.9.2)
     sinatra (1.0)
       rack (>= 1.0)
+    spoon (0.0.1)
     state_machine (0.9.4)
     stomp (1.1)
     tuxml (0.0.1)
