@@ -283,7 +283,7 @@ class ApplicationController < ActionController::Base
     expires_in(seconds, :public => true)
   end
 
-  # A wrapper around ActionPack's #stal?, that always returns true
+  # A wrapper around ActionPack's #stale?, that always returns true
   # if there's data in the flash hash or if we're in development mode
   def stale_conditional?(etag, last_modified)
     return true if !flash.empty? || Rails.env == "development"
