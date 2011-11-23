@@ -72,7 +72,7 @@ begin
     gitorious_says "Fatal error, please contact support"
     exit!(1)
   end
-  
+
   unless $?.success?
     logger.fatal("Failed to execute git command")
     gitorious_says "Failed to execute git command"
