@@ -29,7 +29,7 @@ class RepositoriesController < ApplicationController
     :only => [:edit, :update, :confirm_delete, :destroy]
   before_filter :require_user_has_ssh_keys, :only => [:clone, :create_clone]
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
-  skip_session :only => [:config, :writable_by]
+  always_skip_session :only => [:config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :config]
 
   def index
