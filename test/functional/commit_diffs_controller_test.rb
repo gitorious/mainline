@@ -62,6 +62,16 @@ class CommitDiffsControllerTest < ActionController::TestCase
 
       assert_response 404
     end
+
+    should "not touch the session object" do
+      ApplicationController.any_instance.expects(:public_and_logged_in).never
+
+      get(:index, {
+            :project_id => @project.to_param,
+            :repository_id => @repository.to_param,
+            :id => "5a0943123f6872e75a9b1dd0b6519dd42a186fda"
+          })
+    end
   end
 
   context "Comparing arbitrary commits" do

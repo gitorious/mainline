@@ -260,6 +260,7 @@ class ApplicationController < ActionController::Base
   end
 
   def self.skip_session(options = {})
+    return if !GitoriousConfig["public_mode"]
     skip_before_filter :public_and_logged_in, options
     skip_before_filter :require_current_eula, options
     skip_after_filter :mark_flash_status, options

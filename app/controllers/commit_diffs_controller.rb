@@ -49,11 +49,11 @@ class CommitDiffsController < ApplicationController
     @comments = []
     @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
     @git = @repository.git
-    
+
     unless @commit = @git.commit(params[:id])
       render_not_found and return
     end
-    
+
     @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
     @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
     @author_user = User.find_by_email_with_aliases(@commit.author.email)
