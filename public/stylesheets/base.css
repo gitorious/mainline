@@ -597,6 +597,7 @@ ul.buttons .white-button.small-button a { padding:2px 5px 2px 10px; }
     margin: 0;
     padding-left: 5px;
     height: 30px;
+    overflow: hidden;
     background-image: url(../img/breadcrumb-bg.png)!important;
     background: -webkit-gradient(
 	linear,
