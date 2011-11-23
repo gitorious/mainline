@@ -16,6 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<div id="commit-diffs" data-gts-source="<%= url_for(:controller => :commit_diffs, :action => :compare, :fragment => "1") %>"> 
-<p><%= image_tag("spinner.gif") -%> Please wait while we load your diffs.</p>
-</div> 
+<div
+   id="commit-diffs"
+   data-gts-source-error="We were unable to fetch your diff. This may be caused by server problems at our end, or you may have tried to view the diff between two invalid commits."
+   data-gts-source="<%= url_for(:controller => :commit_diffs, :action => :compare, :fragment => "1") %>">
+  <p><%= image_tag("spinner.gif") -%> Please wait while we load your diffs.</p>
+</div>
