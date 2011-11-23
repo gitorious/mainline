@@ -46,7 +46,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
 
     should "show diffs for successive commits" do
       get(:index, {
-            :project_id => @project.to_param, 
+            :project_id => @project.to_param,
             :repository_id => @repository.to_param,
             :id => "5a0943123f6872e75a9b1dd0b6519dd42a186fda"
           })
@@ -90,16 +90,16 @@ class CommitDiffsControllerTest < ActionController::TestCase
   context "Routing" do
     should "route commit diffs index" do
       assert_recognizes({
-        :controller => "commit_diffs", 
-        :action => "index", 
+        :controller => "commit_diffs",
+        :action => "index",
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => @sha,
       }, { :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/diffs", :method => :get })
 
       assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/diffs", {
-        :controller => "commit_diffs", 
-        :action => "index", 
+        :controller => "commit_diffs",
+        :action => "index",
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => @sha,
