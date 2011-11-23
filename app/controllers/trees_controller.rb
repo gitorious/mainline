@@ -24,29 +24,29 @@ class TreesController < ApplicationController
   before_filter :find_project_and_repository
   before_filter :check_repository_for_commits
   renders_in_site_specific_context :except => [:archive]
-  
+
   def index
-    redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
+    redirect_to repo_owner_path(@repository, :project_repository_tree_path,
                   @project, @repository, branch_with_tree(@repository.head_candidate_name, []))
   end
-  
+
   def show
     @git = @repository.git
     @ref, @path = branch_and_path(params[:branch_and_path], @git)
     unless @commit = @git.commit(@ref)
       handle_missing_tree_sha and return
     end
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
+    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
                           @commit.committed_date.utc)
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-      @root = Breadcrumb::Folder.new({:paths => @path, :head => head, 
+      @root = Breadcrumb::Folder.new({:paths => @path, :head => head,
                                       :repository => @repository})
       path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
       @tree = @git.tree(@commit.tree.id, path)
       expires_in 30.seconds
     end
   end
-  
+
   def archive
     @git = @repository.git
     # FIXME: update route when we've fixed rails bug #1939
@@ -55,12 +55,12 @@ class TreesController < ApplicationController
     unless @commit = @git.commit(@ref)
       handle_missing_tree_sha and return
     end
-    
+
     if !@commit
       flash[:error] = I18n.t "trees_controller.archive_error"
       redirect_to project_repository_path(@project, @repository) and return
     end
-    
+
     user_path = "#{@repository.project_or_owner.to_param}-#{@repository.to_param}-#{@ref}.#{ext}"
     disk_path = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@commit.id}.#{ext}"
     if File.exist?(File.join(GitoriousConfig["archive_cache_dir"], disk_path))
@@ -78,7 +78,7 @@ class TreesController < ApplicationController
       if !File.exist?(File.join(GitoriousConfig["archive_work_dir"], disk_path))
         publish_archive_message(@repository, disk_path, @commit)
       end
-      
+
       respond_to do |format|
         format.html {
           # FIXME: This doesn't fly with wget/curl/etc type clients
@@ -91,7 +91,7 @@ class TreesController < ApplicationController
       end
     end
   end
-  
+
   protected
     def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
       response.headers["X-Sendfile"] = File.join(GitoriousConfig["archive_cache_dir"], real_path)
@@ -113,7 +113,7 @@ class TreesController < ApplicationController
 
     def handle_missing_tree_sha
       flash[:error] = "No such tree SHA1 was found"
-      redirect_to project_repository_tree_path(@project, @repository, 
+      redirect_to project_repository_tree_path(@project, @repository,
                       branch_with_tree("HEAD", @path || []))
     end
 end
