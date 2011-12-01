@@ -29,28 +29,28 @@ class RepositoryArchivingProcessor
 
   def on_message(message)
     return if File.exist?(message["output_path"])
-    
+
     Dir.chdir(message["full_repository_path"]) do
       case message["format"]
       when "tar.gz"
         run("git archive --format=tar --prefix=#{e(message['name'] || message['commit_sha'])}/ " +
-          "#{e(message['commit_sha'])} | gzip > #{e(message['work_path'])}")
+          "#{e(message['commit_sha'])} | gzip -m > #{e(message['work_path'])}")
       end
     end
-    
+
     if run_successful?
       FileUtils.mv(message["work_path"], message["output_path"])
     end
   end
-  
+
   def run_successful?
     $? && $?.success?
   end
-  
+
   def run(cmd)
     `#{cmd}`
   end
-  
+
   protected
     def e(string)
       string.gsub("'", '').gsub('"', '')
