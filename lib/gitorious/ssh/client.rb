@@ -113,11 +113,6 @@ module Gitorious
         # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well
         port = RUBY_VERSION > '1.9' ? _port : _port.to_s
 
-
-        File.open("/tmp/hello.txt", "w") do |f|
-          f.puts URI::HTTP.build(:host => host, :port => port, :path => path, :query => query).inspect
-        end
-
         URI::HTTP.build(:host => host, :port => port, :path => path, :query => query)
       end
     end
