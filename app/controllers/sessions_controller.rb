@@ -30,7 +30,7 @@ class SessionsController < ApplicationController
   renders_in_site_specific_context
   layout "second_generation/application"
   before_filter :validate_request_host, :only => :create
-  
+
   # render new.rhtml
   def new
   end
@@ -86,8 +86,8 @@ class SessionsController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordInvalid => invalid
-    flash[:error] = %Q{This login (<strong>#{@user.login}</strong>) already exists, 
-      please <a href="#{@user.identity_url}"> choose a different persona/nickname 
+    flash[:error] = %Q{This login (<strong>#{@user.login}</strong>) already exists,
+      please <a href="#{@user.identity_url}"> choose a different persona/nickname
       or modify the current one</a>}
     redirect_to login_path(:method => 'openid')
   end
@@ -114,8 +114,8 @@ class SessionsController < ApplicationController
   def successful_login
     if params[:remember_me] == "1"
       self.current_user.remember_me
-      cookies[:auth_token] = { 
-        :value => self.current_user.remember_token , 
+      cookies[:auth_token] = {
+        :value => self.current_user.remember_token ,
         :expires => self.current_user.remember_token_expires_at,
         :domain => ".#{GitoriousConfig['gitorious_host']}",
         :secure => true
@@ -123,7 +123,7 @@ class SessionsController < ApplicationController
     end
     check_state_and_redirect('/')
   end
-  
+
   def check_state_and_redirect(redirection_url)
     if current_user.pending?
       flash[:notice] = "You need to accept the terms"
