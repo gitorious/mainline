@@ -90,7 +90,7 @@ module BlobsHelper
       out << %Q{<td class="line-numbers"><a href="#line#{lineno}" name="line#{lineno}">#{lineno}</a></td>}
       code_classes = "code"
       code_classes << " #{code_theme_class}" if code_theme_class
-      ext = File.extname(filename).sub(/^\./, '')
+      ext = h(File.extname(filename).sub(/^\./, ''))
       out << %Q{<td class="#{code_classes}"><pre class="prettyprint lang-#{ext}">#{h(line)}</pre></td>}
       out << "</tr>"
     end
