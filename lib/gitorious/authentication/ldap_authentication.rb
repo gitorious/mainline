@@ -29,12 +29,13 @@ module Gitorious
       end
 
       def validate_requirements(options)
-        raise ConfigurationError, "Server name required" unless options.key?("server")
+        server_provided = options.key?("server") || options.key?("host")
+        raise ConfigurationError, "Server name required" unless server_provided
         raise ConfigurationError, "Base DN required" unless options.key?("base_dn")
       end
 
       def setup_attributes(options)
-        @server = options["server"]
+        @server = options["host"] || options["server"]
         @port = (options["port"] || 389).to_i
         @attribute_mapping = options["attribute_mapping"] || default_attribute_mapping
         encryption_opt = options["encryption"] || "simple_tls"

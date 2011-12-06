@@ -78,6 +78,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
 
   class StaticLDAPConnection
     def initialize(opts)
+      raise "Static LDAP connection created without host" unless opts[:host]
     end
 
     def self.username=(name)
@@ -120,6 +121,16 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
 
     should "return the actual user" do
       assert_equal(users(:moe), @ldap.authenticate("moe","secret"))
+    end
+
+    should "allow host as alias for server" do
+      ldap = Gitorious::Authentication::LDAPAuthentication.new({
+          "host" => "localhost",
+          "base_dn" => "DC=gitorious,DC=org",
+          "connection_type" => StaticLDAPConnection
+        })
+
+      assert ldap.valid_credentials?("moe","secret")
     end
   end
 
