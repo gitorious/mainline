@@ -1,20 +1,75 @@
-# Configure authentication by saving this file as
-# authentication.yml
-# One section for each RAILS_ENV, like database.yml
-# 
-# development:
-#   disable_default: true                                       # disable database authentication altogether
-#   methods:                                                    # additional methods, an array of hashes
-#     - adapter: Gitorious::Authentication::LDAPAuthentication  # Configure LDAP - add another class name to roll your own.
-#       server: ldap.example                                    # IP/hostname to LDAP server
-#       port: 1999                                              # Override the default port (389)
-#       base_dn: DC=gitorious,DC=org                            # The base DN to search
-#       distinguished_name_template: "{}@gitorious.org"         # How to build a user's DN. Default: CN={},$BASE_DN
-#       attribute_mapping:                                      # Map LDAP fields to database fields. Default: displayname => fullname, mail => email
-#         givenName: fullname
-#         publicEmail: email
-#       encryption: simple_tls                                  # See Net-LDAP for other options, or use "none" for no encryption.
-                                                                # Defaults to "simple_tls" if not set.
-#       callback_class: SampleCallback                          # A class/object that will be called after successful authentication through LDAP. See LdapAuthenticationTest
-#                                                               # Will be "constantized", post_authenticate will be called with an options hash
+# Configure authentication by saving this file as authentication.yml One section
+# for each RAILS_ENV, like database.yml
+#
+# If you just want straight database backed authentication you don't need this
+# file at all.
+#
+development:
+  # Disable database authentication altogether
+  #disable_default: true
+
+  # additional methods, an array of hashes
+  #methods:
+    # An adapter is a class that implements an authentication mechanism. You
+    # can roll your own, or use one of Gitorious' prepackaged ones.
+    # Available implementations are:
+    # Gitorious::Authentication::LDAPAuthentication
+    # Gitorious::Authentication::Crowd
+
+    ############################################################################
+    # Example of configuring LDAP authentication
+    #- adapter: Gitorious::Authentication::LDAPAuthentication
+
+      # IP/hostname to LDAP server
+      #host: ldap.example
+
+      # Override the default port (389)
+      #port: 1999
+
+      # The base DN to search
+      #base_dn: DC=gitorious,DC=org
+
+      # How to build a user's DN. Default: CN={},$BASE_DN
+      #distinguished_name_template: "{}@gitorious.org"
+
+      # Map LDAP fields to database fields.
+      # Default: displayname => fullname, mail => email
+      # attribute_mapping:
+        # givenName: fullname
+        # publicEmail: email
+
+      # See Net-LDAP for other options, or use "none" for no encryption.
+      # Defaults to "simple_tls" if not set.
+      #encryption: simple_tls
+
+      # A class/object that will be called after successful authentication
+      # through LDAP. Will be "constantized", post_authenticate will be called
+      # with an options hash. See LdapAuthenticationTest.
+      #callback_class: SampleCallback
+
+    # End LDAP configuration example
+    ############################################################################
+
+    ############################################################################
+    # Example of configuring Atlassian Crowd authentication
+    #- adapter: Gitorious::Authentication::CrowdAuthentication
+
+      # IP/hostname to Crowd server
+      #host: crowd.example
+
+      # Override default port (8095)
+      #port: 80
+
+      # Set context path for Crowd installation
+      #context: /crowd
+
+      # The application name
+      #application: gitorious
+
+      # Application password
+      #password: 123456789
+
+    # End Crowd configuration example
+    ############################################################################
+
 # production:

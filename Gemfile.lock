@@ -136,6 +136,7 @@ DEPENDENCIES
   mime-types
   mocha
   mysql
+  nokogiri
   oauth
   paperclip (~> 2.2.8)
   proxymachine

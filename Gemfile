@@ -24,6 +24,7 @@ gem "will_paginate"
 gem "hodel_3000_compliant_logger"
 gem "ruby-net-ldap", "~> 0.0.4"
 gem "capillary", "~> 1.0.0"
+gem "nokogiri"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
