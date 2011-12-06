@@ -17,8 +17,7 @@
 #++
 
 require "test_helper"
-class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
-
+class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCase
   # Mock that should receive callbacks
   class CallbackMock
     def self.reset
