@@ -49,7 +49,7 @@ module Gitorious
         user.terms_of_use = "1"
         user.aasm_state = "terms_accepted"
         user.activated_at = Time.now.utc
-        user.save
+        user.save!
         user
       end
     end
