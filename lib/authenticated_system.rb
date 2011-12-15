@@ -5,13 +5,13 @@ module AuthenticatedSystem
     def logged_in?
       current_user != :false
     end
-    
+
     # Accesses the current user from the session.  Set it to :false if login fails
     # so that future calls do not hit the database.
     def current_user
       @current_user ||= (login_from_session || login_from_basic_auth || login_from_cookie || :false)
     end
-    
+
     # Store the given user in the session.
     def current_user=(new_user)
       session[:user_id] = (new_user.nil? || new_user.is_a?(Symbol)) ? nil : new_user.id
@@ -20,7 +20,7 @@ module AuthenticatedSystem
       end
       @current_user = new_user
     end
-    
+
     def set_varnish_auth_cookie
       cookies["_logged_in"] = {
         :value => "true",
@@ -30,11 +30,11 @@ module AuthenticatedSystem
         :secure => true
       }
     end
-    
+
     def clear_varnish_auth_cookie
       cookies.delete "_logged_in", :domain => ".#{GitoriousConfig['gitorious_host']}"
     end
-    
+
     # Check if the user is authorized
     #
     # Override this method in your controllers if you want to restrict access
@@ -95,22 +95,22 @@ module AuthenticatedSystem
         end
       end
       false
-    end  
-    
+    end
+
     # Store the URI of the current request in the session.
     #
     # We can return to this location by calling #redirect_back_or_default.
     def store_location(location = request.request_uri)
       session[:return_to] = location
     end
-    
+
     # Redirect to the URI stored by the most recent store_location call or
     # to the passed default.
     def redirect_back_or_default(default)
       session[:return_to] ? redirect_to(session[:return_to]) : redirect_to(default)
       session[:return_to] = nil
     end
-    
+
     # Inclusion hook to make #current_user and #logged_in?
     # available as ActionView helper methods.
     def self.included(base)
@@ -129,7 +129,7 @@ module AuthenticatedSystem
     end
 
     # Called from #current_user.  Finaly, attempt to login by an expiring token in the cookie.
-    def login_from_cookie      
+    def login_from_cookie
       user = cookies[:auth_token] && User.find_by_remember_token(cookies[:auth_token])
       if user && user.remember_token?
         user.remember_me
@@ -148,6 +148,6 @@ module AuthenticatedSystem
     def get_auth_data
       auth_key  = @@http_auth_headers.detect { |h| request.env.has_key?(h) }
       auth_data = request.env[auth_key].to_s.split unless auth_key.blank?
-      return auth_data && auth_data[0] == 'Basic' ? Base64.decode64(auth_data[1]).split(':')[0..1] : [nil, nil] 
+      return auth_data && auth_data[0] == 'Basic' ? Base64.decode64(auth_data[1]).split(':')[0..1] : [nil, nil]
     end
 end
