@@ -102,7 +102,7 @@ class SessionsController < ApplicationController
   end
 
   def failed_login(message = "Authentication failed.",method="")
-    if method==''
+    if method==""
       flash.now[:error] = message
       render :action => 'new'
     else
