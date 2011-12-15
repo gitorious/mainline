@@ -31,6 +31,11 @@
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
         <div class="horisontal-shadow"></div>
+        <% if flash[:error] %>
+          <div class="error">
+            <p><%= flash[:error] %></p>
+          </div>
+        <% end %>
         <div id="regular_login_fields">
           <ul>
             <li>
