@@ -73,11 +73,29 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     should "provide a default DN template" do
       assert_equal "CN={},DC=gitorious,DC=org", @ldap.distinguished_name_template
     end
+
+    should "provide default DN template with different login attribute" do
+      @ldap = Gitorious::Authentication::LDAPAuthentication.new({
+          "server" => "localhost",
+          "base_dn" => "dc=gitorious,dc=org",
+          "login_attribute" => "uid"
+        })
+
+      assert_equal "uid={},dc=gitorious,dc=org", @ldap.distinguished_name_template
+    end
   end
 
   class StaticLDAPConnection
     def initialize(opts)
       raise "Static LDAP connection created without host" unless opts[:host]
+    end
+
+    def self.login_attribute=(attr)
+      @login_attribute = attr
+    end
+
+    def self.login_attribute
+      @login_attribute || "CN"
     end
 
     def self.username=(name)
@@ -89,7 +107,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
 
     def auth(username, password)
-      @allowed = username == "CN=#{self.class.username},DC=gitorious,DC=org" && password == "secret"
+      @allowed = username == "#{self.class.login_attribute}=#{self.class.username},DC=gitorious,DC=org" && password == "secret"
     end
 
     def bind
@@ -97,7 +115,13 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
 
     def search(options)
+      return [] unless /^\(#{login_attribute}=/ =~ options[:filter].to_s
       ["displayname" => ["Moe Szyslak"], "mail" => ["moe@gitorious.org"]]
+    end
+
+    private
+    def login_attribute
+      self.class.login_attribute
     end
   end
 
@@ -165,6 +189,10 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
       StaticLDAPConnection.username = "moe.szyslak"
     end
 
+    teardown do
+      StaticLDAPConnection.login_attribute = "CN"
+    end
+
     should "create a new user with attributes mapped from LDAP" do
       user = @ldap.authenticate("moe.szyslak", "secret")
       assert_equal "moe@gitorious.org", user.email
@@ -176,6 +204,19 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
 
     should "transform user's login to not contain dots" do
       StaticLDAPConnection.username = "mr.moe.szyslak"
+      user = @ldap.authenticate("mr.moe.szyslak", "secret")
+
+      assert_equal "mr-moe-szyslak", user.login
+    end
+
+    should "search using uid instead of cn" do
+      @ldap = Gitorious::Authentication::LDAPAuthentication.new({
+        "server" => "localhost",
+        "base_dn" => "DC=gitorious,DC=org",
+        "login_attribute" => "uid",
+        "connection_type" => StaticLDAPConnection})
+      StaticLDAPConnection.username = "mr.moe.szyslak"
+      StaticLDAPConnection.login_attribute = "uid"
       user = @ldap.authenticate("mr.moe.szyslak", "secret")
 
       assert_equal "mr-moe-szyslak", user.login

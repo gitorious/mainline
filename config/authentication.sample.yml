@@ -29,7 +29,11 @@ development:
       # The base DN to search
       #base_dn: DC=gitorious,DC=org
 
-      # How to build a user's DN. Default: CN={},$BASE_DN
+      # What LDAP attribute to use for user authentication. Default is CN
+      #login_attribute: uid
+
+      # How to build a user's DN. Default: $LOGIN_ATTRIBUTE={},$BASE_DN,
+      # e.g. CN=chris,DC=gitorious,DC=org
       #distinguished_name_template: "{}@gitorious.org"
 
       # Map LDAP fields to database fields.

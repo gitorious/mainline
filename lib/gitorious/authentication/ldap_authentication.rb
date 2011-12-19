@@ -20,8 +20,7 @@ module Gitorious
   module Authentication
     class LDAPAuthentication
       attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
-        :connection_type, :distinguished_name_template, :connection)
-
+        :connection_type, :distinguished_name_template, :connection, :login_attribute)
 
       def initialize(options)
         validate_requirements(options)
@@ -35,6 +34,7 @@ module Gitorious
       end
 
       def setup_attributes(options)
+        @login_attribute = options["login_attribute"] || "CN"
         @server = options["host"] || options["server"]
         @port = (options["port"] || 389).to_i
         @attribute_mapping = options["attribute_mapping"] || default_attribute_mapping
@@ -83,7 +83,7 @@ module Gitorious
       end
 
       def auto_register(username)
-        filter = Net::LDAP::Filter.eq("cn", username)
+        filter = Net::LDAP::Filter.eq(login_attribute, username)
         result = connection.search(:base => base_dn, :filter => filter,
           :attributes => attribute_mapping.keys, :return_result => true)
         if result.size > 0
@@ -116,7 +116,7 @@ module Gitorious
       end
 
       def build_distinguished_name_template(template)
-        @distinguished_name_template = template || "CN={},#{base_dn}"
+        @distinguished_name_template = template || "#{login_attribute}={},#{base_dn}"
       end
 
     end
