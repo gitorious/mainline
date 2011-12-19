@@ -139,7 +139,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
           "server" => "localhost",
           "base_dn" => "DC=gitorious,DC=org",
           "connection_type" => StaticLDAPConnection,
-          "callback_class" => "Gitorious::Authentication::ConfigurationTest::CallbackMock"
+          "callback_class" => "Gitorious::Authentication::LDAPAuthenticationTest::CallbackMock"
         })
       CallbackMock.reset
       StaticLDAPConnection.username = "moe"
