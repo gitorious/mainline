@@ -30,7 +30,7 @@
   <table class="listing tree">
     <% @tree.contents.select{|c| c.is_a? Grit::Tree}.sort_by{|c| force_utf8(c.name).downcase}.each do |node| -%>
       <tr class="<%= cycle("odd", "even") -%>">
-          <td class="node folder">
+          <td class="node folder" colspan="3">
             <%= link_to h(node.basename) + "/", tree_path(@ref, node.name) -%>
           </td>
     <% end -%>
@@ -39,7 +39,7 @@
         <% if node.is_a? Grit::Submodule -%>
           <td class="node submodule"><a href="#"><%= h(node.basename) -%></a></td>
         <% else -%>
-          <td class="node file <%= class_for_filename(node.name)  -%>">
+          <td class="node file <%= class_for_filename(node.name) -%>">
             <%= link_to h(node.basename), blob_path(@ref, node.name).gsub("%2F","/") -%>
           </td>
         <% end -%>
@@ -62,7 +62,7 @@
   </table>
 <% end -%>
 
-<% content_for :sidebar do -%>  
+<% content_for :sidebar do -%>
   <ul class="sidebar-meta">
     <li><strong>Repository:</strong>
       <%= link_to(h(@repository.name), repo_owner_path(@repository, :project_repository_path, @repository.project, @repository)) -%>
@@ -76,15 +76,15 @@
       <%= link_to(h(@repository.owner.title), @repository.owner) -%>
     </li>
     <li>
-      <strong><%= t("views.trees.branch") %>:</strong> 
+      <strong><%= t("views.trees.branch") %>:</strong>
       <%=h @ref -%>
     </li>
     <li>
-      <strong>HEAD:</strong> 
+      <strong>HEAD:</strong>
       <%= link_to h(@commit.id[0,7]), commit_path(@commit.id) -%>
     </li>
     <li>
-      <strong><%= t("views.logs.head_tree") %>:</strong> 
+      <strong><%= t("views.logs.head_tree") %>:</strong>
       <%= link_to h(@commit.tree.id[0,7]), tree_path(branch_with_tree(@commit.id, [])) -%>
     </li>
   </ul>
@@ -92,12 +92,12 @@
   <ul class="links navigation">
     <li class="commit">
       <%= link_to "Commit log", repo_owner_path(@repository, :project_repository_commits_in_ref_path, @project, @repository, ensplat_path(@ref)) -%>
-    </li>    
+    </li>
     <%= render_download_links(@repository.project, @repository, @ref,
                               :except => :source_tree, :only_list_items => true) -%>
   </ul>
-  
-  <% cache([tree_path(@commit.id), :tags_and_branches], 
+
+  <% cache([tree_path(@commit.id), :tags_and_branches],
            {:expires_in => 10.minutes}) do -%>
 
     <ul class="links navigation disable_hover">
