@@ -44,7 +44,7 @@ class RepositoryArchivingProcessorTest < ActiveSupport::TestCase
   should "generates an archived tarball in the work dir and moves it to the cache path" do
     Dir.expects(:chdir).yields(Dir.new("/tmp"))
     @processor.expects(:run).with("git archive --format=tar " +
-      "--prefix=ze_project-reponame/ abc123 | gzip > #{@msg[:work_path]}").returns(nil)
+      "--prefix=ze_project-reponame/ abc123 | gzip -m > #{@msg[:work_path]}").returns(nil)
 
     @processor.expects(:run_successful?).returns(true)
     FileUtils.expects(:mv).with(@msg[:work_path], @msg[:output_path])
