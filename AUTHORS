@@ -4,15 +4,22 @@ Gitorious Authors
 Project Lead
 -------------
 
-Gitorious has originally been written by Johan Sørensen <johan@johansorensen.com>
-and he remains the project lead.
+Gitorious was originally written by Johan Sørensen <johan@johansorensen.com>.
+The project is currently curated by Gitorious AS (gitorious.com), a company
+dedicated to developing and supporting the Gitorious software.
+
+Current main developers are
+
+    Marius Mathiesen (marius@gitorious.com)
+    Thomas Kjeldahl Nilsson (thomas@gitorious.com)
+    Christian Johansen (christian@gitorious.com)
 
 
 Contributors
 -------------
 
-A number of people have contributed directly to Gitorious by writing documentation 
-or developing code and/or graphics that the project wishes to thank. 
+A number of people have contributed directly to Gitorious by writing documentation
+or developing code and/or graphics that the project wishes to thank.
 A list of these people in order of appearance:
 
   Johan Sørensen  johan@johan...sen.com
