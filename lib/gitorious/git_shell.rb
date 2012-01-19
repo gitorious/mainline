@@ -34,8 +34,12 @@ module Gitorious
       pretty_format = %Q{format:"#{log_format}"}
 
       command = "#{GitoriousConfig['git_binary']} --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
-      command << options.join(" ")
+      command << sanitize(options.join(" "))
       execute(command)
+    end
+
+    def sanitize(input)
+      input.gsub(/[^a-zA-Z0-9\/\s=\-]/,"")
     end
 
     class GitTimeout < ::Timeout::Error
