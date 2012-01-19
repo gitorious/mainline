@@ -14,6 +14,9 @@
 #
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#   Thanks for valuable input from joernchen of Phenoelit 
+#
 #++
 require "timeout"
 module Gitorious
