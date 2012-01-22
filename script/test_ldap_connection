@@ -5,7 +5,7 @@ if ARGV.size < 2
   abort "Usage: #{$0} username password"
 end
 
-require "config/environment"
+require "./config/environment"
 
 username = ARGV[0]
 password = ARGV[1]
