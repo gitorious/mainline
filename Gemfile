@@ -22,7 +22,7 @@ gem "validates_url_format_of"
 gem "acts-as-taggable-on"
 gem "will_paginate"
 gem "hodel_3000_compliant_logger"
-gem "ruby-net-ldap", "~> 0.0.4"
+gem "net-ldap", "~> 0.2.2"
 gem "capillary", "~> 1.0.0"
 gem "nokogiri"
 
