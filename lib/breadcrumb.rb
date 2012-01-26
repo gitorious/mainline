@@ -111,6 +111,45 @@ module Breadcrumb
     end
   end
 
+  class SiteWiki
+    attr_reader :site_title
+    def initialize(site_title)
+      @site_title = site_title
+    end
+
+    def breadcrumb_parent
+      nil
+    end
+
+    def title
+      "#{site_title} wiki"
+    end
+
+    def breadcrumb_css_class
+      'wiki'
+    end
+  end
+
+  class SiteWikiPage
+    attr_reader :page, :site_title
+    def initialize(page, site_title)
+      @page = page
+      @site_title = site_title
+    end
+
+    def breadcrumb_parent
+      SiteWiki.new(@site_title)
+    end
+
+    def title
+      @page.title
+    end
+    
+    def breadcrumb_css_class
+      'file'
+    end
+  end
+ 
   class Memberships
     def initialize(group)
       @group = group

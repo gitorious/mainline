@@ -17,7 +17,7 @@
 #++
 %>
 
-<% users_by_email = @repository.users_by_commits(@commits) %>
+<% users_by_email = Repository.users_by_commits(@commits) %>
 <% no_pagination ||= false -%>
 <ul class="events w-750">
 <% @commits.group_by{|c| c.committed_date.to_s(:human) }.each do |day, commits| -%>

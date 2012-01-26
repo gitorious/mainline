@@ -109,6 +109,24 @@ class BreadcrumbTest < ActiveSupport::TestCase
     end
   end
 
+  context "Breadcrumb::SiteWikiPage" do
+    setup do
+      sit = mock
+      page = mock
+      page.stubs(:title).returns('Home')
+      @page = Breadcrumb::SiteWikiPage.new(page, "TestSite")
+    end
+
+   should "return a SiteWiki as its parent" do
+      assert_instance_of Breadcrumb::SiteWiki, @page.breadcrumb_parent
+      assert_equal "TestSite wiki", @page.breadcrumb_parent.title
+    end
+
+   should "return its title" do
+      assert_equal 'Home', @page.title
+    end
+  end
+
   context "Breadcrumb::Memberships" do
     setup do
       @group = mock("Group")

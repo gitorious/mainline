@@ -1,0 +1,58 @@
+<%
+#--
+#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
+#   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<%= breadcrumbs_from(@root) -%>
+
+<h1>
+  <%= @page.new? ? t("views.common.creating") : t("views.common.editing") -%> 
+  <%= t("views.pages.page") -%> <%= link_to h(@page.title), site_wiki_page_path(@page.title) -%>
+</h1>
+
+<% if @page.new? -%>
+  <% help_box(:middle, :error) do -%>
+    <p>The page "<%=h params[:id] -%>" does not exist yet. You can create it below if
+    you like.</p>
+  <% end -%>
+<% end -%>
+
+
+<% form_for @page, :url => { :action => "update" } do |f| -%>
+  <p class="hint">
+    <%= t("views.common.markdown_format_with_help") -%>
+    <%= t("views.pages.wikiwords_syntax") -%>
+  </p>
+
+  <p>
+    <%= render_markdown_help -%>
+  </p>
+
+  <div id="page_preview" style="display:none">
+  </div>
+
+  <%= f.text_area :content, :class => "text fill taller" -%><br />
+  <%= f.submit -%> 
+  <%= button_to_function("Show preview", "toggle_wiki_preview('#{preview_site_wiki_page_path(@page)}')", :id => "wiki_preview_toggler", :class => "preview") %>
+
+  
+  <%= t("views.pages.or_back_to_page", 
+        :page_link => link_to(@page.title, site_wiki_page_path(@page.title))) -%>
+<% end -%>
+

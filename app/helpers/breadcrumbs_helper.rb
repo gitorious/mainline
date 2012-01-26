@@ -66,6 +66,10 @@ module BreadcrumbsHelper
       project_pages_path(an_object.project)
     when Breadcrumb::Page
       project_page_path(an_object.project, an_object.page.to_param)
+    when Breadcrumb::SiteWiki
+      site_wiki_pages_path
+    when Breadcrumb::SiteWikiPage
+      site_wiki_page_path(an_object.title)
     when Breadcrumb::Memberships
       group_memberships_path(@group)
     when Membership

@@ -16,36 +16,36 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class PagesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :git_access]
-  before_filter :find_project
-  before_filter :check_if_wiki_enabled
-  before_filter :assert_readyness
-  before_filter :require_write_permissions, :only => [:edit, :update]
+class SiteWikiPagesController < ApplicationController
+  before_filter :login_required, :except => [:index, :show, :git_access, :config, :writable_by]
+ 
   renders_in_site_specific_context
-  
+
   def index
+    @site = current_site
     respond_to do |format|
       format.html do
-        @tree_nodes = @project.wiki_repository.git.tree.contents.select{|n|
+        @root = Breadcrumb::SiteWiki.new(@site.title)
+        @tree_nodes = @site.wiki.tree.contents.select{|n|
           n.name =~ /\.#{Page::DEFAULT_FORMAT}$/
         }
-        @root = Breadcrumb::Wiki.new(@project)
-        @atom_auto_discovery_url = project_pages_path(:format => :atom)
+        # @root = Breadcrumb::Wiki.new(@project)
+        @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
       end
       format.atom do
-        @commits = @project.wiki_repository.git.commits("master", 30)
+        @commits = @site.wiki.commits("master", 30)
         expires_in 30.minutes
       end
     end
   end
   
   def show
-    @atom_auto_discovery_url = project_pages_path(:format => :atom)
+    @site = current_site
+    @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
     @page, @root = page_and_root
     if @page.new?
       if logged_in?
-        redirect_to edit_project_page_path(@project, params[:id]) and return
+        redirect_to edit_site_wiki_page_path(params[:id]) and return
       else
         render "no_page" and return
       end
@@ -53,11 +53,14 @@ class PagesController < ApplicationController
   end
   
   def edit
+    @site = current_site
+    @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
     @page, @root = page_and_root
     @page.user = current_user
   end
   
   def preview
+    @site = current_site
     @page, @root = page_and_root
     @page.content = params[:page][:content]
     respond_to do |wants|
@@ -66,7 +69,8 @@ class PagesController < ApplicationController
   end
   
   def update
-    @page = Page.find(params[:id], @project.wiki_repository.git)
+    @site = current_site
+    @page = Page.find(params[:id], @site.wiki)
     @page.user = current_user
     
     if @page.content == params[:page][:content]
@@ -76,10 +80,7 @@ class PagesController < ApplicationController
 
     @page.content = params[:page][:content]
     if @page.save
-      if @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @project, current_user, @page.title)
-        @project.create_event(Action::UPDATE_WIKI_PAGE, @project, current_user, @page.title) 
-      end
-      redirect_to project_page_path(@project, @page)
+      redirect_to site_wiki_page_path(@page)
     else
       flash[:error] = I18n.t("pages_controller.invalid_page_error")
       render :action => "edit"
@@ -87,9 +88,10 @@ class PagesController < ApplicationController
   end
   
   def history
+    @site = current_site
     @page, @root = page_and_root
     if @page.new?
-      redirect_to edit_project_page_path(@project, @page) and return
+      redirect_to edit_site_wiki_page_path(@page) and return
     end
     
     @commits = @page.history(30)
@@ -97,33 +99,37 @@ class PagesController < ApplicationController
   end
 
   def git_access
-    @root = Breadcrumb::Wiki.new(@project)
+    @site = current_site
+    # @root = Breadcrumb::Wiki.new(@project)
+  end
+
+  # Used internally by Gitorious 
+  def config
+    gitdir = Site.wiki_repo_name(params[:site])
+    config_data = "real_path:#{gitdir}\n"
+    config_data << "force_pushing_denied:true"
+    headers["Cache-Control"] = "public, max-age=600"
+    render :text => config_data, :content_type => "text/x-yaml"
+  end
+
+  # Used internally to check write permissions by gitorious
+  # Site wikis are always writable as long as user a valid acct/key
+  def writable_by
+    render :text => "true" and return
   end
   
   protected
     def assert_readyness
-      unless @project.wiki_repository.ready?
+      unless current_site.repository.ready?
         flash[:notice] = I18n.t("pages_controller.repository_not_ready")
-        redirect_to project_path(@project) and return
+        redirect_to "/" and return
       end
     end
-    
-    def check_if_wiki_enabled
-      unless @project.wiki_enabled?
-        redirect_to project_path(@project) and return
-      end
-    end
-    
-    def page_and_root
-      page = Page.find(params[:id], @project.wiki_repository.git)    
-      root = Breadcrumb::Page.new(page, @project)
-      return page, root
-    end
-    
-    def require_write_permissions
-      unless @project.wiki_repository.writable_by?(current_user)
-        flash[:error] = "This project has restricted wiki editing to project members"
-        redirect_to project_pages_path(@project)
-      end
-    end
+        
+  def page_and_root
+    page = Page.find(params[:id], @site.wiki)    
+    root = Breadcrumb::SiteWikiPage.new(page, @site.title)
+    return page, root
+  end
+  
 end

@@ -22,7 +22,6 @@ class SiteTest < ActiveSupport::TestCase
   should_have_many :projects
   should_validate_presence_of :title
   
-  
   should "have a default site with a nil subdomain" do
     default_site = Site.default
     assert_equal "Gitorious", default_site.title
@@ -35,4 +34,43 @@ class SiteTest < ActiveSupport::TestCase
     assert !site.save
     assert_not_nil site.errors.on(:subdomain)
   end
+
+  should "derive grit location from site name" do
+    site = Site.new(:title => "SuperSite")
+    assert_equal "/tmp/git/repositories/SuperSite-site-wiki.git", site.wiki_git_path
+    assert_equal "/tmp/git/repositories/SuperSite-site-wiki.git", Site.wiki_git_path("SuperSite")
+  end
+
+  context "wiki git creation" do
+    setup do
+      @site = Site.new(:title => "test-site")
+      @path = @site.wiki_git_path
+      FileUtils.remove_dir(@path, true)
+    end
+    
+    should "should create new repo and return Grit obj if no repo exists" do
+      Repository.git_backend.expects(:create).with(@path).returns(true)
+      grit_wiki_repo = @site.wiki
+      assert File.exist?(@path), 'File.exist?(path) should be true'
+      assert_hooks_exist @path
+      assert_instance_of Grit::Repo, grit_wiki_repo
+    end
+
+    should "should just return Grit object if repo exists" do
+      FileUtils.mkdir_p(@site.wiki_git_path, :mode => 0755)
+      Repository.expects(:create_git_repository).never
+      grit_wiki_repo = @site.wiki
+      assert_instance_of Grit::Repo, grit_wiki_repo
+    end
+  end
+
+  def assert_hooks_exist(path)
+    Dir.chdir(path) do
+      hooks = File.join(path, "hooks")
+      assert File.exist?(hooks), 'File.exist?(hooks) should be true'
+      assert File.symlink?(hooks), 'File.symlink?(hooks) should be true'
+      assert File.symlink?(File.expand_path(File.readlink(hooks))), 'File.symlink?(File.expand_path(File.readlink(hooks))) should be true'
+    end
+  end
+  
 end
