@@ -17,11 +17,17 @@
 #++
 
 class Hook < ActiveRecord::Base
+  include Gitorious::Authorization
   belongs_to :repository
   belongs_to :user
 
-  validates_presence_of :repository, :user, :url
+  validates_presence_of :user, :url
+  validates_presence_of :repository, :unless => Proc.new { |hook| hook.user && hook.site_admin?(hook.user) }, :message => "is required for non admins"
   validate :valid_url_format
+
+  def self.global_hooks
+    find(:all, :conditions => {:repository_id => nil})
+  end
 
   def successful_connection(message)
     self.successful_request_count += 1
@@ -34,7 +40,11 @@ class Hook < ActiveRecord::Base
     self.last_response = message
     save
   end
-  
+
+  def global?
+    repository.nil?
+  end
+
   def valid_url_format
     begin
       uri = URI.parse(url)
