@@ -551,7 +551,7 @@ class RepositoryTest < ActiveSupport::TestCase
       committer = OpenStruct.new(:email => u.email)
       commits << OpenStruct.new(:committer => committer, :author => committer)
     end
-    users = @repository.users_by_commits(commits)
+    users = Repository.users_by_commits(commits)
     assert_equal users(:johan, :moe).map(&:email).sort, users.keys.sort
     assert_equal users(:johan, :moe).map(&:login).sort, users.values.map(&:login).sort
   end

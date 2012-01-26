@@ -17,14 +17,38 @@
 #++
 class Site < ActiveRecord::Base
   has_many :projects
-
+   
   validates_presence_of :title
   HTTP_CLONING_SUBDOMAIN = 'git'
   validates_exclusion_of :subdomain, :in => [HTTP_CLONING_SUBDOMAIN]
 
   attr_protected :subdomain
-
+    
   def self.default
-    new(:title => GitoriousConfig["site_name"], :subdomain => nil)
+    default_site = Site.new(:title => GitoriousConfig["site_name"], :subdomain => nil)
   end
+
+  def wiki_git_path
+    repo_name = Site.wiki_repo_name(self.title)
+    Repository.full_path_from_partial_path(repo_name)
+  end
+
+  def self.wiki_git_path(title)
+    repo_name = Site.wiki_repo_name(title)
+    Repository.full_path_from_partial_path(repo_name)
+  end
+
+  def self.wiki_repo_name(site_title)
+    "#{site_title}-site-wiki.git"
+  end
+  
+  def wiki
+    if(!File.exist? wiki_git_path)
+      FileUtils.mkdir_p(wiki_git_path, :mode => 0755)
+      repo_name = Site.wiki_repo_name(self.title)          
+      Repository.create_git_repository(repo_name)
+    end
+    Grit::Repo.new(wiki_git_path)
+  end
+  
 end

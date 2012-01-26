@@ -141,6 +141,12 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
 
+  map.site_wiki_git_access_connect 'wiki/:site/config', :controller => 'site_wiki_pages', :action => 'config'
+  map.site_wiki_git_writable_by 'wiki/:site/writable_by', :controller => 'site_wiki_pages', :action => 'writable_by'
+  
+  map.resources :site_wiki_pages, :as => "wiki", :member => { :history => :get,:preview => :put},
+  :collection => { :git_access => :get }
+  
   map.resources :projects, :member => {
     :confirm_delete => :get,
     :preview => :put,
@@ -150,7 +156,7 @@ ActionController::Routing::Routes.draw do |map|
     projects.resources :pages, :member => { :history => :get,:preview => :put}, :collection => { :git_access => :get }
     projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end
-
+  
   map.resource :search
 
   map.resources :messages,

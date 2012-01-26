@@ -17,7 +17,7 @@
 #++
 require 'test_helper'
 
-class PagesHelperTest < ActionView::TestCase
-  include PagesHelper
+class SiteWikiPagesHelperTest < ActionView::TestCase
+  include SiteWikiPagesHelper
 
 end

@@ -1,0 +1,48 @@
+<%
+#--
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<%= breadcrumbs_from(@root) -%>
+
+<h1>
+  <%= t("views.pages.last_n_edits", {
+    :n => 30, 
+    :title => link_to(@page.title, site_wiki_page_path(@page.title))
+  }) -%>
+</h1>
+
+<% @commits.each do |commit| -%>
+  <div class="page-meta page-history">
+    <p>
+      <%= avatar_from_email(commit.committer.email, :size => 20) %>
+      <%- if user = @user_and_email_map[commit.committer.email] -%>
+        <%= link_to(h(commit.committer.name), user) -%>
+      <%- else -%>
+        <%= h(commit.committer.name) -%>
+      <%- end -%>
+      <%= commit.date.to_s(:short) -%>
+    </p>
+    <p><em><%= h(commit.message) -%></em></p>
+    
+    <div class="diff" style="//display:none">
+      <% commit.diffs.each do |file| -%>
+        <%= render_inline_diff(file.diff) -%>
+      <% end -%>
+    </div>
+  </div>
+<% end -%>
