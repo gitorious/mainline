@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,23 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-module Gitorious
-  VERSION = "2.1.1"
+
+require "test_helper"
+class GitShellTest < ActiveSupport::TestCase
+  context "Sanitization" do
+    setup do
+      @shell = Gitorious::GitShell.new
+    end
+
+    should "sanitize parameters sent to it" do
+      @shell.expects(:sanitize).returns("")
+      @shell.expects(:execute).returns(nil)
+      @shell.graph_log(nil, nil)
+    end
+
+    should "remove anything but valid git object names" do
+      input = "`id>/tmp/command`"
+      assert_equal("id/tmp/command", @shell.sanitize(input))
+    end
+  end
 end
