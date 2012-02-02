@@ -25,7 +25,7 @@ class Site < ActiveRecord::Base
   attr_protected :subdomain
     
   def self.default
-    default_site = Site.new(:title => GitoriousConfig["site_name"], :subdomain => nil)
+    Site.new(:title => GitoriousConfig["site_name"], :subdomain => nil)
   end
 
   def wiki_git_path
@@ -33,8 +33,8 @@ class Site < ActiveRecord::Base
     Repository.full_path_from_partial_path(repo_name)
   end
 
-  def self.wiki_git_path(title)
-    repo_name = Site.wiki_repo_name(title)
+  def self.wiki_git_path(site_title)
+    repo_name = Site.wiki_repo_name(site_title)
     Repository.full_path_from_partial_path(repo_name)
   end
 
