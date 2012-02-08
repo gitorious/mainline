@@ -191,7 +191,7 @@ class User < ActiveRecord::Base
       find(:all, :select => "users.*, events.action, count(events.id) as event_count",
         :joins => :events, :group => "users.id", :order => "event_count desc",
         :conditions => ["events.action = ? and events.created_at > ?",
-                        Action::COMMIT, cutoff.days.ago],
+                        Action::PUSH_SUMMARY, cutoff.days.ago],
         :limit => limit)
     end
   end
