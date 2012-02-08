@@ -21,9 +21,9 @@ class Admin::OauthSettingsController < ApplicationController
   before_filter :find_project
 
   def show
-    redirect_to :action => 'edit', :project_id => @project.to_param  
+    redirect_to :action => 'edit', :project_id => @project.to_param
   end
-  
+
   def edit
     @root = Breadcrumb::EditOAuthSettings.new(@project)
   end
@@ -37,7 +37,7 @@ class Admin::OauthSettingsController < ApplicationController
 
   private
     def require_site_admin
-      unless current_user.site_admin?
+      unless site_admin?(current_user)
         flash[:error] = I18n.t "admin.users_controller.check_admin"
         redirect_to root_path
       end

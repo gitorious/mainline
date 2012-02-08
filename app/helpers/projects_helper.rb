@@ -20,10 +20,11 @@
 
 module ProjectsHelper
   include RepositoriesHelper
+  include Gitorious::Authorization
 
   def show_new_project_link?
     if logged_in?
-      if GitoriousConfig["only_site_admins_can_create_projects"] && !current_user.site_admin?
+      if GitoriousConfig["only_site_admins_can_create_projects"] && !site_admin?(current_user)
         return false
       end
     else

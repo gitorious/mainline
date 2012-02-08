@@ -20,6 +20,8 @@ require File.dirname(__FILE__) + '/../test_helper'
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
+  include Gitorious::Authorization
+
   def new_repos(opts={})
     Repository.new({
       :name => "foo",
@@ -375,21 +377,21 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context "#writable_by?" do
+  context "can_write_to?" do
     should "knows if a user can write to self" do
       @repository.owner = users(:johan)
       @repository.save!
       @repository.reload
-      assert @repository.writable_by?(users(:johan))
-      assert !@repository.writable_by?(users(:mike))
+      assert can_write_to?(users(:johan), @repository)
+      assert !can_write_to?(users(:mike), @repository)
 
       @repository.change_owner_to!(groups(:team_thunderbird))
       @repository.save!
-      assert !@repository.writable_by?(users(:johan))
+      assert !can_write_to?(users(:johan), @repository)
 
       @repository.owner.add_member(users(:moe), Role.member)
       @repository.committerships.reload
-      assert @repository.writable_by?(users(:moe))
+      assert can_write_to?(users(:moe), @repository)
     end
 
     context "a wiki repository" do
@@ -400,17 +402,17 @@ class RepositoryTest < ActiveSupport::TestCase
       should "be writable by everyone" do
         @repository.wiki_permissions = Repository::WIKI_WRITABLE_EVERYONE
         [:johan, :mike, :moe].each do |login|
-          assert @repository.writable_by?(users(login)), "not writable_by #{login}"
+          assert can_write_to?(users(login), @repository), "not writable_by #{login}"
         end
       end
 
       should "only be writable by project members" do
         @repository.wiki_permissions = Repository::WIKI_WRITABLE_PROJECT_MEMBERS
         assert @repository.project.member?(users(:johan))
-        assert @repository.writable_by?(users(:johan))
+        assert can_write_to?(users(:johan), @repository)
 
         assert !@repository.project.member?(users(:moe))
-        assert !@repository.writable_by?(users(:moe))
+        assert !can_write_to?(users(:moe), @repository)
       end
     end
   end
@@ -483,17 +485,17 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "be deletable by admins" do
-      assert @repository.admin?(users(:johan))
-      assert !@repository.admin?(users(:moe))
+      assert admin?(users(:johan), @repository)
+      assert !admin?(users(:moe), @repository)
 
-      assert @repository.can_be_deleted_by?(users(:johan))
-      assert !@repository.can_be_deleted_by?(users(:moe))
+      assert can_delete?(users(:johan), @repository)
+      assert !can_delete?(users(:moe), @repository)
     end
 
     should "always be deletable if admin and non-project repo" do
       @repository.kind = Repository::KIND_TEAM_REPO
-      assert @repository.can_be_deleted_by?(users(:johan))
-      assert !@repository.can_be_deleted_by?(users(:moe))
+      assert can_delete?(users(:johan), @repository)
+      assert !can_delete?(users(:moe), @repository)
     end
 
     should "also be deletable by users with admin privs" do
@@ -501,8 +503,8 @@ class RepositoryTest < ActiveSupport::TestCase
       cs = @repository.committerships.create_with_permissions!({
           :committer => users(:mike)
         }, Committership::CAN_ADMIN)
-      assert @repository.can_be_deleted_by?(users(:johan))
-      assert @repository.can_be_deleted_by?(users(:mike))
+      assert can_delete?(users(:johan), @repository)
+      assert can_delete?(users(:mike), @repository)
     end
   end
 
@@ -602,29 +604,29 @@ class RepositoryTest < ActiveSupport::TestCase
     repo = repositories(:johans2)
     repo.committerships.each(&:delete)
     repo.reload
-    assert !repo.committers.include?(users(:moe))
+    assert !committers(repo).include?(users(:moe))
 
     repo.committerships.create_with_permissions!({
         :committer => users(:johan)
       }, Committership::CAN_COMMIT)
-    assert_equal [users(:johan).login], repo.committers.map(&:login)
+    assert_equal [users(:johan).login], committers(repo).map(&:login)
 
     repo.committerships.create_with_permissions!({
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_COMMIT)
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
-    assert_equal exp_users.map(&:login), repo.committers.map(&:login)
+    assert_equal exp_users.map(&:login), committers(repo).map(&:login)
 
     groups(:team_thunderbird).add_member(users(:moe), Role.admin)
     repo.reload
-    assert repo.committers.include?(users(:moe))
+    assert committers(repo).include?(users(:moe))
   end
 
 
   should "know you can request merges from it"  do
     repo = repositories(:johans2)
     assert !repo.mainline?
-    assert repo.committer?(users(:mike))
+    assert committer?(users(:mike), repo)
     assert repo.can_request_merge?(users(:mike))
 
     repo.kind = Repository::KIND_PROJECT_REPO
@@ -692,8 +694,8 @@ class RepositoryTest < ActiveSupport::TestCase
     repo = repositories(:johans)
     old_committer = repo.owner
     repo.change_owner_to!(groups(:team_thunderbird))
-    assert !repo.committers.include?(old_committer)
-    assert repo.committers.include?(groups(:team_thunderbird).members.first)
+    assert !committers(repo).include?(old_committer)
+    assert committers(repo).include?(groups(:team_thunderbird).members.first)
     [:reviewer?, :committer?, :admin?].each do |m|
       assert repo.committerships.last.send(m), "cannot #{m}"
     end
@@ -725,12 +727,12 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "includes the groups' members in #committers" do
-      assert @repo.committers.include?(groups(:team_thunderbird).members.first)
+      assert committers(@repo).include?(groups(:team_thunderbird).members.first)
     end
 
     should "only include unique users in #committers" do
       groups(:team_thunderbird).add_member(users(:moe), Role.member)
-      assert_equal 1, @repo.committers.select{|u| u == users(:moe)}.size
+      assert_equal 1, committers(@repo).select{|u| u == users(:moe)}.size
     end
 
     should "not include committerships without a commit permission bit" do
@@ -738,15 +740,15 @@ class RepositoryTest < ActiveSupport::TestCase
       cs = @repo.committerships.first
       cs.build_permissions(:review)
       cs.save!
-      assert_equal [], @repo.committers.map(&:login)
+      assert_equal [], committers(@repo).map(&:login)
     end
 
     should "return a list of reviewers" do
-      assert !@repo.reviewers.map(&:login).include?(users(:moe).login)
+      assert !reviewers(@repo).map(&:login).include?(users(:moe).login)
       @repo.committerships.create_with_permissions!({
           :committer => users(:moe)
         }, Committership::CAN_REVIEW)
-      assert @repo.reviewers.map(&:login).include?(users(:moe).login)
+      assert reviewers(@repo).map(&:login).include?(users(:moe).login)
     end
 
     context "permission helpers" do
@@ -757,24 +759,24 @@ class RepositoryTest < ActiveSupport::TestCase
       end
 
       should "know if a user is a committer" do
-        assert !@repo.committer?(@cs.committer)
+        assert !committer?(@cs.committer, @repo)
         @cs.build_permissions(:commit); @cs.save
-        assert !@repo.committer?(:false)
-        assert !@repo.committer?(@cs.committer)
+        assert !committer?(:false, @repo)
+        assert !committer?(@cs.committer, @repo)
       end
 
       should "know if a user is a reviewer" do
-        assert !@repo.reviewer?(@cs.committer)
+        assert !reviewer?(@cs.committer, @repo)
         @cs.build_permissions(:review); @cs.save
-        assert !@repo.reviewer?(:false)
-        assert !@repo.reviewer?(@cs.committer)
+        assert !reviewer?(:false, @repo)
+        assert !reviewer?(@cs.committer, @repo)
       end
 
       should "know if a user is a admin" do
-        assert !@repo.admin?(@cs.committer)
+        assert !admin?(@cs.committer, @repo)
         @cs.build_permissions(:commit, :admin); @cs.save
-        assert !@repo.admin?(:false)
-        assert !@repo.admin?(@cs.committer)
+        assert !admin?(:false, @repo)
+        assert !admin?(@cs.committer, @repo)
       end
     end
   end
@@ -1054,7 +1056,7 @@ class RepositoryTest < ActiveSupport::TestCase
         users(:johan).update_attribute(:login, "rohan")
         @clone.update_attribute(:name, "rohans-clone-of-moes")
       end
-      
+
       should "match users with a matching name" do
         assert_includes(@repo.search_clones("rohan"), @clone)
       end
@@ -1069,7 +1071,7 @@ class RepositoryTest < ActiveSupport::TestCase
         @repo = repositories(:johans)
         @clone = repositories(:johans2)
       end
-      
+
       should "match groups with a matching name" do
         assert_includes(@repo.search_clones("thunderbird"), @clone)
       end
@@ -1084,7 +1086,7 @@ class RepositoryTest < ActiveSupport::TestCase
         @repo = repositories(:johans)
         @clone = repositories(:johans2)
       end
-      
+
       should "match repos with a matching name" do
         assert_includes(@repo.search_clones("projectrepos"), @clone)
       end

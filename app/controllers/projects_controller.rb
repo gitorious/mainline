@@ -204,7 +204,7 @@ class ProjectsController < ApplicationController
 
     def check_if_only_site_admins_can_create
       if GitoriousConfig["only_site_admins_can_create_projects"]
-        unless current_user.site_admin?
+        unless site_admin?(current_user)
           flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
           redirect_to projects_path
           return false

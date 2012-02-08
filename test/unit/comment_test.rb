@@ -20,6 +20,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommentTest < ActiveSupport::TestCase
+  include Gitorious::Authorization
 
   should_validate_presence_of :target, :user_id, :project_id
 
@@ -121,7 +122,7 @@ class CommentTest < ActiveSupport::TestCase
     should 'not change the state of its target unless the user can resolve it' do
       @merge_request = merge_requests(:moes_to_johans_open)
       @merge_request.update_attribute(:status_tag, 'Before')
-      assert !@merge_request.resolvable_by?(users(:moe))
+      assert !can_resolve?(users(:moe), @merge_request)
       @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans))
       @comment.state = 'After'
       @comment.user = users(:moe)

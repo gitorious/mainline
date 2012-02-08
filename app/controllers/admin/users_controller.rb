@@ -98,7 +98,7 @@ class Admin::UsersController < ApplicationController
   private
 
   def require_site_admin
-    unless current_user.site_admin?
+    unless site_admin?(current_user)
       flash[:error] = I18n.t "admin.users_controller.check_admin"
       redirect_to root_path
     end

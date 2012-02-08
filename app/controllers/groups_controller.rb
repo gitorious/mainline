@@ -71,7 +71,7 @@ class GroupsController < ApplicationController
 
   def destroy
     @group = Group.find_by_name!(params[:id])
-    if current_user.site_admin? || (@group.admin?(current_user) && @group.deletable?)
+    if site_admin?(current_user) || (@group.admin?(current_user) && @group.deletable?)
       @group.destroy
       flash[:success] = "The team was deleted"
       redirect_to groups_path

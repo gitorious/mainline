@@ -19,6 +19,7 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 class GroupsControllerTest < ActionController::TestCase
+  include Gitorious::Authorization
 
   should_render_in_global_context
 
@@ -161,7 +162,7 @@ class GroupsControllerTest < ActionController::TestCase
     end
 
     should "succeed if there is more than one member and user is site_admin" do
-      assert users(:johan).site_admin?
+      assert site_admin?(users(:johan))
       @group.add_member(users(:johan), Role.member)
       assert_equal 2, @group.members.count
 

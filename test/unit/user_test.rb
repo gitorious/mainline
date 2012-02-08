@@ -20,6 +20,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  include Gitorious::Authorization
 
   setup do
     @user = User.new
@@ -142,12 +143,12 @@ class UserTest < ActiveSupport::TestCase
   should "know if a user has write access to a repository" do
     u = users(:mike)
     repo = repositories(:johans2)
-    assert u.can_write_to?(repo)
-    assert !users(:johan).can_write_to?(repo)
+    assert can_write_to?(u, repo)
+    assert !can_write_to?(users(:johan), repo)
     repo.owner.add_member(users(:johan), Role.member)
     repo.reload
-    assert repo.committers.include?(users(:johan))
-    assert users(:johan).can_write_to?(repo)
+    assert committers(repo).include?(users(:johan))
+    assert can_write_to?(users(:johan), repo)
   end
 
   should "not have wiki repositories in #repositories" do
@@ -237,19 +238,19 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should "know who is a site admin" do
-    assert !users(:mike).site_admin?
+    assert !site_admin?(users(:mike))
     users(:mike).is_admin = true
-    assert users(:mike).site_admin?
+    assert site_admin? users(:mike)
   end
 
   should "know if a user is a an admin of itself" do
-    assert users(:mike).admin?(users(:mike))
-    assert !users(:mike).admin?(users(:johan))
+    assert admin?(users(:mike), users(:mike))
+    assert !admin?(users(:mike), users(:johan))
   end
 
   should "know if a user is a a committer of itself" do
-    assert users(:mike).committer?(users(:mike))
-    assert !users(:mike).committer?(users(:johan))
+    assert committer?(users(:mike), users(:mike))
+    assert !committer?(users(:mike), users(:johan))
   end
 
   should "prepend http:// to the url if needed" do

@@ -30,6 +30,7 @@ class Repository < ActiveRecord::Base
   include RecordThrottling
   include Watchable
   include Gitorious::Search
+  include Gitorious::Authorization
 
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1
@@ -268,7 +269,7 @@ class Repository < ActiveRecord::Base
 
   def display_ssh_url?(user)
     return true if GitoriousConfig["always_display_ssh_url"]
-    writable_by?(user)
+    can_write_to?(user, self)
   end
 
   def full_repository_path
@@ -347,13 +348,9 @@ class Repository < ActiveRecord::Base
     end
   end
 
-  def can_be_deleted_by?(candidate)
-    admin?(candidate)
-  end
-
   # Can +a_user+ request a merge from this repository
-  def can_request_merge?(a_user)
-    !mainline? && writable_by?(a_user)
+  def can_request_merge?(user)
+    !mainline? && can_write_to?(user, self)
   end
 
   # changes the owner to +another_owner+, removes the old owner as committer
@@ -527,45 +524,6 @@ class Repository < ActiveRecord::Base
 
   def tracking_repo?
     kind == KIND_TRACKING_REPO
-  end
-
-  # returns an array of users who have commit bits to this repository either
-  # directly through the owner, or "indirectly" through the associated groups
-  def committers
-    committerships.committers.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  # Returns a list of Users who can review things (as per their Committership)
-  def reviewers
-    committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  # The list of users who can admin this repo, either directly as
-  # committerships or indirectly as members of a group
-  def administrators
-    committerships.admins.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  def committer?(a_user)
-    a_user.is_a?(User) ? self.committers.include?(a_user) : false
-  end
-
-  def reviewer?(a_user)
-    a_user.is_a?(User) ? self.reviewers.include?(a_user) : false
-  end
-
-  def admin?(a_user)
-    a_user.is_a?(User) ? self.administrators.include?(a_user) : false
-  end
-
-  # Is this repo writable by +a_user+, eg. does he have push permissions here
-  # NOTE: this may be context-sensitive depending on the kind of repo
-  def writable_by?(a_user)
-    if wiki?
-      wiki_writable_by?(a_user)
-    else
-      committers.include?(a_user)
-    end
   end
 
   def owned_by_group?
@@ -799,16 +757,6 @@ class Repository < ActiveRecord::Base
         #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
         self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user,
               nil, nil, date = created_at)
-      end
-    end
-
-    # Special permission check for KIND_WIKI repositories
-    def wiki_writable_by?(a_user)
-      case self.wiki_permissions
-      when WIKI_WRITABLE_EVERYONE
-        return true
-      when WIKI_WRITABLE_PROJECT_MEMBERS
-        return self.project.member?(a_user)
       end
     end
 

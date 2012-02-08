@@ -24,6 +24,7 @@ class MergeRequest < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
   include Watchable
   include Gitorious::Search
+  include Gitorious::Authorization
 
   belongs_to :user
   belongs_to :source_repository, :class_name => 'Repository'
@@ -39,7 +40,7 @@ class MergeRequest < ActiveRecord::Base
   after_create :add_to_creators_favorites
 
   before_validation_on_create :set_sequence_number
-  
+
   is_indexed do |s|
     s.index :proposal
     s.index :status_tag, :as => "status"
@@ -47,7 +48,7 @@ class MergeRequest < ActiveRecord::Base
     s.conditions "status != 0"
   end
 
-  
+
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
 
@@ -95,8 +96,8 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
-  def can_be_reopened_by?(a_user)
-    return can_reopen? && resolvable_by?(a_user)
+  def can_be_reopened_by?(user)
+    return can_reopen? && can_resolve?(user, self)
   end
 
   def self.human_name
@@ -263,11 +264,6 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
-  def resolvable_by?(candidate)
-    return false unless candidate.is_a?(User)
-    (candidate === user) || target_repository.reviewers.include?(candidate)
-  end
-
   def commits_for_selection
     return [] if !target_repository
     @commits_for_selection ||= target_repository.git.commit_deltas_from(
@@ -382,8 +378,10 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
+  alias_method :repo_reviewers, :reviewers
+
   def reviewers
-    target_repository.reviewers.uniq.reject{|r| r == user}
+    repo_reviewers(target_repository).uniq.reject{|r| r == user}
   end
 
   def add_to_reviewers_favorites(reviewer)
@@ -419,11 +417,11 @@ class MergeRequest < ActiveRecord::Base
   def fetch_contribution_notice
     callback_response = access_token.post(target_repository.project.oauth_path_prefix,
       oauth_signoff_parameters)
-    
+
     if Net::HTTPAccepted === callback_response
       self.contribution_notice = callback_response.body
     end
-    
+
     contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
     update_attributes(:contribution_agreement_version => contribution_agreement_version)
   end
@@ -464,7 +462,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def request_token
-    @request_token ||= OAuth::RequestToken.from_hash(oauth_consumer, {:oauth_token => oauth_token, :oauth_token_secret => oauth_secret})    
+    @request_token ||= OAuth::RequestToken.from_hash(oauth_consumer, {:oauth_token => oauth_token, :oauth_token_secret => oauth_secret})
   end
 
   def access_token
@@ -490,7 +488,7 @@ class MergeRequest < ActiveRecord::Base
       end
       builder.versions do
         versions.each do |v|
-          builder.version do 
+          builder.version do
             builder.updated_at(v.updated_at.xmlschema)
             builder.version(v.version)
             builder.merge_base_sha(v.merge_base_sha)
@@ -659,7 +657,7 @@ class MergeRequest < ActiveRecord::Base
   def project
     target_repository.project
   end
-  
+
   protected
   def set_sequence_number
     if target_repository

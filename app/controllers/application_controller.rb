@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   include RoutingHelper
+  include Gitorious::Authorization
   protect_from_forgery
 
   before_filter :public_and_logged_in

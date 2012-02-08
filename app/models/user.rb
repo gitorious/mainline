@@ -27,6 +27,7 @@ require_dependency "event"
 class User < ActiveRecord::Base
   include UrlLinting
 
+
   has_many :projects
   has_many :memberships, :dependent => :destroy
   has_many :groups, :through => :memberships
@@ -199,7 +200,7 @@ class User < ActiveRecord::Base
   # A Hash of repository => count of mergerequests active in the
   # repositories that the user is a reviewer in
   def review_repositories_with_open_merge_request_count
-    mr_repository_ids = self.committerships.reviewers.find(:all,
+    mr_repository_ids = review_repositories(self).find(:all,
       :select => "repository_id").map{|c| c.repository_id }
     Repository.find(:all, {
         :select => "repositories.*, count(merge_requests.id) as open_merge_request_count",
@@ -296,10 +297,6 @@ class User < ActiveRecord::Base
     generated_key
   end
 
-  def can_write_to?(repository)
-    repository.writable_by?(self)
-  end
-
   def to_param
     login
   end
@@ -318,22 +315,6 @@ class User < ActiveRecord::Base
 
   def suspended?
     !suspended_at.nil?
-  end
-
-  def site_admin?
-    is_admin
-  end
-
-  # is +a_user+ an admin within this users realm
-  # (for duck-typing repository etc access related things)
-  def admin?(a_user)
-    self == a_user
-  end
-
-  # is +a_user+ a committer within this users realm
-  # (for duck-typing repository etc access related things)
-  def committer?(a_user)
-    self == a_user
   end
 
   def to_grit_actor
