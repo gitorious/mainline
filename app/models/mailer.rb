@@ -79,10 +79,10 @@ class Mailer < ActionMailer::Base
   end
 
   def message_processor_error(processor, err, message_body = nil)
-      subject     "[Gitorious Processor] fail in #{processor.class.name}"
-      from        sender_address
-      recipients  GitoriousConfig['exception_notification_emails']
-      body        :error => err, :message => message_body, :processor => processor
+    subject     "[Gitorious Processor] fail in #{processor.class.name}"
+    from        sender_address
+    recipients  GitoriousConfig['exception_notification_emails']
+    body        :error => err, :message => message_body, :processor => processor
   end
 
   def favorite_notification(user, notification_body)
@@ -100,7 +100,7 @@ class Mailer < ActionMailer::Base
     @sent_on     = Time.now
     @body[:user] = user
   end
-  
+
   def build_notifiable_url(a_notifiable)
     result = case a_notifiable
              when MergeRequest
@@ -114,5 +114,5 @@ class Mailer < ActionMailer::Base
 
   def sender_address
     GitoriousConfig["sender_email_address"] || "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>"
-  end  
+  end
 end
