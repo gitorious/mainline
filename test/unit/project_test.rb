@@ -20,6 +20,8 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
+  include Gitorious::Authorization
+
   def create_project(options={})
     Project.new({
       :title => "foo project",
@@ -96,21 +98,21 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal projects(:johans).slug, projects(:johans).to_param
   end
 
-  should "knows if a user is a admin on a project" do
+  should "knows if a user is admin on a project" do
     project = projects(:johans)
-    assert project.admin?(users(:johan))
+    assert admin?(users(:johan), project)
     project.owner = groups(:team_thunderbird)
-    assert !project.admin?(users(:johan))
+    assert !admin?(users(:johan), project)
     project.owner.add_member(users(:johan), Role.admin)
-    assert project.admin?(users(:johan))
+    assert admin?(users(:johan), project)
 
-    assert !project.admin?(users(:moe))
+    assert !admin?(users(:moe), project)
     project.owner.add_member(users(:moe), Role.member)
-    assert !project.admin?(users(:moe))
+    assert !admin?(users(:moe), project)
     # be able to deal with AuthenticatedSystem's quirky design:
-    assert !project.admin?(:false)
-    assert !project.admin?(false)
-    assert !project.admin?(nil)
+    assert !admin?(:false, project)
+    assert !admin?(false, project)
+    assert !admin?(nil, project)
   end
 
   should "knows if a user is a member on a project" do
@@ -123,7 +125,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     assert !project.member?(users(:moe))
     project.owner.add_member(users(:moe), Role.member)
-    assert !project.admin?(users(:moe))
+    assert !admin?(users(:moe), project)
     # be able to deal with AuthenticatedSystem's quirky design:
     assert !project.member?(:false)
     assert !project.member?(false)
@@ -515,7 +517,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     should "be suspendable" do
       @project.suspend!
-      assert @project.suspended? 
+      assert @project.suspended?
     end
 
     should "by default scope to non-suspended projects" do
@@ -533,7 +535,7 @@ class ProjectTest < ActiveSupport::TestCase
     should "have a tag_list= setter" do
       @project.tag_list = "fun pretty scary"
       assert_equal(%w(fun pretty scary), @project.tag_list)
-    end    
+    end
   end
 
   should "not allow api as slug" do

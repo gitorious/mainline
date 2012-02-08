@@ -29,6 +29,7 @@ class Project < ActiveRecord::Base
   include UrlLinting
   include Watchable
   include Gitorious::Search
+  include Gitorious::Authorization
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
@@ -128,15 +129,6 @@ class Project < ActiveRecord::Base
     containing_site || Site.default
   end
 
-  def admin?(candidate)
-    case owner
-    when User
-      candidate == self.owner
-    when Group
-      owner.admin?(candidate)
-    end
-  end
-
   def member?(candidate)
     case owner
     when User
@@ -155,7 +147,7 @@ class Project < ActiveRecord::Base
   end
 
   def can_be_deleted_by?(candidate)
-    admin?(candidate) && repositories.clones.count == 0
+    admin?(candidate, self) && repositories.clones.count == 0
   end
 
   def home_url=(url)

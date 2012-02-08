@@ -42,6 +42,7 @@ module Gitorious
         is_self = candidate == thing
         return delegate_with_default(:user_committer?, is_self, candidate, thing)
       end
+      return delegate(:group_committer?, candidate, thing) if thing.is_a?(Group)
       delegate(:committer?, candidate, thing)
     end
 
@@ -50,10 +51,6 @@ module Gitorious
     end
 
     def admin?(candidate, thing)
-      if thing.is_a?(User)
-        is_self = candidate == thing
-        return delegate_with_default(:user_admin?, is_self, candidate, thing)
-      end
       delegate(:admin?, candidate, thing)
     end
 

@@ -15,9 +15,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/authorization/base"
+
 module Gitorious
   module Authorization
-    class CommittershipAuthorization
+    class CommittershipAuthorization < Base
       ### Abilities
 
       # TODO: Needs more polymorphism
@@ -43,7 +45,6 @@ module Gitorious
 
       ### Roles
 
-      ### Roles, in terms of committers, reviewers and administrators
       def committer?(candidate, repository)
         candidate.is_a?(User) ? committers(repository).include?(candidate) : false
       end
@@ -52,10 +53,23 @@ module Gitorious
         candidate.is_a?(User) ? reviewers(repository).include?(candidate) : false
       end
 
-      def admin?(candidate, repository)
+      ###
+
+      def repository_admin?(candidate, repository)
         candidate.is_a?(User) ? administrators(repository).include?(candidate) : false
       end
-      ###
+
+      def project_admin?(candidate, project)
+        admin?(candidate, project.owner)
+      end
+
+      def group_admin?(candidate, group)
+        group.user_role(candidate) == Role.admin
+      end
+
+      def group_committer?(candidate, group)
+        [Role.admin, Role.member].include?(group.user_role(candidate))
+      end
 
       def site_admin?(user)
         user.is_a?(User) && user.is_admin

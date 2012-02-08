@@ -559,7 +559,11 @@ class Repository < ActiveRecord::Base
   def owners
     result = if owned_by_group?
       owner.members.select do |member|
-        owner.admin?(member)
+        if owner.respond_to?(:admin)
+          owner.admin?(member)
+        else
+          admin?(member, owner)
+        end
       end
     else
       [owner]
