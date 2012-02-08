@@ -426,7 +426,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open
       @merge_request.close
       assert @merge_request.closed?
-      assert @merge_request.can_be_reopened_by?(@user)
+      assert can_reopen?(@user, @merge_request)
       assert @merge_request.reopen_with_user(@user)
       assert @merge_request.open?
     end
@@ -436,7 +436,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open
       @merge_request.close
       assert @merge_request.closed?
-      assert !@merge_request.can_be_reopened_by?(@user)
+      assert !can_reopen?(@user, @merge_request)
       assert !@merge_request.reopen_with_user(@user)
       assert !@merge_request.open?
     end

@@ -28,12 +28,16 @@ module Gitorious
       admin?(candidate, repository)
     end
 
+    def can_edit?(user, thing)
+      return delegate(:can_edit_comment?, user, thing) if thing.is_a?(Comment)
+    end
+
     def can_resolve?(user, merge_request)
       delegate(:can_resolve?, user, merge_request)
     end
 
-    def can_edit?(user, thing)
-      return delegate(:can_edit_comment?, user, thing) if thing.is_a?(Comment)
+    def can_reopen?(user, merge_request)
+      delegate(:can_reopen?, user, merge_request)
     end
 
     ### Roles

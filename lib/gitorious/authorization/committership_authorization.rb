@@ -35,13 +35,15 @@ module Gitorious
         comment.creator?(user) && comment.recently_created?
       end
 
-      ### Abilities, in terms of committers, reviewers and administrators
       def can_resolve?(user, merge_request)
         return false unless user.is_a?(User)
         return true if user === merge_request.user
         return reviewers(merge_request.target_repository).include?(user)
       end
-      ###
+
+      def can_reopen?(user, merge_request)
+        merge_request.can_reopen? && can_resolve?(user, merge_request)
+      end
 
       ### Roles
 
