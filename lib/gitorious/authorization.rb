@@ -32,6 +32,10 @@ module Gitorious
       delegate(:can_resolve?, user, merge_request)
     end
 
+    def can_edit?(user, thing)
+      return delegate(:can_edit_comment?, user, thing) if thing.is_a?(Comment)
+    end
+
     ### Roles
     def committer?(candidate, thing)
       if thing.is_a?(User)

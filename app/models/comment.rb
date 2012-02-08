@@ -128,10 +128,6 @@ class Comment < ActiveRecord::Base
     MergeRequest === target
   end
 
-  def editable_by?(a_user)
-    creator?(a_user) && recently_created?
-  end
-
   def creator?(a_user)
     a_user == user
   end

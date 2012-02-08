@@ -29,6 +29,10 @@ module Gitorious
         end
       end
 
+      def can_edit_comment?(user, comment)
+        comment.creator?(user) && comment.recently_created?
+      end
+
       ### Abilities, in terms of committers, reviewers and administrators
       def can_resolve?(user, merge_request)
         return false unless user.is_a?(User)

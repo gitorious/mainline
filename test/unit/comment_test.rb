@@ -182,18 +182,18 @@ class CommentTest < ActiveSupport::TestCase
     should "be editable for 10 minutes after being created" do
       assert @comment.creator?(@user)
       assert @comment.recently_created?
-      assert @comment.editable_by?(@user)
+      assert can_edit?(@user, @comment)
     end
 
     should "not be editable when older than 10 minutes" do
       @comment.created_at = 9.minutes.ago
-      assert @comment.editable_by?(@user)
+      assert can_edit?(@user, @comment)
       @comment.created_at = 11.minutes.ago
-      assert !@comment.editable_by?(@user)
+      assert !can_edit?(@user, @comment)
     end
 
     should "never be editable by other users than the creator" do
-      assert !@comment.editable_by?(users(:mike))
+      assert !can_edit?(users(:mike), @comment)
     end
   end
 
