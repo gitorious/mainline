@@ -65,8 +65,8 @@ class SiteTest < ActiveSupport::TestCase
       Repository.git_backend.expects(:create).with(@path).returns(true)
       grit_wiki_repo = @site.wiki
       assert File.exist?(@path), 'File.exist?(path) should be true'
-      assert_hooks_exist @path
       assert_instance_of Grit::Repo, grit_wiki_repo
+      assert_minimal_hooks_exist @path
     end
 
     should "should just return Grit object if repo exists" do
@@ -77,12 +77,11 @@ class SiteTest < ActiveSupport::TestCase
     end
   end
 
-  def assert_hooks_exist(path)
+  def assert_minimal_hooks_exist(path)
     Dir.chdir(path) do
       hooks = File.join(path, "hooks")
-      assert File.exist?(hooks), 'File.exist?(hooks) should be true'
-      assert File.symlink?(hooks), 'File.symlink?(hooks) should be true'
-      assert File.symlink?(File.expand_path(File.readlink(hooks))), 'File.symlink?(File.expand_path(File.readlink(hooks))) should be true'
+      assert File.exist?(hooks)
+      assert File.exist?(hooks+"/pre-receive")
     end
   end
   

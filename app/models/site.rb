@@ -53,8 +53,20 @@ class Site < ActiveRecord::Base
       FileUtils.mkdir_p(wiki_git_path, :mode => 0755)
       repo_name = File.basename(wiki_git_path)
       Repository.create_git_repository(repo_name)
+      setup_minimal_hooks
     end
     Grit::Repo.new(wiki_git_path)
   end
+
+  # Cutting out post push events etc for site wiki since it's a
+  # special case. Only need the bare minimum: no hooks, only empty executable
+  # pre-receive so that we can push.
+  def setup_minimal_hooks
+    FileUtils.rm(wiki_git_path+"/hooks");
+    FileUtils.mkdir(wiki_git_path+"/hooks");
+    FileUtils.touch(wiki_git_path+"/hooks/pre-receive");
+    FileUtils.chmod(0755, wiki_git_path+"/hooks/pre-receive");
+  end
+  
   
 end
