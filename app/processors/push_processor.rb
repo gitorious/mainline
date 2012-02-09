@@ -85,6 +85,8 @@ class PushProcessor
   end
 
   def log_message(message)
-    logger.info("#{Time.now.to_s(:short)} #{message} to repository #{repository.gitdir}")
+    msg = "#{Time.now.to_s(:short)} #{message}"
+    msg +=" to repository #{repository.gitdir}" unless !repository
+    logger.info(msg)
   end
 end

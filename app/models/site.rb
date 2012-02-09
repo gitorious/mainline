@@ -40,13 +40,11 @@ class Site < ActiveRecord::Base
 
   def generate_wiki_git_path
     if(!self.id) then raise "Refusing to generate a git path without a site id" end
-    repo_name = Site.wiki_repo_name(self.id, self.title)
-    Repository.full_path_from_partial_path(repo_name)
+    Repository.full_path_from_partial_path(wiki_repo_name)
   end
 
-  # TODO kill singleton method, update push/pull/config stuff
-  def self.wiki_repo_name(site_id, site_title)
-    "#{site_id}-#{site_title}-site-wiki.git"
+  def wiki_repo_name
+    "#{self.id}-#{self.title}-site-wiki.git"
   end
   
   def wiki

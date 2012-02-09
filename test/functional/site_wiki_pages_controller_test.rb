@@ -61,12 +61,12 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
   
   context "internal routes for git access" do
     should "respond to /wiki/<sitename>/config" do
-      assert_recognizes({ :controller => "site_wiki_pages", :action => "config", :site =>"sitename"},
-                        "/wiki/sitename/config")
+      assert_recognizes({ :controller => "site_wiki_pages", :action => "config", :site_id =>"siteid"},
+                        "/wiki/siteid/config")
     end
     should "respond to /wiki/<sitename>/writable_by" do
-      assert_recognizes({ :controller => "site_wiki_pages", :action => "writable_by", :site =>"sitename"},
-                        "/wiki/sitename/writable_by")
+      assert_recognizes({ :controller => "site_wiki_pages", :action => "writable_by", :site_id =>"siteid"},
+                        "/wiki/siteid/writable_by")
     end
   end
     
@@ -136,7 +136,8 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
       assert_response :success
     end
     should "respond to wiki/<sitename>/config" do
-      get :config, {:site => "gitorious-site"}
+      site = Site.create(:title => "Test");
+      get :config, {:site_id => site.id}
       assert_response :success
     end
   end

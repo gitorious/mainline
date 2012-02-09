@@ -39,10 +39,10 @@ module SiteWikiPagesHelper
   end
 
   def writable_wiki_url(site)
-    "git@#{GitoriousConfig['gitorious_host']}:wiki/#{site.title}.git"
+    "git@#{GitoriousConfig['gitorious_host']}:wiki/#{site.id}.git"
   end
 
   def regular_wiki_url(site)
-    "git://#{GitoriousConfig['gitorious_host']}/wiki/#{site.title}.git"
+    "git://#{GitoriousConfig['gitorious_host']}/wiki/#{site.id}.git"
   end
 end

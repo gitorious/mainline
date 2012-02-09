@@ -105,7 +105,8 @@ class SiteWikiPagesController < ApplicationController
 
   # Used internally by Gitorious 
   def config
-    gitdir = Site.wiki_repo_name(params[:site])
+    site = Site.find_by_id(params[:site_id])
+    gitdir = site.wiki_repo_name
     config_data = "real_path:#{gitdir}\n"
     config_data << "force_pushing_denied:true"
     headers["Cache-Control"] = "public, max-age=600"

@@ -141,8 +141,8 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
 
-  map.site_wiki_git_access_connect 'wiki/:site/config', :controller => 'site_wiki_pages', :action => 'config'
-  map.site_wiki_git_writable_by 'wiki/:site/writable_by', :controller => 'site_wiki_pages', :action => 'writable_by'
+  map.site_wiki_git_access_connect 'wiki/:site_id/config', :controller => 'site_wiki_pages', :action => 'config'
+  map.site_wiki_git_writable_by 'wiki/:site_id/writable_by', :controller => 'site_wiki_pages', :action => 'writable_by'
   
   map.resources :site_wiki_pages, :as => "wiki", :member => { :history => :get,:preview => :put},
   :collection => { :git_access => :get }
