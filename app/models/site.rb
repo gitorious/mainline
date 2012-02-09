@@ -23,29 +23,37 @@ class Site < ActiveRecord::Base
   validates_exclusion_of :subdomain, :in => [HTTP_CLONING_SUBDOMAIN]
 
   attr_protected :subdomain
-    
+  attr_protected :wiki_git_path
+
   def self.default
-    Site.new(:title => GitoriousConfig["site_name"], :subdomain => nil)
+    Site.find_or_create_by_title_and_subdomain(:title => GitoriousConfig["site_name"], :subdomain => nil)
+  end
+  
+  def after_create
+    init_wiki_git_path
   end
 
-  def wiki_git_path
-    repo_name = Site.wiki_repo_name(self.title)
+  def init_wiki_git_path
+    self.wiki_git_path = generate_wiki_git_path
+    self.save!
+  end
+
+  def generate_wiki_git_path
+    if(!self.id) then raise "Refusing to generate a git path without a site id" end
+    repo_name = Site.wiki_repo_name(self.id, self.title)
     Repository.full_path_from_partial_path(repo_name)
   end
 
-  def self.wiki_git_path(site_title)
-    repo_name = Site.wiki_repo_name(site_title)
-    Repository.full_path_from_partial_path(repo_name)
-  end
-
-  def self.wiki_repo_name(site_title)
-    "#{site_title}-site-wiki.git"
+  # TODO kill singleton method, update push/pull/config stuff
+  def self.wiki_repo_name(site_id, site_title)
+    "#{site_id}-#{site_title}-site-wiki.git"
   end
   
   def wiki
+    if(!self.wiki_git_path) then init_wiki_git_path end
     if(!File.exist? wiki_git_path)
       FileUtils.mkdir_p(wiki_git_path, :mode => 0755)
-      repo_name = Site.wiki_repo_name(self.title)          
+      repo_name = File.basename(wiki_git_path)
       Repository.create_git_repository(repo_name)
     end
     Grit::Repo.new(wiki_git_path)

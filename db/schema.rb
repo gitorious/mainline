@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110530131306) do
+ActiveRecord::Schema.define(:version => 20120209093949) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -342,6 +342,7 @@ ActiveRecord::Schema.define(:version => 20110530131306) do
     t.string   "subdomain"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "wiki_git_path"
   end
 
   add_index "sites", ["subdomain"], :name => "index_sites_on_subdomain"

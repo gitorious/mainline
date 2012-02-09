@@ -35,15 +35,28 @@ class SiteTest < ActiveSupport::TestCase
     assert_not_nil site.errors.on(:subdomain)
   end
 
-  should "derive grit location from site name" do
-    site = Site.new(:title => "SuperSite")
-    assert_equal "/tmp/git/repositories/SuperSite-site-wiki.git", site.wiki_git_path
-    assert_equal "/tmp/git/repositories/SuperSite-site-wiki.git", Site.wiki_git_path("SuperSite")
+  should "derive grit location from site title and id" do
+    site = Site.create(:title => "SuperSite")
+    assert_equal "/tmp/git/repositories/#{site.id}-#{site.title}-site-wiki.git", site.wiki_git_path
   end
 
+  should "persist the filepath of its wiki repo" do
+    site = Site.create(:title => "BadSite")
+    expected = site.wiki_git_path
+    assert_equal "/tmp/git/repositories/#{site.id}-#{site.title}-site-wiki.git", expected
+    site.save!
+    assert_equal expected, Site.find_by_id(site.id).wiki_git_path
+  end
+
+  should "persist the default site" do
+    default_site = Site.default
+    assert_not_nil default_site.wiki_git_path
+    assert !default_site.new_record?
+  end
+  
   context "wiki git creation" do
     setup do
-      @site = Site.new(:title => "test-site")
+      @site = Site.create(:title => "test-site")
       @path = @site.wiki_git_path
       FileUtils.remove_dir(@path, true)
     end
