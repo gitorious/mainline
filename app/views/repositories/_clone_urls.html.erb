@@ -33,7 +33,7 @@
       </form>
     </div>
     <div id="clone-help-<%= repository.id -%>-box" class="clone-help-text" style="display:none;">
-      <% if logged_in? && current_user.site_admin? -%>
+      <% if logged_in? && site_admin?(current_user) -%>
         <% content_for :extra_head do %>
           <link rel="vcs-git" href="<%= h(repository.push_url) -%>" title="<%= t("views.repos.show_page_title", :repo => repository.name, :title => h(@owner.title)) -%>" />
         <% end %>

@@ -44,7 +44,7 @@
     </small></p>
     <%= render_markdown_help %>
     <div id="comment_preview">
-      
+
     </div>
     <%- if comment_applies_to_merge_request?(parent) -%>
     <p>
@@ -52,14 +52,14 @@
       <%= f.select :state, statuses_for_merge_request_for_select(parent),
            :selected => parent.status_tag.to_s, :include_blank => true -%>
     </p>
-    
+
     <p>
       <%- if !parent.watched_by?(current_user) -%>
         <%= label_tag(:add_to_favorites, "Start watching") %>:
         <%= check_box_tag(:add_to_favorites, "on") %> <br />
         <span class="hint">
-          If you later on want to stop watching this <%= parent.class.human_name -%>, 
-          simply click the button on the merge request labelled 
+          If you later on want to stop watching this <%= parent.class.human_name -%>,
+          simply click the button on the merge request labelled
           &quot;Stop watching&quot; at the top of the page
         </span>
       <%- end -%>
@@ -67,8 +67,7 @@
     <%- end -%>
     <p>
       <input type="button" class="preview" value="Preview" id="comment_preview_button" />
-      <%- if MergeRequest === parent && (logged_in? &&
-      parent.resolvable_by?(current_user)) -%>
+      <%- if MergeRequest === parent && (logged_in? && can_resolve?(current_user, parent)) -%>
         <%= f.submit t("views.comments.update_or_add") -%>
       <% else -%>
         <%= f.submit t("views.comments.add") -%>

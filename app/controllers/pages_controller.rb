@@ -23,7 +23,7 @@ class PagesController < ApplicationController
   before_filter :assert_readyness
   before_filter :require_write_permissions, :only => [:edit, :update]
   renders_in_site_specific_context
-  
+
   def index
     respond_to do |format|
       format.html do
@@ -39,7 +39,7 @@ class PagesController < ApplicationController
       end
     end
   end
-  
+
   def show
     @atom_auto_discovery_url = project_pages_path(:format => :atom)
     @page, @root = page_and_root
@@ -51,12 +51,12 @@ class PagesController < ApplicationController
       end
     end
   end
-  
+
   def edit
     @page, @root = page_and_root
     @page.user = current_user
   end
-  
+
   def preview
     @page, @root = page_and_root
     @page.content = params[:page][:content]
@@ -64,11 +64,11 @@ class PagesController < ApplicationController
       wants.js
     end
   end
-  
+
   def update
     @page = Page.find(params[:id], @project.wiki_repository.git)
     @page.user = current_user
-    
+
     if @page.content == params[:page][:content]
       flash[:error] = I18n.t("pages_controller.no_changes")
       render :action => "edit" and return
@@ -77,7 +77,7 @@ class PagesController < ApplicationController
     @page.content = params[:page][:content]
     if @page.save
       if @project.new_event_required?(Action::UPDATE_WIKI_PAGE, @project, current_user, @page.title)
-        @project.create_event(Action::UPDATE_WIKI_PAGE, @project, current_user, @page.title) 
+        @project.create_event(Action::UPDATE_WIKI_PAGE, @project, current_user, @page.title)
       end
       redirect_to project_page_path(@project, @page)
     else
@@ -85,13 +85,13 @@ class PagesController < ApplicationController
       render :action => "edit"
     end
   end
-  
+
   def history
     @page, @root = page_and_root
     if @page.new?
       redirect_to edit_project_page_path(@project, @page) and return
     end
-    
+
     @commits = @page.history(30)
     @user_and_email_map = Repository.users_by_commits(@commits)
   end
@@ -99,7 +99,7 @@ class PagesController < ApplicationController
   def git_access
     @root = Breadcrumb::Wiki.new(@project)
   end
-  
+
   protected
     def assert_readyness
       unless @project.wiki_repository.ready?
@@ -107,21 +107,21 @@ class PagesController < ApplicationController
         redirect_to project_path(@project) and return
       end
     end
-    
+
     def check_if_wiki_enabled
       unless @project.wiki_enabled?
         redirect_to project_path(@project) and return
       end
     end
-    
+
     def page_and_root
-      page = Page.find(params[:id], @project.wiki_repository.git)    
+      page = Page.find(params[:id], @project.wiki_repository.git)
       root = Breadcrumb::Page.new(page, @project)
       return page, root
     end
-    
+
     def require_write_permissions
-      unless @project.wiki_repository.writable_by?(current_user)
+      unless can_write_to?(current_user, @project.wiki_repository)
         flash[:error] = "This project has restricted wiki editing to project members"
         redirect_to project_pages_path(@project)
       end

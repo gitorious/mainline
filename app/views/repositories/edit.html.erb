@@ -36,14 +36,14 @@
   <p>
     <%= f.label :head %>
     <span class="hint">Change the symbolic ref the HEAD in the git repository points to</span>:<br />
-    <%= f.select(:head, @heads.map{|h| [h.name, h.name] }, 
+    <%= f.select(:head, @heads.map{|h| [h.name, h.name] },
           :selected => @repository.head ? @repository.head.name : nil) -%>
   </p>
   <p>
     <%= f.label :deny_force_pushing %>:
     <%= f.check_box :deny_force_pushing %><br />
     <span class="hint">
-      Denying force pushing means that pushing non-fastforwards 
+      Denying force pushing means that pushing non-fastforwards
       (eg <code>git push -f</code>) is not allowed, it will also
       prevent tag creation (you can toggle this whenever you like)
     </span>
@@ -58,11 +58,11 @@
   <% unless @repository.owned_by_group? -%>
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
-      <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]}, 
+      <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
             :include_blank => true, :selected => nil -%>
       <br /><small class="hint">
         <strong>Note:</strong> Only change ownership of this repository, if you are
-        absolutely sure you want to give admin and commit access to <em>everyone</em> 
+        absolutely sure you want to give admin and commit access to <em>everyone</em>
         in the selected group.
       </small>
     </p>
@@ -72,7 +72,7 @@
 
 <% content_for :sidebar do -%>
   <ul class="links navigation">
-    <% if @repository.can_be_deleted_by?(current_user) -%>
+    <% if can_delete?(current_user, @repository) -%>
       <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>

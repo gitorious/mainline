@@ -203,7 +203,7 @@ class RepositoriesController < ApplicationController
         end
       rescue ActiveRecord::RecordNotFound # No such merge request
       end
-    elsif user && user.can_write_to?(@repository)
+    elsif user && can_write_to?(user, @repository)
       render :text => "true" and return
     end
     render :text => 'false' and return
@@ -222,7 +222,7 @@ class RepositoriesController < ApplicationController
 
   def confirm_delete
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    unless @repository.can_be_deleted_by?(current_user)
+    unless can_delete?(current_user, @repository)
       flash[:error] = I18n.t "repositories_controller.adminship_error"
       redirect_to(@owner) and return
     end
@@ -230,7 +230,7 @@ class RepositoriesController < ApplicationController
 
   def destroy
     @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    if @repository.can_be_deleted_by?(current_user)
+    if can_delete?(current_user, @repository)
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
       @repository.destroy
@@ -244,7 +244,7 @@ class RepositoriesController < ApplicationController
 
   private
     def require_owner_adminship
-      unless @owner.admin?(current_user)
+      unless admin?(current_user, @owner)
         respond_denied_and_redirect_to(@owner)
         return
       end
@@ -253,7 +253,7 @@ class RepositoriesController < ApplicationController
     def find_and_require_repository_adminship
       @repository = @owner.repositories.find_by_name_in_project!(params[:id],
         @containing_project)
-      unless @repository.admin?(current_user)
+      unless admin?(current_user, @repository)
         respond_denied_and_redirect_to(repo_owner_path(@repository,
             :project_repository_path, @owner, @repository))
         return

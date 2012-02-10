@@ -25,29 +25,29 @@
 </h1>
 
 <table class="listing">
-	<thead>
-		<th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
-		<th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
-		<th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
+        <thead>
+                <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
+                <th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
+                <th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
     <th><%= t(:permissions, :scope => "activerecord.attributes.committerships").humanize %></th>
-		<th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
-		<th></th>
-	</thead>
-	<% @committerships.each do |committership| -%>
-	<tr class="<%= cycle('even', 'odd') -%>">
-	  <td><%= committership.created_at.to_s(:short) -%></td>
-	  <td><%= committership.committer.class.human_name -%></td>
-	  <td><%= link_to h(committership.committer.title), committership.committer -%></td>
+                <th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
+                <th></th>
+        </thead>
+        <% @committerships.each do |committership| -%>
+        <tr class="<%= cycle('even', 'odd') -%>">
+          <td><%= committership.created_at.to_s(:short) -%></td>
+          <td><%= committership.committer.class.human_name -%></td>
+          <td><%= link_to h(committership.committer.title), committership.committer -%></td>
     <td><%=h committership.permission_list.join(', ') -%></td>
-	  <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
-	  <td class="committer-buttons">
+          <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
+          <td class="committer-buttons">
       <%= button_to(t("views.common.edit"),
             [:edit, @owner, @repository, committership], :method => :get) -%>
       <%= button_to(t("views.common.remove"),
             [@owner, @repository, committership], :method => :delete) -%>
     </td>
-	</tr>
-	<% end -%>
+        </tr>
+        <% end -%>
 </table>
 
 <%= will_paginate @committerships -%>
@@ -63,61 +63,7 @@
   </ul>
 
   <h4>Permission overview:</h4>
-
-  <ul class="committers">
-	  <h5>Reviewers</h5>
-  <% @repository.reviewers.each do |user| -%>
-    <li>
-      <div class="user">
-        <%= avatar_from_email(user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(user.title), user -%>
-        <% if @repository.user == user -%>
-          <small class="hint">(<%= t("views.repos.creator") %>)</small>
-        <% end -%>
-      </div>
-    </li>
-  <% end -%>
-  <% if @repository.reviewers.blank? -%>
-    <li><em>No users with review permissions</em></li>
-  <% end %>
-  </ul>
-
-
-  <ul class="committers">
-	  <h5>Committers</h5>
-  <% @repository.committers.each do |user| -%>
-    <li>
-      <div class="user">
-        <%= avatar_from_email(user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(user.title), user -%>
-        <% if @repository.user == user -%>
-          <small class="hint">(<%= t("views.repos.creator") %>)</small>
-        <% end -%>
-      </div>
-    </li>
-  <% end -%>
-  <% if @repository.committers.blank? -%>
-    <li><em>No users with commit permissions</em></li>
-  <% end %>
-  </ul>
-
-
-  <ul class="committers">
-	  <h5>Administrators</h5>
-  <% @repository.administrators.each do |user| -%>
-    <li>
-      <div class="user">
-        <%= avatar_from_email(user.email, :size => 16, :style => "tiny") %>
-        <%= link_to h(user.title), user -%>
-        <% if @repository.user == user -%>
-          <small class="hint">(<%= t("views.repos.creator") %>)</small>
-        <% end -%>
-      </div>
-    </li>
-  <% end -%>
-  <% if @repository.administrators.blank? -%>
-    <li><em>No users with administer permissions</em></li>
-  <% end %>
-  </ul>
-
+  <%= collaborators("Reviewers", "review", reviewers(@repository)) %>
+  <%= collaborators("Committers", "commit", committers(@repository)) %>
+  <%= collaborators("Administrators", "administrator", administrators(@repository)) %>
 <% end -%>

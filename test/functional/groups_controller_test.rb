@@ -131,7 +131,7 @@ class GroupsControllerTest < ActionController::TestCase
     setup do
       @group = groups(:team_thunderbird)
       @user = users(:mike)
-      assert @group.admin?(@user)
+      assert admin?(@user, @group)
     end
 
     should "succeed if there is only one member" do

@@ -31,6 +31,7 @@ module ApplicationHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
   include RoutingHelper
+  include Gitorious::Authorization
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
@@ -467,7 +468,7 @@ module ApplicationHelper
   end
 
   def comment_applies_to_merge_request?(parent)
-    MergeRequest === parent && (logged_in? && parent.resolvable_by?(current_user))
+    MergeRequest === parent && (logged_in? && can_resolve?(current_user, parent))
   end
 
   def statuses_for_merge_request_for_select(merge_request)

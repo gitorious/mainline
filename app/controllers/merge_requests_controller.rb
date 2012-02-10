@@ -250,7 +250,7 @@ class MergeRequestsController < ApplicationController
     end
 
     def assert_merge_request_resolvable
-      unless @merge_request.resolvable_by?(current_user)
+      unless can_resolve?(current_user, @merge_request)
         respond_to do |format|
           flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
           format.html { redirect_to([@owner, @repository, @merge_request]) }

@@ -790,7 +790,7 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "identify that a merge request is being pushed to" do
       @merge_request = merge_requests(:mikes_to_johans)
-      assert !@merge_request.user.can_write_to?(@merge_request.target_repository)
+      assert !can_write_to?(@merge_request.user, @merge_request.target_repository)
       do_writable_by_get({
         :username => @merge_request.user.to_param,
         :project_id => @merge_request.target_repository.project.to_param,
@@ -885,7 +885,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     setup do
       @project = projects(:johans)
       @repo = @project.repositories.first
-      assert @repo.admin?(users(:johan))
+      assert admin?(users(:johan), @repo)
       login_as :johan
     end
 
@@ -897,7 +897,7 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "can only be deleted by the admins" do
       login_as :mike
-      assert !@repo.admin?(users(:mike));
+      assert !admin?(users(:mike), @repo)
       do_delete(@repo)
       assert_redirected_to([@project, @repo])
       assert_match(/only repository admins are allowed/i, flash[:error])
@@ -910,7 +910,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo.committerships.create_with_permissions!({
           :committer => users(:johan)
         }, (Committership::CAN_ADMIN | Committership::CAN_COMMIT))
-      assert repo.reload.admin?(users(:johan))
+      assert admin?(users(:johan), repo.reload)
       delete :destroy, :project_id => repo.project.to_param,
         :group_id => repo.owner.to_param, :id => repo.to_param
       assert_equal nil, flash[:error]
@@ -919,7 +919,6 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "destroying a project creates an event in the project" do
-      Repository.any_instance.expects(:can_be_deleted_by?).returns(true)
       assert_difference("@project.events.count") do
         do_delete(@repo)
         assert_response :redirect
@@ -1094,7 +1093,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository.kind = Repository::KIND_TEAM_REPO
       @repository.owner = groups(:team_thunderbird)
       @repository.save!
-      assert @repository.admin?(users(:mike))
+      assert admin?(users(:mike), @repository)
       get :edit, :project_id => @repository.project.to_param,
         :group_id => groups(:team_thunderbird).to_param, :id => @repository.to_param
       assert_response :success

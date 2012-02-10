@@ -441,7 +441,7 @@ class ProjectsControllerTest < ActionController::TestCase
       get :edit, :id => @project.to_param
       assert_response :success
       assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal users(:mike).groups.select{|g| g.admin?(users(:mike)) }, assigns(:groups)
+      assert_equal users(:mike).groups.select{|g| admin?(users(:mike), g) }, assigns(:groups)
     end
 
     should "only get a list of groups user is admin in on update" do
@@ -451,7 +451,7 @@ class ProjectsControllerTest < ActionController::TestCase
       put :update, :id => @project.to_param, :project => {:title => "foo"}
       assert_response :redirect
       assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal users(:mike).groups.select{|g| g.admin?(users(:mike)) }, assigns(:groups)
+      assert_equal users(:mike).groups.select{|g| admin?(users(:mike), g) }, assigns(:groups)
     end
 
     should "change the owner" do

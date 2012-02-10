@@ -50,7 +50,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     should "requires adminship" do
       @repository.owner = @group
       @repository.save!
-      assert !@repository.admin?(users(:mike))
+      assert !admin?(users(:mike), @repository)
       login_as :mike
       get :index, :group_id => @group.to_param, :repository_id => @repository.to_param
       assert_redirected_to(group_repository_path(@group, @repository))
@@ -90,7 +90,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       cs.build_permissions(:review,:commit,:admin); cs.save!
       repo.save!
       @group.add_member(@user, Role.admin)
-      assert repo.admin?(@user)
+      assert admin?(@user, repo)
 
       get :index, :group_id => @group.to_param, :repository_id => repo.to_param
       assert_response :success

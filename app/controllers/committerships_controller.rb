@@ -107,7 +107,7 @@ class CommittershipsController < ApplicationController
 
   protected
     def require_adminship
-      unless @repository.admin?(current_user)
+      unless admin?(current_user, @repository)
         respond_to do |format|
           format.html {
             flash[:error] = I18n.t "repositories_controller.adminship_error"

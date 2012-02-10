@@ -70,7 +70,7 @@
     <% if @repository.ready? -%>
       <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
     <% end -%>
-    <% if logged_in? && @repository.can_request_merge?(current_user) -%>
+    <% if logged_in? && can_request_merge?(current_user, @repository) -%>
       <li class="merge_request">
         <%= link_to t('views.repos.btn_request'),
               new_project_repository_merge_request_path(@repository.project, @repository) %>
@@ -79,10 +79,8 @@
   </ul>
 
   <ul class="links navigation">
-    <% if @repository.admin?(current_user) -%>
+    <% if admin?(current_user, @repository) -%>
       <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
-    <% end -%>
-    <% if @repository.admin?(current_user) -%>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>

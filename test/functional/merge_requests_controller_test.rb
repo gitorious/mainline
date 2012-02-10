@@ -173,7 +173,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should 'not display a comment change field unless the current user can change the MR' do
       login_as :moe
-      assert !@merge_request.resolvable_by?(users(:moe))
+      assert !can_resolve?(users(:moe), @merge_request)
       get :show, :project_id => @project.to_param,
       :repository_id => repositories(:johans).name,
       :id => @merge_request.to_param
@@ -183,7 +183,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should 'display a comment change field if the current user can change the MR' do
       login_as :johan
-      assert @merge_request.resolvable_by?(users(:johan))
+      assert can_resolve?(users(:johan), @merge_request)
       get :show, :project_id => @project.to_param,
       :repository_id => repositories(:johans).name,
       :id => @merge_request.to_param

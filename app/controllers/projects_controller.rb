@@ -126,7 +126,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @groups = current_user.groups.select{|g| g.admin?(current_user) }
+    @groups = current_user.groups.select{|g| admin?(current_user, g) }
     @root = Breadcrumb::EditProject.new(@project)
   end
 
@@ -143,7 +143,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @groups = current_user.groups.select{|g| g.admin?(current_user) }
+    @groups = current_user.groups.select{|g| admin?(current_user, g) }
     @root = Breadcrumb::EditProject.new(@project)
 
     # change group, if requested
@@ -196,7 +196,7 @@ class ProjectsController < ApplicationController
     end
 
     def assure_adminship
-      if !@project.admin?(current_user)
+      if !admin?(current_user, @project)
         flash[:error] = I18n.t "projects_controller.update_error"
         redirect_to(project_path(@project)) and return
       end

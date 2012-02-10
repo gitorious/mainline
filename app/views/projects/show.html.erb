@@ -57,11 +57,11 @@
             group_memberships_path(@project.owner) -%>
       </li>
     <% end -%>
-    <% if @project.admin?(current_user) -%>
+    <% if admin?(current_user, @project) -%>
       <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
       <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
     <% end -%>
-    <%- if logged_in? && current_user.site_admin? && GitoriousConfig["is_gitorious_dot_org"] -%>
+    <%- if logged_in? && site_admin?(current_user) && GitoriousConfig["is_gitorious_dot_org"] -%>
       <li>
         <%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
       </li>

@@ -31,7 +31,7 @@ module RepositoriesHelper
   end
 
   def edit_or_show_group_text
-    if @repository.admin?(current_user)
+    if admin?(current_user, @repository)
       t("views.repos.edit_group")
     else
       t("views.repos.show_group")

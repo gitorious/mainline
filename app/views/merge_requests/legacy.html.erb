@@ -33,14 +33,14 @@
 <% end -%>
 
 
-<% if logged_in? && @merge_request.resolvable_by?(current_user) && !@merge_request.possible_next_states.blank? -%>
+<% if logged_in? && can_resolve?(current_user, @merge_request) && !@merge_request.possible_next_states.blank? -%>
 
 <% if @merge_request.open? -%>
 <% help_box(:left) do -%>
 <p>
-  <%= t("views.merges.help") %> 
+  <%= t("views.merges.help") %>
   <small>
-    <%= link_to_function(t("views.merges.example"), 
+    <%= link_to_function(t("views.merges.example"),
         "$('#detailed_merge_request_help').toggle()", :class => "more_info") -%>
   </small>
 </p>
@@ -74,7 +74,7 @@
   } else {
   $("#commit_" + index).addClass("with_comments")
   }
-  $('.comment_for_commit_' + index).each(function(){ 
+  $('.comment_for_commit_' + index).each(function(){
       $(this).toggle();
   })
   }
@@ -82,9 +82,9 @@
 
 <% if @commits.blank? -%>
 <p><em>
-    It appears that the commits in this merge request have already been merged 
-    into <%= link_to(@merge_request.target_repository.name, repo_owner_path(@merge_request.target_repository, 
-             [@merge_request.target_repository.project, @merge_request.target_repository])) -%>.    
+    It appears that the commits in this merge request have already been merged
+    into <%= link_to(@merge_request.target_repository.name, repo_owner_path(@merge_request.target_repository,
+             [@merge_request.target_repository.project, @merge_request.target_repository])) -%>.
   </em><br />
   <% if !@merge_request.ending_commit.blank? -%>
   The ending commit of this merge request was <%=h @merge_request.ending_commit -%>.
@@ -112,7 +112,3 @@
   <%= render :partial => @merge_request.comments -%>
 </div>
 <%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
-
-  
-
-

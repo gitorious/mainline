@@ -98,7 +98,7 @@ class MembershipsController < ApplicationController
     end
 
     def ensure_group_adminship
-      unless @group.admin?(current_user)
+      unless admin?(current_user, @group)
         access_denied and return
       end
     end

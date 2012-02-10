@@ -71,7 +71,7 @@ class GroupsController < ApplicationController
 
   def destroy
     @group = Group.find_by_name!(params[:id])
-    if site_admin?(current_user) || (@group.admin?(current_user) && @group.deletable?)
+    if site_admin?(current_user) || (admin?(current_user, @group) && @group.deletable?)
       @group.destroy
       flash[:success] = "The team was deleted"
       redirect_to groups_path
@@ -99,7 +99,7 @@ class GroupsController < ApplicationController
   protected
     def find_group_and_ensure_group_adminship
       @group = Group.find_by_name!(params[:id])
-      unless @group.admin?(current_user)
+      unless admin?(current_user, @group)
         access_denied and return
       end
     end
