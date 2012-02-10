@@ -20,8 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ProjectTest < ActiveSupport::TestCase
-  include Gitorious::Authorization
-
   def create_project(options={})
     Project.new({
       :title => "foo project",

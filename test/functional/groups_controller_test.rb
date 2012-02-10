@@ -19,8 +19,6 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 class GroupsControllerTest < ActionController::TestCase
-  include Gitorious::Authorization
-
   should_render_in_global_context
 
   def setup

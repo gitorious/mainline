@@ -19,7 +19,15 @@ require "gitorious/authorization/configuration"
 
 module Gitorious
   module Authorization
+    def self.ability(action)
+      self.send(:define_method, :"#{action}?") do |agent, subject|
+        delegate_typed_action(action, agent, subject)
+      end
+    end
+
     ### Abilities
+    ability :can_read
+
     def can_write_to?(user, repository)
       delegate(:can_write_to?, user, repository)
     end
@@ -32,12 +40,16 @@ module Gitorious
       return delegate(:can_edit_comment?, user, thing) if thing.is_a?(Comment)
     end
 
+    def can_request_merge?(user, repository)
+      delegate(:can_request_merge?, user, repository)
+    end
+
     def can_resolve?(user, merge_request)
       delegate(:can_resolve?, user, merge_request)
     end
 
-    def can_reopen?(user, merge_request)
-      delegate(:can_reopen?, user, merge_request)
+    def can_reopen_merge_request?(user, merge_request)
+      delegate(:can_reopen_merge_request?, user, merge_request)
     end
 
     ### Roles
@@ -80,6 +92,10 @@ module Gitorious
     end
 
     private
+    def delegate_typed_action(action, agent, subject)
+      delegate(:"#{action}_#{subject.class.to_s.underscore}?", agent, subject)
+    end
+
     def delegate(method, *args)
       Configuration.strategies.each do |authorizor|
         if authorizor.respond_to?(method)

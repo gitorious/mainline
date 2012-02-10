@@ -152,10 +152,6 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def readable_by?(candidate)
-    [self.sender, self.recipient].include?(candidate)
-  end
-
   def mark_as_read_by_user(candidate)
      self.read if self.recipient == candidate
   end

@@ -20,8 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  include Gitorious::Authorization
-
   setup do
     @user = User.new
   end

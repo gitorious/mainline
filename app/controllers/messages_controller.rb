@@ -77,7 +77,7 @@ class MessagesController < ApplicationController
 
   def show
     @message = Message.find(params[:id])
-    if !@message.readable_by?(current_user)
+    if !can_read?(current_user, @message)
       raise ActiveRecord::RecordNotFound and return
     end
     @message.mark_thread_as_read_by_user(current_user)

@@ -20,8 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class GroupTest < ActiveSupport::TestCase
-  include Gitorious::Authorization
-
   context "in general" do
     should "uses the name as to_param" do
       group = Factory.build(:group)

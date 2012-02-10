@@ -26,7 +26,7 @@ require_dependency "event"
 
 class User < ActiveRecord::Base
   include UrlLinting
-
+  include Gitorious::Authorization
 
   has_many :projects
   has_many :memberships, :dependent => :destroy
@@ -372,34 +372,35 @@ class User < ActiveRecord::Base
   end
 
   protected
-    # before filter
-    def encrypt_password
-      return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-      self.crypted_password = encrypt(password)
-    end
+  # before filter
+  def encrypt_password
+    return if password.blank?
+    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+    self.crypted_password = encrypt(password)
+  end
 
-    def password_required?
-      not_openid? && (crypted_password.blank? || !password.blank?)
-    end
+  def password_required?
+    not_openid? && (crypted_password.blank? || !password.blank?)
+  end
 
-    def not_openid?
-      identity_url.blank?
-    end
+  def not_openid?
+    identity_url.blank?
+  end
 
-    def make_activation_code
-      return if !self.activated_at.blank?
-      self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
-    end
+  def make_activation_code
+    return if !self.activated_at.blank?
+    self.activation_code = Digest::SHA1.hexdigest(Time.now.to_s.split(//).sort_by {rand}.join)
+  end
 
-    def lint_identity_url
-      return if not_openid?
-      self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
-    rescue OpenIdAuthentication::InvalidOpenId
-      # validate will catch it instead
-    end
+  def lint_identity_url
+    return if not_openid?
+    self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
+  rescue OpenIdAuthentication::InvalidOpenId
+    # validate will catch it instead
+  end
 
-    def downcase_login
-      login.downcase! if login
-    end
+  def downcase_login
+    login.downcase! if login
+  end
+
 end

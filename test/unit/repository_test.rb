@@ -20,8 +20,6 @@ require File.dirname(__FILE__) + '/../test_helper'
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
-  include Gitorious::Authorization
-
   def new_repos(opts={})
     Repository.new({
       :name => "foo",
@@ -627,11 +625,11 @@ class RepositoryTest < ActiveSupport::TestCase
     repo = repositories(:johans2)
     assert !repo.mainline?
     assert committer?(users(:mike), repo)
-    assert repo.can_request_merge?(users(:mike))
+    assert can_request_merge?(users(:mike), repo)
 
     repo.kind = Repository::KIND_PROJECT_REPO
     assert repo.mainline?
-    assert !repo.can_request_merge?(users(:mike)), "mainlines should not request merges"
+    assert !can_request_merge?(users(:mike), repo), "mainlines should not request merges"
   end
 
   should "sets a hash on create" do
@@ -1186,5 +1184,3 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
 end
-
-

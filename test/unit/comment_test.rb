@@ -20,8 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommentTest < ActiveSupport::TestCase
-  include Gitorious::Authorization
-
   should_validate_presence_of :target, :user_id, :project_id
 
   context "message notifications" do

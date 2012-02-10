@@ -20,7 +20,11 @@ require "gitorious/authorization/base"
 module Gitorious
   module Authorization
     class CommittershipAuthorization < Base
+
       ### Abilities
+      def can_read_message?(user, message)
+        [message.sender, message.recipient].include?(user)
+      end
 
       # TODO: Needs more polymorphism
       def can_write_to?(user, repository)
@@ -35,13 +39,17 @@ module Gitorious
         comment.creator?(user) && comment.recently_created?
       end
 
+      def can_request_merge?(user, repository)
+        !repository.mainline? && can_write_to?(user, repository)
+      end
+
       def can_resolve?(user, merge_request)
         return false unless user.is_a?(User)
         return true if user === merge_request.user
         return reviewers(merge_request.target_repository).include?(user)
       end
 
-      def can_reopen?(user, merge_request)
+      def can_reopen_merge_request?(user, merge_request)
         merge_request.can_reopen? && can_resolve?(user, merge_request)
       end
 

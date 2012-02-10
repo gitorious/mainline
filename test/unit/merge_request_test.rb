@@ -18,8 +18,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class MergeRequestTest < ActiveSupport::TestCase
-  include Gitorious::Authorization
-
   def setup
     @merge_request = merge_requests(:moes_to_johans)
     commits = ["9dbb89110fc45362fc4dc3f60d960381",
@@ -426,7 +424,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open
       @merge_request.close
       assert @merge_request.closed?
-      assert can_reopen?(@user, @merge_request)
+      assert can_reopen_merge_request?(@user, @merge_request)
       assert @merge_request.reopen_with_user(@user)
       assert @merge_request.open?
     end
@@ -436,7 +434,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open
       @merge_request.close
       assert @merge_request.closed?
-      assert !can_reopen?(@user, @merge_request)
+      assert !can_reopen_merge_request?(@user, @merge_request)
       assert !@merge_request.reopen_with_user(@user)
       assert !@merge_request.open?
     end

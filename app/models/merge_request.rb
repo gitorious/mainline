@@ -63,8 +63,6 @@ class MergeRequest < ActiveRecord::Base
 #   STATUS_REJECTED = 3
 #   STATUS_VERIFYING = 4
 
-  alias_method :can_reopen_mr?, :can_reopen?
-
   state_machine :status, :initial => :pending do
     state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
     state :open, :value => ::MergeRequest::STATUS_OPEN
@@ -92,7 +90,7 @@ class MergeRequest < ActiveRecord::Base
   }
 
   def reopen_with_user(a_user)
-    if can_reopen_mr?(a_user, self)
+    if can_reopen_merge_request?(a_user, self)
       return reopen
     end
   end

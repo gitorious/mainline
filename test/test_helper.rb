@@ -13,6 +13,7 @@ end
 
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
+  include Gitorious::Authorization
 
   # Transactional fixtures accelerate your tests by wrapping each test method
   # in a transaction that's rolled back on completion.  This ensures that the
@@ -139,6 +140,8 @@ class ActiveSupport::TestCase
 end
 
 class ActionController::TestCase
+  include Gitorious::Authorization
+
   def setup_ssl_from_config
     return unless GitoriousConfig["use_ssl"]
 
