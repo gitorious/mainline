@@ -69,15 +69,19 @@ module Gitorious
       delegate_with_default(:administrators, [], repository)
     end
 
+    def repository_mainlines(project, user)
+      delegate_with_default(:repository_mainlines, [], project, user)
+    end
+
     def review_repositories(user)
       delegate_with_default(:review_repositories, [], user)
     end
 
     private
     def delegate(method, *args)
-      Configuration.strategies.each do |authorizor|
-        if authorizor.respond_to?(method)
-          result = authorizor.send(method, *args)
+      Configuration.strategies.each do |authorizer|
+        if authorizer.respond_to?(method)
+          result = authorizer.send(method, *args)
           return result if result
         end
       end
@@ -85,9 +89,9 @@ module Gitorious
     end
 
     def delegate_with_default(method, default, *args)
-      Configuration.strategies.each do |authorizor|
-        if authorizor.respond_to?(method)
-          return authorizor.send(method, *args)
+      Configuration.strategies.each do |authorizer|
+        if authorizer.respond_to?(method)
+          return authorizer.send(method, *args)
         end
       end
       default

@@ -16,7 +16,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/configurable_strategy"
-require "gitorious/authorization/committership_authorization"
 
 module Gitorious
   module Authorization
@@ -24,7 +23,7 @@ module Gitorious
       extend Gitorious::ConfigurableStrategy
 
       def self.default_configuration
-        Gitorious::Authorization::CommittershipAuthorization.new
+        CommittershipAuthorization.new
       end
     end
   end
