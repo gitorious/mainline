@@ -39,7 +39,7 @@
         <% end %>
         <p>Repository path: <code><%= h(repository.full_repository_path) -%></a></code></p>
       <% end -%>
-      <% if logged_in? && current_user.can_write_to?(repository) -%>
+      <% if logged_in? && current_user.can_push?(repository) -%>
         <p>
           Adding this repository as a pushable origin:
 <pre>

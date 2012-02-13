@@ -246,7 +246,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     creator = @merge_request.user = users(:mike)
     @merge_request.save!
     @merge_request.target_repository.committerships.each(&:destroy)
-    assert !can_write_to?(creator, @merge_request.target_repository)
+    assert !can_push?(creator, @merge_request.target_repository)
     assert can_resolve?(creator, @merge_request), "not resolvable by creator"
     assert !can_resolve?(users(:moe), @merge_request)
   end

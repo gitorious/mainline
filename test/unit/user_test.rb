@@ -141,12 +141,12 @@ class UserTest < ActiveSupport::TestCase
   should "know if a user has write access to a repository" do
     u = users(:mike)
     repo = repositories(:johans2)
-    assert can_write_to?(u, repo)
-    assert !can_write_to?(users(:johan), repo)
+    assert can_push?(u, repo)
+    assert !can_push?(users(:johan), repo)
     repo.owner.add_member(users(:johan), Role.member)
     repo.reload
     assert committers(repo).include?(users(:johan))
-    assert can_write_to?(users(:johan), repo)
+    assert can_push?(users(:johan), repo)
   end
 
   should "not have wiki repositories in #repositories" do

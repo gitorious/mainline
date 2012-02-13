@@ -27,7 +27,7 @@ module Gitorious
       end
 
       # TODO: Needs more polymorphism
-      def can_write_to?(user, repository)
+      def can_push?(user, repository)
         if repository.wiki?
           can_write_to_wiki?(user, repository)
         else
@@ -40,7 +40,7 @@ module Gitorious
       end
 
       def can_request_merge?(user, repository)
-        !repository.mainline? && can_write_to?(user, repository)
+        !repository.mainline? && can_push?(user, repository)
       end
 
       def can_resolve?(user, merge_request)

@@ -790,7 +790,7 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "identify that a merge request is being pushed to" do
       @merge_request = merge_requests(:mikes_to_johans)
-      assert !can_write_to?(@merge_request.user, @merge_request.target_repository)
+      assert !can_push?(@merge_request.user, @merge_request.target_repository)
       do_writable_by_get({
         :username => @merge_request.user.to_param,
         :project_id => @merge_request.target_repository.project.to_param,

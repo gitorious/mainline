@@ -375,21 +375,21 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context "can_write_to?" do
+  context "can_push?" do
     should "knows if a user can write to self" do
       @repository.owner = users(:johan)
       @repository.save!
       @repository.reload
-      assert can_write_to?(users(:johan), @repository)
-      assert !can_write_to?(users(:mike), @repository)
+      assert can_push?(users(:johan), @repository)
+      assert !can_push?(users(:mike), @repository)
 
       @repository.change_owner_to!(groups(:team_thunderbird))
       @repository.save!
-      assert !can_write_to?(users(:johan), @repository)
+      assert !can_push?(users(:johan), @repository)
 
       @repository.owner.add_member(users(:moe), Role.member)
       @repository.committerships.reload
-      assert can_write_to?(users(:moe), @repository)
+      assert can_push?(users(:moe), @repository)
     end
 
     context "a wiki repository" do
@@ -400,17 +400,17 @@ class RepositoryTest < ActiveSupport::TestCase
       should "be writable by everyone" do
         @repository.wiki_permissions = Repository::WIKI_WRITABLE_EVERYONE
         [:johan, :mike, :moe].each do |login|
-          assert can_write_to?(users(login), @repository), "not writable_by #{login}"
+          assert can_push?(users(login), @repository), "not writable_by #{login}"
         end
       end
 
       should "only be writable by project members" do
         @repository.wiki_permissions = Repository::WIKI_WRITABLE_PROJECT_MEMBERS
         assert @repository.project.member?(users(:johan))
-        assert can_write_to?(users(:johan), @repository)
+        assert can_push?(users(:johan), @repository)
 
         assert !@repository.project.member?(users(:moe))
-        assert !can_write_to?(users(:moe), @repository)
+        assert !can_push?(users(:moe), @repository)
       end
     end
   end

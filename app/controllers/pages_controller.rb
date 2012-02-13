@@ -121,7 +121,7 @@ class PagesController < ApplicationController
     end
 
     def require_write_permissions
-      unless can_write_to?(current_user, @project.wiki_repository)
+      unless can_push?(current_user, @project.wiki_repository)
         flash[:error] = "This project has restricted wiki editing to project members"
         redirect_to project_pages_path(@project)
       end

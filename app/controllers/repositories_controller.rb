@@ -203,7 +203,7 @@ class RepositoriesController < ApplicationController
         end
       rescue ActiveRecord::RecordNotFound # No such merge request
       end
-    elsif user && can_write_to?(user, @repository)
+    elsif user && can_push?(user, @repository)
       render :text => "true" and return
     end
     render :text => 'false' and return

@@ -28,8 +28,8 @@ module Gitorious
     ### Abilities
     ability :can_read
 
-    def can_write_to?(user, repository)
-      delegate(:can_write_to?, user, repository)
+    def can_push?(user, repository)
+      delegate(:can_push?, user, repository)
     end
 
     def can_delete?(candidate, repository)

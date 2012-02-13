@@ -269,7 +269,7 @@ class Repository < ActiveRecord::Base
 
   def display_ssh_url?(user)
     return true if GitoriousConfig["always_display_ssh_url"]
-    can_write_to?(user, self)
+    can_push?(user, self)
   end
 
   def full_repository_path
