@@ -30,7 +30,7 @@
       :locals => {:repository => @repository, :verbose => true} -%>
 </div>
 <div class="content-container">
-  <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
+  <% if !@repository.has_commits? && committers(@repository).include?(current_user) -%>
 <%= render "getting_started" -%>
   <% end -%>
 </div>
