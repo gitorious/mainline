@@ -325,7 +325,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_equal @source_repository, assigns(:merge_request).source_repository
     end
 
-    should "scope to the current_user" do
+     should "scope to the current_user" do
       login_as :johan
       do_post
       assert_equal users(:johan), assigns(:merge_request).user

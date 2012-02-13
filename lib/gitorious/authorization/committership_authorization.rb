@@ -15,13 +15,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/authorization/base"
+require "gitorious/authorization/typed_authorization"
 
 module Gitorious
   module Authorization
-    class CommittershipAuthorization < Base
-
+    class CommittershipAuthorization < TypedAuthorization
       ### Abilities
+      ability :can_read
+      ability :can_edit
+
       def can_read_message?(user, message)
         [message.sender, message.recipient].include?(user)
       end
@@ -33,6 +35,10 @@ module Gitorious
         else
           committers(repository).include?(user)
         end
+      end
+
+      def can_delete?(candidate, repository)
+        admin?(candidate, repository)
       end
 
       def can_edit_comment?(user, comment)

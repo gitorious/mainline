@@ -17,13 +17,26 @@
 #++
 module Gitorious
   module Authorization
-    class Base
+    class TypedAuthorization
+      def self.ability(action)
+        self.send(:define_method, :"#{action}?") do |agent, subject|
+          delegate_on_type(action, agent, subject)
+        end
+      end
+
       def admin?(candidate, thing)
         return candidate == thing if thing.is_a?(User)
         return project_admin?(candidate, thing) if thing.is_a?(Project)
         return repository_admin?(candidate, thing) if thing.is_a?(Repository)
         return group_admin?(candidate, thing) if thing.is_a?(Group)
         false
+      end
+
+      private
+      def delegate_on_type(action, agent, subject)
+        typed_method = :"#{action}_#{subject.class.to_s.underscore}?"
+        return send(typed_method, agent, subject) if respond_to?(typed_method)
+        nil
       end
     end
   end
