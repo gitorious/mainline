@@ -49,14 +49,14 @@ module Gitorious
         !repository.mainline? && can_push?(user, repository)
       end
 
-      def can_resolve?(user, merge_request)
+      def can_resolve_merge_request?(user, merge_request)
         return false unless user.is_a?(User)
         return true if user === merge_request.user
         return reviewers(merge_request.target_repository).include?(user)
       end
 
       def can_reopen_merge_request?(user, merge_request)
-        merge_request.can_reopen? && can_resolve?(user, merge_request)
+        merge_request.can_reopen? && can_resolve_merge_request?(user, merge_request)
       end
 
       ### Roles

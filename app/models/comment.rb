@@ -152,7 +152,7 @@ class Comment < ActiveRecord::Base
   def update_state_in_target
     if applies_to_merge_request? and state_change
       target.with_user(user) do
-        if can_resolve?(user, target)
+        if can_resolve_merge_request?(user, target)
           target.status_tag=(state_changed_to)
           target.create_status_change_event(body)
         end

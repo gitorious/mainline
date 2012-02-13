@@ -31,7 +31,7 @@ module Gitorious
     delegate_ability :can_delete?
     delegate_ability :can_edit?
     delegate_ability :can_request_merge?
-    delegate_ability :can_resolve?
+    delegate_ability :can_resolve_merge_request?
     delegate_ability :can_reopen_merge_request?
 
     ### Roles

@@ -234,12 +234,12 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
 
   should "knows who can resolve itself" do
-    assert can_resolve?(users(:johan), @merge_request)
+    assert can_resolve_merge_request?(users(:johan), @merge_request)
     @merge_request.target_repository.committerships.create_with_permissions!({
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_REVIEW)
-    assert can_resolve?(users(:mike), @merge_request)
-    assert !can_resolve?(users(:moe), @merge_request)
+    assert can_resolve_merge_request?(users(:mike), @merge_request)
+    assert !can_resolve_merge_request?(users(:moe), @merge_request)
   end
 
   should "be resolvable by the MR creator as well" do
@@ -247,12 +247,12 @@ class MergeRequestTest < ActiveSupport::TestCase
     @merge_request.save!
     @merge_request.target_repository.committerships.each(&:destroy)
     assert !can_push?(creator, @merge_request.target_repository)
-    assert can_resolve?(creator, @merge_request), "not resolvable by creator"
-    assert !can_resolve?(users(:moe), @merge_request)
+    assert can_resolve_merge_request?(creator, @merge_request), "not resolvable by creator"
+    assert !can_resolve_merge_request?(users(:moe), @merge_request)
   end
 
   should "have a working resolvable_by? together with fucktard authentication systems" do
-    assert !can_resolve?(false, @merge_request)
+    assert !can_resolve_merge_request?(false, @merge_request)
   end
 
   should "count open merge_requests" do

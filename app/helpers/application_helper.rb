@@ -468,7 +468,7 @@ module ApplicationHelper
   end
 
   def comment_applies_to_merge_request?(parent)
-    MergeRequest === parent && (logged_in? && can_resolve?(current_user, parent))
+    MergeRequest === parent && (logged_in? && can_resolve_merge_request?(current_user, parent))
   end
 
   def statuses_for_merge_request_for_select(merge_request)
