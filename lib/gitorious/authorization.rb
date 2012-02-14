@@ -56,6 +56,10 @@ module Gitorious
       delegate(:site_admin?, user)
     end
 
+    def is_member?(agent, subject)
+      delegate(:is_member?, agent, subject)
+    end
+
     ### Data access
     def committers(repository)
       delegate_with_default(:committers, [], repository)

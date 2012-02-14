@@ -547,6 +547,7 @@ class ProjectTest < ActiveSupport::TestCase
       setup do
         GitoriousConfig["enable_private_repositories"] = true
       end
+
       should "allow anonymous user to view public project" do
         project = Project.new(:title => "My project")
         assert can_read?(nil, project)
@@ -574,6 +575,29 @@ class ProjectTest < ActiveSupport::TestCase
         projects(:johans).add_member(groups(:team_thunderbird))
         assert can_read?(users(:mike), projects(:johans))
       end
+    end
+
+    context "with private repositories disabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+      end
+
+      should "anonymous user to view 'private' project" do
+        projects(:johans).add_member(users(:johan))
+        assert can_read?(nil, projects(:johans))
+      end
+    end
+  end
+
+  context "project memberships" do
+    should "silently ignore duplicates" do
+      project = projects(:johans)
+      project.add_member(users(:mike))
+      project.add_member(users(:mike))
+
+      assert project.member?(users(:mike))
+      assert is_member?(users(:mike), project)
+      assert_equal 1, project.project_memberships.count
     end
   end
 end

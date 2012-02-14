@@ -130,12 +130,9 @@ class Project < ActiveRecord::Base
   end
 
   def member?(candidate)
-    case owner
-    when User
-      candidate == self.owner
-    when Group
-      owner.member?(candidate)
-    end
+    candidate == self.owner ||
+      (owner.respond_to?(:member?) && owner.member?(candidate)) ||
+      project_memberships.any? { |m| is_member?(candidate, m.member) }
   end
 
   def committer?(candidate)
@@ -340,7 +337,9 @@ class Project < ActiveRecord::Base
   end
 
   def add_member(member)
-    self.project_memberships.create!(:project => self, :member => member)
+    return if self.project_memberships.count(:all, :conditions => ["member_id = ? and member_type = ?",
+                                                                   member.id, member.class.to_s]) > 0
+    self.project_memberships.create!(:member => member)
   end
 
   protected

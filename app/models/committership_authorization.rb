@@ -26,7 +26,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     return true if !GitoriousConfig["enable_private_repositories"]
     return true if project.owner == user
     return true if project.project_memberships.count == 0
-    project.project_memberships.any? { |m| member?(user, m.member) }
+    project.project_memberships.any? { |m| is_member?(user, m.member) }
   end
 
   def can_read_message?(user, message)
@@ -74,7 +74,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     candidate.is_a?(User) ? reviewers(repository).include?(candidate) : false
   end
 
-  def member?(candidate, thing)
+  def is_member?(candidate, thing)
     candidate == thing || (thing.respond_to?(:member?) && thing.member?(candidate))
   end
 
