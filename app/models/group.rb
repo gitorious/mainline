@@ -29,6 +29,7 @@ class Group < ActiveRecord::Base
   has_many :cloneable_repositories, :as => :owner, :class_name => "Repository",
      :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
   has_many :projects, :as => :owner
+  has_many :project_memberships, :as => :member
 
   attr_protected :public, :role_id, :user_id
 

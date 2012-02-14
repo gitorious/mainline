@@ -22,9 +22,11 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   ability :can_read
   ability :can_edit
 
-  def can_read_repository?(user, repository)
+  def can_read_project?(user, project)
     return true if !GitoriousConfig["enable_private_repositories"]
-    repository.owner == user
+    return true if project.owner == user
+    return true if project.project_memberships.count == 0
+    project.project_memberships.any? { |m| member?(user, m.member) }
   end
 
   def can_read_message?(user, message)
@@ -72,6 +74,10 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     candidate.is_a?(User) ? reviewers(repository).include?(candidate) : false
   end
 
+  def member?(candidate, thing)
+    candidate == thing || (thing.respond_to?(:member?) && thing.member?(candidate))
+  end
+
   ###
 
   def repository_admin?(candidate, repository)
@@ -110,12 +116,6 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   # committerships or indirectly as members of a group
   def administrators(repository)
     repository.committerships.admins.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  def repository_mainlines(project, user)
-    project.repositories.mainlines.select do |repo|
-      can_read_repository?(user, repo)
-    end
   end
 
   def review_repositories(user)

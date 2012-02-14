@@ -141,6 +141,13 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_template(("index"))
     end
 
+    should "filter private projects" do
+      get :index
+      assert_response :success
+      assert !assigns(:projects).empty?
+      assert_template(("index"))
+    end
+
     context "projects pagination" do
       should_scope_pagination_to(:index, Project)
     end

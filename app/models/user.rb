@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
   has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :favorites, :dependent => :destroy
   has_many :feed_items, :foreign_key => "watcher_id"
+  has_many :project_memberships, :as => :member
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password

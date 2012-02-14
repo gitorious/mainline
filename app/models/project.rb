@@ -34,7 +34,7 @@ class Project < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
   has_many    :comments, :dependent => :destroy
-
+  has_many    :project_memberships
   has_many    :repositories, :order => "repositories.created_at asc",
       :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository",
@@ -337,6 +337,10 @@ class Project < ActiveRecord::Base
 
   def suspend!
     self.suspended_at = Time.now
+  end
+
+  def add_member(member)
+    self.project_memberships.create!(:project => self, :member => member)
   end
 
   protected

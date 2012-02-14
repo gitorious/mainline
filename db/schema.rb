@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120209093949) do
+ActiveRecord::Schema.define(:version => 20120214094615) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -242,20 +242,15 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
   add_index "messages", ["recipient_id"], :name => "index_messages_on_recipient_id"
   add_index "messages", ["sender_id"], :name => "index_messages_on_sender_id"
 
-  create_table "open_id_authentication_associations", :force => true do |t|
-    t.integer "issued"
-    t.integer "lifetime"
-    t.string  "handle"
-    t.string  "assoc_type"
-    t.binary  "server_url"
-    t.binary  "secret"
+  create_table "project_memberships", :force => true do |t|
+    t.integer  "project_id"
+    t.string   "member_type"
+    t.integer  "member_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "open_id_authentication_nonces", :force => true do |t|
-    t.integer "timestamp",  :null => false
-    t.string  "server_url"
-    t.string  "salt",       :null => false
-  end
+  add_index "project_memberships", ["project_id", "member_id", "member_type"], :name => "project_memberships_index"
 
   create_table "projects", :force => true do |t|
     t.string   "title"
@@ -342,7 +337,7 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
     t.string   "subdomain"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "wiki_git_path"
+    t.text     "wiki_git_path"
   end
 
   add_index "sites", ["subdomain"], :name => "index_sites_on_subdomain"

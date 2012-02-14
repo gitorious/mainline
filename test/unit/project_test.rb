@@ -541,4 +541,39 @@ class ProjectTest < ActiveSupport::TestCase
     assert !p.valid?
     assert_not_nil p.errors.on(:slug)
   end
+
+  context "Database authorization" do
+    context "with private repositories enabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+      should "allow anonymous user to view public project" do
+        project = Project.new(:title => "My project")
+        assert can_read?(nil, project)
+      end
+
+      should "allow owner to view private project" do
+        projects(:johans).owner = users(:johan)
+        projects(:johans).add_member(users(:johan))
+        assert can_read?(users(:johan), projects(:johans))
+      end
+
+      should "disallow anonymous user to view private project" do
+        projects(:johans).add_member(users(:johan))
+        assert !can_read?(nil, projects(:johans))
+      end
+
+      should "allow member to view private project" do
+        projects(:johans).owner = users(:johan)
+        projects(:johans).add_member(users(:mike))
+        assert can_read?(users(:mike), projects(:johans))
+      end
+
+      should "allow member to view private project via group membership" do
+        projects(:johans).owner = users(:johan)
+        projects(:johans).add_member(groups(:team_thunderbird))
+        assert can_read?(users(:mike), projects(:johans))
+      end
+    end
+  end
 end

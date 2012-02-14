@@ -69,10 +69,6 @@ module Gitorious
       delegate_with_default(:administrators, [], repository)
     end
 
-    def repository_mainlines(project, user)
-      delegate_with_default(:repository_mainlines, [], project, user)
-    end
-
     def review_repositories(user)
       delegate_with_default(:review_repositories, [], user)
     end
