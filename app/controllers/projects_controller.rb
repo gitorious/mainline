@@ -34,8 +34,7 @@ class ProjectsController < ApplicationController
 
   def index
     @projects = paginate(:action => "index") do
-      Project.paginate(:all, :order => "projects.created_at desc",
-                       :page => params[:page], :include => [:tags, { :repositories => :project } ])
+      paginate_projects(params[:page] || 1, Project.per_page)
     end
 
     return if @projects.count == 0 && params.key?(:page)
@@ -48,21 +47,6 @@ class ProjectsController < ApplicationController
       }
       format.xml  { render :xml => @projects }
       format.atom { }
-    end
-  end
-
-  def category
-    tags = params[:id].to_s.gsub(/,\ ?/, " ")
-    @projects = Project.paginate_by_tag(tags, :order => 'created_at desc',
-                  :page => params[:page])
-    @atom_auto_discovery_url = projects_category_path(params[:id], :format => :atom)
-    respond_to do |format|
-      format.html do
-        @tags = Project.tag_counts
-        render :action => "index"
-      end
-      format.xml  { render :xml => @projects }
-      format.atom { render :action => "index"}
     end
   end
 
@@ -191,24 +175,42 @@ class ProjectsController < ApplicationController
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end
 
-    def find_project
-      @project = Project.find_by_slug!(params[:id], :include => [:repositories])
-    end
+  def find_project
+    @project = Project.find_by_slug!(params[:id], :include => [:repositories])
+  end
 
-    def assure_adminship
-      if !admin?(current_user, @project)
-        flash[:error] = I18n.t "projects_controller.update_error"
-        redirect_to(project_path(@project)) and return
+  def assure_adminship
+    if !admin?(current_user, @project)
+      flash[:error] = I18n.t "projects_controller.update_error"
+      redirect_to(project_path(@project)) and return
+    end
+  end
+
+  def check_if_only_site_admins_can_create
+    if GitoriousConfig["only_site_admins_can_create_projects"]
+      unless site_admin?(current_user)
+        flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
+        redirect_to projects_path
+        return false
       end
     end
+  end
 
-    def check_if_only_site_admins_can_create
-      if GitoriousConfig["only_site_admins_can_create_projects"]
-        unless site_admin?(current_user)
-          flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
-          redirect_to projects_path
-          return false
-        end
+  def paginate_projects(page, per_page)
+    WillPaginate::Collection.create(page, per_page) do |pager|
+      result = Project.paginate(:all, :order => "projects.created_at desc",
+                                :page => params[:page],
+                                :include => [:tags, { :repositories => :project } ]).select do |p|
+        can_read?(current_user, p)
+      end
+
+      # inject the result array into the paginated collection:
+      pager.replace(result)
+
+      unless pager.total_entries
+        # the pager didn't manage to guess the total count, do it manually
+        pager.total_entries = Project.count
       end
     end
+  end
 end

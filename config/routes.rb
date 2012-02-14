@@ -129,10 +129,7 @@ ActionController::Routing::Routes.draw do |map|
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
 
   map.resource  :sessions
-  map.with_options(:controller => "projects", :action => "category") do |project_cat|
-    project_cat.projects_category "projects/category/:id"
-    project_cat.formatted_projects_category "projects/category/:id.:format"
-  end
+
   map.resources :groups, :as => "teams", :member => {:avatar => :delete}  do |grp|
     grp.resources :memberships, :collection => {:auto_complete_for_user_login => :get}
     grp.resources(:repositories, repository_options){|r| build_repository_routes(r) }
@@ -143,10 +140,10 @@ ActionController::Routing::Routes.draw do |map|
 
   map.site_wiki_git_access_connect 'wiki/:site_id/config', :controller => 'site_wiki_pages', :action => 'config'
   map.site_wiki_git_writable_by 'wiki/:site_id/writable_by', :controller => 'site_wiki_pages', :action => 'writable_by'
-  
+
   map.resources :site_wiki_pages, :as => "wiki", :member => { :history => :get,:preview => :put},
   :collection => { :git_access => :get }
-  
+
   map.resources :projects, :member => {
     :confirm_delete => :get,
     :preview => :put,
@@ -156,7 +153,7 @@ ActionController::Routing::Routes.draw do |map|
     projects.resources :pages, :member => { :history => :get,:preview => :put}, :collection => { :git_access => :get }
     projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end
-  
+
   map.resource :search
 
   map.resources :messages,

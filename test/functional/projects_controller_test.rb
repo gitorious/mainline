@@ -134,14 +134,19 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "ProjectsController" do
-    should "GET projects/ succesfully" do
-      get :index
-      assert_response :success
-      assert !assigns(:projects).empty?
-      assert_template(("index"))
+    context "With private repos" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+
+      should "filter private projects in index" do
+        projects(:johans).make_private
+        get :index
+        assert_equal 2, assigns(:projects).length
+      end
     end
 
-    should "filter private projects" do
+    should "GET projects/ succesfully" do
       get :index
       assert_response :success
       assert !assigns(:projects).empty?
