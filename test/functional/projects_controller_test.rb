@@ -137,12 +137,72 @@ class ProjectsControllerTest < ActionController::TestCase
     context "With private repos" do
       setup do
         GitoriousConfig["enable_private_repositories"] = true
+        projects(:johans).make_private
       end
 
       should "filter private projects in index" do
-        projects(:johans).make_private
         get :index
         assert_equal 2, assigns(:projects).length
+      end
+
+      should "render show for private repo with 403 for unauthorized user" do
+        get :show, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo for owner" do
+        login_as :johan
+        get :show, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "render clones for private repo with 403 for unauthorized user" do
+        get :clones, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo clones for owner" do
+        login_as :johan
+        get :clones, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "render private repo edit with 302 for unauthorized user" do
+        get :edit, :id => projects(:johans).to_param
+        assert_response 302
+      end
+
+      should "render private repo edit for owner" do
+        login_as :johan
+        get :edit, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "render private repo edit_slug with 403 for unauthorized user" do
+        get :edit_slug, :id => projects(:johans).to_param
+        assert_response 403
+        put :edit_slug, :id => projects(:johans).to_param, :project => { :slug => "yeah" }
+        assert_response 403
+        assert_not_equal "yeah", projects(:johans).slug
+      end
+
+      should "render private repo edit_slug for owner" do
+        login_as :johan
+        get :edit_slug, :id => projects(:johans).to_param
+        assert_response 200
+        put :edit_slug, :id => projects(:johans).to_param, :project => { :slug => "yeah" }
+        assert_response 302
+      end
+
+      should "render private repo update with 403 for unauthorized user" do
+        put :update, :id => projects(:johans).to_param, :project => {}
+        assert_response 302
+      end
+
+      should "render private repo update for owner" do
+        login_as :johan
+        put :update, :id => projects(:johans).to_param, :project => { :slug => "  " }
+        assert_response 200
       end
     end
 

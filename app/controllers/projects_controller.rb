@@ -177,6 +177,9 @@ class ProjectsController < ApplicationController
 
   def find_project
     @project = Project.find_by_slug!(params[:id], :include => [:repositories])
+    if !can_read?(current_user, @project)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+    end
   end
 
   def assure_adminship

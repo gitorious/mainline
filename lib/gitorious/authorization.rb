@@ -19,6 +19,8 @@ require "gitorious/authorization/configuration"
 
 module Gitorious
   module Authorization
+    class UnauthorizedError < StandardError; end
+
     def self.delegate_ability(action)
       self.send(:define_method, action) do |agent, subject|
         delegate(action, agent, subject)

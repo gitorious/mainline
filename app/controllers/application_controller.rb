@@ -44,6 +44,7 @@ class ApplicationController < ActionController::Base
   rescue_from Grit::GitRuby::Repository::NoSuchPath, :with => :render_not_found
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
+  rescue_from Gitorious::Authorization::UnauthorizedError, :with => :render_unauthorized
 
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -158,6 +159,12 @@ class ApplicationController < ActionController::Base
   def render_throttled_record
     render :partial => "/shared/throttled_record",
     :layout => "application", :status => 412 # precondition failed
+    return false
+  end
+
+  def render_unauthorized
+    render :partial => "/shared/unauthorized",
+    :layout => "application", :status => 403 # forbidden
     return false
   end
 
