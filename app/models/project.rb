@@ -336,6 +336,10 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def make_private
+    add_member(owner)
+  end
+
   def add_member(member)
     return if self.project_memberships.count(:all, :conditions => ["member_id = ? and member_type = ?",
                                                                    member.id, member.class.to_s]) > 0

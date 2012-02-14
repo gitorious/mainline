@@ -575,6 +575,12 @@ class ProjectTest < ActiveSupport::TestCase
         projects(:johans).add_member(groups(:team_thunderbird))
         assert can_read?(users(:mike), projects(:johans))
       end
+
+      should "make project private" do
+        projects(:johans).make_private
+
+        assert !can_read?(users(:mike), projects(:johans))
+      end
     end
 
     context "with private repositories disabled" do
