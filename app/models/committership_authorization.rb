@@ -21,6 +21,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   ### Abilities
   ability :can_read
   ability :can_edit
+  ability :can_delete
 
   def can_read_project?(user, project)
     return true if !GitoriousConfig["enable_private_repositories"]
@@ -42,7 +43,11 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     end
   end
 
-  def can_delete?(candidate, repository)
+  def can_delete_project?(candidate, project)
+    admin?(candidate, project) && project.repositories.clones.count == 0
+  end
+
+  def can_delete_repository?(candidate, repository)
     admin?(candidate, repository)
   end
 

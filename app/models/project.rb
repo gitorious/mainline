@@ -143,10 +143,6 @@ class Project < ActiveRecord::Base
     owner === Group
   end
 
-  def can_be_deleted_by?(candidate)
-    admin?(candidate, self) && repositories.clones.count == 0
-  end
-
   def home_url=(url)
     self[:home_url] = clean_url(url)
   end

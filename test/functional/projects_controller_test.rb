@@ -145,7 +145,7 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_equal 2, assigns(:projects).length
       end
 
-      should "render show for private repo with 403 for unauthorized user" do
+      should "not render show for private repo for unauthorized user" do
         get :show, :id => projects(:johans).to_param
         assert_response 403
       end
@@ -156,7 +156,7 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 200
       end
 
-      should "render clones for private repo with 403 for unauthorized user" do
+      should "not render clones for private repo for unauthorized user" do
         get :clones, :id => projects(:johans).to_param
         assert_response 403
       end
@@ -167,9 +167,10 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 200
       end
 
-      should "render private repo edit with 302 for unauthorized user" do
+      should "not render private repo edit for unauthorized user" do
+        login_as :mike
         get :edit, :id => projects(:johans).to_param
-        assert_response 302
+        assert_response 403
       end
 
       should "render private repo edit for owner" do
@@ -178,7 +179,7 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 200
       end
 
-      should "render private repo edit_slug with 403 for unauthorized user" do
+      should "not render private repo edit_slug for unauthorized user" do
         get :edit_slug, :id => projects(:johans).to_param
         assert_response 403
         put :edit_slug, :id => projects(:johans).to_param, :project => { :slug => "yeah" }
@@ -194,9 +195,10 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 302
       end
 
-      should "render private repo update with 403 for unauthorized user" do
+      should "not render private repo update for unauthorized user" do
+        login_as :mike
         put :update, :id => projects(:johans).to_param, :project => {}
-        assert_response 302
+        assert_response 403
       end
 
       should "render private repo update for owner" do
@@ -204,6 +206,29 @@ class ProjectsControllerTest < ActionController::TestCase
         put :update, :id => projects(:johans).to_param, :project => { :slug => "  " }
         assert_response 200
       end
+
+      should "not render private repo delete confirmation for unauthorized user" do
+        login_as :mike
+        get :confirm_delete, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo delete confirmation for owner" do
+        login_as :johan
+        get :confirm_delete, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "disallow unauthorized user to destroy project" do
+        login_as :mike
+        delete :destroy, :id => projects(:johans).slug
+        assert_response 403
+      end
+    end
+
+    should "PUT to preview" do
+      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }
+      assert_response 200
     end
 
     should "GET projects/ succesfully" do

@@ -26,7 +26,7 @@ class ProjectsController < ApplicationController
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   before_filter :find_project,
-    :only => [:show, :clones, :edit, :update, :confirm_delete, :edit_slug]
+    :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :assure_adminship, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
@@ -159,11 +159,9 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project = Project.find_by_slug!(params[:id])
-    if @project.can_be_deleted_by?(current_user)
+    if can_delete?(current_user, @project)
       project_title = @project.title
       @project.destroy
-#       Event.create(:action => Action::DELETE_PROJECT, :user => current_user, :data => project_title) # FIXME: project_id cannot be null
     else
       flash[:error] = I18n.t "projects_controller.destroy_error"
     end
