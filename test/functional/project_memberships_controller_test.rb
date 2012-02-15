@@ -149,6 +149,12 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
         assert_response :redirect
         assert_redirected_to :action => "index"
       end
+
+      should "remove all members to make project public" do
+        login_as :johan
+        delete :destroy, :project_id => @project.to_param, :id => "all"
+        assert_equal 0, @project.project_memberships.count
+      end
     end
   end
 

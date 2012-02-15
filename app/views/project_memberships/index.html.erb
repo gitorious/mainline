@@ -33,7 +33,10 @@
 <% else %>
   <%= render :partial => "memberships" %>
   <p>
-    Remove all collaborators to open project to the public.
+    <%= link_to("Remove all collaborators",
+                { :action => "destroy", :id => "all" },
+                :method => :delete, :confirm => "Are you sure? This will delete all #{@memberships.count} members") %>
+    to open project to the public.
   </p>
   <%= render :partial => "form" %>
   <% content_for :sidebar do -%>

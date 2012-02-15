@@ -46,7 +46,11 @@ class ProjectMembershipsController < ApplicationController
   end
 
   def destroy
-    @project.project_memberships.find(params[:id]).destroy
+    if params[:id] == "all"
+      @project.project_memberships.destroy_all
+    else
+      @project.project_memberships.find(params[:id]).destroy
+    end
     redirect_to :action => "index"
   end
 
