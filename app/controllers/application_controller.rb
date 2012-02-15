@@ -130,12 +130,19 @@ class ApplicationController < ActionController::Base
     @owner.repositories.find_by_name!(params[:id])
   end
 
+  def authorize_access_to(project)
+    if !can_read?(current_user, project)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+    end
+    project
+  end
+
   def find_project
     @project = Project.find_by_slug!(params[:project_id])
   end
 
   def find_project_and_repository
-    @project = Project.find_by_slug!(params[:project_id])
+    @project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
     # We want to look in all repositories that's somehow within this project
     # realm, not just @project.repositories
     @repository = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)

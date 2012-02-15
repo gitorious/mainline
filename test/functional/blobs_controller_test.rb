@@ -30,8 +30,7 @@ class BlobsControllerTest < ActionController::TestCase
       @repository.stubs(:full_repository_path).returns(repo_path)
 
       Project.stubs(:find_by_slug!).with(@project.slug).returns(@project)
-      Repository.expects(:find_by_name_and_project_id!) \
-          .with(@repository.name, @project.id).returns(@repository)
+      Repository.stubs(:find_by_name_and_project_id!).with(@repository.name, @project.id).returns(@repository)
       @repository.stubs(:has_commits?).returns(true)
 
       @git = stub_everything("Grit mock")
@@ -215,6 +214,30 @@ class BlobsControllerTest < ActionController::TestCase
         assert_response :success
         json_body = JSON.parse(@response.body)
         assert_equal 5, json_body.size
+      end
+    end
+
+    context "With private repositories" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+        @project.make_private
+      end
+
+      should "reject user from show" do
+        get :show, { :project_id => @project.slug,
+          :repository_id => @repository.name,
+          :branch_and_path => ["a"*40, "README"] }
+
+        assert_response 403
+      end
+
+      should "allow owner to view blob" do
+        login_as :johan
+        get :show, { :project_id => @project.slug,
+          :repository_id => @repository.name,
+          :branch_and_path => ["master", "README"] }
+
+        assert_response 302
       end
     end
   end

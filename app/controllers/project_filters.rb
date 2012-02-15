@@ -26,10 +26,7 @@ module ProjectFilters
   def find_project
     id = params[:project_id] if params.key?(:project_id)
     id = params[:id] if id.blank?
-    @project = Project.find_by_slug!(id, :include => [:repositories])
-    if !can_read?(current_user, @project)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
-    end
+    @project = authorize_access_to(Project.find_by_slug!(id, :include => [:repositories]))
   end
 
   def require_admin
