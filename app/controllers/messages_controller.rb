@@ -127,6 +127,5 @@ class MessagesController < ApplicationController
       :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
       :limit => 10).reject{|u|u == current_user}
     render :text => @users.map{|u| u.login }.join("\n")
-    #render :layout => false
   end
 end
