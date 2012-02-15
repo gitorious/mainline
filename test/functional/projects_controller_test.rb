@@ -224,6 +224,29 @@ class ProjectsControllerTest < ActionController::TestCase
         delete :destroy, :id => projects(:johans).slug
         assert_response 403
       end
+
+      should "not display edit permissions link to non-admin" do
+        get :show, :id => projects(:johans).to_param
+        assert_no_match /Manage access/, @response.body
+      end
+
+      should "display edit permissions link for admin" do
+        login_as :johan
+        get :show, :id => projects(:johans).to_param
+        assert_match /Manage access/, @response.body
+      end
+    end
+
+    context "with disabled private repos" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+      end
+
+      should "not display edit acccess link to owner" do
+        login_as :johan
+        get :show, :id => projects(:johans).to_param
+        assert_no_match /Manage access/, @response.body
+      end
     end
 
     should "PUT to preview" do

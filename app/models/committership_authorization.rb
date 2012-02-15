@@ -22,9 +22,10 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   ability :can_read
   ability :can_edit
   ability :can_delete
+  ability :can_grant_access
 
   def can_read_project?(user, project)
-    return true if !GitoriousConfig["enable_private_repositories"]
+    return true if !private_repos
     return true if project.owner == user
     return true if project.project_memberships.count == 0
     project.project_memberships.any? { |m| is_member?(user, m.member) }
@@ -53,6 +54,10 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
 
   def can_edit_comment?(user, comment)
     comment.creator?(user) && comment.recently_created?
+  end
+
+  def can_grant_access_project?(candidate, project)
+    private_repos && admin?(candidate, project)
   end
 
   def can_request_merge?(user, repository)
@@ -135,5 +140,9 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     when Repository::WIKI_WRITABLE_PROJECT_MEMBERS
       return repository.project.member?(user)
     end
+  end
+
+  def private_repos
+    GitoriousConfig["enable_private_repositories"]
   end
 end

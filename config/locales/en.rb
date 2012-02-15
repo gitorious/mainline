@@ -273,11 +273,11 @@
           :other => "commits so far this week",
         },
         :about => "about {{about}}",
-	:edit_title => "Edit your details",
-	:edit_action => "Edit details",
-	:edit_breadcrumb => "Edit Details",
+        :edit_title => "Edit your details",
+        :edit_action => "Edit details",
+        :edit_breadcrumb => "Edit Details",
         :realname => "Full name",
-	:email => "E-mail",
+        :email => "E-mail",
         :url => "Website URL <small>(blog etc.)</small>",
         :openid => "OpenID",
         :my_account => "My account",
@@ -471,6 +471,7 @@
         :delete_message => "Once you press this button the project will be deleted",
         :delete_btn => "YES I am sure I want to delete this project permanently",
         :edit => "Edit project",
+        :manage_access => "Manage access",
         :edit_breadcrumb => "Edit Project",
         :update_title => "Edit project {{link}}",
         :new => "New project",
@@ -498,6 +499,10 @@
         :edit_slug_disclaimer => 'Please note that by changing the slug <strong>all URLs, including git URLs, will be changed</strong>',
         :update_slug => 'Update slug',
         :merge_request_states_hint => 'Each line should contain one status tag that can be selected for merge requests in this project'
+      },
+      :project_memberships => {
+        :collaborator => "Collaborator",
+        :back_to_project => "Back to project"
       },
       :merges => {
         :info => {

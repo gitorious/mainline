@@ -1,0 +1,9 @@
+<tr class="<%= cycle('even', 'odd') -%>">
+  <td><%= project_membership.created_at.to_s(:short) -%></td>
+  <td><%= project_membership.member.class.human_name -%></td>
+  <td><%= link_to h(project_membership.member.title), project_membership.member -%></td>
+  <td class="committer-buttons">
+    <%= button_to(t("views.common.remove"),
+                  project_project_membership_path(@project, project_membership), :method => :delete) -%>
+  </td>
+</tr>

@@ -1,0 +1,9 @@
+<table class="listing">
+  <thead>
+    <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
+    <th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
+    <th><%= t("views.project_memberships.collaborator") %></th>
+    <th></th>
+  </thead>
+  <%= render @memberships %>
+</table>

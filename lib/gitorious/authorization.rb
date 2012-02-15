@@ -35,6 +35,7 @@ module Gitorious
     delegate_ability :can_request_merge?
     delegate_ability :can_resolve_merge_request?
     delegate_ability :can_reopen_merge_request?
+    delegate_ability :can_grant_access?
 
     ### Roles
     def committer?(candidate, thing)

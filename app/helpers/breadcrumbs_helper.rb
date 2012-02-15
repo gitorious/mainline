@@ -82,6 +82,8 @@ module BreadcrumbsHelper
       [@owner, @repository, :committerships]
     when Committership
       [@owner, @repository, @committership]
+    when Breadcrumb::ProjectMemberships
+      [@owner, @project, :project_memberships]
     when Breadcrumb::Messages
       messages_path
     when Breadcrumb::ReceivedMessages

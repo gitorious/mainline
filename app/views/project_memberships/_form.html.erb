@@ -17,10 +17,10 @@
 #++
 %>
 
-<h1>Unauthorized</h1>
-<p>
-  You are not authorized to view this page.
-  <% if current_user.nil? %>
-    Try <%= link_to "logging in", login_url %> and come back.
-  <% end %>
-</p>
+<%= error_messages_for :project_membership -%>
+<% form_for [@project, @project.project_memberships.new], :html => { :class => "collaborator_form" } do |f| -%>
+  <%= render :partial => "/shared/tabbed_collaborator_form" %>
+  <p>
+    <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
+  </p>
+<% end -%>

@@ -22,12 +22,14 @@
 #++
 
 class ProjectsController < ApplicationController
+  include ProjectFilters
+
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   before_filter :find_project,
     :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
-  before_filter :assure_adminship, :only => [:edit, :update, :edit_slug]
+  before_filter :require_admin, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
@@ -171,20 +173,6 @@ class ProjectsController < ApplicationController
   protected
   def by_push_time(repositories)
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
-  end
-
-  def find_project
-    @project = Project.find_by_slug!(params[:id], :include => [:repositories])
-    if !can_read?(current_user, @project)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
-    end
-  end
-
-  def assure_adminship
-    if !admin?(current_user, @project)
-      flash[:error] = I18n.t "projects_controller.update_error"
-      redirect_to(project_path(@project)) and return
-    end
   end
 
   def check_if_only_site_admins_can_create
