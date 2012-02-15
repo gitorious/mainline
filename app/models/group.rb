@@ -79,6 +79,12 @@ class Group < ActiveRecord::Base
     end
   end
 
+  def self.find_fuzzy(query)
+    find(:all,
+         :conditions => ["LOWER(name) LIKE ?", "%" + query.downcase + "%"],
+         :limit => 10)
+  end
+
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }
     all_project_ids << repositories.map{|r| r.project_id }

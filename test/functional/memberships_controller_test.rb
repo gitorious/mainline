@@ -27,7 +27,6 @@ class MembershipsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :edit)
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :auto_complete_for_user_login)
   should_enforce_ssl_for(:post, :create)
   should_enforce_ssl_for(:put, :update)
 
@@ -183,14 +182,6 @@ class MembershipsControllerTest < ActionController::TestCase
           delete :destroy, :group_id => @group.to_param, :id => @group.memberships.first.to_param
         end
         assert_redirected_to(group_memberships_path(@group))
-      end
-    end
-
-    context "autocomplete username" do
-      should "finds user by login" do
-        post :auto_complete_for_user_login, :group_id => groups(:team_thunderbird).to_param,
-          :q => "mik", :format => "js"
-        assert_equal [users(:mike)], assigns(:users)
       end
     end
   end

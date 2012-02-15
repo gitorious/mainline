@@ -54,10 +54,7 @@ ActionController::Routing::Routes.draw do |map|
           v.resources :comments, :collection => {:preview => :post}
         end
       end
-      repo.resources :committerships, :collection => {
-        :auto_complete_for_group_name => :get,
-        :auto_complete_for_user_login => :get
-      }
+      repo.resources :committerships
 
       repo.formatted_commits_feed("commits/*branch/feed.:format",
                                   :controller => "commits", :action => "feed", :conditions => { :feed => :get })
@@ -124,14 +121,16 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
 
-  map.resources  :events, :member => {:commits => :get}
+  map.resources :events, :member => {:commits => :get}
+  map.resources :user_auto_completions, :only => [:index]
+  map.resources :group_auto_completions, :only => [:index]
 
   map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
 
   map.resource  :sessions
 
   map.resources :groups, :as => "teams", :member => {:avatar => :delete}  do |grp|
-    grp.resources :memberships, :collection => {:auto_complete_for_user_login => :get}
+    grp.resources :memberships
     grp.resources(:repositories, repository_options){|r| build_repository_routes(r) }
     grp.resources :projects do |p|
       p.resources(:repositories, repository_options){|r| build_repository_routes(r) }
@@ -150,6 +149,7 @@ ActionController::Routing::Routes.draw do |map|
     :edit_slug => :any,
     :clones => :get
   } do |projects|
+    projects.resources :project_memberships, :as => :memberships
     projects.resources :pages, :member => { :history => :get,:preview => :put}, :collection => { :git_access => :get }
     projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
   end

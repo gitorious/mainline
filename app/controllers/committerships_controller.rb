@@ -17,12 +17,9 @@
 #++
 
 class CommittershipsController < ApplicationController
-  before_filter :find_repository_owner,
-    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  before_filter :find_repository,
-    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  before_filter :require_adminship,
-    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :find_repository_owner
+  before_filter :find_repository
+  before_filter :require_adminship
   renders_in_site_specific_context
 
   def index
@@ -86,23 +83,6 @@ class CommittershipsController < ApplicationController
       flash[:notice] = "The team was removed as a committer"
     end
     redirect_to([@owner, @repository, :committerships])
-  end
-
-  def auto_complete_for_group_name
-    @groups = Group.find(:all,
-      :conditions => [ 'LOWER(name) LIKE ?', '%' + params[:q].downcase + '%' ],
-      :limit => 10)
-    render :text => @groups.map{|g| g.name }.join("\n")
-    #render :layout => false
-  end
-
-  def auto_complete_for_user_login
-    @users = User.find(:all,
-      :conditions => [ 'lower(login) like :name or lower(email) like :name',
-                      {:name => '%' + params[:q].downcase + '%'} ],
-      :limit => 10)
-    render :text => @users.map{|u| u.login }.join("\n")
-    #render "/memberships/auto_complete_for_user_login", :layout => false
   end
 
   protected

@@ -771,6 +771,7 @@ li.commit > a { background-image: url("../images/silk/brick.png") !important; }
 li.merge_commit > a { background-image: url("../images/silk/arrow_merge.png") !important; }
 li.create_project > a { background-image: url("../images/silk/report_add.png") !important; }
 li.delete_project > a { background-image: url("../images/silk/report_delete.png") !important; }
+li.update_access > a { background-image: url("../images/silk/user_edit.png") !important; }
 li.update_project > a { background-image: url("../images/silk/report_edit.png") !important; }
 li.new_repository > a { background-image: url("../images/silk/database_add.png") !important; }
 li.project_members > a { background-image: url("../images/silk/group.png") !important; }
@@ -791,7 +792,7 @@ table.tree tr td.compressed-file a, li.compressed-file > a { background-image: u
 table.tree tr td.image-file a, li.image-file > a { background-image: url("../images/silk/page_white_picture.png"); }
 table.tree tr td.submodule a { background-image: url("../images/silk/folder_go.png"); }
 li.wiki a { background-image: url('../images/silk/book_open.png'); }
-li.memberships a, li.committerships a { background-image: url('../images/silk/group_gear.png'); }
+li.memberships a, li.committerships a, li.projectmemberships a { background-image: url('../images/silk/group_gear.png'); }
 li.membership a, li.committership a { background-image: url('../images/silk/group_edit.png'); }
 li.add_membership a, li.add_commitership a { background-image: url("../images/silk/group_add.png"); }
 li.merge_requests a.selected { color: #09460f; }

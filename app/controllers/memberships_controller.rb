@@ -18,7 +18,7 @@
 
 class MembershipsController < ApplicationController
   before_filter :find_group
-  before_filter :ensure_group_adminship, :except => [:index, :show, :auto_complete_for_user_login]
+  before_filter :ensure_group_adminship, :except => [:index, :show]
   renders_in_global_context
 
   def index
@@ -82,15 +82,6 @@ class MembershipsController < ApplicationController
     end
     redirect_to group_memberships_path(@group)
   end
-
-  def auto_complete_for_user_login
-    @users = User.find(:all,
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
-      :limit => 10)
-    render :text => @users.map{|u| u.login }.join("\n")
-    #render :layout => false
-  end
-
 
   protected
     def find_group

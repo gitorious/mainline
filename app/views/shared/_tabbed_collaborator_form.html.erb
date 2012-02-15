@@ -1,0 +1,61 @@
+<%
+#--
+#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<% content_for :extra_head do -%>
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        $("#add_group_link").click(function(event){
+            $('#add_user').hide();
+            $('#add_group').show();
+            $("#add_user_tab").removeClass("selected");
+            $("#add_group_tab").addClass("selected");
+            event.preventDefault();
+        });
+        $("#add_user_link").click(function(event) {
+            $('#add_group').hide();
+            $('#add_user').show();
+            $("#add_group_tab").removeClass("selected");
+            $("#add_user_tab").addClass("selected");
+            event.preventDefault();
+        });
+        options = {matchSubset: false}
+        $("input#user_login_autocomplete").autocomplete("<%= url_for(:controller => 'user_auto_completions') -%>", options);
+        $("input#group_name_autocomplete").autocomplete("<%= url_for(:controller => 'group_auto_completions') -%>", options);
+    });
+  </script>
+<% end -%>
+
+<ul class="tab_menu inline_tabs">
+  <li class="selected" id="add_user_tab">
+    <a href="#add_user" id="add_user_link"><%= t("views.collaborators.add_user") -%></a>
+  </li>
+  <li id="add_group_tab">
+    <a href="#add_group" id="add_group_link"><%= t("views.collaborators.add_team") -%></a>
+  </li>
+</ul>
+<p class="tab-content" id="add_user">
+  <label for="user_login_autocomplete"><%= t("views.collaborators.user_login") -%></label><br />
+  <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
+</p>
+<p class="tab-content" id="add_group" style="display:none;">
+  <label for="group_name_autocomplete"><%= t("views.collaborators.group_name") -%></label><br />
+  <%= text_field :group, :name, :id => "group_name_autocomplete" -%><br />
+  <span class="hint"><%= t("views.collaborators.add_team_note") -%></span>
+</p>

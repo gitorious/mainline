@@ -198,6 +198,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.find_fuzzy(query)
+    find(:all,
+         :conditions => ["lower(login) like :name or lower(email) like :name",
+                         { :name => "%" + query.downcase + "%" }],
+         :limit => 10)
+  end
+
   # A Hash of repository => count of mergerequests active in the
   # repositories that the user is a reviewer in
   def review_repositories_with_open_merge_request_count

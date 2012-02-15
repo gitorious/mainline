@@ -35,8 +35,6 @@ class CommittershipsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :new)
   should_enforce_ssl_for(:get, :update)
-  should_enforce_ssl_for(:post, :auto_complete_for_group_name)
-  should_enforce_ssl_for(:post, :auto_complete_for_user_login)
   should_enforce_ssl_for(:post, :create)
 
   context "GET index" do
@@ -201,39 +199,6 @@ class CommittershipsControllerTest < ActionController::TestCase
 
     should "update the permission" do
       assert_equal [:review], @committership.reload.permission_list
-    end
-  end
-
-  context "autocompletion" do
-    setup do
-      @user = users(:johan)
-    end
-
-    should "find a group by name" do
-      post :auto_complete_for_group_name, :q => "thunder", :format => "js"
-      assert_equal [groups(:team_thunderbird)], assigns(:groups)
-    end
-
-    should "finds user by login" do
-      post :auto_complete_for_user_login, :q => "joha", :format => "js"
-      assert_equal [@user], assigns(:users)
-      #assert_template "memberships/auto_complete_for_user_login.js.erb"
-    end
-
-    should "find a user by email" do
-      @user.email = "dr_awesome@example.com"
-      @user.save!
-      post :auto_complete_for_user_login, :q => @user.email[0..4], :format => "js"
-      assert_equal [@user], assigns(:users)
-      #assert_template "memberships/auto_complete_for_user_login.js.erb"
-    end
-
-    should "not display emails if user has opted not to have it displayed" do
-      @user.update_attribute(:public_email, false)
-      post :auto_complete_for_user_login, :q => @user.email[0..4], :format => "js"
-      assert_equal [@user], assigns(:users)
-      # assert_template "memberships/auto_complete_for_user_login.js.erb"
-      assert_no_match(/email/, @response.body)
     end
   end
 
