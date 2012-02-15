@@ -86,24 +86,24 @@ class CommittershipsController < ApplicationController
   end
 
   protected
-    def require_adminship
-      unless admin?(current_user, @repository)
-        respond_to do |format|
-          format.html {
-            flash[:error] = I18n.t "repositories_controller.adminship_error"
-            redirect_to([@owner, @repository])
-          }
-          format.xml  {
-            render :text => I18n.t( "repositories_controller.adminship_error"),
-                    :status => :forbidden
-          }
-        end
-        return
+  def require_adminship
+    unless admin?(current_user, @repository)
+      respond_to do |format|
+        format.html {
+          flash[:error] = I18n.t "repositories_controller.adminship_error"
+          redirect_to([@owner, @repository])
+        }
+        format.xml  {
+          render :text => I18n.t( "repositories_controller.adminship_error"),
+          :status => :forbidden
+        }
       end
+      return
     end
+  end
 
-    def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
-        @containing_project)
-    end
+  def find_repository
+    @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+                                                               @containing_project)
+  end
 end
