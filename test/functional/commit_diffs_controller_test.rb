@@ -58,12 +58,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
   context "Comparing arbitrary commits" do
     should "pick the correct commits" do
       Grit::Commit.expects(:diff).with(@repository.git, OTHER_SHA, @sha).returns([])
-      get(:compare,
-          :project_id => @project.slug,
-          :repository_id => @repository.name,
-          :from_id => OTHER_SHA,
-          :id => @sha,
-          :fragment => "true")
+      get :compare, compare_params
       assert_response :success
     end
   end
@@ -99,10 +94,46 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
   end
 
+  context "With private repositories" do
+    setup do
+      enable_private_repositories
+    end
+
+    should "disallow unauthorized access to diffs" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authorized access to diffs" do
+      login_as :johan
+      get :index, params
+      assert_response 302
+    end
+
+    should "disallow unauthorized access to compare view" do
+      get :compare, compare_params
+      assert_response 403
+    end
+
+    should "allow authorized access to compare view" do
+      login_as :johan
+      get :compare, compare_params
+      assert_response 302
+    end
+  end
+
   private
   def params(sha = @sha)
     { :project_id => @project.to_param,
       :repository_id => @repository.to_param,
       :id => sha }
+  end
+
+  def compare_params
+    { :project_id => @project.slug,
+      :repository_id => @repository.name,
+      :from_id => OTHER_SHA,
+      :id => @sha,
+      :fragment => "true" }
   end
 end

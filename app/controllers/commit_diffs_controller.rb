@@ -31,7 +31,6 @@ class CommitDiffsController < ApplicationController
 
   def index
     @diffs = @commit.parents.empty? ? [] : @commit.diffs
-
     render :layout => !request.xhr?
   end
 
