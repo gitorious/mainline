@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class CommitDiffsControllerTest < ActionController::TestCase
   def setup
@@ -33,44 +33,25 @@ class CommitDiffsControllerTest < ActionController::TestCase
       commit = @grit.commit(@sha)
       commit.stubs(:parents).returns([])
       @grit.expects(:commit).returns(commit)
-
-      get(:index, {
-            :project_id => @project.to_param, 
-            :repository_id => @repository.to_param,
-            :id => @sha
-          })
+      get :index, params
 
       assert_equal [], assigns(:diffs)
       assert_select "#content p", /This is the initial commit in this repository/
     end
 
     should "show diffs for successive commits" do
-      get(:index, {
-            :project_id => @project.to_param,
-            :repository_id => @repository.to_param,
-            :id => "5a0943123f6872e75a9b1dd0b6519dd42a186fda"
-          })
-
+      get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
       assert_response :success
     end
 
     should "yield 404 if commit does not exist" do
-      get(:index,
-          :project_id => @project.slug,
-          :repository_id => @repository.name,
-          :id => "0000000")
-
+      get :index, params("0000000")
       assert_response 404
     end
 
     should "not touch the session object" do
       ApplicationController.any_instance.expects(:public_and_logged_in).never
-
-      get(:index, {
-            :project_id => @project.to_param,
-            :repository_id => @repository.to_param,
-            :id => "5a0943123f6872e75a9b1dd0b6519dd42a186fda"
-          })
+      get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
     end
   end
 
@@ -78,11 +59,11 @@ class CommitDiffsControllerTest < ActionController::TestCase
     should "pick the correct commits" do
       Grit::Commit.expects(:diff).with(@repository.git, OTHER_SHA, @sha).returns([])
       get(:compare,
-        :project_id => @project.slug,
-        :repository_id => @repository.name,
-        :from_id => OTHER_SHA,
-        :id => @sha,
-        :fragment => "true")
+          :project_id => @project.slug,
+          :repository_id => @repository.name,
+          :from_id => OTHER_SHA,
+          :id => @sha,
+          :fragment => "true")
       assert_response :success
     end
   end
@@ -108,12 +89,20 @@ class CommitDiffsControllerTest < ActionController::TestCase
 
     should "route comparison between two commits" do
       assert_recognizes({:controller => "commit_diffs",
-          :action => "compare",
-          :project_id => @project.to_param,
-          :repository_id => @repository.to_param,
-          :from_id => SHA,
-          :id => OTHER_SHA},
-        {:path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{SHA}/diffs/#{OTHER_SHA}"})
+        :action => "compare",
+        :project_id => @project.to_param,
+        :repository_id => @repository.to_param,
+        :from_id => SHA,
+        :id => OTHER_SHA }, {
+        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{SHA}/diffs/#{OTHER_SHA}"
+      })
     end
+  end
+
+  private
+  def params(sha = @sha)
+    { :project_id => @project.to_param,
+      :repository_id => @repository.to_param,
+      :id => sha }
   end
 end
