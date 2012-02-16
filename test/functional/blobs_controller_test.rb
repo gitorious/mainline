@@ -199,8 +199,7 @@ class BlobsControllerTest < ActionController::TestCase
       end
 
       should "get the history of a single file" do
-        get :history, :project_id => @project.to_param, :repository_id => @repository.to_param,
-          :branch_and_path => ["master", "README.txt"]
+        get :history, branch_and_path_params("master", "README.txt")
 
         assert_response :success
         assert_equal "master", assigns(:ref)
@@ -209,8 +208,8 @@ class BlobsControllerTest < ActionController::TestCase
       end
 
       should "get the history as json" do
-        get :history, :project_id => @project.to_param, :repository_id => @repository.to_param,
-          :branch_and_path => ["master","README.txt"], :format => "json"
+        get :history, branch_and_path_params("master", "README.txt").merge({ :format => "json" })
+
         assert_response :success
         json_body = JSON.parse(@response.body)
         assert_equal 5, json_body.size
@@ -255,6 +254,17 @@ class BlobsControllerTest < ActionController::TestCase
       should "allow owner to view blame" do
         login_as :johan
         get :raw, branch_and_path_params
+        assert_response 302
+      end
+
+      should "reject user from history" do
+        get :history, branch_and_path_params
+        assert_response 403
+      end
+
+      should "allow owner to view history" do
+        login_as :johan
+        get :history, branch_and_path_params
         assert_response 302
       end
     end
