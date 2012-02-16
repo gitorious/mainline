@@ -30,16 +30,16 @@ class BlobsController < ApplicationController
 
   def show
     if stale?({
-          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), 
+          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
           :last_modified => @commit.committed_date.utc})
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
       unless @blob.respond_to?(:data) # it's a tree
-        redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
+        redirect_to repo_owner_path(@repository, :project_repository_tree_path,
           @project, @repository, params[:branch_and_path])
       end
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-      @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
+      @root = Breadcrumb::Blob.new(:paths => @path, :head => head,
         :repository => @repository, :name => @blob.basename)
       expire_based_on_ref_length(@ref.size)
       render :layout => !pjax_request?
@@ -51,7 +51,7 @@ class BlobsController < ApplicationController
     @blame = @git.blame(@file_path, @ref)
 
     head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-    @root = Breadcrumb::Blob.new(:paths => @path, :head => head, 
+    @root = Breadcrumb::Blob.new(:paths => @path, :head => head,
       :repository => @repository, :name => @path.last)
 
     expire_based_on_ref_length(@ref.size)
@@ -69,7 +69,6 @@ class BlobsController < ApplicationController
         redirect_to project_repository_path(@project, @repository) and return
       end
       expires_in 30.minutes
-#      headers["Content-Disposition"] = %[attachment]
       render :text => @blob.data, :content_type => @blob.mime_type
     else
       @commit = @git.commit(@ref)
@@ -90,19 +89,19 @@ class BlobsController < ApplicationController
       end
     end
   end
-  
+
   def history
     @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
-      redirect_to repo_owner_path(@repository, :project_repository_tree_path, 
+      redirect_to repo_owner_path(@repository, :project_repository_tree_path,
         @project, @repository, params[:branch_and_path])
     end
-    
+
     @root = Breadcrumb::Blob.new({
       :paths => @path,
       :head => @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit),
-      :repository => @repository, 
+      :repository => @repository,
       :name => @blob.basename
     })
     @commits = @git.log(@ref, desplat_path(@path))
@@ -118,10 +117,10 @@ class BlobsController < ApplicationController
         }.to_json}
     end
   end
-  
+
   protected
     def redirect_to_head
-      redirect_to project_repository_blob_path(@project, @repository, 
+      redirect_to project_repository_blob_path(@project, @repository,
                     branch_with_tree("HEAD", @path))
     end
 
