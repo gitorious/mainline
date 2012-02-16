@@ -343,8 +343,7 @@ class CommentsControllerTest < ActionController::TestCase
 
   context "with private repositories" do
     setup do
-      GitoriousConfig["enable_private_repositories"] = true
-      @project.make_private
+      enable_private_repositories
       @comment = Comment.create(:project => @project,
                                 :user => users(:johan),
                                 :target => @repository,

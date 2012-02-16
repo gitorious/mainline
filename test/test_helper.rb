@@ -261,4 +261,9 @@ class ActionController::TestCase
   def options(action, parameters = nil, session = nil, flash = nil)
     process(action, parameters, session, flash, "OPTIONS")
   end
+
+  def enable_private_repositories
+    GitoriousConfig["enable_private_repositories"] = true
+    @project.make_private
+  end
 end

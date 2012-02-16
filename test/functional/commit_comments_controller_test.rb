@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -27,37 +27,16 @@ class CommitCommentsControllerTest < ActionController::TestCase
 
   context "index" do
     should "display comments" do
-      comment = Comment.create!({
-                        :user => users(:johan),
-                        :body => "foo",
-                        :sha1 => @sha,
-                        :target => @repository,
-                        :project => @repository.project,
-                      })
-
-      get(:index, {
-            :project_id => @project.slug, 
-            :repository_id => @repository.name,
-            :id => @sha
-          })
+      comment = create_comment
+      get(:index, params)
 
       assert_equal [comment], assigns(:comments)
       assert_equal 1, assigns(:comment_count)
     end
 
     should "have a different last-modified if there is a comment" do
-      Comment.create!({
-          :user => users(:johan),
-          :body => "foo",
-          :sha1 => @sha,
-          :target => @repository,
-          :project => @repository.project,
-      })
-
-      get(:index,
-          :project_id => @project.slug,
-          :repository_id => @repository.name,
-          :id => @sha)
+      create_comment
+      get(:index, params)
 
       assert_response :success
       assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
@@ -67,20 +46,54 @@ class CommitCommentsControllerTest < ActionController::TestCase
   context "Routing" do
     should "route commits index" do
       assert_recognizes({
-        :controller => "commit_comments", 
-        :action => "index", 
+        :controller => "commit_comments",
+        :action => "index",
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => @sha,
       }, { :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/comments", :method => :get })
 
       assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/comments", {
-        :controller => "commit_comments", 
-        :action => "index", 
+        :controller => "commit_comments",
+        :action => "index",
         :project_id => @project.to_param,
         :repository_id => @repository.to_param,
         :id => @sha,
       })
     end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories
+    end
+
+    should "disallow unauthorized user from listing comments" do
+      comment = create_comment
+      get(:index, params)
+      assert_response 403
+    end
+
+    should "allow authorized user to list comments" do
+      login_as :johan
+      comment = create_comment
+      get(:index, params)
+      assert_response 302
+    end
+  end
+
+  private
+  def create_comment
+    Comment.create!({ :user => users(:johan),
+                      :body => "foo",
+                      :sha1 => @sha,
+                      :target => @repository,
+                      :project => @repository.project })
+  end
+
+  def params
+    { :project_id => @project.slug,
+      :repository_id => @repository.name,
+      :id => @sha }
   end
 end
