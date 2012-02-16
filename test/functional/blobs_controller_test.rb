@@ -22,16 +22,13 @@ class BlobsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
   should_enforce_ssl_for(:get, :history)
 
-  def show_params(sha = "master", file = "README")
+  def branch_and_path_params(sha = "master", file = "README")
+    branch_and_path = [sha]
+    branch_and_path.concat(file) if file.is_a?(Array)
+    branch_and_path << file if file.is_a?(String)
     { :project_id => @project.slug,
       :repository_id => @repository.name,
-      :branch_and_path => [sha, file] }
-  end
-
-  def blame_params(sha = SHA)
-    { :project_id => @project.slug,
-      :repository_id => @repository.name,
-      :branch_and_path => [sha, "lib","foo.c"] }
+      :branch_and_path => branch_and_path }
   end
 
   context "Blob rendering" do
@@ -70,7 +67,7 @@ class BlobsControllerTest < ActionController::TestCase
         @git.expects(:tree).returns(blob_mock)
         @git.stubs(:get_head).returns(stub("head", :name => "master"))
 
-        get :show, show_params("a" * 40)
+        get :show, branch_and_path_params("a" * 40)
 
         assert_response :success
         assert_equal @git, assigns(:git)
@@ -80,7 +77,7 @@ class BlobsControllerTest < ActionController::TestCase
       should "redirects to HEAD if provided sha was not found (backwards compat)" do
         @git.expects(:commit).with("a"*40).returns(nil)
         @git.expects(:heads).returns(mock("head", :name => "master"))
-        get :show, show_params("a" * 40, "foo.rb")
+        get :show, branch_and_path_params("a" * 40, "foo.rb")
 
         assert_redirected_to (project_repository_blob_path(@project, @repository, ["HEAD", "foo.rb"]))
       end
@@ -94,21 +91,21 @@ class BlobsControllerTest < ActionController::TestCase
         end
 
         should "not send session cookies" do
-          get :blame, blame_params
+          get :blame, branch_and_path_params(SHA, ["lib", "foo.c"])
           assert_equal [], @response.headers["Set-Cookie"]
         end
 
         should "expire soonish with shortened ref" do
           @git.stubs(:commit).with("master").returns(stub(:id => SHA, :id_abbrev => "aaa"))
           @git.stubs(:blame).with("lib/foo.c", "master").returns(@blame)
-          get :blame, blame_params("master")
+          get :blame, branch_and_path_params("master", ["lib", "foo.c"])
 
           assert_response :success
           assert_match "max-age=3600", @response.headers["Cache-Control"]
         end
 
         should "never expire with full ref" do
-          get :blame, blame_params
+          get :blame, branch_and_path_params(SHA, ["lib", "foo.c"])
           assert_response :success
           assert_match "max-age=315360000", @response.headers["Cache-Control"]
         end
@@ -133,8 +130,7 @@ class BlobsControllerTest < ActionController::TestCase
         @git.expects(:commit).returns(commit_stub)
         @git.expects(:tree).returns(blob_mock)
 
-        get :raw, {:project_id => @project.slug,
-            :repository_id => @repository.name, :branch_and_path => ["a"*40, "README"]}
+        get :raw, branch_and_path_params
 
         assert_response :success
         assert_equal @git, assigns(:git)
@@ -156,8 +152,7 @@ class BlobsControllerTest < ActionController::TestCase
         @git.stubs(:git).returns(git_mock)
         @git.expects(:blob).returns(blob_mock)
 
-        get :raw, {:project_id => @project.slug,
-            :repository_id => @repository.name, :branch_and_path => ["a"*40]}
+        get :raw, branch_and_path_params("a" * 40, nil)
 
         assert_response :success
         assert_equal @git, assigns(:git)
@@ -172,8 +167,7 @@ class BlobsControllerTest < ActionController::TestCase
         git_mock.expects(:cat_file).returns("commit")
         @git.stubs(:git).returns(git_mock)
         @git.expects(:commit).with("a"*40).returns(nil)
-        get :raw, {:project_id => @project.slug,
-            :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo.rb"]}
+        get :raw, branch_and_path_params("a" * 40, "foo.rb")
 
         assert_redirected_to (project_repository_raw_blob_path(@project, @repository, ["HEAD", "foo.rb"]))
       end
@@ -192,8 +186,7 @@ class BlobsControllerTest < ActionController::TestCase
         @git.expects(:commit).returns(commit_stub)
         @git.expects(:tree).returns(blob_mock)
 
-        get :raw, {:project_id => @project.slug,
-            :repository_id => @repository.name, :branch_and_path => ["a"*40, "README"]}
+        get :raw, branch_and_path_params
 
         assert_redirected_to (project_repository_path(@project, @repository))
       end
@@ -231,26 +224,37 @@ class BlobsControllerTest < ActionController::TestCase
       end
 
       should "reject user from show" do
-        get :show, show_params
+        get :show, branch_and_path_params
 
         assert_response 403
       end
 
       should "allow owner to view blob" do
         login_as :johan
-        get :show, show_params
+        get :show, branch_and_path_params
 
         assert_response 302
       end
 
       should "reject user from blame" do
-        get :blame, blame_params
+        get :blame, branch_and_path_params
         assert_response 403
       end
 
       should "allow owner to view blame" do
         login_as :johan
-        get :blame, blame_params
+        get :blame, branch_and_path_params
+        assert_response 302
+      end
+
+      should "reject user from raw" do
+        get :raw, branch_and_path_params
+        assert_response 403
+      end
+
+      should "allow owner to view blame" do
+        login_as :johan
+        get :raw, branch_and_path_params
         assert_response 302
       end
     end
