@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class MembershipsControllerTest < ActionController::TestCase
-
   should_render_in_global_context
 
   should_enforce_ssl_for(:delete, :destroy)
@@ -108,7 +107,7 @@ class MembershipsControllerTest < ActionController::TestCase
 
       should "requires group adminship on create" do
         login_as :moe
-        assert_no_difference('@group.memberships.count') do
+        assert_no_difference("@group.memberships.count") do
           post :create, :group_id => @group.to_param, :membership => {:role_id => Role.admin.id},
             :user => {:login => users(:mike).login }
         end
@@ -118,7 +117,7 @@ class MembershipsControllerTest < ActionController::TestCase
       should "creates a new membership sucessfully" do
         user = users(:moe)
         assert !@group.members.include?(user)
-        assert_difference('@group.memberships.count') do
+        assert_difference("@group.memberships.count") do
           post :create, :group_id => @group.to_param, :membership => {:role_id => Role.admin.id},
             :user => {:login => user.login }
         end
@@ -126,7 +125,7 @@ class MembershipsControllerTest < ActionController::TestCase
       end
 
       should "handle validation errors" do
-        assert_no_difference('@group.memberships.count') do
+        assert_no_difference("@group.memberships.count") do
           post :create, :group_id => @group.to_param,
             :membership => {:role_id => Role.admin.id},
             :user => {:login => "no-such-user" }
@@ -171,14 +170,14 @@ class MembershipsControllerTest < ActionController::TestCase
     context "DELETE membership" do
       should "requires adminship" do
         login_as :moe
-        assert_no_difference('@group.memberships.count') do
+        assert_no_difference("@group.memberships.count") do
           delete :destroy, :group_id => @group.to_param, :id => @group.memberships.first.to_param
         end
         assert_redirected_to(new_sessions_path)
       end
 
       should "deletes the membership" do
-        assert_difference('@group.memberships.count', -1) do
+        assert_difference("@group.memberships.count", -1) do
           delete :destroy, :group_id => @group.to_param, :id => @group.memberships.first.to_param
         end
         assert_redirected_to(group_memberships_path(@group))
@@ -187,10 +186,7 @@ class MembershipsControllerTest < ActionController::TestCase
   end
 
   def valid_membership(opts = {})
-    {
-      :user_id => users(:mike).id,
-      :role_id => Role.member.id
-    }
+    { :user_id => users(:mike).id,
+      :role_id => Role.member.id }
   end
-
 end

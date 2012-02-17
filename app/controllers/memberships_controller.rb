@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -84,13 +85,13 @@ class MembershipsController < ApplicationController
   end
 
   protected
-    def find_group
-      @group = Group.find_by_name!(params[:group_id])
-    end
+  def find_group
+    @group = Group.find_by_name!(params[:group_id])
+  end
 
-    def ensure_group_adminship
-      unless admin?(current_user, @group)
-        access_denied and return
-      end
+  def ensure_group_adminship
+    unless admin?(current_user, @group)
+      access_denied and return
     end
+  end
 end
