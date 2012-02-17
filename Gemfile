@@ -1,54 +1,53 @@
 source "http://rubygems.org"
 
 #gem "rails", "~> 2.3.5"
-gem "chronic"
-gem "geoip"
-gem "daemons", :require => false
-gem "hoe", :require => false
-gem "echoe", :require => false
-gem "ruby-yadis", :require => "yadis"
+gem "chronic", "0.3.0"
+gem "geoip", "0.8.9"
+gem "daemons", "1.1.0", :require => false
+gem "hoe", "2.8.0", :require => false
+gem "echoe", "4.3.1", :require => false
+gem "ruby-yadis", "0.3.4", :require => "yadis"
 gem "ruby-openid", :require => "openid"
 gem "rdiscount", "1.3.1.1", :platforms => :ruby
-gem "mime-types", :require => "mime/types"
-gem "diff-lcs", :require => "diff/lcs"
-gem "oauth"
+gem "mime-types", "1.16", :require => "mime/types"
+gem "diff-lcs", "1.1.2", :require => "diff/lcs"
+gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.4.5"
-gem "state_machine"
+gem "state_machine", "0.9.4"
 gem "rack", "~> 1.0.1"
-gem "riddle" # For the ultrasphinx plugin
-gem "builder"
-gem "mysql", :platforms => :ruby
-gem "validates_url_format_of"
-gem "acts-as-taggable-on"
-gem "will_paginate"
-gem "hodel_3000_compliant_logger"
+gem "riddle", "1.2.2" # For the ultrasphinx plugin
+gem "builder", "3.0.0"
+gem "mysql", "2.8.1", :platforms => :ruby
+gem "validates_url_format_of", "0.1.1"
+gem "acts-as-taggable-on", "2.0.6"
+gem "will_paginate", "2.3.15"
+gem "hodel_3000_compliant_logger", "0.1.0"
 gem "ruby-net-ldap", "~> 0.0.4"
 gem "capillary", "~> 1.0.0"
-gem "nokogiri"
+gem "nokogiri", "1.5.0"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
 gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'
 # gem "bartt-ssl_requirement" # TODO: use this with Rails 3
-gem "revo-ssl_requirement"
+gem "revo-ssl_requirement", "1.1.0"
 
 # Ruby 1.8 gems
-gem "ruby-hmac", :platforms => :ruby_18
+gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 
 group :test do
-  gem "mocha", :require => false
+  gem "mocha", "0.9.10", :require => false
   gem "factory_girl", "~> 1.3.0"
   gem "shoulda", "~> 2.9.1"
-  gem "tuxml"
+  gem "tuxml", "0.0.1"
   gem "rots", :git => 'https://github.com/roman/rots.git'
-  gem "capybara"
-
-  gem "launchy" # used only for Capybara's save_and_open_page for launching the browser
+  gem "capybara", "1.0.1"
+  gem "launchy", "2.0.5" # used only for Capybara's save_and_open_page for launching the browser
 end
 
 group :git_proxy do
-  gem "proxymachine"
-  gem "rake"
+  gem "proxymachine", "1.2.4"
+  gem "rake", "0.8.7"
 end
 
 group :messaging do
@@ -56,8 +55,8 @@ group :messaging do
 end
 
 group :resque do
-  gem "resque"
-  gem "SystemTimer"
+  gem "resque", "1.9.8"
+  gem "SystemTimer", "1.2.3"
 end
 
 group :stomp do
@@ -65,7 +64,7 @@ group :stomp do
 end
 
 group :active_messaging do
-  gem "activemessaging"
+  gem "activemessaging", "0.7.1"
 end
 
 platform :jruby do
