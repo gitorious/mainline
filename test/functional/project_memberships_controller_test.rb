@@ -33,8 +33,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
 
   context "With private repos" do
     setup do
-      GitoriousConfig["enable_private_repositories"] = true
-      @project.make_private
+      enable_private_repositories
     end
 
     context "index" do
