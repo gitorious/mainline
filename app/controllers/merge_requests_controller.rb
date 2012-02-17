@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -70,7 +71,7 @@ class MergeRequestsController < ApplicationController
   def commit_status
     @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                                                      :include => :target_repository)
-    result = @merge_request.commit_merged?(params[:commit_id]) ? 'true' : 'false'
+    result = @merge_request.commit_merged?(params[:commit_id]) ? "true" : "false"
     render :text => result, :layout => false
   end
 
@@ -98,7 +99,7 @@ class MergeRequestsController < ApplicationController
     respond_to do |wants|
       wants.html {
         if @merge_request.legacy?
-          render :template => 'merge_requests/legacy' and return
+          render :template => "merge_requests/legacy" and return
         end # else render show.html as usual
       }
       wants.xml {render :xml => @merge_request.to_xml}
@@ -112,7 +113,7 @@ class MergeRequestsController < ApplicationController
   def version
     @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
                       :include => [:source_repository, :target_repository])
-    render :partial => 'version', :layout => false, :locals => {
+    render :partial => "version", :layout => false, :locals => {
       :version => @merge_request.version_number(params[:version].to_i)
     }
   end
@@ -131,7 +132,7 @@ class MergeRequestsController < ApplicationController
   # This is a static URL the user returns to after accepting the terms
   # for a merge request
   def oauth_return
-    redirect_back_or_default '/'
+    redirect_back_or_default "/"
   end
 
   def terms_accepted
@@ -202,85 +203,82 @@ class MergeRequestsController < ApplicationController
   end
 
   protected
-    def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
-        @containing_project)
-      @project = @repository.project
+  def find_repository
+    @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+                                                               @containing_project)
+    @project = @repository.project
+  end
+
+  def merge_request_created
+    if @merge_request.acceptance_of_terms_required?
+      request_token = obtain_oauth_request_token
+      @merge_request.oauth_request_token = request_token
+      @merge_request.save
+      returning_page = terms_accepted_project_repository_merge_request_path(@repository.project,
+                                                                            @merge_request.target_repository,
+                                                                            @merge_request)
+      store_location(returning_page)
+      @redirection_path = request_token.authorize_url
+    else
+      flash[:success] = I18n.t("merge_requests_controller.create_success",
+                               :name => @merge_request.target_repository.name)
+      @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
+      @merge_request.confirmed_by_user
+      @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
+                                           :project_repository_merge_request_path, @repository.project,
+                                           @merge_request.target_repository, @merge_request)
     end
 
-    def merge_request_created
-      if @merge_request.acceptance_of_terms_required?
-        request_token = obtain_oauth_request_token
-        @merge_request.oauth_request_token = request_token
-        @merge_request.save
-        returning_page = terms_accepted_project_repository_merge_request_path(
-            @repository.project,
-            @merge_request.target_repository,
-            @merge_request)
-        store_location(returning_page)
-        @redirection_path = request_token.authorize_url
-      else
-        flash[:success] = I18n.t("merge_requests_controller.create_success",
-                                   :name => @merge_request.target_repository.name)
-        @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
-        @merge_request.confirmed_by_user
-        @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
-          :project_repository_merge_request_path, @repository.project,
-          @merge_request.target_repository, @merge_request)
-      end
+    respond_to do |format|
+      format.html {
+        redirect_to @redirection_path
+        return
+      }
+      format.xml { render :xml => @merge_request, :status => :created }
+    end
+  end
 
+  def find_merge_request
+    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id])
+  end
+
+  def obtain_oauth_request_token
+    request_token = @merge_request.oauth_consumer.get_request_token("user_login" => current_user.login,
+                                                                    "merge_request_id" => @merge_request.id)
+    return request_token
+  end
+
+  def assert_merge_request_resolvable
+    unless can_resolve_merge_request?(current_user, @merge_request)
       respond_to do |format|
-        format.html {
-          redirect_to @redirection_path
-          return
+        flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
+        format.html { redirect_to([@owner, @repository, @merge_request]) }
+        format.xml  {
+          render :text => I18n.t("merge_requests_controller.assert_resolvable_error"),
+          :status => :forbidden
         }
-        format.xml { render :xml => @merge_request, :status => :created }
       end
+      return
     end
+  end
 
-    def find_merge_request
-      @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id])
-    end
-
-    def obtain_oauth_request_token
-      request_token = @merge_request.oauth_consumer.get_request_token(
-        'user_login' => current_user.login,
-        'merge_request_id' => @merge_request.id)
-      return request_token
-    end
-
-    def assert_merge_request_resolvable
-      unless can_resolve_merge_request?(current_user, @merge_request)
-        respond_to do |format|
-          flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
-          format.html { redirect_to([@owner, @repository, @merge_request]) }
-          format.xml  {
-            render :text => I18n.t("merge_requests_controller.assert_resolvable_error"),
-              :status => :forbidden
-          }
+  def assert_merge_request_ownership
+    if @merge_request.user != current_user
+      respond_to do |format|
+        flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
+        format.html { redirect_to([@owner, @repository]) }
+        format.xml  do
+          render :text => I18n.t("merge_requests_controller.assert_ownership_error"),
+          :status => :forbidden
         end
-        return
       end
+      return
     end
+  end
 
-    def assert_merge_request_ownership
-      if @merge_request.user != current_user
-        respond_to do |format|
-          flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
-          format.html { redirect_to([@owner, @repository]) }
-          format.xml  {
-            render :text => I18n.t("merge_requests_controller.assert_ownership_error"),
-              :status => :forbidden
-          }
-        end
-        return
-      end
-    end
-
-    def get_branches_and_commits_for_selection
-      @source_branches = @repository.git.branches
-      @target_branches = @merge_request.target_branches_for_selection
-      @commits = @merge_request.commits_for_selection
-    end
-
+  def get_branches_and_commits_for_selection
+    @source_branches = @repository.git.branches
+    @target_branches = @merge_request.target_branches_for_selection
+    @commits = @merge_request.commits_for_selection
+  end
 end

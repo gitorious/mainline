@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class MergeRequestsControllerTest < ActionController::TestCase
 
@@ -82,7 +82,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "filter on status" do
-      @merge_request.update_attribute(:status_tag, 'merged')
+      @merge_request.update_attribute(:status_tag, "merged")
       get :index, :project_id => @project.to_param,
       :repository_id => @target_repository.to_param,
       :status => "merged"
@@ -171,7 +171,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_select "select#comment_state"
     end
 
-    should 'not display a comment change field unless the current user can change the MR' do
+    should "not display a comment change field unless the current user can change the MR" do
       login_as :moe
       assert !can_resolve_merge_request?(users(:moe), @merge_request)
       get :show, :project_id => @project.to_param,
@@ -181,7 +181,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_select "select#comment_state", false
     end
 
-    should 'display a comment change field if the current user can change the MR' do
+    should "display a comment change field if the current user can change the MR" do
       login_as :johan
       assert can_resolve_merge_request?(users(:johan), @merge_request)
       get :show, :project_id => @project.to_param,
@@ -255,7 +255,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should 'assign to @project even when accessed through a user' do
+    should "assign to @project even when accessed through a user" do
       johan = users(:johan)
       login_as :johan
       @source_repository.owner = johan
@@ -303,7 +303,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     post :create, :project_id => @project.to_param,
     :repository_id => @source_repository.to_param, :merge_request => {
       :target_repository_id => @target_repository.id,
-      :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+      :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
       :summary => "some changes to be merged"
     }.merge(data)
   end
@@ -403,13 +403,13 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Terms accepted (GET)' do
+  context "Terms accepted (GET)" do
     setup do
       @merge_request = @source_repository.proposed_merge_requests.new({
                                                                         :summary => "plz merge",
-                                                                        :proposal => 'Would like this to be merged',
+                                                                        :proposal => "Would like this to be merged",
                                                                         :user => users(:johan),
-                                                                        :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+                                                                        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
                                                                         :target_repository => @target_repository,
                                                                         :summary => "foo"
                                                                       })
@@ -419,7 +419,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       login_as :johan
     end
 
-    should 'set the status to open when done authenticating thru OAuth' do
+    should "set the status to open when done authenticating thru OAuth" do
       @merge_request.stubs(:valid_oauth_credentials?).returns(true)
       @merge_request.expects(:terms_accepted)
       get :terms_accepted, {:project_id => @project.to_param,
@@ -428,7 +428,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response :redirect
     end
 
-    should 'not set the status to open if OAuth authentication has not been performed' do
+    should "not set the status to open if OAuth authentication has not been performed" do
       @merge_request.stubs(:valid_oauth_credentials?).returns(false)
       get :terms_accepted, :project_id => @project.to_param,
       :repository_id => @target_repository.to_param,
@@ -484,23 +484,23 @@ class MergeRequestsControllerTest < ActionController::TestCase
     get :commit_status, options
   end
 
-  context 'commit_merged (GET)' do
+  context "commit_merged (GET)" do
     setup do
-      @merge_request.stubs(:commit_merged?).with('ffc').returns(false)
-      @merge_request.stubs(:commit_merged?).with('ffo').returns(true)
+      @merge_request.stubs(:commit_merged?).with("ffc").returns(false)
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
       MergeRequest.stubs(:find).returns(@merge_request)
     end
 
-    should 'return false if the given commit has not been merged' do
-      do_commit_status_get(:commit_id => 'ff0')
+    should "return false if the given commit has not been merged" do
+      do_commit_status_get(:commit_id => "ff0")
       assert_response :success
-      assert_equal 'true', @response.body
+      assert_equal "true", @response.body
     end
 
-    should 'return true if the given commit has been merged' do
-      do_commit_status_get(:commit_id => 'ffc')
+    should "return true if the given commit has been merged" do
+      do_commit_status_get(:commit_id => "ffc")
       assert_response :success
-      assert_equal 'false', @response.body
+      assert_equal "false", @response.body
     end
   end
 
@@ -598,8 +598,8 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'GET #version' do
-    should 'render the diff browser for the given version' do
+  context "GET #version" do
+    should "render the diff browser for the given version" do
       MergeRequest.stubs(:find).returns(@merge_request)
       get :version, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
       :id => @merge_request.to_param, :version => @merge_request.versions.first.version
@@ -646,15 +646,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Redirection from the outside' do
+  context "Redirection from the outside" do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
     end
 
-    should 'redirect to the correct URL when supplying only an id' do
+    should "redirect to the correct URL when supplying only an id" do
       get :direct_access, :id => @merge_request.id
-      assert_redirected_to({
-                             :action => 'show',
+      assert_redirected_to({ :action => "show",
                              :project_id => @merge_request.target_repository.project,
                              :repository_id => @merge_request.target_repository,
                              :id => @merge_request.to_param})
