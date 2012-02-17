@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,7 +22,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'digest/sha1'
+require "digest/sha1"
 require_dependency "event"
 
 class User < ActiveRecord::Base
@@ -85,7 +86,7 @@ class User < ActiveRecord::Base
   end
 
   has_many :received_messages, :class_name => "Message",
-      :foreign_key => 'recipient_id', :order => "created_at DESC" do
+      :foreign_key => "recipient_id", :order => "created_at DESC" do
     def unread
       find(:all, :conditions => {:aasm_state => "unread"})
     end
@@ -104,9 +105,9 @@ class User < ActiveRecord::Base
     Message.find(:all, :conditions => ["sender_id = ? OR recipient_id = ?", self, self])
   end
 
-  Paperclip.interpolates('login'){|attachment, style| attachment.instance.login.downcase}
+  Paperclip.interpolates("login"){|attachment, style| attachment.instance.login.downcase}
 
-  avatar_local_path = '/system/:attachment/:login/:style/:basename.:extension'
+  avatar_local_path = "/system/:attachment/:login/:style/:basename.:extension"
   has_attached_file :avatar,
     :styles => { :medium => "300x300>", :thumb => "64x64>", :tiny => "24x24>" },
     :url => avatar_local_path,
@@ -144,7 +145,7 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
-    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL and suspended_at IS NULL', email] # need to get the salt
+    u = find :first, :conditions => ["email = ? and activated_at IS NOT NULL and suspended_at IS NULL", email] # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
 
