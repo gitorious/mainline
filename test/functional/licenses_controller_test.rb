@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class LicensesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :edit)
@@ -27,40 +28,40 @@ class LicensesControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  context 'Accepting (current) end user license agreement' do
+  context "Accepting (current) end user license agreement" do
     setup do
       @user = users(:old_timer)
       login_as :old_timer
     end
-    
+
     should "GET show redirect to edit with a flash" do
       get :show
       assert_response :redirect
       assert_match(/You need to accept the/, flash[:notice])
     end
-    
-    should 'render the current license version if this has been accepted' do
+
+    should "render the current license version if this has been accepted" do
       @user.accept_terms!
       get :edit
       assert_redirected_to :action => :show
     end
-    
-    should 'ask the user to confirm a newer version if this has not been acccepted' do
+
+    should "ask the user to confirm a newer version if this has not been acccepted" do
       get :edit
       assert_response :success
     end
-    
-    should 'require the user to accept the terms' do
+
+    should "require the user to accept the terms" do
       put :update, :user => {}
       assert_redirected_to :action => :edit
     end
-    
-    should 'change the current version when selected' do
+
+    should "change the current version when selected" do
       put :update, :user => { :terms_of_use => "1" }
       assert_redirected_to :action => :show
       assert @user.reload.terms_accepted?
     end
-    
+
     should "not change the current version if not selected" do
       put :update, :user => {:terms_of_use => ""}
       assert !@user.reload.terms_accepted?
