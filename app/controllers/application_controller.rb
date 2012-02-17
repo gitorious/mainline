@@ -130,11 +130,14 @@ class ApplicationController < ActionController::Base
     @owner.repositories.find_by_name!(params[:id])
   end
 
-  def authorize_access_to(project)
-    if !can_read?(current_user, project)
+  def authorize_access_to(thing)
+    if Project === thing && !can_read?(current_user, thing)
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
-    project
+    if Repository === thing && !can_read?(current_user, thing.project)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+    end
+    thing
   end
 
   def find_project

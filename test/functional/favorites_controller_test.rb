@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,7 +22,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) +  '/../test_helper'
+require File.dirname(__FILE__) +  "/../test_helper"
 
 class FavoritesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :destroy)
@@ -35,20 +36,37 @@ class FavoritesControllerTest < ActionController::TestCase
   end
 
   def do_create_post(type, id, extra_options={})
-    post :create, extra_options.merge(:watchable_type => type,
-      :watchable_id => id)
+    post :create, extra_options.merge(:watchable_type => type, :watchable_id => id)
   end
 
   context "Creating a new favorite" do
-    setup {
+    setup do
       login_as :johan
       @repository = repositories(:johans2)
-    }
+    end
 
     should "require login" do
       session[:user_id] = nil
       post :create
       assert_redirected_to new_sessions_path
+    end
+
+    should "require authorized user when favoriting repository" do
+      @project = @repository.project
+      enable_private_repositories
+      login_as :mike
+
+      do_create_post(@repository.class.name, @repository.id)
+      assert_response 403
+    end
+
+    should "require authorized user when favoriting project" do
+      @project = @repository.project
+      enable_private_repositories
+      login_as :mike
+
+      do_create_post(@project.class.name, @project.id)
+      assert_response 403
     end
 
     should "assign to watchable" do

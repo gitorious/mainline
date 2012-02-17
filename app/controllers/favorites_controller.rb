@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -73,7 +74,6 @@ class FavoritesController < ApplicationController
     rescue NameError
       raise ActiveRecord::RecordNotFound
     end
-    @watchable = watchable_class.find(params[:watchable_id])
+    @watchable = authorize_access_to(watchable_class.find(params[:watchable_id]))
   end
 end
-
