@@ -141,7 +141,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_project
-    @project = Project.find_by_slug!(params[:project_id])
+    @project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
   end
 
   def find_project_and_repository

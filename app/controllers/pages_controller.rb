@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -101,29 +102,29 @@ class PagesController < ApplicationController
   end
 
   protected
-    def assert_readyness
-      unless @project.wiki_repository.ready?
-        flash[:notice] = I18n.t("pages_controller.repository_not_ready")
-        redirect_to project_path(@project) and return
-      end
+  def assert_readyness
+    unless @project.wiki_repository.ready?
+      flash[:notice] = I18n.t("pages_controller.repository_not_ready")
+      redirect_to project_path(@project) and return
     end
+  end
 
-    def check_if_wiki_enabled
-      unless @project.wiki_enabled?
-        redirect_to project_path(@project) and return
-      end
+  def check_if_wiki_enabled
+    unless @project.wiki_enabled?
+      redirect_to project_path(@project) and return
     end
+  end
 
-    def page_and_root
-      page = Page.find(params[:id], @project.wiki_repository.git)
-      root = Breadcrumb::Page.new(page, @project)
-      return page, root
-    end
+  def page_and_root
+    page = Page.find(params[:id], @project.wiki_repository.git)
+    root = Breadcrumb::Page.new(page, @project)
+    return page, root
+  end
 
-    def require_write_permissions
-      unless can_push?(current_user, @project.wiki_repository)
-        flash[:error] = "This project has restricted wiki editing to project members"
-        redirect_to project_pages_path(@project)
-      end
+  def require_write_permissions
+    unless can_push?(current_user, @project.wiki_repository)
+      flash[:error] = "This project has restricted wiki editing to project members"
+      redirect_to project_pages_path(@project)
     end
+  end
 end
