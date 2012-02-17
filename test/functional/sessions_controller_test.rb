@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -17,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class SessionsControllerTest < ActionController::TestCase
   include OpenIdAuthentication
@@ -55,61 +56,61 @@ class SessionsControllerTest < ActionController::TestCase
       Result[:successful],
       identity_url,
       registration = {
-        'nickname' => "patcito",
-        'email' => "patcito@gmail.com",
-        'fullname' => 'Patrick Aljord'
+        "nickname" => "patcito",
+        "email" => "patcito@gmail.com",
+        "fullname" => "Patrick Aljord"
       }
     )
     post :create, :openid_url => identity_url
     assert_nil session[:user_id]
     assert_equal identity_url, session[:openid_url]
-    assert_equal 'patcito', session[:openid_nickname]
-    assert_equal 'patcito@gmail.com', session[:openid_email]
-    assert_equal 'Patrick Aljord', session[:openid_fullname]
+    assert_equal "patcito", session[:openid_nickname]
+    assert_equal "patcito@gmail.com", session[:openid_email]
+    assert_equal "Patrick Aljord", session[:openid_fullname]
     assert_response :redirect
-    assert_redirected_to :controller => 'users', :action => 'openid_build'
+    assert_redirected_to :controller => "users", :action => "openid_build"
   end
 
-  should " fail login and not redirect" do
+  should "fail login and not redirect" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => 'johan@johansorensen.com', :password => 'bad password'
+    post :create, :email => "johan@johansorensen.com", :password => "bad password"
     assert_nil session[:user_id]
     assert_response :success
   end
 
-  should " logout" do
+  should "logout" do
     login_as :johan
     get :destroy
-    assert session[:user_id].nil?, 'nil? should be true'
+    assert session[:user_id].nil?
     assert_response :redirect
   end
 
-  should " remember me" do
+  should "remember me" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => 'johan@johansorensen.com', :password => 'test', :remember_me => "1"
+    post :create, :email => "johan@johansorensen.com", :password => "test", :remember_me => "1"
     assert_not_nil @response.cookies["auth_token"]
   end
 
-  should " should not remember me" do
+  should "should not remember me" do
     @controller.stubs(:using_open_id?).returns(false)
-    post :create, :email => 'johan@johansorensen.com', :password => 'test', :remember_me => "0"
+    post :create, :email => "johan@johansorensen.com", :password => "test", :remember_me => "0"
     assert_nil @response.cookies["auth_token"]
   end
 
-  should " delete token on logout" do
+  should "delete token on logout" do
     login_as :johan
     get :destroy
     assert_nil @response.cookies["auth_token"]
   end
 
-  should " login with cookie" do
+  should "login with cookie" do
     users(:johan).remember_me
     @request.cookies["auth_token"] = cookie_for(:johan)
     get :new
     assert @controller.send(:logged_in?)
   end
 
-  should " fail when trying to login with with expired cookie" do
+  should "fail when trying to login with with expired cookie" do
     users(:johan).remember_me
     users(:johan).update_attribute :remember_token_expires_at, 5.minutes.ago.utc
     @request.cookies["auth_token"] = cookie_for(:johan)
@@ -117,20 +118,20 @@ class SessionsControllerTest < ActionController::TestCase
     assert !@controller.send(:logged_in?)
   end
 
-  should " fail cookie login" do
+  should "fail cookie login" do
     users(:johan).remember_me
-    @request.cookies["auth_token"] = auth_token('invalid_auth_token')
+    @request.cookies["auth_token"] = auth_token("invalid_auth_token")
     get :new
     assert !@controller.send(:logged_in?)
   end
 
-  should " set current user to the session user_id" do
+  should "set current user to the session user_id" do
     session[:user_id] = users(:johan).id
     get :new
     assert_equal users(:johan), @controller.send(:current_user)
   end
 
-  should " show flash when invalid credentials are passed" do
+  should "show flash when invalid credentials are passed" do
     @controller.stubs(:using_open_id?).returns(false)
     post :create, :email => "invalid", :password => "also invalid"
     # response.body.should have_tag("div.flash_message", /please try again/)
@@ -145,17 +146,17 @@ class SessionsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Bypassing caching for authenticated users' do
-    should 'be set when logging in' do
+  context "Bypassing caching for authenticated users" do
+    should "be set when logging in" do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_equal "true", cookies['_logged_in']
+      assert_equal "true", cookies["_logged_in"]
     end
 
-    should 'be removed when logging out' do
+    should "be removed when logging out" do
       post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies['_logged_in']
+      assert_not_nil cookies["_logged_in"]
       delete :destroy
-      assert_nil cookies['_logged_in']
+      assert_nil cookies["_logged_in"]
     end
 
     should "remove the cookie when logging out" do
