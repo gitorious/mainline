@@ -35,7 +35,7 @@ class MergeRequestVersionsController < ApplicationController
     end
 
     @repository = @version.merge_request.target_repository
-    @project = @repository.project
+    @project = authorize_access_to(@repository.project)
 
     if params[:commit_shas] && !commit_range?(params[:commit_shas])
       @commit = @repository.git.commit(params[:commit_shas])
