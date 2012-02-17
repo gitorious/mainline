@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
 require File.dirname(__FILE__) + "/../test_helper"
 
 class ProjectsControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -24,11 +25,9 @@ class SearchesController < ApplicationController
 
   def show
     unless params[:q].blank?
-      @search = Ultrasphinx::Search.new({
-                                          :query => params[:q],
+      @search = Ultrasphinx::Search.new({ :query => params[:q],
                                           :page => (params[:page] || 1),
-                                          :per_page => 30,
-                                        })
+                                          :per_page => 30 })
       @search.run
       @results = paginate(page_free_redirect_options) { @search.results }
     end
