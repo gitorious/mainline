@@ -349,7 +349,7 @@ module EventRenderingHelper
       title = repo_title(repository, project)
       " to " + link_to(h(title+':'+branch_name), repo_owner_path(repository,
           :project_repository_commits_in_ref_path, project, repository, ensplat_path(branch_name))) +
-	(diff_url ? ". #{link_to("View diff", diff_url)}" : "")
+        (diff_url ? ". #{link_to("View diff", diff_url)}" : "")
     end
     body = h(message)
 
@@ -400,7 +400,7 @@ module EventRenderingHelper
     repo = favorite_class.find(event.data)
     action = action_for_event(:event_added_favorite) do
       link_to_watchable(repo)
-      
+
     end
     body = event.body
     category = "favorite"
@@ -419,7 +419,7 @@ module EventRenderingHelper
     body = "#{branch_name} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"
     push_summary(commits_event_path(event.to_param), commit_count, event.target, branch_name, event.to_param, body, diff_url)
   end
-  
+
   protected
     def action_for_event(i18n_key, opts = {}, &block)
       header = "" + I18n.t("application_helper.#{i18n_key}", opts) + " "
