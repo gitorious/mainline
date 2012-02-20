@@ -70,7 +70,7 @@ class SiteController < ApplicationController
     @active_projects = filter(Project.most_active_recently(15))
     @active_users = User.most_active
     @active_groups = Group.most_active
-    @latest_events = Event.latest(25)
+    @latest_events = filter(Event.latest(25))
     render :template => "site/index"
   end
 
@@ -78,10 +78,10 @@ class SiteController < ApplicationController
     @user = current_user
     @projects = filter(@user.projects.find(:all,
                                            :include => [:tags, { :repositories => :project }]))
-    @repositories = current_user.commit_repositories
+    @repositories = filter(current_user.commit_repositories)
     @events = @user.paginated_events_in_watchlist(:page => params[:page])
     @messages = @user.messages_in_inbox(3)
-    @favorites = @user.watched_objects
+    @favorites = filter(@user.watched_objects)
     @root = Breadcrumb::Dashboard.new(@user)
     @atom_auto_discovery_url = watchlist_user_path(@user, :format => :atom)
     render :template => "site/dashboard"

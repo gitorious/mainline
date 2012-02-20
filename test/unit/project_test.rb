@@ -570,12 +570,6 @@ class ProjectTest < ActiveSupport::TestCase
         projects(:johans).add_member(groups(:team_thunderbird))
         assert can_read?(users(:mike), projects(:johans))
       end
-
-      should "make project private" do
-        projects(:johans).make_private
-
-        assert !can_read?(users(:mike), projects(:johans))
-      end
     end
 
     context "with private repositories disabled" do
@@ -586,6 +580,19 @@ class ProjectTest < ActiveSupport::TestCase
       should "anonymous user to view 'private' project" do
         projects(:johans).add_member(users(:johan))
         assert can_read?(nil, projects(:johans))
+      end
+    end
+
+    context "making projects private" do
+      setup do
+        @user = users(:johan)
+        @project = projects(:johans)
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+
+      should "add owner as member" do
+        @project.make_private
+        assert !can_read?(users(:mike), @project)
       end
     end
   end
@@ -600,5 +607,15 @@ class ProjectTest < ActiveSupport::TestCase
       assert is_member?(users(:mike), project)
       assert_equal 1, project.project_memberships.count
     end
+  end
+
+  private
+    def create_event(project, target, user)
+    e = Event.new({ :target => target,
+                    :data => "master",
+                    :action => Action::CREATE_BRANCH })
+    e.user = user
+    e.project = project
+    e.save!
   end
 end
