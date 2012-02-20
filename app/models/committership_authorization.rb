@@ -31,6 +31,11 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     project.project_memberships.any? { |m| is_member?(user, m.member) }
   end
 
+  def can_read_repository?(user, repository)
+    return true if repository.project.nil?
+    can_read_project?(user, repository.project)
+  end
+
   def can_read_message?(user, message)
     [message.sender, message.recipient].include?(user)
   end
@@ -130,6 +135,10 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
 
   def review_repositories(user)
     user.committerships.reviewers
+  end
+
+  def filter_authorized(actor, collection)
+    collection.select { |item| can_read?(actor, item) }
   end
 
   private

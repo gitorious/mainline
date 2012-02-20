@@ -80,6 +80,10 @@ module Gitorious
       delegate_with_default(:review_repositories, [], user)
     end
 
+    def filter_authorized(actor, collection)
+      delegate_with_default(:filter_authorized, [], actor, collection)
+    end
+
     private
     def delegate(method, *args)
       Configuration.strategies.each do |authorizer|

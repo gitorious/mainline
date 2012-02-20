@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class SiteControllerTest < ActionController::TestCase
 
@@ -61,7 +61,6 @@ class SiteControllerTest < ActionController::TestCase
   end
 
   context "#index" do
-
     context "Logged in users" do
       setup {login_as users(:johan)}
 
@@ -107,6 +106,36 @@ class SiteControllerTest < ActionController::TestCase
         end
       end
     end
+
+    context "With private repositories" do
+      setup do
+        @project = Project.first
+        enable_private_repositories
+        GitoriousConfig["is_gitorious_dot_org"] = false
+      end
+
+      should "not display unauthenticated projects" do
+        login_as :mike
+        get :index
+        assert_response :success
+        assert !assigns(:projects).index(@project)
+      end
+
+      should "not display unauthenticated projects in public timeline" do
+        logout
+        projects = Project.find(:all)
+        repos = Repository.find(:all)
+        Project.stubs(:most_active_recently).returns(projects)
+        Repository.stubs(:most_active_clones).returns(repos)
+
+        get :index
+        assert_response :success
+        assert !assigns(:projects).index(@project)
+        assert !assigns(:active_projects).index(@project)
+        assert assigns(:top_repository_clones).none? { |r| r.project == @project }
+        assert_not_equal assigns(:top_repository_clones).length, 0
+      end
+    end
   end
 
   context "#index, with a non-default site" do
@@ -115,19 +144,31 @@ class SiteControllerTest < ActionController::TestCase
       paths << File.join(Rails.root, "test", "fixtures", "views")
       ActionController::Base.view_paths = paths
       @site = sites(:qt)
+      @request.host = "#{@site.subdomain}.gitorious.test"
     end
 
     should "render the Site specific template" do
-      @request.host = "#{@site.subdomain}.gitorious.test"
       get :index
       assert_response :success
       assert_template "#{@site.subdomain}/index"
     end
 
     should "scope the projects to the current site" do
-      @request.host = "#{@site.subdomain}.gitorious.test"
       get :index
       assert_equal @site.projects, assigns(:projects)
+    end
+
+    context "With private repositories" do
+      setup do
+        @project = @site.projects.first
+        enable_private_repositories
+      end
+
+      should "not display unauthenticated projects" do
+        get :index
+        assert_response :success
+        assert !assigns(:projects).index(@project)
+      end
     end
   end
 
@@ -151,13 +192,13 @@ class SiteControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig['public_mode'] = false
-      GitoriousConfig['is_gitorious_dot_org'] = false
+      GitoriousConfig["public_mode"] = false
+      GitoriousConfig["is_gitorious_dot_org"] = false
     end
 
     teardown do
-      GitoriousConfig['public_mode'] = true
-      GitoriousConfig['is_gitorious_dot_org'] = true
+      GitoriousConfig["public_mode"] = true
+      GitoriousConfig["is_gitorious_dot_org"] = true
     end
 
     should "GET / should not show private content in the homepage" do
@@ -169,6 +210,4 @@ class SiteControllerTest < ActionController::TestCase
       assert_no_match(/\/search/, @response.body)
     end
   end
-
 end
-
