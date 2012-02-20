@@ -104,8 +104,4 @@ class SiteController < ApplicationController
       render_public_timeline
     end
   end
-
-  def filter(collection)
-    filter_authorized(current_user, collection)
-  end
 end

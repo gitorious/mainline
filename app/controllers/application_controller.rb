@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
@@ -406,6 +407,25 @@ class ApplicationController < ActionController::Base
   def handle_unknown_ref(ref, git, repo_view)
     flash[:error] = "\"#{CGI.escapeHTML(ref)}\" was not a valid ref, trying #{CGI.escapeHTML(git.head.name)} instead"
     redirect_to_ref(git.head.name, repo_view)
+  end
+
+  def filter(collection)
+    filter_authorized(current_user, collection)
+  end
+
+  def filter_paginated(page, per_page, &block)
+    page = 1 if page.nil?
+    WillPaginate::Collection.create(page, per_page) do |pager|
+      result = filter(block.call(page))
+
+      # inject the result array into the paginated collection:
+      pager.replace(result)
+
+      unless pager.total_entries
+        # the pager didn't manage to guess the total count, do it manually
+        pager.total_entries = result.first.nil? ? 0 : result.first.class.count
+      end
+    end
   end
 
   helper_method :unshifted_polymorphic_path

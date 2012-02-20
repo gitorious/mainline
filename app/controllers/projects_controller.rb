@@ -2,11 +2,11 @@
 #--
 #   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #   Copyright (C) 2008 Cairo Noleto <caironoleto@gmail.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -187,20 +187,10 @@ class ProjectsController < ApplicationController
   end
 
   def paginate_projects(page, per_page)
-    WillPaginate::Collection.create(page, per_page) do |pager|
-      result = Project.paginate(:all, :order => "projects.created_at desc",
-                                :page => params[:page],
-                                :include => [:tags, { :repositories => :project } ]).select do |p|
-        can_read?(current_user, p)
-      end
-
-      # inject the result array into the paginated collection:
-      pager.replace(result)
-
-      unless pager.total_entries
-        # the pager didn't manage to guess the total count, do it manually
-        pager.total_entries = Project.count
-      end
+    filter_paginated(page, per_page) do |page|
+      Project.paginate(:all, :order => "projects.created_at desc",
+                       :page => page,
+                       :include => [:tags, { :repositories => :project } ])
     end
   end
 end
