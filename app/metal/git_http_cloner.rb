@@ -35,7 +35,6 @@ require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Ra
 class GitHttpCloner
   TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
   NOT_FOUND_RESPONSE = [404, {"Content-Type" => "text/html"},[]]
-  NOT_FOUND_RESPONSE = [403, {"Content-Type" => "text/html"},[]]
 
   def self.call(env)
     perform_http_cloning = env["HTTP_HOST"] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
