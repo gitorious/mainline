@@ -382,7 +382,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pjax_request?
-    request.headers['X-PJAX']
+    request.headers["X-PJAX"]
   end
 
   def redirect_to_ref(ref, repo_view)
@@ -413,7 +413,7 @@ class ApplicationController < ActionController::Base
     filter_authorized(current_user, collection)
   end
 
-  def filter_paginated(page, per_page, &block)
+  def filter_paginated(page, per_page = 30, &block)
     page = 1 if page.nil?
     WillPaginate::Collection.create(page, per_page) do |pager|
       result = filter(block.call(page))
