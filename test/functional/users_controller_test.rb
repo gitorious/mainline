@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class UsersControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :avatar)
@@ -68,19 +68,19 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   should "activate user" do
-    assert_nil User.authenticate('moe', 'test')
+    assert_nil User.authenticate("moe", "test")
     get :activate, :activation_code => users(:moe).activation_code
-    assert_redirected_to('/')
+    assert_redirected_to("/")
     assert_not_nil flash[:notice]
-    assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
+    assert_equal users(:moe), User.authenticate("moe@example.com", "test")
   end
 
   should "flashes a message when the activation code is invalid" do
     get :activate, :activation_code => "fubar"
-    assert_redirected_to('/')
+    assert_redirected_to("/")
     assert_nil flash[:notice]
     assert_equal "Invalid activation code", flash[:error]
-    assert_nil User.authenticate('moe@example.com', 'test')
+    assert_nil User.authenticate("moe@example.com", "test")
   end
 
   context "Routing" do
@@ -113,9 +113,9 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   def create_user(options = {})
-    post :create, :user => { :login => 'quire', :email => 'quire@example.com',
-      :password => 'quire', :password_confirmation => 'quire',
-      :terms_of_use => '1' }.merge(options)
+    post :create, :user => { :login => "quire", :email => "quire@example.com",
+      :password => "quire", :password_confirmation => "quire",
+      :terms_of_use => "1" }.merge(options)
   end
 
   should "allow signups" do
@@ -144,7 +144,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require password confirmation on signup" do
     assert_no_difference("User.count") do
       create_user(:password_confirmation => nil)
-      assert !assigns(:user).errors.on(:password_confirmation).empty?, 'empty? should be false'
+      assert !assigns(:user).errors.on(:password_confirmation).empty?
       assert_template(("users/new"))
     end
   end
@@ -152,12 +152,12 @@ class UsersControllerTest < ActionController::TestCase
   should "require email on signup" do
     assert_no_difference("User.count") do
       create_user(:email => nil)
-      assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
+      assert !assigns(:user).errors.on(:email).empty?, "empty? should be false"
       assert_template(("users/new"))
     end
   end
 
-  should 'require acceptance of end user license agreement' do
+  should "require acceptance of end user license agreement" do
     assert_no_difference("User.count") do
       create_user(:terms_of_use => nil)
     end
@@ -171,8 +171,8 @@ class UsersControllerTest < ActionController::TestCase
 
   should "requires the user to activate himself after posting valid data" do
     create_user
-    assert_equal nil, User.authenticate('quire@example.com', 'quire')
-    assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
+    assert_equal nil, User.authenticate("quire@example.com", "quire")
+    assert !@controller.send(:logged_in?)
   end
 
   should "shows the user" do
@@ -320,7 +320,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_match(/A password confirmation link has been sent/, flash[:success])
     end
 
-    should 'notify non-activated users that they need to activate their accounts before resetting the password' do
+    should "notify non-activated users that they need to activate their accounts before resetting the password" do
       user = users(:johan)
       user.expects(:activated?).returns(false)
       User.expects(:find_by_email).returns(user)
@@ -332,28 +332,28 @@ class UsersControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig['public_mode'] = false
+      GitoriousConfig["public_mode"] = false
     end
 
     teardown do
-      GitoriousConfig['public_mode'] = true
+      GitoriousConfig["public_mode"] = true
     end
 
     should "activate user" do
-      assert_nil User.authenticate('moe', 'test')
+      assert_nil User.authenticate("moe", "test")
       get :activate, :activation_code => users(:moe).activation_code
 
-      assert_redirected_to('/')
+      assert_redirected_to("/")
       assert !flash[:notice].nil?
-      assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
+      assert_equal users(:moe), User.authenticate("moe@example.com", "test")
     end
 
     should "flashes a message when the activation code is invalid" do
       get :activate, :activation_code => "fubar"
-      assert_redirected_to('/')
+      assert_redirected_to("/")
       assert_nil flash[:notice]
       assert_equal "Invalid activation code", flash[:error]
-      assert_nil User.authenticate('moe@example.com', 'test')
+      assert_nil User.authenticate("moe@example.com", "test")
     end
 
     should "GET /users/johan" do
@@ -554,7 +554,7 @@ class UsersControllerTest < ActionController::TestCase
 
   context "Creation from OpenID" do
     setup do
-      @valid_session_options = {:openid_url => 'http://moe.example/', :openid_nickname => 'schmoe'}
+      @valid_session_options = {:openid_url => "http://moe.example/", :openid_nickname => "schmoe"}
     end
 
     should "deny access unless OpenID information is present in the session" do
@@ -566,7 +566,7 @@ class UsersControllerTest < ActionController::TestCase
       get :openid_build, {}, @valid_session_options
       user = assigns(:user)
       assert_not_nil user
-      assert_equal 'http://moe.example/', user.identity_url
+      assert_equal "http://moe.example/", user.identity_url
       assert_response :success
     end
 
@@ -574,16 +574,16 @@ class UsersControllerTest < ActionController::TestCase
       post :openid_create, {:user => {}}, @valid_session_options
       user = assigns(:user)
       assert_response :success
-      assert_template 'users/openid_build'
+      assert_template "users/openid_build"
     end
 
     should "create a user with the provided credentials and openid url on success" do
       assert_incremented_by(ActionMailer::Base.deliveries, :size, 1) do
         post :openid_create, {:user => {
-          :fullname => 'Moe Schmoe',
-          :email => 'moe@schmoe.example',
-          :login => 'schmoe',
-          :terms_of_use => '1'
+          :fullname => "Moe Schmoe",
+          :email => "moe@schmoe.example",
+          :login => "schmoe",
+          :terms_of_use => "1"
           }
         }, @valid_session_options
       end
@@ -598,10 +598,10 @@ class UsersControllerTest < ActionController::TestCase
 
     should "redirect to the dashboard on successful creation" do
       post :openid_create, { :user => {
-          :fullname => 'Moe Schmoe',
-          :email => 'moe@schmoe.example',
-          :login => 'schmoe',
-          :terms_of_use => '1'
+          :fullname => "Moe Schmoe",
+          :email => "moe@schmoe.example",
+          :login => "schmoe",
+          :terms_of_use => "1"
         }
       }, @valid_session_options
 
