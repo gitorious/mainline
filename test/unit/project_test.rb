@@ -148,11 +148,6 @@ class ProjectTest < ActiveSupport::TestCase
     assert project.breadcrumb_parent.nil?
   end
 
-  # should "strip html tags, except highlights" do
-  #   project = create_project(:description => %Q{<h1>Project A</h1>\n<strong class="highlight">Project A</strong> is a....})
-  #   assert_equal %Q(Project A\n<strong class="highlight">Project A</strong> is a....), #   project.stripped_description
-  # end
-
   should "have valid urls ( prepending http:// if needed )" do
     project = projects(:johans)
     [ :home_url, :mailinglist_url, :bugtracker_url ].each do |attr|
