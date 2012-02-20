@@ -114,15 +114,22 @@ class ApplicationController < ActionController::Base
   def find_repository_owner
     if params[:user_id]
       @owner = User.find_by_login!(params[:user_id])
-      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
+      set_containing_project
     elsif params[:group_id]
       @owner = Group.find_by_name!(params[:group_id])
-      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
+      set_containing_project
     elsif params[:project_id]
       @owner = Project.find_by_slug!(params[:project_id])
-      @project = @owner
+      @project = authorize_access_to(@owner)
     else
       raise ActiveRecord::RecordNotFound
+    end
+  end
+
+  def set_containing_project
+    if params[:project_id]
+      project = Project.find_by_slug!(params[:project_id])
+      @containing_project = authorize_access_to(project)
     end
   end
 

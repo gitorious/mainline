@@ -1,8 +1,9 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +20,7 @@
 #++
 
 require "net/http"
-require 'uri'
+require "uri"
 
 module Gitorious
   module SSH
@@ -59,7 +60,7 @@ module Gitorious
           raise AccessDeniedError
         end
         full_real_path = File.join(GitoriousConfig["repository_base_path"],
-          configuration["real_path"])
+                                   configuration["real_path"])
         raise AccessDeniedError unless File.exist?(full_real_path)
         full_real_path
       end
@@ -79,7 +80,7 @@ module Gitorious
 
       def configuration
         if @configuration.empty?
-          query_url = "/#{@project_name}/#{@repository_name}/config"
+          query_url = "/#{@project_name}/#{@repository_name}/config?username=#@user_name"
           # $stderr.puts "Querying #{query_url}" if $DEBUG
           resp = connection.get(query_url)
           # $stderr.puts resp
@@ -108,10 +109,10 @@ module Gitorious
       def writable_by_query_uri
         path = "/#{@project_name}/#{@repository_name}/writable_by"
         query = "username=#{@user_name}"
-        host = GitoriousConfig['gitorious_client_host']
-        _port = GitoriousConfig['gitorious_client_port']
+        host = GitoriousConfig["gitorious_client_host"]
+        _port = GitoriousConfig["gitorious_client_port"]
         # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well
-        port = RUBY_VERSION > '1.9' ? _port : _port.to_s
+        port = RUBY_VERSION > "1.9" ? _port : _port.to_s
 
         URI::HTTP.build(:host => host, :port => port, :path => path, :query => query)
       end

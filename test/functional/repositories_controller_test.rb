@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 
 require File.dirname(__FILE__) + "/../test_helper"
 
@@ -575,7 +575,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository = @project.repositories.mainlines.first
     end
 
-    should " require login" do
+    should "require login" do
       session[:user_id] = nil
       do_clone_get
       assert_redirected_to(new_sessions_path)
@@ -623,7 +623,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository = @project.repositories.mainlines.first
     end
 
-    should " require login" do
+    should "require login" do
       session[:user_id] = nil
       do_create_clone_post
       assert_redirected_to(new_sessions_path)
@@ -685,7 +685,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @request.env["HTTP_ACCEPT"] = "application/xml"
     end
 
-    should " require login" do
+    should "require login" do
       authorize_as(nil)
       do_create_clone_post(:name => "foo")
       assert_response 401
@@ -721,7 +721,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository = @project.repositories.mainlines.first
     end
 
-    should " not require login" do
+    should "not require login" do
       session[:user_id] = nil
       do_writable_by_get :username => "johan"
       assert_response :success
@@ -950,7 +950,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :johan
     end
 
-    should " require login" do
+    should "require login" do
       login_as nil
       get :new, :project_id => @project.to_param
       assert_redirected_to(new_sessions_path)
@@ -985,40 +985,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_redirected_to(user_path(@user))
     end
 
-    # See the above example ("should only be allowed to add new repositories to Project")
-    # for why this is commented out
-    #
-    # it "should GET new successfully, and set the owner to a user" do
-    #   get :new, :user_id => @user.to_param
-    #   assert_response :success
-    #   assert_equal @user, #   assigns(:owner)
-    # end
-    #
-    # it "should GET new successfully, and set the owner to a group" do
-    #   get :new, :group_id => @group.to_param
-    #   assert_response :success
-    #   assert_equal @group, #   assigns(:owner)
-    # end
-    #
-    # it "creates a new repository belonging to a user" do
-    #   proc {
-    #     post :create, :user_id => @user.to_param, :repository => {:name => "my-new-repo"}
-    #   }.should change(Repository, :count)
-    #   assert_equal @user, #   assigns(:repository).owner
-    #  assert_response :redirect
-    #  assert_redirected_to(user_repository_path(@user, assigns(:repository)))
-    # end
-    #
-    # it "creates a new repository belonging to a group" do
-    #   proc {
-    #     post :create, :group_id => @group.to_param, :repository => {:name => "my-new-repo"}
-    #   }.should change(Repository, :count)
-    #   assert_equal @group, #   assigns(:repository).owner
-    #   assert_response :redirect
-    #   assert_redirected_to(group_repository_path(@group, assigns(:repository)))
-    # end
-
-    should " GET new successfully, and set the owner to a project" do
+    should "GET new successfully, and set the owner to a project" do
       get :new, :project_id => @project.to_param
       assert_response :success
       assert_equal @project, assigns(:owner)
@@ -1279,6 +1246,195 @@ class RepositoriesControllerTest < ActionController::TestCase
       get :show, :project_id => project.to_param, :id => repository.to_param
 
       assert_no_match(/git:\/\//, @response.body)
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories
+      GitoriousConfig["use_ssl"] = false
+      @group = groups(:team_thunderbird)
+      @repository = @project.repositories.first
+    end
+
+    should "disallow unauthorized users to get project repositories" do
+      get :index, :project_id => @project.to_param
+      assert_response 403
+    end
+
+    should "disallow unauthorized users to get group repositories" do
+      get :index, :group_id => @group.to_param, :project_id => @project.to_param
+      assert_response 403
+    end
+
+    should "disallow unauthorized users to get user repositories" do
+      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
+      assert_response 403
+    end
+
+    should "allow authorize users to get project repositories" do
+      login_as :johan
+      get :index, :project_id => @project.to_param
+      assert_response 200
+    end
+
+    should "allow authorize users to get group repositories" do
+      login_as :johan
+      get :index, :group_id => @group.to_param, :project_id => @project.to_param
+      assert_response 200
+    end
+
+    should "allow authorize users to get user repositories" do
+      login_as :johan
+      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized users to show repository" do
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized users to get show repository" do
+      login_as :johan
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized users to get new" do
+      login_as :mike
+      get :new, :project_id => @project.to_param
+      assert_response 403
+    end
+
+    should "allow authorized users to get new" do
+      login_as :johan
+      get :new, :project_id => @project.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized users to create repository" do
+      login_as :mike
+      post :create, :project_id => @project.to_param, :repository => {}
+      assert_response 403
+    end
+
+    should "allow authorized users to create repository" do
+      login_as :johan
+      post :create, :project_id => @project.to_param, :repository => {}
+      assert_response 200
+    end
+
+    should "disallow unauthenticated users to clone repo" do
+      login_as :mike
+      do_clone_get
+      assert_response 403
+    end
+
+    should "allow authenticated users to clone repo" do
+      login_as :johan
+      do_clone_get
+      assert_response 302
+    end
+
+    should "disallow unauthorized users to create clones" do
+      login_as :mike
+      do_create_clone_post(:name => "foo-clone")
+      assert_response 403
+    end
+
+    should "allow authorized users to create clones" do
+      login_as :johan
+      do_create_clone_post(:name => "foo-clone")
+      assert_response 302
+    end
+
+    should "disallow unauthorized user to edit repository" do
+      login_as :mike
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized user to edit repository" do
+      login_as :johan
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized users to search clones" do
+      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
+        :filter => "projectrepos", :format => "json"
+      assert_response 403
+    end
+
+    should "allow authorized users to search clones" do
+      login_as :johan
+      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
+        :filter => "projectrepos", :format => "json"
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to update repository" do
+      login_as :mike
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized user to update repository" do
+      login_as :johan
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "not disallow writable_by? action" do
+      do_writable_by_get :username => "mike"
+      assert_response :success
+      assert_equal "false", @response.body
+    end
+
+    should "allow owner to write to repo" do
+      do_writable_by_get :username => "johan"
+      assert_response :success
+      assert_equal "true", @response.body
+    end
+
+    should "disallow unauthorized user to access repository configuration" do
+      do_config_get(:username => "mike")
+      assert_response 403
+    end
+
+    should "disallow anonymous user to access repository configuration" do
+      do_config_get
+      assert_response 403
+    end
+
+    should "allow authorized user to access repository configuration" do
+      do_config_get(:username => "johan")
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to confirm deletion" do
+      login_as :mike
+      get :confirm_delete, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized user to confirm deletion" do
+      login_as :johan
+      get :confirm_delete, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to destroy repository" do
+      login_as :mike
+      do_delete @repository
+      assert_response 403
+    end
+
+    should "allow authorized user to destroy repository" do
+      login_as :johan
+      do_delete @repository
+      assert_response 302
     end
   end
 end
