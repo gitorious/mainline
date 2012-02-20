@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -606,5 +607,97 @@ class UsersControllerTest < ActionController::TestCase
 
       assert_redirected_to "/"
     end
+  end
+
+  context "With private repositories" do
+    setup do
+      @user = users(:johan)
+      @project = @user.projects.first
+      enable_private_repositories
+    end
+
+    should "filter projects" do
+      get :show, :id => @user.to_param
+      assert assigns(:projects).none? { |p| p == @project }
+    end
+
+    should "show authorized projects" do
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert assigns(:projects).any? { |p| p == @project }
+    end
+
+    should "filter commit repositories" do
+      get :show, :id => @user.to_param
+      assert assigns(:repositories).none? { |r| r.project == @project }
+    end
+
+    should "show authorized commit repositories" do
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert assigns(:repositories).any? { |r| r.project == @project }
+    end
+
+    should "filter events" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      get :show, :id => @user.to_param
+      assert_equal 1, assigns(:events).length
+      assert assigns(:events).none? { |e| e.project == @project }
+    end
+
+    should "show authorized events" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert_equal 3, assigns(:events).length
+    end
+
+    should "filter favorites" do
+      get :show, :id => @user.to_param
+      assert assigns(:favorites).none? { |f| f.project == @project }
+    end
+
+    should "show authorized favorites" do
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert assigns(:favorites).any? { |f| f.project == @project }
+    end
+
+    should "exclude unauthorized events from atom feed" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      get :feed, :id => @user.to_param, :format => "atom"
+
+      assert_equal 1, assigns(:events).length
+    end
+
+    should "include authorized events in atom feed" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      login_as :johan
+      get :feed, :id => @user.to_param, :format => "atom"
+
+      assert_equal 3, assigns(:events).length
+    end
+  end
+
+  private
+  def create_event(project, target)
+    e = Event.new({ :target => target,
+                    :data => "master",
+                    :action => Action::CREATE_BRANCH })
+    e.user = @user
+    e.project = project
+    e.save!
   end
 end

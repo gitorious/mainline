@@ -1,10 +1,11 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -40,25 +41,20 @@ class UsersController < ApplicationController
 
   renders_in_global_context
   layout :decide_layout
+
   # render new.rhtml
   def new
   end
 
   def show
-    @projects = @user.projects.find(:all,
-      :include => [:tags, { :repositories => :project }])
-    @repositories = @user.commit_repositories
-
-    @events = paginate(page_free_redirect_options) do
-      @user.events.excluding_commits.paginate(:page => params[:page],
-                                              :order => "events.created_at desc",
-                                              :include => [:user, :project])
-    end
-
+    include = [:tags, { :repositories => :project }]
+    @projects = filter(@user.projects.find(:all, :include => include))
+    @repositories = filter(@user.commit_repositories)
+    @events = paginated_events
     return if @events.count == 0 && params.key?(:page)
-    @messages = @user.messages_in_inbox(3) if @user == current_user
-    @favorites = @user.favorites.all(:include => :watchable)
 
+    @messages = @user.messages_in_inbox(3) if @user == current_user
+    @favorites = filter(@user.favorites.all(:include => :watchable))
     @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
     @atom_auto_discovery_title = "Public activity feed"
 
@@ -70,8 +66,8 @@ class UsersController < ApplicationController
 
   def feed
     @user = User.find_by_login!(params[:id])
-    @events = @user.events.find(:all, :order => "events.created_at desc",
-      :include => [:user, :project], :limit => 30)
+    @events = filter(@user.events.find(:all, :order => "events.created_at desc",
+                                       :include => [:user, :project], :limit => 30))
     respond_to do |format|
       format.html { redirect_to user_path(@user) }
       format.atom { }
@@ -224,32 +220,42 @@ class UsersController < ApplicationController
   end
 
   protected
-    def ssl_required?
-      GitoriousConfig["use_ssl"]
-    end
+  def ssl_required?
+    GitoriousConfig["use_ssl"]
+  end
 
-    def find_user
-      @user = User.find_by_login!(params[:id])
-    end
+  def find_user
+    @user = User.find_by_login!(params[:id])
+  end
 
-    def require_identity_url_in_session
-      if session[:openid_url].blank?
-        redirect_to :action => "new" and return
+  def require_identity_url_in_session
+    if session[:openid_url].blank?
+      redirect_to :action => "new" and return
+    end
+  end
+
+  def require_public_user
+    unless @user.public?
+      flash[:notice] = "This user profile is not public"
+      redirect_back_or_default root_path
+    end
+  end
+
+  def decide_layout
+    if [:new, :create, :forgot_password, :pending_activation, :reset_password ].include?(action_name.to_sym)
+      "second_generation/application"
+    else
+      "application"
+    end
+  end
+
+  def paginated_events
+    paginate(page_free_redirect_options) do
+      filter_paginated(params[:page], FeedItem.per_page) do |page|
+        res = @user.events.excluding_commits.paginate(:page => page,
+                                                      :order => "events.created_at desc",
+                                                      :include => [:user, :project])
       end
     end
-
-    def require_public_user
-      unless @user.public?
-        flash[:notice] = "This user profile is not public"
-        redirect_back_or_default root_path
-      end
-    end
-
-    def decide_layout
-      if [:new, :create, :forgot_password, :pending_activation, :reset_password ].include?(action_name.to_sym)
-        "second_generation/application"
-      else
-        "application"
-      end
-    end
+  end
 end

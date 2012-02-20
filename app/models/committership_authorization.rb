@@ -36,6 +36,26 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     can_read_project?(user, repository.project)
   end
 
+  def can_read_group?(user, group)
+    true
+  end
+
+  def can_read_merge_request?(user, merge_request)
+    can_read_project?(user, merge_request.project)
+  end
+
+  def can_read_user?(actor, user)
+    true
+  end
+
+  def can_read_event?(user, event)
+    can_read_project?(user, event.project) && can_read?(user, event.target)
+  end
+
+  def can_read_favorite?(user, favorite)
+    can_read_project?(user, favorite.project)
+  end
+
   def can_read_message?(user, message)
     [message.sender, message.recipient].include?(user)
   end
@@ -138,6 +158,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   end
 
   def filter_authorized(actor, collection)
+    return [] if collection.blank?
     collection.select { |item| can_read?(actor, item) }
   end
 
