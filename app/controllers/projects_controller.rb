@@ -45,7 +45,7 @@ class ProjectsController < ApplicationController
     @atom_auto_discovery_url = projects_path(:format => :atom)
     respond_to do |format|
       format.html {
-        @active_recently = Project.most_active_recently
+        @active_recently = filter(Project.most_active_recently)
         @tags = Project.top_tags
       }
       format.xml  { render :xml => @projects }

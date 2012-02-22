@@ -144,6 +144,12 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_equal 2, assigns(:projects).length
       end
 
+      should "filter private projects in index" do
+        Project.stubs(:most_active_recently).returns(Project.all)
+        get :index
+        assert_equal 2, assigns(:active_recently).length
+      end
+
       should "not render show for private repo for unauthorized user" do
         get :show, :id => projects(:johans).to_param
         assert_response 403
