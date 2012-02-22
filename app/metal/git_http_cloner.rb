@@ -35,6 +35,7 @@ require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Ra
 class GitHttpCloner
   TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
   NOT_FOUND_RESPONSE = [404, {"Content-Type" => "text/html"},[]]
+  NOT_ALLOWED_RESPONSE = [403, {"Content-Type" => "text/html"}, []]
 
   def self.call(env)
     perform_http_cloning = env["HTTP_HOST"] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
@@ -47,6 +48,7 @@ class GitHttpCloner
         rest = match[2]
         begin
           repo = Repository.find_by_path(path)
+          return NOT_ALLOWED_RESPONSE if !can_read?(nil, repo)
           return NOT_FOUND_RESPONSE unless repo
           repo.cloned_from(remote_ip(env), nil, nil, "http") if rest == "/HEAD"
           full_path = File.join(repo.full_repository_path, rest)
@@ -66,6 +68,11 @@ class GitHttpCloner
   end
 
   protected
+  def self.can_read?(user, repository)
+    return true if !GitoriousConfig["enable_private_repositories"]
+    CommittershipAuthorization.new.can_read_repository?(user, repository)
+  end
+
   # Borrowed from ActionController::Request. Extract proxy addresses and stuff (except our own)
   # Does not do ip spoofing checks
   def self.remote_ip(env)
