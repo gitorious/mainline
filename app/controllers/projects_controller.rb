@@ -105,10 +105,11 @@ class ProjectsController < ApplicationController
       end
 
     if @project.save
+      flip_private_switch(@project)
       @project.create_event(Action::CREATE_PROJECT, @project, current_user)
       redirect_to new_project_repository_path(@project)
     else
-      render :action => 'new'
+      render :action => "new"
     end
   end
 
@@ -192,5 +193,11 @@ class ProjectsController < ApplicationController
                        :page => page,
                        :include => [:tags, { :repositories => :project } ])
     end
+  end
+
+  def flip_private_switch(project)
+    return if !GitoriousConfig["enable_private_repositories"] || !params[:private]
+    project.make_private
+    project
   end
 end

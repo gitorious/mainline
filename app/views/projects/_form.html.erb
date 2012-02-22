@@ -28,12 +28,12 @@
     </li>
     <% unless ["edit", "update"].include?(controller.action_name) -%>
       <li>
-    	<%= form.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%>
-    	<div><%= form.text_field :slug -%></div>
+        <%= form.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%>
+        <div><%= form.text_field :slug -%></div>
       </li>
       <li>
-	<%= form.current_user_or_group :owner, t("views.projects.owner"),
-	    :hint => "Select the owner of this project; either yourself or a group you are a member of"-%>
+        <%= form.current_user_or_group :owner, t("views.projects.owner"),
+            :hint => "Select the owner of this project; either yourself or a group you are a member of"-%>
       </li>
     <% end -%>
     <li>
@@ -68,16 +68,27 @@
     </li>
     <% unless form.object.new_record? -%>
       <li>
-    	<%= form.label :wiki_permissions, t(:wiki_permissions, :scope => 'activerecord.attributes.repository') -%>
-    	<div><%= form.select :wiki_permissions, wiki_permission_choices -%></div>
+        <%= form.label :wiki_permissions, t(:wiki_permissions, :scope => 'activerecord.attributes.repository') -%>
+        <div><%= form.select :wiki_permissions, wiki_permission_choices -%></div>
       </li>
     <% end -%>
   </fieldset>
+  <% if GitoriousConfig["enable_private_repositories"] %>
+    <fieldset>
+      <li>
+        <label for="private_project">Make the project private?</label>
+        <div>
+          <input name="private" type="hidden" value="0">
+          <input id="private_project" name="private_project" type="checkbox" value="1">
+        </div>
+      </li>
+    </fieldset>
+  <% end %>
   <fieldset>
     <li>
       <%= form.label :description, t(:description, :scope => 'activerecord.attributes.project') -%>
       <div><small class="hint"><%= t("views.projects.hint") %></small>
-  	<%= form.text_area :description, :class => "text wide tall" -%></div>
+        <%= form.text_area :description, :class => "text wide tall" -%></div>
     </li>
   </fieldset>
 </ul>

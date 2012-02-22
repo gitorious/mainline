@@ -240,6 +240,45 @@ class ProjectsControllerTest < ActionController::TestCase
         get :show, :id => projects(:johans).to_param
         assert_match /Manage access/, @response.body
       end
+
+      should "create private project" do
+        login_as :johan
+
+        assert_difference("Project.count") do
+          post :create, :project => {
+            :title => "project x",
+            :slug => "projectx",
+            :description => "projectx's description",
+            :owner_type => "User"
+          },
+          :private => true
+        end
+
+        assert can_read?(users(:johan), Project.last)
+        assert !can_read?(users(:mike), Project.last)
+        assert !can_read?(nil, Project.last)
+      end
+
+      should "create public project" do
+        login_as :johan
+
+        assert_difference("Project.count") do
+          post :create, :project => {
+            :title => "project x",
+            :slug => "projectx",
+            :description => "projectx's description",
+            :owner_type => "User"
+          },
+          :private => false
+        end
+
+        assert can_read?(nil, Project.last)
+      end
+
+      should "include private checkbox in new page" do
+        get :new
+        assert_match /type="checkbox"[^>]+name="private"/, @response.body
+      end
     end
 
     context "with disabled private repos" do
@@ -251,6 +290,27 @@ class ProjectsControllerTest < ActionController::TestCase
         login_as :johan
         get :show, :id => projects(:johans).to_param
         assert_no_match /Manage access/, @response.body
+      end
+
+      should "not allow creating private project" do
+        login_as :johan
+
+        assert_difference("Project.count") do
+          post :create, :project => {
+            :title => "project x",
+            :slug => "projectx",
+            :description => "projectx's description",
+            :owner_type => "User"
+          },
+          :private => true
+        end
+
+        assert can_read?(nil, Project.last)
+      end
+
+      should "not include private checkbox in new page" do
+        get :new
+        assert_no_match /type="checkbox"[^>]+name="private"/, @response.body
       end
     end
 
