@@ -76,7 +76,7 @@ class UsersController < ApplicationController
 
   def watchlist
     @user = User.find_by_login!(params[:id])
-    @events = @user.paginated_events_in_watchlist({:page => 1})
+    @events = filter(@user.paginated_events_in_watchlist({:page => 1}))
     respond_to do |wants|
       wants.atom { render :template => "users/feed" }
     end
