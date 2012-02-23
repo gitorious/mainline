@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
@@ -46,10 +47,10 @@ class RepositoryTest < ActiveSupport::TestCase
 
   should " only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
-    assert !@repository.valid?, 'valid? should be false'
+    assert !@repository.valid?, "valid? should be false"
 
     @repository.name = "foo!bar"
-    assert !@repository.valid?, 'valid? should be false'
+    assert !@repository.valid?, "valid? should be false"
 
     @repository.name = "foobar"
     assert @repository.valid?
@@ -61,7 +62,7 @@ class RepositoryTest < ActiveSupport::TestCase
   should "has a unique name within a project" do
     @repository.save
     repos = new_repos(:name => "FOO")
-    assert !repos.valid?, 'valid? should be false'
+    assert !repos.valid?, "valid? should be false"
     assert_not_nil repos.errors.on(:name)
 
     assert new_repos(:project => projects(:moes)).valid?
@@ -181,13 +182,13 @@ class RepositoryTest < ActiveSupport::TestCase
     Repository.git_backend.expects(:create).with(path).returns(true)
     Repository.create_git_repository(@repository.real_gitdir)
 
-    assert File.exist?(path), 'File.exist?(path) should be true'
+    assert File.exist?(path), "File.exist?(path) should be true"
 
     Dir.chdir(path) do
       hooks = File.join(path, "hooks")
-      assert File.exist?(hooks), 'File.exist?(hooks) should be true'
-      assert File.symlink?(hooks), 'File.symlink?(hooks) should be true'
-      assert File.symlink?(File.expand_path(File.readlink(hooks))), 'File.symlink?(File.expand_path(File.readlink(hooks))) should be true'
+      assert File.exist?(hooks), "File.exist?(hooks) should be true"
+      assert File.symlink?(hooks), "File.symlink?(hooks) should be true"
+      assert File.symlink?(File.expand_path(File.readlink(hooks))), "File.symlink?(File.expand_path(File.readlink(hooks))) should be true"
     end
   end
 
@@ -257,24 +258,24 @@ class RepositoryTest < ActiveSupport::TestCase
     head = mock("head")
     head.stubs(:name).returns("master")
     @repository.git.expects(:heads).returns([head])
-    assert @repository.has_commits?, '@repository.has_commits? should be true'
+    assert @repository.has_commits?, "@repository.has_commits? should be true"
   end
 
   should "knows if has commits, unless its a new record" do
     @repository.stubs(:new_record?).returns(false)
-    assert !@repository.has_commits?, '@repository.has_commits? should be false'
+    assert !@repository.has_commits?, "@repository.has_commits? should be false"
   end
 
   should "knows if has commits, unless its not ready" do
     @repository.stubs(:ready?).returns(false)
-    assert !@repository.has_commits?, '@repository.has_commits? should be false'
+    assert !@repository.has_commits?, "@repository.has_commits? should be false"
   end
 
   should " build a new repository by cloning another one" do
     repos = Repository.new_by_cloning(@repository)
     assert_equal @repository, repos.parent
     assert_equal @repository.project, repos.project
-    assert repos.new_record?, 'new_record? should be true'
+    assert repos.new_record?, "new_record? should be true"
   end
 
   should "inherit merge request inclusion from its parent" do
@@ -308,14 +309,14 @@ class RepositoryTest < ActiveSupport::TestCase
   context "find_by_path" do
     should "finds a repository by its path" do
       repo = repositories(:johans)
-      path = File.join(GitoriousConfig['repository_base_path'],
+      path = File.join(GitoriousConfig["repository_base_path"],
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
 
     should_eventually "finds a repository by its path, regardless of repository kind" do
       repo = projects(:johans).wiki_repository
-      path = File.join(GitoriousConfig['repository_base_path'].chomp("/"),
+      path = File.join(GitoriousConfig["repository_base_path"].chomp("/"),
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
@@ -325,7 +326,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.owner = groups(:team_thunderbird)
       repo.kind = Repository::KIND_TEAM_REPO
       repo.save!
-      path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
+      path = File.join(GitoriousConfig["repository_base_path"], repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
 
@@ -334,7 +335,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.owner = users(:johan)
       repo.kind = Repository::KIND_USER_REPO
       repo.save!
-      path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
+      path = File.join(GitoriousConfig["repository_base_path"], repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
 
@@ -349,7 +350,7 @@ class RepositoryTest < ActiveSupport::TestCase
       same_name_repo.owner = groups(:team_thunderbird)
       same_name_repo.kind = Repository::KIND_TEAM_REPO
       same_name_repo.save!
-      path = File.join(GitoriousConfig['repository_base_path'], same_name_repo.gitdir)
+      path = File.join(GitoriousConfig["repository_base_path"], same_name_repo.gitdir)
       assert_equal same_name_repo, Repository.find_by_path(path)
     end
   end
@@ -557,12 +558,12 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   should "know if it is a normal project repository" do
-    assert @repository.project_repo?, '@repository.project_repo? should be true'
+    assert @repository.project_repo?, "@repository.project_repo? should be true"
   end
 
   should "know if it is a wiki repo" do
     @repository.kind = Repository::KIND_WIKI
-    assert @repository.wiki?, '@repository.wiki? should be true'
+    assert @repository.wiki?, "@repository.wiki? should be true"
   end
 
   should "has a parent, which is the owner" do
@@ -633,7 +634,7 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   should "sets a hash on create" do
-    assert @repository.new_record?, '@repository.new_record? should be true'
+    assert @repository.new_record?, "@repository.new_record? should be true"
     @repository.save!
     assert_not_nil @repository.hashed_path
     assert_equal 3, @repository.hashed_path.split("/").length
@@ -779,7 +780,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'owners as User or Group' do
+  context "owners as User or Group" do
     setup do
       @repo = repositories(:moes)
     end
@@ -789,12 +790,12 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal([users(:johan)], @repo.owners)
     end
 
-    should 'not throw an error if transferring ownership to a group if the group is already a committer' do
+    should "not throw an error if transferring ownership to a group if the group is already a committer" do
       @repo.change_owner_to!(groups(:team_thunderbird))
       assert_equal([users(:mike)], @repo.owners)
     end
 
-    should 'return the owner if owned by user' do
+    should "return the owner if owned by user" do
       @repo.change_owner_to!(users(:moe))
       assert_equal([users(:moe)], @repo.owners)
     end
@@ -822,19 +823,19 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Signoff of merge requests' do
+  context "Signoff of merge requests" do
     setup do
       @project = projects(:johans)
       @mainline_repository = repositories(:johans)
       @other_repository = repositories(:johans2)
     end
 
-    should 'know that the mainline repository requires signoff of merge requests' do
+    should "know that the mainline repository requires signoff of merge requests" do
       assert @mainline_repository.mainline?
       assert @mainline_repository.requires_signoff_on_merge_requests?
     end
 
-    should 'not require signoff of merge requests in other repositories' do
+    should "not require signoff of merge requests in other repositories" do
       assert !@other_repository.mainline?
       assert !@other_repository.requires_signoff_on_merge_requests?
     end
@@ -865,20 +866,20 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Logging updates' do
+  context "Logging updates" do
     setup {@repository = repositories(:johans)}
 
-    should 'generate events for each value that is changed' do
+    should "generate events for each value that is changed" do
       assert_incremented_by(@repository.events, :size, 1) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "new_name")
         end
         assert @repository.save
       end
-      assert_equal 'new_name', @repository.reload.name
+      assert_equal "new_name", @repository.reload.name
     end
 
-    should 'not generate events when blank values are provided' do
+    should "not generate events when blank values are provided" do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "")
@@ -895,7 +896,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert @repository.reload.description.blank?, "desc: #{@repository.description.inspect}"
     end
 
-    should 'not generate events when invalid values are provided' do
+    should "not generate events when invalid values are provided" do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "Some illegal value")
@@ -903,7 +904,7 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
-    should 'not generate events when a value is unchanged' do
+    should "not generate events when a value is unchanged" do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, @repository.name)
@@ -939,17 +940,17 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Merge request repositories' do
+  context "Merge request repositories" do
     setup do
       @project = Factory.create(:user_project)
       @main_repo = Factory.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
     end
 
-    should 'initially not have a merge request repository' do
+    should "initially not have a merge request repository" do
       assert !@main_repo.has_tracking_repository?
     end
 
-    should 'generate a tracking repository' do
+    should "generate a tracking repository" do
       @merge_repo = @main_repo.create_tracking_repository
       assert @main_repo.project_repo?
       assert @merge_repo.tracking_repo?
@@ -960,7 +961,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal @merge_repo, @main_repo.tracking_repository
     end
 
-    should 'not post a repository creation message for merge request repositories' do
+    should "not post a repository creation message for merge request repositories" do
       @merge_repo = @main_repo.build_tracking_repository
       @merge_repo.expects(:publish).never
       assert @merge_repo.save

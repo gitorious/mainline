@@ -733,37 +733,37 @@ class Repository < ActiveRecord::Base
   end
 
   protected
-    def sharded_hashed_path(h)
-      first = h[0,3]
-      second = h[3,3]
-      last = h[-34, 34]
-      "#{first}/#{second}/#{last}"
-    end
+  def sharded_hashed_path(h)
+    first = h[0,3]
+    second = h[3,3]
+    last = h[-34, 34]
+    "#{first}/#{second}/#{last}"
+  end
 
-    def create_initial_committership
-      self.committerships.create_for_owner!(self.owner)
-    end
+  def create_initial_committership
+    self.committerships.create_for_owner!(self.owner)
+  end
 
-    def self.full_path_from_partial_path(path)
-      File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
-    end
+  def self.full_path_from_partial_path(path)
+    File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
+  end
 
-    def downcase_name
-      name.downcase! if name
-    end
+  def downcase_name
+    name.downcase! if name
+  end
 
-    def create_add_event_if_project_repo
-      if project_repo?
-        #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
-        self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user,
-              nil, nil, date = created_at)
-      end
+  def create_add_event_if_project_repo
+    if project_repo?
+      #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
+      self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user,
+                                nil, nil, date = created_at)
     end
+  end
 
-    def add_owner_as_watchers
-      return if KINDS_INTERNAL_REPO.include?(self.kind)
-      watched_by!(user)
-    end
+  def add_owner_as_watchers
+    return if KINDS_INTERNAL_REPO.include?(self.kind)
+    watched_by!(user)
+  end
 
   private
   def self.create_hooks(path)
