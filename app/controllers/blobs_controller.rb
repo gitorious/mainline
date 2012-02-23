@@ -63,7 +63,7 @@ class BlobsController < ApplicationController
   def raw
     @git = @repository.git
     @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    if @git.git.cat_file({:t => true}, @ref) == 'blob'
+    if @git.git.cat_file({:t => true}, @ref) == "blob"
       @blob = @git.blob(@ref)
       if @blob.size > 500.kilobytes
         flash[:error] = I18n.t "blobs_controller.raw_error", :size => @blob.size
@@ -120,25 +120,23 @@ class BlobsController < ApplicationController
   end
 
   protected
-    def redirect_to_head
-      redirect_to project_repository_blob_path(@project, @repository,
-                    branch_with_tree("HEAD", @path))
-    end
+  def redirect_to_head
+    redirect_to project_repository_blob_path(@project, @repository,
+                                             branch_with_tree("HEAD", @path))
+  end
 
-    def find_commit
-      @git = @repository.git
-      @ref, @path = branch_and_path(params[:branch_and_path], @git)
-      @commit = @git.commit(@ref)
-      unless @commit
-        redirect_to_head and return
-      end
-    end
+  def find_commit
+    @git = @repository.git
+    @ref, @path = branch_and_path(params[:branch_and_path], @git)
+    @commit = @git.commit(@ref)
+    redirect_to_head unless @commit
+  end
 
-    def expire_based_on_ref_length(length)
-      if length == 40
-        cache_forever
-      else
-        cache_for(1.hour)
-      end
+  def expire_based_on_ref_length(length)
+    if length == 40
+      cache_forever
+    else
+      cache_for(1.hour)
     end
+  end
 end

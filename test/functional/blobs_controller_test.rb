@@ -217,22 +217,69 @@ class BlobsControllerTest < ActionController::TestCase
       end
     end
 
-    context "With private repositories" do
+    context "With private projects" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
-        @project.make_private
+        enable_private_repositories(@project)
       end
 
       should "reject user from show" do
         get :show, branch_and_path_params
-
         assert_response 403
       end
 
       should "allow owner to view blob" do
         login_as :johan
         get :show, branch_and_path_params
+        assert_response 302
+      end
 
+      should "reject user from blame" do
+        get :blame, branch_and_path_params
+        assert_response 403
+      end
+
+      should "allow owner to view blame" do
+        login_as :johan
+        get :blame, branch_and_path_params
+        assert_response 302
+      end
+
+      should "reject user from raw" do
+        get :raw, branch_and_path_params
+        assert_response 403
+      end
+
+      should "allow owner to view raw" do
+        login_as :johan
+        get :raw, branch_and_path_params
+        assert_response 302
+      end
+
+      should "reject user from history" do
+        get :history, branch_and_path_params
+        assert_response 403
+      end
+
+      should "allow owner to view history" do
+        login_as :johan
+        get :history, branch_and_path_params
+        assert_response 302
+      end
+    end
+
+    context "With private repositories" do
+      setup do
+        enable_private_repositories(@repository)
+      end
+
+      should "reject user from show" do
+        get :show, branch_and_path_params
+        assert_response 403
+      end
+
+      should "allow owner to view blob" do
+        login_as :johan
+        get :show, branch_and_path_params
         assert_response 302
       end
 
