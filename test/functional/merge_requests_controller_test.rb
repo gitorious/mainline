@@ -748,12 +748,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response 302
     end
 
-    should "disallows unauthenticated users direct access" do
-      get :direct_access, :id => @merge_request.id
-      assert_response 403
-    end
-
-    should "disallows unauthenticated users direct access" do
+    should "disallow unauthenticated users direct access" do
       get :direct_access, :id => @merge_request.id
       assert_response :redirect
     end

@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class BlobsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
@@ -252,7 +252,7 @@ class BlobsControllerTest < ActionController::TestCase
         assert_response 403
       end
 
-      should "allow owner to view blame" do
+      should "allow owner to view raw" do
         login_as :johan
         get :raw, branch_and_path_params
         assert_response 302

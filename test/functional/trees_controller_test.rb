@@ -240,7 +240,7 @@ class TreesControllerTest < ActionController::TestCase
     should "allow authorized users to show tree" do
       login_as :johan
       get :show, params(:branch_and_path => ["master", "lib", "grit"])
-      assert_response 302
+      assert_not_equal "403", @response.code
     end
 
     should "disallow unauthorized users from showing archive" do
@@ -251,7 +251,7 @@ class TreesControllerTest < ActionController::TestCase
     should "allow authorized users to show archive" do
       login_as :johan
       get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
-      assert_response 302
+      assert_not_equal "403", @response.code
     end
   end
 
