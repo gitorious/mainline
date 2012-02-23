@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require File.dirname(__FILE__) + "/../test_helper"
 
 class CommitDiffsControllerTest < ActionController::TestCase
@@ -94,9 +95,37 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "With private projects" do
     setup do
       enable_private_repositories
+    end
+
+    should "disallow unauthorized access to diffs" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authorized access to diffs" do
+      login_as :johan
+      get :index, params
+      assert_response 302
+    end
+
+    should "disallow unauthorized access to compare view" do
+      get :compare, compare_params
+      assert_response 403
+    end
+
+    should "allow authorized access to compare view" do
+      login_as :johan
+      get :compare, compare_params
+      assert_response 302
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@repository)
     end
 
     should "disallow unauthorized access to diffs" do
