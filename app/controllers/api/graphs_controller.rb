@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,15 +22,15 @@ require "gitorious/git_shell"
 
 module Api
   class GraphsController < ApplicationController
+    include Gitorious::Authorization
     skip_session
+    before_filter :find_project_and_repository
+    attr_accessor :project, :repository
 
     rescue_from Gitorious::GitShell::GitTimeout, :with => :render_timeout
-
-    LOG_FORMAT = '%H§%P§%ai§%ae§%d§%s§'
+    LOG_FORMAT = "%H§%P§%ai§%ae§%d§%s§"
 
     def show
-      project = Project.find_by_slug(params[:project_id])
-      repository = project.repositories.find_by_name(params[:repository_id])
       type = params[:type] == "all" ? "--all" : ""
 
       ref = "#{project.slug}/#{repository.name}/#{params[:branch]}"
@@ -59,6 +59,12 @@ module Api
 
     def render_timeout
       render :status => 503, :json => { "message" => "Git timeout" }
+    end
+
+    def find_project_and_repository
+      @project = authorize_access_to(Project.find_by_slug(params[:project_id]))
+      @repository = @project.repositories.find_by_name(params[:repository_id])
+      authorize_access_to(@repository)
     end
   end
 end
