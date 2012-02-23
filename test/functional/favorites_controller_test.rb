@@ -51,16 +51,23 @@ class FavoritesControllerTest < ActionController::TestCase
       assert_redirected_to new_sessions_path
     end
 
-    should "require authorized user when favoriting repository" do
-      @project = @repository.project
-      enable_private_repositories
+    should "require authorized user when favoriting repository of private project" do
+      enable_private_repositories(@repository.project)
       login_as :mike
 
       do_create_post(@repository.class.name, @repository.id)
       assert_response 403
     end
 
-    should "require authorized user when favoriting project" do
+    should "require authorized user when favoriting private repository" do
+      enable_private_repositories(@repository)
+      login_as :moe
+
+      do_create_post(@repository.class.name, @repository.id)
+      assert_response 403
+    end
+
+    should "require authorized user when favoriting private project" do
       @project = @repository.project
       enable_private_repositories
       login_as :mike
@@ -131,6 +138,14 @@ class FavoritesControllerTest < ActionController::TestCase
       delete :destroy, :id => favorite, :format => "js"
       assert_response :ok
     end
+
+    should "not destroy it if not authorized" do
+      login_as :moe
+      favorite = users(:moe).favorites.create(:watchable => @merge_request)
+      enable_private_repositories(@merge_request.source_repository)
+      delete :destroy, :id => favorite, :format => "js"
+      assert_response 403
+    end
   end
 
   context "Deleting a favorite" do
@@ -183,7 +198,7 @@ class FavoritesControllerTest < ActionController::TestCase
       assert_redirected_to new_sessions_path
     end
 
-    should "only list the users favorites" do
+    should "only list the user's favorites" do
       assert @user.favorites.count > 0, "user has no favs"
       other_fav = Favorite.create!({:user => users(:johan),
           :watchable => Repository.last})
@@ -191,6 +206,13 @@ class FavoritesControllerTest < ActionController::TestCase
       assert !assigns(:favorites).include?(other_fav)
       assert_equal @user.favorites, assigns(:favorites)
       assert_response :success
+    end
+
+    should "only list user's authorized favorites" do
+      len = @user.favorites.length
+      enable_private_repositories(@user.favorites.first.watchable)
+      get :index
+      assert_equal len - 1, assigns(:favorites).length
     end
 
     should "have a button to toggle the mail flag" do
@@ -233,6 +255,12 @@ class FavoritesControllerTest < ActionController::TestCase
       get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
       assert_response :redirect
       assert_equal @user, @favorite.reload.user
+    end
+
+    should "disallow unauthorized users" do
+      enable_private_repositories(@favorite.watchable)
+      get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
+      assert_response 403
     end
   end
 end

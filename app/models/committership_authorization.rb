@@ -65,7 +65,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   end
 
   def can_read_favorite?(user, favorite)
-    can_read_project?(user, favorite.project)
+    can_read_project?(user, favorite.project) && can_read?(user, favorite.watchable)
   end
 
   def can_read_message?(user, message)

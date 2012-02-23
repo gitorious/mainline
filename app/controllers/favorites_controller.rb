@@ -22,12 +22,12 @@ class FavoritesController < ApplicationController
   before_filter :find_watchable, :only => [:create]
 
   def index
-    @favorites = current_user.favorites.all(:include => :watchable)
+    @favorites = filter(current_user.favorites.all(:include => :watchable))
     @root = Breadcrumb::Favorites.new(current_user)
   end
 
   def update
-    @favorite = current_user.favorites.find(params[:id])
+    @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.notify_by_email = params[:favorite][:notify_by_email]
     @favorite.save
     respond_to do |wants|
@@ -52,7 +52,7 @@ class FavoritesController < ApplicationController
   end
 
   def destroy
-    @favorite = current_user.favorites.find(params[:id])
+    @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.destroy
     watchable = @favorite.watchable
     respond_to do |wants|
