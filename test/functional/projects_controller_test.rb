@@ -140,13 +140,9 @@ class ProjectsControllerTest < ActionController::TestCase
       end
 
       should "filter private projects in index" do
-        get :index
-        assert_equal 2, assigns(:projects).length
-      end
-
-      should "filter private projects in index" do
         Project.stubs(:most_active_recently).returns(Project.all)
         get :index
+        assert_equal 2, assigns(:projects).length
         assert_equal 2, assigns(:active_recently).length
       end
 
@@ -276,8 +272,10 @@ class ProjectsControllerTest < ActionController::TestCase
       end
 
       should "include private checkbox in new page" do
+        login_as :johan
         get :new
-        assert_match /type="checkbox"[^>]+name="private"/, @response.body
+        assert_match /Make the project private\?/, @response.body
+        assert_match /name="private"/, @response.body
       end
     end
 

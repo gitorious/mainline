@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120214094615) do
+ActiveRecord::Schema.define(:version => 20120223093906) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -75,6 +75,17 @@ ActiveRecord::Schema.define(:version => 20120214094615) do
   add_index "committerships", ["committer_id"], :name => "index_permissions_on_user_id"
   add_index "committerships", ["repository_id"], :name => "index_committerships_on_repository_id"
   add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
+
+  create_table "content_memberships", :force => true do |t|
+    t.integer  "content_id"
+    t.string   "member_type"
+    t.integer  "member_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "content_type"
+  end
+
+  add_index "content_memberships", ["content_id", "member_id", "member_type"], :name => "project_memberships_index"
 
   create_table "emails", :force => true do |t|
     t.integer  "user_id"
@@ -241,16 +252,6 @@ ActiveRecord::Schema.define(:version => 20120214094615) do
   add_index "messages", ["notifiable_type", "notifiable_id"], :name => "index_messages_on_notifiable_type_and_notifiable_id"
   add_index "messages", ["recipient_id"], :name => "index_messages_on_recipient_id"
   add_index "messages", ["sender_id"], :name => "index_messages_on_sender_id"
-
-  create_table "project_memberships", :force => true do |t|
-    t.integer  "project_id"
-    t.string   "member_type"
-    t.integer  "member_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "project_memberships", ["project_id", "member_id", "member_type"], :name => "project_memberships_index"
 
   create_table "projects", :force => true do |t|
     t.string   "title"

@@ -31,11 +31,13 @@ class Project < ActiveRecord::Base
   include Watchable
   include Gitorious::Search
   include Gitorious::Authorization
+  include Gitorious::Protectable
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
   has_many    :comments, :dependent => :destroy
-  has_many    :project_memberships
+  has_many    :project_memberships, :as => :content
+  has_many    :content_memberships, :as => :content
   has_many    :repositories, :order => "repositories.created_at asc",
       :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository",
@@ -49,9 +51,7 @@ class Project < ActiveRecord::Base
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
   default_scope :conditions => ["suspended_at is null"]
-
   serialize :merge_request_custom_states, Array
-
   attr_protected :owner_id, :user_id, :site_id
 
   is_indexed do |s|
@@ -128,12 +128,6 @@ class Project < ActiveRecord::Base
 
   def site
     containing_site || Site.default
-  end
-
-  def member?(candidate)
-    candidate == self.owner ||
-      (owner.respond_to?(:member?) && owner.member?(candidate)) ||
-      project_memberships.any? { |m| is_member?(candidate, m.member) }
   end
 
   def committer?(candidate)
@@ -331,16 +325,6 @@ class Project < ActiveRecord::Base
 
   def suspend!
     self.suspended_at = Time.now
-  end
-
-  def make_private
-    add_member(owner)
-  end
-
-  def add_member(member)
-    return if self.project_memberships.count(:all, :conditions => ["member_id = ? and member_type = ?",
-                                                                   member.id, member.class.to_s]) > 0
-    self.project_memberships.create!(:member => member)
   end
 
   protected

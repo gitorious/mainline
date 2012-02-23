@@ -27,8 +27,8 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   def can_read_project?(user, project)
     return true if !private_repos
     return true if project.owner == user
-    return true if project.project_memberships.count == 0
-    project.project_memberships.any? { |m| is_member?(user, m.member) }
+    return true if project.content_memberships.count == 0
+    project.content_memberships.any? { |m| is_member?(user, m.member) }
   end
 
   def can_read_repository?(user, repository)

@@ -69,7 +69,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
         login = @user.login
         login_as :johan
 
-        assert_difference("@project.reload.project_memberships.count") do
+        assert_difference("@project.reload.content_memberships.count") do
           post :create, :project_id => @project.to_param, :user => { :login => login }
         end
       end
@@ -77,18 +77,18 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
       should "default to adding owner if no parameters" do
         login_as :johan
 
-        assert_difference("@project.reload.project_memberships.count") do
+        assert_difference("@project.reload.content_memberships.count") do
           post :create, :project_id => @project.to_param
         end
 
-        assert_equal @user, @project.project_memberships.first.member
+        assert_equal @user, @project.content_memberships.first.member
       end
 
       should "add group as collaborator" do
         team = groups(:a_team)
         login_as :johan
 
-        assert_difference("@project.reload.project_memberships.count") do
+        assert_difference("@project.reload.content_memberships.count") do
           post :create, :project_id => @project.to_param, :group => { :name => team.name }
         end
 
@@ -125,7 +125,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
 
     context "destroy" do
       setup do
-        @membership = @project.project_memberships.first
+        @membership = @project.content_memberships.first
       end
 
       should "reject unauthorized user" do
@@ -137,7 +137,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
       should "remove member" do
         login_as :johan
 
-        assert_difference("@project.reload.project_memberships.count", -1) do
+        assert_difference("@project.reload.content_memberships.count", -1) do
           delete :destroy, :project_id => @project.to_param, :id => @membership.id
         end
       end
@@ -152,7 +152,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
       should "remove all members to make project public" do
         login_as :johan
         delete :destroy, :project_id => @project.to_param, :id => "all"
-        assert_equal 0, @project.project_memberships.count
+        assert_equal 0, @project.content_memberships.count
       end
     end
   end

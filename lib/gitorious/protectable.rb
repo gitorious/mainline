@@ -16,16 +16,22 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ProjectMembership < ActiveRecord::Base
-  self.table_name = "content_memberships"
-  belongs_to :member, :polymorphic => true
-  belongs_to :content, :polymorphic => true
+module Gitorious
+  module Protectable
+    def make_private
+      add_member(owner)
+    end
 
-  def project=(project)
-    content = project
-  end
+    def add_member(member)
+      return if content_memberships.count(:all, :conditions => ["member_id = ? and member_type = ?",
+                                                                member.id, member.class.to_s]) > 0
+      content_memberships.create!(:member => member)
+    end
 
-  def project
-    content
+    def member?(candidate)
+      candidate == owner ||
+        (owner.respond_to?(:member?) && owner.member?(candidate)) ||
+        content_memberships.any? { |m| is_member?(candidate, m.member) }
+    end
   end
 end

@@ -27,14 +27,14 @@ class ProjectMembershipsController < ApplicationController
 
   def index
     @memberships = paginate(page_free_redirect_options) do
-      @project.project_memberships.paginate(:all, :page => params[:page])
+      @project.content_memberships.paginate(:all, :page => params[:page])
     end
 
     @root = Breadcrumb::ProjectMemberships.new(@project)
   end
 
   def create
-    membership = @project.project_memberships.new
+    membership = @project.content_memberships.new
     membership.member = member(params[:user], params[:group])
     membership.save
     redirect_to :action => "index"
@@ -47,9 +47,9 @@ class ProjectMembershipsController < ApplicationController
 
   def destroy
     if params[:id] == "all"
-      @project.project_memberships.destroy_all
+      @project.content_memberships.destroy_all
     else
-      @project.project_memberships.find(params[:id]).destroy
+      @project.content_memberships.find(params[:id]).destroy
     end
     redirect_to :action => "index"
   end

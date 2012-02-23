@@ -605,7 +605,7 @@ class ProjectTest < ActiveSupport::TestCase
 
       assert project.member?(users(:mike))
       assert is_member?(users(:mike), project)
-      assert_equal 1, project.project_memberships.count
+      assert_equal 1, project.content_memberships.count
     end
   end
 

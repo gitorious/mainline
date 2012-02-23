@@ -16,16 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ProjectMembership < ActiveRecord::Base
-  self.table_name = "content_memberships"
-  belongs_to :member, :polymorphic => true
+class ContentMembership < ActiveRecord::Base
   belongs_to :content, :polymorphic => true
-
-  def project=(project)
-    content = project
-  end
-
-  def project
-    content
-  end
+  belongs_to :member, :polymorphic => true
 end
