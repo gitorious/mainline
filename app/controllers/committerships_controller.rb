@@ -106,6 +106,7 @@ class CommittershipsController < ApplicationController
   def find_repository
     @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
                                                                @containing_project)
+    authorize_access_to(@repository)
     authorize_access_to(@repository.project)
   end
 end

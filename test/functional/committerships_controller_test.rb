@@ -219,45 +219,85 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "with authorization" do
     setup do
-      enable_private_repositories
       @repository = repositories(:johans2)
-      @repository.project.make_private
       @committership = @repository.committerships.create_with_permissions!({
         :committer => users(:mike)
       }, Committership::CAN_ADMIN)
-      login_as :mike
     end
 
-    should "require project access to index" do
-      get :index, params
-      assert_response 403
+    context "private projects" do
+      setup do
+        enable_private_repositories(@repository.project)
+        login_as :mike
+      end
+
+      should "require project access to index" do
+        get :index, params
+        assert_response 403
+      end
+
+      should "require project access to new" do
+        get :new, params(:group_id => @repository.owner.to_param)
+        assert_response 403
+      end
+
+      should "require project access to create" do
+        post :create, params(:group => { :name => @group.name }, :user => {}, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to edit" do
+        get :edit, params(:id => @committership.to_param)
+        assert_response 403
+      end
+
+      should "require project access to update" do
+        put :update, params(:id => @committership.to_param, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to destroy" do
+        delete :destroy, params(:id => Committership.first.id)
+        assert_response 403
+      end
     end
 
-    should "require project access to new" do
-      get :new, params(:group_id => @repository.owner.to_param)
-      assert_response 403
-    end
+    context "private repositories" do
+      setup do
+        enable_private_repositories(@repository)
+      end
 
-    should "require project access to create" do
-      post :create, params(:group => { :name => @group.name }, :user => {}, :permissions => ["review"])
-      assert_response 403
-    end
+      should "require project access to index" do
+        get :index, params
+        assert_response 403
+      end
 
-    should "require project access to edit" do
-      get :edit, params(:id => @committership.to_param)
-      assert_response 403
-    end
+      should "require project access to new" do
+        get :new, params(:group_id => @repository.owner.to_param)
+        assert_response 403
+      end
 
-    should "require project access to update" do
-      put :update, params(:id => @committership.to_param, :permissions => ["review"])
-      assert_response 403
-    end
+      should "require project access to create" do
+        post :create, params(:group => { :name => @group.name }, :user => {}, :permissions => ["review"])
+        assert_response 403
+      end
 
-    should "require project access to destroy" do
-      delete :destroy, params(:id => Committership.first.id)
-      assert_response 403
+      should "require project access to edit" do
+        get :edit, params(:id => @committership.to_param)
+        assert_response 403
+      end
+
+      should "require project access to update" do
+        put :update, params(:id => @committership.to_param, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to destroy" do
+        delete :destroy, params(:id => Committership.first.id)
+        assert_response 403
+      end
     end
   end
 
