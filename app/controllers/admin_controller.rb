@@ -2,6 +2,7 @@
 #--
 #   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,17 +18,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class Admin::RepositoriesController < AdminController
-  def index
-    @unready_repositories = paginate(:action => "index") do
-      Repository.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
-    end
-  end
+class AdminController < ApplicationController
+  before_filter :login_required
+  before_filter :require_site_admin
 
-  def recreate
-    @repository = Repository.find(params[:id])
-    @repository.post_repo_creation_message
-    flash[:notice] = "Recreation message posted"
-    redirect_to :action => :index
+  protected
+  def require_site_admin
+    unless site_admin?(current_user)
+      flash[:error] = I18n.t("admin.check_admin")
+      redirect_to(root_path)
+    end
   end
 end

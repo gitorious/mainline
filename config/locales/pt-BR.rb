@@ -12,9 +12,9 @@
         :suspend_notice => "O usuário {{user_name}} foi suspenso com sucesso.",
         :suspend_error => "Não consguiu suspender usuário {{user_name}}.",
         :unsuspend_notice => "O usuário {{user_name}} foi suspenso com sucesso.",
-        :unsuspend_error => "Não conseguiu reativar usuário {{user_name}}.",
-        :check_admin => "Apenas Para Administradores",
+        :unsuspend_error => "Não conseguiu reativar usuário {{user_name}}."
       },
+      :check_admin => "Apenas Para Administradores"
     },
     :mailer => {
       :repository_clone => "{{login}} clonou {{slug}}/{{parent}}",
@@ -61,7 +61,7 @@
     :repositories_controller => {
       :new_clone_error => "Desculpe, não se pode clonar um repositório vazio",
       :create_clone_error => "Desculpe, não se pode clonar um repositório vazio",
-      :create_success => "Novo repositório criado",      
+      :create_success => "Novo repositório criado",
       :destroy_notice => "O repositório foi apagado",
       :destroy_error => "Você não é o criador deste repositório",
       :adminship_error => "Desculpe, somente administradores do projeto têm permissão para fazer isso",
@@ -159,8 +159,8 @@
         :pages => "Páginas Wiki",
         :user_mgt => "Gerenciamento de Usuários",
         :discussion => "Grupo de Discussão",
-	:teams => 'Equipes',
-	:blog => 'Blog',
+        :teams => 'Equipes',
+        :blog => 'Blog',
       },
       :site => {
         :pay_off => lambda {|gitorious_repo_path, read_more_path|
@@ -171,8 +171,8 @@
         :description => "<strong>Gitorious</strong> quer fornecer uma grande\nmaneira de colaborar com código opensource de forma distribuída",
         :for_projects => "Para Projetos",
         :for_contributors => "Para Colaboradores",
-        :creating_account => lambda { |this, path| 
-          this.link_to("Criar uma conta de usuário", path) + 
+        :creating_account => lambda { |this, path|
+          this.link_to("Criar uma conta de usuário", path) +
           " lhe permite criar seus próprios projetos ou participar do desenvolvimento de qualquer outro." },
         :newest_projects => "Projetos mais Recentes",
         :view_more => "Ver mais &raquo;",
@@ -221,10 +221,12 @@
         :create_btn => "Criar Novo Usuário",
         :is_admin => "É Administrador?",
         :forgot_title => "Esqueceu sua senha?",
-        :send_new_passwd => 'Me envie uma nova senha',
-        :openid_build_title => 'Terminar seu registro',
+        :send_new_passwd => 'Envie-me uma nova senha',
+        :openid_build_title => 'Conclua seu registro',
         :openid_build_description => 'Você precisa entrar com os seguintes detalhes:',
-        :create_title => lambda { |this, path| "Crie um novo usuário ou " + 
+        :openid_failed => 'A autenticação por OpenID falhou.',
+        :openid_canceled => 'A autenticação por OpenID foi cancelada.',
+        :create_title => lambda { |this, path| "Crie um novo usuário ou " +
           this.link_to( "faça login diretamente com seu OpenID", path ) },
         :create_description => "Criar uma nova conta de usuário lhe permite criar seus próprios projetos ou participar no desenvolvimento de qualquer um.",
         :wants_email_notifications => 'Enviar notificações por e-mail?',
@@ -236,7 +238,7 @@
         :member_for => "Membro por",
         :this_week => {
           :one => "commit até agora esta semana",
-          :other => "commits até agora esta semana", 
+          :other => "commits até agora esta semana",
         },
         :about => "cerca de {{about}}",
         :edit_title => "Altere seus detalhes",
@@ -406,7 +408,7 @@
         :current_committers => "Committers",
         :remove => "Remover",
         :clone_breadcrumb => "Clonar Repositório",
-	:create_title => lambda { |this, clone, project| 
+        :create_title => lambda { |this, clone, project|
           "Criar um clone de #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>em #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
         },
         :edit_group => "Editar/exibir membros da equipe",
@@ -474,7 +476,7 @@
         :delete_btn => 'Excluir requisição de merge',
         :example => "Exibir fluxo de trabalho de exemplo",
         :commits_to_merged => "Commits que seriam mesclados",
-	:commits => 'Commits',
+        :commits => 'Commits',
         :reopen_btn => 'Reabrir requisições de merge',
         :update_btn => "Atualizar requisição de merge",
       },
@@ -554,14 +556,14 @@
         :btn_add_as_collaborator => "Adicionar como colaborador",
         :return_to => "retornar para",
         :or_return_to => "ou retornar para",
-        :add_team_note => "<strong>Note</strong> que adicionar uma equipe dará a todos os membros 
+        :add_team_note => "<strong>Note</strong> que adicionar uma equipe dará a todos os membros
             as permissões que você selecionar",
       },
       :aliases => {
         :aliases_title => "Pseudônimos de e-mail",
         :new_alias => "Novo pseudônimo de e-mail",
         :new_alias_breadcrumb => "Novo Pseudônimo de E-mail",
-	:manage_aliases => 'Gerenciar e-mails'
+        :manage_aliases => 'Gerenciar e-mails'
       },
       :messages => {
         :collection_title => "Mensagens",
@@ -619,7 +621,7 @@
       :am => '',
       :pm => '',
     },
- 
+
     # date helper distanci em palavras
     :datetime => {
       :distance_in_words => {
@@ -666,7 +668,7 @@
         }
       }
     },
- 
+
     # numeros
     :number => {
       :format => {
@@ -682,7 +684,7 @@
         }
       }
     },
- 
+
     # Active Record
     :activerecord => {
       :models => {

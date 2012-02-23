@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,7 @@
 #++
 # encoding: utf-8
 
-require File.dirname(__FILE__) + '/../../test_helper'
+require File.dirname(__FILE__) + "/../../test_helper"
 
 class Admin::UsersControllerTest < ActionController::TestCase
   def setup
@@ -53,7 +54,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
   end
 
   should "PUT /admin/users/1/suspend" do
-    assert users(:johan).suspended_at.nil?, 'nil? should be true'
+    assert users(:johan).suspended_at.nil?, "nil? should be true"
     put :suspend, :id => users(:johan).to_param
     assert_equal users(:johan), assigns(:user)
     users(:johan).reload
@@ -85,7 +86,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
 
   context "#reset_password" do
     should "redirects to forgot_password if nothing was found" do
-      post :reset_password, :id => 'invalid_user'
+      post :reset_password, :id => "invalid_user"
       assert_redirected_to(admin_users_path)
       assert_match(/invalid email/i, flash[:error])
     end
@@ -108,12 +109,12 @@ class Admin::UsersControllerTest < ActionController::TestCase
 
   def valid_admin_user
     {
-      :login => 'johndoe',
-      :email => 'foo@foo.com',
-      :password => 'johndoe',
-      :password_confirmation => 'johndoe',
+      :login => "johndoe",
+      :email => "foo@foo.com",
+      :password => "johndoe",
+      :password_confirmation => "johndoe",
       :is_admin => "1",
-      :terms_of_use => '1'
+      :terms_of_use => "1"
     }
   end
 end

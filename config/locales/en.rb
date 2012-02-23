@@ -12,9 +12,9 @@
         :suspend_notice => "User {{user_name}} was successfully suspended.",
         :suspend_error => "Unable to suspend user {{user_name}}.",
         :unsuspend_notice => "User {{user_name}} was successfully unsuspended.",
-        :unsuspend_error => "Unable to unsuspend user {{user_name}}.",
-        :check_admin => "For Administrators Only",
+        :unsuspend_error => "Unable to unsuspend user {{user_name}}."
       },
+      :check_admin => "For Administrators Only"
     },
     :mailer => {
       :repository_clone => "{{login}} has cloned {{slug}}",

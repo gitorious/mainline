@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
@@ -16,10 +17,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class Admin::UsersController < ApplicationController
-  before_filter :login_required
-  before_filter :require_site_admin
 
+class Admin::UsersController < AdminController
   def index
     @users = paginate(:action => "index") do
       User.paginate(:all, :order => 'suspended_at, login', :page => params[:page])
@@ -34,9 +33,7 @@ class Admin::UsersController < ApplicationController
 
   def new
     @user = User.new
-    respond_to do |wants|
-      wants.html
-    end
+    respond_to { |wants| wants.html }
   end
 
   def create
@@ -59,16 +56,15 @@ class Admin::UsersController < ApplicationController
     end
   end
 
-
   def suspend
     @user = User.find_by_login!(params[:id])
     @user.suspended_at = Time.now
     if @user.save
-      flash[:notice] = I18n.t "admin.users_controller.suspend_notice", :user_name => @user.login
+      flash[:notice] = I18n.t("admin.users_controller.suspend_notice", :user_name => @user.login)
     else
-      flash[:error] = I18n.t "admin.users_controller.suspend_error", :user_name => @user.login
+      flash[:error] = I18n.t("admin.users_controller.suspend_error", :user_name => @user.login)
     end
-    redirect_to admin_users_url()
+    redirect_to admin_users_url
   end
 
   def unsuspend
@@ -83,7 +79,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def reset_password
-#    if params[:user] && user = User.find_by_email(params[:user][:email])
     if user = User.find_by_login(params[:id])
       # FIXME: should really be a two-step process: receive link, visiting it resets password
       generated_password = user.reset_password!
@@ -93,14 +88,5 @@ class Admin::UsersController < ApplicationController
       flash[:error] = I18n.t "users_controller.reset_password_error"
     end
     redirect_to admin_users_url()
-  end
-
-  private
-
-  def require_site_admin
-    unless site_admin?(current_user)
-      flash[:error] = I18n.t "admin.users_controller.check_admin"
-      redirect_to root_path
-    end
   end
 end
