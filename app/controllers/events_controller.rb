@@ -21,10 +21,9 @@
 #++
 
 class EventsController < ApplicationController
+  before_filter :find_event
+
   def commits
-    @event = Event.find(params[:id])
-    @repository = @event.target
-    @project = authorize_access_to(@repository.project)
     if @event.action == Action::PUSH
       render_old_style_push
     else
@@ -59,5 +58,11 @@ class EventsController < ApplicationController
       end
       expires_in 30.minutes
     end
+  end
+
+  def find_event
+    @event = authorize_access_to(Event.find(params[:id]))
+    @repository = @event.target
+    @project = @repository.project
   end
 end
