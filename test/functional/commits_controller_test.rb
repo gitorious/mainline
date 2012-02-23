@@ -350,10 +350,50 @@ class CommitsControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "With private projects" do
     setup do
       prepare_project_repo_and_commit
       enable_private_repositories
+    end
+
+    should "disallow unauthorized access to commits" do
+      get :index, index_params(:page => nil, :branch => ["master"])
+      assert_response 403
+    end
+
+    should "allow authorized access to commits" do
+      login_as :johan
+      get :index, index_params(:page => nil, :branch => ["master"])
+      assert_response 302
+    end
+
+    should "disallow unauthorized access to show commit" do
+      get :show, params
+      assert_response 403
+    end
+
+    should "allow authorized access to show commit" do
+      login_as :johan
+      get :show, params
+      assert_response 302
+    end
+
+    should "disallow unauthorized access to view feed" do
+      get :feed, params(:id => "master", :format => "atom")
+      assert_response 403
+    end
+
+    should "allow authorized access to view feed" do
+      login_as :johan
+      get :feed, params(:id => "master", :format => "atom")
+      assert_response 302
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      prepare_project_repo_and_commit
+      enable_private_repositories(@repository)
     end
 
     should "disallow unauthorized access to commits" do
