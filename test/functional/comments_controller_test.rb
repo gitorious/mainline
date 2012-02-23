@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class CommentsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
@@ -93,8 +93,8 @@ class CommentsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'preview' do
-    should 'render a preview of the comment' do
+  context "preview" do
+    should "render a preview of the comment" do
       login_as :johan
       post :preview, comment_params
       assert_response :success
@@ -284,29 +284,29 @@ class CommentsControllerTest < ActionController::TestCase
       end
     end
 
-    should 'transition the target if state is provided' do
+    should "transition the target if state is provided" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
-      assert_equal [nil, 'Resolved'], assigns(:comment).state_change
-      assert_equal 'Resolved', @merge_request.reload.status_tag.name
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "Yeah, right", :state => "Resolved"}
+      assert_equal [nil, "Resolved"], assigns(:comment).state_change
+      assert_equal "Resolved", @merge_request.reload.status_tag.name
     end
 
-    should 'not transition the target if an empty state if provided' do
+    should "not transition the target if an empty state if provided" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => ''}
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "Yeah, right", :state => ""}
       assert_nil @merge_request.reload.status_tag
     end
 
-    should 'not allow other users than the merge request owner to change the state' do
+    should "not allow other users than the merge request owner to change the state" do
       login_as :mike
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "Yeah, right", :state => "Resolved"}
       assert_response :redirect
       assert_nil @merge_request.reload.status_tag
     end
   end
 
-  context 'Changing a comment' do
+  context "Changing a comment" do
     setup {
       @user = users(:moe)
       @repo = repositories(:moes)
@@ -316,22 +316,22 @@ class CommentsControllerTest < ActionController::TestCase
     }
 
     context "GET to #edit" do
-      should 'let the owner edit his own comment' do
+      should "let the owner edit his own comment" do
         login_as @user.login
         @get_edit.call
         assert_response :success
         assert_equal @comment, assigns(:comment)
       end
 
-      should 'not let other users edit the comment' do
+      should "not let other users edit the comment" do
         login_as :mike
         @get_edit.call
         assert_response :unauthorized
       end
     end
 
-    context 'PUT to #update' do
-      should 'update the comment' do
+    context "PUT to #update" do
+      should "update the comment" do
         login_as @user.login
         new_body = "I take that back. This sucks"
         put :update, comment_params(:body => new_body).merge(:id => @comment.to_param)
