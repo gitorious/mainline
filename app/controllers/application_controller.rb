@@ -139,10 +139,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_access_to(thing)
-    if Project === thing && !can_read?(current_user, thing)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
-    end
-    if Repository === thing && !can_read?(current_user, thing)
+    if !can_read?(current_user, thing)
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
     thing

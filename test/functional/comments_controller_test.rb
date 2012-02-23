@@ -32,6 +32,7 @@ class CommentsControllerTest < ActionController::TestCase
     setup_ssl_from_config
     @project = projects(:johans)
     @repository = repositories(:johans)
+    @merge_request = @repository.merge_requests.first
   end
 
   context "#index" do
@@ -105,7 +106,6 @@ class CommentsControllerTest < ActionController::TestCase
   context "polymorphic creation" do
     setup do
       login_as :johan
-      assert @merge_request = @repository.merge_requests.first
     end
 
     should "find set the repository as the polymorphic parent by default" do
@@ -341,7 +341,7 @@ class CommentsControllerTest < ActionController::TestCase
     end
   end
 
-  context "with private repositories" do
+  context "with private projects" do
     setup do
       enable_private_repositories
       @comment = Comment.create(:project => @project,
@@ -421,7 +421,109 @@ class CommentsControllerTest < ActionController::TestCase
     end
   end
 
+  context "with private repositories" do
+    setup do
+      enable_private_repositories(@repository)
+      @comment = Comment.create(:project => @project,
+                                :user => users(:johan),
+                                :target => @repository,
+                                :body => "Looks like progress")
+    end
+
+    should "disallow unauthorized user to list comments" do
+      get :index, repo_params
+      assert_response 403
+    end
+
+    should "allow project owner to list comments" do
+      login_as :johan
+      get :index, repo_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to preview comment" do
+      get :preview, comment_params
+      assert_response 403
+    end
+
+    should "allow project owner to preview comment" do
+      login_as :johan
+      get :preview, comment_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to write new comment" do
+      login_as :mike
+      get :new, repo_params
+      assert_response 403
+    end
+
+    should "allow project owner to write new comment" do
+      login_as :johan
+      get :new, repo_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to create new comment" do
+      login_as :mike
+      post :create, comment_params
+      assert_response 403
+    end
+
+    should "allow project owner to create new comment" do
+      login_as :johan
+      post :create, comment_params
+      assert_response 302
+    end
+
+    should "disallow unauthorized user to edit comment" do
+      login_as :mike
+      get :edit, repo_params.merge(:id => @comment.to_param)
+      assert_response 403
+    end
+
+    should "allow project owner to edit comment" do
+      login_as :johan
+      get :edit, repo_params.merge(:id => @comment.to_param)
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to update comment" do
+      login_as :mike
+      put :update, comment_params(:body => "Ok").merge(:id => @comment.to_param)
+      assert_response 403
+    end
+
+    should "allow project owner to update comment" do
+      login_as :johan
+      put :update, comment_params(:body => "Ok").merge(:id => @comment.to_param)
+      assert_response 200
+    end
+
+    should "disallow if unauthorized to read target version" do
+      login_as :moe
+      @merge_request.source_repository.make_private
+      @merge_request.target_repository.add_member(users(:moe))
+      create_merge_request_version_comment(create_new_version)
+
+      assert_response 403
+    end
+
+    should "disallow if unauthorized to read target merge request" do
+      login_as :moe
+      @merge_request.source_repository.make_private
+      @merge_request.target_repository.add_member(users(:moe))
+      post :create, mr_params(:comment => {:body => "Yeah, right", :state => "Resolved"})
+      assert_response 403
+    end
+
+  end
+
   protected
+  def mr_params(data = {})
+    repo_params.merge(:merge_request_id => @merge_request.to_param).merge(data)
+  end
+
   def repo_params
     { :project_id => @project.to_param,
       :repository_id => @repository.to_param }

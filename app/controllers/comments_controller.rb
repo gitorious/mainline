@@ -154,6 +154,7 @@ class CommentsController < ApplicationController
     else
       @target = @repository
     end
+    authorize_access_to(@target)
   end
 
   def redirect_to_repository_or_target
@@ -181,7 +182,7 @@ class CommentsController < ApplicationController
   end
 
   def comment_should_be_editable
-    @comment = Comment.find(params[:id])
+    @comment = authorize_access_to(Comment.find(params[:id]))
     if !can_edit?(current_user, @comment)
       render :status => :unauthorized, :text => "Sorry mate"
     end

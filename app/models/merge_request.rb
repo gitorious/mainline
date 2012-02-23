@@ -1,10 +1,11 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -27,13 +28,13 @@ class MergeRequest < ActiveRecord::Base
   include Gitorious::Authorization
 
   belongs_to :user
-  belongs_to :source_repository, :class_name => 'Repository'
-  belongs_to :target_repository, :class_name => 'Repository'
+  belongs_to :source_repository, :class_name => "Repository"
+  belongs_to :target_repository, :class_name => "Repository"
   has_many   :events, :as => :target, :dependent => :destroy
   has_many :messages, :as => :notifiable
   has_many :comments, :as => :target, :dependent => :destroy
-  has_many :versions, :class_name => 'MergeRequestVersion',
-    :order => 'version', :dependent => :destroy
+  has_many :versions, :class_name => "MergeRequestVersion",
+    :order => "version", :dependent => :destroy
 
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
@@ -82,7 +83,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   named_scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :open, :conditions => ['status = ?', STATUS_OPEN]
+  named_scope :open, :conditions => ["status = ?", STATUS_OPEN]
   named_scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
   named_scope :by_status, lambda {|state|
     {:conditions => ["LOWER(status_tag) = ? AND status != ?",
@@ -202,10 +203,10 @@ class MergeRequest < ActiveRecord::Base
   # one-to-one relationship between states and events
   def possible_next_states_hash
     map = {
-        STATUS_OPEN => ['Open', 'open'],
-        STATUS_VERIFYING => ['Verifying', 'in_verification'],
-        STATUS_REJECTED => ['Rejected', 'reject'],
-        STATUS_MERGED => ['Merged', 'merge']
+        STATUS_OPEN => ["Open", "open"],
+        STATUS_VERIFYING => ["Verifying", "in_verification"],
+        STATUS_REJECTED => ["Rejected", "reject"],
+        STATUS_MERGED => ["Merged", "merge"]
         }
     result = {}
     possible_next_states.each do |s|
@@ -416,7 +417,7 @@ class MergeRequest < ActiveRecord::Base
       self.contribution_notice = callback_response.body
     end
 
-    contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
+    contribution_agreement_version = callback_response["X-Contribution-Agreement-Version"]
     update_attributes(:contribution_agreement_version => contribution_agreement_version)
   end
 
@@ -439,15 +440,15 @@ class MergeRequest < ActiveRecord::Base
   # Returns the parameters that are passed on to the contribution agreement site
   def oauth_signoff_parameters
     {
-      'commit_id' => ending_commit,
-      'user_email' => user.email,
-      'user_login'  => user.login,
-      'user_name' => URI.escape(user.title),
-      'commit_shas' => commits_to_be_merged.collect(&:id).join(","),
-      'proposal' => URI.escape(proposal),
-      'project_name' => source_repository.project.slug,
-      'repository_name' => source_repository.name,
-      'merge_request_id' => id
+      "commit_id" => ending_commit,
+      "user_email" => user.email,
+      "user_login"  => user.login,
+      "user_name" => URI.escape(user.title),
+      "commit_shas" => commits_to_be_merged.collect(&:id).join(","),
+      "proposal" => URI.escape(proposal),
+      "project_name" => source_repository.project.slug,
+      "repository_name" => source_repository.name,
+      "merge_request_id" => id
     }
   end
 

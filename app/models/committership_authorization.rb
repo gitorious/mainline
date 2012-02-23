@@ -46,8 +46,14 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
     true
   end
 
-  def can_read_merge_request?(user, merge_request)
-    can_read_project?(user, merge_request.project)
+  def can_read_merge_request?(user, mr)
+    can_read_project?(user, mr.project) &&
+      can_read_repository?(user, mr.target_repository) &&
+      can_read_repository?(user, mr.source_repository)
+  end
+
+  def can_read_merge_request_version?(user, version)
+    can_read_merge_request?(user, version.merge_request)
   end
 
   def can_read_user?(actor, user)
@@ -64,6 +70,11 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
 
   def can_read_message?(user, message)
     [message.sender, message.recipient].include?(user)
+  end
+
+  def can_read_comment?(user, comment)
+    (comment.project.nil? || can_read_project?(user, comment.project)) &&
+      (comment.target.nil? || can_read?(user, comment.target))
   end
 
   # TODO: Needs more polymorphism
