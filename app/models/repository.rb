@@ -32,6 +32,7 @@ class Repository < ActiveRecord::Base
   include Watchable
   include Gitorious::Search
   include Gitorious::Authorization
+  include Gitorious::Protectable
 
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1
@@ -47,6 +48,8 @@ class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
+  has_many    :repository_memberships, :as => :content
+  has_many    :content_memberships, :as => :content
   has_many    :committerships, :dependent => :destroy
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id",

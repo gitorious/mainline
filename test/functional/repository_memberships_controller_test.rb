@@ -18,7 +18,7 @@
 
 require File.dirname(__FILE__) + "/../test_helper"
 
-class ProjectMembershipsControllerTest < ActionController::TestCase
+class RepositoryMembershipsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :only => [:index]
   should_enforce_ssl_for(:delete, :destroy)
   should_enforce_ssl_for(:get, :index)
@@ -27,88 +27,89 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
 
   def setup
     setup_ssl_from_config
-    @project = projects(:johans)
+    @repository = repositories(:johans)
     @user = users(:johan)
   end
 
   context "With private repos" do
     setup do
       enable_private_repositories
+      GitoriousConfig["use_ssl"] = false
     end
 
     context "index" do
       should "reject unauthorized user from listing memberships" do
         login_as :mike
-        get :index, :project_id => @project.to_param
+        get :index, params
         assert_response 403
       end
 
       should "allow owner to manage access" do
         login_as :johan
-        get :index, :project_id => @project.to_param
+        get :index, params
         assert_response 200
       end
 
-      should "state that project is public" do
+      should "state that repository is public" do
         login_as :moe
-        get :index, :project_id => projects(:moes).to_param
+        @repository = repositories(:moes)
+        get :index, params
 
         assert_response 200
-        assert_match /Project is public/, @response.body
+        assert_match /Repository is open/, @response.body
         assert_match /Make private/, @response.body
       end
     end
 
     context "create" do
-      should "reject unauthorized user" do
-        login_as :mike
+      should "reject anonymous user" do
         login = @user.login
-        post :create, :project_id => @project.to_param, :user => { :login => login }
-        assert_response 403
+        post :create, params(:user => { :login => login })
+        assert_response 302
       end
 
       should "explicitly add owner as collaborator" do
         login = @user.login
         login_as :johan
 
-        assert_difference("@project.reload.content_memberships.count") do
-          post :create, :project_id => @project.to_param, :user => { :login => login }
+        assert_difference("@repository.reload.content_memberships.count") do
+          post :create, params(:user => { :login => login })
         end
       end
 
       should "default to adding owner if no parameters" do
         login_as :johan
 
-        assert_difference("@project.reload.content_memberships.count") do
-          post :create, :project_id => @project.to_param
+        assert_difference("@repository.reload.content_memberships.count") do
+          post :create, params
         end
 
-        assert_equal @user, @project.content_memberships.first.member
+        assert_equal @user, @repository.content_memberships.first.member
       end
 
       should "add group as collaborator" do
         team = groups(:a_team)
         login_as :johan
 
-        assert_difference("@project.reload.content_memberships.count") do
-          post :create, :project_id => @project.to_param, :group => { :name => team.name }
+        assert_difference("@repository.reload.content_memberships.count") do
+          post :create, params(:group => { :name => team.name })
         end
 
-        assert can_read?(team, @project)
+        assert can_read?(team, @repository)
       end
 
       should "redirect back to index" do
         login = @user.login
         login_as :johan
 
-        post :create, :project_id => @project.to_param, :user => { :login => login }
+        post :create, params(:user => { :login => login })
         assert_response :redirect
         assert_redirected_to :action => "index"
       end
 
       should "render index if user can not be found" do
         login_as :johan
-        post :create, :project_id => @project.to_param, :user => { :login => "login" }
+        post :create, params(:user => { :login => "login" })
 
         assert_response 200
         assert_template "index"
@@ -117,7 +118,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
 
       should "render index if group can not be found" do
         login_as :johan
-        post :create, :project_id => @project.to_param, :group => { :name => "login" }
+        post :create, params(:group => { :name => "login" })
 
         assert_response 200
         assert_template "index"
@@ -127,34 +128,34 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
 
     context "destroy" do
       setup do
-        @membership = @project.content_memberships.first
+        @membership = @repository.content_memberships.first
       end
 
       should "reject unauthorized user" do
         login_as :moe
-        delete :destroy, :project_id => @project.to_param, :id => @membership.id
+        delete :destroy, params(:id => @membership.id)
         assert_response 403
       end
 
       should "remove member" do
         login_as :johan
 
-        assert_difference("@project.reload.content_memberships.count", -1) do
-          delete :destroy, :project_id => @project.to_param, :id => @membership.id
+        assert_difference("@repository.reload.content_memberships.count", -1) do
+          delete :destroy, params(:id => @membership.id)
         end
       end
 
-      should "redirect back to project" do
+      should "redirect back to repository" do
         login_as :johan
-        delete :destroy, :project_id => @project.to_param, :id => @membership.id
+        delete :destroy, params(:id => @membership.id)
         assert_response :redirect
         assert_redirected_to :action => "index"
       end
 
-      should "remove all members to make project public" do
+      should "remove all members to make repository public" do
         login_as :johan
-        delete :destroy, :project_id => @project.to_param, :id => "all"
-        assert_equal 0, @project.content_memberships.count
+        delete :destroy, params(:id => "all")
+        assert_equal 0, @repository.content_memberships.count
       end
     end
   end
@@ -164,11 +165,17 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
       GitoriousConfig["enable_private_repositories"] = false
     end
 
-    should "redirect to index project" do
+    should "redirect to repository index" do
       login_as :moe
-      id = projects(:moes).to_param
-      get :index, :project_id => id
-      assert_redirected_to :controller => "projects", :action => "show", :id => id
+      @repository = repositories(:moes)
+      get :index, params
+      assert_redirected_to :controller => "repositories", :action => "show", :id => @repository.to_param
     end
+  end
+
+  protected
+  def params(data = {})
+    { :project_id => @repository.project.to_param,
+      :repository_id => @repository.to_param }.merge(data)
   end
 end

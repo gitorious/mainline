@@ -233,6 +233,20 @@ module Breadcrumb
     end
   end
 
+  class RepositoryMemberships
+    def initialize(repository)
+      @repository = repository
+    end
+
+    def breadcrumb_parent
+      @repository
+    end
+
+    def title
+      "Collaborators"
+    end
+  end
+
   class MergeRequests
     def initialize(repository)
       @repository = repository

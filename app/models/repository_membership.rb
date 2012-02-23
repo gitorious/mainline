@@ -16,36 +16,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class ProjectMembershipsController < ContentMembershipsController
-  include ProjectFilters
-  before_filter :find_project
-  before_filter :require_admin
+class RepositoryMembership < ActiveRecord::Base
+  self.table_name = "content_memberships"
+  belongs_to :member, :polymorphic => true
+  belongs_to :content, :polymorphic => true
 
-  protected
-  def require_private_repos
-    if !GitoriousConfig["enable_private_repositories"]
-      find_project if @project.nil?
-      redirect_to project_path(@project)
-    end
+  def repository=(repository)
+    content = repository
   end
 
-  def content
-    @project
-  end
-
-  def memberships_path(content)
-    project_project_memberships_path(content)
-  end
-
-  def membership_path(content, membership)
-    project_project_membership_path(content, membership)
-  end
-
-  def new_membership_path(content)
-    new_project_project_membership_path(content)
-  end
-
-  def content_path(content)
-    project_path(content)
+  def repository
+    content
   end
 end

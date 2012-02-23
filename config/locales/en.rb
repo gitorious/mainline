@@ -502,7 +502,19 @@
       },
       :project_memberships => {
         :collaborator => "Collaborator",
-        :back_to_project => "Back to project"
+        :back_to_project => "Back to project",
+        :is_public => "Project is public",
+        :is_public_description => "Anyone with access to {{site_name}} can access this project and its public repositories.",
+        :make_private => "Make private",
+        :make_public => "open project to the public."
+      },
+      :repository_memberships => {
+        :collaborator => "Repository member",
+        :back_to_repository => "Back to repository",
+        :is_public => "Repository is open",
+        :is_public_description => "Anyone with access to the {{project}} project can browse this repository.",
+        :make_private => "Make private",
+        :make_public => "open access to the repository. If the project is also private, this will only open access to project collaborators."
       },
       :merges => {
         :info => {

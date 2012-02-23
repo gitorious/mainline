@@ -25,15 +25,21 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   ability :can_grant_access
 
   def can_read_project?(user, project)
-    return true if !private_repos
-    return true if project.owner == user
-    return true if project.content_memberships.count == 0
-    project.content_memberships.any? { |m| is_member?(user, m.member) }
+    can_read_protected_content?(user, project)
   end
 
   def can_read_repository?(user, repository)
-    return true if repository.project.nil?
-    can_read_project?(user, repository.project)
+    if !repository.project.nil?
+      return false if !can_read_protected_content?(user, repository.project)
+    end
+    can_read_protected_content?(user, repository)
+  end
+
+  def can_read_protected_content?(actor, subject)
+    return true if !private_repos
+    return true if subject.owner == actor
+    return true if subject.content_memberships.count == 0
+    subject.content_memberships.any? { |m| is_member?(actor, m.member) }
   end
 
   def can_read_group?(user, group)
@@ -116,7 +122,8 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   ###
 
   def repository_admin?(candidate, repository)
-    candidate.is_a?(User) ? administrators(repository).include?(candidate) : false
+    return false if !candidate.is_a?(User)
+    candidate == repository.owner || administrators(repository).include?(candidate)
   end
 
   def project_admin?(candidate, project)

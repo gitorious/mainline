@@ -15,37 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-class ProjectMembershipsController < ContentMembershipsController
-  include ProjectFilters
-  before_filter :find_project
-  before_filter :require_admin
-
-  protected
-  def require_private_repos
-    if !GitoriousConfig["enable_private_repositories"]
-      find_project if @project.nil?
-      redirect_to project_path(@project)
-    end
-  end
-
-  def content
-    @project
-  end
-
-  def memberships_path(content)
-    project_project_memberships_path(content)
-  end
-
-  def membership_path(content, membership)
-    project_project_membership_path(content, membership)
-  end
-
-  def new_membership_path(content)
-    new_project_project_membership_path(content)
-  end
-
-  def content_path(content)
-    project_path(content)
+module ContentMembershipsHelper
+  def text(key, params = {})
+    t("views.#{@class_name}_memberships.#{key}", params)
   end
 end

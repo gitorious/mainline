@@ -54,6 +54,8 @@ ActionController::Routing::Routes.draw do |map|
           v.resources :comments, :collection => {:preview => :post}
         end
       end
+
+      repo.resources :repository_memberships, :as => :memberships
       repo.resources :committerships
 
       repo.formatted_commits_feed("commits/*branch/feed.:format",

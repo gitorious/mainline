@@ -264,6 +264,10 @@ class ActionController::TestCase
 
   def enable_private_repositories
     GitoriousConfig["enable_private_repositories"] = true
-    @project.make_private
+    if defined?(@project)
+      @project.make_private
+    else
+      @repository.make_private
+    end
   end
 end

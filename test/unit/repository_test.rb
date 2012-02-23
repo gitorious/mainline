@@ -1184,4 +1184,84 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
+  context "Database authorization" do
+    context "with private repositories enabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+        @repository = repositories(:johans)
+      end
+
+      should "allow anonymous user to view public repository" do
+        repository = Repository.new(:name => "My repository")
+        assert can_read?(nil, repository)
+      end
+
+      should "allow owner to view private repository" do
+        @repository.owner = users(:johan)
+        @repository.add_member(users(:johan))
+        assert can_read?(users(:johan), @repository)
+      end
+
+      should "disallow anonymous user to view private repository" do
+        @repository.add_member(users(:johan))
+        assert !can_read?(nil, @repository)
+      end
+
+      should "disallow repository member if not also project member" do
+        @repository.add_member(users(:mike))
+        @repository.project.make_private
+
+        assert !can_read?(nil, @repository)
+      end
+
+      should "allow member to view private repository" do
+        @repository.owner = users(:johan)
+        @repository.add_member(users(:mike))
+        assert can_read?(users(:mike), @repository)
+      end
+
+      should "allow member to view private repository via group membership" do
+        @repository.owner = users(:johan)
+        @repository.add_member(groups(:team_thunderbird))
+        assert can_read?(users(:mike), @repository)
+      end
+    end
+
+    context "with private repositories disabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+        @repository = repositories(:johans)
+      end
+
+      should "allow anonymous user to view 'private' repository" do
+        @repository.add_member(users(:johan))
+        assert can_read?(nil, @repository)
+      end
+    end
+
+    context "making repositories private" do
+      setup do
+        @user = users(:johan)
+        @repository = repositories(:johans)
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+
+      should "add owner as member" do
+        @repository.make_private
+        assert !can_read?(users(:mike), @repository)
+      end
+    end
+  end
+
+  context "repository memberships" do
+    should "silently ignore duplicates" do
+      repository = repositories(:johans)
+      repository.add_member(users(:mike))
+      repository.add_member(users(:mike))
+
+      assert repository.member?(users(:mike))
+      assert is_member?(users(:mike), repository)
+      assert_equal 1, repository.content_memberships.count
+    end
+  end
 end

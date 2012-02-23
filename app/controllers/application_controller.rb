@@ -142,7 +142,7 @@ class ApplicationController < ActionController::Base
     if Project === thing && !can_read?(current_user, thing)
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
-    if Repository === thing && !can_read?(current_user, thing.project)
+    if Repository === thing && !can_read?(current_user, thing)
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
     thing
@@ -156,7 +156,8 @@ class ApplicationController < ActionController::Base
     @project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
     # We want to look in all repositories that's somehow within this project
     # realm, not just @project.repositories
-    @repository = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)
+    r = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)
+    @repository = authorize_access_to(r)
   end
 
   def check_repository_for_commits
