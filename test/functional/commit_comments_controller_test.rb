@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class CommitCommentsControllerTest < ActionController::TestCase
   def setup
@@ -63,9 +63,28 @@ class CommitCommentsControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "With private projects" do
     setup do
       enable_private_repositories
+    end
+
+    should "disallow unauthorized user from listing comments" do
+      comment = create_comment
+      get(:index, params)
+      assert_response 403
+    end
+
+    should "allow authorized user to list comments" do
+      login_as :johan
+      comment = create_comment
+      get(:index, params)
+      assert_response 302
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@repository)
     end
 
     should "disallow unauthorized user from listing comments" do
