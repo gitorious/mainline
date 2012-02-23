@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -30,10 +31,15 @@ class GroupsController < ApplicationController
   def show
     @group = Group.find_by_name!(params[:id],
               :include => [:members, :projects, :repositories, :committerships])
+    @mainlines = filter(@group.repositories.mainlines)
+    @clones = filter(@group.repositories.clones)
+    @projects = filter(@group.projects)
     @memberships = @group.memberships.find(:all, :include => [:user, :role])
 
     @events = paginate(:action => "show", :id => params[:id]) do
-      @group.events(params[:page])
+      filter_paginated(params[:page], 30) do |page|
+        @group.events(page)
+      end
     end
   end
 
@@ -89,18 +95,19 @@ class GroupsController < ApplicationController
     redirect_to group_path(@group)
   end
 
-  def auto_complete_for_project_slug
-    @projects = Project.find(:all,
-      :conditions => ['LOWER(slug) LIKE ?', "%#{params[:project][:slug].downcase}%"],
-      :limit => 10)
-    render :layout => false
-  end
+  # TODO: Remove? Don't thing it's used
+  # def auto_complete_for_project_slug
+  #   @projects = filter(Project.find(:all,
+  #     :conditions => ['LOWER(slug) LIKE ?', "%#{params[:project][:slug].downcase}%"],
+  #     :limit => 10))
+  #   render :layout => false
+  # end
 
   protected
-    def find_group_and_ensure_group_adminship
-      @group = Group.find_by_name!(params[:id])
-      unless admin?(current_user, @group)
-        access_denied and return
-      end
+  def find_group_and_ensure_group_adminship
+    @group = Group.find_by_name!(params[:id])
+    unless admin?(current_user, @group)
+      access_denied and return
     end
+  end
 end
