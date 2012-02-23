@@ -577,7 +577,7 @@ class ProjectTest < ActiveSupport::TestCase
         GitoriousConfig["enable_private_repositories"] = false
       end
 
-      should "anonymous user to view 'private' project" do
+      should "allow anonymous user to view 'private' project" do
         projects(:johans).add_member(users(:johan))
         assert can_read?(nil, projects(:johans))
       end
