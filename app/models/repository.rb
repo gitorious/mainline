@@ -1,13 +1,14 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
 #   Copyright (C) 2008 David Aguilar <davvid@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -51,10 +52,10 @@ class Repository < ActiveRecord::Base
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id",
     :dependent => :nullify
   has_many    :comments, :as => :target, :dependent => :destroy
-  has_many    :merge_requests, :foreign_key => 'target_repository_id',
+  has_many    :merge_requests, :foreign_key => "target_repository_id",
     :order => "status, id desc", :dependent => :destroy
-  has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id',
-                :class_name => 'MergeRequest', :order => "id desc", :dependent => :destroy
+  has_many    :proposed_merge_requests, :foreign_key => "source_repository_id",
+                :class_name => "MergeRequest", :order => "id desc", :dependent => :destroy
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   has_many :hooks, :dependent => :destroy
@@ -180,7 +181,7 @@ class Repository < ActiveRecord::Base
         project.repositories.clones.map{|r| r.id }
       end.flatten
       find(:all, :limit => limit,
-        :select => 'distinct repositories.*, count(events.id) as event_count',
+        :select => "distinct repositories.*, count(events.id) as event_count",
         :order => "event_count desc", :group => "repositories.id",
         :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
                         clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
@@ -192,7 +193,7 @@ class Repository < ActiveRecord::Base
   def self.most_active_clones(limit = 10)
     Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
       find(:all, :limit => limit,
-        :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
+        :select => "distinct repositories.id, repositories.*, count(events.id) as event_count",
         :order => "event_count desc", :group => "repositories.id",
         :conditions => ["events.created_at > ? and kind in (?)",
                         7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
@@ -380,7 +381,7 @@ class Repository < ActiveRecord::Base
     payload = {
       :target_class => self.class.name,
       :target_id => self.id,
-      :command => parent ? 'clone_git_repository' : 'create_git_repository',
+      :command => parent ? "clone_git_repository" : "create_git_repository",
       :arguments => parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
     }
 
@@ -390,7 +391,7 @@ class Repository < ActiveRecord::Base
   def post_repo_deletion_message
     payload = {
       :target_class => self.class.name,
-      :command => 'delete_git_repository',
+      :command => "delete_git_repository",
       :arguments => [real_gitdir]
     }
 
@@ -493,7 +494,7 @@ class Repository < ActiveRecord::Base
     users_by_email
   end
 
-  def cloned_from(ip, country_code = "--", country_name = nil, protocol = 'git')
+  def cloned_from(ip, country_code = "--", country_name = nil, protocol = "git")
     cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name, :protocol => protocol)
   end
 
