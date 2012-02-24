@@ -47,12 +47,14 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   end
 
   def can_read_merge_request?(user, mr)
-    can_read_project?(user, mr.project) &&
-      can_read_repository?(user, mr.target_repository) &&
-      can_read_repository?(user, mr.source_repository)
+    return true if !private_repos
+    (mr.project.nil? || can_read_project?(user, mr.project)) &&
+      (mr.target_repository.nil? || can_read_repository?(user, mr.target_repository)) &&
+      (mr.source_repository.nil? || can_read_repository?(user, mr.source_repository))
   end
 
   def can_read_merge_request_version?(user, version)
+    return true if !private_repos
     can_read_merge_request?(user, version.merge_request)
   end
 
@@ -61,10 +63,12 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   end
 
   def can_read_event?(user, event)
+    return true if !private_repos
     can_read_project?(user, event.project) && can_read?(user, event.target)
   end
 
   def can_read_favorite?(user, favorite)
+    return true if !private_repos
     can_read_project?(user, favorite.project) && can_read?(user, favorite.watchable)
   end
 
@@ -73,6 +77,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   end
 
   def can_read_comment?(user, comment)
+    return true if !private_repos
     (comment.project.nil? || can_read_project?(user, comment.project)) &&
       (comment.target.nil? || can_read?(user, comment.target))
   end
@@ -176,6 +181,7 @@ class CommittershipAuthorization < Gitorious::Authorization::TypedAuthorization
   end
 
   def filter_authorized(actor, collection)
+    return collection if !private_repos
     return [] if collection.blank?
     collection.select { |item| can_read?(actor, item) }
   end

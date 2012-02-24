@@ -39,19 +39,11 @@ class MergeRequestsController < ApplicationController
 
   def index
     @root = Breadcrumb::MergeRequests.new(@repository)
-    @open_merge_requests = paginate(page_free_redirect_options) do
-      @repository.merge_requests.from_filter(params[:status]) \
-        .paginate(:all, {
-                    :page => params[:page],
-                    :per_page => params[:per_page] || 50,
-                    :order => "created_at desc"
-                  })
-    end
-
+    @open_merge_requests = paginated_mrs(params[:page], params[:per_page] || 50)
     return if @open_merge_requests.count == 0 && params.key?(:page)
 
     @status_tags = @repository.merge_request_status_tags
-    @comment_count = @repository.comments.count
+    @comment_count = filter(@repository.comments).count
     @atom_auto_discovery_url = url_for(:overwrite_params => { :format => "atom" })
 
     respond_to do |wants|
@@ -69,8 +61,9 @@ class MergeRequestsController < ApplicationController
   end
 
   def commit_status
-    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
-                                                     :include => :target_repository)
+    @merge_request = authorize_access_to(
+      @repository.merge_requests.public.find_by_sequence_number!(params[:id],
+                                                                 :include => :target_repository))
     result = @merge_request.commit_merged?(params[:commit_id]) ? "true" : "false"
     render :text => result, :layout => false
   end
@@ -78,13 +71,14 @@ class MergeRequestsController < ApplicationController
   def target_branches
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    @target_branches = @merge_request.target_branches_for_selection
+    @target_branches = filter(@merge_request.target_branches_for_selection)
     render :partial => "target_branches", :layout => false
   end
 
   def show
-    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
-                      :include => [:source_repository, :target_repository])
+    @merge_request = authorize_access_to(
+      @repository.merge_requests.public.find_by_sequence_number!(params[:id],
+                                                                 :include => [:source_repository, :target_repository]))
 
     @version = @merge_request.current_version_number
     begin
@@ -111,8 +105,9 @@ class MergeRequestsController < ApplicationController
   end
 
   def version
-    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
-                      :include => [:source_repository, :target_repository])
+    @merge_request = authorize_access_to(
+      @repository.merge_requests.public.find_by_sequence_number!(params[:id],
+                                                                 :include => [:source_repository, :target_repository]))
     render :partial => "version", :layout => false, :locals => {
       :version => @merge_request.version_number(params[:version].to_i)
     }
@@ -121,8 +116,8 @@ class MergeRequestsController < ApplicationController
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
-    @repositories = @owner.repositories.find(:all,
-      :conditions => ["id != ? AND kind != ? AND merge_requests_enabled = ?", @repository.id, Repository::KIND_TRACKING_REPO, true])
+    @repositories = filter(@owner.repositories.find(:all,
+      :conditions => ["id != ? AND kind != ? AND merge_requests_enabled = ?", @repository.id, Repository::KIND_TRACKING_REPO, true]))
     if first = @repository.parent || @repositories.first
       @merge_request.target_repository_id = first.id
     end
@@ -136,7 +131,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def terms_accepted
-    @merge_request = @repository.merge_requests.find_by_sequence_number!(params[:id])
+    @merge_request = authorize_access_to(@repository.merge_requests.find_by_sequence_number!(params[:id]))
     if @merge_request.terms_accepted
       @merge_request.add_creation_event(@owner, current_user)
       if @merge_request.has_contribution_notice?
@@ -152,7 +147,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def create
-    @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
+    @merge_request = authorize_access_to(@repository.proposed_merge_requests.new(params[:merge_request]))
     @merge_request.user = current_user
     if @merge_request.save
       merge_request_created
@@ -170,7 +165,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def edit
-    @repositories = @owner.repositories.find(:all, :conditions => ["id != ?", @repository.id])
+    @repositories = filter(@owner.repositories.find(:all, :conditions => ["id != ?", @repository.id]))
     get_branches_and_commits_for_selection
   end
 
@@ -181,8 +176,8 @@ class MergeRequestsController < ApplicationController
       flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@owner, @repository, @merge_request]
     else
-      @repositories = @owner.repositories.find(:all,
-        :conditions => ["id != ?", @repository.id])
+      @repositories = filter(@owner.repositories.find(:all,
+        :conditions => ["id != ?", @repository.id]))
       get_branches_and_commits_for_selection
       render :action => "edit"
     end
@@ -196,7 +191,7 @@ class MergeRequestsController < ApplicationController
 
   def direct_access
     # One of the very rare occasions we find by id
-    merge_request = MergeRequest.find(params[:id])
+    merge_request = authorize_access_to(MergeRequest.find(params[:id]))
     project = merge_request.target_repository.project
     repository = merge_request.target_repository
     redirect_to [project, repository, merge_request]
@@ -204,8 +199,9 @@ class MergeRequestsController < ApplicationController
 
   protected
   def find_repository
-    @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
-                                                               @containing_project)
+    @repository = authorize_access_to(
+      @owner.repositories.find_by_name_in_project!(params[:repository_id],
+                                                   @containing_project))
     @project = authorize_access_to(@repository.project)
   end
 
@@ -239,7 +235,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def find_merge_request
-    @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id])
+    @merge_request = authorize_access_to(@repository.merge_requests.public.find_by_sequence_number!(params[:id]))
   end
 
   def obtain_oauth_request_token
@@ -280,5 +276,18 @@ class MergeRequestsController < ApplicationController
     @source_branches = @repository.git.branches
     @target_branches = @merge_request.target_branches_for_selection
     @commits = @merge_request.commits_for_selection
+  end
+
+  def paginated_mrs(page, per_page)
+    paginate(page_free_redirect_options) do
+      filter_paginated(page, per_page) do |page|
+        @repository.merge_requests.from_filter(params[:status]) \
+          .paginate(:all, {
+                      :page => page,
+                      :per_page => per_page,
+                      :order => "created_at desc"
+                    })
+      end
+    end
   end
 end

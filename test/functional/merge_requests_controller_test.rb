@@ -20,7 +20,6 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 class MergeRequestsControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context
 
   def setup
@@ -607,7 +606,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "With private projects" do
     setup do
       enable_private_repositories
       stub_commits(@merge_request)
@@ -750,7 +749,155 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "disallow unauthenticated users direct access" do
       get :direct_access, :id => @merge_request.id
+      assert_response 403
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@target_repository)
+      @project.content_memberships.delete_all
+      stub_commits(@merge_request)
+      MergeRequest.stubs(:find).returns(@merge_request)
+    end
+
+    should "disallow unauthenticated users from listing merge requests" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authenticated users to list merge requests" do
+      MergeRequest.unstub(:find)
+      login_as :johan
+      get :index, params
+      assert_response :success
+    end
+
+    should "disallow unauthenticated users from listing commits" do
+      login_as :mike
+      post :commit_list, params(:merge_request => {})
+      assert_response 403
+    end
+
+    should "allow authenticated users to list commits" do
+      login_as :johan
+      post :commit_list, params(:merge_request => {})
+      assert_response 200
+    end
+
+    should "disallow unauthenticated users from viewing commit status" do
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
+
+      do_commit_status_get(:commit_id => "ff0")
+      assert_response 403
+    end
+
+    should "allow authenticated users to view commit status" do
+      login_as :johan
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
+
+      do_commit_status_get(:commit_id => "ff0")
+      assert_response :success
+    end
+
+    context "GET #target_branches" do
+      setup do
+        grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+        MergeRequest.any_instance.stubs(:target_branches_for_selection).returns(grit.branches)
+        @params = mr_params(:merge_request => { :target_repository_id => repositories(:johans).id })
+      end
+
+      should "disallow unauthenticated users" do
+        login_as :mike
+        post :target_branches, @params
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        post :target_branches, @params
+        assert_response 200
+      end
+    end
+
+    context "#show (GET)" do
+      should "disallow unauthenticated users" do
+        get :show, mr_params
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :show, mr_params
+        assert_response 200
+      end
+    end
+
+    context "GET #version" do
+      should "disallow unauthenticated users" do
+        get :version, mr_params(:version => @merge_request.versions.first.version)
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :version, mr_params(:version => @merge_request.versions.first.version)
+        assert_response 200
+      end
+    end
+
+    should "disallows unauthenticated user from opening new MR" do
+      login_as :mike
+      get :new, params
+      assert_response 403
+    end
+
+    should "allows authenticated user to open new MR" do
+      login_as :johan
+      get :new, params
+      assert_response :success
+    end
+
+    should "disallow unauthenticated user from accepting terms" do
+      login_as :mike
+      get :terms_accepted, mr_params
+      assert_response 403
+    end
+
+    should "allow authenticated user to accept terms" do
+      login_as :johan
+      @merge_request.stubs(:valid_oauth_credentials?).returns(true)
+      @merge_request.expects(:terms_accepted)
+
+      get :terms_accepted, mr_params
       assert_response :redirect
+    end
+
+    should "disallow unauthenticated user from creating MR" do
+      login_as :mike
+      post :create, params(:merge_request => {
+        :target_repository_id => @source_repository.id,
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+        :summary => "some changes"
+      })
+
+      assert_response 403
+    end
+
+    should "allow authenticated user to create MR" do
+      login_as :johan
+      post :create, params(:merge_request => {
+        :target_repository_id => @source_repository.id,
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+        :summary => "some changes"
+      })
+
+      assert_response 302
+    end
+
+    should "disallow unauthenticated users direct access" do
+      get :direct_access, :id => @merge_request.id
+      assert_response 403
     end
   end
 
