@@ -22,7 +22,7 @@ class MergeRequestVersionsController < ApplicationController
   renders_in_site_specific_context
 
   def show
-    @version = MergeRequestVersion.find(params[:id])
+    @version = authorize_access_to(MergeRequestVersion.find(params[:id]))
     @merge_request = @version.merge_request
 
     begin
@@ -35,7 +35,7 @@ class MergeRequestVersionsController < ApplicationController
     end
 
     @repository = @version.merge_request.target_repository
-    @project = authorize_access_to(@repository.project)
+    @project = @repository.project
 
     if params[:commit_shas] && !commit_range?(params[:commit_shas])
       @commit = @repository.git.commit(params[:commit_shas])

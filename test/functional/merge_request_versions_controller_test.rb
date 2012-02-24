@@ -69,10 +69,28 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       should_assign_to :project
     end
 
-    context "With private repositories" do
+    context "With private projects" do
       setup do
         @project = @merge_request.project
         enable_private_repositories
+        @version.stubs(:diffs).with("ffcab".."bacff").returns([])
+      end
+
+      should "disallow unauthenticated users" do
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        assert_response 302
+      end
+    end
+
+    context "With private repositories" do
+      setup do
+        enable_private_repositories(@merge_request.target_repository)
         @version.stubs(:diffs).with("ffcab".."bacff").returns([])
       end
 

@@ -253,6 +253,21 @@ ActiveRecord::Schema.define(:version => 20120223093906) do
   add_index "messages", ["recipient_id"], :name => "index_messages_on_recipient_id"
   add_index "messages", ["sender_id"], :name => "index_messages_on_sender_id"
 
+  create_table "open_id_authentication_associations", :force => true do |t|
+    t.integer "issued"
+    t.integer "lifetime"
+    t.string  "handle"
+    t.string  "assoc_type"
+    t.binary  "server_url"
+    t.binary  "secret"
+  end
+
+  create_table "open_id_authentication_nonces", :force => true do |t|
+    t.integer "timestamp",  :null => false
+    t.string  "server_url"
+    t.string  "salt",       :null => false
+  end
+
   create_table "projects", :force => true do |t|
     t.string   "title"
     t.text     "description"
@@ -375,13 +390,13 @@ ActiveRecord::Schema.define(:version => 20120223093906) do
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
-    t.string   "crypted_password",               :limit => 40
-    t.string   "salt",                           :limit => 40
+    t.string   "crypted_password",               :limit => 40, :default => "",    :null => false
+    t.string   "salt",                           :limit => 40, :default => "",    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
     t.datetime "remember_token_expires_at"
-    t.string   "activation_code",                :limit => 40
+    t.string   "activation_code"
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
     t.string   "fullname"
