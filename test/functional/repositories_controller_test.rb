@@ -1249,7 +1249,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "With private projects" do
     setup do
       enable_private_repositories
       GitoriousConfig["use_ssl"] = false
@@ -1365,6 +1365,185 @@ class RepositoriesControllerTest < ActionController::TestCase
       get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
         :filter => "projectrepos", :format => "json"
       assert_response 403
+    end
+
+    should "allow authorized users to search clones" do
+      login_as :johan
+      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
+        :filter => "projectrepos", :format => "json"
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to update repository" do
+      login_as :mike
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized user to update repository" do
+      login_as :johan
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "not disallow writable_by? action" do
+      do_writable_by_get :username => "mike"
+      assert_response :success
+      assert_equal "false", @response.body
+    end
+
+    should "allow owner to write to repo" do
+      do_writable_by_get :username => "johan"
+      assert_response :success
+      assert_equal "true", @response.body
+    end
+
+    should "disallow unauthorized user to access repository configuration" do
+      do_config_get(:username => "mike")
+      assert_response 403
+    end
+
+    should "disallow anonymous user to access repository configuration" do
+      do_config_get
+      assert_response 403
+    end
+
+    should "allow authorized user to access repository configuration" do
+      do_config_get(:username => "johan")
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to confirm deletion" do
+      login_as :mike
+      get :confirm_delete, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized user to confirm deletion" do
+      login_as :johan
+      get :confirm_delete, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to destroy repository" do
+      login_as :mike
+      do_delete @repository
+      assert_response 403
+    end
+
+    should "allow authorized user to destroy repository" do
+      login_as :johan
+      do_delete @repository
+      assert_response 302
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@repo)
+      GitoriousConfig["use_ssl"] = false
+      @group = groups(:team_thunderbird)
+      @repository = @project.repositories.first
+    end
+
+    should "exclude private repositories in project" do
+      get :index, :project_id => @project.to_param
+      assert_equal 1, assigns(:repositories).length
+    end
+
+    should "exclude filtered private repositories in project" do
+      get :index, :project_id => @project.to_param, :filter => "o", :format => "json"
+      assert_equal 1, assigns(:repositories).length
+    end
+
+    should "exclude private repositories in group" do
+      Repository.all.each { |r| r.make_private }
+      get :index, :group_id => @group.to_param, :project_id => @project.to_param
+      assert_equal 0, assigns(:repositories).length
+    end
+
+    should "exclude private repositories in user" do
+      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
+      assert_equal 1, assigns(:repositories).length
+    end
+
+    should "include authorized private repositories in project" do
+      login_as :johan
+      get :index, :project_id => @project.to_param
+      assert_equal 2, assigns(:repositories).length
+    end
+
+    should "include authorized private repositories in group" do
+      login_as :johan
+      get :index, :group_id => @group.to_param, :project_id => @project.to_param
+      assert_equal 1, assigns(:repositories).length
+    end
+
+    should "include authorized private repositories in user" do
+      login_as :johan
+      get :index, :user_id => users(:johan).to_param, :project_id => @project.to_param
+      assert_equal 2, assigns(:repositories).length
+    end
+
+    should "disallow unauthorized users to show repository" do
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized users to get show repository" do
+      login_as :johan
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthenticated users to clone repo" do
+      login_as :mike
+      do_clone_get
+      assert_response 403
+    end
+
+    should "allow authenticated users to clone repo" do
+      login_as :johan
+      do_clone_get
+      assert_response 302
+    end
+
+    should "disallow unauthorized users to create clones" do
+      login_as :mike
+      do_create_clone_post(:name => "foo-clone")
+      assert_response 403
+    end
+
+    should "allow authorized users to create clones" do
+      login_as :johan
+      do_create_clone_post(:name => "foo-clone")
+      assert_response 302
+    end
+
+    should "disallow unauthorized user to edit repository" do
+      login_as :mike
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 403
+    end
+
+    should "allow authorized user to edit repository" do
+      login_as :johan
+      get :edit, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
+    should "disallow unauthorized users to search clones" do
+      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
+        :filter => "projectrepos", :format => "json"
+      assert_response 403
+    end
+
+    should "exclude private repositories when searching clones" do
+      @repository.make_public
+      @repository.clones.each(&:make_private)
+      get :search_clones, :project_id => @project.to_param, :id => @repository.to_param,
+        :filter => "projectrepos", :format => "json"
+      assert_equal 0, assigns(:repositories).length
     end
 
     should "allow authorized users to search clones" do

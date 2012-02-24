@@ -22,6 +22,10 @@ module Gitorious
       add_member(owner)
     end
 
+    def make_public
+      content_memberships.delete_all
+    end
+
     def add_member(member)
       return if content_memberships.count(:all, :conditions => ["member_id = ? and member_type = ?",
                                                                 member.id, member.class.to_s]) > 0

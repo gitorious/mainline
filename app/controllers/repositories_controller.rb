@@ -36,10 +36,12 @@ class RepositoriesController < ApplicationController
 
   def index
     if term = params[:filter]
-      @repositories = @project.search_repositories(term)
+      @repositories = filter(@project.search_repositories(term))
     else
       @repositories = paginate(page_free_redirect_options) do
-        @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
+        filter_paginated(params[:page], Repository.per_page) do |page|
+          @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => page)
+        end
       end
     end
 
@@ -53,16 +55,17 @@ class RepositoriesController < ApplicationController
   end
 
   def show
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    @root = @repository
+    @root = @repository = repository_to_clone
     @events = paginate(page_free_redirect_options) do
-      @repository.events.top.paginate(:all, :page => params[:page], :order => "created_at desc")
+      filter_paginated(params[:page], Event.per_page) do |page|
+        @repository.events.top.paginate(:all, :page => page, :order => "created_at desc")
+      end
     end
 
     return if @events.count == 0 && params.key?(:page)
     @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
                                   @repository.project, @repository, :format => :atom)
-    response.headers['Refresh'] = "5" unless @repository.ready
+    response.headers["Refresh"] = "5" unless @repository.ready
 
     respond_to do |format|
       format.html
@@ -100,7 +103,7 @@ class RepositoriesController < ApplicationController
   undef_method :clone
 
   def clone
-    @repository_to_clone = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository_to_clone = repository_to_clone
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_clone_error"
@@ -111,7 +114,7 @@ class RepositoriesController < ApplicationController
   end
 
   def create_clone
-    @repository_to_clone = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository_to_clone = repository_to_clone
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       respond_to do |format|
@@ -160,8 +163,8 @@ class RepositoriesController < ApplicationController
   end
 
   def search_clones
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    @repositories = @repository.search_clones(params[:filter])
+    @repository = repository_to_clone
+    @repositories = filter(@repository.search_clones(params[:filter]))
     render :json => to_json(@repositories)
   end
 
@@ -224,7 +227,7 @@ class RepositoriesController < ApplicationController
   end
 
   def confirm_delete
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository = repository_to_clone
     unless can_delete?(current_user, @repository)
       flash[:error] = I18n.t "repositories_controller.adminship_error"
       redirect_to(@owner) and return
@@ -232,7 +235,7 @@ class RepositoriesController < ApplicationController
   end
 
   def destroy
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository = repository_to_clone
     if can_delete?(current_user, @repository)
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
@@ -256,7 +259,7 @@ class RepositoriesController < ApplicationController
   def find_and_require_repository_adminship
     @repository = @owner.repositories.find_by_name_in_project!(params[:id],
                                                                @containing_project)
-    unless admin?(current_user, @repository)
+    unless admin?(current_user, authorize_access_to(@repository))
       respond_denied_and_redirect_to(repo_owner_path(@repository,
                                                      :project_repository_path, @owner, @repository))
       return
@@ -328,5 +331,10 @@ class RepositoriesController < ApplicationController
     if !can_read?(User.find_by_login(params[:username]), repository)
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
+  end
+
+  def repository_to_clone
+    repo = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    authorize_access_to(repo)
   end
 end
