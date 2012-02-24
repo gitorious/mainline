@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -25,30 +26,41 @@
 </h1>
 
 <table class="listing">
-        <thead>
-                <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
-                <th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
-                <th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
+  <thead>
+    <th><%= t(:created_at, :scope => "activerecord.attributes.committerships").humanize %></th>
+    <th><%= t(:committer_type, :scope => "activerecord.attributes.committerships").humanize %></th>
+    <th><%= t(:committer, :scope => "activerecord.attributes.committerships").humanize %></th>
     <th><%= t(:permissions, :scope => "activerecord.attributes.committerships").humanize %></th>
-                <th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
-                <th></th>
-        </thead>
-        <% @committerships.each do |committership| -%>
-        <tr class="<%= cycle('even', 'odd') -%>">
-          <td><%= committership.created_at.to_s(:short) -%></td>
-          <td><%= committership.committer.class.human_name -%></td>
-          <td><%= link_to h(committership.committer.title), committership.committer -%></td>
-    <td><%=h committership.permission_list.join(', ') -%></td>
-          <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
-          <td class="committer-buttons">
-      <%= button_to(t("views.common.edit"),
-            [:edit, @owner, @repository, committership], :method => :get) -%>
-      <%= button_to(t("views.common.remove"),
-            [@owner, @repository, committership], :method => :delete) -%>
-    </td>
-        </tr>
-        <% end -%>
+    <th><%= t(:creator, :scope => "activerecord.attributes.committerships").humanize %></th>
+    <th></th>
+  </thead>
+  <% @committerships.each do |committership| -%>
+    <tr class="<%= cycle('even', 'odd') -%>">
+      <td><%= committership.created_at.to_s(:short) -%></td>
+      <td><%= committership.committer.class.human_name -%></td>
+      <td><%= link_to h(committership.committer.title), committership.committer -%></td>
+      <td><%=h committership.permission_list.join(', ') -%></td>
+      <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
+      <td class="committer-buttons">
+        <%= button_to(t("views.common.edit"),
+                      [:edit, @owner, @repository, committership], :method => :get) -%>
+        <%= button_to(t("views.common.remove"),
+                      [@owner, @repository, committership], :method => :delete) -%>
+      </td>
+    </tr>
+  <% end -%>
 </table>
+
+<% if @repository.public? %>
+  <h2>Repository is open</h2>
+  <p>
+    Anyone with access to <%= @repository.project.title %> can browse and clone
+    this repository.
+  </p>
+<% else %>
+  <h2>Repository is private</h2>
+<% end %>
+<p><%= link_to "Manage repository read access", project_repository_repository_memberships_path(@repository.project, @repository) %></p>
 
 <%= will_paginate @committerships -%>
 
@@ -58,7 +70,7 @@
   <ul class="links actions navigation">
     <li>
       <%= link_to t("views.collaborators.add_new"),
-            [:new, @owner, @containing_project, @repository, :committership] -%>
+          [:new, @owner, @containing_project, @repository, :committership] -%>
     </li>
   </ul>
 

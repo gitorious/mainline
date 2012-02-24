@@ -32,6 +32,14 @@ module Gitorious
       content_memberships.create!(:member => member)
     end
 
+    def public?
+      content_memberships.length == 0
+    end
+
+    def private?
+      !public?
+    end
+
     def member?(candidate)
       candidate == owner ||
         (owner.respond_to?(:member?) && owner.member?(candidate)) ||
