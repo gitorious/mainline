@@ -59,8 +59,8 @@ class SiteController < ApplicationController
     all_projects = current_site.projects.find(:all, :order => "created_at asc")
     @projects = filter_authorized(current_user, all_projects)
     @teams = Group.all_participating_in_projects(@projects)
-    @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
-    @latest_events = Event.latest_in_projects(25, @projects.map{|p| p.id })
+    @top_repository_clones = filter(Repository.most_active_clones_in_projects(@projects))
+    @latest_events = filter(Event.latest_in_projects(25, @projects.map{|p| p.id }))
     render "site/#{current_site.subdomain}/index"
   end
 

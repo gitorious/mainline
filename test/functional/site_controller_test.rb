@@ -121,6 +121,15 @@ class SiteControllerTest < ActionController::TestCase
         assert !assigns(:projects).index(@project)
       end
 
+      should "not display unauthenticated repositories" do
+        repositories(:johans).make_private
+        users(:mike).commit_repositories << repositories(:johans)
+        login_as :mike
+        get :index
+        assert_response :success
+        assert_equal 0, assigns(:repositories).length
+      end
+
       should "not display unauthenticated projects in public timeline" do
         logout
         projects = Project.find(:all)
