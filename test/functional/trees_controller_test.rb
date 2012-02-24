@@ -216,9 +216,49 @@ class TreesControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private repositories" do
+  context "With private projects" do
     setup do
       enable_private_repositories
+    end
+
+    should "disallow unauthorized users from listing trees" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authorized users to list trees" do
+      login_as :johan
+      get :index, params
+      assert_response 302
+    end
+
+    should "disallow unauthorized users from showing tree" do
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      assert_response 403
+    end
+
+    should "allow authorized users to show tree" do
+      login_as :johan
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      assert_not_equal "403", @response.code
+    end
+
+    should "disallow unauthorized users from showing archive" do
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      assert_response 403
+    end
+
+    should "allow authorized users to show archive" do
+      login_as :johan
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      assert_not_equal "403", @response.code
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@repository)
+      @project.make_public
     end
 
     should "disallow unauthorized users from listing trees" do
