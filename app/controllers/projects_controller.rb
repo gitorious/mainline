@@ -70,6 +70,7 @@ class ProjectsController < ApplicationController
     @mainlines = by_push_time(@project.repositories.mainlines)
     @owner = @project
     @root = @project
+    @mainlines = filter(@project.repositories.mainlines)
     @group_clones = filter(@project.recently_updated_group_repository_clones)
     @user_clones = filter(@project.recently_updated_user_repository_clones)
     @atom_auto_discovery_url = project_path(@project, :format => :atom)

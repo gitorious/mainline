@@ -1,9 +1,10 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -26,30 +27,41 @@
 
 <%= error_messages_for :repository -%>
 <% form_for([@owner, @repository]) do |f| -%>
-<fieldset>
-  <li>
-    <%= f.label :name -%>
-    <div><%= f.text_field :name -%></div>
-  </li>
-  <li>
-    <%= f.label :description -%> 
-    <div>
-      <%= f.text_area :description, :class => "text wide" -%><br />
-      <span class="hint">(<%= markdown_hint -%>)</span>
-    </div>
-  </li>
-  <li>
-    <%= f.label :enable_merge_requests -%>
-    <div><%= f.check_box :merge_requests_enabled -%><span class="hint" style="float: left;"> <%= t("views.repos.merge_requests_enabled") -%></span></div>
-  </li>
-</fieldset>
-<fieldset class="submit">	  
-  <%= f.submit "Create repository" -%>
-</fieldset>
+  <fieldset>
+    <li>
+      <%= f.label :name -%>
+      <div><%= f.text_field :name -%></div>
+    </li>
+    <li>
+      <%= f.label :description -%>
+      <div>
+        <%= f.text_area :description, :class => "text wide" -%><br />
+        <span class="hint">(<%= markdown_hint -%>)</span>
+      </div>
+    </li>
+    <li>
+      <%= f.label :enable_merge_requests -%>
+      <div>
+        <%= f.check_box :merge_requests_enabled -%>
+        <span class="hint" style="float: left;"><%= t("views.repos.merge_requests_enabled") -%></span>
+      </div>
+    </li>
+    <% if GitoriousConfig["enable_private_repositories"] %>
+      <li>
+        <label for="private">Make the repository private?</label>
+        <div>
+          <input id="private_repository" name="private" type="checkbox" value="1">
+        </div>
+      </li>
+    <% end %>
+  </fieldset>
+  <fieldset class="submit">
+    <%= f.submit "Create repository" -%>
+  </fieldset>
 <% end -%>
 <% content_for :sidebar do -%>
-	<h2>Information</h2>
-	<p>The repository will be in the <strong><%= link_to h(@project.title), @project -%></strong> project, 
+  <h2>Information</h2>
+  <p>The repository will be in the <strong><%= link_to h(@project.title), @project -%></strong> project,
     and owned by <strong><%= link_to h(@repository.owner.title), @repository.owner -%></strong>
     (a <%= @repository.owner.class.human_name.downcase -%>).
   </p>
