@@ -20,7 +20,7 @@ module Gitorious
   module Authentication
     class LDAPAuthentication
       attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
-        :connection_type, :distinguished_name_template, :connection, :login_attribute)
+        :connection_type, :distinguished_name_template, :connection, :login_attribute, :memberof)
 
       def initialize(options)
         validate_requirements(options)
@@ -44,6 +44,7 @@ module Gitorious
         @connection_type = options["connection_type"] || Net::LDAP
         @callback_class = options["callback_class"].constantize if options.key?("callback_class")
         build_distinguished_name_template(options["distinguished_name_template"])
+        @memberof = options["memberof"]
       end
 
       def post_authenticate(options)
@@ -67,9 +68,9 @@ module Gitorious
       def authenticate(username, password)
         return false unless valid_credentials?(username, password)
         if existing_user = User.find_by_login(transform_username(username))
-          user = existing_user
+          user = existing_user if ismemberof?(memberof, username)
         else
-          user = auto_register(username)
+          user = auto_register(username) if ismemberof?(memberof, username)
         end
 
         return unless post_authenticate({:connection => connection, :username => username})
@@ -119,6 +120,20 @@ module Gitorious
         @distinguished_name_template = template || "#{login_attribute}={},#{base_dn}"
       end
 
+      def ismemberof?(memberof,username)
+        ismember = false
+        filter = Net::LDAP::Filter.eq(login_attribute, username)
+        result = connection.search(:base => base_dn, :filter => filter)
+        if result.size > 0
+          user = result.first
+          groups = Array.new
+          user.memberof.each do |m|  groups << m.split(",")[0].match(/CN=(.*)/)[1] end
+          memberof.each do |m|
+            if groups.include?(m) then ismember = true end
+          end
+        end
+        return ismember
+      end
     end
   end
 end
