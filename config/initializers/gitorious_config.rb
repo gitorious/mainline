@@ -46,8 +46,8 @@ unless defined? GitoriousConfig
   GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
   GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
   GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
-
   GitoriousConfig["ssh_fingerprint"] = GitoriousConfig["ssh_fingerprint"] || "has not been configured"
+  GitoriousConfig["merge_request_diff_timeout"] = (GitoriousConfig["merge_request_diff_timeout"] || 10).to_i
 
   # Add additional paths for views
   if GitoriousConfig.key?("additional_view_paths")

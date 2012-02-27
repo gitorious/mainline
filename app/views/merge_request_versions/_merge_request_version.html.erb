@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -34,7 +35,7 @@
       <% if @commit.committer != @commit.author -%>
         <li class="clear"></li>
         <li class="avatar">
-	        <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
+                <%= avatar_from_email(@commit.author.email, { :size => 32 }) %>
         </li>
         <li>
             <%=h @commit.author.name -%>
@@ -52,15 +53,39 @@
 <%= render :partial => "comments/inline_comment_form", :locals => {
 :commentable_type => "merge_request_version",
 :comment => @version.comments.build,
-:url => repo_owner_path(@version.merge_request.target_repository,
+:url => repo_owner_path(@merge_request.target_repository,
     [
-    @version.merge_request.target_repository.project,
-    @version.merge_request.target_repository,
-    @version.merge_request, @version, :comments]),
+    @merge_request.target_repository.project,
+    @merge_request.target_repository,
+    @merge_request, @version, :comments]),
 :sha1 => nil,
-:include_favorite_checkbox => !@version.merge_request.watched_by?(current_user)
+:include_favorite_checkbox => !@merge_request.watched_by?(current_user)
 } -%>
 
 <%= render_inline_diffs_controls("merge-requests") %>
 <%= render_inline_diffs_with_stats(diffs){|file|@version.comments_for_path_and_sha(file.a_path, @sha_range)} -%>
 
+<% if @timeout %>
+  <div class="timeout">
+    <h3>Git timeout</h3>
+    <p>
+      We're sorry, but it seems that the server timed out trying to fetch the
+      diffs for your merge request. This typically means that the merge request
+      is large. Please review changes locally:
+    </p>
+    <pre># Create a local branch
+git checkout -b merge-requests/<%= @merge_request.sequence_number %>
+
+# Fetch the merge request into the new branch
+git pull <%= @merge_request.target_repository.clone_url %> <%= @merge_request.merge_branch_name %>
+
+# Show the commits
+git log --pretty=oneline --abbrev-commit <%= @merge_request.target_branch %>..merge-requests/<%= @merge_request.sequence_number %></pre>
+    <p>
+      If you believe that this merge request is indeed not too big for the web
+      interface, please
+      contact <a href="mailto:<%= GitoriousConfig["gitorious_support_email"]
+      %>"><%= GitoriousConfig["gitorious_support_email"] %></a>.
+    </p>
+  </div>
+<% end %>

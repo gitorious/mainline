@@ -95,6 +95,11 @@ production:
   # stomp_server_login: ~
   # stomp_server_passcode: ~
 
+  # The maximum number of seconds to allow the web server to wait for diffs for
+  # a merge request. This is used to prevent huge merge requests from spawning
+  # 100 % CPU processes that never die.
+  #merge_request_diff_timeout: 10
+
   # --------
   # "TWEAKS"
   # --------

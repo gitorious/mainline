@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,13 +16,19 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "timeout"
 
 class MergeRequestVersionsController < ApplicationController
   renders_in_site_specific_context
 
   def show
     @version = MergeRequestVersion.find(params[:id])
-    @diffs = @version.diffs(extract_range_from_parameter(params[:commit_shas]))
+    @merge_request = @version.merge_request
+
+    @timeout = Timeout.timeout(GitoriousConfig["merge_request_diff_timeout"]) do
+      @diffs = @version.diffs(extract_range_from_parameter(params[:commit_shas]))
+    end
+
     @repository = @version.merge_request.target_repository
     @project = @repository.project
 
