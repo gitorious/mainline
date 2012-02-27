@@ -1,10 +1,11 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -28,9 +29,15 @@
   <%= paragraphs_with_more(render_markdown(@project.description, :auto_link), @project.id) -%>
 </div>
 <div class="content-container w-750" id="repositories">
-  <% @project.repositories.mainlines.each do |repo| -%>
+  <% @mainlines[0...(@big_repos - 1)].each do |repo| -%>
     <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
   <% end -%>
+  <% if @mainlines.length > @big_repos %>
+    <h3>More repositories</h3>
+    <% @mainlines[(@big_repos - 1)..-1].each do |repo| -%>
+      <%= render :partial => "repositories/overview_tight", :locals => {:repository => repo} -%>
+    <% end -%>
+  <% end %>
 </div>
 <div class="content-container w-750" id="activities">
   <h2><%= t("views.site.dashboard.activities") %> <%= feed_icon @atom_auto_discovery_url %></h2>
@@ -41,7 +48,7 @@
   <ul class="links navigation">
     <% if @project.wiki_enabled? -%>
       <li class="wiki_page"> <!-- Create / Open Wiki -->
-	<%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
+        <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
       </li>
     <% end -%>
     <% if @project.owned_by_group? -%>
@@ -56,7 +63,7 @@
     <% end -%>
     <%- if logged_in? && current_user.site_admin? && GitoriousConfig["is_gitorious_dot_org"] -%>
       <li>
-	<%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
+        <%= link_to t('views.projects.edit_oauth_settings'), edit_admin_oauth_settings_path(@project) %>
       </li>
     <%- end -%>
   </ul>

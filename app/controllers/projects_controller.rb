@@ -77,6 +77,8 @@ class ProjectsController < ApplicationController
     end
 
     return if @events.count == 0 && params.key?(:page)
+    @big_repos = 10
+    @mainlines = by_push_time(@project.repositories.mainlines)
     @owner = @project
     @root = @project
     @group_clones = @project.recently_updated_group_repository_clones
@@ -185,6 +187,10 @@ class ProjectsController < ApplicationController
   end
 
   protected
+  def by_push_time(repositories)
+    repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
+  end
+
     def find_project
       @project = Project.find_by_slug!(params[:id], :include => [:repositories])
     end
