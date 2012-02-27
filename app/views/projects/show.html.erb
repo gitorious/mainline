@@ -29,12 +29,12 @@
   <%= paragraphs_with_more(render_markdown(@project.description, :auto_link), @project.id) -%>
 </div>
 <div class="content-container w-750" id="repositories">
-  <% @mainlines[0...(@big_repos - 1)].each do |repo| -%>
+  <% @mainlines[0...(@big_repos)].each do |repo| -%>
     <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
   <% end -%>
   <% if @mainlines.length > @big_repos %>
     <h3>More repositories</h3>
-    <% @mainlines[(@big_repos - 1)..-1].each do |repo| -%>
+    <% @mainlines[(@big_repos)..-1].each do |repo| -%>
       <%= render :partial => "repositories/overview_tight", :locals => {:repository => repo} -%>
     <% end -%>
   <% end %>
