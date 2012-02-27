@@ -290,11 +290,11 @@ abbr.timeago {
     background-image: url(../img/header-bg.png);
     background-repeat: no-repeat;
     background: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0.1, rgb(31,31,31)),
-	color-stop(0.78, rgb(54,54,54))
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.1, rgb(31,31,31)),
+        color-stop(0.78, rgb(54,54,54))
     );
 
     overflow: hidden;
@@ -600,11 +600,11 @@ ul.buttons .white-button.small-button a { padding:2px 5px 2px 10px; }
     overflow: hidden;
     background-image: url(../img/breadcrumb-bg.png)!important;
     background: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0.05, rgb(173,173,173)),
-	color-stop(0.27, rgb(198,198,198))
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.05, rgb(173,173,173)),
+        color-stop(0.27, rgb(198,198,198))
     );
 
     border-bottom: 1px solid #adadad;
@@ -1135,11 +1135,11 @@ ul.bullet_list li {
     -moz-box-shadow: inset 0px 1px 0px #ffc59b;
     background-color: #ffb063!important;
     background: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0.1, #fba34d),
-	color-stop(0.78, #ffb063)
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.1, #fba34d),
+        color-stop(0.78, #ffb063)
     );
 }
 
@@ -1491,6 +1491,12 @@ table tr .line-numbers {
     width: 35px;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #cdcdcd;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -k-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
 }
 
 table tr .commentable { cursor: pointer; }

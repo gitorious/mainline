@@ -23,8 +23,8 @@ input, textarea, select { font-family:inherit;font-size:inherit;font-weight:inhe
 /**/
 
 body {
-	font-size: 13px;
-	line-height: 1.461em;
+        font-size: 13px;
+        line-height: 1.461em;
   background: #dee7ed;
   color: #000;
 /*  font-family: Georgia, Times, "Times new Roman", serif;*/
@@ -38,29 +38,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-	margin: 0;
-	font-size: 1.615em;
-	line-height: 0.904em;
-	margin-bottom: 0.904em;
+        margin: 0;
+        font-size: 1.615em;
+        line-height: 0.904em;
+        margin-bottom: 0.904em;
 }
 h2 {
-	margin: 0;
-	font-size: 1.461em;
-	line-height: 1em;
-	margin-bottom: 1em;
+        margin: 0;
+        font-size: 1.461em;
+        line-height: 1em;
+        margin-bottom: 1em;
 }
 h3 {
-	margin: 0;
-	font-size: 1.307em;
-	line-height: 1.117em;
-	margin-bottom: 1.117em;
+        margin: 0;
+        font-size: 1.307em;
+        line-height: 1.117em;
+        margin-bottom: 1.117em;
 }
 
 h4 {
-	margin: 0;
-	font-size: 1.153em;
-	line-height: 1.266em;
-	margin-bottom: 1.266em;
+        margin: 0;
+        font-size: 1.153em;
+        line-height: 1.266em;
+        margin-bottom: 1.266em;
 }
 
 #sidebar h1, #sidebar h2, #sidebar h3, #sidebar h4, #sidebar h5, #sidebar h6 {
@@ -71,24 +71,24 @@ h4 {
 }
 
 p, ul, blockquote, pre, td, th, label {
-	margin: 0;
-	font-size: 1em;
-	line-height: 1.461em;
-	margin-bottom: 1.461em;
+        margin: 0;
+        font-size: 1em;
+        line-height: 1.461em;
+        margin-bottom: 1.461em;
 }
 p, ul, blockquote, td, th, label {
 /*  font-family: "Bitstream Vera Serif", Georgia, Times, "Times new Roman", serif;*/
 }
 
 p.small {
-	margin: 0;
-	font-size: 0.846em;
-	line-height: 1.727em;
-	margin-bottom: 1.727em;
+        margin: 0;
+        font-size: 0.846em;
+        line-height: 1.727em;
+        margin-bottom: 1.727em;
 }
 table {
-	border-collapse: collapse;
-	margin-bottom: 1.461em;
+        border-collapse: collapse;
+        margin-bottom: 1.461em;
 }
 code, pre, tt {
   /*font: 95%/105%  "Bitstream Vera Sans Mono", Monaco, "Courier New", Courier, monospace;*/
@@ -1280,8 +1280,8 @@ div.being_constructed p {
   padding-top: 2px;
   margin: 0;
   color: #333;
-	font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
-	font-size: 90%;
+        font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+        font-size: 90%;
 }
 
 div.being_constructed {
@@ -1312,10 +1312,10 @@ div.being_constructed .hint {
 /* auto completions */
 
 .ac_results {
-	padding: 0px;
-	border: 1px solid #888;
-	background-color: #fff;
-	overflow: hidden;
+        padding: 0px;
+        border: 1px solid #888;
+        background-color: #fff;
+        overflow: hidden;
 }
 
 .ac_results ul {
@@ -1326,26 +1326,26 @@ div.being_constructed .hint {
 }
 
 .ac_results iframe {
-	display:none;
-	position:absolute;
-	top:0;
-	left:0;
-	z-index:-1;
-	filter:mask();
-	width:3000px;
-	height:3000px;
+        display:none;
+        position:absolute;
+        top:0;
+        left:0;
+        z-index:-1;
+        filter:mask();
+        width:3000px;
+        height:3000px;
 }
 
 .ac_results li {
-	margin: 0px;
-	padding: 2px 5px;
-	cursor: pointer;
-	display: block;
-	width: 100%;
-	overflow: hidden;
+        margin: 0px;
+        padding: 2px 5px;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        overflow: hidden;
 }
 .ac_loading {
-	background : url('../images/spinner.gif') right center no-repeat;
+        background : url('../images/spinner.gif') right center no-repeat;
 }
 .ac_over {
   background-color: #ffb;
@@ -1407,7 +1407,7 @@ a.more_info img {
 }
 
 table.tree tr td {
-	padding: 5px;
+        padding: 5px;
 }
 
 
@@ -1416,7 +1416,7 @@ table.tree tr td.meta {
 }
 
 table.tree tr td.meta, table.tree tr td.commit_message a {
-	color: #444;
+        color: #444;
 }
 
 table.tree tr td.node a {
@@ -1565,15 +1565,21 @@ table#codeblob {
 }
 
 table tr .line-numbers {
- text-align: right;
- vertical-align: top;
- background: #eee;
- color: #777;
- font-size: 92%;
- padding: 0 3px 0 2px;
- width: 35px;
- border-right: 1px solid #ccc;
- border-bottom: 1px solid #cdcdcd;
+    text-align: right;
+    vertical-align: top;
+    background: #eee;
+    color: #777;
+    font-size: 92%;
+    padding: 0 3px 0 2px;
+    width: 35px;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #cdcdcd;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -k-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
 }
 
 table tr .commentable {
@@ -1826,12 +1832,12 @@ ul.diff_stats small.deletions   { color: #DC0000; }
 }
 
 .comment .body ul, .page ol, .diff-comment .body ul { margin-left: 30px; }
-.comment .body ul li, .diff-comment .body ul li		{ list-style-type: disc; }
-.comment .body ol li, diff-comment .body ol li		{ list-style-type: decimal; }
-.comment .body h1, .diff-comment .body h1			{ margin: 15px 0 10px 0; font-size: 140%;}
-.comment .body h2, .diff-comment .body h2			{ margin: 15px 0 10px 0; font-size: 120%;}
-.comment .body h3, .diff-comment .body h3			{ margin: 15px 0 10px 0; font-size: 110%;}
-.comment .body h4, .diff-comment .body h4			{ margin: 15px 0 10px 0; font-size: 105%;}
+.comment .body ul li, .diff-comment .body ul li         { list-style-type: disc; }
+.comment .body ol li, diff-comment .body ol li          { list-style-type: decimal; }
+.comment .body h1, .diff-comment .body h1                       { margin: 15px 0 10px 0; font-size: 140%;}
+.comment .body h2, .diff-comment .body h2                       { margin: 15px 0 10px 0; font-size: 120%;}
+.comment .body h3, .diff-comment .body h3                       { margin: 15px 0 10px 0; font-size: 110%;}
+.comment .body h4, .diff-comment .body h4                       { margin: 15px 0 10px 0; font-size: 105%;}
 .comment .body blockquote, .diff-comment .body blockquote {
     margin-left: 7px;
     border-left: 3px solid #ccc;
@@ -2009,14 +2015,14 @@ table.markdown_help {
 }
 
 /* Page */
-.page					{ margin-bottom: 0px; padding-bottom: 0px; /*border-bottom: 2px solid #666;*/}
+.page                                   { margin-bottom: 0px; padding-bottom: 0px; /*border-bottom: 2px solid #666;*/}
 .page ul, .page ol { margin-left: 30px; }
-.page ul li		{ list-style-type: disc; }
-.page ol li		{ list-style-type: decimal; }
-.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
-.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
-.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
-.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
+.page ul li             { list-style-type: disc; }
+.page ol li             { list-style-type: decimal; }
+.page h1                        { margin: 15px 0 10px 0; font-size: 150%;}
+.page h2                        { margin: 15px 0 10px 0; font-size: 130%;}
+.page h3                        { margin: 15px 0 10px 0; font-size: 120%;}
+.page h4                        { margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
 
 .repository-description .page {
@@ -2032,29 +2038,29 @@ table.markdown_help {
 /* Merge Requests */
 
 .merge_request_summary h4 {
-	color: #111;
-	margin-bottom: 5px;
+        color: #111;
+        margin-bottom: 5px;
 }
 
 .merge_request_summary .proposal {
-	margin: 5px 0 5px 10px;
-	font-style: oblique;
+        margin: 5px 0 5px 10px;
+        font-style: oblique;
 }
 
 .merge_request_summary {
-	width: 75%;
-	padding: 10px;
-	border: 1px solid #ffe8cd;
-	background-color: #FEFAE6;
-	margin-bottom: 20px;
+        width: 75%;
+        padding: 10px;
+        border: 1px solid #ffe8cd;
+        background-color: #FEFAE6;
+        margin-bottom: 20px;
 }
 
 .merge-request-reason {
-	width: 75%;
-	margin: 10px 0 20px 0;
-	padding: 10px;
-	border: 1px solid #D4D17E;
-	background-color: #FEFCAB;
+        width: 75%;
+        margin: 10px 0 20px 0;
+        padding: 10px;
+        border: 1px solid #D4D17E;
+        background-color: #FEFCAB;
 }
 
 .merge-request-reason p:last-child {
@@ -2078,17 +2084,17 @@ table.markdown_help {
 .recently-closed-merge-requests { margin: 0; }
 .merge_request_summary_short {
   margin: 0;
-	padding: 5px;
-	border: 1px solid #ccc;
-	background-color: #fff;
-	margin-bottom: 5px;
-	font-size: 11px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        margin-bottom: 5px;
+        font-size: 11px;
 }
 
 .merge_request_summary_short a { color: #666;}
 
 .merge_request_summary .byline, .merge_request_summary pre {
-	margin-bottom: 0;
+        margin-bottom: 0;
 }
 
 .merge_request_summary .byline strong {
@@ -2100,24 +2106,24 @@ table.markdown_help {
 }
 
 .merge_request_summary .status, .merge_request_summary_short .status {
-	float:right;
-	color: #888;
-	font-size: 11px;
-	margin: 0;
+        float:right;
+        color: #888;
+        font-size: 11px;
+        margin: 0;
 }
 .merge_request_summary.rejected, .merge_request_summary.merged {
-	background: #eee;
-	border: 1px solid #ddd;
+        background: #eee;
+        border: 1px solid #ddd;
 }
 .merge_request_summary.open .status span,
 .merge_request_summary_short.open .status span,
-.merge-request-reason	.open span	{ color: #FF7F00; }
+.merge-request-reason   .open span      { color: #FF7F00; }
 .merge_request_summary.merged .status span,
 .merge_request_summary_short.merged .status span,
-.merge-request-reason	.merged span 		{ color: #48BA1C; }
+.merge-request-reason   .merged span            { color: #48BA1C; }
 .merge_request_summary.rejected .status span,
 .merge_request_summary_short.rejected .status span,
-.merge-request-reason	.rejected span	{ color: #F00; }
+.merge-request-reason   .rejected span  { color: #F00; }
 
 table.commits_in_event {
   margin-top: 1em
@@ -2529,14 +2535,14 @@ li.event_instance.delete_merge_request { background-image: url("../images/silk/c
 .page-header .page-crumbs li a { margin-right: 5px;}
 .page-header .page-crumbs li.current { color: #666;}
 
-.page					{ margin-bottom: 20px; padding-bottom: 10px; /*border-bottom: 2px solid #666;*/}
+.page                                   { margin-bottom: 20px; padding-bottom: 10px; /*border-bottom: 2px solid #666;*/}
 .page ul, .page ol { margin-left: 30px; }
-.page ul li		{ list-style-type: disc; }
-.page ol li		{ list-style-type: decimal; }
-.page h1			{ margin: 15px 0 10px 0; font-size: 150%;}
-.page h2			{ margin: 15px 0 10px 0; font-size: 130%;}
-.page h3			{ margin: 15px 0 10px 0; font-size: 120%;}
-.page h4			{ margin: 15px 0 10px 0; font-size: 110%;}
+.page ul li             { list-style-type: disc; }
+.page ol li             { list-style-type: decimal; }
+.page h1                        { margin: 15px 0 10px 0; font-size: 150%;}
+.page h2                        { margin: 15px 0 10px 0; font-size: 130%;}
+.page h3                        { margin: 15px 0 10px 0; font-size: 120%;}
+.page h4                        { margin: 15px 0 10px 0; font-size: 110%;}
 .page blockquote { margin-left: 30px; background: #eee; border: 1px solid #ddd; padding: 10px;}
 
 #project-description {
