@@ -21,7 +21,7 @@ class Admin::RepositoriesController < ApplicationController
 
   def index
     @unready_repositories = paginate(:action => "index") do
-      Repository.regular.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
+      Repository.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
     end
   end
 
