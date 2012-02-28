@@ -1,9 +1,3 @@
-GIT
-  remote: https://github.com/roman/rots.git
-  revision: babb5559aae8914556da528147b6649b9c48f48c
-  specs:
-    rots (0.2.1)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -151,7 +145,6 @@ DEPENDENCIES
   resque
   revo-ssl_requirement
   riddle
-  rots!
   ruby-hmac
   ruby-net-ldap (~> 0.0.4)
   ruby-openid
