@@ -1640,5 +1640,18 @@ class RepositoriesControllerTest < ActionController::TestCase
         assert Repository.last.private?
       end
     end
+
+    should "clone private repository" do
+      login_as :moe
+      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+      @repository.stubs(:has_commits?).returns(true)
+      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      @repository.make_private
+      @repository.add_member(users(:moe))
+
+      do_create_clone_post(:name => "foo-clone")
+
+      assert Repository.last.private?
+    end
   end
 end
