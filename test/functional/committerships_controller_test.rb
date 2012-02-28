@@ -39,7 +39,7 @@ class CommittershipsControllerTest < ActionController::TestCase
 
   context "GET index" do
     should "require login" do
-      login_as nil
+      logout
       get :index, params
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))
@@ -200,7 +200,7 @@ class CommittershipsControllerTest < ActionController::TestCase
 
   context "DELETE destroy" do
     should "requires login" do
-      login_as nil
+      logout
       delete :destroy, params(:id => Committership.first.id)
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))

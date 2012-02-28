@@ -32,6 +32,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :update)
 
   def setup
+    GitoriousConfig["enable_private_repositories"] = false
     setup_ssl_from_config
     @project = projects(:johans)
     @repo = repositories(:johans)
@@ -951,7 +952,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      login_as nil
+      logout
       get :new, :project_id => @project.to_param
       assert_redirected_to(new_sessions_path)
     end
@@ -1029,7 +1030,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "requires login" do
-      login_as nil
+      logout
       get :edit, :project_id => @project.to_param, :id => @repository.to_param
       assert_redirected_to(new_sessions_path)
 
@@ -1320,8 +1321,9 @@ class RepositoriesControllerTest < ActionController::TestCase
 
     should "include private checkbox in new page" do
       login_as :johan
+
       get :new, :project_id => @project.to_param
-      assert_match /name="private_repository"/, @response.body
+      assert_match /id="private_repository"/, @response.body
       assert_match /Make the repository private\?/, @response.body
     end
 
@@ -1629,8 +1631,11 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
 
     should "create private repository" do
+      login_as :johan
+
       assert_difference "Repository.count" do
         post :create, :project_id => @project.to_param, :repository => {:name => "my-new-repo"}, :private => "1"
+
         assert_response :redirect
         assert Repository.last.private?
       end

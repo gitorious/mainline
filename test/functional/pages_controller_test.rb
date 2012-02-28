@@ -79,7 +79,7 @@ class PagesControllerTest < ActionController::TestCase
 
   context "show" do
     should "redirects to edit if the page is new, and user is logged in" do
-      login_as nil
+      logout
       page_stub = mock("page stub")
       page_stub.expects(:new?).returns(true)
       page_stub.expects(:title).at_least_once.returns("Home")

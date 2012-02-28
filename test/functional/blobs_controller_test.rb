@@ -250,9 +250,25 @@ class BlobsControllerTest < ActionController::TestCase
       end
 
       should "allow owner to view raw" do
+        blob_mock = mock("blob")
+        blob_mock.stubs(:contents).returns([blob_mock]) #meh
+        blob_mock.expects(:data).returns("blabla")
+        blob_mock.expects(:size).returns(200.kilobytes)
+        blob_mock.expects(:mime_type).returns("text/plain")
+        blob_mock.expects(:name).returns("README.doc")
+        commit_stub = mock("commit")
+        commit_stub.stubs(:id).returns("a"*40)
+        commit_stub.stubs(:tree).returns(commit_stub)
+        commit_stub.stubs(:committed_date).returns(2.days.ago)
+        git_mock = mock("git")
+        git_mock.expects(:cat_file).returns("commit")
+        @git.stubs(:git).returns(git_mock)
+        @git.expects(:commit).returns(commit_stub)
+        @git.expects(:tree).returns(blob_mock)
+
         login_as :johan
         get :raw, branch_and_path_params
-        assert_response 302
+        assert_response 200
       end
 
       should "reject user from history" do
@@ -300,9 +316,25 @@ class BlobsControllerTest < ActionController::TestCase
       end
 
       should "allow owner to view raw" do
+        blob_mock = mock("blob")
+        blob_mock.stubs(:contents).returns([blob_mock]) #meh
+        blob_mock.expects(:data).returns("blabla")
+        blob_mock.expects(:size).returns(200.kilobytes)
+        blob_mock.expects(:mime_type).returns("text/plain")
+        blob_mock.expects(:name).returns("README.doc")
+        commit_stub = mock("commit")
+        commit_stub.stubs(:id).returns("a"*40)
+        commit_stub.stubs(:tree).returns(commit_stub)
+        commit_stub.stubs(:committed_date).returns(2.days.ago)
+        git_mock = mock("git")
+        git_mock.expects(:cat_file).returns("commit")
+        @git.stubs(:git).returns(git_mock)
+        @git.expects(:commit).returns(commit_stub)
+        @git.expects(:tree).returns(blob_mock)
+
         login_as :johan
         get :raw, branch_and_path_params
-        assert_response 302
+        assert_response 200
       end
 
       should "reject user from history" do

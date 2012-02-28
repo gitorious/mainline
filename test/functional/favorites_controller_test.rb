@@ -193,7 +193,7 @@ class FavoritesControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      login_as nil
+      logout
       get :index
       assert_redirected_to new_sessions_path
     end

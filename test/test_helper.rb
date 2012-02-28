@@ -262,6 +262,10 @@ class ActionController::TestCase
     process(action, parameters, session, flash, "OPTIONS")
   end
 
+  def logout
+    login_as nil
+  end
+
   def enable_private_repositories(subject = nil)
     GitoriousConfig["enable_private_repositories"] = true
     return subject.make_private if !subject.nil?

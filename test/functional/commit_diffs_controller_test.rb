@@ -108,7 +108,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
     should "allow authorized access to diffs" do
       login_as :johan
       get :index, params
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized access to compare view" do
@@ -119,7 +119,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
     should "allow authorized access to compare view" do
       login_as :johan
       get :compare, compare_params
-      assert_response 302
+      assert_response 200
     end
   end
 
@@ -136,7 +136,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
     should "allow authorized access to diffs" do
       login_as :johan
       get :index, params
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized access to compare view" do
@@ -147,7 +147,7 @@ class CommitDiffsControllerTest < ActionController::TestCase
     should "allow authorized access to compare view" do
       login_as :johan
       get :compare, compare_params
-      assert_response 302
+      assert_response 200
     end
   end
 

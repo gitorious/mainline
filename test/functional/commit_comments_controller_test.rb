@@ -78,7 +78,7 @@ class CommitCommentsControllerTest < ActionController::TestCase
       login_as :johan
       comment = create_comment
       get(:index, params)
-      assert_response 302
+      assert_response 200
     end
   end
 
@@ -97,7 +97,7 @@ class CommitCommentsControllerTest < ActionController::TestCase
       login_as :johan
       comment = create_comment
       get(:index, params)
-      assert_response 302
+      assert_response 200
     end
   end
 
