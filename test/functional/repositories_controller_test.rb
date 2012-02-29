@@ -1641,17 +1641,36 @@ class RepositoriesControllerTest < ActionController::TestCase
       end
     end
 
-    should "clone private repository" do
-      login_as :moe
-      Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
-      @repository.stubs(:has_commits?).returns(true)
-      @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
-      @repository.make_private
-      @repository.add_member(users(:moe))
+    context "cloning" do
+      setup do
+        login_as :moe
+        Project.expects(:find_by_slug!).with(@project.slug).returns(@project)
+        @repository.stubs(:has_commits?).returns(true)
+        @project.repositories.expects(:find_by_name_in_project!).with(@repository.name, nil).returns(@repository)
+      end
 
-      do_create_clone_post(:name => "foo-clone")
+      should "clone private repository" do
+        @repository.make_private
+        @repository.add_member(users(:moe))
+        do_create_clone_post(:name => "foo-clone")
+        assert Repository.last.private?
+      end
 
-      assert Repository.last.private?
+      should "clone public repository" do
+        do_create_clone_post(:name => "foo-clone")
+        assert !Repository.last.private?
+      end
+
+      should "add parent members to new repository" do
+        @repository.make_private
+        @repository.add_member(users(:moe))
+        @repository.add_member(users(:old_timer))
+        do_create_clone_post(:name => "foo-clone")
+        assert can_read?(users(:old_timer), Repository.last)
+        assert can_read?(users(:moe), Repository.last)
+        assert can_read?(@repository.owner, Repository.last)
+        assert_equal 3, @repository.content_memberships.length
+      end
     end
   end
 end

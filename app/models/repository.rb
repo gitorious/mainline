@@ -75,6 +75,7 @@ class Repository < ActiveRecord::Base
   before_validation :downcase_name
   before_create :set_repository_hash
   after_create :create_initial_committership
+  after_create :add_initial_members
   after_create :create_add_event_if_project_repo
   after_create :post_repo_creation_message
   after_create :add_owner_as_watchers
@@ -745,6 +746,12 @@ class Repository < ActiveRecord::Base
 
   def create_initial_committership
     self.committerships.create_for_owner!(self.owner)
+  end
+
+  def add_initial_members
+    return if parent.nil? || parent.content_memberships.count == 0
+    make_private
+    parent.content_memberships.each { |m| add_member(m.member) }
   end
 
   def self.full_path_from_partial_path(path)
