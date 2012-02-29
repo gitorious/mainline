@@ -70,7 +70,7 @@ class GitHttpCloner
   protected
   def self.can_read?(user, repository)
     return true if !GitoriousConfig["enable_private_repositories"]
-    CommittershipAuthorization.new.can_read_repository?(user, repository)
+    Gitorious::Authorization::DatabaseAuthorization.new.can_read_repository?(user, repository)
   end
 
   # Borrowed from ActionController::Request. Extract proxy addresses and stuff (except our own)

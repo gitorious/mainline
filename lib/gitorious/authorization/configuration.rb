@@ -23,7 +23,7 @@ module Gitorious
       extend Gitorious::ConfigurableStrategy
 
       def self.default_configuration
-        CommittershipAuthorization.new
+        DatabaseAuthorization.new
       end
     end
   end
