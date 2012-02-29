@@ -79,7 +79,9 @@ class SiteController < ApplicationController
     @projects = filter(@user.projects.find(:all,
                                            :include => [:tags, { :repositories => :project }]))
     @repositories = filter(current_user.commit_repositories)
-    @events = filter(@user.paginated_events_in_watchlist(:page => params[:page]))
+    @events = filter_paginated(params[:page], Event.per_page) do |page|
+      (@user.paginated_events_in_watchlist(:page => page))
+    end
     @messages = @user.messages_in_inbox(3)
     @favorites = filter(@user.watched_objects)
     @root = Breadcrumb::Dashboard.new(@user)
