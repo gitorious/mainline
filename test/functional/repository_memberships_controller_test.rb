@@ -92,7 +92,7 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
         login_as :johan
 
         assert_difference("@repository.reload.content_memberships.count") do
-          post :create, params(:group => { :name => team.name })
+          post :create, params(:group => { :name => team.name }, :user => { :login => "" })
         end
 
         assert can_read?(team, @repository)
@@ -102,7 +102,7 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
         login = @user.login
         login_as :johan
 
-        post :create, params(:user => { :login => login })
+        post :create, params(:user => { :login => login }, :group => { :name => "" })
         assert_response :redirect
         assert_redirected_to :action => "index"
       end

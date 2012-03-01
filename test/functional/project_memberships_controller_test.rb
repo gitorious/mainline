@@ -72,7 +72,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
         login_as :johan
 
         assert_difference("@project.reload.content_memberships.count") do
-          post :create, :project_id => @project.to_param, :user => { :login => login }
+          post :create, :project_id => @project.to_param, :user => { :login => login }, :group => { :name => "" }
         end
       end
 
@@ -91,7 +91,7 @@ class ProjectMembershipsControllerTest < ActionController::TestCase
         login_as :johan
 
         assert_difference("@project.reload.content_memberships.count") do
-          post :create, :project_id => @project.to_param, :group => { :name => team.name }
+          post :create, :project_id => @project.to_param, :group => { :name => team.name }, :user => { :login => ""}
         end
 
         assert can_read?(team, @project)
