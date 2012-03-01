@@ -1460,6 +1460,12 @@ class RepositoriesControllerTest < ActionController::TestCase
       @repository = @project.repositories.first
     end
 
+    teardown do
+      user = users(:mike)
+      user.is_admin = false
+      user.save
+    end
+
     should "exclude private repositories in project" do
       get :index, :project_id => @project.to_param
       assert_equal 1, assigns(:repositories).length
