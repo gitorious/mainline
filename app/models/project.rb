@@ -347,6 +347,12 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def on_current_server?
+    server_id = GitoriousConfig["current_server_id"]
+    return false if server_id.to_i == gitorious_server_id
+    return true
+  end
+
   protected
     def create_wiki_repository
       self.wiki_repository = Repository.create!({

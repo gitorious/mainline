@@ -206,6 +206,10 @@ production:
   # Pick a default license
   #default_license: GNU Affero General Public License (AGPLv3)
 
+  # Multi-server environment, work in progress
+  # Database id of GitoriousServer record this server is running
+  # current_server_id: 
+
   # ----------------
   # THEMING SETTINGS
   # ----------------

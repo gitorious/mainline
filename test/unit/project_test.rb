@@ -541,4 +541,26 @@ class ProjectTest < ActiveSupport::TestCase
     assert !p.valid?
     assert_not_nil p.errors.on(:slug)
   end
+
+  context "Which server" do
+    setup do
+      @server = GitoriousServer.create!(:hostname => "backend.local")
+      @project = Project.new
+    end
+
+    teardown do
+      GitoriousConfig.delete("current_server_id")
+    end
+
+    should "be current server if no server is set" do
+      assert @project.on_current_server?
+    end
+
+    should "only be other server if server is set to something else than us" do
+      GitoriousConfig["current_server_id"] = @server.id
+      @project.gitorious_server_id = @server.id
+      assert !@project.on_current_server?
+    end
+    
+  end
 end

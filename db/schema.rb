@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120209093949) do
+ActiveRecord::Schema.define(:version => 20120301142707) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -128,6 +128,12 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
   end
 
   add_index "feed_items", ["watcher_id", "created_at"], :name => "index_feed_items_on_watcher_id_and_created_at"
+
+  create_table "gitorious_servers", :force => true do |t|
+    t.string   "hostname"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -279,6 +285,7 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
     t.string   "oauth_path_prefix"
     t.text     "merge_request_custom_states"
     t.datetime "suspended_at"
+    t.integer  "gitorious_server_id"
   end
 
   add_index "projects", ["owner_type", "owner_id"], :name => "index_projects_on_owner_type_and_owner_id"
