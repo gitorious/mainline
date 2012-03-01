@@ -267,6 +267,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     context "private repositories" do
       setup do
         enable_private_repositories(@repository)
+        login_as :moe
       end
 
       should "require project access to index" do
