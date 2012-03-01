@@ -39,6 +39,7 @@ module Gitorious
 
       def can_read_protected_content?(actor, subject)
         return true if !private_repos
+        return true if site_admin?(actor)
         return true if subject.owner == actor
         return true if subject.content_memberships.count == 0
         subject.content_memberships.any? { |m| is_member?(actor, m.member) }
@@ -50,6 +51,7 @@ module Gitorious
 
       def can_read_merge_request?(user, mr)
         return true if !private_repos
+        return true if site_admin?(user)
         (mr.project.nil? || can_read_project?(user, mr.project)) &&
           (mr.target_repository.nil? || can_read_repository?(user, mr.target_repository)) &&
           (mr.source_repository.nil? || can_read_repository?(user, mr.source_repository))
@@ -80,6 +82,7 @@ module Gitorious
 
       def can_read_comment?(user, comment)
         return true if !private_repos
+        return true if site_admin?(user)
         (comment.project.nil? || can_read_project?(user, comment.project)) &&
           (comment.target.nil? || can_read?(user, comment.target))
       end

@@ -1510,6 +1510,15 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_response 200
     end
 
+    should "allow site admin to get show repository" do
+      user = users(:mike)
+      user.is_admin = true
+      user.save
+      login_as :mike
+      get :show, :project_id => @project.to_param, :id => @repository.to_param
+      assert_response 200
+    end
+
     should "disallow unauthenticated users to clone repo" do
       login_as :mike
       do_clone_get
