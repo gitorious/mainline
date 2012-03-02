@@ -548,19 +548,34 @@ class ProjectTest < ActiveSupport::TestCase
       @project = Project.new
     end
 
-    teardown do
-      GitoriousConfig.delete("current_server_id")
+    context "no GitoriousConfig setting" do
+      should "be considered local regardless of what the database says" do
+        assert @project.on_current_server?
+      end
     end
 
-    should "be current server if no server is set" do
-      assert @project.on_current_server?
-    end
+    context "with GitoriousConfig setting" do
+      setup do
+        GitoriousConfig["current_server_id"] = @server.id
+      end
+      
+      teardown do
+        GitoriousConfig.delete("current_server_id")
+      end
 
-    should "only be other server if server is set to something else than us" do
-      GitoriousConfig["current_server_id"] = @server.id
-      @project.gitorious_server_id = @server.id
-      assert !@project.on_current_server?
+      should "be considered local when no server_id is set" do
+        assert @project.on_current_server?
+      end
+
+      should "be considered local when server_id matches our setting" do
+        @project.gitorious_server_id = @server.id
+        assert @project.on_current_server?
+      end
+
+      should "be considered remote when server_id doesn't match our setting" do
+        @project.gitorious_server_id = @server.id + 1
+        assert !@project.on_current_server?
+      end
     end
-    
   end
 end

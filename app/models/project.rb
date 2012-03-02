@@ -348,8 +348,7 @@ class Project < ActiveRecord::Base
   end
 
   def on_current_server?
-    server_id = GitoriousConfig["current_server_id"]
-    return false if server_id.to_i == gitorious_server_id
+    return false if gitorious_server_id && GitoriousConfig.key?("current_server_id") && GitoriousConfig["current_server_id"] != gitorious_server_id
     return true
   end
 
