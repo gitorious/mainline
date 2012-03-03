@@ -247,7 +247,7 @@ class ProjectsControllerTest < ActionController::TestCase
             :description => "projectx's description",
             :owner_type => "User"
           },
-          :private => true
+          :private_project => "1"
         end
 
         assert can_read?(users(:johan), Project.last)
@@ -264,8 +264,7 @@ class ProjectsControllerTest < ActionController::TestCase
             :slug => "projectx",
             :description => "projectx's description",
             :owner_type => "User"
-          },
-          :private => false
+          }
         end
 
         assert can_read?(nil, Project.last)
@@ -275,7 +274,7 @@ class ProjectsControllerTest < ActionController::TestCase
         login_as :johan
         get :new
         assert_match /Make the project private\?/, @response.body
-        assert_match /name="private"/, @response.body
+        assert_match /name="private_project"/, @response.body
       end
     end
 

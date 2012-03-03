@@ -93,7 +93,7 @@ class RepositoriesController < ApplicationController
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
 
     if @repository.save
-      @repository.make_private if GitoriousConfig["enable_private_repositories"] && params[:private]
+      @repository.make_private if GitoriousConfig["enable_private_repositories"] && params[:private_repository]
       flash[:success] = I18n.t("repositories_controller.create_success")
       redirect_to [@repository.project_or_owner, @repository]
     else

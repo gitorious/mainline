@@ -199,7 +199,7 @@ class ProjectsController < ApplicationController
   end
 
   def flip_private_switch(project)
-    return if !GitoriousConfig["enable_private_repositories"] || !params[:private]
+    return if !GitoriousConfig["enable_private_repositories"] || !params[:private_project]
     project.make_private
     project
   end

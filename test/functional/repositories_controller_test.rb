@@ -1649,7 +1649,7 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :johan
 
       assert_difference "Repository.count" do
-        post :create, :project_id => @project.to_param, :repository => {:name => "my-new-repo"}, :private => "1"
+        post :create, :project_id => @project.to_param, :repository => {:name => "my-new-repo"}, :private_repository => "1"
 
         assert_response :redirect
         assert Repository.last.private?
