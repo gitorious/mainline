@@ -34,3 +34,12 @@ thunderbird:
   owner_id: <%= Fixtures.identify(:team_thunderbird) %>
   merge_requests_need_signoff: true
   containing_site: qt
+
+remote_project:
+  id: 4
+  title: Hosted elsewhere
+  slug: remote
+  user_id: 3
+  owner_type: User
+  owner_id: 1
+  gitorious_server_id: 1
