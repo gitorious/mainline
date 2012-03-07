@@ -88,13 +88,14 @@ production:
   # setups where performance is not critical.
   messaging_adapter: stomp
 
-  # Record throttling By default, Gitorious throttles the rate at
-  # which users can create database records (repositories, projects,
-  # messages..)  Users can only create X record within Y timeframe, or
-  # they'll get a "hold off for a while" message after which the user
-  # has to wait until the Y timeframe has passed to create more
-  # records of that type. Disable this only if you trust all your
-  # users not to abuse/spam/DDOS the installation.
+  # Disable record throttling
+  # By default, Gitorious throttles the rate at which users can create
+  # database records (repositories, projects, messages..) Users can
+  # only create X records within Y timeframe, or they'll get a "hold
+  # off for a while" error message after which the offending user has
+  # to wait until the Y timeframe has passed to create more records of
+  # that type. Disable this only if you trust all your users not to
+  # abuse/spam/DDOS your Gitorious instance with repo/msg/project creation.
   disable_record_throttling: false
 
   # The following properties are all defaults for the stomp adapter
