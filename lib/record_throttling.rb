@@ -17,11 +17,17 @@
 #++
 
 module RecordThrottling
+  
   class LimitReachedError < StandardError; end
   
   def self.included(base)
     base.class_eval do
       include RecordThrottlingInstanceMethods
+
+      def self.throttling_disabled
+        (GitoriousConfig["disable_record_throttling"] && 
+         GitoriousConfig["disable_record_throttling"] == true)
+      end
       
       # Thottles record creation/update. 
       # Raises RecordThrottling::RecordThrottleLimitReachedError if limit is 
@@ -43,9 +49,11 @@ module RecordThrottling
       #   :conditions => proc{|record| {:user_id => record.user.id} },
       #   :timeframe => 5.minutes
       def self.throttle_records(create_or_update, options)
-        options.assert_valid_keys(:limit, :counter, :conditions, :timeframe)
-        write_inheritable_attribute(:creation_throttle_options, options)
-        send("before_#{create_or_update}", :check_throttle_limits)
+        unless throttling_disabled
+          options.assert_valid_keys(:limit, :counter, :conditions, :timeframe)
+          write_inheritable_attribute(:creation_throttle_options, options)
+          send("before_#{create_or_update}", :check_throttle_limits)
+        end
       end
     end
   end

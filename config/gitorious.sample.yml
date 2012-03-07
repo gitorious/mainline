@@ -88,6 +88,15 @@ production:
   # setups where performance is not critical.
   messaging_adapter: stomp
 
+  # Record throttling By default, Gitorious throttles the rate at
+  # which users can create database records (repositories, projects,
+  # messages..)  Users can only create X record within Y timeframe, or
+  # they'll get a "hold off for a while" message after which the user
+  # has to wait until the Y timeframe has passed to create more
+  # records of that type. Disable this only if you trust all your
+  # users not to abuse/spam/DDOS the installation.
+  disable_record_throttling: false
+
   # The following properties are all defaults for the stomp adapter
   # Be sure to match thir analogues in broker.yml
   # stomp_server_address: localhost
@@ -311,3 +320,4 @@ test:
   cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
   use_ssl: true
   messaging_adapter: test
+  disable_record_throttling: false
