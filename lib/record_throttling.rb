@@ -17,18 +17,36 @@
 #++
 
 module RecordThrottling
-  
+
   class LimitReachedError < StandardError; end
+  
+  def self.disable
+    @@disabled = true
+  end
+
+  def self.enable
+    @@disabled = false
+  end
+
+  def self.disabled?
+    @@disabled || RecordThrottling::default_behavior
+  end
+
+  def self.reset_to_default
+    @@disabled =  RecordThrottling::default_behavior
+  end
+
+  def self.default_behavior
+   (GitoriousConfig["disable_record_throttling"] && 
+    GitoriousConfig["disable_record_throttling"] == true)
+  end
+
+  @@disabled = RecordThrottling::default_behavior
   
   def self.included(base)
     base.class_eval do
       include RecordThrottlingInstanceMethods
 
-      def self.throttling_disabled
-        (GitoriousConfig["disable_record_throttling"] && 
-         GitoriousConfig["disable_record_throttling"] == true)
-      end
-      
       # Thottles record creation/update. 
       # Raises RecordThrottling::RecordThrottleLimitReachedError if limit is 
       # reached.
@@ -49,25 +67,25 @@ module RecordThrottling
       #   :conditions => proc{|record| {:user_id => record.user.id} },
       #   :timeframe => 5.minutes
       def self.throttle_records(create_or_update, options)
-        unless throttling_disabled
-          options.assert_valid_keys(:limit, :counter, :conditions, :timeframe)
-          write_inheritable_attribute(:creation_throttle_options, options)
-          send("before_#{create_or_update}", :check_throttle_limits)
-        end
+        options.assert_valid_keys(:limit, :counter, :conditions, :timeframe)
+        write_inheritable_attribute(:creation_throttle_options, options)
+        send("before_#{create_or_update}", :check_throttle_limits)
       end
     end
   end
   
   module RecordThrottlingInstanceMethods
     def check_throttle_limits
-      options = self.class.read_inheritable_attribute(:creation_throttle_options)
-      if options[:counter].call(self) < options[:limit]
-        return true
-      end
-      last_create = self.class.maximum(:created_at, 
-        :conditions => options[:conditions].call(self))
-      if last_create && last_create >= options[:timeframe].ago
-        raise LimitReachedError
+      unless RecordThrottling.disabled?
+        options = self.class.read_inheritable_attribute(:creation_throttle_options)
+        if options[:counter].call(self) < options[:limit]
+          return true
+        end
+        last_create = self.class.maximum(:created_at, 
+                                         :conditions => options[:conditions].call(self))
+        if last_create && last_create >= options[:timeframe].ago
+          raise LimitReachedError
+        end
       end
     end
   end
