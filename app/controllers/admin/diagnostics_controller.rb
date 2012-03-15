@@ -19,18 +19,21 @@
 class Admin::DiagnosticsController < ApplicationController
 
   def index
+    @overall_healthy = markup everything_healthy?
+    
     @queues_up = markup queues_up?
     @git_operations_work = markup git_operations_work?
 
     @free_output = `free -m`
     @vmstat_output = `vmstat`
+    @df_output = `df -h`
   end
 
   def summary
     if everything_healthy?
       render :text => "OK"
     else
-      render :text => "One or several problems, see /admin/diagnostics for diagnostic overview", :status => 500
+      render :text => "Error! See /admin/diagnostics for overview", :status => 500
     end
   end  
 
@@ -50,7 +53,7 @@ class Admin::DiagnosticsController < ApplicationController
   end
 
   def git_operations_work?
-    true
+    false
   end
 
   def queues_up?

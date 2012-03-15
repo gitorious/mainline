@@ -20,10 +20,16 @@
 <% end -%>
 <% end %>
 
+
 <h1>Diagnostics</h1>
 
 <p>This is a overview of the current state of this Gitorious
 setup.</p>
+
+<h2>Summary<h2>
+
+<p>Is everything ok? <%= @overall_healthy %></p>
+
 
 <h2>Core functionality</h2>
 
@@ -38,6 +44,7 @@ setup.</p>
   <tr><td> <%=  %></td></tr>
 </table>
 
+
 <h2>Services and system requirements</h2>
 
 <table>
@@ -51,13 +58,14 @@ setup.</p>
   <tr><td> <%=  %></td></tr>
 </table>
 
+
 <h2>Host system health</h2>
 
 <table>
-  <tr><td> Disk usage ok?</td><td><%=  %></td></tr>
-  <tr><td> Cpu usage ok?</td><td><%=  %></td></tr>
-  <tr><td> Memory usage ok?</td><td><%=  %></td></tr>
+  <tr><td> More than 90% disk space free?</td><td><%=  %></td></tr>
+  <tr><td> More than 90% RAM free?</td><td><%=  %></td></tr>
 </table>
+
 
 <h2>Host system snapshot</h2>
 
@@ -71,6 +79,10 @@ setup.</p>
 <%= @vmstat_output %>
 </pre>
 
+<h3>df -h</h3>
+<pre>
+<%= @df_output %>
+</pre>
 
 
 <h2>How to keep tabs on this</h2>
