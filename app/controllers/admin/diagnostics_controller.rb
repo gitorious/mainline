@@ -21,6 +21,9 @@ class Admin::DiagnosticsController < ApplicationController
   def index
     @queues_up = markup queues_up?
     @git_operations_work = markup git_operations_work?
+
+    @free_output = `free -m`
+    @vmstat_output = `vmstat`
   end
 
   def summary
@@ -38,9 +41,10 @@ class Admin::DiagnosticsController < ApplicationController
       "<span class='diagnostic-false-indicator'>false</span>"
     end
   end
-
   
-  # expand and move to lib/
+  # TODO expand and move to lib/
+  # TODO throttle calls to these health checks to avoid DDOS
+  
   def everything_healthy?
     git_operations_work? && queues_up?
   end

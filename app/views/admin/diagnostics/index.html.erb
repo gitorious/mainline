@@ -22,43 +22,61 @@
 
 <h1>Diagnostics</h1>
 
-<p>This is a visual overview of the current state of this Gitorious
+<p>This is a overview of the current state of this Gitorious
 setup.</p>
 
 <h2>Core functionality</h2>
 
-<ul>
-  <li>Can 'git clone | pull | push' to myself locally? <%= @queues_up %></li>
-  <li>Queues are working? <%= @git_operations_work %></li>
-  <li>Ultrasphinx indexing working? <%=  %></li>
-  <li>Ultrasphinx search queries working? <%=  %></li>
-  <li>Git user and its permissions are present and correct?<%=  %></li>
-  <li>At least one Gitorious admin user exists?<%=  %></li>
-  <li> <%=  %></li>
-  <li> <%=  %></li>
-</ul>
+<table>
+  <tr><td>Can 'git clone | pull | push' to myself locally?</td><td> <%= @queues_up %></td></tr>
+  <tr><td>Queues are working?</td><td> <%= @git_operations_work %></td></tr>
+  <tr><td>Ultrasphinx indexing working?</td><td> <%=  %></td></tr>
+  <tr><td>Ultrasphinx search queries working?</td><td> <%=  %></td></tr>
+  <tr><td>Git user and its permissions are present and correct?</td><td><%=  %></td></tr>
+  <tr><td>At least one Gitorious admin user exists?</td><td><%=  %></td></tr>
+  <tr><td> <%=  %></td></tr>
+  <tr><td> <%=  %></td></tr>
+</table>
 
-<h2>Services and daemons</h2>
+<h2>Services and system requirements</h2>
 
-<ul>
-  <li> Mysql is up? <%=  %></li>
-  <li> Monit is up?<%=  %></li>
-  <li> Ultrasphinx is up? <%=  %></li>
-  <li> Queue service (active mq etc) is up?<%=  %></li>
-  <li> Memcached available? <%=  %></li>
-  <li> Sendmail available? <%=  %></li>
-  <li> <%=  %></li>
-  <li> <%=  %></li>
-</ul>
+<table>
+  <tr><td> Mysql is up?</td><td> <%=  %></td></tr>
+  <tr><td> Monit is up?</td><td><%=  %></td></tr>
+  <tr><td> Ultrasphinx is up?</td><td> <%=  %></td></tr>
+  <tr><td> Queue service (active mq etc) is up?</td><td><%=  %></td></tr>
+  <tr><td> Memcached available?</td><td> <%=  %></td></tr>
+  <tr><td> Sendmail available?</td><td> <%=  %></td></tr>
+  <tr><td> <%=  %></td></tr>
+  <tr><td> <%=  %></td></tr>
+</table>
 
 <h2>Host system health</h2>
 
-<ul>
-  <li> Disk usage <%=  %></li>
-  <li> Cpu usage <%=  %></li>
-  <li> Memory usage <%=  %></li>
-</ul>
+<table>
+  <tr><td> Disk usage ok?</td><td><%=  %></td></tr>
+  <tr><td> Cpu usage ok?</td><td><%=  %></td></tr>
+  <tr><td> Memory usage ok?</td><td><%=  %></td></tr>
+</table>
 
 <h2>Host system snapshot</h2>
 
-<p>TODO Output of free, top, vmstat etc follows</p>
+<h3>free -m</h3>
+<pre>
+<%= @free_output %>
+</pre>
+
+<h3>vmstat</h3>
+<pre>
+<%= @vmstat_output %>
+</pre>
+
+
+
+<h2>How to keep tabs on this</h2>
+
+<p>An go/no-go summary of the system is available at a separate
+<%= link_to "summary url", :action => "summary" %>. This can be pinged
+regularly from an external monitoring service to keep tabs on the
+status of this Gitorious installation. If everything is ok then it
+will respond "OK". If not, it will respond with a 500 error code.</p>
