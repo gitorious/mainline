@@ -110,6 +110,10 @@ module Gitorious
     
     # Host system health
 
+    # TODO make these thresholds configurable, with sane defaults
+    # TODO option to make Gitorious run self-diagnostics regularly
+    # (cron) and alert admin by mail if something breaks
+    
     MAX_HEALTHY_DISK_USAGE = 90#%
     
     def enough_disk_free?
