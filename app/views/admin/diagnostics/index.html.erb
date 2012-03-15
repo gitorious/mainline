@@ -1,0 +1,13 @@
+
+<% content_for(:sidebar) do %>
+<% if controller.is_a? Admin::UsersController -%>
+<ul class="links navigation">
+	<li class="new_user">
+    <%= link_to t("views.users.create_btn"), new_admin_user_path %>
+  </li>
+</ul>
+<% end -%>
+<% end %>
+
+Health check page goes here
+
