@@ -22,7 +22,7 @@ class Admin::DiagnosticsController < ApplicationController
   # TODO hide index (but not summary) behind admin user login filter
   
   def index
-    @overall_healthy = markup(everything_healthy?)
+    @everything_healthy = markup(everything_healthy?)
 
     @git_operations_work = markup(git_operations_work?)
     @queues_up = markup(queues_up?)
@@ -41,9 +41,11 @@ class Admin::DiagnosticsController < ApplicationController
     @memcached_up = markup(memcached_up?)
     @sendmail_up = markup(sendmail_up?)
 
-    @over_90_percent_disk_free = markup(over_90_percent_disk_free?)
-    @over_90_percent_RAM_free = markup(over_90_percent_RAM_free?)
-      
+    @enough_disk_free = markup(enough_disk_free?)
+    @enough_RAM_free = markup(enough_RAM_free?)
+    @healthy_cpu_load_average = markup(healthy_cpu_load_average?)
+
+    @uptime_output = `uptime`
     @free_output = `free -m`
     @vmstat_output = `vmstat`
     @df_output = `df -h`

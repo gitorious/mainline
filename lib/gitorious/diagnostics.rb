@@ -39,8 +39,9 @@ module Gitorious
         queue_service_up? &&
         memcached_up? &&
         sendmail_up? &&
-        over_90_percent_disk_free? &&
-        over_90_percent_RAM_free?
+        enough_disk_free? &&
+        enough_RAM_free? &&
+        healthy_cpu_load_average?
     end
 
     # Core functionality
@@ -109,12 +110,25 @@ module Gitorious
     
     # Host system health
 
-    def over_90_percent_disk_free?
+    MAX_HEALTHY_DISK_USAGE = 90#%
+    
+    def enough_disk_free?
+      percent_str = `df -Ph #{GitoriousConfig['repository_base_path']} | awk 'NR==2 {print $5}'`
+      percent_str.chomp "%"
+      percent_free = percent_free.to_i
+      return (percent_free < MAX_HEALTHY_DISK_USAGE)
+    end
+
+    MAX_HEALTHY_RAM_USAGE = 90#%
+    
+    def enough_RAM_free?
       false
     end
 
-    def over_90_percent_RAM_free?
-      false
+    MAX_HEALTHY_CPU_LOAD = 90#%
+    
+    def healthy_cpu_load_average?
+      false # check uptime, extract load average
     end
     
   end

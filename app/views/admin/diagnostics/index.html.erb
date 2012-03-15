@@ -13,12 +13,12 @@
 
 <h1>Diagnostics</h1>
 
-<p>This is a overview of the current state of this Gitorious
+<p>This is an overview of the current state of this Gitorious
 setup.</p>
 
 <h2>Summary<h2>
 
-<p>Is everything ok? <%= @overall_healthy %></p>
+<p>Is everything ok? <%= @everything_healthy %></p>
 
 
 <h2>Core functionality</h2>
@@ -51,9 +51,16 @@ setup.</p>
 <h2>Host system health</h2>
 
 <table>
-  <tr><td> More than 90% disk space free?</td><td><%= @over_90_percent_disk_free %></td></tr>
-  <tr><td> More than 90% RAM free?</td><td><%= @over_90_percent_RAM_free %></td></tr>
+  <tr><td>More than <%= Gitorious::Diagnostics::MAX_HEALTHY_DISK_USAGE%>% disk space free?</td><td><%= @enough_disk_free %></td></tr>
+  <tr><td>More than <%= Gitorious::Diagnostics::MAX_HEALTHY_RAM_USAGE%>% RAM free?</td><td><%= @enough_RAM_free %></td></tr>
+  <tr><td>Average cpu load below <%= Gitorious::Diagnostics::MAX_HEALTHY_CPU_LOAD%>%?</td><td><%= @healthy_cpu_load_average %></td></tr>
+  
 </table>
+
+<h3>uptime</h3>
+<pre>
+<%= @uptime_output %>
+</pre>
 
 <h3>free -m</h3>
 <pre>
