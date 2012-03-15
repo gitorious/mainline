@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,15 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class Admin::DiagnosticsController < ApplicationController
 
+class Admin::DiagnosticsController < ApplicationController
+  include Gitorious::Diagnostics
+  
   # TODO hide index (but not summary) behind admin user login filter
   
   def index
-    @overall_healthy = markup everything_healthy?
+    @overall_healthy = markup(everything_healthy?)
     
-    @queues_up = markup queues_up?
-    @git_operations_work = markup git_operations_work?
+    @queues_up = markup(queues_up?)
+    @git_operations_work = markup(git_operations_work?)
 
     @free_output = `free -m`
     @vmstat_output = `vmstat`
@@ -39,6 +40,9 @@ class Admin::DiagnosticsController < ApplicationController
     end
   end  
 
+
+  private
+
   def markup(status)
     if status == true
       "<span class='diagnostic-true-indicator'>true</span>"
@@ -47,19 +51,6 @@ class Admin::DiagnosticsController < ApplicationController
     end
   end
   
-  # TODO expand and move to lib/
-  # TODO throttle calls to these health checks to avoid DDOS
-  
-  def everything_healthy?
-    git_operations_work? && queues_up?
-  end
 
-  def git_operations_work?
-    false
-  end
-
-  def queues_up?
-    true
-  end
     
 end
