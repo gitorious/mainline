@@ -23,10 +23,27 @@ class Admin::DiagnosticsController < ApplicationController
   
   def index
     @overall_healthy = markup(everything_healthy?)
-    
-    @queues_up = markup(queues_up?)
-    @git_operations_work = markup(git_operations_work?)
 
+    @git_operations_work = markup(git_operations_work?)
+    @queues_up = markup(queues_up?)
+    @indexing_works = markup(indexing_works?)
+    @search_works = markup(search_works?)
+    @git_user_ok = markup(git_user_ok?)
+    @gitorious_admin_account_present = markup(gitorious_admin_account_present?)
+    @repo_dir_ok = markup(repo_dir_ok?)
+    @tarball_dirs_ok = markup(tarball_dirs_ok?)
+
+    @git_daemon_up = markup(git_daemon_up?)
+    @poller_up = markup(poller_up?)
+    @mysql_up = markup(mysql_up?)
+    @ultrasphinx_up = markup(ultrasphinx_up?)
+    @queue_service_up = markup(queue_service_up?)
+    @memcached_up = markup(memcached_up?)
+    @sendmail_up = markup(sendmail_up?)
+
+    @over_90_percent_disk_free = markup(over_90_percent_disk_free?)
+    @over_90_percent_RAM_free = markup(over_90_percent_RAM_free?)
+      
     @free_output = `free -m`
     @vmstat_output = `vmstat`
     @df_output = `df -h`
