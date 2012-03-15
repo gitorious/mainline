@@ -18,6 +18,8 @@
 #++
 class Admin::DiagnosticsController < ApplicationController
 
+  # TODO hide index (but not summary) behind admin user login filter
+  
   def index
     @overall_healthy = markup everything_healthy?
     
