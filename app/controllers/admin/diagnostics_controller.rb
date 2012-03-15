@@ -19,7 +19,38 @@
 class Admin::DiagnosticsController < ApplicationController
 
   def index
-    
+    @queues_up = markup queues_up?
+    @git_operations_work = markup git_operations_work?
   end
 
+  def summary
+    if everything_healthy?
+      render :text => "OK"
+    else
+      render :text => "One or several problems, see /admin/diagnostics for diagnostic overview", :status => 500
+    end
+  end  
+
+  def markup(status)
+    if status == true
+      "<span class='diagnostic-true-indicator'>true</span>"
+    else
+      "<span class='diagnostic-false-indicator'>false</span>"
+    end
+  end
+
+  
+  # expand and move to lib/
+  def everything_healthy?
+    git_operations_work? && queues_up?
+  end
+
+  def git_operations_work?
+    true
+  end
+
+  def queues_up?
+    true
+  end
+    
 end

@@ -1,4 +1,15 @@
 
+<!--TODO Move me to stylesheets-->
+<style>
+  .diagnostic-true-indicator {
+    color: green;
+  } 
+  .diagnostic-false-indicator {
+    color: red;
+  }
+</style>
+
+
 <% content_for(:sidebar) do %>
 <% if controller.is_a? Admin::UsersController -%>
 <ul class="links navigation">
@@ -9,5 +20,45 @@
 <% end -%>
 <% end %>
 
-Health check page goes here
+<h1>Diagnostics</h1>
 
+<p>This is a visual overview of the current state of this Gitorious
+setup.</p>
+
+<h2>Core functionality</h2>
+
+<ul>
+  <li>Can 'git clone | pull | push' to myself locally? <%= @queues_up %></li>
+  <li>Queues are working? <%= @git_operations_work %></li>
+  <li>Ultrasphinx indexing working? <%=  %></li>
+  <li>Ultrasphinx search queries working? <%=  %></li>
+  <li>Git user and its permissions are present and correct?<%=  %></li>
+  <li>At least one Gitorious admin user exists?<%=  %></li>
+  <li> <%=  %></li>
+  <li> <%=  %></li>
+</ul>
+
+<h2>Services and daemons</h2>
+
+<ul>
+  <li> Mysql is up? <%=  %></li>
+  <li> Monit is up?<%=  %></li>
+  <li> Ultrasphinx is up? <%=  %></li>
+  <li> Queue service (active mq etc) is up?<%=  %></li>
+  <li> Memcached available? <%=  %></li>
+  <li> Sendmail available? <%=  %></li>
+  <li> <%=  %></li>
+  <li> <%=  %></li>
+</ul>
+
+<h2>Host system health</h2>
+
+<ul>
+  <li> Disk usage <%=  %></li>
+  <li> Cpu usage <%=  %></li>
+  <li> Memory usage <%=  %></li>
+</ul>
+
+<h2>Host system snapshot</h2>
+
+<p>TODO Output of free, top, vmstat etc follows</p>
