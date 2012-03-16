@@ -799,7 +799,7 @@ Gitorious.CommentForm = function (path) {
         var plainDiff = [];
 
         var selectors = $.map(this.numbers, function (e) {
-            return "table.codediff.inline tr[data-line-num-tuple=" + e + "]";
+            return "table.codediff.inline tr[data-line-num-tuple='" + e + "']";
         });
 
         // extract the raw diff data from each row
