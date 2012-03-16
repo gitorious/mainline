@@ -114,7 +114,7 @@ module Gitorious
     # TODO option to make Gitorious run self-diagnostics regularly
     # (cron) and alert admin by mail if something breaks
     
-    MAX_HEALTHY_DISK_USAGE = 90#%
+    MAX_HEALTHY_DISK_USAGE = 90 #%
     
     def enough_disk_free?
       percent_str = `df -Ph #{GitoriousConfig['repository_base_path']} | awk 'NR==2 {print $5}'`
@@ -123,7 +123,7 @@ module Gitorious
       return (percent_free < MAX_HEALTHY_DISK_USAGE)
     end
 
-    MAX_HEALTHY_RAM_USAGE = 90#%
+    MAX_HEALTHY_RAM_USAGE = 90 #%
     
     def enough_RAM_free?
       free_numbers = `free -mt | tail -n 1`.chomp.split(" ")
@@ -133,7 +133,7 @@ module Gitorious
       return (percent_free > (100-MAX_HEALTHY_RAM_USAGE))
     end
 
-    MAX_HEALTHY_CPU_LOAD = 90#%
+    MAX_HEALTHY_CPU_LOAD = 90 #%
     
     def healthy_cpu_load_average?
       load_percent_last_15_min = `uptime`.chomp.split(" ").last.to_f
