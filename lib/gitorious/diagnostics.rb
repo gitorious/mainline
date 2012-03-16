@@ -126,13 +126,18 @@ module Gitorious
     MAX_HEALTHY_RAM_USAGE = 90#%
     
     def enough_RAM_free?
-      false
+      free_numbers = `free -mt | tail -n 1`.chomp.split(" ")
+      total = free_numbers[1].to_i
+      free = free_numbers[3].to_i
+      percent_free = (free*100)/total
+      return (percent_free > (100-MAX_HEALTHY_RAM_USAGE))
     end
 
     MAX_HEALTHY_CPU_LOAD = 90#%
     
     def healthy_cpu_load_average?
-      false # check uptime, extract load average
+      load_percent_last_15_min = `uptime`.chomp.split(" ").last.to_f
+      return (load_percent_last_15_min < MAX_HEALTHY_CPU_LOAD.to_f)
     end
     
   end
