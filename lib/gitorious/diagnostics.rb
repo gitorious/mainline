@@ -32,6 +32,7 @@ module Gitorious
         gitorious_admin_account_present? &&
         repo_dir_ok? &&
         tarball_dirs_ok? &&
+        authorized_keys_ok? &&
         git_daemon_up? &&
         poller_up? &&
         mysql_up? &&
@@ -78,6 +79,10 @@ module Gitorious
       false
     end
 
+    def authorized_keys_ok?
+
+    end
+
     # Services and daemons
 
     def git_daemon_up?
@@ -85,27 +90,31 @@ module Gitorious
     end
 
     def poller_up?
-      false
+      count_process_names_containing("poller")
     end
 
     def mysql_up?
-      false
+      count_process_names_containing("mysql")
     end
 
     def ultrasphinx_up?
-      false
+      count_process_names_containing("ultrasphinx")
     end
 
     def queue_service_up?
-      false
+     count_process_names_containing("stomp")
     end
 
     def memcached_up?
-      false
+      count_process_names_containing("memcached")
     end
 
     def sendmail_up?
-      false
+      count_process_names_containing("sendmail")
+    end
+
+    def count_process_names_containing(str)
+      ('ps -ef | grep #{str} | grep -v grep | wc -l'.to_i) > 0
     end
     
     # Host system health

@@ -32,6 +32,7 @@ class Admin::DiagnosticsController < ApplicationController
     @gitorious_admin_account_present = markup(gitorious_admin_account_present?)
     @repo_dir_ok = markup(repo_dir_ok?)
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
+    @authorized_keys_ok = markup(authorized_keys_ok?)
 
     @git_daemon_up = markup(git_daemon_up?)
     @poller_up = markup(poller_up?)

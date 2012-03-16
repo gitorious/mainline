@@ -32,7 +32,7 @@ setup.</p>
   <tr><td>At least one Gitorious admin account exists?</td><td><%= @gitorious_admin_account_present %></td></tr>
   <tr><td>Repository directories present and correct perms?</td><td><%= @repo_dir_ok %></td></tr>
   <tr><td>Tarball cache and work directories present and correct perms?</td><td><%= @tarball_dirs_ok %></td></tr>
-  <tr><td>.ssh/authorized_keys present and ok?</td><td><%= puts "TODO" %></td></tr>
+  <tr><td>.ssh/authorized_keys present and ok?</td><td><%= puts @authorized_keys_ok %></td></tr>
 </table>
 
 
