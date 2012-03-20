@@ -25,11 +25,8 @@ module Gitorious
     
     def everything_healthy?
       git_operations_work? &&
-        queues_up? &&
-        indexing_works? &&
-        search_works? &&
         git_user_ok? &&
-        gitorious_admin_account_present? &&
+        atleast_one_gitorious_account_present? &&
         repo_dir_ok? &&
         tarball_dirs_ok? &&
         authorized_keys_ok? &&
@@ -49,44 +46,78 @@ module Gitorious
     
     def git_operations_work?
       false
+      # TODO
+      # Needs initial config of test user/key
+      # aDD Iinital step during setup
+      # throw useful error in web console if not done yet
+     
+      # test project/repo
+      # needs corresponding public key for a matching user in app
+      # needs keypair for the gitorious user running the test
+      # Could seed db with test user, and create priv key on first run
+      # of diagnostic tool?
+      # CAN TEST This seeding by grepping authorized_keys file
+      
+      # shell out, test clone/push/pull or just git ls-remote? of test repo
+      # cleanup
+      # ssh -i /var/www/gitorious/data/seeded_private_key
     end
-
-    def queues_up?
-      false
-    end
-
-    def indexing_works?
-      false
-    end
-
-    def search_works?
-      false
-    end
-
+    
     def git_user_ok?
       false
+      # TODO
+      # Check that gitorious_user, usually 'git', is present, in git group, has home dir, other??
     end
 
-    def gitorious_admin_account_present?
+    def atleast_one_gitorious_account_present?
       false
+      # TODO
     end
 
     def repo_dir_ok?
       false
+      # TODO
     end
 
     def tarball_dirs_ok?
       false
+      # TODO
     end
 
     def authorized_keys_ok?
-
+      false
+      # TODO
     end
+
+    # TODO wire this up
+    def not_using_reserved_hostname?
+      !GitoriousConfig.using_reserved_hostname?
+    end
+
+
+
+    
+
+    
+    # TODO check for public mode correctly set up
+    
 
     # Services and daemons
 
+
+    def ssh_deamon_up?
+      #TODO
+    end
+
+    
+    def git_installed?
+      #TODO
+    end
+    
     def git_daemon_up?
-      false
+      # other altneratives: git-proxy, <nothing>
+      # in our case also haproxy
+      count_process_names_containing("git-daemon")
     end
 
     def poller_up?
@@ -98,11 +129,16 @@ module Gitorious
     end
 
     def ultrasphinx_up?
-      count_process_names_containing("ultrasphinx")
+      count_process_names_containing("searchd")
+      # TODO + does it respond on configured port, expected by rails app?
+      # TODO check ps -o for pid, we got the pidfile for it
     end
 
     def queue_service_up?
-     count_process_names_containing("stomp")
+      adapter_name = GitoriousConfig["messaging_adapter"]
+      count_process_names_containing(adapter_name)
+      # TODO can we ping stomp? queue service can be on remote box....
+      # TODO just check if there's anyting on specified port for queue service
     end
 
     def memcached_up?
@@ -113,8 +149,24 @@ module Gitorious
       count_process_names_containing("sendmail")
     end
 
+    # TODO wire this up
+    # BUT only for apache
+    # Only useful/true if http_cloning is allowed
+    def xsendfile_enabled?
+      # TODO, one or two appropaches
+
+      #1: enabled and confed in apache
+
+      #2: can do:
+      # curl
+      # http://git.[gitorious_host]/gitorious/mainline.git/info/refs
+      # -> fil
+    end
+
+    
     def count_process_names_containing(str)
-      ('ps -ef | grep #{str} | grep -v grep | wc -l'.to_i) > 0
+      matching_processes_count = (`ps -ef | grep #{str} | grep -v grep | wc -l`.to_i)      
+      matching_processes_count > 0
     end
     
     # Host system health

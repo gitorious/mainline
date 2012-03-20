@@ -25,11 +25,8 @@ class Admin::DiagnosticsController < ApplicationController
     @everything_healthy = markup(everything_healthy?)
 
     @git_operations_work = markup(git_operations_work?)
-    @queues_up = markup(queues_up?)
-    @indexing_works = markup(indexing_works?)
-    @search_works = markup(search_works?)
     @git_user_ok = markup(git_user_ok?)
-    @gitorious_admin_account_present = markup(gitorious_admin_account_present?)
+    @atleast_one_gitorious_account_present = markup(atleast_one_gitorious_account_present?)
     @repo_dir_ok = markup(repo_dir_ok?)
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
     @authorized_keys_ok = markup(authorized_keys_ok?)
@@ -70,7 +67,4 @@ class Admin::DiagnosticsController < ApplicationController
       "<span class='diagnostic-false-indicator'>false</span>"
     end
   end
-  
-
-    
 end

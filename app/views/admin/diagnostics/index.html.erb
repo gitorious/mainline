@@ -24,15 +24,12 @@ setup.</p>
 <h2>Core functionality</h2>
 
 <table>
-  <tr><td>Can 'git clone | pull | push' to myself locally?</td><td> <%= @queues_up %></td></tr>
-  <tr><td>Queues are working?</td><td> <%= @git_operations_work %></td></tr>
-  <tr><td>Ultrasphinx indexing working?</td><td> <%= @indexing_works %></td></tr>
-  <tr><td>Ultrasphinx search queries working?</td><td> <%= @search_works %></td></tr>
+  <tr><td>Can 'git clone | pull | push' to myself locally?</td><td> <%= @git_operations_work %></td></tr>
   <tr><td>Git user and its permissions are present and correct?</td><td><%= @git_user_ok %></td></tr>
-  <tr><td>At least one Gitorious admin account exists?</td><td><%= @gitorious_admin_account_present %></td></tr>
+  <tr><td>At least one Gitorious account exists?</td><td><%= @atleast_one_gitorious_account_present %></td></tr>
   <tr><td>Repository directories present and correct perms?</td><td><%= @repo_dir_ok %></td></tr>
   <tr><td>Tarball cache and work directories present and correct perms?</td><td><%= @tarball_dirs_ok %></td></tr>
-  <tr><td>.ssh/authorized_keys present and ok?</td><td><%= puts @authorized_keys_ok %></td></tr>
+  <tr><td>.ssh/authorized_keys present and ok?</td><td><%= @authorized_keys_ok %></td></tr>
 </table>
 
 
@@ -52,8 +49,8 @@ setup.</p>
 <h2>Host system health</h2>
 
 <table>
-  <tr><td>More than <%= Gitorious::Diagnostics::MAX_HEALTHY_DISK_USAGE%>% disk space free?</td><td><%= @enough_disk_free %></td></tr>
-  <tr><td>More than <%= Gitorious::Diagnostics::MAX_HEALTHY_RAM_USAGE%>% RAM free?</td><td><%= @enough_RAM_free %></td></tr>
+  <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_DISK_USAGE%>% disk space used?</td><td><%= @enough_disk_free %></td></tr>
+  <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_RAM_USAGE%>% RAM used?</td><td><%= @enough_RAM_free %></td></tr>
   <tr><td>Average cpu load below <%= Gitorious::Diagnostics::MAX_HEALTHY_CPU_LOAD%>%?</td><td><%= @healthy_cpu_load_average %></td></tr>
   
 </table>
