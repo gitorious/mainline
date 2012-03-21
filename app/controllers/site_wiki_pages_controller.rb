@@ -18,7 +18,8 @@
 
 class SiteWikiPagesController < ApplicationController
   before_filter :login_required, :except => [:index, :show, :git_access, :config, :writable_by]
- 
+  before_filter :require_site_admin, :only => [:edit, :update]
+
   renders_in_site_specific_context
 
   def index
@@ -131,6 +132,13 @@ class SiteWikiPagesController < ApplicationController
     page = Page.find(params[:id], @site.wiki)    
     root = Breadcrumb::SiteWikiPage.new(page, @site.title)
     return page, root
+  end
+
+  def require_site_admin
+    unless current_user.site_admin?
+      flash[:error] = I18n.t "admin.users_controller.check_admin"
+      redirect_to site_wiki_pages_path
+    end
   end
   
 end
