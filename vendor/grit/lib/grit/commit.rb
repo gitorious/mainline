@@ -114,22 +114,27 @@ module Grit
     #
     def self.list_from_string(repo, text)
       lines = text.split("\n")
-
+      
       commits = []
-
+      
       while !lines.empty?
         id = lines.shift.split.last
         tree = lines.shift.split.last
-
+        
         parents = []
         parents << lines.shift.split.last while lines.first =~ /^parent/
-
-        author, authored_date = self.actor(lines.shift)
-        committer, committed_date = self.actor(lines.shift)
+        
+        author_line = lines.shift
+        author_line << lines.shift if lines[0] !~ /^committer /
+        author, authored_date = self.actor(author_line)
+        
+        committer_line = lines.shift
+        committer_line << lines.shift if lines[0] && lines[0] != '' && lines[0] !~ /^encoding/
+        committer, committed_date = self.actor(committer_line)
 
         # not doing anything with this yet, but it's sometimes there
         encoding = lines.shift.split.last if lines.first =~ /^encoding/
-
+        
         lines.shift
 
         message_lines = []
@@ -142,7 +147,7 @@ module Grit
 
       commits
     end
-
+    
     # Show diffs between two trees:
     #   +repo+ is the Repo
     #   +a+ is a named commit
