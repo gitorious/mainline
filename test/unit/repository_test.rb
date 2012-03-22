@@ -1225,6 +1225,16 @@ class RepositoryTest < ActiveSupport::TestCase
         @repository.add_member(groups(:team_thunderbird))
         assert can_read?(users(:mike), @repository)
       end
+
+      should "display the git URL for public repositories" do
+        assert @repository.git_cloning?
+      end
+      
+      should "not display the git URL for protected repositories" do
+        @repository.owner = users(:johan)
+        @repository.add_member(users(:mike))
+        assert !@repository.git_cloning?
+      end
     end
 
     context "with private repositories disabled" do
