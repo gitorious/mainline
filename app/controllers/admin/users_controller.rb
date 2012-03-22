@@ -62,7 +62,7 @@ class Admin::UsersController < ApplicationController
 
   def suspend
     @user = User.find_by_login!(params[:id])
-    @user.suspended_at = Time.now
+    @user.suspend
     if @user.save
       flash[:notice] = I18n.t "admin.users_controller.suspend_notice", :user_name => @user.login
     else
@@ -73,7 +73,7 @@ class Admin::UsersController < ApplicationController
 
   def unsuspend
     @user = User.find_by_login!(params[:id])
-    @user.suspended_at = nil
+    @user.un_suspend
     if @user.save
       flash[:notice] = I18n.t "admin.users_controller.unsuspend_notice", :user_name => @user.login
     else
