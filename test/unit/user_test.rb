@@ -364,7 +364,7 @@ class UserTest < ActiveSupport::TestCase
       @user.ssh_keys = [ssh_key, ssh_key]
     end
 
-    should "should set suspend timestamp and destroy ssh keys" do
+    should "set suspend timestamp and destroy ssh keys" do
       assert_equal nil, @user.suspended_at
       assert @user.ssh_keys.length > 0
       @user.suspend
