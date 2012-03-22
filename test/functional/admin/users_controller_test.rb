@@ -66,11 +66,10 @@ class Admin::UsersControllerTest < ActionController::TestCase
     users(:johan).suspended_at = Time.new
     users(:johan).save
     put :unsuspend, :id => users(:johan).to_param
-    assert_equal users(:johan), assigns(:user)
     users(:johan).reload
-    assert_nil users(:johan).suspended_at
+    assert_not_nil users(:johan).suspended_at
     assert_response :redirect
-    assert_redirected_to(admin_users_url)
+    assert_redirected_to(new_sessions_url)
   end
 
   should " not access administrator pages if not admin" do
