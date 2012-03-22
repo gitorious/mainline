@@ -44,7 +44,7 @@
 
 <% content_for :sidebar do -%>
   <ul class="links navigation">
-    <% if logged_in? -%>
+    <% if logged_in? && current_user.site_admin? -%>
       <li class="edit_wiki_page">
         <%= edit_link(@page) -%>
       </li>
@@ -55,9 +55,11 @@
     <li class="wiki_page">
       <%= link_to(t("views.pages.index"), site_wiki_pages_path) -%>
     </li>
-    <li class="wiki_via_git">
-      <%= link_to(t("views.pages.git"), git_access_site_wiki_pages_path) -%>
-    </li>
+    <% if current_user.site_admin? -%>
+      <li class="wiki_via_git">
+        <%= link_to(t("views.pages.git"), git_access_site_wiki_pages_path) -%>
+      </li>
+    <% end -%>
   </ul>
   <p>
     <strong>Last update:</strong> <%= commit.date.to_s(:short) -%>
