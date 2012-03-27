@@ -17,8 +17,10 @@
 #++
 
 class Admin::DiagnosticsController < ApplicationController
+  before_filter :login_required, :except => :summary
+  before_filter :require_site_admin, :except => :summary
+
   include Gitorious::Diagnostics
-  
   def index
     @everything_healthy = markup(everything_healthy?)
 
@@ -66,4 +68,11 @@ class Admin::DiagnosticsController < ApplicationController
       "<span class='diagnostic-false-indicator'>false</span>"
     end
   end
+
+  def require_site_admin
+    unless current_user.site_admin?
+      redirect_to root_path
+    end
+  end
+  
 end

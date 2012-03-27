@@ -22,7 +22,7 @@ class DiagnosticsTest < ActiveSupport::TestCase
 
   include Gitorious::Diagnostics
   
-  context "Diagnostics module" do
+  context "Self-diagnostics" do
     should "detect if any current ps entry contains given string" do
       assert atleast_one_process_name_matching("test")
     end
