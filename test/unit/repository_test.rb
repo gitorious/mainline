@@ -44,7 +44,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
   should_have_many :hooks, :dependent => :destroy
 
-  should " only accept names with alphanum characters in it" do
+  should "only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
     assert !@repository.valid?, 'valid? should be false'
 
@@ -1183,6 +1183,24 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
+  context "Reserved repository names" do
+
+    should "not allow users as repository name" do
+      repo = otherwise_valid_repository(:name => "users")
+      assert repo.errors.on :name
+    end
+
+    should "not allow 'groups' as repository name" do
+      repo = otherwise_valid_repository(:name => "groups")
+      assert repo.errors.on :name
+    end
+  end
+
+  def otherwise_valid_repository(options)
+    result = new_repos(options)
+    result.valid?
+    result
+  end
 end
 
 
