@@ -30,6 +30,7 @@ module Gitorious
         repo_dir_ok? &&
         tarball_dirs_ok? &&
         authorized_keys_ok? &&
+        ssh_deamon_up? &&
         git_daemon_up? &&
         poller_up? &&
         mysql_up? &&
@@ -89,64 +90,57 @@ module Gitorious
       # TODO
     end
 
-    # TODO wire this up
+    # TODO wire this up in everything_healthy? test and web UI
     def not_using_reserved_hostname?
-      !GitoriousConfig.using_reserved_hostname?
+      false
+      #!GitoriousConfig.using_reserved_hostname?
     end
 
-
-
-    
-
-    
-    # TODO check for public mode correctly set up
-    
+    # TODO wire this up in everything_healthy? test and web UI
+    def public_mode_correctly_setup?
+      false
+    end
 
     # Services and daemons
 
-
     def ssh_deamon_up?
-      #TODO
+      atleast_one_process_name_matching("sshd")
     end
 
-    
-    def git_installed?
-      #TODO
-    end
-    
     def git_daemon_up?
-      # other altneratives: git-proxy, <nothing>
-      # in our case also haproxy
-      count_process_names_containing("git-daemon")
+      # TODO handle all known alternatives: git-proxy, <nothing>
+      # + in gitorious.org case, also haproxy
+      atleast_one_process_name_matching("git-daemon") ||
+        atleast_one_process_name_matching("git-proxy")
     end
 
     def poller_up?
-      count_process_names_containing("poller")
+      atleast_one_process_name_matching("poller")
     end
 
     def mysql_up?
-      count_process_names_containing("mysql")
+      atleast_one_process_name_matching("mysql")
     end
 
     def ultrasphinx_up?
-      count_process_names_containing("searchd")
+      atleast_one_process_name_matching("searchd")
       # TODO + does it respond on configured port, expected by rails app?
       # TODO check ps -o for pid, we got the pidfile for it
     end
 
     def queue_service_up?
       adapter_name = GitoriousConfig["messaging_adapter"]
-      count_process_names_containing(adapter_name)
+      atleast_one_process_name_matching(adapter_name)
       # TODO can we ping stomp? queue service can be on remote box....
       # TODO just check if there's anyting on specified port for queue service
     end
 
     def memcached_up?
-      count_process_names_containing("memcached")
+      atleast_one_process_name_matching("memcached")
     end
 
     def sendmail_up?
-      count_process_names_containing("sendmail")
+      atleast_one_process_name_matching("sendmail")
     end
 
     # TODO wire this up
@@ -164,16 +158,12 @@ module Gitorious
     end
 
     
-    def count_process_names_containing(str)
+    def atleast_one_process_name_matching(str)
       matching_processes_count = (`ps -ef | grep #{str} | grep -v grep | wc -l`.to_i)      
       matching_processes_count > 0
     end
     
     # Host system health
-
-    # TODO make these thresholds configurable, with sane defaults
-    # TODO option to make Gitorious run self-diagnostics regularly
-    # (cron) and alert admin by mail if something breaks
     
     MAX_HEALTHY_DISK_USAGE = 90 #%
     

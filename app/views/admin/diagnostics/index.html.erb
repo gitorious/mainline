@@ -25,18 +25,19 @@ setup.</p>
 
 <table>
   <tr><td>Can 'git clone | pull | push' to myself locally?</td><td> <%= @git_operations_work %></td></tr>
-  <tr><td>Git user and its permissions are present and correct?</td><td><%= @git_user_ok %></td></tr>
+  <tr><td>Git user present w/ correct permissions?</td><td><%= @git_user_ok %></td></tr>
+  <tr><td>Repository directories present w/ correct permissions?</td><td><%= @repo_dir_ok %></td></tr>
+  <tr><td>Tarball directories present w/ correct permissions?</td><td><%= @tarball_dirs_ok %></td></tr>
+  <tr><td>.ssh/authorized_keys present w/ correct permissions?</td><td><%= @authorized_keys_ok %></td></tr>
   <tr><td>At least one Gitorious account exists?</td><td><%= @atleast_one_gitorious_account_present %></td></tr>
-  <tr><td>Repository directories present and correct perms?</td><td><%= @repo_dir_ok %></td></tr>
-  <tr><td>Tarball cache and work directories present and correct perms?</td><td><%= @tarball_dirs_ok %></td></tr>
-  <tr><td>.ssh/authorized_keys present and ok?</td><td><%= @authorized_keys_ok %></td></tr>
 </table>
 
 
 <h2>Services and daemons</h2>
 
 <table>
-  <tr><td> git-daemon is up?</td><td><%= @git_daemon_up %></td></tr>
+  <tr><td> ssh daemon is up?</td><td><%= @ssh_deamon_up %></td></tr>
+  <tr><td> git-daemon or git-proxy is up?</td><td><%= @git_daemon_up %></td></tr>
   <tr><td> gitorious-poller is up?</td><td><%= @poller_up %></td></tr>
   <tr><td> Mysql is up?</td><td> <%= @mysql_up  %></td></tr>
   <tr><td> Ultrasphinx is up?</td><td> <%= @ultrasphinx_up %></td></tr>
@@ -51,7 +52,7 @@ setup.</p>
 <table>
   <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_DISK_USAGE%>% disk space used?</td><td><%= @enough_disk_free %></td></tr>
   <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_RAM_USAGE%>% RAM used?</td><td><%= @enough_RAM_free %></td></tr>
-  <tr><td>Average cpu load below <%= Gitorious::Diagnostics::MAX_HEALTHY_CPU_LOAD%>%?</td><td><%= @healthy_cpu_load_average %></td></tr>
+  <tr><td>Average cpu load last 15 minutes below <%= Gitorious::Diagnostics::MAX_HEALTHY_CPU_LOAD%>%?</td><td><%= @healthy_cpu_load_average %></td></tr>
   
 </table>
 

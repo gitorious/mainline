@@ -19,8 +19,6 @@
 class Admin::DiagnosticsController < ApplicationController
   include Gitorious::Diagnostics
   
-  # TODO hide index (but not summary) behind admin user login filter
-  
   def index
     @everything_healthy = markup(everything_healthy?)
 
@@ -31,6 +29,7 @@ class Admin::DiagnosticsController < ApplicationController
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
     @authorized_keys_ok = markup(authorized_keys_ok?)
 
+    @ssh_deamon_up = markup(ssh_deamon_up?)
     @git_daemon_up = markup(git_daemon_up?)
     @poller_up = markup(poller_up?)
     @mysql_up = markup(mysql_up?)
