@@ -135,9 +135,11 @@ module Gitorious
       # TODO check ps -o for pid, we got the pidfile for it
     end
 
+    # TODO needs improvement!
     def queue_service_up?
-      adapter_name = GitoriousConfig["messaging_adapter"]
-      atleast_one_process_name_matching(adapter_name)
+      atleast_one_process_name_matching("stomp") ||
+        atleast_one_process_name_matching("resque") ||
+        atleast_one_process_name_matching("activemq")
       # TODO can we ping stomp? queue service can be on remote box....
       # TODO just check if there's anything on specified port for queue service
     end
