@@ -24,8 +24,8 @@ module Gitorious
     # Overall
     
     def everything_healthy?
-      git_operations_work? &&
-        #git_user_ok? &&
+      #git_operations_work? &&
+        git_user_ok? &&
         rails_process_owned_by_git_user? &&
         atleast_one_gitorious_account_present? &&
         repo_dir_ok? &&
