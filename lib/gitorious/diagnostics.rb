@@ -26,6 +26,7 @@ module Gitorious
     def everything_healthy?
       git_operations_work? &&
         git_user_ok? &&
+        rails_process_owned_by_git_user? &&
         atleast_one_gitorious_account_present? &&
         repo_dir_ok? &&
         tarball_dirs_ok? &&
@@ -65,17 +66,20 @@ module Gitorious
     end
     
     def git_user_ok?
-      name = GitoriousConfig["gitorious_user"]
-      user_exists?(name) && current_user?(name)
+      user_exists?(git_user)
     end
 
+    def rails_process_owned_by_git_user?
+      current_user?(git_user)
+    end
+    
     def atleast_one_gitorious_account_present?
       User.count > 0
     end
 
     def repo_dir_ok?
       path = GitoriousConfig["repository_base_path"]
-      (dir_present?(path) && owned_by_current_process?(path))
+      (dir_present?(path) && owned_by_user?(path, git_user))
     end
 
     def tarball_dirs_ok?
@@ -83,14 +87,14 @@ module Gitorious
       work_path = GitoriousConfig["archive_work_dir"]
       
       (dir_present?(cache_path) &&
-       owned_by_current_process?(cache_path) &&
+       owned_by_user?(cache_path, git_user) &&
        dir_present?(work_path) &&
-       owned_by_current_process?(work_path))
+       owned_by_user?(work_path, git_user))
     end
 
     def authorized_keys_ok?
       path = File.expand_path("~/.ssh/authorized_keys")
-      (file_present?(path) && owned_by_current_process?(path))
+      (file_present?(path) && owned_by_user?(path, git_user))
     end
 
     # TODO wire this up in everything_healthy? test and web UI
@@ -204,8 +208,10 @@ module Gitorious
       File.exist?(path)
     end
 
-    def owned_by_current_process?(path)
-      File.owned?(path)
+    def owned_by_user?(path, username)
+      file_owner_uid = File.stat(path).uid.to_i
+      user_uid = `id -u #{username}`.chomp.to_i
+      (user_uid != 0 && (file_owner_uid == user_uid))
     end
 
     def user_exists?(username)
@@ -213,9 +219,14 @@ module Gitorious
       ($? == 0)
     end
 
-    def current_user?(name)
-      `whoami`.chomp == name
+    def current_user?(username)
+      `whoami`.chomp == username
     end
+
+    def git_user
+      GitoriousConfig["gitorious_user"]
+    end
+
     
   end
 end

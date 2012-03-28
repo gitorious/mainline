@@ -37,21 +37,25 @@ class DiagnosticsTest < ActiveSupport::TestCase
       assert dir_present?(File.dirname(__FILE__))
     end
 
-    should "verify file permissions" do
-      assert !owned_by_current_process?("/etc/hosts")
-      assert owned_by_current_process?(__FILE__)
-    end
-
     should "verify user existence" do
       assert !user_exists?("sir_not_in_this_movie")
-      assert user_exists?(`whoami`)
+      assert user_exists?(me)
     end
 
     should "verify current user identity" do
       assert !current_user?("sir_not_in_this_movie")
-      assert current_user?(`whoami`.chomp)
+      assert current_user?(me)
+    end
+
+    should "verify file ownership" do
+      assert !owned_by_user?("/etc/hosts", me)
+      assert !owned_by_user?(__FILE__, "root")
+      assert owned_by_user?(__FILE__, me)
     end
     
   end
 
+  def me
+    `whoami`.chomp
+  end
 end

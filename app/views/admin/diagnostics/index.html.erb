@@ -13,10 +13,11 @@ setup.</p>
 
 <table>
   <tr><td>Can 'git clone | pull | push' to myself locally?</td><td> <%= @git_operations_work %></td></tr>
+  <tr><td>Rails process is owned by git user?</td><td><%= @rails_process_owned_by_git_user %></td></tr>
   <tr><td>Git user present w/ correct permissions?</td><td><%= @git_user_ok %></td></tr>
   <tr><td>Repository directories present w/ correct permissions?</td><td><%= @repo_dir_ok %></td></tr>
   <tr><td>Tarball directories present w/ correct permissions?</td><td><%= @tarball_dirs_ok %></td></tr>
-  <tr><td>.ssh/authorized_keys present w/ correct permissions?</td><td><%= @authorized_keys_ok %></td></tr>
+  <tr><td>(git user) ~/.ssh/authorized_keys present w/ correct permissions?</td><td><%= @authorized_keys_ok %></td></tr>
   <tr><td>At least one Gitorious account exists?</td><td><%= @atleast_one_gitorious_account_present %></td></tr>
 </table>
 

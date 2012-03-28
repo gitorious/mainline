@@ -26,6 +26,7 @@ class Admin::DiagnosticsController < ApplicationController
 
     @git_operations_work = markup(git_operations_work?)
     @git_user_ok = markup(git_user_ok?)
+    @rails_process_owned_by_git_user = markup(rails_process_owned_by_git_user?)
     @atleast_one_gitorious_account_present = markup(atleast_one_gitorious_account_present?)
     @repo_dir_ok = markup(repo_dir_ok?)
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
