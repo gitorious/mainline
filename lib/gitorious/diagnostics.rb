@@ -25,12 +25,13 @@ module Gitorious
     
     def everything_healthy?
       git_operations_work? &&
-        git_user_ok? &&
+        #git_user_ok? &&
         rails_process_owned_by_git_user? &&
         atleast_one_gitorious_account_present? &&
         repo_dir_ok? &&
         tarball_dirs_ok? &&
         authorized_keys_ok? &&
+        not_using_reserved_hostname? &&
         ssh_deamon_up? &&
         git_daemon_up? &&
         poller_up? &&
@@ -45,13 +46,13 @@ module Gitorious
     end
 
     # Core functionality
-    
+
+    # TODO finish this one and wire it up 
     def git_operations_work?
       false
-      # TODO
       # Needs initial config of test user/key
-      # aDD Iinital step during setup
-      # throw useful error in web console if not done yet
+      # Add initial step during server config
+      # throw useful error in web console if this isnt done
      
       # test project/repo
       # needs corresponding public key for a matching user in app
@@ -61,8 +62,9 @@ module Gitorious
       # CAN TEST This seeding by grepping authorized_keys file
       
       # shell out, test clone/push/pull or just git ls-remote? of test repo
-      # cleanup
       # ssh -i /var/www/gitorious/data/seeded_private_key
+
+      # do cleanup before and after test run
     end
     
     def git_user_ok?
@@ -97,13 +99,11 @@ module Gitorious
       (file_present?(path) && owned_by_user?(path, git_user))
     end
 
-    # TODO wire this up in everything_healthy? test and web UI
     def not_using_reserved_hostname?
-      false
-      #!GitoriousConfig.using_reserved_hostname?
+      !GitoriousConfig.using_reserved_hostname?
     end
 
-    # TODO wire this up in everything_healthy? test and web UI
+    # TODO impl and wire this one up as well
     def public_mode_correctly_setup?
       false
     end
@@ -139,7 +139,7 @@ module Gitorious
       adapter_name = GitoriousConfig["messaging_adapter"]
       atleast_one_process_name_matching(adapter_name)
       # TODO can we ping stomp? queue service can be on remote box....
-      # TODO just check if there's anyting on specified port for queue service
+      # TODO just check if there's anything on specified port for queue service
     end
 
     def memcached_up?
@@ -150,14 +150,13 @@ module Gitorious
       atleast_one_process_name_matching("sendmail")
     end
 
-    # TODO wire this up
-    # BUT only for apache
-    # Only useful/true if http_cloning is allowed
+    # TODO impl and wire this one up as well
     def xsendfile_enabled?
+      # NOTE: should only be used for apache
+      # Only useful/true if http_cloning is allowed
+      
       # TODO, one or two appropaches
-
       #1: enabled and confed in apache
-
       #2: can do:
       # curl
       # http://git.[gitorious_host]/gitorious/mainline.git/info/refs
@@ -193,6 +192,8 @@ module Gitorious
       return (load_percent_last_15_min < MAX_HEALTHY_CPU_LOAD.to_f)
     end
 
+
+    
     private
      
     def atleast_one_process_name_matching(str)
@@ -226,8 +227,6 @@ module Gitorious
     def git_user
       GitoriousConfig["gitorious_user"]
     end
-
-    
   end
 end
 

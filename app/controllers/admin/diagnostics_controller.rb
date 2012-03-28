@@ -24,13 +24,14 @@ class Admin::DiagnosticsController < ApplicationController
   def index
     @everything_healthy = markup(everything_healthy?)
 
-    @git_operations_work = markup(git_operations_work?)
+    # @git_operations_work = markup(git_operations_work?)
     @git_user_ok = markup(git_user_ok?)
     @rails_process_owned_by_git_user = markup(rails_process_owned_by_git_user?)
     @atleast_one_gitorious_account_present = markup(atleast_one_gitorious_account_present?)
     @repo_dir_ok = markup(repo_dir_ok?)
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
     @authorized_keys_ok = markup(authorized_keys_ok?)
+    @not_using_reserved_hostname = markup(not_using_reserved_hostname?)
 
     @ssh_deamon_up = markup(ssh_deamon_up?)
     @git_daemon_up = markup(git_daemon_up?)
