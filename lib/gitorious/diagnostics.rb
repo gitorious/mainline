@@ -65,29 +65,32 @@ module Gitorious
     end
     
     def git_user_ok?
-      false
-      # TODO
-      # Check that gitorious_user, usually 'git', is present, in git group, has home dir, other??
+      name = GitoriousConfig["gitorious_user"]
+      user_exists?(name) && current_user?(name)
     end
 
     def atleast_one_gitorious_account_present?
-      false
-      # TODO
+      User.count > 0
     end
 
     def repo_dir_ok?
-      false
-      # TODO
+      path = GitoriousConfig["repository_base_path"]
+      (dir_present?(path) && owned_by_current_process?(path))
     end
 
     def tarball_dirs_ok?
-      false
-      # TODO
+      cache_path = GitoriousConfig["archive_cache_dir"]
+      work_path = GitoriousConfig["archive_work_dir"]
+      
+      (dir_present?(cache_path) &&
+       owned_by_current_process?(cache_path) &&
+       dir_present?(work_path) &&
+       owned_by_current_process?(work_path))
     end
 
     def authorized_keys_ok?
-      false
-      # TODO
+      path = File.expand_path("~/.ssh/authorized_keys")
+      (file_present?(path) && owned_by_current_process?(path))
     end
 
     # TODO wire this up in everything_healthy? test and web UI
@@ -157,12 +160,7 @@ module Gitorious
       # -> fil
     end
 
-    
-    def atleast_one_process_name_matching(str)
-      matching_processes_count = (`ps -ef | grep #{str} | grep -v grep | wc -l`.to_i)      
-      matching_processes_count > 0
-    end
-    
+   
     # Host system health
     
     MAX_HEALTHY_DISK_USAGE = 90 #%
@@ -189,6 +187,34 @@ module Gitorious
     def healthy_cpu_load_average?
       load_percent_last_15_min = `uptime`.chomp.split(" ").last.to_f
       return (load_percent_last_15_min < MAX_HEALTHY_CPU_LOAD.to_f)
+    end
+
+    private
+     
+    def atleast_one_process_name_matching(str)
+      matching_processes_count = (`ps -ef | grep #{str} | grep -v grep | wc -l`.to_i)      
+      matching_processes_count > 0
+    end
+
+    def dir_present?(path)
+      Dir[path].count > 0
+    end
+
+    def file_present?(path)
+      File.exist?(path)
+    end
+
+    def owned_by_current_process?(path)
+      File.owned?(path)
+    end
+
+    def user_exists?(username)
+      `grep '^#{username}' /etc/passwd`
+      ($? == 0)
+    end
+
+    def current_user?(name)
+      `whoami`.chomp == name
     end
     
   end

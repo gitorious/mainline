@@ -26,6 +26,32 @@ class DiagnosticsTest < ActiveSupport::TestCase
     should "detect if any current ps entry contains given string" do
       assert atleast_one_process_name_matching("test")
     end
+
+    should "verify file existence" do
+      assert !file_present?("/tmp/file_not_there.txt")
+      assert file_present?(__FILE__)
+    end
+    
+    should "verify dir existence" do
+      assert !dir_present?("/dir_not_there")
+      assert dir_present?(File.dirname(__FILE__))
+    end
+
+    should "verify file permissions" do
+      assert !owned_by_current_process?("/etc/hosts")
+      assert owned_by_current_process?(__FILE__)
+    end
+
+    should "verify user existence" do
+      assert !user_exists?("sir_not_in_this_movie")
+      assert user_exists?(`whoami`)
+    end
+
+    should "verify current user identity" do
+      assert !current_user?("sir_not_in_this_movie")
+      assert current_user?(`whoami`.chomp)
+    end
+    
   end
 
 end
