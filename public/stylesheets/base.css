@@ -3347,3 +3347,10 @@ body#users h2.activities small {
     font-size: 12px;
     color: #666;
 }
+
+.diagnostic-true-indicator {
+    color: green;
+} 
+.diagnostic-false-indicator {
+    color: red;
+}

@@ -110,6 +110,15 @@ production:
   # 100 % CPU processes that never die.
   #merge_request_diff_timeout: 10
 
+  # Exposes a public url at /admin/diagnostics/summary which, when
+  # called, runs a number of health checks to verify that the
+  # Gitorious installation is configured correctly and that the host
+  # system seems healthy. Useful for checking that installations go
+  # well and for monitoring running installs.
+  # (Note: logged in gitorious admin users can also see a visual
+  # overview of the system state at /admin/diagnostics/)
+  # turn_on_public_diagnostic_summary_page: true
+  
   # --------
   # "TWEAKS"
   # --------
