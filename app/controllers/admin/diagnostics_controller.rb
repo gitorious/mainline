@@ -52,10 +52,14 @@ class Admin::DiagnosticsController < ApplicationController
   end
 
   def summary
-    if everything_healthy?
-      render :text => "OK"
+    if GitoriousConfig["turn_on_public_diagnostic_summary_page"]
+      if everything_healthy?
+        render :text => "OK"
+      else
+        render :text => "Error! Something might be broken in your Gitorious install. See /admin/diagnostics for overview", :status => 500
+      end
     else
-      render :text => "Error! See /admin/diagnostics for overview", :status => 500
+      render :text => "Error! Diagnostic summary page not exposed, see 'turn_on_public_diagnostic_summary_page' setting in gitorious.sample.yml", :status => 500
     end
   end  
 
