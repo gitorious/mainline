@@ -40,7 +40,6 @@ class Admin::DiagnosticsController < ApplicationController
     @ultrasphinx_up = markup(ultrasphinx_up?)
     @queue_service_up = markup(queue_service_up?)
     @memcached_up = markup(memcached_up?)
-    @sendmail_up = markup(sendmail_up?)
 
     @enough_disk_free = markup(enough_disk_free?)
     @enough_RAM_free = markup(enough_RAM_free?)

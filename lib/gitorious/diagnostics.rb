@@ -39,7 +39,6 @@ module Gitorious
         ultrasphinx_up? &&
         queue_service_up? &&
         memcached_up? &&
-        sendmail_up? &&
         enough_disk_free? &&
         enough_RAM_free? &&
         healthy_cpu_load_average?
@@ -104,6 +103,12 @@ module Gitorious
     end
 
     # TODO impl and wire this one up as well
+    def outbound_mail_delivery_working?
+      false
+    end
+
+    
+    # TODO impl and wire this one up as well
     def public_mode_correctly_setup?
       false
     end
@@ -146,10 +151,6 @@ module Gitorious
 
     def memcached_up?
       atleast_one_process_name_matching("memcached")
-    end
-
-    def sendmail_up?
-      atleast_one_process_name_matching("sendmail")
     end
 
     # TODO impl and wire this one up as well
