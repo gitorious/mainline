@@ -56,6 +56,6 @@ class DiagnosticsTest < ActiveSupport::TestCase
   end
 
   def me
-    `whoami`.chomp
+    ENV['USER']
   end
 end

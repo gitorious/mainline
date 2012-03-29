@@ -127,11 +127,11 @@ module Gitorious
     end
 
     def poller_up?
-      atleast_one_process_name_matching("poller")
+      atleast_one_process_name_matching("gitorious-poller")
     end
 
     def mysql_up?
-      atleast_one_process_name_matching("mysql")
+      atleast_one_process_name_matching("mysqld")
     end
 
     def ultrasphinx_up?
@@ -224,7 +224,7 @@ module Gitorious
     end
 
     def current_user?(username)
-      `whoami`.chomp == username
+      ENV['USER'] == username
     end
 
     def git_user
