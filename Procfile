@@ -5,3 +5,4 @@
 web:           thin start
 poller:        bundle exec script/poller run
 stompserver:   stompserver
+git_daemon:     script/git-daemon run
