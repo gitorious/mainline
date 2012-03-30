@@ -46,7 +46,7 @@ group :test do
 end
 
 group :development do
-  gem "foreman", "~> 0.18"
+  gem "foreman", "~> 0.41"
   gem "stompserver", "~> 0.9"
   gem "thin", "~> 1.2"
 end
