@@ -39,6 +39,7 @@
             </li><% end -%>
           <li>
             <%= t("views.users.member_for") %> <%= time_ago_in_words(@user.created_at) %>
+            <% if @user.suspended? -%>(suspended)<% end -%>
           </li>
         </ul>
       </div>
