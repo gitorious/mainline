@@ -72,6 +72,9 @@ module TreesHelper
   # Render a link to another tree, along with a link to comparing the
   # current tree with that tree - unless they're the same
   def tree_and_diff_link(current_commit, current_name, refs, project, repository)
+    if @git.git.cat_file({:t => true}, current_commit.id) == 'tag'
+      current_commit = @git.commit("#{current_commit.id}^0")
+    end
     current_name = current_commit.id_abbrev if current_commit.id == current_name
     list_items = refs.map do |ref|
       display_diff_link = ref.commit.id != current_commit.id
