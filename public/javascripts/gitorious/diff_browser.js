@@ -798,9 +798,11 @@ Gitorious.CommentForm = function (path) {
         var comments = $("#merge_request_comments .comment.inline .inline_comment_link a");
         var plainDiff = [];
 
+        var blobName = this.path;
         var selectors = $.map(this.numbers, function (e) {
-            return "table.codediff.inline tr[data-line-num-tuple='" + e + "']";
+            return "div[data-diff-path='" + blobName + "'] table.codediff.inline tr[data-line-num-tuple='" + e + "']";
         });
+        
 
         // extract the raw diff data from each row
         $(selectors.join(",")).each(function () {
