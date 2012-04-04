@@ -22,7 +22,7 @@ module Gitorious
         [ "teams", "dashboard", "about", "login", "logout", "commit",
           "commits", "tree", "archive-tarball", "archive-zip", "contact",
           "register", "signup", "blog", "merge_request_landing_page", "activities",
-          "api", "wiki"]
+          "api", "wiki", "users", "groups"]
       end
 
       def reserved_root_names

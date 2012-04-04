@@ -38,13 +38,34 @@ def describe_version(version)
   end
 end
 
-desc "Show current and available Gitorious versions and details about individual versions"
-task :changelog do
+def show_changelog
   system("#{ENV['GIT'] || 'git'} fetch git://gitorious.org/gitorious/mainline.git 2> /dev/null")
 
   if ENV["VERSION"]
     describe_version(ENV["VERSION"])
   else
     list_versions
+  end
+end
+
+
+task :changelog do
+  show_changelog
+end
+
+namespace :versioning do
+  desc "List commits not versioned yet"
+  task :unreleased do
+    log_spec = "v#{Gitorious::VERSION}..HEAD"
+    command = %Q[#{ENV['GIT'] || "git"} log #{log_spec}]
+    header = "Commits not yet versioned in Gitorious:"
+    puts "\n#{header}"
+    puts "=" * header.size + "\n"
+    exec command
+  end
+
+  desc "Show current and available Gitorious versions and details about individual versions"
+  task :changelog do
+    show_changelog
   end
 end

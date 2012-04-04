@@ -320,6 +320,16 @@ class User < ActiveRecord::Base
     !suspended_at.nil?
   end
 
+  def suspend
+    self.suspended_at = Time.now
+    self.ssh_keys.destroy_all
+  end
+
+  def un_suspend
+    self.suspended_at = nil
+    # Note: user has to reupload ssh keys again
+  end
+  
   def site_admin?
     is_admin
   end

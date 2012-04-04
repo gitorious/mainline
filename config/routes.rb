@@ -182,6 +182,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
     admin.resources :repositories, :member => {:recreate => :put}
+    admin.connect "diagnostics", :controller => "diagnostics", :action => "index"
   end
 
   map.resources :favorites

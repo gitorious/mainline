@@ -88,6 +88,16 @@ production:
   # setups where performance is not critical.
   messaging_adapter: stomp
 
+  # Disable record throttling
+  # By default, Gitorious throttles the rate at which users can create
+  # database records (repositories, projects, messages..) Users can
+  # only create X records within Y timeframe, or they'll get a "hold
+  # off for a while" error message after which the offending user has
+  # to wait until the Y timeframe has passed to create more records of
+  # that type. Disable this only if you trust all your users not to
+  # abuse/spam/DDOS your Gitorious instance with repo/msg/project creation.
+  disable_record_throttling: false
+
   # The following properties are all defaults for the stomp adapter
   # Be sure to match thir analogues in broker.yml
   # stomp_server_address: localhost
@@ -100,6 +110,15 @@ production:
   # 100 % CPU processes that never die.
   #merge_request_diff_timeout: 10
 
+  # Exposes a public url at /admin/diagnostics/summary which, when
+  # called, runs a number of health checks to verify that the
+  # Gitorious installation is configured correctly and that the host
+  # system seems healthy. Useful for checking that installations go
+  # well and for monitoring running installs.
+  # (Note: logged in gitorious admin users can also see a visual
+  # overview of the system state at /admin/diagnostics/)
+  # turn_on_public_diagnostic_summary_page: true
+  
   # --------
   # "TWEAKS"
   # --------
@@ -311,3 +330,4 @@ test:
   cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
   use_ssl: true
   messaging_adapter: test
+  disable_record_throttling: false

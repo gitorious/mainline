@@ -111,10 +111,16 @@ class MergeRequestsController < ApplicationController
 
   def version
     @merge_request = @repository.merge_requests.public.find_by_sequence_number!(params[:id],
-                      :include => [:source_repository, :target_repository])
-    render :partial => 'version', :layout => false, :locals => {
-      :version => @merge_request.version_number(params[:version].to_i)
-    }
+      :include => [:source_repository, :target_repository])
+    version = @merge_request.version_number(params[:version].to_i)
+    if version.nil?
+      logger.error("Unable to find merge request version #{params[:version]} for merge request #{@merge_request.id}. Cannot continue")
+      render :nothing => true
+    else
+      render :partial => 'version', :layout => false, :locals => {
+        :version => version
+      }
+    end
   end
 
   def new

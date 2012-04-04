@@ -1,0 +1,74 @@
+
+<h1>Diagnostics</h1>
+
+<p>This is an overview of the current state of this Gitorious
+setup.</p>
+
+<h2>Summary<h2>
+
+<p>Is everything ok? <%= @everything_healthy %></p>
+
+
+<h2>Core functionality</h2>
+
+<table>
+  <tr><td>Git user present w/ correct permissions?</td><td><%= @git_user_ok %></td></tr>
+  <tr><td>Rails process is owned by git user?</td><td><%= @rails_process_owned_by_git_user %></td></tr>
+  <tr><td>Repository directories present w/ correct permissions?</td><td><%= @repo_dir_ok %></td></tr>
+  <tr><td>Tarball directories present w/ correct permissions?</td><td><%= @tarball_dirs_ok %></td></tr>
+  <tr><td>(git user) ~/.ssh/authorized_keys present w/ correct permissions?</td><td><%= @authorized_keys_ok %></td></tr>
+  <tr><td>At least one Gitorious account exists?</td><td><%= @atleast_one_gitorious_account_present %></td></tr>
+  <tr><td>Hostname not bound to a 'git.*' domain</td><td><%= @not_using_reserved_hostname %></td></tr>
+</table>
+
+
+<h2>Services and daemons</h2>
+
+<table>
+  <tr><td> ssh daemon is up?</td><td><%= @ssh_deamon_up %></td></tr>
+  <tr><td> git-daemon or git-proxy is up?</td><td><%= @git_daemon_up %></td></tr>
+  <tr><td> gitorious-poller is up?</td><td><%= @poller_up %></td></tr>
+  <tr><td> Mysql is up?</td><td> <%= @mysql_up  %></td></tr>
+  <tr><td> Ultrasphinx is up?</td><td> <%= @ultrasphinx_up %></td></tr>
+  <tr><td> Queue service (active mq etc) is up?</td><td><%= @queue_service_up %></td></tr>
+  <tr><td> Memcached is up?</td><td> <%= @memcached_up %></td></tr>
+</table>
+
+
+<h2>Host system health</h2>
+
+<table>
+  <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_DISK_USAGE%>% disk space used?</td><td><%= @enough_disk_free %></td></tr>
+  <tr><td>Less than <%= Gitorious::Diagnostics::MAX_HEALTHY_RAM_USAGE%>% RAM used?</td><td><%= @enough_RAM_free %></td></tr>
+  <tr><td>Average cpu load last 15 minutes below <%= Gitorious::Diagnostics::MAX_HEALTHY_CPU_LOAD%>%?</td><td><%= @healthy_cpu_load_average %></td></tr>
+  
+</table>
+
+<h3>uptime</h3>
+<pre>
+<%= @uptime_output %>
+</pre>
+
+<h3>free -m</h3>
+<pre>
+<%= @free_output %>
+</pre>
+
+<h3>vmstat</h3>
+<pre>
+<%= @vmstat_output %>
+</pre>
+
+<h3>df -h</h3>
+<pre>
+<%= @df_output %>
+</pre>
+
+
+<h2>How to keep tabs on this</h2>
+
+<p>An go/no-go summary of the system is available at a separate
+<%= link_to "summary url", :action => "summary" %>. This can be pinged
+regularly from an external monitoring service to keep tabs on the
+status of this Gitorious installation. If everything is ok then it
+will respond "OK". If not, it will respond with a 500 error code.</p>

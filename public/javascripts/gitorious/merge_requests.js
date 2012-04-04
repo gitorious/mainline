@@ -232,7 +232,7 @@ jQuery(document).ready(function () {
         hunks.slideDown();
         var lastLine = jQuery("#diff-inline-comments-for-" + last_line_number);
         lastLine.slideToggle();
-        Gitorious.DiffBrowser.CommentHighlighter.add(jQuery(href));
+//        Gitorious.DiffBrowser.CommentHighlighter.add(jQuery(href));
         jQuery.scrollTo(href);
         return true;
     });

@@ -357,6 +357,35 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  context 'Suspension' do
+    setup do
+      SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
+      @user = users(:johan)
+      @user.ssh_keys = [ssh_key, ssh_key]
+    end
+
+    should "set suspend timestamp and destroy ssh keys" do
+      assert_equal nil, @user.suspended_at
+      assert @user.ssh_keys.length > 0
+      @user.suspend
+      @user.save!
+      assert !@user.suspended_at.nil?, "suspend timestamp should be set"
+      assert_equal 0, @user.ssh_keys.length
+    end
+
+    should "be reversable (except for ssh keys)" do
+      @user.suspended_at = Time.now
+      @user.un_suspend
+      @user.save!
+      assert_equal nil, @user.suspended_at
+    end
+  end
+
+  def ssh_key
+    SshKey.new({:user_id => 1,
+                 :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com"})
+  end
+  
   context 'Avatars' do
     setup {@user = users(:johan)}
 
