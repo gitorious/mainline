@@ -45,6 +45,12 @@ group :test do
   gem "launchy" # used only for Capybara's save_and_open_page for launching the browser
 end
 
+group :development do
+  gem "foreman", "~> 0.41"
+  gem "stompserver", "~> 0.9"
+  gem "thin", "~> 1.2"
+end
+
 group :git_proxy do
   gem "proxymachine"
   gem "rake"

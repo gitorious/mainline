@@ -498,7 +498,7 @@ function toggle_wiki_preview(target_url) {
             if (textStatus == "success") {
                 wiki_preview.html(data);
             }
-        });
+        }, "html");
     }
 
     $.each([wiki_preview, wiki_edit], function () {

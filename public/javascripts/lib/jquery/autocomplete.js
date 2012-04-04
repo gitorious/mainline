@@ -24,7 +24,7 @@ jQuery.autocomplete = function(input, options) {
 	$("body").append(results);
 
 	input.autocompleter = me;
-
+  
 	var timeout = null;
 	var prev = "";
 	var active = -1;
@@ -124,7 +124,8 @@ jQuery.autocomplete = function(input, options) {
 	function onChange() {
 		// ignore if the following keys are pressed: [del] [shift] [capslock]
 		if( lastKeyPressCode == 46 || (lastKeyPressCode > 8 && lastKeyPressCode < 32) ) return $results.hide();
-		var v = $input.val();
+		var v = lastCommaSeparatedValue($input.val());
+          
 		if (v == prev) return;
 		prev = v;
 		if (v.length >= options.minChars) {
@@ -136,6 +137,12 @@ jQuery.autocomplete = function(input, options) {
 		}
 	};
 
+        function lastCommaSeparatedValue(str){
+          var fields = str.split(",")
+          var lastField = fields[fields.length - 1];
+          return lastField.trim();
+        };
+  
  	function moveSelect(step) {
 
 		var lis = $("li", results);
@@ -188,7 +195,12 @@ jQuery.autocomplete = function(input, options) {
 		input.lastSelected = v;
 		prev = v;
 		$results.html("");
-		$input.val(v);
+
+                var wholeField = $input.val();
+                var lastField = lastCommaSeparatedValue(wholeField);
+                var updatedWholeField = wholeField.replace(lastField, v);
+          
+		$input.val(updatedWholeField);
 		hideResultsNow();
 		if (options.onItemSelect) {
 			setTimeout(function() { options.onItemSelect(li) }, 1);
@@ -351,7 +363,7 @@ jQuery.autocomplete = function(input, options) {
 	};
 
 	function requestData(q) {
-		if (!options.matchCase) q = q.toLowerCase();
+          if (!options.matchCase) q = q.toLowerCase();
 		var data = options.cacheLength ? loadFromCache(q) : null;
 		// recieve the cached data
 		if (data) {
