@@ -30,8 +30,9 @@ module ApplicationHelper
   include UsersHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
-  include RoutingHelper
-
+  include RoutingHelper  
+  include SiteWikiPagesHelper
+  
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
   STYLESHEETS = {
@@ -598,4 +599,7 @@ module ApplicationHelper
     options["xmlns:gts"] = "http://gitorious.org/schema"
     atom_feed(options, &block)
   end
+
+  
+  
 end
