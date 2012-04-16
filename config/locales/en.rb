@@ -14,6 +14,11 @@
         :unsuspend_notice => "User {{user_name}} was successfully unsuspended.",
         :unsuspend_error => "Unable to unsuspend user {{user_name}}."
       },
+      :user_suspend => {
+        :suspended_cannot_log_back_in_or_run_git_ops => "Suspended Gitorious account. User will not be able to log back in. Ssh keys are revoked. User can no longer push code to the site.",
+        :removed_user_from_teams => "Removed user from team(s): {{group_names}}",
+        :removed_user_committerships_from_repos => "Removed user committerships from repo(s): {{repo_names}}"
+      },
       :check_admin => "For Administrators Only"
     },
     :mailer => {

@@ -19,6 +19,8 @@
 #++
 
 class Admin::UsersController < AdminController
+  include Gitorious::UserAdministration
+  
   def index
     @users = paginate(:action => "index") do
       User.paginate(:all, :order => 'suspended_at, login', :page => params[:page])
@@ -58,12 +60,14 @@ class Admin::UsersController < AdminController
 
   def suspend
     @user = User.find_by_login!(params[:id])
-    @user.suspend
+    suspend_summary = suspend_user(@user)
+    
     if @user.save
-      flash[:notice] = I18n.t("admin.users_controller.suspend_notice", :user_name => @user.login)
+      flash[:notice] = suspend_summary
     else
       flash[:error] = I18n.t("admin.users_controller.suspend_error", :user_name => @user.login)
     end
+    
     redirect_to admin_users_url
   end
 

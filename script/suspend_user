@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+def print_usage
+  puts ""
+  puts "Usage: suspend_user USER_EMAIL_ADDRESS"
+  puts ""
+  puts "Suspends specified Gitorious user, revoking all access to web UI and git operations."
+  puts ""
+  puts "Account is suspended, can no longer log in and loses current browser session."
+  puts "SSH keys are revoked, user no longer able to push, pull, clone git repositories"
+  puts "Committerships and team memberships are removed."
+  puts ""
+end
+
+puts "---Loading Gitorious environment---"
+require File.dirname(__FILE__)+'/../config/environment'
+puts "---Done loading Gitorious environment---\n\n"
+
+def find_user(user_email)
+  user = User.find_by_email(user_email)
+  if !user
+    puts "No Gitorious account with email '#{user_email}', exiting..."
+    exit 1
+  end
+  return user
+end
+
+include Gitorious::UserAdministration
+
+if !ARGV[0]
+  print_usage
+  exit 1
+end
+
+user_email = ARGV[0]
+
+puts "Suspending '#{user_email}'..."
+
+user = find_user(user_email)
+puts suspend_user(user)
