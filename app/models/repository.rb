@@ -737,6 +737,12 @@ class Repository < ActiveRecord::Base
                         [KIND_TEAM_REPO, KIND_USER_REPO, KIND_PROJECT_REPO]}])
   end
 
+  alias :repo_public? :public?
+
+  def public?
+    repo_public? && project.public?
+  end
+
   protected
   def sharded_hashed_path(h)
     first = h[0,3]

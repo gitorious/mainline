@@ -20,10 +20,13 @@ module Gitorious
   module Protectable
     def make_private
       add_member(owner)
+      reload
+      owner
     end
 
     def make_public
       content_memberships.delete_all
+      reload
     end
 
     def add_member(member)

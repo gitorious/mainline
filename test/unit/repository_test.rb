@@ -1191,6 +1191,16 @@ class RepositoryTest < ActiveSupport::TestCase
         @repository = repositories(:johans)
       end
 
+      should "mark repository as private" do
+        @repository.make_private
+        assert @repository.private?
+      end
+
+      should "mark repository as private if project is private" do
+        @repository.project.make_private
+        assert @repository.private?
+      end
+
       should "allow anonymous user to view public repository" do
         repository = Repository.new(:name => "My repository")
         assert can_read?(nil, repository)
@@ -1229,7 +1239,7 @@ class RepositoryTest < ActiveSupport::TestCase
       should "display the git URL for public repositories" do
         assert @repository.git_cloning?
       end
-      
+
       should "not display the git URL for protected repositories" do
         @repository.owner = users(:johan)
         @repository.add_member(users(:mike))
