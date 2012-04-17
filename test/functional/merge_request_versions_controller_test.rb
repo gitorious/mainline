@@ -74,6 +74,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
         @project = @merge_request.project
         enable_private_repositories
         @version.stubs(:diffs).with("ffcab".."bacff").returns([])
+        GitoriousConfig["use_ssl"] = false
       end
 
       should "disallow unauthenticated users" do
@@ -84,7 +85,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       should "allow authenticated users" do
         login_as :johan
         get :show, :id => @version, :commit_shas => "ffcab-bacff"
-        assert_response 302
+        assert_response 200
       end
     end
 
@@ -102,7 +103,7 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       should "allow authenticated users" do
         login_as :johan
         get :show, :id => @version, :commit_shas => "ffcab-bacff"
-        assert_response 302
+        assert_response 200
       end
     end
   end

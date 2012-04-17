@@ -254,6 +254,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context "#create (POST)" do
     setup do
       Grit::Repo.any_instance.stubs(:heads).returns([])
+      GitoriousConfig["use_ssl"] = false
     end
 
     should "require login" do
@@ -502,6 +503,10 @@ class MergeRequestsControllerTest < ActionController::TestCase
   end
 
   context "GET #target_branches" do
+    setup do
+      GitoriousConfig["use_ssl"] = false
+    end
+
     should "retrive a list of the target repository branches" do
       grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
       MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)

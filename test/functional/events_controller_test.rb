@@ -64,37 +64,39 @@ class EventsControllerTest < ActionController::TestCase
     end
   end
 
-  context "With private projects" do
-    setup do
-      enable_private_repositories(@project)
+  disable_ssl do
+    context "With private projects" do
+      setup do
+        enable_private_repositories(@project)
+      end
+
+      should "not show push event commits to unauthorized users" do
+        get :commits, :id => create_push_event.to_param, :format => "js"
+        assert_response 403
+      end
+
+      should "show push event commits to authorized users" do
+        login_as :johan
+        get :commits, :id => create_push_event.to_param, :format => "js"
+        assert_response 200
+      end
     end
 
-    should "not show push event commits to unauthorized users" do
-      get :commits, :id => create_push_event.to_param, :format => "js"
-      assert_response 403
-    end
+    context "With private repositories" do
+      setup do
+        enable_private_repositories(@repository)
+      end
 
-    should "show push event commits to authorized users" do
-      login_as :johan
-      get :commits, :id => create_push_event.to_param, :format => "js"
-      assert_response 302
-    end
-  end
+      should "not show push event commits to unauthorized users" do
+        get :commits, :id => create_push_event.to_param, :format => "js"
+        assert_response 403
+      end
 
-  context "With private repositories" do
-    setup do
-      enable_private_repositories(@repository)
-    end
-
-    should "not show push event commits to unauthorized users" do
-      get :commits, :id => create_push_event.to_param, :format => "js"
-      assert_response 403
-    end
-
-    should "show push event commits to authorized users" do
-      login_as :johan
-      get :commits, :id => create_push_event.to_param, :format => "js"
-      assert_response 302
+      should "show push event commits to authorized users" do
+        login_as :johan
+        get :commits, :id => create_push_event.to_param, :format => "js"
+        assert_response 200
+      end
     end
   end
 

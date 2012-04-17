@@ -352,6 +352,7 @@ class CommitsControllerTest < ActionController::TestCase
 
   context "With private projects" do
     setup do
+      GitoriousConfig["use_ssl"] = false
       prepare_project_repo_and_commit
       enable_private_repositories
     end
@@ -364,7 +365,7 @@ class CommitsControllerTest < ActionController::TestCase
     should "allow authorized access to commits" do
       login_as :johan
       get :index, index_params(:page => nil, :branch => ["master"])
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized access to show commit" do
@@ -375,7 +376,7 @@ class CommitsControllerTest < ActionController::TestCase
     should "allow authorized access to show commit" do
       login_as :johan
       get :show, params
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized access to view feed" do
@@ -386,12 +387,13 @@ class CommitsControllerTest < ActionController::TestCase
     should "allow authorized access to view feed" do
       login_as :johan
       get :feed, params(:id => "master", :format => "atom")
-      assert_response 302
+      assert_response 200
     end
   end
 
   context "With private repositories" do
     setup do
+      GitoriousConfig["use_ssl"] = false
       prepare_project_repo_and_commit
       enable_private_repositories(@repository)
     end
@@ -404,7 +406,7 @@ class CommitsControllerTest < ActionController::TestCase
     should "allow authorized access to commits" do
       login_as :johan
       get :index, index_params(:page => nil, :branch => ["master"])
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized access to show commit" do
@@ -415,7 +417,7 @@ class CommitsControllerTest < ActionController::TestCase
     should "allow authorized access to show commit" do
       login_as :johan
       get :show, params
-      assert_response 302
+      assert_response 200
     end
 
     should "disallow unauthorized access to view feed" do
@@ -426,7 +428,7 @@ class CommitsControllerTest < ActionController::TestCase
     should "allow authorized access to view feed" do
       login_as :johan
       get :feed, params(:id => "master", :format => "atom")
-      assert_response 302
+      assert_response 200
     end
   end
 
