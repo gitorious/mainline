@@ -476,7 +476,7 @@ class UsersControllerTest < ActionController::TestCase
 
     should "be able to update password, even if user created his account with openid" do
       user = users(:johan)
-      user.update_attribute(:encrypted_password, nil)
+      user.update_attribute(:crypted_password, nil)
       put :update_password, :id => user.to_param, :user => {
         :password => "fubar",
         :password_confirmation => "fubar" }
