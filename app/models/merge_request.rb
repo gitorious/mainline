@@ -1,10 +1,11 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -24,22 +25,23 @@ class MergeRequest < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
   include Watchable
   include Gitorious::Search
+  include Gitorious::Authorization
 
   belongs_to :user
-  belongs_to :source_repository, :class_name => 'Repository'
-  belongs_to :target_repository, :class_name => 'Repository'
+  belongs_to :source_repository, :class_name => "Repository"
+  belongs_to :target_repository, :class_name => "Repository"
   has_many   :events, :as => :target, :dependent => :destroy
   has_many :messages, :as => :notifiable
   has_many :comments, :as => :target, :dependent => :destroy
-  has_many :versions, :class_name => 'MergeRequestVersion',
-    :order => 'version', :dependent => :destroy
+  has_many :versions, :class_name => "MergeRequestVersion",
+    :order => "version", :dependent => :destroy
 
   before_destroy :nullify_messages
   after_destroy  :delete_tracking_branches
   after_create :add_to_creators_favorites
 
   before_validation_on_create :set_sequence_number
-  
+
   is_indexed do |s|
     s.index :proposal
     s.index :status_tag, :as => "status"
@@ -47,7 +49,6 @@ class MergeRequest < ActiveRecord::Base
     s.conditions "status != 0"
   end
 
-  
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
 
@@ -82,7 +83,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   named_scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :open, :conditions => ['status = ?', STATUS_OPEN]
+  named_scope :open, :conditions => ["status = ?", STATUS_OPEN]
   named_scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
   named_scope :by_status, lambda {|state|
     {:conditions => ["LOWER(status_tag) = ? AND status != ?",
@@ -90,13 +91,9 @@ class MergeRequest < ActiveRecord::Base
   }
 
   def reopen_with_user(a_user)
-    if can_be_reopened_by?(a_user)
+    if can_reopen_merge_request?(a_user, self)
       return reopen
     end
-  end
-
-  def can_be_reopened_by?(a_user)
-    return can_reopen? && resolvable_by?(a_user)
   end
 
   def self.human_name
@@ -206,10 +203,10 @@ class MergeRequest < ActiveRecord::Base
   # one-to-one relationship between states and events
   def possible_next_states_hash
     map = {
-        STATUS_OPEN => ['Open', 'open'],
-        STATUS_VERIFYING => ['Verifying', 'in_verification'],
-        STATUS_REJECTED => ['Rejected', 'reject'],
-        STATUS_MERGED => ['Merged', 'merge']
+        STATUS_OPEN => ["Open", "open"],
+        STATUS_VERIFYING => ["Verifying", "in_verification"],
+        STATUS_REJECTED => ["Rejected", "reject"],
+        STATUS_MERGED => ["Merged", "merge"]
         }
     result = {}
     possible_next_states.each do |s|
@@ -222,7 +219,6 @@ class MergeRequest < ActiveRecord::Base
   def can_transition_to?(new_state)
     send("can_#{new_state}?")
   end
-
 
   def transition_to(status)
     if can_transition_to?(status)
@@ -261,11 +257,6 @@ class MergeRequest < ActiveRecord::Base
     if target_repository
       "#{target_repository.name}:#{target_branch}"
     end
-  end
-
-  def resolvable_by?(candidate)
-    return false unless candidate.is_a?(User)
-    (candidate === user) || target_repository.reviewers.include?(candidate)
   end
 
   def commits_for_selection
@@ -382,8 +373,10 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
+  alias_method :repo_reviewers, :reviewers
+
   def reviewers
-    target_repository.reviewers.uniq.reject{|r| r == user}
+    repo_reviewers(target_repository).uniq.reject{|r| r == user}
   end
 
   def add_to_reviewers_favorites(reviewer)
@@ -419,12 +412,12 @@ class MergeRequest < ActiveRecord::Base
   def fetch_contribution_notice
     callback_response = access_token.post(target_repository.project.oauth_path_prefix,
       oauth_signoff_parameters)
-    
+
     if Net::HTTPAccepted === callback_response
       self.contribution_notice = callback_response.body
     end
-    
-    contribution_agreement_version = callback_response['X-Contribution-Agreement-Version']
+
+    contribution_agreement_version = callback_response["X-Contribution-Agreement-Version"]
     update_attributes(:contribution_agreement_version => contribution_agreement_version)
   end
 
@@ -447,15 +440,15 @@ class MergeRequest < ActiveRecord::Base
   # Returns the parameters that are passed on to the contribution agreement site
   def oauth_signoff_parameters
     {
-      'commit_id' => ending_commit,
-      'user_email' => user.email,
-      'user_login'  => user.login,
-      'user_name' => URI.escape(user.title),
-      'commit_shas' => commits_to_be_merged.collect(&:id).join(","),
-      'proposal' => URI.escape(proposal),
-      'project_name' => source_repository.project.slug,
-      'repository_name' => source_repository.name,
-      'merge_request_id' => id
+      "commit_id" => ending_commit,
+      "user_email" => user.email,
+      "user_login"  => user.login,
+      "user_name" => URI.escape(user.title),
+      "commit_shas" => commits_to_be_merged.collect(&:id).join(","),
+      "proposal" => URI.escape(proposal),
+      "project_name" => source_repository.project.slug,
+      "repository_name" => source_repository.name,
+      "merge_request_id" => id
     }
   end
 
@@ -464,7 +457,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def request_token
-    @request_token ||= OAuth::RequestToken.from_hash(oauth_consumer, {:oauth_token => oauth_token, :oauth_token_secret => oauth_secret})    
+    @request_token ||= OAuth::RequestToken.from_hash(oauth_consumer, {:oauth_token => oauth_token, :oauth_token_secret => oauth_secret})
   end
 
   def access_token
@@ -490,7 +483,7 @@ class MergeRequest < ActiveRecord::Base
       end
       builder.versions do
         versions.each do |v|
-          builder.version do 
+          builder.version do
             builder.updated_at(v.updated_at.xmlschema)
             builder.version(v.version)
             builder.merge_base_sha(v.merge_base_sha)
@@ -659,7 +652,7 @@ class MergeRequest < ActiveRecord::Base
   def project
     target_repository.project
   end
-  
+
   protected
   def set_sequence_number
     if target_repository

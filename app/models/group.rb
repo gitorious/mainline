@@ -29,6 +29,7 @@ class Group < ActiveRecord::Base
   has_many :cloneable_repositories, :as => :owner, :class_name => "Repository",
      :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
   has_many :projects, :as => :owner
+  has_many :content_memberships, :as => :member
 
   attr_protected :public, :role_id, :user_id
 
@@ -48,7 +49,6 @@ class Group < ActiveRecord::Base
     :styles => { :normal => "300x300>", :medium => "64x64>", :thumb => '32x32>', :icon => '16x16>' },
     :url => avatar_local_path,
     :path => ":rails_root/public#{avatar_local_path}"
-
 
   def self.human_name
     I18n.t("activerecord.models.group")
@@ -79,6 +79,12 @@ class Group < ActiveRecord::Base
     end
   end
 
+  def self.find_fuzzy(query)
+    find(:all,
+         :conditions => ["LOWER(name) LIKE ?", "%" + query.downcase + "%"],
+         :limit => 10)
+  end
+
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }
     all_project_ids << repositories.map{|r| r.project_id }
@@ -103,34 +109,19 @@ class Group < ActiveRecord::Base
     nil
   end
 
-  # is this +user+ a member of this group?
   def member?(user)
     members.include?(user)
   end
 
-  # returns the Role of +user+ in this group
-  def role_of_user(candidate)
-    if !candidate || candidate == :false
-      return
-    end
+  def user_role(candidate)
+    return if !candidate || candidate == :false
     membership = memberships.find_by_user_id(candidate.id)
     return unless membership
     membership.role
   end
 
-  # is +candidate+ an admin in this group?
-  def admin?(candidate)
-    role_of_user(candidate) == Role.admin
-  end
-
-  # is +candidate+ a committer (or admin) in this group?
-  def committer?(candidate)
-    [Role.admin, Role.member].include?(role_of_user(candidate))
-  end
-
-  # Adds +a_user+ as a member to this group with a role of +a_role+
-  def add_member(a_user, a_role)
-    memberships.create!(:user => a_user, :role => a_role)
+  def add_member(user, role)
+    memberships.create!(:user => user, :role => role)
   end
 
   def deletable?
@@ -148,7 +139,7 @@ class Group < ActiveRecord::Base
   end
 
   protected
-    def downcase_name
-      name.downcase! if name
-    end
+  def downcase_name
+    name.downcase! if name
+  end
 end

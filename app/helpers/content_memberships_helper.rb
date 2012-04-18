@@ -1,6 +1,6 @@
-<%
+# encoding: utf-8
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,14 +15,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
-
-<ul>
-<% @users.each do |user| -%>
-<li class="committer">
-  <div class="image"><%= avatar_from_email user.email, :size => 32 -%></div>
-  <div class="login"><%=h user.login -%></div>
-  <div class="email"><span class="informal"><%=h user.email -%></span></div>
-</li>
-<% end -%>
-</ul>
+module ContentMembershipsHelper
+  def text(key, params = {})
+    t("views.#{@class_name}_memberships.#{key}", params)
+  end
+end

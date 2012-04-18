@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -18,7 +19,7 @@
 
 class MembershipsController < ApplicationController
   before_filter :find_group
-  before_filter :ensure_group_adminship, :except => [:index, :show, :auto_complete_for_user_login]
+  before_filter :ensure_group_adminship, :except => [:index, :show]
   renders_in_global_context
 
   def index
@@ -83,23 +84,14 @@ class MembershipsController < ApplicationController
     redirect_to group_memberships_path(@group)
   end
 
-  def auto_complete_for_user_login
-    @users = User.find(:all,
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
-      :limit => 10)
-    render :text => @users.map{|u| u.login }.join("\n")
-    #render :layout => false
+  protected
+  def find_group
+    @group = Group.find_by_name!(params[:group_id])
   end
 
-
-  protected
-    def find_group
-      @group = Group.find_by_name!(params[:group_id])
+  def ensure_group_adminship
+    unless admin?(current_user, @group)
+      access_denied and return
     end
-
-    def ensure_group_adminship
-      unless @group.admin?(current_user)
-        access_denied and return
-      end
-    end
+  end
 end

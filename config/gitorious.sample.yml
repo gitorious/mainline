@@ -134,6 +134,12 @@ production:
   # the correct URLs.
   #public_mode: true
 
+  # Enabling private repositories allows users to control read-access to their
+  # repositories. Repositories are public by default, but individual users
+  # and/or groups can be given read permissions to limit who can see and pull
+  # from it.
+  #enable_private_repositories: false
+
   # Only site admins can create projects.
   #only_site_admins_can_create_projects: false
 

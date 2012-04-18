@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,12 +22,12 @@ class FavoritesController < ApplicationController
   before_filter :find_watchable, :only => [:create]
 
   def index
-    @favorites = current_user.favorites.all(:include => :watchable)
+    @favorites = filter(current_user.favorites.all(:include => :watchable))
     @root = Breadcrumb::Favorites.new(current_user)
   end
 
   def update
-    @favorite = current_user.favorites.find(params[:id])
+    @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.notify_by_email = params[:favorite][:notify_by_email]
     @favorite.save
     respond_to do |wants|
@@ -51,7 +52,7 @@ class FavoritesController < ApplicationController
   end
 
   def destroy
-    @favorite = current_user.favorites.find(params[:id])
+    @favorite = authorize_access_to(current_user.favorites.find(params[:id]))
     @favorite.destroy
     watchable = @favorite.watchable
     respond_to do |wants|
@@ -73,7 +74,6 @@ class FavoritesController < ApplicationController
     rescue NameError
       raise ActiveRecord::RecordNotFound
     end
-    @watchable = watchable_class.find(params[:watchable_id])
+    @watchable = authorize_access_to(watchable_class.find(params[:watchable_id]))
   end
 end
-

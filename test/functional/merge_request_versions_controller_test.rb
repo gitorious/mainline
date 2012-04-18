@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -67,6 +67,44 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       end
       should_respond_with :success
       should_assign_to :project
+    end
+
+    context "With private projects" do
+      setup do
+        @project = @merge_request.project
+        enable_private_repositories
+        @version.stubs(:diffs).with("ffcab".."bacff").returns([])
+        GitoriousConfig["use_ssl"] = false
+      end
+
+      should "disallow unauthenticated users" do
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        assert_response 200
+      end
+    end
+
+    context "With private repositories" do
+      setup do
+        enable_private_repositories(@merge_request.target_repository)
+        @version.stubs(:diffs).with("ffcab".."bacff").returns([])
+      end
+
+      should "disallow unauthenticated users" do
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        assert_response 200
+      end
     end
   end
 end

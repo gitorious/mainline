@@ -19,7 +19,6 @@
 require File.dirname(__FILE__) + "/../test_helper"
 
 class GroupsControllerTest < ActionController::TestCase
-
   should_render_in_global_context
 
   def setup
@@ -132,7 +131,7 @@ class GroupsControllerTest < ActionController::TestCase
     setup do
       @group = groups(:team_thunderbird)
       @user = users(:mike)
-      assert @group.admin?(@user)
+      assert admin?(@user, @group)
     end
 
     should "succeed if there is only one member" do
@@ -161,7 +160,7 @@ class GroupsControllerTest < ActionController::TestCase
     end
 
     should "succeed if there is more than one member and user is site_admin" do
-      assert users(:johan).site_admin?
+      assert site_admin?(users(:johan))
       @group.add_member(users(:johan), Role.member)
       assert_equal 2, @group.members.count
 

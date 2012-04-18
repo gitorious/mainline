@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class SearchesControllerTest < ActionController::TestCase
-
   should_render_in_global_context
   should_enforce_ssl_for(:get, :show)
 
@@ -61,6 +60,41 @@ class SearchesControllerTest < ActionController::TestCase
       end
 
       should_scope_pagination_to(:show, nil, "search results", :delete_all => false)
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      GitoriousConfig["use_ssl"] = false
+      @project = Project.first
+      results = Project.all.concat(Repository.all)
+      enable_private_repositories
+      searcher = mock()
+      searcher.stubs(:run)
+      searcher.stubs(:results).returns(results)
+      searcher.stubs(:total_pages).returns(1)
+      searcher.stubs(:total_entries).returns(results.length)
+      searcher.stubs(:time).returns(42)
+      Ultrasphinx::Search.stubs(:new).returns(searcher)
+    end
+
+    should "filter out unauthorized results" do
+      get :show, :q => "gitorious"
+      assert_response :success
+      assert(assigns(:results).none? do |r|
+        (r.respond_to?(:project) ? r.project : r) == @project
+      end)
+      assert_match /Found 4 results/, @response.body
+    end
+
+    should "not filter out authorized results" do
+      login_as :johan
+      get :show, :q => "gitorious"
+
+      assert(assigns(:results).any? do |r|
+        (r.respond_to?(:project) ? r.project : r) == @project
+      end)
+      assert_match /Found 8 results/, @response.body
     end
   end
 end

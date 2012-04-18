@@ -22,7 +22,7 @@ class MergeRequestVersionsController < ApplicationController
   renders_in_site_specific_context
 
   def show
-    @version = MergeRequestVersion.find(params[:id])
+    @version = authorize_access_to(MergeRequestVersion.find(params[:id]))
     @merge_request = @version.merge_request
 
     begin

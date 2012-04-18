@@ -16,4 +16,30 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module CommittershipsHelper
+  def collaborators(label, permissions, collaborators)
+    creator = t("views.repos.creator")
+    creator_label = "<small class=\"hint\">#{creator}</small>"
+
+    collab_items = collaborators.map do |user|
+      <<-HTML
+    <li>
+      <div class="user">
+        #{avatar_from_email(user.email, :size => 16, :style => "tiny")}
+        #{link_to h(user.title), user}
+        #{creator_label if @repository.user == user}
+      </div>
+    </li>
+      HTML
+    end
+
+    msg = "No users with #{permissions} permissions"
+    collab_items = "<li><em>#{msg}</em></li>" if collaborators.blank?
+
+    <<-HTML
+  <ul class="committers">
+  <h5>#{label}</h5>
+  #{collab_items}
+  </ul>
+    HTML
+  end
 end

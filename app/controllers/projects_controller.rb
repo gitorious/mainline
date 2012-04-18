@@ -1,11 +1,12 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #   Copyright (C) 2008 Cairo Noleto <caironoleto@gmail.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -22,20 +23,21 @@
 #++
 
 class ProjectsController < ApplicationController
+  include ProjectFilters
+
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
   before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
   before_filter :find_project,
-    :only => [:show, :clones, :edit, :update, :confirm_delete, :edit_slug]
-  before_filter :assure_adminship, :only => [:edit, :update, :edit_slug]
+    :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
+  before_filter :require_admin, :only => [:edit, :update, :edit_slug]
   before_filter :require_user_has_ssh_keys, :only => [:new, :create]
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
   def index
     @projects = paginate(:action => "index") do
-      Project.paginate(:all, :order => "projects.created_at desc",
-                       :page => params[:page], :include => [:tags, { :repositories => :project } ])
+      paginate_projects(params[:page] || 1, Project.per_page)
     end
 
     return if @projects.count == 0 && params.key?(:page)
@@ -43,7 +45,7 @@ class ProjectsController < ApplicationController
     @atom_auto_discovery_url = projects_path(:format => :atom)
     respond_to do |format|
       format.html {
-        @active_recently = Project.most_active_recently
+        @active_recently = filter(Project.most_active_recently)
         @tags = Project.top_tags
       }
       format.xml  { render :xml => @projects }
@@ -51,28 +53,15 @@ class ProjectsController < ApplicationController
     end
   end
 
-  def category
-    tags = params[:id].to_s.gsub(/,\ ?/, " ")
-    @projects = Project.paginate_by_tag(tags, :order => 'created_at desc',
-                  :page => params[:page])
-    @atom_auto_discovery_url = projects_category_path(params[:id], :format => :atom)
-    respond_to do |format|
-      format.html do
-        @tags = Project.tag_counts
-        render :action => "index"
-      end
-      format.xml  { render :xml => @projects }
-      format.atom { render :action => "index"}
-    end
-  end
-
   def show
     @events = paginate(:action => "show", :id => @project.to_param) do
-      Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
-        events_finder_options = {}
-        events_finder_options.merge!(@project.events.top.proxy_options)
-        events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
-        @project.events.paginate(events_finder_options)
+      filter_paginated(params[:page], Event.per_page) do |page|
+        Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+          events_finder_options = {}
+          events_finder_options.merge!(@project.events.top.proxy_options)
+          events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
+          @project.events.paginate(events_finder_options)
+        end
       end
     end
 
@@ -81,8 +70,9 @@ class ProjectsController < ApplicationController
     @mainlines = by_push_time(@project.repositories.mainlines)
     @owner = @project
     @root = @project
-    @group_clones = @project.recently_updated_group_repository_clones
-    @user_clones = @project.recently_updated_user_repository_clones
+    @mainlines = filter(@project.repositories.mainlines)
+    @group_clones = filter(@project.recently_updated_group_repository_clones)
+    @user_clones = filter(@project.recently_updated_user_repository_clones)
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     respond_to do |format|
       format.html
@@ -93,8 +83,8 @@ class ProjectsController < ApplicationController
 
   def clones
     @owner = @project
-    @group_clones = @project.repositories.by_groups
-    @user_clones = @project.repositories.by_users
+    @group_clones = filter(@project.repositories.by_groups)
+    @user_clones = filter(@project.repositories.by_users)
     respond_to do |format|
       format.js { render :partial => "repositories" }
     end
@@ -118,15 +108,16 @@ class ProjectsController < ApplicationController
       end
 
     if @project.save
+      flip_private_switch(@project)
       @project.create_event(Action::CREATE_PROJECT, @project, current_user)
       redirect_to new_project_repository_path(@project)
     else
-      render :action => 'new'
+      render :action => "new"
     end
   end
 
   def edit
-    @groups = current_user.groups.select{|g| g.admin?(current_user) }
+    @groups = current_user.groups.select{|g| admin?(current_user, g) }
     @root = Breadcrumb::EditProject.new(@project)
   end
 
@@ -143,7 +134,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    @groups = current_user.groups.select{|g| g.admin?(current_user) }
+    @groups = current_user.groups.select{|g| admin?(current_user, g) }
     @root = Breadcrumb::EditProject.new(@project)
 
     # change group, if requested
@@ -175,11 +166,9 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    @project = Project.find_by_slug!(params[:id])
-    if @project.can_be_deleted_by?(current_user)
+    if can_delete?(current_user, @project)
       project_title = @project.title
       @project.destroy
-#       Event.create(:action => Action::DELETE_PROJECT, :user => current_user, :data => project_title) # FIXME: project_id cannot be null
     else
       flash[:error] = I18n.t "projects_controller.destroy_error"
     end
@@ -191,24 +180,27 @@ class ProjectsController < ApplicationController
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end
 
-    def find_project
-      @project = Project.find_by_slug!(params[:id], :include => [:repositories])
-    end
-
-    def assure_adminship
-      if !@project.admin?(current_user)
-        flash[:error] = I18n.t "projects_controller.update_error"
-        redirect_to(project_path(@project)) and return
+  def check_if_only_site_admins_can_create
+    if GitoriousConfig["only_site_admins_can_create_projects"]
+      unless site_admin?(current_user)
+        flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
+        redirect_to projects_path
+        return false
       end
     end
+  end
 
-    def check_if_only_site_admins_can_create
-      if GitoriousConfig["only_site_admins_can_create_projects"]
-        unless current_user.site_admin?
-          flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
-          redirect_to projects_path
-          return false
-        end
-      end
+  def paginate_projects(page, per_page)
+    filter_paginated(page, per_page) do |page|
+      Project.paginate(:all, :order => "projects.created_at desc",
+                       :page => page,
+                       :include => [:tags, { :repositories => :project } ])
     end
+  end
+
+  def flip_private_switch(project)
+    return if !GitoriousConfig["enable_private_repositories"] || !params[:private_project]
+    project.make_private
+    project
+  end
 end

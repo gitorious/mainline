@@ -1,10 +1,11 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -30,7 +31,7 @@
       :locals => {:repository => @repository, :verbose => true} -%>
 </div>
 <div class="content-container">
-  <% if !@repository.has_commits? && @repository.committers.include?(current_user) -%>
+  <% if !@repository.has_commits? && committers(@repository).include?(current_user) -%>
 <%= render "getting_started" -%>
   <% end -%>
 </div>
@@ -70,7 +71,7 @@
     <% if @repository.ready? -%>
       <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
     <% end -%>
-    <% if logged_in? && @repository.can_request_merge?(current_user) -%>
+    <% if logged_in? && can_request_merge?(current_user, @repository) -%>
       <li class="merge_request">
         <%= link_to t('views.repos.btn_request'),
               new_project_repository_merge_request_path(@repository.project, @repository) %>
@@ -79,10 +80,9 @@
   </ul>
 
   <ul class="links navigation">
-    <% if @repository.admin?(current_user) -%>
+    <% if admin?(current_user, @repository) -%>
       <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
-    <% end -%>
-    <% if @repository.admin?(current_user) -%>
+      <li class="add_collaborator"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>

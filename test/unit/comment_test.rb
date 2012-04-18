@@ -20,7 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommentTest < ActiveSupport::TestCase
-
   should_validate_presence_of :target, :user_id, :project_id
 
   context "message notifications" do
@@ -121,7 +120,7 @@ class CommentTest < ActiveSupport::TestCase
     should 'not change the state of its target unless the user can resolve it' do
       @merge_request = merge_requests(:moes_to_johans_open)
       @merge_request.update_attribute(:status_tag, 'Before')
-      assert !@merge_request.resolvable_by?(users(:moe))
+      assert !can_resolve_merge_request?(users(:moe), @merge_request)
       @comment = @merge_request.comments.new(:body => 'PDI', :project => projects(:johans))
       @comment.state = 'After'
       @comment.user = users(:moe)
@@ -181,18 +180,18 @@ class CommentTest < ActiveSupport::TestCase
     should "be editable for 10 minutes after being created" do
       assert @comment.creator?(@user)
       assert @comment.recently_created?
-      assert @comment.editable_by?(@user)
+      assert can_edit?(@user, @comment)
     end
 
     should "not be editable when older than 10 minutes" do
       @comment.created_at = 9.minutes.ago
-      assert @comment.editable_by?(@user)
+      assert can_edit?(@user, @comment)
       @comment.created_at = 11.minutes.ago
-      assert !@comment.editable_by?(@user)
+      assert !can_edit?(@user, @comment)
     end
 
     should "never be editable by other users than the creator" do
-      assert !@comment.editable_by?(users(:mike))
+      assert !can_edit?(users(:mike), @comment)
     end
   end
 

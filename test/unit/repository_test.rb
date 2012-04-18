@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
@@ -46,10 +47,10 @@ class RepositoryTest < ActiveSupport::TestCase
 
   should "only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
-    assert !@repository.valid?, 'valid? should be false'
+    assert !@repository.valid?, "valid? should be false"
 
     @repository.name = "foo!bar"
-    assert !@repository.valid?, 'valid? should be false'
+    assert !@repository.valid?, "valid? should be false"
 
     @repository.name = "foobar"
     assert @repository.valid?
@@ -61,7 +62,7 @@ class RepositoryTest < ActiveSupport::TestCase
   should "has a unique name within a project" do
     @repository.save
     repos = new_repos(:name => "FOO")
-    assert !repos.valid?, 'valid? should be false'
+    assert !repos.valid?, "valid? should be false"
     assert_not_nil repos.errors.on(:name)
 
     assert new_repos(:project => projects(:moes)).valid?
@@ -181,13 +182,13 @@ class RepositoryTest < ActiveSupport::TestCase
     Repository.git_backend.expects(:create).with(path).returns(true)
     Repository.create_git_repository(@repository.real_gitdir)
 
-    assert File.exist?(path), 'File.exist?(path) should be true'
+    assert File.exist?(path), "File.exist?(path) should be true"
 
     Dir.chdir(path) do
       hooks = File.join(path, "hooks")
-      assert File.exist?(hooks), 'File.exist?(hooks) should be true'
-      assert File.symlink?(hooks), 'File.symlink?(hooks) should be true'
-      assert File.symlink?(File.expand_path(File.readlink(hooks))), 'File.symlink?(File.expand_path(File.readlink(hooks))) should be true'
+      assert File.exist?(hooks), "File.exist?(hooks) should be true"
+      assert File.symlink?(hooks), "File.symlink?(hooks) should be true"
+      assert File.symlink?(File.expand_path(File.readlink(hooks))), "File.symlink?(File.expand_path(File.readlink(hooks))) should be true"
     end
   end
 
@@ -257,24 +258,24 @@ class RepositoryTest < ActiveSupport::TestCase
     head = mock("head")
     head.stubs(:name).returns("master")
     @repository.git.expects(:heads).returns([head])
-    assert @repository.has_commits?, '@repository.has_commits? should be true'
+    assert @repository.has_commits?, "@repository.has_commits? should be true"
   end
 
   should "knows if has commits, unless its a new record" do
     @repository.stubs(:new_record?).returns(false)
-    assert !@repository.has_commits?, '@repository.has_commits? should be false'
+    assert !@repository.has_commits?, "@repository.has_commits? should be false"
   end
 
   should "knows if has commits, unless its not ready" do
     @repository.stubs(:ready?).returns(false)
-    assert !@repository.has_commits?, '@repository.has_commits? should be false'
+    assert !@repository.has_commits?, "@repository.has_commits? should be false"
   end
 
   should " build a new repository by cloning another one" do
     repos = Repository.new_by_cloning(@repository)
     assert_equal @repository, repos.parent
     assert_equal @repository.project, repos.project
-    assert repos.new_record?, 'new_record? should be true'
+    assert repos.new_record?, "new_record? should be true"
   end
 
   should "inherit merge request inclusion from its parent" do
@@ -308,14 +309,14 @@ class RepositoryTest < ActiveSupport::TestCase
   context "find_by_path" do
     should "finds a repository by its path" do
       repo = repositories(:johans)
-      path = File.join(GitoriousConfig['repository_base_path'],
+      path = File.join(GitoriousConfig["repository_base_path"],
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
 
     should_eventually "finds a repository by its path, regardless of repository kind" do
       repo = projects(:johans).wiki_repository
-      path = File.join(GitoriousConfig['repository_base_path'].chomp("/"),
+      path = File.join(GitoriousConfig["repository_base_path"].chomp("/"),
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
@@ -325,7 +326,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.owner = groups(:team_thunderbird)
       repo.kind = Repository::KIND_TEAM_REPO
       repo.save!
-      path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
+      path = File.join(GitoriousConfig["repository_base_path"], repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
 
@@ -334,7 +335,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.owner = users(:johan)
       repo.kind = Repository::KIND_USER_REPO
       repo.save!
-      path = File.join(GitoriousConfig['repository_base_path'], repo.gitdir)
+      path = File.join(GitoriousConfig["repository_base_path"], repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
 
@@ -349,7 +350,7 @@ class RepositoryTest < ActiveSupport::TestCase
       same_name_repo.owner = groups(:team_thunderbird)
       same_name_repo.kind = Repository::KIND_TEAM_REPO
       same_name_repo.save!
-      path = File.join(GitoriousConfig['repository_base_path'], same_name_repo.gitdir)
+      path = File.join(GitoriousConfig["repository_base_path"], same_name_repo.gitdir)
       assert_equal same_name_repo, Repository.find_by_path(path)
     end
   end
@@ -375,21 +376,21 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context "#writable_by?" do
+  context "can_push?" do
     should "knows if a user can write to self" do
       @repository.owner = users(:johan)
       @repository.save!
       @repository.reload
-      assert @repository.writable_by?(users(:johan))
-      assert !@repository.writable_by?(users(:mike))
+      assert can_push?(users(:johan), @repository)
+      assert !can_push?(users(:mike), @repository)
 
       @repository.change_owner_to!(groups(:team_thunderbird))
       @repository.save!
-      assert !@repository.writable_by?(users(:johan))
+      assert !can_push?(users(:johan), @repository)
 
       @repository.owner.add_member(users(:moe), Role.member)
       @repository.committerships.reload
-      assert @repository.writable_by?(users(:moe))
+      assert can_push?(users(:moe), @repository)
     end
 
     context "a wiki repository" do
@@ -400,17 +401,17 @@ class RepositoryTest < ActiveSupport::TestCase
       should "be writable by everyone" do
         @repository.wiki_permissions = Repository::WIKI_WRITABLE_EVERYONE
         [:johan, :mike, :moe].each do |login|
-          assert @repository.writable_by?(users(login)), "not writable_by #{login}"
+          assert can_push?(users(login), @repository), "not writable_by #{login}"
         end
       end
 
       should "only be writable by project members" do
         @repository.wiki_permissions = Repository::WIKI_WRITABLE_PROJECT_MEMBERS
         assert @repository.project.member?(users(:johan))
-        assert @repository.writable_by?(users(:johan))
+        assert can_push?(users(:johan), @repository)
 
         assert !@repository.project.member?(users(:moe))
-        assert !@repository.writable_by?(users(:moe))
+        assert !can_push?(users(:moe), @repository)
       end
     end
   end
@@ -483,17 +484,17 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "be deletable by admins" do
-      assert @repository.admin?(users(:johan))
-      assert !@repository.admin?(users(:moe))
+      assert admin?(users(:johan), @repository)
+      assert !admin?(users(:moe), @repository)
 
-      assert @repository.can_be_deleted_by?(users(:johan))
-      assert !@repository.can_be_deleted_by?(users(:moe))
+      assert can_delete?(users(:johan), @repository)
+      assert !can_delete?(users(:moe), @repository)
     end
 
     should "always be deletable if admin and non-project repo" do
       @repository.kind = Repository::KIND_TEAM_REPO
-      assert @repository.can_be_deleted_by?(users(:johan))
-      assert !@repository.can_be_deleted_by?(users(:moe))
+      assert can_delete?(users(:johan), @repository)
+      assert !can_delete?(users(:moe), @repository)
     end
 
     should "also be deletable by users with admin privs" do
@@ -501,8 +502,8 @@ class RepositoryTest < ActiveSupport::TestCase
       cs = @repository.committerships.create_with_permissions!({
           :committer => users(:mike)
         }, Committership::CAN_ADMIN)
-      assert @repository.can_be_deleted_by?(users(:johan))
-      assert @repository.can_be_deleted_by?(users(:mike))
+      assert can_delete?(users(:johan), @repository)
+      assert can_delete?(users(:mike), @repository)
     end
   end
 
@@ -557,12 +558,12 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   should "know if it is a normal project repository" do
-    assert @repository.project_repo?, '@repository.project_repo? should be true'
+    assert @repository.project_repo?, "@repository.project_repo? should be true"
   end
 
   should "know if it is a wiki repo" do
     @repository.kind = Repository::KIND_WIKI
-    assert @repository.wiki?, '@repository.wiki? should be true'
+    assert @repository.wiki?, "@repository.wiki? should be true"
   end
 
   should "has a parent, which is the owner" do
@@ -602,38 +603,38 @@ class RepositoryTest < ActiveSupport::TestCase
     repo = repositories(:johans2)
     repo.committerships.each(&:delete)
     repo.reload
-    assert !repo.committers.include?(users(:moe))
+    assert !committers(repo).include?(users(:moe))
 
     repo.committerships.create_with_permissions!({
         :committer => users(:johan)
       }, Committership::CAN_COMMIT)
-    assert_equal [users(:johan).login], repo.committers.map(&:login)
+    assert_equal [users(:johan).login], committers(repo).map(&:login)
 
     repo.committerships.create_with_permissions!({
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_COMMIT)
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
-    assert_equal exp_users.map(&:login), repo.committers.map(&:login)
+    assert_equal exp_users.map(&:login), committers(repo).map(&:login)
 
     groups(:team_thunderbird).add_member(users(:moe), Role.admin)
     repo.reload
-    assert repo.committers.include?(users(:moe))
+    assert committers(repo).include?(users(:moe))
   end
 
 
   should "know you can request merges from it"  do
     repo = repositories(:johans2)
     assert !repo.mainline?
-    assert repo.committer?(users(:mike))
-    assert repo.can_request_merge?(users(:mike))
+    assert committer?(users(:mike), repo)
+    assert can_request_merge?(users(:mike), repo)
 
     repo.kind = Repository::KIND_PROJECT_REPO
     assert repo.mainline?
-    assert !repo.can_request_merge?(users(:mike)), "mainlines should not request merges"
+    assert !can_request_merge?(users(:mike), repo), "mainlines should not request merges"
   end
 
   should "sets a hash on create" do
-    assert @repository.new_record?, '@repository.new_record? should be true'
+    assert @repository.new_record?, "@repository.new_record? should be true"
     @repository.save!
     assert_not_nil @repository.hashed_path
     assert_equal 3, @repository.hashed_path.split("/").length
@@ -692,8 +693,8 @@ class RepositoryTest < ActiveSupport::TestCase
     repo = repositories(:johans)
     old_committer = repo.owner
     repo.change_owner_to!(groups(:team_thunderbird))
-    assert !repo.committers.include?(old_committer)
-    assert repo.committers.include?(groups(:team_thunderbird).members.first)
+    assert !committers(repo).include?(old_committer)
+    assert committers(repo).include?(groups(:team_thunderbird).members.first)
     [:reviewer?, :committer?, :admin?].each do |m|
       assert repo.committerships.last.send(m), "cannot #{m}"
     end
@@ -725,12 +726,12 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "includes the groups' members in #committers" do
-      assert @repo.committers.include?(groups(:team_thunderbird).members.first)
+      assert committers(@repo).include?(groups(:team_thunderbird).members.first)
     end
 
     should "only include unique users in #committers" do
       groups(:team_thunderbird).add_member(users(:moe), Role.member)
-      assert_equal 1, @repo.committers.select{|u| u == users(:moe)}.size
+      assert_equal 1, committers(@repo).select{|u| u == users(:moe)}.size
     end
 
     should "not include committerships without a commit permission bit" do
@@ -738,15 +739,15 @@ class RepositoryTest < ActiveSupport::TestCase
       cs = @repo.committerships.first
       cs.build_permissions(:review)
       cs.save!
-      assert_equal [], @repo.committers.map(&:login)
+      assert_equal [], committers(@repo).map(&:login)
     end
 
     should "return a list of reviewers" do
-      assert !@repo.reviewers.map(&:login).include?(users(:moe).login)
+      assert !reviewers(@repo).map(&:login).include?(users(:moe).login)
       @repo.committerships.create_with_permissions!({
           :committer => users(:moe)
         }, Committership::CAN_REVIEW)
-      assert @repo.reviewers.map(&:login).include?(users(:moe).login)
+      assert reviewers(@repo).map(&:login).include?(users(:moe).login)
     end
 
     context "permission helpers" do
@@ -757,29 +758,29 @@ class RepositoryTest < ActiveSupport::TestCase
       end
 
       should "know if a user is a committer" do
-        assert !@repo.committer?(@cs.committer)
+        assert !committer?(@cs.committer, @repo)
         @cs.build_permissions(:commit); @cs.save
-        assert !@repo.committer?(:false)
-        assert !@repo.committer?(@cs.committer)
+        assert !committer?(:false, @repo)
+        assert !committer?(@cs.committer, @repo)
       end
 
       should "know if a user is a reviewer" do
-        assert !@repo.reviewer?(@cs.committer)
+        assert !reviewer?(@cs.committer, @repo)
         @cs.build_permissions(:review); @cs.save
-        assert !@repo.reviewer?(:false)
-        assert !@repo.reviewer?(@cs.committer)
+        assert !reviewer?(:false, @repo)
+        assert !reviewer?(@cs.committer, @repo)
       end
 
       should "know if a user is a admin" do
-        assert !@repo.admin?(@cs.committer)
+        assert !admin?(@cs.committer, @repo)
         @cs.build_permissions(:commit, :admin); @cs.save
-        assert !@repo.admin?(:false)
-        assert !@repo.admin?(@cs.committer)
+        assert !admin?(:false, @repo)
+        assert !admin?(@cs.committer, @repo)
       end
     end
   end
 
-  context 'owners as User or Group' do
+  context "owners as User or Group" do
     setup do
       @repo = repositories(:moes)
     end
@@ -789,12 +790,12 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal([users(:johan)], @repo.owners)
     end
 
-    should 'not throw an error if transferring ownership to a group if the group is already a committer' do
+    should "not throw an error if transferring ownership to a group if the group is already a committer" do
       @repo.change_owner_to!(groups(:team_thunderbird))
       assert_equal([users(:mike)], @repo.owners)
     end
 
-    should 'return the owner if owned by user' do
+    should "return the owner if owned by user" do
       @repo.change_owner_to!(users(:moe))
       assert_equal([users(:moe)], @repo.owners)
     end
@@ -822,19 +823,19 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Signoff of merge requests' do
+  context "Signoff of merge requests" do
     setup do
       @project = projects(:johans)
       @mainline_repository = repositories(:johans)
       @other_repository = repositories(:johans2)
     end
 
-    should 'know that the mainline repository requires signoff of merge requests' do
+    should "know that the mainline repository requires signoff of merge requests" do
       assert @mainline_repository.mainline?
       assert @mainline_repository.requires_signoff_on_merge_requests?
     end
 
-    should 'not require signoff of merge requests in other repositories' do
+    should "not require signoff of merge requests in other repositories" do
       assert !@other_repository.mainline?
       assert !@other_repository.requires_signoff_on_merge_requests?
     end
@@ -865,20 +866,20 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Logging updates' do
+  context "Logging updates" do
     setup {@repository = repositories(:johans)}
 
-    should 'generate events for each value that is changed' do
+    should "generate events for each value that is changed" do
       assert_incremented_by(@repository.events, :size, 1) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "new_name")
         end
         assert @repository.save
       end
-      assert_equal 'new_name', @repository.reload.name
+      assert_equal "new_name", @repository.reload.name
     end
 
-    should 'not generate events when blank values are provided' do
+    should "not generate events when blank values are provided" do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "")
@@ -895,7 +896,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert @repository.reload.description.blank?, "desc: #{@repository.description.inspect}"
     end
 
-    should 'not generate events when invalid values are provided' do
+    should "not generate events when invalid values are provided" do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "Some illegal value")
@@ -903,7 +904,7 @@ class RepositoryTest < ActiveSupport::TestCase
       end
     end
 
-    should 'not generate events when a value is unchanged' do
+    should "not generate events when a value is unchanged" do
       assert_incremented_by(@repository.events, :size, 0) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, @repository.name)
@@ -939,17 +940,17 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Merge request repositories' do
+  context "Merge request repositories" do
     setup do
       @project = Factory.create(:user_project)
       @main_repo = Factory.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
     end
 
-    should 'initially not have a merge request repository' do
+    should "initially not have a merge request repository" do
       assert !@main_repo.has_tracking_repository?
     end
 
-    should 'generate a tracking repository' do
+    should "generate a tracking repository" do
       @merge_repo = @main_repo.create_tracking_repository
       assert @main_repo.project_repo?
       assert @merge_repo.tracking_repo?
@@ -960,7 +961,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal @merge_repo, @main_repo.tracking_repository
     end
 
-    should 'not post a repository creation message for merge request repositories' do
+    should "not post a repository creation message for merge request repositories" do
       @merge_repo = @main_repo.build_tracking_repository
       @merge_repo.expects(:publish).never
       assert @merge_repo.save
@@ -1054,7 +1055,7 @@ class RepositoryTest < ActiveSupport::TestCase
         users(:johan).update_attribute(:login, "rohan")
         @clone.update_attribute(:name, "rohans-clone-of-moes")
       end
-      
+
       should "match users with a matching name" do
         assert_includes(@repo.search_clones("rohan"), @clone)
       end
@@ -1069,7 +1070,7 @@ class RepositoryTest < ActiveSupport::TestCase
         @repo = repositories(:johans)
         @clone = repositories(:johans2)
       end
-      
+
       should "match groups with a matching name" do
         assert_includes(@repo.search_clones("thunderbird"), @clone)
       end
@@ -1084,7 +1085,7 @@ class RepositoryTest < ActiveSupport::TestCase
         @repo = repositories(:johans)
         @clone = repositories(:johans2)
       end
-      
+
       should "match repos with a matching name" do
         assert_includes(@repo.search_clones("projectrepos"), @clone)
       end
@@ -1183,6 +1184,107 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
+  context "Database authorization" do
+    context "with private repositories enabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+        @repository = repositories(:johans)
+      end
+
+      should "mark repository as private" do
+        @repository.make_private
+        assert @repository.private?
+      end
+
+      should "mark repository as private if project is private" do
+        @repository.project.make_private
+        assert @repository.private?
+      end
+
+      should "allow anonymous user to view public repository" do
+        repository = Repository.new(:name => "My repository")
+        assert can_read?(nil, repository)
+      end
+
+      should "allow owner to view private repository" do
+        @repository.owner = users(:johan)
+        @repository.add_member(users(:johan))
+        assert can_read?(users(:johan), @repository)
+      end
+
+      should "disallow anonymous user to view private repository" do
+        @repository.add_member(users(:johan))
+        assert !can_read?(nil, @repository)
+      end
+
+      should "disallow repository member if not also project member" do
+        @repository.add_member(users(:mike))
+        @repository.project.make_private
+
+        assert !can_read?(nil, @repository)
+      end
+
+      should "allow member to view private repository" do
+        @repository.owner = users(:johan)
+        @repository.add_member(users(:mike))
+        assert can_read?(users(:mike), @repository)
+      end
+
+      should "allow member to view private repository via group membership" do
+        @repository.owner = users(:johan)
+        @repository.add_member(groups(:team_thunderbird))
+        assert can_read?(users(:mike), @repository)
+      end
+
+      should "display the git URL for public repositories" do
+        assert @repository.git_cloning?
+      end
+
+      should "not display the git URL for protected repositories" do
+        @repository.owner = users(:johan)
+        @repository.add_member(users(:mike))
+        assert !@repository.git_cloning?
+      end
+    end
+
+    context "with private repositories disabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+        @repository = repositories(:johans)
+      end
+
+      should "allow anonymous user to view 'private' repository" do
+        @repository.add_member(users(:johan))
+        assert can_read?(nil, @repository)
+      end
+    end
+
+    context "making repositories private" do
+      setup do
+        @user = users(:johan)
+        @repository = repositories(:johans)
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+
+      should "add owner as member" do
+        @repository.make_private
+        assert !can_read?(users(:mike), @repository)
+      end
+    end
+  end
+
+  context "repository memberships" do
+    should "silently ignore duplicates" do
+      repository = repositories(:johans)
+      repository.add_member(users(:mike))
+      repository.add_member(users(:mike))
+
+      assert repository.member?(users(:mike))
+      assert is_member?(users(:mike), repository)
+      assert_equal 1, repository.content_memberships.count
+    end
+  end
+
   context "Reserved repository names" do
 
     should "not allow users as repository name" do
@@ -1202,5 +1304,3 @@ class RepositoryTest < ActiveSupport::TestCase
     result
   end
 end
-
-

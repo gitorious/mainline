@@ -1,13 +1,14 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
 #   Copyright (C) 2008 David Aguilar <davvid@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +31,8 @@ class Repository < ActiveRecord::Base
   include RecordThrottling
   include Watchable
   include Gitorious::Search
+  include Gitorious::Authorization
+  include Gitorious::Protectable
 
   KIND_PROJECT_REPO = 0
   KIND_WIKI = 1
@@ -45,15 +48,17 @@ class Repository < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :project
   belongs_to  :owner, :polymorphic => true
+  has_many    :repository_memberships, :as => :content
+  has_many    :content_memberships, :as => :content
   has_many    :committerships, :dependent => :destroy
   belongs_to  :parent, :class_name => "Repository"
   has_many    :clones, :class_name => "Repository", :foreign_key => "parent_id",
     :dependent => :nullify
   has_many    :comments, :as => :target, :dependent => :destroy
-  has_many    :merge_requests, :foreign_key => 'target_repository_id',
+  has_many    :merge_requests, :foreign_key => "target_repository_id",
     :order => "status, id desc", :dependent => :destroy
-  has_many    :proposed_merge_requests, :foreign_key => 'source_repository_id',
-                :class_name => 'MergeRequest', :order => "id desc", :dependent => :destroy
+  has_many    :proposed_merge_requests, :foreign_key => "source_repository_id",
+                :class_name => "MergeRequest", :order => "id desc", :dependent => :destroy
   has_many    :cloners, :dependent => :destroy
   has_many    :events, :as => :target, :dependent => :destroy
   has_many :hooks, :dependent => :destroy
@@ -70,6 +75,7 @@ class Repository < ActiveRecord::Base
   before_validation :downcase_name
   before_create :set_repository_hash
   after_create :create_initial_committership
+  after_create :add_initial_members
   after_create :create_add_event_if_project_repo
   after_create :post_repo_creation_message
   after_create :add_owner_as_watchers
@@ -179,7 +185,7 @@ class Repository < ActiveRecord::Base
         project.repositories.clones.map{|r| r.id }
       end.flatten
       find(:all, :limit => limit,
-        :select => 'distinct repositories.*, count(events.id) as event_count',
+        :select => "distinct repositories.*, count(events.id) as event_count",
         :order => "event_count desc", :group => "repositories.id",
         :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
                         clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
@@ -191,7 +197,7 @@ class Repository < ActiveRecord::Base
   def self.most_active_clones(limit = 10)
     Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
       find(:all, :limit => limit,
-        :select => 'distinct repositories.id, repositories.*, count(events.id) as event_count',
+        :select => "distinct repositories.id, repositories.*, count(events.id) as event_count",
         :order => "event_count desc", :group => "repositories.id",
         :conditions => ["events.created_at > ? and kind in (?)",
                         7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
@@ -255,7 +261,8 @@ class Repository < ActiveRecord::Base
   end
 
   def git_cloning?
-    !GitoriousConfig["hide_git_clone_urls"]
+    return false if GitoriousConfig["hide_git_clone_urls"]
+    return public?
   end
 
   def ssh_cloning?
@@ -268,7 +275,7 @@ class Repository < ActiveRecord::Base
 
   def display_ssh_url?(user)
     return true if GitoriousConfig["always_display_ssh_url"]
-    writable_by?(user)
+    can_push?(user, self)
   end
 
   def full_repository_path
@@ -347,15 +354,6 @@ class Repository < ActiveRecord::Base
     end
   end
 
-  def can_be_deleted_by?(candidate)
-    admin?(candidate)
-  end
-
-  # Can +a_user+ request a merge from this repository
-  def can_request_merge?(a_user)
-    !mainline? && writable_by?(a_user)
-  end
-
   # changes the owner to +another_owner+, removes the old owner as committer
   # and adds +another_owner+ as committer
   def change_owner_to!(another_owner)
@@ -388,7 +386,7 @@ class Repository < ActiveRecord::Base
     payload = {
       :target_class => self.class.name,
       :target_id => self.id,
-      :command => parent ? 'clone_git_repository' : 'create_git_repository',
+      :command => parent ? "clone_git_repository" : "create_git_repository",
       :arguments => parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
     }
 
@@ -398,7 +396,7 @@ class Repository < ActiveRecord::Base
   def post_repo_deletion_message
     payload = {
       :target_class => self.class.name,
-      :command => 'delete_git_repository',
+      :command => "delete_git_repository",
       :arguments => [real_gitdir]
     }
 
@@ -501,7 +499,7 @@ class Repository < ActiveRecord::Base
     users_by_email
   end
 
-  def cloned_from(ip, country_code = "--", country_name = nil, protocol = 'git')
+  def cloned_from(ip, country_code = "--", country_name = nil, protocol = "git")
     cloners.create(:ip => ip, :date => Time.now.utc, :country_code => country_code, :country => country_name, :protocol => protocol)
   end
 
@@ -527,45 +525,6 @@ class Repository < ActiveRecord::Base
 
   def tracking_repo?
     kind == KIND_TRACKING_REPO
-  end
-
-  # returns an array of users who have commit bits to this repository either
-  # directly through the owner, or "indirectly" through the associated groups
-  def committers
-    committerships.committers.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  # Returns a list of Users who can review things (as per their Committership)
-  def reviewers
-    committerships.reviewers.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  # The list of users who can admin this repo, either directly as
-  # committerships or indirectly as members of a group
-  def administrators
-    committerships.admins.map{|c| c.members }.flatten.compact.uniq
-  end
-
-  def committer?(a_user)
-    a_user.is_a?(User) ? self.committers.include?(a_user) : false
-  end
-
-  def reviewer?(a_user)
-    a_user.is_a?(User) ? self.reviewers.include?(a_user) : false
-  end
-
-  def admin?(a_user)
-    a_user.is_a?(User) ? self.administrators.include?(a_user) : false
-  end
-
-  # Is this repo writable by +a_user+, eg. does he have push permissions here
-  # NOTE: this may be context-sensitive depending on the kind of repo
-  def writable_by?(a_user)
-    if wiki?
-      wiki_writable_by?(a_user)
-    else
-      committers.include?(a_user)
-    end
   end
 
   def owned_by_group?
@@ -601,7 +560,11 @@ class Repository < ActiveRecord::Base
   def owners
     result = if owned_by_group?
       owner.members.select do |member|
-        owner.admin?(member)
+        if owner.respond_to?(:admin)
+          admin?(member, owner)
+        else
+          admin?(member, owner)
+        end
       end
     else
       [owner]
@@ -774,48 +737,50 @@ class Repository < ActiveRecord::Base
                         [KIND_TEAM_REPO, KIND_USER_REPO, KIND_PROJECT_REPO]}])
   end
 
+  alias :repo_public? :public?
+
+  def public?
+    repo_public? && project.public?
+  end
+
   protected
-    def sharded_hashed_path(h)
-      first = h[0,3]
-      second = h[3,3]
-      last = h[-34, 34]
-      "#{first}/#{second}/#{last}"
-    end
+  def sharded_hashed_path(h)
+    first = h[0,3]
+    second = h[3,3]
+    last = h[-34, 34]
+    "#{first}/#{second}/#{last}"
+  end
 
-    def create_initial_committership
-      self.committerships.create_for_owner!(self.owner)
-    end
+  def create_initial_committership
+    self.committerships.create_for_owner!(self.owner)
+  end
 
-    def self.full_path_from_partial_path(path)
-      File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
-    end
+  def add_initial_members
+    return if parent.nil? || parent.content_memberships.count == 0
+    make_private
+    parent.content_memberships.each { |m| add_member(m.member) }
+  end
 
-    def downcase_name
-      name.downcase! if name
-    end
+  def self.full_path_from_partial_path(path)
+    File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
+  end
 
-    def create_add_event_if_project_repo
-      if project_repo?
-        #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
-        self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user,
-              nil, nil, date = created_at)
-      end
-    end
+  def downcase_name
+    name.downcase! if name
+  end
 
-    # Special permission check for KIND_WIKI repositories
-    def wiki_writable_by?(a_user)
-      case self.wiki_permissions
-      when WIKI_WRITABLE_EVERYONE
-        return true
-      when WIKI_WRITABLE_PROJECT_MEMBERS
-        return self.project.member?(a_user)
-      end
+  def create_add_event_if_project_repo
+    if project_repo?
+      #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
+      self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user,
+                                nil, nil, date = created_at)
     end
+  end
 
-    def add_owner_as_watchers
-      return if KINDS_INTERNAL_REPO.include?(self.kind)
-      watched_by!(user)
-    end
+  def add_owner_as_watchers
+    return if KINDS_INTERNAL_REPO.include?(self.kind)
+    watched_by!(user)
+  end
 
   private
   def self.create_hooks(path)
@@ -845,5 +810,4 @@ class Repository < ActiveRecord::Base
       file << sp[sp.size-1, sp.size].join("/").sub(/\.git$/, "") << "\n"
     end
   end
-
 end

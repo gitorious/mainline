@@ -24,7 +24,7 @@ class SshKeyFile
     @path = path || default_authorized_keys_path
   end
   attr_accessor :path
-  
+
   def contents
     File.read(@path)
   end
@@ -47,9 +47,9 @@ class SshKeyFile
       file.flock(File::LOCK_EX)
     end
   end
-  
+
   protected
-    def default_authorized_keys_path
-      File.join(File.expand_path("~"), ".ssh", "authorized_keys")
-    end
+  def default_authorized_keys_path
+    File.join(File.expand_path("~"), ".ssh", "authorized_keys")
+  end
 end

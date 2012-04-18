@@ -1,5 +1,7 @@
-<%
+# encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,16 +17,16 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
 
-<ul>
-<% @users.each do |user| -%>
-<li class="committer">
-  <div class="image"><%= avatar_from_email user.email, :size => 32 -%></div>
-  <div class="login"><%=h user.login -%></div>
-  <% if user.public_email? -%>
-    <div class="email"><span class="informal"><%=h user.email -%></span></div>
-  <% end -%>
-</li>
-<% end -%>
-</ul>
+class AdminController < ApplicationController
+  before_filter :login_required
+  before_filter :require_site_admin
+
+  protected
+  def require_site_admin
+    unless site_admin?(current_user)
+      flash[:error] = I18n.t("admin.check_admin")
+      redirect_to(root_path)
+    end
+  end
+end

@@ -221,9 +221,9 @@ class MessageTest < ActiveSupport::TestCase
     message.sender = users(:johan)
     message.recipient = users(:mike)
 
-    assert message.readable_by?(users(:johan))
-    assert message.readable_by?(users(:mike))
-    assert !message.readable_by?(users(:moe))
+    assert can_read?(users(:johan), message)
+    assert can_read?(users(:mike), message)
+    assert !can_read?(users(:moe), message)
   end
 
   should "be marked as read by the recipient" do

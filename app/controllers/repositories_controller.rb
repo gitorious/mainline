@@ -1,10 +1,11 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +24,8 @@
 class RepositoriesController < ApplicationController
   before_filter :login_required,
     :except => [:index, :show, :writable_by, :config, :search_clones]
-  before_filter :find_repository_owner
+  before_filter :find_repository_owner, :except => [:writable_by, :config]
+  before_filter :unauthorized_repository_owner_and_project, :only => [:writable_by, :config]
   before_filter :require_owner_adminship, :only => [:new, :create]
   before_filter :find_and_require_repository_adminship,
     :only => [:edit, :update, :confirm_delete, :destroy]
@@ -34,10 +36,12 @@ class RepositoriesController < ApplicationController
 
   def index
     if term = params[:filter]
-      @repositories = @project.search_repositories(term)
+      @repositories = filter(@project.search_repositories(term))
     else
       @repositories = paginate(page_free_redirect_options) do
-        @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => params[:page])
+        filter_paginated(params[:page], Repository.per_page) do |page|
+          @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => page)
+        end
       end
     end
 
@@ -51,16 +55,17 @@ class RepositoriesController < ApplicationController
   end
 
   def show
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    @root = @repository
+    @root = @repository = repository_to_clone
     @events = paginate(page_free_redirect_options) do
-      @repository.events.top.paginate(:all, :page => params[:page], :order => "created_at desc")
+      filter_paginated(params[:page], Event.per_page) do |page|
+        @repository.events.top.paginate(:all, :page => page, :order => "created_at desc")
+      end
     end
 
     return if @events.count == 0 && params.key?(:page)
     @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
                                   @repository.project, @repository, :format => :atom)
-    response.headers['Refresh'] = "5" unless @repository.ready
+    response.headers["Refresh"] = "5" unless @repository.ready
 
     respond_to do |format|
       format.html
@@ -88,6 +93,7 @@ class RepositoriesController < ApplicationController
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
 
     if @repository.save
+      @repository.make_private if GitoriousConfig["enable_private_repositories"] && params[:private_repository]
       flash[:success] = I18n.t("repositories_controller.create_success")
       redirect_to [@repository.project_or_owner, @repository]
     else
@@ -98,7 +104,7 @@ class RepositoriesController < ApplicationController
   undef_method :clone
 
   def clone
-    @repository_to_clone = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository_to_clone = repository_to_clone
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       flash[:error] = I18n.t "repositories_controller.new_clone_error"
@@ -109,7 +115,7 @@ class RepositoriesController < ApplicationController
   end
 
   def create_clone
-    @repository_to_clone = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    @repository_to_clone = repository_to_clone
     @root = Breadcrumb::CloneRepository.new(@repository_to_clone)
     unless @repository_to_clone.has_commits?
       respond_to do |format|
@@ -158,8 +164,8 @@ class RepositoriesController < ApplicationController
   end
 
   def search_clones
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    @repositories = @repository.search_clones(params[:filter])
+    @repository = repository_to_clone
+    @repositories = filter(@repository.search_clones(params[:filter]))
     render :json => to_json(@repositories)
   end
 
@@ -203,7 +209,7 @@ class RepositoriesController < ApplicationController
         end
       rescue ActiveRecord::RecordNotFound # No such merge request
       end
-    elsif user && user.can_write_to?(@repository)
+    elsif user && can_push?(user, @repository)
       render :text => "true" and return
     end
     render :text => 'false' and return
@@ -212,6 +218,7 @@ class RepositoriesController < ApplicationController
   def config
     @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id],
       @containing_project)
+    authorize_configuration_access(@repository)
     config_data = "real_path:#{@repository.real_gitdir}\n"
     config_data << "force_pushing_denied:"
     config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
@@ -221,16 +228,16 @@ class RepositoriesController < ApplicationController
   end
 
   def confirm_delete
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    unless @repository.can_be_deleted_by?(current_user)
+    @repository = repository_to_clone
+    unless can_delete?(current_user, @repository)
       flash[:error] = I18n.t "repositories_controller.adminship_error"
       redirect_to(@owner) and return
     end
   end
 
   def destroy
-    @repository = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
-    if @repository.can_be_deleted_by?(current_user)
+    @repository = repository_to_clone
+    if can_delete?(current_user, @repository)
       repo_name = @repository.name
       flash[:notice] = I18n.t "repositories_controller.destroy_notice"
       @repository.destroy
@@ -243,65 +250,92 @@ class RepositoriesController < ApplicationController
   end
 
   private
-    def require_owner_adminship
-      unless @owner.admin?(current_user)
-        respond_denied_and_redirect_to(@owner)
-        return
-      end
+  def require_owner_adminship
+    unless admin?(current_user, @owner)
+      respond_denied_and_redirect_to(@owner)
+      return
     end
+  end
 
-    def find_and_require_repository_adminship
-      @repository = @owner.repositories.find_by_name_in_project!(params[:id],
-        @containing_project)
-      unless @repository.admin?(current_user)
-        respond_denied_and_redirect_to(repo_owner_path(@repository,
-            :project_repository_path, @owner, @repository))
-        return
-      end
+  def find_and_require_repository_adminship
+    @repository = @owner.repositories.find_by_name_in_project!(params[:id],
+                                                               @containing_project)
+    unless admin?(current_user, authorize_access_to(@repository))
+      respond_denied_and_redirect_to(repo_owner_path(@repository,
+                                                     :project_repository_path, @owner, @repository))
+      return
     end
+  end
 
-    def respond_denied_and_redirect_to(target)
+  def respond_denied_and_redirect_to(target)
+    respond_to do |format|
+      format.html {
+        flash[:error] = I18n.t "repositories_controller.adminship_error"
+        redirect_to(target)
+      }
+      format.xml  {
+        render :text => I18n.t( "repositories_controller.adminship_error"),
+        :status => :forbidden
+      }
+    end
+  end
+
+  def to_json(repositories)
+    repositories.map { |repo|
+      {
+        :name => repo.name,
+        :description => repo.description,
+        :uri => url_for(project_repository_path(@project, repo)),
+        :img => repo.owner.avatar? ?
+        repo.owner.avatar.url(:thumb) :
+        "/images/default_face.gif",
+        :owner => repo.owner.title,
+        :owner_type => repo.owner_type.downcase,
+        :owner_uri => url_for(repo.owner)
+      }
+    }.to_json
+  end
+
+  def only_projects_can_add_new_repositories
+    if !@owner.is_a?(Project)
       respond_to do |format|
         format.html {
-          flash[:error] = I18n.t "repositories_controller.adminship_error"
-          redirect_to(target)
+          flash[:error] = I18n.t("repositories_controller.only_projects_create_new_error")
+          redirect_to(@owner)
         }
         format.xml  {
-          render :text => I18n.t( "repositories_controller.adminship_error"),
+          render :text => I18n.t( "repositories_controller.only_projects_create_new_error"),
           :status => :forbidden
         }
       end
+      return
     end
+  end
 
-    def to_json(repositories)
-      repositories.map { |repo|
-        {
-          :name => repo.name,
-          :description => repo.description,
-          :uri => url_for(project_repository_path(@project, repo)),
-          :img => repo.owner.avatar? ?
-            repo.owner.avatar.url(:thumb) :
-            "/images/default_face.gif",
-          :owner => repo.owner.title,
-          :owner_type => repo.owner_type.downcase,
-          :owner_uri => url_for(repo.owner)
-        }
-      }.to_json
+  def unauthorized_repository_owner_and_project
+    if params[:user_id]
+      @owner = User.find_by_login!(params[:user_id])
+      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
+    elsif params[:group_id]
+      @owner = Group.find_by_name!(params[:group_id])
+      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
+    elsif params[:project_id]
+      @owner = Project.find_by_slug!(params[:project_id])
+      @project = @owner
+    else
+      raise ActiveRecord::RecordNotFound
     end
+  end
 
-    def only_projects_can_add_new_repositories
-      if !@owner.is_a?(Project)
-        respond_to do |format|
-          format.html {
-            flash[:error] = I18n.t("repositories_controller.only_projects_create_new_error")
-            redirect_to(@owner)
-          }
-          format.xml  {
-            render :text => I18n.t( "repositories_controller.only_projects_create_new_error"),
-                    :status => :forbidden
-          }
-        end
-        return
-      end
+  def authorize_configuration_access(repository)
+    return true if !GitoriousConfig["enable_private_repositories"]
+    if !can_read?(User.find_by_login(params[:username]), repository)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
+  end
+
+  def repository_to_clone
+    repo = @owner.repositories.find_by_name_in_project!(params[:id], @containing_project)
+    authorize_access_to(repo)
+  end
 end

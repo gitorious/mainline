@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -29,7 +30,7 @@ class SiteController < ApplicationController
 
   def index
     if !current_site.subdomain.blank?
-      render_site_index and return
+      render_site_index
     else
       render_global_index
     end
@@ -38,7 +39,6 @@ class SiteController < ApplicationController
   def public_timeline
     render_public_timeline
   end
-
 
   def dashboard
     redirect_to current_user
@@ -54,55 +54,56 @@ class SiteController < ApplicationController
   end
 
   protected
+  # Render a Site-specific index template
+  def render_site_index
+    all_projects = current_site.projects.find(:all, :order => "created_at asc")
+    @projects = filter_authorized(current_user, all_projects)
+    @teams = Group.all_participating_in_projects(@projects)
+    @top_repository_clones = filter(Repository.most_active_clones_in_projects(@projects))
+    @latest_events = filter(Event.latest_in_projects(25, @projects.map{|p| p.id }))
+    render "site/#{current_site.subdomain}/index"
+  end
 
-    # Render a Site-specific index template
-    def render_site_index
-      @projects = current_site.projects.find(:all, :order => "created_at asc")
-      @teams = Group.all_participating_in_projects(@projects)
-      @top_repository_clones = Repository.most_active_clones_in_projects(@projects)
-      @latest_events = Event.latest_in_projects(25, @projects.map{|p| p.id })
-      render "site/#{current_site.subdomain}/index"
+  def render_public_timeline
+    @projects = filter(Project.find(:all, :limit => 10, :order => "id desc"))
+    @top_repository_clones = filter(Repository.most_active_clones)
+    @active_projects = filter(Project.most_active_recently(15))
+    @active_users = User.most_active
+    @active_groups = Group.most_active
+    @latest_events = filter(Event.latest(25))
+    render :template => "site/index"
+  end
+
+  def render_dashboard
+    @user = current_user
+    @projects = filter(@user.projects.find(:all,
+                                           :include => [:tags, { :repositories => :project }]))
+    @repositories = filter(current_user.commit_repositories)
+    @events = filter_paginated(params[:page], Event.per_page) do |page|
+      (@user.paginated_events_in_watchlist(:page => page))
     end
+    @messages = @user.messages_in_inbox(3)
+    @favorites = filter(@user.watched_objects)
+    @root = Breadcrumb::Dashboard.new(@user)
+    @atom_auto_discovery_url = watchlist_user_path(@user, :format => :atom)
+    render :template => "site/dashboard"
+  end
 
-    def render_public_timeline
-      @projects = Project.find(:all, :limit => 10, :order => "id desc")
-      @top_repository_clones = Repository.most_active_clones
-      @active_projects = Project.most_active_recently(15)
-      @active_users = User.most_active
-      @active_groups = Group.most_active
-      @latest_events = Event.latest(25)
-      render :template => "site/index"
+  def render_gitorious_dot_org_in_public
+    @feed_items = Rails.cache.fetch("blog_feed:feed_items", :expires_in => 1.hour) do
+      BlogFeed.new("http://blog.gitorious.org/feed/").fetch
     end
+    render :template => "site/public_index", :layout => "second_generation/application"
+  end
 
-    def render_dashboard
-      @user = current_user
-      @projects = @user.projects.find(:all,
-        :include => [:tags, { :repositories => :project }])
-      @repositories = current_user.commit_repositories
-      @events = @user.paginated_events_in_watchlist(:page => params[:page])
-      @messages = @user.messages_in_inbox(3)
-      @favorites = @user.watched_objects
-      @root = Breadcrumb::Dashboard.new(@user)
-      @atom_auto_discovery_url = watchlist_user_path(@user, :format => :atom)
-
-      render :template => "site/dashboard"
+  # Render the global index template
+  def render_global_index
+    if logged_in?
+      render_dashboard
+    elsif GitoriousConfig["is_gitorious_dot_org"]
+      render_gitorious_dot_org_in_public
+    else
+      render_public_timeline
     end
-
-    def render_gitorious_dot_org_in_public
-      @feed_items = Rails.cache.fetch("blog_feed:feed_items", :expires_in => 1.hour) do
-        BlogFeed.new("http://blog.gitorious.org/feed/").fetch
-      end
-      render :template => "site/public_index", :layout => "second_generation/application"
-    end
-
-    # Render the global index template
-    def render_global_index
-      if logged_in?
-        render_dashboard
-      elsif GitoriousConfig["is_gitorious_dot_org"]
-        render_gitorious_dot_org_in_public
-      else
-        render_public_timeline
-      end
-    end
+  end
 end

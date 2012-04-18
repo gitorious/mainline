@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,7 +22,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) +  '/../test_helper'
+require File.dirname(__FILE__) +  "/../test_helper"
 
 class FavoritesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :destroy)
@@ -35,20 +36,44 @@ class FavoritesControllerTest < ActionController::TestCase
   end
 
   def do_create_post(type, id, extra_options={})
-    post :create, extra_options.merge(:watchable_type => type,
-      :watchable_id => id)
+    post :create, extra_options.merge(:watchable_type => type, :watchable_id => id)
   end
 
   context "Creating a new favorite" do
-    setup {
+    setup do
       login_as :johan
       @repository = repositories(:johans2)
-    }
+    end
 
     should "require login" do
       session[:user_id] = nil
       post :create
       assert_redirected_to new_sessions_path
+    end
+
+    should "require authorized user when favoriting repository of private project" do
+      enable_private_repositories(@repository.project)
+      login_as :mike
+
+      do_create_post(@repository.class.name, @repository.id)
+      assert_response 403
+    end
+
+    should "require authorized user when favoriting private repository" do
+      enable_private_repositories(@repository)
+      login_as :moe
+
+      do_create_post(@repository.class.name, @repository.id)
+      assert_response 403
+    end
+
+    should "require authorized user when favoriting private project" do
+      @project = @repository.project
+      enable_private_repositories
+      login_as :mike
+
+      do_create_post(@project.class.name, @project.id)
+      assert_response 403
     end
 
     should "assign to watchable" do
@@ -113,6 +138,14 @@ class FavoritesControllerTest < ActionController::TestCase
       delete :destroy, :id => favorite, :format => "js"
       assert_response :ok
     end
+
+    should "not destroy it if not authorized" do
+      login_as :moe
+      favorite = users(:moe).favorites.create(:watchable => @merge_request)
+      enable_private_repositories(@merge_request.source_repository)
+      delete :destroy, :id => favorite, :format => "js"
+      assert_response 403
+    end
   end
 
   context "Deleting a favorite" do
@@ -160,12 +193,12 @@ class FavoritesControllerTest < ActionController::TestCase
     end
 
     should "require login" do
-      login_as nil
+      logout
       get :index
       assert_redirected_to new_sessions_path
     end
 
-    should "only list the users favorites" do
+    should "only list the user's favorites" do
       assert @user.favorites.count > 0, "user has no favs"
       other_fav = Favorite.create!({:user => users(:johan),
           :watchable => Repository.last})
@@ -173,6 +206,13 @@ class FavoritesControllerTest < ActionController::TestCase
       assert !assigns(:favorites).include?(other_fav)
       assert_equal @user.favorites, assigns(:favorites)
       assert_response :success
+    end
+
+    should "only list user's authorized favorites" do
+      len = @user.favorites.length
+      enable_private_repositories(@user.favorites.first.watchable)
+      get :index
+      assert_equal len - 1, assigns(:favorites).length
     end
 
     should "have a button to toggle the mail flag" do
@@ -215,6 +255,12 @@ class FavoritesControllerTest < ActionController::TestCase
       get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
       assert_response :redirect
       assert_equal @user, @favorite.reload.user
+    end
+
+    should "disallow unauthorized users" do
+      enable_private_repositories(@favorite.watchable)
+      get :update, :id => @favorite.id, :favorite => {:user_id => users(:johan).id}
+      assert_response 403
     end
   end
 end

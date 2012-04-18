@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,37 +17,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class CommitsControllerTest < ActionController::TestCase
-
   should_enforce_ssl_for(:get, :feed)
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :show)
 
   context "showing a single commit" do
     setup do
-      @project = projects(:johans)
-      @repository = @project.repositories.mainlines.first
-      @repository.update_attribute(:ready, true)
-
-      Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
-      @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-      Repository.any_instance.stubs(:git).returns(@grit)
-      @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
+      prepare_project_repo_and_commit
     end
 
     should "get the correct project and repository" do
-      get :show, {:project_id => @project.to_param,
-          :repository_id => @repository.to_param, :id => @sha}
+      get :show, params
       assert_equal @project, assigns(:project)
       assert_equal @repository, assigns(:repository)
     end
 
     should "get the commit data" do
-      get :show, {:project_id => @project.slug,
-          :repository_id => @repository.name, :id => @sha}
+      get :show, params
       assert_response :success
       assert_equal @repository.git, assigns(:git)
       assert_equal @repository.git.commit(@sha), assigns(:commit)
@@ -54,28 +44,24 @@ class CommitsControllerTest < ActionController::TestCase
     end
 
     should "default to 'inline' diffmode" do
-      get :show, {:project_id => @project.slug,
-          :repository_id => @repository.name, :id => @sha}
+      get :show, params
       assert_equal "inline", assigns(:diffmode)
     end
 
     should "set sidebyside diffmode" do
-      get :show, {:project_id => @project.slug,
-          :repository_id => @repository.name, :id => @sha, :diffmode => "sidebyside" }
+      get :show, params(:diffmode => "sidebyside")
       assert_equal "sidebyside", assigns(:diffmode)
     end
 
     should "get it in diff format" do
-      get :show, :project_id => @project.slug,
-          :repository_id => @repository.name, :id => @sha, :format => "diff"
+      get :show, params(:format => "diff")
       assert_response :success
       assert_equal "text/plain", @response.content_type
       assert_equal @repository.git.commit(@sha).diffs.map{|d| d.diff}.join("\n"), @response.body
     end
 
     should "get it in patch format" do
-      get :show, :project_id => @project.slug,
-          :repository_id => @repository.name, :id => @sha, :format => "patch"
+      get :show, params(:format => "patch")
       assert_response :success
       assert_equal "text/plain", @response.content_type
       assert_equal @repository.git.commit(@sha).to_patch, @response.body
@@ -83,8 +69,7 @@ class CommitsControllerTest < ActionController::TestCase
 
     should "redirect to the commit log with a msg if the SHA1 was not found" do
       @grit.expects(:commit).with("123").returns(nil)
-      get :show, :project_id => @project.slug,
-          :repository_id => @repository.name, :id => "123"
+      get :show, params(:id => "123")
       assert_response :redirect
       assert_match(/no such sha/i, flash[:error])
       assert_redirected_to project_repository_commits_path(@project, @repository)
@@ -98,8 +83,7 @@ class CommitsControllerTest < ActionController::TestCase
           :target => @repository,
           :project => @repository.project,
       })
-      get :show, :project_id => @project.slug,
-          :repository_id => @repository.name, :id => @sha
+      get :show, params
       assert_response :success
       assert_not_equal "Fri, 18 Apr 2008 23:26:07 GMT", @response.headers["Last-Modified"]
     end
@@ -237,7 +221,6 @@ class CommitsControllerTest < ActionController::TestCase
     end
   end
 
-
   context "listing commits" do
     setup do
       @project = projects(:johans)
@@ -255,23 +238,19 @@ class CommitsControllerTest < ActionController::TestCase
 
     context "#index" do
       should "GETs page 1 successfully" do
-        get :index, {:project_id => @project.slug,
-          :repository_id => @repository.name, :page => nil, :branch => ["master"]}
+        get :index, index_params(:page => nil, :branch => ["master"])
         assert_response :success
         assert_equal @repository.git.commits("master", 30, 0), assigns(:commits)
       end
 
       should "GETs page 3 successfully" do
-        get :index, {:project_id => @project.slug,
-          :repository_id => @repository.name, :page => nil, :branch => ["master"],
-          :page => 3}
+        get :index, index_params(:branch => ["master"], :page => 3)
         assert_response :success
         assert_equal @repository.git.commits("master", 30, 60), assigns(:commits)
       end
 
       should "GETs the commits successfully" do
-        get :index, {:project_id => @project.slug,
-          :repository_id => @repository.name, :page => nil, :branch => ["master"]}
+        get :index, index_params(:page => nil, :branch => ["master"])
         assert_response :success
         assert_equal "master", assigns(:root).title
         assert_equal @repository.git, assigns(:git)
@@ -279,8 +258,7 @@ class CommitsControllerTest < ActionController::TestCase
       end
 
       should "GET the commits of a namedspaced branch successfully" do
-        get :index, {:project_id => @project.slug,
-          :repository_id => @repository.name, :page => nil, :branch => ["test", "master"]}
+        get :index, index_params(:page => nil, :branch => ["test", "master"])
         assert_response :success
         assert_equal "test/master", assigns(:ref)
         assert_equal "test/master", assigns(:root).title
@@ -291,13 +269,7 @@ class CommitsControllerTest < ActionController::TestCase
       should "deal gracefully if HEAD file refers to a non-existent ref" do
         @git.expects(:get_head).with("master").returns(nil)
         @git.expects(:commit).with("master").returns(nil)
-
-        get(:index, {
-              :project_id => @project.slug,
-              :repository_id => @repository.name,
-              :page => nil,
-              :branch => ["master"]
-            })
+        get :index, index_params(:page => nil, :branch => ["master"])
 
         assert_response :redirect
         assert_match(/not a valid ref/, flash[:error])
@@ -306,13 +278,7 @@ class CommitsControllerTest < ActionController::TestCase
       should "suggest looking at master when hitting non-existent ref" do
         @git.expects(:get_head).with("2").returns(nil)
         @git.expects(:commit).with("2").returns(nil)
-
-        get(:index, {
-              :project_id => @project.slug,
-              :repository_id => @repository.name,
-              :page => nil,
-              :branch => ["2"]
-            })
+        get :index, index_params(:page => nil, :branch => ["2"])
 
         assert_response :redirect
         assert_redirected_to project_repository_commits_in_ref_path(@project,
@@ -323,13 +289,7 @@ class CommitsControllerTest < ActionController::TestCase
       should "suggest looking at master when hitting non-existent commit" do
         @git.expects(:get_head).with("2").returns(nil)
         @git.expects(:commit).with("2").raises(Errno::EISDIR, "Is a directory")
-
-        get(:index, {
-              :project_id => @project.slug,
-              :repository_id => @repository.name,
-              :page => nil,
-              :branch => ["2"]
-            })
+        get :index, index_params(:page => nil, :branch => ["2"])
 
         assert_response :redirect
         assert_redirected_to project_repository_commits_in_ref_path(@project,
@@ -338,22 +298,19 @@ class CommitsControllerTest < ActionController::TestCase
       end
 
       should "have a proper id in the atom feed" do
-        #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)
         commit = Grit::Commit.new(mock("repo"), "mycommitid", [], stub_everything("tree"),
                       stub_everything("author"), Time.now,
                       stub_everything("comitter"), Time.now,
                       "my commit message".split(" "))
         @repository.git.expects(:commits).twice.returns([commit])
 
-        get :feed, {:project_id => @project.slug,
-          :repository_id => @repository.name, :id => "master", :format => "atom"}
+        get :feed, params(:id => "master", :format => "atom")
         assert @response.body.include?(%Q{<id>tag:test.host,2005:Grit::Commit/mycommitid</id>})
       end
 
       should "not explode when there is no commits" do
         @repository.git.expects(:commits).returns([])
-        get :feed, {:project_id => @project.slug,
-          :repository_id => @repository.name, :id => "master", :format => "atom"}
+        get :feed, params(:id => "master", :format => "atom")
         assert_response :success
         assert_select "feed title", /#{@repository.gitdir}/
       end
@@ -362,8 +319,7 @@ class CommitsControllerTest < ActionController::TestCase
         git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
         @repository.git.expects(:commit).with("ticket-#42") \
           .returns(git_repo.commit("master"))
-        get :index, :project_id => @project.to_param, :repository_id => @repository.to_param,
-          :branch => ["ticket-%2342"]
+        get :index, index_params(:branch => ["ticket-%2342"])
         assert_response :success
         assert_equal "ticket-#42", assigns(:ref)
       end
@@ -392,5 +348,110 @@ class CommitsControllerTest < ActionController::TestCase
     context "commits pagination" do
       should_scope_pagination_to(:index, nil, "commits", :delete_all => false)
     end
+  end
+
+  context "With private projects" do
+    setup do
+      GitoriousConfig["use_ssl"] = false
+      prepare_project_repo_and_commit
+      enable_private_repositories
+    end
+
+    should "disallow unauthorized access to commits" do
+      get :index, index_params(:page => nil, :branch => ["master"])
+      assert_response 403
+    end
+
+    should "allow authorized access to commits" do
+      login_as :johan
+      get :index, index_params(:page => nil, :branch => ["master"])
+      assert_response 200
+    end
+
+    should "disallow unauthorized access to show commit" do
+      get :show, params
+      assert_response 403
+    end
+
+    should "allow authorized access to show commit" do
+      login_as :johan
+      get :show, params
+      assert_response 200
+    end
+
+    should "disallow unauthorized access to view feed" do
+      get :feed, params(:id => "master", :format => "atom")
+      assert_response 403
+    end
+
+    should "allow authorized access to view feed" do
+      login_as :johan
+      get :feed, params(:id => "master", :format => "atom")
+      assert_response 200
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      GitoriousConfig["use_ssl"] = false
+      prepare_project_repo_and_commit
+      enable_private_repositories(@repository)
+    end
+
+    should "disallow unauthorized access to commits" do
+      get :index, index_params(:page => nil, :branch => ["master"])
+      assert_response 403
+    end
+
+    should "allow authorized access to commits" do
+      login_as :johan
+      get :index, index_params(:page => nil, :branch => ["master"])
+      assert_response 200
+    end
+
+    should "disallow unauthorized access to show commit" do
+      get :show, params
+      assert_response 403
+    end
+
+    should "allow authorized access to show commit" do
+      login_as :johan
+      get :show, params
+      assert_response 200
+    end
+
+    should "disallow unauthorized access to view feed" do
+      get :feed, params(:id => "master", :format => "atom")
+      assert_response 403
+    end
+
+    should "allow authorized access to view feed" do
+      login_as :johan
+      get :feed, params(:id => "master", :format => "atom")
+      assert_response 200
+    end
+  end
+
+  private
+  def params(additional = {})
+    { :project_id => @project.slug,
+      :repository_id => @repository.name,
+      :id => @sha }.merge(additional)
+  end
+
+  def index_params(additional = {})
+    { :project_id => @project.slug,
+      :repository_id => @repository.name }.merge(additional)
+  end
+
+  def prepare_project_repo_and_commit
+    @project = projects(:johans)
+    @repository = @project.repositories.mainlines.first
+    @repository.update_attribute(:ready, true)
+
+    Repository.any_instance.stubs(:full_repository_path).returns(grit_test_repo("dot_git"))
+    @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+    Repository.any_instance.stubs(:git).returns(@grit)
+    @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
   end
 end

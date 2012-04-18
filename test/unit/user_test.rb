@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -17,10 +18,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class UserTest < ActiveSupport::TestCase
-
   setup do
     @user = User.new
   end
@@ -43,14 +43,14 @@ class UserTest < ActiveSupport::TestCase
   should_validate_presence_of :login, :password, :password_confirmation, :email
   should_validate_acceptance_of :terms_of_use
 
-  should_not_allow_values_for :login, 'john.doe', 'john_doe'
-  should_allow_values_for :login, 'JohnDoe', 'john-doe', 'john999'
+  should_not_allow_values_for :login, "john.doe", "john_doe"
+  should_allow_values_for :login, "JohnDoe", "john-doe", "john999"
 
-  should 'downcase the login before validation' do
+  should "downcase the login before validation" do
     u = User.new
-    u.login = 'FooBar'
+    u.login = "FooBar"
     assert !u.valid?
-    assert_equal('foobar', u.login)
+    assert_equal("foobar", u.login)
   end
 
   should "require a username without spaces" do
@@ -92,7 +92,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should "not rehash the password" do
-    users(:johan).update_attributes(:email => 'johan2@js.com')
+    users(:johan).update_attributes(:email => "johan2@js.com")
     assert_equal users(:johan), User.authenticate("johan2@js.com", "test")
   end
 
@@ -142,12 +142,12 @@ class UserTest < ActiveSupport::TestCase
   should "know if a user has write access to a repository" do
     u = users(:mike)
     repo = repositories(:johans2)
-    assert u.can_write_to?(repo)
-    assert !users(:johan).can_write_to?(repo)
+    assert can_push?(u, repo)
+    assert !can_push?(users(:johan), repo)
     repo.owner.add_member(users(:johan), Role.member)
     repo.reload
-    assert repo.committers.include?(users(:johan))
-    assert users(:johan).can_write_to?(repo)
+    assert committers(repo).include?(users(:johan))
+    assert can_push?(users(:johan), repo)
   end
 
   should "not have wiki repositories in #repositories" do
@@ -217,7 +217,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal js.fullname, js.to_grit_actor.name
   end
 
-  should 'initially be pending' do
+  should "initially be pending" do
     u = create_user
     assert u.pending?
   end
@@ -237,29 +237,29 @@ class UserTest < ActiveSupport::TestCase
   end
 
   should "know who is a site admin" do
-    assert !users(:mike).site_admin?
+    assert !site_admin?(users(:mike))
     users(:mike).is_admin = true
-    assert users(:mike).site_admin?
+    assert site_admin? users(:mike)
   end
 
   should "know if a user is a an admin of itself" do
-    assert users(:mike).admin?(users(:mike))
-    assert !users(:mike).admin?(users(:johan))
+    assert admin?(users(:mike), users(:mike))
+    assert !admin?(users(:mike), users(:johan))
   end
 
   should "know if a user is a a committer of itself" do
-    assert users(:mike).committer?(users(:mike))
-    assert !users(:mike).committer?(users(:johan))
+    assert committer?(users(:mike), users(:mike))
+    assert !committer?(users(:mike), users(:johan))
   end
 
   should "prepend http:// to the url if needed" do
     user = users(:johan)
     assert user.valid?
-    user.url = 'http://blah.com'
+    user.url = "http://blah.com"
     assert user.valid?
-    user.url = 'blah.com'
+    user.url = "blah.com"
     assert user.valid?
-    assert_equal 'http://blah.com', user.url
+    assert_equal "http://blah.com", user.url
   end
 
   context "find_by_email_with_aliases" do
@@ -281,28 +281,28 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Messages' do
+  context "Messages" do
     setup do
       @message = messages(:johans_message_to_moe)
       @sender = users(:johan)
       @recipient = users(:moe)
     end
 
-    should 'know of its received messages' do
+    should "know of its received messages" do
       assert @sender.sent_messages.include?(@message)
     end
 
-    should 'have an all_messages method that returns all messages to or from self' do
+    should "have an all_messages method that returns all messages to or from self" do
       assert @sender.all_messages.include?(@message)
       assert @recipient.all_messages.include?(@message)
       assert !users(:mike).all_messages.include?(@message)
     end
 
-    should 'know of its sent messages' do
+    should "know of its sent messages" do
       assert @recipient.received_messages.include?(@message)
     end
 
-    should 'keep track of the number of unread messages' do
+    should "keep track of the number of unread messages" do
       assert_equal(1, @recipient.received_messages.unread_count)
     end
 
@@ -313,15 +313,15 @@ class UserTest < ActiveSupport::TestCase
       assert_equal(0, @recipient.received_messages.unread_count)
     end
 
-    context 'Top level messages' do
+    context "Top level messages" do
       setup do
         @sender = Factory.create(:user)
         @recipient = Factory.create(:user)
         @other_user = Factory.create(:user)
-        @message = Message.create(:sender => @sender, :recipient => @recipient, :subject => 'Hello', :body => 'World')
+        @message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hello", :body => "World")
       end
 
-      should 'include messages to self' do
+      should "include messages to self" do
         assert @recipient.top_level_messages.include?(@message)
         assert_equal @recipient, @message.recipient
         assert !@message.archived_by_recipient?
@@ -331,7 +331,7 @@ class UserTest < ActiveSupport::TestCase
         assert !@recipient.messages_in_inbox.include?(@message)
       end
 
-      should 'include messages from self with unread replies' do
+      should "include messages from self with unread replies" do
         reply = @message.build_reply(:body => "Thx")
         assert reply.save
         assert @sender.top_level_messages.include?(@message)
@@ -341,7 +341,7 @@ class UserTest < ActiveSupport::TestCase
         assert @sender.messages_in_inbox.include?(@message)
       end
 
-      should 'not include messages from someone else with unread replies' do
+      should "not include messages from someone else with unread replies" do
         another_message = Message.create({
             :sender => @other_user,
             :recipient => @recipient,
@@ -357,7 +357,7 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Suspension' do
+  context "Suspension" do
     setup do
       SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
       @user = users(:johan)
@@ -386,15 +386,15 @@ class UserTest < ActiveSupport::TestCase
                  :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com"})
   end
   
-  context 'Avatars' do
+  context "Avatars" do
     setup {@user = users(:johan)}
 
     should "generate an avatar path based on the user's login" do
-      @user.avatar_file_name = 'foo.png'
+      @user.avatar_file_name = "foo.png"
       assert_equal "/system/avatars/#{@user.login}/original/foo.png", @user.avatar.url
     end
 
-    context 'finding an avatar from an email' do
+    context "finding an avatar from an email" do
       should "return :nil when a user does not have an avatar" do
         assert_equal :nil, User.find_avatar_for_email(@user.email, :thumb)
       end
@@ -406,13 +406,13 @@ class UserTest < ActiveSupport::TestCase
       end
 
       should "return :nil when an unknown email address is requested" do
-        assert_equal :nil, User.find_avatar_for_email('noone@nowhere.com', :thumb)
+        assert_equal :nil, User.find_avatar_for_email("noone@nowhere.com", :thumb)
       end
     end
 
     context "cache expirery of avatars" do
       should "expire the cache when the avatar is changed" do
-        @user.update_attribute(:avatar_file_name, 'foo.png')
+        @user.update_attribute(:avatar_file_name, "foo.png")
         @user.update_attribute(:avatar_updated_at, 2.days.ago)
 
         assert_avatars_expired(@user) do
@@ -422,7 +422,7 @@ class UserTest < ActiveSupport::TestCase
       end
 
       should "expire the cache when the avatar is deleted" do
-        @user.update_attribute(:avatar_file_name, 'foo.png')
+        @user.update_attribute(:avatar_file_name, "foo.png")
         @user.update_attribute(:avatar_updated_at, 2.days.ago)
 
         assert_avatars_expired(@user) do
@@ -432,7 +432,7 @@ class UserTest < ActiveSupport::TestCase
       end
 
       should "expire the cache for all the styles" do
-        @user.update_attribute(:avatar_file_name, 'foo.png')
+        @user.update_attribute(:avatar_file_name, "foo.png")
         @user.update_attribute(:avatar_updated_at, 2.days.ago)
 
         assert_avatars_expired(@user) do
@@ -442,7 +442,7 @@ class UserTest < ActiveSupport::TestCase
       end
 
       should "expire the cache for all the alias emails as well" do
-        @user.update_attribute(:avatar_file_name, 'foo.png')
+        @user.update_attribute(:avatar_file_name, "foo.png")
         @user.update_attribute(:avatar_updated_at, 2.days.ago)
         assert_equal 1, @user.email_aliases.count
 
@@ -520,7 +520,7 @@ class UserTest < ActiveSupport::TestCase
     should "be retrieved as expected" do
       u1 = create_user(:login => "joe", :email => "joe@hepp.com")
       u2 = create_user(:login => "jane", :email => "jane@hepp.com")
-      
+
       e1 = create_event(:action => Action::COMMIT, :user => u1, :body => "12")
       e2 = create_event(:action => Action::PUSH_SUMMARY, :user => u1, :body => "34")
       e3 = create_event(:action => Action::PUSH_SUMMARY, :user => u1, :body => "56")
@@ -533,29 +533,21 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  
   protected
-    def create_user(options = {})
-      u = User.new({
-                     :email => 'quire@example.com',
-                     :terms_of_use => "1",
-                   }.merge(options))
-      u.login = options[:login] || "quire"
-      u.password = options[:password] || 'quire'
-      u.password_confirmation = options[:password_confirmation] || 'quire'
-      u.save
-      u
-    end
+  def create_user(options = {})
+    u = User.new({ :email => "quire@example.com", :terms_of_use => "1" }.merge(options))
+    u.login = options[:login] || "quire"
+    u.password = options[:password] || "quire"
+    u.password_confirmation = options[:password_confirmation] || "quire"
+    u.save
+    u
+  end
 
-    def create_event(options={})
-      c = Event.new({
-                      :target => repositories(:johans),
-                      :body => "blabla"
-                    }.merge(options))
-      c.user = options[:user] || users(:johan)
-      c.project = options[:project] || projects(:thunderbird)
-      c.save!
-      c
-    end
-          
+  def create_event(options={})
+    c = Event.new({ :target => repositories(:johans), :body => "blabla" }.merge(options))
+    c.user = options[:user] || users(:johan)
+    c.project = options[:project] || projects(:thunderbird)
+    c.save!
+    c
+  end
 end

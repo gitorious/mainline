@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,15 +16,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class Admin::OauthSettingsController < ApplicationController
-  before_filter :login_required
-  before_filter :require_site_admin
+
+class Admin::OauthSettingsController < AdminController
   before_filter :find_project
 
   def show
-    redirect_to :action => 'edit', :project_id => @project.to_param  
+    redirect_to :action => "edit", :project_id => @project.to_param
   end
-  
+
   def edit
     @root = Breadcrumb::EditOAuthSettings.new(@project)
   end
@@ -32,14 +32,6 @@ class Admin::OauthSettingsController < ApplicationController
     @project.oauth_settings = params[:oauth_settings]
     @project.save
     flash[:notice] = "OAuth settings were updated"
-    redirect_to :action => 'edit', :project_id => @project.to_param
+    redirect_to :action => "edit", :project_id => @project.to_param
   end
-
-  private
-    def require_site_admin
-      unless current_user.site_admin?
-        flash[:error] = I18n.t "admin.users_controller.check_admin"
-        redirect_to root_path
-      end
-    end
 end

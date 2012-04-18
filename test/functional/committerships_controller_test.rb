@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,8 +20,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class CommittershipsControllerTest < ActionController::TestCase
-  should_render_in_site_specific_context
-
   def setup
     setup_ssl_from_config
     @project = projects(:johans)
@@ -30,27 +29,26 @@ class CommittershipsControllerTest < ActionController::TestCase
     login_as :johan
   end
 
+  should_render_in_site_specific_context
   should_enforce_ssl_for(:delete, :destroy)
   should_enforce_ssl_for(:get, :edit)
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :new)
   should_enforce_ssl_for(:get, :update)
-  should_enforce_ssl_for(:post, :auto_complete_for_group_name)
-  should_enforce_ssl_for(:post, :auto_complete_for_user_login)
   should_enforce_ssl_for(:post, :create)
 
   context "GET index" do
-    should "requires login" do
-      login_as nil
-      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+    should "require login" do
+      logout
+      get :index, params
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))
     end
 
-    should "requires adminship" do
+    should "require administrator" do
       @repository.owner = @group
       @repository.save!
-      assert !@repository.admin?(users(:mike))
+      assert !admin?(users(:mike), @repository)
       login_as :mike
       get :index, :group_id => @group.to_param, :repository_id => @repository.to_param
       assert_redirected_to(group_repository_path(@group, @repository))
@@ -58,7 +56,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
 
     should "finds the owner (a Project) and the repository" do
-      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+      get :index, params
       assert_response :success
       assert_equal @project, assigns(:owner)
       assigns(:repository) == @repository
@@ -87,10 +85,11 @@ class CommittershipsControllerTest < ActionController::TestCase
       repo = repositories(:moes)
       repo.owner = @group
       cs = repo.committerships.first
-      cs.build_permissions(:review,:commit,:admin); cs.save!
+      cs.build_permissions(:review,:commit,:admin)
+      cs.save!
       repo.save!
       @group.add_member(@user, Role.admin)
-      assert repo.admin?(@user)
+      assert admin?(@user, repo)
 
       get :index, :group_id => @group.to_param, :repository_id => repo.to_param
       assert_response :success
@@ -113,7 +112,7 @@ class CommittershipsControllerTest < ActionController::TestCase
 
   context "GET new" do
     should "is successful" do
-      get :new, :project_id => @project.to_param, :repository_id => @repository.to_param
+      get :new, params
       assert_response :success
       assert_not_equal nil, assigns(:committership)
       assert_equal @repository, assigns(:committership).repository
@@ -139,10 +138,7 @@ class CommittershipsControllerTest < ActionController::TestCase
   context "POST create" do
     should "add a Group as having committership" do
       assert_difference("@repository.committerships.count") do
-        post :create, {
-          :project_id => @project.to_param, :repository_id => @repository.to_param,
-          :group => {:name => @group.name}, :user => {}, :permissions => ["review"]
-        }
+        post :create, params(:group => {:name => @group.name}, :user => {}, :permissions => ["review"])
       end
       assert_response :redirect
       assert !assigns(:committership).new_record?, 'new_record? should be false'
@@ -179,8 +175,7 @@ class CommittershipsControllerTest < ActionController::TestCase
           :committer => users(:mike),
           :permissions => Committership::CAN_REVIEW
         })
-      get :edit, :project_id => @project.to_param, :repository_id => @repository.to_param,
-        :id => @committership.to_param
+      get :edit, params(:id => @committership.to_param)
     end
     should_respond_with :success
     should_assign_to(:committership, :equals =>  @committership)
@@ -193,8 +188,7 @@ class CommittershipsControllerTest < ActionController::TestCase
           :committer => users(:mike),
           :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
         })
-      get :update, :project_id => @project.to_param, :repository_id => @repository.to_param,
-        :id => @committership.to_param, :permissions => ["review"]
+      get :update, params(:id => @committership.to_param, :permissions => ["review"])
     end
     should_respond_with :redirect
     should_assign_to(:committership, :equals => @committership)
@@ -204,44 +198,10 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
   end
 
-  context "autocompletion" do
-    setup do
-      @user = users(:johan)
-    end
-
-    should "find a group by name" do
-      post :auto_complete_for_group_name, :q => "thunder", :format => "js"
-      assert_equal [groups(:team_thunderbird)], assigns(:groups)
-    end
-
-    should "finds user by login" do
-      post :auto_complete_for_user_login, :q => "joha", :format => "js"
-      assert_equal [@user], assigns(:users)
-      #assert_template "memberships/auto_complete_for_user_login.js.erb"
-    end
-
-    should "find a user by email" do
-      @user.email = "dr_awesome@example.com"
-      @user.save!
-      post :auto_complete_for_user_login, :q => @user.email[0..4], :format => "js"
-      assert_equal [@user], assigns(:users)
-      #assert_template "memberships/auto_complete_for_user_login.js.erb"
-    end
-
-    should "not display emails if user has opted not to have it displayed" do
-      @user.update_attribute(:public_email, false)
-      post :auto_complete_for_user_login, :q => @user.email[0..4], :format => "js"
-      assert_equal [@user], assigns(:users)
-      # assert_template "memberships/auto_complete_for_user_login.js.erb"
-      assert_no_match(/email/, @response.body)
-    end
-  end
-
   context "DELETE destroy" do
     should "requires login" do
-      login_as nil
-      delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param,
-        :id => Committership.first.id
+      logout
+      delete :destroy, params(:id => Committership.first.id)
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))
     end
@@ -252,12 +212,99 @@ class CommittershipsControllerTest < ActionController::TestCase
         :creator => @user
       })
       assert_difference("@repository.committerships.count", -1) do
-        delete :destroy, :project_id => @project.to_param, :repository_id => @repository.to_param,
-          :id => committership.id
+        delete :destroy, params(:id => committership.id)
       end
       assert_match(/team was removed as a committer/, flash[:notice])
       assert_response :redirect
     end
   end
 
+  context "with authorization" do
+    setup do
+      @repository = repositories(:johans2)
+      @committership = @repository.committerships.create_with_permissions!({
+        :committer => users(:mike)
+      }, Committership::CAN_ADMIN)
+    end
+
+    context "private projects" do
+      setup do
+        enable_private_repositories(@repository.project)
+        login_as :mike
+      end
+
+      should "require project access to index" do
+        get :index, params
+        assert_response 403
+      end
+
+      should "require project access to new" do
+        get :new, params(:group_id => @repository.owner.to_param)
+        assert_response 403
+      end
+
+      should "require project access to create" do
+        post :create, params(:group => { :name => @group.name }, :user => {}, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to edit" do
+        get :edit, params(:id => @committership.to_param)
+        assert_response 403
+      end
+
+      should "require project access to update" do
+        put :update, params(:id => @committership.to_param, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to destroy" do
+        delete :destroy, params(:id => Committership.first.id)
+        assert_response 403
+      end
+    end
+
+    context "private repositories" do
+      setup do
+        enable_private_repositories(@repository)
+        login_as :moe
+      end
+
+      should "require project access to index" do
+        get :index, params
+        assert_response 403
+      end
+
+      should "require project access to new" do
+        get :new, params(:group_id => @repository.owner.to_param)
+        assert_response 403
+      end
+
+      should "require project access to create" do
+        post :create, params(:group => { :name => @group.name }, :user => {}, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to edit" do
+        get :edit, params(:id => @committership.to_param)
+        assert_response 403
+      end
+
+      should "require project access to update" do
+        put :update, params(:id => @committership.to_param, :permissions => ["review"])
+        assert_response 403
+      end
+
+      should "require project access to destroy" do
+        delete :destroy, params(:id => Committership.first.id)
+        assert_response 403
+      end
+    end
+  end
+
+  private
+  def params(additional = {})
+    { :project_id => @project.to_param,
+      :repository_id => @repository.to_param }.merge(additional)
+  end
 end

@@ -12,9 +12,9 @@
         :suspend_notice => "L\'utilisateur {{user_name}} a été suspendu avec succès.",
         :suspend_error => "Impossible de suspendre l\'utilisateur {{user_name}}.",
         :unsuspend_notice => "L\'utilisateur {{user_name}} a été rétabli dans ses fonctions.",
-        :unsuspend_error => "Impossible de rétablir l\'utilisateur {{user_name}} dans ses fonctions.",
-        :check_admin => "Seulement pour les administrateurs",
+        :unsuspend_error => "Impossible de rétablir l\'utilisateur {{user_name}} dans ses fonctions."
       },
+      :check_admin => "Seulement pour les administrateurs"
     },
     :mailer => {
       :repository_clone => "{{login}} a cloné {{slug}}",
@@ -238,11 +238,11 @@
           :other => "commits so far this week",
         },
         :about => "about {{about}}",
-	:edit_title => "Edit your details",
-	:edit_action => "Edit details",
-	:edit_breadcrumb => "Edit Details",
+        :edit_title => "Edit your details",
+        :edit_action => "Edit details",
+        :edit_breadcrumb => "Edit Details",
         :realname => "Full name",
-	:email => "E-mail",
+        :email => "E-mail",
         :url => "Website URL <small>(blog etc.)</small>",
         :openid => "OpenID",
         :my_account => "My account",

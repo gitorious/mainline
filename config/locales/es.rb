@@ -11,9 +11,9 @@
         :suspend_notice => "El usuario {{user_name}} ah sido suspendido.",
         :suspend_error => "No se ha logrado suspender al usuario {{user_name}}.",
         :unsuspend_notice => "El usuario {{user_name}} ah sido reactivado.",
-        :unsuspend_error => "No se ha logrado reactivar al usuario {{user_name}}.",
-        :check_admin => "Sólo para administradores",
+        :unsuspend_error => "No se ha logrado reactivar al usuario {{user_name}}."
       },
+      :check_admin => "Sólo para administradores"
     },
     :mailer => {
       :repository_clone => "{{login}} ah clonado {{slug}}/{{parent}}",
@@ -117,8 +117,8 @@
         :description => "<strong>Gitorious</strong> pretende proveer una manera\ninteresante de hacer desarrollo opensource colaborativo y distribuido",
         :for_projects => "Para proyectos",
         :for_contributors => "Para colaboradores",
-        :creating_account => lambda { |this, path| 
-          this.link_to("Crear una cuenta de usuario", path) + 
+        :creating_account => lambda { |this, path|
+          this.link_to("Crear una cuenta de usuario", path) +
           " le permite crear su propio proyecto o participar en el desarrollo de otro proyecto." },
         :newest_projects => "Los proyectos más nuevos",
         :view_more => "Ver más &raquo;",
@@ -156,7 +156,11 @@
         :is_admin => "¿Es administrator?",
         :forgot_title => "¿Olvidó su contraseña?",
         :send_new_passwd => 'Enviarme una nueva contraseña',
-        :create_title => lambda { |this, path| "Cree un nuevo usuario o " + 
+        :openid_build_title => 'Complete your registration', # translation missing
+        :openid_build_description => 'You need to enter the following details:', # translation missing
+        :openid_failed => 'OpenID authentication has failed.', # translation missing
+        :openid_canceled => 'OpenID authentication was canceled.', # translation missing
+        :create_title => lambda { |this, path| "Cree un nuevo usuario o " +
           this.link_to( "entre directamente con su OpenID", path ) },
         :create_description => "Crear una cuenta de usuario le permite crear su propio proyecto o participar en el desarrollo de otro proyecto.",
         :member_for => "Miembro para",
@@ -285,14 +289,14 @@
         :btn_delete_repo => "Borrar el repositorio",
         :committers => "Committers",
         :remove => "Quitar",
-        :create_title => lambda { |this, clone, project| 
+        :create_title => lambda { |this, clone, project|
           "Crear un clon de #{this.link_to( h(clone.name), this.send(:project_repository_path, project, clone) )} <small>en #{this.link_to h(project.title), this.send(:project_path, project)}</small>"
         },
         :clone_note => %Q{
-          <em><strong>Nota:</strong> Los clones que no han tenido actualizaciones en 7 
-          días son borrados automáticamente (para evitar que el proyecto termine teniendo 
-          un montón de repositorios vacíos), así que es una buena idea esperar para 
-          crear el cln aquí hasta tener algo para publicar.</em>          
+          <em><strong>Nota:</strong> Los clones que no han tenido actualizaciones en 7
+          días son borrados automáticamente (para evitar que el proyecto termine teniendo
+          un montón de repositorios vacíos), así que es una buena idea esperar para
+          crear el cln aquí hasta tener algo para publicar.</em>
         },
       },
       :projects => {
@@ -326,7 +330,7 @@
           :target_repos => "El repositorio con el que desea que este repositorio sea mezclado",
           :target_branch => "El branch donde desea que sus cambios sean mezclados",
           :source_branch => "El branch desde donde desea que el repositorio destino tome sus cambios para mezclar",
-          :proposal => "Un breve resumen de sus cambios",          
+          :proposal => "Un breve resumen de sus cambios",
         },
         :summary_tile => "{{source}} ah solicitado un merge con {{target}}",
         :review => "Revisar la solicitud de merge &#x2192;",
@@ -446,7 +450,7 @@
         }
       }
     },
- 
+
     # números
     :number => {
       :format => {
@@ -462,7 +466,7 @@
         }
       }
     },
- 
+
     :activerecord => {
       :models => {
         :user => {
@@ -484,7 +488,7 @@
         :repositories => {
           :one => "Repositorio",
           :other => "Repositorios",
-        }, 
+        },
         :keys => {
           :one => "Llave",
           :other => "Llaves",

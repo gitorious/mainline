@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -23,7 +24,7 @@ class Committership < ActiveRecord::Base
 
   CAN_REVIEW = 1 << 4
   CAN_COMMIT = 1 << 5
-  CAN_ADMIN  = 1 << 6
+  CAN_ADMIN = 1 << 6
 
   PERMISSION_TABLE = {
     :review => CAN_REVIEW,
@@ -33,12 +34,12 @@ class Committership < ActiveRecord::Base
 
   belongs_to :committer, :polymorphic => true
   belongs_to :repository
-  belongs_to :creator, :class_name => 'User'
+  belongs_to :creator, :class_name => "User"
   has_many :messages, :as => :notifiable
 
   validates_presence_of :committer_id, :committer_type, :repository_id
   validates_uniqueness_of :committer_id, :scope => [:committer_type, :repository_id],
-    :message => 'is already a committer to this repository'
+    :message => "is already a committer to this repository"
 
   attr_protected :permissions
 
@@ -120,38 +121,38 @@ class Committership < ActiveRecord::Base
   end
 
   protected
-    def notify_repository_owners
-      return unless creator
-      recipients = repository.owners
-      recipients.each do |r|
-        message = Message.new({
-          :sender => creator,
-          :recipient => r,
-          :subject => I18n.t("committership.notification_subject"),
-          :body => I18n.t("committership.notification_body", {
-            :inviter => creator.title,
-            :user => committer.title,
-            :repository => repository.name,
-            :project => repository.project.title
-          }),
-          :notifiable => self
-        })
-        message.save
-      end
+  def notify_repository_owners
+    return unless creator
+    recipients = repository.owners
+    recipients.each do |r|
+      message = Message.new({
+        :sender => creator,
+        :recipient => r,
+        :subject => I18n.t("committership.notification_subject"),
+        :body => I18n.t("committership.notification_body", {
+          :inviter => creator.title,
+          :user => committer.title,
+          :repository => repository.name,
+          :project => repository.project.title
+        }),
+        :notifiable => self
+      })
+      message.save
     end
+  end
 
-    def add_new_committer_event
-      repository.project.create_event(Action::ADD_COMMITTER, repository,
-                                      creator, committer.title)
-    end
+  def add_new_committer_event
+    repository.project.create_event(Action::ADD_COMMITTER, repository,
+                                    creator, committer.title)
+  end
 
-    def add_removed_committer_event
-      return unless repository
-      repository.project.create_event(Action::REMOVE_COMMITTER, repository,
-                                      creator, committer.title)
-    end
+  def add_removed_committer_event
+    return unless repository
+    repository.project.create_event(Action::REMOVE_COMMITTER, repository,
+                                    creator, committer.title)
+  end
 
-    def nullify_messages
-      messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
-    end
+  def nullify_messages
+    messages.update_all({:notifiable_id => nil, :notifiable_type => nil})
+  end
 end

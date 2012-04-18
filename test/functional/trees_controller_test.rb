@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class TreesControllerTest < ActionController::TestCase
-  
+
   should_render_in_site_specific_context :except => [:archive]
 
   should_enforce_ssl_for(:get, :archive)
@@ -32,15 +32,15 @@ class TreesControllerTest < ActionController::TestCase
       pending "fix rails bug #1939"
       assert_recognizes({
         :controller => "trees",
-        :action => "archive", 
+        :action => "archive",
         :project_id => "proj",
         :repository_id => "repo",
         :branch => ["foo"],
-        :format => "tar.gz",        
+        :format => "tar.gz",
       }, "/proj/repo/archive/foo.tar.gz")
       assert_recognizes({
         :controller => "trees",
-        :action => "archive", 
+        :action => "archive",
         :project_id => "proj",
         :repository_id => "repo",
         :branch => ["foo"],
@@ -52,7 +52,7 @@ class TreesControllerTest < ActionController::TestCase
       pending "fix rails bug #1939"
       assert_recognizes({
         :controller => "trees",
-        :action => "archive", 
+        :action => "archive",
         :project_id => "proj",
         :repository_id => "repo",
         :branch => ["foo", "bar"],
@@ -60,11 +60,11 @@ class TreesControllerTest < ActionController::TestCase
       }, "/proj/repo/archive/foo/bar.zip")
       assert_recognizes({
         :controller => "trees",
-        :action => "archive", 
+        :action => "archive",
         :project_id => "proj",
         :repository_id => "repo",
         :branch => ["foo", "bar"],
-        :format => "tar.gz",        
+        :format => "tar.gz",
       }, "/proj/repo/archive/foo/bar.tar.gz")
     end
   end
@@ -81,15 +81,14 @@ class TreesControllerTest < ActionController::TestCase
 
   context "#index" do
     should "redirect to the master head, if not :id given" do
-      get :index, :project_id => @project.slug, :repository_id => @repository.name
+      get :index, params
       assert_redirected_to(project_repository_tree_path(@project, @repository, ["master"]))
     end
   end
 
   context "#show" do
     should "GET successfully" do
-      get :show, :project_id => @project.to_param, 
-        :repository_id => @repository.to_param, :branch_and_path => ["master", "lib", "grit"]
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
 
       assert_response :success
       assert_equal @repository.git.tree("81a18c36ebe04e406ab84ccc911d79e65e14d1c0"), assigns(:tree)
@@ -98,24 +97,21 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "redirect to HEAD if provided sha was not found (backwards compat)" do
-      get :show, :project_id => @project.slug, 
-        :repository_id => @repository.name, :branch_and_path => ["a"*40, "foo"]
+      get :show, params(:branch_and_path => ["a"*40, "foo"])
 
       assert_redirected_to(project_repository_tree_path(@project, @repository, ["HEAD", "foo"]))
     end
 
     should "set a pseudo-head if the tree ref is a sha" do
-      ref = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"      
-      get :show, :project_id => @project.to_param, 
-        :repository_id => @repository.to_param, :branch_and_path => [ref]
+      ref = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
+      get :show, params(:branch_and_path => [ref])
 
       assert_response :success
       assert_equal ref[0..6], assigns(:root).breadcrumb_parent.title
     end
 
     should "support browsing a namespaced branch" do
-      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param, 
-            :branch_and_path => ["test", "master", "lib"]
+      get :show, params(:branch_and_path => ["test", "master", "lib"])
 
       assert_response :success
       assert_equal "test/master", assigns(:root).breadcrumb_parent.breadcrumb_parent.title
@@ -123,17 +119,15 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "cache the tree" do
-      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param, 
-            :branch_and_path => ["test", "master", "lib"]
+      get :show, params(:branch_and_path => ["test", "master", "lib"])
 
       assert_response :success
-      assert_equal "max-age=30, private", @response.headers['Cache-Control']
+      assert_equal "max-age=30, private", @response.headers["Cache-Control"]
     end
 
     should "redirect to the tree index with a msg if the tree SHA1 was not found" do
       @grit.expects(:commit).with("master").returns(nil)
-      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param, 
-            :branch_and_path => ["master", "lib"]
+      get :show, params(:branch_and_path => ["master", "lib"])
       assert_response :redirect
       assert_match(/no such tree sha/i, flash[:error])
     end
@@ -144,15 +138,14 @@ class TreesControllerTest < ActionController::TestCase
       git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
       @repository.git.expects(:commit).with("ticket-#42") \
         .returns(git_repo.commit("master"))
-      get :show, :project_id => @project.to_param, :repository_id => @repository.to_param,
-        :branch_and_path => ["ticket-%2342"]
+      get :show, params(:branch_and_path => ["ticket-%2342"])
       assert_response :success
       assert_equal "ticket-#42", assigns(:ref)
     end
 
     should "urlencode # in branch names" do
       Repository.any_instance.expects(:head_candidate_name).returns("ticket-#42")
-      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+      get :index, params
       assert_response :redirect
       assert_redirected_to project_repository_tree_path(@project, @repository, ["ticket-#42"])
     end
@@ -165,14 +158,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "return the correct for an existing cached tarball" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
                         "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(true)
 
-      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
-        :branch => %w[master], :archive_format => "tar.gz"
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
-      assert_response :success      
+      assert_response :success
       assert_equal cached_path, @response.headers["X-Sendfile"]
       assert_equal "application/x-gzip; charset=utf-8", @response.headers["Content-Type"]
       exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.tar.gz"
@@ -180,15 +172,14 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "enqueue a job when the tarball is not cached" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
-      work_path = File.join(GitoriousConfig["archive_work_dir"], 
+      work_path = File.join(GitoriousConfig["archive_work_dir"],
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(false)
 
-      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
-        :branch => %w[test master], :archive_format => "tar.gz"
+      get :archive, params(:branch => %w[test master], :archive_format => "tar.gz")
 
       assert_response 202 # Accepted
       assert_match(/is currently being generated, try again later/, @response.body)
@@ -202,15 +193,14 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "not enqueue a job when work has already begun" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"], 
+      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
-      work_path = File.join(GitoriousConfig["archive_work_dir"], 
+      work_path = File.join(GitoriousConfig["archive_work_dir"],
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(true)
 
-      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
-        :branch => %w[master], :archive_format => "tar.gz"
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
       assert_response 202 # Accepted
 
@@ -219,11 +209,94 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "redirect to the first tree when an invalid ref is requested" do
-      get :archive, :project_id => @project.slug, :repository_id => @repository.name, 
-        :branch => %w[foo], :archive_format => "tar.gz"
+      get :archive, params(:branch => %w[foo], :archive_format => "tar.gz")
 
       assert_response :redirect
-      assert_redirected_to project_repository_tree_path(@project, @repository, 'HEAD')
+      assert_redirected_to project_repository_tree_path(@project, @repository, "HEAD")
     end
+  end
+
+  context "With private projects" do
+    setup do
+      enable_private_repositories
+    end
+
+    should "disallow unauthorized users from listing trees" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authorized users to list trees" do
+      login_as :johan
+      get :index, params
+      assert_response 302
+    end
+
+    should "disallow unauthorized users from showing tree" do
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      assert_response 403
+    end
+
+    should "allow authorized users to show tree" do
+      login_as :johan
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      assert_not_equal "403", @response.code
+    end
+
+    should "disallow unauthorized users from showing archive" do
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      assert_response 403
+    end
+
+    should "allow authorized users to show archive" do
+      login_as :johan
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      assert_not_equal "403", @response.code
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@repository)
+      @project.make_public
+    end
+
+    should "disallow unauthorized users from listing trees" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authorized users to list trees" do
+      login_as :johan
+      get :index, params
+      assert_response 302
+    end
+
+    should "disallow unauthorized users from showing tree" do
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      assert_response 403
+    end
+
+    should "allow authorized users to show tree" do
+      login_as :johan
+      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      assert_not_equal "403", @response.code
+    end
+
+    should "disallow unauthorized users from showing archive" do
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      assert_response 403
+    end
+
+    should "allow authorized users to show archive" do
+      login_as :johan
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      assert_not_equal "403", @response.code
+    end
+  end
+
+  private
+  def params(data = {})
+    { :project_id => @project.slug, :repository_id => @repository.name }.merge(data)
   end
 end

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -74,10 +75,9 @@ class MessagesController < ApplicationController
     redirect_to :action => :index
   end
 
-
   def show
     @message = Message.find(params[:id])
-    if !@message.readable_by?(current_user)
+    if !can_read?(current_user, @message)
       raise ActiveRecord::RecordNotFound and return
     end
     @message.mark_thread_as_read_by_user(current_user)
@@ -87,7 +87,6 @@ class MessagesController < ApplicationController
       wants.js {render :partial => "message", :layout => false}
     end
   end
-
 
   def create
     thread_options = params[:message].merge({
@@ -123,10 +122,7 @@ class MessagesController < ApplicationController
   end
 
   def auto_complete_for_message_recipients
-    @users = User.find(:all,
-      :conditions => [ 'LOWER(login) LIKE ?', '%' + params[:q].downcase + '%' ],
-      :limit => 10).reject{|u|u == current_user}
-    render :text => @users.map{|u| u.login }.join("\n")
-    #render :layout => false
+    @users = User.find_fuzzy(params[:q]).reject{|u|u == current_user}
+    render :text => @users
   end
 end

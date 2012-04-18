@@ -1,5 +1,6 @@
 class GitoriousFormBuilder < ActionView::Helpers::FormBuilder
-  
+  include Gitorious::Authorization
+
   # Creates a set of radio buttons for the current_user and a select tag
   # for any groups he's a member of
   def current_user_or_group(field, label_title, hint = nil, options = {})
@@ -13,17 +14,17 @@ class GitoriousFormBuilder < ActionView::Helpers::FormBuilder
     result << "</div>"
     result.join("\n")
   end
-  
+
   private
 
   def select_group_membership(field)
-    admin_groups = @template.current_user.groups.select {|g| g.admin? @template.current_user }
+    admin_groups = @template.current_user.groups.select {|g| admin?(@template.current_user, g) }
     result = ""
     unless admin_groups.empty?
       result << "Group: " + radio_button("#{field}_type", "Group")
-      result << select("#{field}_id", admin_groups.map{|g| [g.name, g.id] }, 
+      result << select("#{field}_id", admin_groups.map{|g| [g.name, g.id] },
                         {}, :id => "#{object_name}_#{field}_id_group_select")
     end
-    result    
+    result
   end
 end

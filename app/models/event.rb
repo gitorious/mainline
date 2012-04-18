@@ -1,7 +1,8 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #
@@ -29,9 +30,9 @@ class Event < ActiveRecord::Base
   has_many :events, :as => :target do
     def commits
       find(:all, {
-          :limit => Event::MAX_COMMIT_EVENTS + 1,
-          :conditions => {:action => Action::COMMIT}
-        })
+             :limit => Event::MAX_COMMIT_EVENTS + 1,
+             :conditions => {:action => Action::COMMIT}
+           })
     end
   end
   has_many :feed_items, :dependent => :destroy
@@ -42,7 +43,7 @@ class Event < ActiveRecord::Base
   validates_presence_of :user_id, :unless => :user_email_set?
 
   named_scope :top, {
-    :conditions => ['target_type != ?', 'Event'],
+    :conditions => ["target_type != ?", "Event"],
     :order => "created_at desc",
     :include => [:user, :project]
   }
@@ -51,34 +52,34 @@ class Event < ActiveRecord::Base
   def self.latest(count)
     Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do
       latest_event_ids = Event.find_by_sql(
-        ["select id,action,created_at from events " +
-         "use index (index_events_on_created_at) where (action != ?) " +
-         "order by created_at desc limit ?", Action::COMMIT, count
-        ]).map(&:id)
+                                           ["select id,action,created_at from events " +
+                                            "use index (index_events_on_created_at) where (action != ?) " +
+                                            "order by created_at desc limit ?", Action::COMMIT, count
+                                           ]).map(&:id)
       Event.find(latest_event_ids, :order => "created_at desc",
-        :include => [:user, :project, :events])
+                 :include => [:user, :project, :events])
     end
   end
 
   def self.latest_in_projects(count, project_ids)
     return [] if project_ids.blank?
     Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}",
-        :expires_in => 10.minutes) do
+                      :expires_in => 10.minutes) do
       find(:all, {
-          :from => "#{quoted_table_name} use index (index_events_on_created_at)",
-          :order => "events.created_at desc", :limit => count,
-          :include => [:user, :project, :events],
-          :conditions => ['events.action != ? and project_id in (?)',
-                          Action::COMMIT, project_ids]
-        })
+             :from => "#{quoted_table_name} use index (index_events_on_created_at)",
+             :order => "events.created_at desc", :limit => count,
+             :include => [:user, :project, :events],
+             :conditions => ["events.action != ? and project_id in (?)",
+                             Action::COMMIT, project_ids]
+           })
     end
   end
 
   def build_commit(options={})
     e = self.class.new(options.merge({
-          :action => Action::COMMIT,
-          :project_id => project_id
-        }))
+                                       :action => Action::COMMIT,
+                                       :project_id => project_id
+                                     }))
     e.target = self
     return e
   end
@@ -96,9 +97,9 @@ class Event < ActiveRecord::Base
   def commit_event?
     action == Action::COMMIT
   end
-  
+
   def kind
-    'commit'
+    "commit"
   end
 
   def email=(an_email)
@@ -123,7 +124,7 @@ class Event < ActiveRecord::Base
     else
       a = Grit::Actor.from_string(user_email)
       if a.email.blank?
-        return Grit::Actor.new(a.name.to_s.split('@').first, a.name)
+        return Grit::Actor.new(a.name.to_s.split("@").first, a.name)
       else
         return a
       end
@@ -172,7 +173,7 @@ class Event < ActiveRecord::Base
       logger.info("Event archiving: archived one batch of events")
     end
   end
-  
+
   def self.archive_events_older_than(created_before)
     events_for_archive_in_batches(created_before) do |batch|
       Event.transaction do
@@ -199,7 +200,6 @@ class Event < ActiveRecord::Base
   end
 
   protected
-
   def user_email_set?
     !user_email.blank?
   end

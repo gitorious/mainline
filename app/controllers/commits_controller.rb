@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -85,34 +85,6 @@ class CommitsController < ApplicationController
         render :text => @commit.to_patch, :content_type => "text/plain"
       end
     end
-  end
-
-  def comments
-    @comments = @repository.comments.find_all_by_sha1(params[:id], :include => :user)
-    last_modified = @comments.size > 0 ? @comments.last.created_at.utc : Time.at(0)
-
-    if stale_conditional?([params[:id], @comments.size], last_modified)
-      @comment_count = @comments.length
-      render :layout => !request.xhr?
-    end
-  end
-
-  def diffs
-    @comments = []
-    @diffmode = params[:diffmode] == "sidebyside" ? "sidebyside" : "inline"
-    @git = @repository.git
-
-    unless @commit = @git.commit(params[:id])
-      handle_missing_sha and return
-    end
-
-    @root = Breadcrumb::Commit.new(:repository => @repository, :id => @commit.id_abbrev)
-    @diffs = commit_diffs
-    @committer_user = User.find_by_email_with_aliases(@commit.committer.email)
-    @author_user = User.find_by_email_with_aliases(@commit.author.email)
-    headers["Cache-Control"] = "public, max-age=315360000"
-
-    render :layout => !request.xhr?
   end
 
   def feed

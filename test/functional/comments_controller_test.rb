@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class CommentsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
@@ -32,97 +32,89 @@ class CommentsControllerTest < ActionController::TestCase
     setup_ssl_from_config
     @project = projects(:johans)
     @repository = repositories(:johans)
+    @merge_request = @repository.merge_requests.first
   end
 
   context "#index" do
     should "scopes to project.repositories" do
-      get :index, :project_id => @project.to_param, 
-        :repository_id => @repository.to_param
+      get :index, repo_params
       assert_response :success
       assert !assigns(:comments).include?(comments(:moes_repos))
     end
   end
-  
-  context "#new" do    
+
+  context "#new" do
     should "requires login" do
       session[:user_id] = nil
-      get :new, :project_id => @project.slug, 
-        :repository_id => @repository.name
-      assert_redirected_to (new_sessions_path)
+      get :new, repo_params
+      assert_redirected_to new_sessions_path
     end
-    
+
     should "is successfull" do
       login_as :johan
-      get :new, :project_id => @project.slug, 
-        :repository_id => @repository.name
+      get :new, repo_params
       assert_response :success
       assert_equal @repository, assigns(:comment).target
     end
   end
-  
-  context "#create" do    
+
+  context "#create" do
     should "requires login" do
       session[:user_id] = nil
-      get :create, :project_id => @project.slug, 
-        :repository_id => @repository.name, :comment => {}
-      assert_redirected_to (new_sessions_path)
+      get :create, comment_params({})
+      assert_redirected_to new_sessions_path
     end
-    
+
     should "scopes to the repository" do
       login_as :johan
-      get :create, :project_id => @project.slug, 
-        :repository_id => @repository.name, :comment => { :body => "blabla" }
+      get :create, comment_params({ :body => "blabla" })
       assert_equal @repository, assigns(:comment).target
     end
-    
+
     should "assigns the comment to the current_user" do
       login_as :johan
-      get :create, :project_id => @project.slug, 
-        :repository_id => @repository.name, :comment => { :body => "blabla" }
+      get :create, comment_params({ :body => "blabla" })
       assert_equal users(:johan), assigns(:comment).user
     end
-    
+
     should "creates the record on successful data" do
       login_as :johan
       assert_difference("Comment.count") do
-        get :create, :project_id => @project.slug, 
-          :repository_id => @repository.name, :comment => { :body => "moo" }
+        get :create, comment_params({ :body => "moo" })
         assert_redirected_to (project_repository_comments_path(@project, @repository))
         assert_match(/your comment was added/i, flash[:success])
       end
     end
-    
+
     should "it re-renders on invalid data" do
       login_as :johan
-      get :create, :project_id => @project.slug, 
-        :repository_id => @repository.name, :comment => {:body => nil}
+      get :create, comment_params({ :body => nil })
       assert_response :success
       assert_template("comments/new")
-    end    
+    end
   end
-  
-  context 'preview' do
-    should 'render a preview of the comment' do
+
+  context "preview" do
+    should "render a preview of the comment" do
       login_as :johan
-      post :preview, :project_id => @project.slug, :repository_id => @repository.name, :comment => {:body => 'Foo'}
+      post :preview, comment_params
       assert_response :success
       assert_template("comments/preview")
     end
   end
-  
+
   context "polymorphic creation" do
     setup do
       login_as :johan
-      assert @merge_request = @repository.merge_requests.first
     end
-    
+
     should "find set the repository as the polymorphic parent by default" do
-      get :new, :project_id => @project.slug, :repository_id => @repository.to_param
+      get :new, repo_params
       assert_response :success
       assert_equal @repository, assigns(:target)
       assert_equal @repository, assigns(:comment).target
     end
-    
+
     should "find set the polymorphic parent by default, for merge requests" do
       get :new, :project_id => @project.slug, :repository_id => @repository.to_param,
         :merge_request_id => @merge_request.to_param
@@ -141,28 +133,26 @@ class CommentsControllerTest < ActionController::TestCase
       end
 
       should "render a json response when created" do
-        post :create, :project_id => @repo.project.to_param, :repository_id => @repo.to_param,
-        :comment => {
-          :sha1 => "ffca00",
-          :path => "test/functional/comments_controller_test.rb",
-          :lines => "135-135:135-138+3",
-          :target_id => @repo.id,
-          :target_type => @repo.class.name,
-          :body => "Now this is a useful feature"
-        }, :format => "js"
+        post :create, comment_params({ :sha1 => "ffca00",
+                                       :path => "test/functional/comments_controller_test.rb",
+                                       :lines => "135-135:135-138+3",
+                                       :target_id => @repo.id,
+                                       :target_type => @repo.class.name,
+                                       :body => "Now this is a useful feature"
+                                     }).merge({ :format => "js" })
         assert_response :success
         result = JSON.parse(@response.body)
         assert_not_nil result["comment"]
       end
     end
-    
+
     context "Watching a merge request" do
       setup do
         @repo = @merge_request.target_repository
         @project = @repo.project
         @user = users(:moe)
       end
-      
+
       should "be watched when user wants it" do
         login_as @user
         assert_incremented_by(@user.favorites, :size, 1) do
@@ -198,14 +188,12 @@ class CommentsControllerTest < ActionController::TestCase
 
       should "list the MR comments in #index" do
         get(:index, :project_id => @project.slug, :repository_id => @repository.to_param,
-          :merge_request_id => @merge_request.to_param
-          )
+          :merge_request_id => @merge_request.to_param)
         assert_response :success
         assert_equal(@merge_request, assigns(:target))
-        #assert_equal([@comment], assigns(:comments))
       end
     end
-    
+
     context "Merge request versions" do
       should "set the merge request version as polymorphic parent" do
         @version = create_new_version
@@ -295,68 +283,258 @@ class CommentsControllerTest < ActionController::TestCase
           :merge_request_id => @merge_request.to_param, :comment => {:body => "awesome", :state => "merged"}
       end
     end
-    
-    should 'transition the target if state is provided' do
+
+    should "transition the target if state is provided" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
-      assert_equal [nil, 'Resolved'], assigns(:comment).state_change
-      assert_equal 'Resolved', @merge_request.reload.status_tag.name
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "Yeah, right", :state => "Resolved"}
+      assert_equal [nil, "Resolved"], assigns(:comment).state_change
+      assert_equal "Resolved", @merge_request.reload.status_tag.name
     end
-    
-    should 'not transition the target if an empty state if provided' do
+
+    should "not transition the target if an empty state if provided" do
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => ''}
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "Yeah, right", :state => ""}
       assert_nil @merge_request.reload.status_tag
     end
-    
-    should 'not allow other users than the merge request owner to change the state' do
+
+    should "not allow other users than the merge request owner to change the state" do
       login_as :mike
       post :create, :project_id => @project.slug, :repository_id => @repository.to_param,
-        :merge_request_id => @merge_request.to_param, :comment => {:body => 'Yeah, right', :state => 'Resolved'}
+        :merge_request_id => @merge_request.to_param, :comment => {:body => "Yeah, right", :state => "Resolved"}
       assert_response :redirect
       assert_nil @merge_request.reload.status_tag
     end
   end
 
-  context 'Changing a comment' do
+  context "Changing a comment" do
     setup {
       @user = users(:moe)
       @repo = repositories(:moes)
       @comment = Comment.create(:project => @repo.project, :user => @user,
         :target => @repo, :body => "Looks like progress")
-      @get_edit = proc { get(:edit, :project_id => @repo.project.to_param,
-          :repository_id => @repo.to_param, :id => @comment.to_param) }
+      @get_edit = proc { get(:edit, repo_params.merge(:id => @comment.to_param)) }
     }
-    
+
     context "GET to #edit" do
-      should 'let the owner edit his own comment' do
+      should "let the owner edit his own comment" do
         login_as @user.login
         @get_edit.call
         assert_response :success
         assert_equal @comment, assigns(:comment)
       end
-      
-      should 'not let other users edit the comment' do
+
+      should "not let other users edit the comment" do
         login_as :mike
         @get_edit.call
         assert_response :unauthorized
       end
     end
 
-    context 'PUT to #update' do
-      should 'update the comment' do
+    context "PUT to #update" do
+      should "update the comment" do
         login_as @user.login
         new_body = "I take that back. This sucks"
-        put(:update, :project_id => @repo.project.to_param,
-          :repository_id => @repo.to_param, :id => @comment.to_param,
-          :comment => {:body => new_body})
+        put :update, comment_params(:body => new_body).merge(:id => @comment.to_param)
         assert_response :success
         assert_equal new_body, @comment.reload.body
       end
     end
   end
 
+  context "with private projects" do
+    setup do
+      enable_private_repositories
+      @comment = Comment.create(:project => @project,
+                                :user => users(:johan),
+                                :target => @repository,
+                                :body => "Looks like progress")
+    end
+
+    should "disallow unauthorized user to list comments" do
+      get :index, repo_params
+      assert_response 403
+    end
+
+    should "allow project owner to list comments" do
+      login_as :johan
+      get :index, repo_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to preview comment" do
+      get :preview, comment_params
+      assert_response 403
+    end
+
+    should "allow project owner to preview comment" do
+      login_as :johan
+      get :preview, comment_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to write new comment" do
+      login_as :mike
+      get :new, repo_params
+      assert_response 403
+    end
+
+    should "allow project owner to write new comment" do
+      login_as :johan
+      get :new, repo_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to create new comment" do
+      login_as :mike
+      post :create, comment_params
+      assert_response 403
+    end
+
+    should "allow project owner to create new comment" do
+      login_as :johan
+      post :create, comment_params
+      assert_response 302
+    end
+
+    should "disallow unauthorized user to edit comment" do
+      login_as :mike
+      get :edit, repo_params.merge(:id => @comment.to_param)
+      assert_response 403
+    end
+
+    should "allow project owner to edit comment" do
+      login_as :johan
+      get :edit, repo_params.merge(:id => @comment.to_param)
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to update comment" do
+      login_as :mike
+      put :update, comment_params(:body => "Ok").merge(:id => @comment.to_param)
+      assert_response 403
+    end
+
+    should "allow project owner to update comment" do
+      login_as :johan
+      put :update, comment_params(:body => "Ok").merge(:id => @comment.to_param)
+      assert_response 200
+    end
+  end
+
+  context "with private repositories" do
+    setup do
+      enable_private_repositories(@repository)
+      @comment = Comment.create(:project => @project,
+                                :user => users(:johan),
+                                :target => @repository,
+                                :body => "Looks like progress")
+    end
+
+    should "disallow unauthorized user to list comments" do
+      get :index, repo_params
+      assert_response 403
+    end
+
+    should "allow project owner to list comments" do
+      login_as :johan
+      get :index, repo_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to preview comment" do
+      get :preview, comment_params
+      assert_response 403
+    end
+
+    should "allow project owner to preview comment" do
+      login_as :johan
+      get :preview, comment_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to write new comment" do
+      login_as :mike
+      get :new, repo_params
+      assert_response 403
+    end
+
+    should "allow project owner to write new comment" do
+      login_as :johan
+      get :new, repo_params
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to create new comment" do
+      login_as :mike
+      post :create, comment_params
+      assert_response 403
+    end
+
+    should "allow project owner to create new comment" do
+      login_as :johan
+      post :create, comment_params
+      assert_response 302
+    end
+
+    should "disallow unauthorized user to edit comment" do
+      login_as :mike
+      get :edit, repo_params.merge(:id => @comment.to_param)
+      assert_response 403
+    end
+
+    should "allow project owner to edit comment" do
+      login_as :johan
+      get :edit, repo_params.merge(:id => @comment.to_param)
+      assert_response 200
+    end
+
+    should "disallow unauthorized user to update comment" do
+      login_as :mike
+      put :update, comment_params(:body => "Ok").merge(:id => @comment.to_param)
+      assert_response 403
+    end
+
+    should "allow project owner to update comment" do
+      login_as :johan
+      put :update, comment_params(:body => "Ok").merge(:id => @comment.to_param)
+      assert_response 200
+    end
+
+    should "disallow if unauthorized to read target version" do
+      login_as :moe
+      @merge_request.source_repository.make_private
+      @merge_request.target_repository.add_member(users(:moe))
+      create_merge_request_version_comment(create_new_version)
+
+      assert_response 403
+    end
+
+    should "disallow if unauthorized to read target merge request" do
+      login_as :moe
+      @merge_request.source_repository.make_private
+      @merge_request.target_repository.add_member(users(:moe))
+      post :create, mr_params(:comment => {:body => "Yeah, right", :state => "Resolved"})
+      assert_response 403
+    end
+
+  end
+
   protected
+  def mr_params(data = {})
+    repo_params.merge(:merge_request_id => @merge_request.to_param).merge(data)
+  end
+
+  def repo_params
+    { :project_id => @project.to_param,
+      :repository_id => @repository.to_param }
+  end
+
+  def comment_params(comment = { :body => "Foo" })
+    { :project_id => @project.slug,
+      :repository_id => @repository.name,
+      :comment => comment }
+  end
+
   def create_new_version
     diff_backend = mock
     diff_backend.stubs(:commit_diff).returns([])

@@ -82,7 +82,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     cs.build_permissions(:review); cs.save!
     @merge_request.user = users(:mike)
     @merge_request.save
-    assert_no_difference("Message.count", @merge_request.target_repository.reviewers.size) do
+    assert_no_difference("Message.count", reviewers(@merge_request.target_repository).size) do
       @merge_request.confirmed_by_user
     end
   end
@@ -234,25 +234,25 @@ class MergeRequestTest < ActiveSupport::TestCase
   end
 
   should "knows who can resolve itself" do
-    assert @merge_request.resolvable_by?(users(:johan))
+    assert can_resolve_merge_request?(users(:johan), @merge_request)
     @merge_request.target_repository.committerships.create_with_permissions!({
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_REVIEW)
-    assert @merge_request.resolvable_by?(users(:mike))
-    assert !@merge_request.resolvable_by?(users(:moe))
+    assert can_resolve_merge_request?(users(:mike), @merge_request)
+    assert !can_resolve_merge_request?(users(:moe), @merge_request)
   end
 
   should "be resolvable by the MR creator as well" do
     creator = @merge_request.user = users(:mike)
     @merge_request.save!
     @merge_request.target_repository.committerships.each(&:destroy)
-    assert !creator.can_write_to?(@merge_request.target_repository)
-    assert @merge_request.resolvable_by?(creator), "not resolvable by creator"
-    assert !@merge_request.resolvable_by?(users(:moe))
+    assert !can_push?(creator, @merge_request.target_repository)
+    assert can_resolve_merge_request?(creator, @merge_request), "not resolvable by creator"
+    assert !can_resolve_merge_request?(users(:moe), @merge_request)
   end
 
   should "have a working resolvable_by? together with fucktard authentication systems" do
-    assert !@merge_request.resolvable_by?(:false)
+    assert !can_resolve_merge_request?(false, @merge_request)
   end
 
   should "count open merge_requests" do
@@ -265,10 +265,10 @@ class MergeRequestTest < ActiveSupport::TestCase
   should 'have a transition from pending to open' do
     mr = @merge_request.clone
     assert mr.pending_acceptance_of_terms?
-    
+
     mr.expects(:valid_oauth_credentials?).returns(true)
     mr.expects(:fetch_contribution_notice)
-    
+
     mr.terms_accepted
     assert mr.open?
   end
@@ -424,7 +424,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open
       @merge_request.close
       assert @merge_request.closed?
-      assert @merge_request.can_be_reopened_by?(@user)
+      assert can_reopen_merge_request?(@user, @merge_request)
       assert @merge_request.reopen_with_user(@user)
       assert @merge_request.open?
     end
@@ -434,7 +434,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       @merge_request.open
       @merge_request.close
       assert @merge_request.closed?
-      assert !@merge_request.can_be_reopened_by?(@user)
+      assert !can_reopen_merge_request?(@user, @merge_request)
       assert !@merge_request.reopen_with_user(@user)
       assert !@merge_request.open?
     end
@@ -843,10 +843,10 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should "be accessible from the merge request" do
-      assert_equal(@merge_request.target_repository.reviewers.uniq.reject{|r|r == @merge_request.user},
+      assert_equal(reviewers(@merge_request.target_repository).uniq.reject{|r|r == @merge_request.user},
         @merge_request.reviewers)
     end
-    
+
     should "add a favorite for each reviewer" do
       @merge_request.expects(:add_to_reviewers_favorites).times(@merge_request.reviewers.size)
       @merge_request.notify_subscribers_about_creation
@@ -881,7 +881,7 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.save
       }
     end
-    
+
   end
 
   context "Watchable" do
@@ -894,5 +894,5 @@ class MergeRequestTest < ActiveSupport::TestCase
         @merge_request.project)
     end
   end
-  
+
 end

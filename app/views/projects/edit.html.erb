@@ -27,8 +27,8 @@
 <%= error_messages_for :project -%>
 <% form_for(@project, :method => "put") do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
-	
-	<div class="merge_request_statuses content-container w-730">
+
+        <div class="merge_request_statuses content-container w-730">
   <label>Merge Request Statuses:</label><br />
   <table class="listing" id="merge_request_statuses">
     <thead>
@@ -46,19 +46,19 @@
        existing status will update all affected merge requests</p>
     <% end -%>
     <% f.fields_for(:merge_request_statuses) do |status_form| -%>
-      <%= render :partial => "merge_request_status_form", 
+      <%= render :partial => "merge_request_status_form",
             :locals => {:form => status_form, :project_form => f} -%>
     <% end -%>
   </table>
 <div class="add-link-container">
-	<div class="button right add_link"><%= add_status_link(f) -%></div>
+        <div class="button right add_link"><%= add_status_link(f) -%></div>
 </div>
 
  <div class="box rounded light-gray w-730">
-	<% unless @project.owned_by_group? -%>
+        <% unless @project.owned_by_group? -%>
     <p>
       <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
-      <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]}, 
+      <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
             :include_blank => true, :selected => nil -%>
       <br /><small class="hint">
         <strong>Note:</strong> This will give the group members
@@ -68,10 +68,10 @@
       </small>
     </p>
   <% end -%>
-	</div><!-- end box -->
-	</div>
-	<fieldset  class="submit">
-  <input type="button" value="Preview" id="project_preview_button" 
+        </div><!-- end box -->
+        </div>
+        <fieldset  class="submit">
+  <input type="button" value="Preview" id="project_preview_button"
          gts:url="<%= preview_project_path(@project) -%>" />
 
   <%= f.submit t("views.common.update") -%>
@@ -87,7 +87,7 @@
     <li class="update_project">
       <%= link_to t('views.projects.edit_slug_title'), edit_slug_project_path(@project) %>
     </li>
-    <% if @project.can_be_deleted_by?(current_user) -%>
+    <% if can_delete?(current_user, @project) -%>
       <li class="delete_project">
         <%= link_to t("views.projects.delete"), confirm_delete_project_path(@project) -%>
       </li>

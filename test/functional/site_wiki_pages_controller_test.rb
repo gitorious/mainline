@@ -27,16 +27,16 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :git_access)
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:put, :preview)
-  
+
   def setup
     setup_ssl_from_config
   end
 
-  context "top wiki route" do        
+  context "top wiki route" do
     should "be generated correctly from action and controller" do
       assert_generates "/wiki", :controller => "site_wiki_pages", :action => "index"
     end
-    
+
   end
 
   context "resourceful routes" do
@@ -48,7 +48,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
       assert_generates "/wiki/Testpage/preview", :controller => "site_wiki_pages", :action => "preview", :id => "Testpage"
     end
   end
-  
+
   context "resource path convenience urls" do
     should "be generated for every action" do
       assert_generates site_wiki_pages_path, :controller => "site_wiki_pages", :action => "index"
@@ -58,7 +58,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
       assert_generates preview_site_wiki_page_path("Testpage"), :controller => "site_wiki_pages", :action => "preview", :id => "Testpage"
     end
   end
-  
+
   context "internal routes for git access" do
     should "respond to /wiki/<sitename>/config" do
       assert_recognizes({ :controller => "site_wiki_pages", :action => "config", :site_id =>"siteid"},
@@ -69,7 +69,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
                         "/wiki/siteid/writable_by")
     end
   end
-    
+
   context "index action" do
     should "render" do
       git_stub = stub("git", {
@@ -93,7 +93,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
 
   context "show" do
     should "redirects to edit if the page is new, and user is logged in" do
-      login_as nil
+      logout
       page_stub = mock("page stub")
       page_stub.expects(:new?).returns(true)
       page_stub.expects(:title).at_least_once.returns("Home")

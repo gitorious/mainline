@@ -1,21 +1,21 @@
 #!/usr/bin/env ruby
 
-require 'rubygems'
-require 'daemons'
-require 'geoip'
-require 'socket'
-require 'fcntl'
+require "rubygems"
+require "daemons"
+require "geoip"
+require "socket"
+require "fcntl"
 require "optparse"
 
 ENV["RAILS_ENV"] ||= "production"
-require File.dirname(__FILE__)+'/../config/environment'
+require File.dirname(__FILE__) + "/../config/environment"
 
 Rails.configuration.log_level = :info # Disable debug
 ActiveRecord::Base.allow_concurrency = true
 
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
-BASE_PATH = File.expand_path(GitoriousConfig['repository_base_path'])
+BASE_PATH = File.expand_path(GitoriousConfig["repository_base_path"])
 
 TIMEOUT = 30
 MAX_CHILDREN = 30
@@ -31,14 +31,15 @@ end
 module Git
   class Daemon
     include Daemonize
-    
+    include Gitorious::Authorization
+
     SERVICE_READ_REGEXP = /^(git\-upload\-pack|git\ upload\-pack)\s(.+)\x00host=([\w\.\-]+)/.freeze
     SERVICE_WRITE_REGEXP = /^(git\-receive\-pack|git\ receive\-pack)\s(.+)\x00host=([\w\.\-]+)/.freeze
-    
+
     def initialize(options)
       @options = options
     end
-    
+
     def start
       if @options[:daemonize]
         daemonize(@options[:logfile])
@@ -51,7 +52,7 @@ module Git
       ActiveRecord::Base.verify_active_connections! if @options[:daemonize]
       run
     end
-      
+
     def run
       Dir.chdir(GitoriousConfig["repository_base_path"])
       if @options[:pidfile]
@@ -66,17 +67,17 @@ module Git
           session.close
           next
         end
-        
+
         run_service(session)
       end
     end
-    
+
     def run_service(session)
       $children_active += 1
       ip_family, port, name, ip = session.peeraddr
-      
+
       line = receive_data(session)
-      
+
       if line =~ SERVICE_READ_REGEXP
         start_time = Time.now
         service = $1
@@ -85,26 +86,28 @@ module Git
 
         path = File.expand_path("#{BASE_PATH}/#{base_path}")
         log(Process.pid, "Connection from #{ip} for #{base_path.inspect}")
-        
-        repository = nil        
+
+        repository = nil
         begin
           ActiveRecord::Base.verify_active_connections!
-          repository = ::Repository.find_by_path(path)
+          repository = Repository.find_by_path(path)
         rescue => e
           log(Process.pid, "AR error: #{e.class.name} #{e.message}:\n #{e.backtrace.join("\n  ")}")
         end
-        
+
         unless repository
-          log(Process.pid, "Cannot find repository: #{path}")
-          write_error_message(session, "Cannot find repository: #{base_path}")
-          $children_active -= 1
-          session.close
-          return
+          return abort(session, "Cannot find repository: #{path}",
+                       "Cannot find repository: #{base_path}")
         end
-        
+
+        if !can_read?(nil, repository)
+          return abort(session, "Attempt to clone private repository: #{repository.name}",
+                       "Unable to access repository #{base_path}")
+        end
+
         real_path = File.expand_path(repository.full_repository_path)
         log(Process.pid, "#{ip} wants #{path.inspect} => #{real_path.inspect}")
-        
+
         if real_path.index(BASE_PATH) != 0 || !File.directory?(real_path)
           log(Process.pid, "Invalid path: #{real_path}")
           write_error_message(session, "Cannot find repository: #{base_path}")
@@ -112,7 +115,7 @@ module Git
           $children_active -= 1
           return
         end
-      
+
         if !File.exist?(File.join(real_path, "git-daemon-export-ok"))
           session.close
           $children_active -= 1
@@ -129,19 +132,19 @@ module Git
             repository.cloned_from(ip, localization[3], localization[5], 'git')
           end
         end
-      
+
         Dir.chdir(real_path) do
           cmd = "git-upload-pack --strict --timeout=#{TIMEOUT} ."
-          
+
           child_pid = fork do
             log(Process.pid, "Deferred in #{'%0.5f' % (Time.now - start_time)}s")
-            
+
             $stdout.reopen(session)
             $stdin.reopen(session)
             $stderr.reopen("/dev/null")
-            
+
             exec(cmd)
-            # FIXME; we don't ever get here since we exec(), so reaped count may be incorrect 
+            # FIXME; we don't ever get here since we exec(), so reaped count may be incorrect
             $children_reaped += 1
             exit!
           end
@@ -161,13 +164,13 @@ module Git
       end
       session.close
     end
-  
+
     def handle_stop(signal)
       @socket.close
       log(Process.pid, "Received #{signal}, exiting..")
       exit 0
     end
-  
+
     def handle_cld
       loop do
         pid = nil
@@ -176,37 +179,44 @@ module Git
         rescue Errno::ECHILD
           break
         end
-        
+
         if pid && $?
           $children_reaped += 1
           log(pid, "Disconnected. (status=#{$?.exitstatus})") if pid > 0
           if $children_reaped == $children_active
             $children_reaped = 0
-            $children_active = 0 
+            $children_active = 0
           end
-          
+
           next
         end
         break
       end
     end
-  
+
     def log(pid, msg)
       $stderr.puts "#{Time.now.strftime("%Y-%m-%d %H:%M:%S")} [#{pid}] #{msg}"
     end
-    
+
     def write_error_message(session, msg)
       message = ["\n----------------------------------------------"]
       message << msg
       message << "----------------------------------------------\n"
       write_into_sideband(session, message.join("\n"), 2)
     end
-    
+
     def write_into_sideband(session, message, channel)
       msg = "%s%s" % [channel.chr, message]
       session.write("%04x%s" % [msg.length+4, msg])
     end
-    
+
+    def abort(session, log_message, error)
+      log(Process.pid, log_message)
+      write_error_message(session, error)
+      $children_active -= 1
+      session.close
+    end
+
     def accept_socket
       if RUBY_VERSION < '1.9'
         @socket.accept
@@ -222,7 +232,7 @@ module Git
         end
       end
     end
-    
+
     def receive_data(session)
       if RUBY_VERSION < '1.9'
         read_data(session)
@@ -230,7 +240,7 @@ module Git
         read_data_nonblock(session)
       end
     end
-    
+
     def read_data(session)
       size_string = session.recv(4)
       return "" if !size_string
@@ -240,7 +250,7 @@ module Git
     rescue Errno::ECONNRESET
       return ""
     end
-    
+
     def read_data_nonblock(session)
       begin
         size_string = session.recv_nonblock(4)
@@ -256,7 +266,7 @@ module Git
         end
       end
     end
-  
+
   end
 end
 
@@ -280,19 +290,19 @@ OptionParser.new do |opts|
   opts.on("-a", "--address=[host]", "Host to listen on", "Default: #{options[:host]}") do |o|
     options[:host] = o
   end
-  
+
   opts.on("-l", "--logfile=[file]", "File to log to", "Default: #{options[:logfile]}") do |o|
     options[:logfile] = o
   end
-  
+
   opts.on("-P", "--pidfile=[file]", "PID file to use (if daemonized)", "Default: #{options[:pidfile]}") do |o|
     options[:pidfile] = o
   end
-  
+
   opts.on("-d", "--daemonize", "Daemonize or run in foreground", "Default: #{options[:daemonize]}") do |o|
     options[:daemonize] = o
   end
-  
+
   opts.on("-r", "--reuseaddr", "Re-use addresses", "Default: #{options[:reuseaddr].inspect}") do |o|
     options[:reuseaddr] = o
   end
@@ -300,12 +310,12 @@ OptionParser.new do |opts|
   opts.on("-g", "--disable-geoip", "Disable logging of connections with GeoIP", "Default: #{options[:disable_geoip].inspect}") do |o|
     options[:disable_geoip] = o
   end
-  
+
   opts.on_tail("-h", "--help", "Show this help message.") do
     puts opts
     exit
   end
-  
+
   # opts.on("-e", "--environment", "RAILS_ENV to use") do |o|
   #   options[:port] = o
   # end
@@ -319,4 +329,3 @@ trap("SIGINT")   { @git_daemon.handle_stop("SIGINT")  }
 trap("CLD")      { @git_daemon.handle_cld  }
 
 @git_daemon.start
-

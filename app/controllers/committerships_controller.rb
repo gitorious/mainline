@@ -1,5 +1,6 @@
 # encoding: utf-8
-#--
+#-
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,12 +18,9 @@
 #++
 
 class CommittershipsController < ApplicationController
-  before_filter :find_repository_owner,
-    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  before_filter :find_repository,
-    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
-  before_filter :require_adminship,
-    :except => [:auto_complete_for_group_name, :auto_complete_for_user_login]
+  before_filter :find_repository_owner
+  before_filter :find_repository
+  before_filter :require_adminship
   renders_in_site_specific_context
 
   def index
@@ -88,42 +86,27 @@ class CommittershipsController < ApplicationController
     redirect_to([@owner, @repository, :committerships])
   end
 
-  def auto_complete_for_group_name
-    @groups = Group.find(:all,
-      :conditions => [ 'LOWER(name) LIKE ?', '%' + params[:q].downcase + '%' ],
-      :limit => 10)
-    render :text => @groups.map{|g| g.name }.join("\n")
-    #render :layout => false
-  end
-
-  def auto_complete_for_user_login
-    @users = User.find(:all,
-      :conditions => [ 'lower(login) like :name or lower(email) like :name',
-                      {:name => '%' + params[:q].downcase + '%'} ],
-      :limit => 10)
-    render :text => @users.map{|u| u.login }.join("\n")
-    #render "/memberships/auto_complete_for_user_login", :layout => false
-  end
-
   protected
-    def require_adminship
-      unless @repository.admin?(current_user)
-        respond_to do |format|
-          format.html {
-            flash[:error] = I18n.t "repositories_controller.adminship_error"
-            redirect_to([@owner, @repository])
-          }
-          format.xml  {
-            render :text => I18n.t( "repositories_controller.adminship_error"),
-                    :status => :forbidden
-          }
-        end
-        return
+  def require_adminship
+    unless admin?(current_user, @repository)
+      respond_to do |format|
+        format.html {
+          flash[:error] = I18n.t "repositories_controller.adminship_error"
+          redirect_to([@owner, @repository])
+        }
+        format.xml  {
+          render :text => I18n.t( "repositories_controller.adminship_error"),
+          :status => :forbidden
+        }
       end
+      return
     end
+  end
 
-    def find_repository
-      @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
-        @containing_project)
-    end
+  def find_repository
+    @repository = @owner.repositories.find_by_name_in_project!(params[:repository_id],
+                                                               @containing_project)
+    authorize_access_to(@repository)
+    authorize_access_to(@repository.project)
+  end
 end

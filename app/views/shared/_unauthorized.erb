@@ -1,6 +1,6 @@
 <%
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,11 +17,10 @@
 #++
 %>
 
-<ul>
-<% @groups.each do |group| -%>
-<li class="committers">
-  <div class="name"><%=h group.name -%></div>
-  <div class="hint">(<%= pluralize group.members.count, "member", "members" -%>)</div>
-</li>
-<% end -%>
-</ul>
+<h1>Unauthorized</h1>
+<p>
+  You are not authorized to view this page.
+  <% if current_user.nil? %>
+    Try <%= link_to "logging in", login_url %> and come back.
+  <% end %>
+</p>

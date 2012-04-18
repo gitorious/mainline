@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -37,18 +38,18 @@ class CommentsController < ApplicationController
       format.atom { }
     end
   end
-  
+
   def preview
     @comment = Comment.new(params[:comment])
     respond_to do |wants|
       wants.js
     end
   end
-  
+
   def new
     @comment = @target.comments.new
   end
-  
+
   def create
     state = params[:comment].delete(:state)
     @comment = @target.comments.new(params[:comment])
@@ -67,7 +68,7 @@ class CommentsController < ApplicationController
     @comment.save
     render :partial => @comment
   end
-  
+
   protected
   def render_or_redirect
     if @comment.save
@@ -120,14 +121,14 @@ class CommentsController < ApplicationController
   def favorite_target
     @target.is_a?(MergeRequest) ? @target : @target.merge_request
   end
-  
+
   def comment_was_invalid
     respond_to { |wants|
       wants.html { render :action => "new" }
       wants.js   { render :nothing => true, :status => :not_acceptable }
     }
   end
-  
+
   def applies_to_merge_request_version?
     MergeRequestVersion === @target
   end
@@ -153,6 +154,7 @@ class CommentsController < ApplicationController
     else
       @target = @repository
     end
+    authorize_access_to(@target)
   end
 
   def redirect_to_repository_or_target
@@ -180,8 +182,8 @@ class CommentsController < ApplicationController
   end
 
   def comment_should_be_editable
-    @comment = Comment.find(params[:id])
-    if !@comment.editable_by?(current_user)
+    @comment = authorize_access_to(Comment.find(params[:id]))
+    if !can_edit?(current_user, @comment)
       render :status => :unauthorized, :text => "Sorry mate"
     end
   end

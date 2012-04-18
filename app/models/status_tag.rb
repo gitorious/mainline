@@ -37,11 +37,7 @@ class StatusTag
   end
 
   def color
-    if status && !status.color.blank?
-      status.color
-    else
-      "#cccccc"
-    end
+    status && !status.color.blank? ? status.color : "#cccccc"
   end
 
   def open?

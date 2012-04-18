@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class MergeRequestsControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context
 
   def setup
@@ -59,85 +58,55 @@ class MergeRequestsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:put, :update)
 
   context "#index (GET)" do
-    should " not require login" do
+    should "not require login" do
       session[:user_id] = nil
-      get :index, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param
+      get :index, params
       assert_response :success
     end
 
     should "gets all the merge requests in the repository" do
       %w(html xml).each do |format|
-        get :index, :project_id => @project.to_param,
-        :repository_id => @target_repository.to_param,
-        :format => format
+        get :index, params(:format => format)
         assert_equal @target_repository.merge_requests.open, assigns(:open_merge_requests)
       end
     end
 
     should "gets a comment count for" do
-      get :index, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param
+      get :index, params
       assert_equal @target_repository.comments.count, assigns(:comment_count)
     end
 
     should "filter on status" do
-      @merge_request.update_attribute(:status_tag, 'merged')
-      get :index, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param,
-      :status => "merged"
+      @merge_request.update_attribute(:status_tag, "merged")
+      get :index, params(:status => "merged")
       assert_response :success
       assert_equal [@merge_request], assigns(:open_merge_requests)
     end
 
     should "have the MergeRequestList breadcrumb as root" do
-      get :index, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param
+      get :index, params
       assert_instance_of Breadcrumb::MergeRequests, assigns(:root)
     end
 
     context "paginating merge requests" do
       setup do
-        @params = {
-          :project_id => @project.to_param,
-          :repository_id => @target_repository.to_param
-        }
+        @params = params
       end
 
       should_scope_pagination_to(:index, MergeRequest, "merge requests")
     end
   end
 
-  def stub_commits(merge_request)
-    commits = ["9dbb89110fc45362fc4dc3f60d960381",
-               "6823e6622e1da9751c87380ff01a1db1",
-               "526fa6c0b3182116d8ca2dc80dedeafb",
-               "286e8afb9576366a2a43b12b94738f07"].collect do |sha|
-      m = mock
-      m.stubs(:id).returns(sha)
-      m.stubs(:id_abbrev).returns(sha[0..7])
-      m.stubs(:committer).returns(Grit::Actor.new("bob", "bob@example.com"))
-      m.stubs(:author).returns(Grit::Actor.new("bob", "bob@example.com"))
-      m.stubs(:short_message).returns("bla bla")
-      m.stubs(:committed_date).returns(3.days.ago)
-      m.stubs(:to_patch).returns("From: #{sha}\nSubject: [PATCH]")
-      m
-    end
-    merge_request.stubs(:commits_for_selection).returns(commits)
-    merge_request.stubs(:commits_to_be_merged).returns(commits[0..1])
-  end
-
   context "#show (GET)" do
-    should " not require login" do
+    should "not require login" do
       session[:user_id] = nil
       MergeRequest.expects(:find_by_sequence_number!).returns(@merge_request)
       stub_commits(@merge_request)
       [@merge_request.source_repository, @merge_request.target_repository].each do |r|
         r.stubs(:git).returns(stub_everything("Git"))
       end
-      get :show, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param,
-      :id => @merge_request.to_param
+
+      get :show, mr_params
       assert_response :success
       assert_select "h3", :content => "Add a new comment:"
     end
@@ -146,14 +115,12 @@ class MergeRequestsControllerTest < ActionController::TestCase
       %w(html patch xml).each do |format|
         MergeRequest.expects(:find).returns(@merge_request)
         stub_commits(@merge_request)
-        get :show, :project_id => @project.to_param,
-        :repository_id => @target_repository.to_param,
-        :id => @merge_request.to_param, :format => format
+
+        get :show, mr_params(:format => format)
         assert_response :success
         assert_equal 2, assigns(:commits).size
       end
     end
-
 
     should "allow committers to change status" do
       login_as :johan
@@ -164,29 +131,26 @@ class MergeRequestsControllerTest < ActionController::TestCase
       [@merge_request.source_repository, @merge_request.target_repository].each do |r|
         r.stubs(:git).returns(git_stub)
       end
-      get :show, :project_id => @project.to_param,
-      :repository_id => repositories(:johans).name,
-      :id => @merge_request.id
+
+      get :show, mr_params
       assert_response :success
       assert_select "select#comment_state"
     end
 
-    should 'not display a comment change field unless the current user can change the MR' do
+    should "not display a comment change field unless the current user can change the MR" do
       login_as :moe
-      assert !@merge_request.resolvable_by?(users(:moe))
-      get :show, :project_id => @project.to_param,
-      :repository_id => repositories(:johans).name,
-      :id => @merge_request.to_param
+      assert !can_resolve_merge_request?(users(:moe), @merge_request)
+
+      get :show, mr_params
       assert_response :success
       assert_select "select#comment_state", false
     end
 
-    should 'display a comment change field if the current user can change the MR' do
+    should "display a comment change field if the current user can change the MR" do
       login_as :johan
-      assert @merge_request.resolvable_by?(users(:johan))
-      get :show, :project_id => @project.to_param,
-      :repository_id => repositories(:johans).name,
-      :id => @merge_request.to_param
+      assert can_resolve_merge_request?(users(:johan), @merge_request)
+
+      get :show, mr_params
       assert_response :success
       assert_select "select#comment_state"
     end
@@ -195,9 +159,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       setup { @merge_request.update_attribute(:legacy, true) }
 
       should "create a version for the legacy merge_requests" do
-        get :show, :project_id => @project.to_param,
-        :repository_id => repositories(:johans).name,
-        :id => @merge_request.to_param
+        get :show, mr_params
 
         assert_response :success
         assert_template "merge_requests/legacy"
@@ -211,9 +173,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       end
 
       should "catch timeouts and render metadata only" do
-        get :show, :project_id => @project.to_param,
-        :repository_id => repositories(:johans).name,
-        :id => @merge_request.to_param
+        get :show, mr_params
 
         assert_response :success
         assert assigns(:git_timeout_occured)
@@ -226,10 +186,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       @merge_request.sequence_number = 399
       @merge_request.target_branch = "superfly-feature"
 
-      get(:show,
-          :project_id => @project.to_param,
-          :repository_id => @target_repository.to_param,
-          :id => @merge_request.to_param)
+      get :show, mr_params
 
       assert @response.body.include?("git merge merge-requests/399")
       assert @response.body.include?("git push origin superfly-feature")
@@ -243,38 +200,34 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "requires login" do
       session[:user_id] = nil
-      get :new, :project_id => @project.to_param,
-      :repository_id => @source_repository.to_param
+      get :new, params
       assert_redirected_to(new_sessions_path)
     end
 
     should "is successful" do
       login_as :johan
-      get :new, :project_id => @project.to_param,
-      :repository_id => @source_repository.to_param
+      get :new, params
       assert_response :success
     end
 
-    should 'assign to @project even when accessed through a user' do
+    should "assign to @project even when accessed through a user" do
       johan = users(:johan)
       login_as :johan
       @source_repository.owner = johan
       @source_repository.save!
-      get :new, :user_id => johan.to_param, :repository_id => @source_repository.to_param, :project_id => @project.to_param
+      get :new, params(:user_id => johan.to_param)
       assert_response :success
     end
 
     should "assigns the new merge_requests' source_repository" do
       login_as :johan
-      get :new, :project_id => @project.to_param,
-      :repository_id => @source_repository.to_param
+      get :new, params(:repository_id => @source_repository.to_param)
       assert_equal @source_repository, assigns(:merge_request).source_repository
     end
 
     should "gets a list of possible target clones" do
       login_as :johan
-      get :new, :project_id => @project.to_param,
-      :repository_id => @source_repository.to_param
+      get :new, params(:repository_id => @source_repository.to_param)
       assert_equal [repositories(:johans)], assigns(:repositories)
     end
 
@@ -287,30 +240,21 @@ class MergeRequestsControllerTest < ActionController::TestCase
       clone.merge_requests_enabled = false
       assert clone.save
       login_as :johan
-      get :new, :project_id => @project.to_param,
-      :repository_id => @source_repository.to_param
+      get :new, params(:repository_id => @source_repository.to_param)
       assert !assigns(:repositories).include?(clone)
     end
 
     should "suggest the parent of the source repo as target" do
       login_as :johan
-      get :new, :project_id => @project.to_param, :repository_id => @source_repository.to_param
+      get :new, params(:repository_id => @source_repository.to_param)
       assert_equal @source_repository.parent.id, assigns(:merge_request).target_repository_id
     end
-  end
-
-  def do_post(data={})
-    post :create, :project_id => @project.to_param,
-    :repository_id => @source_repository.to_param, :merge_request => {
-      :target_repository_id => @target_repository.id,
-      :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
-      :summary => "some changes to be merged"
-    }.merge(data)
   end
 
   context "#create (POST)" do
     setup do
       Grit::Repo.any_instance.stubs(:heads).returns([])
+      GitoriousConfig["use_ssl"] = false
     end
 
     should "require login" do
@@ -347,12 +291,12 @@ class MergeRequestsControllerTest < ActionController::TestCase
       end
     end
 
-    should 'not require off-site signoff of terms unless the repository needs it' do
+    should "not require off-site signoff of terms unless the repository needs it" do
       login_as(:johan)
       post :create, :project_id => @project.to_param,
       :repository_id => @target_repository.to_param, :merge_request => {
         :target_repository_id => @source_repository.id,
-        :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
         :summary => "some changes"
       }
       result = assigns(:merge_request)
@@ -367,7 +311,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
         post :create, :project_id => @project.to_param,
         :repository_id => @target_repository.to_param, :merge_request => {
           :target_repository_id => @source_repository.id,
-          :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+          :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
           :summary => "some changes"
         }
       end
@@ -375,6 +319,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "it re-renders on invalid data, with the target repos list" do
       login_as :johan
+      MergeRequest.any_instance.stubs(:save).returns(false)
       do_post :target_repository => nil
       assert_response :success
       assert_template(("merge_requests/new"))
@@ -392,8 +337,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "route the merge_request_landing_page" do
-      assert_recognizes({
-                          :controller => "merge_requests",
+      assert_recognizes({ :controller => "merge_requests",
                           :action => "oauth_return",
                         }, "/merge_request_landing_page")
     end
@@ -403,44 +347,35 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Terms accepted (GET)' do
+  context "Terms accepted (GET)" do
     setup do
-      @merge_request = @source_repository.proposed_merge_requests.new({
-                                                                        :summary => "plz merge",
-                                                                        :proposal => 'Would like this to be merged',
+      @merge_request = @source_repository.proposed_merge_requests.new({ :summary => "plz merge",
+                                                                        :proposal => "Would like this to be merged",
                                                                         :user => users(:johan),
-                                                                        :ending_commit => '6823e6622e1da9751c87380ff01a1db1',
+                                                                        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
                                                                         :target_repository => @target_repository,
-                                                                        :summary => "foo"
-                                                                      })
+                                                                        :summary => "foo" })
       assert @merge_request.save
       @merge_request.stubs(:commits_to_be_merged).returns([])
       MergeRequest.stubs(:find).returns(@merge_request)
       login_as :johan
     end
 
-    should 'set the status to open when done authenticating thru OAuth' do
+    should "set the status to open when done authenticating thru OAuth" do
       @merge_request.stubs(:valid_oauth_credentials?).returns(true)
       @merge_request.expects(:terms_accepted)
-      get :terms_accepted, {:project_id => @project.to_param,
-        :repository_id => @target_repository.to_param,
-        :id => @merge_request.to_param}
+
+      get :terms_accepted, mr_params
       assert_response :redirect
     end
 
-    should 'not set the status to open if OAuth authentication has not been performed' do
+    should "not set the status to open if OAuth authentication has not been performed" do
       @merge_request.stubs(:valid_oauth_credentials?).returns(false)
-      get :terms_accepted, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param,
-      :id => @merge_request.to_param
+
+      get :terms_accepted, mr_params
       assert_response :redirect
       assert !@merge_request.open?
     end
-  end
-
-  def do_edit_get
-    get :edit, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-    :id => @merge_request.to_param
   end
 
   context "#edit (GET)" do
@@ -470,37 +405,23 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  def do_put(data={})
-    put :update, :project_id => @project.to_param,
-    :repository_id => @target_repository.to_param,
-    :id => @merge_request.to_param,
-    :merge_request => {
-      :target_repository_id => @target_repository.id,
-    }.merge(data)
-  end
-
-  def do_commit_status_get(data = {})
-    options = {:project_id => @project.to_param,:repository_id => @target_repository.to_param,:id => @merge_request.id}.merge(data)
-    get :commit_status, options
-  end
-
-  context 'commit_merged (GET)' do
+  context "commit_merged (GET)" do
     setup do
-      @merge_request.stubs(:commit_merged?).with('ffc').returns(false)
-      @merge_request.stubs(:commit_merged?).with('ffo').returns(true)
+      @merge_request.stubs(:commit_merged?).with("ffc").returns(false)
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
       MergeRequest.stubs(:find).returns(@merge_request)
     end
 
-    should 'return false if the given commit has not been merged' do
-      do_commit_status_get(:commit_id => 'ff0')
+    should "return false if the given commit has not been merged" do
+      do_commit_status_get(:commit_id => "ff0")
       assert_response :success
-      assert_equal 'true', @response.body
+      assert_equal "true", @response.body
     end
 
-    should 'return true if the given commit has been merged' do
-      do_commit_status_get(:commit_id => 'ffc')
+    should "return true if the given commit has been merged" do
+      do_commit_status_get(:commit_id => "ffc")
       assert_response :success
-      assert_equal 'false', @response.body
+      assert_equal "false", @response.body
     end
   end
 
@@ -541,6 +462,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "it re-renders on invalid data, with the target repos list" do
       login_as :johan
+      MergeRequest.any_instance.stubs(:save).returns(false)
       do_put :target_repository => nil
       assert_response :success
       assert_template(("merge_requests/edit"))
@@ -575,42 +497,38 @@ class MergeRequestsControllerTest < ActionController::TestCase
       MergeRequest.expects(:new).returns(merge_request)
     end
 
-    should " render a list of commits that can be merged" do
+    should "render a list of commits that can be merged" do
       login_as :johan
-      post :commit_list, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param,
-      :merge_request => {}
+      post :commit_list, params(:merge_request => {})
       assert_equal @commits, assigns(:commits)
     end
   end
 
   context "GET #target_branches" do
+    setup do
+      GitoriousConfig["use_ssl"] = false
+      GitoriousConfig["enable_private_repositories"] = false
+    end
+
     should "retrive a list of the target repository branches" do
       grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
       MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)
 
       login_as :johan
-      post :target_branches, :project_id => @project.to_param,
-      :repository_id => @target_repository.to_param,
-      :merge_request => {:target_repository_id => repositories(:johans).id}
+      post :target_branches, mr_params(:merge_request => {
+        :target_repository_id => repositories(:johans).id
+      })
       assert_response :success
       assert_equal grit.branches, assigns(:target_branches)
     end
   end
 
-  context 'GET #version' do
-    should 'render the diff browser for the given version' do
+  context "GET #version" do
+    should "render the diff browser for the given version" do
       MergeRequest.stubs(:find).returns(@merge_request)
-      get :version, :project_id => @project.to_param, :repository_id => @target_repository.to_param,
-      :id => @merge_request.to_param, :version => @merge_request.versions.first.version
+      get :version, mr_params(:version => @merge_request.versions.first.version)
       assert_response :success
     end
-  end
-
-  def do_delete
-    delete :destroy, :project_id => @project.to_param,
-    :repository_id => @target_repository.to_param,
-    :id => @merge_request.to_param
   end
 
   context "#destroy (DELETE)" do
@@ -646,15 +564,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Redirection from the outside' do
+  context "Redirection from the outside" do
     setup do
       @merge_request = merge_requests(:moes_to_johans)
     end
 
-    should 'redirect to the correct URL when supplying only an id' do
+    should "redirect to the correct URL when supplying only an id" do
       get :direct_access, :id => @merge_request.id
-      assert_redirected_to({
-                             :action => 'show',
+      assert_redirected_to({ :action => "show",
                              :project_id => @merge_request.target_repository.project,
                              :repository_id => @merge_request.target_repository,
                              :id => @merge_request.to_param})
@@ -663,8 +580,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "routing" do
     should "route for repositories thats owned by users with dots in their username on #index" do
-      assert_recognizes({
-                          :controller => "merge_requests",
+      assert_recognizes({ :controller => "merge_requests",
                           :action => "index",
                           :user_id => "mc.hammer",
                           :project_id => "myproject",
@@ -680,8 +596,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "route for repositories thats owned by users with dots in their username on #show" do
-      assert_recognizes({
-                          :controller => "merge_requests",
+      assert_recognizes({ :controller => "merge_requests",
                           :action => "show",
                           :user_id => "mc.hammer",
                           :project_id => "myproject",
@@ -699,4 +614,353 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
   end
 
+  context "With private projects" do
+    setup do
+      enable_private_repositories
+      stub_commits(@merge_request)
+      MergeRequest.stubs(:find).returns(@merge_request)
+    end
+
+    should "disallow unauthenticated users from listing merge requests" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authenticated users to list merge requests" do
+      MergeRequest.unstub(:find)
+      login_as :johan
+      get :index, params
+      assert_response :success
+    end
+
+    should "disallow unauthenticated users from listing commits" do
+      login_as :mike
+      post :commit_list, params(:merge_request => {})
+      assert_response 403
+    end
+
+    should "allow authenticated users to list commits" do
+      login_as :johan
+      post :commit_list, params(:merge_request => {})
+      assert_response 200
+    end
+
+    should "disallow unauthenticated users from viewing commit status" do
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
+
+      do_commit_status_get(:commit_id => "ff0")
+      assert_response 403
+    end
+
+    should "allow authenticated users to view commit status" do
+      login_as :johan
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
+
+      do_commit_status_get(:commit_id => "ff0")
+      assert_response :success
+    end
+
+    context "GET #target_branches" do
+      setup do
+        grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+        MergeRequest.any_instance.stubs(:target_branches_for_selection).returns(grit.branches)
+        @params = mr_params(:merge_request => { :target_repository_id => repositories(:johans).id })
+      end
+
+      should "disallow unauthenticated users" do
+        login_as :mike
+        post :target_branches, @params
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        post :target_branches, @params
+        assert_response 200
+      end
+    end
+
+    context "#show (GET)" do
+      should "disallow unauthenticated users" do
+        get :show, mr_params
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :show, mr_params
+        assert_response 200
+      end
+    end
+
+    context "GET #version" do
+      should "disallow unauthenticated users" do
+        get :version, mr_params(:version => @merge_request.versions.first.version)
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :version, mr_params(:version => @merge_request.versions.first.version)
+        assert_response 200
+      end
+    end
+
+    should "disallows unauthenticated user from opening new MR" do
+      login_as :mike
+      get :new, params
+      assert_response 403
+    end
+
+    should "allows authenticated user to open new MR" do
+      login_as :johan
+      get :new, params
+      assert_response :success
+    end
+
+    should "disallow unauthenticated user from accepting terms" do
+      login_as :mike
+      get :terms_accepted, mr_params
+      assert_response 403
+    end
+
+    should "allow authenticated user to accept terms" do
+      login_as :johan
+      @merge_request.stubs(:valid_oauth_credentials?).returns(true)
+      @merge_request.expects(:terms_accepted)
+
+      get :terms_accepted, mr_params
+      assert_response :redirect
+    end
+
+    should "disallow unauthenticated user from creating MR" do
+      login_as :mike
+      post :create, params(:merge_request => {
+        :target_repository_id => @source_repository.id,
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+        :summary => "some changes"
+      })
+
+      assert_response 403
+    end
+
+    should "allow authenticated user to create MR" do
+      login_as :johan
+      post :create, params(:merge_request => {
+        :target_repository_id => @source_repository.id,
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+        :summary => "some changes"
+      })
+
+      assert_response 302
+    end
+
+    should "disallow unauthenticated users direct access" do
+      get :direct_access, :id => @merge_request.id
+      assert_response 403
+    end
+  end
+
+  context "With private repositories" do
+    setup do
+      enable_private_repositories(@target_repository)
+      @project.content_memberships.delete_all
+      stub_commits(@merge_request)
+      MergeRequest.stubs(:find).returns(@merge_request)
+    end
+
+    should "disallow unauthenticated users from listing merge requests" do
+      get :index, params
+      assert_response 403
+    end
+
+    should "allow authenticated users to list merge requests" do
+      MergeRequest.unstub(:find)
+      login_as :johan
+      get :index, params
+      assert_response :success
+    end
+
+    should "disallow unauthenticated users from listing commits" do
+      login_as :mike
+      post :commit_list, params(:merge_request => {})
+      assert_response 403
+    end
+
+    should "allow authenticated users to list commits" do
+      login_as :johan
+      post :commit_list, params(:merge_request => {})
+      assert_response 200
+    end
+
+    should "disallow unauthenticated users from viewing commit status" do
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
+
+      do_commit_status_get(:commit_id => "ff0")
+      assert_response 403
+    end
+
+    should "allow authenticated users to view commit status" do
+      login_as :johan
+      @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
+
+      do_commit_status_get(:commit_id => "ff0")
+      assert_response :success
+    end
+
+    context "GET #target_branches" do
+      setup do
+        grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+        MergeRequest.any_instance.stubs(:target_branches_for_selection).returns(grit.branches)
+        @params = mr_params(:merge_request => { :target_repository_id => repositories(:johans).id })
+      end
+
+      should "disallow unauthenticated users" do
+        login_as :mike
+        post :target_branches, @params
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        post :target_branches, @params
+        assert_response 200
+      end
+    end
+
+    context "#show (GET)" do
+      should "disallow unauthenticated users" do
+        get :show, mr_params
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :show, mr_params
+        assert_response 200
+      end
+    end
+
+    context "GET #version" do
+      should "disallow unauthenticated users" do
+        get :version, mr_params(:version => @merge_request.versions.first.version)
+        assert_response 403
+      end
+
+      should "allow authenticated users" do
+        login_as :johan
+        get :version, mr_params(:version => @merge_request.versions.first.version)
+        assert_response 200
+      end
+    end
+
+    should "disallows unauthenticated user from opening new MR" do
+      login_as :mike
+      get :new, params
+      assert_response 403
+    end
+
+    should "allows authenticated user to open new MR" do
+      login_as :johan
+      get :new, params
+      assert_response :success
+    end
+
+    should "disallow unauthenticated user from accepting terms" do
+      login_as :mike
+      get :terms_accepted, mr_params
+      assert_response 403
+    end
+
+    should "allow authenticated user to accept terms" do
+      login_as :johan
+      @merge_request.stubs(:valid_oauth_credentials?).returns(true)
+      @merge_request.expects(:terms_accepted)
+
+      get :terms_accepted, mr_params
+      assert_response :redirect
+    end
+
+    should "disallow unauthenticated user from creating MR" do
+      login_as :mike
+      post :create, params(:merge_request => {
+        :target_repository_id => @source_repository.id,
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+        :summary => "some changes"
+      })
+
+      assert_response 403
+    end
+
+    should "allow authenticated user to create MR" do
+      login_as :johan
+      post :create, params(:merge_request => {
+        :target_repository_id => @source_repository.id,
+        :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+        :summary => "some changes"
+      })
+
+      assert_response 302
+    end
+
+    should "disallow unauthenticated users direct access" do
+      get :direct_access, :id => @merge_request.id
+      assert_response 403
+    end
+  end
+
+  private
+  def params(data = {})
+    { :project_id => @project.to_param,
+      :repository_id => @target_repository.to_param }.merge(data)
+  end
+
+  def mr_params(data = {})
+    params(:id => @merge_request.to_param).merge(data)
+  end
+
+  def stub_commits(merge_request)
+    commits = ["9dbb89110fc45362fc4dc3f60d960381",
+               "6823e6622e1da9751c87380ff01a1db1",
+               "526fa6c0b3182116d8ca2dc80dedeafb",
+               "286e8afb9576366a2a43b12b94738f07"].collect do |sha|
+      m = mock
+      m.stubs(:id).returns(sha)
+      m.stubs(:id_abbrev).returns(sha[0..7])
+      m.stubs(:committer).returns(Grit::Actor.new("bob", "bob@example.com"))
+      m.stubs(:author).returns(Grit::Actor.new("bob", "bob@example.com"))
+      m.stubs(:short_message).returns("bla bla")
+      m.stubs(:committed_date).returns(3.days.ago)
+      m.stubs(:to_patch).returns("From: #{sha}\nSubject: [PATCH]")
+      m
+    end
+    merge_request.stubs(:commits_for_selection).returns(commits)
+    merge_request.stubs(:commits_to_be_merged).returns(commits[0..1])
+  end
+
+  def do_post(data={})
+    post :create, params(:repository_id => @source_repository.to_param, :merge_request => {
+      :target_repository_id => @target_repository.id,
+      :ending_commit => "6823e6622e1da9751c87380ff01a1db1",
+      :summary => "some changes to be merged"
+    }.merge(data))
+  end
+
+  def do_edit_get
+    get :edit, mr_params
+  end
+
+  def do_put(data={})
+    put :update, mr_params(:merge_request => {
+      :target_repository_id => @target_repository.id,
+    }.merge(data))
+  end
+
+  def do_delete
+    delete :destroy, mr_params
+  end
+
+  def do_commit_status_get(data = {})
+    get :commit_status, mr_params(data)
+  end
 end

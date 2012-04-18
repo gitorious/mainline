@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #
@@ -17,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require File.dirname(__FILE__) + "/../test_helper"
 
 class UsersControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :avatar)
@@ -67,19 +68,19 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   should "activate user" do
-    assert_nil User.authenticate('moe', 'test')
+    assert_nil User.authenticate("moe", "test")
     get :activate, :activation_code => users(:moe).activation_code
-    assert_redirected_to('/')
+    assert_redirected_to("/")
     assert_not_nil flash[:notice]
-    assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
+    assert_equal users(:moe), User.authenticate("moe@example.com", "test")
   end
 
   should "flashes a message when the activation code is invalid" do
     get :activate, :activation_code => "fubar"
-    assert_redirected_to('/')
+    assert_redirected_to("/")
     assert_nil flash[:notice]
     assert_equal "Invalid activation code", flash[:error]
-    assert_nil User.authenticate('moe@example.com', 'test')
+    assert_nil User.authenticate("moe@example.com", "test")
   end
 
   context "Routing" do
@@ -112,9 +113,9 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   def create_user(options = {})
-    post :create, :user => { :login => 'quire', :email => 'quire@example.com',
-      :password => 'quire', :password_confirmation => 'quire',
-      :terms_of_use => '1' }.merge(options)
+    post :create, :user => { :login => "quire", :email => "quire@example.com",
+      :password => "quire", :password_confirmation => "quire",
+      :terms_of_use => "1" }.merge(options)
   end
 
   should "allow signups" do
@@ -143,7 +144,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require password confirmation on signup" do
     assert_no_difference("User.count") do
       create_user(:password_confirmation => nil)
-      assert !assigns(:user).errors.on(:password_confirmation).empty?, 'empty? should be false'
+      assert !assigns(:user).errors.on(:password_confirmation).empty?
       assert_template(("users/new"))
     end
   end
@@ -151,12 +152,12 @@ class UsersControllerTest < ActionController::TestCase
   should "require email on signup" do
     assert_no_difference("User.count") do
       create_user(:email => nil)
-      assert !assigns(:user).errors.on(:email).empty?, 'empty? should be false'
+      assert !assigns(:user).errors.on(:email).empty?, "empty? should be false"
       assert_template(("users/new"))
     end
   end
 
-  should 'require acceptance of end user license agreement' do
+  should "require acceptance of end user license agreement" do
     assert_no_difference("User.count") do
       create_user(:terms_of_use => nil)
     end
@@ -170,8 +171,8 @@ class UsersControllerTest < ActionController::TestCase
 
   should "requires the user to activate himself after posting valid data" do
     create_user
-    assert_equal nil, User.authenticate('quire@example.com', 'quire')
-    assert !@controller.send(:logged_in?), 'controller.send(:logged_in?) should be false'
+    assert_equal nil, User.authenticate("quire@example.com", "quire")
+    assert !@controller.send(:logged_in?)
   end
 
   should "shows the user" do
@@ -319,7 +320,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_match(/A password confirmation link has been sent/, flash[:success])
     end
 
-    should 'notify non-activated users that they need to activate their accounts before resetting the password' do
+    should "notify non-activated users that they need to activate their accounts before resetting the password" do
       user = users(:johan)
       user.expects(:activated?).returns(false)
       User.expects(:find_by_email).returns(user)
@@ -331,28 +332,28 @@ class UsersControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig['public_mode'] = false
+      GitoriousConfig["public_mode"] = false
     end
 
     teardown do
-      GitoriousConfig['public_mode'] = true
+      GitoriousConfig["public_mode"] = true
     end
 
     should "activate user" do
-      assert_nil User.authenticate('moe', 'test')
+      assert_nil User.authenticate("moe", "test")
       get :activate, :activation_code => users(:moe).activation_code
 
-      assert_redirected_to('/')
+      assert_redirected_to("/")
       assert !flash[:notice].nil?
-      assert_equal users(:moe), User.authenticate('moe@example.com', 'test')
+      assert_equal users(:moe), User.authenticate("moe@example.com", "test")
     end
 
     should "flashes a message when the activation code is invalid" do
       get :activate, :activation_code => "fubar"
-      assert_redirected_to('/')
+      assert_redirected_to("/")
       assert_nil flash[:notice]
       assert_equal "Invalid activation code", flash[:error]
-      assert_nil User.authenticate('moe@example.com', 'test')
+      assert_nil User.authenticate("moe@example.com", "test")
     end
 
     should "GET /users/johan" do
@@ -375,6 +376,7 @@ class UsersControllerTest < ActionController::TestCase
 
   context "account-related tests" do
     setup do
+      GitoriousConfig["use_ssl"] = false
       login_as :johan
     end
 
@@ -473,14 +475,14 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "be able to update password, even if user created his account with openid" do
-      user = users(:johan)
-      user.update_attribute(:crypted_password, nil)
+      user = create_open_id_user("mropenid", "open@id.com", "http://myauth")
+      login_as user
       put :update_password, :id => user.to_param, :user => {
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_redirected_to user_path(user)
       assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+      assert_equal user, User.authenticate("open@id.com", "fubar")
     end
 
     should "be able to delete his avatar" do
@@ -553,7 +555,7 @@ class UsersControllerTest < ActionController::TestCase
 
   context "Creation from OpenID" do
     setup do
-      @valid_session_options = {:openid_url => 'http://moe.example/', :openid_nickname => 'schmoe'}
+      @valid_session_options = {:openid_url => "http://moe.example/", :openid_nickname => "schmoe"}
     end
 
     should "deny access unless OpenID information is present in the session" do
@@ -565,7 +567,7 @@ class UsersControllerTest < ActionController::TestCase
       get :openid_build, {}, @valid_session_options
       user = assigns(:user)
       assert_not_nil user
-      assert_equal 'http://moe.example/', user.identity_url
+      assert_equal "http://moe.example/", user.identity_url
       assert_response :success
     end
 
@@ -573,16 +575,16 @@ class UsersControllerTest < ActionController::TestCase
       post :openid_create, {:user => {}}, @valid_session_options
       user = assigns(:user)
       assert_response :success
-      assert_template 'users/openid_build'
+      assert_template "users/openid_build"
     end
 
     should "create a user with the provided credentials and openid url on success" do
       assert_incremented_by(ActionMailer::Base.deliveries, :size, 1) do
         post :openid_create, {:user => {
-          :fullname => 'Moe Schmoe',
-          :email => 'moe@schmoe.example',
-          :login => 'schmoe',
-          :terms_of_use => '1'
+          :fullname => "Moe Schmoe",
+          :email => "moe@schmoe.example",
+          :login => "schmoe",
+          :terms_of_use => "1"
           }
         }, @valid_session_options
       end
@@ -597,14 +599,118 @@ class UsersControllerTest < ActionController::TestCase
 
     should "redirect to the dashboard on successful creation" do
       post :openid_create, { :user => {
-          :fullname => 'Moe Schmoe',
-          :email => 'moe@schmoe.example',
-          :login => 'schmoe',
-          :terms_of_use => '1'
+          :fullname => "Moe Schmoe",
+          :email => "moe@schmoe.example",
+          :login => "schmoe",
+          :terms_of_use => "1"
         }
       }, @valid_session_options
 
       assert_redirected_to "/"
     end
+  end
+
+  context "With private repositories" do
+    setup do
+      @user = users(:johan)
+      @project = @user.projects.first
+      enable_private_repositories
+    end
+
+    should "filter projects" do
+      get :show, :id => @user.to_param
+      assert assigns(:projects).none? { |p| p == @project }
+    end
+
+    should "show authorized projects" do
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert assigns(:projects).any? { |p| p == @project }
+    end
+
+    should "filter commit repositories" do
+      get :show, :id => @user.to_param
+      assert assigns(:repositories).none? { |r| r.project == @project }
+    end
+
+    should "show authorized commit repositories" do
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert assigns(:repositories).any? { |r| r.project == @project }
+    end
+
+    should "filter events" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      get :show, :id => @user.to_param
+      assert_equal 1, assigns(:events).length
+      assert assigns(:events).none? { |e| e.project == @project }
+    end
+
+    should "show authorized events" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert_equal 3, assigns(:events).length
+    end
+
+    should "filter favorites" do
+      get :show, :id => @user.to_param
+      assert assigns(:favorites).none? { |f| f.project == @project }
+    end
+
+    should "show authorized favorites" do
+      login_as :johan
+      get :show, :id => @user.to_param
+      assert assigns(:favorites).any? { |f| f.project == @project }
+    end
+
+    should "exclude unauthorized events from atom feed" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      get :feed, :id => @user.to_param, :format => "atom"
+
+      assert_equal 1, assigns(:events).length
+    end
+
+    should "include authorized events in atom feed" do
+      create_event(projects(:moes), @project.repositories.first)
+      create_event(@project, @project.repositories.first)
+      create_event(projects(:moes), projects(:moes).repositories.first)
+
+      login_as :johan
+      get :feed, :id => @user.to_param, :format => "atom"
+
+      assert_equal 3, assigns(:events).length
+    end
+  end
+
+  private
+  def create_event(project, target)
+    e = Event.new({ :target => target,
+                    :data => "master",
+                    :action => Action::CREATE_BRANCH })
+    e.user = @user
+    e.project = project
+    e.save!
+  end
+
+  def create_open_id_user(login, email, identity_url)
+    user = User.new
+    user.login = login
+    user.email = email
+    user.identity_url = identity_url
+    user.terms_of_use = "1"
+    user.accept_terms
+    user.activate
+    user.save!
+    user
   end
 end

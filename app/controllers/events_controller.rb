@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
@@ -20,25 +21,9 @@
 #++
 
 class EventsController < ApplicationController
-  def index
-    @events = paginate(page_free_redirect_options) do
-      Event.paginate(:all, :order => "events.created_at desc",
-                     :page => params[:page], :include => [:user])
-    end
-
-    return if @events.count == 0 && params.key?(:page)
-    @atom_auto_discovery_url = events_path(:format => :atom)
-
-    respond_to do |if_format_is|
-      if_format_is.html {}
-      if_format_is.atom {}
-    end
-  end
+  before_filter :find_event
 
   def commits
-    @event = Event.find(params[:id])
-    @repository = @event.target
-    @project = @repository.project
     if @event.action == Action::PUSH
       render_old_style_push
     else
@@ -46,6 +31,7 @@ class EventsController < ApplicationController
     end
   end
 
+  private
   # TODO: Remove when old push events are removed
   def render_old_style_push
     @commit_count = @event.events.count
@@ -72,5 +58,11 @@ class EventsController < ApplicationController
       end
       expires_in 30.minutes
     end
+  end
+
+  def find_event
+    @event = authorize_access_to(Event.find(params[:id]))
+    @repository = @event.target
+    @project = @repository.project
   end
 end

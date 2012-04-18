@@ -28,26 +28,26 @@
     <%= f.label :description, t('views.groups.description') -%>
      <div><%= t("views.common.format_using_markdown", :markdown => 'markdown') -%><%= f.text_area :description %> </div>
   </li>
-  
+
   <li>
     <%= f.label :avatar, t('views.groups.avatar') -%>
     <div><%= image_tag @group.avatar.url(:thumb) %>
     <%- if @group.avatar? -%>
-      <%= button_to_function("Delete current team image", 
+      <%= button_to_function("Delete current team image",
         "if (confirm('Are you sure you want to delete the team image?')) $('#delete_avatar').submit()") %>
     <%- end -%><br />
     <%= f.file_field :avatar %> </div>
   </li>
 
 
-</fieldset> 
+</fieldset>
 <fieldset class="submit">
-	<%= f.submit t("views.groups.update_team_submit") -%>
+        <%= f.submit t("views.groups.update_team_submit") -%>
 </fieldset>
 <% end -%>
 
 <% content_for :sidebar do -%>
-  <% if current_user.site_admin? || (@group.admin?(current_user) && @group.deletable?) -%>
+  <% if site_admin?(current_user) || (admin?(current_user, @group) && @group.deletable?) -%>
     <p>
       <%= button_to("Delete this group permanently", group_path(@group),
             :method => :delete, :confirm => "Do you really wish to DELETE this group?") -%>

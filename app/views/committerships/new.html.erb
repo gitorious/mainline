@@ -19,69 +19,20 @@
 
 <%= breadcrumbs_from(@committership) -%>
 
-<% content_for :extra_head do -%>
-<script type="text/javascript" charset="utf-8">
-  $(document).ready(function(){
-    $("#add_group_link").click(function(event){
-      $('#add_user').hide();
-      $('#add_group').show();
-      $("#add_user_tab").removeClass("selected");
-      $("#add_group_tab").addClass("selected");
-      event.preventDefault();
-    });
-    $("#add_user_link").click(function(event) {
-      $('#add_group').hide();
-      $('#add_user').show();
-      $("#add_group_tab").removeClass("selected");
-      $("#add_user_tab").addClass("selected");
-      event.preventDefault();
-    });
-    options = {matchSubset: false}
-    $("input#user_login_autocomplete").autocomplete("<%= url_for(:action => :auto_complete_for_user_login) -%>", options);
-    $("input#group_name_autocomplete").autocomplete("<%= url_for(:action => :auto_complete_for_group_name) -%>", options);
-  });
-</script>
-<% end -%>
-
-<h1>
-  <%= t("views.collaborators.new_title", :repo_name => @repository.name)  -%>
-</h1>
+<h1><%= t("views.collaborators.new_title", :repo_name => @repository.name) -%></h1>
 
 <%= error_messages_for :committership -%>
-<% form_for [@owner, @repository, @committership] do |f| -%>
-  <ul class="tab_menu inline_tabs">
-    <li class="selected"  id="add_user_tab">
-      <a href="#add_user" id="add_user_link"><%= t("views.collaborators.add_user") -%></a>
-    </li>
-    <li id="add_group_tab">
-      <a href="#add_group" id="add_group_link"><%= t("views.collaborators.add_team") -%></a>
-    </a>
-  </ul>
-
-  <p class="tab-content" id="add_user">
-    <%= f.label :group_name, t("views.collaborators.user_login") -%>   <br />
-    <%= text_field :user, :login, :id => "user_login_autocomplete" -%>
-  </p>
-  <p class="tab-content" id="add_group" style="display:none;">
-    <%= f.label :group_name, t("views.collaborators.group_name") -%>   <br />
-    <%= text_field :group, :name, :id => "group_name_autocomplete" -%>
-    <br /><span class="hint">
-      <%= t("views.collaborators.add_team_note") -%>
-    </span>
-  </p>
-
+<% form_for [@owner, @repository, @committership], :html => { :class => "collaborator_form" } do |f| -%>
+  <%= render :partial => "/shared/tabbed_collaborator_form" %>
   <p><%= f.label :permissions -%>:
-		<p><%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %></p>
-  		<p><%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %></p>
-     	<p><%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administer" %></p>
-
-
+  <p><%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %></p>
+  <p><%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %></p>
+  <p><%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administer" %></p>
   <p>
     <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
     <%= t("views.collaborators.or_return_to") -%>
     <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
   </p>
-
 <% end -%>
 
 <% content_for :sidebar do %>

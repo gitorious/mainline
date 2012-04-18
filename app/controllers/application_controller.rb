@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
@@ -24,6 +25,7 @@ class ApplicationController < ActionController::Base
   include AuthenticatedSystem
   include ExceptionNotifiable
   include RoutingHelper
+  include Gitorious::Authorization
   protect_from_forgery
 
   before_filter :public_and_logged_in
@@ -43,6 +45,7 @@ class ApplicationController < ActionController::Base
   rescue_from Grit::GitRuby::Repository::NoSuchPath, :with => :render_not_found
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
+  rescue_from Gitorious::Authorization::UnauthorizedError, :with => :render_unauthorized
 
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -111,15 +114,22 @@ class ApplicationController < ActionController::Base
   def find_repository_owner
     if params[:user_id]
       @owner = User.find_by_login!(params[:user_id])
-      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
+      set_containing_project
     elsif params[:group_id]
       @owner = Group.find_by_name!(params[:group_id])
-      @containing_project = Project.find_by_slug!(params[:project_id]) if params[:project_id]
+      set_containing_project
     elsif params[:project_id]
       @owner = Project.find_by_slug!(params[:project_id])
-      @project = @owner
+      @project = authorize_access_to(@owner)
     else
       raise ActiveRecord::RecordNotFound
+    end
+  end
+
+  def set_containing_project
+    if params[:project_id]
+      project = Project.find_by_slug!(params[:project_id])
+      @containing_project = authorize_access_to(project)
     end
   end
 
@@ -128,15 +138,23 @@ class ApplicationController < ActionController::Base
     @owner.repositories.find_by_name!(params[:id])
   end
 
+  def authorize_access_to(thing)
+    if !can_read?(current_user, thing)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+    end
+    thing
+  end
+
   def find_project
-    @project = Project.find_by_slug!(params[:project_id])
+    @project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
   end
 
   def find_project_and_repository
-    @project = Project.find_by_slug!(params[:project_id])
+    @project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
     # We want to look in all repositories that's somehow within this project
     # realm, not just @project.repositories
-    @repository = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)
+    r = Repository.find_by_name_and_project_id!(params[:repository_id], @project.id)
+    @repository = authorize_access_to(r)
   end
 
   def check_repository_for_commits
@@ -157,6 +175,12 @@ class ApplicationController < ActionController::Base
   def render_throttled_record
     render :partial => "/shared/throttled_record",
     :layout => "application", :status => 412 # precondition failed
+    return false
+  end
+
+  def render_unauthorized
+    render :partial => "/shared/unauthorized",
+    :layout => "application", :status => 403 # forbidden
     return false
   end
 
@@ -363,7 +387,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pjax_request?
-    request.headers['X-PJAX']
+    request.headers["X-PJAX"]
   end
 
   def redirect_to_ref(ref, repo_view)
@@ -388,6 +412,25 @@ class ApplicationController < ActionController::Base
   def handle_unknown_ref(ref, git, repo_view)
     flash[:error] = "\"#{CGI.escapeHTML(ref)}\" was not a valid ref, trying #{CGI.escapeHTML(git.head.name)} instead"
     redirect_to_ref(git.head.name, repo_view)
+  end
+
+  def filter(collection)
+    filter_authorized(current_user, collection)
+  end
+
+  def filter_paginated(page, per_page = 30, &block)
+    page = 1 if page.nil?
+    WillPaginate::Collection.create(page, per_page) do |pager|
+      result = filter(block.call(page))
+
+      # inject the result array into the paginated collection:
+      pager.replace(result)
+
+      unless pager.total_entries
+        # the pager didn't manage to guess the total count, do it manually
+        pager.total_entries = result.first.nil? ? 0 : result.first.class.count
+      end
+    end
   end
 
   helper_method :unshifted_polymorphic_path

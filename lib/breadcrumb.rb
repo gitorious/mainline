@@ -144,12 +144,12 @@ module Breadcrumb
     def title
       @page.title
     end
-    
+
     def breadcrumb_css_class
       'file'
     end
   end
- 
+
   class Memberships
     def initialize(group)
       @group = group
@@ -206,6 +206,34 @@ module Breadcrumb
   end
 
   class Committerships
+    def initialize(repository)
+      @repository = repository
+    end
+
+    def breadcrumb_parent
+      @repository
+    end
+
+    def title
+      "Collaborators"
+    end
+  end
+
+  class ProjectMemberships
+    def initialize(project)
+      @project = project
+    end
+
+    def breadcrumb_parent
+      @project
+    end
+
+    def title
+      "Collaborators"
+    end
+  end
+
+  class RepositoryMemberships
     def initialize(repository)
       @repository = repository
     end

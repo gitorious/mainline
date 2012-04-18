@@ -96,21 +96,21 @@ class ProjectTest < ActiveSupport::TestCase
     assert_equal projects(:johans).slug, projects(:johans).to_param
   end
 
-  should "knows if a user is a admin on a project" do
+  should "knows if a user is admin on a project" do
     project = projects(:johans)
-    assert project.admin?(users(:johan))
+    assert admin?(users(:johan), project)
     project.owner = groups(:team_thunderbird)
-    assert !project.admin?(users(:johan))
+    assert !admin?(users(:johan), project)
     project.owner.add_member(users(:johan), Role.admin)
-    assert project.admin?(users(:johan))
+    assert admin?(users(:johan), project)
 
-    assert !project.admin?(users(:moe))
+    assert !admin?(users(:moe), project)
     project.owner.add_member(users(:moe), Role.member)
-    assert !project.admin?(users(:moe))
+    assert !admin?(users(:moe), project)
     # be able to deal with AuthenticatedSystem's quirky design:
-    assert !project.admin?(:false)
-    assert !project.admin?(false)
-    assert !project.admin?(nil)
+    assert !admin?(:false, project)
+    assert !admin?(false, project)
+    assert !admin?(nil, project)
   end
 
   should "knows if a user is a member on a project" do
@@ -123,7 +123,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     assert !project.member?(users(:moe))
     project.owner.add_member(users(:moe), Role.member)
-    assert !project.admin?(users(:moe))
+    assert !admin?(users(:moe), project)
     # be able to deal with AuthenticatedSystem's quirky design:
     assert !project.member?(:false)
     assert !project.member?(false)
@@ -132,10 +132,10 @@ class ProjectTest < ActiveSupport::TestCase
 
   should "knows if a user can delete the project" do
     project = projects(:johans)
-    assert !project.can_be_deleted_by?(users(:moe))
-    assert !project.can_be_deleted_by?(users(:johan)) # it has clones..
+    assert !can_delete?(users(:moe), project)
+    assert !can_delete?(users(:johan), project) # it has clones..
     project.repositories.clones.each(&:destroy)
-    assert project.reload.can_be_deleted_by?(users(:johan)) # the clones are clone
+    assert can_delete?(users(:johan), project.reload) # the clones are clone
   end
 
   should "strip html tags" do
@@ -147,11 +147,6 @@ class ProjectTest < ActiveSupport::TestCase
     project = create_project
     assert project.breadcrumb_parent.nil?
   end
-
-  # should "strip html tags, except highlights" do
-  #   project = create_project(:description => %Q{<h1>Project A</h1>\n<strong class="highlight">Project A</strong> is a....})
-  #   assert_equal %Q(Project A\n<strong class="highlight">Project A</strong> is a....), #   project.stripped_description
-  # end
 
   should "have valid urls ( prepending http:// if needed )" do
     project = projects(:johans)
@@ -525,7 +520,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     should "be suspendable" do
       @project.suspend!
-      assert @project.suspended? 
+      assert @project.suspended?
     end
 
     should "by default scope to non-suspended projects" do
@@ -543,12 +538,94 @@ class ProjectTest < ActiveSupport::TestCase
     should "have a tag_list= setter" do
       @project.tag_list = "fun pretty scary"
       assert_equal(%w(fun pretty scary), @project.tag_list)
-    end    
+    end
   end
 
   should "not allow api as slug" do
     p = Project.new(:slug => "api")
     assert !p.valid?
     assert_not_nil p.errors.on(:slug)
+  end
+
+  context "Database authorization" do
+    context "with private repositories enabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+
+      should "allow anonymous user to view public project" do
+        project = Project.new(:title => "My project")
+        assert can_read?(nil, project)
+      end
+
+      should "allow owner to view private project" do
+        projects(:johans).owner = users(:johan)
+        projects(:johans).add_member(users(:johan))
+        assert can_read?(users(:johan), projects(:johans))
+      end
+
+      should "disallow anonymous user to view private project" do
+        projects(:johans).add_member(users(:johan))
+        assert !can_read?(nil, projects(:johans))
+      end
+
+      should "allow member to view private project" do
+        projects(:johans).owner = users(:johan)
+        projects(:johans).add_member(users(:mike))
+        assert can_read?(users(:mike), projects(:johans))
+      end
+
+      should "allow member to view private project via group membership" do
+        projects(:johans).owner = users(:johan)
+        projects(:johans).add_member(groups(:team_thunderbird))
+        assert can_read?(users(:mike), projects(:johans))
+      end
+    end
+
+    context "with private repositories disabled" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+      end
+
+      should "allow anonymous user to view 'private' project" do
+        projects(:johans).add_member(users(:johan))
+        assert can_read?(nil, projects(:johans))
+      end
+    end
+
+    context "making projects private" do
+      setup do
+        @user = users(:johan)
+        @project = projects(:johans)
+        GitoriousConfig["enable_private_repositories"] = true
+      end
+
+      should "add owner as member" do
+        @project.make_private
+        assert !can_read?(users(:mike), @project)
+      end
+    end
+  end
+
+  context "project memberships" do
+    should "silently ignore duplicates" do
+      project = projects(:johans)
+      project.add_member(users(:mike))
+      project.add_member(users(:mike))
+
+      assert project.member?(users(:mike))
+      assert is_member?(users(:mike), project)
+      assert_equal 1, project.content_memberships.count
+    end
+  end
+
+  private
+    def create_event(project, target, user)
+    e = Event.new({ :target => target,
+                    :data => "master",
+                    :action => Action::CREATE_BRANCH })
+    e.user = user
+    e.project = project
+    e.save!
   end
 end

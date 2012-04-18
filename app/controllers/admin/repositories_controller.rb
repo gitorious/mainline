@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,10 +16,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class Admin::RepositoriesController < ApplicationController
-  before_filter :login_required
-  before_filter :require_site_admin
 
+class Admin::RepositoriesController < AdminController
   def index
     @unready_repositories = paginate(:action => "index") do
       Repository.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
@@ -30,13 +29,5 @@ class Admin::RepositoriesController < ApplicationController
     @repository.post_repo_creation_message
     flash[:notice] = "Recreation message posted"
     redirect_to :action => :index
-  end
-
-  private
-  def require_site_admin
-    unless current_user.site_admin?
-      flash[:error] = I18n.t "admin.users_controller.check_admin"
-      redirect_to root_path
-    end
   end
 end

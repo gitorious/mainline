@@ -1,0 +1,50 @@
+<%
+#--
+#   Copyright (C) 2012 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<%= breadcrumbs_from(@root) -%>
+<% if flash[:error] %>
+  <h2 class="error">
+<% end %>
+
+<h1><%= t("views.collaborators.title",
+          :repo_name => link_to(h(@project.title), [@owner, @project]))  -%></h1>
+
+<% if @memberships.count == 0 %>
+  <h2>Project is public</h2>
+  <p>
+    <%= link_to "Make private", project_project_memberships_path(@project), :method => :post %>
+  </p>
+<% else %>
+  <%= render :partial => "memberships" %>
+  <p>
+    <%= link_to("Remove all collaborators",
+                { :action => "destroy", :id => "all" },
+                :method => :delete, :confirm => "Are you sure? This will delete all #{@memberships.count} members") %>
+    to open project to the public.
+  </p>
+  <%= render :partial => "form" %>
+  <% content_for :sidebar do -%>
+    <ul class="links actions navigation">
+      <li>
+        <%= link_to t("views.project_memberships.back_to_project"),
+            project_path(@project) -%>
+      </li>
+    </ul>
+  <% end -%>
+<% end %>

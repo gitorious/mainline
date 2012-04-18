@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,11 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
 require File.dirname(__FILE__) + "/../test_helper"
 
 class ProjectsControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   should_render_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
@@ -134,6 +133,189 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "ProjectsController" do
+    context "With private repos" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = true
+        projects(:johans).make_private
+      end
+
+      should "filter private projects in index" do
+        Project.stubs(:most_active_recently).returns(Project.all)
+        get :index
+        assert_equal 2, assigns(:projects).length
+        assert_equal 2, assigns(:active_recently).length
+      end
+
+      should "not render show for private repo for unauthorized user" do
+        get :show, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo for owner" do
+        login_as :johan
+        get :show, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "not render clones for private repo for unauthorized user" do
+        get :clones, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo clones for owner" do
+        login_as :johan
+        get :clones, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "not render private repo edit for unauthorized user" do
+        login_as :mike
+        get :edit, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo edit for owner" do
+        login_as :johan
+        get :edit, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "not render private repo edit_slug for unauthorized user" do
+        get :edit_slug, :id => projects(:johans).to_param
+        assert_response 403
+        put :edit_slug, :id => projects(:johans).to_param, :project => { :slug => "yeah" }
+        assert_response 403
+        assert_not_equal "yeah", projects(:johans).slug
+      end
+
+      should "render private repo edit_slug for owner" do
+        login_as :johan
+        get :edit_slug, :id => projects(:johans).to_param
+        assert_response 200
+        put :edit_slug, :id => projects(:johans).to_param, :project => { :slug => "yeah" }
+        assert_response 302
+      end
+
+      should "not render private repo update for unauthorized user" do
+        login_as :mike
+        put :update, :id => projects(:johans).to_param, :project => {}
+        assert_response 403
+      end
+
+      should "render private repo update for owner" do
+        login_as :johan
+        put :update, :id => projects(:johans).to_param, :project => { :slug => "  " }
+        assert_response 200
+      end
+
+      should "not render private repo delete confirmation for unauthorized user" do
+        login_as :mike
+        get :confirm_delete, :id => projects(:johans).to_param
+        assert_response 403
+      end
+
+      should "render private repo delete confirmation for owner" do
+        login_as :johan
+        get :confirm_delete, :id => projects(:johans).to_param
+        assert_response 200
+      end
+
+      should "disallow unauthorized user to destroy project" do
+        login_as :mike
+        delete :destroy, :id => projects(:johans).slug
+        assert_response 403
+      end
+
+      should "not display edit permissions link to non-admin" do
+        get :show, :id => projects(:johans).to_param
+        assert_no_match /Manage access/, @response.body
+      end
+
+      should "display edit permissions link for admin" do
+        login_as :johan
+        get :show, :id => projects(:johans).to_param
+        assert_match /Manage access/, @response.body
+      end
+
+      should "create private project" do
+        login_as :johan
+
+        assert_difference("Project.count") do
+          post :create, :project => {
+            :title => "project x",
+            :slug => "projectx",
+            :description => "projectx's description",
+            :owner_type => "User"
+          },
+          :private_project => "1"
+        end
+
+        assert can_read?(users(:johan), Project.last)
+        assert !can_read?(users(:mike), Project.last)
+        assert !can_read?(nil, Project.last)
+      end
+
+      should "create public project" do
+        login_as :johan
+
+        assert_difference("Project.count") do
+          post :create, :project => {
+            :title => "project x",
+            :slug => "projectx",
+            :description => "projectx's description",
+            :owner_type => "User"
+          }
+        end
+
+        assert can_read?(nil, Project.last)
+      end
+
+      should "include private checkbox in new page" do
+        login_as :johan
+        get :new
+        assert_match /Make the project private\?/, @response.body
+        assert_match /name="private_project"/, @response.body
+      end
+    end
+
+    context "with disabled private repos" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+      end
+
+      should "not display edit acccess link to owner" do
+        login_as :johan
+        get :show, :id => projects(:johans).to_param
+        assert_no_match /Manage access/, @response.body
+      end
+
+      should "not allow creating private project" do
+        login_as :johan
+
+        assert_difference("Project.count") do
+          post :create, :project => {
+            :title => "project x",
+            :slug => "projectx",
+            :description => "projectx's description",
+            :owner_type => "User"
+          },
+          :private => true
+        end
+
+        assert can_read?(nil, Project.last)
+      end
+
+      should "not include private checkbox in new page" do
+        get :new
+        assert_no_match /type="checkbox"[^>]+name="private"/, @response.body
+      end
+    end
+
+    should "PUT to preview" do
+      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }
+      assert_response 200
+    end
+
     should "GET projects/ succesfully" do
       get :index
       assert_response :success
@@ -441,7 +623,7 @@ class ProjectsControllerTest < ActionController::TestCase
       get :edit, :id => @project.to_param
       assert_response :success
       assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal users(:mike).groups.select{|g| g.admin?(users(:mike)) }, assigns(:groups)
+      assert_equal users(:mike).groups.select{|g| admin?(users(:mike), g) }, assigns(:groups)
     end
 
     should "only get a list of groups user is admin in on update" do
@@ -451,7 +633,7 @@ class ProjectsControllerTest < ActionController::TestCase
       put :update, :id => @project.to_param, :project => {:title => "foo"}
       assert_response :redirect
       assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal users(:mike).groups.select{|g| g.admin?(users(:mike)) }, assigns(:groups)
+      assert_equal users(:mike).groups.select{|g| admin?(users(:mike), g) }, assigns(:groups)
     end
 
     should "change the owner" do

@@ -1,13 +1,14 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
 #   Copyright (C) 2008 Dag Odenhall <dag.odenhall@gmail.com>
 #   Copyright (C) 2008 Tim Dysinger <tim@dysinger.net>
 #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -29,11 +30,14 @@ class Project < ActiveRecord::Base
   include UrlLinting
   include Watchable
   include Gitorious::Search
+  include Gitorious::Authorization
+  include Gitorious::Protectable
 
   belongs_to  :user
   belongs_to  :owner, :polymorphic => true
   has_many    :comments, :dependent => :destroy
-
+  has_many    :project_memberships, :as => :content
+  has_many    :content_memberships, :as => :content
   has_many    :repositories, :order => "repositories.created_at asc",
       :conditions => ["kind != ?", Repository::KIND_WIKI], :dependent => :destroy
   has_one     :wiki_repository, :class_name => "Repository",
@@ -47,9 +51,7 @@ class Project < ActiveRecord::Base
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
   default_scope :conditions => ["suspended_at is null"]
-
   serialize :merge_request_custom_states, Array
-
   attr_protected :owner_id, :user_id, :site_id
 
   is_indexed do |s|
@@ -128,34 +130,12 @@ class Project < ActiveRecord::Base
     containing_site || Site.default
   end
 
-  def admin?(candidate)
-    case owner
-    when User
-      candidate == self.owner
-    when Group
-      owner.admin?(candidate)
-    end
-  end
-
-  def member?(candidate)
-    case owner
-    when User
-      candidate == self.owner
-    when Group
-      owner.member?(candidate)
-    end
-  end
-
   def committer?(candidate)
     owner == User ? owner == candidate : owner.committer?(candidate)
   end
 
   def owned_by_group?
     owner === Group
-  end
-
-  def can_be_deleted_by?(candidate)
-    admin?(candidate) && repositories.clones.count == 0
   end
 
   def home_url=(url)

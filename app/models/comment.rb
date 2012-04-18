@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,7 +22,8 @@
 
 class Comment < ActiveRecord::Base
   include Gitorious::Search
-  
+  include Gitorious::Authorization
+
   belongs_to :user
   belongs_to :target, :polymorphic => true
   belongs_to :project
@@ -127,10 +129,6 @@ class Comment < ActiveRecord::Base
     MergeRequest === target
   end
 
-  def editable_by?(a_user)
-    creator?(a_user) && recently_created?
-  end
-
   def creator?(a_user)
     a_user == user
   end
@@ -140,27 +138,26 @@ class Comment < ActiveRecord::Base
   end
 
   protected
-    def notify_target_if_supported
-      if target && NOTIFICATION_TARGETS.include?(target.class)
-        if self.target === MergeRequestVersion
-          target_user = target.merge_request.user
-        else
-          target_user = target.user
+  def notify_target_if_supported
+    if target && NOTIFICATION_TARGETS.include?(target.class)
+      if self.target === MergeRequestVersion
+        target_user = target.merge_request.user
+      else
+        target_user = target.user
+      end
+      return if target_user == user
+      deliver_notification_to(target_user)
+    end
+  end
+
+  def update_state_in_target
+    if applies_to_merge_request? and state_change
+      target.with_user(user) do
+        if can_resolve_merge_request?(user, target)
+          target.status_tag=(state_changed_to)
+          target.create_status_change_event(body)
         end
-        return if target_user == user
-        deliver_notification_to(target_user)
       end
     end
-
-    def update_state_in_target
-      if applies_to_merge_request? and state_change
-        target.with_user(user) do
-          if target.resolvable_by?(user)
-            target.status_tag=(state_changed_to)
-            target.create_status_change_event(body)
-          end
-        end
-      end
-    end
-
+  end
 end

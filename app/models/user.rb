@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -21,11 +22,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'digest/sha1'
+require "digest/sha1"
 require_dependency "event"
 
 class User < ActiveRecord::Base
   include UrlLinting
+  include Gitorious::Authorization
 
   has_many :projects
   has_many :memberships, :dependent => :destroy
@@ -44,6 +46,7 @@ class User < ActiveRecord::Base
   has_many :events_as_target, :class_name => "Event", :as => :target
   has_many :favorites, :dependent => :destroy
   has_many :feed_items, :foreign_key => "watcher_id"
+  has_many :content_memberships, :as => :member
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password, :current_password
@@ -83,7 +86,7 @@ class User < ActiveRecord::Base
   end
 
   has_many :received_messages, :class_name => "Message",
-      :foreign_key => 'recipient_id', :order => "created_at DESC" do
+      :foreign_key => "recipient_id", :order => "created_at DESC" do
     def unread
       find(:all, :conditions => {:aasm_state => "unread"})
     end
@@ -102,9 +105,9 @@ class User < ActiveRecord::Base
     Message.find(:all, :conditions => ["sender_id = ? OR recipient_id = ?", self, self])
   end
 
-  Paperclip.interpolates('login'){|attachment, style| attachment.instance.login.downcase}
+  Paperclip.interpolates("login"){|attachment, style| attachment.instance.login.downcase}
 
-  avatar_local_path = '/system/:attachment/:login/:style/:basename.:extension'
+  avatar_local_path = "/system/:attachment/:login/:style/:basename.:extension"
   has_attached_file :avatar,
     :styles => { :medium => "300x300>", :thumb => "64x64>", :tiny => "24x24>" },
     :url => avatar_local_path,
@@ -142,7 +145,7 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(email, password)
-    u = find :first, :conditions => ['email = ? and activated_at IS NOT NULL and suspended_at IS NULL', email] # need to get the salt
+    u = find :first, :conditions => ["email = ? and activated_at IS NOT NULL and suspended_at IS NULL", email] # need to get the salt
     u && u.authenticated?(password) ? u : nil
   end
 
@@ -196,10 +199,17 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.find_fuzzy(query)
+    find(:all,
+         :conditions => ["lower(login) like :name or lower(email) like :name",
+                         { :name => "%" + query.downcase + "%" }],
+         :limit => 10)
+  end
+
   # A Hash of repository => count of mergerequests active in the
   # repositories that the user is a reviewer in
   def review_repositories_with_open_merge_request_count
-    mr_repository_ids = self.committerships.reviewers.find(:all,
+    mr_repository_ids = review_repositories(self).find(:all,
       :select => "repository_id").map{|c| c.repository_id }
     Repository.find(:all, {
         :select => "repositories.*, count(merge_requests.id) as open_merge_request_count",
@@ -296,10 +306,6 @@ class User < ActiveRecord::Base
     generated_key
   end
 
-  def can_write_to?(repository)
-    repository.writable_by?(self)
-  end
-
   def to_param
     login
   end
@@ -313,7 +319,7 @@ class User < ActiveRecord::Base
   end
 
   def is_openid_only?
-    self.crypted_password.nil?
+    self.crypted_password.blank?
   end
 
   def suspended?
@@ -328,22 +334,6 @@ class User < ActiveRecord::Base
   def un_suspend
     self.suspended_at = nil
     # Note: user has to reupload ssh keys again
-  end
-  
-  def site_admin?
-    is_admin
-  end
-
-  # is +a_user+ an admin within this users realm
-  # (for duck-typing repository etc access related things)
-  def admin?(a_user)
-    self == a_user
-  end
-
-  # is +a_user+ a committer within this users realm
-  # (for duck-typing repository etc access related things)
-  def committer?(a_user)
-    self == a_user
   end
 
   def to_grit_actor
@@ -401,34 +391,35 @@ class User < ActiveRecord::Base
   end
 
   protected
-    # before filter
-    def encrypt_password
-      return if password.blank?
-      self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
-      self.crypted_password = encrypt(password)
-    end
+  # before filter
+  def encrypt_password
+    return if password.blank?
+    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--") if new_record?
+    self.crypted_password = encrypt(password)
+  end
 
-    def password_required?
-      not_openid? && (crypted_password.blank? || !password.blank?)
-    end
+  def password_required?
+    not_openid? && (crypted_password.blank? || !password.blank?)
+  end
 
-    def not_openid?
-      identity_url.blank?
-    end
+  def not_openid?
+    identity_url.blank?
+  end
 
-    def make_activation_code
-      return if !self.activated_at.blank?
-      self.activation_code = Digest::SHA1.hexdigest( Time.now.to_s.split(//).sort_by {rand}.join )
-    end
+  def make_activation_code
+    return if !self.activated_at.blank?
+    self.activation_code = Digest::SHA1.hexdigest(Time.now.to_s.split(//).sort_by {rand}.join)
+  end
 
-    def lint_identity_url
-      return if not_openid?
-      self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
-    rescue OpenIdAuthentication::InvalidOpenId
-      # validate will catch it instead
-    end
+  def lint_identity_url
+    return if not_openid?
+    self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
+  rescue OpenIdAuthentication::InvalidOpenId
+    # validate will catch it instead
+  end
 
-    def downcase_login
-      login.downcase! if login
-    end
+  def downcase_login
+    login.downcase! if login
+  end
+
 end

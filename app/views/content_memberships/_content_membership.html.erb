@@ -1,0 +1,8 @@
+<tr class="<%= cycle('even', 'odd') -%>">
+  <td><%= content_membership.created_at.to_s(:short) -%></td>
+  <td><%= content_membership.member.class.human_name -%></td>
+  <td><%= link_to h(content_membership.member.title), content_membership.member -%></td>
+  <td class="committer-buttons">
+    <%= button_to(t("views.common.remove"), membership_path(@content, content_membership), :method => :delete) -%>
+  </td>
+</tr>

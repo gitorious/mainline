@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120209093949) do
+ActiveRecord::Schema.define(:version => 20120223093906) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -75,6 +75,17 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
   add_index "committerships", ["committer_id"], :name => "index_permissions_on_user_id"
   add_index "committerships", ["repository_id"], :name => "index_committerships_on_repository_id"
   add_index "committerships", ["repository_id"], :name => "index_permissions_on_repository_id"
+
+  create_table "content_memberships", :force => true do |t|
+    t.integer  "content_id"
+    t.string   "member_type"
+    t.integer  "member_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "content_type"
+  end
+
+  add_index "content_memberships", ["content_id", "member_id", "member_type"], :name => "project_memberships_index"
 
   create_table "emails", :force => true do |t|
     t.integer  "user_id"
@@ -342,7 +353,7 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
     t.string   "subdomain"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "wiki_git_path"
+    t.text     "wiki_git_path"
   end
 
   add_index "sites", ["subdomain"], :name => "index_sites_on_subdomain"
@@ -379,13 +390,13 @@ ActiveRecord::Schema.define(:version => 20120209093949) do
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
-    t.string   "crypted_password",               :limit => 40
-    t.string   "salt",                           :limit => 40
+    t.string   "crypted_password",               :limit => 40, :default => "",    :null => false
+    t.string   "salt",                           :limit => 40, :default => "",    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
     t.datetime "remember_token_expires_at"
-    t.string   "activation_code",                :limit => 40
+    t.string   "activation_code"
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
     t.string   "fullname"
