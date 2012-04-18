@@ -319,7 +319,7 @@ class User < ActiveRecord::Base
   end
 
   def is_openid_only?
-    self.crypted_password.nil?
+    self.crypted_password.blank?
   end
 
   def suspended?

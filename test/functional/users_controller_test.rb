@@ -475,14 +475,14 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "be able to update password, even if user created his account with openid" do
-      user = users(:johan)
-      user.update_attribute(:crypted_password, nil)
+      user = create_open_id_user("mropenid", "open@id.com", "http://myauth")
+      login_as user
       put :update_password, :id => user.to_param, :user => {
         :password => "fubar",
         :password_confirmation => "fubar" }
       assert_redirected_to user_path(user)
       assert_match(/Your password has been changed/i, flash[:success])
-      assert_equal users(:johan), User.authenticate(users(:johan).email, "fubar")
+      assert_equal user, User.authenticate("open@id.com", "fubar")
     end
 
     should "be able to delete his avatar" do
@@ -700,5 +700,17 @@ class UsersControllerTest < ActionController::TestCase
     e.user = @user
     e.project = project
     e.save!
+  end
+
+  def create_open_id_user(login, email, identity_url)
+    user = User.new
+    user.login = login
+    user.email = email
+    user.identity_url = identity_url
+    user.terms_of_use = "1"
+    user.accept_terms
+    user.activate
+    user.save!
+    user
   end
 end

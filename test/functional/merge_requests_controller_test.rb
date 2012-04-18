@@ -319,6 +319,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "it re-renders on invalid data, with the target repos list" do
       login_as :johan
+      MergeRequest.any_instance.stubs(:save).returns(false)
       do_post :target_repository => nil
       assert_response :success
       assert_template(("merge_requests/new"))
@@ -461,6 +462,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "it re-renders on invalid data, with the target repos list" do
       login_as :johan
+      MergeRequest.any_instance.stubs(:save).returns(false)
       do_put :target_repository => nil
       assert_response :success
       assert_template(("merge_requests/edit"))
@@ -505,6 +507,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context "GET #target_branches" do
     setup do
       GitoriousConfig["use_ssl"] = false
+      GitoriousConfig["enable_private_repositories"] = false
     end
 
     should "retrive a list of the target repository branches" do
