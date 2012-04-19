@@ -375,7 +375,7 @@ class UserTest < ActiveSupport::TestCase
 
     should "be reversable (except for ssh keys)" do
       @user.suspended_at = Time.now
-      @user.un_suspend
+      @user.unsuspend
       @user.save!
       assert_equal nil, @user.suspended_at
     end
@@ -385,7 +385,7 @@ class UserTest < ActiveSupport::TestCase
     SshKey.new({:user_id => 1,
                  :key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com"})
   end
-  
+
   context "Avatars" do
     setup {@user = users(:johan)}
 

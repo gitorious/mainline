@@ -331,7 +331,7 @@ class User < ActiveRecord::Base
     self.ssh_keys.destroy_all
   end
 
-  def un_suspend
+  def unsuspend
     self.suspended_at = nil
     # Note: user has to reupload ssh keys again
   end

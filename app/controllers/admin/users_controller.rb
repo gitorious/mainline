@@ -69,7 +69,7 @@ class Admin::UsersController < AdminController
 
   def unsuspend
     @user = User.find_by_login!(params[:id])
-    @user.un_suspend
+    @user.unsuspend
     if @user.save
       flash[:notice] = I18n.t "admin.users_controller.unsuspend_notice", :user_name => @user.login
     else
