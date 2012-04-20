@@ -85,7 +85,7 @@ class BlobsController < ApplicationController
           redirect_to project_repository_path(@project, @repository) and return
         end
         expires_in 30.minutes
-        headers["Content-Disposition"] = %[attachment;filename="#{@blob.name}"]
+#        headers["Content-Disposition"] = %[attachment;filename="#{@blob.name}"]
         render :text => @blob.data, :content_type => @blob.mime_type
       end
     end

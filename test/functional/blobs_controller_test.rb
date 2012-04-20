@@ -120,7 +120,6 @@ class BlobsControllerTest < ActionController::TestCase
         blob_mock.expects(:data).returns("blabla")
         blob_mock.expects(:size).returns(200.kilobytes)
         blob_mock.expects(:mime_type).returns("text/plain")
-        blob_mock.expects(:name).returns("README.doc")
         commit_stub = mock("commit")
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)
@@ -139,7 +138,6 @@ class BlobsControllerTest < ActionController::TestCase
         assert_equal "blabla", @response.body
         assert_equal "text/plain", @response.content_type
         assert_equal "max-age=1800, private", @response.headers['Cache-Control']
-        assert_equal %[attachment;filename="README.doc"], @response.headers["Content-Disposition"]
       end
 
       should "get the blob data from a blob sha and render it as text/plain" do
@@ -255,7 +253,6 @@ class BlobsControllerTest < ActionController::TestCase
         blob_mock.expects(:data).returns("blabla")
         blob_mock.expects(:size).returns(200.kilobytes)
         blob_mock.expects(:mime_type).returns("text/plain")
-        blob_mock.expects(:name).returns("README.doc")
         commit_stub = mock("commit")
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)
@@ -321,7 +318,6 @@ class BlobsControllerTest < ActionController::TestCase
         blob_mock.expects(:data).returns("blabla")
         blob_mock.expects(:size).returns(200.kilobytes)
         blob_mock.expects(:mime_type).returns("text/plain")
-        blob_mock.expects(:name).returns("README.doc")
         commit_stub = mock("commit")
         commit_stub.stubs(:id).returns("a"*40)
         commit_stub.stubs(:tree).returns(commit_stub)
