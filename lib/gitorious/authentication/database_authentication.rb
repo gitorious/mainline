@@ -18,8 +18,8 @@
 module Gitorious
   module Authentication
     class DatabaseAuthentication
-      def authenticate(username,password)
-        User.authenticate(username, password)
+      def authenticate(credentials)
+        User.authenticate(credentials.username, credentials.password)
       end
     end
   end

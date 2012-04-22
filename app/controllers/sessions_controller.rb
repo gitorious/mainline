@@ -93,7 +93,10 @@ class SessionsController < ApplicationController
   end
 
   def password_authentication(email, password)
-    self.current_user = Gitorious::Authentication.authenticate(email, password)
+    credentials = Gitorious::Authentication::Credentials.new
+    credentials.username = email
+    credentials.password = password
+    self.current_user = Gitorious::Authentication.authenticate(credentials)
     if logged_in?
       successful_login
     else

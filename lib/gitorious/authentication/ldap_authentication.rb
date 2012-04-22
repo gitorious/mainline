@@ -64,18 +64,18 @@ module Gitorious
       end
 
       # The actual authentication callback
-      def authenticate(username, password)
-        return false unless valid_credentials?(username, password)
-        if existing_user = User.find_by_login(transform_username(username))
+      def authenticate(credentials)
+        return false unless valid_credentials?(credentials.username, credentials.password)
+        if existing_user = User.find_by_login(transform_username(credentials.username))
           user = existing_user
         else
-          user = auto_register(username)
+          user = auto_register(credentials.username)
         end
 
         return unless post_authenticate({
             :connection => connection,
-            :username => username,
-            :user_filter => username_filter(username),
+            :username => credentials.username,
+            :user_filter => username_filter(credentials.username),
             :base_dn => base_dn})
         user
       end
