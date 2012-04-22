@@ -75,5 +75,35 @@ development:
 
     # End Crowd configuration example
     ############################################################################
+    
+    ############################################################################
+    # Example of configuring Kerberos authentication
+    #- adapter: Gitorious::Authentication::KerberosAuthentication
+    
+      # Set the Kerberos realm (should be uppercase)
+      #realm: EXAMPLE.COM
+      
+      # The default email domain for users in this realm. If you do not
+      # specify any email_domain, the default is to use the lowercase
+      # realm value.
+      #email_domain: example.com
+      
+      # Note that you must also set up Apache's mod_auth_kerb within
+      # httpd.conf. For example:
+      #  # Enable SSO authentication via Kerberos
+      #  <Location /sessions/http>
+      #    AuthType Kerberos
+      #    AuthName "Gitorious Web UI"
+      #    KrbMethodNegotiate on
+      #    KrbMethodK5Passwd off
+      #    KrbServiceName HTTP
+      #    KrbAuthRealm EXAMPLE.COM
+      #    Krb5Keytab /etc/httpd/http.keytab
+      #    Require valid-user
+      #    ErrorDocument 401 /401.html
+      #  </Location>
+    
+    # End Kerberos configuration example
+    ############################################################################
 
 # production:
