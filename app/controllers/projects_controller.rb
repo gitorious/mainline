@@ -54,16 +54,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @events = paginate(:action => "show", :id => @project.to_param) do
-      filter_paginated(params[:page], Event.per_page) do |page|
-        Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
-          events_finder_options = {}
-          events_finder_options.merge!(@project.events.top.proxy_options)
-          events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
-          @project.events.paginate(events_finder_options)
-        end
-      end
-    end
+    @events = paginated_events
 
     return if @events.count == 0 && params.key?(:page)
     @big_repos = 10
@@ -202,5 +193,26 @@ class ProjectsController < ApplicationController
     return if !GitoriousConfig["enable_private_repositories"] || !params[:private_project]
     project.make_private
     project
+  end
+
+  def paginated_events
+    paginate(:action => "show", :id => @project.to_param) do
+      if !private_repositories_enabled?
+        Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+          unfiltered_paginated_events
+        end
+      else
+        filter_paginated(params[:page], Event.per_page) do |page|
+          unfiltered_paginated_events
+        end
+      end
+    end
+  end
+
+  def unfiltered_paginated_events
+    events_finder_options = {}
+    events_finder_options.merge!(@project.events.top.proxy_options)
+    events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
+    @project.events.paginate(events_finder_options)
   end
 end
