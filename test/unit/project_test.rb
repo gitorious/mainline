@@ -249,6 +249,19 @@ class ProjectTest < ActiveSupport::TestCase
       committership.permissions)
   end
 
+  should "manage to change ownership even if new owner already has committership on repos in project" do
+    new_owner = groups(:a_team)
+    project = projects(:johans)
+
+    repo = project.repositories.first
+    c = repo.committerships.create!(:committer => new_owner,:creator_id => new_owner.id)
+    c.build_permissions(:review, :commit, :admin)
+    c.save!
+
+    project.change_owner_to(new_owner)
+  end
+
+
   should "delegate wiki permissions to the wiki repository" do
     project = projects(:johans)
     assert_equal project.wiki_repository.wiki_permissions, project.wiki_permissions
