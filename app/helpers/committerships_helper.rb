@@ -42,4 +42,16 @@ module CommittershipsHelper
   </ul>
     HTML
   end
+
+  def confirmation_if_sole_admin(repo, committership)
+    if last_admin(repo, committership)
+      "You are about to remove the last committer with admin rights. Are you sure about this?"
+    end
+  end
+
+  def last_admin(repo, to_be_removed)
+    admins = repo.committerships.select { |c| c.admin? }
+    (admins.size == 1 && admins.first == to_be_removed)    
+  end
+  
 end

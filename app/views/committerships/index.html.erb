@@ -45,7 +45,7 @@
         <%= button_to(t("views.common.edit"),
                       [:edit, @owner, @repository, committership], :method => :get) -%>
         <%= button_to(t("views.common.remove"),
-                      [@owner, @repository, committership], :method => :delete) -%>
+                      [@owner, @repository, committership], :method => :delete, :confirm => confirmation_if_sole_admin(@repository, committership)) -%>
       </td>
     </tr>
   <% end -%>
