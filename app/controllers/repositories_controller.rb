@@ -56,11 +56,7 @@ class RepositoriesController < ApplicationController
 
   def show
     @root = @repository = repository_to_clone
-    @events = paginate(page_free_redirect_options) do
-      filter_paginated(params[:page], Event.per_page) do |page|
-        @repository.events.top.paginate(:all, :page => page, :order => "created_at desc")
-      end
-    end
+    @events = paginated_events
 
     return if @events.count == 0 && params.key?(:page)
     @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
@@ -72,6 +68,24 @@ class RepositoriesController < ApplicationController
       format.xml  { render :xml => @repository }
       format.atom {  }
     end
+  end
+
+  def paginated_events
+    paginate(page_free_redirect_options) do
+      if !private_repositories_enabled?
+        Rails.cache.fetch("paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}") do
+          unfiltered_paginated_events
+        end
+      else
+        filter_paginated(params[:page], Event.per_page) do |page|
+          unfiltered_paginated_events
+        end
+      end
+    end
+  end
+
+  def unfiltered_paginated_events
+    @repository.events.top.paginate(:all, :page => params[:page], :order => "created_at desc")
   end
 
   def new
