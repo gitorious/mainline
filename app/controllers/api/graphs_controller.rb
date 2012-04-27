@@ -42,7 +42,10 @@ module Api
       data.split("\n").each { |line| parser << line }
 
       respond_to do |wants|
-        wants.json { render :json => parser.to_json }
+        wants.json do
+          cache_for 60.minutes
+          render :json => parser.to_json
+        end
       end
     end
 
