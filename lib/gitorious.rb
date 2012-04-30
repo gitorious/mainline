@@ -16,5 +16,5 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module Gitorious
-  VERSION = "2.1.1"
+  VERSION = "2.2.0"
 end

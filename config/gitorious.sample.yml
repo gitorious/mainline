@@ -118,7 +118,7 @@ production:
   # (Note: logged in gitorious admin users can also see a visual
   # overview of the system state at /admin/diagnostics/)
   # turn_on_public_diagnostic_summary_page: true
-  
+
   # --------
   # "TWEAKS"
   # --------
@@ -137,7 +137,9 @@ production:
   # Enabling private repositories allows users to control read-access to their
   # repositories. Repositories are public by default, but individual users
   # and/or groups can be given read permissions to limit who can see and pull
-  # from it.
+  # from individual repositories and/or projects.
+  # More information is available in the Gitorious Wiki:
+  # https://gitorious.org/gitorious/pages/PrivateRepositories
   #enable_private_repositories: false
 
   # Only site admins can create projects.
