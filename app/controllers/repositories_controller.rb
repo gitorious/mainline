@@ -73,7 +73,7 @@ class RepositoriesController < ApplicationController
   def paginated_events
     paginate(page_free_redirect_options) do
       if !private_repositories_enabled?
-        Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+        Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
           unfiltered_paginated_events
         end
       else
