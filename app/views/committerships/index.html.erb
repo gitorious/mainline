@@ -62,7 +62,7 @@
 <% end %>
 <p><%= link_to "Manage repository read access", project_repository_repository_memberships_path(@repository.project, @repository) %></p>
 
-<%= will_paginate @committerships -%>
+<%= render_pagination_links @committerships -%>
 
 <%= render "permission_explanation" %>
 

@@ -27,7 +27,7 @@
   <%= render :partial => "repositories/overview", :locals => {:repository => repo} -%>
 <% end -%>
 
-<%= will_paginate @repositories -%>
+<%= render_pagination_links @repositories -%>
 
 <% content_for :sidebar do -%>
   <%= render :partial => "projects/repositories" if @project -%>
