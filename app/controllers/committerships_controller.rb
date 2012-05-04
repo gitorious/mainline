@@ -80,6 +80,13 @@ class CommittershipsController < ApplicationController
 
   def destroy
     @committership = @repository.committerships.find(params[:id])
+
+    # Update creator to hold the "destroyer" user account
+    # Makes sure hooked-in event reports correct destroying user
+    # We have no other way of passing destroying user along
+    # except restructing code to not use implicit event hooks.
+    @committership.creator = current_user
+    
     if @committership.destroy
       flash[:notice] = "The committer was removed."
     end
