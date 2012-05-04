@@ -75,7 +75,7 @@ class Admin::DiagnosticsController < ApplicationController
   end
 
   def require_site_admin
-    unless current_user.site_admin?
+    unless current_user.is_admin?
       redirect_to root_path
     end
   end
