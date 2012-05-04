@@ -214,7 +214,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       assert_difference("@repository.committerships.count", -1) do
         delete :destroy, params(:id => committership.id)
       end
-      assert_match(/team was removed as a committer/, flash[:notice])
+      assert_match(/The committer was removed/, flash[:notice])
       assert_response :redirect
     end
   end
