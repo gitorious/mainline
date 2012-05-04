@@ -44,9 +44,6 @@
         type="radio" 
         value="<%= commit.id -%>" 
         class="merge_to"
-        <% if commit.id == @merge_request.ending_commit -%>
-        checked="checked"
-        <% end -%> />
     </td>
     <td class="commit-details meta">
       <ul>
@@ -74,3 +71,15 @@
   Please select which commit to start from and which to end at. The last 
   commit needs to be after the first one.
 </div>
+
+<!-- Note: Temporary hack ahead, remove during merge request page redesign.
+  Having to select a range of commits is mandatory but not checked
+  by default and not obvious to users. The merge request page needs
+  overall redesign, until then we'll just select the whole commit by default
+  after the commit-list table has finished rendering and initalizing. -->
+<script>
+  var selectFirstCommitRadioBtn = function(){
+    $("#commit_table").find("input[type=radio]")[0].click();
+  };
+  setTimeout(selectFirstCommitRadioBtn,1000); 
+</script>
