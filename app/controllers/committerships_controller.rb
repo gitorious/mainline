@@ -81,7 +81,7 @@ class CommittershipsController < ApplicationController
   def destroy
     @committership = @repository.committerships.find(params[:id])
     if @committership.destroy
-      flash[:notice] = "The team was removed as a committer"
+      flash[:notice] = "The committer was removed."
     end
     redirect_to([@owner, @repository, :committerships])
   end
