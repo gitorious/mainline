@@ -18,7 +18,7 @@ ActionMailer::Base.default_url_options[:host] =
   YAML.load_file(File.join(RAILS_ROOT, "config/gitorious.yml"))[RAILS_ENV]["gitorious_host"]
 config.action_mailer.raise_delivery_errors = false
 config.action_mailer.delivery_method = :test
-ExceptionNotifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT,
+ExceptionNotification::Notifier.exception_recipients = YAML.load_file(File.join(RAILS_ROOT,
   "config/gitorious.yml"))["exception_notification_emails"]
 
 config.cache_store = :mem_cache_store, ['localhost:11211'], { 

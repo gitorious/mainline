@@ -28,7 +28,7 @@ gem "nokogiri", "1.5.0"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
-gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'
+gem "exception_notification", "~> 2.3.3", :require => "exception_notification"
 # gem "bartt-ssl_requirement" # TODO: use this with Rails 3
 gem "revo-ssl_requirement", "1.1.0"
 
