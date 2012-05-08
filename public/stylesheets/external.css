@@ -146,10 +146,13 @@ body#sessions #wrapper {
 
 #header #introduction h2 {
     width: 447px;
-    height: 74px;
-    text-indent: -9999px;
-    float: left;
-    background: url(../img/external/header.png) no-repeat;
+    height: 64px;
+    line-height: 1.5em;
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: #fff;
+    font-family: 'Nobile', arial, serif;
+    font-weight: normal;
 }
 
 #header #introduction p {
@@ -169,11 +172,11 @@ body#sessions #wrapper {
 
 #header #introduction p.description {
     margin-top: 18px;
-    font-size: 18px;
-    background: url(../img/external/description.png) no-repeat;
-    text-indent: -9999px;
+    font-family: 'Nobile', arial, serif;
+    font-size: 16px;
     width: 374px;
-    height: 36px;
+    letter-spacing: 1px;
+    height: 46px;
 }
 
 #header #introduction p.directions {

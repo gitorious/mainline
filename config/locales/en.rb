@@ -187,6 +187,7 @@
         :search => "Search",
         :faq => "FAQ",
         :about => "About",
+        :about_gitorious => "about Gitorious",
         :my_account => "My Account",
         :logout => "Logout",
         :login => "Login",
