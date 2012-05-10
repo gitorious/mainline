@@ -48,4 +48,4 @@
   </li>
 <% end -%>
 </ul>
-<%= will_paginate(@commits) unless no_pagination -%>
+<%= render_pagination_links (@commits) unless no_pagination -%>

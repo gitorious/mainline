@@ -42,7 +42,7 @@
           <%= render :partial => result, :object => result -%>
         </div>
       <% end -%>
-      <%= will_paginate(@search) -%>
+      <%= render_pagination_links (@search) -%>
     <% end -%>
   <% end -%>
 </div>

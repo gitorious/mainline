@@ -32,7 +32,7 @@
 <% end -%>
 </ul>
 
-<%= will_paginate @projects -%>
+<%= render_pagination_links @projects -%>
 
 <% content_for :sidebar do -%>
   <h2><%= t("views.projects.popular") %></h2>
