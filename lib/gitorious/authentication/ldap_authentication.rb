@@ -72,7 +72,11 @@ module Gitorious
           user = auto_register(username)
         end
 
-        return unless post_authenticate({:connection => connection, :username => username})
+        return unless post_authenticate({
+            :connection => connection,
+            :username => username,
+            :user_filter => username_filter(username),
+            :base_dn => base_dn})
         user
       end
 
@@ -83,8 +87,7 @@ module Gitorious
       end
 
       def auto_register(username)
-        filter = Net::LDAP::Filter.eq(login_attribute, username)
-        result = connection.search(:base => base_dn, :filter => filter,
+        result = connection.search(:base => base_dn, :filter => username_filter(username),
           :attributes => attribute_mapping.keys, :return_result => true)
         if result.size > 0
           data = result.first
@@ -105,6 +108,10 @@ module Gitorious
       end
 
       private
+
+      def username_filter(username)
+        Net::LDAP::Filter.eq(login_attribute, username)
+      end
 
       # The default mapping of LDAP -> User attributes
       def default_attribute_mapping
