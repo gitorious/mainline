@@ -245,7 +245,11 @@ class Repository < ActiveRecord::Base
   end
 
   def ssh_clone_url
-    push_url
+    if GitoriousConfig['sshd_port'] then
+	"git+ssh://#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}:#{GitoriousConfig['sshd_port']}/#{gitdir}"
+    else
+	push_url
+    end
   end
 
   def git_clone_url
