@@ -90,7 +90,9 @@ module Gitorious
         result = connection.search(:base => base_dn, :filter => username_filter(username),
           :attributes => attribute_mapping.keys, :return_result => true)
         if result.size > 0
-          data = result.first
+          data = result.detect do |element|
+            attribute_mapping.keys.all? {|ldap_name| element[ldap_name] }
+          end
           user = User.new
           user.login = transform_username(username)
           attribute_mapping.each do |ldap_name, our_name|
