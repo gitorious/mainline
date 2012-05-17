@@ -197,7 +197,7 @@
       :license => {
         :show_title => 'Acordo de Licença para o Usuário Final',
         :terms_accepted => 'Você aceitou os Termos de Uso',
-        :terms_not_accepted => 'Yocê precisa aceitar os Termos de Uso',
+        :terms_not_accepted => 'Você precisa aceitar os Termos de Uso',
         :terms_already_accepted => 'Você já aceitou os últimos termos de uso'
       },
       :keys => {
@@ -286,6 +286,7 @@
         :raw => "dado blob puro",
         :show => "Conteúdos Blob",
         :history => "Histórico Blob",
+        :blame => "Culpados",
         :heading => "Histórico para {{ref}}:{{path}}",
         :too_big => lambda { |this, path| "Este arquivo é muito grande para ser renderizado num tempo razoável, " +
           this.link_to("tente ver os dados puros", path) },
@@ -330,7 +331,7 @@
         :openid_url => "URL OpenID",
         :email => "E-mail",
         :to_openid => "Mudar para OpenID",
-        :to_regular => "Switch para login normal",
+        :to_regular => "Mudar para login normal",
         :regular_login_header => "Login normal",
         :openid_login_header => "Login por OpenID"
       },
@@ -444,6 +445,7 @@
         :mailing => "Lista de Discussão em ",
         :bugtracker => "Gerenciador de Bugs em ",
         :repos => "Repositórios",
+        :manage_access => "Gerenciar Acesso",
         :repository_clones => "Clones do repositório",
         :no_clones_yet => "Não há clones deste repositório no Gitorious ainda",
         :project_members => "Membros do projeto",
@@ -454,6 +456,22 @@
         :edit_slug_disclaimer => 'Note que alterando o slug, <strong>todas as URLs, incluindo as URLs do git, serão alteradas</strong>',
         :update_slug => 'Atualizar slug',
         :merge_request_states_hint => 'Cada linha deveria conter um tag de status que pode ser selecionado para requisições de merge neste projeto'
+      },
+      :project_memberships => {
+          :collaborator => "Colaborador",
+          :back_to_project => "Voltar ao projeto",
+          :is_public => "Projeto é público",
+          :is_public_description => "Qualquer um com acesso a {{site_name}} pode acessar este projeto e seus repositórios.",
+          :make_private => "Tornar privado",
+          :make_public => "Abrir este projeto para o público."
+      },
+      :repository_memberships => {
+          :collaborator => "Membro",
+          :back_to_repository => "Voltar ao repositório",
+          :is_public => "Repositório é aberto",
+          :is_public_description => "Qualquer um com acesso ao projeto {{project}} pode navegar nesse repositório.",
+          :make_private => "Tornar privado",
+          :make_public => "Abrir acesso ao repositório. Se o projeto for também privado, isto irá abrir acesso apenas aos membros do projeto."
       },
       :merges => {
         :info => {
