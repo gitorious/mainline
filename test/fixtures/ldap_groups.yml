@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  user_id: 1
+  description: MyText
+  avatar_file_name: MyString
+  avatar_content_type: MyString
+  avatar_file_size: MyString
+  avatar_updated_at: 2012-05-18 14:33:37
+  member_dns: MyText
+
+two:
+  name: MyString
+  user_id: 1
+  description: MyText
+  avatar_file_name: MyString
+  avatar_content_type: MyString
+  avatar_file_size: MyString
+  avatar_updated_at: 2012-05-18 14:33:37
+  member_dns: MyText

@@ -168,6 +168,19 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
 
   add_index "hooks", ["repository_id"], :name => "index_hooks_on_repository_id"
 
+  create_table "ldap_groups", :force => true do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.text     "description"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.string   "avatar_file_size"
+    t.datetime "avatar_updated_at"
+    t.text     "member_dns"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "memberships", :force => true do |t|
     t.integer  "group_id"
     t.integer  "user_id"
@@ -361,7 +374,7 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "subdomain"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "wiki_git_path"
+    t.string   "wiki_git_path"
   end
 
   add_index "sites", ["subdomain"], :name => "index_sites_on_subdomain"
@@ -398,13 +411,13 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   create_table "users", :force => true do |t|
     t.string   "login"
     t.string   "email"
-    t.string   "crypted_password",               :limit => 40, :default => "",    :null => false
-    t.string   "salt",                           :limit => 40, :default => "",    :null => false
+    t.string   "crypted_password",               :limit => 40
+    t.string   "salt",                           :limit => 40
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "remember_token"
     t.datetime "remember_token_expires_at"
-    t.string   "activation_code"
+    t.string   "activation_code",                :limit => 40
     t.datetime "activated_at"
     t.integer  "ssh_key_id"
     t.string   "fullname"

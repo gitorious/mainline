@@ -29,6 +29,7 @@ module Gitorious
         return project_admin?(candidate, thing) if thing.is_a?(Project)
         return repository_admin?(candidate, thing) if thing.is_a?(Repository)
         return group_admin?(candidate, thing) if thing.is_a?(Group)
+        return group_admin?(candidate, thing) if thing.is_a?(LdapGroup)
         false
       end
 

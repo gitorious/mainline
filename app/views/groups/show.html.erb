@@ -117,9 +117,14 @@
   </ul>
   <ul class="links navigation">
     <% if group_admin?(@group, current_user) -%>
-      <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
-      <li><%= link_to t("views.memberships.add_new_member"), new_group_membership_path(@group) -%></li>
-      <li><%= link_to t('views.groups.edit_team'), [:edit, @group] %></li>
+
+      <% if Team.can_have_members?(@group) -%>
+        <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
+        <li><%= link_to t("views.memberships.add_new_member"),
+          new_group_membership_path(@group) -%></li>
+      <% end -%>
+    
+      <li><%= link_to t('views.groups.edit_team'), edit_group_path(@group) %></li>
     <% end -%>
   </ul>
 <% end -%>

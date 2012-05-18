@@ -32,8 +32,28 @@ class Team
   end
 
   def self.find_by_name!(name)
+    includes = [:projects, :repositories, :committerships]
+    if group_implementation === Group
+      includes << :members
+    end
     group_implementation.find_by_name!(name,
-                        :include => [:members, :projects, :repositories, :committerships])
+                        :include => includes)
+  end
+
+  def self.memberships(group)
+    if group === Group
+      group.memberships.find(:all, :include => [:user, :role])
+    else
+      []
+    end
+  end
+
+  def self.events(group, page)
+    if group === Group
+      group.events(page)
+    else
+      []
+    end
   end
 
   def self.new_group
@@ -41,21 +61,29 @@ class Team
   end
 
   def self.create_group(params, user)
-    group = group_implementation.new(params)
+    group = group_implementation.new(group_params(params))
     group.transaction do
       group.creator = user
       group.save!
-      group.memberships.create!({
-        :user => user,
-        :role => Role.admin,
-      })
+      if group === Group 
+        group.memberships.create!({
+                                    :user => user,
+                                    :role => Role.admin,
+                                  })
+      end
     end
     return group
   end
 
-  def self.update_group(group, description, avatar)
-    group.description = description
-    group.avatar = avatar
+  def self.group_params(params)
+    params.key?(:ldap_group) ? params[:ldap_group] : params[:group]
+  end
+
+  
+  def self.update_group(group, params)
+    params = group_params(params)
+    group.description = params[:descripton]
+    group.avatar = params[:avatar]
     group.save!
   end
 
@@ -81,5 +109,10 @@ class Team
     group.avatar.destroy
     group.save
   end
+
+  def self.can_have_members?(group)
+    group === Group 
+  end
+
 
 end
