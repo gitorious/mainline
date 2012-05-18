@@ -24,13 +24,12 @@ class GroupsController < ApplicationController
 
   def index
     @groups = paginate(:action => "index") do
-      Group.paginate(:all, :page => params[:page])
+      Team.paginate_all(params[:page])
     end
   end
 
   def show
-    @group = Group.find_by_name!(params[:id],
-              :include => [:members, :projects, :repositories, :committerships])
+    @group = Team.find_by_name!(params[:id])
     @mainlines = filter(@group.repositories.mainlines)
     @clones = filter(@group.repositories.clones)
     @projects = filter(@group.projects)
@@ -44,31 +43,21 @@ class GroupsController < ApplicationController
   end
 
   def new
-    @group = Group.new
+    @group = Team.new_group
   end
 
   def edit
   end
 
   def update
-    @group.description = params[:group][:description]
-    @group.avatar = params[:group][:avatar]
-    @group.save!
+    Team.update_group(@group, params[:group][:description], params[:group][:avatar])
     redirect_to group_path(@group)
     rescue ActiveRecord::RecordInvalid
       render :action => 'edit'
   end
 
   def create
-    @group = Group.new(params[:group])
-    @group.transaction do
-      @group.creator = current_user
-      @group.save!
-      @group.memberships.create!({
-        :user => current_user,
-        :role => Role.admin,
-      })
-    end
+    @group = Team.create_group(params[:group], current_user)
     flash[:success] = I18n.t "groups_controller.group_created"
     redirect_to group_path(@group)
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
@@ -76,21 +65,19 @@ class GroupsController < ApplicationController
   end
 
   def destroy
-    @group = Group.find_by_name!(params[:id])
-    if site_admin?(current_user) || (admin?(current_user, @group) && @group.deletable?)
-      @group.destroy
+    begin
+      Team.destroy_group(params[:id], current_user)
       flash[:success] = "The team was deleted"
       redirect_to groups_path
-    else
-      flash[:error] = "The team cannot be deleted, since there are other members in it"
-      redirect_to group_path(@group)
+    rescue Team::DestroyGroupError => e
+      flash[:error] = e.message
+      redirect_to group_path(params[:id])
     end
   end
 
   # DELETE avatar
   def avatar
-    @group.avatar.destroy
-    @group.save
+    Team.delete_avatar(@group)
     flash[:success] = "The team image was deleted"
     redirect_to group_path(@group)
   end
@@ -105,7 +92,7 @@ class GroupsController < ApplicationController
 
   protected
   def find_group_and_ensure_group_adminship
-    @group = Group.find_by_name!(params[:id])
+    @group = Team.find_by_name!(params[:id])
     unless admin?(current_user, @group)
       access_denied and return
     end
