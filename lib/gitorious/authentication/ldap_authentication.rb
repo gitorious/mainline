@@ -91,7 +91,7 @@ module Gitorious
           :attributes => attribute_mapping.keys, :return_result => true)
         if result.size > 0
           data = result.detect do |element|
-            attribute_mapping.keys.all? {|ldap_name| element[ldap_name] }
+            attribute_mapping.keys.none? {|ldap_name| element[ldap_name].blank? }
           end
           user = User.new
           user.login = transform_username(username)
