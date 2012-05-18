@@ -25,6 +25,28 @@ module Gitorious
       def self.default_configuration
         DatabaseAuthorization.new
       end
+
+      def self.configure!
+        authorization_configuration_path = File.join(Rails.root, "config", "authorization.yml")
+
+        if File.exist?(authorization_configuration_path)
+          if config = YAML::load_file(authorization_configuration_path)[RAILS_ENV]
+            Gitorious::Authorization::Configuration.configure(config)
+          else
+            Gitorious::Authorization::Configuration.use_default_configuration
+          end
+        else
+          Gitorious::Authorization::Configuration.use_default_configuration
+        end
+        @configured = true
+      end
+
+      def self.configured?
+        @configured
+      end
+
+      configure! unless configured?
+
     end
   end
 end
