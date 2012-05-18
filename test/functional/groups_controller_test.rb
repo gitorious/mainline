@@ -156,7 +156,7 @@ class GroupsControllerTest < ActionController::TestCase
         assert_response :redirect
       end
       assert_redirected_to group_path(@group)
-      assert_match(/team cannot be deleted/, flash[:error])
+      assert_match(/Teams with current members or projects cannot be deleted/, flash[:error])
     end
 
     should "succeed if there is more than one member and user is site_admin" do

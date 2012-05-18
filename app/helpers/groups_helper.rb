@@ -17,8 +17,6 @@
 #++
 module GroupsHelper
   def group_admin?(group,user)
-    return false unless user.is_a? User
-    role = group.user_role(user)
-    role && role.admin?
+    Team.group_admin?(group, user)
   end
 end
