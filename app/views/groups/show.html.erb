@@ -116,7 +116,7 @@
     </li>
   </ul>
   <ul class="links navigation">
-    <% if admin?(current_user, @group) -%>
+    <% if group_admin?(@group, current_user) -%>
       <li><%= link_to t("views.groups.edit_memberships"), [@group, :memberships] -%></li>
       <li><%= link_to t("views.memberships.add_new_member"), new_group_membership_path(@group) -%></li>
       <li><%= link_to t('views.groups.edit_team'), [:edit, @group] %></li>

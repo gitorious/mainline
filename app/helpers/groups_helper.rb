@@ -16,5 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 module GroupsHelper
-
+  def group_admin?(group,user)
+    return false unless user.is_a? User
+    role = group.user_role(user)
+    role && role.admin?
+  end
 end
