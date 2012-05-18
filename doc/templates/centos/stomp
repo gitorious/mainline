@@ -95,8 +95,12 @@ start
       fi
     fi
     ;;
+  status)
+    status -p $PID_FILE stompserver
+    RETVAL=$?
+    ;;
   *)
-    echo $"Usage: $0 {start|stop|restart|condrestart}"
+    echo $"Usage: $0 {start|stop|restart|condrestart|status}"
     RETVAL=1
 esac
 exit $RETVAL
