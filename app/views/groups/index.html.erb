@@ -23,7 +23,7 @@
     <li>
         <%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16", :style => "float: left; margin-right: 4px; ") %>
       <p>
-		<strong><%= link_to h(group.name), group_path(group) -%></strong>
+		<strong><%= link_to h(group.name), group_path(group.to_param) -%></strong>
           (<%= pluralize group.members.count, t("views.groups.member_singular"), t("views.groups.member_plural") -%>,
           <%= pluralize group.repositories.count, t("views.groups.repo_singular"), t("views.groups.repo_plural") -%>)
       </p>

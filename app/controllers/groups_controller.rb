@@ -33,11 +33,12 @@ class GroupsController < ApplicationController
     @mainlines = filter(@group.repositories.mainlines)
     @clones = filter(@group.repositories.clones)
     @projects = filter(@group.projects)
-    @memberships = @group.memberships.find(:all, :include => [:user, :role])
+
+    @memberships = Team.memberships(@group)
 
     @events = paginate(:action => "show", :id => params[:id]) do
       filter_paginated(params[:page], 30) do |page|
-        @group.events(page)
+        Team.events(@group, page)
       end
     end
   end
@@ -50,14 +51,14 @@ class GroupsController < ApplicationController
   end
 
   def update
-    Team.update_group(@group, params[:group][:description], params[:group][:avatar])
+    Team.update_group(@group, params)
     redirect_to group_path(@group)
     rescue ActiveRecord::RecordInvalid
       render :action => 'edit'
   end
 
   def create
-    @group = Team.create_group(params[:group], current_user)
+    @group = Team.create_group(params, current_user)
     flash[:success] = I18n.t "groups_controller.group_created"
     redirect_to group_path(@group)
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound

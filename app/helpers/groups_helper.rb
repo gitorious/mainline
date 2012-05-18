@@ -19,4 +19,13 @@ module GroupsHelper
   def group_admin?(group,user)
     Team.group_admin?(group, user)
   end
+
+  def ldap_groups_path(options={})
+    groups_path(options)
+  end
+
+  def ldap_group_path(group, options={})
+    group_path(group, options)
+  end
+  
 end
