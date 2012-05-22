@@ -111,7 +111,7 @@ class Team
   end
 
   def self.can_have_members?(group)
-    group === Group 
+    group.is_a?(Group) 
   end
 
 
