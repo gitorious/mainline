@@ -114,7 +114,9 @@
       :reset_password_notice => "A new password has been sent to your email",
       :reset_password_error => "Invalid email",
       :reset_password_inactive_account  => 'Your account has not been activated yet. Please check your mailbox (including your spam folder) for an activation message from Gitorious',
-      :show_pagination_oob => "Sorry, there were no events for page {{page}}."
+      :show_pagination_oob => "Sorry, there were no events for page {{page}}.",
+      :account_deleted => "Account deleted",
+      :delete_your_repos_and_projects_first => "Please delete or change ownership of your projects and repositories before you remove your own account."
     },
     :pages_controller => {
       :invalid_page_error => "invalid page, badly formatted title or body",
@@ -306,7 +308,8 @@
           :info => "A <strong>confirmation e-mail</strong> will be delivered to the e-mail address you specified. This e-mail contains an activation link, visit that link to complete the registration.",
           :thanks => "We look forward to seeing you use Gitorious!"
         },
-        :favorites_action => "Your favorites"
+        :favorites_action => "Your favorites",
+        :delete_account => "Delete account"
       },
       :logs => {
         :title => "Commits in {{repo_url}}:{{ref}}",

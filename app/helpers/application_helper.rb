@@ -558,7 +558,7 @@ module ApplicationHelper
     if extra_class = options.delete(:class)
       css_classes << extra_class
     end
-    content_tag(:div, link_to(label, url, :class => ""),
+    content_tag(:div, link_to(label, url, :class => "", :confirm => options[:confirm]),
         :id => options.delete(:id), :class => css_classes.flatten.join(" "))
   end
 

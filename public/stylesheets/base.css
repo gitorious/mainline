@@ -718,6 +718,10 @@ li.edit_account_password > a,
     background-image: url("../images/silk/star.png") !important;
 }
 
+.delete_account > a {
+    background-image: url("../images/silk/user_delete.png") !important;
+}
+
 li.new_key > a { background-image: url("../images/silk/key_add.png") !important; }
 li.edit_key > a { background-image: url("../images/silk/key_edit.png") !important; }
 

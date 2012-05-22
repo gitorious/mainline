@@ -390,6 +390,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def deletable?
+    repositories.count == 0 && projects.count == 0
+  end
+  
   protected
   # before filter
   def encrypt_password

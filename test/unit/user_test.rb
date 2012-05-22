@@ -533,6 +533,17 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
+  context "user deletion" do
+    should "be possible if user has no repos or projects" do
+      u = User.new
+      assert u.deletable?
+    end
+
+    should "not be possible if user has any current repos and/or projects" do
+      assert !users(:johan).deletable?
+    end
+  end
+
   protected
   def create_user(options = {})
     u = User.new({ :email => "quire@example.com", :terms_of_use => "1" }.merge(options))

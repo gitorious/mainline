@@ -492,9 +492,33 @@ class UsersControllerTest < ActionController::TestCase
       delete :avatar, :id => user.to_param
       assert_redirected_to user_path(user)
       assert !user.reload.avatar?
-    end
+    end    
   end
 
+  context "deleting your own account" do
+    should "be allowed if you don't own any projects or repos" do
+      user = create_open_id_user("thomas", "thomas@openid.com", "http://myauth")
+      login_as user
+      assert_response :success
+      assert user.deletable?
+      get :delete_current, :id => user.id
+      assert_match(/Account deleted/i, flash[:success])
+      assert_redirected_to root_path
+      assert_nil User.find_by_login "thomas"
+    end
+
+    should "be prevented, with feedback message, if repos or projects present" do
+      user = users(:moe) # has projects and repos
+      login_as user
+      assert_response :success
+      assert !user.deletable?
+      get :delete_current, :id => user.id
+      assert_redirected_to user_path(user)
+      assert_match(/Please delete or change ownership of your projects/i, flash[:error])
+      assert_not_nil User.find_by_login(user.login)
+    end
+  end
+  
   context "Viewing ones own favorites" do
     setup {
       login_as(:johan)

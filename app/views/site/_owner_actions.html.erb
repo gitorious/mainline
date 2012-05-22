@@ -36,3 +36,6 @@
   <%= link_button_link_to(t("views.users.favorites_action"), favorites_path, 
         :class => "show_favorites") -%>
 </li>
+<li>
+  <%= link_button_link_to(t("views.users.delete_account"), delete_current_user_path(current_user), :method => :get , :confirm => "This will remove your current Gitorious account permanently! Are you sure about this?", :class => "delete_account") -%>
+</li>
