@@ -1,5 +1,7 @@
 class LdapGroup < ActiveRecord::Base
-  belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
+  extend GroupBehavior
+
+#  belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
   has_many(:repositories, :as => :owner, :conditions => ["kind NOT IN (?)",
                                                          Repository::KINDS_INTERNAL_REPO],
            :dependent => :destroy)
