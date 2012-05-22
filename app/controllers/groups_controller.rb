@@ -33,9 +33,7 @@ class GroupsController < ApplicationController
     @mainlines = filter(@group.repositories.mainlines)
     @clones = filter(@group.repositories.clones)
     @projects = filter(@group.projects)
-
     @memberships = Team.memberships(@group)
-
     @events = paginate(:action => "show", :id => params[:id]) do
       filter_paginated(params[:page], 30) do |page|
         Team.events(@group, page)
