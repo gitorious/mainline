@@ -41,7 +41,7 @@ class Team
   end
 
   def self.memberships(group)
-    if group === Group
+    if group.is_a?(Group)
       group.memberships.find(:all, :include => [:user, :role])
     else
       []
@@ -49,7 +49,7 @@ class Team
   end
 
   def self.events(group, page)
-    if group === Group
+    if group.is_a?(Group)
       group.events(page)
     else
       []
@@ -65,7 +65,7 @@ class Team
     group.transaction do
       group.creator = user
       group.save!
-      if group === Group 
+      if group.is_a?(Group)
         group.memberships.create!({
                                     :user => user,
                                     :role => Role.admin,
@@ -82,7 +82,7 @@ class Team
   
   def self.update_group(group, params)
     params = group_params(params)
-    group.description = params[:descripton]
+    group.description = params[:description]
     group.avatar = params[:avatar]
     group.save!
   end
