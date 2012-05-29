@@ -30,7 +30,7 @@
   </li>
   <li class="secondary subtle"><%= link_to t("views.layout.logout"), logout_path -%></li>
 <%- else -%>
-  <% if GitoriousConfig['public_mode'] -%>
+  <% if GitoriousConfig['public_mode'] and GitoriousConfig['registration_enabled'] -%>
         <li class="secondary"><%= link_to t("views.layout.register"), new_user_path -%></li>
   <% end -%>
   <li class="secondary"><%= link_to t("views.layout.login"), login_path -%></li>
