@@ -25,7 +25,8 @@ class Team
     @group_implementation = klass
   end
 
-  self.group_implementation = Group
+  self.group_implementation = GitoriousConfig["group_implementation"].constantize
+
   
   def self.paginate_all(current_page = nil)
     group_implementation.paginate(:all, :page => current_page)
