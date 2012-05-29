@@ -84,6 +84,7 @@ class Team
     params = group_params(params)
     group.description = params[:description]
     group.avatar = params[:avatar]
+    group.ldap_group_names = params[:ldap_group_names] if params.key?(:ldap_group_names)
     group.save!
   end
 

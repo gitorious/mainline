@@ -20,7 +20,15 @@ class LdapGroup < ActiveRecord::Base
     :path => ":rails_root/public#{avatar_local_path}"
 
 
+  serialize :member_dns
 
+  def ldap_group_names
+    member_dns.join("\n")
+  end
+
+  def ldap_group_names=(newline_separated_list)
+    self.member_dns = newline_separated_list.split("\n")
+  end
   
   def members
     []
