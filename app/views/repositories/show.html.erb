@@ -82,7 +82,7 @@
   <ul class="links navigation">
     <% if admin?(current_user, @repository) -%>
       <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
-      <li class="add_collaborator"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
+      <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
     <% end -%>
   </ul>

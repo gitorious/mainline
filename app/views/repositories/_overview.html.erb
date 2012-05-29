@@ -22,13 +22,16 @@
 <div class="repository_meta">
 	<div class="repository-info">
     		<h3 <%= repository.mainline? ? "mainline" : "clone" -%>>
-      		<% if verbose -%>
-      			<%= link_to h(repository.project.to_param), repository.project -%>
-      			<%= image_tag("silk/arrow_right.png") -%>
-      			<% end -%>
-      			<%= link_to h(repository.name),
-            repo_owner_path(repository, [repository.project, repository]) -%>
-    		</h3>
+      		  <% if verbose -%>
+      		    <%= link_to h(repository.project.to_param), repository.project -%>
+      		    <%= image_tag("silk/arrow_right.png") -%>
+      		  <% end -%>
+      		  <%= link_to h(repository.name),
+                      repo_owner_path(repository, [repository.project, repository]) -%>
+                  <% if repository.private? -%>
+                    <%= image_tag("silk/lock.png", :class => "private_access") -%>
+                  <% end -%>
+                </h3>
     
 
   <% unless repository.description.blank? -%>

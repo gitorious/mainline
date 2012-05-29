@@ -20,7 +20,12 @@
 #++
 %>
 
-<h3><%= link_to h(project.title), project_path(project) -%></h3>
+<h3><%= link_to h(project.title), project_path(project) -%>
+  <% if project.private? -%>
+    <%= image_tag("silk/lock.png", :class => "private_access") -%>
+  <% end -%>
+</h3>
+
 <p><%= truncate h(project.stripped_description), :length => 250 -%></p>
 <p class="hint">
   <strong><%= t("views.projects.categories") %>:</strong> 
