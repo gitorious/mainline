@@ -39,6 +39,16 @@
     <%= f.file_field :avatar %> </div>
   </li>
 
+  <% if @group.is_a?(LdapGroup) %>
+    <li>
+      <%= f.label :member_dns %>
+      <div>
+        Enter LDAP group DNs, one per line<br />
+        <%= f.text_area :ldap_group_names %>
+      </div>
+    </li>
+  <% end %>
+
 
 </fieldset>
 <fieldset class="submit">
