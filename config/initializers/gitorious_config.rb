@@ -65,3 +65,5 @@ end
 GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"
 GitoriousConfig["git_version"] = `#{GitoriousConfig['git_binary']} --version`.chomp
 ActionMailer::Base.default_url_options[:protocol] = GitoriousConfig["scheme"]
+
+GitoriousConfig["group_implementation"] = GitoriousConfig["use_ldap_authorization"] ? "LdapGroup" : "Group"
