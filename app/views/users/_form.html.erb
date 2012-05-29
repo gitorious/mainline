@@ -20,7 +20,9 @@
 <div class="form-wrapper" id="signup">
 	<div id="sign-up">
 	<h1>Create a new user</h1>
+	<% if GitoriousConfig['openid_enabled'] -%>
 	<p class="alt-login">Or log in directly with your <%= link_to "OpenID", login_path %></p>
+	<% end -%>
 	<p><%= t("views.users.create_description") %></p>
 		<div class="horisontal-shadow"></div>
 			<ul>

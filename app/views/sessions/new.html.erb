@@ -28,7 +28,9 @@
     <div class="form-wrapper" id="login">
       <div id="log-in">
         <h1>Log in to <%= GitoriousConfig["site_name"] %></h1>
+        <% if GitoriousConfig['openid_enabled'] -%>
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
+        <% end -%>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
         <div class="horisontal-shadow"></div>
         <% if flash[:error] %>

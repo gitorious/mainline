@@ -142,6 +142,9 @@ production:
   # https://gitorious.org/gitorious/pages/PrivateRepositories
   #enable_private_repositories: false
 
+  # Enable OpenID
+  openid_enabled: true
+  
   # Only site admins can create projects.
   #only_site_admins_can_create_projects: false
 

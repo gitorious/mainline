@@ -192,6 +192,10 @@ class ApplicationController < ActionController::Base
     return false
   end
 
+  def require_openid_enabled
+    render_unauthorized unless GitoriousConfig['openid_enabled']
+  end
+
   def public_and_logged_in
     login_required unless GitoriousConfig['public_mode']
   end
