@@ -26,6 +26,8 @@ class UsersController < ApplicationController
     :only => [:pending_activation, :activate, :forgot_password,
               :forgot_password_create, :reset_password]
   before_filter :require_not_logged_in, :only => [:pending_activation]
+  before_filter :require_registration_enabled,
+    :only => [:new, :create]
   before_filter :login_required,
     :only => [:edit, :update, :password, :update_password, :avatar]
   before_filter :find_user,

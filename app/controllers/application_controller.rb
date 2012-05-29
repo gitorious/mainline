@@ -192,6 +192,10 @@ class ApplicationController < ActionController::Base
     return false
   end
 
+  def require_registration_enabled
+    render_unauthorized unless GitoriousConfig['registration_enabled']
+  end
+
   def public_and_logged_in
     login_required unless GitoriousConfig['public_mode']
   end

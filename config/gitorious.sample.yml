@@ -134,6 +134,9 @@ production:
   # the correct URLs.
   #public_mode: true
 
+  # This enables the user regestration in public mode
+  registration_enabled: true
+
   # Enabling private repositories allows users to control read-access to their
   # repositories. Repositories are public by default, but individual users
   # and/or groups can be given read permissions to limit who can see and pull
