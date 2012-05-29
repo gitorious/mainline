@@ -371,6 +371,9 @@ production:
   # enter a label to display next to the username field in Gitorious
   # custom_username_label: Username
 
+  # Should LDAP be used for authorization? 
+  # use_ldap_for_authorization: true
+
 development:
 
 test:
