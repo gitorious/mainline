@@ -83,7 +83,7 @@
 
   <p class="alt_links">
     <small>
-      <% if GitoriousConfig['public_mode'] and GitoriousConfig['registration_enabled'] -%>
+      <% if GitoriousConfig['public_mode'] and GitoriousConfig['enable_registration'] -%>
         <%= link_to t("views.sessions.register"), new_user_path -%>
         &mdash;
       <% end -%>
