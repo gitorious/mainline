@@ -135,7 +135,7 @@ production:
   #public_mode: true
 
   # This enables the user regestration in public mode
-  registration_enabled: true
+  enable_registration: true
 
   # Enabling private repositories allows users to control read-access to their
   # repositories. Repositories are public by default, but individual users
