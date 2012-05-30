@@ -87,7 +87,7 @@
 
   <p class="alt_links">
     <small>
-      <% if GitoriousConfig['enable_openid'] -%>
+      <% if GitoriousConfig['public_mode'] -%>
         <%= link_to t("views.sessions.register"), new_user_path -%>
         &mdash;
       <% end -%>
