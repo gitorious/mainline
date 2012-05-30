@@ -28,7 +28,7 @@
     <div class="form-wrapper" id="login">
       <div id="log-in">
         <h1>Log in to <%= GitoriousConfig["site_name"] %></h1>
-        <% if GitoriousConfig['openid_enabled'] -%>
+        <% if GitoriousConfig['enable_openid'] -%>
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <% end -%>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
@@ -59,6 +59,7 @@
             </li>
           </ul>
         </div>
+        <% if GitoriousConfig['enable_openid'] -%>
         <div id="openid_login_fields" class="login_hidden">
           <ul>
             <li>
@@ -76,6 +77,7 @@
             </li>
           </ul>
         </div>
+        <% end -%>
 
 
 
@@ -85,7 +87,7 @@
 
   <p class="alt_links">
     <small>
-      <% if GitoriousConfig['public_mode'] -%>
+      <% if GitoriousConfig['enable_openid'] -%>
         <%= link_to t("views.sessions.register"), new_user_path -%>
         &mdash;
       <% end -%>

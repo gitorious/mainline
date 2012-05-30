@@ -143,8 +143,8 @@ production:
   #enable_private_repositories: false
 
   # Enable OpenID
-  openid_enabled: true
-  
+  enable_openid: true
+
   # Only site admins can create projects.
   #only_site_admins_can_create_projects: false
 

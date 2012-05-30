@@ -3,6 +3,7 @@ unless defined? GitoriousConfig
 
   # make the default be publicly open
   GitoriousConfig["public_mode"] = true if GitoriousConfig["public_mode"].nil?
+  GitoriousConfig["enable_openid"] = true if GitoriousConfig["enable_openid"].nil?
   GitoriousConfig["locale"] = "en" if GitoriousConfig["locale"].nil?
   GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
   GitoriousConfig["gitorious_support_email"] = "support@gitorious.local" if GitoriousConfig["gitorious_support_email"].nil?
