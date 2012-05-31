@@ -65,7 +65,7 @@ class LdapGroup < ActiveRecord::Base
   def self.ldap_groups_for_user(user)
     configurator = ldap_configurator
     membership_attribute = ldap_configurator.membership_attribute_name
-    LdapConnection.new({:host => configurator.server, :port => configurator.port}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+    LdapConnection.new({:host => configurator.server, :port => configurator.port, :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
         :base => configurator.base_dn,
         :filter => Net::LDAP::Filter.eq(configurator.login_attribute, user.login),
@@ -87,7 +87,7 @@ class LdapConnection
   end
 
   def bind_as(bind_user_dn, bind_user_pass)
-    connection = Net::LDAP.new({:host => options[:host], :port => options[:port]})
+    connection = Net::LDAP.new({:host => options[:host], :port => options[:port], :encryption => options[:encryption]})
     connection.auth(bind_user_dn, bind_user_pass)
     begin
       if connection.bind
