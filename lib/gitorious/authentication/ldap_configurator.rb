@@ -1,0 +1,72 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2012 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+module Gitorious
+  module Authentication
+    class LDAPConfigurator
+      attr_reader :options
+      
+      def initialize(options_hash)
+        @options = options_hash
+      end
+
+      def login_attribute
+        options["login_attribute"] || "CN"
+      end
+
+      def server
+        options["host"] || options["server"]
+      end
+
+      def port
+        (options["port"] || 389).to_i
+      end
+
+      def attribute_mapping
+        options["attribute_mapping"] || default_attribute_mapping
+      end
+
+      def encryption
+        encryption_opt = options["encryption"] || "simple_tls"
+        encryption_opt.to_sym if encryption_opt != "none"
+      end
+
+      def base_dn
+        options["base_dn"]
+      end
+      
+      def connection_type
+        @connection_type = options["connection_type"] || Net::LDAP
+      end
+
+      def authentication_callback_class
+        options["callback_class"].constantize if options.key?("callback_class")
+      end
+
+      def distinguished_name_template
+        options["distinguished_name_template"] || "#{login_attribute}={},#{base_dn}"
+      end
+      
+      # The default mapping of LDAP -> User attributes
+      def default_attribute_mapping
+        {"displayname" => "fullname", "mail" => "email"}
+      end
+    end
+
+  end
+end

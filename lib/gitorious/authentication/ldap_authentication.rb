@@ -34,16 +34,16 @@ module Gitorious
       end
 
       def setup_attributes(options)
-        @login_attribute = options["login_attribute"] || "CN"
-        @server = options["host"] || options["server"]
-        @port = (options["port"] || 389).to_i
-        @attribute_mapping = options["attribute_mapping"] || default_attribute_mapping
-        encryption_opt = options["encryption"] || "simple_tls"
-        @encryption = encryption_opt.to_sym if encryption_opt != "none"
-        @base_dn = options["base_dn"]
-        @connection_type = options["connection_type"] || Net::LDAP
-        @callback_class = options["callback_class"].constantize if options.key?("callback_class")
-        build_distinguished_name_template(options["distinguished_name_template"])
+        configurator = LDAPConfigurator.new(options)
+        @login_attribute               = configurator.login_attribute
+        @server                        = configurator.server
+        @port                          = configurator.port
+        @attribute_mapping             = configurator.attribute_mapping
+        @encryption                    = configurator.encryption
+        @base_dn                       = configurator.base_dn        
+        @connection_type               = configurator.connection_type        
+        @callback_class                = configurator.authentication_callback_class
+        @distinguished_name_template   = configurator.distinguished_name_template
       end
 
       def post_authenticate(options)
@@ -117,19 +117,12 @@ module Gitorious
         Net::LDAP::Filter.eq(login_attribute, username)
       end
 
-      # The default mapping of LDAP -> User attributes
-      def default_attribute_mapping
-        {"displayname" => "fullname", "mail" => "email"}
-      end
 
       def build_username(login)
         distinguished_name_template.sub("{}", login)
       end
 
-      def build_distinguished_name_template(template)
-        @distinguished_name_template = template || "#{login_attribute}={},#{base_dn}"
-      end
-
     end
   end
 end
+
