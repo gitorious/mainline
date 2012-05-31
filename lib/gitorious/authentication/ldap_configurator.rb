@@ -66,6 +66,19 @@ module Gitorious
       def default_attribute_mapping
         {"displayname" => "fullname", "mail" => "email"}
       end
+
+      def bind_username
+        options["bind_user"]["username"]
+      end
+
+      def bind_password
+        options["bind_user"]["password"]
+      end
+
+      # The name of the membership attribute name (9/10 times this is the default)
+      def membership_attribute_name
+        options.fetch("membership_attribute_name", "memberof").to_sym
+      end
     end
 
   end
