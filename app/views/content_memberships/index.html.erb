@@ -22,7 +22,7 @@
   <h2 class="error">
 <% end %>
 
-<h1><%= t("views.collaborators.title",
+<h1><%= t("views.repository_memberships.title",
           :repo_name => link_to(h(@content.title), content_path(@content)))  -%></h1>
 
 <% if @memberships.count == 0 %>
@@ -33,7 +33,8 @@
   </p>
 <% else %>
   <%= render :partial => "content_memberships/memberships" %>
-  <p>
+  
+<p>
     <%= link_to("Remove all collaborators",
                 { :action => "destroy", :id => "all" },
                 :method => :delete, :confirm => "Are you sure? This will delete all #{@memberships.count} members") %>
@@ -44,6 +45,9 @@
     <ul class="links actions navigation">
       <li>
         <%= link_to text(:"back_to_#{@class_name}"), content_path(@content) -%>
+        <% if admin?(current_user, @repository) -%>
+          <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
+        <% end -%>
       </li>
     </ul>
   <% end -%>

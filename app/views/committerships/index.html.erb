@@ -59,8 +59,13 @@
   </p>
 <% else %>
   <h2>Repository is private</h2>
+  <p>Note: To see this project, collaborators on <strong><%= @repository.project.title
+  %></strong> need to be <%= link_to "granted read access",
+  project_repository_repository_memberships_path(@repository.project,
+  @repository) %> in addition to their
+  regular collaborator permissions.
+  </p>
 <% end %>
-<p><%= link_to "Manage repository read access", project_repository_repository_memberships_path(@repository.project, @repository) %></p>
 
 <%= render_pagination_links @committerships -%>
 
@@ -72,6 +77,9 @@
       <%= link_to t("views.collaborators.add_new"),
           [:new, @owner, @containing_project, @repository, :committership] -%>
     </li>
+    <% if admin?(current_user, @repository) -%>
+      <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
+    <% end -%>
   </ul>
 
   <h4>Permission overview:</h4>

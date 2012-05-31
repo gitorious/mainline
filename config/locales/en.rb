@@ -509,6 +509,9 @@
         :update_slug => 'Update slug',
         :merge_request_states_hint => 'Each line should contain one status tag that can be selected for merge requests in this project'
       },
+      :private_content_read_access => {
+        :btn_add_read_rights => "Grant read access"
+      },
       :project_memberships => {
         :collaborator => "Collaborator",
         :back_to_project => "Back to project",
@@ -518,6 +521,7 @@
         :make_public => "open project to the public."
       },
       :repository_memberships => {
+        :title => "Manage user &amp; team read access to {{repo_name}}",
         :collaborator => "Repository member",
         :back_to_repository => "Back to repository",
         :is_public => "Repository is open",
