@@ -1,3 +1,21 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2012 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
 require "net/ldap"
 class LdapGroup < ActiveRecord::Base
   extend GroupBehavior
@@ -58,14 +76,17 @@ class LdapGroup < ActiveRecord::Base
     configuration = YAML::load_file(auth_configuration_path)[RAILS_ENV]["methods"].detect do |m|
       m["adapter"] == "Gitorious::Authentication::LDAPAuthentication"
     end
-    raise LdapConnection::LdapError, "No LDAP configuration found for current environment (#{Rails.env}) in #{auth_configuration_path}" unless configuration
+    raise Gitorious::Authorization::LDAP::LdapError, "No LDAP configuration found for current environment (#{Rails.env}) in #{auth_configuration_path}" unless configuration
     Gitorious::Authentication::LDAPConfigurator.new(configuration)
   end
 
-  def self.ldap_groups_for_user(user)
+  def self.ldap_group_names_for_user(user)
     configurator = ldap_configurator
     membership_attribute = ldap_configurator.membership_attribute_name
-    LdapConnection.new({:host => configurator.server, :port => configurator.port, :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+    Gitorious::Authorization::LDAP::Connection.new({
+        :host => configurator.server,
+        :port => configurator.port,
+        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
         :base => configurator.base_dn,
         :filter => Net::LDAP::Filter.eq(configurator.login_attribute, user.login),
@@ -76,38 +97,18 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
-  
-end
-
-class LdapConnection
-  attr_reader :options
-  
-  def initialize(options)
-    @options = options
-  end
-
-  def bind_as(bind_user_dn, bind_user_pass)
-    connection = Net::LDAP.new({:host => options[:host], :port => options[:port], :encryption => options[:encryption]})
-    connection.auth(bind_user_dn, bind_user_pass)
-    begin
-      if connection.bind
-        yield BoundConnection.new(connection)
-        connection.close
+  def self.groups_for_user(user)
+    ldap_group_names = ldap_group_names_for_user(user)
+    result = []
+    all.each do |group|
+      dns_in_group = group.member_dns
+      ldap_group_names.map do |name|
+        if dns_in_group.include?(name)
+          result << group
+        end
       end
-    rescue Net::LDAP::LdapError => e
-      raise LdapError, "Unable to connect to the LDAP server on #{options[:host]}:#{options[:port]}. Are you sure the LDAP server is running?"
     end
+    
+    result.compact
   end
-
-  class BoundConnection
-    def initialize(native_connection)
-      @native_connection = native_connection
-    end
-
-    def search(options)
-      @native_connection.search(options)
-    end
-  end
-
-  class LdapError < StandardError;end
 end

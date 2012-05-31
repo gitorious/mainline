@@ -2,3 +2,6 @@ first_ldap_group:
   name: FirstLdapGroup
   user_id: 1
   description: Backed by LDAP
+  member_dns: 
+  - cn=developers
+  - cn=testers
