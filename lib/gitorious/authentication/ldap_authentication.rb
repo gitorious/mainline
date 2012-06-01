@@ -105,6 +105,8 @@ module Gitorious
           user.aasm_state = "terms_accepted"
           user.activated_at = Time.now.utc
           user.save!
+          # Reset the password to something random
+          user.reset_password!
           user
         end
       end
