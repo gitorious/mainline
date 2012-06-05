@@ -42,7 +42,7 @@ class LdapGroup < ActiveRecord::Base
   serialize :member_dns
 
   def ldap_group_names
-    member_dns.join("\n")
+    Array(member_dns).join("\n")
   end
 
   def ldap_group_names=(newline_separated_list)
