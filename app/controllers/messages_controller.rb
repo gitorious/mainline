@@ -122,7 +122,7 @@ class MessagesController < ApplicationController
   end
 
   def auto_complete_for_message_recipients
-    @users = User.find_fuzzy(params[:q]).reject{|u|u == current_user}
+    @users = User.find_fuzzy(params[:q]).reject{|u|u == current_user}.map{|u| u.login }.join("\n")
     render :text => @users
   end
 end

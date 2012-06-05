@@ -247,13 +247,13 @@ class MessagesControllerTest < ActionController::TestCase
     end
 
     should "not include current_user when looking up" do
-      post :auto_complete_for_message_recipients, :q => "joh", :format => "js"
-      assert_equal([], assigns(:users))
+      post :auto_complete_for_message_recipients, :q => "joh"
+      assert_equal("", assigns(:users))
     end
 
     should "assign an array of users when looking up" do
-      post :auto_complete_for_message_recipients, :q => "mik", :format => "js"
-      assert_equal([users(:mike)], assigns(:users))
+      post :auto_complete_for_message_recipients, :q => "mik"
+      assert_equal("mike", users(:mike).login)
     end
   end
 
