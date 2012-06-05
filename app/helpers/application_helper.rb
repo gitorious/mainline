@@ -33,6 +33,7 @@ module ApplicationHelper
   include RoutingHelper  
   include SiteWikiPagesHelper
   include Gitorious::Authorization
+  include GroupRoutingHelper
   
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 

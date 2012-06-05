@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,8 +15,13 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-module GroupsHelper
-  def group_admin?(group,user)
-    Team.group_admin?(group, user)
+
+module GroupRoutingHelper
+  def ldap_groups_path(options={})
+    groups_path(options)
   end
+
+  def ldap_group_path(group, options={})
+    group_path(group, options)
+  end  
 end
