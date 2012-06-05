@@ -27,18 +27,69 @@ class Team
 
   self.group_implementation = GitoriousConfig["group_implementation"].constantize
 
+  class GroupFinder
+    def paginate_all(current_page=nil)
+      Group.paginate(:all, :page => current_page)
+    end
+
+    def find_by_name!(name)
+      includes = [:projects, :repositories, :committerships, :members]
+      Group.find_by_name!(name,:include => includes)
+    end
+
+    def new_group(params={})
+      Group.new(params)
+    end
+
+    def create_group(params, user)
+      group = new_group(params)
+      group.transaction do
+        group.creator = user
+        group.save!
+        group.memberships.create!({
+            :user => user,
+            :role => Role.admin,
+          })
+      end
+      return group
+    end
+  end
+
+  class LdapGroupFinder
+    def paginate_all(current_page = nil)
+      LdapGroup.paginate(:all, :page => current_page)
+    end
+
+    def find_by_name!(name)    
+      includes = [:projects, :repositories, :committerships]
+      LdapGroup.find_by_name!(name,:include => includes)
+    end
+
+    def new_group(params={})
+      LdapGroup.new
+    end
+
+    def create_group(params, user)
+      group = new_group(params)
+      group.transaction do
+        group.creator = user
+        group.save!
+      end
+      return group
+    end
+  end
+
+  # Return a (class level) finder
+  def self.group_finder
+    group_implementation == LdapGroup ? LdapGroupFinder.new : GroupFinder.new
+  end
   
   def self.paginate_all(current_page = nil)
-    group_implementation.paginate(:all, :page => current_page)
+    group_finder.paginate_all
   end
 
   def self.find_by_name!(name)
-    includes = [:projects, :repositories, :committerships]
-    if group_implementation === Group
-      includes << :members
-    end
-    group_implementation.find_by_name!(name,
-                        :include => includes)
+    group_finder.find_by_name!(name)
   end
 
   def self.memberships(group)
@@ -58,22 +109,11 @@ class Team
   end
 
   def self.new_group
-    group_implementation.new
+    group_finder.new_group
   end
 
   def self.create_group(params, user)
-    group = group_implementation.new(group_params(params))
-    group.transaction do
-      group.creator = user
-      group.save!
-      if group.is_a?(Group)
-        group.memberships.create!({
-                                    :user => user,
-                                    :role => Role.admin,
-                                  })
-      end
-    end
-    return group
+    group_finder.create_group(group_params(params), user)
   end
 
   def self.group_params(params)
@@ -93,7 +133,7 @@ class Team
   end
   
   def self.destroy_group(name, user)
-    group = group_implementation.find_by_name! name
+    group = group_finder.find_by_name! name
     unless user.is_admin? 
       raise DestroyGroupError, "You're not admin" unless group_admin?(group, user)
       raise DestroyGroupError, "Teams with current members or projects cannot be deleted" unless group.deletable?
