@@ -77,6 +77,19 @@ class TeamTest < ActiveSupport::TestCase
       assert group.valid?
     end
   end
+
+  context "Accessing groups" do
+    setup {@group = groups(:a_team)}
+
+    should "return events" do
+      @group.expects(:events).returns([])
+      Team.events(@group,nil)
+    end
+
+    should "return memberships" do      
+      assert_kind_of Array, Team.memberships(@group)
+    end
+  end
   
 
   def ldap_group_params
