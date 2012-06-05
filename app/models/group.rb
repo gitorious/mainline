@@ -22,6 +22,7 @@ class Group < ActiveRecord::Base
     :source => :repository, :class_name => 'Repository'
 
   extend GroupBehavior
+  include GroupBehavior::InstanceMethods
 
   has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
@@ -97,10 +98,6 @@ class Group < ActiveRecord::Base
 
   def to_param
     name
-  end
-
-  def to_param_with_prefix
-    "+#{to_param}"
   end
 
   def title

@@ -24,24 +24,7 @@
 <div class="with_divider">
   <div id="left" class="w-365">
   <% pull_box("Members", :class => "pull-box-365") do -%>
-    <% if @memberships.empty? -%>
-      <ul><li><em>None</em></li></ul>
-    <% end -%>
-    <% @memberships.group_by(&:role).each do |role, memberships| -%>
-      <ul>
-        <li class="hint"><%=h role.name -%>s
-        <ul>
-        <% memberships.each do |membership| -%>
-          <li>
-            <div class="user">
-              <%= avatar(membership.user, :size => 16, :style => "tiny") %>
-              <%= link_to h(membership.user.title), user_path(membership.user) -%>
-                </div>
-          </li>
-        <% end -%>
-        </li></ul>
-      <% end -%>
-    </ul>
+    <%= render :partial => "#{@group.class.name.underscore}_members" %>
   <% end -%>
 
   <% pull_box("Team repositories", :class => "pull-box-365") do -%></h4>

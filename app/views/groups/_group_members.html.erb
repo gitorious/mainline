@@ -1,0 +1,18 @@
+<% if @memberships.empty? -%>
+  <ul><li><em>None</em></li></ul>
+<% end -%>
+<% @memberships.group_by(&:role).each do |role, memberships| -%>
+  <ul>
+    <li class="hint"><%=h role.name -%>s
+      <ul>
+        <% memberships.each do |membership| -%>
+          <li>
+            <div class="user">
+              <%= avatar(membership.user, :size => 16, :style => "tiny") %>
+              <%= link_to h(membership.user.title), user_path(membership.user) -%>
+            </div>
+          </li>
+        <% end -%>
+    </li></ul>
+<% end -%>
+</ul>

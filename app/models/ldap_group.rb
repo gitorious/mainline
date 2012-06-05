@@ -19,6 +19,7 @@
 require "net/ldap"
 class LdapGroup < ActiveRecord::Base
   extend GroupBehavior
+  include GroupBehavior::InstanceMethods
 
 #  belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
   has_many(:repositories, :as => :owner, :conditions => ["kind NOT IN (?)",

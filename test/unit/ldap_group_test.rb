@@ -52,7 +52,14 @@ class LdapGroupTest < ActiveSupport::TestCase
         assert_equal([], LdapGroup.groups_for_user(@user))
       end
     end
+  end
 
+  context "Owner prefix" do
+    setup { @group = ldap_groups(:first_ldap_group) }
+
+    should "use the + prefix" do
+      assert_equal "+FirstLdapGroup", @group.to_param_with_prefix
+    end
   end
 
   def stub_ldap_groups(groups)
