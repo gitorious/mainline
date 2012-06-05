@@ -79,13 +79,42 @@ class Team
     end
   end
 
+  class Wrapper
+    def initialize(group)
+      @group = group
+    end
+  end
+  
+  class LdapGroupWrapper < Wrapper
+    def events(page)
+      []
+    end
+    def memberships
+      []
+    end
+  end
+
+  class GroupWrapper < Wrapper
+    def events(page)
+      @group.events(page)
+    end
+    
+    def memberships
+      @group.memberships.find(:all, :include => [:user, :role])
+    end
+  end
+
+  def self.group_wrapper(group)
+    group.is_a?(LdapGroup) ? LdapGroupWrapper.new(group) : GroupWrapper.new(group)
+  end
+
   # Return a (class level) finder
   def self.group_finder
     group_implementation == LdapGroup ? LdapGroupFinder.new : GroupFinder.new
   end
   
   def self.paginate_all(current_page = nil)
-    group_finder.paginate_all
+    group_finder.paginate_all(current_page)
   end
 
   def self.find_by_name!(name)
@@ -93,19 +122,11 @@ class Team
   end
 
   def self.memberships(group)
-    if group.is_a?(Group)
-      group.memberships.find(:all, :include => [:user, :role])
-    else
-      []
-    end
+    group_wrapper(group).memberships
   end
 
   def self.events(group, page)
-    if group.is_a?(Group)
-      group.events(page)
-    else
-      []
-    end
+    group_wrapper(group).events(page)
   end
 
   def self.new_group
@@ -155,6 +176,4 @@ class Team
   def self.can_have_members?(group)
     group.is_a?(Group) 
   end
-
-
 end
