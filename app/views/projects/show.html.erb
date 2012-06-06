@@ -65,7 +65,7 @@
       <li class="new_repository"><%= link_to t("views.projects.add_repository"), new_project_repository_path(@project) -%></li>
       <li class="update_project"><%= link_to t("views.projects.edit"), edit_project_path(@project) -%></li>
     <% end -%>
-    <% if can_grant_access?(current_user, @project) -%>
+    <% if GitoriousConfig["enable_private_repositories"] && can_grant_access?(current_user, @project) -%>
       <li class="update_access"><%= link_to t("views.projects.manage_access"), project_project_memberships_path(@project) -%></li>
     <% end -%>
     <%- if logged_in? && site_admin?(current_user) && GitoriousConfig["is_gitorious_dot_org"] -%>
