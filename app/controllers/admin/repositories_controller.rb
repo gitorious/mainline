@@ -20,7 +20,7 @@
 class Admin::RepositoriesController < AdminController
   def index
     @unready_repositories = paginate(:action => "index") do
-      Repository.paginate(:all,:conditions => {:ready => false}, :per_page => 10, :page => params[:page])
+      Repository.paginate(:all,:conditions => "ready = false AND kind != #{Repository::KIND_TRACKING_REPO}", :per_page => 30, :page => params[:page])
     end
   end
 
