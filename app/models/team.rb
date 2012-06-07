@@ -69,7 +69,7 @@ class Team
     end
 
     def find_by_name!(name)    
-      includes = [:projects, :repositories, :committerships]
+      includes = [:projects, :repositories]
       LdapGroup.find_by_name!(name,:include => includes)
     end
 
