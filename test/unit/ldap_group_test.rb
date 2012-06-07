@@ -62,6 +62,17 @@ class LdapGroupTest < ActiveSupport::TestCase
     end
   end
 
+  context "Deletion" do
+    setup { @group = ldap_groups(:first_ldap_group) }
+
+    should "be disallowed for groups owning projects" do
+      p = projects(:johans)
+      p.owner = @group
+      assert p.save
+      refute @group.deletable?
+    end
+  end
+
   def stub_ldap_groups(groups)
     LdapGroup.stubs(:ldap_group_names_for_user).returns(groups)
     yield

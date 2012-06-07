@@ -603,12 +603,13 @@ class ProjectsControllerTest < ActionController::TestCase
 
     should "get a list of the users' groups on edit" do
       group = groups(:a_team)
-      assert !group.member?(users(:mike))
-      group.add_member(users(:mike), Role.member)
+      mike = users(:mike)
+      assert !group.member?(mike)
+      group.add_member(mike, Role.member)
       get :edit, :id => @project.to_param
       assert_response :success
       assert !assigns(:groups).include?(group), "included group where user is only member"
-      assert_equal users(:mike).groups.select{|g| admin?(users(:mike), g) }, assigns(:groups)
+      assert_equal Team.by_admin(mike), assigns(:groups)
     end
 
     should "only get a list of groups user is admin in on update" do

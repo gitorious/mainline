@@ -78,6 +78,10 @@ class ActiveSupport::TestCase
       (message || inclusion_failure(collection, object, false)))
   end
 
+  def refute(test, message=nil)
+    assert !test, message
+  end
+
   def inclusion_failure(collection, object, should_be_included)
     not_message = should_be_included ? "" : " not"
     "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"

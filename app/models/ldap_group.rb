@@ -66,6 +66,10 @@ class LdapGroup < ActiveRecord::Base
     name
   end
 
+  def deletable?
+    projects.empty?
+  end
+
   def user_role(candidate)
     if candidate == creator
       Role.admin

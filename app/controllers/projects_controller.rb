@@ -119,7 +119,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @groups = current_user.groups.select{|g| admin?(current_user, g) }
+    @groups = Team.by_admin(current_user)
     @root = Breadcrumb::EditProject.new(@project)
   end
 
@@ -141,7 +141,10 @@ class ProjectsController < ApplicationController
 
     # change group, if requested
     unless params[:project][:owner_id].blank?
-      @project.change_owner_to(current_user.groups.find(params[:project][:owner_id]))
+      new_owner = Team.find(params[:project][:owner_id])
+      if Team.group_admin?(new_owner, current_user)
+        @project.change_owner_to(new_owner)
+      end
     end
 
     @project.attributes = params[:project]
