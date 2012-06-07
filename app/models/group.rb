@@ -26,23 +26,10 @@ class Group < ActiveRecord::Base
 
   has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
-  has_many :repositories, :as => :owner, :conditions => ["kind NOT IN (?)",
-                                                         Repository::KINDS_INTERNAL_REPO],
-    :dependent => :destroy
-  has_many :cloneable_repositories, :as => :owner, :class_name => "Repository",
-     :conditions => ["kind != ?", Repository::KIND_TRACKING_REPO]
-  has_many :projects, :as => :owner
   has_many :content_memberships, :as => :member
 
   attr_protected :public, :role_id, :user_id
 
-  NAME_FORMAT = /[a-z0-9\-]+/.freeze
-  validates_presence_of :name
-  validates_uniqueness_of :name
-  validates_format_of :name, :with => /^#{NAME_FORMAT}$/,
-    :message => "Must be alphanumeric, and optional dash"
-
-  before_validation :downcase_name
 
   Paperclip.interpolates('group_name'){|attachment,style| attachment.instance.name}
 
@@ -135,10 +122,5 @@ class Group < ActiveRecord::Base
                                        }],
                        :order => "events.created_at desc",
                        :include => [:user, :project])
-  end
-
-  protected
-  def downcase_name
-    name.downcase! if name
   end
 end

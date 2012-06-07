@@ -98,7 +98,7 @@ class ProjectsController < ApplicationController
       when "User"
         current_user
       when "Group"
-        current_user.groups.find(params[:project][:owner_id])
+        Team.find(params[:project][:owner_id])
       end
     
     if @project.save

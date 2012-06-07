@@ -18,7 +18,7 @@ class GitoriousFormBuilder < ActionView::Helpers::FormBuilder
   private
 
   def select_group_membership(field)
-    admin_groups = @template.current_user.groups.select {|g| admin?(@template.current_user, g) }
+    admin_groups = Team.by_admin(@template.current_user)
     result = ""
     unless admin_groups.empty?
       result << "Group: " + radio_button("#{field}_type", "Group")

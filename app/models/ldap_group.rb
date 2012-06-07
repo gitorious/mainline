@@ -21,13 +21,6 @@ class LdapGroup < ActiveRecord::Base
   extend GroupBehavior
   include GroupBehavior::InstanceMethods
 
-#  belongs_to :creator, :class_name => "User", :foreign_key => "user_id"
-  has_many(:repositories, :as => :owner, :conditions => ["kind NOT IN (?)",
-                                                         Repository::KINDS_INTERNAL_REPO],
-           :dependent => :destroy)
-
-  has_many :projects, :as => :owner
-  has_many :committerships, :as => :committer, :dependent => :destroy
 
   
   Paperclip.interpolates('group_name'){|attachment,style| attachment.instance.name}
