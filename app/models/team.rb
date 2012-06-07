@@ -53,6 +53,14 @@ class Team
       end
       return group
     end
+
+    def by_admin(user)
+      user.groups.select{|g| Team.group_admin?(user, g) }
+    end
+
+    def find(id)
+      Group.find(id)
+    end
   end
 
   class LdapGroupFinder
@@ -66,7 +74,7 @@ class Team
     end
 
     def new_group(params={})
-      LdapGroup.new
+      LdapGroup.new(params)
     end
 
     def create_group(params, user)
@@ -76,6 +84,14 @@ class Team
         group.save!
       end
       return group
+    end
+
+    def by_admin(user)
+      LdapGroup.find_all_by_user_id(user.id)
+    end
+
+    def find(id)
+      LdapGroup.find(id)
     end
   end
 
@@ -133,6 +149,10 @@ class Team
     group_finder.new_group
   end
 
+  def self.find(polymorphic_id)
+    group_finder.find(polymorphic_id)
+  end
+
   def self.create_group(params, user)
     group_finder.create_group(group_params(params), user)
   end
@@ -148,6 +168,10 @@ class Team
     group.avatar = params[:avatar]
     group.ldap_group_names = params[:ldap_group_names] if params.key?(:ldap_group_names)
     group.save!
+  end
+
+  def self.by_admin(user)
+    group_finder.by_admin(user)
   end
 
   class DestroyGroupError < StandardError

@@ -135,7 +135,7 @@ class Project < ActiveRecord::Base
   end
 
   def owned_by_group?
-    owner === Group
+    ["Group","LdapGroup"].include?(owner_type)
   end
 
   def home_url=(url)

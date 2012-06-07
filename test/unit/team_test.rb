@@ -60,6 +60,17 @@ class TeamTest < ActiveSupport::TestCase
         Team.destroy_group(group.name, users(:moe)) 
       end
     end
+
+    should "treat group creator as admin" do      
+      group = ldap_groups(:first_ldap_group)
+      user = group.creator
+      assert Team.by_admin(user).include?(group)
+    end
+
+    should "find by id" do
+      group = ldap_groups(:first_ldap_group)
+      assert_equal group, Team.find(group.id)
+    end
   end
 
   context "Group backend" do
@@ -75,6 +86,17 @@ class TeamTest < ActiveSupport::TestCase
     should "create a new instance" do
       group = Team.create_group(normal_group_params, User.first)
       assert group.valid?
+    end
+
+    should "list all groups for which a user is admin" do
+      user = users(:johan)
+      groups = user.groups.select{|g| admin?(g, user) }
+      assert_equal groups, Team.by_admin(user)
+    end
+
+    should "find by id" do
+      group = Group.first
+      assert_equal(group, Team.find(group.id))
     end
   end
 

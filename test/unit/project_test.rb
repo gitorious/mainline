@@ -261,6 +261,21 @@ class ProjectTest < ActiveSupport::TestCase
     project.change_owner_to(new_owner)
   end
 
+  should "consider LdapGroup owned projects group owned" do
+    project = projects(:johans)
+    project.owner = ldap_groups(:first_ldap_group)
+    assert project.owned_by_group?
+  end
+
+  should "transfer ownership to an LDAP group" do
+    new_owner = ldap_groups(:first_ldap_group)
+    project = projects(:johans)
+    repo = project.repositories.first
+    c = repo.committerships.create!(:committer => new_owner,:creator_id => new_owner.id)
+    c.build_permissions(:review, :commit, :admin)
+    c.save!
+  end
+
 
   should "delegate wiki permissions to the wiki repository" do
     project = projects(:johans)
