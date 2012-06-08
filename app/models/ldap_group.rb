@@ -35,6 +35,42 @@ class LdapGroup < ActiveRecord::Base
 
   serialize :member_dns
 
+  validate :validate_ldap_dns
+
+  def validate_ldap_dns
+    configurator = self.class.ldap_configurator
+    Gitorious::Authorization::LDAP::Connection.new({
+        :host => configurator.server,
+        :port => configurator.port,
+        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+      Array(member_dns).each do |dn|
+        if ldap_dn_in_base?(dn, configurator.base_dn)
+          errors.add(:member_dns, "LDAP DN #{dn} is part of the LDAP search base #{configurator.base_dn}")
+        end
+        result = connection.search(
+          :base => configurator.base_dn,
+          :filter => generate_ldap_filters_from_dn(dn),
+          :return_result => true)
+        errors.add(:member_dns, "#{dn} not found") if result.empty?
+      end
+    end
+  end
+
+  # We don't want member DNs to contain the base DN to search
+  def ldap_dn_in_base?(dn, base)
+    dn =~ /#{base}/
+  end
+
+  def generate_ldap_filters_from_dn(dn)
+    filters = dn.split(",").map do |pair|
+      attribute, value = pair.split("=")
+      Net::LDAP::Filter.eq(attribute, value)
+    end
+    filters.inject(filters.shift) do |memo, obj|
+      memo & obj
+    end
+  end
+
   def ldap_group_names
     Array(member_dns).join("\n")
   end
