@@ -44,6 +44,7 @@
       <%= f.label :ldap_group_names %>
       <div>
         Enter LDAP group DNs, one per line<br />
+        <strong>Note:</strong> entries should be relative to the LDAP base DN<br /> 
         <%= f.text_area :ldap_group_names %>
       </div>
     </li>

@@ -17,10 +17,6 @@
 #++
 
 class Group < ActiveRecord::Base
-  has_many :committerships, :as => :committer, :dependent => :destroy
-  has_many :participated_repositories, :through => :committerships,
-    :source => :repository, :class_name => 'Repository'
-
   extend GroupBehavior
   include GroupBehavior::InstanceMethods
 
@@ -69,11 +65,6 @@ class Group < ActiveRecord::Base
     end
   end
 
-  def self.find_fuzzy(query)
-    find(:all,
-         :conditions => ["LOWER(name) LIKE ?", "%" + query.downcase + "%"],
-         :limit => 10)
-  end
 
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }

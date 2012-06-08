@@ -16,7 +16,18 @@ module GroupBehavior
       :message => "Must be alphanumeric, and optional dash")
 
     klass.before_validation :downcase_name
+    klass.has_many :committerships, :as => :committer, :dependent => :destroy
+    klass.has_many :participated_repositories, :through => :committerships,
+    :source => :repository, :class_name => 'Repository'
+
+
+    def klass.find_fuzzy(query)
+      find(:all,
+        :conditions => ["LOWER(name) LIKE ?", "%" + query.downcase + "%"],
+        :limit => 10)
+    end
   end
+
 
   module InstanceMethods
     def to_param_with_prefix

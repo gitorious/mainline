@@ -20,7 +20,7 @@ module CommittershipsHelper
     creator = t("views.repos.creator")
     creator_label = "<small class=\"hint\">#{creator}</small>"
 
-    collab_items = collaborators.map do |user|
+    collab_items = collaborators.select{|c|User === c}.map do |user|
       <<-HTML
     <li>
       <div class="user">
