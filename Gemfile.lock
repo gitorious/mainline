@@ -69,6 +69,7 @@ GEM
       rake
     multi_json (1.0.4)
     mysql (2.8.1)
+    net-ldap (0.3.1)
     nokogiri (1.5.0)
     nokogiri (1.5.0-java)
     oauth (0.4.4)
@@ -96,7 +97,6 @@ GEM
     revo-ssl_requirement (1.1.0)
     riddle (1.2.2)
     ruby-hmac (0.4.0)
-    ruby-net-ldap (0.0.4)
     ruby-openid (2.1.8)
     ruby-yadis (0.3.4)
     rubyforge (2.0.4)
@@ -159,6 +159,7 @@ DEPENDENCIES
   mime-types (= 1.16)
   mocha (= 0.9.10)
   mysql (= 2.8.1)
+  net-ldap (~> 0.3)
   nokogiri (= 1.5.0)
   oauth (= 0.4.4)
   paperclip (~> 2.4.5)
@@ -171,7 +172,6 @@ DEPENDENCIES
   riddle (= 1.2.2)
   rots!
   ruby-hmac (= 0.4.0)
-  ruby-net-ldap (~> 0.0.4)
   ruby-openid
   ruby-yadis (= 0.3.4)
   shoulda (~> 2.9.1)
