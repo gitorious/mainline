@@ -23,7 +23,7 @@ gem "acts-as-taggable-on", "2.0.6"
 gem "will_paginate", "2.3.15"
 gem "just_paginate", "0.0.6"
 gem "hodel_3000_compliant_logger", "0.1.0"
-gem "ruby-net-ldap", "~> 0.0.4"
+gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "1.5.0"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
