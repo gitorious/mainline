@@ -586,7 +586,7 @@ class Repository < ActiveRecord::Base
 
   def repository_plain_path
     if project
-      "#{self.project.slug}-#{self.name}" 
+      "#{self.project.slug}/#{self.name}" 
     else
       "#{self.name}"
     end

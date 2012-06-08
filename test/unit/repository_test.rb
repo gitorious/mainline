@@ -649,7 +649,7 @@ class RepositoryTest < ActiveSupport::TestCase
     repository = new_repos
     FileUtils.mkdir_p(repository.full_repository_path, :mode => 0755)
     repository.save!
-    assert_equal "#{repository.project.slug}-#{repository.name}", repository.hashed_path
+    assert_equal "#{repository.project.slug}/#{repository.name}", repository.hashed_path
   end
 
   should "create the initial committership on create for owner" do
