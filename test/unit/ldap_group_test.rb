@@ -18,6 +18,12 @@
 require 'test_helper'
 
 class LdapGroupTest < ActiveSupport::TestCase
+  should_validate_presence_of :name
+
+  def setup
+    LdapGroup.any_instance.stubs(:validate_ldap_dns)
+  end
+  
   context "Ldap group serialization" do
     setup {
       @group = ldap_groups(:first_ldap_group)
@@ -70,6 +76,20 @@ class LdapGroupTest < ActiveSupport::TestCase
       p.owner = @group
       assert p.save
       refute @group.deletable?
+    end
+  end
+
+  context "LDAP filters" do
+    setup do
+      @group = ldap_groups(:first_ldap_group)
+    end
+
+    should "extract an LDAP filter" do
+      assert_equal "(cn=admins)", @group.generate_ldap_filters_from_dn("cn=admins").to_s
+    end
+
+    should "extract an LDAP filter for two attributes" do
+      assert_equal "(&(cn=admins)(ou=development))", @group.generate_ldap_filters_from_dn("cn=admins,ou=development").to_s
     end
   end
 

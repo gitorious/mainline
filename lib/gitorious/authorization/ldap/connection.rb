@@ -31,7 +31,6 @@ module Gitorious
           begin
             if connection.bind
               yield BoundConnection.new(connection)
-              connection.close
             end
           rescue Net::LDAP::LdapError => e
             raise LdapError, "Unable to connect to the LDAP server on #{options[:host]}:#{options[:port]}. Are you sure the LDAP server is running?"

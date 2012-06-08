@@ -18,7 +18,10 @@
 
 require "test_helper"
 class TeamTest < ActiveSupport::TestCase
-
+  def setup
+    LdapGroup.any_instance.stubs(:validate_ldap_dns)
+  end
+  
   context "LDAP backend" do
     setup do
       @old_klass = Team.group_implementation
