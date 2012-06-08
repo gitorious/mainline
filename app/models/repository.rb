@@ -73,7 +73,7 @@ class Repository < ActiveRecord::Base
   validates_uniqueness_of :hashed_path, :case_sensitive => false
 
   before_validation :downcase_name
-  before_create :set_repository_hash
+  before_create :set_repository_path
   after_create :create_initial_committership
   after_create :add_initial_members
   after_create :create_add_event_if_project_repo
@@ -552,10 +552,6 @@ class Repository < ActiveRecord::Base
     project_repo? ? project : owner
   end
 
-  def full_hashed_path
-    hashed_path || set_repository_hash
-  end
-
   # Returns a list of users being either the owner (if User) or each admin member (if Group)
   def owners
     result = if owned_by_group?
@@ -570,6 +566,30 @@ class Repository < ActiveRecord::Base
       [owner]
     end
     return result
+  end
+
+  def full_hashed_path
+    self.hashed_path || set_repository_path
+  end
+
+  def set_repository_path
+    if GitoriousConfig["enable_repository_dir_sharding"]
+      set_repository_hash
+    else
+      set_repository_plain_path
+    end
+  end
+  
+  def set_repository_plain_path
+    self.hashed_path ||= repository_plain_path
+  end
+
+  def repository_plain_path
+    if project
+      "#{self.project.slug}-#{self.name}" 
+    else
+      "#{self.name}"
+    end
   end
 
   def set_repository_hash
