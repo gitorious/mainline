@@ -61,6 +61,10 @@ class Team
     def find(id)
       Group.find(id)
     end
+
+    def find_fuzzy(q)
+      Group.find_fuzzy(q)
+    end
   end
 
   class LdapGroupFinder
@@ -92,6 +96,10 @@ class Team
 
     def find(id)
       LdapGroup.find(id)
+    end
+
+    def find_fuzzy(q)
+      LdapGroup.find_fuzzy(q)
     end
   end
 
@@ -172,6 +180,10 @@ class Team
 
   def self.by_admin(user)
     group_finder.by_admin(user)
+  end
+
+  def self.find_fuzzy(q)
+    group_finder.find_fuzzy(q)
   end
 
   class DestroyGroupError < StandardError

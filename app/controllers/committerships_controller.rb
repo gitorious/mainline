@@ -40,7 +40,7 @@ class CommittershipsController < ApplicationController
     if params[:group][:name].blank? && !params[:user][:login].blank?
       @committership.committer = User.find_by_login(params[:user][:login])
     else
-      @committership.committer = Group.find_by_name(params[:group][:name])
+      @committership.committer = Team.find_by_name!(params[:group][:name])
     end
     @committership.creator = current_user
     @committership.build_permissions(params[:permissions])
