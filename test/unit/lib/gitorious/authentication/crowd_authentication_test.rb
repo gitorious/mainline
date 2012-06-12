@@ -24,6 +24,12 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     options = options.merge({"application" => "gitorious", "password" => "12345678"})
     Gitorious::Authentication::CrowdAuthentication.new(options)
   end
+  def valid_client_credentials(username, password)
+    credentials = Gitorious::Authentication::Credentials.new
+    credentials.username = username
+    credentials.password = password
+    credentials
+  end
 
   context "Configuration" do
     should "require an application name" do
@@ -114,15 +120,15 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
     end
 
     should "not accept invalid credentials" do
-      assert !@crowd.authenticate("moe", "secret")
+      assert !@crowd.authenticate(valid_client_credentials("moe", "secret"))
     end
 
     should "accept valid credentials" do
-      assert @crowd.authenticate("moe", "LetMe1n")
+      assert @crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
     end
 
     should "return the actual user" do
-      assert_equal(users(:moe), @crowd.authenticate("moe", "LetMe1n"))
+      assert_equal(users(:moe), @crowd.authenticate(valid_client_credentials("moe", "LetMe1n")))
     end
   end
 
@@ -132,7 +138,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 443).returns(connection)
 
-      crowd.authenticate("moe", "LetMe1n")
+      crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
 
       assert connection.use_ssl?
     end
@@ -142,7 +148,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 8095).returns(connection)
 
-      crowd.authenticate("moe", "LetMe1n")
+      crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
 
       assert !connection.use_ssl?
     end
@@ -153,7 +159,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 443).returns(connection)
 
-      crowd.authenticate("moe", "LetMe1n")
+      crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
 
       assert_equal connection.verify_mode, OpenSSL::SSL::VERIFY_NONE
     end
@@ -163,7 +169,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection = MockHTTPConnection.new(:use_ssl => true)
       Net::HTTP.expects(:new).with("localhost", 443).returns(connection)
 
-      crowd.authenticate("moe", "LetMe1n")
+      crowd.authenticate(valid_client_credentials("moe", "LetMe1n"))
 
       assert_not_equal connection.verify_mode, OpenSSL::SSL::VERIFY_NONE
     end
@@ -174,7 +180,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection.expected_url = "/rest/usermanagement/1/authentication?username=mooey"
       Net::HTTP.expects(:new).with("sso.myplace", 80).returns(connection)
 
-      assert crowd.authenticate("mooey", "LetMe1n")
+      crowd.authenticate(valid_client_credentials("mooey", "LetMe1n"))
     end
   end
 
@@ -187,7 +193,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection = MockHTTPConnection.new(:expected_user => "moe-szyslak")
       Net::HTTP.expects(:new).with("localhost", 8095).returns(connection)
 
-      user = @crowd.authenticate("moe-szyslak", "LetMe1n")
+      user = @crowd.authenticate(valid_client_credentials("moe-szyslak", "LetMe1n"))
       assert_equal "moe@gitorious.org", user.email
       assert_equal "Moe Szyslak", user.fullname
       assert_equal "moe-szyslak", user.login
@@ -199,7 +205,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       connection = MockHTTPConnection.new(:expected_user => "mr.moe.szyslak")
       Net::HTTP.expects(:new).with("localhost", 8095).returns(connection)
 
-      user = @crowd.authenticate("mr.moe.szyslak", "LetMe1n")
+      user = @crowd.authenticate(valid_client_credentials("mr.moe.szyslak", "LetMe1n"))
 
       assert_equal "mr-moe-szyslak", user.login
     end

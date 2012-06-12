@@ -33,6 +33,13 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
   end
 
+  def valid_client_credentials(username, password)
+    credentials = Gitorious::Authentication::Credentials.new
+    credentials.username = username
+    credentials.password = password
+    credentials
+  end
+
 
   context "Configuration" do
     setup do
@@ -143,7 +150,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
 
     should "return the actual user" do
-      assert_equal(users(:moe), @ldap.authenticate("moe","secret"))
+      assert_equal(users(:moe), @ldap.authenticate(valid_client_credentials("moe","secret")))
     end
 
     should "allow host as alias for server" do
@@ -170,12 +177,12 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
 
     should "not call post_authenticate when login fails" do
-      assert !@ldap.authenticate("moe", "ohno")
+      assert !@ldap.authenticate(valid_client_credentials("moe", "ohno"))
       assert !CallbackMock.called?
     end
 
     should "call post_authenticate after successful login" do
-      assert_equal users(:moe), @ldap.authenticate("moe","secret")
+      assert_equal users(:moe), @ldap.authenticate(valid_client_credentials("moe","secret"))
       assert CallbackMock.called?
     end
   end
@@ -194,7 +201,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
 
     should "create a new user with attributes mapped from LDAP" do
-      user = @ldap.authenticate("moe.szyslak", "secret")
+      user = @ldap.authenticate(valid_client_credentials("moe.szyslak", "secret"))
       assert_equal "moe@gitorious.org", user.email
       assert_equal "Moe Szyslak", user.fullname
       assert_equal "moe-szyslak", user.login
@@ -204,7 +211,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
 
     should "transform user's login to not contain dots" do
       StaticLDAPConnection.username = "mr.moe.szyslak"
-      user = @ldap.authenticate("mr.moe.szyslak", "secret")
+      user = @ldap.authenticate(valid_client_credentials("mr.moe.szyslak", "secret"))
 
       assert_equal "mr-moe-szyslak", user.login
     end
@@ -217,7 +224,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
         "connection_type" => StaticLDAPConnection})
       StaticLDAPConnection.username = "mr.moe.szyslak"
       StaticLDAPConnection.login_attribute = "uid"
-      user = @ldap.authenticate("mr.moe.szyslak", "secret")
+      user = @ldap.authenticate(valid_client_credentials("mr.moe.szyslak", "secret"))
 
       assert_equal "mr-moe-szyslak", user.login
     end

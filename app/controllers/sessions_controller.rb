@@ -43,6 +43,13 @@ class SessionsController < ApplicationController
     end
   end
 
+  # This controller action should be protected behind a web server
+  # single sign-on authentication mechanism, like Apache's mod_auth_kerb
+  # or mod_ssl.
+  def http
+    http_authentication
+  end
+
   def destroy
     self.current_user.forget_me if logged_in?
     cookies.delete :auth_token
@@ -93,11 +100,30 @@ class SessionsController < ApplicationController
   end
 
   def password_authentication(email, password)
-    self.current_user = Gitorious::Authentication.authenticate(email, password)
+    credentials = Gitorious::Authentication::Credentials.new
+    credentials.username = email
+    credentials.password = password
+    self.current_user = Gitorious::Authentication.authenticate(credentials)
     if logged_in?
       successful_login
     else
       failed_login("Email and/or password did not match, please try again.")
+    end
+  end
+
+  # Single sign-on, via a web server's authentication mechanism.
+  def http_authentication
+    credentials = Gitorious::Authentication::Credentials.new
+    credentials.env = request.env
+    self.current_user = Gitorious::Authentication.authenticate(credentials)
+    if logged_in?
+      successful_login
+    else
+      # If the web server is protecting this sessions URL, you might end up
+      # with an HTTP 401 error, in which case you won't even get this far.
+      # Still, it could happen, if you do some further application-level checks
+      # within your Gitorious::Authentication module.
+      failed_login "Gitorious could not verify your browser's credentials.", 'http'
     end
   end
 

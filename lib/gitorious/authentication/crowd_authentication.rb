@@ -28,10 +28,10 @@ module Gitorious
         @client = CrowdAPI.new(opt["application"], opt["password"], opt);
       end
 
-      def authenticate(username, password)
-        @client.authenticate(username, password) do |status, body|
+      def authenticate(credentials)
+        @client.authenticate(credentials.username, credentials.password) do |status, body|
           return nil unless status.to_i == 200
-          User.find_by_login(CrowdUser.map_username(username)) ||
+          User.find_by_login(CrowdUser.map_username(credentials.username)) ||
             CrowdUser.from_xml_string(body).to_user
         end
       end

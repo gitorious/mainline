@@ -20,9 +20,9 @@ require "gitorious/authentication/configuration"
 module Gitorious
   module Authentication
     # Returns the first matching User instance from all authentication methods
-    def self.authenticate(username, password)
+    def self.authenticate(credentials)
       Configuration.authentication_methods.each do |authenticator|
-        if result = authenticator.authenticate(username, password)
+        if result = authenticator.authenticate(credentials)
           return result
         end
       end
