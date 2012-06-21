@@ -222,6 +222,12 @@ production:
   # Mangle visible e-mail addresses (spam protection)
   #mangle_email_addresses: true
 
+  # The maximum size of a raw blob that can be downloaded.
+  #max_download_blob_size: 500.kilobytes
+
+  # The maximum size of a text blob that can be rendered.
+  #max_render_blob_size: 350.kilobytes
+
   # Available project licenses. This can be configured as an array of licenses:
   #
   # licenses:
