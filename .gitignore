@@ -28,3 +28,6 @@ public/javascripts/sites/*
 public/system/avatars
 public/system/group_avatars
 /.keeptesting
+/data/hooks/custom-pre-receive
+/data/hooks/custom-post-receive
+/data/hooks/custom-update

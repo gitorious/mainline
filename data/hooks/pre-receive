@@ -28,7 +28,11 @@ logger = if ENV["GITORIOUS_BASE_DIR"]
            Logger.new("/tmp/pre_receive_guard.log")
          end
 
+
+hook_input_lines = ""
+
 while data = gets
+  hook_input_lines << data
   begin
     pre_receive_guard = Gitorious::SSH::PreReceiveGuard.new(ENV.to_hash, data)
     oldrev, newrev, ref = data.chomp.split(" ")
@@ -84,4 +88,39 @@ while data = gets
     pre_receive_guard.gitorious_says "Temporary interuption. Please try again shortly"
     exit!(1)
   end
+
+ 
 end
+
+require 'pathname'
+def custom_hook_path
+  real_path_of_this = Pathname.new(File.dirname(__FILE__)).realpath
+  full_path_of_this = File.expand_path(real_path_of_this)
+  custom_prereceive_path = full_path_of_this + "/custom-pre-receive"
+end
+
+def run_custom_hook_if_present(input)
+  if File.exist?(custom_hook_path) 
+    cmd = %Q{#{custom_hook_path} 2>&1}
+    IO.popen(cmd, 'w+') do |subprocess|
+      subprocess.write(input)
+      subprocess.close_write
+      subprocess.read.split("\n").each do |l|
+        puts "#{l}\n"
+      end
+    end
+
+    custom_hook_status = $?
+    if !custom_hook_status.success?
+      puts "not success, exiting with its code"
+      exit(custom_hook_status.exitstatus)
+    end
+  end  
+end
+
+run_custom_hook_if_present(hook_input_lines)
+
+
+
+
+

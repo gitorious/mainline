@@ -1,78 +1,54 @@
-#!/bin/sh
+#!/usr/bin/env ruby
+
+#--
+#   Copyright (C) 2012 Gitorious AS
 #
-# An example hook script to blocks unannotated tags from entering.
-# Called by git-receive-pack with arguments: refname sha1-old sha1-new
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
 #
-# To enable this hook, make this file executable by "chmod +x update".
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
 #
-# Config
-# ------
-# hooks.allowunannotated
-#   This boolean sets whether unannotated tags will be allowed into the
-#   repository.  By default they won't be.
-#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
 
-# --- Command line
-refname="$1"
-oldrev="$2"
-newrev="$3"
+reference_name = ARGV[0]
+sha_before = ARGV[1]
+sha_after = ARGV[2]
 
-# --- Safety check
-if [ -z "$GIT_DIR" ]; then
-	echo "Don't run this script from the command line." >&2
-	echo " (if you want, you could supply GIT_DIR then run" >&2
-	echo "  $0 <ref> <oldrev> <newrev>)" >&2
-	exit 1
-fi
+# NOTE: Any core Gitorious update operations goes here at the top (none so far).
 
-if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
-	echo "Usage: $0 <ref> <oldrev> <newrev>" >&2
-	exit 1
-fi
+require 'pathname'
+def custom_hook_path
+  real_path_of_this = Pathname.new(File.dirname(__FILE__)).realpath
+  full_path_of_this = File.expand_path(real_path_of_this)
+  custom_prereceive_path = full_path_of_this + "/custom-update"
+end
 
-# --- Config
-allowunannotated=$(git repo-config --bool hooks.allowunannotated)
+# TODO pass the 3 arguments instead of stdin lines
 
-# check for no description
-projectdesc=$(sed -e '1p' "$GIT_DIR/description")
-if [ -z "$projectdesc" -o "$projectdesc" = "Unnamed repository; edit this file to name it for gitweb" ]; then
-	echo "*** Project description file hasn't been set" >&2
-	exit 1
-fi
+def run_custom_hook_if_present(ref, sha1, sha2)
+  if File.exist?(custom_hook_path) 
+    cmd = %Q{#{custom_hook_path} #{ref} #{sha1} #{sha2} 2>&1}
+    IO.popen(cmd, 'w+') do |subprocess|
+      subprocess.write("")
+      subprocess.close_write
+      subprocess.read.split("\n").each do |l|
+        puts "#{l}\n"
+      end
+    end
 
-# --- Check types
-# if $newrev is 0000...0000, it's a commit to delete a branch
-if [ -z "${newrev##0*}" ]; then
-	newrev_type=commit
-else
-	newrev_type=$(git cat-file -t $newrev)
-fi
+    custom_hook_status = $?
+    if !custom_hook_status.success?
+      puts "not success, exiting with its code"
+      exit(custom_hook_status.exitstatus)
+    end
+  end  
+end
 
-case "$refname","$newrev_type" in
-	refs/tags/*,commit)
-		# un-annotated tag
-		short_refname=${refname##refs/tags/}
-		if [ "$allowunannotated" != "true" ]; then
-			echo "*** The un-annotated tag, $short_refname, is not allowed in this repository" >&2
-			echo "*** Use 'git tag [ -a | -s ]' for tags you want to propagate." >&2
-			exit 1
-		fi
-		;;
-	refs/tags/*,tag)
-		# annotated tag
-		;;
-	refs/heads/*,commit)
-		# branch
-		;;
-	refs/remotes/*,commit)
-		# tracking branch
-		;;
-	*)
-		# Anything else (is there anything else?)
-		echo "*** Update hook: unknown type of update to ref $refname of type $newrev_type" >&2
-		exit 1
-		;;
-esac
-
-# --- Finished
-exit 0
+run_custom_hook_if_present(reference_name, sha_before, sha_after)

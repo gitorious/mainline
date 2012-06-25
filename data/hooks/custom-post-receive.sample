@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+# Custom post-receive hook
+# -----------------------
+
+# Enable by renaming from custom-post-receive.sample to
+# custom-post-receive. Once renamed, it can be customized freely and is
+# not version controlled. Content of this script can be changed to
+# regular shellscript, no need to be ruby code.
+
+# Called at the end of the standard Gitorious post-receive hook.
+# Like the regular post-receive hook, the custom post-receive hook
+# receives pushed references on stdin, one line per pushed reference.
+
+# Example: pushing 'master' and 'testbranch' will pass something like
+# this to stdin
+#
+# remote: b506db4d7520f0257dfe389ab729fa0976ced289 1cbd892e83f597cb6c33a53a45c38a1ba6bbef27 refs/heads/master
+# remote: 5577de353b5799f4c7bd65561b630c4cc8eb4b1c 19df9a1b5c973b004f23f7989ce2773ba638acd9 refs/heads/testbranch
+
+# Anything written to stdout (e.g 'puts("foo")') and stderr will be
+# passed back over the line to the user who started the git push.
+
+# exit!(EXITCODE), or raising exceptions will cause an abort at this
+# point, but note that the actual git push operation has already gone
+# through so doing an unexpected exit serves little or no  purpose.
+
+# More on the "pre-receive", "post-receive" and "update" serverside hooks:
+# http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
+
+puts "[DEBUG] CUSTOM POST-RECEIVE HOOK STARTS"
+
+puts "[DEBUG] REFERENCES PUSHED:"
+while data = gets
+  puts data # writes each pushed reference to stdout
+end
+
+puts "[DEBUG] CUSTOM POST-RECEIVE HOOK ENDS"

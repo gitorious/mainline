@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+# Custom update hook
+# -----------------------
+
+# Enable by renaming from custom-update.sample to custom-update. Once
+# renamed, it can be customized freely and is not version
+# controlled. Content of this script can be changed to regular
+# shellscript, no need to be ruby code.
+
+# Called at the end of the standard Gitorious update hook.  Like the
+# regular update hook, the custom update hook is called once per
+# pushed reference, taking the name of the reference, original commit
+# sha and attempted new commit sha as params.
+
+# Anything written to stdout (e.g 'puts("foo")') and stderr will be
+# passed back over the line to the user who started the git push.
+
+# exit!(EXITCODE), or raising exceptions, will abort push of
+# the current reference (and only that reference, others may be pushed
+# just fine.)
+
+# More on the "pre-receive", "update" and "update" serverside hooks:
+# http://git-scm.com/book/en/Customizing-Git-Git-Hooks#Server-Side-Hooks
+
+puts "[DEBUG] CUSTOM UPDATE HOOK STARTS"
+
+reference_name = ARGV[0]
+sha_before = ARGV[1]
+sha_after = ARGV[2]
+
+puts "[DEBUG] REFERENCE PUSHED: #{reference_name}"
+puts "[DEBUG] ORIGINAL SHA: #{sha_before}"
+puts "[DEBUG] REFERENCE PUSHED: #{sha_after}"
+
+puts "[DEBUG] CUSTOM UPDATE HOOK ENDS"
