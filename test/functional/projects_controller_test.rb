@@ -269,13 +269,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
         assert can_read?(nil, Project.last)
       end
-
-      should "include private checkbox in new page" do
-        login_as :johan
-        get :new
-        assert_match /Make the project private\?/, @response.body
-        assert_match /name="private_project"/, @response.body
-      end
+      
     end
 
     context "with disabled private repos" do
@@ -303,11 +297,6 @@ class ProjectsControllerTest < ActionController::TestCase
         end
 
         assert can_read?(nil, Project.last)
-      end
-
-      should "not include private checkbox in new page" do
-        get :new
-        assert_no_match /type="checkbox"[^>]+name="private"/, @response.body
       end
     end
 

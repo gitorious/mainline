@@ -26,10 +26,23 @@
 <%= error_messages_for :project -%>
 <% form_for @project, :url => projects_path, :builder => GitoriousFormBuilder  do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
+
+   <% if (GitoriousConfig["enable_private_repositories"] &
+    GitoriousConfig["repos_and_projects_private_by_default"]) %>
+    <fieldset>
+      <li><div>
+       <%= image_tag("silk/lock.png", :class => "private_access") %>
+       This project will be private by
+        default, but can be made public after you have finished
+        creating it.
+      </div></li></fieldset>
+    <% end %>
+
   <fieldset class="submit">
     <%= f.submit t("views.projects.create") -%>
   </fieldset>
 <% end -%>
+
 <% content_for :sidebar do -%>
   <h2>Information</h2>
   <p class="hint"><%= t("views.projects.new_hint") %></p>

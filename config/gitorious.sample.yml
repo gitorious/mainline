@@ -152,6 +152,9 @@ production:
   # https://gitorious.org/gitorious/pages/PrivateRepositories
   #enable_private_repositories: false
 
+  # Make all newly created projects and repos private from the start by default
+  #repos_and_projects_private_by_default: false
+  
   # Only site admins can create projects.
   #only_site_admins_can_create_projects: false
 

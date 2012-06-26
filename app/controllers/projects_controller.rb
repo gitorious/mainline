@@ -97,9 +97,9 @@ class ProjectsController < ApplicationController
       when "Group"
         current_user.groups.find(params[:project][:owner_id])
       end
-
+    
     if @project.save
-      flip_private_switch(@project)
+      @project.make_private if projects_private_on_creation?
       @project.create_event(Action::CREATE_PROJECT, @project, current_user)
       redirect_to new_project_repository_path(@project)
     else
@@ -189,10 +189,8 @@ class ProjectsController < ApplicationController
     end
   end
 
-  def flip_private_switch(project)
-    return if !GitoriousConfig["enable_private_repositories"] || !params[:private_project]
-    project.make_private
-    project
+  def projects_private_on_creation?
+    GitoriousConfig["enable_private_repositories"] && (params[:private_project] || GitoriousConfig["repos_and_projects_private_by_default"])    
   end
 
   def paginated_events

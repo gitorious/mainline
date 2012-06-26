@@ -20,7 +20,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<ul class="form">
   <fieldset>
     <li>
       <%= form.label :title, t(:title, :scope => 'activerecord.attributes.project') -%>
@@ -73,16 +72,7 @@
       </li>
     <% end -%>
   </fieldset>
-  <% if GitoriousConfig["enable_private_repositories"] %>
-    <fieldset>
-      <li>
-        <label for="private_project">Make the project private?</label>
-        <div>
-          <input id="private_project" name="private_project" type="checkbox" value="1">
-        </div>
-      </li>
-    </fieldset>
-  <% end %>
+ 
   <fieldset>
     <li>
       <%= form.label :description, t(:description, :scope => 'activerecord.attributes.project') -%>
@@ -90,4 +80,3 @@
         <%= form.text_area :description, :class => "text wide tall" -%></div>
     </li>
   </fieldset>
-</ul>

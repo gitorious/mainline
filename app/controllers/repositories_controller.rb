@@ -105,14 +105,18 @@ class RepositoriesController < ApplicationController
     @repository.owner = @project.owner
     @repository.user = current_user
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
-
+    
     if @repository.save
-      @repository.make_private if GitoriousConfig["enable_private_repositories"] && params[:private_repository]
+      @repository.make_private if repos_private_on_creation?
       flash[:success] = I18n.t("repositories_controller.create_success")
       redirect_to [@repository.project_or_owner, @repository]
     else
       render :action => "new"
     end
+  end
+
+  def repos_private_on_creation?
+    GitoriousConfig["enable_private_repositories"] && (params[:private_repository] || GitoriousConfig["repos_and_projects_private_by_default"])
   end
 
   undef_method :clone

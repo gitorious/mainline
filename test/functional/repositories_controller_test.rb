@@ -992,11 +992,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       assert_equal @project, assigns(:owner)
     end
 
-    should "not include private checkbox in new page" do
-      get :new, :project_id => @project.to_param
-      assert_no_match /"private_repository"/, @response.body
-    end
-
     should "creates a new repository belonging to a Project" do
       assert_difference("Repository.count") do
         post :create, :project_id => @project.to_param, :repository => {:name => "my-new-repo"}
@@ -1317,14 +1312,6 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :johan
       get :new, :project_id => @project.to_param
       assert_response 200
-    end
-
-    should "include private checkbox in new page" do
-      login_as :johan
-
-      get :new, :project_id => @project.to_param
-      assert_match /id="private_repository"/, @response.body
-      assert_match /Make the repository private\?/, @response.body
     end
 
     should "disallow unauthorized users to create repository" do
