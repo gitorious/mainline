@@ -1,7 +1,7 @@
 #!/bin/bash
 ### BEGIN INIT INFO
-# Provides:          Gitorious GIT-Poller
-# Required-Start:
+# Provides:          git-poller 
+# Required-Start:    mysql
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
@@ -14,7 +14,7 @@
 RUBY_HOME="/opt/ruby-enterprise"
 GITORIOUS_HOME="/var/www/gitorious"
 RETVAL=0
-PROG="poller"
+PROG="git-poller"
 GIT_POLLER="$RUBY_HOME/bin/ruby $GITORIOUS_HOME/script/poller"
 LOCK_FILE=/var/lock/git-poller
 PID_FILE=$GITORIOUS_HOME/tmp/pids/poller0.pid
@@ -39,49 +39,47 @@ start()
 {
   do_check_pid
   if [ $RUNNING != 2 ] ; then
-    echo -n "Starting $PROG: "
-    /bin/su - git -c "RAILS_ENV=$RAILS_ENV $GIT_POLLER start"
-    sleep 4
+    echo -n "Starting $PROG"
+    /bin/su - git -c "RAILS_ENV=$RAILS_ENV $GIT_POLLER start" 2>/dev/null
+    sleep 4 
     if [ -f $PID_FILE ] ; then
-      echo "Success"
+      echo "."
       RETVAL=0
     else
-      echo "FAILURE"
+      echo ": FAILURE!!!" 
       RETVAL=1
     fi
   else
-    echo -n "$PROG already running"
+    echo "$PROG already running"
     RETVAL=1
   fi
   [ "$RETVAL" = 0 ] && touch $LOCK_FILE
-  echo
 }
  
 stop()
 {
   do_check_pid
-  echo -n "Stopping $PROG: "
   if [ $RUNNING != 2 ] ; then
     echo "$PROG was not properly running"
     RETVAL=1
   else
+    echo -n "Stopping $PROG"
     #killproc -p $PID_FILE
-    /bin/su - git -c "RAILS_ENV=$RAILS_ENV $GIT_POLLER stop"
+    /bin/su - git -c "RAILS_ENV=$RAILS_ENV $GIT_POLLER stop" 1>/dev/null 2>/dev/null
     RETVAL=$?
-    sleep 4
+    sleep 1
+    # if we are in halt or reboot runlevel kill all running sessions
+    # so the TCP connections are closed cleanly
+    if [ "x$runlevel" = x0 -o "x$runlevel" = x6 ] ; then
+      killproc -p $PID 2>/dev/null
+    fi
+    if [ "$RETVAL" = 0 ] ; then
+      rm -f $LOCK_FILE
+      echo "."
+    else
+      echo ": FAILURE!!!"
+    fi
   fi
-  # if we are in halt or reboot runlevel kill all running sessions
-  # so the TCP connections are closed cleanly
-  if [ "x$runlevel" = x0 -o "x$runlevel" = x6 ] ; then
-    killproc -p $PID 2>/dev/null
-  fi
-  if [ "$RETVAL" = 0 ] ; then
-    rm -f $LOCK_FILE
-    echo "Success"
-  else
-    echo "FAILURE"
-  fi
-  echo
 }
  
 case "$1" in
