@@ -36,6 +36,9 @@ production:
   # Host name users use to reach Gitorious, e.g. "gitorious.org".
   gitorious_host: gitorious.test
 
+  # Host name used to access repos via git and ssh+git, if different.
+  #gitorious_clone_host: gitorious.test
+
   # The path where git repositories are stored. The actual (bare) repositories
   # reside in #{repository_base_path}/#{project.slug}/#{repository.name}.git/:
   repository_base_path: "/var/git/repositories"
