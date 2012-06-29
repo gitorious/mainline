@@ -158,8 +158,13 @@ production:
   # Make all newly created projects and repos private from the start by default
   #repos_and_projects_private_by_default: false
   
-  # Only site admins can create projects.
-  #only_site_admins_can_create_projects: false
+  # Only site admins can create projects.  If a regular user attempts
+  # to create a project (s)he is redirected to a form where a project
+  # proposal (name+description) can be submitted. Site admins are
+  # notified by mail and are able to review porposed projects before
+  # approving creation. Users are notified by mail of
+  # rejection/approvals.
+  # only_site_admins_can_create_projects: false
 
   # System message that will appear on all pages if present
   #system_message:

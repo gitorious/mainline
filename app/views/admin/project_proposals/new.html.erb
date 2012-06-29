@@ -1,0 +1,33 @@
+
+<h1>Propose new project</h1>
+
+<%= error_messages_for :proposal -%>
+
+<% form_for @proposal, :url => { :action => "create" } do |f| -%>
+  <fieldset>
+    <li>
+      <%= f.label :title -%>
+      <div><%= f.text_field :title -%></div>
+    </li>
+    <li>
+      <%= f.label :description -%>
+      <div>
+        <%= f.text_area :description, :class => "text wide" -%><br />
+      </div>
+    </li>
+  </fieldset>
+
+  <fieldset>
+    <li>
+      <div>
+        <strong>Note</strong>: Site admins will be notified of this
+        proposal. The project will created once it has been approved
+        by a site admin.
+      </div>
+    </li>
+  </fieldset>
+    
+  <fieldset class="submit">
+    <%= f.submit "Submit" -%>
+  </fieldset>
+<% end -%>

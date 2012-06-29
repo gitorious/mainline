@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120223093906) do
+ActiveRecord::Schema.define(:version => 20120629102742) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -266,6 +266,14 @@ ActiveRecord::Schema.define(:version => 20120223093906) do
     t.integer "timestamp",  :null => false
     t.string  "server_url"
     t.string  "salt",       :null => false
+  end
+
+  create_table "project_proposals", :force => true do |t|
+    t.string   "title"
+    t.text     "description"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "projects", :force => true do |t|

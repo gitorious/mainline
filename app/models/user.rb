@@ -393,6 +393,10 @@ class User < ActiveRecord::Base
   def deletable?
     repositories.count == 0 && projects.count == 0
   end
+
+  def self.admins
+    User.find(:all, :conditions=> {:is_admin => true})
+  end
   
   protected
   # before filter

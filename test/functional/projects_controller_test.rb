@@ -675,14 +675,13 @@ class ProjectsControllerTest < ActionController::TestCase
       GitoriousConfig["only_site_admins_can_create_projects"] = false
     end
 
-    should "redirect if the user is not a site admin on GET #new" do
+    should "redirect regular users to the project approval workflow" do
       login_as :moe
       get :new
       assert_response :redirect
-      assert_match(/only site administrators/i, flash[:error])
-      assert_redirected_to projects_path
+      assert_redirected_to "/admin/project_proposals/new"
     end
-
+    
     should "succesfully GET #new if the user is a site_admin" do
       login_as :johan
       get :new
@@ -778,4 +777,5 @@ class ProjectsControllerTest < ActionController::TestCase
                             :host => "gitorious.test")
     end
   end
+  
 end

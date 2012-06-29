@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
 
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
-  before_filter :check_if_only_site_admins_can_create, :only => [:new, :create]
+  before_filter :check_if_only_site_admins_can_create, :only => [:create]
   before_filter :find_project,
     :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :require_admin, :only => [:edit, :update, :edit_slug]
@@ -82,6 +82,9 @@ class ProjectsController < ApplicationController
   end
 
   def new
+    if (GitoriousConfig["only_site_admins_can_create_projects"] & !site_admin?(current_user))
+      redirect_to(:controller => "admin/project_proposals", :action => :new)
+    end
     @project = Project.new
     @project.owner = current_user
     @root = Breadcrumb::NewProject.new
@@ -165,7 +168,7 @@ class ProjectsController < ApplicationController
     end
     redirect_to projects_path
   end
-
+  
   protected
   def by_push_time(repositories)
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse

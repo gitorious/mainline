@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  title: Straight and narrow project
+  description: A good project proposal
+
+two:
+  title: The Silly Project
+  description: A ludicrious project proposal

@@ -1,0 +1,22 @@
+<h1>Pending project proposals</h1>
+
+<table>
+    <tr>
+      <th>Title</th>
+      <th>Creator</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+  </tr>
+
+<% @proposals.each do |p| %>
+  <tr>
+      <td><%= p.title %></td>
+      <td>~<%= link_to h(p.creator.login), p.creator -%></td>
+      <td><%= p.description %></td>
+      <td><%= button_to "Approve", :action => "approve", :id => p.to_param %></td>
+      <td><%= button_to "Reject", :action => "reject", :id => p.to_param %></td>
+  </tr>  
+<% end %>
+
+</table>

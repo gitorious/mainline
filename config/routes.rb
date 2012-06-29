@@ -145,7 +145,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :site_wiki_pages, :as => "wiki", :member => { :history => :get,:preview => :put},
   :collection => { :git_access => :get }
-
+  
   map.resources :projects, :member => {
     :confirm_delete => :get,
     :preview => :put,
@@ -183,6 +183,11 @@ ActionController::Routing::Routes.draw do |map|
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
     admin.resources :repositories, :member => {:recreate => :put}
     admin.connect "diagnostics", :controller => "diagnostics", :action => "index"
+    admin.connect "project_proposals", :controller => "project_proposals", :action => "index"
+    admin.connect "project_proposals/new", :controller => "project_proposals", :action => "new"
+    admin.connect "project_proposals/create", :controller => "project_proposals", :action => "create"
+    admin.connect "project_proposals/reject", :controller => "project_proposals", :action => "reject"
+    admin.connect "project_proposals/approve", :controller => "project_proposals", :action => "approve"
   end
 
   map.resources :favorites
