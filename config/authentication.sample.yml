@@ -106,4 +106,27 @@ development:
     # End Kerberos configuration example
     ############################################################################
 
+    ############################################################################
+    # Example of configuring SSL client certificate authentication
+    #- adapter: Gitorious::Authentication::SSLAuthentication
+      # What certificate field to use as login name. Default is CN.
+      #login_field: Email
+
+      # Whether the domain should be stripped, if the email address is
+      # used as login name. Default is false.
+      #login_strip_domain: true
+
+      # Character used to replace forbidden characters in login names.
+      # Set to '' to strip forbidden characters. Default is '-'.
+      #login_replace_char: ''
+
+      # Note that you must also set up Apache to create SSL related
+      # environment variables for the http auth controller:
+      #  <Location /sessions/http>
+      #    SSLOptions +StdEnvVars
+      #  </Location>
+
+    # End SSL client certificate configuration example
+    ############################################################################
+
 # production:
