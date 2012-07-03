@@ -51,6 +51,12 @@ development:
       # with an options hash. See LdapAuthenticationTest.
       #callback_class: SampleCallback
 
+      # Specify a username/password to use for authenticated bind
+      # NOTE: This is required when using LDAP for authorization
+      #bind_user:
+      #  username: boss
+      #  password: sikret
+
     # End LDAP configuration example
     ############################################################################
 
