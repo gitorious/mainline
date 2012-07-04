@@ -38,17 +38,17 @@ class LdapGroup < ActiveRecord::Base
   validate :validate_ldap_dns
   
   def validate_ldap_dns
-    configurator = self.class.ldap_configurator
+    authentication = self.class.ldap_authentication
     Gitorious::Authorization::LDAP::Connection.new({
-        :host => configurator.server,
-        :port => configurator.port,
-        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+        :host => authentication.server,
+        :port => authentication.port,
+        :encryption => authentication.encryption}).bind_as(authentication.bind_username, authentication.bind_password) do |connection|
       Array(member_dns).each do |dn|
-        if ldap_dn_in_base?(dn, configurator.group_search_dn)
-          errors.add(:member_dns, "LDAP DN #{dn} is part of the LDAP search base #{configurator.group_search_dn}")
+        if ldap_dn_in_base?(dn, authentication.group_search_dn)
+          errors.add(:member_dns, "LDAP DN #{dn} is part of the LDAP search base #{authentication.group_search_dn}")
         end
         result = connection.search(
-          :base => configurator.group_search_dn,
+          :base => authentication.group_search_dn,
           :filter => generate_ldap_filters_from_dn(dn),
           :return_result => true)
         errors.add(:member_dns, "#{dn} not found") if result.empty?
@@ -105,26 +105,26 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
-  def self.ldap_configurator
+  def self.ldap_authentication
     auth_configuration_path = File.join(Rails.root, "config", "authentication.yml")
     configuration = YAML::load_file(auth_configuration_path)[RAILS_ENV]["methods"].detect do |m|
       m["adapter"] == "Gitorious::Authentication::LDAPAuthentication"
     end
     raise Gitorious::Authorization::LDAP::LdapError, "No LDAP configuration found for current environment (#{Rails.env}) in #{auth_configuration_path}" unless configuration
-    Gitorious::Authentication::LDAPConfigurator.new(configuration)
+    Gitorious::Authentication::LDAPAuthentication.new(configuration)
   end
 
   def self.ldap_group_names_for_user(user)
     return [] unless user.is_a?(User)
-    configurator = ldap_configurator
-    membership_attribute = ldap_configurator.membership_attribute_name
+    authentication = ldap_authentication
+    membership_attribute = ldap_authentication.membership_attribute_name
     Gitorious::Authorization::LDAP::Connection.new({
-        :host => configurator.server,
-        :port => configurator.port,
-        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+        :host => authentication.server,
+        :port => authentication.port,
+        :encryption => authentication.encryption}).bind_as(authentication.bind_username, authentication.bind_password) do |connection|
       entries = connection.search(
-        :base => configurator.group_search_dn,
-        :filter => Net::LDAP::Filter.eq(configurator.login_attribute, user.login),
+        :base => authentication.group_search_dn,
+        :filter => Net::LDAP::Filter.eq(authentication.login_attribute, user.login),
         :attributes => [membership_attribute])
       if !entries.blank?
         return entries.first[membership_attribute]
@@ -144,14 +144,14 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def self.uncached_dns_in_group(group_name, member_attribute_name)
-    configurator = ldap_configurator
+    authentication = ldap_authentication
     attribute, value = group_name.split("=")
     Gitorious::Authorization::LDAP::Connection.new({
-        :host => configurator.server,
-        :port => configurator.port,
-        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+        :host => authentication.server,
+        :port => authentication.port,
+        :encryption => authentication.encryption}).bind_as(authentication.bind_username, authentication.bind_password) do |connection|
       entries = connection.search(
-        :base => configurator.group_search_dn,
+        :base => authentication.group_search_dn,
         :filter => Net::LDAP::Filter.eq(attribute, value),
         :attributes => [member_attribute_name])
       if !entries.blank?
@@ -193,23 +193,23 @@ class LdapGroup < ActiveRecord::Base
   # Nested groups are not supported, only entries with a [login_attribute] 
   # value matching a User with the given username will be returned.
   def members
-    configurator = self.class.ldap_configurator
+    authentication = self.class.ldap_authentication
     usernames = member_dns.map do |dn|
-      self.class.user_dns_in_group(dn, configurator.members_attribute_name)
+      self.class.user_dns_in_group(dn, authentication.members_attribute_name)
     end
 
     usernames.compact.flatten.map do |dn|
       username = dn.split(",").detect do |pair|
         k,v = pair.split("=")
-        v if k == configurator.login_attribute
+        v if k == authentication.login_attribute
       end
       attr, username = dn.split(",").first.split("=")
-      User.find_by_login(Gitorious::Authentication::LDAPConfigurator.transform_username(username))
+      User.find_by_login(authentication.transform_username(username))
     end.compact.uniq
   end
 
   def self.build_qualified_dn(user_spec)
-    [user_spec, ldap_configurator.group_search_dn].compact.join(",")
+    [user_spec, ldap_authentication.group_search_dn].compact.join(",")
   end
 
   def self.groups_for_user(user)

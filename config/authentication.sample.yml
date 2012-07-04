@@ -73,6 +73,18 @@ development:
       # member or uniquemember
       #members_attribute_name: member
 
+      # Whether the domain should be stripped, if an email address is
+      # used as login name. Default is false.
+      #login_strip_domain: false
+
+      # Character used to replace forbidden characters in login names.
+      # Set to '' to strip forbidden characters. Default is '-'.
+      #login_replace_char: '-'
+
+      # Adds the given domain (if any) to the email address given in the LDAP
+      # attribute. If it already contains a domain it is replaced. Default is nil.
+      #email_domain:
+
     # End LDAP configuration example
     ############################################################################
 
@@ -99,56 +111,53 @@ development:
     ############################################################################
     
     ############################################################################
-    # Example of configuring Kerberos authentication
-    #- adapter: Gitorious::Authentication::KerberosAuthentication
-    
-      # Set the Kerberos realm (should be uppercase)
-      #realm: EXAMPLE.COM
-      
-      # The default email domain for users in this realm. If you do not
-      # specify any email_domain, the default is to use the lowercase
-      # realm value.
-      #email_domain: example.com
-      
-      # Note that you must also set up Apache's mod_auth_kerb within
-      # httpd.conf. For example:
-      #  # Enable SSO authentication via Kerberos
-      #  <Location /sessions/http>
-      #    AuthType Kerberos
-      #    AuthName "Gitorious Web UI"
-      #    KrbMethodNegotiate on
-      #    KrbMethodK5Passwd off
-      #    KrbServiceName HTTP
-      #    KrbAuthRealm EXAMPLE.COM
-      #    Krb5Keytab /etc/httpd/http.keytab
-      #    Require valid-user
-      #    ErrorDocument 401 /401.html
-      #  </Location>
-    
-    # End Kerberos configuration example
-    ############################################################################
+    # Example of configuring HTTP authentication
+    #- adapter: Gitorious::Authentication::HTTPAuthentication
+      # What server variable to use as login name. Default is REMOTE_USER.
+      #login_variable: REMOTE_USER
 
-    ############################################################################
-    # Example of configuring SSL client certificate authentication
-    #- adapter: Gitorious::Authentication::SSLAuthentication
-      # What certificate field to use as login name. Default is CN.
-      #login_field: Email
+      # Map server variables to database fields. Default is empty.
+      #variable_mapping:
 
-      # Whether the domain should be stripped, if the email address is
+      # Whether the domain should be stripped, if an email address is
       # used as login name. Default is false.
-      #login_strip_domain: true
+      #login_strip_domain: false
 
       # Character used to replace forbidden characters in login names.
       # Set to '' to strip forbidden characters. Default is '-'.
-      #login_replace_char: ''
+      #login_replace_char: '-'
 
-      # Note that you must also set up Apache to create SSL related
-      # environment variables for the http auth controller:
-      #  <Location /sessions/http>
-      #    SSLOptions +StdEnvVars
-      #  </Location>
+      # Adds the given domain (if any) to the email address given in the server
+      # variable. If it already contains a domain it is replaced. Default is nil.
+      #email_domain:
 
-    # End SSL client certificate configuration example
+      # All options are optional. Without any further configuration, every web
+      # server based authentication method (Basic Auth, Kerberos, SSL, etc.)
+      # should work out of the box, as long as the web server sets the
+      # REMOTE_USER variable. However in order to enable auto-registration you
+      # have to configure at least a server variable providing the email address.
+
+      # Example for email addresses given in REMOTE_USER:
+      #login_strip_domain: true
+      #variable_mapping:
+        #REMOTE_USER: email
+
+      # Example for email address and full name given in SSL client certificate:
+      #login_variable: SSL_CLIENT_S_DN_Email
+      #login_strip_domain: true
+      #variable_mapping:
+        #SSL_CLIENT_S_DN_Email: email
+        #SSL_CLIENT_S_DN_CN: fullname
+
+      # Example for cases where REMOTE_USER contains the username which is also
+      # the email alias or where REMOTE_USER is in the format <username>@<domain>,
+      # and the given domain isn't the email domain but e.g. a Kerberos realm:
+      #login_strip_domain: true
+      #email_domain: example.com
+      #variable_mapping:
+        #REMOTE_USER: email
+
+    # End HTTP configuration example
     ############################################################################
 
 # production:

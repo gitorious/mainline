@@ -51,7 +51,7 @@ class AccessControlTest < ActiveSupport::TestCase
       @committership.build_permissions(:commit)
       @user = users(:moe)
       LdapGroup.stubs(:ldap_group_names_for_user).returns(@ldap_group.member_dns)
-      LdapGroup.stubs(:ldap_configurator).returns(stub(:group_search_dn => nil))
+      LdapGroup.stubs(:ldap_authentication).returns(stub(:group_search_dn => nil))
       @authorization = Gitorious::Authorization::DatabaseAuthorization.new
     end
     teardown do

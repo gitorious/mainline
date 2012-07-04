@@ -111,7 +111,7 @@ class LdapGroupTest < ActiveSupport::TestCase
     end
 
     should "query each membering group for members" do
-      LdapGroup.stubs(:ldap_configurator).returns(stub({
+      LdapGroup.stubs(:ldap_authentication).returns(stub({
                                                          :members_attribute_name => "uniquemember",
                                                          :login_attribute => "cn"
                                                        }))
@@ -123,7 +123,7 @@ class LdapGroupTest < ActiveSupport::TestCase
 
   def stub_ldap_groups(groups)
     LdapGroup.stubs(:ldap_group_names_for_user).returns(groups)
-    LdapGroup.stubs(:ldap_configurator).returns(stub(:group_search_dn => nil))
+    LdapGroup.stubs(:ldap_authentication).returns(stub(:group_search_dn => nil))
     yield
   end
 end

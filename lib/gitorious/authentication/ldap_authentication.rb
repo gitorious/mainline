@@ -19,13 +19,19 @@ require "net/ldap"
 module Gitorious
   module Authentication
     class LDAPAuthentication
+      include UsernameTransformation
+      include AutoRegistration
+
       attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
-                  :connection_type, :distinguished_name_template, :connection, :login_attribute, 
-                  :bind_user, :bind_password)
+                  :group_search_dn, :connection_type,
+                  :distinguished_name_template, :connection, :login_attribute,
+                  :bind_user, :bind_password, :membership_attribute_name,
+                  :members_attribute_name)
 
       def initialize(options)
         validate_requirements(options)
         setup_attributes(options)
+        super
       end
 
       def validate_requirements(options)
@@ -35,18 +41,20 @@ module Gitorious
       end
 
       def setup_attributes(options)
-        configurator = LDAPConfigurator.new(options)
-        @login_attribute               = configurator.login_attribute
-        @server                        = configurator.server
-        @port                          = configurator.port
-        @attribute_mapping             = configurator.attribute_mapping
-        @encryption                    = configurator.encryption
-        @base_dn                       = configurator.base_dn        
-        @connection_type               = configurator.connection_type        
-        @callback_class                = configurator.authentication_callback_class
-        @distinguished_name_template   = configurator.distinguished_name_template
-        @bind_user                     = configurator.bind_username
-        @bind_password                 = configurator.bind_password
+        @login_attribute               = options["login_attribute"] || "CN"
+        @server                        = options["host"] || options["server"]
+        @port                          = (options["port"] || 389).to_i
+        @attribute_mapping             = options["attribute_mapping"] || {"displayname" => "fullname", "mail" => "email"}
+        @encryption                    = (options["encryption"] || "simple_tls").to_sym if options["encryption"] != "none"
+        @base_dn                       = options["base_dn"]
+        @group_search_dn               = options.fetch("group_search_dn", base_dn)
+        @connection_type               = options["connection_type"] || Net::LDAP
+        @callback_class                = options["callback_class"].constantize if options.key?("callback_class")
+        @distinguished_name_template   = options["distinguished_name_template"] || "#{login_attribute}={},#{base_dn}"
+        @bind_user                     = options["bind_user"] && options["bind_user"]["username"]
+        @bind_password                 = options["bind_user"] && options["bind_user"]["password"]
+        @membership_attribute_name     = options.fetch("membership_attribute_name", "memberof").to_sym
+        @members_attribute_name        = options.fetch("members_attribute_name", "member").to_sym
       end
 
       def use_authenticated_bind?
@@ -95,13 +103,8 @@ module Gitorious
 
       # The actual authentication callback
       def authenticate(credentials)
-        return false unless valid_credentials?(credentials.username, credentials.password)
-        if existing_user = User.find_by_login(transform_username(credentials.username))
-          user = existing_user
-        else
-          user = auto_register(credentials.username)
-        end
-
+        return unless valid_credentials?(credentials.username, credentials.password)
+        return unless user = super
         return unless post_authenticate({
             :connection => connection,
             :username => credentials.username,
@@ -110,35 +113,19 @@ module Gitorious
         user
       end
 
-      # Transform a username usable towards LDAP into something that passes Gitorious'
-      # username validations
-      def transform_username(username)
-        LDAPConfigurator.transform_username(username)
-      end
-
-      def auto_register(username)
-        result = connection.search(:base => base_dn, :filter => username_filter(username),
+      def get_attributes(credentials)
+        attributes = {}
+        result = connection.search(:base => base_dn, :filter => username_filter(credentials.username),
           :attributes => attribute_mapping.keys, :return_result => true)
         if result.size > 0
           data = result.detect do |element|
             attribute_mapping.keys.all? {|ldap_name| element[ldap_name] }
           end
-          user = User.new
-          user.login = transform_username(username)
           attribute_mapping.each do |ldap_name, our_name|
-            user.write_attribute(our_name, data[ldap_name].first)
+            attributes[our_name] = data[ldap_name].first
           end
-
-          user.password = "left_blank"
-          user.password_confirmation = "left_blank"
-          user.terms_of_use = '1'
-          user.aasm_state = "terms_accepted"
-          user.activated_at = Time.now.utc
-          user.save!
-          # Reset the password to something random
-          user.reset_password!
-          user
         end
+        attributes
       end
 
       def build_username(login)
