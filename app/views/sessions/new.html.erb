@@ -30,13 +30,6 @@
         <h1>Log in to <%= GitoriousConfig["site_name"] %></h1>
         <p class="openid-switch">Or log in with <a href="#" class="foo1">OpenID</a>.</p>
         <p class="regular-switch" style="display: none">Or log in with your <a href="#" class="foo2">regular account</a>.</p>
-        <% kerberos = Gitorious::Authentication::Configuration.authentication_methods.detect do |m|
-             Gitorious::Authentication::KerberosAuthentication === m
-           end
-          if kerberos
-        %>
-        <p>Or log in with <%= link_to 'Kerberos', :controller => "sessions", :action=> "http" %> (single sign-on).</p>
-        <% end %>
         <div class="horisontal-shadow"></div>
         <% if flash[:error] %>
           <div class="error">
