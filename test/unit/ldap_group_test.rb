@@ -95,6 +95,7 @@ class LdapGroupTest < ActiveSupport::TestCase
 
   def stub_ldap_groups(groups)
     LdapGroup.stubs(:ldap_group_names_for_user).returns(groups)
+    LdapGroup.stubs(:ldap_configurator).returns(stub(:base_dn => nil))
     yield
   end
 end
