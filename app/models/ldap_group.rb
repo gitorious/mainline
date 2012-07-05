@@ -131,11 +131,15 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
+  def self.build_qualified_dn(user_spec)
+    [user_spec, ldap_configurator.base_dn].compact.join(",")
+  end
+
   def self.groups_for_user(user)
-    ldap_group_names = ldap_group_names_for_user(user)
+    ldap_group_names = ldap_group_names_for_user(user)    
     result = []
     all.each do |group|
-      dns_in_group = group.member_dns
+      dns_in_group = group.member_dns.map {|dn| build_qualified_dn(dn)}
       ldap_group_names.map do |name|
         if dns_in_group.include?(name)
           result << group

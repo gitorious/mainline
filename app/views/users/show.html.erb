@@ -132,11 +132,11 @@
         <% end -%>
       </ul><% end %><% pull_box("Team memberships", :class => "teams pull-box-390") do -%>
       <ul>
-        <% @user.groups.each do |group| -%>
+        <% Team.for_user(@user).each do |group| -%>
           <li style="clear:left">
             <span style="float:left; padding: 2px 10px 2px 2px"><%= image_tag(group.avatar.url(:thumb), :alt => "Avatar", :width => "16") %></span> <%= link_to h(group.name), group_path(group) -%>
           </li><% end -%>
-      </ul><% end unless @user.groups.blank? -%>
+      </ul><% end unless Team.for_user(@user).blank? -%>
   </div>
   <div class="clear"></div>
 </div>

@@ -65,6 +65,10 @@ class Team
     def find_fuzzy(q)
       Group.find_fuzzy(q)
     end
+
+    def for_user(user)
+      user.groups
+    end
   end
 
   class LdapGroupFinder
@@ -100,6 +104,10 @@ class Team
 
     def find_fuzzy(q)
       LdapGroup.find_fuzzy(q)
+    end
+
+    def for_user(user)
+      LdapGroup.groups_for_user(user)
     end
   end
 
@@ -211,5 +219,9 @@ class Team
 
   def self.can_have_members?(group)
     group.is_a?(Group) 
+  end
+
+  def self.for_user(user)
+    group_finder.for_user(user)
   end
 end
