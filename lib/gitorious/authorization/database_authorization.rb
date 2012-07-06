@@ -155,7 +155,14 @@ module Gitorious
 
       def repository_admin?(candidate, repository)
         return false if !candidate.is_a?(User)
-        candidate == repository.owner || administrators(repository).include?(candidate)
+        return true if candidate == repository.owner
+        if Team.group_implementation == LdapGroup
+          groups = Team.for_user(candidate)
+          groups_with_admin_access = repository.committerships.admins.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
+          return groups_with_admin_access.any?{|group| groups.include?(group)}
+        else
+          administrators(repository).include?(candidate)
+        end
       end
 
       def project_admin?(candidate, project)
