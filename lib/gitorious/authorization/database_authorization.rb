@@ -92,6 +92,17 @@ module Gitorious
         if repository.wiki?
           can_write_to_wiki?(user, repository)
         else
+          push_granted?(repository, user)
+        end
+      end
+
+      def push_granted?(repository, user)
+        if Team.group_implementation == LdapGroup
+          return true if committers(repository).include?(user)
+          groups = Team.for_user(user)
+          groups_with_access = ldap_groups_with_commit_access(repository)
+          return groups_with_access.any?{|group| groups.include?(group) }
+        else
           committers(repository).include?(user)
         end
       end
@@ -168,6 +179,10 @@ module Gitorious
       # groups
       def committers(repository)
         repository.committerships.committers.map{|c| c.members }.flatten.compact.uniq
+      end
+
+      def ldap_groups_with_commit_access(repository)
+        repository.committerships.committers.select{|c|c.committer_type == "LdapGroup"}.map(&:committer)
       end
 
       # Returns a list of Users who can review things (as per their Committership)
