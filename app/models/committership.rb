@@ -115,6 +115,8 @@ class Committership < ActiveRecord::Base
     case committer
     when Group
       committer.members
+    when LdapGroup
+      committer.members
     else
       [committer]
     end
