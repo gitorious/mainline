@@ -58,6 +58,10 @@ class LdapGroupTest < ActiveSupport::TestCase
         assert_equal([], LdapGroup.groups_for_user(@user))
       end
     end
+
+    should "not try looking up memberships for anonymous users" do
+      assert_equal([], LdapGroup.groups_for_user(:false))
+    end
   end
 
   context "Owner prefix" do

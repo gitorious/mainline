@@ -115,6 +115,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def self.ldap_group_names_for_user(user)
+    return [] unless user.is_a?(User)
     configurator = ldap_configurator
     membership_attribute = ldap_configurator.membership_attribute_name
     Gitorious::Authorization::LDAP::Connection.new({
@@ -137,6 +138,7 @@ class LdapGroup < ActiveRecord::Base
 
   def self.groups_for_user(user)
     ldap_group_names = ldap_group_names_for_user(user)    
+    return [] if ldap_group_names.empty?
     result = []
     all.each do |group|
       dns_in_group = group.member_dns.map {|dn| build_qualified_dn(dn)}
