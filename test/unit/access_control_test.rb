@@ -17,7 +17,7 @@
 #++
 require "test_helper"
 
-class AccessControlTest < ActiveSupport::TestCase
+ class AccessControlTest < ActiveSupport::TestCase
   context "Regular teams" do
     setup do
       @repository = repositories(:johans)
@@ -73,5 +73,12 @@ class AccessControlTest < ActiveSupport::TestCase
       @committership.save!
       assert @authorization.repository_admin?(@user, @repository)
     end
+
+     should "let reviewers resolve merge requests" do
+       @committership.build_permissions(:review)
+       @committership.save!
+       merge_request = @repository.merge_requests.build
+       assert @authorization.can_resolve_merge_request?(@user, merge_request)
+     end
   end
 end

@@ -130,7 +130,13 @@ module Gitorious
       def can_resolve_merge_request?(user, merge_request)
         return false unless user.is_a?(User)
         return true if user === merge_request.user
-        return reviewers(merge_request.target_repository).include?(user)
+        if Team.group_implementation == LdapGroup
+          groups = Team.for_user(user)
+          review_groups = merge_request.target_repository.committerships.reviewers.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
+          return review_groups.any?{|group| groups.include?(group)}
+        else
+          return reviewers(merge_request.target_repository).include?(user)
+        end
       end
 
       def can_reopen_merge_request?(user, merge_request)
