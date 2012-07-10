@@ -16,7 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/authorization/typed_authorization"
-
+require "gitorious/authorization/group_authorization"
+require "gitorious/authorization/ldap_group_authorization"
 module Gitorious
   module Authorization
     class DatabaseAuthorization < Gitorious::Authorization::TypedAuthorization
@@ -25,6 +26,15 @@ module Gitorious
       ability :can_edit
       ability :can_delete
       ability :can_grant_access
+
+      # Load one of the group authorization types
+      def select_group_authorization
+        if Team.group_implementation ==  LdapGroup
+          LdapGroupAuthorization.new(self)
+        else
+          GroupAuthorization.new(self)
+        end
+      end
 
       def can_read_project?(user, project)
         can_read_protected_content?(user, project)
@@ -97,14 +107,7 @@ module Gitorious
       end
 
       def push_granted?(repository, user)
-        if Team.group_implementation == LdapGroup
-          return true if committers(repository).include?(user)
-          groups = Team.for_user(user)
-          groups_with_access = ldap_groups_with_commit_access(repository)
-          return groups_with_access.any?{|group| groups.include?(group) }
-        else
-          committers(repository).include?(user)
-        end
+        select_group_authorization.push_granted?(repository, user)
       end
 
       def can_delete_project?(candidate, project)
@@ -130,13 +133,7 @@ module Gitorious
       def can_resolve_merge_request?(user, merge_request)
         return false unless user.is_a?(User)
         return true if user === merge_request.user
-        if Team.group_implementation == LdapGroup
-          groups = Team.for_user(user)
-          review_groups = merge_request.target_repository.committerships.reviewers.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
-          return review_groups.any?{|group| groups.include?(group)}
-        else
-          return reviewers(merge_request.target_repository).include?(user)
-        end
+        select_group_authorization.can_resolve_merge_request?(user, merge_request)
       end
 
       def can_reopen_merge_request?(user, merge_request)
@@ -162,13 +159,7 @@ module Gitorious
       def repository_admin?(candidate, repository)
         return false if !candidate.is_a?(User)
         return true if candidate == repository.owner
-        if Team.group_implementation == LdapGroup
-          groups = Team.for_user(candidate)
-          groups_with_admin_access = repository.committerships.admins.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
-          return groups_with_admin_access.any?{|group| groups.include?(group)}
-        else
-          administrators(repository).include?(candidate)
-        end
+        select_group_authorization.repository_admin?(candidate, repository)
       end
 
       def project_admin?(candidate, project)
@@ -192,10 +183,6 @@ module Gitorious
       # groups
       def committers(repository)
         repository.committerships.committers.map{|c| c.members }.flatten.compact.uniq
-      end
-
-      def ldap_groups_with_commit_access(repository)
-        repository.committerships.committers.select{|c|c.committer_type == "LdapGroup"}.map(&:committer)
       end
 
       # Returns a list of Users who can review things (as per their Committership)
