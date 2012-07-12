@@ -132,6 +132,42 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
+  # Do an LDAP lookup for all member DNs in a given group
+  def self.user_dns_in_group(group_name, member_attribute_name)
+    configurator = ldap_configurator
+    attribute, value = group_name.split("=")
+    Gitorious::Authorization::LDAP::Connection.new({
+        :host => configurator.server,
+        :port => configurator.port,
+        :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
+      entries = connection.search(
+        :base => configurator.base_dn,
+        :filter => Net::LDAP::Filter.eq(attribute, value),
+        :attributes => [member_attribute_name])
+      if !entries.blank?
+        return entries.first[member_attribute_name]
+      end    
+    end
+  end
+
+  # Load all Users who are members of this group
+  # Nested groups are not supported, only entries with a [login_attribute] 
+  # value matching a User with the given username will be returned.
+  def load_members
+    configurator = self.class.ldap_configurator
+    usernames = member_dns.map do |dn|
+      self.class.user_dns_in_group(dn, configurator.members_attribute_name)
+    end
+    usernames.compact.flatten.map do |dn|
+      username = dn.split(",").detect do |pair|
+        k,v = pair.split("=")
+        v if k == configurator.login_attribute
+      end
+      attr, username = dn.split(",").first.split("=")
+      User.find_by_login(username)
+    end.compact.uniq
+  end
+
   def self.build_qualified_dn(user_spec)
     [user_spec, ldap_configurator.base_dn].compact.join(",")
   end

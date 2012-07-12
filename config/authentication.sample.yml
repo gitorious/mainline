@@ -57,6 +57,18 @@ development:
       #  username: boss
       #  password: sikret
 
+      # When using LDAP authorization: which attribute in a user
+      # record specifies groups a user is member of
+      # This will depend on your schema/LDAP server implementation
+      # but in 9/10 cases, it will be memberof
+      #membership_attribute_name: memberof
+
+      # When using LDAP authorization: which attribute in a group
+      # record specifies users that are member of the group
+      # This will depend on your  LDAP schema, but will usually be 
+      # member or uniquemember
+      #members_attribute_name: member
+
     # End LDAP configuration example
     ############################################################################
 

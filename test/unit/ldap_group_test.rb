@@ -97,6 +97,22 @@ class LdapGroupTest < ActiveSupport::TestCase
     end
   end
 
+  context "Looking up members of a group" do
+    setup do
+      @group = ldap_groups(:first_ldap_group)
+    end
+
+    should "query each membering group for members" do
+      LdapGroup.stubs(:ldap_configurator).returns(stub({
+                                                         :members_attribute_name => "uniquemember",
+                                                         :login_attribute => "cn"
+                                                       }))
+      LdapGroup.expects(:user_dns_in_group).with("cn=testers", "uniquemember").returns(["cn=johan"])
+      LdapGroup.expects(:user_dns_in_group).with("cn=developers","uniquemember").returns([])
+      assert_equal([users(:johan)], @group.load_members)
+    end
+  end
+
   def stub_ldap_groups(groups)
     LdapGroup.stubs(:ldap_group_names_for_user).returns(groups)
     LdapGroup.stubs(:ldap_configurator).returns(stub(:base_dn => nil))

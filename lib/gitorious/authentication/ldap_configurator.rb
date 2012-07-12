@@ -79,6 +79,11 @@ module Gitorious
       def membership_attribute_name
         options.fetch("membership_attribute_name", "memberof").to_sym
       end
+      
+      # The name of the members attribute name. Depending on the LDAP schema
+      def members_attribute_name
+        options.fetch("members_attribute_name", "member").to_sym
+      end
     end
 
   end
