@@ -109,7 +109,7 @@ class LdapGroupTest < ActiveSupport::TestCase
                                                        }))
       LdapGroup.expects(:user_dns_in_group).with("cn=testers", "uniquemember").returns(["cn=johan"])
       LdapGroup.expects(:user_dns_in_group).with("cn=developers","uniquemember").returns([])
-      assert_equal([users(:johan)], @group.load_members)
+      assert_equal([users(:johan)], @group.members)
     end
   end
 

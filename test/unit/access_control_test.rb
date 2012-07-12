@@ -63,6 +63,7 @@ require "test_helper"
     end
 
     should "grant push access once committership exists" do
+       LdapGroup.any_instance.stubs(:members).returns([])
       @committership.save!
       assert @authorization.can_push?(@user, @repository)
     end
