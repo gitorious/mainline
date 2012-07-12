@@ -37,6 +37,17 @@
     <div><%= f.file_field :avatar %></div>
   </li>
 
+  <% if @group.is_a?(LdapGroup) %>
+    <li>
+      <%= f.label :ldap_group_names %>
+      <div>
+        Enter LDAP group DNs, one per line<br />
+        <strong>Note:</strong> entries should be relative to the LDAP
+        base DN<br /> <%= f.text_area :ldap_group_names %>
+      </div>
+    </li>
+  <% end %>
+
   <% # TODO: be able to add a bunch of members right away -%>
 </fieldset>
 <fieldset class="submit"> 
