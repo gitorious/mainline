@@ -159,7 +159,7 @@ class LdapGroup < ActiveRecord::Base
   # Load all Users who are members of this group
   # Nested groups are not supported, only entries with a [login_attribute] 
   # value matching a User with the given username will be returned.
-  def load_members
+  def members
     configurator = self.class.ldap_configurator
     usernames = member_dns.map do |dn|
       self.class.user_dns_in_group(dn, configurator.members_attribute_name)

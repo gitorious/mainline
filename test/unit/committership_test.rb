@@ -244,14 +244,4 @@ class CommittershipTest < ActiveSupport::TestCase
       cs.repository.user.destroy
     end
   end
-
-  context "Ldap groups" do
-    setup do 
-      @committership = new_committership(:committer => ldap_groups(:first_ldap_group))
-    end
-    
-    should "have an empty list of members (for now)" do
-      assert_equal([], @committership.members)
-    end
-  end
 end
