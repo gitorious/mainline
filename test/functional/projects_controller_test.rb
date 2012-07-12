@@ -774,5 +774,28 @@ class ProjectsControllerTest < ActionController::TestCase
                             :host => "gitorious.test")
     end
   end
-  
+
+  context "With private repos and LDAP authorization" do
+    setup do
+      GitoriousConfig["enable_private_repositories"] = true
+      Team.group_implementation = LdapGroup
+      @group = ldap_groups(:first_ldap_group)
+      @user = users(:moe)
+      LdapGroup.stubs(:groups_for_user).with(@user).returns([@group])
+      @project = projects(:johans)
+      @project.make_private
+      @project.add_member(@group)
+    end
+    
+    teardown do
+      GitoriousConfig["enable_private_repositories"] = false
+      Team.group_implementation = Group
+    end
+
+    should "filter private projects in index" do
+      login_as @user
+      get :show, :id => @project.to_param
+      assert_response :success
+    end
+  end
 end

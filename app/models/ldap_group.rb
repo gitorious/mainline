@@ -132,6 +132,10 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
+  def member?(user)
+    self.class.groups_for_user(user).include?(self)
+  end
+
   # Do an LDAP lookup for all member DNs in a given group
   def self.user_dns_in_group(group_name, member_attribute_name)
     Rails.cache.fetch(["ldap_group", "members", group_name], :expires_in => 60.minutes) do
