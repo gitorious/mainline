@@ -1,5 +1,10 @@
 <ul>
+  <li><strong>LDAP groups</strong></li>
 <% for group in @group.ldap_group_names do %>
   <li><%= group -%></li>
+<% end %>
+<li><strong>Users</strong></li>
+<% for member in @group.members do %>
+  <li><%= link_to(member.login, member) -%></li>
 <% end %>
 </ul>
