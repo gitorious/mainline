@@ -57,7 +57,7 @@ class ContentMembershipsController < ApplicationController
   protected
   def member(user, group)
     return User.find_by_login!(user[:login]) if user && !user[:login].empty?
-    return Group.find_by_name!(group[:name]) if group && !group[:name].empty?
+    return Team.find_by_name!(group[:name]) if group && !group[:name].empty?
     content.owner
   end
 
