@@ -797,5 +797,12 @@ class ProjectsControllerTest < ActionController::TestCase
       get :show, :id => @project.to_param
       assert_response :success
     end
+
+    should "deny access for users who are not member of the LDAP group" do
+      LdapGroup.stubs(:groups_for_user).with(users(:mike)).returns([])
+      login_as users(:mike)
+      get :show, :id => @project.to_param
+      assert_response 403
+    end
   end
 end
