@@ -144,13 +144,13 @@ class Team
   def self.group_finder
     group_implementation == LdapGroup ? LdapGroupFinder.new : GroupFinder.new
   end
-  
-  def self.paginate_all(current_page = nil)
-    group_finder.paginate_all(current_page)
-  end
 
-  def self.find_by_name!(name)
-    group_finder.find_by_name!(name)
+  def self.method_missing(name, *args, &block)
+    if group_finder.respond_to?(name)
+      group_finder.send(name, *args, &block)
+    else
+      super(name, *args, &block)
+    end
   end
 
   def self.memberships(group)
@@ -159,14 +159,6 @@ class Team
 
   def self.events(group, page)
     group_wrapper(group).events(page)
-  end
-
-  def self.new_group
-    group_finder.new_group
-  end
-
-  def self.find(polymorphic_id)
-    group_finder.find(polymorphic_id)
   end
 
   def self.create_group(params, user)
@@ -184,14 +176,6 @@ class Team
     group.avatar = params[:avatar]
     group.ldap_group_names = params[:ldap_group_names] if params.key?(:ldap_group_names)
     group.save!
-  end
-
-  def self.by_admin(user)
-    group_finder.by_admin(user)
-  end
-
-  def self.find_fuzzy(q)
-    group_finder.find_fuzzy(q)
   end
 
   class DestroyGroupError < StandardError
@@ -219,9 +203,5 @@ class Team
 
   def self.can_have_members?(group)
     group.is_a?(Group) 
-  end
-
-  def self.for_user(user)
-    group_finder.for_user(user)
   end
 end
