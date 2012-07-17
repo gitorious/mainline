@@ -27,90 +27,6 @@ class Team
 
   self.group_implementation = GitoriousConfig["group_implementation"].constantize
 
-  class GroupFinder
-    def paginate_all(current_page=nil)
-      Group.paginate(:all, :page => current_page)
-    end
-
-    def find_by_name!(name)
-      includes = [:projects, :repositories, :committerships, :members]
-      Group.find_by_name!(name,:include => includes)
-    end
-
-    def new_group(params={})
-      Group.new(params)
-    end
-
-    def create_group(params, user)
-      group = new_group(params)
-      group.transaction do
-        group.creator = user
-        group.save!
-        group.memberships.create!({
-            :user => user,
-            :role => Role.admin,
-          })
-      end
-      return group
-    end
-
-    def by_admin(user)
-      user.groups.select{|g| Team.group_admin?(user, g) }
-    end
-
-    def find(id)
-      Group.find(id)
-    end
-
-    def find_fuzzy(q)
-      Group.find_fuzzy(q)
-    end
-
-    def for_user(user)
-      user.groups
-    end
-  end
-
-  class LdapGroupFinder
-    def paginate_all(current_page = nil)
-      LdapGroup.paginate(:all, :page => current_page)
-    end
-
-    def find_by_name!(name)    
-      includes = [:projects, :repositories]
-      LdapGroup.find_by_name!(name,:include => includes)
-    end
-
-    def new_group(params={})
-      LdapGroup.new(params)
-    end
-
-    def create_group(params, user)
-      group = new_group(params)
-      group.transaction do
-        group.creator = user
-        group.save!
-      end
-      return group
-    end
-
-    def by_admin(user)
-      LdapGroup.find_all_by_user_id(user.id)
-    end
-
-    def find(id)
-      LdapGroup.find(id)
-    end
-
-    def find_fuzzy(q)
-      LdapGroup.find_fuzzy(q)
-    end
-
-    def for_user(user)
-      LdapGroup.groups_for_user(user)
-    end
-  end
-
   class Wrapper
     def initialize(group)
       @group = group
@@ -168,7 +84,6 @@ class Team
   def self.group_params(params)
     params.key?(:ldap_group) ? params[:ldap_group] : params[:group]
   end
-
   
   def self.update_group(group, params)
     params = group_params(params)
