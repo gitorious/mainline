@@ -20,7 +20,8 @@ module Gitorious
   module Authentication
     class LDAPAuthentication
       attr_reader(:server, :port, :encryption, :attribute_mapping, :base_dn,
-        :connection_type, :distinguished_name_template, :connection, :login_attribute)
+                  :connection_type, :distinguished_name_template, :connection, :login_attribute, 
+                  :bind_user, :bind_password)
 
       def initialize(options)
         validate_requirements(options)
@@ -44,6 +45,12 @@ module Gitorious
         @connection_type               = configurator.connection_type        
         @callback_class                = configurator.authentication_callback_class
         @distinguished_name_template   = configurator.distinguished_name_template
+        @bind_user                     = configurator.bind_username
+        @bind_password                 = configurator.bind_password
+      end
+
+      def use_authenticated_bind?
+        !bind_user.blank?
       end
 
       def post_authenticate(options)
@@ -57,10 +64,33 @@ module Gitorious
       # Ask the LDAP server if the credentials are correct
       def valid_credentials?(username, password)
         return false if password.blank?
+        @connection  = @connection_type.new({:encryption => encryption, :host => server, :port => port})        
+        if use_authenticated_bind?
+          return authenticated_credentials_check(username, password)
+        else
+          return anonymous_credentials_check(username, password)
+        end
+      end
 
-        @connection  = @connection_type.new({:encryption => encryption, :host => server, :port => port})
+      # If no bind user has been specified, bind directly
+      def anonymous_credentials_check(username, password)
         connection.auth(build_username(username), password)
         return connection.bind
+      end
+
+      # If a bind user has been supplied:
+      # - first bind as the unprivileged bind user
+      # - then do a search for a user with the specified credentials, 
+      #   and attempt to bind as this user
+      # http://net-ldap.rubyforge.org/Net/LDAP.html#method-i-bind_as
+      def authenticated_credentials_check(username, password)
+        connection.auth(bind_user, bind_password)
+        result = connection.bind_as(:base => base_dn,
+                                    :filter => username_filter(username),
+                                    :password => password)
+        if result
+          return true
+        end
       end
 
       # The actual authentication callback
@@ -121,7 +151,6 @@ module Gitorious
       def build_username(login)
         distinguished_name_template.sub("{}", login)
       end
-
     end
   end
 end
