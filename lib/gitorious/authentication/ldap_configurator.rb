@@ -68,11 +68,11 @@ module Gitorious
       end
 
       def bind_username
-        options["bind_user"]["username"]
+        options["bind_user"] && options["bind_user"]["username"]
       end
 
       def bind_password
-        options["bind_user"]["password"]
+        options["bind_user"] && options["bind_user"]["password"]
       end
 
       # The name of the membership attribute name (9/10 times this is the default)

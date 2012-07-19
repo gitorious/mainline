@@ -187,6 +187,17 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     end
   end
 
+  context "Authenticated binding" do
+    should "use authenticated bind when a bind user has been specified" do
+      ldap = Gitorious::Authentication::LDAPAuthentication.new({
+                                                                 "server" => "localhost",
+                                                                 "base_dn" => "",
+                                                                 "bind_user" => {"username" => "cn=guest"}
+                                                               })
+      assert ldap.use_authenticated_bind?
+    end
+  end
+
   context "Auto-registration" do
     setup do
       @ldap = Gitorious::Authentication::LDAPAuthentication.new({
