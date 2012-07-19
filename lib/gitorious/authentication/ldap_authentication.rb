@@ -141,15 +141,14 @@ module Gitorious
         end
       end
 
+      def build_username(login)
+        distinguished_name_template.sub("{}", login)
+      end
+
       private
 
       def username_filter(username)
         Net::LDAP::Filter.eq(login_attribute, username)
-      end
-
-
-      def build_username(login)
-        distinguished_name_template.sub("{}", login)
       end
     end
   end
