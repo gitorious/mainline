@@ -17,6 +17,8 @@
 #++
 
 require "net/ldap"
+require "finders/group_finder"
+require "finders/ldap_group_finder"
 class LdapGroup < ActiveRecord::Base
   extend GroupBehavior
   include GroupBehavior::InstanceMethods
@@ -44,11 +46,11 @@ class LdapGroup < ActiveRecord::Base
         :port => configurator.port,
         :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       Array(member_dns).each do |dn|
-        if ldap_dn_in_base?(dn, configurator.base_dn)
-          errors.add(:member_dns, "LDAP DN #{dn} is part of the LDAP search base #{configurator.base_dn}")
+        if ldap_dn_in_base?(dn, configurator.group_search_dn)
+          errors.add(:member_dns, "LDAP DN #{dn} is part of the LDAP search base #{configurator.group_search_dn}")
         end
         result = connection.search(
-          :base => configurator.base_dn,
+          :base => configurator.group_search_dn,
           :filter => generate_ldap_filters_from_dn(dn),
           :return_result => true)
         errors.add(:member_dns, "#{dn} not found") if result.empty?
@@ -123,7 +125,7 @@ class LdapGroup < ActiveRecord::Base
         :port => configurator.port,
         :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
-        :base => configurator.base_dn,
+        :base => configurator.group_search_dn,
         :filter => Net::LDAP::Filter.eq(configurator.login_attribute, user.login),
         :attributes => [membership_attribute])
       if !entries.blank?
@@ -151,7 +153,7 @@ class LdapGroup < ActiveRecord::Base
         :port => configurator.port,
         :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
-        :base => configurator.base_dn,
+        :base => configurator.group_search_dn,
         :filter => Net::LDAP::Filter.eq(attribute, value),
         :attributes => [member_attribute_name])
       if !entries.blank?
@@ -179,7 +181,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def self.build_qualified_dn(user_spec)
-    [user_spec, ldap_configurator.base_dn].compact.join(",")
+    [user_spec, ldap_configurator.group_search_dn].compact.join(",")
   end
 
   def self.groups_for_user(user)

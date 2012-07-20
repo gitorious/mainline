@@ -49,6 +49,10 @@ module Gitorious
       def base_dn
         options["base_dn"]
       end
+
+      def group_search_dn
+        options.fetch("group_search_dn", base_dn)
+      end
       
       def connection_type
         @connection_type = options["connection_type"] || Net::LDAP
