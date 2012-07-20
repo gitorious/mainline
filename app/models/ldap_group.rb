@@ -170,6 +170,7 @@ class LdapGroup < ActiveRecord::Base
     usernames = member_dns.map do |dn|
       self.class.user_dns_in_group(dn, configurator.members_attribute_name)
     end
+    puts "Usernames: #{usernames.join(",")}"
     usernames.compact.flatten.map do |dn|
       username = dn.split(",").detect do |pair|
         k,v = pair.split("=")
