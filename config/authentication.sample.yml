@@ -31,7 +31,7 @@ development:
 
       # The base DN when searching for groups (for authorization)
       # If unspecified, base_dn is used
-      # group_search:dn: OU=groups,dc=gitorious,dc=org
+      # group_search_dn: OU=groups,dc=gitorious,dc=org
 
       # What LDAP attribute to use for user authentication. Default is CN
       #login_attribute: uid
