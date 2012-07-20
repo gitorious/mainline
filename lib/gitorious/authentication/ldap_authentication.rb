@@ -113,7 +113,7 @@ module Gitorious
       # Transform a username usable towards LDAP into something that passes Gitorious'
       # username validations
       def transform_username(username)
-        username.gsub(".", "-")
+        LDAPConfigurator.transform_username(username)
       end
 
       def auto_register(username)
