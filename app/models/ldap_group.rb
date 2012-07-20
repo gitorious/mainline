@@ -177,7 +177,7 @@ class LdapGroup < ActiveRecord::Base
         v if k == configurator.login_attribute
       end
       attr, username = dn.split(",").first.split("=")
-      User.find_by_login(username.sub(".","-")
+      User.find_by_login(username.sub(".","-"))
     end.compact.uniq
   end
 
