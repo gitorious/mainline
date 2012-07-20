@@ -170,7 +170,6 @@ class LdapGroup < ActiveRecord::Base
     usernames = member_dns.map do |dn|
       self.class.user_dns_in_group(dn, configurator.members_attribute_name)
     end
-    puts "Usernames: #{usernames.join(",")}"
 
     usernames.compact.flatten.map do |dn|
       username = dn.split(",").detect do |pair|
@@ -178,7 +177,7 @@ class LdapGroup < ActiveRecord::Base
         v if k == configurator.login_attribute
       end
       attr, username = dn.split(",").first.split("=")
-      User.find_by_login(username.sub(".","-"))
+      User.find_by_login(Gitorious::Authentication::LDAPConfigurator.transform_username(username))
     end.compact.uniq
   end
 
@@ -188,7 +187,7 @@ class LdapGroup < ActiveRecord::Base
 
   def self.groups_for_user(user)
     ldap_group_names = ldap_group_names_for_user(user)    
-    return [] if ldap_group_names.empty?
+    return [] if ldap_group_names.blank?
     result = []
     all.each do |group|
       dns_in_group = group.member_dns.map {|dn| build_qualified_dn(dn)}

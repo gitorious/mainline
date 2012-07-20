@@ -88,7 +88,10 @@ module Gitorious
       def members_attribute_name
         options.fetch("members_attribute_name", "member").to_sym
       end
-    end
 
+      def self.transform_username(username)
+        username.gsub(".","-")
+      end
+    end
   end
 end
