@@ -35,13 +35,14 @@ class Admin::ProjectProposalsController < AdminController
 
     if @proposal.name_clashes_with_existing_project?
       flash[:error] = "Project with that title already exists!"
-      render :action => "new" and return
+      render :action => "new" and return 
     end
     
-    if !@proposal.save
+    if @proposal.save
       notify_site_admins("A new project has been proposed",
                          "Review the project at #{root_url}admin/project_proposals to approve or reject")
       flash[:notice] = "Project proposal created, admins have been notified and will review it."
+
       redirect_to current_user
     else
       render :action => "new"

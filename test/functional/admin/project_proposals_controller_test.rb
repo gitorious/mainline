@@ -62,9 +62,13 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
       pre_count = ProjectProposal.all.count
       post :create, :project_proposal => new_proposal
       assert_equal pre_count+1, ProjectProposal.all.count
+      assert_response :redirect
     end
+
   end   
 
+  
+  
   def login_as_admin
     login_as :johan
   end
@@ -74,8 +78,8 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
   end
 
   def new_proposal
-    p = ProjectProposal.create({:title => "TopSecret#{rand(100000)}",
-                               :description => "Lorem ipsum",
-                               :creator => users(:moe)})
+    p = ProjectProposal.new({:title => "TopSecret#{rand(100000)}",
+                              :description => "Lorem ipsum",
+                              :creator => users(:moe)})
   end
 end
