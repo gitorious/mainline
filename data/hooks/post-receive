@@ -48,7 +48,7 @@ def custom_hook_path
 end
 
 def run_custom_hook_if_present(input)
-  if File.exist?(custom_hook_path) 
+  if (File.exist?(custom_hook_path) && File.executable?(custom_hook_path))
     cmd = %Q{#{custom_hook_path} 2>&1}
     IO.popen(cmd, 'w+') do |subprocess|
       subprocess.write(input)
@@ -67,6 +67,5 @@ def run_custom_hook_if_present(input)
 end
 
 run_custom_hook_if_present(hook_input_lines)
-
 
 puts "[OK]"
