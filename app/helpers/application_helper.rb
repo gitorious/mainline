@@ -180,6 +180,7 @@ module ApplicationHelper
   end
 
   def gravatar_url_for(email, options = {})
+    return "default_face.gif" if GitoriousConfig['disable_gravatar']
     prefix = request.ssl? ? "https://secure" : "http://www"
     scheme = request.ssl? ? "https" : "http"
     options.reverse_merge!(:default => "images/default_face.gif")

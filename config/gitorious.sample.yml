@@ -348,6 +348,9 @@ production:
   # Hide wiki options when creating and viewing projects
   #disable_wikis: true
 
+  # Don't use gravatar for avatars. Only local images will work
+  #disable_gravatar: true
+
 development:
 
 test:
