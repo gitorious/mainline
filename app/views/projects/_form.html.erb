@@ -60,6 +60,8 @@
       <div><%= form.text_field :bugtracker_url -%></div>
     </li>
   </fieldset>
+
+  <% if !GitoriousConfig["disable_wikis"] -%>
   <fieldset>
     <li>
       <%= form.label :wiki_enabled, t(:wiki_enabled, :scope => 'activerecord.attributes.project') -%>
@@ -72,6 +74,7 @@
       </li>
     <% end -%>
   </fieldset>
+  <% end -%>
  
   <fieldset>
     <li>

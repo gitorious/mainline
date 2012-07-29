@@ -345,6 +345,9 @@ production:
   # enter a label to display next to the username field in Gitorious
   # custom_username_label: Username
 
+  # Hide wiki options when creating and viewing projects
+  #disable_wikis: true
+
 development:
 
 test:

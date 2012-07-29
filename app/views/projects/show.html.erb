@@ -50,7 +50,7 @@
 
 <% content_for :sidebar do -%>
   <ul class="links navigation">
-    <% if @project.wiki_enabled? -%>
+    <% if @project.wiki_enabled? && !GitoriousConfig["disable_wikis"] -%>
       <li class="wiki_page"> <!-- Create / Open Wiki -->
         <%= link_to t("views.layout.pages"), project_page_path(@project, "Home") -%>
       </li>
