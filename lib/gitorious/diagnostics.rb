@@ -44,6 +44,41 @@ module Gitorious
         healthy_cpu_load_average?
     end
 
+    def health_text_summary
+
+      puts ("everything healthy?".ljust(50)+"#{everything_healthy?}")
+
+      # @git operations work?  #{git_operations_work?}"
+      puts ("git user ok?".ljust(50)+"#{git_user_ok?}")
+      puts ("current user is git user?".ljust(50) + "#{rails_process_owned_by_git_user?}")
+      puts ("atleast one gitorious account present?".ljust(50) + "#{atleast_one_gitorious_account_present?}")
+      puts ("repo dir ok?".ljust(50) + "#{repo_dir_ok?}")
+      puts ("tarball dirs ok?".ljust(50) + "#{tarball_dirs_ok?}")
+      puts ("authorized keys ok?".ljust(50) + "#{authorized_keys_ok?}")
+      puts ("not using reserved hostname?".ljust(50) + "#{not_using_reserved_hostname?}")
+
+      puts ("ssh deamon up?".ljust(50) + "#{ssh_deamon_up?}")
+      puts ("git daemon up?".ljust(50) + "#{git_daemon_up?}")
+      puts ("poller up?".ljust(50) + "#{poller_up?}")
+      puts ("mysql up?".ljust(50) + "#{mysql_up?}")
+      puts ("ultrasphinx up?".ljust(50) + "#{ultrasphinx_up?}")
+      puts ("queue service up?".ljust(50) + "#{queue_service_up?}")
+      puts ("memcached up?".ljust(50) + "#{memcached_up?}")
+
+      puts ("enough disk free?".ljust(50) + "#{enough_disk_free?}")
+      puts ("enough RAM free?".ljust(50) + "#{enough_RAM_free?}")
+      puts ("healthy cpu load average?".ljust(50)+ "#{healthy_cpu_load_average?}")
+
+      puts "\n\nuptime:\n"
+      puts `uptime`
+      puts "\n\nfree:\n"
+      puts `free -m`
+      puts "\n\nvmstat:\n"
+      puts `vmstat`
+      puts "\n\ndf:\n"
+      puts `df -h`
+    end
+    
     # Core functionality
 
     # TODO finish this one and wire it up 
