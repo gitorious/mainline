@@ -45,7 +45,7 @@ namespace :backup do
 
   # More explicit: specify tarball path
   # sudo bundle exec env TARBALL_PATH="current_snapshot.sql" rake backup:snapshot
-  # sudo bundle exec env TARBALL_PATH="current_snapshot.sql" rake backup:snapshot
+  # sudo bundle exec env TARBALL_PATH="current_snapshot.sql" rake backup:restore
 
   DEFAULT_TAR_PATH="snapshot.tar"
   SQL_DUMP_FILE="db_state.sql"
