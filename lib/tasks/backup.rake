@@ -9,16 +9,18 @@ namespace :backup do
   # 0. Both backup and restore tasks must be started from within the
   # root of your Gitorious installation. For disaster recovery, you'll
   # first need to get a new installation of Gitorious up, after which
-  # you can run the recover task.
+  # you can run the recover task to bring in the data from a snapshot
+  # tarball.
 
-  # 1 Should be run as root/superuser to preserve file/dir ownerships.
+  # 1. Both tasks should be run as root/superuser to preserve file/dir
+  # ownerships and have enough permissions when the backup tasks shell
+  # out.
 
-  # TODO just fetch from gitorious.yml!
-  # 2. Assumes that the gitorious installation is owned by the
-  # "git" user.
+  # 2. You need to specify which environment you
+  # snapshotting/restoring (production, development, etc). See example
+  # below to pass this as param.
 
-  # 3. Leans on the 'mysqldump' util for the db backup, only
-  # dumps/restores the gitorious_production db (not dev, test etc)
+  # 3. Leans on the 'mysqldump' util for database backup.
 
   # 4. Doesn't currently capture queue state, so you may want to shut
   # down the web frontend first and let the queues settle down before
@@ -36,36 +38,42 @@ namespace :backup do
   
   # EXAMPLES:
   
-  # Simple dump of default tarball file in current directory:
-  # sudo bundle exec rake backup:snapshot
+  # Simple dump of production env to default tarball file in current directory:
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production
 
-  # Simple restore from default tarball in current directory:
-  # sudo bundle exec rake backup:restore
+  # Simple restore of production env from default tarball in current directory:
+  # sudo bundle exec rake backup:restore RAILS_ENV=production
 
   # More explicit: specify tarball path
-  # sudo bundle exec rake backup:snapshot TARBALL_PATH="current_snapshot.sql"
-  # sudo bundle exec rake backup:restore TARBALL_PATH="current_snapshot.sql"
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
+  # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
 
   DEFAULT_TAR_PATH="snapshot.tar"
   SQL_DUMP_FILE="db_state.sql"
   TMP_WORKDIR="tmp-backup-workdir"
-  ENV["RAILS_ENV"] ||= "production"
   RAILS_ENV = ENV["RAILS_ENV"]
 
-  # TODO should be able to run without setting RAILS_ENV explicitly,
-  # def. production
+  require 'yaml'
   
   def repo_path
-    require 'yaml'
     conf = YAML::load(File.open('config/gitorious.yml'))
     conf[RAILS_ENV]['repository_base_path']
+  end
+
+  def db_name
+    conf = YAML::load(File.open('config/database.yml'))
+    conf[RAILS_ENV]['database']
+  end
+
+  def gitorious_user
+    conf = YAML::load(File.open('config/gitorious.yml'))
+    conf[RAILS_ENV]['gitorious_user']
   end
   
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
   task :snapshot do
     tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
 
-    # TODO use rake tasks for rm/cleanup etc
     puts "Initializing..."
     puts `rm -f #{tarball_path};rm -f #{SQL_DUMP_FILE}`
     puts `rm -rf #{TMP_WORKDIR}; mkdir #{TMP_WORKDIR}`
@@ -78,15 +86,13 @@ namespace :backup do
     puts `cp ./config/authentication.yml #{TMP_WORKDIR}/config`
     puts `cp ./config/database.yml #{TMP_WORKDIR}/config`
 
-    # TODO back up ultrasphinx config also?
-    
     puts "Backing up custom hooks..."
     puts `cp ./data/hooks/custom-pre-receive #{TMP_WORKDIR}/data/hooks`
     puts `cp ./data/hooks/custom-post-receive #{TMP_WORKDIR}/data/hooks`
     puts `cp ./data/hooks/custom-update #{TMP_WORKDIR}/data/hooks`
     
     puts "Backing up mysql state..."
-    puts `mysqldump gitorious_#{RAILS_ENV} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
+    puts `mysqldump #{db_name} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
     
     puts "Backing up repositories in #{repo_path}..."
     puts `cp -r #{repo_path}/* #{TMP_WORKDIR}/repos`
@@ -94,7 +100,6 @@ namespace :backup do
     puts "Archiving it all in #{tarball_path}..."
     puts `tar -czf #{tarball_path} #{TMP_WORKDIR}`
 
-    # TODO use rake cleanup tasks
     puts "Cleaning up..."
     puts `rm -rf #{SQL_DUMP_FILE};rm -rf #{TMP_WORKDIR}`
 
@@ -110,21 +115,20 @@ namespace :backup do
     puts `rm -rf #{TMP_WORKDIR};tar -xf #{tarball_path}`
 
     puts "Restoring custom config files..."
-    puts `cp #{TMP_WORKDIR}/config/* ./config`
+    puts `cp -f #{TMP_WORKDIR}/config/* ./config`
 
     puts "Restoring custom hooks..."
-    puts `cp #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
+    puts `cp -f #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
 
     puts "Restoring mysql state..."
-    # TODO pull db name from database yml?
-    puts `mysql gitorious_#{RAILS_ENV} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
+    puts `mysql #{db_name} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
 
     puts "Restoring repositories in #{repo_path}..."
     puts `mkdir -p #{repo_path}`
-    puts `cp -r #{TMP_WORKDIR}/repos/* #{repo_path}`
+    puts `cp -rf #{TMP_WORKDIR}/repos/* #{repo_path}`
 
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
-    puts `su git -c "rm ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
+    puts `su #{gitorious_user} -c "rm ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
 
     puts "Recreating symlink to common hooks"
     puts `rm -f #{repo_path}/.hooks` 
