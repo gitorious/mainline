@@ -6,15 +6,18 @@ namespace :backup do
 
   # ASSUMPTIONS:
 
-  # 0. Both backup and restore tasks must be started from within
-  # the root of your Gitorious installation.
+  # 0. Both backup and restore tasks must be started from within the
+  # root of your Gitorious installation. For disaster recovery, you'll
+  # first need to get a new installation of Gitorious up, after which
+  # you can run the recover task.
 
   # 1 Should be run as root/superuser to preserve file/dir ownerships.
 
+  # TODO just fetch from gitorious.yml!
   # 2. Assumes that the gitorious installation is owned by the
   # "git" user.
 
-  # 3. Leans on the 'mysql' util for the db backup, only
+  # 3. Leans on the 'mysqldump' util for the db backup, only
   # dumps/restores the gitorious_production db (not dev, test etc)
 
   # 4. Doesn't currently capture queue state, so you may want to shut
@@ -25,11 +28,7 @@ namespace :backup do
   # repos into a local tarball. Sites with huge amounts of repo data
   # may need custom backup schemes.
 
-  # 6. Assumes that the location of the gitorious installation
-  # remains the same between taking a snapshot and restoring it, since
-  # repos symlink their hooks to the common hooks in the data/hooks dir.
-
-  # 7. The restore step assumes minor to no changes in versions of
+  # 6. The restore step assumes minor to no changes in versions of
   # Gitorious between snapshot and subsequent restoration of a
   # backup. Major version jumps may necessitate a more manual restore
   # procedure due to changes in configurations, db schema, folder
@@ -44,23 +43,25 @@ namespace :backup do
   # sudo bundle exec rake backup:restore
 
   # More explicit: specify tarball path
-  # sudo bundle exec env TARBALL_PATH="current_snapshot.sql" rake backup:snapshot
-  # sudo bundle exec env TARBALL_PATH="current_snapshot.sql" rake backup:restore
+  # sudo bundle exec rake backup:snapshot TARBALL_PATH="current_snapshot.sql"
+  # sudo bundle exec rake backup:restore TARBALL_PATH="current_snapshot.sql"
 
   DEFAULT_TAR_PATH="snapshot.tar"
   SQL_DUMP_FILE="db_state.sql"
   TMP_WORKDIR="tmp-backup-workdir"
-
+  RAILS_ENV = ENV["RAILS_ENV"] || "production"
+  
   def repo_path
     require 'yaml'
     conf = YAML::load(File.open('config/gitorious.yml'))
-    conf['production']['repository_base_path']
+    conf[RAILS_ENV]['repository_base_path']
   end
   
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
   task :snapshot do
     tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
 
+    
     puts "Initializing..."
     puts `rm -f #{tarball_path};rm -f #{SQL_DUMP_FILE}`
     puts `rm -rf #{TMP_WORKDIR}; mkdir #{TMP_WORKDIR}`
@@ -79,7 +80,7 @@ namespace :backup do
     puts `cp ./data/hooks/custom-update #{TMP_WORKDIR}/data/hooks`
     
     puts "Backing up mysql state..."
-    puts `mysqldump gitorious_production > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
+    puts `mysqldump gitorious_#{RAILS_ENV} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
 
     puts "Backing up repositories in #{repo_path}..."
     puts `cp -r #{repo_path}/* #{TMP_WORKDIR}/repos`
@@ -107,15 +108,25 @@ namespace :backup do
     puts "Restoring custom hooks..."
     puts `cp #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
 
+    puts "Dropping current database"
+    puts `sudo RAILS_ENV=#{RAILS_ENV} bundle exec rake db:drop`
+    
+    puts "Creating database"
+    puts `sudo RAILS_ENV=#{RAILS_ENV} bundle exec rake db:create`
+    
     puts "Restoring mysql state..."
-    puts `mysql gitorious_production < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
-   
+    puts `mysql gitorious_#{RAILS_ENV} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
+
     puts "Restoring repositories in #{repo_path}..."
     puts `mkdir -p #{repo_path}`
     puts `cp -r #{TMP_WORKDIR}/repos/* #{repo_path}`
 
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
     puts `sudo su git -c "rm ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
+
+    puts "Recreating symlink to common hooks"
+    puts `rm -f #{repo_path}/.hooks` 
+    puts `ln -s #{File.expand_path('./data/hooks')} #{repo_path}/.hooks`
     
     puts "Cleaning up..."
     puts `rm -rf #{TMP_WORKDIR}`
