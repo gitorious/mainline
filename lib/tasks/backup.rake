@@ -4,13 +4,37 @@ namespace :backup do
   # setups. Saves/restores current production db, local configuration
   # files and git repositories - in a single tarball.
 
+  # OPTIONS:
+  #
+  # Options are passed to the rake task with env variables.
+  #
+  # RAILS_ENV=<production|development|test|staging..> 
+  # TARBALL_PATH=<PATH> Specify tarball path
+  # SKIP_CONFIG=true Leave config files alone, only restore repos & database.     
+
+  # EXAMPLES:
+  #
+  # Simple dump of production env to default tarball file in current directory:
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production
+  #
+  # Simple restore of production env from default tarball in current directory:
+  # sudo bundle exec rake backup:restore RAILS_ENV=production
+  #
+  # More explicit: specify tarball path
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
+  # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
+  #
+  # During restore of a snapshot, only restore db and repos (use for
+  # migrating state from one gitorious setup/config to another)
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production SKIP_CONFIG
+  
   # ASSUMPTIONS:
 
   # 0. Both backup and restore tasks must be started from within the
   # root of your Gitorious installation. For disaster recovery, you'll
-  # first need to get a new installation of Gitorious up, after which
-  # you can run the recover task to bring in the data from a snapshot
-  # tarball.
+  # first need to get a functional installation of Gitorious up, after which
+  # you can run the recover task to bring in the data and possibly
+  # configuration files from a a snapshot tarball.
 
   # 1. Both tasks should be run as root/superuser to preserve file/dir
   # ownerships and have enough permissions when the backup tasks shell
@@ -18,7 +42,7 @@ namespace :backup do
 
   # 2. You need to specify which environment you
   # snapshotting/restoring (production, development, etc). See example
-  # below to pass this as param.
+  # above to pass this as param.
 
   # 3. Leans on the 'mysqldump' util for database backup.
 
@@ -36,18 +60,6 @@ namespace :backup do
   # procedure due to changes in configurations, db schema, folder
   # structure etc.
   
-  # EXAMPLES:
-  
-  # Simple dump of production env to default tarball file in current directory:
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production
-
-  # Simple restore of production env from default tarball in current directory:
-  # sudo bundle exec rake backup:restore RAILS_ENV=production
-
-  # More explicit: specify tarball path
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
-  # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
-
   DEFAULT_TAR_PATH="snapshot.tar"
   SQL_DUMP_FILE="db_state.sql"
   TMP_WORKDIR="tmp-backup-workdir"
@@ -68,6 +80,11 @@ namespace :backup do
   def gitorious_user
     conf = YAML::load(File.open('config/gitorious.yml'))
     conf[RAILS_ENV]['gitorious_user']
+  end
+
+  def restore_config_files?
+    puts "***CONFIG: #{ENV['SKIP_CONFIG']}"
+    !(ENV["SKIP_CONFIG"] == "true")
   end
   
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
@@ -114,19 +131,25 @@ namespace :backup do
     puts "Preparing..."
     puts `rm -rf #{TMP_WORKDIR};tar -xf #{tarball_path}`
 
-    puts "Restoring custom config files..."
-    puts `cp -f #{TMP_WORKDIR}/config/* ./config`
+    if restore_config_files?
+      puts "Restoring custom config files..."
+      puts `cp -f #{TMP_WORKDIR}/config/* ./config`
 
-    puts "Restoring custom hooks..."
-    puts `cp -f #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
-
+      puts "Restoring custom hooks..."
+      puts `cp -f #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
+    end
+ 
     puts "Restoring mysql state..."
     puts `mysql #{db_name} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
 
+    puts "Upgrading database structure..."
+    Rake::Task["db:migrate"].invoke
+    
     puts "Restoring repositories in #{repo_path}..."
     puts `mkdir -p #{repo_path}`
     puts `cp -rf #{TMP_WORKDIR}/repos/* #{repo_path}`
-
+    puts `chown -R #{gitorious_user}:#{gitorious_user} #{repo_path}`
+    
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
     puts `su #{gitorious_user} -c "rm ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
 
