@@ -83,7 +83,6 @@ namespace :backup do
   end
 
   def restore_config_files?
-    puts "***CONFIG: #{ENV['SKIP_CONFIG']}"
     !(ENV["SKIP_CONFIG"] == "true")
   end
   
