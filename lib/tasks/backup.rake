@@ -1,16 +1,35 @@
 namespace :backup do
 
   # Full backup snapshot/restore for reasonably standard Gitorious
-  # setups. Saves/restores current production db, local configuration
-  # files and git repositories - in a single tarball.
+  # setups. Saves/restores the state of the Gitorious installation
+  # to/from a single tarball. Also saves the local Gitorious config
+  # files, easying the reinstall process if the entire installation is
+  # lost.
+
+  # Use for backup/disaster recovery, for cloning/migrating to a new
+  # server, or simply for quick snapshotting/restoring during
+  # testing/development/experimentation.
+
+  # Backup/disaster recovery:
+  # Perform regular, timestamped runs of the backup:snapshot task.
+  # If your data is corrupted/lost, run backup:restore in the root
+  # directory. If the entire Gitorious installation is lost, reinstall
+  # a new working Gitorious server, then run backup:restore there, possibly
+  # including the old config files (RESTORE_CONFIG_FILES=true).
 
   # OPTIONS:
   #
   # Options are passed to the rake task with env variables.
   #
-  # RAILS_ENV=<production|development|test|staging..> 
-  # TARBALL_PATH=<PATH> Specify tarball path
-  # SKIP_CONFIG=true Leave config files alone, only restore repos & database.     
+  # RAILS_ENV=<production|development|test|staging..>
+  #
+  # TARBALL_PATH=<PATH> Specify path of tar file to backup to/restore
+  # from.
+  #
+  # RESTORE_CONFIG_FILES=true During restore, overwrite config files
+  # of current Gitorious install with previously backed up config
+  # files (config/{database,gitorious,authentication}.yml) plus the
+  # custom hooks (data/hooks/custom-{post-receive,pre-receive,update})
 
   # EXAMPLES:
   #
@@ -24,9 +43,8 @@ namespace :backup do
   # sudo bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
   # sudo bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH="current_snapshot.sql"
   #
-  # During restore of a snapshot, only restore db and repos (use for
-  # migrating state from one gitorious setup/config to another)
-  # sudo bundle exec rake backup:snapshot RAILS_ENV=production SKIP_CONFIG
+  # During restore of a snapshot, also restore config files
+  # sudo bundle exec rake backup:snapshot RAILS_ENV=production RESTORE_CONFIG_FILES=true
   
   # ASSUMPTIONS:
 
@@ -54,11 +72,11 @@ namespace :backup do
   # repos into a local tarball. Sites with huge amounts of repo data
   # may need custom backup schemes.
 
-  # 6. The restore step assumes minor to no changes in versions of
-  # Gitorious between snapshot and subsequent restoration of a
-  # backup. Major version jumps may necessitate a more manual restore
-  # procedure due to changes in configurations, db schema, folder
-  # structure etc.
+  # 6. The restore step (especially if restoring old config files)
+  # assumes only minor changes in versions of Gitorious between
+  # snapshot and subsequent restoration of a backup. Major version
+  # jumps may necessitate a more manual restore procedure due to
+  # changes in configurations, db schema, folder structure etc.
   
   DEFAULT_TAR_PATH="snapshot.tar"
   SQL_DUMP_FILE="db_state.sql"
@@ -83,7 +101,7 @@ namespace :backup do
   end
 
   def restore_config_files?
-    !(ENV["SKIP_CONFIG"] == "true")
+    (ENV["RESTORE_CONFIG_FILES"] == "true")
   end
   
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
