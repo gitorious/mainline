@@ -91,8 +91,13 @@ class UsersController < ApplicationController
     if !@user.terms_of_use.blank?
       @user.accept_terms!
     end
-    redirect_to :action => "pending_activation"
-  rescue ActiveRecord::RecordInvalid
+	if !GitoriousConfig["require_activation"]
+      @user.activate
+      redirect_to "/login"
+    else
+	  redirect_to :action => "pending_activation"
+    end
+	rescue ActiveRecord::RecordInvalid
     render :action => 'new'
   end
 

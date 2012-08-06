@@ -344,6 +344,14 @@ production:
   # If your site uses other mechanisms for authentication than the built-in
   # enter a label to display next to the username field in Gitorious
   # custom_username_label: Username
+  
+  # Determines if a new member needs to click on an activation link
+  # via email prior to being able to log in. If set to false the
+  # user is automatically activated at time of creation and doesn't
+  # receive the email. This is usefull in situations where email isn't
+  # configured or possible due to Port 25 restrictions. Default value is
+  # to require activation.
+  require_activation: true
 
 development:
 
