@@ -44,30 +44,38 @@ module Gitorious
         healthy_cpu_load_average?
     end
 
+    def ascii_test(label)
+      test_result = yield
+      green = "\x1b[32m"
+      red = "\x1b[31m"
+      status_color = test_result ? green : red
+      reset = "\x1b[0m"
+      ("#{status_color}#{label}".ljust(50)+"#{test_result}#{reset}")
+    end
+    
     def health_text_summary
-
-      puts ("everything healthy?".ljust(50)+"#{everything_healthy?}")
+      puts ascii_test("everything healthy?"){ everything_healthy? }
 
       # @git operations work?  #{git_operations_work?}"
-      puts ("git user ok?".ljust(50)+"#{git_user_ok?}")
-      puts ("current user is git user?".ljust(50) + "#{rails_process_owned_by_git_user?}")
-      puts ("atleast one gitorious account present?".ljust(50) + "#{atleast_one_gitorious_account_present?}")
-      puts ("repo dir ok?".ljust(50) + "#{repo_dir_ok?}")
-      puts ("tarball dirs ok?".ljust(50) + "#{tarball_dirs_ok?}")
-      puts ("authorized keys ok?".ljust(50) + "#{authorized_keys_ok?}")
-      puts ("not using reserved hostname?".ljust(50) + "#{not_using_reserved_hostname?}")
+      puts ascii_test("git user ok?") {git_user_ok?}
+      puts ascii_test("current user is git user?"){rails_process_owned_by_git_user?}
+      puts ascii_test("atleast one gitorious account present?") {atleast_one_gitorious_account_present?}
+      puts ascii_test("repo dir ok?"){repo_dir_ok?}
+      puts ascii_test("tarball dirs ok?"){tarball_dirs_ok?}
+      puts ascii_test("authorized keys ok?"){authorized_keys_ok?}
+      puts ascii_test("not using reserved hostname?"){not_using_reserved_hostname?}
 
-      puts ("ssh deamon up?".ljust(50) + "#{ssh_deamon_up?}")
-      puts ("git daemon up?".ljust(50) + "#{git_daemon_up?}")
-      puts ("poller up?".ljust(50) + "#{poller_up?}")
-      puts ("mysql up?".ljust(50) + "#{mysql_up?}")
-      puts ("ultrasphinx up?".ljust(50) + "#{ultrasphinx_up?}")
-      puts ("queue service up?".ljust(50) + "#{queue_service_up?}")
-      puts ("memcached up?".ljust(50) + "#{memcached_up?}")
+      puts ascii_test("ssh deamon up?"){ssh_deamon_up?}
+      puts ascii_test("git daemon up?"){git_daemon_up?}
+      puts ascii_test("poller up?"){poller_up?}
+      puts ascii_test("mysql up?"){mysql_up?}
+      puts ascii_test("ultrasphinx up?"){ultrasphinx_up?}
+      puts ascii_test("queue service up?"){queue_service_up?}
+      puts ascii_test("memcached up?"){memcached_up?}
 
-      puts ("enough disk free?".ljust(50) + "#{enough_disk_free?}")
-      puts ("enough RAM free?".ljust(50) + "#{enough_RAM_free?}")
-      puts ("healthy cpu load average?".ljust(50)+ "#{healthy_cpu_load_average?}")
+      puts ascii_test("enough disk free?"){enough_disk_free?}
+      puts ascii_test("enough RAM free?"){enough_RAM_free?}
+      puts ascii_test("healthy cpu load average?"){healthy_cpu_load_average?}
 
       puts "\n\nuptime:\n"
       puts `uptime`
@@ -78,6 +86,8 @@ module Gitorious
       puts "\n\ndf:\n"
       puts `df -h`
     end
+
+    
     
     # Core functionality
 

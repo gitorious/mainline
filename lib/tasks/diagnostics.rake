@@ -1,11 +1,18 @@
 namespace :diagnostics do
 
-  desc "Check if all diagnostics tests pass (true/false). Note that this has to be run as the same user that usually runs/owns the app (often the 'git' user). Roughly the same as the web page at /admin/diagnostics/summary."
+  # Diagnostics: get either simple binary answer, or a summary of Gitorious
+  # installation. Must be executed by same user as
+  # config/gitorious.yml -> 'gitorious_user'
+
+  # EXAMPLE:
+  # sudo su git -c "bundle exec rake diagnostics:summary RAILS_ENV=production"
+  
+  desc "Check if all diagnostics tests pass (true/false). Roughly the same as the web page at /admin/diagnostics/summary."
   task :healthy do
     puts `script/runner 'include Gitorious::Diagnostics;puts everything_healthy?'`
   end
 
-  desc "Prints out Gitorious system health summary. Note that this has to be run as the same user that usually runs/owns the app (often the 'git' user). Roughly the same output as the web page at /admin/diagnostics"
+  desc "Prints out Gitorious system health summary. Roughly the same output as the web page at /admin/diagnostics"
   task :summary do
     puts `script/runner 'include Gitorious::Diagnostics;puts health_text_summary'`
   end
