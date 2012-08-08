@@ -179,7 +179,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.namespace :admin do |admin|
-    admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put }
+    admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put, :flip_admin_status => :put }
     admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
     admin.resources :repositories, :member => {:recreate => :put}
     admin.connect "diagnostics", :controller => "diagnostics", :action => "index"
@@ -188,6 +188,7 @@ ActionController::Routing::Routes.draw do |map|
     admin.connect "project_proposals/create", :controller => "project_proposals", :action => "create"
     admin.connect "project_proposals/reject", :controller => "project_proposals", :action => "reject"
     admin.connect "project_proposals/approve", :controller => "project_proposals", :action => "approve"
+    
   end
 
   map.resources :favorites

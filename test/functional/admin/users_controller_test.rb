@@ -73,7 +73,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
     assert_redirected_to(new_sessions_url)
   end
 
-  should " not access administrator pages if not admin" do
+  should "not access administrator pages if not admin" do
     login_as :mike
     get :index
     assert_redirected_to(root_path)
@@ -104,6 +104,17 @@ class Admin::UsersControllerTest < ActionController::TestCase
 
   context "users pagination" do
     should_scope_pagination_to(:index, User, :delete_all => false)
+  end
+
+  context "site admin status" do
+    should "be flippable from admin user list" do
+      u = users(:moe)
+      assert !u.is_admin
+      post :flip_admin_status, :id => u.to_param
+      u.reload
+      assert u.is_admin
+      assert_redirected_to(admin_users_path)
+    end
   end
 
   def valid_admin_user

@@ -93,4 +93,11 @@ class Admin::UsersController < AdminController
     end
     redirect_to admin_users_url()
   end
+
+  def flip_admin_status
+    @user = User.find_by_login!(params[:id])
+    @user.is_admin = !@user.is_admin
+    @user.save
+    redirect_to admin_users_url()
+  end
 end
