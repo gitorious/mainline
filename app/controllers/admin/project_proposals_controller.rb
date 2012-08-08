@@ -27,6 +27,7 @@ class Admin::ProjectProposalsController < AdminController
     @proposal = ProjectProposal.new
   end
 
+  
   def create
     @proposal = ProjectProposal.new
     @proposal.title =  params[:project_proposal][:title]
@@ -52,6 +53,7 @@ class Admin::ProjectProposalsController < AdminController
   def approve
     proposal = ProjectProposal.find_by_id(params[:id])
     project = proposal.approve
+    project.make_private if projects_private_on_creation?
     notify_creator("Your '#{project.title}' project has been approved!", project.owner,
                    "Please update your project license, description etc.")
     flash[:notice] = "Project approved and created, user has been notified"
@@ -82,6 +84,11 @@ class Admin::ProjectProposalsController < AdminController
                   :recipient => recipient,
                   :subject => subject,
                   :body => body }).save
+  end
+
+  def projects_private_on_creation?
+    GitoriousConfig["enable_private_repositories"] &&
+      GitoriousConfig["repos_and_projects_private_by_default"]
   end
   
 end

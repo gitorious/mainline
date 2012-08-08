@@ -20,6 +20,10 @@
 require File.dirname(__FILE__) + "/../../test_helper"
 
 class Admin::ProjectProposalsControllerTest < ActionController::TestCase
+
+  def setup
+    setup_ssl_from_config
+  end
   
   context "Routing" do
     should "recognize project proposal actions" do
@@ -48,13 +52,38 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
   end
 
   context "Project approval workflow" do
+    
     should "let users create project proposal & notify admins" do
-      # login_as_non_admin
-      # pre_count = ProjectProposal.all.count
-      # post :create, :project_proposal => new_proposal
-      # assert_equal pre_count+1, ProjectProposal.all.count
-      # assert_response :redirect
+      login_as_non_admin
+      pre_count = ProjectProposal.all.count
+      post :create, :project_proposal => new_proposal
+      assert_equal pre_count+1, ProjectProposal.all.count
+      assert_response :redirect
     end
+
+    should "let admins approve project proposal" do
+      proposal = new_proposal
+      proposal.save
+      pre_count = Project.all.count
+      login_as_admin
+      post :approve, :id => proposal.to_param
+      assert_equal pre_count+1, Project.all.count
+      assert !Project.all.last.private?
+      assert_response :redirect
+    end
+
+    should "ensure that approved project is private if private by default is toggled" do
+      GitoriousConfig["enable_private_repositories"] = true
+      GitoriousConfig["repos_and_projects_private_by_default"] = true
+      proposal = new_proposal
+      proposal.save
+      login_as_admin
+      post :approve, :id => proposal.to_param
+      assert Project.all.last.private?
+      GitoriousConfig["enable_private_repositories"] = false
+      GitoriousConfig["repos_and_projects_private_by_default"] = false
+    end
+    
   end   
   
   def login_as_admin
