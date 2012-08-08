@@ -36,11 +36,11 @@ module Gitorious
     end
 
     def public?
-      content_memberships.length == 0
+      !private?
     end
 
     def private?
-      !public?
+      content_memberships && content_memberships.length > 0
     end
 
     def member?(candidate)
