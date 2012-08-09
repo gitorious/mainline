@@ -85,6 +85,6 @@ class PushProcessor
   end
 
   def log_message(message)
-    logger.info("#{Time.now.to_s(:short)} #{message} to repository #{repository.gitdir}")
+    logger.info("#{Time.now.to_s(:short)} #{message}")
   end
 end
