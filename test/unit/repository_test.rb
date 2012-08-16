@@ -220,7 +220,7 @@ class RepositoryTest < ActiveSupport::TestCase
     Repository.clone_git_repository(target.real_gitdir, source.real_gitdir, :skip_hooks => true)
   end
 
-  should " create the hooks" do
+  should "create the hooks" do
     hooks = "/path/to/hooks"
     path = "/path/to/repository"
     base_path = "#{RAILS_ROOT}/data/hooks"
@@ -235,14 +235,9 @@ class RepositoryTest < ActiveSupport::TestCase
 
     local_hooks = "/path/to/local/hooks"
     File.expects(:join).in_sequence.with(path, "hooks").returns(local_hooks)
-
     File.expects(:exist?).in_sequence.with(local_hooks).returns(true)
 
-    File.expects(:join).with(path, "description").in_sequence
-
-    File.expects(:open).in_sequence.returns(true)
-
-    assert Repository.create_hooks(path)
+    Repository.create_hooks(path)
   end
 
   should "deletes a repository" do

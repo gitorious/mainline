@@ -161,7 +161,6 @@ class Repository < ActiveRecord::Base
   def self.create_git_repository(path)
     full_path = full_path_from_partial_path(path)
     git_backend.create(full_path)
-
     self.create_hooks(full_path)
   end
 
@@ -823,11 +822,6 @@ class Repository < ActiveRecord::Base
       Dir.chdir(path) do
         FileUtils.ln_s(target_path, "hooks")
       end
-    end
-
-    File.open(File.join(path, "description"), "w") do |file|
-      sp = path.split("/")
-      file << sp[sp.size-1, sp.size].join("/").sub(/\.git$/, "") << "\n"
     end
   end
 end
