@@ -191,7 +191,7 @@ module EventRendering
 
     def render_comment
       comment = Comment.find(@event.data) # FIXME: sucks
-      template_string = "{user} commented on {url}:\n{body}"
+      template_string = "{user} commented on {url}\n{body}"
       if @event.body == "MergeRequest"
         repo = @event.target.target_repository
         add_from_template(template_string, {
