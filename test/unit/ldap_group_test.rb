@@ -81,6 +81,14 @@ class LdapGroupTest < ActiveSupport::TestCase
       assert p.save
       refute @group.deletable?
     end
+
+    should "remove read-access to projects when deleted" do
+      p = projects(:johans)
+      p.content_memberships.create(:content => p, :member => @group)
+      assert_incremented_by ContentMembership, :count, -1 do
+        @group.destroy
+      end
+    end
   end
 
   context "LDAP filters" do

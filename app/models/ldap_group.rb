@@ -23,8 +23,6 @@ class LdapGroup < ActiveRecord::Base
   extend GroupBehavior
   include GroupBehavior::InstanceMethods
 
-
-  
   Paperclip.interpolates('group_name'){|attachment,style| attachment.instance.name}
 
   avatar_local_path = '/system/group_avatars/:group_name/:style/:basename.:extension'
@@ -38,7 +36,7 @@ class LdapGroup < ActiveRecord::Base
   serialize :member_dns
 
   validate :validate_ldap_dns
-
+  
   def validate_ldap_dns
     configurator = self.class.ldap_configurator
     Gitorious::Authorization::LDAP::Connection.new({
