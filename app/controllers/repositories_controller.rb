@@ -177,7 +177,7 @@ class RepositoriesController < ApplicationController
 
   def edit
     @root = Breadcrumb::EditRepository.new(@repository)
-    @groups = Team.by_admin(current_user)
+    @groups = Team.for_user(current_user)
     @heads = @repository.git.heads
   end
 
