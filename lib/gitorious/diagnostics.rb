@@ -60,18 +60,18 @@ module Gitorious
       puts ascii_test("git user ok?") {git_user_ok?}
       puts ascii_test("current user is git user?"){rails_process_owned_by_git_user?}
       puts ascii_test("atleast one gitorious account present?") {atleast_one_gitorious_account_present?}
-      puts ascii_test("repo dir ok?"){repo_dir_ok?}
-      puts ascii_test("tarball dirs ok?"){tarball_dirs_ok?}
-      puts ascii_test("authorized keys ok?"){authorized_keys_ok?}
-      puts ascii_test("not using reserved hostname?"){not_using_reserved_hostname?}
+      puts ascii_test("repository base dir present, owned by git user?"){repo_dir_ok?}
+      puts ascii_test("tarball dirs present, owned by git user?"){tarball_dirs_ok?}
+      puts ascii_test("authorized keys present, owned by git user?"){authorized_keys_ok?}
+      puts ascii_test("hostname not bound to a 'git.*' subdomain?"){not_using_reserved_hostname?}
 
-      puts ascii_test("ssh deamon up?"){ssh_deamon_up?}
-      puts ascii_test("git daemon up?"){git_daemon_up?}
-      puts ascii_test("poller up?"){poller_up?}
-      puts ascii_test("mysql up?"){mysql_up?}
-      puts ascii_test("ultrasphinx up?"){ultrasphinx_up?}
-      puts ascii_test("queue service up?"){queue_service_up?}
-      puts ascii_test("memcached up?"){memcached_up?}
+      puts ascii_test("ssh deamon is up?"){ssh_deamon_up?}
+      puts ascii_test("git daemon is up?"){git_daemon_up?}
+      puts ascii_test("poller is up?"){poller_up?}
+      puts ascii_test("mysql is up?"){mysql_up?}
+      puts ascii_test("ultrasphinx is up?"){ultrasphinx_up?}
+      puts ascii_test("queue service is up?"){queue_service_up?}
+      puts ascii_test("memcached is up?"){memcached_up?}
 
       puts ascii_test("enough disk free?"){enough_disk_free?}
       puts ascii_test("enough RAM free?"){enough_RAM_free?}
