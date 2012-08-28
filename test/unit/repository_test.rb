@@ -1201,6 +1201,11 @@ class RepositoryTest < ActiveSupport::TestCase
         @repository.make_private
         assert @repository.private?
       end
+
+      should "mark repository as private if project is private" do
+        @repository.project.make_private
+        assert @repository.private?
+      end
  
       should "allow anonymous user to view public repository" do
         repository = Repository.new(:name => "My repository")
