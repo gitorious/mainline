@@ -17,7 +17,7 @@
 #++
 require "test_helper"
 
- class AccessControlTest < ActiveSupport::TestCase
+class AccessControlTest < ActiveSupport::TestCase
   context "Regular teams" do
     setup do
       @repository = repositories(:johans)
@@ -63,7 +63,7 @@ require "test_helper"
     end
 
     should "grant push access once committership exists" do
-       LdapGroup.any_instance.stubs(:members).returns([])
+      LdapGroup.any_instance.stubs(:members).returns([])
       @committership.save!
       assert @authorization.can_push?(@user, @repository)
     end
@@ -75,11 +75,17 @@ require "test_helper"
       assert @authorization.repository_admin?(@user, @repository)
     end
 
-     should "let reviewers resolve merge requests" do
-       @committership.build_permissions(:review)
-       @committership.save!
-       merge_request = @repository.merge_requests.build
-       assert @authorization.can_resolve_merge_request?(@user, merge_request)
-     end
+    should "grant project admin" do
+      @project = @repository.project
+      @project.change_owner_to(@ldap_group)
+      assert @authorization.project_admin?(@user, @project)
+    end
+
+    should "let reviewers resolve merge requests" do
+      @committership.build_permissions(:review)
+      @committership.save!
+      merge_request = @repository.merge_requests.build
+      assert @authorization.can_resolve_merge_request?(@user, merge_request)
+    end
   end
 end
