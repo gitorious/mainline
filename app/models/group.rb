@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
 
   has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
-  has_many :content_memberships, :as => :member
+
 
   attr_protected :public, :role_id, :user_id
 

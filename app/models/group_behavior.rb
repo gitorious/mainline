@@ -19,6 +19,7 @@ module GroupBehavior
     klass.has_many :committerships, :as => :committer, :dependent => :destroy
     klass.has_many :participated_repositories, :through => :committerships,
     :source => :repository, :class_name => 'Repository'
+    klass.has_many :content_memberships, :as => :member, :dependent => :destroy
 
 
     def klass.find_fuzzy(query)
