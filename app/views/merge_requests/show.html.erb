@@ -146,7 +146,7 @@ git checkout -b merge-requests/<%= @merge_request.sequence_number %>
 
 # Fetch the merge request into this branch
 git pull \
-  <%= @merge_request.target_repository.clone_url %> \
+  <%= @merge_request.target_repository.default_clone_url %> \
   <%= @merge_request.merge_branch_name %>
 
 # Show the commits, assess they are okay
