@@ -162,6 +162,35 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
+  class MembershipsWrapper
+    def initialize(members)
+      @members = members
+    end
+
+    def paginate(which, options={})
+      self
+    end
+
+    def total_pages
+      1
+    end
+    
+    def each(&blk)
+      @members.each {|m| yield m}
+    end
+
+    def count
+      @members.count
+    end
+  end
+  
+  def memberships
+    memberships = members.map do |member|
+      Membership.new(:user_id => member.id, :created_at => Time.now, :role => Role.member)
+    end
+    MembershipsWrapper.new(memberships)
+  end
+
   # Load all Users who are members of this group
   # Nested groups are not supported, only entries with a [login_attribute] 
   # value matching a User with the given username will be returned.

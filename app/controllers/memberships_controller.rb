@@ -86,7 +86,7 @@ class MembershipsController < ApplicationController
 
   protected
   def find_group
-    @group = Group.find_by_name!(params[:group_id])
+    @group = Team.find_by_name!(params[:group_id])
   end
 
   def ensure_group_adminship
