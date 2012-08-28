@@ -163,7 +163,11 @@ module Gitorious
       end
 
       def project_admin?(candidate, project)
-        admin?(candidate, project.owner)
+        if Team.group_implementation == LdapGroup
+          return select_group_authorization.project_admin?(candidate, project)
+        else
+          return admin?(candidate, project.owner)
+        end
       end
 
       def group_admin?(candidate, group)

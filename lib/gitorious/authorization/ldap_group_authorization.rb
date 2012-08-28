@@ -45,6 +45,10 @@ module Gitorious
       def ldap_groups_with_commit_access(repository)
         repository.committerships.committers.select{|c|c.committer_type == "LdapGroup"}.map(&:committer)
       end
+
+      def project_admin?(user, project)
+        Team.for_user(user).include?(project.owner)
+      end
     end
   end
 end
