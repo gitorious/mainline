@@ -189,12 +189,13 @@ class RepositoriesController < ApplicationController
 
   def update
     @root = Breadcrumb::EditRepository.new(@repository)
-    @groups = current_user.groups
+    @groups = Team.for_user(current_user)
     @heads = @repository.git.heads
 
     Repository.transaction do
       unless params[:repository][:owner_id].blank?
-        @repository.change_owner_to!(current_user.groups.find(params[:repository][:owner_id]))
+        new_owner = @groups.detect {|group| group.id == params[:repository][:owner_id].to_i}
+        @repository.change_owner_to!(new_owner)
       end
 
       @repository.head = params[:repository][:head]
