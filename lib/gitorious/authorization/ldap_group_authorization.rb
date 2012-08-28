@@ -47,6 +47,7 @@ module Gitorious
       end
 
       def project_admin?(user, project)
+        return true if !project.owned_by_group? && project.user == user
         Team.for_user(user).include?(project.owner)
       end
     end
