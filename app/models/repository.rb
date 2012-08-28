@@ -528,7 +528,7 @@ class Repository < ActiveRecord::Base
   end
 
   def owned_by_group?
-    owner === Group
+    owner === Group || owner === LdapGroup
   end
 
   def breadcrumb_parent
