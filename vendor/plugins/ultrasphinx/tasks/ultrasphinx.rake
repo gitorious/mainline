@@ -18,6 +18,10 @@ namespace :ultrasphinx do
   desc "Rebuild the configuration file for this particular environment."
   task :configure => [:_environment] do
     Ultrasphinx::Configure.run
+    # Gitorious patch: fixer error in ultrasphinx-generated config
+    Dir["#{RAILS_ROOT}/config/ultrasphinx/*"].each do |path|
+      `sed -i 's/base_tags/tags/' #{path}`
+    end
   end
   
   namespace :index do    
