@@ -58,11 +58,11 @@ module Gitorious
 
       # @git operations work?  #{git_operations_work?}"
       puts ascii_test("git user ok?") {git_user_ok?}
-      puts ascii_test("current user is git user?"){rails_process_owned_by_git_user?}
+      puts ascii_test("rails process present & owned by git user?"){rails_process_owned_by_git_user?}
       puts ascii_test("atleast one gitorious account present?") {atleast_one_gitorious_account_present?}
-      puts ascii_test("repository base dir present, owned by git user?"){repo_dir_ok?}
+      puts ascii_test("repo base dir present, owned by git user?"){repo_dir_ok?}
       puts ascii_test("tarball dirs present, owned by git user?"){tarball_dirs_ok?}
-      puts ascii_test("authorized keys present, owned by git user?"){authorized_keys_ok?}
+      puts ascii_test("git user has ~/.ssh/authorized_keys file?"){authorized_keys_ok?}
       puts ascii_test("hostname not bound to a 'git.*' subdomain?"){not_using_reserved_hostname?}
 
       puts ascii_test("ssh deamon is up?"){ssh_deamon_up?}
@@ -116,7 +116,7 @@ module Gitorious
     end
 
     def rails_process_owned_by_git_user?
-      current_user?(git_user)
+      `ps U #{git_user} | grep Rails | wc -l`.to_i > 0
     end
     
     def atleast_one_gitorious_account_present?
@@ -139,8 +139,9 @@ module Gitorious
     end
 
     def authorized_keys_ok?
-      path = File.expand_path("~/.ssh/authorized_keys")
-      (file_present?(path) && owned_by_user?(path, git_user))
+      git_user_home = `su #{git_user} -c "echo ~"`.chomp
+      authkeys_path = "#{git_user_home}/.ssh/authorized_keys"
+      file_present?(authkeys_path)
     end
 
     def not_using_reserved_hostname?
@@ -172,7 +173,7 @@ module Gitorious
     end
 
     def poller_up?
-      atleast_one_process_name_matching("gitorious-poller")
+      atleast_one_process_name_matching("poller")
     end
 
     def mysql_up?
@@ -187,9 +188,13 @@ module Gitorious
 
     # TODO needs improvement!
     def queue_service_up?
-      atleast_one_process_name_matching("stomp") ||
-        atleast_one_process_name_matching("resque") ||
-        atleast_one_process_name_matching("activemq")
+      if GitoriousConfig["messaging_adapter"] != "sync"
+        return (atleast_one_process_name_matching("stomp") ||
+                atleast_one_process_name_matching("resque") ||
+                atleast_one_process_name_matching("activemq"))
+      else
+        true
+      end
       # TODO can we ping stomp? queue service can be on remote box....
       # TODO just check if there's anything on specified port for queue service
     end

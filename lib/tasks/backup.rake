@@ -84,6 +84,13 @@ namespace :backup do
   RAILS_ENV = ENV["RAILS_ENV"]
 
   require 'yaml'
+
+  def exit_if_nonsudo
+    if Process.uid != 0
+      puts "Please run the task as sudo!"
+      exit
+    end
+  end
   
   def repo_path
     conf = YAML::load(File.open('config/gitorious.yml'))
@@ -106,6 +113,8 @@ namespace :backup do
   
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
   task :snapshot do
+    exit_if_nonsudo
+
     tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
 
     puts "Initializing..."
@@ -143,6 +152,8 @@ namespace :backup do
   
   desc "Restores Gitorious instance to snapshot previously stored in tarball file."
   task :restore => ["db:drop", "db:create"] do
+    exit_if_nonsudo
+    
     tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
 
     puts "Preparing..."
