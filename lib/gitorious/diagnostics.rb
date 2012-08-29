@@ -25,6 +25,7 @@ module Gitorious
     
     def everything_healthy?
       #git_operations_work? &&
+        web_interface_reachable? &&
         git_user_ok? &&
         rails_process_owned_by_git_user? &&
         atleast_one_gitorious_account_present? &&
@@ -58,6 +59,7 @@ module Gitorious
 
       # @git operations work?  #{git_operations_work?}"
       puts ascii_test("git user ok?") {git_user_ok?}
+      puts ascii_test("gitorius front web page is up?"){web_interface_reachable?}
       puts ascii_test("rails process present & owned by git user?"){rails_process_owned_by_git_user?}
       puts ascii_test("atleast one gitorious account present?") {atleast_one_gitorious_account_present?}
       puts ascii_test("repo base dir present, owned by git user?"){repo_dir_ok?}
@@ -111,6 +113,10 @@ module Gitorious
       # do cleanup before and after test run
     end
     
+    def web_interface_reachable?
+      `curl localhost:80 | grep Gitorious | wc -l`.to_i > 0 
+    end
+
     def git_user_ok?
       user_exists?(git_user)
     end
@@ -152,7 +158,6 @@ module Gitorious
     def outbound_mail_delivery_working?
       false
     end
-
     
     # TODO impl and wire this one up as well
     def public_mode_correctly_setup?
@@ -186,7 +191,6 @@ module Gitorious
       # TODO check ps -o for pid, we got the pidfile for it
     end
 
-    # TODO needs improvement!
     def queue_service_up?
       if GitoriousConfig["messaging_adapter"] != "sync"
         return (atleast_one_process_name_matching("stomp") ||
