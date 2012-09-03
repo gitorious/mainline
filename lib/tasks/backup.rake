@@ -130,9 +130,16 @@ namespace :backup do
     puts `cp ./config/database.yml #{TMP_WORKDIR}/config`
 
     puts "Backing up custom hooks..."
-    puts `cp ./data/hooks/custom-pre-receive #{TMP_WORKDIR}/data/hooks`
-    puts `cp ./data/hooks/custom-post-receive #{TMP_WORKDIR}/data/hooks`
-    puts `cp ./data/hooks/custom-update #{TMP_WORKDIR}/data/hooks`
+    
+    if File.exist?("./data/hooks/custom-pre-receive")
+      puts `cp ./data/hooks/custom-pre-receive #{TMP_WORKDIR}/data/hooks`
+    end
+    if File.exist?("./data/hooks/custom-post-receive")
+      puts `cp ./data/hooks/custom-post-receive #{TMP_WORKDIR}/data/hooks`
+    end
+    if File.exist?("./data/hooks/custom-update")
+      puts `cp ./data/hooks/custom-update #{TMP_WORKDIR}/data/hooks`
+    end
     
     puts "Backing up mysql state..."
     puts `mysqldump #{db_name} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
@@ -179,7 +186,7 @@ namespace :backup do
     puts `chown -R #{gitorious_user}:#{gitorious_user} #{repo_path}`
     
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
-    puts `su #{gitorious_user} -c "rm ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
+    puts `su #{gitorious_user} -c "rm -f ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
 
     puts "Recreating symlink to common hooks"
     puts `rm -f #{repo_path}/.hooks` 
