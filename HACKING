@@ -17,7 +17,7 @@ Libraries/applications:
 * Oniguruma C library (http://www.geocities.jp/kosako3/oniguruma/)
 * Sphinx (http://sphinxsearch.com/)
 
-(App is deployed on mysql, allthough source should be free of mysql-isms/quirks)
+(App is deployed on mysql, although source should be free of mysql-isms/quirks)
 
 
 === The Hackers digest guide:
