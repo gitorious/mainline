@@ -28,6 +28,7 @@ class SshKey < ActiveRecord::Base
   SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ SshKey:(\d+)?-User:(\d+)?$/ims.freeze
 
   validates_presence_of :user_id, :key
+  validates_uniqueness_of :key, :message => "is already in use - please use/generate a different keypair."
 
   before_validation { |k| k.key.to_s.strip! }
   before_validation :lint_key!

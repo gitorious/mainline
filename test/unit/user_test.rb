@@ -361,7 +361,7 @@ class UserTest < ActiveSupport::TestCase
     setup do
       SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
       @user = users(:johan)
-      @user.ssh_keys = [ssh_key, ssh_key]
+      @user.ssh_keys = [ssh_key]
     end
 
     should "set suspend timestamp and destroy ssh keys" do

@@ -43,7 +43,14 @@ class SshKeyTest < ActiveSupport::TestCase
     assert !key.valid?
   end
 
-  should " have a valid ssh key" do
+  should "only allow unique ssh keys across the whole site" do
+    key = new_key
+    key.save
+    key2 = new_key
+    assert !key2.valid?
+  end
+
+  should "have a valid ssh key" do
     key = new_key
     key.key = ""
     assert !key.valid?
