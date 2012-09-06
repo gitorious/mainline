@@ -63,7 +63,7 @@ class GitBackendTest < ActiveSupport::TestCase
   should "deletes a git repository" do
     base_path = "/base/path"
     repos_path = base_path + "/repo"
-    GitoriousConfig.expects(:[]).with("repository_base_path").returns(base_path)
+    RepositoryRoot.expects(:default_base_path).returns(base_path)
     FileUtils.expects(:rm_rf).with(repos_path).returns(true)
     GitBackend.delete!(repos_path)
   end

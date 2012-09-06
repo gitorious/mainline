@@ -33,7 +33,7 @@ namespace :mirror do
     # rebuild symlinks for all standard repos (omit symlinks to Gitorious wiki repos etc)
     repo_data = Repository.regular.each do |r| 
       symlink_path = "#{mirror_base}/#{r.name}"
-      actual_path = "#{GitoriousConfig["repository_base_path"]}/#{r.real_gitdir}"
+      actual_path = "#{RepositoryRoot.default_base_path}/#{r.real_gitdir}"
       puts `ln -fs #{actual_path} #{symlink_path}`
     end
 

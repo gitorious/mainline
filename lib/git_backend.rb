@@ -26,7 +26,7 @@ class GitBackend
     end
     
     def delete!(repos_path)
-      if repos_path.index(GitoriousConfig["repository_base_path"]) == 0
+      if repos_path.index(RepositoryRoot.default_base_path) == 0
         FileUtils.rm_rf(repos_path)
       else
         raise "bad path"

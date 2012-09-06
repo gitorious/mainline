@@ -130,7 +130,7 @@ module Gitorious
     end
 
     def repo_dir_ok?
-      path = GitoriousConfig["repository_base_path"]
+      path = RepositoryRoot.default_base_path
       (dir_present?(path) && owned_by_user?(path, git_user))
     end
 
@@ -226,7 +226,7 @@ module Gitorious
     MAX_HEALTHY_DISK_USAGE = 90 #%
     
     def enough_disk_free?
-      percent_str = `df -Ph #{GitoriousConfig['repository_base_path']} | awk 'NR==2 {print $5}'`
+      percent_str = `df -Ph #{RepositoryRoot.default_base_path} | awk 'NR==2 {print $5}'`
       percent_str.chomp "%"
       percent_free = percent_free.to_i
       return (percent_free < MAX_HEALTHY_DISK_USAGE)

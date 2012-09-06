@@ -130,7 +130,7 @@ class Repository < ActiveRecord::Base
   end
 
   def self.find_by_path(path)
-    base_path = path.gsub(/^#{Regexp.escape(GitoriousConfig['repository_base_path'])}/, "")
+    base_path = path.gsub(/^#{Regexp.escape(RepositoryRoot.default_base_path)}/, "")
     path_components = base_path.split("/").reject{|p| p.blank? }
     repo_name, owner_name = [path_components.pop, path_components.shift]
     project_name = path_components.pop
@@ -781,7 +781,7 @@ class Repository < ActiveRecord::Base
   end
 
   def self.full_path_from_partial_path(path)
-    File.expand_path(File.join(GitoriousConfig["repository_base_path"], path))
+    File.expand_path(File.join(RepositoryRoot.default_base_path, path))
   end
 
   def downcase_name
@@ -803,7 +803,7 @@ class Repository < ActiveRecord::Base
 
   private
   def self.create_hooks(path)
-    hooks = File.join(GitoriousConfig["repository_base_path"], ".hooks")
+    hooks = File.join(RepositoryRoot.default_base_path, ".hooks")
     Dir.chdir(path) do
       hooks_base_path = File.expand_path("#{RAILS_ROOT}/data/hooks")
 

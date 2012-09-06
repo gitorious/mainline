@@ -164,7 +164,7 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "has a full repository_path" do
-      expected_dir = File.expand_path(File.join(GitoriousConfig["repository_base_path"],
+      expected_dir = File.expand_path(File.join(RepositoryRoot.default_base_path,
         "#{@repository.full_hashed_path}.git"))
       assert_equal expected_dir, @repository.full_repository_path
     end
@@ -225,7 +225,7 @@ class RepositoryTest < ActiveSupport::TestCase
     path = "/path/to/repository"
     base_path = "#{RAILS_ROOT}/data/hooks"
 
-    File.expects(:join).in_sequence.with(GitoriousConfig["repository_base_path"], ".hooks").returns(hooks)
+    File.expects(:join).in_sequence.with(RepositoryRoot.default_base_path, ".hooks").returns(hooks)
 
     Dir.expects(:chdir).in_sequence.with(path).yields(nil)
 
@@ -304,14 +304,14 @@ class RepositoryTest < ActiveSupport::TestCase
   context "find_by_path" do
     should "finds a repository by its path" do
       repo = repositories(:johans)
-      path = File.join(GitoriousConfig["repository_base_path"],
+      path = File.join(RepositoryRoot.default_base_path,
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
 
     should_eventually "finds a repository by its path, regardless of repository kind" do
       repo = projects(:johans).wiki_repository
-      path = File.join(GitoriousConfig["repository_base_path"].chomp("/"),
+      path = File.join(RepositoryRoot.default_base_path.chomp("/"),
                         projects(:johans).slug, "#{repo.name}.git")
       assert_equal repo, Repository.find_by_path(path)
     end
@@ -321,7 +321,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.owner = groups(:team_thunderbird)
       repo.kind = Repository::KIND_TEAM_REPO
       repo.save!
-      path = File.join(GitoriousConfig["repository_base_path"], repo.gitdir)
+      path = File.join(RepositoryRoot.default_base_path, repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
 
@@ -330,7 +330,7 @@ class RepositoryTest < ActiveSupport::TestCase
       repo.owner = users(:johan)
       repo.kind = Repository::KIND_USER_REPO
       repo.save!
-      path = File.join(GitoriousConfig["repository_base_path"], repo.gitdir)
+      path = File.join(RepositoryRoot.default_base_path, repo.gitdir)
       assert_equal repo, Repository.find_by_path(path)
     end
 
@@ -345,7 +345,7 @@ class RepositoryTest < ActiveSupport::TestCase
       same_name_repo.owner = groups(:team_thunderbird)
       same_name_repo.kind = Repository::KIND_TEAM_REPO
       same_name_repo.save!
-      path = File.join(GitoriousConfig["repository_base_path"], same_name_repo.gitdir)
+      path = File.join(RepositoryRoot.default_base_path, same_name_repo.gitdir)
       assert_equal same_name_repo, Repository.find_by_path(path)
     end
   end

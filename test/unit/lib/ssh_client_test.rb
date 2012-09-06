@@ -24,7 +24,7 @@ class SSHClientTest < ActiveSupport::TestCase
   def setup
     @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
     @real_path = "abc/123/defg.git"
-    @full_real_path = File.join(GitoriousConfig["repository_base_path"], @real_path)
+    @full_real_path = File.join(RepositoryRoot.default_base_path, @real_path)
     @ok_stub = stub("ok response mock",
       :body => "real_path:#{@real_path}\nforce_pushing_denied:false")
     @not_ok_stub = stub("ok response mock", :body => "nil")
