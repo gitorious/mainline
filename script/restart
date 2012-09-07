@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Restarts the web frontend of Gitorious (ie. the Rails app part) Run
+# it after reconfiguring or redeploying/upgrading your Gitorious
+# installation.
+
+touch tmp/restart.txt

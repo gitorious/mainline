@@ -1,2 +1,6 @@
 #!/bin/sh
+
+# Run to get an overview of how your Gitorious is doing. Use for
+# profiling and for checking that your setup works as it should.
+
 su git -c "bundle exec rake diagnostics:summary RAILS_ENV=production"

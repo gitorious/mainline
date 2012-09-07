@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Clear out the asset pipeline (js, css, templates) and restart to
+# take effect.
+
+bundle exec rake assets:clear
+touch tmp/restart.txt
