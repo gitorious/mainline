@@ -1,0 +1,2 @@
+#!/bin/sh
+su git -c "bundle exec rake diagnostics:summary RAILS_ENV=production"
