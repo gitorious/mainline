@@ -145,9 +145,8 @@ module Gitorious
     end
 
     def authorized_keys_ok?
-      git_user_home = `su #{git_user} -c "echo ~"`.chomp
-      authkeys_path = "#{git_user_home}/.ssh/authorized_keys"
-      file_present?(authkeys_path)
+      path = File.expand_path("~/.ssh/authorized_keys")
+      (file_present?(path) && owned_by_user?(path, git_user))
     end
 
     def not_using_reserved_hostname?
