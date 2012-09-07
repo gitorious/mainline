@@ -21,8 +21,8 @@ Repository.find(:all).each do |repo|
       say "no path for #{repo.inspect}"
     end
     
-    full_path = File.join(GitoriousConfig["repository_base_path"], path)
-    full_target_path = File.join(GitoriousConfig["repository_base_path"], "#{repo.full_hashed_path}.git")
+    full_path = File.join(RepositoryRoot.default_base_path, path)
+    full_target_path = File.join(RepositoryRoot.default_base_path, "#{repo.full_hashed_path}.git")
     unless File.exist?(full_path)
       $stderr.puts "\e[1;31m#{path.inspect} doesn't exist!\e[0m"
       next
@@ -36,7 +36,7 @@ Repository.find(:all).each do |repo|
     
     # relink hooks    
     FileUtils.rm(File.join(full_target_path, "hooks"), :verbose => true, :noop => NOOP)
-    hooks_src = File.join(GitoriousConfig["repository_base_path"], ".hooks")
+    hooks_src = File.join(RepositoryRoot.default_base_path, ".hooks")
     hooks_dest = File.join(full_target_path, "hooks")
     FileUtils.ln_s(hooks_src, hooks_dest, :verbose => true, :noop => NOOP)
   rescue => e

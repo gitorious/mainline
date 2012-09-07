@@ -30,7 +30,7 @@ Project.find(:all).each_with_index do |project, index|
     end
   when "load_readmes"
     wiki_repo = project.wiki_repository
-    git_dir = File.join(GitoriousConfig["repository_base_path"], project.mainline_repository.gitdir)
+    git_dir = File.join(RepositoryRoot.default_base_path, project.mainline_repository.gitdir)
     unless File.exist?(git_dir)
       failure_msg "Skipping #{project.slug}, no mainline repo, wtf?  (#{index+1}/#{project_count})"
       next

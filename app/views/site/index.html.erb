@@ -43,7 +43,7 @@
     </p>
   <% end unless logged_in? -%>
 
-<% cache([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
+<% cache_in_private([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
   <% pull_box("Recent activities", :class => "pull-box-510") do -%>
     <ul class="events inline">
     <% @latest_events.each do |event| -%>
@@ -55,7 +55,7 @@
 </div>
 
 <div id="right">
-<% cache([:site_index, :active_projects_recently], :expires_in => 1.hour) do -%>
+<% cache_in_private([:site_index, :active_projects_recently], :expires_in => 1.hour) do -%>
   <% pull_box("Active projects", :class => "pull-box-510") do -%>
     <ul class="with_icons">
       <% @active_projects.each do |project| -%>
@@ -68,7 +68,7 @@
   <% end -%>
 <% end -%>
 
-<% cache([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
+<% cache_in_private([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
   <% pull_box("Most active repository clones", :class => "pull-box-510") do -%>
     <ul class="with_icons">
       <% @top_repository_clones.each do |repo| -%>
@@ -82,7 +82,7 @@
   <% end -%>
 <% end -%>
 
-<% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
+<% cache_in_private([:site_index, :active_users], :expires_in => 20.minutes) do -%>
   <% pull_box("Active users", :class => "pull-box-510") do -%>
     <ul class="with_icons inline_icons">
       <% @active_users.each do |user| -%>
@@ -95,7 +95,7 @@
   <% end -%>
 <% end -%>
 
-<% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
+<% cache_in_private([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
   <% pull_box("Active teams", :class => "pull-box-510") do -%>
     <ul class="with_icons inline_icons">
       <% @active_groups.each do |group| -%>
@@ -108,7 +108,7 @@
   <% end -%>
 <% end -%>
 
-<% cache([:site_index, :newest_projects], :expires_in => 5.minutes) do -%>
+<% cache_in_private([:site_index, :newest_projects], :expires_in => 5.minutes) do -%>
   <% pull_box(t("views.site.newest_projects"), :class => "pull-box-510") do -%>
     <ul class="with_icons">
       <% @projects.each do |project| -%>

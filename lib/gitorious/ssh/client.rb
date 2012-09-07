@@ -59,7 +59,7 @@ module Gitorious
         if !configuration["real_path"] || configuration["real_path"] == "nil"
           raise AccessDeniedError
         end
-        full_real_path = File.join(GitoriousConfig["repository_base_path"],
+        full_real_path = File.join(RepositoryRoot.default_base_path,
                                    configuration["real_path"])
         raise AccessDeniedError unless File.exist?(full_real_path)
         full_real_path

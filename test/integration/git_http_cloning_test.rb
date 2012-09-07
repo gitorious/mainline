@@ -34,7 +34,7 @@ class GitHttpCloningTest < ActionController::IntegrationTest
         end
         assert_response :success
         assert_not_nil(headers['X-Sendfile'])
-        assert_equal(File.join(GitoriousConfig['repository_base_path'], @repository.real_gitdir, "HEAD"), headers['X-Sendfile'])
+        assert_equal(File.join(RepositoryRoot.default_base_path, @repository.real_gitdir, "HEAD"), headers['X-Sendfile'])
       end
     end
 

@@ -15,7 +15,7 @@ ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__) + "/../config/environment"
 
 
-repo_path = GitoriousConfig['repository_base_path']
+repo_path = RepositoryRoot.default_base_path
 repo_hooks = File.join(repo_path, ".hooks")
 gitorious_hooks = File.expand_path(File.join(File.dirname(__FILE__), "../data/hooks"))
 

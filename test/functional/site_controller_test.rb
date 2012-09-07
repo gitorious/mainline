@@ -18,6 +18,7 @@
 #++
 
 require File.dirname(__FILE__) + "/../test_helper"
+require "test_cache_store"
 
 class SiteControllerTest < ActionController::TestCase
 
@@ -143,6 +144,19 @@ class SiteControllerTest < ActionController::TestCase
         assert !assigns(:active_projects).index(@project)
         assert assigns(:top_repository_clones).none? { |r| r.project == @project }
         assert_not_equal assigns(:top_repository_clones).length, 0
+      end
+
+      should "not fragment cache the public timeline" do
+        perform_caching = ActionController::Base.perform_caching
+        old_cache_store = ActionController::Base.cache_store
+        ActionController::Base.perform_caching = true
+        cache_store = TestCacheStore.new
+        ActionController::Base.cache_store = cache_store
+        cache_store.expects(:write).never
+        get :index
+        assert_response :success
+        ActionController::Base.perform_caching = perform_caching
+        ActionController::Base.cache_store = old_cache_store
       end
     end
   end

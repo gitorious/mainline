@@ -15,7 +15,7 @@ ActiveRecord::Base.allow_concurrency = true
 
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
-BASE_PATH = File.expand_path(GitoriousConfig["repository_base_path"])
+BASE_PATH = File.expand_path(RepositoryRoot.default_base_path)
 
 TIMEOUT = 30
 MAX_CHILDREN = 30
@@ -54,7 +54,7 @@ module Git
     end
 
     def run
-      Dir.chdir(GitoriousConfig["repository_base_path"])
+      Dir.chdir(RepositoryRoot.default_base_path)
       if @options[:pidfile]
         File.open(@options[:pidfile], "w") do |f|
           f.write(Process.pid)
