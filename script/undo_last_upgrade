@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+# Convenience command to revert effects of the last run of
+# script/upgrade_to or script/upgrade_to_next_version.
+#
+# NOTE: only reverts to state before last upgrade. So if you upgrade
+# several versions in one go, reverting will only jump you back one
+# version, not to the original you started from.
+
+
+def restore_db
+  require 'yaml'
+  conf = YAML::load(File.open('config/database.yml'))
+  db_name = conf['production']['database']
+  puts `mysql #{db_name} < /tmp/upgrade_db_backup.sql`
+end
+
+def restore_working_directory
+  puts `tar -xf /tmp/upgrade_working_dir_backup.tar`
+end
+
+puts "Attempting to undo last attempted upgrade..."
+puts "Restoring database..."
+restore_db
+puts "Restoring contents of this directory..."
+restore_working_directory
+puts "Done undoing last upgrade. Please test and verify your Gitorious site."

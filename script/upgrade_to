@@ -1,0 +1,89 @@
+#!/usr/bin/env ruby
+
+# Standard upgrade command to upgrade the Gitorious installation to a
+# newer tagged version.
+#
+# Usage:
+# script/upgrade_to <VERSION_TAG_NAME>
+#
+# Example:
+# script/upgrade_to v2.2.1
+
+# You can determine your current version and the next version by running:
+# bundle exec rake versioning:changelog
+# This will tell you both your current version and what newer tagged versions exist.
+
+# Note: an undo point is saved each time this command is run, so a
+# failed run can be reversed by running script/undo_last_upgrade (note
+# that each execution of /upgrade_to overwrites the undo point, so
+# only do one upgrade at a time.)
+
+# Assumptions: 
+# 1: If you are several versions behind, only upgrade one tagged version at a time. 
+# 2: Always perform a manual, extra backup (/script/snapshot) before attempting an upgrade
+# 3: Take the Gitorious installation offline to prevent users from using it while upgrading
+# 4: Before going through with the upgrade, check relevant release notes for any breaking changes, 
+#    (particularly important for any major version upgrades)
+
+
+if Process.uid != 0
+  puts "Please run the task as superuser/root!"
+  exit
+end
+
+if !ARGV[0] 
+  puts "Usage:"
+  puts "script/upgrade_to <tag>"
+  exit
+end
+
+new_tag = ARGV[0]
+
+def backup_db
+  require 'yaml'
+  conf = YAML::load(File.open('config/database.yml'))
+  db_name = conf['production']['database']
+  puts `mysqldump #{db_name} > /tmp/upgrade_db_backup.sql`
+end
+
+def backup_working_directory
+  puts `rm -f /tmp/upgrade_working_dir_backup.tar && tar -czf /tmp/upgrade_working_dir_backup.tar .`
+end
+
+def prepare_undo_data
+  backup_db
+  backup_working_directory
+end
+
+puts "UPGRADE: About to attempt Gitorious upgrade. Please backup first. Proceed with upgrade? (y/n)"
+response = $stdin.gets.chomp
+if response != "y" 
+  puts "UPGRADE: Quit."
+  exit
+end
+
+puts "UPGRADE: Attempting upgrade to #{new_tag}..."
+
+puts "UPGRADE: Fetching latest Gitorious code from the origin remote (should be gitorious.org)..."
+puts `git fetch origin`
+
+puts "UPGRADE: Preparing data needed by script/undo_last_upgrade..."
+prepare_undo_data
+
+puts "UPGRADE: Git checking out the '#{new_tag}' tag"
+puts `git checkout #{new_tag}`
+
+puts "UPGRADE: Updating submodules..."
+puts `git submodule init`
+
+puts "UPGRADE: Migrating database..."
+puts `env RAILS_ENV=production bundle exec rake db:migrate`
+
+puts "UPGRADE: Clearing asset pipeline..."
+puts `env RAILS_ENV=production bundle exec rake assets:clear`
+
+puts "UPGRADE: Restarting Gitorious..."
+puts `script/restart` 
+
+puts "UPGRADE: Done, upgraded to #{new_tag}."
+puts "\nATTENTION: Please test and verify that your site works as expected. If any errors occur, rollback to the pre-upgrade state with script/undo_last_upgrade"
