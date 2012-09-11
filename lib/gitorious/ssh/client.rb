@@ -21,6 +21,7 @@
 
 require "net/http"
 require "uri"
+require File.expand_path(File.dirname(__FILE__) + "../../../../app/models/repository_root")
 
 module Gitorious
   module SSH
