@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+# Convenience script for performing snapshotting/backups in standard
+# production environments of Gitorious. 
+
+# Performs snapshot of current Gitorious state (hosted repositories +
+# database). Takes optional env variable parameter to specific the
+# path where you want the resulting tarball to be stored. Must be run
+# as superuser/root.
+# 
+# (See /lib/tasks/backup.rake for more discussion of assumptions and
+# use cases.)
+#
+# Examples:
+#
+# script/snapshot                               Stores snapshot as ./snapshot.tar
+# TARBALL_PATH=/tmp/backup.tar script/snapshot  Stores snapshot in /tmp/backup.tar
+
+
+tarball_path = ENV["TARBALL_PATH"] || "snapshot.tar"
+
+puts "Snapshotting state..."
+puts `bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH=#{tarball_path}`
+puts "Snapshot done."

@@ -87,7 +87,7 @@ namespace :backup do
 
   def exit_if_nonsudo
     if Process.uid != 0
-      puts "Please run the task as sudo!"
+      puts "Please run the task as superuser/root!"
       exit
     end
   end
@@ -126,8 +126,11 @@ namespace :backup do
     
     puts "Backing up custom config files..."
     puts `cp ./config/gitorious.yml #{TMP_WORKDIR}/config`
-    puts `cp ./config/authentication.yml #{TMP_WORKDIR}/config`
     puts `cp ./config/database.yml #{TMP_WORKDIR}/config`
+    
+    if File.exist?("./config/authentication.yml")
+      puts `cp ./config/authentication.yml #{TMP_WORKDIR}/config`
+    end
 
     puts "Backing up custom hooks..."
     
