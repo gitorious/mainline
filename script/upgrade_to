@@ -76,6 +76,9 @@ puts `git checkout #{new_tag}`
 puts "UPGRADE: Updating submodules..."
 puts `git submodule init`
 
+puts "UPGRADE: Upgrading gem dependencies via Bundler..."
+puts `bundle install`
+
 puts "UPGRADE: Migrating database..."
 puts `env RAILS_ENV=production bundle exec rake db:migrate`
 
