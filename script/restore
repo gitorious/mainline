@@ -14,9 +14,9 @@
 # Examples:
 #
 # script/restore                                Restore state from ./snapshot.tar
-# TARBALL_PATH=/tmp/backup.tar script/restore   Restore state from /tmp/backup.tar
+# script/restore /tmp/backup.tar                Restore state from /tmp/backup.tar
 
-tarball_path = ENV["TARBALL_PATH"] || "snapshot.tar"
+tarball_path = ARGV[0] || "snapshot.tar"
 
 puts "Restoring state from snapshot..."
 puts `bundle exec rake backup:restore RAILS_ENV=production TARBALL_PATH=#{tarball_path}`

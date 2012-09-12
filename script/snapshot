@@ -14,10 +14,9 @@
 # Examples:
 #
 # script/snapshot                               Stores snapshot as ./snapshot.tar
-# TARBALL_PATH=/tmp/backup.tar script/snapshot  Stores snapshot in /tmp/backup.tar
+# script/snapshot /tmp/backup.tar               Stores snapshot in /tmp/backup.tar
 
-
-tarball_path = ENV["TARBALL_PATH"] || "snapshot.tar"
+tarball_path = ARGV[0] || "snapshot.tar"
 
 puts "Snapshotting state..."
 puts `bundle exec rake backup:snapshot RAILS_ENV=production TARBALL_PATH=#{tarball_path}`
