@@ -93,7 +93,7 @@ module Gitorious
         username.gsub(".","-")
       end
 
-      def self.reverse_username_transformation(username)
+      def reverse_username_transformation(username)
         username.gsub("-",".")
       end
     end
