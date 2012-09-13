@@ -76,7 +76,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def ldap_group_names=(newline_separated_list)
-    self.member_dns = newline_separated_list.split("\n")
+    self.member_dns = newline_separated_list.split(/[\r\n]+/)
   end
   
   def members
