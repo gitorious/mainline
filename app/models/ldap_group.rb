@@ -124,7 +124,7 @@ class LdapGroup < ActiveRecord::Base
         :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
         :base => configurator.group_search_dn,
-        :filter => Net::LDAP::Filter.eq(configurator.login_attribute, user.login),
+        :filter => Net::LDAP::Filter.eq(configurator.login_attribute, configurator.reverse_username_transformation(user.login)),
         :attributes => [membership_attribute])
       if !entries.blank?
         return entries.first[membership_attribute]

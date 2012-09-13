@@ -92,6 +92,10 @@ module Gitorious
       def self.transform_username(username)
         username.gsub(".","-")
       end
+
+      def self.reverse_username_transformation(username)
+        username.gsub("-",".")
+      end
     end
   end
 end
