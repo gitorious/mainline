@@ -123,7 +123,7 @@ class LdapGroup < ActiveRecord::Base
         :port => configurator.port,
         :encryption => configurator.encryption}).bind_as(configurator.bind_username, configurator.bind_password) do |connection|
       entries = connection.search(
-        :base => configurator.group_search_dn,
+        :base => configurator.base_dn,
         :filter => Net::LDAP::Filter.eq(configurator.login_attribute, configurator.reverse_username_transformation(user.login)),
         :attributes => [membership_attribute])
       if !entries.blank?
