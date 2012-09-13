@@ -36,7 +36,7 @@
           <td><%= membership.user.public_email? ? h(membership.user.email) : "N/A" -%></td>
           <td><%=h membership.role.name -%></td>
           <td>
-            <%- if admin?(current_user, @group) -%>
+            <%- if admin?(current_user, @group) && @group.is_a?(Group) -%>
               <%= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
               <%= button_to(t("views.common.remove"), group_membership_path(@group, membership), :method => :delete) -%>
             <%- end -%>
