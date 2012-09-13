@@ -47,6 +47,6 @@
 
 <%= render_pagination_links @memberships -%>
 
-<% if admin?(current_user, @group) -%>
+<% if admin?(current_user, @group) and @group.is_a?(Group) -%>
   <p><%= link_to t("views.memberships.add_new_member"), new_group_membership_path(@group)  -%></p>
 <% end -%>
