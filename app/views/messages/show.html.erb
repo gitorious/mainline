@@ -35,6 +35,7 @@
       </p>
       <p class="body">
         <%= simple_format h(message.body) %>
+	<%= render(:partial => "notifiable", :locals => {:notifiable => message.notifiable}) -%>
       </p>
       <ul class="message_actions">
         <% if message.unread? and message.recipient == current_user %>

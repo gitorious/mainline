@@ -41,7 +41,7 @@ class Admin::ProjectProposalsController < AdminController
     
     if @proposal.save
       notify_site_admins("A new project has been proposed",
-                         "Review the project at #{root_url}admin/project_proposals to approve or reject")
+                         "Proposal for project #{@proposal.title} submitted by #{@proposal.creator.title}", @proposal)
       flash[:notice] = "Project proposal created, admins have been notified and will review it."
 
       redirect_to current_user
@@ -70,11 +70,12 @@ class Admin::ProjectProposalsController < AdminController
   end
 
   protected
-  def notify_site_admins(subject, body)
+  def notify_site_admins(subject, body, proposal)
     User.admins.each do |admin|
       Message.new({:sender => current_user,
                     :recipient => admin,
                     :subject => subject,
+                    :notifiable => proposal,
                     :body => body }).save
     end
   end
