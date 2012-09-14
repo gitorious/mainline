@@ -34,6 +34,7 @@ module ApplicationHelper
   include SiteWikiPagesHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
+  include Gitorious::CacheInPrivateHelper
   
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
