@@ -21,7 +21,8 @@ namespace :mirror do
   
   desc "Create mirror directory with symlinks to all current regular repository paths"
   task :symlinkedrepos => :environment do    
-    mirror_base = GitoriousConfig["symlinked_mirror_repo_base"]
+    default_mirror_base_path = "#{GitoriousConfig['repository_base_path']}/../mirrored-public-repos"
+    mirror_base = GitoriousConfig["symlinked_mirror_repo_base"] || default_mirror_base_path
     owner = GitoriousConfig["gitorious_user"]
 
     # create symlink dir if not there already
@@ -30,14 +31,16 @@ namespace :mirror do
     # remove any current symlinks
     puts `rm -rf #{mirror_base}/*`
     
-    # rebuild symlinks for all standard repos (omit symlinks to Gitorious wiki repos etc)
+    # rebuild symlinks for all standard repos (omit private repos, wiki repos etc)
     repo_data = Repository.regular.each do |r| 
-      symlink_path = "#{mirror_base}/#{r.name}"
-      actual_path = "#{RepositoryRoot.default_base_path}/#{r.real_gitdir}"
-      puts `ln -fs #{actual_path} #{symlink_path}`
+      if !r.private?
+        symlink_path = "#{mirror_base}/#{r.name}"
+        actual_path = "#{GitoriousConfig["repository_base_path"]}/#{r.real_gitdir}"
+        puts `ln -fs #{actual_path} #{symlink_path}`
+      end
     end
 
     # make sure gitorious user owns all repo symlinks
-    puts `chown -R #{owner}:#{owner} #{GitoriousConfig["symlinked_mirror_repo_base"]}`
+    puts `chown -R #{owner}:#{owner} #{mirror_base}`
   end
 end

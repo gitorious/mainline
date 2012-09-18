@@ -110,7 +110,8 @@ production:
   # Gitweb). Note that you'll need to run the mirror:symlinkedrepos
   # rake manually (or via cron) to create/update the the mirror
   # symlinks. Only creates symlinks to regular hosted repositories:
-  # wiki repos etc are ignored.  
+  # wiki repos etc are ignored. Defaults to
+  # <repository_base_path>/../mirrored-public-repos
   symlinked_mirror_repo_base : "/var/www/gitorious/repo-mirror"
 
   # The following properties are all defaults for the stomp adapter
