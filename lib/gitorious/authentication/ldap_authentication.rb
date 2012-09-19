@@ -129,6 +129,10 @@ module Gitorious
             user.write_attribute(our_name, data[ldap_name].first)
           end
 
+          if user.email.blank?
+            user.email = "#{username}.example@#{GitoriousConfig['gitorious_host']}"
+          end
+
           user.password = "left_blank"
           user.password_confirmation = "left_blank"
           user.terms_of_use = '1'

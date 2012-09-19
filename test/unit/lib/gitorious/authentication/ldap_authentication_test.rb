@@ -123,7 +123,20 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
 
     def search(options)
       return [] unless /^\(#{login_attribute}=/ =~ options[:filter].to_s
-      ["displayname" => ["Moe Szyslak"], "mail" => ["moe@gitorious.org"]]
+      entry = {"displayname" => ["Moe Szyslak"], "mail" => ["moe@gitorious.org"]}
+      entry["mail"] = [] if self.class.never_return_email?
+      result = [entry]
+      result
+    end
+
+    def self.never_return_email?
+      @return_empty_email_address
+    end
+    
+    def self.return_empty_email_address!
+      @return_empty_email_address = true
+      yield
+      @return_empty_email_address = false
     end
 
     private
@@ -218,6 +231,13 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
       assert_equal "moe-szyslak", user.login
 
       assert user.valid?
+    end
+
+    should "build a synthetic email if LDAP entry has no email" do
+      StaticLDAPConnection.return_empty_email_address! do
+        user = @ldap.authenticate(valid_client_credentials("moe.szyslak", "secret"))
+        assert_equal("moe.szyslak.example@#{GitoriousConfig['gitorious_host']}", user.email)
+      end
     end
 
     should "transform user's login to not contain dots" do
