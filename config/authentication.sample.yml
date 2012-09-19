@@ -73,6 +73,11 @@ development:
       # member or uniquemember
       #members_attribute_name: member
 
+      # To increase performance, Gitorious supports caching the result
+      # of group lookups. Enter how many minutes these results should
+      # be cached, default is 0 (no caching)
+      #cache_expiry: 60
+
     # End LDAP configuration example
     ############################################################################
 

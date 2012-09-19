@@ -138,10 +138,18 @@ class LdapGroup < ActiveRecord::Base
 
   # Do an LDAP lookup for all member DNs in a given group
   def self.user_dns_in_group(group_name, member_attribute_name)
-    Rails.cache.fetch(["ldap_group", "members", group_name], :expires_in => 60.minutes) do
+    cached_ldap_lookup(["ldap_group", "members", group_name]) do
       uncached_dns_in_group(group_name, member_attribute_name)
     end
   end
+
+  def self.cached_ldap_lookup(key)
+    expiry = ldap_configurator.cache_expiry
+    Rails.cache.fetch(key, :expires_in => expiry.minutes) do
+      yield
+    end
+  end
+
 
   def self.uncached_dns_in_group(group_name, member_attribute_name)
     configurator = ldap_configurator

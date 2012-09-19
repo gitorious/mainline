@@ -121,6 +121,22 @@ class LdapGroupTest < ActiveSupport::TestCase
     end
   end
 
+  context "Cache LDAP lookups" do
+    should "by default not be cached" do
+      group_name = "agroup"
+      LdapGroup.expects(:ldap_configurator).returns(mock(:cache_expiry => 0))
+      Rails.cache.expects(:fetch).with(["ldap_group", "members", group_name], :expires_in => 0.minutes).returns([])
+      LdapGroup.user_dns_in_group(group_name, "memberof")
+    end
+
+    should "use specified interval in minutes" do
+      group_name = "agroup"
+      LdapGroup.expects(:ldap_configurator).returns(mock(:cache_expiry => 60))
+      Rails.cache.expects(:fetch).with(["ldap_group", "members", group_name], :expires_in => 60.minutes).returns([])
+      LdapGroup.user_dns_in_group(group_name, "memberof")
+    end
+  end
+
   def stub_ldap_groups(groups)
     LdapGroup.stubs(:ldap_group_names_for_user).returns(groups)
     LdapGroup.stubs(:ldap_configurator).returns(stub(:group_search_dn => nil))

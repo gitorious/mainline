@@ -89,6 +89,10 @@ module Gitorious
         options.fetch("members_attribute_name", "member").to_sym
       end
 
+      def cache_expiry
+        options.fetch("cache_expiry",nil).to_i
+      end
+
       def self.transform_username(username)
         username.gsub(".","-")
       end
