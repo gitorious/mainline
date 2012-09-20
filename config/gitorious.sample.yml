@@ -101,6 +101,16 @@ production:
   # abuse/spam/DDOS your Gitorious instance with repo/msg/project creation.
   disable_record_throttling: false
 
+  # Enable repository directory sharding
+  # By default, gitorious will store repositories directly under
+  # 'repository_base_path', directly named by project and repo title.
+  # However for large installations which host a lot of repositories,
+  # the repository directories can be hashed and sharded into
+  # subdirectories 3 levels deep to break them down into a hash-like tree of
+  # directories instead. This helps avoid hitting
+  # (filesystem-specific) limits on number of entries in a directory.
+  # enable_repository_dir_sharding: true
+  
   # Base directory for mirror ie symlinks to actual repositories
   # Designate a folder where symlinks to all current repository
   # directories are created. Handy for hosting Gitweb, cgit etc in
