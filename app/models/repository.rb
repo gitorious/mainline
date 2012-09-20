@@ -229,6 +229,10 @@ class Repository < ActiveRecord::Base
     "#{self.full_hashed_path}.git"
   end
 
+  def complete_gitdir
+    self.class.full_path_from_partial_path(real_gitdir)
+  end
+
   def browse_url
     "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{url_path}"
   end

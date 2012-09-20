@@ -853,16 +853,16 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "get projects/1/repositories/3/config is true" do
       do_config_get
       assert_response :success
-      exp = "real_path:#{@repository.real_gitdir}\nforce_pushing_denied:false"
-      assert_equal exp, @response.body
+      exp = /full_real_path:#{@repository.complete_gitdir}/
+      assert exp.match(@response.body)
     end
 
     should "expose the wiki repository" do
       wiki = @project.wiki_repository
       assert_not_nil wiki
       do_config_get(:id => wiki.to_param)
-      expected = "real_path:#{wiki.real_gitdir}\nforce_pushing_denied:false"
-      assert_equal expected, @response.body
+      expected = /full_real_path:#{wiki.complete_gitdir}/
+      assert expected.match(@response.body)
     end
 
     should "not use a session cookie" do

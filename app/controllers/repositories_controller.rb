@@ -238,6 +238,7 @@ class RepositoriesController < ApplicationController
       @containing_project)
     authorize_configuration_access(@repository)
     config_data = "real_path:#{@repository.real_gitdir}\n"
+    config_data << "full_real_path:#{@repository.complete_gitdir}\n"
     config_data << "force_pushing_denied:"
     config_data << (@repository.deny_force_pushing? ? 'true' : 'false')
     headers["Cache-Control"] = "public, max-age=600"

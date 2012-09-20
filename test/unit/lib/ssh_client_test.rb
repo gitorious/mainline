@@ -26,7 +26,7 @@ class SSHClientTest < ActiveSupport::TestCase
     @real_path = "abc/123/defg.git"
     @full_real_path = File.join(RepositoryRoot.default_base_path, @real_path)
     @ok_stub = stub("ok response mock",
-      :body => "real_path:#{@real_path}\nforce_pushing_denied:false")
+      :body => "full_real_path:#{@full_real_path}\nforce_pushing_denied:false")
     @not_ok_stub = stub("ok response mock", :body => "nil")
   end
 
@@ -95,7 +95,7 @@ class SSHClientTest < ActiveSupport::TestCase
       connection_stub = stub_everything("connection stub")
       connection_stub.expects(:get).with("/foo/bar/config?username=johan").returns(@ok_stub)
       client.expects(:connection).once.returns(connection_stub)
-      assert_equal @real_path, client.configuration["real_path"]
+      assert_equal @full_real_path, client.configuration["full_real_path"]
       assert_equal "false", client.configuration["force_pushing_denied"]
     end
 

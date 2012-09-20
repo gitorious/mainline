@@ -22,16 +22,6 @@
 require "net/http"
 require "uri"
 
-# We certainly don't want to load Rails here, but still we need to access
-# a subclass of it
-# TODO: Let the remote handle this on our behalf
-if !defined?(ActiveRecord)
-  module ActiveRecord
-    class Base
-    end
-  end
-end
-require File.expand_path(File.dirname(__FILE__) + "../../../../app/models/repository_root")
 
 module Gitorious
   module SSH
@@ -67,11 +57,10 @@ module Gitorious
       end
 
       def real_path
-        if !configuration["real_path"] || configuration["real_path"] == "nil"
+        if !configuration["full_real_path"] || configuration["full_real_path"] == "nil"
           raise AccessDeniedError
         end
-        full_real_path = File.join(RepositoryRoot.default_base_path,
-                                   configuration["real_path"])
+        full_real_path = configuration["full_real_path"]
         raise AccessDeniedError unless File.exist?(full_real_path)
         full_real_path
       end
