@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class RepositoryRoot
+class RepositoryRoot < ActiveRecord::Base
   def self.default_base_path
     GitoriousConfig["repository_base_path"]
   end

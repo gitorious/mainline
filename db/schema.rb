@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120629102742) do
+ActiveRecord::Schema.define(:version => 20120920082143) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -298,6 +298,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "oauth_path_prefix"
     t.text     "merge_request_custom_states"
     t.datetime "suspended_at"
+    t.integer  "repository_root_id"
+    t.datetime "offline_from"
   end
 
   add_index "projects", ["owner_type", "owner_id"], :name => "index_projects_on_owner_type_and_owner_id"
@@ -338,6 +340,12 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   add_index "repositories", ["project_id"], :name => "index_repositories_on_project_id"
   add_index "repositories", ["ready"], :name => "index_repositories_on_ready"
   add_index "repositories", ["user_id"], :name => "index_repositories_on_user_id"
+
+  create_table "repository_roots", :force => true do |t|
+    t.string   "path"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "roles", :force => true do |t|
     t.string   "name"
