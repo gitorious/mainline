@@ -23,7 +23,6 @@
 #++
 
 class ProjectsController < ApplicationController
-  include ProjectFilters
 
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]

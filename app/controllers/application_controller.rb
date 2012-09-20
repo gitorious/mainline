@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
   include ExceptionNotifiable
   include RoutingHelper
   include Gitorious::Authorization
+  include ProjectFilters
   protect_from_forgery
 
   before_filter :public_and_logged_in
@@ -151,10 +152,6 @@ class ApplicationController < ActionController::Base
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
     end
     return thing
-  end
-
-  def find_project
-    @project = authorize_access_to(Project.find_by_slug!(params[:project_id]))
   end
 
   def find_project_and_repository

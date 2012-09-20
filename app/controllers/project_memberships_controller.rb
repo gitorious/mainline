@@ -17,7 +17,6 @@
 #++
 
 class ProjectMembershipsController < ContentMembershipsController
-  include ProjectFilters
   before_filter :find_project
   before_filter :require_admin
 
