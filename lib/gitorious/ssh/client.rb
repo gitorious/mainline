@@ -21,6 +21,16 @@
 
 require "net/http"
 require "uri"
+
+# We certainly don't want to load Rails here, but still we need to access
+# a subclass of it
+# TODO: Let the remote handle this on our behalf
+if !defined?(ActiveRecord)
+  module ActiveRecord
+    class Base
+    end
+  end
+end
 require File.expand_path(File.dirname(__FILE__) + "../../../../app/models/repository_root")
 
 module Gitorious
