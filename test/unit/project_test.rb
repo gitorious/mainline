@@ -632,6 +632,18 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
+  context "Offline" do
+    setup do
+      @project = projects(:johans)
+    end
+
+    should "be marked as unavailable when offline" do
+      assert !@project.offline?
+      @project.offline_from = Time.now
+      assert @project.offline?
+    end
+  end
+
   private
     def create_event(project, target, user)
     e = Event.new({ :target => target,

@@ -329,6 +329,10 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def offline?
+    !offline_from.nil?
+  end
+
   protected
     def create_wiki_repository
       self.wiki_repository = Repository.create!({
