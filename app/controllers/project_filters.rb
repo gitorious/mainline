@@ -27,6 +27,9 @@ module ProjectFilters
     id = params[:project_id] if params.key?(:project_id)
     id = params[:id] if id.blank?
     @project = authorize_access_to(Project.find_by_slug!(id, :include => [:repositories]))
+    if @project && @project.offline?
+      raise ProjectOfflineError, "Project #{@project.slug} is offline for maintenance"
+    end
   end
 
   def require_admin
@@ -34,5 +37,8 @@ module ProjectFilters
       flash[:error] = I18n.t "projects_controller.update_error"
       redirect_to(project_path(@project)) and return
     end
+  end
+
+  class ProjectOfflineError < StandardError
   end
 end

@@ -47,6 +47,7 @@ class ApplicationController < ActionController::Base
   rescue_from Grit::Git::GitTimeout, :with => :render_git_timeout
   rescue_from RecordThrottling::LimitReachedError, :with => :render_throttled_record
   rescue_from Gitorious::Authorization::UnauthorizedError, :with => :render_unauthorized
+  rescue_from ProjectFilters::ProjectOfflineError, :with => :render_project_offline
 
   def rescue_action(exception)
     return super if RAILS_ENV != "production"
@@ -189,6 +190,11 @@ class ApplicationController < ActionController::Base
     return false
   end
 
+  def render_project_offline
+    render :text => "Project is offline", :layout => "application", :status => 503
+    return false
+  end
+  
   def public_and_logged_in
     login_required unless GitoriousConfig['public_mode']
   end

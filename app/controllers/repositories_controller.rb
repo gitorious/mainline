@@ -346,6 +346,9 @@ class RepositoriesController < ApplicationController
   end
 
   def authorize_configuration_access(repository)
+    if repository.project.offline?
+      raise ProjectFilters::ProjectOfflineError
+    end
     return true if !GitoriousConfig["enable_private_repositories"]
     if !can_read?(User.find_by_login(params[:username]), repository)
       raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)

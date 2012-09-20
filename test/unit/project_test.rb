@@ -639,7 +639,7 @@ class ProjectTest < ActiveSupport::TestCase
 
     should "be marked as unavailable when offline" do
       assert !@project.offline?
-      @project.offline_from = Time.now
+      @project.mark_offline!
       assert @project.offline?
     end
   end

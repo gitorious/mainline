@@ -329,6 +329,10 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def mark_offline!
+    update_attribute(:offline_from, Time.now)
+  end
+  
   def offline?
     !offline_from.nil?
   end

@@ -777,5 +777,17 @@ class ProjectsControllerTest < ActionController::TestCase
                             :host => "gitorious.test")
     end
   end
+
+  context "Projects offline" do
+    setup do
+      @project = projects(:johans)
+    end
+
+    should "render 503 when project is offline" do
+      @project.mark_offline!
+      get :show, :id => @project.slug
+      assert_response 503
+    end
+  end
   
 end

@@ -876,6 +876,13 @@ class RepositoriesControllerTest < ActionController::TestCase
 
       assert_equal "public, max-age=600", @response.headers["Cache-Control"]
     end
+
+    should "render an error when project is offline" do
+      @project.mark_offline!
+      do_config_get
+
+      assert_response 503
+    end
   end
 
   def do_delete(repos)
