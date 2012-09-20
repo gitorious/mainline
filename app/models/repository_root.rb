@@ -16,7 +16,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class RepositoryRoot < ActiveRecord::Base
+  validate :valid_path
+  
   def self.default_base_path
     GitoriousConfig["repository_base_path"]
+  end
+
+  def valid_path
+    errors.add(:path, "Path must be a directory") unless Pathname(path).directory?
   end
 end

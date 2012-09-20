@@ -28,4 +28,13 @@ class RepositoryRootTest < ActiveSupport::TestCase
       assert_equal @base_path, RepositoryRoot.default_base_path
     end
   end
+
+  context "Validations" do
+    should "ensure the path exists" do
+      @root = RepositoryRoot.new(:path => "/t")
+      assert !@root.valid?
+      @root.path = "/tmp"
+      assert @root.valid?
+    end
+  end
 end
