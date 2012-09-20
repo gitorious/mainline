@@ -337,6 +337,39 @@ class Project < ActiveRecord::Base
     !offline_from.nil?
   end
 
+  def migrate_to_repository_root(repository_root, noop=true)
+    mark_offline!
+#    self.repository_root_id = repository_root.id
+    project_path = Pathname(repository_root.path) + slug
+    puts "First of all, we'll create #{project_path}"
+    project_path.mkpath
+    repositories.each do |repo|
+      existing_path = repo.full_repository_path
+      puts "Existing path is #{existing_path}"
+      new_path = File.expand_path(Pathname(repository_root.path) + "#{repo.repository_plain_path}.git")
+
+      if existing_path == new_path
+        puts "Skipping #{existing_path}"
+        break
+      end
+      
+      FileUtils.mkdir_p(new_path) unless noop
+      
+      Pathname(File.expand_path(existing_path)).children.each do |path|
+        if !path.symlink?
+          source = path
+          target = Pathname(new_path) + path.basename
+          puts "Copying #{source} to #{target}"
+          FileUtils.cp_r(source, target) unless noop
+        end
+      end
+      repo.hashed_path = File.join(slug, repo.name) unless noop
+      repo.save! unless noop
+      Repository.create_hooks(new_path)
+    end
+    self.offline_from = nil
+  end
+
   protected
     def create_wiki_repository
       self.wiki_repository = Repository.create!({
