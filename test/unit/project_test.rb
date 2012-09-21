@@ -642,6 +642,29 @@ class ProjectTest < ActiveSupport::TestCase
       @project.mark_offline!
       assert @project.offline?
     end
+
+    should "take a block" do
+      @project.offline_operation do
+        assert @project.offline?
+      end
+      assert !@project.offline?
+    end
+  end
+
+  context "Repository root location" do
+    setup do
+      @project = projects(:johans)
+    end    
+    
+    should "use the default by default" do
+      assert_equal RepositoryRoot.default_base_path, @project.repository_root_path
+    end
+
+    should "use that from the repository root if specified" do
+      root = RepositoryRoot.create! :path => "/tmp"
+      @project.repository_root_id = root.id
+      assert_equal root.path, @project.repository_root_path
+    end
   end
 
   private

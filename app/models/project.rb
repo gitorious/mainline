@@ -332,6 +332,12 @@ class Project < ActiveRecord::Base
   def mark_offline!
     update_attribute(:offline_from, Time.now)
   end
+
+  def offline_operation
+    mark_offline!
+    yield
+    update_attribute(:offline_from, nil)
+  end
   
   def offline?
     !offline_from.nil?
@@ -339,7 +345,7 @@ class Project < ActiveRecord::Base
 
   def migrate_to_repository_root(repository_root, noop=true)
     mark_offline!
-#    self.repository_root_id = repository_root.id
+    self.repository_root_id = repository_root.id unless noop
     project_path = Pathname(repository_root.path) + slug
     puts "First of all, we'll create #{project_path}"
     project_path.mkpath
@@ -368,6 +374,36 @@ class Project < ActiveRecord::Base
       Repository.create_hooks(new_path)
     end
     self.offline_from = nil
+  end
+
+  def unhash_repositories
+    offline_operation do
+      project_dir = Pathname(repository_root_path) + slug
+      if !project_dir.exist?
+        puts "Will create #{project_dir}"
+        project_dir.mkdir
+      end
+      repositories.each do |repo|
+        old_gitdir = Pathname(repo.full_repository_path)
+        new_gitdir = project_dir + "#{repo.name}.git"
+        if old_gitdir == new_gitdir
+          puts "Will not move #{new_gitdir}, as it's already using a hashed path"
+          next
+        end
+        puts "Will move #{old_gitdir} to #{new_gitdir}"
+        old_gitdir.rename(new_gitdir)
+        repo.hashed_path = "#{slug}/#{repo.name}"
+        repo.save!
+      end
+    end
+  end
+
+  def repository_root_path
+    if repository_root_id.blank?
+      RepositoryRoot.default_base_path
+    else
+      RepositoryRoot.find(repository_root_id).path
+    end
   end
 
   protected
