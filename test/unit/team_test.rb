@@ -93,7 +93,7 @@ class TeamTest < ActiveSupport::TestCase
 
     should "list all groups for which a user is admin" do
       user = users(:johan)
-      groups = user.groups.select{|g| admin?(g, user) }
+      groups = user.groups.select{|g| admin?(user, g) }
       assert_equal groups, Team.by_admin(user)
     end
 

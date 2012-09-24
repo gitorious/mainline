@@ -43,7 +43,7 @@ class GroupFinder
   end
 
   def by_admin(user)
-    user.groups.select{|g| Team.group_admin?(user, g) }
+    user.groups.select{|g| Team.group_admin?(g, user) }
   end
 
   def find(id)
