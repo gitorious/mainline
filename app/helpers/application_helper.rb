@@ -115,7 +115,7 @@ module ApplicationHelper
     else
       out << %Q{<p class="spin">#{image_tag("spinner.gif")}</p>}
     end
-    out << %Q{  <p class="hint">If this message persist beyond what is reasonable, feel free to #{link_to("contact us", contact_path)}</p>}
+    out << %Q{  <p class="hint">If this message persists beyond what is reasonable, feel free to #{link_to("contact us", contact_path)}</p>}
     out << %Q{</div></div>}
     out
   end
