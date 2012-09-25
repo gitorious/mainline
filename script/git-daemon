@@ -152,9 +152,10 @@ module Git
       elsif line =~ SERVICE_WRITE_REGEXP
         service, base_path, host = $1, $2, $3
         log(Process.pid, "Not accepting #{service.inspect} for #{base_path.inspect}")
-        write_error_message(session, "The git:// url is read-only. Please see " +
-          "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')} " +
-          "for the push url, if you're a committer.")
+        write_error_message(session, "The 'git://' url is read-only. Please switch to a " +
+          "writeable url (http, 'https://' or ssh, 'git@...'), if you're a committer.  " +
+          "See #{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}#{base_path.sub(/\.git$/, '')}" +
+          "for the urls.")
         $children_active -= 1
         session.close
         return
