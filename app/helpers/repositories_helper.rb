@@ -115,7 +115,7 @@ module RepositoriesHelper
               :repo => repository.name, :title => h(owner.title))
 
     content_for(:extra_head) do
-      "<link rel=\"vcs-#{type}\" href=\"#{url}\" title=\"#{title}\" />"
+      "<link rel=\"vcs-git\" href=\"#{url}\" title=\"#{title}\" />"
     end
 
     id = "#{type}-#{repository.id}"
