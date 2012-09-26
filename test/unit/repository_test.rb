@@ -1305,6 +1305,19 @@ class RepositoryTest < ActiveSupport::TestCase
     end
   end
 
+  context "Deletion" do
+    setup {
+      @repository = repositories(:johans)
+    }
+
+    should "ensure merge requests are removed first to avoid cascading validation errors" do
+      mr = mock
+      mr.expects(:destroy).times(2)
+      @repository.stubs(:merge_requests).returns([mr])
+      @repository.destroy
+    end
+  end
+
   def otherwise_valid_repository(options)
     result = new_repos(options)
     result.valid?

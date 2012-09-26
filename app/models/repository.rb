@@ -111,6 +111,12 @@ class Repository < ActiveRecord::Base
     s.conditions "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
   end
 
+  def destroy
+    merge_requests.each &:destroy
+    reload
+    super
+  end
+
   def self.human_name
     I18n.t("activerecord.models.repository")
   end
