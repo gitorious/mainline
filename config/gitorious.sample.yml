@@ -26,18 +26,18 @@ production:
   # be port 80 (in the production environment).
   gitorious_client_port: 80
 
-  # Host the ./script/gitorious script should use. This should be a locally
-  # reachable hostname. Note that if you use Apache to serve Gitorious, you
-  # have to provide 'localhost' as a ServerAlias in order for the app to be
-  # reachable over localhost:80. You may also specify the public hostname
-  # here, e.g. gitorious.mycompany.com.
-  gitorious_client_host: localhost
-
   # Host name users use to reach Gitorious, e.g. "gitorious.org".
   gitorious_host: gitorious.test
 
   # Host name used to access repos via git and ssh+git, if different.
   #gitorious_clone_host: gitorious.test
+
+  # Host name used by local scripts to fetch repository information over HTTP.
+  # You can put the same value used for gitorious_host here.
+  # As an optimization, you could use a local hostname such as localhost.
+  # In that case, make sure to put localhost as an alternative hostname in your
+  # webserver config (Apache: "ServerAlias" setting, nginx: "host" setting).
+  gitorious_client_host: localhost
 
   # The path where git repositories are stored. The actual (bare) repositories
   # reside in #{repository_base_path}/#{project.slug}/#{repository.name}.git/:
