@@ -15,9 +15,9 @@ ActiveRecord::Base.allow_concurrency = true
 
 ENV["PATH"] = "/usr/local/bin/:/opt/local/bin:#{ENV["PATH"]}"
 
-BASE_PATH = File.expand_path(GitoriousConfig["repository_base_path"])
+BASE_PATH = File.expand_path(RepositoryRoot.default_base_path)
 
-TIMEOUT = 300
+TIMEOUT = 30
 MAX_CHILDREN = 30
 $children_reaped = 0
 $children_active = 0
@@ -54,7 +54,7 @@ module Git
     end
 
     def run
-      Dir.chdir(GitoriousConfig["repository_base_path"])
+      Dir.chdir(RepositoryRoot.default_base_path)
       if @options[:pidfile]
         File.open(@options[:pidfile], "w") do |f|
           f.write(Process.pid)
@@ -104,13 +104,15 @@ module Git
           return abort(session, "Attempt to clone private repository: #{repository.name}",
                        "Unable to access repository #{base_path}")
         end
-         unless repository.project.public?
-		log(Process.pid, "Repository is private: #{path}")
-		write_error_message(session, "Not allowed to access repository: #{base_path}")
-		$children_active -= 1
-		session.close
-		return
-	end 
+
+	unless repository.project.public? 
+	  log(Process.pid, "Repository is private: #{path}") 
+ 	  write_error_message(session, "Not allowed to access repository: #{base_path}") 
+	  $children_active -= 1 
+	  session.close 
+	  return 
+	end  
+
         real_path = File.expand_path(repository.full_repository_path)
         log(Process.pid, "#{ip} wants #{path.inspect} => #{real_path.inspect}")
 
