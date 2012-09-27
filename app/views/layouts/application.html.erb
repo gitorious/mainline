@@ -43,7 +43,7 @@
       </h1>
       <ul id="menu">
         <% if GitoriousConfig['public_mode'] || logged_in? -%>
-          <li class="activity"><%= link_to "Activities", activity_path -%></li>
+          <li class="activity"><%= link_to t("views.site.dashboard.activities"), activity_path -%></li>
           <li class="projects"><%= link_to t("views.layout.projects"), projects_path -%></li>
           <li class="teams"><%= link_to t("views.layout.teams"), groups_path -%></li>
         <% end -%>
