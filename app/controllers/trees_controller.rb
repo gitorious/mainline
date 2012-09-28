@@ -94,8 +94,12 @@ class TreesController < ApplicationController
   end
 
   protected
-    def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
+  def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
+    if GitoriousConfig["frontend_server"] == "nginx"
+      response.headers["X-Accel-Redirect"] = "/tarballs/#{real_path}"
+    else
       response.headers["X-Sendfile"] = File.join(GitoriousConfig["archive_cache_dir"], real_path)
+    end
       response.headers["Content-Type"] = content_type
       user_path = user_path.gsub("/", "_").gsub('"', '\"')
       response.headers["Content-Disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""

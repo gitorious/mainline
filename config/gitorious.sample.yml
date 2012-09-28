@@ -145,6 +145,19 @@ production:
   # overview of the system state at /admin/diagnostics/)
   # turn_on_public_diagnostic_summary_page: true
 
+  # Give a hint about which frontend web server is being used
+  # Setting this to 'nginx' will cause Gitorious to use X-Accel-Redirect headers
+  # for files that should be served directly by the web server.
+  # Not setting this option will assume Nginx is being used
+  # Please note that when when assuming Nginx, Gitorious will serve static files
+  # from the following URIs mapping to the file system:
+  # - /tarballs/<tarball-name>   -> <archive_cache_dir>/<tarball-name>
+  # - /
+  # 
+  # Furthermore, you should instruct Nginx to consider these URLs private to prevent direct
+  # access to them. Have a look in doc/templates/nginx.conf.sample for an example
+  #frontend_server: nginx
+
   # --------
   # "TWEAKS"
   # --------

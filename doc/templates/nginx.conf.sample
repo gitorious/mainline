@@ -1,0 +1,18 @@
+server {
+  # Handle tarball downloads
+  # Gitorious will send a X-Accel-Redirect header like
+  # X-Accel-Redirect: /tarballs/project-repo-sha.tar.gz
+  # Which should be streamed from /var/www/gitorious/tarballs-cache/project-repo-sha.tar.gz
+  location /tarballs/ {
+    internal;
+    alias /var/www/gitorious/tarballs-cache/;
+  }
+  # Handle git-over-http requests
+  # Gitorious will send a X-Accel-Redirect header like
+  # X-Accel-Redirect: /git-http/project/repository.git/info/refs
+  # Which should map to /var/www/gitorious/repositories/project/repository.git/info/refs
+  location /git-http/ {
+    internal;
+    alias /var/www/gitorious/repositories/;
+  }
+}

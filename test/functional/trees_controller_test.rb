@@ -155,20 +155,37 @@ class TreesControllerTest < ActionController::TestCase
     setup do
       @master_sha = "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
       @test_master_sha = "2d3acf90f35989df8f262dc50beadc4ee3ae1560"
+      @cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+                        "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
+      File.stubs(:exist?).with(@cached_path).returns(true)
     end
 
     should "return the correct for an existing cached tarball" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
-                        "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
-      File.expects(:exist?).with(cached_path).returns(true)
 
       get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
       assert_response :success
-      assert_equal cached_path, @response.headers["X-Sendfile"]
+      assert_equal @cached_path, @response.headers["X-Sendfile"]
       assert_equal "application/x-gzip; charset=utf-8", @response.headers["Content-Type"]
       exp_filename = "#{@repository.project.to_param}-#{@repository.to_param}-master.tar.gz"
       assert_equal "Content-Disposition: attachment; filename=\"#{exp_filename}\"", @response.headers["Content-Disposition"]
+    end
+
+    should "use X-Sendfile headers when running under Apache" do
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+
+      assert_response :success
+      assert_not_nil @response.headers["X-Sendfile"]
+    end
+
+    should "use X-Accel-Redirect to /tarballs/name-sha.tar.gz when running Nginx" do
+      GitoriousConfig["frontend_server"] = "nginx"
+      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+
+      assert_response :success
+      tarball_name = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@master_sha}.tar.gz"
+      assert_equal "/tarballs/#{tarball_name}", @response.headers["X-Accel-Redirect"]
+      GitoriousConfig["frontend_server"] = nil
     end
 
     should "enqueue a job when the tarball is not cached" do
