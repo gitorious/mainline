@@ -36,9 +36,18 @@ class ProjectsController < ApplicationController
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
   def index
-    @projects = paginate(:action => "index") do
-      paginate_projects(params[:page] || 1, Project.per_page)
+
+    if GitoriousConfig["enable_private_repositories"]
+      # temporary fix for broken pagination: just show all projects
+      # 
+      @projects = filter(Project.all) 
+    else
+      @projects = paginate(:action => "index") do
+        paginate_projects(params[:page] || 1, Project.per_page)
+      end
     end
+
+
 
     return if @projects.count == 0 && params.key?(:page)
 
