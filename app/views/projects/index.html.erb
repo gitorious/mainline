@@ -32,7 +32,7 @@
 <% end -%>
 </ul>
 
-<%= render_pagination_links @projects -%>
+<%= render_pagination_links(@projects) unless GitoriousConfig["enable_private_repositories"] -%>
 
 <% content_for :sidebar do -%>
   <h2><%= t("views.projects.popular") %></h2>

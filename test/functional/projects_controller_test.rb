@@ -313,6 +313,10 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     context "projects pagination" do
+      setup do
+        GitoriousConfig["enable_private_repositories"] = false
+      end
+
       should_scope_pagination_to(:index, Project)
     end
 
