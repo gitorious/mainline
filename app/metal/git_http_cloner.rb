@@ -51,11 +51,10 @@ class GitHttpCloner
           return NOT_ALLOWED_RESPONSE if !can_read?(nil, repo)
           return NOT_FOUND_RESPONSE unless repo
           repo.cloned_from(remote_ip(env), nil, nil, "http") if rest == "/HEAD"
-          full_path = File.join(repo.full_repository_path, rest)
           headers = {
-            "X-Sendfile" => full_path,
             "Content-Type" => "application/octet-stream"
-          }
+          }.merge(sendfile_headers(repo, rest))
+
           env["rack.session.options"] = {}
           return [200, headers, []]
         rescue ActiveRecord::RecordNotFound
@@ -65,6 +64,14 @@ class GitHttpCloner
       end
     end
     return NOT_FOUND_RESPONSE
+  end
+
+  def self.sendfile_headers(repo, rest)
+    if GitoriousConfig["frontend_server"] == "nginx"
+      {"X-Accel-Redirect" => File.join("/git-http", repo.real_gitdir, rest)}
+    else
+      {"X-Sendfile" => File.join(repo.full_repository_path, rest)}
+    end
   end
 
   protected

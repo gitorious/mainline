@@ -38,6 +38,14 @@ class GitHttpCloningTest < ActionController::IntegrationTest
       end
     end
 
+    should "use X-Accel-Redirect when running under nginx" do
+      GitoriousConfig["frontend_server"] = "nginx"
+      get @request_uri, {}, :host => "git.gitorious.local", :remote_addr => "192.71.1.2"
+      assert_response :success
+      assert_not_nil headers["X-Accel-Redirect"]
+      GitoriousConfig["frontend_server"] = nil
+    end
+
     context "disabling of http cloning" do
       setup { GitoriousConfig['hide_http_clone_urls'] = true }
       teardown { GitoriousConfig['hide_http_clone_urls'] = false }
