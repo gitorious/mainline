@@ -990,7 +990,8 @@ class RepositoryTest < ActiveSupport::TestCase
       @now = Time.now
       Time.stubs(:now).returns(@now)
       @repository.stubs(:git).returns(stub())
-      @repository.git.expects(:gc_auto).returns(true)
+      @repository.git.stubs(:git).returns(stub())
+      @repository.git.git.expects(:gc).returns(true)
     end
 
     should "have a gc! method that updates last_gc_at" do
