@@ -25,6 +25,7 @@ gem "hodel_3000_compliant_logger", "0.1.0"
 gem "ruby-net-ldap", "~> 0.0.4"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "1.5.0"
+gem "unicorn", "~> 4.3.1", :platforms => :ruby
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

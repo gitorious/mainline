@@ -1,0 +1,11 @@
+#/bin/sh
+
+# Have a running Unicorn server reload itself
+
+PIDFILE="tmp/pids/unicorn.pid"
+if [ -f $PIDFILE ]; then
+  echo "Restarting Unicorn"
+  kill -USR2 `cat $PIDFILE`
+else
+  echo "No pid for Unicorn found"
+fi
