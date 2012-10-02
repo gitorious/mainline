@@ -53,8 +53,19 @@ require File.dirname(__FILE__) + "/../config/environment"
 require "optparse"
 require "proxymachine"
 require "daemons"
+require "yaml"
 
 ROOT_DIR = File.expand_path( File.join(File.dirname(__FILE__), "../") )
+
+if RAILS_ENV == "production" && Process.uid == 0
+  git_user = YAML::load_file(ROOT_DIR + "/config/gitorious.yml")[RAILS_ENV]["gitorious_user"]
+  if git_user
+    uid = Etc.getpwnam(git_user).uid
+    gid = Etc.getpwnam(git_user).gid
+    Process::GID.change_privilege(gid)
+    Process::UID.change_privilege(uid)
+  end
+end
 
 begin
   options = {
