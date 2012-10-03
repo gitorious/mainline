@@ -15,8 +15,12 @@ RAILS_ROOT = (Pathname(__FILE__) + "../../").realpath.to_s
 Socket = (Pathname(RAILS_ROOT) + "tmp/pids/unicorn.sock").to_s
 Timeout = 30
 
-worker_processes = (RAILS_ENV == "production" ? 16 : 4)
+
+worker_processes (RAILS_ENV == "production" ? 16 : 4)
 preload_app true
+
+# REE has a copy-on-write friendly GC, enable it if possible
+GC.respond_to?(:copy_on_write_friendly?) and GC.copy_on_write_friendly = true
 timeout Timeout
 
 
