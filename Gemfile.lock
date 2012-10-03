@@ -59,6 +59,7 @@ GEM
     json (1.5.4-java)
     json_pure (1.6.5)
     kgio (2.7.4)
+    just_paginate (0.0.6)
     launchy (2.0.5)
       addressable (~> 2.2.6)
     launchy (2.0.5-java)
@@ -161,6 +162,7 @@ DEPENDENCIES
   hodel_3000_compliant_logger (= 0.1.0)
   hoe (= 2.8.0)
   json (~> 1.5.1)
+  just_paginate
   launchy (= 2.0.5)
   mime-types (= 1.16)
   mocha (= 0.9.10)

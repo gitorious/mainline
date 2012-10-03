@@ -32,7 +32,7 @@
 <% end -%>
 </ul>
 
-<%= render_pagination_links(@projects) unless GitoriousConfig["enable_private_repositories"] -%>
+<%= JustPaginate.page_navigation(@page, @total_pages) { |page_no| "/projects/?page=#{page_no}" } -%>
 
 <% content_for :sidebar do -%>
   <h2><%= t("views.projects.popular") %></h2>

@@ -35,21 +35,20 @@ class ProjectsController < ApplicationController
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
-  def index
+  def index   
+    @page = JustPaginate.page_value(params[:page])
 
-    if GitoriousConfig["enable_private_repositories"]
-      # temporary fix for broken pagination: just show all projects
-      # 
-      @projects = filter(Project.all) 
+    if private_repositories_enabled?
+      @project_count = filter(Project.all).count
+      @projects, @total_pages = JustPaginate.paginate(@page, Project.per_page, @project_count) do |index_range|
+        filter(Project.all).slice(index_range)
+      end
     else
-      @projects = paginate(:action => "index") do
-        paginate_projects(params[:page] || 1, Project.per_page)
+      @project_count = Project.all.count
+      @projects, @total_pages = JustPaginate.paginate(@page, Project.per_page, @project_count) do |index_range|
+        Project.all( :offset => index_range.first, :limit => index_range.count)
       end
     end
-
-
-
-    return if @projects.count == 0 && params.key?(:page)
 
     @atom_auto_discovery_url = projects_path(:format => :atom)
     respond_to do |format|

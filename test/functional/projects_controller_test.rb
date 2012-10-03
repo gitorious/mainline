@@ -312,14 +312,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_template(("index"))
     end
 
-    context "projects pagination" do
-      setup do
-        GitoriousConfig["enable_private_repositories"] = false
-      end
-
-      should_scope_pagination_to(:index, Project)
-    end
-
     should "GET projects/new succesfully" do
       login_as :johan
       get :new
