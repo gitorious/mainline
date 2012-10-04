@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.dirname(__FILE__) + "/setup")
+Gitorious::CLI.new.run_with_gitorious_environment do
+  load Gem.bin_path('unicorn', 'unicorn_rails')
+end
