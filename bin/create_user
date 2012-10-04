@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.dirname(__FILE__) + "/setup")
+Gitorious::CLI.new.run_with_gitorious_environment do
+  require "config/environment"
+  ActionMailer::Base.raise_delivery_errors = false
+  ActionMailer::Base.delivery_method = :test
+
+  puts "Type in users login: "
+  login = gets.strip
+
+  puts "Type in users e-mail: "
+  email = gets.strip
+  puts "Type in users password: "
+  password = gets.strip
+
+  user = User.new(:email => email, :terms_of_use => '1')
+  user.password = password
+  user.password_confirmation = password
+  user.login = login
+
+  user.save!
+  user.activate
+  puts "User '#{login}' created successfully."
+end

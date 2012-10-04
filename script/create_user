@@ -3,6 +3,8 @@ require File.dirname(__FILE__)+'/../config/environment'
 ActionMailer::Base.raise_delivery_errors = false
 ActionMailer::Base.delivery_method = :test
 
+puts "*** WARNING: This script is deprecated. Use bin/create_user instead ***"
+
 puts "Type in users login: "
 login = gets.strip
 
