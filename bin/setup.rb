@@ -33,6 +33,7 @@ module Gitorious
           etc_user = Etc.getpwnam(git_user)
           uid = etc_user.uid
           gid = etc_user.gid
+          ENV["HOME"] = etc_user.dir
           current_userid = Process.euid
           if current_userid == uid
             # OK, running as correct user
