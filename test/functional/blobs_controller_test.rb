@@ -93,7 +93,7 @@ class BlobsControllerTest < ActionController::TestCase
 
         should "not send session cookies" do
           get :blame, branch_and_path_params(SHA, ["lib", "foo.c"])
-          assert_equal [], @response.headers["Set-Cookie"]
+          assert_nil @response.headers["Set-Cookie"]
         end
 
         should "expire soonish with shortened ref" do

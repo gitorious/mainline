@@ -868,7 +868,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     should "not use a session cookie" do
       do_config_get
 
-      assert_equal [], @response.headers["Set-Cookie"]
+      assert_nil @response.headers["Set-Cookie"]
     end
 
     should "send cache friendly headers" do
