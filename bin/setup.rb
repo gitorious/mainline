@@ -19,6 +19,7 @@ module Gitorious
       require "rubygems"
       ENV["BUNDLE_GEMFILE"] = (Pathname(rails_root) + "Gemfile").to_s
       ENV["RAILS_ENV"] ||= "production"
+      Dir.chdir(rails_root)
       require "bundler/setup"
     end
 
