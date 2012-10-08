@@ -18,6 +18,12 @@
 module Gitorious
   module Authorization
     # Resolve authorization when LDAP backed groups are used
+    #
+    # The @authorizer instance variable is an object who is able to
+    # perform authorization. This behavior is mixed into all
+    # controllers, models etc. - and is able to do authorization which
+    # is not handled by an LDAP authorization object; ie. direct user
+    # access.
     class LdapGroupAuthorization
       def initialize(authorizer)
         @authorizer = authorizer
@@ -31,12 +37,14 @@ module Gitorious
       end
 
       def can_resolve_merge_request?(user, merge_request)
+        return true if merge_request.target_repository.committerships.reviewers.any? {|cs| cs.committer == user}
         groups = Team.for_user(user)
         review_groups = merge_request.target_repository.committerships.reviewers.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
         return review_groups.any?{|group| groups.include?(group)}
       end
 
       def repository_admin?(candidate, repository)
+        return true if repository.committerships.admins.any? {|cs| cs.committer == candidate}
         groups = Team.for_user(candidate)
         groups_with_admin_access = repository.committerships.admins.select{|c| c.committer_type == "LdapGroup"}.map(&:committer)
         return groups_with_admin_access.any?{|group| groups.include?(group)}

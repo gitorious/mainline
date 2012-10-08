@@ -18,6 +18,12 @@
 module Gitorious
   module Authorization
     # Resolve authorization when "normal" group authorization is used
+    #
+    # The @authorizer instance variable is an object who is able to
+    # perform authorization. This behavior is mixed into all
+    # controllers, models etc. - and is able to do authorization which
+    # is not handled by an LDAP authorization object; ie. direct user
+    # access.
     class GroupAuthorization
       def initialize(authorizer)
         @authorizer = authorizer

@@ -22,7 +22,7 @@ class AccessControlTest < ActiveSupport::TestCase
     setup do
       @repository = repositories(:johans)
     end
-    
+
     context "can_push?" do
       should "knows if a user can write to self" do
         @repository.owner = users(:johan)
@@ -30,11 +30,11 @@ class AccessControlTest < ActiveSupport::TestCase
         @repository.reload
         assert can_push?(users(:johan), @repository)
         assert !can_push?(users(:mike), @repository)
-        
+
         @repository.change_owner_to!(groups(:team_thunderbird))
         @repository.save!
         assert !can_push?(users(:johan), @repository)
-        
+
         @repository.owner.add_member(users(:moe), Role.member)
         @repository.committerships.reload
         assert can_push?(users(:moe), @repository)
@@ -86,6 +86,27 @@ class AccessControlTest < ActiveSupport::TestCase
       @committership.save!
       merge_request = @repository.merge_requests.build
       assert @authorization.can_resolve_merge_request?(@user, merge_request)
+    end
+
+    context "a user with direct access" do
+      setup do
+        @committership.committer = @user
+        @committership.build_permissions :commit, :review, :admin
+        @committership.save
+      end
+
+      should "grant push access to users with direct access" do
+        assert @authorization.push_granted?(@repository, @user)
+      end
+
+      should "resolve merge request" do
+        merge_request = @repository.merge_requests.build
+        assert @authorization.can_resolve_merge_request?(@user, merge_request)
+      end
+
+      should "be repository admin" do
+        assert @authorization.repository_admin?(@user, @repository)
+      end
     end
   end
 end
