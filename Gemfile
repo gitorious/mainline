@@ -9,7 +9,7 @@ gem "echoe", "4.3.1", :require => false
 gem "ruby-yadis", "0.3.4", :require => "yadis"
 gem "ruby-openid", :require => "openid"
 gem "rdiscount", "1.3.1.1", :platforms => :ruby
-gem "mime-types", "1.16", :require => "mime/types"
+gem "mime-types", "~> 1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.4.5"
@@ -23,10 +23,13 @@ gem "acts-as-taggable-on", "2.0.6"
 gem "will_paginate", "2.3.15"
 gem "just_paginate", "0.0.6"
 gem "hodel_3000_compliant_logger", "0.1.0"
-gem "net-ldap", "~> 0.3"
-gem "capillary", "~> 1.0.1"
+gem "ruby-net-ldap", "~> 0.0"
+gem "capillary", "~> 1.0"
 gem "nokogiri", "1.5.0"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
+gem "tiltout", "~> 1.0"
+gem "libdolt", "~> 0.6"
+gem "eventmachine", "~> 1.0"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
@@ -59,7 +62,7 @@ group :git_proxy do
 end
 
 group :messaging do
-  gem "json", "~> 1.5.1", :platforms => :ruby_18
+  gem "json", "~> 1.5", :platforms => :ruby_18
 end
 
 group :resque do

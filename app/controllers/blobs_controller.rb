@@ -30,21 +30,33 @@ class BlobsController < ApplicationController
   renders_in_site_specific_context :except => [:blame, :history]
 
   def show
-    if stale?({
-          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
-          :last_modified => @commit.committed_date.utc})
-      @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
-      render_not_found and return unless @blob
-      unless @blob.respond_to?(:data) # it's a tree
-        redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-          @project, @repository, params[:branch_and_path])
-      end
-      head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-      @root = Breadcrumb::Blob.new(:paths => @path, :head => head,
-        :repository => @repository, :name => @blob.basename)
-      expire_based_on_ref_length(@ref.size)
-      render :layout => !pjax_request?
+    ref, path = branch_and_path(params[:branch_and_path], @repository.git)
+
+    Gitorious::Dolt.new(@repository).blob(ref, path) do |err, data|
+      @title = t("views.blobs.page_title",
+                 :path => path.join("/"),
+                 :repo => @repository.name,
+                 :title => @project.title)
+      body = Gitorious::Dolt.view.render(:blob, data)
+      render :text => body, :content_type => "text/html", :layout => "v3/application"
     end
+
+
+    # if stale?({
+    #       :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+    #       :last_modified => @commit.committed_date.utc})
+    #   @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
+    #   render_not_found and return unless @blob
+    #   unless @blob.respond_to?(:data) # it's a tree
+    #     redirect_to repo_owner_path(@repository, :project_repository_tree_path,
+    #       @project, @repository, params[:branch_and_path])
+    #   end
+    #   head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+    #   @root = Breadcrumb::Blob.new(:paths => @path, :head => head,
+    #     :repository => @repository, :name => @blob.basename)
+    #   expire_based_on_ref_length(@ref.size)
+    #   render :layout => !pjax_request?
+    # end
   end
 
   def blame

@@ -32,20 +32,32 @@ class TreesController < ApplicationController
   end
 
   def show
-    @git = @repository.git
-    @ref, @path = branch_and_path(params[:branch_and_path], @git)
-    unless @commit = @git.commit(@ref)
-      handle_missing_tree_sha and return
+    ref, path = branch_and_path(params[:branch_and_path], @repository.git)
+
+    Gitorious::Dolt.new(@repository).tree(ref, path) do |err, data|
+      #next error(err, repo, ref) if !err.nil?
+      #tree = data[:tree]
+      #next redirect(blob_url(repo, ref, path)) if tree.class.to_s !~ /\bTree/
+
+      @title = t("views.trees.page_title", :repo => @repository.name, :title => @project.title)
+      body = Gitorious::Dolt.view.render(:tree, data)
+      render :text => body, :content_type => "text/html", :layout => "v3/application"
     end
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
-                          @commit.committed_date.utc)
-      head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
-      @root = Breadcrumb::Folder.new({:paths => @path, :head => head,
-                                      :repository => @repository})
-      path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
-      @tree = @git.tree(@commit.tree.id, path)
-      expires_in 30.seconds
-    end
+
+    # @git = @repository.git
+    # @ref, @path = branch_and_path(params[:branch_and_path], @git)
+    # unless @commit = @git.commit(@ref)
+    #   handle_missing_tree_sha and return
+    # end
+    # if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+    #                       @commit.committed_date.utc)
+    #   head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
+    #   @root = Breadcrumb::Folder.new({:paths => @path, :head => head,
+    #                                   :repository => @repository})
+    #   path = @path.blank? ? [] : ["#{@path.join("/")}/"] # FIXME: meh, this sux
+    #   @tree = @git.tree(@commit.tree.id, path)
+    #   expires_in 30.seconds
+    # end
   end
 
   def archive
