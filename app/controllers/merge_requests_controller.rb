@@ -224,8 +224,8 @@ class MergeRequestsController < ApplicationController
     else
       flash[:success] = I18n.t("merge_requests_controller.create_success",
                                :name => @merge_request.target_repository.name)
-      @merge_request.confirmed_by_user
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
+      @merge_request.confirmed_by_user
       @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
                                            :project_repository_merge_request_path, @repository.project,
                                            @merge_request.target_repository, @merge_request)
