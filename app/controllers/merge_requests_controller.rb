@@ -71,7 +71,7 @@ class MergeRequestsController < ApplicationController
   def target_branches
     @merge_request = @repository.proposed_merge_requests.new(params[:merge_request])
     @merge_request.user = current_user
-    @target_branches = filter(@merge_request.target_branches_for_selection)
+    @target_branches = @merge_request.target_branches_for_selection
     render :partial => "target_branches", :layout => false
   end
 
