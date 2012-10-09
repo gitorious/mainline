@@ -18,6 +18,8 @@
 require "libdolt"
 require "tiltout"
 require "eventmachine"
+require "erubis"
+require "pathname"
 
 module Gitorious
   module MaxDepth
@@ -28,48 +30,42 @@ module Gitorious
 
   module DoltUrls
     def tree_url(repository, ref, path = "")
-      "/#{repository}/trees/#{ref}/#{path}"
+      "/#{repository}/source/#{ref}:#{path}"
     end
 
     def blob_url(repository, ref, path)
-      "/#{repository}/blobs/#{ref}/#{path}"
+      "/#{repository}/source/#{ref}:#{path}"
     end
 
     def blame_url(repository, ref, path)
-      "/#{repository}/blobs/blame/#{ref}/#{path}"
+      "/#{repository}/blame/#{ref}:#{path}"
     end
 
     def history_url(repository, ref, path)
-      "/#{repository}/blobs/history/#{ref}/#{path}"
+      "/#{repository}/history/#{ref}:#{path}"
     end
 
     def raw_url(repository, ref, path)
-      "/#{repository}/blobs/raw/#{ref}/#{path}"
+      "/#{repository}/raw/#{ref}:#{path}"
     end
 
     def tree_history_url(repository, ref, path)
-      "/TODO"
+      "/#{repository}/tree_history/#{ref}:#{path}"
     end
   end
 
   class Dolt
-    def initialize(repository)
+    def initialize(project, repository)
+      @project = project
       @repository = repository
       resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
       @actions = ::Dolt::RepoActions.new(resolver)
     end
 
-    def tree(ref, path, &block)
+    def object(ref, path, &block)
       in_reactor do
-        name = "#{@repository.project.slug}/#{@repository.name}"
-        @actions.tree(name, ref, path.join("/"), &block)
-      end
-    end
-
-    def blob(ref, path, &block)
-      in_reactor do
-        name = "#{@repository.project.slug}/#{@repository.name}"
-        @actions.blob(name, ref, path.join("/"), &block)
+        name = "#{@project.slug}/#{@repository.name}"
+        @actions.tree_entry(name, ref, path, &block)
       end
     end
 
@@ -78,7 +74,10 @@ module Gitorious
     end
 
     def self.create_view
-      view = Tiltout.new(::Dolt.template_dir, { :layout => nil })
+      base = Pathname(__FILE__).dirname + "../../app/views/layouts/v3"
+      layout = base.expand_path + "application.html.erb"
+      puts "\n\n\n#{layout}\n\n\n"
+      view = Tiltout.new(::Dolt.template_dir, { :layout => {:file => layout} })
       view.helper(Gitorious::DoltUrls)
       view.helper(::Dolt::View::Object)
       view.helper(::Dolt::View::Blob)
