@@ -1,0 +1,6 @@
+* Dolt integration [/]
+* UI upgrade [0/4]
+** TODO Project/repository logos
+** TODO Script to load current user
+** TODO Script to enable repo admin button
+** TODO Script to either show or hide SSH URLs
