@@ -151,6 +151,11 @@ class ProjectsControllerTest < ActionController::TestCase
         assert_response 403
       end
 
+      should "not render show xml for private repo for unauthorized user" do
+        get :show, :id => projects(:johans).to_param, :format => :xml
+        assert_response 403
+      end
+
       should "render private repo for owner" do
         login_as :johan
         get :show, :id => projects(:johans).to_param
@@ -269,7 +274,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
         assert can_read?(nil, Project.last)
       end
-      
+
     end
 
     context "with disabled private repos" do
@@ -678,7 +683,7 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to "/admin/project_proposals/new"
     end
-    
+
     should "succesfully GET #new if the user is a site_admin" do
       login_as :johan
       get :new
@@ -786,7 +791,7 @@ class ProjectsControllerTest < ActionController::TestCase
       @project.make_private
       @project.add_member(@group)
     end
-    
+
     teardown do
       GitoriousConfig["enable_private_repositories"] = false
       Team.group_implementation = Group

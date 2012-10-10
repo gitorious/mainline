@@ -75,7 +75,9 @@ class ProjectsController < ApplicationController
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     respond_to do |format|
       format.html
-      format.xml  { render :xml => @project }
+      format.xml do
+        render :xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones)
+      end
       format.atom { }
     end
   end
