@@ -25,7 +25,8 @@ class SourceBrowser
     match, project_slug, repo, ref, path = *env["PATH_INFO"].match(URL)
     return NOT_FOUND_RESPONSE if !match
     project = Project.find_by_slug(project_slug)
-    repository = project.repositories.find_by_name(repo)
+    repository = project && project.repositories.find_by_name(repo)
+    return NOT_FOUND_RESPONSE if project.nil? || repository.nil?
     response = nil
     dolt = Gitorious::Dolt.new(project, repository)
 

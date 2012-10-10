@@ -7,6 +7,7 @@
     <link href="/ui3/css/gitorious.css" rel="stylesheet">
     <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <%= favicon_link_tag %>
   </head>
   <body>
     <div class="gts-masthead navbar">
@@ -18,7 +19,7 @@
               <input type="search" placeholder="Search" class="search-query span2" name="q">
             </form>
             <div class="pull-right btn-group">
-              <a href="dashboard.html/login" class="btn btn-inverse">Log in</a>
+              <a href="/login" class="btn btn-inverse">Log in</a>
             </div>
           </div>
         </div>
@@ -54,7 +55,7 @@
             <a href="<%= download_ref_url(repo, ref) %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= ref %> as .tar.gz">
               <i class="icon icon-download"></i> Download
             </a>
-            <a href="<%= watch_repository_url(repo) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
+            <a href="<%= watch_url(repo) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
             <a href="<%= clone_repository_url(repo) %>" class="btn">Clone</a>
           </div>
         </div>
@@ -85,7 +86,7 @@ git push</pre>
             </div>
           </div>
         <% end %>
-        <%= repo_nav(repo, ref, path, :active => :source, :entries => repo_nav_entries(repo, ref)) %>
+        <%= repo_nav(repo, ref, path, :active => :source, :entries => repo_nav_entries(repository, ref)) %>
       </div>
     </div>
     <div class="container">
@@ -122,10 +123,8 @@ git push</pre>
             </ul>
           </div>
         </div>
-        <p class="gts-com-plug">
-          <a href="http://gitorious.com">Professional Gitorious services</a> - Git
-          hosting at your company, custom features, support and more.
-          <a href="http://gitorious.com">gitorious.com</a>.
+        <p class="gts-footer-blurb">
+          <%= footer_blurb %>
         </p>
       </div>
     </div>

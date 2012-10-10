@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -20,6 +20,8 @@ require "tiltout"
 require "eventmachine"
 require "erubis"
 require "pathname"
+require "gitorious/view"
+require "gitorious/view/layout_helper"
 
 module Gitorious
   module DoltViewHelper
@@ -33,6 +35,7 @@ module Gitorious
     include ::Dolt::View::TabWidth
     include ::Dolt::View::BinaryBlobEmbedder
     include ::Dolt::View::SmartBlobRenderer
+    include Gitorious::View::LayoutHelper
 
     # How many directory levels do we want to expand? When browsing directories
     # deeper than the specified depth, the initial directories will be chunked
@@ -52,109 +55,6 @@ module Gitorious
     #
     def tabwidth
       4
-    end
-
-    def tree_url(repository, ref, path = "")
-      "/#{repository}/source/#{ref}:#{path}"
-    end
-
-    def blob_url(repository, ref, path)
-      "/#{repository}/source/#{ref}:#{path}"
-    end
-
-    def blame_url(repository, ref, path)
-      "/#{repository}/blame/#{ref}:#{path}"
-    end
-
-    def history_url(repository, ref, path)
-      "/#{repository}/history/#{ref}:#{path}"
-    end
-
-    def raw_url(repository, ref, path)
-      "/#{repository}/raw/#{ref}:#{path}"
-    end
-
-    def tree_history_url(repository, ref, path)
-      "/#{repository}/tree_history/#{ref}:#{path}"
-    end
-
-    def repo_nav_entries(repository, ref)
-      [[:readme, "Readme", tree_url(repository, ref, "Readme")],
-       [:activities, "Activities", "/activities"],
-       [:commits, "Commits", "/commits"],
-       [:source, "Source", "/source"],
-       [:merge_requests, "Merge requests", "/merge-requests"],
-       [:community, "Community", "/community"]]
-    end
-
-    def repo_nav(repository, ref, path, options)
-      items = options[:entries].map do |entry|
-        is_active = entry.first == options[:active]
-        <<-HTML
-          <li#{" class=\"active\"" if is_active}>
-            <a#{" href=\"" + entry.last + "\"" if !is_active}>#{entry[1]}</a>
-          </li>
-        HTML
-      end
-
-      "<ul class=\"nav nav-tabs\">#{items.join}</ul>"
-    end
-  end
-
-  module LayoutHelper
-    def project_url(project)
-      "/#{project.slug}"
-    end
-
-    def download_ref_url(repository, ref)
-      "#"
-    end
-
-    def watch_repository_url(repository)
-      "#"
-    end
-
-    def clone_repository_url(repository)
-      "#"
-    end
-
-    def git_clone_url(repository)
-      repository.git_clone_url
-    end
-
-    def http_clone_url(repository)
-      repository.http_clone_url
-    end
-
-    def ssh_clone_url(repository)
-      repository.ssh_clone_url
-    end
-
-    def git_cloning?(repository)
-      repository.git_cloning?
-    end
-
-    def http_cloning?(repository)
-      repository.http_cloning?
-    end
-
-    def ssh_cloning?(repository)
-      repository.ssh_cloning?
-    end
-
-    def default_clone_url(repository)
-      repository.default_clone_url
-    end
-
-    def repo_url_button(repository, options)
-      type = options[:type].downcase
-      return "" if !send(:"#{type}_cloning?", repository)
-      url = send(:"#{type}_clone_url", repository)
-      class_name = (options[:active] ? "active " : "") + "btn gts-repo-url"
-      html = "<a class=\"#{class_name}\" href=\"#{url}\">#{options[:type]}</a>"
-      return html unless options[:active]
-      "#{html}<input class=\"span4 gts-current-repo-url gts-select-onfocus\" " +
-        "type=\"url\" value=\"#{url}\">"
     end
   end
 
@@ -180,13 +80,13 @@ module Gitorious
     end
 
     def self.view
-      @view ||= create_view(Pathname(__FILE__).dirname + "../../app/views/layouts/v3")
+      @view ||= create_view
     end
 
-    def self.create_view(base)
+    def self.create_view
       Tiltout.new(::Dolt.template_dir, {
-        :layout => { :file => base.expand_path + "application.html.erb" },
-        :helpers => [Gitorious::DoltViewHelper, Gitorious::LayoutHelper],
+        :layout => { :file => Gitorious::View.layout_file },
+        :helpers => [Gitorious::DoltViewHelper],
         :cache => Rails.env != "development"
       })
     end
