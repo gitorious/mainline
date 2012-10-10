@@ -27,12 +27,13 @@ class SourceBrowser
     project = Project.find_by_slug(project_slug)
     repository = project.repositories.find_by_name(repo)
     response = nil
+    dolt = Gitorious::Dolt.new(project, repository)
 
-    Gitorious::Dolt.new(project, repository).object(ref, path) do |err, data|
+    dolt.object(ref, path) do |err, data|
       if !err.nil?
         response = error(err, repo, ref)
       else
-        response = success(Gitorious::Dolt.view.render(data[:type], data))
+        response = success(dolt.render(data[:type], data))
       end
     end
 

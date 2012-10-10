@@ -22,13 +22,38 @@ require "erubis"
 require "pathname"
 
 module Gitorious
-  module MaxDepth
+  module DoltViewHelper
+    include ::Dolt::View::Object
+    include ::Dolt::View::Blob
+    include ::Dolt::View::Blame
+    include ::Dolt::View::Breadcrumb
+    include ::Dolt::View::Tree
+    include ::Dolt::View::Commit
+    include ::Dolt::View::Gravatar
+    include ::Dolt::View::TabWidth
+    include ::Dolt::View::BinaryBlobEmbedder
+    include ::Dolt::View::SmartBlobRenderer
+
+    # How many directory levels do we want to expand? When browsing directories
+    # deeper than the specified depth, the initial directories will be chunked
+    # like so:
+    #
+    # lib/gitorious
+    #   something
+    #     really
+    #       nested
+    #
     def maxdepth
       3
     end
-  end
 
-  module DoltUrls
+    # Dolt::View::TabWidth module converts tabs to spaces so we can control the
+    # rendered width. This number specifies the desired width.
+    #
+    def tabwidth
+      4
+    end
+
     def tree_url(repository, ref, path = "")
       "/#{repository}/source/#{ref}:#{path}"
     end
@@ -52,6 +77,85 @@ module Gitorious
     def tree_history_url(repository, ref, path)
       "/#{repository}/tree_history/#{ref}:#{path}"
     end
+
+    def repo_nav_entries(repository, ref)
+      [[:readme, "Readme", tree_url(repository, ref, "Readme")],
+       [:activities, "Activities", "/activities"],
+       [:commits, "Commits", "/commits"],
+       [:source, "Source", "/source"],
+       [:merge_requests, "Merge requests", "/merge-requests"],
+       [:community, "Community", "/community"]]
+    end
+
+    def repo_nav(repository, ref, path, options)
+      items = options[:entries].map do |entry|
+        is_active = entry.first == options[:active]
+        <<-HTML
+          <li#{" class=\"active\"" if is_active}>
+            <a#{" href=\"" + entry.last + "\"" if !is_active}>#{entry[1]}</a>
+          </li>
+        HTML
+      end
+
+      "<ul class=\"nav nav-tabs\">#{items.join}</ul>"
+    end
+  end
+
+  module LayoutHelper
+    def project_url(project)
+      "/#{project.slug}"
+    end
+
+    def download_ref_url(repository, ref)
+      "#"
+    end
+
+    def watch_repository_url(repository)
+      "#"
+    end
+
+    def clone_repository_url(repository)
+      "#"
+    end
+
+    def git_clone_url(repository)
+      repository.git_clone_url
+    end
+
+    def http_clone_url(repository)
+      repository.http_clone_url
+    end
+
+    def ssh_clone_url(repository)
+      repository.ssh_clone_url
+    end
+
+    def git_cloning?(repository)
+      repository.git_cloning?
+    end
+
+    def http_cloning?(repository)
+      repository.http_cloning?
+    end
+
+    def ssh_cloning?(repository)
+      repository.ssh_cloning?
+    end
+
+    def default_clone_url(repository)
+      repository.default_clone_url
+    end
+
+    def repo_url_button(repository, options)
+      type = options[:type].downcase
+      return "" if !send(:"#{type}_cloning?", repository)
+      url = send(:"#{type}_clone_url", repository)
+      class_name = (options[:active] ? "active " : "") + "btn gts-repo-url"
+      html = "<a class=\"#{class_name}\" href=\"#{url}\">#{options[:type]}</a>"
+      return html unless options[:active]
+      "#{html}<input class=\"span4 gts-current-repo-url gts-select-onfocus\" " +
+        "type=\"url\" value=\"#{url}\">"
+    end
   end
 
   class Dolt
@@ -69,35 +173,26 @@ module Gitorious
       end
     end
 
-    def self.view
-      @view ||= create_view
+    def render(type, data)
+      data[:project] = @project
+      data[:repo] = @repository
+      self.class.view.render(type, data)
     end
 
-    def self.create_view
-      base = Pathname(__FILE__).dirname + "../../app/views/layouts/v3"
-      layout = base.expand_path + "application.html.erb"
-      puts "\n\n\n#{layout}\n\n\n"
-      view = Tiltout.new(::Dolt.template_dir, { :layout => {:file => layout} })
-      view.helper(Gitorious::DoltUrls)
-      view.helper(::Dolt::View::Object)
-      view.helper(::Dolt::View::Blob)
-      view.helper(::Dolt::View::Blame)
-      view.helper(::Dolt::View::Breadcrumb)
-      view.helper(::Dolt::View::Tree)
-      view.helper(::Dolt::View::Commit)
-      view.helper(::Dolt::View::Gravatar)
-      ::Dolt::View::TabWidth.tab_width = 4
-      view.helper(::Dolt::View::TabWidth)
-      view.helper(::Dolt::View::BinaryBlobEmbedder)
-      view.helper(::Dolt::View::SmartBlobRenderer)
-      view.helper(Gitorious::MaxDepth)
-      view
+    def self.view
+      @view ||= create_view(Pathname(__FILE__).dirname + "../../app/views/layouts/v3")
+    end
+
+    def self.create_view(base)
+      Tiltout.new(::Dolt.template_dir, {
+        :layout => { :file => base.expand_path + "application.html.erb" },
+        :helpers => [Gitorious::DoltViewHelper, Gitorious::LayoutHelper],
+        :cache => Rails.env != "development"
+      })
     end
 
     def in_reactor(&block)
-      if EventMachine.reactor_running?
-        return block.call
-      end
+      return block.call if EventMachine.reactor_running?
 
       EventMachine.run do
         block.call

@@ -13,10 +13,81 @@
       <div class="navbar-inner">
         <div class="container">
           <a class="gts-logo" href="/"><img src="/ui3/images/gitorious.png" alt="Gitorious" title="Gitorious"></a>
+          <div class="pull-right">
+            <form action="/search" method="get" class="navbar-search pull-left">
+              <input type="search" placeholder="Search" class="search-query span2" name="q">
+            </form>
+            <div class="pull-right btn-group">
+              <a href="dashboard.html/login" class="btn btn-inverse">Log in</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <br><br>
+    <div class="gts-repo-header">
+      <div class="container">
+        <div class="row">
+          <% if !repo.parent.nil? %>
+            <p class="gts-clone-source">
+              <i title="Cloned from <%= repo.parent.project.title %>/<%= repo.parent.name %>" class="icon icon-share-alt"></i>
+              Cloned from
+              <a href="/project"><%= repo.parent.project.title %></a> /
+              <a href="/repo"><%= repo.parent.name %></a>
+            </p>
+          <% end %>
+          <h2 class="span">
+            <!-- TODO: Logo -->
+            <a href="<%= project_url(project) %>"><%= project.title %></a> /
+            <span><%= repo.name %></span>
+          </h2>
+        </div>
+        <div class="row">
+          <div class="span">
+            <div class="btn-group gts-repo-urls">
+              <%= repo_url_button(repo, :type => "Git", :active => !ssh_cloning?(repo) && git_cloning?(repo)) %>
+              <%= repo_url_button(repo, :type => "HTTP", :active => !ssh_cloning?(repo) && !git_cloning?(repo)) %>
+              <%= repo_url_button(repo, :type => "SSH", :active => ssh_cloning?(repo)) %>
+              <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
+            </div>
+          </div>
+          <div class="pull-right">
+            <a href="<%= download_ref_url(repo, ref) %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= ref %> as .tar.gz">
+              <i class="icon icon-download"></i> Download
+            </a>
+            <a href="<%= watch_repository_url(repo) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
+            <a href="<%= clone_repository_url(repo) %>" class="btn">Clone</a>
+          </div>
+        </div>
+        <div class="collapse gts-help row" id="repo-url-help">
+          <div class="alert alert-info span pull-right">
+            <p>
+              To <strong>clone</strong> this repository:
+            </p>
+            <pre class="prettyprint">git clone <%= default_clone_url(repo) %></pre>
+            <p>
+              To <strong>push</strong> to this repository:
+            </p>
+            <pre class="prettyprint"># Add a new remote
+git remote add origin <%= default_clone_url(repo) %>
+
+# Push the master branch to the newly added origin, and configure
+# this remote and branch as the default:
+git push -u origin master
+
+# From now on you can push master to the "origin" remote with:
+git push</pre>
+          </div>
+        </div>
+        <% unless repo.description.blank? %>
+          <div class="row gts-description">
+            <div class="span">
+              <p><%= repo.description %></p>
+            </div>
+          </div>
+        <% end %>
+        <%= repo_nav(repo, ref, path, :active => :source, :entries => repo_nav_entries(repo, ref)) %>
+      </div>
+    </div>
     <div class="container">
       <%= yield %>
     </div>
@@ -63,6 +134,7 @@
     <script src="/ui3/js/components/url.js"></script>
     <script src="/ui3/js/components/ref-selector.js"></script>
     <script src="/ui3/js/components/tree-history.js"></script>
+    <script src="/ui3/lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="/ui3/js/gitorious.js"></script>
   </body>
 </html>
