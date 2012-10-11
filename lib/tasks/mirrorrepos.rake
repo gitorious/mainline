@@ -10,17 +10,17 @@ namespace :mirror do
   # the folder structure becomes less than human readable when browsing from Gitweb.
   #
   # To keep this updated, schedule regular/frequent runs of this rake task (e.g. cron)
-  
+
   # EXAMPLE:
   #
   # Run this from the root of your gitorious installation (where you normally run rake tasks)
   # sudo bundle exec rake mirror:symlinkedrepos RAILS_ENV=production
   #
-    
+
   require 'yaml'
-  
+
   desc "Create mirror directory with symlinks to all current regular repository paths"
-  task :symlinkedrepos => :environment do    
+  task :symlinkedrepos => :environment do
     default_mirror_base_path = "#{GitoriousConfig['repository_base_path']}/../mirrored-public-repos"
     mirror_base = GitoriousConfig["symlinked_mirror_repo_base"] || default_mirror_base_path
     owner = GitoriousConfig["gitorious_user"]
@@ -30,12 +30,14 @@ namespace :mirror do
 
     # remove any current symlinks
     puts `rm -rf #{mirror_base}/*`
-    
+
     # rebuild symlinks for all standard repos (omit private repos, wiki repos etc)
-    repo_data = Repository.regular.each do |r| 
+    repo_data = Repository.regular.each do |r|
       if !r.private?
-        symlink_path = "#{mirror_base}/#{r.name}"
         actual_path = "#{GitoriousConfig["repository_base_path"]}/#{r.real_gitdir}"
+        repo_parent_dir = Pathname.new(r.url_path).dirname
+        project_dir = "#{mirror_base}/#{repo_parent_dir}"
+        symlink_path = "#{project_dir}/#{r.name}"
         puts `ln -fs #{actual_path} #{symlink_path}`
       end
     end
