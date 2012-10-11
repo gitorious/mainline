@@ -128,6 +128,9 @@ git push</pre>
         </p>
       </div>
     </div>
+    <% if !repo.nil? %>
+      <script>var gts = { repository: "<%= repository_slug(repo) %>" };</script>
+    <% end %>
     <script src="/ui3/dist/gts-ui-deps.js"></script>
     <script src="/ui3/js/components/abbrev.js"></script>
     <script src="/ui3/js/components/url.js"></script>
