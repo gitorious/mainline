@@ -35,7 +35,7 @@ class ProjectsController < ApplicationController
   renders_in_site_specific_context :only => [:show, :edit, :update, :confirm_delete]
   renders_in_global_context :except => [:show, :edit, :update, :confirm_delete, :clones]
 
-  def index   
+  def index
     @page = JustPaginate.page_value(params[:page])
 
     if private_repositories_enabled?
@@ -75,7 +75,9 @@ class ProjectsController < ApplicationController
     @atom_auto_discovery_url = project_path(@project, :format => :atom)
     respond_to do |format|
       format.html
-      format.xml  { render :xml => @project }
+      format.xml do
+        render :xml => @project.to_xml({}, @mainlines, @group_clones + @user_clones)
+      end
       format.atom { }
     end
   end
@@ -108,7 +110,7 @@ class ProjectsController < ApplicationController
       when "Group"
         Team.find(params[:project][:owner_id])
       end
-    
+
     if @project.save
       @project.make_private if projects_private_on_creation?
       @project.create_event(Action::CREATE_PROJECT, @project, current_user)
@@ -179,7 +181,7 @@ class ProjectsController < ApplicationController
     end
     redirect_to projects_path
   end
-  
+
   protected
   def by_push_time(repositories)
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
@@ -204,7 +206,7 @@ class ProjectsController < ApplicationController
   end
 
   def projects_private_on_creation?
-    GitoriousConfig["enable_private_repositories"] && (params[:private_project] || GitoriousConfig["repos_and_projects_private_by_default"])    
+    GitoriousConfig["enable_private_repositories"] && (params[:private_project] || GitoriousConfig["repos_and_projects_private_by_default"])
   end
 
   def paginated_events

@@ -160,14 +160,14 @@ class Project < ActiveRecord::Base
     description[/^([^\n]+)/, 1]
   end
 
-  def to_xml(opts = {})
+  def to_xml(opts = {}, mainlines = [], clones = [])
     info = Proc.new { |options|
       builder = options[:builder]
       builder.owner(owner.to_param, :kind => (owned_by_group? ? "Team" : "User"))
 
       builder.repositories(:type => "array") do |repos|
         builder.mainlines :type => "array" do
-          repositories.mainlines.each { |repo|
+          mainlines.each { |repo|
             builder.repository do
               builder.id repo.id
               builder.name repo.name
@@ -177,7 +177,7 @@ class Project < ActiveRecord::Base
           }
         end
         builder.clones :type => "array" do
-          repositories.clones.each { |repo|
+          clones.each { |repo|
             builder.repository do
               builder.id repo.id
               builder.name repo.name
