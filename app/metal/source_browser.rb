@@ -18,34 +18,62 @@
 #++
 
 class SourceBrowser
-  URL = /([^\/]+)\/([^\/]+)\/source\/(.+):(.*)/
-  NOT_FOUND_RESPONSE = [404, {"Content-Type" => "text/html"},[]]
+  ROUTE = /([^\/]+)\/([^\/]+)\/(source|blame|history|raw|tree_history|refs)(?:\/([^:]+)(?::(.*))?)?/
+  NOT_FOUND = [404, {}, []]
 
   def self.call(env)
-    match, project_slug, repo, ref, path = *env["PATH_INFO"].match(URL)
-    return NOT_FOUND_RESPONSE if !match
-    project = Project.find_by_slug(project_slug)
+    match, proj, repo, action, ref, path = *env["PATH_INFO"].match(ROUTE)
+    action = action && action.to_sym
+    return NOT_FOUND if match.nil? || !respond_to?(action)
+    return redirect("/#{proj}/#{repo}/#{action}/master:#{path}") if ref.nil?
+    project = Project.find_by_slug(proj)
     repository = project && project.repositories.find_by_name(repo)
-    return NOT_FOUND_RESPONSE if project.nil? || repository.nil?
+    return NOT_FOUND if project.nil? || repository.nil?
     response = nil
     dolt = Gitorious::Dolt.new(project, repository)
+    send(action, dolt, project, repository, ref, path) { |r| response = r }
+    response
+  end
 
+  def self.source(dolt, project, repository, ref, path, &block)
     dolt.object(ref, path) do |err, data|
       if !err.nil?
-        response = error(err, repo, ref)
+        block.call(error(err, repository, ref))
       else
-        response = success(dolt.render(data[:type], data))
+        block.call(success(dolt.render(data[:type], data)))
       end
     end
+  end
 
-    response
+  def self.blame(dolt, project, repository, ref, path, &block)
+    block.call([200, {}, ["TODO"]])
+  end
+
+  def self.history(dolt, project, repository, ref, path, &block)
+    block.call([200, {}, ["TODO"]])
+  end
+
+  def self.raw(dolt, project, repository, ref, path, &block)
+    block.call([200, {}, ["TODO"]])
+  end
+
+  def self.tree_history(dolt, project, repository, ref, path, &block)
+    block.call([200, {}, ["TODO"]])
+  end
+
+  def self.refs(dolt, project, repository, ref, path, &block)
+    block.call([200, {}, ["TODO"]])
   end
 
   def self.success(body)
     [200, { "Content-Type" => "text/html" }, [body]]
   end
 
-  def self.error(err, repo, ref)
+  def self.error(err, repository, ref)
     [500, { "Content-Type" => "text/html" }, [err.message]]
+  end
+
+  def self.redirect(url)
+    [301, { "Location" => url }, []]
   end
 end

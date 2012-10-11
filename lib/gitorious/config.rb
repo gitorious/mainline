@@ -18,8 +18,12 @@
 
 module Gitorious
   module Config
+    def site_name
+      @site_name ||= GitoriousConfig.fetch("site_name", "Gitorious")
+    end
+
     def footer_blurb
-      with_default("footer_blurb", <<-HTML)
+      @footer_blurb ||= with_default("footer_blurb", <<-HTML)
         <a href="http://gitorious.com">Professional Gitorious services</a> - Git
         hosting at your company, custom features, support and more.
         <a href="http://gitorious.com">gitorious.com</a>.
@@ -27,7 +31,7 @@ module Gitorious
     end
 
     def favicon_url
-      with_default("favicon_url", "/favicon.ico")
+      @favicon_url ||= with_default("favicon_url", "/favicon.ico")
     end
 
     private
