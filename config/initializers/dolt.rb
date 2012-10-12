@@ -60,8 +60,8 @@ module Gitorious
     def initialize(project, repository)
       @project = project
       @repository = repository
-      resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
-      @actions = ::Dolt::RepoActions.new(resolver)
+      @resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
+      @actions = ::Dolt::RepoActions.new(@resolver)
       @repo_name = "#{@project.slug}/#{@repository.name}"
     end
 
@@ -74,6 +74,10 @@ module Gitorious
       data[:project] = @project
       data[:repository] = @repository
       self.class.view.render(type, data, opts)
+    end
+
+    def rev_parse_oid_sync(ref)
+      @resolver.resolve.rev_parse_oid_sync(ref)
     end
 
     def self.view

@@ -32,18 +32,26 @@ class SourceBrowser
     ActiveRecord::Base.establish_connection
     match, proj, repo, action, ref, path = *env["PATH_INFO"].match(ROUTE)
     return NOT_FOUND if match.nil?
-    action = action && action.to_sym
-    return redirect("/#{proj}/#{repo}/#{action}/master:#{path}") if ref.nil? && action != :refs
+
     project = Project.find_by_slug(proj)
     repository = project && project.repositories.find_by_name(repo)
     source_browser = new(project, repository)
+    action = action && action.to_sym
     return NOT_FOUND if project.nil? || repository.nil? || !source_browser.respond_to?(action)
-    result = Gitorious::Dolt.in_reactor do |done|
-      source_browser.send(action, ref, path) do |r|
-        done.call(r)
-      end
+
+    source_browser.dispatch(action, ref, path)
+  end
+
+  def dispatch(action, ref, path)
+    if action != :refs && ref.nil? #|| ref.length != 40
+      #ref = @dolt.rev_parse_oid_sync(ref || "HEAD")
+      ref = "master"
+      return redirect("/#{@project.slug}/#{@repository.name}/#{action}/#{ref}:#{path}")
     end
-    result
+
+    Gitorious::Dolt.in_reactor do |done|
+      send(action, ref, path) { |r| done.call(r) }
+    end
   end
 
   def source(ref, path, &block)
@@ -104,7 +112,7 @@ class SourceBrowser
     [500, { "Content-Type" => "text/html" }, [err.respond_to?(:message) ? err.message : err]]
   end
 
-  def self.redirect(url)
+  def redirect(url)
     [301, { "Location" => url }, []]
   end
 
