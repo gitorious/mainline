@@ -28,10 +28,9 @@ gem "capillary", "~> 1.0"
 gem "nokogiri", "1.5.0"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "tiltout", "~> 1.1"
-gem "libdolt", "~> 0.7"
+gem "libdolt", "~> 0.8"
 gem "eventmachine", "~> 1.0"
 gem "erubis"
-gem "ruby-debug"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

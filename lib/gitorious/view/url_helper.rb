@@ -23,12 +23,16 @@ module Gitorious
         "/#{project.slug}"
       end
 
-      def repository_slug(repository)
+      def repository_url(repository)
+        "/#{repository_url_slug(repository)}"
+      end
+
+      def repository_url_slug(repository)
         "#{repository.project.slug}/#{repository.name}"
       end
 
       def download_ref_url(repository, ref)
-        "/#{repository_slug(repository)}/archive-tarball/#{ref}"
+        "/#{repository_url_slug(repository)}/archive-tarball/#{ref}"
       end
 
       def watch_url(thing)
@@ -36,7 +40,7 @@ module Gitorious
       end
 
       def clone_repository_url(repository)
-        "/#{repository_slug(repository)}/clone"
+        "/#{repository_url_slug(repository)}/clone"
       end
 
       def git_clone_url(repository)

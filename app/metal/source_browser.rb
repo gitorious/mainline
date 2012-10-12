@@ -28,20 +28,22 @@ class SourceBrowser
   end
 
   def self.call(env)
+    env["rack.session.options"] = {}
+    ActiveRecord::Base.establish_connection
     match, proj, repo, action, ref, path = *env["PATH_INFO"].match(ROUTE)
     return NOT_FOUND if match.nil?
-    return redirect("/#{proj}/#{repo}/#{action}/master:#{path}") if ref.nil?
+    action = action && action.to_sym
+    return redirect("/#{proj}/#{repo}/#{action}/master:#{path}") if ref.nil? && action != :refs
     project = Project.find_by_slug(proj)
     repository = project && project.repositories.find_by_name(repo)
-    action = action && action.to_sym
     source_browser = new(project, repository)
     return NOT_FOUND if project.nil? || repository.nil? || !source_browser.respond_to?(action)
-    response = nil
-    Gitorious::Dolt.in_reactor do
-      source_browser.send(action, ref, path) { |r| response = r }
+    result = Gitorious::Dolt.in_reactor do |done|
+      source_browser.send(action, ref, path) do |r|
+        done.call(r)
+      end
     end
-
-    response || NOT_FOUND
+    result
   end
 
   def source(ref, path, &block)
@@ -51,10 +53,10 @@ class SourceBrowser
     end
   end
 
-  def readme(ref, path, &block)
-    # Redirect to detected readme file
-    block.call([200, {}, ["TODO"]])
-  end
+  # def readme(ref, path, &block)
+  #   # Redirect to detected readme file
+  #   block.call([200, {}, ["TODO"]])
+  # end
 
   def blame(ref, path, &block)
     @dolt.blame(ref, path) do |err, data|
@@ -71,22 +73,31 @@ class SourceBrowser
   end
 
   def raw(ref, path, &block)
-    #action(:raw, dolt, repository, ref, path, &block)
-    [200, {}, ["TODO"]]
+    @dolt.blob(ref, path) do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      body = @dolt.render(:raw, data, :layout => nil)
+      block.call(success(body, "text/plain"))
+    end
   end
 
   def tree_history(ref, path, &block)
-    #action(:tree_history, dolt, repository, ref, path, &block)
-    [200, {}, ["TODO"]]
+    @dolt.tree_history(ref, path, 1) do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      body = @dolt.render(:tree_history, data, :layout => nil)
+      block.call(success(body, "application/json"))
+    end
   end
 
   def refs(ref, path, &block)
-    #action(:refs, dolt, repository, ref, path, &block)
-    [200, {}, ["TODO"]]
+    @dolt.refs do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      body = @dolt.render(:refs, data, :layout => nil)
+      block.call(success(body, "application/json"))
+    end
   end
 
-  def success(body)
-    [200, { "Content-Type" => "text/html" }, [body]]
+  def success(body, content_type = "text/html")
+    [200, { "Content-Type" => content_type }, [body]]
   end
 
   def error(err, ref, path)

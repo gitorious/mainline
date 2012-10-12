@@ -70,10 +70,10 @@ module Gitorious
       @actions.send(name, @repo_name, *args, &block)
     end
 
-    def render(type, data)
+    def render(type, data, opts = {})
       data[:project] = @project
-      data[:repo] = @repository
-      self.class.view.render(type, data)
+      data[:repository] = @repository
+      self.class.view.render(type, data, opts)
     end
 
     def self.view
@@ -89,12 +89,19 @@ module Gitorious
     end
 
     def self.in_reactor(&block)
-      return block.call if EventMachine.reactor_running?
+      result = nil
+      if EventMachine.reactor_running?
+        block.call(Proc.new { |res| result = res })
+        return result
+      end
 
       EventMachine.run do
-        block.call
-        EventMachine.stop
+        block.call(Proc.new do |res|
+                     result = res
+                     EventMachine.stop
+                   end)
       end
+      result
     end
   end
 end
