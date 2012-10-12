@@ -18,62 +18,91 @@
 #++
 
 class SourceBrowser
-  ROUTE = /([^\/]+)\/([^\/]+)\/(source|blame|history|raw|tree_history|refs)(?:\/([^:]+)(?::(.*))?)?/
+  ROUTE = /([^\/]+)\/([^\/]+)\/(source|blame|history|raw|tree_history|refs|readme)(?:\/([^:]+)(?::(.*))?)?/
   NOT_FOUND = [404, {}, []]
+
+  def initialize(project, repository)
+    @project = project
+    @repository = repository
+    @dolt = Gitorious::Dolt.new(project, repository)
+  end
 
   def self.call(env)
     match, proj, repo, action, ref, path = *env["PATH_INFO"].match(ROUTE)
-    action = action && action.to_sym
-    return NOT_FOUND if match.nil? || !respond_to?(action)
+    return NOT_FOUND if match.nil?
     return redirect("/#{proj}/#{repo}/#{action}/master:#{path}") if ref.nil?
     project = Project.find_by_slug(proj)
     repository = project && project.repositories.find_by_name(repo)
-    return NOT_FOUND if project.nil? || repository.nil?
+    action = action && action.to_sym
+    source_browser = new(project, repository)
+    return NOT_FOUND if project.nil? || repository.nil? || !source_browser.respond_to?(action)
     response = nil
-    dolt = Gitorious::Dolt.new(project, repository)
-    send(action, dolt, project, repository, ref, path) { |r| response = r }
-    response
+    Gitorious::Dolt.in_reactor do
+      source_browser.send(action, ref, path) { |r| response = r }
+    end
+
+    response || NOT_FOUND
   end
 
-  def self.source(dolt, project, repository, ref, path, &block)
-    dolt.object(ref, path) do |err, data|
-      if !err.nil?
-        block.call(error(err, repository, ref))
-      else
-        block.call(success(dolt.render(data[:type], data)))
-      end
+  def source(ref, path, &block)
+    @dolt.tree_entry(ref, path) do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      block.call(success(@dolt.render(data[:type], data)))
     end
   end
 
-  def self.blame(dolt, project, repository, ref, path, &block)
+  def readme(ref, path, &block)
+    # Redirect to detected readme file
     block.call([200, {}, ["TODO"]])
   end
 
-  def self.history(dolt, project, repository, ref, path, &block)
-    block.call([200, {}, ["TODO"]])
+  def blame(ref, path, &block)
+    @dolt.blame(ref, path) do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      block.call(success(@dolt.render(:blame, data)))
+    end
   end
 
-  def self.raw(dolt, project, repository, ref, path, &block)
-    block.call([200, {}, ["TODO"]])
+  def history(ref, path, &block)
+    @dolt.history(ref, path, 20) do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      block.call(success(@dolt.render(:commits, data)))
+    end
   end
 
-  def self.tree_history(dolt, project, repository, ref, path, &block)
-    block.call([200, {}, ["TODO"]])
+  def raw(ref, path, &block)
+    #action(:raw, dolt, repository, ref, path, &block)
+    [200, {}, ["TODO"]]
   end
 
-  def self.refs(dolt, project, repository, ref, path, &block)
-    block.call([200, {}, ["TODO"]])
+  def tree_history(ref, path, &block)
+    #action(:tree_history, dolt, repository, ref, path, &block)
+    [200, {}, ["TODO"]]
   end
 
-  def self.success(body)
+  def refs(ref, path, &block)
+    #action(:refs, dolt, repository, ref, path, &block)
+    [200, {}, ["TODO"]]
+  end
+
+  def success(body)
     [200, { "Content-Type" => "text/html" }, [body]]
   end
 
-  def self.error(err, repository, ref)
-    [500, { "Content-Type" => "text/html" }, [err.message]]
+  def error(err, ref, path)
+    [500, { "Content-Type" => "text/html" }, [err.respond_to?(:message) ? err.message : err]]
   end
 
   def self.redirect(url)
     [301, { "Location" => url }, []]
+  end
+
+  private
+  def results(err, template, data, ref, path)
+    if !err.nil?
+      block.call(error(err, ref, path))
+    else
+      block.call(success(@dolt.render(template, data)))
+    end
   end
 end

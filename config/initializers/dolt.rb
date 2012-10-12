@@ -23,6 +23,11 @@ require "pathname"
 require "gitorious/view"
 require "gitorious/view/layout_helper"
 
+# Dolt::View::TabWidth module converts tabs to spaces so we can control the
+# rendered width. This number specifies the desired width.
+#
+Dolt::View::TabWidth.tab_width = 4
+
 module Gitorious
   module DoltViewHelper
     include ::Dolt::View::Object
@@ -49,13 +54,6 @@ module Gitorious
     def maxdepth
       3
     end
-
-    # Dolt::View::TabWidth module converts tabs to spaces so we can control the
-    # rendered width. This number specifies the desired width.
-    #
-    def tabwidth
-      4
-    end
   end
 
   class Dolt
@@ -64,13 +62,12 @@ module Gitorious
       @repository = repository
       resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
       @actions = ::Dolt::RepoActions.new(resolver)
+      @repo_name = "#{@project.slug}/#{@repository.name}"
     end
 
-    def object(ref, path, &block)
-      in_reactor do
-        name = "#{@project.slug}/#{@repository.name}"
-        @actions.tree_entry(name, ref, path, &block)
-      end
+    def method_missing(name, *args, &block)
+      return super if !@actions.respond_to?(name)
+      @actions.send(name, @repo_name, *args, &block)
     end
 
     def render(type, data)
@@ -91,7 +88,7 @@ module Gitorious
       })
     end
 
-    def in_reactor(&block)
+    def self.in_reactor(&block)
       return block.call if EventMachine.reactor_running?
 
       EventMachine.run do
