@@ -56,7 +56,7 @@ module Gitorious
       end
 
       def readme_url(repository_slug, ref)
-        "/#{repository_slug}/source/readme/#{ref}"
+        "/#{repository_slug}/readme/#{ref}"
       end
 
       def repository_activities_url(repository_slug, ref)
