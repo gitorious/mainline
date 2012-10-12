@@ -37,7 +37,7 @@ namespace :mirror do
         actual_path = "#{GitoriousConfig["repository_base_path"]}/#{r.real_gitdir}"
         repo_parent_dir = Pathname.new(r.url_path).dirname
         project_dir = "#{mirror_base}/#{repo_parent_dir}"
-        puts puts `mkdir -p #{project_dir}`
+        puts `mkdir -p #{project_dir}`
         symlink_path = "#{project_dir}/#{r.name}"
         puts `ln -fs #{actual_path} #{symlink_path}`
       end
