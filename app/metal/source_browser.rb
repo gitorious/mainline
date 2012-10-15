@@ -37,9 +37,13 @@ class SourceBrowser
     repository = project && project.repositories.find_by_name(repo)
     source_browser = new(project, repository)
     action = action && action.to_sym
-    return NOT_FOUND if project.nil? || repository.nil? || !source_browser.respond_to?(action)
+    return NOT_FOUND if project.nil? || repository.nil? || !source_browser.handles?(action)
 
     source_browser.dispatch(action, ref, path)
+  end
+
+  def handles?(action)
+    @dolt.available? && respond_to?(action)
   end
 
   def dispatch(action, ref, path)

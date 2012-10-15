@@ -58,11 +58,38 @@ module Gitorious
 
   class Dolt
     def initialize(project, repository)
+      @available = true
+
+      if EventMachine.reactor_running?
+        @available = false
+        $stderr.puts <<-WARN
+
+
+WARNING: The default Dolt (source code browser) integration does not work
+with evented web servers. Any attempt to access
+/<project>/<repository>/{source,blame,history,raw,tree,history,refs,readme}
+URLs will not work.
+
+If you wish run Gitorious with an evented server (e.g. Thin), you will have
+to run the async Sinatra application for Dolt next to it, and proxy requests
+in a front-end like nginx.
+
+To avoid this issue in development, make sure you are not using `script/server`
+with thin - use passenger or mongrel (or even webrick) in stead.
+
+
+WARN
+      end
+
       @project = project
       @repository = repository
       @resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
       @actions = ::Dolt::RepoActions.new(@resolver)
       @repo_name = "#{@project.slug}/#{@repository.name}"
+    end
+
+    def available?
+      @available
     end
 
     def method_missing(name, *args, &block)
@@ -94,10 +121,10 @@ module Gitorious
 
     def self.in_reactor(&block)
       result = nil
-      if EventMachine.reactor_running?
-        block.call(Proc.new { |res| result = res })
-        return result
-      end
+      # Manual blocking...
+      # Without this, two requests may try to complete their work in the same
+      # reactor loop, which does not work
+      sleep 0.01 while EventMachine.reactor_running?
 
       EventMachine.run do
         block.call(Proc.new do |res|
