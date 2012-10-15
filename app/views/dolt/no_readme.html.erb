@@ -1,0 +1,19 @@
+<div class="gts-markup">
+  <h1><%= @title = "Readme: Missing in action" %></h1>
+  <p>
+    This repository has no Readme file. If this is your repository we encourage
+    you to provide a Readme that gets people quickly started using and
+    contributing to your repository.
+  </p>
+  <p>
+    <%= site_name %> supports a number of markup formats. Writing your Readme in
+    either of these ensures it will be rendered as pretty formatted HTML instead
+    of raw source.
+  </p>
+  <h2>Supported markup formats</h2>
+  <ul>
+    <% supported_markups.each do |markup| %>
+      <li><%= markup[:suffix].sub(/^\*/, "Readme") %></li>
+    <% end %>
+  </ul>
+</div>

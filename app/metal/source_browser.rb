@@ -47,9 +47,8 @@ class SourceBrowser
   end
 
   def dispatch(action, ref, path)
-    if action != :refs && ref.nil? #|| ref.length != 40
-      #ref = @dolt.rev_parse_oid_sync(ref || "HEAD")
-      ref = "master"
+    if action != :refs && (ref.nil? || ref.length != 40)
+      ref = @dolt.rev_parse_oid_sync(ref || "HEAD")
       return redirect("/#{@project.slug}/#{@repository.name}/#{action}/#{ref}:#{path}")
     end
 
@@ -59,16 +58,18 @@ class SourceBrowser
   end
 
   def source(ref, path, &block)
-    @dolt.tree_entry(ref, path) do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      block.call(success(@dolt.render(data[:type], data)))
-    end
+    tree_entry(ref, path, &block)
   end
 
-  # def readme(ref, path, &block)
-  #   # Redirect to detected readme file
-  #   block.call([200, {}, ["TODO"]])
-  # end
+  def readme(ref, path = nil, &block)
+    @dolt.readme(ref) do |data|
+      readme = data[:readmes].first
+      locals = { :active => :readme }
+      next tree_entry(ref, readme[:name], locals, &block) if readme
+      tpl = Gitorious::View.template("dolt/no_readme")
+      block.call(success(@dolt.render({ :file => tpl }, locals.merge(data))))
+    end
+  end
 
   def blame(ref, path, &block)
     @dolt.blame(ref, path) do |err, data|
@@ -126,6 +127,13 @@ class SourceBrowser
       block.call(error(err, ref, path))
     else
       block.call(success(@dolt.render(template, data)))
+    end
+  end
+
+  def tree_entry(ref, path, locals = {}, &block)
+    @dolt.tree_entry(ref, path) do |err, data|
+      next block.call(error(err, ref, path)) if !err.nil?
+      block.call(success(@dolt.render(data[:type], locals.merge(data))))
     end
   end
 end

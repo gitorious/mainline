@@ -18,6 +18,7 @@
 require "gitorious/view/dolt_helper"
 require "gitorious/view/url_helper"
 require "gitorious/config"
+require "makeup/markup"
 
 module Gitorious
   module View
@@ -76,6 +77,10 @@ module Gitorious
       def favicon_link_tag
         url = favicon_url
         "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
+      end
+
+      def supported_markups
+        Makeup::Markup.markups
       end
     end
   end

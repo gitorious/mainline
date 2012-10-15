@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title><%= @title %></title>
+    <title><%= @title %> - <%= site_name %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/ui3/css/gitorious.css" rel="stylesheet">
     <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -86,7 +86,10 @@ git push</pre>
             </div>
           </div>
         <% end %>
-        <%= repo_nav(repository, ref, path, :active => :source, :entries => repo_nav_entries(repository_slug, ref)) %>
+        <%= repo_nav(repository, ref, defined?(path) ? path : "", {
+                       :active => defined?(active) ? active : :source,
+                       :entries => repo_nav_entries(repository_slug, ref)
+                     }) %>
       </div>
     </div>
     <div class="container">

@@ -27,10 +27,6 @@ gem "ruby-net-ldap", "~> 0.0.4"
 gem "capillary", "~> 1.0"
 gem "nokogiri", "1.5.0"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
-gem "tiltout", "~> 1.1"
-gem "libdolt", "~> 0.8"
-gem "eventmachine", "~> 1.0"
-gem "erubis"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
@@ -81,4 +77,12 @@ end
 
 platform :jruby do
   gem "activerecord-jdbcmysql-adapter"
+end
+
+group :source_browser do
+  gem "libdolt", "~> 0.9"
+  gem "eventmachine", "~> 1.0"
+  gem "tiltout", "~> 1.2"
+  gem "makeup", "~> 0.2"
+  gem "erubis"
 end

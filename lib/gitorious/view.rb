@@ -28,7 +28,11 @@ module Gitorious
     end
 
     def self.layout_file
-      views_dir + "layouts/#{layout}.html.erb"
+      template("layouts/#{layout}")
+    end
+
+    def self.template(name)
+      views_dir + "#{name}.html.erb"
     end
   end
 end

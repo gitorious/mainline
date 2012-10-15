@@ -108,6 +108,17 @@ WARN
       self.class.view.render(type, data, opts)
     end
 
+    def readme(ref, &block)
+      repository = @resolver.resolve
+      repository.readme(ref).callback do |readmes|
+        block.call({ :readmes => readmes,
+                     :repository => repository,
+                     :ref => ref,
+                     :path => "",
+                     :repository_slug => "#{@project.slug}/#{@repository.name}" })
+      end
+    end
+
     def rev_parse_oid_sync(ref)
       @resolver.resolve.rev_parse_oid_sync(ref)
     end
