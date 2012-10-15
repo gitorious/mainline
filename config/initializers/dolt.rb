@@ -58,6 +58,15 @@ module Gitorious
 
   class Dolt
     def initialize(project, repository)
+      @project = project
+      @repository = repository
+      @resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
+      @actions = ::Dolt::RepoActions.new(@resolver)
+      @repo_name = "#{@project.slug}/#{@repository.name}"
+    end
+
+    def self.available?
+      return @available if defined?(@available)
       @available = true
 
       if EventMachine.reactor_running?
@@ -81,15 +90,11 @@ with thin - use passenger or mongrel (or even webrick) in stead.
 WARN
       end
 
-      @project = project
-      @repository = repository
-      @resolver = ::Dolt::GitoriousRepoResolver.new(@repository)
-      @actions = ::Dolt::RepoActions.new(@resolver)
-      @repo_name = "#{@project.slug}/#{@repository.name}"
+      @available
     end
 
     def available?
-      @available
+      self.class.available?
     end
 
     def method_missing(name, *args, &block)
