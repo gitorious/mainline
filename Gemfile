@@ -80,7 +80,7 @@ platform :jruby do
 end
 
 group :source_browser do
-  gem "libdolt", "~> 0.9"
+  gem "libdolt", "~> 0.10"
   gem "eventmachine", "~> 1.0"
   gem "tiltout", "~> 1.2"
   gem "makeup", "~> 0.2"
