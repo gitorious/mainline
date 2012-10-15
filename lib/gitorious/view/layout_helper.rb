@@ -65,7 +65,7 @@ module Gitorious
           is_active = entry.first == options[:active]
           <<-HTML
           <li#{" class=\"active\"" if is_active}>
-            <a#{" href=\"" + entry.last + "\"" if !is_active}>#{entry[1]}</a>
+            <a href="#{entry.last}">#{entry[1]}</a>
           </li>
         HTML
         end
