@@ -33,6 +33,7 @@ class RepositoriesController < ApplicationController
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   always_skip_session :only => [:config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :config]
+  layout "v3/application"
 
   def index
     if term = params[:filter]
@@ -105,7 +106,7 @@ class RepositoriesController < ApplicationController
     @repository.owner = @project.owner
     @repository.user = current_user
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
-    
+
     if @repository.save
       @repository.make_private if repos_private_on_creation?
       flash[:success] = I18n.t("repositories_controller.create_success")

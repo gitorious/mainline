@@ -30,12 +30,13 @@ module ApplicationHelper
   include UsersHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
-  include RoutingHelper  
+  include RoutingHelper
   include SiteWikiPagesHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
-  
+  include Gitorious::View::LayoutHelper
+
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
   STYLESHEETS = {
