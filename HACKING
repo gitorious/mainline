@@ -32,7 +32,7 @@ Libraries/applications:
 
 4. Get your git on!
 
-Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in 
+Consult the mailinglist (http://groups.google.com/group/gitorious) or drop in
 by #gitorious on irc.freenode.net if you have questions.
 
 
@@ -64,3 +64,20 @@ by #gitorious on irc.freenode.net if you have questions.
 
 (copied mostly verbatim from dev.rubyonrails.org)
 
+=== Branching model
+
+Gitorious uses
+[the git-flow branching model](http://nvie.com/posts/a-successful-git-branching-model/)
+for branching. This means that the master branch is stable, and is
+only merged to once a feature has been completed.
+
+New features are created in feature branches (named `feature/$name`)
+and then merged into the `next` branch once finished. Such features
+arrive in `master` as new releases.
+
+When contributing new features into Gitorious as merge requests, these
+should be started the `next` branch, and marked as such when proposed.
+
+The exception to this is hotfixes, which may be started from and
+proposed merged into `master`. Please note that hotfixes should not
+implement new functionality.
