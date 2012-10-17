@@ -51,29 +51,33 @@ module ApplicationHelper
     out = %Q{<div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
                   class="help-box #{style} #{icon} round-5">
                <div class="icon #{icon}"></div>}
-    out << capture(&block)
+    out << block.call
     out << "</div>"
     concat(out)
   end
 
   def pull_box(title, options = {}, &block)
-    css_class = options.delete(:class)
-    out = %Q{<div class="pull-box-container #{css_class}">}
-    out << %Q{<div class="pull-box-header"><h3>#{title}</h3></div>} if title
-    out << %Q{<div class="pull-box-content">}
-    out << capture(&block)
-    out << "</div></div>"
-    concat(out)
+    title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
+    <<-HTML
+      <div class="pull-box-container #{options.delete(:class)}">
+        #{title_html}
+        <div class="pull-box-content">
+          #{block.call if block_given?}
+        </div>
+      </div>
+    HTML
   end
 
   def dialog_box(title, options = {}, &block)
-    css_class = options.delete(:class)
-    out = %Q{<div class="dialog-box #{css_class}">}
-    out << %Q{<h3 class="round-top-5 dialog-box-header">#{title}</h3>} if title
-    out << %Q{<div class="dialog-box-content">}
-    out << capture(&block)
-    out << "</div></div>"
-    concat(out)
+    title_html = title.nil? ? "" : "<h3 class=\"round-top-5 dialog-box-header\">#{title}</h3>"
+    <<-HTML
+      <div class="dialog-box #{options.delete(:class)}">
+        #{title_html}
+        <div class="dialog-box-content">
+          #{block.call if block_given?}
+        </div>
+      </div>
+    HTML
   end
 
   def markdown(text, options = [:smart])

@@ -30,7 +30,7 @@ module CommentsHelper
       block_options[:"data-sha-range"] = comment.sha1
       block_options[:"data-merge-request-version"] = comment.target.version if comment.target.respond_to?(:version)
     end
-    output = content_tag(:div, capture(&block), block_options)
+    output = content_tag(:div, block.call, block_options)
     concat(output)
   end
 end

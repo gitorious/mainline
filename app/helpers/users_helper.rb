@@ -37,8 +37,8 @@ module UsersHelper
       user, domain = h(email).split("@", 2)
       return user if domain.blank?
       domain, ext = domain.split(".", 2)
-      user + " @" + domain[0, domain.length/2] +
-        "&hellip;" + domain[-(domain.length/3)..-1] + ".#{ext}"
+      str = "#{user.to_s} @#{domain[0, domain.length/2].to_s}"
+      "#{str}&hellip;#{domain[-(domain.length/3)..-1]}.#{ext}"
     else
       h(email)
     end
