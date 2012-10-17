@@ -33,7 +33,6 @@ class RepositoriesController < ApplicationController
   before_filter :only_projects_can_add_new_repositories, :only => [:new, :create]
   always_skip_session :only => [:config, :writable_by]
   renders_in_site_specific_context :except => [:writable_by, :config]
-  layout "v3/application"
 
   def index
     if term = params[:filter]
@@ -65,7 +64,11 @@ class RepositoriesController < ApplicationController
     response.headers["Refresh"] = "5" unless @repository.ready
 
     respond_to do |format|
-      format.html
+      format.html do
+        render(:file => Gitorious::View.template("v3/repositories/show").to_s,
+               :locals => { :repository => @repository },
+               :layout => "v3/application")
+      end
       format.xml  { render :xml => @repository }
       format.atom {  }
     end
