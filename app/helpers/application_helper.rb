@@ -110,7 +110,7 @@ module ApplicationHelper
   def build_notice_for(object, options = {})
     out =  %Q{<div class="being_constructed round-10">}
     out <<  %Q{<div class="being_constructed_content round-10">}
-    out << %Q{  <p>#{I18n.t( "application_helper.notice_for").call(object.class.name.humanize.downcase)}</p>}
+    out << %Q{  <p>#{I18n.t( "application_helper.notice_for", :class_name => object.class.name.humanize.downcase)}</p>}
     if options.delete(:include_refresh_link)
       out << %Q{<p class="spin hint"><a href="#{url_for()}">Click to refresh</a></p>}
     else

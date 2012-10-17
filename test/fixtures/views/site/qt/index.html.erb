@@ -37,11 +37,11 @@
     </tr>
   </table>
   <% end -%>
-	  <% if GitoriousConfig['public_mode'] || logged_in? -%>
-	  <p class="hint create_account_hint">
-		<%= t("views.site.creating_account").call(self, new_user_path) %>
-	  </p>
-	  <% end -%>
+          <% if GitoriousConfig['public_mode'] || logged_in? -%>
+          <p class="hint create_account_hint">
+                <%= t("views.site.creating_account", :path => new_user_path) %>
+          </p>
+          <% end -%>
   <% end -%>
 </div>
 

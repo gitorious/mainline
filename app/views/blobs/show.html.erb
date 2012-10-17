@@ -62,7 +62,7 @@
   <% end -%>
 <% elsif textual?(@blob) && too_big_to_render?(@blob.size) -%>
   <p>
-	<%= t("views.blobs.too_big").call(self, raw_blob_path(@commit.id, current_path)) %>
+        <%= t("views.blobs.too_big", :path => raw_blob_path(@commit.id, current_path)) %>
   </p>
 <% elsif image?(@blob) -%>
   <% cache(blob_path(@commit.id, @blob.id)) do -%>
@@ -70,7 +70,7 @@
   <% end -%>
 <% else -%>
   <p>
-	<%= t("views.blobs.message").call(self, raw_blob_path(@commit.id, current_path)) %>
+        <%= t("views.blobs.message", :path => raw_blob_path(@commit.id, current_path)) %>
   </p>
 <% end -%>
 <%= render "unholy_highlight_mess" %>
