@@ -28,6 +28,8 @@ gem "capillary", "~> 1.0"
 gem "nokogiri", "1.5.0"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 
+gem "async_sinatra"
+
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'
 gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'

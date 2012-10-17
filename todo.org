@@ -1,9 +1,10 @@
 * Dolt integration [/]
-* UI upgrade [0/5]
+* UI upgrade [0/6]
 ** TODO Project/repository logos
 ** TODO Script to load current user
 ** TODO Script to enable repo admin button
 ** TODO Script to either show or hide SSH URLs
 ** TODO Add gitorious.yml setting: javascript_load_path: [] (replaces extra_html_head_data)
+** TODO gts-commit-oid script
 * Dropped configuration features [0/1]
 ** TODO extra_html_head_data

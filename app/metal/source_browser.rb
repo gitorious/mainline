@@ -16,18 +16,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+# require "config/environment"
+require "sinatra"
+require "sinatra/async"
 
-class SourceBrowser
-  ROUTE = /([^\/]+)\/([^\/]+)\/(source|blame|history|raw|tree_history|refs|readme)(?:\/([^:]+)(?::(.*))?)?/
-  NOT_FOUND = [404, {}, []]
+class SourceBrowser < Sinatra::Base
+  register Sinatra::Async
 
-  def initialize(project, repository)
-    @project = project
-    @repository = repository
-    @dolt = Gitorious::Dolt.new(project, repository)
-  end
-
-  def self.call(env)
+  aget "/:project/:repository/source/*:*" do
     env["rack.session.options"] = {}
     ActiveRecord::Base.establish_connection
     match, proj, repo, action, ref, path = *env["PATH_INFO"].match(ROUTE)
@@ -42,98 +38,122 @@ class SourceBrowser
     source_browser.dispatch(action, ref, path)
   end
 
-  def handles?(action)
-    @dolt.available? && respond_to?(action)
-  end
+  # ROUTE = /([^\/]+)\/([^\/]+)\/(source|blame|history|raw|tree_history|refs|readme)(?:\/([^:]+)(?::(.*))?)?/
+  # NOT_FOUND = [404, { "Content-Type" => "text/html" }, []]
 
-  def dispatch(action, ref, path)
-    if action != :refs && (ref.nil? || ref.length != 40)
-      ref = @dolt.rev_parse_oid_sync(ref || "HEAD")
-      return redirect("/#{@project.slug}/#{@repository.name}/#{action}/#{ref}:#{path}")
-    end
+  # def initialize(project, repository)
+  #   @project = project
+  #   @repository = repository
+  #   @dolt = Gitorious::Dolt.new(project, repository)
+  # end
 
-    Gitorious::Dolt.in_reactor do |done|
-      send(action, ref, path) { |r| done.call(r) }
-    end
-  end
+  # def self.call(env)
+  #   env["rack.session.options"] = {}
+  #   ActiveRecord::Base.establish_connection
+  #   match, proj, repo, action, ref, path = *env["PATH_INFO"].match(ROUTE)
+  #   return NOT_FOUND if match.nil?
 
-  def source(ref, path, &block)
-    tree_entry(ref, path, &block)
-  end
+  #   project = Project.find_by_slug(proj)
+  #   repository = project && project.repositories.find_by_name(repo)
+  #   source_browser = new(project, repository)
+  #   action = action && action.to_sym
+  #   return NOT_FOUND if project.nil? || repository.nil? || !source_browser.handles?(action)
 
-  def readme(ref, path = nil, &block)
-    @dolt.readme(ref) do |data|
-      readme = data[:readmes].first
-      locals = { :active => :readme }
-      next tree_entry(ref, readme[:name], locals, &block) if readme
-      tpl = Gitorious::View.template("dolt/no_readme")
-      block.call(success(@dolt.render({ :file => tpl }, locals.merge(data))))
-    end
-  end
+  #   source_browser.dispatch(action, ref, path)
+  # end
 
-  def blame(ref, path, &block)
-    @dolt.blame(ref, path) do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      block.call(success(@dolt.render(:blame, data)))
-    end
-  end
+  # def handles?(action)
+  #   @dolt.available? && respond_to?(action)
+  # end
 
-  def history(ref, path, &block)
-    @dolt.history(ref, path, 20) do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      block.call(success(@dolt.render(:commits, data)))
-    end
-  end
+  # def dispatch(action, ref, path)
+  #   if action != :refs && (ref.nil? || ref.length != 40)
+  #     ref = @dolt.rev_parse_oid_sync(ref || "HEAD")
+  #     return redirect("/#{@project.slug}/#{@repository.name}/#{action}/#{ref}:#{path}")
+  #   end
 
-  def raw(ref, path, &block)
-    @dolt.blob(ref, path) do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      body = @dolt.render(:raw, data, :layout => nil)
-      block.call(success(body, "text/plain"))
-    end
-  end
+  #   Gitorious::Dolt.in_reactor do |done|
+  #     send(action, ref, path) { |r| done.call(r) }
+  #   end
+  # end
 
-  def tree_history(ref, path, &block)
-    @dolt.tree_history(ref, path, 1) do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      body = @dolt.render(:tree_history, data, :layout => nil)
-      block.call(success(body, "application/json"))
-    end
-  end
+  # def source(ref, path, &block)
+  #   tree_entry(ref, path, &block)
+  # end
 
-  def refs(ref, path, &block)
-    @dolt.refs do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      body = @dolt.render(:refs, data, :layout => nil)
-      block.call(success(body, "application/json"))
-    end
-  end
+  # def readme(ref, path = nil, &block)
+  #   @dolt.readme(ref) do |data|
+  #     readme = data[:readmes].first
+  #     locals = { :active => :readme }
+  #     next tree_entry(ref, readme[:name], locals, &block) if readme
+  #     tpl = Gitorious::View.template("dolt/no_readme")
+  #     block.call(success(@dolt.render({ :file => tpl }, locals.merge(data))))
+  #   end
+  # end
 
-  def success(body, content_type = "text/html")
-    [200, { "Content-Type" => content_type }, [body]]
-  end
+  # def blame(ref, path, &block)
+  #   @dolt.blame(ref, path) do |err, data|
+  #     next block.call(error(err, ref, path)) if !err.nil?
+  #     block.call(success(@dolt.render(:blame, data)))
+  #   end
+  # end
 
-  def error(err, ref, path)
-    [500, { "Content-Type" => "text/html" }, [err.respond_to?(:message) ? err.message : err]]
-  end
+  # def history(ref, path, &block)
+  #   @dolt.history(ref, path, 20) do |err, data|
+  #     next block.call(error(err, ref, path)) if !err.nil?
+  #     block.call(success(@dolt.render(:commits, data)))
+  #   end
+  # end
 
-  def redirect(url)
-    [301, { "Location" => url }, []]
-  end
+  # def raw(ref, path, &block)
+  #   @dolt.blob(ref, path) do |err, data|
+  #     next block.call(error(err, ref, path)) if !err.nil?
+  #     body = @dolt.render(:raw, data, :layout => nil)
+  #     block.call(success(body, "text/plain"))
+  #   end
+  # end
 
-  private
-  def results(err, template, data, ref, path)
-    if !err.nil?
-      block.call(error(err, ref, path))
-    else
-      block.call(success(@dolt.render(template, data)))
-    end
-  end
+  # def tree_history(ref, path, &block)
+  #   @dolt.tree_history(ref, path, 1) do |err, data|
+  #     next block.call(error(err, ref, path)) if !err.nil?
+  #     body = @dolt.render(:tree_history, data, :layout => nil)
+  #     block.call(success(body, "application/json"))
+  #   end
+  # end
 
-  def tree_entry(ref, path, locals = {}, &block)
-    @dolt.tree_entry(ref, path) do |err, data|
-      next block.call(error(err, ref, path)) if !err.nil?
-      block.call(success(@dolt.render(data[:type], locals.merge(data))))
-    end
-  end
+  # def refs(ref, path, &block)
+  #   @dolt.refs do |err, data|
+  #     next block.call(error(err, ref, path)) if !err.nil?
+  #     body = @dolt.render(:refs, data, :layout => nil)
+  #     block.call(success(body, "application/json"))
+  #   end
+  # end
+
+  # def success(body, content_type = "text/html")
+  #   [200, { "Content-Type" => content_type }, [body]]
+  # end
+
+  # def error(err, ref, path)
+  #   [500, { "Content-Type" => "text/html" }, [err.respond_to?(:message) ? err.message : err]]
+  # end
+
+  # def redirect(url)
+  #   [301, { "Location" => url }, []]
+  # end
+
+  # private
+  # def results(err, template, data, ref, path)
+  #   if !err.nil?
+  #     block.call(error(err, ref, path))
+  #   else
+  #     block.call(success(@dolt.render(template, data)))
+  #   end
+  # end
+
+  # def tree_entry(ref, path, locals = {}, &block)
+  #   @dolt.tree_entry(ref, path) do |err, data|
+  #     next block.call(error(err, ref, path)) if !err.nil?
+  #     block.call(success(@dolt.render(data[:type], locals.merge(data))))
+  #   end
+  # end
 end

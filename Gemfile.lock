@@ -19,6 +19,8 @@ GEM
     activesupport (2.3.14)
     acts-as-taggable-on (2.0.6)
     addressable (2.2.8)
+    async_sinatra (0.3.0)
+      sinatra (>= 1.0)
     builder (3.0.0)
     capillary (1.0.2)
       json (~> 1.5)
@@ -179,6 +181,7 @@ DEPENDENCIES
   activemessaging (= 0.7.1)
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (= 2.0.6)
+  async_sinatra
   builder (= 3.0.0)
   capillary (~> 1.0)
   capybara (= 1.0.1)
