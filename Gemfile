@@ -14,7 +14,7 @@ gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.4.5"
 gem "state_machine", "0.9.4"
-gem "rack", "~> 1.0.1"
+gem "rack", "1.1.0"
 gem "riddle", "1.2.2" # For the ultrasphinx plugin
 gem "builder", "3.0.0"
 gem "mysql", "2.8.1", :platforms => :ruby
