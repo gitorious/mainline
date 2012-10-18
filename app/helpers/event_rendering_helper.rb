@@ -423,7 +423,7 @@ module EventRenderingHelper
   protected
     def action_for_event(i18n_key, opts = {}, &block)
       header = "" + I18n.t("application_helper.#{i18n_key}", opts) + " "
-      header + capture(&block)
+      "#{header}#{block.call}"
     end
 
     def repo_title(repo, project)
