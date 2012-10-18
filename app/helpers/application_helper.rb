@@ -30,12 +30,12 @@ module ApplicationHelper
   include UsersHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
-  include RoutingHelper  
+  include RoutingHelper
   include SiteWikiPagesHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
-  
+
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
   STYLESHEETS = {
@@ -48,21 +48,22 @@ module ApplicationHelper
   end
 
   def help_box(style = :side, icon = :help, options = {}, &block)
-    out = %Q{<div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
-                  class="help-box #{style} #{icon} round-5">
-               <div class="icon #{icon}"></div>}
-    out << block.call
-    out << "</div>"
-    concat(out)
+    concat(<<-HTML)
+      <div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
+           class="help-box #{style} #{icon} round-5">
+        <div class="icon #{icon}"></div>
+        #{capture(&block)}
+      </div>
+    HTML
   end
 
   def pull_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
-    <<-HTML
+    concat(<<-HTML)
       <div class="pull-box-container #{options.delete(:class)}">
         #{title_html}
         <div class="pull-box-content">
-          #{block.call if block_given?}
+          #{capture(&block)}
         </div>
       </div>
     HTML
@@ -70,11 +71,11 @@ module ApplicationHelper
 
   def dialog_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<h3 class=\"round-top-5 dialog-box-header\">#{title}</h3>"
-    <<-HTML
+    concat(<<-HTML)
       <div class="dialog-box #{options.delete(:class)}">
         #{title_html}
         <div class="dialog-box-content">
-          #{block.call if block_given?}
+          #{capture(&block)}
         </div>
       </div>
     HTML
