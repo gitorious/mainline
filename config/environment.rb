@@ -40,8 +40,11 @@ Rails::Initializer.run do |config|
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
 
   # Add additional load paths for your own custom dirs
-  config.load_paths += %W( #{RAILS_ROOT}/lib/gitorious )
-  config.load_once_paths  << File.expand_path("#{RAILS_ROOT}/lib/gitorious")
+  config.autoload_paths += %W( #{RAILS_ROOT}/lib/gitorious )
+
+  # Avoid class cache errors like "A copy of Gitorious::XYZ has been removed
+  # from the module tree but is still active!"
+  config.autoload_once_paths  << File.expand_path("#{RAILS_ROOT}/lib/gitorious")
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
