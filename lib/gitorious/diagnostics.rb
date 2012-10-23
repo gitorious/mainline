@@ -114,7 +114,7 @@ module Gitorious
     end
     
     def web_interface_reachable?
-      `curl --silent localhost:80 | grep Gitorious | wc -l`.to_i > 0 
+      `curl --silent #{GitoriousConfig["gitorious_host"]}:#{GitoriousConfig["gitorious_client_port"]} | grep Gitorious | wc -l`.to_i > 0
     end
 
     def git_user_ok?
