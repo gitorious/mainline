@@ -73,8 +73,8 @@ class PushEventLogger
   end
 
   def calculate_commit_count
-    lines = @repository.git.git.log({:pretty => "oneline"}, [@spec.from_sha.sha, @spec.to_sha.sha].join(".."))
-    lines.split("\n").size
+    count = @repository.git.git.rev_list({:count => true}, [@spec.from_sha.sha, @spec.to_sha.sha].join(".."))
+    count.strip
   end
 
   private
