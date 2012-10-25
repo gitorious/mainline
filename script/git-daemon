@@ -105,13 +105,13 @@ module Git
                        "Unable to access repository #{base_path}")
         end
 
-	unless repository.project.public? 
-	  log(Process.pid, "Repository is private: #{path}") 
- 	  write_error_message(session, "Not allowed to access repository: #{base_path}") 
-	  $children_active -= 1 
-	  session.close 
-	  return 
-	end  
+        unless repository.project.public?
+          log(Process.pid, "Repository is private: #{path}")
+          write_error_message(session, "Not allowed to access repository: #{base_path}")
+          $children_active -= 1
+          session.close
+          return
+        end
 
         real_path = File.expand_path(repository.full_repository_path)
         log(Process.pid, "#{ip} wants #{path.inspect} => #{real_path.inspect}")
@@ -134,7 +134,7 @@ module Git
           if ip_family == "AF_INET6"
             repository.cloned_from(ip)
           else
-            geoip = GeoIP.new(File.join(RAILS_ROOT, "data", "GeoIP.dat"))
+            geoip = GeoIP.new(Rails.root + "data/GeoIP.dat")
             localization = geoip.country(ip)
             geoip.close
             repository.cloned_from(ip, localization[3], localization[5], 'git')
@@ -282,8 +282,8 @@ end
 options = {
   :port => 9418,
   :host => "0.0.0.0",
-  :logfile => File.join(RAILS_ROOT, "log", "git-daemon.log"),
-  :pidfile => File.join(RAILS_ROOT, "log", "git-daemon.pid"),
+  :logfile => Rails.root + "log/git-daemon.log",
+  :pidfile => Rails.root + "log/git-daemon.pid",
   :daemonize => false,
   :reuseaddr => true,
   :disable_geoip => false,

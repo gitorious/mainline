@@ -1,5 +1,5 @@
 unless defined? GitoriousConfig
-  GitoriousConfig = c = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))[RAILS_ENV]
+  GitoriousConfig = c = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))[Rails.env]
 
   # make the default be publicly open
   GitoriousConfig["public_mode"] = true if GitoriousConfig["public_mode"].nil?
@@ -30,7 +30,7 @@ unless defined? GitoriousConfig
   require "subdomain_validation"
   GitoriousConfig.extend(SubdomainValidation)
 
-  default_messaging_adapter = RAILS_ENV == "test" ? "test" : "stomp"
+  default_messaging_adapter = Rails.env.test? ? "test" : "stomp"
   GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
   if !GitoriousConfig.valid_subdomain?

@@ -17,21 +17,38 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-RAILS_ENV = ENV['RAILS_ENV'] || "production"
-RAILS_ROOT = File.expand_path(File.join(File.readlink(File.readlink(File.dirname(File.expand_path(__FILE__)))), "..", ".."))
+require "pathname"
 
-$: << File.join(RAILS_ROOT, "lib")
-require 'rubygems'
-require 'bundler'
-ENV['BUNDLE_GEMFILE'] = File.join(RAILS_ROOT, "Gemfile")
-Bundler.require :messaging, RAILS_ENV
+class RailsEnv
+  def initialize(env); @env = env; end
+  def production?; @env == "production"; end
+  def development?; @env == "development"; end
+  def test?; @env == "test"; end
+  def to_s; @env; end
+end
 
-require 'yaml'
-require 'gitorious/messaging'
+module Rails
+  def self.root
+    @root ||= Pathname(__FILE__).realpath + "../../"
+  end
+
+  def self.env
+    @env ||= RailsEnv.new(ENV["RAILS_ENV"] || "production")
+  end
+end
+
+$: << Rails.root + "lib")
+require "rubygems"
+require "bundler"
+ENV["BUNDLE_GEMFILE"] = Rails.root + "Gemfile"
+Bundler.require :messaging, Rails.env
+
+require "yaml"
+require "gitorious/messaging"
 
 if !defined?(GitoriousConfig)
-  conf = YAML::load_file(File.join(RAILS_ROOT, "config", "gitorious.yml"))
-  GitoriousConfig = conf[RAILS_ENV]
+  conf = YAML::load_file(Rails.root + "config/gitorious.yml")
+  GitoriousConfig = conf[Rails.env]
   adapter = GitoriousConfig["messaging_adapter"] || "stomp"
   Bundler.require adapter.to_sym
   Gitorious::Messaging.load_adapter(adapter)

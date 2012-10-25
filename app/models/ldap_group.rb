@@ -36,7 +36,7 @@ class LdapGroup < ActiveRecord::Base
   serialize :member_dns
 
   validate :validate_ldap_dns
-  
+
   def validate_ldap_dns
     configurator = self.class.ldap_configurator
     Gitorious::Authorization::LDAP::Connection.new({
@@ -78,11 +78,11 @@ class LdapGroup < ActiveRecord::Base
   def ldap_group_names=(newline_separated_list)
     self.member_dns = newline_separated_list.split(/[\r\n]+/)
   end
-  
+
   def members
     []
   end
-  
+
   def to_param
     name
   end
@@ -90,7 +90,7 @@ class LdapGroup < ActiveRecord::Base
   def breadcrumb_parent
     nil
   end
-  
+
   def title
     name
   end
@@ -107,7 +107,7 @@ class LdapGroup < ActiveRecord::Base
 
   def self.ldap_configurator
     auth_configuration_path = File.join(Rails.root, "config", "authentication.yml")
-    configuration = YAML::load_file(auth_configuration_path)[RAILS_ENV]["methods"].detect do |m|
+    configuration = YAML::load_file(auth_configuration_path)[Rails.env]["methods"].detect do |m|
       m["adapter"] == "Gitorious::Authentication::LDAPAuthentication"
     end
     raise Gitorious::Authorization::LDAP::LdapError, "No LDAP configuration found for current environment (#{Rails.env}) in #{auth_configuration_path}" unless configuration
@@ -164,7 +164,7 @@ class LdapGroup < ActiveRecord::Base
         :attributes => [member_attribute_name])
       if !entries.blank?
         return entries.first[member_attribute_name]
-      end    
+      end
     end
   end
 
@@ -180,7 +180,7 @@ class LdapGroup < ActiveRecord::Base
     def total_pages
       1
     end
-    
+
     def each(&blk)
       @members.each {|m| yield m}
     end
@@ -189,7 +189,7 @@ class LdapGroup < ActiveRecord::Base
       @members.count
     end
   end
-  
+
   def memberships
     memberships = members.map do |member|
       Membership.new(:user_id => member.id, :created_at => Time.now, :role => Role.member)
@@ -198,7 +198,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   # Load all Users who are members of this group
-  # Nested groups are not supported, only entries with a [login_attribute] 
+  # Nested groups are not supported, only entries with a [login_attribute]
   # value matching a User with the given username will be returned.
   def members
     configurator = self.class.ldap_configurator
@@ -221,7 +221,7 @@ class LdapGroup < ActiveRecord::Base
   end
 
   def self.groups_for_user(user)
-    ldap_group_names = ldap_group_names_for_user(user)    
+    ldap_group_names = ldap_group_names_for_user(user)
     return [] if ldap_group_names.blank?
     result = []
     all.each do |group|
@@ -232,7 +232,7 @@ class LdapGroup < ActiveRecord::Base
         end
       end
     end
-    
+
     result.compact
   end
 end

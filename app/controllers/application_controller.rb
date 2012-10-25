@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
   rescue_from Gitorious::Authorization::UnauthorizedError, :with => :render_unauthorized
 
   def rescue_action(exception)
-    return super if RAILS_ENV != "production"
+    return super if !Rails.env.production?
 
     case exception
       # Can't catch RoutingError with rescue_from it seems,
@@ -173,7 +173,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_not_found
-    render :template => "#{RAILS_ROOT}/public/404.html", :status => 404, :layout => "application"
+    render :template => Rails.root + "public/404.html", :status => 404, :layout => "application"
   end
 
   def render_git_timeout

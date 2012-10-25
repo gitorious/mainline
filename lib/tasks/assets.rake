@@ -1,5 +1,5 @@
 def rm(path)
-  Dir.glob(File.join(RAILS_ROOT, path)).each do |file|
+  Dir.glob(Rails.root + path).each do |file|
     puts file if ENV["VERBOSE"]
     `rm -f #{file}`
   end

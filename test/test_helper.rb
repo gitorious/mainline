@@ -1,8 +1,8 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'test_help'
-require 'ssl_requirement_macros'
-require 'messaging_test_helper'
+require "test_help"
+require "ssl_requirement_macros"
+require "messaging_test_helper"
 
 require "shoulda"
 require "mocha"
@@ -57,7 +57,7 @@ class ActiveSupport::TestCase
   end
 
   def grit_test_repo(name)
-    File.join(RAILS_ROOT, "vendor/grit/test", name )
+    "#{Rails.root}/vendor/grit/test/#{name}"
   end
 
   def assert_incremented_by(obj, meth, value)
@@ -149,8 +149,8 @@ class ActionController::TestCase
   def setup_ssl_from_config
     return unless GitoriousConfig["use_ssl"]
 
-    @request.env['HTTPS'] = 'on'
-    @request.env['SERVER_PORT'] = 443
+    @request.env["HTTPS"] = "on"
+    @request.env["SERVER_PORT"] = 443
   end
 
   def self.enforce_ssl

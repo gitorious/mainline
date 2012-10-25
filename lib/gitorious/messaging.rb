@@ -48,7 +48,7 @@ module Gitorious
       # around this assumption in its implementation.
       #
       # Implementing modules should call +#consume(message, options = {})+ to
-      # consume incoming messages. 
+      # consume incoming messages.
 
       def self.included(klass)
         if defined? @adapter
@@ -117,11 +117,11 @@ module Gitorious
       return @@logger if defined? @@logger
       return @@logger = NoopLogger.new if !defined?(ActiveSupport)
 
-      filename = "message_processing#{RAILS_ENV == 'test' ? '_test' : ''}"
-      io = RAILS_ENV == "development" ? STDOUT : File.join(RAILS_ROOT, "log", "#{filename}.log")
+      filename = "message_processing#{Rails.env.test? ? '_test' : ''}"
+      io = Rails.env.development? ? STDOUT : Rails.root + "log/#{filename}.log"
       @@logger = ActiveSupport::BufferedLogger.new(io)
       @@logger.level = ActiveSupport::BufferedLogger::INFO
-      @@logger.auto_flushing = true if RAILS_ENV == "production"
+      @@logger.auto_flushing = true if Rails.env.production?
       @@logger
     end
 
