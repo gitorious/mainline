@@ -23,7 +23,6 @@
 
 class ApplicationController < ActionController::Base
   include AuthenticatedSystem
-  include ExceptionNotifiable
   include RoutingHelper
   include Gitorious::Authorization
   protect_from_forgery

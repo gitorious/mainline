@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem "rails", "2.3.14"
+gem "rails", "3.0.6"
 gem "chronic", "0.3.0"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
@@ -15,9 +15,7 @@ gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.4.5"
 gem "state_machine", "0.9.4"
 gem "riddle", "1.2.2" # For the ultrasphinx plugin
-gem "builder", "3.0.0"
 gem "mysql", "2.8.1", :platforms => :ruby
-gem "validates_url_format_of", "0.1.1"
 gem "acts-as-taggable-on", "2.0.6"
 gem "will_paginate", "2.3.15"
 gem "just_paginate", "0.0.6"
@@ -25,13 +23,15 @@ gem "hodel_3000_compliant_logger", "0.1.0"
 gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "1.5.0"
+gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 
-# TODO: replace the lines below while upgrading to Rails 3
-# gem "exception_notification", :require => 'exception_notifier'
-gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'
-# gem "bartt-ssl_requirement" # TODO: use this with Rails 3
-gem "revo-ssl_requirement", "1.1.0"
+# Rails 2
+# gem "exception_notification", "~> 1.0.20090728", :require => 'exception_notifier'
+# gem "revo-ssl_requirement", "1.1.0"
+
+gem "exception_notification", :require => 'exception_notifier'
+gem "bartt-ssl_requirement", '~>1.4.0', :require => 'ssl_requirement'
 
 # Ruby 1.8 gems
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
@@ -63,7 +63,6 @@ end
 
 group :resque do
   gem "resque", "1.9.8"
-  gem "SystemTimer", "1.2.3"
 end
 
 group :stomp do

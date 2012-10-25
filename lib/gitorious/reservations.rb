@@ -32,7 +32,7 @@ module Gitorious
       def controller_names_plural
         # don't cache while Rails didn't finish initialization
         return @controller_names_plural if @controller_names_plural.present? && Rails.initialized?
-        @controller_names_plural = ActionController::Routing.possible_controllers.map{|s| s.split("/").first }
+        @controller_names_plural = [] #ActionController::Routing.possible_controllers.map{|s| s.split("/").first }
       end
 
       def controller_names

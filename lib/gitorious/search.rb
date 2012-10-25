@@ -30,16 +30,16 @@ module Gitorious
     # When including Gitorious::Search into a class, we provide +make_searchable+ to the class,
     # which relies on this being implemented in the module providing search
     def self.included(klass)
-      
+
       # Keep a reference to the unobtrusive is_indexed method from Ultrasphinx
       # The Ultrasphinx rake tasks greps files for calls to is_indexed
       # so we want to keep this
       klass.instance_eval do
         alias :is_indexed_ultrasphinx :is_indexed
       end
-      
+
       klass.extend(@search_adapter)
     end
-    
+
   end
 end

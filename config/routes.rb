@@ -1,208 +1,484 @@
-# encoding: utf-8
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008, 2009 Johan Sørensen <johan@johansorensen.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
+Gitorious::Application.routes.draw do
+  root :to => 'site#index'
+  match 'users/activate/:activation_code' => 'users#activate'
+  match 'users/pending_activation' => 'users#pending_activation'
+  match 'users/reset_password/:token' => 'users#reset_password', :as => :reset_password
 
+  resources :users do
+    collection do
+      get :forgot_password
+      post :forgot_password_create
+      get :openid_build
+      post :openid_create
+    end
 
-# == ROUTING NOTE =========================================================
-#
-# Note that all routes are getting pre and post processed by the filter class
-# in RAILS_ROOT/lib/route_filters/repository_owner_namespacing.rb and that
-# you should be EXTRA CAREFUL when adding a route that doesn't map directly
-# by name to an existing controller or action. In such case the same string
-# should be added to Gitorious::Reservations::unaccounted_root_names
-#
-# =========================================================================
+    member do
+      get :delete_current
+      delete :avatar
+      get :watchlist
+      get :password
+      get :feed
+      put :update_password
+    end
 
-ActionController::Routing::Routes.draw do |map|
-  VALID_REF = /[a-zA-Z0-9~\{\}\+\^\.\-_\/]+/
+    resources :keys
 
-  # Builds up the common repository sub-routes that's shared between projects
-  # and user+team namespaced repositories
-  def build_repository_routes(repository, options = {})
-    repository.with_options(options) do |repo|
-      repo.resources :comments
-      repo.commit_comment "comments/commit/:sha", :controller => "comments",
-        :action => "commit", :conditions => { :method => :get }
-      repo.comments_preview 'comments/preview', :controller => 'comments',
-        :action => 'preview'#, :conditions => {:method => :put}
-      repo.resources :merge_requests, :member => {
-        :terms_accepted => :get,
-        :version => :get,
-        :commit_status => :get
-      }, :collection => {
-        :create => :post,
-        :commit_list => :post,
-        :target_branches => :post,
-      } do |merge_request|
-        merge_request.resources :comments, :collection => {:preview => :post}
-        merge_request.resources :merge_request_versions do |v|
-          v.resources :comments, :collection => {:preview => :post}
+    resources :aliases do
+      member do
+        get :confirm
+      end
+    end
+
+    resource :license
+
+    resources :repositories do
+      member do
+        post :create_clone
+        get :clone
+        get :search_clones
+        get :config
+        get :committers
+        get :confirm_delete
+        get :writable_by
+      end
+
+      resources :comments
+
+      match 'comments/commit/:sha' => 'comments#commit', :as => :commit_comment, :via => :get
+      match 'comments/preview' => 'comments#preview', :as => :comments_preview
+
+      resources :merge_requests do
+        collection do
+          post :create
+          post :commit_list
+          post :target_branches
+        end
+
+        member do
+          get :commit_status
+          get :version
+          get :terms_accepted
+        end
+
+        resources :comments do
+          collection do
+            post :preview
+          end
+        end
+
+        resources :merge_request_versions do
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
         end
       end
 
-      repo.resources :repository_memberships, :as => :memberships
-      repo.resources :committerships
+      resources :repository_memberships
+      resources :committerships
 
-      repo.formatted_commits_feed("commits/*branch/feed.:format",
-                                  :controller => "commits", :action => "feed", :conditions => { :feed => :get })
-      repo.commits         "commits", :controller => "commits", :action => "index"
-      repo.commits_in_ref  "commits/*branch", :controller => "commits", :action => "index"
-      repo.graph           "graph", :controller => "graphs", :action => "index"
-      repo.graph_in_ref    "graph/*branch", :controller => "graphs", :action => "index"
-      repo.commit_comments "commit/:id/comments", :controller => "commit_comments", :action => "index", :id => /[^\/]+/
-      repo.commit_diffs    "commit/:id/diffs", :controller => "commit_diffs", :action => "index", :id => /[^\/]+/
-      repo.commit_compare  "commit/:from_id/diffs/:id", :controller => "commit_diffs", :action => "compare"
-      repo.commit          "commit/:id", :controller => "commits", :action => "show", :id => /.*/
-      repo.trees           "trees/", :controller => "trees", :action => "index"
-      repo.tree            "trees/*branch_and_path", :controller => "trees", :action => "show"
-      repo.formatted_tree  "trees/*branch_and_path.:format", :controller => "trees", :action => "show"
-      repo.archive_tar     "archive-tarball/*branch", :controller => "trees", :action => "archive", :archive_format => "tar.gz"
-      #repo.archive_zip    "archive-zip/*branch", :controller => "trees", :action => "archive", :archive_format => "zip"
-      repo.raw_blob        "blobs/raw/*branch_and_path", :controller => "blobs", :action => "raw"
-      repo.blob_history    "blobs/history/*branch_and_path", :controller => "blobs", :action => "history"
-      repo.blame           "blobs/blame/*branch_and_path", :controller => "blobs", :action => "blame"
-      repo.blob            "blobs/*branch_and_path", :controller => "blobs", :action => "show"
+      match 'commits/*branch/feed.:format' => 'commits#feed', :as => :formatted_commits_feed#, :via =>
+      match 'commits' => 'commits#index', :as => :commits
+      match 'commits/*branch' => 'commits#index', :as => :commits_in_ref
+      match 'graph' => 'graphs#index', :as => :graph
+      match 'graph/*branch' => 'graphs#index', :as => :graph_in_ref
+      match 'commit/:id/comments' => 'commit_comments#index', :as => :commit_comments, :id => /[^\/]+/
+      match 'commit/:id/diffs' => 'commit_diffs#index', :as => :commit_diffs, :id => /[^\/]+/
+      match 'commit/:from_id/diffs/:id' => 'commit_diffs#compare', :as => :commit_compare
+      match 'commit/:id' => 'commits#show', :as => :commit, :id => /.*/
+      match 'trees/' => 'trees#index', :as => :trees
+      match 'trees/*branch_and_path' => 'trees#show', :as => :tree
+      match 'trees/*branch_and_path.:format' => 'trees#show', :as => :formatted_tree
+      match 'archive-tarball/*branch' => 'trees#archive', :as => :archive_tar, :archive_format => 'tar.gz'
+      match 'blobs/raw/*branch_and_path' => 'blobs#raw', :as => :raw_blob
+      match 'blobs/history/*branch_and_path' => 'blobs#history', :as => :blob_history
+      match 'blobs/blame/*branch_and_path' => 'blobs#blame', :as => :blame
+      match 'blobs/*branch_and_path' => 'blobs#show', :as => :blob
     end
-  end
 
-  repository_options = {
-    :member => {
-      :clone => :get, :create_clone => :post,
-      :writable_by => :get,
-      :config => :get,
-      :confirm_delete => :get,
-      :committers => :get,
-      :search_clones => :get
-    }
-  }
-
-  map.root :controller => "site", :action => "index"
-
-  map.connect "users/activate/:activation_code", :controller => "users", :action => "activate"
-  map.connect "users/pending_activation", :controller => "users", :action => "pending_activation"
-  map.reset_password "users/reset_password/:token", :controller => "users", :action => "reset_password"
-  map.resources(:users, :requirements => {:id => /#{User::USERNAME_FORMAT}/i }, :collection => {
-    :forgot_password => :get,
-    :forgot_password_create => :post,
-    :openid_build => :get,
-    :openid_create => :post
-  }, :member => {
-    :feed => :get,
-    :password => :get,
-    :update_password => :put,
-    :avatar => :delete,
-    :delete_current => :get,
-    :watchlist => :get
-  }) do |user|
-    user.with_options({:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}}) do |user_req|
-      user_req.resources :keys
-      user_req.resources :aliases, :member => { :confirm => :get }
-      user_req.resource :license
-      user_req.resources(:repositories, repository_options){|r| build_repository_routes(r) }
-      user_req.resources :projects do |p|
-        p.resources(:repositories, repository_options.merge({
-          :requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}
-        })) do |repo|
-          build_repository_routes(repo, {:requirements => {:user_id => /#{User::USERNAME_FORMAT}/i}})
+    resources :projects do
+      resources :repositories do
+        member do
+          post :create_clone
+          get :clone
+          get :search_clones
+          get :config
+          get :committers
+          get :confirm_delete
+          get :writable_by
         end
+
+        resources :comments
+
+        match 'comments/commit/:sha' => 'comments#commit', :as => :commit_comment, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }, :via => :get
+        match 'comments/preview' => 'comments#preview', :as => :comments_preview, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+
+        resources :merge_requests do
+          collection do
+            post :create
+            post :commit_list
+            post :target_branches
+          end
+
+          member do
+            get :commit_status
+            get :version
+            get :terms_accepted
+          end
+
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
+
+          resources :merge_request_versions do
+            resources :comments do
+              collection do
+                post :preview
+              end
+            end
+          end
+        end
+
+        resources :repository_memberships
+        resources :committerships
+
+        match 'commits/*branch/feed.:format' => 'commits#feed', :as => :formatted_commits_feed, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }#, :via =>
+        match 'commits' => 'commits#index', :as => :commits, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'commits/*branch' => 'commits#index', :as => :commits_in_ref, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'graph' => 'graphs#index', :as => :graph, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'graph/*branch' => 'graphs#index', :as => :graph_in_ref, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'commit/:id/comments' => 'commit_comments#index', :as => :commit_comments, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }, :id => /[^\/]+/
+        match 'commit/:id/diffs' => 'commit_diffs#index', :as => :commit_diffs, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }, :id => /[^\/]+/
+        match 'commit/:from_id/diffs/:id' => 'commit_diffs#compare', :as => :commit_compare, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'commit/:id' => 'commits#show', :as => :commit, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }, :id => /.*/
+        match 'trees/' => 'trees#index', :as => :trees, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'trees/*branch_and_path' => 'trees#show', :as => :tree, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'trees/*branch_and_path.:format' => 'trees#show', :as => :formatted_tree, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'archive-tarball/*branch' => 'trees#archive', :as => :archive_tar, :archive_format => 'tar.gz', :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'blobs/raw/*branch_and_path' => 'blobs#raw', :as => :raw_blob, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'blobs/history/*branch_and_path' => 'blobs#history', :as => :blob_history, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'blobs/blame/*branch_and_path' => 'blobs#blame', :as => :blame, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
+        match 'blobs/*branch_and_path' => 'blobs#show', :as => :blob, :constraints => { :user_id => /(?i-mx:[a-z0-9\-_\.]+)/i }
       end
     end
   end
 
-  map.resources :events, :member => {:commits => :get}
-  map.resources :user_auto_completions, :only => [:index]
-  map.resources :group_auto_completions, :only => [:index]
-
-  map.open_id_complete '/sessions', :controller => "sessions", :action=> "create",:requirements => { :method => :get }
-
-  map.resource  :sessions
-
-  map.resources :groups, :as => "teams", :member => {:avatar => :delete}  do |grp|
-    grp.resources :memberships
-    grp.resources(:repositories, repository_options){|r| build_repository_routes(r) }
-    grp.resources :projects do |p|
-      p.resources(:repositories, repository_options){|r| build_repository_routes(r) }
+  resources :events do
+    member do
+      get :commits
     end
   end
 
-  map.site_wiki_git_access_connect 'wiki/:site_id/config', :controller => 'site_wiki_pages', :action => 'config'
-  map.site_wiki_git_writable_by 'wiki/:site_id/writable_by', :controller => 'site_wiki_pages', :action => 'writable_by'
+  resources :user_auto_completions, :only => [:index]
+  resources :group_auto_completions, :only => [:index]
 
-  map.resources :site_wiki_pages, :as => "wiki", :member => { :history => :get,:preview => :put},
-  :collection => { :git_access => :get }
-  
-  map.resources :projects, :member => {
-    :confirm_delete => :get,
-    :preview => :put,
-    :edit_slug => :any,
-    :clones => :get
-  } do |projects|
-    projects.resources :project_memberships, :as => :memberships
-    projects.resources :pages, :member => { :history => :get,:preview => :put}, :collection => { :git_access => :get }
-    projects.resources(:repositories, repository_options){|r| build_repository_routes(r) }
+  #match '/sessions' => 'sessions#create', :as => :open_id_complete, :constraints => { :method => :get }
+  match '/sessions' => 'sessions#create', :as => :open_id_complete, :via => :get
+
+  resource :sessions
+
+  resources :groups do
+    member do
+      delete :avatar
+    end
+
+    resources :memberships
+    resources :repositories do
+
+      member do
+        post :create_clone
+        get :clone
+        get :search_clones
+        get :config
+        get :committers
+        get :confirm_delete
+        get :writable_by
+      end
+
+      resources :comments
+
+      match 'comments/commit/:sha' => 'comments#commit', :as => :commit_comment, :via => :get
+      match 'comments/preview' => 'comments#preview', :as => :comments_preview
+
+      resources :merge_requests do
+        collection do
+          post :create
+          post :commit_list
+          post :target_branches
+        end
+
+        member do
+          get :commit_status
+          get :version
+          get :terms_accepted
+        end
+
+        resources :comments do
+          collection do
+            post :preview
+          end
+        end
+
+        resources :merge_request_versions do
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
+        end
+      end
+
+      resources :repository_memberships
+      resources :committerships
+      match 'commits/*branch/feed.:format' => 'commits#feed', :as => :formatted_commits_feed#, :via =>
+      match 'commits' => 'commits#index', :as => :commits
+      match 'commits/*branch' => 'commits#index', :as => :commits_in_ref
+      match 'graph' => 'graphs#index', :as => :graph
+      match 'graph/*branch' => 'graphs#index', :as => :graph_in_ref
+      match 'commit/:id/comments' => 'commit_comments#index', :as => :commit_comments, :id => /[^\/]+/
+      match 'commit/:id/diffs' => 'commit_diffs#index', :as => :commit_diffs, :id => /[^\/]+/
+      match 'commit/:from_id/diffs/:id' => 'commit_diffs#compare', :as => :commit_compare
+      match 'commit/:id' => 'commits#show', :as => :commit, :id => /.*/
+      match 'trees/' => 'trees#index', :as => :trees
+      match 'trees/*branch_and_path' => 'trees#show', :as => :tree
+      match 'trees/*branch_and_path.:format' => 'trees#show', :as => :formatted_tree
+      match 'archive-tarball/*branch' => 'trees#archive', :as => :archive_tar, :archive_format => 'tar.gz'
+      match 'blobs/raw/*branch_and_path' => 'blobs#raw', :as => :raw_blob
+      match 'blobs/history/*branch_and_path' => 'blobs#history', :as => :blob_history
+      match 'blobs/blame/*branch_and_path' => 'blobs#blame', :as => :blame
+      match 'blobs/*branch_and_path' => 'blobs#show', :as => :blob
+    end
+
+    resources :projects do
+      resources :repositories do
+        member do
+          post :create_clone
+          get :clone
+          get :search_clones
+          get :config
+          get :committers
+          get :confirm_delete
+          get :writable_by
+        end
+
+        resources :comments
+
+        match 'comments/commit/:sha' => 'comments#commit', :as => :commit_comment, :via => :get
+        match 'comments/preview' => 'comments#preview', :as => :comments_preview
+
+        resources :merge_requests do
+          collection do
+            post :create
+            post :commit_list
+            post :target_branches
+          end
+
+          member do
+            get :commit_status
+            get :version
+            get :terms_accepted
+          end
+
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
+
+          resources :merge_request_versions do
+            resources :comments do
+              collection do
+                post :preview
+              end
+            end
+          end
+        end
+
+        resources :repository_memberships
+        resources :committerships
+
+        match 'commits/*branch/feed.:format' => 'commits#feed', :as => :formatted_commits_feed#, :via =>
+        match 'commits' => 'commits#index', :as => :commits
+        match 'commits/*branch' => 'commits#index', :as => :commits_in_ref
+        match 'graph' => 'graphs#index', :as => :graph
+        match 'graph/*branch' => 'graphs#index', :as => :graph_in_ref
+        match 'commit/:id/comments' => 'commit_comments#index', :as => :commit_comments, :id => /[^\/]+/
+        match 'commit/:id/diffs' => 'commit_diffs#index', :as => :commit_diffs, :id => /[^\/]+/
+        match 'commit/:from_id/diffs/:id' => 'commit_diffs#compare', :as => :commit_compare
+        match 'commit/:id' => 'commits#show', :as => :commit, :id => /.*/
+        match 'trees/' => 'trees#index', :as => :trees
+        match 'trees/*branch_and_path' => 'trees#show', :as => :tree
+        match 'trees/*branch_and_path.:format' => 'trees#show', :as => :formatted_tree
+        match 'archive-tarball/*branch' => 'trees#archive', :as => :archive_tar, :archive_format => 'tar.gz'
+        match 'blobs/raw/*branch_and_path' => 'blobs#raw', :as => :raw_blob
+        match 'blobs/history/*branch_and_path' => 'blobs#history', :as => :blob_history
+        match 'blobs/blame/*branch_and_path' => 'blobs#blame', :as => :blame
+        match 'blobs/*branch_and_path' => 'blobs#show', :as => :blob
+      end
+    end
   end
 
-  map.resource :search
+  match 'wiki/:site_id/config' => 'site_wiki_pages#config', :as => :site_wiki_git_access_connect
+  match 'wiki/:site_id/writable_by' => 'site_wiki_pages#writable_by', :as => :site_wiki_git_writable_by
 
-  map.resources :messages,
-    :member => {:reply => :post, :read => :put},
-    :collection => {:auto_complete_for_message_recipients => :get, :sent => :get, :bulk_update => :put, :all => :get}
+  resources :site_wiki_pages do
+    collection do
+      get :git_access
+    end
 
-  map.with_options :controller => 'sessions' do |session|
-    session.login    '/login',  :action => 'new'
-    session.logout   '/logout', :action => 'destroy'
+    member do
+      put :preview
+      get :history
+    end
   end
 
-  map.dashboard "dashboard", :controller => "site", :action => "dashboard"
-  map.about "about", :controller => "site", :action => "about"
-  map.about_page "about/:action", :controller => "site"
-  map.contact "contact", :controller => "site", :action => "contact"
+  resources :projects do
+    member do
+      put :preview
+      #any :edit_slug
+      get :clones
+      get :confirm_delete
+    end
 
-  map.namespace :api do |api|
-    api.connect ':project_id/:repository_id/log/graph', :controller => 'graphs', :action => 'show', :branch => 'master'
-    api.connect ':project_id/:repository_id/log/graph/*branch', :controller => 'graphs', :action => 'show'
+    resources :project_memberships
+
+    resources :pages do
+      collection do
+        get :git_access
+      end
+
+      member do
+        put :preview
+        get :history
+      end
+    end
+
+    resources :repositories do
+      member do
+        post :create_clone
+        get :clone
+        get :search_clones
+        get :config
+        get :committers
+        get :confirm_delete
+        get :writable_by
+      end
+
+      resources :comments
+
+      match 'comments/commit/:sha' => 'comments#commit', :as => :commit_comment, :via => :get
+      match 'comments/preview' => 'comments#preview', :as => :comments_preview
+
+      resources :merge_requests do
+        collection do
+          post :create
+          post :commit_list
+          post :target_branches
+        end
+
+        member do
+          get :commit_status
+          get :version
+          get :terms_accepted
+        end
+
+        resources :comments do
+          collection do
+            post :preview
+          end
+        end
+
+        resources :merge_request_versions do
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
+        end
+      end
+
+      resources :repository_memberships
+      resources :committerships
+      match 'commits/*branch/feed.:format' => 'commits#feed', :as => :formatted_commits_feed#, :via =>
+      match 'commits' => 'commits#index', :as => :commits
+      match 'commits/*branch' => 'commits#index', :as => :commits_in_ref
+      match 'graph' => 'graphs#index', :as => :graph
+      match 'graph/*branch' => 'graphs#index', :as => :graph_in_ref
+      match 'commit/:id/comments' => 'commit_comments#index', :as => :commit_comments, :id => /[^\/]+/
+      match 'commit/:id/diffs' => 'commit_diffs#index', :as => :commit_diffs, :id => /[^\/]+/
+      match 'commit/:from_id/diffs/:id' => 'commit_diffs#compare', :as => :commit_compare
+      match 'commit/:id' => 'commits#show', :as => :commit, :id => /.*/
+      match 'trees/' => 'trees#index', :as => :trees
+      match 'trees/*branch_and_path' => 'trees#show', :as => :tree
+      match 'trees/*branch_and_path.:format' => 'trees#show', :as => :formatted_tree
+      match 'archive-tarball/*branch' => 'trees#archive', :as => :archive_tar, :archive_format => 'tar.gz'
+      match 'blobs/raw/*branch_and_path' => 'blobs#raw', :as => :raw_blob
+      match 'blobs/history/*branch_and_path' => 'blobs#history', :as => :blob_history
+      match 'blobs/blame/*branch_and_path' => 'blobs#blame', :as => :blame
+      match 'blobs/*branch_and_path' => 'blobs#show', :as => :blob
+    end
   end
 
-  map.namespace :admin do |admin|
-    admin.resources :users, :member => { :suspend => :put, :unsuspend => :put, :reset_password => :put, :flip_admin_status => :put }
-    admin.resource :oauth_settings, :path_prefix => "/admin/projects/:project_id"
-    admin.resources :repositories, :member => {:recreate => :put}
-    admin.connect "diagnostics", :controller => "diagnostics", :action => "index"
-    admin.connect "project_proposals", :controller => "project_proposals", :action => "index"
-    admin.connect "project_proposals/new", :controller => "project_proposals", :action => "new"
-    admin.connect "project_proposals/create", :controller => "project_proposals", :action => "create"
-    admin.connect "project_proposals/reject", :controller => "project_proposals", :action => "reject"
-    admin.connect "project_proposals/approve", :controller => "project_proposals", :action => "approve"
-    
+  resource :search
+  resources :messages do
+    collection do
+      get :sent
+      put :bulk_update
+      get :all
+      get :auto_complete_for_message_recipients
+    end
+
+    member do
+      post :reply
+      put :read
+    end
   end
 
-  map.resources :favorites
+  match '/login' => 'sessions#new', :as => :login
+  match '/logout' => 'sessions#destroy', :as => :logout
+  match 'dashboard' => 'site#dashboard', :as => :dashboard
+  match 'about' => 'site#about', :as => :about
+  match 'about/:action' => 'site#index', :as => :about_page
+  match 'contact' => 'site#contact', :as => :contact
 
-  map.activity "/activities", :controller => "site", :action => "public_timeline"
+  namespace :api do
+    match ':project_id/:repository_id/log/graph' => 'graphs#show', :branch => 'master'
+    match ':project_id/:repository_id/log/graph/*branch' => 'graphs#show'
+  end
 
-  map.merge_request_landing_page '/merge_request_landing_page', :controller => 'merge_requests', :action => 'oauth_return'
+  namespace :admin do
+    resources :users do
+      member do
+        put :suspend
+        put :flip_admin_status
+        put :unsuspend
+        put :reset_password
+      end
+    end
 
-  map.merge_request_direct_access '/merge_requests/:id', :controller => 'merge_requests', :action => 'direct_access'
+    resource :oauth_settings
 
-  # Install the default route as the lowest priority.
-  map.connect ':controller/:action/:id.:format'
-  map.connect ':controller/:action/:id'
+    resources :repositories do
+      member do
+        put :recreate
+      end
+    end
 
-  # See the routing_filter plugin and lib/route_filters/*
-  map.filter "repository_owner_namespacing", :file => "route_filters/repository_owner_namespacing"
+    match 'diagnostics' => 'diagnostics#index'
+    match 'project_proposals' => 'project_proposals#index'
+    match 'project_proposals/new' => 'project_proposals#new'
+    match 'project_proposals/create' => 'project_proposals#create'
+    match 'project_proposals/reject' => 'project_proposals#reject'
+    match 'project_proposals/approve' => 'project_proposals#approve'
+  end
+
+  resources :favorites
+
+  match '/activities' => 'site#public_timeline', :as => :activity
+  match '/merge_request_landing_page' => 'merge_requests#oauth_return', :as => :merge_request_landing_page
+  match '/merge_requests/:id' => 'merge_requests#direct_access', :as => :merge_request_direct_access
+  match '/:controller(/:action(/:id))'
 end

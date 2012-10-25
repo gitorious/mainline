@@ -1,33 +1,15 @@
 ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require "test_help"
-require "ssl_requirement_macros"
-require "messaging_test_helper"
-
-require "shoulda"
-require "mocha"
-begin
-  require "redgreen"
-rescue LoadError
-end
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
+require 'ssl_requirement_macros'
+require 'messaging_test_helper'
+require 'shoulda'
+require 'mocha'
 
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
   include Gitorious::Authorization
 
-  # Transactional fixtures accelerate your tests by wrapping each test method
-  # in a transaction that's rolled back on completion.  This ensures that the
-  # test database remains unchanged so your fixtures don't have to be reloaded
-  # between every test method.  Fewer database queries means faster tests.
-  #
-  # Read Mike Clark's excellent walkthrough at
-  #   http://clarkware.com/cgi/blosxom/2005/10/24#Rails10FastTesting
-  #
-  # Every Active Record database supports transactions except MyISAM tables
-  # in MySQL.  Turn off transactional fixtures in this case; however, if you
-  # don't care one way or the other, switching from MyISAM to InnoDB tables
-  # is recommended.
-  #
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
@@ -45,12 +27,6 @@ class ActiveSupport::TestCase
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
   fixtures :all
-
-  NULL_SHA = "0" * 40 unless defined?(NULL_SHA)
-  SHA = "a" * 40 unless defined?(SHA)
-  OTHER_SHA = "f" * 40 unless defined?(OTHER_SHA)
-
-  # Add more helper methods to be used by all tests here...
 
   def repo_path
     File.join(File.dirname(__FILE__), "..", ".git")

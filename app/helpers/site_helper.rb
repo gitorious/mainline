@@ -47,14 +47,15 @@ module SiteHelper
     return "" if files.length == 0
     urls = files.collect { |f| f.sub(root, "") }
 
-    <<-HTML
+    html = <<-HTML
     <div id="screenshots-rotator">
       <div id="screenshotsnavigation"></div>
       <div id="screenshots-container">
-        #{urls.collect { |u| "<img src=\"#{u}\">" }}
+        #{urls.collect { |u| "<img src=\"#{u}\">" }.join('').html_safe}
       </div>
     </div>
     HTML
+    html.html_safe
   end
 
   def git_version
