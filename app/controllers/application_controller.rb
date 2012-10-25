@@ -172,7 +172,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_not_found
-    render :template => Rails.root + "public/404.html", :status => 404, :layout => "application"
+    render :file => "/public/404.html", :status => 404, :layout => "application"
   end
 
   def render_git_timeout

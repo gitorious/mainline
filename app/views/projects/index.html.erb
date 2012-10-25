@@ -32,7 +32,7 @@
 <% end -%>
 </ul>
 
-<%= JustPaginate.page_navigation(@page, @total_pages) { |page_no| "/projects/?page=#{page_no}" } -%>
+<%= raw JustPaginate.page_navigation(@page, @total_pages) { |page_no| "/projects/?page=#{page_no}" } -%>
 
 <% content_for :sidebar do -%>
   <h2><%= t("views.projects.popular") %></h2>
@@ -42,11 +42,11 @@
     <% end %>
   </ul>
 <ul class="links navigation">
-	<li class="new_project">
+        <li class="new_project">
       <%= link_to t("views.projects.create_new"), new_project_path() -%>
     </li>
 </ul>
-  <% pull_box("Most active recently", :class => "pull-box-sidebar") do -%> 
+  <% pull_box("Most active recently", :class => "pull-box-sidebar") do -%>
     <ul class="with_icons">
       <% @active_recently.each do |project| -%>
         <li class="project"><%= link_to h(project.title), project -%></li>

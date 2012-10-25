@@ -1,6 +1,7 @@
 # Be sure to restart your server when you modify this file.
 
 # We can't use a TLD in domain (e.g. we can't set localhost here)!
+gitorious_yaml = YAML::load_file(Rails.root + "config/gitorious.yml")[Rails.env]
 domain = gitorious_yaml["gitorious_host"]
 
 if domain =~ /\./
