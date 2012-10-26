@@ -268,10 +268,6 @@ module ApplicationHelper
     end
   end
 
-  def sidebar_content?
-    !@content_for_sidebar.blank?
-  end
-
   def render_readme(repository)
     possibilities = []
     repository.git.git.ls_tree({:name_only => true}, "master").each do |line|
@@ -571,7 +567,7 @@ module ApplicationHelper
       :next_label => "Next",
       :container => "True"
     }
-    will_paginate(collection, options.merge(default_options)).html_safe
+    (will_paginate(collection, options.merge(default_options)) || "").html_safe
   end
 
   def dashboard_path

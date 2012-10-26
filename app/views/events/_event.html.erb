@@ -1,30 +1,31 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <% relative_time ||= false -%>
 
 <% action, body, category = action_and_body_for_event(event) %>
 <li class="event_instance <%= relative_time ? 'relative' : '' %> <%= Action::css_class(event.action) -%>" id="<%= dom_id(event) -%>">
-	  <p class="event_category <%= category -%>"><%= category.humanize -%></p>
+  <p class="event_category <%= category -%>"><%= category.humanize -%></p>
   <% unless relative_time -%>
     <p class="event_date"><%= event.created_at.to_s(:short_time) -%></p>
   <% end -%>
@@ -32,19 +33,19 @@
 
   <div class="event_meta">
     <p class="event_action">
-    <% if relative_time -%>
+      <% if relative_time -%>
         <span class="relative_date">
           <%= time_ago(event.created_at) -%>
         </span>
-    <% end -%>
-    <% unless action.empty? %>
-      <% if event.user.nil? %>
-        <%= event.actor_display %>
-      <% else %>
-        <strong><%= link_to h(event.user.title), user_path(event.user), :class => "event-author" %></strong>
+      <% end -%>
+      <% unless action.empty? %>
+        <% if event.user.nil? %>
+          <%= event.actor_display %>
+        <% else %>
+          <strong><%= link_to h(event.user.title), user_path(event.user), :class => "event-author" %></strong>
+        <% end %>
+        <%= action.html_safe %>
       <% end %>
-      <%= action %>
-    <% end %>
     </p>
     <div class="<%= event.action == Action::COMMIT ? "commit_message" : "" -%> commit_message">
       <%= simple_format(sanitize(body)) %>
@@ -58,6 +59,5 @@
         <%= image_tag("spinner.gif") -%>
       </div>
     <% end -%>
-
   </div>
 </li>

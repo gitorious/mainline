@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -60,11 +61,11 @@
       <% end -%>
     </div>
     <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
-      <div id="content" class="<%= sidebar_content? ? "with_sidebar" : "" -%>">
+      <div id="content" class="<%= content_for?(:sidebar) ? "with_sidebar" : "" -%>">
         <%= flashes %>
         <%= yield -%>
       </div>
-      <% if sidebar_content? -%>
+      <% if content_for?(:sidebar) -%>
         <div id="sidebar">
           <%= yield :sidebar -%>
         </div>
