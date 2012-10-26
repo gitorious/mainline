@@ -19,9 +19,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-
 <a name="<%= dom_id(comment) -%>"></a>
-<% comment_block(comment) do -%>
+<%= comment_block(comment) do -%>
   <%- if comment.state_change -%>
   <p class="meta_body">
     &#x2192; State changed <%- if comment.state_changed_from -%>from
@@ -35,7 +34,7 @@
         <pre class="diff-comment-context"><code><%= comment.context %></code></pre>
       </blockquote>
     <% end %>
-    <%= render_markdown(comment.body, :auto_link) -%>
+    <%= render_markdown(comment.body, :auto_link).html_safe -%>
   </div>
   <p class="byline">
     <span class="avatar">

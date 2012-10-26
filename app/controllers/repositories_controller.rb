@@ -85,7 +85,7 @@ class RepositoriesController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    @repository.events.top.paginate(:all, :page => params[:page], :order => "created_at desc")
+    @repository.events.top.paginate(:page => params[:page], :order => "created_at desc")
   end
 
   def new
@@ -105,7 +105,7 @@ class RepositoriesController < ApplicationController
     @repository.owner = @project.owner
     @repository.user = current_user
     @repository.merge_requests_enabled = params[:repository][:merge_requests_enabled]
-    
+
     if @repository.save
       @repository.make_private if repos_private_on_creation?
       flash[:success] = I18n.t("repositories_controller.create_success")
@@ -234,7 +234,7 @@ class RepositoriesController < ApplicationController
     render :text => 'false' and return
   end
 
-  def config
+  def repository_config
     @repository = @owner.cloneable_repositories.find_by_name_in_project!(params[:id],
       @containing_project)
     authorize_configuration_access(@repository)

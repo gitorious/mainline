@@ -28,10 +28,10 @@ Gitorious::Application.routes.draw do
       post :create_clone
       get :clone
       get :search_clones
-      get :config
       get :committers
       get :confirm_delete
       get :writable_by
+      match "config" => "repositories#repository_config"
     end
 
     resources :comments

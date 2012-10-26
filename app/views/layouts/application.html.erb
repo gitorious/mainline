@@ -60,7 +60,7 @@
         </div>
       <% end -%>
     </div>
-    <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
+    <div id="container" class="<%= !content_for?(:submenu) ? "" : "in-context-mode" -%>">
       <div id="content" class="<%= content_for?(:sidebar) ? "with_sidebar" : "" -%>">
         <%= flashes %>
         <%= yield -%>

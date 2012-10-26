@@ -59,7 +59,7 @@
 
       <% if @project && false -%>
         <h2 id="project_title"><%= link_to h(@project.title), @project -%></h2>
-        <ul id="submenu" class="<%= @content_for_submenu.blank? ? "white" : "" -%>">
+        <ul id="submenu" class="<%= !content_for(:submenu) ? "white" : "" -%>">
           <li class="<%= submenu_selected_class_if_current?(:overview) -%>">
             <%= link_to t("views.layout.project_overview"),
                 project_path(@project), :class => "round-top-5" -%>
@@ -85,12 +85,12 @@
         </ul>
       <% end -%>
     </div>
-    <% unless @content_for_breadcrumbs.blank? -%>
+    <% if content_for?(:breadcrumbs) -%>
       <ul id="breadcrumbs">
         <%= yield :breadcrumbs -%>
       </ul>
     <% end -%>
-    <div id="container" class="<%= @content_for_submenu.blank? ? "" : "in-context-mode" -%>">
+    <div id="container" class="<%= !content_for(:submenu) ? "" : "in-context-mode" -%>">
       <div id="content" class="<%= content_for?(:sidebar) ? "with_sidebar" : "" -%>">
         <%= flashes %>
         <%= yield -%>

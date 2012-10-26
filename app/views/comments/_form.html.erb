@@ -20,15 +20,15 @@
 #++
 %>
 
-<% comment ||= nil -%>
+<% comment ||= Comment.new -%>
 <% sha1 ||= nil -%>
 <% parent ||= nil -%>
 <div id="comment-form">
 <h3><%= t("views.comments.add_title") %>:</h3>
 
 <% if logged_in? -%>
-  <%= error_messages_for :comment -%>
-  <% form_for(:comment, :url => new_polymorphic_comment_path(parent, comment || Comment.new)) do |f| -%>
+  <%= error_messages(comment) -%>
+  <% form_for(:comment, :url => new_polymorphic_comment_path(parent, comment)) do |f| -%>
     <% if sha1 -%>
       <%= f.hidden_field :sha1, :value => sha1 -%>
     <% end -%>
@@ -76,7 +76,7 @@
   <% end -%>
 <% else -%>
   <p>
-    <em><%= link_to t("views.sessions.login"), new_sessions_path -%> or 
+    <em><%= link_to t("views.sessions.login"), new_sessions_path -%> or
     <%= link_to t("views.users.create"), new_user_path -%> to post a comment</em>
   </p>
 <% end -%>

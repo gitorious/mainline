@@ -599,4 +599,11 @@ module ApplicationHelper
     options["xmlns:gts"] = "http://gitorious.org/schema"
     atom_feed(options, &block)
   end
+
+  # Temporary - Rails 3 removed error_messages_for
+  def error_messages(model)
+    return "" if model.nil? || !model.errors.any?
+    errors = model.errors.full_messages.map { |msg| "<li>#{msg}</li>" }
+    "<ul>#{errors}</ul>".html_safe
+  end
 end
