@@ -82,7 +82,7 @@ module ApplicationHelper
   end
 
   def markdown(text, options = [:smart])
-    renderer =.html_safe MarkupRenderer.new(text, :markdown => options)
+    renderer = MarkupRenderer.new(text, :markdown => options)
     renderer.to_html.html_safe
   end
 
