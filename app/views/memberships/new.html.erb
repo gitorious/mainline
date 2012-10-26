@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
 #
@@ -29,7 +30,8 @@ $(document).ready(function() {
 
 <h2 class="content-header"><%= t("views.memberships.new_title", :group_memberships => link_to(h(@group.name), [@group, :memberships])) -%></h2>
 
-<%= error_messages_for :group, :membership -%>
+<%= error_messages(@group) -%>
+<%= error_messages(@membership) -%>
 <% form_for [@group, @membership] do |f| -%>
 <fieldset>
   <li>

@@ -17,7 +17,7 @@
 #++
 %>
 
-<%= error_messages_for :"#{@class_name}_membership" -%>
+<%= error_messages(@content) -%>
 <% form_for(new_membership_path(@content),
             :html => { :class => "collaborator_form" }) do |f| -%>
   <%= render :partial => "/shared/tabbed_collaborator_form" %>

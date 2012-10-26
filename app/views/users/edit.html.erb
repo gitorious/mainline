@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
@@ -23,7 +24,7 @@
 
 <h2 class="content-header"><%= t("views.users.edit_title") %></h2>
 
-<%= error_messages_for :user -%>
+<%= error_messages(@user) -%>
 <% form_for @user, :url => user_path, :html => {:multipart => true} do |f| -%>
 <fieldset>
   <li>
@@ -48,26 +49,26 @@
     <%= f.label :url, t("views.users.openid") -%>
     <div><%= f.text_field :identity_url -%></div>
   </li>
-  
+
   <li>
     <%= f.label :avatar, t('views.users.avatar') %>
-  	<div><%= avatar(@user, :version => :thumb, :size => '24') %>
+        <div><%= avatar(@user, :version => :thumb, :size => '24') %>
     <%- if @user.avatar? -%>
-      <%= button_to_function("Delete current profile image", "if (confirm('Are you sure you want to delete your profile image?')) $('#delete_avatar').submit()") %> 
+      <%= button_to_function("Delete current profile image", "if (confirm('Are you sure you want to delete your profile image?')) $('#delete_avatar').submit()") %>
     <%- end -%>
-	<span class="hint"> If you do not add an image, Gitorious will try to use your gravatar </span>
-	</div>
+        <span class="hint"> If you do not add an image, Gitorious will try to use your gravatar </span>
+        </div>
   </li>
 
-	<li>
-		<label>Upload avatar</label>
-		<div><%= f.file_field :avatar %></div>
-	</li>
-	
-	<li>
-    	<%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
-    	<div><%= f.check_box :wants_email_notifications %><span class="hint"> <%= t("views.users.describe_email_notifications") -%></span></div>
-	</li>
+        <li>
+                <label>Upload avatar</label>
+                <div><%= f.file_field :avatar %></div>
+        </li>
+
+        <li>
+        <%= f.label :wants_email_notifications, t("views.users.wants_email_notifications") %>
+        <div><%= f.check_box :wants_email_notifications %><span class="hint"> <%= t("views.users.describe_email_notifications") -%></span></div>
+        </li>
   <li>
     <%= f.label :default_favorite_notifications -%>
     <div><%= f.check_box :default_favorite_notifications -%><span class="hint"> <%= t("views.users.describe_default_favorite_notifications", :url => favorites_path) -%></span></div>
@@ -79,5 +80,5 @@
 <% end -%>
 
 <%- form_for(@user, :url => avatar_user_path, :html => {:id => "delete_avatar", :method => :delete}) do |f| -%>
-  
+
 <%- end -%>

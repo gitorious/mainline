@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,24 +22,24 @@
 
 <h2 class="content-header"><%= t("views.aliases.new_alias") -%></h2>
 
-<%= error_messages_for :email -%>
+<%= error_messages(@email) -%>
 <% form_for(@email, :url => user_aliases_path(@user)) do |f| -%>
 <fieldset>
-	<li>
-		<%= f.label :address -%>
-    	<div><%= f.text_field :address -%></div>
-  	</li>
+        <li>
+                <%= f.label :address -%>
+        <div><%= f.text_field :address -%></div>
+        </li>
 </fieldset>
-<fieldset class="submit"> 
-		<%= f.submit("Add alias") -%>
+<fieldset class="submit">
+                <%= f.submit("Add alias") -%>
 </fieldset>
 <% end -%>
 
 <% content_for :sidebar do -%>
-	<h2>Information</h2>
-	<p>You will be sent an email asking you to confirm this email after it has been created. </p>
+        <h2>Information</h2>
+        <p>You will be sent an email asking you to confirm this email after it has been created. </p>
   <ul class="links navigation">
-	<li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%></li>
+        <li class="alias"><%= link_to t("views.aliases.manage_aliases"), user_aliases_path(current_user) -%></li>
 
   </ul>
 <% end -%>

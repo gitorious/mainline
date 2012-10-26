@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,7 +18,7 @@
 #++
 %>
 <h2 class="content-header">Create a new user </h2>
-<%= error_messages_for :user %>
+<%= error_messages(@user) %>
 <% form_for :user, :url => admin_users_path do |f| -%>
   <%= render :partial => 'admin/users/form', :locals => { :f => f } %>
 <% end -%>

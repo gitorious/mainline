@@ -17,8 +17,9 @@
 #++
 %>
 
-<%= error_messages_for :project_membership -%>
-<% form_for [@project, @project.project_memberships.new], :html => { :class => "collaborator_form" } do |f| -%>
+<% membership = @project.project_memberships.new %>
+<%= error_messages(membership -%>
+<% form_for [@project, membership], :html => { :class => "collaborator_form" } do |f| -%>
   <%= render :partial => "/shared/tabbed_collaborator_form" %>
   <p>
     <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>

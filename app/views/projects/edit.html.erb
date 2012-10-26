@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
@@ -24,7 +25,7 @@
 
 <h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h2>
 
-<%= error_messages_for :project -%>
+<%= error_messages(@project) -%>
 <% form_for(@project, :method => "put") do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
 

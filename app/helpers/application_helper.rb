@@ -602,7 +602,7 @@ module ApplicationHelper
 
   # Temporary - Rails 3 removed error_messages_for
   def error_messages(model)
-    return "" if model.nil? || !model.errors.any?
+    return "" if !model.errors.any?
     errors = model.errors.full_messages.map { |msg| "<li>#{msg}</li>" }
     "<ul>#{errors}</ul>".html_safe
   end

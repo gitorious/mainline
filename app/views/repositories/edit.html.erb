@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,7 +22,7 @@
 
 <h1>Editing repository <%= link_to h(@repository.name), [@owner, @repository] -%></h1>
 
-<%= error_messages_for :repository -%>
+<%= error_messages(@repository) -%>
 <% form_for(repo_owner_path(@repository.reload, [@repository.project, @repository])) do |f| -%>
   <p>
     <%= f.label :description -%>

@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,28 +22,28 @@
 
 <h2 class="content-header">Edit collaborator permissions</h2>
 
-<%= error_messages_for :committership -%>
+<%= error_messages(@committership) -%>
 <% form_for [@owner, @repository, @committership] do |f| -%>
 
-	<ul class="form">
-		<fieldset>
-			<li><%= f.label "Review" %>
-				<div><%= check_box_tag "permissions[]", "review", @committership.reviewer? -%></div>
-			</li>
-			<li><%= f.label "Commit" %>
-				<div><%= check_box_tag "permissions[]", "commit", @committership.committer? -%></div>
-			</li>
-			<li><%= f.label "Administer" %>
-				<div><%= check_box_tag "permissions[]", "admin", @committership.admin? -%></div>
-			</li>
-		</fieldset>
-	</ul>
-	<fieldset class="submit">
-			<%= f.submit "Update permissions" -%>
-		    <%= t("views.collaborators.or_return_to") -%>
-		    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
-	</fieldset>
-	
+        <ul class="form">
+                <fieldset>
+                        <li><%= f.label "Review" %>
+                                <div><%= check_box_tag "permissions[]", "review", @committership.reviewer? -%></div>
+                        </li>
+                        <li><%= f.label "Commit" %>
+                                <div><%= check_box_tag "permissions[]", "commit", @committership.committer? -%></div>
+                        </li>
+                        <li><%= f.label "Administer" %>
+                                <div><%= check_box_tag "permissions[]", "admin", @committership.admin? -%></div>
+                        </li>
+                </fieldset>
+        </ul>
+        <fieldset class="submit">
+                        <%= f.submit "Update permissions" -%>
+                    <%= t("views.collaborators.or_return_to") -%>
+                    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
+        </fieldset>
+
 <% end -%>
 
 <% content_for :sidebar do %>

@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,13 +22,13 @@
 
 <h1><%= t("views.projects.edit_slug_title", :link => link_to( h(@project.title), project_path(@project))) -%></h1>
 
-<%= error_messages_for :project -%>
+<%= error_messages(@project) -%>
 <% form_for(@project, :url => edit_slug_project_path(@project), :method => "put") do |f| -%>
 
   <div class="info_hint">
     <%= t('views.projects.edit_slug_disclaimer') %>
   </div>
-  
+
   <p>
     <%= f.label :slug, t(:slug, :scope => 'activerecord.attributes.project') -%><br />
     <%= f.text_field :slug -%>
@@ -35,5 +36,3 @@
 
   <%= f.submit t("views.projects.update_slug") -%>
 <% end -%>
-
-

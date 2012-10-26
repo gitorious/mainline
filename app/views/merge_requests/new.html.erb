@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -24,7 +25,7 @@
 
 <h1><%= t("views.merges.create_title") %></h1>
 
-<%= error_messages_for :merge_request -%>
+<%= error_messages(@merge_request) -%>
 <% form_for [@repository.project, @repository, @merge_request] do |f| -%>
   <% help_box do -%>
     <p>
@@ -36,7 +37,7 @@
     </p>
   <% end -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
-  
+
   <% if @project.merge_requests_need_signoff? -%>
     <% help_box(:left) do -%>
       <p>
@@ -52,7 +53,7 @@
       </p>
     <% end -%>
   <% end -%>
-  
+
   <%= f.submit t("views.merges.create_btn") -%>
 <% end -%>
 
