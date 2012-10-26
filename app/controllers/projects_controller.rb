@@ -224,9 +224,12 @@ class ProjectsController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    events_finder_options = {}
-    events_finder_options.merge!(@project.events.top.proxy_options)
-    events_finder_options.merge!({:per_page => Event.per_page, :page => params[:page]})
-    @project.events.paginate(events_finder_options)
+    @project.events.paginate({
+      :conditions => ["target_type != ?", "Event"],
+      :order => "created_at desc",
+      :include => [:user, :project],
+      :per_page => Event.per_page,
+      :page => params[:page]
+    })
   end
 end
