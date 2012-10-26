@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,14 +15,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../../test_helper'
+
+require "test_helper"
 
 class WebHookGeneratorTest < ActiveSupport::TestCase
 
   def setup
     @repository = repositories(:johans)
 
-    grit = mock    
+    grit = mock
     grit.stubs(:commits_between).with(SHA, OTHER_SHA).returns([grit_commit])
     @repository.stubs(:git).returns(grit)
 
@@ -35,12 +36,12 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
   context "Generating payload" do
     should "contain the start sha" do
       payload = @generator.payload
-      assert_equal SHA, payload[:before] 
+      assert_equal SHA, payload[:before]
     end
 
     should "contain the end sha" do
       payload = @generator.payload
-      assert_equal OTHER_SHA, payload[:after] 
+      assert_equal OTHER_SHA, payload[:after]
     end
 
     should "contain the username of the pusher" do
@@ -59,7 +60,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
     end
 
     should "contain project name and description" do
-      project = @repository.project      
+      project = @repository.project
       project.update_attribute(:slug, "my-project")
       project.update_attribute(:description, "Yes, mine")
       payload = @generator.payload
@@ -72,7 +73,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
       @repository.name = "name"
       @repository.description = "Terrible hacks"
       payload = @generator.payload
-      
+
       assert_equal "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/#{@repository.name}", payload[:repository][:url]
       assert_equal "name", payload[:repository][:name]
       assert_equal "Terrible hacks", payload[:repository][:description]
@@ -107,7 +108,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
 
     should "contain a list of commits" do
       payload = @generator.payload
-      
+
       assert_kind_of Array, payload[:commits]
     end
   end

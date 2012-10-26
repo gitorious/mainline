@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+
+require "test_helper"
 
 class MergeRequestTest < ActiveSupport::TestCase
   def setup
@@ -35,12 +37,6 @@ class MergeRequestTest < ActiveSupport::TestCase
   def teardown
     clear_message_queue
   end
-
-  should_validate_presence_of :user, :source_repository, :target_repository
-  should_validate_presence_of :summary, :sequence_number
-
-  should_have_many :comments
-  should_not_allow_mass_assignment_of :sequence_number
 
   should 'calculate the merge base between target branch and self' do
     repo = mock("Git repo")

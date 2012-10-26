@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mårnes Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class SubdomainValidationTest < ActiveSupport::TestCase
   context "Validate configuration" do
@@ -30,7 +30,7 @@ class SubdomainValidationTest < ActiveSupport::TestCase
       @config["gitorious_host"] = "gitorious.org"
       assert @config.valid_subdomain?
     end
-  
+
     should "Host names without dots are not considered valid" do
       @config["gitorious_host"] = "gitorious"
       assert !@config.valid_subdomain?

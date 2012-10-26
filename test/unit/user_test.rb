@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   setup do
@@ -31,20 +31,6 @@ class UserTest < ActiveSupport::TestCase
       assert !user.new_record?
     end
   end
-
-  should_have_many :email_aliases
-  should_have_many :committerships, :dependent => :destroy
-  should_have_many :memberships, :dependent => :destroy
-  should_have_many :email_aliases, :dependent => :destroy
-  should_have_many :commit_repositories
-  should_have_many :favorites, :dependent => :destroy
-  should_have_many :feed_items
-
-  should_validate_presence_of :login, :password, :password_confirmation, :email
-  should_validate_acceptance_of :terms_of_use
-
-  should_not_allow_values_for :login, "john.doe", "john_doe"
-  should_allow_values_for :login, "JohnDoe", "john-doe", "john999"
 
   should "downcase the login before validation" do
     u = User.new

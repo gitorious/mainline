@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,10 +15,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require "test_helper"
 
 class PushEventLoggerTest < ActiveSupport::TestCase
-  
+
   context "deciding what events to create" do
     context "for tags" do
       should "create meta event when creating" do
@@ -121,7 +122,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
         spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
         logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert !logger.create_push_event?      
+        assert !logger.create_push_event?
     end
   end
 
@@ -233,7 +234,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       event = logger.build_meta_event
 
 
-      assert_equal "Deleted tag release", event.body      
+      assert_equal "Deleted tag release", event.body
     end
 
     should "describe deleted branches" do
@@ -253,7 +254,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
       @logger = PushEventLogger.new(@repository, @spec, @user)
       @event = @logger.build_push_event
     end
-    
+
     should "have a user" do
       assert_equal @user, @event.user
     end
@@ -289,7 +290,7 @@ GIT_LOG
     should "create a push event with the appropriate data" do
       @logger.expects(:calculate_commit_count).returns(10)
       event = @logger.create_push_event
-            
+
       assert_equal([SHA, OTHER_SHA, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR), event.data)
     end
   end
@@ -299,7 +300,7 @@ GIT_LOG
       body = [SHA, OTHER_SHA, "master", "10"].join(PushEventLogger::PUSH_EVENT_DATA_SEPARATOR)
       @result = PushEventLogger.parse_event_data(body)
     end
-    
+
     should "contain the start sha" do
       assert_equal SHA, @result[:start_sha]
     end

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class SshKeyProcessorTest < ActiveSupport::TestCase
 
@@ -26,13 +26,13 @@ class SshKeyProcessorTest < ActiveSupport::TestCase
     @processor = SshKeyProcessor.new
     @key = Factory.create(:ssh_key, :ready => false)
   end
-  
+
   should "add to authorized keys" do
     assert !@key.ready?
     SshKey.expects(:add_to_authorized_keys).with('fofofo')
     options = {
-      :target_class => 'SshKey', 
-      :command => 'add_to_authorized_keys', 
+      :target_class => 'SshKey',
+      :command => 'add_to_authorized_keys',
       :arguments => ['fofofo'],
       :target_id => @key.id}
     json = options.to_json
@@ -40,7 +40,7 @@ class SshKeyProcessorTest < ActiveSupport::TestCase
 
     assert @key.reload.ready?
   end
-  
+
   should "remove from authorized keys" do
     SshKey.expects(:delete_from_authorized_keys).with('fofofo')
     options = {

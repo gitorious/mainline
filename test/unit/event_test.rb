@@ -17,12 +17,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class EventTest < ActiveSupport::TestCase
-
-  should_have_many :feed_items, :dependent => :destroy
-
   def setup
     @event = new_event
     @user = users(:johan)

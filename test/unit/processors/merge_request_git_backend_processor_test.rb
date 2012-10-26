@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
   def setup
@@ -44,7 +44,7 @@ class MergeRequestGitBackendProcessorTest < ActiveSupport::TestCase
         :target_repository_id => @merge_request.target_repository.id,
       }
     end
-    
+
     should "push to delete the tracking branch" do
       @processor.stubs(:source_repository).returns(@merge_request.source_repository)
       @source_git.expects(:push).with({:timeout => false},

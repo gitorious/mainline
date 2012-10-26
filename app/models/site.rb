@@ -17,7 +17,7 @@
 #++
 class Site < ActiveRecord::Base
   has_many :projects
-   
+
   validates_presence_of :title
   HTTP_CLONING_SUBDOMAIN = 'git'
   validates_exclusion_of :subdomain, :in => [HTTP_CLONING_SUBDOMAIN]
@@ -25,12 +25,10 @@ class Site < ActiveRecord::Base
   attr_protected :subdomain
   attr_protected :wiki_git_path
 
+  after_create :init_wiki_git_path
+
   def self.default
     Site.find_or_create_by_title_and_subdomain(:title => GitoriousConfig["site_name"], :subdomain => nil)
-  end
-  
-  def after_create
-    init_wiki_git_path
   end
 
   def init_wiki_git_path
@@ -46,7 +44,7 @@ class Site < ActiveRecord::Base
   def wiki_repo_name
     "#{self.id}-#{self.title}-site-wiki.git"
   end
-  
+
   def wiki
     if(!self.wiki_git_path) then init_wiki_git_path end
     if(!File.exist? wiki_git_path)
@@ -67,6 +65,6 @@ class Site < ActiveRecord::Base
     FileUtils.touch(wiki_git_path+"/hooks/pre-receive");
     FileUtils.chmod(0755, wiki_git_path+"/hooks/pre-receive");
   end
-  
-  
+
+
 end

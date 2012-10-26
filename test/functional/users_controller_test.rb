@@ -18,7 +18,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class UsersControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :avatar)
@@ -492,7 +492,7 @@ class UsersControllerTest < ActionController::TestCase
       delete :avatar, :id => user.to_param
       assert_redirected_to user_path(user)
       assert !user.reload.avatar?
-    end    
+    end
   end
 
   context "deleting your own account" do
@@ -518,7 +518,7 @@ class UsersControllerTest < ActionController::TestCase
       assert_not_nil User.find_by_login(user.login)
     end
   end
-  
+
   context "Viewing ones own favorites" do
     setup {
       login_as(:johan)

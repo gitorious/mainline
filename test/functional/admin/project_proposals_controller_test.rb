@@ -17,14 +17,14 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../../test_helper"
+require "test_helper"
 
 class Admin::ProjectProposalsControllerTest < ActionController::TestCase
 
   def setup
     setup_ssl_from_config
   end
-  
+
   context "Routing" do
     should "recognize project proposal actions" do
       assert_recognizes({:controller => "admin/project_proposals",
@@ -52,7 +52,7 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
   end
 
   context "Project approval workflow" do
-    
+
     should "let users create project proposal & notify admins" do
       login_as_non_admin
       pre_count = ProjectProposal.all.count
@@ -83,9 +83,9 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
       GitoriousConfig["enable_private_repositories"] = false
       GitoriousConfig["repos_and_projects_private_by_default"] = false
     end
-    
-  end   
-  
+
+  end
+
   def login_as_admin
     login_as :johan
   end

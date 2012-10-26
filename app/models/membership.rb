@@ -21,7 +21,7 @@ class Membership < ActiveRecord::Base
   belongs_to :user
   belongs_to :role
   has_many :messages, :as => :notifiable
-  before_validation_on_update :dont_demote_group_creator
+  before_validation(:dont_demote_group_creator, :on => :update)
   before_destroy :dont_delete_group_creator
   before_destroy :nullify_messages
 

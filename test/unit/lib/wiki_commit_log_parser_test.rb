@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,10 +17,11 @@
 #++
 
 require "test_helper"
+
 class WikiCommitLogParserTest < ActiveSupport::TestCase
   context "Parsing modified files from commit log" do
     setup do
-      @parser = Gitorious::Wiki::CommitParser.new      
+      @parser = Gitorious::Wiki::CommitParser.new
     end
 
     should "extract the details for a single commit" do
@@ -99,7 +100,7 @@ COMMIT
     setup do
       @commit = Gitorious::Wiki::Commit.new
     end
-    
+
     should "discard file suffix for added files" do
       @commit.added_file_names = ["Readme.markdown", "License.txt"]
       assert_equal %w(Readme License), @commit.added_page_names

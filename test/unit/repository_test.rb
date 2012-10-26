@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 require "ostruct"
 
 class RepositoryTest < ActiveSupport::TestCase
@@ -38,12 +38,6 @@ class RepositoryTest < ActiveSupport::TestCase
   def teardown
     clear_message_queue
   end
-
-  should_validate_presence_of :user_id, :name, :owner_id
-  should_validate_uniqueness_of :hashed_path
-  should_validate_uniqueness_of :name, :scoped_to => :project_id, :case_sensitive => false
-
-  should_have_many :hooks, :dependent => :destroy
 
   should "only accept names with alphanum characters in it" do
     @repository.name = "foo bar"

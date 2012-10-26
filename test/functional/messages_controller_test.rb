@@ -16,7 +16,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + "/../test_helper"
+
+require "test_helper"
 
 class MessagesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :all)

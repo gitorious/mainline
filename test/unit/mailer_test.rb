@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class MailerTest < ActiveSupport::TestCase
 
@@ -129,7 +129,7 @@ class MailerTest < ActiveSupport::TestCase
     teardown do
       GitoriousConfig["sender_email_address"] = @old_address
     end
-    
+
     should "be a sensible default unless configured" do
       GitoriousConfig["sender_email_address"] = nil
       message = Mailer.create_signup_notification(@user)

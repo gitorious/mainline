@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,15 +16,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+
+require "test_helper"
 
 class MessageTest < ActiveSupport::TestCase
-  should_belong_to :sender
-  should_belong_to :recipient
-  should_validate_presence_of :subject, :body
-  should_belong_to :notifiable
-  should_have_many :replies
-
   context 'The state machine' do
     setup do
       @recipient = Factory.create(:user)

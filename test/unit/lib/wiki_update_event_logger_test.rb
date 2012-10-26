@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require "test_helper"
 
 class WikiUpdateEventLoggerTest < ActiveSupport::TestCase
@@ -27,7 +28,7 @@ class WikiUpdateEventLoggerTest < ActiveSupport::TestCase
       Gitorious::Wiki::CommitParser.any_instance.expects(:fetch_from_git).returns([@commit])
       @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
     end
-    
+
     should "create update wiki page event for updated pages" do
       @commit.modified_file_names = %w[Home.mdown]
       logger = Gitorious::Wiki::UpdateEventLogger.new(@repository, @spec, @user)

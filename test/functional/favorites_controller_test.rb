@@ -22,7 +22,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) +  "/../test_helper"
+require "test_helper"
 
 class FavoritesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:delete, :destroy)

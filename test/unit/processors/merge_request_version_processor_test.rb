@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../../test_helper'
+require "test_helper"
 
 class MergeRequestVersionProcessorTest < ActiveSupport::TestCase
   def setup
@@ -28,7 +28,7 @@ class MergeRequestVersionProcessorTest < ActiveSupport::TestCase
     @source_repository = @merge_request.source_repository
     @message = @version.branch_deletion_message
   end
-  
+
   def teardown
     @processor = nil
   end

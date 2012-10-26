@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class FavoriteTest < ActiveSupport::TestCase
   def create_favorited_repo
@@ -24,13 +25,6 @@ class FavoriteTest < ActiveSupport::TestCase
     project = Factory.create(:project, :user => user, :owner => user)
     repo = Factory.create(:repository, :user => user, :project => project, :owner => user)
     [user, project, repo]
-  end
-
-  context "In general" do
-    should_validate_presence_of :watchable_type, :watchable_id, :user_id
-    should_belong_to :user
-    should_belong_to :watchable
-    should_validate_uniqueness_of :user_id, :scoped_to => [:watchable_id, :watchable_type]
   end
 
   context "Watching a repository" do
@@ -76,7 +70,7 @@ class FavoriteTest < ActiveSupport::TestCase
 
   context "Deleting events before deletion" do
     setup {
-      @user, @project, @repo = create_favorited_repo      
+      @user, @project, @repo = create_favorited_repo
       @favorite = @user.favorites.create :watchable => @repo
     }
 

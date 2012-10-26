@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +17,9 @@
 #++
 
 require "test_helper"
+
 class SearchTest < ActiveSupport::TestCase
-  
+
   context "Using Ultrasphinx" do
     Gitorious::Search.use Gitorious::Search::Ultrasphinx::Adapter
 
@@ -30,7 +31,7 @@ class SearchTest < ActiveSupport::TestCase
 
     should "call into Ultrasphinx" do
       assert_not_nil Ultrasphinx::MODEL_CONFIGURATION["SearchTest::Searchable"]
-    end    
+    end
   end
 
   context "Specifying associations" do
@@ -95,11 +96,11 @@ class SearchTest < ActiveSupport::TestCase
   end
 
   context "Calling Ultrasphinx" do
-    
+
     class SampleSearchable < ActiveRecord::Base
       include Gitorious::Search
     end
-    
+
     should "handle a single field" do
       SampleSearchable.expects(:is_indexed_ultrasphinx).with(:fields => [:body])
       SampleSearchable.is_indexed {|s| s.index(:body)}
@@ -133,7 +134,7 @@ class SearchTest < ActiveSupport::TestCase
     should "index associated fields" do
       SunspotSearchable.expects(:searchable).yields(SunspotSearchable)
       SunspotSearchable.expects(:text).with(:commented_by).yields(SunspotSearchable)
-      
+
       SunspotSearchable.is_indexed do |s|
         s.index "user#login", :as => :commented_by
       end
@@ -142,7 +143,7 @@ class SearchTest < ActiveSupport::TestCase
     should "index a single field" do
       SunspotSearchable.expects(:searchable).yields(SunspotSearchable)
       SunspotSearchable.expects(:text).with(:title)
-      
+
       SunspotSearchable.is_indexed do |s|
         s.index :title
       end

@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 require "test_cache_store"
 
 class SiteControllerTest < ActionController::TestCase

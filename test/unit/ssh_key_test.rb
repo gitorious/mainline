@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,10 +17,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class SshKeyTest < ActiveSupport::TestCase
-  
+
   def new_key(opts={})
     SshKey.new({
       :user_id => 1,
@@ -30,12 +31,10 @@ class SshKeyTest < ActiveSupport::TestCase
   def setup
     SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
-  
+
   def teardown
     clear_message_queue
   end
-
-  should_validate_presence_of :user_id, :key
 
   should "validate the key using ssh-keygen" do
     key = new_key
@@ -56,37 +55,37 @@ class SshKeyTest < ActiveSupport::TestCase
     assert !key.valid?
     key.key = "foo bar@baz"
     assert !key.valid?
-    
+
     key.key = "ssh-somealgo as23d$%&asdasdasd bar@baz"
     assert !key.valid?
-    
+
     key.key = "ssh-rsa asdasda2\n34as+d=\n bar@baz"
     assert key.valid?
     key.key = "ssh-rsa asdasda2\n34as+d=\n bar@baz.grogg.zing"
     assert key.valid?
     key.key = "ssh-rsa asdasda2\n34as+d=\n bar@127.0.0.1"
     assert key.valid?
-    
+
     key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steakhouse.local"
     assert key.valid?
-    
+
     key.key = 'ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE foo@steak_house.local'
     assert key.valid?
   end
-  
+
   should "allows a wider range of extended comments" do
     key = new_key
-    
+
     key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{GitoriousConfig['gitorious_host']} key"
     assert key.valid?
-    
+
     key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+#{GitoriousConfig['gitorious_host']} key"
     assert key.valid?
-    
+
     key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']} key"
     assert key.valid?
   end
-  
+
   should "cant contain multiple keys" do
     encoded_key = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
     k = "ssh-rsa #{encoded_key} foo@example.com"
@@ -101,44 +100,44 @@ class SshKeyTest < ActiveSupport::TestCase
     assert_equal encoded_key, ssh.encoded_key
     assert_equal "ssh-rsa #{encoded_key}", ssh.to_keyfile_format.split(" ")[0..1].join(" ")
   end
-  
+
   should "strips newlines before save" do
     ssh = new_key(:key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG\n9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cm\nVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com")
     ssh.valid?
     assert !ssh.key.include?("\n")
-    
+
     ssh = new_key(:key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG\r\n9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cm\nVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com")
     ssh.valid?
     assert !ssh.key.include?("\r\n")
-    
+
     ssh = new_key(:key => "ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG\r9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cm\nVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com")
     ssh.valid?
     assert !ssh.key.include?("\r")
   end
-  
+
   should "strips beginning and ending whitespace+newlines before validation" do
     ssh = new_key(:key => "\n ssh-rsa asdfsomekey foo@example.com  \n  ")
     assert ssh.valid?
     assert_equal "ssh-rsa asdfsomekey foo@example.com", ssh.key
   end
-    
+
   should "wraps the key at 72 columns for display" do
     ssh = new_key
     expected_wrapped = <<EOS
 ssh-rsa bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dk
 anB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216
-ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com 
+ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU= foo@example.com
 EOS
     assert_equal expected_wrapped.strip, ssh.wrapped_key
   end
-  
+
   should "return the algorithm and encoded key with our own comment with to_keyfile" do
     key = new_key
     key.save!
     expected_format = "#{key.algorithm} #{key.encoded_key} SshKey:#{key.id}-User:#{key.user_id}"
     assert_equal expected_format, key.to_keyfile_format
   end
-  
+
   should "returns a proper ssh key with to_key" do
     ssh_key = new_key
     ssh_key.save!
@@ -148,7 +147,7 @@ EOS
       %Q{\n### END KEY #{ssh_key.id} ###\n}
     assert_equal exp_key, ssh_key.to_key
   end
-  
+
   should "adds itself to the authorized keys file" do
     ssh_key_file_mock = mock("SshKeyFile mock")
     ssh_key = new_key
@@ -156,7 +155,7 @@ EOS
     ssh_key_file_mock.expects(:add_key).with(ssh_key.to_key).returns(true)
     SshKey.add_to_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
-  
+
   should "removes itself to the authorized keys file" do
     ssh_key_file_mock = mock("SshKeyFile mock")
     ssh_key = new_key
@@ -164,7 +163,7 @@ EOS
     ssh_key_file_mock.expects(:delete_key).with(ssh_key.to_key).returns(true)
     SshKey.delete_from_authorized_keys(ssh_key.to_key, ssh_key_file_mock)
   end
-  
+
   def key_with_content(algo = nil, key = nil, comment = nil)
     algo ||= "ssh-rsa"
     key ||= "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
@@ -173,7 +172,7 @@ EOS
       :key => "#{algo} #{key} #{comment}",
     })
   end
-  
+
   context "Parsing the key" do
     should "parse out the key into its components" do
       assert_equal 3, new_key.components.size
@@ -185,15 +184,15 @@ EOS
         key.components
       end
     end
-    
+
     should "parse out the algorithm" do
       assert_equal "ssh-rsa", new_key.algorithm
     end
-  
+
     should "parse out the username+host comment" do
       assert_equal "foo@example.com", new_key.comment
     end
-  
+
     should "parse out the content" do
       expected_content = "bXljYWtkZHlpemltd21vY2NqdGJnaHN2bXFjdG9zbXplaGlpZnZ0a3VyZWFzc2dkanB4aXNxamxieGVib3l6Z3hmb2ZxZW15Y2FrZGR5aXppbXdtb2NjanRiZ2hzdm1xY3Rvc216ZWhpaWZ2dGt1cmVhc3NnZGpweGlzcWpsYnhlYm95emd4Zm9mcWU="
       assert_equal expected_content, new_key.encoded_key
@@ -209,7 +208,7 @@ EOS
       "74YL6aTrfAHTXXJ7fcMDZxQ== foo@bar")
     assert_equal "9b:72:ec:61:35:08:56:c1:95:8c:fd:dd:32:66:ab:8a", ssh_key.fingerprint
   end
-  
+
   context "Message sending" do
     should 'send a message when created' do
       ssh_key = new_key
@@ -229,7 +228,7 @@ EOS
         ssh_key.publish_creation_message
       end
     end
-  
+
     should 'sends a message on destroy' do
       ssh_key = new_key
       ssh_key.save!

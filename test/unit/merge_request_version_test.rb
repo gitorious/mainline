@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,8 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require File.dirname(__FILE__) + '/../test_helper'
+
+require "test_helper"
 
 class MergeRequestVersionTest < ActiveSupport::TestCase
   context 'In general' do
@@ -59,7 +61,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       @diff_backend = mock
       @version.stubs(:diff_backend).returns(@diff_backend)
     end
-    
+
     should 'handle a range' do
       @diff_backend.expects(:commit_diff).with("ffc","ccf", true)
       result = @version.diffs("ffc".."ccf")
@@ -67,7 +69,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
 
     should 'handle a single commit' do
       @diff_backend.expects(:single_commit_diff).with("ffc")
-      result = @version.diffs("ffc")      
+      result = @version.diffs("ffc")
     end
 
     should 'handle all commits' do
@@ -119,7 +121,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     should "ask the cache for diffs for a single commit" do
       Rails.cache.expects(:fetch).with("merge_request_diff_v1_f00").returns("foo_bar")
       assert_equal "foo_bar", @backend.single_commit_diff("f00")
-    end    
+    end
   end
 
   context 'Commenting' do
@@ -131,7 +133,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
         :sha1 => "ffac-aafc", :user => @merge_request.user,  :body => "Needs more cowbell",
         :project => @merge_request.target_repository.project)
     end
-    
+
     should 'fetch all comments with the specified path and sha' do
     assert_equal([@comment],
       @first_version.comments_for_path_and_sha(@comment.path, "ffac-aafc"))
@@ -155,7 +157,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
     should 'fetch all comments when given a Range' do
       assert_equal([@comment], @first_version.comments_for_path_and_sha(@comment.path, ("ffac".."aafc")))
     end
-    
+
     should 'not fetch comments with a different sha or path' do
       assert_equal([], @first_version.comments_for_path_and_sha(@comment.path, "fac-afc"))
       assert_equal([], @first_version.comments_for_path_and_sha("foo/bar.rb", "ffac-aafc"))
@@ -197,7 +199,7 @@ class MergeRequestVersionTest < ActiveSupport::TestCase
       version.save
       @comment = version.comments.first
     end
-    
+
     should "create a comment when created" do
       assert_not_nil @comment
       assert @comment.body =~ /Pushed new version [\d]+/

@@ -16,12 +16,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'test_helper'
+require "test_helper"
 
 class DiagnosticsTest < ActiveSupport::TestCase
 
   include Gitorious::Diagnostics
-  
+
   context "Self-diagnostics" do
     should "detect if any current ps entry contains given string" do
       assert atleast_one_process_name_matching("test")
@@ -31,7 +31,7 @@ class DiagnosticsTest < ActiveSupport::TestCase
       assert !file_present?("/tmp/file_not_there.txt")
       assert file_present?(__FILE__)
     end
-    
+
     should "verify dir existence" do
       assert !dir_present?("/dir_not_there")
       assert dir_present?(File.dirname(__FILE__))
@@ -52,7 +52,7 @@ class DiagnosticsTest < ActiveSupport::TestCase
       assert !owned_by_user?(__FILE__, "root")
       assert owned_by_user?(__FILE__, me)
     end
-    
+
   end
 
   def me

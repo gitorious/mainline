@@ -17,6 +17,7 @@
 #++
 
 require "test_helper"
+
 class GitShellTest < ActiveSupport::TestCase
   context "Sanitization" do
     setup do

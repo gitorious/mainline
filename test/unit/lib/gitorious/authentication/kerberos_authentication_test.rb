@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@
 #++
 
 require "test_helper"
+
 class Gitorious::Authentication::KerberosAuthenticationTest < ActiveSupport::TestCase
 
   # Accepts a Kerberos principal string, and returns a

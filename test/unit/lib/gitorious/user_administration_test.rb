@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'test_helper'
+require "test_helper"
 
 class UserAdministrationTest < ActiveSupport::TestCase
   include Gitorious::UserAdministration
@@ -30,8 +30,8 @@ class UserAdministrationTest < ActiveSupport::TestCase
 
   context "team cleanup" do
     setup do
-      @g = groups(:team_thunderbird) # Already has Mike 
-      @user = users(:johan)      
+      @g = groups(:team_thunderbird) # Already has Mike
+      @user = users(:johan)
       @g.add_member(@user, Role.admin)
     end
 
@@ -57,7 +57,7 @@ class UserAdministrationTest < ActiveSupport::TestCase
       c = @r1.committerships.new
       c.creator = @user
       c.committer = @user
-      c.build_permissions :review, :admin, :commit 
+      c.build_permissions :review, :admin, :commit
       c.save
     end
 
@@ -101,10 +101,10 @@ class UserAdministrationTest < ActiveSupport::TestCase
       @johans_project.save
       @other_project = projects(:johans)
     end
-    
+
     should "build list of projects which are orphaned if user leaves" do
       orphans = projects_orphaned_by_user_leaving(@user)
       assert orphans.all?{|p| p.owner.id == @user.id}
     end
-  end  
+  end
 end

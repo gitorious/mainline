@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,8 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class ProjectTest < ActiveSupport::TestCase
   def create_project(options={})
@@ -29,9 +29,6 @@ class ProjectTest < ActiveSupport::TestCase
       :owner => users(:johan)
     }.merge(options))
   end
-
-  should_belong_to :containing_site
-  should_have_many :merge_request_statuses
 
   should "have a title to be valid" do
     project = create_project(:title => nil)

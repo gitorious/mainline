@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -16,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + '/../test_helper'
+require "test_helper"
 
 class StatusTagTest < ActiveSupport::TestCase
   def setup
@@ -65,7 +66,7 @@ class StatusTagTest < ActiveSupport::TestCase
   should "have a default grayish color whe there is no #status" do
     st = StatusTag.new("Foo", @project)
     assert_equal "#cccccc", st.color
-    
+
     @open_status.update_attribute(:color, "")
     st = StatusTag.new("Foo", @project)
     assert_equal "#cccccc", st.color
@@ -75,7 +76,7 @@ class StatusTagTest < ActiveSupport::TestCase
     st = StatusTag.new("Open", @project)
     assert st.open?
     assert !st.closed?
-    
+
     st = StatusTag.new("Closed", @project)
     assert st.closed?
     assert !st.open?

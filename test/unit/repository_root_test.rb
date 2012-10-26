@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require 'test_helper'
+require "test_helper"
 
 class RepositoryRootTest < ActiveSupport::TestCase
   context "No roots defined" do

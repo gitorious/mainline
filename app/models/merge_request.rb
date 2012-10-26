@@ -40,7 +40,8 @@ class MergeRequest < ActiveRecord::Base
   after_destroy  :delete_tracking_branches
   after_create :add_to_creators_favorites
 
-  before_validation_on_create :set_sequence_number
+  before_validation(:set_sequence_number, :on => :create)
+  #before_validation_on_create :set_sequence_number
 
   is_indexed do |s|
     s.index :proposal

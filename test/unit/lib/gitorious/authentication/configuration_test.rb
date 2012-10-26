@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,7 @@
 #++
 
 require "test_helper"
+
 class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
   context "Default configuration" do
     setup do
@@ -31,7 +32,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
 
     should "only exclude database authentication when instructed to do so" do
       Gitorious::Authentication::Configuration.configure({"disable_default" => "true"})
-      assert_equal 0, Gitorious::Authentication::Configuration.authentication_methods.size      
+      assert_equal 0, Gitorious::Authentication::Configuration.authentication_methods.size
     end
 
     should "not allow several auth methods of same type" do
@@ -54,7 +55,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
       Gitorious::Authentication::Configuration.configure(options)
       @ldap = Gitorious::Authentication::Configuration.authentication_methods.last
     end
-    
+
     should "configure LDAP authentication" do
       assert_equal "directory.example", @ldap.server
     end

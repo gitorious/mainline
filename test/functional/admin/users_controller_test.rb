@@ -18,7 +18,7 @@
 #++
 # encoding: utf-8
 
-require File.dirname(__FILE__) + "/../../test_helper"
+require "test_helper"
 
 class Admin::UsersControllerTest < ActionController::TestCase
   def setup

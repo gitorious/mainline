@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.dirname(__FILE__) + "/../test_helper"
+require "test_helper"
 
 class ProjectMembershipsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context :only => [:index]
