@@ -35,10 +35,6 @@ class UsersController < ApplicationController
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
 
-  verify :method => :put, :only => [:update_password, :update]
-  verify :method => :delete, :only => :avatar
-  verify :method => :post, :only => [:create, :forgot_password_create]
-
   renders_in_global_context
   layout :decide_layout
 
@@ -218,7 +214,7 @@ class UsersController < ApplicationController
     flash[:success] = "You profile image was deleted"
     redirect_to user_path
   end
-  
+
   def delete_current
     @user = current_user
     if(@user.deletable?)
