@@ -42,12 +42,12 @@ class Event < ActiveRecord::Base
 
   validates_presence_of :user_id, :unless => :user_email_set?
 
-  named_scope :top, {
+  scope :top, {
     :conditions => ["target_type != ?", "Event"],
     :order => "created_at desc",
     :include => [:user, :project]
   }
-  named_scope :excluding_commits, {:conditions => ["action != ?", Action::COMMIT]}
+  scope :excluding_commits, {:conditions => ["action != ?", Action::COMMIT]}
 
   def self.latest(count)
     Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do

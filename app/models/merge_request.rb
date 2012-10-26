@@ -82,10 +82,10 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
-  named_scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
-  named_scope :open, :conditions => ["status = ?", STATUS_OPEN]
-  named_scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
-  named_scope :by_status, lambda {|state|
+  scope :public, :conditions => ["status != ?", STATUS_PENDING_ACCEPTANCE_OF_TERMS]
+  scope :open, :conditions => ["status = ?", STATUS_OPEN]
+  scope :closed, :conditions => ["status = ?", STATUS_CLOSED]
+  scope :by_status, lambda {|state|
     {:conditions => ["LOWER(status_tag) = ? AND status != ?",
                      state.downcase, STATUS_PENDING_ACCEPTANCE_OF_TERMS ] }
   }

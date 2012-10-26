@@ -374,7 +374,7 @@ module ApplicationHelper
   end
 
   def current_site
-    @controller.current_site
+    controller.current_site
   end
 
   def force_utf8(str)

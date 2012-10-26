@@ -40,7 +40,7 @@ class Email < ActiveRecord::Base
     end
   end
 
-  named_scope :in_state, lambda {|*states| {:conditions => {:aasm_state => states}}}
+  scope :in_state, lambda {|*states| {:conditions => {:aasm_state => states}}}
 
   def self.find_confirmed_by_address(addr)
     with_aasm_state(:confirmed).first(:conditions => {:address => addr})

@@ -42,7 +42,7 @@ class Comment < ActiveRecord::Base
   validates_presence_of :user_id, :target, :project_id
   validates_presence_of :body, :if =>  Proc.new {|mr| mr.body_required?}
 
-  named_scope :with_shas, proc{|*shas|
+  scope :with_shas, proc{|*shas|
     {:conditions => { :sha1 => shas.flatten }, :include => :user}
   }
 
