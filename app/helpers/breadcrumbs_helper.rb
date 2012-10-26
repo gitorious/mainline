@@ -33,7 +33,7 @@ module BreadcrumbsHelper
       end
       html << content_tag(:li, breadcrumb_link_to(crumb), :class => css_klass)
     end
-    html
+    html.html_safe
   end
 
   # Renders breadcrumbs starting from +root+

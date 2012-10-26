@@ -48,7 +48,7 @@ module ApplicationHelper
   end
 
   def help_box(style = :side, icon = :help, options = {}, &block)
-    concat(<<-HTML)
+    raw <<-HTML
       <div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
            class="help-box #{style} #{icon} round-5">
         <div class="icon #{icon}"></div>
@@ -59,7 +59,7 @@ module ApplicationHelper
 
   def pull_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
-    concat(<<-HTML)
+    raw <<-HTML
       <div class="pull-box-container #{options.delete(:class)}">
         #{title_html}
         <div class="pull-box-content">
@@ -71,7 +71,7 @@ module ApplicationHelper
 
   def dialog_box(title, options = {}, &block)
     title_html = title.nil? ? "" : "<h3 class=\"round-top-5 dialog-box-header\">#{title}</h3>"
-    concat(<<-HTML)
+    raw <<-HTML
       <div class="dialog-box #{options.delete(:class)}">
         #{title_html}
         <div class="dialog-box-content">
@@ -130,7 +130,7 @@ module ApplicationHelper
     if object.respond_to?(:ready?) && object.ready?
       yield
     else
-      concat(build_notice_for(object, options))
+      raw build_notice_for(object, options)
     end
   end
 
@@ -600,7 +600,7 @@ module ApplicationHelper
   def footer_link(setting, html_options={})
     url = GitoriousConfig["#{setting}_url"]
     text = t("views.layout.#{setting}")
-    "<li>#{link_to text, url, html_options}</li>"
+    "<li>#{link_to text, url, html_options}</li>".html_safe
   end
 
   def namespaced_atom_feed(options={}, &block)

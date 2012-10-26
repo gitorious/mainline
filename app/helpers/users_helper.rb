@@ -38,7 +38,7 @@ module UsersHelper
       return user if domain.blank?
       domain, ext = domain.split(".", 2)
       str = "#{user.to_s} @#{domain[0, domain.length/2].to_s}"
-      "#{str}&hellip;#{domain[-(domain.length/3)..-1]}.#{ext}"
+      "#{str}&hellip;#{domain[-(domain.length/3)..-1]}.#{ext}".html_safe
     else
       h(email)
     end
