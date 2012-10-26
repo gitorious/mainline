@@ -34,9 +34,7 @@
     </div>
     <div id="clone-help-<%= repository.id -%>-box" class="clone-help-text" style="display:none;">
       <% if logged_in? && site_admin?(current_user) -%>
-        <% content_for :extra_head do %>
-          <link rel="vcs-git" href="<%= h(repository.push_url) -%>" title="<%= t("views.repos.show_page_title", :repo => repository.name, :title => h(@owner.title)) -%>" />
-        <% end %>
+        <% vcs_link_tag(:href => repository.push_url, :title => t("views.repos.show_page_title", :repo => repository.name, :title => h(@owner.title))) %>
         <p>Repository path: <code><%= h(repository.full_repository_path) -%></a></code></p>
       <% end -%>
       <% if logged_in? && can_push?(current_user, repository) -%>

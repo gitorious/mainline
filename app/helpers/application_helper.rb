@@ -606,4 +606,12 @@ module ApplicationHelper
     errors = model.errors.full_messages.map { |msg| "<li>#{msg}</li>" }
     "<ul>#{errors}</ul>".html_safe
   end
+
+  def vcs_link_tag(options)
+    content_for :extra_head do
+      (<<-HTML).html_safe
+        <link rel="vcs-git" href="#{h(options[:href])}" title="#{h(options[:title])}">
+      HTML
+    end
+  end
 end
