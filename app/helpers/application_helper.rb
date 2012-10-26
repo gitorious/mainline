@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -82,8 +82,8 @@ module ApplicationHelper
   end
 
   def markdown(text, options = [:smart])
-    renderer = MarkupRenderer.new(text, :markdown => options)
-    renderer.to_html
+    renderer =.html_safe MarkupRenderer.new(text, :markdown => options)
+    renderer.to_html.html_safe
   end
 
   def render_markdown(text, *options)
@@ -94,12 +94,12 @@ module ApplicationHelper
     if auto_link
       markdownized_text = auto_link(markdownized_text, :urls)
     end
-    sanitize(markdownized_text)
+    sanitize(markdownized_text).html_safe
   end
 
   def feed_icon(url, alt_title = "Atom feed", size = :small)
-    link_to image_tag("silk/feed.png", :class => "feed_icon"), url,
-      :alt => alt_title, :title => alt_title
+    link_to(image_tag("silk/feed.png", :class => "feed_icon"), url,
+            :alt => alt_title, :title => alt_title)
   end
 
   def default_css_tag_sizes
@@ -123,7 +123,7 @@ module ApplicationHelper
     end
     out << %Q{  <p class="hint">If this message persists beyond what is reasonable, feel free to #{link_to("contact us", contact_path)}</p>}
     out << %Q{</div></div>}
-    out
+    out.html_safe
   end
 
   def render_if_ready(object, options = {})
@@ -179,7 +179,7 @@ module ApplicationHelper
       # end
       return stylesheet_link_tag("syntax_themes/idle")
     end
-    out.join("\n")
+    out.join("\n").html_safe
   end
 
   def base_url(full_url)
@@ -236,13 +236,13 @@ module ApplicationHelper
 
   def gravatar_frame(email, options = {})
     extra_css_class = options[:style] ? " gravatar_#{options[:style]}" : ""
-    %{<div class="gravatar#{extra_css_class}">#{gravatar(email, options)}</div>}
+    %{<div class="gravatar#{extra_css_class}">#{gravatar(email, options)}</div>}.html_safe
   end
 
   def flashes
     flash.map do |type, content|
       content_tag(:div, content_tag(:p, content), :class => "flash_message #{type}")
-    end.join("\n")
+    end.join("\n").html_safe
   end
 
   def action_and_body_for_event(event)
@@ -284,7 +284,7 @@ module ApplicationHelper
   end
 
   def render_markdown_help
-    render :partial => '/site/markdown_help'
+    render(:partial => "/site/markdown_help")
   end
 
   def link_to_help_toggle(dom_id, style = :image)
@@ -297,26 +297,25 @@ module ApplicationHelper
       link_to_function("?", "$('##{dom_id}').toggle()", :class => "more_info") +
       ")</span>"
     end
-
   end
 
   FILE_EXTN_MAPPINGS = {
-    '.cpp' => 'cplusplus-file',
-    '.c' => 'c-file',
-    '.h' => 'header-file',
-    '.java' => 'java-file',
-    '.sh' => 'exec-file',
-    '.exe'  => 'exec-file',
-    '.rb' => 'ruby-file',
-    '.png' => 'image-file',
-    '.jpg' => 'image-file',
-    '.gif' => 'image-file',
-    'jpeg' => 'image-file',
-    '.zip' => 'compressed-file',
-    '.gz' => 'compressed-file'}
+    ".cpp" => "cplusplus-file",
+    ".c" => "c-file",
+    ".h" => "header-file",
+    ".java" => "java-file",
+    ".sh" => "exec-file",
+    ".exe"  => "exec-file",
+    ".rb" => "ruby-file",
+    ".png" => "image-file",
+    ".jpg" => "image-file",
+    ".gif" => "image-file",
+    "jpeg" => "image-file",
+    ".zip" => "compressed-file",
+    ".gz" => "compressed-file"}
 
   def class_for_filename(filename)
-    return FILE_EXTN_MAPPINGS[File.extname(filename)] || 'file'
+    return FILE_EXTN_MAPPINGS[File.extname(filename)] || "file"
   end
 
   def render_download_links(project, repository, head, options={})
@@ -333,10 +332,7 @@ module ApplicationHelper
       head = head[0..7]
     end
 
-    {
-      'tar.gz' => 'tar',
-      # 'zip' => 'zip',
-    }.each do |extension, url_key|
+    { "tar.gz" => "tar" }.each do |extension, url_key|
       archive_path = self.send("project_repository_archive_#{url_key}_path", project, repository, ensplat_path(head))
       link_html = link_to("Download #{head} as #{extension}", archive_path,
         :onclick => "Gitorious.DownloadChecker.checkURL('#{archive_path}?format=js', 'archive-box-#{head.gsub("/", "_")}');return false",
@@ -348,7 +344,7 @@ module ApplicationHelper
     end
 
     if options.delete(:only_list_items)
-      links.join("\n")
+      links.join("\n").html_safe
     else
       css_classes = options[:class] || "meta"
       content_tag(:ul, links.join("\n"), :class => "links #{css_classes}")
@@ -359,18 +355,20 @@ module ApplicationHelper
     return if text.blank?
     first, rest = text.split("</p>", 2)
     if rest.blank?
-      first + "</p>"
+      (first + "</p>").html_safe
     else
-      %Q{#{first}
+      (<<-HTML).html_safe
+        #{first}
         <a href="#more"
            onclick="$('#description-rest-#{identifier}').toggle(); $(this).hide()">more&hellip;</a></p>
-        <div id="description-rest-#{identifier}" style="display:none;">#{rest}</div>}
+        <div id="description-rest-#{identifier}" style="display:none;">#{rest}</div>
+      HTML
     end
   end
 
   def markdown_hint
     t("views.common.format_using_markdown",
-      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>))
+      :markdown => %(<a href="http://daringfireball.net/projects/markdown/">Markdown</a>)).html_safe
   end
 
   def current_site
@@ -388,7 +386,6 @@ module ApplicationHelper
     else
       str.mb_chars
     end
-
   end
 
   # Creates a CSS styled <button>.
@@ -431,7 +428,7 @@ module ApplicationHelper
 
         <div class="clear"></div>
       </div>
-    }
+    }.html_safe
   end
 
   def project_summary_box(project)
@@ -449,7 +446,6 @@ module ApplicationHelper
     summary_box link_to(team.name, group_path(team)),
       text,
       glossy_homepage_avatar(team.avatar? ? image_tag(team.avatar.url(:thumb), :width => 30, :height => 30) : default_avatar)
-
   end
 
   def user_summary_box(user)
@@ -540,7 +536,7 @@ module ApplicationHelper
   # inserts a <wbr> tag somewhere in the middle of +str+
   def wbr_middle(str)
     half_size = str.length / 2
-    str.to_s[0..half_size-1] + "<wbr />" + str[half_size..-1]
+    (str.to_s[0..half_size-1] + "<wbr />" + str[half_size..-1]).html_safe
   end
 
   def time_ago(time, options = {})
@@ -575,7 +571,7 @@ module ApplicationHelper
       :next_label => "Next",
       :container => "True"
     }
-    will_paginate(collection, options.merge(default_options))
+    will_paginate(collection, options.merge(default_options)).html_safe
   end
 
   def dashboard_path

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
 #
@@ -38,7 +39,7 @@ module SiteHelper
 
       word_broken = to_break.gsub(/\/|\:/) { $~[0] + "<wbr>" }
       %{<a#{tag_attributes}>#{word_broken}}
-    }
+    }.html_safe
   end
 
   def screenshots_rotator(dir)

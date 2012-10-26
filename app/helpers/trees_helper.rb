@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -46,7 +45,7 @@ module TreesHelper
       end
     end
     out << "</ul>"
-    out
+    out.html_safe
   end
 
   def render_tag_box_if_match(sha, tags_per_sha)
@@ -58,7 +57,7 @@ module TreesHelper
       out << tagname
       out << %Q{</code></span>}
     end
-    out
+    out.html_safe
   end
 
   def commit_for_tree_path(repository, path)
@@ -89,6 +88,6 @@ module TreesHelper
       html << diff_link if display_diff_link
       content_tag(:li, html, :class => display_diff_link ? "double_row" : "")
     end
-    list_items.join
+    list_items.join.html_safe
   end
 end

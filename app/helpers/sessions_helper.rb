@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -23,17 +24,17 @@ module SessionsHelper
   # determines which form to display for login
   def login_method
     if params[:method]=='openid'
-      "<script  type=\"text/javascript\">
+      ("<script  type=\"text/javascript\">
          $(document).ready(function(){
            $(\"#regular_login_fields\").toggle();
            $(\"#openid_login_fields\").toggle();
          })
-      </script>"
+      </script>").html_safe
     end
   end
 
   def switch_login(title, action)
-    link_to_function(title, <<-EOS)
+    link_to_function(title, (<<-EOS).html_safe)
 
       $(".foo1").click(
       function() {
@@ -42,11 +43,11 @@ module SessionsHelper
         $("#openid_login_fields").removeClass("login_hidden");
       });
 
-EOS
+    EOS
   end
 
   def switch_op_login(title, action)
-    link_to_function(title, <<-EOS)
+    link_to_function(title, (<<-EOS).html_safe)
       $(".regular-switch a").click(
       function() {
         $("p.regular-switch").toggle();

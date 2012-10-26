@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -421,16 +422,16 @@ module EventRenderingHelper
   end
 
   protected
-    def action_for_event(i18n_key, opts = {}, &block)
-      header = "" + I18n.t("application_helper.#{i18n_key}", opts) + " "
-      "#{header}#{block.call}"
-    end
+  def action_for_event(i18n_key, opts = {}, &block)
+    header = "" + I18n.t("application_helper.#{i18n_key}", opts) + " "
+    "#{header}#{block.call}"
+  end
 
-    def repo_title(repo, project)
-      if repo.project_repo?
-        h(File.join(project.to_param_with_prefix, repo.name))
-      else
-        h(File.join(repo.owner.to_param_with_prefix, project.slug, repo.name))
-      end
+  def repo_title(repo, project)
+    if repo.project_repo?
+      h(File.join(project.to_param_with_prefix, repo.name))
+    else
+      h(File.join(repo.owner.to_param_with_prefix, project.slug, repo.name))
     end
+  end
 end

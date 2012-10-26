@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -32,9 +33,9 @@ module RepositoriesHelper
 
   def edit_or_show_group_text
     if admin?(current_user, @repository)
-      t("views.repos.edit_group")
+      t("views.repos.edit_group").html_safe
     else
-      t("views.repos.show_group")
+      t("views.repos.show_group").html_safe
     end
   end
 
@@ -43,13 +44,11 @@ module RepositoriesHelper
       content_tag(:li, link_to(h(branch.name), log_path(branch.name),
                                :title => branch_link_title_text(branch)),
                   :class => "branch #{highlight_if_head(branch)}")
-    end.join("\n  ")
+    end.join("\n  ").html_safe
   end
 
   def highlight_if_head(branch)
-    if branch.head?
-      "head"
-    end
+    "head" if branch.head?
   end
 
   def branch_link_title_text(branch)
@@ -89,7 +88,7 @@ module RepositoriesHelper
                       </li>}
     end
 
-    list_items.join("\n")
+    list_items.join("\n").html_safe
   end
 
   def show_clone_list_search?(group_clones, user_clones)
@@ -101,7 +100,7 @@ module RepositoriesHelper
     active_types << "git" if repository.git_cloning?
     active_types << "http" if repository.http_cloning?
     active_types << "ssh" if display_ssh_url?(repository)
-    active_types.join("_")
+    active_types.join("_").html_safe
   end
 
   def display_ssh_url?(repository)
@@ -120,7 +119,7 @@ module RepositoriesHelper
 
     id = "#{type}-#{repository.id}"
 
-    <<-HTML
+    (<<-HTML).html_safe
       <p class="clone_radio">
         <label for="#{id}">
           <input type="radio" id="#{id}" name="url-#{repository.id}" value="#{url}" #{git_or_ssh_url_checked(repository, type)}>#{type.to_s.upcase}

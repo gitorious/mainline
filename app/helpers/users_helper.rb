@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -45,7 +46,7 @@ module UsersHelper
   end
 
   def render_email(email)
-    "&lt;" + mangled_mail(email).to_s + "&gt;"
+    ("&lt;" + mangled_mail(email).to_s + "&gt;").html_safe
   end
 
   def is_current_user?(a_user)
