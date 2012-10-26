@@ -1,3 +1,21 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2012 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
@@ -53,6 +71,7 @@ module Gitorious
     # Skip frameworks you're not going to use. To use Rails without a database
     # you must remove the Active Record framework.
     # config.frameworks -= [ :active_record, :active_resource, :action_mailer ]
+    config.filter_parameters += [:password, :password_confirmation]
 
     # Only load the plugins named here, in the order given. By default, all plugins
     # in vendor/plugins are loaded in alphabetical order.
