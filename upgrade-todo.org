@@ -76,3 +76,7 @@
 ** TODO FeedItemTest
 *** should_belong_to :event
 *** should_belong_to :watcher
+* Instructions to users [0/1]
+** TODO Database configuration: Use mysql2
+* Tests that are muted [/]
+** stomp_adapter_test.rb
