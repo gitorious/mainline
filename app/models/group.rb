@@ -23,9 +23,7 @@ class Group < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy
   has_many :members, :through => :memberships, :source => :user
 
-
   attr_protected :public, :role_id, :user_id
-
 
   Paperclip.interpolates('group_name'){|attachment,style| attachment.instance.name}
 

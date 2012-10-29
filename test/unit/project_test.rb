@@ -450,7 +450,7 @@ class ProjectTest < ActiveSupport::TestCase
   end
 
   should "create default merge_request_statuses on creation" do
-    project = Factory.build(:user_project)
+    project = FactoryGirl.build(:user_project)
     assert project.new_record?
     project.save!
 

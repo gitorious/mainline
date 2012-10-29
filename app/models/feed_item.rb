@@ -30,5 +30,4 @@ class FeedItem < ActiveRecord::Base
              VALUES #{sql_values.join(',')}}
     ActiveRecord::Base.connection.execute(sql)
   end
-
 end

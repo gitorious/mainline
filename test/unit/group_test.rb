@@ -22,7 +22,7 @@ require "test_helper"
 class GroupTest < ActiveSupport::TestCase
   context "in general" do
     should "uses the name as to_param" do
-      group = Factory.build(:group)
+      group = FactoryGirl.build(:group)
       assert_equal group.name, group.to_param
     end
   end
@@ -90,12 +90,12 @@ class GroupTest < ActiveSupport::TestCase
   end
 
   should "has to_param_with_prefix" do
-    grp = Factory.build(:group, :name => 'webkit')
+    grp = FactoryGirl.build(:group, :name => 'webkit')
     assert_equal "+#{grp.to_param}", grp.to_param_with_prefix
   end
 
   should "has no breadcrumb parent" do
-    assert_equal nil, Factory.build(:group).breadcrumb_parent
+    assert_equal nil, FactoryGirl.build(:group).breadcrumb_parent
   end
 
   context 'Deleting groups' do
@@ -128,13 +128,13 @@ class GroupTest < ActiveSupport::TestCase
         :name => @existing_group.name
       })
       assert !group.valid?, 'valid? should be false'
-      assert_not_nil group.errors.on(:name)
+      assert_not_nil group.errors[:name]
     end
 
     should " have a alphanumeric name" do
-      group = Factory.build(:group, :name => "fu bar")
+      group = FactoryGirl.build(:group, :name => "fu bar")
       assert !group.valid?, 'group.valid? should be false'
-      assert_not_nil group.errors.on(:name)
+      assert_not_nil group.errors[:name]
     end
 
     should 'require valid names' do
@@ -142,7 +142,7 @@ class GroupTest < ActiveSupport::TestCase
         g = Group.new
         g.name = name
         assert !g.save
-        assert_not_nil(g.errors.on(:name), "#{name} should not be a valid name")
+        assert_not_nil(g.errors[:name], "#{name} should not be a valid name")
       end
     end
 

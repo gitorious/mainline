@@ -69,6 +69,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :login, :email, :case_sensitive => false
   validates_acceptance_of :terms_of_use, :on => :create, :allow_nil => false
   validates_format_of     :avatar_file_name, :with => /\.(jpe?g|gif|png|bmp|svg|ico)$/i, :allow_blank => true
+  validate :normalized_openid_identifier
 
   before_save :encrypt_password
   before_create :make_activation_code
@@ -219,16 +220,6 @@ class User < ActiveRecord::Base
         :joins => :merge_requests,
         :limit => 5
       })
-  end
-
-  def validate
-    if !not_openid?
-      begin
-        OpenIdAuthentication.normalize_identifier(self.identity_url)
-      rescue OpenIdAuthentication::InvalidOpenId => e
-        errors.add(:identity_url, I18n.t( "user.invalid_url" ))
-      end
-    end
   end
 
   # Activates the user in the database.
@@ -397,7 +388,7 @@ class User < ActiveRecord::Base
   def self.admins
     User.find(:all, :conditions=> {:is_admin => true})
   end
-  
+
   protected
   # before filter
   def encrypt_password
@@ -407,11 +398,11 @@ class User < ActiveRecord::Base
   end
 
   def password_required?
-    not_openid? && (crypted_password.blank? || !password.blank?)
+    !openid? && (crypted_password.blank? || !password.blank?)
   end
 
-  def not_openid?
-    identity_url.blank?
+  def openid?
+    !identity_url.blank?
   end
 
   def make_activation_code
@@ -420,7 +411,7 @@ class User < ActiveRecord::Base
   end
 
   def lint_identity_url
-    return if not_openid?
+    return if !openid?
     self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
   rescue OpenIdAuthentication::InvalidOpenId
     # validate will catch it instead
@@ -430,4 +421,13 @@ class User < ActiveRecord::Base
     login.downcase! if login
   end
 
+  protected
+  def normalized_openid_identifier
+    return if !openid?
+    begin
+      OpenIdAuthentication.normalize_identifier(self.identity_url)
+    rescue OpenIdAuthentication::InvalidOpenId => e
+      errors.add(:identity_url, I18n.t( "user.invalid_url" ))
+    end
+  end
 end
