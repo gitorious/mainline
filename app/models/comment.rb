@@ -31,11 +31,6 @@ class Comment < ActiveRecord::Base
   after_create :update_state_in_target
   serialize :state_change, Array
 
-  define_index do
-    indexes body
-    indexes user.login, :as => "commented_by"
-  end
-
   attr_protected :user_id
 
   validates_presence_of :user_id, :target, :project_id

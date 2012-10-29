@@ -91,5 +91,6 @@ Rails::Initializer.run do |config|
     OAuth::Consumer::CA_FILE = nil
     Gitorious::Plugin::post_load
     Grit::Git.git_binary = GitoriousConfig["git_binary"]
+    Gitorious::SearchIndex.setup
   end
 end

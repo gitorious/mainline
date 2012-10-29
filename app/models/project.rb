@@ -53,13 +53,6 @@ class Project < ActiveRecord::Base
   serialize :merge_request_custom_states, Array
   attr_protected :owner_id, :user_id, :site_id
 
-  define_index do
-    indexes title
-    indexes description
-    indexes slug
-    indexes user.login, :as => :user
-    indexes tags.name, :as => :category
-  end
 
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id
