@@ -314,7 +314,7 @@ class UsersControllerTest < ActionController::TestCase
     should "sends a new password if email was found" do
       u = users(:johan)
       User.expects(:generate_reset_password_key).returns("secret")
-      Mailer.expects(:forgotten_password).with(u, "secret")
+      Mailer.expects(:forgotten_password).with(u, "secret").returns(FakeMail.new)
       post :forgot_password_create, :user => {:email => u.email}
       assert_redirected_to(root_path)
       assert_match(/A password confirmation link has been sent/, flash[:success])

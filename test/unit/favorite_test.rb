@@ -136,8 +136,8 @@ class FavoriteTest < ActiveSupport::TestCase
     end
 
     should "deliver the notification email" do
-      Mailer.expects(:favorite_notification).with(@user,
-        regexp_matches(/johan pushed/))
+      favorite_mock = Mailer.expects(:favorite_notification)
+      favorite_mock.with(@user, regexp_matches(/johan pushed/)).returns(FakeMail.new)
       @favorite.notify_about_event(@event)
     end
   end

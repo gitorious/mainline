@@ -261,3 +261,8 @@ class ActionController::TestCase
     end
   end
 end
+
+class FakeMail
+  attr_reader :delivered
+  def deliver; @delivered = true; end
+end
