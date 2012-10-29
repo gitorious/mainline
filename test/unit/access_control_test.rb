@@ -70,7 +70,6 @@ class AccessControlTest < ActiveSupport::TestCase
     end
 
     should "grant admin access to repositories" do
-      refute @authorization.repository_admin?(@user, @repository)
       @committership.build_permissions(:admin)
       @committership.save!
       assert @authorization.repository_admin?(@user, @repository)

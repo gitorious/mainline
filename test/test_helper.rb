@@ -58,8 +58,8 @@ class ActiveSupport::TestCase
       (message || inclusion_failure(collection, object, false)))
   end
 
-  def refute(test, message=nil)
-    assert !test, message
+  def refute(*args)
+    assert(!args.shift, *args)
   end
 
   def inclusion_failure(collection, object, should_be_included)
