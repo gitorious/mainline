@@ -4,4 +4,5 @@
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
 
+require 'thinking_sphinx/tasks'
 Gitorious::Application.load_tasks
