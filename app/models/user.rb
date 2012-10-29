@@ -226,7 +226,7 @@ class User < ActiveRecord::Base
   def activate
     @activated = true
     self.attributes = {:activated_at => Time.now.utc, :activation_code => nil}
-    save(false)
+    save(:validate => false)
   end
 
   def activated?
