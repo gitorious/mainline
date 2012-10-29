@@ -111,7 +111,7 @@ module Gitorious::Messaging::StompAdapter
 
       protected
       def notify_on_error(err)
-        Mailer.deliver_message_processor_error(processor, err)
+        Mailer.message_processor_error(processor, err).deliver
       end
     end
   end

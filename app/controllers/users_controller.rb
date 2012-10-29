@@ -116,7 +116,7 @@ class UsersController < ApplicationController
     if params[:user] && user = User.find_by_email(params[:user][:email])
       if user.activated?
         password_key = user.forgot_password!
-        Mailer.deliver_forgotten_password(user, password_key)
+        Mailer.forgotten_password(user, password_key).deliver
         flash[:success] = "A password confirmation link has been sent to your email address"
         redirect_to(root_path)
       else

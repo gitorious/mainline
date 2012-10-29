@@ -61,6 +61,6 @@ class Favorite < ActiveRecord::Base
 
   def notify_about_event(an_event)
     notification_content = EventRendering::Text.render(an_event)
-    Mailer.deliver_favorite_notification(self.user, notification_content)
+    Mailer.favorite_notification(self.user, notification_content).deliver
   end
 end

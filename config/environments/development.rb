@@ -27,12 +27,10 @@ Gitorious::Application.configure do
     :namespace => 'ks1'
   }
 
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = :test
+
   # TODO: UPGRADE
-  # gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]
-  #
-  # ActionMailer::Base.default_url_options[:host] = gts_config["gitorious_host"]
-  # config.action_mailer.raise_delivery_errors = false
-  # config.action_mailer.delivery_method = :test
   #
   # ExceptionNotifier.exception_recipients = gts_config["exception_notification_emails"]
 end

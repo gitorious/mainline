@@ -29,7 +29,7 @@ class EmailTest < ActiveSupport::TestCase
 
   should "send an email confirmation on create" do
     email = Email.new(:address => "foo@bar.com", :user => users(:johan))
-    Mailer.expects(:deliver_new_email_alias).with(email).returns(true)
+    Mailer.expects(:new_email_alias).with(email).returns(true)
     email.save!
   end
 

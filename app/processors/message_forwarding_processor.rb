@@ -42,7 +42,7 @@ class MessageForwardingProcessor
         notifiable_type.constantize.find(notifiable_id)
       end
       logger.info("#{self.class.name} sending Message:#{message_id.inspect} to #{recipient.login} from #{sender.login}")
-      Mailer.deliver_notification_copy(recipient, sender, subject, body, notifiable, message_id)
+      Mailer.notification_copy(recipient, sender, subject, body, notifiable, message_id).deliver
     rescue ActiveRecord::RecordNotFound
       logger.error("Could not deliver message to #{recipient_id}")
     end

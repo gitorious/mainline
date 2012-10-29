@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -15,13 +16,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 class Email < ActiveRecord::Base
   belongs_to :user
 
   FORMAT = /^[^@\s]+@([\-a-z0-9]+\.)+[a-z]{2,}$/i
   validates_presence_of :user, :address
-  validates_format_of   :address, :with => FORMAT
-  validates_length_of   :address, :within => 5..255
+  validates_format_of :address, :with => FORMAT
+  validates_length_of :address, :within => 5..255
   validates_uniqueness_of :address, :scope => "user_id", :case_sensitive => false
 
   attr_protected :aasm_state, :user_id, :confirmation_code
@@ -48,7 +50,7 @@ class Email < ActiveRecord::Base
 
   protected
   def send_confirmation_email
-    Mailer.deliver_new_email_alias(self)
+    Mailer.new_email_alias(self).deliver
   end
 
   def set_confirmation_code

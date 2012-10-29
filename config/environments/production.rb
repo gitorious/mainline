@@ -50,7 +50,4 @@ Gitorious::Application.configure do
   # Make sure this is writeable by your webserver user
   cache_dir = Rails.root + 'public/cache'
   config.action_controller.page_cache_directory = cache_dir
-
-  gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]
-  ActionMailer::Base.default_url_options[:host] = gts_config["gitorious_host"]
 end

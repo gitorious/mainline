@@ -93,7 +93,7 @@ class Admin::UsersControllerTest < ActionController::TestCase
     should "sends a new password if email was found" do
       u = users(:johan)
       User.expects(:generate_random_password).returns("secret")
-      Mailer.expects(:deliver_forgotten_password).with(u, "secret")
+      Mailer.expects(:forgotten_password).with(u, "secret")
       post :reset_password, :id => u.to_param
       assert_redirected_to(admin_users_path)
       assert_equal "A new password has been sent to your email", flash[:notice]
