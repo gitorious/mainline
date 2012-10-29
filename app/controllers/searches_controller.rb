@@ -26,22 +26,18 @@ class SearchesController < ApplicationController
 
   def show
     unless params[:q].blank?
-      orig_results = nil
+      @all_results = nil  # The unfiltered search result from TS
       @results = paginate(page_free_redirect_options) do
         filter_paginated(params[:page], PER_PAGE) do |page|
-          @search = Ultrasphinx::Search.new({ :query => params[:q],
-                                              :page => page,
-                                              :per_page => PER_PAGE })
-          @search.run
-          orig_results = @search.results
+          @all_results = ThinkingSphinx.search({ :query => params[:q],
+                                             :page => page,
+                                             :per_page => PER_PAGE })
         end
       end
 
-      orig_len = orig_results.nil? ? 0 : orig_results.length
-      len = @results.nil? ? 0 : @results.length
-      @total_entries = @search.nil? ? 0 : @search.total_entries - (orig_len - len)
+      unfiltered_results_length = @all_results.nil? ? 0 : @all_results.length
+      filtered_results_length = @results.length
+      @total_entries = @all_results.total_entries - (unfiltered_results_length - filtered_results_length)
     end
-  rescue Ultrasphinx::UsageError
-    @results = []
   end
 end

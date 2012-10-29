@@ -14,7 +14,7 @@ gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.4.5"
 gem "state_machine", "0.9.4"
-gem "riddle", "1.2.2" # For the ultrasphinx plugin
+
 gem "builder", "3.0.0"
 gem "mysql", "2.8.1", :platforms => :ruby
 gem "validates_url_format_of", "0.1.1"
@@ -26,6 +26,8 @@ gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "1.5.0"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
+
+gem "thinking-sphinx", "~> 1.4.13"
 
 # TODO: replace the lines below while upgrading to Rails 3
 # gem "exception_notification", :require => 'exception_notifier'

@@ -30,7 +30,6 @@ class Repository < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
   include RecordThrottling
   include Watchable
-  include Gitorious::Search
   include Gitorious::Authorization
   include Gitorious::Protectable
 
@@ -105,11 +104,11 @@ class Repository < ActiveRecord::Base
 
   named_scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
-  is_indexed do |s|
-    s.index :name
-    s.index :description
-    s.index "project#slug", :as => :project
-    s.conditions "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
+  define_index do
+    indexes name
+    indexes description
+    indexes project.slug, :as => :project
+    where "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
   end
 
   def destroy

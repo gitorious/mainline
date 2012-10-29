@@ -24,16 +24,16 @@
 <% @page_title = @search.blank? ? t("views.searches.search") : t("views.searches.page_title", :term => h(params[:q])) -%>
 <h1><%= @page_title -%></h1>
 
-<% if @search -%>
+<% if @results -%>
   <p class="hint search_time">
-    <small><%= t("views.searches.found", :count => @total_entries, :time => @search.time) %></small>
+    <small><%= t("views.searches.found", :count => @total_entries, :time => @all_results.query_time) %></small>
   </p>
 <% end -%>
 
 <%= render :partial => "search_box", :locals => {:hide_tips => false} -%>
 
 <div class="search_results">
-  <% if @search -%>
+  <% if @results -%>
     <% if @results.empty? -%>
       <p><%= t("views.searches.no_results", :term => h(force_utf8(params[:q]))) %></p>
     <% else -%>
@@ -42,7 +42,7 @@
           <%= render :partial => result, :object => result -%>
         </div>
       <% end -%>
-      <%= render_pagination_links (@search) -%>
+      <%= render_pagination_links (@results) -%>
     <% end -%>
   <% end -%>
 </div>
