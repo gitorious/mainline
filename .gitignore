@@ -32,3 +32,4 @@ public/system/group_avatars
 /data/hooks/custom-post-receive
 /data/hooks/custom-update
 /TAGS
+/config/development.sphinx.conf
