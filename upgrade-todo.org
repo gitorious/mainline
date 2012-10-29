@@ -78,16 +78,15 @@
 *** should_belong_to :watcher
 * Instructions to users [0/1]
 ** TODO Database configuration: Use mysql2
-* Tests that are muted/not passing [0/12]
-** TODO stomp_adapter_test.rb
-** TODO test/unit/user_test.rb
-** TODO test/unit/lib/gitorious/search_test.rb
-** TODO test/unit/lib/ssh_client_test.rb
-** TODO test/unit/repository_test.rb
-** TODO test/unit/helpers/repositories_helper_test.rb
-** TODO test/unit/lib/gitorious/messaging/sync_adapter_test.rb
-** TODO test/unit/merge_request_test.rb
-** TODO test/unit/lib/gitorious/authentication/ldap_authentication_test.rb
-** TODO test/unit/helpers/event_rendering_helper_test.rb
-** TODO test/unit/helpers/blobs_helper_test.rb
-** TODO test/unit/helpers/application_helper_test.rb
+* Tests that are muted/not passing [5/11]
+** TODO stomp_adapter_test.rb (ActiveMessaging)
+** TODO test/unit/user_test.rb (OpenID)
+** TODO test/unit/lib/ssh_client_test.rb (Routing)
+** TODO test/unit/repository_test.rb (???)
+** DONE test/unit/helpers/repositories_helper_test.rb
+** DONE test/unit/lib/gitorious/messaging/sync_adapter_test.rb
+** TODO test/unit/merge_request_test.rb (???)
+** DONE test/unit/lib/gitorious/authentication/ldap_authentication_test.rb
+** TODO test/unit/helpers/event_rendering_helper_test.rb (Routing)
+** DONE test/unit/helpers/blobs_helper_test.rb
+** DONE test/unit/helpers/application_helper_test.rb

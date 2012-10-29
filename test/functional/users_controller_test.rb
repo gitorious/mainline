@@ -128,7 +128,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require login on signup" do
     assert_no_difference("User.count") do
       create_user(:login => nil)
-      assert_not_nil assigns(:user).errors.on(:login)
+      assert_not_nil assigns(:user).errors[:login]
       assert_template("users/new")
     end
   end
@@ -136,7 +136,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require password on signup" do
     assert_no_difference("User.count") do
       create_user(:password => nil)
-      assert !assigns(:user).errors.on(:password).empty?
+      assert !assigns(:user).errors[:password].empty?
       assert_template(("users/new"))
     end
   end
@@ -144,7 +144,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require password confirmation on signup" do
     assert_no_difference("User.count") do
       create_user(:password_confirmation => nil)
-      assert !assigns(:user).errors.on(:password_confirmation).empty?
+      assert !assigns(:user).errors[:password_confirmation].empty?
       assert_template(("users/new"))
     end
   end
@@ -152,7 +152,7 @@ class UsersControllerTest < ActionController::TestCase
   should "require email on signup" do
     assert_no_difference("User.count") do
       create_user(:email => nil)
-      assert !assigns(:user).errors.on(:email).empty?, "empty? should be false"
+      assert !assigns(:user).errors[:email].empty?, "empty? should be false"
       assert_template(("users/new"))
     end
   end

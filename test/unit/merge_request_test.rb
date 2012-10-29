@@ -198,7 +198,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     assert @merge_request.open?, '@merge_request.open? should be true'
   end
 
-  should 'know if a specific commit has been merged or not' do
+  should "know if a specific commit has been merged or not" do
     repo = mock("Git repo")
     git = mock("Git backend")
     repo.stubs(:git).returns(git)
@@ -495,11 +495,11 @@ class MergeRequestTest < ActiveSupport::TestCase
 
     should 'require ending_commit for new records' do
       assert !@merge_request.save
-      assert_not_nil @merge_request.errors.on(:ending_commit)
+      assert_not_nil @merge_request.errors[:ending_commit]
     end
 
     should 'not consider a missing ending_commit a show stopper on update' do
-      @merge_request.save(false)
+      @merge_request.save(:validate => false)
       @merge_request.proposal = 'Yikes'
       assert @merge_request.save
     end
@@ -697,7 +697,7 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should 'build an event with only the new state' do
-      @merge_request.write_attribute(:status_tag, nil)
+      @merge_request.send(:write_attribute, :status_tag, nil)
       @merge_request.with_user(users(:johan)) do
         @merge_request.status_tag = "Closed"
         @merge_request.create_status_change_event("Setting this to closed")
@@ -815,7 +815,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_equal mr2.sequence_number, @merge_request.sequence_number
       assert !mr2.save
       assert_equal mr2.sequence_number, @merge_request.sequence_number
-      assert_not_nil mr2.errors.on(:sequence_number)
+      assert_not_nil mr2.errors[:sequence_number]
     end
 
     should "use sequence_number in to_param" do

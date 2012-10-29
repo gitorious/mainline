@@ -47,7 +47,7 @@ class ProjectTest < ActiveSupport::TestCase
     p1.save!
     p2 = create_project(:slug => "FOO")
     assert !p2.valid?, 'valid? should be false'
-    assert_not_nil p2.errors.on(:slug)
+    assert_not_nil p2.errors[:slug]
   end
 
   should "have an alphanumeric slug" do
@@ -65,11 +65,11 @@ class ProjectTest < ActiveSupport::TestCase
   should "cannot have a reserved name as slug" do
     project = create_project(:slug => Gitorious::Reservations.project_names.first)
     project.valid?
-    assert_not_nil project.errors.on(:slug)
+    assert_not_nil project.errors[:slug]
 
     project = create_project(:slug => "dashboard")
     project.valid?
-    assert_not_nil project.errors.on(:slug)
+    assert_not_nil project.errors[:slug]
   end
 
   should "creates the wiki repository on create" do
@@ -182,9 +182,9 @@ class ProjectTest < ActiveSupport::TestCase
     project.bugtracker_url = "invalid@bugtracker"
 
     assert !project.valid?
-    assert project.errors.on(:home_url)
-    assert project.errors.on(:mailinglist_url)
-    assert project.errors.on(:bugtracker_url)
+    assert project.errors[:home_url]
+    assert project.errors[:mailinglist_url]
+    assert project.errors[:bugtracker_url]
   end
 
   should "allow valid urls" do
@@ -195,9 +195,9 @@ class ProjectTest < ActiveSupport::TestCase
     project.bugtracker_url = "http://bugtracker.com"
 
     assert project.valid?
-    assert project.errors.on(:home_url).nil?
-    assert project.errors.on(:mailinglist_url).nil?
-    assert project.errors.on(:bugtracker_url).nil?
+    assert project.errors[:home_url].nil?
+    assert project.errors[:mailinglist_url].nil?
+    assert project.errors[:bugtracker_url].nil?
   end
 
   should "find or create an associated wiki repo" do
@@ -569,7 +569,7 @@ class ProjectTest < ActiveSupport::TestCase
   should "not allow api as slug" do
     p = Project.new(:slug => "api")
     assert !p.valid?
-    assert_not_nil p.errors.on(:slug)
+    assert_not_nil p.errors[:slug]
   end
 
   context "Database authorization" do

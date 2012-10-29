@@ -70,14 +70,15 @@ class SSHClientTest < ActiveSupport::TestCase
     request
   end
 
-
   should "ask for the real path" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     exp_path = "/foo/bar/writable_by?username=johan"
     assert_equal exp_path, client.writable_by_query_path
 
     request = make_request(client.writable_by_query_path)
-    assert_equal RepositoriesController, ActionController::Routing::Routes.recognize(request)
+    uri = request.env["REQUEST_URI"]
+
+    assert_equal RepositoriesController, Rails.application.routes.recognize_path(uri)
     assert_equal "writable_by", request.symbolized_path_parameters[:action]
     assert_equal "repositories", request.symbolized_path_parameters[:controller]
     assert_equal "foo", request.symbolized_path_parameters[:project_id]

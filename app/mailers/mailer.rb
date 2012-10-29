@@ -25,7 +25,7 @@
 class Mailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
-  include ActionController::UrlWriter
+  include Rails.application.routes.url_helpers
 
   default(:from => lambda { GitoriousConfig["sender_email_address"] ||
             "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>" })

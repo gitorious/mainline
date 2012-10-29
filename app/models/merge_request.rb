@@ -175,7 +175,7 @@ class MergeRequest < ActiveRecord::Base
     end
 
     @previous_state = status_tag.name if status_tag
-    write_attribute(:status_tag, tag.name)
+    self[:status_tag] = tag.name
     save
   end
 
@@ -592,7 +592,7 @@ class MergeRequest < ActiveRecord::Base
     result = Rails.cache.fetch(key, :expires_in => 60.minutes) do
       output = target_repository.git.git.cherry({},target_branch, a_commit)
       # Storing false in the cache would make it miss each time:
-      output.blank? ? :true : :false
+      result output.blank? ? :true : :false
     end
     result == :true
   end

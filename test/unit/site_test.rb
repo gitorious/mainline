@@ -30,7 +30,7 @@ class SiteTest < ActiveSupport::TestCase
     site = Site.new
     site.subdomain = Site::HTTP_CLONING_SUBDOMAIN
     assert !site.save
-    assert_not_nil site.errors.on(:subdomain)
+    assert_not_nil site.errors[:subdomain]
   end
 
   should "derive grit location from site title and id" do

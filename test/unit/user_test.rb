@@ -42,14 +42,14 @@ class UserTest < ActiveSupport::TestCase
   should "require a username without spaces" do
     assert_no_difference("User.count") do
       u = create_user(:login => "joe schmoe")
-      assert_equal "is invalid", u.errors.on(:login)
+      assert_equal "is invalid", u.errors[:login]
     end
   end
 
   should "require an email that looks emailish" do
     assert_no_difference("User.count") do
       u = create_user(:email => "kernel.wtf")
-      assert_not_nil u.errors.on(:email)
+      assert_not_nil u.errors[:email]
     end
   end
 
@@ -185,7 +185,7 @@ class UserTest < ActiveSupport::TestCase
     u = users(:johan)
     u.identity_url = "€&/()"
     assert !u.valid?
-    assert_not_nil u.errors.on(:identity_url), u.errors.on(:identity_url)
+    assert_not_nil u.errors[:identity_url], u.errors[:identity_url]
   end
 
   should "return that the user already has a password" do

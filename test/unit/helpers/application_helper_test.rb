@@ -48,11 +48,11 @@ class ApplicationHelperTest < ActionView::TestCase
   should "not render block content if object is ready" do
     obj = mock("any given object")
     obj.stubs(:ready?).returns(false)
-    render_if_ready(obj) do
+    output = render_if_ready(obj) do
       "moo"
     end
-    assert_not_equal "moo", output_buffer
-    assert_match(/is being created/, output_buffer)
+    assert_not_equal "moo", output
+    assert_match(/is being created/, output)
   end
 
   should "gives us the domain of a full url" do

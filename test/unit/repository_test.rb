@@ -57,7 +57,7 @@ class RepositoryTest < ActiveSupport::TestCase
     @repository.save
     repos = new_repos(:name => "FOO")
     assert !repos.valid?, "valid? should be false"
-    assert_not_nil repos.errors.on(:name)
+    assert_not_nil repos.errors[:name]
 
     assert new_repos(:project => projects(:moes)).valid?
   end
@@ -65,11 +65,11 @@ class RepositoryTest < ActiveSupport::TestCase
   should "not have a reserved name" do
     repo = new_repos(:name => Gitorious::Reservations.repository_names.first.dup)
     repo.valid?
-    assert_not_nil repo.errors.on(:name)
+    assert_not_nil repo.errors[:name]
     RepositoriesController.action_methods.each do |action|
       repo.name = action.dup
       repo.valid?
-      assert_not_nil repo.errors.on(:name), "fail on #{action}"
+      assert_not_nil repo.errors[:name], "fail on #{action}"
     end
   end
 
@@ -597,6 +597,7 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.committerships.create_with_permissions!({
         :committer => users(:johan)
       }, Committership::CAN_COMMIT)
+
     assert_equal [users(:johan).login], committers(repo).map(&:login)
 
     repo.committerships.create_with_permissions!({
@@ -609,7 +610,6 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.reload
     assert committers(repo).include?(users(:moe))
   end
-
 
   should "know you can request merges from it"  do
     repo = repositories(:johans2)
@@ -867,14 +867,14 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   context "Logging updates" do
-    setup {@repository = repositories(:johans)}
+    setup { @repository = repositories(:johans) }
 
     should "generate events for each value that is changed" do
       assert_incremented_by(@repository.events, :size, 1) do
         @repository.log_changes_with_user(users(:johan)) do
           @repository.replace_value(:name, "new_name")
         end
-        assert @repository.save
+        assert @repository.save!
       end
       assert_equal "new_name", @repository.reload.name
     end
@@ -1290,12 +1290,12 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "not allow users as repository name" do
       repo = otherwise_valid_repository(:name => "users")
-      assert repo.errors.on :name
+      assert repo.errors[:name]
     end
 
     should "not allow 'groups' as repository name" do
       repo = otherwise_valid_repository(:name => "groups")
-      assert repo.errors.on :name
+      assert repo.errors[:name]
     end
   end
 
