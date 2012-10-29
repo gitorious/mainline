@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -27,11 +28,9 @@ class SshKey < ActiveRecord::Base
 
   SSH_KEY_FORMAT = /^ssh\-[a-z0-9]{3,4} [a-z0-9\+=\/]+ SshKey:(\d+)?-User:(\d+)?$/ims.freeze
 
+  validate :valid_ssh_key
   validates_presence_of :user_id, :key
   validates_uniqueness_of :key, :message => "is already in use - please use/generate a different keypair."
-
-  before_validation { |k| k.key.to_s.strip! }
-  before_validation :lint_key!
 
   # we only allow people to create/destroy keys after_update  :create_update_task
   after_destroy :publish_deletion_message
@@ -40,8 +39,8 @@ class SshKey < ActiveRecord::Base
     I18n.t("activerecord.models.ssh_key")
   end
 
-  def validate
-    if self.to_keyfile_format !~ SSH_KEY_FORMAT
+  def valid_ssh_key
+    if to_keyfile_format !~ SSH_KEY_FORMAT
       errors.add(:key, I18n.t("ssh_key.key_format_validation_message"))
     end
 
@@ -129,8 +128,7 @@ class SshKey < ActiveRecord::Base
     return $?.success?
   end
 
-  protected
-  def lint_key!
-    self.key.to_s.gsub!(/(\r|\n)*/m, "")
+  def key=(key)
+    self[:key] = key.to_s.strip.gsub(/(\r|\n)*/m, "")
   end
 end
