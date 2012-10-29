@@ -42,7 +42,7 @@ class UserTest < ActiveSupport::TestCase
   should "require a username without spaces" do
     assert_no_difference("User.count") do
       u = create_user(:login => "joe schmoe")
-      assert_equal "is invalid", u.errors[:login]
+      assert_equal ["is invalid"], u.errors[:login]
     end
   end
 
@@ -514,8 +514,8 @@ class UserTest < ActiveSupport::TestCase
 
       assert_not_nil User.most_active
       assert_equal 2, User.most_active.count
-      assert_equal "2", User.most_active.first.event_count
-      assert_equal "1", User.most_active.second.event_count
+      assert_equal 2, User.most_active.first.event_count
+      assert_equal 1, User.most_active.second.event_count
     end
   end
 

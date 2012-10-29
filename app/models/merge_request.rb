@@ -592,7 +592,7 @@ class MergeRequest < ActiveRecord::Base
     result = Rails.cache.fetch(key, :expires_in => 60.minutes) do
       output = target_repository.git.git.cherry({},target_branch, a_commit)
       # Storing false in the cache would make it miss each time:
-      result output.blank? ? :true : :false
+      output.blank? ? :true : :false
     end
     result == :true
   end
