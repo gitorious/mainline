@@ -22,8 +22,8 @@ require "test_helper"
 class MessageTest < ActiveSupport::TestCase
   context 'The state machine' do
     setup do
-      @recipient = Factory.create(:user)
-      @sender = Factory.create(:user)
+      @recipient = FactoryGirl.create(:user)
+      @sender = FactoryGirl.create(:user)
     end
 
     context 'class level' do
@@ -43,7 +43,7 @@ class MessageTest < ActiveSupport::TestCase
 
     context 'instance level' do
       setup do
-        @message = Factory.create(:message, :sender => @sender, :recipient => @recipient)
+        @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @recipient)
         @recipient = @message.recipient
         assert_not_nil(@recipient)
       end
@@ -58,7 +58,7 @@ class MessageTest < ActiveSupport::TestCase
 
   context 'Replying to a message' do
     setup do
-      @message    = Factory.create(:message)
+      @message    = FactoryGirl.create(:message)
       @reply = @message.build_reply(:body => "Thanks. That is much appreciated")
     end
 
@@ -129,7 +129,7 @@ class MessageTest < ActiveSupport::TestCase
 
   context 'Calculating the number of messages in a thread' do
     setup do
-      @message = Factory.create(:message)
+      @message = FactoryGirl.create(:message)
     end
 
     should 'calculate the number of unread messages' do
@@ -168,8 +168,8 @@ class MessageTest < ActiveSupport::TestCase
 
   context 'Email notifications' do
     setup do
-      @privacy_lover = Factory.create(:user, :wants_email_notifications => false)
-      @email_lover = Factory.create(:user, :wants_email_notifications => true)
+      @privacy_lover = FactoryGirl.create(:user, :wants_email_notifications => false)
+      @email_lover = FactoryGirl.create(:user, :wants_email_notifications => true)
       # @moe = users(:moe)
       # @mike = users(:mike)
       @message = Message.new(:subject => "Hello", :body => "World")
@@ -233,7 +233,7 @@ class MessageTest < ActiveSupport::TestCase
   end
 
   context 'Rendering XML' do
-    setup {@message = Factory.create(:message)}
+    setup {@message = FactoryGirl.create(:message)}
     should 'include required attributes' do
       result = @message.to_xml
       assert_match /<recipient_name>#{@message.recipient.title}<\/recipient_name>/, result
@@ -247,8 +247,8 @@ class MessageTest < ActiveSupport::TestCase
   context "Thottling" do
     setup do
       Message.destroy_all
-      @recipient = Factory.create(:user)
-      @sender = Factory.create(:user)
+      @recipient = FactoryGirl.create(:user)
+      @sender = FactoryGirl.create(:user)
     end
 
     should "not throttle system notifications" do
@@ -296,13 +296,13 @@ class MessageTest < ActiveSupport::TestCase
 
   context 'Archive state' do
     setup do
-      @sender = Factory.create(:user)
-      @recipient = Factory.create(:user)
-      @message = Factory.create(:message, :sender => @sender, :recipient => @recipient)
+      @sender = FactoryGirl.create(:user)
+      @recipient = FactoryGirl.create(:user)
+      @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @recipient)
     end
 
     should 'be marked as archived by both sender and recipient when it is the same user' do
-      @message = Factory.create(:message, :sender => @sender, :recipient => @sender)
+      @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @sender)
       @message.archived_by(@sender)
       assert @message.archived_by_sender?
       assert @message.archived_by_recipient?
@@ -349,8 +349,8 @@ class MessageTest < ActiveSupport::TestCase
 
   context "Sender display" do
     setup do
-      @sender = Factory.create(:user)
-      @recipient = Factory.create(:user)
+      @sender = FactoryGirl.create(:user)
+      @recipient = FactoryGirl.create(:user)
     end
 
     should "be sender#title when no notifiable exists" do
@@ -360,7 +360,7 @@ class MessageTest < ActiveSupport::TestCase
     end
 
     should "be Gitorious when a notifiable exists" do
-      group = Factory.create(:group, :creator => @sender)
+      group = FactoryGirl.create(:group, :creator => @sender)
       membership = Membership.build_invitation(@sender,
         :group => group,
         :user => @recipient,

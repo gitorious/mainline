@@ -22,9 +22,9 @@ require "test_helper"
 class MessageThreadTest < ActiveSupport::TestCase
   context 'Building a message' do
     setup do
-      @sender = Factory.create(:user)
-      @john = Factory.create(:user, :login => 'john')
-      @jane = Factory.create(:user, :login => 'jane')
+      @sender = FactoryGirl.create(:user)
+      @john = FactoryGirl.create(:user, :login => 'john')
+      @jane = FactoryGirl.create(:user, :login => 'jane')
       @thread = MessageThread.new(:subject => 'Hello world', :body => 'Lorem ipsum', :recipients => 'john jane', :sender => @sender)
     end
 

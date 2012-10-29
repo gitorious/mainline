@@ -301,9 +301,9 @@ class UserTest < ActiveSupport::TestCase
 
     context "Top level messages" do
       setup do
-        @sender = Factory.create(:user)
-        @recipient = Factory.create(:user)
-        @other_user = Factory.create(:user)
+        @sender = FactoryGirl.create(:user)
+        @recipient = FactoryGirl.create(:user)
+        @other_user = FactoryGirl.create(:user)
         @message = Message.create(:sender => @sender, :recipient => @recipient, :subject => "Hello", :body => "World")
       end
 

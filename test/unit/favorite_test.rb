@@ -21,9 +21,9 @@ require "test_helper"
 
 class FavoriteTest < ActiveSupport::TestCase
   def create_favorited_repo
-    user = Factory.create(:user)
-    project = Factory.create(:project, :user => user, :owner => user)
-    repo = Factory.create(:repository, :user => user, :project => project, :owner => user)
+    user = FactoryGirl.create(:user)
+    project = FactoryGirl.create(:project, :user => user, :owner => user)
+    repo = FactoryGirl.create(:repository, :user => user, :project => project, :owner => user)
     [user, project, repo]
   end
 

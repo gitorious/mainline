@@ -435,7 +435,7 @@ class ProjectTest < ActiveSupport::TestCase
   end
 
   context 'Merge request status tags' do
-    setup {@project = Factory.create(:user_project)}
+    setup {@project = FactoryGirl.create(:user_project)}
 
     should 'serialize merge_request_state_options' do
       @project.merge_request_custom_states = %w(Merged Verifying)
@@ -465,14 +465,14 @@ class ProjectTest < ActiveSupport::TestCase
 
   context "Searching" do
     setup do
-      @owner = Factory.create(:user, :login => "thejoker")
-      @project = Factory.create(:project, :user => @owner,
+      @owner = FactoryGirl.create(:user, :login => "thejoker")
+      @project = FactoryGirl.create(:project, :user => @owner,
         :owner => @owner)
-      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
+      @repo = FactoryGirl.create(:repository, :project => @project, :owner => @owner,
         :user => @owner, :name => "thework", :description => "halloween")
-      @group = Factory.create(:group, :creator => @owner,
+      @group = FactoryGirl.create(:group, :creator => @owner,
         :name => "foo-hackers", :user_id => @owner.to_param)
-      @group_repo = Factory.create(:repository, :project => @project,
+      @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
       @tracking_repo = @repo.create_tracking_repository
     end
@@ -500,14 +500,14 @@ class ProjectTest < ActiveSupport::TestCase
 
   context "Cloneable repositories" do
     setup do
-      @owner = Factory.create(:user, :login => "thejoker")
-      @project = Factory.create(:project, :user => @owner,
+      @owner = FactoryGirl.create(:user, :login => "thejoker")
+      @project = FactoryGirl.create(:project, :user => @owner,
         :owner => @owner)
-      @repo = Factory.create(:repository, :project => @project, :owner => @owner,
+      @repo = FactoryGirl.create(:repository, :project => @project, :owner => @owner,
         :user => @owner, :name => "thework", :description => "halloween")
-      @group = Factory.create(:group, :creator => @owner,
+      @group = FactoryGirl.create(:group, :creator => @owner,
         :name => "foo-hackers", :user_id => @owner.to_param)
-      @group_repo = Factory.create(:repository, :project => @project,
+      @group_repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @group, :name => "group-repo", :user => @owner)
       @tracking_repo = @repo.create_tracking_repository
     end
@@ -557,7 +557,7 @@ class ProjectTest < ActiveSupport::TestCase
 
   context "Tagging" do
     setup do
-      @project = Factory.create(:user_project)
+      @project = FactoryGirl.create(:user_project)
     end
 
     should "have a tag_list= setter" do

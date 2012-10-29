@@ -260,8 +260,8 @@ class MessagesControllerTest < ActionController::TestCase
 
   context "On PUT to bulk_update" do
     setup do
-      @sender = Factory.create(:user)
-      @recipient = Factory.create(:user)
+      @sender = FactoryGirl.create(:user)
+      @recipient = FactoryGirl.create(:user)
       @messages = 4.times.collect{ |i|
         Message.create(:sender => @sender, :recipient => @recipient, :subject => "Message #{i}", :body => "Hello world")
       }

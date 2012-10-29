@@ -28,9 +28,9 @@ class MembershipTest < ActiveSupport::TestCase
 
   context 'Adding members to a group' do
     setup do
-      @group = Factory.create(:group)
+      @group = FactoryGirl.create(:group)
       @user = @group.creator
-      @inviter = Factory.create(:user)
+      @inviter = FactoryGirl.create(:user)
     end
 
     should 'send a message to a newly added member after he is added to the group' do
@@ -43,7 +43,7 @@ class MembershipTest < ActiveSupport::TestCase
     end
 
     should 'nullify messages when deleted' do
-      @invitee = Factory.create(:user)
+      @invitee = FactoryGirl.create(:user)
       @user.received_messages.destroy_all
       membership = Membership.build_invitation(@inviter, :user => @invitee, :group => @group, :role => Role.member)
       membership.save
@@ -62,9 +62,9 @@ class MembershipTest < ActiveSupport::TestCase
 
   context 'The group creator' do
     setup do
-      @group = Factory.create(:group)
+      @group = FactoryGirl.create(:group)
       @creator = @group.creator
-      @membership = Factory.create(:membership, :user => @creator, :group => @group)
+      @membership = FactoryGirl.create(:membership, :user => @creator, :group => @group)
       assert_equal @creator, @group.creator
     end
 
@@ -81,8 +81,8 @@ class MembershipTest < ActiveSupport::TestCase
 
   context 'A membership' do
     setup {
-      @group = Factory.create(:group)
-      @membership = Factory.create(:membership, :user => @group.creator, :group => @group)
+      @group = FactoryGirl.create(:group)
+      @membership = FactoryGirl.create(:membership, :user => @group.creator, :group => @group)
     }
 
     should 'be unique for each user' do

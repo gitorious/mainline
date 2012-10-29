@@ -35,7 +35,7 @@ gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 
 group :test do
   gem "mocha", "0.9.10", :require => false
-  gem "factory_girl", "~> 1.3.0"
+  gem "factory_girl_rails", "~> 4.1"
   gem "shoulda", "~> 2.9.1"
   gem "rots", :git => "https://github.com/roman/rots.git"
   gem "capybara", "1.0.1"

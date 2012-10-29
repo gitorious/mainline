@@ -942,8 +942,8 @@ class RepositoryTest < ActiveSupport::TestCase
 
   context "Merge request repositories" do
     setup do
-      @project = Factory.create(:user_project)
-      @main_repo = Factory.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
+      @project = FactoryGirl.create(:user_project)
+      @main_repo = FactoryGirl.create(:repository, :project => @project, :owner => @project.owner, :user => @project.user)
     end
 
     should "initially not have a merge request repository" do
@@ -1005,13 +1005,13 @@ class RepositoryTest < ActiveSupport::TestCase
   context "Fresh repositories" do
     setup do
       Repository.destroy_all
-      @me = Factory.create(:user, :login => "johnnie")
-      @project = Factory.create(:project, :user => @me,
+      @me = FactoryGirl.create(:user, :login => "johnnie")
+      @project = FactoryGirl.create(:project, :user => @me,
         :owner => @me)
-      @repo = Factory.create(:repository, :project => @project,
+      @repo = FactoryGirl.create(:repository, :project => @project,
         :owner => @project, :user => @me)
       @users = %w(bill steve jack nellie).map { | login |
-        Factory.create(:user, :login => login)
+        FactoryGirl.create(:user, :login => login)
       }
       @user_repos = @users.map do |u|
         new_repo = Repository.new_by_cloning(@repo)
