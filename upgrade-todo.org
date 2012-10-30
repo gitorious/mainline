@@ -1,13 +1,13 @@
-* Gems that went out of style [1/21]
+* Gems that went out of style [3/21]
 ** DONE gem "validates_url_format_of", "0.1.1"
-** TODO gem "SystemTimer", "1.2.3" (from resque group)
+** DONE gem "SystemTimer", "1.2.3" (from resque group)
 ** TODO Reservations
 ** TODO verify has moved to routing [0/1]
 *** TODO UsersController
 **** verify :method => :put, :only => [:update_password, :update]
 **** verify :method => :delete, :only => :avatar
 **** verify :method => :post, :only => [:create, :forgot_password_create]
-** TODO open_id_authentication
+** DONE open_id_authentication
 ** TODO HookTest
 *** should_belong_to :repository
 *** should_validate_presence_of :user, :repository, :url
@@ -76,8 +76,9 @@
 ** TODO FeedItemTest
 *** should_belong_to :event
 *** should_belong_to :watcher
-* Instructions to users [0/1]
+* Instructions to users [0/2]
 ** TODO Database configuration: Use mysql2
+** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
 * Tests that are muted/not passing [5/11]
 ** TODO stomp_adapter_test.rb (ActiveMessaging)
 ** TODO test/unit/user_test.rb (OpenID)
