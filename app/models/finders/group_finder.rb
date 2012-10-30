@@ -31,13 +31,16 @@ class GroupFinder
 
   def create_group(params, user)
     group = new_group(params)
-    group.transaction do
-      group.creator = user
-      group.save!
-      group.memberships.create!({
-                                  :user => user,
-                                  :role => Role.admin,
-                                })
+    begin
+      group.transaction do
+        group.creator = user
+        group.save!
+        group.memberships.create!({
+                                    :user => user,
+                                    :role => Role.admin,
+                                  })
+      end
+    rescue ActiveRecord::RecordInvalid
     end
     return group
   end

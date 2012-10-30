@@ -21,7 +21,7 @@ class TeamTest < ActiveSupport::TestCase
   def setup
     LdapGroup.any_instance.stubs(:validate_ldap_dns)
   end
-  
+
   context "LDAP backend" do
     setup do
       @old_klass = Team.group_implementation
@@ -31,7 +31,7 @@ class TeamTest < ActiveSupport::TestCase
     teardown do
       Team.group_implementation = @old_klass
     end
-    
+
     should "supply pagination" do
       LdapGroup.expects(:paginate)
       Team.paginate_all
@@ -50,21 +50,30 @@ class TeamTest < ActiveSupport::TestCase
       assert_kind_of LdapGroup, group
     end
 
+    should "return a group even if it's invalid" do
+      name = "This is not valid"
+      group = Team.create_group({:group => {:name => name}}, User.first)
+      assert !group.valid?
+      assert_equal name, group.name
+    end
+
+
+
     should "destroy a group if user is admin" do
       assert_nothing_raised do
         group = ldap_groups(:first_ldap_group)
-        Team.destroy_group(group.name, group.creator) 
+        Team.destroy_group(group.name, group.creator)
       end
     end
 
     should "not let others than the group creator destroy it" do
       assert_raises Team::DestroyGroupError do
         group = ldap_groups(:first_ldap_group)
-        Team.destroy_group(group.name, users(:moe)) 
+        Team.destroy_group(group.name, users(:moe))
       end
     end
 
-    should "treat group creator as admin" do      
+    should "treat group creator as admin" do
       group = ldap_groups(:first_ldap_group)
       user = group.creator
       assert Team.by_admin(user).include?(group)
@@ -91,6 +100,13 @@ class TeamTest < ActiveSupport::TestCase
       assert group.valid?
     end
 
+    should "return a group even if it's invalid" do
+      name = "This is not valid"
+      group = Team.create_group({:group => {:name => name}}, User.first)
+      assert !group.valid?
+      assert_equal name, group.name
+    end
+
     should "list all groups for which a user is admin" do
       user = users(:johan)
       groups = user.groups.select{|g| admin?(user, g) }
@@ -111,11 +127,11 @@ class TeamTest < ActiveSupport::TestCase
       Team.events(@group,nil)
     end
 
-    should "return memberships" do      
+    should "return memberships" do
       assert_kind_of Array, Team.memberships(@group)
     end
   end
-  
+
 
   def ldap_group_params
     {:ldap_group => {:name => "Testing", :description => "4fun only"}}
