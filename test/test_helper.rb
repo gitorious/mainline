@@ -190,15 +190,23 @@ class ActionController::TestCase
 
   def self.should_render_in_global_context(options = {})
     should "Render in global context for actions" do
-      filter = @controller.class.filter_chain.find(:require_global_site_context)
-      assert_not_nil filter, ":require_global_site_context before_filter not set"
-      unless options[:except].blank?
-        assert_not_nil filter.options[:except], "no :except specified in controller"
-        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter.options[:except].sort
+      # TODO: This is _horrible_. Refactor to an actual API and use that.
+      klass = @controller.class.to_s.underscore
+      controller = File.read(Rails.root + "app/controllers/#{klass}.rb")
+      regexp = /renders_in_global_context(?:[ ,]+:except => (.*))?(?:[ ,]+:only => (.*))?/
+      matches = controller.match(regexp)
+      assert_not_nil matches, ":require_global_site_context before_filter not set"
+
+      if !options[:except].blank?
+        assert_not_nil matches[1], "no :except specified in controller"
+        filter_options = matches[1].match(/\[(.*)\]/)[1].split(", ").map { |s| s[1..-1] }.sort
+        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter_options
       end
-      unless options[:only].blank?
-        assert_not_nil filter.options[:only], "no :only specified in controller"
-        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter.options[:only].sort
+
+      if !options[:only].blank?
+        assert_not_nil matches[2], "no :only specified in controller"
+        filter_options = matches[2].match(/\[(.*)\]/)[1].split(", ").map { |s| s[1..-1] }.sort
+        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter_options
       end
     end
   end
