@@ -598,13 +598,13 @@ class RepositoryTest < ActiveSupport::TestCase
         :committer => users(:johan)
       }, Committership::CAN_COMMIT)
 
-    assert_equal [users(:johan).login], committers(repo).map(&:login)
+    assert_equal [users(:johan).login], committers(repo.reload).map(&:login)
 
     repo.committerships.create_with_permissions!({
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_COMMIT)
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
-    assert_equal exp_users.map(&:login), committers(repo).map(&:login)
+    assert_equal exp_users.map(&:login), committers(repo.reload).map(&:login)
 
     groups(:team_thunderbird).add_member(users(:moe), Role.admin)
     repo.reload
@@ -747,7 +747,7 @@ class RepositoryTest < ActiveSupport::TestCase
       @repo.committerships.create_with_permissions!({
           :committer => users(:moe)
         }, Committership::CAN_REVIEW)
-      assert reviewers(@repo).map(&:login).include?(users(:moe).login)
+      assert reviewers(@repo.reload).map(&:login).include?(users(:moe).login)
     end
 
     context "permission helpers" do
