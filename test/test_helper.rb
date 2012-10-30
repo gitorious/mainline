@@ -67,18 +67,6 @@ class ActiveSupport::TestCase
     "Expected collection (#{collection.count} items) #{not_message} to include #{object.class.name}"
   end
 
-  def self.should_subscribe_to(queue_name)
-    should "Subscribe to message queue #{queue_name}" do
-      klass = self.class.name.sub(/Test$/, "").constantize
-
-      subscription = ActiveMessaging::Gateway.subscriptions.values.find do |s|
-        s.destination.name == queue_name && s.processor_class == klass
-      end
-
-      assert_not_nil subscription, "#{klass.name} does not subscribe to #{queue_name}"
-    end
-  end
-
   def self.should_scope_pagination_to(action, klass, pluralized = nil, opt = {})
     if Hash === pluralized
       opt = pluralized

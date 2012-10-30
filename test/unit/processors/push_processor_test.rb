@@ -23,7 +23,6 @@ class PushProcessorTest < ActiveSupport::TestCase
     @processor = PushProcessor.new
   end
 
-  #should_subscribe_to :push
   should_consume "/queue/GitoriousPush"
 
   context "Parsing" do

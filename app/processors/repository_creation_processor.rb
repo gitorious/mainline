@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,20 +17,15 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# This is required because ActiveMessaging actually forcefully loads
-# all processors before initializers are run. Hopefully this can go away
-# when the vendored ActiveMessaging plugin is removed.
-require File.join(Rails.root, "config/initializers/messaging")
-
 class RepositoryCreationProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousRepositoryCreation"
 
   def on_message(message)
-    target_class  = message['target_class']
-    target_id     = message['target_id']
-    command       = message['command']
-    arguments     = message['arguments']
+    target_class = message["target_class"]
+    target_id = message["target_id"]
+    command = message["command"]
+    arguments = message["arguments"]
 
     logger.info("Processor: #{target_class}(#{target_id.inspect})::#{command}(#{arguments.inspect}..)")
     target_class.constantize.send(command, *arguments)

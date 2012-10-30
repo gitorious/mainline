@@ -49,7 +49,7 @@ require "gitorious/messaging"
 if !defined?(GitoriousConfig)
   conf = YAML::load_file(Rails.root + "config/gitorious.yml")
   GitoriousConfig = conf[Rails.env]
-  adapter = GitoriousConfig["messaging_adapter"] || "stomp"
+  adapter = GitoriousConfig["messaging_adapter"] || "resque"
   Bundler.require adapter.to_sym
   Gitorious::Messaging.load_adapter(adapter)
   Gitorious::Messaging.configure_publisher(adapter)

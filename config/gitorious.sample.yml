@@ -82,14 +82,12 @@ production:
   exception_notification_emails:
 
   # Messaging queue configuration
-  # Gitorious ships with two message queue implementations; Stomp via the
-  # ActiveMessaging gem and Resque. A TorqueBox implementation is on its way.
-  # Possible values: stomp, resque, test, sync. Default value is stomp. The test
+  # Possible values: resque, test, sync. Default value is resque. The test
   # implementation is intended for unit testing only, not for production or
   # development use (messages are only stored in a list, never processed). The
   # sync adapter is intended for development use, but may also suit low traffic
   # setups where performance is not critical.
-  messaging_adapter: stomp
+  messaging_adapter: resque
 
   # Disable record throttling
   # By default, Gitorious throttles the rate at which users can create
@@ -110,7 +108,7 @@ production:
   # directories instead. This helps avoid hitting
   # (filesystem-specific) limits on number of entries in a directory.
   # enable_repository_dir_sharding: true
-  
+
   # Base directory for mirror ie symlinks to actual repositories
   # Designate a folder where symlinks to all current repository
   # directories are created. Handy for hosting Gitweb, cgit etc in
@@ -123,13 +121,6 @@ production:
   # wiki repos etc are ignored. Defaults to
   # <repository_base_path>/../mirrored-public-repos
   symlinked_mirror_repo_base : "/var/www/gitorious/repo-mirror"
-
-  # The following properties are all defaults for the stomp adapter
-  # Be sure to match thir analogues in broker.yml
-  # stomp_server_address: localhost
-  # stomp_server_port: 61613
-  # stomp_server_login: ~
-  # stomp_server_passcode: ~
 
   # The maximum number of seconds to allow the web server to wait for diffs for
   # a merge request. This is used to prevent huge merge requests from spawning
@@ -153,7 +144,7 @@ production:
   # from the following URIs mapping to the file system:
   # - /tarballs/<tarball-name>   -> <archive_cache_dir>/<tarball-name>
   # - /
-  # 
+  #
   # Furthermore, you should instruct Nginx to consider these URLs private to prevent direct
   # access to them. Have a look in doc/templates/nginx.conf.sample for an example
   #frontend_server: nginx
@@ -183,7 +174,7 @@ production:
 
   # Make all newly created projects and repos private from the start by default
   #repos_and_projects_private_by_default: false
-  
+
   # Only site admins can create projects.  If a regular user attempts
   # to create a project (s)he is redirected to a form where a project
   # proposal (name+description) can be submitted. Site admins are
@@ -371,7 +362,7 @@ production:
   # enter a label to display next to the username field in Gitorious
   # custom_username_label: Username
 
-  # Should LDAP be used for authorization? 
+  # Should LDAP be used for authorization?
   # use_ldap_for_authorization: true
 
 development:

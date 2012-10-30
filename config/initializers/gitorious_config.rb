@@ -48,7 +48,7 @@ unless defined? GitoriousConfig
   require "subdomain_validation"
   GitoriousConfig.extend(SubdomainValidation)
 
-  default_messaging_adapter = Rails.env.test? ? "test" : "stomp"
+  default_messaging_adapter = Rails.env.test? ? "test" : "resque"
   GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
   if !GitoriousConfig.valid_subdomain?

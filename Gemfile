@@ -44,7 +44,6 @@ end
 
 group :development do
   gem "foreman", "~> 0.41"
-  gem "stompserver", "~> 0.9"
   gem "thin", "~> 1.2"
 end
 
@@ -59,14 +58,6 @@ end
 
 group :resque do
   gem "resque", "1.9.8"
-end
-
-group :stomp do
-  gem "stomp", "1.1"
-end
-
-group :active_messaging do
-  gem "activemessaging", "0.7.1"
 end
 
 platform :jruby do

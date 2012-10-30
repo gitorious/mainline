@@ -1,5 +1,5 @@
-* Gems that went out of style [0/21]
-** TODO gem "validates_url_format_of", "0.1.1"
+* Gems that went out of style [1/21]
+** DONE gem "validates_url_format_of", "0.1.1"
 ** TODO gem "SystemTimer", "1.2.3" (from resque group)
 ** TODO Reservations
 ** TODO verify has moved to routing [0/1]
@@ -90,3 +90,6 @@
 ** TODO test/unit/helpers/event_rendering_helper_test.rb (Routing)
 ** DONE test/unit/helpers/blobs_helper_test.rb
 ** DONE test/unit/helpers/application_helper_test.rb
+* Docs [0/2]
+** TODO Remove NEWS file
+** TODO Write new README

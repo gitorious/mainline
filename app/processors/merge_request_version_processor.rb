@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -17,11 +17,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# This is required because ActiveMessaging actually forcefully loads
-# all processors before initializers are run. Hopefully this can go away
-# when the vendored ActiveMessaging plugin is removed.
-require File.join(Rails.root, "config/initializers/messaging")
-
 class MergeRequestVersionProcessor
   include Gitorious::Messaging::Consumer
   consumes "/queue/GitoriousMergeRequestVersionDeletion"
@@ -35,7 +30,7 @@ class MergeRequestVersionProcessor
     begin
       source_repository.git.git.push({:timeout => false},
         tracking_repository_path, ":#{target_branch_name}")
-    rescue 
+    rescue
       logger.error("Unable to remove branch #{target_branch_name} in #{tracking_repository_path}")
     end
   end
