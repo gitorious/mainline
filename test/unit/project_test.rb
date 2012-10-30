@@ -195,9 +195,9 @@ class ProjectTest < ActiveSupport::TestCase
     project.bugtracker_url = "http://bugtracker.com"
 
     assert project.valid?
-    assert project.errors[:home_url].nil?
-    assert project.errors[:mailinglist_url].nil?
-    assert project.errors[:bugtracker_url].nil?
+    assert project.errors[:home_url].blank?
+    assert project.errors[:mailinglist_url].blank?
+    assert project.errors[:bugtracker_url].blank?
   end
 
   should "find or create an associated wiki repo" do
