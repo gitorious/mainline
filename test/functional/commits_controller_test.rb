@@ -20,9 +20,9 @@
 require "test_helper"
 
 class CommitsControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:get, :feed)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :show)
+  should_enforce_ssl_for(:get, :show, :project_id => "p", :repository_id => "r", :id => "master")
+  should_enforce_ssl_for(:get, :feed, :project_id => "p", :repository_id => "r", :id => "master", :format => "atom")
+  should_enforce_ssl_for(:get, :index, :project_id => "p", :repository_id => "r")
 
   context "showing a single commit" do
     setup do
