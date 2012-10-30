@@ -1,13 +1,8 @@
 source "http://rubygems.org"
 
 gem "rails", "~> 3.0.6"
-gem "chronic", "0.3.0"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
-gem "hoe", "2.8.0", :require => false
-gem "echoe", "4.3.1", :require => false
-gem "ruby-yadis", "0.3.4", :require => "yadis"
-gem "ruby-openid", :require => "openid"
 gem "rdiscount", "1.3.1.1", :platforms => :ruby
 gem "mime-types", "1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
@@ -28,10 +23,21 @@ gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
 gem "bartt-ssl_requirement", "~>1.4.0", :require => "ssl_requirement"
 gem "validates_url_format_of", "~> 0.2.0"
-
 gem "thinking-sphinx", "~> 2.0.10"
-# Ruby 1.8 gems
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
+
+# TODO: I suspect these gems can be removed.
+# Make all tests pass before attempting.
+group :deprecations do
+  gem "chronic", "0.3.0"
+  gem "hoe", "2.8.0", :require => false
+  gem "echoe", "4.3.1", :require => false
+end
+
+group :openid do
+  gem "ruby-yadis", "0.3.4", :require => "yadis"
+  gem "ruby-openid", :require => "openid"
+end
 
 group :test do
   gem "mocha", "0.9.10", :require => false
@@ -49,7 +55,7 @@ end
 
 group :git_proxy do
   gem "proxymachine", "1.2.4"
-  gem "rake", "0.8.7"
+  gem "rake", "~> 0.9"
 end
 
 group :messaging do
