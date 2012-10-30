@@ -20,7 +20,7 @@ class LdapGroupFinder
     LdapGroup.paginate(:all, :page => current_page)
   end
 
-  def find_by_name!(name)    
+  def find_by_name!(name)
     includes = [:projects, :repositories]
     LdapGroup.find_by_name!(name,:include => includes)
   end
@@ -31,9 +31,12 @@ class LdapGroupFinder
 
   def create_group(params, user)
     group = new_group(params)
-    group.transaction do
-      group.creator = user
-      group.save!
+    begin
+      group.transaction do
+        group.creator = user
+        group.save!
+      end
+    rescue ActiveRecord::RecordInvalid
     end
     return group
   end
