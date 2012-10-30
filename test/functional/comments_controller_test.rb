@@ -22,11 +22,11 @@ require "test_helper"
 class CommentsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
 
-  should_enforce_ssl_for(:get, :create)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :preview)
+  should_enforce_ssl_for(:get, :index, :project_id => "p", :repository_id => "r")
+  should_enforce_ssl_for(:get, :new, :project_id => "p", :repository_id => "r")
+  should_enforce_ssl_for(:get, :create, :project_id => "p", :repository_id => "r")
+  should_enforce_ssl_for(:post, :create, :project_id => "p", :repository_id => "r")
+  should_enforce_ssl_for(:post, :preview, :project_id => "p", :repository_id => "r")
 
   def setup
     setup_ssl_from_config
@@ -244,7 +244,7 @@ class CommentsControllerTest < ActionController::TestCase
         @version = create_new_version
         create_merge_request_version_comment(@version)
         assert_response :success
-        assert_equal "application/json", @response.content_type
+        assert_equal "text/javascript", @response.content_type
         json = ActiveSupport::JSON.decode(@response.body)
         assert_not_nil json["file-diff"]
         assert_not_nil json["comment"]

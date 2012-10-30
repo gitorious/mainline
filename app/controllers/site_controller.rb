@@ -22,11 +22,10 @@
 #++
 
 class SiteController < ApplicationController
-  PAGES = [:about, :faq, :contact, :tos, :privacy_policy]
-  skip_before_filter :public_and_logged_in, :only => [:index].concat(PAGES)
+  skip_before_filter :public_and_logged_in, :only => [:index, :about, :faq, :contact, :tos, :privacy_policy]
   before_filter :login_required, :only => [:dashboard]
-  renders_in_site_specific_context :except => PAGES
-  renders_in_global_context :only => PAGES
+  renders_in_site_specific_context :except => [:about, :faq, :contact, :tos, :privacy_policy]
+  renders_in_global_context :only => [:about, :faq, :contact, :tos, :privacy_policy]
 
   def index
     if !current_site.subdomain.blank?

@@ -21,7 +21,11 @@ require "test_helper"
 
 class BlobsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
-  should_enforce_ssl_for(:get, :history)
+  should_enforce_ssl_for(:get, :history, {
+                           :project_id => "p",
+                           :repository_id => "r",
+                           :branch_and_path => "p"
+                         })
 
   def branch_and_path_params(sha = "master", file = "README")
     branch_and_path = [sha]

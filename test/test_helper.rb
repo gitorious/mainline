@@ -189,39 +189,35 @@ class ActionController::TestCase
   end
 
   def self.should_render_in_global_context(options = {})
-    should "Render in global context for actions" do
-      # TODO: This is _horrible_. Refactor to an actual API and use that.
-      klass = @controller.class.to_s.underscore
-      controller = File.read(Rails.root + "app/controllers/#{klass}.rb")
-      regexp = /renders_in_global_context(?:[ ,]+:except => (.*))?(?:[ ,]+:only => (.*))?/
-      matches = controller.match(regexp)
-      assert_not_nil matches, ":require_global_site_context before_filter not set"
-
-      if !options[:except].blank?
-        assert_not_nil matches[1], "no :except specified in controller"
-        filter_options = matches[1].match(/\[(.*)\]/)[1].split(", ").map { |s| s[1..-1] }.sort
-        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter_options
-      end
-
-      if !options[:only].blank?
-        assert_not_nil matches[2], "no :only specified in controller"
-        filter_options = matches[2].match(/\[(.*)\]/)[1].split(", ").map { |s| s[1..-1] }.sort
-        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter_options
-      end
-    end
+    should_use_class_macro(
+      "Render in global context for actions",
+      "renders_in_global_context",
+      options
+    )
   end
 
   def self.should_render_in_site_specific_context(options = {})
-    should "Render in site specific context for actions" do
-      filter = @controller.class.filter_chain.find(:redirect_to_current_site_subdomain)
-      assert_not_nil filter, ":redirect_to_current_site_subdomain before_filter not set"
-      unless options[:except].blank?
-        assert_not_nil filter.options[:except], "no :except specified in controller"
-        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter.options[:except].sort
+    should_use_class_macro(
+      "Render in site specific context for actions",
+      "renders_in_site_specific_context",
+      options
+    )
+  end
+
+  # TODO: This is _horrible_. Refactor to an actual API and use that.
+  def self.should_use_class_macro(test_name, macro_name, options = {})
+    should test_name do
+      filter = extract_class_macro(@controller, macro_name)
+      assert_not_nil filter, "Class macro #{macro_name} apparently not in use"
+
+      if !options[:except].blank?
+        assert_not_nil filter[:except], "no :except specified in controller"
+        assert_equal [*options[:except]].flatten.map(&:to_s).sort, filter[:except]
       end
-      unless options[:only].blank?
-        assert_not_nil filter.options[:only], "no :only specified in controller"
-        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter.options[:only].sort
+
+      if !options[:only].blank?
+        assert_not_nil filter[:only], "no :only specified in controller"
+        assert_equal [*options[:only]].flatten.map(&:to_s).sort, filter[:only]
       end
     end
   end
@@ -255,6 +251,23 @@ class ActionController::TestCase
     else
       @repository.make_private
     end
+  end
+
+  # TODO: This is _horrible_. Refactor to an actual API and use that.
+  def extract_class_macro(controller, macro)
+    klass = controller.class.to_s.underscore
+    contents = File.read(Rails.root + "app/controllers/#{klass}.rb")
+    regexp = /#{macro}(?:[ ,]+:except => (.*))?(?:[ ,]+:only => (.*))?/
+    matches = contents.match(regexp)
+    return nil if !matches
+
+    { :except => extract_strings(matches[1]),
+      :only => extract_strings(matches[2]) }
+  end
+
+  def extract_strings(str)
+    matches = str && str.match(/\[(.*)\]/)
+    matches && matches[1].split(", ").map { |s| s[1..-1] }.sort
   end
 end
 

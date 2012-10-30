@@ -174,18 +174,20 @@ class ApplicationController < ActionController::Base
   end
 
   def render_git_timeout
-    render :partial => "/shared/git_timeout", :layout => (request.xhr? ? false : "application") and return
+    render("/shared/_git_timeout",
+           :layout => (request.xhr? ? false : "application"))
+    return false
   end
 
   def render_throttled_record
-    render :partial => "/shared/throttled_record",
-    :layout => "application", :status => 412 # precondition failed
+    render("/shared/_throttled_record",
+           :layout => "application", :status => 412) # precondition failed
     return false
   end
 
   def render_unauthorized
-    render :partial => "/shared/unauthorized",
-    :layout => "application", :status => 403 # forbidden
+    render("/shared/_unauthorized",
+           :layout => "application", :status => 403) # forbidden
     return false
   end
 
