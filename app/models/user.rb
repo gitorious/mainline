@@ -24,6 +24,7 @@
 
 require "digest/sha1"
 require_dependency "event"
+require "open_id_authentication"
 
 class User < ActiveRecord::Base
   include UrlLinting
@@ -412,8 +413,8 @@ class User < ActiveRecord::Base
 
   def lint_identity_url
     return if !openid?
-    self.identity_url = OpenIdAuthentication.normalize_identifier(self.identity_url)
-  rescue OpenIdAuthentication::InvalidOpenId
+    self.identity_url = OpenID.normalize_url(self.identity_url)
+  rescue OpenID::DiscoveryFailure
     # validate will catch it instead
   end
 
@@ -425,8 +426,8 @@ class User < ActiveRecord::Base
   def normalized_openid_identifier
     return if !openid?
     begin
-      OpenIdAuthentication.normalize_identifier(self.identity_url)
-    rescue OpenIdAuthentication::InvalidOpenId => e
+      OpenID.normalize_url(self.identity_url)
+    rescue OpenID::DiscoveryFailure => e
       errors.add(:identity_url, I18n.t( "user.invalid_url" ))
     end
   end

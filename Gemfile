@@ -37,6 +37,7 @@ end
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
   gem "ruby-openid", :require => "openid"
+  gem "gitorious_openid_auth", "~> 1.1"
 end
 
 group :test do
