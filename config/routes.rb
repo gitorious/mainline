@@ -245,5 +245,5 @@ Gitorious::Application.routes.draw do
   match '/activities' => 'site#public_timeline', :as => :activity
   match '/merge_request_landing_page' => 'merge_requests#oauth_return', :as => :merge_request_landing_page
   match '/merge_requests/:id' => 'merge_requests#direct_access', :as => :merge_request_direct_access
-  # match '/:controller(/:action(/:id))'
+  match '/:controller(/:action(/:id))'
 end
