@@ -22,40 +22,6 @@ require 'rails/all'
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
-class Class
-  def is_indexed(*args, &block)
-  end
-end
-
-module Ultrasphinx
-  class Search
-    def initialize(options = {})
-    end
-
-    def self.query_defaults=(defaults)
-    end
-
-    def self.query_defaults
-      {}
-    end
-
-    def self.excerpting_options=(options)
-    end
-
-    def self.client_options
-      {}
-    end
-  end
-
-  class UsageError < StandardError
-  end
-
-  MAIN_INDEX = 1
-
-  def self.delta_index_present?
-  end
-end
-
 module Gitorious
   class Application < Rails::Application
     config.autoload_paths += [config.root.join('lib')]
@@ -132,6 +98,7 @@ module Gitorious
       OAuth::Consumer::CA_FILE = nil
       Gitorious::Plugin::post_load
       Grit::Git.git_binary = GitoriousConfig["git_binary"]
+      Gitorious::SearchIndex.setup
     end
 
     gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]

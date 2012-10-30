@@ -104,13 +104,6 @@ class Repository < ActiveRecord::Base
 
   scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
-  define_index do
-    indexes name
-    indexes description
-    indexes project.slug, :as => :project
-    where "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
-  end
-
   def destroy
     merge_requests.each &:destroy
     reload

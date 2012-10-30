@@ -42,13 +42,6 @@ class MergeRequest < ActiveRecord::Base
   before_validation(:set_sequence_number, :on => :create)
   #before_validation_on_create :set_sequence_number
 
-  define_index do
-    indexes proposal
-    indexes status_tag, :as => "status"
-    indexes user.login, :as => "proposed_by"
-    where "status != 0"
-  end
-
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
 
