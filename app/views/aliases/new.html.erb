@@ -23,7 +23,7 @@
 <h2 class="content-header"><%= t("views.aliases.new_alias") -%></h2>
 
 <%= error_messages(@email) -%>
-<% form_for(@email, :url => user_aliases_path(@user)) do |f| -%>
+<%= form_for(@email, :url => user_aliases_path(@user)) do |f| -%>
 <fieldset>
         <li>
                 <%= f.label :address -%>
@@ -35,7 +35,7 @@
 </fieldset>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
         <h2>Information</h2>
         <p>You will be sent an email asking you to confirm this email after it has been created. </p>
   <ul class="links navigation">
