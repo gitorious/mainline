@@ -118,12 +118,14 @@ class ProjectsControllerTest < ActionController::TestCase
         :action => "show",
         :id => @project.to_param,
         :format => "xml"
-      }, {:path => "/#{@project.to_param}.xml", :method => :get})
+      }, { :path => "/#{@project.to_param}.xml", :method => :get })
+
       assert_recognizes({
         :controller => "projects",
         :action => "index",
         :format => "xml"
-      }, {:path => "/projects.xml", :method => :get})
+      }, { :path => "/projects.xml", :method => :get })
+
       assert_generates("/projects.xml", {
         :controller => "projects",
         :action => "index",
