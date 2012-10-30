@@ -30,11 +30,11 @@ class AliasesControllerTest < ActionController::TestCase
     login_as :johan
   end
 
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :confirm)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
+  should_enforce_ssl_for(:delete, :destroy, :user_id => "johan")
+  should_enforce_ssl_for(:get, :confirm, :user_id => "johan")
+  should_enforce_ssl_for(:get, :index, :user_id => "johan")
+  should_enforce_ssl_for(:get, :new, :user_id => "johan")
+  should_enforce_ssl_for(:post, :create, :user_id => "johan")
 
   context "Listing all emails" do
     should "require login" do
