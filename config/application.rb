@@ -45,12 +45,12 @@ module Gitorious
     # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
 
     # Add additional load paths for your own custom dirs
-    config.autoload_paths << (Rails.root + "lib/gitorious")
-    config.autoload_paths << (Rails.root + "app")
+    config.autoload_paths << (Rails.root + "lib/gitorious").to_s
+    config.autoload_paths << (Rails.root + "app").to_s
 
     # Avoid class cache errors like "A copy of Gitorious::XYZ has been removed
     # from the module tree but is still active!"
-    config.autoload_once_paths << (Rails.root + "lib/gitorious")
+    config.autoload_once_paths << (Rails.root + "lib/gitorious").to_s
 
     # Force all environments to use the same logger level
     # (by default production uses :info, the others :debug)
