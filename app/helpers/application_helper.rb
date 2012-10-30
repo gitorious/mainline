@@ -136,7 +136,7 @@ module ApplicationHelper
 
   def selected_if_current_page(url_options, slack = false)
     if slack
-      if controller.request.request_uri.index(CGI.escapeHTML(url_for(url_options))) == 0
+      if controller.request.fullpath.index(CGI.escapeHTML(url_for(url_options))) == 0
         "selected"
       end
     else

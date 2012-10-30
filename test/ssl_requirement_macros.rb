@@ -17,7 +17,7 @@ Test::Unit::TestCase.class_eval do
       setup do
         @request.env['HTTPS'] = 'on'
       end
-    
+
       context "" do
         yield
       end
@@ -26,7 +26,7 @@ Test::Unit::TestCase.class_eval do
 
   def self.should_redirect_to_ssl
     should 'redirect to ssl' do
-      assert_redirected_to "https://" + @request.host + @request.request_uri
-    end    
+      assert_redirected_to "https://" + @request.host + @request.fullpath
+    end
   end
 end

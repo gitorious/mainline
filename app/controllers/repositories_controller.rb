@@ -349,7 +349,7 @@ class RepositoriesController < ApplicationController
   def authorize_configuration_access(repository)
     return true if !GitoriousConfig["enable_private_repositories"]
     if !can_read?(User.find_by_login(params[:username]), repository)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
     end
   end
 

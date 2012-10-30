@@ -181,7 +181,7 @@ class ActionController::TestCase
               # some parameters
             end
 
-            assert_not_equal "https://" + @request.host + @request.request_uri, @response.location
+            assert_not_equal "https://" + @request.host + @request.fullpath, @response.location
           end
         end
       end

@@ -145,7 +145,7 @@ class ApplicationController < ActionController::Base
 
   def authorize_access_with_private_repositories_enabled(thing)
     if !can_read?(current_user, thing)
-      raise Gitorious::Authorization::UnauthorizedError.new(request.request_uri)
+      raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
     end
     return thing
   end
