@@ -17,95 +17,116 @@
 #++
 
 Gitorious::Application.routes.draw do
-  root :to => 'site#index'
+  # Helper that builds repository routes in a given context
+  def route_repositories
+    # Listing repositories and creating new ones happens over
+    # /~<user>/repositories/, e.g:
+    # /~zmalltalker/repositories/new
+    resources :repositories, :only => [:index, :new, :create]
 
-  match 'users/activate/:activation_code' => 'users#activate'
-  match 'users/pending_activation' => 'users#pending_activation'
-  match 'users/reset_password/:token' => 'users#reset_password', :as => :reset_password
-
-  repository_routing = Proc.new do
-    member do
-      post :create_clone
-      get :clone
-      get :search_clones
-      get :committers
-      get :confirm_delete
-      get :writable_by
-      match "config" => "repositories#repository_config"
-    end
-
-    resources :comments
-
-    match 'comments/commit/:sha' => 'comments#commit', :as => :commit_comment, :via => :get
-    match 'comments/preview' => 'comments#preview', :as => :comments_preview
-
-    resources :merge_requests do
-      collection do
-        post :create
-        post :commit_list
-        post :target_branches
-      end
-
+    # Browsing, editing and destroying existing repositories happens over
+    # /~<user>/<repository_name>/, e.g.:
+    # /~zmalltalker/mainline/
+    # /~zmalltalker/mainline/edit
+    resources(:repositories, {
+                :path => "/",
+                :only => [:show, :edit, :update, :destroy]
+              }) do
       member do
-        get :commit_status
-        get :version
-        get :terms_accepted
+        post :create_clone
+        get :clone
+        get :search_clones
+        get :committers
+        get :confirm_delete
+        get :writable_by
+        match "config" => "repositories#repository_config"
       end
 
-      resources :comments do
+      resources :comments
+
+      match "comments/commit/:sha" => "comments#commit", :as => :commit_comment, :via => :get
+      match "comments/preview" => "comments#preview", :as => :comments_preview
+
+      resources :merge_requests do
         collection do
-          post :preview
+          post :create
+          post :commit_list
+          post :target_branches
         end
-      end
 
-      resources :merge_request_versions do
+        member do
+          get :commit_status
+          get :version
+          get :terms_accepted
+        end
+
         resources :comments do
           collection do
             post :preview
           end
         end
+
+        resources :merge_request_versions do
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
+        end
       end
+
+      resources :repository_memberships
+      resources :committerships
+
+      match "commits/*branch/feed.:format" => "commits#feed", :as => :formatted_commits_feed#, :via =>
+      match "commits" => "commits#index", :as => :commits
+      match "commits/*branch" => "commits#index", :as => :commits_in_ref
+      match "graph" => "graphs#index", :as => :graph
+      match "graph/*branch" => "graphs#index", :as => :graph_in_ref
+      match "commit/:id/comments" => "commit_comments#index", :as => :commit_comments, :id => /[^\/]+/
+      match "commit/:id/diffs" => "commit_diffs#index", :as => :commit_diffs, :id => /[^\/]+/
+      match "commit/:from_id/diffs/:id" => "commit_diffs#compare", :as => :commit_compare
+      match "commit/:id" => "commits#show", :as => :commit, :id => /.*/
+      match "trees/" => "trees#index", :as => :trees
+      match "trees/*branch_and_path" => "trees#show", :as => :tree
+      match "trees/*branch_and_path.:format" => "trees#show", :as => :formatted_tree
+      match "archive-tarball/*branch" => "trees#archive", :as => :archive_tar, :archive_format => "tar.gz"
+      match "blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob
+      match "blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history
+      match "blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
+      match "blobs/*branch_and_path" => "blobs#show", :as => :blob
     end
-
-    resources :repository_memberships
-    resources :committerships
-
-    match 'commits/*branch/feed.:format' => 'commits#feed', :as => :formatted_commits_feed#, :via =>
-    match 'commits' => 'commits#index', :as => :commits
-    match 'commits/*branch' => 'commits#index', :as => :commits_in_ref
-    match 'graph' => 'graphs#index', :as => :graph
-    match 'graph/*branch' => 'graphs#index', :as => :graph_in_ref
-    match 'commit/:id/comments' => 'commit_comments#index', :as => :commit_comments, :id => /[^\/]+/
-    match 'commit/:id/diffs' => 'commit_diffs#index', :as => :commit_diffs, :id => /[^\/]+/
-    match 'commit/:from_id/diffs/:id' => 'commit_diffs#compare', :as => :commit_compare
-    match 'commit/:id' => 'commits#show', :as => :commit, :id => /.*/
-    match 'trees/' => 'trees#index', :as => :trees
-    match 'trees/*branch_and_path' => 'trees#show', :as => :tree
-    match 'trees/*branch_and_path.:format' => 'trees#show', :as => :formatted_tree
-    match 'archive-tarball/*branch' => 'trees#archive', :as => :archive_tar, :archive_format => 'tar.gz'
-    match 'blobs/raw/*branch_and_path' => 'blobs#raw', :as => :raw_blob
-    match 'blobs/history/*branch_and_path' => 'blobs#history', :as => :blob_history
-    match 'blobs/blame/*branch_and_path' => 'blobs#blame', :as => :blame
-    match 'blobs/*branch_and_path' => 'blobs#show', :as => :blob
   end
 
-  resources :users do
-    collection do
-      get :forgot_password
-      post :forgot_password_create
-      get :openid_build
-      post :openid_create
-    end
+  ##################
+  # Actual routing #
+  ##################
 
-    member do
-      get :delete_current
-      delete :avatar
-      get :watchlist
-      get :password
-      get :feed
-      put :update_password
-    end
+  # R0. Site index
+  root :to => "site#index"
 
+  # R1. User routes
+  resources :users, :only => [:index, :new, :create]
+
+  get "/~:id(.:format)" => "users#show", :as => "user", :id => /[^\/]+/
+  get "/~:id/edit(.:format)" => "users#edit", :as => "edit_user", :id => /[^\/]+/
+  put "/~:id(.:format)" => "users#update", :id => /[^\/]+/
+  delete "/~:id(.:format)" => "users#destroy", :id => /[^\/]+/
+
+  scope "/~:id", :id => /[^\/]+/ do
+    get "/forgot_password" => "users#forgot_password", :as => "user_forgot_password"
+    post "/forgot_password_create" => "users#forgot_password_create"
+    get "/openid_build" => "users#openid_build", :as => "user_openid_build"
+    post "/openid_create" => "users#openid_create", :as => "user_openid_create"
+    get "/delete_current" => "users#delete_current", :as => "user_delete_current"
+    delete "/avatar" => "users#avatar"
+    get "/watchlist" => "users#watchlist", :as => "user_watchlist"
+    get "/password" => "users#password", :as => "user_password"
+    get "/feed" => "users#feed", :as => "user_feed"
+    put "/update_password" => "users#update_password", :as => "user_password"
+  end
+
+  scope "/~:user_id", :user_id => /[^\/]+/ do
     resources :keys
 
     resources :aliases do
@@ -115,13 +136,33 @@ Gitorious::Application.routes.draw do
     end
 
     resource :license
-
-    resources :repositories, &repository_routing
-
-    resources :projects do
-      resources :repositories , &repository_routing
-    end
+    route_repositories
+    match "/:project/*slug" => redirect("/%{project}/%{slug}")
   end
+
+  get "/users/activate/:activation_code" => "users#activate"
+  get "/users/pending_activation" => "users#pending_activation"
+  get "/users/reset_password/:token" => "users#reset_password", :as => :reset_password
+
+  # R2. Groups
+  resources :groups, :only => [:index, :new, :create]
+
+  get "/+:id(.:format)" => "groups#show", :as => "group", :id => /[^\/]+/
+  get "/+:id/edit(.:format)" => "groups#edit", :as => "edit_group", :id => /[^\/]+/
+  put "/+:id(.:format)" => "groups#update", :id => /[^\/]+/
+  delete "/+:id(.:format)" => "groups#destroy", :id => /[^\/]+/
+
+  scope "/+:id", :id => /[^\/]+/ do
+    delete "avatar" => "groups#avatar"
+  end
+
+  scope "/+:group_id", :id => /[^\/]+/ do
+    resources :memberships
+    route_repositories
+    match "/:project/*slug" => redirect("/%{project}/%{slug}")
+  end
+
+  # R3. ???
 
   resources :events do
     member do
@@ -132,25 +173,18 @@ Gitorious::Application.routes.draw do
   resources :user_auto_completions, :only => [:index]
   resources :group_auto_completions, :only => [:index]
 
-  match '/sessions' => 'sessions#create', :as => :open_id_complete, :via => :get
+  match "/sessions" => "sessions#create", :as => :open_id_complete, :via => :get
 
   resource :sessions
 
-  resources :groups do
-    member do
-      delete :avatar
-    end
 
-    resources :memberships
-    resources :repositories, &repository_routing
 
-    resources :projects do
-      resources :repositories, &repository_routing
-    end
-  end
 
-  match 'wiki/:site_id/config' => 'site_wiki_pages#config', :as => :site_wiki_git_access_connect
-  match 'wiki/:site_id/writable_by' => 'site_wiki_pages#writable_by', :as => :site_wiki_git_writable_by
+
+
+
+  match "wiki/:site_id/config" => "site_wiki_pages#config", :as => :site_wiki_git_access_connect
+  match "wiki/:site_id/writable_by" => "site_wiki_pages#writable_by", :as => :site_wiki_git_writable_by
 
   resources :site_wiki_pages do
     collection do
@@ -161,30 +195,6 @@ Gitorious::Application.routes.draw do
       put :preview
       get :history
     end
-  end
-
-  resources :projects do
-    member do
-      put :preview
-      #any :edit_slug
-      get :clones
-      get :confirm_delete
-    end
-
-    resources :project_memberships
-
-    resources :pages do
-      collection do
-        get :git_access
-      end
-
-      member do
-        put :preview
-        get :history
-      end
-    end
-
-    resources :repositories, &repository_routing
   end
 
   resource :search
@@ -202,16 +212,16 @@ Gitorious::Application.routes.draw do
     end
   end
 
-  match '/login' => 'sessions#new', :as => :login
-  match '/logout' => 'sessions#destroy', :as => :logout
-  match 'dashboard' => 'site#dashboard', :as => :dashboard
-  match 'about' => 'site#about', :as => :about
-  match 'about/:action' => 'site#index', :as => :about_page
-  match 'contact' => 'site#contact', :as => :contact
+  match "/login" => "sessions#new", :as => :login
+  match "/logout" => "sessions#destroy", :as => :logout
+  match "/dashboard" => "site#dashboard", :as => :dashboard
+  match "/about" => "site#about", :as => :about
+  match "/about/:action" => "site#index", :as => :about_page
+  match "/contact" => "site#contact", :as => :contact
 
   namespace :api do
-    match ':project_id/:repository_id/log/graph' => 'graphs#show', :branch => 'master'
-    match ':project_id/:repository_id/log/graph/*branch' => 'graphs#show'
+    match ":project_id/:repository_id/log/graph" => "graphs#show", :branch => "master"
+    match ":project_id/:repository_id/log/graph/*branch" => "graphs#show"
   end
 
   namespace :admin do
@@ -232,18 +242,45 @@ Gitorious::Application.routes.draw do
       end
     end
 
-    match 'diagnostics' => 'diagnostics#index'
-    match 'project_proposals' => 'project_proposals#index'
-    match 'project_proposals/new' => 'project_proposals#new'
-    match 'project_proposals/create' => 'project_proposals#create'
-    match 'project_proposals/reject' => 'project_proposals#reject'
-    match 'project_proposals/approve' => 'project_proposals#approve'
+    match "diagnostics" => "diagnostics#index"
+    match "project_proposals" => "project_proposals#index"
+    match "project_proposals/new" => "project_proposals#new"
+    match "project_proposals/create" => "project_proposals#create"
+    match "project_proposals/reject" => "project_proposals#reject"
+    match "project_proposals/approve" => "project_proposals#approve"
   end
 
   resources :favorites
 
-  match '/activities' => 'site#public_timeline', :as => :activity
-  match '/merge_request_landing_page' => 'merge_requests#oauth_return', :as => :merge_request_landing_page
-  match '/merge_requests/:id' => 'merge_requests#direct_access', :as => :merge_request_direct_access
-  match '/:controller(/:action(/:id))'
+  match "/activities" => "site#public_timeline", :as => :activity
+  match "/merge_request_landing_page" => "merge_requests#oauth_return", :as => :merge_request_landing_page
+  match "/merge_requests/:id" => "merge_requests#direct_access", :as => :merge_request_direct_access
+
+  get "/projects(.:format)" => "projects#index"
+  get "/:id/edit(.:format)" => "projects#edit"
+
+  resources :projects, :path => "/" do
+    member do
+      put :preview
+      get :edit_slug
+      put :edit_slug
+      get :clones
+      get :confirm_delete
+    end
+
+    resources :project_memberships
+
+    resources :pages do
+      collection do
+        get :git_access
+      end
+
+      member do
+        put :preview
+        get :history
+      end
+    end
+
+    route_repositories
+  end
 end
