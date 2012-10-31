@@ -110,4 +110,11 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :show, :user_id => "thomanil", :id => 1)
     should_enforce_ssl_for(:delete, :destroy, :user_id => "thomanil", :id => 1)
   end
+
+  context "LicensesController" do
+    setup { @controller = LicensesController.new }
+    should_enforce_ssl_for(:get, :show, :user_id => "zmalltalker")
+    should_enforce_ssl_for(:get, :edit, :user_id => "zmalltalker")
+    should_enforce_ssl_for(:put, :update, :user_id => "zmalltalker")
+  end
 end

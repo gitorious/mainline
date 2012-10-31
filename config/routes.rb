@@ -163,7 +163,7 @@ Gitorious::Application.routes.draw do
       end
     end
 
-    resource :license
+    resource :license, :only => [:show, :edit, :update]
     route_repositories
     match "/:project/*slug" => redirect("/%{project}/%{slug}")
   end
