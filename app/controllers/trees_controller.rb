@@ -50,9 +50,8 @@ class TreesController < ApplicationController
 
   def archive
     @git = @repository.git
-    # FIXME: update route when we've fixed rails bug #1939
     @ref = desplat_path(params[:branch])
-    ext = params[:archive_format]
+    ext = params[:format]
     unless @commit = @git.commit(@ref)
       handle_missing_tree_sha and return
     end

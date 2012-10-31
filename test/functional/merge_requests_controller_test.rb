@@ -335,16 +335,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
       assert_response :redirect
       assert_redirected_to "/foo/bar"
     end
-
-    should "route the merge_request_landing_page" do
-      assert_recognizes({ :controller => "merge_requests",
-                          :action => "oauth_return",
-                        }, "/merge_request_landing_page")
-    end
-
-    should "have a named route" do
-      assert_equal "/merge_request_landing_page", merge_request_landing_page_path
-    end
   end
 
   context "Terms accepted (GET)" do
@@ -575,42 +565,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
                              :project_id => @merge_request.target_repository.project,
                              :repository_id => @merge_request.target_repository,
                              :id => @merge_request.to_param})
-    end
-  end
-
-  context "routing" do
-    should "route for repositories thats owned by users with dots in their username on #index" do
-      assert_recognizes({ :controller => "merge_requests",
-                          :action => "index",
-                          :user_id => "mc.hammer",
-                          :project_id => "myproject",
-                          :repository_id => "myrepo",
-                        }, {:path => "/~mc.hammer/myproject/myrepo/merge_requests", :method => :get})
-      assert_generates("/~mc.hammer/myproject/myrepo/merge_requests", {
-                         :controller => "merge_requests",
-                         :action => "index",
-                         :user_id => "mc.hammer",
-                         :project_id => "myproject",
-                         :repository_id => "myrepo",
-                       })
-    end
-
-    should "route for repositories thats owned by users with dots in their username on #show" do
-      assert_recognizes({ :controller => "merge_requests",
-                          :action => "show",
-                          :user_id => "mc.hammer",
-                          :project_id => "myproject",
-                          :repository_id => "myrepo",
-                          :id => "42"
-                        }, {:path => "/~mc.hammer/myproject/myrepo/merge_requests/42", :method => :get})
-      assert_generates("/~mc.hammer/myproject/myrepo/merge_requests/42", {
-                         :controller => "merge_requests",
-                         :action => "show",
-                         :user_id => "mc.hammer",
-                         :project_id => "myproject",
-                         :repository_id => "myrepo",
-                         :id => "42"
-                       })
     end
   end
 

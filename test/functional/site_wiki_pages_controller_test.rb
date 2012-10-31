@@ -31,44 +31,6 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  context "top wiki route" do
-    should "be generated correctly from action and controller" do
-      assert_generates "/wiki", :controller => "site_wiki_pages", :action => "index"
-    end
-
-  end
-
-  context "resourceful routes" do
-    should "be generated for every action" do
-      assert_generates "/wiki", :controller => "site_wiki_pages", :action => "index"
-      assert_generates "/wiki/Testpage", :controller => "site_wiki_pages", :action => "show", :id => "Testpage"
-      assert_generates "/wiki/Testpage/edit", :controller => "site_wiki_pages", :action => "edit", :id => "Testpage"
-      assert_generates "/wiki/Testpage/history", :controller => "site_wiki_pages", :action => "history", :id => "Testpage"
-      assert_generates "/wiki/Testpage/preview", :controller => "site_wiki_pages", :action => "preview", :id => "Testpage"
-    end
-  end
-
-  context "resource path convenience urls" do
-    should "be generated for every action" do
-      assert_generates site_wiki_pages_path, :controller => "site_wiki_pages", :action => "index"
-      assert_generates edit_site_wiki_page_path("Testpage"), :controller => "site_wiki_pages", :action => "edit", :id => "Testpage"
-      assert_generates site_wiki_page_path("Testpage"), :controller => "site_wiki_pages", :action => "show", :id => "Testpage"
-      assert_generates history_site_wiki_page_path("Testpage"), :controller => "site_wiki_pages", :action => "history", :id => "Testpage"
-      assert_generates preview_site_wiki_page_path("Testpage"), :controller => "site_wiki_pages", :action => "preview", :id => "Testpage"
-    end
-  end
-
-  context "internal routes for git access" do
-    should "respond to /wiki/<sitename>/config" do
-      assert_recognizes({ :controller => "site_wiki_pages", :action => "config", :site_id =>"siteid"},
-                        "/wiki/siteid/config")
-    end
-    should "respond to /wiki/<sitename>/writable_by" do
-      assert_recognizes({ :controller => "site_wiki_pages", :action => "writable_by", :site_id =>"siteid"},
-                        "/wiki/siteid/writable_by")
-    end
-  end
-
   context "index action" do
     should "render" do
       git_stub = stub("git", {

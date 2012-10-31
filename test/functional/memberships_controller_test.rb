@@ -33,41 +33,6 @@ class MembershipsControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  context "Routing" do
-    setup do
-      @group = groups(:team_thunderbird)
-    end
-
-    should "recognizes routing like /+team-name/memberships" do
-      assert_generates("/+#{@group.to_param}/memberships", {
-        :controller => "memberships",
-        :action => "index",
-        :group_id => @group.to_param
-      })
-      assert_recognizes({
-        :controller => "memberships",
-        :action => "index",
-        :group_id => @group.to_param
-      }, {:path => "/+#{@group.to_param}/memberships", :method => :get})
-    end
-
-    should "recognizes routing like /+team-name/memberships/n" do
-      membership = @group.memberships.first
-      assert_generates("/+#{@group.to_param}/memberships/#{membership.to_param}", {
-        :controller => "memberships",
-        :action => "show",
-        :group_id => @group.to_param,
-        :id => membership.to_param
-      })
-      assert_recognizes({
-        :controller => "memberships",
-        :action => "show",
-        :group_id => @group.to_param,
-        :id => membership.to_param
-      }, {:path => "/+#{@group.to_param}/memberships/#{membership.to_param}", :method => :get})
-    end
-  end
-
   context "MembershipsController" do
     setup do
       login_as :mike

@@ -36,15 +36,6 @@ class GroupsControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:post, :create)
   should_enforce_ssl_for(:put, :update)
 
-  context "Routing" do
-    should "recognizes routes starting with plus as teams/show/<name>" do
-      assert_generates("/+#{@group.to_param}", { :controller => "groups",
-        :action => "show", :id => @group.to_param})
-      assert_recognizes({:controller => "groups", :action => "show",
-                         :id => @group.to_param}, "/+#{@group.to_param}")
-    end
-  end
-
   context "index" do
     should "GET successfully" do
       get :index

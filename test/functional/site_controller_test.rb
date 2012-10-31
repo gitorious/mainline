@@ -47,13 +47,6 @@ class SiteControllerTest < ActionController::TestCase
   end
 
   context "#activity" do
-    should "route /activity to public_timeline" do
-      assert_recognizes({
-          :controller => "site",
-          :action => "public_timeline"
-        }, "/activities")
-    end
-
     should "render the global activity timeline" do
       get :public_timeline
       assert_response :success

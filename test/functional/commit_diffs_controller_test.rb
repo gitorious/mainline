@@ -81,37 +81,6 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
   end
 
-  context "Routing" do
-    should "route commit diffs index" do
-      assert_recognizes({
-        :controller => "commit_diffs",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      }, { :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/diffs", :method => :get })
-
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/diffs", {
-        :controller => "commit_diffs",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      })
-    end
-
-    should "route comparison between two commits" do
-      assert_recognizes({:controller => "commit_diffs",
-        :action => "compare",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :from_id => SHA,
-        :id => OTHER_SHA }, {
-        :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{SHA}/diffs/#{OTHER_SHA}"
-      })
-    end
-  end
-
   context "With private projects" do
     setup do
       enable_private_repositories

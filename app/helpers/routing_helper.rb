@@ -118,12 +118,6 @@ module RoutingHelper
     project_repository_blob_path(repository.project, repository, branch_with_tree(head, filename))
   end
 
-  def tree_archive_status_url
-    fmt = (params[:archive_format] == "tar.gz" ? "tar" : zip)
-    self.send("project_repository_archive_#{fmt}_path",
-      @repository.project, @repository, @ref, :format => :js)
-  end
-
   def new_polymorphic_comment_path(parent, comment)
     if parent
       repo_owner_path(@repository, [@project, @repository, parent, comment])

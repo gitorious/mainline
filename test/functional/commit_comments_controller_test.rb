@@ -43,26 +43,6 @@ class CommitCommentsControllerTest < ActionController::TestCase
     end
   end
 
-  context "Routing" do
-    should "route commits index" do
-      assert_recognizes({
-        :controller => "commit_comments",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      }, { :path => "/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/comments", :method => :get })
-
-      assert_generates("/#{@project.to_param}/#{@repository.to_param}/commit/#{@sha}/comments", {
-        :controller => "commit_comments",
-        :action => "index",
-        :project_id => @project.to_param,
-        :repository_id => @repository.to_param,
-        :id => @sha,
-      })
-    end
-  end
-
   context "With private projects" do
     setup do
       enable_private_repositories

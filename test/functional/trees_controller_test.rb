@@ -27,48 +27,6 @@ class TreesControllerTest < ActionController::TestCase
   should_enforce_ssl_for(:get, :index)
   should_enforce_ssl_for(:get, :show)
 
-  context "routing" do
-    should_eventually "recognize a single glob with a format" do
-      pending "fix rails bug #1939"
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo"],
-        :format => "tar.gz",
-      }, "/proj/repo/archive/foo.tar.gz")
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo"],
-        :format => "zip",
-      }, "/proj/repo/archive/foo.zip")
-    end
-
-    should_eventually "recognize multiple globs with a format" do
-      pending "fix rails bug #1939"
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo", "bar"],
-        :format => "zip",
-      }, "/proj/repo/archive/foo/bar.zip")
-      assert_recognizes({
-        :controller => "trees",
-        :action => "archive",
-        :project_id => "proj",
-        :repository_id => "repo",
-        :branch => ["foo", "bar"],
-        :format => "tar.gz",
-      }, "/proj/repo/archive/foo/bar.tar.gz")
-    end
-  end
-
   def setup
     @project = projects(:johans)
     @repository = @project.repositories.mainlines.first
@@ -161,8 +119,7 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "return the correct for an existing cached tarball" do
-
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
 
       assert_response :success
       assert_equal @cached_path, @response.headers["X-Sendfile"]
@@ -172,7 +129,7 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "use X-Sendfile headers when running under Apache" do
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
 
       assert_response :success
       assert_not_nil @response.headers["X-Sendfile"]
@@ -180,7 +137,7 @@ class TreesControllerTest < ActionController::TestCase
 
     should "use X-Accel-Redirect to /tarballs/name-sha.tar.gz when running Nginx" do
       GitoriousConfig["frontend_server"] = "nginx"
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
 
       assert_response :success
       tarball_name = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@master_sha}.tar.gz"
@@ -196,7 +153,7 @@ class TreesControllerTest < ActionController::TestCase
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(false)
 
-      get :archive, params(:branch => %w[test master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[test master], :format => "tar.gz")
 
       assert_response 202 # Accepted
       assert_match(/is currently being generated, try again later/, @response.body)
@@ -217,7 +174,7 @@ class TreesControllerTest < ActionController::TestCase
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(true)
 
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
 
       assert_response 202 # Accepted
 
@@ -226,7 +183,7 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "redirect to the first tree when an invalid ref is requested" do
-      get :archive, params(:branch => %w[foo], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[foo], :format => "tar.gz")
 
       assert_response :redirect
       assert_redirected_to project_repository_tree_path(@project, @repository, "HEAD")
@@ -261,13 +218,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized users from showing archive" do
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
       assert_response 403
     end
 
     should "allow authorized users to show archive" do
       login_as :johan
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
       assert_not_equal "403", @response.code
     end
   end
@@ -301,13 +258,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized users from showing archive" do
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
       assert_response 403
     end
 
     should "allow authorized users to show archive" do
       login_as :johan
-      get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
+      get :archive, params(:branch => %w[master], :format => "tar.gz")
       assert_not_equal "403", @response.code
     end
   end

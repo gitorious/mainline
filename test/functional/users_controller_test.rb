@@ -83,35 +83,6 @@ class UsersControllerTest < ActionController::TestCase
     assert_nil User.authenticate("moe@example.com", "test")
   end
 
-  context "Routing" do
-    setup do
-      @user = users(:johan)
-    end
-
-    should "recognizes routes starting with tilde as users/show/<name>" do
-      assert_generates("/~#{@user.to_param}", {
-        :controller => "users",
-        :action => "show",
-        :id => @user.to_param})
-
-      assert_recognizes({
-        :controller => "users", :action => "show", :id => @user.to_param
-      }, {:path => "/~#{@user.to_param}", :method => :get})
-    end
-
-    should "does not recognize controller collection actions as repositories" do
-      assert_recognizes({
-        :controller => "users", :action => "forgot_password"
-      }, {:path => "/users/forgot_password", :method => :get})
-    end
-
-    should "does not recognize controller member actions as repositories" do
-      assert_recognizes({
-        :controller => "users", :action => "activate", :activation_code => "123"
-      }, {:path => "/users/activate/123", :method => :get})
-    end
-  end
-
   def create_user(options = {})
     post :create, :user => { :login => "quire", :email => "quire@example.com",
       :password => "quire", :password_confirmation => "quire",
@@ -187,40 +158,6 @@ class UsersControllerTest < ActionController::TestCase
     get :show, :id => user.to_param
     assert_response :success
     assert_select "#sidebar ul li.email", 0
-  end
-
-  should "recognizes routing with dots in it" do
-    assert_recognizes({
-      :controller => "users",
-      :action => "show",
-      :id => "j.s"
-    }, "/users/j.s")
-    assert_recognizes({
-      :controller => "users",
-      :action => "show",
-      :id => "j.s"
-    }, "/~j.s")
-  end
-
-  should "recognizes sub-resource routing with dots in it" do
-    assert_recognizes({
-      :controller => "licenses",
-      :action => "edit",
-      :user_id => "j.s"
-    }, "/users/j.s/license/edit")
-    assert_recognizes({
-      :controller => "licenses",
-      :action => "edit",
-      :user_id => "j.s"
-    }, "/~j.s/license/edit")
-  end
-
-  should "recognizes activate routes" do
-    assert_recognizes({
-      :controller => "users",
-      :action => "activate",
-      :activation_code => "abc123",
-    }, "/users/activate/abc123")
   end
 
   context "GET show" do

@@ -25,32 +25,6 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  context "Routing" do
-    should "recognize project proposal actions" do
-      assert_recognizes({:controller => "admin/project_proposals",
-                          :action => "index"},
-                        {:path => "/admin/project_proposals", :method => :get})
-
-      assert_recognizes({:controller => "admin/project_proposals",
-                          :action => "new"},
-                        {:path => "/admin/project_proposals/new", :method => :get})
-
-      assert_recognizes({:controller => "admin/project_proposals",
-                          :action => "create"},
-                        {:path => "/admin/project_proposals/create", :method => :post})
-
-      assert_recognizes({:controller => "admin/project_proposals",
-                          :action => "approve",
-                          :id => "1"},
-                        {:path => "/admin/project_proposals/approve/1", :method => :post})
-
-      assert_recognizes({:controller => "admin/project_proposals",
-                          :action => "reject",
-                          :id => "1"},
-                        {:path => "/admin/project_proposals/reject/1", :method => :post})
-    end
-  end
-
   context "Project approval workflow" do
 
     should "let users create project proposal & notify admins" do
