@@ -31,4 +31,14 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :index)
     should_enforce_ssl_for(:put, :recreate)
   end
+
+  context "Admin::UsersController" do
+    setup { @controller = Admin::UsersController.new }
+    should_enforce_ssl_for(:get, :index)
+    should_enforce_ssl_for(:get, :new)
+    should_enforce_ssl_for(:post, :create)
+    should_enforce_ssl_for(:post, :reset_password)
+    should_enforce_ssl_for(:put, :suspend)
+    should_enforce_ssl_for(:put, :unsuspend)
+  end
 end
