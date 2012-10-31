@@ -25,8 +25,6 @@ class EventsControllerTest < ActionController::TestCase
     @repository = repositories(:johans)
   end
 
-  should_enforce_ssl_for(:get, :commits)
-
   context "commits" do
     setup do
       @push_event = create_push_event

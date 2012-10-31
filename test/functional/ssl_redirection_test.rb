@@ -76,4 +76,9 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :update, :project_id => "p", :repository_id => "r", :id => 1)
     should_enforce_ssl_for(:post, :create, :project_id => "p", :repository_id => "r")
   end
+
+  context "EventsController" do
+    setup { @controller = EventsController.new }
+    should_enforce_ssl_for(:get, :commits)
+  end
 end
