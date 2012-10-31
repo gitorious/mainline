@@ -255,8 +255,8 @@ Gitorious::Application.routes.draw do
 
   # R8. API
   namespace :api do
-    match ":project_id/:repository_id/log/graph" => "graphs#show", :branch => "master"
-    match ":project_id/:repository_id/log/graph/*branch" => "graphs#show"
+    get ":project_id/:repository_id/log/graph(.:format)" => "graphs#show"
+    get ":project_id/:repository_id/log/graph/*branch(.:format)" => "graphs#show"
   end
 
   # R9. Events

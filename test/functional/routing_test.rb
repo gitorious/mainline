@@ -957,4 +957,19 @@ class RoutingTest < ActionController::TestCase
                         })
     end
   end
+
+  context "API routing" do
+    should "recognize log graph" do
+      assert_recognizes({ :controller => "api/graphs",
+                          :action => "show",
+                          :project_id => "gitorious",
+                          :repository_id => "mainline",
+                          :format => "json",
+                          :branch => "master"
+                        }, {
+                          :path => "/api/gitorious/mainline/log/graph.json",
+                          :method => :get
+                        })
+    end
+  end
 end
