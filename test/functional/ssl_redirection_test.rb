@@ -50,4 +50,13 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:delete, :destroy, :user_id => "johan", :id => 1)
     should_enforce_ssl_for(:get, :confirm, :user_id => "johan", :id => 1)
   end
+
+  context "CommentsController" do
+    setup { @controller = CommentsController.new }
+    should_enforce_ssl_for(:get, :index, :project_id => "p", :repository_id => "r")
+    should_enforce_ssl_for(:get, :new, :project_id => "p", :repository_id => "r")
+    should_enforce_ssl_for(:get, :create, :project_id => "p", :repository_id => "r")
+    should_enforce_ssl_for(:post, :create, :project_id => "p", :repository_id => "r")
+    should_enforce_ssl_for(:post, :preview, :project_id => "p", :repository_id => "r")
+  end
 end

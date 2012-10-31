@@ -46,8 +46,8 @@ Gitorious::Application.routes.draw do
 
       resources :comments
 
-      get "comments/commit/:sha" => "comments#commit", :as => :commit_comment
-      get "comments/preview" => "comments#preview", :as => :comments_preview
+      get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
+      match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]
 
       resources :merge_requests do
         collection do

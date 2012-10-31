@@ -964,11 +964,23 @@ class RoutingTest < ActionController::TestCase
                           :action => "show",
                           :project_id => "gitorious",
                           :repository_id => "mainline",
-                          :format => "json",
-                          :branch => "master"
+                          :format => "json"
                         }, {
                           :path => "/api/gitorious/mainline/log/graph.json",
                           :method => :get
+                        })
+    end
+  end
+
+  context "Comment routing" do
+    should "recognize commit comment" do
+      assert_recognizes({ :controller => "comments",
+                          :action => "preview",
+                          :project_id => "johans-project",
+                          :repository_id => "johansprojectrepos"
+                        }, {
+                          :path => "/johans-project/johansprojectrepos/comments/preview",
+                          :method => :post
                         })
     end
   end

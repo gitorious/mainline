@@ -22,12 +22,6 @@ require "test_helper"
 class CommentsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
 
-  should_enforce_ssl_for(:get, :index, :project_id => "p", :repository_id => "r")
-  should_enforce_ssl_for(:get, :new, :project_id => "p", :repository_id => "r")
-  should_enforce_ssl_for(:get, :create, :project_id => "p", :repository_id => "r")
-  should_enforce_ssl_for(:post, :create, :project_id => "p", :repository_id => "r")
-  should_enforce_ssl_for(:post, :preview, :project_id => "p", :repository_id => "r")
-
   def setup
     setup_ssl_from_config
     @project = projects(:johans)
@@ -97,7 +91,7 @@ class CommentsControllerTest < ActionController::TestCase
   context "preview" do
     should "render a preview of the comment" do
       login_as :johan
-      post :preview, comment_params
+      post :preview, comment_params(nil, :format => "js")
       assert_response :success
       assert_template("comments/preview")
     end
@@ -368,7 +362,7 @@ class CommentsControllerTest < ActionController::TestCase
 
     should "allow project owner to preview comment" do
       login_as :johan
-      get :preview, comment_params
+      get :preview, comment_params(nil, :format => "js")
       assert_response 200
     end
 
@@ -448,7 +442,7 @@ class CommentsControllerTest < ActionController::TestCase
 
     should "allow project owner to preview comment" do
       login_as :johan
-      get :preview, comment_params
+      get :preview, comment_params(nil, :format => "js")
       assert_response 200
     end
 
@@ -529,10 +523,11 @@ class CommentsControllerTest < ActionController::TestCase
       :repository_id => @repository.to_param }
   end
 
-  def comment_params(comment = { :body => "Foo" })
+  def comment_params(comment = nil, extras = {})
+    comment ||= { :body => "Foo" }
     { :project_id => @project.slug,
       :repository_id => @repository.name,
-      :comment => comment }
+      :comment => comment }.merge(extras)
   end
 
   def create_new_version
