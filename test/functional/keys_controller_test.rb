@@ -20,7 +20,6 @@
 require "test_helper"
 
 class KeysControllerTest < ActionController::TestCase
-
   should_render_in_global_context
 
   def setup
@@ -28,12 +27,6 @@ class KeysControllerTest < ActionController::TestCase
     @user = users(:johan)
     SshKey.any_instance.stubs(:valid_key_using_ssh_keygen?).returns(true)
   end
-
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :create)
 
   context "index" do
     setup do
@@ -59,7 +52,7 @@ class KeysControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    should "scopes to the current_users keys" do
+    should "scope to the current user's keys" do
       get :index, :user_id => @user.to_param
       assert_equal users(:johan).ssh_keys, assigns(:ssh_keys)
     end
@@ -100,9 +93,9 @@ class KeysControllerTest < ActionController::TestCase
       login_as :johan
     end
 
-    should " require login" do
+    should "require login" do
       session[:user_id] = nil
-      get :new
+      get :new, :user_id => "zmalltalker"
       assert_redirected_to (new_sessions_path)
     end
 
@@ -146,9 +139,9 @@ end
       login_as :johan
     end
 
-    should " require login" do
+    should "require login" do
       session[:user_id] = nil
-      post :create, :ssh_key => {:key => valid_key}
+      post :create, :user_id => "zmalltalker", :ssh_key => {:key => valid_key}
       assert_redirected_to(new_sessions_path)
     end
 
@@ -159,13 +152,13 @@ end
       assert_redirected_to user_path(users(:moe))
     end
 
-    should "scopes to the current_user" do
-      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
+    should "scope to the current user" do
+      post :create, :user_id => @user.to_param, :ssh_key => { :key => valid_key }
       assert_equal users(:johan).id, assigns(:ssh_key).user_id
     end
 
     should "POST account/keys/create is successful" do
-      post :create, :ssh_key => {:key => valid_key}, :user_id => @user.to_param
+      post :create, :user_id => @user.to_param, :ssh_key => {:key => valid_key}
       assert_response :redirect
     end
 
