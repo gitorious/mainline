@@ -30,12 +30,6 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
 
   should_render_in_site_specific_context
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :update)
-  should_enforce_ssl_for(:post, :create)
 
   context "GET index" do
     should "require login" do
@@ -169,44 +163,39 @@ class CommittershipsControllerTest < ActionController::TestCase
     end
   end
 
-  context "GET edit" do
-    setup do
-      @committership = @repository.committerships.create!({
-          :committer => users(:mike),
-          :permissions => Committership::CAN_REVIEW
-        })
-      get :edit, params(:id => @committership.to_param)
-    end
-    should_respond_with :success
-    should_assign_to(:committership, :equals =>  @committership)
-    should_render_template "edit"
+  should "GET edit" do
+    @committership = @repository.committerships.create!({
+      :committer => users(:mike),
+      :permissions => Committership::CAN_REVIEW
+    })
+    get :edit, params(:id => @committership.to_param)
+
+    assert_response :success
+    assert_equal @committership, assigns(:committership)
+    assert_template("committerships/edit")
   end
 
-  context "PUT update" do
-    setup do
-      @committership = @repository.committerships.create!({
-          :committer => users(:mike),
-          :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
-        })
-      get :update, params(:id => @committership.to_param, :permissions => ["review"])
-    end
-    should_respond_with :redirect
-    should_assign_to(:committership, :equals => @committership)
+  should "PUT update" do
+    @committership = @repository.committerships.create!({
+      :committer => users(:mike),
+      :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
+    })
+    get :update, params(:id => @committership.to_param, :permissions => ["review"])
 
-    should "update the permission" do
-      assert_equal [:review], @committership.reload.permission_list
-    end
+    assert_response :redirect
+    assert_equal @committership, assigns(:committership)
+    assert_equal [:review], @committership.reload.permission_list
   end
 
   context "DELETE destroy" do
-    should "requires login" do
+    should "require login" do
       logout
       delete :destroy, params(:id => Committership.first.id)
       assert_match(/only repository admins are allowed/, flash[:error])
       assert_redirected_to(project_repository_path(@project, @repository))
     end
 
-    should "deletes the committership" do
+    should "delete committership" do
       committership = @repository.committerships.create!({
         :committer => @group,
         :creator => @user

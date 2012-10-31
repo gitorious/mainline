@@ -1,51 +1,51 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@committership) -%>
 
 <h2 class="content-header">Edit collaborator permissions</h2>
 
 <%= error_messages(@committership) -%>
-<% form_for [@owner, @repository, @committership] do |f| -%>
+<%= form_for [@owner, @repository, @committership] do |f| -%>
 
-        <ul class="form">
-                <fieldset>
-                        <li><%= f.label "Review" %>
-                                <div><%= check_box_tag "permissions[]", "review", @committership.reviewer? -%></div>
-                        </li>
-                        <li><%= f.label "Commit" %>
-                                <div><%= check_box_tag "permissions[]", "commit", @committership.committer? -%></div>
-                        </li>
-                        <li><%= f.label "Administer" %>
-                                <div><%= check_box_tag "permissions[]", "admin", @committership.admin? -%></div>
-                        </li>
-                </fieldset>
-        </ul>
-        <fieldset class="submit">
-                        <%= f.submit "Update permissions" -%>
-                    <%= t("views.collaborators.or_return_to") -%>
-                    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
-        </fieldset>
+<ul class="form">
+  <fieldset>
+    <li><%= f.label "Review" %>
+      <div><%= check_box_tag "permissions[]", "review", @committership.reviewer? -%></div>
+    </li>
+    <li><%= f.label "Commit" %>
+      <div><%= check_box_tag "permissions[]", "commit", @committership.committer? -%></div>
+    </li>
+    <li><%= f.label "Administer" %>
+      <div><%= check_box_tag "permissions[]", "admin", @committership.admin? -%></div>
+    </li>
+  </fieldset>
+</ul>
+<fieldset class="submit">
+  <%= f.submit "Update permissions" -%>
+  <%= t("views.collaborators.or_return_to") -%>
+  <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
+</fieldset>
 
 <% end -%>
 
-<% content_for :sidebar do %>
+<%= content_for :sidebar do %>
   <%= render "permission_explanation" %>
 <% end %>

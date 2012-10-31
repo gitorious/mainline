@@ -59,7 +59,8 @@ module RoutingHelper
   def repo_owner_path(repo, path_spec, *args)
     if repo.team_repo?
       if path_spec.is_a?(Symbol)
-        return send("group_#{path_spec}", *args.unshift(repo.owner))
+        # return send("group_#{path_spec}", *args.unshift(repo.owner))
+        return send(path_spec, *args.unshift(repo.owner))
       else
         return *unshifted_polymorphic_path(repo, path_spec)
       end

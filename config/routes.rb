@@ -190,7 +190,7 @@ Gitorious::Application.routes.draw do
   # Nested group resources. This is in a separate scope because the
   # controllers expect params[:group_id] to contain the group, not
   # params[:id] as in the scope above
-  scope "/+:group_id", :id => /[^\/]+/ do
+  scope "/+:group_id", :id => /[^\/]+/, :as => :group do
     resources :memberships
 
     # We route repositories because we cannot know what project it

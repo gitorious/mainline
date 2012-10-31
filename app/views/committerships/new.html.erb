@@ -1,41 +1,41 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@committership) -%>
 
 <h1><%= t("views.collaborators.new_title", :repo_name => @repository.name) -%></h1>
 
 <%= error_messages(@committership) -%>
-<% form_for [@owner, @repository, @committership], :html => { :class => "collaborator_form" } do |f| -%>
-  <%= render :partial => "/shared/tabbed_collaborator_form" %>
-  <p><%= f.label :permissions -%>:
-  <p><%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %></p>
-  <p><%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %></p>
-  <p><%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administer" %></p>
-  <p>
-    <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
-    <%= t("views.collaborators.or_return_to") -%>
-    <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
-  </p>
+<%= form_for [@owner, @repository, @committership], :html => { :class => "collaborator_form" } do |f| -%>
+<%= render :partial => "/shared/tabbed_collaborator_form" %>
+<p><%= f.label :permissions -%>:
+<p><%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %></p>
+<p><%= check_box_tag "permissions[]", "commit", false -%> <%= f.label "Commit" %></p>
+<p><%= check_box_tag "permissions[]", "admin", false -%> <%= f.label "Administer" %></p>
+<p>
+  <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
+  <%= t("views.collaborators.or_return_to") -%>
+  <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
+</p>
 <% end -%>
 
-<% content_for :sidebar do %>
+<%= content_for :sidebar do %>
   <%= render "permission_explanation" %>
 <% end %>
