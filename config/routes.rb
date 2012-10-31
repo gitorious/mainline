@@ -154,7 +154,7 @@ Gitorious::Application.routes.draw do
   # Nested user resources. This is in a separate scope because the
   # controllers expect params[:user_id] to contain the user, not
   # params[:id] as in the scope above
-  scope "/~:user_id", :user_id => /[^\/]+/ do
+  scope "/~:user_id", :user_id => /[^\/]+/, :as => :user do
     resources :keys
 
     resources :aliases do

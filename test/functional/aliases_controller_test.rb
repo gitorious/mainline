@@ -20,7 +20,6 @@
 require "test_helper"
 
 class AliasesControllerTest < ActionController::TestCase
-
   should_render_in_global_context
 
   def setup
@@ -29,12 +28,6 @@ class AliasesControllerTest < ActionController::TestCase
     @email = emails(:johans1)
     login_as :johan
   end
-
-  should_enforce_ssl_for(:get, :index, :user_id => "johan")
-  should_enforce_ssl_for(:get, :new, :user_id => "johan")
-  should_enforce_ssl_for(:post, :create, :user_id => "johan")
-  should_enforce_ssl_for(:delete, :destroy, :user_id => "johan", :id => 1)
-  should_enforce_ssl_for(:get, :confirm, :user_id => "johan", :id => 1)
 
   context "Listing all emails" do
     should "require login" do

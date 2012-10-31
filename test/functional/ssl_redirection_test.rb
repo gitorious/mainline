@@ -41,4 +41,13 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:put, :suspend)
     should_enforce_ssl_for(:put, :unsuspend)
   end
+
+  context "AliasesController" do
+    setup { @controller = AliasesController.new }
+    should_enforce_ssl_for(:get, :index, :user_id => "johan")
+    should_enforce_ssl_for(:get, :new, :user_id => "johan")
+    should_enforce_ssl_for(:post, :create, :user_id => "johan")
+    should_enforce_ssl_for(:delete, :destroy, :user_id => "johan", :id => 1)
+    should_enforce_ssl_for(:get, :confirm, :user_id => "johan", :id => 1)
+  end
 end
