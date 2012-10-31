@@ -937,4 +937,24 @@ class RoutingTest < ActionController::TestCase
                         })
     end
   end
+
+  context "Repository admin routing" do
+    should "recognize index" do
+      assert_recognizes({ :controller => "admin/repositories",
+                          :action => "index"
+                        }, {
+                          :path => "/admin/repositories",
+                          :method => :get
+                        })
+    end
+
+    should "recognize recreate" do
+      assert_recognizes({ :controller => "admin/repositories",
+                          :action => "recreate"
+                        }, {
+                          :path => "/admin/repositories/recreate",
+                          :method => :put
+                        })
+    end
+  end
 end

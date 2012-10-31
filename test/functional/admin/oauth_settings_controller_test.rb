@@ -19,10 +19,6 @@
 require "test_helper"
 
 class Admin::OauthSettingsControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
   end

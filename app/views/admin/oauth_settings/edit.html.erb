@@ -1,53 +1,54 @@
 <%
-# encoding: utf-8
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  # encoding: utf-8
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <%= breadcrumbs_from(@root) -%>
 
 <h2 class="content-header">Edit contribution settings</h2>
 
-<%- form_for(@project, :url => admin_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
-	<fieldset>  <%- @project.oauth_settings.each do |k, v| -%>
+<%= form_for(@project, :url => admin_oauth_settings_path(:project_id => @project), :method => :put) do |f| -%>
+  <fieldset>  <%- @project.oauth_settings.each do |k, v| -%>
 
-    	<li>
-      		<label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label>
-      		<div><input id="project_oauth_settings_<%= k %>" type="text" name="oauth_settings[<%= k %>]" value="<%= v %>"/></div>
-    	</li>
+      <li>
+        <label for="project_oauth_settings_<%= k %>"><%= k.to_s.humanize %></label>
+        <div><input id="project_oauth_settings_<%= k %>" type="text" name="oauth_settings[<%= k %>]" value="<%= v %>"/></div>
+      </li>
 
-  <%- end -%>
-  	</fieldset>
-  	<fieldset class="submit">
+    <%- end -%>
+  </fieldset>
+  <fieldset class="submit">
     <%= f.submit %>
-  	</fieldset>
+  </fieldset>
 <%- end -%>
 
-<% content_for :sidebar do -%>
-	<h2>Information</h2>
-	<p>
-	  This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
-	  Leave the site field empty to deactivate the requirement of merge requests to be signed off.
-	</p>
- 	<ul class="options">
-		<h4>Current options</h4>
-  		<li>
-			<strong>Signoff required:</strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %>
-		</li>
-	</ul>
+<%= content_for :sidebar do -%>
+  <h2>Information</h2>
+  <p>
+    This page lets you specify settings for the OAuth site used for signing off merge requests. If you enable this feature, you will need to provide at least the <strong>site</strong>, <strong>signoff key</strong> and <strong>signoff secret</strong> options. For non-standard paths, also supply the <strong>path prefix</strong> option. In the column to the right you will find the current options used.<br/>
+    Leave the site field empty to deactivate the requirement of merge requests to be signed off.
+  </p>
+  <ul class="options">
+    <h4>Current options</h4>
+    <li>
+      <strong>Signoff required:</strong><%= @project.merge_requests_need_signoff? ? "YES" : "NO" %>
+    </li>
+  </ul>
   <%- @project.oauth_consumer_options.each do |k, v| -%>
     <%- unless v.blank? -%>
       <h5><%= k.to_s.humanize %></h5>
