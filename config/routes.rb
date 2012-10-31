@@ -80,7 +80,7 @@ Gitorious::Application.routes.draw do
       resources :repository_memberships
       resources :committerships
 
-      match "/commits/*branch/feed(.:format)" => "commits#feed", :as => :formatted_commits_feed
+      match "/commits/*id/feed(.:format)" => "commits#feed", :as => :formatted_commits_feed
       match "/commits" => "commits#index", :as => :commits
       match "/commits/*branch" => "commits#index", :as => :commits_in_ref
 

@@ -984,4 +984,19 @@ class RoutingTest < ActionController::TestCase
                         })
     end
   end
+
+  context "Commit routing" do
+    should "recognize feed" do
+      assert_recognizes({ :controller => "commits",
+                          :action => "feed",
+                          :project_id => "gitorious",
+                          :repository_id => "mainline",
+                          :id => "master",
+                          :format => "atom"
+                        }, {
+                          :path => "/gitorious/mainline/commits/master/feed.atom",
+                          :method => :get
+                        })
+    end
+  end
 end
