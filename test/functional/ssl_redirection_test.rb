@@ -89,4 +89,16 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:put, :update, :id => 1)
     should_enforce_ssl_for(:delete, :destroy, :id => 1)
   end
+
+  context "GroupsController" do
+    setup { @controller = GroupsController.new }
+    should_enforce_ssl_for(:get, :index)
+    should_enforce_ssl_for(:get, :new)
+    should_enforce_ssl_for(:post, :create)
+    should_enforce_ssl_for(:get, :show, :id => "+hackers")
+    should_enforce_ssl_for(:get, :edit, :id => "+hackers")
+    should_enforce_ssl_for(:put, :update, :id => "+hackers")
+    should_enforce_ssl_for(:delete, :avatar, :id => "+hackers")
+    should_enforce_ssl_for(:delete, :destroy, :id => "+hackers")
+  end
 end

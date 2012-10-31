@@ -27,15 +27,6 @@ class GroupsControllerTest < ActionController::TestCase
     @group = groups(:team_thunderbird)
   end
 
-  should_enforce_ssl_for(:delete, :avatar)
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   context "index" do
     should "GET successfully" do
       get :index
@@ -60,14 +51,12 @@ class GroupsControllerTest < ActionController::TestCase
     end
   end
 
-  context "edit" do
-    setup do
-      login_as :mike
-      get :edit, :id => @group.to_param
-    end
+  should "GET edit" do
+    login_as :mike
+    get :edit, :id => @group.to_param
 
-    should_assign_to :group
-    should_respond_with :success
+    assert_not_nil assigns(:group)
+    assert_response :success
   end
 
   context "update" do
