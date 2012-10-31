@@ -281,7 +281,7 @@ Gitorious::Application.routes.draw do
     end
   end
 
-  resources :favorites
+  resources :favorites, :only => [:index, :create, :update, :destroy]
 
   # R11. Search
   resource :search

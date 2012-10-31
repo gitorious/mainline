@@ -57,25 +57,16 @@ module RoutingHelper
   # if +path_spec+ is an array (and no +args+ given) it'll use that as the
   # polymorphic-url-style (eg [@project, @repo, @foo])
   def repo_owner_path(repo, path_spec, *args)
-    if repo.team_repo?
-      if path_spec.is_a?(Symbol)
-        # return send("group_#{path_spec}", *args.unshift(repo.owner))
-        return send(path_spec, *args.unshift(repo.owner))
-      else
-        return *unshifted_polymorphic_path(repo, path_spec)
-      end
-    elsif repo.user_repo?
-      if path_spec.is_a?(Symbol)
-        return send("user_#{path_spec}", *args.unshift(repo.owner))
-      else
-        return *unshifted_polymorphic_path(repo, path_spec)
-      end
+    # TODO: This method will eventually go away. Gitorious 3 will
+    # only link to canonical project/repository URLs, i.e.
+    # /gitorious/zmalltalkers-mainline over
+    # /~zmalltalker/gitorious/zmalltalkers-mainline
+    #
+    # The paths have already been simplified
+    if path_spec.is_a?(Symbol)
+      return send(path_spec, *args)
     else
-      if path_spec.is_a?(Symbol)
-        return send(path_spec, *args)
-      else
-        return *path_spec
-      end
+      return path_spec
     end
   end
 

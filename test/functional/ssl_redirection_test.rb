@@ -81,4 +81,12 @@ class SslRedirectionTest < ActionController::TestCase
     setup { @controller = EventsController.new }
     should_enforce_ssl_for(:get, :commits)
   end
+
+  context "FavoritesController" do
+    setup { @controller = FavoritesController.new }
+    should_enforce_ssl_for(:get, :index)
+    should_enforce_ssl_for(:post, :create)
+    should_enforce_ssl_for(:put, :update, :id => 1)
+    should_enforce_ssl_for(:delete, :destroy, :id => 1)
+  end
 end
