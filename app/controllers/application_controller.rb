@@ -377,7 +377,7 @@ class ApplicationController < ActionController::Base
       items = []
     end
 
-    if params.key?(:page) && items.count == 0
+    if params.key?(:page) && items.length == 0
       controller = params[:controller].gsub("/", "_")
       key = "#{controller}_controller.#{params[:action]}_pagination_oob"
       flash[:error] = I18n.t(key, :page => params[:page].to_i)

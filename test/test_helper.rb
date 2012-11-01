@@ -86,7 +86,6 @@ class ActiveSupport::TestCase
     should "add flash message explaining that page doesn't exist" do
       params = @params || {}
       get action, params.merge({ :page => 10 })
-
       assert_not_nil flash[:error]
       assert_match /no #{pluralized}/, flash[:error]
       assert_match /10/, flash[:error]

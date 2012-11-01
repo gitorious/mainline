@@ -32,14 +32,14 @@ class MembershipsControllerTest < ActionController::TestCase
       @group = groups(:team_thunderbird)
     end
 
-    context "GET /groups/N/memberships.html" do
-      should "gets the memberships successfully" do
+    context "GET group memberships" do
+      should "get memberships successfully" do
         get :index, :group_id => @group.to_param
         assert_response :success
         assert_equal @group.memberships, assigns(:memberships)
       end
 
-      should " not require adminship in index" do
+      should "not require admin for index" do
         login_as :moe
         get :index, :group_id => @group.to_param
         assert_response :success
