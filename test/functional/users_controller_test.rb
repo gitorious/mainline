@@ -28,10 +28,10 @@ class UsersControllerTest < ActionController::TestCase
   context "http methods" do
     setup { login_as :johan }
 
-    should_verify_method :post, :create
+    should_verify_method :post, :create, :user => {}
     should_verify_method :post, :forgot_password_create
     should_verify_method :put, :update, :id => "johan"
-    should_verify_method :put, :update_password, :id => "johan"
+    should_verify_method :put, :update_password, :id => "johan", :user => {}
     should_verify_method :delete, :avatar, :id => "johan"
   end
 
@@ -145,7 +145,7 @@ class UsersControllerTest < ActionController::TestCase
     should "#show sets atom feed autodiscovery" do
       user = users(:johan)
       get :show, :id => user.login
-      assert_equal feed_user_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
+      assert_equal user_feed_path(user, :format => :atom), assigns(:atom_auto_discovery_url)
     end
 
     should "not display inactive users" do

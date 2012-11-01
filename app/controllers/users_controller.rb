@@ -51,12 +51,12 @@ class UsersController < ApplicationController
 
     @messages = @user.messages_in_inbox(3) if @user == current_user
     @favorites = filter(@user.favorites.all(:include => :watchable))
-    @atom_auto_discovery_url = feed_user_path(@user, :format => :atom)
+    @atom_auto_discovery_url = user_feed_path(@user, :format => :atom)
     @atom_auto_discovery_title = "Public activity feed"
 
     respond_to do |format|
       format.html { }
-      format.atom { redirect_to feed_user_path(@user, :format => :atom) }
+      format.atom { redirect_to user_feed_path(@user, :format => :atom) }
     end
   end
 
