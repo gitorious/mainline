@@ -21,7 +21,6 @@ require "test_helper"
 
 class SearchesControllerTest < ActionController::TestCase
   should_render_in_global_context
-  should_enforce_ssl_for(:get, :show)
 
   context "#show" do
     should "search for the given query" do
@@ -44,8 +43,6 @@ class SearchesControllerTest < ActionController::TestCase
       get :show, :q => ""
       assert_nil assigns(:results)
     end
-
-#    should_scope_pagination_to(:show, nil, "search results", :delete_all => false)
   end
 
   context "With private repositories" do
