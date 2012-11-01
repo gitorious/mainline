@@ -22,13 +22,6 @@ require "test_helper"
 class MembershipsControllerTest < ActionController::TestCase
   should_render_in_global_context
 
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
   end

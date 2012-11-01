@@ -1,48 +1,49 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@root) -%>
 
 <h1><%= t("views.memberships.header_title", :group_name => link_to(h(@group.name), @group)) -%></h1>
 
 <table class="listing">
-        <thead>
-                <th><%= t(:created_at, :scope => "activerecord.attributes.memberships").humanize %></th>
-                <th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
-                <th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
-                <th><%= t(:name, :scope => "activerecord.attributes.roles").humanize %></th>
-                <th></th>
-        </thead>
-        <% @memberships.each do |membership| -%>
-        <tr class="<%= cycle('even', 'odd') -%>">
-          <td><%= membership.created_at.to_s(:short) -%></td>
-          <td><%= link_to h(membership.user.login), membership.user -%></td>
-          <td><%= membership.user.public_email? ? h(membership.user.email) : "N/A" -%></td>
-          <td><%=h membership.role.name -%></td>
-          <td>
-            <%- if admin?(current_user, @group) && @group.is_a?(Group) -%>
-              <%= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
-              <%= button_to(t("views.common.remove"), group_membership_path(@group, membership), :method => :delete) -%>
-            <%- end -%>
-          </td>
-        </tr>
-        <% end -%>
+  <thead>
+    <th><%= t(:created_at, :scope => "activerecord.attributes.memberships").humanize %></th>
+    <th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
+    <th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
+    <th><%= t(:name, :scope => "activerecord.attributes.roles").humanize %></th>
+    <th></th>
+  </thead>
+  <% @memberships.each do |membership| -%>
+    <tr class="<%= cycle('even', 'odd') -%>">
+      <td><%= membership.created_at.to_s(:short) -%></td>
+      <td><%= link_to h(membership.user.login), membership.user -%></td>
+      <td><%= membership.user.public_email? ? h(membership.user.email) : "N/A" -%></td>
+      <td><%=h membership.role.name -%></td>
+      <td>
+        <%- if admin?(current_user, @group) && @group.is_a?(Group) -%>
+          <%= link_to t("views.common.edit"), edit_group_membership_path(@group, membership) -%>
+          <%= button_to(t("views.common.remove"), group_membership_path(@group, membership), :method => :delete) -%>
+        <%- end -%>
+      </td>
+    </tr>
+  <% end -%>
 </table>
 
 <%= render_pagination_links @memberships -%>
