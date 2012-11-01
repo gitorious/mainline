@@ -273,7 +273,7 @@ class RoutingTest < ActionController::TestCase
                          })
       end
 
-      should "recognizes routing like /projectname/repositories" do
+      should "recognize /projectname/repositories" do
         assert_recognizes({ :controller => "repositories",
                             :action => "index",
                             :project_id => "gitorious"
@@ -399,72 +399,10 @@ class RoutingTest < ActionController::TestCase
                            :format => "xml",
                          })
       end
-
-      should "recognize /~user/reponame" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "show",
-                            :user_id => "zmalltalker",
-                            :id => "gts-mainline",
-                          }, "/~zmalltalker/gts-mainline")
-
-        assert_generates("/~zmalltalker/gts-mainline", {
-                           :controller => "repositories",
-                           :action => "show",
-                           :user_id => "zmalltalker",
-                           :id => "gts-mainline",
-                         })
-      end
-
-      should "recognize /~user/reponame/action" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "edit",
-                            :user_id => "zmalltalker",
-                            :id => "gts-mainline",
-                          }, "/~zmalltalker/gts-mainline/edit")
-
-        assert_generates("/~zmalltalker/gts-mainline/edit", {
-                           :controller => "repositories",
-                           :action => "edit",
-                           :user_id => "zmalltalker",
-                           :id => "gts-mainline",
-                         })
-      end
-
-      context "usernames with dots" do
-        should "recognize /~user.name/myrepo" do
-          assert_recognizes({ :controller => "repositories",
-                              :action => "show",
-                              :user_id => "user.name",
-                              :id => "myrepo",
-                            }, "/~user.name/myrepo")
-
-          assert_generates("/~user.name/myrepo", {
-                             :controller => "repositories",
-                             :action => "show",
-                             :user_id => "user.name",
-                             :id => "myrepo",
-                           })
-        end
-
-        should "recognize /~user.name/myrepo/action" do
-          assert_recognizes({ :controller => "repositories",
-                              :action => "edit",
-                              :user_id => "user.name",
-                              :id => "myrepo",
-                            }, "/~user.name/myrepo/edit")
-
-          assert_generates("/~user.name/myrepo/edit", {
-                             :controller => "repositories",
-                             :action => "edit",
-                             :user_id => "user.name",
-                             :id => "myrepo",
-                           })
-        end
-      end
     end
 
     context "by teams" do
-      should "recognizes routing like /+teamname/repositories" do
+      should "recognize /+teamname/repositories" do
         assert_recognizes({ :controller => "repositories",
                             :action => "index",
                             :group_id => "chilimunchers"
@@ -474,36 +412,6 @@ class RoutingTest < ActionController::TestCase
                            :controller => "repositories",
                            :action => "index",
                            :group_id => "chilimunchers",
-                         })
-      end
-
-      should "recognize /+teamname/repo" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "show",
-                            :group_id => "chilimunchers",
-                            :id => "gts-mainline"
-                          }, "/+chilimunchers/gts-mainline")
-
-        assert_generates("/+chilimunchers/gts-mainline", {
-                           :controller => "repositories",
-                           :action => "show",
-                           :group_id => "chilimunchers",
-                           :id => "gts-mainline"
-                         })
-      end
-
-      should "recognize /+teamname/repo/action" do
-        assert_recognizes({ :controller => "repositories",
-                            :action => "clone",
-                            :group_id => "chilimunchers",
-                            :id => "gts-mainline"
-                          }, "/+chilimunchers/gts-mainline/clone")
-
-        assert_generates("/+chilimunchers/gts-mainline/clone", {
-                           :controller => "repositories",
-                           :action => "clone",
-                           :group_id => "chilimunchers",
-                           :id => "gts-mainline"
                          })
       end
 
@@ -544,26 +452,6 @@ class RoutingTest < ActionController::TestCase
                          :controller => "commits",
                          :action => "show",
                          :project_id => "gitorious",
-                         :repository_id => "mainline",
-                         :id => @sha,
-                       })
-    end
-
-    should "route user-namespaced commits index, with dots in the username" do
-      assert_recognizes({ :controller => "commits",
-                          :action => "show",
-                          :user_id => "mc.hammer",
-                          :repository_id => "mainline",
-                          :id => @sha,
-                        }, {
-                          :path => "/~mc.hammer/mainline/commit/#{@sha}",
-                          :method => :get
-                        })
-
-      assert_generates("/~mc.hammer/mainline/commit/#{@sha}", {
-                         :controller => "commits",
-                         :action => "show",
-                         :user_id => "mc.hammer",
                          :repository_id => "mainline",
                          :id => @sha,
                        })
@@ -838,7 +726,7 @@ class RoutingTest < ActionController::TestCase
 
     should "recognize /wiki/<sitename>/config" do
       assert_recognizes({ :controller => "site_wiki_pages",
-                          :action => "config",
+                          :action => "repository_config",
                           :site_id =>"siteid"
                         }, "/wiki/siteid/config")
     end
@@ -882,7 +770,7 @@ class RoutingTest < ActionController::TestCase
                           })
       end
 
-      should "recognizes routing like /+team-name/memberships/n" do
+      should "recognize /+team-name/memberships/n" do
         assert_generates("/+chilieaters/memberships/42", {
                            :controller => "memberships",
                            :action => "show",

@@ -17,107 +17,6 @@
 #++
 
 Gitorious::Application.routes.draw do
-  # Helper that builds repository routes in a given context
-  def route_repositories
-    # Listing repositories and creating new ones happens over
-    # /<namespace>/repositories/, e.g:
-    #   /~zmalltalker/repositories/new
-    #   /gitorious/repositories/new
-    resources :repositories, :only => [:index, :new, :create]
-
-    # Browsing, editing and destroying existing repositories happens over
-    # /<namespace>/<repository_name>/, e.g.:
-    #   /~zmalltalker/mainline/
-    #   /~zmalltalker/mainline/edit
-    #   /gitorious/mainline/edit
-    resources(:repositories, {
-                :path => "/",
-                :only => [:show, :edit, :update, :destroy]
-              }) do
-      member do
-        post :create_clone
-        get :clone
-        get :search_clones
-        get :committers
-        get :confirm_delete
-        get :writable_by
-        get "/config" => "repositories#repository_config"
-      end
-
-      resources :comments
-
-      get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
-      match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]
-
-      resources :merge_requests do
-        collection do
-          post :create
-          post :commit_list
-          post :target_branches
-        end
-
-        member do
-          get :commit_status
-          get :version
-          get :terms_accepted
-        end
-
-        resources :comments do
-          collection do
-            post :preview
-          end
-        end
-
-        resources :merge_request_versions do
-          resources :comments do
-            collection do
-              post :preview
-            end
-          end
-        end
-      end
-
-      resources :repository_memberships, :only => [:index, :new, :create, :destroy]
-      resources :committerships
-
-      match "/commits/*id/feed(.:format)" => "commits#feed", :as => :formatted_commits_feed
-      match "/commits" => "commits#index", :as => :commits
-      match "/commits/*branch" => "commits#index", :as => :commits_in_ref
-
-      match "/commit/:id/comments" => "commit_comments#index", :as => :commit_comments, :id => /[^\/]+/
-      match "/commit/:id/diffs" => "commit_diffs#index", :as => :commit_diffs, :id => /[^\/]+/
-      match "/commit/:from_id/diffs/:id" => "commit_diffs#compare", :as => :commit_compare
-      match "/commit/:id(.:format)" => "commits#show", :as => :commit, :id => /.*/
-
-      match "/graph" => "graphs#index", :as => :graph
-      match "/graph/*branch" => "graphs#index", :as => :graph_in_ref
-
-      match "/trees/" => "trees#index", :as => :trees
-      match "/trees/*branch_and_path" => "trees#show", :as => :tree
-      match "/trees/*branch_and_path.:format" => "trees#show", :as => :formatted_tree
-
-      # These URLs were introduced as a work-around for a Rails bug that
-      # prevented URLs like /archive/:branch.:format. Now we can use the
-      # "real" URLs, redirect these temps to the proper ones.
-      get "/archive-tarball/*branch" => (redirect do |params, request|
-        prefix = request.fullpath.split("/archive-tarball").first
-        "#{prefix}/archive/#{params[:branch]}.tar.gz"
-      end)
-
-      match "/archive/*branch.tar.gz" => "trees#archive", :as => :archive_tar
-      match "/archive/*branch.:format" => "trees#archive", :as => :archive
-
-      match "/blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob
-      match "/blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history
-      match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
-      match "/blobs/*branch_and_path" => "blobs#show", :as => :blob
-    end
-  end
-
-  ##################
-  # Actual routing #
-  ##################
-
   ### R0. Site index
   root :to => "site#index"
 
@@ -166,9 +65,9 @@ Gitorious::Application.routes.draw do
       end
     end
 
+    get "/repositories" => "repositories#index"
     resource :license, :only => [:show, :edit, :update]
-    route_repositories
-    match "/:project/*slug" => redirect("/%{project}/%{slug}")
+    match "/*slug" => "owner_redirections#show"
   end
 
   ### R2. Sessions
@@ -195,14 +94,8 @@ Gitorious::Application.routes.draw do
   # params[:id] as in the scope above
   scope "/+:group_id", :id => /[^\/]+/, :as => :group do
     resources :memberships
-
-    # We route repositories because we cannot know what project it
-    # belongs to. Ideally: Make a small Rack app that figures it out
-    # and redirects
-    route_repositories
-
-    # Project URLs work just as well outside the group namespace, redirect
-    match "/:project/*slug" => redirect("/%{project}/%{slug}")
+    get "/repositories" => "repositories#index"
+    match "/*slug" => "owner_redirections#show"
   end
 
   # R4. Site-wide wiki
@@ -319,6 +212,98 @@ Gitorious::Application.routes.draw do
       end
     end
 
-    route_repositories
+    # R13.2. Repositories
+
+    # Listing repositories and creating new ones happens over
+    # /<project>/repositories/, e.g:
+    #   /gitorious/repositories/new
+    resources :repositories, :only => [:index, :new, :create]
+
+    # Browsing, editing and destroying existing repositories happens over
+    # /<project>/<repository_name>/, e.g.:
+    #   /gitorious/mainline
+    #   /gitorious/mainline/edit
+    resources(:repositories, {
+                :path => "/",
+                :only => [:show, :edit, :update, :destroy]
+              }) do
+      member do
+        post :create_clone
+        get :clone
+        get :search_clones
+        get :committers
+        get :confirm_delete
+        get :writable_by
+        get "/config" => "repositories#repository_config"
+      end
+
+      resources :comments
+
+      get "/comments/commit/:sha" => "comments#commit", :as => :commit_comment
+      match "/comments/preview" => "comments#preview", :as => :comments_preview, :via => [:get, :post]
+
+      resources :merge_requests do
+        collection do
+          post :create
+          post :commit_list
+          post :target_branches
+        end
+
+        member do
+          get :commit_status
+          get :version
+          get :terms_accepted
+        end
+
+        resources :comments do
+          collection do
+            post :preview
+          end
+        end
+
+        resources :merge_request_versions do
+          resources :comments do
+            collection do
+              post :preview
+            end
+          end
+        end
+      end
+
+      resources :repository_memberships, :only => [:index, :new, :create, :destroy]
+      resources :committerships
+
+      match "/commits/*id/feed(.:format)" => "commits#feed", :as => :formatted_commits_feed
+      match "/commits" => "commits#index", :as => :commits
+      match "/commits/*branch" => "commits#index", :as => :commits_in_ref
+
+      match "/commit/:id/comments" => "commit_comments#index", :as => :commit_comments, :id => /[^\/]+/
+      match "/commit/:id/diffs" => "commit_diffs#index", :as => :commit_diffs, :id => /[^\/]+/
+      match "/commit/:from_id/diffs/:id" => "commit_diffs#compare", :as => :commit_compare
+      match "/commit/:id(.:format)" => "commits#show", :as => :commit, :id => /.*/
+
+      match "/graph" => "graphs#index", :as => :graph
+      match "/graph/*branch" => "graphs#index", :as => :graph_in_ref
+
+      match "/trees/" => "trees#index", :as => :trees
+      match "/trees/*branch_and_path" => "trees#show", :as => :tree
+      match "/trees/*branch_and_path.:format" => "trees#show", :as => :formatted_tree
+
+      # These URLs were introduced as a work-around for a Rails bug that
+      # prevented URLs like /archive/:branch.:format. Now we can use the
+      # "real" URLs, redirect these temps to the proper ones.
+      get "/archive-tarball/*branch" => (redirect do |params, request|
+        prefix = request.fullpath.split("/archive-tarball").first
+        "#{prefix}/archive/#{params[:branch]}.tar.gz"
+      end)
+
+      match "/archive/*branch.tar.gz" => "trees#archive", :as => :archive_tar
+      match "/archive/*branch.:format" => "trees#archive", :as => :archive
+
+      match "/blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob
+      match "/blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history
+      match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
+      match "/blobs/*branch_and_path" => "blobs#show", :as => :blob
+    end
   end
 end
