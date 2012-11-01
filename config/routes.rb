@@ -206,7 +206,7 @@ Gitorious::Application.routes.draw do
   end
 
   # R4. Site-wide wiki
-  get "/wiki/:site_id/config" => "site_wiki_pages#config", :as => :site_wiki_git_access_connect
+  get "/wiki/:site_id/config" => "site_wiki_pages#repository_config", :as => :site_wiki_git_access_connect
   get "/wiki/:site_id/writable_by" => "site_wiki_pages#writable_by", :as => :site_wiki_git_writable_by
 
   resources :site_wiki_pages, :path => "/wiki" do

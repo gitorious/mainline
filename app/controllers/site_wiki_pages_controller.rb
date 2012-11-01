@@ -39,7 +39,7 @@ class SiteWikiPagesController < ApplicationController
       end
     end
   end
-  
+
   def show
     @site = current_site
     @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
@@ -52,14 +52,14 @@ class SiteWikiPagesController < ApplicationController
       end
     end
   end
-  
+
   def edit
     @site = current_site
     @atom_auto_discovery_url = site_wiki_pages_path(:format => :atom)
     @page, @root = page_and_root
     @page.user = current_user
   end
-  
+
   def preview
     @site = current_site
     @page, @root = page_and_root
@@ -68,12 +68,12 @@ class SiteWikiPagesController < ApplicationController
       wants.js
     end
   end
-  
+
   def update
     @site = current_site
     @page = Page.find(params[:id], @site.wiki)
     @page.user = current_user
-    
+
     if @page.content == params[:page][:content]
       flash[:error] = I18n.t("pages_controller.no_changes")
       render :action => "edit" and return
@@ -87,14 +87,14 @@ class SiteWikiPagesController < ApplicationController
       render :action => "edit"
     end
   end
-  
+
   def history
     @site = current_site
     @page, @root = page_and_root
     if @page.new?
       redirect_to edit_site_wiki_page_path(@page) and return
     end
-    
+
     @commits = @page.history(30)
     @user_and_email_map = Repository.users_by_commits(@commits)
   end
@@ -104,8 +104,8 @@ class SiteWikiPagesController < ApplicationController
     # @root = Breadcrumb::Wiki.new(@project)
   end
 
-  # Used internally by Gitorious 
-  def config
+  # Used internally by Gitorious
+  def repository_config
     site = Site.find_by_id(params[:site_id])
     gitdir = site.wiki_repo_name
     config_data = "real_path:#{gitdir}\n"
@@ -119,7 +119,7 @@ class SiteWikiPagesController < ApplicationController
   def writable_by
     render :text => "true" and return
   end
-  
+
   protected
     def assert_readyness
       unless current_site.repository.ready?
@@ -127,9 +127,9 @@ class SiteWikiPagesController < ApplicationController
         redirect_to "/" and return
       end
     end
-        
+
   def page_and_root
-    page = Page.find(params[:id], @site.wiki)    
+    page = Page.find(params[:id], @site.wiki)
     root = Breadcrumb::SiteWikiPage.new(page, @site.title)
     return page, root
   end
@@ -140,5 +140,5 @@ class SiteWikiPagesController < ApplicationController
       redirect_to site_wiki_pages_path
     end
   end
-  
+
 end

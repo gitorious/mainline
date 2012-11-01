@@ -241,4 +241,12 @@ class SslRedirectionTest < ActionController::TestCase
     setup { @controller = SearchesController.new }
     should_enforce_ssl_for(:get, :show)
   end
+
+  context "SiteWikiPagesController" do
+    setup { @controller = SiteWikiPagesController.new }
+    should_enforce_ssl_for(:get, :index)
+    should_enforce_ssl_for(:get, :edit, :id => "Page")
+    should_enforce_ssl_for(:get, :git_access, :id => "Page")
+    should_enforce_ssl_for(:put, :preview, :id => "Page")
+  end
 end

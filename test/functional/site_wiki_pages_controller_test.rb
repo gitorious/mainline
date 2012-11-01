@@ -19,13 +19,7 @@
 require "test_helper"
 
 class SiteWikiPagesControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context
-
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :git_access)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:put, :preview)
 
   def setup
     setup_ssl_from_config
@@ -48,7 +42,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal grit.commits("master", 30), assigns(:commits)
       assert_template "index.atom.builder"
-      assert_equal "max-age=1800, private", @response.headers['Cache-Control']
+      assert_equal "max-age=1800, private", @response.headers["Cache-Control"]
     end
   end
 
@@ -67,7 +61,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
     end
   end
 
-  context 'Preview' do
+  context "Preview" do
     setup do
       page_stub = mock("page stub")
       page_stub.expects(:content=)
@@ -77,9 +71,9 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
       Page.expects(:find).returns(page_stub)
     end
 
-    should 'render the preview for an existing page' do
+    should "render the preview for an existing page" do
       login_as :johan
-      put :preview, :id => "Sandbox", :format => 'js', :page => {:content => 'Foo'}
+      put :preview, :id => "Sandbox", :format => "js", :page => {:content => "Foo"}
       assert_response :success
     end
   end
