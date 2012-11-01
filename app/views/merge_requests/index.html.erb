@@ -1,24 +1,25 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = t("views.merges.page_title", :repo => h(@repository.name)) -%>
 <%= breadcrumbs_from(@root) -%>
@@ -32,12 +33,12 @@
   <strong>Filter by status:</strong>
   <%= render_status_tag_list(@status_tags, @repository) -%>
 </div>  <% if @open_merge_requests.blank? -%>
-<div class="box w-750 round">
+  <div class="box w-750 round">
     <p>
       <em><%= t("views.merges.no_merge") %></em>
     </p>
-</div>
-  <% end -%>
+  </div>
+<% end -%>
 <table class="listing">
   <thead>
     <th>ID</th>
@@ -48,29 +49,28 @@
     <th>Age</th>
   </thead>
   <tbody>
-
-  <% @open_merge_requests.each do |merge_request| -%>
-    <% mr_path = repo_owner_path(merge_request.target_repository,
-         [ merge_request.source_repository.project,
-           merge_request.target_repository,
-           merge_request ]) -%>
-    <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
-      <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
-    <% if merge_request.status_tag -%>
-      <td style="color:<%=h merge_request.status_tag.color -%>">
-        <%=h merge_request.status_tag.name -%>
-      </td>
-    <% else -%>
-      <td><%=h merge_request.status_tag -%></td>
+    <% @open_merge_requests.each do |merge_request| -%>
+      <% mr_path = repo_owner_path(merge_request.target_repository,
+                                   [ merge_request.source_repository.project,
+                                     merge_request.target_repository,
+                                     merge_request ]) -%>
+      <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
+        <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
+        <% if merge_request.status_tag -%>
+          <td style="color:<%=h merge_request.status_tag.color -%>">
+            <%=h merge_request.status_tag.name -%>
+          </td>
+        <% else -%>
+          <td><%=h merge_request.status_tag -%></td>
+        <% end -%>
+        <td>
+          <%= link_to h(truncate(merge_request.summary, :length=>110)), mr_path -%>
+        </td>
+        <td><%=h merge_request.target_branch -%></td>
+        <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
+        <td><%= time_ago(merge_request.created_at) -%></td>
+      </tr>
     <% end -%>
-      <td>
-        <%= link_to h(truncate(merge_request.summary, :length=>110)), mr_path -%>
-      </td>
-      <td><%=h merge_request.target_branch -%></td>
-      <td><%= link_to(h(merge_request.user.login), merge_request.user) -%></td>
-      <td><%= time_ago(merge_request.created_at) -%></td>
-    </tr>
-  <% end -%>
   </tbody>
 </table>
 

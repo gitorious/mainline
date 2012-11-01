@@ -1,45 +1,44 @@
 <%
-# encoding: utf-8
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2009 Sven Eckelmann <sven.eckelmann@gmx.de>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  # encoding: utf-8
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2009 Sven Eckelmann <sven.eckelmann@gmx.de>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@merge_request) -%>
 <% @page_title = "Merge request ##{@merge_request.to_param}: #{h(@merge_request.summary)}" -%>
 <div class="options">
-	<ul>
-	<%- if @merge_request.user == current_user -%>
-	  	<li><%= button_to t('views.merges.edit_btn'), repo_owner_path(@merge_request.target_repository,
-	      [:edit, @merge_request.source_repository.project, @merge_request.target_repository, @merge_request]), :method => :get %></li>
-	  	<li><%= button_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
-	      [@merge_request.source_repository.project,
-	      @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %></li>
-	<%- end -%>
-			<li><%= favorite_button(@merge_request) %></li>
+  <ul>
+    <%- if @merge_request.user == current_user -%>
+      <li><%= button_to t('views.merges.edit_btn'), repo_owner_path(@merge_request.target_repository,
+                                                                    [:edit, @merge_request.source_repository.project, @merge_request.target_repository, @merge_request]), :method => :get %></li>
+      <li><%= button_to t('views.merges.delete_btn'), repo_owner_path(@merge_request.target_repository,
+                                                                      [@merge_request.source_repository.project,
+                                                                       @merge_request.target_repository, @merge_request]), :method => :delete, :confirm => 'Are you sure you want to delete this merge request?' %></li>
+    <%- end -%>
+    <li><%= favorite_button(@merge_request) %></li>
   </ul>
 </div>
 
 <h1><%= t("views.merges.show_title", :id => h(@merge_request.to_param), :summary => h(@merge_request.summary)) -%></h1>
-
-
 <div class="merge_request_overview">
   <div class="proposal">
     <%= simple_format(auto_link(h(@merge_request.proposal), :urls)) -%>
@@ -49,99 +48,91 @@
     <li class="byline">Requested by:
       <span class="avatar">
         <%= link_to(avatar(@merge_request.user, { :size => 16 }),
-              user_path(@merge_request.user)) %>
+                    user_path(@merge_request.user)) %>
       </span>
       <%= link_to(h(@merge_request.user.title), @merge_request.user) -%>
     </li>
     <li>Status: <%= colorized_status(@merge_request.status_tag) -%></li>
     <li>Source repository:
       <%= link_to h(@merge_request.source_name),
-        repo_owner_path(@merge_request.source_repository,
-         [@merge_request.source_repository.project, @merge_request.source_repository]) -%>
+          repo_owner_path(@merge_request.source_repository,
+                          [@merge_request.source_repository.project, @merge_request.source_repository]) -%>
     </li>
     <li>Target repository:
       <%= link_to h(@merge_request.target_name),
-	      repo_owner_path(@merge_request.target_repository,
-         [@merge_request.source_repository.project, @merge_request.target_repository]) -%>
+          repo_owner_path(@merge_request.target_repository,
+                          [@merge_request.source_repository.project, @merge_request.target_repository]) -%>
     </li>
     <li>Created at: <%= @merge_request.created_at.to_s(:long_ordinal) -%></li>
   </ul>
 </div>
 
-<% render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
-
-<h2><%= t("views.merges.commits_to_merged") %>:</h2>
-<div class="version_selector">
-  <div class="changable-selection-current round-10" id="merge_request_version"
-       gts:url="<%= select_version_url(@merge_request) -%>">
-    Version <%= @merge_request.versions.last.version -%>
+<%= render_if_ready(@merge_request, {:include_refresh_link => true}) do -%>
+  <h2><%= t("views.merges.commits_to_merged") %>:</h2>
+  <div class="version_selector">
+    <div class="changable-selection-current round-10" id="merge_request_version"
+         gts:url="<%= select_version_url(@merge_request) -%>">
+      Version <%= @merge_request.versions.last.version -%>
+    </div>
+    <ul class="changable-selection-options shadow-2 round-5">
+      <% @merge_request.versions.each do |version| -%>
+        <li data-mr-version-number="<%= version.version -%>"
+            data-mr-version-url="<%= commit_diff_url(version) -%>">
+          Version <%=h version.version %>
+        </li>
+      <% end -%>
+    </ul>
   </div>
-  <ul class="changable-selection-options shadow-2 round-5">
-    <% @merge_request.versions.each do |version| -%>
-      <li data-mr-version-number="<%= version.version -%>"
-          data-mr-version-url="<%= commit_diff_url(version) -%>">
-        Version <%=h version.version %>
-      </li>
-    <% end -%>
-  </ul>
-</div>
-<div id="diff_browser_for_current_version">
-  <% if !@git_timeout_occured %>
-  <%= render :partial => "version",
-       :locals => {:version => @merge_request.versions.last} -%>
-  <% end %>
-</div>
+  <div id="diff_browser_for_current_version">
+    <% if !@git_timeout_occured %>
+      <%= render :partial => "version",
+          :locals => {:version => @merge_request.versions.last} -%>
+    <% end %>
+  </div>
 
-<h2 id="comments">Comments
+  <h2 id="comments">Comments
+    <form action="#">
+      <label for="toggle_inline_comments">Include comments entered inline</label>
+      <input type="checkbox" id="toggle_inline_comments" checked="checked" />
+    </form>
+  </h2>
 
-<form action="#">
-  <label for="toggle_inline_comments">Include comments entered inline</label>
-  <input type="checkbox" id="toggle_inline_comments" checked="checked" />
-</form>
-</h2>
+  <div class="commentable comments" id="merge_request_comments">
+    <%= render :partial => @merge_request.cascaded_comments -%>
+  </div>
 
-<div class="commentable comments" id="merge_request_comments">
-  <%= render :partial => @merge_request.cascaded_comments -%>
-</div>
+  <%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
 
-<%= render :partial => "comments/form", :locals => { :parent => @merge_request } -%>
-
-<% if logged_in? && @merge_request.user == current_user %>
-  <% help_box(:right) do %>
-  <p>
-    <%= link_to_function("How to update your merge request", "$('#detailed_merge_request_update_help').toggle()", :class => "more_info") -%>
-  </p>
-  <div id="detailed_merge_request_update_help" style="display:none;">
-  <p>
-    To make updates to your merge requests,
-    you can either edit it from <%= link_to("this link", :action => :edit) %> or push your changes through git
-    Either way, a new version of your merge request will be created, up until the last commit you push.
-    You may make as many updates as you like; the last one will always be displayed by default
-  </p>
-
-
-  <pre>
-git push \
+  <% if logged_in? && @merge_request.user == current_user %>
+    <%= help_box(:right) do %>
+      <p>
+        <%= link_to_function("How to update your merge request", "$('#detailed_merge_request_update_help').toggle()", :class => "more_info") -%>
+      </p>
+      <div id="detailed_merge_request_update_help" style="display:none;">
+        <p>
+          To make updates to your merge requests,
+          you can either edit it from <%= link_to("this link", :action => :edit) %> or push your changes through git
+          Either way, a new version of your merge request will be created, up until the last commit you push.
+          You may make as many updates as you like; the last one will always be displayed by default
+        </p>
+        <pre>git push \
   <%= @merge_request.target_repository.push_url -%> \
-  <%= @merge_request.source_branch -%>:<%= @merge_request.merge_branch_name -%>
-  </pre>
-  </div>
+  <%= @merge_request.source_branch -%>:<%= @merge_request.merge_branch_name -%></pre>
+      </div>
+    <% end %>
   <% end %>
-<% end %>
 
-<% help_box(:right) do %>
-<p>
-  <%= link_to_function("How to apply this merge request to your repository", "$('#detailed_merge_request_integration_help').toggle()", :class => "more_info") -%>
-</p>
-<div id="detailed_merge_request_integration_help" style="display:none">
-<p>
-One way to merge in these changes is to pull them into a local
-branch for review, verifying the changes and then merge to back
-to master.
-</p>
-
-<pre>
-# Check out a new branch for integration
+  <%= help_box(:right) do %>
+    <p>
+      <%= link_to_function("How to apply this merge request to your repository", "$('#detailed_merge_request_integration_help').toggle()", :class => "more_info") -%>
+    </p>
+    <div id="detailed_merge_request_integration_help" style="display:none">
+      <p>
+        One way to merge in these changes is to pull them into a local
+        branch for review, verifying the changes and then merge to back
+        to master.
+      </p>
+      <pre># Check out a new branch for integration
 git checkout -b merge-requests/<%= @merge_request.sequence_number %>
 
 # Fetch the merge request into this branch
@@ -155,9 +146,8 @@ git log --pretty=oneline --abbrev-commit <%= @merge_request.target_branch %>..me
 # To apply the changes to your branch:
 git checkout <%= @merge_request.target_branch %>
 git merge merge-requests/<%= @merge_request.sequence_number %>
-git push origin <%= @merge_request.target_branch %>
-</pre>
-</div>
-<% end %>
+git push origin <%= @merge_request.target_branch %></pre>
+    </div>
+  <% end %>
 
-<% end -%><% # render_if_ready %>
+<% end -%>

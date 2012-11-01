@@ -16,11 +16,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 class LdapGroupFinder
-  def paginate_all(current_page = nil)
-    LdapGroup.paginate(:all, :page => current_page)
+  def paginate(current_page = nil)
+    LdapGroup.paginate(:page => current_page)
   end
 
-  def find_by_name!(name)    
+  def find_by_name!(name)
     includes = [:projects, :repositories]
     LdapGroup.find_by_name!(name,:include => includes)
   end

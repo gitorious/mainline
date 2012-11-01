@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -22,10 +23,11 @@ namespaced_atom_feed do |feed|
 
   @open_merge_requests.each do |mr|
     item_url = url_for(:overwrite_params => {
-        :action => "show",
-        :id => mr.to_param,
-        :format => nil
-      }, :only_path => false)
+                         :action => "show",
+                         :id => mr.to_param,
+                         :format => nil
+                       }, :only_path => false)
+
     feed.entry(mr, :url => item_url) do |entry|
       entry.title("##{h(mr.id)}: " + h(mr.summary))
       entry.content((<<-EOS), :type => "html")

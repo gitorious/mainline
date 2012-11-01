@@ -24,7 +24,7 @@ class GroupsController < ApplicationController
 
   def index
     @groups = paginate(:action => "index") do
-      Team.paginate_all(params[:page])
+      Team.paginate(params[:page])
     end
   end
 

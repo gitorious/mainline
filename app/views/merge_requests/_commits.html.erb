@@ -1,3 +1,21 @@
+<%
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <div id="commits_to_be_merged">
   <div id="wait_for_commits" class="please_wait round-10 shadow-2" style="display:none">
     <div class="being_constructed_content round-10">
@@ -9,69 +27,69 @@
       </p>
     </div>
   </div>
-<%- if @version -%>
-<p><strong>Commits in version <%= @version -%></strong>:</p>
-<%- end -%>
-<table class="select_commits_from_list">
-<% @commits.each_with_index do |commit, i| %>
-  <tr id="commit_<%= i -%>" class="commit_row unknown-status" data-merge-request-commit-id="<%= commit.id -%>">
-    <td class="commit-details meta">
-      <ul>
-        <li class="sha-abbrev">
-          <%= link_to commit.id_abbrev,
-                repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit) %>
-        </li>
-        <li class="committer">
-          <strong><%=h truncate(force_utf8(commit.committer.to_s), :length => 25) %></strong>
-        </li>
-      </ul>
-      <small>
-        <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago
-        <% if (comment_count = @commit_comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
-          (<%= link_to pluralize(comment_count, "comment", "comments"),
-                repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
-                  @repository.project, @merge_request.source_repository, commit.id) + '#comments',
-                :onclick => "toggleComments(#{i}); return false" -%>)
-        <% end -%>
-      </small>
-    </td>
-    <td class="commit-details message">
-      <div class="commit_message inline">
-        <%= link_to h(truncate(force_utf8(commit.short_message), :length => 140)),
-              repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit)  %>
-      </div>
-    </td>
-  </tr>
-  <% @commit_comments.select{|c| c.sha1 == commit.id }.each do |comment| -%>
-    <tr class="comment_for_commit_<%= i -%> commit_comments commit_row" style="display:none">
-      <td class="commit-details meta">
-        <ul>
-          <li class="avatar">
-            <%= link_to(avatar_from_email(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
-          </li>
-          <li class="author">
-            <%= link_to(h(comment.user.login), comment.user) -%>
-          </li>
-        </ul>
-        <small class="permalink">
-          <%= link_to time_ago(comment.created_at),
+  <%- if @version -%>
+    <p><strong>Commits in version <%= @version -%></strong>:</p>
+  <%- end -%>
+  <table class="select_commits_from_list">
+    <% @commits.each_with_index do |commit, i| %>
+      <tr id="commit_<%= i -%>" class="commit_row unknown-status" data-merge-request-commit-id="<%= commit.id -%>">
+        <td class="commit-details meta">
+          <ul>
+            <li class="sha-abbrev">
+              <%= link_to commit.id_abbrev,
+                  repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit) %>
+            </li>
+            <li class="committer">
+              <strong><%=h truncate(force_utf8(commit.committer.to_s), :length => 25) %></strong>
+            </li>
+          </ul>
+          <small>
+            <%= distance_of_time_in_words_to_now(commit.committed_date) %> ago
+            <% if (comment_count = @commit_comments.select{|c| c.sha1 == commit.id }.size) > 0 -%>
+              (<%= link_to pluralize(comment_count, "comment", "comments"),
+                   repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
+                                   @repository.project, @merge_request.source_repository, commit.id) + '#comments',
+                   :onclick => "toggleComments(#{i}); return false" -%>)
+            <% end -%>
+          </small>
+        </td>
+        <td class="commit-details message">
+          <div class="commit_message inline">
+            <%= link_to h(truncate(force_utf8(commit.short_message), :length => 140)),
+                repo_owner_path(@merge_request.source_repository, :project_repository_commit_path, @project || @containing_project, @merge_request.source_repository, commit)  %>
+          </div>
+        </td>
+      </tr>
+      <% @commit_comments.select{|c| c.sha1 == commit.id }.each do |comment| -%>
+        <tr class="comment_for_commit_<%= i -%> commit_comments commit_row" style="display:none">
+          <td class="commit-details meta">
+            <ul>
+              <li class="avatar">
+                <%= link_to(avatar_from_email(comment.user.email, { :size => 16 }), user_path(comment.user)) %>
+              </li>
+              <li class="author">
+                <%= link_to(h(comment.user.login), comment.user) -%>
+              </li>
+            </ul>
+            <small class="permalink">
+              <%= link_to time_ago(comment.created_at),
                   repo_owner_path(@merge_request.source_repository, :project_repository_commit_path,
-                      @repository.project, @merge_request.source_repository, comment.sha1) + "##{dom_id(comment)}" -%>
-        </small>
-      </td>
-      <td class="commit-details body">
-        <div class="inline">
-          <%= link_to truncate(sanitize(force_utf8(comment.body)), :length => 70),
-                repo_owner_path(@merge_request.source_repository,
-                  :project_repository_commit_path, @project,
-                  @merge_request.source_repository, commit) + "##{dom_id(comment)}" %>
-        </div>
-      </td>
-    <tr>
-  <% end -%>
-<% end %>
-</table>
+                                  @repository.project, @merge_request.source_repository, comment.sha1) + "##{dom_id(comment)}" -%>
+            </small>
+          </td>
+          <td class="commit-details body">
+            <div class="inline">
+              <%= link_to truncate(sanitize(force_utf8(comment.body)), :length => 70),
+                  repo_owner_path(@merge_request.source_repository,
+                                  :project_repository_commit_path, @project,
+                                  @merge_request.source_repository, commit) + "##{dom_id(comment)}" %>
+            </div>
+          </td>
+        <tr>
+      <% end -%>
+    <% end %>
+  </table>
 </div>
 <script type="application/javascript">
-//load_commit_status();
+  //load_commit_status();
 </script>

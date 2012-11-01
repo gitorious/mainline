@@ -29,7 +29,7 @@ class SslRedirectionTest < ActionController::TestCase
   context "Admin::RepositoriesController" do
     setup { @controller = Admin::RepositoriesController.new }
     should_enforce_ssl_for(:get, :index)
-    should_enforce_ssl_for(:put, :recreate)
+    should_enforce_ssl_for(:put, :recreate, :id => 1)
   end
 
   context "Admin::UsersController" do
@@ -37,9 +37,9 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :index)
     should_enforce_ssl_for(:get, :new)
     should_enforce_ssl_for(:post, :create)
-    should_enforce_ssl_for(:post, :reset_password)
-    should_enforce_ssl_for(:put, :suspend)
-    should_enforce_ssl_for(:put, :unsuspend)
+    should_enforce_ssl_for(:post, :reset_password, :id => "zmalltalker")
+    should_enforce_ssl_for(:put, :suspend, :id => "zmalltalker")
+    should_enforce_ssl_for(:put, :unsuspend, :id => "zmalltalker")
   end
 
   context "AliasesController" do
@@ -126,5 +126,44 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :edit, :group_id => "punchers", :id => 1)
     should_enforce_ssl_for(:put, :update, :group_id => "punchers", :id => 1)
     should_enforce_ssl_for(:delete, :destroy, :group_id => "punchers", :id => 1)
+  end
+
+  context "MergeRequestsController" do
+    setup { @controller = MergeRequestsController.new }
+
+    def self.params(extra = {})
+      { :project_id => "gitorious", :repository_id => "mainline" }.merge(extra)
+    end
+
+    should_enforce_ssl_for(:get, :index, params)
+    should_enforce_ssl_for(:get, :new, params)
+    should_enforce_ssl_for(:post, :create, params)
+    should_enforce_ssl_for(:get, :oauth_return, params)
+    should_enforce_ssl_for(:get, :show, params(:id => 1))
+    should_enforce_ssl_for(:get, :edit, params(:id => 1))
+    should_enforce_ssl_for(:get, :commit_status, params(:id => 1))
+    should_enforce_ssl_for(:get, :direct_access, params(:id => 1))
+    should_enforce_ssl_for(:get, :terms_accepted, params(:id => 1))
+    should_enforce_ssl_for(:get, :version, params(:id => 1))
+    should_enforce_ssl_for(:post, :commit_list, params(:id => 1))
+    should_enforce_ssl_for(:post, :target_branches, params(:id => 1))
+    should_enforce_ssl_for(:put, :update, params(:id => 1))
+    should_enforce_ssl_for(:delete, :destroy, params(:id => 1))
+  end
+
+  context "MergeRequestVersionsController" do
+    setup do
+      @controller = MergeRequestVersionsController.new
+      git = mock
+      git.stubs(:git)
+      Repository.any_instance.stubs(:git).returns(git)
+    end
+
+    should_enforce_ssl_for(:get, :show, {
+                             :project_id => "p",
+                             :repository_id => "r",
+                             :merge_request_id => 1,
+                             :id => 1
+                           })
   end
 end

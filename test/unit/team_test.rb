@@ -35,7 +35,7 @@ class TeamTest < ActiveSupport::TestCase
 
     should "supply pagination" do
       LdapGroup.expects(:paginate)
-      Team.paginate_all
+      Team.paginate
     end
 
     should "find by name" do

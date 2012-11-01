@@ -1,6 +1,24 @@
+<%
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <div class="merge_request_diff_browser" id="merge_request_current_version">
-  <ul class="commit_selector <%= many_commits?(version) ? 'large' : 'compact' -%>" 
-      id="merge_request_commit_selector" 
+  <ul class="commit_selector <%= many_commits?(version) ? 'large' : 'compact' -%>"
+      id="merge_request_commit_selector"
       data-merge-request-version-url="<%= commit_diff_url(version) -%>">
     <li class="merge_base round-10">
       <%= merge_base_link(version) -%>
@@ -22,56 +40,56 @@
     <% end -%>
   </ul>
 
-<% if many_commits?(version) -%>
-  <div id="large_commit_selector">
-    <%= styled_button(:medium, "Show diffs for commits", :id => "show-large-diff-range") -%>
-    <table class="select_commits_from_list" id="commit_table">
-    <% version.affected_commits.reverse.each_with_index do |commit, i| %>
-      <tr id="commit_<%= i -%>" class="commit_row">
-        <td class="merge_to_container">
-          <input 
-             name="merge_request[ending_commit]" 
-             id="merge_request_ending_commit"
-             type="radio" 
-             value="<%= commit.id -%>" 
-             class="merge_to" />
-        </td>
-        <td class="commit-details meta">
-          <ul>
-            <li class="sha-abbrev"><%=h commit.id_abbrev %></li>
-            <li class="committer">
-              <strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong>
-            </li>
-          </ul>
-          <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
-        </td>
-        <td class="commit-details message">
-          <div class="commit_message inline">
-            <%= inline_sha_link(h(truncate(commit.short_message,
-                  :length => 140)), commit.id) -%>
-          </div>
-        </td>
-      </tr>
-      <% end %>
-    </table>
+  <% if many_commits?(version) -%>
+    <div id="large_commit_selector">
+      <%= styled_button(:medium, "Show diffs for commits", :id => "show-large-diff-range") -%>
+      <table class="select_commits_from_list" id="commit_table">
+        <% version.affected_commits.reverse.each_with_index do |commit, i| %>
+          <tr id="commit_<%= i -%>" class="commit_row">
+            <td class="merge_to_container">
+              <input
+                 name="merge_request[ending_commit]"
+                 id="merge_request_ending_commit"
+                 type="radio"
+                 value="<%= commit.id -%>"
+                 class="merge_to" />
+            </td>
+            <td class="commit-details meta">
+              <ul>
+                <li class="sha-abbrev"><%=h commit.id_abbrev %></li>
+                <li class="committer">
+                  <strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong>
+                </li>
+              </ul>
+              <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
+            </td>
+            <td class="commit-details message">
+              <div class="commit_message inline">
+                <%= inline_sha_link(h(truncate(commit.short_message,
+                                               :length => 140)), commit.id) -%>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  <% end -%>
+
+  <div class="clear"></div>
+
+  <div id="merge_request_diff_loading" style="display:none">
+    <div class="merge_request_diff_loading_indicator">
+      <p>Fetching commit diffs&hellip;</p>
+      <p><img src="/images/spinner.gif" height="16" width="16" /></p>
+    </div>
   </div>
-<% end -%>
 
-<div class="clear"></div>
-
-<div id="merge_request_diff_loading" style="display:none">
-  <div class="merge_request_diff_loading_indicator">
-    <p>Fetching commit diffs&hellip;</p>
-    <p><img src="/images/spinner.gif" height="16" width="16" /></p>
+  <div id="current_shas"
+       data-merge-request-current-shas="<%= version.sha_summary(:long) -%>"
+       class="merge_request_commit_summary round-bottom-5">
+    <%= summarize_version(version) -%>
   </div>
-</div>
 
-<div id="current_shas"
-     data-merge-request-current-shas="<%= version.sha_summary(:long) -%>"
-     class="merge_request_commit_summary round-bottom-5">
-  <%= summarize_version(version) -%>
-</div>
-
-<div id="merge_request_diff">  
-</div>
+  <div id="merge_request_diff">
+  </div>
 </div>

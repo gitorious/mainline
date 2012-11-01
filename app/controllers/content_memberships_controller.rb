@@ -23,7 +23,7 @@ class ContentMembershipsController < ApplicationController
 
   def index
     @memberships = paginate(page_free_redirect_options) do
-      content.content_memberships.paginate(:all, :page => params[:page])
+      content.content_memberships.paginate(:page => params[:page])
     end
     @root = Breadcrumb.const_get("#{content.class.name}Memberships".to_sym).new(content)
     render_action(:index)

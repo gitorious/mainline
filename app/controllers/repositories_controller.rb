@@ -40,7 +40,7 @@ class RepositoriesController < ApplicationController
     else
       @repositories = paginate(page_free_redirect_options) do
         filter_paginated(params[:page], Repository.per_page) do |page|
-          @owner.repositories.regular.paginate(:all, :include => [:user, :events, :project], :page => page)
+          @owner.repositories.regular.paginate(:include => [:user, :events, :project], :page => page)
         end
       end
     end

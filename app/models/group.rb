@@ -104,7 +104,7 @@ class Group < ActiveRecord::Base
   end
 
   def events(page = 1)
-    Event.top.paginate(:all, :page => page,
+    Event.top.paginate(:page => page,
                        :conditions => ["events.user_id in (:user_ids) and events.project_id in (:project_ids)", {
                                          :user_ids => members.map { |u| u.id },
                                          :project_ids => all_related_project_ids,

@@ -1,44 +1,44 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(Breadcrumb::MergeRequests.new(@repository)) -%>
 
 <h1><%= t("views.merges.edit_title") %></h1>
 
 <%= error_messages(@merge_request) -%>
-<% form_for [@project, @repository, @merge_request] do |f| -%>
-  <p>
-    <%= f.label :summary, t(:summary, :scope => 'activerecord.attributes.merge_request') -%><br />
-    <small class="hint"><%= t("views.merges.info.summary") %></small><br />
-    <%= f.text_field :summary -%>
-  </p>
-  <p>
-    <%= f.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
-    <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
-    <%= f.text_area :proposal, :class => "text medium" -%>
-  </p>
+<%= form_for [@project, @repository, @merge_request] do |f| -%>
+<p>
+  <%= f.label :summary, t(:summary, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.summary") %></small><br />
+  <%= f.text_field :summary -%>
+</p>
+<p>
+  <%= f.label :proposal, t(:proposal, :scope => 'activerecord.attributes.merge_request') -%><br />
+  <small class="hint"><%= t("views.merges.info.proposal") %></small><br />
+  <%= f.text_area :proposal, :class => "text medium" -%>
+</p>
 
 
-  <%= render :partial => "commit_list" -%>
+<%= render :partial => "commit_list" -%>
 
-  <%= f.submit t("views.merges.update_btn") -%>
+<%= f.submit t("views.merges.update_btn") -%>
 <% end -%>
 
 <%= render :partial => "commit_list_js" -%>

@@ -199,7 +199,7 @@ class ProjectsController < ApplicationController
 
   def paginate_projects(page, per_page)
     filter_paginated(page, per_page) do |page|
-      Project.paginate(:all, :order => "projects.created_at desc",
+      Project.paginate(:order => "projects.created_at desc",
                        :page => page,
                        :include => [:tags, { :repositories => :project } ])
     end

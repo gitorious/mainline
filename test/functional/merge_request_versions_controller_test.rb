@@ -16,12 +16,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
 require "test_helper"
 
 class MergeRequestVersionsControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context
-  should_enforce_ssl_for(:get, :show)
 
   context "Viewing diffs" do
     setup do
@@ -32,41 +31,39 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
 
       #(repo, id, parents, tree, author, authored_date, committer, committed_date, message)
       @commit = Grit::Commit.new(mock("repo"), "mycommitid", [], stub_everything("tree"),
-        stub_everything("author"), Time.now, stub_everything("comitter"), Time.now,
-        "my commit message".split(" "))
+                                 stub_everything("author"), Time.now, stub_everything("comitter"), Time.now,
+                                 "my commit message".split(" "))
 
       Repository.any_instance.stubs(:git).returns(@git)
       MergeRequestVersion.stubs(:find).returns(@version)
     end
 
-    context "Viewing the diff for a single commit" do
-      setup do
-        @version.expects(:diffs).with("ffcab").returns([])
-        @git.expects(:commit).with("ffcab").returns(@commit)
-        get :show, :id => @version, :commit_shas => "ffcab"
-      end
+    should "view the diff for a single commit" do
+      @version.expects(:diffs).with("ffcab").returns([])
+      @git.expects(:commit).with("ffcab").returns(@commit)
 
-      should_respond_with :success
-      should_assign_to(:commit, :class => Grit::Commit){ @commit }
+      get :show, params(:id => @version.to_param, :commit_shas => "ffcab")
+
+      assert_response :success
+      assert_equal @commit, assigns(:commit)
     end
 
-    context "Viewing the diff for a series of commits" do
-      setup do
-        @version.expects(:diffs).with("ffcab".."bacff").returns([])
-        get :show, :id => @version, :commit_shas => "ffcab-bacff"
-      end
+    should "view the diff for a series of commits" do
+      @version.expects(:diffs).with("ffcab".."bacff").returns([])
 
-      should_respond_with :success
-      should_not_assign_to(:commit)
+      get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
+
+      assert_response :success
+      assert_nil assigns(:commit)
     end
 
-    context "Viewing the entire diff" do
-      setup do
-        @version.expects(:diffs).returns([])
-        get :show,  :id => @version
-      end
-      should_respond_with :success
-      should_assign_to :project
+    should "view the entire diff" do
+      @version.expects(:diffs).returns([])
+
+      get :show, params(:id => @version)
+
+      assert_response :success
+      assert_not_nil assigns(:project)
     end
 
     context "With private projects" do
@@ -78,13 +75,13 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       end
 
       should "disallow unauthenticated users" do
-        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
         assert_response 403
       end
 
       should "allow authenticated users" do
         login_as :johan
-        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
         assert_response 200
       end
     end
@@ -96,15 +93,22 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       end
 
       should "disallow unauthenticated users" do
-        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
         assert_response 403
       end
 
       should "allow authenticated users" do
         login_as :johan
-        get :show, :id => @version, :commit_shas => "ffcab-bacff"
+        get :show, params(:id => @version, :commit_shas => "ffcab-bacff")
         assert_response 200
       end
     end
+  end
+
+  def params(extras)
+    { :project_id => "gitorious",
+      :repository_id => "repository",
+      :merge_request_id => 1,
+      :format => "js" }.merge(extras)
   end
 end

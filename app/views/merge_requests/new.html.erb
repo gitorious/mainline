@@ -1,60 +1,60 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(Breadcrumb::MergeRequests.new(@repository)) -%>
 
 <h1><%= t("views.merges.create_title") %></h1>
 
 <%= error_messages(@merge_request) -%>
-<% form_for [@repository.project, @repository, @merge_request] do |f| -%>
-  <% help_box do -%>
+<%= form_for [@repository.project, @repository, @merge_request] do |f| -%>
+<%= help_box do -%>
+  <p>
+    By sending a merge request to another repository you are inviting the owners
+    of that repository to merge the changes you have in your clone. By writing
+    a short summary explaining your overall changes, the recipients can decide
+    whether to merge your commits or provide feedback on them. The merge requests
+    are public so that everyone can provide feedback on your changes.
+  </p>
+<% end -%>
+<%= render :partial => "form", :locals => {:form => f} -%>
+
+<% if @project.merge_requests_need_signoff? -%>
+  <%= help_box(:left) do -%>
     <p>
-      By sending a merge request to another repository you are inviting the owners
-      of that repository to merge the changes you have in your clone. By writing
-      a short summary explaining your overall changes, the recipients can decide
-      whether to merge your commits or provide feedback on them. The merge requests
-      are public so that everyone can provide feedback on your changes.
+      This project requires that users who submit merge requests should accept
+      a contribution agreement. <strong>You will get redirected to a third-party site
+        in order to review and accept their contribution agreement</strong>.
+      If you do not accept that contribution agreement, the merge request will
+      not be accepted. If you already accepted that agreement once before you may
+      not need to accept it again, unless it has changed.<br />
+      Note that the third-party may receive your full name and email in order
+      to identify your contributions to their project, if you accept the
+      agreement.
     </p>
   <% end -%>
-  <%= render :partial => "form", :locals => {:form => f} -%>
+<% end -%>
 
-  <% if @project.merge_requests_need_signoff? -%>
-    <% help_box(:left) do -%>
-      <p>
-        This project requires that users who submit merge requests should accept
-        a contribution agreement. <strong>You will get redirected to a third-party site
-        in order to review and accept their contribution agreement</strong>.
-        If you do not accept that contribution agreement, the merge request will
-        not be accepted. If you already accepted that agreement once before you may
-        not need to accept it again, unless it has changed.<br />
-        Note that the third-party may receive your full name and email in order
-        to identify your contributions to their project, if you accept the
-        agreement.
-      </p>
-    <% end -%>
-  <% end -%>
-
-  <%= f.submit t("views.merges.create_btn") -%>
+<%= f.submit t("views.merges.create_btn") -%>
 <% end -%>
 
 <%= render :partial => "commit_list_js" -%>

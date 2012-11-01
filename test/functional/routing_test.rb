@@ -774,6 +774,19 @@ class RoutingTest < ActionController::TestCase
                          :action => "oauth_return"
                        })
     end
+
+    should "recognize version" do
+      assert_recognizes({ :controller => "merge_request_versions",
+                          :action => "show",
+                          :project_id => "gitorious",
+                          :repository_id => "mainline",
+                          :merge_request_id => "1",
+                          :id => "1"
+                        }, {
+                          :path => "/gitorious/mainline/merge_requests/1/merge_request_versions/1",
+                          :method => :get
+                        })
+    end
   end
 
   context "Site routing" do
@@ -950,9 +963,10 @@ class RoutingTest < ActionController::TestCase
 
     should "recognize recreate" do
       assert_recognizes({ :controller => "admin/repositories",
-                          :action => "recreate"
+                          :action => "recreate",
+                          :id => "1"
                         }, {
-                          :path => "/admin/repositories/recreate",
+                          :path => "/admin/repositories/1/recreate",
                           :method => :put
                         })
     end

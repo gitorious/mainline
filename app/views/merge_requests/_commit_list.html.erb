@@ -1,29 +1,32 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <label>Select commits:</label>
 <p class="hint">
   Select the range of commits you want to be included in the merge request
 </p>
 
-<% help_box(:middle, :error, {
-    :id=>"large_selection_warning", :style=>"display:none;" }) do -%>
+<%= help_box(:middle, :error, {
+               :id => "large_selection_warning",
+               :style => "display: none;"
+             }) do -%>
   <strong>Note:</strong> You have selected a large amounts of commits,
   make sure that you have selected the correct target and source branch you intend to
   merge with and from respectively.
@@ -35,31 +38,31 @@
     <th>Summary</th>
     <th class="commit_list_status" colspan="2">No range selected yet</th>
   </tr>
-<% @commits.each_with_index do |commit, i| %>
-  <tr id="commit_<%= i -%>" class="commit_row">
-    <td class="merge_to_container">
-      <input 
-        name="merge_request[ending_commit]" 
-        id="merge_request_ending_commit"
-        type="radio" 
-        value="<%= commit.id -%>" 
-        class="merge_to"
-    </td>
-    <td class="commit-details meta">
-      <ul>
-        <li class="sha-abbrev"><%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit) %></li>
-        <li class="committer"><strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong></li>
-      </ul>
-      <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
-    </td>
-    <td class="commit-details message">
-      <div class="commit_message inline">
-        <%=h truncate(commit.short_message, :length => 140) %>
-      </div>
-    </td>
-    <td class="selection">&nbsp;</td>
-  </tr>
-<% end %>
+  <% @commits.each_with_index do |commit, i| %>
+    <tr id="commit_<%= i -%>" class="commit_row">
+      <td class="merge_to_container">
+        <input
+           name="merge_request[ending_commit]"
+           id="merge_request_ending_commit"
+           type="radio"
+           value="<%= commit.id -%>"
+           class="merge_to"
+           </td>
+      <td class="commit-details meta">
+        <ul>
+          <li class="sha-abbrev"><%= link_to commit.id_abbrev, project_repository_commit_path(@project, @repository, commit) %></li>
+          <li class="committer"><strong><%=h truncate(commit.committer.to_s, :length => 25) %></strong></li>
+        </ul>
+        <small><%= distance_of_time_in_words_to_now(commit.committed_date) %> ago</small>
+      </td>
+      <td class="commit-details message">
+        <div class="commit_message inline">
+          <%=h truncate(commit.short_message, :length => 140) %>
+        </div>
+      </td>
+      <td class="selection">&nbsp;</td>
+    </tr>
+  <% end %>
   <tr>
     <th></th>
     <th></th>
@@ -68,7 +71,7 @@
 </table>
 
 <div id="commit_selection_error" style="display:none">
-  Please select which commit to start from and which to end at. The last 
+  Please select which commit to start from and which to end at. The last
   commit needs to be after the first one.
 </div>
 
@@ -81,5 +84,5 @@
   var selectFirstCommitRadioBtn = function(){
     $("#commit_table").find("input[type=radio]")[0].click();
   };
-  setTimeout(selectFirstCommitRadioBtn,1000); 
+  setTimeout(selectFirstCommitRadioBtn,1000);
 </script>

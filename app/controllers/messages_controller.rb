@@ -44,7 +44,7 @@ class MessagesController < ApplicationController
 
   def sent
     @messages = paginate(page_free_redirect_options) do
-      current_user.sent_messages.paginate(:all, :page => params[:page])
+      current_user.sent_messages.paginate(:page => params[:page])
     end
 
     @root = Breadcrumb::SentMessages.new(current_user)

@@ -186,7 +186,7 @@ Gitorious::Application.routes.draw do
   delete "/+:id(.:format)" => "groups#destroy", :id => /[^\/]+/
 
   # Additional group actions
-  scope "/+:id", :id => /[^\/]+/ do
+  scope "/+:id", :id => /[^\/]+/, :as => :group do
     delete "avatar" => "groups#avatar"
   end
 

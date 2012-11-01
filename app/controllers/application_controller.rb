@@ -366,7 +366,7 @@ class ApplicationController < ActionController::Base
   #
   #     def index
   #       @groups = paginate(:action => "index") do
-  #         Group.paginate(:all, :page => params[:page])
+  #         Group.paginate(:page => params[:page])
   #       end
   #     end
   #

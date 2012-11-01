@@ -1,24 +1,25 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% no_link ||= false -%>
 
@@ -29,29 +30,29 @@
     <% else -%>
       <span><%=h merge_request.status_string -%></span>
     <% end -%>
-  ]</p>
+    ]</p>
 
   <h5>
-	<% source = link_to h(merge_request.source_name), 
-          repo_owner_path(merge_request.source_repository, [merge_request.source_repository.project, merge_request.source_repository]) -%>
-	<% target = link_to h(merge_request.target_name), 
-	      repo_owner_path(merge_request.target_repository, [merge_request.source_repository.project, merge_request.target_repository]) -%>
-	<%= t("views.merges.summary_title", :source => source, :target => target) -%>
+    <% source = link_to h(merge_request.source_name),
+       repo_owner_path(merge_request.source_repository, [merge_request.source_repository.project, merge_request.source_repository]) -%>
+    <% target = link_to h(merge_request.target_name),
+       repo_owner_path(merge_request.target_repository, [merge_request.source_repository.project, merge_request.target_repository]) -%>
+    <%= t("views.merges.summary_title", :source => source, :target => target) -%>
   </h5>
   <div class="proposal"><%= simple_format(auto_link(h(merge_request.proposal), :urls)) -%></div>
-  
+
   <p class="byline">
-    <%= link_to(h(merge_request.user.title), merge_request.user) -%> | 
-    <%= merge_request.created_at.to_s(:short) -%> 
-    
-    
+    <%= link_to(h(merge_request.user.title), merge_request.user) -%> |
+    <%= merge_request.created_at.to_s(:short) -%>
+
+
     <% if !no_link -%>
       | <strong>
-          <%= link_to t("views.merges.review"), 
-                repo_owner_path(merge_request.target_repository, 
-                  [ merge_request.source_repository.project, 
-                    merge_request.target_repository, merge_request ]) -%>
-        </strong>
+        <%= link_to t("views.merges.review"),
+            repo_owner_path(merge_request.target_repository,
+                            [ merge_request.source_repository.project,
+                              merge_request.target_repository, merge_request ]) -%>
+      </strong>
     <% end -%>
     <small class="hint">Marked as &quot;<%= h(merge_request.status_tag) -%>&quot;
       at <%= merge_request.updated_at.to_s(:short) %></small>
