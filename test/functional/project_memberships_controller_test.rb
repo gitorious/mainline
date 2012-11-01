@@ -19,12 +19,6 @@
 require "test_helper"
 
 class ProjectMembershipsControllerTest < ActionController::TestCase
-  should_render_in_site_specific_context :only => [:index]
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     setup_ssl_from_config
     @project = projects(:johans)

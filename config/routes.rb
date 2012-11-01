@@ -306,7 +306,7 @@ Gitorious::Application.routes.draw do
       get :confirm_delete
     end
 
-    resources :project_memberships
+    resources :project_memberships, :only => [:index, :new, :create, :destroy]
 
     resources :pages do
       collection do

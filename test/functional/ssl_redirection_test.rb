@@ -192,4 +192,11 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:put, :preview, :id => "page", :project_id => "gts")
     should_enforce_ssl_for(:get, :git_access, :id => "page", :project_id => "gts")
   end
+
+  context "ProjectMembershipsController" do
+    setup { @controller = ProjectMembershipsController.new }
+    should_enforce_ssl_for(:get, :index, :project_id => "gts")
+    should_enforce_ssl_for(:post, :create, :project_id => "gts")
+    should_enforce_ssl_for(:delete, :destroy, :project_id => "gts", :id => 1)
+  end
 end
