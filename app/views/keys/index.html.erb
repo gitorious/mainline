@@ -1,24 +1,25 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = "SSH Keys" -%>
 <%= breadcrumbs_from(@root) -%>
@@ -26,37 +27,36 @@
 <h1><%= t("views.keys.ssh_keys") %></h1>
 
 <table class="listing">
-	<thead>
-		<th>Uploaded</th>
-		<th>Name</th>
-		<th>Algorithm</th>
-		<th>Fingerprint</th>
-	  <th>Ready?</th>
-		<th></th>
-	</thead>
-	<% @ssh_keys.each do |ssh_key| -%>
-	<tr class="<%= cycle('even', 'odd') -%>">
-	  <td><%= ssh_key.created_at.to_s(:short) -%></td>
-	  <td><%= truncate(h(ssh_key.comment), :length => 20) -%></td>
-	  <td><%=h ssh_key.algorithm -%></td>
-	  <td>
-	    <code><%= wbr_middle(h(ssh_key.fingerprint)) -%></code>
-	  </td>
-	  <td class="icon">
-	    <%= image_tag(ssh_key.ready? ? "silk/tick.png" : "silk/cross.png", 
-	          :title => ssh_key.ready? ? 'Ready' : 'Not ready') -%>
-	  </td>
-	  <td>
-      <%= button_to t("views.common.delete"), user_key_path(current_user, ssh_key),
-                 :confirm => t("views.common.confirm"), :method => :delete, :class => "inline" -%>
-	  </td>
-	</tr>
-	<% end -%>
+  <thead>
+    <th>Uploaded</th>
+    <th>Name</th>
+    <th>Algorithm</th>
+    <th>Fingerprint</th>
+    <th>Ready?</th>
+    <th></th>
+  </thead>
+  <% @ssh_keys.each do |ssh_key| -%>
+    <tr class="<%= cycle('even', 'odd') -%>">
+      <td><%= ssh_key.created_at.to_s(:short) -%></td>
+      <td><%= truncate(h(ssh_key.comment), :length => 20) -%></td>
+      <td><%=h ssh_key.algorithm -%></td>
+      <td>
+        <code><%= wbr_middle(h(ssh_key.fingerprint)) -%></code>
+      </td>
+      <td class="icon">
+        <%= image_tag(ssh_key.ready? ? "silk/tick.png" : "silk/cross.png",
+                      :title => ssh_key.ready? ? 'Ready' : 'Not ready') -%>
+      </td>
+      <td>
+        <%= button_to t("views.common.delete"), user_key_path(current_user, ssh_key),
+            :confirm => t("views.common.confirm"), :method => :delete, :class => "inline" -%>
+      </td>
+    </tr>
+  <% end -%>
 </table>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <li class="new_key"><%= link_to t("views.keys.add_ssh_key"), new_user_key_path(current_user) -%></li>
   </ul>
 <% end -%>
-

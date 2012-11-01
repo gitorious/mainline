@@ -1,21 +1,22 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <% @page_title = t("views.aliases.aliases_title") -%>
 <%= breadcrumbs_from(@root) -%>
 
@@ -28,28 +29,28 @@
 </p>
 
 <table class="listing">
-	<thead>
-		<th>Added</th>
-		<th>Address</th>
-		<th>State</th>
-		<th></th>
-	</thead>
-	<% @emails.each do |email| -%>
-	<tr class="<%= cycle('even', 'odd') -%>">
-	  <td><%= email.created_at.to_s(:short) -%></td>
-	  <td>&lt;<%= h(email.address) -%>&gt;</td>
-	  <td>
-	    <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png", 
-	          :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') -%>
-	  </td>
-	  <td><%= button_to(t("views.common.remove"), 
-							user_alias_path(@user, email), :method => :delete, 
-							:confirm => t("views.common.confirm")) -%></td>
-	</tr>
-	<% end -%>
+  <thead>
+    <th>Added</th>
+    <th>Address</th>
+    <th>State</th>
+    <th></th>
+  </thead>
+  <% @emails.each do |email| -%>
+    <tr class="<%= cycle('even', 'odd') -%>">
+      <td><%= email.created_at.to_s(:short) -%></td>
+      <td>&lt;<%= h(email.address) -%>&gt;</td>
+      <td>
+        <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png",
+                      :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') -%>
+      </td>
+      <td><%= button_to(t("views.common.remove"),
+                        user_alias_path(@user, email), :method => :delete,
+                        :confirm => t("views.common.confirm")) -%></td>
+    </tr>
+  <% end -%>
 </table>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <li class="new_alias"><%= link_to t("views.aliases.new_alias"), new_user_alias_path(@user) -%>
   </ul>

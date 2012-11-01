@@ -1,21 +1,22 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 <%= breadcrumbs_from(@root) -%>
@@ -23,18 +24,18 @@
 <ul class="horizontal meta" style="float:right">
   <li>
     <%= link_to "Log graph", project_repository_graph_in_ref_path(@project,
-    @repository, params[:branch]) %>
+                                                                  @repository, params[:branch]) %>
   </li>
 </ul>
 <h1>
   <%= t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
 
-<% cache([repo_owner_path(@repository, [@project, @repository]), :commits, @ref, @commits.current_page], {:expires_in => 10.minutes}) do -%>
+<%= cache([repo_owner_path(@repository, [@project, @repository]), :commits, @ref, @commits.current_page], {:expires_in => 10.minutes}) do -%>
   <%= render :partial => "log" -%>
 <% end -%>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="sidebar-meta">
     <li>
       <strong><%= t("views.logs.project") %>:</strong>
@@ -45,10 +46,10 @@
       <%= link_to h(@repository.owner.to_param_with_prefix), @repository.owner -%>
     </li>
     <% unless @commits.blank? -%>
-    <li>
-      <strong><%= t("views.logs.head_tree") %>:</strong>
-      <%= link_to h(@commits.first.tree.id[0,7]), tree_path(branch_with_tree(@commits.first.id, [])) -%>
-    </li>
+      <li>
+        <strong><%= t("views.logs.head_tree") %>:</strong>
+        <%= link_to h(@commits.first.tree.id[0,7]), tree_path(branch_with_tree(@commits.first.id, [])) -%>
+      </li>
     <% end -%>
   </ul>
 
@@ -56,21 +57,21 @@
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 
-<% cache([repo_owner_path(@repository, [@project, @repository]), :tags_and_branches],
-        {:expires_in => 10.minutes}) do -%>
+  <%= cache([repo_owner_path(@repository, [@project, @repository]), :tags_and_branches],
+           {:expires_in => 10.minutes}) do -%>
 
-  <ul class="icon_list links navigation">
-	 <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
-    <%= render_branch_list_items(@git.branches) -%>
-  </ul>
+    <ul class="icon_list links navigation">
+      <h5 id="branches"><%= t("views.logs.branches") %>:</h5>
+      <%= render_branch_list_items(@git.branches) -%>
+    </ul>
 
-  <% unless @git.tags.blank? -%>
-  <ul class="icon_list links navigation">
-	<h5 id="tags"><%= t("views.logs.tags") %>:</h5>
-  <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
-    <li><%= link_to h(tag.name), commit_path(tag.commit.id), :title => h(tag.name) -%></li>
+    <% unless @git.tags.blank? -%>
+      <ul class="icon_list links navigation">
+        <h5 id="tags"><%= t("views.logs.tags") %>:</h5>
+        <% @git.tags.sort{|a, b| a.name <=> b.name }.each do |tag| -%>
+          <li><%= link_to h(tag.name), commit_path(tag.commit.id), :title => h(tag.name) -%></li>
+        <% end -%>
+      </ul>
+    <% end -%>
   <% end -%>
-  </ul>
-  <% end -%>
-<% end -%>
 <% end -%>

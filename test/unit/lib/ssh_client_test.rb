@@ -78,7 +78,7 @@ class SSHClientTest < ActiveSupport::TestCase
     request = make_request(client.writable_by_query_path)
     uri = request.env["REQUEST_URI"]
 
-    assert_equal RepositoriesController, Rails.application.routes.recognize_path(uri)
+    assert_equal "repositories", Rails.application.routes.recognize_path(uri)[:controller]
     assert_equal "writable_by", request.symbolized_path_parameters[:action]
     assert_equal "repositories", request.symbolized_path_parameters[:controller]
     assert_equal "foo", request.symbolized_path_parameters[:project_id]
