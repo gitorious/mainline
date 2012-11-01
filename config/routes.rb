@@ -245,7 +245,7 @@ Gitorious::Application.routes.draw do
     resource :oauth_settings
 
     resources :repositories, :only => [:index] do
-      collection do
+      member do
         put :recreate
       end
     end
