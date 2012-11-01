@@ -1,21 +1,22 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <h1>Perguntas e Respostas</h1>
 
@@ -32,14 +33,14 @@
 <p>
   A maneira mais fácil é colocando alguma coisa parecida com o seguinte no seu
   arquivo <code>.git/config</code> do repositório que quer enviar para o Gitorious:
-<pre>
-[remote "origin"]
-       url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-       fetch = +refs/heads/*:refs/remotes/origin/*
-[branch "master"]
-       remote = origin
-       merge = refs/heads/master
-</pre>
+  <pre>
+    [remote "origin"]
+    url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    [branch "master"]
+    remote = origin
+    merge = refs/heads/master
+  </pre>
   e então <code>git push origin master</code> para enviar os códigos para o Gitorious.
 </p>
 <p>
@@ -47,11 +48,11 @@
   você pode configurar um repositório remoto fazendo o seguinte (adicione --fetch para
   adicionar a chamada para pegar a configuração de cima):
   <pre>
-  git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-  # para gravar o branch master para o repositório remoto origin que adicionamos acima:
-  git push origin master
-  # depois disso você pode fazer apenas:
-  git push
+    git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+    # para gravar o branch master para o repositório remoto origin que adicionamos acima:
+    git push origin master
+    # depois disso você pode fazer apenas:
+    git push
   </pre>
 </p>
 
@@ -95,7 +96,7 @@
   <code>git versão 1.5.4.4</code>
 </p>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <li><%= link_to "Sobre", about_path(:anchor => "about") -%></li>
     <li><%= link_to "Contato", about_path(:anchor => "contact") -%></li>

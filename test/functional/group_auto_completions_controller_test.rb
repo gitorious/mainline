@@ -20,8 +20,6 @@
 require "test_helper"
 
 class GroupAutoCompletionsControllerTest < ActionController::TestCase
-  should_enforce_ssl_for :get, :index
-
   def setup
     @user = users(:johan)
   end

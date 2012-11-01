@@ -1,99 +1,100 @@
 <%
-#--
-#   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
-#   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
-#   Copyright (C) 2008 David Aguilar <davvid@gmail.com>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
+  #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
+  #   Copyright (C) 2008 David Aguilar <davvid@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <h2 class="content-header">FAQ</h2>
 
 <div class="faq-entry">
-	<h3>I get "fatal: no matching remote head" when trying to clone a repository</h3>
-	<p>Most likely the repository you are trying to clone is empty, and the error
-  message is git's friendly way of telling you that. See below (or by clicking 
-  "more info" next to the repository's "push url") for info on how to push to it.</p>
-</div> 
+  <h3>I get "fatal: no matching remote head" when trying to clone a repository</h3>
+  <p>Most likely the repository you are trying to clone is empty, and the error
+    message is git's friendly way of telling you that. See below (or by clicking
+    "more info" next to the repository's "push url") for info on how to push to it.</p>
+</div>
 
 <div class="faq-entry">
-	<h3>What is the SSH key fingerprint of the server I am pushing to?</h3>
-	<p> The SSH key fingerprint of the <%= GitoriousConfig['gitorious_host'] %> server is:<br />
-  <code><%= GitoriousConfig["ssh_fingerprint"] %></code></p>
+  <h3>What is the SSH key fingerprint of the server I am pushing to?</h3>
+  <p> The SSH key fingerprint of the <%= GitoriousConfig['gitorious_host'] %> server is:<br />
+    <code><%= GitoriousConfig["ssh_fingerprint"] %></code></p>
 </div>
 
 
 <div class="faq-entry">
-	<h3>How do I point my local Git repository at Gitorious?</h3>
-	<p>Easiest way is to put something like the following in your <code>.git/config</code> 
-  		file of the repository you wish to push:
-	<pre>[remote "origin"]
-       url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-       fetch = +refs/heads/*:refs/remotes/origin/*
-[branch "master"]
-       remote = origin
-       merge = refs/heads/master</pre>
-  and then <code>git push origin master</code> to push the code to Gitorious.</p>
-	<p>You can also just run "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", or
-  you can setup a remote by doing the following (add --fetch to the add call to 
-  get the config from above):
-  <pre>
-  git remote add origin <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
-  # to push the master branch to the origin remote we added above:
-  git push origin master 
-  # after that you can just do:
-  git push
-  </pre></p>
+  <h3>How do I point my local Git repository at Gitorious?</h3>
+  <p>Easiest way is to put something like the following in your <code>.git/config</code>
+    file of the repository you wish to push:
+    <pre>[remote "origin"]
+      url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+      fetch = +refs/heads/*:refs/remotes/origin/*
+      [branch "master"]
+      remote = origin
+      merge = refs/heads/master</pre>
+    and then <code>git push origin master</code> to push the code to Gitorious.</p>
+  <p>You can also just run "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", or
+    you can setup a remote by doing the following (add --fetch to the add call to
+    get the config from above):
+    <pre>
+      git remote add origin <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+      # to push the master branch to the origin remote we added above:
+      git push origin master
+      # after that you can just do:
+      git push
+    </pre></p>
 </div>
 
 <div class="faq-entry">
-	<h3>What version of Git is Gitorious running?</h3>
-	<p><code><%= git_version %></code></p>
+  <h3>What version of Git is Gitorious running?</h3>
+  <p><code><%= git_version %></code></p>
 </div>
 
 <div class="faq-entry">
-	<h3>How did my avatar/mugshot end up on this site? I am not even registered!</h3>
-	<p> We use <a href="http://gravatar.com">Gravatar.com</a> for user avatars. If you
-  have not registered on Gitorious, someone else may have pushed commits with you
-  name and/or email in them which we in turn hash and send to to Gravatar.com to
-  find an avatar image. If you want it changed you should either register and 
-  upload an avatar of your own, or go to Gravatar.com and change it.</p>
+  <h3>How did my avatar/mugshot end up on this site? I am not even registered!</h3>
+  <p> We use <a href="http://gravatar.com">Gravatar.com</a> for user avatars. If you
+    have not registered on Gitorious, someone else may have pushed commits with you
+    name and/or email in them which we in turn hash and send to to Gravatar.com to
+    find an avatar image. If you want it changed you should either register and
+    upload an avatar of your own, or go to Gravatar.com and change it.</p>
 </div>
 
 <div class="faq-entry">
-	<h3>Why do I need to upload my public SSH key?</h3>
-	<p>When you push to a Git repository, your public key is how we authenticate 
-  you and check if have the permissions required to do a commit to a given repository</p>
+  <h3>Why do I need to upload my public SSH key?</h3>
+  <p>When you push to a Git repository, your public key is how we authenticate
+    you and check if have the permissions required to do a commit to a given repository</p>
 </div>
 
 <div class="faq-entry">
-	<h3>I have Windows. How do I generate the required SSH key?</h3>
-	<p>The recommended way to use Git on Windows is the 
-  <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%> version. It comes bundled
-  with minimal Cygwin support. When you finish installing it, you will have a "Git Bash"
-  icon in your desktop. Double click to open it and now you can use known Linux-like
-  commands, such as <code>"ssh-keygen -t rsa"</code>. Just press 'Return' in every question
-  it asks and you will finally have your pair of keys under ".ssh". For example, type
-  <code>"cat ~/.ssh/id_rsa.pub"</code>. Thats is the public key that you are required to
-  copy and paste into your account on Gitorious.</p>
+  <h3>I have Windows. How do I generate the required SSH key?</h3>
+  <p>The recommended way to use Git on Windows is the
+    <%= link_to "msysGit", "http://code.google.com/p/msysgit/" -%> version. It comes bundled
+    with minimal Cygwin support. When you finish installing it, you will have a "Git Bash"
+    icon in your desktop. Double click to open it and now you can use known Linux-like
+    commands, such as <code>"ssh-keygen -t rsa"</code>. Just press 'Return' in every question
+    it asks and you will finally have your pair of keys under ".ssh". For example, type
+    <code>"cat ~/.ssh/id_rsa.pub"</code>. Thats is the public key that you are required to
+    copy and paste into your account on Gitorious.</p>
 </div>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <%= render "meta_links" -%>
   </ul>

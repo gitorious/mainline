@@ -84,7 +84,7 @@ class SiteController < ApplicationController
     @messages = @user.messages_in_inbox(3)
     @favorites = filter(@user.watched_objects)
     @root = Breadcrumb::Dashboard.new(@user)
-    @atom_auto_discovery_url = watchlist_user_path(@user, :format => :atom)
+    @atom_auto_discovery_url = user_watchlist_path(@user, :format => :atom)
     render :template => "site/dashboard"
   end
 

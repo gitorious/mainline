@@ -18,6 +18,75 @@
 
 require "test_helper"
 
+class ActionController::TestCase
+  def self.enforce_ssl
+    context "when enforcing ssl" do
+      setup do
+        @use_ssl = GitoriousConfig["use_ssl"]
+        GitoriousConfig["use_ssl"] = true
+        login_as(:johan)
+      end
+
+      teardown do
+        GitoriousConfig["use_ssl"] = @use_ssl
+      end
+
+      context "" do
+        yield
+      end
+    end
+  end
+
+  def self.disable_ssl
+    context "when not enforcing ssl" do
+      setup do
+        @use_ssl = GitoriousConfig["use_ssl"]
+        GitoriousConfig["use_ssl"] = false
+      end
+
+      teardown do
+        GitoriousConfig["use_ssl"] = @use_ssl
+      end
+
+      context "" do
+        yield
+      end
+    end
+  end
+
+  def self.should_enforce_ssl_for(method, action, params = {}, &block)
+    enforce_ssl do
+      without_ssl_context do
+        context "#{method.to_s.upcase} :#{action}" do
+          setup do
+            block.call unless block.nil?
+            self.send(method, action, params)
+          end
+
+          should_redirect_to_ssl
+        end
+      end
+    end
+
+    disable_ssl do
+      without_ssl_context do
+        context "#{method.to_s.upcase} :#{action}" do
+          should "not redirect to HTTPS" do
+            begin
+              self.send(method, action, params)
+            rescue NoMethodError
+              # Doesn't matter, this just means we hit the controller missing
+              # some parameters
+            end
+
+            assert_not_equal "https://" + @request.host + @request.fullpath, @response.location
+          end
+        end
+      end
+    end
+  end
+end
+
 class SslRedirectionTest < ActionController::TestCase
   context "Admin::OauthSettingsController" do
     setup { @controller = Admin::OauthSettingsController.new }
@@ -289,5 +358,40 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :password, :id => "zmalltalker")
     should_enforce_ssl_for(:get, :feed, :id => "zmalltalker")
     should_enforce_ssl_for(:put, :update_password, :id => "zmalltalker")
+  end
+
+  context "BlobsController" do
+    setup { @controller = BlobsController.new }
+    should_enforce_ssl_for(:get, :history, {
+                             :project_id => "p",
+                             :repository_id => "r",
+                             :branch_and_path => "p"
+                           })
+  end
+
+  context "GroupAutoCompletionsController" do
+    setup { @controller = GroupAutoCompletionsController.new }
+    should_enforce_ssl_for(:get, :index)
+  end
+
+  context "UserAutoCompletionsController" do
+    setup { @controller = UserAutoCompletionsController.new }
+    should_enforce_ssl_for(:get, :index)
+  end
+
+  context "SessionsController" do
+    setup { @controller = SessionsController.new }
+    should_enforce_ssl_for(:delete, :destroy)
+    should_enforce_ssl_for(:get, :destroy)
+    should_enforce_ssl_for(:get, :new)
+    should_enforce_ssl_for(:post, :create)
+    should_enforce_ssl_for(:post, :new)
+  end
+
+  context "SiteController" do
+    setup { @controller = SiteController.new }
+    should_enforce_ssl_for(:get, :dashboard)
+    should_enforce_ssl_for(:get, :index)
+    should_enforce_ssl_for(:get, :public_timeline)
   end
 end

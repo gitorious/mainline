@@ -20,8 +20,6 @@
 require "test_helper"
 
 class UserAutoCompletionsControllerTest < ActionController::TestCase
-  should_enforce_ssl_for :get, :index
-
   def setup
     @user = users(:johan)
     @user.email = "dr_awesome@example.com"

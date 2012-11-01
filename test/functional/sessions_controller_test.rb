@@ -31,12 +31,6 @@ class SessionsControllerTest < ActionController::TestCase
     auth_token users(user).remember_token
   end
 
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :destroy)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :new)
-
   def setup
     setup_ssl_from_config
     GitoriousConfig["use_ssl"] = true

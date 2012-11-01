@@ -1,3 +1,22 @@
+<%
+  #--
+  #   Copyright (C) 2011-2012 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
 <div id="top-wrapper">
   <div id="header">
     <%= screenshots_rotator("img/external/screens") %>
@@ -114,9 +133,9 @@
     <div class="column" id="featured-projects">
       <h3 class="find">Find a project</h3>
       <div class="search">
-        <% form_for(:search, :url => search_path(:only_path => false,
-                                                 :host => GitoriousConfig["gitorious_host"]),
-                    :html => { :method => "get" }) do |f| -%>
+        <%= form_for(:search, :url => search_path(:only_path => false,
+                                                  :host => GitoriousConfig["gitorious_host"]),
+                     :html => { :method => "get" }) do |f| -%>
           <p>
             <%= text_field_tag :q, "", :class => "text search-field round-5" -%>
             <%= submit_tag "Search" -%>
@@ -153,7 +172,7 @@
           <a href="http://gitorious.org/sfa"><img src="img/external/projects/regjeringen.png"></a>
           <p>
             <strong><a href="http://gitorious.org/sfa">Samarbeid for
-            arbeid</a></strong> is an initiave from the norwegian government for
+                arbeid</a></strong> is an initiave from the norwegian government for
             political debating through social media.
           </p>
         </li>

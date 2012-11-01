@@ -1,21 +1,22 @@
- <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+<%
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <% @page_title = "Your dashboard" -%>
 <%= breadcrumbs_from(@user) -%>
@@ -32,12 +33,12 @@
             <li><%= h(@user.fullname) -%></li>
           <% end %>
           <% if @user.public_email? -%>
-          <li class="email">
-            <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
-          </li>
+            <li class="email">
+              <%= mail_to(@user.email, mangled_mail(@user.email), :encode => "javascript") -%>
+            </li>
           <% end -%>
           <% if @user.url %>
-          <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
+            <li><a rel="me" href="<%=h @user.url -%>"><%=h @user.url -%></a></li>
           <% end -%>
           <li>
             <%= t("views.users.member_for") %>
@@ -53,47 +54,47 @@
       </ul>
       <div class="clear"></div>
     </div>
-	<div class="content-container w-510">
-    <h2 class="activities">
-	<% if showing_newsfeed? %>
-		Your news feed
-	<% else %>
-		<%= t("views.site.dashboard.activities") -%>
-	<% end %>
-		<%= feed_icon @atom_auto_discovery_url -%>
-	<% if is_current_user?(@user) -%>
-    	<small>(<%= newsfeed_or_user_events_link -%>)</small>
-	<% end -%>
-    </h2>
-    
-<% if @events.empty? -%>
-      <p class="hint">
-        <%= personified(@user, "You have", "#{@user.title} has") -%> no news.
-      </p>
-    <% else -%>
-      <div id="user_events" class="w-510">
-        <%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-510" } -%>
-      </div>
-    <% end -%>
+    <div class="content-container w-510">
+      <h2 class="activities">
+        <% if showing_newsfeed? %>
+          Your news feed
+        <% else %>
+          <%= t("views.site.dashboard.activities") -%>
+        <% end %>
+        <%= feed_icon @atom_auto_discovery_url -%>
+        <% if is_current_user?(@user) -%>
+          <small>(<%= newsfeed_or_user_events_link -%>)</small>
+        <% end -%>
+      </h2>
+
+      <% if @events.empty? -%>
+        <p class="hint">
+          <%= personified(@user, "You have", "#{@user.title} has") -%> no news.
+        </p>
+      <% else -%>
+        <div id="user_events" class="w-510">
+          <%= render :partial => "events/events", :locals => { :events => @events, :container_css_class => "w-510" } -%>
+        </div>
+      <% end -%>
+    </div>
   </div>
-	</div>
   <div id="right" class="w-390">
-    <% pull_box("Open merge requests for you", :class => "merge-requests pull-box-390") do %>
+    <%= pull_box("Open merge requests for you", :class => "merge-requests pull-box-390") do %>
       <ul>
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
             <%= link_to(repo.url_path + ": " + repo.open_merge_request_count.to_s,
-                 repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
+                        repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
           </li>
         <% end %>
       </ul>
     <% end if show_merge_request_count_for_user?(@user) %>
 
 
-    <% pull_box("You are watching", :class => "your-favorites favorite pull-box-390") do %>
+    <%= pull_box("You are watching", :class => "your-favorites favorite pull-box-390") do %>
       <div class="filters">
         <ul>
-			<li><strong>Sort by:</strong></li>
+          <li><strong>Sort by:</strong></li>
           <% if is_current_user?(@user) -%>
             <li><a class="foreign" href="#not-mine">Not yours</a></li>
             <li><a class="mine" href="#mine">Yours</a></li>
@@ -119,33 +120,33 @@
       </ul>
     <% end %>
 
-    <% pull_box("Your projects", :class => "your-projects pull-box-390") do -%>
+    <%= pull_box("Your projects", :class => "your-projects pull-box-390") do -%>
       <ul class="with_icons">
-      <% @projects.each do |project| -%>
-        <li class="project">
-          <%= link_to h(project.title), project -%>
-        </li>
-      <% end -%>
+        <% @projects.each do |project| -%>
+          <li class="project">
+            <%= link_to h(project.title), project -%>
+          </li>
+        <% end -%>
 
       </ul>
       <% if is_current_user?(@user) -%>
-	<div class="pull-box-links">	
-      <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
-            :id => "new-project-button"}) %>
-	</div>
+        <div class="pull-box-links">
+          <%= link_button_link_to(t("views.projects.create_new"), new_project_path, {
+                                    :id => "new-project-button"}) %>
+        </div>
       <% end -%>
     <% end -%>
 
-    <% pull_box("Your repositories", :class => "your-repositories pull-box-390") do -%>
-    <% if @repositories.blank? -%>
-      <% if is_current_user?(@user) -%>
-		
-      
-        You currently do not have any repository clones. You can clone
-        a repository you wish to contribute to by going to a
-        repository overview page and clicking the "Clone repository" button
-        in the repository information box.</p>
-		
+    <%= pull_box("Your repositories", :class => "your-repositories pull-box-390") do -%>
+      <% if @repositories.blank? -%>
+        <% if is_current_user?(@user) -%>
+
+
+          You currently do not have any repository clones. You can clone
+          a repository you wish to contribute to by going to a
+          repository overview page and clicking the "Clone repository" button
+          in the repository information box.</p>
+
       <% else -%>
        <p class="hint"> <%=h @user.title -%> currently does not have any repository clones.</p>
       <% end -%>
@@ -161,7 +162,7 @@
     <% end -%>
 <% end %>
 
-  	<% pull_box("Your team memberships", :class => "teams pull-box-390") do -%>
+        <%= pull_box("Your team memberships", :class => "teams pull-box-390") do -%>
       <ul>
       <% @user.groups.each do |group| -%>
         <li style="clear:left">

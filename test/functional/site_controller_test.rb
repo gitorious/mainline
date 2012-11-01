@@ -21,13 +21,8 @@ require "test_helper"
 require "test_cache_store"
 
 class SiteControllerTest < ActionController::TestCase
-
   should_render_in_site_specific_context :except => [:about, :faq, :contact, :tos, :privacy_policy]
   should_render_in_global_context :only => [:about, :faq, :contact, :tos, :privacy_policy]
-
-  should_enforce_ssl_for(:get, :dashboard)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :public_timeline)
 
   def setup
     setup_ssl_from_config
@@ -90,14 +85,6 @@ class SiteControllerTest < ActionController::TestCase
       should "not include any commit_repositories" do
         get :index
         assert_nil assigns(:repositories)
-      end
-
-      should "use the funky layout" do
-        alter_gitorious_config("is_gitorious_dot_org", true) do
-          get :index
-          assert_response :success
-          assert_equal "layouts/second_generation/application", @response.layout
-        end
       end
     end
 
