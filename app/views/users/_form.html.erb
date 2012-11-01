@@ -1,67 +1,65 @@
 <%
-#--
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <div class="form-wrapper" id="signup">
-	<div id="sign-up">
-	<h1>Create a new user</h1>
-	<p class="alt-login">Or log in directly with your <%= link_to "OpenID", login_path %></p>
-	<p><%= t("views.users.create_description") %></p>
-		<div class="horisontal-shadow"></div>
-			<ul>
-				<li>
-					<%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%>
-    				<%= f.text_field :login -%>
-				</li>
+  <div id="sign-up">
+    <h1>Create a new user</h1>
+    <p class="alt-login">Or log in directly with your <%= link_to "OpenID", login_path %></p>
+    <p><%= t("views.users.create_description") %></p>
+    <div class="horisontal-shadow"></div>
+    <ul>
+      <li>
+        <%= f.label :login, t(:login, :scope => "activerecord.attributes.user") -%>
+        <%= f.text_field :login -%>
+      </li>
+      <li>
+        <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%>
+        <%= f.text_field :email -%>
+      </li>
+      <li>
+        <%= f.label :password, t(:password, :scope => "activerecord.attributes.user") -%>
+        <%= f.password_field :password %>
+      </li>
+      <li>
+        <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%>
+        <%= f.password_field :password_confirmation %>
+      </li>
+      <li>
+        <div class="tos">
+          <%= f.check_box :terms_of_use  -%>
+          <label for="user_terms_of_use">I accept the <%= render :partial => "licenses/tos_link" -%></label>
+        </div>
+        <div class="submit">
+          <%= f.submit t("views.common.signup") %>
+        </div>
+      </li>
+    </ul>
+  </div>
 
-				<li>
-				    <%= f.label :email, t(:email, :scope => "activerecord.attributes.user") -%>
-				    <%= f.text_field :email -%>
-				</li>
-				<li>
-				    <%= f.label :password, t(:password, :scope => "activerecord.attributes.user") -%>
-				    <%= f.password_field :password %>
-				</li>
-				<li>
-				    <%= f.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user") -%>
-				    <%= f.password_field :password_confirmation %>
-				</li>
-				<li>
-					<div class="tos">
-						<%= f.check_box :terms_of_use  -%>
-						<label for="user_terms_of_use">I accept the <%= render :partial => "licenses/tos_link" -%></label>
-					</div>
-					<div class="submit"> 
-						<%= f.submit t("views.common.signup") %>
-					</div>
-				
-				</li>
-			</ul>
-
-	</div>
-	
 </div>
-	<p class="alt_links">
+<p class="alt_links">
   <small>
-  <% if GitoriousConfig['public_mode'] -%>
-    <%= link_to "Log in", login_path %>
-    &mdash;
-  <% end -%> 
-  <%= link_to t("views.sessions.forgot"), forgot_password_users_path -%>
+    <% if GitoriousConfig['public_mode'] -%>
+      <%= link_to "Log in", login_path %>
+      &mdash;
+    <% end -%>
+    <%= link_to t("views.sessions.forgot"), users_forgot_password_path -%>
   </small>
 </p>

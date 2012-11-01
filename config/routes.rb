@@ -122,11 +122,11 @@ Gitorious::Application.routes.draw do
   root :to => "site#index"
 
   ### R1. User routes
-  resources :users, :only => [:index, :new, :create] do
+  resources :users, :only => [:new, :create] do
     collection do
       get  "/reset_password/:token" => "users#reset_password", :as => :reset_password
       get  "/activate/:activation_code" => "users#activate"
-      post "/forgot_password" => "users#forgot_password_create"
+      post "/forgot_password" => "users#forgot_password_create", :as => :forgot_password_create
       get :forgot_password
       get :pending_activation
       get :openid_build
@@ -145,13 +145,13 @@ Gitorious::Application.routes.draw do
   delete "/~:id(.:format)" => "users#destroy", :id => /[^\/]+/
 
   # Additional user actions
-  scope "/~:id", :id => /[^\/]+/ do
-    get "/delete_current" => "users#delete_current", :as => "user_delete_current"
+  scope "/~:id", :id => /[^\/]+/, :as => :user do
+    get "/delete_current" => "users#delete_current", :as => :delete_current
     delete "/avatar" => "users#avatar"
-    get "/watchlist" => "users#watchlist", :as => "user_watchlist"
-    get "/password" => "users#password", :as => "user_password"
-    get "/feed" => "users#feed", :as => "user_feed"
-    put "/update_password" => "users#update_password", :as => "user_password"
+    get "/watchlist" => "users#watchlist", :as => :watchlist
+    get "/password" => "users#password", :as => :password
+    get "/feed" => "users#feed", :as => :feed
+    put "/update_password" => "users#update_password", :as => :update_password
   end
 
   # Nested user resources. This is in a separate scope because the

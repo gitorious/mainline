@@ -1,10 +1,10 @@
 <%
   #--
   #   Copyright (C) 2012 Gitorious AS
-  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
   #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
   #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
   #
   #   This program is free software: you can redistribute it and/or modify
   #   it under the terms of the GNU Affero General Public License as published by
@@ -23,7 +23,7 @@
 
 <div id="content">
   <%= error_messages(@user || User.new) %>
-  <% form_for :user, :url => users_path do |f| -%>
+  <%= form_for :user, :url => users_path do |f| -%>
     <%= render :partial => 'form', :locals => { :f => f } %>
   <% end -%>
 </div>

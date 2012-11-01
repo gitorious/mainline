@@ -21,25 +21,6 @@
 require "test_helper"
 
 class UsersControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:delete, :avatar)
-  should_enforce_ssl_for(:get, :activate)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :feed)
-  should_enforce_ssl_for(:get, :forgot_password)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :openid_build)
-  should_enforce_ssl_for(:get, :password)
-  should_enforce_ssl_for(:get, :pending_activation)
-  should_enforce_ssl_for(:get, :reset_password, :token => "a1bda21bd3b332bda")
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:get, :watchlist)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :forgot_password_create)
-  should_enforce_ssl_for(:post, :openid_create)
-  should_enforce_ssl_for(:put, :reset_password)
-  should_enforce_ssl_for(:put, :update)
-  should_enforce_ssl_for(:put, :update_password)
-
   def setup
     setup_ssl_from_config
   end

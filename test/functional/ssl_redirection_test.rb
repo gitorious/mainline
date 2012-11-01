@@ -249,4 +249,45 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :git_access, :id => "Page")
     should_enforce_ssl_for(:put, :preview, :id => "Page")
   end
+
+  context "TreesController" do
+    setup { @controller = TreesController.new }
+    should_enforce_ssl_for(:get, :index, {
+                             :project_id => "gts",
+                             :repository_id => "mainline"
+                           })
+
+    should_enforce_ssl_for(:get, :show, {
+                             :project_id => "gts",
+                             :repository_id => "mainline",
+                             :branch_and_path => "master"
+                           })
+
+    should_enforce_ssl_for(:get, :archive, {
+                             :project_id => "gts",
+                             :repository_id => "mainline",
+                             :branch => "master"
+                           })
+  end
+
+  context "UsersController" do
+    setup { @controller = UsersController.new }
+    should_enforce_ssl_for(:get, :new)
+    should_enforce_ssl_for(:post, :create)
+    should_enforce_ssl_for(:get, :reset_password, :token => "a1bda21bd3b332bda")
+    should_enforce_ssl_for(:get, :activate, :activation_code => "123456789")
+    should_enforce_ssl_for(:get, :forgot_password)
+    should_enforce_ssl_for(:post, :forgot_password_create)
+    should_enforce_ssl_for(:get, :pending_activation)
+    should_enforce_ssl_for(:get, :openid_build)
+    should_enforce_ssl_for(:post, :openid_create)
+    should_enforce_ssl_for(:get, :show, :id => "zmalltalker")
+    should_enforce_ssl_for(:get, :edit, :id => "zmalltalker")
+    should_enforce_ssl_for(:put, :update, :id => "zmalltalker")
+    should_enforce_ssl_for(:delete, :avatar, :id => "zmalltalker")
+    should_enforce_ssl_for(:get, :watchlist, :id => "zmalltalker")
+    should_enforce_ssl_for(:get, :password, :id => "zmalltalker")
+    should_enforce_ssl_for(:get, :feed, :id => "zmalltalker")
+    should_enforce_ssl_for(:put, :update_password, :id => "zmalltalker")
+  end
 end
