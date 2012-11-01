@@ -1,86 +1,85 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
-#   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
-#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
-#   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 <%= breadcrumbs_from(@root) -%>
 
 <h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h2>
 
 <%= error_messages(@project) -%>
-<% form_for(@project, :method => "put") do |f| -%>
+<%= form_for(@project, :method => "put") do |f| -%>
   <%= render :partial => "form", :locals => {:form => f} -%>
 
-        <div class="merge_request_statuses content-container w-730">
-  <label>Merge Request Statuses:</label><br />
-  <table class="listing" id="merge_request_statuses">
-    <thead>
-      <tr>
-      <th>Default?</th>
-      <th>Name</th>
-      <th>State</th>
-      <th>Description</th>
-      <th>Color</th>
-      <th></th>
-      <tr>
-    </thead>
-    <% help_box(:center, :error, :style => "margin-top:10px;margin-bottom:10px;width:75%;") do -%>
-     <p><strong>Note</strong> that changing the name or state of an
-       existing status will update all affected merge requests</p>
-    <% end -%>
-    <% f.fields_for(:merge_request_statuses) do |status_form| -%>
-      <%= render :partial => "merge_request_status_form",
+  <div class="merge_request_statuses content-container w-730">
+    <label>Merge Request Statuses:</label><br />
+    <table class="listing" id="merge_request_statuses">
+      <thead>
+        <tr>
+          <th>Default?</th>
+          <th>Name</th>
+          <th>State</th>
+          <th>Description</th>
+          <th>Color</th>
+          <th></th>
+        <tr>
+      </thead>
+      <%= help_box(:center, :error, :style => "margin-top:10px;margin-bottom:10px;width:75%;") do -%>
+        <p><strong>Note</strong> that changing the name or state of an
+          existing status will update all affected merge requests</p>
+      <% end -%>
+      <%= f.fields_for(:merge_request_statuses) do |status_form| -%>
+        <%= render :partial => "merge_request_status_form",
             :locals => {:form => status_form, :project_form => f} -%>
-    <% end -%>
-  </table>
-<div class="add-link-container">
-        <div class="button right add_link"><%= add_status_link(f) -%></div>
-</div>
+      <% end -%>
+    </table>
+    <div class="add-link-container">
+      <div class="button right add_link"><%= add_status_link(f) -%></div>
+    </div>
 
- <div class="box rounded light-gray w-730">
-        <% unless @project.owned_by_group? -%>
-    <p>
-      <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
-      <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
-            :include_blank => true, :selected => nil -%>
-      <br /><small class="hint">
-        <strong>Note:</strong> This will give the group members
-        admin rights to this project, along with adding them as
-        committers to the mainline repositories (you can remove them later
-        on a per-repository basis if you want to)
-      </small>
-    </p>
-  <% end -%>
-        </div><!-- end box -->
-        </div>
-        <fieldset  class="submit">
-  <input type="button" value="Preview" id="project_preview_button"
-         gts:url="<%= preview_project_path(@project) -%>" />
+    <div class="box rounded light-gray w-730">
+      <% unless @project.owned_by_group? -%>
+        <p>
+          <%= f.label :owner_id, "Transfer ownership to a group <small>(optional)</small>" -%>:<br />
+          <%= f.select :owner_id, @groups.map{|g| [g.name, g.id]},
+              :include_blank => true, :selected => nil -%>
+          <br /><small class="hint">
+            <strong>Note:</strong> This will give the group members
+            admin rights to this project, along with adding them as
+            committers to the mainline repositories (you can remove them later
+            on a per-repository basis if you want to)
+          </small>
+        </p>
+      <% end -%>
+    </div><!-- end box -->
+  </div>
+  <fieldset  class="submit">
+    <input type="button" value="Preview" id="project_preview_button"
+           gts:url="<%= preview_project_path(@project) -%>" />
 
-  <%= f.submit t("views.common.update") -%>
-</fieldset>
+    <%= f.submit t("views.common.update") -%>
+  </fieldset>
 <% end -%>
 
-
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <% if @project.owned_by_group? -%>
       <li><%= link_to t("views.projects.project_members"), group_memberships_path(@project.owner) -%></li>

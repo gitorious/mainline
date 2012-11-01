@@ -48,7 +48,7 @@
   <%= render :partial => "events/events", :locals => {  :events => @events, :container_css_class => "w-750"  } -%>
 </div>
 
-<% content_for :sidebar do -%>
+<%= content_for :sidebar do -%>
   <ul class="links navigation">
     <% if @project.wiki_enabled? -%>
       <li class="wiki_page"> <!-- Create / Open Wiki -->
@@ -75,7 +75,7 @@
     <%- end -%>
   </ul>
   <%= render :partial => "meta" %>
-  <% benchmark("Repositories (sidebar)") do  -%>
+  <%= benchmark("Repositories (sidebar)") do  -%>
     <h3>
       <%= link_to t("views.projects.repository_clones"),
           project_repositories_path(@project) -%>
