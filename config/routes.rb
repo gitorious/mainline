@@ -122,24 +122,27 @@ Gitorious::Application.routes.draw do
   root :to => "site#index"
 
   ### R1. User routes
-  resources :users, :only => [:index, :new, :create]
+  resources :users, :only => [:index, :new, :create] do
+    collection do
+      get  "/reset_password/:token" => "users#reset_password", :as => :reset_password
+      get  "/activate/:activation_code" => "users#activate"
+      post "/forgot_password" => "users#forgot_password_create"
+      get :forgot_password
+      get :pending_activation
+      get :openid_build
+      post :openid_create
+
+      # Used to be we supported things like /users/~zmalltalker/mainline
+      # No more, ~<user_name> is the canonical user URL namespace
+      get "/*slug" => redirect("/~%{slug}")
+    end
+  end
+
   # `resources :users` can't do the ~<user> ids
   get "/~:id(.:format)" => "users#show", :as => "user", :id => /[^\/]+/
   get "/~:id/edit(.:format)" => "users#edit", :as => "edit_user", :id => /[^\/]+/
   put "/~:id(.:format)" => "users#update", :id => /[^\/]+/
   delete "/~:id(.:format)" => "users#destroy", :id => /[^\/]+/
-
-  get  "/users/forgot_password" => "users#forgot_password", :as => "user_forgot_password"
-  post "/users/forgot_password" => "users#forgot_password_create"
-  get  "/users/reset_password/:token" => "users#reset_password", :as => :reset_password
-  get  "/users/activate/:activation_code" => "users#activate"
-  get  "/users/pending_activation" => "users#pending_activation"
-  get  "/users/openid_build" => "users#openid_build", :as => "user_openid_build"
-  post "/users/openid_create" => "users#openid_create", :as => "user_openid_create"
-
-  # Used to be we supported things like /users/~zmalltalker/mainline
-  # No more, ~<user_name> is the canonical user URL namespace
-  get  "/users/*slug" => redirect("/~%{slug}")
 
   # Additional user actions
   scope "/~:id", :id => /[^\/]+/ do
