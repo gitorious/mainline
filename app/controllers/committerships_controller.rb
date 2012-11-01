@@ -25,7 +25,7 @@ class CommittershipsController < ApplicationController
 
   def index
     @committerships = paginate(page_free_redirect_options) do
-      @repository.committerships.paginate(:all, :page => params[:page])
+      @repository.committerships.paginate(:page => params[:page])
     end
 
     @root = Breadcrumb::Committerships.new(@repository)
@@ -86,7 +86,7 @@ class CommittershipsController < ApplicationController
     # We have no other way of passing destroying user along
     # except restructing code to not use implicit event hooks.
     @committership.creator = current_user
-    
+
     if @committership.destroy
       flash[:notice] = "The committer was removed."
     end
