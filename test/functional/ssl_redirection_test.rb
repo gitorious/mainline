@@ -229,4 +229,11 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :confirm_delete, :project_id => "gts", :id => "mainline")
     should_enforce_ssl_for(:get, :search_clones, :project_id => "gts", :id => "mainline")
   end
+
+  context "RepositoryMembershipsController" do
+    setup { @controller = RepositoryMembershipsController.new }
+    should_enforce_ssl_for(:get, :index, :project_id => "gts", :repository_id => "mainline")
+    should_enforce_ssl_for(:post, :create, :project_id => "gts", :repository_id => "mainline")
+    should_enforce_ssl_for(:delete, :destroy, :project_id => "gts", :repository_id => "mainline", :id => 1)
+  end
 end

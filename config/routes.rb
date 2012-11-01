@@ -77,7 +77,7 @@ Gitorious::Application.routes.draw do
         end
       end
 
-      resources :repository_memberships
+      resources :repository_memberships, :only => [:index, :new, :create, :destroy]
       resources :committerships
 
       match "/commits/*id/feed(.:format)" => "commits#feed", :as => :formatted_commits_feed
