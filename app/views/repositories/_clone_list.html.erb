@@ -1,28 +1,29 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <h4><%= t("views.projects.repository_clones") -%></h4>
 
 <% if show_clone_list_search?(@repository.clones.by_groups, @repository.clones.by_users) -%>
   <%= render(:partial => "clone_list_search", :locals => {
-        :path => search_clones_project_repository_path(@repository.project, @repository)
-  }) -%>
+               :path => search_clones_project_repository_path(@repository.project, @repository)
+             }) -%>
 <% end -%>
 
 <% unless @repository.clones.by_groups.blank? -%>
@@ -30,19 +31,19 @@
     <h5><%= t("views.repos.by_teams") -%> (<%= @repository.clones.by_groups.count -%>)</h5>
     <ul class="repository_list">
       <% @repository.clones.by_groups.fresh.each do |repo| -%>
-      <%= render :partial => "repositories/repository_sidebar", 
-      :locals => {:repository => repo} -%>
+        <%= render :partial => "repositories/repository_sidebar",
+            :locals => {:repository => repo} -%>
       <% end -%>
     </ul>
   </div>
-  <% end -%>
+<% end -%>
 <% unless @repository.clones.by_users.blank? -%>
   <div class="personal_clones">
     <h5><%= t("views.repos.by_users") -%> (<%= @repository.clones.by_users.count -%>)</h5>
     <ul class="repository_list">
       <% @repository.clones.by_users.fresh.each do |repo|-%>
-      <%= render :partial => "repositories/repository_sidebar", 
-      :locals => {:repository => repo} -%>
+        <%= render :partial => "repositories/repository_sidebar",
+            :locals => {:repository => repo} -%>
       <% end -%>
       <ul>
   </div>
@@ -51,5 +52,5 @@
 <% if @repository.clones.by_groups.blank? && @repository.clones.by_users.blank? -%>
   <ul>
     <li class="hint"><%= t("views.projects.no_clones_yet") -%></li>
-  </ul>    
+  </ul>
 <% end -%>

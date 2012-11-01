@@ -1,47 +1,47 @@
 <%
-#--
-#   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <%= breadcrumbs_from(@root) -%>
 
 <% content_for :extra_head do -%>
   <script type="text/javascript" charset="utf-8">
-    $(document).ready(function() {
-      var group_selection_changed = function() {
+$(document).ready(function() {
+    var group_selection_changed = function() {
         var select_element = $("#repository_owner_id_group_select");
         var sel = null;
         jQuery.each(select_element[0].options, function(){
-          if ($(this).val() == select_element.val()) sel = this;
-        })
+            if ($(this).val() == select_element.val()) sel = this;
+        });
         $("#repository_name").val(sel.text + "-<%= @repository_to_clone.name -%>");
         $("#repository_owner_type_group")[0].checked = true;
-      };
-      $("#repository_owner_id_group_select").change(function(e) {
+    };
+    $("#repository_owner_id_group_select").change(function(e) {
         group_selection_changed();
-      });
-      $("#repository_owner_type_group").click(function(e) {
-        group_selection_changed();
-      });
-      $("#repository_owner_type_user").click(function(e) {
-        $("#repository_name").val("<%= current_user.login -%>s-<%= @repository_to_clone.name -%>");
-      })
     });
+    $("#repository_owner_type_group").click(function(e) {
+        group_selection_changed();
+    });
+    $("#repository_owner_type_user").click(function(e) {
+        $("#repository_name").val("<%= current_user.login -%>s-<%= @repository_to_clone.name -%>");
+    });
+});
   </script>
 <% end -%>
 
@@ -53,13 +53,13 @@
 
 <%= error_messages(@repository) -%>
 
-<% form_for @repository, :repository,
-      :url => create_clone_project_repository_path(@repository.project, @repository_to_clone),
-      :builder => GitoriousFormBuilder do |f| -%>
+<%= form_for @repository, :repository,
+   :url => create_clone_project_repository_path(@repository.project, @repository_to_clone),
+   :builder => GitoriousFormBuilder do |f| -%>
   <p>
     <%= f.current_user_or_group :owner, t("views.repos.owner"),
-          :hint => "Clone the repository as either yourself or a group you are in",
-          :default => :user -%>
+        :hint => "Clone the repository as either yourself or a group you are in",
+        :default => :user -%>
   </p>
   <p>
     <%= f.label :name, t("views.repos.name", :name => current_user.login) -%>:<br />

@@ -20,17 +20,6 @@
 require "test_helper"
 
 class RepositoriesControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:delete, :destroy)
-  should_enforce_ssl_for(:get, :clone)
-  should_enforce_ssl_for(:get, :confirm_delete)
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :search_clones)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:put, :update)
-
   def setup
     GitoriousConfig["enable_private_repositories"] = false
     setup_ssl_from_config

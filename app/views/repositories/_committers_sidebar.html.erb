@@ -1,40 +1,41 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
-<h4><%= t("views.repos.current_committers") %></h4>    
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<h4><%= t("views.repos.current_committers") %></h4>
 <ul class="committers">
-<% @repository.committerships.users.each do |cs| -%>
-  <li>
-    <div class="user">
-      <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
-      <%= link_to h(cs.committer.title), cs.committer -%>
-      <% if @repository.user == cs.committer -%>
-        <small class="hint">(<%= t("views.repos.creator") %>)</small>
-      <% end -%>
-    </div>
-  </li>
-<% end -%>
-<% @repository.committerships.groups.each do |cs| -%>
-  <li>
-    <div class="group">
-      <%= image_tag("silk/group.png") %>
-      <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>
-    </div>
-  </li>
-<% end -%>
+  <% @repository.committerships.users.each do |cs| -%>
+    <li>
+      <div class="user">
+        <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
+        <%= link_to h(cs.committer.title), cs.committer -%>
+        <% if @repository.user == cs.committer -%>
+          <small class="hint">(<%= t("views.repos.creator") %>)</small>
+        <% end -%>
+      </div>
+    </li>
+  <% end -%>
+  <% @repository.committerships.groups.each do |cs| -%>
+    <li>
+      <div class="group">
+        <%= image_tag("silk/group.png") %>
+        <%= link_to h(cs.committer.to_param_with_prefix), cs.committer -%>
+      </div>
+    </li>
+  <% end -%>
 </ul>

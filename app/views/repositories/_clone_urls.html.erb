@@ -1,21 +1,22 @@
 <%
-#--
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU Affero General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
-#
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU Affero General Public License for more details.
-#
-#   You should have received a copy of the GNU Affero General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#++
-%>
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
 
 <ul>
   <li>
@@ -36,33 +37,33 @@
       <% if logged_in? && site_admin?(current_user) -%>
         <% vcs_link_tag(:href => repository.push_url, :title => t("views.repos.show_page_title", :repo => repository.name, :title => h(@owner.title))) %>
         <p>Repository path: <code><%= h(repository.full_repository_path) -%></a></code></p>
-      <% end -%>
-      <% if logged_in? && can_push?(current_user, repository) -%>
-        <p>
-          Adding this repository as a pushable origin:
-<pre>
+<% end -%>
+<% if logged_in? && can_push?(current_user, repository) -%>
+  <p>
+    Adding this repository as a pushable origin:
+    <pre>
 # Add the push url to your already existing origin:
 git remote set-url --push origin <%= repository.push_url %>
 # to push the master branch to the origin remote we added above:
 git push origin master
 # after that you can just do:
 git push
-</pre></p>
-      <% end -%>
-      <p>Cloning this repository:
-<pre>
+    </pre></p>
+<% end -%>
+<p>Cloning this repository:
+  <pre>
 git clone <%= repository.default_clone_url -%> <%=h repository.name %>
 cd <%=h repository.name -%>
-</pre></p>
-      <p>Add this repository as a remote to an existing local repository:
-<pre>
+  </pre></p>
+<p>Add this repository as a remote to an existing local repository:
+  <pre>
 git remote add <%=h repository.name -%> <%= repository.default_clone_url %>
 git fetch <%=h repository.name %>
 git checkout -b my-local-tracking-branch <%=h repository.name -%>/master_or_other_branch
-</pre>
-      </p>
-    </div>
-  </li>
+  </pre>
+</p>
+</div>
+</li>
 </ul>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {

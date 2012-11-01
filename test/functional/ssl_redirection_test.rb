@@ -215,4 +215,18 @@ class SslRedirectionTest < ActionController::TestCase
     should_enforce_ssl_for(:get, :confirm_delete, :id => "gitorious")
     should_enforce_ssl_for(:delete, :destroy, :id => "gitorious")
   end
+
+  context "RepositoriesController" do
+    setup { @controller = RepositoriesController.new }
+    should_enforce_ssl_for(:get, :index, :project_id => "gts")
+    should_enforce_ssl_for(:get, :new, :project_id => "gts")
+    should_enforce_ssl_for(:post, :create, :project_id => "gts")
+    should_enforce_ssl_for(:get, :show, :project_id => "gts", :id => "mainline")
+    should_enforce_ssl_for(:get, :edit, :project_id => "gts", :id => "mainline")
+    should_enforce_ssl_for(:put, :update, :project_id => "gts", :id => "mainline")
+    should_enforce_ssl_for(:delete, :destroy, :project_id => "gts", :id => "mainline")
+    should_enforce_ssl_for(:get, :clone, :project_id => "gts", :id => "mainline")
+    should_enforce_ssl_for(:get, :confirm_delete, :project_id => "gts", :id => "mainline")
+    should_enforce_ssl_for(:get, :search_clones, :project_id => "gts", :id => "mainline")
+  end
 end
