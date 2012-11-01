@@ -166,4 +166,20 @@ class SslRedirectionTest < ActionController::TestCase
                              :id => 1
                            })
   end
+
+  context "MessagesController" do
+    setup { @controller = MessagesController.new }
+    should_enforce_ssl_for(:get, :index)
+    should_enforce_ssl_for(:get, :new)
+    should_enforce_ssl_for(:post, :create)
+    should_enforce_ssl_for(:get, :sent)
+    should_enforce_ssl_for(:put, :bulk_update)
+    should_enforce_ssl_for(:get, :all)
+    should_enforce_ssl_for(:post, :auto_complete_for_message_recipients)
+    should_enforce_ssl_for(:get, :read, :id => 1)
+    should_enforce_ssl_for(:get, :reply, :id => 1)
+    should_enforce_ssl_for(:get, :show, :id => 1)
+    should_enforce_ssl_for(:post, :reply, :id => 1)
+    should_enforce_ssl_for(:put, :read, :id => 1)
+  end
 end

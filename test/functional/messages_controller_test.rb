@@ -20,18 +20,6 @@
 require "test_helper"
 
 class MessagesControllerTest < ActionController::TestCase
-  should_enforce_ssl_for(:get, :all)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :new)
-  should_enforce_ssl_for(:get, :read)
-  should_enforce_ssl_for(:get, :reply)
-  should_enforce_ssl_for(:get, :sent)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:post, :auto_complete_for_message_recipients)
-  should_enforce_ssl_for(:post, :create)
-  should_enforce_ssl_for(:post, :reply)
-  should_enforce_ssl_for(:put, :bulk_update)
-  should_enforce_ssl_for(:put, :read)
   should_render_in_global_context
 
   def setup
@@ -43,12 +31,12 @@ class MessagesControllerTest < ActionController::TestCase
       login_as :moe
     end
 
-    context "requesting page" do
-      setup { get :index }
+    should "request page" do
+      get :index
 
-      should_respond_with :success
-      should_assign_to :messages
-      should_render_template :index
+      assert_response :success
+      assert_not_nil assigns(:messages)
+      assert_template("messages/index")
     end
 
     should "not display messages from self as new" do
@@ -66,39 +54,39 @@ class MessagesControllerTest < ActionController::TestCase
     end
   end
 
-  context "On GET to index with XML" do
-    setup do
-      login_as :moe
-      get :index, :format => "xml"
-    end
-    should_respond_with :success
-    should_assign_to :messages
+  should "GET index with XML" do
+    login_as :moe
+    get :index, :format => "xml"
+
+    assert_response :success
+    assert_not_nil assigns(:messages)
   end
 
-  context "On GET to sent" do
+  should "GET sent" do
+    login_as :moe
+    get :sent
+
+    assert_response :success
+    assert_not_nil assigns(:messages)
+    assert_template("messages/sent")
+  end
+
+  context "paginating sent messages" do
     setup do
       login_as :moe
       get :sent
     end
 
-    should_respond_with :success
-    should_assign_to :messages
-    should_render_template :sent
-
-    context "paginating sent messages" do
-      should_scope_pagination_to(:sent, Message, "sent messages")
-    end
+    should_scope_pagination_to(:sent, Message, "sent messages")
   end
 
-  context "On GET to show" do
-    setup do
-      @message = messages(:johans_message_to_moe)
-      login_as :moe
-      get :show, :id => @message.to_param
-    end
+  should "GET show" do
+    @message = messages(:johans_message_to_moe)
+    login_as :moe
+    get :show, :id => @message.to_param
 
-    should_respond_with :success
-    should_assign_to :message
+    assert_response :success
+    assert_not_nil assigns(:message)
   end
 
   context "On GET to show (marking as read)" do
@@ -121,104 +109,100 @@ class MessagesControllerTest < ActionController::TestCase
     end
   end
 
-  context "On GET to show in XML" do
-    setup do
-      @message = messages(:johans_message_to_moe)
-      login_as :moe
-      get :show, :id => @message.to_param, :format => "xml"
-    end
+  should "GET show as XML" do
+    message = messages(:johans_message_to_moe)
+    login_as :moe
+    get :show, :id => message.to_param, :format => "xml"
 
-    should_respond_with :success
-    should_assign_to :message
+    assert_response :success
+    assert_not_nil assigns(:message)
   end
 
-  context "Trying to peek at other peoples messages" do
-    setup do
-      login_as :mike
-      get :show, :id => @message.to_param
-    end
+  should "not allow peeking at other people's messages" do
+    message = messages(:johans_message_to_moe)
+    login_as :mike
+    get :show, :id => message.to_param
 
-    should_respond_with :not_found
+    assert_response :not_found
   end
 
-  context "On PUT to read" do
-    setup do
-      login_as :moe
-      @message = messages(:johans_message_to_moe)
-      put :read, :id => @message.to_param, :format => "js"
-    end
+  should "PUT read" do
+    login_as :moe
+    message = messages(:johans_message_to_moe)
+    put :read, :id => message.to_param, :format => "js"
 
-    should_respond_with :success
-    should_assign_to :message#, @message)
+    assert_response :success
+    assert_equal message, assigns(:message)
   end
 
-  context "On POST to create" do
-    setup do
-      login_as :moe
-      post :create, :message => {:subject => "Hello", :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", :recipients => "johan"}
-    end
+  should "POST to create" do
+    login_as :moe
+    post :create, :message => {:subject => "Hello", :body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", :recipients => "johan"}
 
-    should_respond_with :redirect
-    should_assign_to :messages
-    should_set_the_flash_to(/sent/i)
+    assert_response :redirect
+    assert_not_nil assigns(:messages)
+    assert_match flash[:notice], /sent/i
   end
 
-  context "On POST to create with several recipients" do
-    setup {login_as :moe}
+  context "POST to create with several recipients" do
+    setup { login_as :moe }
 
     context "separating user names with tokens" do
       should "support a comma" do
         assert_incremented_by Message, :count, 2 do
-          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(",")}
+          post :create, :message => {
+            :subject => "Hello",
+            :body => "This is for several recipients",
+            :recipients => %w(johan mike).join(",")
+          }
         end
       end
 
       should "support a whitespace character" do
         assert_incremented_by Message, :count, 2 do
-          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(" ")}
+          post :create, :message => {
+            :subject => "Hello",
+            :body => "This is for several recipients",
+            :recipients => %w(johan mike).join(" ")
+          }
         end
       end
 
       should "support a period" do
         assert_incremented_by Message, :count, 2 do
-          post :create, :message => {:subject => "Hello", :body => "This is for several recipients", :recipients => %w(johan mike).join(".")}
+          post :create, :message => {
+            :subject => "Hello",
+            :body => "This is for several recipients",
+            :recipients => %w(johan mike).join(".")
+          }
         end
       end
-
     end
   end
 
+  should "POST to reply" do
+    login_as :moe
+    @original_message = messages(:johans_message_to_moe)
+    post :reply, :id => @original_message.to_param, :message => {
+      :body => "Yeah, great idea",
+      :subject => "Well"
+    }
 
-  context "On POST to reply" do # POST /messages/2/reply
-    setup do
-      login_as :moe
-      @original_message = messages(:johans_message_to_moe)
-      post :reply, :id => @original_message.to_param, :message => {:body => "Yeah, great idea", :subject => "Well"}
-    end
-
-    should_assign_to :message
-    should_respond_with :redirect
-    should_set_the_flash_to(/sent/i)
-
-    should "set the correct subject" do
-      result = assigns(:message)
-      assert_equal("Well", result.subject)
-    end
+    assert_response :redirect
+    assert_match flash[:notice], /sent/i
+    assert_not_nil assigns(:message)
+    assert_equal("Well", assigns(:message).subject)
   end
 
-  context "On GET to new" do
-    setup do
-      login_as :johan
-      get :new
-    end
+  should "GET new" do
+    login_as :johan
+    get :new
 
-    should_assign_to :message
-    should_respond_with :success
-    should_render_template :new
+    assert_response :success
+    assert_template "messages/new"
 
-    should "set the sender" do
-      assert_equal users(:johan), assigns(:message).sender
-    end
+    assert_not_nil assigns(:message)
+    assert_equal(users(:johan), assigns(:message).sender)
   end
 
   should "insert the username on GET new if the to querystring param is given" do
@@ -227,25 +211,26 @@ class MessagesControllerTest < ActionController::TestCase
     assert_select "#message_recipients[value=?]", users(:mike).login
   end
 
-  context "On GET to all" do
+  should "GET all" do
+    login_as :johan
+    get :all
+
+    assert_not_nil assigns(:messages)
+    assert_response :success
+    assert_template "messages/all"
+  end
+
+  context "paginating all" do
     setup do
       login_as :johan
       get :all
     end
 
-    should_assign_to :messages
-    should_respond_with :success
-    should_render_template :all
-
-    context "paginating all" do
-      should_scope_pagination_to(:all, Message)
-    end
+    should_scope_pagination_to(:all, Message)
   end
 
-  context "On POST to auto_complete_for_message_recipients" do
-    setup do
-      login_as :johan
-    end
+  context "POST to auto_complete_for_message_recipients" do
+    setup { login_as :johan }
 
     should "not include current_user when looking up" do
       post :auto_complete_for_message_recipients, :q => "joh"
@@ -262,15 +247,19 @@ class MessagesControllerTest < ActionController::TestCase
     setup do
       @sender = FactoryGirl.create(:user)
       @recipient = FactoryGirl.create(:user)
-      @messages = 4.times.collect{ |i|
-        Message.create(:sender => @sender, :recipient => @recipient, :subject => "Message #{i}", :body => "Hello world")
-      }
+      @messages = 4.times.collect do |i|
+        Message.create(:sender => @sender,
+                       :recipient => @recipient,
+                       :subject => "Message #{i}",
+                       :body => "Hello world")
+      end
     end
 
     should "mark the selected messages as read when supplying no action" do
       @request.session[:user_id] = @recipient.id
       put :bulk_update, :message_ids => @messages.collect(&:id)
       assert_response :redirect
+
       @messages.each do |msg|
         assert msg.reload.read?
       end
@@ -280,6 +269,7 @@ class MessagesControllerTest < ActionController::TestCase
       @request.session[:user_id] = @recipient.id
       put :bulk_update, :message_ids => @messages.collect(&:id), :requested_action => "archive"
       assert_response :redirect
+
       @messages.each do |msg|
         assert msg.reload.archived_by_recipient?
       end
@@ -287,22 +277,21 @@ class MessagesControllerTest < ActionController::TestCase
   end
 
   context "Sender disappears" do
-    setup do
-      @message = messages(:johans_message_to_moe)
-    end
+    setup { @message = messages(:johans_message_to_moe) }
 
     should "render without error" do
       users(:johan).destroy
       login_as :moe
       get :index
+
       assert_response :success
     end
   end
 
-  context "Unauthenticated GET to index" do
-    setup {get :index}
+  should "disallow unauthenticated GET to index" do
+    get :index
 
-    should_respond_with :redirect
+    assert_response :redirect
   end
 
   context "Fishy data" do

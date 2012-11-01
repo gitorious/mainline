@@ -16,6 +16,9 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+
+require "will_paginate/array"
+
 class MessagesController < ApplicationController
   before_filter :login_required
   renders_in_global_context
