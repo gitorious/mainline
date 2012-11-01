@@ -20,14 +20,6 @@
 require "test_helper"
 
 class PagesControllerTest < ActionController::TestCase
-
-  should_render_in_site_specific_context
-  should_enforce_ssl_for(:get, :edit)
-  should_enforce_ssl_for(:get, :git_access)
-  should_enforce_ssl_for(:get, :index)
-  should_enforce_ssl_for(:get, :show)
-  should_enforce_ssl_for(:put, :preview)
-
   def setup
     setup_ssl_from_config
     @project = projects(:johans)
