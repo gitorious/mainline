@@ -23,7 +23,7 @@ class Admin::UsersController < AdminController
 
   def index
     @users = paginate(:action => "index") do
-      User.paginate(:all, :order => 'suspended_at, login', :page => params[:page])
+      User.paginate(:order => 'suspended_at, login', :page => params[:page])
     end
 
     return if @users.length == 0 && params.key?(:page)

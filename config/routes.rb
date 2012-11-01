@@ -234,7 +234,7 @@ Gitorious::Application.routes.draw do
   # R7. Administration
   namespace :admin do
     resources :users, :only => [:index, :new, :create] do
-      collection do
+      member do
         put :suspend
         put :flip_admin_status
         put :unsuspend
