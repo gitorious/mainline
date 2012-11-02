@@ -16,11 +16,16 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require (Rails.root + "lib/gitorious/git_http_cloner.rb").realpath
+
 Gitorious::Application.routes.draw do
   ### R0. Site index
   root :to => "site#index"
 
-  ### R1. User routes
+  ### R1. Git HTTP cloner Rack app
+  match "/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner
+
+  ### R2. User routes
   resources :users, :only => [:new, :create] do
     collection do
       get  "/reset_password/:token" => "users#reset_password", :as => :reset_password
@@ -70,13 +75,13 @@ Gitorious::Application.routes.draw do
     match "/*slug" => "owner_redirections#show"
   end
 
-  ### R2. Sessions
+  ### R3. Sessions
   resource :sessions
   get "/sessions" => "sessions#create", :as => :open_id_complete
   get "/login" => "sessions#new", :as => :login
   get "/logout" => "sessions#destroy", :as => :logout
 
-  ### R3. Groups
+  ### R4. Groups
   resources :groups, :only => [:index, :new, :create]
   # `resource :groups` can't do the +<group> ids
   get "/+:id(.:format)" => "groups#show", :as => "group", :id => /[^\/]+/
@@ -98,7 +103,7 @@ Gitorious::Application.routes.draw do
     match "/*slug" => "owner_redirections#show"
   end
 
-  # R4. Site-wide wiki
+  ### R5. Site-wide wiki
   get "/wiki/:site_id/config" => "site_wiki_pages#repository_config", :as => :site_wiki_git_access_connect
   get "/wiki/:site_id/writable_by" => "site_wiki_pages#writable_by", :as => :site_wiki_git_writable_by
 
@@ -113,18 +118,18 @@ Gitorious::Application.routes.draw do
     end
   end
 
-  # R5. Direct merge request access
+  ### R6. Direct merge request access
   match "/merge_request_landing_page" => "merge_requests#oauth_return", :as => :merge_request_landing_page
   get "/merge_requests/:id" => "merge_requests#direct_access", :as => :merge_request_direct_access
 
-  # R6. Site controller, various loose pages
+  ### R7. Site controller, various loose pages
   get "/activities" => "site#public_timeline", :as => :activity
   get "/dashboard" => "site#dashboard", :as => :dashboard
   get "/about" => "site#about", :as => :about
   get "/about/:action" => "site#index", :as => :about_page
   get "/contact" => "site#contact", :as => :contact
 
-  # R7. Administration
+  ### R8. Administration
   namespace :admin do
     resources :users, :only => [:index, :new, :create] do
       member do
@@ -149,20 +154,20 @@ Gitorious::Application.routes.draw do
     post "/project_proposals/:id/approve" => "project_proposals#approve"
   end
 
-  # R8. API
+  ### R9. API
   namespace :api do
     get ":project_id/:repository_id/log/graph(.:format)" => "graphs#show"
     get ":project_id/:repository_id/log/graph/*branch(.:format)" => "graphs#show"
   end
 
-  # R9. Events
+  ### R10. Events
   resources :events do
     collection do
       get :commits
     end
   end
 
-  # R10. Additional logged in user resources
+  ### R11. Additional logged in user resources
   resources :messages do
     collection do
       get :sent
@@ -179,14 +184,14 @@ Gitorious::Application.routes.draw do
 
   resources :favorites, :only => [:index, :create, :update, :destroy]
 
-  # R11. Search
+  ### R12. Search
   resource :search
 
-  # R12. Auto-completion
+  ### R13. Auto-completion
   resources :user_auto_completions, :only => [:index]
   resources :group_auto_completions, :only => [:index]
 
-  # R13. Projects
+  ### R14. Projects
   get "/projects(.:format)" => "projects#index"
   get "/:id/edit(.:format)" => "projects#edit"
 
@@ -212,7 +217,7 @@ Gitorious::Application.routes.draw do
       end
     end
 
-    # R13.2. Repositories
+    ### R14.2. Repositories
 
     # Listing repositories and creating new ones happens over
     # /<project>/repositories/, e.g:

@@ -16,9 +16,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require File.expand_path('../boot', __FILE__)
-
-require 'rails/all'
+require File.expand_path("../boot", __FILE__)
+require "rails/all"
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
@@ -107,5 +106,8 @@ module Gitorious
                                                  :email_prefix => "[Gitorious] ",
                                                  :sender_address => %{"Exception notifier" <notifier@gitorious>},
                                                  :exception_recipients => gts_config["exception_notification_emails"])
+
+    # require (Rails.root + "app/metal/git_http_cloner.rb").realpath
+    # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
   end
 end

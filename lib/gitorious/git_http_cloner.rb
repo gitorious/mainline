@@ -1,0 +1,95 @@
+# encoding: utf-8
+#--
+#   Copyright (C) 2012 Gitorious AS and/or its subsidiary(-ies)
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+
+# Middleware that handles HTTP cloning
+#
+# - Rip out the repo path and rest from the URI
+# - Return a X-Sendfile header in the response containing the full
+#   path to the object requested
+# - This will be picked up by Apache (given mod-x_sendfile is
+#   installed) and then delivered to the client
+
+module Gitorious
+  class GitHttpCloner
+    TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
+    NOT_FOUND_RESPONSE = [404, { "Content-Type" => "text/html" },[]]
+    NOT_ALLOWED_RESPONSE = [403, { "Content-Type" => "text/html" }, []]
+
+    def self.call(env)
+      return NOT_ALLOWED_RESPONSE if GitoriousConfig["hide_http_clone_urls"]
+      match = /(.*\.git)(.*)/.match(env["PATH_INFO"])
+      path = match[1]
+      rest = match[2]
+
+      begin
+        repo = Repository.find_by_path(path)
+        return NOT_ALLOWED_RESPONSE if !can_read?(nil, repo)
+        return NOT_FOUND_RESPONSE unless repo
+        repo.cloned_from(remote_ip(env), nil, nil, "http") if rest == "/HEAD"
+        headers = {
+          "Content-Type" => "application/octet-stream"
+        }.merge(sendfile_headers(repo, rest))
+        #env["rack.session.options"] = {}
+        return [200, headers, []]
+      rescue ActiveRecord::RecordNotFound
+        # Repo not found
+        return NOT_FOUND_RESPONSE
+      end
+    end
+
+    def self.sendfile_headers(repo, rest)
+      if GitoriousConfig["frontend_server"] == "nginx"
+        { "X-Accel-Redirect" => File.join("/git-http", repo.real_gitdir, rest) }
+      else
+        { "X-Sendfile" => File.join(repo.full_repository_path, rest) }
+      end
+    end
+
+    protected
+    def self.can_read?(user, repository)
+      return true if !GitoriousConfig["enable_private_repositories"]
+      Gitorious::Authorization::DatabaseAuthorization.new.can_read_repository?(user, repository)
+    end
+
+    # Borrowed from ActionController::Request. Extract proxy addresses and stuff (except our own)
+    # Does not do ip spoofing checks
+    def self.remote_ip(env)
+      remote_addr_list = env["REMOTE_ADDR"] && env["REMOTE_ADDR"].scan(/[^,\s]+/)
+      unless remote_addr_list.blank?
+        not_trusted_addrs = remote_addr_list.reject {|addr| addr =~ TRUSTED_PROXIES}
+        return not_trusted_addrs.first unless not_trusted_addrs.empty?
+      end
+
+      remote_ips = env["HTTP_X_FORWARDED_FOR"] && env["HTTP_X_FORWARDED_FOR"].split(",")
+
+      if env.include? "HTTP_CLIENT_IP"
+        return env["HTTP_CLIENT_IP"]
+      end
+
+      if remote_ips
+        while remote_ips.size > 1 && TRUSTED_PROXIES =~ remote_ips.last.strip
+          remote_ips.pop
+        end
+        return remote_ips.last.strip
+      end
+
+      env["REMOTE_ADDR"]
+    end
+  end
+end
