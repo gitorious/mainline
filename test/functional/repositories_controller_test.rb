@@ -29,7 +29,7 @@ class RepositoriesControllerTest < ActionController::TestCase
     Repository.any_instance.stubs(:git).returns(@grit)
   end
 
-  should_render_in_site_specific_context :except => [:writable_by, :config]
+  should_render_in_site_specific_context :except => [:writable_by, :repository_config]
 
   context "#index" do
     setup do
@@ -86,10 +86,15 @@ class RepositoriesControllerTest < ActionController::TestCase
       repo.owner = @user
       repo.save!
       repo.stubs(:git).returns(stub_everything("git mock"))
-      get :show, :user_id => @user.to_param, :project_id => repo.project.to_param,
+
+      get :show, {
+        :user_id => @user.to_param,
+        :project_id => repo.project.to_param,
         :id => repo.to_param
+      }
+
       assert_response :success
-      atom_url = user_project_repository_path(@user, repo.project, repo, :format => :atom)
+      atom_url = project_repository_path(repo.project, repo, :format => :atom)
       assert_equal atom_url, assigns(:atom_auto_discovery_url)
     end
 
@@ -471,7 +476,7 @@ class RepositoriesControllerTest < ActionController::TestCase
   end
 
   def do_config_get(options={})
-    get(:config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
+    get(:repository_config, {:project_id => @project.slug, :id => @repository.name}.merge(options))
   end
 
   context "#config" do
@@ -685,8 +690,13 @@ class RepositoriesControllerTest < ActionController::TestCase
           :committer => users(:moe)
         }, Committership::CAN_ADMIN)
       @repository.save!
-      get :edit, :project_id => @repository.project.to_param,
-        :user_id => users(:moe).to_param, :id => @repository.to_param
+
+      get :edit, {
+        :project_id => @project.to_param,
+        :user_id => users(:moe).to_param,
+        :id => @repository.to_param
+      }
+
       assert_response :success
     end
 
@@ -788,7 +798,7 @@ class RepositoriesControllerTest < ActionController::TestCase
           :owner_id => new_group.id
         }
       assert_response :redirect
-      assert_redirected_to(group_repository_path(group, @repository))
+      assert_redirected_to(project_repository_path(@project, @repository))
       assert_equal group, @repository.reload.owner
     end
 

@@ -20,7 +20,7 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<h1>Editing repository <%= link_to h(@repository.name), [@owner, @repository] -%></h1>
+<h1>Editing repository <%= link_to h(@repository.name), [@repository.project, @repository] -%></h1>
 
 <%= error_messages(@repository) -%>
 <%= form_for(repo_owner_path(@repository.reload, [@repository.project, @repository])) do |f| -%>

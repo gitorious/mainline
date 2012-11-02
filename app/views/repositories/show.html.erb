@@ -96,7 +96,7 @@
     <h3><%= t("views.logs.branches") %>:</h3>
     <ul>
       <% @repository.git.branches.each do |branch| -%>
-        <li><%= link_to h(branch.name), project_repository_log_path(@owner, @repository, ensplat_path(branch.name)) -%></li>
+        <li><%= link_to h(branch.name), project_repository_log_path(@repository.project, @repository, ensplat_path(branch.name)) -%></li>
       <% end -%>
     </ul>
   <% end -%>

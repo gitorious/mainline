@@ -180,7 +180,7 @@ class MergeRequestsController < ApplicationController
     if @merge_request.save
       @merge_request.publish_notification
       flash[:success] = I18n.t "merge_requests_controller.update_success"
-      redirect_to [@owner, @repository, @merge_request]
+      redirect_to [@repository.project, @repository, @merge_request]
     else
       @repositories = filter(@owner.repositories.find(:all,
         :conditions => ["id != ?", @repository.id]))
@@ -192,7 +192,7 @@ class MergeRequestsController < ApplicationController
   def destroy
     @merge_request.destroy
     flash[:success] = I18n.t "merge_requests_controller.destroy_success"
-    redirect_to [@owner, @repository]
+    redirect_to [@repository.project, @repository]
   end
 
   def direct_access
@@ -254,7 +254,7 @@ class MergeRequestsController < ApplicationController
     unless can_resolve_merge_request?(current_user, @merge_request)
       respond_to do |format|
         flash[:error] = I18n.t "merge_requests_controller.assert_resolvable_error"
-        format.html { redirect_to([@owner, @repository, @merge_request]) }
+        format.html { redirect_to([@repository.project, @repository, @merge_request]) }
         format.xml  {
           render :text => I18n.t("merge_requests_controller.assert_resolvable_error"),
           :status => :forbidden
@@ -268,7 +268,7 @@ class MergeRequestsController < ApplicationController
     if @merge_request.user != current_user
       respond_to do |format|
         flash[:error] = I18n.t "merge_requests_controller.assert_ownership_error"
-        format.html { redirect_to([@owner, @repository]) }
+        format.html { redirect_to([@repository.project, @repository]) }
         format.xml  do
           render :text => I18n.t("merge_requests_controller.assert_ownership_error"),
           :status => :forbidden

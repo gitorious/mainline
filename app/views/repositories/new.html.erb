@@ -26,7 +26,7 @@
 <h2 class="content-header">Add new repository to <%= link_to h(@owner.title), @owner -%></h2>
 
 <%= error_messages(@repository) -%>
-<%= form_for([@owner, @repository]) do |f| -%>
+<%= form_for([@repository.project, @repository]) do |f| -%>
   <fieldset>
     <li>
       <%= f.label :name -%>

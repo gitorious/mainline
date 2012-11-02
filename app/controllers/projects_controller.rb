@@ -224,22 +224,12 @@ class ProjectsController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    paginated = @project.events.paginate({
+    marshalable_events(@project.events.paginate({
       :conditions => ["target_type != ?", "Event"],
       :order => "created_at desc",
       :include => [:user, :project],
       :per_page => Event.per_page,
       :page => params[:page]
-    })
-
-    def paginated.marshal_dump
-      map(&:attributes).to_json
-    end
-
-    def paginated.marshal_load(attributes)
-      JSON.parse(attributes).map { |attrs| Event.new(attrs) }
-    end
-
-    paginated
+    }))
   end
 end

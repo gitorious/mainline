@@ -23,7 +23,7 @@
 <h1><%= t("views.collaborators.new_title", :repo_name => @repository.name) -%></h1>
 
 <%= error_messages(@committership) -%>
-<%= form_for [@owner, @repository, @committership], :html => { :class => "collaborator_form" } do |f| -%>
+<%= form_for [@repository.project, @repository, @committership], :html => { :class => "collaborator_form" } do |f| -%>
 <%= render :partial => "/shared/tabbed_collaborator_form" %>
 <p><%= f.label :permissions -%>:
 <p><%= check_box_tag "permissions[]", "review", false -%> <%= f.label "Review" %></p>
@@ -32,7 +32,7 @@
 <p>
   <%= f.submit t("views.collaborators.btn_add_as_collaborator") -%>
   <%= t("views.collaborators.or_return_to") -%>
-  <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
+  <%= link_to "collaborator list", [@repository.project, @repository, :committerships] -%>
 </p>
 <% end -%>
 

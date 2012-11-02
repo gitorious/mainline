@@ -22,7 +22,7 @@
 
 <h1>
   <%= t("views.collaborators.title",
-        :repo_name => link_to(h(@repository.name), [@owner, @repository]))  -%>
+        :repo_name => link_to(h(@repository.name), [@repository.project, @repository]))  -%>
 </h1>
 
 <table class="listing">
@@ -43,9 +43,9 @@
       <td><%= link_to(h(committership.creator.login), committership.creator) if committership.creator -%>
       <td class="committer-buttons">
         <%= button_to(t("views.common.edit"),
-                      [:edit, @owner, @repository, committership], :method => :get) -%>
+                      [:edit, @repository.project, @repository, committership], :method => :get) -%>
         <%= button_to(t("views.common.remove"),
-                      [@owner, @repository, committership], :method => :delete, :confirm => confirmation_if_sole_admin(@repository, committership)) -%>
+                      [@repository.project, @repository, committership], :method => :delete, :confirm => confirmation_if_sole_admin(@repository, committership)) -%>
       </td>
     </tr>
   <% end -%>

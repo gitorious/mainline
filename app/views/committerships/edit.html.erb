@@ -23,7 +23,7 @@
 <h2 class="content-header">Edit collaborator permissions</h2>
 
 <%= error_messages(@committership) -%>
-<%= form_for [@owner, @repository, @committership] do |f| -%>
+<%= form_for [@repository.project, @repository, @committership] do |f| -%>
 
 <ul class="form">
   <fieldset>
@@ -41,7 +41,7 @@
 <fieldset class="submit">
   <%= f.submit "Update permissions" -%>
   <%= t("views.collaborators.or_return_to") -%>
-  <%= link_to "collaborator list", [@owner, @repository, :committerships] -%>
+  <%= link_to "collaborator list", [@repository.project, @repository, :committerships] -%>
 </fieldset>
 
 <% end -%>

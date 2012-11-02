@@ -91,7 +91,7 @@ module RoutingHelper
   end
 
   def repository_path(action, sha1=nil)
-    repo_owner_path(@repository, :project_repository_path, @project, @repository)+"/"+action+"/"+sha1.to_s
+    project_repository_path(@project, @repository) + "/" + action + "/" + sha1.to_s
   end
 
   def blob_path(shaish, path)

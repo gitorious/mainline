@@ -20,6 +20,5 @@
   #++
   %>
 
-</h3><%= link_to h(repository.url_path),
-         repo_owner_path(repository, :project_repository_path, repository.project, repository) -%></h3>
+<h3><%= link_to h(repository.url_path), project_repository_path(repository.project, repository) -%></h3>
 <p><%= truncate h(repository.description), :length => 250 -%></p>

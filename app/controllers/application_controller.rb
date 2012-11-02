@@ -387,6 +387,18 @@ class ApplicationController < ActionController::Base
     items
   end
 
+  def marshalable_events(events)
+    def events.marshal_dump
+      map(&:attributes).to_json
+    end
+
+    def events.marshal_load(attributes)
+      JSON.parse(attributes).map { |attrs| Event.new(attrs) }
+    end
+
+    events
+  end
+
   def page_free_redirect_options
     redirect_options = params.dup
     redirect_options.delete(:page)
