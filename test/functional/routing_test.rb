@@ -171,39 +171,6 @@ class RoutingTest < ActionController::TestCase
                        })
     end
 
-    should "recognize projects with dotted names" do
-      assert_recognizes({ :controller => "projects",
-                          :action => "show",
-                          :id => "gito.rious"
-                        }, {
-                          :path => "/gito.rious",
-                          :method => :get
-                        })
-
-      assert_generates("/gito.rious", {
-                         :controller => "projects",
-                         :action => "show",
-                         :id => "gito.rious"
-                       })
-
-      assert_recognizes({ :controller => "projects",
-                          :action => "clones",
-                          :id => "gito.rious"
-                        }, {
-                          :path => "/gito.rious/clones",
-                          :method => :get
-                        })
-
-      assert_recognizes({ :controller => "repositories",
-                          :action => "edit",
-                          :project_id => "gito.rious",
-                          :id => "mainline"
-                        }, {
-                          :path => "/gito.rious/mainline/edit",
-                          :method => :get
-                        })
-    end
-
     def recognize_project_action(method, path, action)
       assert_recognizes({ :controller => "projects",
                           :action => action,

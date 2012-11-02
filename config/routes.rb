@@ -189,22 +189,16 @@ Gitorious::Application.routes.draw do
   # R13. Projects
   get "/projects(.:format)" => "projects#index"
   get "/:id/edit(.:format)" => "projects#edit"
-  get "/:id.:format" => "projects#show", :id => /[^\/]+/, :format => /(html|json|atom|xml)/
-  get "/:id" => "projects#show", :id => /[^\/]+/
 
-  resources :projects, :path => "/"
-
-  scope "/:id", :id => /[^\/]+/, :as => :projects do
-    controller :projects do
+  resources :projects, :path => "/" do
+    member do
       put :preview
       get :edit_slug
       put :edit_slug
       get :clones
       get :confirm_delete
     end
-  end
 
-  scope "/:project_id", :project_id => /[^\/]+/, :as => :projects do
     resources :project_memberships, :only => [:index, :new, :create, :destroy]
 
     resources :pages do
