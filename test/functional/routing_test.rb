@@ -675,6 +675,18 @@ class RoutingTest < ActionController::TestCase
                           :method => :get
                         })
     end
+
+    should "recognize show" do
+      assert_recognizes({ :controller => "merge_requests",
+                          :action => "show",
+                          :project_id => "johans-project",
+                          :repository_id => "johansprojectrepos",
+                          :id => "399"
+                        }, {
+                          :path => "/johans-project/johansprojectrepos/merge_requests/399",
+                          :method => :get
+                        })
+    end
   end
 
   context "Site routing" do

@@ -98,7 +98,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
     should "get a list of the commits to be merged" do
       %w(html patch xml).each do |format|
-        MergeRequest.expects(:find).returns(@merge_request)
+        MergeRequest.expects(:find_by_sequence_number!).returns(@merge_request)
         stub_commits(@merge_request)
 
         get :show, mr_params(:format => format)
@@ -110,12 +110,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
     should "allow committers to change status" do
       login_as :johan
       stub_commits(@merge_request)
-
-      MergeRequest.expects(:find).returns(@merge_request)
-      git_stub = stub_everything("Grit", :commit_deltas_from => [])
-      [@merge_request.source_repository, @merge_request.target_repository].each do |r|
-        r.stubs(:git).returns(git_stub)
-      end
 
       get :show, mr_params
       assert_response :success
@@ -166,13 +160,14 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "display 'how to merge' help with correct branch" do
-      MergeRequest.expects(:find).returns(@merge_request)
       stub_commits(@merge_request)
       @merge_request.sequence_number = 399
       @merge_request.target_branch = "superfly-feature"
+      @merge_request.save
 
       get :show, mr_params
 
+      assert_response 200
       assert @response.body.include?("git merge merge-requests/399")
       assert @response.body.include?("git push origin superfly-feature")
     end
@@ -332,7 +327,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
                                                                         :summary => "foo" })
       assert @merge_request.save
       @merge_request.stubs(:commits_to_be_merged).returns([])
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
       login_as :johan
     end
 
@@ -384,7 +379,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     setup do
       @merge_request.stubs(:commit_merged?).with("ffc").returns(false)
       @merge_request.stubs(:commit_merged?).with("ffo").returns(true)
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
     end
 
     should "return false if the given commit has not been merged" do
@@ -500,7 +495,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
 
   context "GET #version" do
     should "render the diff browser for the given version" do
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
       get :version, mr_params(:version => @merge_request.versions.first.version)
       assert_response :success
     end
@@ -557,7 +552,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     setup do
       enable_private_repositories
       stub_commits(@merge_request)
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
     end
 
     should "disallow unauthenticated users from listing merge requests" do
@@ -566,7 +561,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "allow authenticated users to list merge requests" do
-      MergeRequest.unstub(:find)
+      MergeRequest.unstub(:find_by_sequence_number!)
       login_as :johan
       get :index, params
       assert_response :success
@@ -705,7 +700,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
       enable_private_repositories(@target_repository)
       @project.content_memberships.delete_all
       stub_commits(@merge_request)
-      MergeRequest.stubs(:find).returns(@merge_request)
+      MergeRequest.stubs(:find_by_sequence_number!).returns(@merge_request)
     end
 
     should "disallow unauthenticated users from listing merge requests" do
@@ -714,7 +709,7 @@ class MergeRequestsControllerTest < ActionController::TestCase
     end
 
     should "allow authenticated users to list merge requests" do
-      MergeRequest.unstub(:find)
+      MergeRequest.unstub(:find_by_sequence_number!)
       login_as :johan
       get :index, params
       assert_response :success
