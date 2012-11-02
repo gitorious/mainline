@@ -38,11 +38,13 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
     should "render the history atom feed" do
       grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
       Site.any_instance.stubs(:wiki).returns(grit)
+
       get :index, :format => "atom"
+
       assert_response :success
       assert_equal grit.commits("master", 30), assigns(:commits)
-      assert_template "index.atom.builder"
       assert_equal "max-age=1800, private", @response.headers["Cache-Control"]
+      assert_match @response.body, /<author>/
     end
   end
 
@@ -87,14 +89,15 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
 
   context "internal git access urls" do
     should "respond to wiki/<sitename>/writable_by" do
-      get :writable_by
+      site = Site.create(:title => "Test");
+      get :writable_by, :site_id => site.id
       assert_response :success
     end
+
     should "respond to wiki/<sitename>/config" do
       site = Site.create(:title => "Test");
-      get :config, {:site_id => site.id}
+      get :repository_config, :site_id => site.id
       assert_response :success
     end
   end
-
 end

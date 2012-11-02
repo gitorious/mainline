@@ -75,13 +75,13 @@ module BreadcrumbsHelper
     when Membership
       edit_group_membership_path(@group, @membership)
     when Breadcrumb::MergeRequests
-      [@project, @repository, :merge_requests]
+      [@repository.project, @repository, :merge_requests]
     when MergeRequest
-      [@project, @repository, @merge_request]
+      [@repository.project, @repository, @merge_request]
     when Breadcrumb::Committerships
-      [@project, @repository, :committerships]
+      [@repository.project, @repository, :committerships]
     when Committership
-      [@project, @repository, @committership]
+      [@repository.project, @repository, @committership]
     when Breadcrumb::ProjectMemberships
       [@project, :project_memberships]
     when Breadcrumb::Messages

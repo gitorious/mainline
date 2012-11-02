@@ -31,7 +31,7 @@ class UsersController < ApplicationController
   before_filter :find_user,
     :only => [:show, :edit, :update, :password, :update_password, :avatar]
   before_filter :require_current_user,
-    :only => [:edit, :update, :password, :update_password, :avatar, ]
+    :only => [:edit, :update, :password, :update_password, :avatar]
   before_filter :require_identity_url_in_session, :only => [:openid_build, :openid_create]
   before_filter :require_public_user, :only => :show
 

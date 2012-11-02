@@ -21,21 +21,11 @@
 require "test_helper"
 
 class UsersControllerTest < ActionController::TestCase
+  should_render_in_global_context
+
   def setup
     setup_ssl_from_config
   end
-
-  context "http methods" do
-    setup { login_as :johan }
-
-    should_verify_method :post, :create, :user => {}
-    should_verify_method :post, :forgot_password_create
-    should_verify_method :put, :update, :id => "johan"
-    should_verify_method :put, :update_password, :id => "johan", :user => {}
-    should_verify_method :delete, :avatar, :id => "johan"
-  end
-
-  should_render_in_global_context
 
   should "show pending activation" do
     get :pending_activation

@@ -389,7 +389,11 @@ class SslRedirectionTest < ActionController::TestCase
   end
 
   context "SiteController" do
-    setup { @controller = SiteController.new }
+    setup do
+      BlogFeed.any_instance.stubs(:fetch).returns([])
+      @controller = SiteController.new
+    end
+
     should_enforce_ssl_for(:get, :dashboard)
     should_enforce_ssl_for(:get, :index)
     should_enforce_ssl_for(:get, :public_timeline)

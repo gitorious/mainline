@@ -17,9 +17,9 @@
 #++
 
 class SiteWikiPagesController < ApplicationController
-  before_filter :login_required, :except => [:index, :show, :git_access, :config, :writable_by]
+  before_filter :login_required, :except => [:index, :show, :git_access, :repository_config, :writable_by]
   before_filter :require_site_admin, :only => [:edit, :update]
-
+  helper PagesHelper, SiteWikiPagesHelper
   renders_in_site_specific_context
 
   def index

@@ -44,8 +44,8 @@ class CommittershipsControllerTest < ActionController::TestCase
       @repository.save!
       assert !admin?(users(:mike), @repository)
       login_as :mike
-      get :index, :group_id => @group.to_param, :repository_id => @repository.to_param
-      assert_redirected_to(group_repository_path(@group, @repository))
+      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+      assert_redirected_to(project_repository_path(@project, @repository))
       assert_match(/only repository admins are allowed/, flash[:error])
     end
 
@@ -53,25 +53,6 @@ class CommittershipsControllerTest < ActionController::TestCase
       get :index, params
       assert_response :success
       assert_equal @project, assigns(:owner)
-      assigns(:repository) == @repository
-    end
-
-    should "finds the owner (a Group) and the repository" do
-      @repository.owner = @group
-      @repository.save!
-      @group.add_member(@user, Role.admin)
-      get :index, :group_id => @group.to_param, :repository_id => @repository.to_param
-      assert_response :success
-      assert_equal @group, assigns(:owner)
-      assigns(:repository) == @repository
-    end
-
-    should "finds the owner (a User) and the repository" do
-      @repository.owner = @user
-      @repository.save!
-      get :index, :user_id => @user.to_param, :repository_id => @repository.to_param
-      assert_response :success
-      assert_equal @user, assigns(:owner)
       assigns(:repository) == @repository
     end
 
@@ -85,7 +66,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       @group.add_member(@user, Role.admin)
       assert admin?(@user, repo)
 
-      get :index, :group_id => @group.to_param, :repository_id => repo.to_param
+      get :index, :project_id => repo.project.to_param, :repository_id => repo.to_param
       assert_response :success
       exp = repo.committerships.find(:all, :conditions => {
         :committer_type => "Group",
@@ -97,7 +78,7 @@ class CommittershipsControllerTest < ActionController::TestCase
     context "commitership pagination" do
       setup do
         login_as :johan
-        @params = { :user_id => @user.to_param, :repository_id => @repository.to_param }
+        @params = { :project_id => @project.to_param, :repository_id => @repository.to_param }
       end
 
       should_scope_pagination_to(:index, Committership, :delete_all => false)
@@ -119,7 +100,7 @@ class CommittershipsControllerTest < ActionController::TestCase
           :committer => users(:mike)
         }, Committership::CAN_ADMIN)
       login_as :mike
-      get :new, :group_id => repo.owner.to_param,
+      get :new, :project_id => repo.project.to_param,
         :project_id => repo.project.to_param,
       :repository_id => repositories(:johans2).to_param
       assert_response :success
@@ -228,7 +209,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       end
 
       should "require project access to new" do
-        get :new, params(:group_id => @repository.owner.to_param)
+        get :new, params(:project_id => @repository.project.to_param)
         assert_response 403
       end
 
@@ -265,7 +246,7 @@ class CommittershipsControllerTest < ActionController::TestCase
       end
 
       should "require project access to new" do
-        get :new, params(:group_id => @repository.owner.to_param)
+        get :new, params(:project_id => @project.to_param)
         assert_response 403
       end
 

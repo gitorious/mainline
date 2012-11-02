@@ -160,7 +160,6 @@ class ActionController::TestCase
 
       actions.each do |method|
         send(method, action, params)
-
         assert_response 400, "Should disallow #{method} for #{action}"
       end
     end

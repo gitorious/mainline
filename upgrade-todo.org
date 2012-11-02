@@ -96,3 +96,24 @@
 ** TODO Write new README
 * Dates and time [0/1]
 * TODO repo_owner_path
+* Stuff
+
+    should "finds the owner (a Group) and the repository" do
+      @repository.owner = @group
+      @repository.save!
+      @group.add_member(@user, Role.admin)
+      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+      assert_response :success
+      assert_equal @group, assigns(:owner)
+      assigns(:repository) == @repository
+    end
+
+
+    should "finds the owner (a User) and the repository" do
+      @repository.owner = @user
+      @repository.save!
+      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
+      assert_response :success
+      assert_equal @user, assigns(:owner)
+      assigns(:repository) == @repository
+    end

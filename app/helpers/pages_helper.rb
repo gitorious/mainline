@@ -41,10 +41,18 @@ module PagesHelper
   end
 
   def writable_wiki_url(project)
-    "git@#{GitoriousConfig['gitorious_host']}:#{project.slug}/#{project.wiki_repository.name}.git"
+    if project.respond_to?(:slug)
+      "git@#{GitoriousConfig['gitorious_host']}:#{project.slug}/#{project.wiki_repository.name}.git"
+    else
+      "git@#{GitoriousConfig['gitorious_host']}:wiki/#{project.id}.git"
+    end
   end
 
   def regular_wiki_url(project)
-    "git://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{project.wiki_repository.name}.git"
+    if project.respond_to?(:slug)
+      "git://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{project.wiki_repository.name}.git"
+    else
+      "git://#{GitoriousConfig['gitorious_host']}/wiki/#{project.id}.git"
+    end
   end
 end
