@@ -298,7 +298,7 @@ Gitorious::Application.routes.draw do
       end)
 
       match "/archive/*branch.tar.gz" => "trees#archive", :as => :archive_tar
-      match "/archive/*branch.:format" => "trees#archive", :as => :archive
+      match "/archive/*branch.:archive_format" => "trees#archive", :as => :archive
 
       match "/blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob
       match "/blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history

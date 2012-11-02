@@ -617,7 +617,7 @@ class RoutingTest < ActionController::TestCase
                           :repository_id => "repo",
                           :branch => "foo"
                         }, "/proj/repo/archive/foo.tar.gz", {
-                          :format => "tar.gz"
+                          :archive_format => "tar.gz"
                         })
 
       assert_recognizes({ :controller => "trees",
@@ -625,7 +625,7 @@ class RoutingTest < ActionController::TestCase
                           :project_id => "proj",
                           :repository_id => "repo",
                           :branch => "foo",
-                          :format => "zip",
+                          :archive_format => "zip",
                         }, "/proj/repo/archive/foo.zip")
     end
 
@@ -635,7 +635,7 @@ class RoutingTest < ActionController::TestCase
                           :project_id => "proj",
                           :repository_id => "repo",
                           :branch => "foo/bar",
-                          :format => "zip",
+                          :archive_format => "zip",
                         }, "/proj/repo/archive/foo/bar.zip")
 
       assert_recognizes({ :controller => "trees",
@@ -644,7 +644,7 @@ class RoutingTest < ActionController::TestCase
                           :repository_id => "repo",
                           :branch => "foo/bar"
                         }, "/proj/repo/archive/foo/bar.tar.gz", {
-                          :format => "tar.gz"
+                          :archive_format => "tar.gz"
                         })
     end
   end

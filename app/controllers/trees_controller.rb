@@ -51,7 +51,7 @@ class TreesController < ApplicationController
   def archive
     @git = @repository.git
     @ref = desplat_path(params[:branch])
-    ext = params[:format]
+    ext = params[:archive_format]
     unless @commit = @git.commit(@ref)
       handle_missing_tree_sha and return
     end
