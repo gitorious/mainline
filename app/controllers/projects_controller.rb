@@ -63,7 +63,6 @@ class ProjectsController < ApplicationController
 
   def show
     @events = paginated_events
-
     return if @events.count == 0 && params.key?(:page)
     @big_repos = 10
     @mainlines = by_push_time(@project.repositories.mainlines)
@@ -212,7 +211,8 @@ class ProjectsController < ApplicationController
   def paginated_events
     paginate(:action => "show", :id => @project.to_param) do
       if !private_repositories_enabled?
-        Rails.cache.fetch("paginated-project-events:#{@project.id}:#{params[:page] || 1}", :expires_in => 10.minutes) do
+        id = "paginated-project-events:#{@project.id}:#{params[:page] || 1}"
+        Rails.cache.fetch(id, :expires_in => 10.minutes) do
           unfiltered_paginated_events
         end
       else
@@ -224,12 +224,22 @@ class ProjectsController < ApplicationController
   end
 
   def unfiltered_paginated_events
-    @project.events.paginate({
+    paginated = @project.events.paginate({
       :conditions => ["target_type != ?", "Event"],
       :order => "created_at desc",
       :include => [:user, :project],
       :per_page => Event.per_page,
       :page => params[:page]
     })
+
+    def paginated.marshal_dump
+      map(&:attributes).to_json
+    end
+
+    def paginated.marshal_load(attributes)
+      JSON.parse(attributes).map { |attrs| Event.new(attrs) }
+    end
+
+    paginated
   end
 end

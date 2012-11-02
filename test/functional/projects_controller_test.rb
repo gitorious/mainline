@@ -65,7 +65,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
       should "render private repo clones for owner" do
         login_as :johan
-        get :clones, :id => projects(:johans).to_param
+        get :clones, :id => projects(:johans).to_param, :format => "js"
         assert_response 200
       end
 
@@ -202,7 +202,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "PUT to preview" do
-      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }
+      put :preview, :id => projects(:johans).to_param, :project => { :description => "Hey" }, :format => "js"
       assert_response 200
     end
 
@@ -331,7 +331,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "require login for PUT projects/update" do
-      put :update
+      put :update, :id => "gitorious"
       assert_redirected_to(new_sessions_path)
     end
 
@@ -397,7 +397,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "require login to DELETE projects/destroy" do
-      delete :destroy
+      delete :destroy, :id => "gitorious"
       assert_response :redirect
       assert_redirected_to new_sessions_path
     end
@@ -444,7 +444,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     should "require login for GET projects/xx/confirm_delete" do
-      get :confirm_delete
+      get :confirm_delete, :id => "gitorious"
       assert_response :redirect
       assert_redirected_to(new_sessions_path)
     end
@@ -469,22 +469,6 @@ class ProjectsControllerTest < ActionController::TestCase
       assert_not_nil assigns(:group_clones)
       assert_not_nil assigns(:user_clones)
       assert_template "_repositories"
-    end
-
-    should "respond with etag based on the event when GET show" do
-      50.times do |i|
-        projects(:johans).events.create!({
-          :action => Action::CREATE_BRANCH,:target => repositories(:johans),
-          :data => "branch-#{i}", :body => "branch-#{i}", :user => users(:moe)
-        })
-      end
-
-      get :show, :id => projects(:johans).slug
-      page_one_etag = @response.etag
-      assert_not_nil page_one_etag
-
-      get :show, :id => projects(:johans).slug, :page => 2
-      assert_not_equal page_one_etag, @response.etag
     end
 
     context "project event pagination" do
@@ -644,8 +628,9 @@ class ProjectsControllerTest < ActionController::TestCase
   context "with a site specific layout" do
     should "render with the application layout if there is no containing site" do
       get :show, :id => projects(:johans).to_param
+
       assert_response :success
-      assert_equal "layouts/application", @response.layout
+      assert @layouts.include?("layouts/application")
       assert_not_nil assigns(:current_site)
       assert_not_nil @controller.send(:current_site)
       assert_equal Site.default.title, @controller.send(:current_site).title

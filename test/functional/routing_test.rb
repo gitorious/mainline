@@ -203,6 +203,10 @@ class RoutingTest < ActionController::TestCase
       recognize_project_action(:get, "/gitorious/confirm_delete", "confirm_delete")
     end
 
+    should "recognize projects#preview" do
+      recognize_project_action(:put, "/gitorious/preview", "preview")
+    end
+
     should "recognize routes with format" do
       assert_recognizes({ :controller => "projects",
                           :action => "show",

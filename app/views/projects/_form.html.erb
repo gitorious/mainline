@@ -43,7 +43,7 @@
   <li class="licenses">
     <%= form.label :license, license_label("activerecord.attributes.project") -%>
     <div>
-      <%= form.select(:license, project_license_choices(:selected => default_license(@project))) -%>
+      <%= form.select(:license, project_license_choices(:selected => default_license(@project)).html_safe) -%>
     </div>
   </li>
 </fieldset>
