@@ -78,11 +78,11 @@ class SSHClientTest < ActiveSupport::TestCase
     request = make_request(client.writable_by_query_path)
     uri = request.env["REQUEST_URI"]
 
-    assert_equal "repositories", Rails.application.routes.recognize_path(uri)[:controller]
-    assert_equal "writable_by", request.symbolized_path_parameters[:action]
-    assert_equal "repositories", request.symbolized_path_parameters[:controller]
-    assert_equal "foo", request.symbolized_path_parameters[:project_id]
-    assert_equal "bar", request.symbolized_path_parameters[:id]
+    route = Rails.application.routes.recognize_path(uri)
+    assert_equal "repositories", route[:controller]
+    assert_equal "writable_by", route[:action]
+    assert_equal "foo", route[:project_id]
+    assert_equal "bar", route[:id]
   end
 
   should "return the correct authentication URL" do
