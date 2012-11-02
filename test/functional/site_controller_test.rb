@@ -83,6 +83,7 @@ class SiteControllerTest < ActionController::TestCase
       end
 
       should "not include any commit_repositories" do
+        BlogFeed.any_instance.stubs(:fetch).returns([])
         get :index
         assert_nil assigns(:repositories)
       end
@@ -143,9 +144,7 @@ class SiteControllerTest < ActionController::TestCase
 
   context "#index, with a non-default site" do
     setup do
-      paths = ActionController::Base.view_paths
-      paths << File.join(Rails.root, "test", "fixtures", "views")
-      ActionController::Base.view_paths = paths
+      @controller.prepend_view_path(File.join(Rails.root, "test", "fixtures", "views"))
       @site = sites(:qt)
       @request.host = "#{@site.subdomain}.gitorious.test"
     end

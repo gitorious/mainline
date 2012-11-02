@@ -75,7 +75,7 @@ unless defined? GitoriousConfig
       puts "WARNING: Additional view path '#{path}' does not exists, skipping"
     else
       additional_view_paths = ActionView::PathSet.new([path])
-      ActionController::Base.view_paths.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))
+      Gitorious::Application.paths.app.views.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))
     end
   end
 end
