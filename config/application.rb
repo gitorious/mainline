@@ -107,7 +107,7 @@ module Gitorious
                                                  :sender_address => %{"Exception notifier" <notifier@gitorious>},
                                                  :exception_recipients => gts_config["exception_notification_emails"])
 
-    # require (Rails.root + "app/metal/git_http_cloner.rb").realpath
+    # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
     # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
   end
 end

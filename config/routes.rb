@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require (Rails.root + "lib/gitorious/git_http_cloner.rb").realpath
+require (Rails.root + "app/racks/git_http_cloner.rb").realpath
 
 Gitorious::Application.routes.draw do
   ### R0. Site index

@@ -32,8 +32,9 @@ module Gitorious
     NOT_ALLOWED_RESPONSE = [403, { "Content-Type" => "text/html" }, []]
 
     def self.call(env)
-      return NOT_ALLOWED_RESPONSE if GitoriousConfig["hide_http_clone_urls"]
       match = /(.*\.git)(.*)/.match(env["PATH_INFO"])
+      return NOT_FOUND_RESPONSE if match.nil?
+      return NOT_ALLOWED_RESPONSE if GitoriousConfig["hide_http_clone_urls"]
       path = match[1]
       rest = match[2]
 
@@ -43,9 +44,10 @@ module Gitorious
         return NOT_FOUND_RESPONSE unless repo
         repo.cloned_from(remote_ip(env), nil, nil, "http") if rest == "/HEAD"
         headers = {
-          "Content-Type" => "application/octet-stream"
+          "Content-Type" => "application/octet-stream",
+          "X-Robots-Tag" => "noindex,nofollow"
         }.merge(sendfile_headers(repo, rest))
-        #env["rack.session.options"] = {}
+        env["rack.session.options"] = {}
         return [200, headers, []]
       rescue ActiveRecord::RecordNotFound
         # Repo not found
@@ -67,8 +69,8 @@ module Gitorious
       Gitorious::Authorization::DatabaseAuthorization.new.can_read_repository?(user, repository)
     end
 
-    # Borrowed from ActionController::Request. Extract proxy addresses and stuff (except our own)
-    # Does not do ip spoofing checks
+    # Borrowed from ActionController::Request. Extract proxy addresses
+    # and stuff (except our own) Does not do ip spoofing checks
     def self.remote_ip(env)
       remote_addr_list = env["REMOTE_ADDR"] && env["REMOTE_ADDR"].scan(/[^,\s]+/)
       unless remote_addr_list.blank?

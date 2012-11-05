@@ -17,32 +17,19 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-# Middleware that handles HTTP cloning
+# Rack Middleware that handles HTTP cloning
 
 require(File.dirname(__FILE__) + "/../../config/environment") unless defined?(Rails)
-require(File.dirname(__FILE__) + "/../../lib/gitorious/git_http_cloner")
+require(File.dirname(__FILE__) + "/../../app/racks/git_http_cloner")
 
-class GitHttpCloner
+class GitHttpClonerMiddleware
   def initialize(app)
     @app = app
   end
 
   def call(env)
-    perform_http_cloning = env["HTTP_HOST"] =~ /^#{Site::HTTP_CLONING_SUBDOMAIN}\..*/
-
-    if !perform_http_cloning || GitoriousConfig["hide_http_clone_urls"]
-      return @app.call(env)
-    end
-
-    if env["PATH_INFO"] =~ /^\/robots.txt$/
-      body = ["User-Agent: *\nDisallow: /\n"]
-      return [200, { "Content-Type" => "text/plain" }, body]
-    end
-
-    if !/(.*\.git)(.*)/.match(env["PATH_INFO"])
-      return @app.call(env)
-    end
-
-    Gitorious::GitHttpCloner.call(env)
+    response = Gitorious::GitHttpCloner.call(env)
+    return @app.call(env) if response[0] > 400 && response[0] < 500
+    response
   end
 end
