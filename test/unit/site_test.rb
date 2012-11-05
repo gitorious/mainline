@@ -29,13 +29,6 @@ class SiteTest < ActiveSupport::TestCase
     assert_nil default_site.subdomain
   end
 
-  should 'not allow sites with http as subdomain' do
-    site = Site.new
-    site.subdomain = Site::HTTP_CLONING_SUBDOMAIN
-    assert !site.save
-    assert_not_nil site.errors[:subdomain]
-  end
-
   should "derive grit location from site title and id" do
     site = Site.create(:title => "SuperSite")
     assert_equal "/tmp/git/repositories/#{site.id}-#{site.title}-site-wiki.git", site.wiki_git_path

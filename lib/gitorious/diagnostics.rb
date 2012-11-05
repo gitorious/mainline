@@ -32,7 +32,6 @@ module Gitorious
         repo_dir_ok? &&
         tarball_dirs_ok? &&
         authorized_keys_ok? &&
-        not_using_reserved_hostname? &&
         ssh_deamon_up? &&
         git_daemon_up? &&
         poller_up? &&
@@ -65,7 +64,6 @@ module Gitorious
       puts ascii_test("repo base dir present, owned by git user?"){repo_dir_ok?}
       puts ascii_test("tarball dirs present, owned by git user?"){tarball_dirs_ok?}
       puts ascii_test("git user has ~/.ssh/authorized_keys file?"){authorized_keys_ok?}
-      puts ascii_test("hostname not bound to a 'git.*' subdomain?"){not_using_reserved_hostname?}
 
       puts ascii_test("ssh deamon is up?"){ssh_deamon_up?}
       puts ascii_test("git daemon is up?"){git_daemon_up?}
@@ -147,10 +145,6 @@ module Gitorious
     def authorized_keys_ok?
       path = File.expand_path("~/.ssh/authorized_keys")
       (file_present?(path) && owned_by_user?(path, git_user))
-    end
-
-    def not_using_reserved_hostname?
-      !GitoriousConfig.using_reserved_hostname?
     end
 
     # TODO impl and wire this one up as well

@@ -31,7 +31,6 @@ class Admin::DiagnosticsController < ApplicationController
     @repo_dir_ok = markup(repo_dir_ok?)
     @tarball_dirs_ok = markup(tarball_dirs_ok?)
     @authorized_keys_ok = markup(authorized_keys_ok?)
-    @not_using_reserved_hostname = markup(not_using_reserved_hostname?)
 
     @ssh_deamon_up = markup(ssh_deamon_up?)
     @git_daemon_up = markup(git_daemon_up?)
@@ -61,7 +60,7 @@ class Admin::DiagnosticsController < ApplicationController
     else
       render :text => "Error! Diagnostic summary page not exposed, see 'turn_on_public_diagnostic_summary_page' setting in gitorious.sample.yml", :status => 500
     end
-  end  
+  end
 
 
   private
@@ -79,5 +78,5 @@ class Admin::DiagnosticsController < ApplicationController
       redirect_to root_path
     end
   end
-  
+
 end

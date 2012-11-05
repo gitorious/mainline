@@ -56,11 +56,6 @@ unless defined? GitoriousConfig
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
 
-  if GitoriousConfig.using_reserved_hostname?
-    Rails.logger.warn "The specified gitorious_host is reserved in Gitorious\n" +
-      "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
-  end
-
   GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
   GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
   GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
@@ -78,6 +73,10 @@ unless defined? GitoriousConfig
       Gitorious::Application.paths.app.views.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))
     end
   end
+
+  # Used to be we supported a special git/http subdomain. No longer. The
+  # git_http_host setting can be used to emulate the old behavior
+  GitoriousConfig["git_http_host"] ||= GitoriousConfig["gitorious_host"]
 end
 
 GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"
