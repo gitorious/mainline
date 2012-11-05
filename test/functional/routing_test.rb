@@ -99,6 +99,20 @@ class RoutingTest < ActionController::TestCase
   end
 
   context "Project routing" do
+    should "recognize /projects" do
+      assert_recognizes({ :controller => "projects",
+                          :action => "index"
+                        }, {
+                          :path => "/projects",
+                          :method => :get
+                        })
+
+      assert_generates("/projects", {
+                         :controller => "projects",
+                         :action => "index"
+                       })
+    end
+
     should "recognize /projectname" do
       assert_recognizes({ :controller => "projects",
                           :action => "show",
