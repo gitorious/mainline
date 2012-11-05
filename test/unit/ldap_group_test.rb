@@ -23,6 +23,8 @@ class LdapGroupTest < ActiveSupport::TestCase
     LdapGroup.any_instance.stubs(:validate_ldap_dns)
   end
 
+  should validate_presence_of(:name)
+
   context "Ldap group serialization" do
     setup {
       @group = ldap_groups(:first_ldap_group)

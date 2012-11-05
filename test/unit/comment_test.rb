@@ -20,6 +20,10 @@
 require "test_helper"
 
 class CommentTest < ActiveSupport::TestCase
+  should validate_presence_of(:target)
+  should validate_presence_of(:user_id)
+  should validate_presence_of(:project_id)
+
   context "message notifications" do
     setup do
       @merge_request = merge_requests(:moes_to_johans_open)

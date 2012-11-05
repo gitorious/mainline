@@ -1,94 +1,38 @@
-* Gems that went out of style [3/21]
+* Gems that went out of style [20/21]
 ** DONE gem "validates_url_format_of", "0.1.1"
 ** DONE gem "SystemTimer", "1.2.3" (from resque group)
 ** TODO Reservations
-** TODO verify has moved to routing [0/1]
-*** TODO UsersController
-**** verify :method => :put, :only => [:update_password, :update]
-**** verify :method => :delete, :only => :avatar
-**** verify :method => :post, :only => [:create, :forgot_password_create]
+** DONE verify has moved to routing
 ** DONE open_id_authentication
-** TODO HookTest
-*** should_belong_to :repository
-*** should_validate_presence_of :user, :repository, :url
-** TODO EmailTest
-*** should_belong_to :user
-*** should_validate_presence_of :address
-*** should_not_allow_values_for :address, "kernel.wtf", "you@host"
-*** should_allow_values_for :address, "johan@example.com", "ker+nel.w-t-f@foo-bar.co.uk"
-*** should_ensure_length_in_range(:address, 5..255)
-*** should_validate_uniqueness_of :address, :scoped_to => "user_id", :case_sensitive => false
-** TODO CommentTest
-*** should_validate_presence_of :target, :user_id, :project_id
-** TODO CommittershipsTest
-*** should_validate_presence_of :repository_id, :committer_type, :committer_id
-** TODO FavoriteTest
-***
-  context "In general" do
-    should_validate_presence_of :watchable_type, :watchable_id, :user_id
-    should_belong_to :user
-    should_belong_to :watchable
-    should_validate_uniqueness_of :user_id, :scoped_to => [:watchable_id, :watchable_type]
-  end
-** TODO LdapGroupTest
-*** should_validate_presence_of :name
-** TODO MergeRequestStatusTest
-*** should_belong_to :project
-*** should_validate_presence_of :project, :state, :name
-** TODO MergeRequestTest
-*** should_validate_presence_of :user, :source_repository, :target_repository
-*** should_validate_presence_of :summary, :sequence_number
-*** should_have_many :comments
-*** should_not_allow_mass_assignment_of :sequence_number
-** TODO MessageTest
-*** should_belong_to :sender
-*** should_belong_to :recipient
-*** should_validate_presence_of :subject, :body
-*** should_belong_to :notifiable
-*** should_have_many :replies
-** TODO RepositoryTest
-*** should_validate_presence_of :user_id, :name, :owner_id
-*** should_validate_uniqueness_of :hashed_path
-*** should_validate_uniqueness_of :name, :scoped_to => :project_id, :case_sensitive => false
-*** should_have_many :hooks, :dependent => :destroy
-** TODO SiteTest
-*** should_have_many :projects
-*** should_validate_presence_of :title
-** TODO SshKeyTest
-*** should_validate_presence_of :user_id, :key
-** TODO UserTest
-*** should_have_many :email_aliases
-*** should_have_many :committerships, :dependent => :destroy
-*** should_have_many :memberships, :dependent => :destroy
-*** should_have_many :email_aliases, :dependent => :destroy
-*** should_have_many :commit_repositories
-*** should_have_many :favorites, :dependent => :destroy
-*** should_have_many :feed_items
-*** should_validate_presence_of :login, :password, :password_confirmation, :email
-*** should_validate_acceptance_of :terms_of_use
-*** should_not_allow_values_for :login, "john.doe", "john_doe"
-*** should_allow_values_for :login, "JohnDoe", "john-doe", "john999"
-** TODO EventTest
-*** should_have_many :feed_items, :dependent => :destroy
-** TODO ProjectTest
-*** should_belong_to :containing_site
-*** should_have_many :merge_request_statuses
-** TODO FeedItemTest
-*** should_belong_to :event
-*** should_belong_to :watcher
+** DONE HookTest
+** DONE EmailTest
+** DONE CommentTest
+** DONE CommittershipsTest
+** DONE FavoriteTest
+** DONE LdapGroupTest
+** DONE MergeRequestStatusTest
+** DONE MergeRequestTest
+** DONE MessageTest
+** DONE RepositoryTest
+** DONE SiteTest
+** DONE SshKeyTest
+** DONE UserTest
+** DONE EventTest
+** DONE ProjectTest
+** DONE FeedItemTest
 * Instructions to users [0/2]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
-* Tests that are muted/not passing [5/11]
-** TODO stomp_adapter_test.rb (ActiveMessaging)
-** TODO test/unit/user_test.rb (OpenID)
-** TODO test/unit/lib/ssh_client_test.rb (Routing)
-** TODO test/unit/repository_test.rb (???)
+* Tests that are muted/not passing [11/11]
+** DONE stomp_adapter_test.rb (ActiveMessaging)
+** DONE test/unit/user_test.rb (OpenID)
+** DONE test/unit/lib/ssh_client_test.rb (Routing)
+** DONE test/unit/repository_test.rb (???)
 ** DONE test/unit/helpers/repositories_helper_test.rb
 ** DONE test/unit/lib/gitorious/messaging/sync_adapter_test.rb
-** TODO test/unit/merge_request_test.rb (???)
+** DONE test/unit/merge_request_test.rb (???)
 ** DONE test/unit/lib/gitorious/authentication/ldap_authentication_test.rb
-** TODO test/unit/helpers/event_rendering_helper_test.rb (Routing)
+** DONE test/unit/helpers/event_rendering_helper_test.rb (Routing)
 ** DONE test/unit/helpers/blobs_helper_test.rb
 ** DONE test/unit/helpers/application_helper_test.rb
 * Docs [0/2]
@@ -116,4 +60,4 @@
       assert_response :success
       assert_equal @user, assigns(:owner)
       assigns(:repository) == @repository
-    end
+      end

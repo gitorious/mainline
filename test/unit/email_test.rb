@@ -20,6 +20,16 @@
 require "test_helper"
 
 class EmailTest < ActiveSupport::TestCase
+  should belong_to(:user)
+  should validate_presence_of(:address)
+  should_not allow_value("kernel.wtf").for(:address)
+  should_not allow_value("you@host").for(:address)
+  should allow_value("johan@example.com").for(:address)
+  should allow_value("ker+nel.w-t-f@foo-bar.co.uk").for(:address)
+  # TODO: How to do this in shoulda 3.x?
+  # should ensure_length_in_range(:address, 5..255)
+  should validate_uniqueness_of(:address).scoped_to(:user_id).case_insensitive
+
   should "default to a pending state" do
     e = Email.create!(:address => "foo@bar.com", :user => users(:johan))
     assert e.pending?

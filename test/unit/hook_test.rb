@@ -20,6 +20,11 @@
 require "test_helper"
 
 class HookTest < ActiveSupport::TestCase
+  should belong_to(:repository)
+  should validate_presence_of(:user)
+  should validate_presence_of(:repository)
+  should validate_presence_of(:url)
+
   context "URL validation" do
     should "require a valid URL" do
       hook = Hook.new(:url => "http:/gitorious.org/web-hooks")

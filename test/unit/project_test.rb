@@ -30,6 +30,9 @@ class ProjectTest < ActiveSupport::TestCase
     }.merge(options))
   end
 
+  should belong_to(:containing_site)
+  should have_many(:merge_request_statuses)
+
   should "have a title to be valid" do
     project = create_project(:title => nil)
     assert !project.valid?, 'valid? should be false'

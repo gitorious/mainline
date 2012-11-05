@@ -25,6 +25,24 @@ class UserTest < ActiveSupport::TestCase
     @user = User.new
   end
 
+  should have_many(:email_aliases)
+  should have_many(:committerships).dependent(:destroy)
+  should have_many(:memberships).dependent(:destroy)
+  should have_many(:email_aliases).dependent(:destroy)
+  should have_many(:favorites).dependent(:destroy)
+  should have_many(:commit_repositories)
+  should have_many(:feed_items)
+  should validate_presence_of(:login)
+  should validate_presence_of(:password)
+  should validate_presence_of(:password_confirmation)
+  should validate_presence_of(:email)
+  should validate_acceptance_of(:terms_of_use)
+  should_not allow_value("john.doe").for(:login)
+  should_not allow_value("john_doe").for(:login)
+  should allow_value("JohnDoe").for(:login)
+  should allow_value("john-doe").for(:login)
+  should allow_value("john999").for(:login)
+
   should "create a valid user" do
     assert_difference("User.count") do
       user = create_user

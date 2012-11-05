@@ -39,6 +39,13 @@ class RepositoryTest < ActiveSupport::TestCase
     clear_message_queue
   end
 
+  should validate_presence_of(:user_id)
+  should validate_presence_of(:name)
+  should validate_presence_of(:owner_id)
+  should validate_uniqueness_of(:hashed_path)
+  should validate_uniqueness_of(:name).scoped_to(:project_id)
+  should have_many(:hooks).dependent(:destroy)
+
   should "only accept names with alphanum characters in it" do
     @repository.name = "foo bar"
     assert !@repository.valid?, "valid? should be false"

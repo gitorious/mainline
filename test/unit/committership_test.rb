@@ -20,6 +20,10 @@
 require "test_helper"
 
 class CommittershipTest < ActiveSupport::TestCase
+  should validate_presence_of(:repository_id)
+  should validate_presence_of(:committer_type)
+  should validate_presence_of(:committer_id)
+
   should "have a creator" do
     committership = new_committership
     assert_equal users(:johan), committership.creator

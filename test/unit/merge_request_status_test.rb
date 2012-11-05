@@ -20,6 +20,11 @@
 require "test_helper"
 
 class MergeRequestStatusTest < ActiveSupport::TestCase
+  should belong_to(:project)
+  should validate_presence_of(:project)
+  should validate_presence_of(:state)
+  should validate_presence_of(:name)
+
   context "State" do
     setup do
       @project = Project.first

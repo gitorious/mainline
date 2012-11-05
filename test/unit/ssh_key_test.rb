@@ -36,6 +36,9 @@ class SshKeyTest < ActiveSupport::TestCase
     clear_message_queue
   end
 
+  should validate_presence_of(:user_id)
+  should validate_presence_of(:key)
+
   should "validate the key using ssh-keygen" do
     key = new_key
     key.expects(:valid_key_using_ssh_keygen?).returns(false)

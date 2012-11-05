@@ -43,7 +43,7 @@ end
 group :test do
   gem "mocha", "0.9.10", :require => false
   gem "factory_girl_rails", "~> 4.1"
-  gem "shoulda", "~> 2.9.1"
+  gem "shoulda", "~> 3.3"
   gem "rots", :git => "https://github.com/roman/rots.git"
   gem "capybara", "1.0.1"
   gem "launchy", "2.0.5" # used only for Capybara's save_and_open_page for launching the browser

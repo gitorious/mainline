@@ -27,6 +27,15 @@ class FavoriteTest < ActiveSupport::TestCase
     [user, project, repo]
   end
 
+  context "In general" do
+    should belong_to(:user)
+    should belong_to(:watchable)
+    should validate_presence_of(:watchable_type)
+    should validate_presence_of(:watchable_id)
+    should validate_presence_of(:user_id)
+    should validate_uniqueness_of(:user_id).scoped_to(:watchable_id, :watchable_type)
+  end
+
   context "Watching a repository" do
     setup do
       @user, @project, @repo = create_favorited_repo

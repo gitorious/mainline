@@ -37,6 +37,8 @@ class EventTest < ActiveSupport::TestCase
     c
   end
 
+  should have_many(:feed_items).dependent(:destroy)
+
   should "belong to a user or have an author email" do
     event = Event.new(:target => repositories(:johans), :body => "blabla", :project => @project, :action => Action::COMMIT)
     assert event.user.nil?

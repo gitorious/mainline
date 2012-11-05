@@ -20,35 +20,42 @@
 require "test_helper"
 
 class MessageTest < ActiveSupport::TestCase
-  context 'The state machine' do
+  should belong_to(:sender)
+  should belong_to(:recipient)
+  should validate_presence_of(:subject)
+  should validate_presence_of(:body)
+  should belong_to(:notifiable)
+  should have_many(:replies)
+
+  context "The state machine" do
     setup do
       @recipient = FactoryGirl.create(:user)
       @sender = FactoryGirl.create(:user)
     end
 
-    context 'class level' do
-      should 'have all the required states' do
+    context "class level" do
+      should "have all the required states" do
         registered_state_names = Message.state_machines[:aasm_state].states.collect(&:name)
         [:unread, :read].each do |state|
           assert registered_state_names.include?(state)
         end
       end
 
-      should 'have all the required events' do
+      should "have all the required events" do
         # Yeah, I know this is a bit brute, will refactor once all the models are migrated
         registered_event_names = Message.state_machines[:aasm_state].events.instance_variable_get("@nodes").collect(&:name)
         [:read].each {|e| assert registered_event_names.include?(e)}
       end
     end
 
-    context 'instance level' do
+    context "instance level" do
       setup do
         @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @recipient)
         @recipient = @message.recipient
         assert_not_nil(@recipient)
       end
 
-      should 'transition to read when the user reads it' do
+      should "transition to read when the user reads it" do
         unread_message_count = @recipient.received_messages.unread_count
         @message.read!
         assert_equal(unread_message_count - 1, @recipient.received_messages.unread_count)
@@ -56,46 +63,46 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Replying to a message' do
+  context "Replying to a message" do
     setup do
       @message    = FactoryGirl.create(:message)
       @reply = @message.build_reply(:body => "Thanks. That is much appreciated")
     end
 
-    should 'set the sender and recipient correctly' do
+    should "set the sender and recipient correctly" do
       assert_equal @message.recipient, @reply.sender
       assert_equal @message.sender, @reply.recipient
     end
 
-    should 'be able to override the subject of a message' do
+    should "be able to override the subject of a message" do
       @reply = @message.build_reply(:body => "Thanks. That is much appreciated", :subject => "WTF")
       assert_equal("WTF", @reply.subject)
     end
 
-    should 'set a default subject when replying to a message' do
+    should "set a default subject when replying to a message" do
       assert_equal("Re: #{@message.subject}", @reply.subject)
     end
 
-    should 'flag which message the reply relates to' do
+    should "flag which message the reply relates to" do
       assert_equal @message, @reply.in_reply_to
     end
 
-    should "add to its original messages's responses" do
+    should "add to its original messages' responses" do
       assert @reply.save
       assert @message.replies.include?(@reply)
     end
 
-    should 'set the root message' do
+    should "set the root message" do
       assert @reply.save
       assert_equal @message, @reply.root_message
     end
 
-    should 'flag the root message as having unread messages when a new reply is created' do
+    should "flag the root message as having unread messages when a new reply is created" do
       assert !@message.has_unread_replies?
       assert @reply.save
       assert @message.reload.has_unread_replies?
       @message.update_attribute(:has_unread_replies, false)
-      reply_to_reply = @reply.build_reply(:body => 'All right!', :subject => 'Feeling chatty')
+      reply_to_reply = @reply.build_reply(:body => "All right!", :subject => "Feeling chatty")
       assert reply_to_reply.save
       assert !@message.reload.has_unread_replies?
     end
@@ -127,12 +134,12 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Calculating the number of messages in a thread' do
+  context "Calculating the number of messages in a thread" do
     setup do
       @message = FactoryGirl.create(:message)
     end
 
-    should 'calculate the number of unread messages' do
+    should "calculate the number of unread messages" do
       assert_equal(1, @message.number_of_messages_in_thread)
       reply = @message.build_reply(:body => "Thanks so much")
       assert reply.save
@@ -145,15 +152,15 @@ class MessageTest < ActiveSupport::TestCase
       assert_equal(7, @message.number_of_messages_in_thread)
     end
 
-    should 'know which messages are in the same thread' do
-      reply = @message.build_reply(:body => 'Yeah')
+    should "know which messages are in the same thread" do
+      reply = @message.build_reply(:body => "Yeah")
       reply.save
       reply_to_reply = reply.build_reply(:body=>"Nope")
       reply_to_reply.save
       assert @message.messages_in_thread.include?(reply_to_reply)
     end
 
-    should 'know whether there are any unread messages in the thread' do
+    should "know whether there are any unread messages in the thread" do
       @message.read!
       assert !@message.unread_messages?
       reply = @message.build_reply(:body => "This is not read yet")
@@ -166,7 +173,7 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Email notifications' do
+  context "Email notifications" do
     setup do
       @privacy_lover = FactoryGirl.create(:user, :wants_email_notifications => false)
       @email_lover = FactoryGirl.create(:user, :wants_email_notifications => true)
@@ -176,7 +183,7 @@ class MessageTest < ActiveSupport::TestCase
       clear_message_queue
     end
 
-    should 'fire a notification event on message creation' do
+    should "fire a notification event on message creation" do
       assert @email_lover.wants_email_notifications?
       @message.sender = @privacy_lover
       @message.recipient = @email_lover
@@ -184,7 +191,7 @@ class MessageTest < ActiveSupport::TestCase
       @message.save
     end
 
-    should 'not fire a notification event for opt-out users' do
+    should "not fire a notification event for opt-out users" do
       assert !@privacy_lover.wants_email_notifications?
       @message.sender = @email_lover
       @message.recipient = @privacy_lover
@@ -192,7 +199,7 @@ class MessageTest < ActiveSupport::TestCase
       @message.save
     end
 
-    should 'actually send the message to the queue' do
+    should "actually send the message to the queue" do
       @message.sender = @privacy_lover
       @message.recipient = @email_lover
       @message.save
@@ -204,7 +211,7 @@ class MessageTest < ActiveSupport::TestCase
                        })
     end
 
-    should 'not send a notification when the sender and recipient is the same person' do
+    should "not send a notification when the sender and recipient is the same person" do
       @message.sender = @message.recipient = @email_lover
       assert @message.recipient.wants_email_notifications?
       @message.expects(:schedule_email_delivery).never
@@ -232,16 +239,16 @@ class MessageTest < ActiveSupport::TestCase
     assert_equal "read", message.reload.aasm_state_for_user(users(:mike))
   end
 
-  context 'Rendering XML' do
+  context "Rendering XML" do
     setup {@message = FactoryGirl.create(:message)}
-    should 'include required attributes' do
+    should "include required attributes" do
       result = @message.to_xml
       assert_match /<recipient_name>#{@message.recipient.title}<\/recipient_name>/, result
     end
   end
 
-  context 'Mass email delivery' do
-    should_eventually 'create n messages when supplying several recipients'
+  context "Mass email delivery" do
+    should_eventually "create n messages when supplying several recipients"
   end
 
   context "Thottling" do
@@ -294,45 +301,45 @@ class MessageTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Archive state' do
+  context "Archive state" do
     setup do
       @sender = FactoryGirl.create(:user)
       @recipient = FactoryGirl.create(:user)
       @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @recipient)
     end
 
-    should 'be marked as archived by both sender and recipient when it is the same user' do
+    should "be marked as archived by both sender and recipient when it is the same user" do
       @message = FactoryGirl.create(:message, :sender => @sender, :recipient => @sender)
       @message.archived_by(@sender)
       assert @message.archived_by_sender?
       assert @message.archived_by_recipient?
     end
 
-    should 'initially be unread_by_both' do
+    should "initially be unread_by_both" do
       assert !@message.archived_by_sender?
       assert !@message.archived_by_recipient?
     end
 
-    should 'be archived by sender' do
+    should "be archived by sender" do
       @message.archived_by(@sender)
       assert @message.archived_by_sender?
       assert !@message.archived_by_recipient?
     end
 
-    should 'be archived by recipient' do
+    should "be archived by recipient" do
       @message.archived_by(@recipient)
       assert @message.archived_by_recipient?
       assert !@message.archived_by_sender?
     end
 
-    should 'be archived by both sender and recipient' do
+    should "be archived by both sender and recipient" do
       @message.archived_by(@sender)
       @message.archived_by(@recipient)
       assert @message.archived_by_sender?
       assert @message.archived_by_recipient?
     end
 
-    should 'be reset when a reply is created' do
+    should "be reset when a reply is created" do
       @message.archived_by(@sender)
       @message.save
       reply = @message.build_reply(:body => "Foo")
@@ -372,5 +379,4 @@ class MessageTest < ActiveSupport::TestCase
       assert !message.replies_enabled?
     end
   end
-
 end

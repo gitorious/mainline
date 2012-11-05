@@ -20,6 +20,9 @@
 require "test_helper"
 
 class SiteTest < ActiveSupport::TestCase
+  should have_many(:projects)
+  should validate_presence_of(:title)
+
   should "have a default site with a nil subdomain" do
     default_site = Site.default
     assert_equal "Gitorious", default_site.title
