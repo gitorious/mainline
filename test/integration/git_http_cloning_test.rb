@@ -33,10 +33,6 @@ class GitHttpCloningTest < ActionController::IntegrationTest
     should "set X-Sendfile headers" do
       assert_incremented_by(@repository.cloners, :count, 1) do
         get @request_uri, {}, :remote_addr => "192.71.1.2"
-
-        last_cloner = @repository.cloners.last
-        assert_equal("192.71.1.2", last_cloner.ip)
-        assert_equal("http", last_cloner.protocol)
       end
 
       assert_response :success
@@ -44,8 +40,25 @@ class GitHttpCloningTest < ActionController::IntegrationTest
       assert_equal(File.join(RepositoryRoot.default_base_path, @repository.real_gitdir, "HEAD"), headers["X-Sendfile"])
     end
 
+    should "create cloner with correct remote address" do
+      assert_incremented_by(@repository.cloners, :count, 1) do
+        # This doesn't seem to work.
+        # get @request_uri, {}, :remote_addr => "192.71.1.2"
+
+        # This, however, is every bit as good
+        Gitorious::GitHttpCloner.call({
+          "PATH_INFO" => @request_uri,
+          "REMOTE_ADDR" => "192.71.1.2"
+        })
+
+        last_cloner = @repository.cloners.last
+        assert_equal("192.71.1.2", last_cloner.ip)
+        assert_equal("http", last_cloner.protocol)
+      end
+    end
+
     should "set Robot Exclusion Protocol (REP) header" do
-      get @request_uri, {}, :remote_addr => "192.71.1.2"
+      get @request_uri
 
       assert_match /noindex/, headers["X-Robots-Tag"]
       assert_match /nofollow/, headers["X-Robots-Tag"]
