@@ -20,6 +20,7 @@
 ** DONE EventTest
 ** DONE ProjectTest
 ** DONE FeedItemTest
+* branch_and_path was Array, is now String
 * Instructions to users [0/2]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
@@ -61,3 +62,8 @@
       assert_equal @user, assigns(:owner)
       assigns(:repository) == @repository
       end
+
+* Config
+** Environment variables for all settings
+** Gitorious.use_config(Gitorious::Configuration.new(hash))
+** Possibly more than one API (not just GitoriousCONFIG)
