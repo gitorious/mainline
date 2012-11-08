@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -26,7 +27,7 @@ class MergeRequestStatus < ActiveRecord::Base
   before_save :synchronize_merge_request_statuses
 
   def self.default
-    find(:first, :conditions => {:default => true})
+    where(:default => true).first
   end
 
   def self.create_defaults_for_project(project)
@@ -40,7 +41,7 @@ class MergeRequestStatus < ActiveRecord::Base
         :name => "Closed",
         :state => MergeRequest::STATUS_CLOSED,
         :color => "#AA0000"
-      })    
+      })
   end
 
   def self.default_states

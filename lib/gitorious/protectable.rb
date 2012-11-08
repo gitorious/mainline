@@ -30,15 +30,16 @@ module Gitorious
     end
 
     def add_member(member)
-      return if content_memberships.count(:all, :conditions => ["member_id = ? and member_type = ?",
-                                                                member.id, member.class.to_s]) > 0
+      return if content_memberships.where("member_id = ? and member_type = ?",
+                                          member.id,
+                                          member.class.to_s).count > 0
       content_memberships.create!(:member => member)
     end
 
     def public?
       content_memberships.length == 0
     end
- 
+
     def private?
       !public?
     end

@@ -159,7 +159,7 @@ class UsersControllerTest < ActionController::TestCase
     get :feed, :id => user.login, :format => "atom"
     assert_response :success
     assert_equal user, assigns(:user)
-    assert_equal user.events.find(:all, :limit => 30, :order => "created_at desc"), assigns(:events)
+    assert_equal user.events.limit(30).order("created_at desc"), assigns(:events)
   end
 
   context "#forgot_password" do

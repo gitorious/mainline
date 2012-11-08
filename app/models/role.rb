@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -21,19 +22,14 @@ class Role < ActiveRecord::Base
 
   include Comparable
 
-  # TODO: use this when we upgrade to rails 2.3, and nuke the ::all override
-  # default_scope :order => 'kind desc'
-
-  def self.all
-    find(:all, :order => "kind desc")
-  end
+  default_scope :order => "kind desc"
 
   def self.admin
-    find_by_kind(KIND_ADMIN)
+    where(:kind => KIND_ADMIN).first
   end
 
   def self.member
-    find_by_kind(KIND_MEMBER)
+    where(:kind => KIND_MEMBER).first
   end
 
   def admin?

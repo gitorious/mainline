@@ -43,8 +43,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    include = [:tags, { :repositories => :project }]
-    @projects = filter(@user.projects.find(:all, :include => include))
+    @projects = filter(@user.projects.includes(:tags, { :repositories => :project }))
     @repositories = filter(@user.commit_repositories)
     @events = paginated_events
     return if @events.count == 0 && params.key?(:page)
@@ -62,8 +61,8 @@ class UsersController < ApplicationController
 
   def feed
     @user = User.find_by_login!(params[:id])
-    @events = filter(@user.events.find(:all, :order => "events.created_at desc",
-                                       :include => [:user, :project], :limit => 30))
+    @events = filter(@user.events.order("events.created_at desc").
+                     includes(:user, :project).limit(30))
     respond_to do |format|
       format.html { redirect_to user_path(@user) }
       format.atom { }

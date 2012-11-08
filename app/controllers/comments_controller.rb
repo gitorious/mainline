@@ -29,7 +29,7 @@ class CommentsController < ApplicationController
   renders_in_site_specific_context
 
   def index
-    @comments = @target.comments.find(:all, :include => :user)
+    @comments = @target.comments.includes(:user)
     @merge_request_count = @repository.merge_requests.count_open
     @atom_auto_discovery_url = project_repository_comments_path(@project, @repository,
       :format => :atom)

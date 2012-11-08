@@ -65,7 +65,7 @@ class MessagesController < ApplicationController
     message_ids = params[:message_ids].to_a
     message_ids.each do |message_id|
       # if message = current_user.all_messages.find(message_id)
-      if message = Message.find(:first, :conditions => ['(recipient_id=? OR sender_id=?) AND id=?', current_user, current_user, message_id])
+      if message = Message.where("(recipient_id=? OR sender_id=?) AND id=?", current_user, current_user, message_id).first
         if params[:requested_action] == 'archive'
           message.archived_by(current_user)
           message.save!

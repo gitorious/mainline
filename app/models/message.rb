@@ -38,8 +38,7 @@ class Message < ActiveRecord::Base
 
   throttle_records :create, :limit => 10,
     :counter => proc{|msg|
-      msg.sender.sent_messages.count(:all,
-        :conditions => ["created_at > ?", 1.day.ago])
+      msg.sender.sent_messages.where("created_at > ?", 1.day.ago).count
     },
     :conditions => proc{|msg| {:sender_id => msg.sender.id, :notifiable_type => nil} },
     :timeframe => 15.minutes

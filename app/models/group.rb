@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -42,27 +43,29 @@ class Group < ActiveRecord::Base
     mainline_ids = projects.map do |project|
       project.repositories.mainlines.map{|r| r.id }
     end.flatten
-    Committership.groups.find(:all,
-      :conditions => { :repository_id => mainline_ids }).map{|c| c.committer }.uniq
+
+    all = Committership.groups.where(:repository_id => mainline_ids)
+    all.map { |c| c.committer }.uniq
   end
 
   # Finds the most active groups by activity in repositories they're committers in
   def self.most_active(limit = 10, cutoff = 5)
     Rails.cache.fetch("groups:most_active:#{limit}:#{cutoff}", :expires_in => 1.hour) do
       # FIXME: there's a certain element of approximation in here
-      find(:all, :joins => [{:committerships => {:repository => :events}}],
-        :select => %Q{groups.*, committerships.repository_id,
-          repositories.id, events.id, events.target_id, events.target_type,
-          count(events.id) as event_count},
-        :group => "groups.id",
-        :conditions => ["committerships.repository_id = events.target_id and " +
-                        "events.target_type = ? AND events.created_at > ?",
-                        "Repository", cutoff.days.ago],
-        :order => "event_count desc",
-        :limit => limit)
+      active = select("groups.*, committerships.repository_id," +
+             "repositories.id, events.id, events.target_id, events.target_type," +
+             "count(events.id) as event_count").
+        where("committerships.repository_id = events.target_id and " +
+              "events.target_type = ? AND events.created_at > ?",
+              "Repository",
+              cutoff.days.ago).
+        joins(:committerships => { :repository => :events }).
+        group("groups.id").
+        order("count(events.id) desc").
+        limit(limit)
+      MarshalableRelation.extend(active, Group)
     end
   end
-
 
   def all_related_project_ids
     all_project_ids = projects.map{|p| p.id }

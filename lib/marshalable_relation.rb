@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
 #   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -17,18 +16,21 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-class AddProjectIdToComments < ActiveRecord::Migration
-  def self.up
-    add_column  :comments, :project_id, :integer
-    add_index   :comments, :project_id
-    ActiveRecord::Base::reset_column_information
-
-    Comment.all.each do |comment|
-      comment.update_attributes(:project_id => comment.repository.project_id)
+class MarshalableRelation
+  # Extend active record relations with +marshal_dump+ and
+  # +marshal_load+ methods that serializes the objects/relations as
+  # JSON. This allows them to be cached with Rails.cache
+  #
+  def self.extend(relation, klass)
+    (class << relation; self; end).send(:define_method, :marshal_dump) do
+      { :class_name => klass.to_s, :entries => map(&:attributes).to_json }
     end
-  end
 
-  def self.down
-    remove_column :comments, :project_id
+    def relation.marshal_load(dump)
+      klass = Object.const_get(dump[:class_name])
+      JSON.parse(dump[:attributes]).map { |attrs| klass.new(attrs) }
+    end
+
+    relation
   end
 end

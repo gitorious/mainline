@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,8 +29,7 @@ class StatusTag
   end
 
   def status
-    project.merge_request_statuses.find(:first,
-      :conditions => ["LOWER(name) = ?", name.downcase])
+    project.merge_request_statuses.where("LOWER(name) = ?", name.downcase).first
   end
 
   def description

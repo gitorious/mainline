@@ -87,27 +87,30 @@ class User < ActiveRecord::Base
 
   end
 
-  has_many :received_messages, :class_name => "Message",
-      :foreign_key => "recipient_id", :order => "created_at DESC" do
+  has_many :received_messages, {
+    :class_name => "Message",
+    :foreign_key => "recipient_id",
+    :order => "created_at DESC"
+  } do
     def unread
-      find(:all, :conditions => {:aasm_state => "unread"})
+      where({ :aasm_state => "unread" })
     end
 
     def top_level
-      find(:all, :conditions => {:in_reply_to_id => nil})
+      where({ :in_reply_to_id => nil })
     end
 
     def unread_count
-      count(:all, :conditions => ["aasm_state = ? and archived_by_recipient = ? and sender_id != recipient_id",
-                                  "unread", false])
+      where("aasm_state = ? and archived_by_recipient = ? and sender_id != recipient_id",
+            "unread", false).count
     end
   end
 
   def all_messages
-    Message.find(:all, :conditions => ["sender_id = ? OR recipient_id = ?", self, self])
+    Message.where("sender_id = ? OR recipient_id = ?", self, self)
   end
 
-  Paperclip.interpolates("login"){|attachment, style| attachment.instance.login.downcase}
+  Paperclip.interpolates("login") { |attachment, style| attachment.instance.login.downcase }
 
   avatar_local_path = "/system/:attachment/:login/:style/:basename.:extension"
   has_attached_file :avatar,
@@ -134,10 +137,13 @@ class User < ActiveRecord::Base
                          {:user => self.id, :yes => true, :no => false, :limit => limit}])
   end
 
-  has_many :sent_messages, :class_name => "Message",
-      :foreign_key => "sender_id", :order => "created_at DESC" do
+  has_many :sent_messages, {
+    :class_name => "Message",
+    :foreign_key => "sender_id",
+    :order => "created_at DESC"
+  } do
     def top_level
-      find(:all, :conditions => {:in_reply_to_id => nil})
+      where(:in_reply_to_id => nil)
     end
   end
 
@@ -191,36 +197,38 @@ class User < ActiveRecord::Base
   end
 
   def self.most_active(limit = 10, cutoff = 3)
-    Rails.cache.fetch("users:most_active_pushers:#{limit}:#{cutoff}",
-        :expires_in => 1.hour) do
-      find(:all, :select => "users.*, events.action, count(events.id) as event_count",
-        :joins => :events, :group => "users.id", :order => "event_count desc",
-        :conditions => ["events.action = ? and events.created_at > ?",
-                        Action::PUSH_SUMMARY, cutoff.days.ago],
-        :limit => limit)
+    cache_key = "users:most_active_pushers:#{limit}:#{cutoff}"
+    Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
+      users = select("users.*, events.action, count(events.id) as event_count").
+        where("events.action = ? and events.created_at > ?",
+              Action::PUSH_SUMMARY,
+              cutoff.days.ago).
+        joins(:events).
+        group("users.id").
+        order("count(events.id) desc").
+        limit(limit)
+      MarshalableRelation.extend(users.all, User)
     end
   end
 
   def self.find_fuzzy(query)
-    find(:all,
-         :conditions => ["lower(login) like :name or lower(email) like :name",
-                         { :name => "%" + query.downcase + "%" }],
-         :limit => 10)
+    where("lower(login) like :name or lower(email) like :name",
+          { :name => "%" + query.downcase + "%" }).limit(10)
   end
 
   # A Hash of repository => count of mergerequests active in the
   # repositories that the user is a reviewer in
   def review_repositories_with_open_merge_request_count
-    mr_repository_ids = review_repositories(self).find(:all,
-      :select => "repository_id").map{|c| c.repository_id }
-    Repository.find(:all, {
-        :select => "repositories.*, count(merge_requests.id) as open_merge_request_count",
-        :conditions => ["repositories.id in (?) and merge_requests.status = ?",
-                        mr_repository_ids, MergeRequest::STATUS_OPEN],
-        :group => "repositories.id",
-        :joins => :merge_requests,
-        :limit => 5
-      })
+    repo_ids = review_repositories(self).select("repository_id")
+    mr_repository_ids = repo_ids.map { |c| c.repository_id }
+    Repository.
+      select("repositories.*, count(merge_requests.id) as open_merge_request_count").
+      where("repositories.id in (?) and merge_requests.status = ?",
+            mr_repository_ids,
+            MergeRequest::STATUS_OPEN).
+      group("repositories.id").
+      joins(:merge_requests).
+      limit(5)
   end
 
   # Activates the user in the database.
@@ -362,10 +370,7 @@ class User < ActiveRecord::Base
   end
 
   def watched_objects
-    favorites.find(:all, {
-      :include => :watchable,
-      :order => "id desc"
-    }).collect(&:watchable)
+    favorites.includes(:watchable).order("id desc").collect(&:watchable)
   end
 
   def paginated_events_in_watchlist(pagination_options = {})
@@ -378,7 +383,7 @@ class User < ActiveRecord::Base
 
       total = (watched.length < watched.per_page ? watched.length : watched.total_entries)
       items = WillPaginate::Collection.new(watched.current_page, watched.per_page, total)
-      items.replace(Event.find(watched.map(&:event_id), {:order => "created_at desc"}))
+      items.replace(Event.where(:id => watched.map(&:event_id)).order("created_at desc"))
     end
   end
 
@@ -387,7 +392,7 @@ class User < ActiveRecord::Base
   end
 
   def self.admins
-    User.find(:all, :conditions=> {:is_admin => true})
+    User.where(:is_admin => true)
   end
 
   protected

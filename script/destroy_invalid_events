@@ -3,7 +3,7 @@
 ENV["RAILS_ENV"] ||= "production"
 require File.dirname(__FILE__)+'/../config/environment'
 
-Event.find(:all).each do |event|
+Event.all.each do |event|
   begin
     event.target_type.constantize.find(event.target_id)
     Project.find(event.project_id)
@@ -12,5 +12,3 @@ Event.find(:all).each do |event|
     event.destroy
   end
 end
-
-

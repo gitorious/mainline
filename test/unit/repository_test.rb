@@ -859,7 +859,7 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   context "Thottling" do
-    setup{ Repository.destroy_all }
+    setup { Repository.all.collect(&:destroy) }
 
     should "throttle on create" do
       assert_nothing_raised do
@@ -1308,9 +1308,9 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   context "Deletion" do
-    setup {
+    setup do
       @repository = repositories(:johans)
-    }
+    end
 
     should "ensure merge requests are removed first to avoid cascading validation errors" do
       mr = mock

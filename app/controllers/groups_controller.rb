@@ -81,14 +81,6 @@ class GroupsController < ApplicationController
     redirect_to group_path(@group)
   end
 
-  # TODO: Remove? Don't thing it's used
-  # def auto_complete_for_project_slug
-  #   @projects = filter(Project.find(:all,
-  #     :conditions => ['LOWER(slug) LIKE ?', "%#{params[:project][:slug].downcase}%"],
-  #     :limit => 10))
-  #   render :layout => false
-  # end
-
   protected
   def find_group_and_ensure_group_adminship
     @group = Team.find_by_name!(params[:id])

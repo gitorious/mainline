@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -19,7 +20,7 @@
 module RecordThrottling
 
   class LimitReachedError < StandardError; end
-  
+
   def self.disable
     @@disabled = true
   end
@@ -37,18 +38,18 @@ module RecordThrottling
   end
 
   def self.default_behavior
-   (GitoriousConfig["disable_record_throttling"] && 
+   (GitoriousConfig["disable_record_throttling"] &&
     GitoriousConfig["disable_record_throttling"] == true)
   end
 
   @@disabled = RecordThrottling::default_behavior
-  
+
   def self.included(base)
     base.class_eval do
       include RecordThrottlingInstanceMethods
 
-      # Thottles record creation/update. 
-      # Raises RecordThrottling::RecordThrottleLimitReachedError if limit is 
+      # Thottles record creation/update.
+      # Raises RecordThrottling::RecordThrottleLimitReachedError if limit is
       # reached.
       #
       # Options:
@@ -62,7 +63,7 @@ module RecordThrottling
       # Example usage:
       # throttle_records :create, :limit => 5,
       #   :counter => proc{|record|
-      #      record.user.projects.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+      #      record.user.projects.where("created_at > ?", 5.minutes.ago).count
       #   },
       #   :conditions => proc{|record| {:user_id => record.user.id} },
       #   :timeframe => 5.minutes
@@ -73,7 +74,7 @@ module RecordThrottling
       end
     end
   end
-  
+
   module RecordThrottlingInstanceMethods
     def check_throttle_limits
       unless RecordThrottling.disabled?
@@ -81,7 +82,7 @@ module RecordThrottling
         if options[:counter].call(self) < options[:limit]
           return true
         end
-        last_create = self.class.maximum(:created_at, 
+        last_create = self.class.maximum(:created_at,
                                          :conditions => options[:conditions].call(self))
         if last_create && last_create >= options[:timeframe].ago
           raise LimitReachedError

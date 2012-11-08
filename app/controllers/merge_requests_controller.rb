@@ -122,8 +122,10 @@ class MergeRequestsController < ApplicationController
   def new
     @merge_request = @repository.proposed_merge_requests.new
     @merge_request.user = current_user
-    @repositories = filter(@owner.repositories.find(:all,
-      :conditions => ["id != ? AND kind != ? AND merge_requests_enabled = ?", @repository.id, Repository::KIND_TRACKING_REPO, true]))
+    @repositories = filter(@owner.repositories.where("id != ? AND kind != ? AND merge_requests_enabled = ?",
+                                                     @repository.id,
+                                                     Repository::KIND_TRACKING_REPO,
+                                                     true))
     if first = @repository.parent || @repositories.first
       @merge_request.target_repository_id = first.id
     end
@@ -160,8 +162,7 @@ class MergeRequestsController < ApplicationController
     else
       respond_to do |format|
         format.html {
-          @repositories = @owner.repositories.find(:all,
-            :conditions => ["id != ?", @repository.id])
+          @repositories = @owner.repositories.where("id != ?", @repository.id)
           get_branches_and_commits_for_selection
           render :action => "new"
         }
@@ -171,7 +172,7 @@ class MergeRequestsController < ApplicationController
   end
 
   def edit
-    @repositories = filter(@owner.repositories.find(:all, :conditions => ["id != ?", @repository.id]))
+    @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
     get_branches_and_commits_for_selection
   end
 
@@ -182,8 +183,7 @@ class MergeRequestsController < ApplicationController
       flash[:success] = I18n.t "merge_requests_controller.update_success"
       redirect_to [@repository.project, @repository, @merge_request]
     else
-      @repositories = filter(@owner.repositories.find(:all,
-        :conditions => ["id != ?", @repository.id]))
+      @repositories = filter(@owner.repositories.where("id != ?", @repository.id))
       get_branches_and_commits_for_selection
       render :action => "edit"
     end

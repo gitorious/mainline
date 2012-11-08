@@ -29,10 +29,7 @@ class Event < ActiveRecord::Base
   belongs_to :target, :polymorphic => true
   has_many :events, :as => :target do
     def commits
-      find(:all, {
-             :limit => Event::MAX_COMMIT_EVENTS + 1,
-             :conditions => {:action => Action::COMMIT}
-           })
+      where(:action => Action::COMMIT).limit(Event::MAX_COMMIT_EVENTS + 1)
     end
   end
   has_many :feed_items, :dependent => :destroy
@@ -56,8 +53,10 @@ class Event < ActiveRecord::Base
                                             "use index (index_events_on_created_at) where (action != ?) " +
                                             "order by created_at desc limit ?", Action::COMMIT, count
                                            ]).map(&:id)
-      Event.find(latest_event_ids, :order => "created_at desc",
-                 :include => [:user, :project, :events])
+      MarshalableRelation.extend(Event.
+                                 where(:id => latest_event_ids).
+                                 order("created_at desc").
+                                 includes(:user, :project, :events), Event)
     end
   end
 
@@ -65,13 +64,14 @@ class Event < ActiveRecord::Base
     return [] if project_ids.blank?
     Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}",
                       :expires_in => 10.minutes) do
-      find(:all, {
-             :from => "#{quoted_table_name} use index (index_events_on_created_at)",
-             :order => "events.created_at desc", :limit => count,
-             :include => [:user, :project, :events],
-             :conditions => ["events.action != ? and project_id in (?)",
-                             Action::COMMIT, project_ids]
-           })
+      latest = where("events.action != ? and events.project_id in (?)",
+                     Action::COMMIT,
+                     project_ids).
+        from("#{quoted_table_name} use index (index_events_on_created_at)").
+        order("events.created_at desc").
+        includes(:user, :project, :events).
+        limit(count)
+      MarshalableRelation.extend(latest, Event)
     end
   end
 
@@ -141,10 +141,10 @@ class Event < ActiveRecord::Base
 
   def favorites_for_email_notification
     conditions = ["notify_by_email = ? and user_id != ?", true, self.user_id]
-    favorites = self.project.favorites.find(:all, :conditions => conditions)
+    favorites = self.project.favorites.where(conditions)
     # Find anyone who's just favorited the target, if it's watchable
     if self.target.respond_to?(:watchers)
-      favorites += self.target.favorites.find(:all, :conditions => conditions)
+      favorites += self.target.favorites.where(conditions)
     end
 
     favorites.uniq
@@ -214,10 +214,10 @@ class Event < ActiveRecord::Base
   # interested in his own doings).
   def watcher_ids
     # Find all the watchers of the project
-    watcher_ids = self.project.watchers.find(:all, :select => "users.id").map(&:id)
+    watcher_ids = self.project.watchers.select("users.id").map(&:id)
     # Find anyone who's just watching the target, if it's watchable
     if self.target.respond_to?(:watchers)
-      watcher_ids += self.target.watchers.find(:all, :select => "users.id").map(&:id)
+      watcher_ids += self.target.watchers.select("users.id").map(&:id)
     end
     watcher_ids.uniq.select{|an_id| an_id != self.user_id }
   end

@@ -68,10 +68,10 @@ class CommittershipsControllerTest < ActionController::TestCase
 
       get :index, :project_id => repo.project.to_param, :repository_id => repo.to_param
       assert_response :success
-      exp = repo.committerships.find(:all, :conditions => {
+      exp = repo.committerships.where({
         :committer_type => "Group",
         :committer_id => @group.id
-      })
+      }).all
       assert_equal exp, assigns(:committerships)
     end
 

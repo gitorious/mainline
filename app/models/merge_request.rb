@@ -98,7 +98,7 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def self.count_open
-    count(:all, :conditions => {:status => STATUS_OPEN})
+    where(:status => STATUS_OPEN).count
   end
 
   def self.statuses
@@ -383,11 +383,11 @@ class MergeRequest < ActiveRecord::Base
   end
 
   def creation_event
-    Event.find(:first, :conditions => {
-        :action => Action::REQUEST_MERGE,
-        :target_id => self.id,
-        :target_type => self.class.name
-      })
+    Event.where({
+      :action => Action::REQUEST_MERGE,
+      :target_id => self.id,
+      :target_type => self.class.name
+    }).first
   end
 
   def oauth_request_token=(token)
@@ -622,10 +622,10 @@ class MergeRequest < ActiveRecord::Base
       save
     else
       comment = comments.create!({
-          :user => updated_by,
-          :body => reason,
-          :project => target_repository.project
-        })
+        :user => updated_by,
+        :body => reason,
+        :project => target_repository.project
+      })
       comment.state = status_string
       comment.save!
     end
@@ -633,12 +633,13 @@ class MergeRequest < ActiveRecord::Base
 
   # Comments made on self and all versions
   def cascaded_comments
-    Comment.find(:all,
-      :conditions => ["(target_type = 'MergeRequest' AND target_id = ?) OR " +
-                      "(target_type = 'MergeRequestVersion' AND target_id in (?))",
-                      self.id, self.version_ids],
-      :order => "comments.created_at",
-      :include => [:target,:user])
+    Comment.
+      where("(target_type = 'MergeRequest' AND target_id = ?) OR " +
+            "(target_type = 'MergeRequestVersion' AND target_id in (?))",
+            self.id,
+            self.version_ids).
+      order("comments.created_at").
+      includes(:target, :user)
   end
 
   # Watchables need a project in order for redirection to work

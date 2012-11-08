@@ -73,37 +73,36 @@ class Repository < ActiveRecord::Base
 
   before_validation :downcase_name
   before_create :set_repository_path
-  # after_create :create_initial_committership
-  # after_create :add_initial_members
-  # after_create :create_add_event_if_project_repo
-  # after_create :post_repo_creation_message
-  # after_create :add_owner_as_watchers
   after_create :build_repository
   after_destroy :post_repo_deletion_message
 
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
-      record.user.repositories.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+      record.user.repositories.where("created_at > ?", 5.minutes.ago).count
     },
-    :conditions => proc{|record| {:user_id => record.user.id} },
+    :conditions => proc { |record| { :user_id => record.user.id } },
     :timeframe => 5.minutes
 
   scope :by_users,  :conditions => { :kind => KIND_USER_REPO } do
     def fresh(limit = 10)
-      find(:all, :order => "last_pushed_at DESC", :limit => limit)
+      order("last_pushed_at DESC").limit(limit)
     end
   end
+
   scope :by_groups, :conditions => { :kind => KIND_TEAM_REPO } do
     def fresh(limit=10)
-      find(:all, :order => "last_pushed_at DESC", :limit => limit)
+      order("last_pushed_at DESC").limit(limit)
     end
   end
+
   scope :clones,    :conditions => ["kind in (?) and parent_id is not null",
                                           [KIND_TEAM_REPO, KIND_USER_REPO]]
+
   scope :mainlines, :conditions => { :kind => KIND_PROJECT_REPO }
 
   scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
+
   def destroy
     merge_requests.each &:destroy
     reload
@@ -154,7 +153,7 @@ class Repository < ActiveRecord::Base
         owner_conditions.merge!(:project_id => project.id)
       end
     end
-    Repository.find(:first, :conditions => {:name => repo_name}.merge(owner_conditions))
+    Repository.where({ :name => repo_name }.merge(owner_conditions)).first
   end
 
   def self.create_git_repository(path)
@@ -182,34 +181,40 @@ class Repository < ActiveRecord::Base
       clone_ids = projects.map do |project|
         project.repositories.clones.map{|r| r.id }
       end.flatten
-      find(:all, :limit => limit,
-        :select => "distinct repositories.*, count(events.id) as event_count",
-        :order => "event_count desc", :group => "repositories.id",
-        :conditions => ["repositories.id in (?) and events.created_at > ? and kind in (?)",
-                        clone_ids, 7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-        #:conditions => { :id => clone_ids },
-        :joins => :events, :include => :project)
+      clones = select("distinct repositories.*, count(events.id) as event_count").
+        where("repositories.id in (?) and events.created_at > ? and kind in (?)",
+              clone_ids, 7.days.ago,
+              [KIND_USER_REPO, KIND_TEAM_REPO]).
+        order("count(events.id) desc").
+        joins(:events).
+        includes(:project).
+        group("repositories.id").
+        limit(limit)
+      MarshalableRelation.extend(clones.all, Repository)
     end
   end
 
   def self.most_active_clones(limit = 10)
     Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
-      find(:all, :limit => limit,
-        :select => "distinct repositories.id, repositories.*, count(events.id) as event_count",
-        :order => "event_count desc", :group => "repositories.id",
-        :conditions => ["events.created_at > ? and kind in (?)",
-                        7.days.ago, [KIND_USER_REPO, KIND_TEAM_REPO]],
-        :joins => :events, :include => :project)
+      clones = select("distinct repositories.id, repositories.*, count(events.id) as event_count").
+        where("events.created_at > ? and kind in (?)",
+              7.days.ago,
+              [KIND_USER_REPO, KIND_TEAM_REPO]).
+        order("count(events.id) desc").
+        group("repositories.id").
+        joins(:events).
+        includes(:project).
+        limit(limit)
+      MarshalableRelation.extend(clones.all, Repository)
     end
   end
 
   # Finds all repositories that might be due for a gc, starting with
   # the ones who've been pushed to recently
   def self.all_due_for_gc(batch_size = 25)
-    find(:all,
-      :order => "push_count_since_gc desc",
-      :conditions => "push_count_since_gc > 0",
-      :limit => batch_size)
+    where("push_count_since_gc > 0").
+      order("push_count_since_gc desc").
+      limit(batch_size)
   end
 
   def gitdir
@@ -464,8 +469,7 @@ class Repository < ActiveRecord::Base
       emails[actor.email] = actor.name
     end
 
-    users = User.find(:all, :conditions => ["email in (?)", emails.keys])
-    users.each do |user|
+    User.where("email in (?)", emails.keys).each do |user|
       author_name = emails[user.email]
       if h[author_name] # in the event that a user with the same name has used two different emails, he'd be gone by now
         h[user.login] = h.delete(author_name)
@@ -478,7 +482,7 @@ class Repository < ActiveRecord::Base
   # Returns a Hash {email => user}, where email is selected from the +commits+
   def self.users_by_commits(commits)
     emails = commits.map { |commit| commit.author.email }.uniq
-    users = User.find(:all, :conditions => ["email in (?)", emails])
+    users = User.where("email in (?)", emails)
 
     users_by_email = users.inject({}){|hash, user| hash[user.email] = user; hash }
     users_by_email
@@ -635,7 +639,7 @@ class Repository < ActiveRecord::Base
   end
 
   def tracking_repository
-    self.class.find(:first, :conditions => {:parent_id => self, :kind => KIND_TRACKING_REPO})
+    self.class.where(:parent_id => self, :kind => KIND_TRACKING_REPO).first
   end
 
   def has_tracking_repository?

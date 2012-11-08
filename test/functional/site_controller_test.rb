@@ -114,8 +114,8 @@ class SiteControllerTest < ActionController::TestCase
 
       should "not display unauthenticated projects in public timeline" do
         logout
-        projects = Project.find(:all)
-        repos = Repository.find(:all)
+        projects = Project.all
+        repos = Repository.all
         Project.stubs(:most_active_recently).returns(projects)
         Repository.stubs(:most_active_clones).returns(repos)
 

@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -54,7 +55,7 @@ class Favorite < ActiveRecord::Base
   end
 
   def destroy_event
-    if event = Event.find(:first, :conditions => event_options)
+    if event = Event.where(event_options).first
       event.destroy
     end
   end

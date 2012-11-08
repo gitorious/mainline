@@ -49,7 +49,7 @@ class Project < ActiveRecord::Base
   has_many    :merge_request_statuses, :order => "id asc"
   accepts_nested_attributes_for :merge_request_statuses, :allow_destroy => true
 
-  default_scope :conditions => ["suspended_at is null"]
+  default_scope :conditions => ["projects.suspended_at is null"]
   serialize :merge_request_custom_states, Array
   attr_protected :owner_id, :user_id, :site_id
 
@@ -71,7 +71,7 @@ class Project < ActiveRecord::Base
 
   throttle_records :create, :limit => 5,
     :counter => proc{|record|
-      record.user.projects.count(:all, :conditions => ["created_at > ?", 5.minutes.ago])
+      record.user.projects.where("created_at > ?", 5.minutes.ago).count
     },
     :conditions => proc{|record| {:user_id => record.user.id} },
     :timeframe => 5.minutes
@@ -91,21 +91,22 @@ class Project < ActiveRecord::Base
   def self.most_active_recently(limit = 10, number_of_days = 3)
     Rails.cache.fetch("projects:most_active_recently:#{limit}:#{number_of_days}",
         :expires_in => 30.minutes) do
-      find(:all, :joins => :events, :limit => limit,
-        :select => 'distinct projects.*, count(events.id) as event_count',
-        :order => "event_count desc", :group => "projects.id",
-        :conditions => ["events.created_at > ?", number_of_days.days.ago])
+      projects = select("distinct projects.*, count(events.id) as event_count").
+        where("events.created_at > ?", number_of_days.days.ago).
+        joins(:events).
+        order("count(events.id) desc").
+        group("projects.id").
+        limit(limit)
+      MarshalableRelation.extend(projects, Project)
     end
   end
 
   def recently_updated_group_repository_clones(limit = 5)
-    self.repositories.by_groups.find(:all, :limit => limit,
-      :order => "last_pushed_at desc")
+    self.repositories.by_groups.order("last_pushed_at desc").limit(limit)
   end
 
   def recently_updated_user_repository_clones(limit = 5)
-    self.repositories.by_users.find(:all, :limit => limit,
-      :order => "last_pushed_at desc")
+    self.repositories.by_users.order("last_pushed_at desc").limit(limit)
   end
 
   def to_param
@@ -197,16 +198,15 @@ class Project < ActiveRecord::Base
   end
 
   def new_event_required?(action_id, target, user, data)
-    events_count = events.count(:all, :conditions => [
-      "action = :action_id AND target_id = :target_id AND target_type = :target_type AND user_id = :user_id and data = :data AND created_at > :date_threshold",
-      {
-        :action_id => action_id,
-        :target_id => target.id,
-        :target_type => target.class.name,
-        :user_id => user.id,
-        :data => data,
-        :date_threshold => 1.hour.ago
-      }])
+    events_count = events.where("action = :action_id AND target_id = :target_id AND target_type = :target_type AND user_id = :user_id and data = :data AND created_at > :date_threshold",
+                                {
+                                  :action_id => action_id,
+                                  :target_id => target.id,
+                                  :target_type => target.class.name,
+                                  :user_id => user.id,
+                                  :data => data,
+                                  :date_threshold => 1.hour.ago
+                                }).count
     return events_count < 1
   end
 

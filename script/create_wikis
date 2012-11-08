@@ -13,7 +13,7 @@ def failure_msg(msg)
 end
 
 project_count = Project.count
-Project.find(:all).each_with_index do |project, index|
+Project.all.each_with_index do |project, index|
   case action
   when "create_repos"
     next unless project.wiki_repository.blank?

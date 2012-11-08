@@ -55,7 +55,7 @@ class SiteController < ApplicationController
   protected
   # Render a Site-specific index template
   def render_site_index
-    all_projects = current_site.projects.find(:all, :order => "created_at asc")
+    all_projects = current_site.projects.order("created_at asc")
     @projects = filter_authorized(current_user, all_projects)
     @teams = Group.all_participating_in_projects(@projects)
     @top_repository_clones = filter(Repository.most_active_clones_in_projects(@projects))
@@ -64,7 +64,7 @@ class SiteController < ApplicationController
   end
 
   def render_public_timeline
-    @projects = filter(Project.find(:all, :limit => 10, :order => "id desc"))
+    @projects = filter(Project.order("id desc").limit(10))
     @top_repository_clones = filter(Repository.most_active_clones)
     @active_projects = filter(Project.most_active_recently(15))
     @active_users = User.most_active
@@ -75,8 +75,7 @@ class SiteController < ApplicationController
 
   def render_dashboard
     @user = current_user
-    @projects = filter(@user.projects.find(:all,
-                                           :include => [:tags, { :repositories => :project }]))
+    @projects = filter(@user.projects.includes(:tags, { :repositories => :project }))
     @repositories = filter(current_user.commit_repositories)
     @events = filter_paginated(params[:page], Event.per_page) do |page|
       (@user.paginated_events_in_watchlist(:page => page))

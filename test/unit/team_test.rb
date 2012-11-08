@@ -113,7 +113,7 @@ class TeamTest < ActiveSupport::TestCase
     end
 
     should "return memberships" do
-      assert_kind_of Array, Team.memberships(@group)
+      assert_kind_of ActiveRecord::Relation, Team.memberships(@group)
     end
   end
 
