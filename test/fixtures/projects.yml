@@ -31,6 +31,6 @@ thunderbird:
   user_id: 3
   created_at: <%= 5.days.ago.to_s(:db) %>
   owner_type: Group
-  owner_id: <%= Fixtures.identify(:team_thunderbird) %>
+  owner_id: <%= ActiveRecord::Fixtures.identify(:team_thunderbird) %>
   merge_requests_need_signoff: true
   containing_site: qt

@@ -40,7 +40,6 @@ class MergeRequest < ActiveRecord::Base
   after_create :add_to_creators_favorites
 
   before_validation(:set_sequence_number, :on => :create)
-  #before_validation_on_create :set_sequence_number
 
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number
@@ -53,9 +52,6 @@ class MergeRequest < ActiveRecord::Base
   STATUS_PENDING_ACCEPTANCE_OF_TERMS = 0
   STATUS_OPEN = 1
   STATUS_CLOSED = 5 # further states must start at 5+n (for backwards compat)
-#   STATUS_MERGED = 2
-#   STATUS_REJECTED = 3
-#   STATUS_VERIFYING = 4
 
   state_machine :status, :initial => :pending do
     state :pending, :value => ::MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS

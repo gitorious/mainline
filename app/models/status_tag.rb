@@ -29,6 +29,7 @@ class StatusTag
   end
 
   def status
+    return nil if name.blank?
     project.merge_request_statuses.where("LOWER(name) = ?", name.downcase).first
   end
 

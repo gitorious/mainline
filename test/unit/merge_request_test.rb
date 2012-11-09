@@ -32,6 +32,9 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
     @merge_request.stubs(:commits_for_selection).returns(commits)
     assert @merge_request.pending_acceptance_of_terms?
+
+    # TODO: STOP using Rails.cache in model
+    Rails.cache.clear
   end
 
   def teardown
@@ -736,8 +739,9 @@ class MergeRequestTest < ActiveSupport::TestCase
     should "add a comment and set the state when reason exists" do
       @merge_request.reason = "You are right, this is a great idea!"
       @merge_request.close
-      @merge_request.save
+      @merge_request.save!
       @merge_request.migrate_to_status_tag
+
       assert_equal "closed", @merge_request.reload.status_string
       assert_not_nil comment = @merge_request.comments.reload.last
       assert_equal @merge_request.updated_by, comment.user
@@ -797,17 +801,16 @@ class MergeRequestTest < ActiveSupport::TestCase
 
 
   context "Sequence numbers" do
-    setup {
+    setup do
       @repository = repositories(:johans)
-      @merge_request = @repository.merge_requests.build(
-                                                        :user => users(:moe),
+      @merge_request = @repository.merge_requests.build(:user => users(:moe),
                                                         :source_repository => repositories(:moes),
                                                         :summary => "Please merge",
                                                         :proposal => "New window decorations",
                                                         :sha_snapshot => "ffac",
-                                                        :ending_commit => "ac00"
-                                                        )
-    }
+                                                        :ending_commit => "ac00")
+    end
+
     should "set the sequence number on create" do
       next_sequence = @repository.next_merge_request_sequence_number
       assert @merge_request.save
@@ -816,14 +819,20 @@ class MergeRequestTest < ActiveSupport::TestCase
     end
 
     should "require a unique sequence number for each target repo" do
-      assert @merge_request.save
-      mr2 = @merge_request.clone
-      assert mr2.save
-      mr2.sequence_number = @merge_request.sequence_number
-      assert_equal mr2.sequence_number, @merge_request.sequence_number
-      assert !mr2.save
-      assert_equal mr2.sequence_number, @merge_request.sequence_number
-      assert_not_nil mr2.errors[:sequence_number]
+      @merge_request.sequence_number = 666
+      @merge_request.save
+
+      mr2 = @repository.merge_requests.build(:user => users(:moe),
+                                             :source_repository => repositories(:moes),
+                                             :summary => "Please merge",
+                                             :proposal => "New window decorations",
+                                             :sha_snapshot => "ffac",
+                                             :ending_commit => "ac00",
+                                             :sequence_number => 666)
+
+      mr2.save
+
+      assert_not_equal mr2.reload.sequence_number, @merge_request.reload.sequence_number
     end
 
     should "use sequence_number in to_param" do

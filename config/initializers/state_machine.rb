@@ -16,12 +16,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-FactoryGirl.define do
-  factory(:message) do |m|
-    m.sender { |u| u.association(:user) }
-    m.recipient { |u| u.association(:user) }
-    m.subject "Hello"
-    m.body "Just called to say hi"
-    m.aasm_state "unread"
-  end
-end
+# MergeRequests uses 'open' as a state machine state, conflicts with
+# pre-existing Object#open. Ignore for now, rename in the long run.
+StateMachine::Machine.ignore_method_conflicts = true

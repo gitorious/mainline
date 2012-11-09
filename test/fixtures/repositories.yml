@@ -22,7 +22,7 @@ johans2:
   updated_at: 2007-11-18 01:21:21
   kind: <%= Repository::KIND_TEAM_REPO %>
   owner_type: Group
-  owner_id: <%= Fixtures.identify(:team_thunderbird) %>
+  owner_id: <%= ActiveRecord::Fixtures.identify(:team_thunderbird) %>
   hashed_path: b0c/554/5de8afee2a86064d372c17a113f2984c6b
 
 moes:
@@ -36,7 +36,7 @@ moes:
   owner_type: User
   owner_id: 2
   hashed_path: b13/de7/574a4a04fb250257dcb5a7d6ef01dcf290
-  
+
 johans_moe_clone:
   id: 4
   name: johans-clone-of-moes
@@ -49,7 +49,7 @@ johans_moe_clone:
   owner_type: User
   owner_id: 1
   hashed_path: e9c/217/f61aac09621d9fdb68665acd359b4d0686
-  
+
 johans_wiki:
   name: <%= "mainline#{Repository::WIKI_NAME_SUFFIX}" %>
   project_id: 1

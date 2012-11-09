@@ -550,7 +550,11 @@ class UserTest < ActiveSupport::TestCase
 
   protected
   def create_user(options = {})
-    u = User.new({ :email => "quire@example.com", :terms_of_use => "1" }.merge(options))
+    u = User.new({
+      :email => "quire@example.com",
+      :terms_of_use => "1",
+      :aasm_state => "pending"
+    }.merge(options))
     u.login = options[:login] || "quire"
     u.password = options[:password] || "quire"
     u.password_confirmation = options[:password_confirmation] || "quire"
@@ -559,7 +563,10 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def create_event(options={})
-    c = Event.new({ :target => repositories(:johans), :body => "blabla" }.merge(options))
+    c = Event.new({
+      :target => repositories(:johans),
+      :body => "blabla"
+    }.merge(options))
     c.user = options[:user] || users(:johan)
     c.project = options[:project] || projects(:thunderbird)
     c.save!

@@ -20,6 +20,7 @@
 require "test_helper"
 
 class CommitsHelperTest < ActionView::TestCase
+  include ERB::Util
 
   should "includes the RepostoriesHelper" do
     included_modules = (class << self; self; end).send(:included_modules)

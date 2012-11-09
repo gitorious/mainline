@@ -360,26 +360,26 @@ class Repository < ActiveRecord::Base
   # changes the owner to +another_owner+, removes the old owner as committer
   # and adds +another_owner+ as committer
   def change_owner_to!(another_owner)
-    unless owned_by_group?
-      transaction do
-        if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
-          existing.destroy
-        end
-        self.owner = another_owner
-        if self.kind != KIND_PROJECT_REPO
-          case another_owner
-          when Group
-            self.kind = KIND_TEAM_REPO
-          when User
-            self.kind = KIND_USER_REPO
-          end
-        end
-        unless committerships.any?{|c|c.committer == another_owner}
-          committerships.create_for_owner!(self.owner)
-        end
-        save!
-        reload
+    return if owned_by_group?
+
+    transaction do
+      if existing = committerships.find_by_committer_id_and_committer_type(owner.id, owner.class.name)
+        existing.destroy
       end
+      self.owner = another_owner
+      if self.kind != KIND_PROJECT_REPO # project_repo?
+        case another_owner
+        when Group
+          self.kind = KIND_TEAM_REPO
+        when User
+          self.kind = KIND_USER_REPO
+        end
+      end
+      unless committerships.any?{|c|c.committer == another_owner}
+        committerships.create_for_owner!(self.owner)
+      end
+      save!
+      reload
     end
   end
 
@@ -517,7 +517,7 @@ class Repository < ActiveRecord::Base
   end
 
   def owned_by_group?
-    owner === Group || owner === LdapGroup
+    owner.is_a?(Group) || owner.is_a?(LdapGroup)
   end
 
   def internal?
@@ -590,7 +590,7 @@ class Repository < ActiveRecord::Base
       raw_hash = Digest::SHA1.hexdigest(owner.to_param +
                                         self.to_param +
                                         Time.now.to_f.to_s +
-                                        ActiveSupport::SecureRandom.hex)
+                                        SecureRandom.hex)
       sharded_hash = sharded_hashed_path(raw_hash)
       sharded_hash
     end

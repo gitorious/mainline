@@ -437,15 +437,15 @@ class ProjectTest < ActiveSupport::TestCase
     end
   end
 
-  context 'Merge request status tags' do
-    setup {@project = FactoryGirl.create(:user_project)}
+  context "Merge request status tags" do
+    setup { @project = FactoryGirl.create(:user_project) }
 
-    should 'serialize merge_request_state_options' do
+    should "serialize merge_request_state_options" do
       @project.merge_request_custom_states = %w(Merged Verifying)
       assert_equal %w(Merged Verifying), @project.merge_request_custom_states
     end
 
-    should 'be serializible through a text-only version' do
+    should "be serializible through a text-only version" do
       assert_equal "Open\nClosed\nVerifying", @project.merge_request_states
       @project.merge_request_states = "Foo\nBar"
       assert_equal ['Foo','Bar'], @project.merge_request_custom_states

@@ -795,17 +795,20 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "return a list of the users who are admin for the repository if owned_by_group?" do
       @repo.change_owner_to!(groups(:a_team))
-      assert_equal([users(:johan)], @repo.owners)
+      assert_equal(1, @repo.owners.count)
+      assert_equal(users(:johan), @repo.owners.first)
     end
 
     should "not throw an error if transferring ownership to a group if the group is already a committer" do
       @repo.change_owner_to!(groups(:team_thunderbird))
-      assert_equal([users(:mike)], @repo.owners)
+      assert_equal(1, @repo.owners.count)
+      assert_equal(users(:mike), @repo.owners.first)
     end
 
     should "return the owner if owned by user" do
       @repo.change_owner_to!(users(:moe))
-      assert_equal([users(:moe)], @repo.owners)
+      assert_equal(1, @repo.owners.count)
+      assert_equal(users(:moe), @repo.owners.first)
     end
   end
 
@@ -1314,8 +1317,10 @@ class RepositoryTest < ActiveSupport::TestCase
 
     should "ensure merge requests are removed first to avoid cascading validation errors" do
       mr = mock
-      mr.expects(:destroy).times(2)
-      @repository.stubs(:merge_requests).returns([mr])
+      mr.expects(:destroy).times(1)
+      merge_requests = [mr]
+      def merge_requests.delete_all; end
+      @repository.stubs(:merge_requests).returns(merge_requests)
       @repository.destroy
     end
   end

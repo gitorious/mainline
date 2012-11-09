@@ -20,6 +20,7 @@ require "test_helper"
 
 class EventRenderingHelperTest < ActionView::TestCase
   include ApplicationHelper
+  include ERB::Util
 
   context "create tag events" do
     should "link to the tag tree" do

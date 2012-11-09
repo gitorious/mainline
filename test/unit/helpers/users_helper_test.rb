@@ -1,6 +1,10 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2012 Johan Sørensen <johan@johansorensen.com>
+#   Copyright (C) 2012 Gitorious AS
+#   Copyright (C) 2010 Peter Kjellerstedt <pkj@axis.com>
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+#   Copyright (C) 2008-2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,8 +23,9 @@
 require "test_helper"
 
 class UsersHelperTest < ActionView::TestCase
+  include ERB::Util
 
-  should " encode email" do
+  should "encode email" do
     email = "aAT@NOSPAM@bDOTcom"
     encoded = (0...email.length).inject("") do |result, index|
       i = RUBY_VERSION > '1.9' ? email[index].ord : email[index]

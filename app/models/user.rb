@@ -163,11 +163,11 @@ class User < ActiveRecord::Base
   end
 
   def self.generate_random_password(n = 12)
-    ActiveSupport::SecureRandom.hex(n)
+    SecureRandom.hex(n)
   end
 
   def self.generate_reset_password_key(n = 16)
-    ActiveSupport::SecureRandom.hex(n)
+    SecureRandom.hex(n)
   end
 
   def self.find_avatar_for_email(email, version)

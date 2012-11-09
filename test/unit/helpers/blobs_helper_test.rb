@@ -20,6 +20,7 @@
 require "test_helper"
 
 class BlobsHelperTest < ActionView::TestCase
+  include ERB::Util
 
   def included_modules
     (class << self; self; end).send(:included_modules)

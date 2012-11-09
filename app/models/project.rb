@@ -275,20 +275,21 @@ class Project < ActiveRecord::Base
 
   # Returns a String representation of the merge request states
   def merge_request_states
-    (merge_request_custom_states || merge_request_default_states).join("\n")
+    (has_custom_merge_request_states? ?
+     merge_request_custom_states :
+     merge_request_default_states).join("\n")
   end
 
   def merge_request_states=(s)
     self.merge_request_custom_states = s.split("\n").collect(&:strip)
   end
 
-
   def merge_request_fixed_states
-    ['Merged','Rejected']
+    ["Merged", "Rejected"]
   end
 
   def merge_request_default_states
-    ['Open','Closed','Verifying']
+    ["Open", "Closed", "Verifying"]
   end
 
   def has_custom_merge_request_states?
