@@ -39,11 +39,15 @@ class Admin::UsersController < AdminController
   end
 
   def create
+    login = params[:user].delete(:login)
+    password = params[:user].delete(:password)
+    password_confirmation = params[:user].delete(:password_confirmation)
+    is_admin = params[:user].delete(:is_admin) == "1"
     @user = User.new(params[:user])
-    @user.login = params[:user][:login]
-    @user.is_admin = params[:user][:is_admin] == "1"
-    @user.password = params[:user][:password]
-    @user.password_confirmation = params[:user][:password_confirmation]
+    @user.login = login
+    @user.is_admin = is_admin
+    @user.password = password
+    @user.password_confirmation = password_confirmation
 
     respond_to do |wants|
       if @user.save

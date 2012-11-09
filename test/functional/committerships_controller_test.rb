@@ -145,10 +145,11 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
 
   should "GET edit" do
-    @committership = @repository.committerships.create!({
-      :committer => users(:mike),
-      :permissions => Committership::CAN_REVIEW
-    })
+    @committership = @repository.committerships.new
+    @committership.committer = users(:mike)
+    @committership.permissions = Committership::CAN_REVIEW
+    @committership.save!
+
     get :edit, params(:id => @committership.to_param)
 
     assert_response :success
@@ -157,10 +158,11 @@ class CommittershipsControllerTest < ActionController::TestCase
   end
 
   should "PUT update" do
-    @committership = @repository.committerships.create!({
-      :committer => users(:mike),
-      :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
-    })
+    @committership = @repository.committerships.new
+    @committership.committer = users(:mike)
+    @committership.permissions = (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
+    @committership.save!
+
     get :update, params(:id => @committership.to_param, :permissions => ["review"])
 
     assert_response :redirect

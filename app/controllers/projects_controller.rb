@@ -100,6 +100,7 @@ class ProjectsController < ApplicationController
   end
 
   def create
+    owner_id = params[:project].delete(:owner_id)
     @project = Project.new(params[:project])
     @root = Breadcrumb::NewProject.new
     @project.user = current_user
@@ -107,7 +108,7 @@ class ProjectsController < ApplicationController
       when "User"
         current_user
       when "Group"
-        Team.find(params[:project][:owner_id])
+        Team.find(owner_id)
       end
 
     if @project.save
@@ -142,7 +143,7 @@ class ProjectsController < ApplicationController
 
     # change group, if requested
     unless params[:project][:owner_id].blank?
-      new_owner = Team.find(params[:project][:owner_id])
+      new_owner = Team.find(params[:project].delete(:owner_id))
       if Team.group_admin?(new_owner, current_user)
         @project.change_owner_to(new_owner)
       end

@@ -78,10 +78,13 @@ class UsersController < ApplicationController
   end
 
   def create
+    login = params[:user].delete(:login)
+    password = params[:user].delete(:password)
+    password_confirmation = params[:user].delete(:password_confirmation)
     @user = User.new(params[:user])
-    @user.login = params[:user][:login]
-    @user.password = params[:user][:password]
-    @user.password_confirmation = params[:user][:password_confirmation]
+    @user.login = login
+    @user.password = password
+    @user.password_confirmation = password_confirmation
     @user.save!
     if !@user.terms_of_use.blank?
       @user.accept_terms!
@@ -152,7 +155,8 @@ class UsersController < ApplicationController
 
   def update
     @user = current_user
-    @user.attributes = params[:user]
+    params[:user].delete(:password)
+    params[:user].delete(:password_confirmation)
     if current_user.save
       flash[:success] = "Your account details were updated"
       redirect_to user_path
@@ -183,12 +187,17 @@ class UsersController < ApplicationController
   end
 
   def openid_build
-    @user = User.new(:identity_url => session[:openid_url], :email => session[:openid_email], :login => session[:openid_nickname], :fullname => session[:openid_fullname])
+    @user = User.new(:identity_url => session[:openid_url],
+                     :email => session[:openid_email],
+                     :fullname => session[:openid_fullname])
+    @user.login = session[:openid_nickname]
+    @user
   end
 
   def openid_create
+    login = params[:user].delete(:login)
     @user = User.new(params[:user])
-    @user.login = params[:user][:login]
+    @user.login = login
     @user.identity_url = session[:openid_url]
     if @user.save
       if !@user.terms_of_use.blank?

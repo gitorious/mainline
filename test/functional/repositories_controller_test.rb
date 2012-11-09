@@ -846,10 +846,10 @@ class RepositoriesControllerTest < ActionController::TestCase
       login_as :mike
       project = projects(:johans)
       repository = project.repositories.clones.first
-      repository.committerships.create!({
-          :committer => users(:mike),
-          :permissions => Committership::CAN_REVIEW | Committership::CAN_COMMIT
-        })
+      committership = repository.committerships.new
+      committership.committer = users(:mike)
+      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
+      committership.save!
 
       Project.expects(:find_by_slug!).with(project.slug).returns(project)
       repository.stubs(:has_commits?).returns(true)
