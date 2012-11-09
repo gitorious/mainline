@@ -9,11 +9,9 @@ gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.7"
 gem "state_machine", "~> 1.1"
-gem "mysql2", "~> 0.3"
 gem "acts-as-taggable-on", "~> 2.3"
 gem "will_paginate", "~>3.0"
 gem "just_paginate", "0.0.6"
-gem "hodel_3000_compliant_logger", "0.1.0"
 gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
 gem "nokogiri", "1.5.0"
@@ -25,14 +23,7 @@ gem "validates_formatting_of", "~> 0.7"
 gem "thinking-sphinx", "~> 2.0.10"
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 gem "rails_autolink", "~> 1.0"
-
-# TODO: I suspect these gems can be removed.
-# Make all tests pass before attempting.
-group :deprecations do
-  gem "chronic", "0.3.0"
-  gem "hoe", "2.8.0", :require => false
-  gem "echoe", "4.3.1", :require => false
-end
+gem "mysql2"
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
