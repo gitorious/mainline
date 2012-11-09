@@ -21,7 +21,7 @@ class AddLegacyTagToMergeRequests < ActiveRecord::Migration
   def self.up
     transaction do
       add_column :merge_requests, :legacy, :boolean, :default => false
-      ActiveRecord::Base.reset_column_information
+      MergeRequest.reset_column_information
       merge_requests = MergeRequest.where("status != ? and created_at < ?",
                                           MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS,
                                           1.week.ago).

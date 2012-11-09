@@ -21,7 +21,7 @@ class AddPermissionsToCommitterships < ActiveRecord::Migration
   def self.up
     transaction do
       add_column :committerships, :permissions, :integer
-      ActiveRecord::Base.reset_column_information
+      Committership.reset_column_information
       base_perms = Committership::CAN_REVIEW | Committership::CAN_COMMIT
       say_with_time("Updating existing permissions") do
         Committership.includes(:repository => [:user]).each do |c|

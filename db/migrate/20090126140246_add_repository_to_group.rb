@@ -24,7 +24,7 @@ class AddRepositoryToGroup < ActiveRecord::Migration
       add_column :repositories, :owner_id, :integer
       add_index :repositories, [:owner_type, :owner_id]
 
-      ActiveRecord::Base.reset_column_information
+      Repository.reset_column_information
       Repository.all.each do |repo|
         repo.update_attribute(:owner_type, "User")
         repo.update_attribute(:owner_id, repo.user_id)

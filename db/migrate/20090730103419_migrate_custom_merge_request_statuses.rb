@@ -1,10 +1,13 @@
-class Project < ActiveRecord::Base
-  default_scope :conditions => {}
+module Gitorious
+  class Project < ActiveRecord::Base
+    default_scope :conditions => {}
+  end
 end
+
 class MigrateCustomMergeRequestStatuses < ActiveRecord::Migration
   def self.up
     transaction do
-      Project.all.each do |project|
+      Gitorious::Project.all.each do |project|
         if !project.merge_request_custom_states.blank?
           project.merge_request_custom_states.each do |open_state|
             project.merge_request_statuses.create!({
@@ -20,7 +23,7 @@ class MigrateCustomMergeRequestStatuses < ActiveRecord::Migration
               :color => "#408000"
           })
         end
-        
+
         ["Merged", "Rejected"].each do |closed_state|
           project.merge_request_statuses.create!({
               :name => closed_state,
@@ -34,7 +37,7 @@ class MigrateCustomMergeRequestStatuses < ActiveRecord::Migration
 
   def self.down
     transaction do
-      Project.all.each do |project|
+      Gitorious::Project.all.each do |project|
         project.merge_request_statuses.each do |state|
           next unless state.open?
           project.merge_request_custom_states << state.name
