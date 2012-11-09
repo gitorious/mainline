@@ -24,6 +24,7 @@ gem "bartt-ssl_requirement", "~>1.4.0", :require => "ssl_requirement"
 gem "validates_url_format_of", "~> 0.2"
 gem "thinking-sphinx", "~> 2.0.10"
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
+gem "rails_autolink", "~> 1.0"
 
 # TODO: I suspect these gems can be removed.
 # Make all tests pass before attempting.

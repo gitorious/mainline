@@ -27,18 +27,17 @@ class Admin::ProjectProposalsController < AdminController
     @proposal = ProjectProposal.new
   end
 
-  
   def create
     @proposal = ProjectProposal.new
-    @proposal.title =  params[:project_proposal][:title]
-    @proposal.description =  params[:project_proposal][:description]
+    @proposal.title = params[:project_proposal][:title]
+    @proposal.description = params[:project_proposal][:description]
     @proposal.creator = current_user
 
     if @proposal.name_clashes_with_existing_project?
       flash[:error] = "Project with that title already exists!"
-      render :action => "new" and return 
+      render :action => "new" and return
     end
-    
+
     if @proposal.save
       notify_site_admins("A new project has been proposed",
                          "Proposal for project #{@proposal.title} submitted by #{@proposal.creator.title}", @proposal)
@@ -59,7 +58,7 @@ class Admin::ProjectProposalsController < AdminController
     flash[:notice] = "Project approved and created, user has been notified"
     redirect_to :action => :index
   end
-  
+
   def reject
     proposal = ProjectProposal.find_by_id(params[:id])
     notify_creator("Your '#{proposal.title}' project was rejected", proposal.creator,
@@ -91,5 +90,5 @@ class Admin::ProjectProposalsController < AdminController
     GitoriousConfig["enable_private_repositories"] &&
       GitoriousConfig["repos_and_projects_private_by_default"]
   end
-  
+
 end

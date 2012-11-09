@@ -38,7 +38,9 @@ Gitorious::Application.routes.draw do
 
       # Used to be we supported things like /users/~zmalltalker/mainline
       # No more, ~<user_name> is the canonical user URL namespace
-      get "/*slug" => redirect("/~%{slug}")
+      get "/*slug" => (redirect do |params, request|
+                         request.fullpath.sub("users/", "~")
+                       end), :slug => /.*/
     end
   end
 

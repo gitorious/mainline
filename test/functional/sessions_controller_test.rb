@@ -23,14 +23,6 @@ require "test_helper"
 class SessionsControllerTest < ActionController::TestCase
   include OpenIdAuthentication
 
-  def auth_token(token)
-    CGI::Cookie.new('name' => 'auth_token', 'value' => token)
-  end
-
-  def cookie_for(user)
-    auth_token users(user).remember_token
-  end
-
   def setup
     setup_ssl_from_config
     GitoriousConfig["use_ssl"] = true
@@ -100,7 +92,7 @@ class SessionsControllerTest < ActionController::TestCase
 
   should "login with cookie" do
     users(:johan).remember_me
-    @request.cookies["auth_token"] = cookie_for(:johan)
+    @request.cookies["auth_token"] = users(:johan).remember_token
     get :new
     assert @controller.send(:logged_in?)
   end
@@ -108,14 +100,14 @@ class SessionsControllerTest < ActionController::TestCase
   should "fail when trying to login with with expired cookie" do
     users(:johan).remember_me
     users(:johan).update_attribute :remember_token_expires_at, 5.minutes.ago.utc
-    @request.cookies["auth_token"] = cookie_for(:johan)
+    @request.cookies["auth_token"] = users(:johan).remember_token
     get :new
     assert !@controller.send(:logged_in?)
   end
 
   should "fail cookie login" do
     users(:johan).remember_me
-    @request.cookies["auth_token"] = auth_token("invalid_auth_token")
+    @request.cookies["auth_token"] = "invalid_auth_token"
     get :new
     assert !@controller.send(:logged_in?)
   end

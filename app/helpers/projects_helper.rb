@@ -40,15 +40,13 @@ module ProjectsHelper
   end
 
   def add_status_link(form_builder)
-    link_to_function("Add status") do |page|
-      form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
-          :child_index => 'NEW_RECORD') do |f|
-        html = render(:partial => 'merge_request_status_form',
-                 :locals => { :form => f, :project_form => nil })
-        page << ("$('#merge_request_statuses').append(" +
-          "'#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()))" +
-          ".find('input:last').SevenColorPicker();")
-      end
+    form_builder.fields_for(:merge_request_statuses, MergeRequestStatus.new,
+                            :child_index => 'NEW_RECORD') do |f|
+      html = render(:partial => 'merge_request_status_form',
+                    :locals => { :form => f, :project_form => nil })
+      link_to_function("Add status", "$('#merge_request_statuses').append(" +
+                       "'#{escape_javascript(html)}'.replace(/NEW_RECORD/g, new Date().getTime()))" +
+                       ".find('input:last').SevenColorPicker();")
     end
   end
 

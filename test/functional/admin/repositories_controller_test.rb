@@ -38,7 +38,7 @@ class Admin::RepositoriesControllerTest < ActionController::TestCase
     should "re-post the creation message" do
       login_as :johan
       repo = repositories(:johans)
-      Repository.expects(:find).with(2).returns(repo)
+      Repository.expects(:find).with("2").returns(repo)
       repo.expects(:post_repo_creation_message)
 
       put :recreate, :id => 2

@@ -31,7 +31,6 @@ class SessionsController < ApplicationController
   layout "second_generation/application"
   before_filter :validate_request_host, :only => :create
 
-  # render new.rhtml
   def new
   end
 
@@ -159,5 +158,4 @@ class SessionsController < ApplicationController
       redirect_back_or_default(redirection_url)
     end
   end
-
 end

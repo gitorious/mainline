@@ -103,6 +103,13 @@ class Repository < ActiveRecord::Base
   scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
 
+  def open_merge_requests
+    # merge_requests.open doesn't quite work, presumably related to the
+    # issue of 'open': Object#open, "open" state and "open" scope. Overload!
+    # TODO: Refactor MergeRequest
+    merge_requests.where({}).open
+  end
+
   def destroy
     merge_requests.each &:destroy
     reload

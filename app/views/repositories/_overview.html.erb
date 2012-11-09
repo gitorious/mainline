@@ -82,8 +82,8 @@
       </li>
       <%- if repository.merge_requests_enabled? -%>
         <li class="repository-link merge_requests">
-          <%= link_to "Merge requests <small>(#{repository.merge_requests.open.count})</small>".html_safe,
-              repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>
+          <%= link_to("Merge requests <small>(#{repository.open_merge_requests.count})</small>".html_safe,
+                      repo_owner_path(repository, [repository.project, repository, :merge_requests])) -%>
         </li>
       <%- end -%>
 
