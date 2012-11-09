@@ -94,7 +94,7 @@
     <% end -%>
     <li>
       <strong>Created:</strong>
-      <%= @group.created_at.to_s(:short) -%>
+      <%= l(@group.created_at, :format => :short) -%>
     </li>
   </ul>
   <ul class="links navigation">

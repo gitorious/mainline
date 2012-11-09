@@ -36,7 +36,7 @@
       <%- else -%>
         <%= h(commit.committer.name) -%>
       <%- end -%>
-      <%= commit.date.to_s(:short) -%>
+      <%= l(commit.date, :format => :short) -%>
     </p>
     <p><em><%= h(commit.message) -%></em></p>
 

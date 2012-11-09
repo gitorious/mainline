@@ -90,16 +90,12 @@ class Project < ActiveRecord::Base
   # Returns the projects limited by +limit+ who has the most activity within
   # the +cutoff+ period
   def self.most_active_recently(limit = 10, number_of_days = 3)
-    Rails.cache.fetch("projects:most_active_recently:#{limit}:#{number_of_days}",
-        :expires_in => 30.minutes) do
-      projects = select("distinct projects.*, count(events.id) as event_count").
-        where("events.created_at > ?", number_of_days.days.ago).
-        joins(:events).
-        order("count(events.id) desc").
-        group("projects.id").
-        limit(limit)
-      MarshalableRelation.extend(projects, Project)
-    end
+    projects = select("distinct projects.*, count(events.id) as event_count").
+      where("events.created_at > ?", number_of_days.days.ago).
+      joins(:events).
+      order("count(events.id) desc").
+      group("projects.id").
+      limit(limit)
   end
 
   def recently_updated_group_repository_clones(limit = 5)

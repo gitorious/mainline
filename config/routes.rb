@@ -194,7 +194,7 @@ Gitorious::Application.routes.draw do
   resources :group_auto_completions, :only => [:index]
 
   ### R14. Projects
-  get "/projects(.:format)" => "projects#index", :as => :projects
+  resources :projects, :only => [:index, :create]
   get "/:id/edit(.:format)" => "projects#edit"
 
   resources :projects, :path => "/" do

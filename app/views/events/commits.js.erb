@@ -1,9 +1,29 @@
+<%
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
 <table class="commits_in_event">
 <% @commits.each_with_index do |c, index| %>
   <% if index+1 > Event::MAX_COMMIT_EVENTS -%>
     <tr>
       <td valign="top" class="avatar">
-        
+
       </td>
       <td valign="top">
           <%= link_to("And #{@commit_count - @commits.count} more commits&hellip;",
@@ -25,9 +45,9 @@
             <%= link_to h(c.user.title), user_path(c.user) %>
           <% end %>
           <strong>committed</strong>
-          <%= link_to(c.data[0,8], repo_owner_path(@repository, 
+          <%= link_to(c.data[0,8], repo_owner_path(@repository,
                 :project_repository_commit_path, @project, @repository, c.data)) %>
-          <span class="timestamp">on <%= c.created_at.to_s(:long) %></span>
+          <span class="timestamp">on <%= l(c.created_at, :format => :long) %></span>
         </p>
         <div class="commit_message">
           <%= link_to(simple_format(h(c.body)),
@@ -39,4 +59,3 @@
   <% end -%>
 <% end %>
 </table>
-

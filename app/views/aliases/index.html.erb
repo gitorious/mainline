@@ -37,7 +37,7 @@
   </thead>
   <% @emails.each do |email| -%>
     <tr class="<%= cycle('even', 'odd') -%>">
-      <td><%= email.created_at.to_s(:short) -%></td>
+      <td><%= l(email.created_at, :format => :short) -%></td>
       <td>&lt;<%= h(email.address) -%>&gt;</td>
       <td>
         <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png",

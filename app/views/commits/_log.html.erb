@@ -21,14 +21,14 @@
 <% users_by_email = Repository.users_by_commits(@commits) %>
 <% no_pagination ||= false -%>
 <ul class="events w-750">
-<% @commits.group_by{|c| c.committed_date.to_s(:human) }.each do |day, commits| -%>
+<% @commits.group_by{|c| l(c.committed_date, :format => :human) }.each do |day, commits| -%>
   <li>
     <p class="date"><%= day -%></p>
     <ul class="event_instances">
       <% commits.each do |commit| -%>
         <% user = users_by_email[commit.author.email] %>
         <li class="event_instance <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
-          <p class="event_date"><%= commit.committed_date.to_s(:short_time) %></p>
+          <p class="event_date"><%= l(commit.committed_date, :format => :short_time) %></p>
           <%= avatar_from_email(commit.author.email, :size => 16)  %>
           <div class="event_meta">
             <p>

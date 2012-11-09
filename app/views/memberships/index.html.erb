@@ -1,6 +1,6 @@
 <%
   #--
-  #   Copyright (C) 2012 Gitorious
+  #   Copyright (C) 2012 Gitorious AS
   #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
   #
   #   This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@
   </thead>
   <% @memberships.each do |membership| -%>
     <tr class="<%= cycle('even', 'odd') -%>">
-      <td><%= membership.created_at.to_s(:short) -%></td>
+      <td><%= l(membership.created_at, :format => :short) -%></td>
       <td><%= link_to h(membership.user.login), membership.user -%></td>
       <td><%= membership.user.public_email? ? h(membership.user.email) : "N/A" -%></td>
       <td><%=h membership.role.name -%></td>

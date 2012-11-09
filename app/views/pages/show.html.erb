@@ -60,7 +60,7 @@
       </li>
     </ul>
     <p>
-      <strong>Last update:</strong> <%= commit.date.to_s(:short) -%>
+      <strong>Last update:</strong> <%= l(commit.date, :format => :short) -%>
     </p>
   <% end -%>
 <% end -%>

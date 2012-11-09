@@ -28,7 +28,7 @@
 <%= form_for(:ssh_key, :url => user_keys_path) do |f| -%>
   <p>
     <%= f.label :key, t("views.keys.your_public_key") -%><br />
-    <small class="hint"><%= t("views.keys.hint") %></small><br />
+    <small class="hint"><%= t("views.keys.hint").html_safe %></small><br />
     <%= f.text_area :key, :class => "text medium" -%>
   </p>
   <%= f.submit t("views.common.save") -%>

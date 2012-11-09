@@ -63,7 +63,7 @@
     <% end -%>
     <li>
       <strong><%= t("views.repos.created") %>:</strong>
-      <%= @repository.created_at.to_s(:short) -%>
+      <%= l(@repository.created_at, :format => :short) -%>
     </li>
   </ul>
 

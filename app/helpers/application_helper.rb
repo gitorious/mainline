@@ -614,4 +614,8 @@ module ApplicationHelper
       HTML
     end
   end
+
+  def long_ordinal(date)
+    date.strftime("%B #{date.day.ordinalize}, %Y")
+  end
 end

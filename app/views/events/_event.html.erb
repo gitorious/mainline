@@ -27,7 +27,7 @@
 <li class="event_instance <%= relative_time ? 'relative' : '' %> <%= Action::css_class(event.action) -%>" id="<%= dom_id(event) -%>">
   <p class="event_category <%= category -%>"><%= category.humanize -%></p>
   <% unless relative_time -%>
-    <p class="event_date"><%= event.created_at.to_s(:short_time) -%></p>
+    <p class="event_date"><%= l(event.created_at, :format => :short_time) -%></p>
   <% end -%>
   <%= avatar_from_email(event.email, :size => 16)  %>
 

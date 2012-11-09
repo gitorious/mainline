@@ -1,72 +1,22 @@
-* Gems that went out of style [20/21]
-** DONE gem "validates_url_format_of", "0.1.1"
-** DONE gem "SystemTimer", "1.2.3" (from resque group)
+* Launch ready [0/7]
 ** TODO Reservations
-** DONE verify has moved to routing
-** DONE open_id_authentication
-** DONE HookTest
-** DONE EmailTest
-** DONE CommentTest
-** DONE CommittershipsTest
-** DONE FavoriteTest
-** DONE LdapGroupTest
-** DONE MergeRequestStatusTest
-** DONE MergeRequestTest
-** DONE MessageTest
-** DONE RepositoryTest
-** DONE SiteTest
-** DONE SshKeyTest
-** DONE UserTest
-** DONE EventTest
-** DONE ProjectTest
-** DONE FeedItemTest
-* branch_and_path was Array, is now String
+** TODO branch_and_path was Array, is now String
+** TODO Remove NEWS file
+** TODO Write new README
+** TODO Kill repo_owner_path
+** TODO User.most_active -> removed caching, fix
+     Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
+** TODO Project.most_active_recently -> removed caching, fix
+     Rails.cache.fetch("projects:most_active_recently:#{limit}:#{number_of_days}",
+         :expires_in => 30.minutes) do
+       MarshalableRelation.extend(projects, Project)
+     end
+
 * Instructions to users [0/3]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
 ** TODO Clean out vendor
-* Tests that are muted/not passing [11/11]
-** DONE stomp_adapter_test.rb (ActiveMessaging)
-** DONE test/unit/user_test.rb (OpenID)
-** DONE test/unit/lib/ssh_client_test.rb (Routing)
-** DONE test/unit/repository_test.rb (???)
-** DONE test/unit/helpers/repositories_helper_test.rb
-** DONE test/unit/lib/gitorious/messaging/sync_adapter_test.rb
-** DONE test/unit/merge_request_test.rb (???)
-** DONE test/unit/lib/gitorious/authentication/ldap_authentication_test.rb
-** DONE test/unit/helpers/event_rendering_helper_test.rb (Routing)
-** DONE test/unit/helpers/blobs_helper_test.rb
-** DONE test/unit/helpers/application_helper_test.rb
-* Docs [0/2]
-** TODO Remove NEWS file
-** TODO Write new README
-* Dates and time [0/1]
-* TODO repo_owner_path
-* Stuff
-
-    should "finds the owner (a Group) and the repository" do
-      @repository.owner = @group
-      @repository.save!
-      @group.add_member(@user, Role.admin)
-      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
-      assert_response :success
-      assert_equal @group, assigns(:owner)
-      assigns(:repository) == @repository
-    end
-
-
-    should "finds the owner (a User) and the repository" do
-      @repository.owner = @user
-      @repository.save!
-      get :index, :project_id => @project.to_param, :repository_id => @repository.to_param
-      assert_response :success
-      assert_equal @user, assigns(:owner)
-      assigns(:repository) == @repository
-      end
-
-* Config
-** Environment variables for all settings
-** Gitorious.use_config(Gitorious::Configuration.new(hash))
-** Possibly more than one API (not just GitoriousCONFIG)
-* User.most_active -> removed caching, fix
-    Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
+* Config notes [0/3]
+** TODO Environment variables for all settings
+** TODO Gitorious.use_config(Gitorious::Configuration.new(hash))
+** TODO Possibly more than one API (not just GitoriousCONFIG)

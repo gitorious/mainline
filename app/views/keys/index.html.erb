@@ -37,7 +37,7 @@
   </thead>
   <% @ssh_keys.each do |ssh_key| -%>
     <tr class="<%= cycle('even', 'odd') -%>">
-      <td><%= ssh_key.created_at.to_s(:short) -%></td>
+      <td><%= l(ssh_key.created_at, :format => :short) -%></td>
       <td><%= truncate(h(ssh_key.comment), :length => 20) -%></td>
       <td><%=h ssh_key.algorithm -%></td>
       <td>

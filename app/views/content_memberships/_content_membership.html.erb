@@ -18,7 +18,7 @@
   %>
 
 <tr class="<%= cycle('even', 'odd') -%>">
-  <td><%= content_membership.created_at.to_s(:short) -%></td>
+  <td><%= l(content_membership.created_at, :format => :short) -%></td>
   <td><%= content_membership.member.class.human_name -%></td>
   <td><%= link_to h(content_membership.member.title), content_membership.member -%></td>
   <td class="committer-buttons">

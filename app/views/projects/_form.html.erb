@@ -32,8 +32,8 @@
       <div><%= form.text_field :slug -%></div>
     </li>
     <li>
-      <%= form.current_user_or_group :owner, t("views.projects.owner"),
-          :hint => "Select the owner of this project; either yourself or a group you are a member of"-%>
+      <%= form.current_user_or_group(:owner, t("views.projects.owner"),
+                                     :hint => "Select the owner of this project; either yourself or a group you are a member of").html_safe -%>
     </li>
   <% end -%>
   <li>
@@ -77,7 +77,7 @@
 <fieldset>
   <li>
     <%= form.label :description, t(:description, :scope => 'activerecord.attributes.project') -%>
-    <div><small class="hint"><%= t("views.projects.hint") %></small>
+    <div><small class="hint"><%= t("views.projects.hint").html_safe %></small>
       <%= form.text_area :description, :class => "text wide tall" -%></div>
   </li>
 </fieldset>

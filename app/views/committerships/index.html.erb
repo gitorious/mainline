@@ -36,7 +36,7 @@
   </thead>
   <% @committerships.each do |committership| -%>
     <tr class="<%= cycle('even', 'odd') -%>">
-      <td><%= committership.created_at.to_s(:short) -%></td>
+      <td><%= l(committership.created_at, :format => :short) -%></td>
       <td><%= committership.committer.class.human_name -%></td>
       <td><%= link_to h(committership.committer.title), committership.committer -%></td>
       <td><%=h committership.permission_list.join(', ') -%></td>

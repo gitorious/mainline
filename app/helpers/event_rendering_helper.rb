@@ -372,7 +372,7 @@ module EventRenderingHelper
       end
       meta =  content_tag(:span,
         %Q{<span class="actor">#{actor}</span> } +
-        %Q{<span class="timestamp">on #{commit.created_at.to_s(:long)}</span>})
+        %Q{<span class="timestamp">on #{l(commit.created_at, :format => :long)}</span>})
       message = content_tag(:div, [icon, meta].join("\n"))
       commit_msg = link_to(simple_format(h(commit.body)),
         repo_owner_path(commit.target.target.target,

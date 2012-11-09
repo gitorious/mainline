@@ -43,7 +43,7 @@
 
   <p class="byline">
     <%= link_to(h(merge_request.user.title), merge_request.user) -%> |
-    <%= merge_request.created_at.to_s(:short) -%>
+    <%= l(merge_request.created_at, :format => :short) -%>
 
 
     <% if !no_link -%>
@@ -55,6 +55,6 @@
       </strong>
     <% end -%>
     <small class="hint">Marked as &quot;<%= h(merge_request.status_tag) -%>&quot;
-      at <%= merge_request.updated_at.to_s(:short) %></small>
+      at <%= l(merge_request.updated_at, :format => :short) %></small>
   </p>
 </div>
