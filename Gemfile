@@ -1,16 +1,16 @@
 source "http://rubygems.org"
 
-gem "rails", "~> 3.1"
+gem "rails", "~> 3.2"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
 gem "rdiscount", "1.3.1.1", :platforms => :ruby
 gem "mime-types", "1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
-gem "paperclip", "~> 2.4.5"
+gem "paperclip", "~> 2.7"
 gem "state_machine", "~> 1.1"
 gem "mysql2", "~> 0.3"
-gem "acts-as-taggable-on", "2.0.6"
+gem "acts-as-taggable-on", "~> 2.3"
 gem "will_paginate", "~>3.0"
 gem "just_paginate", "0.0.6"
 gem "hodel_3000_compliant_logger", "0.1.0"
@@ -21,7 +21,7 @@ gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
 gem "bartt-ssl_requirement", "~>1.4.0", :require => "ssl_requirement"
-gem "validates_url_format_of", "~> 0.2"
+gem "validates_formatting_of", "~> 0.7"
 gem "thinking-sphinx", "~> 2.0.10"
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 gem "rails_autolink", "~> 1.0"

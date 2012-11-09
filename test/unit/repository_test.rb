@@ -474,10 +474,10 @@ class RepositoryTest < ActiveSupport::TestCase
       @repository.kind = Repository::KIND_PROJECT_REPO
       @repository.project.repositories << new_repos(:name => "another")
       @repository.save!
-      @repository.committerships.create!({
-        :committer => users(:moe),
-        :permissions => (Committership::CAN_REVIEW | Committership::CAN_COMMIT)
-      })
+      committership = @repository.committerships.new
+      committership.committer = users(:moe)
+      committership.permissions = Committership::CAN_REVIEW | Committership::CAN_COMMIT
+      committership.save!
     end
 
     should "be deletable by admins" do

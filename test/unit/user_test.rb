@@ -521,6 +521,8 @@ class UserTest < ActiveSupport::TestCase
   end
 
   context "most active users" do
+    setup { Rails.cache.clear }
+
     should "be retrieved as expected" do
       u1 = create_user(:login => "joe", :email => "joe@hepp.com")
       u2 = create_user(:login => "jane", :email => "jane@hepp.com")
@@ -531,7 +533,7 @@ class UserTest < ActiveSupport::TestCase
       e4 = create_event(:action => Action::PUSH_SUMMARY, :user => u2, :body => "78")
 
       assert_not_nil User.most_active
-      assert_equal 2, User.most_active.count
+      assert_equal 2, User.most_active.all.count
       assert_equal 2, User.most_active.first.event_count
       assert_equal 1, User.most_active.second.event_count
     end
@@ -550,14 +552,17 @@ class UserTest < ActiveSupport::TestCase
 
   protected
   def create_user(options = {})
+    login = options.delete(:login) || "quire"
+    password = options.delete(:password) || "quire"
+    password_confirmation = options.delete(:password_confirmation) || "quire"
     u = User.new({
       :email => "quire@example.com",
       :terms_of_use => "1",
       :aasm_state => "pending"
     }.merge(options))
-    u.login = options[:login] || "quire"
-    u.password = options[:password] || "quire"
-    u.password_confirmation = options[:password_confirmation] || "quire"
+    u.login = login
+    u.password = password
+    u.password_confirmation = password_confirmation
     u.save
     u
   end

@@ -69,7 +69,8 @@ module RecordThrottling
       #   :timeframe => 5.minutes
       def self.throttle_records(create_or_update, options)
         options.assert_valid_keys(:limit, :counter, :conditions, :timeframe)
-        write_inheritable_attribute(:creation_throttle_options, options)
+        class_attribute :creation_throttle_options
+        self.creation_throttle_options = options
         send("before_#{create_or_update}", :check_throttle_limits)
       end
     end
@@ -78,7 +79,7 @@ module RecordThrottling
   module RecordThrottlingInstanceMethods
     def check_throttle_limits
       unless RecordThrottling.disabled?
-        options = self.class.read_inheritable_attribute(:creation_throttle_options)
+        options = self.class.creation_throttle_options
         if options[:counter].call(self) < options[:limit]
           return true
         end

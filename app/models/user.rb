@@ -198,17 +198,14 @@ class User < ActiveRecord::Base
 
   def self.most_active(limit = 10, cutoff = 3)
     cache_key = "users:most_active_pushers:#{limit}:#{cutoff}"
-    Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
-      users = select("users.*, events.action, count(events.id) as event_count").
-        where("events.action = ? and events.created_at > ?",
-              Action::PUSH_SUMMARY,
-              cutoff.days.ago).
-        joins(:events).
-        group("users.id").
-        order("count(events.id) desc").
-        limit(limit)
-      MarshalableRelation.extend(users.all, User)
-    end
+    select("users.*, events.action, count(events.id) as event_count").
+      where("events.action = ? and events.created_at > ?",
+            Action::PUSH_SUMMARY,
+            cutoff.days.ago).
+      joins(:events).
+      group("users.id").
+      order("count(events.id) desc").
+      limit(limit)
   end
 
   def self.find_fuzzy(query)

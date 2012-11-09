@@ -827,9 +827,9 @@ class MergeRequestTest < ActiveSupport::TestCase
                                              :summary => "Please merge",
                                              :proposal => "New window decorations",
                                              :sha_snapshot => "ffac",
-                                             :ending_commit => "ac00",
-                                             :sequence_number => 666)
+                                             :ending_commit => "ac00")
 
+      mr2.sequence_number = 666
       mr2.save
 
       assert_not_equal mr2.reload.sequence_number, @merge_request.reload.sequence_number

@@ -26,7 +26,12 @@ class Site < ActiveRecord::Base
   after_create :init_wiki_git_path
 
   def self.default
-    Site.find_or_create_by_title_and_subdomain(:title => GitoriousConfig["site_name"], :subdomain => nil)
+    site = Site.where(:title => GitoriousConfig["site_name"], :subdomain => nil).first
+    if site.nil?
+      site = Site.new(:title => GitoriousConfig["site_name"])
+      site.save
+    end
+    site
   end
 
   def init_wiki_git_path
