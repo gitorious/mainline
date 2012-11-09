@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+require(File.expand_path(File.dirname(__FILE__) + "/setup"))
+
+Gitorious::CLI.new.run_with_gitorious_environment do
+  require "./config/environment"
+  require "highline/import"
+
+  ActionMailer::Base.raise_delivery_errors = false
+  ActionMailer::Base.delivery_method = :test
+
+  email = ask("Enter e-mail: ")
+
+  default_login = email.split("@").first
+  login = ask("Enter login (#{default_login}): ")
+  login = default_login if login.blank?
+
+  password = ask("Enter password: ") { |q| q.echo = "*" }
+
+  user = User.new(:email => email, :terms_of_use => "1")
+  user.login = login
+  user.password = user.password_confirmation = password
+
+  user.is_admin = ask("Make user admin? (y/n) ") == "y"
+
+  if !user.valid?
+    puts "Unable to create user:"
+    puts user.errors.full_messages.map { |m| "  - #{m}" }.join("\n")
+    exit
+  end
+
+  user.save!
+  user.activate
+  puts "User '#{login}' created successfully."
+end

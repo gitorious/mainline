@@ -24,6 +24,7 @@ gem "thinking-sphinx", "~> 2.0.10"
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 gem "rails_autolink", "~> 1.0"
 gem "mysql2"
+gem "highline"
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
@@ -56,6 +57,10 @@ end
 
 group :resque do
   gem "resque", "1.9.8"
+end
+
+group :http_utils do
+  gem "httparty", "~> 0.9"
 end
 
 platform :jruby do
