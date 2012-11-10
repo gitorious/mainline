@@ -84,8 +84,8 @@ git log --pretty=oneline --abbrev-commit <%= @merge_request.target_branch %>..me
     <p>
       If you believe that this merge request is indeed not too big for the web
       interface, please
-      contact <a href="mailto:<%= GitoriousConfig["gitorious_support_email"]
-      %>"><%= GitoriousConfig["gitorious_support_email"] %></a>.
+      contact <a href="mailto:<%= Gitorious.support_email
+      %>"><%= Gitorious.support_email %></a>.
     </p>
   </div>
 <% end %>
