@@ -31,10 +31,7 @@ unless defined? GitoriousConfig
   Gitorious::Configuration.append(config[Rails.env])
   Gitorious::Configuration.append(global)
 
-  # make the default be publicly open
-  GitoriousConfig["public_mode"] = true if GitoriousConfig["public_mode"].nil?
   GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
-  GitoriousConfig["gitorious_support_email"] = "support@gitorious.local" if GitoriousConfig["gitorious_support_email"].nil?
 
   if !GitoriousConfig.key?("additional_footer_links")
     GitoriousConfig["additional_footer_links"] = [["Professional Gitorious Services", "http://gitorious.com/"]]

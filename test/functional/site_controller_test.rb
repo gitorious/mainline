@@ -194,12 +194,12 @@ class SiteControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig["public_mode"] = false
+      @test_settings = Gitorious::Configuration.prepend("public_mode" => false)
       GitoriousConfig["is_gitorious_dot_org"] = false
     end
 
     teardown do
-      GitoriousConfig["public_mode"] = true
+      Gitorious::Configuration.prune(@test_settings)
       GitoriousConfig["is_gitorious_dot_org"] = true
     end
 

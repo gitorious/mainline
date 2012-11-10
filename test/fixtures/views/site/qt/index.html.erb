@@ -38,7 +38,7 @@
         </tr>
       </table>
     <% end -%>
-    <% if GitoriousConfig['public_mode'] || logged_in? -%>
+    <% if Gitorious.public? || logged_in? -%>
       <p class="hint create_account_hint">
         <%= t("views.site.creating_account", :path => new_user_path) %>
       </p>
@@ -46,7 +46,7 @@
   <% end -%>
 </div>
 
-<% if GitoriousConfig['public_mode'] -%>
+<% if Gitorious.public? -%>
   <div id="left">
     <%= pull_box(nil, :class => "expose") do -%>
       <p>

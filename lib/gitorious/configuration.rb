@@ -38,7 +38,9 @@ module Gitorious
       env_key = "GITORIOUS_#{key.upcase}"
       return ENV[env_key] if ENV.key?(env_key)
       settings = configs.detect { |c| c.key?(key) }
-      settings ? settings[key] : default
+      return settings[key] if settings
+      return yield if block_given? && default.nil?
+      default
     end
 
     private

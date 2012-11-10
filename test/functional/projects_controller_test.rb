@@ -532,11 +532,11 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig["public_mode"] = false
+      @test_settings = Gitorious::Configuration.prepend("public_mode" => false)
     end
 
     teardown do
-      GitoriousConfig["public_mode"] = true
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "GET /projects" do

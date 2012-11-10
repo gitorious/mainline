@@ -56,7 +56,7 @@
 </div>
 <p class="alt_links">
   <small>
-    <% if GitoriousConfig['public_mode'] -%>
+    <% if Gitorious.public? -%>
       <%= link_to "Log in", login_path %>
       &mdash;
     <% end -%>

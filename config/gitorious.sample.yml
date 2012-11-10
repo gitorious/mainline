@@ -42,6 +42,22 @@
 #client_host: localhost
 #client_port: 80
 
+# When Gitorious is running in public mode (true), everyone with
+# access to the server can view and clone repositories. Private mode
+# (false) will not allow anonymous access to content or user
+# registration. Only pre-approved and logged in users can surf the
+# Gitorious installation.
+#
+# NB! If you intend to run in private mode, you should probably also
+# disable HTTP and git:// cloning. These protocols are anonymous, and
+# will allow unregistered users to pull repositories, given that they
+# somehow obtained the correct URLs.
+#public_mode: true
+
+# Email address to the support for the Gitorious server. Default is
+# gitorious-support@<host>
+#support_email: support@gitorious.local
+
 production:
   # Host name used to access repos via git and ssh+git, if different.
   #gitorious_clone_host: gitorious.test
@@ -167,17 +183,6 @@ production:
   # "TWEAKS"
   # --------
 
-  # When Gitorious is running in public mode (true), everyone with access to the
-  # server can view and clone repositories. Private mode (false) will not allow
-  # anonymous access to content or user registration. Only pre-approved and
-  # logged in users can surf the Gitorious installation.
-  #
-  # NB! If you intend to run in private mode, you should probably also disable
-  # HTTP and git:// cloning. These protocols are anonymous, and will allow
-  # unregistered users to pull repositories, given that they somehow obtained
-  # the correct URLs.
-  #public_mode: true
-
   # Enabling private repositories allows users to control read-access to their
   # repositories. Repositories are public by default, but individual users
   # and/or groups can be given read permissions to limit who can see and pull
@@ -291,9 +296,6 @@ production:
 
   # Stuff that's in the html <head>. custom stats javascript code etc
   #extra_html_head_data:
-
-  # Email address to the support for the Gitorious server
-  #gitorious_support_email: support@gitorious.local
 
   # The SSH fingerprint of your server
   #ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"

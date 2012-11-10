@@ -196,7 +196,7 @@ class ApplicationController < ActionController::Base
   end
 
   def public_and_logged_in
-    login_required unless GitoriousConfig['public_mode']
+    login_required unless Gitorious.public?
   end
 
   def mark_flash_status
@@ -295,7 +295,7 @@ class ApplicationController < ActionController::Base
   end
 
   def self.skip_session(options = {})
-    return if !GitoriousConfig["public_mode"]
+    return if !Gitorious.public?
     always_skip_session(options)
   end
 

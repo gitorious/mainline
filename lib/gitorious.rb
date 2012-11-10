@@ -48,6 +48,18 @@ module Gitorious
     @email_sender = Gitorious::Configuration.get("email_sender", default)
   end
 
+  def self.public?
+    return @public if !@public.nil? && cache?
+    @public = Gitorious::Configuration.get("public_mode", true)
+  end
+
+  def self.support_email
+    return @support_email if @support_email && cache?
+    @support_email = Gitorious::Configuration.get("support_email") do
+      "gitorious-support@#{host}"
+    end
+  end
+
   private
   def self.cache?
     Rails.env.production?
