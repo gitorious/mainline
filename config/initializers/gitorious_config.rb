@@ -19,9 +19,13 @@
 unless defined? GitoriousConfig
   GitoriousConfig = c = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))[Rails.env]
 
+  # New configuration
+  require "gitorious"
+  require "gitorious/configuration"
+  Gitorious::Configuration.append(GitoriousConfig)
+
   # make the default be publicly open
   GitoriousConfig["public_mode"] = true if GitoriousConfig["public_mode"].nil?
-  GitoriousConfig["locale"] = "en" if GitoriousConfig["locale"].nil?
   GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
   GitoriousConfig["gitorious_support_email"] = "support@gitorious.local" if GitoriousConfig["gitorious_support_email"].nil?
 
@@ -35,11 +39,10 @@ unless defined? GitoriousConfig
 
   # require the use of SSL by default
   GitoriousConfig["use_ssl"] = true if GitoriousConfig["use_ssl"].nil?
-  GitoriousConfig["scheme"] = GitoriousConfig["use_ssl"] ? "https" : "http"
 
   # set global locale
-  I18n.default_locale = GitoriousConfig["locale"]
-  I18n.locale = GitoriousConfig["locale"]
+  I18n.default_locale = GitoriousConfig["locale"] || "en"
+  I18n.locale = GitoriousConfig["locale"] || "en"
 
   # set default tos/privacy policy urls
   GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].blank?
@@ -52,7 +55,7 @@ unless defined? GitoriousConfig
   GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
   if !GitoriousConfig.valid_subdomain?
-    Rails.logger.warn "Invalid subdomain name #{GitoriousConfig['gitorious_host']}. Session cookies will not work!\n" +
+    Rails.logger.warn "Invalid subdomain name #{Gitorious.host}. Session cookies will not work!\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
 
@@ -76,7 +79,7 @@ unless defined? GitoriousConfig
 
   # Used to be we supported a special git/http subdomain. No longer. The
   # git_http_host setting can be used to emulate the old behavior
-  GitoriousConfig["git_http_host"] ||= GitoriousConfig["gitorious_host"]
+  GitoriousConfig["git_http_host"] ||= Gitorious.host
 end
 
 GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"

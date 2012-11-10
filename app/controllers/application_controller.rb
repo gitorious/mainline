@@ -18,6 +18,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require "gitorious"
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
@@ -259,7 +261,7 @@ class ApplicationController < ActionController::Base
   end
 
   def subdomain_without_common
-    tld_length = GitoriousConfig["gitorious_host"].split(".").length - 1
+    tld_length = Gitorious.host.split(".").length - 1
     request.subdomains(tld_length).select{|s| s !~ /^(ww.|secure)$/}.first
   end
 
@@ -267,7 +269,7 @@ class ApplicationController < ActionController::Base
     return unless request.get?
     if !current_site.subdomain.blank?
       if subdomain_without_common != current_site.subdomain
-        url_parameters = {:only_path => false, :host => "#{current_site.subdomain}.#{GitoriousConfig["gitorious_host"]}#{request.port_string}"}.merge(params)
+        url_parameters = {:only_path => false, :host => "#{current_site.subdomain}.#{Gitorious.host}#{request.port_string}"}.merge(params)
         redirect_to url_parameters
       end
     elsif !subdomain_without_common.blank?
@@ -284,7 +286,7 @@ class ApplicationController < ActionController::Base
   def redirect_to_top_domain
     host_without_subdomain = {
       :only_path => false,
-      :host => GitoriousConfig["gitorious_host"]
+      :host => Gitorious.host
     }
     if ![80, 443].include?(request.port)
       host_without_subdomain[:host] << ":#{request.port}"

@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -26,4 +27,4 @@ One of your favorites has a new activity:
 
 You are receiving this email because you have chosen to be notified by
 email whenever this favorite has new activity. You can manage your
-favorite subscriptions at <%= GitoriousConfig['scheme'] %>://<%= GitoriousConfig['gitorious_host'] %>/favorites
+favorite subscriptions at <%= Gitorious.url("/favorites") -%>

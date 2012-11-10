@@ -82,8 +82,8 @@ class RepositoryTest < ActiveSupport::TestCase
 
   context "git urls" do
     setup do
-      @host_with_user = "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_host']}"
-      @host = "#{GitoriousConfig['gitorious_host']}"
+      @host_with_user = "#{GitoriousConfig['gitorious_user']}@#{Gitorious.host}"
+      @host = "#{Gitorious.host}"
       @git_http_host = GitoriousConfig["git_http_host"]
     end
 
@@ -104,12 +104,12 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "has a http url" do
-      assert_equal "#{GitoriousConfig['scheme']}://#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      assert_equal Gitorious.url("/#{@repository.project.slug}/foo.git"), @repository.http_clone_url
     end
 
     should "use the real http cloning URL" do
       GitoriousConfig["git_http_host"] = "whatever.dude"
-      assert_equal "#{GitoriousConfig['scheme']}://whatever.dude/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      assert_equal "#{Gitorious.scheme}://whatever.dude/#{@repository.project.slug}/foo.git", @repository.http_clone_url
     end
 
     should "has a clone url with the project name, if it is a mainline" do
@@ -150,18 +150,18 @@ class RepositoryTest < ActiveSupport::TestCase
     should "has a http clone url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
-      assert_equal "#{GitoriousConfig['scheme']}://#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
+      assert_equal "#{Gitorious.scheme}://#{@host}/#{@repository.project.slug}/foo.git", @repository.http_clone_url
     end
 
     should "have a http clone url with the team/user, if it is not a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
-      url = "#{GitoriousConfig['scheme']}://#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "#{Gitorious.scheme}://#{@host}/#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.http_clone_url
 
       @repository.owner = users(:johan)
       @repository.kind = Repository::KIND_USER_REPO
-      url = "#{GitoriousConfig['scheme']}://#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "#{Gitorious.scheme}://#{@host}/#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.http_clone_url
     end
 

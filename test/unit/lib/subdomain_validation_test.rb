@@ -27,24 +27,24 @@ class SubdomainValidationTest < ActiveSupport::TestCase
     end
 
     should "Gitorious.org should work with subdomains" do
-      @config["gitorious_host"] = "gitorious.org"
+      @config["host"] = "gitorious.org"
       assert @config.valid_subdomain?
     end
 
     should "Host names without dots are not considered valid" do
-      @config["gitorious_host"] = "gitorious"
+      @config["host"] = "gitorious"
       assert !@config.valid_subdomain?
     end
 
     should "Localhost is not an acceptable host name" do
-      @config["gitorious_host"] = "localhost"
+      @config["host"] = "localhost"
       assert !@config.valid_subdomain?
     end
   end
 
   context "Request validation" do
     setup do
-      @config = {"gitorious_host" => "gitorious.org"}
+      @config = {"host" => "gitorious.org"}
       @config.extend(SubdomainValidation)
     end
 
@@ -61,12 +61,12 @@ class SubdomainValidationTest < ActiveSupport::TestCase
     end
 
     should "not consider invalid domain names successful" do
-      @config["gitorious_host"] = "gitorious"
+      @config["host"] = "gitorious"
       assert !@config.valid_request_host?("gitorious")
     end
 
     should "consider sub domain hosts valid" do
-      @config = {"gitorious_host" => "git.gitorious.org"}
+      @config = {"host" => "git.gitorious.org"}
       @config.extend(SubdomainValidation)
 
       assert @config.valid_request_host?("git.gitorious.org")

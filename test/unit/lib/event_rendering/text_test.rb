@@ -43,7 +43,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
 
     should "always include a project link" do
       res = render(@event)
-      assert_match /\n#{GitoriousConfig['scheme']}:\/\/#{GitoriousConfig['gitorious_host']}\/johans-project$/, res
+      assert_match /\n#{Gitorious.scheme}:\/\/#{Gitorious.host}\/johans-project$/, res
     end
 
     should "raise error for unknown actions" do
@@ -96,7 +96,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     end
 
     should "render the url of the clone" do
-      exp = " #{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{@clone_repo.url_path}"
+      exp = Gitorious.url("/#{@clone_repo.url_path}")
       assert @output.include?(exp), "did not include the url in: #{@output}"
     end
   end
@@ -433,10 +433,6 @@ class TextEventRenderingTest < ActiveSupport::TestCase
   protected
   def render(event)
     ::EventRendering::Text.render(event)
-  end
-
-  def base_url
-    "#{GitoriousConfig['scheme']}://" + GitoriousConfig["gitorious_host"]
   end
 
   def mock_git_git_show_call

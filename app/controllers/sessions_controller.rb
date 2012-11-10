@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 August Lilleaas <augustlilleaas@gmail.com>
@@ -23,6 +24,7 @@
 
 require "openid"
 require "yadis"
+require "gitorious"
 
 # This controller handles the login/logout function of the site.
 class SessionsController < ApplicationController
@@ -142,7 +144,7 @@ class SessionsController < ApplicationController
       cookies[:auth_token] = {
         :value => self.current_user.remember_token ,
         :expires => self.current_user.remember_token_expires_at,
-        :domain => ".#{GitoriousConfig['gitorious_host']}",
+        :domain => ".#{Gitorious.host}",
         :secure => true
       }
     end

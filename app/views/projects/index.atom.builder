@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David Chelimsky <dchelimsky@gmail.com>
 #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
@@ -23,8 +24,7 @@ namespaced_atom_feed do |feed|
   feed.updated((@projects.blank? ? Time.now : @projects.first.created_at))
 
   @projects.each do |project|
-    item_url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}" + project_path(project)
-    feed.entry(project, :url => item_url) do |entry|
+    feed.entry(project, :url => Gitorious.url(project_path(project))) do |entry|
       entry.title(project.title)
       entry.content(project.description)
       entry.author do |author|

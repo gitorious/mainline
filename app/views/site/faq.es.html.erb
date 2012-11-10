@@ -36,7 +36,7 @@
   del repositorio que quiere publicar:
   <pre>
     [remote "origin"]
-    url = <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+    url = <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
     fetch = +refs/heads/*:refs/remotes/origin/*
     [branch "master"]
     remote = origin
@@ -45,10 +45,10 @@
   y entonces <code>git push origin master</code> para publicar el código en Gitorious.
 </p>
 <p>
-  También puede simplemente ejecutar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:tumbline/mainline.git</code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para
+  También puede simplemente ejecutar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:tumbline/mainline.git</code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para
   obtener la configuración de arriba):
   <pre>
-    git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= GitoriousConfig['gitorious_host'] -%>:<em>project</em>/<em>repository.git</em>
+    git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
     # para publicar el branch master al origin remote que agregamos arriba:
     git push origin master
     # después de eso puede simplemente hacer:
@@ -64,7 +64,7 @@
   para que puedan contactarlo sobre sus proyectos si así lo necesitan. De todas formas tomamos
   algunas medidas simples contra crawlers al no mostrar toda su dirección en texto plano. <br />
   Pero sólo para que quede claro: nosotros no vendemos ni usamos la información que usted brinda
-  a <%= GitoriousConfig['gitorious_host'] -%> para obtener ganancias económicas o personales.
+  a <%= Gitorious.host -%> para obtener ganancias económicas o personales.
 </p>
 
 <hr />

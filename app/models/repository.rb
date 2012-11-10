@@ -23,6 +23,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious"
 require "gitorious/reservations"
 require "gitorious/messaging"
 
@@ -241,7 +242,7 @@ class Repository < ActiveRecord::Base
   end
 
   def browse_url
-    "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{url_path}"
+    Gitorious.url(url_path)
   end
 
   def default_clone_url
@@ -251,7 +252,7 @@ class Repository < ActiveRecord::Base
   end
 
   def clone_url
-    "git://#{GitoriousConfig['gitorious_clone_host'] || GitoriousConfig['gitorious_host']}/#{gitdir}"
+    "git://#{GitoriousConfig['gitorious_clone_host'] || Gitorious.host}/#{gitdir}"
   end
 
   def ssh_clone_url
@@ -263,7 +264,7 @@ class Repository < ActiveRecord::Base
   end
 
   def http_clone_url
-    "#{GitoriousConfig['scheme']}://#{GitoriousConfig['git_http_host']}/#{gitdir}"
+    "#{Gitorious.scheme}://#{GitoriousConfig['git_http_host']}/#{gitdir}"
   end
 
   def http_cloning?
@@ -280,7 +281,7 @@ class Repository < ActiveRecord::Base
   end
 
   def push_url
-    "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_clone_host'] || GitoriousConfig['gitorious_host']}:#{gitdir}"
+    "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_clone_host'] || Gitorious.host}:#{gitdir}"
   end
 
   def display_ssh_url?(user)

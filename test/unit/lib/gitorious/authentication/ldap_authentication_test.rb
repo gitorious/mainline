@@ -237,7 +237,7 @@ class Gitorious::Authentication::LDAPAuthenticationTest < ActiveSupport::TestCas
     should "build a synthetic email if LDAP entry has no email" do
       StaticLDAPConnection.return_empty_email_address! do
         user = @ldap.authenticate(valid_client_credentials("moe.szyslak", "secret"))
-        assert_equal("moe.szyslak.example@#{GitoriousConfig['gitorious_host']}", user.email)
+        assert_equal("moe.szyslak.example@#{Gitorious.host}", user.email)
       end
     end
 

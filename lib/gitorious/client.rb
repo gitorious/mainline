@@ -1,7 +1,6 @@
-<%
+# encoding: utf-8
 #--
 #   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,14 +15,21 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
 
-Hola <%= @user.login -%>,
+module Gitorious
+  class Client
+    attr_reader :host, :port, :scheme
 
-Su nueva contraseña es: <%= @password %>
+    def initialize(host, port, scheme = "http")
+      @host = host.split(":").first
+      @port = port.to_i
+      @scheme = scheme
+    end
 
-Si no solicitó una nueva contraseña, por favor coméntenos este incidente.
-
-Atentamente,
-
-<%= Gitorious.url("/") %>
+    def url(path)
+      host_port = host
+      host_port << ":#{port}" unless port == 80
+      "#{scheme}://#{host_port}#{path}"
+    end
+  end
+end

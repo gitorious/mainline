@@ -130,7 +130,7 @@ module Gitorious
           end
 
           if user.email.blank?
-            user.email = "#{username}.example@#{GitoriousConfig['gitorious_host']}"
+            user.email = "#{username}.example@#{Gitorious.host}"
           end
 
           user.password = "left_blank"

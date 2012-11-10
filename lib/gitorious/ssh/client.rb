@@ -101,8 +101,8 @@ module Gitorious
       end
 
       def connection
-        port = GitoriousConfig["gitorious_client_port"]
-        host = GitoriousConfig["gitorious_client_host"]
+        port = Gitorious.client.host
+        host = Gitorious.client.port
         @connection ||= Net::HTTP.start(host, port)
       end
 
@@ -110,8 +110,8 @@ module Gitorious
       def writable_by_query_uri
         path = "/#{@project_name}/#{@repository_name}/writable_by"
         query = "username=#{@user_name}"
-        host = GitoriousConfig["gitorious_client_host"]
-        _port = GitoriousConfig["gitorious_client_port"]
+        host = Gitorious.client.host
+        _port = Gitorious.client.port
         # Ruby 1.9 expects a number, while 1.8 expects a string. Oh well
         port = RUBY_VERSION > "1.9" ? _port : _port.to_s
 

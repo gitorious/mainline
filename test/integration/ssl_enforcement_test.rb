@@ -33,7 +33,7 @@ class SslEnforcementTest < ActionController::IntegrationTest
     end
 
     should "not redirect from https to http" do
-      get "https://#{GitoriousConfig['gitorious_host']}/projects"
+      get "https://#{Gitorious.host}/projects"
 
       assert_response :success
     end
@@ -42,7 +42,7 @@ class SslEnforcementTest < ActionController::IntegrationTest
       repo = repositories(:johans)
       project = repo.project
 
-      get "http://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{repo.name}/config"
+      get "http://#{Gitorious.host}/#{project.slug}/#{repo.name}/config"
 
       assert_response :success
     end

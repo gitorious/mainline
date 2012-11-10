@@ -1,7 +1,6 @@
-<%
+# encoding: utf-8
 #--
 #   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,14 +15,30 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-%>
 
-Hola <%= @user.login -%>,
+module Gitorious
+  # Application-wide configuration settings.
+  #
+  module Configuration
 
-Su nueva contraseña es: <%= @password %>
+    def self.prepend(settings)
+      configs.unshift(settings)
+    end
 
-Si no solicitó una nueva contraseña, por favor coméntenos este incidente.
+    def self.append(settings)
+      configs.push(settings)
+    end
 
-Atentamente,
+    def self.get(key, default = nil)
+      env_key = "GITORIOUS_#{key.upcase}"
+      return ENV[env_key] if ENV.key?(env_key)
+      settings = configs.detect { |c| c.key?(key) }
+      settings && settings[key] || default
+    end
 
-<%= Gitorious.url("/") %>
+    private
+    def self.configs
+      @@configs ||= []
+    end
+  end
+end

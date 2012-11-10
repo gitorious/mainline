@@ -22,13 +22,13 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require "gitorious"
+
 class Mailer < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   extend ActionView::Helpers::SanitizeHelper::ClassMethods
   include Rails.application.routes.url_helpers
-
-  default(:from => lambda { GitoriousConfig["sender_email_address"] ||
-            "Gitorious <no-reply@#{GitoriousConfig['gitorious_host']}>" })
+  default(:from => lambda { Gitorious.email_sender })
 
   def signup_notification(user)
     @user = user
@@ -52,7 +52,7 @@ class Mailer < ActionMailer::Base
       :controller => "messages",
       :action => "show",
       :id => message_id,
-      :host => GitoriousConfig["gitorious_host"]
+      :host => Gitorious.host
     })
     @body = sanitize(body)
     @recipient = recipient.title.to_s
@@ -71,7 +71,7 @@ class Mailer < ActionMailer::Base
 
   def forgotten_password(user, pw_key)
     @user = user
-    @url = reset_password_users_url(pw_key, :protocol => GitoriousConfig["scheme"])
+    @url = reset_password_users_url(pw_key, :protocol => Gitorious.scheme)
     mail(:to => format_address(user),
          :subject => prefixed_subject(I18n.t("mailer.new_password")))
   end

@@ -20,7 +20,6 @@
 require "test_helper"
 
 class MailerTest < ActiveSupport::TestCase
-
   URL_BASE = "#{Mailer.default_url_options[:protocol]||'http'}://#{Mailer.default_url_options[:host]}"
 
   setup do
@@ -94,11 +93,11 @@ class MailerTest < ActiveSupport::TestCase
 
     body = mail.body.decoded
     assert_match /#{sender.fullname} has sent you a message on Gitorious:/, body
-    assert_match /#{GitoriousConfig['scheme']}:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, body
-    assert_match "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/messages/#{message_id}", body
+    assert_match /#{Gitorious.scheme}:\/\/.*\/#{merge_request.target_repository.project.slug}\//i, body
+    assert_match Gitorious.url("/messages/#{message_id}"), body
   end
 
-  should 'sanitize the contents of notifications' do
+  should "sanitize the contents of notifications" do
     recipient = users(:moe)
     sender = users(:mike)
     subject = %Q(<script type="text/javascript">alert(document.cookie)</script>Hello)
@@ -122,29 +121,29 @@ class MailerTest < ActiveSupport::TestCase
     assert_match(/Hello #{user.login}/, body)
     assert mail.body.include?(body), "notification body not in: #{body}"
     assert_match(/you are receiving this email because/i, body)
-    assert_match(/#{GitoriousConfig['gitorious_host']}\/favorites/, body)
+    assert_match(/#{Gitorious.host}\/favorites/, body)
   end
 
   context "Sender address" do
     setup do
-      @old_address = GitoriousConfig["sender_email_address"]
+      @old_address = GitoriousConfig["email_sender"]
       @user = users(:moe)
     end
 
     teardown do
-      GitoriousConfig["sender_email_address"] = @old_address
+      GitoriousConfig["email_sender"] = @old_address
     end
 
     should "be a sensible default unless configured" do
-      GitoriousConfig["sender_email_address"] = nil
+      GitoriousConfig["email_sender"] = nil
       message = Mailer.signup_notification(@user)
-      sender_address = "no-reply@#{GitoriousConfig['gitorious_host']}"
+      sender_address = "no-reply@#{Gitorious.host}"
       assert_equal sender_address, message.from.first
     end
 
     should "use configured sender address" do
       sender_address = "no-reply@gitorious.example"
-      GitoriousConfig["sender_email_address"] = "Gitorious <#{sender_address}>"
+      GitoriousConfig["email_sender"] = "Gitorious <#{sender_address}>"
       message = Mailer.signup_notification(@user)
       assert_equal sender_address, message.from.first
     end

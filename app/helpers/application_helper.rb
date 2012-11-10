@@ -24,6 +24,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require "gitorious"
+
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   include ActsAsTaggableOn::TagsHelper
@@ -193,7 +195,7 @@ module ApplicationHelper
     port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
     "#{prefix}.gravatar.com/avatar.php?gravatar_id=" +
     (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
-      u("#{scheme}://#{GitoriousConfig['gitorious_host']}#{port_string}" +
+      u("#{scheme}://#{Gitorious.host}#{port_string}" +
       "/#{options.delete(:default)}") +
     options.map { |k,v| "&amp;#{k}=#{v}" }.join
   end
@@ -571,12 +573,12 @@ module ApplicationHelper
   end
 
   def dashboard_path
-    root_url(:host => GitoriousConfig["gitorious_host"], :protocol => GitoriousConfig["scheme"])
+    root_url(:host => Gitorious.host, :protocol => Gitorious.scheme)
   end
 
   def site_domain
-    host = GitoriousConfig["gitorious_host"]
-    port = GitoriousConfig["gitorious_port"]
+    host = Gitorious.host
+    port = Gitorious.port
     port = port.to_i != 80 ? ":#{port}" : ""
     "#{host}#{port}"
   end

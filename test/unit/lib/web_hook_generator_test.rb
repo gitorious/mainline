@@ -74,7 +74,7 @@ class WebHookGeneratorTest < ActiveSupport::TestCase
       @repository.description = "Terrible hacks"
       payload = @generator.payload
 
-      assert_equal "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{@repository.project.slug}/#{@repository.name}", payload[:repository][:url]
+      assert_equal Gitorious.url("/#{@repository.project.slug}/#{@repository.name}"), payload[:repository][:url]
       assert_equal "name", payload[:repository][:name]
       assert_equal "Terrible hacks", payload[:repository][:description]
       assert_equal 1, payload[:repository][:clones]

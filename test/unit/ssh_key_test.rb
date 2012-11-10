@@ -79,13 +79,13 @@ class SshKeyTest < ActiveSupport::TestCase
   should "allows a wider range of extended comments" do
     key = new_key
 
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{GitoriousConfig['gitorious_host']} key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{Gitorious.host} key"
     assert key.valid?
 
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+#{GitoriousConfig['gitorious_host']} key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE joe+#{Gitorious.host} key"
     assert key.valid?
 
-    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']} key"
+    key.key = "ssh-rsa AAAAB3Nz/aC1yc2EAAAABIwAAAQE #{Gitorious.scheme}://#{Gitorious.host} key"
     assert key.valid?
   end
 

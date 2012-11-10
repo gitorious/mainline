@@ -87,7 +87,7 @@ class SSHClientTest < ActiveSupport::TestCase
 
   should "return the correct authentication URL" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
-    assert_equal "http://#{GitoriousConfig['gitorious_client_host']}:#{GitoriousConfig['gitorious_client_port']}/foo/bar/writable_by?username=johan", client.writable_by_query_url
+    assert_equal Gitorious.client.url("/foo/bar/writable_by?username=johan"), client.writable_by_query_url
   end
 
   context "configuration parsing" do

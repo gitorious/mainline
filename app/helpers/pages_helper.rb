@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
 #
@@ -42,17 +43,17 @@ module PagesHelper
 
   def writable_wiki_url(project)
     if project.respond_to?(:slug)
-      "git@#{GitoriousConfig['gitorious_host']}:#{project.slug}/#{project.wiki_repository.name}.git"
+      "git@#{Gitorious.host}:#{project.slug}/#{project.wiki_repository.name}.git"
     else
-      "git@#{GitoriousConfig['gitorious_host']}:wiki/#{project.id}.git"
+      "git@#{Gitorious.host}:wiki/#{project.id}.git"
     end
   end
 
   def regular_wiki_url(project)
     if project.respond_to?(:slug)
-      "git://#{GitoriousConfig['gitorious_host']}/#{project.slug}/#{project.wiki_repository.name}.git"
+      "git://#{Gitorious.host}/#{project.slug}/#{project.wiki_repository.name}.git"
     else
-      "git://#{GitoriousConfig['gitorious_host']}/wiki/#{project.id}.git"
+      "git://#{Gitorious.host}/wiki/#{project.id}.git"
     end
   end
 end

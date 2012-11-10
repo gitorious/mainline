@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2010 Marius Mårnes Mathiesen <marius@shortcut.no>
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -18,7 +19,7 @@
 
 module SubdomainValidation
   def gitorious_host
-    self["gitorious_host"]
+    self["host"]
   end
 
   def valid_subdomain?

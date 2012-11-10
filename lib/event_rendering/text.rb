@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -227,7 +228,7 @@ module EventRendering
 
     def render_push_summary
       event_data = PushEventLogger.parse_event_data(@event.data)
-      url = "#{GitoriousConfig['scheme']}://#{GitoriousConfig['gitorious_host']}/#{@event.project.slug}/#{@event.target.name}/commits"
+      url = Gitorious.url("/#{@event.project.slug}/#{@event.target.name}/commits")
       branch_name = event_data[:branch]
       start_sha = event_data[:start_sha_short]
       end_sha = event_data[:end_sha_short]
@@ -303,12 +304,8 @@ module EventRendering
     end
 
     protected
-    def base_url
-      "#{GitoriousConfig['scheme']}://" + GitoriousConfig["gitorious_host"]
-    end
-
     def url(*parts)
-      File.join(base_url, *parts)
+      Gitorious.url("/" + parts.join("/"))
     end
 
     def add_diff_content
@@ -323,8 +320,7 @@ module EventRendering
     end
 
     def diff_url(start_sha, end_sha)
-      base_url + "/" + @event.target.url_path + "/commit/" + start_sha + "/diffs/" + end_sha
+      Gitorious.url("/" + @event.target.url_path + "/commit/" + start_sha + "/diffs/" + end_sha)
     end
-
   end
 end

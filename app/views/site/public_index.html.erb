@@ -134,7 +134,7 @@
       <h3 class="find">Find a project</h3>
       <div class="search">
         <%= form_for(:search, :url => search_path(:only_path => false,
-                                                  :host => GitoriousConfig["gitorious_host"]),
+                                                  :host => Gitorious.host),
                      :html => { :method => "get" }) do |f| -%>
           <p>
             <%= text_field_tag :q, "", :class => "text search-field round-5" -%>
