@@ -17,12 +17,19 @@
 #++
 
 unless defined? GitoriousConfig
-  GitoriousConfig = c = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))[Rails.env]
+  global = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))
+  config = {
+    "production" => global.delete("production"),
+    "development" => global.delete("development"),
+    "test" => global.delete("test")
+  }
+  GitoriousConfig = c = config[Rails.env]
 
   # New configuration
   require "gitorious"
   require "gitorious/configuration"
-  Gitorious::Configuration.append(GitoriousConfig)
+  Gitorious::Configuration.append(config[Rails.env])
+  Gitorious::Configuration.append(global)
 
   # make the default be publicly open
   GitoriousConfig["public_mode"] = true if GitoriousConfig["public_mode"].nil?

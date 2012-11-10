@@ -17,7 +17,7 @@
 #++
 
 module Gitorious
-  class Client
+  class Url
     attr_reader :host, :port, :scheme
 
     def initialize(host, port, scheme = "http")
@@ -29,7 +29,7 @@ module Gitorious
     def url(path)
       host_port = host
       host_port << ":#{port}" unless port == 80
-      "#{scheme}://#{host_port}#{path}"
+      "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
     end
   end
 end

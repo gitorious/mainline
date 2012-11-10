@@ -16,37 +16,29 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/configuration"
-require "gitorious/client"
+require "gitorious/url"
 
 module Gitorious
   VERSION = "3.0.0"
 
-  def self.scheme
-    return @scheme if @scheme && cache?
-    @scheme = Gitorious::Configuration.get("use_ssl") ? "https" : "http"
+  def self.site
+    return @site if @site && cache?
+    host = Gitorious::Configuration.get("host", "localhost")
+    port = Gitorious::Configuration.get("port", 80).to_i
+    scheme = Gitorious::Configuration.get("use_ssl") ? "https" : "http"
+    @site = Gitorious::Url.new(host, port, scheme)
   end
 
-  def self.host
-    return @host if @host && cache?
-    @host = Gitorious::Configuration.get("host", "localhost")
-  end
-
-  def self.port
-    return @port if @port && cache?
-    @port = Gitorious::Configuration.get("port", 80).to_i
-  end
-
-  def self.url(path)
-    host_port = host
-    host_port << ":#{port}" unless port == 80
-    "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
-  end
+  def self.scheme; site.scheme; end
+  def self.host; site.host; end
+  def self.port; site.port; end
+  def self.url(path); site.url(path); end
 
   def self.client
     return @client if @client && cache?
     host = Gitorious::Configuration.get("client_host", "localhost")
     port = Gitorious::Configuration.get("client_port", "80")
-    @client = Gitorious::Client.new(host, port)
+    @client = Gitorious::Url.new(host, port)
   end
 
   def self.email_sender
