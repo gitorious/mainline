@@ -284,8 +284,12 @@ class UsersControllerTest < ActionController::TestCase
 
   context "account-related tests" do
     setup do
-      GitoriousConfig["use_ssl"] = false
       login_as :johan
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
+    end
+
+    teardown do
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "require current_user" do

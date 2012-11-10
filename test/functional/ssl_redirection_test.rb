@@ -22,13 +22,12 @@ class ActionController::TestCase
   def self.enforce_ssl
     context "when enforcing ssl" do
       setup do
-        @use_ssl = GitoriousConfig["use_ssl"]
-        GitoriousConfig["use_ssl"] = true
         login_as(:johan)
+        @test_settings = Gitorious::Configuration.prepend("use_ssl" => true)
       end
 
       teardown do
-        GitoriousConfig["use_ssl"] = @use_ssl
+        Gitorious::Configuration.prune(@test_settings)
       end
 
       context "" do
@@ -40,12 +39,11 @@ class ActionController::TestCase
   def self.disable_ssl
     context "when not enforcing ssl" do
       setup do
-        @use_ssl = GitoriousConfig["use_ssl"]
-        GitoriousConfig["use_ssl"] = false
+        @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
       end
 
       teardown do
-        GitoriousConfig["use_ssl"] = @use_ssl
+        Gitorious::Configuration.prune(@test_settings)
       end
 
       context "" do

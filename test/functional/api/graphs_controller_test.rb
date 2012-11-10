@@ -100,7 +100,11 @@ class Api::GraphsControllerTest < ActionController::TestCase
   context "With private project" do
     setup do
       enable_private_repositories
-      GitoriousConfig["use_ssl"] = false
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
+    end
+
+    teardown do
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "disallow unauthorized user to graph branch" do
@@ -119,7 +123,11 @@ class Api::GraphsControllerTest < ActionController::TestCase
   context "With private repository" do
     setup do
       enable_private_repositories(@repo)
-      GitoriousConfig["use_ssl"] = false
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
+    end
+
+    teardown do
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "disallow unauthorized user to graph branch" do

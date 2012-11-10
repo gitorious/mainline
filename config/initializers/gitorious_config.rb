@@ -44,9 +44,6 @@ unless defined? GitoriousConfig
   GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil?
   GitoriousConfig["mangle_email_addresses"] = true if !GitoriousConfig.key?("mangle_email_addresses")
 
-  # require the use of SSL by default
-  GitoriousConfig["use_ssl"] = true if GitoriousConfig["use_ssl"].nil?
-
   # set global locale
   I18n.default_locale = GitoriousConfig["locale"] || "en"
   I18n.locale = GitoriousConfig["locale"] || "en"

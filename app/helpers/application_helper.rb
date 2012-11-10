@@ -584,7 +584,7 @@ module ApplicationHelper
   end
 
   def fq_root_link
-    "http#{GitoriousConfig['use_ssl'] ? 's' : ''}://#{site_domain}/"
+    Gitorious.url("/")
   end
 
   def url?(setting)

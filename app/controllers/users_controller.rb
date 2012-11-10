@@ -237,7 +237,7 @@ class UsersController < ApplicationController
 
   protected
   def ssl_required?
-    GitoriousConfig["use_ssl"]
+    Gitorious.ssl?
   end
 
   def find_user

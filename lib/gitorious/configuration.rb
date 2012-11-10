@@ -20,20 +20,25 @@ module Gitorious
   # Application-wide configuration settings.
   #
   module Configuration
-
     def self.prepend(settings)
       configs.unshift(settings)
+      settings
     end
 
     def self.append(settings)
       configs.push(settings)
+      settings
+    end
+
+    def self.prune(settings)
+      @@configs = configs.reject { |c| c == settings }
     end
 
     def self.get(key, default = nil)
       env_key = "GITORIOUS_#{key.upcase}"
       return ENV[env_key] if ENV.key?(env_key)
       settings = configs.detect { |c| c.key?(key) }
-      settings && settings[key] || default
+      settings ? settings[key] : default
     end
 
     private

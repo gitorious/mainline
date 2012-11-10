@@ -47,7 +47,6 @@ class SearchesControllerTest < ActionController::TestCase
 
   context "With private repositories" do
     setup do
-      GitoriousConfig["use_ssl"] = false
       @project = Project.first
       search_results = Project.all.concat(Repository.all)
       enable_private_repositories
@@ -56,6 +55,11 @@ class SearchesControllerTest < ActionController::TestCase
       search_results.stubs(:total_pages).returns(1)
       search_results.stubs(:total_entries).returns(search_results.length)
       search_results.stubs(:query_time).returns(42)
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
+    end
+
+    teardown do
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "filter out unauthorized results" do

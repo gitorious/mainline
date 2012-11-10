@@ -25,7 +25,11 @@ class SessionsControllerTest < ActionController::TestCase
 
   def setup
     setup_ssl_from_config
-    GitoriousConfig["use_ssl"] = true
+    @test_settings = Gitorious::Configuration.prepend("use_ssl" => true)
+  end
+
+  teardown do
+    Gitorious::Configuration.prune(@test_settings)
   end
 
   should "login and redirect" do

@@ -61,9 +61,8 @@ class SessionsController < ApplicationController
   end
 
   protected
-
   def ssl_required?
-    GitoriousConfig["use_ssl"]
+    Gitorious.ssl?
   end
 
   def validate_request_host

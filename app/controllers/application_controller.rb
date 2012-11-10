@@ -341,7 +341,7 @@ class ApplicationController < ActionController::Base
   end
 
   def ssl_required?
-    GitoriousConfig["use_ssl"] && using_session? && logged_in?
+    Gitorious.ssl? && using_session? && logged_in?
   end
 
   def unshifted_polymorphic_path(repo, path_spec)

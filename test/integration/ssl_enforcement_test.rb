@@ -21,15 +21,11 @@ require "test_helper"
 class SslEnforcementTest < ActionController::IntegrationTest
   context "with SSL enabled" do
     setup do
-      # @ssl_enabled = @request.env['HTTPS']
-      # @request.env['HTTPS'] = "on"
-      @use_ssl = GitoriousConfig["use_ssl"]
-      GitoriousConfig["use_ssl"] = true
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => true)
     end
 
     teardown do
-      # @request.env['HTTPS'] = @ssl_enabled
-      GitoriousConfig["use_ssl"] = @use_ssl
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "not redirect from https to http" do

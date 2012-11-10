@@ -900,9 +900,13 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "With private projects" do
     setup do
       enable_private_repositories
-      GitoriousConfig["use_ssl"] = false
       @group = groups(:team_thunderbird)
       @repository = @project.repositories.first
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
+    end
+
+    teardown do
+      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "disallow unauthorized users to get project repositories" do
@@ -1089,12 +1093,13 @@ class RepositoriesControllerTest < ActionController::TestCase
   context "With private repositories" do
     setup do
       enable_private_repositories(@repo)
-      GitoriousConfig["use_ssl"] = false
       @group = groups(:team_thunderbird)
       @repository = @project.repositories.first
+      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
     end
 
     teardown do
+      Gitorious::Configuration.prune(@test_settings)
       user = users(:mike)
       user.is_admin = false
       user.save
