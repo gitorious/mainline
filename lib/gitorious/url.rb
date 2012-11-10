@@ -31,5 +31,9 @@ module Gitorious
       host_port << ":#{port}" unless port == 80
       "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
     end
+
+    def ssl?
+      scheme == "https"
+    end
   end
 end

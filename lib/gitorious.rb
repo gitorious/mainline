@@ -23,15 +23,16 @@ module Gitorious
 
   def self.site
     return @site if @site && cache?
-    host = Gitorious::Configuration.get("host", "localhost")
+    host = Gitorious::Configuration.get("host", "gitorious.local")
     port = Gitorious::Configuration.get("port", 80).to_i
-    scheme = Gitorious::Configuration.get("use_ssl") ? "https" : "http"
+    scheme = Gitorious::Configuration.get("use_ssl", true) ? "https" : "http"
     @site = Gitorious::Url.new(host, port, scheme)
   end
 
   def self.scheme; site.scheme; end
   def self.host; site.host; end
   def self.port; site.port; end
+  def self.ssl?; site.ssl?; end
   def self.url(path); site.url(path); end
 
   def self.client

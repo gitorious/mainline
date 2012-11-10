@@ -1,34 +1,48 @@
+# The Gitorious configuration file controls several aspects of your
+# setup. While the default settings will work to some extent, you are
+# strongly recommended to review these settings upon initial
+# installation.
+#
+# Each setting is described in comments throughout the file. The
+# settings that are commented out are defaults. Uncomment to change
+# the value.
+#
+# Please note: This is a YAML file, and YAML files should _not_ use
+# tabs for indentation. Using tabs for indentation will prevent
+# Gitorious from running at all.
+#
+# Structure of this file
+#
+# This file has four main sections: Global settings, and one section
+# for each environment Gitorious runs in: production, development,
+# test. Unless you intend to build new features, fix bugs, etc, you
+# only need to look through the global settings.
+#
+# If you intend to work on the Gitorious source code, you need it to
+# run in development mode. Review the development mode section to the
+# bottom of this file for suggested overrides for that environment.
+
+# The host and port users reach Gitorious with. Used to generate URLs
+# where full URLs are required (e.g. in emails etc).
+#host: gitorious.local
+#port: 80
+
+# Using SSL is strongly recommended. If you leave this on, remember to
+# configure your web server accordingly.
+#use_ssl: true
+
+# Internal scripts will make HTTP requests to Gitorious for certain
+# kinds of information (e.g. bin/gitorious uses HTTP to figure out
+# where a repo resides on disk and so on). For this to work, you must
+# provide a hostname and port that resolves locally on the server, and
+# that serves Gitorious. In most cases, you can use the host and port
+# users use to reach Gitorious, but you may also optimize network
+# access by using a local host and port. Remember to make sure your
+# frontend web server knows about these as well.
+#client_host: localhost
+#client_port: 80
+
 production:
-  # The following is annotated default settings for your Gitorious install. In
-  # order for Gitorious to function properly, you _must_ tend to some of these
-  # settings. The settings are presented in four groups below; the top group is
-  # settings you have to provide, the second group is settings we recommend you
-  # review (and change where appropriate). The third group contains settings for
-  # tweaking the behavior of Gitorious (system message, public/private mode and
-  # so on), while the fourth group contains entirely optional settings that you
-  # can freely skip even reading when initially setting up (mostly related to
-  # theming and customizing the UI).
-  #
-  # Note: This configuration file will be split into smaller logically grouped
-  # files in future versions of Gitorious.
-  #
-  # If you want to be able to run Gitorious in development mode (useful when
-  # developing new features, or debugging), be sure to copy all the settings
-  # to the development group too. Look for the development: label to the bottom
-  # of this file.
-  #
-  # ------------------
-  # MANDATORY SETTINGS
-  # ------------------
-  #
-  # Port the ./script/gitorious script should use. This should be the port
-  # Gitorious runs under in the given environment. For normal setups, this will
-  # be port 80 (in the production environment).
-  gitorious_client_port: 80
-
-  # Host name users use to reach Gitorious, e.g. "gitorious.org".
-  gitorious_host: gitorious.test
-
   # Host name used to access repos via git and ssh+git, if different.
   #gitorious_clone_host: gitorious.test
 
@@ -186,8 +200,8 @@ production:
   # System message that will appear on all pages if present
   #system_message:
 
-  # Define your locale. See config/locales/ for supported locales.
-  #locale: en
+# Define your locale. See config/locales/ for supported locales.
+#locale: en
 
   # Hides http:// clone URLs from repository boxes when set to true.
   #hide_http_clone_urls: false
