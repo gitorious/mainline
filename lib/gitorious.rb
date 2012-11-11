@@ -15,11 +15,14 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "gitorious/configuration"
+require "gitorious/configurable"
 require "gitorious/url"
 
 module Gitorious
   VERSION = "3.0.0"
+
+  # Application-wide configuration settings.
+  Configuration = Configurable.new("GITORIOUS")
 
   def self.site
     return @site if @site && cache?
@@ -62,6 +65,7 @@ module Gitorious
 
   private
   def self.cache?
-    Rails.env.production?
+    return Rails.env.production? if defined?(Rails)
+    false
   end
 end

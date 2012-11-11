@@ -15,20 +15,22 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "yaml" if !defined?(YAML)
 
 unless defined? GitoriousConfig
-  global = YAML::load_file(File.join(Rails.root,"config/gitorious.yml"))
+  root = File.join(File.expand_path(File.dirname(__FILE__)), "../..")
+  env = defined?(Rails) ? Rails.env : "test"
+  global = YAML::load_file(File.join(root,"config/gitorious.yml"))
   config = {
     "production" => global.delete("production"),
     "development" => global.delete("development"),
     "test" => global.delete("test")
   }
-  GitoriousConfig = c = config[Rails.env]
+  GitoriousConfig = c = config[env]
 
   # New configuration
   require "gitorious"
-  require "gitorious/configuration"
-  Gitorious::Configuration.append(config[Rails.env])
+  Gitorious::Configuration.append(config[env])
   Gitorious::Configuration.append(global)
 
   GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
@@ -42,20 +44,22 @@ unless defined? GitoriousConfig
   GitoriousConfig["mangle_email_addresses"] = true if !GitoriousConfig.key?("mangle_email_addresses")
 
   # set global locale
-  I18n.default_locale = GitoriousConfig["locale"] || "en"
-  I18n.locale = GitoriousConfig["locale"] || "en"
+  if defined?(I18n)
+    I18n.default_locale = GitoriousConfig["locale"] || "en"
+    I18n.locale = GitoriousConfig["locale"] || "en"
+  end
 
   # set default tos/privacy policy urls
-  GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].blank?
-  GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].blank?
+  GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil? || GitoriousConfig["terms_of_service_url"] == ""
+  GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil? || GitoriousConfig["privacy_policy_url"] == ""
 
   require "subdomain_validation"
   GitoriousConfig.extend(SubdomainValidation)
 
-  default_messaging_adapter = Rails.env.test? ? "test" : "resque"
+  default_messaging_adapter = env == "test" ? "test" : "resque"
   GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
 
-  if !GitoriousConfig.valid_subdomain?
+  if !GitoriousConfig.valid_subdomain? && defined?(Rails)
     Rails.logger.warn "Invalid subdomain name #{Gitorious.host}. Session cookies will not work!\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end

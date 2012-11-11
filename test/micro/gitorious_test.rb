@@ -15,28 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "minitest/autorun"
+require "config/initializers/gitorious_config"
+require "gitorious"
 
-module Gitorious
-  class Url
-    attr_reader :host, :port, :scheme
+class GitoriousTest < MiniTest::Spec
+  after do
+    ENV.delete("GITORIOUS_HOST")
+  end
 
-    def initialize(host, port = 80, scheme = "http")
-      @host = host.split(":").first
-      @port = port.to_i
-      @scheme = scheme
-    end
-
-    def url(path)
-      "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
-    end
-
-    def host_port
-      return host if port == 80 || (port == 443 && ssl?)
-      "#{host}:#{port}"
-    end
-
-    def ssl?
-      scheme == "https"
-    end
+  it "uses GITORIOUS_ environment variables" do
+    ENV["GITORIOUS_HOST"] = "gitorious.org"
+    assert_equal "gitorious.org", Gitorious.host
   end
 end

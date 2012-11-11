@@ -17,26 +17,35 @@
 #++
 
 module Gitorious
-  class Url
-    attr_reader :host, :port, :scheme
-
-    def initialize(host, port = 80, scheme = "http")
-      @host = host.split(":").first
-      @port = port.to_i
-      @scheme = scheme
+  class Configurable
+    def initialize(env_prefix)
+      @env_prefix = env_prefix
     end
 
-    def url(path)
-      "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
+    def prepend(settings)
+      configs.unshift(settings)
+      settings
     end
 
-    def host_port
-      return host if port == 80 || (port == 443 && ssl?)
-      "#{host}:#{port}"
+    def append(settings)
+      configs.push(settings)
+      settings
     end
 
-    def ssl?
-      scheme == "https"
+    def prune(settings)
+      @configs = configs.reject { |c| c == settings }
     end
+
+    def get(key, default = nil)
+      env_key = "#{@env_prefix}_#{key.upcase}"
+      return ENV[env_key] if ENV.key?(env_key)
+      settings = configs.detect { |c| c.key?(key) }
+      return settings[key] if settings
+      return yield if block_given? && default.nil?
+      default
+    end
+
+    private
+    def configs; @configs ||= []; end
   end
 end
