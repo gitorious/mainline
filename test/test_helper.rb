@@ -5,14 +5,11 @@ require "ssl_requirement_macros"
 require "messaging_test_helper"
 require "shoulda"
 require "mocha"
+require "fast_test_helper"
 
 class ActiveSupport::TestCase
   include AuthenticatedTestHelper
   include Gitorious::Authorization
-
-  NULL_SHA = "0" * 40
-  SHA = "a" * 40
-  OTHER_SHA = "a" * 40
 
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,

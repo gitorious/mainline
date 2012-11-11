@@ -15,11 +15,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "push_spec_parser"
 
-require "test_helper"
-
-class PushSpecParserTest < ActiveSupport::TestCase
-
+class PushSpecParserTest < MiniTest::Shoulda
   context "Actions" do
     should "parse a tag creation" do
       spec = PushSpecParser.new(NULL_SHA, OTHER_SHA, "refs/tags/topic")

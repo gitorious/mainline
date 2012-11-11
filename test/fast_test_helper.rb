@@ -43,6 +43,12 @@ module MiniTest
   end
 end
 
+# Constants used throughout
+NULL_SHA = "0" * 40
+SHA = "a" * 40
+OTHER_SHA = "a" * 40
+
+# Rails shims
 class NilClass; def blank?; true; end; end
 class String; def blank?; self == ""; end; end
 class Array; def blank?; self.count == 0; end; end
