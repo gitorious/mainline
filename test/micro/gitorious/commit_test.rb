@@ -15,13 +15,41 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "vendor/grit/lib/grit"
+require "gitorious/commit"
 
-require "test_helper"
+class User
+  attr_accessor :email
 
-class CommitTest < ActiveSupport::TestCase
+  def initialize(attributes)
+    @email = attributes[:email]
+    @@users ||= {}
+    @@users[attributes[:email]] = self
+  end
+
+  def self.find_by_email_with_aliases(email)
+    @@users ||= {}
+    @@users[email]
+  end
+end
+
+module Rails
+  class Cache
+    def fetch(key)
+      yield
+    end
+  end
+
+  def self.cache
+    @cache ||= Cache.new
+  end
+end
+
+class CommitTest < MiniTest::Shoulda
   context "Commits from registered users" do
     setup do
-      @user = users(:moe)
+      @user = User.new(:email => "moe@example.com")
       @committer = Grit::Actor.new("John Committer", @user.email)
       @author = Grit::Actor.new("Jane Author", "jane@g.org")
       @committed_at = 2.days.ago

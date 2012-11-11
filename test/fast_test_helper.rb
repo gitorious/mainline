@@ -69,3 +69,9 @@ class Array
     self.inject(0) { |s, n| s + block.call(n) }
   end
 end
+
+class Fixnum
+  def days; self * 24 * 60 * 60; end
+  def day; days; end
+  def ago; Time.now - self; end
+end
