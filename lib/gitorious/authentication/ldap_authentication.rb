@@ -16,6 +16,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "net/ldap"
+require "gitorious"
+require "gitorious/authentication/ldap_configurator"
+
 module Gitorious
   module Authentication
     class LDAPAuthentication

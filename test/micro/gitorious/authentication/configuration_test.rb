@@ -15,10 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "gitorious/authentication/configuration"
+require "gitorious/authentication/database_authentication"
+require "gitorious/authentication/ldap_authentication"
 
-require "test_helper"
-
-class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
+class Gitorious::Authentication::ConfigurationTest < MiniTest::Shoulda
   context "Default configuration" do
     setup do
       Gitorious::Authentication::Configuration.authentication_methods.clear
@@ -44,8 +46,7 @@ class Gitorious::Authentication::ConfigurationTest < ActiveSupport::TestCase
   context "LDAP authentication" do
     setup do
       Gitorious::Authentication::Configuration.authentication_methods.clear
-      options = {"methods" => [{
-                                 "adapter" => "Gitorious::Authentication::LDAPAuthentication",
+      options = {"methods" => [{ "adapter" => "Gitorious::Authentication::LDAPAuthentication",
                                  "server" => "directory.example",
                                  "base_dn" => "DC=gitorious,DC=org",
                                  "port" => "998",

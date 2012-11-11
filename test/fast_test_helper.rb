@@ -50,7 +50,16 @@ OTHER_SHA = "a" * 40
 
 # Rails shims
 class NilClass; def blank?; true; end; end
-class String; def blank?; self == ""; end; end
 class Array; def blank?; self.count == 0; end; end
 class TrueClass; def blank?; false; end; end
 class FalseClass; def blank?; true; end; end
+
+class String
+  def blank?; self == ""; end
+
+  def constantize
+    self.split("::").inject(Object) do |mod, name|
+      mod.const_get(name)
+    end
+  end
+end

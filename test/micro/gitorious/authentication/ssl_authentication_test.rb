@@ -15,31 +15,23 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "test_helper"
+require "fast_test_helper"
 require "authentication_test_helper"
+require "gitorious/authentication/credentials"
+require "gitorious/authentication/ssl_authentication"
 
-class Gitorious::Authentication::SSLAuthenticationTest < ActiveSupport::TestCase
+class Gitorious::Authentication::SSLAuthenticationTest < MiniTest::Shoulda
   include Gitorious::SSLTestHelper
 
-  context "Auto-registration" do
+  context "Authentication" do
     setup do
-      @ssl = Gitorious::Authentication::SSLAuthentication.new({
-          "login_field" => "Email",
-          "login_strip_domain" => true,
-          "login_replace_char" => "",
-        })
-      @cn = 'John Doe'
-      @email = 'j.doe@example.com'
+      @ssl = Gitorious::Authentication::SSLAuthentication.new({})
     end
 
-    should "create a new user with information from the SSL client certificate" do
-      user = @ssl.authenticate(valid_client_credentials(@cn, @email))
-
-      assert_equal "jdoe", user.login
-      assert_equal @email, user.email
-      assert_equal @cn, user.fullname
-
-      assert user.valid?
+    should "return the actual user" do
+      moe = User.new
+      User.stubs(:find_by_login).with("moe").returns(moe)
+      assert_equal(moe, @ssl.authenticate(valid_client_credentials("moe", "moe@example.com")))
     end
   end
 end
