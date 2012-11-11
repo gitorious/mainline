@@ -240,7 +240,9 @@ module Gitorious
       return (load_percent_last_15_min < MAX_HEALTHY_CPU_LOAD.to_f)
     end
 
-
+    def public_summary?
+      Gitorious::Configuration.get("public_diagnostics_summary", false)
+    end
 
     private
 

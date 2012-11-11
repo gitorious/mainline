@@ -17,10 +17,10 @@
 #++
 
 class Admin::DiagnosticsController < ApplicationController
+  include Gitorious::Diagnostics
   before_filter :login_required, :except => :summary
   before_filter :require_site_admin, :except => :summary
 
-  include Gitorious::Diagnostics
   def index
     @everything_healthy = markup(everything_healthy?)
 
@@ -51,20 +51,22 @@ class Admin::DiagnosticsController < ApplicationController
   end
 
   def summary
-    if GitoriousConfig["turn_on_public_diagnostic_summary_page"]
-      if everything_healthy?
-        render :text => "OK"
-      else
-        render :text => "Error! Something might be broken in your Gitorious install. See /admin/diagnostics for overview", :status => 500
-      end
+    if !public_summary?
+      msg = "Error! Diagnostic summary page not exposed, see " +
+        "'public_diagnostics_summary' setting in gitorious.sample.yml"
+      render(:text => msg, :status => 500) and return
+    end
+
+    if everything_healthy?
+      render :text => "OK"
     else
-      render :text => "Error! Diagnostic summary page not exposed, see 'turn_on_public_diagnostic_summary_page' setting in gitorious.sample.yml", :status => 500
+      msg = "Error! Something might be broken in your Gitorious install. " +
+        "See /admin/diagnostics for overview"
+      render(:text => msg, :status => 500)
     end
   end
 
-
   private
-
   def markup(status)
     if status == true
       "<span class='diagnostic-true-indicator'>true</span>"
@@ -78,5 +80,4 @@ class Admin::DiagnosticsController < ApplicationController
       redirect_to root_path
     end
   end
-
 end

@@ -58,6 +58,19 @@
 # gitorious-support@<host>
 #support_email: support@gitorious.local
 
+# Exposes a public url at /admin/diagnostics/summary which, when
+# called, runs a number of health checks to verify that the Gitorious
+# installation is configured correctly and that the host system seems
+# healthy. Useful for checking that installations go well and for
+# monitoring running installs.
+# (Note: Logged in gitorious admins can also see a visual overview of
+# the system state at /admin/diagnostics/, regardless of this setting)
+#
+# TODO: Make this setting control which remote addresses are allowed
+# to access the summary rather than all or nothing.
+#
+#public_diagnostics_summary: true
+
 production:
   # Host name used to access repos via git and ssh+git, if different.
   #gitorious_clone_host: gitorious.test
@@ -156,15 +169,6 @@ production:
   # a merge request. This is used to prevent huge merge requests from spawning
   # 100 % CPU processes that never die.
   #merge_request_diff_timeout: 10
-
-  # Exposes a public url at /admin/diagnostics/summary which, when
-  # called, runs a number of health checks to verify that the
-  # Gitorious installation is configured correctly and that the host
-  # system seems healthy. Useful for checking that installations go
-  # well and for monitoring running installs.
-  # (Note: logged in gitorious admin users can also see a visual
-  # overview of the system state at /admin/diagnostics/)
-  # turn_on_public_diagnostic_summary_page: true
 
   # Give a hint about which frontend web server is being used
   # Setting this to 'nginx' will cause Gitorious to use X-Accel-Redirect headers
