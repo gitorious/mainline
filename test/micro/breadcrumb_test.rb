@@ -16,32 +16,33 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "breadcrumb"
 
-require "test_helper"
-
-class BreadcrumbTest < ActiveSupport::TestCase
-
+class BreadcrumbTest < MiniTest::Shoulda
   context "Breadcrumb::Folder" do
     setup do
       @head = Object.new
       def @head.name
         return "head"
       end
-      @folder = Breadcrumb::Folder.new(:paths => %w(foo bar baz), :head => @head, :repository => nil)
+      @folder = Breadcrumb::Folder.new(:paths => %w(foo bar baz),
+                                       :head => @head,
+                                       :repository => nil)
     end
 
-    should " return a relevant title" do
-      assert_equal 'baz', @folder.title
+    should "return a relevant title" do
+      assert_equal "baz", @folder.title
     end
 
-    should " return parents all the way up to a Branch" do
+    should "return parents all the way up to a Branch" do
       branch = @folder.breadcrumb_parent.breadcrumb_parent.breadcrumb_parent.breadcrumb_parent
       assert_instance_of Breadcrumb::Branch, branch
     end
 
     should "have a top level folder" do
       folder = Breadcrumb::Folder.new(:paths => [], :head => @head, :repository => nil)
-      assert_equal '/', folder.title
+      assert_equal "/", folder.title
     end
   end
 
@@ -51,11 +52,11 @@ class BreadcrumbTest < ActiveSupport::TestCase
       def @o.name
         return "Yikes"
       end
-      @branch = Breadcrumb::Branch.new(@o, 'I am a parent')
+      @branch = Breadcrumb::Branch.new(@o, "I am a parent")
     end
 
    should " return its title" do
-      assert_equal 'Yikes', @branch.title
+      assert_equal "Yikes", @branch.title
     end
 
    should " return its parent" do
@@ -65,7 +66,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
 
   context "Breadcrumb::Blob" do
     setup do
-      @blob = Breadcrumb::Blob.new(:paths => %w(foo), :name => 'README', :head => nil ,:repository => nil)
+      @blob = Breadcrumb::Blob.new(:paths => %w(foo), :name => "README", :head => nil ,:repository => nil)
     end
 
    should " have a Folder as its parent" do
@@ -80,11 +81,11 @@ class BreadcrumbTest < ActiveSupport::TestCase
   context "Breadcrumb::Commit" do
     setup do
       @repo = mock
-      @commit = Breadcrumb::Commit.new(:repository => @repo, :id => 'ffc0349')
+      @commit = Breadcrumb::Commit.new(:repository => @repo, :id => "ffc0349")
     end
 
    should " return its title" do
-      assert_equal 'ffc0349', @commit.title
+      assert_equal "ffc0349", @commit.title
     end
 
    should " return the Repository as its parent" do
@@ -96,7 +97,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
     setup do
       project = mock
       page = mock
-      page.stubs(:title).returns('Home')
+      page.stubs(:title).returns("Home")
       @page = Breadcrumb::Page.new(page, project)
     end
 
@@ -105,7 +106,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
     end
 
    should " return its title" do
-      assert_equal 'Home', @page.title
+      assert_equal "Home", @page.title
     end
   end
 
@@ -113,7 +114,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
     setup do
       sit = mock
       page = mock
-      page.stubs(:title).returns('Home')
+      page.stubs(:title).returns("Home")
       @page = Breadcrumb::SiteWikiPage.new(page, "TestSite")
     end
 
@@ -123,7 +124,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
     end
 
    should "return its title" do
-      assert_equal 'Home', @page.title
+      assert_equal "Home", @page.title
     end
   end
 
@@ -138,7 +139,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
     end
 
    should " return its title" do
-      assert_equal 'Members', @crumb.title
+      assert_equal "Members", @crumb.title
     end
   end
 
@@ -153,7 +154,7 @@ class BreadcrumbTest < ActiveSupport::TestCase
     end
 
    should "return its title" do
-      assert_equal 'Collaborators', @crumb.title
+      assert_equal "Collaborators", @crumb.title
     end
   end
 end
