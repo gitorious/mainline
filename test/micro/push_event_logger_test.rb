@@ -15,11 +15,43 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "push_spec_parser"
+require "push_event_logger"
 
-require "test_helper"
+class Repository
+  attr_reader :project, :user
+  def initialize(attributes = {}); end
+end
 
-class PushEventLoggerTest < ActiveSupport::TestCase
+class User
+  def initialize(attributes = {}); end
+end
 
+class Event
+  attr_accessor :action, :user, :data, :project, :target, :body
+  def initialize(attributes = {})
+    @action = attributes[:action]
+    @body = attributes[:body]
+    @data = attributes[:data]
+    @user = attributes[:user]
+    @target = attributes[:target]
+    @is_new = true
+  end
+  def save; @is_new = false; end
+  def save!; save; end
+  def new_record?; @is_new; end
+end
+
+class Action
+  CREATE_TAG = 0
+  DELETE_TAG = 2
+  CREATE_BRANCH = 4
+  DELETE_BRANCH = 8
+  PUSH_SUMMARY = 16
+end
+
+class PushEventLoggerTest < MiniTest::Shoulda
   context "deciding what events to create" do
     context "for tags" do
       should "create meta event when creating" do
@@ -119,10 +151,10 @@ class PushEventLoggerTest < ActiveSupport::TestCase
     end
 
     should "not create a push event when updating" do
-        spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
-        logger = PushEventLogger.new(Repository.new, spec, User.new)
+      spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/merge-requests/134")
+      logger = PushEventLogger.new(Repository.new, spec, User.new)
 
-        assert !logger.create_push_event?
+      assert !logger.create_push_event?
     end
   end
 
@@ -166,7 +198,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
 
   context "meta events" do
     setup do
-      @repository = repositories(:johans)
+      @repository = Repository.new #repositories(:johans)
       @project = @repository.project
       @user = @repository.user
       @create_spec = PushSpecParser.new(SHA, NULL_SHA, "refs/heads/master")
@@ -248,8 +280,8 @@ class PushEventLoggerTest < ActiveSupport::TestCase
 
   context "Push event" do
     setup do
-      @repository = repositories(:johans)
-      @user = users(:johan)
+      @repository = Repository.new #repositories(:johans)
+      @user = User.new #users(:johan)
       @spec = PushSpecParser.new(SHA, OTHER_SHA, "refs/heads/master")
       @logger = PushEventLogger.new(@repository, @spec, @user)
       @event = @logger.build_push_event
@@ -274,7 +306,7 @@ class PushEventLoggerTest < ActiveSupport::TestCase
     should "know how many commits were pushed" do
       git = mock
       log =<<GIT_LOG
-58226ba392520deb36cf89a7c1e85c047e9d1b2b Make sure meta events create usable meta and data attributes
+# 58226ba392520deb36cf89a7c1e85c047e9d1b2b Make sure meta events create usable meta and data attributes
 c8db6a4907fc3cd7762e862ea2e1f1683ba00e5f Merge request update events are created from the model
 bea57a4ac3a6590d1c66f3fadd986943d9830dde Start building event objects in PushEventLogger
 04a7d04b72c5e9da75b775f0ff0b9b424465313a Start implementation of push event logger/factory
