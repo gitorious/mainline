@@ -141,7 +141,7 @@ class MessagesControllerTest < ActionController::TestCase
 
     assert_response :redirect
     assert_not_nil assigns(:messages)
-    assert_match flash[:notice], /sent/i
+    assert_match /sent/i, flash[:notice]
   end
 
   context "POST to create with several recipients" do
@@ -189,7 +189,7 @@ class MessagesControllerTest < ActionController::TestCase
     }
 
     assert_response :redirect
-    assert_match flash[:notice], /sent/i
+    assert_match /sent/i, flash[:notice]
     assert_not_nil assigns(:message)
     assert_equal("Well", assigns(:message).subject)
   end

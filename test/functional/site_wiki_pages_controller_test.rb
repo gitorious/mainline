@@ -44,7 +44,7 @@ class SiteWikiPagesControllerTest < ActionController::TestCase
       assert_response :success
       assert_equal grit.commits("master", 30), assigns(:commits)
       assert_equal "max-age=1800, private", @response.headers["Cache-Control"]
-      assert_match @response.body, /<author>/
+      assert_match /<author>/, @response.body
     end
   end
 
