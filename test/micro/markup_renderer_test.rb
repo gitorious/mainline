@@ -16,11 +16,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "rdiscount"
+require "markup_renderer"
 
-require "test_helper"
-
-class MarkupRendererTest < ActiveSupport::TestCase
-
+class MarkupRendererTest < MiniTest::Shoulda
   context "rendering markdown" do
     should "render standard markdown" do
       text = "foo\n\n**bar**\n\n> baz"

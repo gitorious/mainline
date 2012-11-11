@@ -46,3 +46,5 @@ end
 class NilClass; def blank?; true; end; end
 class String; def blank?; self == ""; end; end
 class Array; def blank?; self.count == 0; end; end
+class TrueClass; def blank?; false; end; end
+class FalseClass; def blank?; true; end; end
