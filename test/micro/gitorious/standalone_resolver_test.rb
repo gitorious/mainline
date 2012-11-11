@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,12 +15,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "gitorious/standalone_resolver"
 
-require File.expand_path(File.join(File.dirname(__FILE__), "../../../../lib/gitorious/standalone_resolver"))
-require "test/unit"
-require "rubygems"
-require "shoulda"
-class StandaloneResolverTest < Test::Unit::TestCase
+class StandaloneResolverTest < MiniTest::Shoulda
   def setup
     @project_repo_path = "/project/repository.git"
     @group_repo_path = "/+team/project/repository.git"
