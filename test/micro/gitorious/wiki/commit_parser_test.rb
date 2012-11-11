@@ -15,10 +15,11 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "gitorious/wiki/commit_parser"
+require "push_spec_parser"
 
-require "test_helper"
-
-class WikiCommitLogParserTest < ActiveSupport::TestCase
+class WikiCommitParserTest < MiniTest::Shoulda
   context "Parsing modified files from commit log" do
     setup do
       @parser = Gitorious::Wiki::CommitParser.new
@@ -44,7 +45,7 @@ COMMIT
 
   context "Parsing more that one commit" do
     setup do
-      @output =<<COMMIT
+      @output = <<COMMIT
 commit e88d589c7c833152efeee05bf7e4b54e958be876
 Author: Marius Mathiesen <marius@shortcut.no>
 

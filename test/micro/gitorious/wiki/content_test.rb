@@ -15,12 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "gitorious/wiki/content"
 
-require "test_helper"
-
-class WikiContentTest < ActiveSupport::TestCase
+class WikiContentTest < MiniTest::Shoulda
   include Gitorious::Wiki::Content
-  
+
   context "White-listing of specific tags" do
     should "allow a table" do
       html = "<table><tr><td>Yo!</td></tr></table>"
@@ -50,5 +50,4 @@ class WikiContentTest < ActiveSupport::TestCase
       assert_equal html, sanitize_wiki_content(html)
     end
   end
-  
 end

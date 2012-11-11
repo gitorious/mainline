@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/configurable"
-require "gitorious/url"
+require "gitorious/mount_point"
 
 module Gitorious
   VERSION = "3.0.0"
@@ -29,7 +29,7 @@ module Gitorious
     host = Gitorious::Configuration.get("host", "gitorious.local")
     port = Gitorious::Configuration.get("port", 80).to_i
     scheme = Gitorious::Configuration.get("use_ssl", true) ? "https" : "http"
-    @site = Gitorious::Url.new(host, port, scheme)
+    @site = Gitorious::MountPoint.new(host, port, scheme)
   end
 
   def self.scheme; site.scheme; end
@@ -42,7 +42,7 @@ module Gitorious
     return @client if @client && cache?
     host = Gitorious::Configuration.get("client_host", "localhost")
     port = Gitorious::Configuration.get("client_port", "80")
-    @client = Gitorious::Url.new(host, port)
+    @client = Gitorious::MountPoint.new(host, port)
   end
 
   def self.email_sender

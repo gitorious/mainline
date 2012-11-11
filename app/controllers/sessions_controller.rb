@@ -66,7 +66,7 @@ class SessionsController < ApplicationController
   end
 
   def validate_request_host
-    if !GitoriousConfig.valid_request_host?(request.host)
+    if !Gitorious.site.can_share_cookies?(request.host)
       Rails.logger.warn("WARNING: Invalid request host '#{request.host}'. Session cookies will not work")
     end
   end

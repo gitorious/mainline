@@ -17,18 +17,38 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-module SubdomainValidation
-  def gitorious_host
-    self["host"]
-  end
+module Gitorious
+  class MountPoint
+    attr_reader :host, :port, :scheme
 
-  def valid_subdomain?
-    return gitorious_host =~ /[a-z0-9_]?\.[a-z0-9_]?/
-  end
+    def initialize(host, port = 80, scheme = "http")
+      @host = host.split(":").first
+      @port = port.to_i
+      @scheme = scheme
+    end
 
-  def valid_request_host?(host)
-    return false if !valid_subdomain?
-    subdomain_re = Regexp.new(".*\.?" + gitorious_host)
-    return host =~ subdomain_re
+    def url(path)
+      "#{scheme}://#{host_port}#{path.sub(/^\/?/, '/')}"
+    end
+
+    def host_port
+      return host if port == 80 || (port == 443 && ssl?)
+      "#{host}:#{port}"
+    end
+
+    def ssl?
+      scheme == "https"
+    end
+
+    # A valid fully qualified domain name is required to contain one
+    # dot.
+    def valid_fqdn?
+      return !host.match(/[a-z0-9_]?\.[a-z0-9_]?/).nil?
+    end
+
+    def can_share_cookies?(other_host)
+      return false if !valid_fqdn?
+      return !other_host.match(Regexp.new("(.+\.)?" + host)).nil?
+    end
   end
 end
