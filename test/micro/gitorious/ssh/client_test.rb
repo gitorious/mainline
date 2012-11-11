@@ -16,11 +16,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "config/initializers/gitorious_config"
+require "gitorious/ssh/strainer"
+require "gitorious/ssh/client"
 
-require "test_helper"
-
-class SSHClientTest < ActiveSupport::TestCase
-
+class SSHClientTest < MiniTest::Shoulda
   def setup
     @strainer = Gitorious::SSH::Strainer.new("git-upload-pack 'foo/bar.git'").parse!
     @real_path = "abc/123/defg.git"
@@ -62,27 +63,6 @@ class SSHClientTest < ActiveSupport::TestCase
   should "set the username that was passed into it" do
     client = Gitorious::SSH::Client.new(@strainer, "johan")
     assert_equal "johan", client.user_name
-  end
-
-  def make_request(path)
-    request = ActionController::TestRequest.new
-    request.request_uri = path
-    request
-  end
-
-  should "ask for the real path" do
-    client = Gitorious::SSH::Client.new(@strainer, "johan")
-    exp_path = "/foo/bar/writable_by?username=johan"
-    assert_equal exp_path, client.writable_by_query_path
-
-    request = make_request(client.writable_by_query_path)
-    uri = request.env["REQUEST_URI"]
-
-    route = Rails.application.routes.recognize_path(uri)
-    assert_equal "repositories", route[:controller]
-    assert_equal "writable_by", route[:action]
-    assert_equal "foo", route[:project_id]
-    assert_equal "bar", route[:id]
   end
 
   should "return the correct authentication URL" do
