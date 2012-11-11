@@ -16,11 +16,38 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "vendor/diff-display/lib/diff-display"
+require "gitorious/diff/comment_callback"
 
-require "test_helper"
+class Comment
+  attr_accessor :first_line_number, :last_line_number, :number_of_lines
 
-class CommentCallbackTest < ActiveSupport::TestCase
+  def initialize(attributes = {})
+    lines_str = attributes[:lines]
 
+    # TODO: This was copy-pasted from the Comment ActiveRecord model
+    # Refactor to share
+
+    start, rest = lines_str.split(":")
+    raise "invalid lines format" if rest.blank?
+    last, amount = rest.split("+")
+    if start.blank? || last.blank? || amount.blank?
+      raise "invalid lines format"
+    end
+    self.first_line_number = start
+    self.last_line_number = last
+    self.number_of_lines = amount
+  end
+end
+
+class User
+  def self.first
+    new
+  end
+end
+
+class CommentCallbackTest < MiniTest::Shoulda
   context "with several comments" do
     setup do
       @comments = [

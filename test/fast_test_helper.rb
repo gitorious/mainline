@@ -63,3 +63,9 @@ class String
     end
   end
 end
+
+class Array
+  def sum(&block)
+    self.inject(0) { |s, n| s + block.call(n) }
+  end
+end
