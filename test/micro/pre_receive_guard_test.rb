@@ -16,22 +16,21 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "data/hooks/pre_receive_guard"
 
-require "test_helper"
-require Rails.root + "data/hooks/pre_receive_guard"
-
-class PreReceiveGuardTest < ActiveSupport::TestCase
-  context 'In general' do
+class PreReceiveGuardTest < MiniTest::Shoulda
+  context "In general" do
     setup do
       @env = {
-          'GITORIOUS_WRITABLE_BY_URL' => 'http://gitorious.example/repositories/writable_by?user=john',
-          'SSH_ORIGINAL_COMMAND'  => 'git-receive-pack foo.git'}
+          "GITORIOUS_WRITABLE_BY_URL" => "http://gitorious.example/repositories/writable_by?user=john",
+          "SSH_ORIGINAL_COMMAND"  => "git-receive-pack foo.git"}
       @guard = Gitorious::SSH::PreReceiveGuard.new(@env, "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
     end
 
-    should 'know if the hook is called via SSH and allow pushes if local' do
+    should "know if the hook is called via SSH and allow pushes if local" do
       assert !@guard.local_connection?
-      @env.delete('SSH_ORIGINAL_COMMAND')
+      @env.delete("SSH_ORIGINAL_COMMAND")
       @guard = Gitorious::SSH::PreReceiveGuard.new(@env, "#{'0'*10} #{'fca'*10} refs/merge-requests/123")
       assert @guard.local_connection?
       assert @guard.allow_push?
@@ -55,12 +54,12 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert guard.deny_force_pushes?
     end
 
-    should 'build the correct authentication URL' do
+    should "build the correct authentication URL" do
       assert_equal "http://gitorious.example/repositories/writable_by?user=john&git_path=#{CGI.escape('refs/merge-requests/123')}", @guard.authentication_url
     end
 
-    should 'extract the Git target correctly' do
-      assert_equal 'refs/merge-requests/123', @guard.git_target
+    should "extract the Git target correctly" do
+      assert_equal "refs/merge-requests/123", @guard.git_target
     end
 
     should "chomp newlines from the git_target" do
@@ -69,13 +68,13 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
       assert_equal "refs/heads/master", guard.git_target
     end
 
-    should 'not allow push when Gitorious says no' do
-      @guard.stubs(:get_via_http).returns('false')
+    should "not allow push when Gitorious says no" do
+      @guard.stubs(:get_via_http).returns("false")
       assert !@guard.allow_push?
     end
 
-    should 'allow push when Gitorious says it is ok' do
-      @guard.stubs(:get_via_http).returns('true')
+    should "allow push when Gitorious says it is ok" do
+      @guard.stubs(:get_via_http).returns("true")
       assert !@guard.deny_force_pushes?
       assert @guard.allow_push?
     end
@@ -97,6 +96,5 @@ class PreReceiveGuardTest < ActiveSupport::TestCase
         "#{'0'*10} #{'fca'*10} refs/merge-requests/123\n")
       assert guard.deny_merge_request_update_with_sha?("0"*40)
     end
-
   end
 end
