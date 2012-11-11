@@ -15,16 +15,18 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 require "messaging_test_helper"
 require "gitorious/messaging"
+require "gitorious/messaging/test_adapter"
 
 class TestPublisher
   include Gitorious::Messaging::Publisher
   include Gitorious::Messaging::TestAdapter::Publisher
 end
 
-class MessagingTestAdapterTest < ActiveSupport::TestCase
+class MessagingTestAdapterTest < MiniTest::Shoulda
+  include MessagingTestHelper
+
   context "publisher" do
     teardown do
       Gitorious::Messaging::TestAdapter.clear
@@ -54,7 +56,7 @@ class MessagingTestAdapterTest < ActiveSupport::TestCase
       publisher = TestPublisher.new
       publisher.publish("/queue/MyQueue", { :id => 42 })
 
-      assert_raise RuntimeError do
+      assert_raises RuntimeError do
         assert_published "/queue/MyQueue", "id" => 40
       end
     end

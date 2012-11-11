@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
 tests = Dir.glob("test/micro/**/*.rb").join(" ")
-command = "ruby -I.:lib:test -e '%w[#{tests}].each { |t| require(t) }'"
+command = "ruby -I.:app:lib:test -e '%w[#{tests}].each { |t| require(t) }'"
 puts command
 system command

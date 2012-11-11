@@ -111,11 +111,11 @@ module Gitorious
     end
 
     class AbortMessageException < Exception; end
-    class NoopLogger; def debug; end; end
+    class NoopLogger; def debug(message); end; end
 
     def self.logger
       return @@logger if defined? @@logger
-      return @@logger = NoopLogger.new if !defined?(ActiveSupport)
+      return @@logger = NoopLogger.new if !defined?(ActiveSupport) || !defined?(Rails)
 
       filename = "message_processing#{Rails.env.test? ? '_test' : ''}"
       io = Rails.env.development? ? STDOUT : Rails.root + "log/#{filename}.log"
