@@ -15,10 +15,10 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "fast_test_helper"
+require "gitorious/authorization/configuration"
 
-require "test_helper"
-
-class Gitorious::Authorization::ConfigurationTest < ActiveSupport::TestCase
+class Gitorious::Authorization::ConfigurationTest < MiniTest::Shoulda
   context "Default configuration" do
     setup do
       Gitorious::Authorization::Configuration.strategies.clear

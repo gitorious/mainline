@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious/configurable_strategy"
+require "gitorious/authorization/database_authorization"
 
 module Gitorious
   module Authorization
@@ -27,7 +28,7 @@ module Gitorious
       end
 
       def self.configure!
-        authorization_configuration_path = File.join(Rails.root, "config", "authorization.yml")
+        authorization_configuration_path = File.join(root, "config", "authorization.yml")
 
         if File.exist?(authorization_configuration_path)
           if config = YAML::load_file(authorization_configuration_path)[Rails.env]
@@ -45,8 +46,11 @@ module Gitorious
         @configured
       end
 
-      configure! unless configured?
+      def self.root
+        File.expand_path(File.join(File.dirname(__FILE__), "../../.."))
+      end
 
+      configure! unless configured?
     end
   end
 end
