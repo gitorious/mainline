@@ -1,3 +1,7 @@
+IMPORTANT NOTICE: This script is outdated and will not work. It will
+be updated. In the meantime, please refer to http://getgitorious.com.
+======================================================================
+
 These instructions are for setting up a local development environment in
 Debian. When you're ready to deploy to a live site you'll want to set up
 dedicated user accounts, cron jobs, and init scripts, and replace some

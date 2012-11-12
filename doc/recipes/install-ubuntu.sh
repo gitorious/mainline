@@ -1,6 +1,11 @@
 #!/bin/sh
 # This script expects to run as root
 
+echo "IMPORTANT NOTICE: This script is outdated and will not work. It will
+be updated. In the meantime, please refer to http://getgitorious.com.
+======================================================================"
+exit
+
 # ONLY CHANGE THIS PART
 export SERVER_NAME=gitorious.org
 export GITORIOUS_REPO=git://gitorious.org/gitorious/akitaonrails-gitorious.git
@@ -33,7 +38,7 @@ if [ -d ~/tmp ]; then rm -Rf ~/tmp; fi
 mkdir ~/tmp && cd ~/tmp
 
 test -f onig-5.9.1.tar.gz || wget http://www.geocities.jp/kosako3/oniguruma/archive/onig-5.9.1.tar.gz
-test -d onig-5.9.1 || tar xvfz onig-5.9.1.tar.gz 
+test -d onig-5.9.1 || tar xvfz onig-5.9.1.tar.gz
 cd onig-5.9.1
 ./configure && make && make install
 cd ..
@@ -100,18 +105,18 @@ if [ -f /etc/apache2/sites-available/gitorious ]; then rm /etc/apache2/sites-ava
 touch /etc/apache2/mods-available/passenger.load
 touch /etc/apache2/mods-available/passenger.conf
 touch /etc/apache2/sites-available/gitorious
- 
+
 echo "LoadModule passenger_module /usr/local/lib/ruby/gems/1.8/gems/passenger-2.2.9/ext/apache2/mod_passenger.so" >> /etc/apache2/mods-available/passenger.load
 echo "PassengerRoot /usr/local/lib/ruby/gems/1.8/gems/passenger-2.2.9" >> /etc/apache2/mods-available/passenger.load
 echo "PassengerRuby /usr/local/bin/ruby" >> /etc/apache2/mods-available/passenger.conf
- 
+
 a2enmod passenger
 
 echo "<VirtualHost *:80>" >> /etc/apache2/sites-available/gitorious
 echo "  ServerName $SERVER_NAME" >> /etc/apache2/sites-available/gitorious
 echo "  DocumentRoot /var/www/gitorious/public" >> /etc/apache2/sites-available/gitorious
 echo "</VirtualHost>" >> /etc/apache2/sites-available/gitorious
- 
+
 rm /etc/apache2/sites-enabled/000*
 ln -s /etc/apache2/sites-available/gitorious /etc/apache2/sites-enabled/000-gitorious
 

@@ -1,23 +1,25 @@
 === UNDERSTANDING GITORIOUS ===
 
-One of the main challenges in Gitorious is its installation process. It is
-anything but trivial.
+One of the main challenges in Gitorious is its installation process.
+It is anything but trivial.
 
-The main piece is a plain vanilla Ruby on Rails web application, and this is
-the easiest part.
+The main piece is a plain vanilla Ruby on Rails web application, and
+this is the easiest part.
 
-The purpose of the web front-end is to concentrate all Git projects in an easy 
-to manage user interface, which also makes it easy to make clones, send merge 
-requests, manage committers and participate through comments in the website 
-itself. The user interface also provides a nice visualization of the commit log 
-and the source tree. So this is a high quality website for Git project management.
+The purpose of the web front-end is to concentrate all Git projects in
+an easy to manage user interface, which also makes it easy to make
+clones, send merge requests, manage committers and participate through
+comments in the website itself. The user interface also provides a
+nice visualization of the commit log and the source tree. So this is a
+high quality website for Git project management.
 
-It can be used for any number of Git workflows. It is easier to create a 
-Centralized Workflow model, where you have one central Git repository and many 
-committers added to it, as well as the Integration Workflow, where you have a 
-"mainline" repository. Other developers can clone from it, keep pushing commits 
-in their own cloned repositories and once they're done with some feature, they can 
-easily send a merge request back to the maintainer of the original mainline.
+Gitorious can be used for any number of Git workflows. It is easier to
+create a Centralized Workflow model, where you have one central Git
+repository and many committers added to it, as well as the Integration
+Workflow, where you have a "mainline" repository. Other developers can
+clone from it, keep pushing commits in their own cloned repositories
+and once they're done with some feature, they can easily send a merge
+request back to the maintainer of the original mainline.
 
 Take a look at Scott Chacon's explanation on these workflows:
 http://www.whygitisbetterthanx.com/#any-workflow
@@ -27,19 +29,20 @@ http://www.whygitisbetterthanx.com/#any-workflow
 For all of this to work, we need more than a front-end web application. There are
 backend pieces that we will have to understand and deal with.
 
-I'll make a general explanation of the architecture and then you will find 
+I'll make a general explanation of the architecture and then you will find
 specific procedures at:
 
 * doc/recipes/install-centos.txt
 * doc/recipes/install-ubuntu.txt
 
-First of all, we need Git installed in the machine. We also need a MySQL database
-where the project metadata is stored.
+First of all, we need Git installed on the machine. We also need a
+MySQL database where the project metadata is stored.
 
-All non-web operations goes through SSH, so we need that installed too. More
-than that, Gitorious was kind of inspired by an older project called Gitosis. It
-has a clever idea on which there is one local user (usually called "git"). And
-every developer from any project use this same user.
+All non-web operations goes through SSH, so we need that installed
+too. More than that, Gitorious was kind of inspired by an older
+project called Gitosis. It has a clever idea on which there is one
+local user (usually called "git"). And every developer from any
+project use this same user.
 
 That's how you clone a remote repository from what's called your "Push URL":
 
@@ -52,51 +55,58 @@ It is very similar as operating over an SSH URL:
 And that's exactly what happens. Let's break it down:
 
 * git           - is the 'special' user on the server
-* gitorious.org - is the server itself, which needs to have 
-* ~             - (tilde) as all Unix users will know, it is the alias for the home 
+* gitorious.org - is the server itself, which needs to have
+* ~             - (tilde) as all Unix users will know, it is the alias for the home
                   directory, in this case it means "/home/git"
 * gitorious     - is the project directory under the home directory of the user git.
                   And the neat thing about this is that every clone of the mainline
                   repository goes under this umbrella directory.
-* mainline.git  - is the git repository directory under the project. 
+* mainline.git  - is the git repository directory under the project.
 
-But it would be odd if everybody had permission to login under the same username:
-anyone could mess around any project's directories. But the advantage of using SSH is
-that it is flexible enough to provide an infrastructure to disallow such a thing.
+It would be odd if everybody had permission to login under the same
+username: anyone could mess around any project's directories. But the
+advantage of using SSH is that it is flexible enough to provide an
+infrastructure to disallow such a thing.
 
-As a technical detail, whenever you log in either using a normal ssh client or the git
-command line, it will read its local .ssh/authorized_keys file. Inside it you will find
-something similar to this:
+As a technical detail, whenever you log in either using a normal ssh
+client or the git command line, it will read its local
+.ssh/authorized_keys file. Inside it you will find something similar
+to this:
 
   ### START KEY 1 ###
   command="gitorious akitaonrails",no-port-forwarding,no-X11-forwarding,
   no-agent-forwarding,no-pty ssh-rsa AAAAB...MCay0w== fabioakita@MacHal9001.local
   ### END KEY 1 ###
 
-I cut off the big ssh key for brevity. So whenever you try to login through ssh, you will
-have your public key transferred and compared to those in this file. This allow for the
-SSH server to find your entry and therefore, which 'command' it should run. Then it will
-execute 'gitorious [your_login]' and it will check with the website's data if you do or
-do not have access to the project you want to (it passes the SSH arguments through to the
-gitorious command as well). That's how it determines your identity and your permissions
-regardless of everybody logging into the same local user account (ex. 'git').
+I cut off the big ssh key for brevity. So whenever you try to login
+through ssh, you will have your public key transferred and compared to
+those in this file. This allow for the SSH server to find your entry
+and therefore, which 'command' it should run. Then it will execute
+'gitorious [your_login]' and it will check with the website's data if
+you do or do not have access to the project you want to (it passes the
+SSH arguments through to the gitorious command as well). That's how it
+determines your identity and your permissions regardless of everybody
+logging into the same local user account (ex. 'git').
 
-You do all this through what's called a "Push URL", meaning that you only use it if you 
-have permission to push your changes back to the repository (you're either the owner of 
-the project or someone added you as a committer).
+You do all this through what's called a "Push URL", meaning that you
+only use it if you have permission to push your changes back to the
+repository (you're either the owner of the project or someone added
+you as a committer).
 
-If you don't have push permission, you will only see a "Public Clone URL" that resembles 
-this one:
- 
+If you don't have push permission, you will only see a "Public Clone
+URL" that resembles this one:
+
   git clone git://gitorious.org/gitorious/gitorious.git
 
-Instead of going through the SSH port, this one will connect to port 9418 of your server
-(if you have firewalls up, be sure to have this port open).
+Instead of going through the SSH port, this one will connect to port
+9418 of your server (if you have firewalls up, be sure to have this
+port open).
 
-If there is an open port, there is a daemons. The Gitorious project also give your what's
-called the "git-daemon" which keeps running and listening to this port. It allows for 
-the git command to clone the remote repository but not to push stuff back. This is good 
-for read-only scenarios.
+If there is an open port, there is a daemons. The Gitorious project
+also give your what's called the "git-daemon" which keeps running and
+listening to this port. It allows for the git command to clone the
+remote repository but not to push stuff back. This is good for
+read-only scenarios.
 
 == ASYNCHRONOUS OPERATIONS ==
 
@@ -106,55 +116,61 @@ Whenever you:
 * Create a new project
 * Clone an existing project
 
-Nothing will happen. Until you manually run the script/task_notifier task inside your
-website's directory. This script will see what's queued and run those tasks. It would
-be too time consuming to stay inside a Controller's Action, so they were correctly
-detached into an asynchronous process that will run when it can. Usually people set it
+Nothing will happen. Until you manually run the script/task_notifier
+task inside your website's directory. This script will see what's
+queued and run those tasks. It would be too time consuming to stay
+inside a Controller's Action, so they were correctly detached into an
+asynchronous process that will run when it can. Usually people set it
 up as a Cron Job.
 
-These kinds of actions triggers notifications to the users, so e-mails are sent through
-plain vanilla sendmail as well.
+These kinds of actions triggers notifications to the users, so e-mails
+are sent through plain vanilla sendmail as well.
 
 So that covers the main pieces.
 
 == OPTIONAL PIECES ==
 
-The website provides a search functionality that depends on Sphinx and the Ultrasphinx
-plugin for Rails. It is way smarter than a plain "LIKE" operator from SQL, but it 
-requires a living daemon and a task.
+The website provides a search functionality that depends on Sphinx and
+the Ultrasphinx plugin for Rails. It is way smarter than a plain
+"LIKE" operator from SQL, but it requires a living daemon and a task.
 
-So you will need another daemon for Sphinx and you will also need another Cron Job
-for Ultrasphinx's task that rebuilds the index to reflect recent changes. Those are
-optional if you don't want or don't need the search functionality.
+So you will need another daemon for Sphinx and you will also need
+another Cron Job for Ultrasphinx's task that rebuilds the index to
+reflect recent changes. Those are optional if you don't want or don't
+need the search functionality.
 
-There is another task called script/graph_generator which depends on the Gruff and
-RMagick rubygems as well as the native ImageMagick library. It generates a nice
-graph on commits frequency through the days. When you run it, it will generate a
-PNG static image. If you don't run it, Gitorious will simply ignore it. It is very
-cumbersome to make this component work correctly.
+There is another task called script/graph_generator which depends on
+the Gruff and RMagick rubygems as well as the native ImageMagick
+library. It generates a nice graph on commits frequency through the
+days. When you run it, it will generate a PNG static image. If you
+don't run it, Gitorious will simply ignore it. It is very cumbersome
+to make this component work correctly.
 
 == PRIVATE MODE ==
 
-The original intent of Gitorious is for an open source public website where every 
-project is open to the public.
+The original intent of Gitorious is for an open source public website
+where every project is open to the public.
 
-But as Gitorious itself is an open source project, people can choose to have their
-own installation (as you will, as you're reading this documentation).
+But as Gitorious itself is an open source project, people can choose
+to have their own installation (as you will, as you're reading this
+documentation).
 
-Sometimes people want to install their own private Gitorious in a VPS server. And 
-then host their company's internal projects, for example. But in this scenario, their
-private Gitorious would be publicly exposed to the Internet.
+Sometimes people want to install their own private Gitorious in a VPS
+server. And then host their company's internal projects, for example.
+But in this scenario, their private Gitorious would be publicly
+exposed to the Internet.
 
 Now you can change your config/gitorious.yml file and change this:
 
   public_mode: false
 
-The default mode is 'true', which make your Gitorious public. But if you want your
-own private server, change it to 'false'.
+The default mode is 'true', which make your Gitorious public. But if
+you want your own private server, change it to 'false'.
 
-In private mode, the 'Register' page is also locked and you need to create a super
-user manually. Do this in the server running the task 'script/create_admin'. It will
-ask for the administrator's email and password and will create it for you.
+In private mode, the 'Register' page is also locked and you need to
+create a super user manually. Do this in the server running the task
+'script/create_admin'. It will ask for the administrator's email and
+password and will create it for you.
 
 == SUMMARY ==
 
@@ -168,4 +184,3 @@ So, the shopping list goes like this:
 * set up the task_notifier cron job
 * set up the ultrasphinx cron job
 * set up the graph_generator cron job
-

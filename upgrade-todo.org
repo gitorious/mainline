@@ -1,8 +1,8 @@
-* Launch ready [1/7]
+* Launch ready [3/7]
 ** DONE Reservations
 ** TODO branch_and_path was Array, is now String
-** TODO Remove NEWS file
-** TODO Write new README
+** DONE Remove NEWS file
+** DONE Write new README (needs to be improved later)
 ** TODO Kill repo_owner_path
 ** TODO User.most_active -> removed caching, fix
      Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
@@ -11,7 +11,7 @@
          :expires_in => 30.minutes) do
        MarshalableRelation.extend(projects, Project)
      end
-* Instructions to users [0/4]
+* Instructions to users [0/5]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
 ** TODO Clean out vendor
@@ -21,7 +21,3 @@
 *** gitorious_client_port -> client_port
 *** sender_email_address -> email_sender
 *** gitorious_support_email -> support_email
-* Config notes [0/3]
-** TODO Environment variables for all settings
-** TODO Gitorious.use_config(Gitorious::Configuration.new(hash))
-** TODO Possibly more than one API (not just GitoriousCONFIG)
