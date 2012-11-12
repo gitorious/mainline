@@ -50,10 +50,9 @@
   </thead>
   <tbody>
     <% @open_merge_requests.each do |merge_request| -%>
-      <% mr_path = repo_owner_path(merge_request.target_repository,
-                                   [ merge_request.source_repository.project,
-                                     merge_request.target_repository,
-                                     merge_request ]) -%>
+      <% mr_path = [merge_request.source_repository.project,
+                    merge_request.target_repository,
+                    merge_request] -%>
       <tr class="<%= cycle('even', 'odd') -%>" id="<%= dom_id(merge_request) -%>">
         <td><%= link_to "#"+h(merge_request.to_param), mr_path -%></td>
         <% if merge_request.status_tag -%>

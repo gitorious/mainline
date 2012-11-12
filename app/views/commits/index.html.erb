@@ -31,7 +31,7 @@
   <%= t("views.logs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
 
-<%= cache([repo_owner_path(@repository, [@project, @repository]), :commits, @ref, @commits.current_page], {:expires_in => 10.minutes}) do -%>
+<%= cache([[@project, @repository], :commits, @ref, @commits.current_page], {:expires_in => 10.minutes}) do -%>
   <%= render :partial => "log" -%>
 <% end -%>
 
@@ -57,7 +57,7 @@
     <%= render_download_links(@project, @repository, params[:branch], :only_list_items => true) %>
   </ul>
 
-  <%= cache([repo_owner_path(@repository, [@project, @repository]), :tags_and_branches],
+  <%= cache([[@project, @repository], :tags_and_branches],
            {:expires_in => 10.minutes}) do -%>
 
     <ul class="icon_list links navigation">

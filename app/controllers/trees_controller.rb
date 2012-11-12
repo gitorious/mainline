@@ -27,8 +27,7 @@ class TreesController < ApplicationController
   renders_in_site_specific_context :except => [:archive]
 
   def index
-    redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-                  @project, @repository, branch_with_tree(@repository.head_candidate_name, []))
+    redirect_to(project_repository_tree_path(@project, @repository, branch_with_tree(@repository.head_candidate_name, [])))
   end
 
   def show

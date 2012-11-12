@@ -24,7 +24,7 @@ module RepositoriesHelper
   include FavoritesHelper
 
   def blob_blame_path(shaish, path)
-    repo_owner_path(@repository, :project_repository_blame_path, @project, @repository, branch_with_tree(shaish, path))
+    project_repository_blame_path(@project, @repository, branch_with_tree(shaish, path))
   end
 
   def namespaced_branch?(branchname)
@@ -74,8 +74,7 @@ module RepositoriesHelper
 
     list_items = heads_to_display.map do |head|
       li = %Q{<li class="#{highlight_if_head(head)}">}
-      li << link_to(h(head.name), repo_owner_path(repository, :project_repository_commits_in_ref_path,
-                 repository.project, repository, ensplat_path(head.name)),
+      li << link_to(h(head.name), project_repository_commits_in_ref_path(repository.project, repository, ensplat_path(head.name)),
               :title => branch_link_title_text(head))
       li << "</li>"
       li

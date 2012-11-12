@@ -226,9 +226,9 @@ class MergeRequestsController < ApplicationController
                                :name => @merge_request.target_repository.name)
       @owner.create_event(Action::REQUEST_MERGE, @merge_request, current_user)
       @merge_request.confirmed_by_user
-      @redirection_path =  repo_owner_path(@merge_request.reload.target_repository,
-                                           :project_repository_merge_request_path, @repository.project,
-                                           @merge_request.target_repository, @merge_request)
+      @redirection_path = project_repository_merge_request_path(@repository.project,
+                                                                @merge_request.target_repository,
+                                                                @merge_request)
     end
 
     respond_to do |format|

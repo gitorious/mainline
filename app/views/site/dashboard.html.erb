@@ -84,7 +84,7 @@
         <% @user.review_repositories_with_open_merge_request_count.each do |repo| %>
           <li>
             <%= link_to(repo.url_path + ": " + repo.open_merge_request_count.to_s,
-                        repo_owner_path(repo, [repo.project, repo, :merge_requests])) %>
+                        [repo.project, repo, :merge_requests]) %>
           </li>
         <% end %>
       </ul>
@@ -154,8 +154,7 @@
       <ul class="with_icons">
         <% @repositories.each do |repo| -%>
           <li class="repository">
-            <%= link_to h(repo.url_path),
-                  repo_owner_path(repo, [repo.project, repo]) -%>
+            <%= link_to h(repo.url_path), [repo.project, repo] -%>
           </li>
         <% end -%>
       </ul>

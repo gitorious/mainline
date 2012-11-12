@@ -91,8 +91,7 @@
         <ul class="with_icons">
           <% @repositories.each do |repo| -%>
             <li class="repository">
-              <%= link_to h(repo.url_path),
-                  repo_owner_path(repo, [repo.project, repo]) -%>
+              <%= link_to h(repo.url_path), [repo.project, repo] -%>
             </li><% end -%>
         </ul><% end -%><% end %><%= pull_box("#{h @user.title} is watching", :class => "your-favorites favorite pull-box-390") do %>
       <div class="filters">

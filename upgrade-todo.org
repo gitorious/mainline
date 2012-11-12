@@ -1,9 +1,8 @@
-* Launch ready [3/7]
+* Launch ready [4/6]
 ** DONE Reservations
-** TODO branch_and_path was Array, is now String
 ** DONE Remove NEWS file
 ** DONE Write new README (needs to be improved later)
-** TODO Kill repo_owner_path
+** DONE Kill repo_owner_path
 ** TODO User.most_active -> removed caching, fix
      Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
 ** TODO Project.most_active_recently -> removed caching, fix

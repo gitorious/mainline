@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -46,7 +47,7 @@ module BreadcrumbsHelper
   def breadcrumb_link_to(an_object)
     url = case an_object
     when Repository
-      repo_owner_path(an_object, :project_repository_path, an_object.project, an_object)
+      project_repository_path(an_object.project, an_object)
     when Project
       project_path(an_object)
     when Group
@@ -54,8 +55,7 @@ module BreadcrumbsHelper
     when User
       user_path(an_object)
     when Breadcrumb::Branch
-      repo_owner_path(@repository, :project_repository_commits_in_ref_path,
-                        @project, @repository, ensplat_path(an_object.title))
+      project_repository_commits_in_ref_path(@project, @repository, ensplat_path(an_object.title))
     when Breadcrumb::Folder
       tree_path(@ref, an_object.paths)
     when Breadcrumb::Blob

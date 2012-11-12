@@ -32,10 +32,6 @@ class RepositoriesHelperTest < ActionView::TestCase
     end
   end
 
-  def repo_owner_path(*args)
-    @controller.send(:repo_owner_path, *args)
-  end
-
   def setup
     @project = projects(:johans)
     @repository = @project.repositories.mainlines.first

@@ -414,7 +414,7 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_ref(ref, repo_view)
-    redirect_to repo_owner_path(@repository, repo_view, @project, @repository, ref)
+    redirect_to(send(repo_view, @project, @repository, ref))
   end
 
   def get_head(ref)

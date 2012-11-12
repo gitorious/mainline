@@ -34,12 +34,12 @@
             <p>
               <%= user ? link_to(user.login, user_path(user)) : h(force_utf8(commit.author.name)) -%>
               <strong><%= t("views.logs.committed") %></strong> <%= link_to h(commit.id_abbrev),
-                repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id) -%>
+                project_repository_commit_path(@project, @repository, commit.id) -%>
             </p>
             <p>
               <div class="commit_message">
                 <%= link_to simple_format(h(commit.short_message)),
-                  repo_owner_path(@repository, :project_repository_commit_path, @project, @repository, commit.id) -%>
+                  project_repository_commit_path(@project, @repository, commit.id) -%>
               </div>
             </p>
           </div>

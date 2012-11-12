@@ -22,8 +22,7 @@ namespaced_atom_feed do |feed|
   feed.updated((@commits.blank? ? nil : @commits.first.committed_date))
 
   @commits.each do |commit|
-    item_url = Gitorious.url(repo_owner_path(@repository, :project_repository_commit_path,
-                                             @project, @repository, commit.id, :format => :html))
+    item_url = Gitorious.url(project_repository_commit_path(@project, @repository, commit.id, :format => :html))
     feed.entry(commit, {
       :url => item_url,
       :updated => commit.committed_date.utc,

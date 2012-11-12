@@ -46,7 +46,7 @@
       <li>
         <%= link_to text(:"back_to_#{@class_name}"), content_path(@content) -%>
         <% if admin?(current_user, @repository) -%>
-          <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
+          <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), [@repository.project, @repository, :committerships] -%></li>
         <% end -%>
       </li>
     </ul>

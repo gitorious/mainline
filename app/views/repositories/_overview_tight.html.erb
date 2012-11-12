@@ -24,11 +24,11 @@
     <%= image_tag("silk/arrow_right.png") -%>
   <% end -%>
   <%= link_to "<strong>#{h(repository.name)}</strong>",
-      repo_owner_path(repository, [repository.project, repository]) -%>
-  (<%= link_to "Commits", repo_owner_path(repository, [repository.project, repository, :commits]) -%>,
+      [repository.project, repository] -%>
+  (<%= link_to "Commits", [repository.project, repository, :commits] -%>,
   <%- if repository.merge_requests_enabled? -%>
     <%= link_to "Merge requests",
-        repo_owner_path(repository, [repository.project, repository, :merge_requests]) -%>,
+        [repository.project, repository, :merge_requests] -%>,
   <%- end -%>
-  <%= link_to "Source tree", repo_owner_path(repository, [repository.project, repository, :trees]) -%>)
+  <%= link_to "Source tree", [repository.project, repository, :trees] -%>)
 </h5>

@@ -87,7 +87,7 @@
         <ul class="with_icons">
           <% @top_repository_clones.each do |repo| -%>
             <li class="repository">
-              <%= link_to h(repo.title), repo_owner_path(repo, :project_repository_path, repo.project, repo) -%>
+              <%= link_to h(repo.title), project_repository_path(repo.project, repo) -%>
               <span class="hint">(<%= link_to h(repo.project.title), repo.project -%>)</span>
               <small class="hint"><%= truncate(h(strip_tags(repo.description)), :length => 65) -%></small>
             </li>

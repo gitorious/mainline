@@ -104,8 +104,7 @@ class CommitsController < ApplicationController
   protected
   def handle_missing_sha
     flash[:error] = "No such SHA1 was found"
-    redirect_to repo_owner_path(@repository, :project_repository_commits_path, @project,
-                                @repository)
+    redirect_to(project_repository_commits_path(@project, @repository))
   end
 
   def commit_diffs

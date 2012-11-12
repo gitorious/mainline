@@ -23,7 +23,7 @@
 <h1>Editing repository <%= link_to h(@repository.name), [@repository.project, @repository] -%></h1>
 
 <%= error_messages(@repository) -%>
-<%= form_for(repo_owner_path(@repository.reload, [@repository.project, @repository])) do |f| -%>
+<%= form_for([@repository.project, @repository.reload]) do |f| -%>
   <p>
     <%= f.label :description -%>
     <span class="hint">(<%= markdown_hint -%>)</span>:<br />
@@ -75,7 +75,7 @@
 <%= content_for :sidebar do -%>
   <ul class="links navigation">
     <% if can_delete?(current_user, @repository) -%>
-      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), repo_owner_path(@repository, [:confirm_delete, @repository.project, @repository]) -%></li>
+      <li class="delete_repository"><%= link_to t("views.repos.btn_delete_repo"), [:confirm_delete, @repository.project, @repository] -%></li>
     <% end -%>
   </ul>
 <% end -%>

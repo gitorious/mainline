@@ -25,7 +25,7 @@
   <p class="important_message">
     <%= t("views.repos.message_delete") %>
 
-    <%= form_for repo_owner_path(@repository, [@repository.project, @repository]), :html => {:method => :delete} do |f| -%>
+    <%= form_for [@repository.project, @repository], :html => {:method => :delete} do |f| -%>
     <%= f.submit(t("views.repos.btn_delete")) -%>
 <% end -%>
 </p>
@@ -34,6 +34,6 @@
 <%= content_for :sidebar do -%>
   <ul class="links navigation">
     <li><%= link_to t("views.projects.back"),
-            repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
+            [:edit, @repository.project, @repository] -%></li>
   </ul>
 <% end -%>

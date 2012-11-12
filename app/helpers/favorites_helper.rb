@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -62,13 +63,12 @@ module FavoritesHelper
     case watchable
     when Repository
       link_to(repo_title(watchable, watchable.project),
-        repo_owner_path(watchable, [watchable.project, watchable]))
+        [watchable.project, watchable])
     when MergeRequest
       link_to(h(truncate("##{watchable.to_param}: #{watchable.summary}", :length => 65)),
-        repo_owner_path(watchable.target_repository,
-          [watchable.source_repository.project,
-           watchable.target_repository,
-          watchable]))
+        [watchable.source_repository.project,
+         watchable.target_repository,
+         watchable])
     else
       link_to(h(watchable.title), watchable)
     end

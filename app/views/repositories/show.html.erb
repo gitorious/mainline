@@ -58,7 +58,7 @@
       <li>
         <strong><%= t("views.repos.clone_of") %>:</strong>
         <%= link_to h(@repository.parent.gitdir),
-            repo_owner_path(@repository.parent, [@repository.parent.project, @repository.parent]) -%>
+            [@repository.parent.project, @repository.parent] -%>
       </li>
     <% end -%>
     <li>
@@ -69,7 +69,7 @@
 
   <ul class="links navigation">
     <% if @repository.ready? -%>
-      <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), repo_owner_path(@repository, [:clone, @repository.project, @repository]) -%></li>
+      <li class="clone_repository"><%= link_to t("views.repos.btn_clone"), [:clone, @repository.project, @repository] -%></li>
     <% end -%>
     <% if logged_in? && can_request_merge?(current_user, @repository) -%>
       <li class="merge_request">
@@ -81,12 +81,12 @@
 
   <ul class="links navigation">
     <% if admin?(current_user, @repository) -%>
-      <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), repo_owner_path(@repository, [@repository.project, @repository, :committerships]) -%></li>
+      <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), [@repository.project, @repository, :committerships] -%></li>
 
       <% if GitoriousConfig["enable_private_repositories"] -%>
         <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
       <% end -%>
-      <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), repo_owner_path(@repository, [:edit, @repository.project, @repository]) -%></li>
+      <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.project, @repository] -%></li>
     <% end -%>
   </ul>
 

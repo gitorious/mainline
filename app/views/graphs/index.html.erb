@@ -30,7 +30,7 @@
   <%= t("views.graphs.title", :repo_url => h(@repository.url_path), :ref => h(@ref)) -%>
 </h1>
 
-<%= cache([repo_owner_path(@repository, [@project, @repository]), :graphs, @ref, params[:type]], {:expires_in => 10.minutes}) do -%>
+<%= cache([[@project, @repository], :graphs, @ref, params[:type]], {:expires_in => 10.minutes}) do -%>
   <div class="capillary" id="capillary-log"
        data-id-url="<%= "/#{@project.slug}/#{@repository.name}/graph/{{id}}" %>"
        data-message-url="<%= "/#{@project.slug}/#{@repository.name}/commit/{{id}}" %>"

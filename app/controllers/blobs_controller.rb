@@ -36,8 +36,8 @@ class BlobsController < ApplicationController
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
       unless @blob.respond_to?(:data) # it's a tree
-        redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-          @project, @repository, params[:branch_and_path])
+        url = project_repository_tree_path(@project, @repository, params[:branch_and_path])
+        redirect_to(url)
       end
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Blob.new(:paths => @path, :head => head,
@@ -95,8 +95,7 @@ class BlobsController < ApplicationController
     @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
     render_not_found and return unless @blob
     unless @blob.respond_to?(:data) # it's a tree
-      redirect_to repo_owner_path(@repository, :project_repository_tree_path,
-        @project, @repository, params[:branch_and_path])
+      redirect_to(project_repository_tree_path(@project, @repository, params[:branch_and_path]))
     end
 
     @root = Breadcrumb::Blob.new({

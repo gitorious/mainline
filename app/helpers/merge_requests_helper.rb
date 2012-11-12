@@ -65,15 +65,16 @@ module MergeRequestsHelper
   end
 
   def link_to_not_selected_status(repository, status)
-    link_to(h(status.to_s), repo_owner_path(repository,
-        :project_repository_merge_requests_path, repository.project,
-        repository, {:status => status}))
+    link_to(h(status.to_s), project_repository_merge_requests_path(repository.project,
+                                                                   repository,
+                                                                   :status => status))
   end
 
   def link_to_selected_status(repository, status)
-    link_to(h(status.to_s), repo_owner_path(repository,
-        :project_repository_merge_requests_path, repository.project,
-        repository, {:status => status}), {:class => "selected"})
+    url = project_repository_merge_requests_path(repository.project,
+                                                 repository,
+                                                 :status => status)
+    link_to(h(status.to_s), url, :class => "selected")
   end
 
   def merge_base_link(version)

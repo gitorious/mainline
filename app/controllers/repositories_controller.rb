@@ -59,8 +59,9 @@ class RepositoriesController < ApplicationController
     @events = paginated_events
 
     return if @events.count == 0 && params.key?(:page)
-    @atom_auto_discovery_url = repo_owner_path(@repository, :project_repository_path,
-                                  @repository.project, @repository, :format => :atom)
+    @atom_auto_discovery_url = project_repository_path(@repository.project,
+                                                       @repository,
+                                                       :format => :atom)
     response.headers["Refresh"] = "5" unless @repository.ready
 
     respond_to do |format|
@@ -166,7 +167,7 @@ class RepositoriesController < ApplicationController
       if @repository.save
         @owner.create_event(Action::CLONE_REPOSITORY, @repository, current_user, @repository_to_clone.id)
 
-        location = repo_owner_path(@repository, :project_repository_path, @repository.project, @repository)
+        location = project_repository_path(@repository.project, @repository)
         format.html { redirect_to location }
         format.xml  { render :xml => @repository, :status => :created, :location => location }
       else
@@ -281,8 +282,7 @@ class RepositoriesController < ApplicationController
     @repository = @owner.repositories.find_by_name_in_project!(params[:id],
                                                                @containing_project)
     unless admin?(current_user, authorize_access_to(@repository))
-      respond_denied_and_redirect_to(repo_owner_path(@repository,
-                                                     :project_repository_path, @repository.project, @repository))
+      respond_denied_and_redirect_to(project_repository_path(@repository.project, @repository))
       return
     end
   end
