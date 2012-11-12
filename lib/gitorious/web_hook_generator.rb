@@ -15,11 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious/messaging"
 
 module Gitorious
   class WebHookGenerator
     include Gitorious::Messaging::Publisher
-    
+
     def initialize(repository, spec, user)
       @repository = repository
       @spec = spec
@@ -36,7 +37,7 @@ module Gitorious
     def publish_notification(data)
       publish("/queue/GitoriousPostReceiveWebHook", data)
     end
-    
+
     def payload
       {
         :before        => @spec.from_sha.sha,

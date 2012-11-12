@@ -77,6 +77,7 @@ if !defined?(Rails)
       @@users[attributes[:email]] = self
     end
 
+    def title; login; end
     def reset_password!; end
     def self.find_by_login(login); end
 
@@ -87,9 +88,16 @@ if !defined?(Rails)
   end
 
   class Repository < TestHelper::Model
-    attr_accessor :project, :user, :name, :hooks, :description, :browse_url
+    attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
+      :clones, :owner
 
-    def last_pushed_at; end
+    def last_pushed_at
+      Time.now
+    end
+  end
+
+  class Project < TestHelper::Model
+    attr_accessor :title, :slug, :description
   end
 end
 
