@@ -55,13 +55,16 @@ OTHER_SHA = "a" * 40
 module TestHelper
   class Model
     def initialize(attributes = {})
+      @is_new = true
       attributes.each { |k, v| send(:"#{k}=", v) }
     end
 
     def write_attribute(key, val); end
     def update_attribute(key, val); end
     def valid?; end
-    def save!; end
+    def save; @is_new = false; end
+    def save!; save; end
+    def new_record?; @is_new; end
     def self.first; new; end
   end
 end
@@ -97,7 +100,32 @@ if !defined?(Rails)
   end
 
   class Project < TestHelper::Model
-    attr_accessor :title, :slug, :description
+    attr_accessor :title, :slug, :description, :events
+
+    def create_event(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
+      self.events ||= []
+      self.events.push({
+        :action_id => action_id,
+        :target => target,
+        :user => user,
+        :data => data,
+        :body => body,
+        :date => date
+      })
+    end
+  end
+
+  class Event < TestHelper::Model
+    attr_accessor :action, :user, :data, :project, :target, :body
+  end
+
+  class Action
+    CREATE_TAG = 0
+    DELETE_TAG = 2
+    CREATE_BRANCH = 4
+    DELETE_BRANCH = 8
+    PUSH_SUMMARY = 16
+    UPDATE_WIKI_PAGE = 32
   end
 end
 

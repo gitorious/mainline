@@ -19,29 +19,6 @@ require "fast_test_helper"
 require "push_spec_parser"
 require "push_event_logger"
 
-class Event
-  attr_accessor :action, :user, :data, :project, :target, :body
-  def initialize(attributes = {})
-    @action = attributes[:action]
-    @body = attributes[:body]
-    @data = attributes[:data]
-    @user = attributes[:user]
-    @target = attributes[:target]
-    @is_new = true
-  end
-  def save; @is_new = false; end
-  def save!; save; end
-  def new_record?; @is_new; end
-end
-
-class Action
-  CREATE_TAG = 0
-  DELETE_TAG = 2
-  CREATE_BRANCH = 4
-  DELETE_BRANCH = 8
-  PUSH_SUMMARY = 16
-end
-
 class PushEventLoggerTest < MiniTest::Shoulda
   context "deciding what events to create" do
     context "for tags" do
