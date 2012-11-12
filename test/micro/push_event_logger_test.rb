@@ -24,10 +24,6 @@ class Repository
   def initialize(attributes = {}); end
 end
 
-class User
-  def initialize(attributes = {}); end
-end
-
 class Event
   attr_accessor :action, :user, :data, :project, :target, :body
   def initialize(attributes = {})

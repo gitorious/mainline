@@ -17,19 +17,6 @@
 #++
 require "rexml/document"
 
-if !defined?(User)
-  class User
-    attr_accessor :login, :fullname, :email, :password, :password_confirmation,
-    :terms_of_use, :aasm_state, :activated_at
-    def initialize(attributes = {}); end
-    def write_attribute(key, val); end
-    def valid?; end
-    def save!; end
-    def reset_password!; end
-    def self.find_by_login(login); end
-  end
-end
-
 module Gitorious
   module SSLTestHelper
     def valid_client_credentials(cn, email)

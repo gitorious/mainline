@@ -20,12 +20,10 @@ require "fast_test_helper"
 require "vendor/diff-display/lib/diff-display"
 require "gitorious/diff/comment_callback"
 
-class Comment
-  attr_accessor :first_line_number, :last_line_number, :number_of_lines
+class Comment < TestHelper::Model
+  attr_accessor :first_line_number, :last_line_number, :number_of_lines, :body, :user
 
-  def initialize(attributes = {})
-    lines_str = attributes[:lines]
-
+  def lines=(lines_str)
     # TODO: This was copy-pasted from the Comment ActiveRecord model
     # Refactor to share
 
@@ -38,12 +36,6 @@ class Comment
     self.first_line_number = start
     self.last_line_number = last
     self.number_of_lines = amount
-  end
-end
-
-class User
-  def self.first
-    new
   end
 end
 

@@ -19,33 +19,6 @@ require "fast_test_helper"
 require "vendor/grit/lib/grit"
 require "gitorious/commit"
 
-class User
-  attr_accessor :email
-
-  def initialize(attributes)
-    @email = attributes[:email]
-    @@users ||= {}
-    @@users[attributes[:email]] = self
-  end
-
-  def self.find_by_email_with_aliases(email)
-    @@users ||= {}
-    @@users[email]
-  end
-end
-
-module Rails
-  class Cache
-    def fetch(key)
-      yield
-    end
-  end
-
-  def self.cache
-    @cache ||= Cache.new
-  end
-end
-
 class CommitTest < MiniTest::Shoulda
   context "Commits from registered users" do
     setup do

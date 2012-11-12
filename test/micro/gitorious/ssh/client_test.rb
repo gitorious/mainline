@@ -17,9 +17,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "fast_test_helper"
-require "config/initializers/gitorious_config"
 require "gitorious/ssh/strainer"
 require "gitorious/ssh/client"
+
+class RepositoryRoot
+  def self.default_base_path; "/tmp"; end
+end
 
 class SSHClientTest < MiniTest::Shoulda
   def setup

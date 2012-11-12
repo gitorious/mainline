@@ -18,11 +18,10 @@
 require "fast_test_helper"
 require "gitorious/git_shell"
 
-GitoriousConfig = { "git_binary" => "/usr/bin/git" }
-
 class GitShellTest < MiniTest::Shoulda
   context "Sanitization" do
     setup do
+      GitoriousConfig["git_binary"] = "/usr/bin/git"
       @shell = Gitorious::GitShell.new
     end
 
