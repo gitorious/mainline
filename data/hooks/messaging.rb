@@ -25,11 +25,12 @@ class RailsEnv
   def development?; @env == "development"; end
   def test?; @env == "test"; end
   def to_s; @env; end
+  def to_sym; @env.to_sym; end
 end
 
 module Rails
   def self.root
-    @root ||= Pathname(__FILE__).realpath + "../../"
+    @root ||= Pathname(__FILE__).realpath + "../../../"
   end
 
   def self.env
@@ -37,22 +38,21 @@ module Rails
   end
 end
 
-$: << Rails.root + "lib")
+$: << (Rails.root + "lib").realpath.to_s
 require "rubygems"
 require "bundler"
-ENV["BUNDLE_GEMFILE"] = Rails.root + "Gemfile"
-Bundler.require :messaging, Rails.env
+ENV["BUNDLE_GEMFILE"] = (Rails.root + "Gemfile").realpath.to_s
+Bundler.require(:messaging, Rails.env)
 
 require "yaml"
 require "gitorious/messaging"
 
-if !defined?(GitoriousConfig)
+if !defined?(Gitorious::Configuration)
   conf = YAML::load_file(Rails.root + "config/gitorious.yml")
-  GitoriousConfig = conf[Rails.env]
-  adapter = GitoriousConfig["messaging_adapter"] || "resque"
-  Bundler.require adapter.to_sym
-  Gitorious::Messaging.load_adapter(adapter)
-  Gitorious::Messaging.configure_publisher(adapter)
+  Gitorious::Messaging.adapter = conf[Rails.env.to_s]["messaging_adapter"] || conf["messaging_adapter"]
+  Bundler.require(Gitorious::Messaging.adapter.to_sym)
+  Gitorious::Messaging.load_adapter(Gitorious::Messaging.adapter)
+  Gitorious::Messaging.configure_publisher(Gitorious::Messaging.adapter)
 end
 
 class Publisher

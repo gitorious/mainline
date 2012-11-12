@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require 'json'
+require "json"
 
 if !"".respond_to?(:camelize)
   class String
@@ -28,6 +28,13 @@ end
 # See lib/gitorious/messaging/ for possible implementations
 module Gitorious
   module Messaging
+    def self.adapter=(adapter)
+      @@adapter = adapter
+    end
+
+    def self.adapter
+      @@adapter || "resque"
+    end
 
     module Publisher
       # Publishes a message. The payload is JSON encoded before passed along,
@@ -139,8 +146,7 @@ module Gitorious
       Gitorious::Messaging::Consumer.use(klass)
     end
 
-    def self.configure(config)
-      adapter = config["messaging_adapter"]
+    def self.configure(adapter)
       Gitorious::Messaging.load_adapter(adapter)
       Gitorious::Messaging.configure_publisher(adapter)
       Gitorious::Messaging.configure_consumer(adapter)

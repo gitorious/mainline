@@ -185,7 +185,7 @@ module Gitorious
     end
 
     def queue_service_up?
-      if GitoriousConfig["messaging_adapter"] != "sync"
+      if Gitorious::Messaging.adapter != "sync"
         return atleast_one_process_name_matching("resque")
       else
         true

@@ -53,8 +53,9 @@ unless defined? GitoriousConfig
   GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil? || GitoriousConfig["terms_of_service_url"] == ""
   GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil? || GitoriousConfig["privacy_policy_url"] == ""
 
-  default_messaging_adapter = env == "test" ? "test" : "resque"
-  GitoriousConfig["messaging_adapter"] ||= default_messaging_adapter
+  require "gitorious/messaging"
+  default_adapter = env == "test" ? "test" : "resque"
+  Gitorious::Messaging.adapter = Gitorious::Configuration.get("messaging_adapter", default_adapter)
 
   if !Gitorious.site.valid_fqdn? && defined?(Rails)
     Rails.logger.warn "Invalid subdomain name #{Gitorious.host}. Session cookies will not work!\n" +
