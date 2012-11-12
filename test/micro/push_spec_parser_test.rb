@@ -16,6 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "fast_test_helper"
+require "app/models/action"
 require "push_spec_parser"
 
 class PushSpecParserTest < MiniTest::Shoulda

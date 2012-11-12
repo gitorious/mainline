@@ -118,15 +118,6 @@ if !defined?(Rails)
   class Event < TestHelper::Model
     attr_accessor :action, :user, :data, :project, :target, :body
   end
-
-  class Action
-    CREATE_TAG = 0
-    DELETE_TAG = 2
-    CREATE_BRANCH = 4
-    DELETE_BRANCH = 8
-    PUSH_SUMMARY = 16
-    UPDATE_WIKI_PAGE = 32
-  end
 end
 
 # Rails shims
