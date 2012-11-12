@@ -37,12 +37,12 @@ class BlobsHelperTest < ActionView::TestCase
   context "render_highlighted()" do
     should "html escape the line & add the proper class" do
       res = render_highlighted("puts '<foo>'", "foo.rb")
-      assert res.include?(%Q{<td class="code"><pre class="prettyprint lang-rb">puts &#x27;&lt;foo&gt;&#x27;</pre></td>}), res
+      assert res.include?(%Q{<td class="code"><pre class="prettyprint lang-rb">puts &#x27;&lt;foo&gt;&#x27;</pre></td>}), res.to_s
     end
 
     should "add line numbers" do
       res = render_highlighted("alert('moo')\nalert('moo')", "foo.js")
-      assert res.include?(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>} ), res
+      assert res.include?(%Q{<td class="line-numbers"><a href="#line2" name="line2">2</a></td>} ), res.to_s
     end
   end
 
