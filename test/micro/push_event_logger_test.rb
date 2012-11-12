@@ -19,11 +19,6 @@ require "fast_test_helper"
 require "push_spec_parser"
 require "push_event_logger"
 
-class Repository
-  attr_reader :project, :user
-  def initialize(attributes = {}); end
-end
-
 class Event
   attr_accessor :action, :user, :data, :project, :target, :body
   def initialize(attributes = {})
