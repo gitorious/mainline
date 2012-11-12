@@ -24,7 +24,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 require "gitorious"
-require "gitorious/reservations"
 require "gitorious/messaging"
 
 class Repository < ActiveRecord::Base
@@ -67,8 +66,7 @@ class Repository < ActiveRecord::Base
   validates_presence_of :user_id, :name, :owner_id, :project_id
   validates_format_of :name, :with => /^#{NAME_FORMAT}$/i,
     :message => "is invalid, must match something like /[a-z0-9_\\-]+/"
-  validates_exclusion_of :name,
-    :in => (Gitorious::Reservations.project_names + Gitorious::Reservations.repository_names)
+  validates_exclusion_of :name, :in => lambda { |r| Repository.reserved_names }
   validates_uniqueness_of :name, :scope => :project_id, :case_sensitive => false
   validates_uniqueness_of :hashed_path, :case_sensitive => false
 
@@ -781,6 +779,15 @@ class Repository < ActiveRecord::Base
 
   def build_repository
     RepositoryBuilder.new(self).build
+  end
+
+  def self.reserved_names
+    @reserved_names ||= []
+  end
+
+  def self.reserve_names(names)
+    @reserved_names ||= []
+    @reserved_names.concat(names)
   end
 
   private

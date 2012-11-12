@@ -1,5 +1,5 @@
-* Launch ready [0/7]
-** TODO Reservations
+* Launch ready [1/7]
+** DONE Reservations
 ** TODO branch_and_path was Array, is now String
 ** TODO Remove NEWS file
 ** TODO Write new README
@@ -11,7 +11,6 @@
          :expires_in => 30.minutes) do
        MarshalableRelation.extend(projects, Project)
      end
-
 * Instructions to users [0/4]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ

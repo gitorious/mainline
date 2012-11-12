@@ -59,7 +59,7 @@ class Project < ActiveRecord::Base
   validates_uniqueness_of :slug, :case_sensitive => false
   validates_format_of :slug, :with => /^#{NAME_FORMAT}$/i,
     :message => I18n.t( "project.format_slug_validation")
-  validates_exclusion_of :slug, :in => Gitorious::Reservations.project_names
+  validates_exclusion_of :slug, :in => lambda { |p| Project.reserved_slugs }
 
   validates_formatting_of :home_url, :using => :url, :allow_nil => true, :message => I18n.t("project.ssl_required")
   validates_formatting_of :mailinglist_url, :using => :url, :allow_nil => true, :message => I18n.t("project.ssl_required")
@@ -317,26 +317,35 @@ class Project < ActiveRecord::Base
     self.suspended_at = Time.now
   end
 
+  def self.reserved_slugs
+    @reserved_slugs ||= []
+  end
+
+  def self.reserve_slugs(slugs)
+    @reserved_slugs ||= []
+    @reserved_slugs.concat(slugs)
+  end
+
   protected
-    def create_wiki_repository
-      self.wiki_repository = Repository.create!({
-        :user => self.user,
-        :name => self.slug + Repository::WIKI_NAME_SUFFIX,
-        :kind => Repository::KIND_WIKI,
-        :project => self,
-        :owner => self.owner,
-      })
-    end
+  def create_wiki_repository
+    self.wiki_repository = Repository.create!({
+      :user => self.user,
+      :name => self.slug + Repository::WIKI_NAME_SUFFIX,
+      :kind => Repository::KIND_WIKI,
+      :project => self,
+      :owner => self.owner,
+    })
+  end
 
-    def create_default_merge_request_statuses
-      MergeRequestStatus.create_defaults_for_project(self)
-    end
+  def create_default_merge_request_statuses
+    MergeRequestStatus.create_defaults_for_project(self)
+  end
 
-    def downcase_slug
-      slug.downcase! if slug
-    end
+  def downcase_slug
+    slug.downcase! if slug
+  end
 
-    def add_as_favorite
-      watched_by!(self.user)
-    end
+  def add_as_favorite
+    watched_by!(self.user)
+  end
 end

@@ -58,7 +58,7 @@ module Gitorious
     # Make Time.zone default to the specified zone, and make Active Record store time values
     # in the database in UTC, and return them converted to the specified local zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
-    config.time_zone = 'UTC'
+    config.time_zone = "UTC"
 
     # The internationalization framework can be changed to have another default locale (standard is :en) or more load paths.
     # All files from config/locales/*.rb,yml are added automatically.
@@ -98,6 +98,10 @@ module Gitorious
       Gitorious::Plugin::post_load
       Grit::Git.git_binary = GitoriousConfig["git_binary"]
       Gitorious::SearchIndex.setup
+
+      require "gitorious/reservations"
+      Rails.application.reload_routes!
+      Repository.reserve_names(Gitorious::Reservations.repository_names)
     end
 
     gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]
