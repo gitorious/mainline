@@ -34,3 +34,4 @@ public/system/group_avatars
 /TAGS
 /config/development.sphinx.conf
 /config/resque.yml
+/config/memcache.yml

@@ -24,7 +24,8 @@ module Gitorious
   def self.on_config(config_file)
     path = Rails.root + "config/#{config_file}"
     if path.exist?
-      yield YAML::load_file(path)[Rails.env]
+      settings = YAML::load_file(path)[Rails.env]
+      yield settings if settings
     end
   end
 end
