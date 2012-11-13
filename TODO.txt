@@ -1,68 +1,9 @@
-events:
-* need to create user-less events even we don't find matching users, otherwise it gets weird whenever there's commits from non-registered gitorious users (or users commit from another email).
-- maybe save name+email in events table in that case, so we can hook them up to a user later if needed.
-* .hooks symlink need to go to $deploy_to/current, not the release dir
-
-new-ui:
-* show outstanding mergerequests on dashboard
-* tweak fonts-sizes and line-heights
-* Clone stats graph on repositories#index
-* popular & active projects on frontpage
-* make the top-header smaller (move gitorious logo to footer?)
-
-(in no particular order)
-
-two from Yurii:
-1) show commits actually merged for merge request after actual merge (I see them on open request, but do not on merged one) 
-2) provide clone url on every repo browsing page, so I can get url to pull from even if I am reading a commit
-
-* tree browser: deal better with funny characters: http://gitorious.org/projects/avara/repos/mainline/trees/master
-* if you comment on a specific commit, you should get redirected back there
-
->  If you do `git archive --format=tar --prefix=myproject/ HEAD | gzip >
->  myproject.tar.gz`, when .gitattributes specifies files that have
->  export-subst, it will expand keywords such as $Format:%cd$. Gitorious'
->  "Download as gzipped tarball" apparently does not do this and I think
->  it'd be pretty nice if it did.
-
-* Deal gracefully with markdown errors (and/or look into using the other markdown libary instead)
-* Markdownify atom feed body for projects.atom
-* Make the fact that you _can_ clone/fork any repo more visible, maybe reword it since people confuse it with local cloning
-* Show the most recent mergerequests on users dashboard so they can track them
-* Make the archive download an external little mongrel/rack thing, and store the result per sha1
-* Comments on MergeRequests and/or votes (or just comments when you resolve)
-* only load scriptacolous+friends when needed
-* git-blame rendering?
-* Reword /about page
-* mail the user when someone adds him as a comitter
-* expire fragment caches for project+repos on deletion
-*a Tone down the "owner" of a repository, or implement a proper "mirror" project type.
-*b be able to mark a project as a "mirror"
-* Nicer diff stats
-* more interesting project stats on frontpage
-* parse git submodule data and link to project if submodule is in gitorious
-* add mainline as a remote branch in clones
-* timezone support
-* Email source_repository owner about merge_request changes
-* Get rid of all the mocking in the controller tests, or at least clean it up
-* Nag project owners with no commits to the mainline repos after a week or two
-* gitk-style branch view
-* Projects can add multiple "pages", not just the index description
-* paginate comments
-* OpenID login
-* Clean up in commit diff CSS
-* graph Repository#parent relationships properly
-* (A RemoteRepository class for repositories hosted elsewhere?)
-* Auto-remove cloned repositories that havent been committed to after 7 days?
-* Refactor the Task/queue system
-* A "Status" field for a project (though a wiki-frontpage makes this unneeded-ish)
-* improve commenting and comments visibility
-* handle mising/wrong SHA1s gracefully in browser
-* parse SHA1s in commits+comments
-* Detect renames etc when showing a commit
-* Always add a "mainline-upstream" branch that track the mainline repos automagically to clones
----
-
-a ProjectMirror that sucks in svn repositories. They need to be differentiated form normal projects (don't display owner etc, since it's a mirror). Also, the mainline repository should probably be immutable so people can commit changes to the actual mirror.
-
-Groups may be a better alternative to allowing multiple repositories in a project, so a Group (or Product?) has many projects.
+* Feature requests [0/8]
+** TODO Clone stats graph on repositories#index
+** TODO Markdownify atom feed body for projects.atom
+** TODO +1 merge request
+** TODO parse git submodule data and link to project if submodule is in gitorious
+** TODO timezone support
+** TODO (A RemoteRepository class for repositories hosted elsewhere?)
+** TODO Auto-remove cloned repositories that havent been committed to after 7 days?
+** TODO Detect renames etc when showing a commit

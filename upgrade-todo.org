@@ -10,10 +10,10 @@
          :expires_in => 30.minutes) do
        MarshalableRelation.extend(projects, Project)
      end
-* Instructions to users [0/5]
+* Instructions to users [1/4]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
-** TODO Clean out vendor
+** DONE Clean out vendor (thomanil fucked it up)
 ** TODO Configuration changes
 *** gitorious_host -> host
 *** gitorious_client_host -> client_host
