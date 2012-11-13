@@ -25,6 +25,7 @@ gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 gem "rails_autolink", "~> 1.0"
 gem "mysql2"
 gem "highline"
+gem "oniguruma", "~> 1.1", :platforms => :ruby_18
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
