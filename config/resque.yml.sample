@@ -1,0 +1,5 @@
+# If your Redis server is running on a different server/port than the
+# default, enter your settings here and rename the file to resque.yml
+development: localhost:6379
+test: localhost:6379
+production: localhost:6379
