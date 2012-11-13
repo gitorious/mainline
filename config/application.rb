@@ -106,10 +106,15 @@ module Gitorious
 
     gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]
 
-    Gitorious::Application.config.middleware.use(ExceptionNotifier,
-                                                 :email_prefix => "[Gitorious] ",
-                                                 :sender_address => %{"Exception notifier" <notifier@gitorious>},
-                                                 :exception_recipients => gts_config["exception_notification_emails"])
+    if  gts_config["exception_notification_emails"].blank?
+      puts "WARNING! No value set for exception_notification_emails in gitorious.yml."
+      puts "Will not be able to send email regarding unhandled exceptions"
+    else
+      Gitorious::Application.config.middleware.use(ExceptionNotifier,
+                                                   :email_prefix => "[Gitorious] ",
+                                                   :sender_address => %{"Exception notifier" <notifier@gitorious>},
+                                                   :exception_recipients => gts_config["exception_notification_emails"])
+    end
 
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
     # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
