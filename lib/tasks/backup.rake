@@ -45,7 +45,7 @@ namespace :backup do
   #
   # During restore of a snapshot, also restore config files
   # sudo bundle exec rake backup:snapshot RAILS_ENV=production RESTORE_CONFIG_FILES=true
-  
+
   # ASSUMPTIONS:
 
   # 0. Both backup and restore tasks must be started from within the
@@ -77,7 +77,7 @@ namespace :backup do
   # snapshot and subsequent restoration of a backup. Major version
   # jumps may necessitate a more manual restore procedure due to
   # changes in configurations, db schema, folder structure etc.
-  
+
   DEFAULT_TAR_PATH="snapshot.tar"
   SQL_DUMP_FILE="db_state.sql"
   TMP_WORKDIR="tmp-backup-workdir"
@@ -91,7 +91,7 @@ namespace :backup do
       exit
     end
   end
-  
+
   def repo_path
     conf = YAML::load(File.open('config/gitorious.yml'))
     conf[RAILS_ENV]['repository_base_path']
@@ -107,10 +107,15 @@ namespace :backup do
     conf[RAILS_ENV]['gitorious_user']
   end
 
+  def database_credential_options
+    conf = YAML::load(File.open('config/database.yml'))
+    "-u#{conf[RAILS_ENV]['username']} -p#{conf[RAILS_ENV]['password']}"
+  end
+
   def restore_config_files?
     (ENV["RESTORE_CONFIG_FILES"] == "true")
   end
-  
+
   desc "Simple state snapshot of the Gitorious instance to a single tarball."
   task :snapshot do
     exit_if_nonsudo
@@ -123,17 +128,17 @@ namespace :backup do
     puts `mkdir #{TMP_WORKDIR}/repos`
     puts `mkdir #{TMP_WORKDIR}/config`
     puts `mkdir -p #{TMP_WORKDIR}/data/hooks`
-    
+
     puts "Backing up custom config files..."
     puts `cp ./config/gitorious.yml #{TMP_WORKDIR}/config`
     puts `cp ./config/database.yml #{TMP_WORKDIR}/config`
-    
+
     if File.exist?("./config/authentication.yml")
       puts `cp ./config/authentication.yml #{TMP_WORKDIR}/config`
     end
 
     puts "Backing up custom hooks..."
-    
+
     if File.exist?("./data/hooks/custom-pre-receive")
       puts `cp ./data/hooks/custom-pre-receive #{TMP_WORKDIR}/data/hooks`
     end
@@ -143,13 +148,13 @@ namespace :backup do
     if File.exist?("./data/hooks/custom-update")
       puts `cp ./data/hooks/custom-update #{TMP_WORKDIR}/data/hooks`
     end
-    
+
     puts "Backing up mysql state..."
     puts `mysqldump #{db_name} > #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
-    
+
     puts "Backing up repositories in #{repo_path}..."
     puts `cp -r #{repo_path}/* #{TMP_WORKDIR}/repos`
-    
+
     puts "Archiving it all in #{tarball_path}..."
     puts `tar -czf #{tarball_path} #{TMP_WORKDIR}`
 
@@ -159,11 +164,11 @@ namespace :backup do
     puts "Done! Backed up current Gitorious state to #{tarball_path}."
   end
 
-  
+
   desc "Restores Gitorious instance to snapshot previously stored in tarball file."
   task :restore => ["db:drop", "db:create"] do
     exit_if_nonsudo
-    
+
     tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
 
     puts "Preparing..."
@@ -176,25 +181,25 @@ namespace :backup do
       puts "Restoring custom hooks..."
       puts `cp -f #{TMP_WORKDIR}/data/hooks/* ./data/hooks`
     end
- 
+
     puts "Restoring mysql state..."
-    puts `mysql #{db_name} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
+    puts `mysql #{database_credential_options} #{db_name} < #{TMP_WORKDIR}/#{SQL_DUMP_FILE}`
 
     puts "Upgrading database structure..."
     Rake::Task["db:migrate"].invoke
-    
+
     puts "Restoring repositories in #{repo_path}..."
     puts `mkdir -p #{repo_path}`
     puts `cp -rf #{TMP_WORKDIR}/repos/* #{repo_path}`
     puts `chown -R #{gitorious_user}:#{gitorious_user} #{repo_path}`
-    
+
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
     puts `su #{gitorious_user} -c "rm -f ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
 
     puts "Recreating symlink to common hooks"
     puts `rm -f #{repo_path}/.hooks` 
     puts `ln -s #{File.expand_path('./data/hooks')} #{repo_path}/.hooks`
-    
+
     puts "Cleaning up..."
     puts `rm -rf #{TMP_WORKDIR}`
 
