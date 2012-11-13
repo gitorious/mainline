@@ -1,7 +1,7 @@
 begin
   $: << File.join(File.expand_path(File.dirname(__FILE__)), "app")
   require "config/environment"
-  require 'resque/tasks'
+  require "resque/tasks"
 rescue LoadError => err
   # Ignore in case not using Resque
 end
