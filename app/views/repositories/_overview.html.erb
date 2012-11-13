@@ -36,11 +36,8 @@
         <%= image_tag("silk/lock.png", :class => "private_access") -%>
       <% end -%>
     </h3>
-
-
     <% unless repository.description.blank? -%>
       <div class="repository-description page">
-
         <%= paragraphs_with_more(render_markdown(repository.description, :auto_link),
                                  repository.id) -%>
       </div>
