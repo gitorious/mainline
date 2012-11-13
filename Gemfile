@@ -1,9 +1,9 @@
 source "http://rubygems.org"
 
-gem "rails", "~> 3.2"
+gem "rails", "3.2.8"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
-gem "rdiscount", "1.3.1.1", :platforms => :ruby
+gem "rdiscount", "~> 1.6", :platforms => :ruby
 gem "mime-types", "1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
