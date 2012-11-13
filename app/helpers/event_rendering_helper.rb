@@ -326,7 +326,7 @@ module EventRenderingHelper
   end
 
   def render_several_commit_push(event)
-    commit_detail_url = commits_event_path(event.to_param)
+    commit_detail_url = commits_events_path(event.to_param)
     commit_count = event.events.size
     repository = event.target
     branch_name = event.data
@@ -416,7 +416,7 @@ module EventRenderingHelper
     diff_url = project_repository_commit_compare_path(event.target.project, event.target, :from_id => first_sha, :id => last_sha)
 
     body = "#{branch_name} changed from #{first_sha[0,7]} to #{last_sha[0,7]}"
-    push_summary(commits_event_path(event.to_param), commit_count, event.target, branch_name, event.to_param, body, diff_url)
+    push_summary(commits_events_path(event.to_param), commit_count, event.target, branch_name, event.to_param, body, diff_url)
   end
 
   protected
