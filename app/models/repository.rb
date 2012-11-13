@@ -201,18 +201,15 @@ class Repository < ActiveRecord::Base
   end
 
   def self.most_active_clones(limit = 10)
-    Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
-      clones = select("distinct repositories.id, repositories.*, count(events.id) as event_count").
-        where("events.created_at > ? and kind in (?)",
-              7.days.ago,
-              [KIND_USER_REPO, KIND_TEAM_REPO]).
-        order("count(events.id) desc").
-        group("repositories.id").
-        joins(:events).
-        includes(:project).
-        limit(limit)
-      MarshalableRelation.extend(clones.all, Repository)
-    end
+    select("distinct repositories.id, repositories.*, count(events.id) as event_count").
+      where("events.created_at > ? and kind in (?)",
+            7.days.ago,
+            [KIND_USER_REPO, KIND_TEAM_REPO]).
+      order("count(events.id) desc").
+      group("repositories.id").
+      joins(:events).
+      includes(:project).
+      limit(limit)
   end
 
   # Finds all repositories that might be due for a gc, starting with

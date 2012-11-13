@@ -10,6 +10,8 @@
          :expires_in => 30.minutes) do
        MarshalableRelation.extend(projects, Project)
      end
+* TODO Repository#most_active_clones -> removed caching, fix
+    Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
 * Instructions to users [1/4]
 ** TODO Database configuration: Use mysql2
 ** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
