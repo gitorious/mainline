@@ -19,39 +19,6 @@
 require "test_helper"
 
 class ActionController::TestCase
-  def self.enforce_ssl
-    context "when enforcing ssl" do
-      setup do
-        login_as(:johan)
-        @test_settings = Gitorious::Configuration.prepend("use_ssl" => true)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@test_settings)
-      end
-
-      context "" do
-        yield
-      end
-    end
-  end
-
-  def self.disable_ssl
-    context "when not enforcing ssl" do
-      setup do
-        @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@test_settings)
-      end
-
-      context "" do
-        yield
-      end
-    end
-  end
-
   def self.should_enforce_ssl_for(method, action, params = {}, &block)
     enforce_ssl do
       without_ssl_context do

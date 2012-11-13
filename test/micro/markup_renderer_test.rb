@@ -48,13 +48,13 @@ class MarkupRendererTest < MiniTest::Shoulda
 
     should "not touch code blocks, built with html tags" do
       r = MarkupRenderer.new("foo\n<pre><code>if (true)\n  return false</code></pre>")
-      exp = "<p>foo<br/>\n<pre><code>if (true)\n  return false</code></pre></p>\n"
+      exp = "<p>foo</p>\n\n<pre><code>if (true)\n  return false</code></pre>\n\n"
       assert_equal exp, r.to_html
     end
 
     should "not touch code block, built with indentation" do
       r = MarkupRenderer.new("foo\n    if (true)\n      return false")
-      exp = "<p>foo<br/>\n</p>\n\n<pre><code>if (true)\n  return false\n</code></pre>\n"
+      exp = "<p>foo</p>\n\n<pre><code>if (true)  \n  return false\n</code></pre>\n"
       assert_equal exp, r.to_html
     end
 
