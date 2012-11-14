@@ -58,6 +58,14 @@ module Gitorious
     @ssh_daemon = Gitorious::GitSshMountPoint.new(Gitorious.user, host)
   end
 
+  def self.git_http
+    return @git_http if @git_http && cache?
+    host = Gitorious::Configuration.get("git_http_host") { Gitorious.host }
+    port = Gitorious::Configuration.get("git_http_port") { Gitorious.port }
+    scheme = Gitorious::Configuration.get("git_http_scheme") { Gitorious.scheme }
+    @git_http = Gitorious::HttpMountPoint.new(host, port, scheme)
+  end
+
   def self.email_sender
     return @email_sender if @email_sender && cache?
     default = "Gitorious <no-reply@#{host}>"

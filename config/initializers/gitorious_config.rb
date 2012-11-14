@@ -77,10 +77,6 @@ unless defined? GitoriousConfig
       Gitorious::Application.paths.app.views.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))
     end
   end
-
-  # Used to be we supported a special git/http subdomain. No longer. The
-  # git_http_host setting can be used to emulate the old behavior
-  GitoriousConfig["git_http_host"] ||= Gitorious.host
 end
 
 GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"

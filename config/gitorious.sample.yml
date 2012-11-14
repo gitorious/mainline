@@ -78,6 +78,13 @@
 # `host` setting.
 #ssh_daemon_host: gitorious.local
 
+# Host and port used for Git over HTTP. See the main `host` and `port`
+# settings for further explanation. These default to whatever the main
+# `host` and `port` are set to.
+#git_http_host: gitorious.local
+#git_http_port: 80
+#git_http_scheme: https
+
 # When Gitorious is running in public mode (true), everyone with
 # access to the server can view and clone repositories. Private mode
 # (false) will not allow anonymous access to content or user
