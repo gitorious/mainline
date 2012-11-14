@@ -1,3 +1,5 @@
+require "gitorious/configuration_loader"
+
 namespace :backup do
 
   # Full backup snapshot/restore for reasonably standard Gitorious
@@ -92,24 +94,24 @@ namespace :backup do
     end
   end
 
+  def load_config
+    @config ||= Gitorious::ConfigurationLoader.new.load(RAILS_ENV)
+  end
+
+  def db_config
+    @db_config ||= YAML::load(File.open('config/database.yml'))
+  end
+
   def repo_path
-    conf = YAML::load(File.open('config/gitorious.yml'))
-    conf[RAILS_ENV]['repository_base_path']
+    Gitorious::Configuration.get("repository_base_path")
   end
 
   def db_name
-    conf = YAML::load(File.open('config/database.yml'))
-    conf[RAILS_ENV]['database']
-  end
-
-  def gitorious_user
-    conf = YAML::load(File.open('config/gitorious.yml'))
-    conf['user'] || conf[RAILS_ENV]['user']
+    db_config[RAILS_ENV]['database']
   end
 
   def database_credential_options
-    conf = YAML::load(File.open('config/database.yml'))
-    "-u#{conf[RAILS_ENV]['username']} -p#{conf[RAILS_ENV]['password']}"
+    "-u#{db_config[RAILS_ENV]['username']} -p#{db_config[RAILS_ENV]['password']}"
   end
 
   def restore_config_files?
@@ -168,6 +170,7 @@ namespace :backup do
   desc "Restores Gitorious instance to snapshot previously stored in tarball file."
   task :restore => ["db:drop", "db:create"] do
     exit_if_nonsudo
+    load_config
 
     tarball_path = ENV["TARBALL_PATH"] || DEFAULT_TAR_PATH
 
@@ -191,7 +194,7 @@ namespace :backup do
     puts "Restoring repositories in #{repo_path}..."
     puts `mkdir -p #{repo_path}`
     puts `cp -rf #{TMP_WORKDIR}/repos/* #{repo_path}`
-    puts `chown -R #{gitorious_user}:#{gitorious_user} #{repo_path}`
+    puts `chown -R #{Gitorious.user}:#{Gitorious.user} #{repo_path}`
 
     puts "Rebuilding ~/.ssh/authorized_keys from user keys in database..."
     puts `su #{gitorious_user} -c "rm -f ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`

@@ -17,11 +17,10 @@ namespace :mirror do
   # sudo bundle exec rake mirror:symlinkedrepos RAILS_ENV=production
   #
 
-  require 'yaml'
-
   desc "Create mirror directory with symlinks to all current regular repository paths"
   task :symlinkedrepos => :environment do
-    default_mirror_base_path = "#{GitoriousConfig['repository_base_path']}/../mirrored-public-repos"
+    base = Gitorious::Configuration.get("repository_base_path")
+    default_mirror_base_path = "#{base}/../mirrored-public-repos"
     mirror_base = GitoriousConfig["symlinked_mirror_repo_base"] || default_mirror_base_path
     owner = Gitorious.user
 
@@ -34,7 +33,8 @@ namespace :mirror do
     # rebuild symlinks for all standard repos (omit private repos, wiki repos etc)
     repo_data = Repository.regular.each do |r|
       if !r.private?
-        actual_path = "#{GitoriousConfig["repository_base_path"]}/#{r.real_gitdir}"
+        base = Gitorious::Configuration.get("repository_base_path")
+        actual_path = "#{base}/#{r.real_gitdir}"
         repo_parent_dir = Pathname.new(r.url_path).dirname
         project_dir = "#{mirror_base}/#{repo_parent_dir}"
         puts `mkdir -p #{project_dir}`
