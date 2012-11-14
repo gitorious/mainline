@@ -24,16 +24,20 @@ unless defined? GitoriousConfig
   loader = Gitorious::ConfigurationLoader.new
 
   # Wire up the global Gitorious::Configuration singleton with settings
-  loader.configure_singleton(env)
 
   # Set global locale
   I18n.locale = I18n.default_locale = Gitorious::Configuration.get("locale", "en")
+  config = loader.configure_singleton(env)
 
   # Configure messaging
   default_adapter = env == "test" ? "test" : "resque"
-  Gitorious::Messaging.adapter = Gitorious::Configuration.get("messaging_adapter", default_adapter)
+  Gitorious::Messaging.adapter = config.get("messaging_adapter", default_adapter)
 
-
+  # Configure Repository base path
+  if defined?(Rails)
+    require Rails.root + "app/models/repository_root"
+    RepositoryRoot.default_base_path = config.get("repository_base_path")
+  end
 
   # TODO: Port remaining settings
 

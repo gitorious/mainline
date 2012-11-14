@@ -17,7 +17,6 @@
 #++
 require "yaml"
 
-
 module Gitorious
   class ConfigurationLoader
     def initialize(root = File.expand_path(File.join(File.dirname(__FILE__), "../..")))

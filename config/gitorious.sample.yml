@@ -116,12 +116,13 @@
 # address only, or Name <address>.
 #email_sender: Gitorious <no-reply@gitorious.local>
 
+# The path where git repositories are stored. The actual (bare)
+# repositories reside in
+# #{repository_base_path}/#{project.slug}/#{repository.name}.git/
+repository_base_path: "/var/git/repositories"
+
 production:
 
-
-  # The path where git repositories are stored. The actual (bare) repositories
-  # reside in #{repository_base_path}/#{project.slug}/#{repository.name}.git/:
-  repository_base_path: "/var/git/repositories"
 
   # Gitorious allows users to download archived tarballs of repositories. In
   # order to do this, it needs a separate directory to do the rough work,
