@@ -28,4 +28,32 @@ class GitoriousTest < MiniTest::Spec
     ENV["GITORIOUS_HOST"] = "gitorious.org"
     assert_equal "gitorious.org", Gitorious.host
   end
+
+  describe "support email" do
+    it "defaults to gitorious-support@<host>" do
+      Gitorious::Configuration.override("host" => "my.gitorio.us") do |conf|
+        assert_equal "gitorious-support@my.gitorio.us", Gitorious.support_email
+      end
+    end
+
+    it "uses configured sender" do
+      Gitorious::Configuration.override("support_email" => "cj@gitorious.org") do |conf|
+        assert_equal "cj@gitorious.org", Gitorious.support_email
+      end
+    end
+  end
+
+  describe "email sender" do
+    it "defaults to Gitorious <no-reply@<host>>" do
+      Gitorious::Configuration.override("host" => "my.gitorio.us") do |conf|
+        assert_equal "Gitorious <no-reply@my.gitorio.us>", Gitorious.email_sender
+      end
+    end
+
+    it "uses configured sender" do
+      Gitorious::Configuration.override("email_sender" => "cj@gitorious.org") do |conf|
+        assert_equal "cj@gitorious.org", Gitorious.email_sender
+      end
+    end
+  end
 end

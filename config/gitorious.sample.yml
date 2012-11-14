@@ -56,7 +56,7 @@
 
 # Email address to the support for the Gitorious server. Default is
 # gitorious-support@<host>
-#support_email: support@gitorious.local
+#support_email: gitorious-support@gitorious.local
 
 # Exposes a public url at /admin/diagnostics/summary which, when
 # called, runs a number of health checks to verify that the Gitorious
@@ -70,6 +70,11 @@
 # to access the summary rather than all or nothing.
 #
 #public_diagnostics_summary: true
+
+# The (optional name and) address used when sending emails. This
+# defaults to "Gitorious <no-reply@<host>>. Can be set to an email
+# address only, or Name <address>.
+#sender_email_address: Gitorious <no-reply@gitorious.local>
 
 production:
   # Host name used to access repos via git and ssh+git, if different.
