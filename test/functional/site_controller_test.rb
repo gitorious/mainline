@@ -194,17 +194,18 @@ class SiteControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      @test_settings = Gitorious::Configuration.prepend("public_mode" => false)
       GitoriousConfig["is_gitorious_dot_org"] = false
     end
 
     teardown do
-      Gitorious::Configuration.prune(@test_settings)
       GitoriousConfig["is_gitorious_dot_org"] = true
     end
 
     should "GET / should not show private content in the homepage" do
-      get :index
+      Gitorious::Configuration.override("public_mode" => false) do
+        get :index
+      end
+
       assert_no_match(/Newest projects/, @response.body)
       assert_no_match(/action\=\"\/search"/, @response.body)
       assert_no_match(/Creating a user account/, @response.body)

@@ -531,16 +531,11 @@ class ProjectsControllerTest < ActionController::TestCase
   end
 
   context "in Private Mode" do
-    setup do
-      @test_settings = Gitorious::Configuration.prepend("public_mode" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@test_settings)
-    end
-
     should "GET /projects" do
-      get :index
+      Gitorious::Configuration.override("public_mode" => false) do
+        get :index
+      end
+
       assert_redirected_to(root_path)
       assert_match(/Action requires login/, flash[:error])
     end

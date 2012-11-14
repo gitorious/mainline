@@ -129,10 +129,6 @@ class MailerTest < ActiveSupport::TestCase
       @user = users(:moe)
     end
 
-    teardown do
-      Gitorious::Configuration.prune(@test_settings) if @test_settings
-    end
-
     should "be a sensible default unless configured" do
       Gitorious::Configuration.stubs(:configs).returns([])
       message = Mailer.signup_notification(@user)
@@ -142,9 +138,11 @@ class MailerTest < ActiveSupport::TestCase
 
     should "use configured sender address" do
       address = "Gitorious <no-reply@gitorious.example>"
-      @test_settings = Gitorious::Configuration.prepend("email_sender" => address)
-      message = Mailer.signup_notification(@user)
-      assert_equal "no-reply@gitorious.example", message.from.first
+
+      Gitorious::Configuration.override("email_sender" => address) do
+        message = Mailer.signup_notification(@user)
+        assert_equal "no-reply@gitorious.example", message.from.first
+      end
     end
   end
 end
