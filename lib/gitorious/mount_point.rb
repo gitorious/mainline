@@ -21,10 +21,10 @@ module Gitorious
   class MountPoint
     attr_reader :host, :port, :scheme
 
-    def initialize(host, port = 80, scheme = "http")
+    def initialize(host, port = nil, scheme = nil)
       @host = host.split(":").first
-      @port = port.to_i
-      @scheme = scheme
+      @port = (port || default_port).to_i
+      @scheme = scheme || default_scheme
     end
 
     def url(path)
@@ -32,12 +32,8 @@ module Gitorious
     end
 
     def host_port
-      return host if port == 80 || (port == 443 && ssl?)
+      return host if port == default_port
       "#{host}:#{port}"
-    end
-
-    def ssl?
-      scheme == "https"
     end
 
     # A valid fully qualified domain name is required to contain one
@@ -45,10 +41,29 @@ module Gitorious
     def valid_fqdn?
       return !host.match(/[a-z0-9_]?\.[a-z0-9_]?/).nil?
     end
+  end
+
+  class HttpMountPoint < MountPoint
+    def ssl?
+      scheme == "https"
+    end
 
     def can_share_cookies?(other_host)
       return false if !valid_fqdn?
       return !other_host.match(Regexp.new("(.+\.)?" + host)).nil?
     end
+
+    def default_scheme
+      port == 443 ? "https" : "http"
+    end
+
+    def default_port
+      scheme == "https" ? 443 : 80
+    end
+  end
+
+  class GitMountPoint < MountPoint
+    def default_scheme; "git"; end
+    def default_port; 9418; end
   end
 end

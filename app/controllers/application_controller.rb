@@ -32,8 +32,6 @@ class ApplicationController < ActionController::Base
   before_filter :public_and_logged_in
   before_filter :require_current_eula
 
-  include SslRequirement # Need to be included after the above
-
   after_filter :mark_flash_status
 
   layout :pick_layout_based_on_site
@@ -338,10 +336,6 @@ class ApplicationController < ActionController::Base
 
   def ssl_allowed?
     request.ssl?
-  end
-
-  def ssl_required?
-    Gitorious.ssl? && using_session? && logged_in?
   end
 
   def unshifted_polymorphic_path(repo, path_spec)

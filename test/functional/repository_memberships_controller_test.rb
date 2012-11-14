@@ -28,11 +28,6 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
   context "With private repos" do
     setup do
       enable_private_repositories
-      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@test_settings)
     end
 
     context "index" do

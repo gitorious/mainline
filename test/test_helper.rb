@@ -11,39 +11,6 @@ class ActiveSupport::TestCase
   include AuthenticatedTestHelper
   include Gitorious::Authorization
 
-  def self.enforce_ssl
-    context "when enforcing ssl" do
-      setup do
-        login_as(:johan)
-        @test_settings = Gitorious::Configuration.prepend("use_ssl" => true)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@test_settings)
-      end
-
-      context "" do
-        yield
-      end
-    end
-  end
-
-  def self.disable_ssl
-    context "when not enforcing ssl" do
-      setup do
-        @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@test_settings)
-      end
-
-      context "" do
-        yield
-      end
-    end
-  end
-
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.

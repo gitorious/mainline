@@ -218,11 +218,6 @@ class CommitsControllerTest < ActionController::TestCase
     setup do
       prepare_project_repo_and_commit
       enable_private_repositories
-      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "disallow unauthorized access to commits" do
@@ -263,11 +258,6 @@ class CommitsControllerTest < ActionController::TestCase
     setup do
       prepare_project_repo_and_commit
       enable_private_repositories(@repository)
-      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "disallow unauthorized access to commits" do

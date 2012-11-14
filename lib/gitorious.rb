@@ -27,9 +27,9 @@ module Gitorious
   def self.site
     return @site if @site && cache?
     host = Gitorious::Configuration.get("host", "gitorious.local")
-    port = Gitorious::Configuration.get("port", 80).to_i
-    scheme = Gitorious::Configuration.get("use_ssl", true) ? "https" : "http"
-    @site = Gitorious::MountPoint.new(host, port, scheme)
+    port = Gitorious::Configuration.get("port")
+    scheme = Gitorious::Configuration.get("scheme")
+    @site = Gitorious::HttpMountPoint.new(host, port, scheme)
   end
 
   def self.scheme; site.scheme; end
@@ -41,8 +41,8 @@ module Gitorious
   def self.client
     return @client if @client && cache?
     host = Gitorious::Configuration.get("client_host", "localhost")
-    port = Gitorious::Configuration.get("client_port", "80")
-    @client = Gitorious::MountPoint.new(host, port)
+    port = Gitorious::Configuration.get("client_port")
+    @client = Gitorious::HttpMountPoint.new(host, port)
   end
 
   def self.email_sender

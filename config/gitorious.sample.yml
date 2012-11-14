@@ -23,14 +23,25 @@
 # run in development mode. Review the development mode section to the
 # bottom of this file for suggested overrides for that environment.
 
-# The host and port users reach Gitorious with. Used to generate URLs
-# where full URLs are required (e.g. in emails etc).
+# The host, port and scheme users reach Gitorious with. Used to
+# generate URLs where full URLs are required (e.g. in emails etc). The
+# scheme defaults to https. When the scheme is https, the port
+# defaults to 443, otherwise it defaults to 80. None of these settings
+# affect your deployment, they only influence how Gitorious generates
+# full URLs. If you stay with the default SSL configuration (highly
+# recommended), you must configure your web server accordingly.
+#
+# NB! Gitorious 2.x used a use_ssl setting that made Gitorious force
+# users onto https when attempting to login. This behavior is gone. If
+# you want SSL, deploy under SSL only or configure your webserver to
+# redirect all http traffic to https.
+#
+# If you need help generating an SSL certificate, see this guide:
+# https://github.com/ioerror/duraconf/blob/master/startssl/README.markdown
+#
+#scheme: https
 #host: gitorious.local
-#port: 80
-
-# Using SSL is strongly recommended. If you leave this on, remember to
-# configure your web server accordingly.
-#use_ssl: true
+#port: 443
 
 # Internal scripts will make HTTP requests to Gitorious for certain
 # kinds of information (e.g. bin/gitorious uses HTTP to figure out
@@ -84,15 +95,7 @@
 #sender_email_address: Gitorious <no-reply@gitorious.local>
 
 production:
-  # Host name used to access repos via git and ssh+git, if different.
-  #gitorious_clone_host: gitorious.test
 
-  # Host name used by local scripts to fetch repository information over HTTP.
-  # You can put the same value used for gitorious_host here.
-  # As an optimization, you could use a local hostname such as localhost.
-  # In that case, make sure to put localhost as an alternative hostname in your
-  # webserver config (Apache: "ServerAlias" setting, nginx: "host" setting).
-  gitorious_client_host: localhost
 
   # The path where git repositories are stored. The actual (bare) repositories
   # reside in #{repository_base_path}/#{project.slug}/#{repository.name}.git/:
@@ -395,3 +398,5 @@ production:
   # use_ldap_for_authorization: true
 
 development:
+  # You likely don't want to run SSL in development
+  scheme: "http"

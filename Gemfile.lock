@@ -42,7 +42,6 @@ GEM
       rails (~> 3.0)
     addressable (2.2.8)
     arel (3.0.2)
-    bartt-ssl_requirement (1.4.2)
     builder (3.0.4)
     capillary (1.0.2)
       json (~> 1.5)
@@ -245,7 +244,6 @@ PLATFORMS
 DEPENDENCIES
   activerecord-jdbcmysql-adapter
   acts-as-taggable-on (~> 2.3)
-  bartt-ssl_requirement (~> 1.4.0)
   capillary (~> 1.0.1)
   capybara (= 1.0.1)
   daemons (= 1.1.0)

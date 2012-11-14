@@ -61,10 +61,6 @@ class SessionsController < ApplicationController
   end
 
   protected
-  def ssl_required?
-    Gitorious.ssl?
-  end
-
   def validate_request_host
     if !Gitorious.site.can_share_cookies?(request.host)
       Rails.logger.warn("WARNING: Invalid request host '#{request.host}'. Session cookies will not work")
@@ -144,7 +140,7 @@ class SessionsController < ApplicationController
         :value => self.current_user.remember_token ,
         :expires => self.current_user.remember_token_expires_at,
         :domain => ".#{Gitorious.host}",
-        :secure => true
+        :secure => Gitorious.site.ssl?
       }
     end
     check_state_and_redirect('/')

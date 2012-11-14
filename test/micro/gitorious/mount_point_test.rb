@@ -18,74 +18,98 @@
 require "minitest/autorun"
 require "gitorious/mount_point"
 
-class UrlTest < MiniTest::Spec
-  it "does not use ssl by default" do
-    url = Gitorious::MountPoint.new("gitorious.here")
+class MountPointTest < MiniTest::Spec
+  describe Gitorious::HttpMountPoint do
+    it "does not use ssl by default" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here")
 
-    refute url.ssl?
-  end
-
-  it "uses ssl" do
-    url = Gitorious::MountPoint.new("gitorious.here", 443, "https")
-
-    assert url.ssl?
-  end
-
-  it "generates url" do
-    url = Gitorious::MountPoint.new("gitorious.here")
-
-    assert_equal "http://gitorious.here/somewhere", url.url("/somewhere")
-  end
-
-  it "generates url for non-80 port" do
-    url = Gitorious::MountPoint.new("gitorious.here", 81)
-
-    assert_equal "http://gitorious.here:81/somewhere", url.url("/somewhere")
-  end
-
-  it "generates url for ssl on port 443" do
-    url = Gitorious::MountPoint.new("gitorious.here", 443, "https")
-
-    assert_equal "https://gitorious.here/somewhere", url.url("/somewhere")
-  end
-
-  it "considers gitorious.org a valid fqdn" do
-    url = Gitorious::MountPoint.new("gitorious.org")
-
-    assert url.valid_fqdn?
-  end
-
-  it "considers host names without dots invalid fqdns" do
-    url = Gitorious::MountPoint.new("localhost")
-
-    refute url.valid_fqdn?
-  end
-
-  describe "#can_share_cookies?" do
-    it "can share on same host" do
-      url = Gitorious::MountPoint.new("gitorious.org")
-      assert url.can_share_cookies?("gitorious.org")
+      refute mp.ssl?
     end
 
-    it "can share with subdomains" do
-      url = Gitorious::MountPoint.new("gitorious.org")
-      assert url.can_share_cookies?("qt.gitorious.org")
+    it "uses ssl" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here", 443, "https")
+
+      assert mp.ssl?
     end
 
-    it "cannot share with different domain" do
-      url = Gitorious::MountPoint.new("gitorious.org")
-      refute url.can_share_cookies?("gitorious.com")
+    it "defaults to http on port 80" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here")
+
+      assert_equal "http://gitorious.here/somewhere", mp.url("/somewhere")
     end
 
-    it "cannot share cookies if not a fully qualified domain name" do
-      url = Gitorious::MountPoint.new("gitorious")
-      refute url.can_share_cookies?("gitorious")
+    it "generates url for non-80 port" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here", 81)
+
+      assert_equal "http://gitorious.here:81/somewhere", mp.url("/somewhere")
     end
 
-    it "can share with same subdomain" do
-      url = Gitorious::MountPoint.new("git.gitorious.org")
-      assert url.can_share_cookies?("git.gitorious.org")
-      assert url.can_share_cookies?("other.git.gitorious.org")
+    it "generates url for ssl on port 443" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here", 443, "https")
+
+      assert_equal "https://gitorious.here/somewhere", mp.url("/somewhere")
+    end
+
+    it "generates url for ssl on non-443 port" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.here", 1918, "https")
+
+      assert_equal "https://gitorious.here:1918/somewhere", mp.url("/somewhere")
+    end
+
+    it "considers gitorious.org a valid fqdn" do
+      mp = Gitorious::HttpMountPoint.new("gitorious.org")
+
+      assert mp.valid_fqdn?
+    end
+
+    it "considers host names without dots invalid fqdns" do
+      mp = Gitorious::HttpMountPoint.new("localhost")
+
+      refute mp.valid_fqdn?
+    end
+
+    describe "#can_share_cookies?" do
+      it "can share on same host" do
+        mp = Gitorious::HttpMountPoint.new("gitorious.org")
+        assert mp.can_share_cookies?("gitorious.org")
+      end
+
+      it "can share with subdomains" do
+        mp = Gitorious::HttpMountPoint.new("gitorious.org")
+        assert mp.can_share_cookies?("qt.gitorious.org")
+      end
+
+      it "cannot share with different domain" do
+        mp = Gitorious::HttpMountPoint.new("gitorious.org")
+        refute mp.can_share_cookies?("gitorious.com")
+      end
+
+      it "cannot share cookies if not a fully qualified domain name" do
+        mp = Gitorious::HttpMountPoint.new("gitorious")
+        refute mp.can_share_cookies?("gitorious")
+      end
+
+      it "can share with same subdomain" do
+        mp = Gitorious::HttpMountPoint.new("git.gitorious.org")
+        assert mp.can_share_cookies?("git.gitorious.org")
+        assert mp.can_share_cookies?("other.git.gitorious.org")
+      end
+    end
+  end
+
+  describe Gitorious::GitMountPoint do
+    it "generates git urls" do
+      mp = Gitorious::GitMountPoint.new("gitorious.org")
+      url = mp.url("/gitorious/mainline.git")
+
+      assert_equal "git://gitorious.org/gitorious/mainline.git", url
+    end
+
+    it "generates git urls for non-default" do
+      mp = Gitorious::GitMountPoint.new("gitorious.org", 9417)
+      url = mp.url("/gitorious/mainline.git")
+
+      assert_equal "git://gitorious.org:9417/gitorious/mainline.git", url
     end
   end
 end

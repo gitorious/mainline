@@ -18,7 +18,6 @@ gem "nokogiri", "1.5.0"
 gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
-gem "bartt-ssl_requirement", "~>1.4.0", :require => "ssl_requirement"
 gem "validates_formatting_of", "~> 0.7"
 gem "thinking-sphinx", "~> 2.0.10"
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18

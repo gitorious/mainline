@@ -45,14 +45,6 @@ module RoutingHelper
     path.split("/").select{|p| !p.blank? }
   end
 
-  def secure_login_url
-    if SslRequirement.disable_ssl_check?
-      sessions_path
-    else
-      sessions_url(:protocol => "https", :host => SslRequirement.ssl_host)
-    end
-  end
-
   def log_path(objectish = "master", options = {})
     objectish = ensplat_path(objectish)
     if options.blank? # just to avoid the ? being tacked onto the url

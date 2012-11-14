@@ -25,7 +25,7 @@ class WebHookGeneratorTest < MiniTest::Shoulda
     @repository = Repository.new
     @repository.project = Project.new(:slug => "my-project", :description => "Yes, mine")
     @repository.clones = [{}]
-    @repository.browse_url = "https://gitorious.test/my-project/name"
+    @repository.browse_url = "http://gitorious.test/my-project/name"
 
     grit = mock
     grit.stubs(:commits_between).with(SHA, OTHER_SHA).returns([grit_commit])

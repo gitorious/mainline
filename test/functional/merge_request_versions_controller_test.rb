@@ -71,11 +71,6 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
         @project = @merge_request.project
         enable_private_repositories
         @version.stubs(:diffs).with("ffcab".."bacff").returns([])
-        @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@test_settings)
       end
 
       should "disallow unauthenticated users" do
@@ -94,11 +89,6 @@ class MergeRequestVersionsControllerTest < ActionController::TestCase
       setup do
         enable_private_repositories(@merge_request.target_repository)
         @version.stubs(:diffs).with("ffcab".."bacff").returns([])
-        @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-      end
-
-      teardown do
-        Gitorious::Configuration.prune(@test_settings)
       end
 
       should "disallow unauthenticated users" do

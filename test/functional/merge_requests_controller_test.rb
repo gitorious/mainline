@@ -234,11 +234,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context "#create (POST)" do
     setup do
       Grit::Repo.any_instance.stubs(:heads).returns([])
-      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "require login" do
@@ -481,11 +476,6 @@ class MergeRequestsControllerTest < ActionController::TestCase
   context "GET #target_branches" do
     setup do
       GitoriousConfig["enable_private_repositories"] = false
-      @test_settings = Gitorious::Configuration.prepend("use_ssl" => false)
-    end
-
-    teardown do
-      Gitorious::Configuration.prune(@test_settings)
     end
 
     should "retrive a list of the target repository branches" do

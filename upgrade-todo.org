@@ -22,3 +22,6 @@
 *** gitorious_client_port -> client_port
 *** sender_email_address -> email_sender
 *** gitorious_support_email -> support_email
+*** gitorious_clone_host -> git_daemon_host (+git_daemon_port)
+*** use_ssl is gone
+*** scheme is new

@@ -236,10 +236,6 @@ class UsersController < ApplicationController
   end
 
   protected
-  def ssl_required?
-    Gitorious.ssl?
-  end
-
   def find_user
     @user = User.find_by_login!(params[:id])
   end
