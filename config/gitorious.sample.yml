@@ -142,21 +142,23 @@ repository_base_path: "/var/git/repositories"
 # New repositories default to being private
 #repositories_default_private: false
 
+# Gitorious allows users to download archived tarballs of repositories. In
+# order to do this, it needs a separate directory to do the rough work,
+# and a directory to keep cached tarballs (such that we don't waste time
+# re-generating tarballs on every request).
+#
+# Tarball cache directory. Gitorious uses X-Sendfile to deliver files to
+# users, so this needs to be readable by the web server.
+archive_cache_dir: "/var/git/tarballs"
+
+#
+# Temporary tarball work directory
+archive_work_dir: "/var/git/tarballs-work"
+
 production:
 
 
-  # Gitorious allows users to download archived tarballs of repositories. In
-  # order to do this, it needs a separate directory to do the rough work,
-  # and a directory to keep cached tarballs (such that we don't waste time
-  # re-generating tarballs on every request).
-  #
-  # Tarball cache directory. Gitorious uses X-Sendfile to deliver files to
-  # users, so this needs to be readable by the web server.
-  archive_cache_dir: "/var/git/tarballs"
 
-  #
-  # Temporary tarball work directory
-  archive_work_dir: "/var/git/tarballs-work"
 
   # Session key. It is recommended to use a long random string for this. A
   # suitable key can be generated with `apg -m 64`. Make sure you paste the

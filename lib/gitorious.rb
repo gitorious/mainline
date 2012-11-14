@@ -114,6 +114,16 @@ module Gitorious
     remote_ops_ips.include?(remote_addr)
   end
 
+  def self.archive_cache_dir
+    return @archive_cache_dir if @archive_cache_dir && cache?
+    @archive_cache_dir = Gitorious::Configuration.get("archive_cache_dir")
+  end
+
+  def self.archive_work_dir
+    return @archive_work_dir if @archive_work_dir && cache?
+    @archive_work_dir = Gitorious::Configuration.get("archive_work_dir")
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

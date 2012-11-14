@@ -108,7 +108,7 @@ class TreesControllerTest < ActionController::TestCase
     setup do
       @master_sha = "ca8a30f5a7f0f163bbe3b6f0abf18a6c83b0687a"
       @test_master_sha = "2d3acf90f35989df8f262dc50beadc4ee3ae1560"
-      @cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+      @cached_path = File.join(Gitorious.archive_cache_dir,
                         "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.stubs(:exist?).with(@cached_path).returns(true)
     end
@@ -141,9 +141,9 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "enqueue a job when the tarball is not cached" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+      cached_path = File.join(Gitorious.archive_cache_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
-      work_path = File.join(GitoriousConfig["archive_work_dir"],
+      work_path = File.join(Gitorious.archive_work_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@test_master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(false)
@@ -162,9 +162,9 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "not enqueue a job when work has already begun" do
-      cached_path = File.join(GitoriousConfig["archive_cache_dir"],
+      cached_path = File.join(Gitorious.archive_cache_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
-      work_path = File.join(GitoriousConfig["archive_work_dir"],
+      work_path = File.join(Gitorious.archive_work_dir,
                       "#{@repository.hashed_path.gsub(/\//, '-')}-#{@master_sha}.tar.gz")
       File.expects(:exist?).with(cached_path).returns(false)
       File.expects(:exist?).with(work_path).returns(true)

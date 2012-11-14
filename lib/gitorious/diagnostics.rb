@@ -131,8 +131,8 @@ module Gitorious
     end
 
     def tarball_dirs_ok?
-      cache_path = GitoriousConfig["archive_cache_dir"]
-      work_path = GitoriousConfig["archive_work_dir"]
+      cache_path = Gitorious.archive_cache_dir
+      work_path = Gitorious.archive_work_dir
 
       (dir_present?(cache_path) &&
        owned_by_user?(cache_path, git_user) &&
