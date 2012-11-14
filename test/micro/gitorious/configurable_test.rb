@@ -115,4 +115,48 @@ class ConfigurationTest < MiniTest::Spec
       assert_equal false, @config.get("use_something", true)
     end
   end
+
+  describe "temporary configuration override" do
+    it "temporarily disables regular configuration" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1, :two => 2)
+
+      config.override(:one => 3) do |c|
+        assert_equal 3, c.get(:one)
+        assert_equal "Oops", c.get(:two, "Oops")
+      end
+    end
+
+    it "restores original configuration after block" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1, :two => 2)
+
+      config.override(:one => 3) { |c| }
+
+      assert_equal 1, config.get(:one)
+    end
+
+    it "restores original configuration when block raises" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1, :two => 2)
+
+      begin
+        config.override(:one => 3) { |c| raise "Hell" }
+      rescue
+      end
+
+      assert_equal 1, config.get(:one)
+    end
+
+    it "does not swallow block exceptions" do
+      config = Gitorious::Configurable.new
+      config.append(:one => 1, :two => 2)
+
+      assert_raises(Hell) do
+        config.override(:one => 3) { |c| raise Hell.new }
+      end
+    end
+  end
 end
+
+class Hell < RuntimeError; end

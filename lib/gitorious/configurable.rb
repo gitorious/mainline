@@ -18,7 +18,7 @@
 
 module Gitorious
   class Configurable
-    def initialize(env_prefix)
+    def initialize(env_prefix = nil)
       @env_prefix = env_prefix
     end
 
@@ -38,11 +38,22 @@ module Gitorious
 
     def get(key, default = nil)
       env_key = "#{@env_prefix}_#{key.upcase}"
-      return ENV[env_key] if ENV.key?(env_key)
+      return ENV[env_key] if !@env_prefix.nil? && ENV.key?(env_key)
       settings = configs.detect { |c| c.key?(key) }
       return settings[key] if settings
       return yield if block_given? && default.nil?
       default
+    end
+
+    def override(settings = {})
+      configs = @configs
+      @configs = [settings]
+
+      begin
+        yield(self)
+      ensure
+        @configs = configs
+      end
     end
 
     private
