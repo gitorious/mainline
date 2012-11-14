@@ -155,15 +155,31 @@ archive_cache_dir: "/var/git/tarballs"
 # Temporary tarball work directory
 archive_work_dir: "/var/git/tarballs-work"
 
+# Session key. It is recommended to use a long random string for this.
+# A suitable key can be generated with `apg -m 64`. Make sure you
+# paste the key as one long string, no newlines or escaped characters.
+#cookie_secret: sadfk8asd_-:;SDAD)(97dsa789ssf
+
+# Messaging queue configuration
+# Possible values: resque, test, sync. Default value is resque. The
+# test implementation is intended for unit testing only, not for
+# production or development use (messages are only stored in a list,
+# never processed). The sync adapter is intended for development use,
+# but may also suit low traffic setups where performance is not
+# critical.
+#messaging_adapter: resque
+
+# Record throttling
+# Gitorious throttles the rate at which users can create database
+# records (repositories, projects, messages..) Users can only create X
+# records within Y timeframe, or they'll get a "hold off for a while"
+# error message after which the offending user has to wait until the Y
+# timeframe has passed to create more records of that type. Disable
+# this only if you trust all your users not to abuse/spam/DDOS your
+# Gitorious instance with repo/msg/project creation.
+#enable_record_throttling: true
+
 production:
-
-
-
-
-  # Session key. It is recommended to use a long random string for this. A
-  # suitable key can be generated with `apg -m 64`. Make sure you paste the
-  # key as one long string, no newlines or escaped characters.
-  cookie_secret: ssssht
 
   # --------------------
   # RECOMMENDED SETTINGS
@@ -177,23 +193,6 @@ production:
   # with details if you provide your addresses here.
   exception_notification_emails:
 
-  # Messaging queue configuration
-  # Possible values: resque, test, sync. Default value is resque. The test
-  # implementation is intended for unit testing only, not for production or
-  # development use (messages are only stored in a list, never processed). The
-  # sync adapter is intended for development use, but may also suit low traffic
-  # setups where performance is not critical.
-  messaging_adapter: resque
-
-  # Disable record throttling
-  # By default, Gitorious throttles the rate at which users can create
-  # database records (repositories, projects, messages..) Users can
-  # only create X records within Y timeframe, or they'll get a "hold
-  # off for a while" error message after which the offending user has
-  # to wait until the Y timeframe has passed to create more records of
-  # that type. Disable this only if you trust all your users not to
-  # abuse/spam/DDOS your Gitorious instance with repo/msg/project creation.
-  disable_record_throttling: false
 
   # Enable repository directory sharding
   # By default, gitorious will store repositories directly under
@@ -427,3 +426,7 @@ production:
 development:
   # You likely don't want to run SSL in development
   scheme: "http"
+
+  # Using synchronous "background processing" saves you the trouble of
+  # setting up Redis and Resque in development.
+  messaging_adapter: sync

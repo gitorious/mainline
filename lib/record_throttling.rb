@@ -18,31 +18,29 @@
 #++
 
 module RecordThrottling
-
   class LimitReachedError < StandardError; end
 
   def self.disable
-    @@disabled = true
+    @@enabled = false
   end
 
   def self.enable
-    @@disabled = false
+    @@enabled = true
   end
 
   def self.disabled?
-    @@disabled || RecordThrottling::default_behavior
+    !@@enabled || !RecordThrottling::default_behavior
   end
 
   def self.reset_to_default
-    @@disabled =  RecordThrottling::default_behavior
+    @@enabled = RecordThrottling::default_behavior
   end
 
   def self.default_behavior
-   (GitoriousConfig["disable_record_throttling"] &&
-    GitoriousConfig["disable_record_throttling"] == true)
+    Gitorious::Configuration.get("enable_record_throttling", true)
   end
 
-  @@disabled = RecordThrottling::default_behavior
+  @@enabled = RecordThrottling::default_behavior
 
   def self.included(base)
     base.class_eval do
@@ -78,16 +76,15 @@ module RecordThrottling
 
   module RecordThrottlingInstanceMethods
     def check_throttle_limits
-      unless RecordThrottling.disabled?
-        options = self.class.creation_throttle_options
-        if options[:counter].call(self) < options[:limit]
-          return true
-        end
-        last_create = self.class.maximum(:created_at,
-                                         :conditions => options[:conditions].call(self))
-        if last_create && last_create >= options[:timeframe].ago
-          raise LimitReachedError
-        end
+      return if RecordThrottling.disabled?
+      options = self.class.creation_throttle_options
+      if options[:counter].call(self) < options[:limit]
+        return true
+      end
+      last_create = self.class.maximum(:created_at,
+                                       :conditions => options[:conditions].call(self))
+      if last_create && last_create >= options[:timeframe].ago
+        raise LimitReachedError
       end
     end
   end
