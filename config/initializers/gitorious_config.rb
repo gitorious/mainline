@@ -24,9 +24,6 @@ unless defined? GitoriousConfig
   loader = Gitorious::ConfigurationLoader.new
 
   # Wire up the global Gitorious::Configuration singleton with settings
-
-  # Set global locale
-  I18n.locale = I18n.default_locale = Gitorious::Configuration.get("locale", "en")
   config = loader.configure_singleton(env)
 
   # Configure messaging

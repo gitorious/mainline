@@ -100,6 +100,9 @@ module Gitorious
       require "gitorious/reservations"
       Rails.application.reload_routes!
       Repository.reserve_names(Gitorious::Reservations.repository_names)
+
+      # Set global locale
+      I18n.locale = I18n.default_locale = Gitorious::Configuration.get("locale", "en")
     end
 
     gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env] || {}
