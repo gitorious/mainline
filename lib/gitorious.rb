@@ -74,6 +74,21 @@ module Gitorious
     @public = Gitorious::Configuration.get("public_mode", true)
   end
 
+  def self.private_repositories?
+    return @private_repos if !@private_repos.nil? && cache?
+    @private_repos = Gitorious::Configuration.get("enable_private_repositories", false)
+  end
+
+  def self.projects_default_private?
+    return @projdefpriv if !@projdefpriv.nil? && cache?
+    @projdefpriv = private_repositories? && Gitorious::Configuration.get("projects_default_private", false)
+  end
+
+  def self.repositories_default_private?
+    return @repodefpriv if !@repodefpriv.nil? && cache?
+    @repodefpriv = private_repositories? && Gitorious::Configuration.get("repositories_default_private", false)
+  end
+
   def self.support_email
     return @support_email if @support_email && cache?
     @support_email = Gitorious::Configuration.get("support_email") do

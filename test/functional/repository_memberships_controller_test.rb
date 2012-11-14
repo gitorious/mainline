@@ -154,15 +154,13 @@ class RepositoryMembershipsControllerTest < ActionController::TestCase
   end
 
   context "With private repos disabled" do
-    setup do
-      GitoriousConfig["enable_private_repositories"] = false
-    end
-
     should "redirect to repository index" do
-      login_as :moe
-      @repository = repositories(:moes)
-      get :index, params
-      assert_redirected_to :controller => "repositories", :action => "show", :id => @repository.to_param
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
+        login_as :moe
+        @repository = repositories(:moes)
+        get :index, params
+        assert_redirected_to :controller => "repositories", :action => "show", :id => @repository.to_param
+      end
     end
   end
 

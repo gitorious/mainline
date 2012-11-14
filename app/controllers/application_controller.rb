@@ -136,7 +136,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_access_to(thing)
-    if private_repositories_enabled?
+    if Gitorious.private_repositories?
       return authorize_access_with_private_repositories_enabled(thing)
     else
       return thing
@@ -448,10 +448,6 @@ class ApplicationController < ActionController::Base
         pager.total_entries = result.first.nil? ? 0 : result.first.class.count
       end
     end
-  end
-
-  def private_repositories_enabled?
-    GitoriousConfig["enable_private_repositories"]
   end
 
   helper_method :unshifted_polymorphic_path

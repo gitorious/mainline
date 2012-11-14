@@ -1207,8 +1207,12 @@ class RepositoryTest < ActiveSupport::TestCase
   context "Database authorization" do
     context "with private repositories enabled" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
         @repository = repositories(:johans)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "mark repository as private" do
@@ -1268,27 +1272,25 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     context "with private repositories disabled" do
-      setup do
-        GitoriousConfig["enable_private_repositories"] = false
-        @repository = repositories(:johans)
-      end
-
       should "allow anonymous user to view 'private' repository" do
-        @repository.add_member(users(:johan))
-        assert can_read?(nil, @repository)
+        Gitorious::Configuration.override("enable_private_repositories" => false) do
+          @repository = repositories(:johans)
+          @repository.add_member(users(:johan))
+
+          assert can_read?(nil, @repository)
+        end
       end
     end
 
     context "making repositories private" do
-      setup do
+      should "add owner as member" do
         @user = users(:johan)
         @repository = repositories(:johans)
-        GitoriousConfig["enable_private_repositories"] = true
-      end
+        Gitorious::Configuration.override("enable_private_repositories" => true) do
+          @repository.make_private
 
-      should "add owner as member" do
-        @repository.make_private
-        assert !can_read?(users(:mike), @repository)
+          assert !can_read?(users(:mike), @repository)
+        end
       end
     end
   end

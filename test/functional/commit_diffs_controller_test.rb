@@ -51,26 +51,19 @@ class CommitDiffsControllerTest < ActionController::TestCase
     end
 
     should "not touch the session object" do
-      with_private_repositories_set_to(nil) do
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
         ApplicationController.any_instance.expects(:authorize_access_with_private_repositories_enabled).never
         get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
       end
     end
 
     should "not bypass authorization if private repositories are enabled" do
-      with_private_repositories_set_to(true) do
+      Gitorious::Configuration.override("enable_private_repositories" => true) do
         @controller.expects(:authorize_access_with_private_repositories_enabled).with(@project).returns(@project)
         @controller.expects(:authorize_access_with_private_repositories_enabled).with(@repository).returns(@repository)
         get :index, params("5a0943123f6872e75a9b1dd0b6519dd42a186fda")
       end
     end
-  end
-
-  def with_private_repositories_set_to(state)
-    old_value = GitoriousConfig.fetch("enable_private_repositories")
-    GitoriousConfig["enable_private_repositories"] = state
-    yield
-    GitoriousConfig["enable_private_repositories"] = old_value
   end
 
   context "Comparing arbitrary commits" do

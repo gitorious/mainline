@@ -20,15 +20,6 @@
 require "test_helper"
 
 class Admin::ProjectProposalsControllerTest < ActionController::TestCase
-  def setup
-    setup_ssl_from_config
-  end
-
-  def teardown
-    GitoriousConfig["enable_private_repositories"] = false
-    GitoriousConfig["repos_and_projects_private_by_default"] = false
-  end
-
   context "Project approval workflow" do
     should "let users create project proposal & notify admins" do
       login_as_non_admin
@@ -50,13 +41,18 @@ class Admin::ProjectProposalsControllerTest < ActionController::TestCase
     end
 
     should "ensure that approved project is private if private by default is toggled" do
-      GitoriousConfig["enable_private_repositories"] = true
-      GitoriousConfig["repos_and_projects_private_by_default"] = true
-      proposal = new_proposal
-      proposal.save
-      login_as_admin
-      post :approve, :id => proposal.to_param
-      assert Project.all.last.private?
+      Gitorious::Configuration.override({
+        "enable_private_repositories" => true,
+        "projects_default_private" => true
+      }) do
+        proposal = new_proposal
+        proposal.save
+        login_as_admin
+
+        post :approve, :id => proposal.to_param
+
+        assert Project.all.last.private?
+      end
     end
   end
 

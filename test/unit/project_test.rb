@@ -578,7 +578,11 @@ class ProjectTest < ActiveSupport::TestCase
   context "Database authorization" do
     context "with private repositories enabled" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "allow anonymous user to view public project" do
@@ -611,26 +615,22 @@ class ProjectTest < ActiveSupport::TestCase
     end
 
     context "with private repositories disabled" do
-      setup do
-        GitoriousConfig["enable_private_repositories"] = false
-      end
-
       should "allow anonymous user to view 'private' project" do
-        projects(:johans).add_member(users(:johan))
-        assert can_read?(nil, projects(:johans))
+        Gitorious::Configuration.override("enable_private_repositories" => false) do
+          projects(:johans).add_member(users(:johan))
+          assert can_read?(nil, projects(:johans))
+        end
       end
     end
 
     context "making projects private" do
-      setup do
+      should "add owner as member" do
         @user = users(:johan)
         @project = projects(:johans)
-        GitoriousConfig["enable_private_repositories"] = true
-      end
-
-      should "add owner as member" do
-        @project.make_private
-        assert !can_read?(users(:mike), @project)
+        Gitorious::Configuration.override("enable_private_repositories" => true) do
+          @project.make_private
+          assert !can_read?(users(:mike), @project)
+        end
       end
     end
   end

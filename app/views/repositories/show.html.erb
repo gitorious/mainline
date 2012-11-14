@@ -83,7 +83,7 @@
     <% if admin?(current_user, @repository) -%>
       <li class="add_collaborator"><%= link_to t("views.repos.btn_manage_collaborators"), [@repository.project, @repository, :committerships] -%></li>
 
-      <% if GitoriousConfig["enable_private_repositories"] -%>
+      <% if Gitorious.private_repositories? -%>
         <li class="update_access"><%= link_to "Manage read access", project_repository_repository_memberships_path(@repository.project, @repository) -%></li>
       <% end -%>
       <li class="update_repository"><%= link_to t("views.repos.btn_edit_repo"), [:edit, @repository.project, @repository] -%></li>

@@ -38,7 +38,7 @@ class ProjectsController < ApplicationController
   def index
     @page = JustPaginate.page_value(params[:page])
 
-    if private_repositories_enabled?
+    if Gitorious.private_repositories?
       @project_count = filter(Project.all).count
       @projects, @total_pages = JustPaginate.paginate(@page, Project.per_page, @project_count) do |index_range|
         filter(Project.all).slice(index_range)
@@ -206,12 +206,12 @@ class ProjectsController < ApplicationController
   end
 
   def projects_private_on_creation?
-    GitoriousConfig["enable_private_repositories"] && (params[:private_project] || GitoriousConfig["repos_and_projects_private_by_default"])
+    Gitorious.private_repositories? && (params[:private_project] || Gitorious.repositories_default_private?)
   end
 
   def paginated_events
     paginate(:action => "show", :id => @project.to_param) do
-      if !private_repositories_enabled?
+      if !Gitorious.private_repositories?
         id = "paginated-project-events:#{@project.id}:#{params[:page] || 1}"
         Rails.cache.fetch(id, :expires_in => 10.minutes) do
           unfiltered_paginated_events

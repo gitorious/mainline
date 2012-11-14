@@ -26,4 +26,5 @@
 *** use_ssl is gone
 *** scheme is new
 *** gitorious_user -> user
+*** repos_and_projects_private_by_default -> {projects_default_private,repositories_default_private}
 ***

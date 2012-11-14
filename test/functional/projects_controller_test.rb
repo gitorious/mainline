@@ -31,8 +31,12 @@ class ProjectsControllerTest < ActionController::TestCase
   context "ProjectsController" do
     context "With private repos" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = true
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
         projects(:johans).make_private
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "filter private projects in index" do
@@ -175,7 +179,11 @@ class ProjectsControllerTest < ActionController::TestCase
 
     context "with disabled private repos" do
       setup do
-        GitoriousConfig["enable_private_repositories"] = false
+        @settings = Gitorious::Configuration.prepend("enable_private_repositories" => false)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "not display edit acccess link to owner" do
@@ -658,7 +666,7 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "With private repos and LDAP authorization" do
     setup do
-      GitoriousConfig["enable_private_repositories"] = true
+      @settings = Gitorious::Configuration.prepend("enable_private_repositories" => true)
       Team.group_implementation = LdapGroup
       @group = ldap_groups(:first_ldap_group)
       @user = users(:moe)
@@ -669,7 +677,7 @@ class ProjectsControllerTest < ActionController::TestCase
     end
 
     teardown do
-      GitoriousConfig["enable_private_repositories"] = false
+      Gitorious::Configuration.prune(@settings)
       Team.group_implementation = Group
     end
 

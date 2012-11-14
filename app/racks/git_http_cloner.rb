@@ -65,7 +65,7 @@ module Gitorious
 
     protected
     def self.can_read?(user, repository)
-      return true if !GitoriousConfig["enable_private_repositories"]
+      return true if !Gitorious.private_repositories?
       Gitorious::Authorization::DatabaseAuthorization.new.can_read_repository?(user, repository)
     end
 

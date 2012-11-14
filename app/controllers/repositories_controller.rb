@@ -73,7 +73,7 @@ class RepositoriesController < ApplicationController
 
   def paginated_events
     paginate(page_free_redirect_options) do
-      if !private_repositories_enabled?
+      if !Gitorious.private_repositories?
         Rails.cache.fetch("new_paginated_events_in_repo_#{@repository.id}:#{params[:page] || 1}", :expires_in => 1.minute) do
           marshalable_events(unfiltered_paginated_events)
         end
@@ -118,7 +118,7 @@ class RepositoriesController < ApplicationController
   end
 
   def repos_private_on_creation?
-    GitoriousConfig["enable_private_repositories"] && (params[:private_repository] || GitoriousConfig["repos_and_projects_private_by_default"])
+    Gitorious.private_repositories? && (params[:private_repository] || Gitorious.repositories_default_private?)
   end
 
   undef_method :clone
@@ -348,7 +348,7 @@ class RepositoriesController < ApplicationController
   end
 
   def authorize_configuration_access(repository)
-    return true if !GitoriousConfig["enable_private_repositories"]
+    return true if !Gitorious.private_repositories?
     if !can_read?(User.find_by_login(params[:username]), repository)
       raise Gitorious::Authorization::UnauthorizedError.new(request.fullpath)
     end

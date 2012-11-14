@@ -23,7 +23,7 @@ class ProjectMembershipsController < ContentMembershipsController
 
   protected
   def require_private_repos
-    if !GitoriousConfig["enable_private_repositories"]
+    if !Gitorious.private_repositories?
       find_project if @project.nil?
       redirect_to project_path(@project)
     end

@@ -474,20 +474,18 @@ class MergeRequestsControllerTest < ActionController::TestCase
   end
 
   context "GET #target_branches" do
-    setup do
-      GitoriousConfig["enable_private_repositories"] = false
-    end
-
     should "retrive a list of the target repository branches" do
-      grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
-      MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)
+      Gitorious::Configuration.override("enable_private_repositories" => false) do
+        grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
+        MergeRequest.any_instance.expects(:target_branches_for_selection).returns(grit.branches)
 
-      login_as :johan
-      post :target_branches, mr_params(:merge_request => {
-        :target_repository_id => repositories(:johans).id
-      })
-      assert_response :success
-      assert_equal grit.branches, assigns(:target_branches)
+        login_as :johan
+        post :target_branches, mr_params(:merge_request => {
+                                           :target_repository_id => repositories(:johans).id
+                                         })
+        assert_response :success
+        assert_equal grit.branches, assigns(:target_branches)
+      end
     end
   end
 

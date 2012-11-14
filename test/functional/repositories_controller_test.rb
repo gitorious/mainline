@@ -21,12 +21,16 @@ require "test_helper"
 
 class RepositoriesControllerTest < ActionController::TestCase
   def setup
-    GitoriousConfig["enable_private_repositories"] = false
+    @settings = Gitorious::Configuration.prepend("enable_private_repositories" => false)
     setup_ssl_from_config
     @project = projects(:johans)
     @repo = repositories(:johans)
     @grit = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
     Repository.any_instance.stubs(:git).returns(@grit)
+  end
+
+  teardown do
+    Gitorious::Configuration.prune(@settings)
   end
 
   should_render_in_site_specific_context :except => [:writable_by, :repository_config]
