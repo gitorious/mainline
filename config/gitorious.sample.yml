@@ -56,6 +56,15 @@
 #client_host: localhost
 #client_port: 80
 
+# Host and port used to reach the Gitorious git-daemon. Note that the
+# git-daemon service must be run separately from Gitorious. See
+# doc/templates/upstart for sample configurations of both git-daemon
+# and git-proxy. The default is for this service to run on the same
+# host as Gitorious (e.g. the `host` setting) on the default git
+# protocol port, 9418.
+#git_daemon_host: gitorious.test
+#git_daemon_port: 9418
+
 # When Gitorious is running in public mode (true), everyone with
 # access to the server can view and clone repositories. Private mode
 # (false) will not allow anonymous access to content or user

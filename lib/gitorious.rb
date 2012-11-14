@@ -45,6 +45,13 @@ module Gitorious
     @client = Gitorious::HttpMountPoint.new(host, port)
   end
 
+  def self.git_daemon
+    return @git_daemon if @git_daemon && cache?
+    host = Gitorious::Configuration.get("git_daemon_host") { Gitorious.host }
+    port = Gitorious::Configuration.get("git_daemon_port", 9418).to_i
+    @git_daemon = Gitorious::GitMountPoint.new(host, port)
+  end
+
   def self.email_sender
     return @email_sender if @email_sender && cache?
     default = "Gitorious <no-reply@#{host}>"

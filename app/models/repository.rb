@@ -247,7 +247,7 @@ class Repository < ActiveRecord::Base
   end
 
   def clone_url
-    "git://#{GitoriousConfig['gitorious_clone_host'] || Gitorious.host}/#{gitdir}"
+    Gitorious.git_daemon.url(gitdir)
   end
 
   def ssh_clone_url
