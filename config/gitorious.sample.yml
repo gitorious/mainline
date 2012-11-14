@@ -114,7 +114,7 @@
 # The (optional name and) address used when sending emails. This
 # defaults to "Gitorious <no-reply@<host>>. Can be set to an email
 # address only, or Name <address>.
-#sender_email_address: Gitorious <no-reply@gitorious.local>
+#email_sender: Gitorious <no-reply@gitorious.local>
 
 production:
 
