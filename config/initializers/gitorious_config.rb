@@ -17,21 +17,59 @@
 #++
 require "yaml" if !defined?(YAML)
 
-unless defined? GitoriousConfig
-  root = File.join(File.expand_path(File.dirname(__FILE__)), "../..")
-  env = defined?(Rails) ? Rails.env : "test"
-  global = YAML::load_file(File.join(root,"config/gitorious.yml"))
+def log_error(message)
+  message = "WARNING!\n========\n#{message}\n"
+
+  if defined?(Rails) && Rails.respond_to?(:logger)
+    Rails.logger.error(message)
+  else
+    puts message
+  end
+end
+
+def load_configs(env, root)
+  cfg = YAML::load_file(File.join(root, "config/gitorious.yml"))
+
+  if cfg.key?("test")
+    log_error(<<-EOF)
+Your config/gitorious.yml file contains settings for the test
+environment. As of Gitorious 3 this is deprecated - test settings have
+moved to test/gitorious.yml. Please remove all test
+settings from your configuration file to avoid any unpleasant
+surprises.
+    EOF
+  end
+
+  if env == "test"
+    cfg = YAML::load_file(File.join(root, "test/gitorious.yml"))
+    if cfg.key?("production") || cfg.key?("development") || cfg.key?("test")
+      log_error(<<-EOF)
+The test configuration file test/gitorious.yml is not
+supposed to contain settings groups - it should just contain top-level
+settings applicable to the test environment. Please revise this file.
+Tests may not work as intended.
+      EOF
+    end
+
+    return [cfg]
+  end
+
   config = {
-    "production" => global.delete("production"),
-    "development" => global.delete("development"),
-    "test" => global.delete("test")
+    "production" => cfg.delete("production"),
+    "development" => cfg.delete("development")
   }
-  GitoriousConfig = c = config[env]
+
+  [cfg, config[env]]
+end
+
+unless defined? GitoriousConfig
+  env = defined?(Rails) ? Rails.env : "test"
+  configs = load_configs(env, File.join(File.expand_path(File.dirname(__FILE__)), "../.."))
+  GitoriousConfig = configs.inject({}) { |hash, cfg| hash.merge(cfg) }
 
   # New configuration
   require "gitorious"
-  Gitorious::Configuration.append(config[env])
-  Gitorious::Configuration.append(global)
+  configs.each { |cfg| Gitorious::Configuration.append(cfg) }
 
   GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
 

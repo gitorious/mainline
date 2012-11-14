@@ -340,7 +340,7 @@ class TextEventRenderingTest < ActiveSupport::TestCase
     should "include a link to the repo" do
       res = render(@event)
       url = "gitorious.test/#{@event.target.url_path}"
-      assert res.include?(url), "repo url not in: #{res}"
+      assert res.include?(url), "Expected to contain '#{url}': #{res}"
     end
 
     should "include the repo description, if present" do

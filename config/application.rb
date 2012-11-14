@@ -23,10 +23,8 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Gitorious
   class Application < Rails::Application
-    config.autoload_paths += [config.root.join('lib')]
-    config.encoding = 'utf-8'
-    gitorious_yaml = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]
-    raise "Your config/gitorious.yml does not have an entry for your current Rails environment. Please consult config/gitorious.sample.yml for instructions." unless gitorious_yaml
+    config.autoload_paths += [config.root.join("lib")]
+    config.encoding = "utf-8"
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -104,16 +102,17 @@ module Gitorious
       Repository.reserve_names(Gitorious::Reservations.repository_names)
     end
 
-    gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env]
+    gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env] || {}
 
-    if  gts_config["exception_notification_emails"].blank?
+    if Rails.env.production? && gts_config["exception_notification_emails"].blank?
       puts "WARNING! No value set for exception_notification_emails in gitorious.yml."
       puts "Will not be able to send email regarding unhandled exceptions"
     else
-      Gitorious::Application.config.middleware.use(ExceptionNotifier,
-                                                   :email_prefix => "[Gitorious] ",
-                                                   :sender_address => %{"Exception notifier" <notifier@gitorious>},
-                                                   :exception_recipients => gts_config["exception_notification_emails"])
+      Gitorious::Application.config.middleware.use(ExceptionNotifier, {
+        :email_prefix => "[Gitorious] ",
+        :sender_address => %{"Exception notifier" <notifier@gitorious>},
+        :exception_recipients => gts_config["exception_notification_emails"]
+      })
     end
 
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath

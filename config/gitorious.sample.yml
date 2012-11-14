@@ -13,10 +13,11 @@
 #
 # Structure of this file
 #
-# This file has four main sections: Global settings, and one section
-# for each environment Gitorious runs in: production, development,
-# test. Unless you intend to build new features, fix bugs, etc, you
-# only need to look through the global settings.
+# This file has three main sections: Global settings, and one section
+# each for the development and production environment. Unless you
+# intend to build new features, fix bugs, etc, you only need to look
+# through the global settings. The test environment is configured
+# separately through test/fixtures/config/gitorious.yml.
 #
 # If you intend to work on the Gitorious source code, you need it to
 # run in development mode. Review the development mode section to the
@@ -38,7 +39,9 @@
 # that serves Gitorious. In most cases, you can use the host and port
 # users use to reach Gitorious, but you may also optimize network
 # access by using a local host and port. Remember to make sure your
-# frontend web server knows about these as well.
+# frontend web server knows about these as well. Internal requests do
+# not use SSL, so if you're serving SSL-only to your users, make sure
+# your application can be reached over HTTP locally.
 #client_host: localhost
 #client_port: 80
 
@@ -58,13 +61,13 @@
 # gitorious-support@<host>
 #support_email: gitorious-support@gitorious.local
 
-# Exposes a public url at /admin/diagnostics/summary which, when
-# called, runs a number of health checks to verify that the Gitorious
+# Publicly exposes /admin/diagnostics/summary, which, when called,
+# runs a number of health checks to verify that the Gitorious
 # installation is configured correctly and that the host system seems
 # healthy. Useful for checking that installations go well and for
-# monitoring running installs.
-# (Note: Logged in gitorious admins can also see a visual overview of
-# the system state at /admin/diagnostics/, regardless of this setting)
+# monitoring running installs. (Note: Logged in gitorious admins can
+# also see a visual overview of the system state at
+# /admin/diagnostics/, regardless of this setting)
 #
 # TODO: Make this setting control which remote addresses are allowed
 # to access the summary rather than all or nothing.
@@ -235,9 +238,6 @@ production:
   # Is this gitorious.org? Read: should we have a very flashy homepage?
   #is_gitorious_dot_org: true
 
-  # Configure which address to use as From when sending email
-  #sender_email_address: "Gitorious <no-reply@yourdomain.example>"
-
   # Mangle visible e-mail addresses (spam protection)
   #mangle_email_addresses: true
 
@@ -391,17 +391,3 @@ production:
   # use_ldap_for_authorization: true
 
 development:
-
-test:
-  # Unless you are developing Gitorious and really know what you are doing,
-  # leave the following settings as is.
-  repository_base_path: "/tmp/git/repositories"
-  archive_cache_dir: "/tmp/git/tarball-cache"
-  archive_work_dir: "/tmp/git/tarball-work"
-  gitorious_host: gitorious.test
-  gitorious_client_host: gitorious.test
-  gitorious_client_port: 3000
-  cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
-  use_ssl: true
-  messaging_adapter: test
-  disable_record_throttling: false
