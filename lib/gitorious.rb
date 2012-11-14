@@ -63,6 +63,16 @@ module Gitorious
     end
   end
 
+  def self.remote_ops_ips
+    return @remote_ops_ips if @remote_ops_ips && cache?
+    ips = Gitorious::Configuration.get("remote_ops_ips", ["127.0.0.1"])
+    @remote_ops_ips = Array(ips)
+  end
+
+  def self.ops?(remote_addr)
+    remote_ops_ips.include?(remote_addr)
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

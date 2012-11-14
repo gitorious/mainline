@@ -150,7 +150,10 @@ Gitorious::Application.routes.draw do
       end
     end
 
-    resources :diagnostics, :only => [:index]
+    resources :diagnostics, :only => [:index] do
+      collection { get :summary }
+    end
+
     resources :project_proposals, :only => [:index, :new, :create]
     post "/project_proposals/:id/reject" => "project_proposals#reject"
     post "/project_proposals/:id/approve" => "project_proposals#approve"

@@ -1,4 +1,3 @@
-
 # encoding: utf-8
 #--
 #   Copyright (C) 2012 Gitorious AS
@@ -16,7 +15,6 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
 
 module Gitorious
   module Diagnostics
@@ -238,10 +236,6 @@ module Gitorious
     def healthy_cpu_load_average?
       load_percent_last_15_min = `uptime`.chomp.split(" ").last.to_f
       return (load_percent_last_15_min < MAX_HEALTHY_CPU_LOAD.to_f)
-    end
-
-    def public_summary?
-      Gitorious::Configuration.get("public_diagnostics_summary", false)
     end
 
     private

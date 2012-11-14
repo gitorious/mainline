@@ -51,19 +51,20 @@ class Admin::DiagnosticsController < ApplicationController
   end
 
   def summary
-    if !public_summary?
-      msg = "Error! Diagnostic summary page not exposed, see " +
-        "'public_diagnostics_summary' setting in gitorious.sample.yml"
-      render(:text => msg, :status => 500) and return
+    if !Gitorious::ops?(request.remote_addr)
+      render(:text => <<-EOF, :status => 403) and return
+Error! The diagnostic summary page can only be reached from pre-approved
+remote addresses. If you feel you are being stopped injustly, please contact
+#{Gitorious.support_email}
+      EOF
     end
 
-    if everything_healthy?
-      render :text => "OK"
-    else
-      msg = "Error! Something might be broken in your Gitorious install. " +
-        "See /admin/diagnostics for overview"
-      render(:text => msg, :status => 500)
-    end
+    render(:text => "OK") and return if everything_healthy?
+
+    render(:text => <<-EOF, :status => 500)
+Error! Something might be broken in your Gitorious install.
+See /admin/diagnostics for a detailed overview.
+    EOF
   end
 
   private

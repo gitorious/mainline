@@ -61,18 +61,22 @@
 # gitorious-support@<host>
 #support_email: gitorious-support@gitorious.local
 
-# Publicly exposes /admin/diagnostics/summary, which, when called,
-# runs a number of health checks to verify that the Gitorious
-# installation is configured correctly and that the host system seems
-# healthy. Useful for checking that installations go well and for
+# List of IP addresses that are allowed to access certain possibly
+# sensitive services. Currently this only includes
+# /admin/diagnostics/summary which, when called, runs a number of
+# health checks to verify that the Gitorious installation is
+# configured correctly and that the host system seems healthy. The
+# diagnostics summary is useful for verifying installations and for
 # monitoring running installs. (Note: Logged in gitorious admins can
 # also see a visual overview of the system state at
-# /admin/diagnostics/, regardless of this setting)
+# /admin/diagnostics/, regardless of ips listed here)
 #
-# TODO: Make this setting control which remote addresses are allowed
-# to access the summary rather than all or nothing.
+# This setting defaults to only accept ops requests from localhost. It
+# can be reconfigured to allow any number of IPs by adding entries to
+# the list (be sure to indent each entry with two spaces, no tabs).
 #
-#public_diagnostics_summary: true
+#remote_ops_ips:
+#  - 127.0.0.1
 
 # The (optional name and) address used when sending emails. This
 # defaults to "Gitorious <no-reply@<host>>. Can be set to an email

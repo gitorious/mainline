@@ -56,4 +56,40 @@ class GitoriousTest < MiniTest::Spec
       end
     end
   end
+
+  describe "ops?" do
+    it "returns true for known IP" do
+      Gitorious::Configuration.override("remote_ops_ips" => "192.168.122.1") do
+        assert Gitorious.ops?("192.168.122.1")
+      end
+    end
+
+    it "returns true for one of several known IPs" do
+      ips = ["192.168.122.1", "127.0.0.1", "10.0.0.19"]
+
+      Gitorious::Configuration.override("remote_ops_ips" => ips) do
+        assert Gitorious.ops?("10.0.0.19")
+      end
+    end
+
+    it "returns false for unknown IP" do
+      ips = ["192.168.122.1", "127.0.0.1", "10.0.0.19"]
+
+      Gitorious::Configuration.override("remote_ops_ips" => ips) do
+        refute Gitorious.ops?("10.0.0.1")
+      end
+    end
+
+    it "recognizes localhost by default" do
+      Gitorious::Configuration.override({}) do
+        assert Gitorious.ops?("127.0.0.1")
+      end
+    end
+
+    it "does not recognize localhost when not in specified ips" do
+      Gitorious::Configuration.override("remote_ops_ips" => "192.168.122.1") do
+        refute Gitorious.ops?("127.0.0.1")
+      end
+    end
+  end
 end
