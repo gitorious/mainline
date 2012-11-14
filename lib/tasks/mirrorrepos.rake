@@ -23,7 +23,7 @@ namespace :mirror do
   task :symlinkedrepos => :environment do
     default_mirror_base_path = "#{GitoriousConfig['repository_base_path']}/../mirrored-public-repos"
     mirror_base = GitoriousConfig["symlinked_mirror_repo_base"] || default_mirror_base_path
-    owner = GitoriousConfig["gitorious_user"]
+    owner = Gitorious.user
 
     # create symlink dir if not there already
     puts `mkdir -p #{mirror_base}`

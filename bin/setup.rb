@@ -5,6 +5,7 @@
 # - if so: check if we are it
 # - if not and we are root: setuid+setgid to that user
 # - if not and we are not root, fail
+require "gitorious"
 
 module Gitorious
   class CLI
@@ -29,7 +30,7 @@ module Gitorious
 
     def require_valid_user!
       if rails_env == "production"
-        if git_user = gitorious_config("gitorious_user")
+        if git_user = Gitorious.user
           etc_user = Etc.getpwnam(git_user)
           uid = etc_user.uid
           gid = etc_user.gid
@@ -47,14 +48,6 @@ module Gitorious
           end
         end
       end
-    end
-
-    def gitorious_config(key)
-      YAML::load_file(rails_root + "/config/gitorious.yml")[rails_env][key]
-    end
-
-    def rails_env
-      ENV["RAILS_ENV"]
     end
   end
 end

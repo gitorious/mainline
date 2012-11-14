@@ -48,14 +48,25 @@ module Gitorious
   def self.git_daemon
     return @git_daemon if @git_daemon && cache?
     host = Gitorious::Configuration.get("git_daemon_host") { Gitorious.host }
-    port = Gitorious::Configuration.get("git_daemon_port", 9418).to_i
+    port = Gitorious::Configuration.get("git_daemon_port")
     @git_daemon = Gitorious::GitMountPoint.new(host, port)
+  end
+
+  def self.ssh_daemon
+    return @ssh_daemon if @ssh_daemon && cache?
+    host = Gitorious::Configuration.get("ssh_daemon_host") { Gitorious.host }
+    @ssh_daemon = Gitorious::GitSshMountPoint.new(Gitorious.user, host)
   end
 
   def self.email_sender
     return @email_sender if @email_sender && cache?
     default = "Gitorious <no-reply@#{host}>"
     @email_sender = Gitorious::Configuration.get("email_sender", default)
+  end
+
+  def self.user
+    return @user if @user && cache?
+    @user = Gitorious::Configuration.get("user", "git")
   end
 
   def self.public?

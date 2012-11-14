@@ -84,7 +84,6 @@ class RepositoryTest < ActiveSupport::TestCase
 
   context "git urls" do
     setup do
-      @host_with_user = "#{GitoriousConfig['gitorious_user']}@#{Gitorious.host}"
       @host = "#{Gitorious.host}"
       @git_http_host = GitoriousConfig["git_http_host"]
     end
@@ -98,7 +97,14 @@ class RepositoryTest < ActiveSupport::TestCase
     end
 
     should "has a push url" do
-      assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+      assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
+    end
+
+    should "uses configured ssh host" do
+      Gitorious::Configuration.override("ssh_daemon_host" => "git.gitorious") do |c|
+        expected = "git@git.gitorious:#{@repository.project.slug}/foo.git"
+        assert_equal expected, @repository.push_url
+      end
     end
 
     should "has a clone url" do
@@ -134,18 +140,18 @@ class RepositoryTest < ActiveSupport::TestCase
     should "has a push url with the project name, if it is a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_PROJECT_REPO
-      assert_equal "#{@host_with_user}:#{@repository.project.slug}/foo.git", @repository.push_url
+      assert_equal "git@gitorious.test:#{@repository.project.slug}/foo.git", @repository.push_url
     end
 
     should "have a push url with the team/user, if it is not a mainline" do
       @repository.owner = groups(:team_thunderbird)
       @repository.kind = Repository::KIND_TEAM_REPO
-      url = "#{@host_with_user}:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "git@gitorious.test:#{groups(:team_thunderbird).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.push_url
 
       @repository.kind = Repository::KIND_USER_REPO
       @repository.owner = users(:johan)
-      url = "#{@host_with_user}:#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
+      url = "git@gitorious.test:#{users(:johan).to_param_with_prefix}/#{@repository.project.slug}/foo.git"
       assert_equal url, @repository.push_url
     end
 

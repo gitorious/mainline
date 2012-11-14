@@ -104,7 +104,7 @@ namespace :backup do
 
   def gitorious_user
     conf = YAML::load(File.open('config/gitorious.yml'))
-    conf[RAILS_ENV]['gitorious_user']
+    conf['user'] || conf[RAILS_ENV]['user']
   end
 
   def database_credential_options
@@ -197,7 +197,7 @@ namespace :backup do
     puts `su #{gitorious_user} -c "rm -f ~/.ssh/authorized_keys; bundle exec script/regenerate_ssh_keys ~/.ssh/authorized_keys"`
 
     puts "Recreating symlink to common hooks"
-    puts `rm -f #{repo_path}/.hooks` 
+    puts `rm -f #{repo_path}/.hooks`
     puts `ln -s #{File.expand_path('./data/hooks')} #{repo_path}/.hooks`
 
     puts "Cleaning up..."

@@ -105,11 +105,27 @@ class MountPointTest < MiniTest::Spec
       assert_equal "git://gitorious.org/gitorious/mainline.git", url
     end
 
-    it "generates git urls for non-default" do
+    it "generates git urls for non-default port" do
       mp = Gitorious::GitMountPoint.new("gitorious.org", 9417)
       url = mp.url("/gitorious/mainline.git")
 
       assert_equal "git://gitorious.org:9417/gitorious/mainline.git", url
+    end
+  end
+
+  describe Gitorious::GitSshMountPoint do
+    it "generates ssh urls" do
+      mp = Gitorious::GitSshMountPoint.new("git", "gitorious.org")
+      url = mp.url("/gitorious/mainline.git")
+
+      assert_equal "git@gitorious.org:gitorious/mainline.git", url
+    end
+
+    it "generates ssh url for url without leading slash" do
+      mp = Gitorious::GitSshMountPoint.new("git", "gitorious.org")
+      url = mp.url("gitorious/mainline.git")
+
+      assert_equal "git@gitorious.org:gitorious/mainline.git", url
     end
   end
 end

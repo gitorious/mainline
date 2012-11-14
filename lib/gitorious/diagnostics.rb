@@ -269,7 +269,7 @@ module Gitorious
     end
 
     def git_user
-      GitoriousConfig["gitorious_user"]
+      Gitorious.user
     end
   end
 end

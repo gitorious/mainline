@@ -36,7 +36,7 @@
   del repositorio que quiere publicar:
   <pre>
     [remote "origin"]
-    url = <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
+    url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
     fetch = +refs/heads/*:refs/remotes/origin/*
     [branch "master"]
     remote = origin
@@ -45,10 +45,10 @@
   y entonces <code>git push origin master</code> para publicar el código en Gitorious.
 </p>
 <p>
-  También puede simplemente ejecutar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:tumbline/mainline.git</code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para
+  También puede simplemente ejecutar "<code>git push <%= Gitorious.ssh_daemon.url('tumbline/mainline.git').html_safe %></code>", o puede configurar un remote haciendo lo siguiente (agregue --fetch en la llamada a add para
   obtener la configuración de arriba):
   <pre>
-    git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
+    git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
     # para publicar el branch master al origin remote que agregamos arriba:
     git push origin master
     # después de eso puede simplemente hacer:

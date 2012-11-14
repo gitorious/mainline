@@ -25,3 +25,5 @@
 *** gitorious_clone_host -> git_daemon_host (+git_daemon_port)
 *** use_ssl is gone
 *** scheme is new
+*** gitorious_user -> user
+***

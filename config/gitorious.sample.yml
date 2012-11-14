@@ -23,6 +23,12 @@
 # run in development mode. Review the development mode section to the
 # bottom of this file for suggested overrides for that environment.
 
+# The user that owns the repositories on disk. The same user should
+# own the web server process. The user will have its
+# ~/.ssh/authorized_keys file generated and controlled by Gitorious.
+# It is highly recommended to use a dedicated user for this.
+#user: git
+
 # The host, port and scheme users reach Gitorious with. Used to
 # generate URLs where full URLs are required (e.g. in emails etc). The
 # scheme defaults to https. When the scheme is https, the port
@@ -62,8 +68,15 @@
 # and git-proxy. The default is for this service to run on the same
 # host as Gitorious (e.g. the `host` setting) on the default git
 # protocol port, 9418.
-#git_daemon_host: gitorious.test
+#git_daemon_host: gitorious.local
 #git_daemon_port: 9418
+
+# Host for pulling and pushing over SSH. Gitorious currently does not
+# support running the SSH daemon on any other port than the default
+# 22. The full SSH URLs will include the name of the user (as
+# configured elsewhere in this file). The default is the value of the
+# `host` setting.
+#ssh_daemon_host: gitorious.local
 
 # When Gitorious is running in public mode (true), everyone with
 # access to the server can view and clone repositories. Private mode
@@ -135,14 +148,6 @@ production:
   # In most cases you will want to keep the following settings as is, but we
   # recommend you familiarize yourself with them. If you stray from the common
   # path during setup, you will likely have to change some settings here.
-
-  # Use SSL? Requires web server configuration. Strongly recommended. Forces
-  # the use of HTTPS on login page and all pages while user is logged in.
-  use_ssl: true
-
-  # The user that runs the poller (and, optionally, the git daemon), and who
-  # owns the repositories on disk.
-  gitorious_user: git
 
   # If Gitorious trips on an unrecoverable error, it will send you an email
   # with details if you provide your addresses here.

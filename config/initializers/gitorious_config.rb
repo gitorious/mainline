@@ -15,62 +15,29 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "yaml" if !defined?(YAML)
-
-def log_error(message)
-  message = "WARNING!\n========\n#{message}\n"
-
-  if defined?(Rails) && Rails.respond_to?(:logger)
-    Rails.logger.error(message)
-  else
-    puts message
-  end
-end
-
-def load_configs(env, root)
-  cfg = YAML::load_file(File.join(root, "config/gitorious.yml"))
-
-  if cfg.key?("test")
-    log_error(<<-EOF)
-Your config/gitorious.yml file contains settings for the test
-environment. As of Gitorious 3 this is deprecated - test settings have
-moved to test/gitorious.yml. Please remove all test
-settings from your configuration file to avoid any unpleasant
-surprises.
-    EOF
-  end
-
-  if env == "test"
-    cfg = YAML::load_file(File.join(root, "test/gitorious.yml"))
-    if cfg.key?("production") || cfg.key?("development") || cfg.key?("test")
-      log_error(<<-EOF)
-The test configuration file test/gitorious.yml is not
-supposed to contain settings groups - it should just contain top-level
-settings applicable to the test environment. Please revise this file.
-Tests may not work as intended.
-      EOF
-    end
-
-    return [cfg]
-  end
-
-  config = {
-    "production" => cfg.delete("production"),
-    "development" => cfg.delete("development")
-  }
-
-  [cfg, config[env]]
-end
 
 unless defined? GitoriousConfig
+  require "gitorious/configuration_loader"
+  require "gitorious/messaging"
+
   env = defined?(Rails) ? Rails.env : "test"
-  configs = load_configs(env, File.join(File.expand_path(File.dirname(__FILE__)), "../.."))
-  GitoriousConfig = configs.inject({}) { |hash, cfg| hash.merge(cfg) }
+  loader = Gitorious::ConfigurationLoader.new
 
-  # New configuration
-  require "gitorious"
-  configs.each { |cfg| Gitorious::Configuration.append(cfg) }
+  # Wire up the global Gitorious::Configuration singleton with settings
+  loader.configure_singleton(env)
 
+  # Set global locale
+  I18n.locale = I18n.default_locale = Gitorious::Configuration.get("locale", "en")
+
+  # Configure messaging
+  default_adapter = env == "test" ? "test" : "resque"
+  Gitorious::Messaging.adapter = Gitorious::Configuration.get("messaging_adapter", default_adapter)
+
+
+
+  # TODO: Port remaining settings
+
+  GitoriousConfig = loader.hash(env)
   GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
 
   if !GitoriousConfig.key?("additional_footer_links")
@@ -81,19 +48,11 @@ unless defined? GitoriousConfig
   GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil?
   GitoriousConfig["mangle_email_addresses"] = true if !GitoriousConfig.key?("mangle_email_addresses")
 
-  # set global locale
-  if defined?(I18n)
-    I18n.default_locale = GitoriousConfig["locale"] || "en"
-    I18n.locale = GitoriousConfig["locale"] || "en"
-  end
-
   # set default tos/privacy policy urls
   GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil? || GitoriousConfig["terms_of_service_url"] == ""
   GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil? || GitoriousConfig["privacy_policy_url"] == ""
 
-  require "gitorious/messaging"
-  default_adapter = env == "test" ? "test" : "resque"
-  Gitorious::Messaging.adapter = Gitorious::Configuration.get("messaging_adapter", default_adapter)
+
 
   if !Gitorious.site.valid_fqdn? && defined?(Rails)
     Rails.logger.warn "Invalid subdomain name #{Gitorious.host}. Session cookies will not work!\n" +

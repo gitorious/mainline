@@ -66,4 +66,19 @@ module Gitorious
     def default_scheme; "git"; end
     def default_port; 9418; end
   end
+
+  class GitSshMountPoint < MountPoint
+    attr_reader :user
+
+    def initialize(user, host, port = nil)
+      @user = user
+      super(host, port, "ssh")
+    end
+
+    def url(path)
+      "#{user}@#{host_port}#{path.sub(/^\/?/, ':')}"
+    end
+
+    def default_port; 22; end
+  end
 end

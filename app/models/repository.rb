@@ -276,7 +276,7 @@ class Repository < ActiveRecord::Base
   end
 
   def push_url
-    "#{GitoriousConfig['gitorious_user']}@#{GitoriousConfig['gitorious_clone_host'] || Gitorious.host}:#{gitdir}"
+    Gitorious.ssh_daemon.url(gitdir)
   end
 
   def display_ssh_url?(user)

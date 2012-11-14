@@ -35,7 +35,7 @@
   arquivo <code>.git/config</code> do repositório que quer enviar para o Gitorious:
   <pre>
     [remote "origin"]
-    url = <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
+    url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
     fetch = +refs/heads/*:refs/remotes/origin/*
     [branch "master"]
     remote = origin
@@ -44,11 +44,11 @@
   e então <code>git push origin master</code> para enviar os códigos para o Gitorious.
 </p>
 <p>
-  Você também pode executar "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:tumbline/mainline.git</code>", ou
+  Você também pode executar "<code>git push <%= Gitorious.ssh_daemon.url('tumbline/mainline.git').html_safe %></code>", ou
   você pode configurar um repositório remoto fazendo o seguinte (adicione --fetch para
   adicionar a chamada para pegar a configuração de cima):
   <pre>
-    git remote add origin <% GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
+    git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
     # para gravar o branch master para o repositório remoto origin que adicionamos acima:
     git push origin master
     # depois disso você pode fazer apenas:

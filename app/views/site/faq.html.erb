@@ -44,17 +44,17 @@
   <p>Easiest way is to put something like the following in your <code>.git/config</code>
     file of the repository you wish to push:
     <pre>[remote "origin"]
-      url = <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
+      url = <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
       fetch = +refs/heads/*:refs/remotes/origin/*
       [branch "master"]
       remote = origin
       merge = refs/heads/master</pre>
     and then <code>git push origin master</code> to push the code to Gitorious.</p>
-  <p>You can also just run "<code>git push <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:tumbline/mainline.git</code>", or
+  <p>You can also just run "<code>git push <%= Gitorious.ssh_daemon.url('tumbline/mainline.git').html_safe %></code>", or
     you can setup a remote by doing the following (add --fetch to the add call to
     get the config from above):
     <pre>
-      git remote add origin <%= GitoriousConfig['gitorious_user'] -%>@<%= Gitorious.host -%>:<em>project</em>/<em>repository.git</em>
+      git remote add origin <%= Gitorious.ssh_daemon.url("<em>project</em>/<em>repository.git</em>").http_safe %>
       # to push the master branch to the origin remote we added above:
       git push origin master
       # after that you can just do:
