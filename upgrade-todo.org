@@ -29,3 +29,4 @@
 *** repos_and_projects_private_by_default -> {projects_default_private,repositories_default_private}
 *** New: git_http_port, git_http_scheme
 *** disable_record_throttling -> enable_record_throttling
+*** exception_notification_emails -> exception_recipients

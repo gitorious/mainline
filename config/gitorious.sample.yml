@@ -179,6 +179,11 @@ archive_work_dir: "/var/git/tarballs-work"
 # Gitorious instance with repo/msg/project creation.
 #enable_record_throttling: true
 
+# If Gitorious trips on an unrecoverable error, it will send you an
+# email with details if you provide your addresses here. To provide
+# multiple addresses, separate them with commas
+#exception_recipients: ops@gitorious.local
+
 production:
 
   # --------------------
@@ -188,10 +193,6 @@ production:
   # In most cases you will want to keep the following settings as is, but we
   # recommend you familiarize yourself with them. If you stray from the common
   # path during setup, you will likely have to change some settings here.
-
-  # If Gitorious trips on an unrecoverable error, it will send you an email
-  # with details if you provide your addresses here.
-  exception_notification_emails:
 
 
   # Enable repository directory sharding

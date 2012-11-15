@@ -103,19 +103,18 @@ module Gitorious
 
       # Set global locale
       I18n.locale = I18n.default_locale = Gitorious::Configuration.get("locale", "en")
-    end
 
-    gts_config = YAML.load_file(Rails.root + "config/gitorious.yml")[Rails.env] || {}
-
-    if Rails.env.production? && gts_config["exception_notification_emails"].blank?
-      puts "WARNING! No value set for exception_notification_emails in gitorious.yml."
-      puts "Will not be able to send email regarding unhandled exceptions"
-    else
-      Gitorious::Application.config.middleware.use(ExceptionNotifier, {
-        :email_prefix => "[Gitorious] ",
-        :sender_address => %{"Exception notifier" <notifier@gitorious>},
-        :exception_recipients => gts_config["exception_notification_emails"]
-      })
+      exception_recipients = Gitorious::Configuration.get("exception_recipients")
+      if Rails.env.production? && exception_emails.blank?
+        puts "WARNING! No value set for exception_recipients in gitorious.yml."
+        puts "Will not be able to send email regarding unhandled exceptions"
+      else
+        Gitorious::Application.config.middleware.use(ExceptionNotifier, {
+          :email_prefix => "[Gitorious] ",
+          :sender_address => %{"Exception notifier" <notifier@gitorious>},
+          :exception_recipients => exception_recipients
+        })
+      end
     end
 
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath

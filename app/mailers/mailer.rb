@@ -88,8 +88,8 @@ class Mailer < ActionMailer::Base
     @message = message_body
     @processor = processor
     subject = prefixed_subject("fail in #{processor.class.name}", "Processor")
-    mail(:to => GitoriousConfig["exception_notification_emails"],
-         :subject => subject)
+    recipients = Gitorious::Configuration.get("exception_recipients")
+    mail(:to => recipients, :subject => subject)
   end
 
   def favorite_notification(user, notification_body)
