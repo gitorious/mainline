@@ -129,6 +129,11 @@ module Gitorious
     @diff_timeout = Gitorious::Configuration.get("merge_request_diff_timeout", 10).to_i
   end
 
+  def self.frontend_server
+    return @frontend_server if @frontend_server && cache?
+    @frontend_server = Gitorious::Configuration.get("frontend_server", "nginx").downcase
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

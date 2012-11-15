@@ -93,7 +93,7 @@ class TreesController < ApplicationController
 
   protected
   def set_xsendfile_headers(real_path, user_path, content_type = "application/x-gzip")
-    if GitoriousConfig["frontend_server"] == "nginx"
+    if Gitorious.frontend_server == "nginx"
       response.headers["X-Accel-Redirect"] = "/tarballs/#{real_path}"
     else
       response.headers["X-Sendfile"] = File.join(Gitorious.archive_cache_dir, real_path)

@@ -26,10 +26,6 @@ class GitHttpCloningTest < ActionController::IntegrationTest
       @request_uri = "/johans-project/johansprojectrepos.git/HEAD"
     end
 
-    teardown do
-      GitoriousConfig["frontend_server"] = nil
-    end
-
     should "set X-Sendfile headers" do
       assert_incremented_by(@repository.cloners, :count, 1) do
         get @request_uri, {}, :remote_addr => "192.71.1.2"
@@ -65,7 +61,7 @@ class GitHttpCloningTest < ActionController::IntegrationTest
     end
 
     should "use X-Accel-Redirect when running under nginx" do
-      GitoriousConfig["frontend_server"] = "nginx"
+      Gitorious.stubs(:frontend_server).returns("nginx")
       get @request_uri, {}, :host => "git.gitorious.local", :remote_addr => "192.71.1.2"
 
       assert_response :success

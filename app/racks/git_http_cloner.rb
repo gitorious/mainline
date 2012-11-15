@@ -56,7 +56,7 @@ module Gitorious
     end
 
     def self.sendfile_headers(repo, rest)
-      if GitoriousConfig["frontend_server"] == "nginx"
+      if Gitorious.frontend_server == "nginx"
         { "X-Accel-Redirect" => File.join("/git-http", repo.real_gitdir, rest) }
       else
         { "X-Sendfile" => File.join(repo.full_repository_path, rest) }

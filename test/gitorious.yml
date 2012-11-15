@@ -7,6 +7,7 @@ host: gitorious.test
 scheme: http
 client_host: gitorious.test
 client_port: 3000
+frontend_server: apache
 cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
 messaging_adapter: test
 disable_record_throttling: false

@@ -131,13 +131,12 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "use X-Accel-Redirect to /tarballs/name-sha.tar.gz when running Nginx" do
-      GitoriousConfig["frontend_server"] = "nginx"
+      Gitorious.stubs(:frontend_server).returns("nginx")
       get :archive, params(:branch => %w[master], :archive_format => "tar.gz")
 
       assert_response :success
       tarball_name = "#{@repository.hashed_path.gsub(/\//,'-')}-#{@master_sha}.tar.gz"
       assert_equal "/tarballs/#{tarball_name}", @response.headers["X-Accel-Redirect"]
-      GitoriousConfig["frontend_server"] = nil
     end
 
     should "enqueue a job when the tarball is not cached" do
