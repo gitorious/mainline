@@ -124,6 +124,11 @@ module Gitorious
     @archive_work_dir = Gitorious::Configuration.get("archive_work_dir")
   end
 
+  def self.diff_timeout
+    return @diff_timeout if @diff_timeout && cache?
+    @diff_timeout = Gitorious::Configuration.get("merge_request_diff_timeout", 10).to_i
+  end
+
   private
   def self.cache?
     return Rails.env.production? if defined?(Rails)

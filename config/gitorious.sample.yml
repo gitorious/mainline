@@ -193,17 +193,12 @@ archive_work_dir: "/var/git/tarballs-work"
 # multiple addresses, separate them with commas
 #exception_recipients: ops@gitorious.local
 
+# The maximum number of seconds to allow the web server to wait for
+# diffs for a merge request. This is used to prevent huge merge
+# requests from spawning 100 % CPU processes that never die.
+#merge_request_diff_timeout: 10
+
 production:
-
-  # --------------------
-  # RECOMMENDED SETTINGS
-  # --------------------
-  #
-  # In most cases you will want to keep the following settings as is, but we
-  # recommend you familiarize yourself with them. If you stray from the common
-  # path during setup, you will likely have to change some settings here.
-
-
   # Base directory for mirror ie symlinks to actual repositories
   # Designate a folder where symlinks to all current repository
   # directories are created. Handy for hosting Gitweb, cgit etc in
@@ -217,10 +212,6 @@ production:
   # <repository_base_path>/../mirrored-public-repos
   symlinked_mirror_repo_base : "/var/www/gitorious/repo-mirror"
 
-  # The maximum number of seconds to allow the web server to wait for diffs for
-  # a merge request. This is used to prevent huge merge requests from spawning
-  # 100 % CPU processes that never die.
-  #merge_request_diff_timeout: 10
 
   # Give a hint about which frontend web server is being used
   # Setting this to 'nginx' will cause Gitorious to use X-Accel-Redirect headers
