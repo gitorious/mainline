@@ -373,6 +373,11 @@ production:
 
   # Should LDAP be used for authorization? 
   # use_ldap_for_authorization: true
+  
+  # Default OpenID provider URL. Blank by default.
+  # Examples:
+  #   Google: https://www.google.com/accounts/o8/id
+  # openid_default_provider_url: 
 
 development:
 

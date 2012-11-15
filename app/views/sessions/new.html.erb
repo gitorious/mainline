@@ -68,7 +68,11 @@
           <ul>
             <li>
               <%= label_tag :openid_url, t("views.sessions.openid") %>
-              <%= text_field_tag 'openid_url', params[:openid_url] -%>
+              <% if params[:openid_url].blank? && GitoriousConfig['openid_default_provider_url'].present? -%>
+                <%= text_field_tag 'openid_url', GitoriousConfig['openid_default_provider_url'] -%>
+              <% else -%>
+                <%= text_field_tag 'openid_url', params[:openid_url] -%>
+              <% end -%>
             </li>
             <li>
               <div class="tos">
