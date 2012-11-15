@@ -123,6 +123,15 @@
 # address only, or Name <address>.
 #email_sender: Gitorious <no-reply@gitorious.local>
 
+# Gitorious stores repositories under 'repository_base_path', directly
+# named by project slug and repository title. However, for large
+# installations which host a lot of repositories, the repository
+# directories can be hashed and sharded into subdirectories 3 levels
+# deep to break them down into a hash-like tree of directories
+# instead. This helps avoid hitting (filesystem-specific) limits on
+# number of entries in a directory.
+#enable_repository_dir_sharding: true
+
 # The path where git repositories are stored. The actual (bare)
 # repositories reside in
 # #{repository_base_path}/#{project.slug}/#{repository.name}.git/
@@ -194,16 +203,6 @@ production:
   # recommend you familiarize yourself with them. If you stray from the common
   # path during setup, you will likely have to change some settings here.
 
-
-  # Enable repository directory sharding
-  # By default, gitorious will store repositories directly under
-  # 'repository_base_path', directly named by project and repo title.
-  # However for large installations which host a lot of repositories,
-  # the repository directories can be hashed and sharded into
-  # subdirectories 3 levels deep to break them down into a hash-like tree of
-  # directories instead. This helps avoid hitting
-  # (filesystem-specific) limits on number of entries in a directory.
-  # enable_repository_dir_sharding: true
 
   # Base directory for mirror ie symlinks to actual repositories
   # Designate a folder where symlinks to all current repository

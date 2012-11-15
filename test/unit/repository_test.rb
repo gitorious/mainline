@@ -635,19 +635,17 @@ class RepositoryTest < ActiveSupport::TestCase
     assert !can_request_merge?(users(:mike), repo), "mainlines should not request merges"
   end
 
-  should "use a sharded hashed path if enable_repository_dir_sharding is toggled" do
-    GitoriousConfig["enable_repository_dir_sharding"] = true
+  should "use a sharded hashed path if RepositoryRoot is configured to" do
+    RepositoryRoot.stubs(:shard_dirs?).returns(true)
     repository = new_repos
     assert repository.new_record?, "repository.new_record? should be true"
     repository.save!
     assert_not_nil repository.hashed_path
     assert_equal 3, repository.hashed_path.split("/").length
     assert_match(/[a-z0-9\/]{42}/, repository.hashed_path)
-    GitoriousConfig["enable_repository_dir_sharding"] = false
   end
 
   should "use repo name for path by default, not sharded hashed paths" do
-    GitoriousConfig["enable_repository_dir_sharding"] = false
     repository = new_repos
     FileUtils.mkdir_p(repository.full_repository_path, :mode => 0755)
     repository.save!

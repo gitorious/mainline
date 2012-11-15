@@ -34,6 +34,7 @@ unless defined? GitoriousConfig
   if defined?(Rails)
     require Rails.root + "app/models/repository_root"
     RepositoryRoot.default_base_path = config.get("repository_base_path")
+    RepositoryRoot.shard_dirs! if config.get("enable_repository_dir_sharding")
   end
 
   # TODO: Port remaining settings

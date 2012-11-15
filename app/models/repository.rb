@@ -569,7 +569,7 @@ class Repository < ActiveRecord::Base
   end
 
   def set_repository_path
-    if GitoriousConfig["enable_repository_dir_sharding"]
+    if RepositoryRoot.shard_dirs?
       set_repository_hash
     else
       set_repository_plain_path

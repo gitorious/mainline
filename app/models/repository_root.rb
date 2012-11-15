@@ -24,4 +24,12 @@ class RepositoryRoot
   def self.default_base_path=(path)
     @default_base_path = path
   end
+
+  def self.shard_dirs?
+    !!@shard_dirs
+  end
+
+  def self.shard_dirs!
+    @shard_dirs = true
+  end
 end
