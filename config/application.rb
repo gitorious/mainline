@@ -105,7 +105,7 @@ module Gitorious
       I18n.locale = I18n.default_locale = Gitorious::Configuration.get("locale", "en")
 
       exception_recipients = Gitorious::Configuration.get("exception_recipients")
-      if Rails.env.production? && exception_emails.blank?
+      if Rails.env.production? && exception_recipients.blank?
         puts "WARNING! No value set for exception_recipients in gitorious.yml."
         puts "Will not be able to send email regarding unhandled exceptions"
       else
