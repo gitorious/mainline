@@ -68,6 +68,12 @@ Tests may not work as intended.
     def configure_singleton(env)
       require "gitorious"
       load(env).each { |cfg| Gitorious::Configuration.append(cfg) }
+
+      if defined?(RepositoryRoot)
+        RepositoryRoot.default_base_path = Gitorious::Configuration.get("repository_base_path")
+        RepositoryRoot.shard_dirs! if Gitorious::Configuration.get("enable_repository_dir_sharding")
+      end
+
       Gitorious::Configuration
     end
 

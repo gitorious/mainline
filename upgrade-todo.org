@@ -30,3 +30,5 @@
 *** New: git_http_port, git_http_scheme
 *** disable_record_throttling -> enable_record_throttling
 *** exception_notification_emails -> exception_recipients
+** https://localhost.localdomain/gitorious/project_memberships/all
+** Manage user &amp; team read access to <a href="/gitorious">Gitorious</a>

@@ -21,7 +21,8 @@
 
 require "net/http"
 require "uri"
-require File.expand_path(File.dirname(__FILE__) + "../../../../app/models/repository_root")
+require "gitorious/configuration_loader"
+require File.expand_path(File.join(File.dirname(__FILE__), "../../../app/models/repository_root.rb"))
 
 module Gitorious
   module SSH
@@ -34,6 +35,7 @@ module Gitorious
         @repository_name.gsub!(/\.git$/, "")
         @user_name = username
         @configuration = {}
+        load_config
       end
       attr_accessor :project_name, :repository_name, :user_name
 
@@ -101,9 +103,14 @@ module Gitorious
       end
 
       def connection
-        port = Gitorious.client.host
-        host = Gitorious.client.port
+        host = Gitorious.client.host
+        port = Gitorious.client.port
         @connection ||= Net::HTTP.start(host, port)
+      end
+
+      def load_config
+        return if Gitorious.respond_to?(:client)
+        Gitorious::ConfigurationLoader.new.configure_singleton(RAILS_ENV)
       end
 
       # Returns an actual URI object

@@ -106,8 +106,8 @@ module Gitorious
 
       exception_recipients = Gitorious::Configuration.get("exception_recipients")
       if Rails.env.production? && exception_recipients.blank?
-        puts "WARNING! No value set for exception_recipients in gitorious.yml."
-        puts "Will not be able to send email regarding unhandled exceptions"
+        $stderr.puts "WARNING! No value set for exception_recipients in gitorious.yml."
+        $stderr.puts "Will not be able to send email regarding unhandled exceptions"
       else
         Gitorious::Application.config.middleware.use(ExceptionNotifier, {
           :email_prefix => "[Gitorious] ",

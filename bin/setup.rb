@@ -5,12 +5,12 @@
 # - if so: check if we are it
 # - if not and we are root: setuid+setgid to that user
 # - if not and we are not root, fail
-require "gitorious"
 
 module Gitorious
   class CLI
     def run_with_gitorious_environment
       setup_environment
+      load_config
       require_valid_user!
       yield
     end
@@ -26,6 +26,17 @@ module Gitorious
 
     def rails_root
       rails_root ||= (Pathname(__FILE__) + "../../").realpath.to_s
+    end
+
+    def rails_env
+      ENV["RAILS_ENV"]
+    end
+
+    def load_config
+      return if Gitorious.respond_to?(:user)
+      $: << "./lib"
+      require "gitorious/configuration_loader"
+      Gitorious::ConfigurationLoader.new.configure_singleton(ENV["RAILS_ENV"])
     end
 
     def require_valid_user!

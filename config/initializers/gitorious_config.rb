@@ -23,19 +23,17 @@ unless defined? GitoriousConfig
   env = defined?(Rails) ? Rails.env : "test"
   loader = Gitorious::ConfigurationLoader.new
 
+  if defined?(Rails)
+    # Load so configure_singleton will configure Repository base path
+    require Rails.root + "app/models/repository_root"
+  end
+
   # Wire up the global Gitorious::Configuration singleton with settings
   config = loader.configure_singleton(env)
 
   # Configure messaging
   default_adapter = env == "test" ? "test" : "resque"
   Gitorious::Messaging.adapter = config.get("messaging_adapter", default_adapter)
-
-  if defined?(Rails)
-    # Configure Repository base path
-    require Rails.root + "app/models/repository_root"
-    RepositoryRoot.default_base_path = config.get("repository_base_path")
-    RepositoryRoot.shard_dirs! if config.get("enable_repository_dir_sharding")
-  end
 
   # TODO: Port remaining settings
 
@@ -71,7 +69,7 @@ unless defined? GitoriousConfig
     path = File.expand_path(GitoriousConfig["additional_view_paths"])
 
     if !File.exists?(path)
-      puts "WARNING: Additional view path '#{path}' does not exists, skipping"
+      $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
     else
       additional_view_paths = ActionView::PathSet.new([path])
       Gitorious::Application.paths.app.views.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))

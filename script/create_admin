@@ -1,2 +1,2 @@
 #!/usr/bin/env ruby
-puts "*** WARNING: This script is deprecated. Use bin/create-user instead ***"
+$stderr.puts "*** WARNING: This script is deprecated. Use bin/create-user instead ***"

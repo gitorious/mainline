@@ -3,11 +3,13 @@
 require "yaml"
 
 if File.symlink?(__FILE__)
-  $:.unshift File.dirname(File.readlink(__FILE__)) + "/../lib/gitorious/ssh"
+  $:.unshift File.dirname(File.readlink(__FILE__)) + "/../lib"
+  $:.unshift File.dirname(File.readlink(__FILE__)) + "/../app"
   BASE_DIR = File.dirname(File.readlink(__FILE__)) + "/../"
   conf_file = File.join(BASE_DIR, "config/gitorious.yml")
 else
-  $:.unshift File.dirname(__FILE__) + "/../lib/gitorious/ssh"
+  $:.unshift File.dirname(__FILE__) + "/../lib"
+  $:.unshift File.dirname(__FILE__) + "/../app"
   BASE_DIR = File.dirname(__FILE__) + "/../"
   conf_file = File.join(BASE_DIR, "config/gitorious.yml")
 end
@@ -16,8 +18,8 @@ RAILS_ENV = ENV["RAILS_ENV"] ||= "production"
 GitoriousConfig = YAML::load_file(conf_file)[RAILS_ENV]
 
 require "logger"
-require "strainer"
-require "client"
+require "gitorious/ssh/strainer"
+require "gitorious/ssh/client"
 
 File.umask(0022)
 original_command = ENV["SSH_ORIGINAL_COMMAND"]

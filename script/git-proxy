@@ -49,7 +49,8 @@
 #
 #Bundler.require(:default, :git_proxy) if defined?(Bundler)
 
-require File.dirname(__FILE__) + "/../config/environment"
+require "pathname"
+require (Pathname(__FILE__) + "../../config/environment.rb").realpath
 require "optparse"
 require "proxymachine"
 require "daemons"
@@ -57,9 +58,9 @@ require "yaml"
 
 ROOT_DIR = File.expand_path( File.join(File.dirname(__FILE__), "../") )
 
-if RAILS_ENV == "production" && Process.uid == 0
+if Rails.env.production? && Process.uid == 0
   config = YAML::load_file(ROOT_DIR + "/config/gitorious.yml")
-  git_user = config["user"] || (config[RAILS_ENV] && config[RAILS_ENV]["user"])
+  git_user = config["user"] || (config[Rails.env] && config[Rails.env]["user"])
   if git_user
     uid = Etc.getpwnam(git_user).uid
     gid = Etc.getpwnam(git_user).gid
