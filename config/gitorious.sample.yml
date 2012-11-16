@@ -419,10 +419,20 @@ production:
   # Should LDAP be used for authorization?
   # use_ldap_for_authorization: true
 
+# Sensible defaults for the development environment
 development:
-  # You likely don't want to run SSL in development
   scheme: "http"
-
-  # Using synchronous "background processing" saves you the trouble of
-  # setting up Redis and Resque in development.
+  host: localhost
+  port: 3000
+  client_host: localhost
+  client_port: 3000
+  git_daemon_host: localhost
+  git_daemon_port: 9418
+  ssh_daemon_host: localhost
+  git_http_host: localhost
+  git_http_port: 3000
+  git_http_scheme: http
   messaging_adapter: sync
+  enable_record_throttling: false
+  merge_request_diff_timeout: 30
+  site_name: Gitorious Development mode
