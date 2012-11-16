@@ -1,20 +1,6 @@
 # Be sure to restart your server when you modify this file.
 
 # We can't use a TLD in domain (e.g. we can't set localhost here)!
-gitorious_yaml = YAML::load_file(Rails.root + "config/gitorious.yml")[Rails.env]
-domain = gitorious_yaml["host"]
-
-if domain =~ /\./
-  domain = ".#{domain}"
-else
-  domain = ""
-end
-
-Gitorious::Application.config.session_store :cookie_store, {
-  :key => '_gitorious_session',
-  :domain => domain,
-  :expire_after => 3.weeks
-}
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

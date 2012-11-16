@@ -24,12 +24,13 @@ unless defined? GitoriousConfig
   loader = Gitorious::ConfigurationLoader.new
 
   if defined?(Rails)
-    # Load so configure_singleton will configure Repository base path
+    # Load so configure_singletons will configure them
     require Rails.root + "app/models/repository_root"
+    require Rails.root + "app/models/project_license"
   end
 
   # Wire up the global Gitorious::Configuration singleton with settings
-  config = loader.configure_singleton(env)
+  config = loader.configure_singletons(env)
 
   # Configure messaging
   default_adapter = env == "test" ? "test" : "resque"

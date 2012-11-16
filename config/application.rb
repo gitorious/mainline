@@ -115,6 +115,12 @@ module Gitorious
           :exception_recipients => exception_recipients
         })
       end
+
+      Gitorious::Application.config.session_store(:cookie_store, {
+        :key => "_gitorious_session",
+        :domain => Gitorious.host =~ /\./ ? ".#{Gitorious.host}" : "",
+        :expire_after => 3.weeks
+      })
     end
 
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
