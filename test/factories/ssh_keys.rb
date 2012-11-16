@@ -23,7 +23,7 @@ FactoryGirl.define do
 
   factory(:ssh_key) do |k|
     k.user {|u| u.association(:user) }
-    k.key { generate(:key) }
+    k.key { Factory.next(:key) }
     k.ready true
   end
 end

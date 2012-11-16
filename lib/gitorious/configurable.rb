@@ -37,7 +37,7 @@ module Gitorious
     end
 
     def get(key, default = nil)
-      env_key = "#{@env_prefix}_#{key.upcase}"
+      env_key = "#{@env_prefix}_#{key.to_s.upcase}"
       return ENV[env_key] if !@env_prefix.nil? && ENV.key?(env_key)
       settings = configs.detect { |c| c.key?(key) }
       return settings[key] if settings

@@ -22,7 +22,7 @@ FactoryGirl.define do
   end
 
   factory(:repository) do |r|
-    r.name { generate(:repository_name) }
+    r.name { Factory.next(:repository_name) }
     r.kind Repository::KIND_PROJECT_REPO
   end
 

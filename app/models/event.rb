@@ -169,7 +169,7 @@ class Event < ActiveRecord::Base
 
   def self.events_for_archive_in_batches(created_before)
     find_in_batches(:conditions => ["created_at < ? AND target_type != ?", created_before, "event"]) do |batch|
-      yield batch
+      yield batch if block_given?
       logger.info("Event archiving: archived one batch of events")
     end
   end

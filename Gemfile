@@ -18,13 +18,13 @@ gem "nokogiri", "1.5.0"
 gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
-gem "validates_formatting_of", "~> 0.7"
 gem "thinking-sphinx", "~> 2.0.10"
 gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 gem "rails_autolink", "~> 1.0"
 gem "mysql2"
 gem "highline"
 gem "oniguruma", "~> 1.1", :platforms => :ruby_18
+gem "SystemTimer", "~> 1.2", :platforms => :ruby_18
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
@@ -34,12 +34,12 @@ end
 
 group :test do
   gem "mocha", "0.9.10", :require => false
-  gem "factory_girl_rails", "~> 4.1"
+  gem "factory_girl_rails", "~> 1.7"
   gem "shoulda", "~> 3.3"
   gem "rots", :git => "https://github.com/roman/rots.git"
   gem "capybara", "1.0.1"
   gem "launchy", "2.0.5" # used only for Capybara's save_and_open_page for launching the browser
-  gem "minitest", "~> 4.2"
+  gem "minitest", "4.2.0"
 end
 
 group :development do

@@ -214,7 +214,7 @@ class EventTest < ActiveSupport::TestCase
       repository = repositories(:johans)
       initial_commit_event = new_event(
         :action => Action::PUSH,
-        :created_at => 32.days.ago,
+        :created_at => 35.days.ago,
         :data => "ffc",
         :target => repository)
       initial_commit_event.save!
@@ -222,7 +222,8 @@ class EventTest < ActiveSupport::TestCase
       Event.events_for_archive_in_batches(1.month.ago) do |batch|
         batch.each {|event| result << event}
       end
-      assert result.include?(initial_commit_event)
+
+      assert result.collect(&:id).include?(initial_commit_event.id)
     end
 
     should "not include newer events" do

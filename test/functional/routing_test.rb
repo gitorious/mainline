@@ -185,22 +185,6 @@ class RoutingTest < ActionController::TestCase
                        })
     end
 
-    def recognize_project_action(method, path, action)
-      assert_recognizes({ :controller => "projects",
-                          :action => action,
-                          :id => "gitorious"
-                        }, {
-                          :path => path,
-                          :method => method
-                        })
-
-      assert_generates(path, {
-                         :controller => "projects",
-                         :action => action,
-                         :id => "gitorious"
-                       })
-    end
-
     should "recognize projects#edit" do
       recognize_project_action(:get, "/gitorious/edit", "edit")
     end
@@ -930,5 +914,21 @@ class RoutingTest < ActionController::TestCase
                           :method => :get
                         })
     end
+  end
+
+  def recognize_project_action(method, path, action)
+    assert_recognizes({ :controller => "projects",
+                        :action => action,
+                        :id => "gitorious"
+                      }, {
+                        :path => path,
+                        :method => method
+                      })
+
+    assert_generates(path, {
+                       :controller => "projects",
+                       :action => action,
+                       :id => "gitorious"
+                     })
   end
 end
