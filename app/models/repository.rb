@@ -183,21 +183,19 @@ class Repository < ActiveRecord::Base
 
   def self.most_active_clones_in_projects(projects, limit = 5)
     key = "repository:most_active_clones_in_projects:#{projects.map(&:id).join('-')}:#{limit}"
-    Rails.cache.fetch(key, :expires_in => 2.hours) do
-      clone_ids = projects.map do |project|
-        project.repositories.clones.map{|r| r.id }
-      end.flatten
-      clones = select("distinct repositories.*, count(events.id) as event_count").
-        where("repositories.id in (?) and events.created_at > ? and kind in (?)",
-              clone_ids, 7.days.ago,
-              [KIND_USER_REPO, KIND_TEAM_REPO]).
-        order("count(events.id) desc").
-        joins(:events).
-        includes(:project).
-        group("repositories.id").
-        limit(limit)
-      MarshalableRelation.extend(clones.all, Repository)
-    end
+    clone_ids = projects.map do |project|
+      project.repositories.clones.map{|r| r.id }
+    end.flatten
+
+    select("distinct repositories.*, count(events.id) as event_count").
+      where("repositories.id in (?) and events.created_at > ? and kind in (?)",
+            clone_ids, 7.days.ago,
+            [KIND_USER_REPO, KIND_TEAM_REPO]).
+      order("count(events.id) desc").
+      joins(:events).
+      includes(:project).
+      group("repositories.id").
+      limit(limit)
   end
 
   def self.most_active_clones(limit = 10)

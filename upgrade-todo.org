@@ -1,22 +1,13 @@
-* Launch ready [4/6]
+* Launch ready [4/7]
 ** DONE Reservations
 ** DONE Remove NEWS file
 ** DONE Write new README (needs to be improved later)
 ** DONE Kill repo_owner_path
-** TODO User.most_active -> removed caching, fix
-     Rails.cache.fetch(cache_key, :expires_in => 1.hour) do
-** TODO Project.most_active_recently -> removed caching, fix
-     Rails.cache.fetch("projects:most_active_recently:#{limit}:#{number_of_days}",
-         :expires_in => 30.minutes) do
-       MarshalableRelation.extend(projects, Project)
-     end
-* TODO Repository#most_active_clones -> removed caching, fix
-    Rails.cache.fetch("repository:most_active_clones:#{limit}", :expires_in => 2.hours) do
-* Instructions to users [1/4]
-** TODO Database configuration: Use mysql2
-** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
-** DONE Clean out vendor (thomanil fucked it up)
-** TODO Configuration changes
+** TODO Instructions to users [1/4]
+*** TODO Database configuration: Use mysql2
+*** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
+*** DONE Clean out vendor (thomanil fucked it up)
+*** TODO Configuration changes
 *** gitorious_host -> host
 *** gitorious_client_host -> client_host
 *** gitorious_client_port -> client_port
@@ -30,5 +21,7 @@
 *** New: git_http_port, git_http_scheme
 *** disable_record_throttling -> enable_record_throttling
 *** exception_notification_emails -> exception_recipients
-** https://localhost.localdomain/gitorious/project_memberships/all
-** Manage user &amp; team read access to <a href="/gitorious">Gitorious</a>
+*** https://localhost.localdomain/gitorious/project_memberships/all
+*** Manage user &amp; team read access to <a href="/gitorious">Gitorious</a>
+** TODO Configuration deprecation warnings
+** TODO Configuration port script
