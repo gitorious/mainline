@@ -36,7 +36,7 @@ module Gitorious
       return if Gitorious.respond_to?(:user)
       $: << "./lib"
       require "gitorious/configuration_loader"
-      Gitorious::ConfigurationLoader.new.configure_singleton(ENV["RAILS_ENV"])
+      Gitorious::ConfigurationLoader.new.configure_singletons(ENV["RAILS_ENV"])
     end
 
     def require_valid_user!

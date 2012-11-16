@@ -26,8 +26,8 @@ FactoryGirl.define do
   end
 
   factory(:user) do |u|
-    u.login { generate(:login) }
-    u.email { generate(:email) }
+    u.login { Factory.next(:login) }
+    u.email { Factory.next(:email) }
     u.terms_of_use "1"
     u.salt "7e3041ebc2fc05a40c60028e2c4901a81035d3cd"
     u.crypted_password "00742970dc9e6319f8019fd54864d3ea740f04b1" # test

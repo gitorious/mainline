@@ -213,6 +213,70 @@ archive_work_dir: "/var/git/tarballs-work"
 # requests from spawning 100 % CPU processes that never die.
 #merge_request_diff_timeout: 10
 
+# Define your locale. See config/locales/ for supported locales. Note
+# that locales other than en are likely to be incomplete at this
+# point. Feel free to contribute translations.
+#locale: en
+
+# Available project licenses. This can be configured as an array of
+# licenses:
+#
+# licenses:
+#   - BSD
+#   - GPL
+#   - LGPL
+#   - MIT
+#
+# Alternately, you can configure licenses as an array of hashes, where
+# each hash consists of name -> description pairs. The descriptions
+# will be shown in the project creation UI (/new).
+#
+# licenses:
+#   - MIT: No guarantees, no strings attached
+#   - BSD: Keep the copyright
+#
+# For multi-line descriptions, use the YAML escape pipe:
+#
+# licenses:
+#   - MIT: |
+#     <ul>
+#       <li>Liberal license</li>
+#     </ul>
+#   - BSD: Keep the copyright
+#
+# Default licenses are:
+#
+#licenses:
+#  - Academic Free License v3.0",
+#  - MIT License
+#  - BSD License
+#  - Ruby License
+#  - GNU General Public License version 2 (GPLv2)
+#  - GNU General Public License version 3 (GPLv3)
+#  - GNU Lesser General Public License (LGPL)
+#  - GNU Affero General Public License (AGPLv3)
+#  - Mozilla Public License 1.0 (MPL)
+#  - Mozilla Public License 1.1 (MPL 1.1)
+#  - Qt Public License (QPL)
+#  - Python License
+#  - zlib/libpng License
+#  - Apache License
+#  - Apple Public Source License
+#  - Perl Artistic License
+#  - Microsoft Permissive License (Ms-PL)
+#  - ISC License
+#  - Lisp Lesser License
+#  - Boost Software License
+#  - Public Domain
+#  - Other Open Source Initiative Approved License
+#  - Other/Proprietary License
+#  - Other/Multiple
+#  - None
+
+# The default license. Should be an exact match with one of the names
+# in the list above.
+#default_license: GNU Affero General Public License (AGPLv3)
+
 production:
   # Base directory for mirror ie symlinks to actual repositories
   # Designate a folder where symlinks to all current repository
@@ -243,9 +307,6 @@ production:
   # System message that will appear on all pages if present
   #system_message:
 
-# Define your locale. See config/locales/ for supported locales.
-#locale: en
-
   # Hides http:// clone URLs from repository boxes when set to true.
   #hide_http_clone_urls: false
 
@@ -266,64 +327,6 @@ production:
 
   # Mangle visible e-mail addresses (spam protection)
   #mangle_email_addresses: true
-
-  # Available project licenses. This can be configured as an array of licenses:
-  #
-  # licenses:
-  #   - BSD
-  #   - GPL
-  #   - LGPL
-  #   - MIT
-  #
-  # Alternately, you can configure licenses as an array of hashes, where each
-  # hash consists of name -> description pairs. The descriptions will be shown
-  # in the project creation UI (/projects/new).
-  #
-  # licenses:
-  #   - MIT: No guarantees, no strings attached
-  #   - BSD: Keep the copyright
-  #
-  # For multi-line descriptions, use the YAML escape pipe:
-  #
-  # licenses:
-  #   - MIT: |
-  #     <ul>
-  #       <li>Liberal license</li>
-  #     </ul>
-  #   - BSD: Keep the copyright
-  #
-  # Default licenses are:
-  #
-  # licenses:
-  #   - Academic Free License v3.0",
-  #   - MIT License
-  #   - BSD License
-  #   - Ruby License
-  #   - GNU General Public License version 2 (GPLv2)
-  #   - GNU General Public License version 3 (GPLv3)
-  #   - GNU Lesser General Public License (LGPL)
-  #   - GNU Affero General Public License (AGPLv3)
-  #   - Mozilla Public License 1.0 (MPL)
-  #   - Mozilla Public License 1.1 (MPL 1.1)
-  #   - Qt Public License (QPL)
-  #   - Python License
-  #   - zlib/libpng License
-  #   - Apache License
-  #   - Apple Public Source License
-  #   - Perl Artistic License
-  #   - Microsoft Permissive License (Ms-PL)
-  #   - ISC License
-  #   - Lisp Lesser License
-  #   - Boost Software License
-  #   - Public Domain
-  #   - Other Open Source Initiative Approved License
-  #   - Other/Proprietary License
-  #   - Other/Multiple
-  #   - None
-  #
-
-  # Pick a default license
-  #default_license: GNU Affero General Public License (AGPLv3)
 
   # ----------------
   # THEMING SETTINGS
@@ -416,10 +419,20 @@ production:
   # Should LDAP be used for authorization?
   # use_ldap_for_authorization: true
 
+# Sensible defaults for the development environment
 development:
-  # You likely don't want to run SSL in development
   scheme: "http"
-
-  # Using synchronous "background processing" saves you the trouble of
-  # setting up Redis and Resque in development.
+  host: localhost
+  port: 3000
+  client_host: localhost
+  client_port: 3000
+  git_daemon_host: localhost
+  git_daemon_port: 9418
+  ssh_daemon_host: localhost
+  git_http_host: localhost
+  git_http_port: 3000
+  git_http_scheme: http
   messaging_adapter: sync
+  enable_record_throttling: false
+  merge_request_diff_timeout: 30
+  site_name: Gitorious Development mode

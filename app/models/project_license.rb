@@ -22,11 +22,6 @@
 class ProjectLicense
   attr_reader :name, :description
 
-  def initialize(name, description = nil)
-    @name = name
-    @description = description
-  end
-
   DEFAULT = ["Academic Free License v3.0",
              "MIT License",
              "BSD License",
@@ -53,15 +48,32 @@ class ProjectLicense
              "Other/Multiple",
              "None"]
 
+  def initialize(name, description = nil)
+    @name = name
+    @description = description
+  end
+
   def to_s; name; end
   def inspect; name; end
 
-  def self.all
-    @licenses ||= load_licenses(GitoriousConfig["licenses"] || DEFAULT)
+  def self.default
+    @default
   end
 
-  def self.default
-    GitoriousConfig['default_license']
+  def self.default=(default)
+    @default = default
+  end
+
+  def self.all
+    @licenses ||= []
+  end
+
+  def self.licenses=(licenses)
+    @licenses = load_licenses(licenses)
+  end
+
+  def self.first
+    all.first
   end
 
   private

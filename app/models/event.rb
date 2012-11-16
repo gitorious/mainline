@@ -47,32 +47,25 @@ class Event < ActiveRecord::Base
   scope :excluding_commits, {:conditions => ["action != ?", Action::COMMIT]}
 
   def self.latest(count)
-    Rails.cache.fetch("events:latest_#{count}", :expires_in => 10.minutes) do
-      latest_event_ids = Event.find_by_sql(
-                                           ["select id,action,created_at from events " +
-                                            "use index (index_events_on_created_at) where (action != ?) " +
-                                            "order by created_at desc limit ?", Action::COMMIT, count
-                                           ]).map(&:id)
-      MarshalableRelation.extend(Event.
-                                 where(:id => latest_event_ids).
-                                 order("created_at desc").
-                                 includes(:user, :project, :events), Event)
-    end
+    latest_event_ids = Event.find_by_sql(
+                                         ["select id,action,created_at from events " +
+                                          "use index (index_events_on_created_at) where (action != ?) " +
+                                          "order by created_at desc limit ?", Action::COMMIT, count
+                                         ]).map(&:id)
+    Event.where(:id => latest_event_ids).
+      order("created_at desc").
+      includes(:user, :project, :events)
   end
 
   def self.latest_in_projects(count, project_ids)
     return [] if project_ids.blank?
-    Rails.cache.fetch("events:latest_in_projects_#{project_ids.join("_")}_#{count}",
-                      :expires_in => 10.minutes) do
-      latest = where("events.action != ? and events.project_id in (?)",
-                     Action::COMMIT,
-                     project_ids).
-        from("#{quoted_table_name} use index (index_events_on_created_at)").
-        order("events.created_at desc").
-        includes(:user, :project, :events).
-        limit(count)
-      MarshalableRelation.extend(latest, Event)
-    end
+    where("events.action != ? and events.project_id in (?)",
+          Action::COMMIT,
+          project_ids).
+      from("#{quoted_table_name} use index (index_events_on_created_at)").
+      order("events.created_at desc").
+      includes(:user, :project, :events).
+      limit(count)
   end
 
   def build_commit(options={})
@@ -169,7 +162,7 @@ class Event < ActiveRecord::Base
 
   def self.events_for_archive_in_batches(created_before)
     find_in_batches(:conditions => ["created_at < ? AND target_type != ?", created_before, "event"]) do |batch|
-      yield batch
+      yield batch if block_given?
       logger.info("Event archiving: archived one batch of events")
     end
   end

@@ -65,16 +65,25 @@ Tests may not work as intended.
       @hashes[env] ||= load(env).inject({}) { |hash, cfg| hash.merge(cfg) }
     end
 
-    def configure_singleton(env)
+    def configure_singletons(env)
       require "gitorious"
       load(env).each { |cfg| Gitorious::Configuration.append(cfg) }
+      configure_available_singletons(Gitorious::Configuration)
+    end
 
+    def configure_available_singletons(config)
       if defined?(RepositoryRoot)
-        RepositoryRoot.default_base_path = Gitorious::Configuration.get("repository_base_path")
-        RepositoryRoot.shard_dirs! if Gitorious::Configuration.get("enable_repository_dir_sharding")
+        RepositoryRoot.default_base_path = config.get("repository_base_path")
+        RepositoryRoot.shard_dirs! if config.get("enable_repository_dir_sharding")
       end
 
-      Gitorious::Configuration
+      if defined?(ProjectLicense)
+        licenses = config.get("licenses", ProjectLicense::DEFAULT)
+        ProjectLicense.licenses = licenses
+        ProjectLicense.default = config.get("default_license", ProjectLicense.first.name)
+      end
+
+      config
     end
 
     private

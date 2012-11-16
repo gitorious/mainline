@@ -110,7 +110,7 @@ module Gitorious
 
       def load_config
         return if Gitorious.respond_to?(:client)
-        Gitorious::ConfigurationLoader.new.configure_singleton(RAILS_ENV)
+        Gitorious::ConfigurationLoader.new.configure_singletons(RAILS_ENV)
       end
 
       # Returns an actual URI object

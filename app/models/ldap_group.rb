@@ -150,7 +150,6 @@ class LdapGroup < ActiveRecord::Base
     end
   end
 
-
   def self.uncached_dns_in_group(group_name, member_attribute_name)
     configurator = ldap_configurator
     attribute, value = group_name.split("=")
