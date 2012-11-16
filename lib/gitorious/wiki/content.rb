@@ -26,14 +26,14 @@ module Gitorious
       def wikize(content)
         content = wiki_link(content)
         rd = MarkupRenderer.new(content, :markdown => [:smart, :generate_toc])
-        content = content_tag(:div, rd.to_html, :class => "page-content")
-        toc_content = rd.markdown.toc_content
+        content = content_tag(:div, rd.to_html.html_safe, :class => "page-content")
+        toc_content = rd.markdown.toc_content.html_safe
         if !toc_content.blank?
           toc = content_tag(:div, toc_content, :class => "toc")
         else
           toc = ""
         end
-        content_tag(:div, toc + sanitize_wiki_content(content), :class => "page wiki-page")
+        content_tag(:div, toc.html_safe + sanitize_wiki_content(content), :class => "page wiki-page")
       end
 
       def sanitize_wiki_content(html)

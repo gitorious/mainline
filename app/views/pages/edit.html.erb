@@ -37,7 +37,7 @@
 
 <%= form_for [@project, @page] do |f| -%>
 <p class="hint">
-  <%= t("views.common.markdown_format_with_help") -%>
+  <%= t("views.common.markdown_format_with_help").html_safe -%>
   <%= t("views.pages.wikiwords_syntax") -%>
 </p>
 
@@ -54,5 +54,5 @@
 
 
 <%= t("views.pages.or_back_to_page",
-      :page_link => link_to(@page.title, project_page_path(@project, @page.title))) -%>
+      :page_link => link_to(@page.title, project_page_path(@project, @page.title))).html_safe -%>
 <% end -%>
