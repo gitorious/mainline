@@ -43,6 +43,7 @@ GEM
       rails (~> 3.0)
     addressable (2.2.8)
     arel (3.0.2)
+    bouncy-castle-java (1.5.0146.1)
     builder (3.0.4)
     capillary (1.0.2)
       json (~> 1.5)
@@ -91,6 +92,9 @@ GEM
     i18n (0.6.1)
     jdbc-mysql (5.1.13)
     journey (1.0.4)
+    jruby-openssl (0.7.7)
+      bouncy-castle-java (>= 1.5.0146.1)
+    jruby-rack (1.1.10)
     json (1.7.5)
     json (1.7.5-java)
     just_paginate (0.0.6)
@@ -221,6 +225,10 @@ GEM
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
+    trinidad (1.4.4)
+      jruby-rack (>= 1.1.10)
+      trinidad_jars (>= 1.1.0)
+    trinidad_jars (1.1.1)
     twitter-stream (0.1.16)
       eventmachine (>= 0.12.8)
       http_parser.rb (~> 0.5.1)
@@ -255,6 +263,7 @@ DEPENDENCIES
   gitorious_openid_auth (~> 1.1)
   highline
   httparty (~> 0.9)
+  jruby-openssl
   json (~> 1.5)
   just_paginate (= 0.0.6)
   launchy (= 2.0.5)
@@ -282,5 +291,6 @@ DEPENDENCIES
   state_machine (~> 1.1)
   thin (~> 1.2)
   thinking-sphinx (~> 2.0.10)
+  trinidad
   unicorn (~> 4.3.1)
   will_paginate (~> 3.0)
