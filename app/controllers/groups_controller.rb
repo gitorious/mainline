@@ -57,6 +57,7 @@ class GroupsController < ApplicationController
 
   def create
     @group = Team.create_group(params, current_user)
+    @group.save!
     flash[:success] = I18n.t "groups_controller.group_created"
     redirect_to group_path(@group)
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
