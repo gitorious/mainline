@@ -35,6 +35,7 @@ Gitorious::Application.routes.draw do
       get :pending_activation
       get :openid_build
       post :openid_create
+      get "/new" => "users#new"
 
       # Used to be we supported things like /users/~zmalltalker/mainline
       # No more, ~<user_name> is the canonical user URL namespace

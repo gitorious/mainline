@@ -181,6 +181,15 @@ class PagesControllerTest < ActionController::TestCase
           get :edit, :project_id => @project.to_param, :id => "NotHere"
         end
       end
+
+      should "render correctly" do
+        login_as :johan
+        git_stub = mock
+        git_stub.stubs(:tree).returns(stub(:/ => stub(:id => "", :data => "Well hey there")))
+        Repository.any_instance.stubs(:git).returns(git_stub)
+        get :edit, :project_id => @project.to_param, :id => "GreatSuccess"
+        assert_response :success
+      end
     end
 
     context "put preview" do
