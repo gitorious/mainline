@@ -3,10 +3,12 @@
 ** DONE Remove NEWS file
 ** DONE Write new README (needs to be improved later)
 ** DONE Kill repo_owner_path
-** TODO Instructions to users [1/4]
+** TODO Instructions to users [1/6]
 *** TODO Database configuration: Use mysql2
 *** TODO Stomp/ActiveMessaging is gone: No more broker.yml, no more ActiveMQ
 *** DONE Clean out vendor (thomanil fucked it up)
+*** TODO bin/gitorious
+*** TODO bin/git-proxy
 *** TODO Configuration changes
 *** gitorious_host -> host
 *** gitorious_client_host -> client_host

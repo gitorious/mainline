@@ -31,6 +31,7 @@ GITORIOUS_USER=`whoami`
 # been done.
 #sudo apt-get install -y git-core
 #mkdir -p $GITORIOUS_ROOT
+#cd $GITORIOUS_ROOT
 #git clone git://gitorious.org/gitorious/mainline.git gitorious
 
 # Gitorious uses submodules for non-ruby dependencies, such as
@@ -47,7 +48,7 @@ cd gitorious
 
 # Some system packages are required in order to build certain Ruby
 # dependencies that uses system libraries.
-sudo apt-get install -y make gcc g++ mysql-client mysql-server libmysqlclient-dev libxml2-dev libxslt1-dev libonig2
+sudo apt-get install -y make gcc g++ mysql-client mysql-server libmysqlclient-dev libxml2-dev libxslt1-dev libonig2 libreadline6-dev
 sudo service mysqld start
 
 # Install Ruby. Skip if you've already done this.
@@ -172,7 +173,7 @@ echo "With the background processes in order, start the server in production:"
 echo "rails server -e production"
 
 # To pull repositories over the git protocol, simply start the git daemon:
-sudo apt-get install git-daemon-run
+sudo apt-get install -y git-daemon-run
 git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories
 
 # To do Git over HTTP, you need a frontend server, as Gitorious uses

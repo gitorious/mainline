@@ -30,6 +30,7 @@ GITORIOUS_USER=`whoami`
 # been done.
 #sudo yum install -y git
 #mkdir -p $GITORIOUS_ROOT
+#cd $GITORIOUS_ROOT
 #git clone git://gitorious.org/gitorious/mainline.git gitorious
 
 # Gitorious uses submodules for non-ruby dependencies, such as
@@ -171,7 +172,7 @@ echo "With the background processes in order, start the server in production:"
 echo "rails server -e production"
 
 # To pull repositories over the git protocol, simply start the git daemon:
-sudo yum install git-daemon
+sudo yum install -y git-daemon
 git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories
 
 # To do Git over HTTP, you need a frontend server, as Gitorious uses
