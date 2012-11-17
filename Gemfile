@@ -14,7 +14,7 @@ gem "will_paginate", "~>3.0"
 gem "just_paginate", "0.0.6"
 gem "net-ldap", "~> 0.3"
 gem "capillary", "~> 1.0.1"
-gem "nokogiri", "1.5.0"
+gem "nokogiri", "~> 1.5"
 gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
