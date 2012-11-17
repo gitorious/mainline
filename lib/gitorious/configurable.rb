@@ -37,10 +37,11 @@ module Gitorious
     end
 
     def get(key, default = nil)
-      env_key = "#{@env_prefix}_#{key.to_s.upcase}"
-      return ENV[env_key] if !@env_prefix.nil? && ENV.key?(env_key)
-      settings = configs.detect { |c| c.key?(key) }
-      return settings[key] if settings
+      ([key] + aliases(key)).each do |k|
+        value = lookup(k)
+        issue_deprecation(k, key, deprecations[k]) if k != key
+        return value unless value.nil?
+      end
       return yield if block_given? && default.nil?
       default
     end
@@ -56,7 +57,41 @@ module Gitorious
       end
     end
 
+    def rename(old, new, comment = nil)
+      aliases(new) << old
+      deprecations[old] = comment
+      new
+    end
+
+    def aliases(key)
+      @aliases ||= {}
+      @aliases[key] ||= []
+    end
+
+    def on_deprecation(&block)
+      deprecation_listeners << block
+    end
+
     private
+    def lookup(key)
+      env_key = "#{@env_prefix}_#{key.to_s.upcase}"
+      return ENV[env_key] if !@env_prefix.nil? && ENV.key?(env_key)
+      settings = configs.detect { |c| c.key?(key) }
+      return settings[key] unless settings.nil?
+    end
+
+    def deprecation_listeners
+      @deprecation_listeners ||= []
+    end
+
+    def deprecations
+      @deprecations ||= {}
+    end
+
+    def issue_deprecation(old, new, comment)
+      deprecation_listeners.each { |l| l.call(old, new, comment) }
+    end
+
     def configs; @configs ||= []; end
   end
 end

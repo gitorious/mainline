@@ -157,6 +157,47 @@ class ConfigurationTest < MiniTest::Spec
       end
     end
   end
+
+  describe "deprecations" do
+    before do
+      @config = Gitorious::Configurable.new
+    end
+
+    it "looks up setting via deprecated key" do
+      @config.rename("host_name", "host")
+      @config.append("host_name" => "somewhere")
+
+      assert_equal "somewhere", @config.get("host")
+    end
+
+    it "calls callback when using deprecated key" do
+      args = []
+
+      @config.on_deprecation do |key, new, comment|
+        args = [key, new]
+      end
+
+      @config.rename("host_name", "host")
+      @config.append("host_name" => "somewhere")
+      host = @config.get("host")
+
+      assert_equal ["host_name", "host"], args
+    end
+
+    it "does not call callback when using non-deprecated key" do
+      args = []
+
+      @config.on_deprecation do |key, new, comment|
+        args = [key, new]
+      end
+
+      @config.rename("host_name", "host")
+      @config.append("host" => "somewhere")
+      host = @config.get("host")
+
+      assert_equal [], args
+    end
+  end
 end
 
 class Hell < RuntimeError; end
