@@ -107,6 +107,8 @@ production:
   host: localhost
   encoding: utf8" > config/database.yml
 
+bundle exec rake db:schema:load
+
 # Take note: This uses your user as the Gitorious user. That means
 # that Gitorious will take ownership (i.e.: destructively write to)
 # your ~/.ssh/authorized_keys. In many cases, this is not a worry. If
