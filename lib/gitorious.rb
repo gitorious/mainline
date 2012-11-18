@@ -23,6 +23,35 @@ module Gitorious
 
   # Application-wide configuration settings.
   Configuration = Configurable.new("GITORIOUS")
+  Configuration.rename("gitorious_host", "host")
+  Configuration.rename("gitorious_client_host", "client_host")
+  Configuration.rename("gitorious_client_port", "client_port")
+  Configuration.rename("sender_email_address", "email_sender")
+  Configuration.rename("gitorious_support_email", "support_email")
+  Configuration.rename("gitorious_clone_host", "git_daemon_host")
+  Configuration.rename("use_ssl", "scheme", <<-EOF) { |use_ssl| use_ssl ? "https" : "http" }
+The scheme setting should be set to "http"
+or "https".
+  EOF
+  Configuration.rename("gitorious_user", "user")
+  Configuration.rename("repos_and_projects_private_by_default", "projects_default_private", <<-EOF)
+Please note that this setting has been
+split into two settings:
+projects_default_private and repositories_default_private.
+  EOF
+  Configuration.rename("disable_record_throttling", "enable_record_throttling", <<-EOF) { |d| !d }
+You should invert this value.
+  EOF
+  Configuration.rename("exception_notification_emails", "exception_recipients")
+
+  Configuration.on_deprecation do |old, new, comment|
+    $stderr.puts(<<-EOF)
+WARNING! Setting '#{old}' in config/gitorious.yml is deprecated.
+Use '#{new}' instead. Many configuration settings have changed
+in Gitorious 3, please refer to config/gitorious.sample.yml for
+full documentation. #{comment}
+    EOF
+  end
 
   def self.site
     return @site if @site && cache?

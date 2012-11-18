@@ -197,6 +197,13 @@ class ConfigurationTest < MiniTest::Spec
 
       assert_equal [], args
     end
+
+    it "calls block to transform deprecated value" do
+      @config.rename("use_ssl", "scheme") { |use_ssl| "http#{use_ssl ? 's' : ''}" }
+      @config.append("use_ssl" => true)
+
+      assert_equal "https", @config.get("scheme")
+    end
   end
 end
 

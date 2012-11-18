@@ -18,8 +18,14 @@
 
 module Gitorious
   class Configurable
+    attr_reader :deprecation_listeners, :deprecations, :transformations, :configs
+
     def initialize(env_prefix = nil)
       @env_prefix = env_prefix
+      @deprecation_listeners = []
+      @deprecations = {}
+      @transformations = {}
+      @configs = []
     end
 
     def prepend(settings)
@@ -40,7 +46,10 @@ module Gitorious
       ([key] + aliases(key)).each do |k|
         value = lookup(k)
         issue_deprecation(k, key, deprecations[k]) if k != key
-        return value unless value.nil?
+        if !value.nil?
+          value = transformations[k].call(value) unless transformations[k].nil?
+          return value
+        end
       end
       return yield if block_given? && default.nil?
       default
@@ -57,9 +66,10 @@ module Gitorious
       end
     end
 
-    def rename(old, new, comment = nil)
+    def rename(old, new, comment = nil, &block)
       aliases(new) << old
       deprecations[old] = comment
+      transformations[old] = block
       new
     end
 
@@ -80,18 +90,8 @@ module Gitorious
       return settings[key] unless settings.nil?
     end
 
-    def deprecation_listeners
-      @deprecation_listeners ||= []
-    end
-
-    def deprecations
-      @deprecations ||= {}
-    end
-
     def issue_deprecation(old, new, comment)
       deprecation_listeners.each { |l| l.call(old, new, comment) }
     end
-
-    def configs; @configs ||= []; end
   end
 end
