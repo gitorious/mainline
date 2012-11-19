@@ -30,9 +30,9 @@
   </head>
 
   <body id="<%= controller.controller_name -%>">
-    <% unless GitoriousConfig["system_message"].blank? -%>
+    <% unless Gitorious::Configuration.get("system_message").blank? -%>
       <div id="system_message">
-        <p><strong><%= t("views.layout.system_notice") %>:</strong> <%= GitoriousConfig["system_message"] -%></p>
+        <p><strong><%= t("views.layout.system_notice") %>:</strong> <%= Gitorious::Configuration.get("system_message") -%></p>
       </div>
     <% end -%>
     <div id="header">

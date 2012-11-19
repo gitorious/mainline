@@ -286,17 +286,17 @@ archive_work_dir: "/var/git/tarballs-work"
 # rejection/approvals.
 #enable_project_approvals: false
 
+# System message that will appear on all pages if present
+#system_message:
+
+
+
+
 production:
 
   # --------
   # "TWEAKS"
   # --------
-
-  # System message that will appear on all pages if present
-  #system_message:
-
-  # Hides http:// clone URLs from repository boxes when set to true.
-  #hide_http_clone_urls: false
 
   # Hides git:// clone URLs from repository boxes when set to true.
   # Set to true if you don't intend to run a git-daemon.
