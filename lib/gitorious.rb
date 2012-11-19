@@ -48,8 +48,8 @@ You should invert this value.
     $stderr.puts(<<-EOF)
 WARNING! Setting '#{old}' in config/gitorious.yml is deprecated.
 Use '#{new}' instead. Many configuration settings have changed
-in Gitorious 3, please refer to config/gitorious.sample.yml for
-full documentation. #{comment}
+in Gitorious 3, please refer to config/gitorious.sample.yml for full documentation.
+#{comment}
     EOF
   end
 
