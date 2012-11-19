@@ -82,7 +82,9 @@
 # doc/templates/upstart for sample configurations of both git-daemon
 # and git-proxy. The default is for this service to run on the same
 # host as Gitorious (e.g. the `host` setting) on the default git
-# protocol port, 9418.
+# protocol port, 9418. Disabling the Git daemon will hide all git://
+# URLs from the UI.
+#enable_git_daemon: true
 #git_daemon_host: gitorious.local
 #git_daemon_port: 9418
 
@@ -95,7 +97,8 @@
 
 # Host and port used for Git over HTTP. See the main `host` and `port`
 # settings for further explanation. These default to whatever the main
-# `host` and `port` are set to.
+# `host` and `port` are set to. Disabling Git/HTTP will hide all Git
+# HTTP URLs from the UI.
 #enable_git_http: true
 #git_http_host: gitorious.local
 #git_http_port: 80
@@ -297,10 +300,6 @@ production:
   # --------
   # "TWEAKS"
   # --------
-
-  # Hides git:// clone URLs from repository boxes when set to true.
-  # Set to true if you don't intend to run a git-daemon.
-  #hide_git_clone_urls: false
 
   # Always display SSH URLs, regardless of push access? This setting should be
   # true if you have disabled both HTTP and git:// cloning (typically when

@@ -880,25 +880,15 @@ class RepositoriesControllerTest < ActionController::TestCase
     end
   end
 
-  context "when hiding git:// URLs" do
-    setup do
-      @hide_setting = GitoriousConfig["hide_git_clone_urls"]
-      GitoriousConfig["hide_git_clone_urls"] = true
-    end
+  should "not display git:// link when disabling the git daemon" do
+    Gitorious.stubs(:git_daemon).returns(nil)
+    project = projects(:johans)
+    repository = project.repositories.mainlines.first
+    repository.update_attribute(:ready, true)
 
-    teardown do
-      GitoriousConfig["hide_git_clone_urls"] = @hide_setting
-    end
+    get :show, :project_id => project.to_param, :id => repository.to_param
 
-    should "not display git:// link" do
-      project = projects(:johans)
-      repository = project.repositories.mainlines.first
-      repository.update_attribute(:ready, true)
-
-      get :show, :project_id => project.to_param, :id => repository.to_param
-
-      assert_no_match(/git:\/\//, @response.body)
-    end
+    assert_no_match(/git:\/\//, @response.body)
   end
 
   context "With private projects" do

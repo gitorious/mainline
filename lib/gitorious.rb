@@ -47,6 +47,9 @@ You should invert this value.
   Configuration.rename("hide_http_clone_urls", "enable_git_http", <<-MSG) { |d| !d }
 You should invert this value.
   MSG
+  Configuration.rename("hide_git_clone_urls", "enable_git_daemon", <<-MSG) { |d| !d }
+You should invert this value.
+  MSG
 
   Configuration.on_deprecation do |old, new, comment|
     $stderr.puts(<<-EOF)
@@ -80,6 +83,7 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
 
   def self.git_daemon
     return @git_daemon if @git_daemon && cache?
+    return nil if !Gitorious::Configuration.get("enable_git_daemon", true)
     host = Gitorious::Configuration.get("git_daemon_host") { Gitorious.host }
     port = Gitorious::Configuration.get("git_daemon_port")
     @git_daemon = Gitorious::GitMountPoint.new(host, port)

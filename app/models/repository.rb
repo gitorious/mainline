@@ -265,8 +265,7 @@ class Repository < ActiveRecord::Base
   end
 
   def git_cloning?
-    return false if GitoriousConfig["hide_git_clone_urls"]
-    return public?
+    return !Gitorious.git_daemon.nil? && public?
   end
 
   def ssh_cloning?
