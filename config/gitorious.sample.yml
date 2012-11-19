@@ -324,39 +324,29 @@ archive_work_dir: "/var/git/tarballs-work"
 # be assumed to be an image and included as an img tag.
 #logo_url:
 
+# Add more view paths if you want to override some or all of
+# Gitorious' views. Make sure you know what you're doing before
+# attepting this - there is no API guarantee from the current
+# controllers. If you override views, study the git log (the Changelog
+# may not mention these changes) before upgrading.
+#
+# This allows you to e.g. provide your own frontpage template by
+# saving the file:
+# vendor/plugin/mysite/views/site/public_index.html.erb
+#
+# (Note that this particular template requires is_gitorious_dot_org:
+# true). Refer to app/views/site/public_index.html.erb for how to customize.
+#additional_view_paths: vendor/plugin/mysite/views
 
 # Should LDAP be used for authorization?
 #enable_ldap_authorization: true
 
 production:
-
-  # --------
-  # "TWEAKS"
-  # --------
-
-  # Always display SSH URLs, regardless of push access? This setting should be
-  # true if you have disabled both HTTP and git:// cloning (typically when
-  # Gitorious is running in private mode). Setting this to true will always
-  # display the ssh URLs for a repository, even if the current user does not
-  # have access to push to it. ssh always allows cloning for users that have
-  # uploaded their public key.
-  #always_display_ssh_url: false
-
   # Is this gitorious.org? Read: should we have a very flashy homepage?
   #is_gitorious_dot_org: true
 
-  # Mangle visible e-mail addresses (spam protection)
-  #mangle_email_addresses: true
-
-  # ----------------
-  # THEMING SETTINGS
-  # ----------------
-
   # Stuff that's in the html <head>. custom stats javascript code etc
   #extra_html_head_data:
-
-  # The SSH fingerprint of your server
-  #ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
 
   # An array of two-element arrays to be rendered along the normal links in the
   # footer on the site The first element is the link text, the next is the URL
@@ -385,9 +375,6 @@ production:
   # relevant theme information in the Changelog, so you will need to refer to
   # the git log if updating gives you trouble.
 
-  # Site name. Default is "Gitorious"
-  #site_name: Gitorious
-
   # Additional stylesheets for most pages. "Most pages" is everything except for
   # the frontpage/public index, login page and the register page.
   #
@@ -409,32 +396,6 @@ production:
   # common_stylesheets setting
   #external_stylesheets: /mytheme/stylesheets/themed-public-index
 
-  # Use your own favicon
-  #favicon_url: http://www.mysite.com/favicon.ico
-
-  # Logo image. If this setting is not provided, the default Gitorious logo will
-  # be used. If you provide the setting, but no value, no logo image will be
-  # rendered, only the text "Gitorious" (may be useful if you want to provide a
-  # logo via CSS). If you provide a URL, it will be assumed to be an image and
-  # included as an img tag.
-  #logo_url:
-
-  # Add more view paths if you want to override some or all of Gitorious'
-  # views. Make sure you know what you're doing before attepting this - there is
-  # no API guarantee from the current controllers. If you override views, study
-  # the git log (the Changelog may not mention these changes) before upgrading.
-  #additional_view_paths: vendor/plugin/mysite/views
-  #
-  # This allows you to e.g. provide your own frontpage template by saving the
-  # file:
-  # vendor/plugin/mysite/views/site/public_index.html.erb
-  #
-  # (Note that this particular template requires is_gitorious_dot_org:
-  # true). Refer to app/views/site/public_index.html.erb for how to customize.
-
-  # If your site uses other mechanisms for authentication than the built-in
-  # enter a label to display next to the username field in Gitorious
-  # custom_username_label: Username
 # Sensible defaults for the development environment
 development:
   scheme: "http"

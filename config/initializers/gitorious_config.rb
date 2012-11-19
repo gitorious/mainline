@@ -27,6 +27,8 @@ unless defined? GitoriousConfig
     # Load so configure_singletons will configure them
     require Rails.root + "app/models/repository_root"
     require Rails.root + "app/models/project_license"
+    require Rails.root + "app/models/project_proposal"
+    require Rails.root + "app/models/team"
   end
 
   # Wire up the global Gitorious::Configuration singleton with settings
@@ -59,7 +61,6 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
 
   GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil?
   GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil?
-  GitoriousConfig["mangle_email_addresses"] = true if !GitoriousConfig.key?("mangle_email_addresses")
 
   # set default tos/privacy policy urls
   GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil? || GitoriousConfig["terms_of_service_url"] == ""
@@ -75,7 +76,6 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
   GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
   GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
   GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
-  GitoriousConfig["ssh_fingerprint"] = GitoriousConfig["ssh_fingerprint"] || "has not been configured"
 
   # Add additional paths for views
   if GitoriousConfig.key?("additional_view_paths")
