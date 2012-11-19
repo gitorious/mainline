@@ -325,7 +325,8 @@ archive_work_dir: "/var/git/tarballs-work"
 #logo_url:
 
 
-
+# Should LDAP be used for authorization?
+#enable_ldap_authorization: true
 
 production:
 
@@ -434,10 +435,6 @@ production:
   # If your site uses other mechanisms for authentication than the built-in
   # enter a label to display next to the username field in Gitorious
   # custom_username_label: Username
-
-  # Should LDAP be used for authorization?
-  # use_ldap_for_authorization: true
-
 # Sensible defaults for the development environment
 development:
   scheme: "http"

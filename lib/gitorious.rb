@@ -51,6 +51,7 @@ You should invert this value.
 You should invert this value.
   MSG
   Configuration.rename("custom_username_label", "username_label")
+  Configuration.rename("use_ldap_authorization", "enable_ldap_authorization")
 
   Configuration.on_deprecation do |old, new, comment|
     $stderr.puts(<<-EOF)

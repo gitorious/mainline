@@ -15,17 +15,15 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class Team
 
+class Team
   def self.group_implementation
     @group_implementation
   end
 
   def self.group_implementation=(klass)
-    @group_implementation = klass
+    @group_implementation = klass.is_a?(String) ? klass.constantize : klass
   end
-
-  self.group_implementation = GitoriousConfig["group_implementation"].constantize
 
   class Wrapper
     def initialize(group)
