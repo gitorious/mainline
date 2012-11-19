@@ -92,6 +92,7 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
 
   def self.ssh_daemon
     return @ssh_daemon if @ssh_daemon && cache?
+    return nil if !Gitorious::Configuration.get("enable_ssh_daemon", true)
     host = Gitorious::Configuration.get("ssh_daemon_host") { Gitorious.host }
     @ssh_daemon = Gitorious::GitSshMountPoint.new(Gitorious.user, host)
   end

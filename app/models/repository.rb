@@ -269,7 +269,7 @@ class Repository < ActiveRecord::Base
   end
 
   def ssh_cloning?
-    true
+    return !Gitorious.ssh_daemon.nil?
   end
 
   def push_url
@@ -277,7 +277,7 @@ class Repository < ActiveRecord::Base
   end
 
   def display_ssh_url?(user)
-    return true if GitoriousConfig["always_display_ssh_url"]
+    return true if !http_cloning? && !git_cloning? && ssh_cloning?
     can_push?(user, self)
   end
 

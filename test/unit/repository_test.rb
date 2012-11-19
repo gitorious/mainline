@@ -176,11 +176,11 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal expected_dir, @repository.full_repository_path
     end
 
-    should "always display SSH URLs when so instructed" do
-      old_value = GitoriousConfig["always_display_ssh_url"]
-      GitoriousConfig["always_display_ssh_url"] = true
+    should "always display SSH URLs when no git:// or http:// but SSH is enabled" do
+      Gitorious.stubs(:git_daemon).returns(nil)
+      Gitorious.stubs(:git_http).returns(nil)
+
       assert @repository.display_ssh_url?(users(:moe))
-      GitoriousConfig["always_display_ssh_url"] = old_value
     end
   end
 
