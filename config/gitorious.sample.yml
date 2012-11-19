@@ -335,7 +335,10 @@ archive_work_dir: "/var/git/tarballs-work"
 # vendor/plugin/mysite/views/site/public_index.html.erb
 #
 # (Note that this particular template requires is_gitorious_dot_org:
-# true). Refer to app/views/site/public_index.html.erb for how to customize.
+# true).
+#
+# This setting accepts either a single path or multiple paths, using
+# the YAML list syntax.
 #additional_view_paths: vendor/plugin/mysite/views
 
 # Should LDAP be used for authorization?

@@ -50,6 +50,15 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
     MSG
   end
 
+  # Add additional paths for views
+  additional_paths = Array(config.get("additional_view_paths", [])).each do |path|
+    path = File.expand_path(path)
+    if !File.exists?(path)
+      $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
+    end
+    Gitorious::Application.paths.app.views.unshift(path)
+  end
+
   # TODO: Port remaining settings
 
   GitoriousConfig = loader.hash(env)
@@ -76,18 +85,6 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
   GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
   GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
   GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
-
-  # Add additional paths for views
-  if GitoriousConfig.key?("additional_view_paths")
-    path = File.expand_path(GitoriousConfig["additional_view_paths"])
-
-    if !File.exists?(path)
-      $stderr.puts "WARNING: Additional view path '#{path}' does not exists, skipping"
-    else
-      additional_view_paths = ActionView::PathSet.new([path])
-      Gitorious::Application.paths.app.views.unshift(File.expand_path(GitoriousConfig["additional_view_paths"]))
-    end
-  end
 end
 
 GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"
