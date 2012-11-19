@@ -22,7 +22,7 @@ class Team
   end
 
   def self.group_implementation=(klass)
-    @group_implementation = klass.is_a?(String) ? klass.constantize : klass
+    @group_implementation = klass
   end
 
   class Wrapper

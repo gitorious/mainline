@@ -87,11 +87,6 @@ Tests may not work as intended.
         ProjectProposal.enable
       end
 
-      if defined?(Team)
-        implementation = config.get("enable_ldap_authorization", false) ? "LdapGroup" : "Group"
-        Team.group_implementation = implementation
-      end
-
       config
     end
 

@@ -28,7 +28,6 @@ unless defined? GitoriousConfig
     require Rails.root + "app/models/repository_root"
     require Rails.root + "app/models/project_license"
     require Rails.root + "app/models/project_proposal"
-    require Rails.root + "app/models/team"
   end
 
   # Wire up the global Gitorious::Configuration singleton with settings

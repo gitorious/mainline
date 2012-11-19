@@ -121,6 +121,9 @@ module Gitorious
         :domain => Gitorious.host =~ /\./ ? ".#{Gitorious.host}" : "",
         :expire_after => 3.weeks
       })
+
+      implementation = Gitorious::Configuration.get("enable_ldap_authorization", false) ? LdapGroup : Group
+      Team.group_implementation = implementation
     end
 
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
