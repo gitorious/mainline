@@ -16,6 +16,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "gitorious"
 
 # Middleware that handles HTTP cloning
 #
@@ -24,7 +25,6 @@
 #   path to the object requested
 # - This will be picked up by Apache (given mod-x_sendfile is
 #   installed) and then delivered to the client
-
 module Gitorious
   class GitHttpCloner
     TRUSTED_PROXIES = /^127\.0\.0\.1$|^(10|172\.(1[6-9]|2[0-9]|30|31)|192\.168)\./i
@@ -34,7 +34,7 @@ module Gitorious
     def self.call(env)
       match = /(.*\.git)(.*)/.match(env["PATH_INFO"])
       return NOT_FOUND_RESPONSE if match.nil?
-      return NOT_ALLOWED_RESPONSE if GitoriousConfig["hide_http_clone_urls"]
+      return NOT_ALLOWED_RESPONSE if Gitorious.git_http.nil?
       path = match[1]
       rest = match[2]
 

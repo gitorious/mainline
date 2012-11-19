@@ -44,6 +44,9 @@ You should invert this value.
   EOF
   Configuration.rename("exception_notification_emails", "exception_recipients")
   Configuration.rename("only_site_admins_can_create_projects", "enable_project_approvals")
+  Configuration.rename("hide_http_clone_urls", "enable_git_http", <<-MSG) { |d| !d }
+You should invert this value.
+  MSG
 
   Configuration.on_deprecation do |old, new, comment|
     $stderr.puts(<<-EOF)
@@ -90,6 +93,7 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
 
   def self.git_http
     return @git_http if @git_http && cache?
+    return nil if !Gitorious::Configuration.get("enable_git_http", true)
     host = Gitorious::Configuration.get("git_http_host") { Gitorious.host }
     port = Gitorious::Configuration.get("git_http_port") { Gitorious.port }
     scheme = Gitorious::Configuration.get("git_http_scheme") { Gitorious.scheme }

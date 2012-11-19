@@ -96,6 +96,7 @@
 # Host and port used for Git over HTTP. See the main `host` and `port`
 # settings for further explanation. These default to whatever the main
 # `host` and `port` are set to.
+#enable_git_http: true
 #git_http_host: gitorious.local
 #git_http_port: 80
 #git_http_scheme: https

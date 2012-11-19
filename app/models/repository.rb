@@ -261,7 +261,7 @@ class Repository < ActiveRecord::Base
   end
 
   def http_cloning?
-    !GitoriousConfig["hide_http_clone_urls"]
+    !Gitorious.git_http.nil?
   end
 
   def git_cloning?

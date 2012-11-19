@@ -68,16 +68,12 @@ class GitHttpCloningTest < ActionController::IntegrationTest
       assert_not_nil headers["X-Accel-Redirect"]
     end
 
-    context "disabling of http cloning" do
-      setup { GitoriousConfig["hide_http_clone_urls"] = true }
-      teardown { GitoriousConfig["hide_http_clone_urls"] = false }
+    should "not allow http cloning if denied by configuration" do
+      Gitorious.stubs(:git_http).returns(nil)
+      get @request_uri, {}
 
-      should "not allow http cloning if denied by configuration" do
-        get @request_uri, {}
-
-        assert_response 403
-        assert_nil headers['X-Sendfile']
-      end
+      assert_response 403
+      assert_nil headers['X-Sendfile']
     end
   end
 end
