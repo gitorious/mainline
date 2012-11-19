@@ -19,12 +19,9 @@ gem "memcache-client", "~> 1.8"
 gem "unicorn", "~> 4.3.1", :platforms => :ruby
 gem "exception_notification", :require => "exception_notifier"
 gem "thinking-sphinx", "~> 2.0.10"
-gem "ruby-hmac", "0.4.0", :platforms => :ruby_18
 gem "rails_autolink", "~> 1.0"
 gem "mysql2"
 gem "highline"
-gem "oniguruma", "~> 1.1", :platforms => :ruby_18
-gem "SystemTimer", "~> 1.2", :platforms => :ruby_18
 
 group :openid do
   gem "ruby-yadis", "0.3.4", :require => "yadis"
@@ -68,4 +65,10 @@ platform :jruby do
   gem "activerecord-jdbcmysql-adapter"
   gem "jruby-openssl"
   gem 'trinidad', :require => false
+end
+
+platform :ruby_18 do
+  gem "ruby-hmac", "0.4.0"
+  gem "oniguruma", "~> 1.1"
+  gem "SystemTimer", "~> 1.2"
 end
