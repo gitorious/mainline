@@ -1,3 +1,44 @@
+#!/usr/bin/env ruby
+
+require "yaml"
+
+old = YAML.load_file("./config/gitorious.yml")
+`cp config/gitorious.yml config/gitorious.yml-gts2-x.bu-#{Time.now.to_i}`
+
+def optional(settings, setting)
+  return "##{setting}:" if !settings.key?(setting)
+  "#{setting}: #{settings[setting]}"
+end
+
+def unported(settings, setting)
+  if settings.key?(setting)
+    puts "WARNING! #{setting} configuration not automatically ported,\n" +
+      "please edit the setting manually."
+  end
+end
+
+all = (old["test"] || {}).merge(old["development"] || {}).merge(old["production"] || {})
+
+File.open("./config/gitorious.yml", "w") do |f|
+  if old["production"]["messaging_adapter"] == "stomp"
+    puts "WARNING! Messaging adapter stomp is no longer supported. \n" +
+      "Refer to the Readme for information on running Redis and Resque. \n" +
+      "Temporarily using the sync adapter, please update gitorious.yml \n" +
+      "once Redis is set up properly."
+  end
+
+  unported(all, "licenses")
+  unported(all, "post_load")
+  unported(all, "additional_footer_links")
+  unported(all, "common_stylesheets")
+  unported(all, "external_stylesheets")
+
+  puts "Please be advised that only your production settings are ported"
+  puts "If you need to port your development settings as well, you must"
+  puts "do so manually. Refer to the generated configuration file for"
+  puts "available settings."
+
+  f.puts <<-CONFIG
 # The Gitorious configuration file controls several aspects of your
 # setup. While the default settings will work to some extent, you are
 # strongly recommended to review these settings upon initial
@@ -24,18 +65,18 @@
 # bottom of this file for suggested overrides for that environment.
 
 # Site name. Used in the title of the page and various other places.
-site_name: Gitorious
+site_name: #{all["site_name"]}
 
 # The user that owns the repositories on disk. The same user should
 # own the web server process. The user will have its
 # ~/.ssh/authorized_keys file generated and controlled by Gitorious.
 # It is highly recommended to use a dedicated user for this.
-user: git
+user: #{all["gitorious_user"]}
 
 # The path where git repositories are stored. The actual (bare)
 # repositories reside in
-# #{repository_base_path}/#{project.slug}/#{repository.name}.git/
-repository_base_path: "/var/git/repositories"
+# \#\{repository_base_path}/\#\{project.slug}/\#\{repository.name}.git/
+repository_base_path: #{all["repository_base_path"]}
 
 # Gitorious stores repositories under 'repository_base_path', directly
 # named by project slug and repository title. However, for large
@@ -44,7 +85,7 @@ repository_base_path: "/var/git/repositories"
 # deep to break them down into a hash-like tree of directories
 # instead. This helps avoid hitting (filesystem-specific) limits on
 # number of entries in a directory.
-#enable_repository_dir_sharding: false
+enable_repository_dir_sharding: #{all.key?("enable_repository_dir_sharding") ? all["enable_repository_dir_sharding"] : false}
 
 # Gitorious allows users to download archived tarballs of repositories. In
 # order to do this, it needs a separate directory to do the rough work,
@@ -53,10 +94,10 @@ repository_base_path: "/var/git/repositories"
 #
 # Tarball cache directory. Gitorious uses X-Sendfile to deliver files to
 # users, so this needs to be readable by the web server.
-archive_cache_dir: "/var/git/tarballs"
+archive_cache_dir: #{all["archive_cache_dir"]}
 
 # Temporary tarball work directory
-archive_work_dir: "/var/git/tarballs-work"
+archive_work_dir: #{all["archive_work_dir"]}
 
 # The host, port and scheme users reach Gitorious with. Used to
 # generate URLs where full URLs are required (e.g. in emails etc). The
@@ -74,9 +115,9 @@ archive_work_dir: "/var/git/tarballs-work"
 # If you need help generating an SSL certificate, see this guide:
 # https://github.com/ioerror/duraconf/blob/master/startssl/README.markdown
 #
-#scheme: https
-#host: gitorious.local
-#port: 443
+scheme: #{all["use_ssl"] ? 'https' : 'http'}
+host: #{all["gitorious_host"]}
+#port: 80
 
 # Internal scripts will make HTTP requests to Gitorious for certain
 # kinds of information (e.g. bin/gitorious uses HTTP to figure out
@@ -88,8 +129,8 @@ archive_work_dir: "/var/git/tarballs-work"
 # frontend web server knows about these as well. Internal requests do
 # not use SSL, so if you're serving SSL-only to your users, make sure
 # your application can be reached over HTTP locally.
-#client_host: localhost
-#client_port: 80
+client_host: #{all["gitorious_client_host"]}
+client_port: #{all["gitorious_client_port"]}
 
 # Host for pulling and pushing over SSH. Gitorious currently does not
 # support running the SSH daemon on any other port than the default
@@ -102,7 +143,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # will be displayed to any user. Anyone with a valid SSH key is
 # allowed to clone over SSH.
 #enable_ssh_daemon: true
-#ssh_daemon_host: gitorious.local
+ssh_daemon_host: #{all["gitorious_clone_host"] || all["gitorious_host"]}
 
 # Host and port used to reach the Gitorious git-daemon. Note that the
 # git-daemon service must be run separately from Gitorious. See
@@ -111,16 +152,16 @@ archive_work_dir: "/var/git/tarballs-work"
 # host as Gitorious (e.g. the `host` setting) on the default git
 # protocol port, 9418. Disabling the Git daemon will hide all git://
 # URLs from the UI.
-#enable_git_daemon: true
-#git_daemon_host: gitorious.local
+enable_git_daemon: #{!all["hide_git_clone_urls"]}
+git_daemon_host: #{all["gitorious_clone_host"] || all["gitorious_host"]}
 #git_daemon_port: 9418
 
 # Host and port used for Git over HTTP. See the main `host` and `port`
 # settings for further explanation. These default to whatever the main
 # `host` and `port` are set to. Disabling Git/HTTP will hide all Git
 # HTTP URLs from the UI.
-#enable_git_http: true
-#git_http_host: gitorious.local
+enable_git_http: #{!all["hide_http_clone_urls"]}
+git_http_host: #{all["gitorious_clone_host"] || all["gitorious_host"]}
 #git_http_port: 80
 #git_http_scheme: https
 
@@ -137,7 +178,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # Furthermore, you should instruct Nginx to consider these URLs
 # private to prevent direct access to them. Have a look in
 # doc/templates/nginx.conf.sample for an example.
-#frontend_server: nginx
+frontend_server: #{all["frontend_server"] || 'apache'}
 
 # Messaging queue configuration
 # Possible values: resque, test, sync. Default value is resque. The
@@ -146,7 +187,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # never processed). The sync adapter is intended for development use,
 # but may also suit low traffic setups where performance is not
 # critical.
-#messaging_adapter: resque
+messaging_adapter: #{all["messaging_adapter"] == 'stomp' ? 'sync' : all["messaging_adapter"]}
 
 # When Gitorious is running in public mode (true), everyone with
 # access to the server can view and clone repositories. Private mode
@@ -158,7 +199,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # disable HTTP and git:// cloning. These protocols are anonymous, and
 # will allow unregistered users to pull repositories, given that they
 # somehow obtained the correct URLs.
-#public_mode: true
+public_mode: #{!!all["public_mode"]}
 
 # Enabling private repositories allows users to control read-access to
 # their repositories. Repositories are public by default, but
@@ -166,13 +207,13 @@ archive_work_dir: "/var/git/tarballs-work"
 # limit who can browse and pull from individual repositories and/or
 # projects. More information is available in the Gitorious Wiki:
 # https://gitorious.org/gitorious/pages/PrivateRepositories
-#enable_private_repositories: false
+enable_private_repositories: #{!!all["enable_private_repositories"]}
 
 # New projects default to being private
-#projects_default_private: false
+projects_default_private: #{!!all["repos_and_projects_private_by_default"]}
 
 # New repositories default to being private
-#repositories_default_private: false
+repositories_default_private: #{!!all["repos_and_projects_private_by_default"]}
 
 # Only site admins can create projects. If a regular user attempts to
 # create a project (s)he is redirected to a form where a project
@@ -180,25 +221,25 @@ archive_work_dir: "/var/git/tarballs-work"
 # notified by mail and are able to review porposed projects before
 # approving creation. Users are notified by mail of
 # rejection/approvals.
-#enable_project_approvals: false
+enable_project_approvals: #{all["only_site_admins_can_create_projects"]}
 
 # Session key. It is recommended to use a long random string for this.
 # A suitable key can be generated with `apg -m 64`. Make sure you
 # paste the key as one long string, no newlines or escaped characters.
-#cookie_secret: sadfk8asd_-:;SDAD)(97dsa789ssf
+cookie_secret: #{all["cookie_secret"]}
 
 # Define your locale. See config/locales/ for supported locales. Note
 # that locales other than en are likely to be incomplete at this
 # point. Feel free to contribute translations.
-#locale: en
+locale: #{all["locale"]}
 
 # The (optional name and) address used when sending emails. This
 # defaults to "Gitorious <no-reply@<host>>. Can be set to an email
 # address only, or Name <address>.
-#email_sender: Gitorious <no-reply@gitorious.local>
+email_sender: #{all["sender_email_address"]}
 
 # Should LDAP be used for authorization?
-#enable_ldap_authorization: true
+enable_ldap_authorization: #{!!all["use_ldap_authorization"]}
 
 # Gitorious throttles the rate at which users can create database
 # records (repositories, projects, messages..) Users can only create X
@@ -207,12 +248,12 @@ archive_work_dir: "/var/git/tarballs-work"
 # timeframe has passed to create more records of that type. Disable
 # this only if you trust all your users not to abuse/spam/DDOS your
 # Gitorious instance with repo/msg/project creation.
-#enable_record_throttling: true
+enable_record_throttling: #{!all["disable_record_throttling"]}
 
 # The maximum number of seconds to allow the web server to wait for
 # diffs for a merge request. This is used to prevent huge merge
 # requests from spawning 100 % CPU processes that never die.
-#merge_request_diff_timeout: 10
+merge_request_diff_timeout: #{all["merge_request_diff_timeout"] || 10}
 
 # List of IP addresses that are allowed to access certain possibly
 # sensitive services. Currently this only includes
@@ -234,7 +275,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # If Gitorious trips on an unrecoverable error, it will send you an
 # email with details if you provide your addresses here. To provide
 # multiple addresses, separate them with commas
-#exception_recipients: ops@gitorious.local
+#{optional(all, "exception_notification_emails")}
 
 # The git binary. Gitorious will use the binary for its various Git
 # activity. Gitorious will also list the Git version in the FAQ.
@@ -297,48 +338,48 @@ archive_work_dir: "/var/git/tarballs-work"
 
 # The default license. Should be an exact match with one of the names
 # in the list above.
-#default_license: GNU Affero General Public License (AGPLv3)
+default_license: #{all["default_license"] || "GNU Affero General Public License (AGPLv3)"}
 
 # By default the label of the license field is "License". However, the
 # license field may be repurposed for certain installs, in which case
 # it may make sense to rename the label as well.
-#license_label: Username
+license_label: #{all["license_label"] || "License"}
 
 # If desired, license descriptions can be displayed in the sidebar
 # when creating new projects. This can ease the task of choosing a
 # license, especially if the license field has been repurposed to some
 # company internal classification system.
-#enable_sidebar_license_descriptions: false
+enable_sidebar_license_descriptions: #{!!all["show_license_descriptions_in_sidebar"]}
 
 # If your site uses other mechanisms for authentication than the
 # built-in database authentication, enter a label to display next to
 # the username field in Gitorious
-#username_label: Username
+username_label: #{all["username_label"] || "Username"}
 
 # System message that will appear on all pages if present
-#system_message:
+#{optional(all, "system_message")}
 
 # Email address to the support for the Gitorious server. Default is
 # gitorious-support@<host>
-#support_email: gitorious-support@gitorious.local
+#{optional(all, "support_email")}
 
 # Mangle visible e-mail addresses (spam protection)
-#mangle_email_addresses: true
+mangle_email_addresses: #{all["mangle_email_addresses"]}
 
 # Logo image. If this setting is not provided, the default Gitorious
 # logo will be used. If you provide the setting, but no value, no logo
 # image will be rendered, only the text "Gitorious" (may be useful if
 # you want to provide a logo via CSS). If you provide a URL, it will
 # be assumed to be an image and included as an img tag.
-#logo_url:
+#{optional(all, "logo_url")}
 
 # Use your own favicon. If not specified, the default Gitorious
 # favicon will be used.
-#favicon_url: http://www.mysite.com/favicon.ico
+#{optional(all, "favicon_url")}
 
 # The SSH fingerprint of your server. This is displayed in the FAQ if
 # set.
-#ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
+#{optional(all, "ssh_fingerprint")}
 
 # Add more view paths if you want to override some or all of
 # Gitorious' views. Make sure you know what you're doing before
@@ -355,7 +396,7 @@ archive_work_dir: "/var/git/tarballs-work"
 #
 # This setting accepts either a single path or multiple paths, using
 # the YAML list syntax.
-#additional_view_paths: vendor/plugin/mysite/views
+#{optional(all, "additional_view_paths")}
 
 ######################################################################
 # The following are UI theming settings. They are deprecated, and    #
@@ -368,10 +409,10 @@ archive_work_dir: "/var/git/tarballs-work"
 #  - /some/file/to/load.rb
 
 # Is this gitorious.org? Read: should we have a very flashy homepage?
-#is_gitorious_dot_org: true
+is_gitorious_dot_org: #{!!all["is_gitorious_dot_org"]}
 
 # Stuff that's in the html <head>. custom stats javascript code etc
-#extra_html_head_data:
+#{optional(all, "extra_html_head_data")}
 
 # An array of two-element arrays to be rendered along the normal links in the
 # footer on the site The first element is the link text, the next is the URL
@@ -381,18 +422,18 @@ archive_work_dir: "/var/git/tarballs-work"
 
 # Set to true if you want to render terms of service and privacy policy links
 # in the footer.
-#terms_of_use: false
+#{optional(all, "terms_of_use")}
 
 # Actual URLs to terms of service and privacy policy pages. Note that the
 # defaults point to gitorious.org's policies. If you want to provide your own,
 # add app/views/site/tos.html.erb and then provide /about/tos as the URL. For
 # information on how to format the template, take a look at
 # app/views/site/about.html.erb
-#terms_of_service_url: http://en.gitorious.org/tos
-#privacy_policy_url: http://en.gitorious.org/privacy_policy
+terms_of_service_url: #{all["terms_of_service_url"] || 'http://en.gitorious.org/tos'}
+privacy_policy_url: #{all["privacy_policy_url"] || 'http://en.gitorious.org/privacy_policy'}
 
 # Additional text/markup displayed in the footer.
-#footer_blurb
+footer_blurb: #{all["footer_blurb"]}
 
 # The following settings are useful if you're interested in theming your
 # Gitorious install. Please note however, that we don't give any API
@@ -424,22 +465,65 @@ archive_work_dir: "/var/git/tarballs-work"
 # common_stylesheets setting
 #external_stylesheets: /mytheme/stylesheets/themed-public-index
 
-# Sensible defaults for the development environment
+# Overrides for the development environment
 development:
-  scheme: "http"
-  host: localhost
-  port: 3000
-  client_host: localhost
-  client_port: 3000
-  git_daemon_host: localhost
-  git_daemon_port: 9418
-  ssh_daemon_host: localhost
-  git_http_host: localhost
-  git_http_port: 3000
-  git_http_scheme: http
-  messaging_adapter: sync
-  enable_record_throttling: false
-  merge_request_diff_timeout: 30
-  site_name: Gitorious Development mode
+  #site_name:
+  #user:
+  #repository_base_path:
+  #enable_repository_dir_sharding:
+  #archive_cache_dir:
+  #archive_work_dir:
+  #host:
+  #port:
+  #scheme:
+  #client_host:
+  #client_port:
+  #enable_ssh_daemon:
+  #ssh_daemon_host:
+  #enable_git_daemon:
+  #git_daemon_host:
+  #git_daemon_port:
+  #enable_git_http:
+  #git_http_host:
+  #git_http_port:
+  #git_http_scheme:
+  #frontend_server:
+  #public_mode:
+  #enable_private_repositories:
+  #projects_default_private:
+  #repositories_default_private:
+  #enable_project_approvals:
+  #cookie_secret:
+  #locale:
+  #email_sender:
+  #enable_ldap_authorization:
+  #enable_record_throttling:
+  #merge_request_diff_timeout:
+  #remote_ops_ips:
+  #exception_recipients:
+  #git_binary:
+  #git_version:
+  #licenses:
+  #default_license:
+  #license_label:
+  #enable_sidebar_license_descriptions:
+  #username_label:
+  #system_message:
+  #support_email:
+  #mangle_email_addresses:
+  #logo_url:
+  #favicon_url:
+  #ssh_fingerprint:
+  #post_load:
+  #is_gitorious_dot_org:
+  #terms_of_use:
+  #extra_html_head_data:
+  #footer_blurb:
+  #common_stylesheets:
+  #external_stylesheets:
 
 # Test configuration can be found in test/gitorious.yml
+  CONFIG
+
+  puts "config/gitorious.yml upgraded!"
+end
