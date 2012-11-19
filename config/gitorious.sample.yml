@@ -23,6 +23,9 @@
 # run in development mode. Review the development mode section to the
 # bottom of this file for suggested overrides for that environment.
 
+# Site name. Used in the title of the page and various other places.
+#site_name: Gitorious
+
 # The user that owns the repositories on disk. The same user should
 # own the web server process. The user will have its
 # ~/.ssh/authorized_keys file generated and controlled by Gitorious.
@@ -291,6 +294,29 @@ archive_work_dir: "/var/git/tarballs-work"
 
 # System message that will appear on all pages if present
 #system_message:
+
+# Mangle visible e-mail addresses (spam protection)
+#mangle_email_addresses: true
+
+# The SSH fingerprint of your server. This is displayed in the FAQ if
+# set.
+#ssh_fingerprint: "7e:af:8d:ec:f0:39:5e:ba:52:16:ce:19:fa:d4:b8:7d"
+
+# If your site uses other mechanisms for authentication than the
+# built-in database authentication, enter a label to display next to
+# the username field in Gitorious
+#username_label: Username
+
+# Use your own favicon. If not specified, the default Gitorious
+# favicon will be used.
+#favicon_url: http://www.mysite.com/favicon.ico
+
+# Logo image. If this setting is not provided, the default Gitorious
+# logo will be used. If you provide the setting, but no value, no logo
+# image will be rendered, only the text "Gitorious" (may be useful if
+# you want to provide a logo via CSS). If you provide a URL, it will
+# be assumed to be an image and included as an img tag.
+#logo_url:
 
 
 

@@ -58,10 +58,6 @@ module SessionsHelper
   end
 
   def login_field_label
-    if custom_label = GitoriousConfig["custom_username_label"]
-      custom_label
-    else
-      t("views.sessions.label")
-    end
+    Gitorious::Configuration.get("username_label", t("views.sessions.label"))
   end
 end

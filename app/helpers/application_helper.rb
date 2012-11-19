@@ -514,21 +514,13 @@ module ApplicationHelper
   end
 
   def favicon_link_tag
-    unless (url = GitoriousConfig["favicon_url"]).blank?
-      "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
-    end
+    url = Gitorious::Configuration.get("favicon_url", "/favicon.ico")
+    "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
   end
 
   def logo_link
-    visual = if !GitoriousConfig.key?("logo_url")
-               image_tag("/img/logo.png")
-             elsif GitoriousConfig["logo_url"].blank?
-               "Gitorious"
-             else
-               image_tag(GitoriousConfig["logo_url"])
-             end
-
-    link_to visual, root_path
+    logo = Gitorious::Configuration.get("logo_url", "/img/logo.png")
+    link_to(logo.blank? ? "Gitorious" : image_tag(logo), root_path)
   end
 
   # inserts a <wbr> tag somewhere in the middle of +str+

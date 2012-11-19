@@ -50,6 +50,7 @@ You should invert this value.
   Configuration.rename("hide_git_clone_urls", "enable_git_daemon", <<-MSG) { |d| !d }
 You should invert this value.
   MSG
+  Configuration.rename("custom_username_label", "username_label")
 
   Configuration.on_deprecation do |old, new, comment|
     $stderr.puts(<<-EOF)

@@ -34,7 +34,7 @@ module UsersHelper
   end
 
   def mangled_mail(email)
-    if GitoriousConfig["mangle_email_addresses"]
+    if Gitorious::Configuration.get("mangle_email_addresses", true)
       user, domain = h(email).split("@", 2)
       return user if domain.blank?
       domain, ext = domain.split(".", 2)

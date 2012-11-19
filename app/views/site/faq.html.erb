@@ -32,12 +32,17 @@
     "more info" next to the repository's "push url") for info on how to push to it.</p>
 </div>
 
-<div class="faq-entry">
-  <h3>What is the SSH key fingerprint of the server I am pushing to?</h3>
-  <p> The SSH key fingerprint of the <%= Gitorious.host %> server is:<br />
-    <code><%= GitoriousConfig["ssh_fingerprint"] %></code></p>
-</div>
-
+<% if Gitorious::Configuration.get("ssh_fingerprint") %>
+  <div class="faq-entry">
+    <h3>What is the SSH key fingerprint of the server I am pushing to?</h3>
+    <p>
+      The SSH key fingerprint of the <%= Gitorious.host %> server is:<br />
+      <code><%= Gitorious::Configuration.get("ssh_fingerprint") %></code>
+    </p>
+  </div>
+<% else %>
+  <!-- Server SSH key fingerprint is missing from Gitorious configuration -->
+<% end %>
 
 <div class="faq-entry">
   <h3>How do I point my local Git repository at Gitorious?</h3>
