@@ -515,7 +515,7 @@ module ApplicationHelper
 
   def favicon_link_tag
     url = Gitorious::Configuration.get("favicon_url", "/favicon.ico")
-    "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">"
+    "<link rel=\"shortcut icon\" href=\"#{url}\" type=\"image/x-icon\">".html_safe
   end
 
   def logo_link
