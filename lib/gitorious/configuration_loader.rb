@@ -83,6 +83,10 @@ Tests may not work as intended.
         ProjectLicense.default = config.get("default_license", ProjectLicense.first.name)
       end
 
+      if config.get("enable_project_approvals") && defined?(ProjectProposal)
+        ProjectProposal.enable
+      end
+
       config
     end
 

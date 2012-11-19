@@ -277,19 +277,19 @@ archive_work_dir: "/var/git/tarballs-work"
 # in the list above.
 #default_license: GNU Affero General Public License (AGPLv3)
 
+# Only site admins can create projects. If a regular user attempts to
+# create a project (s)he is redirected to a form where a project
+# proposal (name+description) can be submitted. Site admins are
+# notified by mail and are able to review porposed projects before
+# approving creation. Users are notified by mail of
+# rejection/approvals.
+#enable_project_approvals: false
+
 production:
 
   # --------
   # "TWEAKS"
   # --------
-
-  # Only site admins can create projects.  If a regular user attempts
-  # to create a project (s)he is redirected to a form where a project
-  # proposal (name+description) can be submitted. Site admins are
-  # notified by mail and are able to review porposed projects before
-  # approving creation. Users are notified by mail of
-  # rejection/approvals.
-  # only_site_admins_can_create_projects: false
 
   # System message that will appear on all pages if present
   #system_message:

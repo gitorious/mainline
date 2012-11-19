@@ -43,6 +43,7 @@ projects_default_private and repositories_default_private.
 You should invert this value.
   EOF
   Configuration.rename("exception_notification_emails", "exception_recipients")
+  Configuration.rename("only_site_admins_can_create_projects", "enable_project_approvals")
 
   Configuration.on_deprecation do |old, new, comment|
     $stderr.puts(<<-EOF)

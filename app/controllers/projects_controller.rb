@@ -27,7 +27,7 @@ class ProjectsController < ApplicationController
 
   before_filter :login_required,
     :only => [:create, :update, :destroy, :new, :edit, :confirm_delete]
-  before_filter :check_if_only_site_admins_can_create, :only => [:create]
+  before_filter :check_if_project_proposal_is_required, :only => [:create]
   before_filter :find_project,
     :only => [:show, :clones, :edit, :update, :confirm_delete, :destroy, :edit_slug]
   before_filter :require_admin, :only => [:edit, :update, :edit_slug]
@@ -91,7 +91,7 @@ class ProjectsController < ApplicationController
   end
 
   def new
-    if (GitoriousConfig["only_site_admins_can_create_projects"] & !site_admin?(current_user))
+    if ProjectProposal.required?(current_user)
       redirect_to(:controller => "admin/project_proposals", :action => :new)
     end
     @project = Project.new
@@ -187,13 +187,11 @@ class ProjectsController < ApplicationController
     repositories.sort_by { |ml| ml.last_pushed_at || Time.utc(1970) }.reverse
   end
 
-  def check_if_only_site_admins_can_create
-    if GitoriousConfig["only_site_admins_can_create_projects"]
-      unless site_admin?(current_user)
-        flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
-        redirect_to projects_path
-        return false
-      end
+  def check_if_project_proposal_is_required
+    if ProjectProposal.required?(current_user)
+      flash[:error] = I18n.t("projects_controller.create_only_for_site_admins")
+      redirect_to(projects_path)
+      return false
     end
   end
 

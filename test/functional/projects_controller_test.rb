@@ -551,13 +551,13 @@ class ProjectsControllerTest < ActionController::TestCase
 
   context "when only admins are allowed to create new projects" do
     setup do
-      GitoriousConfig["only_site_admins_can_create_projects"] = true
+      ProjectProposal.enable
       users(:johan).update_attribute(:is_admin, true)
       users(:moe).update_attribute(:is_admin, false)
     end
 
     teardown do
-      GitoriousConfig["only_site_admins_can_create_projects"] = false
+      ProjectProposal.disable
     end
 
     should "redirect regular users to the project approval workflow" do
