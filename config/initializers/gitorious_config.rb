@@ -36,6 +36,18 @@ unless defined? GitoriousConfig
   default_adapter = env == "test" ? "test" : "resque"
   Gitorious::Messaging.adapter = config.get("messaging_adapter", default_adapter)
 
+  if !config.get("symlinked_mirror_repo_base").nil?
+    $stderr.puts <<-MSG
+The symlinked_mirror_repo_base setting in config/gitorious.yml is no
+longer supported. Please specify this directory by running the
+mirror:symlinkedrepos rake task with an environment variable instead.
+Remember to update your crontab if you run this task with cron.
+
+Example:
+env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlinkedrepos
+    MSG
+  end
+
   # TODO: Port remaining settings
 
   GitoriousConfig = loader.hash(env)
