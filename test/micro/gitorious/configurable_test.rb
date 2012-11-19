@@ -198,6 +198,19 @@ class ConfigurationTest < MiniTest::Spec
       assert_equal [], args
     end
 
+    it "does not call callback when using default for renamed key" do
+      args = []
+
+      @config.on_deprecation do |key, new, comment|
+        args = [key, new]
+      end
+
+      @config.rename("host_name", "host")
+      host = @config.get("host", "localhost")
+
+      assert_equal [], args
+    end
+
     it "calls block to transform deprecated value" do
       @config.rename("use_ssl", "scheme") { |use_ssl| "http#{use_ssl ? 's' : ''}" }
       @config.append("use_ssl" => true)

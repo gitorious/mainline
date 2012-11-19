@@ -45,7 +45,7 @@ module Gitorious
     def get(key, default = nil)
       ([key] + aliases(key)).each do |k|
         value = lookup(k)
-        issue_deprecation(k, key, deprecations[k]) if k != key
+        issue_deprecation(k, key, deprecations[k]) if k != key && !value.nil?
         if !value.nil?
           value = transformations[k].call(value) unless transformations[k].nil?
           return value
