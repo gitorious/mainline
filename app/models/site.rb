@@ -1,5 +1,6 @@
 # encoding: utf-8
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -26,9 +27,9 @@ class Site < ActiveRecord::Base
   after_create :init_wiki_git_path
 
   def self.default
-    site = Site.where(:title => GitoriousConfig["site_name"], :subdomain => nil).first
+    site = Site.where(:title => Gitorious.site_name, :subdomain => nil).first
     if site.nil?
-      site = Site.new(:title => GitoriousConfig["site_name"])
+      site = Site.new(:title => Gitorious.site_name)
       site.save
     end
     site

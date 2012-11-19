@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-unless defined? GitoriousConfig
+if !defined?(Gitorious::Configuration) || !Gitorious.configured?
   require "gitorious/configuration_loader"
   require "gitorious/messaging"
 
@@ -58,33 +58,10 @@ env MIRROR_BASEDIR=/var/www/gitorious/repo-mirror bundle exec rake mirror:symlin
     Gitorious::Application.paths.app.views.unshift(path)
   end
 
-  # TODO: Port remaining settings
-
-  GitoriousConfig = loader.hash(env)
-  GitoriousConfig["is_gitorious_dot_org"] = true if GitoriousConfig["is_gitorious_dot_org"].nil?
-
-  if !GitoriousConfig.key?("additional_footer_links")
-    GitoriousConfig["additional_footer_links"] = [["Professional Gitorious Services", "http://gitorious.com/"]]
-  end
-
-  GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil?
-  GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil?
-
-  # set default tos/privacy policy urls
-  GitoriousConfig["terms_of_service_url"] = "http://en.gitorious.org/tos" if GitoriousConfig["terms_of_service_url"].nil? || GitoriousConfig["terms_of_service_url"] == ""
-  GitoriousConfig["privacy_policy_url"] = "http://en.gitorious.org/privacy_policy" if GitoriousConfig["privacy_policy_url"].nil? || GitoriousConfig["privacy_policy_url"] == ""
-
-
+  config.append("git_version" => `#{Gitorious.git_binary} --version`.chomp)
 
   if !Gitorious.site.valid_fqdn? && defined?(Rails)
     Rails.logger.warn "Invalid subdomain name #{Gitorious.host}. Session cookies will not work!\n" +
       "See http://gitorious.org/gitorious/pages/ErrorMessages for further explanation"
   end
-
-  GitoriousConfig["site_name"] = GitoriousConfig["site_name"] || "Gitorious"
-  GitoriousConfig["discussion_url"] = GitoriousConfig.key?("discussion_url") ? GitoriousConfig["discussion_url"] : "http://groups.google.com/group/gitorious"
-  GitoriousConfig["blog_url"] = GitoriousConfig.key?("blog_url") ? GitoriousConfig["blog_url"] : "http://blog.gitorious.org"
 end
-
-GitoriousConfig["git_binary"] = GitoriousConfig["git_binary"] || "/usr/bin/env git"
-GitoriousConfig["git_version"] = `#{GitoriousConfig['git_binary']} --version`.chomp

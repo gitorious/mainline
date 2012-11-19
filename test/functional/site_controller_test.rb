@@ -28,19 +28,6 @@ class SiteControllerTest < ActionController::TestCase
     setup_ssl_from_config
   end
 
-  def alter_gitorious_config(key, value)
-    old_value = GitoriousConfig[key]
-    GitoriousConfig[key] = value
-
-    yield
-
-    if old_value.nil?
-      GitoriousConfig.delete(key)
-    else
-      GitoriousConfig[key] = old_value
-    end
-  end
-
   context "#activity" do
     should "render the global activity timeline" do
       get :public_timeline
@@ -75,7 +62,7 @@ class SiteControllerTest < ActionController::TestCase
 
     context "Anonymous users" do
       should "render the public timeline" do
-        alter_gitorious_config("is_gitorious_dot_org", false) do
+        Gitorious::Configuration.override("is_gitorious_dot_org" => false) do
           get :index
           assert_response :success
           assert_template "site/index"
@@ -93,7 +80,11 @@ class SiteControllerTest < ActionController::TestCase
       setup do
         @project = Project.first
         enable_private_repositories
-        GitoriousConfig["is_gitorious_dot_org"] = false
+        @settings = Gitorious::Configuration.append("is_gitorious_dot_org" => false)
+      end
+
+      teardown do
+        Gitorious::Configuration.prune(@settings)
       end
 
       should "not display unauthenticated projects" do
@@ -194,18 +185,18 @@ class SiteControllerTest < ActionController::TestCase
 
   context "in Private Mode" do
     setup do
-      GitoriousConfig["is_gitorious_dot_org"] = false
+      @settings = Gitorious::Configuration.append("is_gitorious_dot_org" => false)
     end
 
     teardown do
-      GitoriousConfig["is_gitorious_dot_org"] = true
+      Gitorious::Configuration.prune(@settings)
     end
 
     should "GET / should not show private content in the homepage" do
-      Gitorious::Configuration.override("public_mode" => false) do
-        get :index
-      end
+      Gitorious.stubs(:public?).returns(false)
+      get :index
 
+      assert_response 200
       assert_no_match(/Newest projects/, @response.body)
       assert_no_match(/action\=\"\/search"/, @response.body)
       assert_no_match(/Creating a user account/, @response.body)

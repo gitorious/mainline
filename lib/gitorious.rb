@@ -52,6 +52,7 @@ You should invert this value.
   MSG
   Configuration.rename("custom_username_label", "username_label")
   Configuration.rename("use_ldap_authorization", "enable_ldap_authorization")
+  Configuration.rename("show_license_descriptions_in_sidebar", "enable_sidebar_license_descriptions")
 
   Configuration.on_deprecation do |old, new, comment|
     $stderr.puts(<<-EOF)
@@ -173,6 +174,33 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
   def self.frontend_server
     return @frontend_server if @frontend_server && cache?
     @frontend_server = Gitorious::Configuration.get("frontend_server", "nginx").downcase
+  end
+
+  def self.dot_org?
+    @is_gitorious_org = Gitorious::Configuration.get("is_gitorious_dot_org", true)
+  end
+
+  def self.git_binary
+    return @git_binary if @git_binary && cache?
+    @git_binary = Gitorious::Configuration.get("git_binary", "/usr/bin/env git")
+  end
+
+  def self.git_version
+    return @git_version if @git_version && cache?
+    @git_version = Gitorious::Configuration.get("git_version")
+  end
+
+  def self.site_name
+    return @site_name if @site_name && cache?
+    @site_name = Gitorious::Configuration.get("site_name", "Gitorious")
+  end
+
+  def self.configured?
+    @configured
+  end
+
+  def self.configured!
+    @configured = true
   end
 
   private

@@ -71,6 +71,6 @@ module ProjectsHelper
   end
 
   def license_label(scope = nil)
-    GitoriousConfig["license_label"] || t("license", :scope => scope)
+    Gitorious::Configuration.get("license_label", t("license", :scope => scope))
   end
 end

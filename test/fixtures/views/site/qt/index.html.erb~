@@ -1,5 +1,6 @@
 <%
 #--
+#   Copyright (C) 2012 Gitorious AS
 #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
 #   Copyright (C) 2008 Johan Sørensen <johan@johansorensen.com>
 #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
@@ -41,24 +42,24 @@
     </tr>
   </table>
   <% end -%>
-	  <% if GitoriousConfig['public_mode'] || logged_in? -%>
-	  <p class="hint create_account_hint">
-		<%= t("views.site.creating_account").call(self, new_user_path) %>
-	  </p>
-	  <% end -%>
+          <% if Gitorious.public? || logged_in? -%>
+          <p class="hint create_account_hint">
+                <%= t("views.site.creating_account").call(self, new_user_path) %>
+          </p>
+          <% end -%>
   <% end -%>
 </div>
 
-<% if GitoriousConfig['public_mode'] -%>
+<% if Gitorious.public? -%>
 <div id="left">
   <% pull_box(nil, :class => "expose") do -%>
     <p>
-      Gitorious provides <a href="/gitorious">open source</a> infrastructure 
+      Gitorious provides <a href="/gitorious">open source</a> infrastructure
       for open source projects which use Git.
       <small><a href="/about">Read more&hellip;</a></small>
     </p>
   <% end -%>
-  
+
 <% cache([:site_index, :recent_activities], :expires_in => 10.minutes) do -%>
   <% pull_box("Recent activities") do -%>
     <ul class="events inline">
@@ -96,7 +97,7 @@
     </ul>
   <% end -%>
 <% end -%>
-  
+
 <% cache([:site_index, :active_clones], :expires_in => 25.minutes) do -%>
   <% pull_box("Most active repository clones") do -%>
     <ul class="with_icons">
@@ -110,7 +111,7 @@
     </ul>
   <% end -%>
 <% end -%>
-  
+
 <% cache([:site_index, :active_teams], :expires_in => 15.minutes) do -%>
   <% pull_box("Active teams") do -%>
     <ul class="with_icons">
@@ -120,7 +121,7 @@
     </ul>
   <% end -%>
 <% end -%>
- 
+
 <% cache([:site_index, :active_users], :expires_in => 20.minutes) do -%>
   <% pull_box("Active users") do -%>
     <ul class="with_icons">

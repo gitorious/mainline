@@ -98,7 +98,7 @@ class SiteController < ApplicationController
   def render_global_index
     if logged_in?
       render_dashboard
-    elsif GitoriousConfig["is_gitorious_dot_org"]
+    elsif Gitorious.dot_org?
       render_gitorious_dot_org_in_public
     else
       render_public_timeline

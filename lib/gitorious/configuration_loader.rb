@@ -68,6 +68,7 @@ Tests may not work as intended.
     def configure_singletons(env)
       require "gitorious"
       load(env).each { |cfg| Gitorious::Configuration.append(cfg) }
+      Gitorious.configured!
       configure_available_singletons(Gitorious::Configuration)
     end
 

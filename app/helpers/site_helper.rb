@@ -58,8 +58,4 @@ module SiteHelper
     HTML
     html.html_safe
   end
-
-  def git_version
-    @git_version ||= GitoriousConfig["git_version"]
-  end
 end

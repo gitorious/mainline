@@ -15,24 +15,30 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "fast_test_helper"
-require "gitorious/git_shell"
+require "gitorious"
 
-class GitShellTest < MiniTest::Shoulda
-  context "Sanitization" do
-    setup do
-      @shell = Gitorious::GitShell.new
+module Gitorious
+  module View
+    DEFAULT_FOOTER_LINKS = [["Professional Gitorious Services", "http://gitorious.com/"]]
+
+    def self.additional_footer_links
+      Gitorious::Configuration.get("additional_footer_links", DEFAULT_FOOTER_LINKS)
     end
 
-    should "sanitize parameters sent to it" do
-      @shell.expects(:sanitize).returns("")
-      @shell.expects(:execute).returns(nil)
-      @shell.graph_log(nil, nil)
+    def self.terms_of_service_url
+      Gitorious::Configuration.get("terms_of_service_url", "http://en.gitorious.org/tos")
     end
 
-    should "remove anything but valid git object names" do
-      input = "`id>/tmp/command`"
-      assert_equal("id/tmp/command", @shell.sanitize(input))
+    def self.privacy_policy_url
+      Gitorious::Configuration.get("privacy_policy_url", "http://en.gitorious.org/privacy_policy")
+    end
+
+    def self.discussion_url
+      Gitorious::Configuration.get("discussion_url", "http://groups.google.com/group/gitorious")
+    end
+
+    def self.blog_url
+      Gitorious::Configuration.get("discussion_url", "http://blog.gitorious.org")
     end
   end
 end

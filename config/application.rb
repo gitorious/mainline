@@ -94,7 +94,7 @@ module Gitorious
 
       OAuth::Consumer::CA_FILE = nil
       Gitorious::Plugin::post_load
-      Grit::Git.git_binary = GitoriousConfig["git_binary"]
+      Grit::Git.git_binary = Gitorious.git_binary
       Gitorious::SearchIndex.setup
 
       require "gitorious/reservations"

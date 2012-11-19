@@ -115,7 +115,7 @@ class Mailer < ActionMailer::Base
   end
 
   def prefixed_subject(subject, prefix = nil)
-    prefix = "#{GitoriousConfig['site_name']} #{prefix}".strip
+    prefix = "#{Gitorious.site_name} #{prefix}".strip
     "[#{prefix}] #{subject}"
   end
 end

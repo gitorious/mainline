@@ -45,7 +45,7 @@
 <%= content_for :sidebar do -%>
   <h2>Information</h2>
   <p class="hint"><%= t("views.projects.new_hint") %></p>
-  <%= "<div id=\"license-descriptions\"></div>" if GitoriousConfig["show_license_descriptions_in_sidebar"] %>
+  <%= "<div id=\"license-descriptions\"></div>" if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
 <% end -%>
 <script type="text/javascript" src="/javascripts/gitorious/license-descriptions.js"></script>
 <script type="text/javascript">

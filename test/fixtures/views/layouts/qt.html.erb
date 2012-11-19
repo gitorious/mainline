@@ -110,10 +110,10 @@
           <li><%= link_to t("views.layout.discussion"), "http://groups.google.com/group/gitorious" -%> | </li>
           <li><%= link_to t("views.layout.blog"), "http://blog.gitorious.org" -%></li>
         </ul>
-        <% if GitoriousConfig["terms_of_use"] -%>
+        <% if Gitorious::Configuration.get("terms_of_use") -%>
           <ul class="legal">
-            <li><%= link_to "Terms of Service", GitoriousConfig["terms_of_service_url"] %></li>
-            <li><%= link_to "Privacy Policy", GitoriousConfig["privacy_policy_url"] %></li>
+            <li><%= link_to "Terms of Service", Gitorious::View.terms_of_service_url %></li>
+            <li><%= link_to "Privacy Policy", Gitorious::View.privacy_policy_url %></li>
           </ul>
         <% end -%>
         <div class="clear"></div>

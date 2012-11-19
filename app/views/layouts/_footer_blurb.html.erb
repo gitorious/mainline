@@ -1,6 +1,6 @@
 <p class="footer-blurb">
-  <% if GitoriousConfig.key?("footer_blurb") %>
-    <%= GitoriousConfig["footer_blurb"] %>
+  <% if blurb = Gitorious::Configuration.get("footer_blurb") %>
+    <%= blurb %>
   <% else %>
     <a href="http://gitorious.com">Professional Gitorious services</a> - Git
     hosting at your company, custom features, support and more.

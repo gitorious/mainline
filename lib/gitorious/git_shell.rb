@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -15,12 +15,12 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#   Thanks for valuable input from joernchen of Phenoelit 
+#   Thanks for valuable input from joernchen of Phenoelit
 #
 #++
 require "timeout"
-module Gitorious
 
+module Gitorious
   # Grit is too helpful with escaping the output for our somewhat special needs
   # This class lets us shell out to Git directly
   class GitShell
@@ -36,7 +36,7 @@ module Gitorious
       log_format = '%H§%P§%ai§%ae§%d§%s§'
       pretty_format = %Q{format:"#{log_format}"}
 
-      command = "#{GitoriousConfig['git_binary']} --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
+      command = "#{Gitorious.git_binary} --git-dir=#{git_dir} log --graph --pretty=#{pretty_format} "
       command << sanitize(options.join(" "))
       execute(command)
     end

@@ -486,7 +486,7 @@ module ApplicationHelper
   def include_stylesheets(group)
     stylesheets = STYLESHEETS[group]
     cache_name = "gts-#{group}"
-    additional = GitoriousConfig["#{group}_stylesheets"]
+    additional = Gitorious::Configuration.get("#{group}_stylesheets")
 
     unless additional.nil?
       additional = [additional] unless Array === additional
@@ -580,11 +580,11 @@ module ApplicationHelper
   end
 
   def url?(setting)
-    !GitoriousConfig["#{setting}_url"].blank?
+    !Gitorious::View.send(:"#{setting}_url").blank?
   end
 
   def footer_link(setting, html_options={})
-    url = GitoriousConfig["#{setting}_url"]
+    url = Gitorious::View.send(:"#{setting}_url")
     text = t("views.layout.#{setting}")
     "<li>#{link_to text, url, html_options}</li>".html_safe
   end

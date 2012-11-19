@@ -62,7 +62,7 @@ class ContentMembershipsController < ApplicationController
   end
 
   def render_action(action)
-    @site_name = GitoriousConfig["site_name"]
+    @site_name = Gitorious.site_name
     @content = content
     @class_name = @content.class.name.downcase
     render :template => "content_memberships/#{action}"

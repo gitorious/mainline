@@ -15,7 +15,6 @@ else
 end
 
 RAILS_ENV = ENV["RAILS_ENV"] ||= "production"
-GitoriousConfig = YAML::load_file(conf_file)[RAILS_ENV]
 
 require "logger"
 require "gitorious/ssh/strainer"

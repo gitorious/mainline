@@ -1,6 +1,6 @@
 # encoding: utf-8
 #--
-#   Copyright (C) 2011 Gitorious AS
+#   Copyright (C) 2011-2012 Gitorious AS
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -19,7 +19,7 @@
 module Gitorious
   module Plugin
     def self.post_load
-      (GitoriousConfig["post_load"] || []).each do |file|
+      Gitorious::Configuration.get("post_load", []).each do |file|
         require(File.join(Rails.root, file))
       end
     end

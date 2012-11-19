@@ -10,3 +10,4 @@ client_port: 3000
 frontend_server: apache
 cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
 messaging_adapter: test
+git_binary: /usr/bin/git
