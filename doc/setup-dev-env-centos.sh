@@ -65,11 +65,17 @@ cd sphinx-2.0.6-release
 ./configure
 sudo make install
 
+PATH=/usr/local/bin:$PATH
+
 # Bundler is the tool used to manage Gitorious' Ruby dependencies.
 # http://gembundler.com/
 sudo gem install bundler
 cd $GITORIOUS_ROOT/gitorious
+# System gems can only be installed by root
 sudo bundle install
+# Annoyingly, we have to do it again, so Bundler puts git dependencies
+# in the right place :|
+bundle install
 
 # With all the dependencies installed, let's configure Gitorious. Feel
 # free to change username and password for the database etc.
@@ -175,7 +181,8 @@ echo "rails server -e production"
 
 # To pull repositories over the git protocol, simply start the git daemon:
 sudo yum install -y git-daemon
-git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories
+echo "Start the git-daemon like so:"
+echo "git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories"
 
 # To do Git over HTTP, you need a frontend server, as Gitorious uses
 # Sendfile to avoid locking up a Rails process while serving
@@ -192,7 +199,7 @@ baseurl=http://nginx.org/packages/centos/6/x86_64/
 gpgcheck=0
 enabled=1" > /etc/yum.repos.d/nginx.repo
 
-yum install nginx
+yum install -y nginx
 sed -i "s/user  nginx/user $GITORIOUS_USER/" /etc/nginx/nginx.conf
 
 echo "upstream rails {
