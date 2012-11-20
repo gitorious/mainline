@@ -1,13 +1,19 @@
 == Guide to Hacking Gitorious
 
-The quickest way to get a working Gitorious environment is to use the
-installer, or one of the pre-built VMs available from http://getgitorious.org.
+To get started you need a working Gitorious setup. Gitorious ships
+with two scripts that gets most enough services up and running to work
+on it. See doc/setup-dev-env-centos.sh or doc/setup-dev-env-ubuntu.sh.
+These scripts are executable annotated walkthroughs for getting
+Gitorious up and running. If you're on e.g. Debian, the Ubuntu script
+should work, but you will likely need to go through it manually.
 
-This file is in need of elaboration.
+On a box that has no existing Ruby development environment running
+either of the two aforementioned scripts will take about 10-15
+minutes.
 
-=== Tasks and other scripts
-
-* rake db:setup creates the initial database tables
+Alternatively, if you're OK with working through a virtual machine,
+you can grab the fully automated installer or one of the pre-built VMs
+from http://getgitorious.org.
 
 === Coding style
 

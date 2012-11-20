@@ -16,13 +16,6 @@
 # apt/debs for package management. If you're unsure, read through it
 # before running it, and/or execute individual sections manually
 # instead.
-#
-# Note that this script installs Ruby from yum. This gives you 1.8.7
-# on most systems. While supported, this version of Ruby may produce
-# more warnings and the occasional oddity than normal. If you already
-# have an existing ruby installation, or prefer tools like rbenv or
-# rvm, feel free to use them instead. If doing do, modify this script
-# accordingly.
 
 GITORIOUS_ROOT=~/projects/gitorious
 GITORIOUS_USER=`whoami`
