@@ -72,7 +72,7 @@ Tests may not work as intended.
       configure_available_singletons(Gitorious::Configuration, env)
     end
 
-    def configure_available_singletons(config, env)
+    def configure_available_singletons(config, env = "production")
       if defined?(RepositoryRoot)
         RepositoryRoot.default_base_path = config.get("repository_base_path")
         RepositoryRoot.shard_dirs! if config.get("enable_repository_dir_sharding")
