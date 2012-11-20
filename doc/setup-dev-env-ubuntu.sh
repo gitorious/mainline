@@ -70,7 +70,11 @@ sudo make install
 # http://gembundler.com/
 sudo gem install bundler
 cd $GITORIOUS_ROOT/gitorious
+# System gems can only be installed by root
 sudo bundle install
+# Annoyingly, we have to do it again, so Bundler puts git dependencies
+# in the right place :|
+bundle install
 
 # With all the dependencies installed, let's configure Gitorious. Feel
 # free to change username and password for the database etc.
@@ -182,7 +186,8 @@ echo "rails server -e production"
 
 # To pull repositories over the git protocol, simply start the git daemon:
 sudo apt-get install -y git-daemon-run
-git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories
+echo "Start the git-daemon like so:"
+echo "git daemon --listen=0.0.0.0 --port=9418 --export-all --base-path=$GITORIOUS_ROOT/repositories --verbose --reuseaddr $GITORIOUS_ROOT/repositories"
 
 # To do Git over HTTP, you need a frontend server, as Gitorious uses
 # Sendfile to avoid locking up a Rails process while serving
