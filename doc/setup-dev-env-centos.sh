@@ -113,8 +113,6 @@ production:
   host: localhost
   encoding: utf8" > config/database.yml
 
-bundle exec rake db:schema:load
-
 # Take note: This uses your user as the Gitorious user. That means
 # that Gitorious will take ownership (i.e.: destructively write to)
 # your ~/.ssh/authorized_keys. In many cases, this is not a worry. If
@@ -147,6 +145,8 @@ development:
   merge_request_diff_timeout: 30
 " > config/gitorious.yml
 
+bundle exec rake db:schema:load
+
 # Finally, create a user for yourself. Be sure to answer yes when
 # asked if the user should be an admin. If you want to (manually) test
 # certain features for non-admins, just come back and create more
@@ -158,7 +158,7 @@ bin/create-user
 sudo ln -s $GITORIOUS_ROOT/gitorious/bin/gitorious /usr/local/bin/gitorious
 
 echo "Now you should be able to run the application in development mode:"
-echo "rails server # or just `rails s`"
+echo "rails server # or just rails s"
 
 # Need to ensure that .ssh exists and has proper permissions
 mkdir /home/$GITORIOUS_USER/.ssh
