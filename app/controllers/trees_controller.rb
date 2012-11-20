@@ -36,7 +36,7 @@ class TreesController < ApplicationController
     unless @commit = @git.commit(@ref)
       handle_missing_tree_sha and return
     end
-    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+    if stale_conditional?(Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path]),
                           @commit.committed_date.utc)
       head = @git.get_head(@ref) || Grit::Head.new(@commit.id_abbrev, @commit)
       @root = Breadcrumb::Folder.new({:paths => @path, :head => head,

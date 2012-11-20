@@ -31,7 +31,7 @@ class BlobsController < ApplicationController
 
   def show
     if stale?({
-          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join),
+          :etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path]),
           :last_modified => @commit.committed_date.utc})
       @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
       render_not_found and return unless @blob
@@ -77,7 +77,7 @@ class BlobsController < ApplicationController
         redirect_to project_repository_raw_blob_path(@project, @repository,
                       branch_with_tree("HEAD", @path)) and return
       end
-      if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path].join), :last_modified => @commit.committed_date.utc)
+      if stale?(:etag => Digest::SHA1.hexdigest(@commit.id + params[:branch_and_path]), :last_modified => @commit.committed_date.utc)
         @blob = @git.tree(@commit.tree.id, ["#{@path.join("/")}"]).contents.first
         render_not_found and return unless @blob
         if @blob.size > 500.kilobytes
