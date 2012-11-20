@@ -374,7 +374,7 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "subdomain"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "wiki_git_path"
+    t.text     "wiki_git_path"
   end
 
   add_index "sites", ["subdomain"], :name => "index_sites_on_subdomain"

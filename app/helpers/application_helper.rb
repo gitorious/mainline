@@ -193,7 +193,7 @@ module ApplicationHelper
     scheme = request.ssl? ? "https" : "http"
     options.reverse_merge!(:default => "images/default_face.gif")
     port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
-    "#{prefix}.gravatar.com/avatar.php?gravatar_id=" +
+    "#{prefix}.gravatar.com/avatar/" +
     (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
       u("#{scheme}://#{Gitorious.host}#{port_string}" +
       "/#{options.delete(:default)}") +

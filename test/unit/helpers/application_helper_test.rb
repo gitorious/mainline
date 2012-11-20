@@ -72,7 +72,7 @@ class ApplicationHelperTest < ActionView::TestCase
 
     assert_equal "www.gravatar.com", base_url(url)
     assert url.include?(Digest::MD5.hexdigest(email)), 'url.include?(Digest::MD5.hexdigest(email)) should be true'
-    assert url.include?("avatar.php?"), 'url.include?("avatar.php?") should be true'
+    assert url.include?("avatar/"), 'url.include?("avatar/") should be true'
     assert url.include?("default=http://")
   end
 

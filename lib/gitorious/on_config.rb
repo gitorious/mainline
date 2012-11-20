@@ -15,45 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-class LdapGroupFinder
-  def paginate(current_page = nil)
-    LdapGroup.paginate(:page => current_page)
-  end
-
-  def find_by_name!(name)
-    includes = [:projects, :repositories]
-    LdapGroup.find_by_name!(name,:include => includes)
-  end
-
-  def new_group(params={})
-    LdapGroup.new(params)
-  end
-
-  def create_group(params, user)
-    group = new_group(params)
-    begin
-      group.transaction do
-        group.creator = user
-        group.save!
-      end
-    rescue ActiveRecord::RecordInvalid
+module Gitorious
+  # If the file Rails.root + config/config_file exists, load this as a
+  # YAML file, fetch the section under Rails.env and yield these settings
+  #
+  # See config/initializers/resque.rb / config/resque.yml for an
+  # example
+  def self.on_config(config_file)
+    path = Rails.root + "config/#{config_file}"
+    if path.exist?
+      settings = YAML::load_file(path)[Rails.env]
+      yield settings if settings
     end
-    return group
-  end
-
-  def by_admin(user)
-    LdapGroup.find_all_by_user_id(user.id)
-  end
-
-  def find(id)
-    LdapGroup.find(id)
-  end
-
-  def find_fuzzy(q)
-    LdapGroup.find_fuzzy(q)
-  end
-
-  def for_user(user)
-    LdapGroup.groups_for_user(user)
   end
 end

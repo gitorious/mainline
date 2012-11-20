@@ -106,6 +106,13 @@ class GroupsControllerTest < ActionController::TestCase
       assert_equal "foo-hackers", assigns(:group).name
       assert_equal [users(:mike)], assigns(:group).members
     end
+
+    should "validate on create" do
+      login_as :mike
+      post(:create, :group => {:name => "test test", :description => "Whatever"},
+             :project => {:slug => projects(:johans).slug})
+      assert_response :success
+    end
   end
 
   context "deleting a group" do

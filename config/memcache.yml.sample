@@ -1,0 +1,7 @@
+# If you're running a production server with Memcache on a different
+# host from localhost, specify the hostname(s) and port(s) here
+# *Note*: you do not need to edit this file if Memcache is running on
+# the same server
+#production:
+# - 1.cache.domain.com:11211
+# - 2.cache.domain.com:11211
