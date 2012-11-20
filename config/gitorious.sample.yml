@@ -302,7 +302,7 @@ archive_work_dir: "/var/git/tarballs-work"
 # By default the label of the license field is "License". However, the
 # license field may be repurposed for certain installs, in which case
 # it may make sense to rename the label as well.
-#license_label: Username
+#license_label: License
 
 # If desired, license descriptions can be displayed in the sidebar
 # when creating new projects. This can ease the task of choosing a
