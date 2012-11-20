@@ -88,11 +88,11 @@ class CommitsController < ApplicationController
   end
 
   def feed
+    expires_in(30.minutes, :public => true)
     @git = @repository.git
     @ref = desplat_path(params[:branch])
     @commits = @repository.git.commits(@ref, 1)
     return if @commits.empty?
-    expires_in 30.minutes
     if stale?(:etag => @commits.first.id, :last_modified => @commits.first.committed_date.utc)
       @commits += @repository.git.commits(@ref, 49, 1)
       respond_to do |format|
