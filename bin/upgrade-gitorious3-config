@@ -1,9 +1,33 @@
 #!/usr/bin/env ruby
 
+require "highline/import"
+
+if ARGV.length < 2
+  puts <<-EOF
+This script should be run with the old and new config file names:
+    bin/upgrade-gitorious3-config config/gitorious.yml config/gitorious3.yml
+
+If you choose a different output file name than config/gitorious.yml, you
+must manually put it in place afterwards
+  EOF
+  exit 1
+end
+
 require "yaml"
 
-old = YAML.load_file("./config/gitorious.yml")
-`cp config/gitorious.yml config/gitorious.yml-gts2-x.bu-#{Time.now.to_i}`
+if !File.exists?(ARGV[0])
+  puts "File #{ARGV[0]} can not be found. Unable to continue"
+  exit 1
+end
+
+if File.exists?(ARGV[1])
+  question = "File #{ARGV[1]} already exists.\n" +
+    "Are you sure you want to replace it? (y/n)"
+  exit 1 if ask(question).strip != "y"
+  `cp #{ARGV[1]} #{ARGV[1]}.bu-#{Time.now.to_i}`
+end
+
+old = YAML.load_file(ARGV[0])
 
 def optional(settings, setting)
   return "##{setting}:" if !settings.key?(setting)
@@ -19,7 +43,7 @@ end
 
 all = (old["test"] || {}).merge(old["development"] || {}).merge(old["production"] || {})
 
-File.open("./config/gitorious.yml", "w") do |f|
+File.open(ARGV[1], "w") do |f|
   if old["production"]["messaging_adapter"] == "stomp"
     puts "WARNING! Messaging adapter stomp is no longer supported. \n" +
       "Refer to the Readme for information on running Redis and Resque. \n" +
