@@ -126,7 +126,7 @@ bundle exec rake db:schema:load
 echo "site_name: My Gitorious
 user: $GITORIOUS_USER
 scheme: http
-host: gitorious.local
+host: localhost
 port: 3000
 frontend_server: nginx
 client_port: 3000
@@ -154,6 +154,12 @@ sudo ln -s $GITORIOUS_ROOT/gitorious/bin/gitorious /usr/local/bin/gitorious
 
 echo "Now you should be able to run the application in development mode:"
 echo "rails server # or just `rails s`"
+
+# Need to ensure that .ssh exists and has proper permissions
+mkdir /home/$GITORIOUS_USER/.ssh
+touch /home/$GITORIOUS_USER/.ssh/authorized_keys
+chmod 0700 /home/$GITORIOUS_USER/.ssh
+chmod 0600 /home/$GITORIOUS_USER/.ssh/authorized_keys
 
 # To run in production, you must install Redis for background
 # processing.
