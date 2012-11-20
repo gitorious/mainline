@@ -28,14 +28,11 @@ if !defined?(Gitorious::Configuration) || !Gitorious.configured?
     require Rails.root + "app/models/repository_root"
     require Rails.root + "app/models/project_license"
     require Rails.root + "app/models/project_proposal"
+    require Rails.root + "lib/gitorious/messaging"
   end
 
   # Wire up the global Gitorious::Configuration singleton with settings
   config = loader.configure_singletons(env)
-
-  # Configure messaging
-  default_adapter = env == "test" ? "test" : "resque"
-  Gitorious::Messaging.adapter = config.get("messaging_adapter", default_adapter)
 
   if !config.get("symlinked_mirror_repo_base").nil?
     $stderr.puts <<-MSG

@@ -69,10 +69,10 @@ Tests may not work as intended.
       require "gitorious"
       load(env).each { |cfg| Gitorious::Configuration.append(cfg) }
       Gitorious.configured!
-      configure_available_singletons(Gitorious::Configuration)
+      configure_available_singletons(Gitorious::Configuration, env)
     end
 
-    def configure_available_singletons(config)
+    def configure_available_singletons(config, env)
       if defined?(RepositoryRoot)
         RepositoryRoot.default_base_path = config.get("repository_base_path")
         RepositoryRoot.shard_dirs! if config.get("enable_repository_dir_sharding")
@@ -86,6 +86,11 @@ Tests may not work as intended.
 
       if config.get("enable_project_approvals") && defined?(ProjectProposal)
         ProjectProposal.enable
+      end
+
+      if defined?(Gitorious::Messaging)
+        default_adapter = env == "test" ? "test" : "resque"
+        Gitorious::Messaging.adapter = config.get("messaging_adapter", default_adapter)
       end
 
       config
