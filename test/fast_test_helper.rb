@@ -38,10 +38,6 @@ module MiniTest
     def assert_nothing_raised(&block)
       block.call # this assertion no longer exists!
     end
-
-    def self.should_eventually(desc)
-      it("should eventually #{desc}") { skip("Should eventually #{desc}") }
-    end
   end
 end
 

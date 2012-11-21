@@ -111,10 +111,6 @@ class PushProcessorTest < ActiveSupport::TestCase
         @processor.consume(@payload.to_json)
       end
     end
-
-    should_eventually "locate the correct merge request" do
-      # @repository.merge_requests.expect(:find_by_sequence_number!).with(@merge_request.sequence_number)
-    end
   end
 
   context "Regular push" do

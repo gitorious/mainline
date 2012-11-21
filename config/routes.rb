@@ -291,7 +291,8 @@ Gitorious::Application.routes.draw do
       match "/commit/:id/comments" => "commit_comments#index", :as => :commit_comments, :id => /[^\/]+/
       match "/commit/:id/diffs" => "commit_diffs#index", :as => :commit_diffs, :id => /[^\/]+/
       match "/commit/:from_id/diffs/:id" => "commit_diffs#compare", :as => :commit_compare
-      match "/commit/:id(.:format)" => "commits#show", :as => :commit, :id => /.*/
+      match "/commit/:format/:id" => "commits#show", :as => :commit, :id => /.*/
+      match "/commit/:id" => "commits#show", :as => :commit, :id => /.*/
 
       match "/graph" => "graphs#index", :as => :graph
       match "/graph/*branch" => "graphs#index", :as => :graph_in_ref
