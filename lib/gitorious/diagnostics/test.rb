@@ -15,22 +15,16 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-require "test_helper"
-
-class Admin::DiagnosticsControllerTest < ActionController::TestCase
-  context "summary" do
-    should "disallow 0.0.0.0 if explicitly left out" do
-      Gitorious::Configuration.override("remote_ops_ips" => "192.168.122.1") do |conf|
-        get :summary
-        assert_response 403
+module Gitorious
+  module Diagnostics
+    # This module stubs any potentially harmful calls
+    module Test
+      def everything_healthy?
+        true
       end
-    end
 
-    should "allow 0.0.0.0 if explicitly included" do
-      ips = ["0.0.0.0", "192.168.122.1"]
-      Gitorious::Configuration.override("remote_ops_ips" => ips) do |conf|
-        get :summary
-        assert_response 200
+      def `(command)
+        "sure"
       end
     end
   end

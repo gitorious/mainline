@@ -19,11 +19,9 @@
 module Gitorious
   module Diagnostics
 
-    # Overall
-
     def everything_healthy?
       #git_operations_work? &&
-        web_interface_reachable? &&
+      web_interface_reachable? &&
         git_user_ok? &&
         rails_process_owned_by_git_user? &&
         atleast_one_gitorious_account_present? &&
@@ -162,18 +160,24 @@ module Gitorious
     end
 
     def git_daemon_up?
-      # TODO handle all known alternatives: git-proxy, <nothing>
-      # + in gitorious.org case, also haproxy
-      atleast_one_process_name_matching("git-daemon") ||
-        atleast_one_process_name_matching("git-proxy")
+      require "socket"
+      begin
+        socket = TCPSocket.open("localhost", 9418)
+        socket.close
+        return true
+      rescue Errno::ECONNREFUSED
+        return false
+      end
     end
 
     def poller_up?
-      atleast_one_process_name_matching("poller")
+      atleast_one_process_name_matching("resque")
     end
 
+    # This is kind of silly, since it appears to be impossible to run this script
+    # without a connection. Anyways...
     def mysql_up?
-      atleast_one_process_name_matching("mysqld")
+      ActiveRecord::Base.connected?
     end
 
     def ultrasphinx_up?
@@ -184,16 +188,24 @@ module Gitorious
 
     def queue_service_up?
       if Gitorious::Messaging.adapter != "sync"
-        return atleast_one_process_name_matching("resque")
+        begin
+          result = Resque.redis.ping
+          return result == "PONG"
+        rescue Errno::ECONNREFUSED
+          return false
+        end
       else
         true
       end
-      # TODO can we ping redis? queue service can be on remote box....
-      # TODO just check if there's anything on specified port for queue service
     end
 
     def memcached_up?
-      atleast_one_process_name_matching("memcached")
+      begin
+        stats = Rails.cache.stats
+        return true
+      rescue MemCache::MemCacheError
+        return false
+      end
     end
 
     # TODO impl and wire this one up as well
@@ -249,7 +261,7 @@ module Gitorious
       Dir[path].count > 0
     end
 
-    def file_present?(path)
+    def file_present?(path)2
       File.exist?(path)
     end
 

@@ -17,7 +17,11 @@
 #++
 
 class Admin::DiagnosticsController < ApplicationController
-  include Gitorious::Diagnostics
+  if Rails.env.test?
+    include Gitorious::Diagnostics::Test
+  else
+    include Gitorious::Diagnostics
+  end
   before_filter :login_required, :except => :summary
   before_filter :require_site_admin, :except => :summary
 
@@ -70,9 +74,9 @@ See /admin/diagnostics for a detailed overview.
   private
   def markup(status)
     if status == true
-      "<span class='diagnostic-true-indicator'>true</span>"
+      "<span class='diagnostic-true-indicator'>true</span>".html_safe
     else
-      "<span class='diagnostic-false-indicator'>false</span>"
+      "<span class='diagnostic-false-indicator'>false</span>".html_safe
     end
   end
 
