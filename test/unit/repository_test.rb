@@ -316,7 +316,7 @@ class RepositoryTest < ActiveSupport::TestCase
       assert_equal repo, Repository.find_by_path(path)
     end
 
-    should_eventually "finds a repository by its path, regardless of repository kind" do
+    should "finds a repository by its path, regardless of repository kind" do
       repo = projects(:johans).wiki_repository
       path = File.join(RepositoryRoot.default_base_path.chomp("/"),
                         projects(:johans).slug, "#{repo.name}.git")

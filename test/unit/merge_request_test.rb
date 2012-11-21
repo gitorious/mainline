@@ -466,25 +466,10 @@ class MergeRequestTest < ActiveSupport::TestCase
       assert_nil message.notifiable
     end
 
-    should_eventually "provide a hash of labels and values for possible next states" do
-      @merge_request.status = MergeRequest::STATUS_VERIFYING
-      assert_equal({"Merged" => "merge", "Rejected" => "reject"}, @merge_request.possible_next_states_hash)
+    should "have a pseudo-open status" do
       @merge_request.status = MergeRequest::STATUS_OPEN
-      assert_equal({"Merged" => "merge", "Rejected" => "reject", "Verifying" => "in_verification"}, @merge_request.possible_next_states_hash)
-      @merge_request.status = MergeRequest::STATUS_REJECTED
-      assert_equal({}, @merge_request.possible_next_states_hash)
-      @merge_request.status = MergeRequest::STATUS_PENDING_ACCEPTANCE_OF_TERMS
-      assert_equal({"Open" => "open"}, @merge_request.possible_next_states_hash)
-      @merge_request.status = MergeRequest::STATUS_MERGED
-      assert_equal({}, @merge_request.possible_next_states_hash)
-    end
-
-    should_eventually "have a pseudo-open status" do
-      [MergeRequest::STATUS_OPEN].each do |s|
-        @merge_request.status = s
-        # TODO: get rid of #open_or_in_verification?
-        assert @merge_request.open_or_in_verification?
-      end
+      # TODO: get rid of #open_or_in_verification?
+      assert @merge_request.open_or_in_verification?
     end
   end
 

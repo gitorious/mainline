@@ -186,25 +186,6 @@ class MergeRequest < ActiveRecord::Base
     end
   end
 
-  # Returns a hash (for the view) of labels and event names for next
-  # states TODO: Obviously, putting the states and transitions inside
-  # a map is not all that DRY, but the state machine does not have a
-  # one-to-one relationship between states and events
-  def possible_next_states_hash
-    map = {
-        STATUS_OPEN => ["Open", "open"],
-        STATUS_VERIFYING => ["Verifying", "in_verification"],
-        STATUS_REJECTED => ["Rejected", "reject"],
-        STATUS_MERGED => ["Merged", "merge"]
-        }
-    result = {}
-    possible_next_states.each do |s|
-      label, value = map[s]
-      result[label] = value
-    end
-    return result
-  end
-
   def can_transition_to?(new_state)
     send("can_#{new_state}?")
   end

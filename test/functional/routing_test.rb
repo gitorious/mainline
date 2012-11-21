@@ -433,10 +433,10 @@ class RoutingTest < ActionController::TestCase
     end
   end
 
+
   context "Commit routing" do
     setup do
       @sha = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
-      @weird_id = '!"#$%&\'()+,-.0123456789;<=>@ABCDEFGHIJKLMNOPQRSTUVWXYZ]_`abcdefghijklmnopqrstuvwxyz{|}'
     end
 
     should "recognize commit sha" do
@@ -479,28 +479,7 @@ class RoutingTest < ActionController::TestCase
                        })
     end
 
-    should_eventually "route branches with weird characters in the id" do
-      assert_recognizes({ :controller => "commits",
-                          :action => "show",
-                          :project_id => "gitorious",
-                          :repository_id => "mainline",
-                          :id => @weird_id,
-                        }, {
-                          :path => "/gitorious/mainline/commit/#{@weird_id}",
-                          :method => :get
-                        })
-
-      escaped = URI.escape(@weird_id, ActionController::Routing::Segment::UNSAFE_PCHAR)
-      assert_generates("/gitorious/mainline/commit/#{escaped}", {
-                         :controller => "commits",
-                         :action => "show",
-                         :project_id => "gitorious",
-                         :repository_id => "mainline",
-                         :id => @weird_id,
-                       })
-    end
-
-    should_eventually "route diff format" do
+    should "route diff format" do
       assert_recognizes({ :controller => "commits",
                           :action => "show",
                           :project_id => "gitorious",
@@ -508,25 +487,24 @@ class RoutingTest < ActionController::TestCase
                           :id => @sha,
                           :format => "diff",
                         }, {
-                          :path => "/gitorious/mainline/commit/#{@sha}",
-                          :method => :get
-                        }, {
+                          :path => "/gitorious/mainline/commit/diff/#{@sha}",
+                          :method => :get,
                           :format => "diff"
                         })
 
-      assert_generates("/gitorious/mainline/commit/#{@sha}", {
+      assert_generates("/gitorious/mainline/commit/diff/#{@sha}", {
                          :controller => "commits",
                          :action => "show",
                          :project_id => "gitorious",
                          :repository_id => "mainline",
                          :id => @sha,
                          :format => "diff"
-                       }, {}, {
+                       }, {
                          :format => "diff",
                        })
     end
 
-    should_eventually "route patch format" do
+    should "route patch format" do
       assert_recognizes({ :controller => "commits",
                           :action => "show",
                           :project_id => "gitorious",
@@ -534,20 +512,19 @@ class RoutingTest < ActionController::TestCase
                           :id => @sha,
                           :format => "patch",
                         }, {
-                          :path => "/gitorious/mainline/commit/#{@sha}",
-                          :method => :get
-                        }, {
-                          :format => "patch",
+                          :path => "/gitorious/mainline/commit/patch/#{@sha}",
+                          :method => :get,
+                          :format => "patch"
                         })
 
-      assert_generates("/gitorious/mainline/commit/#{@sha}", {
+      assert_generates("/gitorious/mainline/commit/patch/#{@sha}", {
                          :controller => "commits",
                          :action => "show",
                          :project_id => "gitorious",
                          :repository_id => "mainline",
                          :id => @sha,
                          :format => "patch"
-                       }, {}, {
+                       }, {
                          :format => "patch",
                        })
     end
