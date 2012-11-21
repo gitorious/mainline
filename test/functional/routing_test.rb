@@ -271,7 +271,7 @@ class RoutingTest < ActionController::TestCase
                            :action => "show",
                            :project_id => "gitorious",
                            :repository_id => "mainline",
-                           :branch_and_path => %w[foo bar baz]
+                           :branch_and_path => "foo/bar/baz"
                          })
       end
 

@@ -28,7 +28,7 @@ class BlobsControllerTest < ActionController::TestCase
     branch_and_path << file if file.is_a?(String)
     { :project_id => @project.slug,
       :repository_id => @repository.name,
-      :branch_and_path => branch_and_path }
+      :branch_and_path => branch_and_path.join("/") }
   end
 
   context "Blob rendering" do

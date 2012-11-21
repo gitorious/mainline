@@ -41,7 +41,7 @@ class TreesControllerTest < ActionController::TestCase
 
   context "#show" do
     should "GET successfully" do
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
 
       assert_response :success
       assert_equal @repository.git.tree("81a18c36ebe04e406ab84ccc911d79e65e14d1c0"), assigns(:tree)
@@ -50,21 +50,21 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "redirect to HEAD if provided sha was not found (backwards compat)" do
-      get :show, params(:branch_and_path => ["a"*40, "foo"])
+      get :show, params(:branch_and_path => "a"*40 + "/foo")
 
       assert_redirected_to(project_repository_tree_path(@project, @repository, ["HEAD", "foo"]))
     end
 
     should "set a pseudo-head if the tree ref is a sha" do
       ref = "3fa4e130fa18c92e3030d4accb5d3e0cadd40157"
-      get :show, params(:branch_and_path => [ref])
+      get :show, params(:branch_and_path => ref)
 
       assert_response :success
       assert_equal ref[0..6], assigns(:root).breadcrumb_parent.title
     end
 
     should "support browsing a namespaced branch" do
-      get :show, params(:branch_and_path => ["test", "master", "lib"])
+      get :show, params(:branch_and_path => "test/master/lib")
 
       assert_response :success
       assert_equal "test/master", assigns(:root).breadcrumb_parent.breadcrumb_parent.title
@@ -72,7 +72,7 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "cache the tree" do
-      get :show, params(:branch_and_path => ["test", "master", "lib"])
+      get :show, params(:branch_and_path => "test/master/lib")
 
       assert_response :success
       assert_equal "max-age=30, private", @response.headers["Cache-Control"]
@@ -80,7 +80,7 @@ class TreesControllerTest < ActionController::TestCase
 
     should "redirect to the tree index with a msg if the tree SHA1 was not found" do
       @grit.expects(:commit).with("master").returns(nil)
-      get :show, params(:branch_and_path => ["master", "lib"])
+      get :show, params(:branch_and_path => "master/lib")
       assert_response :redirect
       assert_match(/no such tree sha/i, flash[:error])
     end
@@ -91,7 +91,7 @@ class TreesControllerTest < ActionController::TestCase
       git_repo = Grit::Repo.new(grit_test_repo("dot_git"), :is_bare => true)
       @repository.git.expects(:commit).with("ticket-#42") \
         .returns(git_repo.commit("master"))
-      get :show, params(:branch_and_path => ["ticket-%2342"])
+      get :show, params(:branch_and_path => "ticket-%2342")
       assert_response :success
       assert_equal "ticket-#42", assigns(:ref)
     end
@@ -201,13 +201,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized users from showing tree" do
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_response 403
     end
 
     should "allow authorized users to show tree" do
       login_as :johan
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_not_equal "403", @response.code
     end
 
@@ -241,13 +241,13 @@ class TreesControllerTest < ActionController::TestCase
     end
 
     should "disallow unauthorized users from showing tree" do
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_response 403
     end
 
     should "allow authorized users to show tree" do
       login_as :johan
-      get :show, params(:branch_and_path => ["master", "lib", "grit"])
+      get :show, params(:branch_and_path => "master/lib/grit")
       assert_not_equal "403", @response.code
     end
 
