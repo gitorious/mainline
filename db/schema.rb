@@ -1,15 +1,17 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
-# please use the migrations feature of Active Record to incrementally modify your database, and
-# then regenerate this schema definition.
+# encoding: UTF-8
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your database schema. If you need
-# to create the application database on another system, you should be using db:schema:load, not running
-# all the migrations from scratch. The latter is a flawed and unsustainable approach (the more migrations
+# Note that this schema.rb definition is the authoritative source for your
+# database schema. If you need to create the application database on another
+# system, you should be using db:schema:load, not running all the migrations
+# from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120629102742) do
+ActiveRecord::Schema.define(:version => 20121121093938) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -20,8 +22,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "target_id"
     t.string   "target_type"
     t.string   "user_email"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "cloners", :force => true do |t|
@@ -42,8 +44,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "target_id",         :null => false
     t.string   "sha1"
     t.text     "body"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
     t.integer  "project_id"
     t.string   "target_type"
     t.string   "state_change"
@@ -64,8 +66,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "committer_id"
     t.integer  "repository_id"
     t.integer  "kind",           :default => 2
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.string   "committer_type",                :null => false
     t.integer  "creator_id"
     t.integer  "permissions"
@@ -80,8 +82,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "content_id"
     t.string   "member_type"
     t.integer  "member_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.string   "content_type"
   end
 
@@ -92,8 +94,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "address"
     t.string   "aasm_state"
     t.string   "confirmation_code"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   add_index "emails", ["address"], :name => "index_emails_on_address"
@@ -107,8 +109,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.text     "body"
     t.integer  "target_id"
     t.string   "target_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
     t.string   "user_email"
   end
 
@@ -124,8 +126,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "watchable_type"
     t.integer  "watchable_id"
     t.string   "action"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.boolean  "notify_by_email", :default => false
   end
 
@@ -134,8 +136,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   create_table "feed_items", :force => true do |t|
     t.integer  "event_id"
     t.integer  "watcher_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   add_index "feed_items", ["watcher_id", "created_at"], :name => "index_feed_items_on_watcher_id_and_created_at"
@@ -143,8 +145,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
     t.text     "description"
     t.string   "avatar_file_name"
     t.string   "avatar_content_type"
@@ -160,8 +162,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "repository_id"
     t.string   "url"
     t.string   "last_response"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                              :null => false
+    t.datetime "updated_at",                              :null => false
     t.integer  "failed_request_count",     :default => 0
     t.integer  "successful_request_count", :default => 0
   end
@@ -177,16 +179,16 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "avatar_file_size"
     t.datetime "avatar_updated_at"
     t.text     "member_dns"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
   end
 
   create_table "memberships", :force => true do |t|
     t.integer  "group_id"
     t.integer  "user_id"
     t.integer  "role_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   add_index "memberships", ["group_id", "user_id"], :name => "index_memberships_on_group_id_and_user_id"
@@ -197,8 +199,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "color"
     t.integer  "state"
     t.string   "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.boolean  "default",     :default => false
   end
 
@@ -209,8 +211,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "merge_request_id"
     t.integer  "version"
     t.string   "merge_base_sha"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
   end
 
   create_table "merge_requests", :force => true do |t|
@@ -220,8 +222,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.text     "proposal"
     t.string   "sha_snapshot"
     t.integer  "status",                         :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
     t.string   "source_branch"
     t.string   "target_branch"
     t.string   "ending_commit"
@@ -236,7 +238,7 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "sequence_number"
   end
 
-  add_index "merge_requests", ["sequence_number", "target_repository_id"], :name => "index_merge_requests_on_sequence_number_and_target_repository_id", :unique => true
+  add_index "merge_requests", ["sequence_number", "target_repository_id"], :name => "index_merge_requests_on_sequence_number", :unique => true
   add_index "merge_requests", ["source_repository_id"], :name => "index_merge_requests_on_source_repository_id"
   add_index "merge_requests", ["status"], :name => "index_merge_requests_on_status"
   add_index "merge_requests", ["target_repository_id"], :name => "index_merge_requests_on_target_repository_id"
@@ -251,8 +253,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.integer  "notifiable_id"
     t.string   "aasm_state"
     t.integer  "in_reply_to_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
     t.integer  "root_message_id"
     t.boolean  "has_unread_replies",    :default => false
     t.boolean  "archived_by_sender",    :default => false
@@ -285,8 +287,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "title"
     t.text     "description"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "projects", :force => true do |t|
@@ -323,8 +325,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.string   "name"
     t.integer  "project_id"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                                :null => false
+    t.datetime "updated_at",                                                :null => false
     t.integer  "parent_id"
     t.boolean  "ready",                                  :default => false
     t.integer  "kind",                                   :default => 0
@@ -355,15 +357,15 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   create_table "roles", :force => true do |t|
     t.string   "name"
     t.integer  "kind"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "sessions", :force => true do |t|
     t.string   "session_id", :null => false
     t.text     "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
@@ -372,8 +374,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   create_table "sites", :force => true do |t|
     t.string   "title"
     t.string   "subdomain"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
     t.text     "wiki_git_path"
   end
 
@@ -382,8 +384,8 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
   create_table "ssh_keys", :force => true do |t|
     t.integer  "user_id"
     t.text     "key"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.boolean  "ready",      :default => false
   end
 
