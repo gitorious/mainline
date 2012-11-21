@@ -130,6 +130,7 @@ GEM
       activesupport (>= 2.3.2)
       cocaine (>= 0.0.2)
       mime-types
+    pg (0.14.1)
     polyglot (0.3.3)
     proxymachine (1.2.4)
       eventmachine (>= 0.12.10)
@@ -277,6 +278,7 @@ DEPENDENCIES
   oauth (= 0.4.4)
   oniguruma (~> 1.1)
   paperclip (~> 2.7)
+  pg
   proxymachine (= 1.2.4)
   rails (= 3.2.8)
   rails_autolink (~> 1.0)

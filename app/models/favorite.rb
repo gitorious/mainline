@@ -30,7 +30,7 @@ class Favorite < ActiveRecord::Base
   end
 
   def event_options
-    {:action => Action::ADD_FAVORITE, :data => watchable.id,
+    {:action => Action::ADD_FAVORITE, :data => watchable.id.to_s,
       :body => watchable.class.name, :project_id => project.id,
       :target_type => "User", :target_id => user.id}
   end

@@ -534,8 +534,8 @@ class UserTest < ActiveSupport::TestCase
 
       assert_not_nil User.most_active
       assert_equal 2, User.most_active.all.count
-      assert_equal 2, User.most_active.first.event_count
-      assert_equal 1, User.most_active.second.event_count
+      assert_equal 2, User.most_active.first.event_count.to_i
+      assert_equal 1, User.most_active.second.event_count.to_i
     end
   end
 

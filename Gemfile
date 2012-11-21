@@ -39,6 +39,10 @@ group :test do
   gem "minitest", "4.2.0"
 end
 
+group :postgres do
+  gem "pg"
+end
+
 group :development do
   gem "foreman", "~> 0.41"
   gem "thin", "~> 1.2"

@@ -203,7 +203,7 @@ class User < ActiveRecord::Base
             Action::PUSH_SUMMARY,
             cutoff.days.ago).
       joins(:events).
-      group("users.id").
+      group("users.id, events.action").
       order("count(events.id) desc").
       limit(limit)
   end
