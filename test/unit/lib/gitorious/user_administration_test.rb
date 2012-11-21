@@ -44,7 +44,7 @@ class UserAdministrationTest < ActiveSupport::TestCase
 
     should "report which teams user has been removed from" do
       summary = remove_from_teams(@user)
-      assert summary =~ /Removed user from team\(s\): team-thunderbird, a-team/
+      assert summary =~ /Removed user from team\(s\): a-team, team-thunderbird/
     end
   end
 

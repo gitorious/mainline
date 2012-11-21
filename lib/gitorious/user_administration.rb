@@ -23,9 +23,9 @@ module Gitorious
 
     def suspend_user(user)
       summarized do |s|
-        s << suspend_account(user) 
+        s << suspend_account(user)
 
-        if(user.groups.count > 0) 
+        if(user.groups.count > 0)
           s << remove_from_teams(user)
         end
 
@@ -34,9 +34,9 @@ module Gitorious
         end
       end
     end
-     
+
     protected
-    
+
     def committership_count(user)
       Committership.all(:conditions => {:committer_id => user.id, :committer_type => "User"}).count
     end
@@ -48,15 +48,15 @@ module Gitorious
         s << " "+I18n.t("admin.user_suspend.suspended_cannot_log_back_in_or_run_git_ops")
       end
     end
-    
+
     def remove_from_teams(user)
       summarized do |s|
         groups = user.groups
-        groups.each do |g| 
+        groups.each do |g|
           g.members.delete(user)
           g.save
         end
-        group_names = groups.map { |g| g.name }.join(", ")
+        group_names = groups.map { |g| g.name }.sort.join(", ")
         s << " "+I18n.t("admin.user_suspend.removed_user_from_teams", :group_names => group_names)
       end
     end
@@ -65,19 +65,19 @@ module Gitorious
       summarized do |s|
         committerships = Committership.all(:conditions => {:committer_id => user.id, :committer_type => "User"})
 
-        repos = [] 
+        repos = []
         committerships.each do |c|
           if c.repository
             repos << c.repository
           end
           c.delete
         end
-        
+
         repo_names = repos.uniq.map { |r| r.name }.join(", ")
         s << " "+I18n.t("admin.user_suspend.removed_user_committerships_from_repos", :repo_names => repo_names)
       end
     end
-    
+
     def teams_orphaned_by_user_leaving(user)
       member_groups = user.groups
       user.groups.find_all{ |group| sole_admin?(user, group)}
@@ -93,7 +93,7 @@ module Gitorious
     end
 
     private
-      
+
     def summarized
       summary = ""
       yield(summary)
@@ -102,13 +102,3 @@ module Gitorious
 
   end
 end
-
-
-
-
-
-
-
-
-
-

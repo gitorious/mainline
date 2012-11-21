@@ -617,7 +617,7 @@ class RepositoryTest < ActiveSupport::TestCase
         :committer => groups(:team_thunderbird)
       }, Committership::CAN_COMMIT)
     exp_users = groups(:team_thunderbird).members.unshift(users(:johan))
-    assert_equal exp_users.map(&:login), committers(repo.reload).map(&:login)
+    assert_equal exp_users.map(&:login).sort, committers(repo.reload).map(&:login).sort
 
     groups(:team_thunderbird).add_member(users(:moe), Role.admin)
     repo.reload
