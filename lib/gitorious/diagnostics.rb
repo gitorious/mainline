@@ -108,7 +108,8 @@ module Gitorious
     end
 
     def web_interface_reachable?
-      `curl --silent localhost:80 | grep Gitorious | wc -l`.to_i > 0
+      url = Gitorious.site.url("/")
+      `curl --silent #{url} | grep Gitorious | wc -l`.to_i > 0
     end
 
     def git_user_ok?
