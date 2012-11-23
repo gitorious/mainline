@@ -41,7 +41,7 @@ cd gitorious
 
 # Some system packages are required in order to build certain Ruby
 # dependencies that uses system libraries.
-sudo apt-get install -y make gcc g++ mysql-client mysql-server libmysqlclient-dev libxml2-dev libxslt1-dev libonig2 libreadline6-dev
+sudo apt-get install -y make gcc g++ mysql-client mysql-server libmysqlclient-dev libxml2-dev libxslt1-dev libonig2 libreadline6-dev postgresql-dev
 sudo service mysqld start
 
 # Install Ruby. Skip if you've already done this.

@@ -47,7 +47,7 @@ cd gitorious
 
 # Some system packages are required in order to build certain Ruby
 # dependencies that uses system libraries.
-sudo yum install -y make gcc gcc-c++ mysql mysql-server mysql-devel libxml2-devel libxslt-devel oniguruma-devel
+sudo yum install -y make gcc gcc-c++ mysql mysql-server mysql-devel libxml2-devel libxslt-devel oniguruma-devel postgresql-devel
 sudo service mysqld start
 
 # Install Ruby. Skip if you've already done this.
@@ -58,12 +58,7 @@ sudo gem update --system
 
 # Download, configure and compile Sphinx, the search engine used by
 # Gitorious.
-cd /tmp
-curl -o sphinx-2.0.6.tar.gz http://sphinxsearch.com/files/sphinx-2.0.6-release.tar.gz
-tar xvzf sphinx-2.0.6.tar.gz
-cd sphinx-2.0.6-release
-./configure
-sudo make install
+sudo yum install sphinx
 
 PATH=/usr/local/bin:$PATH
 
