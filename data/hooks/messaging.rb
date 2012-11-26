@@ -40,7 +40,7 @@ end
 $: << Rails.root + "lib"
 require "rubygems"
 require "bundler"
-ENV["BUNDLE_GEMFILE"] = Rails.root + "Gemfile"
+ENV['BUNDLE_GEMFILE'] = File.join(Rails.root, "Gemfile")
 Bundler.require :messaging, Rails.env
 
 require "yaml"
