@@ -37,7 +37,7 @@ module Rails
   end
 end
 
-$: << Rails.root + "lib")
+$: << Rails.root + "lib"
 require "rubygems"
 require "bundler"
 ENV["BUNDLE_GEMFILE"] = Rails.root + "Gemfile"
