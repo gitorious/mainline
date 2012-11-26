@@ -27,8 +27,8 @@ class SearchesControllerTest < ActionController::TestCase
     should "search for the given query" do
       search_result = [projects(:johans)]
 
-      ThinkingSphinx.expects(:search).with({
-                                             :query => "foo", :page => 1, :per_page => 30,
+      ThinkingSphinx.expects(:search).with("foo",{
+                                             :page => 1, :per_page => 30,
                                              :classes => [Project, Repository, MergeRequest]
       }).returns(search_result)
 

@@ -29,7 +29,7 @@ class SearchesController < ApplicationController
     unless params[:q].blank?
       @all_results = nil  # The unfiltered search result from TS
       @results = filter_paginated(params[:page], PER_PAGE) do |page|
-        @all_results = ThinkingSphinx.search({ :query => params[:q],
+        @all_results = ThinkingSphinx.search(params[:q],{
                                                :page => page,
                                                :per_page => PER_PAGE,
                                                :classes => [Project, Repository, MergeRequest]})
