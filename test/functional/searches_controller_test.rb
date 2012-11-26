@@ -28,7 +28,8 @@ class SearchesControllerTest < ActionController::TestCase
       search_result = [projects(:johans)]
 
       ThinkingSphinx.expects(:search).with({
-        :query => "foo", :page => 1, :per_page => 30
+                                             :query => "foo", :page => 1, :per_page => 30,
+                                             :classes => [Project, Repository, MergeRequest]
       }).returns(search_result)
 
       search_result.expects(:total_entries).returns(1)
@@ -45,7 +46,6 @@ class SearchesControllerTest < ActionController::TestCase
       assert_nil assigns(:results)
     end
 
-#    should_scope_pagination_to(:show, nil, "search results", :delete_all => false)
   end
 
   context "With private repositories" do

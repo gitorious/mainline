@@ -20,6 +20,7 @@
 #++
 
 class SearchesController < ApplicationController
+  Gitorious::SearchIndex.setup if Rails.env.development?
   PER_PAGE = 30
   helper :all
   renders_in_global_context
@@ -30,7 +31,8 @@ class SearchesController < ApplicationController
       @results = filter_paginated(params[:page], PER_PAGE) do |page|
         @all_results = ThinkingSphinx.search({ :query => params[:q],
                                                :page => page,
-                                               :per_page => PER_PAGE })
+                                               :per_page => PER_PAGE,
+                                               :classes => [Project, Repository, MergeRequest]})
         @all_results.to_a
       end
 

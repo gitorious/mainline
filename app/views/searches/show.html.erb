@@ -39,7 +39,7 @@
     <% else -%>
       <% @results.each do |result| -%>
         <div class="item">
-          <%= render :partial => result, :object => result -%>
+          <%= render :partial => "result", :object => presenter(result) -%>
         </div>
       <% end -%>
       <%= render_pagination_links (@results) -%>
@@ -68,12 +68,6 @@
     <h4>Repositories</h4>
     <li><code>name:</code> Repository name</li>
     <li><code>description:</code> Repository description</li>
-  </ul>
-
-  <ul class="search-tips">
-    <h4>Comments</h4>
-    <li><code>body:</code> Comment body</li>
-    <li><code>commented_by:</code> Comment creator username</li>
   </ul>
 
   <ul class="search-tips">

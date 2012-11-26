@@ -18,4 +18,94 @@
 #++
 
 module SearchesHelper
+  def presenter(result)
+    case result
+    when Project
+      ProjectPresenter.new(result)
+    when Repository
+      RepositoryPresenter.new(result)
+    when MergeRequest
+      MergeRequestPresenter.new(result)
+    end
+  end
+
+  class Presenter
+    include ERB::Util
+    include ActionController::UrlWriter
+    include ActionView::Helpers::UrlHelper
+    include ActionView::Helpers::TagHelper
+  end
+
+  class ProjectPresenter < Presenter
+
+    def initialize(obj)
+      @project = obj
+    end
+
+    def title
+      @project.title
+    end
+
+    def url
+      @project
+    end
+
+    def body
+      @project.description
+    end
+
+    def tag_list
+      @project.tag_list.map do |tag|
+        link_to(h(tag), "/search?q=#{h(tag)}")
+      end.to_sentence
+    end
+
+    def summary
+      "The #{@project.title} project is labeled with #{tag_list}"
+    end
+  end
+
+  class RepositoryPresenter
+    def initialize(obj)
+      @repository = obj
+    end
+
+    def title
+      [@repository.project.slug, @repository.name].join("/")
+    end
+
+    def url
+      [@repository.project, @repository]
+    end
+
+    def body
+      @repository.description
+    end
+
+    def summary
+      "The #{title} repository in #{@repository.project.slug}"
+    end
+  end
+
+  class MergeRequestPresenter < Presenter
+    def initialize(obj)
+      @merge_request = obj
+    end
+
+    def title
+      @merge_request.summary || "merge request ##{@merge_request.sequence_number}"
+    end
+
+    def url
+      [@merge_request.target_repository.project, @merge_request.target_repository, @merge_request]
+    end
+
+    def body
+      @merge_request.proposal
+    end
+
+    def summary
+      "An #{@merge_request.status_tag} merge request to #{@merge_request.target_repository.project.slug}/#{@merge_request.target_repository.name}"
+    end
+  end
 end
