@@ -18,7 +18,7 @@
 %>
 <h3><%= link_to(truncate(result.title, :length => 40), result.url) %></h3>
 <p>
-  <%= result.body %>
+  <%= truncate(h(result.body), :length => 250) %>
 </p>
 
 <p class="hint">
