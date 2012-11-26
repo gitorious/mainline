@@ -92,7 +92,7 @@
       :membership_destroyed => "Membership deleted",
     },
     :application_helper => {
-      :notice_for => lambda { |class_name| "This #{class_name} is being created,<br /> it will be ready pretty soon&hellip;"},
+      :notice_for => "This %{class_name} is being created,<br /> it will be ready pretty soon&hellip;",
       :event_status_add_project_repository => "created repository",
       :event_status_created => "created project",
       :event_status_deleted => "deleted project",
@@ -163,17 +163,13 @@
         :blog => "Blog",
       },
       :site => {
-        :pay_off => lambda {|gitorious_repo_path, read_more_path|
-          %{Gitorious provides free <a href="#{gitorious_repo_path}">open source</a> infrastructure for open source projects that use Git. <a href="#{read_more_path}">Read more &raquo;</a>}
-        },
+        :pay_off => "Gitorious provides free <a href=\"%{gitorious_repo_path}\">open source</a> infrastructure for open source projects that use Git.",
         :login_box_header => "Already registered?",
         :page_title => "Free open source project hosting",
         :description => "<strong>Gitorious</strong> is a great way of collaborating on distributed open source projects",
         :for_projects => "For Projects",
         :for_contributors => "For Contributors",
-        :creating_account => lambda { |this, path|
-          this.link_to("Creating a user account", path) +
-          " allows you to create your own project or participate in the development of any project." },
+        :creating_account => "<a href=\"%{path}\">Creating a user account</a> allows you to create your own project or participate in the development of any project.",
         :newest_projects => "Latest projects",
         :view_more => "View more &raquo;",
         :dashboard => {
@@ -224,8 +220,7 @@
         :send_new_passwd => 'Send me a new password',
         :openid_build_title => 'Complete your registration',
         :openid_build_description => 'You need enter the following details:',
-        :create_title => lambda { |this, path| "Create new user or " +
-          this.link_to( "login directly with your OpenID", path ) },
+        :create_title => "Create new user or <a href=\"%{path}\">login directly with your OpenID</a>",
         :create_description => "Creating a user account allows you to create your own project or participate in the development of any project.",
         :wants_email_notifications => 'Send email notifications?',
         :describe_email_notifications => "We will send you an email notification when you receive a message in Gitorious",
@@ -283,12 +278,8 @@
         :show => "Blob contents",
         :history => "Blob history",
         :heading => "History for {{ref}}:{{path}}",
-        :too_big => lambda { |this, path| "This file is too big to be rendered within reasonable time, " +
-          this.link_to("try viewing the raw data", path) },
-        :message => lambda { |this, path|
-          "This blob appears to be binary data, if you like you can " +
-          this.link_to("download the raw data", path) + " (right click, save as)"
-        },
+        :too_big => "This file is too big to be rendered within reasonable time, <a href=\"%{path}\">try viewing the raw data</a>",
+        :message => "This blob appears to be binary data, if you like you can <a href=\"%{path}\">download the raw data</a> (right click, save as)",
       },
       :comments => {
         :commit => "on commit {{sha1}}",
@@ -313,14 +304,13 @@
         :parent_sha1 => "Parent SHA1",
         :page_title => "Commit in {{repo}} in {{title}}",
         :title => "Commit {{commit}}",
-        :message => lambda { |this, path| "This is the initial commit in this repository, " +
-          this.link_to( "browse the initial tree state", path ) + "." },
+        :message => "This is the initial commit in this repository, <a href=\"%{path}\">browse the initial tree state</a>.",
       },
       :sessions => {
         :login => "Login",
-        :label => lambda { |this| "Email"},
+        :label => "Email",
         :passwd => "Password",
-        :openid => lambda { |this| "OpenID"},
+        :openid => "OpenID",
         :remember => "Remember me",
         :submit => 'Log in',
         :register => "Register",
@@ -408,9 +398,7 @@
         :current_committers => "Committers",
         :remove => "Remove",
         :clone_breadcrumb => "Clone Repository",
-        :create_title => lambda { |this, clone, project|
-          "Create a clone of #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>in #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
-        },
+        :create_title => "Create a clone of <a href=\"%{clone_url}\">%{clone_name}</a> <small>in <a href=\"%{project_url}\">%{project_name}</a></small>",
         :edit_group => "Edit/show team members",
         :show_group => "Show team members",
         :by_teams => "Team clones",
@@ -472,7 +460,7 @@
         :no_merge => "No merge requests yet",
         :create_title => "Create a merge request",
         :create_btn => "Create merge request",
-        :show_title => "Reviewing merge request \#{{id}}: {{summary}}",
+        :show_title => "Reviewing merge request \#%{id}: {{summary}}",
         :edit_btn => "Edit merge request",
         :delete_btn => 'Delete merge request',
         :example => "Show example workflow",

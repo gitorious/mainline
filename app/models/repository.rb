@@ -30,7 +30,6 @@ class Repository < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
   include RecordThrottling
   include Watchable
-  include Gitorious::Search
   include Gitorious::Authorization
   include Gitorious::Protectable
 
@@ -74,11 +73,12 @@ class Repository < ActiveRecord::Base
 
   before_validation :downcase_name
   before_create :set_repository_path
-  after_create :create_initial_committership
-  after_create :add_initial_members
-  after_create :create_add_event_if_project_repo
-  after_create :post_repo_creation_message
-  after_create :add_owner_as_watchers
+  # after_create :create_initial_committership
+  # after_create :add_initial_members
+  # after_create :create_add_event_if_project_repo
+  # after_create :post_repo_creation_message
+  # after_create :add_owner_as_watchers
+  after_create :build_repository
   after_destroy :post_repo_deletion_message
 
   throttle_records :create, :limit => 5,
@@ -104,13 +104,6 @@ class Repository < ActiveRecord::Base
 
   named_scope :regular, :conditions => ["kind in (?)", [KIND_TEAM_REPO, KIND_USER_REPO,
                                                        KIND_PROJECT_REPO]]
-  is_indexed do |s|
-    s.index :name
-    s.index :description
-    s.index "project#slug", :as => :project
-    s.conditions "kind in (#{[KIND_PROJECT_REPO, KIND_TEAM_REPO, KIND_USER_REPO].join(',')})"
-  end
-
   def destroy
     merge_requests.each &:destroy
     reload
@@ -297,11 +290,11 @@ class Repository < ActiveRecord::Base
   end
 
   def self.git_backend
-    RAILS_ENV == "test" ? MockGitBackend : GitBackend
+    Rails.env.test? ? MockGitBackend : GitBackend
   end
 
   def git_backend
-    RAILS_ENV == "test" ? MockGitBackend : GitBackend
+    Rails.env.test? ? MockGitBackend : GitBackend
   end
 
   def to_param
@@ -383,19 +376,6 @@ class Repository < ActiveRecord::Base
         reload
       end
     end
-  end
-
-  def post_repo_creation_message
-    return if tracking_repo?
-
-    payload = {
-      :target_class => self.class.name,
-      :target_id => self.id,
-      :command => parent ? "clone_git_repository" : "create_git_repository",
-      :arguments => parent ? [real_gitdir, parent.real_gitdir] : [real_gitdir]
-    }
-
-    publish("/queue/GitoriousRepositoryCreation", payload)
   end
 
   def post_repo_deletion_message
@@ -536,6 +516,10 @@ class Repository < ActiveRecord::Base
     owner === Group || owner === LdapGroup
   end
 
+  def internal?
+    wiki? || tracking_repo?
+  end
+
   def breadcrumb_parent
     if mainline?
       project
@@ -584,14 +568,14 @@ class Repository < ActiveRecord::Base
       set_repository_plain_path
     end
   end
-  
+
   def set_repository_plain_path
     self.hashed_path ||= repository_plain_path
   end
 
   def repository_plain_path
     if project
-      "#{self.project.slug}/#{self.name}" 
+      "#{self.project.slug}/#{self.name}"
     else
       "#{self.name}"
     end
@@ -776,16 +760,6 @@ class Repository < ActiveRecord::Base
     "#{first}/#{second}/#{last}"
   end
 
-  def create_initial_committership
-    self.committerships.create_for_owner!(self.owner)
-  end
-
-  def add_initial_members
-    return if parent.nil? || parent.content_memberships.count == 0
-    make_private
-    parent.content_memberships.each { |m| add_member(m.member) }
-  end
-
   def self.full_path_from_partial_path(path)
     File.expand_path(File.join(RepositoryRoot.default_base_path, path))
   end
@@ -794,24 +768,15 @@ class Repository < ActiveRecord::Base
     name.downcase! if name
   end
 
-  def create_add_event_if_project_repo
-    if project_repo?
-      #(action_id, target, user, data = nil, body = nil, date = Time.now.utc)
-      self.project.create_event(Action::ADD_PROJECT_REPOSITORY, self, self.user,
-                                nil, nil, date = created_at)
-    end
-  end
-
-  def add_owner_as_watchers
-    return if KINDS_INTERNAL_REPO.include?(self.kind)
-    watched_by!(user)
+  def build_repository
+    RepositoryBuilder.new(self).build
   end
 
   private
   def self.create_hooks(path)
     hooks = File.join(RepositoryRoot.default_base_path, ".hooks")
     Dir.chdir(path) do
-      hooks_base_path = File.expand_path("#{RAILS_ROOT}/data/hooks")
+      hooks_base_path = File.expand_path("#{Rails.root}/data/hooks")
 
       if not File.symlink?(hooks)
         if not File.exist?(hooks)

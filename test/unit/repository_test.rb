@@ -223,7 +223,7 @@ class RepositoryTest < ActiveSupport::TestCase
   should "create the hooks" do
     hooks = "/path/to/hooks"
     path = "/path/to/repository"
-    base_path = "#{RAILS_ROOT}/data/hooks"
+    base_path = "#{Rails.root}/data/hooks"
 
     File.expects(:join).in_sequence.with(RepositoryRoot.default_base_path, ".hooks").returns(hooks)
 
@@ -638,7 +638,7 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_match(/[a-z0-9\/]{42}/, repository.hashed_path)
     GitoriousConfig["enable_repository_dir_sharding"] = false
   end
-  
+
   should "use repo name for path by default, not sharded hashed paths" do
     GitoriousConfig["enable_repository_dir_sharding"] = false
     repository = new_repos
@@ -1207,7 +1207,7 @@ class RepositoryTest < ActiveSupport::TestCase
         @repository.project.make_private
         assert @repository.private?
       end
- 
+
       should "allow anonymous user to view public repository" do
         repository = Repository.new(:name => "My repository")
         assert can_read?(nil, repository)

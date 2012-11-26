@@ -30,12 +30,12 @@ module ApplicationHelper
   include UsersHelper
   include BreadcrumbsHelper
   include EventRenderingHelper
-  include RoutingHelper  
+  include RoutingHelper
   include SiteWikiPagesHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
-  
+
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 
   STYLESHEETS = {
@@ -48,32 +48,37 @@ module ApplicationHelper
   end
 
   def help_box(style = :side, icon = :help, options = {}, &block)
-    out = %Q{<div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
-                  class="help-box #{style} #{icon} round-5">
-               <div class="icon #{icon}"></div>}
-    out << capture(&block)
-    out << "</div>"
-    concat(out)
+    concat(<<-HTML)
+      <div id="#{options.delete(:id)}" style="#{options.delete(:style)}"
+           class="help-box #{style} #{icon} round-5">
+        <div class="icon #{icon}"></div>
+        #{capture(&block)}
+      </div>
+    HTML
   end
 
   def pull_box(title, options = {}, &block)
-    css_class = options.delete(:class)
-    out = %Q{<div class="pull-box-container #{css_class}">}
-    out << %Q{<div class="pull-box-header"><h3>#{title}</h3></div>} if title
-    out << %Q{<div class="pull-box-content">}
-    out << capture(&block)
-    out << "</div></div>"
-    concat(out)
+    title_html = title.nil? ? "" : "<div class=\"pull-box-header\"><h3>#{title}</h3></div>"
+    concat(<<-HTML)
+      <div class="pull-box-container #{options.delete(:class)}">
+        #{title_html}
+        <div class="pull-box-content">
+          #{capture(&block)}
+        </div>
+      </div>
+    HTML
   end
 
   def dialog_box(title, options = {}, &block)
-    css_class = options.delete(:class)
-    out = %Q{<div class="dialog-box #{css_class}">}
-    out << %Q{<h3 class="round-top-5 dialog-box-header">#{title}</h3>} if title
-    out << %Q{<div class="dialog-box-content">}
-    out << capture(&block)
-    out << "</div></div>"
-    concat(out)
+    title_html = title.nil? ? "" : "<h3 class=\"round-top-5 dialog-box-header\">#{title}</h3>"
+    concat(<<-HTML)
+      <div class="dialog-box #{options.delete(:class)}">
+        #{title_html}
+        <div class="dialog-box-content">
+          #{capture(&block)}
+        </div>
+      </div>
+    HTML
   end
 
   def markdown(text, options = [:smart])
@@ -110,7 +115,7 @@ module ApplicationHelper
   def build_notice_for(object, options = {})
     out =  %Q{<div class="being_constructed round-10">}
     out <<  %Q{<div class="being_constructed_content round-10">}
-    out << %Q{  <p>#{I18n.t( "application_helper.notice_for").call(object.class.name.humanize.downcase)}</p>}
+    out << %Q{  <p>#{I18n.t( "application_helper.notice_for", :class_name => object.class.name.humanize.downcase)}</p>}
     if options.delete(:include_refresh_link)
       out << %Q{<p class="spin hint"><a href="#{url_for()}">Click to refresh</a></p>}
     else
@@ -186,7 +191,7 @@ module ApplicationHelper
     scheme = request.ssl? ? "https" : "http"
     options.reverse_merge!(:default => "images/default_face.gif")
     port_string = [443, 80].include?(request.port) ? "" : ":#{request.port}"
-    "#{prefix}.gravatar.com/avatar.php?gravatar_id=" +
+    "#{prefix}.gravatar.com/avatar/" +
     (email.nil? ? "" : Digest::MD5.hexdigest(email.downcase)) + "&amp;default=" +
       u("#{scheme}://#{GitoriousConfig['gitorious_host']}#{port_string}" +
       "/#{options.delete(:default)}") +

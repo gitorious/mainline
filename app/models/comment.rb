@@ -21,7 +21,6 @@
 #++
 
 class Comment < ActiveRecord::Base
-  include Gitorious::Search
   include Gitorious::Authorization
 
   belongs_to :user
@@ -31,11 +30,6 @@ class Comment < ActiveRecord::Base
   after_create :notify_target_if_supported
   after_create :update_state_in_target
   serialize :state_change, Array
-
-  is_indexed do |s|
-    s.index :body
-    s.index "user#login", :as => :commented_by
-  end
 
   attr_protected :user_id
 

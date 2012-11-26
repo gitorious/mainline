@@ -21,7 +21,7 @@
 
 <%= render :partial => "commit_infobox" -%>
 <% if @diffs.blank? -%>
-  <p><%= t("views.commits.message").call(self, tree_path(@commit.id)) %></p>
+  <p><%= t("views.commits.message", :path => tree_path(@commit.id)) %></p>
 <% else -%>
   <% unless @commit.merge? -%>
     <%= render_diff_stats(@commit.stats) if sidebyside_diff? -%>

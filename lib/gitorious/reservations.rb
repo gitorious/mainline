@@ -26,7 +26,7 @@ module Gitorious
       end
 
       def reserved_root_names
-        @reserved_root_names ||= unaccounted_root_names + Dir[File.join(RAILS_ROOT, "public", "*")].map{|f| File.basename(f) }
+        @reserved_root_names ||= unaccounted_root_names + Dir[Rails.root + "public/*"].map{|f| File.basename(f) }
       end
 
       def controller_names_plural

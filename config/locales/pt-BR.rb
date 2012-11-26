@@ -3,23 +3,23 @@
   :'pt-BR' => {
     :application => {
       :require_ssh_keys_error => "Você precisa fazer upload da sua chave pública primeiro",
-      :require_current_user => "Malvado {{title}}, malvado! Você não deveria estar revirando as coisas de outras pessoas!",
+      :require_current_user => "Malvado %{title}, malvado! Você não deveria estar revirando as coisas de outras pessoas!",
       :no_commits_notice => "O repositório não tem nenhum commit ainda",
     },
     :admin => {
       :users_controller => {
         :create_notice => 'O usuário foi criado com sucesso.',
-        :suspend_notice => "O usuário {{user_name}} foi suspenso com sucesso.",
-        :suspend_error => "Não consguiu suspender usuário {{user_name}}.",
-        :unsuspend_notice => "O usuário {{user_name}} foi suspenso com sucesso.",
-        :unsuspend_error => "Não conseguiu reativar usuário {{user_name}}."
+        :suspend_notice => "O usuário %{user_name} foi suspenso com sucesso.",
+        :suspend_error => "Não consguiu suspender usuário %{user_name}.",
+        :unsuspend_notice => "O usuário %{user_name} foi suspenso com sucesso.",
+        :unsuspend_error => "Não conseguiu reativar usuário %{user_name}."
       },
       :check_admin => "Apenas Para Administradores"
     },
     :mailer => {
-      :repository_clone => "{{login}} clonou {{slug}}/{{parent}}",
-      :request_notification => "{{login}} requisitou um merge em {{title}}",
-      :code_comment => "{{login}} comentou sua requisição de merge",
+      :repository_clone => "%{login} clonou %{slug}/%{parent}",
+      :request_notification => "%{login} requisitou um merge em %{title}",
+      :code_comment => "%{login} comentou sua requisição de merge",
       :new_password => "Sua nova senha",
       :subject  => 'Por favor ative sua nova conta',
       :activated => 'Sua conta foi ativada!',
@@ -42,9 +42,9 @@
       :destroy_notice => "Chave removida"
     },
     :merge_requests_controller => {
-      :create_success => "Você enviou uma requisição de merge para \"{{name}}\"",
-      :resolve_notice => "A requisição de merge foi marcada como {{status}}",
-      :resolve_disallowed => "A requisição de merge não pode ser marcada como {{status}}",
+      :create_success => "Você enviou uma requisição de merge para \"%{name}\"",
+      :resolve_notice => "A requisição de merge foi marcada como %{status}",
+      :resolve_disallowed => "A requisição de merge não pode ser marcada como %{status}",
       :update_success => "A Requisição de Merge foi atualizada",
       :destroy_success => "A Requisição de Merge foi retratada",
       :assert_resolvable_error => "Você não tem permissão para resolver esta Requisição de Merge",
@@ -92,7 +92,7 @@
       :membership_destroyed => "Associação excluída",
     },
     :application_helper => {
-      :notice_for => lambda { |class_name| "Este(a) #{class_name} está sendo criado(a),<br /> ficará pronto(a) muito em breve&hellip;"},
+      :notice_for => "Este(a) %{class_name} está sendo criado(a),<br /> ficará pronto(a) muito em breve&hellip;",
       :event_status_add_project_repository => "repositório criado",
       :event_status_created => "projeto criado",
       :event_status_deleted => "projeto apagado",
@@ -119,7 +119,7 @@
       :event_updated_wiki_page => "página de wiki editada",
       :event_status_pushed => 'Alguns commits foram pushed',
       :event_status_committed => 'committed',
-      :event_pushed_n => "pushed {{commit_link}}",
+      :event_pushed_n => "pushed %{commit_link}",
       :more_info => "Mais informação…",
     },
     :project => {
@@ -131,11 +131,11 @@
     },
     :membership => {
       :notification_subject => "Você foi adicionado a uma equipe",
-      :notification_body => "{{inviter}} adicionou você para a equipe \"{{group}}\", como um {{role}}",
+      :notification_body => "%{inviter} adicionou você para a equipe \"%{group}\", como um %{role}",
     },
     :committership => {
       :notification_subject => "Um novo commiter foi adicionado",
-      :notification_body => "{{inviter}} adicionou {{user}} como um committer para {{repository}} no projeto {{project}}",
+      :notification_body => "%{inviter} adicionou %{user} como um committer para %{repository} no projeto %{project}",
     },
     :ssh_key => {
       :key_format_validation_message => "não parece ser uma chave pública válida",
@@ -163,21 +163,17 @@
         :blog => 'Blog',
       },
       :site => {
-        :pay_off => lambda {|gitorious_repo_path, read_more_path|
-          %{Gitorious provê uma infra-estrutura de <a href="#{gitorious_repo_path}">código aberto</a> para projetos de código aberto que usam Git. <a href="#{read_more_path}">Leia mais &raquo;</a>}
-        },
+        :pay_off => "Gitorious provê uma infra-estrutura de <a href=\"%{gitorious_repo_path}\">código aberto</a> para projetos de código aberto que usam Git. <a href=\"%{read_more_path}\">Leia mais &raquo;</a>",
         :login_box_header => "Já é registrado?",
         :page_title => "Hospedagem Gratuita de Projetos Open Source",
         :description => "<strong>Gitorious</strong> quer fornecer uma grande\nmaneira de colaborar com código opensource de forma distribuída",
         :for_projects => "Para Projetos",
         :for_contributors => "Para Colaboradores",
-        :creating_account => lambda { |this, path|
-          this.link_to("Criar uma conta de usuário", path) +
-          " lhe permite criar seus próprios projetos ou participar do desenvolvimento de qualquer outro." },
+        :creating_account => "<a href=\"%{path}\">Criar uma conta de usuário</a> lhe permite criar seus próprios projetos ou participar do desenvolvimento de qualquer outro.",
         :newest_projects => "Projetos mais Recentes",
         :view_more => "Ver mais &raquo;",
         :dashboard => {
-          :page_title => "Dashboard do {{login}}",
+          :page_title => "Dashboard do %{login}",
           :activities => "Atividades",
           :your_projects => "Seus projetos:",
           :your_clones => "Seus clones de repositórios",
@@ -226,21 +222,20 @@
         :openid_build_description => 'Você precisa entrar com os seguintes detalhes:',
         :openid_failed => 'A autenticação por OpenID falhou.',
         :openid_canceled => 'A autenticação por OpenID foi cancelada.',
-        :create_title => lambda { |this, path| "Crie um novo usuário ou " +
-          this.link_to( "faça login diretamente com seu OpenID", path ) },
+        :create_title => "Crie um novo usuário ou <a href=\"%{path}\">faça login diretamente com seu OpenID</a>",
         :create_description => "Criar uma nova conta de usuário lhe permite criar seus próprios projetos ou participar no desenvolvimento de qualquer um.",
         :wants_email_notifications => 'Enviar notificações por e-mail?',
         :describe_email_notifications => "Nós lhe enviaremos uma notificação por e-mail quando você receber uma mensagem no Gitorious",
         :default_favorite_notifications => "Por padrão, notificar-me de atualizações sobre o que eu estiver observando",
-        :describe_default_favorite_notifications => lambda { |this, url| "Selecionando esta opção, por padrão você será notificado por e-mail sempre que" +
+        :describe_default_favorite_notifications => "Selecionando esta opção, por padrão você será notificado por e-mail sempre que" +
           "ocorrerem atividades no que você estiver observando no Gitorious.<br/>" +
-          "Visite " + this.link_to("sua página de favoritos", url) + " para ajustar as preferências para cada objeto que você estiver observando no Gitorious"},
+        "Visite <a href=\"%{url}\">sua página de favoritos</a> para ajustar as preferências para cada objeto que você estiver observando no Gitorious",
         :member_for => "Membro por",
         :this_week => {
           :one => "commit até agora esta semana",
           :other => "commits até agora esta semana",
         },
-        :about => "cerca de {{about}}",
+        :about => "cerca de %{about}",
         :edit_title => "Altere seus detalhes",
         :edit_action => 'Alterar detalhes',
         :edit_breadcrumb => "Alterar Detalhes",
@@ -271,7 +266,7 @@
         :favorites_action => "Seus favoritos"
       },
       :logs => {
-        :title => "Commits em {{repo_url}}:{{ref}}",
+        :title => "Commits em %{repo_url}:%{ref}",
         :project => "Projeto",
         :maintainer => "Mantenedor",
         :head_tree => "árvore HEAD",
@@ -280,32 +275,30 @@
         :committed => "comitado",
       },
       :blobs => {
-        :page_title => "{{path}} - {{repo}} em {{title}}",
+        :page_title => "%{path} - %{repo} em %{title}",
         :wrap => "Modo Softwrap",
-        :title => "Blob de <code>{{path}}</code>",
+        :title => "Blob de <code>%{path}</code>",
         :raw => "dado blob puro",
         :show => "Conteúdos Blob",
         :history => "Histórico Blob",
         :blame => "Culpados",
-        :heading => "Histórico para {{ref}}:{{path}}",
-        :too_big => lambda { |this, path| "Este arquivo é muito grande para ser renderizado num tempo razoável, " +
-          this.link_to("tente ver os dados puros", path) },
-        :message => lambda { |this, path| "Este conteúdo parece estar em formato binário. Se quiser, você pode " +
-          this.link_to("baixar os dados puros", path) + " (clique com o botão direito, salvar como)." },
+        :heading => "Histórico para %{ref}:%{path}",
+        :too_big => "Este arquivo é muito grande para ser renderizado num tempo razoável, <a href=\"%{path}\">tente ver os dados puros</a>",
+        :message => "Este conteúdo parece estar em formato binário. Se quiser, você pode <a href=\"%{path}\">baixar os dados puros</a> (clique com o botão direito, salvar como).",
       },
       :comments => {
-        :commit => "no commit {{sha1}}",
+        :commit => "no commit %{sha1}",
         :permalink => '<abbr title="permalink para este comentário">#</abbr>',
         :add_title => "Adicionar um novo comentário",
         :edit_title => "Mudar seu comentário",
         :body => "Comentário",
         :add => "Adicionar Comentário",
         :update_or_add => "Atualizar / Adicionar Comentário",
-        :page_title => "Comentários em {{repo}}",
+        :page_title => "Comentários em %{repo}",
         :diff => "Diferença de Commits",
-        :total => "Comentários ({{total}})",
-        :page_title_2 => "Comentários no {{title}}",
-        :page_title_3 => "Comentários para repositório &quot;{{repo}}&quot; em {{title}}",
+        :total => "Comentários (%{total})",
+        :page_title_2 => "Comentários no %{title}",
+        :page_title_3 => "Comentários para repositório &quot;%{repo}&quot; em %{title}",
       },
       :commits => {
         :date => "Data",
@@ -314,16 +307,15 @@
         :sha1 => "SHA1 do Commit",
         :tree_sha1 => "SHA1 da Árvore",
         :parent_sha1 => "SHA1 do Pai",
-        :page_title => "Commit em {{repo}} no {{title}}",
-        :title => "Commit {{commit}}",
-        :message => lambda { |this, path| "Este é o commit inicial deste repositório, " +
-          this.link_to( "navegue pelo estado inicial da árvore", path ) + "." },
+        :page_title => "Commit em %{repo} no %{title}",
+        :title => "Commit %{commit}",
+        :message => "Este é o commit inicial deste repositório, <a href=\"%{path}\">navegue pelo estado inicial da árvore</a>.",
       },
       :sessions => {
         :login => "Login",
-        :label => lambda { |this| "E-mail ou #{this.switch_login('alterne para OpenID','to_openid')}" },
+        :label => "E-mail",
         :passwd => "Senha",
-        :openid => lambda { |this| "OpenID ou #{this.switch_login('alterne para login por e-mail', 'to_email')}"},
+        :openid => "OpenID",
         :remember => "Lembre-se de mim",
         :submit => 'Entrar',
         :register => "Registrar",
@@ -338,16 +330,16 @@
       :searches => {
         :search => "Pesquisa",
         :hint => %Q{ex. 'wrapper', 'category:python' ou '"document database"'},
-        :page_title => %Q{Pesquisa por "{{term}}"},
-        :no_results => "Desculpe, nada encontrado para {{term}}",
+        :page_title => %Q{Pesquisa por "%{term}"},
+        :no_results => "Desculpe, nada encontrado para %{term}",
         :found => {
-          :one => "Encontrado {{count}} resultado em {{time}}ms",
-          :other => "Encontrado {{count}} resultados em {{time}}ms",
+          :one => "Encontrado %{count} resultado em %{time}ms",
+          :other => "Encontrado %{count} resultados em %{time}ms",
         },
       },
       :trees => {
-        :page_title => "Árvore para {{repo}} em {{title}}",
-        :title => "Árvore do repositório {{repo}} em {{title}}",
+        :page_title => "Árvore para %{repo} em %{title}",
+        :title => "Árvore do repositório %{repo} em %{title}",
         :download => "Faça download como um arquivo compactado (tar.gz)",
         :branch => "Ramo",
       },
@@ -355,8 +347,8 @@
         :overview => "Resumo",
         :commits => "Commits",
         :tree => "Árvore de Código",
-        :comments => "Comentários ({{count}})",
-        :requests => "Requisições de Merge ({{count}})",
+        :comments => "Comentários (%{count})",
+        :requests => "Requisições de Merge (%{count})",
         :public_url => "URL Pública de clone",
         :your_clone_url => "Sua url para push",
         :clone_this_repo => "Clone este repositório",
@@ -365,30 +357,30 @@
         :help_clone_http => "note que clonar sobre HTTP é mais lento, mas útil se estiver atrás de um firewall",
         :http_url => "URL para clone via HTTP",
         :push_url => "URL Privada de Push",
-        :help_push => lambda { |repo| "Você pode executar \"<code>git push #{repo}</code>\", ou também pode configurar um repositório remoto da seguinte maneira:" },
+        :help_push => "Você pode executar \"<code>git push %{repo}</code>\", ou também pode configurar um repositório remoto da seguinte maneira:",
         :owner => "criador",
         :creator => "criador",
         :project => "Projeto",
-        :confirm_delete => "Por favor, confirme apagar o {{repo}} em {{title}}",
+        :confirm_delete => "Por favor, confirme apagar o %{repo} em %{title}",
         :message_delete => "Quando o botão for apertado, o repositório será apagado",
         :btn_delete => "SIM, tenho certeza que quero apagar este repositório permanentemente",
-        :page_title => "Repositórios em {{repo}}",
+        :page_title => "Repositórios em %{repo}",
         :title => "Repositórios",
         :commits => "Commits",
         :tree => "Árvore",
         :activities => { :one => "atividade", :other => "atividades" },
         :branches => { :one => "branch", :other => "branches" },
         :authors => { :one => "autor", :other => "autores" },
-        :name => %Q{Nome <small>(ex "{{name}}-sandbox", "conserto-performance" etc.)</small>},
+        :name => %Q{Nome <small>(ex "%{name}-sandbox", "conserto-performance" etc.)</small>},
         :btn_clone => "Clonar Repositório",
         :back => "Retornar ao Repositório",
-        :show_page_title => "{{repo}} em {{title}}",
-        :show_title => "repositório &quot;{{repo}}&quot; em {{title}}",
-        :committers_title => "Adicionar committers para {{repo}} em {{title}}",
-        :committers_manage_group_members => "Gerenciar membros da equipe para {{group}}",
+        :show_page_title => "%{repo} em %{title}",
+        :show_title => "repositório &quot;%{repo}&quot; em %{title}",
+        :committers_title => "Adicionar committers para %{repo} em %{title}",
+        :committers_manage_group_members => "Gerenciar membros da equipe para %{group}",
         :committers_howto => "Há duas formas de adicionar commiters para um repositório: adicionando membros para a equipe que é dona do repositório, ou adicionando outra equipe como committers.",
         :transfer_owner => "Transferir posse",
-        :current_owner_project => "O repositório pertence atulamente ao projeto {{project_name}} (o qual pertence a você).",
+        :current_owner_project => "O repositório pertence atulamente ao projeto %{project_name} (o qual pertence a você).",
         :current_owner_user => "O repositório pertence atualmente a você.",
         :transfer_owner_howto => "Se você desejar, você pode transferir a posse deste repositório para uma equipe
                                   na qual você seja administrador. Desta forma você pode adicionar múltiplos usuários
@@ -409,9 +401,7 @@
         :current_committers => "Committers",
         :remove => "Remover",
         :clone_breadcrumb => "Clonar Repositório",
-        :create_title => lambda { |this, clone, project|
-          "Criar um clone de #{this.link_to(this.send(:h, clone.name), this.send(:project_repository_path, project, clone) )} <small>em #{this.link_to this.send(:h, project.title), this.send(:project_path, project)}</small>"
-        },
+        :create_title => "Criar um clone de <a href=\"%{clone_url}\">%{clone_name}</a> <small>em <a href=\"%{project_url}\">%{project_name}</a></small>",
         :edit_group => "Editar/exibir membros da equipe",
         :show_group => "Exibir membros da equipe",
         :by_teams => "Clones da equipe",
@@ -424,12 +414,12 @@
         :hint => %Q{São permitidos <a href="http://daringfireball.net/projects/markdown/">Markdown</a> e HTML básico},
         :categories => "Categorias",
         :delete => "Apagar projeto",
-        :delete_title => "Por favor, confirme apagar o {{title}}",
+        :delete_title => "Por favor, confirme apagar o %{title}",
         :delete_message => "Uma vez que o botão for pressionado o projeto será apagado",
         :delete_btn => "SIM, tenho certeza que quero apagar este projeto permanentemente",
         :edit => "Editar projeto",
         :edit_breadcrumb => "Editar Projeto",
-        :update_title => "Atualizar {{link}}",
+        :update_title => "Atualizar %{link}",
         :new => "Novo projeto",
         :create_new => "Criar um novo projeto",
         :popular => "Categorias Populares",
@@ -461,7 +451,7 @@
           :collaborator => "Colaborador",
           :back_to_project => "Voltar ao projeto",
           :is_public => "Projeto é público",
-          :is_public_description => "Qualquer um com acesso a {{site_name}} pode acessar este projeto e seus repositórios.",
+          :is_public_description => "Qualquer um com acesso a %{site_name} pode acessar este projeto e seus repositórios.",
           :make_private => "Tornar privado",
           :make_public => "Abrir este projeto para o público."
       },
@@ -469,7 +459,7 @@
           :collaborator => "Membro",
           :back_to_repository => "Voltar ao repositório",
           :is_public => "Repositório é aberto",
-          :is_public_description => "Qualquer um com acesso ao projeto {{project}} pode navegar nesse repositório.",
+          :is_public_description => "Qualquer um com acesso ao projeto %{project} pode navegar nesse repositório.",
           :make_private => "Tornar privado",
           :make_public => "Abrir acesso ao repositório. Se o projeto for também privado, isto irá abrir acesso apenas aos membros do projeto."
       },
@@ -481,15 +471,15 @@
           :summary => "Um resumo de uma linha das suas mudanças",
           :proposal => "Uma breve descrição de suas mudanças",
         },
-        :summary_title => "{{source}} requisitou um merge com {{target}}",
+        :summary_title => "%{source} requisitou um merge com %{target}",
         :review => "Revisar requisição de merge &#x2192;",
         :edit_title => "Editar requisição de merge",
-        :page_title => "Requisições de merge em {{repo}}",
+        :page_title => "Requisições de merge em %{repo}",
         :hint => %Q{Uma "requisição de merge" é uma notificação de um repositório para outro de que gostaria que suas mudanças fossem mescladas para cima.},
         :no_merge => "Nenhuma requisição de merge ainda",
         :create_title => "Criar uma requisição de merge",
         :create_btn => "Criar requisição de merge",
-        :show_title => "Revisando requisição de merge \#{{id}}: {{summary}}",
+        :show_title => "Revisando requisição de merge \#%{id}: %{summary}",
         :edit_btn => "Editar requisição de merge",
         :delete_btn => 'Excluir requisição de merge',
         :example => "Exibir fluxo de trabalho de exemplo",
@@ -499,7 +489,7 @@
         :update_btn => "Atualizar requisição de merge",
       },
       :committers => {
-        :title => "Dá direitos de commit ao repositório {{repo}} para o usuário",
+        :title => "Dá direitos de commit ao repositório %{repo} para o usuário",
         :login => "Usuários existentes <small>(pesquisa-enquanto-digita)</small>",
         :add => "Adicionar como committer",
       },
@@ -522,25 +512,25 @@
         :cancel => "cancelar",
         :or => "ou",
         :remove => "remover",
-        :format_using_markdown => %Q(Usar {{markdown}} para formatação),
+        :format_using_markdown => %Q(Usar %{markdown} para formatação),
         :markdown_format_with_help => %Q(Formatar páginas utilizando <a href="#markdown-help" class="markdown-help-toggler">Markdown</a>.),
       },
       :pages => {
         :page => "página",
-        :last_edited_by => "Editado pela última vez por {{link_or_name}}",
-        :or_back_to_page => "ou retornar para {{page_link}}",
+        :last_edited_by => "Editado pela última vez por %{link_or_name}",
+        :or_back_to_page => "ou retornar para %{page_link}",
         :history => "Histórico",
-        :last_n_edits => "Últimas {{n}} edições em {{title}}",
+        :last_n_edits => "Últimas %{n} edições em %{title}",
         :index => "Índice de páginas",
-        :format_using_markdown => %Q(Formatar páginas usando {{markdown}}),
+        :format_using_markdown => %Q(Formatar páginas usando %{markdown}),
         :wikiwords_syntax => "[[Wikilink]] criará um link para uma página com este nome.",
         :git => "Acesso Git"
       },
       :memberships => {
         :add_new_member => "Adicionar novo membro",
         :role => "Papel do membro",
-        :header_title => "Membros em {{group_name}}",
-        :new_title => "Adicionar novo membro para {{group_memberships}}",
+        :header_title => "Membros em %{group_name}",
+        :new_title => "Adicionar novo membro para %{group_memberships}",
         :new_breadcrumb => "Adicionar novo membro",
       },
       :groups => {
@@ -564,13 +554,13 @@
       },
       :collaborators => {
         :add_new => "Adicionar colaboradores",
-        :title => "Usuários &amp; times colaborando em {{repo_name}}",
+        :title => "Usuários &amp; times colaborando em %{repo_name}",
         :committer_name => "Committer",
         :group_name => "Nome da equipe ",
         :user_login => "Nome de usuário",
         :add_user => "Adicionar um usuário",
         :add_team => "Adicionar uma equipe",
-        :new_title => "Adicionar um usuário ou uma equipe como colaboradores em {{repo_name}}",
+        :new_title => "Adicionar um usuário ou uma equipe como colaboradores em %{repo_name}",
         :btn_add_as_collaborator => "Adicionar como colaborador",
         :return_to => "retornar para",
         :or_return_to => "ou retornar para",
@@ -646,43 +636,43 @@
         :half_a_minute => 'meio minuto',
         :less_than_x_seconds => {
           :one => 'menos de 1 segundo',
-          :other => 'menos de {{count}} segundos'
+          :other => 'menos de %{count} segundos'
         },
         :x_seconds => {
           :one => '1 segundo',
-          :other => '{{count}} segundos'
+          :other => '%{count} segundos'
         },
         :less_than_x_minutes => {
           :one => 'menos de um minuto',
-          :other => 'menos de {{count}} minutos'
+          :other => 'menos de %{count} minutos'
         },
         :x_minutes => {
           :one => '1 minuto',
-          :other => '{{count}} minutos'
+          :other => '%{count} minutos'
         },
         :about_x_hours => {
           :one => 'aproximadamente 1 hora',
-          :other => 'aproximadamente {{count}} horas'
+          :other => 'aproximadamente %{count} horas'
         },
         :x_days => {
           :one => '1 dia',
-          :other => '{{count}} dias'
+          :other => '%{count} dias'
         },
         :about_x_months => {
           :one => 'aproximadamente 1 mês',
-          :other => 'aproximadamente {{count}} meses'
+          :other => 'aproximadamente %{count} meses'
         },
         :x_months => {
           :one => '1 mês',
-          :other => '{{count}} meses'
+          :other => '%{count} meses'
         },
         :about_x_years => {
           :one => 'aproximadamente 1 ano',
-          :other => 'aproximadamente {{count}} anos'
+          :other => 'aproximadamente %{count} anos'
         },
         :over_x_years => {
           :one => 'mais de 1 ano',
-          :other => 'mais de {{count}} anos'
+          :other => 'mais de %{count} anos'
         }
       }
     },
@@ -782,8 +772,8 @@
       :errors => {
         :template => {
           :header => {
-            :one => "{{model}} não pode ser salvo: 1 erro",
-            :other => "{{model}} não pode ser salvo: {{count}} erros."
+            :one => "%{model} não pode ser salvo: 1 erro",
+            :other => "%{model} não pode ser salvo: %{count} erros."
           },
           :body => "Por favor, cheque os seguintes campos:"
         },
@@ -795,16 +785,16 @@
           :accepted => "precisa ser aceito",
           :empty => "não pode ser vazio",
           :blank => "não pode ser vazio",
-          :too_long => "é muito longo (não mais do que {{count}} caracteres)",
-          :too_short => "é muito curto (não menos do que {{count}} caracteres)",
-          :wrong_length => "não é do tamanho correto (precisa ter {{count}} caracteres)",
+          :too_long => "é muito longo (não mais do que %{count} caracteres)",
+          :too_short => "é muito curto (não menos do que %{count} caracteres)",
+          :wrong_length => "não é do tamanho correto (precisa ter %{count} caracteres)",
           :taken => "não está disponível",
           :not_a_number => "não é um número",
-          :greater_than => "precisa ser maior do que {{count}}",
-          :greater_than_or_equal_to => "precisa ser maior ou igual a {{count}}",
-          :equal_to => "precisa ser igual a {{count}}",
-          :less_than => "precisa ser menor do que {{count}}",
-          :less_than_or_equal_to => "precisa ser menor ou igual a {{count}}",
+          :greater_than => "precisa ser maior do que %{count}",
+          :greater_than_or_equal_to => "precisa ser maior ou igual a %{count}",
+          :equal_to => "precisa ser igual a %{count}",
+          :less_than => "precisa ser menor do que %{count}",
+          :less_than_or_equal_to => "precisa ser menor ou igual a %{count}",
           :odd => "precisa ser ímpar",
           :even => "precisa ser par"
         }

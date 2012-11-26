@@ -60,7 +60,7 @@ EOS
     if custom_label = GitoriousConfig["custom_username_label"]
       custom_label
     else
-      t("views.sessions.label").call(self)
+      t("views.sessions.label")
     end
   end
 end

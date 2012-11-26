@@ -29,7 +29,6 @@ class Project < ActiveRecord::Base
   include RecordThrottling
   include UrlLinting
   include Watchable
-  include Gitorious::Search
   include Gitorious::Authorization
   include Gitorious::Protectable
 
@@ -54,15 +53,6 @@ class Project < ActiveRecord::Base
   serialize :merge_request_custom_states, Array
   attr_protected :owner_id, :user_id, :site_id
 
-  is_indexed do |s|
-    s.index :title
-    s.index :description
-    s.index :slug
-    s.index "user#login", :as => "user"
-    s.collect(:name, :from => "ActsAsTaggableOn::Tag", :as => "category",
-      :using => "LEFT OUTER JOIN taggings ON taggings.taggable_id = projects.id " +
-      "AND taggings.taggable_type = 'Project' LEFT OUTER JOIN tags ON taggings.tag_id = tags.id")
-  end
 
   NAME_FORMAT = /[a-z0-9_\-]+/.freeze
   validates_presence_of :title, :user_id, :slug, :description, :owner_id

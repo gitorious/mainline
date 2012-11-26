@@ -24,7 +24,6 @@
 class MergeRequest < ActiveRecord::Base
   include Gitorious::Messaging::Publisher
   include Watchable
-  include Gitorious::Search
   include Gitorious::Authorization
 
   belongs_to :user
@@ -41,13 +40,6 @@ class MergeRequest < ActiveRecord::Base
   after_create :add_to_creators_favorites
 
   before_validation_on_create :set_sequence_number
-
-  is_indexed do |s|
-    s.index :proposal
-    s.index :status_tag, :as => "status"
-    s.index "user#login", :as => "proposed_by"
-    s.conditions "status != 0"
-  end
 
   attr_protected :user_id, :status, :merge_requests_need_signoff, :oauth_path_prefix,
     :oauth_signoff_key, :oauth_signoff_secret, :oauth_signoff_site, :sequence_number

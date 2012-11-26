@@ -39,6 +39,7 @@ class SessionsControllerTest < ActionController::TestCase
 
   def setup
     setup_ssl_from_config
+    GitoriousConfig["use_ssl"] = true
   end
 
   should "login and redirect" do
@@ -143,39 +144,6 @@ class SessionsControllerTest < ActionController::TestCase
       post :create, :email => "johan@johansorensen.com", :password => "test"
       assert_not_nil flash[:notice]
       assert_equal "true", @response.headers["X-Has-Flash"]
-    end
-  end
-
-  context "Bypassing caching for authenticated users" do
-    should "be set when logging in" do
-      post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_equal "true", cookies["_logged_in"]
-    end
-
-    should "be removed when logging out" do
-      post :create, :email => "johan@johansorensen.com", :password => "test"
-      assert_not_nil cookies["_logged_in"]
-      delete :destroy
-      assert_nil cookies["_logged_in"]
-    end
-
-    should "remove the cookie when logging out" do
-      @request.cookies["_logged_in"] = "true"
-      delete :destroy
-      assert_nil @response.cookies["_logged_in"]
-    end
-
-    should "set the logged-in cookie when logging in with an auth token" do
-      users(:johan).remember_me
-      @request.cookies["auth_token"] = cookie_for(:johan)
-      get :new
-      assert @controller.send(:logged_in?)
-      assert_equal "true", @response.cookies["_logged_in"]
-    end
-
-    should "set the _logged_in cookie only on  succesful logins" do
-      post :create, :email => "johan@johansorensen.com", :password => "lulz"
-      assert_nil cookies['_logged_in']
     end
   end
 end

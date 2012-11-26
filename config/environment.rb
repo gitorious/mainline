@@ -2,10 +2,9 @@
 
 # Uncomment below to force Rails into production mode when
 # you don't control web/app server and can't set it the proper way
-# ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.14' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -40,8 +39,11 @@ Rails::Initializer.run do |config|
   # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
 
   # Add additional load paths for your own custom dirs
-  config.load_paths += %W( #{RAILS_ROOT}/lib/gitorious )
-  config.load_once_paths  << File.expand_path("#{RAILS_ROOT}/lib/gitorious")
+  config.autoload_paths += %W( #{RAILS_ROOT}/lib/gitorious )
+
+  # Avoid class cache errors like "A copy of Gitorious::XYZ has been removed
+  # from the module tree but is still active!"
+  config.autoload_once_paths  << File.expand_path("#{RAILS_ROOT}/lib/gitorious")
 
   # Force all environments to use the same logger level
   # (by default production uses :info, the others :debug)
@@ -89,5 +91,6 @@ Rails::Initializer.run do |config|
     OAuth::Consumer::CA_FILE = nil
     Gitorious::Plugin::post_load
     Grit::Git.git_binary = GitoriousConfig["git_binary"]
+    Gitorious::SearchIndex.setup
   end
 end

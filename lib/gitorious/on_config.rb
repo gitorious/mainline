@@ -1,7 +1,6 @@
 # encoding: utf-8
 #--
 #   Copyright (C) 2012 Gitorious AS
-#   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU Affero General Public License as published by
@@ -16,21 +15,17 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-require File.dirname(__FILE__) + "/../test_helper"
-gem("geoip", ">=0")
-require "geoip"
-
-class ClonerTest < ActiveSupport::TestCase
-
-  def setup
-    @geoip = GeoIP.new(Rails.root + "data/GeoIP.dat")
-    @cloner = Cloner.new
-  end
-
-  should "has a valid country" do
-    localization = @geoip.country(cloners(:argentina).ip)
-    assert_equal cloners(:argentina).country_code, localization[3]
-    assert_equal cloners(:argentina).country, localization[5]
+module Gitorious
+  # If the file Rails.root + config/config_file exists, load this as a
+  # YAML file, fetch the section under Rails.env and yield these settings
+  #
+  # See config/initializers/resque.rb / config/resque.yml for an
+  # example
+  def self.on_config(config_file)
+    path = Rails.root + "config/#{config_file}"
+    if path.exist?
+      settings = YAML::load_file(path)[Rails.env]
+      yield settings if settings
+    end
   end
 end

@@ -44,15 +44,19 @@
   </script>
 <% end -%>
 
-<h1><%= t("views.repos.create_title").call(self, @repository_to_clone, @owner) %></h1>
+<h1><%= t("views.repos.create_title",
+          :clone_name => h(@repository_to_clone.name),
+          :clone_url => project_repository_path(@owner, @repository_to_clone),
+          :project_name => h(@owner.title),
+          :project_url => project_path(@owner)) %></h1>
 
 <%= error_messages_for :repository -%>
 
-<% form_for @repository, :repository, 
+<% form_for @repository, :repository,
       :url => create_clone_project_repository_path(@repository.project, @repository_to_clone),
       :builder => GitoriousFormBuilder do |f| -%>
   <p>
-    <%= f.current_user_or_group :owner, t("views.repos.owner"), 
+    <%= f.current_user_or_group :owner, t("views.repos.owner"),
           :hint => "Clone the repository as either yourself or a group you are in",
           :default => :user -%>
   </p>
