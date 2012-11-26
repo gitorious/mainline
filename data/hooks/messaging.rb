@@ -29,7 +29,7 @@ end
 
 module Rails
   def self.root
-    @root ||= Pathname(__FILE__).realpath + "../../"
+    @root ||= Pathname(__FILE__).realpath + "../../../"
   end
 
   def self.env
@@ -37,18 +37,18 @@ module Rails
   end
 end
 
-$: << Rails.root + "lib")
+$: << Rails.root + "lib"
 require "rubygems"
 require "bundler"
 ENV["BUNDLE_GEMFILE"] = Rails.root + "Gemfile"
-Bundler.require :messaging, Rails.env
+Bundler.require :messaging, Rails.env.to_s
 
 require "yaml"
 require "gitorious/messaging"
 
 if !defined?(GitoriousConfig)
   conf = YAML::load_file(Rails.root + "config/gitorious.yml")
-  GitoriousConfig = conf[Rails.env]
+  GitoriousConfig = conf[Rails.env.to_s]
   adapter = GitoriousConfig["messaging_adapter"] || "stomp"
   Bundler.require adapter.to_sym
   Gitorious::Messaging.load_adapter(adapter)
