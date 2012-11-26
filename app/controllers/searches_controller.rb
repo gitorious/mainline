@@ -27,12 +27,11 @@ class SearchesController < ApplicationController
   def show
     unless params[:q].blank?
       @all_results = nil  # The unfiltered search result from TS
-      @results = paginate(page_free_redirect_options) do
-        page = params[:per_page]
-        _results = ThinkingSphinx.search({ :query => params[:q],
-                                             :page => page,
-                                             :per_page => PER_PAGE })
-        @all_results = filter(_results)
+      @results = filter_paginated(params[:page], PER_PAGE) do |page|
+        @all_results = ThinkingSphinx.search({ :query => params[:q],
+                                               :page => page,
+                                               :per_page => PER_PAGE })
+        @all_results.to_a
       end
 
       unfiltered_results_length = @all_results.nil? ? 0 : @all_results.length
