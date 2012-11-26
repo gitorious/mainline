@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 %>
-<h3><%= link_to(truncate(result.title, :length => 40), result.url) %></h3>
+<h3><%= link_to(truncate(h(result.title), :length => 40), result.url) %></h3>
 <p>
   <%= truncate(h(result.body), :length => 250) %>
 </p>

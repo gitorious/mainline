@@ -43,7 +43,7 @@ module SearchesHelper
     end
 
     def title
-      @project.title
+      h(@project.title)
     end
 
     def url
@@ -61,17 +61,17 @@ module SearchesHelper
     end
 
     def summary
-      "The #{@project.title} project is labeled with #{tag_list}"
+      "The #{title} project is labeled with #{tag_list}"
     end
   end
 
-  class RepositoryPresenter
+  class RepositoryPresenter < Presenter
     def initialize(obj)
       @repository = obj
     end
 
     def title
-      [@repository.project.slug, @repository.name].join("/")
+      [h(@repository.project.slug), h(@repository.name)].join("/")
     end
 
     def url
@@ -83,7 +83,7 @@ module SearchesHelper
     end
 
     def summary
-      "The #{title} repository in #{@repository.project.slug}"
+      "The #{title} repository in #{h(@repository.project.slug)}"
     end
   end
 
@@ -93,7 +93,7 @@ module SearchesHelper
     end
 
     def title
-      @merge_request.summary || "merge request ##{@merge_request.sequence_number}"
+      h(@merge_request.summary) || "merge request ##{@merge_request.sequence_number}"
     end
 
     def url
