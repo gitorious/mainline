@@ -29,7 +29,7 @@ end
 
 module Rails
   def self.root
-    @root ||= Pathname(__FILE__).realpath + "../../"
+    @root ||= Pathname(__FILE__).realpath + "../../../"
   end
 
   def self.env
