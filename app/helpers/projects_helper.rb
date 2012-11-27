@@ -60,7 +60,7 @@ module ProjectsHelper
       link_to_function(remove_img, "$(this).parents('.merge_request_status').remove();");
     else
       # Set the proper hidden html flag to _delete
-      form_builder.hidden_field(:_delete) +
+      form_builder.hidden_field(:_destroy) +
         link_to_function(remove_img, "$(this).parents('.merge_request_status').hide();
           $(this).prev().val('1')")
     end
