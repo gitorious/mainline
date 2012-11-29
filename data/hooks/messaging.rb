@@ -53,6 +53,13 @@ if !defined?(GitoriousConfig)
   Bundler.require adapter.to_sym
   Gitorious::Messaging.load_adapter(adapter)
   Gitorious::Messaging.configure_publisher(adapter)
+  if adapter == "resque"
+    resque_config = Rails.root + "config/resque.yml"
+    if resque_config.exist?
+      settings = YAML::load_file(resque_config)[Rails.env.to_s]
+      Resque.redis = settings if settings
+    end
+  end
 end
 
 class Publisher
