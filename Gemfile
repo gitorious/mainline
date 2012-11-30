@@ -1,5 +1,6 @@
 source "http://rubygems.org"
 
+gem "rdoc"
 gem "rails", "2.3.14"
 gem "chronic", "0.3.0"
 gem "geoip", "0.8.9"
