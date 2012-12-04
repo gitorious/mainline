@@ -10,3 +10,6 @@
 [submodule "public/javascripts/lib/spin.js"]
 	path = public/javascripts/lib/spin.js
 	url = https://github.com/fgnass/spin.js.git
+[submodule "public/ui3"]
+	path = public/ui3
+	url = http://git.gitorious.org/gitorious/ui3.git

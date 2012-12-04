@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/ui3/css/gitorious.css" rel="stylesheet">
+    <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="gts-masthead navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="gts-logo" href="/"><img src="/ui3/images/gitorious.png" alt="Gitorious" title="Gitorious"></a>
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <div class="container">
+      <%= yield %>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <p class="pull-right gts-powered-by">
+          <a href="http://gitorious.org">
+            <img alt="Powered by Gitorious" src="/ui3/images/powered-by.png" title="Powered by Gitorious">
+          </a>
+        </p>
+        <p>
+          Dolt is part of <a href="http://gitorious.org">Gitorious</a>. Dolt
+          (like Gitorious) is free software licensed under
+          the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero
+          General Public License (AGPL)</a> unless noted otherwise.
+        </p>
+      </div>
+    </div>
+    <script src="/ui3/dist/gts-ui-deps.js"></script>
+    <script src="/ui3/js/components/abbrev.js"></script>
+    <script src="/ui3/js/components/url.js"></script>
+    <script src="/ui3/js/components/ref-selector.js"></script>
+    <script src="/ui3/js/components/tree-history.js"></script>
+    <script src="/ui3/js/gitorious.js"></script>
+  </body>
+</html>
