@@ -42,7 +42,7 @@ $: << (Rails.root + "lib").realpath.to_s
 require "rubygems"
 require "bundler"
 ENV["BUNDLE_GEMFILE"] = (Rails.root + "Gemfile").realpath.to_s
-Bundler.require(:messaging, Rails.env)
+Bundler.require(:messaging, Rails.env.to_s)
 
 require "yaml"
 require "gitorious/messaging"
@@ -53,6 +53,14 @@ if !defined?(Gitorious::Configuration)
   Bundler.require(Gitorious::Messaging.adapter.to_sym)
   Gitorious::Messaging.load_adapter(Gitorious::Messaging.adapter)
   Gitorious::Messaging.configure_publisher(Gitorious::Messaging.adapter)
+
+  if adapter == "resque"
+    resque_config = Rails.root + "config/resque.yml"
+    if resque_config.exist?
+      settings = YAML::load_file(resque_config)[Rails.env.to_s]
+      Resque.redis = settings if settings
+    end
+  end
 end
 
 class Publisher

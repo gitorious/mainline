@@ -17,7 +17,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
-require "test_helper"
+require File.dirname(__FILE__) + "/../test_helper"
 
 class SearchesControllerTest < ActionController::TestCase
   should_render_in_global_context
@@ -26,8 +26,10 @@ class SearchesControllerTest < ActionController::TestCase
     should "search for the given query" do
       search_result = [projects(:johans)]
 
-      ThinkingSphinx.expects(:search).with({
-        :query => "foo", :page => 1, :per_page => 30
+      ThinkingSphinx.expects(:search).with("foo",{
+        :page => 1, :per_page => 30,
+        :classes => [Project, Repository, MergeRequest],
+       :match_mode => :extended
       }).returns(search_result)
 
       search_result.expects(:total_entries).returns(1)

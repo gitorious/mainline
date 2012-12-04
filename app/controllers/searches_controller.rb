@@ -20,6 +20,7 @@
 #++
 
 class SearchesController < ApplicationController
+  Gitorious::SearchIndex.setup if Rails.env.development?
   PER_PAGE = 30
   helper :all
   renders_in_global_context
@@ -27,12 +28,13 @@ class SearchesController < ApplicationController
   def show
     unless params[:q].blank?
       @all_results = nil  # The unfiltered search result from TS
-      @results = paginate(page_free_redirect_options) do
-        filter_paginated(params[:page], PER_PAGE) do |page|
-          @all_results = ThinkingSphinx.search({ :query => params[:q],
-                                             :page => page,
-                                             :per_page => PER_PAGE })
-        end
+      @results = filter_paginated(params[:page], PER_PAGE) do |page|
+        @all_results = ThinkingSphinx.search(params[:q],{
+                                               :page => page,
+                                               :per_page => PER_PAGE,
+                                               :classes => [Project, Repository, MergeRequest],
+                                               :match_mode => :extended})
+        @all_results.to_a
       end
 
       unfiltered_results_length = @all_results.nil? ? 0 : @all_results.length

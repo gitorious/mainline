@@ -80,6 +80,8 @@ class ProjectsControllerTest < ActionController::TestCase
       end
 
       should "render private repo edit for owner" do
+        project = projects(:johans)
+        project.merge_request_statuses.create!(:name => "Closed", :description => "Whatever", :state => MergeRequest::STATUS_OPEN)
         login_as :johan
         get :edit, :id => projects(:johans).to_param
         assert_response 200

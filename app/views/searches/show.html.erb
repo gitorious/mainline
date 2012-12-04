@@ -39,7 +39,7 @@
     <% else -%>
       <% @results.each do |result| -%>
         <div class="item">
-          <%= render :partial => result, :object => result -%>
+          <%= render :partial => "result", :object => presenter(result) -%>
         </div>
       <% end -%>
       <%= render_pagination_links (@results) -%>
@@ -57,29 +57,23 @@
 
   <ul class="search-tips">
     <h4>Projects</h4>
-    <li><code>title:</code> Project title</li>
-    <li><code>description:</code> Project description</li>
-    <li><code>slug:</code> Project slug</li>
-    <li><code>category:</code> Project label</li>
-    <li><code>user:</code> Project creator username</li>
+    <li><code>@title</code> Project title</li>
+    <li><code>@description</code> Project description</li>
+    <li><code>@slug</code> Project slug</li>
+    <li><code>@category</code> Project label</li>
+    <li><code>@user</code> Project creator username</li>
   </ul>
 
   <ul class="search-tips">
     <h4>Repositories</h4>
-    <li><code>name:</code> Repository name</li>
-    <li><code>description:</code> Repository description</li>
-  </ul>
-
-  <ul class="search-tips">
-    <h4>Comments</h4>
-    <li><code>body:</code> Comment body</li>
-    <li><code>commented_by:</code> Comment creator username</li>
+    <li><code>@name</code> Repository name</li>
+    <li><code>@description</code> Repository description</li>
   </ul>
 
   <ul class="search-tips">
     <h4>Merge Requests</h4>
-    <li><code>proposal:</code> Merge request proposal body</li>
-    <li><code>proposed_by:</code> Merge request creator username</li>
-    <li><code>status: </code> Merge request status</li>
+    <li><code>@proposal</code> Merge request proposal body</li>
+    <li><code>@proposed_by</code> Merge request creator username</li>
+    <li><code>@status </code> Merge request status</li>
   </ul>
 <% end %>

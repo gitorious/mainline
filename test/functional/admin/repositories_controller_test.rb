@@ -39,10 +39,8 @@ class Admin::RepositoriesControllerTest < ActionController::TestCase
       login_as :johan
       repo = repositories(:johans)
       Repository.expects(:find).with("2").returns(repo)
-      repo.expects(:post_repo_creation_message)
 
       put :recreate, :id => 2
-
       assert_response :redirect
     end
   end
