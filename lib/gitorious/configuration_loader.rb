@@ -69,10 +69,10 @@ Tests may not work as intended.
     def load_configurable_singletons(root_path)
       # Load so configure_singletons will configure them
       root = Pathname(root_path)
-      require root + "app/models/repository_root"
-      require root + "app/models/project_license"
-      require root + "app/models/project_proposal"
-      require root + "lib/gitorious/messaging"
+      require(root + "app/models/repository_root")
+      require(root + "app/models/project_license")
+      require(root + "app/models/project_proposal") if defined?(ActiveRecord)
+      require(root + "lib/gitorious/messaging")
     end
 
     def configure_singletons(env)

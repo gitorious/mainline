@@ -5,6 +5,9 @@
 # - if so: check if we are it
 # - if not and we are root: setuid+setgid to that user
 # - if not and we are not root, fail
+$: << "./lib"
+require "gitorious/configuration_loader"
+require "gitorious/messaging"
 
 module Gitorious
   class CLI
@@ -33,8 +36,10 @@ module Gitorious
     end
 
     def load_config
-      $: << "./lib"
-      require(rails_root + "/config/initializers/gitorious_config.rb")
+      loader = Gitorious::ConfigurationLoader.new
+      loader.load_configurable_singletons(rails_root)
+      config = loader.configure_singletons(rails_env)
+      config
     end
 
     def require_valid_user!
