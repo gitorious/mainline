@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "pathname"
 require "yaml"
 
 module Gitorious
@@ -63,6 +64,15 @@ Tests may not work as intended.
 
     def hash(env)
       @hashes[env] ||= load(env).inject({}) { |hash, cfg| hash.merge(cfg) }
+    end
+
+    def load_configurable_singletons(root_path)
+      # Load so configure_singletons will configure them
+      root = Pathname(root_path)
+      require root + "app/models/repository_root"
+      require root + "app/models/project_license"
+      require root + "app/models/project_proposal"
+      require root + "lib/gitorious/messaging"
     end
 
     def configure_singletons(env)

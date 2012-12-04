@@ -33,11 +33,8 @@ module Gitorious
     end
 
     def load_config
-      return if Gitorious.respond_to?(:user)
       $: << "./lib"
-      require "gitorious/messaging"
-      require "gitorious/configuration_loader"
-      Gitorious::ConfigurationLoader.new.configure_singletons(ENV["RAILS_ENV"])
+      require(rails_root + "/config/initializers/gitorious_config.rb")
     end
 
     def require_valid_user!
