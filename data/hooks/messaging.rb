@@ -54,7 +54,7 @@ if !defined?(Gitorious::Configuration)
   Gitorious::Messaging.load_adapter(Gitorious::Messaging.adapter)
   Gitorious::Messaging.configure_publisher(Gitorious::Messaging.adapter)
 
-  if adapter == "resque"
+  if Gitorious::Messaging.adapter == "resque"
     resque_config = Rails.root + "config/resque.yml"
     if resque_config.exist?
       settings = YAML::load_file(resque_config)[Rails.env.to_s]

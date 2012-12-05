@@ -597,8 +597,12 @@ module ApplicationHelper
   # Temporary - Rails 3 removed error_messages_for
   def error_messages(model)
     return "" if !model.errors.any?
-    errors = model.errors.full_messages.map { |msg| "<li>#{msg}</li>" }
-    "<ul>#{errors}</ul>".html_safe
+    errors = model.errors
+    result = errors.full_messages.inject("") do |memo, obj|
+      memo << content_tag(:li, obj)
+    end
+    header = content_tag(:h2, pluralize(errors.size, "error"))
+    "<div class=\"errorExplanation\" id=\"errorExplanation\">#{header}<ul>#{result}</ul></div>".html_safe
   end
 
   def vcs_link_tag(options)

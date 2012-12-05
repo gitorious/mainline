@@ -17,14 +17,14 @@
 #++
 %>
 <h4>Please wait</h4>
-  
+
 <p>generating tarball&hellip;</p>
 
 <p class="spin"><%= image_tag("spinner.gif") -%></p>
 
 <script type="text/javascript" charset="utf-8">
 var periodicalDownloadChecker = setTimeout(function(){
-var url = '<%= tree_archive_status_url -%>';
+var url = '<%= project_repository_archive_tar_url %>';
 $("#archive-box-<%= @ref.gsub("/", "_") -%>").load(url, function(responseText, textStatus, XMLHttpRequest){
     clearTimeout(periodicalDownloadChecker);
     if (textStatus == "success") {
