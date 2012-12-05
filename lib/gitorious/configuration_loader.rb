@@ -101,6 +101,7 @@ Tests may not work as intended.
       if defined?(Gitorious::Messaging)
         default_adapter = env == "test" ? "test" : "resque"
         Gitorious::Messaging.adapter = config.get("messaging_adapter", default_adapter)
+        Gitorious::Messaging.configure(Gitorious::Messaging.adapter) unless Gitorious::Messaging::Consumer.configured?
       end
 
       config
