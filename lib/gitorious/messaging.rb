@@ -15,6 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "pathname"
 require "json"
 
 if !"".respond_to?(:camelize)
@@ -110,10 +111,11 @@ module Gitorious
     end
 
     def self.load_processors
+      root = Pathname(__FILE__) + "../../../app/processors"
       %w[merge_request_git_backend merge_request merge_request_version
          message_forwarding push repository_archiving repository_creation
          repository_deletion ssh_key web_hook].each do |p|
-        require "processors/#{p}_processor"
+        require "#{root}/#{p}_processor"
       end
     end
 
