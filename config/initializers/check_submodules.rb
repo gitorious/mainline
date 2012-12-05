@@ -25,6 +25,9 @@ File.read(root + ".gitmodules").scan(/path = (.*)/).each do |s|
     $stderr.puts ""
     $stderr.puts "    git submodule update --init --recursive"
     $stderr.puts "    bundle exec rake assets:clear"
-    exit 1
+    $stderr.puts ""
+    $stderr.puts "It is STRONGLY recommended that you resolve this issue."
+    $stderr.puts "The web application will not behave properly as long as"
+    $stderr.puts "this issue persists."
   end
 end
