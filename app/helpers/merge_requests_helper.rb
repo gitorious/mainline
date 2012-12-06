@@ -130,7 +130,7 @@ module MergeRequestsHelper
     options[:style] = "display: none" if sha.blank?
     content_html = content_tag(:span, 'Showing', :class => 'label') + " " +
       content_tag(:code, sha, :class => 'merge_base')
-    content_tag(:div, "#{content_html}", options)
+    content_tag(:div, content_html, options)
   end
 
   def summarize_version_with_several_shas(first,last)

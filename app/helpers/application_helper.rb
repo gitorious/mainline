@@ -392,7 +392,7 @@ module ApplicationHelper
   #  <%= styled_button :medium, "Do something!", :class => "foo", :id => "bar" %>
   def styled_button(size_identifier, label, options = {})
     options.reverse_merge!(:type => "submit", :class => size_identifier.to_s)
-    content_tag(:button, %{<span>#{label}</span>}, options)
+    content_tag(:button, content_tag(:span, label), options)
   end
 
   # Similar to styled_button, but creates a link_to <a>, not a <button>.
