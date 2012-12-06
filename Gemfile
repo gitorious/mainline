@@ -4,7 +4,7 @@ gem "rails", "3.2.8"
 gem "geoip", "0.8.9"
 gem "daemons", "1.1.0", :require => false
 gem "rdiscount", "~> 1.6"
-gem "mime-types", "1.16", :require => "mime/types"
+gem "mime-types", "~> 1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
 gem "paperclip", "~> 2.7"
@@ -63,6 +63,12 @@ end
 
 group :http_utils do
   gem "httparty", "~> 0.9"
+end
+
+group :dolt do
+  gem "libdolt", "~> 0.11"
+  gem "dolt", "~> 0.8"
+  gem "tiltout", "~> 1.4"
 end
 
 platform :jruby do

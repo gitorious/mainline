@@ -1,0 +1,73 @@
+<div class="gts-repo-header">
+  <div class="container">
+    <div class="row">
+      <h1 class="span">
+        <!--img src="<%= img_url('/project-logo.png') %>" width="32" height="32" alt="gitorious logo"-->
+        <a href="<%= project_path(project) %>"><%= project_title(project) %></a> /
+        <span><%= repository_name(repository) %></span>
+      </h1>
+    </div>
+    <div class="row">
+      <div class="span">
+        <div class="btn-group gts-repo-urls">
+          <%= remote_link(repository, app.ssh_daemon, "SSH") %>
+          <%= remote_link(repository, app.git_http, "HTTP") %>
+          <%= remote_link(repository, app.git_daemon, "Git") %>
+          <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="<%= default_remote_url(repository, app) %>">
+          <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
+        </div>
+      </div>
+      <div class="pull-right">
+        <a href="#" class="btn gts-download" rel="tooltip" data-original-title="Download branch master as .tar.gz">
+          <i class="icon icon-download"></i> Download
+        </a>
+        <a href="#" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
+        <a href="#" class="btn">Clone</a>
+      </div>
+    </div>
+    <div class="collapse gts-help row" id="repo-url-help">
+      <div class="alert alert-info span pull-right">
+        <p>
+          To <strong>clone</strong> this repository:
+        </p>
+        <pre class="prettyprint">git clone <%= default_remote_url(repository, app) %></pre>
+        <p>
+          To <strong>push</strong> to this repository:
+        </p>
+        <pre class="prettyprint"># Add a new remote
+git remote add origin <%= default_remote_url(repository, app) %>
+
+# Push the master branch to the newly added origin, and configure
+# this remote and branch as the default:
+git push -u origin master
+
+# From now on you can push master to the "origin" remote with:
+git push</pre>
+      </div>
+    </div>
+    <div class="row gts-description">
+      <div class="span">
+        <%= project_description(project) %>
+      </div>
+    </div>
+    <ul class="nav nav-tabs">
+      <li><a href="#">Readme</a></li>
+      <li><a href="#">Activities</a></li>
+      <li><a href="#">Commits</a></li>
+      <li class="active"><a>Source code</a></li>
+      <li><a href="#">Merge requests <span class="count">(2)</span></a></li>
+      <li><a href="#">Community</a></li>
+      <li class="pull-right dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
+        <ul class="dropdown-menu">
+          <li><a href="#"><i class="icon-pencil"></i> Edit repository</a></li>
+          <li><a href="#"><i class="icon-trash"></i> Delete repository</a></li>
+          <li class="divider"></li>
+          <li><a href="#"><i class="i"></i> Change name</a></li>
+          <li><a href="#"><i class="i"></i> Manage collaborators</a></li>
+          <li><a href="#"><i class="i"></i> Transfer ownership</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>
