@@ -17,13 +17,16 @@
 #++
 
 require (Rails.root + "app/racks/git_http_cloner.rb").realpath
+require (Rails.root + "app/racks/repository_browser.rb").realpath
 
 Gitorious::Application.routes.draw do
   ### R0. Site index
   root :to => "site#index"
 
-  ### R1. Git HTTP cloner Rack app
+  ### R1. Rack endpoints
   match "/:project_id/:repository_id.git/*slug" => Gitorious::GitHttpCloner
+  # The repository browser instance is configured in an initializer
+  match "/:project_id/:repository_id/source/*slug" => Gitorious::RepositoryBrowser.instance
 
   ### R2. User routes
   resources :users, :only => [:new, :create] do

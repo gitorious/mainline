@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= @title %> - Gitorious</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/ui3/css/gitorious.css" rel="stylesheet">
+    <link href="/ui3/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/ui3/lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="gts-masthead navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="gts-logo" href="/"><img src="/ui3/images/gitorious.png" alt="Gitorious" title="Gitorious"></a>
+          <div class="pull-right">
+            <form action="search.html" class="navbar-search pull-left">
+              <input type="search" placeholder="Search" class="search-query span2">
+            </form>
+            <div class="pull-right btn-group">
+              <a href="/login" class="btn btn-inverse"><i class="icon-user icon-white"></i> Log in</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% if defined?(repository_meta) %>
+      <%= partial("repositories/repo_header", {
+            :repository => repository_meta,
+            :project => repository_meta.project,
+            :app => Gitorious
+          }) %>
+    <% end %>
+    <div class="container gts-body">
+      <%= yield %>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <p class="pull-right gts-powered-by">
+          <a href="http://gitorious.org">
+            <img alt="Powered by Gitorious" src="/ui3/images/powered-by.png" title="Powered by Gitorious">
+          </a>
+        </p>
+        <p>
+          Gitorious is free software licensed under
+          the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero
+            General Public License (AGPL)</a> unless noted otherwise.
+        </p>
+        <div class="row">
+          <div class="span2">
+            <ul>
+              <li><a href="/about">About Gitorious</a></li>
+              <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
+            </ul>
+          </div>
+          <div class="span2">
+            <ul>
+              <li><a href="http://blog.gitorious.org">Blog</a></li>
+              <li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
+            </ul>
+          </div>
+          <div class="span2">
+            <ul>
+              <li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="gts-com-plug">
+          <a href="http://gitorious.com">Professional Gitorious services</a> - Git
+          hosting at your company, custom features, support and more.
+          <a href="http://gitorious.com">gitorious.com</a>.
+        </p>
+      </div>
+    </div>
+    <script src="/ui3/dist/gts-ui-deps.js"></script>
+    <script src="/ui3/js/components/abbrev.js"></script>
+    <script src="/ui3/js/components/url.js"></script>
+    <script src="/ui3/js/components/ref-selector.js"></script>
+    <script src="/ui3/js/components/tree-history.js"></script>
+    <script src="/ui3/js/gitorious.js"></script>
+  </body>
+</html>
