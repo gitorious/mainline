@@ -139,6 +139,6 @@ module MergeRequestsHelper
     content_html = content_tag(:span, 'Showing', :class => 'label') + " " +
       content_tag(:code, first, :class => 'first') + "-" +
       content_tag(:code, last, :class => 'last')
-    content_tag(:div, "#{content_html}", options)
+    content_tag(:div, content_html, options)
   end
 end
