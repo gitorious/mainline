@@ -19,7 +19,7 @@
 
 module MessagesHelper
   def sender_and_recipient_display(message)
-    sender_and_recipient_for(message).collect(&:capitalize).join(",")
+    sender_and_recipient_for(message).collect(&:capitalize).join(",").html_safe
   end
 
   def sender_and_recipient_for(message)

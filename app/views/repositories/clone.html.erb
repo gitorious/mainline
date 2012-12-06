@@ -49,7 +49,7 @@ $(document).ready(function() {
           :clone_name => h(@repository_to_clone.name),
           :clone_url => project_repository_path(@repository_to_clone.project, @repository_to_clone),
           :project_name => h(@owner.title),
-          :project_url => project_path(@owner)) %></h1>
+          :project_url => project_path(@owner)).html_safe %></h1>
 
 <%= error_messages(@repository) -%>
 
@@ -58,12 +58,12 @@ $(document).ready(function() {
                :builder => GitoriousFormBuilder
              }) do |f| -%>
   <p>
-    <%= f.current_user_or_group :owner, t("views.repos.owner"),
+    <%= f.current_user_or_group(:owner, t("views.repos.owner"),
         :hint => "Clone the repository as either yourself or a group you are in",
-        :default => :user -%>
+        :default => :user).html_safe -%>
   </p>
   <p>
-    <%= f.label :name, t("views.repos.name", :name => current_user.login) -%>:<br />
+    <%= f.label :name, t("views.repos.name", :name => current_user.login).html_safe -%>:<br />
     <%= f.text_field :name -%>
   </p>
   <%= f.submit t("views.repos.btn_clone") -%>

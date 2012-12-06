@@ -22,7 +22,7 @@
 
 <h1>
   <%= t("views.collaborators.title",
-        :repo_name => link_to(h(@repository.name), [@repository.project, @repository]))  -%>
+        :repo_name => link_to(h(@repository.name), [@repository.project, @repository])).html_safe  -%>
 </h1>
 
 <table class="listing">

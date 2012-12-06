@@ -111,7 +111,7 @@ module ApplicationHelper
   def linked_tag_list_as_sentence(tags)
     tags.map do |tag|
       link_to(h(tag.name), search_path(:q => "category:#{h(tag.name)}"))
-    end.to_sentence
+    end.to_sentence.html_safe
   end
 
   def build_notice_for(object, options = {})
