@@ -28,7 +28,7 @@
 
 <%= breadcrumbs_from(@root) -%>
 
-<h2 class="content-header"><%= t("views.memberships.new_title", :group_memberships => link_to(h(@group.name), [@group, :memberships])) -%></h2>
+<h2 class="content-header"><%= t("views.memberships.new_title", :group_memberships => link_to(h(@group.name), [@group, :memberships])).html_safe -%></h2>
 
 <%= error_messages(@group) -%>
 <%= error_messages(@membership) -%>

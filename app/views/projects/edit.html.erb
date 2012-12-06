@@ -23,7 +23,7 @@
   %>
 <%= breadcrumbs_from(@root) -%>
 
-<h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))) -%></h2>
+<h2 class="content-header"><%= t("views.projects.update_title", :link => link_to( h(@project.title), project_path(@project))).html_safe -%></h2>
 
 <%= error_messages(@project) -%>
 <%= form_for(@project, :method => "put") do |f| -%>

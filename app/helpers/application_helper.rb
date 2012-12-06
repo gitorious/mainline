@@ -111,7 +111,7 @@ module ApplicationHelper
   def linked_tag_list_as_sentence(tags)
     tags.map do |tag|
       link_to(h(tag.name), search_path(:q => "category:#{h(tag.name)}"))
-    end.to_sentence
+    end.to_sentence.html_safe
   end
 
   def build_notice_for(object, options = {})
@@ -392,7 +392,7 @@ module ApplicationHelper
   #  <%= styled_button :medium, "Do something!", :class => "foo", :id => "bar" %>
   def styled_button(size_identifier, label, options = {})
     options.reverse_merge!(:type => "submit", :class => size_identifier.to_s)
-    content_tag(:button, %{<span>#{label}</span>}, options)
+    content_tag(:button, content_tag(:span, label), options)
   end
 
   # Similar to styled_button, but creates a link_to <a>, not a <button>.
