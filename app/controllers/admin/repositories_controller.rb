@@ -26,7 +26,7 @@ class Admin::RepositoriesController < AdminController
 
   def recreate
     @repository = Repository.find(params[:id])
-    @repository.post_repo_creation_message
+    RepositoryBuilder.new(@repository).post_repo_creation_message
     flash[:notice] = "Recreation message posted"
     redirect_to :action => :index
   end
