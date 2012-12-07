@@ -30,7 +30,7 @@ class MergeRequestTest < ActiveSupport::TestCase
       m.stubs(:id).returns(sha)
       m
     end
-    @merge_request.stubs(:commits_for_selection).returns(commits)
+    @merge_request.stubs(:lookup_commits_for_selection).returns(commits)
     assert @merge_request.pending_acceptance_of_terms?
 
     # TODO: STOP using Rails.cache in model

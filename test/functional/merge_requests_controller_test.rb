@@ -21,6 +21,20 @@ require "test_helper"
 
 class MergeRequestsControllerTest < ActionController::TestCase
   should_render_in_site_specific_context
+    TestCommit = Struct.new(:id, :name, :message) do
+      def id_abbrev
+        id.to_s[0..6]
+      end
+      def committer
+        name
+      end
+      def committed_date
+        1.year.ago
+      end
+      def short_message
+        message
+      end
+    end
 
   def setup
     setup_ssl_from_config
@@ -38,7 +52,11 @@ class MergeRequestsControllerTest < ActionController::TestCase
     MergeRequestVersion.any_instance.stubs(:affected_commits).returns([])
     @merge_request.versions << version
     version.stubs(:merge_request).returns(@merge_request)
-    @merge_request.stubs(:commits_for_selection).returns([])
+
+
+    commit_stub = TestCommit.new("fff", "This is great")
+    MergeRequest.any_instance.stubs(:commits_for_selection).returns([commit_stub])
+
     assert_not_nil @merge_request.versions.last
   end
 
