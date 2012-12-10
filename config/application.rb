@@ -125,7 +125,9 @@ module Gitorious
       implementation = Gitorious::Configuration.get("enable_ldap_authorization", false) ? LdapGroup : Group
       Team.group_implementation = implementation
     end
+    require "rack/openid"
 
+    config.middleware.use Rack::OpenID
     # require (Rails.root + "app/middlewares/git_http_cloner.rb").realpath
     # config.middleware.insert_before ActionDispatch::Cookies, ::GitHttpCloner
   end
