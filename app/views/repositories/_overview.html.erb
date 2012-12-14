@@ -73,8 +73,7 @@
             [repository.project, repository, :commits] -%>
       </li>
       <li class="repository-link tree">
-        <%= link_to "Source tree",
-            [repository.project, repository, :trees] -%>
+        <%= link_to("Source tree", tree_url(RepositoryPresenter.new(repository).slug, repository.head.name)) -%>
       </li>
       <%- if repository.merge_requests_enabled? -%>
         <li class="repository-link merge_requests">

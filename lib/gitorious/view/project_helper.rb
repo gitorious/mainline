@@ -19,13 +19,9 @@
 module Gitorious
   module View
     module ProjectHelper
-      def project_title(project)
-        h(project.title)
-      end
-
       def project_description(project)
         # Eventually: Support markdown here
-        "<p>#{h(project.description)}</p>"
+        "<p>#{project.description}</p>"
       end
     end
   end

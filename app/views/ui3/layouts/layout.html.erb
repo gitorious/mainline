@@ -28,6 +28,7 @@
       <%= partial("repositories/repo_header", {
             :repository => repository_meta,
             :project => repository_meta.project,
+            :ref => ref,
             :app => Gitorious
           }) %>
     <% end %>
@@ -72,11 +73,22 @@
         </p>
       </div>
     </div>
+    <% if defined?(repository_meta) %>
+      <script>
+        var gts = {
+            repository: "<%= repository_meta.slug %>",
+            commitUrlTemplate: "<%= project_repository_commit_path(repository_meta.project,
+                                                                   repository_meta,
+                                                                   "%oid%").sub("%oid%", "\#{oid}") %>"
+        };
+    </script>
+    <% end %>
     <script src="/ui3/dist/gts-ui-deps.js"></script>
     <script src="/ui3/js/components/abbrev.js"></script>
     <script src="/ui3/js/components/url.js"></script>
     <script src="/ui3/js/components/ref-selector.js"></script>
     <script src="/ui3/js/components/tree-history.js"></script>
+    <script src="/ui3/js/components/commit-linker.js"></script>
     <script src="/ui3/js/gitorious.js"></script>
   </body>
 </html>
