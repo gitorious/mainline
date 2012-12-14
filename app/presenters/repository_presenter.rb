@@ -22,9 +22,14 @@ class RepositoryPresenter
     @repository = repository
   end
 
+  def id; repository.id; end
   def name; repository.name; end
   def gitdir; repository.gitdir; end
   def to_param; repository.to_param; end
+
+  def open_merge_request_count
+    repository.open_merge_requests.count
+  end
 
   def slug
     "#{project.slug}/#{name}"

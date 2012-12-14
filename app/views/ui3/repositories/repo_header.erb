@@ -19,11 +19,11 @@
         </div>
       </div>
       <div class="pull-right">
-        <a href="#" class="btn gts-download" rel="tooltip" data-original-title="Download branch master as .tar.gz">
+        <a href="<%= project_repository_archive_tar_path(repository.project, repository, ref) %>" class="btn gts-download" rel="tooltip" data-original-title="Download branch master as .tar.gz">
           <i class="icon icon-download"></i> Download
         </a>
-        <a href="#" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
-        <a href="#" class="btn">Clone</a>
+        <a href="<%= favorites_path(:watchable_id => repository.id, :watchable_type => repository.class.name) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
+        <a href="<%= clone_project_repository_path(repository.project, repository) %>" class="btn">Clone</a>
       </div>
     </div>
     <div class="collapse gts-help row" id="repo-url-help">
@@ -56,7 +56,12 @@ git push</pre>
       <li><a href="<%= project_repository_path(repository.project, repository) %>">Activities</a></li>
       <li><a href="<%= project_repository_commits_in_ref_path(repository.project, repository, ref) %>">Commits</a></li>
       <li class="active"><a>Source code</a></li>
-      <li><a href="<%= project_repository_merge_requests_path(repository.project, repository) %>">Merge requests</a></li>
+      <li>
+        <a href="<%= project_repository_merge_requests_path(repository.project, repository) %>">
+          Merge requests
+          <span class="count">(<%= repository.open_merge_request_count %>)</span>
+        </a>
+      </li>
       <!--li><a href="#">Community</a></li-->
       <li class="pull-right"><a href="<%= edit_project_repository_path(repository.project, repository) %>"><i class="icon-cog"></i> Admin</a>
       <!--li class="pull-right dropdown">
