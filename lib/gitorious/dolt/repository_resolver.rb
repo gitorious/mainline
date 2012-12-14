@@ -15,17 +15,30 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
+require "libdolt"
+require "presenters/repository_presenter"
 
-class ProjectPresenter
-  def initialize(project)
-    @project = project
+module Gitorious
+  module Dolt
+    class Repository < ::Dolt::Git::Repository
+      attr_reader :meta
+
+      def initialize(repository)
+        @meta = RepositoryPresenter.new(repository)
+        super(repository.full_repository_path)
+      end
+    end
+
+    class RepositoryResolver
+      def initialize(scope = ::Repository)
+        @scope = scope
+      end
+
+      def resolve(repo)
+        repository = @scope.find_by_path(repo)
+        raise ActiveRecord::RecordNotFound.new if repository.nil?
+        Gitorious::Dolt::Repository.new(repository)
+      end
+    end
   end
-
-  def title; project.title; end
-  def slug; project.slug; end
-  def description; project.description; end
-  def to_param; project.to_param; end
-
-  private
-  def project; @project; end
 end

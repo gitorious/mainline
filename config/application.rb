@@ -26,6 +26,9 @@ module Gitorious
     config.autoload_paths += [config.root.join("lib")]
     config.encoding = "utf-8"
 
+    # Required for the async Dolt integration to work properly
+    config.threadsafe!
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

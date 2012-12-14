@@ -15,8 +15,7 @@
 #   You should have received a copy of the GNU Affero General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
-
-require "project_presenter"
+require "presenters/project_presenter"
 
 class RepositoryPresenter
   def initialize(repository)
@@ -25,6 +24,11 @@ class RepositoryPresenter
 
   def name; repository.name; end
   def gitdir; repository.gitdir; end
+  def to_param; repository.to_param; end
+
+  def slug
+    "#{project.slug}/#{name}"
+  end
 
   def project
     @project ||= ProjectPresenter.new(@repository.project)

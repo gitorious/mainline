@@ -3,17 +3,18 @@
     <div class="row">
       <h1 class="span">
         <!--img src="<%= img_url('/project-logo.png') %>" width="32" height="32" alt="gitorious logo"-->
-        <a href="<%= project_path(project) %>"><%= project_title(project) %></a> /
-        <span><%= repository_name(repository) %></span>
+        <a href="<%= project_path(project) %>"><%= project.slug %></a> /
+        <span><%= repository.name %></span>
       </h1>
     </div>
     <div class="row">
       <div class="span">
         <div class="btn-group gts-repo-urls">
-          <%= remote_link(repository, app.ssh_daemon, "SSH") %>
-          <%= remote_link(repository, app.git_http, "HTTP") %>
-          <%= remote_link(repository, app.git_daemon, "Git") %>
-          <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="<%= default_remote_url(repository, app) %>">
+          <% default_remote = app.default_remote_url(repository) %>
+          <%= remote_link(repository, app.ssh_daemon, "SSH", default_remote) %>
+          <%= remote_link(repository, app.git_http, "HTTP", default_remote) %>
+          <%= remote_link(repository, app.git_daemon, "Git", default_remote) %>
+          <input class="span4 gts-current-repo-url gts-select-onfocus" type="url" value="<%= default_remote %>">
           <button data-toggle="collapse" data-target="#repo-url-help" class="gts-repo-url-help btn">?</button>
         </div>
       </div>
@@ -30,12 +31,12 @@
         <p>
           To <strong>clone</strong> this repository:
         </p>
-        <pre class="prettyprint">git clone <%= default_remote_url(repository, app) %></pre>
+        <pre class="prettyprint">git clone <%= default_remote %></pre>
         <p>
           To <strong>push</strong> to this repository:
         </p>
         <pre class="prettyprint"># Add a new remote
-git remote add origin <%= default_remote_url(repository, app) %>
+git remote add origin <%= default_remote %>
 
 # Push the master branch to the newly added origin, and configure
 # this remote and branch as the default:
@@ -51,13 +52,14 @@ git push</pre>
       </div>
     </div>
     <ul class="nav nav-tabs">
-      <li><a href="#">Readme</a></li>
-      <li><a href="#">Activities</a></li>
-      <li><a href="#">Commits</a></li>
+      <!--li><a href="#">Readme</a></li-->
+      <li><a href="<%= project_repository_path(repository.project, repository) %>">Activities</a></li>
+      <li><a href="<%= project_repository_commits_in_ref_path(repository.project, repository, ref) %>">Commits</a></li>
       <li class="active"><a>Source code</a></li>
-      <li><a href="#">Merge requests <span class="count">(2)</span></a></li>
-      <li><a href="#">Community</a></li>
-      <li class="pull-right dropdown">
+      <li><a href="<%= project_repository_merge_requests_path(repository.project, repository) %>">Merge requests</a></li>
+      <!--li><a href="#">Community</a></li-->
+      <li class="pull-right"><a href="<%= edit_project_repository_path(repository.project, repository) %>"><i class="icon-cog"></i> Admin</a>
+      <!--li class="pull-right dropdown">
         <a href="#" data-toggle="dropdown" class="dropdown-toggle"><i class="icon-cog"></i> Admin</a>
         <ul class="dropdown-menu">
           <li><a href="#"><i class="icon-pencil"></i> Edit repository</a></li>
@@ -67,7 +69,7 @@ git push</pre>
           <li><a href="#"><i class="i"></i> Manage collaborators</a></li>
           <li><a href="#"><i class="i"></i> Transfer ownership</a></li>
         </ul>
-      </li>
+      </li-->
     </ul>
   </div>
 </div>

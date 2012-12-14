@@ -24,7 +24,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #++
 
+require "libdolt"
 require "gitorious"
+require "gitorious/view/dolt_url_helper"
 
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
@@ -37,6 +39,8 @@ module ApplicationHelper
   include Gitorious::Authorization
   include GroupRoutingHelper
   include Gitorious::CacheInPrivateHelper
+  include Dolt::View::MultiRepository
+  include Gitorious::View::DoltUrlHelper
 
   GREETINGS = ["Hello", "Hi", "Greetings", "Howdy", "Heya", "G'day"]
 

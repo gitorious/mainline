@@ -108,6 +108,10 @@ in Gitorious 3, please refer to config/gitorious.sample.yml for full documentati
     @git_http = Gitorious::HttpMountPoint.new(host, port, scheme)
   end
 
+  def self.default_remote_url(repository)
+    (ssh_daemon || git_daemon || git_http).url(repository.gitdir)
+  end
+
   def self.email_sender
     return @email_sender if @email_sender && cache?
     default = "Gitorious <no-reply@#{host}>"

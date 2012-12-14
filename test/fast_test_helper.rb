@@ -88,7 +88,7 @@ if !defined?(Rails)
 
   class Repository < TestHelper::Model
     attr_accessor :project, :user, :name, :hooks, :description, :browse_url,
-      :clones, :owner
+      :clones, :owner, :full_repository_path
 
     def last_pushed_at
       Time.now

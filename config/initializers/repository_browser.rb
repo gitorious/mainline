@@ -17,33 +17,13 @@
 #++
 require "libdolt"
 require "tiltout"
-base = File.join(File.expand_path(File.dirname(__FILE__)), "../..")
-require File.join(base, "app/racks/repository_browser.rb")
-require File.join(base, "app/presenters/repository_presenter.rb")
-require File.join(base, "lib/gitorious.rb")
-require File.join(base, "lib/gitorious/view/repository_helper.rb")
-require File.join(base, "lib/gitorious/view/project_helper.rb")
-require File.join(base, "lib/gitorious/view/ui_helper.rb")
-require File.join(base, "lib/gitorious/view/dolt_url_helper.rb")
-
-module Gitorious
-  class DoltRepository < Dolt::Git::Repository
-    attr_reader :meta
-
-    def initialize(repository)
-      @meta = RepositoryPresenter.new(repository)
-      super(repository.full_repository_path)
-    end
-  end
-
-  class DoltRepositoryResolver
-    def resolve(repo)
-      repository = Repository.find_by_path(repo)
-      raise ActiveRecord::RecordNotFound.new if repository.nil?
-      DoltRepository.new(repository)
-    end
-  end
-end
+require "racks/repository_browser"
+require "gitorious"
+require "gitorious/view/repository_helper"
+require "gitorious/view/project_helper"
+require "gitorious/view/ui_helper"
+require "gitorious/view/dolt_url_helper"
+require "gitorious/dolt/repository_resolver"
 
 views = Rails.root + "app/views/ui3"
 view = Tiltout.new([Dolt.template_dir, views.realpath.to_s], {
@@ -71,5 +51,5 @@ view.helper(Gitorious::View::RepositoryHelper)
 view.helper(Dolt::View::SmartBlobRenderer)
 view.helper(:maxdepth => 3, :tab_width => 4)
 
-actions = Dolt::RepoActions.new(Gitorious::DoltRepositoryResolver.new)
+actions = Dolt::RepoActions.new(Gitorious::Dolt::RepositoryResolver.new)
 Gitorious::RepositoryBrowser.instance = Gitorious::RepositoryBrowser.new(actions, view)

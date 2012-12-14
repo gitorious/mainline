@@ -19,18 +19,12 @@
 module Gitorious
   module View
     module RepositoryHelper
-      def repository_name(repository)
-        h(repository.name)
-      end
-
-      def remote_link(repository, backend, label)
+      def remote_link(repository, backend, label, default_remote_url)
         return "" if backend.nil?
         url = backend.url(repository.gitdir)
-        "<a class=\"btn gts-repo-url\" href=\"#{url}\">#{label}</a>"
-      end
-
-      def default_remote_url(repository, app)
-        (app.ssh_daemon || app.git_daemon || app.git_http).url(repository.gitdir)
+        class_name = "btn gts-repo-url"
+        class_name += " active" if url == default_remote_url
+        "<a class=\"#{class_name}\" href=\"#{url}\">#{label}</a>"
       end
     end
   end
