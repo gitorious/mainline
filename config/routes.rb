@@ -319,7 +319,7 @@ Gitorious::Application.routes.draw do
       match "/blobs/raw/*branch_and_path" => "blobs#raw", :as => :raw_blob
       match "/blobs/history/*branch_and_path" => "blobs#history", :as => :blob_history
       match "/blobs/blame/*branch_and_path" => "blobs#blame", :as => :blame
-      match "/blobs/*branch_and_path" => "blobs#show", :as => :blob
+      match "/blobs/*branch_and_path" => "blobs#show", :as => :blob, :branch_and_path => /.*/
     end
   end
 end
