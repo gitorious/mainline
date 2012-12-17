@@ -36,42 +36,7 @@
       <%= yield %>
     </div>
     <div class="footer">
-      <div class="container">
-        <p class="pull-right gts-powered-by">
-          <a href="http://gitorious.org">
-            <img alt="Powered by Gitorious" src="/ui3/images/powered-by.png" title="Powered by Gitorious">
-          </a>
-        </p>
-        <p>
-          Gitorious is free software licensed under
-          the <a href="http://www.gnu.org/licenses/agpl-3.0.html">GNU Affero
-            General Public License (AGPL)</a> unless noted otherwise.
-        </p>
-        <div class="row">
-          <div class="span2">
-            <ul>
-              <li><a href="/about">About Gitorious</a></li>
-              <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
-            </ul>
-          </div>
-          <div class="span2">
-            <ul>
-              <li><a href="http://blog.gitorious.org">Blog</a></li>
-              <li><a href="http://en.gitorious.org/tos">Terms of Service</a></li>
-            </ul>
-          </div>
-          <div class="span2">
-            <ul>
-              <li><a href="http://en.gitorious.org/privacy_policy">Privacy Policy</a></li>
-            </ul>
-          </div>
-        </div>
-        <p class="gts-com-plug">
-          <a href="http://gitorious.com">Professional Gitorious services</a> - Git
-          hosting at your company, custom features, support and more.
-          <a href="http://gitorious.com">gitorious.com</a>.
-        </p>
-      </div>
+      <%= partial("layouts/footer") %>
     </div>
     <% if defined?(repository_meta) %>
       <script>
