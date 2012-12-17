@@ -368,16 +368,17 @@ module EventRenderingHelper
       else
         actor = h(commit.actor_display)
       end
-      meta =  content_tag(:span,
-        %Q{<span class="actor">#{actor}</span> } +
-        %Q{<span class="timestamp">on #{l(commit.created_at, :format => :long)}</span>})
-      message = content_tag(:div, [icon, meta].join("\n"))
+      inside_meta = (%Q{<span class="actor">#{actor}</span> } +
+        %Q{<span class="timestamp">on #{l(commit.created_at, :format => :long)}</span>}).html_safe
+      meta =  content_tag(:span,inside_meta)
+
+      message = content_tag(:div, icon.html_safe +  meta.html_safe)
       commit_msg = link_to(simple_format(h(commit.body)),
         project_repository_commit_path(commit.project,
-                                       commit.target.target.target,
+                                       commit.target.target,
                                        commit.data))
       body = content_tag(:div, commit_msg, :class => "commit_message")
-      content_tag(:div, [message, body.html_safe].join("\n"), :class => "event_instance")
+      content_tag(:div, message.html_safe +  body, :class => "event_instance")
     else
       img = image_tag("spinner.gif")
       content_tag(:div, img, :id => "commits_in_event_#{event.to_param}", :style => "display: none")

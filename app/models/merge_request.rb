@@ -231,8 +231,13 @@ class MergeRequest < ActiveRecord::Base
 
   def commits_for_selection
     return [] if !target_repository
-    @commits_for_selection ||= target_repository.git.commit_deltas_from(
-      source_repository.git, target_branch, source_branch)
+    @commits_for_selection ||= lookup_commits_for_selection
+  end
+
+  def lookup_commits_for_selection
+    start_at = target_repository.git.get_head(target_branch).commit.id
+    end_at = source_repository.git.get_head(source_branch).commit.id
+    source_repository.git.commits_between(start_at, end_at).reverse
   end
 
   def applies_to_specific_commits?
