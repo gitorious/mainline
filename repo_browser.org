@@ -1,11 +1,11 @@
-* Todo [0/10]
+* Todo [2/10]
 ** TODO Login-button needs to be replaced with user menu, if logged in
 ** TODO Remote URLs needs to be filtered for logged in user
-** TODO Make JS solution for Download link on repo header
 ** TODO Watch-button needs to be generated for logged in user
 ** TODO Clone-button needs to be generated for logged in user
-** TODO JS solution to link up SHAs
+** DONE JS solution to link up SHAs
 ** TODO JS solution to link up authors in commit logs etc
-** TODO tree_history JSON.encode(hash) encoding issues
+** DONE tree_history JSON.encode(hash) encoding issues
 ** TODO Various encoding issues
 ** TODO Encoding issues/exceptions in libdolt/views/tree_history.erb kills the entire app server
+** TODO Build archiving into Dolt
