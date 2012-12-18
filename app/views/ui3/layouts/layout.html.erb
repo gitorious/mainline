@@ -14,8 +14,8 @@
         <div class="container">
           <a class="gts-logo" href="/"><img src="/ui3/images/gitorious.png" alt="Gitorious" title="Gitorious"></a>
           <div class="pull-right">
-            <form action="search.html" class="navbar-search pull-left">
-              <input type="search" placeholder="Search" class="search-query span2">
+            <form action="<%= search_path %>" class="navbar-search pull-left" method="get">
+              <input type="search" placeholder="Search" class="search-query span2" name="q">
             </form>
             <div class="pull-right btn-group">
               <a href="/login" class="btn btn-inverse"><i class="icon-user icon-white"></i> Log in</a>
