@@ -195,7 +195,7 @@ Gitorious::Application.routes.draw do
   resources :favorites, :only => [:index, :create, :update, :destroy]
 
   ### R12. Search
-  resource :search
+  get "/search", :controller => "searches", :action => "show", :as => :search
 
   ### R13. Auto-completion
   resources :user_auto_completions, :only => [:index]
