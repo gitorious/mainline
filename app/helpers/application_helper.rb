@@ -105,10 +105,9 @@ module ApplicationHelper
   def default_css_tag_sizes
     %w(tag_size_1 tag_size_2 tag_size_3 tag_size_4)
   end
-
   def linked_tag_list_as_sentence(tags)
     tags.map do |tag|
-      link_to(h(tag.name), search_path(:q => "category:#{h(tag.name)}"))
+      link_to(h(tag.name), search_path(:q => "@category #{h(tag.name)}"))
     end.to_sentence
   end
 

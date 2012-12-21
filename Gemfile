@@ -12,7 +12,7 @@ gem "rdiscount", "1.3.1.1", :platforms => :ruby
 gem "mime-types", "1.16", :require => "mime/types"
 gem "diff-lcs", "1.1.2", :require => "diff/lcs"
 gem "oauth", "0.4.4"
-gem "paperclip", "~> 2.4.5"
+gem "paperclip", "~> 2.7.2"
 gem "state_machine", "0.9.4"
 
 gem "builder", "3.0.0"
