@@ -110,7 +110,7 @@ production:
   # directories instead. This helps avoid hitting
   # (filesystem-specific) limits on number of entries in a directory.
   # enable_repository_dir_sharding: true
-  
+
   # Base directory for mirror ie symlinks to actual repositories
   # Designate a folder where symlinks to all current repository
   # directories are created. Handy for hosting Gitweb, cgit etc in
@@ -153,7 +153,7 @@ production:
   # from the following URIs mapping to the file system:
   # - /tarballs/<tarball-name>   -> <archive_cache_dir>/<tarball-name>
   # - /
-  # 
+  #
   # Furthermore, you should instruct Nginx to consider these URLs private to prevent direct
   # access to them. Have a look in doc/templates/nginx.conf.sample for an example
   #frontend_server: nginx
@@ -183,7 +183,7 @@ production:
 
   # Make all newly created projects and repos private from the start by default
   #repos_and_projects_private_by_default: false
-  
+
   # Only site admins can create projects.  If a regular user attempts
   # to create a project (s)he is redirected to a form where a project
   # proposal (name+description) can be submitted. Site admins are
@@ -371,8 +371,8 @@ production:
   # enter a label to display next to the username field in Gitorious
   # custom_username_label: Username
 
-  # Should LDAP be used for authorization? 
-  # use_ldap_for_authorization: true
+  # Should LDAP be used for authorization?
+  # use_ldap_authorization: true
 
 development:
 

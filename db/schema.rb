@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120629102742) do
+ActiveRecord::Schema.define(:version => 20121130094633) do
 
   create_table "archived_events", :force => true do |t|
     t.integer  "user_id"
@@ -138,6 +138,7 @@ ActiveRecord::Schema.define(:version => 20120629102742) do
     t.datetime "updated_at"
   end
 
+  add_index "feed_items", ["event_id"], :name => "index_feed_items_on_event_id"
   add_index "feed_items", ["watcher_id", "created_at"], :name => "index_feed_items_on_watcher_id_and_created_at"
 
   create_table "groups", :force => true do |t|

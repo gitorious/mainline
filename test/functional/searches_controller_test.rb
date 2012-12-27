@@ -29,7 +29,8 @@ class SearchesControllerTest < ActionController::TestCase
 
       ThinkingSphinx.expects(:search).with("foo",{
                                              :page => 1, :per_page => 30,
-                                             :classes => [Project, Repository, MergeRequest]
+                                             :classes => [Project, Repository, MergeRequest],
+                                             :match_mode => :extended
       }).returns(search_result)
 
       search_result.expects(:total_entries).returns(1)

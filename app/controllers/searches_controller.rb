@@ -32,7 +32,8 @@ class SearchesController < ApplicationController
         @all_results = ThinkingSphinx.search(params[:q],{
                                                :page => page,
                                                :per_page => PER_PAGE,
-                                               :classes => [Project, Repository, MergeRequest]})
+                                               :classes => [Project, Repository, MergeRequest],
+                                               :match_mode => :extended})
         @all_results.to_a
       end
 
