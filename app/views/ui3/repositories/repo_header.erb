@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="pull-right">
-        <a href="<%= project_repository_archive_tar_path(repository.project, repository, ref) %>" class="btn gts-download" rel="tooltip" data-original-title="Download branch master as .tar.gz">
+        <a href="<%= project_repository_archive_tar_path(repository.project, repository, ref) %>" class="btn gts-download" rel="tooltip" data-original-title="Download <%= ref %> master as .tar.gz">
           <i class="icon icon-download"></i> Download
         </a>
         <a href="<%= favorites_path(:watchable_id => repository.id, :watchable_type => repository.class.name) %>" class="btn"><i class="icon icon-star-empty"></i> Watch</a>
