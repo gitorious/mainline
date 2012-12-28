@@ -98,25 +98,25 @@ class TreesController < ApplicationController
     else
       response.headers["X-Sendfile"] = File.join(Gitorious.archive_cache_dir, real_path)
     end
-      response.headers["Content-Type"] = content_type
-      user_path = user_path.gsub("/", "_").gsub('"', '\"')
-      response.headers["Content-Disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
-    end
+    response.headers["Content-Type"] = content_type
+    user_path = user_path.gsub("/", "_").gsub('"', '\"')
+    response.headers["Content-Disposition"] = "Content-Disposition: attachment; filename=\"#{user_path}\""
+  end
 
-    def publish_archive_message(repo, disk_path, commit)
-      publish("/queue/GitoriousRepositoryArchiving", {
-        :full_repository_path => repo.full_repository_path,
-        :output_path => File.join(Gitorious.archive_cache_dir, disk_path),
-        :work_path => File.join(Gitorious.archive_work_dir, disk_path),
-        :commit_sha => commit.id,
-        :name => (repo.project.slug + "-" + repo.name),
-        :format => "tar.gz",
-      })
-    end
+  def publish_archive_message(repo, disk_path, commit)
+    publish("/queue/GitoriousRepositoryArchiving", {
+              :full_repository_path => repo.full_repository_path,
+              :output_path => File.join(Gitorious.archive_cache_dir, disk_path),
+              :work_path => File.join(Gitorious.archive_work_dir, disk_path),
+              :commit_sha => commit.id,
+              :name => (repo.project.slug + "-" + repo.name),
+              :format => "tar.gz",
+            })
+  end
 
-    def handle_missing_tree_sha
-      flash[:error] = "No such tree SHA1 was found"
-      redirect_to project_repository_tree_path(@project, @repository,
-                      branch_with_tree("HEAD", @path || []))
-    end
+  def handle_missing_tree_sha
+    flash[:error] = "No such tree SHA1 was found"
+    redirect_to project_repository_tree_path(@project, @repository,
+                                             branch_with_tree("HEAD", @path || []))
+  end
 end
