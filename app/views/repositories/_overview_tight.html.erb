@@ -23,7 +23,7 @@
     <%= link_to h(repository.project.to_param), repository.project -%>
     <%= image_tag("silk/arrow_right.png") -%>
   <% end -%>
-  <%= link_to "<strong>#{h(repository.name)}</strong>",
+  <%= link_to "<strong>#{h(repository.name)}</strong>".html_safe,
       [repository.project, repository] -%>
   (<%= link_to "Commits", [repository.project, repository, :commits] -%>,
   <%- if repository.merge_requests_enabled? -%>
