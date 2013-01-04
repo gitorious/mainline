@@ -58,7 +58,7 @@ group :messaging do
 end
 
 group :resque do
-  gem "resque", "1.9.8"
+  gem "resque", "~> 1.23"
 end
 
 group :http_utils do
